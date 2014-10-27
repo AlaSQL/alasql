@@ -43,12 +43,13 @@ In Node.js
 
 Supported SQL statements
 ==
-* SELECT
-* INSERT
-* UPDATE
-* DELETE
-* CREATE TABLE [IF NOT EXIST]
-* DROP TABLE [IF EXIST]
+* SELECT FROM JOIN ON WHERE GROUP BY HAVING ORDER BY LIMIT
+* INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2)
+* UPDATE table SET field = value1, field = value2 WHERE condition
+* DELETE FROM table WHERE condition
+* CREATE TABLE \[IF NOT EXIST\] table
+* DROP TABLE \[IF EXIST\] table
+* ALTER TABLE table1 RENAME TO table2
 
 
 SELECT statement

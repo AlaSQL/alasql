@@ -1,0 +1,27 @@
+{
+  "name": "sql-parser",
+  "description": "Lexer and Parser for SQL Syntax",
+  "version": "0.4.0",
+  "author": {
+    "name": "Andy Kent",
+    "email": "andy@forward.co.uk"
+  },
+  "directories": { 
+    "lib" : "./lib"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "jison": "https://github.com/pvwoods/jison/tarball/master",
+    "coffee-script": "1.2.0",
+    "mocha"     : "0.3.2",
+    "should"    : "0.3.2"
+  },
+  "engines": [ 
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/forward/sql-parser.git"
+  }
+}
