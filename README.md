@@ -26,6 +26,7 @@ In browser
     var db = new alasql.Database();
     db.run("CREATE TABLE test (one INT, two NVARCHAR(MAX))");
     db.run("INSERT INTO test (1,2)");
+    db.tables.test.recs.push({one:3,two:4});
     console.table(db.exec("SELECT * FROM test"));
   </script>
 
@@ -36,8 +37,12 @@ In Node.js
     var alasql = require('alasql.js');
     var db = new alasql.Database();
     db.run("CREATE TABLE test (one INT, two NVARCHAR(MAX))");
-    db.run("INSERT INTO test (1,2)");
-    console.table(db.exec("SELECT * FROM test"));
+    db.tables.test.recs = \[
+        {one:3,two:4},
+        {one:5,two:6},
+    \];
+    var res = db.exec("SELECT * FROM test ORDER BY two DESC");
+    console.log(res[0].one);
 
 ```
 
@@ -90,6 +95,21 @@ Each database can be used with the following sync methods:
 Prerequisites
 ==
 [sql-parser.js](https://github.com/forward/sql-parser) - SQL Parser by Andrew Kent
+
+Performance
+===
+
+Limitations
+==
+
+Tests
+==
+
+I use mocha for tests. Just run incommand line:
+
+```
+  mocha
+```
 
 
 Credits
