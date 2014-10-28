@@ -1,5 +1,13 @@
 # Performance Tests
 
+##JSPerf test
+
+Compare alasql.js vs sql.js at [jsPerf](http://jsperf.com/sql-js-vs-alasql-js/3).
+
+As we can see sql.js is optimized for Firefox (probably, because asm.js).
+
+## Other tests
+
 I compared three databases: 
 
 * alasql.js
