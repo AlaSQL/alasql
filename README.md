@@ -1,20 +1,17 @@
-alasql.js - pure JavaScript client-side SQL-database 
-===
-Version 0.0.2 Date: October 27, 2014 
+## alasql.js - pure JavaScript client-side SQL-database 
+
+Version: 0.0.3 Date: October 28, 2014 
 
 alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
 
-Installation
-===
+## Installation
 
-In browser - just save two files [alasql.js](lib/alasql.js) and [sql-parser.js](lib/sql-parser.js).
 
-In Node.js use the following command:
 
-  npm install alasql (Sorry, this is not realized yet. Just save these .js files)
+### In browser
 
-In browser
-====
+Just add two files [alasql.js](lib/alasql.js) and [sql-parser.js](lib/sql-parser.js) to the page.
+
 ```
   <script src="sql-parser.js"></script>
   <script src="alasql.js"></script>	
@@ -27,8 +24,13 @@ In browser
   </script>
 
 ```
+
 In Node.js
 ====
+Use the following command:
+
+  npm install alasql (Sorry, this is not realized yet. Just save these .js files)
+
 ```
     var alasql = require('./lib/alasql.js');
     var db = new alasql.Database();
@@ -42,8 +44,8 @@ In Node.js
 
 ```
 
-Supported SQL statements
-===
+### Supported SQL statements
+
 * SELECT conditions FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number
 * INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2)
 * UPDATE table SET field = value1, field = value2 WHERE condition 
@@ -53,8 +55,7 @@ Supported SQL statements
 * ALTER TABLE table1 RENAME TO table2
 
 
-SELECT statement
-===
+#### SELECT statement
 
 Now alasql supports following subset of SELECT syntax:
 
@@ -67,20 +68,19 @@ Now alasql supports following subset of SELECT syntax:
 * ORDER BY field1, alias3
 * LIMIT number
 
-FUNCTIONS
-===
+#### Functions
+
 * ABS
 * MIN
 * MAX
-* some others
+* some others (to be continued)
 
-AGGREGATORS
-===
+#### Aggregators
+
 * SUM()
 * COUNT() 
 
-Database methods
-===
+### Database methods
 
 Each database can be used with the following methods:
 
@@ -89,33 +89,32 @@ Each database can be used with the following methods:
 
 alasql.js works synchronously.
 
-Performance
-===
-alasql.js is faster than [sql.js]() and [WebSQL]() in 5 to 10 times on more than 10000 records queries. 
+### Performance
 
+According the preliminary performance tests alasql.js is faster than [sql.js]() and [WebSQL]() in 5 to 10 times on more than 10000 records tables. 
 
-Limitations
-===
+### Limitations
+
 It is ok with 1000000 records in memory of browser. 
 
-Tests
-===
+### Tests
 
-I use mocha for tests. Just run mocha from command line:
+I use mocha for tests. Run mocha from command line:
 
 ```
     mocha
 ```
 
-Known Bugs
-===
+### Known Bugs
 
 1. There is a '[STAR bug](https://github.com/forward/sql-parser/issues/6)' in sql-parser, therefore
 it is still impossible to use multiplication function.
 
 
-Future Plans
-===
+### Future Plans
+
+* Aggregators and functions
+* Code refactoring
 * Performance tests and optimization
 * SubQueries
 * SQLite compatibility: functions
@@ -133,12 +132,11 @@ Future Plans
 * JavaScript functions
 * Persistence
 
-Credits
-===
-Many thanks to Andrew Kent for his SQL Parser and other people for other useful tools, which made our work much easier.
+## Credits
 
-License
-==
+Many thanks to Andrew Kent for his SQL Parser and other people for useful tools, which made our work much easier.
 
-(c) 2014, Andrey Gershun (agershun@gmail.com), [MIT licance information](LICENSE)
+## License
+
+(c) 2014, Andrey Gershun (agershun@gmail.com), [MIT licence information](LICENSE)
 
