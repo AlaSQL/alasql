@@ -1,9 +1,8 @@
-alasql.js - pure JavaScript fast client-side SQL-database 
+alasql.js - pure JavaScript client-side SQL-database 
 ===
 Version 0.0.2 Date: October 27, 2014 
 
-alasql.js is a lightweight client-side SQL database designed to work in browser and Node.js. 
-It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
+alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
 
 Installation
 ===
@@ -15,10 +14,8 @@ In Node.js use the following command:
   npm install alasql (Sorry, this is not realized yet. Just save these .js files)
 
 In browser
-==
+====
 ```
-  test.html
-  =========
   <script src="sql-parser.js"></script>
   <script src="alasql.js"></script>	
   <script>
@@ -31,7 +28,7 @@ In browser
 
 ```
 In Node.js
-==
+====
 ```
     var alasql = require('./lib/alasql.js');
     var db = new alasql.Database();
@@ -46,18 +43,18 @@ In Node.js
 ```
 
 Supported SQL statements
-==
+===
 * SELECT conditions FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number
 * INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2)
-* UPDATE table SET field = value1, field = value2 WHERE condition (Not realized yet)
-* DELETE FROM table WHERE condition (Not realized yet)
+* UPDATE table SET field = value1, field = value2 WHERE condition 
+* DELETE FROM table WHERE condition 
 * CREATE TABLE \[IF NOT EXIST\] table
 * DROP TABLE \[IF EXIST\] table
 * ALTER TABLE table1 RENAME TO table2
 
 
 SELECT statement
-==
+===
 
 Now alasql supports following subset of SELECT syntax:
 
@@ -71,46 +68,73 @@ Now alasql supports following subset of SELECT syntax:
 * LIMIT number
 
 FUNCTIONS
-==
+===
 * ABS
 * MIN
 * MAX
 * some others
 
 AGGREGATORS
-==
+===
 * SUM()
 * COUNT() 
 
 Database methods
-==
+===
 
-Each database can be used with the following sync methods:
+Each database can be used with the following methods:
 
 * vat db = new Database() - create new alasql-database
 * var res = db.exec(sql-statement) - executes SELECT query and returns array of objects 
+
+alasql.js works synchronously.
 
 Performance
 ===
 alasql.js is faster than [sql.js]() and [WebSQL]() in 5 to 10 times on more than 10000 records queries. 
 
+
 Limitations
-==
+===
 It is ok with 1000000 records in memory of browser. 
-10 millions is not ok.
 
 Tests
-==
+===
 
 I use mocha for tests. Just run mocha from command line:
 
 ```
-  mocha
+    mocha
 ```
 
+Known Bugs
+===
+
+1. There is a '[STAR bug](https://github.com/forward/sql-parser/issues/6)' in sql-parser, therefore
+it is still impossible to use multiplication function.
+
+
+Future Plans
+===
+* Performance tests and optimization
+* SubQueries
+* SQLite compatibility: functions
+* Query with parameters
+* Indices with hash
+* Optimization of WHERE and JOINS with indices 
+* RIGHT JOIN, OUTER JOIN
+* Gulp.js/Minifiication/package with 'sql-parser'
+* Fix 'STAR BUG' and some other minor sql-parser issues
+* WebWorkers
+* Dirty data and indices update
+* Constrains, Foreign Keys, Primary key, cascade delete
+* Types, NULL, NOT NULL
+* Rowversion
+* JavaScript functions
+* Persistence
 
 Credits
-==
+===
 Many thanks to Andrew Kent for his SQL Parser and other people for other useful tools, which made our work much easier.
 
 License
