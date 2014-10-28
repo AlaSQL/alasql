@@ -1,11 +1,10 @@
 ## alasql.js - pure JavaScript client-side SQL-database 
 
-Version: 0.0.3 Date: October 28, 2014 
+Version: 0.0.3 Date: October 28, 2014 [Changelog](CHANGELOG.md) 
 
 alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
 
 ## Installation
-
 
 
 ### In browser
@@ -25,11 +24,15 @@ Just add two files [alasql.js](lib/alasql.js) and [sql-parser.js](lib/sql-parser
 
 ```
 
-In Node.js
-====
-Use the following command:
+You can use alasql.js with define()/require() functions as well, because it supports UMD.
 
-  npm install alasql (Sorry, this is not realized yet. Just save these .js files)
+### In Node.js
+
+Use the following command:
+```
+    npm install alasql (Sorry, this is not realized yet. Just add package into node_modules directory)
+```
+Require alasql.js file:
 
 ```
     var alasql = require('./lib/alasql.js');
@@ -57,7 +60,7 @@ Use the following command:
 
 #### SELECT statement
 
-Now alasql supports following subset of SELECT syntax:
+Now alasql.js supports following subset of SELECT syntax:
 
 * SELECT field1, field2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(field7) AS alias8, *, table2.*
 * FROM table1
@@ -91,7 +94,9 @@ alasql.js works synchronously.
 
 ### Performance
 
-According the preliminary performance tests alasql.js is faster than [sql.js]() and [WebSQL]() in 5 to 10 times on more than 10000 records tables. 
+According the preliminary performance tests alasql.js is faster than [sql.js]() in 5 to 10 times on more than 1000 records tables, and compete [WebSQL]() on different queries. 
+
+The preliminary [performance report](PERFORMANCE.md).
 
 ### Limitations
 
@@ -104,33 +109,17 @@ I use mocha for tests. Run mocha from command line:
 ```
     mocha
 ```
+or run [test/main.html](test/main.html) in browser.
+
 
 ### Known Bugs
 
 1. There is a '[STAR bug](https://github.com/forward/sql-parser/issues/6)' in sql-parser, therefore
 it is still impossible to use multiplication function.
 
-
 ### Future Plans
 
-* Aggregators and functions
-* Code refactoring
-* Performance tests and optimization
-* SubQueries
-* SQLite compatibility: functions
-* Query with parameters
-* Indices with hash
-* Optimization of WHERE and JOINS with indices 
-* RIGHT JOIN, OUTER JOIN
-* Gulp.js/Minifiication/package with 'sql-parser'
-* Fix 'STAR BUG' and some other minor sql-parser issues
-* WebWorkers
-* Dirty data and indices update
-* Constrains, Foreign Keys, Primary key, cascade delete
-* Types, NULL, NOT NULL
-* Rowversion
-* JavaScript functions
-* Persistence
+Read my [to do](TODO.md) page
 
 ## Credits
 

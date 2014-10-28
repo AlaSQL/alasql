@@ -10,9 +10,9 @@
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
-        define(['./sql-parser'], factory);
+        define(['../lib/sql-parser/sql-parser'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('./sql-parser').SQLParser);
+        module.exports = factory(require('/lib/sql-parser/sql-parser').SQLParser);
     } else {
         root.alasql = factory(root.SQLParser);
     }
@@ -63,6 +63,7 @@ Query.prototype.exec = function (db) {
 	if(self.distinct) self.doDistinct();
 	if(self.orderfn) self.recs = self.recs.sort(self.orderfn);
 	if(self.limitnum) self.recs = self.recs.slice(0,self.limitnum);
+// console.log(self);	
 	return self.recs
 };
 
