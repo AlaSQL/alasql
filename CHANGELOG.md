@@ -4,5 +4,7 @@
 
 * Added /test/main.html mocha browser tests
 * Added PERFORMANCE.md and perf.html tests
+* StringValue.toJavaScript()
+
 
 

@@ -1,11 +1,12 @@
-## alasql.js - pure JavaScript client-side SQL-database 
+# alasql.js - pure JavaScript client-side SQL-database 
 
 Version: 0.0.3 Date: October 28, 2014 [Changelog](CHANGELOG.md) 
 
 alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
 
-## Installation
+Try it in [Fiddle](http://jsfiddle.net/agershun/38hj2uwy/3/)
 
+## Installation
 
 ### In browser
 
@@ -28,20 +29,20 @@ You can use alasql.js with define()/require() functions as well, because it supp
 
 ### In Node.js
 
-Use the following command:
+Use the following command for installation:
 ```
-    npm install alasql (Sorry, this is not realized yet. Just add package into node_modules directory)
+    npm install alasql
 ```
-Require alasql.js file:
+Then require alasql.js file:
 
 ```
-    var alasql = require('./lib/alasql.js');
+    var alasql = require('alasql');
     var db = new alasql.Database();
     db.run("CREATE TABLE test (one INT, two INT)");
-    db.tables.test.recs = \[
+    db.tables.test.recs = [
         {one:3,two:4},
         {one:5,two:6},
-    \];
+    ];
     var res = db.exec("SELECT * FROM test ORDER BY two DESC");
     console.log(res[0].one);
 
@@ -116,6 +117,7 @@ or run [test/main.html](test/main.html) in browser.
 
 1. There is a '[STAR bug](https://github.com/forward/sql-parser/issues/6)' in sql-parser, therefore
 it is still impossible to use multiplication function.
+2. There are many others... 
 
 ### Future Plans
 

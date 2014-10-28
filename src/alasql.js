@@ -12,7 +12,7 @@
     if (typeof define === 'function' && define.amd) {
         define(['../lib/sql-parser/sql-parser'], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory(require('/lib/sql-parser/sql-parser').SQLParser);
+        module.exports = factory(require('../lib/sql-parser/sql-parser').SQLParser);
     } else {
         root.alasql = factory(root.SQLParser);
     }

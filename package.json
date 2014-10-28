@@ -1,23 +1,39 @@
 {
   "name": "alasql",
   "description": "Pure JavaScript fast client-side SQL database",
-  "version": "0.0.2",
-  "author": {
-    "name": "Andrey Gershun",
-    "email": "agershun@gmail.com"
+  "version": "0.0.3",
+  "author": "Andrey Gershun <agershun@gmail.com>",
+  "directories": {
+    "example": "examples",
+    "test": "test"
   },
-  "directories": { 
-    "lib" : "./lib"
-  },
-  "dependencies": {
-  },
-  "devDependencies": {
-  },
-  "engines": [ 
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": [
     "node"
   ],
   "repository": {
     "type": "git",
     "url": "http://github.com/agershun/alasql.git"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/agershun/alasql/issues"
+  },
+  "homepage": "https://github.com/agershun/alasql",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [
+    "sql",
+    "alasql",
+    "stand-alone",
+    "relational",
+    "database",
+    "RDBMS",
+    "data",
+    "query",
+    "statement"
+  ],
+  "license": "MIT"
 }
