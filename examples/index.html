@@ -6,6 +6,7 @@
 	<script src="../lib/alasql.js"></script>
 <body>
 	<h1>Test alasql.js database</h1>
+	<div id="sql"></div>
 	<div id="res"></div>
 	<script>
 		var db = new alasql.Database();
@@ -33,9 +34,25 @@
 		db.exec('INSERT INTO test1 VALUES (1,5)');
 		db.exec('INSERT INTO test1 VALUES (2,6)');
 //		db.exec('INSERT INTO test1 VALUES (3,7)');
+		var sql = 'SELECT SUM(b) AS sb,a,test1.c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,a';
+		var res = db.exec(sql);
 
-		console.table(db.exec('SELECT SUM(b) AS sb,a,test1.c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,a'));
+		var s = '<table>';
+		s += '<tr>'
+		for(key in res[0]) {
+			s += '<th style="width:100px">'+key;
+		};
 
+		res.forEach(function(row){
+			s += '<tr>';
+			for(key in row) {
+				s += '<td>'+row[key];
+			};
+		});
+		s += '</table>';
+
+		document.getElementById('sql').innerHTML = sql;
+		document.getElementById('res').innerHTML = s;
 /*
 
 		db.tables.one = {recs:[
@@ -43,7 +60,7 @@
 			{two:4, three:5}
 		]};
 		var res = db.exec('SELECT * FROM one');
-		document.getElementById('res').html = JSON.stringify(res);
+		
 */
 	</script>
 </body>

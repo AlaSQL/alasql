@@ -1,0 +1,23 @@
+{
+  "name": "alasql",
+  "description": "Pure JavaScript fast client-side SQL database",
+  "version": "0.0.2",
+  "author": {
+    "name": "Andrey Gershun",
+    "email": "agershun@gmail.com"
+  },
+  "directories": { 
+    "lib" : "./lib"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "engines": [ 
+    "node"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/agershun/alasql.git"
+  }
+}
