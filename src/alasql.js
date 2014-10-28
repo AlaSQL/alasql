@@ -416,9 +416,14 @@ nodes.Op.prototype.toJavaScript = function (context, tableid) {
 	return s;
 };
 
-
+// Number
 nodes.NumberValue.prototype.toJavaScript = function (context, tableid) {
 	return '('+this.sign + this.value+')';
+};
+
+// String
+nodes.StringValue.prototype.toJavaScript = function (context, tableid) {
+	return '"'+this.value+'"';
 };
 
 
