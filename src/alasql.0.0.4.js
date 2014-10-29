@@ -110,25 +110,17 @@ Query.prototype.doJoin = function(scope, k) {
 Query.prototype.selectwherefn = function (scope) {
 //	console.log(this.wherefn(scope), scope.test);
 	if(!this.wherefn || this.wherefn(scope)) {
+//		console.log('selectwherefn', scope);
+		
+		// var res = this.selectfn(scope);
+		// this.groupfn(self.recs[i])
+		if(this.groupfn) {
+			this.groupfn(this.selectfn(scope));
+		} else {
+			this.recs.push(this.selectfn(scope));
+		}
+//		this.recs.push(this.selectfn(scope));
 
-
-	//		console.log('selectwherefn', scope);
-			
-			// var res = this.selectfn(scope);
-			// this.groupfn(self.recs[i])
-			var rec = this.selectfn(scope);
-
-			if(!this.mdxwherefn || this.mdxwherefn(rec)) {
-
-				if(this.mdxselectfn) this.mdxselectfn(scope,rec);
-
-				if(this.groupfn) {
-					this.groupfn(rec);
-				} else {
-					this.recs.push(rec);
-				};
-	//		this.recs.push(this.selectfn(scope));
-			};
 
 //		if(this.selectfn) this.recs.push(this.selectfn(scope));
 //		else this.recs.push(this.selectfnstar(scope));
@@ -213,25 +205,10 @@ Query.prototype.preIndex = function(db) {
 
 // Execute SQL statement
 Database.prototype.exec = function (sql, cb) {
-	var parsql = SQLParser.parse(sql);
-//	console.log(parsql);
-	var res;
-	if(parsql.constructor.name == 'Select') {
-		var query = parsql.compileQuery(sql, this);
-//		console.log(query);
-		res = query.exec(db);
-	} else {
-		res = parsql.exec(db);
-	}
-//	var res = res2.exec(db);
+	var res = SQLParser.parse(sql).exec(this);
 	if(cb) cb(res);
 	return res;
 };
-
-Database.prototype.compileQuery = function (sql) {
-	var parsql = SQLParser.parse(sql);
-	return parsql.compileQuery(sql, this);
-}
 
 // 
 // Modifiing SQLParser - add compile() and toJavaScript(context) functions
@@ -242,7 +219,7 @@ Database.prototype.compileQuery = function (sql) {
 var nodes = SQLParser.nodes;
 
 // Execute SELECT statement
-nodes.Select.prototype.compileQuery = function (sql, db) {
+nodes.Select.prototype.exec = function (db) {
 	var query = new Query();
 	var tableid = this.source.name.value;
 	query.selectfn = this.compile(tableid);
@@ -268,9 +245,7 @@ nodes.Select.prototype.compileQuery = function (sql, db) {
 	if(this.order) query.orderfn = this.order.compile();
 	if(this.limit) query.limitnum = this.limit.compile();
 //	console.log(query.selectfn);
-	return query;
-
-//	return query.exec(db);
+	return query.exec(db);
 };
 
 nodes.Insert.prototype.exec = function (db) {
@@ -293,8 +268,7 @@ nodes.Insert.prototype.exec = function (db) {
 			rec[fld.fldid] = self.insertExpression[idx].toString();
 
 			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
-			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
-				rec[fld.fldid] = +rec[fld.fldid];
+			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT") rec[fld.fldid] = +rec[fld.fldid];
 		});
 	}
 	table.recs.push(rec);

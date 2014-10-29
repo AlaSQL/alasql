@@ -7,6 +7,7 @@
 * StringValue.toJavaScript()
 * Added callback to Database.exec
 * Sieve of Eratosthenes example
-
+* Remove generation of recs after select in case of group by (for memory optimization)
+* Added conversion for type MONEY for INSERT statement 
 
 

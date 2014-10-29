@@ -1,10 +1,10 @@
 # alasql.js - pure JavaScript client-side SQL-database 
 
-Version: 0.0.3 Date: October 28, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.4 Date: October 29, 2014 [Changelog](CHANGELOG.md) 
 
 alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
 
-alasql.js is written with pure JavaScript and does not use browser WebSQL database.
+alasql.js was written with pure JavaScript and does not use browser WebSQL database.
 
 ## Samples
 

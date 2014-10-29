@@ -18,6 +18,9 @@ Optimization
  * SELECT * FROM f JOIN g ON f1 = g2 AND F1(f) = G1(g) AND F2(not g) = G2(not f) 
  * FOREIGN KEY JOINS
  * WHERE f < const (or <=, >, >=)
+ * WHERE a AND b
+ * WHERE a OR b
+ * ORDER BY WITH index
 * Optimization of WHERE and JOINS with indices 
 * Indices with hash
 * Dirty data and indices update
@@ -25,14 +28,19 @@ Optimization
 * Performance tests and optimization
 * Minimize size
 * Indices with insert/delete/update procedure
+* EXPLAIN QUERY PLAN (like [SQLite does](https://www.sqlite.org/eqp.html))
+* Faster INSERT statement parser (now it is very slow)
+* Combine selectwhere and groupfn functions
 
 SELECT AND OTHER SQL STATEMENTS
 
+* Fast join of single value with indices (PRIMARY KEY)
 * Aggregators and functions
+* Multiple FROM (cartesian multiplication)
 * SubQueries
 * UNION
 * Query with parameters
-* RIGHT INNER JOIN, RIGHT OUTER JOIN, FULL OUTER JOIN
+* RIGHT JOIN, FULL OUTER JOIN
 * SQLite compatibility: functions
 * Constrains, Foreign Keys, Primary key, cascade delete and update
 * Types, NULL, NOT NULL
@@ -45,14 +53,13 @@ SELECT AND OTHER SQL STATEMENTS
 * JavaScript functions
 * Identity 1,1, unique fields
 * SELECT TOP
-* SELECT INTO
+* SELECT INTO table FROM query
 * FETCH 
 * Case operator
 * Multiple statements with ';'
 * Databases
 * Transactions
-
-
+* Views (?)
 
 BUGS
 
@@ -61,6 +68,7 @@ BUGS
 * Tableid and fields to lowercase
 * Aggregators without groups
 * 'SELECT wrongfield FROM table' gives something wrong 
+* LEFT JOIN - empty fields for non existing tables
 
 
 DEVELOPMENT
@@ -91,17 +99,24 @@ COMPATIBILITY
 * Test with ie and Firefox browsers
 * Tests for different browsers (IE!!!)
 * Crossfilter, lodash and underscore speed comparision
+* Cover WebSQL and Sql.js with own functions (for simple migrating)
 
-OTHER NEEDED FUNCTIONALITY (MORE THAN SQL AND MDX)
+OTHER NEEDED FUNCTIONALITY (MORE THAN SQL)
 
 * OLAP
  * Pivot operator
- * MDX
 * Totals (this is non-SQL functionality, but required)
 * Running totals 
 * Hierarchy totals
 * Totals with insert/delete/update procedure
-* Fast join of single value with indices
+
+MDX
+* MDX parser
+* MDX processor
+
+SAMPLES
+
+* Modify [W3C SQL demo database](http://www.w3schools.com/w3Database.js) to work with alasql.js
 
 OTHER
 
