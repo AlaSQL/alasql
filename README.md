@@ -11,6 +11,7 @@ alasql.js was written with pure JavaScript and does not use browser WebSQL datab
 Try alasql.js in [Fiddle](http://jsfiddle.net/agershun/38hj2uwy/3/)
 
 Other examples:
+* [Sandbox](examples/sandbox.html)
 * [Sieve of Eratosthenes](examples/prime.html)
 
 

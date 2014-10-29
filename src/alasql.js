@@ -2,7 +2,7 @@
 // alasql.js
 // "A la SQL" - Pure JavaScript SQL database
 // Date: 27.10.2014
-// Version: 0.0.2
+// Version: 0.0.4
 // (ñ) 2014, Andrey Gershun
 //
 
@@ -212,7 +212,7 @@ Query.prototype.preIndex = function(db) {
 
 
 // Execute SQL statement
-Database.prototype.exec = function (sql, cb) {
+Database.prototype.exec = function (sql, params, cb) {
 	var parsql = SQLParser.parse(sql);
 //	console.log(parsql);
 	var res;
@@ -280,7 +280,9 @@ nodes.Insert.prototype.exec = function (db) {
 	if(self.fields) {
 		self.fields.forEach(function(f, idx){
 			// TODO: type checking and conversions
-			rec[f.name.value] = self.insertExpression[idx].toString();
+			rec[f.name.value] = eval(self.insertExpression[idx].toJavaScript('',''));
+//			console.log(rec[f.name.value]);
+//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
 
 			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
 			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
@@ -290,7 +292,9 @@ nodes.Insert.prototype.exec = function (db) {
 		table.flds.forEach(function(fld, idx){
 //			console.log(fld);
 			// TODO: type checking and conversions
-			rec[fld.fldid] = self.insertExpression[idx].toString();
+			rec[fld.fldid] = eval(self.insertExpression[idx].toJavaScript('',''));
+//			console.log(rec[fld.fldid]);
+//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
 
 			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
 			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
@@ -454,6 +458,13 @@ nodes.Op.prototype.toJavaScript = function (context, tableid) {
 	};
 	return s;
 };
+
+// Number
+nodes.BooleanValue.prototype.toJavaScript = function (context, tableid) {
+//	console.log(this.value);
+	return ""+this.value;
+};
+
 
 // Number
 nodes.NumberValue.prototype.toJavaScript = function (context, tableid) {

@@ -47,21 +47,25 @@
 		db.exec('INSERT INTO test1 VALUES (2,6)');
 //		db.exec('INSERT INTO test1 VALUES (3,7)');
 		var sql = 'SELECT SUM(b) AS sb,a,test1.c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,a';
-		var res = db.exec(sql);
+		
+		sqls.split(';').forEach(function(sql) {
+			var res = db.exec(sql);
+			if(res.length > 0) {
+				var s = '<table style="border:1px solid black">';
+				s += '<tr>'
+				for(key in res[0]) {
+					s += '<th style="width:100px">'+key;
+				};
 
-		var s = '<table style="border:1px solid black">';
-		s += '<tr>'
-		for(key in res[0]) {
-			s += '<th style="width:100px">'+key;
-		};
-
-		res.forEach(function(row){
-			s += '<tr>';
-			for(key in row) {
-				s += '<td>'+(typeof row[key] == 'undefined'?'':row[key]);
-			};
+				res.forEach(function(row){
+					s += '<tr>';
+					for(key in row) {
+						s += '<td>'+(typeof row[key] == 'undefined'?'':row[key]);
+					};
+				});
+				s += '</table>';			
+			}
 		});
-		s += '</table>';
 
 		document.getElementById('sql').innerHTML = sql;
 		document.getElementById('res').innerHTML = s;
