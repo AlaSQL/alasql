@@ -193,8 +193,10 @@ Query.prototype.preIndex = function(db) {
 
 
 // Execute SQL statement
-Database.prototype.exec = function (sql) {
-	return SQLParser.parse(sql).exec(this);
+Database.prototype.exec = function (sql, cb) {
+	var res = SQLParser.parse(sql).exec(this);
+	if(cb) cb(res);
+	return res;
 };
 
 // 

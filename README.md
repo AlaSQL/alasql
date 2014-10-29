@@ -10,15 +10,15 @@ Try it in [Fiddle](http://jsfiddle.net/agershun/38hj2uwy/3/)
 
 ### In browser
 
-Just add two files [alasql.js](lib/alasql.js) and [sql-parser.js](lib/sql-parser.js) to the page.
+Add two files: [alasql.js](src/alasql.js) and [sql-parser.js](lib/sql-parser/sql-parser.js) to the page.
 
 ```
   <script src="sql-parser.js"></script>
   <script src="alasql.js"></script>	
   <script>
     var db = new alasql.Database();
-    db.run("CREATE TABLE test (one INT, two NVARCHAR(MAX))");
-    db.run("INSERT INTO test (1,2)");
+    db.exec("CREATE TABLE test (one INT, two NVARCHAR(MAX))");
+    db.exec("INSERT INTO test (1,2)");
     db.tables.test.recs.push({one:3,two:4}); // You can add values directly to array
     console.table(db.exec("SELECT * FROM test"));
   </script>
@@ -37,8 +37,10 @@ Then require alasql.js file:
 
 ```
     var alasql = require('alasql');
+
     var db = new alasql.Database();
-    db.run("CREATE TABLE test (one INT, two INT)");
+    
+    db.exec("CREATE TABLE test (one INT, two INT)");
     db.tables.test.recs = [
         {one:3,two:4},
         {one:5,two:6},
@@ -50,12 +52,12 @@ Then require alasql.js file:
 
 ### Supported SQL statements
 
-* SELECT conditions FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number
+* SELECT fields FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number
 * INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2)
 * UPDATE table SET field = value1, field = value2 WHERE condition 
 * DELETE FROM table WHERE condition 
-* CREATE TABLE \[IF NOT EXIST\] table
-* DROP TABLE \[IF EXIST\] table
+* CREATE TABLE \[IF NOT EXISTS\] table
+* DROP TABLE \[IF EXISTS\] table
 * ALTER TABLE table1 RENAME TO table2
 
 
@@ -91,7 +93,13 @@ Each database can be used with the following methods:
 * vat db = new Database() - create new alasql-database
 * var res = db.exec(sql-statement) - executes SELECT query and returns array of objects 
 
-alasql.js works synchronously.
+Usually, alasql.js works synchronously, but you can use callback.
+
+```
+    db.exec('SELECT * FROM test', function(res){
+    	console.log(res);
+    });
+```
 
 ### Performance
 
@@ -101,7 +109,7 @@ The preliminary [performance report](PERFORMANCE.md).
 
 ### Limitations
 
-It is ok with 1000000 records in memory of browser. 
+It is Ok with 1000000 records in memory of browser. 
 
 ### Tests
 
@@ -122,6 +130,16 @@ it is still impossible to use multiplication function.
 ### Future Plans
 
 Read my [to do](TODO.md) page
+
+## Close or similar projects
+* [SQLike](http://www.thomasfrank.se/sqlike.html)
+* [JSLINQ](http://jslinq.codeplex.com/)
+* [JavaScriptSQL](http://javascriptsql.sourceforge.net/ARCH/en/index.html)
+* [jlinq](http://www.hugoware.net/projects/jlinq)
+* [dom-storage-query-language](https://code.google.com/p/dom-storage-query-language/)
+* [kombai-js](https://code.google.com/p/kombai-js/)
+* [TaffyDB](http://www.taffydb.com/)
+* [TrimQuery](https://code.google.com/p/trimpath/wiki/TrimQuery)
 
 ## Credits
 
