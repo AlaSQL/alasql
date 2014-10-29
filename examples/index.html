@@ -58,7 +58,7 @@
 		res.forEach(function(row){
 			s += '<tr>';
 			for(key in row) {
-				s += '<td>'+row[key];
+				s += '<td>'+(typeof row[key] == 'undefined'?'':row[key]);
 			};
 		});
 		s += '</table>';

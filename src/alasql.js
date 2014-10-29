@@ -219,9 +219,9 @@ Database.prototype.exec = function (sql, cb) {
 	if(parsql.constructor.name == 'Select') {
 		var query = parsql.compileQuery(sql, this);
 //		console.log(query);
-		res = query.exec(db);
+		res = query.exec(this);
 	} else {
-		res = parsql.exec(db);
+		res = parsql.exec(this);
 	}
 //	var res = res2.exec(db);
 	if(cb) cb(res);

@@ -19,6 +19,7 @@
 		db.exec('CREATE TABLE orders (ordnum INT, clientid STRING, orddate DATE)');
 		db.exec('CREATE TABLE orderlines (ordnum INT, productid INT, price MONEY, qty INT)');
 		db.exec('CREATE TABLE clients (clientid STRING PRIMARY KEY, clientname STRING, regionid STRING)');
+		db.exec('CREATE TABLE regions (regionid STRING PRIMARY KEY, regionname STRING, parentregionid STRING)');
 
 
 		db.tables.orders.recs.push({ordnum:1, clientid: 'ABC', orddate: new Date(2014,0,1)});
@@ -45,9 +46,15 @@
 		db.tables.orderlines.recs.push({ordnum:5, productid: 1001, price:34, qty:15});
 		db.tables.orderlines.recs.push({ordnum:5, productid: 1002, price:4, qty:10});
 
-		db.tables.clients.recs.push({clientid: 'ABC', clientname: 'ABC Corporation', regionid: 'East'});
-		db.tables.clients.recs.push({clientid: 'KLM', clientname: 'KLM Airlines', regionid: 'East'});
-		db.tables.clients.recs.push({clientid: 'XYZ', clientname: 'XYZ Incorporated', regionid: 'South'});
+		db.tables.clients.recs.push({clientid: 'ABC', clientname: 'ABC Corporation', regionid: 'CA'});
+		db.tables.clients.recs.push({clientid: 'KLM', clientname: 'KLM Airlines', regionid: 'AL'});
+		db.tables.clients.recs.push({clientid: 'XYZ', clientname: 'XYZ Incorporated', regionid: 'NV'});
+
+		db.tables.regions.recs.push({regionid: 'CA', regionname: 'East', parentid: 'USA'});
+		db.tables.regions.recs.push({regionid: 'AL', regionname: 'East', parentid: 'USA'});
+		db.tables.regions.recs.push({regionid: 'NV', regionname: 'East', parentid: 'USA'});
+		db.tables.regions.recs.push({regionid: 'USA', regionname: 'East', parentid: undefined});
+
 
 
 		var cube = {
@@ -68,6 +75,7 @@
 				var group = this.groups[this.addressfn(rec)];
 				if(!group) {
 					group = this.groups[this.addressfn(rec)] = {
+						regionid: rec.regionid,
 						clientid: rec.clientid,
 						productid: rec.productid,
 						yearid: rec.yearid,
@@ -79,7 +87,7 @@
 				group.amt += rec.amt; 
 				group.qty += rec.qty;
 			},
-			addressfn: function(rec){return rec.clientid+'`'+rec.productid+'`'+rec.yearid+'`'+rec.monid}
+			addressfn: function(rec){return rec.regionid+'`'+rec.clientid+'`'+rec.productid+'`'+rec.yearid+'`'+rec.monid}
 		};
 
 		// STEP 1
@@ -98,12 +106,32 @@
 
 		// STEP 2
 
+		var regionDim = {
+			fldids: ['regionid'],
+			addressfn: function(rec){return rec.regionid},
+			namefn: function(rec){ return rec.regionid},
+			sortfn: undefined
+		};
+
 		var clientDim = {
 			fldids: ['clientid'],
 			addressfn: function(rec){return rec.clientid},
 			namefn: function(rec){ return rec.clientid},
 			sortfn: undefined
 		};
+
+
+		var rowDim = {
+			dims: [regionDim, clientDim],
+			fldids: regionDim.fldids.concat(clientDim.fldids),
+			addressfn: function(rec){
+				return this.dims.map(function(dim){return dim.addressfn(rec);}).join('`');
+			},
+			namefn: function(rec){ 
+				return this.dims.map(function(dim){return dim.addressfn(rec);}).join(' - ');
+			}
+		};
+
 
 		var productDim = {
 			fldids: ['productid'],
@@ -154,7 +182,12 @@
 			dim.recs = Object.keys(dim.xrecs).map(function(key){return dim.xrecs[key]}).sort(dim.sortfn);
 		}
 
+		collectDim(regionDim);
 		collectDim(clientDim);
+
+		collectDim(rowDim);
+		console.log(rowDim);
+
 		collectDim(productDim);
 		collectDim(yearMonDim);
 
@@ -174,9 +207,9 @@
 		for(var j=0;j<3;j++) {
 			s += '<tr>';
 
-			if(j==0) s += '<th>'+'Client'+'</th>';
+			if(j==2) s += '<th>'+'Region-Client'+'</th>';
+			else if(j==0) s += '<th>'+''+'</th>';
 			else if(j==1) s += '<th>'+''+'</th>';
-			else if(j==2) s += '<th>'+''+'</th>';
 
 
 			productDim.recs.forEach(function(product){
@@ -193,29 +226,34 @@
 			s += '</tr>';
 		};
 
-		clientDim.recs.forEach(function(client){
-			s += '<tr>';
-			s += '<th>'+clientDim.namefn(client)+'</th>';
-			productDim.recs.forEach(function(product){
-				yearMonDim.recs.forEach(function(yearmon){
-					measures.forEach(function(measure){
-						var addr = [
-							clientDim.addressfn(client),
-							productDim.addressfn(product),
-							yearMonDim.addressfn(yearmon)
-						].join('`');
-						s += '<td>';
-						if(typeof cube.xrecs[addr] != 'undefined') {
-							s += cube.xrecs[addr][measure.id];
-						} else {
-							s += ' ';
-						};
-						s += '</td>';
+		rowDim.recs.forEach(function(row){
+//			clientDim.recs.forEach(function(client){
+				s += '<tr>';
+//				s += '<th>'+regionDim.namefn(region)+'</th>';
+//				s += '<th>'+clientDim.namefn(client)+'</th>';
+				s += '<th>'+rowDim.namefn(row)+'</th>';
+				productDim.recs.forEach(function(product){
+					yearMonDim.recs.forEach(function(yearmon){
+						measures.forEach(function(measure){
+							var addr = [
+//								regionDim.addressfn(region),
+//								clientDim.addressfn(client),
+								rowDim.addressfn(row),
+								productDim.addressfn(product),
+								yearMonDim.addressfn(yearmon)
+							].join('`');
+							s += '<td>';
+							if(typeof cube.xrecs[addr] != 'undefined') {
+								s += cube.xrecs[addr][measure.id];
+							} else {
+								s += ' ';
+							};
+							s += '</td>';
+						});
 					});
 				});
-			});
+//			});
 		});
-
 
 
 //		console.table(res);

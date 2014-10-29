@@ -6,11 +6,11 @@ alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightw
 
 alasql.js was written with pure JavaScript and does not use browser WebSQL database.
 
-## Samples
+## Examples
 
-Try it in [Fiddle](http://jsfiddle.net/agershun/38hj2uwy/3/)
+Try alasql.js in [Fiddle](http://jsfiddle.net/agershun/38hj2uwy/3/)
 
-Other samples:
+Other examples:
 * [Sieve of Eratosthenes](examples/prime.html)
 
 
@@ -18,7 +18,7 @@ Other samples:
 
 ### In browser
 
-Add two files: [alasql.js](src/alasql.js) and [sql-parser.js](lib/sql-parser/sql-parser.js) to the page.
+Include two files: [alasql.js](src/alasql.js) and [sql-parser.js](lib/sql-parser/sql-parser.js) to the page.
 
 ```
   <script src="sql-parser.js"></script>
