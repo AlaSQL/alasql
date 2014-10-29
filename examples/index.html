@@ -1,12 +1,24 @@
-﻿<!DOCTYPE html>
+﻿ <!DOCTYPE html>
 <head>
-	<title>Test alasql.js database</title>
+	<title>Test of alasql.js database: Simple SQL statement</title>
 	<script src="../lib/sql-parser/sql-parser.js"></script>
 	<script src="../src/alasql.js"></script>
 </head>
 <body>
+	<style>
+
+	table td, table th {
+	    border: 1px solid black;
+	}
+
+	table td {
+	    text-align: right;		
+	}
+
+	</style>
 	<h1>Test alasql.js database</h1>
 	<div id="sql"></div>
+	<br>
 	<div id="res"></div>
 	<script>
 		var db = new alasql.Database();
@@ -37,7 +49,7 @@
 		var sql = 'SELECT SUM(b) AS sb,a,test1.c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,a';
 		var res = db.exec(sql);
 
-		var s = '<table>';
+		var s = '<table style="border:1px solid black">';
 		s += '<tr>'
 		for(key in res[0]) {
 			s += '<th style="width:100px">'+key;

@@ -6,6 +6,7 @@
 * Added PERFORMANCE.md and perf.html tests
 * StringValue.toJavaScript()
 * Added callback to Database.exec
+* Sieve of Eratosthenes example
 
 
 

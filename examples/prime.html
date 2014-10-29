@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+<head>
+	<title>Prime-numbers test alasql.js database</title>
+	<script src="../lib/sql-parser/sql-parser.js"></script>
+	<script src="../src/alasql.js"></script>
+</head>
+<body>
+	<h1>Test of alasql.js database: Prime Numbers with Sieve of Eratosthenes</h1>
+
+	<p><a href="http://stackoverflow.com/questions/12461896/make-function-call-wait-for-web-sql-query">Original source</a></p> 
+
+	<div id="res"></div>
+
+	<script>
+		var tm = Date.now();
+
+		var db = new alasql.Database();
+		db.exec('CREATE TABLE primes (prime INT)');
+
+		function primecheck (number) {
+		    var isprime = true;
+	        if (number%10 == 1 || number%10 == 3 || number%10 == 7 || number%10 == 9) {
+	            db.exec('SELECT * FROM primes', function (result) {
+	                for (var i = 1; i < result.length; i++) {
+	                    if (number%result[i].prime == 0) {
+	                        isprime = false;
+	                        break;
+	                    }
+	                }
+	                if (isprime) {
+	                    db.exec('INSERT INTO primes (prime) VALUES ('+number+')');
+	                }
+	                return isprime;
+	            });
+	        } else {
+		        isprime = false;
+		        return isprime;
+		    }
+		}
+
+		var maxnum = 1000;
+		for(var i=1; i<maxnum;i++) {
+			primecheck(i);
+		};
+
+		var cnt = db.exec('SELECT COUNT(prime) AS cnt FROM primes GROUP BY prime')[0].cnt;
+		var res = db.exec('SELECT * FROM primes');
+
+		var s = '<p>There are '+cnt+' prime numbers less than '+maxnum+': <br> '+res.map(function(p){return p.prime}).join(', ')+'</p><p>Time '+(Date.now()-tm)+' ms </p>';
+
+		document.getElementById('res').innerHTML = s;
+	</script>
+</body>
