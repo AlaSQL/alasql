@@ -10,15 +10,6 @@ if(typeof exports === 'object') {
 };
 
 
-describe('Create Database', function(){
-	it('Create Database', function(done) {
-		var db = new alasql.Database();
-		assert.deepEqual(db.tables, {});
-		done();		
-	});
-});
-
-
 describe('CREATE TABLE', function(){
 	it('Create table with same name twice', function(done) {
 		var db = new alasql.Database();

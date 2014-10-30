@@ -2,7 +2,7 @@
 // alasql.js
 // "A la SQL" - Pure JavaScript SQL database
 // Date: 27.10.2014
-// Version: 0.0.4
+// Version: 0.0.5
 // (ñ) 2014, Andrey Gershun
 //
 
@@ -24,6 +24,7 @@ var nodes = SQLParser.nodes;
 // Database class constructor
 var Database = function(){
 	this.tables = {};
+	this.sqlcache = {};
 	return this;
 };
 
@@ -216,17 +217,24 @@ Query.prototype.preIndex = function(db) {
 
 // Execute SQL statement
 Database.prototype.exec = function (sql, params, cb) {
-	var parsql = SQLParser.parse(sql);
-//	console.log(parsql);
-	var res;
-//	if(parsql.constructor.name == 'Select') {
-	if(parsql instanceof SQLParser.nodes.Select) {
-		var query = parsql.compileQuery(sql, this);
-//		console.log(1);
-//		console.log(query);
+	if(this.sqlcache[sql]) {
+		var query =  this.sqlcache[sql];	
 		res = query.exec(this);
+
 	} else {
-		res = parsql.exec(this);
+		var parsql = SQLParser.parse(sql);
+	//	console.log(parsql);
+		var res;
+	//	if(parsql.constructor.name == 'Select') {
+		if(parsql instanceof SQLParser.nodes.Select) {
+			var query = parsql.compileQuery(sql, this);
+	//		console.log(1);
+	//		console.log(query);
+			this.sqlcache[sql] = query;
+			res = query.exec(this);
+		} else {
+			res = parsql.exec(this);
+		}
 	}
 //	var res = res2.exec(db);
 	if(cb) cb(res);
@@ -235,8 +243,12 @@ Database.prototype.exec = function (sql, params, cb) {
 };
 
 Database.prototype.compileQuery = function (sql) {
+	if(db.sqlcache[sql]) return db.sqlcache[sql];
+
 	var parsql = SQLParser.parse(sql);
-	return parsql.compileQuery(sql, this);
+	var query = parsql.compileQuery(sql, this);
+	db.sqlcache[sql] = query;
+	return query;
 }
 
 // 
@@ -248,6 +260,7 @@ Database.prototype.compileQuery = function (sql) {
 
 // Execute SELECT statement
 nodes.Select.prototype.compileQuery = function (sql, db) {
+
 	var query = new Query();
 	var tableid = this.source.name.value;
 	query.selectfn = this.compile(tableid);
@@ -273,6 +286,8 @@ nodes.Select.prototype.compileQuery = function (sql, db) {
 	if(this.order) query.orderfn = this.order.compile();
 	if(this.limit) query.limitnum = this.limit.compile();
 //	console.log(query.selectfn);
+
+
 	return query;
 
 //	return query.exec(db);

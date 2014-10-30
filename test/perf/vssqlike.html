@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>alasql.js - Performance Tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+
+    <script src="../../lib/sql-parser/sql-parser.js"></script>
+    <script src="../../src/alasql.js"></script>
+    <script src="../../lib/sqljs/sql.js"></script>
+
+	<h1>alasql.js - Performance Tests</h1>
+
+	<h3>Test SQL statements</h3>>
+	<p><div id="sql"></div></p>
+
+
+    <script>
+
+var NUM_TESTS = 10000;
+
+var sql1 = [
+	'DROP TABLE IF EXISTS test1',
+	'DROP TABLE IF EXISTS test2',
+	'CREATE TABLE test1 (one INT, two INT)',
+	'CREATE TABLE test2 (two INT, three INT)'
+];
+
+var sql2 = [];
+for(var i=0; i<NUM_TESTS; i++) {
+	sql2.push('INSERT INTO test1 VALUES ('+i%10+','+((i*i)%10)+')');
+	sql2.push('INSERT INTO test2 VALUES ('+i%10+','+((i*i)%10)+')');
+}
+
+var sql3 = [
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one > 5 GROUP BY test1.two, test2.three ORDER BY three, sumone'
+];
+
+var tres = {alasql:[], sqljs:[], websql:[]};
+
+// ALASQL
+
+var tm11 = Date.now();
+var adb = new alasql.Database();
+sql1.forEach(function(sql){adb.exec(sql);});
+tres.alasql.push(Date.now()-tm11); 
+
+var tm12 = Date.now();
+// PARSING OF INSERT IS SLOW!!!
+sql2.forEach(function(sql){adb.exec(sql);});
+//for(var i=0; i<NUM_TESTS; i++) {
+//	adb.tables.test1.recs.push({one:i%10, two:(i*i)%10});
+//	adb.tables.test2.recs.push({two:i%10, three:(i*i)%10});
+//};
+tres.alasql.push(Date.now()-tm12); 
+
+var tm13 = Date.now();
+sql3.forEach(function(sql){adb.exec(sql);});
+tres.alasql.push(Date.now()-tm13); 
+
+
+// SQL.JS
+if(false) {
+
+var tm21 = Date.now();
+var sdb = new SQL.Database();
+sdb.exec(sql1.join(';'));
+tres.sqljs.push(Date.now()-tm21); 
+
+var tm22 = Date.now();
+sql2.forEach(function(sql){sdb.exec(sql);});
+tres.sqljs.push(Date.now()-tm22); 
+
+var tm23 = Date.now();
+sql3.forEach(function(sql){sdb.exec(sql);});
+tres.sqljs.push(Date.now()-tm23); 
+
+}
+// TEST WEB SQL
+
+var tm31 = Date.now();
+var wdb = openDatabase('wdb', '0.1', 'Test database', 1000000);
+wdb.transaction(function(tx) {
+	sql1.forEach(function(sql) {
+		tx.executeSql(sql, [], function(tx,result){}, function(tx,error){console.log(error)});
+	});
+	tres.websql.push(Date.now()-tm31); 
+});
+
+
+var tm32 = Date.now();
+wdb.transaction(function(tx) {
+	sql2.forEach(function(sql) {
+		tx.executeSql(sql, [], function(tx,result){}, function(tx,error){console.log(error)});
+	});
+	tres.websql.push(Date.now()-tm32); 
+});
+
+var tm33 = Date.now();
+wdb.transaction(function(tx) {
+	sql1.forEach(function(sql) {
+		tx.executeSql(sql, [], function(tx,result){}, function(tx,error){console.log(error)});
+	});
+	tres.websql.push(Date.now()-tm33); 
+});
+
+
+setTimeout(function() {
+//	var s = '';
+	console.table(tres);
+},3000);
+
+
+
+    </script>
+  </body>
+</html>

@@ -140,15 +140,28 @@ it is still impossible to use multiplication function.
 
 Read my [to do](TODO.md) page
 
-## Close or similar projects
-* [SQLike](http://www.thomasfrank.se/sqlike.html)
+## Similar projects (SQL database, MDX/OLAP on JavaScript)
+SQL-database:
+* [sql.js](https://github.com/kripken/sql.js) - port of SQLike to JavaScript
+* [SequelSphere](http://www.sequelsphere.com/) - commercial SQL-database
+
+LINQ realizations:
+* [SQLike](http://www.thomasfrank.se/sqlike.html) - 
 * [JSLINQ](http://jslinq.codeplex.com/)
 * [JavaScriptSQL](http://javascriptsql.sourceforge.net/ARCH/en/index.html)
+* [TrimQuery](https://code.google.com/p/trimpath/wiki/TrimQuery)
 * [jlinq](http://www.hugoware.net/projects/jlinq)
+
+Other:
 * [dom-storage-query-language](https://code.google.com/p/dom-storage-query-language/)
 * [kombai-js](https://code.google.com/p/kombai-js/)
+
+JavaScript databases:
 * [TaffyDB](http://www.taffydb.com/)
-* [TrimQuery](https://code.google.com/p/trimpath/wiki/TrimQuery)
+* [CrossFilter](https://github.com/square/crossfilter)
+* [js-hypercube](https://github.com/thesmart/js-hypercube)
+* [cubico](https://github.com/diegodayan/cubico)
+* [SimpleMemolap](https://github.com/ajlopez/SimpleMemolap)
 
 ## Credits
 

@@ -5,7 +5,7 @@
 
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('../src/alasql.js');
+	var alasql = require('..');
 };
 
 

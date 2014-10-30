@@ -7,19 +7,20 @@
   </head>
   <body>
 
-    <script src="/lib/sql-parser/sql-parser.js"></script>
-    <script src="/src/alasql.js"></script>
-    <script src="/lib/sqljs/sql.js"></script>
+    <script src="../../lib/sql-parser/sql-parser.js"></script>
+    <script src="../../src/alasql.js"></script>
+    <script src="../../lib/sqljs/sql.js"></script>
+    <script src="../../lib/sqlike/SQLike.js"></script>
 
-	<h1>alasql.js - Performance Tests</h1>
+	<h1>alasql.js - Performance Tests vs sql.js and WebSQL</h1>
 
-	<h3>Test SQL statements</h3>>
-	<p><div id="sql"></div></p>
+	<h3>Results</h3>
+	<p><div id="result"></div></p>
 
 
     <script>
 
-var NUM_TESTS = 10000;
+var NUM_TESTS = 1000;
 
 var sql1 = [
 	'DROP TABLE IF EXISTS test1',
@@ -38,7 +39,7 @@ var sql3 = [
 	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one > 5 GROUP BY test1.two, test2.three ORDER BY three, sumone'
 ];
 
-var tres = {alasql:[], sqljs:[], websql:[]};
+var tres = {alasql:[], sqljs:[], websql:[], sqlike:[]};
 
 // ALASQL
 
@@ -57,7 +58,7 @@ sql2.forEach(function(sql){adb.exec(sql);});
 tres.alasql.push(Date.now()-tm12); 
 
 var tm13 = Date.now();
-sql3.forEach(function(sql){adb.exec(sql);});
+sql3.forEach(function(sql){console.log(adb.exec(sql).length);});
 tres.alasql.push(Date.now()-tm13); 
 
 
@@ -77,7 +78,7 @@ var tm23 = Date.now();
 sql3.forEach(function(sql){sdb.exec(sql);});
 tres.sqljs.push(Date.now()-tm23); 
 
-}
+//}
 // TEST WEB SQL
 
 var tm31 = Date.now();
@@ -107,10 +108,70 @@ wdb.transaction(function(tx) {
 });
 
 
+}
+
+
+var tm41 = Date.now();
+tres.sqlike.push(Date.now()-tm41); 
+
+var tm42 = Date.now();
+tres.sqlike.push(Date.now()-tm42); 
+
+var tm43 = Date.now();
+
+console.log(SQLike.q(
+   {
+       Select: ['|sum|', 'one', 'two', 't2_three'],
+//       Select: ['*'],
+       From: {t1:adb.tables.test1.recs},
+       Join: {t2:adb.tables.test2.recs},
+       On: function(){return this.t1.two==this.t2.two},
+//  		Using: ["two"],
+       GroupBy: ['two', 't2_three'],
+//       OrderBy: ['t2_three', 'sum_t1_one'],
+	   Where: function(){return this.t1.one > 5}       
+   }
+));
+
+// SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two
+//WHERE test1.one > 5 GROUP BY test1.two, test2.three ORDER BY three, sumone
+
+tres.sqlike.push(Date.now()-tm43); 
+
+
+
 setTimeout(function() {
-	var s = '';
-	console.table(tres);
-},3000);
+//	var s = '';
+
+		var s = '';
+//		var sqls = document.getElementById('sql').value;
+//		console.log(sqls.split(';'));
+//		sqls.split(';').forEach(function(sql){
+//			sql = sql.trim();
+//			if(sql) {
+//				var res = db.exec(sql);
+	//		console.log(document.getElementById('sql').value);
+
+		s += '<table style="border:1px solid black">';
+		s += '<tr><th style="width:100px">Database<th style="width:100px">Create<th style="width:100px">Insert<th style="width:100px">Select'
+//		for(key in tres[0]) {
+//			s += '<th style="width:100px">'+key;
+//		};
+
+		Object.keys(tres).forEach(function(k){
+			var row = tres[k];
+			s += '<tr><th>'+k+'</th>';
+			for (var i=0;i<3;i++) {
+				s += '<td>'+(typeof row[i] == 'undefined'?'':row[i]);
+			};
+		});
+		s += '</table>';
+//			};
+//		});
+		document.getElementById('result').innerHTML = s;
+
+//	console.table(tres);
+},100);
 
 
 

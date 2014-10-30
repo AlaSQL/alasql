@@ -33,6 +33,7 @@ Optimization
 * EXPLAIN QUERY PLAN (like [SQLite does](https://www.sqlite.org/eqp.html))
 * Faster INSERT statement parser (now it is very slow)
 * Combine selectwhere and groupfn functions
+* Compare algorithms with [SQLike](http://www.thomasfrank.se/SQLike/) and other JS databases
 
 SELECT AND OTHER SQL STATEMENTS
 
@@ -62,6 +63,8 @@ SELECT AND OTHER SQL STATEMENTS
 * Databases
 * Transactions
 * Views (?)
+* SQL-standards - check [this](https://www.sequelsphere.com/dbdocs/supported-sql/)
+* SQL-functions - check [this](https://www.sequelsphere.com/docs/latest/doc/Supported%20SQL%20Functions.html)
 
 BUGS
 
@@ -98,6 +101,7 @@ ANYDATABASE
 COMPATIBILITY
 
 * Compatibility
+* Realize SQLite functions (from [documentation](http://kripken.github.io/sql.js/documentation/))
 * Test with ie and Firefox browsers
 * Tests for different browsers (IE!!!)
 * Crossfilter, lodash and underscore speed comparision
