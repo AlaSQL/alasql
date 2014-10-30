@@ -20,7 +20,7 @@
 		function primecheck (number) {
 		    var isprime = true;
 	        if (number%10 == 1 || number%10 == 3 || number%10 == 7 || number%10 == 9) {
-	            db.exec('SELECT * FROM primes', function (result) {
+	            db.exec('SELECT * FROM primes', [], function (result) {
 	                for (var i = 1; i < result.length; i++) {
 	                    if (number%result[i].prime == 0) {
 	                        isprime = false;

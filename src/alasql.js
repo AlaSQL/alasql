@@ -18,6 +18,9 @@
     }
 }(this, function (SQLParser) {
 
+// Alias
+var nodes = SQLParser.nodes;
+
 // Database class constructor
 var Database = function(){
 	this.tables = {};
@@ -216,8 +219,10 @@ Database.prototype.exec = function (sql, params, cb) {
 	var parsql = SQLParser.parse(sql);
 //	console.log(parsql);
 	var res;
-	if(parsql.constructor.name == 'Select') {
+//	if(parsql.constructor.name == 'Select') {
+	if(parsql instanceof SQLParser.nodes.Select) {
 		var query = parsql.compileQuery(sql, this);
+//		console.log(1);
 //		console.log(query);
 		res = query.exec(this);
 	} else {
@@ -225,6 +230,7 @@ Database.prototype.exec = function (sql, params, cb) {
 	}
 //	var res = res2.exec(db);
 	if(cb) cb(res);
+//	console.log(res);
 	return res;
 };
 
@@ -238,8 +244,7 @@ Database.prototype.compileQuery = function (sql) {
 // This is a not good practice. Probably I will change something later
 //
 
-// Alias
-var nodes = SQLParser.nodes;
+
 
 // Execute SELECT statement
 nodes.Select.prototype.compileQuery = function (sql, db) {
@@ -492,17 +497,22 @@ nodes.LiteralValue.prototype.toJavaScript = function (context, tableid) {
 nodes.Select.prototype.compile = function(tableid) {
 	var s = 'var res = {};';
 	this.fields.forEach(function(f){
-		if(f.constructor.name == "Field") {
-			if(f.field.constructor.name == "LiteralValue") {
+//		if(f.constructor.name == "Field") {
+
+		if(f instanceof SQLParser.nodes.Field) {
+
+			if(f.field instanceof SQLParser.nodes.LiteralValue) {
+		//	if(f.field.constructor.name == "LiteralValue") {
 				if(f.field.values.length == 1) {
 					s += 'res["'+f.name.values[0] + '"]='+f.field.toJavaScript('scope.',tableid)+';';
 				} else if(f.field.values.length == 2) {
 					s += 'res["'+f.name.values[1] + '"]='+f.field.toJavaScript('scope.',tableid)+';';
 				}
-			} else 	if(f.field.constructor.name == "Op" || f.field.constructor.name == "FunctionValue" ) {
+			} else 	if(f.field instanceof SQLParser.nodes.Op 
+				|| f.field instanceof SQLParser.nodes.FunctionValue ) {
 				s += 'res.'+f.name.values[0] +'='+f.field.toJavaScript('scope.',tableid)+';';
 			}
-		} else if(f.constructor.name == "Star") {
+		} else if(f instanceof SQLParser.nodes.Star) {
 			if(f.literal) {
 				// If table name provided
 				s += 'var w = scope["'+f.literal.values[0]+'"];for(var key in w){res[key]=w[key]};';
@@ -514,7 +524,7 @@ nodes.Select.prototype.compile = function(tableid) {
 							'});'+			
 						'});';
 			}
-		}
+		};
 	});
 	s += 'return res;';
 //	console.log(s);
@@ -563,7 +573,7 @@ nodes.Group.prototype.compile = function (tableid, selectFields) {
 	selectFields.forEach(function(f){
 //		console.log(f);
 //			if(f.constructor.name == 'LiteralValue') return '';
-		if (f.field.constructor.name == 'FunctionValue' 
+		if (f.field instanceof SQLParser.nodes.FunctionValue 
 			&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
 //				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
 			sa.push(f.name.value+':0'); //f.field.arguments[0].toJavaScript(); 	
@@ -582,7 +592,7 @@ nodes.Group.prototype.compile = function (tableid, selectFields) {
 	s += selectFields.map(function(f){
 //			console.log(f);
 //			if(f.constructor.name == 'LiteralValue') return '';
-			if (f.field.constructor.name == 'FunctionValue' 
+			if (f.field instanceof SQLParser.nodes.FunctionValue 
 				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
 //				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
 //				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
@@ -627,7 +637,7 @@ nodes.Join.prototype.compile = function (tableid) {
 
 	// Optimization if there is a left and right parts 
 	// TODO - make a serious optimization of AND expression
-	if(this.conditions.constructor.name == 'Op' && this.conditions.operation == '=') {
+	if(this.conditions instanceof SQLParser.nodes.Op && this.conditions.operation == '=') {
 		join.optimization = 'ix';
 		join.onleftfn = new Function('scope', 'return '+this.conditions.left.toJavaScript('scope.',tableid));
 		join.onrightfn = new Function('scope', 'return '+this.conditions.right.toJavaScript('scope.',tableid));

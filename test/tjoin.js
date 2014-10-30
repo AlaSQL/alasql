@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 };
 
 
-describe('LEFT OUTER JOIN', function(){
+describe('LEFT JOIN', function(){
 	it('Left outer join of two tables', function(done) {
 
 		var db = new alasql.Database();

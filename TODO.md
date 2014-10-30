@@ -1,6 +1,8 @@
 # To do
 
-### Future Plans
+URGENT BUGS OR FEATURES
+
+* SELECT COUNT(*)
 
 REFACTORING
 
