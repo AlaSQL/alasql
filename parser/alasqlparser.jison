@@ -20,9 +20,10 @@
 'ALL'                                      		return 'ALL'
 'FROM'                                          return 'FROM'
 'WHERE'                                         return 'WHERE'
-'GROUP BY'                                      return 'GROUPBY'
+'GROUP BY'                                      return 'GROUP'
+'BY'											return 'BY'
 'HAVING'                                        return 'HAVING'
-'ORDER BY'                                      return 'ORDERBY'
+'ORDER BY'                                      return 'ORDER'
 'AS'                                      		return 'AS'
 
 'INSERT'                                        return 'INSERT'
@@ -36,6 +37,11 @@
 'SET'                                        	return 'SET'
 
 'CREATE'										return 'CREATE'
+'TABLE'											return 'TABLE'
+'PRIMARY'										return 'PRIMARY'
+'KEY'											return 'KEY'
+'IF'											return 'IF'
+'EXISTS'										return 'EXISTS'
 'TABLE'											return 'TABLE'
 'DROP'											return 'DROP'
 '+'												return 'PLUS'
@@ -141,30 +147,25 @@ IntoClause
 	;
 
 FromClause
-	: FROM FromTables
-		{ $$ = { from: $2 }; }
-	| FROM JoinClause
-		{ $$ = $2; }
+	: FROM FromTablesList
+		{ $$ = { from: [$2] }; } 
+	| FROM Table JoinTablesList
+		{ $$ = { from: [$2], joins: $3 }; }
 	;
 
-FromTables
-	: FromTables COMMA FromTable
+FromTablesList
+	: FromTablesList COMMA FromTable
 		{ $$ = $1; $1.push($3); }
 	| FromTable
 		{ $$ = [$1]; }
 	;
 
 FromTable
-	: FromTableSubQuery LITERAL
-		{ $$ = $1; $1.alias = $2 }
-	| FromTableSubQuery
-		{ $$ = $1; }
-	;
-
-FromTableSubQuery
-	: Table
-		{ $$ = $1; } 
-	| SubQuery
+	: LPAR Select RPAR LITERAL
+		{ $$ = new yy.SubQuery({select:$2}); $$.as = $2 }	
+	| Table LITERAL
+		{ $$ = $1; $1.as = $2 }
+	| Table 
 		{ $$ = $1; }
 	;
 
@@ -175,19 +176,11 @@ Table
 		{ $$ = new yy.Table({tableid: $1});}
 	;
 
-SubQuery
-	: LPAR Select RPAR
-		{ $$ = new yy.SubQuery({select:$2}); }
-	;
-
-JoinClause 
-	: FromTableSubQuery JoinTables
-		{ $$ = {from: [$1], joins: $2}; }
-	;
-
-JoinTables
-	: JoinTables JoinTable
+JoinTablesList
+	: JoinTablesList JoinTable
 		{ $$ = $1; $1.push($2); } 
+	| JoinTable
+	 	{ $$ = [$1]; }
 	;
 
 JoinTable
@@ -210,7 +203,7 @@ WhereClause
 
 GroupClause
 	: { $$ = null; }
-	| GROUPBY GroupFields HavingClause
+	| GROUP BY GroupFields HavingClause
 		{ $$ = {group:$3}}
 	;
 
@@ -222,7 +215,7 @@ HavingClause
 
 OrderClause
 	: { $$ = null; }
-	| ORDERBY GroupFields
+	| ORDER BY GroupFields
 		{ $$ = {group:$3}}
 	;
 
@@ -247,7 +240,7 @@ ResultColumns
 
 ResultColumn
 	: Expression AS LITERAL
-		{ $1.alias = $3; $$ = $1;}
+		{ $1.as = $3; $$ = $1;}
 	| Expression
 		{ $$ = $1; }
 	;
@@ -302,7 +295,6 @@ LogicValue
 		{ $$ = new yy.LogicValue({value:false}); }
 	;
 
-
 Op
 	: Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+' , right:$3}); }
@@ -336,3 +328,80 @@ Insert
 	: INSERT INTO LITERAL VALUES LPAR NUMBER RPAR
 		{ $$ = new yy.Insert({into:$3, values: $6}); }
 	;
+
+CreateTable
+	: CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause ConstraintsClause RPAR
+		{ 
+			$$ = new yy.CreateTable({table:$5}); 
+			yy.extend($$,$2); yy.extend($$,$4); 
+			yy.extend($$,$6); yy.extend($$,$7);
+		}
+	;
+
+TemporaryClause 
+	: {$$ = null}
+	| TEMPORARY
+		{ $$ = {temporary:true}; }
+	| TEMP
+		{ $$ = {temporary:true}; }
+	;
+
+IfNotExists
+	: { $$ = $1; }
+	| IF NOT EXISTS
+		{ $$ = {ifnotexists: true}; }
+	;
+
+CreateTableDefClause
+	: ColumnDefList
+		{ $$ = {columns: $1}; }
+	| AS Select
+		{ $$ = {as: $2} }
+	;
+
+ColumnDefList
+	: ColumnDefList COMMA ColumnDef
+		{ $1.push($3); $$ = $1; }
+	| ColumnDef
+		{ $$ = [$1];}
+	;
+
+ColumnDef
+	: LITERAL ColumnTypeName ColumnConstraint
+		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
+	| LITERAL ColumnConstraints
+		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
+	;
+
+ColumnTypeName
+	: LITERAL LPAR SignedNumber DOT SignedNumber RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: $5} }
+	| LITERAL LPAR SignedNumber RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3} }
+	| LITERAL
+		{ $$ = {dbtypeid: $1} }
+	;
+
+ColumnConstraint 
+	: {$$ = null}
+	| PRIMARY KEY
+		{$$ = {primarykey:true};}
+	| NOT NULL
+		{$$ = {notnull:true};}
+	;
+
+ConstraintsClause
+	: {$$ = null;}
+	| COMMA ConstraintsList
+		{$$ = {constraints:$2}}
+	;
+
+ConstraintsList
+	: ConstraintsList COMMA Constraint
+		{$$=$1; $1.push($3)}
+	| Constraint
+		{$$ = [$1];}
+	;
+
+Constraint
+	:;

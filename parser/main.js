@@ -30,8 +30,8 @@ yy.Select = function (params) { return extend(this, params); }
 yy.Select.prototype.toString = function() {
 	var s = 'SELECT '+this.columns.map(function(col){
 		var s = col.toString();
-		console.log(col);
-		if(col.alias) s += ' AS '+col.alias;
+	//	console.log(col);
+		if(col.as) s += ' AS '+col.as;
 		return s;
 	}).join(',');
 	s += ' FROM '+this.from.map(function(f){return f.toString()}).join(',');
@@ -112,6 +112,37 @@ yy.FuncValue.prototype.toString = function() {
 	return s;
 }
 
+yy.ColumnDef = function (params) { return extend(this, params); }
+yy.ColumnDef.prototype.toString = function() {
+	var s =  this.columnid;
+	if(this.dbtypeid) s += ' '+this.dbtypeid;
+	if(this.dbsize) {
+		s += '('+this.dbsize;
+		if(this.dbprecision) s += ','+this.dbprecision;
+		s += ')';
+	};
+	if(this.primarykey) s += ' PRIMARY KEY';
+	if(this.notnull) s += ' NOT NULL';
+	return s;
+}
+
+yy.CreateTable = function (params) { return extend(this, params); }
+yy.CreateTable.prototype.toString = function() {
+	var s = 'CREATE';
+	if(this.temporary) s+=' TEMPORARY';
+	s += ' TABLE';
+	if(this.ifnotexists) s += ' IF NOT EXISTS';
+	s += ' '+this.table.toString();
+	if(this.as) s += ' AS '+this.as;
+	else { 
+		var ss = this.columns.map(function(col){
+			return col.toString();
+		});
+		s += ' ('+ss.join(',')+')';
+	}
+	return s;
+}
+
 
 yy.Insert = function (params) { return extend(this, params); }
 yy.Insert.prototype.toString = function() {
@@ -121,10 +152,9 @@ yy.Insert.prototype.toString = function() {
 alasqlparser.yy = yy;
 
 var sqls = [
-	'SELECT 1+1 FROM B',
-	'SELECT 1+2 AS three FROM one',
-	'SELECT SUM(*) AS qwe FROM one',
-	'SELECT COUNT(one.*), SUM((a+b)) FROM two'
+	'SELECT COUNT(one.*), SUM((a+b)) FROM two',
+	'SELECT 1+a as b FROM two, three',
+	'CREATE TABLE students (studentid INT PRIMARY KEY, studentname STRING)'
 ];
 
 sqls.forEach(function(sql){
