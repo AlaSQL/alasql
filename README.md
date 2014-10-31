@@ -1,6 +1,6 @@
 # alasql.js - pure JavaScript client-side SQL-database 
 
-Version: 0.0.4 Date: October 29, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.5 Date: October 30, 2014 [Changelog](CHANGELOG.md) 
 
 alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
 
@@ -144,6 +144,11 @@ Read my [to do](TODO.md) page
 SQL-database:
 * [sql.js](https://github.com/kripken/sql.js) - port of SQLike to JavaScript
 * [SequelSphere](http://www.sequelsphere.com/) - commercial SQL-database
+* [Datamanip](https://github.com/RossKor/datamanip.js)
+* [jsonQ.js](https://github.com/emasstudio/jsonQ.js)
+* [SQittle](https://github.com/moxley/sqittle)
+* [SQLinJS](https://github.com/nuxy/SQLinJS)
+* [jQuery-SQL-Emulator](https://github.com/maciakl/jQuery-SQL-Emulator)
 
 LINQ realizations:
 * [SQLike](http://www.thomasfrank.se/sqlike.html) - 
@@ -151,13 +156,16 @@ LINQ realizations:
 * [JavaScriptSQL](http://javascriptsql.sourceforge.net/ARCH/en/index.html)
 * [TrimQuery](https://code.google.com/p/trimpath/wiki/TrimQuery)
 * [jlinq](http://www.hugoware.net/projects/jlinq)
+* [jSQL](https://github.com/PaulGuo/jSQL)
 
 Other:
 * [dom-storage-query-language](https://code.google.com/p/dom-storage-query-language/)
 * [kombai-js](https://code.google.com/p/kombai-js/)
 
 JavaScript databases:
+* [SearchJS](https://github.com/deitch/searchjs)
 * [TaffyDB](http://www.taffydb.com/)
+* [River](https://github.com/andykent/river)
 * [CrossFilter](https://github.com/square/crossfilter)
 * [js-hypercube](https://github.com/thesmart/js-hypercube)
 * [cubico](https://github.com/diegodayan/cubico)

@@ -66,8 +66,8 @@ Query.prototype.exec = function (db) {
 
 	if(self.groupfn) self.doGroup();
 	if(self.distinct) self.doDistinct();
-	if(self.orderfn) self.recs = self.recs.sort(self.orderfn);
 	if(self.limitnum) self.recs = self.recs.slice(0,self.limitnum);
+	if(self.orderfn) self.recs = self.recs.sort(self.orderfn);
 // console.log(self);	
 	return self.recs
 };
@@ -100,9 +100,11 @@ Query.prototype.doJoin = function(scope, k) {
 					&& (join.onleftfn(scope) === join.onrightfn(scope)))) {
 				pass = true;
 				self.doJoin(scope,k+1);
-			}
+			} // TODO Add semi-join functionality for OUTER Joins
 		};
 //		} 
+
+// SEMI-JOIN
 
 		if(join.mode == 'OUTER' && join.side == 'LEFT' && !pass) {
 			scope[join.tableid] = {};

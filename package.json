@@ -1,7 +1,7 @@
 {
   "name": "alasql",
-  "description": "Pure JavaScript fast client-side SQL database",
-  "version": "0.0.4",
+  "description": "alasql.js - Pure JavaScript fast client-side SQL database",
+  "version": "0.0.5",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
@@ -26,7 +26,10 @@
   },
   "keywords": [
     "sql",
+    "mdx",
+    "olap",
     "alasql",
+    "parser",
     "stand-alone",
     "relational",
     "database",

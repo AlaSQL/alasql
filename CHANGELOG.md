@@ -1,5 +1,9 @@
 # Changelog
 
+#### 0.0.5 (30.10.2014)
+
+* Changed order of LIMIT and ORDER BY processing
+
 #### Version 0.0.4 (28.10.2014-29.10.2014)
 
 * Added /test/main.html mocha browser tests

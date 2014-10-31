@@ -1,0 +1,10 @@
+node_modules
+components
+.DS_Store
+npm-debug.log
+tmp
+*~
+*.swp
+*.log
+*.pid
+*.swo

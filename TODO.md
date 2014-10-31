@@ -1,14 +1,18 @@
 # To do
 
-URGENT BUGS OR FEATURES
+URGENT BUGS OR FEATURES TO BE IMPLEMENTED
 
+* 'STAR' bug
 * SELECT COUNT(*)
+* ROLLUP() AND CUBE(), GROUPING() [GROUPING SETS()](http://technet.microsoft.com/en-us/library/bb522495(v=sql.105).aspx)
+* GROUP BY ALL
 
-REFACTORING
+CODE REFACTORING
 
 * Change recs => data
 * flds => fields
 * fldid => id
+* Parser
 
 
 Optimization
@@ -34,6 +38,14 @@ Optimization
 * Faster INSERT statement parser (now it is very slow)
 * Combine selectwhere and groupfn functions
 * Compare algorithms with [SQLike](http://www.thomasfrank.se/SQLike/) and other JS databases
+* Add ROLLUP and CUBE functionality
+* Add permutations for CUBE
+* Semi-joins (for outer joins) 
+* Put from table into joins list. Create new joinorder list with semi joins and flipped right joins.
+* Expand outer join to N tables (not only two)
+* USING clause (http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqljusing.html) and optimization
+* INSERT INTO SELECT statement
+* BETWEEN
 
 SELECT AND OTHER SQL STATEMENTS
 
@@ -44,7 +56,10 @@ SELECT AND OTHER SQL STATEMENTS
 * UNION
 * Query with parameters
 * RIGHT JOIN, FULL OUTER JOIN
-* SQLite compatibility: functions
+* CROSS-JOIN (http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqljcrossjoin.html#rrefsqljcrossjoin)
+* ANTI-JOINS, SEMI-JOINS
+* WHERE EXISTS
+* NATURAL JOIN (http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqljnaturaljoin.html#rrefsqljnaturaljoin)
 * Constrains, Foreign Keys, Primary key, cascade delete and update
 * Types, NULL, NOT NULL
 * Database.schema.table.field
@@ -63,17 +78,21 @@ SELECT AND OTHER SQL STATEMENTS
 * Databases
 * Transactions
 * Views (?)
+* Cursors
+* SQLite compatibility: functions
 * SQL-standards - check [this](https://www.sequelsphere.com/dbdocs/supported-sql/)
 * SQL-functions - check [this](https://www.sequelsphere.com/docs/latest/doc/Supported%20SQL%20Functions.html)
 
 BUGS
 
-* Fix 'STAR BUG' and some other minor sql-parser issues
+* Fix 'STAR BUG' and some other minor sql-parser issues ()
 * Date comparison 
 * Tableid and fields to lowercase
 * Aggregators without groups
 * 'SELECT wrongfield FROM table' gives something wrong 
 * LEFT JOIN - empty fields for non existing tables
+* Change order od ORDER BY and LIMIT processing
+* Change order of groupfn() and selectfn(), and check havingfn vs selectfn
 
 
 DEVELOPMENT
@@ -106,6 +125,8 @@ COMPATIBILITY
 * Tests for different browsers (IE!!!)
 * Crossfilter, lodash and underscore speed comparision
 * Cover WebSQL and Sql.js with own functions (for simple migrating)
+* Be compatible with w3school (http://www.w3schools.com/sql/default.asp)
+* Oracle syntax (http://docs.oracle.com/javadb/10.6.2.1/ref/rrefclauses.html)
 
 OTHER NEEDED FUNCTIONALITY (MORE THAN SQL)
 
@@ -123,6 +144,9 @@ MDX
 SAMPLES
 
 * Modify [W3C SQL demo database](http://www.w3schools.com/w3Database.js) to work with alasql.js
+* Console [like](http://www.moxleystratton.com/files/sqittle.html) 
+* One more [sample](http://yradtsevich.github.io/pure-js-websql/test/index.html)
+* Create tutorial database on https://github.com/txje/js-sql-tutorial for best console
 
 OTHER
 
