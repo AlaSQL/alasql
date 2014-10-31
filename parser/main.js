@@ -63,6 +63,12 @@ yy.NumValue.prototype.toString = function() {
 	return this.value.toString();
 }
 
+yy.StringValue = function (params) { return extend(this, params); }
+yy.StringValue.prototype.toString = function() {
+	return this.value.toString();
+}
+
+
 yy.LogicValue = function (params) { return extend(this, params); }
 yy.LogicValue.prototype.toString = function() {
 	return this.value?'TRUE':'FALSE';
@@ -146,18 +152,35 @@ yy.CreateTable.prototype.toString = function() {
 
 yy.Insert = function (params) { return extend(this, params); }
 yy.Insert.prototype.toString = function() {
-	return 'INSERT INTO '+this.into.toString()+' VALUES ('+this.values.toString()+')';;
+	var s = 'INSERT INTO '+this.into.toString();
+	if(this.columns) s += '('+this.columns.toString()+')';
+	s += ' VALUES ('+this.values.toString()+')';;
+	return s;
+}
+
+yy.DropTable = function (params) { return extend(this, params); }
+yy.DropTable.prototype.toString = function() {
+	var s = 'DROP TABLE';
+	if(this.ifexists) s += ' IF EXISTS';
+	s += ' '+this.table.toString();
+	return s;
 }
 
 alasqlparser.yy = yy;
 
 var sqls = [
+	'CREATE TABLE students (studentid INT PRIMARY KEY, studentname STRING)',
+	"INSERT INTO students (studentid, studentname) VALUES (100, 'Paul Johnson')",
 	'SELECT COUNT(one.*), SUM((a+b)) FROM two',
 	'SELECT 1+a as b FROM two, three',
-	'CREATE TABLE students (studentid INT PRIMARY KEY, studentname STRING)'
+	'DROP TABLE IF EXISTS students'
 ];
 
-sqls.forEach(function(sql){
-	console.log(alasqlparser.parse(sql).toString());
-});
+var tm = Date.now();
+for(var i=0; i<1000; i++) {
+	sqls.forEach(function(sql){
+		alasqlparser.parse(sql);//.toString();
+	});
+}
+console.log(Date.now()-tm);
 

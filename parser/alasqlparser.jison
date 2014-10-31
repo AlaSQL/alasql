@@ -65,6 +65,7 @@
 
 [a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
 [0-9]+											return 'NUMBER'
+['](\\.|[^'])*[']                               return 'STRING'
 '('												return 'LPAR'
 ')'												return 'RPAR'
 '.'												return 'DOT'
@@ -154,10 +155,10 @@ FromClause
 	;
 
 FromTablesList
-	: FromTablesList COMMA FromTable
-		{ $$ = $1; $1.push($3); }
-	| FromTable
+	: FromTable
 		{ $$ = [$1]; }
+	| FromTablesList COMMA FromTable
+		{ $$ = $1; $1.push($3); }
 	;
 
 FromTable
@@ -276,6 +277,8 @@ Expression
 		{ $$ = $1; }
 	| LogicValue
 		{ $$ = $1; }
+	| StringValue
+		{ $$ = $1; }
 	;
 
 FuncValue
@@ -295,6 +298,10 @@ LogicValue
 		{ $$ = new yy.LogicValue({value:false}); }
 	;
 
+StringValue
+	: STRING
+		{ $$ = new yy.StringValue({value: $1}); }
+	;
 Op
 	: Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+' , right:$3}); }
@@ -325,8 +332,30 @@ Op
 	;
 
 Insert
-	: INSERT INTO LITERAL VALUES LPAR NUMBER RPAR
+	: INSERT INTO Table VALUES LPAR ValuesList RPAR
 		{ $$ = new yy.Insert({into:$3, values: $6}); }
+	| INSERT INTO Table LPAR ColumnsList RPAR VALUES LPAR ValuesList RPAR
+		{ $$ = new yy.Insert({into:$3, columns: $5, values: $9}); }
+	;
+
+ValuesList
+	: Value
+		{ $$ = [$1]; }
+	| ValuesList COMMA Value
+		{$$ = $1; $1.push($3)}
+	;
+
+Value
+	: NumValue
+	| StringValue
+	| LogicValue
+	;
+
+ColumnsList
+	: Column
+		{ $$ = [$1]; }
+	| ColumnsList COMMA Column
+		{$$ = $1; $1.push($3)}
 	;
 
 CreateTable
@@ -360,10 +389,10 @@ CreateTableDefClause
 	;
 
 ColumnDefList
-	: ColumnDefList COMMA ColumnDef
-		{ $1.push($3); $$ = $1; }
-	| ColumnDef
+	: ColumnDef
 		{ $$ = [$1];}
+	| ColumnDefList COMMA ColumnDef
+		{ $1.push($3); $$ = $1; }
 	;
 
 ColumnDef
@@ -392,8 +421,9 @@ ColumnConstraint
 
 ConstraintsClause
 	: {$$ = null;}
-	| COMMA ConstraintsList
+/*	| COMMA ConstraintsList
 		{$$ = {constraints:$2}}
+*/
 	;
 
 ConstraintsList
@@ -405,3 +435,10 @@ ConstraintsList
 
 Constraint
 	:;
+
+DropTable
+	: DROP TABLE Table
+		{ $$ = new yy.DropTable({table:$3}); }
+	| DROP TABLE IF EXISTS Table
+		{ $$ = new yy.DropTable({table:$5, ifexists:true}); }
+	;
