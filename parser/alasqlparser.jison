@@ -12,44 +12,46 @@
 %%
 
 \s+                                             /* skip whitespace */
-'EXPLAIN'                                       return 'EXPLAIN'
-'QUERY'                                        	return 'QUERY'
-'PLAN'                                        	return 'PLAN'
-'SELECT'                                        return 'SELECT'
-'DISTINCT'                                      return 'DISTINCT'
 'ALL'                                      		return 'ALL'
-'FROM'                                          return 'FROM'
-'WHERE'                                         return 'WHERE'
-'GROUP BY'                                      return 'GROUP'
-'BY'											return 'BY'
-'HAVING'                                        return 'HAVING'
-'ORDER BY'                                      return 'ORDER'
+'ALTER'                                    		return 'ALTER'
+'AND'											return 'AND'
 'AS'                                      		return 'AS'
 
-'INSERT'                                        return 'INSERT'
-'INTO'                                         	return 'INTO'
-'VALUES'                                        return 'VALUES'
-
-'DELETE'                                        return 'DELETE'
-'FROM'                                        	return 'FROM'
-
-'UPDATE'                                        return 'UPDATE'
-'SET'                                        	return 'SET'
+'BY'											return 'BY'
 
 'CREATE'										return 'CREATE'
-'TABLE'											return 'TABLE'
-'PRIMARY'										return 'PRIMARY'
-'KEY'											return 'KEY'
-'IF'											return 'IF'
-'EXISTS'										return 'EXISTS'
-'TABLE'											return 'TABLE'
+'DELETE'                                        return 'DELETE'
+'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
+
+'EXISTS'										return 'EXISTS'
+'EXPLAIN'                                       return 'EXPLAIN'
+'FALSE'											return 'FALSE'
+'FROM'                                          return 'FROM'
+'GROUP BY'                                      return 'GROUP'
+'HAVING'                                        return 'HAVING'
+'IF'											return 'IF'
+'INSERT'                                        return 'INSERT'
+'INTO'                                         	return 'INTO'
+'KEY'											return 'KEY'
+'NOT'											return 'NOT'
+'OR'											return 'OR'
+'PLAN'                                        	return 'PLAN'
+'PRIMARY'										return 'PRIMARY'
+'QUERY'                                        	return 'QUERY'
+'ORDER'	                                      	return 'ORDER'
+'SELECT'                                        return 'SELECT'
+'SET'                                        	return 'SET'
+'TABLE'											return 'TABLE'
+'TRUE'						  					return 'TRUE'
+'UPDATE'                                        return 'UPDATE'
+'VALUES'                                        return 'VALUES'
+'WHERE'                                         return 'WHERE'
+
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
 '*'												return 'STAR'
 '/'												return 'SLASH'
-','												return 'COMMA'
-';'												return 'SEMICOLON'
 '>'												return 'GT'
 '>='											return 'GE'
 '<'												return 'LT'
@@ -57,18 +59,15 @@
 '='												return 'EQ'
 '!='											return 'NE'
 '<>'											return 'NE'
-'AND'											return 'AND'
-'OR'											return 'OR'
-'NOT'											return 'NOT'
-'TRUE'						  					return 'TRUE'
-'FALSE'											return 'FALSE'
+'('												return 'LPAR'
+')'												return 'RPAR'
+'.'												return 'DOT'
+','												return 'COMMA'
+';'												return 'SEMICOLON'
 
 [a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
 [0-9]+											return 'NUMBER'
 ['](\\.|[^'])*[']                               return 'STRING'
-'('												return 'LPAR'
-')'												return 'RPAR'
-'.'												return 'DOT'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
@@ -81,7 +80,7 @@
 %left NOT
 %left PLUS MINUS
 %left STAR SLASH
-%left UMINUS
+/* %left UMINUS */
 
 %start main
 
@@ -102,9 +101,9 @@ Statements
 
 ExplainStatement
 	: EXPLAIN Statement
-		{ $$ = $2 }
+		{ $$ = $2; $2.explain = true; }
 	| EXPLAIN QUERY PLAN Statement
-		{ $$ = $4 }
+		{ $$ = $4;  $4.explain = true;}
 	;
 
 Statement
@@ -114,9 +113,45 @@ Statement
 	| Delete
 	| CreateTable
 	| DropTable
+	| AlterTable
+
+/*	| AttachDatabase
+	| DropIndex
+	| DropTrigger
+	| DropView
+	| BeginTransaction
+	| CommitTransaction
+	| RollbackTransaction
+	| EndTransaction
+	| SavePoint
+	| CreateIndex
+	| CreateTrigger
+	| CreateView
+	| Reindex
+	| StoreDatabase
+	| StoreTable
+	| RestoreDatabase
+	| RestoreTable
+
+	| IfElse
+	| BeginEnd
+	| While
+	| Print
+	| BulkInsert
+	| Case
+
+	| Declare
+	| CreateFunction
+	| CreateProcedure
+	| Loop
+	| ForLoop
+	| DeclareCursor
+	| OpenCursor
+	| FetchCursor
+*/
 	;
 
-
+/* WITH */
 
 WithSelectClause
 	: WITH WithTables Select
@@ -126,6 +161,10 @@ WithSelectClause
 	| Select
 		{ $$ = $1;}
 	;
+
+WithTables :;
+
+/* SELECT */
 
 Select
 	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause
@@ -331,114 +370,3 @@ Op
 		{ $$ = new yy.UniOp({right: $2}); }
 	;
 
-Insert
-	: INSERT INTO Table VALUES LPAR ValuesList RPAR
-		{ $$ = new yy.Insert({into:$3, values: $6}); }
-	| INSERT INTO Table LPAR ColumnsList RPAR VALUES LPAR ValuesList RPAR
-		{ $$ = new yy.Insert({into:$3, columns: $5, values: $9}); }
-	;
-
-ValuesList
-	: Value
-		{ $$ = [$1]; }
-	| ValuesList COMMA Value
-		{$$ = $1; $1.push($3)}
-	;
-
-Value
-	: NumValue
-	| StringValue
-	| LogicValue
-	;
-
-ColumnsList
-	: Column
-		{ $$ = [$1]; }
-	| ColumnsList COMMA Column
-		{$$ = $1; $1.push($3)}
-	;
-
-CreateTable
-	: CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause ConstraintsClause RPAR
-		{ 
-			$$ = new yy.CreateTable({table:$5}); 
-			yy.extend($$,$2); yy.extend($$,$4); 
-			yy.extend($$,$6); yy.extend($$,$7);
-		}
-	;
-
-TemporaryClause 
-	: {$$ = null}
-	| TEMPORARY
-		{ $$ = {temporary:true}; }
-	| TEMP
-		{ $$ = {temporary:true}; }
-	;
-
-IfNotExists
-	: { $$ = $1; }
-	| IF NOT EXISTS
-		{ $$ = {ifnotexists: true}; }
-	;
-
-CreateTableDefClause
-	: ColumnDefList
-		{ $$ = {columns: $1}; }
-	| AS Select
-		{ $$ = {as: $2} }
-	;
-
-ColumnDefList
-	: ColumnDef
-		{ $$ = [$1];}
-	| ColumnDefList COMMA ColumnDef
-		{ $1.push($3); $$ = $1; }
-	;
-
-ColumnDef
-	: LITERAL ColumnTypeName ColumnConstraint
-		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
-	| LITERAL ColumnConstraints
-		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
-	;
-
-ColumnTypeName
-	: LITERAL LPAR SignedNumber DOT SignedNumber RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: $5} }
-	| LITERAL LPAR SignedNumber RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3} }
-	| LITERAL
-		{ $$ = {dbtypeid: $1} }
-	;
-
-ColumnConstraint 
-	: {$$ = null}
-	| PRIMARY KEY
-		{$$ = {primarykey:true};}
-	| NOT NULL
-		{$$ = {notnull:true};}
-	;
-
-ConstraintsClause
-	: {$$ = null;}
-/*	| COMMA ConstraintsList
-		{$$ = {constraints:$2}}
-*/
-	;
-
-ConstraintsList
-	: ConstraintsList COMMA Constraint
-		{$$=$1; $1.push($3)}
-	| Constraint
-		{$$ = [$1];}
-	;
-
-Constraint
-	:;
-
-DropTable
-	: DROP TABLE Table
-		{ $$ = new yy.DropTable({table:$3}); }
-	| DROP TABLE IF EXISTS Table
-		{ $$ = new yy.DropTable({table:$5, ifexists:true}); }
-	;

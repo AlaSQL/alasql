@@ -4,6 +4,8 @@ var Parser = require("jison").Parser;
 //var options = {type: "slr", moduleType: "commonjs", moduleName: "alasqlparser"};
 var grammar = fs.readFileSync('./alasqlparser.jison').toString();
 
+grammar += fs.readFileSync('./grammartwo.jison').toString();
+
 //console.log(grammar);
 var alasqlparser = new Parser(grammar);
 //var alasqlparser = parser.generate();
@@ -158,6 +160,27 @@ yy.Insert.prototype.toString = function() {
 	return s;
 }
 
+yy.Delete = function (params) { return extend(this, params); }
+yy.Delete.prototype.toString = function() {
+	var s = 'DELETE FROM '+this.table.toString();
+	if(this.where) s += ' WHERE '+this.where.toString();
+	return s;
+}
+
+yy.Update = function (params) { return extend(this, params); }
+yy.Update.prototype.toString = function() {
+	var s = 'UPDATE '+this.table.toString();
+	if(this.columns) s += ' SET '+this.columns.toString();
+	if(this.where) s += ' WHERE '+this.where.toString();
+	return s;
+}
+
+yy.SetColumn = function (params) { return extend(this, params); }
+yy.SetColumn.prototype.toString = function() {
+	return this.columnid.toString() + '='+this.expression.toString();
+}
+
+
 yy.DropTable = function (params) { return extend(this, params); }
 yy.DropTable.prototype.toString = function() {
 	var s = 'DROP TABLE';
@@ -169,18 +192,26 @@ yy.DropTable.prototype.toString = function() {
 alasqlparser.yy = yy;
 
 var sqls = [
-	'CREATE TABLE students (studentid INT PRIMARY KEY, studentname STRING)',
+	'SELECT * FROM students ORDER BY studentid',
+	'CREATE TABLE IF NOT EXISTS students (studentid INT PRIMARY KEY, studentname STRING)',
 	"INSERT INTO students (studentid, studentname) VALUES (100, 'Paul Johnson')",
 	'SELECT COUNT(one.*), SUM((a+b)) FROM two',
 	'SELECT 1+a as b FROM two, three',
-	'DROP TABLE IF EXISTS students'
+	'DROP TABLE IF EXISTS students',
+	'DELETE FROM students WHERE studentid = 500',
+	"UPDATE students SET studentname = 'Susan' WHERE studentid = 500",
 ];
 
+/*
 var tm = Date.now();
 for(var i=0; i<1000; i++) {
-	sqls.forEach(function(sql){
-		alasqlparser.parse(sql);//.toString();
-	});
+//	sqls.forEach(function(sql){
+//		alasqlparser.parse(sql);//.toString();
+//	});
+	alasqlparser.parse(sqls.join(';'));
 }
 console.log(Date.now()-tm);
-
+*/
+//	console.log(alasqlparser.parse(sqls.join(';')).toString());
+var t = alasqlparser.parse(sqls[0]);
+console.log(t);
