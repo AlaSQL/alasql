@@ -1,0 +1,13 @@
+<script src="alasqlparser.js"></script>
+<script src="alaparser2.js"></script>
+<script src="alasql2.js"></script>
+<script>
+
+	var mydata = [
+		{studentid:58,studentname:'Sarah Patrik',course:1},
+		{studentid:102,studentname:'John Stewart', course:2},
+	];
+	alasql.tables.students = {data:mydata};
+    console.table(alasql.exec('SELECT * FROM students WHERE course>100'));
+
+</script>
