@@ -20,6 +20,7 @@
 'BY'											return 'BY'
 
 'CREATE'										return 'CREATE'
+'CUBE'											return 'CUBE'
 'DELETE'                                        return 'DELETE'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
@@ -28,7 +29,8 @@
 'EXPLAIN'                                       return 'EXPLAIN'
 'FALSE'											return 'FALSE'
 'FROM'                                          return 'FROM'
-'GROUP BY'                                      return 'GROUP'
+'GROUP'                                      	return 'GROUP'
+'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 'IF'											return 'IF'
 'INSERT'                                        return 'INSERT'
@@ -36,12 +38,14 @@
 'KEY'											return 'KEY'
 'NOT'											return 'NOT'
 'OR'											return 'OR'
+'ORDER'	                                      	return 'ORDER'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'QUERY'                                        	return 'QUERY'
-'ORDER'	                                      	return 'ORDER'
+'ROLLUP'										return 'ROLLUP'
 'SELECT'                                        return 'SELECT'
 'SET'                                        	return 'SET'
+'SETS'                                        	return 'SETS'
 'TABLE'											return 'TABLE'
 'TRUE'						  					return 'TRUE'
 'UPDATE'                                        return 'UPDATE'
@@ -168,7 +172,7 @@ WithTables :;
 
 Select
 	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause
-		{ $$ = $1; yy.extend($$,$1); yy.extend($$,$3); yy.extend($$,$4); yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); }
+		{  yy.extend($$,$1); yy.extend($$,$3); yy.extend($$,$4); yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); $$ = $1; }
 	;
 
 SelectClause
@@ -238,25 +242,60 @@ OnClause
 WhereClause
 	: { $$ = null; }
 	| WHERE Expression
-		{ $$ = {where:$1}; }
+		{ $$ = {where:$2}; }
 	;
 
 GroupClause
 	: { $$ = null; }
-	| GROUP BY GroupFields HavingClause
-		{ $$ = {group:$3}}
+	| GROUP BY GroupExpressionsList HavingClause
+		{ $$ = {group:$3}; yy.extend($$,$4); }
 	;
+
+GroupExpressionsList
+	: GroupExpression
+		{ $$ = [$1]; }
+	| GroupExpressionsList COMMA GroupExpression
+		{ $$ = $1; $1.push($3); }
+	;
+
+GroupExpression
+	: GROUPING SETS LPAR GroupExpressionsList RPAR
+		{ $$ = new yy.GroupExpression({type:'GROUPING SETS', group: $4}); }
+	| ROLLUP LPAR GroupExpressionsList RPAR
+		{ $$ = new yy.GroupExpression({type:'ROLLUP', group: $3}); }
+	| CUBE LPAR GroupExpressionsList RPAR
+		{ $$ = new yy.GroupExpression({type:'CUBE', group: $3}); }
+	| Expression
+		{ $$ = $1; }
+	;
+
 
 HavingClause
 	: { $$ = null; }
 	| HAVING Expression
-		{ $$ = {having:$3}}
+		{ $$ = {having:$2}}
 	;
 
 OrderClause
 	: { $$ = null; }
-	| ORDER BY GroupFields
-		{ $$ = {group:$3}}
+	| ORDER BY OrderExpressionsList
+		{ $$ = {order:$3}}
+	;
+
+OrderExpressionsList
+	: OrderExpression
+		{ $$ = [$1]; }
+	| OrderExpressionsList COMMA OrderExpression
+		{ $$ = $1; $1.push($3)}
+	;
+
+OrderExpression
+	: Expression ASC
+		{ $$ = new yy.OrderExpression({expression: $1, order:$2.toUpperCase()}) }
+	| Expression DESC
+		{ $$ = new yy.OrderExpression({expression: $1, order:$2.toUpperCase()}) }
+	| Expression
+		{ $$ = new yy.OrderExpression({expression: $1}) }
 	;
 
 LimitClause

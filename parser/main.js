@@ -37,6 +37,11 @@ yy.Select.prototype.toString = function() {
 		return s;
 	}).join(',');
 	s += ' FROM '+this.from.map(function(f){return f.toString()}).join(',');
+
+	if(this.where) s += ' WHERE '+this.where.toString();
+	if(this.group) s += ' GROUP BY '+this.group.toString();
+	if(this.having) s += ' HAVING '+this.having.toString();
+	if(this.order) s += ' ORDER BY '+this.order.toString();
 	return s;
 }
 
@@ -120,6 +125,19 @@ yy.FuncValue.prototype.toString = function() {
 	return s;
 }
 
+yy.OrderExpression = function(params){ return extend(this, params); }
+yy.OrderExpression.prototype.toString = function() {
+	var s = this.expression.toString();
+	if(this.order) s += ' '+this.order.toString();
+	return s;
+}
+
+yy.GroupExpression = function(params){ return extend(this, params); }
+yy.GroupExpression.prototype.toString = function() {
+	return this.type+'('+this.group.toString()+')';
+}
+
+
 yy.ColumnDef = function (params) { return extend(this, params); }
 yy.ColumnDef.prototype.toString = function() {
 	var s =  this.columnid;
@@ -191,8 +209,12 @@ yy.DropTable.prototype.toString = function() {
 
 alasqlparser.yy = yy;
 
+/*
 var sqls = [
-	'SELECT * FROM students ORDER BY studentid',
+	'SELECT * FROM students WHERE studentid>2 '+
+	'GROUP BY GROUPING SETS (studentid, studentname, CUBE(age, city)) '+
+	'HAVING studentid > 10 '+
+	'ORDER BY studentid',
 	'CREATE TABLE IF NOT EXISTS students (studentid INT PRIMARY KEY, studentname STRING)',
 	"INSERT INTO students (studentid, studentname) VALUES (100, 'Paul Johnson')",
 	'SELECT COUNT(one.*), SUM((a+b)) FROM two',
@@ -211,7 +233,11 @@ for(var i=0; i<1000; i++) {
 	alasqlparser.parse(sqls.join(';'));
 }
 console.log(Date.now()-tm);
-*/
+//*/
+/*
 //	console.log(alasqlparser.parse(sqls.join(';')).toString());
 var t = alasqlparser.parse(sqls[0]);
-console.log(t);
+console.log(t.group);
+console.log(t.toString());
+
+*/
