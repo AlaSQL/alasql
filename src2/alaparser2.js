@@ -151,18 +151,20 @@ function doJoin (query, scope, h) {
 		}
 	} else {
 //		console.log(query.sources, h);
-		var tableid =query.sources[h].tableid; 
-		var srcdata = query.sources[h].data;
+		var source = query.sources[h];
+		var tableid =source.tableid; 
 		var pass = false;
 
-		for(var i=0, ilen=srcdata.length; i<ilen; i++) {
-			scope[tableid] = srcdata[i];
-			doJoin(query, scope, h+1);
-			pass = true;
+		for(var i=0, ilen=source.data.length; i<ilen; i++) {
+			scope[tableid] = source.data[i];
+			if(source.onleftfn && (source.onleftfn(scope) == source.onrightfn(scope))) {
+				doJoin(query, scope, h+1);
+				pass = true;
+			}
 		};
 
 		// Additional for LEFT JOINS
-		if(query.sources[h].joinmode == 'LEFT' && !pass) {
+		if(source.joinmode == 'LEFT' && !pass) {
 			scope[tableid] = {};
 			self.doJoin(scope,h+1);
 		}	
@@ -173,6 +175,7 @@ function doJoin (query, scope, h) {
 
 yy.Select.prototype.compileJoins = function(query) {
 	console.log(this.join);
+	var self = this;
 	this.joins.forEach(function(jn){
 		var tq = jn.table;
 		var source = {
@@ -181,8 +184,25 @@ yy.Select.prototype.compileJoins = function(query) {
 			tableid: tq.tableid,
 			joinmode: 'INNER'
 		};
-		console.log(jn, source);
+
+		if(jn.using) {
+			var prevSource = query.sources[query.sources.length-1];
+			console.log(prevSource);
+			source.onleftfns = jn.using.map(function(colid){
+				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+colid+"']";
+			}).join('+"`"+');
+			source.onleftfn = new Function('p','return '+source.onleftfns);
+			source.onrightfns = jn.using.map(function(colid){
+				return "p['"+(source.alias||source.tableid)+"']['"+colid+"']";
+			}).join('+"`"+');
+			source.onrightfn = new Function('p','return '+source.onrightfns);
+			source.optimization = 'ix';
+		} else if(self.on) {
+			// Optimization function
+		};
+
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
+		// TODO SubQueries
 		source.data = query.database.tables[source.tableid].data;
 		query.sources.push(source);
 	});

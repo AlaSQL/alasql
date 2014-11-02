@@ -59,6 +59,7 @@
 'TABLE'											return 'TABLE'
 'TRUE'						  					return 'TRUE'
 'UPDATE'                                        return 'UPDATE'
+'USING'                                         return 'USING'
 'VALUES'                                        return 'VALUES'
 'WHERE'                                         return 'WHERE'
 

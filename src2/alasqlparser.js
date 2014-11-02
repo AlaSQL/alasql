@@ -929,56 +929,58 @@ case 43:return 90
 break;
 case 44:return 103
 break;
-case 45:return 109
+case 45:return 50
 break;
-case 46:return 52
+case 46:return 109
 break;
-case 47:return 93
+case 47:return 52
 break;
-case 48:return 94
+case 48:return 93
 break;
-case 49:return 75
+case 49:return 94
 break;
-case 50:return 95
+case 50:return 75
 break;
-case 51:return 96
+case 51:return 95
 break;
-case 52:return 97
+case 52:return 96
 break;
-case 53:return 98
+case 53:return 97
 break;
-case 54:return 99
+case 54:return 98
 break;
-case 55:return 100
+case 55:return 99
 break;
-case 56:return 101
+case 56:return 100
 break;
 case 57:return 101
 break;
-case 58:return 41
+case 58:return 101
 break;
-case 59:return 42
+case 59:return 41
 break;
-case 60:return 44
+case 60:return 42
 break;
-case 61:return 40
+case 61:return 44
 break;
-case 62:return 6
+case 62:return 40
 break;
-case 63:return 43
+case 63:return 6
 break;
-case 64:return 89
+case 64:return 43
 break;
-case 65:return 92
+case 65:return 89
 break;
-case 66:return 5
+case 66:return 92
 break;
-case 67:return 'INVALID'
+case 67:return 5
+break;
+case 68:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:\s+)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:AS\b)/i,/^(?:ASC\b)/i,/^(?:AVG\b)/i,/^(?:BY\b)/i,/^(?:CREATE\b)/i,/^(?:COLLATE\b)/i,/^(?:COUNT\b)/i,/^(?:CUBE\b)/i,/^(?:DELETE\b)/i,/^(?:DESC\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FROM\b)/i,/^(?:GROUP\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:IF\b)/i,/^(?:INSERT\b)/i,/^(?:INTO\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:MAX\b)/i,/^(?:MIN\b)/i,/^(?:NOCASE\b)/i,/^(?:NOT\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:QUERY\b)/i,/^(?:ROLLUP\b)/i,/^(?:SELECT\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SUM\b)/i,/^(?:TABLE\b)/i,/^(?:TRUE\b)/i,/^(?:UPDATE\b)/i,/^(?:VALUES\b)/i,/^(?:WHERE\b)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:>)/i,/^(?:>=)/i,/^(?:<)/i,/^(?:<=)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:<>)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\.)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[a-zA-Z_][a-zA-Z_0-9]*)/i,/^(?:[0-9]+)/i,/^(?:['](\\.|[^'])*['])/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67],"inclusive":true}}
+rules: [/^(?:\s+)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:AS\b)/i,/^(?:ASC\b)/i,/^(?:AVG\b)/i,/^(?:BY\b)/i,/^(?:CREATE\b)/i,/^(?:COLLATE\b)/i,/^(?:COUNT\b)/i,/^(?:CUBE\b)/i,/^(?:DELETE\b)/i,/^(?:DESC\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FROM\b)/i,/^(?:GROUP\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:IF\b)/i,/^(?:INSERT\b)/i,/^(?:INTO\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:MAX\b)/i,/^(?:MIN\b)/i,/^(?:NOCASE\b)/i,/^(?:NOT\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:QUERY\b)/i,/^(?:ROLLUP\b)/i,/^(?:SELECT\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SUM\b)/i,/^(?:TABLE\b)/i,/^(?:TRUE\b)/i,/^(?:UPDATE\b)/i,/^(?:USING\b)/i,/^(?:VALUES\b)/i,/^(?:WHERE\b)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:>)/i,/^(?:>=)/i,/^(?:<)/i,/^(?:<=)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:<>)/i,/^(?:\()/i,/^(?:\))/i,/^(?:\.)/i,/^(?:,)/i,/^(?:;)/i,/^(?:[a-zA-Z_][a-zA-Z_0-9]*)/i,/^(?:[0-9]+)/i,/^(?:['](\\.|[^'])*['])/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68],"inclusive":true}}
 });
 return lexer;
 })();
