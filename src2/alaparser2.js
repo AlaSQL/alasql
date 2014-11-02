@@ -90,33 +90,156 @@ yy.Select.prototype.compile = function(db) {
 	query.database = db;
 //	query.databaseid = db.databaseid;
 	this.compileFrom(query);
+	if(query.joins || this.from.length > 1) this.compileJoins(query);
 	query.selectfn = this.compileSelect(query);
 	query.wherefn = this.compileWhere(query);
-	query.orderfn = this.compileOrder(query);
+	if(this.order) query.orderfn = this.compileOrder(query);
+	if(this.group) query.groupfn = this.compileGroup(query);
+
 //	query.sources = this.compileSources(query);
 //	select.selectfn = function(scope){return {a:1}}; // TODO Remove stub
 	// Compile where
 //	console.log(this);
 //	if(this.where) select.wherefn = this.where.compile('scope.','STUB');
-console.log(query);
-	return function () {
+//console.log(query);
+	window.q = query;
+	return function() {return queryfn(query,arguments); }
+};
+
+
+function queryfn(query, args) {
 //		query.data = query.database.tables[query.defaultTableid].data.filter(query.wherefn);
 //		query.data = query.database.tables[query.defaultTableid].data;
-		var self = this;
-		var data = [];
-		var scope = {};
-		for(var i=0, ilen=query.sources[0].data.length; i<ilen; i++) {
-			scope[query.sources[0].tableid] = query.sources[0].data[i];
+//	var query = this;
+	query.args = args;
+	query.data = [];
+	query.xgroups = {};
+	query.groups = [];
+	var scope = query.scope = {};
+
+	var tableid =query.sources[0].tableid; 
+	var srcdata = query.sources[0].data;
+
+//			console.log(query);
+
+/// REWRITE JOINS!!!
+
+	for(var i=0, ilen=srcdata.length; i<ilen; i++) {
+		scope[tableid] = srcdata[i];
 //
-			if(query.wherefn(scope))
-				data.push(query.selectfn(scope));	
-		};
-//		if(query.groupfn) select.groups = {};
-		if(query.orderfn) data = data.sort(query.orderfn);
-		query.data = data;
-		return data;
+		if(query.wherefn(scope)) {
+			var res = query.selectfn(scope);
+			if(query.groupfn) {
+				query.groupfn(res)
+			} else {
+				query.data.push(res);
+			}	
+		}
 	};
+
+	if(query.groupfn) {
+		if(query.havingfn) query.groups = query.groups.filter(query.havingfn)
+		query.data = query.groups;
+	}
+
+	// delete query.groups;
+	// delete query.xgroups;
+
+//		
+	if(query.orderfn) query.data = data.sort(query.orderfn);
+//		query.data = data;
+	return query.data;
 };
+
+
+yy.Select.prototype.compileJoins = function(query) {
+	console.log(query.sources);
+}
+
+yy.Select.prototype.compileGroup = function(query) {
+
+
+	var self = this;
+	var s = 'var g=this.xgroups[';
+
+//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
+
+	// Array with group columns from record
+//	var rg = gcols.map(function(columnid){return 'r.'+columnid});
+	var rg = this.group.map(function(col){return col.toJavaScript('r','')});
+
+
+	s += rg.join('+"`"+');
+	s += '];if(!g) {this.groups.push(g=this.xgroups[';
+	s += rg.join('+"`"+');
+	s += '] = {';
+
+	// columnid:r.columnid
+	var srg = [];//rg.map(function(fn){ return (fn+':'+fn); });
+
+// Initializw aggregators
+
+
+	this.columns.forEach(function(col){
+//		console.log(f);
+//			if(f.constructor.name == 'LiteralValue') return '';
+
+		if (col instanceof yy.AggrValue) { 
+			if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJavaScript(); 	
+			else if(col.aggregatorid == 'COUNT') {srg.push( "'"+col.as+'\':0'); }
+			else if(col.aggregatorid == 'MIN') { srg.push( "'"+col.as+'\':Infinity'); }
+			else if(col.aggregatorid == 'MAX') { srg.push( "'"+col.as+'\':-Infinity'); }
+//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
+//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
+		};
+
+	});
+
+/*****************/
+
+	s += srg.join(',');
+
+	// var ss = [];
+	// gff.forEach(function(fn){
+	// 	ss.push(fn+':rec.'+fn);
+	// });
+	// s += ss.join(',');
+	s += '});};';
+
+//	console.log(s, this.columns);
+
+console.log(query.selectfn);
+	s += this.columns.map(function(col){
+		if (col instanceof yy.AggrValue) { 
+			if (col.aggregatorid == 'SUM') { return 'g[\''+col.as+'\']+=r[\''+col.as+'\'];'; }//f.field.arguments[0].toJavaScript(); 	
+			else if(col.aggregatorid == 'COUNT') { return 'g[\''+col.as+'\']++;'; }
+			else if(col.aggregatorid == 'MIN') { return 'g[\''+col.as+'\']=Math.min(g[\''+col.as+'\'],r[\''+col.as+'\']);'; }
+			else if(col.aggregatorid == 'MAX') { return 'g[\''+col.as+'\']=Math.max(g[\''+col.as+'\'],r[\''+col.as+'\']);'; }
+//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
+			return '';
+		} else return '';
+	}).join('');
+
+
+//	s += selectFields.map(function(f){
+//			console.log(f);
+//			if(f.constructor.name == 'LiteralValue') return '';
+//			if (f.field instanceof SQLParser.nodes.FunctionValue 
+//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
+//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
+//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
+//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJavaScript(); 	
+//			};
+//			return '';
+//		}).join('');
+//	s += '}';
+	//s += '	group.amt += rec.emplid;';
+	//s += 'group.count++;';
+
+//	console.log(s);
+	return new Function('r',s);
+
+}
 
 yy.Select.prototype.compileFrom = function(query) {
 	var self = this;
@@ -134,6 +257,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			alias: alias,
 			databaseid: tq.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
+			jointype: 'INNER'
 		};
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 		source.data = query.database.tables[source.tableid].data;
@@ -222,21 +346,21 @@ yy.Select.prototype.compileSelect = function(query) {
 				query.xcolumns[coldef.columnid]=coldef;
 
 			}
+		} else if(col instanceof yy.AggrValue) {
+			if(!col.as) col.as = col.toString();
+			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ) {
+				ss.push("'"+col.as+'\':'+col.expression.toJavaScript("p.",query.defaultTableid))	
+			} else if (col.aggregatorid == 'COUNT') {
+				// Nothing
+			} 
+//			else if (col.aggregatorid == 'MAX') {
+//				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
+//			} else if (col.aggregatorid == 'MIN') {
+//				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
+//			}
 		} else {
-//			console.log(col);
-			if(col instanceof yy.AggrValue) {
-				if (col.aggregatorid == 'SUM') {
-					ss.push(col.as+':'+col.expression.toJavaScript("p.",query.defaultTableid))	
-				} else if (col.aggregatorid == 'COUNT') {
-					// Nothing
-				} else if (col.aggregatorid == 'MAX') {
-					ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
-				} else if (col.aggregatorid == 'MIN') {
-					ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
-				}
-			} else ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid));
+			ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
-
 		}
 	});
 	s += ss.join(',')+'};'+sp;
@@ -420,7 +544,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 
 yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
-	var s = this.funcid+'(';
+	var s = this.aggregatorid+'(';
 	if(this.expression) s += this.expression.toString();
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;

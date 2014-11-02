@@ -63,9 +63,16 @@ alasql.exec = function (sql) {
 
 Database.prototype.exec = function(sql) {
 	console.log(sql);
-	statement = this.compile(sql);
+	var tm1 = Date.now();
+	var statement = this.compile(sql);
+	tm1 = Date.now()-tm1;
+
 //	console.log(statement());
-	return statement();
+	var tm2 = Date.now();
+	var data = statement();
+	tm2 = Date.now()-tm2;
+	console.log('compile:', tm1,'exec:', tm2);
+	return data;
 };
 
 // TODO - Replace with normal transactions handling

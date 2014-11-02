@@ -11,7 +11,7 @@
 		{studentid:104,studentname:'Anna Wooden', course:2, startdate: new Date(2014,0,15), amt:5},
 	];
 
-	for(var i=0; i<1000000; i++) {
+	for(var i=0; i<1000; i++) {
 		mydata.push({
 			course:(Math.random()*100)|0,
 			startdate: new Date(
@@ -38,6 +38,11 @@
 	alasql.tables.students.columns.forEach(function(col){
 		alasql.tables.students.xcolumns[col.columnid] = col;
 	});
+
+
+
+
+	
 //    console.table(alasql.exec('SELECT * FROM students WHERE course>100'));
 //    console.table(
 //    	alasql.exec('SELECT * FROM students WHERE course = 2 ORDER BY startdate DESC' )

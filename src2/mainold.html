@@ -1,0 +1,60 @@
+<script src="../lib/sql-parser/sql-parser.js"></script>
+<script src="../src/alasql.js"></script>
+
+
+<script>
+
+	var mydata = [
+		{studentid:58,studentname:'Sarah Patrik',course:1, startdate: new Date(2014,0,10)},
+		{studentid:102,studentname:'John Stewart', course:2, startdate: new Date(2014,0,20)},
+		{studentid:104,studentname:'Anna Wooden', course:2, startdate: new Date(2014,0,15)},
+	];
+
+	for(var i=0; i<1000000; i++) {
+		mydata.push({
+			course:(Math.random()*100)|0,
+			startdate: new Date(
+				((Math.random()*10)|0)+2010, 
+				((Math.random()*12)|0), 
+				((Math.random()*30)|0)+1
+			)
+		});
+	}
+
+		var db = new alasql.Database();
+
+	db.tables.students = {
+		recs:mydata,
+		columns:[
+			{columnid: 'studentid', dbtypeid:'INT'}, 
+			{columnid: 'studentname', dbtypeid: 'STRING'}, 
+			{columnid: 'course'},
+			{columnid: 'startdate', dbtypeid: 'DATE'}
+		]
+	};
+
+	// alasql.tables.students.xcolumns = {};
+	// alasql.tables.students.columns.forEach(function(col){
+	// 	alasql.tables.students.xcolumns[col.columnid] = col;
+	// });
+//    console.table(alasql.exec('SELECT * FROM students WHERE course>100'));
+//    console.table(
+//    	alasql.exec('SELECT * FROM students WHERE course = 2 ORDER BY startdate DESC' )
+//    	alasql.exec('SELECT studentid, studentname FROM students WHERE course = 2' )
+
+    var tm3 = Date.now();
+    	var res = db.exec('SELECT studentid, studentname, course+1 as cr FROM students WHERE cr > 50  ORDER BY studentid DESC' );
+ //   	var res = db.exec('SELECT studentid, studentname, course+1 as cr FROM students WHERE cr = 3 ' );
+    console.log(Date.now()-tm3);
+    console.log(res.length);
+//    );
+//    mydata.filter(function(r){return r.course == 2});
+//    console.log(res[0]);
+    // alasql.exec('SELECT * FROM students ttt');
+    // alasql.exec('SELECT students.* FROM students');
+    // alasql.exec('SELECT studentid FROM students');
+    // alasql.exec('SELECT students.studentid FROM students');
+    // alasql.exec('SELECT ttt.studentid FROM students ttt');
+    // alasql.exec('SELECT ttt.* FROM students ttt');
+
+</script>

@@ -17,6 +17,7 @@
 'AND'											return 'AND'
 'AS'                                      		return 'AS'
 'ASC'                                      		return 'DIRECTION'
+'AVG'                                      		return 'AVG'
 
 'BY'											return 'BY'
 
@@ -383,6 +384,7 @@ Aggregator
 	| COUNT { $$ = $1; }
 	| MIN { $$ = $1; }
 	| MAX { $$ = $1; }
+	| AVG { $$ = $1; }
 	;
 
 FuncValue
