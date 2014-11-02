@@ -18,42 +18,77 @@
     }
 }(this, function (alasqlparser) {
 
-var Alasql = function(){
-	// Initial parameters
-	this.parser = alasqlparser;
-	this.databases = {};
-	// Create initial database
-	this.currentDatabase = this.createDatabase('dbstart');
-	this.tables = this.currentDatabase.tables;
-	return this;
+// Hash function
+// TODO Move it to outside
+function hash(str){
+    var h = 0;
+    if (str.length == 0) return h;
+    for (var i = 0; i < str.length; i++) {
+        h = ((h<<5)-h)+str.charCodeAt(i);
+        h = h & h; 
+   	}
+    return h;
 };
+
+
+
+var alasql = {};
+	// Initial parameters
+alasql.parser = alasqlparser;
+alasql.databases = {};
+	// Create initial database
+alasql.currentDatabase = new Database('dbstart');
+alasql.tables = alasql.currentDatabase.tables;
+
 
 // Database class
-Alasql.Database = function() {
-	var self = this;
-	if(this == Alasql) self = new this(); // TODO Think about it
-	self.engine = this; // Может быть и не так?
-	self.tables = {};
-	return self;
+function Database(databaseid) {
+	alasql.databases[databaseid] = this;
+	this.tables = {};
+	this.sqlcache = {};
+	return this;
 };
+alasql.Database = Database;
 
-Alasql.Database.prototype.exec = function(sql) {
-	return this.compile(sql)();
+// Database class
+function Transaction(database) {
+	this.database = database;
+	return this;
 };
+alasql.Transaction = Transaction;
 
-Alasql.Database.prototype.compile = function(sql) {
-	var ast = alasqlparser.parse(sql);
-	return ast.compile(this);
-}
-
-Alasql.prototype.createDatabase = function (databaseid) {
-	var db = this.databases[databaseid] = new Alasql.Database();
-	return db;
-};
-
-Alasql.prototype.exec = function (sql) {
+alasql.exec = function (sql) {
 	return this.currentDatabase.exec(sql);
 }
 
-return new Alasql;
+Database.prototype.exec = function(sql) {
+	console.log(sql);
+	statement = this.compile(sql);
+	return statement();
+};
+
+// TODO - Replace with normal transactions handling
+Transaction.prototype.executeSQL = function(sql) {
+	this.database.exec(sql);
+};
+
+Database.prototype.compile = function(sql) {
+	var h = hash(sql);
+	var statement = this.sqlcache[h];
+	if(!statement) {
+		var ast = alasql.parser.parse(sql);
+		statement = this.sqlcache[h]= ast.compile(this);
+	};
+	return statement;
+}
+
+// TODO Create Commit
+// Added for compatibility with WebSQL
+Database.prototype.transaction = function(callback) {
+	var tx = new Transaction(this);
+	var res = callback(tx);
+	return res;
+};
+
+return alasql;
 }));

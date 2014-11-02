@@ -7,7 +7,18 @@
 		{studentid:58,studentname:'Sarah Patrik',course:1},
 		{studentid:102,studentname:'John Stewart', course:2},
 	];
-	alasql.tables.students = {data:mydata};
-    console.table(alasql.exec('SELECT * FROM students WHERE course>100'));
+
+	alasql.tables.students = {
+		data:mydata,
+//		columns:[{columnid:'studentid'}, {columnid:'studentname'}, {columnid: 'course'}]
+	};
+//    console.table(alasql.exec('SELECT * FROM students WHERE course>100'));
+    alasql.exec('SELECT * FROM students WHERE course > 1');
+    // alasql.exec('SELECT * FROM students ttt');
+    // alasql.exec('SELECT students.* FROM students');
+    // alasql.exec('SELECT studentid FROM students');
+    // alasql.exec('SELECT students.studentid FROM students');
+    // alasql.exec('SELECT ttt.studentid FROM students ttt');
+    // alasql.exec('SELECT ttt.* FROM students ttt');
 
 </script>

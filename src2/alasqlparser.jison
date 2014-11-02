@@ -52,6 +52,11 @@
 'VALUES'                                        return 'VALUES'
 'WHERE'                                         return 'WHERE'
 
+"SUM"											return "SUM"
+"COUNT"											return "COUNT"
+"MIN"											return "MIN"
+"MAX"											return "MAX"
+
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
 '*'												return 'STAR'
@@ -192,9 +197,9 @@ IntoClause
 
 FromClause
 	: FROM FromTablesList
-		{ $$ = { from: [$2] }; } 
+		{ $$ = { from: $2 }; } 
 	| FROM Table JoinTablesList
-		{ $$ = { from: [$2], joins: $3 }; }
+		{ $$ = { from: $2, joins: $3 }; }
 	;
 
 FromTablesList
@@ -242,7 +247,7 @@ OnClause
 WhereClause
 	: { $$ = null; }
 	| WHERE Expression
-		{ $$ = {where:$2}; }
+		{ $$ = {where: new yy.Expression({expression:$2})}; }
 	;
 
 GroupClause
@@ -343,7 +348,9 @@ Column
 	;
 
 Expression
-	: FuncValue
+	: AggrValue
+		{ $$ = $1; }
+	| FuncValue
 		{ $$ = $1; }
 	| Op
 		{ $$ = $1; }
@@ -357,6 +364,19 @@ Expression
 		{ $$ = $1; }
 	| StringValue
 		{ $$ = $1; }
+	;
+
+
+AggrValue
+	: Aggregator LPAR Expression RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3}); }
+	;
+
+Aggregator
+	: SUM { $$ = $1; }
+	| COUNT { $$ = $1; }
+	| MIN { $$ = $1; }
+	| MAX { $$ = $1; }
 	;
 
 FuncValue

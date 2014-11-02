@@ -82,24 +82,150 @@ yy.Select.prototype.toString = function() {
 }
 
 yy.Select.prototype.compile = function(db) {
-	var select = {};
-	select.selectfn = this.where.compile(db);
-//	select.wherefn = this.compileWhereFn(db);
+	var query = {};
+	query.database = db;
+//	query.databaseid = db.databaseid;
+	this.compileFrom(query);
+	query.selectfn = this.compileSelect(query);
+	query.wherefn = this.compileWhere(query);
+
+//	select.selectfn = function(scope){return {a:1}}; // TODO Remove stub
+	// Compile where
+//	console.log(this);
+//	if(this.where) select.wherefn = this.where.compile('scope.','STUB');
 	return function () {
-		select.data = [];
-		if(select.groupfn) select.groups = {};
-		return select.data;
+//		query.data = query.database.tables[query.defaultTableid].data.filter(query.wherefn);
+
+//		query.data = [];
+//		if(query.groupfn) select.groups = {};
+		return query.data;
 	};
+};
+
+yy.Select.prototype.compileFrom = function(query) {
+	var self = this;
+//	var tableid = this.from[0].tableid;
+//	var as = '';
+//	if(self.from[0].as) as = this.from[0].as;
+	query.defaultTableid = this.from[0].tableid;
+	query.aliases = {};
+	self.from.forEach(function(tq){
+		var alias = tq.as || tq.tableid;
+		query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database};
+	});
+	// TODO Add joins
+};
+
+
+function compileSelectStar (query,alias) {
+	// console.log(query.aliases[alias]);
+//	console.log(query,alias);
+	// console.log(query.aliases[alias].tableid);
+	var s = '', sp = '', ss=[];
+	var columns = query.database.tables[query.aliases[alias].tableid].columns;
+	if(columns) {
+		columns.forEach(function(tcol){
+			ss.push(tcol.columnid+':p.'+alias+'.'+tcol.columnid);
+
+//		console.log('ok',s);
+
+			query.columns.push({columnid:tcol.columnid, 
+				dbtypeid:tcol.dbtypeid, 
+				dbsize:tcol.dbsize, 
+				dbpecision:tcol.dbprecision
+			});
+		});
+	} else {
+		// if column not exists, then copy all
+		sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
+		query.dirtyColumns = true;
+	}
+	return {s:ss.join(','),sp:sp};
 }
 
+
+yy.Select.prototype.compileSelect = function(query) {
+	query.columns = [];
+	query.dirtyColumns = false;
+	var s = 'var r={';
+	var sp = '';
+	var ss = [];
+//	console.log(this.columns);
+	this.columns.forEach(function(col){
+		if(col instanceof yy.Column) {
+			if(col.columnid == '*') {
+				if(col.tableid) {
+					//Copy all
+					var ret = compileSelectStar(query, col.tableid);
+					if(ret.s)  ss = ss.concat(ret.s);
+					sp += ret.sp;
+
+				} else {
+					for(var alias in query.aliases) {
+						var ret = compileSelectStar(query, alias); //query.aliases[alias].tableid);
+						if(ret.s) ss = ss.concat(ret.s);
+						sp += ret.sp;
+					}
+					// TODO Remove these lines
+					// In case of no information 
+					// sp += 'for(var k1 in p){var w=p[k1];'+
+					// 			'for(k2 in w) {r[k2]=w[k2]}}'
+				}
+			} else {
+				// If field, otherwise - expression
+				ss.push((col.as || col.columnid)+':p.'+(col.tableid||query.defaultTableid)+'.'+col.columnid);
+			}
+		} else {
+//			console.log(col);
+			if(col instanceof yy.AggrValue) {
+				if (col.aggregatorid == 'SUM') {
+					ss.push(col.as+':'+col.expression.toJavaScript("p.",query.defaultTableid))	
+				} else if (col.aggregatorid == 'COUNT') {
+					// Nothing
+				} else if (col.aggregatorid == 'MAX') {
+					ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
+				} else if (col.aggregatorid == 'MIN') {
+					ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
+				}
+			} else ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid));
+			//if(col instanceof yy.Expression) {
+
+		}
+	});
+	s += ss.join(',')+'};'+sp+'return r';
+//	console.log(s);
+	return new Function('p',s);
+};
+
+yy.Select.prototype.compileWhere = function(query) {
+	if(this.where) {
+		s = this.where.toJavaScript('p.',query.defaultTableid);
+		console.log(s);
+		return new Function('p','return '+s);
+	}
+};
+
+
+yy.Expression = function(params) { return yy.extend(this, params); };
+yy.Expression.prototype.toString = function() {
+	return this.expression.toString();
+};
+yy.Expression.prototype.toJavaScript = function(context, tableid) {
+	return this.expression.toJavaScript(context, tableid);
+};
+yy.Expression.prototype.compile = function(context, tableid){
+	return new Function('scope','return '+this.toJavaScript(context, tableid));
+};
 
 
 yy.Literal = function (params) { return yy.extend(this, params); }
 yy.Literal.prototype.toString = function() {
 	var s = this.value;
-	if(this.value1) s = this.value1+'.'+s;
+	if(this.value1) s = this.value1+'.'+s; 
+//	else s = tableid+'.'+s;
 	return s;
 }
+
 
 yy.Table = function (params) { return yy.extend(this, params); }
 yy.Table.prototype.toString = function() {
@@ -113,11 +239,21 @@ yy.Op = function (params) { return yy.extend(this, params); }
 yy.Op.prototype.toString = function() {
 	return this.left.toString()+this.op+this.right.toString();
 }
+yy.Op.prototype.toJavaScript = function(context,tableid) {
+	console.log(this);
+	return '('+this.left.toJavaScript(context,tableid)+this.op+this.right.toJavaScript(context,tableid)+')';
+}
+
+
 
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
 	return this.value.toString();
 }
+yy.NumValue.prototype.toJavaScript = function() {
+	return this.value.toString();
+}
+
 
 yy.StringValue = function (params) { return yy.extend(this, params); }
 yy.StringValue.prototype.toString = function() {
@@ -165,6 +301,21 @@ yy.Column.prototype.toString = function() {
 	return s;
 }
 
+yy.Column.prototype.toJavaScript = function(context, tableid) {
+//	var s = this.value;
+// 	var s = this.columnid;
+// 	if(this.tableid) {
+// 		s = this.tableid+'.'+s;
+// //		if(this.databaseid) {
+// //			s = this.databaseid+'.'+s;
+// //		}
+// 	} else {
+// 		s = tableid+'.'+s;
+// 	}
+	return context+(this.tableid || tableid) + '.'+this.columnid;
+}
+
+
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = this.funcid+'(';
@@ -173,6 +324,32 @@ yy.FuncValue.prototype.toString = function() {
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 }
+
+yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
+	var s = 'alasql.functions.'+this.funcid+'(';
+	if(this.expression) s += this.expression.toJavaScript(context, tableid);
+	s += ')';
+//	if(this.alias) s += ' AS '+this.alias;
+	return s;
+}
+
+yy.AggrValue = function(params){ return yy.extend(this, params); }
+yy.AggrValue.prototype.toString = function() {
+	var s = this.funcid+'(';
+	if(this.expression) s += this.expression.toString();
+	s += ')';
+//	if(this.alias) s += ' AS '+this.alias;
+	return s;
+}
+
+yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
+	var s = 'alasql.functions.'+this.funcid+'(';
+	if(this.expression) s += this.expression.toJavaScript(context, tableid);
+	s += ')';
+//	if(this.alias) s += ' AS '+this.alias;
+	return s;
+}
+
 
 yy.OrderExpression = function(params){ return yy.extend(this, params); }
 yy.OrderExpression.prototype.toString = function() {
