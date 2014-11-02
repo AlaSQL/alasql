@@ -64,6 +64,7 @@ alasql.exec = function (sql) {
 Database.prototype.exec = function(sql) {
 	console.log(sql);
 	statement = this.compile(sql);
+//	console.log(statement());
 	return statement();
 };
 

@@ -4,16 +4,27 @@
 <script>
 
 	var mydata = [
-		{studentid:58,studentname:'Sarah Patrik',course:1},
-		{studentid:102,studentname:'John Stewart', course:2},
+		{studentid:58,studentname:'Sarah Patrik',course:1, startdate: new Date(2014,0,10)},
+		{studentid:102,studentname:'John Stewart', course:2, startdate: new Date(2014,0,20)},
+		{studentid:104,studentname:'Anna Wooden', course:2, startdate: new Date(2014,0,15)},
 	];
 
 	alasql.tables.students = {
 		data:mydata,
-//		columns:[{columnid:'studentid'}, {columnid:'studentname'}, {columnid: 'course'}]
+		columns:[
+			{columnid:'studentid', dbtypeid:'INT'}, 
+			{columnid:'studentname', dbtypeid: 'STRING'}, 
+			{columnid: 'course'},
+			{columnid: 'startdate', dbtypeid: 'DATE'}
+		]
 	};
+
+	alasql.tables.students.xcolumns = {};
+	alasql.tables.students.columns.forEach(function(col){
+		alasql.tables.students.xcolumns[col.columnid] = col;
+	});
 //    console.table(alasql.exec('SELECT * FROM students WHERE course>100'));
-    alasql.exec('SELECT * FROM students WHERE course > 1');
+    console.table(alasql.exec('SELECT * FROM students WHERE course = 2 ORDER BY startdate' ));
     // alasql.exec('SELECT * FROM students ttt');
     // alasql.exec('SELECT students.* FROM students');
     // alasql.exec('SELECT studentid FROM students');

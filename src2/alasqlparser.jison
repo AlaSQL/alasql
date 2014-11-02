@@ -16,12 +16,16 @@
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
 'AS'                                      		return 'AS'
+'ASC'                                      		return 'DIRECTION'
 
 'BY'											return 'BY'
 
 'CREATE'										return 'CREATE'
+'COLLATE'										return 'COLLATE'
+"COUNT"											return "COUNT"
 'CUBE'											return 'CUBE'
 'DELETE'                                        return 'DELETE'
+'DESC'                                          return 'DIRECTION'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
 
@@ -36,6 +40,9 @@
 'INSERT'                                        return 'INSERT'
 'INTO'                                         	return 'INTO'
 'KEY'											return 'KEY'
+"MAX"											return "MAX"
+"MIN"											return "MIN"
+'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
@@ -46,16 +53,13 @@
 'SELECT'                                        return 'SELECT'
 'SET'                                        	return 'SET'
 'SETS'                                        	return 'SETS'
+"SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TRUE'						  					return 'TRUE'
 'UPDATE'                                        return 'UPDATE'
 'VALUES'                                        return 'VALUES'
 'WHERE'                                         return 'WHERE'
 
-"SUM"											return "SUM"
-"COUNT"											return "COUNT"
-"MIN"											return "MIN"
-"MAX"											return "MAX"
 
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
@@ -295,12 +299,14 @@ OrderExpressionsList
 	;
 
 OrderExpression
-	: Expression ASC
-		{ $$ = new yy.OrderExpression({expression: $1, order:$2.toUpperCase()}) }
-	| Expression DESC
-		{ $$ = new yy.OrderExpression({expression: $1, order:$2.toUpperCase()}) }
-	| Expression
-		{ $$ = new yy.OrderExpression({expression: $1}) }
+	: Expression
+		{ $$ = new yy.OrderExpression({expression: $1, direction:'ASC'}) }
+	| Expression DIRECTION
+		{ $$ = new yy.OrderExpression({expression: $1, direction:$2.toUpperCase()}) }
+	| Expression COLLATE NOCASE
+		{ $$ = new yy.OrderExpression({expression: $1, direction:'ASC', nocase:true}) }
+	| Expression COLLATE NOCASE DIRECTION
+		{ $$ = new yy.OrderExpression({expression: $1, direction:$4.toUpperCase(), nocase:true}) }
 	;
 
 LimitClause
