@@ -90,7 +90,7 @@ yy.Select.prototype.compile = function(db) {
 	query.database = db;
 //	query.databaseid = db.databaseid;
 	this.compileFrom(query);
-	if(query.joins || this.from.length > 1) this.compileJoins(query);
+	if(this.joins || this.from.length > 1) this.compileJoins(query);
 	query.selectfn = this.compileSelect(query);
 	query.wherefn = this.compileWhere(query);
 	if(this.order) query.orderfn = this.compileOrder(query);
@@ -102,6 +102,7 @@ yy.Select.prototype.compile = function(db) {
 //	console.log(this);
 //	if(this.where) select.wherefn = this.where.compile('scope.','STUB');
 //console.log(query);
+	// TODO Remove debug
 	window.q = query;
 	return function() {return queryfn(query,arguments); }
 };
@@ -117,25 +118,10 @@ function queryfn(query, args) {
 	query.groups = [];
 	var scope = query.scope = {};
 
-	var tableid =query.sources[0].tableid; 
-	var srcdata = query.sources[0].data;
 
-//			console.log(query);
+	var h = 0;
 
-/// REWRITE JOINS!!!
-
-	for(var i=0, ilen=srcdata.length; i<ilen; i++) {
-		scope[tableid] = srcdata[i];
-//
-		if(query.wherefn(scope)) {
-			var res = query.selectfn(scope);
-			if(query.groupfn) {
-				query.groupfn(res)
-			} else {
-				query.data.push(res);
-			}	
-		}
-	};
+	doJoin(query, scope, h);
 
 	if(query.groupfn) {
 		if(query.havingfn) query.groups = query.groups.filter(query.havingfn)
@@ -152,8 +138,55 @@ function queryfn(query, args) {
 };
 
 
+function doJoin (query, scope, h) {
+	if(h>=query.sources.length) {
+
+		if(query.wherefn(scope)) {
+			var res = query.selectfn(scope);
+			if(query.groupfn) {
+				query.groupfn(res)
+			} else {
+				query.data.push(res);
+			}	
+		}
+	} else {
+//		console.log(query.sources, h);
+		var tableid =query.sources[h].tableid; 
+		var srcdata = query.sources[h].data;
+		var pass = false;
+
+		for(var i=0, ilen=srcdata.length; i<ilen; i++) {
+			scope[tableid] = srcdata[i];
+			doJoin(query, scope, h+1);
+			pass = true;
+		};
+
+		// Additional for LEFT JOINS
+		if(query.sources[h].joinmode == 'LEFT' && !pass) {
+			scope[tableid] = {};
+			self.doJoin(scope,h+1);
+		}	
+
+	}
+};
+
+
 yy.Select.prototype.compileJoins = function(query) {
-	console.log(query.sources);
+	console.log(this.join);
+	this.joins.forEach(function(jn){
+		var tq = jn.table;
+		var source = {
+			alias: tq.alias||tq.tableid,
+			databaseid: jn.databaseid || query.database.databaseid,
+			tableid: tq.tableid,
+			joinmode: 'INNER'
+		};
+		console.log(jn, source);
+//		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
+		source.data = query.database.tables[source.tableid].data;
+		query.sources.push(source);
+	});
+	console.log('sources',query.sources);
 }
 
 yy.Select.prototype.compileGroup = function(query) {
@@ -166,7 +199,11 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	// Array with group columns from record
 //	var rg = gcols.map(function(columnid){return 'r.'+columnid});
-	var rg = this.group.map(function(col){return col.toJavaScript('r','')});
+	var rg = this.group.map(function(col){
+		if(col == '') return '1';
+//		console.log(col, col.toJavaScript('r',''));
+		else return col.toJavaScript('r','');
+	});
 
 
 	s += rg.join('+"`"+');
@@ -208,7 +245,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 //	console.log(s, this.columns);
 
-console.log(query.selectfn);
+//console.log(query.selectfn);
 	s += this.columns.map(function(col){
 		if (col instanceof yy.AggrValue) { 
 			if (col.aggregatorid == 'SUM') { return 'g[\''+col.as+'\']+=r[\''+col.as+'\'];'; }//f.field.arguments[0].toJavaScript(); 	
@@ -232,10 +269,11 @@ console.log(query.selectfn);
 //			};
 //			return '';
 //		}).join('');
-//	s += '}';
+
 	//s += '	group.amt += rec.emplid;';
 	//s += 'group.count++;';
 
+//	s += '}';
 //	console.log(s);
 	return new Function('r',s);
 
@@ -247,6 +285,7 @@ yy.Select.prototype.compileFrom = function(query) {
 //	var tableid = this.from[0].tableid;
 //	var as = '';
 //	if(self.from[0].as) as = this.from[0].as;
+//console.log(this);
 	query.defaultTableid = this.from[0].tableid;
 	query.aliases = {};
 	self.from.forEach(function(tq){
@@ -257,7 +296,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			alias: alias,
 			databaseid: tq.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
-			jointype: 'INNER'
+			joinmode: 'INNER'
 		};
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 		source.data = query.database.tables[source.tableid].data;
@@ -303,6 +342,7 @@ function compileSelectStar (query,alias) {
 
 
 yy.Select.prototype.compileSelect = function(query) {
+	var self = this;
 	query.columns = [];
 	query.xcolumns = {};
 	query.dirtyColumns = false;
@@ -347,9 +387,13 @@ yy.Select.prototype.compileSelect = function(query) {
 
 			}
 		} else if(col instanceof yy.AggrValue) {
+			if(!self.group) {
+//				self.group=[new yy.Column({columnid:'q',as:'q'	})];
+				self.group = [''];
+			}
 			if(!col.as) col.as = col.toString();
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ) {
-				ss.push("'"+col.as+'\':'+col.expression.toJavaScript("p.",query.defaultTableid))	
+				ss.push("'"+col.as+'\':'+col.expression.toJavaScript("p",query.defaultTableid))	
 			} else if (col.aggregatorid == 'COUNT') {
 				// Nothing
 			} 
@@ -371,7 +415,7 @@ yy.Select.prototype.compileSelect = function(query) {
 
 yy.Select.prototype.compileWhere = function(query) {
 	if(this.where) {
-		s = this.where.toJavaScript('p.',query.defaultTableid);
+		s = this.where.toJavaScript('p',query.defaultTableid);
 		query.wherefns = s;
 //		console.log(s);
 		return new Function('p','return '+s);
@@ -431,6 +475,15 @@ yy.Literal.prototype.toString = function() {
 //	else s = tableid+'.'+s;
 	return s;
 }
+
+
+yy.Join = function (params) { return yy.extend(this, params); }
+yy.Join.prototype.toString = function() {
+	return 'JOIN'+this.table.toString();
+}
+//yy.Join.prototype.toJavaScript = function(context, tableid) {
+//	return 'JOIN'+this.table.toString();
+//}
 
 
 yy.Table = function (params) { return yy.extend(this, params); }
@@ -521,7 +574,8 @@ yy.Column.prototype.toJavaScript = function(context, tableid) {
 // 	} else {
 // 		s = tableid+'.'+s;
 // 	}
-	return context+(this.tableid || tableid) + '.'+this.columnid;
+if(tableid == '') res = context+'[\''+this.columnid+'\']';
+else return context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 }
 
 

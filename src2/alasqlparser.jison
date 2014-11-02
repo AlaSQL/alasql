@@ -40,6 +40,7 @@
 'IF'											return 'IF'
 'INSERT'                                        return 'INSERT'
 'INTO'                                         	return 'INTO'
+'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
@@ -204,7 +205,7 @@ FromClause
 	: FROM FromTablesList
 		{ $$ = { from: $2 }; } 
 	| FROM Table JoinTablesList
-		{ $$ = { from: $2, joins: $3 }; }
+		{ $$ = { from: [$2], joins: $3 }; }
 	;
 
 FromTablesList
@@ -239,13 +240,15 @@ JoinTablesList
 
 JoinTable
 	: JOIN Table OnClause
-		{ $$ = new yy.Join({table:$1}); yy.extend($$, $3); }
+		{ $$ = new yy.Join({table:$2}); yy.extend($$, $3); }
+	| JOIN Table
+		{ $$ = new yy.Join({table:$2}); }	
 	;
 
 OnClause
 	: ON Expression
 		{ $$ = {on: $2}; }
-	| USING ColumnList
+	| USING ColumnsList
 		{ $$ = {using: $2}; }
 	;
 
