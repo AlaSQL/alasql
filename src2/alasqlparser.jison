@@ -15,6 +15,7 @@
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
+'ANTI'											return 'ANTI'
 'AS'                                      		return 'AS'
 'ASC'                                      		return 'DIRECTION'
 'AVG'                                      		return 'AVG'
@@ -44,11 +45,13 @@
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
 'LEFT'											return 'LEFT'
+'LIMIT'											return 'LIMIT'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
 'ON'											return 'ON'
+'OFFSET'										return 'OFFSET'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'PLAN'                                        	return 'PLAN'
@@ -252,6 +255,7 @@ JoinMode
 	: {$$ = "INNER";}
 	| LEFT {$$ = $1;}
 	| RIGHT {$$ = $1;}
+	| ANTI {$$ = $1;}
 	;
 
 OnClause
@@ -327,13 +331,13 @@ OrderExpression
 LimitClause
 	: { $$ = null; }
 	| LIMIT Expression OffsetClause
-		{ $$ = {limit:$3}; yy.extend($$, $3)}
+		{ $$ = {limit:$2}; yy.extend($$, $3)}
 	;
 
 OffsetClause
 	: { $$ = null; }
 	| OFFSET Expression 
-		{ $$ = {offset:$3}}
+		{ $$ = {offset:$2}}
 	;
 
 ResultColumns

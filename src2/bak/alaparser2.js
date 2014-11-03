@@ -93,12 +93,8 @@ yy.Select.prototype.compile = function(db) {
 	if(this.joins) this.compileJoins(query);
 	query.selectfn = this.compileSelect(query);
 	query.wherefn = this.compileWhere(query);
-	if(this.group) query.groupfn = this.compileGroup(query);
-	query.distinct = this.distinct;
-	query.limit = this.limit?this.limit.value:undefined;
-	query.offset = this.offset?this.offset.value:1;
-//	console.log(query.offset,query.limit);
 	if(this.order) query.orderfn = this.compileOrder(query);
+	if(this.group) query.groupfn = this.compileGroup(query);
 
 //	query.sources = this.compileSources(query);
 //	select.selectfn = function(scope){return {a:1}}; // TODO Remove stub
@@ -116,7 +112,6 @@ function queryfn(query, args) {
 //		query.data = query.database.tables[query.defaultTableid].data.filter(query.wherefn);
 //		query.data = query.database.tables[query.defaultTableid].data;
 //	var query = this;
-	preIndex(query);
 	query.args = args;
 	query.data = [];
 	query.xgroups = {};
@@ -136,76 +131,11 @@ function queryfn(query, args) {
 	// delete query.groups;
 	// delete query.xgroups;
 
-//	
-	doDistinct(query);	
-	doLimit(query);
+//		
 	if(query.orderfn) query.data = data.sort(query.orderfn);
 //		query.data = data;
 	return query.data;
 };
-
-function doLimit (query) {
-	if(query.limit) {
-		var offset = ((query.offset|0)-1)||0;
-		var limit = (query.limit|0) + offset;
-		console.log(offset, limit);
-		query.data = query.data.slice(offset,limit);
-	}
-}
-
-function doDistinct (query) {
-	if(query.distinct) {
-//		console.log('distinct');
-		var uniq = {};
-		// TODO: Speedup
-		for(var i=0,ilen=query.data.length;i<ilen;i++) {
-			var uix = Object.keys(query.data[i]).map(function(k){return query.data[i][k]}).join('`');
-
-			// for(var key in query.data[i]) {
-			// 	uix += '`'+query.data[i][key];
-			// }
-			uniq[uix] = query.data[i];
-		};
-//		console.log(uniq);
-		query.data = [];
-		for(var key in uniq) query.data.push(uniq[key]);
-	}
-};
-
-
-preIndex = function(query) {
-	// if(query.joins && self.joins.length>0) {
-		for(var k=0, klen = query.sources.length;k<klen;k++) {
-//			console.log('klen',klen);
-			var source = query.sources[k];
-			if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
-//				var h = console.log(hash(source.onrightfn));
-
-				// TODO Check if table index exists
-//				if(/*!join.ix || */ join.dirty) {
-					source.ix = {};
-//					join.dirty = false;
-					// Если есть группировка
-					var scope = {};
-//					console.log('join.recs.length',join.recs, join.recs.length);
-					for(var i=0, ilen=source.data.length; i<ilen; i++) {
-						scope[source.alias || source.tableid] = source.data[i];
-//						console.log('preIndex:scope',scope);
-
-						var group = source.ix [ source.onrightfn(scope) ]; 
-						if(!group) {
-							group = source.ix [ source.onrightfn(scope) ] = []; 
-						}
-						group.push(source.data[i]);
-					}
-
-				// TODO - Save index to original table	
-//				}
-			}
-		}
-//	}
-}
-
 
 
 function doJoin (query, scope, h) {
@@ -222,31 +152,23 @@ function doJoin (query, scope, h) {
 	} else {
 //		console.log(query.sources, h);
 		var source = query.sources[h];
-//		var nextjointype = query.sources[h+1] ? query.sources[h+1].jointype: undefined;
 		var tableid =source.tableid; 
 		var pass = false;
-		var data = source.data;
-
-		if(source.optimization == 'ix') {
-//			console.log('join.ix', source.ix)
-			data = source.ix[ source.onleftfn(scope) ] || [];
-		}
 
 
 		// Main cycle
-		for(var i=0, ilen=data.length; i<ilen; i++) {
-			scope[tableid] = data[i];
+		for(var i=0, ilen=source.data.length; i<ilen; i++) {
+			scope[tableid] = source.data[i];
 			if(!source.onleftfn || (source.onleftfn(scope) == source.onrightfn(scope))) {
-//				console.log(source, source.jointype);
 				doJoin(query, scope, h+1);
 				pass = true;
 			}
 		};
 
-//		console.log("out",h,i,pass, source.joinmode );
+		console.log("out",h,i,pass, source.joinmode );
 
 		// Additional for LEFT JOINS
-		if((source.joinmode == 'LEFT') && !pass) {
+		if(source.joinmode == 'LEFT' && !pass) {
 			scope[tableid] = {};
 			doJoin(query,scope,h+1);
 		}	
@@ -256,7 +178,7 @@ function doJoin (query, scope, h) {
 
 
 yy.Select.prototype.compileJoins = function(query) {
-//	console.log(this.join);
+	console.log(this.join);
 	var self = this;
 	this.joins.forEach(function(jn){
 		var tq = jn.table;
@@ -325,7 +247,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			query.sources.push(source);
 		}
 	});
-//	console.log('sources',query.sources);
+	console.log('sources',query.sources);
 }
 
 yy.Select.prototype.compileGroup = function(query) {
@@ -345,13 +267,12 @@ yy.Select.prototype.compileGroup = function(query) {
 		else return col.toJavaScript('r','');
 	});
 
-//	console.log('rg',rg);
+	console.log('rg',rg);
 
 	s += rg.join('+"`"+');
 	s += '];if(!g) {this.groups.push(g=this.xgroups[';
 	s += rg.join('+"`"+');
-//	s += '] = {';
-	s += ']=r';
+	s += '] = {';
 
 	// columnid:r.columnid
 	var srg = [];//rg.map(function(fn){ return (fn+':'+fn); });
@@ -363,11 +284,10 @@ yy.Select.prototype.compileGroup = function(query) {
 
 // Initializw aggregators
 
-/*
+
 	this.columns.forEach(function(col){
 //		console.log(f);
 //			if(f.constructor.name == 'LiteralValue') return '';
-
 
 		if (col instanceof yy.AggrValue) { 
 			if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJavaScript(); 	
@@ -380,20 +300,17 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	});
 
-*/
-
 /*****************/
 
-//	s += srg.join(',');
+	s += srg.join(',');
 
 	// var ss = [];
 	// gff.forEach(function(fn){
 	// 	ss.push(fn+':rec.'+fn);
 	// });
 	// s += ss.join(',');
-//	s += '});};';
+	s += '});};';
 
-	s += ');} else {';
 //	console.log(s, this.columns);
 
 //console.log(query.selectfn);
@@ -424,8 +341,8 @@ yy.Select.prototype.compileGroup = function(query) {
 	//s += '	group.amt += rec.emplid;';
 	//s += 'group.count++;';
 
-	s += '}';
-//	console.log(s, this.group);
+//	s += '}';
+	console.log(s, this.group);
 	return new Function('r',s);
 
 }
@@ -526,20 +443,15 @@ yy.Select.prototype.compileSelect = function(query) {
 				ss.push((col.as || col.columnid)+':p.'+(col.tableid||query.defaultTableid)+'.'+col.columnid);
 
 				var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
-
-				if(xcolumns) {
-					var tcol = xcolumns[col.columnid];
-					var coldef = {
-						columnid:col.as || col.columnid, 
-						dbtypeid:tcol.dbtypeid, 
-						dbsize:tcol.dbsize, 
-						dbpecision:tcol.dbprecision
-					};
-					query.columns.push(coldef);
-					query.xcolumns[coldef.columnid]=coldef;
-				} else {
-					query.dirtyColumns = true;
-				}
+				var tcol = xcolumns[col.columnid];
+				var coldef = {
+					columnid:col.as || col.columnid, 
+					dbtypeid:tcol.dbtypeid, 
+					dbsize:tcol.dbsize, 
+					dbpecision:tcol.dbprecision
+				};
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid]=coldef;
 
 			}
 		} else if(col instanceof yy.AggrValue) {
@@ -551,7 +463,6 @@ yy.Select.prototype.compileSelect = function(query) {
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ) {
 				ss.push("'"+col.as+'\':'+col.expression.toJavaScript("p",query.defaultTableid))	
 			} else if (col.aggregatorid == 'COUNT') {
-				ss.push("'"+col.as+"':1");
 				// Nothing
 			} 
 //			else if (col.aggregatorid == 'MAX') {

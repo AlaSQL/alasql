@@ -1,13 +1,12 @@
 //
 // alasql.js
-// "A la SQL" - Pure JavaScript SQL database
-// Date: 01.11.2014
+// Alasql - JavaScript SQL database
+// Date: 03.11.2014
 // Version: 0.0.6
 // (ñ) 2014, Andrey Gershun
 //
 
 //  UMD header
-
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define(['./alasqlparser'], factory);
@@ -18,8 +17,7 @@
     }
 }(this, function (alasqlparser) {
 
-// Hash function
-// TODO Move it to outside
+// Fast hash function
 function hash(str){
     var h = 0;
     if (str.length == 0) return h;
@@ -31,99 +29,107 @@ function hash(str){
 };
 
 
-
+// Main database variable
 var alasql = {};
-	// Initial parameters
+
+// Initial parameters
 alasql.parser = alasqlparser;
 alasql.databases = {};
-	// Create initial database
-alasql.currentDatabase = new Database('dbstart');
+
+// Create default database
+alasql.currentDatabase = new Database('start');
 alasql.tables = alasql.currentDatabase.tables;
 
-
-// Database class
+// Main Database class
 function Database(databaseid) {
-	alasql.databases[databaseid] = this;
-	this.tables = {};
-	this.sqlcache = {};
-	return this;
+	var self = this;
+	if(self == alasql) self = new Database(databaseid); // to call without new
+	alasql.databases[databaseid] = self;
+	self.tables = {};   // Tables
+	self.sqlcache = {}; // Cache for compiled SQL statements
+	return self;
 };
+
+// Start database
 alasql.Database = Database;
 
-// Database class
+// Transaction class (for WebSQL compatibility)
 function Transaction(database) {
 	this.database = database;
 	return this;
 };
+
+// Main class 
 alasql.Transaction = Transaction;
 
-alasql.exec = function (sql) {
+// Default methods to exec SQL statements
+alasql.run = alasql.exec = function (sql) {
 	return this.currentDatabase.exec(sql);
-}
+};
 
-// Aliases
+// MSSQL aliases
 alasql.query = function (sql) {
 	return this.currentDatabase.query(sql);
 }
-
 alasql.querySingle = function (sql) {
 	return this.currentDatabase.querySingle(sql);
 }
-
 alasql.queryValue = function (sql) {
 	return this.currentDatabase.queryValue(sql);
 }
 
-
-Database.prototype.exec = function(sql) {
-	console.log(sql);
-	var tm1 = Date.now();
+// Main SQL function
+Database.prototype.exec = function(sql, args) {
+	// Compile
 	var statement = this.compile(sql);
-	tm1 = Date.now()-tm1;
-
-//	console.log(statement());
-	var tm2 = Date.now();
-	var data = statement();
-	tm2 = Date.now()-tm2;
-	console.log('compile:', tm1,'exec:', tm2);
+	// Run
+	var data = statement(args);
 	return data;
 };
 
 // Aliases like Microsoft Database
 Database.prototype.query = Database.prototype.exec;
-
+Database.prototype.run = Database.prototype.exec;
 Database.prototype.querySingle = function(sql) {
 	return this.exec(sql)[0];
 }
-
 Database.prototype.queryValue = function(sql) {
 	var res = this.querySingle(sql);
 	return res[Object.keys(res)[0]];
 }
 
-
-// TODO - Replace with normal transactions handling
+// Transactions stub
+// TODO: Implement transactions
 Transaction.prototype.executeSQL = function(sql) {
 	this.database.exec(sql);
 };
 
+// Compile statements
 Database.prototype.compile = function(sql) {
-	var h = hash(sql);
-	var statement = this.sqlcache[h];
+	var hh = hash(sql);
+
+	// Check cache with hash of SQL statement
+	var statement = this.sqlcache[hh];
 	if(!statement) {
+		// If not fount, then compile it
 		var ast = alasql.parser.parse(sql);
-		statement = this.sqlcache[h]= ast.compile(this);
+		// Save to cache
+		statement = this.sqlcache[hh]= ast.compile(this);
 	};
 	return statement;
 }
 
-// TODO Create Commit
+// SQL.js compatibility method
+Database.prototype.prepare = Database.prototype.compile;
+
 // Added for compatibility with WebSQL
+// TODO Create Commit
 Database.prototype.transaction = function(callback) {
 	var tx = new Transaction(this);
 	var res = callback(tx);
 	return res;
 };
 
+// End of module
 return alasql;
 }));

@@ -5,11 +5,14 @@
 
 <script>
 
+	var defined = true;
+
 	var studentsData = [
 		{studentid:58,studentname:'Sarah Patrik',courseid:1, startdate: new Date(2014,0,10), amt:10, schoolid:1},
 		{studentid:102,studentname:'John Stewart', courseid:2, startdate: new Date(2014,0,20), amt:20, schoolid:1},
 		{studentid:102,studentname:'Joan Blackmore', courseid:2, startdate: new Date(2014,0,20), amt:20, schoolid:1},
 		{studentid:104,studentname:'Anna Wooden', courseid:4, startdate: new Date(2014,0,15), amt:30, schoolid:2},
+		{studentid:104,studentname:'Astrid Carlson', courseid:7, startdate: new Date(2014,0,15), amt:30, schoolid:1},
 	];
 
 	var coursesData = [
@@ -20,6 +23,12 @@
 		{courseid:5, coursename: 'fifth', schoolid:2}
 	];
 
+	var schoolData = [
+		{schoolid:1, schoolname: 'Northern School', regionid:'north'},
+		{schoolid:2, schoolname: 'Southern School', regionid:'south'},
+		{schoolid:3, schoolname: 'Eastern School', regionid:'east'},
+		{schoolid:4, schoolname: 'Western School', regionid:'west'},
+	];
 
 
 	// for(var i=0; i<1000; i++) {
@@ -33,6 +42,23 @@
 	// 		amt:((Math.random()*1000)|0)
 	// 	});
 	// }
+
+
+if(!defined) {
+
+	alasql.tables.students = {
+		data:studentsData,
+	};
+
+	alasql.tables.courses = {
+		data: coursesData,
+	};	
+
+	alasql.tables.schools = {
+		data: schoolData,
+	};
+
+} else {
 
 	alasql.tables.students = {
 		data:studentsData,
@@ -64,13 +90,35 @@
 		alasql.tables.courses.xcolumns[col.columnid] = col;
 	});
 
+	alasql.tables.schools = {
+		data: schoolData,
+		columns: [
+			{columnid: 'schoolid', dbtypeid:'INT'}, 
+			{columnid: 'schoolname', dbtypeid: 'STRING'}, 
+			{columnid: 'regionid'},
+		]
+	};
+
+	alasql.tables.schools.xcolumns = {};
+	alasql.tables.schools.columns.forEach(function(col){
+		alasql.tables.schools.xcolumns[col.columnid] = col;
+	});
+}
+
 // 	var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt FROM students RIGHT JOIN courses USING courseid GROUP BY courseid' );
- 	var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt '+
- 		' FROM students LEFT JOIN courses '+
- 		' ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
- 		' GROUP BY courseid' );
+ 	// var res = alasql.exec('SELECT * '+
+ 	// 	' FROM students '+
+ 	// 	' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
+ 	// 	' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
+ 	// 	' GROUP BY schools, courseid, studentname' );
+
+ 	var res = alasql.exec('SELECT students.schoolid '+
+ 		' FROM students '+
+ 		' LEFT JOIN courses USING courseid'
+ 	);
+
 // 	console.log(alasql.queryValue('SELECT COUNT(*) FROM courses, students'));
     console.log(res.length);
-    console.log(res[0]);
+    console.table(res);
 
 </script>
