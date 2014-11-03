@@ -61,6 +61,20 @@ alasql.exec = function (sql) {
 	return this.currentDatabase.exec(sql);
 }
 
+// Aliases
+alasql.query = function (sql) {
+	return this.currentDatabase.query(sql);
+}
+
+alasql.querySingle = function (sql) {
+	return this.currentDatabase.querySingle(sql);
+}
+
+alasql.queryValue = function (sql) {
+	return this.currentDatabase.queryValue(sql);
+}
+
+
 Database.prototype.exec = function(sql) {
 	console.log(sql);
 	var tm1 = Date.now();
@@ -74,6 +88,19 @@ Database.prototype.exec = function(sql) {
 	console.log('compile:', tm1,'exec:', tm2);
 	return data;
 };
+
+// Aliases like Microsoft Database
+Database.prototype.query = Database.prototype.exec;
+
+Database.prototype.querySingle = function(sql) {
+	return this.exec(sql)[0];
+}
+
+Database.prototype.queryValue = function(sql) {
+	var res = this.querySingle(sql);
+	return res[Object.keys(res)[0]];
+}
+
 
 // TODO - Replace with normal transactions handling
 Transaction.prototype.executeSQL = function(sql) {

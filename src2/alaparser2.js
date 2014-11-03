@@ -90,7 +90,7 @@ yy.Select.prototype.compile = function(db) {
 	query.database = db;
 //	query.databaseid = db.databaseid;
 	this.compileFrom(query);
-	if(this.joins || this.from.length > 1) this.compileJoins(query);
+	if(this.joins) this.compileJoins(query);
 	query.selectfn = this.compileSelect(query);
 	query.wherefn = this.compileWhere(query);
 	if(this.order) query.orderfn = this.compileOrder(query);
@@ -155,18 +155,22 @@ function doJoin (query, scope, h) {
 		var tableid =source.tableid; 
 		var pass = false;
 
+
+		// Main cycle
 		for(var i=0, ilen=source.data.length; i<ilen; i++) {
 			scope[tableid] = source.data[i];
-			if(source.onleftfn && (source.onleftfn(scope) == source.onrightfn(scope))) {
+			if(!source.onleftfn || (source.onleftfn(scope) == source.onrightfn(scope))) {
 				doJoin(query, scope, h+1);
 				pass = true;
 			}
 		};
 
+		console.log("out",h,i,pass, source.joinmode );
+
 		// Additional for LEFT JOINS
 		if(source.joinmode == 'LEFT' && !pass) {
 			scope[tableid] = {};
-			self.doJoin(scope,h+1);
+			doJoin(query,scope,h+1);
 		}	
 
 	}
@@ -182,12 +186,15 @@ yy.Select.prototype.compileJoins = function(query) {
 			alias: tq.alias||tq.tableid,
 			databaseid: jn.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
-			joinmode: 'INNER'
+			joinmode: jn.joinmode
 		};
+
+		var alias = tq.as || tq.tableid;
+		query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
 
 		if(jn.using) {
 			var prevSource = query.sources[query.sources.length-1];
-			console.log(prevSource);
+//			console.log(query.sources[0],prevSource,source);
 			source.onleftfns = jn.using.map(function(colid){
 				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+colid+"']";
 			}).join('+"`"+');
@@ -197,14 +204,48 @@ yy.Select.prototype.compileJoins = function(query) {
 			}).join('+"`"+');
 			source.onrightfn = new Function('p','return '+source.onrightfns);
 			source.optimization = 'ix';
-		} else if(self.on) {
+		} else if(jn.on) {
+//console.log(jn.on);
+			if(jn.on instanceof yy.Op && jn.on.operation == '=') {
+				source.optimization = 'ix';
+				source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
+				source.onleftfn = new Function('p', 'return '+source.onleftfns);
+				source.onrightfns = jn.on.right.toJavaScript('p',query.defaultTableid);
+				source.onrightfn = new Function('p', 'return '+source.onrightfns);
+			} else {
+				source.optimization = 'no';
+				source.onleftfn = new Function('return true');
+				source.onrightfn = new Function('p','return '+jn.on.toJavaScript('p',query.defaultTableid));
+			};
+
 			// Optimization function
 		};
 
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
+//console.log(source, jn);
 		// TODO SubQueries
 		source.data = query.database.tables[source.tableid].data;
-		query.sources.push(source);
+		if(source.joinmode == 'RIGHT') {
+			var prevSource = query.sources.pop();
+			if(prevSource.joinmode == 'INNER') {
+				prevSource.joinmode = 'LEFT';
+				prevSource.onleftfn = source.onrightfn;
+				prevSource.onleftfns = source.onrightfns;
+				prevSource.onrightfn = source.onleftfn;
+				prevSource.onrightfns = source.onleftfns;
+				source.onleftfn = undefined;
+				source.onleftfns = undefined;
+				source.onrightfn = undefined;
+				source.onrightfns = undefined;
+				source.joinmode = 'INNER';
+				query.sources.push(source);
+				query.sources.push(prevSource);
+			} else {
+				throw new Error('Do not know how to process this SQL');
+			}
+		} else {
+			query.sources.push(source);
+		}
 	});
 	console.log('sources',query.sources);
 }
@@ -221,10 +262,12 @@ yy.Select.prototype.compileGroup = function(query) {
 //	var rg = gcols.map(function(columnid){return 'r.'+columnid});
 	var rg = this.group.map(function(col){
 		if(col == '') return '1';
+//		console.log(col.toJavaScript('r',''));
 //		console.log(col, col.toJavaScript('r',''));
 		else return col.toJavaScript('r','');
 	});
 
+	console.log('rg',rg);
 
 	s += rg.join('+"`"+');
 	s += '];if(!g) {this.groups.push(g=this.xgroups[';
@@ -233,6 +276,11 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	// columnid:r.columnid
 	var srg = [];//rg.map(function(fn){ return (fn+':'+fn); });
+
+//	var srg = this.group.map(function(col){
+//		if(col == '') return '';
+//		else return col.columnid+':'+col.toJavaScript('r','');
+//	});
 
 // Initializw aggregators
 
@@ -294,7 +342,7 @@ yy.Select.prototype.compileGroup = function(query) {
 	//s += 'group.count++;';
 
 //	s += '}';
-//	console.log(s);
+	console.log(s, this.group);
 	return new Function('r',s);
 
 }
@@ -523,6 +571,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	var op = this.op;
 	if(this.op == '=') op = '===';
 	else if(this.op == '<>') op = '!=';
+	else if(this.op == 'AND') op = '&&';
+	else if(this.op == 'OR') op = '||';
 	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';
 }
 
@@ -594,8 +644,11 @@ yy.Column.prototype.toJavaScript = function(context, tableid) {
 // 	} else {
 // 		s = tableid+'.'+s;
 // 	}
-if(tableid == '') res = context+'[\''+this.columnid+'\']';
-else return context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+	if(tableid == '') {
+		return context+'[\''+this.columnid+'\']';
+	} else {
+		return context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+	}
 }
 
 

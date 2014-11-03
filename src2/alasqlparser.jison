@@ -38,19 +38,23 @@
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 'IF'											return 'IF'
+'INNER'                                         return 'INNER'
 'INSERT'                                        return 'INSERT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
+'LEFT'											return 'LEFT'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
+'ON'											return 'ON'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'QUERY'                                        	return 'QUERY'
+'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
 'SELECT'                                        return 'SELECT'
 'SET'                                        	return 'SET'
@@ -240,10 +244,14 @@ JoinTablesList
 	;
 
 JoinTable
-	: JOIN Table OnClause
-		{ $$ = new yy.Join({table:$2}); yy.extend($$, $3); }
-	| JOIN Table
-		{ $$ = new yy.Join({table:$2}); }	
+	: JoinMode JOIN Table OnClause
+		{ $$ = new yy.Join({table:$3, joinmode: $1}); yy.extend($$, $4); }
+	;
+
+JoinMode
+	: {$$ = "INNER";}
+	| LEFT {$$ = $1;}
+	| RIGHT {$$ = $1;}
 	;
 
 OnClause
@@ -251,6 +259,8 @@ OnClause
 		{ $$ = {on: $2}; }
 	| USING ColumnsList
 		{ $$ = {using: $2}; }
+	|
+		{ $$ = null; }
 	;
 
 WhereClause
@@ -433,6 +443,10 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'=' , right:$3}); }
 	| Expression NE Expression
 		{ $$ = new yy.Op({left:$1, op:'!=' , right:$3}); }
+	| Expression AND Expression
+		{ $$ = new yy.Op({left:$1, op:'AND' , right:$3}); }
+	| Expression OR Expression
+		{ $$ = new yy.Op({left:$1, op:'OR' , right:$3}); }
 	| NOT Expression
 		{ $$ = new yy.UniOp({op:'NOT' , right:$2}); }
 	| MINUS Expression
