@@ -2,9 +2,10 @@
 //
 // alasqlparser.jison
 // SQL Parser for Alasql.js
-// Date: 31.10.2014
-// (c) Andrey Gershun
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
 //
+//1
 */
 
 %lex
@@ -15,13 +16,19 @@
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
+'ANTI'											return 'ANTI'
 'AS'                                      		return 'AS'
+'ASC'                                      		return 'DIRECTION'
+'AVG'                                      		return 'AVG'
 
 'BY'											return 'BY'
 
 'CREATE'										return 'CREATE'
+'COLLATE'										return 'COLLATE'
+"COUNT"											return "COUNT"
 'CUBE'											return 'CUBE'
 'DELETE'                                        return 'DELETE'
+'DESC'                                          return 'DIRECTION'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
 
@@ -33,24 +40,37 @@
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 'IF'											return 'IF'
+'INNER'                                         return 'INNER'
 'INSERT'                                        return 'INSERT'
 'INTO'                                         	return 'INTO'
+'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
+'LEFT'											return 'LEFT'
+'LIMIT'											return 'LIMIT'
+"MAX"											return "MAX"
+"MIN"											return "MIN"
+'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
+'ON'											return 'ON'
+'OFFSET'										return 'OFFSET'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'QUERY'                                        	return 'QUERY'
+'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
 'SELECT'                                        return 'SELECT'
 'SET'                                        	return 'SET'
 'SETS'                                        	return 'SETS'
+"SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TRUE'						  					return 'TRUE'
 'UPDATE'                                        return 'UPDATE'
+'USING'                                         return 'USING'
 'VALUES'                                        return 'VALUES'
 'WHERE'                                         return 'WHERE'
+
 
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
@@ -76,7 +96,6 @@
 .												return 'INVALID'
 
 /lex
-
 %
 %left OR
 %left AND
@@ -192,7 +211,7 @@ IntoClause
 
 FromClause
 	: FROM FromTablesList
-		{ $$ = { from: [$2] }; } 
+		{ $$ = { from: $2 }; } 
 	| FROM Table JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
 	;
@@ -228,21 +247,30 @@ JoinTablesList
 	;
 
 JoinTable
-	: JOIN Table OnClause
-		{ $$ = new yy.Join({table:$1}); yy.extend($$, $3); }
+	: JoinMode JOIN Table OnClause
+		{ $$ = new yy.Join({table:$3, joinmode: $1}); yy.extend($$, $4); }
+	;
+
+JoinMode
+	: {$$ = "INNER";}
+	| LEFT {$$ = $1;}
+	| RIGHT {$$ = $1;}
+	| ANTI {$$ = $1;}
 	;
 
 OnClause
 	: ON Expression
 		{ $$ = {on: $2}; }
-	| USING ColumnList
+	| USING ColumnsList
 		{ $$ = {using: $2}; }
+	|
+		{ $$ = null; }
 	;
 
 WhereClause
 	: { $$ = null; }
 	| WHERE Expression
-		{ $$ = {where:$2}; }
+		{ $$ = {where: new yy.Expression({expression:$2})}; }
 	;
 
 GroupClause
@@ -290,24 +318,26 @@ OrderExpressionsList
 	;
 
 OrderExpression
-	: Expression ASC
-		{ $$ = new yy.OrderExpression({expression: $1, order:$2.toUpperCase()}) }
-	| Expression DESC
-		{ $$ = new yy.OrderExpression({expression: $1, order:$2.toUpperCase()}) }
-	| Expression
-		{ $$ = new yy.OrderExpression({expression: $1}) }
+	: Expression
+		{ $$ = new yy.OrderExpression({expression: $1, direction:'ASC'}) }
+	| Expression DIRECTION
+		{ $$ = new yy.OrderExpression({expression: $1, direction:$2.toUpperCase()}) }
+	| Expression COLLATE NOCASE
+		{ $$ = new yy.OrderExpression({expression: $1, direction:'ASC', nocase:true}) }
+	| Expression COLLATE NOCASE DIRECTION
+		{ $$ = new yy.OrderExpression({expression: $1, direction:$4.toUpperCase(), nocase:true}) }
 	;
 
 LimitClause
 	: { $$ = null; }
 	| LIMIT Expression OffsetClause
-		{ $$ = {limit:$3}; yy.extend($$, $3)}
+		{ $$ = {limit:$2}; yy.extend($$, $3)}
 	;
 
 OffsetClause
 	: { $$ = null; }
 	| OFFSET Expression 
-		{ $$ = {offset:$3}}
+		{ $$ = {offset:$2}}
 	;
 
 ResultColumns
@@ -343,7 +373,9 @@ Column
 	;
 
 Expression
-	: FuncValue
+	: AggrValue
+		{ $$ = $1; }
+	| FuncValue
 		{ $$ = $1; }
 	| Op
 		{ $$ = $1; }
@@ -357,6 +389,20 @@ Expression
 		{ $$ = $1; }
 	| StringValue
 		{ $$ = $1; }
+	;
+
+
+AggrValue
+	: Aggregator LPAR Expression RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3}); }
+	;
+
+Aggregator
+	: SUM { $$ = $1; }
+	| COUNT { $$ = $1; }
+	| MIN { $$ = $1; }
+	| MAX { $$ = $1; }
+	| AVG { $$ = $1; }
 	;
 
 FuncValue
@@ -401,6 +447,10 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'=' , right:$3}); }
 	| Expression NE Expression
 		{ $$ = new yy.Op({left:$1, op:'!=' , right:$3}); }
+	| Expression AND Expression
+		{ $$ = new yy.Op({left:$1, op:'AND' , right:$3}); }
+	| Expression OR Expression
+		{ $$ = new yy.Op({left:$1, op:'OR' , right:$3}); }
 	| NOT Expression
 		{ $$ = new yy.UniOp({op:'NOT' , right:$2}); }
 	| MINUS Expression

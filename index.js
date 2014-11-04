@@ -1,4 +1,4 @@
-var alasql = require('./src/alasql')
+var alasql = require('./alasql')
 
 for(var key in alasql) {
   exports[key] = alasql[key]

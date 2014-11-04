@@ -3,7 +3,7 @@
 // alasqlparser.jison
 // SQL Parser for Alasql.js
 // Date: 31.10.2014
-// (c) Andrey Gershun
+// (c) 2014, Andrey Gershun
 //
 */
 

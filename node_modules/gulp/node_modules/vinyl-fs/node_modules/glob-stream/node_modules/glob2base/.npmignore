@@ -1,0 +1,9 @@
+.DS_Store
+*.log
+node_modules
+build
+*.node
+coverage
+*.orig
+.idea
+sandbox

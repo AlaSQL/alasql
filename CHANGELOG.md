@@ -1,8 +1,15 @@
 # Changelog
 
+### 0.0.6 (04.11.2014)
+
+* Developed new parser based on Jison
+* Use Gulp for development platform
+
+
 #### 0.0.5 (30.10.2014)
 
 * Changed order of LIMIT and ORDER BY processing
+
 
 #### Version 0.0.4 (28.10.2014-29.10.2014)
 
