@@ -23,7 +23,7 @@ describe('UPDATE', function(){
 		var res = db.exec('UPDATE test SET a = (b+100)');
 
 		assert.equal(4, res);
-		assert.equal(101, db.tables.test.recs[0].a);
+		assert.equal(101, db.tables.test.data[0].a);
 		done();		
 	});
 
@@ -45,11 +45,11 @@ describe('UPDATE', function(){
 		// console.log(db.tables.test.recs);
 
 		assert.equal(3, res);
-		assert.equal(100, db.tables.test.recs[0].a);
-		assert.equal(200, db.tables.test.recs[1].a);
-		assert.equal(300, db.tables.test.recs[2].a);
-		assert.equal(4, db.tables.test.recs[3].a);
-		assert.equal(5, db.tables.test.recs[4].a);
+		assert.equal(100, db.tables.test.data[0].a);
+		assert.equal(200, db.tables.test.data[1].a);
+		assert.equal(300, db.tables.test.data[2].a);
+		assert.equal(4, db.tables.test.data[3].a);
+		assert.equal(5, db.tables.test.data[4].a);
 
 		done();		
 	});

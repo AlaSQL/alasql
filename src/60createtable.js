@@ -33,21 +33,23 @@ yy.CreateTable.prototype.toString = function() {
 // CREATE TABLE
 yy.CreateTable.prototype.compile = function (db) {
 	var self = this;
+	var tableid = self.table.tableid;
+	var ifnotexists = self.ifnotexists;
+	var columns = self.columns;
 //	console.log(this);
 
 	return function() {
 
-		var tableid = self.table.tableid;
-		if(!self.ifnotexists || self.ifnotexists && !db.tables[tableid]) {
+		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {
 
 			if(db.tables[tableid]) 
-				throw new Error('Can not create table \''+this.target.value
+				throw new Error('Can not create table \''+tableid
 					+'\', because it already exists in the database \''+db.databaseid+'\'');
 
 			var table = db.tables[tableid] = {}; // TODO Can use special object?
 			table.columns = [];
 			table.xcolumns = {};
-			self.columns.forEach(function(col) {
+			columns.forEach(function(col) {
 				var newcol = {
 					columnid: col.columnid.toLowerCase(),
 					dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
@@ -55,7 +57,6 @@ yy.CreateTable.prototype.compile = function (db) {
 				table.columns.push(newcol);
 				table.xcolumns[newcol.columnid] = newcol;
 			});
-
 			table.data = [];
 			return 1;
 		};

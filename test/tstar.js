@@ -22,8 +22,8 @@ describe('* /STAR / MULTIPLICATION', function(){
 		db.exec('INSERT INTO test VALUES (4,40,400)');
 		db.exec('INSERT INTO test VALUES (5,50,500)');
 
-		console.log('There is a bug in parser')
-/*
+//		console.log('There is a bug in parser')
+
 		var res = db.exec('UPDATE test SET a = (c*100) WHERE b<=(3*10)');
 
 
@@ -32,12 +32,12 @@ describe('* /STAR / MULTIPLICATION', function(){
 		// console.log(db.tables.test.recs);
 
 		assert.equal(3, res);
-		assert.equal(10000, db.tables.test.recs[0].a);
-		assert.equal(20000, db.tables.test.recs[1].a);
-		assert.equal(30000, db.tables.test.recs[2].a);
-		assert.equal(4, db.tables.test.recs[3].a);
-		assert.equal(5, db.tables.test.recs[4].a);
-*/
+		assert.equal(10000, db.tables.test.data[0].a);
+		assert.equal(20000, db.tables.test.data[1].a);
+		assert.equal(30000, db.tables.test.data[2].a);
+		assert.equal(4, db.tables.test.data[3].a);
+		assert.equal(5, db.tables.test.data[4].a);
+
 
 		done();		
 	});

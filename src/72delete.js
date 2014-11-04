@@ -6,16 +6,28 @@ yy.Delete.prototype.toString = function() {
 }
 
 yy.Delete.prototype.compile = function (db) {
-	var table = db.tables[this.target.value];
-	var orignum = table.recs.length;
+//  console.log(11,this);
+	var tableid = this.table.tableid;
 
-	if(this.deleteCondition) {
-		var wherenotfn = new Function('rec','return !('+this.deleteCondition.toJavaScript('rec','')+')');
-//		console.log(this.deleteCondition.toJavaScript('rec',''));
-		table.recs = table.recs.filter(wherenotfn);
+	if(this.where) {
+//		try {
+//		console.log(this, 22, this.where.toJavaScript('r',''));
+//	} catch(err){console.log(444,err)};
+		var wherenotfn = new Function('r','return !('+this.where.toJavaScript('r','')+')');
+		return function () {
+			var table = db.tables[tableid];
+			var orignum = table.data.length;
+			table.data = table.data.filter(wherenotfn);
+//			console.log('deletefn',table.data.length);
+			return orignum - table.data.length;
+		}
 	} else {
-		table.recs.length = 0;		
+		return function () {
+			var table = db.tables[tableid];
+			var orignum = db.tables[tableid].data.length;
+			table.data.length = 0;
+			return orignum;
+		};
 	}
 
-	return orignum - table.recs.length;
 };

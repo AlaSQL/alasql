@@ -10,9 +10,13 @@ yy.DropTable.prototype.toString = function() {
 
 // DROP TABLE
 yy.DropTable.prototype.compile = function (db) {
-	if(this.ifExists && db.tables[this.target.value] || !this.ifExists) {
-		if(!db.tables[this.target.value]) throw new Error('Can not drop table \''+this.target.value+'\', because it does not exist in the database.');
-		delete db.tables[this.target.value];
+	var ifexists = this.ifexists;
+	var tableid = this.table.tableid;
+	return function() {
+		if(!ifexists || ifexists && db.tables[tableid]) {
+			if(!db.tables[tableid]) throw new Error('Can not drop table \''+this.target.value+'\', because it does not exist in the database.');
+			delete db.tables[tableid];
+		}
+		return 1;
 	}
-	return 1;
 };

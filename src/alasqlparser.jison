@@ -51,6 +51,7 @@
 "MIN"											return "MIN"
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
+'NULL'											return 'NULL'
 'ON'											return 'ON'
 'OFFSET'										return 'OFFSET'
 'OR'											return 'OR'
@@ -76,13 +77,13 @@
 '-' 											return 'MINUS'
 '*'												return 'STAR'
 '/'												return 'SLASH'
-'>'												return 'GT'
 '>='											return 'GE'
-'<'												return 'LT'
+'>'												return 'GT'
 '<='											return 'LE'
+'<>'											return 'NE'
+'<'												return 'LT'
 '='												return 'EQ'
 '!='											return 'NE'
-'<>'											return 'NE'
 '('												return 'LPAR'
 ')'												return 'RPAR'
 '.'												return 'DOT'
@@ -115,11 +116,12 @@ main
 	;
 
 Statements
-	: Statements SEMICOLON Statement
+	: Statements Statement
 		{ $$ = $1; $1.push($3); }
+	| Statement SEMICOLON
+		{ $$ = [$1]; }
 	| Statement
 		{ $$ = [$1]; }
-	| 
 	;
 
 ExplainStatement
@@ -389,6 +391,8 @@ Expression
 		{ $$ = $1; }
 	| StringValue
 		{ $$ = $1; }
+	| NullValue
+		{ $$ = $1; }
 	;
 
 
@@ -424,8 +428,14 @@ LogicValue
 
 StringValue
 	: STRING
-		{ $$ = new yy.StringValue({value: $1}); }
+		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/\'\'/g,"'")}); }
 	;
+
+NullValue
+	: NULL
+		{ $$ = new yy.NullValue({value:null}); }
+	;
+
 Op
 	: Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+' , right:$3}); }
@@ -511,6 +521,8 @@ Value
 	: NumValue
 	| StringValue
 	| LogicValue
+	| NullValue
+	| DateValue
 	;
 
 ColumnsList

@@ -1,0 +1,17 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+		var db = new alasql.Database();
+
+		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');
+
+		db.tables.person.data = [ 
+			{ name: 'bill' , sex:'M', income:50000 },
+            { name: 'sara' , sex:'F', income:100000 }
+        ];
+
+		console.log(db.exec("SELECT * FROM person WHERE sex='F' AND income > 60000"));
+
+//    console.log(res);
+</script>

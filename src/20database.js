@@ -13,7 +13,9 @@ alasql.tables = alasql.currentDatabase.tables;
 function Database(databaseid) {
 	var self = this;
 	if(self == alasql) self = new Database(databaseid); // to call without new
-	if(!databaseid) databaseid = 'start';
+	if(!databaseid) {
+		databaseid = +Date.now()+""; // Random name
+	}
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
 	self.tables = {};   // Tables

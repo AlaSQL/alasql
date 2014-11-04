@@ -74,7 +74,7 @@ function queryfn(query, args) {
 //	
 	doDistinct(query);	
 	doLimit(query);
-	if(query.orderfn) query.data = data.sort(query.orderfn);
+	if(query.orderfn) query.data = query.data.sort(query.orderfn);
 //		query.data = data;
 	return query.data;
 };

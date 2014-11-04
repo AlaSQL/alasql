@@ -15,12 +15,13 @@ describe('Test from jsFiddle', function(){
 
 		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');
 
-		db.tables.person.recs = [ 
+		db.tables.person.data = [ 
 			{ name: 'bill' , sex:'M', income:50000 },
             { name: 'sara' , sex:'F', income:100000 }
         ];
 
-		assert.deepEqual([{name:"sara",sex:"F",income:100000}], db.exec('SELECT * FROM person WHERE sex="F" AND income > 60000'));
+		assert.deepEqual([{name:"sara",sex:"F",income:100000}], 
+			db.exec("SELECT * FROM person WHERE sex='F' AND income > 60000"));
 		done();		
 	});
 });

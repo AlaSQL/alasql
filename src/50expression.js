@@ -48,6 +48,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	else if(this.op == '<>') op = '!=';
 	else if(this.op == 'AND') op = '&&';
 	else if(this.op == 'OR') op = '||';
+//	console.log(this);
 	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';
 }
 
@@ -58,7 +59,7 @@ yy.NumValue.prototype.toString = function() {
 	return this.value.toString();
 }
 yy.NumValue.prototype.toJavaScript = function() {
-	return this.value.toString();
+	return ""+this.value;
 }
 
 
@@ -66,11 +67,25 @@ yy.StringValue = function (params) { return yy.extend(this, params); }
 yy.StringValue.prototype.toString = function() {
 	return this.value.toString();
 }
+yy.StringValue.prototype.toJavaScript = function() {
+	return "'"+this.value+"'";
+}
 
 
 yy.LogicValue = function (params) { return yy.extend(this, params); }
 yy.LogicValue.prototype.toString = function() {
 	return this.value?'TRUE':'FALSE';
+}
+yy.LogicValue.prototype.toJavaScript = function() {
+	return this.value?'true':'false';
+}
+
+yy.NullValue = function (params) { return yy.extend(this, params); }
+yy.NullValue.prototype.toString = function() {
+	return 'NULL';
+}
+yy.NullValue.prototype.toJavaScript = function() {
+	return 'null';
 }
 
 
@@ -79,7 +94,14 @@ yy.UniOp.prototype.toString = function() {
 	if(this.op == '-') return this.op+this.right.toString();
 	if(this.op == 'NOT') return this.op+'('+this.right.toString()+')';
 	else if(this.op == null) return '('+this.right.toString()+')';
-}
+};
+
+yy.UniOp.prototype.toJavaScript = function(context, tableid) {
+	if(this.op == '-') return "-"+this.right.toJavaScript(context, tableid);
+	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid)+')';
+	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid)+')';
+};
+
 
 
 // yy.Star = function (params) { return yy.extend(this, params); }

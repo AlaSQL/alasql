@@ -13,28 +13,32 @@ yy.SetColumn.prototype.toString = function() {
 }
 
 yy.Update.prototype.compile = function (db) {
-	var table =  db.tables[this.target.value];
+//	console.log(this);
+
+	var tableid = this.table.tableid;
 	
 	if(this.where) {
-		var wherefn = new Function('rec','return '+this.updateCondition.toJavaScript('rec',''));
+		var wherefn = new Function('r','return '+this.where.toJavaScript('r',''));
 	};
 
 	// Construct update function
 	var s = '';
-	this.assignList.forEach(function(al){
-		s += 'rec.'+al.left.value+'='+al.right.toJavaScript('rec','')+';'; 
+	this.columns.forEach(function(col){
+		s += 'r.'+col.columnid+'='+col.expression.toJavaScript('r','')+';'; 
 	});
-	var assignfn = new Function('rec',s);
+	var assignfn = new Function('r',s);
 
-	var numrows = 0;
-	for(var i=0, ilen=table.recs.length; i<ilen; i++) {
-		if(!wherefn || wherefn(table.recs[i]) ) {
-			assignfn(table.recs[i]);
-			numrows++;
+	return function() {
+		var table = db.tables[tableid];
+		var numrows = 0;
+		for(var i=0, ilen=table.data.length; i<ilen; i++) {
+			if(!wherefn || wherefn(table.data[i]) ) {
+				assignfn(table.data[i]);
+				numrows++;
+			}
 		}
-	}
-
-	return numrows;
+		return numrows;
+	};
 };
 
 

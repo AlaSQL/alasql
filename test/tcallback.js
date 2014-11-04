@@ -13,7 +13,10 @@ describe('Callback', function(){
 	it('exec(sql, callback)', function(done) {
 
 		alasql.exec('CREATE TABLE test (a INT, b INT)');
+		console.log('ok1');
+
 		alasql.exec('INSERT INTO test VALUES (1,1)');
+		console.log('ok2');
 
 		alasql.exec('SELECT * FROM test', [], function(res) {
 			assert.equal(1, res[0].a);

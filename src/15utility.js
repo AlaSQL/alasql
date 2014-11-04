@@ -8,3 +8,17 @@ function hash(str){
    	}
     return h;
 };
+
+/*
+String.prototype.toJavaScript = function() {
+	return "'"+this+"'";
+}
+
+Number.prototype.toJavaScript = function() {
+	return this;
+}
+
+Boolean.prototype.toJavaScript = function() {
+	return this;
+}
+*/

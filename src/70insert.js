@@ -10,25 +10,49 @@ yy.Insert.prototype.toString = function() {
 yy.Insert.prototype.compile = function (db) {
 	var self = this;
 //	console.log(self);
+	var alasql = alasql;
 	var tableid = self.into.tableid;
 
-	var s = 'alasql.tables[\''+tableid+'\'].data.push({';
+	var s = 'alasql.databases[\''+db.databaseid+'\'].tables[\''+tableid+'\'].data.push({';
 
 	var ss = [];
 	if(self.columns) {
 		self.columns.forEach(function(col, idx){
-			ss.push(col.columnid +':'+ self.values[idx].value.toString());
+//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
 //			console.log(rec[f.name.value]);
 //			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
 
 //			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
 //			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
+			var q = col.columnid +':';
+			// if(table.xcolumns && table.xcolumns[col.columnid] && 
+			// 	( table.xcolumns[col.columnid].dbtypeid == "INT"
+			// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
+			// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
+			// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
+			// 	)) q += '+';
+//			console.log(self.values[idx].value);
+			q += self.values[idx].toJavaScript();
+			// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
+			ss.push(q);
+
 		});
 	} else {
 		var table = db.tables[tableid];
-//		console.log('table', table.flds);
+//		console.log('table', table.columns);
 		table.columns.forEach(function(col, idx){
-			ss.push(col.columnid +':'+ self.values[idx].value.toString());
+			var q = col.columnid +':';
+			// if(table.xcolumns && table.xcolumns[col.columnid] && 
+			// 	( table.xcolumns[col.columnid].dbtypeid == "INT"
+			// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
+			// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
+			// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
+			// 	)) q += '+';
+		//	console.log(self.values[idx].toString());
+//console.log(self);
+			q += self.values[idx].toJavaScript();
+			// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
+			ss.push(q);
 
 //			console.log(fld);
 			// TODO: type checking and conversions
@@ -44,6 +68,7 @@ yy.Insert.prototype.compile = function (db) {
 
 
 	s += ss.join(',')+'});return 1;';
+	console.log(s);
 	return new Function(s);
 };
 
