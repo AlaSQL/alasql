@@ -12,10 +12,10 @@ yy.SetColumn.prototype.toString = function() {
 	return this.columnid.toString() + '='+this.expression.toString();
 }
 
-nodes.Update.prototype.exec = function (db) {
+yy.Update.prototype.compile = function (db) {
 	var table =  db.tables[this.target.value];
 	
-	if(this.updateCondition) {
+	if(this.where) {
 		var wherefn = new Function('rec','return '+this.updateCondition.toJavaScript('rec',''));
 	};
 

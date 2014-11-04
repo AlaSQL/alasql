@@ -127,22 +127,7 @@ yy.Column.prototype.toJavaScript = function(context, tableid) {
 }
 
 
-yy.FuncValue = function(params){ return yy.extend(this, params); }
-yy.FuncValue.prototype.toString = function() {
-	var s = this.funcid+'(';
-	if(this.expression) s += this.expression.toString();
-	s += ')';
-//	if(this.alias) s += ' AS '+this.alias;
-	return s;
-}
 
-yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
-	var s = 'alasql.functions.'+this.funcid+'(';
-	if(this.expression) s += this.expression.toJavaScript(context, tableid);
-	s += ')';
-//	if(this.alias) s += ' AS '+this.alias;
-	return s;
-}
 
 yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
@@ -154,11 +139,11 @@ yy.AggrValue.prototype.toString = function() {
 }
 
 yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
-	var s = 'alasql.functions.'+this.funcid+'(';
-	if(this.expression) s += this.expression.toJavaScript(context, tableid);
-	s += ')';
+//	var s = 'alasql.functions.'+this.funcid+'(';
+//	if(this.expression) s += this.expression.toJavaScript(context, tableid);
+//	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
-	return s;
+//	return s;
 }
 
 

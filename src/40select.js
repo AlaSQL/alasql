@@ -38,8 +38,12 @@ yy.Select.prototype.compile = function(db) {
 //	if(this.where) select.wherefn = this.where.compile('scope.','STUB');
 //console.log(query);
 	// TODO Remove debug
-	window.q = query;
-	return function() {return queryfn(query,arguments); }
+//	window.q = query;
+	return function(params, cb) {
+		var res = queryfn(query,params); 
+		if(cb) cb(res); 
+		return res;
+	}
 };
 
 
@@ -233,6 +237,10 @@ yy.Select.prototype.compileJoins = function(query) {
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 //console.log(source, jn);
 		// TODO SubQueries
+		if(!query.database.tables[source.tableid]) {
+			throw new Error('Table \''+source.tableid+
+			'\' is not exists in database \''+query.database.databaseid)+'\'';
+		};
 		source.data = query.database.tables[source.tableid].data;
 		if(source.joinmode == 'RIGHT') {
 			var prevSource = query.sources.pop();

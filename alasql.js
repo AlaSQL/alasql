@@ -5,6 +5,29 @@
 // Version: 0.0.6
 // (ñ) 2014, Andrey Gershun
 //
+/*
+The MIT License (MIT)
+
+Copyright (c) 2014 Andrey Gershun (agershun@gmail.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 //  UMD header
 (function (root, factory) {
@@ -119,7 +142,7 @@ break;
 case 6:
  this.$ = $$[$0];  $$[$0].explain = true;
 break;
-case 14: case 15: case 30: case 52: case 70: case 77: case 78: case 79: case 80: case 81: case 82: case 83: case 84: case 86: case 87: case 88: case 89: case 90: case 131:
+case 14: case 15: case 30: case 52: case 70: case 77: case 78: case 79: case 80: case 81: case 82: case 83: case 84: case 86: case 87: case 88: case 89: case 90:
  this.$ = $$[$0]; 
 break;
 case 16:
@@ -137,7 +160,7 @@ break;
 case 21:
  this.$ = new yy.Select({ columns:$$[$0] }); 
 break;
-case 22: case 128: case 142:
+case 22: case 142:
 this.$ = null
 break;
 case 23:
@@ -179,7 +202,7 @@ break;
 case 41:
  this.$ = {using: $$[$0]}; 
 break;
-case 42: case 43: case 45: case 53: case 55: case 63: case 65:
+case 42: case 43: case 45: case 53: case 55: case 63: case 65: case 128: case 131:
  this.$ = null; 
 break;
 case 44:
@@ -338,8 +361,10 @@ break;
 case 127:
  
 			this.$ = new yy.CreateTable({table:$$[$0-4]}); 
-			yy.extend(this.$,$$[$0-7]); yy.extend(this.$,$$[$0-5]); 
-			yy.extend(this.$,$$[$0-2]); yy.extend(this.$,$$[$0-1]);
+			yy.extend(this.$,$$[$0-7]); 
+			yy.extend(this.$,$$[$0-5]); 
+			yy.extend(this.$,$$[$0-2]); 
+			yy.extend(this.$,$$[$0-1]);
 		
 break;
 case 129: case 130:
@@ -1074,13 +1099,15 @@ alasql.parser = parser;
 alasql.databases = {};
 
 // Create default database
-alasql.currentDatabase = new Database('start');
+alasql.currentDatabase = new Database();
 alasql.tables = alasql.currentDatabase.tables;
 
 // Main Database class
 function Database(databaseid) {
 	var self = this;
 	if(self == alasql) self = new Database(databaseid); // to call without new
+	if(!databaseid) databaseid = 'start';
+	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
 	self.tables = {};   // Tables
 	self.sqlcache = {}; // Cache for compiled SQL statements
@@ -1099,45 +1126,48 @@ function Transaction(database) {
 // Main class 
 alasql.Transaction = Transaction;
 
+alasql.compile = function(sql) {
+	return this.currentDatabase.compile(sql);
+}
 // Default methods to exec SQL statements
-alasql.run = alasql.exec = function (sql) {
-	return this.currentDatabase.exec(sql);
+alasql.run = alasql.exec = function (sql, params, cb) {
+	return this.currentDatabase.exec(sql, params, cb);
 };
 
 // MSSQL aliases
-alasql.query = function (sql) {
-	return this.currentDatabase.query(sql);
+alasql.query = function (sql, params, cb) {
+	return this.currentDatabase.query(sql, params.cb);
 }
-alasql.querySingle = function (sql) {
-	return this.currentDatabase.querySingle(sql);
+alasql.querySingle = function (sql, params, cb) {
+	return this.currentDatabase.querySingle(sql, params, cb);
 }
 alasql.queryValue = function (sql) {
-	return this.currentDatabase.queryValue(sql);
+	return this.currentDatabase.queryValue(sql, params, cb);
 }
 
 // Main SQL function
-Database.prototype.exec = function(sql, args) {
+Database.prototype.exec = function(sql, params, cb) {
 	// Compile
 	var statement = this.compile(sql);
 	// Run
-	var data = statement(args);
+	var data = statement(params, cb);
 	return data;
 };
 
 // Aliases like Microsoft Database
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
-Database.prototype.querySingle = function(sql) {
-	return this.exec(sql)[0];
+Database.prototype.querySingle = function(sql, params, cb) {
+	return this.exec(sql, params, cb)[0];
 }
-Database.prototype.queryValue = function(sql) {
-	var res = this.querySingle(sql);
+Database.prototype.queryValue = function(sql, params, cb) {
+	var res = this.querySingle(sql, params, cb);
 	return res[Object.keys(res)[0]];
 }
 
 // Transactions stub
 // TODO: Implement transactions
-Transaction.prototype.executeSQL = function(sql) {
+Transaction.prototype.executeSQL = function(sql, params, cb) {
 	this.database.exec(sql);
 };
 
@@ -1168,7 +1198,7 @@ Database.prototype.transaction = function(callback) {
 };
 
 
-console.log(parser);
+//console.log(parser);
 
 var yy = parser.yy = {};
 
@@ -1197,8 +1227,10 @@ yy.Statements.prototype.compile = function(db) {
 	if(statements.length == 1) {
 		return statements[0];	
 	} else {
-		return function(){
-			return statements.map(function(st){ return st(); });
+		return function(params, cb){
+			var res = statements.map(function(st){ return st(params); });
+			if(cb) cb(res);
+			return res;
 		}
 	}
 };
@@ -1244,8 +1276,12 @@ yy.Select.prototype.compile = function(db) {
 //	if(this.where) select.wherefn = this.where.compile('scope.','STUB');
 //console.log(query);
 	// TODO Remove debug
-	window.q = query;
-	return function() {return queryfn(query,arguments); }
+//	window.q = query;
+	return function(params, cb) {
+		var res = queryfn(query,params); 
+		if(cb) cb(res); 
+		return res;
+	}
 };
 
 
@@ -1439,6 +1475,10 @@ yy.Select.prototype.compileJoins = function(query) {
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 //console.log(source, jn);
 		// TODO SubQueries
+		if(!query.database.tables[source.tableid]) {
+			throw new Error('Table \''+source.tableid+
+			'\' is not exists in database \''+query.database.databaseid)+'\'';
+		};
 		source.data = query.database.tables[source.tableid].data;
 		if(source.joinmode == 'RIGHT') {
 			var prevSource = query.sources.pop();
@@ -1749,6 +1789,17 @@ yy.Select.prototype.compileOrder = function (query) {
 
 
 
+// SELECT UNION statement
+
+yy.Union = function (params) { return yy.extend(this, params); }
+yy.Union.prototype.toString = function () {
+	return "UNION";
+};
+
+yy.Union.prototype.compile = function (tableid) {
+	return null;
+};
+
 
 yy.Expression = function(params) { return yy.extend(this, params); };
 yy.Expression.prototype.toString = function() {
@@ -1878,22 +1929,7 @@ yy.Column.prototype.toJavaScript = function(context, tableid) {
 }
 
 
-yy.FuncValue = function(params){ return yy.extend(this, params); }
-yy.FuncValue.prototype.toString = function() {
-	var s = this.funcid+'(';
-	if(this.expression) s += this.expression.toString();
-	s += ')';
-//	if(this.alias) s += ' AS '+this.alias;
-	return s;
-}
 
-yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
-	var s = 'alasql.functions.'+this.funcid+'(';
-	if(this.expression) s += this.expression.toJavaScript(context, tableid);
-	s += ')';
-//	if(this.alias) s += ' AS '+this.alias;
-	return s;
-}
 
 yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
@@ -1905,11 +1941,11 @@ yy.AggrValue.prototype.toString = function() {
 }
 
 yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
-	var s = 'alasql.functions.'+this.funcid+'(';
-	if(this.expression) s += this.expression.toJavaScript(context, tableid);
-	s += ')';
+//	var s = 'alasql.functions.'+this.funcid+'(';
+//	if(this.expression) s += this.expression.toJavaScript(context, tableid);
+//	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
-	return s;
+//	return s;
 }
 
 
@@ -1939,6 +1975,76 @@ yy.ColumnDef.prototype.toString = function() {
 	if(this.notnull) s += ' NOT NULL';
 	return s;
 }
+
+
+yy.FuncValue = function(params){ return yy.extend(this, params); }
+yy.FuncValue.prototype.toString = function() {
+	var s = this.funcid+'(';
+	if(this.expression) s += this.expression.toString();
+	s += ')';
+//	if(this.alias) s += ' AS '+this.alias;
+	return s;
+}
+
+yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
+	var s = '';
+	// IF this is standard compile functions
+	if(alasql.stdlib[this.funcid.toUpperCase()]) {
+		s += alasql.stdlib[this.funcid.toUpperCase()].apply(this, this.args);
+	} else {
+	// This is user-defined run-time function
+	// TODO arguments!!!
+		var s = 'alasql.userlib.'+this.funcid.toUpperCase()+'(';
+		if(this.args) s += this.args.toJavaScript(context, tableid);
+		s += ')';
+	}
+//	if(this.alias) s += ' AS '+this.alias;
+	return s;
+}
+
+// // Functions compiler
+// nodes.FunctionValue.prototype.toJavaScript = function (context, tableid) {
+// 	var s = '';
+// 	s += fns[this.name.toUpperCase()].apply(null,this.arguments.map(function(arg){
+// 		if(arg) return arg.toJavaScript(context, tableid);
+// 		else return '';
+// 	}));
+// 	return s;
+// };
+
+// 
+// SQL FUNCTIONS COMPILERS
+// Based on SQLite functions
+
+// IMPORTANT: These are compiled functions
+
+alasql.userlib = {};
+var stdlib = alasql.stdlib = {}
+
+stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
+stdlib.IIF = function(a,b,c) {
+	if(arguments.length == 3) {
+		return  '(('+a+')?('+b+'):('+c+'))';
+	};
+	// TODO: check number of arguments
+};
+stdlib.LOWER = function(s) {return '('+s+').toLowerCase()';}
+stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
+stdlib.IFNULL = function(a,b) {return '('+a+'||'+b+')'};
+stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
+stdlib.LENGTH = function(s) {return '('+s+').length'};
+// fns.LIKE = function(x,y,z) {
+// 	return x.match(new RegExp(y.replace(/\%/g,'*')))[0].length;
+// };
+// LTRIM
+stdlib.MAX = function(){return 'Math.max('+arguments.join(',')+')'};
+stdlib.MIN = function(){return 'Math.min('+arguments.join(',')+')'};
+//fns.MIN = function(){return Math.min.apply(null, arguments)};
+stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
+//REPLACE
+// RTRIM
+// SUBSTR
+// TRIM
 
 
 
@@ -1973,6 +2079,43 @@ yy.CreateTable.prototype.toString = function() {
 	return s;
 }
 
+// CREATE TABLE
+yy.CreateTable.prototype.compile = function (db) {
+	var self = this;
+//	console.log(this);
+
+	return function() {
+
+		var tableid = self.table.tableid;
+		if(!self.ifnotexists || self.ifnotexists && !db.tables[tableid]) {
+
+			if(db.tables[tableid]) 
+				throw new Error('Can not create table \''+this.target.value
+					+'\', because it already exists in the database \''+db.databaseid+'\'');
+
+			var table = db.tables[tableid] = {}; // TODO Can use special object?
+			table.columns = [];
+			table.xcolumns = {};
+			self.columns.forEach(function(col) {
+				var newcol = {
+					columnid: col.columnid.toLowerCase(),
+					dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
+				};
+				table.columns.push(newcol);
+				table.xcolumns[newcol.columnid] = newcol;
+			});
+
+			table.data = [];
+			return 1;
+		};
+		return 0;
+	};
+};
+
+
+
+
+
 yy.DropTable = function (params) { return yy.extend(this, params); }
 yy.DropTable.prototype.toString = function() {
 	var s = 'DROP TABLE';
@@ -1980,6 +2123,29 @@ yy.DropTable.prototype.toString = function() {
 	s += ' '+this.table.toString();
 	return s;
 }
+
+
+// DROP TABLE
+yy.DropTable.prototype.compile = function (db) {
+	if(this.ifExists && db.tables[this.target.value] || !this.ifExists) {
+		if(!db.tables[this.target.value]) throw new Error('Can not drop table \''+this.target.value+'\', because it does not exist in the database.');
+		delete db.tables[this.target.value];
+	}
+	return 1;
+};
+
+
+
+// ALTER TABLE table1 RENAME TO table2
+yy.AlterTable = function (params) { return yy.extend(this, params); }
+yy.AlterTable.prototype.compile = function (db) {
+	if(this.newName.value != this.target.value) {
+		db.tables[this.newName.value] = db.tables[this.target.value];
+		delete db.tables[this.target.value];
+	}
+	return 1;
+};
+
 
 
 
@@ -1991,12 +2157,72 @@ yy.Insert.prototype.toString = function() {
 	return s;
 }
 
+yy.Insert.prototype.compile = function (db) {
+	var self = this;
+//	console.log(self);
+	var tableid = self.into.tableid;
+
+	var s = 'alasql.tables[\''+tableid+'\'].data.push({';
+
+	var ss = [];
+	if(self.columns) {
+		self.columns.forEach(function(col, idx){
+			ss.push(col.columnid +':'+ self.values[idx].value.toString());
+//			console.log(rec[f.name.value]);
+//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
+
+//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
+//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
+		});
+	} else {
+		var table = db.tables[tableid];
+//		console.log('table', table.flds);
+		table.columns.forEach(function(col, idx){
+			ss.push(col.columnid +':'+ self.values[idx].value.toString());
+
+//			console.log(fld);
+			// TODO: type checking and conversions
+//			rec[fld.fldid] = eval(self.insertExpression[idx].toJavaScript('',''));
+//			console.log(rec[fld.fldid]);
+//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
+
+//			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
+//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
+//				rec[fld.fldid] = +rec[fld.fldid];
+		});
+	}
+
+
+	s += ss.join(',')+'});return 1;';
+	return new Function(s);
+};
+
+
+
+
+
 yy.Delete = function (params) { return yy.extend(this, params); }
 yy.Delete.prototype.toString = function() {
 	var s = 'DELETE FROM '+this.table.toString();
 	if(this.where) s += ' WHERE '+this.where.toString();
 	return s;
 }
+
+yy.Delete.prototype.compile = function (db) {
+	var table = db.tables[this.target.value];
+	var orignum = table.recs.length;
+
+	if(this.deleteCondition) {
+		var wherenotfn = new Function('rec','return !('+this.deleteCondition.toJavaScript('rec','')+')');
+//		console.log(this.deleteCondition.toJavaScript('rec',''));
+		table.recs = table.recs.filter(wherenotfn);
+	} else {
+		table.recs.length = 0;		
+	}
+
+	return orignum - table.recs.length;
+};
+
 
 yy.Update = function (params) { return yy.extend(this, params); }
 yy.Update.prototype.toString = function() {
@@ -2006,10 +2232,40 @@ yy.Update.prototype.toString = function() {
 	return s;
 }
 
+
 yy.SetColumn = function (params) { return yy.extend(this, params); }
 yy.SetColumn.prototype.toString = function() {
 	return this.columnid.toString() + '='+this.expression.toString();
 }
+
+yy.Update.prototype.compile = function (db) {
+	var table =  db.tables[this.target.value];
+	
+	if(this.where) {
+		var wherefn = new Function('rec','return '+this.updateCondition.toJavaScript('rec',''));
+	};
+
+	// Construct update function
+	var s = '';
+	this.assignList.forEach(function(al){
+		s += 'rec.'+al.left.value+'='+al.right.toJavaScript('rec','')+';'; 
+	});
+	var assignfn = new Function('rec',s);
+
+	var numrows = 0;
+	for(var i=0, ilen=table.recs.length; i<ilen; i++) {
+		if(!wherefn || wherefn(table.recs[i]) ) {
+			assignfn(table.recs[i]);
+			numrows++;
+		}
+	}
+
+	return numrows;
+};
+
+
+
+
 
 
 // End of module

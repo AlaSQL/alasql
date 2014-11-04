@@ -1,4 +1,4 @@
-console.log(parser);
+//console.log(parser);
 
 var yy = parser.yy = {};
 

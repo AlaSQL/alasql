@@ -5,7 +5,7 @@ yy.Delete.prototype.toString = function() {
 	return s;
 }
 
-nodes.Delete.prototype.exec = function (db) {
+yy.Delete.prototype.compile = function (db) {
 	var table = db.tables[this.target.value];
 	var orignum = table.recs.length;
 

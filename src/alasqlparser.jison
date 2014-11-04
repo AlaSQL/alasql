@@ -523,16 +523,18 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	: CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause ConstraintsClause RPAR
+	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause ConstraintsClause RPAR
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
-			yy.extend($$,$2); yy.extend($$,$4); 
-			yy.extend($$,$7); yy.extend($$,$8);
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
+			yy.extend($$,$7); 
+			yy.extend($$,$8);
 		}
 	;
 
 TemporaryClause 
-	: {$$ = null}
+	: { $$ = null; }
 	| TEMPORARY
 		{ $$ = {temporary:true}; }
 	| TEMP
@@ -540,7 +542,7 @@ TemporaryClause
 	;
 
 IfNotExists
-	: { $$ = $1; }
+	: { $$ = null; }
 	| IF NOT EXISTS
 		{ $$ = {ifnotexists: true}; }
 	;

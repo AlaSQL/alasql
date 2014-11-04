@@ -113,11 +113,11 @@ if(!defined) {
 
  	var res = alasql.exec('SELECT students.schoolid '+
  		' FROM students '+
- 		' LEFT JOIN courses1 USING courseid'
+ 		' LEFT JOIN courses USING courseid'
  	);
 
 // 	console.log(alasql.queryValue('SELECT COUNT(*) FROM courses, students'));
-    console.log(res.length);
+    console.log('Number of records:', res.length);
     console.table(res);
 
 </script>

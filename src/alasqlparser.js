@@ -98,7 +98,7 @@ break;
 case 6:
  this.$ = $$[$0];  $$[$0].explain = true;
 break;
-case 14: case 15: case 30: case 52: case 70: case 77: case 78: case 79: case 80: case 81: case 82: case 83: case 84: case 86: case 87: case 88: case 89: case 90: case 131:
+case 14: case 15: case 30: case 52: case 70: case 77: case 78: case 79: case 80: case 81: case 82: case 83: case 84: case 86: case 87: case 88: case 89: case 90:
  this.$ = $$[$0]; 
 break;
 case 16:
@@ -116,7 +116,7 @@ break;
 case 21:
  this.$ = new yy.Select({ columns:$$[$0] }); 
 break;
-case 22: case 128: case 142:
+case 22: case 142:
 this.$ = null
 break;
 case 23:
@@ -158,7 +158,7 @@ break;
 case 41:
  this.$ = {using: $$[$0]}; 
 break;
-case 42: case 43: case 45: case 53: case 55: case 63: case 65:
+case 42: case 43: case 45: case 53: case 55: case 63: case 65: case 128: case 131:
  this.$ = null; 
 break;
 case 44:
@@ -317,8 +317,10 @@ break;
 case 127:
  
 			this.$ = new yy.CreateTable({table:$$[$0-4]}); 
-			yy.extend(this.$,$$[$0-7]); yy.extend(this.$,$$[$0-5]); 
-			yy.extend(this.$,$$[$0-2]); yy.extend(this.$,$$[$0-1]);
+			yy.extend(this.$,$$[$0-7]); 
+			yy.extend(this.$,$$[$0-5]); 
+			yy.extend(this.$,$$[$0-2]); 
+			yy.extend(this.$,$$[$0-1]);
 		
 break;
 case 129: case 130:

@@ -10,8 +10,10 @@ yy.Statements.prototype.compile = function(db) {
 	if(statements.length == 1) {
 		return statements[0];	
 	} else {
-		return function(){
-			return statements.map(function(st){ return st(); });
+		return function(params, cb){
+			var res = statements.map(function(st){ return st(params); });
+			if(cb) cb(res);
+			return res;
 		}
 	}
 };

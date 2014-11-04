@@ -1,0 +1,12 @@
+<!--<script src="../..//alasqlparser.js"></script>-->
+<script src="../../alasql.js"></script>
+
+<script>
+ 	var res = alasql.compile('CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)');
+
+    console.log(res);
+    console.log(res());
+    console.log('Number of records:', res.length);
+    console.table(res);
+
+</script>

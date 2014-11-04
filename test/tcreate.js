@@ -1,11 +1,6 @@
-﻿//
-// tselect01.js
-// Test for select
-//
-
+﻿
 if(typeof exports === 'object') {
 	var assert = require("assert");
-//	var alasql = require(__dirname+'/../src/alasql.js');
 	var alasql = require('..');
 };
 
@@ -26,7 +21,7 @@ describe('CREATE TABLE IF EXISTS', function(){
 		var db = new alasql.Database();
 		db.exec('CREATE TABLE test (a int, b int)');
 		db.exec('CREATE TABLE IF NOT EXISTS test (c int)');
-		assert.equal("a", db.tables.test.flds[0].fldid);
+		assert.equal("a", db.tables.test.columns[0].columnid);
 		done();		
 	});
 
