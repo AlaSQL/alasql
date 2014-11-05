@@ -14,19 +14,22 @@ yy.Delete.prototype.compile = function (db) {
 //		try {
 //		console.log(this, 22, this.where.toJavaScript('r',''));
 //	} catch(err){console.log(444,err)};
-		var wherenotfn = new Function('r','return !('+this.where.toJavaScript('r','')+')');
-		return function () {
+		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
+//		console.log(wherefn);
+		return function (params, cb) {
 			var table = db.tables[tableid];
 			var orignum = table.data.length;
-			table.data = table.data.filter(wherenotfn);
+			table.data = table.data.filter(function(r){return !wherefn(r,params);});
 //			console.log('deletefn',table.data.length);
+			if(cb) cb(orignum - table.data.length);
 			return orignum - table.data.length;
 		}
 	} else {
-		return function () {
+		return function (params, cb) {
 			var table = db.tables[tableid];
 			var orignum = db.tables[tableid].data.length;
 			table.data.length = 0;
+			if(cb) cb(orignum);
 			return orignum;
 		};
 	}

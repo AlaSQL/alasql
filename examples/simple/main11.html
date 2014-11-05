@@ -1,0 +1,31 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+		alasql.exec('DROP TABLE IF EXISTS test');
+
+		alasql.exec('CREATE TABLE test (a int, b int)');
+		var insert = alasql.compile('INSERT INTO test VALUES ($a,$b)');
+		insert({a:1,b:1});
+		insert({a:2,b:3});
+
+		var insert2 = alasql.compile('INSERT INTO test VALUES (:a,:b)');
+		insert2({a:1,b:1});
+		insert2({a:2,b:3});
+
+		alasql.exec('INSERT INTO test VALUES (?,?)',[99,100]);
+
+		alasql.exec('UPDATE test SET b = 5 WHERE b = ?',[100]);
+
+		var res = alasql.exec('SELECT * FROM test');
+		console.table(res);
+
+		var res = alasql.exec('SELECT * FROM test WHERE a = ?',[99]);
+		console.table(res);
+
+		console.log(alasql.exec('DELETE FROM test WHERE b = ? ',[3]));
+
+		var res1 = alasql.exec('SELECT * FROM test');
+		console.table(res1);
+
+</script>

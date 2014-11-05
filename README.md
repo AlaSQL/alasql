@@ -1,10 +1,8 @@
-# alasql.js - pure JavaScript client-side SQL-database 
+# Alasql.js - pure JavaScript client-side fast SQL-database 
 
-Version: 0.0.5 Date: October 30, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.1.0 Date: November 5, 2014 [Changelog](CHANGELOG.md) 
 
-alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It uses [SQL Parser](https://github.com/forward/sql-parser) by Andrew Kent for parsing of SQL statements.
-
-alasql.js was written with pure JavaScript and does not use browser WebSQL database.
+Alasql.js - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database.
 
 ## Examples
 
@@ -14,27 +12,25 @@ Other examples:
 * [Sandbox](examples/sandbox.html)
 * [Sieve of Eratosthenes](examples/prime.html)
 
-
 ## Installation
 
 ### In browser
 
-Include two files: [alasql.js](src/alasql.js) and [sql-parser.js](lib/sql-parser/sql-parser.js) to the page.
+Include file: [alasql.js](./alasql.js) to the page.
 
 ```
-  <script src="sql-parser.js"></script>
-  <script src="alasql.js"></script>	
+  <script src="alasql.js"></script>  
   <script>
-    var db = new alasql.Database();
-    db.exec("CREATE TABLE test (one INT, two NVARCHAR(MAX))");
-    db.exec("INSERT INTO test (1,2)");
-    db.tables.test.recs.push({one:3,two:4}); // You can add values directly to array
-    console.table(db.exec("SELECT * FROM test"));
+    alasql.exec("CREATE TABLE test (language INT, hello STRING)");
+    alasql.exec("INSERT INTO test VALUES (1,'Hello!')");
+    alasql.exec("INSERT INTO test VALUES (2,'Aloha!')");
+    alasql.exec("INSERT INTO test VALUES (3,'Bonjour!')");
+    console.table(alasql.exec("SELECT * FROM test WHERE language > 1"));
   </script>
 
 ```
 
-You can use alasql.js with define()/require() functions as well, because it supports UMD.
+You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD.
 
 ### In Node.js
 
@@ -50,7 +46,7 @@ Then require alasql.js file:
     var db = new alasql.Database();
     
     db.exec("CREATE TABLE test (one INT, two INT)");
-    db.tables.test.recs = [
+    db.tables.test.data = [   // You can mix SQL and JavaScript
         {one:3,two:4},
         {one:5,two:6},
     ];
@@ -61,45 +57,75 @@ Then require alasql.js file:
 
 ### Supported SQL statements
 
-* SELECT fields FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number
+* SELECT fields FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number OFFSET number
 * INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2)
 * UPDATE table SET field = value1, field = value2 WHERE condition 
 * DELETE FROM table WHERE condition 
 * CREATE TABLE \[IF NOT EXISTS\] table
 * DROP TABLE \[IF EXISTS\] table
-* ALTER TABLE table1 RENAME TO table2
-
 
 #### SELECT statement
 
-Now alasql.js supports following subset of SELECT syntax:
+Now Alasql.js supports following subset of SELECT syntax:
 
-* SELECT field1, field2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(field7) AS alias8, *, table2.*
-* FROM table1
-* LEFT OUTER/INNER JOIN table2 ON condition
+* SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(field7) AS alias8, *, table2.*
+* FROM table1, table2
+* LEFT / RIGHT / INNER  JOIN table2 ON condition / USING columns
 * WHERE condition
-* GROUP BY field1, alias3
+* GROUP BY column1, column2
 * HAVING condition
-* ORDER BY field1, alias3
-* LIMIT number
+* ORDER BY column1, column2 DESC, 
+* LIMIT number [OFFSET number]
 
 #### Functions
 
 * ABS
-* MIN
-* MAX
-* some others (to be continued)
+* IIF
+* IFNULL
+* INSTR
+* LOWER
+* UPPER
 
 #### Aggregators
 
 * SUM()
 * COUNT() 
+* MIN()
+* MAX()
 
-### Database methods
+### alasql
+
+alasql is a main variable of module. You can use it immediatly as default database
+
+In browser:
+```
+    <script src="alasql.js"></script>
+    <script>
+        alasql.exec('CREATE TABLE one (two INT)');
+    </script>
+```
+
+or in Node.js:
+```
+    var alasql = require('alasql');
+    alasql.exec('CREATE TABLE one (two INT)');
+```
+
+Another approach is to create new database:
+
+```
+    var mybase = new alasql Database();
+    mybase.exec('CREATE TABLE one (two INT)');
+```
+You can give a name to database and then access it from alasql:
+```
+    var mybase = new alasql Database('mybase');
+    console.log(alasql.databases.mybase);
+```
 
 Each database can be used with the following methods:
 
-* vat db = new Database() - create new alasql-database
+* vat db = new alasql.Database() - create new alasql-database
 * var res = db.exec(sql-statement) - executes SELECT query and returns array of objects 
 
 Usually, alasql.js works synchronously, but you can use callback.
@@ -110,15 +136,48 @@ Usually, alasql.js works synchronously, but you can use callback.
     });
 ```
 
+or you can use aexec() - promised version of exec (in this case you need to install es6-prommise module for Node.js):
+```
+    db.aexec('SELECT * FROM test').then(function(res){
+        console.log(res);
+    });
+```
+You can use compile statements:
+```
+    var insert = db.compile('INSERT INTO one (1,2)');
+    insert();
+```
+
+You can use parameters in compiled statements:
+
+```
+    var insert1 = db.compile('INSERT INTO one (?,?)');
+    var insert2 = db.compile('INSERT INTO one ($a,$b)');
+    var insert3 = db.compile('INSERT INTO one (:a,:b)');
+
+    insert1([1,2]);
+    insert2({a:1,b:2});
+    insert3({a:3,b:4});
+
+    db.exec('INSERT INTO one (?,?)',[5,6]);
+
+```
+
+
 ### Performance
 
-According the preliminary performance tests alasql.js is faster than [sql.js]() in 5 to 10 times on more than 1000 records tables, and compete [WebSQL]() on different queries. 
+According the preliminary performance tests alasql.js is faster than [sql.js]() in 5 to 10 times on more than 1000 records tables, and 2 to 3 times to [WebSQL]() on different queries. 
 
-The preliminary [performance report](PERFORMANCE.md).
+Alasql has four different optimization algorithm:
+* Caching of compiled queries
+* Joins: Preindexation of joined table
+* Joins: Prefiltering of WHERE expressions
+
+Now optimization algorithm has some limitations and therefore "table1 JOIN table2 USING column1, column2" is faster than "table1 JOIN table2 ON table1.column1 = table2.column1 AND table1.column2 = table2.column2 ", but with one column it is ok.
 
 ### Limitations
 
-It is Ok with 1000000 records in memory of browser. 
+It is Ok with select for 1000000 records or 2 join two tables by 100000 records in each. 
 
 ### Tests
 
@@ -132,9 +191,7 @@ or run [test/main.html](test/main.html) in browser.
 
 ### Known Bugs
 
-1. There is a '[STAR bug](https://github.com/forward/sql-parser/issues/6)' in sql-parser, therefore
-it is still impossible to use multiplication function.
-2. There are many others... 
+1. There are many of them.  
 
 ### Future Plans
 

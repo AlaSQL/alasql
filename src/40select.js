@@ -42,19 +42,26 @@ yy.Select.prototype.compile = function(db) {
 	// TODO Remove debug
 //	window.q = query;
 	return function(params, cb) {
-		var res = queryfn(query,params); 
+		query.params = params;
+		var res = queryfn(query); 
 		if(cb) cb(res); 
 		return res;
 	}
 };
 
 
-function queryfn(query, args) {
+function queryfn(query) {
+
+// First - refresh data sources
+// TODO SubQueries
+	query.sources.forEach(function(source){
+		source.data = query.database.tables[source.tableid].data;
+	});
+
 //		query.data = query.database.tables[query.defaultTableid].data.filter(query.wherefn);
 //		query.data = query.database.tables[query.defaultTableid].data;
 //	var query = this;
 	preIndex(query);
-	query.args = args;
 	query.data = [];
 	query.xgroups = {};
 	query.groups = [];
@@ -135,10 +142,10 @@ preIndex = function(query) {
 					for(var i=0, ilen=source.data.length; i<ilen; i++) {
 						scope[source.alias || source.tableid] = source.data[i];
 //						console.log('preIndex:scope',scope.alias, source.wherefns);
-						if(source.wherefn(scope)) {
-							var group = source.ix [ source.onrightfn(scope) ]; 
+						if(source.wherefn(scope, query.params)) {
+							var group = source.ix [ source.onrightfn(scope, query.params) ]; 
 							if(!group) {
-								group = source.ix [ source.onrightfn(scope) ] = []; 
+								group = source.ix [ source.onrightfn(scope, query.params) ] = []; 
 							}
 							group.push(source.data[i]);
 						}
@@ -151,7 +158,7 @@ preIndex = function(query) {
 				var scope = {};
 				source.data = source.data.filter(function(r) {
 					scope[source.alias] = r;
-					return source.wherefn(scope);
+					return source.wherefn(scope, query.params);
 				});
 			}
 		}
@@ -164,10 +171,10 @@ preIndex = function(query) {
 function doJoin (query, scope, h) {
 	if(h>=query.sources.length) {
 
-		if(query.wherefn(scope)) {
-			var res = query.selectfn(scope);
+		if(query.wherefn(scope,query.params)) {
+			var res = query.selectfn(scope, query.params);
 			if(query.groupfn) {
-				query.groupfn(res)
+				query.groupfn(res, query.params)
 			} else {
 				query.data.push(res);
 			}	
@@ -182,7 +189,7 @@ function doJoin (query, scope, h) {
 
 		if(source.optimization == 'ix') {
 //			console.log('join.ix', source.ix)
-			data = source.ix[ source.onleftfn(scope) ] || [];
+			data = source.ix[ source.onleftfn(scope, query.params) ] || [];
 		}
 
 
@@ -190,11 +197,13 @@ function doJoin (query, scope, h) {
 		for(var i=0, ilen=data.length; i<ilen; i++) {
 			scope[tableid] = data[i];
 //			if(source.wherefn(scope)) {
-				if(!source.onleftfn || (source.onleftfn(scope) == source.onrightfn(scope))) {
+				if(!source.onleftfn || (source.onleftfn(scope, query.params) == source.onrightfn(scope, query.params))) {
 	//				console.log(source, source.jointype);
 //	console.log(source.onmiddlefn(scope), source);
-					if(source.onmiddlefn(scope)) doJoin(query, scope, h+1);
-					pass = true;
+					if(source.onmiddlefn(scope, query.params)) {
+						doJoin(query, scope, h+1);
+						pass = true;
+					}
 				}
 //			}
 		};
@@ -236,16 +245,16 @@ yy.Select.prototype.compileJoins = function(query) {
 			source.onleftfns = jn.using.map(function(colid){
 				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+colid+"']";
 			}).join('+"`"+');
-			source.onleftfn = new Function('p','return '+source.onleftfns);
+			source.onleftfn = new Function('p,params','return '+source.onleftfns);
 			source.onrightfns = jn.using.map(function(colid){
 				return "p['"+(source.alias||source.tableid)+"']['"+colid+"']";
 			}).join('+"`"+');
-			source.onrightfn = new Function('p','return '+source.onrightfns);
+			source.onrightfn = new Function('p,params','return '+source.onrightfns);
 			source.optimization = 'ix';
 		} else if(jn.on) {
 //console.log(jn.on);
 			if(jn.on instanceof yy.Op && jn.on.op == '=') {
-				console.log('ix optimization', jn.on.toJavaScript('p',query.defaultTableid) );
+//				console.log('ix optimization', jn.on.toJavaScript('p',query.defaultTableid) );
 				source.optimization = 'ix';
 			// 	source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
 			// 	source.onleftfn = new Function('p', 'return '+source.onleftfns);
@@ -287,11 +296,12 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.onmiddlefns = middles || 'true';
 //			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
 
-				source.onleftfn = new Function('p', 'return '+source.onleftfns);
-				source.onrightfn = new Function('p', 'return '+source.onrightfns);
-				source.onmiddlefn = new Function('p', 'return '+source.onmiddlefns);
-			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
-				console.log('join on and ',jn);
+				source.onleftfn = new Function('p,params', 'return '+source.onleftfns);
+				source.onrightfn = new Function('p,params', 'return '+source.onrightfns);
+				source.onmiddlefn = new Function('p,params', 'return '+source.onmiddlefns);
+
+//			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
+//				console.log('join on and ',jn);
 
 			} else {
 //				console.log('no optimization');
@@ -299,9 +309,9 @@ yy.Select.prototype.compileJoins = function(query) {
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
 				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid);
-				source.onmiddlefn = new Function('p','return '+jn.on.toJavaScript('p',query.defaultTableid));
+				source.onmiddlefn = new Function('p,params','return '+jn.on.toJavaScript('p',query.defaultTableid));
 			};
-			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
+//			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 
 			// Optimization function
 		};
@@ -449,7 +459,7 @@ yy.Select.prototype.compileGroup = function(query) {
 //	console.log(s, this.group);
 
 //	console.log(query);
-	return new Function('r',s);
+	return new Function('r,params',s);
 
 }
 
@@ -476,7 +486,6 @@ yy.Select.prototype.compileFrom = function(query) {
 			wherefn: returnTrue			
 		};
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
-		source.data = query.database.tables[source.tableid].data;
 		query.sources.push(source);
 
 	});
@@ -596,7 +605,7 @@ yy.Select.prototype.compileSelect = function(query) {
 	s += ss.join(',')+'};'+sp;
 //	console.log(s);
 	query.selectfns = s;
-	return new Function('p',s+'return r');
+	return new Function('p,params',s+'return r');
 };
 
 yy.Select.prototype.compileWhere = function(query) {
@@ -604,7 +613,7 @@ yy.Select.prototype.compileWhere = function(query) {
 		s = this.where.toJavaScript('p',query.defaultTableid);
 		query.wherefns = s;
 //		console.log(s);
-		return new Function('p','return '+s);
+		return new Function('p,params','return '+s);
 	} else return function(){return true};
 };
 
@@ -615,7 +624,7 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 	//for sources compile wherefs
 	query.sources.forEach(function(source) {
 		if(source.wherefns) {
-			source.wherefn = new Function('p','return '+source.wherefns);
+			source.wherefn = new Function('p,params','return '+source.wherefns);
 		};
 //		console.log(source.alias, source.wherefns)
 	});

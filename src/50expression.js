@@ -88,6 +88,16 @@ yy.NullValue.prototype.toJavaScript = function() {
 	return 'null';
 }
 
+yy.ParamValue = function (params) { return yy.extend(this, params); }
+yy.ParamValue.prototype.toString = function() {
+	return '$'+this.param;
+}
+yy.ParamValue.prototype.toJavaScript = function() {
+	if(typeof this.param == "string") return "params[\'"+this.param+"\']";
+	else return "params["+this.param+"]";
+}
+
+
 
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {

@@ -68,9 +68,9 @@ yy.Insert.prototype.compile = function (db) {
 
 	s += ss.join(',')+'});return 1;';
 //	console.log(s);
-	var insertfn = new Function('db',s);
+	var insertfn = new Function('db, params',s);
 	return function(params, cb) {
-		return insertfn(db);
+		return insertfn(db, params);
 	}
 };
 

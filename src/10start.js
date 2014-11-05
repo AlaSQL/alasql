@@ -34,9 +34,9 @@ SOFTWARE.
     if (typeof define === 'function' && define.amd) {
         define([], factory);
     } else if (typeof exports === 'object') {
-        module.exports = factory();
+        module.exports = factory(require('es6-promise').Promise);
     } else {
-        root.alasql = factory();
+        root.alasql = factory(root.Promise);
     }
-}(this, function () {
+}(this, function (Promise) {
 

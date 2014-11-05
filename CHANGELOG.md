@@ -4,7 +4,8 @@
 
 * Developed new parser based on Jison
 * Use Gulp for development platform
-
+* Where optimization
+* New names for fields => columns and recs => data
 
 #### 0.0.5 (30.10.2014)
 

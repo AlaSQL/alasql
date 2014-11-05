@@ -26,22 +26,21 @@ function Database(databaseid) {
 // Start database
 alasql.Database = Database;
 
-// Transaction class (for WebSQL compatibility)
-function Transaction(database) {
-	this.database = database;
-	return this;
-};
-
-// Main class 
-alasql.Transaction = Transaction;
 
 alasql.compile = function(sql) {
 	return this.currentDatabase.compile(sql);
 }
+
 // Default methods to exec SQL statements
 alasql.run = alasql.exec = function (sql, params, cb) {
 	return this.currentDatabase.exec(sql, params, cb);
 };
+
+// Promised version of exec
+alasql.aexec = function (sql, params) {
+	return this.currentDatabase.aexec(sql, params);
+};
+
 
 // MSSQL aliases
 alasql.query = function (sql, params, cb) {
@@ -67,6 +66,14 @@ Database.prototype.exec = function(sql, params, cb) {
 	return data;
 };
 
+Database.prototype.aexec = function(sql, params) {
+	var self = this;
+	return new Promise(function(resolve, reject){
+		self.exec(sql,params,resolve);
+	});
+};
+
+
 // Aliases like Microsoft Database
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
@@ -78,11 +85,6 @@ Database.prototype.queryValue = function(sql, params, cb) {
 	return res[Object.keys(res)[0]];
 }
 
-// Transactions stub
-// TODO: Implement transactions
-Transaction.prototype.executeSQL = function(sql, params, cb) {
-	this.database.exec(sql);
-};
 
 // Compile statements
 Database.prototype.compile = function(sql) {
@@ -104,9 +106,9 @@ Database.prototype.prepare = Database.prototype.compile;
 
 // Added for compatibility with WebSQL
 // TODO Create Commit
-Database.prototype.transaction = function(callback) {
-	var tx = new Transaction(this);
-	var res = callback(tx);
+Database.prototype.transaction = function(cb) {
+	var tx = new alasql.Transaction(this.databaseid);
+	var res = cb(tx);
 	return res;
 };
 

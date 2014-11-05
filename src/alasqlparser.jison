@@ -88,7 +88,10 @@
 ')'												return 'RPAR'
 '.'												return 'DOT'
 ','												return 'COMMA'
+':'												return 'COLON'
 ';'												return 'SEMICOLON'
+'$'												return 'DOLLAR'
+'?'												return 'QUESTION'
 
 [a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
 [0-9]+											return 'NUMBER'
@@ -393,6 +396,8 @@ Expression
 		{ $$ = $1; }
 	| NullValue
 		{ $$ = $1; }
+	| ParamValue
+		{ $$ = $1; }
 	;
 
 
@@ -435,6 +440,20 @@ NullValue
 	: NULL
 		{ $$ = new yy.NullValue({value:null}); }
 	;
+
+ParamValue
+	: DOLLAR LITERAL
+		{ $$ = new yy.ParamValue({param: $2}); }
+	| COLON LITERAL
+		{ $$ = new yy.ParamValue({param: $2}); }
+	| QUESTION
+		{ 
+			if(typeof yy.question == 'undefined') yy.question = 0; 
+			$$ = new yy.ParamValue({param: yy.question++}); 
+			console.log(yy.question);
+		}
+	;
+
 
 Op
 	: Expression PLUS Expression
@@ -523,6 +542,7 @@ Value
 	| LogicValue
 	| NullValue
 	| DateValue
+	| ParamValue
 	;
 
 ColumnsList
