@@ -2,14 +2,15 @@
 
 Version: 0.0.6 Date: November 5, 2014 [Changelog](CHANGELOG.md) 
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database. Fully functional sql server with joins and groups for [66kb only](alasql.min.js).
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database. Fully functional compact sql server with joins, groups, and transactions support for [66kb only](alasql.min.js). Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
 
 * [Alabase vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alabase vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 ## Examples
 
-Try alasql.js in [Fiddle](http://jsfiddle.net/38hj2uwy/6/)
+Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/6/), [sample 2](http://jsfiddle.net/6a06dqhc/3/), [sqmple 3](http://jsfiddle.net/606ksx2g/1/)
+
 
 Other examples:
 * [Sandbox](examples/sandbox.html)
@@ -165,6 +166,20 @@ You can use parameters in compiled statements:
     db.exec('INSERT INTO one (?,?)',[5,6]);
 
 ```
+
+### Transactions
+
+There is a limited support of transactions (with tx.rollback() and tx.commit() functions):
+
+```
+    db = new alasql.Database("mydb");
+    db.transaction(function(tx) {
+        tx.exec('SELECT COUNT(*) FROM students');
+        tx.rollback();
+    });     
+
+```
+
 ### SQL to JavaScript parser and compiler
 
 You can use Alasql to parse and compile SQL statements:

@@ -1297,7 +1297,7 @@ alasql.store = function(databaseid, transactionid) {
 	};
 	var key = databaseid;
 	if(transactionid) key += "."+transactionid;
-	alasql.storage.getItem(key) = JSON.stringify(obj);
+	localStorage[key] = JSON.stringify(obj);
 };
 
 alasql.restore = function(databaseid, transactionid) {
