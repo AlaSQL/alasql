@@ -2,10 +2,10 @@
 
 Version: 0.0.6 Date: November 5, 2014 [Changelog](CHANGELOG.md) 
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database.
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database. Fully functional sql server with joins and groups for [66kb only](alasql.min.js).
 
-[Alabase vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
-[Alabase vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
+* [Alabase vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
+* [Alabase vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 ## Examples
 

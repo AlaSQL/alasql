@@ -1,0 +1,70 @@
+{
+  "name": "gulp-uglify",
+  "description": "Minify files with UglifyJS.",
+  "version": "1.0.1",
+  "author": {
+    "name": "Terin Stock",
+    "email": "terinjokes@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/terinjokes/gulp-uglify/issues"
+  },
+  "dependencies": {
+    "deepmerge": ">=0.2.7 <0.3.0-0",
+    "gulp-util": ">=3.0.0 <4.0.0-0",
+    "through2": ">=0.6.1 <1.0.0-0",
+    "uglify-js": "2.4.15",
+    "vinyl-sourcemaps-apply": ">=0.1.1 <0.2.0-0"
+  },
+  "devDependencies": {
+    "argg": "0.0.1",
+    "codeclimate-test-reporter": "0.0.3",
+    "gulp-concat": ">=2.3.4 <3.0.0-0",
+    "gulp-sourcemaps": ">=1.1.1 <2.0.0-0",
+    "istanbul": ">=0.3.0 <0.4.0-0",
+    "rimraf": ">=2.2.8 <3.0.0-0",
+    "tape": ">=2.12.3 <3.0.0-0",
+    "vinyl": ">=0.3.2 <0.4.0-0"
+  },
+  "engines": {
+    "node": ">= 0.9"
+  },
+  "homepage": "https://github.com/terinjokes/gulp-uglify/",
+  "keywords": [
+    "gulpplugin"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/terinjokes/gulp-uglify.git"
+  },
+  "scripts": {
+    "codeclimate": "cat ./coverage/lcov.info|codeclimate",
+    "coverage": "istanbul cover node_modules/argg test/*.js --report lcovonly",
+    "rm": "rimraf ./coverage",
+    "test": "npm run coverage && npm run rm",
+    "test-report": "npm run coverage && npm run codeclimate && npm run rm"
+  },
+  "gitHead": "00addba278bc8aa2ea130de08315f74573c2e398",
+  "_id": "gulp-uglify@1.0.1",
+  "_shasum": "d70a24ff85b179a7b16cee577023f19b9c4ba96f",
+  "_from": "gulp-uglify@",
+  "_npmVersion": "2.0.0-beta.1",
+  "_npmUser": {
+    "name": "terinjokes",
+    "email": "terinjokes@gmail.com"
+  },
+  "maintainers": [
+    {
+      "name": "terinjokes",
+      "email": "terinjokes@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "d70a24ff85b179a7b16cee577023f19b9c4ba96f",
+    "tarball": "http://registry.npmjs.org/gulp-uglify/-/gulp-uglify-1.0.1.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/gulp-uglify/-/gulp-uglify-1.0.1.tgz"
+}

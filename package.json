@@ -8,7 +8,9 @@
     "test": "test"
   },
   "dependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "gulp-uglify": "^1.0.1"
+  },
   "engines": [
     "node"
   ],

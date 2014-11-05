@@ -12,6 +12,7 @@ module.exports = gulp;
 var changed = require('gulp-changed');
 var jison = require('gulp-jison');
 var concat = require('gulp-concat-sourcemap');
+//var uglify = require('gulp-uglify');
 var jisonLex = require('gulp-jison-lex');
 
 gulp.task('js-merge', function () {
@@ -38,6 +39,7 @@ gulp.task('js-merge', function () {
    	'./src/90finish.js'])
 //    .pipe(changed('./dist/'))
     .pipe(concat('alasql.js'))
+//    .pipe(uglify())
     .pipe(gulp.dest('./'))
 });
 
