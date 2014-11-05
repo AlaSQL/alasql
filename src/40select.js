@@ -24,6 +24,8 @@ yy.Select.prototype.compile = function(db) {
 	if(this.joins) this.compileJoins(query);
 	query.selectfn = this.compileSelect(query);
 	query.wherefn = this.compileWhere(query);
+	if(this.joins && this.where) this.compileWhereJoins(query);
+
 	if(this.group) query.groupfn = this.compileGroup(query);
 	query.distinct = this.distinct;
 	query.limit = this.limit?this.limit.value:undefined;
@@ -61,7 +63,11 @@ function queryfn(query, args) {
 
 	var h = 0;
 
+//	var tm = Date.now();
+
 	doJoin(query, scope, h);
+
+//	console.log('join', Date.now()-tm);
 
 	if(query.groupfn) {
 		if(query.havingfn) query.groups = query.groups.filter(query.havingfn)
@@ -76,6 +82,7 @@ function queryfn(query, args) {
 	doLimit(query);
 	if(query.orderfn) query.data = query.data.sort(query.orderfn);
 //		query.data = data;
+
 	return query.data;
 };
 
@@ -109,11 +116,12 @@ function doDistinct (query) {
 
 
 preIndex = function(query) {
+//	var tm = Date.now();
 	// if(query.joins && self.joins.length>0) {
 		for(var k=0, klen = query.sources.length;k<klen;k++) {
 //			console.log('klen',klen);
 			var source = query.sources[k];
-					console.log(source);
+//					console.log(source);
 			if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 //				var h = console.log(hash(source.onrightfn));
 
@@ -126,20 +134,29 @@ preIndex = function(query) {
 //					console.log('join.recs.length',join.recs, join.recs.length);
 					for(var i=0, ilen=source.data.length; i<ilen; i++) {
 						scope[source.alias || source.tableid] = source.data[i];
-//						console.log('preIndex:scope',scope);
-
-						var group = source.ix [ source.onrightfn(scope) ]; 
-						if(!group) {
-							group = source.ix [ source.onrightfn(scope) ] = []; 
+//						console.log('preIndex:scope',scope.alias, source.wherefns);
+						if(source.wherefn(scope)) {
+							var group = source.ix [ source.onrightfn(scope) ]; 
+							if(!group) {
+								group = source.ix [ source.onrightfn(scope) ] = []; 
+							}
+							group.push(source.data[i]);
 						}
-						group.push(source.data[i]);
 					}
 
 				// TODO - Save index to original table	
 //				}
+			} else if(source.wherefns) {
+				//var tm = Date.now();
+				var scope = {};
+				source.data = source.data.filter(function(r) {
+					scope[source.alias] = r;
+					return source.wherefn(scope);
+				});
 			}
 		}
 //	}
+//				console.log('preIndex',Date.now()-tm);
 }
 
 
@@ -172,11 +189,13 @@ function doJoin (query, scope, h) {
 		// Main cycle
 		for(var i=0, ilen=data.length; i<ilen; i++) {
 			scope[tableid] = data[i];
-			if(!source.onleftfn || (source.onleftfn(scope) == source.onrightfn(scope))) {
-//				console.log(source, source.jointype);
-				doJoin(query, scope, h+1);
-				pass = true;
-			}
+//			if(source.wherefn(scope)) {
+				if(!source.onleftfn || (source.onleftfn(scope) == source.onrightfn(scope))) {
+	//				console.log(source, source.jointype);
+					doJoin(query, scope, h+1);
+					pass = true;
+				}
+//			}
 		};
 
 //		console.log("out",h,i,pass, source.joinmode );
@@ -190,6 +209,7 @@ function doJoin (query, scope, h) {
 	}
 };
 
+function returnTrue () {return true};
 
 yy.Select.prototype.compileJoins = function(query) {
 //	console.log(this.join);
@@ -200,7 +220,9 @@ yy.Select.prototype.compileJoins = function(query) {
 			alias: tq.alias||tq.tableid,
 			databaseid: jn.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
-			joinmode: jn.joinmode
+			joinmode: jn.joinmode,
+			wherefns: '',	// for optimization
+			wherefn: returnTrue
 		};
 
 		var alias = tq.as || tq.tableid;
@@ -219,7 +241,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			source.onrightfn = new Function('p','return '+source.onrightfns);
 			source.optimization = 'ix';
 		} else if(jn.on) {
-console.log(jn.on);
+//console.log(jn.on);
 			if(jn.on instanceof yy.Op && jn.on.op == '=') {
 				source.optimization = 'ix';
 				source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
@@ -228,7 +250,7 @@ console.log(jn.on);
 				source.onrightfn = new Function('p', 'return '+source.onrightfns);
 			} else {
 				source.optimization = 'no';
-				source.onleftfn = new Function('return true');
+				source.onleftfn = returnTrue;
 				source.onrightfn = new Function('p','return '+jn.on.toJavaScript('p',query.defaultTableid));
 			};
 
@@ -376,6 +398,8 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	s += '}';
 //	console.log(s, this.group);
+
+//	console.log(query);
 	return new Function('r',s);
 
 }
@@ -397,7 +421,9 @@ yy.Select.prototype.compileFrom = function(query) {
 			alias: alias,
 			databaseid: tq.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
-			joinmode: 'INNER'
+			joinmode: 'INNER',
+			wherefns: '',	// for optimization
+			wherefn: returnTrue			
 		};
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 		source.data = query.database.tables[source.tableid].data;
@@ -527,6 +553,44 @@ yy.Select.prototype.compileWhere = function(query) {
 //		console.log(s);
 		return new Function('p','return '+s);
 	} else return function(){return true};
+};
+
+yy.Select.prototype.compileWhereJoins = function(query) {
+//	console.log(this.where);
+	optimizeWhereJoin(query, this.where.expression);
+
+	//for sources compile wherefs
+	query.sources.forEach(function(source) {
+		if(source.wherefns) {
+			source.wherefn = new Function('p','return '+source.wherefns);
+		};
+//		console.log(source.alias, source.wherefns)
+	});
+};
+
+function optimizeWhereJoin (query, ast) {
+	var s = ast.toJavaScript('p',query.defaultTableid);
+	var fsrc = [];
+	query.sources.forEach(function(source,idx) {
+		if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
+	});
+//	console.log(ast);
+//	console.log(s);
+//	console.log(fsrc.length);
+	if(fsrc.length == 0) {
+//		console.log('no optimization, can remove this part of ast');
+		return;
+	} else if (fsrc.length == 1) {
+		var src = fsrc[0]; // optmiization source
+		src.wherefns = src.wherefns ? src.wherefns+'&&'+s : s;
+		return;
+	} else {
+		if(ast.op = 'AND') {
+			optimizeWhereJoin(query,ast.left);
+			optimizeWhereJoin(query,ast.right);
+		} 
+	}
+
 };
 
 
