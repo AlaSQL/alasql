@@ -9,7 +9,7 @@ Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweig
 
 ## Examples
 
-Try alasql.js in [Fiddle](http://jsfiddle.net/agershun/38hj2uwy/3/)
+Try alasql.js in [Fiddle](http://jsfiddle.net/38hj2uwy/6/)
 
 Other examples:
 * [Sandbox](examples/sandbox.html)
