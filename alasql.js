@@ -1469,7 +1469,8 @@ function doJoin (query, scope, h) {
 //			if(source.wherefn(scope)) {
 				if(!source.onleftfn || (source.onleftfn(scope) == source.onrightfn(scope))) {
 	//				console.log(source, source.jointype);
-					doJoin(query, scope, h+1);
+//	console.log(source.onmiddlefn(scope), source);
+					if(source.onmiddlefn(scope)) doJoin(query, scope, h+1);
 					pass = true;
 				}
 //			}
@@ -1498,6 +1499,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			databaseid: jn.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
 			joinmode: jn.joinmode,
+			onmiddlefn: returnTrue,
 			wherefns: '',	// for optimization
 			wherefn: returnTrue
 		};
@@ -1520,16 +1522,63 @@ yy.Select.prototype.compileJoins = function(query) {
 		} else if(jn.on) {
 //console.log(jn.on);
 			if(jn.on instanceof yy.Op && jn.on.op == '=') {
+				console.log('ix optimization', jn.on.toJavaScript('p',query.defaultTableid) );
 				source.optimization = 'ix';
-				source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
+			// 	source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
+			// 	source.onleftfn = new Function('p', 'return '+source.onleftfns);
+			// 	source.onrightfns = jn.on.right.toJavaScript('p',query.defaultTableid);
+			// 	source.onrightfn = new Function('p', 'return '+source.onrightfns);
+
+				var lefts ;
+				var rights ;
+				var middles ;
+				// Test right and left sides
+				var ts = jn.on.left.toJavaScript('p',query.defaultTableid);
+				var rs = jn.on.right.toJavaScript('p',query.defaultTableid);
+				if((ts.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
+					rights = ts;
+				} else 	if(!(ts.indexOf("p['"+alias+"']")>-1) && (rs.indexOf("p['"+alias+"']")>-1)){
+					lefts = ts;
+				} else {
+					middles = ts;
+				}
+
+				if((rs.indexOf("p['"+alias+"']")>-1) && !(ts.indexOf("p['"+alias+"']")>-1)){
+					rights = rs;
+				} else if(!(rs.indexOf("p['"+alias+"']")>-1) && (ts.indexOf("p['"+alias+"']")>-1)){
+					lefts = rs;
+				} else {
+					if(middles) {
+						middles = jn.on.toJavaScript('p',query.defaultTableid);
+					} else {
+						rights = '';
+						lefts = '';
+						middles = jn.on.toJavaScript('p',query.defaultTableid);
+						source.optimization = 'no';
+						// What to here?
+					} 
+				}
+
+				source.onleftfns = lefts;
+				source.onrightfns = rights;
+				source.onmiddlefns = middles || 'true';
+//			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
+
 				source.onleftfn = new Function('p', 'return '+source.onleftfns);
-				source.onrightfns = jn.on.right.toJavaScript('p',query.defaultTableid);
 				source.onrightfn = new Function('p', 'return '+source.onrightfns);
+				source.onmiddlefn = new Function('p', 'return '+source.onmiddlefns);
+			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
+				console.log('join on and ',jn);
+
 			} else {
+//				console.log('no optimization');
 				source.optimization = 'no';
-				source.onleftfn = returnTrue;
-				source.onrightfn = new Function('p','return '+jn.on.toJavaScript('p',query.defaultTableid));
+//				source.onleftfn = returnTrue;
+//				source.onleftfns = "true";
+				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid);
+				source.onmiddlefn = new Function('p','return '+jn.on.toJavaScript('p',query.defaultTableid));
 			};
+			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 
 			// Optimization function
 		};
@@ -1699,6 +1748,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			databaseid: tq.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
 			joinmode: 'INNER',
+			onmiddlefn: returnTrue,			
 			wherefns: '',	// for optimization
 			wherefn: returnTrue			
 		};
@@ -1778,6 +1828,9 @@ yy.Select.prototype.compileSelect = function(query) {
 				// If field, otherwise - expression
 				ss.push((col.as || col.columnid)+':p.'+(col.tableid||query.defaultTableid)+'.'+col.columnid);
 
+				if(!query.aliases[col.tableid||query.defaultTableid]) {
+					throw new Error('There is now such table \''+col.tableid+'\'');
+				};
 				var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
 
 				if(xcolumns) {
