@@ -71,10 +71,7 @@ if(!defined) {
 		]
 	};
 
-	alasql.tables.students.xcolumns = {};
-	alasql.tables.students.columns.forEach(function(col){
-		alasql.tables.students.xcolumns[col.columnid] = col;
-	});
+	alasql.indexColumns('students');
 
 	alasql.tables.courses = {
 		data: coursesData,
@@ -84,10 +81,8 @@ if(!defined) {
 			{columnid: 'schoolid'},
 		]
 	}
-	alasql.tables.courses.xcolumns = {};
-	alasql.tables.courses.columns.forEach(function(col){
-		alasql.tables.courses.xcolumns[col.columnid] = col;
-	});
+
+	alasql.indexColumns('courses');
 
 	alasql.tables.schools = {
 		data: schoolData,
@@ -98,23 +93,20 @@ if(!defined) {
 		]
 	};
 
-	alasql.tables.schools.xcolumns = {};
-	alasql.tables.schools.columns.forEach(function(col){
-		alasql.tables.schools.xcolumns[col.columnid] = col;
-	});
+	alasql.indexColumns('schools');
 }
 
-// 	var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt FROM students RIGHT JOIN courses USING courseid GROUP BY courseid' );
+ 	var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt FROM students RIGHT JOIN courses USING courseid GROUP BY courseid' );
  	// var res = alasql.exec('SELECT * '+
  	// 	' FROM students '+
  	// 	' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
  	// 	' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
  	// 	' GROUP BY schools, courseid, studentname' );
 
- 	var res = alasql.exec('SELECT students.schoolid '+
- 		' FROM students '+
- 		' LEFT JOIN courses USING courseid'
- 	);
+// 	var res = alasql.exec('SELECT students.schoolid '+
+// 		' FROM students '+
+// 		' LEFT JOIN courses USING courseid'
+// 	);
 
 // 	console.log(alasql.queryValue('SELECT COUNT(*) FROM courses, students'));
     console.log('Number of records:', res.length);

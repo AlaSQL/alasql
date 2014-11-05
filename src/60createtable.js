@@ -32,10 +32,10 @@ yy.CreateTable.prototype.toString = function() {
 
 // CREATE TABLE
 yy.CreateTable.prototype.compile = function (db) {
-	var self = this;
-	var tableid = self.table.tableid;
-	var ifnotexists = self.ifnotexists;
-	var columns = self.columns;
+//	var self = this;
+	var tableid = this.table.tableid;
+	var ifnotexists = this.ifnotexists;
+	var columns = this.columns;
 //	console.log(this);
 
 	return function() {

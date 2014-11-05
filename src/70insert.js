@@ -10,10 +10,9 @@ yy.Insert.prototype.toString = function() {
 yy.Insert.prototype.compile = function (db) {
 	var self = this;
 //	console.log(self);
-	var alasql = alasql;
 	var tableid = self.into.tableid;
 
-	var s = 'alasql.databases[\''+db.databaseid+'\'].tables[\''+tableid+'\'].data.push({';
+	var s = 'db.tables[\''+tableid+'\'].data.push({';
 
 	var ss = [];
 	if(self.columns) {
@@ -68,8 +67,11 @@ yy.Insert.prototype.compile = function (db) {
 
 
 	s += ss.join(',')+'});return 1;';
-	console.log(s);
-	return new Function(s);
+//	console.log(s);
+	var insertfn = new Function('db',s);
+	return function(params, cb) {
+		return insertfn(db);
+	}
 };
 
 

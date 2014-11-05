@@ -25,7 +25,6 @@ describe('LEFT JOIN', function(){
 		alasql.exec('INSERT INTO test1 VALUES (2,6)');
 
 		var res = alasql.exec('SELECT SUM(b) AS sb,a,test1.c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,a');
-		console.log(res);
 
 		assert.equal(8, res[0].sb);
 		assert.equal(2, res[1].sb);

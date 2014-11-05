@@ -50,8 +50,12 @@ alasql.query = function (sql, params, cb) {
 alasql.querySingle = function (sql, params, cb) {
 	return this.currentDatabase.querySingle(sql, params, cb);
 }
-alasql.queryValue = function (sql) {
+alasql.queryValue = function (sql, params, cb) {
 	return this.currentDatabase.queryValue(sql, params, cb);
+}
+
+alasql.indexColumns = function(tableid) {
+	this.currentDatabase.indexColumns(tableid);
 }
 
 // Main SQL function
@@ -105,3 +109,12 @@ Database.prototype.transaction = function(callback) {
 	var res = callback(tx);
 	return res;
 };
+
+// Index columns
+Database.prototype.indexColumns = function(tableid) {
+	var table = this.tables[tableid];
+	table.xcolumns = {};
+	table.columns.forEach(function(col){
+		table.xcolumns[col.columnid] = col;
+	});	
+}

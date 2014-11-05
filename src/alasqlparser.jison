@@ -257,7 +257,7 @@ JoinMode
 	: {$$ = "INNER";}
 	| LEFT {$$ = $1;}
 	| RIGHT {$$ = $1;}
-	| ANTI {$$ = $1;}
+	| INNER {$$ = $1;}
 	;
 
 OnClause

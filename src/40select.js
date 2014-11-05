@@ -246,14 +246,24 @@ yy.Select.prototype.compileJoins = function(query) {
 			var prevSource = query.sources.pop();
 			if(prevSource.joinmode == 'INNER') {
 				prevSource.joinmode = 'LEFT';
+				var onleftfn = prevSource.onleftfn;
+				var onleftfns = prevSource.onleftfns;
+				var onrightfn = prevSource.onrightfn;
+				var onrightfns = prevSource.onrightfns;
+				var optimization = prevSource.optimization;
+
 				prevSource.onleftfn = source.onrightfn;
 				prevSource.onleftfns = source.onrightfns;
 				prevSource.onrightfn = source.onleftfn;
 				prevSource.onrightfns = source.onleftfns;
-				source.onleftfn = undefined;
-				source.onleftfns = undefined;
-				source.onrightfn = undefined;
-				source.onrightfns = undefined;
+				prevSource.optimization = source.optimization;
+
+				source.onleftfn = onleftfn;
+				source.onleftfns = onleftfns;
+				source.onrightfn = onrightfn;
+				source.onrightfns = onrightfns;
+				source.optimization = optimization;
+
 				source.joinmode = 'INNER';
 				query.sources.push(source);
 				query.sources.push(prevSource);
@@ -530,8 +540,10 @@ yy.Select.prototype.compileOrder = function (query) {
 			
 			// Date conversion
 			var dg = ''; 
-			var dbtypeid = query.xcolumns[columnid].dbtypeid;
-			if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '+';
+			if(query.xcolumns[columnid]) {
+				var dbtypeid = query.xcolumns[columnid].dbtypeid;
+				if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '+';
+			}
 			
 			// COLLATE NOCASE
 			if(ord.nocase) columnid += '.toUpperCase()';

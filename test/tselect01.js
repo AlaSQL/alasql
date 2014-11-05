@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 };
 
 
-describe('SELECT', function(){
+describe('SELECT #01', function(){
 	it('Select *', function(done) {
 		var db = new alasql.Database();
 		db.tables.one = {};

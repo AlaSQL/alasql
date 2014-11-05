@@ -7,6 +7,7 @@ yy.Delete.prototype.toString = function() {
 
 yy.Delete.prototype.compile = function (db) {
 //  console.log(11,this);
+
 	var tableid = this.table.tableid;
 
 	if(this.where) {
