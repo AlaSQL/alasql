@@ -165,6 +165,17 @@ You can use parameters in compiled statements:
     db.exec('INSERT INTO one (?,?)',[5,6]);
 
 ```
+### SQL to JavaScript parser and compiler
+
+You can use Alasql to parse and compile SQL statements:
+
+```
+    var ast = alasql.parser.parse("SELECT * FROM one");
+    var statement = alasql.compile("SELECT * FROM one");
+    statement();
+```
+
+Alasql uses wonderful [Jison](jison.org) parser to produce AST-tree.
 
 
 ### Performance
