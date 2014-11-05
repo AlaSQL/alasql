@@ -30,6 +30,7 @@ yy.Update.prototype.compile = function (db) {
 
 	return function(params, cb) {
 		var table = db.tables[tableid];
+		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			if(!wherefn || wherefn(table.data[i], params) ) {

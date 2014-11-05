@@ -131,7 +131,11 @@ preIndex = function(query) {
 //					console.log(source);
 			if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 //				var h = console.log(hash(source.onrightfn));
-
+				var ixx = query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.onwherefns)];
+				if( !query.database.tables[source.tableid].dirty
+					&& ixx) {
+					source.ix = ixx; 
+				} else {
 				// TODO Check if table index exists
 //				if(/*!join.ix || */ join.dirty) {
 					source.ix = {};
@@ -150,7 +154,9 @@ preIndex = function(query) {
 							group.push(source.data[i]);
 						}
 					}
-
+				
+					query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.onwherefns)] = source.ix;
+				}
 				// TODO - Save index to original table	
 //				}
 			} else if(source.wherefns) {

@@ -1503,7 +1503,11 @@ preIndex = function(query) {
 //					console.log(source);
 			if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 //				var h = console.log(hash(source.onrightfn));
-
+				var ixx = query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.onwherefns)];
+				if( !query.database.tables[source.tableid].dirty
+					&& ixx) {
+					source.ix = ixx; 
+				} else {
 				// TODO Check if table index exists
 //				if(/*!join.ix || */ join.dirty) {
 					source.ix = {};
@@ -1522,7 +1526,9 @@ preIndex = function(query) {
 							group.push(source.data[i]);
 						}
 					}
-
+				
+					query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.onwherefns)] = source.ix;
+				}
 				// TODO - Save index to original table	
 //				}
 			} else if(source.wherefns) {
@@ -2411,6 +2417,7 @@ yy.CreateTable.prototype.compile = function (db) {
 				table.columns.push(newcol);
 				table.xcolumns[newcol.columnid] = newcol;
 			});
+			table.indices = {};
 			table.data = [];
 			return 1;
 		};
@@ -2472,7 +2479,7 @@ yy.Insert.prototype.compile = function (db) {
 //	console.log(self);
 	var tableid = self.into.tableid;
 
-	var s = 'db.tables[\''+tableid+'\'].data.push({';
+	var s = 'db.tables[\''+tableid+'\'].dirty=true;db.tables[\''+tableid+'\'].data.push({';
 
 	var ss = [];
 	if(self.columns) {
@@ -2530,7 +2537,9 @@ yy.Insert.prototype.compile = function (db) {
 //	console.log(s);
 	var insertfn = new Function('db, params',s);
 	return function(params, cb) {
-		return insertfn(db, params);
+		var res = insertfn(db, params);
+		if(cb) cb(res);
+		return res;
 	}
 };
 
@@ -2558,6 +2567,7 @@ yy.Delete.prototype.compile = function (db) {
 //		console.log(wherefn);
 		return function (params, cb) {
 			var table = db.tables[tableid];
+			table.dirty = true;
 			var orignum = table.data.length;
 			table.data = table.data.filter(function(r){return !wherefn(r,params);});
 //			console.log('deletefn',table.data.length);
@@ -2567,6 +2577,7 @@ yy.Delete.prototype.compile = function (db) {
 	} else {
 		return function (params, cb) {
 			var table = db.tables[tableid];
+			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
 			table.data.length = 0;
 			if(cb) cb(orignum);
@@ -2609,6 +2620,7 @@ yy.Update.prototype.compile = function (db) {
 
 	return function(params, cb) {
 		var table = db.tables[tableid];
+		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			if(!wherefn || wherefn(table.data[i], params) ) {

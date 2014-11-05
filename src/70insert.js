@@ -12,7 +12,7 @@ yy.Insert.prototype.compile = function (db) {
 //	console.log(self);
 	var tableid = self.into.tableid;
 
-	var s = 'db.tables[\''+tableid+'\'].data.push({';
+	var s = 'db.tables[\''+tableid+'\'].dirty=true;db.tables[\''+tableid+'\'].data.push({';
 
 	var ss = [];
 	if(self.columns) {
@@ -70,7 +70,9 @@ yy.Insert.prototype.compile = function (db) {
 //	console.log(s);
 	var insertfn = new Function('db, params',s);
 	return function(params, cb) {
-		return insertfn(db, params);
+		var res = insertfn(db, params);
+		if(cb) cb(res);
+		return res;
 	}
 };
 

@@ -57,6 +57,7 @@ yy.CreateTable.prototype.compile = function (db) {
 				table.columns.push(newcol);
 				table.xcolumns[newcol.columnid] = newcol;
 			});
+			table.indices = {};
 			table.data = [];
 			return 1;
 		};

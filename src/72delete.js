@@ -18,6 +18,7 @@ yy.Delete.prototype.compile = function (db) {
 //		console.log(wherefn);
 		return function (params, cb) {
 			var table = db.tables[tableid];
+			table.dirty = true;
 			var orignum = table.data.length;
 			table.data = table.data.filter(function(r){return !wherefn(r,params);});
 //			console.log('deletefn',table.data.length);
@@ -27,6 +28,7 @@ yy.Delete.prototype.compile = function (db) {
 	} else {
 		return function (params, cb) {
 			var table = db.tables[tableid];
+			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
 			table.data.length = 0;
 			if(cb) cb(orignum);
