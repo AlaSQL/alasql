@@ -1390,6 +1390,7 @@ preIndex = function(query) {
 		for(var k=0, klen = query.sources.length;k<klen;k++) {
 //			console.log('klen',klen);
 			var source = query.sources[k];
+					console.log(source);
 			if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 //				var h = console.log(hash(source.onrightfn));
 
@@ -1495,8 +1496,8 @@ yy.Select.prototype.compileJoins = function(query) {
 			source.onrightfn = new Function('p','return '+source.onrightfns);
 			source.optimization = 'ix';
 		} else if(jn.on) {
-//console.log(jn.on);
-			if(jn.on instanceof yy.Op && jn.on.operation == '=') {
+console.log(jn.on);
+			if(jn.on instanceof yy.Op && jn.on.op == '=') {
 				source.optimization = 'ix';
 				source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
 				source.onleftfn = new Function('p', 'return '+source.onleftfns);
