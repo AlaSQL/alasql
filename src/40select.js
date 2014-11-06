@@ -13,8 +13,6 @@ yy.Select.prototype.toString = function() {
 	s += ' FROM '+this.from.map(function(f){return f.toString()}).join(',');
 
 	if(this.where) s += ' WHERE '+this.where.toString();
-	if(this.whereexists) s += ' WHERE EXISTS ('+this.whereexists.toString()+')'
-	if(this.wherenotexists) s += ' WHERE NOT EXISTS ('+this.wherenotexists.toString()+')'
 	if(this.group) s += ' GROUP BY '+this.group.toString();
 	if(this.having) s += ' HAVING '+this.having.toString();
 	if(this.order) s += ' ORDER BY '+this.order.toString();
@@ -30,7 +28,7 @@ yy.Select.prototype.compile = function(db) {
 
 	query.database = db;
 	// 0. Precompile whereexists
-	this.compileWhereExists();
+	this.compileWhereExists(query);
 	
 	// 1. Compile FROM clause
 	query.fromfn = this.compileFrom(query);
@@ -69,16 +67,22 @@ yy.Select.prototype.compile = function(db) {
 	};
 
 	// Now, compile all togeather into one function with query object in scope
-	return function(params, cb) {
+	return function(params, cb, oldscope) {
+//		console.log('SELECT ',params, cb, oldscope);
 		query.params = params;
-		var res = queryfn(query); 
+		var res = queryfn(query,oldscope); 
 		if(cb) cb(res); 
 		return res;
 	}
 };
 
 // Main query procedure
-function queryfn(query) {
+function queryfn(query,oldscope) {
+	var scope;
+	if(!oldscope) scope = {};
+	else scope = cloneDeep(oldscope);
+	query.scope = scope;
+//	console.log(query.scope);
 
 	// First - refresh data sources
 	query.sources.forEach(function(source){
@@ -87,13 +91,15 @@ function queryfn(query) {
 	});
 
 	// Preindexation of data sources
-	preIndex(query);
+	if(!oldscope) {
+		preIndex(query);
+	}
 
 	// Prepare variables
 	query.data = [];
 	query.xgroups = {};
 	query.groups = [];
-	var scope = query.scope = {};
+
 	// Level of Joins
 	var h = 0;
 

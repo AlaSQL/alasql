@@ -50,7 +50,7 @@ console.log('test 6');
 console.log('test 7');
 
 console.log('test 8');
-zt('TEST8 - 1000 UPDATEs without an index',function(){
+zt('TEST8 - 100 UPDATEs without an index',function(){
 // TODO AVG
 	db.transaction(function(){
 		for(var i=0;i<100;i++) {
@@ -60,7 +60,7 @@ zt('TEST8 - 1000 UPDATEs without an index',function(){
 });
 
 console.log('test 9');
-zt('TEST9 - 1000 UPDATEs without an index',function(){
+zt('TEST9 - 25000 UPDATEs without an index',function(){
 // TODO AVG
 	db.transaction(function(){
 		for(var i=0;i<25000;i++) {

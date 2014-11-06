@@ -1,28 +1,16 @@
-yy.Select.prototype.compileWhereExists = function() {
-	return;
-	if(!self.whereexists && !self.wherenotexists) return;
+yy.ExistsValue = function(params) { return yy.extend(this, params); }
+yy.ExistsValue.prototype.toString = function() {
+	return 'EXISTS('+this.value.toString()+')';
+};
 
-	var self = this;
-	if(self.whereexists) {
-		self.from = self.from.concat(self.whereexists.from);
-		if(self.whereexists.where) {
-			if(self.where) {
-				self.where.expression = new yy.Op({op:'AND',left: self.where.expression, right:self.whereexists.where.expression}); 
-			} else {
-				self.where = new yy.Expression({expression:self.whereexists.where.expression});
-			}
-		self.whereexists = undefined;
-		};
-	} else if(self.wherenotexists) {
-		self.from = self.from.concat(self.wherenotexists.from);
-		if(self.wherenotexists.where) {
-			var nw = new yy.UniOp({op:'NOT', right: self.wherenotexists.where.expression});
-			if(self.where) {
-				self.where.expression = new yy.Op({op:'AND',left: self.where.expression, right:nw}); 
-			} else {
-				self.where = new yy.Expression({expression:nw});
-			}
-		};
-		self.wherenotexists = undefined;
-	};
-}
+yy.ExistsValue.prototype.toJavaScript = function() {
+	return 'this.existsfn['+this.existsnum+'](params,null,p).length';
+};
+
+yy.Select.prototype.compileWhereExists = function(query) {
+	if(!this.exists) return;
+	query.existsfn = this.exists.map(function(ex) {
+		return ex.compile(query.database);
+	});
+//	console.log(query.existsfn);
+};

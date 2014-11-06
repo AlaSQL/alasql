@@ -3,7 +3,6 @@
 
 URGENT BUGS OR FEATURES TO BE IMPLEMENTED SOON
 
-* Finish WHERE [NOT] EXISTS
 * Separate branch on github.com for development
 * BEGIN COMMIT ROLLBACK
 * WHERE multiple optimization

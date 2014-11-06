@@ -7,7 +7,8 @@ yy.Expression.prototype.toJavaScript = function(context, tableid) {
 	return this.expression.toJavaScript(context, tableid);
 };
 yy.Expression.prototype.compile = function(context, tableid){
-	return new Function('scope','return '+this.toJavaScript(context, tableid));
+	console.log('Expression',this);
+	return new Function('p','return '+this.toJavaScript(context, tableid));
 };
 
 
@@ -151,11 +152,16 @@ yy.Column.prototype.toJavaScript = function(context, tableid) {
 // 	} else {
 // 		s = tableid+'.'+s;
 // 	}
+//console.log('yy.Column',this, tableid);
+	var s = '';
 	if(tableid == '') {
-		return context+'[\''+this.columnid+'\']';
+		s = context+'[\''+this.columnid+'\']';
 	} else {
-		return context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+		s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 	}
+//	console.log(context,s);
+//	console.trace(new Error());
+	return s;
 }
 
 

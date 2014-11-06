@@ -37,6 +37,19 @@ arrayUnionDeep = function(a,b) {
     return r;
 };
 
+function cloneDeep(obj) {
+    if(obj == null || typeof(obj) != 'object')
+        return obj;
+
+    var temp = obj.constructor(); // changed
+
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key)) {
+            temp[key] = cloneDeep(obj[key]);
+        }
+    }
+    return temp;
+}
 
 equalDeep = function (x, y, deep) {
     if (deep) {

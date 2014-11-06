@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.11 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.12 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -110,6 +110,21 @@ Now Alasql.js supports following subset of SELECT syntax:
 * ROLLUP()
 * CUBE()
 * GROUPING SETS()
+
+#### Exists
+
+* EXISTS (Subquery)
+
+#### User-defined JavaScript functions
+
+You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions
+to alasql.userlib object:
+
+```
+        alasql.userlib.DOUBLE = function(x){return x*2};        
+        db.exec('SELECT a, DOUBLE(a) AS b FROM test1');
+```
+Now Alasql supports only one parameter for functions. Hope I fix this soon.
 
 ### alasql
 

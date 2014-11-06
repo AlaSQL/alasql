@@ -325,6 +325,7 @@ yy.Select.prototype.compileFrom = function(query) {
 		var alias = tq.as || tq.tableid;
 //		console.log(alias);
 		if(tq instanceof yy.Table) {
+//			console.log(tq, tq.databaseid, query);
 			query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
 		} else if(tq instanceof yy.Select) {
 
@@ -471,7 +472,7 @@ yy.Select.prototype.compileSelect = function(query) {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			}
 		} else {
-			ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid));
+			ss.push((col.as || col.columnid)+':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 		}
 	});

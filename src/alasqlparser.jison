@@ -200,7 +200,9 @@ Select
 		{   yy.extend($$,$1); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
 		    yy.extend($$,$8); 
-		    $$ = $1; 
+		    $$ = $1;
+		    $$.exists = yy.exists;
+		    delete yy.exists;
 		}
 	;
 
@@ -281,10 +283,6 @@ WhereClause
 	: { $$ = null; }
 	| WHERE Expression
 		{ $$ = {where: new yy.Expression({expression:$2})}; }
-	| WHERE EXISTS LPAR Select RPAR
-		{ $$ = {whereexists: $4}; }
-	| WHERE NOT EXISTS LPAR Select RPAR	
-		{ $$ = {wherenotexists: $5}; }
 	;
 
 GroupClause
@@ -415,6 +413,8 @@ Expression
 		{ $$ = $1; }
 	| ParamValue
 		{ $$ = $1; }
+	| ExistsValue
+		{ $$ = $1; }
 	;
 
 
@@ -457,6 +457,16 @@ NullValue
 	: NULL
 		{ $$ = new yy.NullValue({value:null}); }
 	;
+
+ExistsValue
+	: EXISTS LPAR Select RPAR
+		{ 
+			if(!yy.exists) yy.exists = [];
+			$$ = new yy.ExistsValue({value:$3, existsidx:yy.exists.length}); 
+			yy.exists.push($3);
+		}
+	;
+
 
 ParamValue
 	: DOLLAR LITERAL

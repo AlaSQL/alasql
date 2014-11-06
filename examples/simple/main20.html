@@ -19,8 +19,9 @@
 		db.exec('INSERT INTO test2 VALUES (2, 4)');
 
 //		var res = db.exec('SELECT a FROM test1 WHERE NOT EXISTS (SELECT * FROM test2 WHERE test1.a = test2.a)');
-		console.table(db.exec('SELECT a FROM test1 WHERE EXISTS (SELECT * FROM test2 WHERE test1.a = test2.a)'));
+		alasql.userlib.DOUBLE = function(x){return x*2};
+		
+		console.table(db.exec('SELECT a, DOUBLE(a) AS b FROM test1'));
 
-		console.table(db.exec('SELECT a FROM test1 WHERE NOT EXISTS (SELECT * FROM test2 WHERE test1.a = test2.a)'));
 
 </script>

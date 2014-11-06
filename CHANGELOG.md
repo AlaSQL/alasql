@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.0.12 (06.11.2014)
+
+* SELECT * FROM test WHERE EXISTS(SELECT * FROM test2 WHERE test1.a = test2.a)
+* User-defined functions (alasql.usrlib)
+
 ### 0.0.11 (06.11.2014)
 
 * SELECT * FROM (SELECT * FROM test) t
