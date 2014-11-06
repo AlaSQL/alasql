@@ -206,10 +206,17 @@ yy.Select.prototype.compileGroup = function(query) {
 
 		s += self.columns.map(function(col){
 			if (col instanceof yy.AggrValue) { 
-				if (col.aggregatorid == 'SUM') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
+				if (col.aggregatorid == 'SUM'
+					|| col.aggregatorid == 'MIN'
+					|| col.aggregatorid == 'MAX'
+					|| col.aggregatorid == 'FIRST'
+					|| col.aggregatorid == 'LAST'
+					|| col.aggregatorid == 'AVG'
+//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
+				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
 				else if(col.aggregatorid == 'COUNT') { return '\''+col.as+'\':1,'; }
-				else if(col.aggregatorid == 'MIN') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
-				else if(col.aggregatorid == 'MAX') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
+//				else if(col.aggregatorid == 'MIN') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
+//				else if(col.aggregatorid == 'MAX') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
 	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
 				return '';
 			} else return '';
@@ -282,6 +289,9 @@ yy.Select.prototype.compileGroup = function(query) {
 				else if(col.aggregatorid == 'COUNT') { return 'g[\''+col.as+'\']++;'; }
 				else if(col.aggregatorid == 'MIN') { return 'g[\''+col.as+'\']=Math.min(g[\''+col.as+'\'],r[\''+col.as+'\']);'; }
 				else if(col.aggregatorid == 'MAX') { return 'g[\''+col.as+'\']=Math.max(g[\''+col.as+'\'],r[\''+col.as+'\']);'; }
+				else if(col.aggregatorid == 'FIRST') { return ''; }
+				else if(col.aggregatorid == 'LAST') { return 'g[\''+col.as+'\']=r[\''+col.as+'\'];'; }
+				else if(col.aggregatorid == 'AVG') { return ''; }
 	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
 				return '';
 			} else return '';
@@ -460,7 +470,9 @@ yy.Select.prototype.compileSelect = function(query) {
 				self.group = [''];
 			}
 			if(!col.as) col.as = col.toString();
-			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ) {
+			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
+				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  col.aggregatorid == 'AVG'
+				) {
 				ss.push("'"+col.as+'\':'+col.expression.toJavaScript("p",query.defaultTableid))	
 			} else if (col.aggregatorid == 'COUNT') {
 				ss.push("'"+col.as+"':1");

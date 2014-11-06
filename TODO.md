@@ -1,17 +1,33 @@
 # To do
 
+### RELEASES PLAN
 
-URGENT BUGS OR FEATURES TO BE IMPLEMENTED SOON
+#### Version 0.0.13
+
+* CASE operator
+* AVG aggregator (http://www.w3schools.com/sql/sql_func_avg.asp)
+* MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
+* LIKE '%a%'
+* SELECT INTO table IN database FROM query (http://www.w3schools.com/sql/sql_select_into.asp)
+* BETWEEN AND (http://www.w3schools.com/sql/sql_between.asp)
+* BEGIN COMMIT ROLLBACK
+* IN
+* Multiple arguments of functions
+
+
+### URGENT BUGS OR FEATURES TO BE IMPLEMENTED SOON
 
 * Separate branch on github.com for development
-* BEGIN COMMIT ROLLBACK
-* WHERE multiple optimization
-* User-defined functions (they are already in)
-* Performance Tests based on SQLite tests (http://www.sqlite.org/speed.html)
-* Pass SQL Logic Test (http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki)
+* FULL OUTER JOIN
+* PIVOT
+
 
 Optimization
 
+* WHERE multiple optimization
+* Performance Tests based on SQLite tests (http://www.sqlite.org/speed.html)
+* Pass SQL Logic Test (http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki)
+* Optimization for EXISTS subqueries (check if column is from outer select)
 * Replace join recursion with loop (may be faster) [like here](http://architects.dzone.com/articles/sql-execution-plans-javascript)
 * Optimizations for joins and subqueries
  * SELECT * FROM f JOIN g ON f1 = g2 AND F1(f) = G1(g) AND F2(not g) = G2(not f) 
@@ -30,17 +46,13 @@ Optimization
 * Semi-joins (for outer joins) 
 * Expand outer join to N tables (not only two)
 * INSERT INTO SELECT statement
-* BETWEEN
 
 SELECT AND OTHER SQL STATEMENTS
 
 * Fast join of single value with indices (PRIMARY KEY)
-* Aggregators and functions
-* SubQueries
 * GROUP BY ALL
 * FULL OUTER JOIN
 * ANTI-JOINS, SEMI-JOINS
-* WHERE EXISTS
 * NATURAL JOIN (http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqljnaturaljoin.html#rrefsqljnaturaljoin)
 * Constrains, Foreign Keys, Primary key, cascade delete and update
 * Types, NULL, NOT NULL
@@ -53,7 +65,7 @@ SELECT AND OTHER SQL STATEMENTS
 * JavaScript functions
 * Identity 1,1, unique fields
 * SELECT TOP
-* SELECT INTO table FROM query
+
 * FETCH 
 * Case operator
 * Views (?)

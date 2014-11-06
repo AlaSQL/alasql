@@ -182,6 +182,7 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
 //	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 //	return s;
+	return '';
 }
 
 

@@ -35,6 +35,7 @@
 'EXISTS'										return 'EXISTS'
 'EXPLAIN'                                       return 'EXPLAIN'
 'FALSE'											return 'FALSE'
+'FIRST'											return 'FIRST'
 'FROM'                                          return 'FROM'
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
@@ -45,6 +46,7 @@
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
+'LAST'											return 'LAST'
 'LEFT'											return 'LEFT'
 'LIMIT'											return 'LIMIT'
 "MAX"											return "MAX"
@@ -429,6 +431,8 @@ Aggregator
 	| MIN { $$ = $1; }
 	| MAX { $$ = $1; }
 	| AVG { $$ = $1; }
+	| FIRST { $$ = $1; }
+	| LAST { $$ = $1; }
 	;
 
 FuncValue

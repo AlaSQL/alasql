@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.13 (06.11.2014)
+
+* FIRST(), LAST()
+
 ### 0.0.12 (06.11.2014)
 
 * SELECT * FROM test WHERE EXISTS(SELECT * FROM test2 WHERE test1.a = test2.a)

@@ -16,7 +16,7 @@ Check Alasql vs other JavaScript databases:
 
 ## Examples
 
-Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/6/), [sample 2](http://jsfiddle.net/6a06dqhc/3/), [sqmple 3](http://jsfiddle.net/606ksx2g/1/)
+Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/6/), [sample 2](http://jsfiddle.net/6a06dqhc/3/), [sample 3](http://jsfiddle.net/606ksx2g/1/)
 
 
 Other examples:
@@ -251,8 +251,8 @@ or run [test/main.html](test/main.html) in browser.
 
 1. Semicolon with multiple statements
 2. ORDER BY clause on three or more UNIONS
-3. There are many of them. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them  
-
+3. AVG() does not work
+4. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them  
 ### Future Plans
 
 Read my [to do](TODO.md) page
