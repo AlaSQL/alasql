@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.7 (06.11.2014)
+
+* WHERE column = expression optmization (creare index)
+
 ### 0.0.6 (04.11.2014)
 
 * Developed new parser based on Jison

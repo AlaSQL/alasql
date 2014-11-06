@@ -3,13 +3,14 @@
 
 <script>
 	var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
-	var sql2 = "INSERT INTO schools (schooldid, schoolname) VALUES (1,'Northern Pacific School');"
-	+"INSERT INTO schools (schooldid, schoolname) VALUES (2,'Western Atlantic School')";
+	var sql2 = "INSERT INTO schools (schooldid, schoolname) VALUES (1,'Northern Pacific School')"
+	var sql21 = "INSERT INTO schools (schooldid, schoolname) VALUES (2,'Western Atlantic School')";
 	var sql3 = 'DELETE FROM schools WHERE schoolid = 1';
 	var sql4 = 'SELECT * FROM schools';
 
-	alasql.exec(sql1);
-	alasql.exec(sql2);
+	console.log(alasql.exec(sql1));
+	console.log(alasql.exec(sql2));
+	console.log(alasql.exec(sql21));
 	console.log(alasql.exec(sql3));
 	var res = alasql.exec(sql4);
 

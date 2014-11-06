@@ -1,13 +1,15 @@
 {
   "name": "alasql",
   "description": "Alasql.js - pure JavaScript fast client-side SQL database",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
     "test": "test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "es6-promise": "2.0.0"
+    },
   "devDependencies": {
     "gulp-uglify": "^1.0.1"
   },
@@ -28,6 +30,7 @@
   },
   "keywords": [
     "sql",
+    "alasql",
     "mdx",
     "olap",
     "alasql",

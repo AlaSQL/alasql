@@ -1,8 +1,8 @@
-# Alasql.js - pure JavaScript client-side fast SQL-database 
+# Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.6 Date: November 5, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.7 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database. Fully functional compact sql server with joins, groups, and transactions support for [66kb only](alasql.min.js). Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database. Fully functional compact sql server with joins, groups, and transactions support for [66kb only](alasql.min.js). Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
 
 * [Alabase vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alabase vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
@@ -206,7 +206,7 @@ Now optimization algorithm has some limitations and therefore "table1 JOIN table
 
 ### Limitations
 
-It is Ok with select for 1000000 records or 2 join two tables by 100000 records in each. 
+It is Ok with select for 1000000 records or 2 join two tables by 10000 records in each. 
 
 ### Tests
 
@@ -220,7 +220,8 @@ or run [test/main.html](test/main.html) in browser.
 
 ### Known Bugs
 
-1. There are many of them.  
+1. Semicolon with multiple statements
+2. There are many of them.  
 
 ### Future Plans
 

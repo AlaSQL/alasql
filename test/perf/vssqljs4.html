@@ -19,7 +19,7 @@
 
     <script>
 
-var NUM_TESTS = 1000;
+var NUM_TESTS = 10000;
 
 var sql1 = [
 	'DROP TABLE IF EXISTS test1',
@@ -35,9 +35,18 @@ for(var i=0; i<NUM_TESTS; i++) {
 }
 
 var sql3 = [
-	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one > 5 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
-	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
-	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one > 5 GROUP BY test1.two, test2.three ORDER BY three, sumone'
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 0 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 1 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 2 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 3 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 4 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 5 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 6 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 7 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 8 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one = 9 AND test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+	//	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test2.three > 2 GROUP BY test1.two, test2.three ORDER BY three, sumone',
+//	'SELECT SUM(test1.one) AS sumone, test1.two, test2.three FROM test1 JOIN test2 ON test1.two = test2.two WHERE test1.one > 5 GROUP BY test1.two, test2.three ORDER BY three, sumone'
 ];
 
 var tres = {alasql:[], sqljs:[], websql:[]};
@@ -108,7 +117,7 @@ wdb.transaction(function(tx) {
 		tx.executeSql(sql, [], function(tx,result){
 			console.log(result.rows.length);
 			idx++;
-			if(idx == 3) tres.websql.push(Date.now()-tm33); 
+			if(idx == sql3.length) tres.websql.push(Date.now()-tm33); 
 		}, function(tx,error){console.log(error)});
 	});
 });
