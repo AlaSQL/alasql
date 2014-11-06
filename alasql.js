@@ -1789,7 +1789,7 @@ yy.ExistsValue.prototype.toString = function() {
 };
 
 yy.ExistsValue.prototype.toJavaScript = function() {
-	return 'this.existsfn['+this.existsnum+'](params,null,p).length';
+	return 'this.existsfn['+this.existsidx+'](params,null,p).length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {

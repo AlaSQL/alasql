@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.12 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.13 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -104,6 +104,9 @@ Now Alasql.js supports following subset of SELECT syntax:
 * COUNT() 
 * MIN()
 * MAX()
+* FIRST()
+* LAST()
+* Sorry, AVG still does not work
 
 #### Grouping functions
 

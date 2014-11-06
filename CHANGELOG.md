@@ -3,6 +3,7 @@
 ### 0.0.13 (06.11.2014)
 
 * FIRST(), LAST()
+* Minor bugs with EXISTS 
 
 ### 0.0.12 (06.11.2014)
 
