@@ -1,0 +1,82 @@
+﻿ <!DOCTYPE html>
+<head>
+	<title>Test of alasql.js database: Simple SQL statement</title>
+	<script src="../alasql.js"></script>
+</head>
+<body>
+	<style>
+
+	table td, table th {
+	    border: 1px solid black;
+	}
+
+	table td {
+	    text-align: right;		
+	}
+
+	</style>
+	<h1>Test alasql.js database</h1>
+	<div id="sqlstatement"></div>
+	<br>
+	<div id="result"></div>
+	<script>
+		var db = new alasql.Database();
+		db.exec('CREATE TABLE test (a int, b int)');
+//		db.exec('CREATE TABLE IF NOT EXISTS test (a int, b int)');
+//		db.exec('CREATE TABLE test (a int, b int)');
+
+//		db.exec('DROP TABLE test');
+//		console.log(4);
+//		db.exec('DROP TABLE IF EXISTS test');
+//		console.log(5);
+//		db.exec('DROP TABLE test');
+//		console.log(6);
+
+		//console.log(1);
+		//db.exec('INSERT INTO test (a,b) VALUES (1,2)');
+//		db.exec('INSERT INTO test (a,b) VALUES (5,4)');
+		db.exec('INSERT INTO test VALUES (1,1)');
+		db.exec('INSERT INTO test VALUES (1,7)');
+		db.exec('INSERT INTO test VALUES (2,2)');
+		db.exec('INSERT INTO test VALUES (3,3)');
+//		console.log(db.tables.test);
+
+		db.exec('CREATE TABLE test1 (a int, c int)');
+		db.exec('INSERT INTO test1 VALUES (1,5)');
+		db.exec('INSERT INTO test1 VALUES (2,6)');
+//		db.exec('INSERT INTO test1 VALUES (3,7)');
+		var sqls = 'SELECT SUM(b) AS sb,a,test1.c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,a';
+		
+		var s = '';
+		sqls.split(';').forEach(function(sql) {
+			var res = db.exec(sql);
+			if(res.length > 0) {
+				s += '<table style="border:1px solid black">';
+				s += '<tr>'
+				for(key in res[0]) {
+					s += '<th style="width:100px">'+key;
+				};
+
+				res.forEach(function(row){
+					s += '<tr>';
+					for(key in row) {
+						s += '<td>'+(typeof row[key] == 'undefined'?'':row[key]);
+					};
+				});
+				s += '</table>';			
+			}
+		});
+
+		document.getElementById('sqlstatement').innerHTML = sqls;
+		document.getElementById('result').innerHTML = s;
+/*
+
+		db.tables.one = {recs:[
+			{two:1, three:2}, 
+			{two:4, three:5}
+		]};
+		var res = db.exec('SELECT * FROM one');
+		
+*/
+	</script>
+</body>

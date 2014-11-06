@@ -1,9 +1,11 @@
 # To do
 
-URGENT BUGS OR FEATURES TO BE IMPLEMENTED
+URGENT BUGS OR FEATURES TO BE IMPLEMENTED SOON
 
-* ROLLUP() AND CUBE(), GROUPING() [GROUPING SETS()](http://technet.microsoft.com/en-us/library/bb522495(v=sql.105).aspx)
-* GROUP BY ALL
+* UNION
+* Subqueries
+* WHERE EXISTS
+* WHERE multiple optimization
 
 Optimization
 
@@ -32,7 +34,7 @@ SELECT AND OTHER SQL STATEMENTS
 * Fast join of single value with indices (PRIMARY KEY)
 * Aggregators and functions
 * SubQueries
-* UNION
+* GROUP BY ALL
 * FULL OUTER JOIN
 * ANTI-JOINS, SEMI-JOINS
 * WHERE EXISTS

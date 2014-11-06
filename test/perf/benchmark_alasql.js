@@ -1,7 +1,7 @@
 var alasql = require('../../alasql.js'),
   adb = new alasql.Database(),
     samplecoll = null,
-    arraySize = 10000,			// how large of a dataset to generate
+    arraySize = 100000,			// how large of a dataset to generate
     totalIterations = 200,	// how many times we search it
     results = [],
   gAsyncCount = 0,
@@ -71,8 +71,12 @@ function initializeDB() {
 	}
 	
   gAsyncCount = 0;
-  
+
+//  adb.exec('SELECT * FROM test WHERE customid = 0');
+
+
   startTime = process.hrtime();
+  
  
  // console.log(adb.tables.test.data[0]);
   //console.log(adb.exec('SELECT * FROM test WHERE customId = :customid',
@@ -100,12 +104,12 @@ function initializeDB() {
         rate = rate.toFixed(2);
         console.log("find (indexed : " + isIndexed + ") : " + totalMS + "ms (" + rate + ") ops/s");
 
-        // if (!isIndexed) {
-        //   isIndexed = true;
+         if (!isIndexed) {
+           isIndexed = true;
         //   ndb.ensureIndex({ fieldName: 'customId' }, function (err) {
-        //     testperfFind();
+             testperfFind();
         //   });
-        // }
+         }
       }
     });
   }

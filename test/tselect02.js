@@ -59,10 +59,10 @@ describe('SELECT #02', function(){
 	 		' FROM students '+
 	 		' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
 	 		' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
-	 		' GROUP BY schools, courseid, studentname '+
+	 		' GROUP BY schoolid, courseid, studentname '+
 	 		' ORDER BY studentname DESC' );
 		assert.equal(5, res.length);
-		assert.equal(104, res[4].studentid);
+		assert.equal(2, res[4].schoolid);
 		done();
 	});
 

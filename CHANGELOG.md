@@ -1,5 +1,13 @@
 # Changelog
 
+### 0.0.9 (06.11.2014)
+
+* ROLLUP, CUBE, GROUPING SETS support
+
+### 0.0.7 (06.11.2014)
+
+* Minor bugs
+
 ### 0.0.7 (06.11.2014)
 
 * WHERE column = expression optmization (creare index)
@@ -14,7 +22,6 @@
 #### 0.0.5 (30.10.2014)
 
 * Changed order of LIMIT and ORDER BY processing
-
 
 #### Version 0.0.4 (28.10.2014-29.10.2014)
 

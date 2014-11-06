@@ -1,0 +1,21 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var db = alasql.Database();
+
+		db.exec('CREATE TABLE test (a INT, b INT, c INT, d INT)');
+		db.exec('INSERT INTO test VALUES (0,0,0, 100)');
+		db.exec('INSERT INTO test VALUES (0,0,1, 200)');
+		db.exec('INSERT INTO test VALUES (0,1,0, 300)');
+		db.exec('INSERT INTO test VALUES (0,1,1, 400)');
+		db.exec('INSERT INTO test VALUES (1,0,0, 500)');
+		db.exec('INSERT INTO test VALUES (1,0,1, 600)');
+		db.exec('INSERT INTO test VALUES (1,1,0, 700)');
+		db.exec('INSERT INTO test VALUES (1,1,1, 800)');
+
+		var res = db.exec('SELECT a,b,c, SUM(d) FROM test '+
+			' GROUP BY GROUPING SETS(a,b),c');
+		console.table(res);
+//    console.log(res);
+</script>

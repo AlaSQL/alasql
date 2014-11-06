@@ -2,7 +2,14 @@
 
 Version: 0.0.8 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. alasql.js was written with pure JavaScript and does not use browser WebSQL database. Fully functional compact sql server with joins, groups, and transactions support for [66kb only](alasql.min.js). Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
+
+* Alasql was written with pure JavaScript and does not use browser WebSQL database. 
+* Alasql is fully functional compact sql server with JOINs, GROUPs, and transactions support.
+* Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
+* Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
+
+
 
 * [Alabase vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alabase vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
@@ -97,6 +104,12 @@ Now Alasql.js supports following subset of SELECT syntax:
 * MIN()
 * MAX()
 
+#### Grouping functions
+
+* ROLLUP()
+* CUBE()
+* GROUPING SETS()
+
 ### alasql
 
 alasql is a main variable of module. You can use it immediatly as default database
@@ -130,7 +143,7 @@ You can give a name to database and then access it from alasql:
 Each database can be used with the following methods:
 
 * vat db = new alasql.Database() - create new alasql-database
-* var res = db.exec(sql-statement) - executes SELECT query and returns array of objects 
+* var res = db.exec("sql-statement") - executes SELECT query and returns array of objects 
 
 Usually, alasql.js works synchronously, but you can use callback.
 
@@ -140,7 +153,7 @@ Usually, alasql.js works synchronously, but you can use callback.
     });
 ```
 
-or you can use aexec() - promised version of exec (in this case you need to install es6-prommise module for Node.js):
+or you can use aexec() - promised version of exec (in this case you need to install es6-prommise module for Node.js) (this feature is experimental and may be removed):
 ```
     db.aexec('SELECT * FROM test').then(function(res){
         console.log(res);
