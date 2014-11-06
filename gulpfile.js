@@ -27,6 +27,7 @@ gulp.task('js-merge', function () {
   	'./src/25yy.js',
   	'./src/30statements.js',
   	'./src/40select.js',
+    './src/41exists.js',
     './src/42compile.js',
     './src/43rollup.js',    
     './src/45union.js',

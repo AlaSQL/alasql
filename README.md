@@ -1,11 +1,11 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.10 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.11 Date: November 6, 2014 [Changelog](CHANGELOG.md) 
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
 * Alasql was written with pure JavaScript and does not use browser WebSQL database. 
-* Alasql is fully functional compact sql server with JOINs, GROUPs, UNIONs and limited transactions support.
+* Alasql is fully functional compact sql server with JOINs, GROUPs, UNIONs, subqueries and limited transactions support.
 * Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
 * Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
 * Alasql is fast, because it uses some optimization methods.
@@ -79,14 +79,15 @@ Then require alasql.js file:
 
 Now Alasql.js supports following subset of SELECT syntax:
 
-* SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(field7) AS alias8, *, table2.*
-* FROM table1, table2
+* SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(expression7) AS alias8, *, table2.*
+* FROM table1, table2, (SELECT * FROM table3) alias
 * LEFT / RIGHT / INNER  JOIN table2 ON condition / USING columns
 * WHERE condition
 * GROUP BY column1, column2, ROLLUP(a,b), CUBE(c,d,e), GROUPING SETS(g,h)
 * HAVING condition
 * ORDER BY column1, column2 DESC, 
 * LIMIT number [OFFSET number]
+* UNION / UNION ALL select
 
 #### Functions
 

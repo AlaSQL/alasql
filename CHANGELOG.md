@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.11 (06.11.2014)
+
+* SELECT * FROM (SELECT * FROM test) t
+
 ### 0.0.10 (06.11.2014)
 
 * SELECT UNION

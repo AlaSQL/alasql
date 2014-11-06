@@ -18,6 +18,11 @@ yy.Select.prototype.compileJoins = function(query) {
 			wherefn: returnTrue
 		};
 
+		source.datafn = function() {
+			return query.database.tables[source.tableid].data;
+		}
+
+
 		var alias = tq.as || tq.tableid;
 		query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
 
@@ -315,11 +320,17 @@ yy.Select.prototype.compileFrom = function(query) {
 //	var as = '';
 //	if(self.from[0].as) as = this.from[0].as;
 //console.log(this);
-	query.defaultTableid = this.from[0].tableid;
 	query.aliases = {};
 	self.from.forEach(function(tq){
 		var alias = tq.as || tq.tableid;
-		query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
+//		console.log(alias);
+		if(tq instanceof yy.Table) {
+			query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
+		} else if(tq instanceof yy.Select) {
+
+		} else {
+			throw new Error('Wrong table at FROM');
+		}
 
 		var source = {
 			alias: alias,
@@ -330,11 +341,26 @@ yy.Select.prototype.compileFrom = function(query) {
 			wherefns: '',	// for optimization
 			wherefn: returnTrue			
 		};
+
+		if(tq instanceof yy.Table) {
+			source.datafn = function() {
+				return query.database.tables[source.tableid].data;
+			}
+		} else if(tq instanceof yy.Select) {
+			source.subquery = tq.compile(db);
+			source.datafn = function() {
+				return source.subquery(query.params);
+			}						
+		} else {
+			throw new Error('Wrong table at FROM');
+		}
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 		query.sources.push(source);
 
 	});
 	// TODO Add joins
+	query.defaultTableid = query.sources[0].alias;
+//console.log(query.defaultTableid);
 };
 
 // yy.Select.prototype.compileSources = function(query) {
@@ -405,24 +431,26 @@ yy.Select.prototype.compileSelect = function(query) {
 				// If field, otherwise - expression
 				ss.push((col.as || col.columnid)+':p.'+(col.tableid||query.defaultTableid)+'.'+col.columnid);
 
-				if(!query.aliases[col.tableid||query.defaultTableid]) {
-					throw new Error('There is now such table \''+col.tableid+'\'');
-				};
-				var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
+				if(query.aliases[col.tableid||query.defaultTableid]) {
+					var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
 
-				if(xcolumns) {
-					var tcol = xcolumns[col.columnid];
-					var coldef = {
-						columnid:col.as || col.columnid, 
-						dbtypeid:tcol.dbtypeid, 
-						dbsize:tcol.dbsize, 
-						dbpecision:tcol.dbprecision
-					};
-					query.columns.push(coldef);
-					query.xcolumns[coldef.columnid]=coldef;
+					if(xcolumns) {
+						var tcol = xcolumns[col.columnid];
+						var coldef = {
+							columnid:col.as || col.columnid, 
+							dbtypeid:tcol.dbtypeid, 
+							dbsize:tcol.dbsize, 
+							dbpecision:tcol.dbprecision
+						};
+						query.columns.push(coldef);
+						query.xcolumns[coldef.columnid]=coldef;
+					} else {
+						query.dirtyColumns = true;
+					}
 				} else {
-					query.dirtyColumns = true;
-				}
+					// This is a subquery? 
+					// throw new Error('There is now such table \''+col.tableid+'\'');
+				};
 
 			}
 		} else if(col instanceof yy.AggrValue) {
@@ -483,6 +511,7 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 };
 
 function optimizeWhereJoin (query, ast) {
+	if(!ast) return;
 	var s = ast.toJavaScript('p',query.defaultTableid);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {

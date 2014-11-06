@@ -13,6 +13,8 @@ yy.Select.prototype.toString = function() {
 	s += ' FROM '+this.from.map(function(f){return f.toString()}).join(',');
 
 	if(this.where) s += ' WHERE '+this.where.toString();
+	if(this.whereexists) s += ' WHERE EXISTS ('+this.whereexists.toString()+')'
+	if(this.wherenotexists) s += ' WHERE NOT EXISTS ('+this.wherenotexists.toString()+')'
 	if(this.group) s += ' GROUP BY '+this.group.toString();
 	if(this.having) s += ' HAVING '+this.having.toString();
 	if(this.order) s += ' ORDER BY '+this.order.toString();
@@ -27,8 +29,11 @@ yy.Select.prototype.compile = function(db) {
 	var query = {};
 
 	query.database = db;
+	// 0. Precompile whereexists
+	this.compileWhereExists();
+	
 	// 1. Compile FROM clause
-	this.compileFrom(query);
+	query.fromfn = this.compileFrom(query);
 	// 2. Compile JOIN clauses
 	if(this.joins) this.compileJoins(query);
 	// 3. Compile SELECT clause
@@ -77,7 +82,8 @@ function queryfn(query) {
 
 	// First - refresh data sources
 	query.sources.forEach(function(source){
-		source.data = query.database.tables[source.tableid].data;
+//		source.data = query.database.tables[source.tableid].data;
+		source.data = source.datafn(); 
 	});
 
 	// Preindexation of data sources
@@ -233,7 +239,11 @@ preIndex = function(query) {
 				};
 			}			
 			// Change this to another place (this is a wrong)
-			query.database.tables[source.tableid].dirty = false;
+			if(query.database.tables[source.tableid]) {
+				query.database.tables[source.tableid].dirty = false;
+			} else {
+				// this is a subquery?
+			}
 		}
 }
 
@@ -256,7 +266,7 @@ function doJoin (query, scope, h) {
 		}
 	} else {
 		var source = query.sources[h];
-		var tableid =source.tableid; 
+		var tableid = source.alias || source.tableid; 
 		var pass = false; // For LEFT JOIN
 		var data = source.data;
 

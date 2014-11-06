@@ -235,7 +235,7 @@ FromTablesList
 
 FromTable
 	: LPAR Select RPAR LITERAL
-		{ $$ = new yy.SubQuery({select:$2}); $$.as = $2 }	
+		{ $$ = $2; $$.as = $4 }	
 	| Table LITERAL
 		{ $$ = $1; $1.as = $2 }
 	| Table 
@@ -281,6 +281,10 @@ WhereClause
 	: { $$ = null; }
 	| WHERE Expression
 		{ $$ = {where: new yy.Expression({expression:$2})}; }
+	| WHERE EXISTS LPAR Select RPAR
+		{ $$ = {whereexists: $4}; }
+	| WHERE NOT EXISTS LPAR Select RPAR	
+		{ $$ = {wherenotexists: $5}; }
 	;
 
 GroupClause
