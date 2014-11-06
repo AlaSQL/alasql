@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Alasql.js - pure JavaScript fast client-side SQL database",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
