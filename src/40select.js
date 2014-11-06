@@ -16,6 +16,8 @@ yy.Select.prototype.toString = function() {
 	if(this.group) s += ' GROUP BY '+this.group.toString();
 	if(this.having) s += ' HAVING '+this.having.toString();
 	if(this.order) s += ' ORDER BY '+this.order.toString();
+	if(this.union) s += ' UNION '+this.union.toString();
+	if(this.unionall) s += ' UNION ALL '+this.unionall.toString();
 	return s;
 };
 
@@ -23,6 +25,7 @@ yy.Select.prototype.toString = function() {
 yy.Select.prototype.compile = function(db) {
 	// Create variable for query
 	var query = {};
+
 	query.database = db;
 	// 1. Compile FROM clause
 	this.compileFrom(query);
@@ -42,6 +45,23 @@ yy.Select.prototype.compile = function(db) {
 	query.offset = this.offset?this.offset.value:1;
 	// 8. Compile ORDER BY clause
 	if(this.order) query.orderfn = this.compileOrder(query);
+
+	// 9. Compile ordering function for UNION and UNIONALL
+	if(this.union) {
+		query.unionfn = this.union.compile(db);
+		if(this.union.order) {
+			query.orderfn = this.union.compileOrder(query);
+		} else {
+			query.orderfn = null;
+		}
+	} else if(this.unionall) {
+		query.unionallfn = this.unionall.compile(db);
+		if(this.unionall.order) {
+			query.orderfn = this.unionall.compileOrder(query);
+		} else {
+			query.orderfn = null;
+		}
+	};
 
 	// Now, compile all togeather into one function with query object in scope
 	return function(params, cb) {
@@ -85,6 +105,13 @@ function queryfn(query) {
 
 	// Reduce to limit and offset
 	doLimit(query);
+
+	// UNION / UNION ALL
+	if(query.unionallfn) {
+		query.data = query.data.concat(query.unionallfn(query.params));
+	} else if(query.unionfn) {
+		query.data = arrayUnionDeep(query.data, query.unionfn(query.params));
+	};
 
 	// Ordering
 	if(query.orderfn) query.data = query.data.sort(query.orderfn);

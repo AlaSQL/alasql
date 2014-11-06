@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.0.10 (06.11.2014)
+
+* SELECT UNION
+* Started SQL tests
+
 ### 0.0.9 (06.11.2014)
 
 * ROLLUP, CUBE, GROUPING SETS support

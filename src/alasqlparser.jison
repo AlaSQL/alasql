@@ -67,6 +67,7 @@
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TRUE'						  					return 'TRUE'
+'UNION'                                         return 'UNION'
 'UPDATE'                                        return 'UPDATE'
 'USING'                                         return 'USING'
 'VALUES'                                        return 'VALUES'
@@ -195,8 +196,12 @@ WithTables :;
 /* SELECT */
 
 Select
-	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause
-		{  yy.extend($$,$1); yy.extend($$,$3); yy.extend($$,$4); yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); $$ = $1; }
+	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
+		{   yy.extend($$,$1); yy.extend($$,$3); yy.extend($$,$4); 
+		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
+		    yy.extend($$,$8); 
+		    $$ = $1; 
+		}
 	;
 
 SelectClause
@@ -307,6 +312,14 @@ HavingClause
 	: { $$ = null; }
 	| HAVING Expression
 		{ $$ = {having:$2}}
+	;
+
+UnionClause
+	:   { $$ = null; }
+	| UNION Select
+		{ $$ = {union: $2} ; }
+	| UNION ALL Select
+		{ $$ = {unionall: $3} ; }
 	;
 
 OrderClause

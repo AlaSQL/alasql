@@ -2,10 +2,14 @@
 
 URGENT BUGS OR FEATURES TO BE IMPLEMENTED SOON
 
-* UNION
+* Separate branch on github.com for development
+* BEGIN COMMIT ROLLBACK
 * Subqueries
 * WHERE EXISTS
 * WHERE multiple optimization
+* User-defined functions (they are already in)
+* Performance Tests based on SQLite tests (http://www.sqlite.org/speed.html)
+* Pass SQL Logic Test (http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki)
 
 Optimization
 
