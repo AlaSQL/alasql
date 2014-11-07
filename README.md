@@ -172,7 +172,7 @@ Usually, alasql.js works synchronously, but you can use callback.
     });
 ```
 
-or you can use aexec() - promised version of exec (in this case you need to install es6-prommise module for Node.js) (this feature is experimental and may be removed):
+or you can use aexec() - promised version of exec (in this case you need to install [es6-promise module](https://www.npmjs.org/package/es6-promise) for Node.js) (this feature is experimental and may be removed):
 ```
     db.aexec('SELECT * FROM test').then(function(res){
         console.log(res);
