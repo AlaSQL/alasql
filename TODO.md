@@ -2,38 +2,39 @@
 
 ### RELEASES PLAN
 
-#### Version 0.0.13
+#### Version 0.0.14
 
-* CASE operator
-* AVG aggregator (http://www.w3schools.com/sql/sql_func_avg.asp)
+* Fix ALTER TABLE RENAME
 * MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
-* LIKE '%a%'
-* SELECT INTO table IN database FROM query (http://www.w3schools.com/sql/sql_select_into.asp)
-* BETWEEN AND (http://www.w3schools.com/sql/sql_between.asp)
-* BEGIN COMMIT ROLLBACK
-* IN
-* Multiple arguments of functions
-
+* ALL, ANY, BETWEEN, LIKE, IN, SOME [like this](http://msdn.microsoft.com/en-us/library/ms188336.aspx)
 
 ### URGENT BUGS OR FEATURES TO BE IMPLEMENTED SOON
 
-* Separate branch on github.com for development
+* CASE operator
+* AVG aggregator (http://www.w3schools.com/sql/sql_func_avg.asp)
+* LIKE '%a%'
+* SELECT INTO table IN database FROM query [like this](http://www.w3schools.com/sql/sql_select_into.asp)
+* BETWEEN AND [like this](http://www.w3schools.com/sql/sql_between.asp)
+* BEGIN COMMIT ROLLBACK
+* IN
+* Multiple arguments of functions
+* Change grammar for LogicValues
+* GO* Separate branch on github.com for development
 * FULL OUTER JOIN
 * PIVOT
-
 
 Optimization
 
 * WHERE multiple optimization
-* Performance Tests based on SQLite tests (http://www.sqlite.org/speed.html)
-* Pass SQL Logic Test (http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki)
+* Performance Tests based on SQLite [tests](http://www.sqlite.org/speed.html)
+* Pass [SQL Logic Test](http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki)
 * Optimization for EXISTS subqueries (check if column is from outer select)
 * Replace join recursion with loop (may be faster) [like here](http://architects.dzone.com/articles/sql-execution-plans-javascript)
 * Optimizations for joins and subqueries
- * SELECT * FROM f JOIN g ON f1 = g2 AND F1(f) = G1(g) AND F2(not g) = G2(not f) 
- * FOREIGN KEY JOINS
- * WHERE a OR b
- * ORDER BY WITH index
+* SELECT * FROM f JOIN g ON f1 = g2 AND F1(f) = G1(g) AND F2(not g) = G2(not f) 
+* FOREIGN KEY JOINS
+* WHERE a OR b optimization
+* ORDER BY WITH index
 * Optimization of WHERE and JOINS with indices 
 * Indices with hash
 * Dirty data and indices update
@@ -53,7 +54,7 @@ SELECT AND OTHER SQL STATEMENTS
 * GROUP BY ALL
 * FULL OUTER JOIN
 * ANTI-JOINS, SEMI-JOINS
-* NATURAL JOIN (http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqljnaturaljoin.html#rrefsqljnaturaljoin)
+* [NATURAL JOIN](http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqljnaturaljoin.html#rrefsqljnaturaljoin)
 * Constrains, Foreign Keys, Primary key, cascade delete and update
 * Types, NULL, NOT NULL
 * Database.schema.table.field
@@ -65,7 +66,6 @@ SELECT AND OTHER SQL STATEMENTS
 * JavaScript functions
 * Identity 1,1, unique fields
 * SELECT TOP
-
 * FETCH 
 * Case operator
 * Views (?)
@@ -84,7 +84,7 @@ BUGS
 
 DEVELOPMENT
 
-* Gulp.js/Minifiication/package with 'sql-parser'
+* Minifiication
 
 REALIZATION
 
@@ -100,6 +100,7 @@ REALIZATION
 * alasql2js compiler
 
 ANYDATABASE
+
 * Any database
 * Node.js server
 * Pass-thru database
@@ -112,13 +113,14 @@ COMPATIBILITY
 * Tests for different browsers (IE!!!)
 * Crossfilter, lodash and underscore speed comparision
 * Cover WebSQL and Sql.js with own functions (for simple migrating)
-* Be compatible with w3school (http://www.w3schools.com/sql/default.asp)
-* Oracle syntax (http://docs.oracle.com/javadb/10.6.2.1/ref/rrefclauses.html)
+* Be compatible with [w3school](http://www.w3schools.com/sql/default.asp)
+* [Oracle syntax](http://docs.oracle.com/javadb/10.6.2.1/ref/rrefclauses.html)
+* Check [SQL BNF](http://www.contrib.andrew.cmu.edu/~shadow/sql/sql2bnf.aug92.txt)
 
 OTHER NEEDED FUNCTIONALITY (MORE THAN SQL)
 
 * OLAP
- * Pivot operator
+* Pivot operator
 * Totals (this is non-SQL functionality, but required)
 * Running totals 
 * Hierarchy totals
@@ -130,7 +132,7 @@ MDX
 
 SAMPLES
 
-* Modify [W3C SQL demo database](http://www.w3schools.com/w3Database.js) to work with alasql.js
+* Check for compatibility with [W3C SQL demo database](http://www.w3schools.com/w3Database.js)
 * Console [like](http://www.moxleystratton.com/files/sqittle.html) 
 * One more [sample](http://yradtsevich.github.io/pure-js-websql/test/index.html)
 * Create tutorial database on https://github.com/txje/js-sql-tutorial for best console

@@ -1131,6 +1131,14 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 }
 
+/*
+//
+// Utilities for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // Fast hash function
 function hash(str){
     var h = 0;
@@ -1149,11 +1157,12 @@ arrayUnion = function(a,b) {
     return r;
 };
 
+// Array Difference
 arrayDiff = function(a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
-// Union arrays
+// Arrays deep union (with records)
 arrayUnionDeep = function(a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
@@ -1170,6 +1179,7 @@ arrayUnionDeep = function(a,b) {
     return r;
 };
 
+// Deep clone obects
 function cloneDeep(obj) {
     if(obj == null || typeof(obj) != 'object')
         return obj;
@@ -1184,6 +1194,7 @@ function cloneDeep(obj) {
     return temp;
 }
 
+// Check equality of objects
 equalDeep = function (x, y, deep) {
     if (deep) {
         if (x == y) return true;
@@ -1219,21 +1230,27 @@ equalDeep = function (x, y, deep) {
         return true;
     }
     return x == y;
-}
+};
+
+// Extend object
+function extend (a,b){
+    if(typeof a == 'undefined') a = {};
+    for(key in b) {
+        if(b.hasOwnProperty(key)) {
+            a[key] = b[key]
+        }
+    }
+    return a;
+};;
+
 
 
 /*
-String.prototype.toJavaScript = function() {
-	return "'"+this+"'";
-}
-
-Number.prototype.toJavaScript = function() {
-	return this;
-}
-
-Boolean.prototype.toJavaScript = function() {
-	return this;
-}
+//
+// Database class for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
 */
 
 // Main database variable
@@ -1264,7 +1281,7 @@ function Database(databaseid) {
 // Start database
 alasql.Database = Database;
 
-
+// Compiler
 alasql.compile = function(sql) {
 	return this.currentDatabase.compile(sql);
 }
@@ -1280,7 +1297,7 @@ alasql.aexec = function (sql, params) {
 };
 
 
-// MSSQL aliases
+// MSSQL-Like aliases
 alasql.query = function (sql, params, cb) {
 	return this.currentDatabase.query(sql, params.cb);
 }
@@ -1304,6 +1321,7 @@ Database.prototype.exec = function(sql, params, cb) {
 	return data;
 };
 
+// Async version of exec
 Database.prototype.aexec = function(sql, params) {
 	var self = this;
 	return new Promise(function(resolve, reject){
@@ -1312,7 +1330,7 @@ Database.prototype.aexec = function(sql, params) {
 };
 
 
-// Aliases like Microsoft Database
+// Aliases like MS SQL
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
 Database.prototype.querySingle = function(sql, params, cb) {
@@ -1343,14 +1361,13 @@ Database.prototype.compile = function(sql) {
 Database.prototype.prepare = Database.prototype.compile;
 
 // Added for compatibility with WebSQL
-// TODO Create Commit
 Database.prototype.transaction = function(cb) {
 	var tx = new alasql.Transaction(this.databaseid);
 	var res = cb(tx);
 	return res;
 };
 
-// Index columns
+// Index columns in table utility
 Database.prototype.indexColumns = function(tableid) {
 	var table = this.tables[tableid];
 	table.xcolumns = {};
@@ -1360,12 +1377,19 @@ Database.prototype.indexColumns = function(tableid) {
 }
 
 
+/*
+//
+// Transactio class for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // Transaction class (for WebSQL compatibility)
 function Transaction(databaseid) {
 	this.transactionid = Date.now();
 	this.databaseid = databaseid;
-	this.commited = false; // 0 - opened, 1 - commited
-	//alasql.store(databaseid, this.transactionid);
+	this.commited = false; 
 	this.bank = JSON.stringify(alasql.databases[databaseid].tables);
 	return this;
 };
@@ -1373,29 +1397,33 @@ function Transaction(databaseid) {
 // Main class 
 alasql.Transaction = Transaction;
 
-
+// Commit
 Transaction.prototype.commit = function() {
 	this.commited = true;
 	delete this.bank;
-//	alasql.wipe(this.databaseid, this.transactionid);
 };
 
+// Rollback
 Transaction.prototype.rollback = function() {
 	alasql.databases[this.databaseid].tables = JSON.parse(this.bank);
-//	alasql.restore(this.databaseid, this.transactionid);
-//	alasql.wipe(this.databaseid, this.transactionid);
 };
 
-
 // Transactions stub
-// TODO: Implement transactions
 Transaction.prototype.exec = Transaction.prototype.executeSQL = function(sql, params, cb) {
 	return alasql.databases[this.databaseid].exec(sql);
 };
 
 
 
+/*
+//
+// Persistence Store for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
+// Store to Storage
 alasql.store = function(databaseid, transactionid) {
 	var obj = {
 		tables: alasql.databases[databaseid].tables
@@ -1405,6 +1433,7 @@ alasql.store = function(databaseid, transactionid) {
 	localStorage[key] = JSON.stringify(obj);
 };
 
+// Restore from localStorage
 alasql.restore = function(databaseid, transactionid) {
 	var key = databaseid;
 	if(transactionid) key += "."+transactionid;
@@ -1422,6 +1451,7 @@ alasql.restore = function(databaseid, transactionid) {
 
 };
 
+// Clear all database records with transactions
 alasql.wipe = function (databaseid, transactionid) {
 	var key = databaseid;
 	if(transactionid) {
@@ -1437,22 +1467,27 @@ alasql.wipe = function (databaseid, transactionid) {
 	}
 };
 
-//console.log(parser);
+/*
+//
+// Parser helper for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 var yy = parser.yy = {};
 
 // Utility
-// TODO Replace with standard function
-yy.extend = function (a,b){
-	if(typeof a == 'undefined') a = {};
-	for(key in b) {
-		if(b.hasOwnProperty(key)) {
-			a[key] = b[key]
-		}
-	}
-	return a;
-};;
+yy.extend = extend;
 
+
+/*
+//
+// Statements class for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 // Statements container
 yy.Statements = function(params) { return yy.extend(this, params); };
@@ -1461,6 +1496,7 @@ yy.Statements.prototype.toString = function () {
 	return this.statements.map(function(st){return st.toString()}).join(';');
 };
 
+// Compile array of statements into single statement
 yy.Statements.prototype.compile = function(db) {
 	var statements = this.statements.map(function(st){return st.compile(db)});
 	if(statements.length == 1) {
@@ -1475,10 +1511,19 @@ yy.Statements.prototype.compile = function(db) {
 };
 
 
+
+/*
+//
+// Select run-time part for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 //
 // Main part of SELECT procedure
 //
-//
+
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
 	var s = 'SELECT '+this.columns.map(function(col){
@@ -1545,7 +1590,6 @@ yy.Select.prototype.compile = function(db) {
 
 	// Now, compile all togeather into one function with query object in scope
 	return function(params, cb, oldscope) {
-//		console.log('SELECT ',params, cb, oldscope);
 		query.params = params;
 		var res = queryfn(query,oldscope); 
 		if(cb) cb(res); 
@@ -1559,7 +1603,6 @@ function queryfn(query,oldscope) {
 	if(!oldscope) scope = {};
 	else scope = cloneDeep(oldscope);
 	query.scope = scope;
-//	console.log(query.scope);
 
 	// First - refresh data sources
 	query.sources.forEach(function(source){
@@ -1730,8 +1773,8 @@ preIndex = function(query) {
 		}
 }
 
-// Join all lines over sources 
 //
+// Join all lines over sources 
 //
 
 function doJoin (query, scope, h) {
@@ -1773,15 +1816,25 @@ function doJoin (query, scope, h) {
 			}
 		};
 
+		// Clear the scope after the loop
+		scope[tableid] = {};
+
 		// Additional join for LEFT JOINS
 		if((source.joinmode == 'LEFT') && !pass) {
-			scope[tableid] = {};
 			doJoin(query,scope,h+1);
 		}	
 	}
 };
 
 
+
+/*
+//
+// EXISTS functions for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 yy.ExistsValue = function(params) { return yy.extend(this, params); }
 yy.ExistsValue.prototype.toString = function() {
@@ -1797,16 +1850,24 @@ yy.Select.prototype.compileWhereExists = function(query) {
 	query.existsfn = this.exists.map(function(ex) {
 		return ex.compile(query.database);
 	});
-//	console.log(query.existsfn);
 };
+
+/*
+//
+// Select compiler part for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 // SELECT Compile functions
 
+// Stub for non-ecisting WHERE clause 
+// so is faster then if(whenrfn) whenfn()
 function returnTrue () {return true};
 
 // Compile JOIN caluese
 yy.Select.prototype.compileJoins = function(query) {
-//	console.log(this.join);
 	var self = this;
 	this.joins.forEach(function(jn){
 		var tq = jn.table;
@@ -2402,6 +2463,14 @@ yy.Select.prototype.compileOrder = function (query) {
 
 
 
+/*
+//
+// ROLLUP(), CUBE(), GROUPING SETS() for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // Calculate ROLLUP()
 
 var rollup = function (a) {
@@ -2498,6 +2567,14 @@ function decartes(gv) {
 }
 
 
+/*
+//
+// UNION for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // SELECT UNION statement
 
 yy.Union = function (params) { return yy.extend(this, params); }
@@ -2509,6 +2586,13 @@ yy.Union.prototype.compile = function (tableid) {
 	return null;
 };
 
+/*
+//
+// Expressions for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 yy.Expression = function(params) { return yy.extend(this, params); };
 yy.Expression.prototype.toString = function() {
@@ -2725,6 +2809,14 @@ yy.ColumnDef.prototype.toString = function() {
 }
 
 
+/*
+//
+// Functions for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = this.funcid+'(';
@@ -2798,6 +2890,13 @@ stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
 // TRIM
 
 
+/*
+//
+// CREATE TABLE for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 yy.ColumnDef = function (params) { return yy.extend(this, params); }
 yy.ColumnDef.prototype.toString = function() {
@@ -2868,6 +2967,13 @@ yy.CreateTable.prototype.compile = function (db) {
 
 
 
+/*
+//
+// DROP TABLE for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 yy.DropTable = function (params) { return yy.extend(this, params); }
 yy.DropTable.prototype.toString = function() {
@@ -2892,6 +2998,13 @@ yy.DropTable.prototype.compile = function (db) {
 };
 
 
+/*
+//
+// ALTER TABLE for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 // ALTER TABLE table1 RENAME TO table2
 yy.AlterTable = function (params) { return yy.extend(this, params); }
@@ -2905,6 +3018,13 @@ yy.AlterTable.prototype.compile = function (db) {
 
 
 
+/*
+//
+// INSERT for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 yy.Insert = function (params) { return yy.extend(this, params); }
 yy.Insert.prototype.toString = function() {
@@ -2987,6 +3107,14 @@ yy.Insert.prototype.compile = function (db) {
 
 
 
+/*
+//
+// DELETE for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 yy.Delete = function (params) { return yy.extend(this, params); }
 yy.Delete.prototype.toString = function() {
 	var s = 'DELETE FROM '+this.table.toString();
@@ -3027,6 +3155,14 @@ yy.Delete.prototype.compile = function (db) {
 
 };
 
+
+/*
+//
+// UPDATE for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 yy.Update = function (params) { return yy.extend(this, params); }
 yy.Update.prototype.toString = function() {
@@ -3077,6 +3213,14 @@ yy.Update.prototype.compile = function (db) {
 
 
 
+
+/*
+//
+// Last part of Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 // End of module
 

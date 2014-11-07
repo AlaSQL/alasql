@@ -1,3 +1,11 @@
+/*
+//
+// EXISTS functions for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 yy.ExistsValue = function(params) { return yy.extend(this, params); }
 yy.ExistsValue.prototype.toString = function() {
 	return 'EXISTS('+this.value.toString()+')';
@@ -12,5 +20,4 @@ yy.Select.prototype.compileWhereExists = function(query) {
 	query.existsfn = this.exists.map(function(ex) {
 		return ex.compile(query.database);
 	});
-//	console.log(query.existsfn);
 };

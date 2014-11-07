@@ -1,3 +1,11 @@
+/*
+//
+// Database class for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // Main database variable
 var alasql = {};
 
@@ -26,7 +34,7 @@ function Database(databaseid) {
 // Start database
 alasql.Database = Database;
 
-
+// Compiler
 alasql.compile = function(sql) {
 	return this.currentDatabase.compile(sql);
 }
@@ -42,7 +50,7 @@ alasql.aexec = function (sql, params) {
 };
 
 
-// MSSQL aliases
+// MSSQL-Like aliases
 alasql.query = function (sql, params, cb) {
 	return this.currentDatabase.query(sql, params.cb);
 }
@@ -66,6 +74,7 @@ Database.prototype.exec = function(sql, params, cb) {
 	return data;
 };
 
+// Async version of exec
 Database.prototype.aexec = function(sql, params) {
 	var self = this;
 	return new Promise(function(resolve, reject){
@@ -74,7 +83,7 @@ Database.prototype.aexec = function(sql, params) {
 };
 
 
-// Aliases like Microsoft Database
+// Aliases like MS SQL
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
 Database.prototype.querySingle = function(sql, params, cb) {
@@ -105,14 +114,13 @@ Database.prototype.compile = function(sql) {
 Database.prototype.prepare = Database.prototype.compile;
 
 // Added for compatibility with WebSQL
-// TODO Create Commit
 Database.prototype.transaction = function(cb) {
 	var tx = new alasql.Transaction(this.databaseid);
 	var res = cb(tx);
 	return res;
 };
 
-// Index columns
+// Index columns in table utility
 Database.prototype.indexColumns = function(tableid) {
 	var table = this.tables[tableid];
 	table.xcolumns = {};

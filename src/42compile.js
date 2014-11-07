@@ -1,10 +1,19 @@
+/*
+//
+// Select compiler part for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // SELECT Compile functions
 
+// Stub for non-ecisting WHERE clause 
+// so is faster then if(whenrfn) whenfn()
 function returnTrue () {return true};
 
 // Compile JOIN caluese
 yy.Select.prototype.compileJoins = function(query) {
-//	console.log(this.join);
 	var self = this;
 	this.joins.forEach(function(jn){
 		var tq = jn.table;

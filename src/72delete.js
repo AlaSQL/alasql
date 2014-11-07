@@ -1,3 +1,11 @@
+/*
+//
+// DELETE for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 yy.Delete = function (params) { return yy.extend(this, params); }
 yy.Delete.prototype.toString = function() {
 	var s = 'DELETE FROM '+this.table.toString();

@@ -1,4 +1,12 @@
+/*
+//
+// Persistence Store for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
+// Store to Storage
 alasql.store = function(databaseid, transactionid) {
 	var obj = {
 		tables: alasql.databases[databaseid].tables
@@ -8,6 +16,7 @@ alasql.store = function(databaseid, transactionid) {
 	localStorage[key] = JSON.stringify(obj);
 };
 
+// Restore from localStorage
 alasql.restore = function(databaseid, transactionid) {
 	var key = databaseid;
 	if(transactionid) key += "."+transactionid;
@@ -25,6 +34,7 @@ alasql.restore = function(databaseid, transactionid) {
 
 };
 
+// Clear all database records with transactions
 alasql.wipe = function (databaseid, transactionid) {
 	var key = databaseid;
 	if(transactionid) {

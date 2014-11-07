@@ -1,3 +1,11 @@
+/*
+//
+// Utilities for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // Fast hash function
 function hash(str){
     var h = 0;
@@ -16,11 +24,12 @@ arrayUnion = function(a,b) {
     return r;
 };
 
+// Array Difference
 arrayDiff = function(a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
-// Union arrays
+// Arrays deep union (with records)
 arrayUnionDeep = function(a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
@@ -37,6 +46,7 @@ arrayUnionDeep = function(a,b) {
     return r;
 };
 
+// Deep clone obects
 function cloneDeep(obj) {
     if(obj == null || typeof(obj) != 'object')
         return obj;
@@ -51,6 +61,7 @@ function cloneDeep(obj) {
     return temp;
 }
 
+// Check equality of objects
 equalDeep = function (x, y, deep) {
     if (deep) {
         if (x == y) return true;
@@ -86,19 +97,16 @@ equalDeep = function (x, y, deep) {
         return true;
     }
     return x == y;
-}
+};
 
+// Extend object
+function extend (a,b){
+    if(typeof a == 'undefined') a = {};
+    for(key in b) {
+        if(b.hasOwnProperty(key)) {
+            a[key] = b[key]
+        }
+    }
+    return a;
+};;
 
-/*
-String.prototype.toJavaScript = function() {
-	return "'"+this+"'";
-}
-
-Number.prototype.toJavaScript = function() {
-	return this;
-}
-
-Boolean.prototype.toJavaScript = function() {
-	return this;
-}
-*/

@@ -1,3 +1,10 @@
+/*
+//
+// Expressions for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
 
 yy.Expression = function(params) { return yy.extend(this, params); };
 yy.Expression.prototype.toString = function() {

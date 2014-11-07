@@ -1,7 +1,16 @@
+
+/*
+//
+// Select run-time part for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 //
 // Main part of SELECT procedure
 //
-//
+
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
 	var s = 'SELECT '+this.columns.map(function(col){
@@ -68,7 +77,6 @@ yy.Select.prototype.compile = function(db) {
 
 	// Now, compile all togeather into one function with query object in scope
 	return function(params, cb, oldscope) {
-//		console.log('SELECT ',params, cb, oldscope);
 		query.params = params;
 		var res = queryfn(query,oldscope); 
 		if(cb) cb(res); 
@@ -82,7 +90,6 @@ function queryfn(query,oldscope) {
 	if(!oldscope) scope = {};
 	else scope = cloneDeep(oldscope);
 	query.scope = scope;
-//	console.log(query.scope);
 
 	// First - refresh data sources
 	query.sources.forEach(function(source){
@@ -253,8 +260,8 @@ preIndex = function(query) {
 		}
 }
 
-// Join all lines over sources 
 //
+// Join all lines over sources 
 //
 
 function doJoin (query, scope, h) {
@@ -296,9 +303,11 @@ function doJoin (query, scope, h) {
 			}
 		};
 
+		// Clear the scope after the loop
+		scope[tableid] = {};
+
 		// Additional join for LEFT JOINS
 		if((source.joinmode == 'LEFT') && !pass) {
-			scope[tableid] = {};
 			doJoin(query,scope,h+1);
 		}	
 	}

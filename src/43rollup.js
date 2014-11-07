@@ -1,3 +1,11 @@
+/*
+//
+// ROLLUP(), CUBE(), GROUPING SETS() for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
 // Calculate ROLLUP()
 
 var rollup = function (a) {
