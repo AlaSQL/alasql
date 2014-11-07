@@ -161,8 +161,8 @@ You can give a name to database and then access it from alasql:
 
 Each database can be used with the following methods:
 
-* vat db = new alasql.Database() - create new alasql-database
-* var res = db.exec("sql-statement") - executes SELECT query and returns array of objects 
+* `var db = new alasql.Database()` - create new alasql-database
+* `var res = db.exec("sql-statement")` - executes SELECT query and returns array of objects 
 
 Usually, alasql.js works synchronously, but you can use callback.
 
