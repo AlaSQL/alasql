@@ -42,30 +42,76 @@ yy.Table.prototype.toString = function() {
 	var s = this.tableid;
 	if(this.databaseid) s = this.databaseid+'.'+s;
 	return s;
-}
+};
 
 
 yy.Op = function (params) { return yy.extend(this, params); }
 yy.Op.prototype.toString = function() {
-	return this.left.toString()+this.op+this.right.toString();
-}
+	if(this.op == 'IN' || this.op == 'NOT IN') {
+		return this.left.toString()+" "+this.op+" ("+this.right.toString()+")";
+	}
+	return this.left.toString()+" "+this.op+" "+this.right.toString();
+};
+
 yy.Op.prototype.toJavaScript = function(context,tableid) {
 //	console.log(this);
 	var op = this.op;
+
+	if(this.op == 'BETWEEN') {
+		if(this.right instanceof yy.Op && this.right.op == 'AND') {
+			return '(('+this.right.left.toJavaScript(context,tableid)+'<='+this.left.toJavaScript(context,tableid)+')&&'+
+			'('+this.left.toJavaScript(context,tableid)+'<='+this.right.right.toJavaScript(context,tableid)+'))';		
+		} else {
+			throw new Error('Wrong BETWEEM operator without AND part');
+		}
+	};
+
+	if(this.op == 'NOT BETWEEN') {
+		if(this.right instanceof yy.Op && this.right.op == 'AND') {
+			return '!(('+this.right.left.toJavaScript(context,tableid)+'<='+this.left.toJavaScript(context,tableid)+')&&'+
+			'('+this.left.toJavaScript(context,tableid)+'<='+this.right.right.toJavaScript(context,tableid)+'))';		
+		} else {
+			throw new Error('Wrong NOT BETWEEM operator without AND part');
+		}
+	};
+
+	if(this.op == 'IN') {
+		if(this.right instanceof yy.Select ) {
+			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid)+')>-1)';
+			return s;
+		} else {
+			throw new Error('Wrong IN operator without SELECT part');
+		}
+	};
+
+
+	if(this.op == 'NOT IN') {
+		if(this.right instanceof yy.Select ) {
+			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid)+')<0)';
+			return s;
+		} else {
+			throw new Error('Wrong NOT IN operator without SELECT part');
+		}
+	};
+
+	// Change names
 	if(this.op == '=') op = '===';
 	else if(this.op == '<>') op = '!=';
 	else if(this.op == 'AND') op = '&&';
 	else if(this.op == 'OR') op = '||';
 //	console.log(this);
 	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';
-}
+};
 
 
 
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
 	return this.value.toString();
-}
+};
+
 yy.NumValue.prototype.toJavaScript = function() {
 	return ""+this.value;
 }

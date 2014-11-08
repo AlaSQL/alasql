@@ -46,6 +46,40 @@ arrayUnionDeep = function(a,b) {
     return r;
 };
 
+// Arrays deep union (with records)
+arrayExceptDeep = function(a,b) {
+    var r = [];
+    a.forEach(function(ai) {
+        var found = false;
+        
+        b.forEach(function(bi){
+            found = found || equalDeep(ai, bi, true);
+        });
+
+        if(!found) {
+            r.push(ai); 
+        }
+    });
+    return r;
+};
+
+// Arrays deep intersect (with records)
+arrayIntersectDeep = function(a,b) {
+    var r = [];
+    a.forEach(function(ai) {
+        var found = false;
+        
+        b.forEach(function(bi){
+            found = found || equalDeep(ai, bi, true);
+        });
+
+        if(found) {
+            r.push(ai); 
+        }
+    });
+    return r;
+};
+
 // Deep clone obects
 function cloneDeep(obj) {
     if(obj == null || typeof(obj) != 'object')
@@ -109,4 +143,12 @@ function extend (a,b){
     }
     return a;
 };;
+
+// Flat array by first row
+flatArray = function flatArray(a) {
+    if(!a || a.length == 0) return [];
+    var key = Object.keys(a[0])[0];
+    if(typeof key == 'undefined') return [];
+    return a.map(function(ai) {return ai[key]});
+}
 

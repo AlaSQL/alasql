@@ -20,6 +20,8 @@
 'ASC'                                      		return 'DIRECTION'
 'AVG'                                      		return 'AVG'
 
+'BETWEEN'										return 'BETWEEN'
+'NOT BETWEEN'									return 'NOT_BETWEEN'
 'BY'											return 'BY'
 
 'CREATE'										return 'CREATE'
@@ -31,6 +33,7 @@
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
 
+'EXCEPT'										return 'EXCEPT'
 'EXISTS'										return 'EXISTS'
 'EXPLAIN'                                       return 'EXPLAIN'
 'FALSE'											return 'FALSE'
@@ -40,8 +43,10 @@
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 'IF'											return 'IF'
+'IN'											return 'IN'
 'INNER'                                         return 'INNER'
 'INSERT'                                        return 'INSERT'
+'INTERSECT'                                     return 'INTERSECT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
@@ -104,8 +109,10 @@
 /lex
 %
 %left OR
+%left BETWEEN NOT_BETWEEN
 %left AND
 %left GT GE LT LE EQ NE
+%left IN
 %left NOT
 %left PLUS MINUS
 %left STAR SLASH
@@ -202,8 +209,10 @@ Select
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
 		    yy.extend($$,$8); 
 		    $$ = $1;
-		    $$.exists = yy.exists;
+		    if(yy.exists) $$.exists = yy.exists;
 		    delete yy.exists;
+		    if(yy.queries) $$.queries = yy.queries;
+			delete yy.queries;
 		}
 	;
 
@@ -323,6 +332,10 @@ UnionClause
 		{ $$ = {union: $2} ; }
 	| UNION ALL Select
 		{ $$ = {unionall: $3} ; }
+	| EXCEPT Select
+		{ $$ = {except: $2} ; }
+	| INTERSECT Select
+		{ $$ = {intersect: $2} ; }
 	;
 
 OrderClause
@@ -516,7 +529,24 @@ Op
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
 	| LPAR Expression RPAR
 		{ $$ = new yy.UniOp({right: $2}); }
+	| Expression IN LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length});
+			yy.queries.push($4);  
+		}
+	| Expression NOT IN LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length});
+			yy.queries.push($5);  
+		}
+	| Expression BETWEEN Expression
+		{ $$ = new yy.Op({left:$1, op:'BETWEEN', right:$3 }); }
+	| Expression NOT_BETWEEN Expression
+		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
 	;
+
 
 /* PART TWO */
 

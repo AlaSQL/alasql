@@ -27,6 +27,8 @@ yy.Select.prototype.toString = function() {
 	if(this.order) s += ' ORDER BY '+this.order.toString();
 	if(this.union) s += ' UNION '+this.union.toString();
 	if(this.unionall) s += ' UNION ALL '+this.unionall.toString();
+	if(this.except) s += ' EXCEPT '+this.except.toString();
+	if(this.intersect) s += ' INTERSECT '+this.intersect.toString();
 	return s;
 };
 
@@ -38,6 +40,9 @@ yy.Select.prototype.compile = function(db) {
 	query.database = db;
 	// 0. Precompile whereexists
 	this.compileWhereExists(query);
+
+	// 0. Precompile queries for IN, NOT IN, ANY and ALL operators
+	this.compileQueries(query);
 	
 	// 1. Compile FROM clause
 	query.fromfn = this.compileFrom(query);
@@ -73,6 +78,20 @@ yy.Select.prototype.compile = function(db) {
 		} else {
 			query.orderfn = null;
 		}
+	} else if(this.except) {
+		query.exceptfn = this.except.compile(db);
+		if(this.except.order) {
+			query.orderfn = this.except.compileOrder(query);
+		} else {
+			query.orderfn = null;
+		}
+	} else if(this.intersect) {
+		query.intersectfn = this.intersect.compile(db);
+		if(this.intersect.order) {
+			query.intersectfn = this.intersect.compileOrder(query);
+		} else {
+			query.orderfn = null;
+		}
 	};
 
 	// Now, compile all togeather into one function with query object in scope
@@ -86,6 +105,13 @@ yy.Select.prototype.compile = function(db) {
 
 // Main query procedure
 function queryfn(query,oldscope) {
+
+	// Run all subqueries before main statement
+	if(query.queriesfn) {
+		query.queriesdata = query.queriesfn.map(function(q){return flatArray(q(query.params))});
+//		console.log(query.queriesdata[0]);
+	}
+
 	var scope;
 	if(!oldscope) scope = {};
 	else scope = cloneDeep(oldscope);
@@ -130,6 +156,10 @@ function queryfn(query,oldscope) {
 		query.data = query.data.concat(query.unionallfn(query.params));
 	} else if(query.unionfn) {
 		query.data = arrayUnionDeep(query.data, query.unionfn(query.params));
+	} else if(query.exceptfn) {
+		query.data = arrayExceptDeep(query.data, query.exceptfn(query.params));
+	} else if(query.intersectfn) {
+		query.data = arrayIntersectDeep(query.data, query.intersectfn(query.params));
 	};
 
 	// Ordering

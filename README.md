@@ -14,6 +14,9 @@ Check Alasql vs other JavaScript databases:
 * [Alabase vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alabase vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
+Warning: Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
+the code before relaese more stable version 0.1.0 in the mid of November.
+
 ## Examples
 
 Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/6/), [sample 2](http://jsfiddle.net/6a06dqhc/3/), [sample 3](http://jsfiddle.net/606ksx2g/1/)
@@ -87,7 +90,11 @@ Now Alasql.js supports following subset of SELECT syntax:
 * HAVING condition
 * ORDER BY column1, column2 DESC, 
 * LIMIT number [OFFSET number]
-* UNION / UNION ALL select
+* UNION / UNION ALL select / INTERSECT / EXCEPT
+
+#### Operators
+
+* +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery)
 
 #### Functions
 
@@ -114,9 +121,6 @@ Now Alasql.js supports following subset of SELECT syntax:
 * CUBE()
 * GROUPING SETS()
 
-#### Exists
-
-* EXISTS (Subquery)
 
 #### User-defined JavaScript functions
 
@@ -214,12 +218,15 @@ There is a limited support of transactions (with tx.rollback() and tx.commit() f
 
 ### SQL to JavaScript parser and compiler
 
-You can use Alasql to parse and compile SQL statements:
+You can use Alasql to parse to AST and compile SQL statements:
 
 ```
-    var ast = alasql.parser.parse("SELECT * FROM one");
-    var statement = alasql.compile("SELECT * FROM one");
-    statement();
+    // Parse to AST
+    var ast = alasql.parse("SELECT * FROM one");
+
+    // Compile to JavaScript function with or without parameters
+    var statement = alasql.compile("SELECT * FROM one WHERE a > ? AND b < ?");
+    statement([1,5]);
 ```
 
 Alasql uses wonderful [Jison](jison.org) parser to produce AST-tree.

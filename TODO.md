@@ -4,6 +4,9 @@
 
 #### Version 0.0.14
 
+* Fix Dates issue
+
+#### Version 0.0.14
 * Fix ALTER TABLE RENAME
 * MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
 * ALL, ANY, BETWEEN, LIKE, IN, SOME [like this](http://msdn.microsoft.com/en-us/library/ms188336.aspx)

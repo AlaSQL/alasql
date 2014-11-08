@@ -1,7 +1,10 @@
 # Changelog
 
-### 0.0.14 (06.11.2014-)
+### 0.0.14 (07.11.2014-07.11.2014)
 
+* SELECT INTERSECT, EXCEPT
+* BETWEEN, NOT BETWEEN
+* Fixed problem wuth wherefn
 
 ### 0.0.13 (06.11.2014)
 

@@ -1,6 +1,6 @@
 /*
 //
-// EXISTS functions for Alasql.js
+// EXISTS and other subqueries functions  functions for Alasql.js
 // Date: 03.11.2014
 // (c) 2014, Andrey Gershun
 //
@@ -19,5 +19,12 @@ yy.Select.prototype.compileWhereExists = function(query) {
 	if(!this.exists) return;
 	query.existsfn = this.exists.map(function(ex) {
 		return ex.compile(query.database);
+	});
+};
+
+yy.Select.prototype.compileQueries = function(query) {
+	if(!this.queries) return;
+	query.queriesfn = this.queries.map(function(q) {
+		return q.compile(query.database);
 	});
 };

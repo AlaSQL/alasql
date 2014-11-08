@@ -23,8 +23,8 @@ yy.Select.prototype.compileJoins = function(query) {
 			tableid: tq.tableid,
 			joinmode: jn.joinmode,
 			onmiddlefn: returnTrue,
-			wherefns: '',	// for optimization
-			wherefn: returnTrue
+			srcwherefns: '',	// for optimization
+			srcwherefn: returnTrue
 		};
 
 		source.datafn = function() {
@@ -358,8 +358,8 @@ yy.Select.prototype.compileFrom = function(query) {
 			tableid: tq.tableid,
 			joinmode: 'INNER',
 			onmiddlefn: returnTrue,			
-			wherefns: '',	// for optimization
-			wherefn: returnTrue			
+			srcwherefns: '',	// for optimization
+			srcwherefn: returnTrue			
 		};
 
 		if(tq instanceof yy.Table) {
@@ -518,8 +518,8 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 
 	//for sources compile wherefs
 	query.sources.forEach(function(source) {
-		if(source.wherefns) {
-			source.wherefn = new Function('p,params','return '+source.wherefns);
+		if(source.srcwherefns) {
+			source.srcwherefn = new Function('p,params','return '+source.srcwherefns);
 		};
 		if(source.wxleftfns) {
 			source.wxleftfn = new Function('p,params','return '+source.wxleftfns);
@@ -547,7 +547,7 @@ function optimizeWhereJoin (query, ast) {
 		return;
 	} else if (fsrc.length == 1) {
 		var src = fsrc[0]; // optmiization source
-		src.wherefns = src.wherefns ? src.wherefns+'&&'+s : s;
+		src.srcwherefns = src.srcwherefns ? src.srcwherefns+'&&'+s : s;
 
 		if((ast instanceof yy.Op) && (ast.op == '=')) {
 			if(ast.left instanceof yy.Column) {

@@ -11,11 +11,14 @@ var alasql = {};
 
 // Initial parameters
 alasql.parser = parser;
+alasql.parse = parser.parse.bind(parser); // Shortcut
 alasql.databases = {};
 
 // Create default database
 alasql.currentDatabase = new Database();
 alasql.tables = alasql.currentDatabase.tables;
+
+alasql.MAXSQLCACHESIZE = 10000;
 
 // Main Database class
 function Database(databaseid) {
@@ -28,6 +31,7 @@ function Database(databaseid) {
 	alasql.databases[databaseid] = self;
 	self.tables = {};   // Tables
 	self.sqlcache = {}; // Cache for compiled SQL statements
+	self.sqlcachesize = 0;
 	return self;
 };
 
@@ -103,9 +107,16 @@ Database.prototype.compile = function(sql) {
 	var statement = this.sqlcache[hh];
 	if(!statement) {
 		// If not fount, then compile it
-		var ast = alasql.parser.parse(sql);
+		var ast = alasql.parse(sql);
 		// Save to cache
 		statement = this.sqlcache[hh]= ast.compile(this);
+
+		// Memory leak prevention 
+		this.sqlcachesize++;
+		if(this.sqlcachesize > alasql.MAXSQLCACHESIZE) {
+			delete this.sqlcache;
+			this.sqlcachesize = 0;
+		}
 	};
 	return statement;
 }
