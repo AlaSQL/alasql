@@ -4,13 +4,12 @@
 
 #### Version 0.0.15 - "Battle for functionality"
 
+* INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
+* CASE
 * FULL OUTER JOIN, SEMI JOIN, ANTI JOIN
 * Tests
 * Website with sandbox
-* MID, ROUND, FORMAT, 
-* INSERT INTO test VALUES('a'),('10'),('20'),('c'),('30'),('d');
-* INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
-* CASE
+* MID(), ROUND(), FORMAT(), 
 * GROUP BY ALL
 
 #### Version 0.0.16 - "Battle for SQL"

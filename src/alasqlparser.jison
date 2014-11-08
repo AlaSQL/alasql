@@ -660,10 +660,21 @@ Delete
 /* INSERT */
 
 Insert
-	: INSERT INTO Table VALUES LPAR ValuesList RPAR
-		{ $$ = new yy.Insert({into:$3, values: $6}); }
-	| INSERT INTO Table LPAR ColumnsList RPAR VALUES LPAR ValuesList RPAR
-		{ $$ = new yy.Insert({into:$3, columns: $5, values: $9}); }
+	: INSERT INTO Table VALUES ValuesListsList
+		{ $$ = new yy.Insert({into:$3, values: $5}); }
+	| INSERT INTO Table LPAR ColumnsList RPAR VALUES ValuesListsList
+		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
+	| INSERT INTO Table Select
+		{ $$ = new yy.Insert({into:$3, select: $4}); }
+	| INSERT INTO Table LPAR ColumnsList RPAR Select
+		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
+	;
+
+ValuesListsList
+	: LPAR ValuesList RPAR
+		{ $$ = [$2]; }
+	| ValuesListsList COMMA LPAR ValuesList RPAR
+		{$$ = $1; $1.push($4)}
 	;
 
 ValuesList

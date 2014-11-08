@@ -72,7 +72,7 @@ Then require alasql.js file:
 ### Supported SQL statements
 
 * SELECT fields FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number OFFSET number
-* INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2)
+* INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2), (value3, value4), ...
 * UPDATE table SET field = value1, field = value2 WHERE condition 
 * DELETE FROM table WHERE condition 
 * CREATE TABLE \[IF NOT EXISTS\] table
@@ -94,16 +94,11 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 #### Operators
 
-* +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery/array), > ANY/SOME (subquery / array), [NOT] IN (subquery / array)
+* +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery/array), > ANY/SOME (subquery / array), [NOT] IN (subquery / array), LIKE
 
 #### Functions
 
-* ABS
-* IIF
-* IFNULL
-* INSTR
-* LOWER
-* UPPER
+* ABS(), IIF(), IFNULL(), INSTR(), LOWER(), UPPER(), LCASE(), UCASE(), LEN(), LENGTH()
 
 #### Aggregators
 
@@ -115,12 +110,11 @@ Now Alasql.js supports following subset of SELECT syntax:
 * LAST()
 * Sorry, AVG still does not work
 
-#### Grouping functions
+#### GROUP BY Grouping functions
 
 * ROLLUP()
 * CUBE()
 * GROUPING SETS()
-
 
 #### User-defined JavaScript functions
 
