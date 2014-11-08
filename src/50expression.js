@@ -62,6 +62,10 @@ yy.Op.prototype.toString = function() {
 yy.Op.prototype.toJavaScript = function(context,tableid) {
 //	console.log(this);
 	var op = this.op;
+	if(this.op == '=') op = '===';
+	else if(this.op == '<>') op = '!=';
+	else if(this.op == 'OR') op = '||';
+
 
 	if(this.op == 'BETWEEN') {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
@@ -113,7 +117,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.allsome == 'ALL') {
 		if(this.right instanceof yy.Select ) {
 			var s = 'this.queriesdata['+this.queriesidx+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+this.op+'b})';
+			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			return s;
+		} else if(this.right instanceof Array ) {
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].every(function(b){return (';
+			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -123,7 +131,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
 		if(this.right instanceof yy.Select ) {
 			var s = 'this.queriesdata['+this.queriesidx+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+this.op+'b})';
+			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			return s;
+		} else if(this.right instanceof Array ) {
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].some(function(b){return (';
+			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -149,9 +161,6 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 
 
 	// Change names
-	if(this.op == '=') op = '===';
-	else if(this.op == '<>') op = '!=';
-	else if(this.op == 'OR') op = '||';
 //	console.log(this);
 	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';
 };

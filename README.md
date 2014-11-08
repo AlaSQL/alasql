@@ -94,7 +94,7 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 #### Operators
 
-* +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery), > ANY/SOME (subquery), [NOT] IN (subquery / array)
+* +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery/array), > ANY/SOME (subquery / array), [NOT] IN (subquery / array)
 
 #### Functions
 

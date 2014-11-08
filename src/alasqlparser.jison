@@ -538,43 +538,17 @@ Op
 	| Expression NE Expression
 		{ $$ = new yy.Op({left:$1, op:'!=' , right:$3}); }
 
-	| Expression GT AllSome LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
-			yy.queries.push($5);  
-		}
-	| Expression GE AllSome LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
-			yy.queries.push($5);  
-		}
-	| Expression LT AllSome LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
-			yy.queries.push($5);  
-		}
-	| Expression LE AllSome LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
-			yy.queries.push($5);  
-		}
-	| Expression EQ AllSome LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
-			yy.queries.push($5);  
-		}
-	| Expression NE AllSome LPAR Select RPAR
+	| Expression CondOp AllSome LPAR Select RPAR
 		{ 
 			if(!yy.queries) yy.queries = []; 
 			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
 			yy.queries.push($5);  
 		}
 
+	| Expression CondOp AllSome LPAR ExprList RPAR
+		{ 
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5}); 
+		}
 
 	| Expression AND Expression
 		{ $$ = new yy.Op({left:$1, op:'AND' , right:$3}); }
@@ -617,6 +591,15 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
 	;
 
+
+CondOp 
+	: GT { $$ = $1; }
+	| GE { $$ = $1; }
+	| LT { $$ = $1; }
+	| LE { $$ = $1; }
+	| EQ { $$ = $1; }
+	| NE { $$ = $1; }
+	;
 
 AllSome
 	: ALL

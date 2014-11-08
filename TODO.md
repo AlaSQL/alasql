@@ -1,23 +1,56 @@
 # To do
 
-### RELEASES PLAN
+## RELEASES PLAN
 
-#### Version 0.0.14
+#### Version 0.0.15 - "Battle for functionality"
 
-* IN (array) 
+* Tests
+* Website with sandbox
 * SELECT TOP
-
-#### Version 0.0.15
-
-* Fix Dates issue
-
-### FEATURES TO BE IMPLEMENTED SOON
-
 * Fix ALTER TABLE RENAME
 * MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
-
 * INSERT INTO test VALUES('a'),('10'),('20'),('c'),('30'),('d');
 * INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
+* CASE
+* GROUP BY ALL
+* PIVOT
+
+#### Version 0.0.16 - "Battle for SQL"
+
+* Fix Dates issues
+* AVG
+* NULL, IS NULL
+* Many-many SQL/92 Tests
+* Browsers/Node.Js/Mobile compatibilty tests
+
+#### Version 0.0.17 - "Battle for Performance"
+
+* forEach loops
+* EXPLAIN
+* Indices
+* Transactions
+
+#### Version 0.0.18 - "Battle for Memory"
+
+* Memory leaks
+* Persistence
+* ALTER TABLE
+* CONSTRAINTS, PRIMARY KEYS
+* Triggers
+
+#### Version 0.0.19 - "Battle with Bugs"
+
+### Version 0.1.0 - "First Pancake!"
+
+### Version 0.2.0 - NoSQL supports
+
+* Like MongoDB search
+
+### Version 0.3.0 - OLAP + MDX
+
+* MDX parser
+
+## FEATURES TO BE IMPLEMENTED SOON
 
 ### THEN
 

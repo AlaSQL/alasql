@@ -49,7 +49,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			source.optimization = 'ix';
 		} else if(jn.on) {
 //console.log(jn.on);
-			if(jn.on instanceof yy.Op && jn.on.op == '=') {
+			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
 //				console.log('ix optimization', jn.on.toJavaScript('p',query.defaultTableid) );
 				source.optimization = 'ix';
 			// 	source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
@@ -555,7 +555,7 @@ function optimizeWhereJoin (query, ast) {
 		var src = fsrc[0]; // optmiization source
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns+'&&'+s : s;
 
-		if((ast instanceof yy.Op) && (ast.op == '=')) {
+		if((ast instanceof yy.Op) && (ast.op == '=' && !ast.allsome)) {
 			if(ast.left instanceof yy.Column) {
 				var ls = ast.left.toJavaScript('p',query.defaultTableid);
 				var rs = ast.right.toJavaScript('p',query.defaultTableid);

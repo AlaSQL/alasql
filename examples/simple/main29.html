@@ -15,9 +15,10 @@
 		alasql.userlib.SUM10 = function(x,y) { return x+y*10; }
 
 		var sql = 'SELECT a FROM test1 WHERE a IN (2,3,4) AND a NOT IN (3)';
-
 		console.table(db.exec(sql));
 
+		var sql = 'SELECT a FROM test1 WHERE a = ANY (2,3,4)';
+		console.table(db.exec(sql));
 
 
 </script>
