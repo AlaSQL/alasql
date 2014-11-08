@@ -111,6 +111,7 @@
 
 /lex
 %
+%left COMMA
 %left OR
 %left BETWEEN NOT_BETWEEN
 %left AND
@@ -451,8 +452,18 @@ Aggregator
 	;
 
 FuncValue
-	: LITERAL LPAR Expression RPAR
+/*	: LITERAL LPAR Expression RPAR
 		{ $$ = new yy.FuncValue({funcid: $1, expression: $3}); }
+*/	
+	: LITERAL LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({funcid: $1, args: $3}); }
+	;
+
+ExprList
+	: Expression
+		{ $$ = [$1]; }
+	| ExprList COMMA Expression
+		{ $1.push($3); $$ = $1 }
 	;
 
 NumValue

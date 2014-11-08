@@ -1,0 +1,23 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var db = alasql.Database("db");
+		db.exec('CREATE TABLE test1 (a int, b int)');
+		db.exec('INSERT INTO test1 VALUES (1,1)');
+		db.exec('INSERT INTO test1 VALUES (2,2)');
+		db.exec('INSERT INTO test1 VALUES (3,3)');
+		db.exec('INSERT INTO test1 VALUES (4,4)');
+		db.exec('INSERT INTO test1 VALUES (5,5)');
+		db.exec('INSERT INTO test1 VALUES (6,6)');
+
+		alasql.userlib.DOUBLE = function(x) { return x*2; }
+		alasql.userlib.SUM10 = function(x,y) { return x+y*10; }
+
+		var sql = 'SELECT a, DOUBLE(a), SUM10(a,b) FROM test1';
+
+		console.table(db.exec(sql));
+
+
+
+</script>

@@ -9,7 +9,9 @@
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = this.funcid+'(';
-	if(this.expression) s += this.expression.toString();
+	s += this.args.map(function(arg){
+		return arg.toString();
+	}).join(',');
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
@@ -25,7 +27,9 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 	// TODO arguments!!!
 		var s = 'alasql.userlib.'+this.funcid.toUpperCase()+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
-		if(this.expression) s += this.expression.toJavaScript(context, tableid);
+		s += this.args.map(function(arg){
+			return arg.toJavaScript(context, tableid);
+		}).join(',');
 		s += ')';
 	}
 //console.log('userfn:',s,this);

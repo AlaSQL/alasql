@@ -5,7 +5,6 @@
 #### Version 0.0.14
 
 * IN (array) - not yet
-* Multiple functions arguments
 
 #### Version 0.0.15
 
@@ -15,6 +14,9 @@
 
 * Fix ALTER TABLE RENAME
 * MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
+
+* INSERT INTO test VALUES('a'),('10'),('20'),('c'),('30'),('d');
+* INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
 
 ### THEN
 

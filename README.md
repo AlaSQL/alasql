@@ -129,9 +129,9 @@ to alasql.userlib object:
 
 ```
         alasql.userlib.DOUBLE = function(x){return x*2};        
-        db.exec('SELECT a, DOUBLE(a) AS b FROM test1');
+        alasql.userlib.SUM10 = function(x,y) { return x+y*10; }
+        db.exec('SELECT a, DOUBLE(a) AS b, SUM10(a,b) FROM test1');
 ```
-Now Alasql supports only one parameter for functions. Hope I fix this soon.
 
 ### alasql
 

@@ -452,6 +452,10 @@ yy.Select.prototype.compileSelect = function(query) {
 				ss.push((col.as || col.columnid)+':p.'+(col.tableid||query.defaultTableid)+'.'+col.columnid);
 
 				if(query.aliases[col.tableid||query.defaultTableid]) {
+
+					if(!query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid]) {
+						throw new Error('Table \''+(col.tableid||query.defaultTableid)+'\' does not exists in database');
+					}
 					var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
 
 					if(xcolumns) {
