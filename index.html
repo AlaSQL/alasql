@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Alasql : Alasql.js - pure JavaScript fast client-side SQL database">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Alasql</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/agershun/alasql">View on GitHub</a>
+
+          <h1 id="project_title">Alasql</h1>
+          <h2 id="project_tagline">Alasql.js - pure JavaScript fast client-side SQL database</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/agershun/alasql/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/agershun/alasql/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h1>
+<a id="alasqljs---pure-javascript-client-side-in-memory-fast-sql-database" class="anchor" href="#alasqljs---pure-javascript-client-side-in-memory-fast-sql-database" aria-hidden="true"><span class="octicon octicon-link"></span></a>Alasql.js - pure JavaScript client-side in-memory fast SQL-database</h1>
+
+<p>Version: 0.0.14 Date: November 7, 2014 <a href="CHANGELOG.md">Changelog</a> </p>
+
+<p>Alasql - '<a href="http://en.wiktionary.org/wiki/%C3%A0_la">à la SQL</a>' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. </p>
+
+<ul>
+<li>Alasql was written with pure JavaScript and does not use browser WebSQL database. </li>
+<li>Alasql is fully functional compact sql server with JOINs, GROUPs, UNIONs, ANY, ALL, IN, subqueries and very limited transactions support.</li>
+<li>Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions</li>
+<li>Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.</li>
+<li>Alasql is fast, because it uses some optimization methods.</li>
+</ul>
+
+<p>Check Alasql vs other JavaScript databases: </p>
+
+<ul>
+<li><a href="http://jsperf.com/alasql-js-vs-websql">Alabase vs. WebSQL</a></li>
+<li><a href="http://jsperf.com/sql-js-vs-alasql-js/4">Alabase vs. SQL.js</a></li>
+</ul>
+
+<p>Warning: Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
+the code before relaese more stable version 0.1.0 in the mid of November.</p>
+
+<h2>
+<a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h2>
+
+<p>Try Alasql in Fiddle: <a href="http://jsfiddle.net/38hj2uwy/6/">sample 1</a>, <a href="http://jsfiddle.net/6a06dqhc/3/">sample 2</a>, <a href="http://jsfiddle.net/606ksx2g/1/">sample 3</a></p>
+
+<p>Other examples:</p>
+
+<ul>
+<li><a href="examples/sandbox.html">Sandbox</a></li>
+<li><a href="examples/prime.html">Sieve of Eratosthenes</a></li>
+</ul>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<h3>
+<a id="in-browser" class="anchor" href="#in-browser" aria-hidden="true"><span class="octicon octicon-link"></span></a>In browser</h3>
+
+<p>Include file: <a href="./alasql.js">alasql.js</a> to the page.</p>
+
+<pre><code>  &lt;script src="alasql.js"&gt;&lt;/script&gt;  
+  &lt;script&gt;
+    alasql.exec("CREATE TABLE test (language INT, hello STRING)");
+    alasql.exec("INSERT INTO test VALUES (1,'Hello!')");
+    alasql.exec("INSERT INTO test VALUES (2,'Aloha!')");
+    alasql.exec("INSERT INTO test VALUES (3,'Bonjour!')");
+    console.table(alasql.exec("SELECT * FROM test WHERE language &gt; 1"));
+  &lt;/script&gt;
+
+</code></pre>
+
+<p>You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD.</p>
+
+<h3>
+<a id="in-nodejs" class="anchor" href="#in-nodejs" aria-hidden="true"><span class="octicon octicon-link"></span></a>In Node.js</h3>
+
+<p>Use the following command for installation:</p>
+
+<pre><code>    npm install alasql
+</code></pre>
+
+<p>Then require alasql.js file:</p>
+
+<pre><code>    var alasql = require('alasql');
+
+    var db = new alasql.Database();
+
+    db.exec("CREATE TABLE test (one INT, two INT)");
+    db.tables.test.data = [   // You can mix SQL and JavaScript
+        {one:3,two:4},
+        {one:5,two:6},
+    ];
+    var res = db.exec("SELECT * FROM test ORDER BY two DESC");
+    console.log(res[0].one);
+
+</code></pre>
+
+<h3>
+<a id="supported-sql-statements" class="anchor" href="#supported-sql-statements" aria-hidden="true"><span class="octicon octicon-link"></span></a>Supported SQL statements</h3>
+
+<ul>
+<li>SELECT fields FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number OFFSET number</li>
+<li>INSERT INTO table [ (field1, field2) ] VALUES (value1, value2), (value3, value4), ...</li>
+<li>INSERT INTO table SELECT subquery</li>
+<li>UPDATE table SET field = value1, field = value2 WHERE condition </li>
+<li>DELETE FROM table WHERE condition </li>
+<li>CREATE TABLE [IF NOT EXISTS] table</li>
+<li>DROP TABLE [IF EXISTS] table</li>
+</ul>
+
+<h4>
+<a id="select-statement" class="anchor" href="#select-statement" aria-hidden="true"><span class="octicon octicon-link"></span></a>SELECT statement</h4>
+
+<p>Now Alasql.js supports following subset of SELECT syntax:</p>
+
+<ul>
+<li>SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(expression7) AS alias8, <em>, table2.</em>
+</li>
+<li>FROM table1, table2, (SELECT * FROM table3) alias</li>
+<li>LEFT / RIGHT / INNER  JOIN table2 ON condition / USING columns</li>
+<li>WHERE condition</li>
+<li>GROUP BY column1, column2, ROLLUP(a,b), CUBE(c,d,e), GROUPING SETS(g,h)</li>
+<li>HAVING condition</li>
+<li>ORDER BY column1, column2 DESC, </li>
+<li>LIMIT number [OFFSET number]</li>
+<li>UNION / UNION ALL select / INTERSECT / EXCEPT</li>
+</ul>
+
+<h4>
+<a id="operators" class="anchor" href="#operators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Operators</h4>
+
+<ul>
+<li>+, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), &gt; ALL (subquery/array), &gt; ANY/SOME (subquery / array), [NOT] IN (subquery / array), LIKE</li>
+</ul>
+
+<h4>
+<a id="functions" class="anchor" href="#functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Functions</h4>
+
+<ul>
+<li>ABS(), IIF(), IFNULL(), INSTR(), LOWER(), UPPER(), LCASE(), UCASE(), LEN(), LENGTH()</li>
+</ul>
+
+<h4>
+<a id="aggregators" class="anchor" href="#aggregators" aria-hidden="true"><span class="octicon octicon-link"></span></a>Aggregators</h4>
+
+<ul>
+<li>SUM()</li>
+<li>COUNT() </li>
+<li>MIN()</li>
+<li>MAX()</li>
+<li>FIRST()</li>
+<li>LAST()</li>
+<li>Sorry, AVG still does not work</li>
+</ul>
+
+<h4>
+<a id="group-by-grouping-functions" class="anchor" href="#group-by-grouping-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>GROUP BY Grouping functions</h4>
+
+<ul>
+<li>ROLLUP()</li>
+<li>CUBE()</li>
+<li>GROUPING SETS()</li>
+</ul>
+
+<h4>
+<a id="user-defined-javascript-functions" class="anchor" href="#user-defined-javascript-functions" aria-hidden="true"><span class="octicon octicon-link"></span></a>User-defined JavaScript functions</h4>
+
+<p>You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions
+to alasql.userlib object:</p>
+
+<pre><code>        alasql.userlib.DOUBLE = function(x){return x*2};        
+        alasql.userlib.SUM10 = function(x,y) { return x+y*10; }
+        db.exec('SELECT a, DOUBLE(a) AS b, SUM10(a,b) FROM test1');
+</code></pre>
+
+<h3>
+<a id="alasql" class="anchor" href="#alasql" aria-hidden="true"><span class="octicon octicon-link"></span></a>alasql</h3>
+
+<p>alasql is a main variable of module. You can use it immediatly as default database</p>
+
+<p>In browser:</p>
+
+<pre><code>    &lt;script src="alasql.js"&gt;&lt;/script&gt;
+    &lt;script&gt;
+        alasql.exec('CREATE TABLE one (two INT)');
+    &lt;/script&gt;
+</code></pre>
+
+<p>or in Node.js:</p>
+
+<pre><code>    var alasql = require('alasql');
+    alasql.exec('CREATE TABLE one (two INT)');
+</code></pre>
+
+<p>Another approach is to create new database:</p>
+
+<pre><code>    var mybase = new alasql Database();
+    mybase.exec('CREATE TABLE one (two INT)');
+</code></pre>
+
+<p>You can give a name to database and then access it from alasql:</p>
+
+<pre><code>    var mybase = new alasql Database('mybase');
+    console.log(alasql.databases.mybase);
+</code></pre>
+
+<p>Each database can be used with the following methods:</p>
+
+<ul>
+<li>vat db = new alasql.Database() - create new alasql-database</li>
+<li>var res = db.exec("sql-statement") - executes SELECT query and returns array of objects </li>
+</ul>
+
+<p>Usually, alasql.js works synchronously, but you can use callback.</p>
+
+<pre><code>    db.exec('SELECT * FROM test', function(res){
+        console.log(res);
+    });
+</code></pre>
+
+<p>or you can use aexec() - promised version of exec (in this case you need to install <a href="https://www.npmjs.org/package/es6-promise">es6-promise</a> module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):</p>
+
+<pre><code>    db.aexec('SELECT * FROM test').then(function(res){
+        console.log(res);
+    });
+</code></pre>
+
+<p>You can use compile statements:</p>
+
+<pre><code>    var insert = db.compile('INSERT INTO one (1,2)');
+    insert();
+</code></pre>
+
+<p>You can use parameters in compiled statements:</p>
+
+<pre><code>    var insert1 = db.compile('INSERT INTO one (?,?)');
+    var insert2 = db.compile('INSERT INTO one ($a,$b)');
+    var insert3 = db.compile('INSERT INTO one (:a,:b)');
+
+    insert1([1,2]);
+    insert2({a:1,b:2});
+    insert3({a:3,b:4});
+
+    db.exec('INSERT INTO one (?,?)',[5,6]);
+
+</code></pre>
+
+<h3>
+<a id="transactions" class="anchor" href="#transactions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Transactions</h3>
+
+<p>There is a limited support of transactions (with tx.rollback() and tx.commit() functions):</p>
+
+<pre><code>    db = new alasql.Database("mydb");
+    db.transaction(function(tx) {
+        tx.exec('SELECT COUNT(*) FROM students');
+        tx.rollback();
+    });     
+
+</code></pre>
+
+<h3>
+<a id="sql-to-javascript-parser-and-compiler" class="anchor" href="#sql-to-javascript-parser-and-compiler" aria-hidden="true"><span class="octicon octicon-link"></span></a>SQL to JavaScript parser and compiler</h3>
+
+<p>You can use Alasql to parse to AST and compile SQL statements:</p>
+
+<pre><code>    // Parse to AST
+    var ast = alasql.parse("SELECT * FROM one");
+
+    // Compile to JavaScript function with or without parameters
+    var statement = alasql.compile("SELECT * FROM one WHERE a &gt; ? AND b &lt; ?");
+    statement([1,5]);
+</code></pre>
+
+<p>Alasql uses wonderful <a href="jison.org">Jison</a> parser to produce AST-tree.</p>
+
+<h3>
+<a id="performance" class="anchor" href="#performance" aria-hidden="true"><span class="octicon octicon-link"></span></a>Performance</h3>
+
+<p>According the preliminary performance tests alasql.js is faster than <a href="">sql.js</a> in 5 to 10 times on more than 1000 records tables, and 2 to 3 times to <a href="">WebSQL</a> on different queries. </p>
+
+<p>Alasql has four different optimization algorithm:</p>
+
+<ul>
+<li>Caching of compiled queries</li>
+<li>Joins: Preindexation of joined table</li>
+<li>Joins: Prefiltering of WHERE expressions</li>
+</ul>
+
+<p>Now optimization algorithm has some limitations and therefore "table1 JOIN table2 USING column1, column2" is faster than "table1 JOIN table2 ON table1.column1 = table2.column1 AND table1.column2 = table2.column2 ", but with one column it is ok.</p>
+
+<h3>
+<a id="limitations" class="anchor" href="#limitations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Limitations</h3>
+
+<p>It is Ok with select for 1000000 records or 2 join two tables by 10000 records in each. </p>
+
+<h3>
+<a id="tests" class="anchor" href="#tests" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tests</h3>
+
+<p>I use mocha for tests. Run mocha from command line:</p>
+
+<pre><code>    mocha
+</code></pre>
+
+<p>or run <a href="test/main.html">test/main.html</a> in browser.</p>
+
+<h3>
+<a id="known-bugs" class="anchor" href="#known-bugs" aria-hidden="true"><span class="octicon octicon-link"></span></a>Known Bugs</h3>
+
+<ol>
+<li>Semicolon with multiple statements</li>
+<li>ORDER BY clause on three or more UNIONS</li>
+<li>AVG() does not work</li>
+<li>There are many of others. Please, <a href="https://github.com/agershun/alasql/issues">give me a chance</a> to fix them<br>
+### Future Plans</li>
+</ol>
+
+<p>Read my <a href="TODO.md">to do</a> page</p>
+
+<h2>
+<a id="similar-projects-sql-database-mdxolap-on-javascript" class="anchor" href="#similar-projects-sql-database-mdxolap-on-javascript" aria-hidden="true"><span class="octicon octicon-link"></span></a>Similar projects (SQL database, MDX/OLAP on JavaScript)</h2>
+
+<p>SQL-database:</p>
+
+<ul>
+<li>
+<a href="https://github.com/kripken/sql.js">sql.js</a> - port of SQLike to JavaScript</li>
+<li>
+<a href="http://www.sequelsphere.com/">SequelSphere</a> - commercial SQL-database</li>
+<li><a href="https://github.com/RossKor/datamanip.js">Datamanip</a></li>
+<li><a href="https://github.com/emasstudio/jsonQ.js">jsonQ.js</a></li>
+<li><a href="https://github.com/moxley/sqittle">SQittle</a></li>
+<li><a href="https://github.com/nuxy/SQLinJS">SQLinJS</a></li>
+<li><a href="https://github.com/maciakl/jQuery-SQL-Emulator">jQuery-SQL-Emulator</a></li>
+</ul>
+
+<p>LINQ realizations:</p>
+
+<ul>
+<li>
+<a href="http://www.thomasfrank.se/sqlike.html">SQLike</a> - </li>
+<li><a href="http://jslinq.codeplex.com/">JSLINQ</a></li>
+<li><a href="http://javascriptsql.sourceforge.net/ARCH/en/index.html">JavaScriptSQL</a></li>
+<li><a href="https://code.google.com/p/trimpath/wiki/TrimQuery">TrimQuery</a></li>
+<li><a href="http://www.hugoware.net/projects/jlinq">jlinq</a></li>
+<li><a href="https://github.com/PaulGuo/jSQL">jSQL</a></li>
+</ul>
+
+<p>Other:</p>
+
+<ul>
+<li><a href="https://code.google.com/p/dom-storage-query-language/">dom-storage-query-language</a></li>
+<li><a href="https://code.google.com/p/kombai-js/">kombai-js</a></li>
+</ul>
+
+<p>JavaScript databases:</p>
+
+<ul>
+<li><a href="https://github.com/deitch/searchjs">SearchJS</a></li>
+<li><a href="http://www.taffydb.com/">TaffyDB</a></li>
+<li><a href="https://github.com/andykent/river">River</a></li>
+<li><a href="https://github.com/square/crossfilter">CrossFilter</a></li>
+<li><a href="https://github.com/thesmart/js-hypercube">js-hypercube</a></li>
+<li><a href="https://github.com/diegodayan/cubico">cubico</a></li>
+<li><a href="https://github.com/ajlopez/SimpleMemolap">SimpleMemolap</a></li>
+</ul>
+
+<h2>
+<a id="other" class="anchor" href="#other" aria-hidden="true"><span class="octicon octicon-link"></span></a>Other</h2>
+
+<ul>
+<li><a href="PRESS.md">Press about Alasql</a></li>
+</ul>
+
+<h2>
+<a id="credits" class="anchor" href="#credits" aria-hidden="true"><span class="octicon octicon-link"></span></a>Credits</h2>
+
+<p>Many thanks to Andrew Kent for his SQL Parser and other people for useful tools, which made our work much easier.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>(c) 2014, Andrey Gershun (<a href="mailto:agershun@gmail.com">agershun@gmail.com</a>), <a href="LICENSE">MIT licence information</a></p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Alasql maintained by <a href="https://github.com/agershun">agershun</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
