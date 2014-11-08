@@ -4,7 +4,10 @@
 
 * SELECT INTERSECT, EXCEPT
 * BETWEEN, NOT BETWEEN
-* Fixed problem wuth wherefn
+* Fixed problem wuth source.srcwherefn and query.wherefn
+* IN (Subquery), NOT IN(Subquery) - IN(array)
+* alasql.parser.parse renamed to alasql.parse
+* Reduced AST tree in case of srcwherefn and wherefn optimizations in joins
 
 ### 0.0.13 (06.11.2014)
 

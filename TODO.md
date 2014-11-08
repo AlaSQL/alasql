@@ -4,26 +4,30 @@
 
 #### Version 0.0.14
 
+* ALL, ANY
+
+#### Version 0.0.15
+
 * Fix Dates issue
 
-#### Version 0.0.14
+### FEATURES TO BE IMPLEMENTED SOON
+
+* IN (array) - not yet
 * Fix ALTER TABLE RENAME
 * MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
-* ALL, ANY, BETWEEN, LIKE, IN, SOME [like this](http://msdn.microsoft.com/en-us/library/ms188336.aspx)
+* ALL, ANY, BETWEEN, LIKE, SOME [like this](http://msdn.microsoft.com/en-us/library/ms188336.aspx)
+* Multiple functions arguments
 
-### URGENT BUGS OR FEATURES TO BE IMPLEMENTED SOON
+### THEN
 
+* FULL OUTER JOIN
 * CASE operator
 * AVG aggregator (http://www.w3schools.com/sql/sql_func_avg.asp)
 * LIKE '%a%'
 * SELECT INTO table IN database FROM query [like this](http://www.w3schools.com/sql/sql_select_into.asp)
-* BETWEEN AND [like this](http://www.w3schools.com/sql/sql_between.asp)
 * BEGIN COMMIT ROLLBACK
-* IN
-* Multiple arguments of functions
 * Change grammar for LogicValues
 * GO* Separate branch on github.com for development
-* FULL OUTER JOIN
 * PIVOT
 
 Optimization

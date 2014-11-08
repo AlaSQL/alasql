@@ -11,10 +11,13 @@ yy.Expression.prototype.toString = function() {
 	return this.expression.toString();
 };
 yy.Expression.prototype.toJavaScript = function(context, tableid) {
+//	console.log('Expression',this);
+	if(this.expression.reduced) return 'true';
 	return this.expression.toJavaScript(context, tableid);
 };
 yy.Expression.prototype.compile = function(context, tableid){
-	console.log('Expression',this);
+//	console.log('Expression',this);
+	if(this.reduced) return returnTrue();
 	return new Function('p','return '+this.toJavaScript(context, tableid));
 };
 
@@ -96,10 +99,27 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 		}
 	};
 
+// Special case for AND optimization (if reduced)
+	if(this.op == 'AND') {
+		if(this.left.reduced) {
+			if(this.right.reduced) {
+				return 'true';
+			} else {
+				return this.right.toJavaScript(context,tableid);
+			}
+		} else if(this.right.reduced) {
+			return this.left.toJavaScript(context,tableid);
+		}			
+
+		// Otherwise process as regular operation (see below)
+		op = '&&';
+
+	}
+
+
 	// Change names
 	if(this.op == '=') op = '===';
 	else if(this.op == '<>') op = '!=';
-	else if(this.op == 'AND') op = '&&';
 	else if(this.op == 'OR') op = '||';
 //	console.log(this);
 	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';

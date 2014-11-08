@@ -1654,10 +1654,13 @@ yy.Select.prototype.compile = function(db) {
 	if(this.joins) this.compileJoins(query);
 	// 3. Compile SELECT clause
 	query.selectfn = this.compileSelect(query);
-	// 4. Compile WHERE clause
-	query.wherefn = this.compileWhere(query);
 	// 5. Optimize WHERE and JOINS
 	if(this.where) this.compileWhereJoins(query);
+
+	// 4. Compile WHERE clause
+	query.wherefn = this.compileWhere(query);
+
+
 	// 6. Compile GROUP BY
 	if(this.group) query.groupfn = this.compileGroup(query);
 	// 7. Compile DISTINCT, LIMIT and OFFSET
@@ -1698,6 +1701,8 @@ yy.Select.prototype.compile = function(db) {
 		}
 	};
 
+//console.log(query);
+
 	// Now, compile all togeather into one function with query object in scope
 	return function(params, cb, oldscope) {
 		query.params = params;
@@ -1725,6 +1730,14 @@ function queryfn(query,oldscope) {
 	query.sources.forEach(function(source){
 //		source.data = query.database.tables[source.tableid].data;
 		source.data = source.datafn(); 
+
+//
+// Ugly hack to use in query.wherefn and source.srcwherefns functions
+// constructions like this.queriesdata['test'].
+// I can elimite it with source.srcwherefn.bind(this)()
+// but it may be slow.
+// 
+		source.queriesdata = query.queriesdata;  
 	});
 
 	// Preindexation of data sources
@@ -1799,6 +1812,7 @@ function doDistinct (query) {
 
 // Optimization: preliminary indexation of joins
 preIndex = function(query) {
+//	console.log(query);
 	// Loop over all sources
 	for(var k=0, klen = query.sources.length;k<klen;k++) {
 		var source = query.sources[k];
@@ -1807,91 +1821,91 @@ preIndex = function(query) {
 			// If there is no table.indices - create it
 			if(!query.database.tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
 				// Check if index already exists
-				var ixx = query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.wherefns)];
-				if( !query.database.tables[source.tableid].dirty && ixx) {
-					source.ix = ixx; 
-				} else {
-					source.ix = {};
-					// Walking over source data
-					var scope = {};
-					for(var i=0, ilen=source.data.length; i<ilen; i++) {
-						// Prepare scope for indexation
-						scope[source.alias || source.tableid] = source.data[i];
+			var ixx = query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
+			if( !query.database.tables[source.tableid].dirty && ixx) {
+				source.ix = ixx; 
+			} else {
+				source.ix = {};
+				// Walking over source data
+				var scope = {};
+				for(var i=0, ilen=source.data.length; i<ilen; i++) {
+					// Prepare scope for indexation
+					scope[source.alias || source.tableid] = source.data[i];
 
-						// Check if it apply to where function 
-						if(source.wherefn(scope, query.params)) {
-							// Create index entry for each address
-							var addr = source.onrightfn(scope, query.params);
-							var group = source.ix [addr]; 
-							if(!group) {
-								group = source.ix [addr] = []; 
-							}
-							group.push(source.data[i]);
-						}
-					}
-					// Save index to original table				
-					query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.wherefns)] = source.ix;
-				}
-			// Optimization for WHERE column = expression
-			} else if (source.wxleftfns) {
-				// Check if index exists
-				var ixx = query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')];
-				if( !query.database.tables[source.tableid].dirty && ixx) {
-					// Use old index if exists
-					source.ix = ixx;
-					// Reduce data (apply filter)
-					source.data = source.ix[source.wxrightfn(query.params)]; 
-				} else {
-					// Create new index
-					source.ix = {};
-					// Prepare scope
-					var scope = {};
-					// Walking on each source line
-					for(var i=0, ilen=source.data.length; i<ilen; i++) {
-						scope[source.alias || source.tableid] = source.data[i];
-						// Create index entry
-						var addr = source.wxleftfn(scope, query.params);
+					// Check if it apply to where function 
+					if(source.srcwherefn(scope, query.params)) {
+						// Create index entry for each address
+						var addr = source.onrightfn(scope, query.params);
 						var group = source.ix [addr]; 
 						if(!group) {
 							group = source.ix [addr] = []; 
 						}
 						group.push(source.data[i]);
 					}
-//					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`'+source.onwherefns)] = source.ix;
-					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')] = source.ix;
 				}
-				// Apply where filter to reduces rows
-				if(source.wherefns) {
-					if(source.data) {
-						var scope = {};
-						source.data = source.data.filter(function(r) {
-							scope[source.alias] = r;
-							return source.wherefn(scope, query.params);
-						});
-					} else {
-						source.data = [];
+				// Save index to original table				
+				query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
+			}
+			// Optimization for WHERE column = expression
+		} else if (source.wxleftfns) {
+			// Check if index exists
+			var ixx = query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')];
+			if( !query.database.tables[source.tableid].dirty && ixx) {
+				// Use old index if exists
+				source.ix = ixx;
+				// Reduce data (apply filter)
+				source.data = source.ix[source.wxrightfn(query.params)]; 
+			} else {
+				// Create new index
+				source.ix = {};
+				// Prepare scope
+				var scope = {};
+				// Walking on each source line
+				for(var i=0, ilen=source.data.length; i<ilen; i++) {
+					scope[source.alias || source.tableid] = source.data[i];
+					// Create index entry
+					var addr = source.wxleftfn(scope, query.params);
+					var group = source.ix [addr]; 
+					if(!group) {
+						group = source.ix [addr] = []; 
 					}
-				}		
-
-			// If there is no any optimization than apply where filter
-			} else if(source.wherefns) {
+					group.push(source.data[i]);
+				}
+//					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`'+source.onwherefns)] = source.ix;
+				query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')] = source.ix;
+			}
+			// Apply where filter to reduces rows
+			if(source.srcwherefns) {
 				if(source.data) {
 					var scope = {};
 					source.data = source.data.filter(function(r) {
 						scope[source.alias] = r;
-						return source.wherefn(scope, query.params);
+						return source.srcwherefn(scope, query.params);
 					});
 				} else {
 					source.data = [];
-				};
-			}			
-			// Change this to another place (this is a wrong)
-			if(query.database.tables[source.tableid]) {
-				query.database.tables[source.tableid].dirty = false;
+				}
+			}		
+
+		// If there is no any optimization than apply srcwhere filter
+		} else if(source.srcwherefns) {
+			if(source.data) {
+				var scope = {};
+				source.data = source.data.filter(function(r) {
+					scope[source.alias] = r;
+					return source.srcwherefn(scope, query.params);
+				});
 			} else {
-				// this is a subquery?
-			}
+				source.data = [];
+			};
+		}			
+		// Change this to another place (this is a wrong)
+		if(query.database.tables[source.tableid]) {
+			query.database.tables[source.tableid].dirty = false;
+		} else {
+			// this is a subquery?
 		}
+	}
 }
 
 //
@@ -2515,10 +2529,12 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 };
 
 function optimizeWhereJoin (query, ast) {
-	if(!ast) return;
+	if(!ast) return false;
 	var s = ast.toJavaScript('p',query.defaultTableid);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {
+
+		// This is a good place to remove all unnecessary optimizations
 		if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
 	});
 //	console.log(ast);
@@ -2526,7 +2542,7 @@ function optimizeWhereJoin (query, ast) {
 //	console.log(fsrc.length);
 	if(fsrc.length == 0) {
 //		console.log('no optimization, can remove this part of ast');
-		return;
+		return false;
 	} else if (fsrc.length == 1) {
 		var src = fsrc[0]; // optmiization source
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns+'&&'+s : s;
@@ -2548,6 +2564,7 @@ function optimizeWhereJoin (query, ast) {
 				} 
 			}
 		}
+		ast.reduced = true;  // To do not duplicate wherefn and srcwherefn
 		return;
 	} else {
 		if(ast.op = 'AND') {
@@ -2727,10 +2744,13 @@ yy.Expression.prototype.toString = function() {
 	return this.expression.toString();
 };
 yy.Expression.prototype.toJavaScript = function(context, tableid) {
+//	console.log('Expression',this);
+	if(this.expression.reduced) return 'true';
 	return this.expression.toJavaScript(context, tableid);
 };
 yy.Expression.prototype.compile = function(context, tableid){
-	console.log('Expression',this);
+//	console.log('Expression',this);
+	if(this.reduced) return returnTrue();
 	return new Function('p','return '+this.toJavaScript(context, tableid));
 };
 
@@ -2812,10 +2832,27 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 		}
 	};
 
+// Special case for AND optimization (if reduced)
+	if(this.op == 'AND') {
+		if(this.left.reduced) {
+			if(this.right.reduced) {
+				return 'true';
+			} else {
+				return this.right.toJavaScript(context,tableid);
+			}
+		} else if(this.right.reduced) {
+			return this.left.toJavaScript(context,tableid);
+		}			
+
+		// Otherwise process as regular operation (see below)
+		op = '&&';
+
+	}
+
+
 	// Change names
 	if(this.op == '=') op = '===';
 	else if(this.op == '<>') op = '!=';
-	else if(this.op == 'AND') op = '&&';
 	else if(this.op == 'OR') op = '||';
 //	console.log(this);
 	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';

@@ -533,10 +533,12 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 };
 
 function optimizeWhereJoin (query, ast) {
-	if(!ast) return;
+	if(!ast) return false;
 	var s = ast.toJavaScript('p',query.defaultTableid);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {
+
+		// This is a good place to remove all unnecessary optimizations
 		if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
 	});
 //	console.log(ast);
@@ -544,7 +546,7 @@ function optimizeWhereJoin (query, ast) {
 //	console.log(fsrc.length);
 	if(fsrc.length == 0) {
 //		console.log('no optimization, can remove this part of ast');
-		return;
+		return false;
 	} else if (fsrc.length == 1) {
 		var src = fsrc[0]; // optmiization source
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns+'&&'+s : s;
@@ -566,6 +568,7 @@ function optimizeWhereJoin (query, ast) {
 				} 
 			}
 		}
+		ast.reduced = true;  // To do not duplicate wherefn and srcwherefn
 		return;
 	} else {
 		if(ast.op = 'AND') {
