@@ -8,6 +8,9 @@
 * IN (Subquery), NOT IN(Subquery) - IN(array)
 * alasql.parser.parse renamed to alasql.parse
 * Reduced AST tree in case of srcwherefn and wherefn optimizations in joins
+* % (MODULO) operator (9%7 == 2)
+* Fix 'undefined' column if alias is not exists
+* x > ALL (subquery), x > SOME/ANY (subquery)
 
 ### 0.0.13 (06.11.2014)
 

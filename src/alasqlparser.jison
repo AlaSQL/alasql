@@ -15,6 +15,7 @@
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
+'ANY'											return 'ANY'
 'ANTI'											return 'ANTI'
 'AS'                                      		return 'AS'
 'ASC'                                      		return 'DIRECTION'
@@ -70,6 +71,7 @@
 'SELECT'                                        return 'SELECT'
 'SET'                                        	return 'SET'
 'SETS'                                        	return 'SETS'
+'SOME'                                        	return 'SOME'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TRUE'						  					return 'TRUE'
@@ -84,6 +86,7 @@
 '-' 											return 'MINUS'
 '*'												return 'STAR'
 '/'												return 'SLASH'
+'%'												return 'PERCENT'
 '>='											return 'GE'
 '>'												return 'GT'
 '<='											return 'LE'
@@ -115,7 +118,7 @@
 %left IN
 %left NOT
 %left PLUS MINUS
-%left STAR SLASH
+%left STAR SLASH PERCENT
 /* %left UMINUS */
 
 %start main
@@ -507,6 +510,10 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'*' , right:$3}); }
 	| Expression SLASH Expression
 		{ $$ = new yy.Op({left:$1, op:'/' , right:$3}); }
+	| Expression PERCENT Expression
+		{ $$ = new yy.Op({left:$1, op:'%' , right:$3}); }
+
+
 	| Expression GT Expression
 		{ $$ = new yy.Op({left:$1, op:'>' , right:$3}); }
 	| Expression GE Expression
@@ -519,6 +526,45 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'=' , right:$3}); }
 	| Expression NE Expression
 		{ $$ = new yy.Op({left:$1, op:'!=' , right:$3}); }
+
+	| Expression GT AllSome LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
+			yy.queries.push($5);  
+		}
+	| Expression GE AllSome LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
+			yy.queries.push($5);  
+		}
+	| Expression LT AllSome LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
+			yy.queries.push($5);  
+		}
+	| Expression LE AllSome LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
+			yy.queries.push($5);  
+		}
+	| Expression EQ AllSome LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
+			yy.queries.push($5);  
+		}
+	| Expression NE AllSome LPAR Select RPAR
+		{ 
+			if(!yy.queries) yy.queries = []; 
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
+			yy.queries.push($5);  
+		}
+
+
 	| Expression AND Expression
 		{ $$ = new yy.Op({left:$1, op:'AND' , right:$3}); }
 	| Expression OR Expression
@@ -547,6 +593,15 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
 	;
 
+
+AllSome
+	: ALL
+		{ $$ = 'ALL'; }
+	| SOME
+		{ $$ = 'SOME'; }
+	| ANY
+		{ $$ = 'ANY'; }
+	;
 
 /* PART TWO */
 

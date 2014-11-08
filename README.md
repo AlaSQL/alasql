@@ -5,7 +5,7 @@ Version: 0.0.14 Date: November 7, 2014 [Changelog](CHANGELOG.md)
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
 * Alasql was written with pure JavaScript and does not use browser WebSQL database. 
-* Alasql is fully functional compact sql server with JOINs, GROUPs, UNIONs, subqueries and limited transactions support.
+* Alasql is fully functional compact sql server with JOINs, GROUPs, UNIONs, ANY, ALL, IN, subqueries and very limited transactions support.
 * Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
 * Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
 * Alasql is fast, because it uses some optimization methods.
@@ -94,7 +94,7 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 #### Operators
 
-* +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery)
+* +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery), > ANY/SOME (subquery)
 
 #### Functions
 

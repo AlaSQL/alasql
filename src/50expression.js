@@ -53,7 +53,10 @@ yy.Op.prototype.toString = function() {
 	if(this.op == 'IN' || this.op == 'NOT IN') {
 		return this.left.toString()+" "+this.op+" ("+this.right.toString()+")";
 	}
-	return this.left.toString()+" "+this.op+" "+this.right.toString();
+	if(this.allsome) {
+		return this.left.toString()+" "+this.op+" "+this.allsome+' ('+this.right.toString()+')';
+	}
+	return this.left.toString()+" "+this.op+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
 };
 
 yy.Op.prototype.toJavaScript = function(context,tableid) {
@@ -97,6 +100,26 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
 		}
+	};
+
+	if(this.allsome == 'ALL') {
+		if(this.right instanceof yy.Select ) {
+			var s = 'this.queriesdata['+this.queriesidx+'].every(function(b){return (';
+			s += this.left.toJavaScript(context,tableid)+')'+this.op+'b})';
+			return s;
+		} else {
+			throw new Error('Wrong NOT IN operator without SELECT part');
+		}		
+	};
+
+	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
+		if(this.right instanceof yy.Select ) {
+			var s = 'this.queriesdata['+this.queriesidx+'].some(function(b){return (';
+			s += this.left.toJavaScript(context,tableid)+')'+this.op+'b})';
+			return s;
+		} else {
+			throw new Error('Wrong NOT IN operator without SELECT part');
+		}		
 	};
 
 // Special case for AND optimization (if reduced)

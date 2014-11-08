@@ -493,7 +493,7 @@ yy.Select.prototype.compileSelect = function(query) {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			}
 		} else {
-			ss.push((col.as || col.columnid)+':'+col.toJavaScript("p",query.defaultTableid));
+			ss.push('\''+(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 		}
 	});

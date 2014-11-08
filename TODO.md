@@ -4,7 +4,8 @@
 
 #### Version 0.0.14
 
-* ALL, ANY
+* IN (array) - not yet
+* Multiple functions arguments
 
 #### Version 0.0.15
 
@@ -12,11 +13,8 @@
 
 ### FEATURES TO BE IMPLEMENTED SOON
 
-* IN (array) - not yet
 * Fix ALTER TABLE RENAME
 * MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
-* ALL, ANY, BETWEEN, LIKE, SOME [like this](http://msdn.microsoft.com/en-us/library/ms188336.aspx)
-* Multiple functions arguments
 
 ### THEN
 
