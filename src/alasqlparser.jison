@@ -586,18 +586,31 @@ Op
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
 	| LPAR Expression RPAR
 		{ $$ = new yy.UniOp({right: $2}); }
+
 	| Expression IN LPAR Select RPAR
 		{ 
 			if(!yy.queries) yy.queries = []; 
 			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length});
 			yy.queries.push($4);  
 		}
+
 	| Expression NOT IN LPAR Select RPAR
 		{ 
 			if(!yy.queries) yy.queries = []; 
 			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length});
 			yy.queries.push($5);  
 		}
+
+	| Expression IN LPAR ExprList RPAR
+		{ $$ = new yy.Op({left: $1, op:'IN', right:$4}); }
+
+	| Expression NOT IN LPAR ExprList RPAR
+		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$5}); }
+
+	/* 
+		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar 
+		at least, I do not know how.
+	*/
 	| Expression BETWEEN Expression
 		{ $$ = new yy.Op({left:$1, op:'BETWEEN', right:$3 }); }
 	| Expression NOT_BETWEEN Expression

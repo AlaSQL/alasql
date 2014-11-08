@@ -86,6 +86,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
 			s += this.left.toJavaScript(context,tableid)+')>-1)';
 			return s;
+		} else if(this.right instanceof Array ) {
+			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid)+')>-1)';
+			return s;
 		} else {
 			throw new Error('Wrong IN operator without SELECT part');
 		}
@@ -95,6 +99,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.op == 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
 			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid)+')<0)';
+			return s;
+		} else if(this.right instanceof Array ) {
+			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].indexOf(';
 			s += this.left.toJavaScript(context,tableid)+')<0)';
 			return s;
 		} else {

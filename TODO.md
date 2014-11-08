@@ -4,7 +4,8 @@
 
 #### Version 0.0.14
 
-* IN (array) - not yet
+* IN (array) 
+* SELECT TOP
 
 #### Version 0.0.15
 
