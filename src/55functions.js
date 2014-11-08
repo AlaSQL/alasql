@@ -9,9 +9,11 @@
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = this.funcid+'(';
-	s += this.args.map(function(arg){
-		return arg.toString();
-	}).join(',');
+	if(this.args && this.args.length > 0) {
+		s += this.args.map(function(arg){
+			return arg.toString();
+		}).join(',');
+	};
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
@@ -21,7 +23,11 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 	var s = '';
 	// IF this is standard compile functions
 	if(alasql.stdlib[this.funcid.toUpperCase()]) {
-		s += alasql.stdlib[this.funcid.toUpperCase()].apply(this, this.args);
+		if(this.args && this.args.length > 0) {
+			s += alasql.stdlib[this.funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJavaScript(context, tableid)}));
+		} else {
+			s += alasql.stdlib[this.funcid.toUpperCase()]();
+		}
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
@@ -61,22 +67,31 @@ stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
 		return  '(('+a+')?('+b+'):('+c+'))';
+	} else {
+		throw new Error('Number of arguments of IFF is not equals to 3');
 	};
-	// TODO: check number of arguments
 };
-stdlib.LOWER = function(s) {return '('+s+').toLowerCase()';}
-stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
 stdlib.IFNULL = function(a,b) {return '('+a+'||'+b+')'};
 stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
+
+stdlib.LEN = function(s) {return '('+s+').length';};
 stdlib.LENGTH = function(s) {return '('+s+').length'};
+
+stdlib.LOWER = function(s) {return '('+s+').toLowerCase()';}
+stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
+
 // fns.LIKE = function(x,y,z) {
 // 	return x.match(new RegExp(y.replace(/\%/g,'*')))[0].length;
 // };
 // LTRIM
 stdlib.MAX = function(){return 'Math.max('+arguments.join(',')+')'};
 stdlib.MIN = function(){return 'Math.min('+arguments.join(',')+')'};
-//fns.MIN = function(){return Math.min.apply(null, arguments)};
+
+stdlib.NOW = function(){return '(new Date())';};
 stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
+
+stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
+stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
 // SUBSTR

@@ -13,7 +13,9 @@
 
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
-	var s = 'SELECT '+this.columns.map(function(col){
+	var s = 'SELECT ';
+	if(this.top) s += 'TOP '+this.top.value+' ';
+	s += this.columns.map(function(col){
 		var s = col.toString();
 	//	console.log(col);
 		if(col.as) s += ' AS '+col.as;
@@ -29,6 +31,8 @@ yy.Select.prototype.toString = function() {
 	if(this.unionall) s += ' UNION ALL '+this.unionall.toString();
 	if(this.except) s += ' EXCEPT '+this.except.toString();
 	if(this.intersect) s += ' INTERSECT '+this.intersect.toString();
+	if(this.limit) s += ' LIMIT '+this.limit.value;
+	if(this.offset) s += ' OFFSET '+this.offset.value;
 	return s;
 };
 
@@ -61,8 +65,15 @@ yy.Select.prototype.compile = function(db) {
 	if(this.group) query.groupfn = this.compileGroup(query);
 	// 7. Compile DISTINCT, LIMIT and OFFSET
 	query.distinct = this.distinct;
-	query.limit = this.limit?this.limit.value:undefined;
-	query.offset = this.offset?this.offset.value:1;
+
+	if(this.top) {
+		query.limit = this.top.value;
+	} else if(this.limit) {
+		query.limit = this.limit.value;
+		if(this.offset) {
+			query.offset = this.offset.value;
+		}
+	}
 	// 8. Compile ORDER BY clause
 	if(this.order) query.orderfn = this.compileOrder(query);
 
@@ -184,8 +195,10 @@ function queryfn(query,oldscope) {
 
 // Limiting
 function doLimit (query) {
+//	console.log(query.limit, query.offset)
 	if(query.limit) {
-		var offset = ((query.offset|0)-1)||0;
+		var offset = 0;
+		if(query.offset) offset = ((query.offset|0)-1)||0;
 		var limit = (query.limit|0) + offset;
 		query.data = query.data.slice(offset,limit);
 	}

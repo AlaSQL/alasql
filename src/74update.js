@@ -38,6 +38,9 @@ yy.Update.prototype.compile = function (db) {
 
 	return function(params, cb) {
 		var table = db.tables[tableid];
+		if(!table) {
+			throw new Error("Table '"+tableid+"' not exists")
+		}
 		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {

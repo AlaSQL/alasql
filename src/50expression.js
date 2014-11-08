@@ -66,6 +66,12 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	else if(this.op == '<>') op = '!=';
 	else if(this.op == 'OR') op = '||';
 
+	if(this.op == 'LIKE') {
+		var s = '('+this.left.toJavaScript(context,tableid)+')'+
+		".match(new RegExp(("+this.right.toJavaScript(context,tableid)+").replace(/\\\%/g,'.*'),'g'))"
+//		console.log(s);
+		return s;
+	};
 
 	if(this.op == 'BETWEEN') {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
@@ -179,7 +185,7 @@ yy.NumValue.prototype.toJavaScript = function() {
 
 yy.StringValue = function (params) { return yy.extend(this, params); }
 yy.StringValue.prototype.toString = function() {
-	return this.value.toString();
+	return "'"+this.value.toString()+"'";
 }
 yy.StringValue.prototype.toJavaScript = function() {
 	return "'"+this.value+"'";

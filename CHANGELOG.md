@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.0.14 (07.11.2014-07.11.2014)
+### 0.0.14 (07.11.2014-08.11.2014)
 
 * SELECT INTERSECT, EXCEPT
 * BETWEEN, NOT BETWEEN
@@ -13,6 +13,10 @@
 * x > ALL (subquery), x > SOME/ANY (subquery)
 * Check if table exists in the database
 * Multiple user defined functions arguments, like TRIPLE(a,b,c)
+* SELECT TOP (as well as SELECT query LIMIT OFFSET)
+* Fixed ALTER TABLE RENAME TO statement
+* LEN(), UCASE(), LCASE(), UPPER(), LOWER(), NOW()
+* Simple matching with LIKE '%day%'
 
 ### 0.0.13 (06.11.2014)
 

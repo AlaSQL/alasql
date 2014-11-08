@@ -53,6 +53,7 @@
 'KEY'											return 'KEY'
 'LAST'											return 'LAST'
 'LEFT'											return 'LEFT'
+'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
@@ -66,6 +67,7 @@
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'QUERY'                                        	return 'QUERY'
+'RENAME'                                        return 'RENAME'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
 'SELECT'                                        return 'SELECT'
@@ -74,6 +76,8 @@
 'SOME'                                        	return 'SOME'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
+'TO'											return 'TO'
+'TOP'											return 'TOP'
 'TRUE'						  					return 'TRUE'
 'UNION'                                         return 'UNION'
 'UPDATE'                                        return 'UPDATE'
@@ -118,6 +122,7 @@
 %left GT GE LT LE EQ NE
 %left IN
 %left NOT
+%left LIKE
 %left PLUS MINUS
 %left STAR SLASH PERCENT
 /* %left UMINUS */
@@ -221,12 +226,18 @@ Select
 	;
 
 SelectClause
-	: SELECT DISTINCT ResultColumns  
-		{ $$ = new yy.Select({ columns:$3, distinct: true }); }
-	| SELECT ALL ResultColumns  
-		{ $$ = new yy.Select({ columns:$3, all:true }); }
-	| SELECT ResultColumns  
-		{ $$ = new yy.Select({ columns:$2 }); }
+	: SELECT DISTINCT TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $3); }
+	| SELECT ALL TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $3); }
+	| SELECT TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$3 }); yy.extend($$, $2); }
+	;
+
+TopClause
+	: TOP NumValue  
+		{ $$ = {top: $2}; }
+	| { $$ = null; }
 	;
 
 IntoClause
@@ -368,13 +379,13 @@ OrderExpression
 
 LimitClause
 	: { $$ = null; }
-	| LIMIT Expression OffsetClause
+	| LIMIT NumValue OffsetClause
 		{ $$ = {limit:$2}; yy.extend($$, $3)}
 	;
 
 OffsetClause
 	: { $$ = null; }
-	| OFFSET Expression 
+	| OFFSET NumValue 
 		{ $$ = {offset:$2}}
 	;
 
@@ -457,6 +468,8 @@ FuncValue
 */	
 	: LITERAL LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({funcid: $1, args: $3}); }
+	| LITERAL LPAR RPAR
+		{ $$ = new yy.FuncValue({funcid: $1}); }
 	;
 
 ExprList
@@ -513,16 +526,18 @@ ParamValue
 
 
 Op
-	: Expression PLUS Expression
-		{ $$ = new yy.Op({left:$1, op:'+' , right:$3}); }
+	: Expression LIKE Expression
+		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
+	| Expression PLUS Expression
+		{ $$ = new yy.Op({left:$1, op:'+', right:$3}); }
 	| Expression MINUS Expression
-		{ $$ = new yy.Op({left:$1, op:'-' , right:$3}); }
+		{ $$ = new yy.Op({left:$1, op:'-', right:$3}); }
 	| Expression STAR Expression
-		{ $$ = new yy.Op({left:$1, op:'*' , right:$3}); }
+		{ $$ = new yy.Op({left:$1, op:'*', right:$3}); }
 	| Expression SLASH Expression
-		{ $$ = new yy.Op({left:$1, op:'/' , right:$3}); }
+		{ $$ = new yy.Op({left:$1, op:'/', right:$3}); }
 	| Expression PERCENT Expression
-		{ $$ = new yy.Op({left:$1, op:'%' , right:$3}); }
+		{ $$ = new yy.Op({left:$1, op:'%', right:$3}); }
 
 
 	| Expression GT Expression
@@ -769,6 +784,8 @@ DropTable
 
 AlterTable
 	: ALTER TABLE Table RENAME TO LITERAL
+		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
 	| ALTER TABLE Table ADD COLUMN ColumnDef
+		{ $$ = null; }
 	;
 

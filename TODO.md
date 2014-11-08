@@ -4,24 +4,24 @@
 
 #### Version 0.0.15 - "Battle for functionality"
 
+* FULL OUTER JOIN, SEMI JOIN, ANTI JOIN
 * Tests
 * Website with sandbox
-* SELECT TOP
-* Fix ALTER TABLE RENAME
-* MID, LEN, ROUND, NOW, FORMAT, LCASE, UCASE, 
+* MID, ROUND, FORMAT, 
 * INSERT INTO test VALUES('a'),('10'),('20'),('c'),('30'),('d');
 * INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
 * CASE
 * GROUP BY ALL
-* PIVOT
 
 #### Version 0.0.16 - "Battle for SQL"
 
 * Fix Dates issues
-* AVG
-* NULL, IS NULL
+* SQL-errors 
 * Many-many SQL/92 Tests
 * Browsers/Node.Js/Mobile compatibilty tests
+* AVG()
+* NULL, IS NULL
+* PIVOT
 
 #### Version 0.0.17 - "Battle for Performance"
 
