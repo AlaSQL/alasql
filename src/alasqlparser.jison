@@ -232,7 +232,9 @@ SelectClause
 		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $3); }
 	| SELECT TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$3 }); yy.extend($$, $2); }
-	;
+/*	| SELECT NumValue
+		{ $$ = new yy.Select( value: $2); }
+*/	;
 
 TopClause
 	: TOP NumValue  

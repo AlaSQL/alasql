@@ -73,6 +73,7 @@ Then require alasql.js file:
 
 * SELECT fields FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number OFFSET number
 * INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2), (value3, value4), ...
+* INSERT INTO table SELECT subquery
 * UPDATE table SET field = value1, field = value2 WHERE condition 
 * DELETE FROM table WHERE condition 
 * CREATE TABLE \[IF NOT EXISTS\] table

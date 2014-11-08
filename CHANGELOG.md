@@ -18,6 +18,7 @@
 * LEN(), UCASE(), LCASE(), UPPER(), LOWER(), NOW()
 * Simple matching with LIKE '%day%'
 * INSERT INTO test VALUES('a'),('10'),('20'),('c'),('30'),('d');
+* SELECT INTO table SELECT query
 
 ### 0.0.13 (06.11.2014)
 
