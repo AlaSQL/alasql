@@ -1509,7 +1509,7 @@ Database.prototype.compile = function(sql) {
 		// Memory leak prevention 
 		this.sqlcachesize++;
 		if(this.sqlcachesize > alasql.MAXSQLCACHESIZE) {
-			delete this.sqlcache;
+			this.sqlcache = {};
 			this.sqlcachesize = 0;
 		}
 	};
