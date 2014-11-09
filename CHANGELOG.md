@@ -5,6 +5,7 @@
 * Negative numbers 
 * Float numbers
 * Strings with single and double quaters
+* CASE WHEN THEN END
 
 ### 0.0.14.3 (09.11.2014)
 

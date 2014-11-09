@@ -25,9 +25,10 @@
 'NOT BETWEEN'									return 'NOT_BETWEEN'
 'BY'											return 'BY'
 
-'CREATE'										return 'CREATE'
+"CASE"											return "CASE"
 'COLLATE'										return 'COLLATE'
 "COUNT"											return "COUNT"
+'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
 'DELETE'                                        return 'DELETE'
@@ -35,6 +36,8 @@
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
 
+'END'											return 'END'
+'ELSE'											return 'ELSE'
 'EXCEPT'										return 'EXCEPT'
 'EXISTS'										return 'EXISTS'
 'EXPLAIN'                                       return 'EXPLAIN'
@@ -79,6 +82,7 @@
 'SOME'                                        	return 'SOME'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
+'THEN'											return 'THEN'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
 'TRUE'						  					return 'TRUE'
@@ -86,6 +90,7 @@
 'UPDATE'                                        return 'UPDATE'
 'USING'                                         return 'USING'
 'VALUES'                                        return 'VALUES'
+'WHEN'                                          return 'WHEN'
 'WHERE'                                         return 'WHERE'
 
 /*
@@ -130,7 +135,6 @@
 %left IN
 %left NOT
 %left LIKE
-%left NUMBER
 %left PLUS MINUS
 %left STAR SLASH PERCENT
 /* %left UMINUS */
@@ -192,7 +196,6 @@ Statement
 	| While
 	| Print
 	| BulkInsert
-	| Case
 
 	| Declare
 	| CreateFunction
@@ -467,6 +470,8 @@ Expression
 		{ $$ = $1; }
 	| ExistsValue
 		{ $$ = $1; }
+	| CaseValue
+		{ $$ = $1; }
 	;
 
 
@@ -505,9 +510,9 @@ ExprList
 NumValue
 	: NUMBER
 		{ $$ = new yy.NumValue({value:$1}); }
-	| MINUS NUMBER
+/*	| MINUS NUMBER
 		{ $$ = new yy.NumValue({value:-$2}); }
-	;
+*/	;
 
 LogicValue
 	: TRUE
@@ -548,6 +553,31 @@ ParamValue
 		}
 	;
 
+
+CaseValue
+	: CASE Expression WhensList ElseClause END
+		{ $$ = new yy.CaseValue({expression:$2, whens: $3, elses: $4}); }
+	| CASE WhensList ElseClause END
+		{ $$ = new yy.CaseValue({whens: $2, elses: $3}); }
+	;
+WhensList
+	: WhensList When
+		{ $$ = $1; $$.push($2); }
+	| When
+		{ $$ = [$1]; }
+	;
+
+When
+	: WHEN Expression THEN Expression
+		{ $$ = {when: $2, then: $4 }; }
+	;
+
+ElseClause
+	: ELSE Expression
+		{ $$ = $2; }
+	| 
+		{$$ = null; } 
+	; 
 
 Op
 	: Expression LIKE Expression
@@ -702,9 +732,9 @@ ValuesListsList
 	;
 
 ValuesList
-	: Value
+	: Expression
 		{ $$ = [$1]; }
-	| ValuesList COMMA Value
+	| ValuesList COMMA Expression
 		{$$ = $1; $1.push($3)}
 	;
 

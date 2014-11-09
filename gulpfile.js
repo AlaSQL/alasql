@@ -36,6 +36,7 @@ gulp.task('js-merge', function () {
     './src/45union.js',
   	'./src/50expression.js',
     './src/55functions.js',
+    './src/57case.js',
   	'./src/60createtable.js',
     './src/62droptable.js',
     './src/64altertable.js',

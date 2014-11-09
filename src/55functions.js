@@ -80,16 +80,25 @@ stdlib.LENGTH = function(s) {return '('+s+').length'};
 stdlib.LOWER = function(s) {return '('+s+').toLowerCase()';}
 stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
-// fns.LIKE = function(x,y,z) {
-// 	return x.match(new RegExp(y.replace(/\%/g,'*')))[0].length;
-// };
+
 // LTRIM
 stdlib.MAX = function(){return 'Math.max('+arguments.join(',')+')'};
 stdlib.MIN = function(){return 'Math.min('+arguments.join(',')+')'};
+stdlib.MID = function(a,b,c){
+	if(arguments.length == 2) return '('+a+').substr('+b+'-1)';
+	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
+};
 
 stdlib.NOW = function(){return '(new Date())';};
 stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
 
+stdlib.ROUND = function(s,d) {
+	if(arguments.length == 2) {
+		return 'Math.round('+s+'*Math.pow(10,'+d+'))/Math.pow(10,'+d+')';
+	} else {
+		return 'Math.round('+s+')';
+	}
+}
 stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
 stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE

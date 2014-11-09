@@ -6,9 +6,7 @@
 
 * Tests
 * INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
-* CASE
 * Sandbox for Website
-* MID(), ROUND(), FORMAT(), 
 
 #### Version 0.0.16 - "Battle for SQL"
 
