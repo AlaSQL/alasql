@@ -9,11 +9,13 @@ var gulp = require('gulp');
 module.exports = gulp;
 //var connect = require('gulp-connect');
 //var livereload = require('gulp-livereload');
-var changed = require('gulp-changed');
-var jison = require('gulp-jison');
+//var changed = require('gulp-changed');
+//var jison = require('gulp-jison');
 var concat = require('gulp-concat-sourcemap');
 //var uglify = require('gulp-uglify');
-var jisonLex = require('gulp-jison-lex');
+//var jisonLex = require('gulp-jison-lex');
+var shell = require('gulp-shell')
+
 
 gulp.task('js-merge', function () {
   return gulp.src([
@@ -47,9 +49,24 @@ gulp.task('js-merge', function () {
     .pipe(gulp.dest('./'))
 });
 
+
+gulp.task('jison-compile', function () {
+  return gulp.src('./src/*.jison', {read: false})
+    .pipe(shell([
+      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js',
+    ]));
+});
+//    , {
+//      templateData: {
+//        f: function (s) {
+//          return s.replace(/$/, '.bak')
+//        }
+//      }
+//    }))
+
 // gulp.task('jison-compile', function () {
 //   return gulp.src('./src/*.jison')
-// //    .pipe(changed('./dist/'))
+ //    .pipe(changed('./dist/'))
 //     .pipe(jison({ moduleType: 'commonjs' }))
 //     .pipe(gulp.dest('./src/'))
 // //    .pipe(livereload());
@@ -67,6 +84,7 @@ gulp.task('js-merge', function () {
 // Главная задача
 gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], function(){
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
+  gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); });
   // gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); gulp.run('js-merge');});
   // gulp.watch('./src/*.jisonlex',function(){ gulp.run('jison-lex-compile'); gulp.run('js-merge');});
 });

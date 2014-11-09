@@ -88,7 +88,11 @@
 'VALUES'                                        return 'VALUES'
 'WHERE'                                         return 'WHERE'
 
-
+/*
+[0-9]+											return 'NUMBER'
+[0-9]+\.[0-9]*									return 'NUMBER'
+*/
+(\d*[.])?\d+									return 'NUMBER'
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
 '*'												return 'STAR'
@@ -111,8 +115,8 @@
 '?'												return 'QUESTION'
 
 [a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
-[0-9]+											return 'NUMBER'
 ['](\\.|[^'])*[']                               return 'STRING'
+["](\\.|[^"])*["]                               return 'STRING'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
@@ -126,6 +130,7 @@
 %left IN
 %left NOT
 %left LIKE
+%left NUMBER
 %left PLUS MINUS
 %left STAR SLASH PERCENT
 /* %left UMINUS */
@@ -500,6 +505,8 @@ ExprList
 NumValue
 	: NUMBER
 		{ $$ = new yy.NumValue({value:$1}); }
+	| MINUS NUMBER
+		{ $$ = new yy.NumValue({value:-$2}); }
 	;
 
 LogicValue

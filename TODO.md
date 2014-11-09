@@ -4,14 +4,11 @@
 
 #### Version 0.0.15 - "Battle for functionality"
 
-* Negative numbers
 * Tests
 * INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
 * CASE
-* FULL OUTER JOIN, SEMI JOIN, ANTI JOIN
-* Website with sandbox
+* Sandbox for Website
 * MID(), ROUND(), FORMAT(), 
-* GROUP BY ALL
 
 #### Version 0.0.16 - "Battle for SQL"
 
