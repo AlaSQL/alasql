@@ -15,8 +15,8 @@
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
-'ANY'											return 'ANY'
 'ANTI'											return 'ANTI'
+'ANY'											return 'ANY'
 'AS'                                      		return 'AS'
 'ASC'                                      		return 'DIRECTION'
 'AVG'                                      		return 'AVG'
@@ -28,6 +28,7 @@
 'CREATE'										return 'CREATE'
 'COLLATE'										return 'COLLATE'
 "COUNT"											return "COUNT"
+"CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
 'DELETE'                                        return 'DELETE'
 'DESC'                                          return 'DIRECTION'
@@ -64,6 +65,7 @@
 'OFFSET'										return 'OFFSET'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
+'OUTER'											return 'OUTER'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'QUERY'                                        	return 'QUERY'
@@ -71,6 +73,7 @@
 'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
 'SELECT'                                        return 'SELECT'
+'SEMI'                                        	return 'SEMI'
 'SET'                                        	return 'SET'
 'SETS'                                        	return 'SETS'
 'SOME'                                        	return 'SOME'
@@ -291,10 +294,23 @@ JoinTable
 	;
 
 JoinMode
-	: {$$ = "INNER";}
-	| LEFT {$$ = $1;}
-	| RIGHT {$$ = $1;}
-	| INNER {$$ = $1;}
+	: { $$ = "INNER"; }
+	| INNER 
+		{ $$ = "INNER"; }
+	| LEFT 
+		{ $$ = "LEFT"; }
+	| RIGHT 
+		{ $$ = "RIGHT"; }
+	| FULL OUTER 
+		{ $$ = "OUTER"; }
+	| OUTER 
+		{ $$ = "OUTER"; }
+	| SEMI 
+		{ $$ = "SEMI"; }
+	| ANTI 
+		{ $$ = "ANTI"; }
+	| CROSS 
+		{ $$ = "INNER"; }
 	;
 
 OnClause

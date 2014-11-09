@@ -88,7 +88,8 @@ describe('Test 01', function() {
 	
 	function doTests() {
 		it('Select 1.1: COUNT', function(done){
-		 	var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt FROM students RIGHT JOIN courses USING courseid GROUP BY courseid' );
+		 	var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt '+
+		 		' FROM students RIGHT JOIN courses USING courseid GROUP BY courseid ORDER BY courseid' );
 		 	assert.deepEqual([ 
 		 		{ courseid: 1, cnt: 1 },
 				{ courseid: 2, cnt: 2 },

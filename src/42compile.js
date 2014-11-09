@@ -14,6 +14,8 @@ function returnTrue () {return true};
 
 // Compile JOIN caluese
 yy.Select.prototype.compileJoins = function(query) {
+//	console.log(this);
+//	debugger;
 	var self = this;
 	this.joins.forEach(function(jn){
 		var tq = jn.table;
@@ -137,7 +139,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			'\' is not exists in database \''+query.database.databaseid)+'\'';
 		};
 		source.data = query.database.tables[source.tableid].data;
-		if(source.joinmode == 'RIGHT') {
+/*		if(source.joinmode == 'RIGHT') {
 			var prevSource = query.sources.pop();
 			if(prevSource.joinmode == 'INNER') {
 				prevSource.joinmode = 'LEFT';
@@ -168,6 +170,8 @@ yy.Select.prototype.compileJoins = function(query) {
 		} else {
 			query.sources.push(source);
 		}
+*/	
+		query.sources.push(source);
 	});
 //	console.log('sources',query.sources);
 }

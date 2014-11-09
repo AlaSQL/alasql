@@ -1,9 +1,5 @@
 # Changelog
 
-### 0.0.14.3 (09.11.2014)
-
-* RIGHT / OUTER / SEMI / ANTI Joins!
-
 ### 0.0.14.2 (07.11.2014-08.11.2014)
 
 * Added more tests

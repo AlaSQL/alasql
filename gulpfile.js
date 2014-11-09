@@ -18,7 +18,6 @@ var jisonLex = require('gulp-jison-lex');
 gulp.task('js-merge', function () {
   return gulp.src([
   	'./src/10start.js', 
-//    './src2/alasqlparser.js', 
   	'./src/alasqlparser.js', 
   	'./src/15utility.js', 
   	'./src/20database.js',
@@ -26,6 +25,8 @@ gulp.task('js-merge', function () {
     './src/22store.js',
   	'./src/25yy.js',
   	'./src/30statements.js',
+    './src/38query.js',
+    './src/39dojoin.js',
   	'./src/40select.js',
     './src/41exists.js',
     './src/42compile.js',

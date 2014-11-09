@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.14.2 Date: November 9, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.14.3 Date: November 9, 2014 [Changelog](CHANGELOG.md) 
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -85,7 +85,7 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 * SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(expression7) AS alias8, *, table2.*
 * FROM table1, table2, (SELECT * FROM table3) alias
-* LEFT / RIGHT / INNER  JOIN table2 ON condition / USING columns
+* LEFT / RIGHT / INNER / OUTER / ANTI / SEMI / CROSS JOIN table2 ON condition / USING columns
 * WHERE condition
 * GROUP BY column1, column2, ROLLUP(a,b), CUBE(c,d,e), GROUPING SETS(g,h)
 * HAVING condition
@@ -254,10 +254,13 @@ or run [test/main.html](test/main.html) in browser.
 
 ### Known Bugs
 
-1. Semicolon with multiple statements
-2. ORDER BY clause on three or more UNIONS
-3. AVG() does not work
-4. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them  
+1. Negative numbers (uniminus) are not implemented yet
+2. Dates sorting and comparing
+3. Semicolon with multiple statements
+4. ORDER BY clause on three or more UNIONS
+5. AVG() does not work
+6. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
+  
 ### Future Plans
 
 Read my [to do](TODO.md) page

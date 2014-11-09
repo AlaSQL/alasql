@@ -4,6 +4,7 @@
 
 #### Version 0.0.15 - "Battle for functionality"
 
+* Negative numbers
 * Tests
 * INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
 * CASE

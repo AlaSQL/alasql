@@ -1,0 +1,37 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var db = alasql.Database("db");
+
+	db.exec('CREATE TABLE one (a INT, b INT)');
+	db.exec('INSERT INTO one VALUES (1,10),(2,20),(3,30), (4,40)');
+
+	db.exec('CREATE TABLE two (e INT, f INT)');
+	db.exec('INSERT INTO two VALUES (1,100),(2,200),(3,300), (1000,1000), (2000,2000)');
+
+	var res = db.exec("SELECT * FROM one, two");
+	console.table(res);
+
+	var res = db.exec("SELECT * FROM one JOIN two ON one.a = two.e");
+	console.table(res);
+
+	var res = db.exec("SELECT * FROM one LEFT JOIN two ON one.a = two.e");
+	console.table(res);
+
+	var res = db.exec("SELECT * FROM one SEMI JOIN two ON one.a = two.e");
+	console.table(res);
+
+	var res = db.exec("SELECT * FROM one RIGHT JOIN two ON one.a = two.e");
+	console.table(res);
+
+	var res = db.exec("SELECT * FROM one OUTER JOIN two ON one.a = two.e");
+	console.table(res);
+
+	var res = db.exec("SELECT * FROM one ANTI JOIN two ON one.a = two.e");
+	console.table(res);
+
+
+// Does not work
+
+</script>
