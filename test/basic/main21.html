@@ -1,0 +1,17 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var db = alasql.Database("db");
+		db.exec('CREATE TABLE test (a int, b int)');
+		db.exec('INSERT INTO test VALUES (1,1)');
+		db.exec('INSERT INTO test VALUES (2,1)');
+		db.exec('INSERT INTO test VALUES (3,1)');
+		db.exec('INSERT INTO test VALUES (4,2)');
+		db.exec('INSERT INTO test VALUES (5,2)');
+		db.exec('INSERT INTO test VALUES (6,2)');
+		
+		console.table(db.exec('SELECT b, SUM(a), COUNT(a), FIRST(a), LAST(a), AVG(a) FROM test GROUP BY b'));
+
+
+</script>

@@ -1,0 +1,22 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var db = alasql.Database("db");
+		db.exec('CREATE TABLE test (a int, b int)');
+		db.exec('INSERT INTO test VALUES (1,1)');
+		db.exec('INSERT INTO test VALUES (2,2)');
+		db.exec('INSERT INTO test VALUES (3,3)');
+		db.exec('INSERT INTO test VALUES (4,4)');
+		db.exec('INSERT INTO test VALUES (5,5)');
+		db.exec('INSERT INTO test VALUES (6,6)');
+		
+		var ast = alasql.parse('SELECT a FROM test WHERE a BETWEEN 2 AND 4');
+		console.log(ast.toString());
+
+		console.table(db.exec('SELECT a FROM test WHERE a BETWEEN 2 AND 4'));
+
+		console.table(db.exec('SELECT a FROM test WHERE a NOT BETWEEN 2 AND 4'));
+
+
+</script>

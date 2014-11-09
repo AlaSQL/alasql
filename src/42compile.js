@@ -41,11 +41,11 @@ yy.Select.prototype.compileJoins = function(query) {
 			source.onleftfns = jn.using.map(function(colid){
 				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+colid+"']";
 			}).join('+"`"+');
-			source.onleftfn = new Function('p,params','return '+source.onleftfns);
+			source.onleftfn = new Function('p,params,alasql','return '+source.onleftfns);
 			source.onrightfns = jn.using.map(function(colid){
 				return "p['"+(source.alias||source.tableid)+"']['"+colid+"']";
 			}).join('+"`"+');
-			source.onrightfn = new Function('p,params','return '+source.onrightfns);
+			source.onrightfn = new Function('p,params,alasql','return '+source.onrightfns);
 			source.optimization = 'ix';
 		} else if(jn.on) {
 //console.log(jn.on);
@@ -57,44 +57,61 @@ yy.Select.prototype.compileJoins = function(query) {
 			// 	source.onrightfns = jn.on.right.toJavaScript('p',query.defaultTableid);
 			// 	source.onrightfn = new Function('p', 'return '+source.onrightfns);
 
-				var lefts ;
-				var rights ;
-				var middles ;
+				var lefts = '';
+				var rights = '';
+				var middles = '';
+				var middlef = false;
 				// Test right and left sides
-				var ts = jn.on.left.toJavaScript('p',query.defaultTableid);
+				var ls = jn.on.left.toJavaScript('p',query.defaultTableid);
 				var rs = jn.on.right.toJavaScript('p',query.defaultTableid);
-				if((ts.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
-					rights = ts;
-				} else 	if(!(ts.indexOf("p['"+alias+"']")>-1) && (rs.indexOf("p['"+alias+"']")>-1)){
-					lefts = ts;
+
+				if((ls.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
+					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { rights = ls; } 
+						else { middlef = true };
+
+				} else 	if(!(ls.indexOf("p['"+alias+"']")>-1) && (rs.indexOf("p['"+alias+"']")>-1)){
+					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { lefts = ls; } 
+						else { middlef = true };
 				} else {
-					middles = ts;
+					middlef = true;
 				}
 
-				if((rs.indexOf("p['"+alias+"']")>-1) && !(ts.indexOf("p['"+alias+"']")>-1)){
-					rights = rs;
-				} else if(!(rs.indexOf("p['"+alias+"']")>-1) && (ts.indexOf("p['"+alias+"']")>-1)){
-					lefts = rs;
+//				console.log(alias, 1,lefts, rights, middlef);
+
+				if((rs.indexOf("p['"+alias+"']")>-1) && !(ls.indexOf("p['"+alias+"']")>-1)){
+					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { rights = rs; } 
+						else { middlef = true };
+				} else if(!(rs.indexOf("p['"+alias+"']")>-1) && (ls.indexOf("p['"+alias+"']")>-1)){
+					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { lefts = rs; } 
+						else { middlef = true };
 				} else {
-					if(middles) {
-						middles = jn.on.toJavaScript('p',query.defaultTableid);
-					} else {
-						rights = '';
-						lefts = '';
-						middles = jn.on.toJavaScript('p',query.defaultTableid);
-						source.optimization = 'no';
-						// What to here?
-					} 
+					middlef = true;
 				}
+
+//				console.log(alias, 2,lefts, rights, middlef);
+
+				if(middlef) {
+//					middles = jn.on.toJavaScript('p',query.defaultTableid);
+//				} else {
+					rights = '';
+					lefts = '';
+					middles = jn.on.toJavaScript('p',query.defaultTableid);
+					source.optimization = 'no';
+					// What to here?
+				} 
 
 				source.onleftfns = lefts;
 				source.onrightfns = rights;
 				source.onmiddlefns = middles || 'true';
 //			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
 
-				source.onleftfn = new Function('p,params', 'return '+source.onleftfns);
-				source.onrightfn = new Function('p,params', 'return '+source.onrightfns);
-				source.onmiddlefn = new Function('p,params', 'return '+source.onmiddlefns);
+				source.onleftfn = new Function('p,params,alasql', 'return '+source.onleftfns);
+				source.onrightfn = new Function('p,params,alasql', 'return '+source.onrightfns);
+				source.onmiddlefn = new Function('p,params,alasql', 'return '+source.onmiddlefns);
 
 //			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
 //				console.log('join on and ',jn);
@@ -105,7 +122,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
 				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid);
-				source.onmiddlefn = new Function('p,params','return '+jn.on.toJavaScript('p',query.defaultTableid));
+				source.onmiddlefn = new Function('p,params,alasql','return '+jn.on.toJavaScript('p',query.defaultTableid));
 			};
 //			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 
@@ -367,7 +384,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				return query.database.tables[source.tableid].data;
 			}
 		} else if(tq instanceof yy.Select) {
-			source.subquery = tq.compile(db);
+			source.subquery = tq.compile(query.database);
 			source.datafn = function() {
 				return source.subquery(query.params);
 			}						
@@ -504,7 +521,7 @@ yy.Select.prototype.compileSelect = function(query) {
 	s += ss.join(',')+'};'+sp;
 //	console.log(s);
 	query.selectfns = s;
-	return new Function('p,params',s+'return r');
+	return new Function('p,params,alasql',s+'return r');
 };
 
 yy.Select.prototype.compileWhere = function(query) {
@@ -512,7 +529,7 @@ yy.Select.prototype.compileWhere = function(query) {
 		s = this.where.toJavaScript('p',query.defaultTableid);
 		query.wherefns = s;
 //		console.log(s);
-		return new Function('p,params','return '+s);
+		return new Function('p,params,alasql','return '+s);
 	} else return function(){return true};
 };
 
@@ -523,13 +540,13 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 	//for sources compile wherefs
 	query.sources.forEach(function(source) {
 		if(source.srcwherefns) {
-			source.srcwherefn = new Function('p,params','return '+source.srcwherefns);
+			source.srcwherefn = new Function('p,params,alasql','return '+source.srcwherefns);
 		};
 		if(source.wxleftfns) {
-			source.wxleftfn = new Function('p,params','return '+source.wxleftfns);
+			source.wxleftfn = new Function('p,params,alasql','return '+source.wxleftfns);
 		};
 		if(source.wxrightfns) {
-			source.wxrightfn = new Function('params','return '+source.wxrightfns);
+			source.wxrightfn = new Function('p,params,alasql','return '+source.wxrightfns);
 		};
 //		console.log(source.alias, source.wherefns)
 //		console.log(source);
@@ -550,8 +567,17 @@ function optimizeWhereJoin (query, ast) {
 //	console.log(fsrc.length);
 	if(fsrc.length == 0) {
 //		console.log('no optimization, can remove this part of ast');
-		return false;
+		return;
 	} else if (fsrc.length == 1) {
+
+		if(!(s.match(/p\[\'.*?\'\]/g)||[])
+			.every(function(s){ 
+						return s == "p['"+fsrc[0].alias+"']"})) { 
+			return; 
+			// This is means, that we have column from parent query
+			// So we return without optimization
+		} 
+
 		var src = fsrc[0]; // optmiization source
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns+'&&'+s : s;
 

@@ -6,8 +6,10 @@
 //
 */
 
+var utils = {};
+
 // Fast hash function
-function hash(str){
+var hash = utils.hash = function hash(str){
     var h = 0;
     if (str.length == 0) return h;
     for (var i = 0; i < str.length; i++) {
@@ -17,20 +19,21 @@ function hash(str){
     return h;
 };
 
+
 // Union arrays
-arrayUnion = function(a,b) {
+var arrayUnion = utils.arrayUnion = function arrayUnion (a,b) {
     var r = b.slice(0);
     a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
     return r;
 };
 
 // Array Difference
-arrayDiff = function(a,b) {
+var arrayDiff = utils.arrayDiff  = function arrayDiff (a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
 // Arrays deep union (with records)
-arrayUnionDeep = function(a,b) {
+var arrayUnionDeep = utils.arrayUnionDeep = function arrayUnionDeep (a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
         var found = false;
@@ -47,7 +50,7 @@ arrayUnionDeep = function(a,b) {
 };
 
 // Arrays deep union (with records)
-arrayExceptDeep = function(a,b) {
+var arrayExceptDeep = utils.arrayExceptDeep = function arrayExceptDeep(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
@@ -64,7 +67,7 @@ arrayExceptDeep = function(a,b) {
 };
 
 // Arrays deep intersect (with records)
-arrayIntersectDeep = function(a,b) {
+var arrayIntersectDeep = utils.arrayInterseptDeep  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
@@ -81,7 +84,7 @@ arrayIntersectDeep = function(a,b) {
 };
 
 // Deep clone obects
-function cloneDeep(obj) {
+var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(obj == null || typeof(obj) != 'object')
         return obj;
 
@@ -96,7 +99,7 @@ function cloneDeep(obj) {
 }
 
 // Check equality of objects
-equalDeep = function (x, y, deep) {
+var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
         if (x == y) return true;
 
@@ -134,7 +137,7 @@ equalDeep = function (x, y, deep) {
 };
 
 // Extend object
-function extend (a,b){
+var extend = utils.extend = function extend (a,b){
     if(typeof a == 'undefined') a = {};
     for(key in b) {
         if(b.hasOwnProperty(key)) {
@@ -145,10 +148,11 @@ function extend (a,b){
 };;
 
 // Flat array by first row
-flatArray = function flatArray(a) {
+var flatArray = utils.flatArray = function flatArray(a) {
     if(!a || a.length == 0) return [];
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
     return a.map(function(ai) {return ai[key]});
-}
+};
+
 

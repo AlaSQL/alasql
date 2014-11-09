@@ -297,7 +297,6 @@ case 115:
  
 			if(typeof yy.question == 'undefined') yy.question = 0; 
 			this.$ = new yy.ParamValue({param: yy.question++}); 
-			console.log(yy.question);
 		
 break;
 case 116:

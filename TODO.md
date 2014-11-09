@@ -4,10 +4,10 @@
 
 #### Version 0.0.15 - "Battle for functionality"
 
+* Tests
 * INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
 * CASE
 * FULL OUTER JOIN, SEMI JOIN, ANTI JOIN
-* Tests
 * Website with sandbox
 * MID(), ROUND(), FORMAT(), 
 * GROUP BY ALL
@@ -17,14 +17,14 @@
 * Fix Dates issues
 * SQL-errors 
 * Many-many SQL/92 Tests
-* Browsers/Node.Js/Mobile compatibilty tests
+* Chrome/FireFox/Safari/IE/Chromium/Node.Js/Rhino/iOS/Android/Win8 compatibilty tests
 * AVG()
 * NULL, IS NULL
 * PIVOT
 
 #### Version 0.0.17 - "Battle for Performance"
 
-* forEach loops
+* Remove forEach loops
 * EXPLAIN
 * Indices
 * Transactions

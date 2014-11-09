@@ -1,0 +1,29 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
+	var sql2 = "INSERT INTO schools (schooldid, schoolname) VALUES (1,'Northern Pacific School')";
+	var sql3 = "INSERT INTO schools VALUES (1,'Northern Pacific School')";
+
+	var res = alasql.exec(sql1);
+	zt('Test insert with columns', 1000000, function() {
+		alasql.exec(sql2);
+	});
+	zt('Test insert without columns ', function() {
+		alasql.exec(sql3);
+	});
+
+	var insert1 = alasql.compile(sql3);
+	zt('Test compiled insert', function() {
+		insert1();
+	});
+
+	var insert2 = alasql.compile("INSERT INTO schools VALUES (?,?)");
+	zt('Test compiled insert with parameters', function() {
+		insert2([1,"Canterberry High School"]);
+	});
+
+    zt.log();
+
+</script>

@@ -341,7 +341,6 @@ case 115:
  
 			if(typeof yy.question == 'undefined') yy.question = 0; 
 			this.$ = new yy.ParamValue({param: yy.question++}); 
-			console.log(yy.question);
 		
 break;
 case 116:
@@ -1245,8 +1244,10 @@ if (typeof module !== 'undefined' && require.main === module) {
 //
 */
 
+var utils = {};
+
 // Fast hash function
-function hash(str){
+var hash = utils.hash = function hash(str){
     var h = 0;
     if (str.length == 0) return h;
     for (var i = 0; i < str.length; i++) {
@@ -1256,20 +1257,21 @@ function hash(str){
     return h;
 };
 
+
 // Union arrays
-arrayUnion = function(a,b) {
+var arrayUnion = utils.arrayUnion = function arrayUnion (a,b) {
     var r = b.slice(0);
     a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
     return r;
 };
 
 // Array Difference
-arrayDiff = function(a,b) {
+var arrayDiff = utils.arrayDiff  = function arrayDiff (a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
 // Arrays deep union (with records)
-arrayUnionDeep = function(a,b) {
+var arrayUnionDeep = utils.arrayUnionDeep = function arrayUnionDeep (a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
         var found = false;
@@ -1286,7 +1288,7 @@ arrayUnionDeep = function(a,b) {
 };
 
 // Arrays deep union (with records)
-arrayExceptDeep = function(a,b) {
+var arrayExceptDeep = utils.arrayExceptDeep = function arrayExceptDeep(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
@@ -1303,7 +1305,7 @@ arrayExceptDeep = function(a,b) {
 };
 
 // Arrays deep intersect (with records)
-arrayIntersectDeep = function(a,b) {
+var arrayIntersectDeep = utils.arrayInterseptDeep  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
@@ -1320,7 +1322,7 @@ arrayIntersectDeep = function(a,b) {
 };
 
 // Deep clone obects
-function cloneDeep(obj) {
+var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(obj == null || typeof(obj) != 'object')
         return obj;
 
@@ -1335,7 +1337,7 @@ function cloneDeep(obj) {
 }
 
 // Check equality of objects
-equalDeep = function (x, y, deep) {
+var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
         if (x == y) return true;
 
@@ -1373,7 +1375,7 @@ equalDeep = function (x, y, deep) {
 };
 
 // Extend object
-function extend (a,b){
+var extend = utils.extend = function extend (a,b){
     if(typeof a == 'undefined') a = {};
     for(key in b) {
         if(b.hasOwnProperty(key)) {
@@ -1384,12 +1386,13 @@ function extend (a,b){
 };;
 
 // Flat array by first row
-flatArray = function flatArray(a) {
+var flatArray = utils.flatArray = function flatArray(a) {
     if(!a || a.length == 0) return [];
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
     return a.map(function(ai) {return ai[key]});
-}
+};
+
 
 
 
@@ -1407,6 +1410,10 @@ var alasql = {};
 // Initial parameters
 alasql.parser = parser;
 alasql.parse = parser.parse.bind(parser); // Shortcut
+
+// Useful library
+alasql.utils = utils;
+
 alasql.databases = {};
 
 // Create default database
@@ -1453,6 +1460,9 @@ alasql.aexec = function (sql, params) {
 alasql.query = function (sql, params, cb) {
 	return this.currentDatabase.query(sql, params.cb);
 }
+alasql.queryArray = function (sql, params, cb) {
+	return this.currentDatabase.queryArray(sql, params.cb);
+}
 alasql.querySingle = function (sql, params, cb) {
 	return this.currentDatabase.querySingle(sql, params, cb);
 }
@@ -1485,6 +1495,9 @@ Database.prototype.aexec = function(sql, params) {
 // Aliases like MS SQL
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
+Database.prototype.queryArray = function(sql, params, cb) {
+	return flatArray(this.exec(sql, params, cb));
+}
 Database.prototype.querySingle = function(sql, params, cb) {
 	return this.exec(sql, params, cb)[0];
 }
@@ -1549,7 +1562,7 @@ function Transaction(databaseid) {
 	this.transactionid = Date.now();
 	this.databaseid = databaseid;
 	this.commited = false; 
-	this.bank = JSON.stringify(alasql.databases[databaseid].tables);
+	this.bank = cloneDeep(alasql.databases[databaseid].tables);
 	return this;
 };
 
@@ -1564,13 +1577,29 @@ Transaction.prototype.commit = function() {
 
 // Rollback
 Transaction.prototype.rollback = function() {
-	alasql.databases[this.databaseid].tables = JSON.parse(this.bank);
+	if(!this.commited) {
+		alasql.databases[this.databaseid].tables = this.bank;
+		delete this.bank;
+	} else {
+		throw new Error('Transaction already commited');
+	}
 };
 
 // Transactions stub
 Transaction.prototype.exec = Transaction.prototype.executeSQL = function(sql, params, cb) {
 	return alasql.databases[this.databaseid].exec(sql);
 };
+
+// MSSQL-Like aliases
+Transaction.prototype.query = function (sql, params, cb) {
+	return alasql.databases[this.databaseid].query(sql, params.cb);
+}
+Transaction.prototype.querySingle = function (sql, params, cb) {
+	return alasql.databases[this.databaseid].querySingle(sql, params, cb);
+}
+Transaction.prototype.queryValue = function (sql, params, cb) {
+	return alasql.databases[this.databaseid].queryValue(sql, params, cb);
+}
 
 
 
@@ -1820,9 +1849,9 @@ function queryfn(query,oldscope) {
 	});
 
 	// Preindexation of data sources
-	if(!oldscope) {
+//	if(!oldscope) {
 		preIndex(query);
-	}
+//	}
 
 	// Prepare variables
 	query.data = [];
@@ -1898,6 +1927,8 @@ preIndex = function(query) {
 	for(var k=0, klen = query.sources.length;k<klen;k++) {
 		var source = query.sources[k];
 		// If there is indexation rule
+//console.log('preIndex', source);
+
 		if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
 			if(!query.database.tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
@@ -1914,9 +1945,9 @@ preIndex = function(query) {
 					scope[source.alias || source.tableid] = source.data[i];
 
 					// Check if it apply to where function 
-					if(source.srcwherefn(scope, query.params)) {
+					if(source.srcwherefn(scope, query.params, alasql)) {
 						// Create index entry for each address
-						var addr = source.onrightfn(scope, query.params);
+						var addr = source.onrightfn(scope, query.params, alasql);
 						var group = source.ix [addr]; 
 						if(!group) {
 							group = source.ix [addr] = []; 
@@ -1935,7 +1966,7 @@ preIndex = function(query) {
 				// Use old index if exists
 				source.ix = ixx;
 				// Reduce data (apply filter)
-				source.data = source.ix[source.wxrightfn(query.params)]; 
+				source.data = source.ix[source.wxrightfn(null, query.params, alasql)]; 
 			} else {
 				// Create new index
 				source.ix = {};
@@ -1945,7 +1976,7 @@ preIndex = function(query) {
 				for(var i=0, ilen=source.data.length; i<ilen; i++) {
 					scope[source.alias || source.tableid] = source.data[i];
 					// Create index entry
-					var addr = source.wxleftfn(scope, query.params);
+					var addr = source.wxleftfn(scope, query.params, alasql);
 					var group = source.ix [addr]; 
 					if(!group) {
 						group = source.ix [addr] = []; 
@@ -1961,7 +1992,7 @@ preIndex = function(query) {
 					var scope = {};
 					source.data = source.data.filter(function(r) {
 						scope[source.alias] = r;
-						return source.srcwherefn(scope, query.params);
+						return source.srcwherefn(scope, query.params, alasql);
 					});
 				} else {
 					source.data = [];
@@ -1974,7 +2005,7 @@ preIndex = function(query) {
 				var scope = {};
 				source.data = source.data.filter(function(r) {
 					scope[source.alias] = r;
-					return source.srcwherefn(scope, query.params);
+					return source.srcwherefn(scope, query.params, alasql);
 				});
 			} else {
 				source.data = [];
@@ -1996,12 +2027,13 @@ preIndex = function(query) {
 function doJoin (query, scope, h) {
 	// Check, if this is a last join?
 	if(h>=query.sources.length) {
+//console.log(query.wherefns);
 		// Then apply where and select
-		if(query.wherefn(scope,query.params)) {
-			var res = query.selectfn(scope, query.params);
+		if(query.wherefn(scope,query.params, alasql)) {
+			var res = query.selectfn(scope, query.params, alasql);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-				query.groupfn(res, query.params)
+				query.groupfn(res, query.params, alasql)
 			} else {
 				query.data.push(res);
 			}	
@@ -2014,16 +2046,16 @@ function doJoin (query, scope, h) {
 
 		// Reduce data for looping if there is optimization hint
 		if(source.optimization == 'ix') {
-			data = source.ix[ source.onleftfn(scope, query.params) ] || [];
+			data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
 		}
 
 		// Main cycle
 		for(var i=0, ilen=data.length; i<ilen; i++) {
 			scope[tableid] = data[i];
 			// Reduce with ON and USING clause
-			if(!source.onleftfn || (source.onleftfn(scope, query.params) == source.onrightfn(scope, query.params))) {
+			if(!source.onleftfn || (source.onleftfn(scope, query.params, alasql) == source.onrightfn(scope, query.params, alasql))) {
 				// For all non-standard JOINs like a-b=0
-				if(source.onmiddlefn(scope, query.params)) {
+				if(source.onmiddlefn(scope, query.params, alasql)) {
 					// Recursively call new join
 					doJoin(query, scope, h+1);
 					// for LEFT JOIN
@@ -2058,6 +2090,7 @@ yy.ExistsValue.prototype.toString = function() {
 };
 
 yy.ExistsValue.prototype.toJavaScript = function() {
+//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p).length,console.log(ww),ww';
 	return 'this.existsfn['+this.existsidx+'](params,null,p).length';
 };
 
@@ -2118,11 +2151,11 @@ yy.Select.prototype.compileJoins = function(query) {
 			source.onleftfns = jn.using.map(function(colid){
 				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+colid+"']";
 			}).join('+"`"+');
-			source.onleftfn = new Function('p,params','return '+source.onleftfns);
+			source.onleftfn = new Function('p,params,alasql','return '+source.onleftfns);
 			source.onrightfns = jn.using.map(function(colid){
 				return "p['"+(source.alias||source.tableid)+"']['"+colid+"']";
 			}).join('+"`"+');
-			source.onrightfn = new Function('p,params','return '+source.onrightfns);
+			source.onrightfn = new Function('p,params,alasql','return '+source.onrightfns);
 			source.optimization = 'ix';
 		} else if(jn.on) {
 //console.log(jn.on);
@@ -2134,44 +2167,61 @@ yy.Select.prototype.compileJoins = function(query) {
 			// 	source.onrightfns = jn.on.right.toJavaScript('p',query.defaultTableid);
 			// 	source.onrightfn = new Function('p', 'return '+source.onrightfns);
 
-				var lefts ;
-				var rights ;
-				var middles ;
+				var lefts = '';
+				var rights = '';
+				var middles = '';
+				var middlef = false;
 				// Test right and left sides
-				var ts = jn.on.left.toJavaScript('p',query.defaultTableid);
+				var ls = jn.on.left.toJavaScript('p',query.defaultTableid);
 				var rs = jn.on.right.toJavaScript('p',query.defaultTableid);
-				if((ts.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
-					rights = ts;
-				} else 	if(!(ts.indexOf("p['"+alias+"']")>-1) && (rs.indexOf("p['"+alias+"']")>-1)){
-					lefts = ts;
+
+				if((ls.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
+					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { rights = ls; } 
+						else { middlef = true };
+
+				} else 	if(!(ls.indexOf("p['"+alias+"']")>-1) && (rs.indexOf("p['"+alias+"']")>-1)){
+					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { lefts = ls; } 
+						else { middlef = true };
 				} else {
-					middles = ts;
+					middlef = true;
 				}
 
-				if((rs.indexOf("p['"+alias+"']")>-1) && !(ts.indexOf("p['"+alias+"']")>-1)){
-					rights = rs;
-				} else if(!(rs.indexOf("p['"+alias+"']")>-1) && (ts.indexOf("p['"+alias+"']")>-1)){
-					lefts = rs;
+//				console.log(alias, 1,lefts, rights, middlef);
+
+				if((rs.indexOf("p['"+alias+"']")>-1) && !(ls.indexOf("p['"+alias+"']")>-1)){
+					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { rights = rs; } 
+						else { middlef = true };
+				} else if(!(rs.indexOf("p['"+alias+"']")>-1) && (ls.indexOf("p['"+alias+"']")>-1)){
+					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { lefts = rs; } 
+						else { middlef = true };
 				} else {
-					if(middles) {
-						middles = jn.on.toJavaScript('p',query.defaultTableid);
-					} else {
-						rights = '';
-						lefts = '';
-						middles = jn.on.toJavaScript('p',query.defaultTableid);
-						source.optimization = 'no';
-						// What to here?
-					} 
+					middlef = true;
 				}
+
+//				console.log(alias, 2,lefts, rights, middlef);
+
+				if(middlef) {
+//					middles = jn.on.toJavaScript('p',query.defaultTableid);
+//				} else {
+					rights = '';
+					lefts = '';
+					middles = jn.on.toJavaScript('p',query.defaultTableid);
+					source.optimization = 'no';
+					// What to here?
+				} 
 
 				source.onleftfns = lefts;
 				source.onrightfns = rights;
 				source.onmiddlefns = middles || 'true';
 //			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
 
-				source.onleftfn = new Function('p,params', 'return '+source.onleftfns);
-				source.onrightfn = new Function('p,params', 'return '+source.onrightfns);
-				source.onmiddlefn = new Function('p,params', 'return '+source.onmiddlefns);
+				source.onleftfn = new Function('p,params,alasql', 'return '+source.onleftfns);
+				source.onrightfn = new Function('p,params,alasql', 'return '+source.onrightfns);
+				source.onmiddlefn = new Function('p,params,alasql', 'return '+source.onmiddlefns);
 
 //			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
 //				console.log('join on and ',jn);
@@ -2182,7 +2232,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
 				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid);
-				source.onmiddlefn = new Function('p,params','return '+jn.on.toJavaScript('p',query.defaultTableid));
+				source.onmiddlefn = new Function('p,params,alasql','return '+jn.on.toJavaScript('p',query.defaultTableid));
 			};
 //			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 
@@ -2444,7 +2494,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				return query.database.tables[source.tableid].data;
 			}
 		} else if(tq instanceof yy.Select) {
-			source.subquery = tq.compile(db);
+			source.subquery = tq.compile(query.database);
 			source.datafn = function() {
 				return source.subquery(query.params);
 			}						
@@ -2581,7 +2631,7 @@ yy.Select.prototype.compileSelect = function(query) {
 	s += ss.join(',')+'};'+sp;
 //	console.log(s);
 	query.selectfns = s;
-	return new Function('p,params',s+'return r');
+	return new Function('p,params,alasql',s+'return r');
 };
 
 yy.Select.prototype.compileWhere = function(query) {
@@ -2589,7 +2639,7 @@ yy.Select.prototype.compileWhere = function(query) {
 		s = this.where.toJavaScript('p',query.defaultTableid);
 		query.wherefns = s;
 //		console.log(s);
-		return new Function('p,params','return '+s);
+		return new Function('p,params,alasql','return '+s);
 	} else return function(){return true};
 };
 
@@ -2600,13 +2650,13 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 	//for sources compile wherefs
 	query.sources.forEach(function(source) {
 		if(source.srcwherefns) {
-			source.srcwherefn = new Function('p,params','return '+source.srcwherefns);
+			source.srcwherefn = new Function('p,params,alasql','return '+source.srcwherefns);
 		};
 		if(source.wxleftfns) {
-			source.wxleftfn = new Function('p,params','return '+source.wxleftfns);
+			source.wxleftfn = new Function('p,params,alasql','return '+source.wxleftfns);
 		};
 		if(source.wxrightfns) {
-			source.wxrightfn = new Function('params','return '+source.wxrightfns);
+			source.wxrightfn = new Function('p,params,alasql','return '+source.wxrightfns);
 		};
 //		console.log(source.alias, source.wherefns)
 //		console.log(source);
@@ -2627,8 +2677,17 @@ function optimizeWhereJoin (query, ast) {
 //	console.log(fsrc.length);
 	if(fsrc.length == 0) {
 //		console.log('no optimization, can remove this part of ast');
-		return false;
+		return;
 	} else if (fsrc.length == 1) {
+
+		if(!(s.match(/p\[\'.*?\'\]/g)||[])
+			.every(function(s){ 
+						return s == "p['"+fsrc[0].alias+"']"})) { 
+			return; 
+			// This is means, that we have column from parent query
+			// So we return without optimization
+		} 
+
 		var src = fsrc[0]; // optmiization source
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns+'&&'+s : s;
 

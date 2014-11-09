@@ -1,0 +1,25 @@
+if(typeof exports === 'object') {
+	var assert = require("assert");
+	var alasql = require('../alasql.js');
+};
+
+describe('Test 32', function() {
+	it('LIKE ', function(done){
+
+	var db = alasql.Database("db");
+		db.exec('CREATE TABLE test (a STRING, b INT, t DATETIME)');
+		db.exec("INSERT INTO test (a) VALUES ('a')");
+		db.exec("INSERT INTO test (a) VALUES ('ab')");
+		db.exec("INSERT INTO test (a) VALUES ('abc')");
+		db.exec("INSERT INTO test (a) VALUES ('abcd')");
+		db.exec("INSERT INTO test (a) VALUES ('abcde')");
+
+		var sql = 'UPDATE test SET b = LEN(a), t = NOW()';
+		assert.equal(5,db.exec(sql));
+
+		var sql = "SELECT b FROM test WHERE a LIKE '%bc%'";
+		assert.deepEqual([3,4,5],db.queryArray(sql));
+
+		done();
+	});
+});

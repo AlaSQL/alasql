@@ -1,5 +1,15 @@
 # Changelog
 
+### 0.0.14.2 (07.11.2014-08.11.2014)
+
+* Added more tests
+
+### 0.0.14.1 (07.11.2014-08.11.2014)
+
+* Added more tests
+* Minor bugs fixed
+* Database.queryArray method()
+
 ### 0.0.14 (07.11.2014-08.11.2014)
 
 * SELECT INTERSECT, EXCEPT

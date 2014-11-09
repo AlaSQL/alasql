@@ -12,6 +12,10 @@ var alasql = {};
 // Initial parameters
 alasql.parser = parser;
 alasql.parse = parser.parse.bind(parser); // Shortcut
+
+// Useful library
+alasql.utils = utils;
+
 alasql.databases = {};
 
 // Create default database
@@ -58,6 +62,9 @@ alasql.aexec = function (sql, params) {
 alasql.query = function (sql, params, cb) {
 	return this.currentDatabase.query(sql, params.cb);
 }
+alasql.queryArray = function (sql, params, cb) {
+	return this.currentDatabase.queryArray(sql, params.cb);
+}
 alasql.querySingle = function (sql, params, cb) {
 	return this.currentDatabase.querySingle(sql, params, cb);
 }
@@ -90,6 +97,9 @@ Database.prototype.aexec = function(sql, params) {
 // Aliases like MS SQL
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
+Database.prototype.queryArray = function(sql, params, cb) {
+	return flatArray(this.exec(sql, params, cb));
+}
 Database.prototype.querySingle = function(sql, params, cb) {
 	return this.exec(sql, params, cb)[0];
 }

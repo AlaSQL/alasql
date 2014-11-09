@@ -1,4 +1,6 @@
-# Press about Alasql
+# People and the press about Alasql
 
 * [Alasql.js: In-memory SQL / Daily JS](http://dailyjs.com/2014/11/06/alasql/)
-* [EchoJS](http://www.echojs.com/news/12205)
+
+* In French
+* In German

@@ -12,6 +12,7 @@ yy.ExistsValue.prototype.toString = function() {
 };
 
 yy.ExistsValue.prototype.toJavaScript = function() {
+//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p).length,console.log(ww),ww';
 	return 'this.existsfn['+this.existsidx+'](params,null,p).length';
 };
 

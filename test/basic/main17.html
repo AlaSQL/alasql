@@ -1,0 +1,21 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var db = alasql.Database("db");
+		db.exec('CREATE TABLE test (a int)');
+		db.exec('INSERT INTO test VALUES (1)');
+		db.exec('INSERT INTO test VALUES (2)');
+		db.exec('INSERT INTO test VALUES (3)');
+		db.exec('INSERT INTO test VALUES (4)');
+		db.exec('INSERT INTO test VALUES (5)');
+		db.exec('INSERT INTO test VALUES (6)');
+		db.exec('INSERT INTO test VALUES (7)');
+
+		var res = db.exec('SELECT a FROM test WHERE a<4 UNION ALL SELECT a FROM test WHERE a>2');
+		console.table(res);
+
+		var res = db.exec('SELECT a FROM test WHERE a<4 UNION SELECT a FROM test WHERE a>2 ORDER BY a');
+		console.table(res);
+
+</script>

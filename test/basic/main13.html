@@ -1,0 +1,30 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	alasql.wipe("mydb");
+	db = new alasql.Database("mydb");
+
+	db.exec("CREATE TABLE students (studentid INT, studentname STRING)");
+	db.exec("INSERT INTO students VALUES (1,'John Johnson')");
+
+	zt('simple', 100, function() {
+		for(var i=0;i<1000;i++) {
+			db.exec("INSERT INTO students VALUES (2,'Peter Peterson')");
+		};
+		db.exec('SELECT COUNT(*) FROM students');		
+	});
+
+	zt('transaction', function() {
+		db.transaction(function(tx) {
+			for(var i=0;i<1000;i++) {
+				tx.exec("INSERT INTO students VALUES (2,'Peter Peterson')");
+			};
+			tx.exec('SELECT COUNT(*) FROM students');
+			tx.rollback();
+		});		
+	});
+
+	zt.log();
+
+</script>

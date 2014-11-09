@@ -522,7 +522,6 @@ ParamValue
 		{ 
 			if(typeof yy.question == 'undefined') yy.question = 0; 
 			$$ = new yy.ParamValue({param: yy.question++}); 
-			console.log(yy.question);
 		}
 	;
 

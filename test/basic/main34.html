@@ -1,0 +1,24 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var db = alasql.Database("db");
+		db.exec('CREATE TABLE test1 (a STRING)');
+
+		var sql = "INSERT INTO test1 (a) VALUES ('Alpha'), ('Beta'), ('Gamma'), ('Delta'), ('Epsilon')";
+		console.log(alasql.parse(sql).toString());
+		db.exec(sql);
+
+		console.table(db.exec("SELECT * FROM test1"));
+
+		db.exec('CREATE TABLE test2 (a STRING)');
+
+		var sql = "INSERT INTO test2 SELECT * FROM test1 WHERE a LIKE '%mm%'";
+		console.log(alasql.parse(sql).toString());
+		console.table(db.exec(sql));
+
+		console.table(db.exec("SELECT * FROM test2"));
+
+
+
+</script>

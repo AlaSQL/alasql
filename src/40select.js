@@ -148,9 +148,9 @@ function queryfn(query,oldscope) {
 	});
 
 	// Preindexation of data sources
-	if(!oldscope) {
+//	if(!oldscope) {
 		preIndex(query);
-	}
+//	}
 
 	// Prepare variables
 	query.data = [];
@@ -226,6 +226,8 @@ preIndex = function(query) {
 	for(var k=0, klen = query.sources.length;k<klen;k++) {
 		var source = query.sources[k];
 		// If there is indexation rule
+//console.log('preIndex', source);
+
 		if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
 			if(!query.database.tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
@@ -242,9 +244,9 @@ preIndex = function(query) {
 					scope[source.alias || source.tableid] = source.data[i];
 
 					// Check if it apply to where function 
-					if(source.srcwherefn(scope, query.params)) {
+					if(source.srcwherefn(scope, query.params, alasql)) {
 						// Create index entry for each address
-						var addr = source.onrightfn(scope, query.params);
+						var addr = source.onrightfn(scope, query.params, alasql);
 						var group = source.ix [addr]; 
 						if(!group) {
 							group = source.ix [addr] = []; 
@@ -263,7 +265,7 @@ preIndex = function(query) {
 				// Use old index if exists
 				source.ix = ixx;
 				// Reduce data (apply filter)
-				source.data = source.ix[source.wxrightfn(query.params)]; 
+				source.data = source.ix[source.wxrightfn(null, query.params, alasql)]; 
 			} else {
 				// Create new index
 				source.ix = {};
@@ -273,7 +275,7 @@ preIndex = function(query) {
 				for(var i=0, ilen=source.data.length; i<ilen; i++) {
 					scope[source.alias || source.tableid] = source.data[i];
 					// Create index entry
-					var addr = source.wxleftfn(scope, query.params);
+					var addr = source.wxleftfn(scope, query.params, alasql);
 					var group = source.ix [addr]; 
 					if(!group) {
 						group = source.ix [addr] = []; 
@@ -289,7 +291,7 @@ preIndex = function(query) {
 					var scope = {};
 					source.data = source.data.filter(function(r) {
 						scope[source.alias] = r;
-						return source.srcwherefn(scope, query.params);
+						return source.srcwherefn(scope, query.params, alasql);
 					});
 				} else {
 					source.data = [];
@@ -302,7 +304,7 @@ preIndex = function(query) {
 				var scope = {};
 				source.data = source.data.filter(function(r) {
 					scope[source.alias] = r;
-					return source.srcwherefn(scope, query.params);
+					return source.srcwherefn(scope, query.params, alasql);
 				});
 			} else {
 				source.data = [];
@@ -324,12 +326,13 @@ preIndex = function(query) {
 function doJoin (query, scope, h) {
 	// Check, if this is a last join?
 	if(h>=query.sources.length) {
+//console.log(query.wherefns);
 		// Then apply where and select
-		if(query.wherefn(scope,query.params)) {
-			var res = query.selectfn(scope, query.params);
+		if(query.wherefn(scope,query.params, alasql)) {
+			var res = query.selectfn(scope, query.params, alasql);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-				query.groupfn(res, query.params)
+				query.groupfn(res, query.params, alasql)
 			} else {
 				query.data.push(res);
 			}	
@@ -342,16 +345,16 @@ function doJoin (query, scope, h) {
 
 		// Reduce data for looping if there is optimization hint
 		if(source.optimization == 'ix') {
-			data = source.ix[ source.onleftfn(scope, query.params) ] || [];
+			data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
 		}
 
 		// Main cycle
 		for(var i=0, ilen=data.length; i<ilen; i++) {
 			scope[tableid] = data[i];
 			// Reduce with ON and USING clause
-			if(!source.onleftfn || (source.onleftfn(scope, query.params) == source.onrightfn(scope, query.params))) {
+			if(!source.onleftfn || (source.onleftfn(scope, query.params, alasql) == source.onrightfn(scope, query.params, alasql))) {
 				// For all non-standard JOINs like a-b=0
-				if(source.onmiddlefn(scope, query.params)) {
+				if(source.onmiddlefn(scope, query.params, alasql)) {
 					// Recursively call new join
 					doJoin(query, scope, h+1);
 					// for LEFT JOIN
