@@ -97,10 +97,6 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 * +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery/array), > ANY/SOME (subquery / array), [NOT] IN (subquery / array), LIKE
 
-#### Functions
-
-* ABS(), IIF(), IFNULL(), INSTR(), LOWER(), UPPER(), LCASE(), UCASE(), LEN(), LENGTH()
-
 #### Aggregators
 
 * SUM()
@@ -116,15 +112,18 @@ Now Alasql.js supports following subset of SELECT syntax:
 * ROLLUP()
 * CUBE()
 * GROUPING SETS()
+#### Functions
+
+* ABS(), IIF(), IFNULL(), INSTR(), LOWER(), UPPER(), LCASE(), UCASE(), LEN(), LENGTH()
 
 #### User-defined JavaScript functions
 
 You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions
-to alasql.userlib object:
+to alasql.fn object:
 
 ```
-        alasql.userlib.DOUBLE = function(x){return x*2};        
-        alasql.userlib.SUM10 = function(x,y) { return x+y*10; }
+        alasql.fn.DOUBLE = function(x){return x*2};        
+        alasql.fn.SUM10 = function(x,y) { return x+y*10; }
         db.exec('SELECT a, DOUBLE(a) AS b, SUM10(a,b) FROM test1');
 ```
 

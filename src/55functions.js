@@ -60,7 +60,9 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 
 // IMPORTANT: These are compiled functions
 
-alasql.userlib = {};
+alasql.fn = {}; // Keep for compatibility
+alasql.userlib = alasql.fn;
+
 var stdlib = alasql.stdlib = {}
 
 stdlib.ABS = function(a) {return 'Math.abs('+a+')'};

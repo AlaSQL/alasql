@@ -22,8 +22,8 @@ describe('Test 20', function() {
 		db.exec('INSERT INTO test2 VALUES (1, 3)');
 		db.exec('INSERT INTO test2 VALUES (2, 4)');
 
-		alasql.userlib.DOUBLE = function(x){return x*2};
-		alasql.userlib.CUBIC = function(x){return x*x*x};
+		alasql.fn.DOUBLE = function(x){return x*2};
+		alasql.fn.CUBIC = function(x){return x*x*x};
 		
 		var res = db.exec('SELECT a, DOUBLE(a) AS b, CUBIC(a) AS c FROM test1 WHERE a = 2');
 		assert.deepEqual([ { a: 2, b: 4, c: 8 } ], res);

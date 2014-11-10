@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.15 (10.11.2014)
+
+* alasql.userlib replaces with alasql.fn
+
 ### 0.0.14.5 (10.11.2014)
 
 * valueOf() instead +Date();
