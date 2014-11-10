@@ -625,15 +625,18 @@ yy.Select.prototype.compileOrder = function (query) {
 			var dg = ''; 
 			if(query.xcolumns[columnid]) {
 				var dbtypeid = query.xcolumns[columnid].dbtypeid;
-				if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '+';
+				if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '.valueOf()';
+				// TODO Add other types mapping
+			} else {
+				dg = '.valueOf()';
 			}
 			
 			// COLLATE NOCASE
 			if(ord.nocase) columnid += '.toUpperCase()';
 
 			// TODO Add date comparision
-			s += 'if('+dg+'a.'+columnid+(ord.direction == 'ASC'?'>':'<')+dg+'b.'+columnid+')return 1;';
-			s += 'if('+dg+'a.'+columnid+'=='+dg+'b.'+columnid+'){';
+			s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
+			s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
 			sk += '}';
 		});
 		s += 'return 0;';

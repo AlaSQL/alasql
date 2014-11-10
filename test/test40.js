@@ -12,7 +12,7 @@ describe('Test 40', function() {
 		db.exec('INSERT INTO one VALUES (-1,-10.1),(-2,-20.2345678),(3,30.12), (-4,40.00)');
 
 
-		it('Negative numbers', function(done){
+		it('Float and negative numbers', function(done){
 			var res = db.exec("SELECT a,b,-1.1*a AS c FROM one ORDER BY a");
 //			console.log();
 			assert.deepEqual(4.4,res[0].c);

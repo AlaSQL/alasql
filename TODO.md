@@ -4,60 +4,69 @@
 
 #### Version 0.0.15 - "Battle for functionality"
 
-* Tests
-* INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
 * Sandbox for Website
+* Dates parsing
 
-#### Version 0.0.16 - "Battle for SQL"
+#### Version 0.0.16 - "Battle for SQL-92"
 
-* Fix Dates issues
-* SQL-errors 
-* Many-many SQL/92 Tests
-* Chrome/FireFox/Safari/IE/Chromium/Node.Js/Rhino/iOS/Android/Win8 compatibilty tests
-* AVG()
+* Fix Dates issues (comparision, ordering)
+* Upper and lower case in tables, columns, and functions names issue
+* Many-many SQL-92 Tests 
+* Complaience with [SQL-92 specifications](http://savage.net.au/SQL/sql-92.bnf.html) where it is possible 
+* Chrome/FireFox/Safari/IE/Chromium/Opera/Node.Js/Rhino/iOS/Android/Win8 compatibilty tests
 * NULL, IS NULL
-* PIVOT
+* SQL-errors 
+* AVG()
+* PIVOT like [T-SQL](http://technet.microsoft.com/en-us/library/ms177410(v=sql.105).aspx)
+* Third UNION order issue
+* Float numbers like 10e20
+* INSERT DEFAULT VALUES
 
 #### Version 0.0.17 - "Battle for Performance"
 
 * Remove forEach loops
 * EXPLAIN
+* Optmization parameters
+* Data types reolution for subqueries
 * Indices
 * Transactions
 
 #### Version 0.0.18 - "Battle for Memory"
 
 * Memory leaks
+* Minification
 * Persistence
 * ALTER TABLE
 * CONSTRAINTS, PRIMARY KEYS
 * Triggers
 
-#### Version 0.0.19 - "Battle with Bugs"
+#### Version 0.0.19 - "JavaScript Dao"
 
-### Version 0.1.0 - "First Pancake!"
+* JavaScript API clarification
 
-### Version 0.2.0 - NoSQL supports
+#### Version 0.0.20 - "Battle with Bugs"
 
-* Like MongoDB search
+* Bug fixing release (alpha for 0.1)
 
-### Version 0.3.0 - OLAP + MDX
+### Version 0.1 - "First Pancake!"
 
-* MDX parser
+### Version 0.2 - NoSQL supports
+
+* JavaScript search like MongoDB
+
+### Version 0.3 - OLAP + MDX
+
+* Mini MDX parser
+* JavaScript in-memory OLAP functionality (additional library)
 
 ## FEATURES TO BE IMPLEMENTED SOON
 
-### THEN
-
-* FULL OUTER JOIN
-* CASE operator
-* AVG aggregator (http://www.w3schools.com/sql/sql_func_avg.asp)
-* LIKE '%a%'
-* SELECT INTO table IN database FROM query [like this](http://www.w3schools.com/sql/sql_select_into.asp)
 * BEGIN COMMIT ROLLBACK
+* INSERT INTO test SELECT 'a' UNION ALL SELECT '10'
+* AVG aggregator (http://www.w3schools.com/sql/sql_func_avg.asp)
+* SELECT INTO table IN database FROM query [like this](http://www.w3schools.com/sql/sql_select_into.asp)
 * Change grammar for LogicValues
 * GO* Separate branch on github.com for development
-* PIVOT
 
 Optimization
 
@@ -117,6 +126,13 @@ BUGS
 * 'SELECT wrongfield FROM table' gives something wrong 
 * Change order of groupfn() and selectfn(), and check havingfn vs selectfn
 
+PERSISTENCE
+
+* WebSQL
+* localStorage / sessionStorage
+* IndexedDB
+* lawnchair.js
+* Serer synchronization JavaScript plugin (like [WebSqlSync](https://github.com/orbitaloop/WebSqlSync))
 
 DEVELOPMENT
 
@@ -134,6 +150,7 @@ REALIZATION
 * Compiled procedures
 * Compiled statements
 * alasql2js compiler
+* Better parser and SQL-formatter
 
 ANYDATABASE
 

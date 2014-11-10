@@ -2934,15 +2934,18 @@ yy.Select.prototype.compileOrder = function (query) {
 			var dg = ''; 
 			if(query.xcolumns[columnid]) {
 				var dbtypeid = query.xcolumns[columnid].dbtypeid;
-				if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '+';
+				if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '.valueOf()';
+				// TODO Add other types mapping
+			} else {
+				dg = '.valueOf()';
 			}
 			
 			// COLLATE NOCASE
 			if(ord.nocase) columnid += '.toUpperCase()';
 
 			// TODO Add date comparision
-			s += 'if('+dg+'a.'+columnid+(ord.direction == 'ASC'?'>':'<')+dg+'b.'+columnid+')return 1;';
-			s += 'if('+dg+'a.'+columnid+'=='+dg+'b.'+columnid+'){';
+			s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
+			s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
 			sk += '}';
 		});
 		s += 'return 0;';
@@ -3765,15 +3768,22 @@ yy.Insert.prototype.compile = function (db) {
 		//		console.log('table', table.columns);
 				table.columns.forEach(function(col, idx){
 					var q = col.columnid +':';
-					// if(table.xcolumns && table.xcolumns[col.columnid] && 
-					// 	( table.xcolumns[col.columnid].dbtypeid == "INT"
+					var val = values[idx].toJavaScript();
+
+					 if(table.xcolumns && table.xcolumns[col.columnid] && 
+					  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
+						table.xcolumns[col.columnid].dbtypeid == "DATETIME"
+					  )) {
+					 	val = "(new Date("+val+"))";
+					 }
 					// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
 					// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
 					// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
 					// 	)) q += '+';
 				//	console.log(self.values[idx].toString());
 		//console.log(self);
-					q += values[idx].toJavaScript();
+					q += val;
+
 					// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
 					ss.push(q);
 

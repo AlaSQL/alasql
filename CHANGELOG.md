@@ -1,11 +1,18 @@
 # Changelog
 
+### 0.0.14.5 (10.11.2014)
+
+* valueOf() instead +Date();
+* Date tests added
+* INSERT date
+
 ### 0.0.14.4 (10.11.2014)
 
 * Negative numbers 
 * Float numbers
 * Strings with single and double quaters
 * CASE WHEN THEN END
+* ROUND, MID
 
 ### 0.0.14.3 (09.11.2014)
 
