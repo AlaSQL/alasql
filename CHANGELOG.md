@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.16 (10.11.2014)
+
+* PRIMARY KEY and FOREIGN KEY parser
+
 ### 0.0.15 (10.11.2014)
 
 * alasql.userlib replaces with alasql.fn
