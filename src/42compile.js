@@ -366,9 +366,11 @@ yy.Select.prototype.compileFrom = function(query) {
 //		console.log(alias);
 		if(tq instanceof yy.Table) {
 //			console.log(tq, tq.databaseid, query);
-			query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
+			query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid, type:'table'};
 		} else if(tq instanceof yy.Select) {
-
+			query.aliases[alias] = {type:'subquery'};
+		} else if(tq instanceof yy.ParamValue) {
+			query.aliases[alias] = {type:'paramvalue'};
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -392,6 +394,9 @@ yy.Select.prototype.compileFrom = function(query) {
 			source.datafn = function() {
 				return source.subquery(query.params);
 			}						
+		} else if(tq instanceof yy.ParamValue) {
+			source.datafn = new Function('params',
+				"return params['"+tq.param+"'];");
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -413,7 +418,9 @@ function compileSelectStar (query,alias) {
 //	console.log(query,alias);
 	// console.log(query.aliases[alias].tableid);
 	var s = '', sp = '', ss=[];
-	var columns = query.database.tables[query.aliases[alias].tableid].columns;
+	if(query.aliases[alias].tableid) {
+		var columns = query.database.tables[query.aliases[alias].tableid].columns;
+	};
 	if(columns) {
 		columns.forEach(function(tcol){
 			ss.push(tcol.columnid+':p.'+alias+'.'+tcol.columnid);
@@ -447,7 +454,6 @@ yy.Select.prototype.compileSelect = function(query) {
 	var s = 'var r={';
 	var sp = '';
 	var ss = [];
-//	console.log(this.columns);
 	this.columns.forEach(function(col){
 		if(col instanceof yy.Column) {
 			if(col.columnid == '*') {
@@ -458,6 +464,7 @@ yy.Select.prototype.compileSelect = function(query) {
 					sp += ret.sp;
 
 				} else {
+//					console.log('aliases', query.aliases);
 					for(var alias in query.aliases) {
 						var ret = compileSelectStar(query, alias); //query.aliases[alias].tableid);
 						if(ret.s) ss = ss.concat(ret.s);
@@ -472,7 +479,7 @@ yy.Select.prototype.compileSelect = function(query) {
 				// If field, otherwise - expression
 				ss.push((col.as || col.columnid)+':p.'+(col.tableid||query.defaultTableid)+'.'+col.columnid);
 
-				if(query.aliases[col.tableid||query.defaultTableid]) {
+				if(query.aliases[col.tableid||query.defaultTableid] && query.aliases[col.tableid||query.defaultTableid].type == 'table') {
 
 					if(!query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid]) {
 						throw new Error('Table \''+(col.tableid||query.defaultTableid)+'\' does not exists in database');

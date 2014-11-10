@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.14.5 Date: November 10, 2014 [Changelog](CHANGELOG.md) 
+Version: 0.0.15 Date: November 10, 2014 [Changelog](CHANGELOG.md) [Release Plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -35,16 +35,24 @@ Include file: [alasql.js](./alasql.js) to the page.
 ```
   <script src="alasql.js"></script>  
   <script>
-    alasql.exec("CREATE TABLE test (language INT, hello STRING)");
-    alasql.exec("INSERT INTO test VALUES (1,'Hello!')");
-    alasql.exec("INSERT INTO test VALUES (2,'Aloha!')");
-    alasql.exec("INSERT INTO test VALUES (3,'Bonjour!')");
-    console.table(alasql.exec("SELECT * FROM test WHERE language > 1"));
+    alasql("CREATE TABLE test (language INT, hello STRING)");
+    alasql("INSERT INTO test VALUES (1,'Hello!')");
+    alasql("INSERT INTO test VALUES (2,'Aloha!')");
+    alasql("INSERT INTO test VALUES (3,'Bonjour!')");
+    console.table(alasql("SELECT * FROM test WHERE language > 1"));
   </script>
 
 ```
 
-You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD.
+You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD:
+
+```
+    require(['../../alasql.js'], function(alasql) {
+        alasql('CREATE TABLE test1 (a int, b int, c int)');
+        alasql('INSERT INTO test1 VALUES (1,10,1)');
+        console.log(alasql('SELECT * FROM test1'));
+    });
+```
 
 ### In Node.js
 
@@ -135,14 +143,14 @@ In browser:
 ```
     <script src="alasql.js"></script>
     <script>
-        alasql.exec('CREATE TABLE one (two INT)');
+        alasql('CREATE TABLE one (two INT)');
     </script>
 ```
 
 or in Node.js:
 ```
     var alasql = require('alasql');
-    alasql.exec('CREATE TABLE one (two INT)');
+    alasql('CREATE TABLE one (two INT)');
 ```
 
 Another approach is to create new database:
@@ -195,6 +203,22 @@ You can use parameters in compiled statements:
 
     db.exec('INSERT INTO one (?,?)',[5,6]);
 
+```
+You even can use param in FROM clause: 
+
+```
+        var years = [
+            {yearid: 2012},
+            {yearid: 2013},
+            {yearid: 2014},
+            {yearid: 2015},
+            {yearid: 2016},
+        ];
+
+        var res = alasql.queryArray('SELECT * FROM ? AS years ' +
+            'WHERE yearid > ?', [years,2014]);
+
+        // res == [2015,2016]
 ```
 
 ### Transactions

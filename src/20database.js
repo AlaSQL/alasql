@@ -7,7 +7,9 @@
 */
 
 // Main database variable
-var alasql = {};
+var alasql = function(sql, params, cb) {
+	return alasql.currentDatabase.exec(sql, params, cb);
+};
 
 // Initial parameters
 alasql.parser = parser;
@@ -70,6 +72,10 @@ alasql.querySingle = function (sql, params, cb) {
 }
 alasql.queryValue = function (sql, params, cb) {
 	return this.currentDatabase.queryValue(sql, params, cb);
+}
+
+alasql.queryArray = function (sql, params, cb) {
+	return this.currentDatabase.queryArray(sql, params, cb);
 }
 
 alasql.indexColumns = function(tableid) {

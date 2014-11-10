@@ -276,10 +276,18 @@ FromTablesList
 FromTable
 	: LPAR Select RPAR LITERAL
 		{ $$ = $2; $$.as = $4 }	
+	| LPAR Select RPAR AS LITERAL
+		{ $$ = $2; $$.as = $5 }	
 	| Table LITERAL
 		{ $$ = $1; $1.as = $2 }
+	| Table AS LITERAL
+		{ $$ = $1; $1.as = $3 }
 	| Table 
 		{ $$ = $1; }
+	| ParamValue LITERAL 
+		{ $$ = $1; $1.as = $2; }
+	| ParamValue AS LITERAL 
+		{ $$ = $1; $1.as = $3; }
 	;
 
 Table

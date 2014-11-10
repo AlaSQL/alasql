@@ -4,6 +4,11 @@
 
 * alasql.userlib replaces with alasql.fn
 * Fixed gulpfile.js
+* CommonJS/AMD/UMD and require.js test
+* alasql(sql, params, callback) function
+* SELECT * FROM one AS t
+* alasql('SELECT * FROM ? AS t', [data]); - array as subquery
+
 
 ### 0.0.14.5 (10.11.2014)
 

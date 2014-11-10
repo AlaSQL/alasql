@@ -1,64 +1,5 @@
 # To do
 
-## RELEASES PLAN
-
-#### Version 0.0.15 - "Battle for functionality"
-
-* Sandbox for Website
-* Dates parsing
-
-#### Version 0.0.16 - "Battle for SQL-92"
-
-* Fix Dates issues (comparision, ordering)
-* Upper and lower case in tables, columns, and functions names issue
-* Many-many SQL-92 Tests 
-* Complaience with [SQL-92 specifications](http://savage.net.au/SQL/sql-92.bnf.html) where it is possible 
-* Chrome/FireFox/Safari/IE/Chromium/Opera/Node.Js/Rhino/iOS/Android/Win8 compatibilty tests
-* NULL, IS NULL
-* SQL-errors 
-* AVG()
-* PIVOT like [T-SQL](http://technet.microsoft.com/en-us/library/ms177410(v=sql.105).aspx)
-* Third UNION order issue
-* Float numbers like 10e20
-* INSERT DEFAULT VALUES
-* Development environment (clean gulp code)
-
-#### Version 0.0.17 - "Battle for Performance"
-
-* Remove forEach loops
-* EXPLAIN
-* Optmization parameters
-* Data types reolution for subqueries
-* Indices
-* Transactions
-
-#### Version 0.0.18 - "Battle for Memory"
-
-* Memory leaks
-* Minification
-* Persistence
-* ALTER TABLE
-* CONSTRAINTS, PRIMARY KEYS
-* Triggers
-
-#### Version 0.0.19 - "JavaScript Dao"
-
-* JavaScript API clarification
-
-#### Version 0.0.20 - "Battle with Bugs"
-
-* Bug fixing release (alpha for 0.1)
-
-### Version 0.1 - "First Pancake!"
-
-### Version 0.2 - NoSQL supports
-
-* JavaScript search like MongoDB
-
-### Version 0.3 - OLAP + MDX
-
-* Mini MDX parser
-* JavaScript in-memory OLAP functionality (additional library)
 
 ## FEATURES TO BE IMPLEMENTED SOON
 
@@ -190,6 +131,16 @@ SAMPLES
 * Console [like](http://www.moxleystratton.com/files/sqittle.html) 
 * One more [sample](http://yradtsevich.github.io/pure-js-websql/test/index.html)
 * Create tutorial database on https://github.com/txje/js-sql-tutorial for best console
+
+### Version 0.2 - NoSQL supports
+
+* JavaScript search like MongoDB
+
+### Version 0.3 - OLAP + MDX
+
+* Mini MDX parser
+* JavaScript in-memory OLAP functionality (additional library)
+
 
 OTHER
 

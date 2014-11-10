@@ -21,7 +21,12 @@ yy.Select.prototype.toString = function() {
 		if(col.as) s += ' AS '+col.as;
 		return s;
 	}).join(',');
-	s += ' FROM '+this.from.map(function(f){return f.toString()}).join(',');
+	s += ' FROM '+this.from.map(function(f){
+		console.log(f);
+		var ss = f.toString();
+		if(f.as) ss += ' AS '+f.as;
+		return ss;
+	}).join(',');
 
 	if(this.where) s += ' WHERE '+this.where.toString();
 	if(this.group) s += ' GROUP BY '+this.group.toString();

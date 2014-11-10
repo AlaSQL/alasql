@@ -1,6 +1,8 @@
 // Main query procedure
 function queryfn(query,oldscope) {
 
+//	console.log(query);
+
 	// Run all subqueries before main statement
 	if(query.queriesfn) {
 		query.queriesdata = query.queriesfn.map(function(q){return flatArray(q(query.params))});
@@ -15,7 +17,7 @@ function queryfn(query,oldscope) {
 	// First - refresh data sources
 	query.sources.forEach(function(source){
 //		source.data = query.database.tables[source.tableid].data;
-		source.data = source.datafn(); 
+		source.data = source.datafn(query.params); 
 
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
