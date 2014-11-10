@@ -27,6 +27,7 @@
 
 "CASE"											return "CASE"
 'COLLATE'										return 'COLLATE'
+"CONSTRAINT"									return "CONSTRAINT"
 "COUNT"											return "COUNT"
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
@@ -43,6 +44,7 @@
 'EXPLAIN'                                       return 'EXPLAIN'
 'FALSE'											return 'FALSE'
 'FIRST'											return 'FIRST'
+'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
@@ -72,6 +74,7 @@
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'QUERY'                                        	return 'QUERY'
+'REFERENCES'                                    return 'REFERENCES'
 'RENAME'                                        return 'RENAME'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
@@ -765,7 +768,7 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause ConstraintsClause RPAR
+	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
@@ -790,16 +793,55 @@ IfNotExists
 	;
 
 CreateTableDefClause
-	: ColumnDefList
-		{ $$ = {columns: $1}; }
+	: ColumnDefsList COMMA ConstraintsList
+		{ $$ = {columns: $1, constraints: $2}; }	
+	| ColumnDefsList
+		{ $$ = {columns: $1}; }	
 	| AS Select
 		{ $$ = {as: $2} }
 	;
 
-ColumnDefList
+ConstraintsList
+	: Constraint
+		{ $$ = [$1];}
+	| ConstraintsList COMMA Constraint
+		{ $1.push($3); $$ = $1; }
+	;
+
+Constraint
+	: ConstraintName PrimaryKey
+		{ $2.csname = $1; $$ = $2; }
+	| ConstraintName ForeignKey
+		{ $2.csname = $1; $$ = $2; }
+	;
+
+ConstraintName
+	:   { $$ = null }
+	| CONSTRAINT LITERAL
+		{ $$ = $2; }
+	;
+
+PrimaryKey
+	: PRIMARY KEY LPAR ColsList RPAR
+		{ $$ = {columns: $4}; }
+	;
+
+ForeignKey
+	: FOREIGN KEY LPAR LITERAL RPAR REFERENCES LITERAL LPAR ColsList RPAR
+		{ $$ = {tableid: $3, columns: $6}; }
+	;
+
+ColsList
+	: LITERAL
+		{ $$ = [$1]; }
+	| ColsList COMMA LITERAL
+		{ $$ = $1; $1.push($3); }
+	;
+
+ColumnDefsList
 	: ColumnDef
 		{ $$ = [$1];}
-	| ColumnDefList COMMA ColumnDef
+	| ColumnDefsList COMMA ColumnDef
 		{ $1.push($3); $$ = $1; }
 	;
 
@@ -823,26 +865,11 @@ ColumnConstraint
 	: {$$ = null}
 	| PRIMARY KEY
 		{$$ = {primarykey:true};}
+	| FOREIGN KEY REFERENCES LITERAL LPAR LITERAL RPAR
+		{$$ = {foreignkey:{tableid:$4, columnid: $6}};}
 	| NOT NULL
 		{$$ = {notnull:true};}
 	;
-
-ConstraintsClause
-	: {$$ = null;}
-/*	| COMMA ConstraintsList
-		{$$ = {constraints:$2}}
-*/
-	;
-
-ConstraintsList
-	: ConstraintsList COMMA Constraint
-		{$$=$1; $1.push($3)}
-	| Constraint
-		{$$ = [$1];}
-	;
-
-Constraint
-	:;
 
 /* DROP TABLE */
 
