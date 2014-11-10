@@ -21,6 +21,7 @@
 * Third UNION order issue
 * Float numbers like 10e20
 * INSERT DEFAULT VALUES
+* Development environment (clean gulp code)
 
 #### Version 0.0.17 - "Battle for Performance"
 

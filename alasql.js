@@ -5,6 +5,7 @@
 // Version: 0.0.6
 // (ñ) 2014, Andrey Gershun
 //
+
 /*
 The MIT License (MIT)
 
@@ -2966,7 +2967,7 @@ yy.Select.prototype.compileOrder = function (query) {
 //
 */
 
-// Calculate ROLLUP()
+// Calculate ROLLUP() combination
 
 var rollup = function (a) {
 	var rr = [];

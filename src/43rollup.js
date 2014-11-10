@@ -6,7 +6,7 @@
 //
 */
 
-// Calculate ROLLUP()
+// Calculate ROLLUP() combination
 
 var rollup = function (a) {
 	var rr = [];

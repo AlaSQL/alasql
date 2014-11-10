@@ -3,6 +3,7 @@
 ### 0.0.15 (10.11.2014)
 
 * alasql.userlib replaces with alasql.fn
+* Fixed gulpfile.js
 
 ### 0.0.14.5 (10.11.2014)
 
