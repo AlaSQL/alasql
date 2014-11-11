@@ -17,6 +17,9 @@ Check Alasql vs other JavaScript databases:
 Warning: Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
 the code before relaese more stable version 0.1.0 in the mid of November.
 
+You can check [version-0.0.16](https://github.com/agershun/alasql/tree/version-0.0.16) branch for new experimental features of new version. 
+
+
 ## Examples
 
 Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/)
