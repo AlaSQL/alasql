@@ -494,7 +494,7 @@ case 199:
  this.$ = {ifnotexists: true}; 
 break;
 case 200:
- this.$ = {columns: $$[$0-2], constraints: $$[$0-1]}; 
+ this.$ = {columns: $$[$0-2], constraints: $$[$0]}; 
 break;
 case 201:
  this.$ = {columns: $$[$0]}; 
@@ -506,16 +506,16 @@ case 203: case 213:
  this.$ = [$$[$0]];
 break;
 case 205: case 206:
- $$[$0].csname = $$[$0-1]; this.$ = $$[$0]; 
+ $$[$0].constraintid = $$[$0-1]; this.$ = $$[$0]; 
 break;
 case 207:
  this.$ = null 
 break;
 case 209:
- this.$ = {columns: $$[$0-1]}; 
+ this.$ = {type: 'PRIMARY KEY', columns: $$[$0-1]}; 
 break;
 case 210:
- this.$ = {tableid: $$[$0-7], columns: $$[$0-4]}; 
+ this.$ = {type: 'FOREIGN KEY', tableid: $$[$0-7], columns: $$[$0-4]}; 
 break;
 case 215:
  this.$ = new yy.ColumnDef({columnid:$$[$0-2]}); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);

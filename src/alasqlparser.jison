@@ -804,7 +804,7 @@ IfNotExists
 
 CreateTableDefClause
 	: ColumnDefsList COMMA ConstraintsList
-		{ $$ = {columns: $1, constraints: $2}; }	
+		{ $$ = {columns: $1, constraints: $3}; }	
 	| ColumnDefsList
 		{ $$ = {columns: $1}; }	
 	| AS Select
@@ -820,9 +820,9 @@ ConstraintsList
 
 Constraint
 	: ConstraintName PrimaryKey
-		{ $2.csname = $1; $$ = $2; }
+		{ $2.constraintid = $1; $$ = $2; }
 	| ConstraintName ForeignKey
-		{ $2.csname = $1; $$ = $2; }
+		{ $2.constraintid = $1; $$ = $2; }
 	;
 
 ConstraintName
@@ -833,12 +833,12 @@ ConstraintName
 
 PrimaryKey
 	: PRIMARY KEY LPAR ColsList RPAR
-		{ $$ = {columns: $4}; }
+		{ $$ = {type: 'PRIMARY KEY', columns: $4}; }
 	;
 
 ForeignKey
 	: FOREIGN KEY LPAR LITERAL RPAR REFERENCES LITERAL LPAR ColsList RPAR
-		{ $$ = {tableid: $3, columns: $6}; }
+		{ $$ = {type: 'FOREIGN KEY', tableid: $3, columns: $6}; }
 	;
 
 ColsList

@@ -539,7 +539,7 @@ case 199:
  this.$ = {ifnotexists: true}; 
 break;
 case 200:
- this.$ = {columns: $$[$0-2], constraints: $$[$0-1]}; 
+ this.$ = {columns: $$[$0-2], constraints: $$[$0]}; 
 break;
 case 201:
  this.$ = {columns: $$[$0]}; 
@@ -551,16 +551,16 @@ case 203: case 213:
  this.$ = [$$[$0]];
 break;
 case 205: case 206:
- $$[$0].csname = $$[$0-1]; this.$ = $$[$0]; 
+ $$[$0].constraintid = $$[$0-1]; this.$ = $$[$0]; 
 break;
 case 207:
  this.$ = null 
 break;
 case 209:
- this.$ = {columns: $$[$0-1]}; 
+ this.$ = {type: 'PRIMARY KEY', columns: $$[$0-1]}; 
 break;
 case 210:
- this.$ = {tableid: $$[$0-7], columns: $$[$0-4]}; 
+ this.$ = {type: 'FOREIGN KEY', tableid: $$[$0-7], columns: $$[$0-4]}; 
 break;
 case 215:
  this.$ = new yy.ColumnDef({columnid:$$[$0-2]}); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);
@@ -3700,6 +3700,7 @@ yy.CreateTable.prototype.compile = function (db) {
 	var tableid = this.table.tableid;
 	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
+	var constraints = this.constraints||[];
 //	console.log(this);
 
 	return function() {
@@ -3735,6 +3736,23 @@ yy.CreateTable.prototype.compile = function (db) {
 					table.indices[pk.hh] = {};
 				};
 
+			});
+
+			constraints.forEach(function(con) {
+				//console.log(con, con.columns);
+				if(con.type == 'PRIMARY KEY') {
+					if(table.pk) {
+						throw new Error('Primary key already exists');
+					}
+					var pk = table.pk = {};
+					pk.columns = con.columns;
+					pk.onrightfns = pk.columns.map(function(columnid){
+						return 'r[\''+columnid+'\']'
+					}).join("+'`'+");
+					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+					pk.hh = hash(pk.onrightfns);
+					table.indices[pk.hh] = {};					
+				}
 			});
 
 //			if(table.pk) {

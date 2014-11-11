@@ -43,6 +43,7 @@ yy.CreateTable.prototype.compile = function (db) {
 	var tableid = this.table.tableid;
 	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
+	var constraints = this.constraints||[];
 //	console.log(this);
 
 	return function() {
@@ -78,6 +79,23 @@ yy.CreateTable.prototype.compile = function (db) {
 					table.indices[pk.hh] = {};
 				};
 
+			});
+
+			constraints.forEach(function(con) {
+				//console.log(con, con.columns);
+				if(con.type == 'PRIMARY KEY') {
+					if(table.pk) {
+						throw new Error('Primary key already exists');
+					}
+					var pk = table.pk = {};
+					pk.columns = con.columns;
+					pk.onrightfns = pk.columns.map(function(columnid){
+						return 'r[\''+columnid+'\']'
+					}).join("+'`'+");
+					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+					pk.hh = hash(pk.onrightfns);
+					table.indices[pk.hh] = {};					
+				}
 			});
 
 //			if(table.pk) {
