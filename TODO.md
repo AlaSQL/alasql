@@ -1,5 +1,26 @@
 # To do
+## URGENT
 
+* console
+* table.pk.pkrightfns, table.pk.pkrightfn, hh
+* table.fks[].fkleftfns, table.fks[].fkleftfn, table.fks[].tableid, fks[].fkrightfns, table.fks[].fkrightfn
+* INSERT, DELETE, UPDATE with primary and foreign keys
+
+* CREATE TRIGGER  and triggers
+* JOIN (subquery)
+* Group by formula
+* WITH clause
+* documentation
+* SELECT FROM nevenending stream (for Node.js), including INNER, LEFT, SEMI JOIN
+* CURSORS
+* Sandbox for SQL - like SQLFiddle, alasqlfiddle.
+* db.indexAll(table)
+* Precompiled insert for tables: 
+* "SELECT aaa.* FROM :aaa" without AS clause
+* compile flags for query (arrayofobjects, value, array, arrayofarrays)
+* Aggregation formula GROUPFN()
+
+## FEATURES TO BE IMPLEMENTED SOON
 ## MOBILE APPLICATIONS SUPPORT
 
 * WinJS
@@ -23,8 +44,6 @@
 ## Applications
 
 * Command-line utility for text files
-
-## FEATURES TO BE IMPLEMENTED SOON
 
 * BEGIN COMMIT ROLLBACK
 * INSERT INTO test SELECT 'a' UNION ALL SELECT '10'

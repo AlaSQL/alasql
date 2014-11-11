@@ -1,18 +1,18 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.15 Date: November 10, 2014 [Changelog](CHANGELOG.md) [Release Plan](RELEASES.md)
+Version: 0.0.15 Date: November 10, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
 * Alasql was written with pure JavaScript and does not use browser WebSQL database. 
-* Alasql is fully functional compact sql server with JOINs, GROUPs, UNIONs, ANY, ALL, IN, subqueries and very limited transactions support.
+* Alasql is fully functional compact SQL server with JOINs, GROUPs, UNIONs, ANY, ALL, IN, subqueries and very limited transactions support.
 * Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
-* Alasql works with all modern versions of browsers (Chrome, Firefox, IE, Safari), Node.js, and mobile iOS and Android.
+* Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql is fast, because it uses some optimization methods.
 
 Check Alasql vs other JavaScript databases: 
-* [Alabase vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
-* [Alabase vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
+* [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
+* [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 Warning: Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
 the code before relaese more stable version 0.1.0 in the mid of November.
@@ -48,11 +48,11 @@ You can use alasql.js with define()/require() functions in browser as well, beca
 
 ```
     require(['../../alasql.js'], function(alasql) {
-        alasql('CREATE TABLE test1 (a int, b int, c int)');
-        alasql('INSERT INTO test1 VALUES (1,10,1)');
-        console.log(alasql('SELECT * FROM test1'));
+        var test1 = [{a:1,b:2,c:3},{a:4,b:5,c:6},{a:7,b:8,c:9}];
+        console.table(alasql('SELECT a, b*c AS bc FROM ? AS t',[test1]));
     });
 ```
+Like in this sample you do not need to CREATE TABLE and INSERTS if you do not need constraints functionality.
 
 ### In Node.js
 
@@ -306,7 +306,7 @@ or run [test/main.html](test/main.html) in browser.
 
 ### Known Bugs
 
-1. Dates sorting and comparing
+1. Dates comparing (sorting now is ok)
 2. Semicolon with multiple statements
 3. ORDER BY clause on three or more UNIONS
 4. AVG() does not work
@@ -316,15 +316,15 @@ or run [test/main.html](test/main.html) in browser.
 
 Read my [to do](TODO.md) page
 
-## [Similar projects](SIMILAR.md) (SQL database, MDX/OLAP on JavaScript)
+### [Similar projects](SIMILAR.md) (SQL database, MDX/OLAP on JavaScript)
 
-## Alasql in blogs and press
+### Alasql in blogs and press
 
 * [People about Alasql](PEOPLE.md)
 
-## Credits
+### Credits
 
-Many thanks to Andrew Kent for his SQL Parser and other people for useful tools, which made our work much easier.
+Many thanks to Andrew Kent for his SQL Parser and other people for useful tools, which make our work much easier.
 
 ## License
 

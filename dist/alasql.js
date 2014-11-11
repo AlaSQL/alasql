@@ -3706,6 +3706,7 @@ yy.CreateTable.prototype.compile = function (db) {
 
 		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {
 
+
 			if(db.tables[tableid]) 
 				throw new Error('Can not create table \''+tableid
 					+'\', because it already exists in the database \''+db.databaseid+'\'');
@@ -3713,6 +3714,9 @@ yy.CreateTable.prototype.compile = function (db) {
 			var table = db.tables[tableid] = {}; // TODO Can use special object?
 			table.columns = [];
 			table.xcolumns = {};
+			table.indices = {};
+			table.data = [];
+
 			columns.forEach(function(col) {
 				var newcol = {
 					columnid: col.columnid.toLowerCase(),
@@ -3720,9 +3724,82 @@ yy.CreateTable.prototype.compile = function (db) {
 				};
 				table.columns.push(newcol);
 				table.xcolumns[newcol.columnid] = newcol;
+
+				// Check for primary key
+				if(col.primarykey) {
+					var pk = table.pk = {};
+					pk.columns = [col.columnid];
+					pk.onrightfns = 'r[\''+col.columnid+'\']';
+					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+					pk.hh = hash(pk.onrightfns);
+					table.indices[pk.hh] = {};
+				};
+
 			});
-			table.indices = {};
-			table.data = [];
+
+//			if(table.pk) {
+				table.insert = function(r) {
+					if(this.pk) {
+						var pk = this.pk;
+						var addr = pk.onrightfn(r);
+						if(typeof this.indices[pk.hh][addr] != 'undefined') {
+							throw new Error('Cannot insert record, because it already exists in primary key');
+						} else {
+							table.data.push(r);
+							this.indices[pk.hh][addr]=r;
+						};
+					} else {
+						table.data.push(r);						
+					}
+				};
+
+				table.delete = function(i) {
+					if(this.pk) {
+						var r = this.data[i];
+						var pk = this.pk;
+						var addr = pk.onrightfn(r);
+						if(typeof this.indices[pk.hh][addr] == 'undefined') {
+							throw new Error('Something wrong with index on table');
+						} else {
+							this.indices[pk.hh][addr]=undefined;
+						};
+					}
+				};
+
+				table.deleteall = function() {
+					this.data.length = 0;
+					if(this.pk) {
+//						var r = this.data[i];
+						this.indices[this.pk.hh] = {};
+					}
+				};
+
+				table.update = function(assignfn, i, params) {
+					if(this.pk) {
+						var r = this.data[i];
+						var pk = this.pk;
+						var addr = pk.onrightfn(r,params);
+						if(typeof this.indices[pk.hh][addr] == 'undefined') {
+							throw new Error('Something wrong with index on table');
+						} else {
+							this.indices[pk.hh][addr]=undefined;
+							assignfn(r);
+							var newaddr = pk.onrightfn(r);
+							if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
+								throw new Error('Record already exists');
+							} else {
+								this.indices[pk.hh][newaddr] = r;
+							}
+						} 
+
+					} else {
+						assignfn(this.data[i]);
+					};
+
+				};
+
+
+//			}
 			return 1;
 		};
 		return 0;
@@ -3823,6 +3900,7 @@ yy.Insert.prototype.compile = function (db) {
 //	console.log(self);
 	var tableid = self.into.tableid;
 
+	// Check, if this dirty flag is required
 	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 
 
@@ -3831,8 +3909,9 @@ yy.Insert.prototype.compile = function (db) {
 
 		self.values.forEach(function(values) {
 
-			s += 'db.tables[\''+tableid+'\'].data.push({';
+//			s += 'db.tables[\''+tableid+'\'].data.push({';
 
+			s += 'var r={';
 			var ss = [];
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
@@ -3891,7 +3970,9 @@ yy.Insert.prototype.compile = function (db) {
 				});
 			}
 
-			s += ss.join(',')+'});';
+			s += ss.join(',')+'};';
+			s += 'db.tables[\''+tableid+'\'].insert(r);';
+
 		});
 
 		s += 'return '+this.values.length;
@@ -3950,7 +4031,16 @@ yy.Delete.prototype.compile = function (db) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = table.data.length;
-			table.data = table.data.filter(function(r){return !wherefn(r,params);});
+
+			var newtable = [];			
+			for(var i=0, ilen=table.data.length;i<ilen;i++) {
+				if(wherefn(table.data[i],params)) {
+					// Check for transaction - if it is not possible then return all back
+					table.delete(i);
+				} else newtable.push(table.data[i]);
+			}
+//			table.data = table.data.filter(function(r){return !;});
+			table.data = newtable;
 //			console.log('deletefn',table.data.length);
 			if(cb) cb(orignum - table.data.length);
 			return orignum - table.data.length;
@@ -3960,7 +4050,9 @@ yy.Delete.prototype.compile = function (db) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
-			table.data.length = 0;
+
+			table.deleteall();
+
 			if(cb) cb(orignum);
 			return orignum;
 		};
@@ -4016,7 +4108,7 @@ yy.Update.prototype.compile = function (db) {
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			if(!wherefn || wherefn(table.data[i], params) ) {
-				assignfn(table.data[i],params);
+				table.update(assignfn, i, params);
 				numrows++;
 			}
 		};
@@ -4027,6 +4119,98 @@ yy.Update.prototype.compile = function (db) {
 
 
 
+
+
+
+// Console functions
+
+alasql.con = {
+	results:{}
+};
+
+alasql.con.open = function(el) {
+	// For browser only
+	if (typeof exports === 'object') return;
+
+	// Find parent element
+	el = el || document.getElementById('alasql-con') || document.getElementsByTagName('body');
+	if(!el) {throw new Error('Cannot fid element for console.')}
+
+	var conel = document.createElement('div');
+	conel.style.width = "1000px";
+	conel.style.height = "320px";
+
+	alasql.con.conel = conel;
+
+	var lenta = document.createElement('div');
+	lenta.style.width = "1000px";
+	lenta.style.height = "200px";
+	lenta.style.overflow = "scroll";
+	alasql.con.lenta = lenta;
+
+	var inpel = document.createElement('div');
+	inpel.style.width = "1000px";
+	inpel.style.height = "100px";
+	inpel.style.contentEditable = true;
+	inpel.innerHTML = 'command ';
+	alasql.con.inpel = inpel;
+
+	conel.appendChild(lenta);
+	conel.appendChild(inpel);
+	el.appendChild(conel);
+};
+
+alasql.con.clear = function() {
+	// For browser only
+	if (typeof exports === 'object') return;
+
+	alasql.con.conel.innerHTML = '';
+};
+
+alasql.con.close = function() {
+	// For browser only
+	if (typeof exports === 'object') return;
+
+	alasql.con.conel.removeChild(alasql.con.lenta);
+	alasql.con.conel.removeChild(alasql.con.inel);
+	alasql.con.conel.parentElement.removeChild(conel);
+};
+
+alasql.con.log = function() {
+		// For browser only
+	if (typeof exports === 'object') {
+		console.log.bind(console).apply(this, arguments);
+	} else {
+		var s = '<div>';
+		s += Array.prototype.slice.call(arguments, 0).map(function(arg){
+			return arg.toString();
+		}).join(' ');
+		s += '</div>';
+		alasql.con.conel.innerHTML += s;
+	};
+
+};
+
+alasql.con.test = function(name, times, fn) {
+	if(arguments.length == 0) {
+		alasql.con.log(alasql.con.results);
+		return;
+	} else if(arguments.length == 1) {
+		var tm = Date.now();
+		fn();
+		alasql.con.log(Date.now()-tm);
+		return;
+	} 
+
+	if(arguments.length == 2) {
+		fn = times;
+		times = 1;
+	}
+
+	var tm = Date.now();
+	for(var i=0;i<times;i++) fn();
+	alasql.con.results[name] = Date.now()-tm;
+};
 
 
 

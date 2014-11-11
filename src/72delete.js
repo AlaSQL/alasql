@@ -28,7 +28,16 @@ yy.Delete.prototype.compile = function (db) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = table.data.length;
-			table.data = table.data.filter(function(r){return !wherefn(r,params);});
+
+			var newtable = [];			
+			for(var i=0, ilen=table.data.length;i<ilen;i++) {
+				if(wherefn(table.data[i],params)) {
+					// Check for transaction - if it is not possible then return all back
+					table.delete(i);
+				} else newtable.push(table.data[i]);
+			}
+//			table.data = table.data.filter(function(r){return !;});
+			table.data = newtable;
 //			console.log('deletefn',table.data.length);
 			if(cb) cb(orignum - table.data.length);
 			return orignum - table.data.length;
@@ -38,7 +47,9 @@ yy.Delete.prototype.compile = function (db) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
-			table.data.length = 0;
+
+			table.deleteall();
+
 			if(cb) cb(orignum);
 			return orignum;
 		};

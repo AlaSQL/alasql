@@ -45,7 +45,7 @@ yy.Update.prototype.compile = function (db) {
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			if(!wherefn || wherefn(table.data[i], params) ) {
-				assignfn(table.data[i],params);
+				table.update(assignfn, i, params);
 				numrows++;
 			}
 		};

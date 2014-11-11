@@ -43,6 +43,7 @@ gulp.task('js-merge', function () {
   	'./src/70insert.js',
     './src/72delete.js',
     './src/74update.js',
+    './src/80console.js',
    	'./src/90finish.js'])
 //    .pipe(changed('./dist/'))
     .pipe(concat('alasql.js'))

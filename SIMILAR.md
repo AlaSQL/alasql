@@ -4,6 +4,7 @@
 SQL-database:
 * [sql.js](https://github.com/kripken/sql.js) - port of SQLike to JavaScript
 * [SequelSphere](http://www.sequelsphere.com/) - commercial SQL-database
+* [SQL inMemory.js](https://github.com/carli2/sqlmemjs) - SQL in JavaScript
 * [Datamanip](https://github.com/RossKor/datamanip.js)
 * [jsonQ.js](https://github.com/emasstudio/jsonQ.js)
 * [SQittle](https://github.com/moxley/sqittle)

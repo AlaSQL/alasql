@@ -20,6 +20,7 @@ yy.Insert.prototype.compile = function (db) {
 //	console.log(self);
 	var tableid = self.into.tableid;
 
+	// Check, if this dirty flag is required
 	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 
 
@@ -28,8 +29,9 @@ yy.Insert.prototype.compile = function (db) {
 
 		self.values.forEach(function(values) {
 
-			s += 'db.tables[\''+tableid+'\'].data.push({';
+//			s += 'db.tables[\''+tableid+'\'].data.push({';
 
+			s += 'var r={';
 			var ss = [];
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
@@ -88,7 +90,9 @@ yy.Insert.prototype.compile = function (db) {
 				});
 			}
 
-			s += ss.join(',')+'});';
+			s += ss.join(',')+'};';
+			s += 'db.tables[\''+tableid+'\'].insert(r);';
+
 		});
 
 		s += 'return '+this.values.length;

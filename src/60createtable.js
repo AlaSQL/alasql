@@ -49,6 +49,7 @@ yy.CreateTable.prototype.compile = function (db) {
 
 		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {
 
+
 			if(db.tables[tableid]) 
 				throw new Error('Can not create table \''+tableid
 					+'\', because it already exists in the database \''+db.databaseid+'\'');
@@ -56,6 +57,9 @@ yy.CreateTable.prototype.compile = function (db) {
 			var table = db.tables[tableid] = {}; // TODO Can use special object?
 			table.columns = [];
 			table.xcolumns = {};
+			table.indices = {};
+			table.data = [];
+
 			columns.forEach(function(col) {
 				var newcol = {
 					columnid: col.columnid.toLowerCase(),
@@ -63,9 +67,82 @@ yy.CreateTable.prototype.compile = function (db) {
 				};
 				table.columns.push(newcol);
 				table.xcolumns[newcol.columnid] = newcol;
+
+				// Check for primary key
+				if(col.primarykey) {
+					var pk = table.pk = {};
+					pk.columns = [col.columnid];
+					pk.onrightfns = 'r[\''+col.columnid+'\']';
+					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+					pk.hh = hash(pk.onrightfns);
+					table.indices[pk.hh] = {};
+				};
+
 			});
-			table.indices = {};
-			table.data = [];
+
+//			if(table.pk) {
+				table.insert = function(r) {
+					if(this.pk) {
+						var pk = this.pk;
+						var addr = pk.onrightfn(r);
+						if(typeof this.indices[pk.hh][addr] != 'undefined') {
+							throw new Error('Cannot insert record, because it already exists in primary key');
+						} else {
+							table.data.push(r);
+							this.indices[pk.hh][addr]=r;
+						};
+					} else {
+						table.data.push(r);						
+					}
+				};
+
+				table.delete = function(i) {
+					if(this.pk) {
+						var r = this.data[i];
+						var pk = this.pk;
+						var addr = pk.onrightfn(r);
+						if(typeof this.indices[pk.hh][addr] == 'undefined') {
+							throw new Error('Something wrong with index on table');
+						} else {
+							this.indices[pk.hh][addr]=undefined;
+						};
+					}
+				};
+
+				table.deleteall = function() {
+					this.data.length = 0;
+					if(this.pk) {
+//						var r = this.data[i];
+						this.indices[this.pk.hh] = {};
+					}
+				};
+
+				table.update = function(assignfn, i, params) {
+					if(this.pk) {
+						var r = this.data[i];
+						var pk = this.pk;
+						var addr = pk.onrightfn(r,params);
+						if(typeof this.indices[pk.hh][addr] == 'undefined') {
+							throw new Error('Something wrong with index on table');
+						} else {
+							this.indices[pk.hh][addr]=undefined;
+							assignfn(r);
+							var newaddr = pk.onrightfn(r);
+							if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
+								throw new Error('Record already exists');
+							} else {
+								this.indices[pk.hh][newaddr] = r;
+							}
+						} 
+
+					} else {
+						assignfn(this.data[i]);
+					};
+
+				};
+
+
+//			}
 			return 1;
 		};
 		return 0;
