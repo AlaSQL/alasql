@@ -19,7 +19,7 @@ the code before relaese more stable version 0.1.0 in the mid of November.
 
 ## Examples
 
-Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/6/), [sample 2](http://jsfiddle.net/6a06dqhc/3/), [sample 3](http://jsfiddle.net/606ksx2g/1/)
+Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/)
 
 
 Other examples:
