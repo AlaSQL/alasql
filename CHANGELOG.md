@@ -4,6 +4,7 @@
 
 * PRIMARY KEY and FOREIGN KEY parser
 * Use array of arrays as parameter value for FROM clause, column names like \[2\] or table\[0\] 
+* alasql.queryArrayOfArrays(), utils.arrayOfArrays()
 
 ### 0.0.15 (10.11.2014)
 

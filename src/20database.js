@@ -77,6 +77,9 @@ alasql.queryValue = function (sql, params, cb) {
 alasql.queryArray = function (sql, params, cb) {
 	return this.currentDatabase.queryArray(sql, params, cb);
 }
+alasql.queryArrayOfArrays = function (sql, params, cb) {
+	return this.currentDatabase.queryArrayOfArrays(sql, params, cb);
+}
 
 alasql.indexColumns = function(tableid) {
 	this.currentDatabase.indexColumns(tableid);
@@ -106,6 +109,11 @@ Database.prototype.run = Database.prototype.exec;
 Database.prototype.queryArray = function(sql, params, cb) {
 	return flatArray(this.exec(sql, params, cb));
 }
+
+Database.prototype.queryArrayOfArrays = function(sql, params, cb) {
+	return arrayOfArrays(this.exec(sql, params, cb));
+}
+
 Database.prototype.querySingle = function(sql, params, cb) {
 	return this.exec(sql, params, cb)[0];
 }

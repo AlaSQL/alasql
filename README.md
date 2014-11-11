@@ -230,6 +230,24 @@ like \[1\] or table\[2\] (remember, all arrays in JavaScript start with 0):
         ];
         var res = alasql('SELECT SUM([1]) FROM ? d WHERE [0]>2016', [data]);
 ```
+Use alasql.queryArrayOfArrays() function to return array of arrays. In this case
+you can specify array position of selected column with number or number in brackets:
+```
+        var res = alasql.queryArrayOfArrays(
+            'SELECT [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [data]);
+```
+This feature can be used as filter for arrays. Compare:
+```
+        // Same filter
+        var res1 = alasql.queryArrayOfArrays('SELECT * FROM ? a WHERE [0]>2016', [data]);
+        var res2 = data.filter(function(a){return a[0]>2016});
+
+        // Complex filter with aggregating, grouping and sorting
+        var res = alasql.queryArrayOfArrays(
+            'SELECT [2] AS 0, SUM([1]) AS 1 FROM ? a WHERE a[0]>2016 GROUP BY [0] ORDER BY [1]', 
+            [data]);
+
+```
 
 ### Transactions
 

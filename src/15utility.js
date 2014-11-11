@@ -155,4 +155,11 @@ var flatArray = utils.flatArray = function flatArray(a) {
     return a.map(function(ai) {return ai[key]});
 };
 
+var arrayOfArrays = utils.arrayOfArrays = function flatArray(a) {
+    return a.map(function(aa){
+        var ar = [];
+        for(var key in aa) ar[key] = aa[key];
+        return ar;
+    });
+};
 

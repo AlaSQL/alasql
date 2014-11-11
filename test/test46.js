@@ -32,9 +32,30 @@ describe('Test 46', function() {
 			[2019, 6, 3]
 		];
 		it('FROM array of arrays', function(done){
-			var res = alasql.queryValue('SELECT SUM([1]),[2] FROM ? d WHERE [0]>2016', [data]);
+			var res = alasql.queryValue('SELECT SUM([1]) FROM ? d WHERE [0]>2016', [data]);
 			assert.equal(15, res);
 			done();
 		});
+
+		it('queryArrayOfArrays()', function(done){
+			var res = alasql.queryArrayOfArrays('SELECT [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [data]);
+			assert.deepEqual([ [ 4, 6 ], [ 5, 8 ], [ 6, 9 ] ], res);
+			done();
+		});
+
+		it('queryArrayOfArrays and filter()', function(done) {
+			var res1 = alasql.queryArrayOfArrays('SELECT * FROM ? d WHERE [0]>2016', [data]);
+			var res2 = data.filter(function(a){return a[0]>2016});
+			assert.deepEqual(res1,res2);
+			done();
+		});
+
+		it('FROM array of arrays', function(done){
+			var res = alasql.queryArrayOfArrays('SELECT [2] AS 0, SUM([1]) AS 1 FROM ? d WHERE [0]>2016 GROUP BY [0] ', [data]);
+			assert.deepEqual(res,[ [ 2, 4 ], [ 3, 11 ] ]);
+			done();
+		});
+
+
 	});
 });

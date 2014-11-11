@@ -438,6 +438,8 @@ ResultColumns
 ResultColumn
 	: Expression AS LITERAL
 		{ $1.as = $3; $$ = $1;}
+	| Expression AS LBRA NUMBER RBRA
+		{ $1.as = $4; $$ = $1;}
 	| Expression AS NUMBER
 		{ $1.as = $3; $$ = $1;}
 	| Expression

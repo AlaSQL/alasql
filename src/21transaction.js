@@ -49,4 +49,9 @@ Transaction.prototype.querySingle = function (sql, params, cb) {
 Transaction.prototype.queryValue = function (sql, params, cb) {
 	return alasql.databases[this.databaseid].queryValue(sql, params, cb);
 }
-
+Transaction.prototype.queryArray = function (sql, params, cb) {
+	return alasql.databases[this.databaseid].queryArray(sql, params, cb);
+}
+Transaction.prototype.queryArrayOfArrays = function (sql, params, cb) {
+	return alasql.databases[this.databaseid].queryArrayOfArrays(sql, params, cb);
+}
