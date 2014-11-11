@@ -14,8 +14,9 @@ Check Alasql vs other JavaScript databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-Warning: Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
-the code before relaese more stable version 0.1.0 in the mid of November.
+Warning: Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0 in the mid of November.
+
+You can check [version-0.0.16](https://github.com/agershun/alasql/tree/version-0.0.16) branch for new experimental features of new version. 
 
 ## Examples
 
