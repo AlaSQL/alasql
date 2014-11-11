@@ -2,6 +2,7 @@
 
 #### Version 0.0.20 - "Battle for SQL-92"
 
+* Use parameter arrays and subqueries in JOIN clause
 * Fix Dates issues (comparision, ordering)
 * Dates parsing in SELECT and UPDATE
 * Upper and lower case in tables, columns, and functions names issue

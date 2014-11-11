@@ -423,7 +423,7 @@ function compileSelectStar (query,alias) {
 	};
 	if(columns) {
 		columns.forEach(function(tcol){
-			ss.push(tcol.columnid+':p.'+alias+'.'+tcol.columnid);
+			ss.push(tcol.columnid+':p[\''+alias+'\'][\''+tcol.columnid+'\']');
 
 //		console.log('ok',s);
 
@@ -477,7 +477,7 @@ yy.Select.prototype.compileSelect = function(query) {
 				}
 			} else {
 				// If field, otherwise - expression
-				ss.push((col.as || col.columnid)+':p.'+(col.tableid||query.defaultTableid)+'.'+col.columnid);
+				ss.push((col.as || col.columnid)+':p[\''+(col.tableid||query.defaultTableid)+'\'][\''+col.columnid+'\']');
 
 				if(query.aliases[col.tableid||query.defaultTableid] && query.aliases[col.tableid||query.defaultTableid].type == 'table') {
 

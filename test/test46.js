@@ -23,5 +23,18 @@ describe('Test 46', function() {
 			done();
 		});
 
+		var data = [
+			[2014, 1, 1],
+			[2015, 2, 1],
+			[2016, 3, 1],
+			[2017, 4, 2],
+			[2018, 5, 3],
+			[2019, 6, 3]
+		];
+		it('FROM array of arrays', function(done){
+			var res = alasql.queryValue('SELECT SUM([1]),[2] FROM ? d WHERE [0]>2016', [data]);
+			assert.equal(15, res);
+			done();
+		});
 	});
 });

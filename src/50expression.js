@@ -249,9 +249,18 @@ yy.UniOp.prototype.toJavaScript = function(context, tableid) {
 
 yy.Column = function(params) { return yy.extend(this, params); }
 yy.Column.prototype.toString = function() {
-	var s = this.columnid;
+	var s;
+	if(this.columnid == +this.columnid) {
+		s = '['+this.columnid+']';
+	} else {
+		s = this.columnid;
+	}
 	if(this.tableid) {
-		s = this.tableid+'.'+s;
+		if(+this.columnid == this.columnid) {
+			s = this.tableid+s;
+		} else {
+			s = this.tableid+'.'+s;
+		}
 		if(this.databaseid) {
 			s = this.databaseid+'.'+s;
 		}

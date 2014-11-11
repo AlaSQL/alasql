@@ -115,6 +115,8 @@
 '!='											return 'NE'
 '('												return 'LPAR'
 ')'												return 'RPAR'
+'['												return 'LBRA'
+']'												return 'RBRA'
 '.'												return 'DOT'
 ','												return 'COMMA'
 ':'												return 'COLON'
@@ -265,7 +267,7 @@ IntoClause
 FromClause
 	: FROM FromTablesList
 		{ $$ = { from: $2 }; } 
-	| FROM Table JoinTablesList
+	| FROM FromTable JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
 	;
 
@@ -436,6 +438,8 @@ ResultColumns
 ResultColumn
 	: Expression AS LITERAL
 		{ $1.as = $3; $$ = $1;}
+	| Expression AS NUMBER
+		{ $1.as = $3; $$ = $1;}
 	| Expression
 		{ $$ = $1; }
 	;
@@ -454,6 +458,10 @@ Column
 		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}	
 	| LITERAL DOT LITERAL
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+	| LITERAL LBRA NUMBER RBRA
+		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+	| LBRA NUMBER RBRA
+		{ $$ = new yy.Column({columnid: $2});}	
 	| LITERAL
 		{ $$ = new yy.Column({columnid: $1});}	
 	;

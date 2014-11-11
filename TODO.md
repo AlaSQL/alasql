@@ -145,3 +145,5 @@ SAMPLES
 OTHER
 
 * Create site alasql.org
+* Review [textql project](https://github.com/dinedal/textql), [q](https://github.com/harelba/q), 
+* [presto](http://prestodb.io/), [h2](http://www.h2database.com/html/grammar.html)

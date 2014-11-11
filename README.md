@@ -167,13 +167,15 @@ You can give a name to database and then access it from alasql:
 
 Each database can be used with the following methods:
 
-* vat db = new alasql.Database() - create new alasql-database
-* var res = db.exec("sql-statement") - executes SELECT query and returns array of objects 
+```
+    var db = new alasql.Database() - create new alasql-database
+    var res = db.exec("sql-statement") - executes SELECT query and returns array of objects 
+```
 
 Usually, alasql.js works synchronously, but you can use callback.
 
 ```
-    db.exec('SELECT * FROM test', function(res){
+    db.exec('SELECT * FROM test', [], function(res){
     	console.log(res);
     });
 ```
@@ -208,10 +210,8 @@ You even can use param in FROM clause:
 
 ```
         var years = [
-            {yearid: 2012},
-            {yearid: 2013},
-            {yearid: 2014},
-            {yearid: 2015},
+            {yearid: 2012}, {yearid: 2013},
+            {yearid: 2014}, {yearid: 2015},
             {yearid: 2016},
         ];
 
@@ -219,6 +219,16 @@ You even can use param in FROM clause:
             'WHERE yearid > ?', [years,2014]);
 
         // res == [2015,2016]
+```
+You can use array of arrays to make a query. In this case use square brackets for column name,
+like \[1\] or table\[2\] (remember, all arrays in JavaScript start with 0):
+```
+        var data = [
+            [2014, 1, 1], [2015, 2, 1],
+            [2016, 3, 1], [2017, 4, 2],
+            [2018, 5, 3], [2019, 6, 3]
+        ];
+        var res = alasql('SELECT SUM([1]) FROM ? d WHERE [0]>2016', [data]);
 ```
 
 ### Transactions
@@ -241,7 +251,7 @@ You can use Alasql to parse to AST and compile SQL statements:
 ```
     // Parse to AST
     var ast = alasql.parse("SELECT * FROM one");
-    console.log(ast.toString());
+    console.log(ast.toString()); // Print restored SQL statement
 
     // Compile to JavaScript function with or without parameters
     var statement = alasql.compile("SELECT * FROM one WHERE a > ? AND b < ?");
