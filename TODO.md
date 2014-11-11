@@ -1,5 +1,28 @@
 # To do
 
+## MOBILE APPLICATIONS SUPPORT
+
+* WinJS
+* Apache Cordova
+* PhoneGap
+
+## BUSINESS INTELLIGENCE
+
+* d3
+* OLAP
+
+## FRAMEWORKS
+
+* jQuery
+* AngularJS
+
+## JAVASCRIPT
+
+* WebWorker
+
+## Applications
+
+* Command-line utility for text files
 
 ## FEATURES TO BE IMPLEMENTED SOON
 
