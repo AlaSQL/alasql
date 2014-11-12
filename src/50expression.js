@@ -178,6 +178,10 @@ yy.NumValue.prototype.toString = function() {
 	return this.value.toString();
 };
 
+yy.NumValue.prototype.toType = function() {
+	return 'number';
+};
+
 yy.NumValue.prototype.toJavaScript = function() {
 	return ""+this.value;
 }
@@ -187,6 +191,11 @@ yy.StringValue = function (params) { return yy.extend(this, params); }
 yy.StringValue.prototype.toString = function() {
 	return "'"+this.value.toString()+"'";
 }
+
+yy.StringValue.prototype.toType = function() {
+	return 'string';
+}
+
 yy.StringValue.prototype.toJavaScript = function() {
 	return "'"+this.value+"'";
 }
@@ -196,6 +205,11 @@ yy.LogicValue = function (params) { return yy.extend(this, params); }
 yy.LogicValue.prototype.toString = function() {
 	return this.value?'TRUE':'FALSE';
 }
+
+yy.LogicValue.prototype.toType = function() {
+	return 'boolean';
+}
+
 yy.LogicValue.prototype.toJavaScript = function() {
 	return this.value?'true':'false';
 }
@@ -267,7 +281,7 @@ yy.Column.prototype.toString = function() {
 	}
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
-}
+};
 
 yy.Column.prototype.toJavaScript = function(context, tableid) {
 //	var s = this.value;

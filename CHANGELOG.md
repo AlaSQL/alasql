@@ -6,6 +6,7 @@
 * Use array of arrays as parameter value for FROM clause, column names like \[2\] or table\[0\] 
 * alasql.queryArrayOfArrays(), utils.arrayOfArrays()
 * PRIMARY KEY ON inseert, delete, update with one or multiple keys
+* Fixed Uppercase and LowerCase problem
 
 ### 0.0.15 (10.11.2014)
 

@@ -1,6 +1,10 @@
 # To do
 ## URGENT
 
+* Add check for CROSS JOIN (that there is no USING or ON clause)
+* Change INNER to CROSS
+* NATURAL JOIN (if needed)
+
 * console
 * table.pk.pkrightfns, table.pk.pkrightfn, hh
 * table.fks[].fkleftfns, table.fks[].fkleftfn, table.fks[].tableid, fks[].fkrightfns, table.fks[].fkrightfn

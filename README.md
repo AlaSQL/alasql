@@ -129,13 +129,12 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 #### User-defined JavaScript functions
 
-You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions
-to alasql.fn object:
+You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions to alasql.fn object (please, use only lower case letters)):
 
 ```
-        alasql.fn.DOUBLE = function(x){return x*2};        
-        alasql.fn.SUM10 = function(x,y) { return x+y*10; }
-        db.exec('SELECT a, DOUBLE(a) AS b, SUM10(a,b) FROM test1');
+        alasql.fn.double = function(x){return x*2};        
+        alasql.fn.sum10 = function(x,y) { return x+y*10; }
+        db.exec('SELECT a, double(a) AS b, sum10(a,b) FROM test1');
 ```
 
 ### alasql

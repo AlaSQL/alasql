@@ -8,7 +8,11 @@
 
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
-	var s = this.funcid+'(';
+	var s = '';
+    if(alasql.stdlib[funcid]) s += this.funcid.substr(1).toUpperCase();
+    else s += this.funcid.substr(1).toLowerCase();
+    
+    s += '(';
 	if(this.args && this.args.length > 0) {
 		s += this.args.map(function(arg){
 			return arg.toString();
@@ -21,17 +25,18 @@ yy.FuncValue.prototype.toString = function() {
 
 yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 	var s = '';
+    var funcid = this.funcid;
 	// IF this is standard compile functions
-	if(alasql.stdlib[this.funcid.toUpperCase()]) {
+	if(alasql.stdlib[funcid]) {
 		if(this.args && this.args.length > 0) {
-			s += alasql.stdlib[this.funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJavaScript(context, tableid)}));
+			s += alasql.stdlib[funcid].apply(this, this.args.map(function(arg) {return arg.toJavaScript(context, tableid)}));
 		} else {
-			s += alasql.stdlib[this.funcid.toUpperCase()]();
+			s += alasql.stdlib[funcid]();
 		}
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
-		var s = 'alasql.userlib.'+this.funcid.toUpperCase()+'(';
+		var s = 'alasql.userlib.'+this.funcid.substr(1).toLowerCase()+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
 			return arg.toJavaScript(context, tableid);
@@ -65,44 +70,48 @@ alasql.userlib = alasql.fn;
 
 var stdlib = alasql.stdlib = {}
 
-stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
-stdlib.IIF = function(a,b,c) {
+stdlib._abs = function(a) {return 'Math.abs('+a+')'};
+stdlib._iif = function(a,b,c) {
 	if(arguments.length == 3) {
 		return  '(('+a+')?('+b+'):('+c+'))';
 	} else {
 		throw new Error('Number of arguments of IFF is not equals to 3');
 	};
 };
-stdlib.IFNULL = function(a,b) {return '('+a+'||'+b+')'};
-stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
+stdlib._ifnull = function(a,b) {return '('+a+'||'+b+')'};
+stdlib._instr = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 
-stdlib.LEN = function(s) {return '('+s+').length';};
-stdlib.LENGTH = function(s) {return '('+s+').length'};
+stdlib._len = function(s) {return '('+s+').length';};
+stdlib._length = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = function(s) {return '('+s+').toLowerCase()';}
-stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
+stdlib._lower = function(s) {return '('+s+').toLowerCase()';}
+stdlib._lcase = function(s) {return '('+s+').toLowerCase()';}
 
 
 // LTRIM
-stdlib.MAX = function(){return 'Math.max('+arguments.join(',')+')'};
-stdlib.MIN = function(){return 'Math.min('+arguments.join(',')+')'};
-stdlib.MID = function(a,b,c){
+stdlib._max = function(){return 'Math.max('+arguments.join(',')+')'};
+stdlib._min = function(){return 'Math.min('+arguments.join(',')+')'};
+stdlib._mid = function(a,b,c){
 	if(arguments.length == 2) return '('+a+').substr('+b+'-1)';
 	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
 };
 
-stdlib.NOW = function(){return '(new Date())';};
-stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
+stdlib._now = function(){return '(new Date())';};
+stdlib._nullif = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
 
-stdlib.ROUND = function(s,d) {
+stdlib._round = function(s,d) {
 	if(arguments.length == 2) {
 		return 'Math.round('+s+'*Math.pow(10,'+d+'))/Math.pow(10,'+d+')';
 	} else {
 		return 'Math.round('+s+')';
 	}
 }
-stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
-stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
+stdlib._upper = function(s) {return '('+s+').toUpperCase()';}
+stdlib._ucase = function(s) {return '('+s+').toUpperCase()';}
+//REPLACE
+// RTRIM
+// SUBSTR
+// TRIM
 //REPLACE
 // RTRIM
 // SUBSTR

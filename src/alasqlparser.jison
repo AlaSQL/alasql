@@ -239,7 +239,9 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 		}
-	;
+/*	| SELECT NumValue
+		{ $$ = new yy.Select({value: $2}); }
+*/	;
 
 SelectClause
 	: SELECT DISTINCT TopClause ResultColumns  
@@ -248,9 +250,7 @@ SelectClause
 		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $3); }
 	| SELECT TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$3 }); yy.extend($$, $2); }
-/*	| SELECT NumValue
-		{ $$ = new yy.Select( value: $2); }
-*/	;
+	;
 
 TopClause
 	: TOP NumValue  
@@ -269,6 +269,8 @@ FromClause
 		{ $$ = { from: $2 }; } 
 	| FROM FromTable JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
+	|
+		{ $$ = null; }
 	;
 
 FromTablesList
@@ -297,9 +299,9 @@ FromTable
 
 Table
 	: LITERAL DOT LITERAL
-		{ $$ = new yy.Table({databaseid: $1, tableid:$3});}
+		{ $$ = new yy.Table({databaseid: $1.toLowerCase(), tableid:$3.toLowerCase()});}
 	| LITERAL
-		{ $$ = new yy.Table({tableid: $1});}
+		{ $$ = new yy.Table({tableid: $1.toLowerCase()});}
 	;
 
 JoinTablesList
@@ -320,18 +322,26 @@ JoinMode
 		{ $$ = "INNER"; }
 	| LEFT 
 		{ $$ = "LEFT"; }
+	| LEFT OUTER
+		{ $$ = "LEFT"; }
 	| RIGHT 
 		{ $$ = "RIGHT"; }
-	| FULL OUTER 
-		{ $$ = "OUTER"; }
+	| RIGHT OUTER
+		{ $$ = "RIGHT"; }
 	| OUTER 
 		{ $$ = "OUTER"; }
+	| FULL OUTER 
+		{ $$ = "OUTER"; }
+
 	| SEMI 
 		{ $$ = "SEMI"; }
-	| ANTI 
+	| ANTI
 		{ $$ = "ANTI"; }
 	| CROSS 
-		{ $$ = "INNER"; }
+		{ 
+			$$ = "INNER"; 
+			// $$ = "CROSS"; // TODO: Change in code
+		}
 	;
 
 OnClause
@@ -437,7 +447,7 @@ ResultColumns
 
 ResultColumn
 	: Expression AS LITERAL
-		{ $1.as = $3; $$ = $1;}
+		{ $1.as = $3.toLowerCase(); $$ = $1;}
 	| Expression AS LBRA NUMBER RBRA
 		{ $1.as = $4; $$ = $1;}
 	| Expression AS NUMBER
@@ -448,24 +458,24 @@ ResultColumn
 
 Star
 	: LITERAL DOT LITERAL DOT STAR
-		{ $$ = new yy.Column({columid: $5, tableid: $3, databaseid:$1}); }	
+		{ $$ = new yy.Column({columid: $5, tableid: $3.toLowerCase(), databaseid:$1}); }	
 	| LITERAL DOT STAR
-		{ $$ = new yy.Column({columnid: $3, tableid: $1}); }	
+		{ $$ = new yy.Column({columnid: $3, tableid: $1.toLowerCase()}); }	
 	| STAR
 		{ $$ = new yy.Column({columnid:$1}); }
 	;
 
 Column
 	: LITERAL DOT LITERAL DOT LITERAL
-		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}	
+		{ $$ = new yy.Column({columnid: $5.toLowerCase(), tableid: $3.toLowerCase(), databaseid:$1.toLowerCase()});}	
 	| LITERAL DOT LITERAL
-		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+		{ $$ = new yy.Column({columnid: $3.toLowerCase(), tableid: $1.toLowerCase()});}	
 	| LITERAL LBRA NUMBER RBRA
-		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+		{ $$ = new yy.Column({columnid: $3, tableid: $1.toLowerCase()});}	
 	| LBRA NUMBER RBRA
 		{ $$ = new yy.Column({columnid: $2});}	
 	| LITERAL
-		{ $$ = new yy.Column({columnid: $1});}	
+		{ $$ = new yy.Column({columnid: $1.toLowerCase()});}	
 	;
 
 Expression
@@ -502,13 +512,13 @@ AggrValue
 	;
 
 Aggregator
-	: SUM { $$ = $1; }
-	| COUNT { $$ = $1; }
-	| MIN { $$ = $1; }
-	| MAX { $$ = $1; }
-	| AVG { $$ = $1; }
-	| FIRST { $$ = $1; }
-	| LAST { $$ = $1; }
+	: SUM { $$ = "SUM"; }
+	| COUNT { $$ = "COUNT"; }
+	| MIN { $$ = "MIN"; }
+	| MAX { $$ = "MAX"; }
+	| AVG { $$ = "AVG"; }
+	| FIRST { $$ = "FIRST"; }
+	| LAST { $$ = "LAST"; }
 	;
 
 FuncValue
@@ -516,9 +526,9 @@ FuncValue
 		{ $$ = new yy.FuncValue({funcid: $1, expression: $3}); }
 */	
 	: LITERAL LPAR ExprList RPAR
-		{ $$ = new yy.FuncValue({funcid: $1, args: $3}); }
+		{ $$ = new yy.FuncValue({funcid: "_"+$1.toLowerCase(), args: $3}); }
 	| LITERAL LPAR RPAR
-		{ $$ = new yy.FuncValue({funcid: $1}); }
+		{ $$ = new yy.FuncValue({ funcid: "_"+$1.toLowerCase() }) }
 	;
 
 ExprList
@@ -564,9 +574,9 @@ ExistsValue
 
 ParamValue
 	: DOLLAR LITERAL
-		{ $$ = new yy.ParamValue({param: $2}); }
+		{ $$ = new yy.ParamValue({param: $2.toLowerCase()}); }
 	| COLON LITERAL
-		{ $$ = new yy.ParamValue({param: $2}); }
+		{ $$ = new yy.ParamValue({param: $2.toLowerCase()}); }
 	| QUESTION
 		{ 
 			if(typeof yy.question == 'undefined') yy.question = 0; 
@@ -828,7 +838,7 @@ Constraint
 ConstraintName
 	:   { $$ = null }
 	| CONSTRAINT LITERAL
-		{ $$ = $2; }
+		{ $$ = $2.toLowerCase(); }
 	;
 
 PrimaryKey
@@ -838,14 +848,14 @@ PrimaryKey
 
 ForeignKey
 	: FOREIGN KEY LPAR LITERAL RPAR REFERENCES LITERAL LPAR ColsList RPAR
-		{ $$ = {type: 'FOREIGN KEY', tableid: $3, columns: $6}; }
+		{ $$ = {type: 'FOREIGN KEY', column: $4.toLowerCase(), tableid: $3.toLowerCase(), columns: $6}; }
 	;
 
 ColsList
 	: LITERAL
-		{ $$ = [$1]; }
+		{ $$ = [$1.toLowerCase()]; }
 	| ColsList COMMA LITERAL
-		{ $$ = $1; $1.push($3); }
+		{ $$ = $1; $1.push($3.toLowerCase()); }
 	;
 
 ColumnDefsList
@@ -857,18 +867,18 @@ ColumnDefsList
 
 ColumnDef
 	: LITERAL ColumnTypeName ColumnConstraint
-		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
+		{ $$ = new yy.ColumnDef({columnid:$1.toLowerCase()}); yy.extend($$,$2); yy.extend($$,$3);}
 	| LITERAL ColumnConstraints
-		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
+		{ $$ = new yy.ColumnDef({columnid:$1.toLowerCase()}); yy.extend($$,$2); }
 	;
 
 ColumnTypeName
 	: LITERAL LPAR SignedNumber DOT SignedNumber RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: $5} }
+		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3, dbprecision: $5} }
 	| LITERAL LPAR SignedNumber RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3} }
+		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3} }
 	| LITERAL
-		{ $$ = {dbtypeid: $1} }
+		{ $$ = {dbtypeid: $1.toUpperCase()} }
 	;
 
 ColumnConstraint 
@@ -876,7 +886,7 @@ ColumnConstraint
 	| PRIMARY KEY
 		{$$ = {primarykey:true};}
 	| FOREIGN KEY REFERENCES LITERAL LPAR LITERAL RPAR
-		{$$ = {foreignkey:{tableid:$4, columnid: $6}};}
+		{$$ = {foreignkey:{tableid:$4.toLowerCase(), columnid: $6.toLowerCase()}};}
 	| NOT NULL
 		{$$ = {notnull:true};}
 	;
@@ -894,7 +904,7 @@ DropTable
 
 AlterTable
 	: ALTER TABLE Table RENAME TO LITERAL
-		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
+		{ $$ = new yy.AlterTable({table:$3, renameto: $6.toLowerCase()});}
 	| ALTER TABLE Table ADD COLUMN ColumnDef
 		{ $$ = null; }
 	;
