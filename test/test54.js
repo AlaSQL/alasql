@@ -10,6 +10,8 @@ describe('Test 54 - SELECT Number', function() {
 		console.log(res);
 		var res = db.exec('SELECT 10,20');
 		console.log(res);
+		var res = db.exec('SELECT 2+2');
+		console.log(res);
 		var res = db.exec('SELECT "Peter"');
 		console.log(res);
 		var res = db.exec('SELECT a FROM (SELECT 10) AS t');

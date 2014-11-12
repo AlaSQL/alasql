@@ -166,14 +166,14 @@ describe('Test 53 - Automatic types parsing', function() {
 		});
 
 		it('Columns from subqueries', function(done){
-			var ast = alasql.parse('SELECT a FROM (SELECT 1 AS a))');
+			var ast = alasql.parse('SELECT a FROM (SELECT 1 AS a)');
 			var cols = ast.statements[0].columns;
 			assert.equal(cols[0].toType(), 'number');
 			done();
 		});
 
 		it('Columns from subqueries', function(done){
-			var ast = alasql.parse('SELECT a FROM (SELECT b AS a FROM test1))');
+			var ast = alasql.parse('SELECT a FROM (SELECT b AS a FROM test1)');
 			var cols = ast.statements[0].columns;
 			assert.deepEqual(cols[0].toType(), {tableid:'test', columnid:'b'});
 			done();

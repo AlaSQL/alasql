@@ -10,11 +10,12 @@ Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweig
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql is fast, because it uses some optimization methods.
 
-Check Alasql vs other JavaScript databases: 
+Check Alasql vs other JavaScript SQL databases: 
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-Warning: Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
+### Warning 
+Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
 the code before relaese more stable version 0.1.0 in the mid of November.
 
 You can check [version-0.0.17](https://github.com/agershun/alasql/tree/version-0.0.17) branch for new experimental features of new version. 
@@ -291,6 +292,9 @@ Alasql has four different optimization algorithm:
 * Joins: Prefiltering of WHERE expressions
 
 Now optimization algorithm has some limitations and therefore "table1 JOIN table2 USING column1, column2" is faster than "table1 JOIN table2 ON table1.column1 = table2.column1 AND table1.column2 = table2.column2 ", but with one column it is ok.
+
+Compare it with Lodash and Underscore:
+* [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
 
 ### Limitations
 

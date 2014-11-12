@@ -285,16 +285,22 @@ FromTable
 		{ $$ = $2; $$.as = $4 }	
 	| LPAR Select RPAR AS LITERAL
 		{ $$ = $2; $$.as = $5 }	
+	| LPAR Select RPAR /* default alias */
+		{ $$ = $2; $$.as = 'default' }	
+
 	| Table LITERAL
 		{ $$ = $1; $1.as = $2 }
 	| Table AS LITERAL
 		{ $$ = $1; $1.as = $3 }
 	| Table 
 		{ $$ = $1; }
+
 	| ParamValue LITERAL 
 		{ $$ = $1; $1.as = $2; }
 	| ParamValue AS LITERAL 
 		{ $$ = $1; $1.as = $3; }
+	| ParamValue
+		{ $$ = $1; $1.as = 'delault'; }
 	;
 
 Table
@@ -847,8 +853,8 @@ PrimaryKey
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR LITERAL RPAR REFERENCES LITERAL LPAR ColsList RPAR
-		{ $$ = {type: 'FOREIGN KEY', column: $4.toLowerCase(), tableid: $3.toLowerCase(), columns: $6}; }
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES LITERAL LPAR ColsList RPAR
+		{ $$ = {type: 'FOREIGN KEY', columns: $4.toLowerCase(), tableid: $3.toLowerCase(), refcolumns: $6}; }
 	;
 
 ColsList

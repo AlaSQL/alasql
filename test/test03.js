@@ -4,7 +4,7 @@ if(typeof exports === 'object') {
 	var zt = require('../lib/zt/zt.js');
 };
 
-describe('Test 03 - 100000 times', function() {
+describe('Test 03 - 100,000 times', function() {
 
 	var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
 	var sql2 = "INSERT INTO schools (schooldid, schoolname) VALUES (999,'Northern Pacific School')";

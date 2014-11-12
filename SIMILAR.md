@@ -2,13 +2,16 @@
 # Similar Projects (JavaScript and SQL)
 
 SQL-database:
-* [sql.js](https://github.com/kripken/sql.js) - port of SQLike to JavaScript
+* [sql.js](https://github.com/kripken/sql.js) - port of SQLite to JavaScript, compiled with Emscripten
 * [SequelSphere](http://www.sequelsphere.com/) - commercial SQL-database
-* [SQL inMemory.js](https://github.com/carli2/sqlmemjs) - SQL in JavaScript
+* [SQLinMemory.js](https://github.com/carli2/sqlmemjs) - SQL in JavaScript
+* [nSQL](https://github.com/alibaba/nquery) - SQL engine (including integration of sources)
+* [SQLinJS](https://github.com/nuxy/SQLinJS)
+* [SQL-Engine](https://github.com/eugeneware/sql-engine) - SQL over LevelDB
+* [level-sql](https://github.com/hij1nx/level-sql) - level sql-engine
 * [Datamanip](https://github.com/RossKor/datamanip.js)
 * [jsonQ.js](https://github.com/emasstudio/jsonQ.js)
 * [SQittle](https://github.com/moxley/sqittle)
-* [SQLinJS](https://github.com/nuxy/SQLinJS)
 * [jQuery-SQL-Emulator](https://github.com/maciakl/jQuery-SQL-Emulator)
 
 LINQ realizations:
@@ -31,3 +34,9 @@ JavaScript databases:
 * [js-hypercube](https://github.com/thesmart/js-hypercube)
 * [cubico](https://github.com/diegodayan/cubico)
 * [SimpleMemolap](https://github.com/ajlopez/SimpleMemolap)
+
+SQL Parsers
+* [sequeljs](https://github.com/camilojd/sequeljs/tree/master/web)
+
+Other
+* [Pure-JS-WebSQL](https://github.com/yradtsevich/pure-js-websql) - integration between WebSQL and SQL.js

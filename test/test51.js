@@ -12,8 +12,8 @@ describe('Test 51 - Foreign Keys)', function() {
 			alasql('DROP TABLE IF EXISTS citiess');
 			alasql('CREATE TABLE persons (name STRING, city STRING, FOREIGN KEY (city) REFERENCES cities(city))');
 			alasql('CREATE TABLE cities (city STRING PRIMARY KEY)')
-			alasql('INSERT INTO cities ("Paris")');
-			alasql('INSERT INTO cities ("Rome")');
+			alasql('INSERT INTO cities VALUES ("Paris")');
+			alasql('INSERT INTO cities VALUES ("Rome")');
 			alasql('INSERT INTO persons VALUES ("Peter", "Rome")');
 			alasql('INSERT INTO persons VALUES ("Telma", "Paris")');
 			var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
@@ -26,7 +26,7 @@ describe('Test 51 - Foreign Keys)', function() {
 		it('Insert wrong data without references', function(done){
 
 			assert.throws(function(){
-				alasql('INSERT INTO persons ("Angela", "Berlin")');
+				alasql('INSERT INTO persons VALUES ("Angela", "Berlin")');
 			});
 			done();
 		});
@@ -49,8 +49,8 @@ describe('Test 51 - Foreign Keys)', function() {
 			alasql('DROP TABLE IF EXISTS citiess');
 			alasql('CREATE TABLE persons (name STRING, city STRING, FOREIGN KEY (city) REFERENCES cities(city))');
 			alasql('CREATE TABLE cities (city STRING)')
-			alasql('INSERT cities ("Paris")');
-			alasql('INSERT cities ("Rome")');
+			alasql('INSERT cities VALUES ("Paris")');
+			alasql('INSERT cities VALUES ("Rome")');
 			alasql('INSERT INTO persons VALUES ("Peter", "Rome")');
 			alasql('INSERT INTO persons VALUES ("Telma", "Paris")');
 			var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
@@ -64,7 +64,7 @@ describe('Test 51 - Foreign Keys)', function() {
 		it('Insert wrong data without references', function(done){
 
 			assert.throws(function(){
-				alasql('INSERT INTO persons ("Angela", "Berlin")');
+				alasql('INSERT INTO persons VALUES ("Angela", "Berlin")');
 			});
 			done();
 		});
@@ -88,8 +88,8 @@ describe('Test 51 - Foreign Keys)', function() {
 			alasql('CREATE TABLE persons (name STRING, country STRING, city STRING,'+
 				' FOREIGN KEY (country, city) REFERENCES cities(country, city))');
 			alasql('CREATE TABLE cities (country STRING, city STRING, PRIMARY KEY(country, city))')
-			alasql('INSERT INTO cities ("France","Paris")');
-			alasql('INSERT INTO cities ("Italy","Rome")');
+			alasql('INSERT INTO cities VALUES ("France","Paris")');
+			alasql('INSERT INTO cities VALUES ("Italy","Rome")');
 			alasql('INSERT INTO persons VALUES ("Peter", "Italy","Rome")');
 			alasql('INSERT INTO persons VALUES ("Telma", "France","Paris")');
 			var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
@@ -102,14 +102,14 @@ describe('Test 51 - Foreign Keys)', function() {
 		it('Insert wrong data without references', function(done){
 
 			assert.throws(function(){
-				alasql('INSERT INTO persons ("Angela", "Germany","Berlin")');
+				alasql('INSERT INTO persons VALUES ("Angela", "Germany","Berlin")');
 			});
 
 			assert.throws(function(){
-				alasql('INSERT INTO persons ("Angela", "Italy","Berlin")');
+				alasql('INSERT INTO persons VALUES ("Angela", "Italy","Berlin")');
 			});
 
-			alasql('INSERT INTO persons ("Angela", "Italy","Rome")');
+			alasql('INSERT INTO persons VALUES ("Angela", "Italy","Rome")');
 
 			var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
 			assert.equals(res,3);
@@ -139,8 +139,8 @@ describe('Test 51 - Foreign Keys)', function() {
 			alasql('CREATE TABLE persons (name STRING, country STRING, city STRING,'+
 				' FOREIGN KEY (country, city) REFERENCES cities(country, city))');
 			alasql('CREATE TABLE cities (country STRING, city STRING, PRIMARY KEY(country, city))')
-			alasql('INSERT INTO cities ("France","Paris")');
-			alasql('INSERT INTO cities ("Italy","Rome")');
+			alasql('INSERT INTO cities VALUES ("France","Paris")');
+			alasql('INSERT INTO cities VALUES ("Italy","Rome")');
 			alasql('INSERT INTO persons VALUES ("Peter", "Italy","Rome")');
 			alasql('INSERT INTO persons VALUES ("Telma", "France","Paris")');
 			var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
@@ -153,14 +153,14 @@ describe('Test 51 - Foreign Keys)', function() {
 		it('Insert wrong data without references', function(done){
 
 			assert.throws(function(){
-				alasql('INSERT INTO persons ("Angela", "Germany","Berlin")');
+				alasql('INSERT INTO persons VALUES ("Angela", "Germany","Berlin")');
 			});
 
 			assert.throws(function(){
-				alasql('INSERT INTO persons ("Angela", "Italy","Berlin")');
+				alasql('INSERT INTO persons VALUES ("Angela", "Italy","Berlin")');
 			});
 
-			alasql('INSERT INTO persons ("Angela", "Italy","Rome")');
+			alasql('INSERT INTO persons VALUES ("Angela", "Italy","Rome")');
 
 			var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
 			assert.equals(res,3);

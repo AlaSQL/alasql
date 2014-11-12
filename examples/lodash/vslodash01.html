@@ -1,0 +1,89 @@
+<script src='../../lib/lodash/lodash.min.js'></script>
+<script src='../../dist/alasql.js'></script>
+<script src='../../lib/zt/zt.js'></script>
+
+<body>
+	<h1>Alasql vs Lodash</h1>
+	<div id="results"></div>
+
+<script>
+	
+var q = [];
+for(var i=0; i<100000; i++){
+	q.push({a:i, b:(Math.random()*1000)|0});
+}
+
+// SORT
+
+zt.times = 1;
+
+console.log('*** ORDER BY ***');
+
+zt("Lodash _.sortBy()", function(){
+	var w = _.sortBy(q, "b");
+});
+
+zt("Alasql sort", function(){
+	var w = alasql("SELECT q.* FROM ? q ORDER BY b",[q]);
+});
+
+zt("Alasql sort with star", function(){
+	var w = alasql("SELECT * FROM ? ORDER BY b",[q]);
+});
+
+zt.log();
+
+console.log('*** COUNT BY ***');
+var w1;
+zt("Lodash _countBy()", function(){
+	w1 = _.countBy(q, "b");
+});
+//console.log(w1);
+
+var w2;
+zt("Alasql COUNT(*) GROUP BY", function(){
+	w2 = alasql("SELECT b, COUNT(*) FROM ? GROUP BY b ORDER BY b",[q]);
+});
+//console.log(w2);
+zt.log();
+
+console.log('*** WHERE ***');
+var w1;
+zt("Lodash _.where()", function(){
+	w1 = _.where(q, {b:500});
+});
+//console.log(w1);
+
+var w2;
+zt("Alasql SELECT WHERE", function(){
+	w2 = alasql("SELECT * FROM ? WHERE b=500",[q]);
+});
+//console.log(w2);
+zt.log();
+
+
+console.log('*** PLUCK ***');
+var w1;
+zt("Lodash _.pluck()", function(){
+	w1 = _.pluck(q, "b");
+});
+//console.log(w1);
+
+var w2;
+zt("Alasql SELECT", function(){
+	w2 = alasql("SELECT b FROM ?",[q]);
+});
+
+var w3;
+zt("Alasql SELECT", function(){
+	w3 = alasql.queryArray("SELECT b FROM ?",[q]);
+});
+
+//console.log(w2);
+zt.log();
+
+
+</script>
+
+
+</body>
