@@ -90,6 +90,7 @@ Then require alasql.js file:
 * DELETE FROM table WHERE condition 
 * CREATE TABLE \[IF NOT EXISTS\] table (columns type PRIMARY KEY, constraints)
 * DROP TABLE \[IF EXISTS\] table
+* CREATE DATABASE, USE DATABASE, DROP DATABASE
 
 #### SELECT statement
 

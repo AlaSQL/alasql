@@ -12,6 +12,7 @@
 %%
 
 \s+                                             /* skip whitespace */
+'ADD'                                      		return 'ADD'
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
@@ -19,6 +20,7 @@
 'ANY'											return 'ANY'
 'AS'                                      		return 'AS'
 'ASC'                                      		return 'DIRECTION'
+'AUTO_INCREMENT'                                return 'AUTO_INCREMENT'
 'AVG'                                      		return 'AVG'
 
 'BETWEEN'										return 'BETWEEN'
@@ -27,11 +29,14 @@
 
 "CASE"											return "CASE"
 'COLLATE'										return 'COLLATE'
+"COLUMN"										return "COLUMN"
 "CONSTRAINT"									return "CONSTRAINT"
 "COUNT"											return "COUNT"
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
+'DATABASE'										return 'DATABASE'
+'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
 'DESC'                                          return 'DIRECTION'
 'DISTINCT'                                      return 'DISTINCT'
@@ -50,7 +55,9 @@
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 'IF'											return 'IF'
+'IDENTITY'										return 'IDENTITY'
 'IN'											return 'IN'
+'INDEX'											return 'INDEX'
 'INNER'                                         return 'INNER'
 'INSERT'                                        return 'INSERT'
 'INTERSECT'                                     return 'INTERSECT'
@@ -63,6 +70,7 @@
 'LIMIT'											return 'LIMIT'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
+"MODIFY"										return "MODIFY"
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
@@ -91,6 +99,7 @@
 'TRUE'						  					return 'TRUE'
 'UNION'                                         return 'UNION'
 'UPDATE'                                        return 'UPDATE'
+'USE'											return 'USE'
 'USING'                                         return 'USING'
 'VALUES'                                        return 'VALUES'
 'WHEN'                                          return 'WHEN'
@@ -170,16 +179,21 @@ ExplainStatement
 	;
 
 Statement
-	: Select
-	| Insert
-	| Update
-	| Delete
+
+	: AlterTable	
+	| CreateDatabase
+	| CreateIndex
 	| CreateTable
+	| Delete
+	| DropDatabase
+	| DropIndex
 	| DropTable
-	| AlterTable
+	| Insert
+	| Select
+	| UseDatabase
+	| Update
 
 /*	| AttachDatabase
-	| DropIndex
 	| DropTrigger
 	| DropView
 	| BeginTransaction
@@ -187,7 +201,6 @@ Statement
 	| RollbackTransaction
 	| EndTransaction
 	| SavePoint
-	| CreateIndex
 	| CreateTrigger
 	| CreateView
 	| Reindex
@@ -318,8 +331,25 @@ JoinTablesList
 	;
 
 JoinTable
-	: JoinMode JOIN Table OnClause
-		{ $$ = new yy.Join({table:$3, joinmode: $1}); yy.extend($$, $4); }
+	: JoinMode JOIN JoinTableAs OnClause
+		{ $$ = new yy.Join({joinmode: $1}); yy.extend($$, $3); yy.extend($$, $4); }
+	;
+
+JoinTableAs
+	: Table
+		{ $$ = {table: $1}; }
+	| Table LITERAL
+		{ $$ = {table: $1, as: $2.toLowerCase() } ; }
+	| Table AS LITERAL
+		{ $$ = {table: $1, as: $3.toLowerCase() } ; }
+	| ParamValue LITERAL
+		{ $$ = {param: $1, as: $2.toLowerCase() } ; }
+	| ParamValue AS LITERAL
+		{ $$ = {param: $1, as: $3.toLowerCase() } ; }
+	| LPAR Select RPAR LITERAL
+		{ $$ = {select: $1, as: $4.toLowerCase() } ; }
+	| LPAR Select RPAR AS LITERAL
+		{ $$ = {select: $1, as: $5.toLowerCase() } ; }
 	;
 
 JoinMode
@@ -508,6 +538,19 @@ Expression
 	| ExistsValue
 		{ $$ = $1; }
 	| CaseValue
+		{ $$ = $1; }
+	;
+
+PrimitiveValue
+	: NumValue
+		{ $$ = $1; }
+	| StringValue
+		{ $$ = $1; }
+	| LogicValue
+		{ $$ = $1; }
+	| NullValue
+		{ $$ = $1; }
+	| ParamValue
 		{ $$ = $1; }
 	;
 
@@ -872,7 +915,7 @@ ColumnDefsList
 	;
 
 ColumnDef
-	: LITERAL ColumnTypeName ColumnConstraint
+	: LITERAL ColumnTypeName ColumnConstraintsClause
 		{ $$ = new yy.ColumnDef({columnid:$1.toLowerCase()}); yy.extend($$,$2); yy.extend($$,$3);}
 	| LITERAL ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1.toLowerCase()}); yy.extend($$,$2); }
@@ -887,12 +930,32 @@ ColumnTypeName
 		{ $$ = {dbtypeid: $1.toUpperCase()} }
 	;
 
-ColumnConstraint 
+ColumnConstraintsClause
 	: {$$ = null}
-	| PRIMARY KEY
+	| ColumnConstraintsList
+		{ $$ = $1; }
+	;
+
+
+ColumnConstraintsList
+	: ColumnConstraintsList ColumnConstraint
+		{ yy.extend($1,$2); $$ = $1;}
+	| ColumnConstraint
+		{ $$ = $1; }
+	;
+
+
+ColumnConstraint 
+	: PRIMARY KEY
 		{$$ = {primarykey:true};}
 	| FOREIGN KEY REFERENCES LITERAL LPAR LITERAL RPAR
 		{$$ = {foreignkey:{tableid:$4.toLowerCase(), columnid: $6.toLowerCase()}};}
+	| AUTO_INCREMENT
+		{$$ = {auto_increment:true};}
+	| IDENTITY LPAR NumValue COMMA NumValue RPAR
+		{ $$ = {identity: [$3,$5]} }
+	| DEFAULT PrimitiveValue
+		{$$ = {default:$2};}
 	| NOT NULL
 		{$$ = {notnull:true};}
 	;
@@ -912,6 +975,38 @@ AlterTable
 	: ALTER TABLE Table RENAME TO LITERAL
 		{ $$ = new yy.AlterTable({table:$3, renameto: $6.toLowerCase()});}
 	| ALTER TABLE Table ADD COLUMN ColumnDef
-		{ $$ = null; }
+		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
+	| ALTER TABLE Table MODIFY COLUMN ColumnDef
+		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
+	| ALTER TABLE Table DROP COLUMN LITERAL
+		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6.toLowerCase()});}
 	;
 
+CreateDatabase
+	: CREATE DATABASE LITERAL
+		{ $$ = new yy.CreateDatabase({databaseid:$3.toLowerCase() });}
+	;
+
+UseDatabase
+	: USE DATABASE LITERAL
+		{ $$ = new yy.UseDatabase({databaseid: $3.toLowerCase() });}	
+	| USE LITERAL
+		{ $$ = new yy.UseDatabase({databaseid: $2.toLowerCase() });}	
+	;
+
+DropDatabase
+	: DROP DATABASE LITERAL
+		{ $$ = new yy.DropDatabase({databaseid: $3.toLowerCase() });}	
+	;
+
+CreateIndex
+	: CREATE INDEX LITERAL ON Table LPAR ColsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$3.toLowerCase(), table:$5, columns:$7})}
+	| CREATE UNIQUE INDEX LITERAL ON Table LPAR ColsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$3.toLowerCase(), table:$5, columns:$7, unique:true})}
+	;
+
+DropIndex
+	: DROP INDEX LITERAL
+		{ $$ = new yy.DropIndex({indexid:$3.toLowerCase()});}
+	;

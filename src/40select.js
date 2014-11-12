@@ -28,6 +28,16 @@ yy.Select.prototype.toString = function() {
 		return ss;
 	}).join(',');
 
+	if(this.joins) {
+		s += ' '+this.joins.map(function(jn){
+			var ss = jn.joinmode +' JOIN ';
+			ss += jn.table.toString();
+			if(jn.using) ss += ' USING '+jn.using.toString();
+			if(jn.on) ss += ' ON '+jn.on.toString();
+			return ss;
+ 		});
+	}
+
 	if(this.where) s += ' WHERE '+this.where.toString();
 	if(this.group) s += ' GROUP BY '+this.group.toString();
 	if(this.having) s += ' HAVING '+this.having.toString();

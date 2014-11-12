@@ -40,9 +40,13 @@ gulp.task('js-merge', function () {
   	'./src/60createtable.js',
     './src/62droptable.js',
     './src/64altertable.js',
+    './src/65createindex.js',
+    './src/66dropindex.js',
   	'./src/70insert.js',
     './src/72delete.js',
     './src/74update.js',
+    './src/74update.js',
+    './src/76usedatabase.js',
     './src/80console.js',
    	'./src/90finish.js'])
 //    .pipe(changed('./dist/'))

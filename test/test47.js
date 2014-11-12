@@ -10,13 +10,15 @@ describe('Test 47', function() {
 		alasql('CREATE TABLE one (a INT)');
 		alasql('INSERT INTO one VALUES (1),(2),(3),(4),(5)');
 
-//		it('Throws error', function(done){
-//			assert.throws(function() {alasql('SELECT * FROM (SELECT * FROM one WHERE a < 3)');},Error);
-//			done();
-//		});
-		var res = alasql.queryValue('SELECT SUM(*) FROM (SELECT * FROM one WHERE a < 3)');
-		assert.equal(3,res);
-		done();
+		it('Throws error', function(done){
+			assert.throws(function() {alasql('SELECT * FROM (SELECT * FROM one WHERE a < 3)');},Error);
+			done();
+		});
 
+		it('Subsubqueries', function(done) {
+			var res = alasql.queryValue('SELECT SUM(*) FROM (SELECT * FROM one WHERE a < 3)');
+			assert.equal(3,res);
+			done();
+		});
 	});
 });

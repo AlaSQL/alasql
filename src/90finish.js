@@ -8,5 +8,13 @@
 
 // End of module
 
+
+// Create default database
+new Database("alasql");
+
+// Set default database
+alasql.use("alasql");
+
+
 return alasql;
 }));

@@ -20,19 +20,21 @@ alasql.utils = utils;
 
 alasql.databases = {};
 
-// Create default database
-alasql.currentDatabase = new Database();
-alasql.tables = alasql.currentDatabase.tables;
 
 alasql.MAXSQLCACHESIZE = 10000;
+
+alasql.use = function (databaseid) {
+	alasql.currentDatabase = alasql.databases[databaseid];
+	alasql.tables = alasql.currentDatabase.tables;
+};
 
 // Main Database class
 function Database(databaseid) {
 	var self = this;
 	if(self == alasql) self = new Database(databaseid); // to call without new
 	if(!databaseid) {
-		databaseid = +Date.now()+""; // Random name
-	}
+		databaseid = "db"+Date.now(); // Random name
+	};
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
 	self.tables = {};   // Tables
@@ -74,12 +76,19 @@ alasql.queryValue = function (sql, params, cb) {
 	return this.currentDatabase.queryValue(sql, params, cb);
 }
 
+
 alasql.queryArray = function (sql, params, cb) {
 	return this.currentDatabase.queryArray(sql, params, cb);
 }
 alasql.queryArrayOfArrays = function (sql, params, cb) {
 	return this.currentDatabase.queryArrayOfArrays(sql, params, cb);
 }
+
+alasql.value = alasql.queryValue;
+alasql.row = alasql.querySingle;
+alasql.array = alasql.queryArray;
+alasql.matrix = alasql.queryArrayOfArrays;
+
 
 alasql.indexColumns = function(tableid) {
 	this.currentDatabase.indexColumns(tableid);
@@ -121,6 +130,11 @@ Database.prototype.queryValue = function(sql, params, cb) {
 	var res = this.querySingle(sql, params, cb);
 	return res[Object.keys(res)[0]];
 }
+
+Database.prototype.value  = Database.prototype.queryValue;
+Database.prototype.row    = Database.prototype.querySingle;
+Database.prototype.array  = Database.prototype.queryArray;
+Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
 
 
 // Compile statements

@@ -417,31 +417,37 @@ function compileSelectStar (query,alias) {
 	// console.log(query.aliases[alias]);
 //	console.log(query,alias);
 	// console.log(query.aliases[alias].tableid);
+//	console.log(alias);
 	var s = '', sp = '', ss=[];
-	if(query.aliases[alias].tableid) {
-		var columns = query.database.tables[query.aliases[alias].tableid].columns;
-	};
-	if(columns) {
-		columns.forEach(function(tcol){
-			ss.push(tcol.columnid+':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+//	if(!alias) {
+//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
+//	} else 	{
+		if(query.aliases[alias].tableid) {
+			var columns = query.database.tables[query.aliases[alias].tableid].columns;
+		};
+		if(columns) {
+			columns.forEach(function(tcol){
+				ss.push(tcol.columnid+':p[\''+alias+'\'][\''+tcol.columnid+'\']');
 
-//		console.log('ok',s);
+	//		console.log('ok',s);
 
-			var coldef = {
-				columnid:tcol.columnid, 
-				dbtypeid:tcol.dbtypeid, 
-				dbsize:tcol.dbsize, 
-				dbpecision:tcol.dbprecision
-			};
-			query.columns.push(coldef);
-			query.xcolumns[coldef.columnid]=coldef;
+				var coldef = {
+					columnid:tcol.columnid, 
+					dbtypeid:tcol.dbtypeid, 
+					dbsize:tcol.dbsize, 
+					dbpecision:tcol.dbprecision
+				};
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid]=coldef;
 
-		});
-	} else {
-		// if column not exists, then copy all
-		sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
-		query.dirtyColumns = true;
-	}
+			});
+		} else {
+			// if column not exists, then copy all
+			sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
+			query.dirtyColumns = true;
+		}
+//	}
+//console.log({s:ss.join(','),sp:sp});
 	return {s:ss.join(','),sp:sp};
 }
 

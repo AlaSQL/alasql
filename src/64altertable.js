@@ -15,22 +15,36 @@ yy.AlterTable.prototype.toString = function() {
 }
 
 yy.AlterTable.prototype.compile = function (db) {
-	var oldtableid = this.table.tableid;
-	var newtableid = this.renameto;
-	return function(params, cb) {
-		var res = 1;
-		if(db.tables[newtableid]) {
-			throw new Error("Can not rename a table '"+oldtableid+"' to '"
-				+newtableid+"', because the table with this name already exists");
-		} else if(newtableid == oldtableid) {
-			throw new Error("Can not rename a table '"+oldtableid+"' to itself");
-		} else {
-			db.tables[newtableid] = db.tables[oldtableid];
-			delete db.tables[oldtableid];
-			res = 1;
-		};
-		if(cb) cb(res)
-		return res;
+
+	if(this.renameto) {
+		var oldtableid = this.table.tableid;
+		var newtableid = this.renameto;
+		return function(params, cb) {
+			var res = 1;
+			if(db.tables[newtableid]) {
+				throw new Error("Can not rename a table '"+oldtableid+"' to '"
+					+newtableid+"', because the table with this name already exists");
+			} else if(newtableid == oldtableid) {
+				throw new Error("Can not rename a table '"+oldtableid+"' to itself");
+			} else {
+				db.tables[newtableid] = db.tables[oldtableid];
+				delete db.tables[oldtableid];
+				res = 1;
+			};
+			if(cb) cb(res)
+			return res;
+		} 
+	} else if(this.addcolumn) {
+		return function(){}
+	} else if(this.modifycolumn) {
+		return function(){}
+	} else if(this.dropcolumn) {
+		var tableid = this.table.tableid;
+		var columnid = this.columnid;
+		return function(){}
+	} else {
+		throw Error('Unknown ALTER TABLE method');
 	}
+
 };
 
