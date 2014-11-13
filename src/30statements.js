@@ -15,7 +15,9 @@ yy.Statements.prototype.toString = function () {
 
 // Compile array of statements into single statement
 yy.Statements.prototype.compile = function(db) {
-	var statements = this.statements.map(function(st){return st.compile(db)});
+	var statements = this.statements.map(function(st){
+		return st.compile(db)
+	});
 	if(statements.length == 1) {
 		return statements[0];	
 	} else {

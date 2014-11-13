@@ -13,4 +13,13 @@ describe('Test 02', function() {
 	 	assert.equal(alasql.currentDatabase.tables.schools.columns.length,2);
 	    done();
 	});
+
+	it('ADD COLUMN', function(done){
+		alasql('create database test02; use test02;');
+
+
+		done();
+	});
+
+
 });

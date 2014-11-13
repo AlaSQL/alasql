@@ -164,10 +164,8 @@ main
 	;
 
 Statements
-	: Statements Statement
-		{ $$ = $1; $1.push($3); }
-	| Statement SEMICOLON
-		{ $$ = [$1]; }
+	: Statements SEMICOLON Statement
+		{ $$ = $1; if($3) $1.push($3); }
 	| Statement
 		{ $$ = [$1]; }
 	;
@@ -181,7 +179,8 @@ ExplainStatement
 
 Statement
 
-	: AlterTable	
+	: { $$ = null; }
+	| AlterTable	
 	| CreateDatabase
 	| CreateIndex
 	| CreateTable

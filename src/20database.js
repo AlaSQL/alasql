@@ -26,9 +26,10 @@ alasql.MAXSQLCACHESIZE = 10000;
 alasql.use = function (databaseid) {
 	alasql.currentDatabase = alasql.databases[databaseid];
 	alasql.tables = alasql.currentDatabase.tables;
-	alasql.currentDatabase.sqlcache = {}; // Cache for compiled SQL statements
-	alasql.currentDatabase.sqlcachesize = 0;
+	alasql.currentDatabase.resetSqlCache();
 };
+
+
 
 // Main Database class
 function Database(databaseid) {
@@ -39,14 +40,19 @@ function Database(databaseid) {
 	};
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
-	self.tables = {};   // Tables
-	self.sqlcache = {}; // Cache for compiled SQL statements
+	self.resetSqlCache();
 	self.sqlcachesize = 0;
 	return self;
 };
 
 // Start database
 alasql.Database = Database;
+
+Database.prototype.resetSqlCache = function () {
+	this.sqlcache = {}; // Cache for compiled SQL statements
+	this.sqlcachesize = 0;	
+}
+
 
 // Compiler
 alasql.compile = function(sql) {
@@ -101,8 +107,11 @@ Database.prototype.exec = function(sql, params, cb) {
 	// Compile
 	var statement = this.compile(sql);
 	// Run
-	var data = statement(params, cb);
-	return data;
+	if(statement) {
+		var data = statement(params, cb);
+		return data;
+	}
+	return;
 };
 
 // Async version of exec
@@ -158,8 +167,7 @@ Database.prototype.compile = function(sql) {
 		// Memory leak prevention 
 		this.sqlcachesize++;
 		if(this.sqlcachesize > alasql.MAXSQLCACHESIZE) {
-			this.sqlcache = {};
-			this.sqlcachesize = 0;
+			this.resetSqlCache();
 		}
 	};
 	return statement;
