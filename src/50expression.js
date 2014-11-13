@@ -59,6 +59,20 @@ yy.Op.prototype.toString = function() {
 	return this.left.toString()+" "+this.op+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
 };
 
+yy.Op.prototype.toType = function(tableid) {
+	if(['-','*','/','%'].indexOf(this.op) >-1) return 'number';
+	if(this.op == '+') {
+		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
+		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
+	};
+	if(['AND','OR','NOT','=','!=','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE'].indexOf(this.op) >-1 ) return 'boolean';
+	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN') return 'boolean';
+	if(this.allsome) return 'boolean';
+	if(!this.op) return this.left.toType();
+
+	return 'unknown';
+};
+
 yy.Op.prototype.toJavaScript = function(context,tableid) {
 //	console.log(this);
 	var op = this.op;
@@ -173,6 +187,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 
 
 
+
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
 	return this.value.toString();
@@ -238,6 +253,11 @@ yy.UniOp.prototype.toString = function() {
 	if(this.op == '-') return this.op+this.right.toString();
 	if(this.op == 'NOT') return this.op+'('+this.right.toString()+')';
 	else if(this.op == null) return '('+this.right.toString()+')';
+};
+
+yy.UniOp.prototype.toType = function(tableid) {
+	if(this.op == '-') return 'number';
+	if(this.op == 'NOT') return 'boolean';
 };
 
 yy.UniOp.prototype.toJavaScript = function(context, tableid) {
@@ -316,8 +336,12 @@ yy.AggrValue.prototype.toString = function() {
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
-}
+};
 
+yy.AggrValue.prototype.toType = function() {
+	if(['SUM','COUNT','AVG','MIN', 'MAX'].indexOf(this.aggregatorid)>-1) return 'number';
+	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
+}
 yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJavaScript(context, tableid);

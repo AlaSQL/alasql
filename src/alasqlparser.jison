@@ -804,7 +804,7 @@ Insert
 	: INSERT INTO Table VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
 	| INSERT INTO Table DEFAULT VALUES
-		{ $$ = new yy.Insert({into:$3, defaultvalues: true}) ; }
+		{ $$ = new yy.Insert({into:$3, default: true}) ; }
 	| INSERT INTO Table LPAR ColumnsList RPAR VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT INTO Table Select

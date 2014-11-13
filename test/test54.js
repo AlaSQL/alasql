@@ -5,22 +5,16 @@ if(typeof exports === 'object') {
 
 describe('Test 54 - SELECT Number', function() {
 	it('SELECT number', function(done){
-	var db = new alasql.Database();
-		var res = db.exec('SELECT 10');
-		console.log(res);
-		var res = db.exec('SELECT 10,20');
-		console.log(res);
-		var res = db.exec('SELECT 2+2');
-		console.log(res);
-		var res = db.exec('SELECT "Peter"');
-		console.log(res);
-		var res = db.exec('SELECT a FROM (SELECT 10) AS t');
-		console.log(res);
-		var res = db.exec('SELECT a FROM (SELECT 10)');
-		console.log(res);
-		var res = db.exec('SELECT a FROM (SELECT 10) UNION ALL (SELECT 20)');
-		console.log(res);
-//		assert.equal(6,res);
+		alasql('create database test54');
+		alasql('use test54');
+
+		assert(10 == alasql.value('SELECT 10'));
+		assert.deepEqual({'10':10,'20':20},alasql.row('SELECT 10,20'));
+		assert(4 == alasql.value('SELECT 2+2'));
+		assert("Peter" == alasql.value('SELECT "Peter"'));
+		assert(10 == alasql.value('SELECT a FROM (SELECT 10 AS a) AS t'));
+		assert(10 == alasql.value('SELECT a FROM (SELECT 10 as a)'));
+		assert.deepEqual([10,20], alasql.array('SELECT a FROM (SELECT 10 as a UNION ALL SELECT 20 as a)'));
 		done();
 	});
 });

@@ -4,6 +4,10 @@ if(typeof exports === 'object') {
 };
 
 describe('Test 51 - Foreign Keys)', function() {
+
+
+if(false) {
+
 	describe('FOREIGN KEYS with one component and PRIMARY KEY', function(){
 
 		it('CREATE TABLE with FOREIGN KEYS and INSERT', function(done){
@@ -180,5 +184,5 @@ describe('Test 51 - Foreign Keys)', function() {
 			done();
 		});
 	});
-
+}
 });

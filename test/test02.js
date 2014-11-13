@@ -8,7 +8,9 @@ describe('Test 02', function() {
 		alasql.exec('DROP TABLE IF EXISTS schools');
 	 	var st = alasql.compile('CREATE TABLE schools (schoolid INT, schoolname STRING)');
 	 	st();
-	 	assert.equal(alasql.tables.schools.columns.length,2);
+//	 	console.log(alasql.currentDatabase.databaseid);
+//	 	console.log(alasql.);
+	 	assert.equal(alasql.currentDatabase.tables.schools.columns.length,2);
 	    done();
 	});
 });

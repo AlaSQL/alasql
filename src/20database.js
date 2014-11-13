@@ -26,12 +26,14 @@ alasql.MAXSQLCACHESIZE = 10000;
 alasql.use = function (databaseid) {
 	alasql.currentDatabase = alasql.databases[databaseid];
 	alasql.tables = alasql.currentDatabase.tables;
+	alasql.currentDatabase.sqlcache = {}; // Cache for compiled SQL statements
+	alasql.currentDatabase.sqlcachesize = 0;
 };
 
 // Main Database class
 function Database(databaseid) {
 	var self = this;
-	if(self == alasql) self = new Database(databaseid); // to call without new
+	if(self === alasql) self = new Database(databaseid); // to call without new
 	if(!databaseid) {
 		databaseid = "db"+Date.now(); // Random name
 	};
@@ -139,15 +141,19 @@ Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
 
 // Compile statements
 Database.prototype.compile = function(sql) {
+
+	var self = this;
 	var hh = hash(sql);
 
 	// Check cache with hash of SQL statement
 	var statement = this.sqlcache[hh];
 	if(!statement) {
+
 		// If not fount, then compile it
 		var ast = alasql.parse(sql);
 		// Save to cache
-		statement = this.sqlcache[hh]= ast.compile(this);
+
+		statement = this.sqlcache[hh]= ast.compile(self);
 
 		// Memory leak prevention 
 		this.sqlcachesize++;

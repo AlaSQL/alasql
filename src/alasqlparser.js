@@ -527,7 +527,7 @@ case 204:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0]}); 
 break;
 case 205:
- this.$ = new yy.Insert({into:$$[$0-2], defaultvalues: true}) ; 
+ this.$ = new yy.Insert({into:$$[$0-2], default: true}) ; 
 break;
 case 206:
  this.$ = new yy.Insert({into:$$[$0-5], columns: $$[$0-3], values: $$[$0]}); 

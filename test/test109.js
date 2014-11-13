@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 };
 
 
-describe('DELETE', function(){
+describe('Test 109 - DELETE', function(){
 	it('DELETE without conditions', function(done) {
 
 		var db = new alasql.Database();

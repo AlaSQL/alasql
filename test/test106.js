@@ -12,6 +12,7 @@ if(typeof exports === 'object') {
 describe('Callback', function(){
 	it('exec(sql, callback)', function(done) {
 
+		alasql('drop table if exists test');
 		alasql.exec('CREATE TABLE test (a INT, b INT)');
 
 		alasql.exec('INSERT INTO test VALUES (1,1)');

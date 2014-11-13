@@ -17,6 +17,7 @@ describe('Test 60 - Other minor', function() {
 	});
 
 	it('SELECT INTO and INTO SELECT', function(done){
+		alasql('drop table if exists cities')
 		alasql("create table cities (name string)");
 		alasql('insert into cities values ("Moscow"),("Roma"),("Minsk")');
 

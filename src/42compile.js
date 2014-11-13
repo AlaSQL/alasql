@@ -73,7 +73,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 
 
-		source.datafn = function() {
+		source.datafn = function(query,params) {
 			return query.database.tables[source.tableid].data;
 		}
 
@@ -432,16 +432,24 @@ yy.Select.prototype.compileFrom = function(query) {
 		};
 
 		if(tq instanceof yy.Table) {
-			source.datafn = function() {
+			source.datafn = function(query,params) {
+				// if(!query) console.log('query');
+				// if(!query.database) console.log('query');
+				// if(!query.database.tables) console.log('query');
+				// if(!source.tableid) console.log('query');
+				// if(!query.database.tables[source.tableid]) console.log(query);
+				// if(!query.database.tables[source.tableid].data) console.log('query');
+
 				return query.database.tables[source.tableid].data;
+//				return alasql.databases[source.databaseid].tables[source.tableid].data;
 			}
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database);
-			source.datafn = function() {
+			source.datafn = function(query, params) {
 				return source.subquery(query.params);
 			}						
 		} else if(tq instanceof yy.ParamValue) {
-			source.datafn = new Function('params',
+			source.datafn = new Function('query,params',
 				"return params['"+tq.param+"'];");
 		} else {
 			throw new Error('Wrong table at FROM');
@@ -562,7 +570,7 @@ yy.Select.prototype.compileSelect = function(query) {
 //				self.group=[new yy.Column({columnid:'q',as:'q'	})];
 				self.group = [''];
 			}
-			if(!col.as) col.as = col.toString();
+			if(!col.as) col.as = escapeq(col.toString());
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  col.aggregatorid == 'AVG'
 				) {
@@ -577,7 +585,7 @@ yy.Select.prototype.compileSelect = function(query) {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			}
 		} else {
-			ss.push('\''+(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
+			ss.push('\''+(col.as || col.columnid || escapeq(col.toString()))+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 		}
 	});
@@ -621,9 +629,11 @@ function optimizeWhereJoin (query, ast) {
 	var s = ast.toJavaScript('p',query.defaultTableid);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {
-
-		// This is a good place to remove all unnecessary optimizations
-		if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
+		// Optimization allowed only for tables only
+		if(source.tableid) {
+			// This is a good place to remove all unnecessary optimizations
+			if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
+		};
 	});
 //	console.log(ast);
 //	console.log(s);

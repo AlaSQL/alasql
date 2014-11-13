@@ -8,6 +8,10 @@
 
 var utils = {};
 
+var escapeq = utils.escapeq = function(s) {
+    return s.replace(/\'/g,"\\'");
+}
+
 // Fast hash function
 var hash = utils.hash = function hash(str){
     var h = 0;

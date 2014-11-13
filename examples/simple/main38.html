@@ -1,0 +1,13 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+
+<script>
+	var q = [];
+	for(var i=0; i<100000; i++){
+		q.push({a:i, b:(Math.random()*1000)|0});
+	}
+
+	w2 = alasql("SELECT * FROM ? WHERE b=500",[q]);
+	console.log(w2[0]);
+
+</script>

@@ -17,7 +17,7 @@ yy.Select.prototype.toString = function() {
 	if(this.top) s += 'TOP '+this.top.value+' ';
 	s += this.columns.map(function(col){
 		var s = col.toString();
-		console.log(col);
+//		console.log(col);
 		if(typeof col.as != "undefined") s += ' AS '+col.as;
 		return s;
 	}).join(',');
@@ -58,6 +58,7 @@ yy.Select.prototype.toString = function() {
 yy.Select.prototype.compile = function(db) {
 	// Create variable for query
 	var query = {};
+	
 
 	query.database = db;
 	// 0. Precompile whereexists
@@ -129,12 +130,15 @@ yy.Select.prototype.compile = function(db) {
 //console.log(query);
 
 	// Now, compile all togeather into one function with query object in scope
-	return function(params, cb, oldscope) {
+	var statement = function(params, cb, oldscope) {
 		query.params = params;
 		var res = queryfn(query,oldscope); 
 		if(cb) cb(res); 
 		return res;
-	}
+	};
+
+//	statement.query = query;
+	return statement;
 };
 
 

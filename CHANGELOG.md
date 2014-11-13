@@ -9,6 +9,9 @@
 * Fixed Uppercase and LowerCase problem
 * CREATE DATABASE, USE DATABASE, DROP DATABASE
 * CROSS and NATURAL JOINs
+* RANDOM
+* INSERT INTO table DEFAULT VALUES
+* CREATE TABLE table (column type DEFAULT value)
 
 ### 0.0.15 (10.11.2014)
 

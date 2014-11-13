@@ -37,6 +37,7 @@ yy.UseDatabase.prototype.compile = function (db) {
 			throw new Error("Database '"+databaseid+"' does not exist")
 		};
 		alasql.use(databaseid);
+		//console.log(alasql.currentDatabase.databaseid);
 		if(cb) cb(1);
 		return 1;
 	};
@@ -51,11 +52,16 @@ yy.DropDatabase.prototype.compile = function (db) {
 	var databaseid = this.databaseid;
 
 	return function(params, cb) {
+		if(databaseid == 'alasql') {
+			throw new Error("Drop 'alasql' dtabase is prohibited");			
+		}
 		if(!alasql.databases[databaseid]) {
-			throw new Error("Database '"+databaseid+"' does not exist")
+			throw new Error("Database '"+databaseid+"' does not exist");
 		};
+//		alasql.use('alasql');
 		delete alasql.databases[databaseid];
 		alasql.currentDatabase = alasql.databases.alasql;
+		alasql.tables = alasql.databases.alasql.tables;
 		if(cb) cb(1);
 		return 1;
 	};

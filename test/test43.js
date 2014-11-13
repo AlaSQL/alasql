@@ -1,26 +1,37 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('../alasql.js');
+	var alasql = require('..');
 };
 
 describe('Test 43', function() {
-	describe('Dates', function(){
+//	describe('Dates', function(){
 
-		var db = alasql.Database("db");
+		var db = new alasql.Database("test43");
 
-		db.exec('CREATE TABLE orders (orderid INT, orderdate DATE)');
+		it('Create database', function(done) {
 
-		var data = db.tables.orders.data;
-		data.push({orderid:1, orderdate: new Date(2014,1,1)});
-		data.push({orderid:2, orderdate: new Date(2012,0,5)});
-		data.push({orderid:3, orderdate: new Date(2014,0,1)});
-		data.push({orderid:4, orderdate: new Date(2014,0,3)});
-		data.push({orderid:5, orderdate: new Date(2013,10,12)});
-		data.push({orderid:6, orderdate: new Date(2014,3,28)});
-		data.push({orderid:7, orderdate: new Date(2014,7,6)});
-		data.push({orderid:8, orderdate: new Date(2013,10,12)});
+			// alasql('create database test43');
+			// alasql('use test43');
+
+			db.exec('DROP TABLE IF EXISTS orders');
+			db.exec('CREATE TABLE orders (orderid INT, orderdate DATE)');
+
+			// db = alasql.databases.test43;
+			var data = db.tables.orders.data;
+			data.push({orderid:1, orderdate: new Date(2014,1,1)});
+			data.push({orderid:2, orderdate: new Date(2012,0,5)});
+			data.push({orderid:3, orderdate: new Date(2014,0,1)});
+			data.push({orderid:4, orderdate: new Date(2014,0,3)});
+			data.push({orderid:5, orderdate: new Date(2013,10,12)});
+			data.push({orderid:6, orderdate: new Date(2014,3,28)});
+			data.push({orderid:7, orderdate: new Date(2014,7,6)});
+			data.push({orderid:8, orderdate: new Date(2013,10,12)});
+			done();
+
+		});
 
 		it('Order by dates ASC', function(done){
+
 			var res = db.queryArray("SELECT orderdate FROM orders ORDER BY orderdate");
 
 			var ok = res[0]<=res[1] &&
@@ -36,6 +47,8 @@ describe('Test 43', function() {
 		});
 
 		it('Order by dates DESC', function(done){
+
+
 			var res = db.queryArray("SELECT orderdate FROM orders ORDER BY orderdate DESC");
 
 			var ok = 
@@ -70,5 +83,5 @@ describe('Test 43', function() {
 		});
 */
 
-	});
+//	});
 });

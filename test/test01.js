@@ -1,9 +1,12 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('../alasql.js');
+	var alasql = require('..');
 };
 
 function prepareData (defined) {
+
+//	alasql('create database test01');
+//	alasql('use test01');
 
 	var studentsData = [
 		{studentid:58,studentname:'Sarah Patrik',courseid:1, startdate: new Date(2014,0,10), amt:10, schoolid:1},
@@ -84,7 +87,6 @@ function prepareData (defined) {
 
 
 
-describe('Test 01', function() {
 	
 	function doTests() {
 		it('Select 1.1: COUNT', function(done){
@@ -120,7 +122,11 @@ describe('Test 01', function() {
 			assert.equal(25,res);
 			done();
 		});
+
+//		alasql('drop database test01');
 	};
+
+describe('Test 01', function() {
 
 	describe('Columns provided', function() {
 		prepareData(true);

@@ -11,6 +11,7 @@ describe('Test 56 - Error in WHERE and preIndex with ParamValue', function() {
 
 	it('SELECT - order by "', function(done){
 		var w = alasql("SELECT q.* FROM ? q ORDER BY b", [q]);
+		assert(w.length == 100000);
 		done();
 	});
 

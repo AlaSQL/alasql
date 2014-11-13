@@ -40,6 +40,7 @@ yy.CreateTable.prototype.toString = function() {
 // CREATE TABLE
 yy.CreateTable.prototype.compile = function (db) {
 //	var self = this;
+	var databaseid = db.databaseid;
 	var tableid = this.table.tableid;
 	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
@@ -47,6 +48,8 @@ yy.CreateTable.prototype.compile = function (db) {
 //	console.log(this);
 
 	return function() {
+		var db = alasql.databases[databaseid];
+//		console.log(databaseid);
 
 		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {
 
@@ -60,12 +63,19 @@ yy.CreateTable.prototype.compile = function (db) {
 			table.xcolumns = {};
 			table.indices = {};
 			table.data = [];
+			table.defaultfns = '';
 
 			columns.forEach(function(col) {
 				var newcol = {
 					columnid: col.columnid.toLowerCase(),
 					dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
 				};
+
+				if(col.default) {
+					table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
+				}
+
+
 				table.columns.push(newcol);
 				table.xcolumns[newcol.columnid] = newcol;
 

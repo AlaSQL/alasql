@@ -5,7 +5,7 @@ if(typeof exports === 'object') {
 
 describe('Test 58 - Indices', function() {
 
-	it('SELECT - CREATE INDEX "', function(done){
+/*	it('SELECT - CREATE INDEX "', function(done){
 		var test1 = [{a:1},{a:2},{a:3},{a:4}];
 		alasql("DROP TABLE IF EXISTS test1");
 		alasql("CREATE TABLE test1 (a INT)");
@@ -31,5 +31,5 @@ describe('Test 58 - Indices', function() {
 		alasql("DROP INDEX test1ab")
 		done();
 	});
-
+*/
 });

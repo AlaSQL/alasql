@@ -3,7 +3,7 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 05', function() {
+describe('Test 05 - DELETE', function() {
 	it('DELETE WHERE ', function(done){
 
 		alasql.exec('DROP TABLE IF EXISTS schools');

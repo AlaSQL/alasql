@@ -572,7 +572,7 @@ case 204:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0]}); 
 break;
 case 205:
- this.$ = new yy.Insert({into:$$[$0-2], defaultvalues: true}) ; 
+ this.$ = new yy.Insert({into:$$[$0-2], default: true}) ; 
 break;
 case 206:
  this.$ = new yy.Insert({into:$$[$0-5], columns: $$[$0-3], values: $$[$0]}); 
@@ -1466,6 +1466,10 @@ if (typeof module !== 'undefined' && require.main === module) {
 
 var utils = {};
 
+var escapeq = utils.escapeq = function(s) {
+    return s.replace(/\'/g,"\\'");
+}
+
 // Fast hash function
 var hash = utils.hash = function hash(str){
     var h = 0;
@@ -1669,12 +1673,14 @@ alasql.MAXSQLCACHESIZE = 10000;
 alasql.use = function (databaseid) {
 	alasql.currentDatabase = alasql.databases[databaseid];
 	alasql.tables = alasql.currentDatabase.tables;
+	alasql.currentDatabase.sqlcache = {}; // Cache for compiled SQL statements
+	alasql.currentDatabase.sqlcachesize = 0;
 };
 
 // Main Database class
 function Database(databaseid) {
 	var self = this;
-	if(self == alasql) self = new Database(databaseid); // to call without new
+	if(self === alasql) self = new Database(databaseid); // to call without new
 	if(!databaseid) {
 		databaseid = "db"+Date.now(); // Random name
 	};
@@ -1782,15 +1788,19 @@ Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
 
 // Compile statements
 Database.prototype.compile = function(sql) {
+
+	var self = this;
 	var hh = hash(sql);
 
 	// Check cache with hash of SQL statement
 	var statement = this.sqlcache[hh];
 	if(!statement) {
+
 		// If not fount, then compile it
 		var ast = alasql.parse(sql);
 		// Save to cache
-		statement = this.sqlcache[hh]= ast.compile(this);
+
+		statement = this.sqlcache[hh]= ast.compile(self);
 
 		// Memory leak prevention 
 		this.sqlcachesize++;
@@ -1996,7 +2006,7 @@ function queryfn(query,oldscope) {
 	// First - refresh data sources
 	query.sources.forEach(function(source){
 //		source.data = query.database.tables[source.tableid].data;
-		source.data = source.datafn(query.params); 
+		source.data = source.datafn(query, query.params); 
 
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
@@ -2404,7 +2414,7 @@ yy.Select.prototype.toString = function() {
 	if(this.top) s += 'TOP '+this.top.value+' ';
 	s += this.columns.map(function(col){
 		var s = col.toString();
-		console.log(col);
+//		console.log(col);
 		if(typeof col.as != "undefined") s += ' AS '+col.as;
 		return s;
 	}).join(',');
@@ -2445,6 +2455,7 @@ yy.Select.prototype.toString = function() {
 yy.Select.prototype.compile = function(db) {
 	// Create variable for query
 	var query = {};
+	
 
 	query.database = db;
 	// 0. Precompile whereexists
@@ -2516,12 +2527,15 @@ yy.Select.prototype.compile = function(db) {
 //console.log(query);
 
 	// Now, compile all togeather into one function with query object in scope
-	return function(params, cb, oldscope) {
+	var statement = function(params, cb, oldscope) {
 		query.params = params;
 		var res = queryfn(query,oldscope); 
 		if(cb) cb(res); 
 		return res;
-	}
+	};
+
+//	statement.query = query;
+	return statement;
 };
 
 
@@ -2539,6 +2553,10 @@ yy.Select.prototype.compile = function(db) {
 yy.ExistsValue = function(params) { return yy.extend(this, params); }
 yy.ExistsValue.prototype.toString = function() {
 	return 'EXISTS('+this.value.toString()+')';
+};
+
+yy.ExistsValue.prototype.toType = function() {
+	return 'boolean';
 };
 
 yy.ExistsValue.prototype.toJavaScript = function() {
@@ -2635,7 +2653,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 
 
-		source.datafn = function() {
+		source.datafn = function(query,params) {
 			return query.database.tables[source.tableid].data;
 		}
 
@@ -2994,16 +3012,24 @@ yy.Select.prototype.compileFrom = function(query) {
 		};
 
 		if(tq instanceof yy.Table) {
-			source.datafn = function() {
+			source.datafn = function(query,params) {
+				// if(!query) console.log('query');
+				// if(!query.database) console.log('query');
+				// if(!query.database.tables) console.log('query');
+				// if(!source.tableid) console.log('query');
+				// if(!query.database.tables[source.tableid]) console.log(query);
+				// if(!query.database.tables[source.tableid].data) console.log('query');
+
 				return query.database.tables[source.tableid].data;
+//				return alasql.databases[source.databaseid].tables[source.tableid].data;
 			}
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database);
-			source.datafn = function() {
+			source.datafn = function(query, params) {
 				return source.subquery(query.params);
 			}						
 		} else if(tq instanceof yy.ParamValue) {
-			source.datafn = new Function('params',
+			source.datafn = new Function('query,params',
 				"return params['"+tq.param+"'];");
 		} else {
 			throw new Error('Wrong table at FROM');
@@ -3124,7 +3150,7 @@ yy.Select.prototype.compileSelect = function(query) {
 //				self.group=[new yy.Column({columnid:'q',as:'q'	})];
 				self.group = [''];
 			}
-			if(!col.as) col.as = col.toString();
+			if(!col.as) col.as = escapeq(col.toString());
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  col.aggregatorid == 'AVG'
 				) {
@@ -3139,7 +3165,7 @@ yy.Select.prototype.compileSelect = function(query) {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			}
 		} else {
-			ss.push('\''+(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
+			ss.push('\''+(col.as || col.columnid || escapeq(col.toString()))+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 		}
 	});
@@ -3183,9 +3209,11 @@ function optimizeWhereJoin (query, ast) {
 	var s = ast.toJavaScript('p',query.defaultTableid);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {
-
-		// This is a good place to remove all unnecessary optimizations
-		if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
+		// Optimization allowed only for tables only
+		if(source.tableid) {
+			// This is a good place to remove all unnecessary optimizations
+			if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
+		};
 	});
 //	console.log(ast);
 //	console.log(s);
@@ -3454,6 +3482,20 @@ yy.Op.prototype.toString = function() {
 	return this.left.toString()+" "+this.op+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
 };
 
+yy.Op.prototype.toType = function(tableid) {
+	if(['-','*','/','%'].indexOf(this.op) >-1) return 'number';
+	if(this.op == '+') {
+		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
+		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
+	};
+	if(['AND','OR','NOT','=','!=','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE'].indexOf(this.op) >-1 ) return 'boolean';
+	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN') return 'boolean';
+	if(this.allsome) return 'boolean';
+	if(!this.op) return this.left.toType();
+
+	return 'unknown';
+};
+
 yy.Op.prototype.toJavaScript = function(context,tableid) {
 //	console.log(this);
 	var op = this.op;
@@ -3568,6 +3610,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 
 
 
+
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
 	return this.value.toString();
@@ -3633,6 +3676,11 @@ yy.UniOp.prototype.toString = function() {
 	if(this.op == '-') return this.op+this.right.toString();
 	if(this.op == 'NOT') return this.op+'('+this.right.toString()+')';
 	else if(this.op == null) return '('+this.right.toString()+')';
+};
+
+yy.UniOp.prototype.toType = function(tableid) {
+	if(this.op == '-') return 'number';
+	if(this.op == 'NOT') return 'boolean';
 };
 
 yy.UniOp.prototype.toJavaScript = function(context, tableid) {
@@ -3711,8 +3759,12 @@ yy.AggrValue.prototype.toString = function() {
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
-}
+};
 
+yy.AggrValue.prototype.toType = function() {
+	if(['SUM','COUNT','AVG','MIN', 'MAX'].indexOf(this.aggregatorid)>-1) return 'number';
+	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
+}
 yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJavaScript(context, tableid);
@@ -3959,6 +4011,7 @@ yy.CreateTable.prototype.toString = function() {
 // CREATE TABLE
 yy.CreateTable.prototype.compile = function (db) {
 //	var self = this;
+	var databaseid = db.databaseid;
 	var tableid = this.table.tableid;
 	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
@@ -3966,6 +4019,8 @@ yy.CreateTable.prototype.compile = function (db) {
 //	console.log(this);
 
 	return function() {
+		var db = alasql.databases[databaseid];
+//		console.log(databaseid);
 
 		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {
 
@@ -3979,12 +4034,19 @@ yy.CreateTable.prototype.compile = function (db) {
 			table.xcolumns = {};
 			table.indices = {};
 			table.data = [];
+			table.defaultfns = '';
 
 			columns.forEach(function(col) {
 				var newcol = {
 					columnid: col.columnid.toLowerCase(),
 					dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
 				};
+
+				if(col.default) {
+					table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
+				}
+
+
 				table.columns.push(newcol);
 				table.xcolumns[newcol.columnid] = newcol;
 
@@ -4193,6 +4255,7 @@ yy.Insert.prototype.compile = function (db) {
 	var self = this;
 //	console.log(self);
 	var tableid = self.into.tableid;
+	var table = db.tables[tableid];
 
 	// Check, if this dirty flag is required
 	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
@@ -4264,6 +4327,7 @@ yy.Insert.prototype.compile = function (db) {
 				});
 			}
 
+			if(db.tables[tableid].defaultfns) s += db.tables[tableid].defaultfns;
 			s += ss.join(',')+'};';
 			s += 'db.tables[\''+tableid+'\'].insert(r);';
 
@@ -4281,7 +4345,11 @@ yy.Insert.prototype.compile = function (db) {
 			db.tables[tableid].data = db.tables[tableid].data.concat(res);
 			return res.length;
 		}
-	}
+	} else if(this.default) {
+        var insertfn = new Function('db,params','db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;'); 
+    } else {
+    	throw new Error('Wrong INSERT parameters');
+    }
 
 
 	return function(params, cb) {
@@ -4455,6 +4523,7 @@ yy.UseDatabase.prototype.compile = function (db) {
 			throw new Error("Database '"+databaseid+"' does not exist")
 		};
 		alasql.use(databaseid);
+		//console.log(alasql.currentDatabase.databaseid);
 		if(cb) cb(1);
 		return 1;
 	};
@@ -4469,11 +4538,16 @@ yy.DropDatabase.prototype.compile = function (db) {
 	var databaseid = this.databaseid;
 
 	return function(params, cb) {
+		if(databaseid == 'alasql') {
+			throw new Error("Drop 'alasql' dtabase is prohibited");			
+		}
 		if(!alasql.databases[databaseid]) {
-			throw new Error("Database '"+databaseid+"' does not exist")
+			throw new Error("Database '"+databaseid+"' does not exist");
 		};
+//		alasql.use('alasql');
 		delete alasql.databases[databaseid];
 		alasql.currentDatabase = alasql.databases.alasql;
+		alasql.tables = alasql.databases.alasql.tables;
 		if(cb) cb(1);
 		return 1;
 	};

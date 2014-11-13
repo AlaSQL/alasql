@@ -3,8 +3,10 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 56 - Params and Subqueries in JOIN', function() {
+describe('Test 57 - Params and Subqueries in JOIN', function() {
 
+
+if(false) {
 	var data1 = [{a:1},{a:2}];
 	var data2 = [{a:1,b:1},{a:2,b:2}];
 	var data3 = [{b:1,b:100},{b:2,c:200}];
@@ -27,5 +29,7 @@ describe('Test 56 - Params and Subqueries in JOIN', function() {
 		console.log(res);
 		done();
 	});
+
+}
 
 });

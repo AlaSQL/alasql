@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.16 Date: November 12, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.16 Date: November 13, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -15,8 +15,8 @@ Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 ### Warning 
-Alasql project is very young and still in active development phase, therefore it may has some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean 
-the code before relaese more stable version 0.1.0 in the mid of November.
+Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0 in the mid of November. 
+Please, submit bugs and suggestions in [issue page]().
 
 You can check [version-0.0.17](https://github.com/agershun/alasql/tree/version-0.0.17) branch for new experimental features of new version. 
 

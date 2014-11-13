@@ -43,7 +43,7 @@ describe('Test 48 - Check parser for primary and foreign keys', function() {
 			alasql('CREATE TABLE countries (a STRING, b STRING)');
 			done();
 		});
-
+/*
 		it('2: FOREIGN KEY (MySQL style)', function(done){
 			alasql('DROP TABLE IF EXISTS cities');
 			alasql('DROP TABLE IF EXISTS countries');
@@ -61,6 +61,6 @@ describe('Test 48 - Check parser for primary and foreign keys', function() {
 			alasql('CREATE TABLE countries (a STRING, b STRING)');
 			done();
 		});
+*/
 	});
-
 });

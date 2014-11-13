@@ -19,7 +19,10 @@ describe('Test 63 - PIVOT', function() {
 
 	it('PIVOT - not yet created', function(done){
 		var res = alasql('select * from sales');
+
+//		alasql('drop database test63');
 		done();
 	});
+
 
 });

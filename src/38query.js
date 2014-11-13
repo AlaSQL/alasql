@@ -17,7 +17,7 @@ function queryfn(query,oldscope) {
 	// First - refresh data sources
 	query.sources.forEach(function(source){
 //		source.data = query.database.tables[source.tableid].data;
-		source.data = source.datafn(query.params); 
+		source.data = source.datafn(query, query.params); 
 
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions

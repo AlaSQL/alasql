@@ -19,6 +19,7 @@ yy.Insert.prototype.compile = function (db) {
 	var self = this;
 //	console.log(self);
 	var tableid = self.into.tableid;
+	var table = db.tables[tableid];
 
 	// Check, if this dirty flag is required
 	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
@@ -90,6 +91,7 @@ yy.Insert.prototype.compile = function (db) {
 				});
 			}
 
+			if(db.tables[tableid].defaultfns) s += db.tables[tableid].defaultfns;
 			s += ss.join(',')+'};';
 			s += 'db.tables[\''+tableid+'\'].insert(r);';
 
@@ -107,7 +109,11 @@ yy.Insert.prototype.compile = function (db) {
 			db.tables[tableid].data = db.tables[tableid].data.concat(res);
 			return res.length;
 		}
-	}
+	} else if(this.default) {
+        var insertfn = new Function('db,params','db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;'); 
+    } else {
+    	throw new Error('Wrong INSERT parameters');
+    }
 
 
 	return function(params, cb) {
