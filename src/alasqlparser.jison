@@ -71,6 +71,7 @@
 "MAX"											return "MAX"
 "MIN"											return "MIN"
 "MODIFY"										return "MODIFY"
+'NATURAL'										return 'NATURAL'
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
@@ -332,7 +333,7 @@ JoinTablesList
 
 JoinTable
 	: JoinMode JOIN JoinTableAs OnClause
-		{ $$ = new yy.Join({joinmode: $1}); yy.extend($$, $3); yy.extend($$, $4); }
+		{ $$ = new yy.Join($1); yy.extend($$, $3); yy.extend($$, $4); }
 	;
 
 JoinTableAs
@@ -353,6 +354,14 @@ JoinTableAs
 	;
 
 JoinMode
+	: { $$ = {joinmode: "INNER"}; }
+	| JoinModeMode
+		{ $$ = { joinmode: $1 } ; }
+	| NATURAL JoinModeMode
+		{ $$ = {joinmode: $1, natural:true} ; }
+	;
+
+JoinModeMode
 	: { $$ = "INNER"; }
 	| INNER 
 		{ $$ = "INNER"; }
@@ -368,16 +377,12 @@ JoinMode
 		{ $$ = "OUTER"; }
 	| FULL OUTER 
 		{ $$ = "OUTER"; }
-
 	| SEMI 
 		{ $$ = "SEMI"; }
 	| ANTI
 		{ $$ = "ANTI"; }
 	| CROSS 
-		{ 
-			$$ = "INNER"; 
-			// $$ = "CROSS"; // TODO: Change in code
-		}
+		{ $$ = "CROSS"; }
 	;
 
 OnClause
@@ -552,6 +557,8 @@ PrimitiveValue
 		{ $$ = $1; }
 	| ParamValue
 		{ $$ = $1; }
+	| FuncValue
+		{ $$ = $1; }
 	;
 
 
@@ -575,9 +582,9 @@ FuncValue
 		{ $$ = new yy.FuncValue({funcid: $1, expression: $3}); }
 */	
 	: LITERAL LPAR ExprList RPAR
-		{ $$ = new yy.FuncValue({funcid: "_"+$1.toLowerCase(), args: $3}); }
+		{ $$ = new yy.FuncValue({funcid: $1.toLowerCase(), args: $3}); }
 	| LITERAL LPAR RPAR
-		{ $$ = new yy.FuncValue({ funcid: "_"+$1.toLowerCase() }) }
+		{ $$ = new yy.FuncValue({ funcid: $1.toLowerCase() }) }
 	;
 
 ExprList
@@ -796,6 +803,8 @@ Delete
 Insert
 	: INSERT INTO Table VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
+	| INSERT INTO Table DEFAULT VALUES
+		{ $$ = new yy.Insert({into:$3, defaultvalues: true}) ; }
 	| INSERT INTO Table LPAR ColumnsList RPAR VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT INTO Table Select

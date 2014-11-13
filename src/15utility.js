@@ -32,6 +32,24 @@ var arrayDiff = utils.arrayDiff  = function arrayDiff (a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
+// Arrays deep intersect (with records)
+var arrayIntersect = utils.arrayIntersept  = function(a,b) {
+    var r = [];
+    a.forEach(function(ai) {
+        var found = false;
+        
+        b.forEach(function(bi){
+            found = found || (ai==bi);
+        });
+
+        if(found) {
+            r.push(ai); 
+        }
+    });
+    return r;
+};
+
+
 // Arrays deep union (with records)
 var arrayUnionDeep = utils.arrayUnionDeep = function arrayUnionDeep (a,b) {
     var r = b.slice(0);

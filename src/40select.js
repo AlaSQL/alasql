@@ -17,16 +17,19 @@ yy.Select.prototype.toString = function() {
 	if(this.top) s += 'TOP '+this.top.value+' ';
 	s += this.columns.map(function(col){
 		var s = col.toString();
-	//	console.log(col);
-		if(col.as) s += ' AS '+col.as;
+		console.log(col);
+		if(typeof col.as != "undefined") s += ' AS '+col.as;
 		return s;
 	}).join(',');
-	s += ' FROM '+this.from.map(function(f){
-		console.log(f);
-		var ss = f.toString();
-		if(f.as) ss += ' AS '+f.as;
-		return ss;
-	}).join(',');
+
+	if(this.from) {
+		s += ' FROM '+this.from.map(function(f){
+			console.log(f);
+			var ss = f.toString();
+			if(f.as) ss += ' AS '+f.as;
+			return ss;
+		}).join(',');
+	};
 
 	if(this.joins) {
 		s += ' '+this.joins.map(function(jn){

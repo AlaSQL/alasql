@@ -17,7 +17,22 @@ yy.Select.prototype.compileJoins = function(query) {
 //	console.log(this);
 //	debugger;
 	var self = this;
+
+
+
+
 	this.joins.forEach(function(jn){
+
+		// Test CROSS-JOIN
+		if(jn.joinmode == "CROSS") {
+			if(jn.using || jn.on) {
+				throw new Error('CROSS JOIN cannot have USING or ON clauses');
+			} else {
+				jn.joinmode == "INNER";
+			}
+		}
+
+
 		var tq = jn.table;
 		var source = {
 			alias: tq.alias||tq.tableid,
@@ -28,6 +43,35 @@ yy.Select.prototype.compileJoins = function(query) {
 			srcwherefns: '',	// for optimization
 			srcwherefn: returnTrue
 		};
+
+
+
+		// Test NATURAL-JOIN
+		if(jn.natural) {
+			if(jn.using || jn.on) {
+				throw new Error('NATURAL JOIN cannot have USING or ON clauses');
+			} else {
+//				source.joinmode == "INNER";
+				if(query.sources.length > 0) {
+					var prevSource = query.sources[query.sources.length-1];
+					var prevTable = alasql.databases[prevSource.databaseid].tables[prevSource.tableid];
+					var table = alasql.databases[source.databaseid].tables[source.tableid];
+
+					if(prevTable && table) {
+						var c1 = prevTable.columns.map(function(col){return col.columnid});
+						var c2 = table.columns.map(function(col){return col.columnid});
+						jn.using = arrayIntersect(c1,c2);
+//						console.log(jn.using);
+					} else {
+						throw new Error('In this version of Alasql NATURAL JOIN '+
+							'works for tables with predefined columns only');
+					};
+				}
+			}
+		}
+
+
+
 
 		source.datafn = function() {
 			return query.database.tables[source.tableid].data;
@@ -361,6 +405,8 @@ yy.Select.prototype.compileFrom = function(query) {
 //	if(self.from[0].as) as = this.from[0].as;
 //console.log(this);
 	query.aliases = {};
+	if(!self.from) return;
+
 	self.from.forEach(function(tq){
 		var alias = tq.as || tq.tableid;
 //		console.log(alias);

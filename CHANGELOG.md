@@ -8,6 +8,7 @@
 * PRIMARY KEY ON inseert, delete, update with one or multiple keys
 * Fixed Uppercase and LowerCase problem
 * CREATE DATABASE, USE DATABASE, DROP DATABASE
+* CROSS and NATURAL JOINs
 
 ### 0.0.15 (10.11.2014)
 
