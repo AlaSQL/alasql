@@ -48,7 +48,7 @@ yy.CreateTable.prototype.compile = function (db) {
 //	console.log(this);
 
 	return function() {
-		var db = alasql.databases[databaseid];
+		var db = alasql.currentDatabase;
 //		console.log(databaseid);
 
 		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {

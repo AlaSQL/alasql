@@ -29,8 +29,6 @@ alasql.use = function (databaseid) {
 	alasql.currentDatabase.resetSqlCache();
 };
 
-
-
 // Main Database class
 function Database(databaseid) {
 	var self = this;
@@ -40,8 +38,9 @@ function Database(databaseid) {
 	};
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
+	self.tables = [];
+	self.indices = {};
 	self.resetSqlCache();
-	self.sqlcachesize = 0;
 	return self;
 };
 
