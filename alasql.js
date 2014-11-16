@@ -1676,6 +1676,7 @@ alasql.DEFAULTDATABASEID = 'alasql';
 
 alasql.use = function (databaseid) {
 	if(!databaseid) databaseid = alasql.DEFAULTDATABASEID;
+	if(alasql.useid == databaseid) return;
 	alasql.useid = databaseid;
 	var db = alasql.databases[alasql.useid];
 	alasql.tables = db.tables;
@@ -1691,7 +1692,9 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 	var db = alasql.databases[databaseid];
 	var hh = hash(sql);
 	var statement = db.sqlCache[hh];
-	if(statement) return statement(params, cb);
+	if(statement && db.dbversion == statement.dbversion) {
+		return statement(params, cb);
+	}
 
 	// Create AST
 	var ast = alasql.parse(sql);
@@ -1700,6 +1703,10 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 	else if(ast.statements.length == 1) {
 		if(ast.statements[0].compile) {
 			var statement = ast.statements[0].compile(databaseid);
+			if(!statement) return;
+			statement.sql = sql;
+			statement.dbversion = db.dbversion;
+			
 			// Secure sqlCache size
 			if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
 				db.resetSqlCache();
@@ -1707,7 +1714,6 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			db.sqlCacheSize++;
 			db.sqlCache[hh] = statement;
 			var res = statement(params, cb);
-//			console.log(res);
 			return res;
 		} else {
 			return ast.statements[0].exec(databaseid, params, cb);		
@@ -1721,28 +1727,35 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 // Run multiple statements and return array of results
 alasql.drun = function (databaseid, ast, params, cb) {
 	var useid = alasql.useid;
-	alasql.use(databaseid);
+	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		var statement = ast.statements[i].compile(alasql.useid);
 		if(statement) {
 			res.push(statement(params));
 		} else {
-			res.push(ast[i].exec());
+			res.push(ast.statements[i].exec());
 		}		
 	};
-	alasql.use(useid);
+	if(useid != databaseid) alasql.use(useid);
 	if(cb) cb(res);
 	return res;
 };
 
 // Compiler
-alasql.compile = function(kind, sql, databaseid) {
+alasql.compile = function(sql, kind, databaseid) {
+	if(!kind) kind = 'collection';
 	if(!databaseid) databaseid = alasql.useid;
 	var ast = alasql.parse(sql);
-	if(ast.length == 1) {
-		var res = ast[0].compile(databaseid);
+	if(ast.statements.length == 1) {
+		var statementfn = ast.statements[0].compile(databaseid);
+		
 		if(kind == 'value') {
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				var key = Object.keys(res)[0];
+				return res[0][key];
+			};
 		} else  if(kind == 'single') {
 			return res[0];
 		} else  if(kind == 'row') {
@@ -1756,12 +1769,14 @@ alasql.compile = function(kind, sql, databaseid) {
 			for(var i=0, ilen=res.length; i<ilen; i++){
 				ar.push(res[i][key]);
 			}
-		} else  if(kind == 'array') {
+		} else if(kind == 'array') {
 			return flatArrya(res);
-		} else  if(kind == 'matrix') {
+		} else if(kind == 'matrix') {
 			return arrayOfArrays(res);
+		} else if(kind == 'collection') {
+			return statementfn;
 		} else {
-			return res;
+			return statementfn;
 		}
 
 	} else {
@@ -2640,7 +2655,6 @@ yy.Select.prototype.compile = function(databaseid) {
 	// Create variable for query
 	var query = {};
 	
-
 	query.database = db;
 	// 0. Precompile whereexists
 	this.compileWhereExists(query);
@@ -4197,7 +4211,7 @@ yy.CreateTable.prototype.toString = function() {
 }
 
 // CREATE TABLE
-yy.CreateTable.prototype.compile = returnUndefined;
+//yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.exec = function (databaseid) {
 //	var self = this;
 	var db = alasql.databases[databaseid];
@@ -4577,7 +4591,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 // INSERT INTO table SELECT
 
 	} else if(this.select) {
-		selectfn = this.select.compile(db);
+		selectfn = this.select.compile(databaseid);
 		var insertfn = function(db, params) {
 			var res = selectfn(params);
 			db.tables[tableid].data = db.tables[tableid].data.concat(res);
@@ -4589,7 +4603,6 @@ yy.Insert.prototype.compile = function (databaseid) {
     	throw new Error('Wrong INSERT parameters');
     }
 
-
 	return function(params, cb) {
 		var res = insertfn(db, params);
 		if(cb) cb(res);
@@ -4597,8 +4610,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 	}
 };
 
-yy.Insert.prototype.exec = function (databaseid) {
-	throw new Error('Insert statement is should be compiled')
+yy.Insert.prototype.exec = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+//	throw new Error('Insert statement is should be compiled')
 }
 
 
@@ -4740,7 +4754,7 @@ yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
 	return 'CREATE DATABASE '+this.databaseid;
 }
-yy.CreateDatabase.prototype.compile = returnUndefined;
+//yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.CreateDatabase.prototype.exec = function (databaseid) {
 	var dbid = this.databaseid;
 	if(alasql.databases[dbid]) {
@@ -4756,7 +4770,7 @@ yy.UseDatabase = function (params) { return yy.extend(this, params); };
 yy.UseDatabase.prototype.toString = function() {
 	return 'USE DATABASE '+this.databaseid;
 }
-yy.UseDatabase.prototype.compile = returnUndefined;
+//yy.UseDatabase.prototype.compile = returnUndefined;
 yy.UseDatabase.prototype.exec = function (databaseid) {
 	var dbid = this.databaseid;
 	if(!alasql.databases[dbid]) {
@@ -4771,7 +4785,7 @@ yy.DropDatabase = function (params) { return yy.extend(this, params); }
 yy.DropDatabase.prototype.toString = function() {
 	return 'DROP DATABASE '+this.databaseid;
 }
-yy.DropDatabase.prototype.compile = returnUndefined;
+//yy.DropDatabase.prototype.compile = returnUndefined;
 yy.DropDatabase.prototype.exec = function (db) {
 	var dbid = this.databaseid;
 

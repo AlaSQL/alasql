@@ -60,7 +60,6 @@ yy.Select.prototype.compile = function(databaseid) {
 	// Create variable for query
 	var query = {};
 	
-
 	query.database = db;
 	// 0. Precompile whereexists
 	this.compileWhereExists(query);

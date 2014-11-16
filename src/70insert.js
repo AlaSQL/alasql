@@ -104,7 +104,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 // INSERT INTO table SELECT
 
 	} else if(this.select) {
-		selectfn = this.select.compile(db);
+		selectfn = this.select.compile(databaseid);
 		var insertfn = function(db, params) {
 			var res = selectfn(params);
 			db.tables[tableid].data = db.tables[tableid].data.concat(res);
@@ -116,7 +116,6 @@ yy.Insert.prototype.compile = function (databaseid) {
     	throw new Error('Wrong INSERT parameters');
     }
 
-
 	return function(params, cb) {
 		var res = insertfn(db, params);
 		if(cb) cb(res);
@@ -124,8 +123,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 	}
 };
 
-yy.Insert.prototype.exec = function (databaseid) {
-	throw new Error('Insert statement is should be compiled')
+yy.Insert.prototype.exec = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+//	throw new Error('Insert statement is should be compiled')
 }
 
 

@@ -12,7 +12,7 @@ yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
 	return 'CREATE DATABASE '+this.databaseid;
 }
-yy.CreateDatabase.prototype.compile = returnUndefined;
+//yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.CreateDatabase.prototype.exec = function (databaseid) {
 	var dbid = this.databaseid;
 	if(alasql.databases[dbid]) {
@@ -28,7 +28,7 @@ yy.UseDatabase = function (params) { return yy.extend(this, params); };
 yy.UseDatabase.prototype.toString = function() {
 	return 'USE DATABASE '+this.databaseid;
 }
-yy.UseDatabase.prototype.compile = returnUndefined;
+//yy.UseDatabase.prototype.compile = returnUndefined;
 yy.UseDatabase.prototype.exec = function (databaseid) {
 	var dbid = this.databaseid;
 	if(!alasql.databases[dbid]) {
@@ -43,7 +43,7 @@ yy.DropDatabase = function (params) { return yy.extend(this, params); }
 yy.DropDatabase.prototype.toString = function() {
 	return 'DROP DATABASE '+this.databaseid;
 }
-yy.DropDatabase.prototype.compile = returnUndefined;
+//yy.DropDatabase.prototype.compile = returnUndefined;
 yy.DropDatabase.prototype.exec = function (db) {
 	var dbid = this.databaseid;
 

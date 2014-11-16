@@ -26,6 +26,7 @@ alasql.DEFAULTDATABASEID = 'alasql';
 
 alasql.use = function (databaseid) {
 	if(!databaseid) databaseid = alasql.DEFAULTDATABASEID;
+	if(alasql.useid == databaseid) return;
 	alasql.useid = databaseid;
 	var db = alasql.databases[alasql.useid];
 	alasql.tables = db.tables;
@@ -41,7 +42,9 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 	var db = alasql.databases[databaseid];
 	var hh = hash(sql);
 	var statement = db.sqlCache[hh];
-	if(statement) return statement(params, cb);
+	if(statement && db.dbversion == statement.dbversion) {
+		return statement(params, cb);
+	}
 
 	// Create AST
 	var ast = alasql.parse(sql);
@@ -50,6 +53,10 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 	else if(ast.statements.length == 1) {
 		if(ast.statements[0].compile) {
 			var statement = ast.statements[0].compile(databaseid);
+			if(!statement) return;
+			statement.sql = sql;
+			statement.dbversion = db.dbversion;
+			
 			// Secure sqlCache size
 			if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
 				db.resetSqlCache();
@@ -57,7 +64,6 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			db.sqlCacheSize++;
 			db.sqlCache[hh] = statement;
 			var res = statement(params, cb);
-//			console.log(res);
 			return res;
 		} else {
 			return ast.statements[0].exec(databaseid, params, cb);		
@@ -71,28 +77,35 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 // Run multiple statements and return array of results
 alasql.drun = function (databaseid, ast, params, cb) {
 	var useid = alasql.useid;
-	alasql.use(databaseid);
+	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		var statement = ast.statements[i].compile(alasql.useid);
 		if(statement) {
 			res.push(statement(params));
 		} else {
-			res.push(ast[i].exec());
+			res.push(ast.statements[i].exec());
 		}		
 	};
-	alasql.use(useid);
+	if(useid != databaseid) alasql.use(useid);
 	if(cb) cb(res);
 	return res;
 };
 
 // Compiler
-alasql.compile = function(kind, sql, databaseid) {
+alasql.compile = function(sql, kind, databaseid) {
+	if(!kind) kind = 'collection';
 	if(!databaseid) databaseid = alasql.useid;
 	var ast = alasql.parse(sql);
-	if(ast.length == 1) {
-		var res = ast[0].compile(databaseid);
+	if(ast.statements.length == 1) {
+		var statementfn = ast.statements[0].compile(databaseid);
+		
 		if(kind == 'value') {
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				var key = Object.keys(res)[0];
+				return res[0][key];
+			};
 		} else  if(kind == 'single') {
 			return res[0];
 		} else  if(kind == 'row') {
@@ -106,12 +119,14 @@ alasql.compile = function(kind, sql, databaseid) {
 			for(var i=0, ilen=res.length; i<ilen; i++){
 				ar.push(res[i][key]);
 			}
-		} else  if(kind == 'array') {
+		} else if(kind == 'array') {
 			return flatArrya(res);
-		} else  if(kind == 'matrix') {
+		} else if(kind == 'matrix') {
 			return arrayOfArrays(res);
+		} else if(kind == 'collection') {
+			return statementfn;
 		} else {
-			return res;
+			return statementfn;
 		}
 
 	} else {

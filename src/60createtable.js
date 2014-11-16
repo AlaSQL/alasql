@@ -38,7 +38,7 @@ yy.CreateTable.prototype.toString = function() {
 }
 
 // CREATE TABLE
-yy.CreateTable.prototype.compile = returnUndefined;
+//yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.exec = function (databaseid) {
 //	var self = this;
 	var db = alasql.databases[databaseid];
