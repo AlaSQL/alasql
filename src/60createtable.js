@@ -56,7 +56,7 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 //	console.log(this);
 
 	// IF NOT EXISTS
-	if(!this.ifnotexists && db.tables[tableid]) return 0;
+	if(this.ifnotexists && db.tables[tableid]) return 0;
 
 	if(db.tables[tableid]) {
 		throw new Error('Can not create table \''+tableid

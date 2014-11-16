@@ -1686,6 +1686,8 @@ alasql.exec = function (sql, params, cb) {
 
 alasql.dexec = function (databaseid, sql, params, cb) {
 	var db = alasql.databases[databaseid];
+	if(db.databaseid != databaseid) console.trace('got!');
+	console.log(3,db.databaseid,databaseid);
 	var hh = hash(sql);
 	var statement = db.sqlCache[hh];
 	if(statement && db.dbversion == statement.dbversion) {
@@ -1891,7 +1893,10 @@ Database.prototype.resetSqlCache = function () {
 
 
 // // Main SQL function
-// Database.prototype.exec = function(sql, params, cb) {
+Database.prototype.exec = function(sql, params, cb) {
+	return alasql.dexec(this.databaseid, sql, params, cb);
+};
+
 // 	// Compile
 // 	var statement = this.compile(sql);
 // 	// Run
@@ -1903,42 +1908,43 @@ Database.prototype.resetSqlCache = function () {
 // };
 
 // // Async version of exec
-// Database.prototype.aexec = function(sql, params) {
-// 	var self = this;
-// 	return new Promise(function(resolve, reject){
-// 		self.exec(sql,params,resolve);
-// 	});
-// };
+Database.prototype.aexec = function(sql, params) {
+	var self = this;
+	return new Promise(function(resolve, reject){
+		alasql.dexec(this.databaseid,sql,params,resolve);
+	});
+};
 
 
 // Aliases like MS SQL
-// Database.prototype.query = Database.prototype.exec;
-// Database.prototype.run = Database.prototype.exec;
-// Database.prototype.queryArray = function(sql, params, cb) {
-// 	return flatArray(this.exec(sql, params, cb));
-// }
+Database.prototype.query = Database.prototype.exec;
+Database.prototype.run = Database.prototype.exec;
+Database.prototype.queryArray = function(sql, params, cb) {
+	return flatArray(this.exec(sql, params, cb));
+}
 
-// Database.prototype.queryArrayOfArrays = function(sql, params, cb) {
-// 	return arrayOfArrays(this.exec(sql, params, cb));
-// }
+Database.prototype.queryArrayOfArrays = function(sql, params, cb) {
+	return arrayOfArrays(this.exec(sql, params, cb));
+}
 
-// Database.prototype.querySingle = function(sql, params, cb) {
-// 	return this.exec(sql, params, cb)[0];
-// }
-// Database.prototype.queryValue = function(sql, params, cb) {
-// 	var res = this.querySingle(sql, params, cb);
-// 	return res[Object.keys(res)[0]];
-// }
+Database.prototype.querySingle = function(sql, params, cb) {
+	return this.exec(sql, params, cb)[0];
+}
+Database.prototype.queryValue = function(sql, params, cb) {
+	var res = this.querySingle(sql, params, cb);
+	return res[Object.keys(res)[0]];
+}
 
-// Database.prototype.value  = Database.prototype.queryValue;
-// Database.prototype.row    = Database.prototype.querySingle;
-// Database.prototype.array  = Database.prototype.queryArray;
-// Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
+Database.prototype.value  = Database.prototype.queryValue;
+Database.prototype.row    = Database.prototype.querySingle;
+Database.prototype.array  = Database.prototype.queryArray;
+Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
 
 
 // Compile statements
-// Database.prototype.compile = function(sql) {
-
+Database.prototype.compile = function(sql, kind) {
+	return alasql.compile(sql, kind, databaseid);
+};
 // 	var self = this;
 // 	var hh = hash(sql);
 
@@ -1962,7 +1968,7 @@ Database.prototype.resetSqlCache = function () {
 // }
 
 // SQL.js compatibility method
-// Database.prototype.prepare = Database.prototype.compile;
+Database.prototype.prepare = Database.prototype.compile;
 
 
 // Added for compatibility with WebSQL
@@ -1992,7 +1998,10 @@ function Transaction(databaseid) {
 	this.databaseid = databaseid;
 	this.commited = false; 
 	this.dbversion = alasql.databases[databaseid].dbversion;
-	this.bank = cloneDeep(alasql.databases[databaseid].tables);
+//	this.bank = cloneDeep(alasql.databases[databaseid]);
+	this.bank = JSON.stringify(alasql.databases[databaseid]);
+	// TODO CLone Tables with insertfns
+//	console.log(this);
 	return this;
 };
 
@@ -2009,8 +2018,9 @@ Transaction.prototype.commit = function() {
 // Rollback
 Transaction.prototype.rollback = function() {
 	if(!this.commited) {
-		alasql.databases[this.databaseid].tables = this.bank;
-		alasql.databases[databaseid].dbversion = this.dbversion;
+		alasql.databases[this.databaseid] = JSON.parse(this.bank);
+		// alasql.databases[this.databaseid].tables = this.bank;
+		// alasql.databases[this.databaseid].dbversion = this.dbversion;
 		delete this.bank;
 	} else {
 		throw new Error('Transaction already commited');
@@ -2019,8 +2029,28 @@ Transaction.prototype.rollback = function() {
 
 // Transactions stub
 Transaction.prototype.exec = Transaction.prototype.executeSQL = function(sql, params, cb) {
-	return alasql.databases[this.databaseid].exec(sql);
+	console.log(this.databaseid);
+	return alasql.dexec(this.databaseid,sql,params,cb);
 };
+
+
+Transaction.prototype.query = Database.prototype.exec;
+Transaction.prototype.run = Database.prototype.exec;
+Transaction.prototype.queryArray = function(sql, params, cb) {
+	return flatArray(this.exec(sql, params, cb));
+}
+
+Transaction.prototype.queryArrayOfArrays = function(sql, params, cb) {
+	return arrayOfArrays(this.exec(sql, params, cb));
+}
+
+Transaction.prototype.querySingle = function(sql, params, cb) {
+	return this.exec(sql, params, cb)[0];
+}
+Transaction.prototype.queryValue = function(sql, params, cb) {
+	var res = this.querySingle(sql, params, cb);
+	return res[Object.keys(res)[0]];
+}
 
 
 
@@ -2747,7 +2777,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		return res;
 	};
 
-	statement.query = query;
+//	statement.dbversion = ;
 //	console.log(statement.query);
 	return statement;
 };
@@ -4244,7 +4274,7 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 //	console.log(this);
 
 	// IF NOT EXISTS
-	if(!this.ifnotexists && db.tables[tableid]) return 0;
+	if(this.ifnotexists && db.tables[tableid]) return 0;
 
 	if(db.tables[tableid]) {
 		throw new Error('Can not create table \''+tableid
@@ -4532,7 +4562,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var table = db.tables[tableid];
 
 	// Check, if this dirty flag is required
-	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
+	var s = '';
+//	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 
 
 // INSERT INTO table VALUES
@@ -4567,7 +4598,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				});
 			} else {
 				var table = db.tables[tableid];
-		//		console.log('table', table.columns);
+	console.log('table1', db, self);
 				table.columns.forEach(function(col, idx){
 					var q = col.columnid +':';
 					var val = values[idx].toJavaScript();
@@ -4603,11 +4634,16 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			if(db.tables[tableid].defaultfns) s += db.tables[tableid].defaultfns;
 			s += ss.join(',')+'};';
-			s += 'db.tables[\''+tableid+'\'].insert(r);';
+//			s += 'db.tables[\''+tableid+'\'].insert(r);';
+            if(db.tables[tableid].insert) {
+    			s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(r);';
+            } else {
+                s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data.push(r);';
+            }
 
 		});
 
-		s += 'return '+this.values.length;
+		s += 'return '+self.values.length;
 		var insertfn = new Function('db, params',s);
 	
 // INSERT INTO table SELECT
@@ -4625,14 +4661,18 @@ yy.Insert.prototype.compile = function (databaseid) {
     	throw new Error('Wrong INSERT parameters');
     }
 
-	return function(params, cb) {
+	var statement = function(params, cb) {
+		console.log(databaseid);
+		var db = alasql.databases[databaseid];
 		var res = insertfn(db, params);
 		if(cb) cb(res);
 		return res;
-	}
+	};
+
+	return statement;
 };
 
-yy.Insert.prototype.exec = function (databaseid, params, cb) {
+yy.Insert.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params,cb);
 //	throw new Error('Insert statement is should be compiled')
 }
@@ -4656,10 +4696,11 @@ yy.Delete.prototype.toString = function() {
 	return s;
 }
 
-yy.Delete.prototype.compile = function (db) {
+yy.Delete.prototype.compile = function (databaseid) {
 //  console.log(11,this);
 
 	var tableid = this.table.tableid;
+	var statement;
 
 	if(this.where) {
 //		try {
@@ -4667,16 +4708,21 @@ yy.Delete.prototype.compile = function (db) {
 //	} catch(err){console.log(444,err)};
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
-		return function (params, cb) {
+		statement = function (params, cb) {
+			var db = alasql.databases[databaseid];
 			var table = db.tables[tableid];
-			table.dirty = true;
+//			table.dirty = true;
 			var orignum = table.data.length;
 
 			var newtable = [];			
 			for(var i=0, ilen=table.data.length;i<ilen;i++) {
 				if(wherefn(table.data[i],params)) {
 					// Check for transaction - if it is not possible then return all back
-					table.delete(i);
+					if(table.delete) {
+						table.delete(i);
+					} else {
+						// SImply do not push
+					}
 				} else newtable.push(table.data[i]);
 			}
 //			table.data = table.data.filter(function(r){return !;});
@@ -4686,7 +4732,7 @@ yy.Delete.prototype.compile = function (db) {
 			return orignum - table.data.length;
 		}
 	} else {
-		return function (params, cb) {
+		statement = function (params, cb) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
@@ -4696,9 +4742,15 @@ yy.Delete.prototype.compile = function (db) {
 			if(cb) cb(orignum);
 			return orignum;
 		};
-	}
+	};
+
+	return statement;
 
 };
+
+yy.Delete.prototype.execute = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+}
 
 
 /*
@@ -4723,9 +4775,8 @@ yy.SetColumn.prototype.toString = function() {
 	return this.columnid.toString() + '='+this.expression.toString();
 }
 
-yy.Update.prototype.compile = function (db) {
+yy.Update.prototype.compile = function (databaseid) {
 //	console.log(this);
-
 	var tableid = this.table.tableid;
 	
 	if(this.where) {
@@ -4739,24 +4790,33 @@ yy.Update.prototype.compile = function (db) {
 	});
 	var assignfn = new Function('r,params',s);
 
-	return function(params, cb) {
+	var statement = function(params, cb) {
+		var db = alasql.databases[databaseid];
 		var table = db.tables[tableid];
 		if(!table) {
 			throw new Error("Table '"+tableid+"' not exists")
 		}
-		table.dirty = true;
+//		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			if(!wherefn || wherefn(table.data[i], params) ) {
-				table.update(assignfn, i, params);
+				if(table.update) {
+					table.update(assignfn, i, params);
+				} else {
+					assignfn(table.data[i], params);
+				}
 				numrows++;
 			}
 		};
 		if(cb) cb(numrows);
 		return numrows;
 	};
+	return statement;
 };
 
+yy.Update.prototype.execute = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+}
 
 
 

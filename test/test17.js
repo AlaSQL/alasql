@@ -3,7 +3,7 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 13', function() {
+describe('Test 17', function() {
 	it('UNION ', function(done){
 
 	var db = alasql.Database("db");

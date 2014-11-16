@@ -23,7 +23,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var table = db.tables[tableid];
 
 	// Check, if this dirty flag is required
-	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
+	var s = '';
+//	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 
 
 // INSERT INTO table VALUES
@@ -58,7 +59,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				});
 			} else {
 				var table = db.tables[tableid];
-		//		console.log('table', table.columns);
+	console.log('table1', db, self);
 				table.columns.forEach(function(col, idx){
 					var q = col.columnid +':';
 					var val = values[idx].toJavaScript();
@@ -94,11 +95,16 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			if(db.tables[tableid].defaultfns) s += db.tables[tableid].defaultfns;
 			s += ss.join(',')+'};';
-			s += 'db.tables[\''+tableid+'\'].insert(r);';
+//			s += 'db.tables[\''+tableid+'\'].insert(r);';
+            if(db.tables[tableid].insert) {
+    			s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(r);';
+            } else {
+                s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data.push(r);';
+            }
 
 		});
 
-		s += 'return '+this.values.length;
+		s += 'return '+self.values.length;
 		var insertfn = new Function('db, params',s);
 	
 // INSERT INTO table SELECT
@@ -116,14 +122,18 @@ yy.Insert.prototype.compile = function (databaseid) {
     	throw new Error('Wrong INSERT parameters');
     }
 
-	return function(params, cb) {
+	var statement = function(params, cb) {
+		console.log(databaseid);
+		var db = alasql.databases[databaseid];
 		var res = insertfn(db, params);
 		if(cb) cb(res);
 		return res;
-	}
+	};
+
+	return statement;
 };
 
-yy.Insert.prototype.exec = function (databaseid, params, cb) {
+yy.Insert.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params,cb);
 //	throw new Error('Insert statement is should be compiled')
 }

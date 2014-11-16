@@ -147,7 +147,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		return res;
 	};
 
-	statement.query = query;
+//	statement.dbversion = ;
 //	console.log(statement.query);
 	return statement;
 };

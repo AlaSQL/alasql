@@ -13,10 +13,11 @@ yy.Delete.prototype.toString = function() {
 	return s;
 }
 
-yy.Delete.prototype.compile = function (db) {
+yy.Delete.prototype.compile = function (databaseid) {
 //  console.log(11,this);
 
 	var tableid = this.table.tableid;
+	var statement;
 
 	if(this.where) {
 //		try {
@@ -24,16 +25,21 @@ yy.Delete.prototype.compile = function (db) {
 //	} catch(err){console.log(444,err)};
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
-		return function (params, cb) {
+		statement = function (params, cb) {
+			var db = alasql.databases[databaseid];
 			var table = db.tables[tableid];
-			table.dirty = true;
+//			table.dirty = true;
 			var orignum = table.data.length;
 
 			var newtable = [];			
 			for(var i=0, ilen=table.data.length;i<ilen;i++) {
 				if(wherefn(table.data[i],params)) {
 					// Check for transaction - if it is not possible then return all back
-					table.delete(i);
+					if(table.delete) {
+						table.delete(i);
+					} else {
+						// SImply do not push
+					}
 				} else newtable.push(table.data[i]);
 			}
 //			table.data = table.data.filter(function(r){return !;});
@@ -43,7 +49,7 @@ yy.Delete.prototype.compile = function (db) {
 			return orignum - table.data.length;
 		}
 	} else {
-		return function (params, cb) {
+		statement = function (params, cb) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
@@ -53,6 +59,12 @@ yy.Delete.prototype.compile = function (db) {
 			if(cb) cb(orignum);
 			return orignum;
 		};
-	}
+	};
+
+	return statement;
 
 };
+
+yy.Delete.prototype.execute = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+}

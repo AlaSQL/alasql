@@ -6,13 +6,15 @@ if(typeof exports === 'object') {
 
 describe('Test 03 - 100,000 times', function() {
 
+	
 	var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
-	var sql2 = "INSERT INTO schools (schooldid, schoolname) VALUES (999,'Northern Pacific School')";
-	var sql3 = "INSERT INTO schools VALUES (999,'Northern Pacific School')";
+	var sql2 = "INSERT INTO schools (schoolid, schoolname) VALUES (999,'Northern Pacific School')";
+	var sql3 = "INSERT INTO schools VALUES (998,'Western Pacific School')";
 
 	zt('Start',100000,function(){});
 
-	it('Create table', function(done){
+	it('0. Create table', function(done){
+		alasql('drop table if exists schools');
 		var res = alasql.exec(sql1);
 		done();
 	});

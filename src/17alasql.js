@@ -40,6 +40,8 @@ alasql.exec = function (sql, params, cb) {
 
 alasql.dexec = function (databaseid, sql, params, cb) {
 	var db = alasql.databases[databaseid];
+	if(db.databaseid != databaseid) console.trace('got!');
+	console.log(3,db.databaseid,databaseid);
 	var hh = hash(sql);
 	var statement = db.sqlCache[hh];
 	if(statement && db.dbversion == statement.dbversion) {

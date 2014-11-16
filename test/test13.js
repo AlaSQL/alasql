@@ -18,8 +18,9 @@ describe('Test 13', function() {
 
 		db.transaction(function(tx) {
 			for(var i=0;i<1000;i++) {
-				tx.exec("INSERT INTO students VALUES (2,'Peter Peterson')");
+				tx.exec("INSERT INTO students VALUES (3,'Alemu Abebe')");
 			};
+//console.log(1);
 			var res = tx.queryValue('SELECT COUNT(*) FROM students');
 			assert.equal(2000,res);
 

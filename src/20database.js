@@ -44,7 +44,10 @@ Database.prototype.resetSqlCache = function () {
 
 
 // // Main SQL function
-// Database.prototype.exec = function(sql, params, cb) {
+Database.prototype.exec = function(sql, params, cb) {
+	return alasql.dexec(this.databaseid, sql, params, cb);
+};
+
 // 	// Compile
 // 	var statement = this.compile(sql);
 // 	// Run
@@ -56,42 +59,43 @@ Database.prototype.resetSqlCache = function () {
 // };
 
 // // Async version of exec
-// Database.prototype.aexec = function(sql, params) {
-// 	var self = this;
-// 	return new Promise(function(resolve, reject){
-// 		self.exec(sql,params,resolve);
-// 	});
-// };
+Database.prototype.aexec = function(sql, params) {
+	var self = this;
+	return new Promise(function(resolve, reject){
+		alasql.dexec(this.databaseid,sql,params,resolve);
+	});
+};
 
 
 // Aliases like MS SQL
-// Database.prototype.query = Database.prototype.exec;
-// Database.prototype.run = Database.prototype.exec;
-// Database.prototype.queryArray = function(sql, params, cb) {
-// 	return flatArray(this.exec(sql, params, cb));
-// }
+Database.prototype.query = Database.prototype.exec;
+Database.prototype.run = Database.prototype.exec;
+Database.prototype.queryArray = function(sql, params, cb) {
+	return flatArray(this.exec(sql, params, cb));
+}
 
-// Database.prototype.queryArrayOfArrays = function(sql, params, cb) {
-// 	return arrayOfArrays(this.exec(sql, params, cb));
-// }
+Database.prototype.queryArrayOfArrays = function(sql, params, cb) {
+	return arrayOfArrays(this.exec(sql, params, cb));
+}
 
-// Database.prototype.querySingle = function(sql, params, cb) {
-// 	return this.exec(sql, params, cb)[0];
-// }
-// Database.prototype.queryValue = function(sql, params, cb) {
-// 	var res = this.querySingle(sql, params, cb);
-// 	return res[Object.keys(res)[0]];
-// }
+Database.prototype.querySingle = function(sql, params, cb) {
+	return this.exec(sql, params, cb)[0];
+}
+Database.prototype.queryValue = function(sql, params, cb) {
+	var res = this.querySingle(sql, params, cb);
+	return res[Object.keys(res)[0]];
+}
 
-// Database.prototype.value  = Database.prototype.queryValue;
-// Database.prototype.row    = Database.prototype.querySingle;
-// Database.prototype.array  = Database.prototype.queryArray;
-// Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
+Database.prototype.value  = Database.prototype.queryValue;
+Database.prototype.row    = Database.prototype.querySingle;
+Database.prototype.array  = Database.prototype.queryArray;
+Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
 
 
 // Compile statements
-// Database.prototype.compile = function(sql) {
-
+Database.prototype.compile = function(sql, kind) {
+	return alasql.compile(sql, kind, databaseid);
+};
 // 	var self = this;
 // 	var hh = hash(sql);
 
@@ -115,7 +119,7 @@ Database.prototype.resetSqlCache = function () {
 // }
 
 // SQL.js compatibility method
-// Database.prototype.prepare = Database.prototype.compile;
+Database.prototype.prepare = Database.prototype.compile;
 
 
 // Added for compatibility with WebSQL

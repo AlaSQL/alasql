@@ -20,9 +20,8 @@ yy.SetColumn.prototype.toString = function() {
 	return this.columnid.toString() + '='+this.expression.toString();
 }
 
-yy.Update.prototype.compile = function (db) {
+yy.Update.prototype.compile = function (databaseid) {
 //	console.log(this);
-
 	var tableid = this.table.tableid;
 	
 	if(this.where) {
@@ -36,24 +35,33 @@ yy.Update.prototype.compile = function (db) {
 	});
 	var assignfn = new Function('r,params',s);
 
-	return function(params, cb) {
+	var statement = function(params, cb) {
+		var db = alasql.databases[databaseid];
 		var table = db.tables[tableid];
 		if(!table) {
 			throw new Error("Table '"+tableid+"' not exists")
 		}
-		table.dirty = true;
+//		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			if(!wherefn || wherefn(table.data[i], params) ) {
-				table.update(assignfn, i, params);
+				if(table.update) {
+					table.update(assignfn, i, params);
+				} else {
+					assignfn(table.data[i], params);
+				}
 				numrows++;
 			}
 		};
 		if(cb) cb(numrows);
 		return numrows;
 	};
+	return statement;
 };
 
+yy.Update.prototype.execute = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+}
 
 
 
