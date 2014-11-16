@@ -4385,16 +4385,18 @@ yy.DropTable.prototype.toString = function() {
 
 
 // DROP TABLE
-yy.DropTable.prototype.compile = function (db) {
-	var ifexists = this.ifexists;
+yy.DropTable.prototype.execute = function (databaseid) {
+	var db = alasql.databases[databaseid];
 	var tableid = this.table.tableid;
-	return function() {
-		if(!ifexists || ifexists && db.tables[tableid]) {
-			if(!db.tables[tableid]) throw new Error('Can not drop table \''+this.target.value+'\', because it does not exist in the database.');
+	if(!this.ifexists || this.ifexists && db.tables[tableid]) {
+		if(!db.tables[tableid]) {
+			throw new Error('Can not drop table \''+this.target.value+'\', because it does not exist in the database.');
+		} else {
 			delete db.tables[tableid];
+			return 1;
 		}
-		return 1;
 	}
+	return 0;
 };
 
 

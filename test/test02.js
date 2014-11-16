@@ -4,22 +4,14 @@ if(typeof exports === 'object') {
 };
 
 describe('Test 02', function() {
-	it('Crete table with compile statement', function(done){
-		alasql.exec('DROP TABLE IF EXISTS schools');
-	 	var st = alasql.compile('CREATE TABLE schools (schoolid INT, schoolname STRING)');
-	 	st();
-//	 	console.log(alasql.currentDatabase.databaseid);
-//	 	console.log(alasql.);
-	 	assert.equal(alasql.currentDatabase.tables.schools.columns.length,2);
+	it('Create table with compile statement', function(done){
+		alasql('create database test02; use test02;');
+		console.log(1);
+		alasql('DROP TABLE IF EXISTS schools');
+	 	alasql('CREATE TABLE schools (schoolid INT, schoolname STRING)');
+	 	assert.equal(alasql.databases.test02.tables.schools.columns.length,2);
+	 	alasql('drop database test02');
 	    done();
 	});
-
-	it('ADD COLUMN', function(done){
-		alasql('create database test02; use test02;');
-
-
-		done();
-	});
-
 
 });
