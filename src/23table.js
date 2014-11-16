@@ -7,7 +7,7 @@
 */
 
 // Table class
-Table = function(){
+Table = function(params){
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};
@@ -16,6 +16,8 @@ Table = function(){
 
 	this.ixdefs = {};
 	this.indices = {};
+
+	extend(this,params);
 };
 
 alasql.Table = Table;
@@ -31,9 +33,10 @@ alasql.Table = Table;
 // alasql.View = View;
 
 Table.prototype.indexColumns = function() {
-	this.xcolumns = {};
-	this.columns.forEach(function(col){
-		table.xcolumns[col.columnid] = col;
+	var self = this;
+	self.xcolumns = {};
+	self.columns.forEach(function(col){
+		self.xcolumns[col.columnid] = col;
 	});	
 }
 

@@ -5,7 +5,6 @@ if(typeof exports === 'object') {
 
 describe('Test 00', function() {
 
-if(false) {
 	it('Very beginning: multiple statements', function(done){
 		var res = [];
 		res.push(alasql('create database test00'));
@@ -17,7 +16,6 @@ if(false) {
 		assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
 		done();
 	});
-};
 
 	it('Very beginning: multiple expressions', function(done){
 		var sql = 'create database test00;';

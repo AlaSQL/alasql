@@ -47,7 +47,7 @@ function prepareData (defined) {
 
 	} else {
 
-		alasql.tables.students = {
+		alasql.tables.students = new Table ({
 			data:studentsData,
 			columns:[
 				{columnid: 'studentid', dbtypeid:'INT'}, 
@@ -57,31 +57,31 @@ function prepareData (defined) {
 				{columnid: 'startdate', dbtypeid: 'DATE'},
 				{columnid: 'amt', dbtypeid: 'MONEY'}
 			]
-		};
+		});
 
-		alasql.indexColumns('students');
+		alasql.tables.students.indexColumns();
 
-		alasql.tables.courses = {
+		alasql.tables.courses = new Table({
 			data: coursesData,
 			columns: [
 				{columnid: 'courseid', dbtypeid:'INT'}, 
 				{columnid: 'coursename', dbtypeid: 'STRING'}, 
 				{columnid: 'schoolid'},
 			]
-		}
+		});
 
-		alasql.indexColumns('courses');
+		alasql.tables.courses.indexColumns();
 
-		alasql.tables.schools = {
+		alasql.tables.schools = new Table ({
 			data: schoolData,
 			columns: [
 				{columnid: 'schoolid', dbtypeid:'INT'}, 
 				{columnid: 'schoolname', dbtypeid: 'STRING'}, 
 				{columnid: 'regionid'},
 			]
-		};
+		});
 
-		alasql.indexColumns('schools');
+		alasql.tables.schools.indexColumns('schools');
 	}
 };
 
