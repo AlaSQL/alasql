@@ -444,7 +444,7 @@ yy.Select.prototype.compileFrom = function(query) {
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
 			}
 		} else if(tq instanceof yy.Select) {
-			source.subquery = tq.compile(query.database);
+			source.subquery = tq.compile(query.database.databaseid);
 			source.datafn = function(query, params) {
 				return source.subquery(query.params);
 			}						

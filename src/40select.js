@@ -98,28 +98,28 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 9. Compile ordering function for UNION and UNIONALL
 	if(this.union) {
-		query.unionfn = this.union.compile(db);
+		query.unionfn = this.union.compile(databaseid);
 		if(this.union.order) {
 			query.orderfn = this.union.compileOrder(query);
 		} else {
 			query.orderfn = null;
 		}
 	} else if(this.unionall) {
-		query.unionallfn = this.unionall.compile(db);
+		query.unionallfn = this.unionall.compile(databaseid);
 		if(this.unionall.order) {
 			query.orderfn = this.unionall.compileOrder(query);
 		} else {
 			query.orderfn = null;
 		}
 	} else if(this.except) {
-		query.exceptfn = this.except.compile(db);
+		query.exceptfn = this.except.compile(databaseid);
 		if(this.except.order) {
 			query.orderfn = this.except.compileOrder(query);
 		} else {
 			query.orderfn = null;
 		}
 	} else if(this.intersect) {
-		query.intersectfn = this.intersect.compile(db);
+		query.intersectfn = this.intersect.compile(databaseid);
 		if(this.intersect.order) {
 			query.intersectfn = this.intersect.compileOrder(query);
 		} else {

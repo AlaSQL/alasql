@@ -9,7 +9,7 @@ describe('Test 54 - SELECT Number', function() {
 		alasql('use test54');
 
 		assert(10 == alasql.value('SELECT 10'));
-		assert.deepEqual({'10':10,'20':20},alasql.row('SELECT 10,20'));
+		assert.deepEqual([10,20],alasql.row('SELECT 10,20'));
 		assert(4 == alasql.value('SELECT 2+2'));
 		assert("Peter" == alasql.value('SELECT "Peter"'));
 		assert(10 == alasql.value('SELECT a FROM (SELECT 10 AS a) AS t'));

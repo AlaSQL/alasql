@@ -6,16 +6,20 @@ if(typeof exports === 'object') {
 describe('Test 38', function() {
 	describe('LEFT AND RIGHT JOINS', function(){
 
-		var db = alasql.Database("db");
+		var db;
+		it('Prepare database', function(done){
+			db = new alasql.Database("db");
 
-		db.exec('CREATE TABLE one (a INT, b INT)');
-		db.exec('INSERT INTO one VALUES (1,10),(2,20),(3,30), (4,40)');
+			db.exec('CREATE TABLE one (a INT, b INT)');
+			db.exec('INSERT INTO one VALUES (1,10),(2,20),(3,30), (4,40)');
 
-		db.exec('CREATE TABLE two (e INT, f INT)');
-		db.exec('INSERT INTO two VALUES (1,100),(2,200),(3,300), (1000,1000), (2000,2000)');
+			db.exec('CREATE TABLE two (e INT, f INT)');
+			db.exec('INSERT INTO two VALUES (1,100),(2,200),(3,300), (1000,1000), (2000,2000)');
 
-		db.exec('CREATE TABLE three (g INT, h INT)');
-		db.exec('INSERT INTO three VALUES (200,2000), (1000,10000),(2000,20000), (3000,30000)');
+			db.exec('CREATE TABLE three (g INT, h INT)');
+			db.exec('INSERT INTO three VALUES (200,2000), (1000,10000),(2000,20000), (3000,30000)');
+			done();
+		});
 
 		it('1x LEFT JOIN', function(done){
 			var res = db.exec("SELECT * FROM one LEFT JOIN two ON one.a = two.e");

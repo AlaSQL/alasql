@@ -59,7 +59,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				});
 			} else {
 				var table = db.tables[tableid];
-	console.log('table1', db, self);
+//	console.log('table1', db, self);
 				table.columns.forEach(function(col, idx){
 					var q = col.columnid +':';
 					var val = values[idx].toJavaScript();
@@ -123,7 +123,7 @@ yy.Insert.prototype.compile = function (databaseid) {
     }
 
 	var statement = function(params, cb) {
-		console.log(databaseid);
+		//console.log(databaseid);
 		var db = alasql.databases[databaseid];
 		var res = insertfn(db, params);
 		if(cb) cb(res);

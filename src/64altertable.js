@@ -14,12 +14,11 @@ yy.AlterTable.prototype.toString = function() {
 	return s;
 }
 
-yy.AlterTable.prototype.compile = function (db) {
-
+yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
+	var db = alasql.databases[databaseid];
 	if(this.renameto) {
 		var oldtableid = this.table.tableid;
 		var newtableid = this.renameto;
-		return function(params, cb) {
 			var res = 1;
 			if(db.tables[newtableid]) {
 				throw new Error("Can not rename a table '"+oldtableid+"' to '"
@@ -33,15 +32,17 @@ yy.AlterTable.prototype.compile = function (db) {
 			};
 			if(cb) cb(res)
 			return res;
-		} 
 	} else if(this.addcolumn) {
-		return function(){}
+		// TODO
+		return 1;
 	} else if(this.modifycolumn) {
-		return function(){}
+		// TODO
+		return 1;
 	} else if(this.dropcolumn) {
 		var tableid = this.table.tableid;
 		var columnid = this.columnid;
-		return function(){}
+		// TODO
+		return 1;
 	} else {
 		throw Error('Unknown ALTER TABLE method');
 	}

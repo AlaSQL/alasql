@@ -13,24 +13,24 @@ describe('Test 59 - Other operators', function() {
 
 	it('USE DATABASE', function(done){
 		alasql("USE DATABASE mybase");
-		assert.equal(alasql.currentDatabase.databaseid, 'mybase'); 
+		assert.equal(alasql.useid, 'mybase'); 
 		done();
 	});
 
 	it('DROP current DATABASE', function(done){
 		alasql("DROP DATABASE mybase");
 		assert(!alasql.databases.mybase); 
-		assert(alasql.currentDatabase.databaseid == 'alasql'); 
+		assert(alasql.useid == 'alasql'); 
 		done();
 	});
 	it('DROP non-current DATABASE', function(done){
 		alasql("CREATE DATABASE mybase");
 		alasql("USE DATABASE mybase");
-		assert(alasql.currentDatabase.databaseid == 'mybase'); 
+		assert(alasql.useid == 'mybase'); 
 		alasql("USE DATABASE alasql");
 		alasql("DROP DATABASE mybase");
 		assert(!alasql.databases.mybase); 
-		assert(alasql.currentDatabase.databaseid == 'alasql'); 
+		assert(alasql.useid == 'alasql'); 
 		done();
 	});
 

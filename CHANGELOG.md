@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.0.17 (13.11.2014 - 14.11.2014)
+
+* Changed approach to execute and compilations
+* Broke transactions (to be reviewed)
+
 ### 0.0.16 (11.11.2014 - 12.11.2014)
 
 * PRIMARY KEY and FOREIGN KEY parser
@@ -12,6 +17,7 @@
 * RANDOM
 * INSERT INTO table DEFAULT VALUES
 * CREATE TABLE table (column type DEFAULT value)
+
 
 ### 0.0.15 (10.11.2014)
 

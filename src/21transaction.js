@@ -50,7 +50,7 @@ Transaction.prototype.rollback = function() {
 
 // Transactions stub
 Transaction.prototype.exec = Transaction.prototype.executeSQL = function(sql, params, cb) {
-	console.log(this.databaseid);
+//	console.log(this.databaseid);
 	return alasql.dexec(this.databaseid,sql,params,cb);
 };
 

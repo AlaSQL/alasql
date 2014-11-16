@@ -23,13 +23,13 @@ yy.ExistsValue.prototype.toJavaScript = function() {
 yy.Select.prototype.compileWhereExists = function(query) {
 	if(!this.exists) return;
 	query.existsfn = this.exists.map(function(ex) {
-		return ex.compile(query.database);
+		return ex.compile(query.database.databaseid);
 	});
 };
 
 yy.Select.prototype.compileQueries = function(query) {
 	if(!this.queries) return;
 	query.queriesfn = this.queries.map(function(q) {
-		return q.compile(query.database);
+		return q.compile(query.database.databaseid);
 	});
 };

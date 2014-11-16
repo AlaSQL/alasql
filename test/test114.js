@@ -7,12 +7,12 @@ if(typeof exports === 'object') {
 describe('Test 114 - RANDOM()', function() {
 
 	it('Select random values', function(done) {
-		var res = alasql.matrix('select random() AS 0, random() AS 1, random(100) AS 2, random(100) AS 3 from ? a',[[1]]);
-		assert(res[0].length == 4);
-		assert(res[0][0] < 1);
-		assert(res[0][1] < 1);
-		assert(res[0][2] < 100);
-		assert(res[0][3] < 100);
+		var res = alasql.row('select random() AS 0, random() AS 1, random(100) AS 2, random(100) AS 3 from ? a',[[1]]);
+		assert(res.length == 4);
+		assert(res[0] < 1);
+		assert(res[1] < 1);
+		assert(res[2] < 100);
+		assert(res[3] < 100);
 		done();
 	});
 

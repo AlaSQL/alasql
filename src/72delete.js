@@ -18,6 +18,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 	var tableid = this.table.tableid;
 	var statement;
+			var db = alasql.databases[databaseid];
 
 	if(this.where) {
 //		try {
@@ -26,7 +27,6 @@ yy.Delete.prototype.compile = function (databaseid) {
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
 		statement = function (params, cb) {
-			var db = alasql.databases[databaseid];
 			var table = db.tables[tableid];
 //			table.dirty = true;
 			var orignum = table.data.length;

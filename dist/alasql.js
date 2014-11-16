@@ -1686,8 +1686,8 @@ alasql.exec = function (sql, params, cb) {
 
 alasql.dexec = function (databaseid, sql, params, cb) {
 	var db = alasql.databases[databaseid];
-	if(db.databaseid != databaseid) console.trace('got!');
-	console.log(3,db.databaseid,databaseid);
+//	if(db.databaseid != databaseid) console.trace('got!');
+//	console.log(3,db.databaseid,databaseid);
 	var hh = hash(sql);
 	var statement = db.sqlCache[hh];
 	if(statement && db.dbversion == statement.dbversion) {
@@ -1834,14 +1834,45 @@ alasql.queryValue = function (sql, params, cb) {
 };
 
 alasql.queryArrayOfArrays = function (sql, params, cb) {
-	var res = this.queryArrayOfArrays(sql, params);
-	if(cb) cb(res);
-	return res;
+	var res = this.exec(sql, params);
+	var keys = Object.keys(res[0]);
+	var klen = keys.length;
+	var aa = [];
+	for(var i=0, ilen=res.length;i<ilen;i++) {
+		var r = res[i];
+		var a = [];
+		for(var k=0; k<klen;k++){
+			a.push(r[keys[k]]);
+		}
+		aa.push(a);
+	}
+
+	if(cb) cb(aa);
+	return aa;
 };
 
+/*alasql.queryColumn = function (sql, params, cb) {
+	var res = this.exec(sql, params);
+	var keys = Object.keys(res[0]);
+	var klen = keys.length;
+	var aa = [];
+	for(var i=0, ilen=res.length;i<ilen;i++) {
+		var r = res[i];
+		var a = [];
+		for(var k=0; k<klen;k++){
+			a.push(r[keys[k]]);
+		}
+		aa.push(a);
+	}
+
+	if(cb) cb(aa);
+	return aa;
+};
+*/
 alasql.value = alasql.queryValue;
 alasql.single = alasql.querySingle;
 alasql.row = alasql.queryRow;
+alasql.column = alasql.queryArray;
 alasql.array = alasql.queryArray;
 alasql.matrix = alasql.queryArrayOfArrays;
 
@@ -2029,7 +2060,7 @@ Transaction.prototype.rollback = function() {
 
 // Transactions stub
 Transaction.prototype.exec = Transaction.prototype.executeSQL = function(sql, params, cb) {
-	console.log(this.databaseid);
+//	console.log(this.databaseid);
 	return alasql.dexec(this.databaseid,sql,params,cb);
 };
 
@@ -2728,28 +2759,28 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 9. Compile ordering function for UNION and UNIONALL
 	if(this.union) {
-		query.unionfn = this.union.compile(db);
+		query.unionfn = this.union.compile(databaseid);
 		if(this.union.order) {
 			query.orderfn = this.union.compileOrder(query);
 		} else {
 			query.orderfn = null;
 		}
 	} else if(this.unionall) {
-		query.unionallfn = this.unionall.compile(db);
+		query.unionallfn = this.unionall.compile(databaseid);
 		if(this.unionall.order) {
 			query.orderfn = this.unionall.compileOrder(query);
 		} else {
 			query.orderfn = null;
 		}
 	} else if(this.except) {
-		query.exceptfn = this.except.compile(db);
+		query.exceptfn = this.except.compile(databaseid);
 		if(this.except.order) {
 			query.orderfn = this.except.compileOrder(query);
 		} else {
 			query.orderfn = null;
 		}
 	} else if(this.intersect) {
-		query.intersectfn = this.intersect.compile(db);
+		query.intersectfn = this.intersect.compile(databaseid);
 		if(this.intersect.order) {
 			query.intersectfn = this.intersect.compileOrder(query);
 		} else {
@@ -2814,14 +2845,14 @@ yy.ExistsValue.prototype.toJavaScript = function() {
 yy.Select.prototype.compileWhereExists = function(query) {
 	if(!this.exists) return;
 	query.existsfn = this.exists.map(function(ex) {
-		return ex.compile(query.database);
+		return ex.compile(query.database.databaseid);
 	});
 };
 
 yy.Select.prototype.compileQueries = function(query) {
 	if(!this.queries) return;
 	query.queriesfn = this.queries.map(function(q) {
-		return q.compile(query.database);
+		return q.compile(query.database.databaseid);
 	});
 };
 
@@ -3271,7 +3302,7 @@ yy.Select.prototype.compileFrom = function(query) {
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
 			}
 		} else if(tq instanceof yy.Select) {
-			source.subquery = tq.compile(query.database);
+			source.subquery = tq.compile(query.database.databaseid);
 			source.datafn = function(query, params) {
 				return source.subquery(query.params);
 			}						
@@ -4446,12 +4477,11 @@ yy.AlterTable.prototype.toString = function() {
 	return s;
 }
 
-yy.AlterTable.prototype.compile = function (db) {
-
+yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
+	var db = alasql.databases[databaseid];
 	if(this.renameto) {
 		var oldtableid = this.table.tableid;
 		var newtableid = this.renameto;
-		return function(params, cb) {
 			var res = 1;
 			if(db.tables[newtableid]) {
 				throw new Error("Can not rename a table '"+oldtableid+"' to '"
@@ -4465,15 +4495,17 @@ yy.AlterTable.prototype.compile = function (db) {
 			};
 			if(cb) cb(res)
 			return res;
-		} 
 	} else if(this.addcolumn) {
-		return function(){}
+		// TODO
+		return 1;
 	} else if(this.modifycolumn) {
-		return function(){}
+		// TODO
+		return 1;
 	} else if(this.dropcolumn) {
 		var tableid = this.table.tableid;
 		var columnid = this.columnid;
-		return function(){}
+		// TODO
+		return 1;
 	} else {
 		throw Error('Unknown ALTER TABLE method');
 	}
@@ -4598,7 +4630,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				});
 			} else {
 				var table = db.tables[tableid];
-	console.log('table1', db, self);
+//	console.log('table1', db, self);
 				table.columns.forEach(function(col, idx){
 					var q = col.columnid +':';
 					var val = values[idx].toJavaScript();
@@ -4662,7 +4694,7 @@ yy.Insert.prototype.compile = function (databaseid) {
     }
 
 	var statement = function(params, cb) {
-		console.log(databaseid);
+		//console.log(databaseid);
 		var db = alasql.databases[databaseid];
 		var res = insertfn(db, params);
 		if(cb) cb(res);
@@ -4701,6 +4733,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 	var tableid = this.table.tableid;
 	var statement;
+			var db = alasql.databases[databaseid];
 
 	if(this.where) {
 //		try {
@@ -4709,7 +4742,6 @@ yy.Delete.prototype.compile = function (databaseid) {
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
 		statement = function (params, cb) {
-			var db = alasql.databases[databaseid];
 			var table = db.tables[tableid];
 //			table.dirty = true;
 			var orignum = table.data.length;

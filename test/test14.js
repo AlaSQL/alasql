@@ -5,7 +5,7 @@ if(typeof exports === 'object') {
 
 describe('Test 14', function() {
 	it('Indices', function(done){
-	var db = alasql.Database("db");
+	var db = new alasql.Database("db");
 		db.exec('DROP TABLE IF EXISTS test1');
 		db.exec('DROP TABLE IF EXISTS test2');
 

@@ -5,11 +5,14 @@ if(typeof exports === 'object') {
 
 describe('Test 39', function() {
 	describe('Negative numbers', function(){
+		var db;
+		it('Prepare database', function(done){
+			db = new alasql.Database("db");
 
-		var db = alasql.Database("db");
-
-		db.exec('CREATE TABLE one (a INT, b INT)');
-		db.exec('INSERT INTO one VALUES (-1,-10),(-2,-20),(3,30), (-4,40)');
+			db.exec('CREATE TABLE one (a INT, b INT)');
+			db.exec('INSERT INTO one VALUES (-1,-10),(-2,-20),(3,30), (-4,40)');
+			done();
+		});
 
 
 		it('Negative numbers', function(done){

@@ -40,8 +40,8 @@ alasql.exec = function (sql, params, cb) {
 
 alasql.dexec = function (databaseid, sql, params, cb) {
 	var db = alasql.databases[databaseid];
-	if(db.databaseid != databaseid) console.trace('got!');
-	console.log(3,db.databaseid,databaseid);
+//	if(db.databaseid != databaseid) console.trace('got!');
+//	console.log(3,db.databaseid,databaseid);
 	var hh = hash(sql);
 	var statement = db.sqlCache[hh];
 	if(statement && db.dbversion == statement.dbversion) {
@@ -188,14 +188,45 @@ alasql.queryValue = function (sql, params, cb) {
 };
 
 alasql.queryArrayOfArrays = function (sql, params, cb) {
-	var res = this.queryArrayOfArrays(sql, params);
-	if(cb) cb(res);
-	return res;
+	var res = this.exec(sql, params);
+	var keys = Object.keys(res[0]);
+	var klen = keys.length;
+	var aa = [];
+	for(var i=0, ilen=res.length;i<ilen;i++) {
+		var r = res[i];
+		var a = [];
+		for(var k=0; k<klen;k++){
+			a.push(r[keys[k]]);
+		}
+		aa.push(a);
+	}
+
+	if(cb) cb(aa);
+	return aa;
 };
 
+/*alasql.queryColumn = function (sql, params, cb) {
+	var res = this.exec(sql, params);
+	var keys = Object.keys(res[0]);
+	var klen = keys.length;
+	var aa = [];
+	for(var i=0, ilen=res.length;i<ilen;i++) {
+		var r = res[i];
+		var a = [];
+		for(var k=0; k<klen;k++){
+			a.push(r[keys[k]]);
+		}
+		aa.push(a);
+	}
+
+	if(cb) cb(aa);
+	return aa;
+};
+*/
 alasql.value = alasql.queryValue;
 alasql.single = alasql.querySingle;
 alasql.row = alasql.queryRow;
+alasql.column = alasql.queryArray;
 alasql.array = alasql.queryArray;
 alasql.matrix = alasql.queryArrayOfArrays;
 

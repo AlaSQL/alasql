@@ -4,13 +4,15 @@ if(typeof exports === 'object') {
 };
 
 describe('Test 40', function() {
-	describe('Float numbers', function(){
-
-		var db = alasql.Database("db");
-
+	var db;
+	it('Prepare database', function(done){
+		db = new alasql.Database("db");
 		db.exec('CREATE TABLE one (a INT, b FLOAT)');
-		db.exec('INSERT INTO one VALUES (-1,-10.1),(-2,-20.2345678),(3,30.12), (-4,40.00)');
+		db.exec('INSERT INTO one VALUES (-1,-10.1),(-2,-20.2345678),(3,30.12), (-4,40.00)');			
+		done();
+	});
 
+	describe('Float numbers', function(){
 
 		it('Float and negative numbers', function(done){
 			var res = db.exec("SELECT a,b,-1.1*a AS c FROM one ORDER BY a");
@@ -24,15 +26,11 @@ describe('Test 40', function() {
 
 	describe('Strings', function(){
 
-		var db = alasql.Database("db");
-
-		db.exec('CREATE TABLE one (a STRING)');
-		db.exec('INSERT INTO one VALUES ("One")');
-		db.exec("INSERT INTO one VALUES ('Two')");
-
-
 		it('Strings with single and double quaters', function(done){
-			var res = db.queryArray("SELECT a FROM one");
+			db.exec('CREATE TABLE five (a STRING)');
+			db.exec('INSERT INTO five VALUES ("One")');
+			db.exec("INSERT INTO five VALUES ('Two')");
+			var res = db.queryArray("SELECT a FROM five");
 //			console.log();
 			assert.deepEqual(["One", "Two"],res);
 			done();
