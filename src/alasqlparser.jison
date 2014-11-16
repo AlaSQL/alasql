@@ -243,7 +243,7 @@ WithTables :;
 
 Select
 	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
-		{   yy.extend($$,$1); yy.extend($$,$3); yy.extend($$,$4); 
+		{   yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
 		    yy.extend($$,$8); 
 		    $$ = $1;
@@ -274,7 +274,7 @@ TopClause
 IntoClause
 	: {$$ = null}
 	| INTO Table
-		{$$ = $2}
+		{$$ = {into: $2} }
 	;
 
 FromClause
@@ -353,8 +353,7 @@ JoinTableAs
 	;
 
 JoinMode
-	: { $$ = {joinmode: "INNER"}; }
-	| JoinModeMode
+	: JoinModeMode
 		{ $$ = { joinmode: $1 } ; }
 	| NATURAL JoinModeMode
 		{ $$ = {joinmode: $1, natural:true} ; }

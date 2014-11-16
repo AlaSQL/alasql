@@ -127,6 +127,16 @@ yy.Select.prototype.compile = function(databaseid) {
 		}
 	};
 
+	// SELECT INTO
+//	console.log(this.into);
+	if(this.into) {
+		query.intofns = 
+		'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
+		'[\''+this.into.tableid+'\'].data='+
+		'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
+		'[\''+this.into.tableid+'\'].data.concat(this.data)';
+		query.intofn = new Function(query.intofns); 
+	}
 //console.log(query);
 
 	// Now, compile all togeather into one function with query object in scope

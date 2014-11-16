@@ -99,10 +99,16 @@ describe('Test 0', function() {
 		alasql('create table one (a int)');
 		alasql('create table two (a int)');
 		alasql('insert into one (a) values (?)', [10]);
-		alasql('insert into two select * from one');
-		var res = alasql.value('select * from two');
-		assert(res = 10);
-		alasql('drop database test00');	
+		alasql('insert into one (a) values (?)', [5]);
+		var res = alasql.value('select sum(a) from one');	
+		assert(res = 15);
+		alasql('insert into two (a) values (?)', [20]);
+		var res = alasql('select * into two from one');
+		assert(res == 2);
+		var res = alasql.value('select sum(a) from two');	
+		assert(res == 35);
+//		console.log(res);
+//		alasql('drop database test00');	
 		done();
 	});	
 

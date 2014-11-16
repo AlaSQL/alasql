@@ -70,8 +70,14 @@ function queryfn(query,oldscope) {
 	// Ordering
 	if(query.orderfn) query.data = query.data.sort(query.orderfn);
 
+	if(query.intofn) {
+		query.intofn();
+		return query.data.length;
+	} else {
+		return query.data;
+	}
+
 	// That's all
-	return query.data;
 };
 
 // Limiting
