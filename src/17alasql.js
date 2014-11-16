@@ -22,16 +22,19 @@ alasql.databases = {};
 
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
+alasql.DEFAULTDATABASEID = 'alasql';
 
 alasql.use = function (databaseid) {
+	if(!databaseid) databaseid = alasql.DEFAULTDATABASEID;
 	alasql.useid = databaseid;
-	alasql.tables = alasql.currentDatabase.tables;
-	alasql.currentDatabase.resetSqlCache();
+	var db = alasql.databases[alasql.useid];
+	alasql.tables = db.tables;
+	db.resetSqlCache();
 };
 
 // Run one statement
 alasql.exec = function (sql, params, cb) {
-	alasql.dexec(alasql.useid, sql, params, cb);
+	return alasql.dexec(alasql.useid, sql, params, cb);
 }
 
 alasql.dexec = function (databaseid, sql, params, cb) {
@@ -42,21 +45,27 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 
 	// Create AST
 	var ast = alasql.parse(sql);
-	if(ast.length == 0) return 0;
-	else if(ast.length == 1) {
-		var statement = ast[i].compile(databaseid);
-		if(statement) {
+	if(!ast.statements) return;
+	if(ast.statements.length == 0) return 0;
+	else if(ast.statements.length == 1) {
+		if(ast.statements[0].compile) {
+			var statement = ast.statements[0].compile(databaseid);
 			// Secure sqlCache size
 			if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
 				db.resetSqlCache();
 			}
 			db.sqlCacheSize++;
 			db.sqlCache[hh] = statement;
-			return statement(params, cb);
+			var res = statement(params, cb);
+//			console.log(res);
+			return res;
+		} else {
+			return ast.statements[0].exec(databaseid, params, cb);		
 		}
-		else return ast[i].exec(databaseid, params, cb);		
+	} else {
+		// Multiple statements
+		return alasql.drun(databaseid, ast, params, cb);
 	}
-	return alasql.drun(databaseid, ast, params, cb);
 };
 
 // Run multiple statements and return array of results
@@ -64,23 +73,47 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	var useid = alasql.useid;
 	alasql.use(databaseid);
 	var res = [];
-	for (var i=0, ilen=ast.length; i<ilen; i++) {
-		var statement = ast[i].compile(alasql.useid);
+	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
+		var statement = ast.statements[i].compile(alasql.useid);
 		if(statement) {
 			res.push(statement(params));
-		} else res.push(ast[i].exec());		
-	});
+		} else {
+			res.push(ast[i].exec());
+		}		
+	};
 	alasql.use(useid);
 	if(cb) cb(res);
 	return res;
 };
 
 // Compiler
-alasql.compile = function(sql, databaseid) {
+alasql.compile = function(kind, sql, databaseid) {
 	if(!databaseid) databaseid = alasql.useid;
 	var ast = alasql.parse(sql);
 	if(ast.length == 1) {
-		return ast[0].compile(databaseid);
+		var res = ast[0].compile(databaseid);
+		if(kind == 'value') {
+		} else  if(kind == 'single') {
+			return res[0];
+		} else  if(kind == 'row') {
+			var a = [];
+			for(var key in res[0]) {
+				a.push(res[0][key]);
+			};
+		} else  if(kind == 'column') {
+			var ar = [];
+			var key = Object.keys(res)[0];
+			for(var i=0, ilen=res.length; i<ilen; i++){
+				ar.push(res[i][key]);
+			}
+		} else  if(kind == 'array') {
+			return flatArrya(res);
+		} else  if(kind == 'matrix') {
+			return arrayOfArrays(res);
+		} else {
+			return res;
+		}
+
 	} else {
 		throw new Error('Number of statments in SQL is not equal to 1');
 	}
@@ -130,7 +163,7 @@ alasql.queryRow = function (sql, params, cb) {
 };
 
 alasql.queryValue = function (sql, params, cb) {
-	var res = this.querySingle(sql, params);
+	var res = this.exec(sql, params)[0];
 	var val = res[Object.keys(res)[0]];
 	if(cb) cb(val);
 	return val;

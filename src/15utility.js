@@ -8,6 +8,9 @@
 
 var utils = {};
 
+function returnTrue () {return true};
+function returnUndefined() {};
+
 var escapeq = utils.escapeq = function(s) {
     return s.replace(/\'/g,"\\'");
 }

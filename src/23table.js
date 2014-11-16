@@ -8,9 +8,12 @@
 
 // Table class
 Table = function(){
-	this.data = [];
+	// Columns
 	this.columns = [];
-	this.ixcolumns = {};
+	this.xcolumns = {};
+	// Data array
+	this.data = [];
+
 	this.ixdefs = {};
 	this.indices = {};
 };

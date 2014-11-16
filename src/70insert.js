@@ -15,8 +15,9 @@ yy.Insert.prototype.toString = function() {
 	return s;
 }
 
-yy.Insert.prototype.compile = function (db) {
+yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
+	var db = alasql.databases[databaseid];
 //	console.log(self);
 	var tableid = self.into.tableid;
 	var table = db.tables[tableid];
@@ -122,6 +123,10 @@ yy.Insert.prototype.compile = function (db) {
 		return res;
 	}
 };
+
+yy.Insert.prototype.exec = function (databaseid) {
+	throw new Error('Insert statement is should be compiled')
+}
 
 
 

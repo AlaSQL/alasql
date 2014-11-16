@@ -1466,6 +1466,9 @@ if (typeof module !== 'undefined' && require.main === module) {
 
 var utils = {};
 
+function returnTrue () {return true};
+function returnUndefined() {};
+
 var escapeq = utils.escapeq = function(s) {
     return s.replace(/\'/g,"\\'");
 }
@@ -1669,16 +1672,19 @@ alasql.databases = {};
 
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
+alasql.DEFAULTDATABASEID = 'alasql';
 
 alasql.use = function (databaseid) {
+	if(!databaseid) databaseid = alasql.DEFAULTDATABASEID;
 	alasql.useid = databaseid;
-	alasql.tables = alasql.currentDatabase.tables;
-	alasql.currentDatabase.resetSqlCache();
+	var db = alasql.databases[alasql.useid];
+	alasql.tables = db.tables;
+	db.resetSqlCache();
 };
 
 // Run one statement
 alasql.exec = function (sql, params, cb) {
-	alasql.dexec(alasql.useid, sql, params, cb);
+	return alasql.dexec(alasql.useid, sql, params, cb);
 }
 
 alasql.dexec = function (databaseid, sql, params, cb) {
@@ -1689,21 +1695,27 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 
 	// Create AST
 	var ast = alasql.parse(sql);
-	if(ast.length == 0) return 0;
-	else if(ast.length == 1) {
-		var statement = ast[i].compile(databaseid);
-		if(statement) {
+	if(!ast.statements) return;
+	if(ast.statements.length == 0) return 0;
+	else if(ast.statements.length == 1) {
+		if(ast.statements[0].compile) {
+			var statement = ast.statements[0].compile(databaseid);
 			// Secure sqlCache size
 			if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
 				db.resetSqlCache();
 			}
 			db.sqlCacheSize++;
 			db.sqlCache[hh] = statement;
-			return statement(params, cb);
+			var res = statement(params, cb);
+//			console.log(res);
+			return res;
+		} else {
+			return ast.statements[0].exec(databaseid, params, cb);		
 		}
-		else return ast[i].exec(databaseid, params, cb);		
+	} else {
+		// Multiple statements
+		return alasql.drun(databaseid, ast, params, cb);
 	}
-	return alasql.drun(databaseid, ast, params, cb);
 };
 
 // Run multiple statements and return array of results
@@ -1711,23 +1723,47 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	var useid = alasql.useid;
 	alasql.use(databaseid);
 	var res = [];
-	for (var i=0, ilen=ast.length; i<ilen; i++) {
-		var statement = ast[i].compile(alasql.useid);
+	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
+		var statement = ast.statements[i].compile(alasql.useid);
 		if(statement) {
 			res.push(statement(params));
-		} else res.push(ast[i].exec());		
-	});
+		} else {
+			res.push(ast[i].exec());
+		}		
+	};
 	alasql.use(useid);
 	if(cb) cb(res);
 	return res;
 };
 
 // Compiler
-alasql.compile = function(sql, databaseid) {
+alasql.compile = function(kind, sql, databaseid) {
 	if(!databaseid) databaseid = alasql.useid;
 	var ast = alasql.parse(sql);
 	if(ast.length == 1) {
-		return ast[0].compile(databaseid);
+		var res = ast[0].compile(databaseid);
+		if(kind == 'value') {
+		} else  if(kind == 'single') {
+			return res[0];
+		} else  if(kind == 'row') {
+			var a = [];
+			for(var key in res[0]) {
+				a.push(res[0][key]);
+			};
+		} else  if(kind == 'column') {
+			var ar = [];
+			var key = Object.keys(res)[0];
+			for(var i=0, ilen=res.length; i<ilen; i++){
+				ar.push(res[i][key]);
+			}
+		} else  if(kind == 'array') {
+			return flatArrya(res);
+		} else  if(kind == 'matrix') {
+			return arrayOfArrays(res);
+		} else {
+			return res;
+		}
+
 	} else {
 		throw new Error('Number of statments in SQL is not equal to 1');
 	}
@@ -1777,7 +1813,7 @@ alasql.queryRow = function (sql, params, cb) {
 };
 
 alasql.queryValue = function (sql, params, cb) {
-	var res = this.querySingle(sql, params);
+	var res = this.exec(sql, params)[0];
 	var val = res[Object.keys(res)[0]];
 	if(cb) cb(val);
 	return val;
@@ -2039,9 +2075,12 @@ alasql.wipe = function (databaseid, transactionid) {
 
 // Table class
 Table = function(){
-	this.data = [];
+	// Columns
 	this.columns = [];
-	this.ixcolumns = {};
+	this.xcolumns = {};
+	// Data array
+	this.data = [];
+
 	this.ixdefs = {};
 	this.indices = {};
 };
@@ -2080,6 +2119,23 @@ var yy = parser.yy = {};
 
 // Utility
 yy.extend = extend;
+
+// Base class for all yy classes
+var Base = yy.Base = function (params) { return yy.extend(this, params); };
+
+Base.prototype.toString = function() {}
+Base.prototype.toType = function() {}
+Base.prototype.toJavaScript = function() {}
+
+//var BaseClause = yy,BaseClause = function (params) { return yy.extend(this, params); };
+Base.prototype.compile = returnUndefined;
+Base.prototype.exec = function() {}
+
+//var BaseStatement = yy,BaseStatement = function (params) { return yy.extend(this, params); };
+Base.prototype.compile = returnUndefined;
+Base.prototype.exec = function() {}
+
+
 
 
 /*
@@ -2579,7 +2635,8 @@ yy.Select.prototype.toString = function() {
 };
 
 // Compile SELECT statement
-yy.Select.prototype.compile = function(db) {
+yy.Select.prototype.compile = function(databaseid) {
+	var db = alasql.databases[databaseid];
 	// Create variable for query
 	var query = {};
 	
@@ -2661,11 +2718,15 @@ yy.Select.prototype.compile = function(db) {
 		return res;
 	};
 
-//	statement.query = query;
+	statement.query = query;
+//	console.log(statement.query);
 	return statement;
 };
 
+yy.Select.prototype.exec = function(databaseid) {
+	throw new Error('Select statement should be precompiled');
 
+};
 
 
 
@@ -4136,143 +4197,137 @@ yy.CreateTable.prototype.toString = function() {
 }
 
 // CREATE TABLE
-yy.CreateTable.prototype.compile = function (db) {
+yy.CreateTable.prototype.compile = returnUndefined;
+yy.CreateTable.prototype.exec = function (databaseid) {
 //	var self = this;
-	var databaseid = db.databaseid;
+	var db = alasql.databases[databaseid];
 	var tableid = this.table.tableid;
-	var ifnotexists = this.ifnotexists;
+	if(!tableid) {
+		throw new Error('Table name is not defined');
+	}
+//	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
+	if(!columns) {
+		throw new Error('Columns are not defined');
+	}
 	var constraints = this.constraints||[];
 //	console.log(this);
 
-	return function() {
-		var db = alasql.currentDatabase;
-//		console.log(databaseid);
+	// IF NOT EXISTS
+	if(!this.ifnotexists && db.tables[tableid]) return 0;
 
-		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {
+	if(db.tables[tableid]) {
+		throw new Error('Can not create table \''+tableid
+			+'\', because it already exists in the database \''+db.databaseid+'\'');
+	}
 
+	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
+	table.defaultfns = '';
 
-			if(db.tables[tableid]) 
-				throw new Error('Can not create table \''+tableid
-					+'\', because it already exists in the database \''+db.databaseid+'\'');
+	this.columns.forEach(function(col) {
+		var newcol = {
+			columnid: col.columnid.toLowerCase(),
+			dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
+		};
 
-			var table = db.tables[tableid] = {}; // TODO Can use special object?
-			table.columns = [];
-			table.xcolumns = {};
-			table.indices = {};
-			table.data = [];
-			table.defaultfns = '';
+		if(col.default) {
+			table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
+		}
 
-			columns.forEach(function(col) {
-				var newcol = {
-					columnid: col.columnid.toLowerCase(),
-					dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
-				};
+		table.columns.push(newcol);
+		table.xcolumns[newcol.columnid] = newcol;
 
-				if(col.default) {
-					table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
-				}
+		// Check for primary key
+		if(col.primarykey) {
+			var pk = table.pk = {};
+			pk.columns = [col.columnid];
+			pk.onrightfns = 'r[\''+col.columnid+'\']';
+			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+			pk.hh = hash(pk.onrightfns);
+			table.indices[pk.hh] = {};
+		};
 
+	});
 
-				table.columns.push(newcol);
-				table.xcolumns[newcol.columnid] = newcol;
-
-				// Check for primary key
-				if(col.primarykey) {
-					var pk = table.pk = {};
-					pk.columns = [col.columnid];
-					pk.onrightfns = 'r[\''+col.columnid+'\']';
-					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
-					pk.hh = hash(pk.onrightfns);
-					table.indices[pk.hh] = {};
-				};
-
-			});
-
-			constraints.forEach(function(con) {
-				//console.log(con, con.columns);
-				if(con.type == 'PRIMARY KEY') {
-					if(table.pk) {
-						throw new Error('Primary key already exists');
-					}
-					var pk = table.pk = {};
-					pk.columns = con.columns;
-					pk.onrightfns = pk.columns.map(function(columnid){
-						return 'r[\''+columnid+'\']'
-					}).join("+'`'+");
-					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
-					pk.hh = hash(pk.onrightfns);
-					table.indices[pk.hh] = {};					
-				}
-			});
+	constraints.forEach(function(con) {
+		//console.log(con, con.columns);
+		if(con.type == 'PRIMARY KEY') {
+			if(table.pk) {
+				throw new Error('Primary key already exists');
+			}
+			var pk = table.pk = {};
+			pk.columns = con.columns;
+			pk.onrightfns = pk.columns.map(function(columnid){
+				return 'r[\''+columnid+'\']'
+			}).join("+'`'+");
+			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+			pk.hh = hash(pk.onrightfns);
+			table.indices[pk.hh] = {};					
+		}
+	});
 
 //			if(table.pk) {
-				table.insert = function(r) {
-					if(this.pk) {
-						var pk = this.pk;
-						var addr = pk.onrightfn(r);
-						if(typeof this.indices[pk.hh][addr] != 'undefined') {
-							throw new Error('Cannot insert record, because it already exists in primary key');
-						} else {
-							table.data.push(r);
-							this.indices[pk.hh][addr]=r;
-						};
-					} else {
-						table.data.push(r);						
-					}
-				};
-
-				table.delete = function(i) {
-					if(this.pk) {
-						var r = this.data[i];
-						var pk = this.pk;
-						var addr = pk.onrightfn(r);
-						if(typeof this.indices[pk.hh][addr] == 'undefined') {
-							throw new Error('Something wrong with index on table');
-						} else {
-							this.indices[pk.hh][addr]=undefined;
-						};
-					}
-				};
-
-				table.deleteall = function() {
-					this.data.length = 0;
-					if(this.pk) {
-//						var r = this.data[i];
-						this.indices[this.pk.hh] = {};
-					}
-				};
-
-				table.update = function(assignfn, i, params) {
-					if(this.pk) {
-						var r = this.data[i];
-						var pk = this.pk;
-						var addr = pk.onrightfn(r,params);
-						if(typeof this.indices[pk.hh][addr] == 'undefined') {
-							throw new Error('Something wrong with index on table');
-						} else {
-							this.indices[pk.hh][addr]=undefined;
-							assignfn(r);
-							var newaddr = pk.onrightfn(r);
-							if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
-								throw new Error('Record already exists');
-							} else {
-								this.indices[pk.hh][newaddr] = r;
-							}
-						} 
-
-					} else {
-						assignfn(this.data[i]);
-					};
-
-				};
-
-
-//			}
-			return 1;
-		};
-		return 0;
+	table.insert = function(r) {
+		if(this.pk) {
+			var pk = this.pk;
+			var addr = pk.onrightfn(r);
+			if(typeof this.indices[pk.hh][addr] != 'undefined') {
+				throw new Error('Cannot insert record, because it already exists in primary key');
+			} else {
+				table.data.push(r);
+				this.indices[pk.hh][addr]=r;
+			};
+		} else {
+			table.data.push(r);						
+		}
 	};
+
+	table.delete = function(i) {
+		if(this.pk) {
+			var r = this.data[i];
+			var pk = this.pk;
+			var addr = pk.onrightfn(r);
+			if(typeof this.indices[pk.hh][addr] == 'undefined') {
+				throw new Error('Something wrong with index on table');
+			} else {
+				this.indices[pk.hh][addr]=undefined;
+			};
+		}
+	};
+
+	table.deleteall = function() {
+		this.data.length = 0;
+		if(this.pk) {
+//						var r = this.data[i];
+			this.indices[this.pk.hh] = {};
+		}
+	};
+
+	table.update = function(assignfn, i, params) {
+		if(this.pk) {
+			var r = this.data[i];
+			var pk = this.pk;
+			var addr = pk.onrightfn(r,params);
+			if(typeof this.indices[pk.hh][addr] == 'undefined') {
+				throw new Error('Something wrong with index on table');
+			} else {
+				this.indices[pk.hh][addr]=undefined;
+				assignfn(r);
+				var newaddr = pk.onrightfn(r);
+				if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
+					throw new Error('Record already exists');
+				} else {
+					this.indices[pk.hh][newaddr] = r;
+				}
+			} 
+
+		} else {
+			assignfn(this.data[i]);
+		};
+
+	};
+
+	return 1;
 };
 
 
@@ -4433,8 +4488,9 @@ yy.Insert.prototype.toString = function() {
 	return s;
 }
 
-yy.Insert.prototype.compile = function (db) {
+yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
+	var db = alasql.databases[databaseid];
 //	console.log(self);
 	var tableid = self.into.tableid;
 	var table = db.tables[tableid];
@@ -4540,6 +4596,10 @@ yy.Insert.prototype.compile = function (db) {
 		return res;
 	}
 };
+
+yy.Insert.prototype.exec = function (databaseid) {
+	throw new Error('Insert statement is should be compiled')
+}
 
 
 
@@ -4670,69 +4730,62 @@ yy.Update.prototype.compile = function (db) {
 //
 // UPDATE for Alasql.js
 // Date: 03.11.2014
+// Modified: 16.11.2014
 // (c) 2014, Andrey Gershun
 //
 */
 
-yy.CreateDatabase = function (params) { return yy.extend(this, params); }
+// CREATE DATABASE databaseid
+yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
 	return 'CREATE DATABASE '+this.databaseid;
 }
-
-yy.CreateDatabase.prototype.compile = function (db) {
-	var databaseid = this.databaseid;
-
-	return function(params, cb) {
-		if(alasql.databases[databaseid]) {
-			throw new Error("Database '"+databaseid+"' already exists")
-		};
-		new alasql.Database(databaseid);
-		if(cb) cb(1);
-		return 1;
+yy.CreateDatabase.prototype.compile = returnUndefined;
+yy.CreateDatabase.prototype.exec = function (databaseid) {
+	var dbid = this.databaseid;
+	if(alasql.databases[dbid]) {
+		throw new Error("Database '"+dbid+"' already exists")
 	};
+	var a = new alasql.Database(dbid);
+	return 1;
 };
 
-yy.UseDatabase = function (params) { return yy.extend(this, params); }
+// USE DATABSE databaseid
+// USE databaseid
+yy.UseDatabase = function (params) { return yy.extend(this, params); };
 yy.UseDatabase.prototype.toString = function() {
 	return 'USE DATABASE '+this.databaseid;
 }
-
-yy.UseDatabase.prototype.compile = function (db) {
-	var databaseid = this.databaseid;
-
-	return function(params, cb) {
-		if(!alasql.databases[databaseid]) {
-			throw new Error("Database '"+databaseid+"' does not exist")
-		};
-		alasql.use(databaseid);
-		//console.log(alasql.currentDatabase.databaseid);
-		if(cb) cb(1);
-		return 1;
+yy.UseDatabase.prototype.compile = returnUndefined;
+yy.UseDatabase.prototype.exec = function (databaseid) {
+	var dbid = this.databaseid;
+	if(!alasql.databases[dbid]) {
+		throw new Error("Database '"+dbid+"' does not exist")
 	};
+	alasql.use(dbid);
+	return 1;
 };
 
+// DROP DATABASE databaseid
 yy.DropDatabase = function (params) { return yy.extend(this, params); }
 yy.DropDatabase.prototype.toString = function() {
 	return 'DROP DATABASE '+this.databaseid;
 }
+yy.DropDatabase.prototype.compile = returnUndefined;
+yy.DropDatabase.prototype.exec = function (db) {
+	var dbid = this.databaseid;
 
-yy.DropDatabase.prototype.compile = function (db) {
-	var databaseid = this.databaseid;
-
-	return function(params, cb) {
-		if(databaseid == 'alasql') {
-			throw new Error("Drop 'alasql' dtabase is prohibited");			
-		}
-		if(!alasql.databases[databaseid]) {
-			throw new Error("Database '"+databaseid+"' does not exist");
-		};
-//		alasql.use('alasql');
-		delete alasql.databases[databaseid];
-		alasql.currentDatabase = alasql.databases.alasql;
-		alasql.tables = alasql.databases.alasql.tables;
-		if(cb) cb(1);
-		return 1;
+	if(dbid == alasql.DEFAULTDATABASEID) {
+		throw new Error("Drop of default database is prohibited");			
+	}
+	if(!alasql.databases[dbid]) {
+		throw new Error("Database '"+databaseid+"' does not exist");
 	};
+	delete alasql.databases[dbid];
+	if(dbid == alasql.useid) {
+		alasql.use();		
+	}
+	return 1;
 };
 
 

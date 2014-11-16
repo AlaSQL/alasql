@@ -55,7 +55,8 @@ yy.Select.prototype.toString = function() {
 };
 
 // Compile SELECT statement
-yy.Select.prototype.compile = function(db) {
+yy.Select.prototype.compile = function(databaseid) {
+	var db = alasql.databases[databaseid];
 	// Create variable for query
 	var query = {};
 	
@@ -137,9 +138,13 @@ yy.Select.prototype.compile = function(db) {
 		return res;
 	};
 
-//	statement.query = query;
+	statement.query = query;
+//	console.log(statement.query);
 	return statement;
 };
 
+yy.Select.prototype.exec = function(databaseid) {
+	throw new Error('Select statement should be precompiled');
 
+};
 

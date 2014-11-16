@@ -38,143 +38,137 @@ yy.CreateTable.prototype.toString = function() {
 }
 
 // CREATE TABLE
-yy.CreateTable.prototype.compile = function (db) {
+yy.CreateTable.prototype.compile = returnUndefined;
+yy.CreateTable.prototype.exec = function (databaseid) {
 //	var self = this;
-	var databaseid = db.databaseid;
+	var db = alasql.databases[databaseid];
 	var tableid = this.table.tableid;
-	var ifnotexists = this.ifnotexists;
+	if(!tableid) {
+		throw new Error('Table name is not defined');
+	}
+//	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
+	if(!columns) {
+		throw new Error('Columns are not defined');
+	}
 	var constraints = this.constraints||[];
 //	console.log(this);
 
-	return function() {
-		var db = alasql.currentDatabase;
-//		console.log(databaseid);
+	// IF NOT EXISTS
+	if(!this.ifnotexists && db.tables[tableid]) return 0;
 
-		if(!ifnotexists || ifnotexists && !db.tables[tableid]) {
+	if(db.tables[tableid]) {
+		throw new Error('Can not create table \''+tableid
+			+'\', because it already exists in the database \''+db.databaseid+'\'');
+	}
 
+	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
+	table.defaultfns = '';
 
-			if(db.tables[tableid]) 
-				throw new Error('Can not create table \''+tableid
-					+'\', because it already exists in the database \''+db.databaseid+'\'');
+	this.columns.forEach(function(col) {
+		var newcol = {
+			columnid: col.columnid.toLowerCase(),
+			dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
+		};
 
-			var table = db.tables[tableid] = {}; // TODO Can use special object?
-			table.columns = [];
-			table.xcolumns = {};
-			table.indices = {};
-			table.data = [];
-			table.defaultfns = '';
+		if(col.default) {
+			table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
+		}
 
-			columns.forEach(function(col) {
-				var newcol = {
-					columnid: col.columnid.toLowerCase(),
-					dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
-				};
+		table.columns.push(newcol);
+		table.xcolumns[newcol.columnid] = newcol;
 
-				if(col.default) {
-					table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
-				}
+		// Check for primary key
+		if(col.primarykey) {
+			var pk = table.pk = {};
+			pk.columns = [col.columnid];
+			pk.onrightfns = 'r[\''+col.columnid+'\']';
+			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+			pk.hh = hash(pk.onrightfns);
+			table.indices[pk.hh] = {};
+		};
 
+	});
 
-				table.columns.push(newcol);
-				table.xcolumns[newcol.columnid] = newcol;
-
-				// Check for primary key
-				if(col.primarykey) {
-					var pk = table.pk = {};
-					pk.columns = [col.columnid];
-					pk.onrightfns = 'r[\''+col.columnid+'\']';
-					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
-					pk.hh = hash(pk.onrightfns);
-					table.indices[pk.hh] = {};
-				};
-
-			});
-
-			constraints.forEach(function(con) {
-				//console.log(con, con.columns);
-				if(con.type == 'PRIMARY KEY') {
-					if(table.pk) {
-						throw new Error('Primary key already exists');
-					}
-					var pk = table.pk = {};
-					pk.columns = con.columns;
-					pk.onrightfns = pk.columns.map(function(columnid){
-						return 'r[\''+columnid+'\']'
-					}).join("+'`'+");
-					pk.onrightfn = new Function("r",'return '+pk.onrightfns);
-					pk.hh = hash(pk.onrightfns);
-					table.indices[pk.hh] = {};					
-				}
-			});
+	constraints.forEach(function(con) {
+		//console.log(con, con.columns);
+		if(con.type == 'PRIMARY KEY') {
+			if(table.pk) {
+				throw new Error('Primary key already exists');
+			}
+			var pk = table.pk = {};
+			pk.columns = con.columns;
+			pk.onrightfns = pk.columns.map(function(columnid){
+				return 'r[\''+columnid+'\']'
+			}).join("+'`'+");
+			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+			pk.hh = hash(pk.onrightfns);
+			table.indices[pk.hh] = {};					
+		}
+	});
 
 //			if(table.pk) {
-				table.insert = function(r) {
-					if(this.pk) {
-						var pk = this.pk;
-						var addr = pk.onrightfn(r);
-						if(typeof this.indices[pk.hh][addr] != 'undefined') {
-							throw new Error('Cannot insert record, because it already exists in primary key');
-						} else {
-							table.data.push(r);
-							this.indices[pk.hh][addr]=r;
-						};
-					} else {
-						table.data.push(r);						
-					}
-				};
-
-				table.delete = function(i) {
-					if(this.pk) {
-						var r = this.data[i];
-						var pk = this.pk;
-						var addr = pk.onrightfn(r);
-						if(typeof this.indices[pk.hh][addr] == 'undefined') {
-							throw new Error('Something wrong with index on table');
-						} else {
-							this.indices[pk.hh][addr]=undefined;
-						};
-					}
-				};
-
-				table.deleteall = function() {
-					this.data.length = 0;
-					if(this.pk) {
-//						var r = this.data[i];
-						this.indices[this.pk.hh] = {};
-					}
-				};
-
-				table.update = function(assignfn, i, params) {
-					if(this.pk) {
-						var r = this.data[i];
-						var pk = this.pk;
-						var addr = pk.onrightfn(r,params);
-						if(typeof this.indices[pk.hh][addr] == 'undefined') {
-							throw new Error('Something wrong with index on table');
-						} else {
-							this.indices[pk.hh][addr]=undefined;
-							assignfn(r);
-							var newaddr = pk.onrightfn(r);
-							if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
-								throw new Error('Record already exists');
-							} else {
-								this.indices[pk.hh][newaddr] = r;
-							}
-						} 
-
-					} else {
-						assignfn(this.data[i]);
-					};
-
-				};
-
-
-//			}
-			return 1;
-		};
-		return 0;
+	table.insert = function(r) {
+		if(this.pk) {
+			var pk = this.pk;
+			var addr = pk.onrightfn(r);
+			if(typeof this.indices[pk.hh][addr] != 'undefined') {
+				throw new Error('Cannot insert record, because it already exists in primary key');
+			} else {
+				table.data.push(r);
+				this.indices[pk.hh][addr]=r;
+			};
+		} else {
+			table.data.push(r);						
+		}
 	};
+
+	table.delete = function(i) {
+		if(this.pk) {
+			var r = this.data[i];
+			var pk = this.pk;
+			var addr = pk.onrightfn(r);
+			if(typeof this.indices[pk.hh][addr] == 'undefined') {
+				throw new Error('Something wrong with index on table');
+			} else {
+				this.indices[pk.hh][addr]=undefined;
+			};
+		}
+	};
+
+	table.deleteall = function() {
+		this.data.length = 0;
+		if(this.pk) {
+//						var r = this.data[i];
+			this.indices[this.pk.hh] = {};
+		}
+	};
+
+	table.update = function(assignfn, i, params) {
+		if(this.pk) {
+			var r = this.data[i];
+			var pk = this.pk;
+			var addr = pk.onrightfn(r,params);
+			if(typeof this.indices[pk.hh][addr] == 'undefined') {
+				throw new Error('Something wrong with index on table');
+			} else {
+				this.indices[pk.hh][addr]=undefined;
+				assignfn(r);
+				var newaddr = pk.onrightfn(r);
+				if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
+					throw new Error('Record already exists');
+				} else {
+					this.indices[pk.hh][newaddr] = r;
+				}
+			} 
+
+		} else {
+			assignfn(this.data[i]);
+		};
+
+	};
+
+	return 1;
 };
 
 
