@@ -316,7 +316,7 @@ or run [test/main.html](test/main.html) in browser.
 ### Known Bugs
 
 1. Dates comparing (sorting now is ok)
-2. Semicolon with multiple statements
+2. Transactions 
 3. ORDER BY clause on three or more UNIONS
 4. AVG() does not work
 5. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!

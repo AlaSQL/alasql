@@ -2,16 +2,15 @@
 ## URGENT
 
 * SELECT 1+1
+* ALTER TABLE ADD COLUMN
+* ALTER TABLE DROP COLUMN
+
 * FOREIGN KEY
 * CREATE INDEX
 * DROP INDEX
 * DROP CONSTRAINT
-* ALTER TABLE ADD COLUMN
-* ALTER TABLE DROP COLUMN
 
 * Add check for CROSS JOIN (that there is no USING or ON clause)
-* Change INNER to CROSS
-* NATURAL JOIN (if needed)
 
 * console
 * table.pk.pkrightfns, table.pk.pkrightfn, hh
