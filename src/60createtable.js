@@ -39,9 +39,10 @@ yy.CreateTable.prototype.toString = function() {
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
-yy.CreateTable.prototype.exec = function (databaseid) {
+yy.CreateTable.prototype.execute = function (databaseid) {
 //	var self = this;
 	var db = alasql.databases[databaseid];
+
 	var tableid = this.table.tableid;
 	if(!tableid) {
 		throw new Error('Table name is not defined');
@@ -89,6 +90,7 @@ yy.CreateTable.prototype.exec = function (databaseid) {
 		};
 
 	});
+
 
 	constraints.forEach(function(con) {
 		//console.log(con, con.columns);
@@ -167,6 +169,9 @@ yy.CreateTable.prototype.exec = function (databaseid) {
 		};
 
 	};
+//	console.log(databaseid);
+//	console.log(db.databaseid,db.tables);
+//	console.log(table);
 
 	return 1;
 };

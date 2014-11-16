@@ -592,7 +592,6 @@ case 220:
 			yy.extend(this.$,$$[$0-6]); 
 			yy.extend(this.$,$$[$0-4]); 
 			yy.extend(this.$,$$[$0-1]); 
-			yy.extend(this.$,$$[$0]);
 		
 break;
 case 222: case 223:
@@ -1713,7 +1712,7 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			var res = statement(params, cb);
 			return res;
 		} else {
-			return ast.statements[0].exec(databaseid, params, cb);		
+			return ast.statements[0].execute(databaseid, params, cb);		
 		}
 	} else {
 		// Multiple statements
@@ -1727,11 +1726,11 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
-		var statement = ast.statements[i].compile(alasql.useid);
-		if(statement) {
+		if(ast.statements[i].compile) { 
+			var statement = ast.statements[i].compile(alasql.useid);
 			res.push(statement(params));
 		} else {
-			res.push(ast.statements[i].exec());
+			res.push(ast.statements[i].execute(alasql.useid, params));
 		}		
 	};
 	if(useid != databaseid) alasql.use(useid);
@@ -4225,9 +4224,10 @@ yy.CreateTable.prototype.toString = function() {
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
-yy.CreateTable.prototype.exec = function (databaseid) {
+yy.CreateTable.prototype.execute = function (databaseid) {
 //	var self = this;
 	var db = alasql.databases[databaseid];
+
 	var tableid = this.table.tableid;
 	if(!tableid) {
 		throw new Error('Table name is not defined');
@@ -4275,6 +4275,7 @@ yy.CreateTable.prototype.exec = function (databaseid) {
 		};
 
 	});
+
 
 	constraints.forEach(function(con) {
 		//console.log(con, con.columns);
@@ -4353,6 +4354,9 @@ yy.CreateTable.prototype.exec = function (databaseid) {
 		};
 
 	};
+//	console.log(databaseid);
+//	console.log(db.databaseid,db.tables);
+//	console.log(table);
 
 	return 1;
 };
@@ -4768,7 +4772,7 @@ yy.CreateDatabase.prototype.toString = function() {
 	return 'CREATE DATABASE '+this.databaseid;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
-yy.CreateDatabase.prototype.exec = function (databaseid) {
+yy.CreateDatabase.prototype.execute = function (databaseid) {
 	var dbid = this.databaseid;
 	if(alasql.databases[dbid]) {
 		throw new Error("Database '"+dbid+"' already exists")
@@ -4784,7 +4788,7 @@ yy.UseDatabase.prototype.toString = function() {
 	return 'USE DATABASE '+this.databaseid;
 }
 //yy.UseDatabase.prototype.compile = returnUndefined;
-yy.UseDatabase.prototype.exec = function (databaseid) {
+yy.UseDatabase.prototype.execute = function (databaseid) {
 	var dbid = this.databaseid;
 	if(!alasql.databases[dbid]) {
 		throw new Error("Database '"+dbid+"' does not exist")
@@ -4799,7 +4803,7 @@ yy.DropDatabase.prototype.toString = function() {
 	return 'DROP DATABASE '+this.databaseid;
 }
 //yy.DropDatabase.prototype.compile = returnUndefined;
-yy.DropDatabase.prototype.exec = function (db) {
+yy.DropDatabase.prototype.execute = function (db) {
 	var dbid = this.databaseid;
 
 	if(dbid == alasql.DEFAULTDATABASEID) {

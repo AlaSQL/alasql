@@ -66,7 +66,7 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			var res = statement(params, cb);
 			return res;
 		} else {
-			return ast.statements[0].exec(databaseid, params, cb);		
+			return ast.statements[0].execute(databaseid, params, cb);		
 		}
 	} else {
 		// Multiple statements
@@ -80,11 +80,11 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
-		var statement = ast.statements[i].compile(alasql.useid);
-		if(statement) {
+		if(ast.statements[i].compile) { 
+			var statement = ast.statements[i].compile(alasql.useid);
 			res.push(statement(params));
 		} else {
-			res.push(ast.statements[i].exec());
+			res.push(ast.statements[i].execute(alasql.useid, params));
 		}		
 	};
 	if(useid != databaseid) alasql.use(useid);

@@ -547,7 +547,6 @@ case 220:
 			yy.extend(this.$,$$[$0-6]); 
 			yy.extend(this.$,$$[$0-4]); 
 			yy.extend(this.$,$$[$0-1]); 
-			yy.extend(this.$,$$[$0]);
 		
 break;
 case 222: case 223:

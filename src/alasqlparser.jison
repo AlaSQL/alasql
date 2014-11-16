@@ -850,7 +850,6 @@ CreateTable
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 			yy.extend($$,$7); 
-			yy.extend($$,$8);
 		}
 	;
 
