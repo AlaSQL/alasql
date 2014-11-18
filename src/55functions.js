@@ -37,7 +37,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
-		var s = 'alasql.userlib.'+this.funcid.toLowerCase()+'(';
+		var s = 'alasql.fn.'+this.funcid.toLowerCase()+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
 			return arg.toJavaScript(context, tableid);
@@ -67,7 +67,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 // IMPORTANT: These are compiled functions
 
 alasql.fn = {}; // Keep for compatibility
-alasql.userlib = alasql.fn;
+//alasql.userlib = alasql.fn; 
 
 var stdlib = alasql.stdlib = {}
 

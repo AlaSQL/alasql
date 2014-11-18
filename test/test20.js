@@ -3,10 +3,10 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 20', function() {
+describe('Test 20 - User-defined functions', function() {
 	it('User-defined functions', function(done){
 
-		var db = alasql.Database("db");
+		var db = new alasql.Database("db");
 		db.exec('CREATE TABLE test1 (a int)');
 		db.exec('INSERT INTO test1 VALUES (1)');
 		db.exec('INSERT INTO test1 VALUES (2)');
@@ -29,4 +29,37 @@ describe('Test 20', function() {
 		assert.deepEqual([ { a: 2, b: 4, c: 8 } ], res);
 		done();
 	});
+
+	it('2 - User-defined functions + compilation', function(done){
+		alasql.fn.cubic = function(x) {return x*x*x}; 
+		var cubic = alasql.compile('SELECT cubic(?)', 'value');
+		assert(8 == cubic([2]));
+		done();
+	});
+
+	it('3 - Database\'s user-defined functions + compilation', function(done){
+		alasql('create database test20;use test20');
+		alasql('create table one (a int)');
+		alasql('insert into one values (10), (20), (30)');
+
+		var num = 0;
+//		alasql.databases.test20.fn.spy = function(x) { 
+		alasql.fn.spy = function(x) { 
+			num++;
+			return num
+		}; 
+		var runspy = alasql.compile('select spy(a) from one', 'array');
+		var res = runspy();
+		assert.deepEqual(res,[1,2,3]);
+
+		num = 0;
+		var runspy2 = alasql.compile('select max(spy(a)) from one', 'value');
+		var res = runspy2();
+		assert.deepEqual(res,3);
+
+		alasql('drop database test20');
+		done();
+	});
+
+
 });

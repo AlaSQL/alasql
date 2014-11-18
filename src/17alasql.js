@@ -104,27 +104,52 @@ alasql.compile = function(sql, kind, databaseid) {
 		
 		if(kind == 'value') {
 			return function(params,cb) {
-				var res = statementfn(params,cb);
-				var key = Object.keys(res)[0];
+				var res = statementfn(params);
+				var key = Object.keys(res[0])[0];
+				if(cb) cb(res[0][key]);
 				return res[0][key];
 			};
 		} else  if(kind == 'single') {
-			return res[0];
+			return function(params,cb) {
+				var res = statementfn(params);
+				if(cb) cb(res[0]);
+				return res[0];
+			}
 		} else  if(kind == 'row') {
-			var a = [];
-			for(var key in res[0]) {
-				a.push(res[0][key]);
-			};
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				var a = [];
+				for(var key in res[0]) {
+					a.push(res[0][key]);
+				};
+				if(cb) cb(a);
+				return a;
+			}
 		} else  if(kind == 'column') {
-			var ar = [];
-			var key = Object.keys(res)[0];
-			for(var i=0, ilen=res.length; i<ilen; i++){
-				ar.push(res[i][key]);
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				var ar = [];
+				var key = Object.keys(res)[0];
+				for(var i=0, ilen=res.length; i<ilen; i++){
+					ar.push(res[i][key]);
+				}
+				if(cb) cb(ar);
+				return ar;
 			}
 		} else if(kind == 'array') {
-			return flatArrya(res);
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				res = flatArray(res);
+				if(cb) cb(res);
+				return res;
+			};
 		} else if(kind == 'matrix') {
-			return arrayOfArrays(res);
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				res = arrayOfArrays(res);
+				if(cb) cb(res);
+				return res;
+			};				
 		} else if(kind == 'collection') {
 			return statementfn;
 		} else {

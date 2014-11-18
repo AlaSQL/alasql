@@ -3,9 +3,9 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 25', function() {
+describe('Test 26', function() {
 	it('Modulo operator', function(done){
-	var db = alasql.Database("db");
+	var db = new alasql.Database("db");
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
 		db.exec('INSERT INTO test1 VALUES (2,2)');

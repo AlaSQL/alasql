@@ -6,7 +6,7 @@ if(typeof exports === 'object') {
 describe('Test 24', function() {
 	it('IN (select) and NOT IN (select)', function(done){
 
-	var db = alasql.Database("db");
+	var db = new alasql.Database("db");
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
 		db.exec('INSERT INTO test1 VALUES (2,2)');

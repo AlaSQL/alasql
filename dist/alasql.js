@@ -1750,27 +1750,52 @@ alasql.compile = function(sql, kind, databaseid) {
 		
 		if(kind == 'value') {
 			return function(params,cb) {
-				var res = statementfn(params,cb);
-				var key = Object.keys(res)[0];
+				var res = statementfn(params);
+				var key = Object.keys(res[0])[0];
+				if(cb) cb(res[0][key]);
 				return res[0][key];
 			};
 		} else  if(kind == 'single') {
-			return res[0];
+			return function(params,cb) {
+				var res = statementfn(params);
+				if(cb) cb(res[0]);
+				return res[0];
+			}
 		} else  if(kind == 'row') {
-			var a = [];
-			for(var key in res[0]) {
-				a.push(res[0][key]);
-			};
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				var a = [];
+				for(var key in res[0]) {
+					a.push(res[0][key]);
+				};
+				if(cb) cb(a);
+				return a;
+			}
 		} else  if(kind == 'column') {
-			var ar = [];
-			var key = Object.keys(res)[0];
-			for(var i=0, ilen=res.length; i<ilen; i++){
-				ar.push(res[i][key]);
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				var ar = [];
+				var key = Object.keys(res)[0];
+				for(var i=0, ilen=res.length; i<ilen; i++){
+					ar.push(res[i][key]);
+				}
+				if(cb) cb(ar);
+				return ar;
 			}
 		} else if(kind == 'array') {
-			return flatArrya(res);
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				res = flatArray(res);
+				if(cb) cb(res);
+				return res;
+			};
 		} else if(kind == 'matrix') {
-			return arrayOfArrays(res);
+			return function(params,cb) {
+				var res = statementfn(params,cb);
+				res = arrayOfArrays(res);
+				if(cb) cb(res);
+				return res;
+			};				
 		} else if(kind == 'collection') {
 			return statementfn;
 		} else {
@@ -3403,10 +3428,10 @@ yy.Select.prototype.compileSelect = function(query) {
 						throw new Error('Table \''+(col.tableid||query.defaultTableid)+'\' does not exists in database');
 					}
 					var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
-console.log(xcolumns, col,123);
-					console.log(0);
+//console.log(xcolumns, col,123);
+//					console.log(0);
 					if(xcolumns) {
-						console.log(1);
+//						console.log(1);
 						var tcol = xcolumns[col.columnid];
 						var coldef = {
 							columnid:col.as || col.columnid, 
@@ -3414,7 +3439,7 @@ console.log(xcolumns, col,123);
 							dbsize:tcol.dbsize, 
 							dbpecision:tcol.dbprecision
 						};
-						console.log(2);
+//						console.log(2);
 						query.columns.push(coldef);
 						query.xcolumns[coldef.columnid]=coldef;
 					} else {
@@ -4123,7 +4148,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
-		var s = 'alasql.userlib.'+this.funcid.toLowerCase()+'(';
+		var s = 'alasql.fn.'+this.funcid.toLowerCase()+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
 			return arg.toJavaScript(context, tableid);
@@ -4153,7 +4178,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 // IMPORTANT: These are compiled functions
 
 alasql.fn = {}; // Keep for compatibility
-alasql.userlib = alasql.fn;
+//alasql.userlib = alasql.fn; 
 
 var stdlib = alasql.stdlib = {}
 
