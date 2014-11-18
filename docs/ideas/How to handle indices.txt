@@ -1,0 +1,44 @@
+How to handle indices?
+======================
+
+### Unique indices
+
+* PRIMARY KEY
+* CREATE INDEX UNIQUE
+
+### Non-unique indices
+* FOREIGN KEY - right part
+* CREATE INDEX
+* JOIN and WHERE optimization
+
+Moments
+==
+* Creation
+  CREATE DATABASE + PRIMARY KEY + FOREIGN KEY
+  CREATE CONSTRAINT
+  CREARE INDEX (UNIQUE)
+  SELECT OPTIMIZATION (if not exists)
+
+* Broke
+  Direct change data
+  Transaction rollback
+  Restore table
+
+* Modify (record by record)
+  Insert
+  Update
+  Delete
+
+* Check availability and ReIndex
+  Select optimization (preIndexation)
+  Insert/Delete/Update
+
+Question?
+==
+* Indices on demand (only when need)
+* Prebuilt indexes
+
+TRANSACTIONS
+===
+Store by tables (data and structure only)
+Restore & Reindex

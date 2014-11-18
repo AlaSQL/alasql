@@ -3,7 +3,8 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 16', function() {
+if(false) {
+describe('Test 16b', function() {
 	it('Grouping', function(done){
 		alasql('create database test16;use test16');
 
@@ -48,3 +49,5 @@ console.log(res);
 		done();
 	});
 });
+
+}

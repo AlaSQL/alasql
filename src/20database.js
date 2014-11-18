@@ -26,7 +26,7 @@ function Database(databaseid) {
 	};
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
-	self.tables = [];
+	self.tables = {};
 	self.indices = {};
 	self.resetSqlCache();
 	self.dbversion = Date.now();

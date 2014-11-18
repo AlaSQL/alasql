@@ -545,8 +545,10 @@ yy.Select.prototype.compileSelect = function(query) {
 						throw new Error('Table \''+(col.tableid||query.defaultTableid)+'\' does not exists in database');
 					}
 					var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
-
+//console.log(xcolumns, col,123);
+//					console.log(0);
 					if(xcolumns) {
+//						console.log(1);
 						var tcol = xcolumns[col.columnid];
 						var coldef = {
 							columnid:col.as || col.columnid, 
@@ -554,6 +556,7 @@ yy.Select.prototype.compileSelect = function(query) {
 							dbsize:tcol.dbsize, 
 							dbpecision:tcol.dbprecision
 						};
+//						console.log(2);
 						query.columns.push(coldef);
 						query.xcolumns[coldef.columnid]=coldef;
 					} else {

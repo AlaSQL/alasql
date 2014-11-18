@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.0.18 (15.11.2014 - 18.11.2014)
+
+* Added more tests
+* Some minor bugs
+
 ### 0.0.17 (13.11.2014 - 14.11.2014)
 
 * Changed approach to execute and compilations

@@ -1,6 +1,7 @@
 # To do
 ## URGENT
 
+* Fix tests
 * SELECT 1+1
 * ALTER TABLE ADD COLUMN
 * ALTER TABLE DROP COLUMN

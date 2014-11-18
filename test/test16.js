@@ -5,10 +5,11 @@ if(typeof exports === 'object') {
 
 describe('Test 16', function() {
 	it('Grouping', function(done){
-		alasql('create database test16;use test16');
+		alasql('create database test16a');
+		alasql('use test16a');
 		alasql('create table students (studentid int, studentname string, courseid int, startdate date, amt money, schoolid int)')
 
-		alasql.tables.students.data = [
+		alasql.databases.test16a.tables.students.data = [
 			{studentid:58,studentname:'Sarah Patrik',courseid:1, startdate: new Date(2014,0,10), amt:10, schoolid:1},
 			{studentid:102,studentname:'John Stewart', courseid:2, startdate: new Date(2014,0,20), amt:20, schoolid:1},
 			{studentid:103,studentname:'Joan Blackmore', courseid:2, startdate: new Date(2014,0,20), amt:20, schoolid:1},
@@ -17,7 +18,7 @@ describe('Test 16', function() {
 		];
 
 		alasql('create table courses (courseid int, coursename string, schoolid int)')
-		alasql.tables.courses.data = [
+		alasql.databases.test16a.tables.courses.data = [
 			{courseid:1, coursename: 'first', schoolid:1},
 			{courseid:2, coursename: 'second', schoolid:1},
 			{courseid:3, coursename: 'third', schoolid:2},
@@ -26,7 +27,7 @@ describe('Test 16', function() {
 		];
 		alasql('create table schools (schoolid int, schoolname string, regionid int)');
 
-		alasql.tables.schools.data = [
+		alasql.databases.test16a.tables.schools.data = [
 			{schoolid:1, schoolname: 'Northern School', regionid:'north'},
 			{schoolid:2, schoolname: 'Southern School', regionid:'south'},
 			{schoolid:3, schoolname: 'Eastern School', regionid:'east'},
@@ -36,10 +37,11 @@ describe('Test 16', function() {
 		var res = alasql('SELECT students.schoolid, students.courseid, students.studentname '+
 	 		' FROM students '+
 	 		' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
-	 		' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
+	 		' LEFT JOIN schools ON courses.schoolid = schools.schoolid '+
 	 		' GROUP BY schoolid, courseid, studentname '+
 	 		' ORDER BY studentname DESC' );
-//console.table(res);
+if(typeof exports === 'object') console.log(res);
+else console.table(res);
 		assert.equal(5, res.length);
 		assert.equal(1, res[0].courseid);
 		assert.equal(2, res[1].courseid);
@@ -47,7 +49,7 @@ describe('Test 16', function() {
 		assert.equal(7, res[3].courseid);
 		assert.equal(4, res[4].courseid);
 
-		alasql('drop database test16');
+		alasql('drop database test16a');
 		done();
 	});
 });
