@@ -18,9 +18,10 @@ Check Alasql vs other JavaScript SQL databases:
 Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0 in the mid of November. 
 Please, submit bugs and suggestions in [issue page]().
 
-Sorry, transactions are broken in version 0.0.17...
+Sorry, transactions were broken in version 0.0.17, because we started to introduce more complex
+approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions onagain in version 0.0.20.
 
-You can check [version-0.0.19](https://github.com/agershun/alasql/tree/version-0.0.17) branch for new experimental features of new version. 
+You can check [version-0.0.19](https://github.com/agershun/alasql/tree/version-0.0.19) branch for new experimental features of new version. 
 
 
 ## Examples
@@ -31,6 +32,8 @@ Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](h
 Other examples:
 * [Sandbox](examples/sandbox.html)
 * [Sieve of Eratosthenes](examples/prime.html)
+
+Short [presentation](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database) about Alasql
 
 ## Installation
 
