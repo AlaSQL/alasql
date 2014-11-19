@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.21 (19.11.2014 - )
+
+* SELECT a AS q, b w FROM one - AS is not required
+
 ### 0.0.20 (19.11.2014)
 
 * SHOW DATABASES
@@ -7,6 +11,7 @@
 * SHOW COLUMNS
 * SHOW INDIEX (not fully)
 * CREATE VIEW syntax
+* Case-sensiviry
 
 ### 0.0.19 (19.11.2014 - 19.11.2014)
 
@@ -118,7 +123,7 @@
 
 * ROLLUP, CUBE, GROUPING SETS support
 
-### 0.0.7 (06.11.2014)
+### 0.0.8 (06.11.2014)
 
 * Minor bugs
 

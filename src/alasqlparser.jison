@@ -517,10 +517,16 @@ ResultColumns
 ResultColumn
 	: Expression AS Literal
 		{ $1.as = $3; $$ = $1;}
+	| Expression Literal
+		{ $1.as = $2; $$ = $1;}
+
 /*	| Expression AS LBRA NUMBER RBRA
 		{ $1.as = $4; $$ = $1;}
-*/	| Expression AS NUMBER
+*/
+	| Expression AS NUMBER
 		{ $1.as = $3; $$ = $1;}
+	| Expression NUMBER
+		{ $1.as = $2; $$ = $1;}
 	| Expression
 		{ $$ = $1; }
 	;
