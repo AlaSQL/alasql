@@ -61,7 +61,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				var table = db.tables[tableid];
 //	console.log('table1', db, self);
 				table.columns.forEach(function(col, idx){
-					var q = col.columnid +':';
+					var q = '\''+col.columnid +'\':';
 					var val = values[idx].toJavaScript();
 
 					 if(table.xcolumns && table.xcolumns[col.columnid] && 
@@ -105,6 +105,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		});
 
 		s += 'return '+self.values.length;
+//console.log(s);
 		var insertfn = new Function('db, params',s);
 	
 // INSERT INTO table SELECT

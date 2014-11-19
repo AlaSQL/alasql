@@ -10,7 +10,7 @@ yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = '';
     if(alasql.stdlib[this.funcid]) s += this.funcid.toUpperCase();
-    else s += this.funcid.toLowerCase();
+    else s += this.funcid;
     
     s += '(';
 	if(this.args && this.args.length > 0) {
@@ -37,7 +37,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
-		var s = 'alasql.fn.'+this.funcid.toLowerCase()+'(';
+		var s = 'alasql.fn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
 			return arg.toJavaScript(context, tableid);

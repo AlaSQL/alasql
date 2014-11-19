@@ -31,7 +31,7 @@ yy.Update.prototype.compile = function (databaseid) {
 	// Construct update function
 	var s = '';
 	this.columns.forEach(function(col){
-		s += 'r.'+col.columnid+'='+col.expression.toJavaScript('r','')+';'; 
+		s += 'r[\''+col.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
 	});
 	var assignfn = new Function('r,params',s);
 

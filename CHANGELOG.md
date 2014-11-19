@@ -1,5 +1,14 @@
 # Changelog
 
+### 0.0.20 (19.11.2014)
+
+*
+
+### 0.0.19 (19.11.2014 - 19.11.2014)
+
+* User-defined functions are database specific.
+* Names in [brackets]
+
 ### 0.0.18 (15.11.2014 - 18.11.2014)
 
 * Added more tests

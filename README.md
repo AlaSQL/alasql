@@ -41,7 +41,7 @@ Short [presentation](http://www.slideshare.net/AndreyGershun/alasqljsfast-javasc
 
 Include file: [alasql.js](./alasql.js) to the page.
 
-```
+```html
   <script src="alasql.js"></script>  
   <script>
     alasql("CREATE TABLE test (language INT, hello STRING)");
@@ -55,7 +55,7 @@ Include file: [alasql.js](./alasql.js) to the page.
 
 You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD:
 
-```
+```js
     require(['../../alasql.js'], function(alasql) {
         var test1 = [{a:1,b:2,c:3},{a:4,b:5,c:6},{a:7,b:8,c:9}];
         console.table(alasql('SELECT a, b*c AS bc FROM ? AS t',[test1]));
@@ -71,7 +71,7 @@ Use the following command for installation:
 ```
 Then require alasql.js file:
 
-```
+```js
     var alasql = require('alasql');
 
     var db = new alasql.Database();
@@ -143,6 +143,8 @@ You can use all benefits of SQL and JavaScript togeather by defining user functi
         alasql.fn.sum10 = function(x,y) { return x+y*10; }
         db.exec('SELECT a, double(a) AS b, sum10(a,b) FROM test1');
 ```
+
+User-defined functions are related to current database. You can define different functions in different databases. 
 
 ### alasql
 
@@ -256,6 +258,17 @@ This feature can be used as filter for arrays. Compare:
             'SELECT [2] AS 0, SUM([1]) AS 1 FROM ? a WHERE a[0]>2016 GROUP BY [0] ORDER BY [1]', 
             [data]);
 
+```
+
+### Lower and Upper Case
+
+Now you can use databases, tables, and columns with spaces inside square brackets:
+
+```sql
+    CREATE DATABASE [My Database];
+    USE [My Database];
+    CREATE TABLE [A.table] ([the-column] INT);
+    SELECT [the-column] AS [AS];
 ```
 
 ### Transactions

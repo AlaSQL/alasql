@@ -3,6 +3,7 @@
 // alasqlparser.jison
 // SQL Parser for Alasql.js
 // Date: 03.11.2014
+// Modified: 19.11.2014
 // (c) 2014, Andrey Gershun
 //
 */
@@ -11,6 +12,7 @@
 %options case-insensitive
 %%
 
+\[([^\]])*\]									return 'BRALITERAL'
 \s+                                             /* skip whitespace */
 'ADD'                                      		return 'ADD'
 'ALL'                                      		return 'ALL'
@@ -124,9 +126,13 @@
 '='												return 'EQ'
 '!='											return 'NE'
 '('												return 'LPAR'
-')'												return 'RPAR'
+')'
+												return 'RPAR'
+/* 
 '['												return 'LBRA'
 ']'												return 'RBRA'
+*/
+
 '.'												return 'DOT'
 ','												return 'COMMA'
 ':'												return 'COLON'
@@ -157,6 +163,13 @@
 %start main
 
 %%
+
+Literal
+	: LITERAL
+		{ $$ = $1.toLowerCase(); }
+	| BRALITERAL
+		{ $$ = doubleq($1.substr(1,$1.length-2)); }
+	;
 
 main
 	: Statements EOF
@@ -294,33 +307,33 @@ FromTablesList
 	;
 
 FromTable
-	: LPAR Select RPAR LITERAL
+	: LPAR Select RPAR Literal
 		{ $$ = $2; $$.as = $4 }	
-	| LPAR Select RPAR AS LITERAL
+	| LPAR Select RPAR AS Literal
 		{ $$ = $2; $$.as = $5 }	
 	| LPAR Select RPAR /* default alias */
 		{ $$ = $2; $$.as = 'default' }	
 
-	| Table LITERAL
+	| Table Literal
 		{ $$ = $1; $1.as = $2 }
-	| Table AS LITERAL
+	| Table AS Literal
 		{ $$ = $1; $1.as = $3 }
 	| Table 
 		{ $$ = $1; }
 
-	| ParamValue LITERAL 
+	| ParamValue Literal 
 		{ $$ = $1; $1.as = $2; }
-	| ParamValue AS LITERAL 
+	| ParamValue AS Literal 
 		{ $$ = $1; $1.as = $3; }
 	| ParamValue
 		{ $$ = $1; $1.as = 'delault'; }
 	;
 
 Table
-	: LITERAL DOT LITERAL
-		{ $$ = new yy.Table({databaseid: $1.toLowerCase(), tableid:$3.toLowerCase()});}
-	| LITERAL
-		{ $$ = new yy.Table({tableid: $1.toLowerCase()});}
+	: Literal DOT Literal
+		{ $$ = new yy.Table({databaseid: $1, tableid:$3});}
+	| Literal
+		{ $$ = new yy.Table({tableid: $1});}
 	;
 
 JoinTablesList
@@ -338,18 +351,18 @@ JoinTable
 JoinTableAs
 	: Table
 		{ $$ = {table: $1}; }
-	| Table LITERAL
-		{ $$ = {table: $1, as: $2.toLowerCase() } ; }
-	| Table AS LITERAL
-		{ $$ = {table: $1, as: $3.toLowerCase() } ; }
-	| ParamValue LITERAL
-		{ $$ = {param: $1, as: $2.toLowerCase() } ; }
-	| ParamValue AS LITERAL
-		{ $$ = {param: $1, as: $3.toLowerCase() } ; }
-	| LPAR Select RPAR LITERAL
-		{ $$ = {select: $1, as: $4.toLowerCase() } ; }
-	| LPAR Select RPAR AS LITERAL
-		{ $$ = {select: $1, as: $5.toLowerCase() } ; }
+	| Table Literal
+		{ $$ = {table: $1, as: $2 } ; }
+	| Table AS Literal
+		{ $$ = {table: $1, as: $3 } ; }
+	| ParamValue Literal
+		{ $$ = {param: $1, as: $2 } ; }
+	| ParamValue AS Literal
+		{ $$ = {param: $1, as: $3 } ; }
+	| LPAR Select RPAR Literal
+		{ $$ = {select: $1, as: $4} ; }
+	| LPAR Select RPAR AS Literal
+		{ $$ = {select: $1, as: $5 } ; }
 	;
 
 JoinMode
@@ -485,36 +498,32 @@ ResultColumns
 	;
 
 ResultColumn
-	: Expression AS LITERAL
-		{ $1.as = $3.toLowerCase(); $$ = $1;}
-	| Expression AS LBRA NUMBER RBRA
+	: Expression AS Literal
+		{ $1.as = $3; $$ = $1;}
+/*	| Expression AS LBRA NUMBER RBRA
 		{ $1.as = $4; $$ = $1;}
-	| Expression AS NUMBER
+*/	| Expression AS NUMBER
 		{ $1.as = $3; $$ = $1;}
 	| Expression
 		{ $$ = $1; }
 	;
 
 Star
-	: LITERAL DOT LITERAL DOT STAR
-		{ $$ = new yy.Column({columid: $5, tableid: $3.toLowerCase(), databaseid:$1}); }	
-	| LITERAL DOT STAR
-		{ $$ = new yy.Column({columnid: $3, tableid: $1.toLowerCase()}); }	
+	: Literal DOT Literal DOT STAR
+		{ $$ = new yy.Column({columid: $5, tableid: $3, databaseid:$1}); }	
+	| Literal DOT STAR
+		{ $$ = new yy.Column({columnid: $3, tableid: $1}); }	
 	| STAR
 		{ $$ = new yy.Column({columnid:$1}); }
 	;
 
 Column
-	: LITERAL DOT LITERAL DOT LITERAL
-		{ $$ = new yy.Column({columnid: $5.toLowerCase(), tableid: $3.toLowerCase(), databaseid:$1.toLowerCase()});}	
-	| LITERAL DOT LITERAL
-		{ $$ = new yy.Column({columnid: $3.toLowerCase(), tableid: $1.toLowerCase()});}	
-	| LITERAL LBRA NUMBER RBRA
-		{ $$ = new yy.Column({columnid: $3, tableid: $1.toLowerCase()});}	
-	| LBRA NUMBER RBRA
-		{ $$ = new yy.Column({columnid: $2});}	
-	| LITERAL
-		{ $$ = new yy.Column({columnid: $1.toLowerCase()});}	
+	: Literal DOT Literal DOT Literal
+		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}	
+	| Literal DOT Literal
+		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+	| Literal
+		{ $$ = new yy.Column({columnid: $1});}	
 	;
 
 Expression
@@ -579,10 +588,10 @@ FuncValue
 /*	: LITERAL LPAR Expression RPAR
 		{ $$ = new yy.FuncValue({funcid: $1, expression: $3}); }
 */	
-	: LITERAL LPAR ExprList RPAR
-		{ $$ = new yy.FuncValue({funcid: $1.toLowerCase(), args: $3}); }
-	| LITERAL LPAR RPAR
-		{ $$ = new yy.FuncValue({ funcid: $1.toLowerCase() }) }
+	: Literal LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({funcid: $1, args: $3}); }
+	| Literal LPAR RPAR
+		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	;
 
 ExprList
@@ -627,10 +636,10 @@ ExistsValue
 
 
 ParamValue
-	: DOLLAR LITERAL
-		{ $$ = new yy.ParamValue({param: $2.toLowerCase()}); }
-	| COLON LITERAL
-		{ $$ = new yy.ParamValue({param: $2.toLowerCase()}); }
+	: DOLLAR Literal
+		{ $$ = new yy.ParamValue({param: $2}); }
+	| COLON Literal
+		{ $$ = new yy.ParamValue({param: $2}); }
 	| QUESTION
 		{ 
 			if(typeof yy.question == 'undefined') yy.question = 0; 
@@ -892,8 +901,8 @@ Constraint
 
 ConstraintName
 	:   { $$ = null }
-	| CONSTRAINT LITERAL
-		{ $$ = $2.toLowerCase(); }
+	| CONSTRAINT Literal
+		{ $$ = $2; }
 	;
 
 PrimaryKey
@@ -902,15 +911,15 @@ PrimaryKey
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES LITERAL LPAR ColsList RPAR
-		{ $$ = {type: 'FOREIGN KEY', columns: $4.toLowerCase(), tableid: $3.toLowerCase(), refcolumns: $6}; }
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Literal LPAR ColsList RPAR
+		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktableid: $7, fkcolumns: $9}; }
 	;
 
 ColsList
-	: LITERAL
-		{ $$ = [$1.toLowerCase()]; }
-	| ColsList COMMA LITERAL
-		{ $$ = $1; $1.push($3.toLowerCase()); }
+	: Literal
+		{ $$ = [$1]; }
+	| ColsList COMMA Literal
+		{ $$ = $1; $1.push($3); }
 	;
 
 ColumnDefsList
@@ -921,10 +930,10 @@ ColumnDefsList
 	;
 
 ColumnDef
-	: LITERAL ColumnTypeName ColumnConstraintsClause
-		{ $$ = new yy.ColumnDef({columnid:$1.toLowerCase()}); yy.extend($$,$2); yy.extend($$,$3);}
-	| LITERAL ColumnConstraints
-		{ $$ = new yy.ColumnDef({columnid:$1.toLowerCase()}); yy.extend($$,$2); }
+	: Literal ColumnTypeName ColumnConstraintsClause
+		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
+	| Literal ColumnConstraints
+		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
 	;
 
 ColumnTypeName
@@ -954,8 +963,8 @@ ColumnConstraintsList
 ColumnConstraint 
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES LITERAL LPAR LITERAL RPAR
-		{$$ = {foreignkey:{tableid:$4.toLowerCase(), columnid: $6.toLowerCase()}};}
+	| FOREIGN KEY REFERENCES Literal LPAR Literal RPAR
+		{$$ = {foreignkey:{tableid:$4, columnid: $6}};}
 	| AUTO_INCREMENT
 		{$$ = {auto_increment:true};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
@@ -978,41 +987,41 @@ DropTable
 /* ALTER TABLE */
 
 AlterTable
-	: ALTER TABLE Table RENAME TO LITERAL
-		{ $$ = new yy.AlterTable({table:$3, renameto: $6.toLowerCase()});}
+	: ALTER TABLE Table RENAME TO Literal
+		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
 	| ALTER TABLE Table ADD COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
 	| ALTER TABLE Table MODIFY COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
-	| ALTER TABLE Table DROP COLUMN LITERAL
-		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6.toLowerCase()});}
+	| ALTER TABLE Table DROP COLUMN Literal
+		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
 	;
 
 CreateDatabase
-	: CREATE DATABASE LITERAL
-		{ $$ = new yy.CreateDatabase({databaseid:$3.toLowerCase() });}
+	: CREATE DATABASE Literal
+		{ $$ = new yy.CreateDatabase({databaseid:$3 });}
 	;
 
 UseDatabase
-	: USE DATABASE LITERAL
-		{ $$ = new yy.UseDatabase({databaseid: $3.toLowerCase() });}	
-	| USE LITERAL
-		{ $$ = new yy.UseDatabase({databaseid: $2.toLowerCase() });}	
+	: USE DATABASE Literal
+		{ $$ = new yy.UseDatabase({databaseid: $3 });}	
+	| USE Literal
+		{ $$ = new yy.UseDatabase({databaseid: $2 });}	
 	;
 
 DropDatabase
-	: DROP DATABASE LITERAL
-		{ $$ = new yy.DropDatabase({databaseid: $3.toLowerCase() });}	
+	: DROP DATABASE Literal
+		{ $$ = new yy.DropDatabase({databaseid: $3 });}	
 	;
 
 CreateIndex
-	: CREATE INDEX LITERAL ON Table LPAR ColsList RPAR
-		{ $$ = new yy.CreateIndex({indexid:$3.toLowerCase(), table:$5, columns:$7})}
-	| CREATE UNIQUE INDEX LITERAL ON Table LPAR ColsList RPAR
-		{ $$ = new yy.CreateIndex({indexid:$3.toLowerCase(), table:$5, columns:$7, unique:true})}
+	: CREATE INDEX Literal ON Table LPAR ColsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
+	| CREATE UNIQUE INDEX Literal ON Table LPAR ColsList RPAR
+		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7, unique:true})}
 	;
 
 DropIndex
-	: DROP INDEX LITERAL
-		{ $$ = new yy.DropIndex({indexid:$3.toLowerCase()});}
+	: DROP INDEX Literal
+		{ $$ = new yy.DropIndex({indexid:$3});}
 	;

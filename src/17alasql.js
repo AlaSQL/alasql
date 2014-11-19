@@ -30,6 +30,7 @@ alasql.use = function (databaseid) {
 	alasql.useid = databaseid;
 	var db = alasql.databases[alasql.useid];
 	alasql.tables = db.tables;
+	alasql.fn = db.fn;
 	db.resetSqlCache();
 };
 

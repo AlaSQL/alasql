@@ -43,8 +43,8 @@ describe('Test 20 - User-defined functions', function() {
 		alasql('insert into one values (10), (20), (30)');
 
 		var num = 0;
-//		alasql.databases.test20.fn.spy = function(x) { 
-		alasql.fn.spy = function(x) { 
+		alasql.databases.test20.fn.spy = function(x) { 
+//		alasql.fn.spy = function(x) { 
 			num++;
 			return num
 		}; 
@@ -58,6 +58,34 @@ describe('Test 20 - User-defined functions', function() {
 		assert.deepEqual(res,3);
 
 		alasql('drop database test20');
+		done();
+	});
+
+	it('4 - Database\'s specific user-defined functions', function(done){
+		alasql('create database test20a;use test20a');
+		alasql('create table one (a int)');
+		alasql('insert into one values (10), (20), (30)');
+
+		alasql.fn.myfun = function(x) { return x+1; };
+
+		var res = alasql.array('select myfun(a) from one');
+		assert.deepEqual(res,[11,21,31]);
+
+		alasql('create database test20b;use test20b');
+		alasql('create table one (a int)');
+		alasql('insert into one values (10), (20), (30)');
+
+		alasql.fn.myfun = function(x) { return x+2; };
+
+		var res = alasql.array('select myfun(a) from one');
+		assert.deepEqual(res,[12,22,32]);
+
+		alasql('use test20a');
+		var res = alasql.array('select myfun(a) from one');
+		assert.deepEqual(res,[11,21,31]);
+
+		alasql('drop database test20a');
+		alasql('drop database test20b');
 		done();
 	});
 

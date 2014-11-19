@@ -68,8 +68,8 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 
 	this.columns.forEach(function(col) {
 		var newcol = {
-			columnid: col.columnid.toLowerCase(),
-			dbtypeid: col.dbtypeid.toUpperCase() // TODO: Add types table
+			columnid: col.columnid,
+			dbtypeid: col.dbtypeid // TODO: Add types table
 		};
 
 		if(col.default) {

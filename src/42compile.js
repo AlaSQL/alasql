@@ -481,7 +481,7 @@ function compileSelectStar (query,alias) {
 		};
 		if(columns) {
 			columns.forEach(function(tcol){
-				ss.push(tcol.columnid+':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
 
 	//		console.log('ok',s);
 
