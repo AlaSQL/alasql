@@ -16,15 +16,46 @@ yy.CreateTable.prototype.toString = function() {
 }
 
 // CREATE TABLE
-yy.CreateIndex.prototype.compile = function (db) {
+yy.CreateIndex.prototype.execute = function (databaseid) {
 //	var self = this;
+	var db = alasql.databases[databaseid];
 	var tableid = this.table.tableid;
-	var unique = this.unique;
+	var table = db.tables[tableid];
 	var indexid = this.indexid;
 
-	return function() {
-		return 0;
+	if(this.unique) {
+		var rightfns = this.columns.map(function(colid){return "r[\'"+colid+"\']"}).join("+'`'+");
+		table.uniqdefs[indexid] = {
+			rightfns: rightfns
+		};
+		var ux = table.uniqs[indexid] = {};
+		if(table.data.length > 0) {
+			for(var i=0, ilen=table.data.length; i<ilen;i++) {
+				var addr = rightfns(table.data[i]);
+				if(!ux[addr]) {
+					ux[addr] = {num:0};
+				};
+				ux[addr].num++;
+			}
+		}
+	} else {
+		var rightfns = this.columns.map(function(colid){return "r[\'"+colid+"\']"}).join("+'`'+");
+		var hh = hash(rightfns);
+		table.inddefs[indexid] = {rightfns:rightfns, hh:hh};
+		table.indices[hh] = {};
+
+		var ix = table.indices[hh] = {};
+		if(table.data.length > 0) {
+			for(var i=0, ilen=table.data.length; i<ilen;i++) {
+				var addr = rightfns(table.data[i]);
+				if(!ix[addr]) {
+					ix[addr] = [];
+				};
+				ix[addr].push(table.data[i]);
+			}
+		}
 	};
+
 };
 
 

@@ -20,8 +20,6 @@ describe('Test 40', function() {
 			assert.deepEqual(4.4,res[0].c);
 			done();
 		});
-
-
 	});
 
 	describe('Strings', function(){
@@ -35,7 +33,22 @@ describe('Test 40', function() {
 			assert.deepEqual(["One", "Two"],res);
 			done();
 		});
-
-
 	});
+
+	describe('Strings', function(){
+
+		it('Strings with single and double quaters like keywords', function(done){
+			alasql('create database test40; use test40');
+			alasql('CREATE TABLE six (a STRING)');
+			alasql('INSERT INTO six VALUES ("One")');
+			alasql("INSERT INTO six VALUES ('Two')");
+			var res = alasql("SELECT a, 'into', 'as' FROM six");
+//			console.log();
+			assert.deepEqual([{"'into'":'into', "'as'":'as', a:"One"}, {"'into'":'into', "'as'":'as', a:"Two"}],res);
+			alasql('drop database test40');
+			done();
+		});
+	});
+
+
 });

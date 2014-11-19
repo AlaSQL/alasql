@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.19 Date: November 19, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.20 Date: November 19, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -21,8 +21,11 @@ Please, submit bugs and suggestions in [issue page]().
 Sorry, transactions were broken in version 0.0.17, because we started to introduce more complex
 approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions onagain in version 0.0.20.
 
-You can check [version-0.0.19](https://github.com/agershun/alasql/tree/version-0.0.19) branch for new experimental features of new version. 
+You can check [version-0.0.20](https://github.com/agershun/alasql/tree/version-0.0.20) branch for new experimental features of new version. 
 
+### Documentation (draft)
+
+The early prototype of documentation ([draft](docs/index.md)).
 
 ## Examples
 
@@ -96,6 +99,7 @@ Then require alasql.js file:
 * CREATE TABLE \[IF NOT EXISTS\] table (columns type PRIMARY KEY, constraints)
 * DROP TABLE \[IF EXISTS\] table
 * CREATE DATABASE, USE DATABASE, DROP DATABASE
+* SHOW DATABASES / SHOW TABLES / SHOW COLUMNS 
 
 #### SELECT statement
 
@@ -136,7 +140,7 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 #### User-defined JavaScript functions
 
-You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions to alasql.fn object (please, use only lower case letters)):
+You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions to alasql.fn object:
 
 ```js
         alasql.fn.double = function(x){return x*2};        
@@ -167,12 +171,12 @@ or in Node.js:
 Another approach is to create new database:
 
 ```js
-    var mybase = new alasql Database();
+    var mybase = new alasql.Database();
     mybase.exec('CREATE TABLE one (two INT)');
 ```
 You can give a name to database and then access it from alasql:
 ```js
-    var mybase = new alasql Database('mybase');
+    var mybase = new alasql.Database('mybase');
     console.log(alasql.databases.mybase);
 ```
 
@@ -255,12 +259,16 @@ This feature can be used as filter for arrays. Compare:
 
         // Complex filter with aggregating, grouping and sorting
         var res = alasql.queryArrayOfArrays(
-            'SELECT [2] AS 0, SUM([1]) AS 1 FROM ? a WHERE a[0]>2016 GROUP BY [0] ORDER BY [1]', 
-            [data]);
+            'SELECT [2] AS 0, SUM([1]) AS 1 FROM ? a WHERE a[0]>? GROUP BY [0] ORDER BY [1]', 
+            [data, 2016]);
 
 ```
 
 ### Lower and Upper Case
+
+By default, Alasql is case-insensitive to all standard keywords (like SELECT) and standard functions (like ABS()). All database names, table names, column names, and user-defined functions are case sensitive. 
+
+JavaScript is case-sensitive language, so use the same CaSe for Alasql and JavaScript data.
 
 Now you can use databases, tables, and columns with spaces inside square brackets:
 
@@ -268,7 +276,7 @@ Now you can use databases, tables, and columns with spaces inside square bracket
     CREATE DATABASE [My Database];
     USE [My Database];
     CREATE TABLE [A.table] ([the-column] INT);
-    SELECT [the-column] AS [AS];
+    SELECT [the-column] AS [AS] FROM [My Database];
 ```
 
 ### Transactions

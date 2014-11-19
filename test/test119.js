@@ -4,6 +4,7 @@ if(typeof exports === 'object') {
 };
 
 describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function() {
+
 	it('PRIMARY KEY', function(done){
 		alasql('create database test119');
 		alasql('use test119');
@@ -43,6 +44,22 @@ describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function() {
 		alasql('insert into three values (1), (2), (3), (1)');
 		assert.throws(function(){
 			alasql('create unique index threea on three(a)')
+		}, Error);
+
+		var res = alasql.value('select count(*) from three');
+		assert.deepEqual(res, 4);
+
+		done();
+	});
+
+	it('UNIQUE INDEX-3 two unique indices and primary key', function(done){
+		
+		alasql('create table four (a int PRIMARY KEY, b int)');
+		alasql('create unique index foura on four(a)')
+		alasql('insert into four values (1,10), (2,20)');
+
+		assert.throws(function(){
+			alasql('insert into four values (1,10)');
 		}, Error);
 
 		var res = alasql.value('select count(*) from three');

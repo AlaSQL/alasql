@@ -43,6 +43,16 @@ yy.Join.prototype.toString = function() {
 yy.Table = function (params) { return yy.extend(this, params); }
 yy.Table.prototype.toString = function() {
 	var s = this.tableid;
+//	if(this.joinmode)
+	if(this.databaseid) s = this.databaseid+'.'+s;
+	return s;
+};
+
+
+yy.View = function (params) { return yy.extend(this, params); }
+yy.View.prototype.toString = function() {
+	var s = this.viewid;
+//	if(this.joinmode)
 	if(this.databaseid) s = this.databaseid+'.'+s;
 	return s;
 };

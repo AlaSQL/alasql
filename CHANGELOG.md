@@ -2,7 +2,11 @@
 
 ### 0.0.20 (19.11.2014)
 
-*
+* SHOW DATABASES
+* SHOW TABLES
+* SHOW COLUMNS
+* SHOW INDIEX (not fully)
+* CREATE VIEW syntax
 
 ### 0.0.19 (19.11.2014 - 19.11.2014)
 

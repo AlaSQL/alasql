@@ -1,6 +1,8 @@
 # To do
 ## URGENT
 
+* SHOW DATABASES
+
 * Fix tests
 * SELECT 1+1
 * ALTER TABLE ADD COLUMN
@@ -93,9 +95,6 @@ SELECT AND OTHER SQL STATEMENTS
 
 * Fast join of single value with indices (PRIMARY KEY)
 * GROUP BY ALL
-* FULL OUTER JOIN
-* ANTI-JOINS, SEMI-JOINS
-* [NATURAL JOIN](http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqljnaturaljoin.html#rrefsqljnaturaljoin)
 * Constrains, Foreign Keys, Primary key, cascade delete and update
 * Types, NULL, NOT NULL
 * Database.schema.table.field
@@ -106,9 +105,7 @@ SELECT AND OTHER SQL STATEMENTS
 * Rowversion, rowversion on insert, delete
 * JavaScript functions
 * Identity 1,1, unique fields
-* SELECT TOP
 * FETCH 
-* Case operator
 * Views (?)
 * Cursors
 * SQLite compatibility: functions
@@ -117,7 +114,6 @@ SELECT AND OTHER SQL STATEMENTS
 
 BUGS
 
-* Tableid and fields to lowercase
 * Aggregators without groups
 * 'SELECT wrongfield FROM table' gives something wrong 
 * Change order of groupfn() and selectfn(), and check havingfn vs selectfn

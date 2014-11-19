@@ -13,6 +13,9 @@
 %%
 
 \[([^\]])*\]									return 'BRALITERAL'
+['](\\.|[^'])*[']                               return 'STRING'
+["](\\.|[^"])*["]                               return 'STRING'
+
 \s+                                             /* skip whitespace */
 'ADD'                                      		return 'ADD'
 'ALL'                                      		return 'ALL'
@@ -32,12 +35,14 @@
 "CASE"											return "CASE"
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
+"COLUMNS"										return "COLUMNS"
 "CONSTRAINT"									return "CONSTRAINT"
 "COUNT"											return "COUNT"
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
 'DATABASE'										return 'DATABASE'
+'DATABASES'										return 'DATABASES'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
 'DESC'                                          return 'DIRECTION'
@@ -89,22 +94,29 @@
 'RENAME'                                        return 'RENAME'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
+'SCHEMAS'                                       return 'DATABASES'
 'SELECT'                                        return 'SELECT'
 'SEMI'                                        	return 'SEMI'
 'SET'                                        	return 'SET'
 'SETS'                                        	return 'SETS'
+'SHOW'                                        	return 'SHOW'
 'SOME'                                        	return 'SOME'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
+'TABLES'										return 'TABLES'
 'THEN'											return 'THEN'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
+'TRAN'											return 'TRAN'
+'TRANSACTION'									return 'TRANSACTION'
 'TRUE'						  					return 'TRUE'
 'UNION'                                         return 'UNION'
+'UNIQUE'                                        return 'UNIQUE'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
 'USING'                                         return 'USING'
 'VALUES'                                        return 'VALUES'
+'VIEW'											return 'VIEW'
 'WHEN'                                          return 'WHEN'
 'WHERE'                                         return 'WHERE'
 
@@ -141,8 +153,6 @@
 '?'												return 'QUESTION'
 
 [a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
-['](\\.|[^'])*[']                               return 'STRING'
-["](\\.|[^"])*["]                               return 'STRING'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
@@ -166,7 +176,8 @@
 
 Literal
 	: LITERAL
-		{ $$ = $1.toLowerCase(); }
+		{ $$ = $1; }
+/*		{ $$ = $1.toLowerCase(); } */
 	| BRALITERAL
 		{ $$ = doubleq($1.substr(1,$1.length-2)); }
 	;
@@ -197,25 +208,31 @@ Statement
 	| CreateDatabase
 	| CreateIndex
 	| CreateTable
+	| CreateTrigger
+	| CreateView
 	| Delete
 	| DropDatabase
 	| DropIndex
 	| DropTable
-	| Insert
-	| Select
-	| UseDatabase
-	| Update
-
-/*	| AttachDatabase
 	| DropTrigger
 	| DropView
+	| Insert
+	| RenameTable
+	| Select
+	| ShowCreateTable
+	| ShowColumns
+	| ShowDatabases
+	| ShowIndex
+	| ShowTables
 	| BeginTransaction
 	| CommitTransaction
 	| RollbackTransaction
 	| EndTransaction
+	| UseDatabase
+	| Update
+
+/*	| AttachDatabase
 	| SavePoint
-	| CreateTrigger
-	| CreateView
 	| Reindex
 	| StoreDatabase
 	| StoreTable
@@ -959,7 +976,6 @@ ColumnConstraintsList
 		{ $$ = $1; }
 	;
 
-
 ColumnConstraint 
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
@@ -997,6 +1013,8 @@ AlterTable
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
 	;
 
+/* DATABASES */
+
 CreateDatabase
 	: CREATE DATABASE Literal
 		{ $$ = new yy.CreateDatabase({databaseid:$3 });}
@@ -1014,14 +1032,71 @@ DropDatabase
 		{ $$ = new yy.DropDatabase({databaseid: $3 });}	
 	;
 
+/* INDEXES */
+
 CreateIndex
 	: CREATE INDEX Literal ON Table LPAR ColsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
 	| CREATE UNIQUE INDEX Literal ON Table LPAR ColsList RPAR
-		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7, unique:true})}
+		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 
 DropIndex
 	: DROP INDEX Literal
 		{ $$ = new yy.DropIndex({indexid:$3});}
+	;
+
+/* SHOW COMMAND */
+
+ShowDatabases
+	: SHOW DATABASES
+		{ $$ = new yy.ShowDatabases();}
+	| SHOW DATABASES LIKE StringValue
+		{ $$ = new yy.ShowDatabases({like:$4});}
+	;
+
+ShowTables
+	: SHOW TABLES
+		{ $$ = new yy.ShowTables();}
+	| SHOW TABLES LIKE StringValue
+		{ $$ = new yy.ShowTables({like:$4});}
+	| SHOW TABLES FROM Literal 
+		{ $$ = new yy.ShowTables({databaseid: $4});}
+	| SHOW TABLES FROM Literal LIKE StringValue
+		{ $$ = new yy.ShowTables({like:$6, databaseid: $4});}
+	;
+
+ShowColumns
+	: SHOW COLUMNS FROM Table
+		{ $$ = new yy.ShowColumns({table: $4});}
+	| SHOW COLUMNS FROM Table FROM Literal
+		{ $$ = new yy.ShowColumns({table: $4, databaseid:$6});}
+	;
+
+ShowIndex
+	: SHOW INDEX FROM Table
+		{ $$ = new yy.ShowIndex({table: $4});}
+	| SHOW INDEX FROM Table FROM Literal
+		{ $$ = new yy.ShowIndex({table: $4, databaseid: $6});}
+	;
+
+ShowCreateTable
+	: SHOW CREATE TABLE Table
+		{ $$ = new yy.ShowCreateTable({table: $4});}
+	| SHOW CREATE TABLE Table FROM Literal
+		{ $$ = new yy.ShowCreateTable({table: $4, databaseid:$6});}
+	;
+
+CreateView
+	: CREATE VIEW View AS Select
+		{ $$ = new yy.CreateView({view:$3, select: $5}); }
+	| CREATE VIEW View LPAR ColsList RPAR AS Select
+		{ $$ = new yy.CreateView({view:$3, columns: $5, select: $5}); }
+	;
+
+View
+	: Literal
+		{ $$ = new yy.View({viewid: $1}); }
+	| Literal DOT Literal
+		{ $$ = new yy.View({databaseid:$1, viewid: $3}); }
 	;

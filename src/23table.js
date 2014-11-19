@@ -14,8 +14,11 @@ Table = function(params){
 	// Data array
 	this.data = [];
 
-	this.ixdefs = {};
+	this.inddefs = {};
 	this.indices = {};
+
+	this.uniqs = {};
+	this.uniqdefs = {};	
 
 	extend(this,params);
 };

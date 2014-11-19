@@ -67,6 +67,8 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 0. Precompile queries for IN, NOT IN, ANY and ALL operators
 	this.compileQueries(query);
 	
+	query.defcols = this.compileDefCols(query, databaseid);
+
 	// 1. Compile FROM clause
 	query.fromfn = this.compileFrom(query);
 	// 2. Compile JOIN clauses

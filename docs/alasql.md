@@ -8,38 +8,34 @@ To execute sql statement on default database:
 To create new database without name (with new name):
 
 ```
-    var db = new alasql();
     var db = new alasql.Database();
 ```
 
 To create new database with name:
 
 ```
-    var db = new alasql(databaseid);
     var db = new alasql.Database(databaseid);
-    var db = alasql.Database(databaseid);
-
+    // or
+    alasql('CREATE DATABASE mydb');
 ```
 Set default database: (be sure, that db is in the list of databases (alasql.databases))
 
 ```
-    alasql.db = db;
+    alasql.use('mydb');
+    // or
+    alasql('USE mydb');
 ```
 
-To reach all databases:
+To reach all databases use alasql.databases:
 ```
-    var dbs = alasql.databases;
+    alasql.databases.forEach(function(db{
+        console.log(db.databaseid);
+    });
 ```
 
 To reach all tables in default database:
 ```
-    var dbs = alasql.tables;
-    var dbs = alasql.db.tables;
-```
-
-To change default database:
-```
-    alasql.use(mydb);
+    var tables = alasql.tables;
 ```
 
 To change alasql [options](options.md):

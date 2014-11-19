@@ -6,7 +6,7 @@ if(typeof exports === 'object') {
 describe('Test 32', function() {
 	it('LIKE ', function(done){
 
-	var db = alasql.Database("db");
+	var db = new alasql.Database("db");
 		db.exec('CREATE TABLE test (a STRING, b INT, t DATETIME)');
 		db.exec("INSERT INTO test (a) VALUES ('a')");
 		db.exec("INSERT INTO test (a) VALUES ('ab')");
