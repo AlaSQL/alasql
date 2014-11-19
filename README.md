@@ -138,7 +138,7 @@ Now Alasql.js supports following subset of SELECT syntax:
 
 You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions to alasql.fn object (please, use only lower case letters)):
 
-```
+```js
         alasql.fn.double = function(x){return x*2};        
         alasql.fn.sum10 = function(x,y) { return x+y*10; }
         db.exec('SELECT a, double(a) AS b, sum10(a,b) FROM test1');
@@ -151,7 +151,7 @@ User-defined functions are related to current database. You can define different
 alasql is a main variable of module. You can use it immediatly as default database
 
 In browser:
-```
+```html
     <script src="alasql.js"></script>
     <script>
         alasql('CREATE TABLE one (two INT)');
@@ -159,53 +159,53 @@ In browser:
 ```
 
 or in Node.js:
-```
+```js
     var alasql = require('alasql');
     alasql('CREATE TABLE one (two INT)');
 ```
 
 Another approach is to create new database:
 
-```
+```js
     var mybase = new alasql Database();
     mybase.exec('CREATE TABLE one (two INT)');
 ```
 You can give a name to database and then access it from alasql:
-```
+```js
     var mybase = new alasql Database('mybase');
     console.log(alasql.databases.mybase);
 ```
 
 Each database can be used with the following methods:
 
-```
+```js
     var db = new alasql.Database() - create new alasql-database
-    var res = db.exec("sql-statement") - executes SELECT query and returns array of objects 
+    var res = db.exec("SELECT * FROM one") - executes SELECT query and returns array of objects 
 ```
 
 Usually, alasql.js works synchronously, but you can use callback.
 
-```
+```js
     db.exec('SELECT * FROM test', [], function(res){
     	console.log(res);
     });
 ```
 
 or you can use aexec() - promised version of exec (in this case you need to install [es6-promise](https://www.npmjs.org/package/es6-promise) module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):
-```
+```js
     db.aexec('SELECT * FROM test').then(function(res){
         console.log(res);
     });
 ```
 You can use compile statements:
-```
+```js
     var insert = db.compile('INSERT INTO one (1,2)');
     insert();
 ```
 
 You can use parameters in compiled statements:
 
-```
+```js
     var insert1 = db.compile('INSERT INTO one (?,?)');
     var insert2 = db.compile('INSERT INTO one ($a,$b)');
     var insert3 = db.compile('INSERT INTO one (:a,:b)');
@@ -219,7 +219,7 @@ You can use parameters in compiled statements:
 ```
 You even can use param in FROM clause: 
 
-```
+```js
         var years = [
             {yearid: 2012}, {yearid: 2013},
             {yearid: 2014}, {yearid: 2015},
@@ -233,7 +233,7 @@ You even can use param in FROM clause:
 ```
 You can use array of arrays to make a query. In this case use square brackets for column name,
 like \[1\] or table\[2\] (remember, all arrays in JavaScript start with 0):
-```
+```js
         var data = [
             [2014, 1, 1], [2015, 2, 1],
             [2016, 3, 1], [2017, 4, 2],
@@ -243,12 +243,12 @@ like \[1\] or table\[2\] (remember, all arrays in JavaScript start with 0):
 ```
 Use alasql.queryArrayOfArrays() function to return array of arrays. In this case
 you can specify array position of selected column with number or number in brackets:
-```
+```js
         var res = alasql.queryArrayOfArrays(
             'SELECT [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [data]);
 ```
 This feature can be used as filter for arrays. Compare:
-```
+```js
         // Same filter
         var res1 = alasql.queryArrayOfArrays('SELECT * FROM ? a WHERE [0]>2016', [data]);
         var res2 = data.filter(function(a){return a[0]>2016});
@@ -275,7 +275,7 @@ Now you can use databases, tables, and columns with spaces inside square bracket
 
 There is a limited support of transactions (with tx.rollback() and tx.commit() functions):
 
-```
+```js
     db = new alasql.Database("mydb");
     db.transaction(function(tx) {
         tx.exec('SELECT COUNT(*) FROM students');
@@ -288,7 +288,7 @@ There is a limited support of transactions (with tx.rollback() and tx.commit() f
 
 You can use Alasql to parse to AST and compile SQL statements:
 
-```
+```js
     // Parse to AST
     var ast = alasql.parse("SELECT * FROM one");
     console.log(ast.toString()); // Print restored SQL statement
