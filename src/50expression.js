@@ -222,7 +222,9 @@ yy.StringValue.prototype.toType = function() {
 }
 
 yy.StringValue.prototype.toJavaScript = function() {
-	return "'"+this.value+"'";
+//	console.log("'"+doubleqq(this.value)+"'");
+	return "'"+doubleqq(this.value)+"'";
+
 }
 
 

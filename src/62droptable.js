@@ -21,7 +21,9 @@ yy.DropTable.prototype.execute = function (databaseid) {
 	var tableid = this.table.tableid;
 	if(!this.ifexists || this.ifexists && db.tables[tableid]) {
 		if(!db.tables[tableid]) {
-			throw new Error('Can not drop table \''+this.target.value+'\', because it does not exist in the database.');
+			if(!alasql.options.dropifnotexists) {
+				throw new Error('Can not drop table \''+this.table.tableid+'\', because it does not exist in the database.');
+			}
 		} else {
 			delete db.tables[tableid];
 			return 1;

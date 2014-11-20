@@ -19,6 +19,7 @@ alasql.parse = parser.parse.bind(parser); // Shortcut
 alasql.utils = utils;
 
 alasql.databases = {};
+alasql.options = {};
 
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;

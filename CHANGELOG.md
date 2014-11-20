@@ -1,8 +1,13 @@
 # Changelog
 
-### 0.0.21 (19.11.2014 - )
+### 0.0.21 (19.11.2014 - 20.11.2014)
 
 * SELECT a AS q, b w FROM one - AS is not required
+* Comments '--' and '/* */'
+* Double quote sign in the string 'Bon''appetite'
+* Compatibility with World Database (http://dev.mysql.com/doc/world-setup/en/index.html)
+ * `literal` in backquotes like literal in square brackets [literal]
+ * Additional grammar for ENGINE, CHARSET, etc. and other keywords for World database
 
 ### 0.0.20 (19.11.2014)
 
@@ -11,7 +16,7 @@
 * SHOW COLUMNS
 * SHOW INDIEX (not fully)
 * CREATE VIEW syntax
-* Case-sensiviry
+* Case-sensivity
 
 ### 0.0.19 (19.11.2014 - 19.11.2014)
 

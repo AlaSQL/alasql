@@ -1,0 +1,4 @@
+# MySQL demo database
+
+test/world/world_innodb.sql
+test/world/world.sql

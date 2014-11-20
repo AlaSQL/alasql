@@ -12,9 +12,13 @@
 %options case-insensitive
 %%
 
-\[([^\]])*\]									return 'BRALITERAL'
-['](\\.|[^'])*[']                               return 'STRING'
-["](\\.|[^"])*["]                               return 'STRING'
+\[([^\]])*?\]	   								 return 'BRALITERAL'
+\`([^\]])*?\`	   								 return 'BRALITERAL'
+(['](\\.|[^'])*?['])+                            return 'STRING'
+["](\\.|[^"])*?["]                               return 'STRING'
+
+\/\*(.*?)\*\/									return /* skip comments */
+"--"(.*?)($|\r\n|\r|\n)							return /* return 'COMMENT' */
 
 \s+                                             /* skip whitespace */
 'ABSOLUTE'                                 		return 'ABSOLUTE'
@@ -34,6 +38,7 @@
 'BY'											return 'BY'
 
 'CASE'											return 'CASE'
+'CHARSET'										return 'CHARSET'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
@@ -54,6 +59,8 @@
 'DROP'											return 'DROP'
 
 'END'											return 'END'
+'ENGINE'										return 'ENGINE'
+'ENUM'											return 'ENUM'
 'ELSE'											return 'ELSE'
 'EXCEPT'										return 'EXCEPT'
 'EXISTS'										return 'EXISTS'
@@ -82,6 +89,7 @@
 'LIMIT'											return 'LIMIT'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
+"MINUS"											return "EXCEPT"
 "MODIFY"										return "MODIFY"
 'NATURAL'										return 'NATURAL'
 'NEXT'											return 'NEXT'
@@ -103,6 +111,7 @@
 'RENAME'                                        return 'RENAME'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
+'SCHEMA'                                        return 'DATABASE'
 'SCHEMAS'                                       return 'DATABASES'
 'SELECT'                                        return 'SELECT'
 'SEMI'                                        	return 'SEMI'
@@ -890,13 +899,25 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR
+	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptions
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 			yy.extend($$,$7); 
 		}
+	;
+
+CreateTableOptions
+	: CreateTableOptions CreateTableOption
+	| CreateTableOption
+	;
+
+CreateTableOptions
+	: DEFAULT
+	| ENGINE EQ Literal
+	| AUTO_INCREMENT EQ NumValue
+	| CHARSET EQ Literal 
 	;
 
 TemporaryClause 
@@ -974,13 +995,16 @@ ColumnDef
 	;
 
 ColumnTypeName
-	: LITERAL LPAR SignedNumber DOT SignedNumber RPAR
+	: LITERAL LPAR NUMBER COMMA NUMBER RPAR
 		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3, dbprecision: $5} }
-	| LITERAL LPAR SignedNumber RPAR
+	| LITERAL LPAR NUMBER RPAR
 		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3} }
 	| LITERAL
 		{ $$ = {dbtypeid: $1.toUpperCase()} }
+	| EMUN LPAR ValuesList RPAR
+		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
+
 
 ColumnConstraintsClause
 	: {$$ = null}

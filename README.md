@@ -19,9 +19,9 @@ Alasql project is very young and still in active development phase, therefore it
 Please, submit bugs and suggestions in [issue page]().
 
 Sorry, transactions were broken in version 0.0.17, because we started to introduce more complex
-approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions onagain in version 0.0.20.
+approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions on again in one of the future version.
 
-You can check [version-0.0.20](https://github.com/agershun/alasql/tree/version-0.0.20) branch for new experimental features of new version. 
+You can check [version-0.0.22](https://github.com/agershun/alasql/tree/version-0.0.22) branch for new experimental features of new version. 
 
 ### Documentation (draft)
 
@@ -273,8 +273,8 @@ JavaScript is case-sensitive language, so use the same CaSe for Alasql and JavaS
 Now you can use databases, tables, and columns with spaces inside square brackets:
 
 ```sql
-    CREATE DATABASE [My Database];
-    USE [My Database];
+    CREATE DATABASE [My Database];  -- BTW You can use comments in the SQL statements
+    USE [My Database];              /* or comments like this */   
     CREATE TABLE [A.table] ([the-column] INT);
     SELECT [the-column] AS [AS] FROM [My Database];
 ```

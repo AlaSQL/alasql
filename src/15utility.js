@@ -15,8 +15,12 @@ var escapeq = utils.escapeq = function(s) {
     return s.replace(/\'/g,"\\'");
 }
 
-var doubleq = utils.escapeq = function(s) {
+var doubleq = utils.doubleq = function(s) {
     return s.replace(/\'\'/g,"\\\'");
+}
+
+var doubleqq = utils.doubleqq = function(s) {
+    return s.replace(/\'/g,"\\\'");
 }
 
 
