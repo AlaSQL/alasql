@@ -1,0 +1,30 @@
+<script src='alasql.js'></script>
+<script src="jquery.min.js"></script>
+<script>
+	alasql.options.dropifnotexists = true;
+	$.get('NeptunoCreacionMySQL.sql.txt').then(function(sql){
+
+	 var tm = Date.now();
+		alasql(sql);
+	console.log("Time:", Date.now()-tm);
+	 var sql="select nombrecompania as comp, nombrecontacto as cont, cargocontacto as cargo from clientes order by cargo, cont desc" ;
+	 var tm = Date.now();
+	var res = alasql(sql);
+	console.log("Time:", Date.now()-tm);
+            document.write("<table border='1'>");
+            document.write("<tr><th>COMPANIA</th>")
+            document.write("<th>CONTACTO</th><th>CARGO</th></tr>");
+            for (i=0;i<res.length;i++){
+                document.write(" <tr><td>");
+				document.write(res[i]["comp"]);
+                document.write(" </td><td>");
+                document.write(res[i]["cont"]);
+                document.write(" </td><td>");
+                document.write(res[i]["cargo"]);
+                document.write("</td></tr>");
+            }
+            document.write("</table>");
+//	          console.table(res);
+	});	
+</script> 
+<output/>

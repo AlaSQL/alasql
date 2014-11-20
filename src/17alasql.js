@@ -84,12 +84,15 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
-		if(ast.statements[i].compile) { 
-			var statement = ast.statements[i].compile(alasql.useid);
-			res.push(statement(params));
-		} else {
-			res.push(ast.statements[i].execute(alasql.useid, params));
-		}		
+		if(ast.statements[i]) {
+			console.log(ast.statements[i].toString());
+			if(ast.statements[i].compile) { 
+				var statement = ast.statements[i].compile(alasql.useid);
+				res.push(statement(params));
+			} else {
+				res.push(ast.statements[i].execute(alasql.useid, params));
+			}		
+		}
 	};
 	if(useid != databaseid) alasql.use(useid);
 	if(cb) cb(res);

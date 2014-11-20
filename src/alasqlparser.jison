@@ -3,7 +3,7 @@
 // alasqlparser.jison
 // SQL Parser for Alasql.js
 // Date: 03.11.2014
-// Modified: 19.11.2014
+// Modified: 20.11.2014
 // (c) 2014, Andrey Gershun
 //
 */
@@ -909,11 +909,12 @@ CreateTable
 	;
 
 CreateTableOptions
-	: CreateTableOptions CreateTableOption
+	: 
+	| CreateTableOptions CreateTableOption
 	| CreateTableOption
 	;
 
-CreateTableOptions
+CreateTableOption
 	: DEFAULT
 	| ENGINE EQ Literal
 	| AUTO_INCREMENT EQ NumValue
@@ -955,6 +956,10 @@ Constraint
 		{ $2.constraintid = $1; $$ = $2; }
 	| ConstraintName ForeignKey
 		{ $2.constraintid = $1; $$ = $2; }
+	| ConstraintName UniqueKey
+		{ $2.constraintid = $1; $$ = $2; }
+	| ConstraintName IndexKey
+		{ $2.constraintid = $1; $$ = $2; }
 	;
 
 ConstraintName
@@ -973,6 +978,14 @@ ForeignKey
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktableid: $7, fkcolumns: $9}; }
 	;
 
+UniqueKey
+	: UNIQUE 
+	;
+
+IndexKey
+	: INDEX Literal LPAR ColumnsList RPAR
+	| KEY Literal LPAR ColumnsList RPAR
+	;	
 ColsList
 	: Literal
 		{ $$ = [$1]; }
@@ -1001,7 +1014,7 @@ ColumnTypeName
 		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3} }
 	| LITERAL
 		{ $$ = {dbtypeid: $1.toUpperCase()} }
-	| EMUN LPAR ValuesList RPAR
+	| ENUM LPAR ValuesList RPAR
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
 
