@@ -17,6 +17,7 @@
 ["](\\.|[^"])*["]                               return 'STRING'
 
 \s+                                             /* skip whitespace */
+'ABSOLUTE'                                 		return 'ABSOLUTE'
 'ADD'                                      		return 'ADD'
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
@@ -32,17 +33,20 @@
 'NOT BETWEEN'									return 'NOT_BETWEEN'
 'BY'											return 'BY'
 
-"CASE"											return "CASE"
+'CASE'											return 'CASE'
+'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
 "COLUMNS"										return "COLUMNS"
 "CONSTRAINT"									return "CONSTRAINT"
 "COUNT"											return "COUNT"
+"CURSOR"										return "CURSOR"
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
 'DATABASE'										return 'DATABASE'
 'DATABASES'										return 'DATABASES'
+'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
 'DESC'                                          return 'DIRECTION'
@@ -55,6 +59,7 @@
 'EXISTS'										return 'EXISTS'
 'EXPLAIN'                                       return 'EXPLAIN'
 'FALSE'											return 'FALSE'
+'FETCH'											return 'FETCH'
 'FIRST'											return 'FIRST'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
@@ -79,18 +84,22 @@
 "MIN"											return "MIN"
 "MODIFY"										return "MODIFY"
 'NATURAL'										return 'NATURAL'
+'NEXT'											return 'NEXT'
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
 'ON'											return 'ON'
 'OFFSET'										return 'OFFSET'
+'OPEN'											return 'OPEN'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
+'PRIOR'                                        	return 'PRIOR'
 'QUERY'                                        	return 'QUERY'
 'REFERENCES'                                    return 'REFERENCES'
+'RELATIVE'                                      return 'RELATIVE'
 'RENAME'                                        return 'RENAME'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
@@ -208,13 +217,11 @@ Statement
 	| CreateDatabase
 	| CreateIndex
 	| CreateTable
-	| CreateTrigger
 	| CreateView
 	| Delete
 	| DropDatabase
 	| DropIndex
 	| DropTable
-	| DropTrigger
 	| DropView
 	| Insert
 	| RenameTable
@@ -231,7 +238,17 @@ Statement
 	| UseDatabase
 	| Update
 
-/*	| AttachDatabase
+	| DeclareCursor
+	| OpenCursor
+	| FetchCursor
+	| CloseCursor
+
+
+/*	
+	| CreateTrigger
+	| DropTrigger
+
+	| AttachDatabase
 	| SavePoint
 	| Reindex
 	| StoreDatabase
@@ -250,9 +267,6 @@ Statement
 	| CreateProcedure
 	| Loop
 	| ForLoop
-	| DeclareCursor
-	| OpenCursor
-	| FetchCursor
 */
 	;
 
@@ -1100,9 +1114,49 @@ CreateView
 		{ $$ = new yy.CreateView({view:$3, columns: $5, select: $5}); }
 	;
 
+DropView
+	: DROP VIEW View
+		{ $$ = new yy.DropView({view:$2}); }
+	;
+
 View
 	: Literal
 		{ $$ = new yy.View({viewid: $1}); }
 	| Literal DOT Literal
 		{ $$ = new yy.View({databaseid:$1, viewid: $3}); }
+	;
+
+DeclareCursor
+	: DECLARE Literal CURSOR FOR Select
+		{ $$ = new yy.DeclareCursor({cursorid:$2, select:$5}); }
+	;
+
+OpenCursor
+	: OPEN Literal
+		{ $$ = new yy.OpenCursor({cursorid:$2}); }
+	;
+
+CloseCursor
+	: CLOSE Literal
+		{ $$ = new yy.CloseCursor({cursorid:$2}); }
+	;
+
+FetchCursor
+	: FETCH FetchDirection FROM Literal
+		{ $$ = new yy.FetchCursor({cursorid:$4}); yy.extend($$,$2); }
+	;
+
+FetchDirection
+	: NEXT
+		{ $$ = {direction: 'NEXT'}; }
+	| PRIOR
+		{ $$ = {direction: 'PRIOR'}; }
+	| FIRST
+		{ $$ = {direction: 'FIRST'}; }
+	| LAST
+		{ $$ = {direction: 'LAST'}; }
+	| ABSOLUTE NumValue
+		{ $$ = {direction: 'ABSOLUTE', num:$2}; }
+	| RELATIVE NumValue
+		{ $$ = {direction: 'RELATIVE', num:$2}; }
 	;
