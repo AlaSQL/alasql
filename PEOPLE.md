@@ -9,6 +9,7 @@ In English:
 
 In Japanese:
 
+* [Alasql.js - オンメモリで動作するJavaScriptデータベース](http://www.moongift.jp/2014/11/alasql-js-%E3%82%AA%E3%83%B3%E3%83%A1%E3%83%A2%E3%83%AA%E3%81%A7%E5%8B%95%E4%BD%9C%E3%81%99%E3%82%8Bjavascript%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9/)
 * [DailyJS Translation](http://panda.node.ws/?p=333)
 * [Documentation](http://www.open-open.com/lib/view/open1415688317196.html)
 
@@ -31,3 +32,4 @@ In Russian:
 In Chinese
 
 * [纯JavaScript快速的客户端SQL数据库：Alasql.js](http://www.open-open.com/lib/view/open1415688317196.html)
+* [JavaScript 数据库 Alasql.js](http://wap.oschina.net/p/alasql-js)

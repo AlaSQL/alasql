@@ -85,7 +85,7 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		if(ast.statements[i]) {
-			console.log(ast.statements[i].toString());
+//			if(alasql.options.logstatements) console.log(ast.statements[i].toString());
 			if(ast.statements[i].compile) { 
 				var statement = ast.statements[i].compile(alasql.useid);
 				res.push(statement(params));

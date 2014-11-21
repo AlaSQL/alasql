@@ -1,13 +1,21 @@
 # To do
 ## URGENT
 
-* SHOW DATABASES
-
+* ALTER TABLE ADD COLUMN
+* ALTER TABLE MODIFY COLUMN
+* Column resolutions
+* Primary key, Foreign Key, Constraints, Unique Indexe
+* Join source Subquery, ParamValue
+* Transactions
+* ORDER BY RAND(), RANDOM(), NEWID()
+* TRUNCATE TABLE
+* ALTER TABLE table DROP INDEX index
+* WITH table AS Select SELECT
+* Check IS NULL/IS NOT NULL
+* DELETE JOIN / UPDATE JOIN 
 * Fix tests
 * SELECT 1+1
-* ALTER TABLE ADD COLUMN
-* ALTER TABLE DROP COLUMN
-
+* STORE / RESTORE TABLE
 * FOREIGN KEY
 * CREATE INDEX
 * DROP INDEX

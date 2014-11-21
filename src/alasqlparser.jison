@@ -312,6 +312,8 @@ Select
 SelectClause
 	: SELECT DISTINCT TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $3); }
+	| SELECT UNIQUE TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $3); }
 	| SELECT ALL TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $3); }
 	| SELECT TopClause ResultColumns  
@@ -899,7 +901,7 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptions
+	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
@@ -908,9 +910,13 @@ CreateTable
 		}
 	;
 
+CreateTableOptionsClause
+	:
+	| CreateTableOptions
+	;
+
 CreateTableOptions
-	: 
-	| CreateTableOptions CreateTableOption
+	: CreateTableOptions CreateTableOption
 	| CreateTableOption
 	;
 
@@ -1066,8 +1072,15 @@ AlterTable
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
 	| ALTER TABLE Table MODIFY COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
+	| ALTER TABLE Table RENAME COLUMN Literal TO Literal
+		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
 	| ALTER TABLE Table DROP COLUMN Literal
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
+	;
+
+RenameTable
+	: RENAME TABLE Table TO Literal
+		{ $$ = new yy.AlterTable({table:$3, renameto: $5});}
 	;
 
 /* DATABASES */
