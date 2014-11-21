@@ -1596,7 +1596,6 @@ var utils = alasql.utils = {};
 // Stub for non-ecisting WHERE clause 
 // so is faster then if(whenrfn) whenfn()
 function returnTrue () {return true};
-
 function returnUndefined() {};
 
 var escapeq = utils.escapeq = function(s) {
@@ -1623,16 +1622,15 @@ var hash = utils.hash = function hash(str){
     return h;
 };
 
-
 // Union arrays
-var arrayUnion = utils.arrayUnion = function arrayUnion (a,b) {
+var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
     return r;
 };
 
 // Array Difference
-var arrayDiff = utils.arrayDiff  = function arrayDiff (a,b) {
+var arrayDiff = utils.arrayDiff  = function (a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
@@ -1655,7 +1653,7 @@ var arrayIntersect = utils.arrayIntersept  = function(a,b) {
 
 
 // Arrays deep union (with records)
-var arrayUnionDeep = utils.arrayUnionDeep = function arrayUnionDeep (a,b) {
+var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
         var found = false;
@@ -1672,7 +1670,7 @@ var arrayUnionDeep = utils.arrayUnionDeep = function arrayUnionDeep (a,b) {
 };
 
 // Arrays deep union (with records)
-var arrayExceptDeep = utils.arrayExceptDeep = function arrayExceptDeep(a,b) {
+var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
@@ -1770,14 +1768,15 @@ var extend = utils.extend = function extend (a,b){
 };;
 
 // Flat array by first row
-var flatArray = utils.flatArray = function flatArray(a) {
+var flatArray = utils.flatArray = function(a) {
     if(!a || a.length == 0) return [];
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
     return a.map(function(ai) {return ai[key]});
 };
 
-var arrayOfArrays = utils.arrayOfArrays = function flatArray(a) {
+// Convert array of objects to array of arrays
+var arrayOfArrays = utils.arrayOfArrays = function (a) {
     return a.map(function(aa){
         var ar = [];
         for(var key in aa) ar[key] = aa[key];
@@ -1800,25 +1799,15 @@ var arrayOfArrays = utils.arrayOfArrays = function flatArray(a) {
 alasql.parser = parser;
 alasql.parse = parser.parse.bind(parser); // Shortcut
 
-// Console
-alasql.table = function(sql, params) {
-	var res = alasql(sql, params);
-	if(typeof exports === 'object') {
-		console.log(res);		
-	} else {
-		console.table(res);
-	}
-};
-
-// Useful library
-alasql.utils = utils;
-
+// Databases
 alasql.databases = {};
 alasql.databasenum = 0; // Current database
 
 // Deafult options
 alasql.options = {};
-alasql.options.valueof = false;
+alasql.options.valueof = false; // Use valueof in orderfn
+alasql.options.dropifnotexists = false; // DROP database in any case
+alasql.options.jsdate = true; // How to handle DATE and DATETIME types
 
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
@@ -3116,9 +3105,6 @@ yy.Select.prototype.compileQueries = function(query) {
 
 // SELECT Compile functions
 
-// Stub for non-ecisting WHERE clause 
-// so is faster then if(whenrfn) whenfn()
-function returnTrue () {return true};
 
 // Compile JOIN caluese
 yy.Select.prototype.compileJoins = function(query) {
@@ -5555,7 +5541,7 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 
 
 // Console functions
-
+/*
 alasql.con = {
 	results:{}
 };
@@ -5622,10 +5608,10 @@ alasql.con.log = function() {
 	};
 
 };
-
-alasql.con.test = function(name, times, fn) {
+*/
+alasql.test = function(name, times, fn) {
 	if(arguments.length == 0) {
-		alasql.con.log(alasql.con.results);
+		alasql.log(alasql.con.results);
 		return;
 	} else if(arguments.length == 1) {
 		var tm = Date.now();
@@ -5643,6 +5629,87 @@ alasql.con.test = function(name, times, fn) {
 	for(var i=0;i<times;i++) fn();
 	alasql.con.results[name] = Date.now()-tm;
 };
+
+// Console
+alasql.log = function(sql, params) {
+	var res;
+	if(typeof sql == "string") {
+		res = alasql(sql, params);
+	} else {
+		res = sql;
+	};
+	if(res instanceof Array) {
+		if(console.table) {
+			console.table(res);		
+		} else {
+			console.log(res);
+		}
+	} else {
+		console.log(res);				
+	}
+};
+
+// Console
+alasql.write = function(sql, params) {
+	// For node other
+	if(typeof exports == 'object') {
+		return alasql.log(sql,params);
+	}
+
+	var res;
+	if(typeof sql == "string") {
+		res = alasql(sql, params);
+	} else {
+		res = sql;
+	};
+	// if(res instanceof Array) {
+	// } else {
+	// }
+	if(document && document.getElementsByTagName('output')) {
+		var s = '';
+//		if(typeof sql == 'string') s += '<p>&gt;&nbsp;'+sql+'</p>';
+		if(res instanceof Array) {
+			s += '<table border="1">';
+			var cols = [];			
+			for(colid in res[0]) {
+				cols.push(colid);
+			}
+			s += '<tr>';
+			cols.forEach(function(colid){
+				s += '<th>'+colid;
+			});
+			for(var i=0,ilen=res.length;i<ilen;i++) {
+				s += '<tr>';
+				cols.forEach(function(colid){
+					s += '<td> '+res[i][colid];
+				});
+			}
+
+			s += '</table>';
+		} else {
+			//s += JSON.stringify(res);
+			if(typeof res != undefined) {
+				s += '<p>'+res.toString()+'</p>';
+			}
+		}
+		document.write(s);
+	} else {
+		console.log(sql);
+		alasql.log(res);
+	}
+
+};
+
+alasql.writep = function (sql) {
+	if(typeof exports == 'object') {	
+		console.log(alasql.useid+'>',sql);
+	} else {
+		document.write("<p>"+alasql.useid+"&gt;&nbsp;"+sql+"</p>");
+	}
+}
+
+
+
 
 
 

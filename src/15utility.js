@@ -12,7 +12,6 @@ var utils = alasql.utils = {};
 // Stub for non-ecisting WHERE clause 
 // so is faster then if(whenrfn) whenfn()
 function returnTrue () {return true};
-
 function returnUndefined() {};
 
 var escapeq = utils.escapeq = function(s) {
@@ -39,16 +38,15 @@ var hash = utils.hash = function hash(str){
     return h;
 };
 
-
 // Union arrays
-var arrayUnion = utils.arrayUnion = function arrayUnion (a,b) {
+var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
     return r;
 };
 
 // Array Difference
-var arrayDiff = utils.arrayDiff  = function arrayDiff (a,b) {
+var arrayDiff = utils.arrayDiff  = function (a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
@@ -71,7 +69,7 @@ var arrayIntersect = utils.arrayIntersept  = function(a,b) {
 
 
 // Arrays deep union (with records)
-var arrayUnionDeep = utils.arrayUnionDeep = function arrayUnionDeep (a,b) {
+var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
         var found = false;
@@ -88,7 +86,7 @@ var arrayUnionDeep = utils.arrayUnionDeep = function arrayUnionDeep (a,b) {
 };
 
 // Arrays deep union (with records)
-var arrayExceptDeep = utils.arrayExceptDeep = function arrayExceptDeep(a,b) {
+var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
@@ -186,14 +184,15 @@ var extend = utils.extend = function extend (a,b){
 };;
 
 // Flat array by first row
-var flatArray = utils.flatArray = function flatArray(a) {
+var flatArray = utils.flatArray = function(a) {
     if(!a || a.length == 0) return [];
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
     return a.map(function(ai) {return ai[key]});
 };
 
-var arrayOfArrays = utils.arrayOfArrays = function flatArray(a) {
+// Convert array of objects to array of arrays
+var arrayOfArrays = utils.arrayOfArrays = function (a) {
     return a.map(function(aa){
         var ar = [];
         for(var key in aa) ar[key] = aa[key];

@@ -8,9 +8,6 @@
 
 // SELECT Compile functions
 
-// Stub for non-ecisting WHERE clause 
-// so is faster then if(whenrfn) whenfn()
-function returnTrue () {return true};
 
 // Compile JOIN caluese
 yy.Select.prototype.compileJoins = function(query) {

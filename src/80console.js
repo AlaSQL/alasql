@@ -1,5 +1,5 @@
 // Console functions
-
+/*
 alasql.con = {
 	results:{}
 };
@@ -66,10 +66,10 @@ alasql.con.log = function() {
 	};
 
 };
-
-alasql.con.test = function(name, times, fn) {
+*/
+alasql.test = function(name, times, fn) {
 	if(arguments.length == 0) {
-		alasql.con.log(alasql.con.results);
+		alasql.log(alasql.con.results);
 		return;
 	} else if(arguments.length == 1) {
 		var tm = Date.now();
@@ -87,4 +87,85 @@ alasql.con.test = function(name, times, fn) {
 	for(var i=0;i<times;i++) fn();
 	alasql.con.results[name] = Date.now()-tm;
 };
+
+// Console
+alasql.log = function(sql, params) {
+	var res;
+	if(typeof sql == "string") {
+		res = alasql(sql, params);
+	} else {
+		res = sql;
+	};
+	if(res instanceof Array) {
+		if(console.table) {
+			console.table(res);		
+		} else {
+			console.log(res);
+		}
+	} else {
+		console.log(res);				
+	}
+};
+
+// Console
+alasql.write = function(sql, params) {
+	// For node other
+	if(typeof exports == 'object') {
+		return alasql.log(sql,params);
+	}
+
+	var res;
+	if(typeof sql == "string") {
+		res = alasql(sql, params);
+	} else {
+		res = sql;
+	};
+	// if(res instanceof Array) {
+	// } else {
+	// }
+	if(document && document.getElementsByTagName('output')) {
+		var s = '';
+//		if(typeof sql == 'string') s += '<p>&gt;&nbsp;'+sql+'</p>';
+		if(res instanceof Array) {
+			s += '<table border="1">';
+			var cols = [];			
+			for(colid in res[0]) {
+				cols.push(colid);
+			}
+			s += '<tr>';
+			cols.forEach(function(colid){
+				s += '<th>'+colid;
+			});
+			for(var i=0,ilen=res.length;i<ilen;i++) {
+				s += '<tr>';
+				cols.forEach(function(colid){
+					s += '<td> '+res[i][colid];
+				});
+			}
+
+			s += '</table>';
+		} else {
+			//s += JSON.stringify(res);
+			if(typeof res != undefined) {
+				s += '<p>'+res.toString()+'</p>';
+			}
+		}
+		document.write(s);
+	} else {
+		console.log(sql);
+		alasql.log(res);
+	}
+
+};
+
+alasql.writep = function (sql) {
+	if(typeof exports == 'object') {	
+		console.log(alasql.useid+'>',sql);
+	} else {
+		document.write("<p>"+alasql.useid+"&gt;&nbsp;"+sql+"</p>");
+	}
+}
+
+
+
 

@@ -1,0 +1,30 @@
+<script src="../../lib/zt/zt.js"></script>
+<script src="../../alasql.js"></script>
+<h1>Console test</h1>
+<output/>
+<script>
+	var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
+	var sql2 = "INSERT INTO schools (schoolid, schoolname) VALUES (1,'Northern Pacific School'), "+
+		" (2, 'Wooden School')";
+	var sql3 = 'SELECT * FROM schools';
+
+	alasql.writep(sql1);
+	alasql.write(sql1);
+	
+	alasql.writep(sql2);
+	alasql.write(sql2);
+
+	alasql.writep(sql3);
+	alasql.write(sql3);
+
+	// zt('Test insert', 1, function() {
+	// 	alasql.exec(sql2);
+	// });
+	// zt('Test insert', 1000000, function() {
+	// 	alasql.exec(sql3);
+	// });
+  
+    // zt.log();
+
+//    console.log(res);
+</script>

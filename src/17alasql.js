@@ -11,25 +11,15 @@
 alasql.parser = parser;
 alasql.parse = parser.parse.bind(parser); // Shortcut
 
-// Console
-alasql.table = function(sql, params) {
-	var res = alasql(sql, params);
-	if(typeof exports === 'object') {
-		console.log(res);		
-	} else {
-		console.table(res);
-	}
-};
-
-// Useful library
-alasql.utils = utils;
-
+// Databases
 alasql.databases = {};
 alasql.databasenum = 0; // Current database
 
 // Deafult options
 alasql.options = {};
-alasql.options.valueof = false;
+alasql.options.valueof = false; // Use valueof in orderfn
+alasql.options.dropifnotexists = false; // DROP database in any case
+alasql.options.jsdate = true; // How to handle DATE and DATETIME types
 
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
