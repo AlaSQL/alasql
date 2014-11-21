@@ -7,7 +7,7 @@
 */
 
 // Main Database class
-function Database(databaseid) {
+var Database = alasql.Database = function (databaseid) {
 	var self = this;
 	if(self === alasql) {
 		if(databaseid) {
@@ -22,7 +22,7 @@ function Database(databaseid) {
 		}
 	}
 	if(!databaseid) {
-		databaseid = "db"+Date.now(); // Random name
+		databaseid = "db"+(alasql.databasenum++); // Random name
 	};
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
@@ -32,12 +32,11 @@ function Database(databaseid) {
 	self.indices = {};
 	self.fn = {};
 	self.resetSqlCache();
-	self.dbversion = Date.now();
+	self.dbversion = 0;
 	return self;
 };
 
 // Start database
-alasql.Database = Database;
 
 Database.prototype.resetSqlCache = function () {
 	this.sqlCache = {}; // Cache for compiled SQL statements

@@ -35,14 +35,59 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			if(cb) cb(res)
 			return res;
 	} else if(this.addcolumn) {
+		var db = alasql.databases[this.table.databaseid || databaseid];
+		db.dbversion++;
+		var tableid = this.table.tableid;
+		var table = db.tables[tableid];
+		var columnid = this.addcolumn.columnid;
+		if(table.xcolumns[columnid]) {
+			throw new Error('Cannot add column "'+columnid+'", because it already exists in the table "'+tableid+'"');
+		}
+
+		var col = {
+			columnid:columnid,
+			dbtypeid:this.dbtypeid,
+			dbsize:this.dbsize,
+			dbprecision:this.dbprecision,
+			dbenum:this.dbenum,
+			defaultfns: null // TODO defaultfns!!!
+		};
+
+		var defaultfn = function(){};
+
+		table.columns.push(col);
+		table.xcolumns[columnid] = col;
+
+		for(var i=0, ilen=table.data.length; i<ilen; i++) {
+//				console.log(table.data[i][columnid]);
+			table.data[i][columnid] = defaultfn();
+		}
+
 		// TODO
 		return 1;
 	} else if(this.modifycolumn) {
+		var db = alasql.databases[this.table.databaseid || databaseid];
+		db.dbversion++;
+		var tableid = this.table.tableid;
+		var table = db.tables[tableid];
+		var columnid = this.modifycolumn.columnid;
+
+		if(!table.xcolumns[columnid]) {
+			throw new Error('Cannot modify column "'+columnid+'", because it was not found in the table "'+tableid+'"');
+		}
+
+		var col = table.xcolumns[columnid];
+		col.dbtypeid = this.dbtypeid;
+		col.dbsize = this.dbsize;
+		col.dbprecision = this.dbprecision;
+		col.dbenum = this.dbenum;
+
+
 		// TODO
 		return 1;
 	} else if(this.renamecolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion = Date.now();
+		db.dbversion++;
 
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
@@ -77,7 +122,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		else return 0;
 	} else if(this.dropcolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
-		db.dbversion = Date.now();
+		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
 		var columnid = this.dropcolumn;

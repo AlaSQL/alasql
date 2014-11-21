@@ -7,7 +7,7 @@
 */
 
 // Table class
-Table = function(params){
+var Table = alasql.Table = function(params){
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};
@@ -23,7 +23,6 @@ Table = function(params){
 	extend(this,params);
 };
 
-alasql.Table = Table;
 
 // View = function(){
 // 	this.data = [];

@@ -479,20 +479,23 @@ function compileSelectStar (query,alias) {
 		if(query.aliases[alias].tableid) {
 			var columns = query.database.tables[query.aliases[alias].tableid].columns;
 		};
+
+
 		if(columns) {
 			columns.forEach(function(tcol){
 				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
 
 	//		console.log('ok',s);
 
-				var coldef = {
+				var col = {
 					columnid:tcol.columnid, 
 					dbtypeid:tcol.dbtypeid, 
 					dbsize:tcol.dbsize, 
-					dbpecision:tcol.dbprecision
+					dbpecision:tcol.dbprecision,
+					dbenum: tcol.dbenum
 				};
-				query.columns.push(coldef);
-				query.xcolumns[coldef.columnid]=coldef;
+				query.columns.push(col);
+				query.xcolumns[col.columnid]=col;
 
 			});
 		} else {
@@ -537,7 +540,7 @@ yy.Select.prototype.compileSelect = function(query) {
 				}
 			} else {
 				// If field, otherwise - expression
-				ss.push((col.as || col.columnid)+':p[\''+(col.tableid||query.defaultTableid)+'\'][\''+col.columnid+'\']');
+				ss.push(escapeq(col.as || col.columnid)+':p[\''+(col.tableid||query.defaultTableid)+'\'][\''+col.columnid+'\']');
 
 				if(query.aliases[col.tableid||query.defaultTableid] && query.aliases[col.tableid||query.defaultTableid].type == 'table') {
 
@@ -577,9 +580,9 @@ yy.Select.prototype.compileSelect = function(query) {
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  col.aggregatorid == 'AVG'
 				) {
-				ss.push("'"+col.as+'\':'+col.expression.toJavaScript("p",query.defaultTableid))	
+				ss.push("'"+escapeq(col.as)+'\':'+col.expression.toJavaScript("p",query.defaultTableid))	
 			} else if (col.aggregatorid == 'COUNT') {
-				ss.push("'"+col.as+"':1");
+				ss.push("'"+escapeq(col.as)+"':1");
 				// Nothing
 			} 
 //			else if (col.aggregatorid == 'MAX') {
@@ -588,7 +591,8 @@ yy.Select.prototype.compileSelect = function(query) {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			}
 		} else {
-			ss.push('\''+(col.as || col.columnid || escapeq(col.toString()))+'\':'+col.toJavaScript("p",query.defaultTableid));
+			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
+//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 		}
 	});
@@ -700,7 +704,7 @@ yy.Select.prototype.compileOrder = function (query) {
 				if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '.valueOf()';
 				// TODO Add other types mapping
 			} else {
-				dg = '.valueOf()';
+				if(alasql.options.valueof) dg = '.valueOf()'; // TODO Check
 			}
 			
 			// COLLATE NOCASE

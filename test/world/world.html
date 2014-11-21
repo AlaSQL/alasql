@@ -2,37 +2,53 @@
 <script src="../../lib/jquery/jquery.min.js"></script>
 <script>
 	alasql.options.dropifnotexists = true;
-	$.get('world.sql').then(function(sql){
-        alasql('create database world; use world')
+	//$.get('world.sql').then(function(sql){
 
-	 var tm = Date.now();
-		alasql(sql);
-	 console.log("Time:", Date.now()-tm);
-	//  var sql="select nombrecompania as comp, nombrecontacto as cont, cargocontacto as cargo from clientes order by cargo, cont desc" ;
-	//  var tm = Date.now();
-	// var res = alasql(sql);
-	// console.log("Time:", Date.now()-tm);
- //            document.write("<table border='1'>");
- //            document.write("<tr><th>COMPANIA</th>")
- //            document.write("<th>CONTACTO</th><th>CARGO</th></tr>");
- //            for (i=0;i<res.length;i++){
- //                document.write(" <tr><td>");
-	// 			document.write(res[i]["comp"]);
- //                document.write(" </td><td>");
- //                document.write(res[i]["cont"]);
- //                document.write(" </td><td>");
- //                document.write(res[i]["cargo"]);
- //                document.write("</td></tr>");
- //            }
- //            document.write("</table>");
-//	          console.table(res);
+
+ $.ajax({
+        async:false,
+        type: "GET",
+        url: "world.sql",
+        dataType: "text",
+        contentType: "application/x-www-form-urlencoded;charset=windows-1252",
+        success: function (sql) {
+
+	        alasql('create database world; use world')
+
+			var tm = Date.now();
+			alasql(sql);
+			console.log("Time:", Date.now()-tm);
+
+			var sql="select Country.Name AS CountryName, City.Name AS CityName, City.Population FROM City LEFT JOIN Country ON City.CountryCode = Country.Code ORDER BY CountryName, CityName" ;
+			var sql = "SELECT ID, Name, Population FROM City LIMIT 10";
+//			var sql = "SELECT Id, Name, Population FROM City";
+			var tm = Date.now();
+			var res = alasql(sql);
+			console.log("Time:", Date.now()-tm);
+			 document.write("<table border='1'>");
+			 document.write("<tr><th>Country</th>")
+			 document.write("<th>City</th><th>Population</th></tr>");
+			 for (i=0;i<res.length;i++){
+			 	document.write(" <tr><td>");
+				document.write(res[i]["ID"]);
+			 	document.write(" </td><td>");
+			 	document.write(res[i]["Name"]);
+			 	document.write(" </td><td>");
+			 	document.write(res[i]["Population"]);
+			 	document.write("</td></tr>");
+			 }
+			document.write("</table>");
+		}
+		//console.table(res);
 	});	
+
+if(false) {
     $.get('world_innodb.sql').then(function(sql){
         alasql('create database world_innodb; use world_innodb')
         var tm = Date.now();
         alasql(sql);    
         console.log("Time:", Date.now()-tm);
     });
-
+}
 </script> 
 <output/>

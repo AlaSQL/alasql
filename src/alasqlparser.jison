@@ -14,8 +14,8 @@
 
 \[([^\]])*?\]	   								 return 'BRALITERAL'
 \`([^\]])*?\`	   								 return 'BRALITERAL'
-(['](\\.|[^'])*?['])+                            return 'STRING'
-["](\\.|[^"])*?["]                               return 'STRING'
+(['](\\.|[^']|\\\')*?['])+                       return 'STRING'
+(["](\\.|[^"]|\\\")*?["])+                       return 'STRING'
 
 \/\*(.*?)\*\/									return /* skip comments */
 "--"(.*?)($|\r\n|\r|\n)							return /* return 'COMMENT' */
@@ -665,7 +665,7 @@ LogicValue
 
 StringValue
 	: STRING
-		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/\'\'/g,"'")}); }
+		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	;
 
 NullValue

@@ -1,12 +1,13 @@
 # Changelog
 
-### 0.0.22 (20.11.2014 -)
+### 0.0.22 (20.11.2014 - )
 
 * SELECT UNIQUE
 * SELECT MINUS SELECT
 * RENAME TABLE table TO literal
 * ALTER TABLE table RENAME COLUMN column TO column
 * ALTER TABLE table DROP COLUMN column
+* Double quoter sign '' and \\' translates into '
 
 ### 0.0.21 (19.11.2014 - 20.11.2014)
 

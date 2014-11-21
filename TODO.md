@@ -3,9 +3,20 @@
 
 * ALTER TABLE ADD COLUMN
 * ALTER TABLE MODIFY COLUMN
+* World City Database - big data
+* FETCH FIRST NumValue ROWS ONLY
+
+* Order by random
+SELECT column, RAND() as IDX 
+FROM table 
+ORDER BY IDX FETCH FIRST 1 ROWS ONLY
+* RAND, RANDOM, NEWID
+* TABLESAMPLE
+
 * Column resolutions
+
 * Primary key, Foreign Key, Constraints, Unique Indexe
-* Join source Subquery, ParamValue
+* Join source Table, Subquery, ParamValue, View
 * Transactions
 * ORDER BY RAND(), RANDOM(), NEWID()
 * TRUNCATE TABLE
@@ -14,7 +25,6 @@
 * Check IS NULL/IS NOT NULL
 * DELETE JOIN / UPDATE JOIN 
 * Fix tests
-* SELECT 1+1
 * STORE / RESTORE TABLE
 * FOREIGN KEY
 * CREATE INDEX

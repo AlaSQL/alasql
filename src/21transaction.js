@@ -12,9 +12,8 @@ Database.prototype.transaction = function(cb) {
 	return res;
 };
 
-
 // Transaction class (for WebSQL compatibility)
-function Transaction(databaseid) {
+var Transaction = alasql.Transaction = function (databaseid) {
 	this.transactionid = Date.now();
 	this.databaseid = databaseid;
 	this.commited = false; 
@@ -27,7 +26,7 @@ function Transaction(databaseid) {
 };
 
 // Main class 
-alasql.Transaction = Transaction;
+
 
 // Commit
 Transaction.prototype.commit = function() {

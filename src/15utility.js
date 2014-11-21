@@ -6,21 +6,25 @@
 //
 */
 
-var utils = {};
+// 
+var utils = alasql.utils = {};
 
+// Stub for non-ecisting WHERE clause 
+// so is faster then if(whenrfn) whenfn()
 function returnTrue () {return true};
+
 function returnUndefined() {};
 
 var escapeq = utils.escapeq = function(s) {
-    return s.replace(/\'/g,"\\'");
+    return s.replace(/\'/g,'\\\'');
 }
 
 var doubleq = utils.doubleq = function(s) {
-    return s.replace(/\'\'/g,"\\\'");
+    return s.replace(/(\'\')/g,'\\\'');
 }
 
 var doubleqq = utils.doubleqq = function(s) {
-    return s.replace(/\'/g,"\\\'");
+    return s.replace(/\'/g,"\'");
 }
 
 

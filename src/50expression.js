@@ -223,7 +223,8 @@ yy.StringValue.prototype.toType = function() {
 
 yy.StringValue.prototype.toJavaScript = function() {
 //	console.log("'"+doubleqq(this.value)+"'");
-	return "'"+doubleqq(this.value)+"'";
+//	return "'"+doubleqq(this.value)+"'";
+	return "'"+escapeq(this.value)+"'";
 
 }
 

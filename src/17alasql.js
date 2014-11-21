@@ -6,20 +6,30 @@
 //
 */
 
-// Main function
-alasql = function(sql, params, cb, scope) {
-	return alasql.exec(sql, params, cb, scope);
-};
 
 // Initial parameters
 alasql.parser = parser;
 alasql.parse = parser.parse.bind(parser); // Shortcut
 
+// Console
+alasql.table = function(sql, params) {
+	var res = alasql(sql, params);
+	if(typeof exports === 'object') {
+		console.log(res);		
+	} else {
+		console.table(res);
+	}
+};
+
 // Useful library
 alasql.utils = utils;
 
 alasql.databases = {};
+alasql.databasenum = 0; // Current database
+
+// Deafult options
 alasql.options = {};
+alasql.options.valueof = false;
 
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
@@ -172,12 +182,12 @@ alasql.compile = function(sql, kind, databaseid) {
 // };
 
 // Promised version of exec
-alasql.aexec = function (sql, params) {
-	var self = this;
-	return new Promise(function(resolve, reject){
-		self.exec(sql,params,resolve);
-	});
-};
+// alasql.aexec = function (sql, params) {
+// 	var self = this;
+// 	return new Promise(function(resolve, reject){
+// 		self.exec(sql,params,resolve);
+// 	});
+// };
 
 
 // MSSQL-Like aliases

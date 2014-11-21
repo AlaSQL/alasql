@@ -58,7 +58,7 @@ yy.Select.prototype.toString = function() {
 yy.Select.prototype.compile = function(databaseid) {
 	var db = alasql.databases[databaseid];
 	// Create variable for query
-	var query = {};
+	var query = new Query();
 	
 	query.database = db;
 	// 0. Precompile whereexists

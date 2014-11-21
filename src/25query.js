@@ -1,19 +1,17 @@
 /*
 //
-// View class for Alasql.js
+// Query class for Alasql.js
 // Date: 14.11.2014
 // (c) 2014, Andrey Gershun
 //
 */
 
 // Table class
-var View = alasql.View = function(params){
+var Query = alasql.Query = function(params){
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};
 	// Data array
-	this.query = [];
-
 	extend(this,params);
 };
 
