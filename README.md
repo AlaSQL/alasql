@@ -353,7 +353,7 @@ or run [test/main.html](test/main.html) in browser.
 
 1. Dates comparing (sorting now is ok)
 2. Transactions 
-3. ORDER BY clause on three or more UNIONS ([See example in Alasql console]](http://alasql.org/console/alaconsole.htm?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
+3. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console/alaconsole.htm?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
 4. AVG() does not work 
 5. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
   
