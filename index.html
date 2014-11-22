@@ -57,6 +57,16 @@
 <li><a href="http://jsperf.com/sql-js-vs-alasql-js/4">Alabase vs. SQL.js</a></li>
 </ul>
 
+<h2>It is simple to use<h2>
+<pre><code>  &lt;script src="alasql.js"&gt;&lt;/script&gt;  
+  &lt;script&gt;
+    alasql.exec("CREATE TABLE test (language INT, hello STRING)");
+    alasql.exec("INSERT INTO test VALUES (1,'Hello!')");
+    alasql.exec("INSERT INTO test VALUES (2,'Aloha!')");
+    alasql.exec("INSERT INTO test VALUES (3,'Bonjour!')");
+    alasql.log("SELECT * FROM test WHERE language &gt; 1");
+  &lt;/script&gt;
+</code></pre>
 
 <p>(c) 2014, Andrey Gershun (<a href="mailto:agershun@gmail.com">agershun@gmail.com</a>), <a href="LICENSE">MIT licence information</a></p>
       </section>
