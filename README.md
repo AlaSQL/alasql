@@ -57,7 +57,7 @@ Include file: [alasql.js](./alasql.js) to the page.
   </script>
 
 ```
-Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE TABLE test (language INT, hello STRING);INSERT INTO test VALUES (1,'Hello!');INSERT INTO test VALUES (2,'Aloha!');SELECT * FROM test WHERE language > 1)
+Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE TABLE test (language INT, hello STRING);INSERT INTO test VALUES (1,'Hello!');INSERT INTO test VALUES (2,'Aloha!');INSERT INTO test VALUES (3,'Bonjour!');SELECT * FROM test WHERE language > 1)
 
 You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD:
 
