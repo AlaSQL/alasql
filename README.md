@@ -28,7 +28,7 @@ You can check [version-0.0.23](https://github.com/agershun/alasql/tree/version-0
 
 ### Documentation (draft)
 
-The early prototype of documentation ([draft](docs/index.md)).
+The early prototype of documentation will be placed on [Alasql Wiki](https://github.com/agershun/alasql/wiki).
 
 ## Examples
 
@@ -47,7 +47,6 @@ Other examples:
 ## Presentations
 
 * [Alasql.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database) (English)
-* [Alasql.js - сервер на JavaScript](http://www.slideshare.net/AndreyGershun/alasqljs-sql-javascript) (Russian)
 
 ## Installation
 
