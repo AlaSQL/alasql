@@ -15,7 +15,7 @@ Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 ### Test Alasql in console
-<!-- * [SQL Console](http://alasql.org/console/alaconsole.html) -->
+* [SQL Console](http://alasql.org/console/alaconsole.html)
 * [Console source code](examples/console/alaconsole.html)
 
 ### Warning 
@@ -57,6 +57,7 @@ Include file: [alasql.js](./alasql.js) to the page.
   </script>
 
 ```
+Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE TABLE test (language INT, hello STRING);INSERT INTO test VALUES (1,'Hello!');INSERT INTO test VALUES (2,'Aloha!');SELECT * FROM test WHERE language > 1)
 
 You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD:
 

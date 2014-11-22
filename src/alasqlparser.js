@@ -83,8 +83,11 @@ performAction: function anonymous(yytext, yyleng, yylineno, yy, yystate /* actio
 
 var $0 = $$.length - 1;
 switch (yystate) {
-case 1: case 40: case 41: case 63: case 104: case 132: case 139: case 140: case 141: case 142: case 143: case 144: case 145: case 146: case 147: case 148: case 149: case 150: case 151: case 152: case 153: case 154: case 155: case 156: case 183: case 210: case 211: case 212: case 213: case 214: case 215: case 267: case 284: case 286:
- this.$ = $$[$0]; 
+case 1:
+
+			if (yy.casesensitive) this.$ = $$[$0];
+			else this.$ = $$[$0].toLowerCase();
+		
 break;
 case 2:
  this.$ = doubleq($$[$0].substr(1,$$[$0].length-2)); 
@@ -106,6 +109,9 @@ case 7:
 break;
 case 8: case 50: case 55: case 94: case 95: case 97: case 105: case 107: case 112: case 120: case 122: case 252: case 255:
  this.$ = null; 
+break;
+case 40: case 41: case 63: case 104: case 132: case 139: case 140: case 141: case 142: case 143: case 144: case 145: case 146: case 147: case 148: case 149: case 150: case 151: case 152: case 153: case 154: case 155: case 156: case 183: case 210: case 211: case 212: case 213: case 214: case 215: case 267: case 284: case 286:
+ this.$ = $$[$0]; 
 break;
 case 42:
  this.$ = $$[$0];
