@@ -37,8 +37,17 @@ Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](h
 Other examples:
 * [Sandbox](examples/sandbox.html)
 * [Sieve of Eratosthenes](examples/prime.html)
+* [World database](examples/console.html)
+* [Hundred of small tests](test)
 
-Short [presentation](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database) about Alasql
+### What People Say about Alasql
+
+* [People around the world about Alasql](PEOPLE.md)
+
+## Presentations
+
+* [Alasql.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database) (English)
+* [Alasql.js - сервер на JavaScript](http://www.slideshare.net/AndreyGershun/alasqljs-sql-javascript) (Russian)
 
 ## Installation
 
@@ -361,9 +370,6 @@ or run [test/main.html](test/main.html) in browser.
 
 Read my [to do](TODO.md) page
 
-### Alasql in blogs and press
-
-* [People around the world about Alasql](PEOPLE.md)
 
 ### Similar projects
 
