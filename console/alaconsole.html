@@ -8,6 +8,7 @@
 	<span id="useid">alasql</span>&gt; <input id='myprompt' style='width:80%;font-weight:bold' autofocus/> 
 </p>
 <script>
+	var first = decodeURI(location.search.substr(1));
 	alasql.options.logtarget = 'myconsole';
-	alasql.prompt('myprompt','useid');
+	alasql.prompt('myprompt','useid', first);
 </script> 
