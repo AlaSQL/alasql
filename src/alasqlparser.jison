@@ -73,6 +73,7 @@
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
+'HELP'											return 'HELP'
 'IF'											return 'IF'
 'IDENTITY'										return 'IDENTITY'
 'IN'											return 'IN'
@@ -87,6 +88,7 @@
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
+'LOAD'											return 'LOAD'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
 "MINUS"											return "EXCEPT"
@@ -246,11 +248,15 @@ Statement
 	| EndTransaction
 	| UseDatabase
 	| Update
+	| Help
+	| ExpressionStatement
+	| Load
 
 	| DeclareCursor
 	| OpenCursor
 	| FetchCursor
 	| CloseCursor
+
 
 
 /*	
@@ -551,6 +557,10 @@ ResultColumn
 	| Expression AS NUMBER
 		{ $1.as = $3; $$ = $1;}
 	| Expression NUMBER
+		{ $1.as = $2; $$ = $1;}
+	| Expression AS StringValue
+		{ $1.as = $3; $$ = $1;}
+	| Expression StringValue
 		{ $1.as = $2; $$ = $1;}
 	| Expression
 		{ $$ = $1; }
@@ -1209,4 +1219,21 @@ FetchDirection
 		{ $$ = {direction: 'ABSOLUTE', num:$2}; }
 	| RELATIVE NumValue
 		{ $$ = {direction: 'RELATIVE', num:$2}; }
+	;
+
+Help
+	: HELP StringValue 
+		{ $$ = new yy.Help({subject:$2.value.toUpperCase()} ) ; }
+	| HELP
+		{ $$ = new yy.Help() ; }
+	;
+
+ExpressionStatement
+	: Expression
+		{ $$ = new yy.ExpressionStatement({expression:$1}); }
+	;
+
+Load
+	: LOAD StringValue
+		{ $$ = new yy.Load({url:$2.value}); }
 	;

@@ -6,6 +6,18 @@
 //
 */
 
+yy.ExpressionStatement = function(params) { return yy.extend(this, params); };
+yy.ExpressionStatement.prototype.toString = function() {
+	return this.expression.toString();
+};
+
+yy.ExpressionStatement.prototype.execute = function (databaseid, params) {
+	if(this.expression) {
+		var expr =  new Function("params",'return '+this.expression.toJavaScript('',''));
+		return expr(params);
+	}
+}
+
 yy.Expression = function(params) { return yy.extend(this, params); };
 yy.Expression.prototype.toString = function() {
 	return this.expression.toString();
@@ -20,6 +32,8 @@ yy.Expression.prototype.compile = function(context, tableid){
 	if(this.reduced) return returnTrue();
 	return new Function('p','return '+this.toJavaScript(context, tableid));
 };
+
+
 
 
 yy.Literal = function (params) { return yy.extend(this, params); }

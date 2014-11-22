@@ -20,6 +20,10 @@ alasql.options = {};
 alasql.options.valueof = false; // Use valueof in orderfn
 alasql.options.dropifnotexists = false; // DROP database in any case
 alasql.options.jsdate = true; // How to handle DATE and DATETIME types
+alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
+alasql.options.logprompt = true; // Print SQL at log
+
+alasql.prompthistory = [];
 
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;

@@ -27,6 +27,27 @@ var doubleqq = utils.doubleqq = function(s) {
 }
 
 
+// For LOAD
+var loadFile = utils.loadFile = function(path, success, error)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                if (success)
+                    success(xhr.responseText);
+            } else {
+                if (error)
+                    error(xhr);
+            }
+        }
+    };
+    xhr.open("GET", path, true);
+    xhr.send();
+}
+
+
 // Fast hash function
 var hash = utils.hash = function hash(str){
     var h = 0;
