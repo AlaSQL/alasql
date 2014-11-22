@@ -196,8 +196,10 @@
 
 Literal
 	: LITERAL
-		{ $$ = $1; }
-/*		{ $$ = $1.toLowerCase(); } */
+		{
+			if (yy.casesensitive) $$ = $1;
+			else $$ = $1.toLowerCase();
+		}
 	| BRALITERAL
 		{ $$ = doubleq($1.substr(1,$1.length-2)); }
 	;

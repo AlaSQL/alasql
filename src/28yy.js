@@ -10,6 +10,8 @@ var yy = parser.yy = {};
 
 // Utility
 yy.extend = extend;
+// Option for case sensitive
+yy.casesensitive = alasql.options.casesensitive; 
 
 // Base class for all yy classes
 var Base = yy.Base = function (params) { return yy.extend(this, params); };

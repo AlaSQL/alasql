@@ -1,6 +1,11 @@
 # Changelog
 
-### 0.0.22 (20.11.2014 - 20.11.2014)
+### 0.0.23 (22.11.2014 - )
+
+* LOAD 'url.sql' - load and execute sql statements
+* HELP - help on Alasql commands
+
+### 0.0.22 (20.11.2014 - 22.11.2014)
 
 * SELECT UNIQUE
 * SELECT MINUS SELECT
