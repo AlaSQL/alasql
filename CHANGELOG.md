@@ -10,6 +10,7 @@
 * Double quoter sign '' and \\' translates into '
 * Test with World and Neptuno databases for compatibility
 * alasql.test(), alasql.log(), alasql.write(), alasql.writep()
+* Console
 
 ### 0.0.21 (19.11.2014 - 20.11.2014)
 

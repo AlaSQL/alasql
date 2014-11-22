@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.21 Date: November 20, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.22 Date: November 22, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -14,14 +14,17 @@ Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
+Test Console
+* [SQL Console](http://alasql.org/console/alaconsole.html)
+* [Console source code](examples/console/alaconsole.html)
+
 ### Warning 
 Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0 in the mid of November. 
 Please, submit bugs and suggestions in [issue page]().
 
-Sorry, transactions were broken in version 0.0.17, because we started to introduce more complex
-approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions on again in one of the future version.
+Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions on again in one of the future version.
 
-You can check [version-0.0.22](https://github.com/agershun/alasql/tree/version-0.0.22) branch for new experimental features of new version. 
+You can check [version-0.0.23](https://github.com/agershun/alasql/tree/version-0.0.23) branch for new experimental features of new version. 
 
 ### Documentation (draft)
 
@@ -30,7 +33,6 @@ The early prototype of documentation ([draft](docs/index.md)).
 ## Examples
 
 Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/)
-
 
 Other examples:
 * [Sandbox](examples/sandbox.html)
