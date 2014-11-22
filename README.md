@@ -100,9 +100,12 @@ Then require alasql.js file:
 * UPDATE table SET field = value1, field = value2 WHERE condition 
 * DELETE FROM table WHERE condition 
 * CREATE TABLE \[IF NOT EXISTS\] table (columns type PRIMARY KEY, constraints)
+* ALTER TABLE
 * DROP TABLE \[IF EXISTS\] table
 * CREATE DATABASE, USE DATABASE, DROP DATABASE
-* SHOW DATABASES / SHOW TABLES / SHOW COLUMNS 
+* SHOW DATABASES / SHOW TABLES / SHOW COLUMNS / SHOW CRETE TABLE
+
+Try all these statements in [Alasql console](http://alasql.org/console/alaconsole.html?help)
 
 #### SELECT statement
 
@@ -164,6 +167,8 @@ In browser:
         alasql('CREATE TABLE one (two INT)');
     </script>
 ```
+Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE TABLE one (two INT))
+
 
 or in Node.js:
 ```js
@@ -279,8 +284,11 @@ Now you can use databases, tables, and columns with spaces inside square bracket
     CREATE DATABASE [My Database];  -- BTW You can use comments in the SQL statements
     USE [My Database];              /* or comments like this */   
     CREATE TABLE [A.table] ([the-column] INT);
+    INSERT INTO [A.table] VALUES (1),(2);
     SELECT [the-column] AS [AS] FROM [My Database];
 ```
+Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE DATABASE [My Database];USE [My Database];CREATE TABLE [A.table] ([the-column] INT);INSERT INTO [A.table] VALUES (1),(2);SELECT [the-column] AS [AS] FROM [My Database])
+
 
 ### Transactions
 
@@ -294,6 +302,7 @@ There is a limited support of transactions (with tx.rollback() and tx.commit() f
     });     
 
 ```
+Warning: Sorry, transactions now are temporary unavailable due some complexities with realization.
 
 ### SQL to JavaScript parser and compiler
 
@@ -344,19 +353,21 @@ or run [test/main.html](test/main.html) in browser.
 
 1. Dates comparing (sorting now is ok)
 2. Transactions 
-3. ORDER BY clause on three or more UNIONS
-4. AVG() does not work
+3. ORDER BY clause on three or more UNIONS ([See example in Alasql console]](http://alasql.org/console/alaconsole.htm?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
+4. AVG() does not work 
 5. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
   
 ### Future Plans
 
 Read my [to do](TODO.md) page
 
-### [Similar projects](SIMILAR.md) (SQL database, MDX/OLAP on JavaScript)
-
 ### Alasql in blogs and press
 
-* [People about Alasql](PEOPLE.md)
+* [People around the world about Alasql](PEOPLE.md)
+
+### Similar projects
+
+* [Similar projects](SIMILAR.md) (SQL database, MDX/OLAP on JavaScript)
 
 ### Credits
 
