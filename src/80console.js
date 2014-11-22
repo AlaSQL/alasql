@@ -162,7 +162,7 @@ alasql.writep = function (sql) {
 	if(typeof exports == 'object') {	
 		console.log(alasql.useid+'>',sql);
 	} else {
-		document.write("<p>"+alasql.useid+"&gt;&nbsp;"+sql+"</p>");
+		document.write("<p>"+alasql.useid+"&gt;&nbsp;<b>"+sql+"</b></p>");
 	}
 }
 

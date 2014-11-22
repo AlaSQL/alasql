@@ -3573,7 +3573,7 @@ function compileSelectStar (query,alias) {
 		if(query.aliases[alias].tableid) {
 			var columns = query.database.tables[query.aliases[alias].tableid].columns;
 		};
-
+		// Check if this is a Table or other
 
 		if(columns) {
 			columns.forEach(function(tcol){
@@ -3581,15 +3581,15 @@ function compileSelectStar (query,alias) {
 
 	//		console.log('ok',s);
 
-				var col = {
+				var coldef = {
 					columnid:tcol.columnid, 
 					dbtypeid:tcol.dbtypeid, 
 					dbsize:tcol.dbsize, 
-					dbpecision:tcol.dbprecision,
+					dbprecision:tcol.dbprecision,
 					dbenum: tcol.dbenum
 				};
-				query.columns.push(col);
-				query.xcolumns[col.columnid]=col;
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid]=coldef;
 
 			});
 		} else {
@@ -3651,7 +3651,8 @@ yy.Select.prototype.compileSelect = function(query) {
 							columnid:col.as || col.columnid, 
 							dbtypeid:tcol.dbtypeid, 
 							dbsize:tcol.dbsize, 
-							dbpecision:tcol.dbprecision
+							dbpecision:tcol.dbprecision,
+							dbenum: tcol.dbenum
 						};
 //						console.log(2);
 						query.columns.push(coldef);
@@ -5704,7 +5705,7 @@ alasql.writep = function (sql) {
 	if(typeof exports == 'object') {	
 		console.log(alasql.useid+'>',sql);
 	} else {
-		document.write("<p>"+alasql.useid+"&gt;&nbsp;"+sql+"</p>");
+		document.write("<p>"+alasql.useid+"&gt;&nbsp;<b>"+sql+"</b></p>");
 	}
 }
 

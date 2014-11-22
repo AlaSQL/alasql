@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.0.22 (20.11.2014 - )
+### 0.0.22 (20.11.2014 - 20.11.2014)
 
 * SELECT UNIQUE
 * SELECT MINUS SELECT
@@ -8,6 +8,8 @@
 * ALTER TABLE table RENAME COLUMN column TO column
 * ALTER TABLE table DROP COLUMN column
 * Double quoter sign '' and \\' translates into '
+* Test with World and Neptuno databases for compatibility
+* alasql.test(), alasql.log(), alasql.write(), alasql.writep()
 
 ### 0.0.21 (19.11.2014 - 20.11.2014)
 
