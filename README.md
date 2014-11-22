@@ -14,8 +14,8 @@ Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-Test Console
-* [SQL Console](http://alasql.org/console/alaconsole.html)
+### Test Alasql in console
+<!-- * [SQL Console](http://alasql.org/console/alaconsole.html) -->
 * [Console source code](examples/console/alaconsole.html)
 
 ### Warning 
