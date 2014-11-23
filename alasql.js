@@ -6008,7 +6008,7 @@ function scrollTo(element, to, duration) {
     }, 10);
 }
 
-alasql.prompt = function(el, useidel) {
+alasql.prompt = function(el, useidel, firstsql) {
 	if(typeof exports == 'object') {
 		throw new Error('The functionality of prompt is not realized for Node.js');
 	};
@@ -6016,6 +6016,12 @@ alasql.prompt = function(el, useidel) {
 	if(typeof el == 'string') el = document.getElementById(el);
 	if(typeof useidel == 'string') useidel = document.getElementById(useidel);
 	useidel.textContent = alasql.useid;
+
+	if(firstsql) {
+		alasql.prompthistory.push(firstsql);
+		prompti = alasql.prompthistory.length;
+		alasql.log(firstsql);
+	}
 
 	var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 	scrollTo(document.getElementsByTagName('body')[0],y,500);
