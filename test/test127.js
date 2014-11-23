@@ -13,7 +13,7 @@ describe('Test 127 SOURCE', function() {
 		var res = alasql('select * from one');
 		assert.deepEqual(res,[{a:1,bbb:1, c:1}, {a:2,bbb:2, c:2}]);
 
-		alasql('drop database test126');
+		alasql('drop database test127');
 		done();
 	});
 

@@ -5,7 +5,8 @@
 * Fixed LIKE operator (added ^ and $)
 * Changed LOAD to SOURCE (like in MySQL)
 * ASSERT operator
-* JSON parser (for ASSERT operator)
+* JSON parser for ASSERT operator
+* Fixed LIKE bug (need more attention)
 
 ### 0.0.23 (22.11.2014 - 22.11.2014)
 
