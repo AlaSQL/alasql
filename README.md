@@ -350,6 +350,7 @@ It is Ok with select for 1000000 records or 2 join two tables by 10000 records i
 
 ### Tests
 
+### Tests with Mocha
 I use mocha for tests. Run mocha from command line:
 
 ```
@@ -357,6 +358,17 @@ I use mocha for tests. Run mocha from command line:
 ```
 or run [test/main.html](test/main.html) in browser.
 
+### Tests with Alasql ASSERT
+
+Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previous operation:
+```sql
+    CREATE TABLE one (a INT);
+    ASSERT 1;
+    INSERT INTO one VALUES (1),(2),(3);
+    ASSERT 3;
+    SELECT * FROM one ORDER BY a DESC;
+    ASSERT [{a:3},{a:2},{a:1}];
+```
 
 ### Known Bugs
 
