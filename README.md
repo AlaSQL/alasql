@@ -30,8 +30,8 @@ The early prototype of documentation will be placed on [Alasql Wiki](https://git
 ## Examples
 
 Try Alasql in console:
-* [SQL Console](http://alasql.org/console/alaconsole.html)
-* [Console source code](examples/console/alaconsole.html)
+* SQL Console [http://alasql.org/console](http://alasql.org/console)
+* [Console source code](examples/console/index.html)
 
 
 Try Alasql in Fiddle: 
@@ -71,7 +71,7 @@ Include file: [alasql.js](./alasql.js) to the page.
   </script>
 
 ```
-Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE TABLE test (language INT, hello STRING);INSERT INTO test VALUES (1,'Hello!');INSERT INTO test VALUES (2,'Aloha!');INSERT INTO test VALUES (3,'Bonjour!');SELECT * FROM test WHERE language > 1)
+Try this sample in [Alasql console](http://alasql.org/console?CREATE TABLE test (language INT, hello STRING);INSERT INTO test VALUES (1,'Hello!');INSERT INTO test VALUES (2,'Aloha!');INSERT INTO test VALUES (3,'Bonjour!');SELECT * FROM test WHERE language > 1)
 
 You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD:
 
@@ -121,7 +121,7 @@ Then require alasql.js file:
 * SOURCE 'url-file.sql'
 * ASSERT json-object
 
-Try all these statements in [Alasql console](http://alasql.org/console/alaconsole.html?help)
+Try all these statements in [Alasql console](http://alasql.org/console?help)
 
 #### SELECT statement
 
@@ -183,7 +183,7 @@ In browser:
         alasql('CREATE TABLE one (two INT)');
     </script>
 ```
-Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE TABLE one (two INT))
+Try this sample in [Alasql console](http://alasql.org/console?CREATE TABLE one (two INT))
 
 
 or in Node.js:
@@ -303,7 +303,7 @@ Now you can use databases, tables, and columns with spaces inside square bracket
     INSERT INTO [A.table] VALUES (1),(2);
     SELECT [the-column] AS [AS] FROM [My Database];
 ```
-Try this sample in [Alasql console](http://alasql.org/console/alaconsole.html?CREATE DATABASE [My Database];USE [My Database];CREATE TABLE [A.table] ([the-column] INT);INSERT INTO [A.table] VALUES (1),(2);SELECT [the-column] AS [AS] FROM [My Database])
+Try this sample in [Alasql console](http://alasql.org/console?CREATE DATABASE [My Database];USE [My Database];CREATE TABLE [A.table] ([the-column] INT);INSERT INTO [A.table] VALUES (1),(2);SELECT [the-column] AS [AS] FROM [My Database])
 
 
 ### Transactions
@@ -381,7 +381,7 @@ Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previo
 
 1. Dates comparing (sorting now is ok)
 2. Transactions 
-3. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console/alaconsole.html?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
+3. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
 4. AVG() does not work 
 5. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
   
