@@ -88,7 +88,7 @@
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
-'LOAD'											return 'LOAD'
+'SOURCE'										return 'SOURCE'
 "MAX"											return "MAX"
 "MIN"											return "MIN"
 "MINUS"											return "EXCEPT"
@@ -252,7 +252,7 @@ Statement
 	| Update
 	| Help
 	| ExpressionStatement
-	| Load
+	| Source
 
 	| DeclareCursor
 	| OpenCursor
@@ -1235,7 +1235,7 @@ ExpressionStatement
 		{ $$ = new yy.ExpressionStatement({expression:$1}); }
 	;
 
-Load
-	: LOAD StringValue
-		{ $$ = new yy.Load({url:$2.value}); }
+Source
+	: SOURCE StringValue
+		{ $$ = new yy.Source({url:$2.value}); }
 	;

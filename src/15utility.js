@@ -28,8 +28,8 @@ var doubleqq = utils.doubleqq = function(s) {
 
 
 // For LOAD
-var loadFile = utils.loadFile = function(path, success, error)
-{
+var loadFile = utils.loadFile = function(path, success, error) {
+    
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function()
     {
@@ -43,7 +43,7 @@ var loadFile = utils.loadFile = function(path, success, error)
             }
         }
     };
-    xhr.open("GET", path, true);
+    xhr.open("GET", path, false); // Async
     xhr.send();
 }
 

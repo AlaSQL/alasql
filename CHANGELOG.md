@@ -1,6 +1,11 @@
 # Changelog
 
-### 0.0.23 (22.11.2014 - )
+### 0.0.24 (23.11.2014 -)
+
+* Fixed LIKE operator (added ^ and $)
+* Changed LOAD to SOURCE (like in MySQL)
+
+### 0.0.23 (22.11.2014 - 22.11.2014)
 
 * LOAD 'url.sql' - load and execute sql statements
 * HELP - help on Alasql commands

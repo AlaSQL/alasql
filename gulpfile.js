@@ -1,8 +1,8 @@
 //
 // gulpfile.js
-// Файл с задачами для Gulp
+// Gulp for Alasql
 // Дата: 06.08.2014
-// (с) 2014, Андрей Гершун
+// (c) 2014, Andrey Gershun
 //
 
 var gulp = require('gulp');
@@ -56,7 +56,7 @@ gulp.task('js-merge', function () {
     './src/78show.js',
     './src/80console.js',
     './src/85help.js',
-    './src/87load.js',
+    './src/87source.js',
    	'./src/90finish.js'])
 //    .pipe(changed('./dist/'))
     .pipe(concat('alasql.js'))

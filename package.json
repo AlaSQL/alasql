@@ -8,7 +8,6 @@
     "test": "test"
   },
   "dependencies": {
-    "es6-promise": "2.0.0"
     },
   "devDependencies": {
     "gulp-uglify": "^1.0.1"

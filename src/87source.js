@@ -6,16 +6,16 @@
 //
 */
 
-yy.Load = function (params) { return yy.extend(this, params); }
-yy.Load.prototype.toString = function() {
-	var s = 'LOAD';
+yy.Source = function (params) { return yy.extend(this, params); }
+yy.Source.prototype.toString = function() {
+	var s = 'SOURCE';
 	if(this.url) s += ' '+this.url;
 	return s;
 }
 
-// DROP TABLE
-yy.Load.prototype.execute = function (databaseid) {
-	console.log(this.url);
+// SOURCE FILE
+yy.Source.prototype.execute = function (databaseid) {
+//	console.log(this.url);
 	loadFile(this.url, function(data){
 //		console.log(data);
 		alasql(data);

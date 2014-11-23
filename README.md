@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.23 Date: November 22, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.24 Date: November 22, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -112,6 +112,7 @@ Then require alasql.js file:
 * DROP TABLE \[IF EXISTS\] table
 * CREATE DATABASE, USE DATABASE, DROP DATABASE
 * SHOW DATABASES / SHOW TABLES / SHOW COLUMNS / SHOW CRETE TABLE
+* SOURCE 'url-file.sql'
 
 Try all these statements in [Alasql console](http://alasql.org/console/alaconsole.html?help)
 
@@ -370,13 +371,14 @@ or run [test/main.html](test/main.html) in browser.
 Read my [to do](TODO.md) page
 
 
-### Similar projects
+### Similar and related projects
 
-* [Similar projects](SIMILAR.md) (SQL database, MDX/OLAP on JavaScript)
+* [Other similar projects](SIMILAR.md) - list of databases on JavaScript
+* [Alamdx](github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
 
 ### Credits
 
-Many thanks to Andrew Kent for his SQL Parser and other people for useful tools, which make our work much easier.
+Many thanks to Zach Carter for Jison parser generator, Andrew Kent for his SQL Parser, and other people for useful tools, which make our work much easier.
 
 ## License
 
