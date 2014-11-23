@@ -72,10 +72,11 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			}
 			db.sqlCacheSize++;
 			db.sqlCache[hh] = statement;
-			var res = statement(params, cb);
+			var res = alasql.res = statement(params, cb);
 			return res;
 		} else {
-			return ast.statements[0].execute(databaseid, params, cb);		
+			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb);		
+			return res;
 		}
 	} else {
 		// Multiple statements
@@ -93,14 +94,15 @@ alasql.drun = function (databaseid, ast, params, cb) {
 //			if(alasql.options.logstatements) console.log(ast.statements[i].toString());
 			if(ast.statements[i].compile) { 
 				var statement = ast.statements[i].compile(alasql.useid);
-				res.push(statement(params));
+				res.push(alasql.res = statement(params));
 			} else {
-				res.push(ast.statements[i].execute(alasql.useid, params));
+				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
 			}		
 		}
 	};
 	if(useid != databaseid) alasql.use(useid);
 	if(cb) cb(res);
+	alasql.res = res;
 	return res;
 };
 

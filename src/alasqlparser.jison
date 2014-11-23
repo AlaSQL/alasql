@@ -12,7 +12,20 @@
 %options case-insensitive
 %%
 
-\[([^\]])*?\]	   								 return 'BRALITERAL'
+\[([^\]])*?\]					{
+									//var a = this;
+									//console.log(a);
+									//console.log(yylloc);
+									//debugger;
+									if((this.matched+"").substr(0,6).toUpperCase() == 'ASSERT') {
+										// this.less(yytext.length);
+										this.less(1);
+										// debugger;
+										return 'LBRA';
+									} else {
+										return 'BRALITERAL'
+									}
+								}
 \`([^\]])*?\`	   								 return 'BRALITERAL'
 (['](\\.|[^']|\\\')*?['])+                       return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+                       return 'STRING'
@@ -29,6 +42,7 @@
 'ANTI'											return 'ANTI'
 'ANY'											return 'ANY'
 'AS'                                      		return 'AS'
+'ASSERT'                                      	return 'ASSERT'
 'ASC'                                      		return 'DIRECTION'
 'AUTO_INCREMENT'                                return 'AUTO_INCREMENT'
 'AVG'                                      		return 'AVG'
@@ -158,12 +172,13 @@
 '='												return 'EQ'
 '!='											return 'NE'
 '('												return 'LPAR'
-')'
-												return 'RPAR'
-/* 
-'['												return 'LBRA'
+')'												return 'RPAR'
+
+'{'												return 'LCUR'
+'}'												return 'RCUR'
+
+/* '['												return 'LBRA' */
 ']'												return 'RBRA'
-*/
 
 '.'												return 'DOT'
 ','												return 'COMMA'
@@ -253,6 +268,7 @@ Statement
 	| Help
 	| ExpressionStatement
 	| Source
+	| Assert
 
 	| DeclareCursor
 	| OpenCursor
@@ -1238,4 +1254,65 @@ ExpressionStatement
 Source
 	: SOURCE StringValue
 		{ $$ = new yy.Source({url:$2.value}); }
+	;
+
+Assert
+	: ASSERT Json
+		{ $$ = new yy.Assert({value:$2}); }
+	| ASSERT STRING COMMA Json	
+		{ $$ = new yy.Assert({value:$2, message:$4}); }
+	;
+
+Json
+	: STRING
+		{ $$ = $1; }
+	| NUMBER
+		{ $$ = +($1); }
+	| TRUE
+		{ $$ = true; }
+	| FALSE
+		{ $$ = false; }
+	| JsonObject
+		{ $$ = $1; }
+	| JsonArray
+		{ $$ = $1; }
+	;
+
+JsonObject
+	: LCUR JsonPropertiesList RCUR
+		{ $$ = $2; }
+	| LCUR JsonPropertiesList COMMA RCUR
+		{ $$ = $2; }
+	| LCUR RCUR
+		{ $$ = {}; }
+	;
+
+JsonArray
+	: LBRA JsonElementsList RBRA
+		{ $$ = $2; } 
+	| LBRA JsonElementsList COMMA RBRA
+		{ $$ = $2; } 
+	| LBRA RBRA
+		{ $$ = []; }
+	;
+
+JsonPropertiesList
+	: JsonPropertiesList COMMA JsonProperty
+		{ yy.extend($1,$3); $$ = $1; }
+	| JsonProperty
+		{ $$ = $1; }
+	;
+
+JsonProperty
+	: STRING COLON Json
+		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
+	| LITERAL COLON Json
+		{ $$ = {}; $$[$1] = $3; }		
+	;
+
+JsonElementsList
+	: JsonElementsList COMMA Json
+		{ $1.push($3); $$ = $1; }
+	| Json
+		{ $$ = [$1]; }
 	;

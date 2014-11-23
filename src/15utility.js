@@ -95,7 +95,8 @@ var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
         var found = false;
         
         r.forEach(function(ri){
-            found = found || equalDeep(ai, ri, true);
+//            found = found || equalDeep(ai, ri, true);
+            found = found || deepEqual(ai, ri);
         });
 
         if(!found) {
@@ -112,7 +113,8 @@ var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
         var found = false;
         
         b.forEach(function(bi){
-            found = found || equalDeep(ai, bi, true);
+//            found = found || equalDeep(ai, bi, true);
+            found = found || deepEqual(ai, bi);
         });
 
         if(!found) {
@@ -129,7 +131,8 @@ var arrayIntersectDeep = utils.arrayInterseptDeep  = function(a,b) {
         var found = false;
         
         b.forEach(function(bi){
-            found = found || equalDeep(ai, bi, true);
+//            found = found || equalDeep(ai, bi, true);
+            found = found || deepEqual(ai, bi, true);
         });
 
         if(found) {
@@ -191,6 +194,30 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     }
     return x == y;
 };
+
+var deepEqual = utils.deepEqual = function (x, y) {
+  if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
+    if (Object.keys(x).length != Object.keys(y).length)
+      return false;
+
+    for (var prop in x) {
+      if (y.hasOwnProperty(prop))
+      {  
+        if (! deepEqual(x[prop], y[prop]))
+          return false;
+      }
+      else
+        return false;
+    }
+
+    return true;
+  }
+  else if (x !== y)
+    return false;
+  else
+    return true;
+}
+
 
 // Extend object
 var extend = utils.extend = function extend (a,b){
