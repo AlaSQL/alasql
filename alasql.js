@@ -1635,7 +1635,6 @@ var doubleqq = utils.doubleqq = function(s) {
 
 // For LOAD
 var loadFile = utils.loadFile = function(path, success, error) {
-    
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function()
     {
