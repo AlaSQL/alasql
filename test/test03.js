@@ -4,14 +4,16 @@ if(typeof exports === 'object') {
 	var zt = require('../lib/zt/zt.js');
 };
 
-describe('Test 03 - 100,000 times', function() {
+var NUMTESTS = 10000;
+
+describe('Test 03 - '+NUMTESTS+'times', function() {
 
 	
 	var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
 	var sql2 = "INSERT INTO schools (schoolid, schoolname) VALUES (999,'Northern Pacific School')";
 	var sql3 = "INSERT INTO schools VALUES (998,'Western Pacific School')";
 
-	zt('Start',100000,function(){});
+	zt('Start',NUMTESTS,function(){});
 
 	it('0. Create table', function(done){
 		alasql('drop table if exists schools');
@@ -65,7 +67,7 @@ describe('Test 03 - 100,000 times', function() {
 
 	it('COUNT(*)', function(done) {
 		var res = alasql.exec('SELECT COUNT(*) FROM schools');
-		assert.equal(600000, res[0]['COUNT(*)']);
+		assert.equal(6*NUMTESTS, res[0]['COUNT(*)']);
 		done();
 	});
 

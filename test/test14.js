@@ -19,14 +19,14 @@ describe('Test 14', function() {
 		db.exec('INSERT INTO test2 VALUES (1,5)');
 		db.exec('INSERT INTO test2 VALUES (2,6)');
 
-		var res = db.exec('SELECT a,b,test2.c FROM test1 LEFT JOIN test2 ON test1.a = test2.a '+
+		var res = db.exec('SELECT test1.a,b,test2.c FROM test1 LEFT JOIN test2 ON test1.a = test2.a '+
 			" WHERE test1.a = 1");
 		assert.deepEqual([ { a: 1, b: 1, c: 5 }, { a: 1, b: 7, c: 5 } ], res);
 		assert.equal(1,Object.keys(db.tables.test1.indices).length);
 		assert.equal(1,Object.keys(db.tables.test2.indices).length);
 		//console.log(db.tables.test1.indices);
 
-		var res = db.exec('SELECT a,b,test2.c FROM test1 LEFT JOIN test2 ON test1.a = test2.a '+
+		var res = db.exec('SELECT test1.a,b,test2.c FROM test1 LEFT JOIN test2 ON test1.a = test2.a '+
 			" WHERE test1.a = 2");
 		assert.deepEqual([ { a: 2, b: 2, c: 6 } ],res);
 		assert.equal(1,Object.keys(db.tables.test1.indices).length);

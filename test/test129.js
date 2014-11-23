@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 };
 
 
-describe('* /STAR / MULTIPLICATION', function(){
+describe('Test 129 - * /STAR / MULTIPLICATION', function(){
 
 	it('UPDATE WHERE with multiplication in assignment and conditions', function(done) {
 

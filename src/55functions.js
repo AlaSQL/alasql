@@ -24,7 +24,7 @@ yy.FuncValue.prototype.toString = function() {
 	return s;
 }
 
-yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
+yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
@@ -40,7 +40,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 		var s = 'alasql.fn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
-			return arg.toJavaScript(context, tableid);
+			return arg.toJavaScript(context, tableid, defcols);
 		}).join(',');
 		s += ')';
 	}

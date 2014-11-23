@@ -31,7 +31,7 @@ describe('Test 27', function() {
 		db.exec('INSERT INTO test3 VALUES (40)');
 		db.exec('INSERT INTO test3 VALUES (50)');
 
-		var sql = 'SELECT a, test2.b FROM test1 JOIN test2 USING a WHERE a<6 '+
+		var sql = 'SELECT test1.a, test2.b FROM test1 JOIN test2 USING a WHERE test1.a<6 '+
 			'AND test2.b IN (SELECT * FROM test3 WHERE test3.q > 30)';
 
 		var res = db.queryArray(sql);

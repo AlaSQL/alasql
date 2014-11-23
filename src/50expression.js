@@ -13,7 +13,7 @@ yy.ExpressionStatement.prototype.toString = function() {
 
 yy.ExpressionStatement.prototype.execute = function (databaseid, params) {
 	if(this.expression) {
-		var expr =  new Function("params",'return '+this.expression.toJavaScript('',''));
+		var expr =  new Function("params",'return '+this.expression.toJavaScript('','', null));
 		return expr(params);
 	}
 }
@@ -22,15 +22,15 @@ yy.Expression = function(params) { return yy.extend(this, params); };
 yy.Expression.prototype.toString = function() {
 	return this.expression.toString();
 };
-yy.Expression.prototype.toJavaScript = function(context, tableid) {
+yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 	if(this.expression.reduced) return 'true';
-	return this.expression.toJavaScript(context, tableid);
+	return this.expression.toJavaScript(context, tableid, defcols);
 };
-yy.Expression.prototype.compile = function(context, tableid){
+yy.Expression.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 	if(this.reduced) return returnTrue();
-	return new Function('p','return '+this.toJavaScript(context, tableid));
+	return new Function('p','return '+this.toJavaScript(context, tableid, defcols));
 };
 
 
@@ -97,7 +97,7 @@ yy.Op.prototype.toType = function(tableid) {
 	return 'unknown';
 };
 
-yy.Op.prototype.toJavaScript = function(context,tableid) {
+yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //	console.log(this);
 	var op = this.op;
 	if(this.op == '=') op = '===';
@@ -105,16 +105,16 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	else if(this.op == 'OR') op = '||';
 
 	if(this.op == 'LIKE') {
-		var s = "("+this.left.toJavaScript(context,tableid)+")"+
-		".match(new RegExp('^'+("+this.right.toJavaScript(context,tableid)+").replace(/\\\%/g,'.*')+'$','g'))"
+		var s = "("+this.left.toJavaScript(context,tableid, defcols)+")"+
+		".match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*')+'$','g'))"
 //		console.log(s);
 		return s;
 	};
 
 	if(this.op == 'BETWEEN') {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
-			return '(('+this.right.left.toJavaScript(context,tableid)+'<='+this.left.toJavaScript(context,tableid)+')&&'+
-			'('+this.left.toJavaScript(context,tableid)+'<='+this.right.right.toJavaScript(context,tableid)+'))';		
+			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
+			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 		} else {
 			throw new Error('Wrong BETWEEM operator without AND part');
 		}
@@ -122,8 +122,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 
 	if(this.op == 'NOT BETWEEN') {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
-			return '!(('+this.right.left.toJavaScript(context,tableid)+'<='+this.left.toJavaScript(context,tableid)+')&&'+
-			'('+this.left.toJavaScript(context,tableid)+'<='+this.right.right.toJavaScript(context,tableid)+'))';		
+			return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
+			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 		} else {
 			throw new Error('Wrong NOT BETWEEM operator without AND part');
 		}
@@ -132,11 +132,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.op == 'IN') {
 		if(this.right instanceof yy.Select ) {
 			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')>-1)';
+			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')>-1)';
+			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
 		} else {
 			throw new Error('Wrong IN operator without SELECT part');
@@ -147,11 +147,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.op == 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
 			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')<0)';
+			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')<0)';
+			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -161,11 +161,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.allsome == 'ALL') {
 		if(this.right instanceof yy.Select ) {
 			var s = 'this.queriesdata['+this.queriesidx+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].every(function(b){return (';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -175,11 +175,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
 		if(this.right instanceof yy.Select ) {
 			var s = 'this.queriesdata['+this.queriesidx+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].some(function(b){return (';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -192,10 +192,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 			if(this.right.reduced) {
 				return 'true';
 			} else {
-				return this.right.toJavaScript(context,tableid);
+				return this.right.toJavaScript(context,tableid, defcols);
 			}
 		} else if(this.right.reduced) {
-			return this.left.toJavaScript(context,tableid);
+			return this.left.toJavaScript(context,tableid, defcols);
 		}			
 
 		// Otherwise process as regular operation (see below)
@@ -206,7 +206,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 
 	// Change names
 //	console.log(this);
-	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';
+	return '('+this.left.toJavaScript(context,tableid, defcols)+op+this.right.toJavaScript(context,tableid, defcols)+')';
 };
 
 
@@ -287,10 +287,10 @@ yy.UniOp.prototype.toType = function(tableid) {
 	if(this.op == 'NOT') return 'boolean';
 };
 
-yy.UniOp.prototype.toJavaScript = function(context, tableid) {
-	if(this.op == '-') return "-"+this.right.toJavaScript(context, tableid);
-	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid)+')';
-	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid)+')';
+yy.UniOp.prototype.toJavaScript = function(context, tableid, defcols) {
+	if(this.op == '-') return "-"+this.right.toJavaScript(context, tableid, defcols);
+	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid, defcols)+')';
+	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid, defcols)+')';
 };
 
 
@@ -330,7 +330,7 @@ yy.Column.prototype.toString = function() {
 	return s;
 };
 
-yy.Column.prototype.toJavaScript = function(context, tableid) {
+yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 //	var s = this.value;
 // 	var s = this.columnid;
 // 	if(this.tableid) {
@@ -343,10 +343,23 @@ yy.Column.prototype.toJavaScript = function(context, tableid) {
 // 	}
 //console.log('yy.Column',this, tableid);
 	var s = '';
-	if(tableid == '') {
+	if(!this.tableid && tableid == '' && !defcols) {
 		s = context+'[\''+this.columnid+'\']';
 	} else {
-		s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+		if(this.tableid) {
+			s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
+		} else if(defcols) {
+			var tbid = defcols[this.columnid];
+			if(tbid == '-') {
+				throw new Error('Cannot resolve column "'+this.columnid+'" because it exists in two source tables');
+			} else if(tbid) {
+				s = context+'[\''+(tbid) + '\'][\''+this.columnid+'\']';
+			} else {
+				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+			}
+		} else {
+			s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+		}
 	}
 //	console.log(context,s);
 //	console.trace(new Error());
@@ -369,7 +382,7 @@ yy.AggrValue.prototype.toType = function() {
 	if(['SUM','COUNT','AVG','MIN', 'MAX'].indexOf(this.aggregatorid)>-1) return 'number';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
-yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
+yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJavaScript(context, tableid);
 //	s += ')';

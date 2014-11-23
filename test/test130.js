@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 };
 
 
-describe('UPDATE', function(){
+describe('Test 130 - UPDATE', function(){
 	it('UPDATE without conditions', function(done) {
 
 		var db = new alasql.Database();

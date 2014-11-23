@@ -23,7 +23,7 @@ describe('Test 25', function() {
 		db.exec('INSERT INTO test2 VALUES (5,50)');
 		db.exec('INSERT INTO test2 VALUES (6,60)');
 
-		var sql = 'SELECT a, test2.b FROM test1 JOIN test2 USING a WHERE a<5 AND test2.b > 20';
+		var sql = 'SELECT test1.a, test2.b FROM test1 JOIN test2 USING a WHERE test1.a<5 AND test2.b > 20';
 
 		var res = db.exec(sql);
 

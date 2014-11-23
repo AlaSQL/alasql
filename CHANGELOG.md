@@ -1,12 +1,13 @@
 # Changelog
 
-### 0.0.24 (23.11.2014 - )
+### 0.0.24 (23.11.2014 - 23.11.2014)
 
 * Fixed LIKE operator (added ^ and $)
 * Changed LOAD to SOURCE (like in MySQL)
 * ASSERT operator
 * JSON parser for ASSERT operator
 * Fixed LIKE bug (need more attention)
+* Fixed bug with default column names
 
 ### 0.0.23 (22.11.2014 - 22.11.2014)
 

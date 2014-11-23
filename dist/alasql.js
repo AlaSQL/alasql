@@ -3337,8 +3337,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				var middles = '';
 				var middlef = false;
 				// Test right and left sides
-				var ls = jn.on.left.toJavaScript('p',query.defaultTableid);
-				var rs = jn.on.right.toJavaScript('p',query.defaultTableid);
+				var ls = jn.on.left.toJavaScript('p',query.defaultTableid,query.defcols);
+				var rs = jn.on.right.toJavaScript('p',query.defaultTableid,query.defcols);
 
 				if((ls.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
 					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
@@ -3374,7 +3374,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //				} else {
 					rights = '';
 					lefts = '';
-					middles = jn.on.toJavaScript('p',query.defaultTableid);
+					middles = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
 					source.optimization = 'no';
 					// What to here?
 				} 
@@ -3396,8 +3396,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.optimization = 'no';
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
-				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid);
-				source.onmiddlefn = new Function('p,params,alasql','return '+jn.on.toJavaScript('p',query.defaultTableid));
+				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
+				source.onmiddlefn = new Function('p,params,alasql','return '+jn.on.toJavaScript('p',query.defaultTableid,query.defcols));
 			};
 //			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 
@@ -3769,14 +3769,17 @@ yy.Select.prototype.compileSelect = function(query) {
 				}
 			} else {
 				// If field, otherwise - expression
-				ss.push(escapeq(col.as || col.columnid)+':p[\''+(col.tableid||query.defaultTableid)+'\'][\''+col.columnid+'\']');
+				var tbid = col.tableid;
+				if(!tbid) tbid = query.defcols[col.columnid];
+				if(!tbid) tbid = query.defaultTableid;
+				ss.push(escapeq(col.as || col.columnid)+':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
 
-				if(query.aliases[col.tableid||query.defaultTableid] && query.aliases[col.tableid||query.defaultTableid].type == 'table') {
+				if(query.aliases[tbid] && query.aliases[tbid].type == 'table') {
 
-					if(!query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid]) {
-						throw new Error('Table \''+(col.tableid||query.defaultTableid)+'\' does not exists in database');
+					if(!query.database.tables[query.aliases[tbid].tableid]) {
+						throw new Error('Table \''+(tbid)+'\' does not exists in database');
 					}
-					var xcolumns = query.database.tables[query.aliases[col.tableid||query.defaultTableid].tableid].xcolumns;
+					var xcolumns = query.database.tables[query.aliases[tbid].tableid].xcolumns;
 //console.log(xcolumns, col,123);
 //					console.log(0);
 					if(xcolumns) {
@@ -3810,7 +3813,7 @@ yy.Select.prototype.compileSelect = function(query) {
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  col.aggregatorid == 'AVG'
 				) {
-				ss.push("'"+escapeq(col.as)+'\':'+col.expression.toJavaScript("p",query.defaultTableid))	
+				ss.push("'"+escapeq(col.as)+'\':'+col.expression.toJavaScript("p",query.defaultTableid,query.defcols))	
 			} else if (col.aggregatorid == 'COUNT') {
 				ss.push("'"+escapeq(col.as)+"':1");
 				// Nothing
@@ -3821,7 +3824,7 @@ yy.Select.prototype.compileSelect = function(query) {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			}
 		} else {
-			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
+			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid,query.defcols));
 //			ss.push('\''+escapeq(col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 		}
@@ -3834,7 +3837,7 @@ yy.Select.prototype.compileSelect = function(query) {
 
 yy.Select.prototype.compileWhere = function(query) {
 	if(this.where) {
-		s = this.where.toJavaScript('p',query.defaultTableid);
+		s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
 		query.wherefns = s;
 //		console.log(s);
 		return new Function('p,params,alasql','return '+s);
@@ -3863,7 +3866,7 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 
 function optimizeWhereJoin (query, ast) {
 	if(!ast) return false;
-	var s = ast.toJavaScript('p',query.defaultTableid);
+	var s = ast.toJavaScript('p',query.defaultTableid,query.defcols);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {
 		// Optimization allowed only for tables only
@@ -3893,15 +3896,15 @@ function optimizeWhereJoin (query, ast) {
 
 		if((ast instanceof yy.Op) && (ast.op == '=' && !ast.allsome)) {
 			if(ast.left instanceof yy.Column) {
-				var ls = ast.left.toJavaScript('p',query.defaultTableid);
-				var rs = ast.right.toJavaScript('p',query.defaultTableid);
+				var ls = ast.left.toJavaScript('p',query.defaultTableid,query.defcols);
+				var rs = ast.right.toJavaScript('p',query.defaultTableid,query.defcols);
 				if(rs.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
 					fsrc[0].wxleftfns = ls; 
 					fsrc[0].wxrightfns = rs; 
 				} 
 			} if(ast.right instanceof yy.Column) {
-				var ls = ast.left.toJavaScript('p',query.defaultTableid);
-				var rs = ast.right.toJavaScript('p',query.defaultTableid);
+				var ls = ast.left.toJavaScript('p',query.defaultTableid,query.defcols);
+				var rs = ast.right.toJavaScript('p',query.defaultTableid,query.defcols);
 				if(ls.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
 					fsrc[0].wxleftfns = rs; 
 					fsrc[0].wxrightfns = ls; 
@@ -4068,20 +4071,22 @@ function decartes(gv) {
 */
 
 yy.Select.prototype.compileDefCols = function(query, databaseid) {
+//	console.log('defcols');
 	var defcols = {};
-	return defcols;
 	if(this.from) {
 		this.from.forEach(function(fr){
 			if(fr instanceof yy.Table) {
 				var alias = fr.as || fr.tableid;
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
-				table.columns.forEach(function(col){
-					if(defcols[col.columnid]) {
-						defcols[col.columnid] = '-'; // Ambigous
-					} else {
-						defcols[col.columnid] = alias;
-					}
-				});
+				if(table.columns) {
+					table.columns.forEach(function(col){
+						if(defcols[col.columnid]) {
+							defcols[col.columnid] = '-'; // Ambigous
+						} else {
+							defcols[col.columnid] = alias;
+						}
+					});
+				}
 			} else if(fr instanceof yy.Select) {
 
 			} else if(fr instanceof yy.ParamValue) {
@@ -4094,19 +4099,22 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 	if(this.joins) {
 		this.joins.forEach(function(jn){
-			console.log(jn);
+//			console.log(jn);
 			var alias = jn.table.tableid;
 			if(jn.as) alias = jn.as;
 			if(jn.table) {
-				var alias = jn.as || jn.tableid;
-				var table = alasql.databases[jn.databaseid || databaseid].tables[jn.tableid];
-				table.columns.forEach(function(col){
-					if(defcols[col.columnid]) {
-						defcols[col.columnid] = '-'; // Ambigous
-					} else {
-						defcols[col.columnid] = alias;
-					}
-				});
+				var alias = jn.as || jn.table.tableid;
+				var table = alasql.databases[jn.databaseid || databaseid].tables[jn.table.tableid];
+//				console.log(jn.table.tableid);
+				if(table.columns) {
+					table.columns.forEach(function(col){
+						if(defcols[col.columnid]) {
+							defcols[col.columnid] = '-'; // Ambigous
+						} else {
+							defcols[col.columnid] = alias;
+						}
+					});
+				}
 			} else if(jn.select) {
 
 			} else if(jn.param) {
@@ -4116,7 +4124,10 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 			};
 		});
 	};
-	console.log(defcols);
+	// for(var k in defcols) {
+	// 	if(defcols[k] == '-') defcols[k] = undefined;
+	// }
+//	console.log(defcols);
 	return defcols;
 }
 
@@ -4154,7 +4165,7 @@ yy.ExpressionStatement.prototype.toString = function() {
 
 yy.ExpressionStatement.prototype.execute = function (databaseid, params) {
 	if(this.expression) {
-		var expr =  new Function("params",'return '+this.expression.toJavaScript('',''));
+		var expr =  new Function("params",'return '+this.expression.toJavaScript('','', null));
 		return expr(params);
 	}
 }
@@ -4163,15 +4174,15 @@ yy.Expression = function(params) { return yy.extend(this, params); };
 yy.Expression.prototype.toString = function() {
 	return this.expression.toString();
 };
-yy.Expression.prototype.toJavaScript = function(context, tableid) {
+yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 	if(this.expression.reduced) return 'true';
-	return this.expression.toJavaScript(context, tableid);
+	return this.expression.toJavaScript(context, tableid, defcols);
 };
-yy.Expression.prototype.compile = function(context, tableid){
+yy.Expression.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 	if(this.reduced) return returnTrue();
-	return new Function('p','return '+this.toJavaScript(context, tableid));
+	return new Function('p','return '+this.toJavaScript(context, tableid, defcols));
 };
 
 
@@ -4238,7 +4249,7 @@ yy.Op.prototype.toType = function(tableid) {
 	return 'unknown';
 };
 
-yy.Op.prototype.toJavaScript = function(context,tableid) {
+yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //	console.log(this);
 	var op = this.op;
 	if(this.op == '=') op = '===';
@@ -4246,16 +4257,16 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	else if(this.op == 'OR') op = '||';
 
 	if(this.op == 'LIKE') {
-		var s = "("+this.left.toJavaScript(context,tableid)+")"+
-		".match(new RegExp('^'+("+this.right.toJavaScript(context,tableid)+").replace(/\\\%/g,'.*')+'$','g'))"
+		var s = "("+this.left.toJavaScript(context,tableid, defcols)+")"+
+		".match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*')+'$','g'))"
 //		console.log(s);
 		return s;
 	};
 
 	if(this.op == 'BETWEEN') {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
-			return '(('+this.right.left.toJavaScript(context,tableid)+'<='+this.left.toJavaScript(context,tableid)+')&&'+
-			'('+this.left.toJavaScript(context,tableid)+'<='+this.right.right.toJavaScript(context,tableid)+'))';		
+			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
+			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 		} else {
 			throw new Error('Wrong BETWEEM operator without AND part');
 		}
@@ -4263,8 +4274,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 
 	if(this.op == 'NOT BETWEEN') {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
-			return '!(('+this.right.left.toJavaScript(context,tableid)+'<='+this.left.toJavaScript(context,tableid)+')&&'+
-			'('+this.left.toJavaScript(context,tableid)+'<='+this.right.right.toJavaScript(context,tableid)+'))';		
+			return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
+			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 		} else {
 			throw new Error('Wrong NOT BETWEEM operator without AND part');
 		}
@@ -4273,11 +4284,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.op == 'IN') {
 		if(this.right instanceof yy.Select ) {
 			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')>-1)';
+			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')>-1)';
+			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
 		} else {
 			throw new Error('Wrong IN operator without SELECT part');
@@ -4288,11 +4299,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.op == 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
 			var s = '(this.queriesdata['+this.queriesidx+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')<0)';
+			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid)+')<0)';
+			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
+			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -4302,11 +4313,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.allsome == 'ALL') {
 		if(this.right instanceof yy.Select ) {
 			var s = 'this.queriesdata['+this.queriesidx+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].every(function(b){return (';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -4316,11 +4327,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
 		if(this.right instanceof yy.Select ) {
 			var s = 'this.queriesdata['+this.queriesidx+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid)}).join(',')+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid)+')'+op+'b})';
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].some(function(b){return (';
+			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -4333,10 +4344,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 			if(this.right.reduced) {
 				return 'true';
 			} else {
-				return this.right.toJavaScript(context,tableid);
+				return this.right.toJavaScript(context,tableid, defcols);
 			}
 		} else if(this.right.reduced) {
-			return this.left.toJavaScript(context,tableid);
+			return this.left.toJavaScript(context,tableid, defcols);
 		}			
 
 		// Otherwise process as regular operation (see below)
@@ -4347,7 +4358,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid) {
 
 	// Change names
 //	console.log(this);
-	return '('+this.left.toJavaScript(context,tableid)+op+this.right.toJavaScript(context,tableid)+')';
+	return '('+this.left.toJavaScript(context,tableid, defcols)+op+this.right.toJavaScript(context,tableid, defcols)+')';
 };
 
 
@@ -4428,10 +4439,10 @@ yy.UniOp.prototype.toType = function(tableid) {
 	if(this.op == 'NOT') return 'boolean';
 };
 
-yy.UniOp.prototype.toJavaScript = function(context, tableid) {
-	if(this.op == '-') return "-"+this.right.toJavaScript(context, tableid);
-	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid)+')';
-	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid)+')';
+yy.UniOp.prototype.toJavaScript = function(context, tableid, defcols) {
+	if(this.op == '-') return "-"+this.right.toJavaScript(context, tableid, defcols);
+	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid, defcols)+')';
+	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid, defcols)+')';
 };
 
 
@@ -4471,7 +4482,7 @@ yy.Column.prototype.toString = function() {
 	return s;
 };
 
-yy.Column.prototype.toJavaScript = function(context, tableid) {
+yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 //	var s = this.value;
 // 	var s = this.columnid;
 // 	if(this.tableid) {
@@ -4484,10 +4495,23 @@ yy.Column.prototype.toJavaScript = function(context, tableid) {
 // 	}
 //console.log('yy.Column',this, tableid);
 	var s = '';
-	if(tableid == '') {
+	if(!this.tableid && tableid == '' && !defcols) {
 		s = context+'[\''+this.columnid+'\']';
 	} else {
-		s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+		if(this.tableid) {
+			s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
+		} else if(defcols) {
+			var tbid = defcols[this.columnid];
+			if(tbid == '-') {
+				throw new Error('Cannot resolve column "'+this.columnid+'" because it exists in two source tables');
+			} else if(tbid) {
+				s = context+'[\''+(tbid) + '\'][\''+this.columnid+'\']';
+			} else {
+				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+			}
+		} else {
+			s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+		}
 	}
 //	console.log(context,s);
 //	console.trace(new Error());
@@ -4510,7 +4534,7 @@ yy.AggrValue.prototype.toType = function() {
 	if(['SUM','COUNT','AVG','MIN', 'MAX'].indexOf(this.aggregatorid)>-1) return 'number';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
-yy.AggrValue.prototype.toJavaScript = function(context, tableid) {
+yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJavaScript(context, tableid);
 //	s += ')';
@@ -4574,7 +4598,7 @@ yy.FuncValue.prototype.toString = function() {
 	return s;
 }
 
-yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
+yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
@@ -4590,7 +4614,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid) {
 		var s = 'alasql.fn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
-			return arg.toJavaScript(context, tableid);
+			return arg.toJavaScript(context, tableid, defcols);
 		}).join(',');
 		s += ')';
 	}

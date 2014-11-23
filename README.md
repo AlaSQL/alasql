@@ -14,13 +14,10 @@ Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-### Test Alasql in console
-* [SQL Console](http://alasql.org/console/alaconsole.html)
-* [Console source code](examples/console/alaconsole.html)
 
 ### Warning 
-Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0 in the mid of November. 
-Please, submit bugs and suggestions in [issue page]().
+Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. 
+Please, submit bugs and suggestions in [issue page](https://github.com/agershun/alasql/issues).
 
 Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions on again in one of the future version.
 
@@ -32,7 +29,16 @@ The early prototype of documentation will be placed on [Alasql Wiki](https://git
 
 ## Examples
 
-Try Alasql in Fiddle: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/)
+Try Alasql in console:
+* [SQL Console](http://alasql.org/console/alaconsole.html)
+* [Console source code](examples/console/alaconsole.html)
+
+
+Try Alasql in Fiddle: 
+* [sample 1](http://jsfiddle.net/38hj2uwy/10/) 
+* [sample 2](http://jsfiddle.net/38hj2uwy/6/) 
+* [sample 3](http://jsfiddle.net/6a06dqhc/3/)
+* [sample 4](http://jsfiddle.net/606ksx2g/1/)
 
 Other examples:
 * [Sandbox](examples/sandbox.html)
@@ -44,7 +50,7 @@ Other examples:
 
 * [People around the world about Alasql](PEOPLE.md)
 
-## Presentations
+### Presentations
 
 * [Alasql.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database) (English)
 
@@ -111,8 +117,9 @@ Then require alasql.js file:
 * ALTER TABLE
 * DROP TABLE \[IF EXISTS\] table
 * CREATE DATABASE, USE DATABASE, DROP DATABASE
-* SHOW DATABASES / SHOW TABLES / SHOW COLUMNS / SHOW CRETE TABLE
+* SHOW DATABASES / SHOW TABLES / SHOW COLUMNS / SHOW CREATE TABLE
 * SOURCE 'url-file.sql'
+* ASSERT json-object
 
 Try all these statements in [Alasql console](http://alasql.org/console/alaconsole.html?help)
 
@@ -224,7 +231,7 @@ You can use compile statements:
     insert();
 ```
 
-You can use parameters in compiled statements:
+You can use parameters in compiled and interpreted statements:
 
 ```js
     var insert1 = db.compile('INSERT INTO one (?,?)');
@@ -327,7 +334,7 @@ You can use Alasql to parse to AST and compile SQL statements:
     statement([1,5]);
 ```
 
-Alasql uses wonderful [Jison](jison.org) parser to produce AST-tree.
+Alasql uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
 
 
 ### Performance

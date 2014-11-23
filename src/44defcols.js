@@ -7,20 +7,22 @@
 */
 
 yy.Select.prototype.compileDefCols = function(query, databaseid) {
+//	console.log('defcols');
 	var defcols = {};
-	return defcols;
 	if(this.from) {
 		this.from.forEach(function(fr){
 			if(fr instanceof yy.Table) {
 				var alias = fr.as || fr.tableid;
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
-				table.columns.forEach(function(col){
-					if(defcols[col.columnid]) {
-						defcols[col.columnid] = '-'; // Ambigous
-					} else {
-						defcols[col.columnid] = alias;
-					}
-				});
+				if(table.columns) {
+					table.columns.forEach(function(col){
+						if(defcols[col.columnid]) {
+							defcols[col.columnid] = '-'; // Ambigous
+						} else {
+							defcols[col.columnid] = alias;
+						}
+					});
+				}
 			} else if(fr instanceof yy.Select) {
 
 			} else if(fr instanceof yy.ParamValue) {
@@ -33,19 +35,22 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 	if(this.joins) {
 		this.joins.forEach(function(jn){
-			console.log(jn);
+//			console.log(jn);
 			var alias = jn.table.tableid;
 			if(jn.as) alias = jn.as;
 			if(jn.table) {
-				var alias = jn.as || jn.tableid;
-				var table = alasql.databases[jn.databaseid || databaseid].tables[jn.tableid];
-				table.columns.forEach(function(col){
-					if(defcols[col.columnid]) {
-						defcols[col.columnid] = '-'; // Ambigous
-					} else {
-						defcols[col.columnid] = alias;
-					}
-				});
+				var alias = jn.as || jn.table.tableid;
+				var table = alasql.databases[jn.databaseid || databaseid].tables[jn.table.tableid];
+//				console.log(jn.table.tableid);
+				if(table.columns) {
+					table.columns.forEach(function(col){
+						if(defcols[col.columnid]) {
+							defcols[col.columnid] = '-'; // Ambigous
+						} else {
+							defcols[col.columnid] = alias;
+						}
+					});
+				}
 			} else if(jn.select) {
 
 			} else if(jn.param) {
@@ -55,6 +60,9 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 			};
 		});
 	};
-	console.log(defcols);
+	// for(var k in defcols) {
+	// 	if(defcols[k] == '-') defcols[k] = undefined;
+	// }
+//	console.log(defcols);
 	return defcols;
 }
