@@ -4,7 +4,6 @@
 
 #### Version 0.0.25 - "Alasql and AlanosQL - like MongoDB"
 
-* Alacon
 * Alaserver
 
 
@@ -41,12 +40,6 @@
 #### Version 0.0.27 - "CAST and CONVERT"
 
 * more CAST functions
-SELECT VALUE, ROW, COLUMN, MATRIX
-* select - [{a:10,b:100},{a:20,b:200}]
-* select value - 10
-* select column - [10,20]
-* select row - [10,100]
-* select matrix - [[10,100],[20,200]]
 
 #### Version 0.0.28 - "ISO and JS Dates"
 
@@ -90,11 +83,6 @@ DRAW AREACHART WITH
   AXIS BOTTOM
   AXIS LEFT
   GRID HORIZONTAL;
-
-
-#### Version 0.0.32 - "Console as plugin"
-
-* Console as aplugin - alaconsole.js
 
 
 #### Version 0.0.33 - "ISO and JS Dates"

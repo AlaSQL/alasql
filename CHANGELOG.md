@@ -43,7 +43,7 @@
 ### 0.0.21 (19.11.2014 - 20.11.2014)
 
 * SELECT a AS q, b w FROM one - AS is not required
-* Comments '--' and '/* */'
+* Comments '--' and '/* */' - single line
 * Double quote sign in the string 'Bon''appetite'
 * Compatibility with World Database (http://dev.mysql.com/doc/world-setup/en/index.html)
  * `literal` in backquotes like literal in square brackets [literal]
