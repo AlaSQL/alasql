@@ -1,9 +1,8 @@
 ## RELEASES PLAN
 
-#### Version 0.0.25 - "Default Table Names"
+#### Version 0.0.25 - "CAST and CONVERT"
 
-* CAST - partially done
-* SOURCE for Node.js (for tests)
+* CAST with more type conversions (dates)
 * Float numbers like 10e20
 * xcolumns to ixcolumns for compatibility with Alfina
 
@@ -11,8 +10,7 @@
 
 * Replace magic character '`' to CharCode(0) or something else similar...
 * ISODATE and JSDATE for DATE and DATETIME
-* CONVERT
-* Multiple line comments like /* comment */
+* Multiple line comments like /* comment newline comment */
 
 #### Version 0.0.27 - "ISO and JS Date/Time Functions"
 

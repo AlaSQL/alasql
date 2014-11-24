@@ -65,6 +65,7 @@
 "COLUMN"										return "COLUMN"
 "COLUMNS"										return "COLUMNS"
 "CONSTRAINT"									return "CONSTRAINT"
+"CONVERT"										return "CONVERT"
 "COUNT"											return "COUNT"
 "CURSOR"										return "CURSOR"
 'CREATE'										return 'CREATE'
@@ -641,6 +642,10 @@ Expression
 CastClause
 	: CAST LPAR Expression AS ColumnType RPAR
 		{ $$ = new yy.Cast({expression:$3}) ; yy.extend($$,$5) ; }
+	| CONVERT LPAR ColumnType COMMA Expression RPAR
+		{ $$ = new yy.Cast({expression:$5}) ; yy.extend($$,$3) ; }
+	| CONVERT LPAR ColumnType COMMA Expression COMMA NUMBER RPAR
+		{ $$ = new yy.Cast({expression:$5, style:$7}) ; yy.extend($$,$3) ; }
 	;
 
 PrimitiveValue

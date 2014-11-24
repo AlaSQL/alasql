@@ -22,3 +22,6 @@ assert [{"CAST(1234 AS STRING)":"1234"}];
 select cast(12.34 as string);
 assert [{"CAST(12.34 AS STRING)":"12.34"}];
 
+select convert(int,12.34);
+assert [{"CAST(12.34 AS INT)":12}];
+-- assert [{"CONVERT(INT,12.34)":12}];

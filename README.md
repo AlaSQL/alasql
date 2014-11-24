@@ -108,26 +108,28 @@ Then require alasql.js file:
 
 ### Supported SQL statements
 
-* SELECT fields FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number OFFSET number
+* SELECT TOP number columns INTO table FROM tableid1 JOIN tableid2 ON oncond WHERE cond GROUP BY v1,v2 HAVING cond ORDER BY a,b, LIMIT number OFFSET number
 * INSERT INTO table \[ (field1, field2) \] VALUES (value1, value2), (value3, value4), ...
 * INSERT INTO table SELECT subquery
 * UPDATE table SET field = value1, field = value2 WHERE condition 
 * DELETE FROM table WHERE condition 
 * CREATE TABLE \[IF NOT EXISTS\] table (columns type PRIMARY KEY, constraints)
-* ALTER TABLE
+* ALTER TABLE ADD COLUMN / DROP COLUMN
 * DROP TABLE \[IF EXISTS\] table
 * CREATE DATABASE, USE DATABASE, DROP DATABASE
 * SHOW DATABASES / SHOW TABLES / SHOW COLUMNS / SHOW CREATE TABLE
 * SOURCE 'url-file.sql'
 * ASSERT json-object
+* Expression (like SELECT expression)
 
 Try all these statements in [Alasql console](http://alasql.org/console?help)
 
 #### SELECT statement
 
-Now Alasql.js supports following subset of SELECT syntax:
+Alasql.js supports following subset of SELECT syntax:
 
 * SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(expression7) AS alias8, *, table2.*
+* TOP number
 * FROM table1, table2, (SELECT * FROM table3) alias
 * LEFT / RIGHT / INNER / OUTER / ANTI / SEMI / CROSS JOIN table2 ON condition / USING columns
 * WHERE condition
@@ -137,27 +139,21 @@ Now Alasql.js supports following subset of SELECT syntax:
 * LIMIT number [OFFSET number]
 * UNION / UNION ALL select / INTERSECT / EXCEPT
 
-#### Operators
+Operators:
 
 * +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery/array), > ANY/SOME (subquery / array), [NOT] IN (subquery / array), LIKE
 * CAST (expression AS type)
 
-#### Aggregators
+Aggregators:
 
-* SUM()
-* COUNT() 
-* MIN()
-* MAX()
-* FIRST()
-* LAST()
-* Sorry, AVG still does not work
+* SUM(), COUNT(), MIN(), MAX(), FIRST(), LAST()
+* Sorry, AVG() still does not work
 
-#### GROUP BY Grouping functions
+GROUP BY Grouping functions:
 
-* ROLLUP()
-* CUBE()
-* GROUPING SETS()
-#### Functions
+* ROLLUP(), CUBE(), GROUPING SETS()
+
+Functions:
 
 * ABS(), IIF(), IFNULL(), INSTR(), LOWER(), UPPER(), LCASE(), UCASE(), LEN(), LENGTH()
 
