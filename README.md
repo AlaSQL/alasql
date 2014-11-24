@@ -1,8 +1,8 @@
-# Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
+# Alasql.js - pure JavaScript client-side in-memory fast SQL and NoSQL database
 
 Version: 0.0.25 Date: November 25, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. It supports SQL and some of NoSQL statements. 
 
 * Alasql was written with pure JavaScript and does not use browser WebSQL database. 
 * Alasql is fully functional compact SQL server with JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries and very limited transactions support.
@@ -16,10 +16,9 @@ Check Alasql vs other JavaScript SQL databases:
 
 
 ### Warning 
-Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. 
-Please, submit bugs and suggestions in [issue page](https://github.com/agershun/alasql/issues).
+Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
 
-Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions on again in one of the future version.
+Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be turned on again in one of the future version.
 
 You can check [version-0.0.26](https://github.com/agershun/alasql/tree/version-0.0.26) branch for new experimental features of new version. 
 
@@ -46,9 +45,9 @@ Other examples:
 * [World database](examples/console.html)
 * [Hundred of small tests](test)
 
-### What People Say about Alasql
+### What People Say about Alasql?
 
-* [People around the world about Alasql](PEOPLE.md)
+* [What people around the world say about Alasql](PEOPLE.md)
 
 ### Presentations
 

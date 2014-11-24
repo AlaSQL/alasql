@@ -46,3 +46,5 @@ alasql = function(sql, params, cb, scope) {
 	return alasql.exec(sql, params, cb, scope);
 };
 
+alasql.version = "0.0.25";
+

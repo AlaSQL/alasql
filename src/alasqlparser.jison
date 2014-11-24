@@ -636,7 +636,9 @@ Expression
 	| CaseValue
 		{ $$ = $1; }
 	| CastClause
-		{ $$ = $1; }		
+		{ $$ = $1; }
+	| Json
+		{ $$ = $1; }			
 	;
 
 CastClause
