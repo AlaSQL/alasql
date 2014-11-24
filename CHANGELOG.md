@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.0.25 (23.11.2014 - 23.11.2014)
+
+* CAST(expression AS type)
+* alasql.options.datetimeformat = 'sql' / 'javascript' for CAST
+* loadFile works in Node.js (changes some tests for proper)
+
 ### 0.0.24 (23.11.2014 - 23.11.2014)
 
 * Fixed LIKE operator (added ^ and $)

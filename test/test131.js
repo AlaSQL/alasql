@@ -1,12 +1,14 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
 	var alasql = require('../alasql.js');
+} else {
+	__dirname = '.';
 };
 
 describe('Test 131 CAST and CONVERT', function() {
 
 	it('1. CAST', function(done){
-		alasql('source "test131.sql"');
+		alasql('source "'+__dirname+'/test131.sql"');
 		done();
 	});
 

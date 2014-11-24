@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL-database 
 
-Version: 0.0.24 Date: November 24, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.25 Date: November 25, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. 
 
@@ -21,7 +21,7 @@ Please, submit bugs and suggestions in [issue page](https://github.com/agershun/
 
 Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. I will turn transactions on again in one of the future version.
 
-You can check [version-0.0.23](https://github.com/agershun/alasql/tree/version-0.0.23) branch for new experimental features of new version. 
+You can check [version-0.0.26](https://github.com/agershun/alasql/tree/version-0.0.26) branch for new experimental features of new version. 
 
 ### Documentation (draft)
 
@@ -140,6 +140,7 @@ Now Alasql.js supports following subset of SELECT syntax:
 #### Operators
 
 * +, -, *, /, %, AND, OR, NOT, BETWEEN, NOT BETWEEN, EXISTS (Subquery), > ALL (subquery/array), > ANY/SOME (subquery / array), [NOT] IN (subquery / array), LIKE
+* CAST (expression AS type)
 
 #### Aggregators
 

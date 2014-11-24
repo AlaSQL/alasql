@@ -19,8 +19,8 @@ yy.Source.prototype.execute = function (databaseid) {
 	loadFile(this.url, function(data){
 //		console.log(data);
 		alasql(data);
-	}, function(xhr){
-		throw xhr;
+	}, function(err){
+		throw err;
 	});
 	return 1;
 };

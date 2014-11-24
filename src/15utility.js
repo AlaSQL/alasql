@@ -29,21 +29,29 @@ var doubleqq = utils.doubleqq = function(s) {
 
 // For LOAD
 var loadFile = utils.loadFile = function(path, success, error) {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function()
-    {
-        if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 200) {
-                if (success)
-                    success(xhr.responseText);
-            } else {
-                if (error)
-                    error(xhr);
+    if(typeof exports == 'object') {
+        // For Node.js
+        var fs = require('fs');
+        var data = fs.readFileSync(path);
+        success(data.toString());
+    } else {
+        // For browser
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function()
+        {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    if (success)
+                        success(xhr.responseText);
+                } else {
+                    if (error)
+                        error(xhr);
+                }
             }
-        }
-    };
-    xhr.open("GET", path, false); // Async
-    xhr.send();
+        };
+        xhr.open("GET", path, false); // Async
+        xhr.send();
+    }
 }
 
 

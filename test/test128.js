@@ -1,6 +1,8 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
 	var alasql = require('../alasql.js');
+} else {
+	__dirname = '.';
 };
 
 describe('Test 128 ASSERT', function() {
@@ -10,7 +12,7 @@ describe('Test 128 ASSERT', function() {
 		alasql('assert 1');
 		alasql('use test128');
 		alasql('assert 1');
-		alasql('source "test128.sql"');
+		alasql('source "'+__dirname+'/test128.sql"');
 		alasql('assert 1');
 
 		alasql('select * from one');
