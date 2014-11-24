@@ -89,7 +89,7 @@ yy.Op.prototype.toType = function(tableid) {
 		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
 	};
-	if(['AND','OR','NOT','=','!=','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE'].indexOf(this.op) >-1 ) return 'boolean';
+	if(['AND','OR','NOT','=','==', '!=','!==','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE'].indexOf(this.op) >-1 ) return 'boolean';
 	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN') return 'boolean';
 	if(this.allsome) return 'boolean';
 	if(!this.op) return this.left.toType();
@@ -103,6 +103,13 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	if(this.op == '=') op = '===';
 	else if(this.op == '<>') op = '!=';
 	else if(this.op == 'OR') op = '||';
+
+	if(this.op == '==') {
+		return 'alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+')';
+	}
+	if(this.op == '!==') {
+		return '(!alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+'))';
+	}
 
 	if(this.op == 'LIKE') {
 		var s = "("+this.left.toJavaScript(context,tableid, defcols)+")"+

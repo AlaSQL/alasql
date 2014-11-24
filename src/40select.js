@@ -14,6 +14,7 @@
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
 	var s = 'SELECT ';
+	if(this.modifier) s += this.modifier+' ';
 	if(this.top) s += 'TOP '+this.top.value+' ';
 	s += this.columns.map(function(col){
 		var s = col.toString();
@@ -59,6 +60,8 @@ yy.Select.prototype.compile = function(databaseid) {
 	var db = alasql.databases[databaseid];
 	// Create variable for query
 	var query = new Query();
+
+	query.modifier = this.modifier;
 	
 	query.database = db;
 	// 0. Precompile whereexists
@@ -145,6 +148,27 @@ yy.Select.prototype.compile = function(databaseid) {
 	var statement = function(params, cb, oldscope) {
 		query.params = params;
 		var res = queryfn(query,oldscope); 
+		
+		if(query.modifier == 'VALUE') {
+			var key = Object.keys(res[0])[0];
+			res = res[0][key];
+		} if(query.modifier == 'ROW') {
+			var a = [];
+			for(var key in res[0]) {
+				a.push(res[0][key]);
+			};
+			res = a;
+		} if(query.modifier == 'COLUMN') {
+			var ar = [];
+			var key = Object.keys(res)[0];
+			for(var i=0, ilen=res.length; i<ilen; i++){
+				ar.push(res[i][key]);
+			}
+			res = ar;
+		} if(query.modifier == 'MATRIX') {
+			res = arrayOfArrays(res);
+		}
+
 		if(cb) cb(res); 
 		return res;
 	};

@@ -6,6 +6,13 @@
 * CONVERT(type, expression)
 * alasql.options.datetimeformat = 'sql' / 'javascript' for CAST
 * loadFile works in Node.js (changes some tests)
+* SELECT VALUE
+* SELECT ROW
+* SELECT COLUMN
+* SELECT MATRIX
+* JSON(json-object)
+* == and !== for deepEqual
+* alacon - alasql console (to run: node alacon sql params...)
 
 ### 0.0.24 (23.11.2014 - 23.11.2014)
 

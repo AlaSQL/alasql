@@ -105,12 +105,14 @@
 'INTERSECT'                                     return 'INTERSECT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
+'JSON'                                         	return 'JSON'
 'KEY'											return 'KEY'
 'LAST'											return 'LAST'
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 'SOURCE'										return 'SOURCE'
+'MATRIX'										return 'MATRIX'	
 "MAX"											return "MAX"
 "MIN"											return "MIN"
 "MINUS"											return "EXCEPT"
@@ -135,6 +137,7 @@
 'RENAME'                                        return 'RENAME'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLUP'										return 'ROLLUP'
+'ROW'											return 'ROW'
 'SCHEMA'                                        return 'DATABASE'
 'SCHEMAS'                                       return 'DATABASES'
 'SELECT'                                        return 'SELECT'
@@ -157,6 +160,7 @@
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
 'USING'                                         return 'USING'
+'VALUE'                                        	return 'VALUE'
 'VALUES'                                        return 'VALUES'
 'VIEW'											return 'VIEW'
 'WHEN'                                          return 'WHEN'
@@ -172,6 +176,8 @@
 '*'												return 'STAR'
 '/'												return 'SLASH'
 '%'												return 'PERCENT'
+'!=='											return 'NEEQEQ'
+'=='											return 'EQEQ'
 '>='											return 'GE'
 '>'												return 'GT'
 '<='											return 'LE'
@@ -205,7 +211,7 @@
 %left OR
 %left BETWEEN NOT_BETWEEN
 %left AND
-%left GT GE LT LE EQ NE
+%left GT GE LT LE EQ NE EQEQ NEEQEQ
 %left IN
 %left NOT
 %left LIKE
@@ -342,14 +348,27 @@ Select
 */	;
 
 SelectClause
-	: SELECT DISTINCT TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $3); }
-	| SELECT UNIQUE TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $3); }
-	| SELECT ALL TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $3); }
-	| SELECT TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$3 }); yy.extend($$, $2); }
+	: SelectModifier DISTINCT TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1); yy.extend($$, $3); }
+	| SelectModifier UNIQUE TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1);yy.extend($$, $3); }
+	| SelectModifier  ALL TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$4, all:true }); yy,extend($$, $1);yy.extend($$, $3); }
+	| SelectModifier TopClause ResultColumns  
+		{ $$ = new yy.Select({ columns:$3 }); yy,extend($$, $1);yy.extend($$, $2); }
+	;
+
+SelectModifier
+	: SELECT
+		{ $$ = null}
+	| SELECT VALUE
+		{ $$ = {modifier:'VALUE'}}
+	| SELECT ROW
+		{ $$ = {modifier:'ROW'}}
+	| SELECT COLUMN
+		{ $$ = {modifier:'COLUMN'}}
+	| SELECT MATRIX
+		{ $$ = {modifier:'MATRIX'}}
 	;
 
 TopClause
@@ -637,8 +656,8 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
-	| Json
-		{ $$ = $1; }			
+	| JSON LPAR Json RPAR
+		{ $$ = new yy.Json({value:$3}); }			
 	;
 
 CastClause
@@ -795,8 +814,12 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'<=' , right:$3}); }
 	| Expression EQ Expression
 		{ $$ = new yy.Op({left:$1, op:'=' , right:$3}); }
+	| Expression EQEQ Expression
+		{ $$ = new yy.Op({left:$1, op:'==' , right:$3}); }
 	| Expression NE Expression
 		{ $$ = new yy.Op({left:$1, op:'!=' , right:$3}); }
+	| Expression NEEQEQ Expression
+		{ $$ = new yy.Op({left:$1, op:'!==' , right:$3}); }
 
 	| Expression CondOp AllSome LPAR Select RPAR
 		{ 
@@ -1330,6 +1353,8 @@ JsonProperty
 	: STRING COLON Json
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| LITERAL COLON Json
+		{ $$ = {}; $$[$1] = $3; }		
+	| LITERAL COLON ParamValue
 		{ $$ = {}; $$[$1] = $3; }		
 	;
 
