@@ -12,25 +12,31 @@
 %options case-insensitive
 %%
 
-\[([^\]])*?\]					{
-									//var a = this;
-									//console.log(a);
-									//console.log(yylloc);
-									//debugger;
+\[([^\]])*?\]					return 'BRALITERAL'
+/*
+								{
+									console.log(this.matched);
 									if((this.matched+"").substr(0,6).toUpperCase() == 'ASSERT') {
-										// this.less(yytext.length);
 										this.less(1);
-										// debugger;
 										return 'LBRA';
 									} else {
 										return 'BRALITERAL'
 									}
 								}
+*/
+
 \`([^\]])*?\`	   								 return 'BRALITERAL'
 (['](\\.|[^']|\\\')*?['])+                       return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+                       return 'STRING'
 
 \/\*(.*?)\*\/									return /* skip comments */
+
+/*
+
+\/\*											
+\*\/											
+
+*/
 "--"(.*?)($|\r\n|\r|\n)							return /* return 'COMMENT' */
 
 \s+                                             /* skip whitespace */
@@ -52,6 +58,7 @@
 'BY'											return 'BY'
 
 'CASE'											return 'CASE'
+'CAST'											return 'CAST'
 'CHARSET'										return 'CHARSET'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
@@ -627,6 +634,13 @@ Expression
 		{ $$ = $1; }
 	| CaseValue
 		{ $$ = $1; }
+	| CastClause
+		{ $$ = $1; }		
+	;
+
+CastClause
+	: CAST LPAR Expression AS ColumnType RPAR
+		{ $$ = new yy.Cast({expression:$3}) ; yy.extend($$,$5) ; }
 	;
 
 PrimitiveValue
@@ -1035,13 +1049,13 @@ ColumnDefsList
 	;
 
 ColumnDef
-	: Literal ColumnTypeName ColumnConstraintsClause
+	: Literal ColumnType ColumnConstraintsClause
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
 	| Literal ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
 	;
 
-ColumnTypeName
+ColumnType
 	: LITERAL LPAR NUMBER COMMA NUMBER RPAR
 		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3, dbprecision: $5} }
 	| LITERAL LPAR NUMBER RPAR
@@ -1274,6 +1288,8 @@ Json
 		{ $$ = false; }
 	| JsonObject
 		{ $$ = $1; }
+	| BRALITERAL
+		{ $$ = eval($1); }
 	| JsonArray
 		{ $$ = $1; }
 	;

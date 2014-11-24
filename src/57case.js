@@ -17,19 +17,19 @@ yy.CaseValue.prototype.toString = function() {
 	s += ' END';
 	return s;
 };
-yy.CaseValue.prototype.toJavaScript = function(context, tableid) {
+yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {
 
 	var s = '(function(p,params,alasql){var r;';
 	if(this.expression) {
 //			this.expression.toJavaScript(context, tableid)
-		s += 'v='+this.expression.toJavaScript(context, tableid)+';';
-		s += (this.whens||[]).map(function(w) { return ' if(v=='+w.when.toJavaScript(context,tableid)
-			+') {r='+w.then.toJavaScript(context,tableid)+'}'; }).join(' else ');
-		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid)+'}';
+		s += 'v='+this.expression.toJavaScript(context, tableid, defcols)+';';
+		s += (this.whens||[]).map(function(w) { return ' if(v=='+w.when.toJavaScript(context,tableid, defcols)
+			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
+		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid, defcols)+'}';
 	} else {
-		s += (this.whens||[]).map(function(w) { return ' if('+w.when.toJavaScript(context,tableid)
-			+') {r='+w.then.toJavaScript(context,tableid)+'}'; }).join(' else ');
-		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid)+'}';
+		s += (this.whens||[]).map(function(w) { return ' if('+w.when.toJavaScript(context,tableid, defcols)
+			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
+		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid,defcols)+'}';
 	}
 	s += 'return r;})(p,params,alasql)';
 
