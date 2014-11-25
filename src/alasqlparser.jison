@@ -13,18 +13,16 @@
 %%
 
 \[([^\]])*?\]					return 'BRALITERAL'
-/*
-								{
+/*								{
 									console.log(this.matched);
 									if((this.matched+"").substr(0,6).toUpperCase() == 'ASSERT') {
-										this.less(1);
+										//this.less(2);
 										return 'LBRA';
 									} else {
 										return 'BRALITERAL'
 									}
 								}
 */
-
 \`([^\]])*?\`	   								 return 'BRALITERAL'
 (['](\\.|[^']|\\\')*?['])+                       return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+                       return 'STRING'
@@ -171,6 +169,8 @@
 [0-9]+\.[0-9]*									return 'NUMBER'
 */
 (\d*[.])?\d+									return 'NUMBER'
+
+'->'											return 'ARROW'
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
 '*'												return 'STAR'
@@ -217,6 +217,7 @@
 %left LIKE
 %left PLUS MINUS
 %left STAR SLASH PERCENT
+%left DOT ARROW
 /* %left UMINUS */
 
 %start main
@@ -803,6 +804,13 @@ Op
 	| Expression PERCENT Expression
 		{ $$ = new yy.Op({left:$1, op:'%', right:$3}); }
 
+	| Expression ARROW Literal
+		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
+	| Expression ARROW NumValue
+		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
+	| Expression ARROW LPAR Expression RPAR
+		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
+
 
 	| Expression GT Expression
 		{ $$ = new yy.Op({left:$1, op:'>' , right:$3}); }
@@ -1352,7 +1360,13 @@ JsonPropertiesList
 JsonProperty
 	: STRING COLON Json
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
+	| NUMBER COLON Json
+		{ $$ = {}; $$[$1] = $3; }		
 	| LITERAL COLON Json
+		{ $$ = {}; $$[$1] = $3; }		
+	| STRING COLON ParamValue
+		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }	
+	| NUMBER COLON ParamValue
 		{ $$ = {}; $$[$1] = $3; }		
 	| LITERAL COLON ParamValue
 		{ $$ = {}; $$[$1] = $3; }		

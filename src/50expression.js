@@ -104,6 +104,18 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	else if(this.op == '<>') op = '!=';
 	else if(this.op == 'OR') op = '||';
 
+	if(this.op == '->') {
+//		console.log(this.right, typeof this.right);
+		if(typeof this.right == "string") {
+			return this.left.toJavaScript(context,tableid, defcols)+'["'+this.right+'"]';
+		} else if(typeof this.right == "number") {
+			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
+		} else {
+			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
+		}
+	}
+
+
 	if(this.op == '==') {
 		return 'alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+')';
 	}

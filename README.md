@@ -156,6 +156,12 @@ Functions:
 
 * ABS(), IIF(), IFNULL(), INSTR(), LOWER(), UPPER(), LCASE(), UCASE(), LEN(), LENGTH()
 
+SELECT modifiers (non-standard SQL):
+* SELECT VALUE - get single value
+* SELECT ROW - get first row as an array
+* SELECT COLUMN - get first column as an array
+* SELECT MATRIX - get all results as an array of arrays
+
 #### User-defined JavaScript functions
 
 You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions to alasql.fn object:
@@ -331,6 +337,35 @@ You can use Alasql to parse to AST and compile SQL statements:
 ```
 
 Alasql uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
+
+Alacon - command-line utility
+==
+You can use Alasql from the command-line:
+```
+    > node alacon "SELECT VALUE 1+1"
+    2
+    > node alacon "SELECT VALUE 1+?" 2
+    3
+```
+
+JSON-objects
+==
+You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
+```sql
+    alasql> SELECT VALUE JSON({a:1,b:2})
+
+    {a:1,b:2}
+
+    alasql> SELECT VALUE JSON({a:1,b:2}) == JSON({a:1,b:2})
+
+    true
+
+    alasql> SELECT VALUE JSON({a:1,b:2})->b
+
+    2
+
+```
+
 
 
 ### Performance
