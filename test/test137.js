@@ -48,19 +48,19 @@ describe('Test 137 get JSON property', function() {
 		var res = alasql('SELECT VALUE @{a:1, b:2}->a');
 		assert.deepEqual(res, 1);
 
-		var res = alasql('SELECT VALUE @{a:1, b:[3,{c:3,d:4},5,6]}->b');
+		var res = alasql('SELECT VALUE @{a:1, b:@[3,{c:3,d:4},5,6]}->b');
 		assert.deepEqual(res, [3,{c:3,d:4},5,6]);
 
-		var res = alasql('SELECT VALUE @{a:1, b:[3,{c:3,d:4},5,6]}->b->3');
+		var res = alasql('SELECT VALUE @{a:1, b:@[3,{c:3,d:4},5,6]}->b->3');
 		assert(res == 6);
 
-		var res = alasql('SELECT VALUE @{a:1, b:[3,{c:3,d:4},5,6]}->("b")->("3")');
+		var res = alasql('SELECT VALUE @{a:1, b:@[3,{c:3,d:4},5,6]}->("b")->("3")');
 		assert(res == 6);
 
-		var res = alasql('SELECT VALUE @{a:1, b:[3,{c:3,d:4},5,6]}->("b")->3');
+		var res = alasql('SELECT VALUE @{a:1, b:@[3,{c:3,d:4},5,6]}->("b")->3');
 		assert(res == 6);
 
-		var res = alasql('SELECT VALUE @{a:1, b1:[3,{c:3,d:4},5,6]}->("b"+1)->(2*2-1)');
+		var res = alasql('SELECT VALUE @{a:1, b1:@[3,{c:3,d:4},5,6]}->("b"+1)->(2*2-1)');
 		assert(res == 6);
 
 		done();
@@ -75,10 +75,10 @@ describe('Test 137 get JSON property', function() {
 	});
 
 	it("4. Get JSON param values in sub-arrays", function(done){
-		var res = alasql('SELECT VALUE @{a:1, b1:[3,{c:?,d:4},?,6]}', [100,200]);
+		var res = alasql('SELECT VALUE @{a:1, b1:@[3,{c:?,d:4},?,6]}', [100,200]);
 		assert.deepEqual(res,{a:1, b1:[3,{c:100,d:4},200,6]});
 
-		var res = alasql('SELECT VALUE @{a:1, b1:[3,{c:?,d:4},?,6]}->b1->1->c', [100,200]);
+		var res = alasql('SELECT VALUE @{a:1, b1:@[3,{c:?,d:4},?,6]}->b1->1->c', [100,200]);
 		assert(res == 100);
 
 		done();

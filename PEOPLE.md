@@ -5,6 +5,7 @@ In English:
 * DailyJS [Alasql.js: In-memory SQL / Daily JS](http://dailyjs.com/2014/11/06/alasql/)
 * ValueType [Pure JavaScript In-Memory Database](http://valuetype.wordpress.com/2014/11/07/pure-javascript-in-memory-database/)
 * SlideShare [Alasql.js fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database)
+* SlideShare [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
 
 
 In Chinese

@@ -16,7 +16,7 @@ describe('Test 128 ASSERT', function() {
 		alasql('assert 1');
 
 		alasql('select * from one');
-		alasql('assert [{a:1,bbb:1, c:1}, {a:2,bbb:2, c:2}]');
+		alasql('assert @[{a:1,bbb:1, c:1}, {a:2,bbb:2, c:2}]');
 		alasql('drop database test128');
 
 		alasql('assert 1');

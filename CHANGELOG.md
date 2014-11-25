@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.0.25 (23.11.2014 - 24.11.2014)
+### 0.0.25 (23.11.2014 - 25.11.2014)
 
 * CAST(expression AS type)
 * CONVERT(type, expression)

@@ -66,8 +66,8 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 	}
 
 	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
-	table.defaultfns = '';
 
+	var ss = [];
 	if(this.columns) {
 		this.columns.forEach(function(col) {
 			var newcol = {
@@ -76,7 +76,7 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 			};
 
 			if(col.default) {
-				table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
+				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript());
 			}
 
 			table.columns.push(newcol);
@@ -94,6 +94,8 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 
 		});
 	};
+	table.defaultfns = ss.join(',');
+
 
 //	if(constraints) {
 		constraints.forEach(function(con) {

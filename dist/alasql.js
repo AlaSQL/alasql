@@ -4891,13 +4891,13 @@ function JSONtoString(obj) {
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
 		if(obj instanceof Array) {
-			s = '['+obj.map(function(b){
+			s += '['+obj.map(function(b){
 				return JSONtoString(b);
 			}).join(',')+']';
 		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
-			ss = [];
+			var ss = [];
 			for(var k in obj) {
 				var s1 = ''; 
 				if(typeof k == "string") s1 += '"'+k+'"';
@@ -4931,13 +4931,13 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
 		if(obj instanceof Array) {
-			s = '['+obj.map(function(b){
+			s += '['+obj.map(function(b){
 				return JSONtoJavaScript(b, context, tableid, defcols);
 			}).join(',')+']';
 		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
-			ss = [];
+			var ss = [];
 			for(var k in obj) {
 				var s1 = ''; 
 				if(typeof k == "string") s1 += '"'+k+'"';
@@ -5087,8 +5087,8 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 	}
 
 	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
-	table.defaultfns = '';
 
+	var ss = [];
 	if(this.columns) {
 		this.columns.forEach(function(col) {
 			var newcol = {
@@ -5097,7 +5097,7 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 			};
 
 			if(col.default) {
-				table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
+				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript());
 			}
 
 			table.columns.push(newcol);
@@ -5115,6 +5115,8 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 
 		});
 	};
+	table.defaultfns = ss.join(',');
+
 
 //	if(constraints) {
 		constraints.forEach(function(con) {
@@ -5549,6 +5551,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 
+	var ss = [];
+
 
 // INSERT INTO table VALUES
 	if(this.values) {
@@ -5558,17 +5562,17 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 //			s += 'db.tables[\''+tableid+'\'].data.push({';
 
-			s += '';
-			var ss = [];
+//			s += '';
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
+
 		//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
 		//			console.log(rec[f.name.value]);
 		//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
 
 		//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
 		//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
-					var q = col.columnid +':';
+					var q = "'"+col.columnid +'\':';
 					// if(table.xcolumns && table.xcolumns[col.columnid] && 
 					// 	( table.xcolumns[col.columnid].dbtypeid == "INT"
 					// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
@@ -5624,8 +5628,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 					sw = 'var r='+JSONtoJavaScript(values)+';';
 				}
 			}
+//console.log(ss);
 
-			if(db.tables[tableid].defaultfns) s += db.tables[tableid].defaultfns;
+			if(db.tables[tableid].defaultfns) ss.unshift(db.tables[tableid].defaultfns);
 			if(sw) {
 				s += sw;
 			} else {

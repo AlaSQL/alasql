@@ -21,13 +21,13 @@ function JSONtoString(obj) {
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
 		if(obj instanceof Array) {
-			s = '['+obj.map(function(b){
+			s += '['+obj.map(function(b){
 				return JSONtoString(b);
 			}).join(',')+']';
 		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
-			ss = [];
+			var ss = [];
 			for(var k in obj) {
 				var s1 = ''; 
 				if(typeof k == "string") s1 += '"'+k+'"';
@@ -61,13 +61,13 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
 		if(obj instanceof Array) {
-			s = '['+obj.map(function(b){
+			s += '['+obj.map(function(b){
 				return JSONtoJavaScript(b, context, tableid, defcols);
 			}).join(',')+']';
 		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
-			ss = [];
+			var ss = [];
 			for(var k in obj) {
 				var s1 = ''; 
 				if(typeof k == "string") s1 += '"'+k+'"';

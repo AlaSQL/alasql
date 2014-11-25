@@ -149,6 +149,9 @@ describe('Test 139 JSON', function() {
 		var res = alasql('SELECT COLUMN a->w FROM five WHERE a->w > 100');
 		assert.deepEqual(res,[123,234]);
 
+		var res = alasql('SELECT COLUMN a->w FROM five WHERE a == @{w:?}',[59]);
+		assert.deepEqual(res,[59]);
+
 //		console.log(res);
 
 

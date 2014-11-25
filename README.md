@@ -1,5 +1,5 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL database 
-with NoSQL functionality
+with some NoSQL functionality
 
 Version: 0.0.25 Date: November 26, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
@@ -9,13 +9,15 @@ Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweig
 * Alasql is fully functional compact SQL server with JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries and very limited transactions support.
 * Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
-* Alasql can operate with JSON objects like JavScript
+* Alasql can operate with JSON objects like JavScript and NoSQL databases
 * Alasql is fast, because it uses some optimization methods.
 
 Check Alasql vs other JavaScript SQL databases: 
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
+NEW:
+* SlideShare [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
 
 ### Warnings 
 Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
@@ -36,7 +38,6 @@ Try Alasql in console:
 * [Alacon](alacon.js) - command-line Alasql console (to run: ```node alacon "sql-statement" params...```)
 * [Alaserver](alaserver.js) - very simple Alasql-server (to run: ```node alaserver```, then 
 type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
-
 
 Try Alasql in Fiddle: 
 * [sample 1](http://jsfiddle.net/38hj2uwy/10/) 

@@ -10,14 +10,14 @@ describe('Test 138 NoSQL', function() {
 	it("1. deepCopy", function(done){
 		alasql('CREATE DATABASE test138; use test138');
 
-		var res = alasql('SELECT COLUMN @a FROM @[{a:[1,2]}, {a:[3,4]}]');
+		var res = alasql('SELECT COLUMN deepCopy(a) FROM @[{a:[1,2]}, {a:[3,4]}]');
 		assert.deepEqual(res, [[1,2],[3,4]]);
 
 		var ar = [{a:[1,2]}, {a:[3,4]}];
 		var res = alasql('SELECT COLUMN a FROM ?',[ar]);
 		assert.deepEqual(res, [[1,2],[3,4]]);
 		ar[0].a = [5,6];
-		assert.deepEqual(res, [5,6],[3.4]]);
+		assert.deepEqual(res, [[5,6],[3.4]]);
 
 		var ar = [{a:[1,2]}, {a:[3,4]}];
 		var res = alasql('SELECT COLUMN @a FROM ?',[ar]);
@@ -43,7 +43,7 @@ describe('Test 138 NoSQL', function() {
 	it("2. Get JSON property operator", function(done){
 		alasql('CREATE TABLE one');
 
-		alasql('INSERT INTO one VALUES @{a:2}, ?',[{a:4}]);
+		alasql('INSERT INTO one VALUES @{a:2}, @(?)',[{a:4}]);
 
 		var res = alasql('SELECT COLUMN a FROM one');
 		assert.deepEqual(res, [2,4]);

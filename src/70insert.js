@@ -27,6 +27,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 
+	var ss = [];
+
 
 // INSERT INTO table VALUES
 	if(this.values) {
@@ -36,17 +38,17 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 //			s += 'db.tables[\''+tableid+'\'].data.push({';
 
-			s += '';
-			var ss = [];
+//			s += '';
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
+
 		//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
 		//			console.log(rec[f.name.value]);
 		//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
 
 		//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
 		//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
-					var q = col.columnid +':';
+					var q = "'"+col.columnid +'\':';
 					// if(table.xcolumns && table.xcolumns[col.columnid] && 
 					// 	( table.xcolumns[col.columnid].dbtypeid == "INT"
 					// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
@@ -102,8 +104,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 					sw = 'var r='+JSONtoJavaScript(values)+';';
 				}
 			}
+//console.log(ss);
 
-			if(db.tables[tableid].defaultfns) s += db.tables[tableid].defaultfns;
+			if(db.tables[tableid].defaultfns) ss.unshift(db.tables[tableid].defaultfns);
 			if(sw) {
 				s += sw;
 			} else {
