@@ -13,6 +13,8 @@
 * JSON(json-object)
 * == and !== for deepEqual
 * alacon - alasql console (to run: node alacon sql params...)
+* Json property operator - JSON({a:1,b:[2,3]})->b->1 => 2
+* Alaserver - server for Alasql
 
 ### 0.0.24 (23.11.2014 - 23.11.2014)
 

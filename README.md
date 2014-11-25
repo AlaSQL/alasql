@@ -1,13 +1,15 @@
-# Alasql.js - pure JavaScript client-side in-memory fast SQL and NoSQL database
+# Alasql.js - pure JavaScript client-side in-memory fast SQL database 
+with NoSQL functionality
 
-Version: 0.0.25 Date: November 25, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.25 Date: November 26, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. It supports SQL and some of NoSQL statements. 
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. It supports SQL and has some of NoSQL functionality. 
 
 * Alasql was written with pure JavaScript and does not use browser WebSQL database. 
 * Alasql is fully functional compact SQL server with JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries and very limited transactions support.
 * Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
+* Alasql can operate with JSON objects like JavScript
 * Alasql is fast, because it uses some optimization methods.
 
 Check Alasql vs other JavaScript SQL databases: 
@@ -15,7 +17,7 @@ Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 
-### Warning 
+### Warnings 
 Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
 
 Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be turned on again in one of the future version.
@@ -29,8 +31,11 @@ The early prototype of documentation will be placed on [Alasql Wiki](https://git
 ## Examples
 
 Try Alasql in console:
-* SQL Console [http://alasql.org/console](http://alasql.org/console)
+* Alasql Console [http://alasql.org/console](http://alasql.org/console)
 * [Console source code](examples/console/index.html)
+* [Alacon](alacon.js) - command-line Alasql console (to run: ```node alacon "sql-statement" params...```)
+* [Alaserver](alaserver.js) - very simple Alasql-server (to run: ```node alaserver```, then 
+type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
 
 
 Try Alasql in Fiddle: 
@@ -366,7 +371,17 @@ You can use JSON objects in your databases (do not forget use == and !== operato
 
 ```
 
+Alaserver - simple database server
+==
+Yes, you can even use Alasql as a very simple server for tests.
 
+To run enter the command: 
+```
+    node alaserver [port]
+```
+then type in browser something like "http://127.0.0.1:1337/?SELECT VALUE 2*2" 
+
+Warning: Alaserver is not multi-thread, not concurent, and not secured.
 
 ### Performance
 
