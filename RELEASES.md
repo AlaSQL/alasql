@@ -1,8 +1,19 @@
 ## RELEASES PLAN
 
 
+#### Version 0.0.25 - "Alasql: SQL and NoSQL"
 
-#### Version 0.0.25 - "Alasql and AlanosQL - like MongoDB"
+* @ deepCopy
+* CREATE TABLE one;
+* INSERT INTO one VALUES @{a:2}, ?
+* SELECT @a FROM @[{a:[1,2]}]
+* @a->2 - deepCopy
+
+GROUP BY TOTAL, a, b, TOTAL
+
+options.result = RECORDSET, MATRIX
+SELECT RECORDSET a
+SELECT GROUP(a/b), SUM(a) FROM 
 
 * Alaserver
 
