@@ -343,6 +343,27 @@ You can use Alasql to parse to AST and compile SQL statements:
 
 Alasql uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
 
+JSON-objects
+==
+You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
+```sql
+    alasql> SELECT VALUE @{a:1,b:2}
+
+    {a:1,b:2}
+
+    alasql> SELECT VALUE @{a:1,b:2} == @{a:1,b:2}
+
+    true
+
+    alasql> SELECT VALUE @{a:1,b:2}->b
+
+    2
+
+    alasql> SELECT VALUE @{a:1,b:(2*2)}->b
+
+    4
+
+```
 Alacon - command-line utility
 ==
 You can use Alasql from the command-line:
@@ -351,24 +372,8 @@ You can use Alasql from the command-line:
     2
     > node alacon "SELECT VALUE 1+?" 2
     3
-```
-
-JSON-objects
-==
-You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
-```sql
-    alasql> SELECT VALUE JSON({a:1,b:2})
-
-    {a:1,b:2}
-
-    alasql> SELECT VALUE JSON({a:1,b:2}) == JSON({a:1,b:2})
-
-    true
-
-    alasql> SELECT VALUE JSON({a:1,b:2})->b
-
-    2
-
+    > node alacon "@{a:(1+?)}" 3
+    4
 ```
 
 Alaserver - simple database server
@@ -382,6 +387,7 @@ To run enter the command:
 then type in browser something like "http://127.0.0.1:1337/?SELECT VALUE 2*2" 
 
 Warning: Alaserver is not multi-thread, not concurent, and not secured.
+
 
 ### Performance
 

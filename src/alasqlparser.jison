@@ -188,6 +188,8 @@
 '('												return 'LPAR'
 ')'												return 'RPAR'
 
+'@'												return 'AT'
+
 '{'												return 'LCUR'
 '}'												return 'RCUR'
 
@@ -657,9 +659,11 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
-	| JSON LPAR Json RPAR
+	| AT Json
+		{ $$ = new yy.Json({value:$2}); }			
+/*	| AT LPAR Json RPAR
 		{ $$ = new yy.Json({value:$3}); }			
-	;
+*/	;
 
 CastClause
 	: CAST LPAR Expression AS ColumnType RPAR
@@ -1316,7 +1320,10 @@ Assert
 	;
 
 Json
-	: STRING
+	: 
+	LPAR Expression RPAR
+		{ $$ = $2; }
+	| STRING
 		{ $$ = $1; }
 	| NUMBER
 		{ $$ = +($1); }

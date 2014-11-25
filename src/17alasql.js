@@ -27,6 +27,9 @@ alasql.options.logprompt = true; // Print SQL at log
 
 alasql.prompthistory = [];
 
+alasql.from = {}; // FROM functions
+alasql.into = {}; // INTO functions
+
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
