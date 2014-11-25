@@ -49,9 +49,11 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 	}
 //	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
-	if(!columns) {
-		throw new Error('Columns are not defined');
-	}
+	// if(false) {
+	// 	if(!columns) {
+	// 		throw new Error('Columns are not defined');
+	// 	}
+	// }
 	var constraints = this.constraints||[];
 //	console.log(this);
 
@@ -66,49 +68,51 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
 	table.defaultfns = '';
 
-	this.columns.forEach(function(col) {
-		var newcol = {
-			columnid: col.columnid,
-			dbtypeid: col.dbtypeid // TODO: Add types table
-		};
+	if(this.columns) {
+		this.columns.forEach(function(col) {
+			var newcol = {
+				columnid: col.columnid,
+				dbtypeid: col.dbtypeid // TODO: Add types table
+			};
 
-		if(col.default) {
-			table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
-		}
-
-		table.columns.push(newcol);
-		table.xcolumns[newcol.columnid] = newcol;
-
-		// Check for primary key
-		if(col.primarykey) {
-			var pk = table.pk = {};
-			pk.columns = [col.columnid];
-			pk.onrightfns = 'r[\''+col.columnid+'\']';
-			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
-			pk.hh = hash(pk.onrightfns);
-			table.indices[pk.hh] = {};
-		};
-
-	});
-
-
-	constraints.forEach(function(con) {
-		//console.log(con, con.columns);
-		if(con.type == 'PRIMARY KEY') {
-			if(table.pk) {
-				throw new Error('Primary key already exists');
+			if(col.default) {
+				table.defaultfns += '\''+col.columnid+'\':'+col.default.toJavaScript()+',';
 			}
-			var pk = table.pk = {};
-			pk.columns = con.columns;
-			pk.onrightfns = pk.columns.map(function(columnid){
-				return 'r[\''+columnid+'\']'
-			}).join("+'`'+");
-			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
-			pk.hh = hash(pk.onrightfns);
-			table.indices[pk.hh] = {};					
-		}
-	});
 
+			table.columns.push(newcol);
+			table.xcolumns[newcol.columnid] = newcol;
+
+			// Check for primary key
+			if(col.primarykey) {
+				var pk = table.pk = {};
+				pk.columns = [col.columnid];
+				pk.onrightfns = 'r[\''+col.columnid+'\']';
+				pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+				pk.hh = hash(pk.onrightfns);
+				table.indices[pk.hh] = {};
+			};
+
+		});
+	};
+
+//	if(constraints) {
+		constraints.forEach(function(con) {
+			//console.log(con, con.columns);
+			if(con.type == 'PRIMARY KEY') {
+				if(table.pk) {
+					throw new Error('Primary key already exists');
+				}
+				var pk = table.pk = {};
+				pk.columns = con.columns;
+				pk.onrightfns = pk.columns.map(function(columnid){
+					return 'r[\''+columnid+'\']'
+				}).join("+'`'+");
+				pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+				pk.hh = hash(pk.onrightfns);
+				table.indices[pk.hh] = {};					
+			}
+		});
+//	}
 //			if(table.pk) {
 	table.insert = function(r) {
 		if(this.pk) {

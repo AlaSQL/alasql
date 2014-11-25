@@ -12,6 +12,7 @@
 %options case-insensitive
 %%
 
+'@['							return 'ATLBRA'
 \[([^\]])*?\]					return 'BRALITERAL'
 /*								{
 									console.log(this.matched);
@@ -38,6 +39,8 @@
 "--"(.*?)($|\r\n|\r|\n)							return /* return 'COMMENT' */
 
 \s+                                             /* skip whitespace */
+'||'											return 'OR'
+'&&'											return 'AND'
 'ABSOLUTE'                                 		return 'ABSOLUTE'
 'ADD'                                      		return 'ADD'
 'ALL'                                      		return 'ALL'
@@ -103,7 +106,9 @@
 'INTERSECT'                                     return 'INTERSECT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
+/*
 'JSON'                                         	return 'JSON'
+*/
 'KEY'											return 'KEY'
 'LAST'											return 'LAST'
 'LEFT'											return 'LEFT'
@@ -661,6 +666,11 @@ Expression
 		{ $$ = $1; }
 	| AT Json
 		{ $$ = new yy.Json({value:$2}); }			
+	| ATLBRA JsonArray
+		{ $$ = new yy.Json({value:$2}); }
+/*	| AT LPAR Expression RPAR
+		{ $$ = new yy.FuncValue({funcid: 'CLONEDEEP', args:[$3]}); }			
+*/
 /*	| AT LPAR Json RPAR
 		{ $$ = new yy.Json({value:$3}); }			
 */	;
@@ -955,7 +965,11 @@ Insert
 ValuesListsList
 	: LPAR ValuesList RPAR
 		{ $$ = [$2]; }
+	| AT Json
+		{ $$ = [$2]; }
 	| ValuesListsList COMMA LPAR ValuesList RPAR
+		{$$ = $1; $1.push($4)}
+	| ValuesListsList COMMA AT Json
 		{$$ = $1; $1.push($4)}
 	;
 
@@ -985,13 +999,21 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
+/*
 	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
+
+*/
+	:  CREATE TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{ 
-			$$ = new yy.CreateTable({table:$5}); 
-			yy.extend($$,$2); 
-			yy.extend($$,$4); 
-			yy.extend($$,$7); 
+			$$ = new yy.CreateTable({table:$4}); 
+			//yy.extend($$,$2); 
+			yy.extend($$,$3); 
+			yy.extend($$,$6); 
 		}
+	| CREATE TABLE IfNotExists Literal
+		{ 
+			$$ = new yy.CreateTable({table:new yy.Table({tableid:$4})}); 
+		}		
 	;
 
 CreateTableOptionsClause
@@ -1323,20 +1345,21 @@ Json
 	: 
 	LPAR Expression RPAR
 		{ $$ = $2; }
-	| STRING
+	| 
+	StringValue
+		{ $$ = $1.value; }
+	| NumValue
+		{ $$ = +$1.value; }
+	| LogicValue
+		{ $$ = (!!$1.value); }
+	| ParamValue
 		{ $$ = $1; }
-	| NUMBER
-		{ $$ = +($1); }
-	| TRUE
-		{ $$ = true; }
-	| FALSE
-		{ $$ = false; }
 	| JsonObject
 		{ $$ = $1; }
-	| BRALITERAL
-		{ $$ = eval($1); }
-	| JsonArray
-		{ $$ = $1; }
+	| AT JsonObject
+		{ $$ = $2; }
+	| ATLBRA JsonArray
+		{ $$ = $2; }
 	;
 
 JsonObject
@@ -1349,11 +1372,11 @@ JsonObject
 	;
 
 JsonArray
-	: LBRA JsonElementsList RBRA
-		{ $$ = $2; } 
-	| LBRA JsonElementsList COMMA RBRA
-		{ $$ = $2; } 
-	| LBRA RBRA
+	: JsonElementsList RBRA
+		{ $$ = $1; } 
+	| JsonElementsList COMMA RBRA
+		{ $$ = $1; } 
+	| RBRA
 		{ $$ = []; }
 	;
 
@@ -1371,13 +1394,13 @@ JsonProperty
 		{ $$ = {}; $$[$1] = $3; }		
 	| LITERAL COLON Json
 		{ $$ = {}; $$[$1] = $3; }		
-	| STRING COLON ParamValue
+/*	| STRING COLON ParamValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }	
 	| NUMBER COLON ParamValue
 		{ $$ = {}; $$[$1] = $3; }		
 	| LITERAL COLON ParamValue
 		{ $$ = {}; $$[$1] = $3; }		
-	;
+*/	;
 
 JsonElementsList
 	: JsonElementsList COMMA Json

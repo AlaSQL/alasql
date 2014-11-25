@@ -478,7 +478,7 @@ function compileSelectStar (query,alias) {
 		};
 		// Check if this is a Table or other
 
-		if(columns) {
+		if(columns && columns.length > 0) {
 			columns.forEach(function(tcol){
 				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
 
@@ -495,9 +495,11 @@ function compileSelectStar (query,alias) {
 				query.xcolumns[coldef.columnid]=coldef;
 
 			});
+//console.log(999,columns);			
 		} else {
 			// if column not exists, then copy all
 			sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
+//console.log(777, sp);
 			query.dirtyColumns = true;
 		}
 //	}
@@ -547,10 +549,11 @@ yy.Select.prototype.compileSelect = function(query) {
 					if(!query.database.tables[query.aliases[tbid].tableid]) {
 						throw new Error('Table \''+(tbid)+'\' does not exists in database');
 					}
+					var columns = query.database.tables[query.aliases[tbid].tableid].columns;					
 					var xcolumns = query.database.tables[query.aliases[tbid].tableid].xcolumns;
 //console.log(xcolumns, col,123);
 //					console.log(0);
-					if(xcolumns) {
+					if(xcolumns && columns.length > 0) {
 //						console.log(1);
 						var tcol = xcolumns[col.columnid];
 						var coldef = {

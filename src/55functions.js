@@ -72,6 +72,7 @@ alasql.fn = {}; // Keep for compatibility
 var stdlib = alasql.stdlib = {}
 
 stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
+stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
 		return  '(('+a+')?('+b+'):('+c+'))';

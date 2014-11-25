@@ -160,7 +160,7 @@ yy.Select.prototype.compile = function(databaseid) {
 			res = a;
 		} if(query.modifier == 'COLUMN') {
 			var ar = [];
-			var key = Object.keys(res)[0];
+			var key = Object.keys(res[0])[0];
 			for(var i=0, ilen=res.length; i<ilen; i++){
 				ar.push(res[i][key]);
 			}

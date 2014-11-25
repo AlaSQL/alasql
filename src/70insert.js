@@ -24,17 +24,19 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	// Check, if this dirty flag is required
 	var s = '';
+	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 
 
 // INSERT INTO table VALUES
 	if(this.values) {
 
+//		console.log(1);
 		self.values.forEach(function(values) {
 
 //			s += 'db.tables[\''+tableid+'\'].data.push({';
 
-			s += 'var r={';
+			s += '';
 			var ss = [];
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
@@ -60,41 +62,53 @@ yy.Insert.prototype.compile = function (databaseid) {
 			} else {
 				var table = db.tables[tableid];
 //	console.log('table1', db, self);
-				table.columns.forEach(function(col, idx){
-					var q = '\''+col.columnid +'\':';
-					var val = values[idx].toJavaScript();
+//console.log(111, table.columns);
+				if(table.columns.length > 0) {
+					table.columns.forEach(function(col, idx){
 
-					 if(table.xcolumns && table.xcolumns[col.columnid] && 
-					  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
-						table.xcolumns[col.columnid].dbtypeid == "DATETIME"
-					  )) {
-					 	val = "(new Date("+val+"))";
-					 }
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
-					// 	)) q += '+';
-				//	console.log(self.values[idx].toString());
-		//console.log(self);
-					q += val;
+						var q = '\''+col.columnid +'\':';
+						var val = values[idx].toJavaScript();
 
-					// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
-					ss.push(q);
+						 if(table.xcolumns && table.xcolumns[col.columnid] && 
+						  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
+							table.xcolumns[col.columnid].dbtypeid == "DATETIME"
+						  )) {
+						 	val = "(new Date("+val+"))";
+						 }
+						// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
+						// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
+						// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
+						// 	)) q += '+';
+					//	console.log(self.values[idx].toString());
+			//console.log(self);
+						q += val;
 
-		//			console.log(fld);
-					// TODO: type checking and conversions
-		//			rec[fld.fldid] = eval(self.insertExpression[idx].toJavaScript('',''));
-		//			console.log(rec[fld.fldid]);
-		//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
+						// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
+						ss.push(q);
 
-		//			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
-		//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
-		//				rec[fld.fldid] = +rec[fld.fldid];
-				});
+			//			console.log(fld);
+						// TODO: type checking and conversions
+			//			rec[fld.fldid] = eval(self.insertExpression[idx].toJavaScript('',''));
+			//			console.log(rec[fld.fldid]);
+			//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
+
+			//			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
+			//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
+			//				rec[fld.fldid] = +rec[fld.fldid];
+					});
+				} else {
+//					console.log(222,values);
+//					sw = 'var w='+JSONtoJavaScript(values)+';for(var k in w){r[k]=w[k]};';
+					sw = 'var r='+JSONtoJavaScript(values)+';';
+				}
 			}
 
 			if(db.tables[tableid].defaultfns) s += db.tables[tableid].defaultfns;
-			s += ss.join(',')+'};';
+			if(sw) {
+				s += sw;
+			} else {
+				s += 'var r={'+ss.join(',')+'};';
+			}
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
             if(db.tables[tableid].insert) {
     			s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(r);';
