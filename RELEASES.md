@@ -3,13 +3,27 @@
 
 #### Version 0.0.25 - "Alasql: SQL and NoSQL"
 
+Persistence
+* Save data
+* Save Schema
+* Restore Schema
+* Restore data
+* Rebuild indexes
+* Transactions
+
+* work over WebSQL select * into websql('two') from websql('one');
+* Lawnchair interface... let's start with it!
+
+* Primary Key
+* Create Index
+
 * @ deepCopy
 * CREATE TABLE one;
 * INSERT INTO one VALUES @{a:2}, ?
 * SELECT @a FROM @[{a:[1,2]}]
 * @a->2 - deepCopy
 
-GROUP BY TOTAL, a, b, TOTAL
+GROUP BY TOTAL(a, b)
 
 options.result = RECORDSET, MATRIX
 SELECT RECORDSET a

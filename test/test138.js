@@ -61,13 +61,49 @@ describe('Test 138 NoSQL', function() {
 		var res = alasql('SELECT SUM(b) AS bb FROM two GROUP BY TOTAL');
 		assert.deepEqual(res, [{bb:9}]);
 
-		var res = alasql('SELECT a,SUM(b) AS bb FROM two GROUP BY TOTAL,a,TOTAL');
-		assert.deepEqual(res, [{bb:9}, {a:1,bb:6}, {a:2,bb:3}, {bb:9}]);
+		var res = alasql('SELECT SUM(b) AS bb FROM two GROUP BY TOTAL()');
+		assert.deepEqual(res, [{bb:9}]);
+
+if(false) {
+
+		var res = alasql('SELECT a,SUM(b) AS bb,b FROM two GROUP BY TOTAL(a,DETAIL) ORDER BY a,bb,b');
+		assert.deepEqual(res, [{a:undefined, bb:9}, {a:1,bb:6, b:undefined}, {a:1,bb:undefined,b:1}, {a:1,bb:undefined,b:2}, 
+			{a:1,bb:undefined,b:3}, {a:2,bb:3, b:undefined}, {a:2,bb:undefined, b:1}, {a:2,bb:undefined, b:2},]);
+
+		var res = alasql('SELECT a,SUM(b) AS b, LEVEL() as level FROM two GROUP BY TOTAL(a,DETAIL) ORDER BY a,bb,b');
+		assert.deepEqual(res, [{a:undefined, b:9, level:0}, {a:1,bb:6, b:undefined}, {a:1,bb:undefined,b:1}, {a:1,bb:undefined,b:2}, 
+			{a:1,bb:undefined,b:3}, {a:2,bb:3, b:undefined}, {a:2,bb:undefined, b:1}, {a:2,bb:undefined, b:2},]);
+
+}
+
+
 
 		done();
 	});
 
-	it("4. Get JSON param values in sub-arrays", function(done){
+	it("4. Dimension", function(done){
+		alasql("CREATE TABLE expense (deptid string, amt MONEY)");
+		alasql("CREATE TABLE dept (deptid string, parentid string, level int)");
+		alasql('PREPARE DIM dept');
+		alasql('SELECT deptid, deptname, SUM(amt) AS amt FROM expense JOIN dept USING deptid '
+			+'GROUP BY DIM(deptid, dept)');
+		done();
+	});
+
+	it("4. CREATE TABLE for JSON objects", function(done){
+
+		alasql('CREATE TABLE three (a JSON); INSERT INTO one VALUES (@{v:10})');
+		var res = alasql('SELECT VALUE a FROM three');
+		assert.deepEqual(res, {v:10});
+
+		alasql('CREATE TABLE four; INSERT INTO four VALUES @{a:{v:10}}');
+		var res = alasql('SELECT VALUE a FROM four');
+		assert.deepEqual(res, {v:10});
+
+		done();
+	});
+
+	it("5. Get JSON param values in sub-arrays", function(done){
 		alasql('DROP DATABASE test138');
 		done();
 	});
