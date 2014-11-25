@@ -29,15 +29,13 @@
   },
   "keywords": [
     "sql",
+    "nosql"
     "alasql",
     "javascript",
     "parser",
-    "relational",
     "database",
-    "RDBMS",
     "data",
     "query",
-    "statement"
   ],
   "license": "MIT"
 }
