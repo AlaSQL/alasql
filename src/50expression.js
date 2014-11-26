@@ -110,6 +110,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return this.left.toJavaScript(context,tableid, defcols)+'["'+this.right+'"]';
 		} else if(typeof this.right == "number") {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
+		} else if(this.right instanceof yy.FuncValue) {
+			if(!this.right.args || this.right.args.length == 0) {
+				return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.funcid+']()'; 
+			}
 		} else {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
 		}

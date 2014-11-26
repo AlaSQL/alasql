@@ -208,7 +208,12 @@
 '$'												return 'DOLLAR'
 '?'												return 'QUESTION'
 
+
 [a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
+
+/*
+[a-zA-ZА-Яа-я_][a-zA-ZА-Яа-я_0-9]*              return 'LITERAL'
+*/
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
@@ -824,6 +829,9 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 	| Expression ARROW LPAR Expression RPAR
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
+
+	| Expression ARROW FuncValue
+		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 
 
 	| Expression GT Expression

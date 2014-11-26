@@ -1,7 +1,273 @@
 ## RELEASES PLAN
 
 
-#### Version 0.0.25 - "Alasql: SQL and NoSQL"
+#### Version 0.0.26 - "Dates & Objects & Property Functions & many-many more... (JavaScriptQL)"
+
+Fix bug
+====
+
+alasql.parse("CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC").toString()
+
+SELECT TOP 10 *,*,*
+  	FROM rrr
+  	GROUP BY
+  	ORDER BY;
+
+ CREATE TABLE one (
+ 	one INT,
+ 	two STRING
+ );
+
+// k("CREATE")+w+k("TABLE")+nl(1)+k("CLASS") 
+// + ident +
+
+function K(s){
+	if(alasql.mode=="prettify") return '<span color="green">'+s+'</span>';
+};
+
+function NL(ident) {
+	if(ident) return '<br><span style="width:50px"></span>'
+};
+
+1. Prettify SQL outpu for Consolet;
+
+2. IDENTITY (1,1) or AUTO_INCREMENT
+
+1. Data as function 
+
+PreIndex - 
+in very beginning
+===
+if(typeof datasrcfn == 'function') {
+	r = datasrcfn(i);
+} else r = data[i];
+
+if result of preindexation is ok or it use in RIGHT / OUTER / ANTI / CROSS JOIN
+--
+data[i] = r;
+
+In doJoin
+--
+LEFT SIDE
+if(typeof datasrcfn == "function" && !data[i] && ) {
+	data[i] = r = data[i];
+}
+
+RIGHT SIDE - 
+if(!data[i] && typeofdatasrcfn = 'function') {
+	data[i] = datasrcfn(i);
+};
+do with data(i);
+
+
+
+3. JAVASCRIPT CLASSES
+===
+
+CREATE TABLE one (
+	dt Date,
+	tm Time
+);
+
+alasql.classes = {};
+alasql.classes.Date = Date;
+
+if it in Class, then Object...
+
+2. STANDARD DATATYPES
+===
+alasql.dbtypes = {};
+alasql.dbtypes.INT = {
+	jstyped: 'number',
+	cast: function(value, dbtypeid) {}
+};
+
+alasql.dbtypes.DATE = {
+	jstyped: 'object',
+	jsclass: 'Date',
+	cast: function(value, dbtypeid) {}
+};
+
+
+3. JAVASCRIPT new
+===
+WHERE new Date(b) == new Date(b);
+
+4. DEFAULT new
+===
+a Date DEFAULT new Date->now();
+
+5. JAVASCRIPT FUNCTIONS
+== 
+a->b()
+
+new Date(2014,1,2)->valueOf()
+new Date(2014,1,2)->getTime()
+
+LENGTH(@"abs")
+@"abcde"->substr(-1)
+
+6. 
+
+* Date datatypes
+
+7. Specific date types
+JSDATE = new Date()
+DATE = "2014-11-02"
+DATETIME = "2014-12-02 23:59:59.123"
+
+8. Optional date type
+alasql.options.datetimeformat = "sql", "js" / or "SQL", "JS" - prefix
+DATE
+DATETIME
+
+Other option - all dates are SQL, only JSDATE - are JavaScript
+
+9. Compare function
+
+if(!columns || columns.length == 0 || columns.dbtypeid == "JSON" ||
+	columns.dbtypeid == "JSDATE"
+) {
+	s += 'if(typeof a=="object") a=a.valueOf();if(typeof b=="object") b=b.valueOf();';
+}
+
+
+10. Cast functions
+
+CAST(a AS JSDATE)
+CAST(a AS SQLDATE)
+
+11. Date functions - realize only standard()!!!!
+====
+
+* NOW()	Returns the current date and time
+* CURDATE()	Returns the current date
+* CURTIME()	Returns the current time
+* DATE()	Extracts the date part of a date or date/time expression
+EXTRACT()	Returns a single part of a date/time
+DATE_ADD()	Adds a specified time interval to a date
+DATE_SUB()	Subtracts a specified time interval from a date
+DATEDIFF()	Returns the number of days between two dates
+DATE_FORMAT()	Displays date/time data in different formats
+
+* GETDATE()	Returns the current date and time
+DATEPART()	Returns a single part of a date/time
+DATEADD()	Adds or subtracts a specified time interval from a date
+DATEDIFF()	Returns the time between two dates
+CONVERT()	Displays date/time data in different formats
+
+ADDDATE()	Adds dates
+ADDTIME()	Adds time
+CONVERT_TZ()	Converts from one timezone to another
+CURDATE()	Returns the current date
+CURRENT_DATE(), CURRENT_DATE	Synonyms for CURDATE()
+CURRENT_TIME(), CURRENT_TIME	Synonyms for CURTIME()
+CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP	Synonyms for NOW()
+CURTIME()	Returns the current time
+DATE_ADD()	Adds two dates
+DATE_FORMAT()	Formats date as specified
+DATE_SUB()	Subtracts two dates
+* DATE()	Extracts the date part of a date or datetime expression
+DATEDIFF()	Subtracts two dates
+* DAY()	Synonym for DAYOFMONTH()
+DAYNAME()	Returns the name of the weekday
+* DAYOFMONTH()	Returns the day of the month (1-31)
+* DAYOFWEEK()	Returns the weekday index of the argument
+* DAYOFYEAR()	Returns the day of the year (1-366)
+EXTRACT	Extracts part of a date
+FROM_DAYS()	Converts a day number to a date
+FROM_UNIXTIME()	Formats date as a UNIX timestamp
+* HOUR()	Extracts the hour
+LAST_DAY	Returns the last day of the month for the argument
+LOCALTIME(), LOCALTIME	Synonym for NOW()
+LOCALTIMESTAMP, LOCALTIMESTAMP()	Synonym for NOW()
+MAKEDATE()	Creates a date from the year and day of year
+MAKETIME	MAKETIME()
+MICROSECOND()	Returns the microseconds from argument
+* MINUTE()	Returns the minute from the argument
+* MONTH()	Return the month from the date passed
+MONTHNAME()	Returns the name of the month
+* NOW()	Returns the current date and time
+PERIOD_ADD()	Adds a period to a year-month
+PERIOD_DIFF()	Returns the number of months between periods
+* QUARTER()	Returns the quarter from a date argument
+SEC_TO_TIME()	Converts seconds to 'HH:MM:SS' format
+* SECOND()	Returns the second (0-59)
+STR_TO_DATE()	Converts a string to a date
+SUBDATE()	When invoked with three arguments a synonym for DATE_SUB()
+SUBTIME()	Subtracts times
+SYSDATE()	Returns the time at which the function executes
+TIME_FORMAT()	Formats as time
+TIME_TO_SEC()	Returns the argument converted to seconds
+* TIME()	Extracts the time portion of the expression passed
+TIMEDIFF()	Subtracts time
+TIMESTAMP()	With a single argument, this function returns the date or datetime expression. With two arguments, the sum of the arguments
+TIMESTAMPADD()	Adds an interval to a datetime expression
+TIMESTAMPDIFF()	Subtracts an interval from a datetime expression
+TO_DAYS()	Returns the date argument converted to days
+UNIX_TIMESTAMP()	Returns a UNIX timestamp
+UTC_DATE()	Returns the current UTC date
+UTC_TIME()	Returns the current UTC time
+UTC_TIMESTAMP()	Returns the current UTC date and time
+* WEEK()	Returns the week number
+* WEEKDAY()	Returns the weekday index
+* WEEKOFYEAR()	Returns the calendar week of the date (1-53)
+* YEAR()	Returns the year
+* YEARWEEK()	Returns the year and week
+
+5. Data types
+
+JavaScript
+===
+string
+number
+boolean
+object
+
+JavaScript Subtype
+==
+Date
+Array
+
+Other
+==
+INT, etc.
+
+
+jstypeid
+==
+
+
+15. PERSISTENCE
+====
+alasql.storage = "localStorage";
+
+Adapters
+Memory
+
+Browser
+==
+1. localStorage
+2. IndexedDB
+sessionStorage
+
+
+link database aaa to websql.aaa
+======
+
+select * from aaa.lol
+select * from mydb(aaa)
+
+WebSQL = select * from websql(mydb select * from aaa);
+WebSQL = select * from websql(mydb.aaa);
+WebSQL = select * into websql(mydb.mytable);
+insert into websql(mydb.mytable) (a,b,c) values (1,2,3);
+
+
+Node
+==
+Redis, Memcached, Key-Values
+
 
 Persistence
 * Save data
@@ -95,6 +361,12 @@ SELECT GROUP(a/b), SUM(a) FROM
 * inventory.insert()
 * inventory.update()
 * inventory.remove()
+
+#### Version 0.0.31 - "Linq interface"
+
+* select().into().from().groupby().orderby().where()
+
+#### Version 0.0.32 - "Promised version"
 
 Alternative
 * alasql('SELECT * FROM ? WHERE {qty:[1,2]}', [data]);

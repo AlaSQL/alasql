@@ -206,6 +206,7 @@ alasql.clear = function() {
 }
 
 alasql.write = function(s) {
+//	console.log('write',s);
 	var target = alasql.options.logtarget;
 	// For node other
 	if(typeof exports == 'object') {
@@ -213,7 +214,7 @@ alasql.write = function(s) {
 	};
 
 	if(target == 'console' || typeof exports == 'object') {
-		if(console.clear) {
+		if(console.log) {
 			console.log(s);
 		} else {
 			// Something todo in Node
@@ -235,7 +236,7 @@ alasql.write = function(s) {
 }
 
 function loghtml(res) {
-	console.log(res); 
+//	console.log(res); 
 	var s  = '';
 	if(typeof res == 'undefined') {
 		s += 'undefined';
@@ -310,8 +311,15 @@ alasql.prompt = function(el, useidel, firstsql) {
 	if(firstsql) {
 		alasql.prompthistory.push(firstsql);
 		prompti = alasql.prompthistory.length;
-		alasql.log(firstsql);
-	}
+		try {
+			var tm = Date.now();
+			alasql.log(firstsql);
+			alasql.write('<p style="color:blue">'+(Date.now()-tm)+' ms</p>');
+		} catch (err) {
+			alasql.write('<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>');
+			alasql.write('<p style="color:red">'+err+'<p>');
+		}
+	};
 
 	var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 	scrollTo(document.getElementsByTagName('body')[0],y,500);
@@ -324,7 +332,9 @@ alasql.prompt = function(el, useidel, firstsql) {
 			alasql.prompthistory.push(sql);
 			prompti = alasql.prompthistory.length;
 			try {
+				var tm = Date.now();
 				alasql.log(sql);
+				alasql.write('<p style="color:blue">'+(Date.now()-tm)+' ms</p>');
 			} catch (err) {
 				alasql.write('<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>');
 				alasql.write('<p style="color:red">'+err+'<p>');

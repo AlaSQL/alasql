@@ -4,14 +4,33 @@ Version: 0.0.26 Date: November 26, 2014 [Change log](CHANGELOG.md), [Release pla
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. It supports SQL and has some of NoSQL functionality. 
 
+## What is Alasql?
+
+Alasql - it is just a functional in-memory SQL database in your brouser or Node.js.
+
+Alasql is very simple to use: just add _only one_ [alasql.min.js](alasql.min.js) file (165Kb) to your project.
+This is all. No 
+
+```html
+    <script src="alasql.min.js"></script>  
+    <script>
+        alasql("CREATE TABLE cities (city string, population number)");
+        alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),\
+            ('Berlin',3517424), ('Madrid',3041579)");
+        console.table( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
+    </script>
+```
+Try this sample in [your browser](demo.html) or in [Alasql console](http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC).
+
 * Alasql was written with pure JavaScript and does not use browser WebSQL database. 
+* Alasql uses "good old" SQL with all expected funcionality and without of limits of LINQ. Plus some [sugar](#Sugar)
 * Alasql is fully functional compact SQL server with JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries and very limited transactions support.
 * Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql can operate with JSON objects like JavScript and NoSQL databases
 * Alasql is fast, because it uses some optimization methods.
 
-Check Alasql vs other JavaScript SQL databases: 
+It is really fast. Check Alasql vs other JavaScript SQL databases: 
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
@@ -314,6 +333,16 @@ Now you can use databases, tables, and columns with spaces inside square bracket
 Try this sample in [Alasql console](http://alasql.org/console?CREATE DATABASE [My Database];USE [My Database];CREATE TABLE [A.table] ([the-column] INT);INSERT INTO [A.table] VALUES (1),(2);SELECT [the-column] AS [AS] FROM [My Database])
 
 
+### Sugar
+
+Alasql extends "good old" SQL to make it closer to JavaScript. The "sugar" includes:
+
+* Json objects - ``` @{a:1,b:@[1,2,3]}
+* Object propertires - ```obj->property->subproperty```
+* Object and arrays elements - ```obj->(a*1)```
+* JavaScript functions - ```obj->valueOf()```
+* SELECT VALUE, ROW, COLUMN, MATRIX to format results of query
+
 ### Transactions
 
 There is a limited support of transactions (with tx.rollback() and tx.commit() functions):
@@ -441,7 +470,6 @@ Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previo
 ### Future Plans
 
 Read my [to do](TODO.md) page
-
 
 ### Similar and related projects
 
