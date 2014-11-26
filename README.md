@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side in-memory fast SQL database with NoSQL functionality
 
-Version: 0.0.25 Date: November 25, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.26 Date: November 26, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. It supports SQL and has some of NoSQL functionality. 
 
