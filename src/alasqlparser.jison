@@ -122,6 +122,7 @@
 "MODIFY"										return "MODIFY"
 'NATURAL'										return 'NATURAL'
 'NEXT'											return 'NEXT'
+'NEW'											return 'NEW'
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
@@ -432,7 +433,7 @@ FromTable
 	| ParamValue AS Literal 
 		{ $$ = $1; $1.as = $3; }
 	| ParamValue
-		{ $$ = $1; $1.as = 'delault'; }
+		{ $$ = $1; $1.as = 'default'; }
 	;
 
 Table
@@ -673,12 +674,22 @@ Expression
 		{ $$ = new yy.Json({value:$2}); }			
 	| ATLBRA JsonArray
 		{ $$ = new yy.Json({value:$2}); }
+	| NewClause
+		{ $$ = $1; }
 /*	| AT LPAR Expression RPAR
 		{ $$ = new yy.FuncValue({funcid: 'CLONEDEEP', args:[$3]}); }			
 */
 /*	| AT LPAR Json RPAR
 		{ $$ = new yy.Json({value:$3}); }			
 */	;
+
+NewClause
+	: NEW Literal
+		{ $$ = new yy.FuncValue({funcid:$2, newid:true})}
+	| NEW FuncValue
+		{ $$ = $1; yy.extend($$,{newid:true}); }
+	;
+
 
 CastClause
 	: CAST LPAR Expression AS ColumnType RPAR

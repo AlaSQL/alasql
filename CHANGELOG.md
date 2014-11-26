@@ -3,6 +3,7 @@
 ### 0.0.26 (26.11.2014 - )
 
 * Show time in ms in Alasql Console
+* JSON Object functions like d->getFullYear()
 
 ### 0.0.25 (23.11.2014 - 25.11.2014)
 
