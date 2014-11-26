@@ -37,6 +37,8 @@ describe('Test 140 JavaScript Functions', function() {
 		var res = alasql("new Date(2014,0,1)");
 		console.log(res);
 
+		alasql.fn.Date = Date;
+
 		var res = alasql("new Date(2014,0,1)");
 		console.log(res);
 	});

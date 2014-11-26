@@ -347,10 +347,10 @@ case 158: case 159:
  this.$ = new yy.Json({value:$$[$0]}); 
 break;
 case 161:
- this.$ = new yy.FuncValue({funcid:$$[$0], newid:true})
+ this.$ = new yy.FuncValue({funcid:$$[$0], newid:true}); 
 break;
 case 162:
- this.$ = $$[$0-1]; yy.extend(this.$,{newid:true}); 
+ this.$ = $$[$0]; yy.extend(this.$,{newid:true}); 
 break;
 case 163:
  this.$ = new yy.Cast({expression:$$[$0-3]}) ; yy.extend(this.$,$$[$0-1]) ; 

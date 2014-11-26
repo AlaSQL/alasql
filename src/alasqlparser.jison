@@ -685,9 +685,9 @@ Expression
 
 NewClause
 	: NEW Literal
-		{ $$ = new yy.FuncValue({funcid:$2, newid:true})}
+		{ $$ = new yy.FuncValue({funcid:$2, newid:true}); }
 	| NEW FuncValue
-		{ $$ = $1; yy.extend($$,{newid:true}); }
+		{ $$ = $2; yy.extend($$,{newid:true}); }
 	;
 
 

@@ -30,6 +30,8 @@ alasql.prompthistory = [];
 alasql.from = {}; // FROM functions
 alasql.into = {}; // INTO functions
 
+alasql.fn = {};
+
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
@@ -40,7 +42,7 @@ alasql.use = function (databaseid) {
 	alasql.useid = databaseid;
 	var db = alasql.databases[alasql.useid];
 	alasql.tables = db.tables;
-	alasql.fn = db.fn;
+//	alasql.fn = db.fn;
 	db.resetSqlCache();
 };
 

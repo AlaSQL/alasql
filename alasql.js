@@ -399,10 +399,10 @@ case 158: case 159:
  this.$ = new yy.Json({value:$$[$0]}); 
 break;
 case 161:
- this.$ = new yy.FuncValue({funcid:$$[$0], newid:true})
+ this.$ = new yy.FuncValue({funcid:$$[$0], newid:true}); 
 break;
 case 162:
- this.$ = $$[$0-1]; yy.extend(this.$,{newid:true}); 
+ this.$ = $$[$0]; yy.extend(this.$,{newid:true}); 
 break;
 case 163:
  this.$ = new yy.Cast({expression:$$[$0-3]}) ; yy.extend(this.$,$$[$0-1]) ; 
@@ -2023,6 +2023,8 @@ alasql.prompthistory = [];
 alasql.from = {}; // FROM functions
 alasql.into = {}; // INTO functions
 
+alasql.fn = {};
+
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
@@ -2033,7 +2035,7 @@ alasql.use = function (databaseid) {
 	alasql.useid = databaseid;
 	var db = alasql.databases[alasql.useid];
 	alasql.tables = db.tables;
-	alasql.fn = db.fn;
+//	alasql.fn = db.fn;
 	db.resetSqlCache();
 };
 
@@ -2298,7 +2300,7 @@ var Database = alasql.Database = function (databaseid) {
 	self.views = {};
 
 	self.indices = {};
-	self.fn = {};
+//	self.fn = {};
 	self.resetSqlCache();
 	self.dbversion = 0;
 	return self;
@@ -4275,6 +4277,8 @@ yy.ExpressionStatement.prototype.toString = function() {
 
 yy.ExpressionStatement.prototype.execute = function (databaseid, params) {
 	if(this.expression) {
+		console.log(this.expression);
+		console.log(this.expression.toJavaScript('','', null));
 		var expr =  new Function("params",'return '+this.expression.toJavaScript('','', null));
 		return expr(params);
 	}
@@ -4750,7 +4754,9 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
-		var s = 'alasql.fn.'+this.funcid+'(';
+//		var s = '';
+		if(this.newid) s+= 'new ';
+		s += 'alasql.fn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
 			return arg.toJavaScript(context, tableid, defcols);

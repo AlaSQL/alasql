@@ -37,7 +37,9 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
-		var s = 'alasql.fn.'+this.funcid+'(';
+//		var s = '';
+		if(this.newid) s+= 'new ';
+		s += 'alasql.fn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		s += this.args.map(function(arg){
 			return arg.toJavaScript(context, tableid, defcols);
