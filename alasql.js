@@ -4884,7 +4884,7 @@ yy.Json.prototype.toString = function() {
 	return s;
 };
 
-function JSONtoString(obj) {
+var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 	var s = '';
 	if(typeof obj == "string") s = '"'+obj+'"';
 	else if(typeof obj == "number") s = obj;
@@ -6278,9 +6278,14 @@ function loghtml(res) {
 			cols.forEach(function(colid){
 				s += '<td> ';
 				if(+res[i][colid] == +res[i][colid]) {
-					s += '<div style="text-align:right">'+res[i][colid]+'</div>';
+					s += '<div style="text-align:right">';
+					if(typeof res[i][colid] == 'undefined') s += 'NULL';
+					else s += res[i][colid];
+					s += '</div>';
 				} else {
-					s += res[i][colid];
+					if(typeof res[i][colid] == 'undefined') s += 'NULL';
+					else s += JSONtoString(res[i][colid]);
+//					s += res[i][colid];
 				};
 			});
 		}

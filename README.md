@@ -16,6 +16,7 @@ Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 ### New!
+* [NoSQL in Alasql](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
 * SlideShare [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
 
 ### Warnings 
@@ -33,7 +34,7 @@ The early prototype of documentation will be placed on [Alasql Wiki](https://git
 
 Try Alasql in console:
 * Alasql Console [http://alasql.org/console](http://alasql.org/console)
-* [Console source code](examples/console/index.html)
+* [Console source code](console/index.html)
 * [Alacon](alacon.js) - command-line Alasql console (to run: ```node alacon "sql-statement" params...```)
 * [Alaserver](alaserver.js) - very simple Alasql-server (to run: ```node alaserver```, then 
 type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )

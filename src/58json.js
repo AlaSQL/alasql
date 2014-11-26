@@ -14,7 +14,7 @@ yy.Json.prototype.toString = function() {
 	return s;
 };
 
-function JSONtoString(obj) {
+var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 	var s = '';
 	if(typeof obj == "string") s = '"'+obj+'"';
 	else if(typeof obj == "number") s = obj;
