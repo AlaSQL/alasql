@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.0.27 (27.11.2014 - )
+
+
 ### 0.0.26 (26.11.2014 - 26.11.2014)
 
 * Show time in ms in Alasql Console

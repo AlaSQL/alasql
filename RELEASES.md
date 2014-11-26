@@ -1,7 +1,22 @@
 ## RELEASES PLAN
 
 
-#### Version 0.0.26 - "Dates & Objects & Property Functions & many-many more... (JavaScriptQL)"
+#### Version 0.0.27 - "Persistence"
+
+Browser:
+* IndexedDB
+* localStorage
+
+* ATTACH TO LOCALSTORAGE
+* ATTACH TO INDEXEDDB
+* STORE SCHEMA
+* STORE DATA
+* STORE DATABASE
+* RESTORE SCHEMA
+* RESTORE DATA
+* RESTORE DATABASE
+
+#### Version 0.0.27 - "Prettify"
 
 Fix bug
 ====
