@@ -133,10 +133,10 @@ alasql.log = function(sql, params) {
 				console.table(res);		
 			} else {
 				// Add print procedure
-				console.log(res);
+				console.log(JSONtoString(res));
 			}
 		} else {
-			console.log(res);				
+			console.log(JSONtoString(res));				
 		}
 
 	} else {
@@ -235,6 +235,7 @@ alasql.write = function(s) {
 }
 
 function loghtml(res) {
+	console.log(res); 
 	var s  = '';
 	if(typeof res == 'undefined') {
 		s += 'undefined';
@@ -272,7 +273,7 @@ function loghtml(res) {
 
 		s += '</table>';
 	} else {
-		s += '<p>'+res.toString()+'</p>';
+		s += '<p>'+JSONtoString(res)+'</p>';
 	}
 		// if () {}
 
