@@ -601,7 +601,7 @@ yy.Select.prototype.compileSelect = function(query) {
 		}
 	});
 	s += ss.join(',')+'};'+sp;
-console.log(s);
+//console.log(s);
 	query.selectfns = s;
 	return new Function('p,params,alasql',s+'return r');
 };

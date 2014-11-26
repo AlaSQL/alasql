@@ -182,6 +182,8 @@
 '*'												return 'STAR'
 '/'												return 'SLASH'
 '%'												return 'PERCENT'
+'!==='											return 'NEEQEQEQ'
+'==='											return 'EQEQEQ'
 '!=='											return 'NEEQEQ'
 '=='											return 'EQEQ'
 '>='											return 'GE'
@@ -224,7 +226,7 @@
 %left OR
 %left BETWEEN NOT_BETWEEN
 %left AND
-%left GT GE LT LE EQ NE EQEQ NEEQEQ
+%left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IN
 %left NOT
 %left LIKE
@@ -857,10 +859,14 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'=' , right:$3}); }
 	| Expression EQEQ Expression
 		{ $$ = new yy.Op({left:$1, op:'==' , right:$3}); }
+	| Expression EQEQEQ Expression
+		{ $$ = new yy.Op({left:$1, op:'===' , right:$3}); }
 	| Expression NE Expression
 		{ $$ = new yy.Op({left:$1, op:'!=' , right:$3}); }
 	| Expression NEEQEQ Expression
 		{ $$ = new yy.Op({left:$1, op:'!==' , right:$3}); }
+	| Expression NEEQEQEQ Expression
+		{ $$ = new yy.Op({left:$1, op:'!===' , right:$3}); }
 
 	| Expression CondOp AllSome LPAR Select RPAR
 		{ 

@@ -34,14 +34,73 @@ describe('Test 140 JavaScript Functions', function() {
 	});
 
 	it("3. NEW keyword", function(done){
-		var res = alasql("new Date(2014,0,1)");
-		console.log(res);
-
 		alasql.fn.Date = Date;
 
 		var res = alasql("new Date(2014,0,1)");
-		console.log(res);
+		assert(res.getFullYear() == 2014);
+
+		var res = alasql("new Date(2014,0,1)->getFullYear()");
+		assert(res == 2014);
+
+		done();
 	});
+
+	it("4. Create table with Date", function(done){
+		alasql.fn.Date = Date;
+
+		alasql('CREATE TABLE one (d Date)');
+
+		alasql('INSERT INTO one VALUES (new Date(2014,0,1)), (new Date(2015,0,2))');
+
+		var res = alasql("SELECT COLUMN d->getFullYear() FROM one");
+		assert.deepEqual(res,[2014,2015]);
+
+		var res = alasql("SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,0,1)");
+		assert.deepEqual(res,[]);
+
+		var res = alasql("SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,0,2)");
+		assert.deepEqual(res,[2015]);
+		done();
+	});
+
+
+		alasql('CREATE TABLE two (d DATE)');
+
+		alasql('INSERT INTO two VALUES ("2014-01-01"), ("2015-01-02")');
+
+		var res = alasql("SELECT COLUMN d FROM two");
+//		assert.deepEqual(res,[2014,2015]);
+		console.log(res);
+
+		var res = alasql("SELECT COLUMN d FROM two");
+		assert.deepEqual(res,["2014-01-01"], ["2015-01-02"]);
+
+
+
+		alasql('CREATE TABLE three (d Date)');
+
+		alasql('INSERT INTO three VALUES ("2014-01-01"), ("2015-01-02")');
+
+		var res = alasql("SELECT COLUMN d FROM three");
+//		assert.deepEqual(res,[2014,2015]);
+		console.log(res);
+
+
+		delete alasql.fn.Date;
+		alasql('CREATE TABLE four (d Date)');
+
+		alasql('INSERT INTO four VALUES ("2014-01-01"), ("2015-01-02")');
+
+		var res = alasql("SELECT COLUMN d FROM four");
+//		assert.deepEqual(res,[2014,2015]);
+		console.log(res);
+		var res = alasql("SELECT COLUMN d FROM four");
+		assert.deepEqual(res,["2014-01-01"], ["2015-01-02"]);
+
+
+		done();
+	});
+
 
 
 	it("99. Drop database", function(done){

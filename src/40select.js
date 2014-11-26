@@ -160,10 +160,12 @@ yy.Select.prototype.compile = function(databaseid) {
 			res = a;
 		} if(query.modifier == 'COLUMN') {
 			var ar = [];
-			var key = Object.keys(res[0])[0];
-			for(var i=0, ilen=res.length; i<ilen; i++){
-				ar.push(res[i][key]);
-			}
+			if(res.length > 0) {
+				var key = Object.keys(res[0])[0];
+				for(var i=0, ilen=res.length; i<ilen; i++){
+					ar.push(res[i][key]);
+				}
+			};
 			res = ar;
 		} if(query.modifier == 'MATRIX') {
 			res = arrayOfArrays(res);
