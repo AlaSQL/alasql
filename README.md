@@ -461,11 +461,11 @@ Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previo
 
 ### Known Bugs
 
-1. Dates comparing (sorting now is ok)
-2. Transactions 
-3. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
-4. AVG() does not work 
-5. There are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
+1. Transactions 
+2. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
+3. AVG() does not work 
+
+Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
   
 ### Future Plans
 
