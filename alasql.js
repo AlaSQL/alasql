@@ -700,13 +700,13 @@ case 304:
  this.$ = new yy.ColumnDef({columnid:$$[$0-1]}); yy.extend(this.$,$$[$0]); 
 break;
 case 305:
- this.$ = {dbtypeid: $$[$0-5].toUpperCase(), dbsize: $$[$0-3], dbprecision: $$[$0-1]} 
+ this.$ = {dbtypeid: $$[$0-5], dbsize: $$[$0-3], dbprecision: $$[$0-1]} 
 break;
 case 306:
- this.$ = {dbtypeid: $$[$0-3].toUpperCase(), dbsize: $$[$0-1]} 
+ this.$ = {dbtypeid: $$[$0-3], dbsize: $$[$0-1]} 
 break;
 case 307:
- this.$ = {dbtypeid: $$[$0].toUpperCase()} 
+ this.$ = {dbtypeid: $$[$0]} 
 break;
 case 308:
  this.$ = {dbtypeid: 'ENUM', enumvalues: $$[$0-1]} 
@@ -4747,7 +4747,7 @@ yy.ColumnDef.prototype.toString = function() {
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = '';
-    if(alasql.stdlib[this.funcid]) s += this.funcid.toUpperCase();
+    if(alasql.stdlib[this.funcid] || alasql.stdfn[this.funcid]) s += this.funcid.toUpperCase();
     else s += this.funcid;
     
     s += '(';
@@ -4772,6 +4772,14 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 		} else {
 			s += alasql.stdlib[funcid.toUpperCase()]();
 		}
+	} else if(alasql.stdfn[funcid.toUpperCase()]) {
+		if(this.newid) s+= 'new ';
+		s += 'alasql.stdfn.'+this.funcid+'(';
+//		if(this.args) s += this.args.toJavaScript(context, tableid);
+		s += this.args.map(function(arg){
+			return arg.toJavaScript(context, tableid, defcols);
+		}).join(',');
+		s += ')';		
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
@@ -4806,10 +4814,11 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 
 // IMPORTANT: These are compiled functions
 
-alasql.fn = {}; // Keep for compatibility
+//alasql.fn = {}; // Keep for compatibility
 //alasql.userlib = alasql.fn; 
 
 var stdlib = alasql.stdlib = {}
+var stdfn = alasql.stdfn = {}
 
 stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
 stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
@@ -4838,7 +4847,6 @@ stdlib.MID = function(a,b,c){
 	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
 };
 
-stdlib.NOW = function(){return '(new Date())';};
 stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
 
 stdlib.RANDOM = function(r) {
@@ -4865,6 +4873,8 @@ stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 // RTRIM
 // SUBSTR
 // TRIM
+
+
 
 
 // 
@@ -5136,9 +5146,11 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 	var ss = [];
 	if(this.columns) {
 		this.columns.forEach(function(col) {
+			var dbtypeid = col.dbtypeid;
+			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
 			var newcol = {
 				columnid: col.columnid,
-				dbtypeid: col.dbtypeid // TODO: Add types table
+				dbtypeid: dbtypeid // TODO: Add types table
 			};
 
 			if(col.default) {
@@ -5250,6 +5262,46 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 
 
 
+
+//
+// Date functions
+// 
+// (c) 2014, Andrey Gershun
+//
+
+
+stdfn.NOW = function(){return d.getFullYear();};
+
+stdfn.SECOND = function(d){
+	d = new Date(d);
+	return d.getSecond();
+};
+
+
+stdfn.MINUTE = function(d){
+	d = new Date(d);
+	return d.getMinute();
+};
+
+stdfn.HOUR = function(d){
+	d = new Date(d);
+	return d.getHour();
+};
+
+stdfn.DAY = stdfn.DAYOFMONTH = function(d){
+	d = new Date(d);
+	return d.getDate();
+};
+
+stdfn.MONTH = function(d){
+	d = new Date(d);
+	return d.getMonth()+1;
+};
+
+stdfn.YEAR = function(d){
+	d = new Date(d);
+	return d.getFullYear();
+};
 
 /*
 //
@@ -5618,15 +5670,19 @@ yy.Insert.prototype.compile = function (databaseid) {
 		//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
 		//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
 					var q = "'"+col.columnid +'\':';
-					// if(table.xcolumns && table.xcolumns[col.columnid] && 
-					// 	( table.xcolumns[col.columnid].dbtypeid == "INT"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
-					// 	)) q += '+';
-		//			console.log(self.values[idx].value);
-					q += values[idx].toJavaScript();
-					// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
+					if(table.xcolumns && table.xcolumns[col.columnid]) { 
+						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
+							q += "+"+values[idx].toJavaScript();
+						} else if (alasql.fn[table.xcolumns[col.columnid].dbtypeid]) {
+							q += "(new "+table.xcolumns[col.columnid].dbtypeid+"(";
+							q += values[idx].toJavaScript();
+							q += "))";
+						} else {
+							q += values[idx].toJavaScript();
+						};
+					} else { 
+						q += values[idx].toJavaScript();
+					}
 					ss.push(q);
 
 				});
@@ -5638,21 +5694,31 @@ yy.Insert.prototype.compile = function (databaseid) {
 					table.columns.forEach(function(col, idx){
 
 						var q = '\''+col.columnid +'\':';
-						var val = values[idx].toJavaScript();
+//						var val = values[idx].toJavaScript();
 
-						 if(table.xcolumns && table.xcolumns[col.columnid] && 
-						  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
-							table.xcolumns[col.columnid].dbtypeid == "DATETIME"
-						  )) {
-						 	val = "(new Date("+val+"))";
-						 }
+						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(col.dbtypeid) >=0) {
+							q += "+"+values[idx].toJavaScript();
+						} else if (alasql.fn[col.dbtypeid]) {
+							q += "(new "+col.dbtypeid+"(";
+							q += values[idx].toJavaScript();
+							q += "))";
+						} else { 
+							q += values[idx].toJavaScript();
+						}
+
+						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
+						 //  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
+							// table.xcolumns[col.columnid].dbtypeid == "DATETIME"
+						 //  )) {
+						 // 	val = "(new Date("+val+"))";
+						 // }
 						// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
 						// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
 						// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
 						// 	)) q += '+';
 					//	console.log(self.values[idx].toString());
 			//console.log(self);
-						q += val;
+//						q += val;
 
 						// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
 						ss.push(q);

@@ -9,7 +9,7 @@
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = '';
-    if(alasql.stdlib[this.funcid]) s += this.funcid.toUpperCase();
+    if(alasql.stdlib[this.funcid] || alasql.stdfn[this.funcid]) s += this.funcid.toUpperCase();
     else s += this.funcid;
     
     s += '(';
@@ -34,6 +34,14 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 		} else {
 			s += alasql.stdlib[funcid.toUpperCase()]();
 		}
+	} else if(alasql.stdfn[funcid.toUpperCase()]) {
+		if(this.newid) s+= 'new ';
+		s += 'alasql.stdfn.'+this.funcid+'(';
+//		if(this.args) s += this.args.toJavaScript(context, tableid);
+		s += this.args.map(function(arg){
+			return arg.toJavaScript(context, tableid, defcols);
+		}).join(',');
+		s += ')';		
 	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
@@ -68,10 +76,11 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 
 // IMPORTANT: These are compiled functions
 
-alasql.fn = {}; // Keep for compatibility
+//alasql.fn = {}; // Keep for compatibility
 //alasql.userlib = alasql.fn; 
 
 var stdlib = alasql.stdlib = {}
+var stdfn = alasql.stdfn = {}
 
 stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
 stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
@@ -100,7 +109,6 @@ stdlib.MID = function(a,b,c){
 	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
 };
 
-stdlib.NOW = function(){return '(new Date())';};
 stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
 
 stdlib.RANDOM = function(r) {
@@ -127,3 +135,5 @@ stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 // RTRIM
 // SUBSTR
 // TRIM
+
+

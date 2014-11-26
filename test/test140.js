@@ -64,26 +64,33 @@ describe('Test 140 JavaScript Functions', function() {
 	});
 
 
+	it("5. Create table with default conversion Date", function(done){
 		alasql('CREATE TABLE two (d DATE)');
 
 		alasql('INSERT INTO two VALUES ("2014-01-01"), ("2015-01-02")');
 
 		var res = alasql("SELECT COLUMN d FROM two");
+		assert.deepEqual(res,["2014-01-01", "2015-01-02"]);
 //		assert.deepEqual(res,[2014,2015]);
-		console.log(res);
+//		console.log(res);
 
 		var res = alasql("SELECT COLUMN d FROM two");
-		assert.deepEqual(res,["2014-01-01"], ["2015-01-02"]);
+		assert.deepEqual(res,["2014-01-01","2015-01-02"]);
+		done();
+	});
 
-
+	it("6. Create table with default conversion Date", function(done){
 
 		alasql('CREATE TABLE three (d Date)');
 
 		alasql('INSERT INTO three VALUES ("2014-01-01"), ("2015-01-02")');
 
-		var res = alasql("SELECT COLUMN d FROM three");
-//		assert.deepEqual(res,[2014,2015]);
-		console.log(res);
+		var res = alasql("SELECT COLUMN d->getFullYear() FROM three");
+		assert.deepEqual(res,[2014,2015]);
+		done();
+	});
+
+	it("7. Create table with default conversion Date", function(done){
 
 
 		delete alasql.fn.Date;
@@ -91,12 +98,18 @@ describe('Test 140 JavaScript Functions', function() {
 
 		alasql('INSERT INTO four VALUES ("2014-01-01"), ("2015-01-02")');
 
-		var res = alasql("SELECT COLUMN d FROM four");
-//		assert.deepEqual(res,[2014,2015]);
-		console.log(res);
-		var res = alasql("SELECT COLUMN d FROM four");
-		assert.deepEqual(res,["2014-01-01"], ["2015-01-02"]);
+		var res = alasql("SELECT COLUMN YEAR(d) FROM four");
+		assert.deepEqual(res,[2014,2015]);
 
+		var res = alasql("SELECT COLUMN MONTH(d) FROM four");
+		assert.deepEqual(res,[1,1]);
+
+		var res = alasql("SELECT COLUMN DAY(d) FROM four");
+		assert.deepEqual(res,[1,2]);
+
+//		console.log(res);
+		var res = alasql("SELECT COLUMN d FROM four");
+		assert.deepEqual(res,["2014-01-01","2015-01-02"]);
 
 		done();
 	});

@@ -1146,11 +1146,11 @@ ColumnDef
 
 ColumnType
 	: LITERAL LPAR NUMBER COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3, dbprecision: $5} }
+		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: $5} }
 	| LITERAL LPAR NUMBER RPAR
-		{ $$ = {dbtypeid: $1.toUpperCase(), dbsize: $3} }
+		{ $$ = {dbtypeid: $1, dbsize: $3} }
 	| LITERAL
-		{ $$ = {dbtypeid: $1.toUpperCase()} }
+		{ $$ = {dbtypeid: $1} }
 	| ENUM LPAR ValuesList RPAR
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;

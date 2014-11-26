@@ -46,6 +46,7 @@ gulp.task('js-merge', function () {
     './src/58json.js',
     './src/59cast.js',
   	'./src/60createtable.js',
+    './src/61date.js',
     './src/62droptable.js',
     './src/64altertable.js',
     './src/65createindex.js',

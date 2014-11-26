@@ -70,9 +70,11 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 	var ss = [];
 	if(this.columns) {
 		this.columns.forEach(function(col) {
+			var dbtypeid = col.dbtypeid;
+			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
 			var newcol = {
 				columnid: col.columnid,
-				dbtypeid: col.dbtypeid // TODO: Add types table
+				dbtypeid: dbtypeid // TODO: Add types table
 			};
 
 			if(col.default) {

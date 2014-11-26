@@ -49,15 +49,19 @@ yy.Insert.prototype.compile = function (databaseid) {
 		//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
 		//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
 					var q = "'"+col.columnid +'\':';
-					// if(table.xcolumns && table.xcolumns[col.columnid] && 
-					// 	( table.xcolumns[col.columnid].dbtypeid == "INT"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
-					// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
-					// 	)) q += '+';
-		//			console.log(self.values[idx].value);
-					q += values[idx].toJavaScript();
-					// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
+					if(table.xcolumns && table.xcolumns[col.columnid]) { 
+						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
+							q += "+"+values[idx].toJavaScript();
+						} else if (alasql.fn[table.xcolumns[col.columnid].dbtypeid]) {
+							q += "(new "+table.xcolumns[col.columnid].dbtypeid+"(";
+							q += values[idx].toJavaScript();
+							q += "))";
+						} else {
+							q += values[idx].toJavaScript();
+						};
+					} else { 
+						q += values[idx].toJavaScript();
+					}
 					ss.push(q);
 
 				});
@@ -69,21 +73,31 @@ yy.Insert.prototype.compile = function (databaseid) {
 					table.columns.forEach(function(col, idx){
 
 						var q = '\''+col.columnid +'\':';
-						var val = values[idx].toJavaScript();
+//						var val = values[idx].toJavaScript();
 
-						 if(table.xcolumns && table.xcolumns[col.columnid] && 
-						  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
-							table.xcolumns[col.columnid].dbtypeid == "DATETIME"
-						  )) {
-						 	val = "(new Date("+val+"))";
-						 }
+						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(col.dbtypeid) >=0) {
+							q += "+"+values[idx].toJavaScript();
+						} else if (alasql.fn[col.dbtypeid]) {
+							q += "(new "+col.dbtypeid+"(";
+							q += values[idx].toJavaScript();
+							q += "))";
+						} else { 
+							q += values[idx].toJavaScript();
+						}
+
+						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
+						 //  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
+							// table.xcolumns[col.columnid].dbtypeid == "DATETIME"
+						 //  )) {
+						 // 	val = "(new Date("+val+"))";
+						 // }
 						// 		|| table.xcolumns[col.columnid].dbtypeid == "FLOAT"
 						// 		|| table.xcolumns[col.columnid].dbtypeid == "NUMBER"
 						// 		|| table.xcolumns[col.columnid].dbtypeid == "MONEY"
 						// 	)) q += '+';
 					//	console.log(self.values[idx].toString());
 			//console.log(self);
-						q += val;
+//						q += val;
 
 						// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
 						ss.push(q);

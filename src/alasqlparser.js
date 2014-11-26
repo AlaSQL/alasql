@@ -648,13 +648,13 @@ case 304:
  this.$ = new yy.ColumnDef({columnid:$$[$0-1]}); yy.extend(this.$,$$[$0]); 
 break;
 case 305:
- this.$ = {dbtypeid: $$[$0-5].toUpperCase(), dbsize: $$[$0-3], dbprecision: $$[$0-1]} 
+ this.$ = {dbtypeid: $$[$0-5], dbsize: $$[$0-3], dbprecision: $$[$0-1]} 
 break;
 case 306:
- this.$ = {dbtypeid: $$[$0-3].toUpperCase(), dbsize: $$[$0-1]} 
+ this.$ = {dbtypeid: $$[$0-3], dbsize: $$[$0-1]} 
 break;
 case 307:
- this.$ = {dbtypeid: $$[$0].toUpperCase()} 
+ this.$ = {dbtypeid: $$[$0]} 
 break;
 case 308:
  this.$ = {dbtypeid: 'ENUM', enumvalues: $$[$0-1]} 
