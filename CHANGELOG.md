@@ -1,9 +1,14 @@
 # Changelog
 
-### 0.0.26 (26.11.2014 - )
+### 0.0.26 (26.11.2014 - 26.11.2014)
 
 * Show time in ms in Alasql Console
 * JSON Object functions like d->getFullYear()
+* JavaScript Dates
+* SQL DATE functions
+* alasql.stdfn() - runtime library
+* CREATE TABLE AND INSERT with Date
+* new Date()
 
 ### 0.0.25 (23.11.2014 - 25.11.2014)
 

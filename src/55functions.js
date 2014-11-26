@@ -38,9 +38,11 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 		if(this.newid) s+= 'new ';
 		s += 'alasql.stdfn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
-		s += this.args.map(function(arg){
-			return arg.toJavaScript(context, tableid, defcols);
-		}).join(',');
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJavaScript(context, tableid, defcols);
+			}).join(',');
+		};
 		s += ')';		
 	} else {
 	// This is user-defined run-time function
@@ -49,9 +51,11 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 		if(this.newid) s+= 'new ';
 		s += 'alasql.fn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
-		s += this.args.map(function(arg){
-			return arg.toJavaScript(context, tableid, defcols);
-		}).join(',');
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJavaScript(context, tableid, defcols);
+			}).join(',');
+		};
 		s += ')';
 	}
 //console.log('userfn:',s,this);

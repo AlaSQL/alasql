@@ -13,8 +13,9 @@ describe('Test 43', function() {
 			// alasql('create database test43');
 			// alasql('use test43');
 
+			alasql.fn.Date = Date;
 			db.exec('DROP TABLE IF EXISTS orders');
-			db.exec('CREATE TABLE orders (orderid INT, orderdate DATE)');
+			db.exec('CREATE TABLE orders (orderid INT, orderdate Date)');
 
 			// db = alasql.databases.test43;
 			var data = db.tables.orders.data;

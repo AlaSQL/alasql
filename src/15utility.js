@@ -250,7 +250,7 @@ var flatArray = utils.flatArray = function(a) {
 var arrayOfArrays = utils.arrayOfArrays = function (a) {
     return a.map(function(aa){
         var ar = [];
-        for(var key in aa) ar[key] = aa[key];
+        for(var key in aa) ar.push(aa[key]);
         return ar;
     });
 };

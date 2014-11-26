@@ -9,8 +9,9 @@ describe('Test 44', function() {
 			alasql('create database test44');
 			alasql('use test44');
 
+			alasql.fn.Date = Date;
 			alasql('drop table if exists orders');
-			alasql('CREATE TABLE orders (orderid INT, orderdate DATE)');
+			alasql('CREATE TABLE orders (orderid INT, orderdate Date)');
 
 			var data = alasql.databases.test44.tables.orders.data;
 			data.push({orderid:1, orderdate: new Date(2014,1,1)});

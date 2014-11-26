@@ -1994,7 +1994,7 @@ var flatArray = utils.flatArray = function(a) {
 var arrayOfArrays = utils.arrayOfArrays = function (a) {
     return a.map(function(aa){
         var ar = [];
-        for(var key in aa) ar[key] = aa[key];
+        for(var key in aa) ar.push(aa[key]);
         return ar;
     });
 };
@@ -4776,9 +4776,11 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 		if(this.newid) s+= 'new ';
 		s += 'alasql.stdfn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
-		s += this.args.map(function(arg){
-			return arg.toJavaScript(context, tableid, defcols);
-		}).join(',');
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJavaScript(context, tableid, defcols);
+			}).join(',');
+		};
 		s += ')';		
 	} else {
 	// This is user-defined run-time function
@@ -4787,9 +4789,11 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 		if(this.newid) s+= 'new ';
 		s += 'alasql.fn.'+this.funcid+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
-		s += this.args.map(function(arg){
-			return arg.toJavaScript(context, tableid, defcols);
-		}).join(',');
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJavaScript(context, tableid, defcols);
+			}).join(',');
+		};
 		s += ')';
 	}
 //console.log('userfn:',s,this);
@@ -5270,22 +5274,28 @@ yy.CreateTable.prototype.execute = function (databaseid) {
 //
 
 
-stdfn.NOW = function(){return d.getFullYear();};
+stdfn.NOW = function(){
+	var d = new Date();
+	var s = d.getFullYear()+"."+("0"+d.getMonth()).substr(-2)+"."+("0"+d.getDate()).substr(-2);
+	s += " "+("0"+d.getHours()).substr(-2)+":"+("0"+d.getMinutes()).substr(-2)+"."+("0"+d.getSeconds()).substr(-2);
+	return s;
+};
+
 
 stdfn.SECOND = function(d){
 	d = new Date(d);
-	return d.getSecond();
+	return d.getSeconds();
 };
 
 
 stdfn.MINUTE = function(d){
 	d = new Date(d);
-	return d.getMinute();
+	return d.getMinutes();
 };
 
 stdfn.HOUR = function(d){
 	d = new Date(d);
-	return d.getHour();
+	return d.getHours();
 };
 
 stdfn.DAY = stdfn.DAYOFMONTH = function(d){
@@ -5662,7 +5672,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 //			s += '';
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
-
+//console.log(db.tables, tableid, table);
 		//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
 		//			console.log(rec[f.name.value]);
 		//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
@@ -5687,7 +5697,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 				});
 			} else {
-				var table = db.tables[tableid];
+//				var table = db.tables[tableid];
 //	console.log('table1', db, self);
 //console.log(111, table.columns);
 				if(table.columns.length > 0) {

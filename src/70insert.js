@@ -41,7 +41,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 //			s += '';
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
-
+//console.log(db.tables, tableid, table);
 		//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
 		//			console.log(rec[f.name.value]);
 		//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
@@ -66,7 +66,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 				});
 			} else {
-				var table = db.tables[tableid];
+//				var table = db.tables[tableid];
 //	console.log('table1', db, self);
 //console.log(111, table.columns);
 				if(table.columns.length > 0) {
