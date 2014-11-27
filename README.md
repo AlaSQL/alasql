@@ -4,11 +4,7 @@ Version: 0.0.27 Date: November 27, 2014 [Change log](CHANGELOG.md), [Release pla
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. 
 
-## What is Alasql?
-
-Alasql is a SQL database for desktop and mobile browsers. It works also in Node.js.
-
-Alasql is very simple to use: just add *only one* file [alasql.min.js](alasql.min.js) (170Kb) to your project. This is all. 
+Alasql is easy to use! Add *only one* file [alasql.min.js](alasql.min.js) (170Kb) to your project. 
 
 ```html
     <script src="alasql.min.js"></script>  
@@ -53,10 +49,10 @@ Try Alasql in Fiddle:
 * [sample 4](http://jsfiddle.net/606ksx2g/1/)
 
 Other examples:
-* [Sandbox](examples/sandbox.html)
-* [Sieve of Eratosthenes](examples/prime.html)
-* [World database](examples/console.html)
-* [Hundred of small tests](test)
+* [Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
+* [Sieve of Eratosthenes](http://jsfiddle.net/agershun/1u05op11/) - [source](examples/prime.html)
+* [World database](alasql.org/console?source 'world.sql';select top 10 * from City) - [source](console/index.html)
+* [More than 140 of Alasql tests](test)
 
 ### What People Say about Alasql?
 
