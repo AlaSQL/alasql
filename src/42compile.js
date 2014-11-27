@@ -447,7 +447,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			}						
 		} else if(tq instanceof yy.ParamValue) {
 			source.datafn = new Function('query,params',
-				"return params['"+tq.param+"'];");
+				"return alasql.prepareFromData(params['"+tq.param+"']);");
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -458,6 +458,22 @@ yy.Select.prototype.compileFrom = function(query) {
 	// TODO Add joins
 	query.defaultTableid = query.sources[0].alias;
 //console.log(query.defaultTableid);
+};
+
+alasql.prepareFromData = function(data) {
+	var res;
+	if(typeof data == "string") {
+		res = data.split(/\r?\n/);
+		for(var i=0, ilen=res.length; i<ilen;i++) {
+			res[i] = [res[i]];
+		}
+	} else if(typeof data == 'function') {
+		var i = 0;
+		var r;
+		res = [];
+		while(typeof (r = data(i++)) != "undefined") res.push(r);
+	};
+	return res;
 };
 
 // yy.Select.prototype.compileSources = function(query) {

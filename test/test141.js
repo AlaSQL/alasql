@@ -11,12 +11,17 @@ describe('Test 141 text as source', function() {
 		alasql('CREATE DATABASE test141; use test141');
 
 
-		var txt = "one\ntwo\nthree\nfour\nfive\nsix\nseven\neight\nnine\nten";
-		var res = alasql('select * from ? where len([0]) <= 3',[txt]);
-		console.log(res);
+		var txt = "one\ntwo\nthree\nfour\nfive\nsix\r\nseven\neight\r\nnine\nten";
+		var days = alasql('select column * from ? where len([0]) <= 3',[txt]);
+		assert.deepEqual(days, ['one','two','six','ten']);
 
-		var res = alasql('select text * from ? where [0]->length > 3',[txt]);
-		console.log(res);
+		var myfn = function(i) {
+			if(i>3) return;
+			return {a:i, b:i*i};
+		};
+
+		var res = alasql('select * from ?',[myfn]);
+		assert.deepEqual(res, [ { a: 0, b: 0 }, { a: 1, b: 1 }, { a: 2, b: 4 }, { a: 3, b: 9 }]);
 
 		done();
 	});
