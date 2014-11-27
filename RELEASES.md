@@ -4,8 +4,22 @@
 
 Priorities
 ===
+27.11.2014
+* Source data is string -> split by lines
+* FROM tab(?)
+* INTO txt()
+
 * Select data from function on the stream (instreamfn())
 * SELECT INTO the streamm function (outstreamfn()) - with group+order and without
+* SELECT without stream
+
+### 28.11.2014
+* Test program for IndexedDB
+* Callback vs Promise vs Sync
+
+
+### 29.11.2014
+
 * Store/Restore data to IndexedDB / localStorage
 * SELECT FROM IndexedDB
 * SELECT FROM IndexedDB with Indexes
@@ -33,6 +47,7 @@ Browser:
 Fix bug
 ====
 
+PRETTYFIER
 alasql.parse("CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC").toString()
 
 SELECT TOP 10 *,*,*
@@ -296,11 +311,7 @@ SELECT GROUP(a/b), SUM(a) FROM
 * SELECT (a = 2) AS alpha FROM one WHERE b IN (2,3)
 * one.find({b:[2,3]});
 
-* INSERT INTO one VALUES {a:1}
-* INSERT INTO one (a) VALUES (1)
 * one.insert({a:1});
-
-* INSERT INTO one VALUES {a:[1,2]} - NoSQL
 
 * UPDATE one SET {a:2} WHERE {a:3}
 * UPDATE one SET a=2 WHERE a=3
@@ -311,6 +322,8 @@ SELECT GROUP(a/b), SUM(a) FROM
 * remove({a:2})
 
 * JSON - pseudo-function and from-function
+
+### LINQ Syntax
 
 #### Version 0.0.26 - "CAST and CONVERT"
 
