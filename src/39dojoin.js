@@ -40,19 +40,23 @@ function doJoin (query, scope, h) {
 			var tableid = source.alias || source.tableid; 
 			var pass = false; // For LEFT JOIN
 			var data = source.data;
-
+			var opt = false;
 
 			// Reduce data for looping if there is optimization hint
 			if(source.joinmode != "RIGHT" && source.joinmode != "OUTER" && source.joinmode != "ANTI" && source.optimization == 'ix') {
 				data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
+				opt = true;
+//				console.log(source.onleftfn(scope, query.params, alasql));
+//				console.log(opt, data, data.length);
 			}
 
 			// Main cycle
 			var i = 0;
 			var ilen=data.length;
 			var dataw;
-			while((dataw = data[i]) || (source.getfn && (dataw = source.getfn(i))) || i<ilen) {
-				if(source.getfn && !source.getfn.dontcache) data[i] = dataw;
+			while((dataw = data[i]) || (!opt && (source.getfn && (dataw = source.getfn(i)))) || (i<ilen) ) {
+				if(!opt && source.getfn && !source.getfn.dontcache) data[i] = dataw;
+//console.log(h, i, dataw);
 				scope[tableid] = dataw;
 				// Reduce with ON and USING clause
 				if(!source.onleftfn || (source.onleftfn(scope, query.params, alasql) == source.onrightfn(scope, query.params, alasql))) {
@@ -69,7 +73,7 @@ function doJoin (query, scope, h) {
 
 //						if(source.joinmode == "RIGHT" || source.joinmode == "ANTI" || source.joinmode == "OUTER") {
 						if(source.joinmode != "LEFT" && source.joinmode != "INNER") {
-							data[i]._rightjoin = true;
+							dataw._rightjoin = true;
 						}
 
 						// for LEFT JOIN

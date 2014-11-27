@@ -140,8 +140,7 @@ preIndex = function(query) {
 //				while(source.getfn i<ilen) {
 
 				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || i<ilen) {
-					if(source.getfn && !source.getfn.dontcache) 
-						source.data[i] = dataw;
+					if(source.getfn && !source.getfn.dontcache) source.data[i] = dataw;
 //					scope[tableid] = dataw;
 
 //				for(var i=0, ilen=source.data.length; i<ilen; i++) {
@@ -156,7 +155,7 @@ preIndex = function(query) {
 						if(!group) {
 							group = source.ix [addr] = []; 
 						}
-						group.push(source.data[i]);
+						group.push(dataw);
 					}
 					i++;
 				}
