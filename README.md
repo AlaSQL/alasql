@@ -51,7 +51,7 @@ Try Alasql in Fiddle:
 Other examples:
 * [Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
 * [Sieve of Eratosthenes](http://jsfiddle.net/agershun/1u05op11/) - [source](examples/prime.html)
-* [World database](alasql.org/console?source 'world.sql';select top 10 * from City) - [source](console/index.html)
+* [World database](http://alasql.org/console?source 'world.sql';select top 10 * from City) - [source](console/index.html)
 * [More than 140 of Alasql tests](test)
 
 ### What People Say about Alasql?
