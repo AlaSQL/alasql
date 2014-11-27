@@ -19,6 +19,7 @@ describe('Test 142 INSTREAM', function() {
 // Connect to other database
 		alasql("select [0], LEN([0]) from alasql(SELECT * FROM one) where [1] like '%sd%'")		
 
+if(false) {
 
 		alasql("select INTO ?",[fn]);
 // include xls
@@ -51,10 +52,11 @@ describe('Test 142 INSTREAM', function() {
 			return ;
 		};
 		alasql.instream.xls = xls;
+};
 
 		done();
 	});
-
+/*
 	it("1. Simple Date functions", function(done){
 
 		var srcfn = function(i) {
@@ -111,7 +113,7 @@ describe('Test 142 INSTREAM', function() {
 	});
 
 
-
+*/
 	it("99. Drop database", function(done){
 		alasql('DROP DATABASE test142');
 		done();

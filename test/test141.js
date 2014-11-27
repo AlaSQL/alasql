@@ -23,6 +23,30 @@ describe('Test 141 text as source', function() {
 		var res = alasql('select * from ?',[myfn]);
 		assert.deepEqual(res, [ { a: 0, b: 0 }, { a: 1, b: 1 }, { a: 2, b: 4 }, { a: 3, b: 9 }]);
 
+		var myfn2 = function(i) {
+			if(i>3) return;
+			return {a:i, b:i*i};
+		};
+		myfn2.dontcache = true;
+
+		var res = alasql('select * from ?',[myfn2]);
+		assert.deepEqual(res, [ { a: 0, b: 0 }, { a: 1, b: 1 }, { a: 2, b: 4 }, { a: 3, b: 9 }]);
+
+		var myfn3 = function(i) {
+			if(i>3) return;
+			return {a:i, c:2*i};
+		};
+
+		var res = alasql('select a, b, t.c from ? left join ? t using a',[myfn,myfn3]);
+		assert.deepEqual(res, [ { a: 0, b:0, c: 0 }, { a: 1, b:1, c: 2 }, 
+			{ a: 2, b:4, c: 4 }, { a: 3, b:9, c: 6 }]);
+		console.log(res);
+
+
+		var res = alasql('select a, b, t.c from ? right join ? t using a',[myfn,myfn3]);
+		assert.deepEqual(res, [ { a: 0, b:0, c: 0 }, { a: 1, b:1, c: 2 }, 
+			{ a: 2, b:4, c: 4 }, { a: 3, b:9, c: 6 }]);
+
 		done();
 	});
 

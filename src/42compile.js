@@ -30,16 +30,60 @@ yy.Select.prototype.compileJoins = function(query) {
 		}
 
 
-		var tq = jn.table;
-		var source = {
-			alias: tq.alias||tq.tableid,
-			databaseid: jn.databaseid || query.database.databaseid,
-			tableid: tq.tableid,
-			joinmode: jn.joinmode,
-			onmiddlefn: returnTrue,
-			srcwherefns: '',	// for optimization
-			srcwherefn: returnTrue
-		};
+		var source;
+		var tq;
+		if(jn.table) {
+			tq = jn.table;
+			source = {
+				alias: jn.as||tq.tableid,
+				databaseid: jn.databaseid || query.database.databaseid,
+				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '',	// for optimization
+				srcwherefn: returnTrue
+			};
+			//
+
+			if(!query.database.tables[source.tableid]) {
+				throw new Error('Table \''+source.tableid+
+				'\' is not exists in database \''+query.database.databaseid)+'\'';
+			};
+			// source.data = query.database.tables[source.tableid].data;
+			source.datafn = function(query,params) {
+				return query.database.tables[source.tableid].data;
+			}
+
+		} else if(jn.select) {
+			source = {
+				alias: jn.as,
+//				databaseid: jn.databaseid || query.database.databaseid,
+//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '',	// for optimization
+				srcwherefn: returnTrue
+			};
+			source.subquery = tq.compile(query.database.databaseid);
+			source.datafn = function(query, params) {
+				return source.subquery(query.params);
+			}				
+		} else if(jn.param) {
+			source = {
+				alias: jn.as,
+//				databaseid: jn.databaseid || query.database.databaseid,
+//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '',	// for optimization
+				srcwherefn: returnTrue
+			};
+			// source.data = ;
+			var jnparam = jn.param.param;
+//			console.log(jn, jnparam);
+			source.datafn = new Function('query,params',
+				"return alasql.prepareFromData(params['"+jnparam+"']);");
+		}
 
 
 
@@ -70,13 +114,12 @@ yy.Select.prototype.compileJoins = function(query) {
 
 
 
-		source.datafn = function(query,params) {
-			return query.database.tables[source.tableid].data;
+
+
+		var alias = jn.as || tq.tableid;
+		if(tq) {
+			query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
 		}
-
-
-		var alias = tq.as || tq.tableid;
-		query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
 
 		if(jn.using) {
 			var prevSource = query.sources[query.sources.length-1];
@@ -175,11 +218,6 @@ yy.Select.prototype.compileJoins = function(query) {
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 //console.log(source, jn);
 		// TODO SubQueries
-		if(!query.database.tables[source.tableid]) {
-			throw new Error('Table \''+source.tableid+
-			'\' is not exists in database \''+query.database.databaseid)+'\'';
-		};
-		source.data = query.database.tables[source.tableid].data;
 /*		if(source.joinmode == 'RIGHT') {
 			var prevSource = query.sources.pop();
 			if(prevSource.joinmode == 'INNER') {
@@ -461,17 +499,12 @@ yy.Select.prototype.compileFrom = function(query) {
 };
 
 alasql.prepareFromData = function(data) {
-	var res;
+	var res = data;
 	if(typeof data == "string") {
 		res = data.split(/\r?\n/);
 		for(var i=0, ilen=res.length; i<ilen;i++) {
 			res[i] = [res[i]];
 		}
-	} else if(typeof data == 'function') {
-		var i = 0;
-		var r;
-		res = [];
-		while(typeof (r = data(i++)) != "undefined") res.push(r);
 	};
 	return res;
 };

@@ -18,7 +18,11 @@ function queryfn(query,oldscope) {
 	query.sources.forEach(function(source){
 //		source.data = query.database.tables[source.tableid].data;
 		source.data = source.datafn(query, query.params); 
-
+//		console.log(source, source.data);
+		if(typeof source.data == 'function') {
+			source.getfn = source.data;
+			source.data = {};
+		}
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
 // constructions like this.queriesdata['test'].
@@ -117,18 +121,32 @@ preIndex = function(query) {
 
 		if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
-			if(!query.database.tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
-				// Check if index already exists
-			var ixx = query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
-			if( !query.database.tables[source.tableid].dirty && ixx) {
-				source.ix = ixx; 
-			} else {
+			if(query.database.tables[source.tableid]) {
+				if(!query.database.tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
+					// Check if index already exists
+				var ixx = query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
+				if( !query.database.tables[source.tableid].dirty && ixx) {
+					source.ix = ixx; 
+				}
+			};
+
+			if(!source.ix) {
 				source.ix = {};
 				// Walking over source data
 				var scope = {};
-				for(var i=0, ilen=source.data.length; i<ilen; i++) {
+				var i = 0;
+				var ilen = source.data.length;
+				var dataw;
+//				while(source.getfn i<ilen) {
+
+				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || i<ilen) {
+					if(source.getfn && !source.getfn.dontcache) 
+						source.data[i] = dataw;
+//					scope[tableid] = dataw;
+
+//				for(var i=0, ilen=source.data.length; i<ilen; i++) {
 					// Prepare scope for indexation
-					scope[source.alias || source.tableid] = source.data[i];
+					scope[source.alias || source.tableid] = dataw;
 
 					// Check if it apply to where function 
 					if(source.srcwherefn(scope, query.params, alasql)) {
@@ -140,9 +158,12 @@ preIndex = function(query) {
 						}
 						group.push(source.data[i]);
 					}
+					i++;
 				}
-				// Save index to original table				
-				query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
+				if(query.database.tables[source.tableid]){
+					// Save index to original table				
+					query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
+				};
 			}
 			// Optimization for WHERE column = expression
 		} else if (source.wxleftfns) {

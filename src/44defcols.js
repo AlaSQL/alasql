@@ -36,9 +36,9 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 	if(this.joins) {
 		this.joins.forEach(function(jn){
 //			console.log(jn);
-			var alias = jn.table.tableid;
-			if(jn.as) alias = jn.as;
 			if(jn.table) {
+				var alias = jn.table.tableid;
+				if(jn.as) alias = jn.as;
 				var alias = jn.as || jn.table.tableid;
 				var table = alasql.databases[jn.databaseid || databaseid].tables[jn.table.tableid];
 //				console.log(jn.table.tableid);

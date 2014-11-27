@@ -48,8 +48,12 @@ function doJoin (query, scope, h) {
 			}
 
 			// Main cycle
-			for(var i=0, ilen=data.length; i<ilen; i++) {
-				scope[tableid] = data[i];
+			var i = 0;
+			var ilen=data.length;
+			var dataw;
+			while((dataw = data[i]) || (source.getfn && (dataw = source.getfn(i))) || i<ilen) {
+				if(source.getfn && !source.getfn.dontcache) data[i] = dataw;
+				scope[tableid] = dataw;
 				// Reduce with ON and USING clause
 				if(!source.onleftfn || (source.onleftfn(scope, query.params, alasql) == source.onrightfn(scope, query.params, alasql))) {
 					// For all non-standard JOINs like a-b=0
@@ -71,7 +75,8 @@ function doJoin (query, scope, h) {
 						// for LEFT JOIN
 						pass = true;
 					}
-				}
+				};
+				i++;
 			};
 
 
@@ -94,12 +99,17 @@ function doJoin (query, scope, h) {
 		
 				scope[source.alias] = {};
 			
-				for (var j=0; j<nextsource.data.length;j++){
-					if(!nextsource.data[j]._rightjoin) {
-						scope[nextsource.alias] = nextsource.data[j];
+				var j = 0;
+				var jlen = nextsource.data.length;
+				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(i))) || j<jlen) {
+					if(nextsource.getfn && !nextsource.getfn.dontcache) nextsource.data[j] = dataw;
+
+					if(!dataw._rightjoin) {
+						scope[nextsource.alias] = dataw;
 						doJoin(query, scope, h+2);
-						nextsource.data[j]._rightjoin = undefined;
+						dataw._rightjoin = undefined;
 					}
+					j++;
 				}
 
 			};
