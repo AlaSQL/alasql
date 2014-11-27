@@ -1,15 +1,14 @@
-# Alasql.js - pure JavaScript client-side fast SQL database with NoSQL functionality
+# Alasql.js - fast JavaScript client-side SQL database
 
-Version: 0.0.27 Date: November 26, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.27 Date: November 27, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side in-memory SQL database designed to work in browser and Node.js. It supports SQL and has some of NoSQL functionality. 
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. 
 
 ## What is Alasql?
 
-Alasql - it is just a functional in-memory SQL database in your brouser or Node.js.
+Alasql is a SQL database for desktop and mobile browsers. It works also in Node.js.
 
-Alasql is very simple to use: just add _only one_ [alasql.min.js](alasql.min.js) file (165Kb) to your project.
-This is all. No 
+Alasql is very simple to use: just add *only one* file [alasql.min.js](alasql.min.js) (170Kb) to your project. This is all. 
 
 ```html
     <script src="alasql.min.js"></script>  
@@ -17,18 +16,18 @@ This is all. No
         alasql("CREATE TABLE cities (city string, population number)");
         alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),\
             ('Berlin',3517424), ('Madrid',3041579)");
-        console.table( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
+        console.log( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
     </script>
 ```
-Try this sample in [your browser](demo.html) or in [Alasql console](http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC).
+Download and try this sample in [your browser](demo.html) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Alasql console</a>.
 
-* Alasql was written with pure JavaScript and does not use browser WebSQL database. 
-* Alasql uses "good old" SQL with all expected funcionality and without of limits of LINQ. Plus some [sugar](#Sugar)
-* Alasql is fully functional compact SQL server with JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries and very limited transactions support.
-* Alasql supports ROLLUP(), CUBE() and GROUPING SETS() functions
+* Alasql was written with pure JavaScript and does not use WebSQL database. 
+* Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
+* Alasql can to work directly with JavaScript objects and functions inside SQL. 
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql can operate with JSON objects like JavScript and NoSQL databases
 * Alasql is fast, because it uses some optimization methods.
+* Plus some [sugar](#Sugar)
 
 It is really fast. Check Alasql vs other JavaScript SQL databases: 
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
@@ -37,17 +36,6 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 ### New!
 * [Work with JSON objects in SQL](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
 * SlideShare [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
-
-### Warnings 
-Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
-
-Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be turned on again in one of the future version.
-
-You can check [version-0.0.26](https://github.com/agershun/alasql/tree/version-0.0.26) branch for new experimental features of new version. 
-
-### Documentation (draft)
-
-The early prototype of documentation will be placed on [Alasql Wiki](https://github.com/agershun/alasql/wiki).
 
 ## Examples
 
@@ -458,6 +446,16 @@ Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previo
     SELECT * FROM one ORDER BY a DESC;
     ASSERT [{a:3},{a:2},{a:1}];
 ```
+### Documentation (draft)
+
+The early prototype of documentation will be placed on [Alasql Wiki](https://github.com/agershun/alasql/wiki).
+
+### Warnings 
+Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
+
+Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be turned on again in one of the future version.
+
+You can check [version-0.0.26](https://github.com/agershun/alasql/tree/version-0.0.26) branch for new experimental features of new version. 
 
 ### Known Bugs
 

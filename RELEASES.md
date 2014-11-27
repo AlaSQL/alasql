@@ -1,7 +1,19 @@
 ## RELEASES PLAN
 
-
 #### Version 0.0.27 - "Persistence"
+
+Priorities
+===
+* Select data from function on the stream (instreamfn())
+* SELECT INTO the streamm function (outstreamfn()) - with group+order and without
+* Store/Restore data to IndexedDB / localStorage
+* SELECT FROM IndexedDB
+* SELECT FROM IndexedDB with Indexes
+* INSERT/DELETE/UPDATE/SELECT INTO 
+* SYNC SCHEMAS WITH INDEXEDDB
+* PRIMARY/FOREIGN KEYS
+* KEYS & IndexedDB
+
 
 Browser:
 * IndexedDB
@@ -89,7 +101,7 @@ alasql.classes.Date = Date;
 
 if it in Class, then Object...
 
-2. STANDARD DATATYPES
+2. STANDARD DATATYPES WITH CAST FUNCTIONS
 ===
 alasql.dbtypes = {};
 alasql.dbtypes.INT = {
@@ -103,40 +115,6 @@ alasql.dbtypes.DATE = {
 	cast: function(value, dbtypeid) {}
 };
 
-
-3. JAVASCRIPT new
-===
-WHERE new Date(b) == new Date(b);
-
-4. DEFAULT new
-===
-a Date DEFAULT new Date->now();
-
-5. JAVASCRIPT FUNCTIONS
-== 
-a->b()
-
-new Date(2014,1,2)->valueOf()
-new Date(2014,1,2)->getTime()
-
-LENGTH(@"abs")
-@"abcde"->substr(-1)
-
-6. 
-
-* Date datatypes
-
-7. Specific date types
-JSDATE = new Date()
-DATE = "2014-11-02"
-DATETIME = "2014-12-02 23:59:59.123"
-
-8. Optional date type
-alasql.options.datetimeformat = "sql", "js" / or "SQL", "JS" - prefix
-DATE
-DATETIME
-
-Other option - all dates are SQL, only JSDATE - are JavaScript
 
 9. Compare function
 
@@ -310,8 +288,6 @@ options.result = RECORDSET, MATRIX
 SELECT RECORDSET a
 SELECT GROUP(a/b), SUM(a) FROM 
 
-* Alaserver
-
 
 #### Version 0.0.26 - "Alasql and AlanosQL - like MongoDB"
 
@@ -388,23 +364,6 @@ Alternative
 alasql.compile('SELECT * FROM ? WHERE {qty:[1,?]}'); - ParamValue
 
 
-#### Version 0.0.31 - "Chart plagin"
-
-* AlaChart - plug-in with high-charts
-DRAW AREACHART WITH
-  AXIS BOTTOM
-  AXIS LEFT
-  GRID HORIZONTAL;
-
-
-#### Version 0.0.33 - "ISO and JS Dates"
-
-* Command line utility
-
-#### Version 0.0.34 - "ISO and JS Date/Time Functions"
-
-* DATE/DATETIME functions for ISODATE and JSDATE
-
 #### Version 0.0.35 - "Primary Keys and Unique Indices"
 
 * PRIMARY KEY
@@ -453,13 +412,6 @@ DRAW AREACHART WITH
 * LOAD JSON url TO table (json)
 * More test databases
 
-
-#### Version 0.0.60 - "Dates and JSDates"
-
-* JSDate option flag
-* Dates parsing in SELECT and UPDATE
-* Fix Dates issues (comparision, ordering)
-
 #### Version 0.0.65 - "Errors"
 
 * SQL-errors handling
@@ -506,10 +458,6 @@ DRAW AREACHART WITH
 
 * JavaScript API clarification
 
-#### Version 0.0.119 - "Load on fly"
-
-* SELECT * FROM csv('./world.txt')
-
 
 #### Version 0.0.120 - "JQuery plugin"
 
@@ -518,10 +466,6 @@ DRAW AREACHART WITH
 #### Version 0.0.121 - "Angular plugin"
 
 * AngularJS plugin 
-
-#### Version 0.0.122 - "Sync Over Browsers"
-
-* WebSQL compatibility
 
 #### Version 0.0.123 - "Sync WebSQL"
 
@@ -537,14 +481,11 @@ DRAW AREACHART WITH
 * MongoDB
 * localStorage
 
-
-
 #### Version 0.0.126 - "SQL parser, prettifier, and generator, SQL query builder"
 
 * SQL prettify
 * SQL query builder
 * SQL parser
-
 
 #### Version 0.0.127 - "SQL parser, prettifier, and generator, SQL query builder"
 
@@ -555,8 +496,7 @@ DRAW AREACHART WITH
 
 * Pass-thru SQL to server or custom driver
 
-
-#### Version 0.0.129 - "Pass-thru databases"
+#### Version 0.0.128 - "LINQ like queries"
 
 * Pass-thru SQL to server or custom driver
 
@@ -568,11 +508,6 @@ DRAW AREACHART WITH
 #### Version 0.0.133 - AlaTextSQL
 
 * Utility for OS command line query and text processing
-
-#### Version 0.0.134 - Alasql-Cli
-
-* alasql '1+1'
-* alasql 'select * from ? order by [0] desc' -csv mydata.txt
 
 #### Version 0.0.135 - MDX SELECT
 
@@ -590,7 +525,6 @@ DRAW AREACHART WITH
 #### Version 0.0.138 - Total on top/bottom and group with details
 
 * SELECT WITH TOTAL GROUP BY deptid, DETAILS()
-
 
 #### Version 0.0.138 - "Battle with Bugs 1"
 
