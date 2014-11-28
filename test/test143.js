@@ -36,11 +36,11 @@ describe('Test 143 streamfn', function() {
 });
 
 		function test143(dontcache) {
-			var nc1=0,nc2 = 0;
+			var nc1=0,nc2 = 0, nc3 = 0;
 			
 			var myfn = function(i) {
 				nc1++;
-				if(i>10) return;
+				if(i>=100) return;
 				return {a:i, b:i+2};
 			};
 			myfn.dontcache = dontcache;
@@ -48,44 +48,51 @@ describe('Test 143 streamfn', function() {
 
 			var myfn2 = function(i) {
 				nc2++;
-				if(i>10) return;
-				for(var k=0;k<2000;k++) {
+				if(i>=100) return;
+				for(var k=0;k<100;k++) {
 					Math.random();
 				}
-				return {a:(i%50)+1, c:(i+1)*10};
+				return {a:(i%25)+1, c:(i+1)*10};
 			};
 			myfn2.dontcache = dontcache;
 		//		myfn3.dontcache = true;
 				var tm = Date.now();
 		//if(true) {
 				var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q INNER join ? t using a',[myfn,myfn2]);
+				nc3 += res.length;
+
 		//console.table(res);
-		console.log('INNER',res.length);
-if(false) {
+//		console.log('INNER',res.length);
+//if(false) {
 				var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q SEMI join ? t using a',[myfn,myfn2]);
+				nc3 += res.length;
 		//console.table(res);
 		//console.log('SEMI', res.length);
 		//}
 				var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q ANTI join ? t using a',[myfn,myfn2]);
+				nc3 += res.length;
 		//console.table(res);
 		//console.log('ANTI', res.length);
 
 		//if(true) {
 				var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q LEFT join ? t using a',[myfn,myfn2]);
+				nc3 += res.length;
 		//console.table(res);
 		//console.log('LEFT',res.length);
 		//		assert(res.length == 13013);
 
 				var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q RIGHT join ? t using a',[myfn,myfn2]);
+				nc3 += res.length;
 		//console.table(res);
 		//console.log('RIGHT',res.length);
 				//assert(res.length == 13039);
 
 				var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q OUTER join ? t using a',[myfn,myfn2]);
+				nc3 += res.length;
 		//console.table(res);
 		//console.log('OUTER',res.length);
 		//		assert(res.length == 13039);
-}
+//}
 		//}
 				// var res = alasql('select q.a, q.b, t.c from ? q OUTER join ? t using a '+
 				// 	'EXCEPT select q.a, q.b, t.c from ? q LEFT join ? t using a',[myfn,myfn2,myfn,myfn2]);
@@ -94,7 +101,8 @@ if(false) {
 
 
 	//		console.log(res);
-			console.log(Date.now() - tm);
-			console.log(dontcache, nc1,nc2);
+			tm = Date.now() - tm;
+			console.log(tm);
+			console.log(dontcache, nc1,nc2, nc3, tm/nc2);
 		}
 
