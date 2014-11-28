@@ -1,5 +1,98 @@
 ## RELEASES PLAN
 
+#### Version 0.0.27 - "Async"
+
+localStorage
+source as a function
+Async version of Alasql
+IndexedDB
+MongoDb and other key-value storages
+
+
+#### Version 0.0.27 - "Two databases"
+
+alasql(sql,params,cb);
+
+
+parse SQL - sync
+
+preparedata from froms and joins, ins, exists, etc. - async
+preIndex - async
+doJoin - async
+write into - async
+cb();
+
+var res = alasql('100',[],function(err,data){
+	
+});
+
+if you use async datasources (like IndexedDB) or others, then you should to call cb;
+res = undefined;
+and cb() returns;
+if(alasql.isasync)
+throw Error(async operation - use async version of alasql)
+
+
+
+
+KEY-VALUE STORAGE
+===
+getfn(1,"asg",cb);
+
+getfn(n, "index", cb); - cursor
+-1 - getall
+-2 - length
+-3 - nocache
+
+Write cursor over IndexedDB database
+
+TWO DATABASES
+=============
+
+CREATE DATABASE db1;
+CREATE DATABASE db2;
+CREATE DATABASE db3;
+
+CREATE TABLE db1.one;
+CREATE TABLE db1.two (a int, b int);
+CREATE TABLE db1.three (a int, b int);
+
+INSERT INTO db2.two VALUES (1)
+INSERT INTO db3.three VALUES (1)
+
+SELECT * INTO db1.one FROM db2.two JOIN db3.three USING a
+SELECT * FROM db1.one;
+
+
+FULL TABLE
+Get tables ... FOR SELECT
+Then save table ... FOR INSERT, DELETE, UPDATE...
+
+
+#### Version 0.0.27 - "localStorage"
+
+ATTACH DATABASE localStorage
+USE localStorage
+SHOW TABLES
+
+SELECT YEAR(a) INTO localStorage.two FROM localStorage.one
+
+SELECT YEAR(a) INTO localStorage(two) FROM localStorage(one)
+
+if database is localStorage then datafn = localStoragefn(n);
+
+INSERT INTO three VALUES ()
+DELETE
+UPDATE
+STORE SCHEMA
+STORE DATA
+
+Answer on StackOverflow questions:
+http://stackoverflow.com/questions/1878256/html5-localstorage-sql
+http://stackoverflow.com/questions/14260127/is-there-a-free-lib-accessing-to-html5-database-sqlite
+
+
+
 #### Version 0.0.27 - "Persistence"
 
 Priorities
