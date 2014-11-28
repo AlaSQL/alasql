@@ -36,7 +36,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			tq = jn.table;
 			source = {
 				alias: jn.as||tq.tableid,
-				databaseid: jn.databaseid || query.database.databaseid,
+				databaseid: tq.databaseid || query.database.databaseid,
 				tableid: tq.tableid,
 				joinmode: jn.joinmode,
 				onmiddlefn: returnTrue,
@@ -45,13 +45,14 @@ yy.Select.prototype.compileJoins = function(query) {
 			};
 			//
 
-			if(!query.database.tables[source.tableid]) {
+//			console.log(source.databaseid, source.tableid);
+			if(!alasql.databases[source.databaseid].tables[source.tableid]) {
 				throw new Error('Table \''+source.tableid+
-				'\' is not exists in database \''+query.database.databaseid)+'\'';
+				'\' is not exists in database \''+source.databaseid)+'\'';
 			};
 			// source.data = query.database.tables[source.tableid].data;
 			source.datafn = function(query,params) {
-				return query.database.tables[source.tableid].data;
+				return alasql.databases[source.databaseid].tables[source.tableid].data;
 			}
 
 		} else if(jn.select) {
@@ -475,7 +476,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				// if(!query.database.tables[source.tableid]) console.log(query);
 				// if(!query.database.tables[source.tableid].data) console.log('query');
 
-				return query.database.tables[source.tableid].data;
+				return alasql.databases[source.databaseid].tables[source.tableid].data;
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
 			}
 		} else if(tq instanceof yy.Select) {
@@ -523,7 +524,7 @@ function compileSelectStar (query,alias) {
 //		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
 //	} else 	{
 		if(query.aliases[alias].tableid) {
-			var columns = query.database.tables[query.aliases[alias].tableid].columns;
+			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
 		};
 		// Check if this is a Table or other
 

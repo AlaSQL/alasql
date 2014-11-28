@@ -13,9 +13,10 @@ describe('Test 144 - Use three databases simultaniosly', function() {
 		alasql('CREATE DATABASE db3');
 
 		alasql('CREATE TABLE db1.one');
-		alasql('CREATE TABLE db1.two (a int, b int)');
-		alasql('CREATE TABLE db1.three (a int, b int)');
+		alasql('CREATE TABLE db2.two (a int, b int)');
+		alasql('CREATE TABLE db3.three (a int, b int)');
 
+		alasql('INSERT INTO db1.one VALUES @{a:1}, @{a:2}');
 		alasql('INSERT INTO db2.two VALUES (1,10), (2,20), (3,30)');
 		alasql('INSERT INTO db3.three VALUES (1,100), (2,200)');
 

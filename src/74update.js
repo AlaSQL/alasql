@@ -22,6 +22,7 @@ yy.SetColumn.prototype.toString = function() {
 
 yy.Update.prototype.compile = function (databaseid) {
 //	console.log(this);
+	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	
 	if(this.where) {

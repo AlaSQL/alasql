@@ -15,7 +15,7 @@ yy.Delete.prototype.toString = function() {
 
 yy.Delete.prototype.compile = function (databaseid) {
 //  console.log(11,this);
-
+	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
 			var db = alasql.databases[databaseid];

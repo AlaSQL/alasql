@@ -41,7 +41,7 @@ yy.CreateTable.prototype.toString = function() {
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid) {
 //	var self = this;
-	var db = alasql.databases[databaseid];
+	var db = alasql.databases[this.table.databaseid || databaseid];
 
 	var tableid = this.table.tableid;
 	if(!tableid) {

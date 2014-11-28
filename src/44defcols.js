@@ -13,6 +13,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 		this.from.forEach(function(fr){
 			if(fr instanceof yy.Table) {
 				var alias = fr.as || fr.tableid;
+//				console.log(alasql.databases[fr.databaseid || databaseid]);
+//				console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
 				if(table.columns) {
 					table.columns.forEach(function(col){
@@ -40,8 +42,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				var alias = jn.table.tableid;
 				if(jn.as) alias = jn.as;
 				var alias = jn.as || jn.table.tableid;
-				var table = alasql.databases[jn.databaseid || databaseid].tables[jn.table.tableid];
-//				console.log(jn.table.tableid);
+				var table = alasql.databases[jn.table.databaseid || databaseid].tables[jn.table.tableid];
+//				console.log(jn.table.tableid, jn.table.databaseid);
 				if(table.columns) {
 					table.columns.forEach(function(col){
 						if(defcols[col.columnid]) {

@@ -17,6 +17,7 @@ yy.Insert.prototype.toString = function() {
 
 yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
+	databaseid = self.into.databaseid || databaseid
 	var db = alasql.databases[databaseid];
 //	console.log(self);
 	var tableid = self.into.tableid;

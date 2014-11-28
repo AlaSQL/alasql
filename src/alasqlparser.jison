@@ -1039,6 +1039,10 @@ CreateTable
 		{ 
 			$$ = new yy.CreateTable({table:new yy.Table({tableid:$4})}); 
 		}		
+	| CREATE TABLE IfNotExists Literal DOT Literal
+		{ 
+			$$ = new yy.CreateTable({table:new yy.Table({tableid:$6, databaseid:$4})}); 
+		}		
 	;
 
 CreateTableOptionsClause
