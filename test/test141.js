@@ -29,7 +29,7 @@ describe('Test 141 text as source', function() {
 		alasql('CREATE DATABASE test141; use test141');
 		done();
 	});
-if(true) {
+
 	it("2. On string", function(done){
 
 		var txt = "one\ntwo\nthree\nfour\nfive\nsix\r\nseven\neight\r\nnine\nten";
@@ -47,7 +47,6 @@ if(true) {
 		assert.deepEqual(res, [ { a: 0, b: 0 }, { a: 1, b: 1 }, { a: 2, b: 4 }, { a: 3, b: 9 }]);
 		done();
 	});
-}
 	it("3. INNER JOIN on stream", function(done){
 
 
@@ -60,7 +59,7 @@ if(true) {
 		done();
 	});
 
-if(true) {
+
 
 	it("3. INNER JOIN on stream", function(done){
 
@@ -72,7 +71,7 @@ if(true) {
 		done();
 	});
 
-}
+
 
 
 	it("99. Drop database", function(done){

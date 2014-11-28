@@ -129,6 +129,8 @@ stdlib.ROUND = function(s,d) {
 		return 'Math.round('+s+')';
 	}
 }
+alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
+
 stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
 stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE

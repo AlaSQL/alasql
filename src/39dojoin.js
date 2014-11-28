@@ -27,7 +27,7 @@ function doJoin (query, scope, h) {
 
 //		if(source.joinmode == "LEFT" || source.joinmode == "INNER" || source.joinmode == "RIGHT"
 //			|| source.joinmode == "OUTER" || source.joinmode == "SEMI") {
-		if(source.joinmode != "ANTI") {
+		if(true) {//source.joinmode != "ANTI") {
 
 			// if(nextsource && nextsource.joinmode == "RIGHT") {
 			// 	if(!nextsource.rightdata) {
@@ -55,7 +55,7 @@ function doJoin (query, scope, h) {
 			var ilen=data.length;
 			var dataw;
 			while((dataw = data[i]) || (!opt && (source.getfn && (dataw = source.getfn(i)))) || (i<ilen) ) {
-				if(!opt && source.getfn && !source.getfn.dontcache) data[i] = dataw;
+				if(!opt && source.getfn && !source.dontcache) data[i] = dataw;
 //console.log(h, i, dataw);
 				scope[tableid] = dataw;
 				// Reduce with ON and USING clause
@@ -64,7 +64,7 @@ function doJoin (query, scope, h) {
 					if(source.onmiddlefn(scope, query.params, alasql)) {
 						// Recursively call new join
 //						if(source.joinmode == "LEFT" || source.joinmode == "INNER" || source.joinmode == "OUTER" || source.joinmode == "RIGHT" ) {
-						if(source.joinmode != "SEMI") { 
+						if(source.joinmode != "SEMI" && source.joinmode != "ANTI") { 
 //							console.log(scope);
 							doJoin(query, scope, h+1);
 						}
@@ -100,24 +100,31 @@ function doJoin (query, scope, h) {
 
 			if(nextsource.joinmode == "OUTER" || nextsource.joinmode == "RIGHT" 
 				|| nextsource.joinmode == "ANTI") {
-		
+
+
 				scope[source.alias] = {};
 			
 				var j = 0;
 				var jlen = nextsource.data.length;
-				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(i))) || j<jlen) {
-					if(nextsource.getfn && !nextsource.getfn.dontcache) nextsource.data[j] = dataw;
+				var dataw;
+				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(j))) || (j<jlen)) {
+					if(nextsource.getfn && !nextsource.dontcache) nextsource.data[j] = dataw;
 
 					if(!dataw._rightjoin) {
 						scope[nextsource.alias] = dataw;
 						doJoin(query, scope, h+2);
-						dataw._rightjoin = undefined;
+					} else {
+						//dataw._rightjoin = undefined;	
+						delete dataw._rightjoin;					
 					}
 					j++;
 				}
+//				console.table(nextsource.data);
+//				debugger;	
 
 			};
 		};
+
 
 		scope[tableid] = undefined;
 

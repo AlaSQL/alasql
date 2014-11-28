@@ -9,6 +9,50 @@ describe('Test 142 INSTREAM', function() {
 
 	it("1. Source as a string", function(done){
 		alasql('CREATE DATABASE test142; use test142');
+		done();
+	});
+
+	it("2. Simple Date functions", function(done){
+
+		var srcfn = function(i) {
+			if(i>2) return;
+			return {i:i, i2:i*2};
+		};
+
+//		srcfn.length = 3;
+
+		var res = alasql('SELECT * FROM ?', [srcfn]);
+//		console.log(res);
+		assert.deepEqual(res, [{i:0,i2:0},{i:1,i2:2},{i:2,i2:4}]);
+
+		done();
+	});
+	it("3. Calculate PI with streaming function", function(done){
+		var n = 10000;
+
+		var rndfn = function(i) {
+			if(i>=n) return; // EOF
+			return {x:Math.random(), y:Math.random()};
+		};
+		rndfn.dontcache = true;
+
+//		rndfn.length = 100;
+
+//		alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
+	var tm = Date.now();
+		var res = alasql('SELECT VALUE COUNT(*) FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
+//		console.log(Date.now() - tm);
+		var pi = res/n*4;
+//		console.log(res,pi);
+		assert( 2 < pi && pi < 4);
+
+		done();
+	});
+/*
+	it("4. Calculate PI", function(done){
+
+
+
 
 		var vtab = "ABCDEF\tsdfsdfsd\ndjlskjd\tsddsf\nsdsdffsd\tsddsfsd";
 		alasql("select [0], LEN([0]) from tab(?) where [1] like '%sd%'",[vtab]);
@@ -57,38 +101,6 @@ if(false) {
 		done();
 	});
 /*
-	it("1. Simple Date functions", function(done){
-
-		var srcfn = function(i) {
-			return {i:i, i2:i*2};
-		};
-
-		srcfn.length = 3;
-
-		var res = alasql('SELECT * FROM ?', [srcfn]);
-		console.log(res);
-		assert.deepEqual(res, [{i:0,i2:0},{i:1,i2:1},{i:2,i2:4}]);
-
-		done();
-	});
-
-	it("2. Calculate PI", function(done){
-		var rndfn = function(i) {
-			return {x:Math.random(), y:Math.random};
-		};
-
-		rndfn.length = 100;
-
-		alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
-
-		var res = alasql('SELECT VALUE COUNT(*) FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
-		var pi = res/rndfn.length;
-		console.log(pi);
-		assert( 3 < pi && pi < 4);
-
-		done();
-	});
-
 	it("3. AGGR functions", function(done){
 		var res = alasql('SELECT SUM(x) AS x, SUM(y) AS y, AGGR(x/y) AS z FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
 		console.log(res);

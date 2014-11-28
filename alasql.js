@@ -2735,6 +2735,12 @@ function queryfn(query,oldscope) {
 //		console.log(source, source.data);
 		if(typeof source.data == 'function') {
 			source.getfn = source.data;
+			source.dontcache = source.getfn.dontcache;
+
+//			var prevsource = query.sources[h-1];
+			if(source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
+				source.dontcache = false;
+			}
 			source.data = {};
 		}
 //
@@ -2750,6 +2756,10 @@ function queryfn(query,oldscope) {
 //	if(!oldscope) {
 		preIndex(query);
 //	}
+
+	query.sources.forEach(function(source) {
+			console.log(source.data);
+	});
 
 	// Prepare variables
 	query.data = [];
@@ -2833,7 +2843,7 @@ preIndex = function(query) {
 		// If there is indexation rule
 //console.log('preIndex', source);
 
-		if(source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
+		if(k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
 			if(query.database.tables[source.tableid]) {
 				if(!query.database.tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
@@ -2853,8 +2863,8 @@ preIndex = function(query) {
 				var dataw;
 //				while(source.getfn i<ilen) {
 
-				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || i<ilen) {
-					if(source.getfn && !source.getfn.dontcache) source.data[i] = dataw;
+				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
+					if(source.getfn && !source.dontcache) source.data[i] = dataw;
 //					scope[tableid] = dataw;
 
 //				for(var i=0, ilen=source.data.length; i<ilen; i++) {
@@ -2893,7 +2903,14 @@ preIndex = function(query) {
 				// Prepare scope
 				var scope = {};
 				// Walking on each source line
-				for(var i=0, ilen=source.data.length; i<ilen; i++) {
+				var i = 0;
+				var ilen = source.data.length;
+				var dataw;
+//				while(source.getfn i<ilen) {
+
+				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
+					if(source.getfn && !source.dontcache) source.data[i] = dataw;
+//				for(var i=0, ilen=source.data.length; i<ilen; i++) {
 					scope[source.alias || source.tableid] = source.data[i];
 					// Create index entry
 					var addr = source.wxleftfn(scope, query.params, alasql);
@@ -2902,6 +2919,7 @@ preIndex = function(query) {
 						group = source.ix [addr] = []; 
 					}
 					group.push(source.data[i]);
+					i++;
 				}
 //					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`'+source.onwherefns)] = source.ix;
 				query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')] = source.ix;
@@ -2920,13 +2938,31 @@ preIndex = function(query) {
 			}		
 
 		// If there is no any optimization than apply srcwhere filter
-		} else if(source.srcwherefns) {
+		} else if(source.srcwherefns && !source.dontcache) {
 			if(source.data) {
 				var scope = {};
+				// TODO!!!!! Data as Function
+
 				source.data = source.data.filter(function(r) {
 					scope[source.alias] = r;
 					return source.srcwherefn(scope, query.params, alasql);
 				});
+
+				var scope = {};
+				var i = 0;
+				var ilen = source.data.length;
+				var dataw;
+				var res = [];
+//				while(source.getfn i<ilen) {
+
+				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
+					if(source.getfn && !source.dontcache) source.data[i] = dataw;
+					scope[source.alias] = r;
+					if(source.srcwherefn(scope, query.params, alasql)) res.push(dataw);
+					i++;
+				}
+				source.data = res;
+
 			} else {
 				source.data = [];
 			};
@@ -2971,7 +3007,7 @@ function doJoin (query, scope, h) {
 
 //		if(source.joinmode == "LEFT" || source.joinmode == "INNER" || source.joinmode == "RIGHT"
 //			|| source.joinmode == "OUTER" || source.joinmode == "SEMI") {
-		if(source.joinmode != "ANTI") {
+		if(true) {//source.joinmode != "ANTI") {
 
 			// if(nextsource && nextsource.joinmode == "RIGHT") {
 			// 	if(!nextsource.rightdata) {
@@ -2999,7 +3035,7 @@ function doJoin (query, scope, h) {
 			var ilen=data.length;
 			var dataw;
 			while((dataw = data[i]) || (!opt && (source.getfn && (dataw = source.getfn(i)))) || (i<ilen) ) {
-				if(!opt && source.getfn && !source.getfn.dontcache) data[i] = dataw;
+				if(!opt && source.getfn && !source.dontcache) data[i] = dataw;
 //console.log(h, i, dataw);
 				scope[tableid] = dataw;
 				// Reduce with ON and USING clause
@@ -3008,7 +3044,7 @@ function doJoin (query, scope, h) {
 					if(source.onmiddlefn(scope, query.params, alasql)) {
 						// Recursively call new join
 //						if(source.joinmode == "LEFT" || source.joinmode == "INNER" || source.joinmode == "OUTER" || source.joinmode == "RIGHT" ) {
-						if(source.joinmode != "SEMI") { 
+						if(source.joinmode != "SEMI" && source.joinmode != "ANTI") { 
 //							console.log(scope);
 							doJoin(query, scope, h+1);
 						}
@@ -3044,24 +3080,31 @@ function doJoin (query, scope, h) {
 
 			if(nextsource.joinmode == "OUTER" || nextsource.joinmode == "RIGHT" 
 				|| nextsource.joinmode == "ANTI") {
-		
+
+
 				scope[source.alias] = {};
 			
 				var j = 0;
 				var jlen = nextsource.data.length;
-				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(i))) || j<jlen) {
-					if(nextsource.getfn && !nextsource.getfn.dontcache) nextsource.data[j] = dataw;
+				var dataw;
+				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(j))) || (j<jlen)) {
+					if(nextsource.getfn && !nextsource.dontcache) nextsource.data[j] = dataw;
 
 					if(!dataw._rightjoin) {
 						scope[nextsource.alias] = dataw;
 						doJoin(query, scope, h+2);
-						dataw._rightjoin = undefined;
+					} else {
+						//dataw._rightjoin = undefined;	
+						delete dataw._rightjoin;					
 					}
 					j++;
 				}
+//				console.table(nextsource.data);
+//				debugger;	
 
 			};
 		};
+
 
 		scope[tableid] = undefined;
 
@@ -4950,6 +4993,8 @@ stdlib.ROUND = function(s,d) {
 		return 'Math.round('+s+')';
 	}
 }
+alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
+
 stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
 stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE

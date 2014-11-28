@@ -1,7 +1,9 @@
 # Changelog
 
 ### 0.0.27 (27.11.2014 - )
-* Function as a source of data for FROM ?
+* Function as a source of data for FROM ? AND JOIN ?
+* Virtualization of source
+* Query as a source in joins
 
 
 ### 0.0.26 (26.11.2014 - 26.11.2014)
