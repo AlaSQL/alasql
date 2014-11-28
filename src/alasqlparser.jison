@@ -397,6 +397,8 @@ IntoClause
 	: {$$ = null}
 	| INTO Table
 		{$$ = {into: $2} }
+	| INTO FuncValue
+		{$$ = {into: $2} }
 	;
 
 FromClause
@@ -436,6 +438,12 @@ FromTable
 		{ $$ = $1; $1.as = $3; }
 	| ParamValue
 		{ $$ = $1; $1.as = 'default'; }
+	| FuncValue
+		{ $$ = $1; $1.as = 'default'; }
+	| FuncValue Literal
+		{ $$ = $1; $1.as = $2; }
+	| FuncValue AS Literal
+		{ $$ = $1; $1.as = $3; }
 	;
 
 Table
@@ -472,6 +480,12 @@ JoinTableAs
 		{ $$ = {select: $1, as: $4} ; }
 	| LPAR Select RPAR AS Literal
 		{ $$ = {select: $1, as: $5 } ; }
+	| FuncValue
+		{ $$ = {func:$1, as:'default'}; }
+	| FuncValue Literal
+		{ $$ = {func:$1, as: $2}; }
+	| FuncValue AS Literal
+		{ $$ = {func:$1, as: $3}; }
 	;
 
 JoinMode
@@ -986,6 +1000,16 @@ Insert
 	| INSERT INTO Table LPAR ColumnsList RPAR Select
 		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
 	;
+/*
+TableParamFunc
+	: Table
+		{ $$ = $1; }
+	| ParamValue
+		{ $$ = $1; }
+	| FuncValue
+		{ $$ = $1; }
+	;
+*/
 
 ValuesListsList
 	: LPAR ValuesList RPAR

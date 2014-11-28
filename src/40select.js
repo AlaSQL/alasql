@@ -135,12 +135,25 @@ yy.Select.prototype.compile = function(databaseid) {
 	// SELECT INTO
 //	console.log(this.into);
 	if(this.into) {
-		query.intofns = 
-		'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
-		'[\''+this.into.tableid+'\'].data='+
-		'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
-		'[\''+this.into.tableid+'\'].data.concat(this.data)';
+		if(this.into instanceof Table) {
+			query.intofns = 
+			'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
+			'[\''+this.into.tableid+'\'].data='+
+			'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
+			'[\''+this.into.tableid+'\'].data.concat(this.data)';
+		} else if (this.into instanceof yy.FuncValue) {
+			query.intofns = 'alasql.into[\''+this.into.funcid+'\'](';
+			if(this.into.args && this.into.args.length>0 ) 	
+				query.intofns += this.into.args.map(function(arg){
+					return arg.toJavaScript();
+				}).join(',');	
+			query.intofns += ')';	
+
+		} else if (this.into instanceof yy.ParamValue) {
+			query.intofns = 'params[\''+this.into.param+"\']";	
+		}
 		query.intofn = new Function(query.intofns); 
+
 	}
 //console.log(query);
 

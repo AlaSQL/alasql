@@ -29,6 +29,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 			} else if(fr instanceof yy.ParamValue) {
 
+			} else if(fr instanceof yy.FuncValue) {
+
 			} else {
 				throw new Error('Unknown type of FROM clause');
 			};
@@ -56,6 +58,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 			} else if(jn.select) {
 
 			} else if(jn.param) {
+
+			} else if(jn.func) {
 
 			} else {
 				throw new Error('Unknown type of FROM clause');

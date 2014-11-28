@@ -453,6 +453,8 @@ yy.Select.prototype.compileFrom = function(query) {
 			query.aliases[alias] = {type:'subquery'};
 		} else if(tq instanceof yy.ParamValue) {
 			query.aliases[alias] = {type:'paramvalue'};
+		} else if(tq instanceof yy.FuncValue) {
+			query.aliases[alias] = {type:'paramvalue'};
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -487,6 +489,16 @@ yy.Select.prototype.compileFrom = function(query) {
 		} else if(tq instanceof yy.ParamValue) {
 			source.datafn = new Function('query,params',
 				"return alasql.prepareFromData(params['"+tq.param+"']);");
+		} else if(tq instanceof yy.FuncValue) {
+			var s = "return alasql.from['"+tq.funcid+"'](";
+			if(tq.args && tq.args.length>0) {
+				s += tq.args.map(function(arg){
+					return arg.toJavaScript();
+				}).join(',');
+			}
+			s += ');';
+			source.datafn = new Function('query,params',s);
+
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -506,7 +518,15 @@ alasql.prepareFromData = function(data) {
 		for(var i=0, ilen=res.length; i<ilen;i++) {
 			res[i] = [res[i]];
 		}
+	} else if(typeof data == 'object' && !(data instanceof Array)) {
+//	} else if(typeof data == 'object' && !(typeof data.length == 'undefined')) {
+		res = [];
+		for(var key in data) {
+			if(data.hasOwnProperty(key)) res.push([key,data[key]]);
+		};
+//		console.log(res);
 	};
+//	console.log(typeof data);
 	return res;
 };
 
