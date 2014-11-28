@@ -15,7 +15,10 @@ describe('Test 143 streamfn', function() {
 	it("3. INNER JOIN on stream", function(done){
 
 		test143(true);
+		alasql.databases[alasql.useid].dbversion++
 		test143(false);
+		alasql.databases[alasql.useid].dbversion++
+//		test143(true);
 //		test143(false);
 //		test143(true);
 
@@ -37,7 +40,7 @@ describe('Test 143 streamfn', function() {
 			
 			var myfn = function(i) {
 				nc1++;
-				if(i>2) return;
+				if(i>10) return;
 				return {a:i, b:i+2};
 			};
 			myfn.dontcache = dontcache;
@@ -45,7 +48,7 @@ describe('Test 143 streamfn', function() {
 
 			var myfn2 = function(i) {
 				nc2++;
-				if(i>2) return;
+				if(i>10) return;
 				for(var k=0;k<2000;k++) {
 					Math.random();
 				}

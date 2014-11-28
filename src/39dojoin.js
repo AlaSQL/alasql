@@ -43,17 +43,19 @@ function doJoin (query, scope, h) {
 			var opt = false;
 
 			// Reduce data for looping if there is optimization hint
-			if(source.joinmode != "RIGHT" && source.joinmode != "OUTER" && source.joinmode != "ANTI" && source.optimization == 'ix') {
-				data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
-				opt = true;
-//				console.log(source.onleftfn(scope, query.params, alasql));
-//				console.log(opt, data, data.length);
+			if(!source.getfn || (source.getfn && !source.dontcache)) {
+				if(source.joinmode != "RIGHT" && source.joinmode != "OUTER" && source.joinmode != "ANTI" && source.optimization == 'ix') {
+					data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
+					opt = true;
+	//				console.log(source.onleftfn(scope, query.params, alasql));
+//					console.log(opt, data, data.length);
+				}
 			}
-
 			// Main cycle
 			var i = 0;
 			var ilen=data.length;
 			var dataw;
+//			console.log(h,opt,source.data,i,source.dontcache);
 			while((dataw = data[i]) || (!opt && (source.getfn && (dataw = source.getfn(i)))) || (i<ilen) ) {
 				if(!opt && source.getfn && !source.dontcache) data[i] = dataw;
 //console.log(h, i, dataw);

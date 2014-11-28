@@ -43,9 +43,9 @@ function queryfn(query,oldscope) {
 		preIndex(query);
 //	}
 
-	query.sources.forEach(function(source) {
-			console.log(source.data);
-	});
+	// query.sources.forEach(function(source) {
+	// 		console.log(source.data);
+	// });
 
 	// Prepare variables
 	query.data = [];
