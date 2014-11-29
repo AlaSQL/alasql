@@ -70,7 +70,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 //				var table = db.tables[tableid];
 //	console.log('table1', db, self);
 //console.log(111, table.columns);
-				if(table.columns && table.columns.length > 0) {
+				if((values instanceof Array) && table.columns && table.columns.length > 0) {
 					table.columns.forEach(function(col, idx){
 
 						var q = '\''+col.columnid +'\':';

@@ -5,7 +5,6 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(false){
 describe('Test 135 a la NoSQL', function() {
 
 	var test135;
@@ -27,4 +26,3 @@ describe('Test 135 a la NoSQL', function() {
 	});
 
 });
-}

@@ -5,6 +5,9 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
+
+// Only for browser
+if(typeof exports != 'object') {
 describe('Test 145 - localStorage', function() {
 
 	it("1. window object", function(done){
@@ -42,28 +45,39 @@ describe('Test 145 - localStorage', function() {
 	});
 
 	it("2. localStorage as a table name with key, value", function(done){
-		alasql.from.localStorage = function () {
-			return function(i) {
+		var lsfn = function(i) {
 				if(i >= localStorage.length) return;
 				var k = localStorage.key(i);
-				return [k,JSON.parse(localStorage.getItem(k))];
-			}
+				var v;
+				try {
+					v = JSON.parse(localStorage.getItem(k));
+				} catch(err){}
+				return [k,v];
+			};
+
+		alasql.from.localStorage = function () {
+			return lsfn;
 		};
 		var res = alasql('SELECT COLUMN [1] FROM localStorage() WHERE [0] LIKE "one"');
 		assert.deepEqual(res,[[{a:1,b:2},{a:2,b:4}, {a:3,b:6}]]);
+
+		var res = alasql('SELECT COLUMN [1] FROM ? WHERE [0] LIKE "one"',[lsfn]);
+		assert.deepEqual(res,[[{a:1,b:2},{a:2,b:4}, {a:3,b:6}]]);
+
 //		console.log(res);
-
-
-		alasql.into.localStorage = function () {
-			return function(row) {
-				console.log('save to LS');
-				localStorage[row[0]] = JSON.stringify(row[1]);
-			}
+if(false) {
+//console.log(1);
+		alasql.into.localStorage = function (r,i) {
+			console.log('save to LS',r,i);
+			localStorage[r[0]] = JSON.stringify(r[1]);
 		};
 
 //		alasql('INSERT INTO localStorage() VALUES ("mytable.1",@[1,2,3]), ("mytable.2",@{a:1,b:2})'); // key=value
 
-		alasql('SELECT * INTO localStorage() FROM ?',[[1,"wind"],[2,"fire"]]);
+		var res = alasql('SELECT * INTO localStorage() FROM ?',[[1,"wind"],[2,"fire"]]);
+		console.log(res);
+		console.log(localStorage[1],localStorage[2]);
+};
 		done();
 	});
 if(false) {
@@ -111,4 +125,6 @@ if(false) {
 	});
 };
 });
+
+}
 

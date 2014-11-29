@@ -22,7 +22,6 @@ describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function() {
 		done();
 	});
 
-if(false) {
 	it('UNIQUE INDEX-1 before insert', function(done){
 		
 		alasql('create table two (a int)');
@@ -38,7 +37,6 @@ if(false) {
 
 		done();
 	});
-}
 
 	it('UNIQUE INDEX-2 after insert', function(done){
 		

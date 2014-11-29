@@ -28,14 +28,14 @@ describe('Test 132 Alasql + NoSQL', function() {
 
 	it("3. SELECT", function(done) {
 		var res1 = alasql('SELECT * FROM one WHERE b IN (2,3)');
-//		var res2 = alasql('SELECT * FROM one WHERE @{b:@[2,3]}');
-//		var res3 = alasql.tables.one.find({b:[2,3]});
-//		assert.deepEqual(res1,res2);
-//		assert.deepEqual(res1,res3);
+		var res2 = alasql('SELECT * FROM one WHERE @{b:@[2,3]}');
+		var res3 = alasql.tables.one.find({b:[2,3]});
+		assert.deepEqual(res1,res2);
+		assert.deepEqual(res1,res3);
 
 		var res1 = alasql('SELECT (a = 2) AS alpha FROM one WHERE b IN (2,3)');
-//		var res2 = alasql('SELECT @{a:2} AS alpha FROM one WHERE @{b:[2,3]}');
-//		assert.deepEqual(res1,res2);
+		var res2 = alasql('SELECT @{a:2} AS alpha FROM one WHERE @{b:[2,3]}');
+		assert.deepEqual(res1,res2);
 
 		done();
 	});
@@ -48,16 +48,16 @@ describe('Test 132 Alasql + NoSQL', function() {
 	});
 
 	it("5. UPDATE", function(done) {
-//		alasql('UPDATE one SET {a:2} WHERE {a:3}');
+		alasql('UPDATE one SET {a:2} WHERE {a:3}');
 		alasql('UPDATE one SET a=2 WHERE a=3');
-//		alasql.tables.one.update({a:2}, {a:3});
+		alasql.tables.one.update({a:2}, {a:3});
 		done();
 	});
 
 	it("6. UPDATE", function(done) {
-//		alasql('DELETE FROM one WHERE @{a:2}');
+		alasql('DELETE FROM one WHERE @{a:2}');
 		alasql('DELETE FROM one WHERE a=2');
-//		alasql.tables.one.remove({a:2})
+		alasql.tables.one.remove({a:2})
 		done();
 	});
 

@@ -102,7 +102,7 @@ describe('Test 143 streamfn', function() {
 
 	//		console.log(res);
 			tm = Date.now() - tm;
-			console.log(tm);
-			console.log(dontcache, nc1,nc2, nc3, tm/nc2);
+//			console.log(tm);
+//			console.log(dontcache, nc1,nc2, nc3, tm/nc2);
 		}
 

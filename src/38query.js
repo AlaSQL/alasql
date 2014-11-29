@@ -85,7 +85,10 @@ function queryfn(query,oldscope) {
 	if(query.orderfn) query.data = query.data.sort(query.orderfn);
 
 	if(query.intofn) {
-		query.intofn();
+		for(var i=0,ilen=query.data.length;i<ilen;i++){
+			query.intofn(query.data[i],i);
+		}
+//		console.log(query.intofn);
 		return query.data.length;
 	} else {
 		return query.data;
@@ -243,7 +246,7 @@ preIndex = function(query) {
 
 				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
 					if(source.getfn && !source.dontcache) source.data[i] = dataw;
-					scope[source.alias] = r;
+					scope[source.alias] = dataw;
 					if(source.srcwherefn(scope, query.params, alasql)) res.push(dataw);
 					i++;
 				}

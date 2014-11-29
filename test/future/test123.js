@@ -55,7 +55,6 @@ describe('Test 123 - SHOW DATABASES, TABLES, COLUMNS, INDEX, CREATE TABLE', func
 		done();
 	});
 
-if(false) {
 	it('5. SHOW INDEX', function(done){
 		alasql('insert into one values (1,1,1), (2,2,2), (4,4,4), (5,5,5), (6,6,6)');
 		alasql('insert into two values (1),(2),(3),(6)');
@@ -81,7 +80,6 @@ if(false) {
 		assert(false);
 		done();
 	});
-}
 
 
 	it('99.Clear database', function(done){

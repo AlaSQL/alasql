@@ -5,7 +5,6 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(false) {
 describe('Test 136 get JSON property', function() {
 
 	it("1. Get element of object and Array", function(done){
@@ -22,5 +21,3 @@ describe('Test 136 get JSON property', function() {
 	});
 
 });
-
-}

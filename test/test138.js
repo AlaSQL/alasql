@@ -98,7 +98,7 @@ if(false) {
 
 	it("4. CREATE TABLE for JSON objects", function(done){
 
-		alasql('CREATE TABLE three (a JSON); INSERT INTO one VALUES (@{v:10})');
+		alasql('CREATE TABLE three (a JSON); INSERT INTO three VALUES (@{v:10})');
 		var res = alasql('SELECT VALUE a FROM three');
 		assert.deepEqual(res, {v:10});
 

@@ -4,7 +4,7 @@ if(typeof exports === 'object') {
 };
 
 describe('Test 116', function() {
-	it('0.1. Single statement CREATE, USE and DROP DATABASE', function(done){
+	it('1. Single statement CREATE, USE and DROP DATABASE', function(done){
 		alasql('create database test116');
 		assert(!!alasql.databases.test116);
 		alasql('use test116');
@@ -15,7 +15,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('0.2. Single statement CREATE, USE and DROP CREATE TABLE ', function(done){
+	it('2. Single statement CREATE, USE and DROP CREATE TABLE ', function(done){
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -28,7 +28,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('0.3. Single statement CREATE, USE and DROP CREATE TABLE ', function(done){
+	it('3. Single statement CREATE, USE and DROP CREATE TABLE ', function(done){
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -44,7 +44,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('0.4. Compile and reset cache', function(done){
+	it('4. Compile and reset cache', function(done){
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -80,7 +80,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('0.5. INSERT INTO one SELECT ', function(done){
+	it('5. INSERT INTO one SELECT ', function(done){
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -93,7 +93,7 @@ describe('Test 116', function() {
 		done();
 	});	
 
-	it('0.6. SELECT * INTO one ', function(done){
+	it('6. SELECT * INTO one ', function(done){
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -105,9 +105,11 @@ describe('Test 116', function() {
 		alasql('insert into two (a) values (?)', [20]);
 		var res = alasql('select * into two from one');
 		assert(res == 2);
+		assert(alasql.databases.test116.tables.one.data.length == 2);
+		assert(alasql.databases.test116.tables.two.data.length == 3);
 		var res = alasql.value('select sum(a) from two');	
-		assert(res == 35);
 //		console.log(res);
+		assert(res == 35);
 		alasql('drop database test116');	
 		done();
 	});	

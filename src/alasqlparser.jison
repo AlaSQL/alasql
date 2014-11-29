@@ -1016,10 +1016,14 @@ ValuesListsList
 		{ $$ = [$2]; }
 	| AT Json
 		{ $$ = [$2]; }
+	| ParamValue
+		{ $$ = [$1]; }
 	| ValuesListsList COMMA LPAR ValuesList RPAR
 		{$$ = $1; $1.push($4)}
 	| ValuesListsList COMMA AT Json
 		{$$ = $1; $1.push($4)}
+	| ValuesListsList COMMA ParamValue
+		{$$ = $1; $1.push($3)}
 	;
 
 ValuesList
