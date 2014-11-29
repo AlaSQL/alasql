@@ -11,6 +11,9 @@
 alasql.parser = parser;
 alasql.parse = parser.parse.bind(parser); // Shortcut
 
+// Database Engines
+alasql.engines = {};
+
 // Databases
 alasql.databases = {};
 alasql.databasenum = 0; // Current database

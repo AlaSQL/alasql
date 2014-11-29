@@ -26,6 +26,27 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	return res;
 };
 
+// CREATE DATABASE databaseid
+yy.AttachDatabase = function (params) { return yy.extend(this, params); };
+yy.AttachDatabase.prototype.toString = function() {
+	var s = K('ATTACH')+' ';
+	if(this.engineid) s += L(this.engineid);
+	s += K('DATABASE')+' '+L(this.databaseid);
+	if(this.as) s+= K('AS')+' '+L(this.as);
+	return s;
+}
+//yy.CreateDatabase.prototype.compile = returnUndefined;
+yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
+	// console.log(alasql.useid, databaseid, this.databaseid);
+	// console.trace();
+	if(!alasql.engines[this.engineid]) {
+		throw new Error('Engine "'+this.engineid+'" is not defined.');
+	};
+	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, cb);
+	return res;
+};
+
+
 // USE DATABSE databaseid
 // USE databaseid
 yy.UseDatabase = function (params) { return yy.extend(this, params); };

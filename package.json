@@ -1,7 +1,7 @@
 {
   "name": "alasql",
-  "description": "Alasql.js - pure JavaScript in-memory client-side fast SQL database with NoSQL functionality",
-  "version": "0.0.27",
+  "description": "Alasql.js - fast JavaScript SQL database",
+  "version": "0.0.28",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
@@ -34,6 +34,7 @@
     "javascript",
     "parser",
     "database",
+    "DBMS",
     "data",
     "query"
   ],

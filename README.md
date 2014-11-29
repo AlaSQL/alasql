@@ -1,10 +1,10 @@
 # Alasql.js - fast JavaScript client-side SQL database
 
-Version: 0.0.27 Date: November 28, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.28 Date: November 29, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight client-side SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. 
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. 
 
-Alasql is easy to use! Add *only one* file [alasql.min.js](alasql.min.js) (170Kb) to your project. 
+Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (170Kb) to your project. 
 
 ```html
     <script src="alasql.min.js"></script>  

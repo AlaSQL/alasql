@@ -51,6 +51,7 @@
 'AS'                                      		return 'AS'
 'ASSERT'                                      	return 'ASSERT'
 'ASC'                                      		return 'DIRECTION'
+'ATTACH'                                      	return 'ATTACH'
 'AUTO_INCREMENT'                                return 'AUTO_INCREMENT'
 'AVG'                                      		return 'AVG'
 
@@ -272,6 +273,7 @@ Statement
 
 	: { $$ = null; }
 	| AlterTable	
+	| AttachDatabase	
 	| CreateDatabase
 	| CreateIndex
 	| CreateTable
@@ -1248,9 +1250,19 @@ RenameTable
 
 /* DATABASES */
 
+AttachDatabase
+	: ATTACH Literal DATABASE Literal
+		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2 });}
+	| ATTACH Literal DATABASE Literal AS Literal
+		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2, as:$6 });}
+	;
+
+
 CreateDatabase
 	: CREATE DATABASE Literal
 		{ $$ = new yy.CreateDatabase({databaseid:$3 });}
+	| CREATE Literal DATABASE Literal
+		{ $$ = new yy.CreateDatabase({databaseid:$4, engineid:$2 });}
 	;
 
 UseDatabase
