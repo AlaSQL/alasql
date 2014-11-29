@@ -1,9 +1,14 @@
 # Changelog
 
-### 0.0.27 (27.11.2014 - )
+### 0.0.28 (29.11.2014 - )
+
+
+### 0.0.27 (27.11.2014 - 29.11.2014)
 * Function as a source of data for FROM ? AND JOIN ?
 * Virtualization of source
 * Query as a source in joins
+* Multiple databases
+* SELECT * INTO into-function() FROM from-function() 
 
 
 ### 0.0.26 (26.11.2014 - 26.11.2014)

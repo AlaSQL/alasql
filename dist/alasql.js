@@ -1,8 +1,8 @@
 //
 // alasql.js
 // Alasql - JavaScript SQL database
-// Date: 26.11.2014
-// Version: 0.0.26
+// Date: 29.11.2014
+// Version: 0.0.27
 // (ñ) 2014, Andrey Gershun
 //
 
@@ -46,7 +46,7 @@ alasql = function(sql, params, cb, scope) {
 	return alasql.exec(sql, params, cb, scope);
 };
 
-alasql.version = "0.0.26";
+alasql.version = "0.0.29";
 
 
 

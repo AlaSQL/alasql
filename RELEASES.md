@@ -1,15 +1,21 @@
 ## RELEASES PLAN
 
-#### Version 0.0.27 - "Async"
+
+
+#### Version 0.0.28 - "Async"
+
+* Async version of Alasql
+
+
+#### Version 0.0.29 - "OTHER FUNCTIONALITY"
+
 
 localStorage
 source as a function
-Async version of Alasql
 IndexedDB
 MongoDb and other key-value storages
 
 
-#### Version 0.0.27 - "Two databases"
 
 alasql(sql,params,cb);
 

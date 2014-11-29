@@ -29,7 +29,11 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-### New!
+## Future version 0.0.28 - Async
+
+Now I am hardly working on async version of Alasql to implement IndexedDB and WebSQL support.
+
+### Use JavaScript objects and functions in SQL
 * [Work with JSON objects in SQL](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
 * SlideShare [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
 
