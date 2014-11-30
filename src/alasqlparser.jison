@@ -1286,6 +1286,8 @@ UseDatabase
 DropDatabase
 	: DROP DATABASE Literal
 		{ $$ = new yy.DropDatabase({databaseid: $3 });}	
+	| DROP Literal DATABASE Literal
+		{ $$ = new yy.DropDatabase({databaseid: $4, engineid:$2 });}	
 	;
 
 /* INDEXES */

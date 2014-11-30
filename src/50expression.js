@@ -49,7 +49,10 @@ yy.Literal.prototype.toString = function() {
 
 yy.Join = function (params) { return yy.extend(this, params); }
 yy.Join.prototype.toString = function() {
-	return NL()+ID()+K('JOIN')+this.table.toString();
+	var s = NL()+ID();
+	if(this.joinmode) s += K(this.joinmode)+' ';
+	s += K('JOIN')+this.table.toString();
+	return s;
 }
 
 //yy.Join.prototype.toJavaScript = function(context, tableid) {

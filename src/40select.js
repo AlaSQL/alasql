@@ -23,7 +23,7 @@ yy.Select.prototype.toString = function() {
 //		console.log(col);
 		if(typeof col.as != "undefined") s += ' '+K('AS')+' '+L(col.as);
 		return s;
-	}).join(',');
+	}).join(', ');
 
 	if(this.from) {
 		s += NL()+ID()+K('FROM')+' '+this.from.map(function(f){
@@ -36,7 +36,9 @@ yy.Select.prototype.toString = function() {
 
 	if(this.joins) {
 		s += this.joins.map(function(jn){
-			var ss = NL()+ID()+jn.joinmode +' '+K('JOIN')+' ';
+			var ss = NL()+ID();
+			if(jn.joinmode) ss += K(jn.joinmode)+' ';
+			ss += K('JOIN')+' ';
 			ss += jn.table.toString();
 			if(jn.using) ss += ' '+K('USING')+' '+jn.using.toString();
 			if(jn.on) ss += ' '+K('ON')+' '+jn.on.toString();

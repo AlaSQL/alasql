@@ -10,7 +10,7 @@
 yy.Statements = function(params) { return yy.extend(this, params); };
 
 yy.Statements.prototype.toString = function () {
-	return this.statements.map(function(st){return st.toString()}).join(';');
+	return this.statements.map(function(st){return st.toString()}).join(';'+NL());
 };
 
 // Compile array of statements into single statement

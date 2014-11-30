@@ -2,16 +2,19 @@
 
 <pre><code><div id='sql'></div></code></pre>
 
+<pre><code><div id='sql1'></div></code></pre>
 <div id='res'></div>
 
 
 <script src="../alasql.js"></script>
 <script>
-	var sql = "SELECT * FROM one WHERE a > 10";
-	var ast = alasql.parse(sql);
-	alasql.pretty = true;
-	var html = ast.toString();
+	var sql = "SELECT *,b,c.* FROM one LEFT JOIN three USING  bb WHERE a>10; create WebSQL database one as two; drop database one";
+	var sql1 = alasql.pretty(sql,true);
+	var html = alasql.pretty(sql);
+
+
 	document.getElementById('sql').textContent = sql;
+	document.getElementById('sql1').textContent = sql1;
 	document.getElementById('res').innerHTML = html;
 	console.log(sql);
 	console.log(html);

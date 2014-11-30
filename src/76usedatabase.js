@@ -10,7 +10,14 @@
 // CREATE DATABASE databaseid
 yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
-	return 'CREATE DATABASE '+this.databaseid;
+	var s = K('CREATE'); 
+	if(this.engineid) s+=' '+L(this.engineid);
+	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	if(this.args && this.args.length > 0) { 
+		s += '('+this.args.map(function(arg){ return arg.toString()}).join(', ')+')';
+	}
+	if(this.as) s += ' '+K('AS')+' '+L(this.as);
+	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
@@ -40,10 +47,10 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 // CREATE DATABASE databaseid
 yy.AttachDatabase = function (params) { return yy.extend(this, params); };
 yy.AttachDatabase.prototype.toString = function() {
-	var s = K('ATTACH')+' ';
-	if(this.engineid) s += L(this.engineid);
-	s += K('DATABASE')+' '+L(this.databaseid);
-	if(this.as) s+= K('AS')+' '+L(this.as);
+	var s = K('ATTACH');
+	if(this.engineid) s += ' '+L(this.engineid);
+	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	if(this.as) s+= ' '+K('AS')+' '+L(this.as);
 	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
@@ -62,7 +69,7 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 // USE databaseid
 yy.UseDatabase = function (params) { return yy.extend(this, params); };
 yy.UseDatabase.prototype.toString = function() {
-	return 'USE DATABASE '+this.databaseid;
+	return K('USE') +' '+K('DATABASE')+' '+L(this.databaseid);
 }
 //yy.UseDatabase.prototype.compile = returnUndefined;
 yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
@@ -79,7 +86,7 @@ yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
 // DROP DATABASE databaseid
 yy.DropDatabase = function (params) { return yy.extend(this, params); }
 yy.DropDatabase.prototype.toString = function() {
-	return 'DROP DATABASE '+this.databaseid;
+	return K('DROP')+' '+K('DATABASE')+' '+L(this.databaseid);
 }
 //yy.DropDatabase.prototype.compile = returnUndefined;
 yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
