@@ -22,30 +22,34 @@ yy.ColumnDef.prototype.toString = function() {
 
 yy.CreateTable = function (params) { return yy.extend(this, params); }
 yy.CreateTable.prototype.toString = function() {
-	var s = 'CREATE';
-	if(this.temporary) s+=' TEMPORARY';
-	s += ' TABLE';
-	if(this.ifnotexists) s += ' IF NOT EXISTS';
+	var s = K('CREATE');
+	if(this.temporary) s+=' '+K('TEMPORARY');
+	s += ' '+K('TABLE');
+	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
-	if(this.as) s += ' AS '+this.as;
+	if(this.as) s += ' '+K('AS')+' '+L(this.as);
 	else { 
 		var ss = this.columns.map(function(col){
 			return col.toString();
 		});
-		s += ' ('+ss.join(',')+')';
+		s += ' ('+NL()+ID()+ss.join(','+NL()+ID())+')';
 	}
 	return s;
 }
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
-yy.CreateTable.prototype.execute = function (databaseid) {
+yy.CreateTable.prototype.execute = function (databaseid, cb) {
 //	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
 	var tableid = this.table.tableid;
 	if(!tableid) {
 		throw new Error('Table name is not defined');
+	}
+
+	if(db.engineid) {
+		alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
 	}
 //	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;

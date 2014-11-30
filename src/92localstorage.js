@@ -98,6 +98,23 @@ LS.showDatabases = function(like, cb) {
 	return res;
 };
 
+LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	var tb = LS.get(lsdbid+'.'+tableid);
+	var res = 1;
+
+	if(tb && !ifnotexists) {
+		throw new Error('Table "'+tableid+'" alsready exists in localStorage database "'+lsdbid+'"');
+	};
+	var lsdb = LS.get(lsdbid);
+	lsdb.tables[tableid] = true;
+	LS.set(lsdbid, lsdb);
+	LS.set(lsdbid+'.'+tableid, []);
+
+	if(cb) cb(res);
+	return res;
+}
+
 LS.fromTable = function(databaseid, tableid, cb) {
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);

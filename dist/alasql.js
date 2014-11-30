@@ -5435,30 +5435,34 @@ yy.ColumnDef.prototype.toString = function() {
 
 yy.CreateTable = function (params) { return yy.extend(this, params); }
 yy.CreateTable.prototype.toString = function() {
-	var s = 'CREATE';
-	if(this.temporary) s+=' TEMPORARY';
-	s += ' TABLE';
-	if(this.ifnotexists) s += ' IF NOT EXISTS';
+	var s = K('CREATE');
+	if(this.temporary) s+=' '+K('TEMPORARY');
+	s += ' '+K('TABLE');
+	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
-	if(this.as) s += ' AS '+this.as;
+	if(this.as) s += ' '+K('AS')+' '+L(this.as);
 	else { 
 		var ss = this.columns.map(function(col){
 			return col.toString();
 		});
-		s += ' ('+ss.join(',')+')';
+		s += ' ('+NL()+ID()+ss.join(','+NL()+ID())+')';
 	}
 	return s;
 }
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
-yy.CreateTable.prototype.execute = function (databaseid) {
+yy.CreateTable.prototype.execute = function (databaseid, cb) {
 //	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
 	var tableid = this.table.tableid;
 	if(!tableid) {
 		throw new Error('Table name is not defined');
+	}
+
+	if(db.engineid) {
+		alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
 	}
 //	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
@@ -6114,7 +6118,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 			return res.length;
 		}
 	} else if(this.default) {
-        var insertfn = new Function('db,params','db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;'); 
+		var insertfns = 'db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;';
+        var insertfn = new Function('db,params',insertfns); 
     } else {
     	throw new Error('Wrong INSERT parameters');
     }
@@ -7151,6 +7156,23 @@ LS.showDatabases = function(like, cb) {
 	if(cb) cb(res);
 	return res;
 };
+
+LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	var tb = LS.get(lsdbid+'.'+tableid);
+	var res = 1;
+
+	if(tb && !ifnotexists) {
+		throw new Error('Table "'+tableid+'" alsready exists in localStorage database "'+lsdbid+'"');
+	};
+	var lsdb = LS.get(lsdbid);
+	lsdb.tables[tableid] = true;
+	LS.set(lsdbid, lsdb);
+	LS.set(lsdbid+'.'+tableid, []);
+
+	if(cb) cb(res);
+	return res;
+}
 
 LS.fromTable = function(databaseid, tableid, cb) {
 	var lsdbid = alasql.databases[databaseid].lsdbid;

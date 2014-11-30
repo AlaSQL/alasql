@@ -150,7 +150,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 			return res.length;
 		}
 	} else if(this.default) {
-        var insertfn = new Function('db,params','db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;'); 
+		var insertfns = 'db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;';
+        var insertfn = new Function('db,params',insertfns); 
     } else {
     	throw new Error('Wrong INSERT parameters');
     }

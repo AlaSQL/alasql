@@ -1,0 +1,58 @@
+{
+  "name": "redis",
+  "version": "0.12.1",
+  "description": "Redis client library",
+  "keywords": [
+    "redis",
+    "database"
+  ],
+  "author": {
+    "name": "Matt Ranney",
+    "email": "mjr@ranney.com"
+  },
+  "main": "./index.js",
+  "scripts": {
+    "test": "node ./test.js"
+  },
+  "devDependencies": {
+    "metrics": ">=0.1.5",
+    "colors": "~0.6.0-1",
+    "underscore": "~1.4.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mranney/node_redis.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mranney/node_redis/issues"
+  },
+  "homepage": "https://github.com/mranney/node_redis",
+  "_id": "redis@0.12.1",
+  "_shasum": "64df76ad0fc8acebaebd2a0645e8a48fac49185e",
+  "_from": "redis@*",
+  "_npmVersion": "1.4.9",
+  "_npmUser": {
+    "name": "bryce",
+    "email": "bryce@ravenwall.com"
+  },
+  "maintainers": [
+    {
+      "name": "mjr",
+      "email": "mjr@ranney.com"
+    },
+    {
+      "name": "bryce",
+      "email": "bryce@ravenwall.com"
+    },
+    {
+      "name": "dtrejo",
+      "email": "david.daniel.trejo@gmail.com"
+    }
+  ],
+  "dist": {
+    "shasum": "64df76ad0fc8acebaebd2a0645e8a48fac49185e",
+    "tarball": "http://registry.npmjs.org/redis/-/redis-0.12.1.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/redis/-/redis-0.12.1.tgz"
+}
