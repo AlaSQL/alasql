@@ -51,9 +51,16 @@ yy.Select.prototype.compileJoins = function(query) {
 				'\' is not exists in database \''+source.databaseid)+'\'';
 			};
 			// source.data = query.database.tables[source.tableid].data;
-			source.datafn = function(query,params) {
-				return alasql.databases[source.databaseid].tables[source.tableid].data;
-			}
+			if(alasql.databases[source.databaseid].engineid) {
+				source.datafn = function(query,params) {
+					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
+						source.databaseid, tableid);
+				}				
+			} else {
+				source.datafn = function(query,params) {
+					return alasql.databases[source.databaseid].tables[source.tableid].data;
+				}
+			};
 
 		} else if(jn.select) {
 			source = {

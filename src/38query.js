@@ -103,6 +103,8 @@ function queryfn(query,oldscope) {
 		}
 //		console.log(query.intofn);
 		return query.data.length;
+	} else if(query.intoallfn) {
+		return query.intoallfn();	
 	} else {
 		return query.data;
 	}

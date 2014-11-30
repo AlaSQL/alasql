@@ -144,10 +144,14 @@ yy.Select.prototype.compile = function(databaseid) {
 //	console.log(this.into);
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
-			query.intofns = 
-			'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
-			'[\''+this.into.tableid+'\'].data.push(r);';
-
+			if((this.into.databaseid||databaseid).engineid) {
+				query.intoallfns = 'alasql.engines["'+(this.into.databaseid||databaseid).engineid+'"]'+
+					'.intoTable("'+this.into.databaseid||databaseid+'","'+this.into.tableid+'",query.data);';
+			} else {
+				query.intofns = 
+				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
+				'[\''+this.into.tableid+'\'].data.push(r);';
+			}
 		} else if (this.into instanceof yy.FuncValue) {
 			query.intofns = 'alasql.into[\''+this.into.funcid+'\'](';
 			var ss = ['r','i'];
@@ -161,7 +165,13 @@ yy.Select.prototype.compile = function(databaseid) {
 			query.intofns = 'params[\''+this.into.param+"\'](r)";	
 		};
 //		console.log(query.intofns);
-		query.intofn = new Function("r,i",query.intofns); 
+		if(query.intofns) {
+			query.intofn = new Function("r,i",query.intofns); 
+		};
+
+		if(query.intoallfns) {
+			query.intofn = new Function("query",query.intoallfns); 
+		}
 
 	}
 //console.log(query);

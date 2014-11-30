@@ -1224,10 +1224,14 @@ ColumnConstraint
 /* DROP TABLE */
 
 DropTable
-	: DROP TABLE IF EXISTS Table
-		{ $$ = new yy.DropTable({table:$5, ifexists:true}); }
-	| DROP TABLE Table
-		{ $$ = new yy.DropTable({table:$3}); }
+	: DROP TABLE IfExists Table
+		{ $$ = new yy.DropTable({table:$4}); yy.extend($$, $3); }
+	;
+
+IfExists
+	: { $$ = null; }
+	| IF EXISTS
+		{ $$ = {ifexists: true};}
 	;
 
 /* ALTER TABLE */
@@ -1261,12 +1265,12 @@ AttachDatabase
 
 
 CreateDatabase
-	: CREATE DATABASE Literal
-		{ $$ = new yy.CreateDatabase({databaseid:$3 });}
-	| CREATE Literal DATABASE Literal AsClause
-		{ $$ = new yy.CreateDatabase({databaseid:$4, engineid:$2, as:$5 }); }
-	| CREATE Literal DATABASE Literal LPAR ExprList RPAR AsClause
-		{ $$ = new yy.CreateDatabase({databaseid:$4, engineid:$2, args:$6, as:$8 }); }
+	: CREATE DATABASE IfNotExists Literal
+		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$4); }
+	| CREATE Literal DATABASE IfNotExists Literal AsClause
+		{ $$ = new yy.CreateDatabase({engineid:$2, databaseid:$5, as:$6 }); yy.extend($$,$4); }
+	| CREATE Literal DATABASE IfNotExists Literal LPAR ExprList RPAR AsClause
+		{ $$ = new yy.CreateDatabase({engineid:$2, databaseid:$5, args:$7, as:$9 }); yy.extend($$,$4); }
 	;
 
 AsClause
@@ -1284,10 +1288,10 @@ UseDatabase
 	;
 
 DropDatabase
-	: DROP DATABASE Literal
-		{ $$ = new yy.DropDatabase({databaseid: $3 });}	
-	| DROP Literal DATABASE Literal
-		{ $$ = new yy.DropDatabase({databaseid: $4, engineid:$2 });}	
+	: DROP DATABASE IfExists Literal
+		{ $$ = new yy.DropDatabase({databaseid: $4 }); yy.extend($$,$3); }	
+	| DROP Literal DATABASE IfExists Literal
+		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2 }); yy.extend($$,$4); }	
 	;
 
 /* INDEXES */
@@ -1311,6 +1315,10 @@ ShowDatabases
 		{ $$ = new yy.ShowDatabases();}
 	| SHOW DATABASES LIKE StringValue
 		{ $$ = new yy.ShowDatabases({like:$4});}
+	| SHOW Literal DATABASES
+		{ $$ = new yy.ShowDatabases({engineid:$2});}
+	| SHOW Literal DATABASES LIKE StringValue
+		{ $$ = new yy.ShowDatabases({engineid:$2, like:$5});}
 	;
 
 ShowTables

@@ -12,7 +12,9 @@ yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
 	var s = K('CREATE'); 
 	if(this.engineid) s+=' '+L(this.engineid);
-	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	s += ' '+K('DATABASE');
+	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
+	s += ' '+L(this.databaseid);
 	if(this.args && this.args.length > 0) { 
 		s += '('+this.args.map(function(arg){ return arg.toString()}).join(', ')+')';
 	}
@@ -30,7 +32,7 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 		});
 	};
 	if(this.engineid) {
-		var res = alasql.engines[this.engineid].createDatabase(this.databaseid, this.args, this.as, cb);
+		var res = alasql.engines[this.engineid].createDatabase(this.databaseid, this.args, this.ifnotexists, this.as, cb);
 		return res;
 	} else {
 		var dbid = this.databaseid;
@@ -86,10 +88,19 @@ yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
 // DROP DATABASE databaseid
 yy.DropDatabase = function (params) { return yy.extend(this, params); }
 yy.DropDatabase.prototype.toString = function() {
-	return K('DROP')+' '+K('DATABASE')+' '+L(this.databaseid);
+	var s = K('DROP');
+	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
+	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	return s;
 }
 //yy.DropDatabase.prototype.compile = returnUndefined;
 yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
+	if(this.engineid) {
+
+//		console.log(this,this.databaseid, this.ifexists);
+		return alasql.engines[this.engineid].dropDatabase(this.databaseid, this.ifexists, cb);
+	}
+
 	var dbid = this.databaseid;
 
 	if(dbid == alasql.DEFAULTDATABASEID) {

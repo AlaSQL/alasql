@@ -12,18 +12,24 @@ yy.ShowDatabases.prototype.toString = function() {
 	if(this.like) s += 'LIKE '+this.like.toString();
 	return s;
 }
-yy.ShowDatabases.prototype.execute = function (databaseid) {
-	var self = this;
-	var res = [];
-	for(dbid in alasql.databases) {
-		res.push({databaseid: dbid});
+yy.ShowDatabases.prototype.execute = function (databaseid,cb) {
+	if(this.engineid) {
+		return alasql.engines[this.engineid].showDatabases(this.like, cb);
+	} else {
+		var self = this;
+		var res = [];
+		for(dbid in alasql.databases) {
+			res.push({databaseid: dbid});
+		};
+		if(self.like && res && res.length > 0) {
+			res = res.filter(function(d){
+				return d.databaseid.match(new RegExp((self.like.value).replace(/\%/g,'.*'),'g'));
+			});
+		}
+		if(cb) cb(res);
+		return res;
 	};
-	if(self.like && res && res.length > 0) {
-		res = res.filter(function(d){
-			return d.databaseid.match(new RegExp((self.like.value).replace(/\%/g,'.*'),'g'));
-		});
-	}
-	return res;
+
 };
 
 

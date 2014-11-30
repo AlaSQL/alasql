@@ -265,8 +265,11 @@ function loghtml(res) {
 					else s += res[i][colid];
 					s += '</div>';
 				} else {
-					if(typeof res[i][colid] == 'undefined') s += 'NULL';
-					else s += JSONtoString(res[i][colid]);
+					if(typeof res[i][colid] == 'undefined') {
+						s += 'NULL';
+					} else if (typeof res[i][colid] == 'string') {
+						s += res[i][colid];
+					} else s += JSONtoString(res[i][colid]);
 //					s += res[i][colid];
 				};
 			});
