@@ -260,6 +260,8 @@ Statements
 		{ $$ = $1; if($3) $1.push($3); }
 	| Statement
 		{ $$ = [$1]; }
+	| ExplainStatement
+		{ $$ = [$1]; }
 	;
 
 ExplainStatement
@@ -1261,10 +1263,19 @@ AttachDatabase
 CreateDatabase
 	: CREATE DATABASE Literal
 		{ $$ = new yy.CreateDatabase({databaseid:$3 });}
-	| CREATE Literal DATABASE Literal
-		{ $$ = new yy.CreateDatabase({databaseid:$4, engineid:$2 });}
+	| CREATE Literal DATABASE Literal AsClause
+		{ $$ = new yy.CreateDatabase({databaseid:$4, engineid:$2, as:$5 }); }
+	| CREATE Literal DATABASE Literal LPAR ExprList RPAR AsClause
+		{ $$ = new yy.CreateDatabase({databaseid:$4, engineid:$2, args:$6, as:$8 }); }
 	;
 
+AsClause
+	:	
+		{$$ = null;}
+	| AS Literal
+		{ $$ = $1; }
+	;
+	
 UseDatabase
 	: USE DATABASE Literal
 		{ $$ = new yy.UseDatabase({databaseid: $3 });}	

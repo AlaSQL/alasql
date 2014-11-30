@@ -16,14 +16,25 @@ yy.CreateDatabase.prototype.toString = function() {
 yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	// console.log(alasql.useid, databaseid, this.databaseid);
 	// console.trace();
-	var dbid = this.databaseid;
-	if(alasql.databases[dbid]) {
-		throw new Error("Database '"+dbid+"' already exists")
+	var args;
+	if(this.args && this.args.length > 0) {
+		args = this.args.map(function(arg){
+			return new Function('params','return '+arg.toJavaScript())(params);
+		});
 	};
-	var a = new alasql.Database(dbid);
-	var res = 1;
-	if(cb) return cb(res);
-	return res;
+	if(this.engineid) {
+		var res = alasql.engines[this.engineid].createDatabase(this.databaseid, this.args, this.as, cb);
+		return res;
+	} else {
+		var dbid = this.databaseid;
+		if(alasql.databases[dbid]) {
+			throw new Error("Database '"+dbid+"' already exists")
+		};
+		var a = new alasql.Database(dbid);
+		var res = 1;
+		if(cb) return cb(res);
+		return res;
+	}
 };
 
 // CREATE DATABASE databaseid

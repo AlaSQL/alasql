@@ -1,11 +1,16 @@
 // Main query procedure
 function queryfn(query,oldscope) {
-
+	var ms;
 //	console.log(query);
 
 	// Run all subqueries before main statement
 	if(query.queriesfn) {
-		query.queriesdata = query.queriesfn.map(function(q){return flatArray(q(query.params))});
+		query.queriesdata = query.queriesfn.map(function(q,idx){
+			if(query.explain) ms = Date.now();
+			var res = flatArray(q(query.params));
+			query.explaination.push({explid: query.explid++, description:'Query '+idx,ms:Date.now()-ms});
+			return res;
+		});
 //		console.log(query.queriesdata[0]);
 	}
 
@@ -82,9 +87,17 @@ function queryfn(query,oldscope) {
 	};
 
 	// Ordering
-	if(query.orderfn) query.data = query.data.sort(query.orderfn);
+	if(query.orderfn) {
+		if(query.explain) var ms = Date.now();
+		query.data = query.data.sort(query.orderfn);
+		if(query.explain) { 
+			query.explaination.push({explid: query.explid++, description:'QUERY BY',ms:Date.now()-ms});
+		}
+	};
 
-	if(query.intofn) {
+	if(query.explain) {
+		return query.explaination;
+	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
 			query.intofn(query.data[i],i);
 		}

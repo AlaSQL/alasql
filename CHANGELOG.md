@@ -2,8 +2,10 @@
 
 ### 0.0.28 (29.11.2014 - )
 
+*
 
 ### 0.0.27 (27.11.2014 - 29.11.2014)
+
 * Function as a source of data for FROM ? AND JOIN ?
 * Virtualization of source
 * Query as a source in joins

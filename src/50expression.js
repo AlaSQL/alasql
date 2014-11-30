@@ -43,14 +43,15 @@ yy.Literal.prototype.toString = function() {
 	var s = this.value;
 	if(this.value1) s = this.value1+'.'+s; 
 //	else s = tableid+'.'+s;
-	return s;
+	return L(s);
 }
 
 
 yy.Join = function (params) { return yy.extend(this, params); }
 yy.Join.prototype.toString = function() {
-	return 'JOIN'+this.table.toString();
+	return NL()+ID()+K('JOIN')+this.table.toString();
 }
+
 //yy.Join.prototype.toJavaScript = function(context, tableid) {
 //	return 'JOIN'+this.table.toString();
 //}
@@ -61,7 +62,7 @@ yy.Table.prototype.toString = function() {
 	var s = this.tableid;
 //	if(this.joinmode)
 	if(this.databaseid) s = this.databaseid+'.'+s;
-	return s;
+	return L(s);
 };
 
 
@@ -70,19 +71,19 @@ yy.View.prototype.toString = function() {
 	var s = this.viewid;
 //	if(this.joinmode)
 	if(this.databaseid) s = this.databaseid+'.'+s;
-	return s;
+	return L(s);
 };
 
 
 yy.Op = function (params) { return yy.extend(this, params); }
 yy.Op.prototype.toString = function() {
 	if(this.op == 'IN' || this.op == 'NOT IN') {
-		return this.left.toString()+" "+this.op+" ("+this.right.toString()+")";
+		return this.left.toString()+" "+P(this.op)+" ("+this.right.toString()+")";
 	}
 	if(this.allsome) {
-		return this.left.toString()+" "+this.op+" "+this.allsome+' ('+this.right.toString()+')';
+		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
 	}
-	return this.left.toString()+" "+this.op+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
+	return this.left.toString()+" "+P(this.op)+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
 };
 
 yy.Op.prototype.toType = function(tableid) {
@@ -254,7 +255,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
-	return this.value.toString();
+	return N(this.value.toString());
 };
 
 yy.NumValue.prototype.toType = function() {
@@ -268,7 +269,7 @@ yy.NumValue.prototype.toJavaScript = function() {
 
 yy.StringValue = function (params) { return yy.extend(this, params); }
 yy.StringValue.prototype.toString = function() {
-	return "'"+this.value.toString()+"'";
+	return "'"+S(this.value.toString())+"'";
 }
 
 yy.StringValue.prototype.toType = function() {

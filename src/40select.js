@@ -13,45 +13,47 @@
 
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
-	var s = 'SELECT ';
-	if(this.modifier) s += this.modifier+' ';
-	if(this.top) s += 'TOP '+this.top.value+' ';
+	var s = '';
+	if(this.explain) s+= K('EXPLAIN')+' ';
+	s += K('SELECT')+' ';
+	if(this.modifier) s += K(this.modifier)+' ';
+	if(this.top) s += K('TOP')+' '+N(this.top.value)+' ';
 	s += this.columns.map(function(col){
 		var s = col.toString();
 //		console.log(col);
-		if(typeof col.as != "undefined") s += ' AS '+col.as;
+		if(typeof col.as != "undefined") s += ' '+K('AS')+' '+L(col.as);
 		return s;
 	}).join(',');
 
 	if(this.from) {
-		s += ' FROM '+this.from.map(function(f){
-			console.log(f);
+		s += NL()+ID()+K('FROM')+' '+this.from.map(function(f){
+//			console.log(f);
 			var ss = f.toString();
-			if(f.as) ss += ' AS '+f.as;
+			if(f.as) ss += ' '+K('AS')+' '+f.as;
 			return ss;
 		}).join(',');
 	};
 
 	if(this.joins) {
-		s += ' '+this.joins.map(function(jn){
-			var ss = jn.joinmode +' JOIN ';
+		s += this.joins.map(function(jn){
+			var ss = NL()+ID()+jn.joinmode +' '+K('JOIN')+' ';
 			ss += jn.table.toString();
-			if(jn.using) ss += ' USING '+jn.using.toString();
-			if(jn.on) ss += ' ON '+jn.on.toString();
+			if(jn.using) ss += ' '+K('USING')+' '+jn.using.toString();
+			if(jn.on) ss += ' '+K('ON')+' '+jn.on.toString();
 			return ss;
  		});
 	}
 
-	if(this.where) s += ' WHERE '+this.where.toString();
-	if(this.group) s += ' GROUP BY '+this.group.toString();
-	if(this.having) s += ' HAVING '+this.having.toString();
-	if(this.order) s += ' ORDER BY '+this.order.toString();
-	if(this.union) s += ' UNION '+this.union.toString();
-	if(this.unionall) s += ' UNION ALL '+this.unionall.toString();
-	if(this.except) s += ' EXCEPT '+this.except.toString();
-	if(this.intersect) s += ' INTERSECT '+this.intersect.toString();
-	if(this.limit) s += ' LIMIT '+this.limit.value;
-	if(this.offset) s += ' OFFSET '+this.offset.value;
+	if(this.where) s += NL()+ID()+K('WHERE')+' '+this.where.toString();
+	if(this.group) s += NL()+ID()+K('GROUP BY')+' '+this.group.toString();
+	if(this.having) s += NL()+ID()+K('HAVING')+' '+this.having.toString();
+	if(this.order) s += NL()+ID()+K('ORDER BY')+' '+this.order.toString();
+	if(this.limit) s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
+	if(this.offset) s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
+	if(this.union) s += NL()+K('UNION')+NL()+this.union.toString();
+	if(this.unionall) s += NL()+K('UNION ALL')+NL()+this.unionall.toString();
+	if(this.except) s += NL()+K('EXCEPT')+NL()+this.except.toString();
+	if(this.intersect) s += NL()+K('INTERSECT')+NL()+this.intersect.toString();
 	return s;
 };
 
@@ -60,6 +62,10 @@ yy.Select.prototype.compile = function(databaseid) {
 	var db = alasql.databases[databaseid];
 	// Create variable for query
 	var query = new Query();
+
+	query.explain = this.explain; // Explain
+	query.explaination = [];
+	query.explid = 1;
 
 	query.modifier = this.modifier;
 	

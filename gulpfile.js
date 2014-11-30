@@ -21,7 +21,7 @@ gulp.task('js-merge', function () {
   return gulp.src([
   	'./src/10start.js', 
   	'./src/alasqlparser.js', 
-    './src/12prerry.js', 
+    './src/12pretty.js', 
   	'./src/15utility.js', 
     './src/17alasql.js', 
     './src/20database.js',
