@@ -5660,17 +5660,21 @@ stdfn.YEAR = function(d){
 
 yy.DropTable = function (params) { return yy.extend(this, params); }
 yy.DropTable.prototype.toString = function() {
-	var s = 'DROP TABLE';
-	if(this.ifexists) s += ' IF EXISTS';
+	var s = K('DROP')+' '+K('TABLE');
+	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
 	return s;
 }
 
 
 // DROP TABLE
-yy.DropTable.prototype.execute = function (databaseid) {
+yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
+	console.log(db, this.table.databaseid );
+	if(db.engineid) {
+		return alasql.engines[db.engineid].dropTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
+	}
 	if(!this.ifexists || this.ifexists && db.tables[tableid]) {
 		if(!db.tables[tableid]) {
 			if(!alasql.options.dropifnotexists) {
@@ -7116,7 +7120,8 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 		
 		var db = LS.get(lsdbid);
 		for(var tableid in db.tables) {
-			localStorage.removeItem[lsdbid+'.'+tableid];
+//			console.log('remove',lsdbid,tableid);
+			localStorage.removeItem(lsdbid+'.'+tableid);
 		}
 
 		localStorage.removeItem(lsdbid);
@@ -7174,6 +7179,20 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	return res;
 }
 
+LS.dropTable = function (databaseid, tableid, ifexists, cb) {
+	var res = 1;
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	var lsdb = LS.get(lsdbid);
+	if(!ifexists && !lsdb.tables[tableid]) {
+		throw new Error('Cannot drop table "'+tableid+'" in localStorage, because it does not exist');
+	};
+	delete lsdb.tables[tableid];
+	LS.set(lsdbid, lsdb);
+	localStorage.removeItem(lsdbid+'.'+tableid);
+	if(cb) cb(res);
+	return res;
+}
+
 LS.fromTable = function(databaseid, tableid, cb) {
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
@@ -7191,7 +7210,6 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	if(cb) cb(res);
 	return res;
 };
-
 
 
 
