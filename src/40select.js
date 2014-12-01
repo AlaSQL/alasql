@@ -145,7 +145,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
 			if(alasql.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
-				query.intoallfns = 'alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
+				query.intoallfns = 'return alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
 					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data);';
 			} else {
 				query.intofns = 

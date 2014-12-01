@@ -83,7 +83,7 @@ LS.attachDatabase = function(databaseid, dbid, cb){
 	if(!alasql.autocommit) {
 		if(db.tables){
 			for(var tbid in db.tables) {
-				db.tables[tbid].data = LS.get(db.lsdbid+'.'+tableid);
+				db.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
 			}
 		}
 	}
@@ -151,7 +151,7 @@ LS.fromTable = function(databaseid, tableid, cb) {
 LS.intoTable = function(databaseid, tableid, value, cb) {
 //	console.log('intoTable',databaseid, tableid, value, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-	var res = 1;
+	var res = value.length;
 	var tb = LS.get(lsdbid+'.'+tableid);
 	if(!tb) tb = [];
 	tb = tb.concat(value);

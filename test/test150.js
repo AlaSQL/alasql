@@ -13,35 +13,36 @@ describe('Test 150 - localStorage Engine', function() {
 		alasql('SET AUTOCOMMIT OFF');
 		assert(!alasql.autocommit);
 
-		alasql('DROP localStorage DATABASE IF EXISTS ls149');
-		assert(!localStorage['ls149']);
-		assert(!localStorage['ls149.one']);
-		alasql('CREATE localStorage DATABASE IF NOT EXISTS ls149');
-		assert(localStorage['ls149']);
+		alasql('DROP localStorage DATABASE IF EXISTS ls150');
+		assert(!localStorage['ls150']);
+		assert(!localStorage['ls150.one']);
+		alasql('CREATE localStorage DATABASE IF NOT EXISTS ls150');
+		assert(localStorage['ls150']);
 		done();
 	});
 
 	it("2. Show databases", function(done){
 		var res = alasql('SHOW localStorage DATABASES');
 		var found = false;
-		res.forEach(function(d){ found = found || (d.databaseid == "ls149")});
+		res.forEach(function(d){ found = found || (d.databaseid == "ls150")});
 		assert(found);
 		done();
 	});
 
 	it("3. Attach localStorage database", function(done){
-		alasql('ATTACH localStorage DATABASE ls149 AS test149');
-		assert(alasql.databases.test149);
-		assert(alasql.databases.test149.engineid == 'localStorage');
+		alasql('ATTACH localStorage DATABASE ls149 AS test150');
+		assert(alasql.databases.test150);
+		assert(alasql.databases.test150.engineid == 'localStorage');
 		done();
 	});
 
 	it("4. Create localStorage databases", function(done){
-		alasql('CREATE TABLE IF NOT EXISTS test149.one (a int, b string)');
+		alasql('CREATE TABLE IF NOT EXISTS test150.one (a int, b string)');
 //		assert(!alasql.databases.test149.tables.one);
-		assert(JSON.parse(!localStorage['ls149']).tables);
-		assert(JSON.parse(!localStorage['ls149']).tables.one);
-		assert(JSON.parse(!localStorage['ls149.one']));
+console.log(JSON.parse(localStorage['ls150']));
+		assert(JSON.parse(localStorage['ls150']).tables);
+//		assert(JSON.parse(localStorage['ls149']).tables.one);
+		assert(!localStorage['ls150.one']);
 		// var tb = JSON.parse(localStorage['ls149']).tables.one;
 		// assert(tb.columns);
 		// assert(tb.columns[0].columnid == 'a');
@@ -50,17 +51,15 @@ describe('Test 150 - localStorage Engine', function() {
 	});
 
 	it("5.Insert values into localStorage database", function(done) {
-		alasql('create database test149a');
-		alasql('CREATE TABLE test149a.one (a int, b string)');
+		alasql('create database test150a');
+		alasql('CREATE TABLE test150a.one (a int, b string)');
 
-		alasql('insert into test149a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
-		alasql('select * into test149.one from test149a.one');
-		assert(!localStorage['ls149.one'], [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
-		assert(alasql.databases.test146.tables.one.data, [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
+		alasql('insert into test150a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
+		alasql('select * into test150.one from test150a.one');
+		assert(alasql.databases.test150.tables.one.data, [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
 
-		var res = alasql('select * from test149.one');
-		console.log(999,res);
-//		assert(alasql.engines.localStorage.get('ls149.one').length == 3);
+		var res = alasql('select * from test150.one');
+		assert(res, [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
 		done();
 	});
 
@@ -71,27 +70,26 @@ describe('Test 150 - localStorage Engine', function() {
 	});
 */
 
-if(false)
 	it("7.Select into localStorage table", function(done) {
-		var res = alasql('SELECT a*2 as a, b INTO test149.one FROM test149.one');
+		var res = alasql('SELECT a*2 as a, b INTO test150.one FROM test150.one');
 		assert(res == 3);
 		done();
 	});
 
 	it("8.Drop localStorage table", function(done) {
-		alasql('DROP TABLE test149.one');
-		assert(!localStorage['ls149.one']);
+		alasql('DROP TABLE test150.one');
+		assert(!localStorage['ls150.one']);
 		done();
 	});
 
 
 	it("99. Detach database", function(done){
-		alasql('DROP DATABASE test149a');
+		alasql('DROP DATABASE test150a');
 		assert(!alasql.databases.test149a);
-		alasql('DROP DATABASE test149');
+		alasql('DROP DATABASE test150');
 		assert(!alasql.databases.test149);
-		alasql('DROP localStorage DATABASE ls149');
-		assert(!localStorage['ls149']);
+		alasql('DROP localStorage DATABASE ls150');
+		assert(!localStorage['ls150']);
 		done();
 	});
 });

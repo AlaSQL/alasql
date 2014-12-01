@@ -59,7 +59,6 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function() {
 
 		var res = alasql('select * from test149.one');
 		assert.deepEqual(res, [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
-//		console.log(999,res);
 //		assert(alasql.engines.localStorage.get('ls149.one').length == 3);
 		done();
 	});
@@ -69,15 +68,18 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function() {
 	// 	assert(res.length == 3);
 	// 	done();
 	// });
+//if(false) {
 
-
-if(false)
 	it("7.Select into localStorage table", function(done) {
+		var res = alasql('select * from test149.one');
+		assert(res.length == 3);
+		var res = alasql('SELECT a*2 as a, b FROM test149.one');
+		assert(res.length == 3);
 		var res = alasql('SELECT a*2 as a, b INTO test149.one FROM test149.one');
 		assert(res == 3);
 		done();
 	});
-
+//}
 	it("8.Drop localStorage table", function(done) {
 		alasql('DROP TABLE test149.one');
 		assert(!localStorage['ls149.one']);

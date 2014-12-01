@@ -627,17 +627,20 @@ yy.Select.prototype.compileSelect = function(query) {
 			} else {
 				// If field, otherwise - expression
 				var tbid = col.tableid;
+//				console.log(query.sources);
+				var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
 				if(!tbid) tbid = query.defcols[col.columnid];
 				if(!tbid) tbid = query.defaultTableid;
 				ss.push(escapeq(col.as || col.columnid)+':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
 
 				if(query.aliases[tbid] && query.aliases[tbid].type == 'table') {
 
-					if(!query.database.tables[query.aliases[tbid].tableid]) {
+					if(!alasql.databases[dbid].tables[query.aliases[tbid].tableid]) {
+//						console.log(query.database,tbid,query.aliases[tbid].tableid);
 						throw new Error('Table \''+(tbid)+'\' does not exists in database');
 					}
-					var columns = query.database.tables[query.aliases[tbid].tableid].columns;					
-					var xcolumns = query.database.tables[query.aliases[tbid].tableid].xcolumns;
+					var columns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;					
+					var xcolumns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].xcolumns;
 //console.log(xcolumns, col,123);
 //					console.log(0);
 					if(xcolumns && columns.length > 0) {
