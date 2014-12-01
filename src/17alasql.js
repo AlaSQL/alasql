@@ -87,6 +87,7 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			var res = alasql.res = statement(params, cb);
 			return res;
 		} else {
+//			console.log(ast.statements[0]);
 			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb);		
 			return res;
 		}

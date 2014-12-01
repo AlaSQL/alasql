@@ -56,6 +56,7 @@
 'AUTOCOMMIT'									return 'AUTOCOMMIT';
 'AVG'                                      		return 'AVG'
 
+'BEGIN'											return 'BEGIN'
 'BETWEEN'										return 'BETWEEN'
 'NOT BETWEEN'									return 'NOT_BETWEEN'
 'BY'											return 'BY'
@@ -67,13 +68,14 @@
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
 "COLUMNS"										return "COLUMNS"
+"COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
 "CONVERT"										return "CONVERT"
 "COUNT"											return "COUNT"
-"CURSOR"										return "CURSOR"
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
+"CURSOR"										return "CURSOR"
 'DATABASE'										return 'DATABASE'
 'DATABASES'										return 'DATABASES'
 'DECLARE'                                       return 'DECLARE'
@@ -143,6 +145,7 @@
 'RELATIVE'                                      return 'RELATIVE'
 'RENAME'                                        return 'RENAME'
 'RIGHT'                                        	return 'RIGHT'
+'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
 'ROW'											return 'ROW'
 'SCHEMA'                                        return 'DATABASE'
@@ -1512,4 +1515,25 @@ OnOff
 		{ $$ = true; }
 	| OFF
 		{ $$ = false; }
+	;
+
+CommitTransaction
+	: COMMIT
+		{ $$ = new yy.Commit(); }
+	| COMMIT TRANSACTION
+		{ $$ = new yy.Commit(); }
+	;
+
+RollbackTransaction
+	: ROLLBACK
+		{ $$ = new yy.Rollback(); }
+	| ROLLBACK TRANSACTION
+		{ $$ = new yy.Rollback(); }
+	;
+
+BeginTransaction
+	: BEGIN
+		{ $$ = new yy.Begin(); }
+	| BEGIN TRANSACTION
+		{ $$ = new yy.Begin(); }
 	;

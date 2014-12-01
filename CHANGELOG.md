@@ -3,7 +3,8 @@
 ### 0.0.28 (29.11.2014 - 01.12.2014)
 
 * SET AUTOCOMMIT ON|OFF 
-* localStorage in AUTOCIMMIT mode
+* localStorage in AUTOCIMMIT ON mode (without INSERT/DELETE/UPDATE)
+* localStorage in AUTOCIMMIT OF mode (simple COMMIT)
 
 ### 0.0.27 (27.11.2014 - 29.11.2014)
 

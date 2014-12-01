@@ -1,6 +1,6 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('..');
+	var alasql = require('../alasql.js');
 };
 
 function prepareData (defined) {

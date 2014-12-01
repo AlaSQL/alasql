@@ -162,4 +162,18 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	return res;
 };
 
+LS.commit = function(databaseid, cb) {
+	var db = alasql.databases[databaseid];
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	lsdb = {databaseid:lsdbid, tables:{}};
+	if(db.tables) {
+		for(var tbid in db.tables) {
+			lsdb.tables[tbid] = {columns: db.tables[tbid].columns};
+			LS.set(lsdbid+'.'+tbid, db.tables[tbid].data);
+		};
+	}
+	LS.set(lsdbid,lsdb);
+	return 1;
+};
+
 

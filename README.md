@@ -2,7 +2,7 @@
 
 Version: 0.0.28 Date: November 29, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. 
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use localStorage as a persistent storage.
 
 Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (170Kb) to your project. 
 
@@ -23,19 +23,20 @@ Download and try this sample in [your browser](demo.html) or try it in <a href="
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql can operate with JSON objects like JavScript and NoSQL databases
 * Alasql is fast, because it uses some optimization methods.
+* Alasql can use localStorage as a storage for databases in AUTOCOMMIT ON and AUTOCOMMIT OFF modes
 * Plus some [sugar](#Sugar)
 
 It is really fast. Check Alasql vs other JavaScript SQL databases: 
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-## Future version 0.0.28 - Async
+## Work in Porgess - Async
 
 Now I am hardly working on async version of Alasql to implement IndexedDB and WebSQL support.
 
-### Use JavaScript objects and functions in SQL
-* [Work with JSON objects in SQL](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
-* SlideShare [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
+### New: localStorage support
+
+* See test/test149.js and test/test150.js for samples
 
 ## Examples
 
@@ -65,6 +66,7 @@ Other examples:
 ### Presentations
 
 * [Alasql.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database) (English)
+* [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
 
 ## Installation
 
@@ -361,8 +363,21 @@ You can use Alasql to parse to AST and compile SQL statements:
 
 Alasql uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
 
-JSON-objects
-==
+
+### localStorage
+You can use browser localStorage as a data storage. Here is a sample:
+```
+    alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
+    alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
+    alasql('CREATE TABLE IF NOT EXISTS MyAtlas.City (city string, population number');
+    alasql('SELECT * INTO MyAtlas FROM ?',[[{'Vienna', 1731000}, {'Budapest', 1728000}]]);
+    var res = alasql('SELECT * FROM MyAtlas');
+    console.log(res);
+```
+Try to run this sample two or three times. 
+
+### JSON-objects
+
 You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
 ```sql
     alasql> SELECT VALUE @{a:1,b:2}
@@ -382,10 +397,12 @@ You can use JSON objects in your databases (do not forget use == and !== operato
     4
 
 ```
-Alacon - command-line utility
-==
+Try Alasql JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
+
+### Alacon - command-line utility
+
 You can use Alasql from the command-line:
-```
+```sql
     > node alacon "SELECT VALUE 1+1"
     2
     > node alacon "SELECT VALUE 1+?" 2
@@ -394,8 +411,8 @@ You can use Alasql from the command-line:
     4
 ```
 
-Alaserver - simple database server
-==
+### Alaserver - simple database server
+
 Yes, you can even use Alasql as a very simple server for tests.
 
 To run enter the command: 
@@ -424,18 +441,19 @@ Compare it with Lodash and Underscore:
 ### Limitations
 
 It is Ok with select for 1000000 records or 2 join two tables by 10000 records in each. 
+Now you can use streamming functions to work with longer datasources (see [test/test143.js](test/test143.js).
 
 ### Tests
 
 ### Tests with Mocha
-I use mocha for tests. Run mocha from command line:
+Alasql uses ```mocha``` for tests. Run mocha from command line:
 
 ```
-    mocha
+    > mocha
 ```
-or run [test/main.html](test/main.html) in browser.
+or run [test/index.html](test/index.html) for tests in browser.
 
-### Tests with Alasql ASSERT
+### Tests with Alasql ASSERT from SQL
 
 Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previous operation:
 ```sql
@@ -453,15 +471,16 @@ The early prototype of documentation will be placed on [Alasql Wiki](https://git
 ### Warnings 
 Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
 
-Sorry, transactions were temporary turned off in version 0.0.17, because we started to introduce more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be turned on again in one of the future version.
+Sorry, transactions are very limited, because we started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
 
-You can check [version-0.0.26](https://github.com/agershun/alasql/tree/version-0.0.26) branch for new experimental features of new version. 
+You can check next version branches for new experimental features. 
 
-### Known Bugs
+### Known Bugs and Limitations
 
-1. Transactions 
+1. Limited functionality for transactions 
 2. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
 3. AVG() does not work 
+4. Alasql is still sync
 
 Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
   
