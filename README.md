@@ -369,12 +369,22 @@ You can use browser localStorage as a data storage. Here is a sample:
 ```
     alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
     alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
-    alasql('CREATE TABLE IF NOT EXISTS MyAtlas.City (city string, population number');
-    alasql('SELECT * INTO MyAtlas FROM ?',[[{'Vienna', 1731000}, {'Budapest', 1728000}]]);
-    var res = alasql('SELECT * FROM MyAtlas');
+    alasql('CREATE TABLE IF NOT EXISTS MyAtlas.City (city string, population number)');
+    alasql('SELECT * INTO MyAtlas.City FROM ?',[[{city:'Vienna', population:1731000}, 
+        {city:'Budapest', population:1728000}]]);
+    var res = alasql('SELECT * FROM MyAtlas.City');
     console.log(res);
 ```
-Try to run this sample two or three times. 
+Try this sample in [jsFiddel](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample 
+two or three times, and Alasql store more and more data in localStorage. Here, "Atals" is 
+the name of localStorage database, where "MyAtlas" is a memory Alasql database.
+
+You can use localStorage in two modes: SET AUTOCOMMIT ON to immediate save data
+to localStorage after each statement or SET AUTOCOMMIT OFF. In this case you need
+to use COMMIT statement to save all data from in-memory mirror to localStorage.
+
+Sorry, INSERT/DELETE/UPDATE for AUTOCOMMIT ON mode are not supported yet in this version, 
+as ROLLBACK for AUTOCOMMIT OFF mode. 
 
 ### JSON-objects
 
