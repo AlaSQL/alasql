@@ -128,6 +128,7 @@
 'NOCASE'										return 'NOCASE'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
+'OFF'											return 'OFF'
 'ON'											return 'ON'
 'OFFSET'										return 'OFFSET'
 'OPEN'											return 'OPEN'
@@ -1503,7 +1504,7 @@ JsonElementsList
 
 SetVariable
 	: SET AUTOCOMMIT OnOff
-		{ $$ = new SetVariable({autocommit:$3});}
+		{ $$ = new yy.SetVariable({autocommit:$3});}
 	;
 
 OnOff

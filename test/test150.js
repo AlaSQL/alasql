@@ -7,11 +7,11 @@ if(typeof exports === 'object') {
 
 if(typeof exports != 'object') {
 
-describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function() {
+describe('Test 150 - localStorage Engine', function() {
 
 	it("1. Create database", function(done){
-		alasql('SET AUTOCOMMIT ON');
-		assert(alasql.autocommit);
+		alasql('SET AUTOCOMMIT OFF');
+		assert(!alasql.autocommit);
 
 		alasql('DROP localStorage DATABASE IF EXISTS ls149');
 		assert(!localStorage['ls149']);
@@ -39,13 +39,13 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function() {
 	it("4. Create localStorage databases", function(done){
 		alasql('CREATE TABLE IF NOT EXISTS test149.one (a int, b string)');
 //		assert(!alasql.databases.test149.tables.one);
-		assert(JSON.parse(localStorage['ls149']).tables);
-		assert(JSON.parse(localStorage['ls149']).tables.one);
-		assert(JSON.parse(localStorage['ls149.one']));
-		var tb = JSON.parse(localStorage['ls149']).tables.one;
-		assert(tb.columns);
-		assert(tb.columns[0].columnid == 'a');
-		assert(tb.columns[1].columnid == 'b');
+		assert(JSON.parse(!localStorage['ls149']).tables);
+		assert(JSON.parse(!localStorage['ls149']).tables.one);
+		assert(JSON.parse(!localStorage['ls149.one']));
+		// var tb = JSON.parse(localStorage['ls149']).tables.one;
+		// assert(tb.columns);
+		// assert(tb.columns[0].columnid == 'a');
+		// assert(tb.columns[1].columnid == 'b');
 		done();
 	});
 
@@ -55,21 +55,21 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function() {
 
 		alasql('insert into test149a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 		alasql('select * into test149.one from test149a.one');
-		assert.deepEqual(JSON.parse(localStorage['ls149.one']), [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
+		assert(!localStorage['ls149.one'], [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
+		assert(alasql.databases.test146.tables.one.data, [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
 
 		var res = alasql('select * from test149.one');
-		assert.deepEqual(res, [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
-//		console.log(999,res);
+		console.log(999,res);
 //		assert(alasql.engines.localStorage.get('ls149.one').length == 3);
 		done();
 	});
 
-	// it("6.Select from localStorage table", function(done) {
-	// 	var res = alasql('SELECT * FROM test149.one');
-	// 	assert(res.length == 3);
-	// 	done();
-	// });
-
+/*;	it("6.Select from localStorage table", function(done) {
+		var res = alasql('SELECT * FROM test149.one');
+		assert(res.length == 3);
+		done();
+	});
+*/
 
 if(false)
 	it("7.Select into localStorage table", function(done) {

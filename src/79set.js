@@ -9,15 +9,15 @@
 yy.SetVariable = function (params) { return yy.extend(this, params); }
 yy.SetVariable.prototype.toString = function() {
 	var s = K('SET')+' ';
-	if(typeof this.autommit != 'undefined') {
-		s += K('AUTOCOMMIT')+' '+(this.autocommit:'ON'?'OFF');
+	if(typeof this.autocommit != 'undefined') {
+		s += K('AUTOCOMMIT')+' '+(this.autocommit?'ON':'OFF');
 	};
 	return s;
 }
 
 yy.SetVariable.prototype.execute = function (databaseid,cb) {
-	if(typeof this.autommit != 'undefined') {
-		alasql.autommit = this.autommit;
+	if(typeof this.autocommit != 'undefined') {
+		alasql.autocommit = this.autocommit;
 	}
 
 };

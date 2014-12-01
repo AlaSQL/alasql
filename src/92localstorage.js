@@ -78,7 +78,15 @@ LS.attachDatabase = function(databaseid, dbid, cb){
 	var db = new alasql.Database(dbid || databaseid);
 	db.engineid = "localStorage";
 	db.lsdbid = databaseid;
-	db.tables = LS.get(databaseid);
+	db.tables = LS.get(databaseid).tables;
+	// IF AUTOCOMMIT IS OFF then copy data to memory
+	if(!alasql.autocommit) {
+		if(db.tables){
+			for(var tbid in db.tables) {
+				db.tables[tbid].data = LS.get(db.lsdbid+'.'+tableid);
+			}
+		}
+	}
 	return res;
 };
 
@@ -108,7 +116,9 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 		throw new Error('Table "'+tableid+'" alsready exists in localStorage database "'+lsdbid+'"');
 	};
 	var lsdb = LS.get(lsdbid);
-	lsdb.tables[tableid] = true;
+	var table = alasql.databases[databaseid].tables[tableid];
+	lsdb.tables[tableid] = {columns:table.columns};
+
 	LS.set(lsdbid, lsdb);
 	LS.set(lsdbid+'.'+tableid, []);
 
@@ -131,7 +141,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 }
 
 LS.fromTable = function(databaseid, tableid, cb) {
-	console.log(998, databaseid, tableid, cb);
+//	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
 	if(cb) cb(res);
@@ -146,8 +156,8 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	if(!tb) tb = [];
 	tb = tb.concat(value);
 	LS.set(lsdbid+'.'+tableid, tb);
-	console.log(lsdbid+'.'+tableid, tb);
-	console.log(localStorage[lsdbid+'.'+tableid]);
+//	console.log(lsdbid+'.'+tableid, tb);
+//	console.log(localStorage[lsdbid+'.'+tableid]);
 	if(cb) cb(res);
 	return res;
 };

@@ -942,7 +942,7 @@ case 407: case 408:
  this.$ = {}; this.$[$$[$0-2]] = $$[$0]; 
 break;
 case 411:
- this.$ = new SetVariable({autocommit:$$[$0]});
+ this.$ = new yy.SetVariable({autocommit:$$[$0]});
 break;
 case 412:
  this.$ = true; 
@@ -1608,162 +1608,164 @@ case 89:return 197
 break;
 case 90:return 164
 break;
-case 91:return 102
+case 91:return 291
 break;
-case 92:return 128
+case 92:return 102
 break;
-case 93:return 271
+case 93:return 128
 break;
-case 94:return 196
+case 94:return 271
 break;
-case 95:return 120
+case 95:return 196
 break;
-case 96:return 96
+case 96:return 120
 break;
-case 97:return 14
+case 97:return 96
 break;
-case 98:return 238
+case 98:return 14
 break;
-case 99:return 276
+case 99:return 238
 break;
-case 100:return 13
+case 100:return 276
 break;
-case 101:return 242
+case 101:return 13
 break;
-case 102:return 278
+case 102:return 242
 break;
-case 103:return 254
+case 103:return 278
 break;
-case 104:return 97
+case 104:return 254
 break;
-case 105:return 114
+case 105:return 97
 break;
-case 106:return 69
+case 106:return 114
 break;
-case 107:return 259
+case 107:return 69
 break;
-case 108:return 263
+case 108:return 259
 break;
-case 109:return 67
+case 109:return 263
 break;
-case 110:return 99
+case 110:return 67
 break;
-case 111:return 204
+case 111:return 99
 break;
-case 112:return 113
+case 112:return 204
 break;
-case 113:return 262
+case 113:return 113
 break;
-case 114:return 201
+case 114:return 262
 break;
-case 115:return "SUM"
+case 115:return 201
 break;
-case 116:return 216
+case 116:return "SUM"
 break;
-case 117:return 264
+case 117:return 216
 break;
-case 118:return 175
+case 118:return 264
 break;
-case 119:return 255
+case 119:return 175
 break;
-case 120:return 72
+case 120:return 255
 break;
-case 121:return 'TRAN'
+case 121:return 72
 break;
-case 122:return 'TRANSACTION'
+case 122:return 'TRAN'
 break;
-case 123:return 161
+case 123:return 'TRANSACTION'
 break;
-case 124:return 117
+case 124:return 161
 break;
-case 125:return 65
+case 125:return 117
 break;
-case 126:return 203
+case 126:return 65
 break;
-case 127:return 261
+case 127:return 203
 break;
-case 128:return 104
+case 128:return 261
 break;
-case 129:return 68
+case 129:return 104
 break;
-case 130:return 209
+case 130:return 68
 break;
-case 131:return 266
+case 131:return 209
 break;
-case 132:return 174
+case 132:return 266
 break;
-case 133:return 106
+case 133:return 174
 break;
-case 134:return 130
+case 134:return 106
 break;
-case 135:return 182
+case 135:return 130
 break;
-case 136:return 178
+case 136:return 182
 break;
-case 137:return 179
+case 137:return 178
 break;
-case 138:return 133
+case 138:return 179
 break;
-case 139:return 180
+case 139:return 133
 break;
-case 140:return 181
+case 140:return 180
 break;
-case 141:return 192
+case 141:return 181
 break;
-case 142:return 189
+case 142:return 192
 break;
-case 143:return 191
+case 143:return 189
 break;
-case 144:return 188
+case 144:return 191
 break;
-case 145:return 184
+case 145:return 188
 break;
-case 146:return 183
+case 146:return 184
 break;
-case 147:return 186
+case 147:return 183
 break;
-case 148:return 190
+case 148:return 186
 break;
-case 149:return 185
+case 149:return 190
 break;
-case 150:return 187
+case 150:return 185
 break;
-case 151:return 190
+case 151:return 187
 break;
-case 152:return 82
+case 152:return 190
 break;
-case 153:return 83
+case 153:return 82
 break;
-case 154:return 142
+case 154:return 83
 break;
-case 155:return 283
+case 155:return 142
 break;
-case 156:return 285
+case 156:return 283
 break;
-case 157:return 287
+case 157:return 285
 break;
-case 158:return 86
+case 158:return 287
 break;
-case 159:return 81
+case 159:return 86
 break;
-case 160:return 167
+case 160:return 81
 break;
-case 161:return 9
+case 161:return 167
 break;
-case 162:return 166
+case 162:return 9
 break;
-case 163:return 168
+case 163:return 166
 break;
-case 164:return 4
+case 164:return 168
 break;
-case 165:return 8
+case 165:return 4
 break;
-case 166:return 'INVALID'
+case 166:return 8
+break;
+case 167:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:@\[)/i,/^(?:\[([^\]])*?\])/i,/^(?:`([^\]])*?`)/i,/^(?:(['](\\.|[^']|\\')*?['])+)/i,/^(?:(["](\\.|[^"]|\\")*?["])+)/i,/^(?:\/\*(.*?)\*\/)/i,/^(?:--(.*?)($|\r\n|\r|\n))/i,/^(?:\s+)/i,/^(?:\|\|)/i,/^(?:&&)/i,/^(?:ABSOLUTE\b)/i,/^(?:ADD\b)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:ANTI\b)/i,/^(?:ANY\b)/i,/^(?:AS\b)/i,/^(?:ASSERT\b)/i,/^(?:ASC\b)/i,/^(?:ATTACH\b)/i,/^(?:AUTO_INCREMENT\b)/i,/^(?:AUTOCOMMIT\b)/i,/^(?:AVG\b)/i,/^(?:BETWEEN\b)/i,/^(?:NOT BETWEEN\b)/i,/^(?:BY\b)/i,/^(?:CASE\b)/i,/^(?:CAST\b)/i,/^(?:CHARSET\b)/i,/^(?:CLOSE\b)/i,/^(?:COLLATE\b)/i,/^(?:COLUMN\b)/i,/^(?:COLUMNS\b)/i,/^(?:CONSTRAINT\b)/i,/^(?:CONVERT\b)/i,/^(?:COUNT\b)/i,/^(?:CURSOR\b)/i,/^(?:CREATE\b)/i,/^(?:CROSS\b)/i,/^(?:CUBE\b)/i,/^(?:DATABASE\b)/i,/^(?:DATABASES\b)/i,/^(?:DECLARE\b)/i,/^(?:DEFAULT\b)/i,/^(?:DELETE\b)/i,/^(?:DESC\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:END\b)/i,/^(?:ENGINE\b)/i,/^(?:ENUM\b)/i,/^(?:ELSE\b)/i,/^(?:EXCEPT\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FETCH\b)/i,/^(?:FIRST\b)/i,/^(?:FOREIGN\b)/i,/^(?:FROM\b)/i,/^(?:GROUP\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:HELP\b)/i,/^(?:IF\b)/i,/^(?:IDENTITY\b)/i,/^(?:IN\b)/i,/^(?:INDEX\b)/i,/^(?:INNER\b)/i,/^(?:INSERT\b)/i,/^(?:INTERSECT\b)/i,/^(?:INTO\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:LAST\b)/i,/^(?:LEFT\b)/i,/^(?:LIKE\b)/i,/^(?:LIMIT\b)/i,/^(?:SOURCE\b)/i,/^(?:MATRIX\b)/i,/^(?:MAX\b)/i,/^(?:MIN\b)/i,/^(?:MINUS\b)/i,/^(?:MODIFY\b)/i,/^(?:NATURAL\b)/i,/^(?:NEXT\b)/i,/^(?:NEW\b)/i,/^(?:NOCASE\b)/i,/^(?:NOT\b)/i,/^(?:NULL\b)/i,/^(?:ON\b)/i,/^(?:OFFSET\b)/i,/^(?:OPEN\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:OUTER\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:PRIOR\b)/i,/^(?:QUERY\b)/i,/^(?:REFERENCES\b)/i,/^(?:RELATIVE\b)/i,/^(?:RENAME\b)/i,/^(?:RIGHT\b)/i,/^(?:ROLLUP\b)/i,/^(?:ROW\b)/i,/^(?:SCHEMA\b)/i,/^(?:SCHEMAS\b)/i,/^(?:SELECT\b)/i,/^(?:SEMI\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SHOW\b)/i,/^(?:SOME\b)/i,/^(?:SUM\b)/i,/^(?:TABLE\b)/i,/^(?:TABLES\b)/i,/^(?:THEN\b)/i,/^(?:TO\b)/i,/^(?:TOP\b)/i,/^(?:TRAN\b)/i,/^(?:TRANSACTION\b)/i,/^(?:TRUE\b)/i,/^(?:UNION\b)/i,/^(?:UNIQUE\b)/i,/^(?:UPDATE\b)/i,/^(?:USE\b)/i,/^(?:USING\b)/i,/^(?:VALUE\b)/i,/^(?:VALUES\b)/i,/^(?:VIEW\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:(\d*[.])?\d+)/i,/^(?:->)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:!===)/i,/^(?:===)/i,/^(?:!==)/i,/^(?:==)/i,/^(?:>=)/i,/^(?:>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:@)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\])/i,/^(?:\.)/i,/^(?:,)/i,/^(?::)/i,/^(?:;)/i,/^(?:\$)/i,/^(?:\?)/i,/^(?:[a-zA-Z_][a-zA-Z_0-9]*)/i,/^(?:$)/i,/^(?:.)/i],
-conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166],"inclusive":true}}
+rules: [/^(?:@\[)/i,/^(?:\[([^\]])*?\])/i,/^(?:`([^\]])*?`)/i,/^(?:(['](\\.|[^']|\\')*?['])+)/i,/^(?:(["](\\.|[^"]|\\")*?["])+)/i,/^(?:\/\*(.*?)\*\/)/i,/^(?:--(.*?)($|\r\n|\r|\n))/i,/^(?:\s+)/i,/^(?:\|\|)/i,/^(?:&&)/i,/^(?:ABSOLUTE\b)/i,/^(?:ADD\b)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:ANTI\b)/i,/^(?:ANY\b)/i,/^(?:AS\b)/i,/^(?:ASSERT\b)/i,/^(?:ASC\b)/i,/^(?:ATTACH\b)/i,/^(?:AUTO_INCREMENT\b)/i,/^(?:AUTOCOMMIT\b)/i,/^(?:AVG\b)/i,/^(?:BETWEEN\b)/i,/^(?:NOT BETWEEN\b)/i,/^(?:BY\b)/i,/^(?:CASE\b)/i,/^(?:CAST\b)/i,/^(?:CHARSET\b)/i,/^(?:CLOSE\b)/i,/^(?:COLLATE\b)/i,/^(?:COLUMN\b)/i,/^(?:COLUMNS\b)/i,/^(?:CONSTRAINT\b)/i,/^(?:CONVERT\b)/i,/^(?:COUNT\b)/i,/^(?:CURSOR\b)/i,/^(?:CREATE\b)/i,/^(?:CROSS\b)/i,/^(?:CUBE\b)/i,/^(?:DATABASE\b)/i,/^(?:DATABASES\b)/i,/^(?:DECLARE\b)/i,/^(?:DEFAULT\b)/i,/^(?:DELETE\b)/i,/^(?:DESC\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:END\b)/i,/^(?:ENGINE\b)/i,/^(?:ENUM\b)/i,/^(?:ELSE\b)/i,/^(?:EXCEPT\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FETCH\b)/i,/^(?:FIRST\b)/i,/^(?:FOREIGN\b)/i,/^(?:FROM\b)/i,/^(?:GROUP\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:HELP\b)/i,/^(?:IF\b)/i,/^(?:IDENTITY\b)/i,/^(?:IN\b)/i,/^(?:INDEX\b)/i,/^(?:INNER\b)/i,/^(?:INSERT\b)/i,/^(?:INTERSECT\b)/i,/^(?:INTO\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:LAST\b)/i,/^(?:LEFT\b)/i,/^(?:LIKE\b)/i,/^(?:LIMIT\b)/i,/^(?:SOURCE\b)/i,/^(?:MATRIX\b)/i,/^(?:MAX\b)/i,/^(?:MIN\b)/i,/^(?:MINUS\b)/i,/^(?:MODIFY\b)/i,/^(?:NATURAL\b)/i,/^(?:NEXT\b)/i,/^(?:NEW\b)/i,/^(?:NOCASE\b)/i,/^(?:NOT\b)/i,/^(?:NULL\b)/i,/^(?:OFF\b)/i,/^(?:ON\b)/i,/^(?:OFFSET\b)/i,/^(?:OPEN\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:OUTER\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:PRIOR\b)/i,/^(?:QUERY\b)/i,/^(?:REFERENCES\b)/i,/^(?:RELATIVE\b)/i,/^(?:RENAME\b)/i,/^(?:RIGHT\b)/i,/^(?:ROLLUP\b)/i,/^(?:ROW\b)/i,/^(?:SCHEMA\b)/i,/^(?:SCHEMAS\b)/i,/^(?:SELECT\b)/i,/^(?:SEMI\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SHOW\b)/i,/^(?:SOME\b)/i,/^(?:SUM\b)/i,/^(?:TABLE\b)/i,/^(?:TABLES\b)/i,/^(?:THEN\b)/i,/^(?:TO\b)/i,/^(?:TOP\b)/i,/^(?:TRAN\b)/i,/^(?:TRANSACTION\b)/i,/^(?:TRUE\b)/i,/^(?:UNION\b)/i,/^(?:UNIQUE\b)/i,/^(?:UPDATE\b)/i,/^(?:USE\b)/i,/^(?:USING\b)/i,/^(?:VALUE\b)/i,/^(?:VALUES\b)/i,/^(?:VIEW\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:(\d*[.])?\d+)/i,/^(?:->)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:!===)/i,/^(?:===)/i,/^(?:!==)/i,/^(?:==)/i,/^(?:>=)/i,/^(?:>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:@)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\])/i,/^(?:\.)/i,/^(?:,)/i,/^(?::)/i,/^(?:;)/i,/^(?:\$)/i,/^(?:\?)/i,/^(?:[a-zA-Z_][a-zA-Z_0-9]*)/i,/^(?:$)/i,/^(?:.)/i],
+conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167],"inclusive":true}}
 });
 return lexer;
 })();
@@ -2153,6 +2155,9 @@ alasql.options.datetimeformat = 'sql'; // How to handle DATE and DATETIME types
 alasql.options.casesensitive = true; // Table and column names are case sensitive and converted to lower-case
 alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
 alasql.options.logprompt = true; // Print SQL at log
+
+// AUTOCOMMIT ON | OFF
+alasql.autocommit = true;
 
 alasql.prompthistory = [];
 
@@ -2935,7 +2940,7 @@ function queryfn(query,oldscope) {
 		}
 	};
 
-	console.log(query.intoallfns);
+//	console.log(query.intoallfns);
 
 	if(query.explain) {
 		return query.explaination;
@@ -3497,7 +3502,7 @@ yy.Select.prototype.compile = function(databaseid) {
 //	console.log(this.into);
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
-			if(alasql.databases[this.into.databaseid||databaseid].engineid) {
+			if(alasql.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
 				query.intoallfns = 'alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
 					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data);';
 			} else {
@@ -3661,7 +3666,7 @@ yy.Select.prototype.compileJoins = function(query) {
 				'\' is not exists in database \''+source.databaseid)+'\'';
 			};
 			// source.data = query.database.tables[source.tableid].data;
-			if(alasql.databases[source.databaseid].engineid) {
+			if(alasql.autocommit && alasql.databases[source.databaseid].engineid) {
 				console.log(997,alasql.databases[source.databaseid].engineid);
 				source.datafn = function(query,params) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
@@ -4088,9 +4093,9 @@ yy.Select.prototype.compileFrom = function(query) {
 		};
 
 		if(tq instanceof yy.Table) {
-				console.log(997,alasql.databases[source.databaseid].engineid);
+//				console.log(997,alasql.databases[source.databaseid].engineid);
 			if(alasql.databases[source.databaseid].engineid) {
-				console.log(997,alasql.databases[source.databaseid].engineid);
+//				console.log(997,alasql.databases[source.databaseid].engineid);
 				source.datafn = function(query,params) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid);
@@ -5484,9 +5489,6 @@ yy.CreateTable.prototype.execute = function (databaseid, cb) {
 		throw new Error('Table name is not defined');
 	}
 
-	if(db.engineid) {
-		alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
-	}
 //	var ifnotexists = this.ifnotexists;
 	var columns = this.columns;
 	// if(false) {
@@ -5540,22 +5542,27 @@ yy.CreateTable.prototype.execute = function (databaseid, cb) {
 
 
 //	if(constraints) {
-		constraints.forEach(function(con) {
-			//console.log(con, con.columns);
-			if(con.type == 'PRIMARY KEY') {
-				if(table.pk) {
-					throw new Error('Primary key already exists');
-				}
-				var pk = table.pk = {};
-				pk.columns = con.columns;
-				pk.onrightfns = pk.columns.map(function(columnid){
-					return 'r[\''+columnid+'\']'
-				}).join("+'`'+");
-				pk.onrightfn = new Function("r",'return '+pk.onrightfns);
-				pk.hh = hash(pk.onrightfns);
-				table.indices[pk.hh] = {};					
+	constraints.forEach(function(con) {
+		//console.log(con, con.columns);
+		if(con.type == 'PRIMARY KEY') {
+			if(table.pk) {
+				throw new Error('Primary key already exists');
 			}
-		});
+			var pk = table.pk = {};
+			pk.columns = con.columns;
+			pk.onrightfns = pk.columns.map(function(columnid){
+				return 'r[\''+columnid+'\']'
+			}).join("+'`'+");
+			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+			pk.hh = hash(pk.onrightfns);
+			table.indices[pk.hh] = {};					
+		}
+	});
+
+	if(db.engineid) {
+		alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
+	}
+
 //	}
 //			if(table.pk) {
 	table.insert = function(r) {
@@ -6570,6 +6577,32 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 };
 
 
+/*
+//
+// SET for Alasql.js
+// Date: 01.12.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
+yy.SetVariable = function (params) { return yy.extend(this, params); }
+yy.SetVariable.prototype.toString = function() {
+	var s = K('SET')+' ';
+	if(typeof this.autocommit != 'undefined') {
+		s += K('AUTOCOMMIT')+' '+(this.autocommit?'ON':'OFF');
+	};
+	return s;
+}
+
+yy.SetVariable.prototype.execute = function (databaseid,cb) {
+	if(typeof this.autocommit != 'undefined') {
+		alasql.autocommit = this.autocommit;
+	}
+
+};
+
+
+
 // Console functions
 /*
 alasql.con = {
@@ -7164,7 +7197,15 @@ LS.attachDatabase = function(databaseid, dbid, cb){
 	var db = new alasql.Database(dbid || databaseid);
 	db.engineid = "localStorage";
 	db.lsdbid = databaseid;
-	db.tables = LS.get(databaseid);
+	db.tables = LS.get(databaseid).tables;
+	// IF AUTOCOMMIT IS OFF then copy data to memory
+	if(!alasql.autocommit) {
+		if(db.tables){
+			for(var tbid in db.tables) {
+				db.tables[tbid].data = LS.get(db.lsdbid+'.'+tableid);
+			}
+		}
+	}
 	return res;
 };
 
@@ -7194,7 +7235,9 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 		throw new Error('Table "'+tableid+'" alsready exists in localStorage database "'+lsdbid+'"');
 	};
 	var lsdb = LS.get(lsdbid);
-	lsdb.tables[tableid] = true;
+	var table = alasql.databases[databaseid].tables[tableid];
+	lsdb.tables[tableid] = {columns:table.columns};
+
 	LS.set(lsdbid, lsdb);
 	LS.set(lsdbid+'.'+tableid, []);
 
@@ -7217,7 +7260,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 }
 
 LS.fromTable = function(databaseid, tableid, cb) {
-	console.log(998, databaseid, tableid, cb);
+//	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
 	if(cb) cb(res);
@@ -7232,8 +7275,8 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	if(!tb) tb = [];
 	tb = tb.concat(value);
 	LS.set(lsdbid+'.'+tableid, tb);
-	console.log(lsdbid+'.'+tableid, tb);
-	console.log(localStorage[lsdbid+'.'+tableid]);
+//	console.log(lsdbid+'.'+tableid, tb);
+//	console.log(localStorage[lsdbid+'.'+tableid]);
 	if(cb) cb(res);
 	return res;
 };

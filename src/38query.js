@@ -95,7 +95,7 @@ function queryfn(query,oldscope) {
 		}
 	};
 
-	console.log(query.intoallfns);
+//	console.log(query.intoallfns);
 
 	if(query.explain) {
 		return query.explaination;
