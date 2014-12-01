@@ -1,8 +1,9 @@
 # Changelog
 
-### 0.0.28 (29.11.2014 - )
+### 0.0.28 (29.11.2014 - 01.12.2014)
 
-*
+* SET AUTOCOMMIT ON|OFF 
+* localStorage in AUTOCIMMIT mode
 
 ### 0.0.27 (27.11.2014 - 29.11.2014)
 

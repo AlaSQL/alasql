@@ -53,6 +53,7 @@
 'ASC'                                      		return 'DIRECTION'
 'ATTACH'                                      	return 'ATTACH'
 'AUTO_INCREMENT'                                return 'AUTO_INCREMENT'
+'AUTOCOMMIT'									return 'AUTOCOMMIT';
 'AVG'                                      		return 'AVG'
 
 'BETWEEN'										return 'BETWEEN'
@@ -303,6 +304,7 @@ Statement
 	| ExpressionStatement
 	| Source
 	| Assert
+	| SetVariable
 
 	| DeclareCursor
 	| OpenCursor
@@ -1497,4 +1499,16 @@ JsonElementsList
 		{ $1.push($3); $$ = $1; }
 	| Json
 		{ $$ = [$1]; }
+	;
+
+SetVariable
+	: SET AUTOCOMMIT OnOff
+		{ $$ = new SetVariable({autocommit:$3});}
+	;
+
+OnOff
+	: ON
+		{ $$ = true; }
+	| OFF
+		{ $$ = false; }
 	;

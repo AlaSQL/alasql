@@ -35,7 +35,7 @@ describe('Test 149 - localStorage Engine', function() {
 
 	it("4. Create localStorage databases", function(done){
 		alasql('CREATE TABLE IF NOT EXISTS test149.one (a int, b string)');
-	//	assert(alasql.databases.test149.tables.one);
+		assert(!alasql.databases.test149.tables.one);
 		assert(JSON.parse(localStorage['ls149']).tables);
 		assert(JSON.parse(localStorage['ls149']).tables.one);
 		assert(JSON.parse(localStorage['ls149.one']));
