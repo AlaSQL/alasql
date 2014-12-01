@@ -2924,16 +2924,18 @@ function queryfn(query,oldscope) {
 		}
 	};
 
+	console.log(query.intoallfns);
+
 	if(query.explain) {
 		return query.explaination;
+	} else if(query.intoallfn) {
+		return query.intoallfn();	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
 			query.intofn(query.data[i],i);
 		}
 //		console.log(query.intofn);
 		return query.data.length;
-	} else if(query.intoallfn) {
-		return query.intoallfn();	
 	} else {
 		return query.data;
 	}
@@ -3484,9 +3486,9 @@ yy.Select.prototype.compile = function(databaseid) {
 //	console.log(this.into);
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
-			if((this.into.databaseid||databaseid).engineid) {
-				query.intoallfns = 'alasql.engines["'+(this.into.databaseid||databaseid).engineid+'"]'+
-					'.intoTable("'+this.into.databaseid||databaseid+'","'+this.into.tableid+'",query.data);';
+			if(alasql.databases[this.into.databaseid||databaseid].engineid) {
+				query.intoallfns = 'alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
+					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data);';
 			} else {
 				query.intofns = 
 				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
@@ -3510,7 +3512,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		};
 
 		if(query.intoallfns) {
-			query.intofn = new Function("query",query.intoallfns); 
+			query.intoallfn = new Function(query.intoallfns); 
 		}
 
 	}
@@ -3649,6 +3651,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			};
 			// source.data = query.database.tables[source.tableid].data;
 			if(alasql.databases[source.databaseid].engineid) {
+				console.log(997,alasql.databases[source.databaseid].engineid);
 				source.datafn = function(query,params) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, tableid);
@@ -4074,7 +4077,15 @@ yy.Select.prototype.compileFrom = function(query) {
 		};
 
 		if(tq instanceof yy.Table) {
-			source.datafn = function(query,params) {
+				console.log(997,alasql.databases[source.databaseid].engineid);
+			if(alasql.databases[source.databaseid].engineid) {
+				console.log(997,alasql.databases[source.databaseid].engineid);
+				source.datafn = function(query,params) {
+					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
+						source.databaseid, source.tableid);
+				}				
+			} else {
+				source.datafn = function(query,params) {
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');
 				// if(!query.database.tables) console.log('query');
@@ -4082,8 +4093,9 @@ yy.Select.prototype.compileFrom = function(query) {
 				// if(!query.database.tables[source.tableid]) console.log(query);
 				// if(!query.database.tables[source.tableid].data) console.log('query');
 
-				return alasql.databases[source.databaseid].tables[source.tableid].data;
+					return alasql.databases[source.databaseid].tables[source.tableid].data;
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
+				};
 			}
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
@@ -5671,7 +5683,7 @@ yy.DropTable.prototype.toString = function() {
 yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
-	console.log(db, this.table.databaseid );
+//	console.log(db, this.table.databaseid );
 	if(db.engineid) {
 		return alasql.engines[db.engineid].dropTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
 	}
@@ -7194,6 +7206,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 }
 
 LS.fromTable = function(databaseid, tableid, cb) {
+	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
 	if(cb) cb(res);
@@ -7201,12 +7214,15 @@ LS.fromTable = function(databaseid, tableid, cb) {
 };
 
 LS.intoTable = function(databaseid, tableid, value, cb) {
+//	console.log('intoTable',databaseid, tableid, value, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = 1;
 	var tb = LS.get(lsdbid+'.'+tableid);
 	if(!tb) tb = [];
 	tb = tb.concat(value);
 	LS.set(lsdbid+'.'+tableid, tb);
+	console.log(lsdbid+'.'+tableid, tb);
+	console.log(localStorage[lsdbid+'.'+tableid]);
 	if(cb) cb(res);
 	return res;
 };

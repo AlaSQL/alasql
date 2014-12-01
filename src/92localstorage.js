@@ -131,6 +131,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 }
 
 LS.fromTable = function(databaseid, tableid, cb) {
+	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
 	if(cb) cb(res);
@@ -138,12 +139,15 @@ LS.fromTable = function(databaseid, tableid, cb) {
 };
 
 LS.intoTable = function(databaseid, tableid, value, cb) {
+//	console.log('intoTable',databaseid, tableid, value, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = 1;
 	var tb = LS.get(lsdbid+'.'+tableid);
 	if(!tb) tb = [];
 	tb = tb.concat(value);
 	LS.set(lsdbid+'.'+tableid, tb);
+	console.log(lsdbid+'.'+tableid, tb);
+	console.log(localStorage[lsdbid+'.'+tableid]);
 	if(cb) cb(res);
 	return res;
 };

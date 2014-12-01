@@ -144,9 +144,9 @@ yy.Select.prototype.compile = function(databaseid) {
 //	console.log(this.into);
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
-			if((this.into.databaseid||databaseid).engineid) {
-				query.intoallfns = 'alasql.engines["'+(this.into.databaseid||databaseid).engineid+'"]'+
-					'.intoTable("'+this.into.databaseid||databaseid+'","'+this.into.tableid+'",query.data);';
+			if(alasql.databases[this.into.databaseid||databaseid].engineid) {
+				query.intoallfns = 'alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
+					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data);';
 			} else {
 				query.intofns = 
 				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
@@ -170,7 +170,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		};
 
 		if(query.intoallfns) {
-			query.intofn = new Function("query",query.intoallfns); 
+			query.intoallfn = new Function(query.intoallfns); 
 		}
 
 	}

@@ -47,9 +47,11 @@ describe('Test 149 - localStorage Engine', function() {
 		alasql('CREATE TABLE test149a.one (a int, b string)');
 
 		alasql('insert into test149a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
-		var res = alasql('select * into test149.one from test149a.one')
-		console.log(res);
-		console.log(localStorage['test149.one']);
+		alasql('select * into test149.one from test149a.one');
+		assert(localStorage['ls149.one'], [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
+
+		var res = alasql('select * from test149.one');
+		console.log(999,res);
 //		assert(alasql.engines.localStorage.get('ls149.one').length == 3);
 		done();
 	});
@@ -77,7 +79,10 @@ if(false)
 
 	it("99. Detach database", function(done){
 		alasql('DROP DATABASE test149a');
+		assert(!alasql.databases.test149a);
 		alasql('DROP DATABASE test149');
+		assert(!alasql.databases.test149);
+		alasql('DROP localStorage DATABASE ls149');
 		assert(!localStorage['ls149']);
 		done();
 	});

@@ -95,16 +95,18 @@ function queryfn(query,oldscope) {
 		}
 	};
 
+	console.log(query.intoallfns);
+
 	if(query.explain) {
 		return query.explaination;
+	} else if(query.intoallfn) {
+		return query.intoallfn();	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
 			query.intofn(query.data[i],i);
 		}
 //		console.log(query.intofn);
 		return query.data.length;
-	} else if(query.intoallfn) {
-		return query.intoallfn();	
 	} else {
 		return query.data;
 	}

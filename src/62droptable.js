@@ -19,7 +19,7 @@ yy.DropTable.prototype.toString = function() {
 yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
-	console.log(db, this.table.databaseid );
+//	console.log(db, this.table.databaseid );
 	if(db.engineid) {
 		return alasql.engines[db.engineid].dropTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
 	}

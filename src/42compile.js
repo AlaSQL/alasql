@@ -52,6 +52,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			};
 			// source.data = query.database.tables[source.tableid].data;
 			if(alasql.databases[source.databaseid].engineid) {
+				console.log(997,alasql.databases[source.databaseid].engineid);
 				source.datafn = function(query,params) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, tableid);
@@ -477,7 +478,15 @@ yy.Select.prototype.compileFrom = function(query) {
 		};
 
 		if(tq instanceof yy.Table) {
-			source.datafn = function(query,params) {
+				console.log(997,alasql.databases[source.databaseid].engineid);
+			if(alasql.databases[source.databaseid].engineid) {
+				console.log(997,alasql.databases[source.databaseid].engineid);
+				source.datafn = function(query,params) {
+					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
+						source.databaseid, source.tableid);
+				}				
+			} else {
+				source.datafn = function(query,params) {
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');
 				// if(!query.database.tables) console.log('query');
@@ -485,8 +494,9 @@ yy.Select.prototype.compileFrom = function(query) {
 				// if(!query.database.tables[source.tableid]) console.log(query);
 				// if(!query.database.tables[source.tableid].data) console.log('query');
 
-				return alasql.databases[source.databaseid].tables[source.tableid].data;
+					return alasql.databases[source.databaseid].tables[source.tableid].data;
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
+				};
 			}
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
