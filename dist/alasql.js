@@ -6475,7 +6475,7 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 
 yy.ShowDatabases = function (params) { return yy.extend(this, params); }
 yy.ShowDatabases.prototype.toString = function() {
-	var s = 'SHOW DATABASES ';
+	var s = K('SHOW')+' '+K('DATABASES');
 	if(this.like) s += 'LIKE '+this.like.toString();
 	return s;
 }
@@ -6502,9 +6502,9 @@ yy.ShowDatabases.prototype.execute = function (databaseid,cb) {
 
 yy.ShowTables = function (params) { return yy.extend(this, params); }
 yy.ShowTables.prototype.toString = function() {
-	var s = 'SHOW TABLES';
+	var s = K('SHOW')+' '+K('TABLES');
 	if(this.databaseid) s += ' FROM '+this.databaseid;
-	if(this.like) s += ' LIKE '+this.like.toString();
+	if(this.like) s += ' '+K('LIKE')+' '+this.like.toString();
 	return s;
 }
 yy.ShowTables.prototype.execute = function (databaseid) {
@@ -6525,9 +6525,9 @@ yy.ShowTables.prototype.execute = function (databaseid) {
 
 yy.ShowColumns = function (params) { return yy.extend(this, params); }
 yy.ShowColumns.prototype.toString = function() {
-	var s = 'SHOW COLUMNS';
-	if(this.table.tableid) s += ' FROM '+this.table.tableid;
-	if(this.databaseid) s += ' FROM '+this.databaseid;
+	var s = K('SHOW')+' '+K('COLUMNS');
+	if(this.table.tableid) s += ' '+K('FROM')+' '+this.table.tableid;
+	if(this.databaseid) s += ' '+K('FROM')+' '+this.databaseid;
 	return s;
 };
 
@@ -6547,9 +6547,9 @@ yy.ShowColumns.prototype.execute = function (databaseid) {
 
 yy.ShowIndex = function (params) { return yy.extend(this, params); }
 yy.ShowIndex.prototype.toString = function() {
-	var s = 'SHOW INDEX';
-	if(this.table.tableid) s += ' FROM '+this.table.tableid;
-	if(this.databaseid) s += ' FROM '+this.databaseid;
+	var s = K('SHOW')+' '+K('INDEX');
+	if(this.table.tableid) s += ' '+K('FROM')+' '+this.table.tableid;
+	if(this.databaseid) s += ' '+K('FROM')+' '+this.databaseid;
 	return s;
 }
 yy.ShowIndex.prototype.execute = function (databaseid) {
@@ -6567,8 +6567,8 @@ yy.ShowIndex.prototype.execute = function (databaseid) {
 
 yy.ShowCreateTable = function (params) { return yy.extend(this, params); }
 yy.ShowCreateTable.prototype.toString = function() {
-	var s = 'SHOW CREATE TABLE '+this.table.tableid;
-	if(this.databaseid) s += ' FROM '+this.databaseid;
+	var s = K('SHOW')+' '+K('CREATE')+' '+K('TABLE')+' '+L(this.table.tableid);
+	if(this.databaseid) s += ' '+K('FROM')+' '+L(this.databaseid);
 	return s;
 }
 yy.ShowCreateTable.prototype.execute = function (databaseid) {
@@ -6576,13 +6576,13 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 	var table = db.tables[this.table.tableid];
 	var self = this;
 	if(table) {
-		var s = 'CREATE TABLE '+this.table.tableid+' (';
+		var s = K('CREATE')+' '+K('TABLE')+' '+L(this.table.tableid)+' (';
 		var ss = [];
 		if(table.columns) {
 			table.columns.forEach(function(col){
-				var a = col.columnid+' '+col.dbtypeid;
-				if(col.dbsize) a += '('+col.dbsize+')';
-				if(col.primarykey) a += ' PRIMARY KEY';
+				var a = L(col.columnid)+' '+K(col.dbtypeid);
+				if(col.dbsize) a += '('+N(col.dbsize)+')';
+				if(col.primarykey) a += ' '+K('PRIMARY')+' '+K('KEY');
 				// TODO extend
 				ss.push(a); 
 			});
@@ -6780,7 +6780,7 @@ alasql.log = function(sql, params) {
 		var s = '';
 
 		if(typeof sql == 'string' && alasql.options.logprompt) {
-			s += '<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>';
+			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
 		}
 
 		if(res instanceof Array) {
@@ -6963,7 +6963,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 				alasql.log(sql);
 				alasql.write('<p style="color:blue">'+(Date.now()-tm)+' ms</p>');
 			} catch (err) {
-				alasql.write('<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>');
+				alasql.write('<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql, false)+'</p>');
 				alasql.write('<p style="color:red">'+err+'<p>');
 			}
 			el.focus();
@@ -7082,8 +7082,8 @@ yy.Help.prototype.execute = function (databaseid) {
 
 yy.Source = function (params) { return yy.extend(this, params); }
 yy.Source.prototype.toString = function() {
-	var s = 'SOURCE';
-	if(this.url) s += ' '+this.url;
+	var s = K('SOURCE');
+	if(this.url) s += ' '+S('\''+this.url+'\'');
 	return s;
 }
 

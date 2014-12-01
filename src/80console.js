@@ -156,7 +156,7 @@ alasql.log = function(sql, params) {
 		var s = '';
 
 		if(typeof sql == 'string' && alasql.options.logprompt) {
-			s += '<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>';
+			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
 		}
 
 		if(res instanceof Array) {
@@ -339,7 +339,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 				alasql.log(sql);
 				alasql.write('<p style="color:blue">'+(Date.now()-tm)+' ms</p>');
 			} catch (err) {
-				alasql.write('<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>');
+				alasql.write('<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql, false)+'</p>');
 				alasql.write('<p style="color:red">'+err+'<p>');
 			}
 			el.focus();
