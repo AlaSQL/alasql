@@ -6180,7 +6180,17 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var statement = function(params, cb) {
 		//console.log(databaseid);
 		var db = alasql.databases[databaseid];
-		var res = insertfn(db, params);
+
+		if(alasql.autocommit && db.engineid) {
+			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+		}
+		
+		var res = insertfn(db,params);
+
+		if(alasql.autocommit && db.engineid) {
+			alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+		}
+//		var res = insertfn(db, params);
 		if(cb) cb(res);
 		return res;
 	};
@@ -6226,6 +6236,10 @@ yy.Delete.prototype.compile = function (databaseid) {
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
 		statement = function (params, cb) {
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+			}
+
 			var table = db.tables[tableid];
 //			table.dirty = true;
 			var orignum = table.data.length;
@@ -6243,17 +6257,30 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 //			table.data = table.data.filter(function(r){return !;});
 			table.data = newtable;
+			var res = orignum - table.data.length;
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+			}
+
 //			console.log('deletefn',table.data.length);
-			if(cb) cb(orignum - table.data.length);
-			return orignum - table.data.length;
+			if(cb) cb(res);
+			return res;
 		}
 	} else {
 		statement = function (params, cb) {
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+			}
+
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
 
 			table.deleteall();
+
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+			}
 
 			if(cb) cb(orignum);
 			return orignum;
@@ -6309,6 +6336,11 @@ yy.Update.prototype.compile = function (databaseid) {
 
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];
+
+		if(alasql.autocommit && db.engineid) {
+			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+		}
+
 		var table = db.tables[tableid];
 		if(!table) {
 			throw new Error("Table '"+tableid+"' not exists")
@@ -6325,6 +6357,11 @@ yy.Update.prototype.compile = function (databaseid) {
 				numrows++;
 			}
 		};
+
+		if(alasql.autocommit && db.engineid) {
+			alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+		}
+
 		if(cb) cb(numrows);
 		return numrows;
 	};
@@ -7355,6 +7392,19 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	if(cb) cb(res);
 	return res;
 };
+
+LS.loadTableData = function(databaseid, tableid){
+	var db = alasql.databases[databaseid];
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	db.tables[tableid].data = LS.get(lsdbid+'.'+tableid);
+}
+
+LS.saveTableData = function(databaseid, tableid){
+	var db = alasql.databases[databaseid];
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	LS.set(lsdbid+'.'+tableid,db.tables[tableid].data);
+	db.tables[tableid].data = null;
+}
 
 LS.commit = function(databaseid, cb) {
 	console.log('COMMIT');

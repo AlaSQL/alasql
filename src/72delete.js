@@ -27,6 +27,10 @@ yy.Delete.prototype.compile = function (databaseid) {
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
 		statement = function (params, cb) {
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+			}
+
 			var table = db.tables[tableid];
 //			table.dirty = true;
 			var orignum = table.data.length;
@@ -44,17 +48,30 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 //			table.data = table.data.filter(function(r){return !;});
 			table.data = newtable;
+			var res = orignum - table.data.length;
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+			}
+
 //			console.log('deletefn',table.data.length);
-			if(cb) cb(orignum - table.data.length);
-			return orignum - table.data.length;
+			if(cb) cb(res);
+			return res;
 		}
 	} else {
 		statement = function (params, cb) {
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+			}
+
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
 
 			table.deleteall();
+
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+			}
 
 			if(cb) cb(orignum);
 			return orignum;

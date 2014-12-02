@@ -38,6 +38,11 @@ yy.Update.prototype.compile = function (databaseid) {
 
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];
+
+		if(alasql.autocommit && db.engineid) {
+			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+		}
+
 		var table = db.tables[tableid];
 		if(!table) {
 			throw new Error("Table '"+tableid+"' not exists")
@@ -54,6 +59,11 @@ yy.Update.prototype.compile = function (databaseid) {
 				numrows++;
 			}
 		};
+
+		if(alasql.autocommit && db.engineid) {
+			alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+		}
+
 		if(cb) cb(numrows);
 		return numrows;
 	};

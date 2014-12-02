@@ -162,6 +162,19 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	return res;
 };
 
+LS.loadTableData = function(databaseid, tableid){
+	var db = alasql.databases[databaseid];
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	db.tables[tableid].data = LS.get(lsdbid+'.'+tableid);
+}
+
+LS.saveTableData = function(databaseid, tableid){
+	var db = alasql.databases[databaseid];
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	LS.set(lsdbid+'.'+tableid,db.tables[tableid].data);
+	db.tables[tableid].data = null;
+}
+
 LS.commit = function(databaseid, cb) {
 	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
