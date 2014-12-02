@@ -163,15 +163,14 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 };
 
 LS.commit = function(databaseid, cb) {
+	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	lsdb = {databaseid:lsdbid, tables:{}};
 	if(db.tables) {
 		for(var tbid in db.tables) {
 			lsdb.tables[tbid] = {columns: db.tables[tbid].columns};
-			if(!alasql.autocommit) {
-				LS.set(lsdbid+'.'+tbid, db.tables[tbid].data);
-			}
+			LS.set(lsdbid+'.'+tbid, db.tables[tbid].data);
 		};
 	}
 	LS.set(lsdbid,lsdb);
@@ -180,22 +179,28 @@ LS.commit = function(databaseid, cb) {
 
 LS.begin = LS.commit;
 
-LS.rollback = function(databaseid. cb) {
+LS.rollback = function(databaseid, cb) {
 	var db = alasql.databases[databaseid];
+	db.dbversion++;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	lsdb = LS.get(lsdbid);
-	if(!alasql.autocommit) {
+//	if(!alasql.autocommit) {
 		if(lsdb.tables){
 			for(var tbid in lsdb.tables) {
-				lsdb.tables[tbid].prototype = alasql.Table;
-				lsdb.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
+				var tb = new alasql.Table({columns: db.tables[tbid].columns});
+				extend(tb,lsdb.tables[tbid]);
+				lsdb.tables[tbid] = tb;
+				if(!alasql.autocommit) {
+					lsdb.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
+				}
 				lsdb.tables[tbid].indexColumns();
+
 				// index columns
 				// convert types
 			}
 		}
-	}
-	alasql.databases[databaseid] = lsdb;
+//	}
+	alasql.databases[databaseid] = new alasql.Database(lsdb);
 	alasql.databases[databaseid].engineid = 'localStorage';
 }
 
