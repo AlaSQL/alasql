@@ -169,11 +169,34 @@ LS.commit = function(databaseid, cb) {
 	if(db.tables) {
 		for(var tbid in db.tables) {
 			lsdb.tables[tbid] = {columns: db.tables[tbid].columns};
-			LS.set(lsdbid+'.'+tbid, db.tables[tbid].data);
+			if(!alasql.autocommit) {
+				LS.set(lsdbid+'.'+tbid, db.tables[tbid].data);
+			}
 		};
 	}
 	LS.set(lsdbid,lsdb);
 	return 1;
 };
+
+LS.begin = LS.commit;
+
+LS.rollback = function(databaseid. cb) {
+	var db = alasql.databases[databaseid];
+	var lsdbid = alasql.databases[databaseid].lsdbid;
+	lsdb = LS.get(lsdbid);
+	if(!alasql.autocommit) {
+		if(lsdb.tables){
+			for(var tbid in lsdb.tables) {
+				lsdb.tables[tbid].prototype = alasql.Table;
+				lsdb.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
+				lsdb.tables[tbid].indexColumns();
+				// index columns
+				// convert types
+			}
+		}
+	}
+	alasql.databases[databaseid] = lsdb;
+	alasql.databases[databaseid].engineid = 'localStorage';
+}
 
 

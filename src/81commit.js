@@ -11,6 +11,14 @@ yy.Begin.prototype.toString = function() {
 }
 
 yy.Begin.prototype.execute = function (databaseid,params, cb) {
+	var res = 1;
+	if(alasql.databases[alasql.useid].engineid) {
+		return alasql.engines[alasql.databases[alasql.useid].engineid].begin(databaseid, cb);
+	} else {
+		// alasql commit!!!
+	}
+	if(cb) cb(res);
+	return res;
 };
 
 yy.Commit = function (params) { return yy.extend(this, params); }
@@ -35,4 +43,12 @@ yy.Rollback.prototype.toString = function() {
 }
 
 yy.Rollback.prototype.execute = function (databaseid,params,cb) {
+	var res = 1;
+	if(alasql.databases[alasql.useid].engineid) {
+		return alasql.engines[alasql.databases[alasql.useid].engineid].rollback(databaseid, cb);
+	} else {
+		// alasql commit!!!
+	}
+	if(cb) cb(res);
+	return res;
 };
