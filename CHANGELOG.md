@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.0.29 (29.11.2014 - 02.12.2014)
+
+* INSERT/DELETE/UPDATE for localStorage AUTOCOMMIT ON mode
+* ROLLBACK for localStorage bug
+
 ### 0.0.28 (29.11.2014 - 01.12.2014)
 
 * SET AUTOCOMMIT ON|OFF 

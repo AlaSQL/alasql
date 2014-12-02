@@ -1,6 +1,6 @@
 # Alasql.js - fast JavaScript client-side SQL database
 
-Version: 0.0.28 Date: November 29, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.29 Date: December 2, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use localStorage as a persistent storage.
 
@@ -19,10 +19,9 @@ Download and try this sample in [your browser](demo.html) or try it in <a href="
 
 * Alasql was written with pure JavaScript and does not use WebSQL database. 
 * Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
-* Alasql can to work directly with JavaScript objects and functions inside SQL. 
-* Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
-* Alasql can operate with JSON objects like JavScript and NoSQL databases
 * Alasql is fast, because it uses some optimization methods.
+* Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
+* Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavScript and NoSQL databases
 * Alasql can use localStorage as a storage for databases in AUTOCOMMIT ON and AUTOCOMMIT OFF modes
 * Plus some [sugar](#Sugar)
 
@@ -30,13 +29,14 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-## Work in Porgess - Async
+## New: localStorage support
+
+* See [test149.js](test/test149.js) - [test152.js](test/test152.js) for samples.
+
+## Work in progress: version 0.0.30 "Async"
 
 Now I am hardly working on async version of Alasql to implement IndexedDB and WebSQL support.
 
-### New: localStorage support
-
-* See test/test149.js and test/test150.js for samples
 
 ## Examples
 
@@ -48,16 +48,13 @@ Try Alasql in console:
 type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
 
 Try Alasql in Fiddle: 
-* [sample 1](http://jsfiddle.net/38hj2uwy/10/) 
-* [sample 2](http://jsfiddle.net/38hj2uwy/6/) 
-* [sample 3](http://jsfiddle.net/6a06dqhc/3/)
-* [sample 4](http://jsfiddle.net/606ksx2g/1/)
+* [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/)
+* [Alasql Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
+* [Sieve of Eratosthenes](http://jsfiddle.net/agershun/1u05op11/) - [source](examples/prime.html)
 
 Other examples:
-* [Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
-* [Sieve of Eratosthenes](http://jsfiddle.net/agershun/1u05op11/) - [source](examples/prime.html)
 * [World database](http://alasql.org/console?source 'world.sql';select top 10 * from City) - [source](console/index.html)
-* [More than 140 of Alasql tests](test)
+* [More than 150 of Alasql tests](test)
 
 ### What People Say about Alasql?
 

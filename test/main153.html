@@ -9,13 +9,36 @@
   <body>
     <div id="mocha"></div>
     <script src="../lib/assert/assert.js"></script>
-    <script src="../lib/mocha/mocha.js"></script>
-    <script src="../lib/zt/zt.js"></script>
-    <script>mocha.setup('bdd')</script>
+<!--    <script src="../lib/mocha/mocha.js"></script> -->
+<!--    <script src="../lib/zt/zt.js"></script> -->
+<!--    <script>mocha.setup('bdd')</script> -->
 
+<script type="text/javascript">
+    
+function describe(s,f) {
+    f(done);
+}
+
+function it(s,f) {
+    var s = f.toString();
+    document.getElementById('result').innerHTML += s+'\n';
+    f(done);
+}
+
+function done(){};
+
+</script>
+<pre><code>
+<output/>
+<div id='result'></div>
+</code>
+</pre>
     <script src="../alasql.js"></script>
 
-    <script src="test00.js"></script>
+    <script src="test153.js"></script>
+
+
+<!--    <script src="test00.js"></script>
     <script src="test01.js"></script>
     <script src="test02.js"></script>
     <script src="test03.js"></script>
@@ -153,7 +176,7 @@
     <script src="test131.js"></script>
     <script src="test132.js"></script>
     <script src="test133.js"></script>
-    <script src="test134.js"></script>
+   <script src="test134.js"></script>
     <script src="test135.js"></script>
     <script src="test136.js"></script>
     <script src="test137.js"></script>
@@ -164,18 +187,14 @@
     <script src="test142.js"></script>
     <script src="test143.js"></script>
     <script src="test144.js"></script>
-    <script src="test145.js"></script>
-    <script src="test146.js"></script>
-    <script src="test147.js"></script>
-    <script src="test148.js"></script>
-    <script src="test149.js"></script>
-    <script src="test150.js"></script>
-    <script src="test151.js"></script>
-    <script src="test152.js"></script>
-    <script src="test153.js"></script>
-    <script>
+   <script src="test145.js"></script>
+     <script src="test146.js"></script>
+-->
+<!--    <script>
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
         else { mocha.run(); }
     </script>
-  </body>
+
+
+-->  </body>
 </html>
