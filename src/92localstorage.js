@@ -195,6 +195,7 @@ LS.begin = LS.commit;
 LS.rollback = function(databaseid, cb) {
 	var db = alasql.databases[databaseid];
 	db.dbversion++;
+//	console.log(db.dbversion)
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	lsdb = LS.get(lsdbid);
 //	if(!alasql.autocommit) {
@@ -213,8 +214,11 @@ LS.rollback = function(databaseid, cb) {
 			}
 		}
 //	}
-	alasql.databases[databaseid] = new alasql.Database(lsdb);
+	delete alasql.databases[databaseid];
+	alasql.databases[databaseid] = new alasql.Database(databaseid);
+	extend(alasql.databases[databaseid], lsdb);
 	alasql.databases[databaseid].engineid = 'localStorage';
+//console.log(999, alasql.databases[databaseid]);
 }
 
 

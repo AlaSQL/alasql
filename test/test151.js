@@ -32,9 +32,14 @@ describe('Test 151 - localStorage Engine', function() {
 		var res = alasql('SELECT * FROM ls151.one');
 		assert(res.length == 6);
 
+//		console.log(alasql.databases.ls151.tables.one);
+//		console.log(localStorage['ls151.one']);
+
 		alasql('ROLLBACK');
-		var res = alasql('SELECT * FROM ls151.one');
-		console.log(res);
+//		console.log(alasql.databases.ls151.tables.one);
+
+		var res = alasql('SELECT * FROM one');
+//		console.log(res);
 		assert(res.length == 3);
 
 		done();
@@ -42,7 +47,7 @@ describe('Test 151 - localStorage Engine', function() {
 
 	it("99. Detach database", function(done){
 		alasql('DROP localStorage DATABASE ls151');
-		alasql('DROP DATABASE test151');
+		alasql('DROP DATABASE ls151');
 		done();
 	});
 });

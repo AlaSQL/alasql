@@ -15,7 +15,10 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				var alias = fr.as || fr.tableid;
 //				console.log(alasql.databases[fr.databaseid || databaseid]);
 //				console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
+//console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
+//console.log(alasql.databases);
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
+//console.log(table);
 				if(table.columns) {
 					table.columns.forEach(function(col){
 						if(defcols[col.columnid]) {
