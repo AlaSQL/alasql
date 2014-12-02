@@ -7407,7 +7407,7 @@ LS.saveTableData = function(databaseid, tableid){
 }
 
 LS.commit = function(databaseid, cb) {
-	console.log('COMMIT');
+//	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	lsdb = {databaseid:lsdbid, tables:{}};
