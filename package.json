@@ -15,6 +15,11 @@
   "engines": [
     "node"
   ],
+  "bin": {
+    "alacon": "./bin/alacon.js",
+    "alaserver": "./bin/alaserver.js",
+  },
+
   "repository": {
     "type": "git",
     "url": "http://github.com/agershun/alasql.git"
@@ -36,7 +41,8 @@
     "database",
     "DBMS",
     "data",
-    "query"
+    "query",
+    "localStorage"
   ],
   "license": "MIT"
 }
