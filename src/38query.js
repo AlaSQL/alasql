@@ -23,7 +23,7 @@ function queryfn(query,oldscope,cb) {
 	// First - refresh data sources
 	query.sources.forEach(function(source, idx){
 //		source.data = query.database.tables[source.tableid].data;
-		console.log(666,idx);
+//		console.log(666,idx);
 		source.datafn(query, query.params, queryfn2, idx); 
 //		console.log(source, source.data);
 //

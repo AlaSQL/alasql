@@ -2919,7 +2919,7 @@ function queryfn(query,oldscope,cb) {
 	// First - refresh data sources
 	query.sources.forEach(function(source, idx){
 //		source.data = query.database.tables[source.tableid].data;
-		console.log(666,idx);
+//		console.log(666,idx);
 		source.datafn(query, query.params, queryfn2, idx); 
 //		console.log(source, source.data);
 //
@@ -7566,23 +7566,23 @@ IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 	  	var tx = ixdb.transaction([tableid]);
 	  	var store = tx.objectStore(tableid);
 	  	var cur = store.openCursor();
-	  	console.log(cur);
+//	  	console.log(cur);
 	  	cur.onblocked = function(event) {
-	  		console.log('blocked');
+//	  		console.log('blocked');
 	  	}
 	  	cur.onerror = function(event) {
-	  		console.log('error');
+//	  		console.log('error');
 	  	}
 	  	cur.onsuccess = function(event) {
-	  		console.log('success');
+//	  		console.log('success');
 		  	var cursor = event.target.result;
-		  		console.log(222,event);
-		  		console.log(333,cursor);
+//		  		console.log(222,event);
+//		  		console.log(333,cursor);
 		  	if(cursor) {
 		  		res.push(cursor.value);
 		  		cursor.continue();
 		  	} else {
-		  		console.log(555, res,idx,query);
+//		  		console.log(555, res,idx,query);
 		  		ixdb.close();
 		  		cb(res, idx, query);
 		  	}

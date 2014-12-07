@@ -17,7 +17,7 @@ describe('Test 155 - InsexedDB INSERT', function() {
 			'SELECT * INTO test155.one FROM ?;'+
 			'SELECT * FROM test155.one'+
 			'', [[{a:1},{a:2}]], function(res){
-		 	console.log(950, res);
+		 	assert.deepEqual(res, [1,1,1,1,2,[{a:1},{a:2}]]);
 			done();
 		});
 	});
