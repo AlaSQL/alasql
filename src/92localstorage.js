@@ -7,7 +7,7 @@
 var LS = alasql.engines.localStorage = function (){};
 
 LS.get = function(key) {
-	var s = localStorage[key];
+	var s = localStorage.getItem(key);
 	if(typeof s == "undefined") return;
 	var v = undefined;
 	try {
@@ -20,7 +20,7 @@ LS.get = function(key) {
 
 LS.set = function(key, value){
 	if(typeof value == 'undefined') localStorage.removeItem(key);
-	else localStorage[key] = JSON.stringify(value); 
+	else localStorage.setItem(key, JSON.stringify(value));
 }
 
 LS.createDatabase = function(lsdbid, args, ifnotexists, dbid, cb){
@@ -157,7 +157,7 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	tb = tb.concat(value);
 	LS.set(lsdbid+'.'+tableid, tb);
 //	console.log(lsdbid+'.'+tableid, tb);
-//	console.log(localStorage[lsdbid+'.'+tableid]);
+//	console.log(localStorage.getItem(lsdbid+'.'+tableid));
 	if(cb) cb(res);
 	return res;
 };
