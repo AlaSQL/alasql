@@ -70,15 +70,15 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 };
 
 
-LS.attachDatabase = function(databaseid, dbid, cb){
+LS.attachDatabase = function(lsdbid, dbid, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
 	};
-	var db = new alasql.Database(dbid || databaseid);
+	var db = new alasql.Database(dbid || lsdbid);
 	db.engineid = "localStorage";
-	db.lsdbid = databaseid;
-	db.tables = LS.get(databaseid).tables;
+	db.lsdbid = lsdbid;
+	db.tables = LS.get(lsdbid).tables;
 	// IF AUTOCOMMIT IS OFF then copy data to memory
 	if(!alasql.autocommit) {
 		if(db.tables){
@@ -93,13 +93,14 @@ LS.attachDatabase = function(databaseid, dbid, cb){
 LS.showDatabases = function(like, cb) {
 	var res = [];
 	var ls = LS.get('alasql');
+	var relike = new RegExp(like.value.replace(/\%/g,'.*'),'g');
 	if(ls && ls.databases) {
 		for(dbid in ls.databases) {
 			res.push({databaseid: dbid});
 		};
 		if(like && res && res.length > 0) {
 			res = res.filter(function(d){
-				return d.databaseid.match(new RegExp((like.value).replace(/\%/g,'.*'),'g'));
+				return d.databaseid.match(relike);
 			});
 		}		
 	};

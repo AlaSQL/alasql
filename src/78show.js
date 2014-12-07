@@ -12,7 +12,7 @@ yy.ShowDatabases.prototype.toString = function() {
 	if(this.like) s += 'LIKE '+this.like.toString();
 	return s;
 }
-yy.ShowDatabases.prototype.execute = function (databaseid,cb) {
+yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 	if(this.engineid) {
 		return alasql.engines[this.engineid].showDatabases(this.like, cb);
 	} else {
@@ -40,7 +40,7 @@ yy.ShowTables.prototype.toString = function() {
 	if(this.like) s += ' '+K('LIKE')+' '+this.like.toString();
 	return s;
 }
-yy.ShowTables.prototype.execute = function (databaseid) {
+yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.databaseid || databaseid];
 
 	var self = this;
@@ -53,6 +53,7 @@ yy.ShowTables.prototype.execute = function (databaseid) {
 			return d.tableid.match(new RegExp((self.like.value).replace(/\%/g,'.*'),'g'));
 		});
 	};
+	if(cb) cb(res);
 	return res;
 };
 

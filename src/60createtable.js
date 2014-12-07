@@ -39,7 +39,7 @@ yy.CreateTable.prototype.toString = function() {
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
-yy.CreateTable.prototype.execute = function (databaseid, cb) {
+yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
@@ -118,7 +118,9 @@ yy.CreateTable.prototype.execute = function (databaseid, cb) {
 		}
 	});
 
+//	console.log(100,db.engineid);
 	if(db.engineid) {
+//		console.log(101,db.engineid);
 		alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
 	}
 

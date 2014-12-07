@@ -5502,7 +5502,7 @@ yy.CreateTable.prototype.toString = function() {
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
-yy.CreateTable.prototype.execute = function (databaseid, cb) {
+yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
@@ -5581,7 +5581,9 @@ yy.CreateTable.prototype.execute = function (databaseid, cb) {
 		}
 	});
 
+//	console.log(100,db.engineid);
 	if(db.engineid) {
+//		console.log(101,db.engineid);
 		alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
 	}
 
@@ -6519,7 +6521,7 @@ yy.ShowDatabases.prototype.toString = function() {
 	if(this.like) s += 'LIKE '+this.like.toString();
 	return s;
 }
-yy.ShowDatabases.prototype.execute = function (databaseid,cb) {
+yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 	if(this.engineid) {
 		return alasql.engines[this.engineid].showDatabases(this.like, cb);
 	} else {
@@ -6547,7 +6549,7 @@ yy.ShowTables.prototype.toString = function() {
 	if(this.like) s += ' '+K('LIKE')+' '+this.like.toString();
 	return s;
 }
-yy.ShowTables.prototype.execute = function (databaseid) {
+yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.databaseid || databaseid];
 
 	var self = this;
@@ -6560,6 +6562,7 @@ yy.ShowTables.prototype.execute = function (databaseid) {
 			return d.tableid.match(new RegExp((self.like.value).replace(/\%/g,'.*'),'g'));
 		});
 	};
+	if(cb) cb(res);
 	return res;
 };
 
@@ -7230,7 +7233,185 @@ WebSQL.attachDatabase = function(databaseid, dbid, cb){
 //
 //
 
-alasql.engines.IndexedDB = function (){};
+var IDB = alasql.engines.IndexedDB = function (){};
+
+IDB.showDatabases = function(like,cb) {
+	// console.log('showDatabases',arguments);
+	var request = indexedDB.webkitGetDatabaseNames();
+	request.onsuccess = function(event) {
+		var dblist = event.target.result;
+		var res = [];
+		if(like) {
+			var relike = new RegExp((like.value).replace(/\%/g,'.*'),'g');
+		}
+		for(var i=0;i<dblist.length;i++) {
+			if(!like || dblist[i].match(relike)) {
+				res.push({databaseid: dblist[i]});
+			}
+		};
+		cb(res);
+	};
+};
+
+IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
+	var request1 = indexedDB.webkitGetDatabaseNames();
+	request1.onsuccess = function(event) {
+		var dblist = event.target.result;
+		if(dblist.contains(ixdbid)){
+			if(ifnotexists) {
+				cb(0);
+				return;
+			} else {		
+				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
+			}
+		};
+
+		var request2 = window.indexedDB.open(ixdbid,1);
+		request2.onsuccess = function(event) {
+			event.target.result.close();
+			cb(1);
+		};
+	};
+	// }
+};
+
+IDB.dropDatabase = function(ixdbid, ifexists, cb){
+	var request1 = indexedDB.webkitGetDatabaseNames();
+	request1.onsuccess = function(event) {
+		var dblist = event.target.result;
+		if(!dblist.contains(ixdbid)){
+			if(ifexists) {
+				cb(0);
+				return;
+			} else {
+				throw new Error('IndexedDB: Cannot drop new database "'+ixdbid+'" because it does not exist');
+			}
+		};
+		var request2 = indexedDB.deleteDatabase(ixdbid);
+		request2.onsuccess = function(event) {
+			cb(1);
+		}
+	};
+};
+
+IDB.attachDatabase = function(ixdbid, dbid, cb) {
+	var request1 = indexedDB.webkitGetDatabaseNames();
+		request1.onsuccess = function(event) {
+		var dblist = event.target.result;
+		if(!dblist.contains(ixdbid)){
+			throw new Error('IndexedDB: Cannot attach database "'+ixdbid+'" because it does not exist');
+		};
+		var request2 = indexedDB.open(ixdbid);
+		request2.onsuccess = function(event) {
+			var ixdb = event.target.result;
+			var db = new alasql.Database(dbid || ixdbid);
+			db.engineid = "IndexedDB";
+			db.ixdbid = ixdbid;
+			db.tables = [];
+		  	var tblist = ixdb.objectStoreNames;
+			for(var i=0;i<tblist.length;i++){
+				db.tables[tblist[i]] = {};
+			};
+
+		// if(!alasql.autocommit) {
+		// if(db.tables){
+		// 	for(var tbid in db.tables) {
+		// 		db.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
+		// 	}
+		// 	}
+		// }
+			event.target.result.close();		
+			cb(1);
+		};
+	};
+};
+
+
+IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
+	var ixdbid = alasql.databases[databaseid].ixdbid;
+
+	var request1 = indexedDB.webkitGetDatabaseNames();
+		request1.onsuccess = function(event) {
+		var dblist = event.target.result;
+		if(!dblist.contains(ixdbid)){
+			throw new Error('IndexedDB: Cannot create table in database "'+ixdbid+'" because it does not exist');
+		};
+		var request2 = indexedDB.open(ixdbid);
+		request2.onversionchange = function(event) {
+//			console.log('onversionchange');
+			event.target.result.close();
+		};
+		request2.onsuccess = function(event) {
+			var version = event.target.result.version;
+			event.target.result.close();
+
+			var request3 = indexedDB.open(ixdbid, version+1);
+			request3.onupgradeneeded = function(event) {
+				var ixdb = event.target.result;
+//				console.log(ixdb);
+				var store = ixdb.createObjectStore(tableid);
+//				console.log(store);
+			};
+			request3.onsuccess = function(event) {
+//				console.log('opened');
+				event.target.result.close();
+				cb(1);
+			};
+			request3.onerror = function(event){
+				throw event;
+//				console.log('error');
+			}
+			request3.onblocked = function(event){
+				throw new Error('Cannot create table "'+tableid+'" because database "'+databaseid+'"  is blocked');
+//				console.log('blocked');
+			}				
+		};
+	};
+};
+
+IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
+	var ixdbid = alasql.databases[databaseid].ixdbid;
+
+	var request1 = indexedDB.webkitGetDatabaseNames();
+		request1.onsuccess = function(event) {
+		var dblist = event.target.result;
+		if(!dblist.contains(ixdbid)){
+			throw new Error('IndexedDB: Cannot drop table in database "'+ixdbid+'" because it does not exist');
+		};
+		var request2 = indexedDB.open(ixdbid);
+		request2.onversionchange = function(event) {
+			event.target.result.close();
+		};
+		request2.onsuccess = function(event) {
+			var version = event.target.result.version;
+			event.target.result.close();
+
+			var request3 = indexedDB.open(ixdbid, version+1);
+			request3.onupgradeneeded = function(event) {
+				var ixdb = event.target.result;
+//				console.log(ixdb);
+				ixdb.deleteObjectStore(tableid);
+				delete alasql.databases[databaseid].tables[tableid];
+//				var store = ixdb.createObjectStore(tableid);
+				console.log('deleted');
+			};
+			request3.onsuccess = function(event) {
+				console.log('opened');
+				event.target.result.close();
+				cb(1);
+			};
+			request3.onerror = function(event){
+				throw event;
+//				console.log('error');
+			}
+			request3.onblocked = function(event){
+				throw new Error('Cannot drop table "'+tableid+'" because database "'+databaseid+'" is blocked');
+//				console.log('blocked');
+			}				
+		};
+	};
+}
+
 
 //
 // 91websql.js
@@ -7304,15 +7485,15 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 };
 
 
-LS.attachDatabase = function(databaseid, dbid, cb){
+LS.attachDatabase = function(lsdbid, dbid, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
 	};
-	var db = new alasql.Database(dbid || databaseid);
+	var db = new alasql.Database(dbid || lsdbid);
 	db.engineid = "localStorage";
-	db.lsdbid = databaseid;
-	db.tables = LS.get(databaseid).tables;
+	db.lsdbid = lsdbid;
+	db.tables = LS.get(lsdbid).tables;
 	// IF AUTOCOMMIT IS OFF then copy data to memory
 	if(!alasql.autocommit) {
 		if(db.tables){
@@ -7327,13 +7508,14 @@ LS.attachDatabase = function(databaseid, dbid, cb){
 LS.showDatabases = function(like, cb) {
 	var res = [];
 	var ls = LS.get('alasql');
+	var relike = new RegExp(like.value.replace(/\%/g,'.*'),'g');
 	if(ls && ls.databases) {
 		for(dbid in ls.databases) {
 			res.push({databaseid: dbid});
 		};
 		if(like && res && res.length > 0) {
 			res = res.filter(function(d){
-				return d.databaseid.match(new RegExp((like.value).replace(/\%/g,'.*'),'g'));
+				return d.databaseid.match(relike);
 			});
 		}		
 	};
