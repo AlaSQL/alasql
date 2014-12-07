@@ -121,7 +121,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 			request3.onupgradeneeded = function(event) {
 				var ixdb = event.target.result;
 //				console.log(ixdb);
-				var store = ixdb.createObjectStore(tableid);
+				var store = ixdb.createObjectStore(tableid, {autoIncrement:true});
 //				console.log(store);
 			};
 			request3.onsuccess = function(event) {
@@ -190,12 +190,18 @@ IDB.intoTable = function(databaseid, tableid, value, cb) {
 	var request1 = indexedDB.open(ixdbid);
 	request1.onsuccess = function(event) {
 		var ixdb = event.target.result;
-		var tx = ixdb.transaction(tableid,"readwrite");
+		var tx = ixdb.transaction([tableid],"readwrite");
 		var tb = tx.objectStore(tableid);
+		// console.log(tb.keyPath);
+		// console.log(tb.indexNames);
+		// console.log(tb.autoIncrement);
 		for(var i=0, ilen = value.length;i<ilen;i++) {
 			tb.add(value[i]);
 		};
-		cb(ilen);
+		tx.oncomplete = function() {
+			ixdb.close();
+			cb(ilen);
+		}
 	};
 
 	// var tb = LS.get(lsdbid+'.'+tableid);
@@ -207,4 +213,40 @@ IDB.intoTable = function(databaseid, tableid, value, cb) {
 	// if(cb) cb(res);
 	// return res;
 };
+
+IDB.fromTable = function(databaseid, tableid, cb, idx, query){
+	// console.log(arguments);
+	// console.trace();
+	var ixdbid = alasql.databases[databaseid].ixdbid;
+	var request = window.indexedDB.open(ixdbid);
+	request.onsuccess = function(event) {
+	  	var res = [];
+	  	var ixdb = event.target.result;
+//	  	console.log(444,ixdb, tableid, ixdbid);
+	  	var tx = ixdb.transaction([tableid]);
+	  	var store = tx.objectStore(tableid);
+	  	var cur = store.openCursor();
+	  	console.log(cur);
+	  	cur.onblocked = function(event) {
+	  		console.log('blocked');
+	  	}
+	  	cur.onerror = function(event) {
+	  		console.log('error');
+	  	}
+	  	cur.onsuccess = function(event) {
+	  		console.log('success');
+		  	var cursor = event.target.result;
+		  		console.log(222,event);
+		  		console.log(333,cursor);
+		  	if(cursor) {
+		  		res.push(cursor.value);
+		  		cursor.continue();
+		  	} else {
+		  		console.log(555, res,idx,query);
+		  		ixdb.close();
+		  		cb(res, idx, query);
+		  	}
+	  	}
+	}		
+}
 

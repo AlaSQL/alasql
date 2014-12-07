@@ -1,8 +1,8 @@
 // Main query procedure
-function queryfn(query,oldscope) {
+function queryfn(query,oldscope,cb) {
 	var ms;
 //	console.log(query);
-
+	query.cb = cb;
 	// Run all subqueries before main statement
 	if(query.queriesfn) {
 		query.queriesdata = query.queriesfn.map(function(q,idx){
@@ -19,21 +19,13 @@ function queryfn(query,oldscope) {
 	else scope = cloneDeep(oldscope);
 	query.scope = scope;
 
+	query.sourceslen = query.sources.length;
 	// First - refresh data sources
-	query.sources.forEach(function(source){
+	query.sources.forEach(function(source, idx){
 //		source.data = query.database.tables[source.tableid].data;
-		source.data = source.datafn(query, query.params); 
+		console.log(666,idx);
+		source.datafn(query, query.params, queryfn2, idx); 
 //		console.log(source, source.data);
-		if(typeof source.data == 'function') {
-			source.getfn = source.data;
-			source.dontcache = source.getfn.dontcache;
-
-//			var prevsource = query.sources[h-1];
-			if(source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
-				source.dontcache = false;
-			}
-			source.data = {};
-		}
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
 // constructions like this.queriesdata['test'].
@@ -43,6 +35,26 @@ function queryfn(query,oldscope) {
 		source.queriesdata = query.queriesdata;  
 	});
 
+};
+
+function queryfn2(data,idx,query) {
+	var source = query.sources[idx];
+	source.data = data;
+	if(typeof source.data == 'function') {
+		source.getfn = source.data;
+		source.dontcache = source.getfn.dontcache;
+
+//			var prevsource = query.sources[h-1];
+		if(source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
+			source.dontcache = false;
+		}
+		source.data = {};
+	}
+
+	query.sourceslen--;
+	if(query.sourceslen>0) return;
+
+	var scope = query.scope;
 	// Preindexation of data sources
 //	if(!oldscope) {
 		preIndex(query);
@@ -98,16 +110,19 @@ function queryfn(query,oldscope) {
 //	console.log(query.intoallfns);
 
 	if(query.explain) {
+		if(query.cb) query.cb(query.explaination);
 		return query.explaination;
 	} else if(query.intoallfn) {
-		return query.intoallfn();	
+		return query.intoallfn(query.cb);	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
 			query.intofn(query.data[i],i);
 		}
 //		console.log(query.intofn);
+		if(query.cb) query.cb(query.data.length);
 		return query.data.length;
 	} else {
+		if(query.cb) query.cb(query.data);
 		return query.data;
 	}
 

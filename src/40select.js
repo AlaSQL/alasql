@@ -146,7 +146,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		if(this.into instanceof yy.Table) {
 			if(alasql.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
 				query.intoallfns = 'return alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
-					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data);';
+					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data, cb);';
 			} else {
 				query.intofns = 
 				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
@@ -170,7 +170,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		};
 
 		if(query.intoallfns) {
-			query.intoallfn = new Function(query.intoallfns); 
+			query.intoallfn = new Function("cb",query.intoallfns); 
 		}
 
 	}
@@ -179,32 +179,37 @@ yy.Select.prototype.compile = function(databaseid) {
 	// Now, compile all togeather into one function with query object in scope
 	var statement = function(params, cb, oldscope) {
 		query.params = params;
-		var res = queryfn(query,oldscope); 
-		
-		if(query.modifier == 'VALUE') {
-			var key = Object.keys(res[0])[0];
-			res = res[0][key];
-		} if(query.modifier == 'ROW') {
-			var a = [];
-			for(var key in res[0]) {
-				a.push(res[0][key]);
-			};
-			res = a;
-		} if(query.modifier == 'COLUMN') {
-			var ar = [];
-			if(res.length > 0) {
-				var key = Object.keys(res[0])[0];
-				for(var i=0, ilen=res.length; i<ilen; i++){
-					ar.push(res[i][key]);
-				}
-			};
-			res = ar;
-		} if(query.modifier == 'MATRIX') {
-			res = arrayOfArrays(res);
-		}
+		var res1 = queryfn(query,oldscope,function(res){
 
-		if(cb) cb(res); 
-		return res;
+			if(query.modifier == 'VALUE') {
+				var key = Object.keys(res[0])[0];
+				res = res[0][key];
+			} if(query.modifier == 'ROW') {
+				var a = [];
+				for(var key in res[0]) {
+					a.push(res[0][key]);
+				};
+				res = a;
+			} if(query.modifier == 'COLUMN') {
+				var ar = [];
+				if(res.length > 0) {
+					var key = Object.keys(res[0])[0];
+					for(var i=0, ilen=res.length; i<ilen; i++){
+						ar.push(res[i][key]);
+					}
+				};
+				res = ar;
+			} if(query.modifier == 'MATRIX') {
+				res = arrayOfArrays(res);
+			}
+
+			if(cb) cb(res); 
+			return res;
+
+		}); 
+
+		return res1;
+		
 	};
 
 //	statement.dbversion = ;

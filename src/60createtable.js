@@ -121,7 +121,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(100,db.engineid);
 	if(db.engineid) {
 //		console.log(101,db.engineid);
-		alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
+		return alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
 	}
 
 //	}
@@ -188,6 +188,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(databaseid);
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);
+	if(cb) cb(1);
 
 	return 1;
 };

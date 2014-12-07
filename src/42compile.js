@@ -53,12 +53,14 @@ yy.Select.prototype.compileJoins = function(query) {
 			// source.data = query.database.tables[source.tableid].data;
 			if(alasql.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
-				source.datafn = function(query,params) {
+				source.datafn = function(query,params, cb, idx) {
+					console.log(777,arguments);
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
-						source.databaseid, tableid);
+						source.databaseid, tableid, cb, idx,query);
 				}				
 			} else {
-				source.datafn = function(query,params) {
+				source.datafn = function(query,params,cb, idx) {
+					if(cb) cb(alasql.databases[source.databaseid].tables[source.tableid].data,idx,query);
 					return alasql.databases[source.databaseid].tables[source.tableid].data;
 				}
 			};
@@ -74,8 +76,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				srcwherefn: returnTrue
 			};
 			source.subquery = tq.compile(query.database.databaseid);
-			source.datafn = function(query, params) {
-				return source.subquery(query.params);
+			source.datafn = function(query, params, cb, idx) {
+				return source.subquery(query.params, null, cb, idx);
 			}				
 		} else if(jn.param) {
 			source = {
@@ -90,8 +92,8 @@ yy.Select.prototype.compileJoins = function(query) {
 			// source.data = ;
 			var jnparam = jn.param.param;
 //			console.log(jn, jnparam);
-			source.datafn = new Function('query,params',
-				"return alasql.prepareFromData(params['"+jnparam+"']);");
+			source.datafn = new Function('query,params,cb,idx',
+				"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)cb(res, idx, query);return res");
 		}
 
 
@@ -481,40 +483,41 @@ yy.Select.prototype.compileFrom = function(query) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 			if(alasql.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
-				source.datafn = function(query,params) {
+				source.datafn = function(query,params,cb,idx) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
-						source.databaseid, source.tableid);
+						source.databaseid, source.tableid,cb,idx,query);
 				}				
 			} else {
-				source.datafn = function(query,params) {
+				source.datafn = function(query,params,cb,idx) {
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');
 				// if(!query.database.tables) console.log('query');
 				// if(!source.tableid) console.log('query');
 				// if(!query.database.tables[source.tableid]) console.log(query);
 				// if(!query.database.tables[source.tableid].data) console.log('query');
-
-					return alasql.databases[source.databaseid].tables[source.tableid].data;
+					var res = alasql.databases[source.databaseid].tables[source.tableid].data;
+					if(cb) cb(res,idx,query);
+					return res;
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
 				};
 			}
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
-			source.datafn = function(query, params) {
-				return source.subquery(query.params);
+			source.datafn = function(query, params, cb, idx) {
+				return source.subquery(query.params, cb, idx, query);
 			}						
 		} else if(tq instanceof yy.ParamValue) {
-			source.datafn = new Function('query,params',
-				"return alasql.prepareFromData(params['"+tq.param+"']);");
+			source.datafn = new Function('query,params,cb,idx',
+				"var res = alasql.prepareFromData(params['"+tq.param+"']);if(cb)cb(res,idx,query);return res");
 		} else if(tq instanceof yy.FuncValue) {
-			var s = "return alasql.from['"+tq.funcid+"'](";
+			var s = "var res=alasql.from['"+tq.funcid+"'](";
 			if(tq.args && tq.args.length>0) {
 				s += tq.args.map(function(arg){
 					return arg.toJavaScript();
 				}).join(',');
 			}
-			s += ');';
-			source.datafn = new Function('query,params',s);
+			s += ');if(cb)cb(res,idx,query);return res';
+			source.datafn = new Function('query,params, cb, idx',s);
 
 		} else {
 			throw new Error('Wrong table at FROM');
