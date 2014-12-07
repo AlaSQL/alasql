@@ -183,3 +183,28 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 		};
 	};
 }
+
+IDB.intoTable = function(databaseid, tableid, value, cb) {
+//	console.log('intoTable',databaseid, tableid, value, cb);
+	var ixdbid = alasql.databases[databaseid].ixdbid;
+	var request1 = indexedDB.open(ixdbid);
+	request1.onsuccess = function(event) {
+		var ixdb = event.target.result;
+		var tx = ixdb.transaction(tableid,"readwrite");
+		var tb = tx.objectStore(tableid);
+		for(var i=0, ilen = value.length;i<ilen;i++) {
+			tb.add(value[i]);
+		};
+		cb(ilen);
+	};
+
+	// var tb = LS.get(lsdbid+'.'+tableid);
+	// if(!tb) tb = [];
+	// tb = tb.concat(value);
+	// LS.set(lsdbid+'.'+tableid, tb);
+//	console.log(lsdbid+'.'+tableid, tb);
+//	console.log(localStorage[lsdbid+'.'+tableid]);
+	// if(cb) cb(res);
+	// return res;
+};
+

@@ -14,8 +14,8 @@ describe('Test 155 - InsexedDB INSERT', function() {
 			'CREATE IndexedDB DATABASE ag155;'+
 			'ATTACH IndexedDB DATABASE ag155 AS test155;'+
 			'CREATE TABLE test155.one;'+
-			'INSERT INTO test155.one VALUES @{a:10};'+
-			'', [], function(res){
+			'SELECT * INTO test155.one FROM ?'+
+			'', [[{a:1}]], function(res){
 		 	console.log(950, res);
 			done();
 		});
