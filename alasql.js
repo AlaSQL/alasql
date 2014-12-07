@@ -2236,7 +2236,11 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 		}
 	} else {
 		// Multiple statements
-		return alasql.drun(databaseid, ast, params, cb);
+		if(cb) {
+			alasql.adrun(databaseid, ast, params, cb);
+		} else {
+			return alasql.drun(databaseid, ast, params, cb);
+		}
 	}
 };
 
@@ -2247,7 +2251,6 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		if(ast.statements[i]) {
-//			if(alasql.options.logstatements) console.log(ast.statements[i].toString());
 			if(ast.statements[i].compile) { 
 				var statement = ast.statements[i].compile(alasql.useid);
 				res.push(alasql.res = statement(params));
@@ -2261,6 +2264,33 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	alasql.res = res;
 	return res;
 };
+
+// Run multiple statements and return array of results
+alasql.adrun = function (databaseid, ast, params, cb) {
+	var useid = alasql.useid;
+	if(useid != databaseid) alasql.use(databaseid);
+	var res = [];
+
+	adrunone();
+
+	function adrunone(data) {
+		if(typeof data != 'undefined') res.push(data);
+		var astatement = ast.statements.shift();
+		if(!astatement) {
+			if(useid != databaseid) alasql.use(useid);
+			cb(res);
+		} else {
+			if(astatement.compile) {
+				var statement = astatement.compile(alasql.useid);
+				statement(params, adrunone);
+			} else {
+				astatement.execute(alasql.useid, params, adrunone);
+			}
+		}
+	}
+};
+
+
 
 // Compiler
 alasql.compile = function(sql, kind, databaseid) {
@@ -7393,10 +7423,10 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 				ixdb.deleteObjectStore(tableid);
 				delete alasql.databases[databaseid].tables[tableid];
 //				var store = ixdb.createObjectStore(tableid);
-				console.log('deleted');
+				// console.log('deleted');
 			};
 			request3.onsuccess = function(event) {
-				console.log('opened');
+				// console.log('opened');
 				event.target.result.close();
 				cb(1);
 			};

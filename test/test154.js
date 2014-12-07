@@ -11,7 +11,7 @@ describe('Test 154 - InsexedDB test', function() {
 
 	it("1. Create Database and Table", function(done){
 		alasql('DROP IndexedDB DATABASE IF EXISTS ag154', [], function(res){
-			assert(res == 1);
+			assert(res == 1 || res == 0);
 			alasql('CREATE IndexedDB DATABASE ag154', [], function(res){
 				assert(res == 1);
 				alasql('SHOW IndexedDB DATABASES', [], function(res) {
@@ -27,13 +27,13 @@ describe('Test 154 - InsexedDB test', function() {
 							alasql('SHOW TABLES FROM ag154', [], function(res){
 								assert(res.length == 1);
 								assert(res[0].tableid == 'one');
-//									console.log(997,res);
+									// console.log(997,res);
 
 								alasql('DROP TABLE ag154.one', [], function(res){
-//									console.log(998,res);
+									// console.log(998,res);
 									assert(res == 1);
 									alasql('SHOW TABLES FROM ag154', [], function(res){
-//										console.log(999,res);
+										// console.log(999,res);
 										assert(res.length == 0);
 
 										done();
@@ -50,14 +50,14 @@ describe('Test 154 - InsexedDB test', function() {
 
 	it("2. Show Databases Async", function(done){
 		alasql('SHOW IndexedDB DATABASES', [], function(res){
-			console.log(100,res);
+			// console.log(100,res);
 			done();
 		});
 	});
 
 	it("3. Show Databases Like Async", function(done){
 		alasql('SHOW IndexedDB DATABASES LIKE "my%"', [], function(res){
-			console.log(200, res);
+			// console.log(200, res);
 		});
 		done();
 	});
@@ -65,11 +65,11 @@ describe('Test 154 - InsexedDB test', function() {
 	it("4. Drop Database", function(done){
 		alasql('DROP IndexedDB DATABASE IF EXISTS ag154', [], function(res){
 			assert(res == 1);
-			console.log(alasql.databases.ag154);
+			// console.log(alasql.databases.ag154);
 			alasql('DROP DATABASE IF EXISTS ag154', [], function(res){
 				assert(res == 1);
 				alasql('SHOW IndexedDB DATABASES', [], function(res){
-					console.log(300,res);
+					// console.log(300,res);
 					done();
 				});
 			});
@@ -77,8 +77,8 @@ describe('Test 154 - InsexedDB test', function() {
 	});
 
 	it("5. Multiple lines async", function(done){
-		alasql('SHOW IndexedDB DATABASES;SHOW IndexedDB DATABASES', [], function(res){
-			console.log(900, res);
+		alasql('CREATE IndexedDB DATABASE ag154;SHOW IndexedDB DATABASES;SHOW IndexedDB DATABASES', [], function(res){
+		 	console.log(900, res);
 			done();
 		});
 	});

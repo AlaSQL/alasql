@@ -164,10 +164,10 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 				ixdb.deleteObjectStore(tableid);
 				delete alasql.databases[databaseid].tables[tableid];
 //				var store = ixdb.createObjectStore(tableid);
-				console.log('deleted');
+				// console.log('deleted');
 			};
 			request3.onsuccess = function(event) {
-				console.log('opened');
+				// console.log('opened');
 				event.target.result.close();
 				cb(1);
 			};
