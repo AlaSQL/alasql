@@ -99,8 +99,9 @@ IDB.attachDatabase = function(ixdbid, dbid, cb) {
 
 
 IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
+//	console.log(arguments);
 	var ixdbid = alasql.databases[databaseid].ixdbid;
-
+//	console.log(ixdbid);
 	var request1 = indexedDB.webkitGetDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;

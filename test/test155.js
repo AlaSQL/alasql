@@ -35,13 +35,9 @@ describe('Test 154 - InsexedDB test', function() {
 									alasql('SHOW TABLES FROM ag154', [], function(res){
 										// console.log(999,res);
 										assert(res.length == 0);
-										// console.log(alasql.databases.ag154);
-										alasql('DETACH DATABASE ag154;DROP IndexedDB DATABASE ag154',[],function(res){
-											assert(res[0]==1);
-											assert(res[1]==1);
-//											console.log(res);
-											done();
-										});
+		console.log(alasql.databases.ag154);
+
+										done();
 
 									});
 								});
@@ -53,7 +49,6 @@ describe('Test 154 - InsexedDB test', function() {
 		});
 	});
 
-if(false) {
 	it("2. Show Databases Async", function(done){
 		alasql('SHOW IndexedDB DATABASES', [], function(res){
 			// console.log(100,res);
@@ -109,7 +104,6 @@ if(false) {
 		});
 	});
 
-};
 
 });
 

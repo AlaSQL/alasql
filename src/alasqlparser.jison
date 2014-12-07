@@ -82,6 +82,7 @@
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
 'DESC'                                          return 'DIRECTION'
+'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
 
@@ -286,6 +287,7 @@ Statement
 	| CreateTable
 	| CreateView
 	| Delete
+	| DetachDatabase
 	| DropDatabase
 	| DropIndex
 	| DropTable
@@ -1269,6 +1271,10 @@ AttachDatabase
 		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2, as:$6 });}
 	;
 
+DetachDatabase
+	: DETACH DATABASE Literal
+		{ $$ = new yy.DetachDatabase({databaseid:$3});}
+	;
 
 CreateDatabase
 	: CREATE DATABASE IfNotExists Literal

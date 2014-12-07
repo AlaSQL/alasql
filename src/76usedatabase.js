@@ -67,6 +67,47 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 };
 
 
+// CREATE DATABASE databaseid
+yy.DetachDatabase = function (params) { return yy.extend(this, params); };
+yy.DetachDatabase.prototype.toString = function() {
+	var s = K('DETACH');
+	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	return s;
+}
+//yy.CreateDatabase.prototype.compile = returnUndefined;
+yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
+	// console.log(alasql.useid, databaseid, this.databaseid);
+	// console.trace();
+	if(!alasql.databases[this.databaseid].engineid) {
+		throw new Error('Cannot detach database "'+this.engineid+'", because it was not attached.');
+	};
+	var res;
+	
+	var dbid = this.databaseid;
+
+	if(dbid == alasql.DEFAULTDATABASEID) {
+		throw new Error("Drop of default database is prohibited");			
+	}
+//	console.log(dbid);
+	if(!alasql.databases[dbid]) {
+		if(!this.ifexists) {
+			throw new Error("Database '"+dbid+"' does not exist");	
+		} else {
+			res = 0;
+		}
+	} else {
+		delete alasql.databases[dbid];
+		if(dbid == alasql.useid) {
+			alasql.use();		
+		}
+		res = 1;
+	}
+	if(cb) cb(res);
+	return res;
+//	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, cb);
+//	return res;
+};
+
 // USE DATABSE databaseid
 // USE databaseid
 yy.UseDatabase = function (params) { return yy.extend(this, params); };
@@ -100,22 +141,33 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 //		console.log(this,this.databaseid, this.ifexists);
 		return alasql.engines[this.engineid].dropDatabase(this.databaseid, this.ifexists, cb);
 	}
-
+	var res;
+	
 	var dbid = this.databaseid;
 
 	if(dbid == alasql.DEFAULTDATABASEID) {
 		throw new Error("Drop of default database is prohibited");			
 	}
+//	console.log(dbid);
 	if(!alasql.databases[dbid]) {
-		throw new Error("Database '"+databaseid+"' does not exist");
-	};
-	delete alasql.databases[dbid];
-	if(dbid == alasql.useid) {
-		alasql.use();		
+		if(!this.ifexists) {
+			throw new Error("Database '"+dbid+"' does not exist");	
+		} else {
+			res = 0;
+		}
+	} else {
+		if(alasql.databases[dbid].engineid) {
+			throw new Error("Cannot drop database '"+dbid+"', because it is attached. Detach it.");	
+		}
+
+		delete alasql.databases[dbid];
+		if(dbid == alasql.useid) {
+			alasql.use();		
+		}
+		res = 1;
 	}
-	var res = 1;
 	if(cb) cb(res);
-	return 1;
+	return res;
 };
 
 
