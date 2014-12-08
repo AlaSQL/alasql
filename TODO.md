@@ -1,6 +1,15 @@
 # To do
 ## URGENT
 
+* Fix errors
+* Add dom-storage support
+* IndexedDB INSERT/DELETE/UPDATE
+* Check GROUP BY compatibility
+http://blog.jooq.org/2014/12/04/do-you-really-understand-sqls-group-by-and-having-clauses/
+
+
+
+
 * ALTER TABLE ADD COLUMN
 * ALTER TABLE MODIFY COLUMN
 * World City Database - big data

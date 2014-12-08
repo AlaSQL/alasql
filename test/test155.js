@@ -22,7 +22,6 @@ describe('Test 155 - InsexedDB INSERT', function() {
 		});
 	});
 
-
 });
 
 }

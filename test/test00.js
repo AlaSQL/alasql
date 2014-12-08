@@ -12,6 +12,7 @@ describe('Test 00', function() {
 		res.push(alasql('create table one (a int)'));
 		res.push(alasql('insert into one values (1),(2),(3),(4),(5)'));
 		res.push(alasql('select * from one'));
+		console.log(alasql.databases.test00.tables.one);
 		res.push(alasql('drop database test00'));
 		assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
 		done();

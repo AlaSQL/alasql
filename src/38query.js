@@ -21,10 +21,14 @@ function queryfn(query,oldscope,cb) {
 
 	query.sourceslen = query.sources.length;
 	// First - refresh data sources
+
+	var result;
 	query.sources.forEach(function(source, idx){
 //		source.data = query.database.tables[source.tableid].data;
 //		console.log(666,idx);
-		source.datafn(query, query.params, queryfn2, idx); 
+		var rs = source.datafn(query, query.params, queryfn2, idx); 
+		console.log(333,rs);
+		if(typeof rs != undefined) result = rs;
 //		console.log(source, source.data);
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
@@ -34,7 +38,7 @@ function queryfn(query,oldscope,cb) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
-
+	return result;
 };
 
 function queryfn2(data,idx,query) {
@@ -53,6 +57,9 @@ function queryfn2(data,idx,query) {
 
 	query.sourceslen--;
 	if(query.sourceslen>0) return;
+
+console.log(55,query);
+
 
 	var scope = query.scope;
 	// Preindexation of data sources
