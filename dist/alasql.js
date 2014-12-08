@@ -2923,9 +2923,9 @@ function queryfn(query,oldscope,cb) {
 //		source.data = query.database.tables[source.tableid].data;
 //		console.log(666,idx);
 		var rs = source.datafn(query, query.params, queryfn2, idx); 
-		console.log(333,rs);
+//		console.log(333,rs);
 		if(typeof rs != undefined) result = rs;
-//		console.log(source, source.data);
+//		console.log(444,result);
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
 // constructions like this.queriesdata['test'].
@@ -2934,6 +2934,7 @@ function queryfn(query,oldscope,cb) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
+	if(query.sources.length == 0) result = queryfn3(query);
 	return result;
 };
 
@@ -2954,7 +2955,11 @@ function queryfn2(data,idx,query) {
 	query.sourceslen--;
 	if(query.sourceslen>0) return;
 
-console.log(55,query);
+	return queryfn3(query);
+};
+
+function queryfn3(query) {
+//console.log(55,query);
 
 
 	var scope = query.scope;
@@ -2977,6 +2982,8 @@ console.log(55,query);
 
 	// Start walking over data
 	doJoin(query, scope, h);
+
+//console.log(85,query.data[0]);
 
 	// If groupping, then filter groups with HAVING function
 	if(query.groupfn) {
@@ -3025,8 +3032,11 @@ console.log(55,query);
 		if(query.cb) query.cb(query.data.length);
 		return query.data.length;
 	} else {
-		if(query.cb) query.cb(query.data);
-		return query.data;
+//		console.log(111,query.cb,query.data);
+		var res = query.data;
+		if(query.cb) res = query.cb(query.data);
+//		console.log(777,res)
+		return res;
 	}
 
 	// That's all
@@ -3213,8 +3223,10 @@ function doJoin (query, scope, h) {
 //console.log(query.wherefns);
 		// Then apply where and select
 		if(query.wherefn(scope,query.params, alasql)) {
+
+//			console.log("scope",scope.schools);
 			var res = query.selectfn(scope, query.params, alasql);
-//			console.log("last",scope);
+//			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
 				query.groupfn(res, query.params, alasql)
@@ -3612,32 +3624,19 @@ yy.Select.prototype.compile = function(databaseid) {
 		query.params = params;
 		var res1 = queryfn(query,oldscope,function(res){
 
-			if(query.modifier == 'VALUE') {
-				var key = Object.keys(res[0])[0];
-				res = res[0][key];
-			} if(query.modifier == 'ROW') {
-				var a = [];
-				for(var key in res[0]) {
-					a.push(res[0][key]);
-				};
-				res = a;
-			} if(query.modifier == 'COLUMN') {
-				var ar = [];
-				if(res.length > 0) {
-					var key = Object.keys(res[0])[0];
-					for(var i=0, ilen=res.length; i<ilen; i++){
-						ar.push(res[i][key]);
-					}
-				};
-				res = ar;
-			} if(query.modifier == 'MATRIX') {
-				res = arrayOfArrays(res);
-			}
+//console.log(res[0].schoolid);
+//console.log(184,res);
+			var res2 = modify(query, res);
 
-			if(cb) cb(res); 
-			return res;
+
+			if(cb) cb(res2); 
+//console.log(8888,res2);
+			return res2;
 
 		}); 
+//console.log(9999,res1);
+
+//		if(typeof res1 != 'undefined') res1 =  modify(query,res1);
 
 		return res1;
 		
@@ -3645,8 +3644,37 @@ yy.Select.prototype.compile = function(databaseid) {
 
 //	statement.dbversion = ;
 //	console.log(statement.query);
+//console.log(202,statement);
 	return statement;
 };
+
+function modify(query, res) {
+	if(query.modifier == 'VALUE') {
+//		console.log(222,res);
+		var key = Object.keys(res[0])[0];
+		res = res[0][key];
+	} if(query.modifier == 'ROW') {
+		var a = [];
+		for(var key in res[0]) {
+			a.push(res[0][key]);
+		};
+		res = a;
+	} if(query.modifier == 'COLUMN') {
+		var ar = [];
+		if(res.length > 0) {
+			var key = Object.keys(res[0])[0];
+			for(var i=0, ilen=res.length; i<ilen; i++){
+				ar.push(res[i][key]);
+			}
+		};
+		res = ar;
+	} if(query.modifier == 'MATRIX') {
+		res = arrayOfArrays(res);
+	}
+	return res;
+};
+
+
 
 yy.Select.prototype.exec = function(databaseid) {
 	throw new Error('Select statement should be precompiled');
@@ -4190,8 +4218,9 @@ yy.Select.prototype.compileFrom = function(query) {
 				// if(!query.database.tables[source.tableid]) console.log(query);
 				// if(!query.database.tables[source.tableid].data) console.log('query');
 					var res = alasql.databases[source.databaseid].tables[source.tableid].data;
-//				console.log(res);
-					if(cb) cb(res,idx,query);
+//				console.log(500,res);
+					if(cb) res = cb(res,idx,query);
+//				console.log(600,res);
 					return res;
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
 				};
@@ -4199,7 +4228,15 @@ yy.Select.prototype.compileFrom = function(query) {
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
 			source.datafn = function(query, params, cb, idx) {
-				return source.subquery(query.params, cb, idx, query);
+//				return source.subquery(query.params, cb, idx, query);
+				var res;
+				source.subquery(query.params, function(data){
+	//				console.log(512,data);
+					if(cb) res = cb(data,idx,query);
+					return data;
+				});
+//					console.log(515,res);
+				return res;
 			}						
 		} else if(tq instanceof yy.ParamValue) {
 			source.datafn = new Function('query,params,cb,idx',

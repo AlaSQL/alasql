@@ -497,8 +497,9 @@ yy.Select.prototype.compileFrom = function(query) {
 				// if(!query.database.tables[source.tableid]) console.log(query);
 				// if(!query.database.tables[source.tableid].data) console.log('query');
 					var res = alasql.databases[source.databaseid].tables[source.tableid].data;
-//				console.log(res);
-					if(cb) cb(res,idx,query);
+//				console.log(500,res);
+					if(cb) res = cb(res,idx,query);
+//				console.log(600,res);
 					return res;
 //				return alasql.databases[source.databaseid].tables[source.tableid].data;
 				};
@@ -506,7 +507,15 @@ yy.Select.prototype.compileFrom = function(query) {
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
 			source.datafn = function(query, params, cb, idx) {
-				return source.subquery(query.params, cb, idx, query);
+//				return source.subquery(query.params, cb, idx, query);
+				var res;
+				source.subquery(query.params, function(data){
+	//				console.log(512,data);
+					if(cb) res = cb(data,idx,query);
+					return data;
+				});
+//					console.log(515,res);
+				return res;
 			}						
 		} else if(tq instanceof yy.ParamValue) {
 			source.datafn = new Function('query,params,cb,idx',

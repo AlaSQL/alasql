@@ -100,7 +100,7 @@ function prepareData (defined) {
 		 	done();
 		});
 		it('Select 1.2: LEFT JOIN ON ', function(done){
-			var res = alasql.exec('SELECT * '+
+			var res = alasql('SELECT * '+
 				' FROM students '+
 				' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
 				' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
@@ -109,7 +109,7 @@ function prepareData (defined) {
 			done();
 		});
 		it('Select 1.3: LEFT JOIN', function(done){
-			var res = alasql.exec('SELECT students.schoolid '+
+			var res = alasql('SELECT students.schoolid '+
 				' FROM students '+
 				' LEFT JOIN courses USING courseid'
 			);
@@ -117,7 +117,7 @@ function prepareData (defined) {
 			done();
 		});
 		it('Select 1.4: queryValue', function(done){
-			var res = alasql.queryValue('SELECT COUNT(*) FROM courses, students');
+			var res = alasql('SELECT VALUE COUNT(*) FROM courses, students');
 			assert.equal(25,res);
 			done();
 		});

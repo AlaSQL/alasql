@@ -9,8 +9,10 @@ function doJoin (query, scope, h) {
 //console.log(query.wherefns);
 		// Then apply where and select
 		if(query.wherefn(scope,query.params, alasql)) {
+
+//			console.log("scope",scope.schools);
 			var res = query.selectfn(scope, query.params, alasql);
-//			console.log("last",scope);
+//			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
 				query.groupfn(res, query.params, alasql)

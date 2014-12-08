@@ -16,7 +16,8 @@ describe('Test 18', function() {
 		db.exec('INSERT INTO test VALUES (5)');
 		db.exec('INSERT INTO test VALUES (6)');
 		db.exec('INSERT INTO test VALUES (7)');
-		var res = db.queryValue('SELECT SUM(a*2+1) AS aa FROM (SELECT a FROM test) q');
+		var res = db.exec('SELECT VALUE SUM(a*2+1) AS aa FROM (SELECT a FROM test) q');
+//		console.log(20,res);
 
 		assert.equal(res, 63);
 

@@ -181,32 +181,19 @@ yy.Select.prototype.compile = function(databaseid) {
 		query.params = params;
 		var res1 = queryfn(query,oldscope,function(res){
 
-			if(query.modifier == 'VALUE') {
-				var key = Object.keys(res[0])[0];
-				res = res[0][key];
-			} if(query.modifier == 'ROW') {
-				var a = [];
-				for(var key in res[0]) {
-					a.push(res[0][key]);
-				};
-				res = a;
-			} if(query.modifier == 'COLUMN') {
-				var ar = [];
-				if(res.length > 0) {
-					var key = Object.keys(res[0])[0];
-					for(var i=0, ilen=res.length; i<ilen; i++){
-						ar.push(res[i][key]);
-					}
-				};
-				res = ar;
-			} if(query.modifier == 'MATRIX') {
-				res = arrayOfArrays(res);
-			}
+//console.log(res[0].schoolid);
+//console.log(184,res);
+			var res2 = modify(query, res);
 
-			if(cb) cb(res); 
-			return res;
+
+			if(cb) cb(res2); 
+//console.log(8888,res2);
+			return res2;
 
 		}); 
+//console.log(9999,res1);
+
+//		if(typeof res1 != 'undefined') res1 =  modify(query,res1);
 
 		return res1;
 		
@@ -214,8 +201,37 @@ yy.Select.prototype.compile = function(databaseid) {
 
 //	statement.dbversion = ;
 //	console.log(statement.query);
+//console.log(202,statement);
 	return statement;
 };
+
+function modify(query, res) {
+	if(query.modifier == 'VALUE') {
+//		console.log(222,res);
+		var key = Object.keys(res[0])[0];
+		res = res[0][key];
+	} if(query.modifier == 'ROW') {
+		var a = [];
+		for(var key in res[0]) {
+			a.push(res[0][key]);
+		};
+		res = a;
+	} if(query.modifier == 'COLUMN') {
+		var ar = [];
+		if(res.length > 0) {
+			var key = Object.keys(res[0])[0];
+			for(var i=0, ilen=res.length; i<ilen; i++){
+				ar.push(res[i][key]);
+			}
+		};
+		res = ar;
+	} if(query.modifier == 'MATRIX') {
+		res = arrayOfArrays(res);
+	}
+	return res;
+};
+
+
 
 yy.Select.prototype.exec = function(databaseid) {
 	throw new Error('Select statement should be precompiled');

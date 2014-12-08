@@ -27,9 +27,9 @@ function queryfn(query,oldscope,cb) {
 //		source.data = query.database.tables[source.tableid].data;
 //		console.log(666,idx);
 		var rs = source.datafn(query, query.params, queryfn2, idx); 
-		console.log(333,rs);
+//		console.log(333,rs);
 		if(typeof rs != undefined) result = rs;
-//		console.log(source, source.data);
+//		console.log(444,result);
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
 // constructions like this.queriesdata['test'].
@@ -38,6 +38,7 @@ function queryfn(query,oldscope,cb) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
+	if(query.sources.length == 0) result = queryfn3(query);
 	return result;
 };
 
@@ -58,7 +59,11 @@ function queryfn2(data,idx,query) {
 	query.sourceslen--;
 	if(query.sourceslen>0) return;
 
-console.log(55,query);
+	return queryfn3(query);
+};
+
+function queryfn3(query) {
+//console.log(55,query);
 
 
 	var scope = query.scope;
@@ -81,6 +86,8 @@ console.log(55,query);
 
 	// Start walking over data
 	doJoin(query, scope, h);
+
+//console.log(85,query.data[0]);
 
 	// If groupping, then filter groups with HAVING function
 	if(query.groupfn) {
@@ -129,8 +136,11 @@ console.log(55,query);
 		if(query.cb) query.cb(query.data.length);
 		return query.data.length;
 	} else {
-		if(query.cb) query.cb(query.data);
-		return query.data;
+//		console.log(111,query.cb,query.data);
+		var res = query.data;
+		if(query.cb) res = query.cb(query.data);
+//		console.log(777,res)
+		return res;
 	}
 
 	// That's all
