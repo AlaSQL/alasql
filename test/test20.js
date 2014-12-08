@@ -32,11 +32,11 @@ describe('Test 20 - User-defined functions', function() {
 
 	it('2 - User-defined functions + compilation', function(done){
 		alasql.fn.cubic3 = function(x) {return x*x*x}; 
-		var cubic = alasql.compile('SELECT VALUE cubic3(?)');
-		console.log(36,cubic);
-		console.log(37,cubic([1]));
-		console.log(38,cubic([2]));
-		assert(8 == cubic([2]));
+		var cub = alasql.compile('SELECT VALUE cubic3(?)');
+		console.log(36,cub);
+		console.log(37,cub([1]));
+		console.log(38,cub([2]));
+		assert(8 == cub([2]));
 		done();
 	});
 

@@ -104,7 +104,7 @@ describe('Test 150 - localStorage Engine', function() {
 	it("99. Detach database", function(done){
 		alasql('DROP DATABASE test150a');
 		assert(!alasql.databases.test149a);
-		alasql('DROP DATABASE test150');
+		alasql('DETACH DATABASE test150');
 		assert(!alasql.databases.test149);
 		alasql('DROP localStorage DATABASE ls150');
 		assert(!localStorage['ls150']);

@@ -47,8 +47,8 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 	});
 
 	it("99. Detach database", function(done){
+		alasql('DETACH DATABASE ls152');
 		alasql('DROP localStorage DATABASE ls152');
-		alasql('DROP DATABASE ls152');
 		done();
 	});
 });

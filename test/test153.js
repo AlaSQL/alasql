@@ -11,7 +11,7 @@ describe('Test 153 - Async test1...', function() {
 
 	it("1. Create database", function(done){
 		alasql('CREATE DATABASE IF NOT EXISTS test153');
-		alasql('CREATE TABLE one (a int)');
+		alasql('CREATE TABLE test153.one (a int)');
 		var getfn = function(i, cb) {
 			if(i>3) return;
 			var res = {a:i};

@@ -46,8 +46,8 @@ describe('Test 151 - localStorage Engine', function() {
 	});
 
 	it("99. Detach database", function(done){
+		alasql('DETACH DATABASE ls151');
 		alasql('DROP localStorage DATABASE ls151');
-		alasql('DROP DATABASE ls151');
 		done();
 	});
 });

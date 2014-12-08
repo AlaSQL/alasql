@@ -5,12 +5,14 @@ function queryfn(query,oldscope,cb) {
 	query.cb = cb;
 	// Run all subqueries before main statement
 	if(query.queriesfn) {
+		console.log(8);
 		query.queriesdata = query.queriesfn.map(function(q,idx){
-			if(query.explain) ms = Date.now();
+//			if(query.explain) ms = Date.now();
 			var res = flatArray(q(query.params));
-			query.explaination.push({explid: query.explid++, description:'Query '+idx,ms:Date.now()-ms});
+//			query.explaination.push({explid: query.explid++, description:'Query '+idx,ms:Date.now()-ms});
 			return res;
 		});
+		console.log(9,query.queriesdata.length);
 //		console.log(query.queriesdata[0]);
 	}
 
@@ -283,6 +285,7 @@ preIndex = function(query) {
 
 				source.data = source.data.filter(function(r) {
 					scope[source.alias] = r;
+					console.log(288,source);
 					return source.srcwherefn(scope, query.params, alasql);
 				});
 
