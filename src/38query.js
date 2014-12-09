@@ -1,18 +1,36 @@
 // Main query procedure
-function queryfn(query,oldscope,cb) {
+function queryfn(query,oldscope,cb, A,B) {
 	var ms;
-//	console.log(query);
-	query.cb = cb;
+		query.sourceslen = query.sources.length;
+		var slen = query.sourceslen;
+		query.A = A;
+		query.B = B;
+//	console.log(arguments);
+		query.cb = cb;
+
 	// Run all subqueries before main statement
 	if(query.queriesfn) {
-		console.log(8);
-		query.queriesdata = query.queriesfn.map(function(q,idx){
+		query.sourceslen += query.queriesfn.length;
+		slen += query.queriesfn.length;
+
+		query.queriesdata = [];
+
+//		console.log(8);
+		query.queriesfn.forEach(function(q,idx){
 //			if(query.explain) ms = Date.now();
-			var res = flatArray(q(query.params));
+//console.log(18,idx);
+//			var res = flatArray(q(query.params,null,queryfn2,(-idx-1),query));
+
+//			var res = flatArray(queryfn(q.query,null,queryfn2,(-idx-1),query));
+
+			queryfn(q.query,null,queryfn2,(-idx-1),query);
+
+
 //			query.explaination.push({explid: query.explid++, description:'Query '+idx,ms:Date.now()-ms});
-			return res;
+//			query.queriesdata[idx] = res;
+//			return res;
 		});
-		console.log(9,query.queriesdata.length);
+//		console.log(9,query.queriesdata.length);
 //		console.log(query.queriesdata[0]);
 	}
 
@@ -21,13 +39,13 @@ function queryfn(query,oldscope,cb) {
 	else scope = cloneDeep(oldscope);
 	query.scope = scope;
 
-	query.sourceslen = query.sources.length;
 	// First - refresh data sources
 
 	var result;
 	query.sources.forEach(function(source, idx){
 //		source.data = query.database.tables[source.tableid].data;
 //		console.log(666,idx);
+		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx); 
 //		console.log(333,rs);
 		if(typeof rs != undefined) result = rs;
@@ -40,22 +58,32 @@ function queryfn(query,oldscope,cb) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
-	if(query.sources.length == 0) result = queryfn3(query);
+	if(slen == 0) result = queryfn3(query);
 	return result;
 };
 
 function queryfn2(data,idx,query) {
-	var source = query.sources[idx];
-	source.data = data;
-	if(typeof source.data == 'function') {
-		source.getfn = source.data;
-		source.dontcache = source.getfn.dontcache;
 
-//			var prevsource = query.sources[h-1];
-		if(source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
-			source.dontcache = false;
+//console.log(56,arguments);
+
+	if(idx>=0) {
+		var source = query.sources[idx];
+		source.data = data;
+		if(typeof source.data == 'function') {
+			source.getfn = source.data;
+			source.dontcache = source.getfn.dontcache;
+
+	//			var prevsource = query.sources[h-1];
+			if(source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
+				source.dontcache = false;
+			}
+			source.data = {};
 		}
-		source.data = {};
+	} else {
+		// subqueries
+		query.queriesdata[-idx-1] = flatArray(data);
+//		console.log(78,idx,data);
+//		console.log(79,query.queriesdata);
 	}
 
 	query.sourceslen--;
@@ -126,7 +154,7 @@ function queryfn3(query) {
 //	console.log(query.intoallfns);
 
 	if(query.explain) {
-		if(query.cb) query.cb(query.explaination);
+		if(query.cb) query.cb(query.explaination,query.A, query.B);
 		return query.explaination;
 	} else if(query.intoallfn) {
 		return query.intoallfn(query.cb);	
@@ -135,12 +163,12 @@ function queryfn3(query) {
 			query.intofn(query.data[i],i);
 		}
 //		console.log(query.intofn);
-		if(query.cb) query.cb(query.data.length);
+		if(query.cb) query.cb(query.data.length,query.A, query.B);
 		return query.data.length;
 	} else {
 //		console.log(111,query.cb,query.data);
 		var res = query.data;
-		if(query.cb) res = query.cb(query.data);
+		if(query.cb) res = query.cb(query.data,query.A, query.B);
 //		console.log(777,res)
 		return res;
 	}
@@ -285,7 +313,7 @@ preIndex = function(query) {
 
 				source.data = source.data.filter(function(r) {
 					scope[source.alias] = r;
-					console.log(288,source);
+//					console.log(288,source);
 					return source.srcwherefn(scope, query.params, alasql);
 				});
 

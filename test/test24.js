@@ -19,6 +19,10 @@ describe('Test 24', function() {
 		db.exec('INSERT INTO test2 VALUES (2,2)');
 		db.exec('INSERT INTO test2 VALUES (3,3)');
 
+		var res = db.exec('SELECT * FROM test1 WHERE a IN (SELECT a FROM test2)');
+		console.log(res);
+		done();
+		return;
 		var res = db.exec('SELECT COLUMN a FROM test1 WHERE a IN (SELECT a FROM test2)');
 		assert.deepEqual([ 2,3 ], res);
 		var res = db.queryArray('SELECT a FROM test1 WHERE a NOT IN (SELECT a FROM test2)');

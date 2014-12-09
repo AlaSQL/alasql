@@ -202,6 +202,7 @@ yy.Select.prototype.compile = function(databaseid) {
 //	statement.dbversion = ;
 //	console.log(statement.query);
 //console.log(202,statement);
+	statement.query = query;
 	return statement;
 };
 
