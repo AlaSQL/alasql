@@ -10,7 +10,7 @@
 
 yy.Union = function (params) { return yy.extend(this, params); }
 yy.Union.prototype.toString = function () {
-	return "UNION";
+	return K('UNION');
 };
 
 yy.Union.prototype.compile = function (tableid) {

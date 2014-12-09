@@ -16,35 +16,36 @@ describe('Test 03 - '+NUMTESTS+'times', function() {
 	zt('Start',NUMTESTS,function(){});
 
 	it('0. Create table', function(done){
+		alasql('create database test03; use test03');
 		alasql('drop table if exists schools');
-		var res = alasql.exec(sql1);
+		var res = alasql(sql1);
 		done();
 	});
 
 	it("1. Test insert with columns ", function(done) {
 		zt('Test insert with columns', function() {
-			alasql.exec(sql2);
+			alasql(sql2);
 		});
 		done();
 	});
 
 	it("2. Test insert without columns", function(done) {
 		zt('Test insert without columns ', function() {
-			alasql.exec(sql3);
+			alasql(sql3);
 		});
 		done();
 	});
 
 	it("3. Test insert without compilation #1", function(done) {
 		zt('Test insert without compilation #1', function() {
-			alasql.exec(sql3);
+			alasql(sql3);
 		});
 		done();
 	});
 
 	it("4. Test insert without compilation and caching", function(done) {
 		zt('Test insert without compilation and caching', function() {
-			alasql.exec(sql3.replace('999', ((Math.random()*1000)|0)));
+			alasql(sql3.replace('999', ((Math.random()*1000)|0)));
 		});
 		done();
 	});
@@ -66,10 +67,16 @@ describe('Test 03 - '+NUMTESTS+'times', function() {
 	});
 
 	it('COUNT(*)', function(done) {
-		var res = alasql.exec('SELECT COUNT(*) FROM schools');
+		var res = alasql('SELECT COUNT(*) FROM schools');
 		assert.equal(6*NUMTESTS, res[0]['COUNT(*)']);
 		done();
 	});
+
+	it('Drop database', function(done) {
+		alasql('drop database test03');
+		done();
+	});
+
 
 //    zt.log();
 });

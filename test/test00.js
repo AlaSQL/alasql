@@ -12,13 +12,12 @@ describe('Test 00', function() {
 		res.push(alasql('create table one (a int)'));
 		res.push(alasql('insert into one values (1),(2),(3),(4),(5)'));
 		res.push(alasql('select * from one'));
-//		console.log(alasql.databases.test00.tables.one);
 		res.push(alasql('drop database test00'));
 		assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
 		done();
 	});
 
-	it('Very beginning: multiple expressions', function(done){
+	it('Very beginning: multiple statements in one string', function(done){
 		var sql = 'create database test00;';
 		sql += 'use test00;';
 		sql += 'create table one (a int);';
@@ -29,6 +28,21 @@ describe('Test 00', function() {
 		assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
 		done();
 	});
+
+	it('Very beginning: multiple statements in one string with callback', function(done){
+		var sql = 'create database test00;';
+		sql += 'use test00;';
+		sql += 'create table one (a int);';
+		sql += 'insert into one values (1),(2),(3),(4),(5);';
+		sql += 'select * from one;';
+		sql += 'drop database test00';
+		alasql(sql, [], function(res){
+			assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
+			done();
+		});
+	});
+
+// TODO - convert to NoSQL interface
 
  	// it('Very beginning: single expression', function(done){
  	// 	var db = new alasql.Database('test00');

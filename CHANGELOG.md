@@ -1,5 +1,13 @@
 # Changelog
 
+### 0.0.30 (03.12.2014 - 09.12.2014)
+
+* Async version (except streamming)
+* Fixed a hundred bugs after changes to async/sync version
+* IndexedDB support (except INSERT/DELETE/UPDATE)
+* DOM-Storage support (pull request #15)
+* Grammar for STORE/RESTORE commands (for key-value storages)
+
 ### 0.0.29 (29.11.2014 - 02.12.2014)
 
 * INSERT/DELETE/UPDATE for localStorage AUTOCOMMIT ON mode

@@ -4,7 +4,7 @@
 //
 //
 
-var IDB = alasql.engines.IndexedDB = function (){};
+var IDB = alasql.engines.INDEXEDDB = function (){};
 
 IDB.showDatabases = function(like,cb) {
 	// console.log('showDatabases',arguments);
@@ -76,7 +76,7 @@ IDB.attachDatabase = function(ixdbid, dbid, cb) {
 		request2.onsuccess = function(event) {
 			var ixdb = event.target.result;
 			var db = new alasql.Database(dbid || ixdbid);
-			db.engineid = "IndexedDB";
+			db.engineid = "INDEXEDDB";
 			db.ixdbid = ixdbid;
 			db.tables = [];
 		  	var tblist = ixdb.objectStoreNames;

@@ -145,6 +145,7 @@
 'REFERENCES'                                    return 'REFERENCES'
 'RELATIVE'                                      return 'RELATIVE'
 'RENAME'                                        return 'RENAME'
+'RESTORE'                                       return 'RESTORE'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
@@ -157,6 +158,7 @@
 'SETS'                                        	return 'SETS'
 'SHOW'                                        	return 'SHOW'
 'SOME'                                        	return 'SOME'
+'STORE'                                        	return 'STORE'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
@@ -311,6 +313,8 @@ Statement
 	| Source
 	| Assert
 	| SetVariable
+	| Store
+	| Restore
 
 	| DeclareCursor
 	| OpenCursor
@@ -1266,9 +1270,9 @@ RenameTable
 
 AttachDatabase
 	: ATTACH Literal DATABASE Literal
-		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2 });}
+		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase() });}
 	| ATTACH Literal DATABASE Literal AS Literal
-		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2, as:$6 });}
+		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase(), as:$6 });}
 	;
 
 DetachDatabase
@@ -1280,9 +1284,9 @@ CreateDatabase
 	: CREATE DATABASE IfNotExists Literal
 		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$4); }
 	| CREATE Literal DATABASE IfNotExists Literal AsClause
-		{ $$ = new yy.CreateDatabase({engineid:$2, databaseid:$5, as:$6 }); yy.extend($$,$4); }
+		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, as:$6 }); yy.extend($$,$4); }
 	| CREATE Literal DATABASE IfNotExists Literal LPAR ExprList RPAR AsClause
-		{ $$ = new yy.CreateDatabase({engineid:$2, databaseid:$5, args:$7, as:$9 }); yy.extend($$,$4); }
+		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, args:$7, as:$9 }); yy.extend($$,$4); }
 	;
 
 AsClause
@@ -1303,7 +1307,7 @@ DropDatabase
 	: DROP DATABASE IfExists Literal
 		{ $$ = new yy.DropDatabase({databaseid: $4 }); yy.extend($$,$3); }	
 	| DROP Literal DATABASE IfExists Literal
-		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2 }); yy.extend($$,$4); }	
+		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }	
 	;
 
 /* INDEXES */
@@ -1328,9 +1332,9 @@ ShowDatabases
 	| SHOW DATABASES LIKE StringValue
 		{ $$ = new yy.ShowDatabases({like:$4});}
 	| SHOW Literal DATABASES
-		{ $$ = new yy.ShowDatabases({engineid:$2});}
+		{ $$ = new yy.ShowDatabases({engineid:$2.toUpperCase() });}
 	| SHOW Literal DATABASES LIKE StringValue
-		{ $$ = new yy.ShowDatabases({engineid:$2, like:$5});}
+		{ $$ = new yy.ShowDatabases({engineid:$2.toUpperCase() , like:$5});}
 	;
 
 ShowTables
@@ -1543,3 +1547,18 @@ BeginTransaction
 	| BEGIN TRANSACTION
 		{ $$ = new yy.Begin(); }
 	;
+
+Store
+	: STORE
+		{ $$ = new yy.Store(); }
+	| STORE Literal
+		{ $$ = new yy.Store({databaseid: $2}); }
+	;
+
+Restore
+	: RESTORE
+		{ $$ = new yy.Restore(); }
+	| RESTORE Literal
+		{ $$ = new yy.Restore({databaseid: $2}); }
+	;	
+

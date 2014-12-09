@@ -1,151 +1,51 @@
 ## RELEASES PLAN
 
+#### Version 0.0.30 - "Async"
+
+* Async version of Alasql (without streamming)
+* IndexedDB support (without INSERT/DELETE/UPDATE)
+* REGEXP_LIKE 
 
 
-#### Version 0.0.28 - "Async"
+* NeDB
+* LockiJS
+* TaffyDB
 
-* Async version of Alasql
+#### Version 0.0.31 - "OTHER FUNCTIONALITY"
 
-
-#### Version 0.0.29 - "OTHER FUNCTIONALITY"
-
-
-localStorage
+IndexedDB INSERT/DELETE/UPDATE
+sessionStorage
 source as a function
-IndexedDB
 MongoDb and other key-value storages
 
-
-
-alasql(sql,params,cb);
-
-
-parse SQL - sync
-
-preparedata from froms and joins, ins, exists, etc. - async
-preIndex - async
-doJoin - async
-write into - async
-cb();
-
-var res = alasql('100',[],function(err,data){
-	
-});
-
-if you use async datasources (like IndexedDB) or others, then you should to call cb;
-res = undefined;
-and cb() returns;
-if(alasql.isasync)
-throw Error(async operation - use async version of alasql)
-
-
-
-
-KEY-VALUE STORAGE
-===
-getfn(1,"asg",cb);
-
-getfn(n, "index", cb); - cursor
--1 - getall
--2 - length
--3 - nocache
-
-Write cursor over IndexedDB database
-
-TWO DATABASES
-=============
-
-CREATE DATABASE db1;
-CREATE DATABASE db2;
-CREATE DATABASE db3;
-
-CREATE TABLE db1.one;
-CREATE TABLE db1.two (a int, b int);
-CREATE TABLE db1.three (a int, b int);
-
-INSERT INTO db2.two VALUES (1)
-INSERT INTO db3.three VALUES (1)
-
-SELECT * INTO db1.one FROM db2.two JOIN db3.three USING a
-SELECT * FROM db1.one;
-
-
-FULL TABLE
-Get tables ... FOR SELECT
-Then save table ... FOR INSERT, DELETE, UPDATE...
-
-
-#### Version 0.0.27 - "localStorage"
-
-ATTACH DATABASE localStorage
-USE localStorage
-SHOW TABLES
-
-SELECT YEAR(a) INTO localStorage.two FROM localStorage.one
-
-SELECT YEAR(a) INTO localStorage(two) FROM localStorage(one)
-
-if database is localStorage then datafn = localStoragefn(n);
-
-INSERT INTO three VALUES ()
-DELETE
-UPDATE
-STORE SCHEMA
-STORE DATA
+#### Version 0.0.32 - Advanced "localStorage" support
+* STORE SCHEMA
+* STORE DATA
 
 Answer on StackOverflow questions:
 http://stackoverflow.com/questions/1878256/html5-localstorage-sql
 http://stackoverflow.com/questions/14260127/is-there-a-free-lib-accessing-to-html5-database-sqlite
 
 
+#### Version 0.0.33 - "Streamming"
 
-#### Version 0.0.27 - "Persistence"
-
-Priorities
-===
-27.11.2014
-* Source data is string -> split by lines
 * FROM tab(?)
 * INTO txt()
-
 * Select data from function on the stream (instreamfn())
 * SELECT INTO the streamm function (outstreamfn()) - with group+order and without
 * SELECT without stream
 
-### 28.11.2014
-* Test program for IndexedDB
-* Callback vs Promise vs Sync
-
-
-### 29.11.2014
-
-* Store/Restore data to IndexedDB / localStorage
-* SELECT FROM IndexedDB
 * SELECT FROM IndexedDB with Indexes
-* INSERT/DELETE/UPDATE/SELECT INTO 
+* IndexedDB INSERT/DELETE/UPDATE/SELECT INTO 
 * SYNC SCHEMAS WITH INDEXEDDB
 * PRIMARY/FOREIGN KEYS
 * KEYS & IndexedDB
 
 
-Browser:
-* IndexedDB
-* localStorage
-
-* ATTACH TO LOCALSTORAGE
-* ATTACH TO INDEXEDDB
-* STORE SCHEMA
-* STORE DATA
-* STORE DATABASE
-* RESTORE SCHEMA
-* RESTORE DATA
-* RESTORE DATABASE
-
-#### Version 0.0.27 - "Prettify"
+#### Version 0.0.34 - "Prettify"
 
 Fix bug
 ====
-
 PRETTYFIER
 alasql.parse("CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC").toString()
 
@@ -159,61 +59,12 @@ SELECT TOP 10 *,*,*
  	two STRING
  );
 
-// k("CREATE")+w+k("TABLE")+nl(1)+k("CLASS") 
-// + ident +
-
-function K(s){
-	if(alasql.mode=="prettify") return '<span color="green">'+s+'</span>';
-};
-
-function NL(ident) {
-	if(ident) return '<br><span style="width:50px"></span>'
-};
-
 1. Prettify SQL outpu for Consolet;
 
 2. IDENTITY (1,1) or AUTO_INCREMENT
 
-1. Data as function 
 
-PreIndex - 
-in very beginning
-===
-if(typeof datasrcfn == 'function') {
-	r = datasrcfn(i);
-} else r = data[i];
-
-if result of preindexation is ok or it use in RIGHT / OUTER / ANTI / CROSS JOIN
---
-data[i] = r;
-
-In doJoin
---
-LEFT SIDE
-if(typeof datasrcfn == "function" && !data[i] && ) {
-	data[i] = r = data[i];
-}
-
-RIGHT SIDE - 
-if(!data[i] && typeofdatasrcfn = 'function') {
-	data[i] = datasrcfn(i);
-};
-do with data(i);
-
-
-
-3. JAVASCRIPT CLASSES
-===
-
-CREATE TABLE one (
-	dt Date,
-	tm Time
-);
-
-alasql.classes = {};
-alasql.classes.Date = Date;
-
-if it in Class, then Object...
+#### Version 0.0.35 - "CAST"
 
 2. STANDARD DATATYPES WITH CAST FUNCTIONS
 ===
@@ -347,16 +198,9 @@ jstypeid
 
 15. PERSISTENCE
 ====
-alasql.storage = "localStorage";
 
 Adapters
 Memory
-
-Browser
-==
-1. localStorage
-2. IndexedDB
-sessionStorage
 
 
 link database aaa to websql.aaa
@@ -406,7 +250,7 @@ SELECT GROUP(a/b), SUM(a) FROM
 #### Version 0.0.26 - "Alasql and AlanosQL - like MongoDB"
 
 
-* SELECT {a:2} AS alpha FROM one WHERE {b:[2,3]}
+* SELECT {a:2} AS alpha FROM one FIND {b:[2,3]}
 * SELECT (a = 2) AS alpha FROM one WHERE b IN (2,3)
 * one.find({b:[2,3]});
 
@@ -416,7 +260,7 @@ SELECT GROUP(a/b), SUM(a) FROM
 * UPDATE one SET a=2 WHERE a=3
 * one.update({a:2}, {a:3});
 
-* DELETE FROM one WHERE {a:2}
+* DELETE FROM one FIND {a:2}
 * DELETE FROM one WHERE a=2
 * remove({a:2})
 

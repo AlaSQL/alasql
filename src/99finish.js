@@ -6,7 +6,7 @@
 //
 */
 
-// End of module
+// This is a final part of Alasql
 
 
 // Create default database
@@ -14,7 +14,6 @@ new Database("alasql");
 
 // Set default database
 alasql.use("alasql");
-
 
 return alasql;
 }));

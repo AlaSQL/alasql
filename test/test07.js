@@ -17,7 +17,7 @@ describe('Test 07', function() {
 
 		db.exec('UPDATE test SET a=c*100 WHERE b<=3*10');
 
-		var res = db.queryValue("SELECT SUM(a) FROM test");
+		var res = db.exec("SELECT VALUE SUM(a) FROM test");
 
 		assert.equal(60009,res);
 		done();

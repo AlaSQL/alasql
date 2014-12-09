@@ -8,27 +8,51 @@
 
 yy.Help = function (params) { return yy.extend(this, params); }
 yy.Help.prototype.toString = function() {
-	var s = 'HELP';
-	if(this.subject) s += ' '+this.subject;
+	var s = K('HELP');
+	if(this.subject) s += ' '+L(this.subject);
 	return s;
 }
 
-
-alasql.helpdocs = [
-	{Command:'CREATE DATABASE database'},
-	{Command:'CREATE TABLE table (columns)'},
-	{Command:'DROP DATABASE database'},
-	{Command:'DROP TABLE table'},
-	{Command:'See <a href="http://alasql.org/docs">alasql.org/docs</a> for documentation'}
+// Help string
+helpdocs = [
+	{command:'ALTER TABLE table RENAME TO table'},
+	{command:'ALTER TABLE table ADD COLUMN column coldef'},
+	{command:'ALTER TABLE table MODIFY COLUMN column coldef'},
+	{command:'ALTER TABLE table RENAME COLUMN column TO column'},
+	{command:'ALTER TABLE table DROP column'},
+	{command:'ATTACH engine DATABASE database'},
+	{command:'ASSERT value'},
+	{command:'BEGIN [TRANSACTION]'},
+	{command:'COMMIT [TRANSACTION]'},
+	{command:'CREATE [engine] DATABASE [IF NOT EXISTS] database'},
+	{command:'CREATE TABLE [IF NOT EXISTS] table (column definitions)'},
+	{command:'DELETE FROM table [WHERE expression]'},
+	{command:'DETACH DATABASE database'},
+	{command:'DROP [engine] DATABASE [IF EXISTS] database'},
+	{command:'DROP TABLE [IF EXISTS] table'},
+	{command:'INSERT INTO table VALUES value,...'},
+	{command:'INSERT INTO table DEFAULT VALUES'},
+	{command:'INSERT INTO table SELECT select'},
+	{command:'HELP [subject]'},
+	{command:'ROLLBACK [TRANSACTION]'},
+	{command:'SELECT [modificator] columns [INTO table] [FROM table,...] [[mode] JOIN [ON] [USING]] [WHERE ] [GROUP BY] [HAVING] [ORDER BY] '},
+	{command:'SET option value'},
+	{command:'SHOW [engine] DATABASES'},
+	{command:'SHOW TABLES'},
+	{command:'SHOW CREATE TABLE table'},
+	{command:'UPDATE table SET column1 = expression1, ... [WHERE expression]'},
+	{command:'USE [DATABASE] database'},
+	{command:'expression'},
+	{command:'See also <a href="http://github/agershun/alasq">http://github/agershun/alasq</a> for more information'}
 ];
 
-// DROP TABLE
+// execute
 yy.Help.prototype.execute = function (databaseid) {
 	var ss = [];
 	if(!this.subject) {
 		ss = alasql.helpdocs;
 	} else {
-		ss.push('See <a href="http://alasql.org/docs">alasql.org/docs</a> for documentation');
+		ss.push('See also <a href="http://github/agershun/alasq">http://github/agershun/alasq</a> for more information');
 	}
 	return ss;
 };

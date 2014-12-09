@@ -1,13 +1,14 @@
 //
-// 91websql.js
-// 
+// 91localstorage.js
+// localStorage engine
+// Date: 09.12.2014
 // (c) Andrey Gershun
 //
 
-var LS = alasql.engines.localStorage = function (){};
+var LS = alasql.engines.LOCALSTORAGE = function (){};
 
 LS.get = function(key) {
-	var s = localStorage[key];
+	var s = localStorage.getItem(key);
 	if(typeof s == "undefined") return;
 	var v = undefined;
 	try {
@@ -20,7 +21,7 @@ LS.get = function(key) {
 
 LS.set = function(key, value){
 	if(typeof value == 'undefined') localStorage.removeItem(key);
-	else localStorage[key] = JSON.stringify(value); 
+	else localStorage.setItem(key,JSON.stringify(value)); 
 }
 
 LS.createDatabase = function(lsdbid, args, ifnotexists, dbid, cb){
@@ -220,7 +221,7 @@ LS.rollback = function(databaseid, cb) {
 	delete alasql.databases[databaseid];
 	alasql.databases[databaseid] = new alasql.Database(databaseid);
 	extend(alasql.databases[databaseid], lsdb);
-	alasql.databases[databaseid].engineid = 'localStorage';
+	alasql.databases[databaseid].engineid = 'LOCALSTORAGE';
 //console.log(999, alasql.databases[databaseid]);
 }
 
