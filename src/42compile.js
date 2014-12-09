@@ -528,7 +528,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				}).join(',');
 			}
 			s += ');if(cb)res=cb(res,idx,query);return res';
-			source.datafn = new Function('query,params, cb, idx',s);
+			source.datafn = new Function('query, params, cb, idx',s);
 
 		} else {
 			throw new Error('Wrong table at FROM');

@@ -1,14 +1,12 @@
 {
   "name": "alasql",
   "description": "Alasql.js - fast JavaScript SQL database",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
     "test": "test"
   },
-  "dependencies": {
-    },
   "devDependencies": {
     "gulp-uglify": "^1.0.1"
   },
@@ -17,9 +15,8 @@
   ],
   "bin": {
     "alacon": "./bin/alacon.js",
-    "alaserver": "./bin/alaserver.js",
+    "alaserver": "./bin/alaserver.js"
   },
-
   "repository": {
     "type": "git",
     "url": "http://github.com/agershun/alasql.git"
@@ -42,7 +39,8 @@
     "DBMS",
     "data",
     "query",
-    "localStorage"
+    "localStorage",
+    "IndexedDB"
   ],
   "license": "MIT"
 }

@@ -122,6 +122,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	if(db.engineid) {
 //		console.log(101,db.engineid);
 		return alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
+//		console.log('createtable',res1);
+//		return res1; 
 	}
 
 //	}

@@ -1,6 +1,6 @@
-# Alasql.js - JavaScript client-side SQL database
+# Alasql.js - pure JavaScript client-side SQL database (with localStorage and IndexedDB support)
 
-Version: 0.0.30 Date: December 8, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.30 Date: December 9, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use IndexedDB and localStorage as a persistent storage.
 
@@ -22,6 +22,7 @@ Download and try this sample in [your browser](demo.html) or try it in <a href="
 * Alasql is fast, because it uses some optimization methods.
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavScript and NoSQL databases
+* Alasql supports IndexedDB (all statements except INSERT/DELETE/UPDATE)
 * Alasql can use localStorage as a storage for databases in AUTOCOMMIT ON and AUTOCOMMIT OFF modes
 * Plus some [sugar](#Sugar)
 
@@ -29,13 +30,10 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-## New: localStorage support
+## News: Async, localStorage and limited IndexedDB support
+Alasql now can work in two modes: sync and async (it depends if callback shown).
 
-* See [test149.js](test/test149.js) - [test152.js](test/test152.js) for samples.
-
-## Work in progress: version 0.0.30 "Async"
-
-Now I am hardly working on async version of Alasql to implement IndexedDB and WebSQL support.
+* See [test149.js](test/test149.js) - [test156.js](test/test152.js) for samples.
 
 
 ## Examples

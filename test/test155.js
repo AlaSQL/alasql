@@ -14,10 +14,13 @@ describe('Test 155 - InsexedDB INSERT', function() {
 			'CREATE IndexedDB DATABASE ag155;'+
 			'ATTACH IndexedDB DATABASE ag155 AS test155;'+
 			'CREATE TABLE test155.one;'+
+			'CREATE TABLE test155.two;'+
 			'SELECT * INTO test155.one FROM ?;'+
 			'SELECT * FROM test155.one'+
 			'', [[{a:1},{a:2}]], function(res){
-		 	assert.deepEqual(res, [1,1,1,1,2,[{a:1},{a:2}]]);
+//				console.trace();
+//			console.log(res);
+		 	assert.deepEqual(res, [1,1,1,1,1,2,[{a:1},{a:2}]]);
 			done();
 		});
 	});
@@ -25,4 +28,5 @@ describe('Test 155 - InsexedDB INSERT', function() {
 });
 
 }
+
 

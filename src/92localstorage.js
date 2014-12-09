@@ -148,7 +148,7 @@ LS.fromTable = function(databaseid, tableid, cb, idx, query) {
 //	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
-	if(cb) cb(res, idx, query);
+	if(cb) res = cb(res, idx, query);
 	return res;
 };
 

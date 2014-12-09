@@ -104,6 +104,7 @@ describe('Test 116', function() {
 		assert(res = 15);
 		alasql('insert into two (a) values (?)', [20]);
 		var res = alasql('select * into two from one');
+//		console.log(107,res);
 		assert(res == 2);
 		assert(alasql.databases.test116.tables.one.data.length == 2);
 		assert(alasql.databases.test116.tables.two.data.length == 3);

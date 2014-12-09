@@ -49,7 +49,9 @@ function queryfn(query,oldscope,cb, A,B) {
 		var rs = source.datafn(query, query.params, queryfn2, idx); 
 //		console.log(333,rs);
 		if(typeof rs != undefined) {
-			if(query.intofn || query.intoallfn) rs = rs.length;
+			// TODO - this is a hack: check if result is array - check all cases and
+			// make it more logical
+			if((query.intofn || query.intoallfn) && rs instanceof Array) rs = rs.length;
 			result = rs;
 		}
 //		console.log(444,result);
@@ -164,7 +166,7 @@ function queryfn3(query) {
 //		console.log(161);
 		var res = query.intoallfn(query.cb,query.A, query.B); 
 //		console.log(1163,res);
-		if(query.cb) res = query.cb(res,query.A, query.B);
+//		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);
 //		debugger;
 		return res;	

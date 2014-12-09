@@ -17,11 +17,13 @@ describe('Test 156 - match()', function() {
 			'SELECT * FROM one WHERE a->match(?)'+
 			'', ["Moscow"], function(res){
 //		 	console.log(res[4]);
-	 	assert.deepEqual(res[4], [{a:"Moscow"}]);
-	 	done();
+	 		assert.deepEqual(res[4], [{a:"Moscow"}]);
+	 		done();
+	 	});
 	});
 
 //https://docs.oracle.com/cd/B19306_01/appdev.102/b14251/adfns_regexp.htm
+if(false) {
 
 	it("2. RegExp like Oracle functions", function(done){
 		alasql('SELECT * FROM one WHERE REGEXP_LIKE(a,"Mos")');
@@ -40,7 +42,6 @@ describe('Test 156 - match()', function() {
 	});
 
 
-if(false) {
 	it("3. Criterias for WHERE like MongoDB", function(done){
 
 	 	alasql('SELECT * FROM one WHERE CRITERIA(@{a:"Moscow"})');

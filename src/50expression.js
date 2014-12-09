@@ -181,6 +181,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else if(this.right instanceof Array ) {
 			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+//console.log(s);
 			return s;
 		} else {
 			throw new Error('Wrong IN operator without SELECT part');

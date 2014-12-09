@@ -200,6 +200,7 @@ IDB.intoTable = function(databaseid, tableid, value, cb) {
 		};
 		tx.oncomplete = function() {
 			ixdb.close();
+//			console.log('indexeddb',203,ilen);
 			cb(ilen);
 		}
 	};
