@@ -20,7 +20,8 @@ describe('Test 24', function() {
 		db.exec('INSERT INTO test2 VALUES (3,3)');
 
 		var res = db.exec('SELECT * FROM test1 WHERE a IN (SELECT a FROM test2)');
-		console.log(res);
+		assert(res.length == 2);
+//		console.log(res);
 		done();
 		return;
 		var res = db.exec('SELECT COLUMN a FROM test1 WHERE a IN (SELECT a FROM test2)');

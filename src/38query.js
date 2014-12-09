@@ -48,7 +48,10 @@ function queryfn(query,oldscope,cb, A,B) {
 		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx); 
 //		console.log(333,rs);
-		if(typeof rs != undefined) result = rs;
+		if(typeof rs != undefined) {
+			if(query.intofn || query.intoallfn) rs = rs.length;
+			result = rs;
+		}
 //		console.log(444,result);
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
@@ -65,8 +68,8 @@ function queryfn(query,oldscope,cb, A,B) {
 function queryfn2(data,idx,query) {
 
 //console.log(56,arguments);
-		console.log(78,idx,data);
-console.trace();
+//		console.log(78,data, idx,query);
+//console.trace();
 
 	if(idx>=0) {
 		var source = query.sources[idx];
@@ -158,7 +161,13 @@ function queryfn3(query) {
 		if(query.cb) query.cb(query.explaination,query.A, query.B);
 		return query.explaination;
 	} else if(query.intoallfn) {
-		return query.intoallfn(query.cb);	
+//		console.log(161);
+		var res = query.intoallfn(query.cb,query.A, query.B); 
+//		console.log(1163,res);
+		if(query.cb) res = query.cb(res,query.A, query.B);
+//		console.log(1165,res);
+//		debugger;
+		return res;	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
 			query.intofn(query.data[i],i);

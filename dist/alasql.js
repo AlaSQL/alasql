@@ -2960,7 +2960,10 @@ function queryfn(query,oldscope,cb, A,B) {
 		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx); 
 //		console.log(333,rs);
-		if(typeof rs != undefined) result = rs;
+		if(typeof rs != undefined) {
+			if(query.intofn || query.intoallfn) rs = rs.length;
+			result = rs;
+		}
 //		console.log(444,result);
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
@@ -2977,8 +2980,8 @@ function queryfn(query,oldscope,cb, A,B) {
 function queryfn2(data,idx,query) {
 
 //console.log(56,arguments);
-		console.log(78,idx,data);
-console.trace();
+//		console.log(78,data, idx,query);
+//console.trace();
 
 	if(idx>=0) {
 		var source = query.sources[idx];
@@ -3070,7 +3073,13 @@ function queryfn3(query) {
 		if(query.cb) query.cb(query.explaination,query.A, query.B);
 		return query.explaination;
 	} else if(query.intoallfn) {
-		return query.intoallfn(query.cb);	
+//		console.log(161);
+		var res = query.intoallfn(query.cb,query.A, query.B); 
+//		console.log(1163,res);
+		if(query.cb) res = query.cb(res,query.A, query.B);
+//		console.log(1165,res);
+//		debugger;
+		return res;	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
 			query.intofn(query.data[i],i);
@@ -7790,7 +7799,7 @@ LS.attachDatabase = function(lsdbid, dbid, cb){
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
 	};
 	var db = new alasql.Database(dbid || lsdbid);
-	db.engineid = "localStorage";
+	db.engineid = "LOCALSTORAGE";
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
 	// IF AUTOCOMMIT IS OFF then copy data to memory
@@ -7857,11 +7866,11 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	return res;
 }
 
-LS.fromTable = function(databaseid, tableid, cb) {
+LS.fromTable = function(databaseid, tableid, cb, idx, query) {
 //	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
-	if(cb) cb(res);
+	if(cb) cb(res, idx, query);
 	return res;
 };
 
@@ -7875,7 +7884,9 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	LS.set(lsdbid+'.'+tableid, tb);
 //	console.log(lsdbid+'.'+tableid, tb);
 //	console.log(localStorage[lsdbid+'.'+tableid]);
+//console.log(165,res);
 	if(cb) cb(res);
+//console.log(167,res);
 	return res;
 };
 

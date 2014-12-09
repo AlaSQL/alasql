@@ -32,9 +32,9 @@ describe('Test 150 - localStorage Engine', function() {
 	});
 
 	it("3. Attach localStorage database", function(done){
-		alasql('ATTACH localStorage DATABASE ls150 AS test150');
+		alasql('ATTACH LOCALSTORAGE DATABASE ls150 AS test150');
 		assert(alasql.databases.test150);
-		assert(alasql.databases.test150.engineid == 'localStorage');
+		assert(alasql.databases.test150.engineid == 'LOCALSTORAGE');
 		done();
 	});
 

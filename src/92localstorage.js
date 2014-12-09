@@ -77,7 +77,7 @@ LS.attachDatabase = function(lsdbid, dbid, cb){
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
 	};
 	var db = new alasql.Database(dbid || lsdbid);
-	db.engineid = "localStorage";
+	db.engineid = "LOCALSTORAGE";
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
 	// IF AUTOCOMMIT IS OFF then copy data to memory
@@ -144,11 +144,11 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	return res;
 }
 
-LS.fromTable = function(databaseid, tableid, cb) {
+LS.fromTable = function(databaseid, tableid, cb, idx, query) {
 //	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = LS.get(lsdbid+'.'+tableid);
-	if(cb) cb(res);
+	if(cb) cb(res, idx, query);
 	return res;
 };
 
@@ -162,7 +162,9 @@ LS.intoTable = function(databaseid, tableid, value, cb) {
 	LS.set(lsdbid+'.'+tableid, tb);
 //	console.log(lsdbid+'.'+tableid, tb);
 //	console.log(localStorage[lsdbid+'.'+tableid]);
+//console.log(165,res);
 	if(cb) cb(res);
+//console.log(167,res);
 	return res;
 };
 
