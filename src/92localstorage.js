@@ -93,7 +93,9 @@ LS.attachDatabase = function(lsdbid, dbid, cb){
 LS.showDatabases = function(like, cb) {
 	var res = [];
 	var ls = LS.get('alasql');
-	var relike = new RegExp(like.value.replace(/\%/g,'.*'),'g');
+	if(like) {
+		var relike = new RegExp(like.value.replace(/\%/g,'.*'),'g');
+	}
 	if(ls && ls.databases) {
 		for(dbid in ls.databases) {
 			res.push({databaseid: dbid});

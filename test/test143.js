@@ -49,7 +49,7 @@ describe('Test 143 streamfn', function() {
 			var myfn2 = function(i) {
 				nc2++;
 				if(i>=100) return;
-				for(var k=0;k<100;k++) {
+				for(var k=0;k<10;k++) {
 					Math.random();
 				}
 				return {a:(i%25)+1, c:(i+1)*10};

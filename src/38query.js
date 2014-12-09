@@ -65,6 +65,8 @@ function queryfn(query,oldscope,cb, A,B) {
 function queryfn2(data,idx,query) {
 
 //console.log(56,arguments);
+		console.log(78,idx,data);
+console.trace();
 
 	if(idx>=0) {
 		var source = query.sources[idx];
@@ -82,7 +84,6 @@ function queryfn2(data,idx,query) {
 	} else {
 		// subqueries
 		query.queriesdata[-idx-1] = flatArray(data);
-//		console.log(78,idx,data);
 //		console.log(79,query.queriesdata);
 	}
 
