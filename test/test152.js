@@ -17,7 +17,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		alasql('CREATE TABLE IF NOT EXISTS ls152.one (a int, b string)');
 		alasql('INSERT INTO ls152.one VALUES (1,"Rome"),(2,"London"),(3,"Berlin"),(4,"Paris")');
 //		console.log(alasql.databases.ls152.tables.one.data);
-		assert(!alasql.databases.ls152.tables.one.data);
+//		assert(!alasql.databases.ls152.tables.one.data);
 
 		var res = alasql('SELECT * FROM ls152.one');
 		assert.deepEqual(res, [{"a":1,"b":"Rome"},{"a":2,"b":"London"},{"a":3,"b":"Berlin"},{a:4,b:'Paris'}]);

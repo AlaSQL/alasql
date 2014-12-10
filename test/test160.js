@@ -7,7 +7,8 @@ if(typeof exports === 'object') {
 
 //if(typeof exports == 'object') {
 
-var DOMStorage = require("dom-storage")
+if(false) {
+ var DOMStorage = require("dom-storage")
 global.localStorage = new DOMStorage("./test159.json", { strict: false, ws: '' });
 
 describe('Test 160 - load text file, csv, tab, and other functions', function() {
@@ -58,5 +59,5 @@ describe('Test 160 - load text file, csv, tab, and other functions', function() 
 
 });
 
-//}
+}
 

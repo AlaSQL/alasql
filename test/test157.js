@@ -6,7 +6,7 @@ if(typeof exports === 'object') {
 };
 
 //if(typeof exports != 'object') {
-
+if(false) {
 describe('Test 157 - json()', function() {
 
 	it("1. Load data from jaon file into IndexedDB database", function(done){
@@ -33,5 +33,5 @@ describe('Test 157 - json()', function() {
 	});
 });
 
-//}
+}
 

@@ -7,7 +7,7 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-
+if(false){
 describe('Test 163 - Streaming', function() {
 
 	if(typeof exports === 'object') {
@@ -40,5 +40,5 @@ describe('Test 163 - Streaming', function() {
 
 });
 
-//}
+}
 

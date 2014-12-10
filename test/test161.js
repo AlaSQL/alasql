@@ -14,6 +14,7 @@ if(typeof exports == 'object') {
 	// how to attach these files in browser?
 }
 
+if(false) {
 describe('Test 161 - load and process Excel file', function() {
 
 	it("1. Load Excel file", function(done){
@@ -38,5 +39,5 @@ describe('Test 161 - load and process Excel file', function() {
 
 });
 
-//}
+}
 

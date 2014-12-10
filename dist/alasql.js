@@ -3837,7 +3837,7 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.datafn = function(query,params, cb, idx) {
 //					console.log(777,arguments);
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
-						source.databaseid, tableid, cb, idx,query);
+						source.databaseid, source.tableid, cb, idx,query);
 				}				
 			} else {
 				source.datafn = function(query,params,cb, idx) {
@@ -6221,8 +6221,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var s = '';
 	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
-
-	var ss = [];
+	var s3 = 'var a,aa=[];';
+	var s33;
 
 
 // INSERT INTO table VALUES
@@ -6230,6 +6230,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 //		console.log(1);
 		self.values.forEach(function(values) {
+			var ss = [];
 
 //			s += 'db.tables[\''+tableid+'\'].data.push({';
 
@@ -6310,39 +6311,59 @@ yy.Insert.prototype.compile = function (databaseid) {
 				} else {
 //					console.log(222,values);
 //					sw = 'var w='+JSONtoJavaScript(values)+';for(var k in w){r[k]=w[k]};';
-					sw = 'var r='+JSONtoJavaScript(values)+';';
+					sw = JSONtoJavaScript(values);
 				}
 			}
 //console.log(ss);
 
 			if(db.tables[tableid].defaultfns) ss.unshift(db.tables[tableid].defaultfns);
 			if(sw) {
-				s += sw;
+				s += 'a='+sw+';';
 			} else {
-				s += 'var r={'+ss.join(',')+'};';
+				s += 'a={'+ss.join(',')+'};';
 			}
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
-            if(db.tables[tableid].insert) {
-    			s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(r);';
-            } else {
-                s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data.push(r);';
-            }
-
+	        if(db.tables[tableid].insert) {
+				s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(a);';
+	        } else {
+				s += 'aa.push(a);';
+			}
 		});
 
+		s33 = s3+s;
+
+        if(db.tables[tableid].insert) {
+//			s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(r);';
+        } else {
+            s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data='+	
+            'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data.concat(aa);';
+        }
+
 		s += 'return '+self.values.length;
+
 //console.log(s);
-		var insertfn = new Function('db, params',s);
+		var insertfn = new Function('db, params',s3+s);
 	
 // INSERT INTO table SELECT
 
 	} else if(this.select) {
 		selectfn = this.select.compile(databaseid);
-		var insertfn = function(db, params) {
-			var res = selectfn(params);
-			db.tables[tableid].data = db.tables[tableid].data.concat(res);
-			return res.length;
+	    if(db.engineid && alasql.engines[db.engineid].intoTable) {
+			var statement = function(params, cb) {
+				var aa = selectfn(params);
+				var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, cb);
+				return res;
+			};
+			return statement;
+	    } else {
+			var insertfn = function(db, params) {
+				var res = selectfn(params);
+				db.tables[tableid].data = db.tables[tableid].data.concat(res);
+				return res.length;
+			}
 		}
+
+
 	} else if(this.default) {
 		var insertfns = 'db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;';
         var insertfn = new Function('db,params',insertfns); 
@@ -6350,22 +6371,37 @@ yy.Insert.prototype.compile = function (databaseid) {
     	throw new Error('Wrong INSERT parameters');
     }
 
-	var statement = function(params, cb) {
-		//console.log(databaseid);
-		var db = alasql.databases[databaseid];
+//    console.log(1,s);
+//    	console.log(s33);
 
-		if(alasql.autocommit && db.engineid) {
-			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
-		}
-		
-		var res = insertfn(db,params);
+    if(db.engineid && alasql.engines[db.engineid].intoTable) {
+		var statement = function(params, cb) {
+			var aa = new Function("db,params",s33+'return aa;')(db,params);
+//			console.log(aa);
+			var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, cb);
+//			if(cb) cb(res);
+			return res;
+		};
 
-		if(alasql.autocommit && db.engineid) {
-			alasql.engines[db.engineid].saveTableData(databaseid,tableid);
-		}
-//		var res = insertfn(db, params);
-		if(cb) cb(res);
-		return res;
+    } else {
+
+		var statement = function(params, cb) {
+			//console.log(databaseid);
+			var db = alasql.databases[databaseid];
+
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+			}
+			
+			var res = insertfn(db,params);
+
+			if(alasql.autocommit && db.engineid) {
+				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+			}
+	//		var res = insertfn(db, params);
+			if(cb) cb(res);
+			return res;
+		};
 	};
 
 	return statement;
@@ -7533,7 +7569,8 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 		};
 		var request2 = indexedDB.deleteDatabase(ixdbid);
 		request2.onsuccess = function(event) {
-			cb(1);
+			console.log('dropped');
+			if(cb) cb(1);
 		}
 	};
 };
@@ -7620,6 +7657,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var request1 = indexedDB.webkitGetDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
+	
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot drop table in database "'+ixdbid+'" because it does not exist');
 		};
@@ -7634,9 +7672,14 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 			var request3 = indexedDB.open(ixdbid, version+1);
 			request3.onupgradeneeded = function(event) {
 				var ixdb = event.target.result;
-//				console.log(ixdb);
-				ixdb.deleteObjectStore(tableid);
-				delete alasql.databases[databaseid].tables[tableid];
+				if(ixdb.objectStoreNames.contains(tableid)) {
+					ixdb.deleteObjectStore(tableid);
+					delete alasql.databases[databaseid].tables[tableid];
+				} else {
+					if(!ifexists) {
+						throw new Error('IndexedDB: Cannot drop table "'+tableid+'" because it is not exist');
+					}
+				}
 //				var store = ixdb.createObjectStore(tableid);
 				// console.log('deleted');
 			};
@@ -7656,6 +7699,37 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 		};
 	};
 }
+
+// IDB.intoTable = function(databaseid, tableid, value, cb) {
+// //	console.log('intoTable',databaseid, tableid, value, cb);
+// 	var ixdbid = alasql.databases[databaseid].ixdbid;
+// 	var request1 = indexedDB.open(ixdbid);
+// 	request1.onsuccess = function(event) {
+// 		var ixdb = event.target.result;
+// 		var tx = ixdb.transaction([tableid],"readwrite");
+// 		var tb = tx.objectStore(tableid);
+// 		// console.log(tb.keyPath);
+// 		// console.log(tb.indexNames);
+// 		// console.log(tb.autoIncrement);
+// 		for(var i=0, ilen = value.length;i<ilen;i++) {
+// 			tb.add(value[i]);
+// 		};
+// 		tx.oncomplete = function() {
+// 			ixdb.close();
+// //			console.log('indexeddb',203,ilen);
+// 			cb(ilen);
+// 		}
+// 	};
+
+// 	// var tb = LS.get(lsdbid+'.'+tableid);
+// 	// if(!tb) tb = [];
+// 	// tb = tb.concat(value);
+// 	// LS.set(lsdbid+'.'+tableid, tb);
+// //	console.log(lsdbid+'.'+tableid, tb);
+// //	console.log(localStorage[lsdbid+'.'+tableid]);
+// 	// if(cb) cb(res);
+// 	// return res;
+// };
 
 IDB.intoTable = function(databaseid, tableid, value, cb) {
 //	console.log('intoTable',databaseid, tableid, value, cb);
@@ -7687,6 +7761,7 @@ IDB.intoTable = function(databaseid, tableid, value, cb) {
 	// if(cb) cb(res);
 	// return res;
 };
+
 
 IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 	// console.log(arguments);
