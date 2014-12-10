@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side SQL database (with localStorage and IndexedDB support)
 
-Version: 0.0.30 Date: December 9, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.31 Date: December 11, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use IndexedDB and localStorage as a persistent storage.
 
@@ -22,7 +22,7 @@ Download and try this sample in [your browser](demo.html) or try it in <a href="
 * Alasql is fast, because it uses some optimization methods.
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavScript and NoSQL databases
-* Alasql supports IndexedDB (all statements except INSERT/DELETE/UPDATE)
+* Alasql supports IndexedDB (all statements except UPDATE)
 * Alasql can use localStorage as a storage for databases in AUTOCOMMIT ON and AUTOCOMMIT OFF modes
 * Plus some [sugar](#Sugar)
 
@@ -485,7 +485,7 @@ You can check next version branches for new experimental features.
 1. Limited functionality for transactions 
 2. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
 3. AVG() does not work 
-4. Alasql is still sync
+4. DELETE FROM table and UPDATE still not working with IndexedDB
 
 Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
   

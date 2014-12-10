@@ -22,22 +22,28 @@ describe('Test 158 - INSERT/DELETE/UPDATE in IndexedDB', function() {
 //				console.log(22);
 					assert(res,5);
 					alasql("select column * from cities where city like 'M%' order by city", [], function(res){
-				console.log(25, res);
+//				console.log(25, res);
 						assert.deepEqual(res,['Minsk','Moscow']);
+						alasql('delete from cities where city in ("Riga","Tallinn","Moscow")', [], function(res) {
+							assert(res == 3);
+							alasql('select column * from cities order by city', [], function(res) {
+								assert.deepEqual(res, ["Minsk","Paris"]);
 
-						alasql('detach database test158',[],function(res) {
-							console.log(52);
-							assert(res==1);
-							alasql('drop indexeddb database test158',[],function(res){
-								console.log(51,res);
-								assert(res==1);
-								done();
+									alasql('detach database test158',[],function(res) {
+			//							console.log(52);
+										assert(res==1);
+										alasql('drop indexeddb database test158',[],function(res){
+			//								console.log(51,res);
+											assert(res==1);
+											done();
+										});
+									});
+
+								});
 							});
 						});
-
 					});
-				});
-
+//				});
 		});
 
 	});

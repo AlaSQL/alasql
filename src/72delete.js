@@ -27,7 +27,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
 		statement = function (params, cb) {
-			if(alasql.autocommit && db.engineid) {
+			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {
+				return alasql.engines[db.engineid].deleteFromTable(databaseid, tableid, wherefn, params, cb);
+			}
+
+			if(alasql.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 			}
 
@@ -49,7 +53,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //			table.data = table.data.filter(function(r){return !;});
 			table.data = newtable;
 			var res = orignum - table.data.length;
-			if(alasql.autocommit && db.engineid) {
+			if(alasql.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 

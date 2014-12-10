@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.0.31 (10.12.2014 - .12.2014)
+
+* INSERT and DELETE for IndexedDB
+* New tests for FROM and INTO functions
+
 ### 0.0.30 (03.12.2014 - 09.12.2014)
 
 * Async version (except streamming)

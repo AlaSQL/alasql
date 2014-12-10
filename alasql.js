@@ -6445,7 +6445,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
 		statement = function (params, cb) {
-			if(alasql.autocommit && db.engineid) {
+			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {
+				return alasql.engines[db.engineid].deleteFromTable(databaseid, tableid, wherefn, params, cb);
+			}
+
+			if(alasql.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 			}
 
@@ -6467,7 +6471,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //			table.data = table.data.filter(function(r){return !;});
 			table.data = newtable;
 			var res = orignum - table.data.length;
-			if(alasql.autocommit && db.engineid) {
+			if(alasql.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 
@@ -7569,7 +7573,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 		};
 		var request2 = indexedDB.deleteDatabase(ixdbid);
 		request2.onsuccess = function(event) {
-			console.log('dropped');
+//			console.log('dropped');
 			if(cb) cb(1);
 		}
 	};
@@ -7798,6 +7802,48 @@ IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 	  	}
 	}		
 }
+
+IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
+	// console.log(arguments);
+	// console.trace();
+	var ixdbid = alasql.databases[databaseid].ixdbid;
+	var request = window.indexedDB.open(ixdbid);
+	request.onsuccess = function(event) {
+	  	var res = [];
+	  	var ixdb = event.target.result;
+//	  	console.log(444,ixdb, tableid, ixdbid);
+	  	var tx = ixdb.transaction([tableid], 'readwrite');
+	  	var store = tx.objectStore(tableid);
+	  	var cur = store.openCursor();
+	  	var num = 0;
+//	  	console.log(cur);
+	  	cur.onblocked = function(event) {
+//	  		console.log('blocked');
+	  	}
+	  	cur.onerror = function(event) {
+//	  		console.log('error');
+	  	}
+	  	cur.onsuccess = function(event) {
+//	  		console.log('success');
+		  	var cursor = event.target.result;
+//		  		console.log(222,event);
+//		  		console.log(333,cursor);
+		  	if(cursor) {
+		  		if(wherefn(cursor.value,params)) {
+//		  		console.log(cursor);
+		  			cursor.delete();
+		  			num++;
+		  		}
+		  		cursor.continue();
+		  	} else {
+//		  		console.log(555, res,idx,query);
+		  		ixdb.close();
+		  		cb(num);
+		  	}
+	  	}
+	}		
+}
+
 
 
 
