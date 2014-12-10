@@ -9,16 +9,14 @@ if(typeof exports === 'object') {
 };
 
 
-describe('Callback', function(){
+describe('Test 06 - Callback', function(){
 	it('exec(sql, callback)', function(done) {
-
-		alasql('drop table if exists test');
-		alasql.exec('CREATE TABLE test (a INT, b INT)');
-
-		alasql.exec('INSERT INTO test VALUES (1,1)');
-
-		alasql.exec('SELECT * FROM test', [], function(res) {
-			assert.equal(1, res[0].a);
+		alasql('create database test06; use test06');
+		alasql('CREATE TABLE test (a INT, b INT)');
+		alasql('INSERT INTO test VALUES (1,1)');
+		alasql('SELECT * FROM test', [], function(res) {
+			assert(res[0].a == 1);
+			alasql('drop database test06');
 			done();		
 		});
 

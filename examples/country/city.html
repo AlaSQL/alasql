@@ -1,0 +1,6 @@
+﻿<script src='../../alasql.min.js'></script>
+<script>
+	alasql("select country_name from csv('contry.csv',{headers:true}) where country_code = 'AZ'",[],function(res){
+		console.log(res[0]);
+	});
+</script>
