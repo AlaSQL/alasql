@@ -56,7 +56,7 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.datafn = function(query,params, cb, idx) {
 //					console.log(777,arguments);
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
-						source.databaseid, tableid, cb, idx,query);
+						source.databaseid, source.tableid, cb, idx,query);
 				}				
 			} else {
 				source.datafn = function(query,params,cb, idx) {
