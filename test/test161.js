@@ -5,7 +5,7 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(typeof exports == 'object') {
+if(typeof exports == 'object' && false) {
 
 	var XLS = require('xlsjs');
 	var XLSX = require('js-xlsx');

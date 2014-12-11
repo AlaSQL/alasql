@@ -8,7 +8,7 @@ if(typeof exports === 'object') {
 };
 
 
-//if(typeof exports === 'object') {
+if(typeof exports === 'object' && false) {
 
 describe('Test 167 - database in database', function() {
 
@@ -29,5 +29,5 @@ describe('Test 167 - database in database', function() {
 
 });
 
-//}
+}
 

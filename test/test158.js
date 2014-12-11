@@ -5,7 +5,7 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-//if(typeof exports != 'object') {
+if(typeof exports != 'object') {
 
 describe('Test 158 - INSERT/DELETE/UPDATE in IndexedDB', function() {
 
@@ -55,5 +55,5 @@ describe('Test 158 - INSERT/DELETE/UPDATE in IndexedDB', function() {
 
 });
 
-//}
+}
 

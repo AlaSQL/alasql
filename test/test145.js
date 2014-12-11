@@ -55,7 +55,7 @@ describe('Test 145 - localStorage', function() {
 				return [k,v];
 			};
 
-		alasql.from.localStorage = function () {
+		alasql.from.LOCALSTORAGE = function () {
 			return lsfn;
 		};
 		var res = alasql('SELECT COLUMN [1] FROM localStorage() WHERE [0] LIKE "one"');

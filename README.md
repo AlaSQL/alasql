@@ -31,10 +31,8 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 ## News: Async, localStorage, DOM-storage, and IndexedDB support
-Alasql now can work in two modes: sync and async (it depends if callback shown).
-
-* See [test149.js](test/test149.js) - [test156.js](test/test152.js) for samples.
-
+* Alasql now can work in two modes: sync and async (it depends if callback shown). See [test149.js](test/test149.js) - [test156.js](test/test152.js) for samples.
+* Alasql can work with files in CSV, TAB, TXT, and JSON format
 
 ## Examples
 
@@ -359,8 +357,8 @@ You can use Alasql to parse to AST and compile SQL statements:
 Alasql uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
 
 
-### localStorage
-You can use browser localStorage as a data storage. Here is a sample:
+### localStorage and DOM-storage
+You can use browser localStorage and [DOM-storage](https://github.com/node-browser-compat/dom-storage) as a data storage. Here is a sample:
 ```
     alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
     alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
@@ -378,8 +376,18 @@ You can use localStorage in two modes: SET AUTOCOMMIT ON to immediate save data
 to localStorage after each statement or SET AUTOCOMMIT OFF. In this case you need
 to use COMMIT statement to save all data from in-memory mirror to localStorage.
 
-Sorry, INSERT/DELETE/UPDATE for AUTOCOMMIT ON mode are not supported yet in this version, 
-as ROLLBACK for AUTOCOMMIT OFF mode. 
+### Work with CSV, TAB, TXT, and JSON files
+You can use files in these formats directly from Alasql (in sync and async modes):
+```js
+    var res1 = alasq("select * from txt('mytext.txt') where [0] like 'M%'");
+    var res2 = alasq("select * from tab('mydata.tab') order by [1]");
+    var res3 = alasq("select [3] as city,[4] as population from csv('cities.csv')");
+    
+    alasq("select * from json('array.json')",[],function(res4){
+        console.log(res4)
+    });
+```
+See [test157.js](test/test157.js) as an example.
 
 ### JSON-objects
 
@@ -451,10 +459,11 @@ Now you can use streamming functions to work with longer datasources (see [test/
 ### Tests
 
 ### Tests with Mocha
-Alasql uses ```mocha``` for tests. Run mocha from command line:
+Alasql uses ```mocha``` for tests. Run mocha from command line in directory with tests:
 
 ```
-    > mocha
+    > cd test
+    > mocha .
 ```
 or run [test/index.html](test/index.html) for tests in browser.
 

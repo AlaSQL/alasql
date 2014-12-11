@@ -262,6 +262,30 @@ SAMPLES
 * JavaScript in-memory OLAP functionality (additional library)
 
 
+attach server database mssql; 
+attach indexeddb database cache;
+insert into cache.synctables values ('one','select * from mssql.one');
+
+attach server database mssql; 
+attach indexeddb database cache;
+insert into versions select * from mssql.versions;
+sync cache.synctables on versions;
+
+
+if exists(cache.table) then 
+	sss
+elsif sss then
+	aaaa
+else
+	sss
+end if;
+
+while
+
+end;
+
+
+
 OTHER
 
 * Create site alasql.org

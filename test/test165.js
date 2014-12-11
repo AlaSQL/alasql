@@ -8,7 +8,7 @@ if(typeof exports === 'object') {
 };
 
 
-if(typeof exports === 'object') {
+if(typeof exports === 'object' && false) {
 
 describe('Test 165 - WebSQL database', function() {
 
