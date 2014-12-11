@@ -28,7 +28,7 @@ var doubleqq = utils.doubleqq = function(s) {
 
 
 // For LOAD
-var loadFile = utils.loadFile = function(path, success, error) {
+var loadFile = utils.loadFile = function(path, asy, success, error) {
     if(typeof exports == 'object') {
         // For Node.js
         var fs = require('fs');
@@ -49,10 +49,11 @@ var loadFile = utils.loadFile = function(path, success, error) {
                 }
             }
         };
-        xhr.open("GET", path, false); // Async
+        xhr.open("GET", path, asy); // Async
         xhr.send();
     }
-}
+};
+
 
 
 // Fast hash function

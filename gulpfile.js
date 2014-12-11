@@ -62,6 +62,7 @@ gulp.task('js-merge', function () {
     './src/79set.js',
     './src/80console.js',
     './src/81commit.js',
+    './src/84from.js',
     './src/85help.js',
     './src/87source.js',
     './src/89assert.js',

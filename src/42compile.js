@@ -521,7 +521,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			source.datafn = new Function('query,params,cb,idx',
 				"var res = alasql.prepareFromData(params['"+tq.param+"']);if(cb)res=cb(res,idx,query);return res");
 		} else if(tq instanceof yy.FuncValue) {
-			var s = "var res=alasql.from['"+tq.funcid+"'](";
+			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
 			if(tq.args && tq.args.length>0) {
 				s += tq.args.map(function(arg){
 					return arg.toJavaScript();

@@ -6,32 +6,46 @@ if(typeof exports === 'object') {
 };
 
 //if(typeof exports != 'object') {
-if(false) {
 describe('Test 157 - json()', function() {
 
-	it("1. Load data from jaon file into IndexedDB database", function(done){
-
-		alasql("create indexeddb database if not exists test157; \
-			attach indexeddb database test157; \
-			use test157; \
-			drop table if exists movies; \
-			create table movies; \
-			select * into movies from json('movies.json'); \
-			select value count(*) from movies",[], function(res) {
-				var num = res.pop();
-				console.log('Number of movies in database:',num);
-				assert(num = 1000);
-				done();
+	it("1. Load text data from file async", function(done){
+		alasql('select * from json("test157.json")',[],function(res){
+//			console.log(res);
+			assert.deepEqual(res, [{a:1},{a:2}]);
+			done();
 		});
-
 	});
 
-	it("99. Drop database", function(done){
-		alasql('detach database test157;\
-				drop indexeddb database test157');
+
+	it("2. Load text data from file sync ", function(done){
+		var res = alasql('select * from json("test157.json")');
+		assert.deepEqual(res, [{a:1},{a:2}]);
 		done();
 	});
+
+	it("3. Load text file", function(done){
+		alasql('select column * from txt("test157.txt") where [0] like "M%" order by [0]',[],function(res){
+//			console.log(res);
+			assert.deepEqual(res, ["Madrid","Milano","Minsk","Moscow"]);
+			done();
+		});
+	});
+
+	it("4. Load tab-separated file", function(done){
+		alasql('select column * from tab("test157.tab") where [1] > 100 order by [0]',[],function(res){
+			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
+			done();
+		});
+	});
+
+	it("5. Load CSV-file", function(done){
+		alasql('select column * from csv("test157a.csv") where [1] > 100 order by [0]',[],function(res){
+			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
+			done();
+		});
+	});
+
+
 });
 
-}
 

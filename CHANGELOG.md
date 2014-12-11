@@ -5,7 +5,7 @@
 * INSERT and DELETE for IndexedDB
 * New tests for FROM and INTO functions
 * UPDATE for IndexedDB
-* DOM-storage support
+* DOM-storage support for Node.js (test159.js)
 
 ### 0.0.30 (03.12.2014 - 09.12.2014)
 

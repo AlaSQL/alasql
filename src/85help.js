@@ -47,12 +47,13 @@ helpdocs = [
 ];
 
 // execute
-yy.Help.prototype.execute = function (databaseid) {
+yy.Help.prototype.execute = function (databaseid, params, cb) {
 	var ss = [];
 	if(!this.subject) {
 		ss = alasql.helpdocs;
 	} else {
 		ss.push('See also <a href="http://github/agershun/alasq">http://github/agershun/alasq</a> for more information');
 	}
+	if(cb) ss = cb(ss);
 	return ss;
 };

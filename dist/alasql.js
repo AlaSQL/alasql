@@ -1933,7 +1933,7 @@ var doubleqq = utils.doubleqq = function(s) {
 
 
 // For LOAD
-var loadFile = utils.loadFile = function(path, success, error) {
+var loadFile = utils.loadFile = function(path, asy, success, error) {
     if(typeof exports == 'object') {
         // For Node.js
         var fs = require('fs');
@@ -1954,10 +1954,11 @@ var loadFile = utils.loadFile = function(path, success, error) {
                 }
             }
         };
-        xhr.open("GET", path, false); // Async
+        xhr.open("GET", path, asy); // Async
         xhr.send();
     }
-}
+};
+
 
 
 // Fast hash function
@@ -4302,7 +4303,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			source.datafn = new Function('query,params,cb,idx',
 				"var res = alasql.prepareFromData(params['"+tq.param+"']);if(cb)res=cb(res,idx,query);return res");
 		} else if(tq instanceof yy.FuncValue) {
-			var s = "var res=alasql.from['"+tq.funcid+"'](";
+			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
 			if(tq.args && tq.args.length>0) {
 				s += tq.args.map(function(arg){
 					return arg.toJavaScript();
@@ -7365,6 +7366,68 @@ yy.Rollback.prototype.execute = function (databaseid,params,cb) {
 
 /*
 //
+// FROM functions Alasql.js
+// Date: 11.12.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+
+
+
+// Read JSON file
+
+alasql.from.JSON = function(filename, opts, cb, idx, query) {
+	var res;
+	alasql.utils.loadFile(filename,!!cb,function(data){
+		res = JSON.parse(data);	
+		if(cb) res = cb(res, idx, query);
+	});
+	return res;
+};
+
+alasql.from.TXT = function(filename, opts, cb, idx, query) {
+	var res;
+	alasql.utils.loadFile(filename,!!cb,function(data){
+		res = data.split(/\r?\n/);
+		for(var i=0, ilen=res.length; i<ilen;i++) {
+			res[i] = [res[i]];
+		}
+		if(cb) res = cb(res, idx, query);
+	});
+	return res;
+};
+
+alasql.from.TAB = function(filename, opts, cb, idx, query) {
+	var res;
+	alasql.utils.loadFile(filename,!!cb,function(data){
+		res = data.split(/\r?\n/);
+		for(var i=0, ilen=res.length; i<ilen;i++) {
+			res[i] = res[i].split('\t');
+		}
+		if(cb) res = cb(res, idx, query);
+	});
+	return res;
+};
+
+alasql.from.CSV = function(filename, opts, cb, idx, query) {
+	var opt = {
+		separator: ','
+	};
+	alasql.utils.extend(opt, opts);
+	var res;
+	alasql.utils.loadFile(filename,!!cb,function(data){
+		res = data.split(/\r?\n/);
+		for(var i=0, ilen=res.length; i<ilen;i++) {
+			res[i] = res[i].split(opt.separator);
+		}
+		if(cb) res = cb(res, idx, query);
+	});
+	return res;
+};
+
+
+/*
+//
 // HELP for Alasql.js
 // Date: 03.11.2014
 // (c) 2014, Andrey Gershun
@@ -7412,13 +7475,14 @@ helpdocs = [
 ];
 
 // execute
-yy.Help.prototype.execute = function (databaseid) {
+yy.Help.prototype.execute = function (databaseid, params, cb) {
 	var ss = [];
 	if(!this.subject) {
 		ss = alasql.helpdocs;
 	} else {
 		ss.push('See also <a href="http://github/agershun/alasq">http://github/agershun/alasq</a> for more information');
 	}
+	if(cb) ss = cb(ss);
 	return ss;
 };
 
@@ -7439,11 +7503,14 @@ yy.Source.prototype.toString = function() {
 }
 
 // SOURCE FILE
-yy.Source.prototype.execute = function (databaseid) {
+yy.Source.prototype.execute = function (databaseid,params,cb) {
 //	console.log(this.url);
-	loadFile(this.url, function(data){
+	loadFile(this.url, !!cb, function(data){
 //		console.log(data);
+		var res = 1;
 		alasql(data);
+		if(cb) res = cb(res);
+		return res;
 	}, function(err){
 		throw err;
 	});

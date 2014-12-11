@@ -90,27 +90,32 @@ describe('Test 159 - test DOM-storage', function() {
 
 	it("3. Multiple call-backs", function(done){
 		var res = alasql("drop localstorage database if exists test159",[],function(res){
-//			console.log(1);
 			alasql("create localstorage database if not exists test159;",[], function(res){
-//			console.log(2);
 				alasql("attach localstorage database test159",[],function(res){
-//			console.log(3);
-					alasql("use test159;\
-					drop table if exists cities;\
-					create table cities (city string);\
-					insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn');\
-					delete from cities where city in ('Riga','Tallinn','Moscow'); \
-					update cities set city = 'Vilnius' where city = 'Minsk';\
-					insert into cities values ('Berlin')", [], function(res){
-						res = alasql('select column * from cities order by city');
-						assert.deepEqual(res, ["Berlin","Paris","Vilnius"]);
-
-						res = alasql('detach database test159; \
-								drop localstorage database test159');
-						assert.deepEqual(res,[1,1]);
-
-						done();
-
+					alasql("use test159",[],function(res){
+						alasql("drop table if exists cities",[],function(res){
+							alasql("create table cities (city string);",[],function(res){
+								alasql("insert into cities values ('Moscow'),('Paris'),('Minsk'),\
+									('Riga'),('Tallinn')",[],function(res){
+									alasql("delete from cities where city in ('Riga','Tallinn','Moscow')",[],function(res){
+										alasql("update cities set city = 'Vilnius' where city = 'Minsk'",[],function(res){
+											alasql("insert into cities values ('Berlin')", [], function(res){
+												alasql('select column * from cities order by city',[],function(res){
+													assert.deepEqual(res, ["Berlin","Paris","Vilnius"]);
+													alasql("detach database test159",[],function(res){
+														assert(res==1);
+														alasql("drop localstorage database test159",[], function(res){
+															assert(res==1);
+															done();
+														});
+													});
+												});
+											});
+										});
+									});
+								});
+							});
+						});
 					});
 				});
 			});
