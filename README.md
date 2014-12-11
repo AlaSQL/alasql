@@ -1,4 +1,4 @@
-# Alasql.js - pure JavaScript client-side SQL database (with localStorage and IndexedDB support)
+# Alasql.js - pure JavaScript client-side SQL database with support of localStorage and IndexedDB 
 
 Version: 0.0.31 Date: December 11, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 

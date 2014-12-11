@@ -1451,8 +1451,7 @@ Json
 	: 
 	LPAR Expression RPAR
 		{ $$ = $2; }
-	| 
-	StringValue
+	| StringValue
 		{ $$ = $1.value; }
 	| NumValue
 		{ $$ = +$1.value; }

@@ -6550,6 +6550,14 @@ yy.Update.prototype.compile = function (databaseid) {
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];
 
+
+//		console.log(db.engineid);
+//		console.log(db.engineid && alasql.engines[db.engineid].updateTable);
+		if(db.engineid && alasql.engines[db.engineid].updateTable) {
+//			console.log('updateTable');
+			return alasql.engines[db.engineid].updateTable(databaseid, tableid, assignfn, wherefn, params, cb);
+		}
+
 		if(alasql.autocommit && db.engineid) {
 			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 		}
@@ -7829,7 +7837,7 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 //		  		console.log(222,event);
 //		  		console.log(333,cursor);
 		  	if(cursor) {
-		  		if(wherefn(cursor.value,params)) {
+		  		if((!wherefn) || wherefn(cursor.value,params)) {
 //		  		console.log(cursor);
 		  			cursor.delete();
 		  			num++;
@@ -7844,6 +7852,49 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 	}		
 }
 
+IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
+	// console.log(arguments);
+	// console.trace();
+	var ixdbid = alasql.databases[databaseid].ixdbid;
+	var request = window.indexedDB.open(ixdbid);
+	request.onsuccess = function(event) {
+	  	var res = [];
+	  	var ixdb = event.target.result;
+//	  	console.log(444,ixdb, tableid, ixdbid);
+	  	var tx = ixdb.transaction([tableid], 'readwrite');
+	  	var store = tx.objectStore(tableid);
+	  	var cur = store.openCursor();
+	  	var num = 0;
+//	  	console.log(cur);
+	  	cur.onblocked = function(event) {
+//	  		console.log('blocked');
+	  	}
+	  	cur.onerror = function(event) {
+//	  		console.log('error');
+	  	}
+	  	cur.onsuccess = function(event) {
+//	  		console.log('success');
+		  	var cursor = event.target.result;
+//		  		console.log(222,event);
+//		  		console.log(333,cursor);
+		  	if(cursor) {
+		  		if((!wherefn) || wherefn(cursor.value,params)) {
+		  		//console.log(cursor);
+		  			var r = cursor.value;
+					assignfn(r,params);
+				//	console.log('update 363',r);
+		  			cursor.update(r);
+		  			num++;
+		  		}
+		  		cursor.continue();
+		  	} else {
+//		  		console.log(555, res,idx,query);
+		  		ixdb.close();
+		  		cb(num);
+		  	}
+	  	}
+	}		
+}
 
 
 

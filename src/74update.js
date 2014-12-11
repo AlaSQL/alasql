@@ -39,6 +39,14 @@ yy.Update.prototype.compile = function (databaseid) {
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];
 
+
+//		console.log(db.engineid);
+//		console.log(db.engineid && alasql.engines[db.engineid].updateTable);
+		if(db.engineid && alasql.engines[db.engineid].updateTable) {
+//			console.log('updateTable');
+			return alasql.engines[db.engineid].updateTable(databaseid, tableid, assignfn, wherefn, params, cb);
+		}
+
 		if(alasql.autocommit && db.engineid) {
 			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 		}

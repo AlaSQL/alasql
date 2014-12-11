@@ -4,6 +4,7 @@
 
 * INSERT and DELETE for IndexedDB
 * New tests for FROM and INTO functions
+* UPDATE for IndexedDB
 
 ### 0.0.30 (03.12.2014 - 09.12.2014)
 

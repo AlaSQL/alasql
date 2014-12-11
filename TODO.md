@@ -1,12 +1,54 @@
 # To do
 ## URGENT
 
-* Fix errors with localStorage
+* IndexedDB UPDATE
+* {}, [] - alasql.yy.options.braliteral
+* FROM txt('aaa.txt',{});
+
 * Add sessionStorage support
-* Add dom-storage support
-* IndexedDB INSERT/DELETE/UPDATE
 * Add async streamming
 
+Option:
+* alasql.yy.options.braliteral = true; [column]
+
+* Create cache
+attach server database mssql; 
+attach indexeddb database cache;
+insert into cache.synctables values ('one','select * from mssql.one');
+
+* Sync cache
+attach server database mssql; 
+attach indexeddb database cache;
+insert into versions select * from mssql.versions;
+sync cache.synctables on versions;
+
+* IF THEN ELSE
+if exists(cache.table) then 
+	sss
+elsif sss then
+	aaaa
+else
+	sss
+end if;
+
+set @info = select *;
+set @a = select *;
+open cursor;
+...
+
+* CASE
+
+* LOOP sss EXIT WHEN llll END LOOP;
+
+* WHILE LOOP
+while loop
+
+end loop;
+
+* WHILE BEGIN END;
+* SET var = expression;
+* variables @var  (@literal)
+* DECLARE @aaaa INT
 
 * Check GROUP BY compatibility
 http://blog.jooq.org/2014/12/04/do-you-really-understand-sqls-group-by-and-having-clauses/
