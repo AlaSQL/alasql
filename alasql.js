@@ -7992,6 +7992,7 @@ LS.attachDatabase = function(lsdbid, dbid, cb){
 			}
 		}
 	}
+	if(cb) res = cb(res);
 	return res;
 };
 

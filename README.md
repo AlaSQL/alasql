@@ -30,7 +30,7 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-## News: Async, localStorage and limited IndexedDB support
+## News: Async, localStorage, DOM-storage, and IndexedDB support
 Alasql now can work in two modes: sync and async (it depends if callback shown).
 
 * See [test149.js](test/test149.js) - [test156.js](test/test152.js) for samples.

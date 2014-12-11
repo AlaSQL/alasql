@@ -65,6 +65,60 @@ describe('Test 159 - test DOM-storage', function() {
 		done();
 	});
 
+
+	it("2. Multiple statements ", function(done){
+		var res = alasql("drop localstorage database if exists test159;\
+			create localstorage database if not exists test159;\
+			attach localstorage database test159;\
+			use test159;\
+			drop table if exists cities;\
+			create table cities (city string);\
+			insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn');\
+			delete from cities where city in ('Riga','Tallinn','Moscow'); \
+			update cities set city = 'Vilnius' where city = 'Minsk';\
+			insert into cities values ('Berlin')");
+
+		res = alasql('select column * from cities order by city');
+		assert.deepEqual(res, ["Berlin","Paris","Vilnius"]);
+
+		res = alasql('detach database test159; \
+				drop localstorage database test159');
+		assert.deepEqual(res,[1,1]);
+
+		done();
+	});
+
+	it("3. Multiple call-backs", function(done){
+		var res = alasql("drop localstorage database if exists test159",[],function(res){
+//			console.log(1);
+			alasql("create localstorage database if not exists test159;",[], function(res){
+//			console.log(2);
+				alasql("attach localstorage database test159",[],function(res){
+//			console.log(3);
+					alasql("use test159;\
+					drop table if exists cities;\
+					create table cities (city string);\
+					insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn');\
+					delete from cities where city in ('Riga','Tallinn','Moscow'); \
+					update cities set city = 'Vilnius' where city = 'Minsk';\
+					insert into cities values ('Berlin')", [], function(res){
+						res = alasql('select column * from cities order by city');
+						assert.deepEqual(res, ["Berlin","Paris","Vilnius"]);
+
+						res = alasql('detach database test159; \
+								drop localstorage database test159');
+						assert.deepEqual(res,[1,1]);
+
+						done();
+
+					});
+				});
+			});
+		});
+
+	});
+
+
 /*
 
 //if(false) {

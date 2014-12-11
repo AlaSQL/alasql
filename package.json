@@ -40,7 +40,8 @@
     "data",
     "query",
     "localStorage",
-    "IndexedDB"
+    "IndexedDB",
+    "DOM-storage"
   ],
   "license": "MIT"
 }
