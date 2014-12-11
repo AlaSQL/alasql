@@ -7,13 +7,68 @@ if(typeof exports === 'object') {
 
 if(typeof exports == 'object') {
 
-var DOMStorage = require("dom-storage")
-global.localStorage = new DOMStorage("./test159.json", { strict: false, ws: '' });
+	var DOMStorage = require("dom-storage")
+	global.localStorage = new DOMStorage("./test159.json", { strict: false, ws: '' });
+
+};
 
 describe('Test 159 - test DOM-storage', function() {
 
 	it("1. Test ", function(done){
+		var res = alasql("drop localstorage database if exists test159");
+		assert(res == 0 || res == 1);
 
+		var res = alasql("create localstorage database if not exists test159");
+		assert(res == 0 || res == 1);
+
+		res = alasql('attach localstorage database test159');
+		assert(res == 1);
+
+		res = alasql('use test159');
+		assert(res == 1);
+
+		res = alasql('drop table if exists cities');
+		assert(res == 0 || res == 1);
+
+		res = alasql('create table cities (city string)');
+		assert(res == 1);
+
+		res = alasql("insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')");
+		assert(res == 5);
+
+		res = alasql("select column * from cities where city like 'M%' order by city");
+		assert.deepEqual(res,['Minsk','Moscow']);
+
+		res = alasql('delete from cities where city in ("Riga","Tallinn","Moscow")');
+		assert(res == 3);
+
+		res = alasql('select column * from cities order by city');
+		assert.deepEqual(res, ["Minsk","Paris"]);
+
+		res = alasql("update cities set city = 'Vilnius' where city = 'Minsk'");
+		assert(res == 1);
+
+		res = alasql('select column * from cities order by city');
+		assert.deepEqual(res, ["Paris","Vilnius"]);
+
+		res = alasql("insert into cities values ('Berlin')");
+		assert(res == 1);
+
+		res = alasql('select column * from cities order by city');
+		assert.deepEqual(res, ["Berlin","Paris","Vilnius"]);
+
+
+		res = alasql('detach database test159; \
+				drop localstorage database test159');
+		assert.deepEqual(res,[1,1]);
+
+		done();
+	});
+
+/*
+
+//if(false) {
+	it("1. Test ", function(done){
 		alasql("create localstorage database if not exists test159; \
 			attach localstorage database test159; \
 			use test159; \
@@ -49,10 +104,11 @@ describe('Test 159 - test DOM-storage', function() {
 
 	it("99. Drop database", function(done){
 		alasql('detach database test159;\
-				drop indexeddb database test159');
+				drop localstorage database test159');
 		done();
 	});
+//};
+// */
 });
 
-}
 

@@ -1,6 +1,6 @@
 //
 // 91localstorage.js
-// localStorage engine
+// localStorage and DOM-Storage engine
 // Date: 09.12.2014
 // (c) Andrey Gershun
 //
@@ -47,7 +47,11 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 	var ls = LS.get('alasql');
 	if(!(ifexists && ls && ls.databases && !ls.databases[lsdbid])) {
 		if(!ls) {
-			throw new Error('There are no alasql databases in localStorage');
+			if(!ifexists) {
+				throw new Error('There are no alasql databases in localStorage');
+			} else {
+				return 0;
+			}
 		};
 //		console.log(999,ls.databases,ls.databases[lsdbid], lsdbid);	
 		if(ls.databases && !ls.databases[lsdbid]) {

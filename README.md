@@ -476,16 +476,14 @@ The early prototype of documentation will be placed on [Alasql Wiki](https://git
 ### Warnings 
 Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
 
-Sorry, transactions are very limited, because we started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
-
 You can check next version branches for new experimental features. 
 
 ### Known Bugs and Limitations
 
-1. Limited functionality for transactions 
-2. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
-3. AVG() does not work 
-4. DELETE FROM table and UPDATE still not working with IndexedDB
+1. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
+2. AVG() aggregator does not work yet.
+3. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because Alasql started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
+
 
 Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
   
