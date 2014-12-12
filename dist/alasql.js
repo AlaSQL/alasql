@@ -2203,6 +2203,8 @@ alasql.into = {}; // INTO functions
 
 alasql.fn = {};
 
+alasql.busy = 0;
+
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
@@ -2289,6 +2291,7 @@ alasql.drun = function (databaseid, ast, params, cb) {
 
 // Run multiple statements and return array of results
 alasql.adrun = function (databaseid, ast, params, cb) {
+//	alasql.busy++;
 	var useid = alasql.useid;
 	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
@@ -2301,6 +2304,8 @@ alasql.adrun = function (databaseid, ast, params, cb) {
 		if(!astatement) {
 			if(useid != databaseid) alasql.use(useid);
 			cb(res);
+//			alasql.busy--;
+//			if(alasql.busy<0) alasql.busy = 0;
 		} else {
 			if(astatement.compile) {
 				var statement = astatement.compile(alasql.useid);
@@ -4304,12 +4309,33 @@ yy.Select.prototype.compileFrom = function(query) {
 				"var res = alasql.prepareFromData(params['"+tq.param+"']);if(cb)res=cb(res,idx,query);return res");
 		} else if(tq instanceof yy.FuncValue) {
 			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
+			// if(tq.args && tq.args.length>0) {
+			// 	s += tq.args.map(function(arg){
+			// 		return arg.toJavaScript();
+			// 	}).concat('cb,idx,query').join(',');
+			// }
+			// if(tq.args && tq.args.length>0) {
+			// 	s += tq.args.map(function(arg){
+			// 		return arg.toJavaScript();
+			// 	}).concat().join(',');
+			// }
 			if(tq.args && tq.args.length>0) {
-				s += tq.args.map(function(arg){
-					return arg.toJavaScript();
-				}).join(',');
+				if(tq.args[0]) {
+					s += tq.args[0].toJavaScript()+',';
+				} else {
+					s += 'null,';
+				};
+				if(tq.args[1]) {
+					s += tq.args[1].toJavaScript()+',';
+				} else {
+					s += 'null,';
+				};
+			} else {
+				s += 'null,null,'
 			}
-			s += ');if(cb)res=cb(res,idx,query);return res';
+			s += 'cb,idx,query';
+			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
+//	console.log(s);
 			source.datafn = new Function('query, params, cb, idx',s);
 
 		} else {
@@ -7092,7 +7118,8 @@ alasql.log = function(sql, params) {
 		var s = '';
 
 		if(typeof sql == 'string' && alasql.options.logprompt) {
-			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
+//			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
+			s += '<pre><code>'+alasql.pretty(sql)+'</code></pre>';
 		}
 
 		if(res instanceof Array) {
@@ -7378,6 +7405,7 @@ yy.Rollback.prototype.execute = function (databaseid,params,cb) {
 
 alasql.from.JSON = function(filename, opts, cb, idx, query) {
 	var res;
+	//console.log('cb',cb);
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = JSON.parse(data);	
 		if(cb) res = cb(res, idx, query);
@@ -7398,15 +7426,9 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 };
 
 alasql.from.TAB = function(filename, opts, cb, idx, query) {
-	var res;
-	alasql.utils.loadFile(filename,!!cb,function(data){
-		res = data.split(/\r?\n/);
-		for(var i=0, ilen=res.length; i<ilen;i++) {
-			res[i] = res[i].split('\t');
-		}
-		if(cb) res = cb(res, idx, query);
-	});
-	return res;
+	if(!opts) opts = {};
+	opts.separator = '\t';
+	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
 
 alasql.from.CSV = function(filename, opts, cb, idx, query) {
@@ -7417,8 +7439,32 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	var res;
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
-		for(var i=0, ilen=res.length; i<ilen;i++) {
-			res[i] = res[i].split(opt.separator);
+		if(opt.headers) {
+			if(query && query.sources && query.sources[idx]) {
+				var hh = [];
+				if(typeof opt.headers == 'boolean') {
+					hh = res[0].split(opt.separator);
+
+				} else if(opt.headers instanceof Array) {
+					hh = opt.headers;
+				}
+				var columns = query.sources[idx].columns = [];
+				hh.forEach(function(h){
+					columns.push({columnid:h});
+				});
+				for(var i=1, ilen=res.length; i<ilen;i++) {
+					var a = res[i].split(opt.separator);
+					var b = {};
+					hh.forEach(function(h,j){
+						b[h] = a[j];
+					});
+					res[i] = b;
+				}
+			}	
+		} else {
+			for(var i=0, ilen=res.length; i<ilen;i++) {
+				res[i] = res[i].split(opt.separator);
+			}
 		}
 		if(cb) res = cb(res, idx, query);
 	});

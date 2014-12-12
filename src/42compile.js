@@ -522,12 +522,33 @@ yy.Select.prototype.compileFrom = function(query) {
 				"var res = alasql.prepareFromData(params['"+tq.param+"']);if(cb)res=cb(res,idx,query);return res");
 		} else if(tq instanceof yy.FuncValue) {
 			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
+			// if(tq.args && tq.args.length>0) {
+			// 	s += tq.args.map(function(arg){
+			// 		return arg.toJavaScript();
+			// 	}).concat('cb,idx,query').join(',');
+			// }
+			// if(tq.args && tq.args.length>0) {
+			// 	s += tq.args.map(function(arg){
+			// 		return arg.toJavaScript();
+			// 	}).concat().join(',');
+			// }
 			if(tq.args && tq.args.length>0) {
-				s += tq.args.map(function(arg){
-					return arg.toJavaScript();
-				}).join(',');
+				if(tq.args[0]) {
+					s += tq.args[0].toJavaScript()+',';
+				} else {
+					s += 'null,';
+				};
+				if(tq.args[1]) {
+					s += tq.args[1].toJavaScript()+',';
+				} else {
+					s += 'null,';
+				};
+			} else {
+				s += 'null,null,'
 			}
-			s += ');if(cb)res=cb(res,idx,query);return res';
+			s += 'cb,idx,query';
+			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
+//	console.log(s);
 			source.datafn = new Function('query, params, cb, idx',s);
 
 		} else {

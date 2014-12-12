@@ -156,7 +156,8 @@ alasql.log = function(sql, params) {
 		var s = '';
 
 		if(typeof sql == 'string' && alasql.options.logprompt) {
-			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
+//			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
+			s += '<pre><code>'+alasql.pretty(sql)+'</code></pre>';
 		}
 
 		if(res instanceof Array) {

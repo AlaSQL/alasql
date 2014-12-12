@@ -38,6 +38,8 @@ alasql.into = {}; // INTO functions
 
 alasql.fn = {};
 
+alasql.busy = 0;
+
 // Cache
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
@@ -124,6 +126,7 @@ alasql.drun = function (databaseid, ast, params, cb) {
 
 // Run multiple statements and return array of results
 alasql.adrun = function (databaseid, ast, params, cb) {
+//	alasql.busy++;
 	var useid = alasql.useid;
 	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
@@ -136,6 +139,8 @@ alasql.adrun = function (databaseid, ast, params, cb) {
 		if(!astatement) {
 			if(useid != databaseid) alasql.use(useid);
 			cb(res);
+//			alasql.busy--;
+//			if(alasql.busy<0) alasql.busy = 0;
 		} else {
 			if(astatement.compile) {
 				var statement = astatement.compile(alasql.useid);
