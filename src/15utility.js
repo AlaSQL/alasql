@@ -37,8 +37,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
     } else {
         // For browser
         var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function()
-        {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     if (success)
@@ -53,6 +52,29 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         xhr.send();
     }
 };
+
+
+var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
+    if(typeof exports == 'object') {
+        // For Node.js
+        var fs = require('fs');
+        var data = fs.readFileSync(path);
+        success(data.toString());
+    } else {
+        // For browser
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", path, asy); // Async
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function() {
+            var data = new Uint8Array(xhr.response);
+            var arr = new Array();
+            for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+            success(arr.join(""));
+        };
+        xhr.send();
+    };
+};
+
 
 
 
@@ -254,5 +276,30 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
         for(var key in aa) ar.push(aa[key]);
         return ar;
     });
+};
+
+
+utils.xlsnc = function(i) {
+    var addr = String.fromCharCode(65+i%26);
+    if(i>=26) {
+        i=((i/26)|0)-1;
+        addr = String.fromCharCode(65+i%26)+addr;
+        if(i>26) {
+            i=((i/26)|0)-1;
+            addr = String.fromCharCode(65+i%26)+addr;
+        };
+    };
+    return addr;
+};
+
+utils.xlscn = function(s) {
+    var n = s.charCodeAt(0)-65;
+    if(s.length>1) {
+        n = n*26+s.charCodeAt(1)-65;
+        if(s.length>2) {
+            n = n*26+s.charCodeAt(2)-65;
+        }
+    }
+    return n;
 };
 

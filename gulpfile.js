@@ -99,7 +99,7 @@ gulp.task('copy-dist', function(){
 
 gulp.task('copy-dist-org', function(){
   gulp.src(['./alasql.min.js'])
-    .pipe(gulp.dest('../alasql-org/'));
+    .pipe(gulp.dest('./console/'));
 });
 
 gulp.task('copy-console-org', function(){

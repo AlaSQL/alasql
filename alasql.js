@@ -1948,8 +1948,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
     } else {
         // For browser
         var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function()
-        {
+        xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     if (success)
@@ -1964,6 +1963,29 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         xhr.send();
     }
 };
+
+
+var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
+    if(typeof exports == 'object') {
+        // For Node.js
+        var fs = require('fs');
+        var data = fs.readFileSync(path);
+        success(data.toString());
+    } else {
+        // For browser
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", path, asy); // Async
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function() {
+            var data = new Uint8Array(xhr.response);
+            var arr = new Array();
+            for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+            success(arr.join(""));
+        };
+        xhr.send();
+    };
+};
+
 
 
 
@@ -2165,6 +2187,31 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
         for(var key in aa) ar.push(aa[key]);
         return ar;
     });
+};
+
+
+utils.xlsnc = function(i) {
+    var addr = String.fromCharCode(65+i%26);
+    if(i>=26) {
+        i=((i/26)|0)-1;
+        addr = String.fromCharCode(65+i%26)+addr;
+        if(i>26) {
+            i=((i/26)|0)-1;
+            addr = String.fromCharCode(65+i%26)+addr;
+        };
+    };
+    return addr;
+};
+
+utils.xlscn = function(s) {
+    var n = s.charCodeAt(0)-65;
+    if(s.length>1) {
+        n = n*26+s.charCodeAt(1)-65;
+        if(s.length>2) {
+            n = n*26+s.charCodeAt(2)-65;
+        }
+    }
+    return n;
 };
 
 
@@ -7476,6 +7523,91 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	});
 	return res;
 };
+
+
+alasql.from.XLS = function(filename, opts, cb, idx, query) {
+	if(typeof exports === 'object') {
+		var XLSX = require('xlsjs');
+	} else {
+		var XLSX = window.XLS;
+		if(!XLSX) {
+			throw new Error('XLS library is not attached');
+		}
+	}
+	return XLSXLSX(XLSX,filename, opts, cb, idx, query);
+};
+
+alasql.from.XLSX = function(filename, opts, cb, idx, query) {
+	if(typeof exports === 'object') {
+		var XLSX = require('xlsx');
+	} else {
+		var XLSX = window.XLSX;
+		if(!XLSX) {
+			throw new Error('XLSX library is not attached');
+		}
+	}
+	return XLSXLSX(XLSX,filename, opts, cb, idx, query);
+};
+
+function XLSXLSX(XLSX,filename, opts, cb, idx, query) {
+	var opt = {};
+	if(!opts) opts = {};
+	alasql.utils.extend(opt, opts);
+	var res;
+
+	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
+		var workbook = XLSX.read(data,{type:'binary'});
+//		console.log(workbook);
+		var sheetid;
+		if(typeof opt.sheetid == 'undefined') {
+			sheetid = workbook.SheetNames[0];
+		} else {
+			sheetid = opt.sheetid;
+		};
+		var range;
+		if(typeof opt.range == 'undefined') {
+			range = workbook.Sheets[sheetid]['!ref'];
+		} else {
+			range = opt.range;
+			if(workbook.Sheets[sheetid][range]) range = workbook.Sheets[sheetid][range];
+		};
+		var rg = range.split(':');
+		var col0 = rg[0].match(/[A-Z]+/)[0];
+		var row0 = rg[0].match(/[0-9]+/)[0];
+		var col1 = rg[1].match(/[A-Z]+/)[0];
+		var row1 = rg[1].match(/[0-9]+/)[0];
+//		console.log(114,rg,col0,col1,row0,row1);
+
+		var hh = {};
+		for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+			var col = alasql.utils.xlsnc(j);
+			if(opt.headers) {
+				hh[col] = workbook.Sheets[sheetid][col+""+row0].v;
+			} else {
+				hh[col] = col;
+			}
+		}
+		var res = [];
+		if(opt.headers) row0++;
+		for(var i=row0;i<=row1;i++) {
+			var row = {};
+			for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+				var col = alasql.utils.xlsnc(j);
+				if(workbook.Sheets[sheetid][col+""+i]) {
+					row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;
+				}
+			}
+			res.push(row);
+		}
+
+		if(cb) res = cb(res, idx, query);
+	}, function(err){
+		throw err;
+	});
+
+	return res;
+};
+
 
 
 /*

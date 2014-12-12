@@ -1,11 +1,16 @@
 # Changelog
 
-### 0.0.31 (10.12.2014 - .12.2014)
+### 0.0.31 (12.12.2014 - .12.2014)
+
+* Read XLS and XLSX files (with xlsx package)
+
+### 0.0.31 (10.12.2014 - 11.12.2014)
 
 * INSERT and DELETE for IndexedDB
 * New tests for FROM and INTO functions
 * UPDATE for IndexedDB
 * DOM-storage support for Node.js (test159.js)
+
 
 ### 0.0.30 (03.12.2014 - 09.12.2014)
 
