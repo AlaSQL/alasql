@@ -1,19 +1,58 @@
-## RELEASES PLAN
+# Releases Plan
 
-#### Version 0.0.30 - "Async"
+## Alasql Prioritites
+1. Bugs, Speed, Memory Leaks, Better Code, Errors handling, Size
+2. Documentation, alasql.org website, Alasql promotion
+3. PIVOT, GROUP BY TOTAL, DETAIL, AGGR(function), GROUP BY HIERARCHY, AVG
+4. SYNC, optimiztic blocking
+5. UNION bug, merge algorithms, utilities
+6. Primary Key/Foreign Key/Unique Index/Autoincrement/Default
+7. Transactions
+8. WebSQL and pass-thru databases, better support of with IndexedDB and NeDB, WebWorkers
+9. Linq, NoSQL, and MongoDB functions
+10. Streams, cursorst, if-then, while, Views
 
-* Async version of Alasql (without streamming)
-* IndexedDB support (without INSERT/DELETE/UPDATE)
+## Next Versions
+
+### Version 0.0.31 - "XLS + Pretty + Bug Fixes" (priorities 1-2)
+
+* XLS() and XLSX() loading functions with headers
+* Fix TXT bug
+* Remove localStorage store()/restore()
+* Prettify bugs
+* alasql.org/console bugs (HELP and other commands)
+* alasql.org redesign (add twitter + stories)
+* master branch + CDN + dist/
+* alacon + alaserver bin commands (test with npm install alasql -g)
+
+Fix bugs in pretty()
+====
+1. alasql.parse("CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC").toString()
+
+SELECT TOP 10 *,*,*
+  	FROM rrr
+  	GROUP BY
+  	ORDER BY;
+
+ CREATE TABLE one (
+ 	one INT,
+ 	two STRING
+ );
+
+2. Prettify SQL outpu for Consolet;
+
+
+## Other Functionality 
+
+#### Version 0.0.31 - "OTHER FUNCTIONALITY"
+
 * REGEXP_LIKE 
 
+3. IDENTITY (1,1) or AUTO_INCREMENT
 
 * NeDB
 * LockiJS
 * TaffyDB
-
-#### Version 0.0.31 - "OTHER FUNCTIONALITY"
-
-IndexedDB INSERT/DELETE/UPDATE
 sessionStorage
 source as a function
 MongoDb and other key-value storages
@@ -44,24 +83,6 @@ http://stackoverflow.com/questions/14260127/is-there-a-free-lib-accessing-to-htm
 
 #### Version 0.0.34 - "Prettify"
 
-Fix bug
-====
-PRETTYFIER
-alasql.parse("CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC").toString()
-
-SELECT TOP 10 *,*,*
-  	FROM rrr
-  	GROUP BY
-  	ORDER BY;
-
- CREATE TABLE one (
- 	one INT,
- 	two STRING
- );
-
-1. Prettify SQL outpu for Consolet;
-
-2. IDENTITY (1,1) or AUTO_INCREMENT
 
 
 #### Version 0.0.35 - "CAST"
@@ -284,23 +305,6 @@ SELECT GROUP(a/b), SUM(a) FROM
 * Replace magic character '`' to CharCode(0) or something else similar Unicode?
 * ISODATE and JSDATE for DATE and DATETIME
 * Multiple line comments like /* comment newline comment */
-
-#### Version 0.0.29 - "CSV and TAB - queries"
-
-* select into csv('ala.csv',true/false)
-* select into tab('ala.tab',true/false)
-* select into xls('ala.xls') - add-on with sheetjs
-* select into xlsx('ala.xlsx') - add-on
-* select from csv('./ala.csv',true) 
-* select from csv('./ala.csv')
-* select from tab('./ala.txt')
-* select from tab('./ala.txt',true)
-* select from xlsx('./ala.xlsx')
-* select from xls('./ala.xls')
-* select from json('./ala.json')
-* join csv('demo.csv') AS t
-* a in csv('demo.csv')
-* IMPORT TABLE FROM 'csv:aaa.txt?headers=true'
 
 #### Version 0.0.30 - "NoSQL interface"
 
