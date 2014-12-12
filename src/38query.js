@@ -159,12 +159,13 @@ function queryfn3(query) {
 
 //	console.log(query.intoallfns);
 
-	if(query.explain) {
-		if(query.cb) query.cb(query.explaination,query.A, query.B);
-		return query.explaination;
-	} else if(query.intoallfn) {
+	// if(query.explain) {
+	// 	if(query.cb) query.cb(query.explaination,query.A, query.B);
+	// 	return query.explaination;
+	// } else 
+	if(query.intoallfn) {
 //		console.log(161);
-		var res = query.intoallfn(query.cb,query.A, query.B); 
+		var res = query.intoallfn(query.columns,query.cb,query.A, query.B); 
 //		console.log(1163,res);
 //		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);

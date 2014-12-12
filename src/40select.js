@@ -146,13 +146,15 @@ yy.Select.prototype.compile = function(databaseid) {
 		if(this.into instanceof yy.Table) {
 			if(alasql.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
 				query.intoallfns = 'return alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
-					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data, cb);';
+					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data, columns, cb);';
 			} else {
 				query.intofns = 
 				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
 				'[\''+this.into.tableid+'\'].data.push(r);';
 			}
 		} else if (this.into instanceof yy.FuncValue) {
+
+/*
 			query.intofns = 'alasql.into[\''+this.into.funcid+'\'](';
 			var ss = ['r','i'];
 			if(this.into.args && this.into.args.length>0 ) 	
@@ -160,6 +162,23 @@ yy.Select.prototype.compile = function(databaseid) {
 					ss.push(arg.toJavaScript());
 				});
 			query.intofns += ss.join(',')+')';	
+*/
+			var qs = 'alasql.into[\''+this.into.funcid.toUpperCase()+'\'](';
+			if(this.into.args && this.into.args.length>0 ) {
+				qs += this.into.args[0].toJavaScript()+',';
+				if(this.into.args.length > 1) {
+					qs += this.into.args[1].toJavaScript()+',';
+				} else {
+					qs += 'null,';
+				}
+			} else {
+				qs += 'null, null,'
+			}
+			query.intoallfns = qs+'this.data,columns,cb)';
+//console.log('999');		
+
+
+
 
 		} else if (this.into instanceof yy.ParamValue) {
 			query.intofns = 'params[\''+this.into.param+"\'](r)";	
@@ -170,7 +189,8 @@ yy.Select.prototype.compile = function(databaseid) {
 		};
 
 		if(query.intoallfns) {
-			query.intoallfn = new Function("cb",query.intoallfns); 
+//			console.log(query.intoallfns);
+			query.intoallfn = new Function("columns,cb",query.intoallfns); 
 		}
 
 	}

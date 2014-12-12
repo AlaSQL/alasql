@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side SQL database with support of localStorage and IndexedDB 
 
-Version: 0.0.31 Date: December 11, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.32 Date: December 13, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use IndexedDB and localStorage as a persistent storage.
 
@@ -30,9 +30,17 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-## News: Async, localStorage, DOM-storage, and IndexedDB support
-* Alasql now can work in two modes: sync and async (it depends if callback shown). See [test149.js](test/test149.js) - [test156.js](test/test152.js) for samples.
-* Alasql can work with files in CSV, TAB, TXT, and JSON format
+## New: Read Excel, CSV, TAB, and text files
+Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
+```js
+    alasql('select * into one from csv("mydata.csv")');
+    alasql('select Country, Name from xlsx("cities.xlsx",{headers:true, range:"B1:E10"})\
+        where Population > 100000',
+        [],function(data){
+        console.log(data);
+    });
+```
+See [test168](test/test168.js)
 
 ## Examples
 

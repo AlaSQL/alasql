@@ -26,7 +26,7 @@ gulp.task('js-merge', function () {
     './src/17alasql.js', 
     './src/20database.js',
     './src/21transaction.js',
-    './src/22store.js',
+//    './src/22store.js',
     './src/23table.js',
     './src/24view.js',
   	'./src/25query.js',
@@ -62,6 +62,7 @@ gulp.task('js-merge', function () {
     './src/79set.js',
     './src/80console.js',
     './src/81commit.js',
+    './src/83into.js',
     './src/84from.js',
     './src/85help.js',
     './src/87source.js',
@@ -69,7 +70,10 @@ gulp.task('js-merge', function () {
     './src/90websql.js',
     './src/91indexeddb.js',
     './src/92localstorage.js',
-   	'./src/99finish.js'])
+    './src/98saveas.js',
+    './src/FileSaver.js',
+   	'./src/99finish.js'
+    ])
 //    .pipe(changed('./dist/'))
     .pipe(concat('alasql.js'))
 //    .pipe(uglify())

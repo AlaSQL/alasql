@@ -1,15 +1,13 @@
 # To do
 ## URGENT
 
-* IndexedDB UPDATE
+Option:
+* alasql.yy.options.braliteral = true; [column]
 * {}, [] - alasql.yy.options.braliteral
-* FROM txt('aaa.txt',{});
 
 * Add sessionStorage support
 * Add async streamming
 
-Option:
-* alasql.yy.options.braliteral = true; [column]
 
 * Create cache
 attach server database mssql; 

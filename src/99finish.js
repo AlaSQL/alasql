@@ -8,6 +8,10 @@
 
 // This is a final part of Alasql
 
+// FileSaveAs
+	alasql.utils.saveAs = saveAs;
+
+};
 
 // Create default database
 new Database("alasql");

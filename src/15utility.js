@@ -59,7 +59,10 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
         // For Node.js
         var fs = require('fs');
         var data = fs.readFileSync(path);
-        success(data.toString());
+        var arr = new Array();
+        for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+        success(arr.join(""));
+//        success(data);
     } else {
         // For browser
         var xhr = new XMLHttpRequest();
@@ -76,6 +79,29 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 };
 
 
+// For LOAD
+var saveFile = utils.saveFile = function(path, data, cb) {
+    if(typeof exports == 'object') {
+        // For Node.js
+        var fs = require('fs');
+        var data = fs.writeFileSync(path,data);
+    } else {
+        var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+        saveAs(blob, path);        
+    }
+};
+
+// For LOAD
+// var saveBinaryFile = utils.saveFile = function(path, data, cb) {
+//     if(typeof exports == 'object') {
+//         // For Node.js
+//         var fs = require('fs');
+//         var data = fs.writeFileSync(path,data);
+//     } else {
+//         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+//         saveAs(blob, path);        
+//     }
+// };
 
 
 // Fast hash function

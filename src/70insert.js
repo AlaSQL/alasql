@@ -157,7 +157,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 	    if(db.engineid && alasql.engines[db.engineid].intoTable) {
 			var statement = function(params, cb) {
 				var aa = selectfn(params);
-				var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, cb);
+				var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa,null, cb);
 				return res;
 			};
 			return statement;
@@ -184,7 +184,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		var statement = function(params, cb) {
 			var aa = new Function("db,params",s33+'return aa;')(db,params);
 //			console.log(aa);
-			var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, cb);
+			var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, null, cb);
 //			if(cb) cb(res);
 			return res;
 		};

@@ -157,7 +157,7 @@ LS.fromTable = function(databaseid, tableid, cb, idx, query) {
 	return res;
 };
 
-LS.intoTable = function(databaseid, tableid, value, cb) {
+LS.intoTable = function(databaseid, tableid, value, columns, cb) {
 //	console.log('intoTable',databaseid, tableid, value, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = value.length;
