@@ -32,7 +32,7 @@ describe('Test 157 - json()', function() {
 	});
 
 	it("5. Load tab-separated file", function(done){
-		alasql('select column city from tab("test157b.tab", @{headers:true}) where population > 100 order by city',[],function(res){
+		alasql('select column city from tab("test157b.tab", {headers:true}) where population > 100 order by city',[],function(res){
 			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
 			done();
 		});
@@ -47,7 +47,7 @@ describe('Test 157 - json()', function() {
 	});
 
 	it("7. Load CSV-file with headers", function(done){
-		alasql('select column city from csv("test157b.csv",@{headers:true}) where population > 100 order by city',[],function(res){
+		alasql('select column city from csv("test157b.csv",{headers:true}) where population > 100 order by city',[],function(res){
 			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
 			done();
 		});

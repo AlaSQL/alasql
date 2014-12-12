@@ -702,11 +702,11 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
-	| AT Json
-		{ $$ = new yy.Json({value:$2}); }			
-	| ATLBRA JsonArray
+	| Json
+		{ $$ = new yy.Json({value:$1}); }			
+/*	| ATLBRA JsonArray
 		{ $$ = new yy.Json({value:$2}); }
-	| NewClause
+*/	| NewClause
 		{ $$ = $1; }
 /*	| AT LPAR Expression RPAR
 		{ $$ = new yy.FuncValue({funcid: 'CLONEDEEP', args:[$3]}); }			
@@ -1030,13 +1030,13 @@ TableParamFunc
 ValuesListsList
 	: LPAR ValuesList RPAR
 		{ $$ = [$2]; }
-	| AT Json
+	| Json
 		{ $$ = [$2]; }
 	| ParamValue
 		{ $$ = [$1]; }
 	| ValuesListsList COMMA LPAR ValuesList RPAR
 		{$$ = $1; $1.push($4)}
-	| ValuesListsList COMMA AT Json
+	| ValuesListsList COMMA Json
 		{$$ = $1; $1.push($4)}
 	| ValuesListsList COMMA ParamValue
 		{$$ = $1; $1.push($3)}
@@ -1443,21 +1443,22 @@ Source
 Assert
 	: ASSERT Json
 		{ $$ = new yy.Assert({value:$2}); }
+	| ASSERT PrimitiveValue
+		{ $$ = new yy.Assert({value:$2}); }
 	| ASSERT STRING COMMA Json	
 		{ $$ = new yy.Assert({value:$2, message:$4}); }
 	;
 
 Json
-	: 
-	LPAR Expression RPAR
+	: AT LPAR Expression RPAR
 		{ $$ = $2; }
-	| StringValue
+	| AT StringValue
 		{ $$ = $1.value; }
-	| NumValue
+	| AT NumValue
 		{ $$ = +$1.value; }
-	| LogicValue
+	| AT LogicValue
 		{ $$ = (!!$1.value); }
-	| ParamValue
+	| AT ParamValue
 		{ $$ = $1; }
 	| JsonObject
 		{ $$ = $1; }
@@ -1465,6 +1466,13 @@ Json
 		{ $$ = $2; }
 	| ATLBRA JsonArray
 		{ $$ = $2; }
+	;
+
+JsonValue
+	: Json
+		{ $$ = $1; }
+	| PrimitiveValue
+		{ $$ = $1; }
 	;
 
 JsonObject
@@ -1493,11 +1501,11 @@ JsonPropertiesList
 	;
 
 JsonProperty
-	: STRING COLON Json
+	: STRING COLON JsonValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
-	| NUMBER COLON Json
+	| NUMBER COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }		
-	| LITERAL COLON Json
+	| LITERAL COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }		
 /*	| STRING COLON ParamValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }	
