@@ -1470,7 +1470,7 @@ Json
 
 JsonValue
 	: Json
-		{ $$ = $1; }
+		{ $$ = $1.value; }
 	| PrimitiveValue
 		{ $$ = $1; }
 	;
@@ -1516,9 +1516,9 @@ JsonProperty
 */	;
 
 JsonElementsList
-	: JsonElementsList COMMA Json
+	: JsonElementsList COMMA JsonValue
 		{ $1.push($3); $$ = $1; }
-	| Json
+	| JsonValue
 		{ $$ = [$1]; }
 	;
 
