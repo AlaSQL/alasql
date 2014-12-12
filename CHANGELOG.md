@@ -1,8 +1,9 @@
 # Changelog
 
-### 0.0.31 (12.12.2014 - .12.2014)
+### 0.0.32 (12.12.2014 - .12.2014)
 
 * Read XLS and XLSX files (with xlsx package)
+* AT is no longer required for json-objects @{}
 
 ### 0.0.31 (10.12.2014 - 11.12.2014)
 

@@ -782,7 +782,7 @@ ExprList
 
 NumValue
 	: NUMBER
-		{ $$ = new yy.NumValue({value:$1}); }
+		{ $$ = new yy.NumValue({value:+$1}); }
 /*	| MINUS NUMBER
 		{ $$ = new yy.NumValue({value:-$2}); }
 */	;
@@ -1031,13 +1031,13 @@ ValuesListsList
 	: LPAR ValuesList RPAR
 		{ $$ = [$2]; }
 	| Json
-		{ $$ = [$2]; }
+		{ $$ = [$1]; }
 	| ParamValue
 		{ $$ = [$1]; }
 	| ValuesListsList COMMA LPAR ValuesList RPAR
 		{$$ = $1; $1.push($4)}
 	| ValuesListsList COMMA Json
-		{$$ = $1; $1.push($4)}
+		{$$ = $1; $1.push($3)}
 	| ValuesListsList COMMA ParamValue
 		{$$ = $1; $1.push($3)}
 	;
@@ -1444,22 +1444,22 @@ Assert
 	: ASSERT Json
 		{ $$ = new yy.Assert({value:$2}); }
 	| ASSERT PrimitiveValue
-		{ $$ = new yy.Assert({value:$2}); }
+		{ $$ = new yy.Assert({value:$2.value}); }
 	| ASSERT STRING COMMA Json	
-		{ $$ = new yy.Assert({value:$2, message:$4}); }
+		{ $$ = new yy.Assert({value:$4, message:$2}); }
 	;
 
 Json
 	: AT LPAR Expression RPAR
-		{ $$ = $2; }
+		{ $$ = $3; }
 	| AT StringValue
-		{ $$ = $1.value; }
+		{ $$ = $2.value; }
 	| AT NumValue
-		{ $$ = +$1.value; }
+		{ $$ = +$2.value; }
 	| AT LogicValue
-		{ $$ = (!!$1.value); }
+		{ $$ = (!!$2.value); }
 	| AT ParamValue
-		{ $$ = $1; }
+		{ $$ = $2; }
 	| JsonObject
 		{ $$ = $1; }
 	| AT JsonObject
@@ -1470,10 +1470,28 @@ Json
 
 JsonValue
 	: Json
-		{ $$ = $1.value; }
-	| PrimitiveValue
+		{ $$ = $1; }
+	| JsonPrimitiveValue
 		{ $$ = $1; }
 	;
+
+JsonPrimitiveValue
+	: NumValue
+		{ $$ = +$1.value; }
+	| StringValue
+		{ $$ = ""+$1.value; }
+	| LogicValue
+		{ $$ = $1.value; }
+	| NullValue
+		{ $$ = $1.value; }
+	| ParamValue
+		{ $$ = $1; }
+	| FuncValue
+		{ $$ = $1; }
+	| LPAR Expression RPAR
+		{ $$ = $2}
+	;
+
 
 JsonObject
 	: LCUR JsonPropertiesList RCUR

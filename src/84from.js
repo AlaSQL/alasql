@@ -81,36 +81,36 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	if(typeof exports === 'object') {
-		var XLSX = require('xlsjs');
+		var X = require('xlsjs');
 	} else {
-		var XLSX = window.XLS;
-		if(!XLSX) {
+		var X = window.XLS;
+		if(!X) {
 			throw new Error('XLS library is not attached');
 		}
 	}
-	return XLSXLSX(XLSX,filename, opts, cb, idx, query);
+	return XLSXLSX(X,filename, opts, cb, idx, query);
 };
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	if(typeof exports === 'object') {
-		var XLSX = require('xlsx');
+		var X = require('xlsx');
 	} else {
-		var XLSX = window.XLSX;
-		if(!XLSX) {
+		var X = window.XLSX;
+		if(!X) {
 			throw new Error('XLSX library is not attached');
 		}
 	}
-	return XLSXLSX(XLSX,filename, opts, cb, idx, query);
+	return XLSXLSX(X,filename, opts, cb, idx, query);
 };
 
-function XLSXLSX(XLSX,filename, opts, cb, idx, query) {
+function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var opt = {};
 	if(!opts) opts = {};
 	alasql.utils.extend(opt, opts);
 	var res;
 
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
-		var workbook = XLSX.read(data,{type:'binary'});
+		var workbook = X.read(data,{type:'binary'});
 //		console.log(workbook);
 		var sheetid;
 		if(typeof opt.sheetid == 'undefined') {

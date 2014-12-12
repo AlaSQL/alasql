@@ -73,7 +73,7 @@ describe('Test 168b - read XLS', function() {
 	});
 
 	it("4. Read XLS file with Headers and sheet", function(done) {
-		var res = alasql('select column City from xlsx("'+__dirname+'/test168.xls",{headers:true, sheetid: "USA", range:"A1:B6"})\
+		var res = alasql('select column City from xls("'+__dirname+'/test168.xls",{headers:true, sheetid: "USA", range:"A1:B6"})\
 				where Population > 10000000 order by City',[],function(res){
 //					console.log(res);
 			assert.deepEqual(res,["New York"])

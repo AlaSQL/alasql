@@ -639,6 +639,7 @@ yy.Select.prototype.compileSelect = function(query) {
 	var sp = '';
 	var ss = [];
 	this.columns.forEach(function(col){
+//console.log(col);		
 		if(col instanceof yy.Column) {
 			if(col.columnid == '*') {
 				if(col.tableid) {
