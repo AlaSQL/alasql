@@ -1,10 +1,19 @@
 //
-// 
+// into functions
 //
-//
+// (c) 2014 Andrey Gershun
 //
 
 alasql.into.TXT = function(filename, opts, data, columns, cb) {
+	// If columns is empty
+	if(columns.length == 0 && data.length > 0) {
+		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+	}
+	if(typeof filename == 'object') {
+		opts = filename;
+		filename = null;
+	}
+
 	var res = data.length;
 	var s = '';
 	if(data.length > 0) {
@@ -13,7 +22,15 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 			return d[key];
 		}).join('\n');
 	}
-	alasql.utils.saveFile(filename,s);
+//	if(filename) {
+		alasql.utils.saveFile(filename,s);
+//	} else {
+//		if(typeof exports == 'object') {
+//			process.stdout.write(s);
+//		} else {
+//		console.log(s);
+//		};
+//	}
 	if(cb) res = cb(res);
 	return res;
 };
@@ -26,6 +43,14 @@ alasql.into.TAB = function(filename, opts, data, columns, cb) {
 }
 
 alasql.into.CSV = function(filename, opts, data, columns, cb) {
+	if(columns.length == 0 && data.length > 0) {
+		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+	}
+	if(typeof filename == 'object') {
+		opts = filename;
+		filename = null;
+	}
+
 	var opt = {};
 	opt.separator = ',';
 	alasql.utils.extend(opt, opts);
@@ -42,33 +67,53 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 			return d[col.columnid];
 		}).join(opts.separator)+'\n';	
 	});
-	alasql.utils.saveFile(filename,s);
+	if(filename) {
+		alasql.utils.saveFile(filename,s);
+	} else {
+		console.log(s);
+	}
 	if(cb) res = cb(res);
 	return res;
 };
 
 alasql.into.XLSX = function(filename, opts, data, columns, cb) {
+	if(columns.length == 0 && data.length > 0) {
+		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+	}
+
 	if(typeof exports == 'object') {
 		var XLSX = require('xlsx');
+	} else {
+		var XLSX = window.XLSX;
 	};
 
-	var opt = {};
+	var opt = {sheetid:'Sheet1',headers:true};
+	alasql.utils.extend(opt, opts);
+
 	var res = data.length;
 	var cells = {};
 	var wb = {SheetNames:[], Sheets:{}};
-	wb.SheetNames.push('Sheet2');
-	wb.Sheets.Sheet2 = cells;
+	wb.SheetNames.push(opt.sheetid);
+	wb.Sheets[opt.sheetid] = cells;
+
+	wb.Sheets[opt.sheetid]['!ref'] = 'A1:'+alasql.utils.xlsnc(columns.length)+(data.length+2);
 	var i = 1;
 
-	for(i=1;i<10;i++) {
-		if(opts && opts.headers) {
-			columns.forEach(function(col, idx){
-				cells[alasql.utils.xlsnc(idx)+""+i] = {v:col.columnid};
-			});
-		}
+	if(opt.headers) {
+		columns.forEach(function(col, idx){
+			cells[alasql.utils.xlsnc(idx)+""+i] = {v:col.columnid};
+		});
+		i++;
 	}
 
-	console.log(wb);
+	for(var j=0;j<data.length;j++) {
+		columns.forEach(function(col, idx){
+			cells[alasql.utils.xlsnc(idx)+""+i] = {v:data[j][col.columnid]};
+		});		
+		i++;
+	}
+
+//	console.log(wb);
 
 	if(typeof exports == 'object') {
 		XLSX.writeFile(wb, filename);

@@ -4,6 +4,7 @@
 
 * Read XLS and XLSX files (with xlsx package)
 * AT is no longer required for json-objects @{}
+* Stdin and stdout functions for Alacon (INTO TXT() FROM TXT())
 
 ### 0.0.31 (10.12.2014 - 11.12.2014)
 

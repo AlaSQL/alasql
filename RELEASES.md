@@ -16,8 +16,7 @@
 
 ### Version 0.0.32 - "XLS + Pretty + Bug Fixes" (priorities 1-2)
 
-* Fix TXT bug
-* Prettify bugs
+* Prettify() bugs
 * alasql.org/console bugs (HELP and other commands)
 * alasql.org redesign (add twitter + stories)
 * master branch + CDN + dist/
@@ -66,7 +65,6 @@ http://stackoverflow.com/questions/14260127/is-there-a-free-lib-accessing-to-htm
 
 #### Version 0.0.33 - "Streamming"
 
-* INTO txt()
 * Select data from function on the stream (instreamfn())
 * SELECT INTO the streamm function (outstreamfn()) - with group+order and without
 * SELECT without stream

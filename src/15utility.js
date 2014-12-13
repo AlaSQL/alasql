@@ -29,11 +29,28 @@ var doubleqq = utils.doubleqq = function(s) {
 
 // For LOAD
 var loadFile = utils.loadFile = function(path, asy, success, error) {
+
     if(typeof exports == 'object') {
         // For Node.js
         var fs = require('fs');
-        var data = fs.readFileSync(path);
-        success(data.toString());
+//        console.log(36,path);
+//        console.log(typeof path);
+        if(!path) {
+            var buff = '';
+            process.stdin.setEncoding('utf8');
+            process.stdin.on('readable', function() {
+                var chunk = process.stdin.read();
+                if (chunk !== null) {
+                    buff += chunk.toString();
+                }
+            });
+            process.stdin.on('end', function() {
+               success(buff);
+            });
+        } else {
+            var data = fs.readFileSync(path);
+            success(data.toString());
+        }
     } else {
         // For browser
         var xhr = new XMLHttpRequest();
@@ -81,13 +98,18 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 
 // For LOAD
 var saveFile = utils.saveFile = function(path, data, cb) {
-    if(typeof exports == 'object') {
-        // For Node.js
-        var fs = require('fs');
-        var data = fs.writeFileSync(path,data);
+    if(!path) {
+        alasql.options.stdout = true;
+        console.log(data);
     } else {
-        var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-        saveAs(blob, path);        
+        if(typeof exports == 'object') {
+            // For Node.js
+            var fs = require('fs');
+            var data = fs.writeFileSync(path,data);
+        } else {
+            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+            saveAs(blob, path);        
+        }
     }
 };
 

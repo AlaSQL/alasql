@@ -11,12 +11,14 @@ yy.ExpressionStatement.prototype.toString = function() {
 	return this.expression.toString();
 };
 
-yy.ExpressionStatement.prototype.execute = function (databaseid, params) {
+yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression);
 //		console.log(this.expression.toJavaScript('','', null));
 		var expr =  new Function("params",'return '+this.expression.toJavaScript('','', null));
-		return expr(params);
+		var res = expr(params);
+		if(cb) res = cb(res);
+		return res;
 	}
 }
 

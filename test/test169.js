@@ -7,7 +7,7 @@ if(typeof exports === 'object') {
 
 //if(typeof exports === 'object' && false) {
 
-describe('Test 169 - into TXT', function() {
+describe('Test 169 - select into TXT, CSV, XLSX', function() {
 
 	it("0. Write TXT file", function(done) {
 		alasql('create database test169;use test169');
@@ -45,7 +45,6 @@ if(typeof exports == 'object') {
 			done();		
 		});
 	});
-};
 
 	it("5. Write XLSX file with headers", function(done) {
 		alasql('select * into xlsx("'+__dirname+'/test169a.xlsx",{headers:true}) from one',[],function(res){
@@ -54,6 +53,7 @@ if(typeof exports == 'object') {
 		});
 	});
 
+};
 
 	it("99. Drop database", function(done) {
 		alasql('drop database test169');

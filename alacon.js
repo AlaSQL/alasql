@@ -6,15 +6,21 @@
 //
 
 var alasql = require('./alasql.js');
+alasql.options.alacon = true;
 var fs = require('fs');
 
 
 if(process.argv.length <= 2) {
-	console.log('ALACON - Alasql command-line utility (cersion '+alasql.version+') ');
+	console.log('alacon - Alasql command-line utility (version '+alasql.version+') ');
 	console.log();
 	console.log('Usage:');
-	console.log('    node alacon "sql-statement" [ param0 ]... - run SQL statement');
-	console.log('    node alacon -f file.sql [ param0 ]...     - run SQL from file');
+	console.log('  node alacon "sql-statement" [ param0 ]... - run SQL statement');
+	console.log('  node alacon -f file.sql [ param0 ]...     - run SQL from file');
+	console.log();
+	console.log('Samples:');
+	console.log('  node alacon \'select 2+2\'');	
+	console.log('  node alacon \'select count(*) from txt()\' <city.txt');
+	console.log('  node alacon \'select * into xlsx("city.xlsx") from txt("city.txt")\'');
 	console.log();
 } else if(process.argv.length > 2) {
 	var sql = process.argv[2];
@@ -33,6 +39,8 @@ if(process.argv.length <= 2) {
 		}
 		params.push(a);
 	};
-	var res = alasql(sql,params);
-	console.log(res);
+	var res = alasql(sql,params,function(res){
+		if(!alasql.options.stdout) console.log(res);
+	});
+//	console.log(res);
 };
