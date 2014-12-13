@@ -50,7 +50,7 @@ helpdocs = [
 yy.Help.prototype.execute = function (databaseid, params, cb) {
 	var ss = [];
 	if(!this.subject) {
-		ss = alasql.helpdocs;
+		ss = helpdocs;
 	} else {
 		ss.push('See also <a href="http://github/agershun/alasq">http://github/agershun/alasq</a> for more information');
 	}

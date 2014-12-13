@@ -43,5 +43,8 @@
     "IndexedDB",
     "DOM-storage"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "bin": {
+      "alacon" : "alacon.js"
+  }  
 }

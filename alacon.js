@@ -6,7 +6,6 @@
 //
 
 var alasql = require('./alasql.js');
-alasql.options.alacon = true;
 var fs = require('fs');
 
 
