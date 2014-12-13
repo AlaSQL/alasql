@@ -7522,16 +7522,16 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
 	var s = '';
-	if(opts && opts.headers) {
+	if(opt.headers) {
 		s += columns.map(function(col){
 			return col.columnid;
-		}).join(opts.separator)+'\n';
+		}).join(opt.separator)+'\n';
 	}
 
-	data.forEach(function(d){
+	data.forEach(function(d, idx){
 		s += columns.map(function(col){
 			return d[col.columnid];
-		}).join(opts.separator)+'\n';	
+		}).join(opt.separator)+'\n';	
 	});
 	if(filename) {
 		alasql.utils.saveFile(filename,s);
@@ -7663,8 +7663,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 			if(query && query.sources && query.sources[idx]) {
 				var hh = [];
 				if(typeof opt.headers == 'boolean') {
-					hh = res[0].split(opt.separator);
-
+					hh = res.shift().split(opt.separator);
 				} else if(opt.headers instanceof Array) {
 					hh = opt.headers;
 				}
@@ -7672,7 +7671,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 				hh.forEach(function(h){
 					columns.push({columnid:h});
 				});
-				for(var i=1, ilen=res.length; i<ilen;i++) {
+				for(var i=0, ilen=res.length-1; i<ilen;i++) {
 					var a = res[i].split(opt.separator);
 					var b = {};
 					hh.forEach(function(h,j){
@@ -7680,6 +7679,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 					});
 					res[i] = b;
 				}
+//				console.log(res[0]);
 			}	
 		} else {
 			for(var i=0, ilen=res.length; i<ilen;i++) {

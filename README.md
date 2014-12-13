@@ -1,6 +1,6 @@
 # Alasql.js - pure JavaScript client-side SQL database with support of localStorage and IndexedDB 
 
-Version: 0.0.32 Date: December 13, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.32 Date: December 14, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use IndexedDB and localStorage as a persistent storage.
 
@@ -31,7 +31,9 @@ It is really fast. Check Alasql vs other JavaScript SQL databases:
 * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
 ## New: Read Excel, CSV, TAB, and text files
-Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
+
+Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
+
 ```js
     alasql('select * into one from csv("mydata.csv")');
     alasql('select Country, Name from xlsx("cities.xlsx",{headers:true, range:"B1:E10"})\
@@ -40,7 +42,17 @@ Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
         console.log(data);
     });
 ```
-See [test168](test/test168.js)
+See [test168](test/test168.js) - [test169](test/test169.js)
+
+Upload CSV file with headers to IndexedDB database, and then save only asian countries 
+to Excel file:
+```js
+    alasql('ATTACH INDEXEDDB DATABASE geo; \
+            CREATE TABLE IF NOT EXISTS geo.country; \
+            SELECT * INTO geo.country FROM CSV("country.csv",{headers:true}); \
+            SELECT * INTO XLSX("asia.xlsx") FROM geo.country WHERE continent_name = "Asia"');
+```
+See [the example](http://alasql.org/demo/001csv/). 
 
 ## Examples
 
@@ -58,6 +70,7 @@ Try Alasql in Fiddle:
 
 Other examples:
 * [World database](http://alasql.org/console?source 'world.sql';select top 10 * from City) - [source](console/index.html)
+* Mini-ETL: [upload CSV data to IndexedDB database](http://alasql.org/demo/001csv/)
 * [More than 150 of Alasql tests](test)
 
 ### What People Say about Alasql?
@@ -515,7 +528,10 @@ Read my [to do](TODO.md) page
 
 ### Credits
 
-Many thanks to Zach Carter for Jison parser generator, Andrew Kent for his SQL Parser, and other people for useful tools, which make our work much easier.
+Many thanks to Zach Carter for [Jison](http://zaach.github.io/jison/) parser generator, 
+Andrew Kent for his [SQL Parser](https://github.com/forward/sql-parser), 
+authors of [XLSX](https://github.com/SheetJS/js-xlsx) library,
+and other people for useful tools, which make our work much easier.
 
 ## License
 

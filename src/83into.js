@@ -56,16 +56,16 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
 	var s = '';
-	if(opts && opts.headers) {
+	if(opt.headers) {
 		s += columns.map(function(col){
 			return col.columnid;
-		}).join(opts.separator)+'\n';
+		}).join(opt.separator)+'\n';
 	}
 
-	data.forEach(function(d){
+	data.forEach(function(d, idx){
 		s += columns.map(function(col){
 			return d[col.columnid];
-		}).join(opts.separator)+'\n';	
+		}).join(opt.separator)+'\n';	
 	});
 	if(filename) {
 		alasql.utils.saveFile(filename,s);
