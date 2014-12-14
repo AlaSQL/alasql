@@ -14,10 +14,11 @@
 
 ## Next Versions
 
-### Version 0.0.32 - "XLS + Pretty + Bug Fixes" (priorities 1-2)
+### Version 0.0.33 - "WebSQL + Pretty + Bug Fixes" (priorities 1-2)
 
+* WebSQL support
 * Prettify() bugs
-* alasql.org/console bugs (HELP and other commands)
+* alasql.org/console bugs (SOURCE and other commands)
 * alasql.org redesign (add twitter + stories)
 * master branch + CDN + dist/
 * alacon + alaserver bin commands (test with npm install alasql -g)
@@ -36,25 +37,26 @@ SELECT TOP 10 *,*,*
  	two STRING
  );
 
-2. Prettify SQL outpu for Consolet;
+2. Prettify SQL output for Consolet;
 
 
 ## Other Functionality 
 
-#### Version 0.0.31 - "OTHER FUNCTIONALITY"
+#### Version 0.0.33 - "OTHER FUNCTIONALITY"
 
+* Syncing with server
 * REGEXP_LIKE 
+* IDENTITY (1,1) or AUTO_INCREMENT
 
-3. IDENTITY (1,1) or AUTO_INCREMENT
-
+Other databases support:
 * NeDB
 * LockiJS
 * TaffyDB
-sessionStorage
-source as a function
-MongoDb and other key-value storages
+* sessionStorage
+* MongoDb and other key-value storages
+* source as a function
 
-#### Version 0.0.32 - Advanced "localStorage" support
+#### Version 0.0.34 - Advanced "localStorage" support
 * STORE SCHEMA
 * STORE DATA
 
@@ -74,10 +76,6 @@ http://stackoverflow.com/questions/14260127/is-there-a-free-lib-accessing-to-htm
 * SYNC SCHEMAS WITH INDEXEDDB
 * PRIMARY/FOREIGN KEYS
 * KEYS & IndexedDB
-
-
-#### Version 0.0.34 - "Prettify"
-
 
 
 #### Version 0.0.35 - "CAST"
@@ -217,18 +215,6 @@ jstypeid
 
 Adapters
 Memory
-
-
-link database aaa to websql.aaa
-======
-
-select * from aaa.lol
-select * from mydb(aaa)
-
-WebSQL = select * from websql(mydb select * from aaa);
-WebSQL = select * from websql(mydb.aaa);
-WebSQL = select * into websql(mydb.mytable);
-insert into websql(mydb.mytable) (a,b,c) values (1,2,3);
 
 
 Node

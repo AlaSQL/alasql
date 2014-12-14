@@ -22,7 +22,7 @@ Download and try this sample in [your browser](demo.html) or try it in <a href="
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavScript and NoSQL databases
 * Alasql supports IndexedDB and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)
-* Plus some JavaScript [sugar](#Sugar)
+* Plus some [JavaScript sugar](#Sugar)
 * Alasql is fast, because it uses some optimization methods. 
 
 Check Alasql vs other JavaScript SQL databases: 
@@ -63,7 +63,7 @@ Try Alasql in console:
 type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
 
 Try Alasql in Fiddle: 
-* [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/)
+* Simple examples: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/), [sample 5](http://jsfiddle.net/agershun/38hj2uwy/40/)
 * [IndexedDB example](http://jsfiddle.net/agershun/1t2rrr78/)
 * [Alasql Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
 * [Sieve of Eratosthenes](http://jsfiddle.net/agershun/1u05op11/) - [source](examples/prime.html)
@@ -337,11 +337,11 @@ Now you can use databases, tables, and columns with spaces inside square bracket
 Try this sample in [Alasql console](http://alasql.org/console?CREATE DATABASE [My Database];USE [My Database];CREATE TABLE [A.table] ([the-column] INT);INSERT INTO [A.table] VALUES (1),(2);SELECT [the-column] AS [AS] FROM [My Database])
 
 
-### Sugar
+### JavaScript Sugar
 
 Alasql extends "good old" SQL to make it closer to JavaScript. The "sugar" includes:
 
-* Json objects - ``` @{a:1,b:@[1,2,3]}
+* Json objects - ``` {a:1,b:@[1,2,3]}
 * Object propertires - ```obj->property->subproperty```
 * Object and arrays elements - ```obj->(a*1)```
 * JavaScript functions - ```obj->valueOf()```

@@ -415,6 +415,8 @@ IntoClause
 		{$$ = {into: $2} }
 	| INTO FuncValue
 		{$$ = {into: $2} }
+	| INTO ParamValue
+		{$$ = {into: $2} }
 	;
 
 FromClause

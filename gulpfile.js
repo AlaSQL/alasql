@@ -14,7 +14,7 @@ module.exports = gulp;
 var concat = require('gulp-concat-sourcemap');
 //var uglify = require('gulp-uglify');
 //var jisonLex = require('gulp-jison-lex');
-var shell = require('gulp-shell')
+var shell = require('gulp-shell');
 
 
 gulp.task('js-merge', function () {
