@@ -181,11 +181,14 @@ yy.Select.prototype.compile = function(databaseid) {
 
 
 		} else if (this.into instanceof yy.ParamValue) {
-			query.intofns = 'params[\''+this.into.param+"\'](r)";	
+//			console.log(184);
+//			query.intofns = 'params[\''+this.into.param+"\'](r)";	
+			query.intofns = "params['"+this.into.param+"'].push(r)";
+
 		};
 //		console.log(query.intofns);
 		if(query.intofns) {
-			query.intofn = new Function("r,i",query.intofns); 
+			query.intofn = new Function("r,i,params",query.intofns); 
 		};
 
 		if(query.intoallfns) {
