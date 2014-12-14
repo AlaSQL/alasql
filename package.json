@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Alasql - fast JavaScript SQL database for browser and Node.js with IndexedDB, localStorage, and DOM-storage support",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",

@@ -64,6 +64,7 @@ type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
 
 Try Alasql in Fiddle: 
 * [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/)
+* [IndexedDB example](http://jsfiddle.net/agershun/1t2rrr78/)
 * [Alasql Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
 * [Sieve of Eratosthenes](http://jsfiddle.net/agershun/1u05op11/) - [source](examples/prime.html)
 
