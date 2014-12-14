@@ -7671,7 +7671,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 				hh.forEach(function(h){
 					columns.push({columnid:h});
 				});
-				for(var i=0, ilen=res.length-1; i<ilen;i++) {
+				for(var i=0, ilen=res.length; i<ilen;i++) {
 					var a = res[i].split(opt.separator);
 					var b = {};
 					hh.forEach(function(h,j){
