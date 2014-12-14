@@ -19,18 +19,17 @@ Download and try this sample in [your browser](demo.html) or try it in <a href="
 
 * Alasql was written with pure JavaScript and does not use WebSQL database. 
 * Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
-* Alasql is fast, because it uses some optimization methods.
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
 * Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavScript and NoSQL databases
-* Alasql supports IndexedDB (all statements except UPDATE)
-* Alasql can use localStorage as a storage for databases in AUTOCOMMIT ON and AUTOCOMMIT OFF modes
-* Plus some [sugar](#Sugar)
+* Alasql supports IndexedDB and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)
+* Plus some JavaScript [sugar](#Sugar)
+* Alasql is fast, because it uses some optimization methods. 
 
-It is really fast. Check Alasql vs other JavaScript SQL databases: 
-* [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
-* [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
+Check Alasql vs other JavaScript SQL databases: 
+ * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
+ * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-## New: Read Excel, CSV, TAB, and text files
+## New: Read and write Excel, CSV, TAB, JSON, and text files to/from database
 
 Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 
@@ -71,7 +70,7 @@ Try Alasql in Fiddle:
 Other examples:
 * [World database](http://alasql.org/console?source 'world.sql';select top 10 * from City) - [source](console/index.html)
 * Mini-ETL: [upload CSV data to IndexedDB database](http://alasql.org/demo/001csv/)
-* [More than 150 of Alasql tests](test)
+* [More than 200 of Alasql tests](test)
 
 ### What People Say about Alasql?
 
@@ -79,7 +78,7 @@ Other examples:
 
 ### Presentations
 
-* [Alasql.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database) (English)
+* [Alasql.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database)
 * [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
 
 ## Installation
