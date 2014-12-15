@@ -70,6 +70,7 @@ gulp.task('js-merge', function () {
     './src/90websql.js',
     './src/91indexeddb.js',
     './src/92localstorage.js',
+    './src/93sqlite.js',
     './src/98saveas.js',
     './src/FileSaver.js',
    	'./src/99finish.js'

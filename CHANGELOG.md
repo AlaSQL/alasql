@@ -1,6 +1,10 @@
 # Changelog
 
-### 0.0.32 (12.12.2014 - .12.2014)
+### 0.0.33 (12.12.2014 - 14.12.2014)
+
+* SQL.js engine adapter (to real SQLite database)
+
+### 0.0.32 (12.12.2014 - 14.12.2014)
 
 * Read XLS and XLSX files (with xlsx package)
 * AT is no longer required for json-objects @{}

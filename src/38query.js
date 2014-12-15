@@ -270,54 +270,58 @@ preIndex = function(query) {
 				};
 			}
 			// Optimization for WHERE column = expression
-		} else if (source.wxleftfns) {
-			// Check if index exists
-			var ixx = query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')];
-			if( !query.database.tables[source.tableid].dirty && ixx) {
-				// Use old index if exists
-				source.ix = ixx;
-				// Reduce data (apply filter)
-				source.data = source.ix[source.wxrightfn(null, query.params, alasql)]; 
-			} else {
-				// Create new index
-				source.ix = {};
-				// Prepare scope
-				var scope = {};
-				// Walking on each source line
-				var i = 0;
-				var ilen = source.data.length;
-				var dataw;
-//				while(source.getfn i<ilen) {
-
-				while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
-					if(source.getfn && !source.dontcache) source.data[i] = dataw;
-//				for(var i=0, ilen=source.data.length; i<ilen; i++) {
-					scope[source.alias || source.tableid] = source.data[i];
-					// Create index entry
-					var addr = source.wxleftfn(scope, query.params, alasql);
-					var group = source.ix [addr]; 
-					if(!group) {
-						group = source.ix [addr] = []; 
-					}
-					group.push(source.data[i]);
-					i++;
+		} else if (source.wxleftfn) {
+				if(!alasql.databases[source.databaseid].engineid) {
+					// Check if index exists
+					var ixx = query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')];
 				}
-//					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`'+source.onwherefns)] = source.ix;
-				query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')] = source.ix;
-			}
-			// Apply where filter to reduces rows
-			if(source.srcwherefns) {
-				if(source.data) {
-					var scope = {};
-					source.data = source.data.filter(function(r) {
-						scope[source.alias] = r;
-						return source.srcwherefn(scope, query.params, alasql);
-					});
+				if( !query.database.tables[source.tableid].dirty && ixx) {
+					// Use old index if exists
+					source.ix = ixx;
+					// Reduce data (apply filter)
+					source.data = source.ix[source.wxrightfn(null, query.params, alasql)]; 
 				} else {
-					source.data = [];
-				}
-			}		
+					// Create new index
+					source.ix = {};
+					// Prepare scope
+					var scope = {};
+					// Walking on each source line
+					var i = 0;
+					var ilen = source.data.length;
+					var dataw;
+	//				while(source.getfn i<ilen) {
 
+					while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
+						if(source.getfn && !source.dontcache) source.data[i] = dataw;
+	//				for(var i=0, ilen=source.data.length; i<ilen; i++) {
+						scope[source.alias || source.tableid] = source.data[i];
+						// Create index entry
+						var addr = source.wxleftfn(scope, query.params, alasql);
+						var group = source.ix [addr]; 
+						if(!group) {
+							group = source.ix [addr] = []; 
+						}
+						group.push(source.data[i]);
+						i++;
+					}
+	//					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`'+source.onwherefns)] = source.ix;
+					if(!alasql.databases[source.databaseid].engineid) {
+						query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')] = source.ix;
+					}
+				}
+				// Apply where filter to reduces rows
+				if(source.srcwherefns) {
+					if(source.data) {
+						var scope = {};
+						source.data = source.data.filter(function(r) {
+							scope[source.alias] = r;
+							return source.srcwherefn(scope, query.params, alasql);
+						});
+					} else {
+						source.data = [];
+					}
+				}		
+//			}
 		// If there is no any optimization than apply srcwhere filter
 		} else if(source.srcwherefns && !source.dontcache) {
 			if(source.data) {

@@ -42,6 +42,7 @@
 '||'											return 'OR'
 '&&'											return 'AND'
 'ABSOLUTE'                                 		return 'ABSOLUTE'
+'ACTION'                                      	return 'ACTION'
 'ADD'                                      		return 'ADD'
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
@@ -129,6 +130,7 @@
 'NEXT'											return 'NEXT'
 'NEW'											return 'NEW'
 'NOCASE'										return 'NOCASE'
+'NO'											return 'NO'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
 'OFF'											return 'OFF'
@@ -326,8 +328,6 @@ Statement
 /*	
 	| CreateTrigger
 	| DropTrigger
-
-	| AttachDatabase
 	| SavePoint
 	| Reindex
 	| StoreDatabase
@@ -1161,8 +1161,24 @@ PrimaryKey
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Literal LPAR ColsList RPAR
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Literal LPAR ColsList RPAR OnForeignKeyClause
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktableid: $7, fkcolumns: $9}; }
+	;
+
+OnForeignKeyClause
+	:
+		{ $$ = null; }
+	| OnDeleteClause OnUpdateClause
+		{ $$ = null; }
+	;
+
+OnDeleteClause
+	: ON DELETE NO ACTION
+		{$$ = null; }
+	;
+OnUpdateClause
+	: ON UPDATE NO ACTION
+		{$$ = null; }
 	;
 
 UniqueKey
@@ -1273,8 +1289,12 @@ RenameTable
 AttachDatabase
 	: ATTACH Literal DATABASE Literal
 		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase() });}
+	| ATTACH Literal DATABASE Literal LPAR ExprList RPAR
+		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase(), args:$6 });}
 	| ATTACH Literal DATABASE Literal AS Literal
 		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase(), as:$6 });}
+	| ATTACH Literal DATABASE Literal LPAR ExprList RPAR AS Literal
+		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase(), as:$9, args:$6});}
 	;
 
 DetachDatabase
