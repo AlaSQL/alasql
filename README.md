@@ -29,7 +29,7 @@ Check Alasql vs other JavaScript SQL databases:
  * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
  * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
 
-## New: Read and write Excel, CSV, TAB, JSON, and text files to/from database
+### New: Read and write Excel, CSV, TAB, JSON, and text files to/from database
 
 Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 
@@ -43,6 +43,8 @@ Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 ```
 See [test168](test/test168.js) - [test169](test/test169.js)
 
+### CSV and IndexedDB database
+
 Upload CSV file with headers to IndexedDB database, and then save only asian countries 
 to Excel file:
 ```js
@@ -52,6 +54,8 @@ to Excel file:
             SELECT * INTO XLSX("asia.xlsx") FROM geo.country WHERE continent_name = "Asia"');
 ```
 See [the example](http://alasql.org/demo/001csv/). 
+
+### SQLite database files
 
 Alasql can work with SQLite tables together with [SQL.js] library:
 ```html
@@ -67,6 +71,17 @@ Alasql can work with SQLite tables together with [SQL.js] library:
 ```
 
 See more detailed [the example](http://alasql.org/demo/004sqlite/).
+
+### Angular.js and Alasql.js
+
+You can use Alasql together with Angular.js framework:
+
+```js
+    $scope.exportData = function () {
+        alasql('SELECT * INTO XLSX("john.xlsx",{headers:true}) FROM ?',[$scope.items]);
+    };
+```
+See [simple example in jsFiddle](http://jsfiddle.net/agershun/00nfeq12/).
 
 ## Examples
 
