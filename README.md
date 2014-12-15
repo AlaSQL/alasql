@@ -53,6 +53,21 @@ to Excel file:
 ```
 See [the example](http://alasql.org/demo/001csv/). 
 
+Alasql can work with SQLite tables together with [SQL.js] library:
+```html
+    <script src="alasql.js"></script>
+    <script src="sql.js"></script>
+    <script>
+        alasql('ATTACH SQLITE DATABASE Chinook("Chinook_Sqlite.sqlite");\
+            USE Chinook; \
+            SELECT * FROM Genre',[],function(res){
+                console.log("Genres:",res.pop());
+        });
+    </script>
+```
+
+See more detailed [the example](http://alasql.org/demo/004sqlite/).
+
 ## Examples
 
 Try Alasql in console:
