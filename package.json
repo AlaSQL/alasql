@@ -41,7 +41,8 @@
     "query",
     "localStorage",
     "IndexedDB",
-    "DOM-storage"
+    "DOM-storage",
+    "SQLite"
   ],
   "license": "MIT",
   "bin": {
