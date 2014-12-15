@@ -95,9 +95,16 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 6. Compile GROUP BY
 	if(this.group) query.groupfn = this.compileGroup(query);
+
+
+
 	// 7. Compile DISTINCT, LIMIT and OFFSET
 	query.distinct = this.distinct;
 
+	// 8. Compile ORDER BY clause
+	if(this.order) query.orderfn = this.compileOrder(query);
+
+// TOP
 	if(this.top) {
 		query.limit = this.top.value;
 	} else if(this.limit) {
@@ -106,8 +113,6 @@ yy.Select.prototype.compile = function(databaseid) {
 			query.offset = this.offset.value;
 		}
 	}
-	// 8. Compile ORDER BY clause
-	if(this.order) query.orderfn = this.compileOrder(query);
 
 	// 9. Compile ordering function for UNION and UNIONALL
 	if(this.union) {
