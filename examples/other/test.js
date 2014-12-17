@@ -13,8 +13,8 @@ console.log(res);
 
 
 var res = alasql('select id_group, count(id) as cnt from ? where id in (4,7)\
-group by id_group having count(distinct id) = 2',[groups]);         
+group by id_group having count(id) = 2',[groups]);         
 
-console.log(res);               
+console.log(res);     
 
 //document.getElementById('result').textContent = JSON.stringify(res);

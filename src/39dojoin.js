@@ -49,7 +49,9 @@ function doJoin (query, scope, h) {
 				if(source.joinmode != "RIGHT" && source.joinmode != "OUTER" && source.joinmode != "ANTI" && source.optimization == 'ix') {
 					data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
 					opt = true;
-	//				console.log(source.onleftfn(scope, query.params, alasql));
+//					console.log(source.onleftfns);
+//					console.log(source.ix);
+//	console.log(source.onleftfn(scope, query.params, alasql));
 //					console.log(opt, data, data.length);
 				}
 			}

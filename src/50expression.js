@@ -389,6 +389,7 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 // 		s = tableid+'.'+s;
 // 	}
 //console.log('yy.Column',this, tableid);
+//	console.log(392,this.columnid);
 	var s = '';
 	if(!this.tableid && tableid == '' && !defcols) {
 		s = context+'[\''+this.columnid+'\']';

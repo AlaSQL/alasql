@@ -3203,7 +3203,7 @@ preIndex = function(query) {
 		var source = query.sources[k];
 		// If there is indexation rule
 //console.log('preIndex', source);
-
+//console.log(source);
 		if(k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
 			if(query.database.tables[source.tableid]) {
@@ -3214,7 +3214,6 @@ preIndex = function(query) {
 					source.ix = ixx; 
 				}
 			};
-
 			if(!source.ix) {
 				source.ix = {};
 				// Walking over source data
@@ -3249,6 +3248,8 @@ preIndex = function(query) {
 					query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
 				};
 			}
+//console.log(38,274,source.ix);
+
 			// Optimization for WHERE column = expression
 		} else if (source.wxleftfn) {
 				if(!alasql.databases[source.databaseid].engineid) {
@@ -3395,7 +3396,9 @@ function doJoin (query, scope, h) {
 				if(source.joinmode != "RIGHT" && source.joinmode != "OUTER" && source.joinmode != "ANTI" && source.optimization == 'ix') {
 					data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
 					opt = true;
-	//				console.log(source.onleftfn(scope, query.params, alasql));
+//					console.log(source.onleftfns);
+//					console.log(source.ix);
+//	console.log(source.onleftfn(scope, query.params, alasql));
 //					console.log(opt, data, data.length);
 				}
 			}
@@ -3998,7 +4001,7 @@ yy.Select.prototype.compileJoins = function(query) {
 					if(prevTable && table) {
 						var c1 = prevTable.columns.map(function(col){return col.columnid});
 						var c2 = table.columns.map(function(col){return col.columnid});
-						jn.using = arrayIntersect(c1,c2);
+						jn.using = arrayIntersect(c1,c2).map(function(colid){return {columnid:colid}});
 //						console.log(jn.using);
 					} else {
 						throw new Error('In this version of Alasql NATURAL JOIN '+
@@ -4021,15 +4024,22 @@ yy.Select.prototype.compileJoins = function(query) {
 		if(jn.using) {
 			var prevSource = query.sources[query.sources.length-1];
 //			console.log(query.sources[0],prevSource,source);
-			source.onleftfns = jn.using.map(function(colid){
-				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+colid+"']";
+			source.onleftfns = jn.using.map(function(col){
+//				console.log(141,colid);
+				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+col.columnid+"']";
 			}).join('+"`"+');
+
+
+
 			source.onleftfn = new Function('p,params,alasql','return '+source.onleftfns);
-			source.onrightfns = jn.using.map(function(colid){
-				return "p['"+(source.alias||source.tableid)+"']['"+colid+"']";
+
+			source.onrightfns = jn.using.map(function(col){
+				return "p['"+(source.alias||source.tableid)+"']['"+col.columnid+"']";
 			}).join('+"`"+');
 			source.onrightfn = new Function('p,params,alasql','return '+source.onrightfns);
 			source.optimization = 'ix';
+//			console.log(151,source.onleftfns, source.onrightfns);
+//			console.log(source);
 		} else if(jn.on) {
 //console.log(jn.on);
 			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
@@ -5342,6 +5352,7 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 // 		s = tableid+'.'+s;
 // 	}
 //console.log('yy.Column',this, tableid);
+//	console.log(392,this.columnid);
 	var s = '';
 	if(!this.tableid && tableid == '' && !defcols) {
 		s = context+'[\''+this.columnid+'\']';

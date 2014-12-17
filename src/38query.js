@@ -226,7 +226,7 @@ preIndex = function(query) {
 		var source = query.sources[k];
 		// If there is indexation rule
 //console.log('preIndex', source);
-
+//console.log(source);
 		if(k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
 			if(query.database.tables[source.tableid]) {
@@ -237,7 +237,6 @@ preIndex = function(query) {
 					source.ix = ixx; 
 				}
 			};
-
 			if(!source.ix) {
 				source.ix = {};
 				// Walking over source data
@@ -272,6 +271,8 @@ preIndex = function(query) {
 					query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
 				};
 			}
+//console.log(38,274,source.ix);
+
 			// Optimization for WHERE column = expression
 		} else if (source.wxleftfn) {
 				if(!alasql.databases[source.databaseid].engineid) {

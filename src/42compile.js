@@ -113,7 +113,7 @@ yy.Select.prototype.compileJoins = function(query) {
 					if(prevTable && table) {
 						var c1 = prevTable.columns.map(function(col){return col.columnid});
 						var c2 = table.columns.map(function(col){return col.columnid});
-						jn.using = arrayIntersect(c1,c2);
+						jn.using = arrayIntersect(c1,c2).map(function(colid){return {columnid:colid}});
 //						console.log(jn.using);
 					} else {
 						throw new Error('In this version of Alasql NATURAL JOIN '+
@@ -136,15 +136,22 @@ yy.Select.prototype.compileJoins = function(query) {
 		if(jn.using) {
 			var prevSource = query.sources[query.sources.length-1];
 //			console.log(query.sources[0],prevSource,source);
-			source.onleftfns = jn.using.map(function(colid){
-				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+colid+"']";
+			source.onleftfns = jn.using.map(function(col){
+//				console.log(141,colid);
+				return "p['"+(prevSource.alias||prevSource.tableid)+"']['"+col.columnid+"']";
 			}).join('+"`"+');
+
+
+
 			source.onleftfn = new Function('p,params,alasql','return '+source.onleftfns);
-			source.onrightfns = jn.using.map(function(colid){
-				return "p['"+(source.alias||source.tableid)+"']['"+colid+"']";
+
+			source.onrightfns = jn.using.map(function(col){
+				return "p['"+(source.alias||source.tableid)+"']['"+col.columnid+"']";
 			}).join('+"`"+');
 			source.onrightfn = new Function('p,params,alasql','return '+source.onrightfns);
 			source.optimization = 'ix';
+//			console.log(151,source.onleftfns, source.onrightfns);
+//			console.log(source);
 		} else if(jn.on) {
 //console.log(jn.on);
 			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
