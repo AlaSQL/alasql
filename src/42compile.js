@@ -741,6 +741,16 @@ yy.Select.prototype.compileWhere = function(query) {
 	} else return function(){return true};
 };
 
+yy.Select.prototype.compileHaving = function(query) {
+	if(this.having) {
+		s = this.having.toJavaScript('p',-1);
+		query.havingfns = s;
+//		console.log(s);
+		return new Function('p,params,alasql','return '+s);
+	} else return function(){return true};
+};
+
+
 yy.Select.prototype.compileWhereJoins = function(query) {
 //	console.log(this.where);
 	optimizeWhereJoin(query, this.where.expression);

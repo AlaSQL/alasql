@@ -404,6 +404,8 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 			} else {
 				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 			}
+		} else if(tableid == -1) {
+			s = context+'[\''+this.columnid+'\']';
 		} else {
 			s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 		}

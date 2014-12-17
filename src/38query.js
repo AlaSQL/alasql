@@ -126,8 +126,11 @@ function queryfn3(query) {
 //console.log(85,query.data[0]);
 
 	// If groupping, then filter groups with HAVING function
+//			console.log(query.havingfns);
 	if(query.groupfn) {
-		if(query.havingfn) query.groups = query.groups.filter(query.havingfn)
+		if(query.havingfn) {
+			query.groups = query.groups.filter(query.havingfn);
+		}
 		query.data = query.groups;
 	};
 

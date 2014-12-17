@@ -2,7 +2,7 @@
 // alasql.js
 // Alasql - JavaScript SQL database
 // Date: 14.12.2014
-// Version: 0.0.32
+// Version: 0.0.33
 // (ñ) 2014, Andrey Gershun
 //
 
@@ -3103,8 +3103,11 @@ function queryfn3(query) {
 //console.log(85,query.data[0]);
 
 	// If groupping, then filter groups with HAVING function
+//			console.log(query.havingfns);
 	if(query.groupfn) {
-		if(query.havingfn) query.groups = query.groups.filter(query.havingfn)
+		if(query.havingfn) {
+			query.groups = query.groups.filter(query.havingfn);
+		}
 		query.data = query.groups;
 	};
 
@@ -3667,6 +3670,9 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 6. Compile GROUP BY
 	if(this.group) query.groupfn = this.compileGroup(query);
+
+	// 6. Compile GROUP BY
+	if(this.having) query.havingfn = this.compileHaving(query);
 
 
 
@@ -4620,6 +4626,16 @@ yy.Select.prototype.compileWhere = function(query) {
 	} else return function(){return true};
 };
 
+yy.Select.prototype.compileHaving = function(query) {
+	if(this.having) {
+		s = this.having.toJavaScript('p',-1);
+		query.havingfns = s;
+//		console.log(s);
+		return new Function('p,params,alasql','return '+s);
+	} else return function(){return true};
+};
+
+
 yy.Select.prototype.compileWhereJoins = function(query) {
 //	console.log(this.where);
 	optimizeWhereJoin(query, this.where.expression);
@@ -5341,6 +5357,8 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 			} else {
 				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 			}
+		} else if(tableid == -1) {
+			s = context+'[\''+this.columnid+'\']';
 		} else {
 			s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 		}

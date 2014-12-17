@@ -96,6 +96,9 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 6. Compile GROUP BY
 	if(this.group) query.groupfn = this.compileGroup(query);
 
+	// 6. Compile GROUP BY
+	if(this.having) query.havingfn = this.compileHaving(query);
+
 
 
 	// 7. Compile DISTINCT, LIMIT and OFFSET
