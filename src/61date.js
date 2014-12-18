@@ -29,6 +29,11 @@ stdfn.HOUR = function(d){
 	return d.getHours();
 };
 
+stdfn.DAYOFWEEK = stdfn.WEEKDAY = function(d){
+	d = new Date(d);
+	return d.getDay();
+};
+
 stdfn.DAY = stdfn.DAYOFMONTH = function(d){
 	d = new Date(d);
 	return d.getDate();

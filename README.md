@@ -4,7 +4,8 @@ Version: 0.0.34 Date: December 18, 2014 [Change log](CHANGELOG.md), [Release pla
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use IndexedDB and localStorage as a persistent storage.
 
-Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 200Kb) to your project. 
+Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 200Kb) to your project and call 
+```alasql()``` function with SQL statement: 
 
 ```html
     <script src="alasql.min.js"></script>  
@@ -15,7 +16,9 @@ Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 200Kb
         console.log( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
     </script>
 ```
-Download and try this sample in [your browser](demo.html) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Alasql console</a>.
+Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Alasql console</a>.
+
+## Why Alasql?
 
 * Alasql was written with pure JavaScript and does not use WebSQL database. 
 * Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
@@ -25,11 +28,15 @@ Download and try this sample in [your browser](demo.html) or try it in <a href="
 * Plus some [JavaScript sugar](#Sugar)
 * Alasql is fast, because it uses some optimization methods. 
 
-Check Alasql vs other JavaScript SQL databases: 
+Check Alasql vs other JavaScript SQL databases and other data processing libraries: 
  * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
  * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
+ * Alasql vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
+ * [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
 
-### New: Read and write Excel, CSV, TAB, JSON, and text files to/from database
+## What is new?
+
+### Read and write Excel, CSV, TAB, JSON, and text files to/from database
 
 Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 
@@ -43,7 +50,7 @@ Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 ```
 See [test168](test/test168.js) - [test169](test/test169.js)
 
-### CSV and IndexedDB database
+### ETL sample: CSV and IndexedDB database
 
 Upload CSV file with headers to IndexedDB database, and then save only asian countries 
 to Excel file:
@@ -55,9 +62,9 @@ to Excel file:
 ```
 See [the example](http://alasql.org/demo/001csv/). 
 
-### SQLite database files
+### Read SQLite database files
 
-Alasql can work with SQLite tables together with [SQL.js] library:
+Alasql can work with SQLite data files on the top of with [SQL.js](https://github.com/kripken/sql.js) library:
 ```html
     <script src="alasql.js"></script>
     <script src="sql.js"></script>
@@ -498,9 +505,6 @@ Alasql has four different optimization algorithm:
 * Joins: Prefiltering of WHERE expressions
 
 Now optimization algorithm has some limitations and therefore "table1 JOIN table2 USING column1, column2" is faster than "table1 JOIN table2 ON table1.column1 = table2.column1 AND table1.column2 = table2.column2 ", but with one column it is ok.
-
-Compare it with Lodash and Underscore:
-* [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
 
 ### Limitations
 

@@ -6008,6 +6008,11 @@ stdfn.HOUR = function(d){
 	return d.getHours();
 };
 
+stdfn.DAYOFWEEK = stdfn.WEEKDAY = function(d){
+	d = new Date(d);
+	return d.getDay();
+};
+
 stdfn.DAY = stdfn.DAYOFMONTH = function(d){
 	d = new Date(d);
 	return d.getDate();
@@ -7529,6 +7534,11 @@ yy.Rollback.prototype.execute = function (databaseid,params,cb) {
 //
 // (c) 2014 Andrey Gershun
 //
+
+alasql.into.JSON = function(filename, opts, data, columns, cb) {
+	var s = JSON.stringify(data);
+	alasql.utils.saveFile(filename,s);
+};
 
 alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	// If columns is empty

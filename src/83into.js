@@ -4,6 +4,11 @@
 // (c) 2014 Andrey Gershun
 //
 
+alasql.into.JSON = function(filename, opts, data, columns, cb) {
+	var s = JSON.stringify(data);
+	alasql.utils.saveFile(filename,s);
+};
+
 alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	// If columns is empty
 	if(columns.length == 0 && data.length > 0) {
