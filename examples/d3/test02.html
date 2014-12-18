@@ -1,0 +1,69 @@
+<script src="d3.v3.min.js"></script>
+<script src="../../alasql.min.js"></script>
+<script src="../../lib/xlsx/xlsx.core.min.js"></script>
+<h1>Alasql+d3: Olympic Medals By Age</h1>
+<div id="viz"></div>
+<script>
+    alasql('SELECT Age, SUM([Gold Medals]) AS Gold, SUM([Silver Medals]) AS Silver, SUM([Bronze Medals]) AS Bronze FROM XLSX("medals.xlsx",{headers:true}) GROUP BY Age ORDER BY Age',[],function(data){
+//    	console.log(data[0]);
+
+		var viz = d3.select("#viz");
+		
+		var header = viz
+		.append('div');
+
+		header.append('div')
+		.style('float','left')
+		.style('width','50px')
+		.style('font-weight','bold')
+		.text('Age');
+
+		header.append('div')
+		.style('float','left')
+		.style('width','300px')
+		.style('font-weight','bold')
+		.text('Gold / Silver / Bronze Medals');
+
+
+		var div = viz
+		.selectAll('div')
+		.data(data)
+		.enter()
+		.append("div");
+
+		div
+		.append('div')
+		.style('float','left')
+		.style('width','50px')
+		.text(function(d){return d.Age});
+
+		div
+		.append('div')
+		.style('float','left')
+		.style('background-color','gold')
+		.style('width',function(d){return d.Gold+'px';})
+		.style('text-align','right')
+		.text(function(d){return d.Gold});
+
+		div
+		.append('div')
+		.style('float','left')
+		.style('background-color','silver')
+		.style('width',function(d){return d.Silver+'px';})
+		.style('text-align','right')
+		.text(function(d){return d.Silver});
+
+		div
+		.append('div')
+		.style('float','left')
+		.style('background-color','#CD7F32')
+		.style('width',function(d){return d.Bronze+'px';})
+		.style('text-align','right')
+		.text(function(d){return d.Bronze});
+
+		div
+		.style('clear','both');
+
+    });
+
+</script>

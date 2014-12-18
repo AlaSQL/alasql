@@ -98,11 +98,11 @@ stdlib.IIF = function(a,b,c) {
 stdlib.IFNULL = function(a,b) {return '('+a+'||'+b+')'};
 stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 
-stdlib.LEN = function(s) {return '('+s+').length';};
-stdlib.LENGTH = function(s) {return '('+s+').length'};
+stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
+//stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = function(s) {return '('+s+').toLowerCase()';}
-stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
+stdlib.LOWER = stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
+//stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 
 // LTRIM
@@ -131,8 +131,8 @@ stdlib.ROUND = function(s,d) {
 }
 alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
-stdlib.UPPER = function(s) {return '('+s+').toUpperCase()';}
-stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
+stdlib.UPPER = stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
+//stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
 // SUBSTR

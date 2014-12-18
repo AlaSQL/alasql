@@ -1,0 +1,23 @@
+<script src="d3.v3.min.js"></script>
+<script src="../../alasql.min.js"></script>
+<h1>d3+Alasql</h1>
+<div id="viz"></div>
+<svg></svg>
+<script>
+    alasql('SELECT MATRIX country_name, LEN(country_name) FROM CSV("country.csv",{headers:true})',[],function(dataSet){
+//    	console.log(data[0]);
+    	var svg = d3.select('svg');
+		svg.selectAll('circle')
+                .data(dataSet)
+                .enter()
+                .append('circle')
+                .attr({
+                    r: function(d){  return d[1] },
+                    cx: function(d){return d[1]*10 },
+                    cy: function(d){return d[1]*20 },
+                    fill: function(d){return ['red','blue','green', 'yellow'][d[1]%4];},
+                    text: function(d){return d[0];}
+                });
+    });
+
+</script>
