@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.0.34 (14.12.2014 - 18.12.2014)
+
+* Fixed USING bug
+* Fixed HAVING bug
+*
+
 ### 0.0.33 (12.12.2014 - 14.12.2014)
 
 * SQL.js engine adapter (to real SQLite database)
