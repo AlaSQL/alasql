@@ -50,6 +50,34 @@ Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 ```
 See [test168](test/test168.js) - [test169](test/test169.js)
 
+### d3.js
+
+Alasql can be used with d3.js to create diagrams, like below:
+
+```js
+    function graph(axe) {
+        alasql('SELECT '+axe+', SUM([Gold Medals]) AS Gold, \
+            SUM([Silver Medals]) AS Silver, SUM([Bronze Medals]) AS Bronze \
+            FROM XLSX("medals.xlsx",{headers:true}) \
+            GROUP BY '+axe+' ORDER BY '+axe,[],function(data){
+
+            d3.select("#viz")
+            .append('div')
+            .style('float','left')
+            .style('width','100px')
+            .style('text-align','right')
+            .style('padding','2px')
+            .text(function(d){return d[axe]});
+        });
+    }
+
+    graph('Axe');
+
+```
+
+Try the [simple example](http://alasql.org/demo/005d3/) of Alasql + d3.js integration.
+
+
 ### ETL sample: CSV and IndexedDB database
 
 Upload CSV file with headers to IndexedDB database, and then save only asian countries 
