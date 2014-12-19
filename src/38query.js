@@ -137,8 +137,6 @@ function queryfn3(query) {
 	// Remove distinct values	
 	doDistinct(query);	
 
-	// Reduce to limit and offset
-	doLimit(query);
 
 	// UNION / UNION ALL
 	if(query.unionallfn) {
@@ -159,6 +157,9 @@ function queryfn3(query) {
 			query.explaination.push({explid: query.explid++, description:'QUERY BY',ms:Date.now()-ms});
 		}
 	};
+
+	// Reduce to limit and offset
+	doLimit(query);
 
 //	console.log(query.intoallfns);
 
