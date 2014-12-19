@@ -52,21 +52,22 @@ See [test168](test/test168.js) - [test169](test/test169.js)
 
 ### d3.js
 
-Alasql can be used with d3.js to create diagrams, like below:
+Alasql can be used with d3.js to create diagrams, like the example below. Here Alasql
+read Excel file with Olympic Prizes, group and sort rows by one of the axes, and then
+take top 10 records and create a list with axe values:
 
 ```js
     function graph(axe) {
-        alasql('SELECT '+axe+', SUM([Gold Medals]) AS Gold, \
+        alasql('SELECT TOP 10 '+axe+', SUM([Gold Medals]) AS Gold, \
             SUM([Silver Medals]) AS Silver, SUM([Bronze Medals]) AS Bronze \
             FROM XLSX("medals.xlsx",{headers:true}) \
             GROUP BY '+axe+' ORDER BY '+axe,[],function(data){
 
-            d3.select("#viz")
-            .append('div')
-            .style('float','left')
-            .style('width','100px')
-            .style('text-align','right')
-            .style('padding','2px')
+            d3.select("body")
+            .append('ul')
+            .data(data)
+            .entry()
+            .append('li')
             .text(function(d){return d[axe]});
         });
     }
