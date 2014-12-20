@@ -40,7 +40,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.TAB = function(filename, opts, data, columns, cb) {
+alasql.into.TAB = alasql.into.TSV = function(filename, opts, data, columns, cb) {
 	var opt = {};
 	alasql.utils.extend(opt, opts);
 	opt.separator = '\t';

@@ -1,6 +1,9 @@
 # To do
 ## URGENT
 
+* Change CSV parsing algorithm to [d3.csv](https://github.com/mbostock/d3/blob/master/src/dsv/dsv.js)
+* Add TSV = TAB 
+
 Option:
 * alasql.yy.options.braliteral = true; [column]
 * {}, [] - alasql.yy.options.braliteral

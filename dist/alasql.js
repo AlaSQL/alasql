@@ -3138,6 +3138,21 @@ function queryfn3(query) {
 	// Reduce to limit and offset
 	doLimit(query);
 
+	// Remove Angular.js artifacts and other unnecessary columns
+	// Issue #25
+
+//	console.log(query.removeKeys);
+
+    var removeKeys = query.removeKeys;
+    if(angular) removeKeys.push('$$hashKey');
+    var jlen = removeKeys.length;
+    if(jlen > 0) {
+      for(var i=0,ilen=query.data.length;i<ilen;i++) {
+        for(var j=0; j<jlen;j++)
+          delete query.data[i][removeKeys[j]];
+      }    
+    }
+
 //	console.log(query.intoallfns);
 
 	// if(query.explain) {
@@ -3643,6 +3658,8 @@ yy.Select.prototype.compile = function(databaseid) {
 	var db = alasql.databases[databaseid];
 	// Create variable for query
 	var query = new Query();
+
+    query.removeKeys = [];
 
 	query.explain = this.explain; // Explain
 	query.explaination = [];
@@ -7572,7 +7589,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.TAB = function(filename, opts, data, columns, cb) {
+alasql.into.TAB = alasql.into.TSV = function(filename, opts, data, columns, cb) {
 	var opt = {};
 	alasql.utils.extend(opt, opts);
 	opt.separator = '\t';
@@ -7716,7 +7733,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	return res;
 };
 
-alasql.from.TAB = function(filename, opts, cb, idx, query) {
+alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	if(!opts) opts = {};
 	opts.separator = '\t';
 	return alasql.from.CSV(filename, opts, cb, idx, query);

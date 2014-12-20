@@ -161,6 +161,21 @@ function queryfn3(query) {
 	// Reduce to limit and offset
 	doLimit(query);
 
+	// Remove Angular.js artifacts and other unnecessary columns
+	// Issue #25
+
+//	console.log(query.removeKeys);
+
+    var removeKeys = query.removeKeys;
+    if(angular) removeKeys.push('$$hashKey');
+    var jlen = removeKeys.length;
+    if(jlen > 0) {
+      for(var i=0,ilen=query.data.length;i<ilen;i++) {
+        for(var j=0; j<jlen;j++)
+          delete query.data[i][removeKeys[j]];
+      }    
+    }
+
 //	console.log(query.intoallfns);
 
 	// if(query.explain) {

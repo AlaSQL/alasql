@@ -65,6 +65,8 @@ yy.Select.prototype.compile = function(databaseid) {
 	// Create variable for query
 	var query = new Query();
 
+    query.removeKeys = [];
+
 	query.explain = this.explain; // Explain
 	query.explaination = [];
 	query.explid = 1;

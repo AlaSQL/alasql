@@ -32,7 +32,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	return res;
 };
 
-alasql.from.TAB = function(filename, opts, cb, idx, query) {
+alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	if(!opts) opts = {};
 	opts.separator = '\t';
 	return alasql.from.CSV(filename, opts, cb, idx, query);
