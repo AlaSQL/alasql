@@ -69,6 +69,14 @@ describe('Test 176 - CSV and TSV', function() {
     done();
   });
 
+  it("9. CSV with commas and strings and e-mails", function(done) {
+    alasql('SELECT * FROM CSV("test176d.csv",{headers:true})',[],function(res){
+	    console.log(res);
+    });
+    //assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
+    done();
+  });
+
 
 });
 

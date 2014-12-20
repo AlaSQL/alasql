@@ -133,9 +133,11 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		  for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
 		  return buf;
 		}
-
 		/* the saveAs call downloads a file on the local machine */
-		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename)
+//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
+//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
+//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
+		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
 	}
 
 
