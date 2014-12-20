@@ -67,6 +67,8 @@ function decartes(gv) {
 		for(var t=0; t<gv.length; t++) {
 			if(gv[t] instanceof yy.Column) {
 		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
+			} else if(gv[t] instanceof yy.FuncValue) {
+		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
 			} else if(gv[t] instanceof yy.GroupExpression) {
 				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group));
 				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group));
@@ -88,7 +90,12 @@ function decartes(gv) {
 		}
 		return res;
 	} else {
-		if(gv instanceof yy.Column) return [gv.columnid];
+		if(gv instanceof yy.Column) {
+			return [gv.columnid];
+		} else if(gv instanceof yy.FuncValue) {
+			return [gv.toString()];
+		}
+
 
 		// switch(gv.t) {
 		// 	case 'plain': return gv.p; break;

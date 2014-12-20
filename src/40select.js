@@ -87,7 +87,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 2. Compile JOIN clauses
 	if(this.joins) this.compileJoins(query);
 	// 3. Compile SELECT clause
-	query.selectfn = this.compileSelect(query);
+	query.selectfns = this.compileSelect1(query);
 	// 5. Optimize WHERE and JOINS
 	if(this.where) this.compileWhereJoins(query);
 
@@ -98,9 +98,10 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 6. Compile GROUP BY
 	if(this.group) query.groupfn = this.compileGroup(query);
 
-	// 6. Compile GROUP BY
+	// 6. Compile HAVING
 	if(this.having) query.havingfn = this.compileHaving(query);
 
+	query.selectfn = this.compileSelect2(query);
 
 
 	// 7. Compile DISTINCT, LIMIT and OFFSET

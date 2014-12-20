@@ -16,6 +16,8 @@
 
 * SELECT * EXCLUDE ($$hashKey)
 
+*^$$hashKey
+
 
 ### Version 0.0.33 - "WebSQL + Pretty + Bug Fixes" (priorities 1-2)
 

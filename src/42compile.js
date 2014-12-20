@@ -291,12 +291,30 @@ yy.Select.prototype.compileGroup = function(query) {
 		allgroups = arrayUnion(allgroups, a);
 	});
 
+	query.allgroups = allgroups;
+
+//console.log(42,294, this.group);
+//console.log(allgroups);
+	allgroups.forEach(function(colid){
+		if(query.selectColumns[colid]) {
+	//		console.log(colid,'ok');
+		} else {
+//			if(colid.indexOf())
+//			console.log(colid,'bad');	
+			var tmpid = 'default';
+			if(query.sources.length > 0) tmpid = query.sources[0].alias;
+//			console.log(new yy.Column({columnid:colid}).toJavaScript('p',query.sources[0].alias));
+//			query.selectfns += 'r[\''+colid+'\']=p[\''+tmpid+'\'][\''+colid+'\'];';
+			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJavaScript('p',tmpid))+';';
+		}
+	});
+
 	// Create negative array
 
 	var s = '';
 
 	allgroup.forEach(function(agroup) {
-
+//console.log(agroup);
 
 		// Start of group function
 		s += 'var g=this.xgroups[';
@@ -324,10 +342,9 @@ yy.Select.prototype.compileGroup = function(query) {
 			else return "'"+columnid+"':r['"+columnid+"'],";
 		}).join('');
 
-
 		var neggroup = arrayDiff(allgroups,agroup);
 
-		s += neggroup.map(function(columnid){
+		s += neggroup.map(function(columnid){			
 			return "'"+columnid+"':null,";
 		}).join('');
 
@@ -624,6 +641,7 @@ function compileSelectStar (query,alias) {
 		if(columns && columns.length > 0) {
 			columns.forEach(function(tcol){
 				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+				query.selectColumns[escapeq(tcol.columnid)] = true;
 
 	//		console.log('ok',s);
 
@@ -651,10 +669,11 @@ function compileSelectStar (query,alias) {
 }
 
 
-yy.Select.prototype.compileSelect = function(query) {
+yy.Select.prototype.compileSelect1 = function(query) {
 	var self = this;
 	query.columns = [];
 	query.xcolumns = {};
+	query.selectColumns = {};
 	query.dirtyColumns = false;
 	var s = 'var r={';
 	var sp = '';
@@ -689,6 +708,7 @@ yy.Select.prototype.compileSelect = function(query) {
 				if(!tbid) tbid = query.defcols[col.columnid];
 				if(!tbid) tbid = query.defaultTableid;
 				ss.push(escapeq(col.as || col.columnid)+':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+				query.selectColumns[escapeq(col.as || col.columnid)] = true;
 
 				if(query.aliases[tbid] && query.aliases[tbid].type == 'table') {
 
@@ -735,7 +755,9 @@ yy.Select.prototype.compileSelect = function(query) {
 			} else if (col.aggregatorid == 'COUNT') {
 				ss.push("'"+escapeq(col.as)+"':1");
 				// Nothing
-			} 
+			}
+			query.selectColumns[escapeq(col.expression.toString())] = true;
+
 //			else if (col.aggregatorid == 'MAX') {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			} else if (col.aggregatorid == 'MIN') {
@@ -745,11 +767,17 @@ yy.Select.prototype.compileSelect = function(query) {
 			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid,query.defcols));
 //			ss.push('\''+escapeq(col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
+			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
 		}
 	});
 	s += ss.join(',')+'};'+sp;
-//console.log(s);
-	query.selectfns = s;
+	return s;
+//console.log(42,753,query.xcolumns, query.selectColumns);
+}
+yy.Select.prototype.compileSelect2 = function(query) {
+
+	var s = query.selectfns ;
+//	console.log(s);
 	return new Function('p,params,alasql',s+'return r');
 };
 
