@@ -18,6 +18,11 @@ Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 200Kb
 ```
 Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Alasql console</a>.
 
+## Documentation 
+
+* [Alasql User Manual](http://slideshare.com)
+* [Alasql Wiki](https://github.com/agershun/alasql/wiki) (sorry, work in progress)
+
 ## Why Alasql?
 
 * Alasql was written with pure JavaScript and does not use WebSQL database. 
@@ -240,8 +245,7 @@ Operators:
 
 Aggregators:
 
-* SUM(), COUNT(), MIN(), MAX(), FIRST(), LAST()
-* Sorry, AVG() still does not work
+* SUM(), COUNT(), MIN(), MAX(), FIRST(), LAST(), AVG(), AGGR()
 
 GROUP BY Grouping functions:
 
@@ -562,9 +566,6 @@ Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previo
     SELECT * FROM one ORDER BY a DESC;
     ASSERT [{a:3},{a:2},{a:1}];
 ```
-### Documentation (draft)
-
-The early prototype of documentation will be placed on [Alasql Wiki](https://github.com/agershun/alasql/wiki).
 
 ### Warnings 
 Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
@@ -574,8 +575,7 @@ You can check next version branches for new experimental features.
 ### Known Bugs and Limitations
 
 1. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
-2. AVG() aggregator does not work yet.
-3. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because Alasql started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
+2. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because Alasql started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
 
 
 Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!

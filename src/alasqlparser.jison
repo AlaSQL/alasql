@@ -44,6 +44,7 @@
 'ABSOLUTE'                                 		return 'ABSOLUTE'
 'ACTION'                                      	return 'ACTION'
 'ADD'                                      		return 'ADD'
+'AGGR'                                     		return 'AGGR'
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
@@ -763,6 +764,7 @@ Aggregator
 	| AVG { $$ = "AVG"; }
 	| FIRST { $$ = "FIRST"; }
 	| LAST { $$ = "LAST"; }
+	| AGGR { $$ = "AGGR"; }
 	;
 
 FuncValue

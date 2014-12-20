@@ -429,7 +429,7 @@ yy.AggrValue.prototype.toString = function() {
 };
 
 yy.AggrValue.prototype.toType = function() {
-	if(['SUM','COUNT','AVG','MIN', 'MAX'].indexOf(this.aggregatorid)>-1) return 'number';
+	if(['SUM','COUNT','AVG','MIN', 'MAX','AGGR'].indexOf(this.aggregatorid)>-1) return 'number';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
 yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {

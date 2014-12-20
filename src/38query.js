@@ -166,8 +166,10 @@ function queryfn3(query) {
 
 //	console.log(query.removeKeys);
 
+//	console.log(query.removeKeys);
+
     var removeKeys = query.removeKeys;
-    if(angular) removeKeys.push('$$hashKey');
+    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
     var jlen = removeKeys.length;
     if(jlen > 0) {
       for(var i=0,ilen=query.data.length;i<ilen;i++) {

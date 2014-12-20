@@ -15,7 +15,6 @@
 ## Next Versions
 
 * SELECT * EXCLUDE ($$hashKey)
-* New CSV parser
 
 
 ### Version 0.0.33 - "WebSQL + Pretty + Bug Fixes" (priorities 1-2)

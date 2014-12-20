@@ -40,11 +40,95 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 
 alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	var opt = {
-		separator: ','
+		separator: ',',
+		quote: '"'
 	};
 	alasql.utils.extend(opt, opts);
 	var res;
-	alasql.utils.loadFile(filename,!!cb,function(data){
+	alasql.utils.loadFile(filename,!!cb,function(text){
+
+		var delimiterCode = opt.separator.charCodeAt(0);
+		var quoteCode = opt.quote.charCodeAt(0);
+
+      	var EOL = {}, EOF = {}, rows = [], N = text.length, I = 0, n = 0, t, eol;
+	      function token() {
+	        if (I >= N) return EOF;
+	        if (eol) return eol = false, EOL;
+	        var j = I;
+	        if (text.charCodeAt(j) === quoteCode) {
+	          var i = j;
+	          while (i++ < N) {
+	            if (text.charCodeAt(i) === quoteCode) {
+	              if (text.charCodeAt(i + 1) !== quoteCode) break;
+	              ++i;
+	            }
+	          }
+	          I = i + 2;
+	          var c = text.charCodeAt(i + 1);
+	          if (c === 13) {
+	            eol = true;
+	            if (text.charCodeAt(i + 2) === 10) ++I;
+	          } else if (c === 10) {
+	            eol = true;
+	          }
+	          return text.substring(j + 1, i).replace(/""/g, '"');
+	        }
+	        while (I < N) {
+	          var c = text.charCodeAt(I++), k = 1;
+	          if (c === 10) eol = true; else if (c === 13) {
+	            eol = true;
+	            if (text.charCodeAt(I) === 10) ++I, ++k;
+	          } else if (c !== delimiterCode) continue;
+	          return text.substring(j, I - k);
+	        }
+	        return text.substring(j);
+	      }
+
+	      while ((t = token()) !== EOF) {
+	        var a = [];
+	        while (t !== EOL && t !== EOF) {
+	          a.push(t);
+	          t = token();
+	        }
+
+	        if(opt.headers) {
+	        	if(n == 0) {
+					if(typeof opt.headers == 'boolean') {
+		        		hs = a;
+					} else if(opt.headers instanceof Array) {
+						hs = opt.headers;
+		        		var r = {};
+		        		hs.forEach(function(h,idx){
+		        			r[h] = a[idx];
+		        		});
+						rows.push(r);
+					}
+
+	        	} else {
+	        		var r = {};
+	        		hs.forEach(function(h,idx){
+	        			r[h] = a[idx];
+	        		});
+	        		rows.push(r);
+	        	}
+	        	n++;
+	        } else {
+	    	    rows.push(a);
+	    	}
+	      }
+
+	      res = rows;
+
+		if(opt.headers) {
+			if(query && query.sources && query.sources[idx]) {
+				var columns = query.sources[idx].columns = [];
+				hs.forEach(function(h){
+					columns.push({columnid:h});
+				});
+			};
+		};
+
+if(false) {
 		res = data.split(/\r?\n/);
 		if(opt.headers) {
 			if(query && query.sources && query.sources[idx]) {
@@ -73,6 +157,9 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 				res[i] = res[i].split(opt.separator);
 			}
 		}
+
+};
+
 		if(cb) res = cb(res, idx, query);
 	});
 	return res;
