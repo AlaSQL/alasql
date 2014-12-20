@@ -135,7 +135,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		}
 
 		/* the saveAs call downloads a file on the local machine */
-		saveAs(new Blob([s2ab(wbout)],{type:""}), filename)
+		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename)
 	}
 
 

@@ -2039,6 +2039,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     }
 };
 
+
 // For LOAD
 // var saveBinaryFile = utils.saveFile = function(path, data, cb) {
 //     if(typeof exports == 'object') {
@@ -7741,7 +7742,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		}
 
 		/* the saveAs call downloads a file on the local machine */
-		saveAs(new Blob([s2ab(wbout)],{type:""}), filename)
+		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename)
 	}
 
 
