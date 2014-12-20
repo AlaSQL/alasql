@@ -58,6 +58,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 
 	var opt = {};
 	opt.separator = ',';
+	opt.quote = '"';
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
 	var s = '';
