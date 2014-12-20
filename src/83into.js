@@ -69,7 +69,10 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 
 	data.forEach(function(d, idx){
 		s += columns.map(function(col){
-			return d[col.columnid];
+			var s = d[col.columnid];
+			s = s.replace(new RegExp('\\'+opt.quote,"g"),'""');
+			if(s.indexOf(opt.separator) > -1 || s.indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
+			return s;
 		}).join(opt.separator)+'\n';	
 	});
 	if(filename) {
