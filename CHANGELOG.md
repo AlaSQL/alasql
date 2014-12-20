@@ -1,13 +1,10 @@
 # Changelog
 
-### 0.0.35 (14.12.2014 - 18.12.2014)
+### 0.0.34 (14.12.2014 - 20.12.2014)
 
 * New User Manual written
 * Remove $$hashKey field for Angular.js integration
 * New CSV and TAB parser with separators and quotes
-
-### 0.0.34 (14.12.2014 - 18.12.2014)
-
 * Fixed USING bug
 * Fixed HAVING bug
 * INTO JSON function() 

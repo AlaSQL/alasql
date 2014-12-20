@@ -20,7 +20,7 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 
 ## Documentation 
 
-* [Alasql User Manual](http://slideshare.com)
+* [Alasql User Manual](http://www.slideshare.net/AndreyGershun/alasql-manual-141220-1)
 * [Alasql Wiki](https://github.com/agershun/alasql/wiki) (sorry, work in progress)
 
 ## Why Alasql?
