@@ -62,12 +62,20 @@ describe('Test 176 - CSV and TSV', function() {
   });
 
 
+it("7. CSV with commas and strings", function(done) {
+    var res = alasql('SELECT * FROM CSV("test176c.csv",{headers:true, quote:"\'"})');
+    console.log(res);
+    //assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
+    done();
+  });
+
+
 });
 
 
 // This part of code was taken from d3.js library
 // with minor modifications
-
+/*
     parseRows = function(text) {
 
 var delimiterCode = 59; //;
@@ -139,4 +147,4 @@ var hs = [];
     };
 
 //};
-
+*/
