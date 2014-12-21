@@ -151,7 +151,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	}
 
 	if(this.op == 'LIKE') {
-		var s = "("+this.left.toJavaScript(context,tableid, defcols)+")"+
+		var s = "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
 		".match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*')+'$','g'))"
 //		console.log(s);
 		return s;

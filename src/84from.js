@@ -25,6 +25,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
 		for(var i=0, ilen=res.length; i<ilen;i++) {
+			if(res[i] == +res[i]) res[i] = +res[i];
 			res[i] = [res[i]];
 		}
 		if(cb) res = cb(res, idx, query);
@@ -100,6 +101,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		        		var r = {};
 		        		hs.forEach(function(h,idx){
 		        			r[h] = a[idx];
+							if(r[h] == +r[h]) r[h] = +r[h];
 		        		});
 						rows.push(r);
 					}
@@ -108,6 +110,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	        		var r = {};
 	        		hs.forEach(function(h,idx){
 	        			r[h] = a[idx];
+						if(r[h] == +r[h]) r[h] = +r[h];
 	        		});
 	        		rows.push(r);
 	        	}
@@ -128,6 +131,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 			};
 		};
 
+/*
 if(false) {
 		res = data.split(/\r?\n/);
 		if(opt.headers) {
@@ -159,7 +163,7 @@ if(false) {
 		}
 
 };
-
+*/
 		if(cb) res = cb(res, idx, query);
 	});
 	return res;

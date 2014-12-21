@@ -5254,7 +5254,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	}
 
 	if(this.op == 'LIKE') {
-		var s = "("+this.left.toJavaScript(context,tableid, defcols)+")"+
+		var s = "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
 		".match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*')+'$','g'))"
 //		console.log(s);
 		return s;
@@ -7743,7 +7743,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		s += columns.map(function(col){
 			var s = d[col.columnid];
 			s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
-			if(s.indexOf(opt.separator) > -1 || s.indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
+			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
 			return s;
 		}).join(opt.separator)+'\n';	
 	});
@@ -7854,6 +7854,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
 		for(var i=0, ilen=res.length; i<ilen;i++) {
+			if(res[i] == +res[i]) res[i] = +res[i];
 			res[i] = [res[i]];
 		}
 		if(cb) res = cb(res, idx, query);
@@ -7929,6 +7930,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		        		var r = {};
 		        		hs.forEach(function(h,idx){
 		        			r[h] = a[idx];
+							if(r[h] == +r[h]) r[h] = +r[h];
 		        		});
 						rows.push(r);
 					}
@@ -7937,6 +7939,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	        		var r = {};
 	        		hs.forEach(function(h,idx){
 	        			r[h] = a[idx];
+						if(r[h] == +r[h]) r[h] = +r[h];
 	        		});
 	        		rows.push(r);
 	        	}
@@ -7957,6 +7960,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 			};
 		};
 
+/*
 if(false) {
 		res = data.split(/\r?\n/);
 		if(opt.headers) {
@@ -7988,7 +7992,7 @@ if(false) {
 		}
 
 };
-
+*/
 		if(cb) res = cb(res, idx, query);
 	});
 	return res;
