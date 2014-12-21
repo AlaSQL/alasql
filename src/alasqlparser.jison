@@ -12,6 +12,7 @@
 %options case-insensitive
 %%
 
+\[\?\]							return 'BRAQUESTION'
 '@['							return 'ATLBRA'
 \[([^\]])*?\]					return 'BRALITERAL'
 /*								{
@@ -457,6 +458,7 @@ FromTable
 		{ $$ = $1; $1.as = $3; }
 	| ParamValue
 		{ $$ = $1; $1.as = 'default'; }
+
 	| FuncValue
 		{ $$ = $1; $1.as = 'default'; }
 	| FuncValue Literal
@@ -827,6 +829,11 @@ ParamValue
 		{ 
 			if(typeof yy.question == 'undefined') yy.question = 0; 
 			$$ = new yy.ParamValue({param: yy.question++}); 
+		}
+	| BRAQUESTION
+		{ 
+			if(typeof yy.question == 'undefined') yy.question = 0; 
+			$$ = new yy.ParamValue({param: yy.question++, array:true}); 
 		}
 	;
 
