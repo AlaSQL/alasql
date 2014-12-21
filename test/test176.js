@@ -56,22 +56,24 @@ describe('Test 176 - CSV and TSV', function() {
 	});
 
   it("7. Sync CSV", function(done) {
-    var res = alasql('SELECT * FROM CSV("test176b.csv",{separator:";",quote:"\\\"",headers:true})');
-    assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
-    done();
+    var res = alasql('SELECT * FROM CSV("test176b.csv",{separator:";",quote:"\\\"",headers:true})',[],function(res){
+	    assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
+    	done();
+    });
   });
 
 
   it("8. CSV with commas and strings", function(done) {
     var res = alasql('SELECT * FROM CSV("test176c.csv",{headers:true, quote:"\'"})');
-    console.log(res);
+ //   console.log(res);
     //assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
     done();
   });
 
   it("9. CSV with commas and strings and e-mails", function(done) {
     alasql('SELECT * FROM CSV("test176d.csv",{headers:true})',[],function(res){
-	    console.log(res);
+    	assert(res.length == 4);
+//	    console.log(res);
     });
     //assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
     done();

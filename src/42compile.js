@@ -66,6 +66,12 @@ yy.Select.prototype.compileJoins = function(query) {
 				}
 			};
 
+//		var alias = jn.as || tq.tableid;
+//		if(tq) {
+			query.aliases[source.alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
+//		}
+
+
 		} else if(jn.select) {
 			source = {
 				alias: jn.as,
@@ -80,6 +86,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			source.datafn = function(query, params, cb, idx) {
 				return source.subquery(query.params, null, cb, idx);
 			}				
+			query.aliases[source.alias] = {type:'subquery'};
 		} else if(jn.param) {
 			source = {
 				alias: jn.as,
@@ -95,9 +102,69 @@ yy.Select.prototype.compileJoins = function(query) {
 //			console.log(jn, jnparam);
 			source.datafn = new Function('query,params,cb,idx',
 				"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)res=cb(res, idx, query);return res");
+			query.aliases[source.alias] = {type:'paramvalue'};
+		} else if(jn.funcid) {
+			source = {
+				alias: jn.as,
+//				databaseid: jn.databaseid || query.database.databaseid,
+//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '',	// for optimization
+				srcwherefn: returnTrue
+			};
+			// source.data = ;
+
+/*
+			var jnparam = jn.param.param;
+			source.datafn = new Function('query,params,cb,idx',
+				"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)res=cb(res, idx, query);return res");
+*/
+
+			var s = "var res=alasql.from['"+js.funcid.toUpperCase()+"'](";
+			// if(tq.args && tq.args.length>0) {
+			// 	s += tq.args.map(function(arg){
+			// 		return arg.toJavaScript();
+			// 	}).concat('cb,idx,query').join(',');
+			// }
+			// if(tq.args && tq.args.length>0) {
+			// 	s += tq.args.map(function(arg){
+			// 		return arg.toJavaScript();
+			// 	}).concat().join(',');
+			// }
+			if(jn.args && jn.args.length>0) {
+				if(jn.args[0]) {
+					s += jn.args[0].toJavaScript()+',';
+				} else {
+					s += 'null,';
+				};
+				if(jn.args[1]) {
+					s += jn.args[1].toJavaScript()+',';
+				} else {
+					s += 'null,';
+				};
+			} else {
+				s += 'null,null,'
+			}
+			s += 'cb,idx,query';
+			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
+//	console.log(s);
+			source.datafn = new Function('query, params, cb, idx',s);
+
+			query.aliases[source.alias] = {type:'funcvalue'};
 		}
-
-
+/*
+		} else if(tq instanceof yy.Select) {
+			query.aliases[alias] = {type:'subquery'};
+		} else if(tq instanceof yy.ParamValue) {
+			query.aliases[alias] = {type:'paramvalue'};
+		} else if(tq instanceof yy.FuncValue) {
+			query.aliases[alias] = {type:'paramvalue'};
+		} else {
+			throw new Error('Wrong table at FROM');
+		}
+*/
+		var alias = source.alias;
 
 		// Test NATURAL-JOIN
 		if(jn.natural) {
@@ -128,10 +195,6 @@ yy.Select.prototype.compileJoins = function(query) {
 
 
 
-		var alias = jn.as || tq.tableid;
-		if(tq) {
-			query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid};
-		}
 
 		if(jn.using) {
 			var prevSource = query.sources[query.sources.length-1];
@@ -628,7 +691,8 @@ function compileSelectStar (query,alias) {
 	// console.log(query.aliases[alias]);
 //	console.log(query,alias);
 	// console.log(query.aliases[alias].tableid);
-//	console.log(alias);
+//	console.log(42,631,alias);
+//	console.log(query.aliases);
 	var s = '', sp = '', ss=[];
 //	if(!alias) {
 //		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';

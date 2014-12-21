@@ -124,6 +124,10 @@ You can use Alasql together with Angular.js framework:
 ```
 See [simple example in jsFiddle](http://jsfiddle.net/agershun/00nfeq12/).
 
+Other examples of Alasql and Angular.js integration: 
+
+* [Calculating average of array](http://jsfiddle.net/agershun/she06Lq3/2/)
+
 ## Examples
 
 Try Alasql in console:
