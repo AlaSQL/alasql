@@ -6153,6 +6153,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 // (c) 2014, Andrey Gershun
 //
 
+/*
+alasql.fn.Date = Date;
+alasql.fn.Number = Number;
+alasql.fn.String = String;
+alasql.fn.Boolean = Boolean;
+*/
+
+stdfn.DATE = Date;
 
 stdfn.NOW = function(){
 	var d = new Date();
@@ -6161,7 +6169,6 @@ stdfn.NOW = function(){
 	return s;
 };
 
-stdfn.Date = Date;
 
 stdfn.SECOND = function(d){
 	d = new Date(d);
