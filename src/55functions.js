@@ -9,8 +9,9 @@
 yy.FuncValue = function(params){ return yy.extend(this, params); }
 yy.FuncValue.prototype.toString = function() {
 	var s = '';
-    if(alasql.stdlib[this.funcid] || alasql.stdfn[this.funcid]) s += this.funcid.toUpperCase();
-    else s += this.funcid;
+    
+    if(alasql.fn[this.funcid]) s += this.funcid;
+    else if(alasql.stdlib[this.funcid] || alasql.stdfn[this.funcid]) s += this.funcid.toUpperCase();
     
     s += '(';
 	if(this.args && this.args.length > 0) {
@@ -28,7 +29,20 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
-	if(alasql.stdlib[funcid.toUpperCase()]) {
+	if(alasql.fn[funcid]) {
+	// This is user-defined run-time function
+	// TODO arguments!!!
+//		var s = '';
+		if(this.newid) s+= 'new ';
+		s += 'alasql.fn.'+this.funcid+'(';
+//		if(this.args) s += this.args.toJavaScript(context, tableid);
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJavaScript(context, tableid, defcols);
+			}).join(',');
+		};
+		s += ')';
+	} else if(alasql.stdlib[funcid.toUpperCase()]) {
 		if(this.args && this.args.length > 0) {
 			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJavaScript(context, tableid)}));
 		} else {
@@ -44,20 +58,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 			}).join(',');
 		};
 		s += ')';		
-	} else {
-	// This is user-defined run-time function
-	// TODO arguments!!!
-//		var s = '';
-		if(this.newid) s+= 'new ';
-		s += 'alasql.fn.'+this.funcid+'(';
-//		if(this.args) s += this.args.toJavaScript(context, tableid);
-		if(this.args && this.args.length > 0) {
-			s += this.args.map(function(arg){
-				return arg.toJavaScript(context, tableid, defcols);
-			}).join(',');
-		};
-		s += ')';
-	}
+	} 
 //console.log('userfn:',s,this);
 
 //	if(this.alias) s += ' AS '+this.alias;
