@@ -6161,6 +6161,7 @@ stdfn.NOW = function(){
 	return s;
 };
 
+stdfn.Date = Date;
 
 stdfn.SECOND = function(d){
 	d = new Date(d);
