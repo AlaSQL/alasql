@@ -37,6 +37,7 @@ Check Alasql vs other JavaScript SQL databases and other data processing librari
  * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
  * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
  * Alasql vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
+ * [Alasql vs. Lodash](http://jsperf.com/alasql-vs-lodash)
  * [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
 
 ## What is new?
@@ -249,7 +250,7 @@ Operators:
 
 Aggregators:
 
-* SUM(), COUNT(), MIN(), MAX(), FIRST(), LAST(), AVG(), AGGR()
+* SUM(), COUNT(), MIN(), MAX(), FIRST(), LAST(), AVG(), AGGR(), ARRAY()
 
 GROUP BY Grouping functions:
 
