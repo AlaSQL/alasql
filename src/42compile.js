@@ -786,7 +786,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
 				if(!tbid) tbid = query.defcols[col.columnid];
 				if(!tbid) tbid = query.defaultTableid;
-				if(col.columnid != '') {
+				if(col.columnid != '_') {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
 				} else {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');					

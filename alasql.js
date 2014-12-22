@@ -4714,7 +4714,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
 				if(!tbid) tbid = query.defcols[col.columnid];
 				if(!tbid) tbid = query.defaultTableid;
-				if(col.columnid != '') {
+				if(col.columnid != '_') {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
 				} else {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');					
@@ -5528,14 +5528,14 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log(392,this.columnid);
 	var s = '';
 	if(!this.tableid && tableid == '' && !defcols) {
-		if(this.columnid != '') {
+		if(this.columnid != '_') {
 			s = context+'[\''+this.columnid+'\']';
 		} else {
 			s = context;
 		}
 	} else {
 		if(this.tableid) {
-			if(this.columnid != '') {
+			if(this.columnid != '_') {
 				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
 			} else {
 				s = context+'[\''+(this.tableid) + '\']';
@@ -5545,13 +5545,13 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 			if(tbid == '-') {
 				throw new Error('Cannot resolve column "'+this.columnid+'" because it exists in two source tables');
 			} else if(tbid) {
-				if(this.columnid != '') {
+				if(this.columnid != '_') {
 					s = context+'[\''+(tbid) + '\'][\''+this.columnid+'\']';
 				} else {
 					s = context+'[\''+(tbid) + '\']';
 				};
 			} else {
-				if(this.columnid != '') {
+				if(this.columnid != '_') {
 					s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 				} else {
 					s = context+'[\''+(this.tableid || tableid) + '\']';
@@ -5564,7 +5564,7 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 //				s = context;				
 //			}
 		} else {
-			if(this.columnid != '') {
+			if(this.columnid != '_') {
 				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 			} else {
 				s = context+'[\''+(this.tableid || tableid) + '\']';

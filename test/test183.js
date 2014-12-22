@@ -33,7 +33,7 @@ for (var i = len; --i >= 0;) {
 
 var max1 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT([0]) AS cnt FROM [?] GROUP BY [0])', [arr]);
 
-var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GROUP BY [])', [arr]);
+var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GROUP BY _)', [arr]);
 
 
      console.log(max,max1,max2);
@@ -43,11 +43,18 @@ var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GRO
 
     it("1. ARRAY()", function(done) {
     
-        var res = alasql('SELECT [0],FIRST([]) FROM ? GROUP BY [0]',[[[1,10],[2,20],[3,30]]]);
+        var res = alasql('SELECT [0],FIRST(_) FROM ? GROUP BY [0]',[[[1,10],[2,20],[3,30]]]);
         console.log(res);
 
-        var res = alasql('SELECT [] AS one, COUNT(*) AS cnt FROM ? GROUP BY one',[[1,2,3,1]]);
+        var res = alasql('SELECT _ AS one, COUNT(*) AS cnt FROM ? GROUP BY one',[[1,2,3,1]]);
         console.log(res);
+
+        var res = alasql('SELECT _, SUM(_), COUNT(*) FROM ? GROUP BY _',[[1,2,3,1]]);
+        console.log(res);
+
+        var res = alasql('SELECT column _*2 FROM ?',[[1,2,3,1]]);
+        console.log(res);
+
 
       done();
     });
