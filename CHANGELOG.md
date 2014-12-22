@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.0.35 (14.12.2014 - 20.12.2014)
+
+* Added [?] array conversion
+* ARRAY Aggregator (http://stackoverflow.com/questions/15887900/group-objects-by-property-in-javascript?rq=1)
+
+
 ### 0.0.34 (14.12.2014 - 20.12.2014)
 
 * New User Manual written

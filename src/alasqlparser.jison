@@ -51,6 +51,7 @@
 'AND'											return 'AND'
 'ANTI'											return 'ANTI'
 'ANY'											return 'ANY'
+'ARRAY'                                     	return 'ARRAY'
 'AS'                                      		return 'AS'
 'ASSERT'                                      	return 'ASSERT'
 'ASC'                                      		return 'DIRECTION'
@@ -767,6 +768,7 @@ Aggregator
 	| FIRST { $$ = "FIRST"; }
 	| LAST { $$ = "LAST"; }
 	| AGGR { $$ = "AGGR"; }
+	| ARRAY { $$ = "ARRAY"; }
 	;
 
 FuncValue

@@ -430,6 +430,7 @@ yy.AggrValue.prototype.toString = function() {
 
 yy.AggrValue.prototype.toType = function() {
 	if(['SUM','COUNT','AVG','MIN', 'MAX','AGGR'].indexOf(this.aggregatorid)>-1) return 'number';
+	if(['ARRAY'].indexOf(this.aggregatorid)>-1) return 'array';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
 yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {

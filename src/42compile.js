@@ -425,7 +425,9 @@ yy.Select.prototype.compileGroup = function(query) {
 //					|| col.aggregatorid == 'AVG'
 //				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
 				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
-				else if(col.aggregatorid == 'COUNT') { return '\''+col.as+'\':1,'; }
+				else if(col.aggregatorid == 'ARRAY') {
+				 	return '\''+col.as+'\':[r[\''+col.as+'\']],';
+				} else if(col.aggregatorid == 'COUNT') { return '\''+col.as+'\':1,'; }
 //				else if(col.aggregatorid == 'MIN') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
 //				else if(col.aggregatorid == 'MAX') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
 				else if(col.aggregatorid == 'AVG') { 
@@ -505,6 +507,7 @@ yy.Select.prototype.compileGroup = function(query) {
 			if (col instanceof yy.AggrValue) { 
 				if (col.aggregatorid == 'SUM') { return 'g[\''+col.as+'\']+=r[\''+col.as+'\'];'; }//f.field.arguments[0].toJavaScript(); 	
 				else if(col.aggregatorid == 'COUNT') { return 'g[\''+col.as+'\']++;'; }
+				else if(col.aggregatorid == 'ARRAY') { return 'g[\''+col.as+'\'].push(r[\''+col.as+'\']);'; }
 				else if(col.aggregatorid == 'MIN') { return 'g[\''+col.as+'\']=Math.min(g[\''+col.as+'\'],r[\''+col.as+'\']);'; }
 				else if(col.aggregatorid == 'MAX') { return 'g[\''+col.as+'\']=Math.max(g[\''+col.as+'\'],r[\''+col.as+'\']);'; }
 				else if(col.aggregatorid == 'FIRST') { return ''; }
@@ -825,7 +828,8 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			}
 			if(!col.as) col.as = escapeq(col.toString());
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
-				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  col.aggregatorid == 'AVG'
+				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  
+				col.aggregatorid == 'AVG' || col.aggregatorid == 'ARRAY' 
 				) {
 				ss.push("'"+escapeq(col.as)+'\':'+col.expression.toJavaScript("p",query.defaultTableid,query.defcols))	
 			} else if (col.aggregatorid == 'COUNT') {
