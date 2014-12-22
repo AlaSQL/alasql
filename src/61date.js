@@ -11,7 +11,9 @@ alasql.fn.String = String;
 alasql.fn.Boolean = Boolean;
 */
 
-stdfn.DATE = Date;
+stdfn.DATE = function (d) {
+	return new Date(d);
+};
 
 stdfn.NOW = function(){
 	var d = new Date();
