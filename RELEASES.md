@@ -1,23 +1,106 @@
 # Releases Plan
 
 ## Alasql Prioritites
-1. Bugs, Speed, Memory Leaks, Better Code, Errors handling, Size
-2. Documentation, alasql.org website, Alasql promotion
-3. PIVOT, GROUP BY TOTAL, DETAIL, AGGR(function), GROUP BY HIERARCHY, AVG
-4. SYNC, optimiztic blocking
-5. UNION bug, merge algorithms, utilities
-6. Primary Key/Foreign Key/Unique Index/Autoincrement/Default
-7. Transactions
-8. WebSQL and pass-thru databases, better support of with IndexedDB and NeDB, WebWorkers
+1. Bugs, Speed, Memory Leaks, Better Code, Errors handling, Library Size, Compatibility (Browsers, Mobiles, SQLs)
+2. Documentation, alasql.org website, Alasql promotion, Article, Coockbook, Tutorial
+3. UNION bug, merge algorithms, utilities, Prettify, Console, Alacon, Functions in GROUP, HAVING and ORDER
+4. Primary Key/Foreign Key/Unique Index/Autoincrement/Default
+5. Transactions
+6. PIVOT, UNPIVOT, GROUP BY TOTAL, DETAIL, GROUP BY HIERARCHY
+7. WebSQL and pass-thru databases, better support of with IndexedDB and NeDB, WebWorkers
+8. SYNC, optimiztic blocking
 9. Linq, NoSQL, and MongoDB functions
-10. Streams, cursorst, if-then, while, Views
+10. Streams, cursors, if-then, while, Views, Comsole
 
 ## Next Versions
 
-* SELECT * EXCLUDE ($$hashKey)
+1. Upload XLSX() and CSV() file in browser
 
-*^$$hashKey
+SELECT * FROM CSV("#multifiles",{upload:true});
+SELECT * FROM CSV(".multifiles");
+SELECT * FROM CSV("#multifiles");
 
+* * - how to resolve unambigous column names?
+* Short syntax: alasql('order by a,b',[a]);
+
+> cat a.txt | alacon 'order by mid(_,1,5)' | cat
+
+* Short syntax: alasql('SELECT COLUMN _ FROM ? ORDER BY a',[a]);
+
+For browser:
+    SELECT COLUMN _ FROM ?
+For Node.js
+    SELECT COLUMN _ FROM TXT()
+
+* Short syntax: alasql('SELECT * FROM ? ORDER BY a',[a]);
+* 
+
+<button alasql-click='SELECT * FROM ? WHERE a = ? | src_items, test | items'>
+<div ng-repeat="item in items | alasql: ORDER BY a,b">
+
+* Angular Light Filter 
+http://jsfiddle.net/agershun/pTT5x/5/
+
+// Easy filter
+alight.filters.alasql = function(exp, scope) {
+    return function(value) {
+        return alasql(exp,[value,scope]);
+    }
+}
+
+<i al-repeat="it in [1,2,3,4,5,6,7,8,9] | alasql:WHERE _ <= :size">({{it}})</i>
+<a al-alasql="items | SELECT * FROM XLSX('mydata.xlsx')">aaaa</a>
+
+alasql("SELECT * FROM XLSX('#file',{upload:true})",[],function(res){
+	console.log(res);
+});
+
+        var iel = document.createElement('input');
+        iel.setAttribute('type','file');
+        iel.style.width = "500px";
+        iel.addEventListener('change', deptImportFileSelect.bind(this), false);
+
+
+
+	function deptImportFileSelect (event) {
+		var self = this;
+//		console.log('deptImportFileSelect');
+		var files = event.target.files;
+		var reader = new FileReader();
+		var name = files[0].name;
+		reader.onload = function(e) {
+			var data = e.target.result;
+			if(name.substr(-5).toLowerCase() == '.xlsx') {
+				workbook = XLSX.read(data, {type: 'binary'});
+			} else if(name.substr(-4).toLowerCase() == '.xls') {
+				workbook = XLS.read(data, {type: 'binary'});
+			} else {
+				alertify.error('Неправильный формат файла. Допустимые форматы: xlsx и xls');
+				return;
+			}
+			var s = '';
+			_.forEach(Object.keys(workbook.Sheets), function(sheetid){
+				self.sheets.push({sheetid:sheetid});
+			});
+
+			var line  = _.findIndex(this.sheets,{deptname:workbook.Sheets[Object.keys(workbook.Sheets)[0]].A2.v});
+			if(!_.isUndefined(line)) self.hsheetgrid.selectCell(line,0);
+
+			self.$scan();
+			self.hsheetgrid.render();
+		};
+		reader.readAsBinaryString(files[0]);	
+	}
+
+
+
+
+* SELECT SUM(_) FROM ?
+* SELECT q1._, q2._ AS q2_ FROM ? q1 JOIN ? q2 USING a
+* SELECT * FROM ? WHERE a IN ?
+* SELECT * FROM ? WHERE ? IN a
+* SELECT TEXT _ FROM TXT('aaa.txt') WHERE LEN(_) > 20 ORDER BY _
+* alacon bin + alaserver bin
 
 ### Version 0.0.33 - "WebSQL + Pretty + Bug Fixes" (priorities 1-2)
 

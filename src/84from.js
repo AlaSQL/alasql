@@ -6,6 +6,26 @@
 //
 */
 
+// Read data from any file
+alasql.from.FILE = function(filename, opts, cb, idx, query) {
+	if(typeof filename == 'string') {
+		fname = filename;
+	} else if(filename instanceof Event) {
+		fname = filename.target.files[0].name;
+	} else {
+		throw new Error("Wrong usage of FILE() function");
+	}
+	var parts = fname.split('.');
+//	console.log("parts",parts,parts[parts.length-1]);
+	var ext = parts[parts.length-1].toUpperCase();
+//	console.log("ext",ext);
+	if(alasql.from[ext]) {
+//		console.log(ext);
+		return alasql.from[ext](filename, opts, cb, idx, query);
+	} else {
+		throw new Error('Cannot recognize file type for loading');
+	}
+};
 
 
 // Read JSON file
@@ -201,8 +221,10 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var res;
 
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
+
+//	function processData(data) {
 		var workbook = X.read(data,{type:'binary'});
-//		console.log(workbook);
+		console.log(workbook);
 		var sheetid;
 		if(typeof opt.sheetid == 'undefined') {
 			sheetid = workbook.SheetNames[0];
@@ -227,7 +249,11 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
 			var col = alasql.utils.xlsnc(j);
 			if(opt.headers) {
-				hh[col] = workbook.Sheets[sheetid][col+""+row0].v;
+				if(workbook.Sheets[sheetid][col+""+row0]) {
+					hh[col] = workbook.Sheets[sheetid][col+""+row0].v;
+				} else {
+					hh[col] = col;
+				}
 			} else {
 				hh[col] = col;
 			}

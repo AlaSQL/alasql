@@ -52,21 +52,34 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
             success(data.toString());
         }
     } else {
-        // For browser
-        var xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    if (success)
-                        success(xhr.responseText);
-                } else {
-                    if (error)
-                        error(xhr);
+
+        if(typeof path == "string") {
+                    // For browser
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        if (success)
+                            success(xhr.responseText);
+                    } else {
+                        if (error)
+                            error(xhr);
+                    }
                 }
-            }
-        };
-        xhr.open("GET", path, asy); // Async
-        xhr.send();
+            };
+            xhr.open("GET", path, asy); // Async
+            xhr.send();
+        } else if(path instanceof Event) {
+            // console.log("event");
+            var files = path.target.files;
+            var reader = new FileReader();
+            var name = files[0].name;
+            reader.onload = function(e) {
+                var data = e.target.result;
+                success(data);
+            };
+            reader.readAsText(files[0]);    
+        }
     }
 };
 
@@ -81,17 +94,30 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
         success(arr.join(""));
 //        success(data);
     } else {
-        // For browser
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", path, asy); // Async
-        xhr.responseType = "arraybuffer";
-        xhr.onload = function() {
-            var data = new Uint8Array(xhr.response);
-            var arr = new Array();
-            for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-            success(arr.join(""));
-        };
-        xhr.send();
+
+        if(typeof path == "string") {
+            // For browser
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", path, asy); // Async
+            xhr.responseType = "arraybuffer";
+            xhr.onload = function() {
+                var data = new Uint8Array(xhr.response);
+                var arr = new Array();
+                for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                success(arr.join(""));
+            };
+            xhr.send();
+        } else if(path instanceof Event) {
+            // console.log("event");
+            var files = path.target.files;
+            var reader = new FileReader();
+            var name = files[0].name;
+            reader.onload = function(e) {
+                var data = e.target.result;
+                success(data);
+            };
+            reader.readAsBinaryString(files[0]);    
+        }
     };
 };
 
