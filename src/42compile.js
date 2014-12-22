@@ -363,7 +363,7 @@ yy.Select.prototype.compileGroup = function(query) {
 //console.log(allgroups);
 	allgroups.forEach(function(colid){
 		if(query.selectColumns[colid]) {
-	//		console.log(colid,'ok');
+//			console.log(colid,'ok');
 		} else {
 //			if(colid.indexOf())
 //			console.log(colid,'bad');	
@@ -371,6 +371,8 @@ yy.Select.prototype.compileGroup = function(query) {
 			if(query.sources.length > 0) tmpid = query.sources[0].alias;
 //			console.log(new yy.Column({columnid:colid}).toJavaScript('p',query.sources[0].alias));
 //			query.selectfns += 'r[\''+colid+'\']=p[\''+tmpid+'\'][\''+colid+'\'];';
+//console.log(374, colid);
+			query.removeKeys.push(colid);
 			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJavaScript('p',tmpid))+';';
 		}
 	});
@@ -675,17 +677,19 @@ yy.Select.prototype.compileFrom = function(query) {
 
 alasql.prepareFromData = function(data,array) {
 	var res = data;
-	if(array) {
+	if(typeof data == "string") {
+		res = data.split(/\r?\n/);
+		if(array) {
+			for(var i=0, ilen=res.length; i<ilen;i++) {
+				res[i] = [res[i]];
+			}
+		}
+	} else if(array) {
 		res = [];
 		for(var i=0, ilen=data.length; i<ilen;i++) {
 			res.push([data[i]]);
 		}
 //		console.log(res);
-	} else if(typeof data == "string") {
-		res = data.split(/\r?\n/);
-		for(var i=0, ilen=res.length; i<ilen;i++) {
-			res[i] = [res[i]];
-		}
 	} else if(typeof data == 'object' && !(data instanceof Array)) {
 //	} else if(typeof data == 'object' && !(typeof data.length == 'undefined')) {
 		res = [];
@@ -840,7 +844,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				ss.push("'"+escapeq(col.as)+"':1");
 				// Nothing
 			}
-			query.selectColumns[escapeq(col.expression.toString())] = true;
+			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = true;
 
 //			else if (col.aggregatorid == 'MAX') {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))

@@ -9,6 +9,8 @@ if(typeof exports === 'object') {
 
 describe('Test 183 - [] column', function() {
 
+if(false){
+
 	it("1. ARRAY()", function(done) {
 
   var arr = [];
@@ -41,8 +43,10 @@ var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GRO
       done();
   });
 
+}
     it("1. ARRAY()", function(done) {
-    
+
+/*    
         var res = alasql('SELECT [0],FIRST(_) FROM ? GROUP BY [0]',[[[1,10],[2,20],[3,30]]]);
         console.log(res);
 
@@ -51,9 +55,19 @@ var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GRO
 
         var res = alasql('SELECT _, SUM(_), COUNT(*) FROM ? GROUP BY _',[[1,2,3,1]]);
         console.log(res);
-
-        var res = alasql('SELECT column _*2 FROM ?',[[1,2,3,1]]);
+*/
+        var res = alasql('SELECT SUM(_) FROM ? GROUP BY _',[[1,2,3,1]]);
         console.log(res);
+
+
+        var res = alasql('SELECT COLUMN LEN(_) FROM ?',[["aaa","aabbb","sssd"]]);
+        console.log(res);
+
+        var res = alasql('SELECT _, LEN(_) FROM ?',["aaa\naabbb\nsssd"]);
+        console.log(res);
+
+        // var res = alasql('SELECT column _*2 FROM ?',[[1,2,3,1]]);
+        // console.log(res);
 
 
       done();
