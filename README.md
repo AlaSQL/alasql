@@ -37,8 +37,8 @@ Check Alasql vs other JavaScript SQL databases and other data processing librari
  * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
  * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
  * Alasql vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
- * [Alasql vs. Lodash](http://jsperf.com/alasql-vs-lodash)
- * [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
+ * [Alasql vs. Lodash](http://jsperf.com/alasql-vs-lodash), [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
+ * [Alasql vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
 
 ## What is new?
 
@@ -235,7 +235,7 @@ Alasql.js supports following subset of SELECT syntax:
 * SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(expression7) AS alias8, *, table2.*
 * TOP number
 * FROM table1, table2, (SELECT * FROM table3) alias
-* LEFT / RIGHT / INNER / OUTER / ANTI / SEMI / CROSS JOIN table2 ON condition / USING columns
+* LEFT / RIGHT / INNER / OUTER / ANTI / SEMI / CROSS / NATURAL JOIN table2 ON condition / USING columns
 * WHERE condition
 * GROUP BY column1, column2, ROLLUP(a,b), CUBE(c,d,e), GROUPING SETS(g,h)
 * HAVING condition

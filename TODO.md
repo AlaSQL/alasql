@@ -1,7 +1,8 @@
 # To do
 ## URGENT
 
-* Change CSV parsing algorithm to [d3.csv](https://github.com/mbostock/d3/blob/master/src/dsv/dsv.js)
+* Fix *, table1.*, table2.* with common columns issue
+* Tests!
 
 Option:
 * alasql.yy.options.braliteral = true; [column]

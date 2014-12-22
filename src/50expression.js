@@ -392,23 +392,47 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log(392,this.columnid);
 	var s = '';
 	if(!this.tableid && tableid == '' && !defcols) {
-		s = context+'[\''+this.columnid+'\']';
+		if(this.columnid != '') {
+			s = context+'[\''+this.columnid+'\']';
+		} else {
+			s = context;
+		}
 	} else {
 		if(this.tableid) {
-			s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
+			if(this.columnid != '') {
+				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
+			} else {
+				s = context+'[\''+(this.tableid) + '\']';
+			}
 		} else if(defcols) {
 			var tbid = defcols[this.columnid];
 			if(tbid == '-') {
 				throw new Error('Cannot resolve column "'+this.columnid+'" because it exists in two source tables');
 			} else if(tbid) {
-				s = context+'[\''+(tbid) + '\'][\''+this.columnid+'\']';
+				if(this.columnid != '') {
+					s = context+'[\''+(tbid) + '\'][\''+this.columnid+'\']';
+				} else {
+					s = context+'[\''+(tbid) + '\']';
+				};
 			} else {
-				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+				if(this.columnid != '') {
+					s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+				} else {
+					s = context+'[\''+(this.tableid || tableid) + '\']';
+				};
 			}
 		} else if(tableid == -1) {
-			s = context+'[\''+this.columnid+'\']';
+//			if(this.columnid != '') {
+				s = context+'[\''+this.columnid+'\']';
+//			} else {
+//				s = context;				
+//			}
 		} else {
-			s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+			if(this.columnid != '') {
+				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+			} else {
+				s = context+'[\''+(this.tableid || tableid) + '\']';
+			}
 		}
 	}
 //	console.log(context,s);
