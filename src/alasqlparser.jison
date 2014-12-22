@@ -1515,6 +1515,8 @@ JsonPrimitiveValue
 		{ $$ = ""+$1.value; }
 	| LogicValue
 		{ $$ = $1.value; }
+	| Column
+		{ $$ = $1; }	
 	| NullValue
 		{ $$ = $1.value; }
 	| ParamValue
@@ -1556,7 +1558,7 @@ JsonProperty
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }		
-	| LITERAL COLON JsonValue
+	| Literal COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }		
 /*	| STRING COLON ParamValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }	
