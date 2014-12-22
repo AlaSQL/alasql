@@ -11,7 +11,7 @@ yy.FuncValue.prototype.toString = function() {
 	var s = '';
     
     if(alasql.fn[this.funcid]) s += this.funcid;
-    else if(alasql.stdlib[this.funcid] || alasql.stdfn[this.funcid]) s += this.funcid.toUpperCase();
+    else if(alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()]) s += this.funcid.toUpperCase();
     
     s += '(';
 	if(this.args && this.args.length > 0) {
@@ -50,7 +50,7 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 		}
 	} else if(alasql.stdfn[funcid.toUpperCase()]) {
 		if(this.newid) s+= 'new ';
-		s += 'alasql.stdfn.'+this.funcid+'(';
+		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
 //		if(this.args) s += this.args.toJavaScript(context, tableid);
 		if(this.args && this.args.length > 0) {
 			s += this.args.map(function(arg){
