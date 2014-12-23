@@ -224,7 +224,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 //	function processData(data) {
 		var workbook = X.read(data,{type:'binary'});
-		console.log(workbook);
+//		console.log(workbook);
 		var sheetid;
 		if(typeof opt.sheetid == 'undefined') {
 			sheetid = workbook.SheetNames[0];
