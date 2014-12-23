@@ -148,6 +148,7 @@
 'PRIOR'                                        	return 'PRIOR'
 'QUERY'                                        	return 'QUERY'
 'RECORDSET'                                     return 'RECORDSET'
+'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
 'RELATIVE'                                      return 'RELATIVE'
 'RENAME'                                        return 'RENAME'
@@ -779,6 +780,7 @@ Aggregator
 	| LAST { $$ = "LAST"; }
 	| AGGR { $$ = "AGGR"; }
 	| ARRAY { $$ = "ARRAY"; }
+/*	| REDUCE { $$ = "REDUCE"; } */
 	;
 
 FuncValue
