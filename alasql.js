@@ -462,7 +462,14 @@ case 197:
  this.$ = "ARRAY"; 
 break;
 case 198:
- this.$ = new yy.FuncValue({funcid: $$[$0-3], args: $$[$0-1]}); 
+ 
+		    if(alasql.aggr[$$[$0-3]]) {
+		    	this.$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
+                      funcid: $$[$0-3], expression: $$[$0-1].pop() });
+		    } else {
+			    this.$ = new yy.FuncValue({funcid: $$[$0-3], args: $$[$0-1]}); 
+			};
+		
 break;
 case 199:
  this.$ = new yy.FuncValue({ funcid: $$[$0-2] }) 
@@ -2382,6 +2389,7 @@ alasql.from = {}; // FROM functions
 alasql.into = {}; // INTO functions
 
 alasql.fn = {};
+alasql.aggr = {};
 
 alasql.busy = 0;
 
@@ -4469,6 +4477,8 @@ yy.Select.prototype.compileGroup = function(query) {
 				} else if(col.aggregatorid == 'AGGR') {
 					aft += ',g[\''+col.as+'\']='+col.expression.toJavaScript('g',-1); 
 					return '';
+				} else if(col.aggregatorid == 'REDUCE') {
+					return '\''+col.as+'\':alasql.aggr[\''+col.funcid+'\'](r[\''+col.as+'\']),'; 
 				}
 				return '';
 			} else return '';
@@ -4552,6 +4562,8 @@ yy.Select.prototype.compileGroup = function(query) {
 	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
 				} else if(col.aggregatorid == 'AGGR') {
 					return 'g[\''+col.as+'\']='+col.expression.toJavaScript('g',-1)+';'; 
+				} else if(col.aggregatorid == 'REDUCE') {
+					return 'g[\''+col.as+'\']=alasql.aggr.'+col.funcid+'(r[\''+col.as+'\'],g[\''+col.as+'\']);'; 
 				}
 				return '';
 			} else return '';
@@ -4574,7 +4586,7 @@ yy.Select.prototype.compileGroup = function(query) {
 		//s += 'group.count++;';
 
 		s += '}';
-	//	console.log(s, this.group);
+//		console.log(s, this.group);
 
 	});
 
@@ -4867,7 +4879,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			if(!col.as) col.as = escapeq(col.toString());
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  
-				col.aggregatorid == 'AVG' || col.aggregatorid == 'ARRAY' 
+				col.aggregatorid == 'AVG' || col.aggregatorid == 'ARRAY' || col.aggregatorid == 'REDUCE'
 				) {
 				ss.push("'"+escapeq(col.as)+'\':'+col.expression.toJavaScript("p",query.defaultTableid,query.defcols))	
 			} else if (col.aggregatorid == 'COUNT') {
@@ -5691,7 +5703,9 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 
 yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
-	var s = this.aggregatorid+'(';
+	var s = '';
+	if(this.aggregatorid == 'REDUCE') s += this.funcid+'(';
+	else s += this.aggregatorid+'(';
 	if(this.expression) s += this.expression.toString();
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
@@ -5754,6 +5768,7 @@ yy.FuncValue.prototype.toString = function() {
 	var s = '';
     
     if(alasql.fn[this.funcid]) s += this.funcid;
+    else if(alasql.aggr[this.funcid]) s += this.funcid;
     else if(alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()]) s += this.funcid.toUpperCase();
     
     s += '(';
@@ -5801,7 +5816,9 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 			}).join(',');
 		};
 		s += ')';		
-	} 
+	} else {
+		// Aggregator
+	}
 //console.log('userfn:',s,this);
 
 //	if(this.alias) s += ' AS '+this.alias;
@@ -5873,7 +5890,7 @@ stdlib.ROUND = function(s,d) {
 		return 'Math.round('+s+')';
 	}
 }
-alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
+stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
 stdlib.UPPER = stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}

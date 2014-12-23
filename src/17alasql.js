@@ -37,6 +37,7 @@ alasql.from = {}; // FROM functions
 alasql.into = {}; // INTO functions
 
 alasql.fn = {};
+alasql.aggr = {};
 
 alasql.busy = 0;
 

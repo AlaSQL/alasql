@@ -28,11 +28,12 @@ describe('Test 185 - IN Expression', function() {
     });
     it("1. REDUCE Aggregator", function(done) {
       var data = [{a:[1,2,3,4,1,2,2,3],b:1},{a:[10],b:10}];
-      alasql.fn.summa = function(a,b){
-        return a+b;
+      alasql.aggr.Summa = function(v,s){
+//        console.log(v,s);
+        return v+(s|0);
       };
-//      var res = alasql('SELECT VALUE REDUCE(b,summa,0) FROM ?',[data]);
-//      console.log(res);
+      var res = alasql('SELECT VALUE Summa(b) FROM ?',[data]);
+      console.log(res);
       done();
     });
 });

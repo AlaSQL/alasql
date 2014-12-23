@@ -11,6 +11,7 @@ yy.FuncValue.prototype.toString = function() {
 	var s = '';
     
     if(alasql.fn[this.funcid]) s += this.funcid;
+    else if(alasql.aggr[this.funcid]) s += this.funcid;
     else if(alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()]) s += this.funcid.toUpperCase();
     
     s += '(';
@@ -58,7 +59,9 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 			}).join(',');
 		};
 		s += ')';		
-	} 
+	} else {
+		// Aggregator
+	}
 //console.log('userfn:',s,this);
 
 //	if(this.alias) s += ' AS '+this.alias;
@@ -130,7 +133,7 @@ stdlib.ROUND = function(s,d) {
 		return 'Math.round('+s+')';
 	}
 }
-alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
+stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
 stdlib.UPPER = stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}

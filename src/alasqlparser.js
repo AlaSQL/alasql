@@ -410,7 +410,14 @@ case 197:
  this.$ = "ARRAY"; 
 break;
 case 198:
- this.$ = new yy.FuncValue({funcid: $$[$0-3], args: $$[$0-1]}); 
+ 
+		    if(alasql.aggr[$$[$0-3]]) {
+		    	this.$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
+                      funcid: $$[$0-3], expression: $$[$0-1].pop() });
+		    } else {
+			    this.$ = new yy.FuncValue({funcid: $$[$0-3], args: $$[$0-1]}); 
+			};
+		
 break;
 case 199:
  this.$ = new yy.FuncValue({ funcid: $$[$0-2] }) 

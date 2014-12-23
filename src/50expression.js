@@ -449,7 +449,9 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 
 yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
-	var s = this.aggregatorid+'(';
+	var s = '';
+	if(this.aggregatorid == 'REDUCE') s += this.funcid+'(';
+	else s += this.aggregatorid+'(';
 	if(this.expression) s += this.expression.toString();
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;

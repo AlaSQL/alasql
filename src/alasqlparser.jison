@@ -785,10 +785,19 @@ Aggregator
 
 FuncValue
 /*	: LITERAL LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({funcid: $1, expression: $3}); }
+		{ 
+		    $$ = new yy.FuncValue({funcid: $1, expression: $3}); 
+		}
 */	
 	: Literal LPAR ExprList RPAR
-		{ $$ = new yy.FuncValue({funcid: $1, args: $3}); }
+		{ 
+		    if(alasql.aggr[$1]) {
+		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
+                      funcid: $1, expression: $3.pop() });
+		    } else {
+			    $$ = new yy.FuncValue({funcid: $1, args: $3}); 
+			};
+		}
 	| Literal LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	;

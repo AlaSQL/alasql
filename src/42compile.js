@@ -441,6 +441,8 @@ yy.Select.prototype.compileGroup = function(query) {
 				} else if(col.aggregatorid == 'AGGR') {
 					aft += ',g[\''+col.as+'\']='+col.expression.toJavaScript('g',-1); 
 					return '';
+				} else if(col.aggregatorid == 'REDUCE') {
+					return '\''+col.as+'\':alasql.aggr[\''+col.funcid+'\'](r[\''+col.as+'\']),'; 
 				}
 				return '';
 			} else return '';
@@ -524,6 +526,8 @@ yy.Select.prototype.compileGroup = function(query) {
 	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
 				} else if(col.aggregatorid == 'AGGR') {
 					return 'g[\''+col.as+'\']='+col.expression.toJavaScript('g',-1)+';'; 
+				} else if(col.aggregatorid == 'REDUCE') {
+					return 'g[\''+col.as+'\']=alasql.aggr.'+col.funcid+'(r[\''+col.as+'\'],g[\''+col.as+'\']);'; 
 				}
 				return '';
 			} else return '';
@@ -546,7 +550,7 @@ yy.Select.prototype.compileGroup = function(query) {
 		//s += 'group.count++;';
 
 		s += '}';
-	//	console.log(s, this.group);
+//		console.log(s, this.group);
 
 	});
 
@@ -839,7 +843,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			if(!col.as) col.as = escapeq(col.toString());
 			if (col.aggregatorid == 'SUM' || col.aggregatorid == 'MAX' ||  col.aggregatorid == 'MIN' ||
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  
-				col.aggregatorid == 'AVG' || col.aggregatorid == 'ARRAY' 
+				col.aggregatorid == 'AVG' || col.aggregatorid == 'ARRAY' || col.aggregatorid == 'REDUCE'
 				) {
 				ss.push("'"+escapeq(col.as)+'\':'+col.expression.toJavaScript("p",query.defaultTableid,query.defcols))	
 			} else if (col.aggregatorid == 'COUNT') {
