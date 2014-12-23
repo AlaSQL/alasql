@@ -77,6 +77,7 @@ describe('Test 113 - SELECT ', function(){
 	 		' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
 	 		' GROUP BY schoolid, courseid, studentname '+
 	 		' ORDER BY studentname DESC' );
+//		console.table(res);
 		assert.equal(5, res.length);
 		assert.equal(2, res[4].schoolid);
 		done();
@@ -86,7 +87,6 @@ describe('Test 113 - SELECT ', function(){
 		var res = alasql.exec('SELECT students.schoolid '+
 			' FROM students '+
 			' JOIN courses USING courseid');
-
 		assert.equal(4, res.length);
 		done();
 	});

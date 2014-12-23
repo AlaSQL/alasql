@@ -15,6 +15,12 @@ var Query = alasql.Query = function(params){
 	extend(this,params);
 };
 
+var Recordset = alasql.Recordset = function(params){
+	// Data array
+	extend(this,params);
+};
+
+
 // View = function(){
 // 	this.data = [];
 // 	this.columns = [];

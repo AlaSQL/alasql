@@ -147,6 +147,7 @@
 'PRIMARY'										return 'PRIMARY'
 'PRIOR'                                        	return 'PRIOR'
 'QUERY'                                        	return 'QUERY'
+'RECORDSET'                                     return 'RECORDSET'
 'REFERENCES'                                    return 'REFERENCES'
 'RELATIVE'                                      return 'RELATIVE'
 'RENAME'                                        return 'RENAME'
@@ -167,6 +168,7 @@
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
+'TEXT'											return 'TEXT'
 'THEN'											return 'THEN'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
@@ -391,7 +393,9 @@ SelectClause
 		{ $$ = new yy.Select({ columns:$4, all:true }); yy,extend($$, $1);yy.extend($$, $3); }
 	| SelectModifier TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$3 }); yy,extend($$, $1);yy.extend($$, $2); }
-	;
+/*	| 
+		{ $$ = new yy.Select({columns:[new yy.Column({columnid:'_', modifier:'COLUMN'})]});}
+*/	;
 
 SelectModifier
 	: SELECT
@@ -404,6 +408,12 @@ SelectModifier
 		{ $$ = {modifier:'COLUMN'}}
 	| SELECT MATRIX
 		{ $$ = {modifier:'MATRIX'}}
+	| SELECT TEXT
+		{ $$ = {modifier:'TEXT'}}
+	| SELECT INDEX
+		{ $$ = {modifier:'INDEX'}}
+	| SELECT RECORDSET
+		{ $$ = {modifier:'RECORDSET'}}
 	;
 
 TopClause
@@ -954,6 +964,13 @@ Op
 	| Expression NOT IN LPAR ExprList RPAR
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$5}); }
 
+	| Expression IN ColFunc
+		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+
+	| Expression NOT IN ColFunc
+		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
+
+
 	/* 
 		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar 
 		at least, I do not know how.
@@ -964,6 +981,14 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
 	;
 
+ColFunc
+	: Column
+		{ $$ = $1;}
+	| FuncValue
+		{ $$ = $1;}
+	| AT LPAR Expression RPAR
+		{ $$ = $3;}	
+	;
 
 CondOp 
 	: GT { $$ = $1; }

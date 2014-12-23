@@ -33,7 +33,7 @@ describe('Test 141 text as source', function() {
 	it("2. On string", function(done){
 
 		var txt = "one\ntwo\nthree\nfour\nfive\nsix\r\nseven\neight\r\nnine\nten";
-		var days = alasql('select column * from ? where len([0]) <= 3',[txt]);
+		var days = alasql('select column _ from ? where len(_) <= 3',[txt]);
 		assert.deepEqual(days, ['one','two','six','ten']);
 
 		var res = alasql('select * from ?',[myfn]);

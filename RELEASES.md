@@ -14,20 +14,31 @@
 
 ## Next Versions
 
+
 alasql("SELECT RECORDSET * FROM XLSX(?)",[recordset]);
+alasql("SELECT KEY a, ARRAY(_) FROM ?",[data]); == _.groupBy(data,"a"); like Lodash
+alasql("SELECT KEY ? AS a, ARRAY(_) FROM ? GROUP BY a",[myFn, data]); 
+alasql('SELECT *, REMOVE(hashKey) FROM ?',[a]);
+a = #->a
+
+SELECT * FROM MSSQL("select * from a",{database:"aas"})
+extend(a._,b._) as ab
+
+alasql.Select('*').compile(dbid);
+alasql.Select('*').exec([a,b],cb);
+alasql.From("").
+
+/* http://en.wikipedia.org/wiki/Language_Integrated_Query */
 
 Filters:
 alasql("GROUP BY _ HAVING COUNT(*) > 2 WHERE _ < 100 ORDER BY _ DESC",[data]);
 
-alasql("SELECT GROUP a, ARRAY(_) FROM ?",[data]); == _.groupBy(data,"a");
+alasql('SELECT a FROM ? GROUP BY ?',[data, groupFn]);
+var res = alasql('GROUP BY ?',[data,groupFn]);
+var res = alasql('GROUP BY MID(a,1,1)',[data]);
+var res = alasql('group by _ having count(*) > 10', [data]);
 
 
-
-1. Upload XLSX() and CSV() file in browser
-
-SELECT * FROM CSV("#multifiles",{upload:true});
-SELECT * FROM CSV(".multifiles");
-SELECT * FROM CSV("#multifiles");
 
 * * - how to resolve unambigous column names?
 * Short syntax: alasql('order by a,b',[a]);

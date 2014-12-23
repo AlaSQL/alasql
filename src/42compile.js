@@ -361,7 +361,9 @@ yy.Select.prototype.compileGroup = function(query) {
 
 //console.log(42,294, this.group);
 //console.log(allgroups);
+//		console.log(42,364,query.selectColumns)
 	allgroups.forEach(function(colid){
+//		console.log(42,365,colid, query.selectColumns[colid])
 		if(query.selectColumns[colid]) {
 //			console.log(colid,'ok');
 		} else {
@@ -372,7 +374,7 @@ yy.Select.prototype.compileGroup = function(query) {
 //			console.log(new yy.Column({columnid:colid}).toJavaScript('p',query.sources[0].alias));
 //			query.selectfns += 'r[\''+colid+'\']=p[\''+tmpid+'\'][\''+colid+'\'];';
 //console.log(374, colid);
-			query.removeKeys.push(colid);
+			if(Object.keys(query.selectColumns).length != 0) query.removeKeys.push(colid);
 			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJavaScript('p',tmpid))+';';
 		}
 	});

@@ -11,6 +11,8 @@ alasql.fn.String = String;
 alasql.fn.Boolean = Boolean;
 */
 
+stdfn.EXTEND = alasql.utils.extend;
+
 stdfn.DATE = function (d) {
 	return new Date(d);
 };

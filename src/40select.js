@@ -243,18 +243,33 @@ yy.Select.prototype.compile = function(databaseid) {
 function modify(query, res) {
 	if(query.modifier == 'VALUE') {
 //		console.log(222,res);
-		var key = Object.keys(res[0])[0];
-		res = res[0][key];
+		if(res.length > 0) {
+			var key;
+			if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
+			else key = Object.keys(res[0])[0];
+			res = res[0][key];
+		} else {
+			res = undefined;
+		}
 	} if(query.modifier == 'ROW') {
-		var a = [];
-		for(var key in res[0]) {
-			a.push(res[0][key]);
-		};
-		res = a;
+		if(res.length > 0) {
+			var key;
+			if(query.columns) key = query.columns[0].columnid;
+			else key = Object.keys(res[0])[0];
+			var a = [];
+			for(var key in res[0]) {
+				a.push(res[0][key]);
+			};
+			res = a;
+		} else {
+			res = undefined;
+		}
 	} if(query.modifier == 'COLUMN') {
 		var ar = [];
 		if(res.length > 0) {
-			var key = Object.keys(res[0])[0];
+			var key;
+			if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
+			else key = Object.keys(res[0])[0];
 			for(var i=0, ilen=res.length; i<ilen; i++){
 				ar.push(res[i][key]);
 			}
@@ -262,6 +277,35 @@ function modify(query, res) {
 		res = ar;
 	} if(query.modifier == 'MATRIX') {
 		res = arrayOfArrays(res);
+	} if(query.modifier == 'INDEX') {
+		var ar = {};
+		var key,val;
+		if(query.columns && query.columns.length > 0) {
+			key = query.columns[0].columnid;
+			val = query.columns[1].columnid;
+		} else {
+			var okeys = Object.keys(res[0]);
+			key = okeys[0];
+			val = okeys[1];
+		}
+		for(var i=0, ilen=res.length; i<ilen; i++){
+			ar[res[i][key]] = res[i][val];
+		}
+		res = ar;
+//		res = arrayOfArrays(res);
+	} if(query.modifier == 'RECORDSET') {
+		res = new alasql.Recordset({data:res, columns:query.columns});
+//		res = arrayOfArrays(res);
+	} if(query.modifier == 'TEXT') {
+		var key;
+		if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
+		else key = Object.keys(res[0])[0];
+		var s = '';
+		for(var i=0, ilen=res.length; i<ilen; i++){
+			res[i] = res[i][key];
+		}
+		res = res.join('\n');
+//		res = arrayOfArrays(res);
 	}
 	return res;
 };

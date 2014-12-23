@@ -186,7 +186,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //console.log(s);
 			return s;
 		} else {
-			throw new Error('Wrong IN operator without SELECT part');
+			var s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
+			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			return s;
+//		} else {
+//			throw new Error('Wrong IN operator without SELECT part');
 		}
 	};
 

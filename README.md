@@ -33,9 +33,10 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 * Plus some [JavaScript sugar](#Sugar)
 * Alasql is fast, because it uses some optimization methods. 
 
-Check Alasql vs other JavaScript SQL databases and other data processing libraries: 
+Check Alasql vs other JavaScript SQL databases and data processing libraries: 
  * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
  * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
+ * [Alasql vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - test on 2^20 records
  * Alasql vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
  * [Alasql vs. Lodash](http://jsperf.com/alasql-vs-lodash), [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
  * [Alasql vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
