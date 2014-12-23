@@ -14,6 +14,15 @@
 
 ## Next Versions
 
+alasql("SELECT RECORDSET * FROM XLSX(?)",[recordset]);
+
+Filters:
+alasql("GROUP BY _ HAVING COUNT(*) > 2 WHERE _ < 100 ORDER BY _ DESC",[data]);
+
+alasql("SELECT GROUP a, ARRAY(_) FROM ?",[data]); == _.groupBy(data,"a");
+
+
+
 1. Upload XLSX() and CSV() file in browser
 
 SELECT * FROM CSV("#multifiles",{upload:true});
@@ -65,31 +74,6 @@ alasql("SELECT * FROM XLSX('#file',{upload:true})",[],function(res){
 	function deptImportFileSelect (event) {
 		var self = this;
 //		console.log('deptImportFileSelect');
-		var files = event.target.files;
-		var reader = new FileReader();
-		var name = files[0].name;
-		reader.onload = function(e) {
-			var data = e.target.result;
-			if(name.substr(-5).toLowerCase() == '.xlsx') {
-				workbook = XLSX.read(data, {type: 'binary'});
-			} else if(name.substr(-4).toLowerCase() == '.xls') {
-				workbook = XLS.read(data, {type: 'binary'});
-			} else {
-				alertify.error('Неправильный формат файла. Допустимые форматы: xlsx и xls');
-				return;
-			}
-			var s = '';
-			_.forEach(Object.keys(workbook.Sheets), function(sheetid){
-				self.sheets.push({sheetid:sheetid});
-			});
-
-			var line  = _.findIndex(this.sheets,{deptname:workbook.Sheets[Object.keys(workbook.Sheets)[0]].A2.v});
-			if(!_.isUndefined(line)) self.hsheetgrid.selectCell(line,0);
-
-			self.$scan();
-			self.hsheetgrid.render();
-		};
-		reader.readAsBinaryString(files[0]);	
 	}
 
 
