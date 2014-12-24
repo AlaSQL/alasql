@@ -14,6 +14,16 @@
 
 ## Next Versions
 
+http://stackoverflow.com/questions/25677207/count-total-with-two-criterias-using-lodash/27634849#27634849
+// User-defined aggregator to concat arrays
+alasql.aggr.CONCAT = function(v,s) {
+    return (s||[]).concat(v);
+};
+
+SELECT VALUE CONCAT(_)
+
+http://stackoverflow.com/questions/25047463/group-by-and-sum-using-underscore-lodash/27634325#27634325
+SELECT INDEX platformId, SUM(payout) AS payout, SUM(numOfPeople) AS numOfPeople FROM ? GROUP BY platformId;
 
 alasql("SELECT RECORDSET * FROM XLSX(?)",[recordset]);
 alasql("SELECT KEY a, ARRAY(_) FROM ?",[data]); == _.groupBy(data,"a"); like Lodash

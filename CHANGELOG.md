@@ -1,5 +1,10 @@
 # Changelog
 
+
+### 0.0.35 (23.12.2014 - .12.2014)
+
+* REDUCE Aggregator
+
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 
 * Added [?] array conversion
