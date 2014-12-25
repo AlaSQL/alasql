@@ -28,7 +28,7 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 * Alasql was written with pure JavaScript and does not use WebSQL database. 
 * Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
-* Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavScript and NoSQL databases
+* Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavaScript and NoSQL databases
 * Alasql supports IndexedDB and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)
 * Plus some [JavaScript sugar](#Sugar)
 * Alasql is fast, because it uses some optimization methods. 
@@ -465,8 +465,8 @@ You can use browser localStorage and [DOM-storage](https://github.com/node-brows
     var res = alasql('SELECT * FROM MyAtlas.City');
     console.log(res);
 ```
-Try this sample in [jsFiddel](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample 
-two or three times, and Alasql store more and more data in localStorage. Here, "Atals" is 
+Try this sample in [jsFiddle](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample 
+two or three times, and Alasql store more and more data in localStorage. Here, "Atlas" is 
 the name of localStorage database, where "MyAtlas" is a memory Alasql database.
 
 You can use localStorage in two modes: SET AUTOCOMMIT ON to immediate save data
