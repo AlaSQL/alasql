@@ -97,7 +97,12 @@ yy.Select.prototype.OrderBy = function(){
 	var self = this;
 	var agrs = [];
 
-	if(arguments.length > 1) {
+	self.order = [];
+
+	if(arguments.length == 0) {
+//		self.order.push(new yy.OrderExpression({expression: new yy.Column({columnid:"_"}), direction:'ASC'}));		
+		args = ["_"];
+	} else if(arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);;
 	} else if(arguments.length == 1) {
 		if(arguments[0] instanceof Array) {
@@ -109,18 +114,23 @@ yy.Select.prototype.OrderBy = function(){
 		throw new Error('Wrong number of arguments of Select() function');
 	}
 
-	self.order = [];
-
-	args.forEach(function(arg){
-		var expr = new yy.Column({columnid:arg});
-		if(typeof arg == 'function'){
-			expr = new yy.Column({columnid:'*',func:expr});
-		}
-		self.order.push(new yy.OrderExpression({expression: expr, direction:'ASC'}));
-	});
-
+	if(args.length > 0) {
+		args.forEach(function(arg){
+			var expr = new yy.Column({columnid:arg});
+			if(typeof arg == 'function'){
+				expr = arg;
+			}
+			self.order.push(new yy.OrderExpression({expression: expr, direction:'ASC'}));
+		});
+	}
 	return self;
 }
+
+yy.Select.prototype.Top = function(topnum){
+	var self = this;
+	self.top = new yy.NumValue({value:topnum});
+	return self;
+};
 
 yy.Select.prototype.GroupBy = function(){
 	var self = this;
@@ -151,7 +161,7 @@ yy.Select.prototype.GroupBy = function(){
 yy.Select.prototype.Where = function(expr){
 	var self = this;
 	if(typeof expr == 'function' ) {
-		console.log(expr);
+		self.where = expr;
 	}
 	return self;
 };

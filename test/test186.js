@@ -51,9 +51,12 @@ describe('Test 186 - Linq Syntax', function() {
         ];
 
       var exampleArray = alasql(myList)
-//        .Where(function(item){ return item.FirstName == "Chris"; })
-         .OrderBy(function(item) { return item.FirstName; })
-         .Select(function(item){ return item.FirstName; }).exec();
+         .Where(function(p){ return p[undefined].FirstName == "Chris"; })
+         .Select(function(item){ return item.FirstName; })
+         .OrderBy(function(name){ return name; })
+//          .OrderBy('_')
+//         .Top(2)
+         .exec();
 
       console.log(58,exampleArray);
       done();

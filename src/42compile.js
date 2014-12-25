@@ -888,10 +888,14 @@ yy.Select.prototype.compileSelect2 = function(query) {
 
 yy.Select.prototype.compileWhere = function(query) {
 	if(this.where) {
-		s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
-		query.wherefns = s;
+		if(typeof this.where == "function") {
+			return this.where;
+		} else {
+			s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
+			query.wherefns = s;
 //		console.log(s);
-		return new Function('p,params,alasql','return '+s);
+			return new Function('p,params,alasql','return '+s);
+		}
 	} else return function(){return true};
 };
 
@@ -986,11 +990,12 @@ function optimizeWhereJoin (query, ast) {
 
 yy.Select.prototype.compileOrder = function (query) {
 	if(this.order) {
-			console.log(990, this.order);
+//			console.log(990, this.order);
 		if(this.order && this.order.length == 1 && this.order[0].expression 
-			 && this.order[0].expression.columnid == '*' && this.order[0].expression.func) {
-			console.log(991);
-			var func = this.order[0].expression.func;
+			 && typeof this.order[0].expression == "function") {
+//			console.log(991, this.order[0]);
+			var func = this.order[0].expression;
+//			console.log(994, func);
 			return function(a,b){
 				var ra = func(a),rb = func(b);
 				if(ra>rb) return 1;
@@ -1017,9 +1022,14 @@ yy.Select.prototype.compileOrder = function (query) {
 			// COLLATE NOCASE
 			if(ord.nocase) columnid += '.toUpperCase()';
 
+			if(columnid == '_') {
+				s += 'if(a'+dg+(ord.direction == 'ASC'?'>':'<')+'b'+dg+')return 1;';
+				s += 'if(a'+dg+'==b'+dg+'){';
+			} else {
 			// TODO Add date comparision
-			s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
-			s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
+				s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
+				s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
+			}
 			sk += '}';
 		});
 		s += 'return 0;';

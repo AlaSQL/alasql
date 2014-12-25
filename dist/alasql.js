@@ -4637,7 +4637,9 @@ yy.Select.prototype.compileFrom = function(query) {
 		} else if(tq instanceof yy.ParamValue) {
 			query.aliases[alias] = {type:'paramvalue'};
 		} else if(tq instanceof yy.FuncValue) {
-			query.aliases[alias] = {type:'paramvalue'};
+			query.aliases[alias] = {type:'funcvalue'};
+		} else if(tq instanceof yy.FromData) {
+			query.aliases[alias] = {type:'fromdata'};
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -4726,6 +4728,12 @@ yy.Select.prototype.compileFrom = function(query) {
 //	console.log(s);
 			source.datafn = new Function('query, params, cb, idx',s);
 
+		} else if(tq instanceof yy.FromData) {
+				source.datafn = function(query,params,cb,idx) {
+					var res = tq.data;
+					if(cb) res = cb(res,idx,query);
+					return res;
+				}				
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -4824,11 +4832,14 @@ yy.Select.prototype.compileSelect1 = function(query) {
 	var s = 'var r={';
 	var sp = '';
 	var ss = [];
+
 	this.columns.forEach(function(col){
 //console.log(col);		
 		if(col instanceof yy.Column) {
 			if(col.columnid == '*') {
-				if(col.tableid) {
+				if(col.func) {
+					sp += 'r=params[\''+col.param+'\'](p[\''+query.sources[0].alias+'\'],p,params,alasql);';
+				} else if(col.tableid) {
 					//Copy all
 					var ret = compileSelectStar(query, col.tableid);
 					if(ret.s)  ss = ss.concat(ret.s);
@@ -4934,10 +4945,14 @@ yy.Select.prototype.compileSelect2 = function(query) {
 
 yy.Select.prototype.compileWhere = function(query) {
 	if(this.where) {
-		s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
-		query.wherefns = s;
+		if(typeof this.where == "function") {
+			return this.where;
+		} else {
+			s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
+			query.wherefns = s;
 //		console.log(s);
-		return new Function('p,params,alasql','return '+s);
+			return new Function('p,params,alasql','return '+s);
+		}
 	} else return function(){return true};
 };
 
@@ -5032,6 +5047,20 @@ function optimizeWhereJoin (query, ast) {
 
 yy.Select.prototype.compileOrder = function (query) {
 	if(this.order) {
+//			console.log(990, this.order);
+		if(this.order && this.order.length == 1 && this.order[0].expression 
+			 && typeof this.order[0].expression == "function") {
+//			console.log(991, this.order[0]);
+			var func = this.order[0].expression;
+//			console.log(994, func);
+			return function(a,b){
+				var ra = func(a),rb = func(b);
+				if(ra>rb) return 1;
+				if(ra==rb) return 0;
+				return -1;
+			}
+		};
+
 		var s = '';
 		var sk = '';
 		this.order.forEach(function(ord){
@@ -5050,9 +5079,14 @@ yy.Select.prototype.compileOrder = function (query) {
 			// COLLATE NOCASE
 			if(ord.nocase) columnid += '.toUpperCase()';
 
+			if(columnid == '_') {
+				s += 'if(a'+dg+(ord.direction == 'ASC'?'>':'<')+'b'+dg+')return 1;';
+				s += 'if(a'+dg+'==b'+dg+'){';
+			} else {
 			// TODO Add date comparision
-			s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
-			s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
+				s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
+				s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
+			}
 			sk += '}';
 		});
 		s += 'return 0;';
@@ -5211,6 +5245,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 			} else if(fr instanceof yy.ParamValue) {
 
 			} else if(fr instanceof yy.FuncValue) {
+
+			} else if(fr instanceof yy.FromData) {
 
 			} else {
 				throw new Error('Unknown type of FROM clause');
@@ -5774,6 +5810,176 @@ yy.ColumnDef.prototype.toString = function() {
 	if(this.notnull) s += ' NOT NULL';
 	return s;
 }
+
+
+// Alasql Linq library
+
+yy.FromData = function(params) { return yy.extend(this, params); };
+yy.FromData.prototype.toString = function() {
+	if(this.data) return K('DATA')+'('+((Math.random()*10e15)|0)+')';
+	else return '?';
+};
+yy.FromData.prototype.toJavaScript = function(){
+//	console.log('yy.FromData.prototype.toJavaScript');
+};
+
+yy.Select.prototype.exec = function(params,cb) {
+	
+	if(this.preparams) params = this.preparams.concat(params);
+	console.log(15,this.preparams);
+
+	var databaseid = alasql.useid;
+	db = alasql.databases[databaseid];
+	var sql = this.toString();
+	var hh = hash(sql);
+	console.log(sql);
+
+	var statement = this.compile(databaseid);
+	if(!statement) return;
+	statement.sql = sql;
+	statement.dbversion = db.dbversion;
+	
+	// Secure sqlCache size
+	if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
+		db.resetSqlCache();
+	}
+	db.sqlCacheSize++;
+	db.sqlCache[hh] = statement;
+	var res = alasql.res = statement(params, cb);
+	return res;
+};
+
+yy.Select.prototype.Select = function(){
+	var self = this;
+	var agrs = [];
+	if(arguments.length > 1) {
+		args = Array.prototype.slice.call(arguments);;
+	} else if(arguments.length == 1) {
+		if(arguments[0] instanceof Array) {
+			args = arguments[0];
+		} else {
+			args = [arguments[0]];
+		}
+	} else {
+		throw new Error('Wrong number of arguments of Select() function');
+	}
+
+	self.columns = [];
+
+	args.forEach(function(arg){
+		if(typeof arg == "string") {
+			self.columns.push(new yy.Column({columnid: arg}));
+		} else if(typeof arg == "function") {
+			var pari = 0;
+			if(self.preparams) {
+				pari = self.preparams.length;
+			} else {
+				self.preparams = [];
+			}
+			self.preparams.push(arg);
+			self.columns.push(new yy.Column({columnid: "*", func:arg, param:pari}));
+		} else {
+			// Unknown type
+		}
+	});
+
+//	console.log(self instanceof yy.Select);
+	return self;
+};
+
+yy.Select.prototype.From = function(tableid){
+	var self = this;
+	if(!self.from) self.from = [];
+	if(tableid instanceof Array) {
+		var pari = 0;
+		if(self.preparams) {
+			pari = self.preparams.length;
+		} else {
+			self.preparams = [];
+		}
+		self.preparams.push(tableid); 
+		self.from.push(new yy.ParamValue({param:pari}));
+	} else if(typeof tableid =="string") {
+		self.from.push(new yy.Table({tableid:tableid}));
+	} else {
+		throw new Error('Unknown arguments in From() function')
+	}
+	return self;
+}
+
+yy.Select.prototype.OrderBy = function(){
+	var self = this;
+	var agrs = [];
+
+	self.order = [];
+
+	if(arguments.length == 0) {
+//		self.order.push(new yy.OrderExpression({expression: new yy.Column({columnid:"_"}), direction:'ASC'}));		
+		args = ["_"];
+	} else if(arguments.length > 1) {
+		args = Array.prototype.slice.call(arguments);;
+	} else if(arguments.length == 1) {
+		if(arguments[0] instanceof Array) {
+			args = arguments[0];
+		} else {
+			args = [arguments[0]];
+		}
+	} else {
+		throw new Error('Wrong number of arguments of Select() function');
+	}
+
+	if(args.length > 0) {
+		args.forEach(function(arg){
+			var expr = new yy.Column({columnid:arg});
+			if(typeof arg == 'function'){
+				expr = arg;
+			}
+			self.order.push(new yy.OrderExpression({expression: expr, direction:'ASC'}));
+		});
+	}
+	return self;
+}
+
+yy.Select.prototype.Top = function(topnum){
+	var self = this;
+	self.top = new yy.NumValue({value:topnum});
+	return self;
+};
+
+yy.Select.prototype.GroupBy = function(){
+	var self = this;
+	var agrs = [];
+
+	if(arguments.length > 1) {
+		args = Array.prototype.slice.call(arguments);;
+	} else if(arguments.length == 1) {
+		if(arguments[0] instanceof Array) {
+			args = arguments[0];
+		} else {
+			args = [arguments[0]];
+		}
+	} else {
+		throw new Error('Wrong number of arguments of Select() function');
+	}
+
+	self.group = [];
+
+	args.forEach(function(arg){
+		var expr = new yy.Column({columnid:arg});
+		self.group.push(expr);
+	});
+
+	return self;
+};
+
+yy.Select.prototype.Where = function(expr){
+	var self = this;
+	if(typeof expr == 'function' ) {
+		self.where = expr;
+	}
+	return self;
+};
+
 
 
 /*
