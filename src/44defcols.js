@@ -34,6 +34,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 			} else if(fr instanceof yy.FuncValue) {
 
+			} else if(fr instanceof yy.FromData) {
+
 			} else {
 				throw new Error('Unknown type of FROM clause');
 			};

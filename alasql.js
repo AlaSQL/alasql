@@ -43,7 +43,16 @@ SOFTWARE.
 
 // Main function
 alasql = function(sql, params, cb, scope) {
-	return alasql.exec(sql, params, cb, scope);
+	if(arguments.length == 0) {
+		return new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.ParamValue({param:0})]});
+	} else if ((arguments.length == 1) && (sql instanceof Array)) {
+		var select = new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.ParamValue({param:0})]});
+		select.preparams = [sql];	
+		return select;
+//		return new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.FromData({data:sql})]});
+	} else {
+		return alasql.exec(sql, params, cb, scope);
+	}
 };
 
 alasql.version = "0.0.29";
@@ -2428,6 +2437,8 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 	if(ast.statements.length == 0) return 0;
 	else if(ast.statements.length == 1) {
 		if(ast.statements[0].compile) {
+
+// Compile and Execute
 			var statement = ast.statements[0].compile(databaseid);
 			if(!statement) return;
 			statement.sql = sql;
@@ -2441,6 +2452,7 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			db.sqlCache[hh] = statement;
 			var res = alasql.res = statement(params, cb);
 			return res;
+			
 		} else {
 //			console.log(ast.statements[0]);
 			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb);		
@@ -3726,9 +3738,18 @@ yy.Select.prototype.toString = function() {
 	}
 
 	if(this.where) s += NL()+ID()+K('WHERE')+' '+this.where.toString();
-	if(this.group) s += NL()+ID()+K('GROUP BY')+' '+this.group.toString();
+	if(this.group && this.group.length>0) {
+		s += NL()+ID()+K('GROUP BY')+' '+this.group.map(function(grp){
+			return grp.toString();
+		}).join(', ');
+	};
 	if(this.having) s += NL()+ID()+K('HAVING')+' '+this.having.toString();
-	if(this.order) s += NL()+ID()+K('ORDER BY')+' '+this.order.toString();
+
+	if(this.order && this.order.length>0) {
+		s += NL()+ID()+K('ORDER BY')+' '+this.order.map(function(ord){
+			return  ord.toString();
+		}).join(', ');
+	};
 	if(this.limit) s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
 	if(this.offset) s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
 	if(this.union) s += NL()+K('UNION')+NL()+this.union.toString();
@@ -3991,10 +4012,10 @@ function modify(query, res) {
 
 
 
-yy.Select.prototype.exec = function(databaseid) {
-	throw new Error('Select statement should be precompiled');
+// yy.Select.prototype.exec = function(databaseid) {
+// 	throw new Error('Select statement should be precompiled');
 
-};
+// };
 
 
 

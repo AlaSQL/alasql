@@ -580,7 +580,9 @@ yy.Select.prototype.compileFrom = function(query) {
 		} else if(tq instanceof yy.ParamValue) {
 			query.aliases[alias] = {type:'paramvalue'};
 		} else if(tq instanceof yy.FuncValue) {
-			query.aliases[alias] = {type:'paramvalue'};
+			query.aliases[alias] = {type:'funcvalue'};
+		} else if(tq instanceof yy.FromData) {
+			query.aliases[alias] = {type:'fromdata'};
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -669,6 +671,12 @@ yy.Select.prototype.compileFrom = function(query) {
 //	console.log(s);
 			source.datafn = new Function('query, params, cb, idx',s);
 
+		} else if(tq instanceof yy.FromData) {
+				source.datafn = function(query,params,cb,idx) {
+					var res = tq.data;
+					if(cb) res = cb(res,idx,query);
+					return res;
+				}				
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -767,11 +775,14 @@ yy.Select.prototype.compileSelect1 = function(query) {
 	var s = 'var r={';
 	var sp = '';
 	var ss = [];
+
 	this.columns.forEach(function(col){
 //console.log(col);		
 		if(col instanceof yy.Column) {
 			if(col.columnid == '*') {
-				if(col.tableid) {
+				if(col.func) {
+					sp += 'r=params[\''+col.param+'\'](p[\''+query.sources[0].alias+'\'],p,params,alasql);';
+				} else if(col.tableid) {
 					//Copy all
 					var ret = compileSelectStar(query, col.tableid);
 					if(ret.s)  ss = ss.concat(ret.s);
@@ -975,6 +986,19 @@ function optimizeWhereJoin (query, ast) {
 
 yy.Select.prototype.compileOrder = function (query) {
 	if(this.order) {
+			console.log(990, this.order);
+		if(this.order && this.order.length == 1 && this.order[0].expression 
+			 && this.order[0].expression.columnid == '*' && this.order[0].expression.func) {
+			console.log(991);
+			var func = this.order[0].expression.func;
+			return function(a,b){
+				var ra = func(a),rb = func(b);
+				if(ra>rb) return 1;
+				if(ra==rb) return 0;
+				return -1;
+			}
+		};
+
 		var s = '';
 		var sk = '';
 		this.order.forEach(function(ord){

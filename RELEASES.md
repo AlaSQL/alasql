@@ -14,13 +14,95 @@
 
 ## Next Versions
 
+0. Linq
+
+* Having() + functions()
+* Where()
+* Join()
+* Modifiers: Matrix(), Value(), Row(), Column(), Text(), 
+* Distinct(), Top()
+* tableid.columnid
+* databaseid.tableid
+* -columnid (for Orders)
+
+1. Alternative Excel Export (safari safe)
+
+http://stackoverflow.com/questions/27511629/importing-and-exporting-excel-files-to-javascript-array/27616508#27616508
+
+2. CONCAT Aggregator and REDUCE syntax
+
 http://stackoverflow.com/questions/25677207/count-total-with-two-criterias-using-lodash/27634849#27634849
 // User-defined aggregator to concat arrays
-alasql.aggr.CONCAT = function(v,s) {
-    return (s||[]).concat(v);
+alasql.aggr.CONCAT = function(acc, val, v2,...) {
+    return (acc||[]).concat(val);
 };
 
-SELECT VALUE CONCAT(_)
+SELECT SUM(a*b)
+
+SELECT VALUE CONCAT(_) FROM ? WHERE LEN(_) = 2
+
+SELECT * FROM ? WHERE a IN (SELECT * FROM _.b WHERE c > 0);
+SELECT * FROM ? WHERE a IN b
+http://jsfiddle.net/agershun/gaohxfjo/2/
+
+Question: http://stackoverflow.com/questions/9923625/find-item-in-array-based-on-text?rq=1
+
+var res = alasql('SELECT COLUMN id FROM ? WHERE ([desc] LIKE $[1]) OR (title like $[1]) OR EXISTS(SELECT * FROM _.tags WHERE _ like $[1])', [items,"%"+serach+"%"]);
+
+SELECT KEYS(a) AS k FROM ? WHERE EXIST(SELECT * FROM _.k WHERE _ LIKE "Name%")
+
+if(databaseid == '_') {...}
+
+
+
+aaa.filter(function(obj){var k = Object.keys(obj); return (k.filter(function(d){return d.indexOf("Name")==0}).length)});
+
+## Linq
+
+
+
+
+#### Variant 1: like Underscope and Lo-Dash
+alasql(data).orderBy("aaa","bbb","-ccc");
+alasql(data).groupBy("aaa");
+
+#### Variant 2
+alasql.Select('*').From(data).Where('a>10').exec();
+
+alasql.From().value();
+alasql.From().exec();
+alasql.From(data).OrderBy("aaa").Matrix().exec();
+alasql.From(data).OrderBy("aaa").Matrix().compile();
+alasql.From(data).OrderBy("aaa").Matrix().pretty();
+alasql(data).OrderBy("aaa").Matrix().exec();
+
+alasql(data) => new Alalinq();
+Alalinq.from = new yy.Data(data);
+Alalinq.exec = create yy.Statement({select:new yy.Select()});
+
+
+
+Alalinq()
+Linq
+Linq = function(){};
+
+extend(alasql,Alalinq);
+
+Question - how to cache it?
+
+Alasql Syntax:
+Select
+From
+Where
+alasql(data).Select("a","FIRST(b) AS c").GroupBy("a").OrderBy("c").exec();
+GroupBy
+Join
+Top
+Having
+Value, Matrix, Row, Column, Text
+
+
+
 
 http://stackoverflow.com/questions/25047463/group-by-and-sum-using-underscore-lodash/27634325#27634325
 SELECT INDEX platformId, SUM(payout) AS payout, SUM(numOfPeople) AS numOfPeople FROM ? GROUP BY platformId;

@@ -47,9 +47,18 @@ yy.Select.prototype.toString = function() {
 	}
 
 	if(this.where) s += NL()+ID()+K('WHERE')+' '+this.where.toString();
-	if(this.group) s += NL()+ID()+K('GROUP BY')+' '+this.group.toString();
+	if(this.group && this.group.length>0) {
+		s += NL()+ID()+K('GROUP BY')+' '+this.group.map(function(grp){
+			return grp.toString();
+		}).join(', ');
+	};
 	if(this.having) s += NL()+ID()+K('HAVING')+' '+this.having.toString();
-	if(this.order) s += NL()+ID()+K('ORDER BY')+' '+this.order.toString();
+
+	if(this.order && this.order.length>0) {
+		s += NL()+ID()+K('ORDER BY')+' '+this.order.map(function(ord){
+			return  ord.toString();
+		}).join(', ');
+	};
 	if(this.limit) s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
 	if(this.offset) s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
 	if(this.union) s += NL()+K('UNION')+NL()+this.union.toString();
@@ -312,8 +321,8 @@ function modify(query, res) {
 
 
 
-yy.Select.prototype.exec = function(databaseid) {
-	throw new Error('Select statement should be precompiled');
+// yy.Select.prototype.exec = function(databaseid) {
+// 	throw new Error('Select statement should be precompiled');
 
-};
+// };
 

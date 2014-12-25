@@ -4,6 +4,12 @@
 ### 0.0.35 (23.12.2014 - .12.2014)
 
 * REDUCE Aggregator
+* LINQ functions:
+ * alasql() or alasql(data)
+ * Select()
+ * From()
+ * OrderBy()
+ * GroupBy()
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

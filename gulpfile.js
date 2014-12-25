@@ -41,6 +41,7 @@ gulp.task('js-merge', function () {
     './src/44defcols.js',
     './src/45union.js',
   	'./src/50expression.js',
+    './src/52linq.js',
     './src/55functions.js',
     './src/56datetime.js',
     './src/57case.js',

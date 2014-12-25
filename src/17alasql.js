@@ -76,6 +76,8 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 	if(ast.statements.length == 0) return 0;
 	else if(ast.statements.length == 1) {
 		if(ast.statements[0].compile) {
+
+// Compile and Execute
 			var statement = ast.statements[0].compile(databaseid);
 			if(!statement) return;
 			statement.sql = sql;
@@ -89,6 +91,7 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			db.sqlCache[hh] = statement;
 			var res = alasql.res = statement(params, cb);
 			return res;
+			
 		} else {
 //			console.log(ast.statements[0]);
 			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb);		

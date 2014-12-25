@@ -43,7 +43,16 @@ SOFTWARE.
 
 // Main function
 alasql = function(sql, params, cb, scope) {
-	return alasql.exec(sql, params, cb, scope);
+	if(arguments.length == 0) {
+		return new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.ParamValue({param:0})]});
+	} else if ((arguments.length == 1) && (sql instanceof Array)) {
+		var select = new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.ParamValue({param:0})]});
+		select.preparams = [sql];	
+		return select;
+//		return new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.FromData({data:sql})]});
+	} else {
+		return alasql.exec(sql, params, cb, scope);
+	}
 };
 
 alasql.version = "0.0.29";
