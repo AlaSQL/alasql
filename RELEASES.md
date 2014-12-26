@@ -13,14 +13,84 @@
 10. Streams, cursors, if-then, while, Views, Comsole
 
 ## Next Versions
+1. ? IN ?
+
+For the question:
+http://stackoverflow.com/questions/15441670/intersection-of-arrays-of-objects-based-on-object-property-value/27657487#27657487
+
+1. Add TRIM to CSV reading procedure
+
+if(trim(s) = +s)
+
+0.Clean the code. Remove modifier functions like queryValue()
+
+1. SELECT after GROUP BY
+
+http://www.polyteknisk.dk/related_materials/9780735623132_chapter_01.pdf
+
+SELECT and GROUP order:
+==
+FROM clause
+WHERE clause
+GROUP BY clause
+HAVING clause
+SELECT clause
+ORDER BY clause
+
+MySQL Extensions to GROUP BY
+MySQL extends this behavior to permit the use of an alias in the HAVING clause for the aggregated column
+http://stackoverflow.com/questions/18169055/confusion-about-the-execution-order-in-sql-query?lq=1
+
+1. Insert selectfn into group function() before having();
+Not a big change, but ... some.
+
+SELECT order
+======
+
+FROM
+ON
+OUTER
+WHERE
+--> SELECT (now)
+GROUP BY
+CUBE | ROLLUP
+HAVING
+--> SELECT (should be)
+DISTINCT
+ORDER BY
+TOP
+
+
+Check Fluent interface for Linq and Select();
+Where(r,p) p[0].price == r.price
+GroupBy(r,p,g) p.prices.price * 100
+Max(??????) -> return p.Max(); - scope as an object  
+if(g is undefined) g = {max:0}
+else g.max = g.max+g.max
+(g.max = (g.max||0)+1);
+
+GROUP BY ?, ORDER BY ?, HAVING ?, WHERE ? - how to group() and select()
+
+2. CROSS APPLY (file:///C:/Users/%D0%90%D0%BD%D0%B4%D1%80%D0%B5%D0%B9/Dropbox/Projects/Knowbase2014/books/SQL_chapter_01.pdf)
+
+3. PIVOT / UNPIVOT
+
+4. FROM RANGE(1,10) check 
+5. VALUE KEY WORD
+
+var res = alasql('SELECT COUNT(*) as cnt, VALUE AGGR(cnt/$[0]*4) as pi FROM (SELECT random() as x, random() as y FROM RANGE(1,$[0])) WHERE x*x+y*y<1',
+          [n]);
+
+0. 'SELECT x, y, SUM(x) OVER (PARTITION y) FROM data'
 
 0. Linq
 
-* Having() + functions()
-* Where()
-* Join()
-* Modifiers: Matrix(), Value(), Row(), Column(), Text(), 
-* Distinct(), Top()
+* Having(g) + functions()
+* Where(r,p)
+* GroupBy(r,p,g)
+* Join("tableid",function on(r1,r2){})
+* Modifiers: Matrix(), Row(), Index("columnid"), Value("columnid"),  Column("columid"), Text("columnid"), 
+* Distinct(), Top(), Limit(), Fetch()
 * tableid.columnid
 * databaseid.tableid
 * -columnid (for Orders)

@@ -1,7 +1,7 @@
 # Changelog
 
 
-### 0.0.35 (23.12.2014 - .12.2014)
+### 0.0.36 (23.12.2014 - .12.2014)
 
 * REDUCE Aggregator
 * LINQ functions:
@@ -10,6 +10,9 @@
  * From()
  * OrderBy()
  * GroupBy()
+ * Having()
+ * Top()
+* RANGE(1,10) - from function
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

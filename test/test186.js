@@ -41,7 +41,7 @@ describe('Test 186 - Linq Syntax', function() {
       done();
     });
 
-    it("2. JSLINQ compatibility",function(done){
+//    it("2. JSLINQ compatibility",function(done){
       var myList = [
         {FirstName:"Chris",LastName:"Pearson"},
         {FirstName:"Kate",LastName:"Johnson"},
@@ -50,16 +50,53 @@ describe('Test 186 - Linq Syntax', function() {
         {FirstName:"Steve",LastName:"Pinkerton"}
         ];
 
-      var exampleArray = alasql(myList)
-         .Where(function(p){ return p[undefined].FirstName == "Chris"; })
-         .Select(function(item){ return item.FirstName; })
-         .OrderBy(function(name){ return name; })
-//          .OrderBy('_')
-//         .Top(2)
-         .exec();
+      for(var j=0;j<5;j++) {
+        myList = myList.concat(myList);
+      }
 
-      console.log(58,exampleArray);
-      done();
-    });
+
+      var tm0 = Date.now();
+      for(var i=0;i<200;i++) {
+        alasql.databases.alasql.resetSqlCache();
+        var res1 = alasql(myList)
+           .Where(function(p){ return p[undefined].FirstName >= "Josh"; })
+           .Select(function(item){ return item.FirstName; })
+           .OrderBy(function(name){ return name; })
+           .Top(2)
+           .exec();
+      }
+      tm0 = Date.now()-tm0;
+
+      var tm1 = Date.now();
+      for(var i=0;i<200;i++) {
+//        alasql.databases.alasql.resetSqlCache();
+        var res1 = alasql(myList)
+           .Where(function(p){ return p[undefined].FirstName >= "Josh"; })
+           .Select(function(item){ return item.FirstName; })
+           .OrderBy(function(name){ return name; })
+           .Top(2)
+           .exec();
+      }
+      tm1 = Date.now()-tm1;
+
+      var tm2 = Date.now();
+      for(var i=0;i<200;i++) {
+        alasql.databases.alasql.resetSqlCache();
+        var res2 = alasql('SELECT TOP 2 FirstName AS name FROM ? ORDER BY name',[myList]);
+      }
+      tm2 = Date.now()-tm2;
+
+      var tm3 = Date.now();
+      for(var i=0;i<200;i++) {
+//        alasql.databases.alasql.resetSqlCache();
+        var res2 = alasql('SELECT TOP 2 FirstName AS name FROM ? ORDER BY name',[myList]);
+      }
+      tm3 = Date.now()-tm3;
+
+      console.log(tm0, tm1,tm2, tm3);
+
+//      console.log(58,exampleArray);
+    //   done();
+    // });
 
 });

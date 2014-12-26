@@ -57,7 +57,7 @@ Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 ```
 See [test168](test/test168.js) - [test169](test/test169.js)
 
-### d3.js
+### d3.js + Alasql
 
 Alasql can be used with d3.js to create diagrams, like the example below. Here Alasql
 read Excel file with Olympic Prizes, group and sort rows by one of the axes, and then
@@ -85,6 +85,27 @@ take top 10 records and create a list with axe values:
 
 Try the [simple example](http://alasql.org/demo/005d3/) of Alasql + d3.js integration.
 
+
+### Google Maps + Alasql
+```js
+    alasql("SELECT * FROM CSV("https://cdn.rawgit.com/albertyw/avenews/master/old/data/average-latitude-longitude-countries.csv",{headers:true})', [], function(country){
+        var mapOptions = { zoom : 3, center : new google.maps.LatLng(40, 0),
+            mapTypeId : google.maps.MapTypeId.ROADMAP
+        };
+        var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+        for (i = 0; i < country.length; i++) {
+            var opts = {
+                strokeColor : '#000000',
+                fillColor : ["red","green","blue","brown"][i%4],
+                fillOpacity : 0.35,
+                map : map,
+                center : new google.maps.LatLng(country[i].Latitude,country[i].Longitude),
+                radius : 100000
+            };
+            new google.maps.Circle(opts);
+    });
+```
+Check [this example](http://alasql.org/demo/009geo) and [this example](http://jsfiddle.net/agershun/1o2xq1yh/2/) of integrations Alasql and Google Maps.
 
 ### ETL sample: CSV and IndexedDB database
 

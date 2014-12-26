@@ -6,6 +6,13 @@
 //
 */
 
+alasql.from.RANGE = function(start, finish, cb, idx, query) {
+	var res = [];
+	for(i=start;i<=finish;i++) res.push(i);
+	if(cb) res = cb(res, idx, query);
+	return res;
+}
+
 // Read data from any file
 alasql.from.FILE = function(filename, opts, cb, idx, query) {
 	if(typeof filename == 'string') {

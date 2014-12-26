@@ -5826,13 +5826,13 @@ yy.FromData.prototype.toJavaScript = function(){
 yy.Select.prototype.exec = function(params,cb) {
 	
 	if(this.preparams) params = this.preparams.concat(params);
-	console.log(15,this.preparams);
+//	console.log(15,this.preparams);
 
 	var databaseid = alasql.useid;
 	db = alasql.databases[databaseid];
 	var sql = this.toString();
 	var hh = hash(sql);
-	console.log(sql);
+//	console.log(sql);
 
 	var statement = this.compile(databaseid);
 	if(!statement) return;
@@ -8259,6 +8259,13 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 // (c) 2014, Andrey Gershun
 //
 */
+
+alasql.from.RANGE = function(start, finish, cb, idx, query) {
+	var res = [];
+	for(i=start;i<=finish;i++) res.push(i);
+	if(cb) res = cb(res, idx, query);
+	return res;
+}
 
 // Read data from any file
 alasql.from.FILE = function(filename, opts, cb, idx, query) {

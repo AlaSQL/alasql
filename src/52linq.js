@@ -12,13 +12,13 @@ yy.FromData.prototype.toJavaScript = function(){
 yy.Select.prototype.exec = function(params,cb) {
 	
 	if(this.preparams) params = this.preparams.concat(params);
-	console.log(15,this.preparams);
+//	console.log(15,this.preparams);
 
 	var databaseid = alasql.useid;
 	db = alasql.databases[databaseid];
 	var sql = this.toString();
 	var hh = hash(sql);
-	console.log(sql);
+//	console.log(sql);
 
 	var statement = this.compile(databaseid);
 	if(!statement) return;
