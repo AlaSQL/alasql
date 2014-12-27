@@ -22,7 +22,9 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		headers = [];
 		var ths = sel.querySelector("thead tr").childNodes;
 		for(var i=0;i<ths.length;i++){
-			headers.push(ths.item(i).textContent);
+			if(!(ths.style.display == "none" && opt.skipdisplaynone)) {
+				headers.push(ths.item(i).textContent);
+			}
 		}
 	}
 //	console.log(headers);
@@ -33,11 +35,13 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		var tds = trs.item(j).childNodes;
 		var r = {};
 		for(var i=0;i<tds.length;i++){
-			if(headers) {
-				r[headers[i]] = tds.item(i).textContent;
-			} else {
-				r[i] = tds.item(i).textContent;
-//				console.log(r);
+			if(!(tds.style.display == "none" && opt.skipdisplaynone)) {
+				if(headers) {
+					r[headers[i]] = tds.item(i).textContent;
+				} else {
+					r[i] = tds.item(i).textContent;
+	//				console.log(r);
+				}
 			}
 		}
 		res.push(r);

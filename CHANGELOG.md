@@ -13,6 +13,7 @@
  * Having()
  * Top()
 * RANGE(1,10) - from function
+* HTML-from and into functions
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 
