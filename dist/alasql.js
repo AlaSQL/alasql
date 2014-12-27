@@ -8100,6 +8100,60 @@ yy.Rollback.prototype.execute = function (databaseid,params,cb) {
 // (c) 2014 Andrey Gershun
 //
 
+utils.emptyChildren = function (container){
+  var len = container.childNodes.length;
+  while (len--) {
+    container.removeChild(container.lastChild);
+  };
+};
+
+alasql.into.HTML = function(selector, opts, data, columns, cb) {
+	var opt = {};
+	alasql.utils.extend(opt, opts);
+
+	var sel = document.querySelector(selector);
+	if(!sel) {
+		throw new Error('Selected HTML element is not found');
+	};	
+
+	if(columns.length == 0) {
+		if(typeof data[0] == "object") {
+			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+		} else {
+			// What should I do?
+			// columns = [{columnid:"_"}];
+		}
+	}
+
+	var tbe = document.createElement('table');
+	var thead = document.createElement('thead');
+	tbe.appendChild(thead);
+	if(opt.headers) {
+		var tre = document.createElement('tr');
+		for(var i=0;i<columns.length;i++){
+			var the = document.createElement('th');
+			the.textContent = columns[i].columnid;
+			tre.appendChild(the);
+		}
+		thead.appendChild(tre);
+	}
+
+	var tbody = document.createElement('tbody');
+	tbe.appendChild(tbody);
+	for(var j=0;j<data.length;j++){
+		var tre = document.createElement('tr');
+		for(var i=0;i<columns.length;i++){
+			var the = document.createElement('td');
+			the.textContent = data[j][columns[i].columnid];
+			tre.appendChild(the);
+		}
+		tbody.appendChild(tre);
+	};
+	alasql.utils.emptyChildren(sel);
+	console.log(tbe,columns);
+	sel.appendChild(tbe);
+};
+
 alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	var s = JSON.stringify(data);
 	alasql.utils.saveFile(filename,s);
@@ -8259,6 +8313,48 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 // (c) 2014, Andrey Gershun
 //
 */
+
+alasql.from.HTML = function(selector, opts, cb, idx, query) {
+	var opt = {};
+	alasql.utils.extend(opt, opts);
+
+	var sel = document.querySelector(selector);
+	if(!sel && sel.tagName != "TABLE") {
+		throw new Error('Selected HTML element is not TABLE');
+	};	
+
+	var res = [];
+	var headers = opt.headers;
+
+	if(headers && !(headers instanceof Array)) {
+		headers = [];
+		var ths = sel.querySelector("thead tr").childNodes;
+		for(var i=0;i<ths.length;i++){
+			headers.push(ths.item(i).textContent);
+		}
+	}
+//	console.log(headers);
+
+	var trs = sel.querySelectorAll("tbody tr");
+
+	for(var j=0;j<trs.length;j++) {
+		var tds = trs.item(j).childNodes;
+		var r = {};
+		for(var i=0;i<tds.length;i++){
+			if(headers) {
+				r[headers[i]] = tds.item(i).textContent;
+			} else {
+				r[i] = tds.item(i).textContent;
+//				console.log(r);
+			}
+		}
+		res.push(r);
+	}
+//console.log(res);
+	if(cb) res = cb(res, idx, query);
+	return res;
+}
+
 
 alasql.from.RANGE = function(start, finish, cb, idx, query) {
 	var res = [];

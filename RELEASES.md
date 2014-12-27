@@ -13,10 +13,20 @@
 10. Streams, cursors, if-then, while, Views, Comsole
 
 ## Next Versions
+
+FROM HTML()
+1. Social to alasql.org
+2. Wiki
+3. Check Blob.js
+
 1. ? IN ?
 
 For the question:
 http://stackoverflow.com/questions/15441670/intersection-of-arrays-of-objects-based-on-object-property-value/27657487#27657487
+
+Calculate prime numbers with SQL
+
+2. CSV/TAB export with headers:["header1","header2"] for arrays
 
 1. Add TRIM to CSV reading procedure
 

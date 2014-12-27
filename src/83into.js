@@ -4,6 +4,60 @@
 // (c) 2014 Andrey Gershun
 //
 
+utils.emptyChildren = function (container){
+  var len = container.childNodes.length;
+  while (len--) {
+    container.removeChild(container.lastChild);
+  };
+};
+
+alasql.into.HTML = function(selector, opts, data, columns, cb) {
+	var opt = {};
+	alasql.utils.extend(opt, opts);
+
+	var sel = document.querySelector(selector);
+	if(!sel) {
+		throw new Error('Selected HTML element is not found');
+	};	
+
+	if(columns.length == 0) {
+		if(typeof data[0] == "object") {
+			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+		} else {
+			// What should I do?
+			// columns = [{columnid:"_"}];
+		}
+	}
+
+	var tbe = document.createElement('table');
+	var thead = document.createElement('thead');
+	tbe.appendChild(thead);
+	if(opt.headers) {
+		var tre = document.createElement('tr');
+		for(var i=0;i<columns.length;i++){
+			var the = document.createElement('th');
+			the.textContent = columns[i].columnid;
+			tre.appendChild(the);
+		}
+		thead.appendChild(tre);
+	}
+
+	var tbody = document.createElement('tbody');
+	tbe.appendChild(tbody);
+	for(var j=0;j<data.length;j++){
+		var tre = document.createElement('tr');
+		for(var i=0;i<columns.length;i++){
+			var the = document.createElement('td');
+			the.textContent = data[j][columns[i].columnid];
+			tre.appendChild(the);
+		}
+		tbody.appendChild(tre);
+	};
+	alasql.utils.emptyChildren(sel);
+	console.log(tbe,columns);
+	sel.appendChild(tbe);
+};
+
 alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	var s = JSON.stringify(data);
 	alasql.utils.saveFile(filename,s);

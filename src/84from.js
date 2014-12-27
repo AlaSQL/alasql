@@ -6,6 +6,48 @@
 //
 */
 
+alasql.from.HTML = function(selector, opts, cb, idx, query) {
+	var opt = {};
+	alasql.utils.extend(opt, opts);
+
+	var sel = document.querySelector(selector);
+	if(!sel && sel.tagName != "TABLE") {
+		throw new Error('Selected HTML element is not TABLE');
+	};	
+
+	var res = [];
+	var headers = opt.headers;
+
+	if(headers && !(headers instanceof Array)) {
+		headers = [];
+		var ths = sel.querySelector("thead tr").childNodes;
+		for(var i=0;i<ths.length;i++){
+			headers.push(ths.item(i).textContent);
+		}
+	}
+//	console.log(headers);
+
+	var trs = sel.querySelectorAll("tbody tr");
+
+	for(var j=0;j<trs.length;j++) {
+		var tds = trs.item(j).childNodes;
+		var r = {};
+		for(var i=0;i<tds.length;i++){
+			if(headers) {
+				r[headers[i]] = tds.item(i).textContent;
+			} else {
+				r[i] = tds.item(i).textContent;
+//				console.log(r);
+			}
+		}
+		res.push(r);
+	}
+//console.log(res);
+	if(cb) res = cb(res, idx, query);
+	return res;
+}
+
+
 alasql.from.RANGE = function(start, finish, cb, idx, query) {
 	var res = [];
 	for(i=start;i<=finish;i++) res.push(i);
