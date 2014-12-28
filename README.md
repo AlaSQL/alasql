@@ -21,7 +21,7 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 ## Documentation 
 
 * [Alasql User Manual](http://www.slideshare.net/AndreyGershun/alasql-manual-141220-1)
-* [Alasql Wiki](https://github.com/agershun/alasql/wiki) (sorry, work in progress)
+* [Alasql Wiki](https://github.com/agershun/alasql/wiki)
 
 ## Why Alasql?
 
@@ -43,7 +43,7 @@ Check Alasql vs other JavaScript SQL databases and data processing libraries:
 
 ## What is new?
 
-### Read and write Excel, CSV, TAB, JSON, and text files to/from database
+### Read and write Excel, CSV, TAB, JSON,  and text files to/from database
 
 Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 
@@ -272,7 +272,7 @@ Operators:
 
 Aggregators:
 
-* SUM(), COUNT(), MIN(), MAX(), FIRST(), LAST(), AVG(), AGGR(), ARRAY()
+* SUM(), COUNT(), MIN(), MAX(), FIRST(), LAST(), AVG(), AGGR(), ARRAY(), REDUCE()
 
 GROUP BY Grouping functions:
 

@@ -19,6 +19,10 @@ FROM HTML()
 2. Wiki
 3. Check Blob.js
 
+1. Functions on Aggregator like SUM(x)*2 AS s2
+2. SELECT x,y,z, z*SUM(x) OVER (PARTITION BY y)
+3. SELECT *, DELETE(a,b) FROM ?
+
 1. ? IN ?
 
 For the question:
