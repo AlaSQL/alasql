@@ -22,6 +22,7 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 
 * [Alasql User Manual](http://www.slideshare.net/AndreyGershun/alasql-manual-141220-1)
 * [Alasql Wiki](https://github.com/agershun/alasql/wiki)
+* [Alasql Coockbok](https://github.com/agershun/alasql/wiki/Data-manipulation) - Alasql cases
 
 ## Why Alasql?
 
