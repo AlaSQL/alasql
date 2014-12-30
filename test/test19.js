@@ -21,11 +21,11 @@ describe('Test 19', function() {
 		db.exec('INSERT INTO test2 VALUES (1, 3)');
 		db.exec('INSERT INTO test2 VALUES (2, 4)');
 
-		var res = db.queryArray('SELECT a FROM test1 WHERE EXISTS '+
+		var res = db.exec('SELECT COLUMN a FROM test1 WHERE EXISTS '+
 			'(SELECT * FROM test2 WHERE test1.a = test2.b)');
 		assert.deepEqual(res, [1,2,3,4]);
 
-		var res = db.queryArray('SELECT a FROM test1 WHERE NOT EXISTS '+
+		var res = db.exec('SELECT COLUMN a FROM test1 WHERE NOT EXISTS '+
 			'(SELECT * FROM test2 WHERE test1.a = test2.a)');
 		assert.deepEqual(res, [3,4,5,6]);
 		done();

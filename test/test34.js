@@ -10,8 +10,8 @@ describe('Test 34', function() {
 		db.exec('CREATE TABLE test (a STRING)');
 		db.exec("INSERT INTO test (a) VALUES ('a'), ('b'), ('c')");
 
-		var sql = "SELECT * FROM test";
-		assert.deepEqual(['a','b','c'], db.queryArray(sql));
+		var sql = "SELECT COLUMN * FROM test";
+		assert.deepEqual(['a','b','c'], db.exec(sql));
 
 		done();
 	});

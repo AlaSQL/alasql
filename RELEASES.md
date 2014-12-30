@@ -14,6 +14,81 @@
 
 ## Next Versions
 
+1.clean releases file
+2. MENTION FILESAVER IN README
+3. clean the code - remove comments and unnecessary functions
+4. add go keyword
+5. sql into
+
+SELECT * INTO SQL() FROM ? - generates inserts
+SHOW CREATE 
+
+
+ROW_NUMBER, RANK, DENSE_RANK, and NTILE
+
+0. go keyword
+set nocount off
+object_id(tableid)
+default dbo scheme
+not null
+char)_
+
+SELECT orderid, customerid FROM dbo.Orders ORDER BY 2, 1;
+
+ELECT TOP 100 PERCENT orderid, customerid
+         FROM dbo.Orders
+         ORDER BY orderid
+
+ CREATE VIEW dbo.VSortedOrders
+         AS
+         SELECT TOP 100 PERCENT orderid, customerid
+         FROM dbo.Orders
+         ORDER BY orderid
+         GO
+
+GO
+APPLY
+CROSS APPLY
+OUTER APPLY
+PIVOT
+UNPIVOT
+
+
+group by all
+COUNT(expression)  count if not null
+UPDATE dbo.T1 SET c1 = c1 + (SELECT MAX(c1) FROM dbo.T1);
+
+1. BIT_AND (&), BIT_OR(|), BIT_XOR(^), STD, STDDEV_POP, STDDEV_SAMP, VAR_POP, VAR_SAMP, VAR
+http://www.w3resource.com/mysql/aggregate-functions-and-grouping/aggregate-functions-and-grouping-in-mysql.php
+
+1. STUFF - http://msdn.microsoft.com/en-us/library/ms188043.aspx
+STUFF ( character_expression , start , length , replaceWith_expression )
+
+SELECT 
+STUFF((SELECT ',' + Col1
+FROM cteSTUFF
+FOR
+XML PATH ('')
+),1,1,'') AS 'RowtoColumns'
+
+SUBQUERIES in Fucntions
+
+1. alasql('SELECT * INTO SQL('mytable') FROM ?',[data]); 
+generates 'INSERT INTO mytable () VALUES ();'
+
+1. GROUP_CONCAT() - join fields for group
+alasql.aggr.GROUP_CONCAT = function (acc, val) {
+  return (acc||"")+val;
+}
+
+http://www.w3resource.com/mysql/aggregate-functions-and-grouping/aggregate-functions-and-grouping-group_concat.php
+SELECT pub_id,GROUP_CONCAT(DISTINCT cate_id  
+ORDER BY  cate_id ASC SEPARATOR ' ')  
+FROM book_mast  
+GROUP BY pub_id ;  
+
+- See more at: http://www.w3resource.com/mysql/aggregate-functions-and-grouping/aggregate-functions-and-grouping-group_concat.php#sthash.e7pAitjF.dpuf
+
 FROM HTML()
 1. Social to alasql.org
 2. Wiki

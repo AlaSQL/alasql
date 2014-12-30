@@ -19,7 +19,7 @@ describe('Test 26', function() {
 		db.exec('INSERT INTO test2 VALUES (2,20)');
 		db.exec('INSERT INTO test2 VALUES (3,30)');
 
-		var res = db.queryValue('SELECT SUM(a%3) FROM test1');
+		var res = db.exec('SELECT VALUE SUM(a%3) FROM test1');
 		assert.equal(6,res);
 		done();
 	});

@@ -7,6 +7,10 @@
 */
 
 // Main Database class
+/**
+    @class Database 
+ */
+
 var Database = alasql.Database = function (databaseid) {
 	var self = this;
 	if(self === alasql) {
@@ -36,7 +40,10 @@ var Database = alasql.Database = function (databaseid) {
 	return self;
 };
 
-// Start database
+
+/**
+    Reset SQL statements cache
+ */
 
 Database.prototype.resetSqlCache = function () {
 	this.sqlCache = {}; // Cache for compiled SQL statements
@@ -44,8 +51,15 @@ Database.prototype.resetSqlCache = function () {
 }
 
 
-
 // // Main SQL function
+
+/**
+    Run SQL statement on database
+    @param {string} sql SQL statement
+    @param [object] params Parameters
+    @param {function} cb callback
+ */
+
 Database.prototype.exec = function(sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
 };
@@ -61,15 +75,18 @@ Database.prototype.exec = function(sql, params, cb) {
 // };
 
 // // Async version of exec
-Database.prototype.aexec = function(sql, params) {
-	var self = this;
-	return new Promise(function(resolve, reject){
-		alasql.dexec(this.databaseid,sql,params,resolve);
-	});
-};
+
+
+// Database.prototype.aexec = function(sql, params) {
+// 	var self = this;
+// 	return new Promise(function(resolve, reject){
+// 		alasql.dexec(this.databaseid,sql,params,resolve);
+// 	});
+// };
 
 
 // Aliases like MS SQL
+/*
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
 Database.prototype.queryArray = function(sql, params, cb) {
@@ -98,6 +115,8 @@ Database.prototype.matrix = Database.prototype.queryArrayOfArrays;
 Database.prototype.compile = function(sql, kind) {
 	return alasql.compile(sql, kind, databaseid);
 };
+
+*/
 // 	var self = this;
 // 	var hh = hash(sql);
 
@@ -121,7 +140,7 @@ Database.prototype.compile = function(sql, kind) {
 // }
 
 // SQL.js compatibility method
-Database.prototype.prepare = Database.prototype.compile;
+//Database.prototype.prepare = Database.prototype.compile;
 
 
 // Added for compatibility with WebSQL

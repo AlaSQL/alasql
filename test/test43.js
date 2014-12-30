@@ -33,7 +33,7 @@ describe('Test 43', function() {
 
 		it('Order by dates ASC', function(done){
 
-			var res = db.queryArray("SELECT orderdate FROM orders ORDER BY orderdate");
+			var res = db.exec("SELECT COLUMN orderdate FROM orders ORDER BY orderdate");
 
 			var ok = res[0]<=res[1] &&
 				res[1]<=res[2] &&
@@ -50,7 +50,7 @@ describe('Test 43', function() {
 		it('Order by dates DESC', function(done){
 
 
-			var res = db.queryArray("SELECT orderdate FROM orders ORDER BY orderdate DESC");
+			var res = db.exec("SELECT COLUMN orderdate FROM orders ORDER BY orderdate DESC");
 
 			var ok = 
 				res[0]>=res[1] &&
@@ -69,7 +69,7 @@ describe('Test 43', function() {
 		it('Dates parsing in INSERT', function(done){
 			db.exec("INSERT INTO orders VALUES (10,'2015-10-20')");
 
-			var res = db.queryValue('SELECT orderdate FROM orders WHERE orderid = 10');
+			var res = db.exec('SELECT VALUE orderdate FROM orders WHERE orderid = 10');
 			assert.equal(res.valueOf(), new Date("2015-10-20").valueOf());
 			done();
 		});

@@ -15,12 +15,12 @@ describe('Test 29', function() {
 		db.exec('INSERT INTO test1 VALUES (5,5)');
 		db.exec('INSERT INTO test1 VALUES (6,6)');
 
-		var sql = 'SELECT a FROM test1 WHERE a IN (2,3,4) AND a NOT IN (3)';
-		var res = db.queryArray(sql);
+		var sql = 'SELECT COLUMN a FROM test1 WHERE a IN (2,3,4) AND a NOT IN (3)';
+		var res = db.exec(sql);
 		assert.deepEqual([ 2, 4 ], res);
 
-		var sql = 'SELECT a FROM test1 WHERE a = ANY (2,3,4)';
-		var res = db.queryArray(sql);
+		var sql = 'SELECT COLUMN a FROM test1 WHERE a = ANY (2,3,4)';
+		var res = db.exec(sql);
 		assert.deepEqual([ 2, 3, 4 ], res);
 
 		done();

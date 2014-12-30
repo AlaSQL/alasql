@@ -28,13 +28,13 @@ describe('Test 28', function() {
 		db.exec('INSERT INTO test3 VALUES (5,30)');
 		db.exec('INSERT INTO test3 VALUES (6,30)');
 
-		var sql = 'SELECT a FROM test1 WHERE a > ALL (SELECT a FROM test2)';
-		var res = db.queryArray(sql);
+		var sql = 'SELECT COLUMN a FROM test1 WHERE a > ALL (SELECT a FROM test2)';
+		var res = db.exec(sql);
 		assert.deepEqual([ 5, 6], res);
 
 
-		var sql = 'SELECT a FROM test2 WHERE a >= ANY (SELECT a FROM test3)';
-		var res = db.queryArray(sql);
+		var sql = 'SELECT COLUMN a FROM test2 WHERE a >= ANY (SELECT a FROM test3)';
+		var res = db.exec(sql);
 
 		assert.deepEqual([ 3,4 ], res);
 		done();

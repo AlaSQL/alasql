@@ -13,7 +13,7 @@ describe('Test 13', function() {
 		for(var i=0;i<1000;i++) {
 			db.exec("INSERT INTO students VALUES (2,'Peter Peterson')");
 		};
-		var res = db.queryValue('SELECT COUNT(*) FROM students');		
+		var res = db.exec('SELECT VALUE COUNT(*) FROM students');		
 		assert.equal(1000,res);
 
 		db.transaction(function(tx) {
@@ -21,12 +21,12 @@ describe('Test 13', function() {
 				tx.exec("INSERT INTO students VALUES (3,'Alemu Abebe')");
 			};
 //console.log(1);
-			var res = tx.queryValue('SELECT COUNT(*) FROM students');
+			var res = tx.exec('SELECT VALUE COUNT(*) FROM students');
 			assert.equal(2000,res);
 
 			tx.rollback();
 
-			var res = tx.queryValue('SELECT COUNT(*) FROM students');
+			var res = tx.exec('SELECT VALUE COUNT(*) FROM students');
 			assert.equal(1000,res);
 			
 			done();

@@ -15,16 +15,16 @@ describe('Test 35 - LIMIT OFFSET', function() {
 		db.exec('INSERT INTO test1 VALUES (5,5)');
 		db.exec('INSERT INTO test1 VALUES (6,6)');
 
-		var sql = 'SELECT TOP 2 a FROM test1';
-		var res = db.queryArray(sql);
+		var sql = 'SELECT COLUMN TOP 2 a FROM test1';
+		var res = db.exec(sql);
 		assert.deepEqual([ 1,2 ], res);
 
-		var sql = 'SELECT a FROM test1 LIMIT 3';
-		var res = db.queryArray(sql);
+		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3';
+		var res = db.exec(sql);
 		assert.deepEqual([ 1,2,3 ], res);
 
-		var sql = 'SELECT a FROM test1 LIMIT 3 OFFSET 2';
-		var res = db.queryArray(sql);
+		var sql = 'SELECT COLUMN a FROM test1 LIMIT 3 OFFSET 2';
+		var res = db.exec(sql);
 		assert.deepEqual([ 2,3,4 ], res);
 
 		done();

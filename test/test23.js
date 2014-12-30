@@ -16,9 +16,9 @@ describe('Test 23', function() {
 		db.exec('INSERT INTO test VALUES (6,6)');
 		
 		
-		var res = db.queryArray('SELECT a FROM test WHERE a BETWEEN 2 AND 4');
+		var res = db.exec('SELECT COLUMN a FROM test WHERE a BETWEEN 2 AND 4');
 		assert.deepEqual([ 2,3,4 ], res);
-		var res = db.queryArray('SELECT a FROM test WHERE a NOT BETWEEN 2 AND 4');
+		var res = db.exec('SELECT COLUMN a FROM test WHERE a NOT BETWEEN 2 AND 4');
 		assert.deepEqual([ 1,5,6 ], res);
 		done();
 	});

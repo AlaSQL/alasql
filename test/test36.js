@@ -12,8 +12,8 @@ describe('Test 36', function() {
 		var sql = "INSERT INTO test1 (a) VALUES ('Alpha'), ('Beta'), ('Gamma'), ('Delta'), ('Epsilon')";
 		db.exec(sql);
 		
-		var sql = "SELECT COUNT(*) FROM test1";
-		assert.equal(5,db.queryValue(sql));
+		var sql = "SELECT VALUE COUNT(*) FROM test1";
+		assert.equal(5,db.exec(sql));
 
 		db.exec('CREATE TABLE test2 (a STRING)');
 

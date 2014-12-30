@@ -17,8 +17,8 @@ describe('Test 32', function() {
 		var sql = 'UPDATE test SET b = LEN(a), t = NOW()';
 		assert.equal(5,db.exec(sql));
 
-		var sql = "SELECT b FROM test WHERE a LIKE '%bc%'";
-		assert.deepEqual([3,4,5],db.queryArray(sql));
+		var sql = "SELECT COLUMN b FROM test WHERE a LIKE '%bc%'";
+		assert.deepEqual([3,4,5],db.exec(sql));
 
 		done();
 	});

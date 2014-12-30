@@ -42,6 +42,15 @@ SOFTWARE.
 }(this, function () {
 
 // Main function
+
+/**
+ @param {string | Object} sql SQL-statement or data object for fuent interface
+ @param {Object} params SQL parameters
+ @param {Function} cb callback function
+ @param {Object} scope Scope for nested queries
+ return {array} Data object
+ */
+
 alasql = function(sql, params, cb, scope) {
 	if(arguments.length == 0) {
 		return new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.ParamValue({param:0})]});
@@ -55,5 +64,7 @@ alasql = function(sql, params, cb, scope) {
 	}
 };
 
-alasql.version = "0.0.29";
+/** Current version of alasql */
+
+alasql.version = "0.0.36";
 

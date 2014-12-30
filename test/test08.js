@@ -17,10 +17,10 @@ describe('Test 08', function() {
 
 		db.exec('UPDATE test SET a=a*100, b=-b WHERE b<=3*10 AND a<>2');
 
-		var res = db.queryValue("SELECT SUM(a) FROM test");
+		var res = db.exec("SELECT VALUE SUM(a) FROM test");
 		assert.equal(411,res);
 
-		var res = db.queryValue("SELECT MIN(b) FROM test");
+		var res = db.exec("SELECT VALUE MIN(b) FROM test");
 		assert.equal(-30,res);
 		done();
 	});

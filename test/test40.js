@@ -28,7 +28,7 @@ describe('Test 40', function() {
 			db.exec('CREATE TABLE five (a STRING)');
 			db.exec('INSERT INTO five VALUES ("One")');
 			db.exec("INSERT INTO five VALUES ('Two')");
-			var res = db.queryArray("SELECT a FROM five");
+			var res = db.exec("SELECT COLUMN a FROM five");
 //			console.log();
 			assert.deepEqual(["One", "Two"],res);
 			done();
