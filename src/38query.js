@@ -46,7 +46,7 @@ function queryfn(query,oldscope,cb, A,B) {
 //		source.data = query.database.tables[source.tableid].data;
 //		console.log(666,idx);
 		source.query = query;
-		var rs = source.datafn(query, query.params, queryfn2, idx); 
+		var rs = source.datafn(query, query.params, queryfn2, idx, alasql); 
 //		console.log(333,rs);
 		if(typeof rs != undefined) {
 			// TODO - this is a hack: check if result is array - check all cases and
@@ -186,7 +186,8 @@ function queryfn3(query) {
 	// } else 
 	if(query.intoallfn) {
 //		console.log(161);
-		var res = query.intoallfn(query.columns,query.cb,query.A, query.B); 
+//		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql); 
+		var res = query.intoallfn(query.columns,query.cb,alasql); 
 //		console.log(1163,res);
 //		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);
@@ -194,7 +195,7 @@ function queryfn3(query) {
 		return res;	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
-			query.intofn(query.data[i],i);
+			query.intofn(query.data[i],i,alasql);
 		}
 //		console.log(query.intofn);
 		if(query.cb) query.cb(query.data.length,query.A, query.B);

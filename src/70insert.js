@@ -149,7 +149,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		s += 'return '+self.values.length;
 
 //console.log(s);
-		var insertfn = new Function('db, params',s3+s);
+		var insertfn = new Function('db, params, alasql',s3+s);
 	
 // INSERT INTO table SELECT
 
@@ -163,7 +163,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			};
 			return statement;
 	    } else {
-			var insertfn = function(db, params) {
+			var insertfn = function(db, params, alasql) {
 				var res = selectfn(params);
 				db.tables[tableid].data = db.tables[tableid].data.concat(res);
 				return res.length;
@@ -173,7 +173,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	} else if(this.default) {
 		var insertfns = 'db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;';
-        var insertfn = new Function('db,params',insertfns); 
+        var insertfn = new Function('db,params,alasql',insertfns); 
     } else {
     	throw new Error('Wrong INSERT parameters');
     }
@@ -200,7 +200,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 			}
 			
-			var res = insertfn(db,params);
+			var res = insertfn(db,params,alasql);
 
 			if(alasql.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);

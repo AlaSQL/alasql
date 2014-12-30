@@ -44,6 +44,7 @@ SOFTWARE.
 // Main function
 
 /**
+ alasql - Main Alasql class
  @param {string | Object} sql SQL-statement or data object for fuent interface
  @param {Object} params SQL parameters
  @param {Function} cb callback function
@@ -51,7 +52,7 @@ SOFTWARE.
  return {array} Data object
  */
 
-alasql = function(sql, params, cb, scope) {
+var alasql = function(sql, params, cb, scope) {
 	if(arguments.length == 0) {
 		return new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.ParamValue({param:0})]});
 	} else if ((arguments.length == 1) && (sql instanceof Array)) {

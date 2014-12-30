@@ -8,14 +8,31 @@
 
 
 // Initial parameters
+/**
+ Jison parser
+ */
 alasql.parser = parser;
+
+/**
+ Jison parser
+ @param {string} sql SQL statement
+ @return {object} AST (Abstract Syntax Tree)
+ */
 alasql.parse = parser.parse.bind(parser); // Shortcut
 
 // Database Engines
+/**
+ List of engines of external databases
+ */
 alasql.engines = {};
 
 // Databases
+/**
+ List of databases
+ */
 alasql.databases = {};
+
+/** Number of databases */
 alasql.databasenum = 0; // Current database
 
 // Deafult options

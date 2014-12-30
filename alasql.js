@@ -44,6 +44,7 @@ SOFTWARE.
 // Main function
 
 /**
+ alasql - Main Alasql class
  @param {string | Object} sql SQL-statement or data object for fuent interface
  @param {Object} params SQL parameters
  @param {Function} cb callback function
@@ -51,7 +52,7 @@ SOFTWARE.
  return {array} Data object
  */
 
-alasql = function(sql, params, cb, scope) {
+var alasql = function(sql, params, cb, scope) {
 	if(arguments.length == 0) {
 		return new yy.Select({columns:[new yy.Column({columnid:'*'})],from: [new yy.ParamValue({param:0})]});
 	} else if ((arguments.length == 1) && (sql instanceof Array)) {
@@ -2380,14 +2381,31 @@ utils.xlscn = function(s) {
 
 
 // Initial parameters
+/**
+ Jison parser
+ */
 alasql.parser = parser;
+
+/**
+ Jison parser
+ @param {string} sql SQL statement
+ @return {object} AST (Abstract Syntax Tree)
+ */
 alasql.parse = parser.parse.bind(parser); // Shortcut
 
 // Database Engines
+/**
+ List of engines of external databases
+ */
 alasql.engines = {};
 
 // Databases
+/**
+ List of databases
+ */
 alasql.databases = {};
+
+/** Number of databases */
 alasql.databasenum = 0; // Current database
 
 // Deafult options
@@ -3172,7 +3190,7 @@ function queryfn(query,oldscope,cb, A,B) {
 //		source.data = query.database.tables[source.tableid].data;
 //		console.log(666,idx);
 		source.query = query;
-		var rs = source.datafn(query, query.params, queryfn2, idx); 
+		var rs = source.datafn(query, query.params, queryfn2, idx, alasql); 
 //		console.log(333,rs);
 		if(typeof rs != undefined) {
 			// TODO - this is a hack: check if result is array - check all cases and
@@ -3312,7 +3330,8 @@ function queryfn3(query) {
 	// } else 
 	if(query.intoallfn) {
 //		console.log(161);
-		var res = query.intoallfn(query.columns,query.cb,query.A, query.B); 
+//		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql); 
+		var res = query.intoallfn(query.columns,query.cb,alasql); 
 //		console.log(1163,res);
 //		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);
@@ -3320,7 +3339,7 @@ function queryfn3(query) {
 		return res;	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
-			query.intofn(query.data[i],i);
+			query.intofn(query.data[i],i,alasql);
 		}
 //		console.log(query.intofn);
 		if(query.cb) query.cb(query.data.length,query.A, query.B);
@@ -3953,12 +3972,13 @@ yy.Select.prototype.compile = function(databaseid) {
 		};
 //		console.log(query.intofns);
 		if(query.intofns) {
-			query.intofn = new Function("r,i,params",query.intofns); 
+            console.log(query.intofns);
+			query.intofn = new Function("r,i,params,alasql",query.intofns); 
 		};
 
 		if(query.intoallfns) {
 //			console.log(query.intoallfns);
-			query.intoallfn = new Function("columns,cb",query.intoallfns); 
+			query.intoallfn = new Function("columns,cb,alasql",query.intoallfns); 
 		}
 
 	}
@@ -4164,13 +4184,13 @@ yy.Select.prototype.compileJoins = function(query) {
 			// source.data = query.database.tables[source.tableid].data;
 			if(alasql.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
-				source.datafn = function(query,params, cb, idx) {
+				source.datafn = function(query,params, cb, idx, alasql) {
 //					console.log(777,arguments);
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid, cb, idx,query);
 				}				
 			} else {
-				source.datafn = function(query,params,cb, idx) {
+				source.datafn = function(query,params,cb, idx, alasql) {
 					var res = alasql.databases[source.databaseid].tables[source.tableid].data;
 					if(cb) res = cb(res,idx,query);
 					return res;
@@ -4194,7 +4214,7 @@ yy.Select.prototype.compileJoins = function(query) {
 				srcwherefn: returnTrue
 			};
 			source.subquery = tq.compile(query.database.databaseid);
-			source.datafn = function(query, params, cb, idx) {
+			source.datafn = function(query, params, cb, idx, alasql) {
 				return source.subquery(query.params, null, cb, idx);
 			}				
 			query.aliases[source.alias] = {type:'subquery'};
@@ -4215,7 +4235,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			if(jn.array) ps += ",true";
 			ps += ");if(cb)res=cb(res, idx, query);return res";
 
-			source.datafn = new Function('query,params,cb,idx',ps);
+			source.datafn = new Function('query,params,cb,idx, alasql',ps);
 			query.aliases[source.alias] = {type:'paramvalue'};
 		} else if(jn.funcid) {
 			source = {
@@ -4263,7 +4283,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			s += 'cb,idx,query';
 			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
 //	console.log(s);
-			source.datafn = new Function('query, params, cb, idx',s);
+			source.datafn = new Function('query, params, cb, idx, alasql',s);
 
 			query.aliases[source.alias] = {type:'funcvalue'};
 		}
@@ -4712,12 +4732,12 @@ yy.Select.prototype.compileFrom = function(query) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 			if(alasql.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
-				source.datafn = function(query,params,cb,idx) {
+				source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
 				}				
 			} else {
-				source.datafn = function(query,params,cb,idx) {
+				source.datafn = function(query,params,cb,idx, alasql) {
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');
 				// if(!query.database.tables) console.log('query');
@@ -4734,7 +4754,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			}
 		} else if(tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
-			source.datafn = function(query, params, cb, idx) {
+			source.datafn = function(query, params, cb, idx, alasql) {
 //				return source.subquery(query.params, cb, idx, query);
 				var res;
 				source.subquery(query.params, function(data){
@@ -4750,7 +4770,7 @@ yy.Select.prototype.compileFrom = function(query) {
 //				console.log(tq);
 			if(tq.array) ps+=",true";
 			ps += ");if(cb)res=cb(res,idx,query);return res"
-			source.datafn = new Function('query,params,cb,idx',ps);
+			source.datafn = new Function('query,params,cb,idx,alasql',ps);
 		} else if(tq instanceof yy.FuncValue) {
 			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
 			// if(tq.args && tq.args.length>0) {
@@ -4780,10 +4800,10 @@ yy.Select.prototype.compileFrom = function(query) {
 			s += 'cb,idx,query';
 			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
 //	console.log(s);
-			source.datafn = new Function('query, params, cb, idx',s);
+			source.datafn = new Function('query, params, cb, idx, alasql',s);
 
 		} else if(tq instanceof yy.FromData) {
-				source.datafn = function(query,params,cb,idx) {
+				source.datafn = function(query,params,cb,idx, alasql) {
 					var res = tq.data;
 					if(cb) res = cb(res,idx,query);
 					return res;
@@ -7118,7 +7138,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		s += 'return '+self.values.length;
 
 //console.log(s);
-		var insertfn = new Function('db, params',s3+s);
+		var insertfn = new Function('db, params, alasql',s3+s);
 	
 // INSERT INTO table SELECT
 
@@ -7132,7 +7152,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			};
 			return statement;
 	    } else {
-			var insertfn = function(db, params) {
+			var insertfn = function(db, params, alasql) {
 				var res = selectfn(params);
 				db.tables[tableid].data = db.tables[tableid].data.concat(res);
 				return res.length;
@@ -7142,7 +7162,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	} else if(this.default) {
 		var insertfns = 'db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;';
-        var insertfn = new Function('db,params',insertfns); 
+        var insertfn = new Function('db,params,alasql',insertfns); 
     } else {
     	throw new Error('Wrong INSERT parameters');
     }
@@ -7169,7 +7189,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 			}
 			
-			var res = insertfn(db,params);
+			var res = insertfn(db,params,alasql);
 
 			if(alasql.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);

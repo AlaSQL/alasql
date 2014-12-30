@@ -208,12 +208,12 @@ yy.Select.prototype.compile = function(databaseid) {
 		};
 //		console.log(query.intofns);
 		if(query.intofns) {
-			query.intofn = new Function("r,i,params",query.intofns); 
+			query.intofn = new Function("r,i,params,alasql",query.intofns); 
 		};
 
 		if(query.intoallfns) {
 //			console.log(query.intoallfns);
-			query.intoallfn = new Function("columns,cb",query.intoallfns); 
+			query.intoallfn = new Function("columns,cb,alasql",query.intoallfns); 
 		}
 
 	}

@@ -6,7 +6,7 @@ if(typeof exports === 'object') {
 };
 
 //if(typeof exports != 'object') {
-
+if(false) {
 describe('Test 186 - Linq Syntax', function() {
     it("1. empty alasql()", function(done) {
       var data1 = [{a:1,b:10},{a:2,b:20},{a:0,b:20},];
@@ -100,3 +100,4 @@ describe('Test 186 - Linq Syntax', function() {
     // });
 
 });
+}
