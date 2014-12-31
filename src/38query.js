@@ -129,9 +129,15 @@ function queryfn3(query) {
 //			console.log(query.havingfns);
 	if(query.groupfn) {
 		if(query.havingfn) {
-			query.groups = query.groups.filter(query.havingfn);
+			query.data = [];
+			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+				if(query.havingfn(query.groups[i],query.params,alasql))
+					query.data.push(query.groups[i]);
+			}
+//			query.groups = query.groups.filter();
+		} else {
+			query.data = query.groups;
 		}
-		query.data = query.groups;
 	};
 
 	// Remove distinct values	
@@ -184,10 +190,11 @@ function queryfn3(query) {
 	// 	if(query.cb) query.cb(query.explaination,query.A, query.B);
 	// 	return query.explaination;
 	// } else 
+//console.log(190,query.intofns);
 	if(query.intoallfn) {
 //		console.log(161);
 //		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql); 
-		var res = query.intoallfn(query.columns,query.cb,alasql); 
+		var res = query.intoallfn(query.columns,query.cb,query.alasql); 
 //		console.log(1163,res);
 //		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);
@@ -195,7 +202,7 @@ function queryfn3(query) {
 		return res;	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
-			query.intofn(query.data[i],i,alasql);
+			query.intofn(query.data[i],i,query.params,query.alasql);
 		}
 //		console.log(query.intofn);
 		if(query.cb) query.cb(query.data.length,query.A, query.B);

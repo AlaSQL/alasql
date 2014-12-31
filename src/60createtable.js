@@ -173,7 +173,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				throw new Error('Something wrong with index on table');
 			} else {
 				this.indices[pk.hh][addr]=undefined;
-				assignfn(r);
+				assignfn(r,params,alasql);
 				var newaddr = pk.onrightfn(r);
 				if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
 					throw new Error('Record already exists');
@@ -183,7 +183,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			} 
 
 		} else {
-			assignfn(this.data[i]);
+			assignfn(this.data[i],params,alasql);
 		};
 
 	};

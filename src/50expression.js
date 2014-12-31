@@ -15,8 +15,8 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression);
 //		console.log(this.expression.toJavaScript('','', null));
-		var expr =  new Function("params",'return '+this.expression.toJavaScript('','', null));
-		var res = expr(params);
+		var expr =  new Function("params,alasql",'return '+this.expression.toJavaScript('','', null));
+		var res = expr(params,alasql);
 		if(cb) res = cb(res);
 		return res;
 	}

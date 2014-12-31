@@ -555,7 +555,7 @@ yy.Select.prototype.compileGroup = function(query) {
 	});
 
 //	console.log(s);
-	return new Function('r,params',s);
+	return new Function('r,params,alasql',s);
 
 }
 

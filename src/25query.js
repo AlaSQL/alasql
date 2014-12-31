@@ -7,7 +7,13 @@
 */
 
 // Table class
+
+/**
+ @class Query Main query class
+ */
 var Query = alasql.Query = function(params){
+	this.alasql = alasql;
+//	console.log(12,alasql);
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};

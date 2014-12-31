@@ -3052,7 +3052,13 @@ var View = alasql.View = function(params){
 */
 
 // Table class
+
+/**
+ @class Query Main query class
+ */
 var Query = alasql.Query = function(params){
+	this.alasql = alasql;
+//	console.log(12,alasql);
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};
@@ -3275,9 +3281,15 @@ function queryfn3(query) {
 //			console.log(query.havingfns);
 	if(query.groupfn) {
 		if(query.havingfn) {
-			query.groups = query.groups.filter(query.havingfn);
+			query.data = [];
+			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+				if(query.havingfn(query.groups[i],query.params,alasql))
+					query.data.push(query.groups[i]);
+			}
+//			query.groups = query.groups.filter();
+		} else {
+			query.data = query.groups;
 		}
-		query.data = query.groups;
 	};
 
 	// Remove distinct values	
@@ -3330,10 +3342,11 @@ function queryfn3(query) {
 	// 	if(query.cb) query.cb(query.explaination,query.A, query.B);
 	// 	return query.explaination;
 	// } else 
+//console.log(190,query.intofns);
 	if(query.intoallfn) {
 //		console.log(161);
 //		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql); 
-		var res = query.intoallfn(query.columns,query.cb,alasql); 
+		var res = query.intoallfn(query.columns,query.cb,query.alasql); 
 //		console.log(1163,res);
 //		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);
@@ -3341,7 +3354,7 @@ function queryfn3(query) {
 		return res;	
 	} else if(query.intofn) {
 		for(var i=0,ilen=query.data.length;i<ilen;i++){
-			query.intofn(query.data[i],i,alasql);
+			query.intofn(query.data[i],i,query.params,query.alasql);
 		}
 //		console.log(query.intofn);
 		if(query.cb) query.cb(query.data.length,query.A, query.B);
@@ -3550,7 +3563,7 @@ function doJoin (query, scope, h) {
 //			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-				query.groupfn(res, query.params, alasql)
+				query.groupfn(res, query.params, query.alasql)
 			} else {
 				query.data.push(res);
 			}	
@@ -4687,7 +4700,7 @@ yy.Select.prototype.compileGroup = function(query) {
 	});
 
 //	console.log(s);
-	return new Function('r,params',s);
+	return new Function('r,params,alasql',s);
 
 }
 
@@ -5401,8 +5414,8 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression);
 //		console.log(this.expression.toJavaScript('','', null));
-		var expr =  new Function("params",'return '+this.expression.toJavaScript('','', null));
-		var res = expr(params);
+		var expr =  new Function("params,alasql",'return '+this.expression.toJavaScript('','', null));
+		var res = expr(params,alasql);
 		if(cb) res = cb(res);
 		return res;
 	}
@@ -6580,7 +6593,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				throw new Error('Something wrong with index on table');
 			} else {
 				this.indices[pk.hh][addr]=undefined;
-				assignfn(r);
+				assignfn(r,params,alasql);
 				var newaddr = pk.onrightfn(r);
 				if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
 					throw new Error('Record already exists');
@@ -6590,7 +6603,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			} 
 
 		} else {
-			assignfn(this.data[i]);
+			assignfn(this.data[i],params,alasql);
 		};
 
 	};
@@ -7334,7 +7347,7 @@ yy.Update.prototype.compile = function (databaseid) {
 	var tableid = this.table.tableid;
 	
 	if(this.where) {
-		var wherefn = new Function('r,params','return '+this.where.toJavaScript('r',''));
+		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r',''));
 	};
 
 	// Construct update function
@@ -7342,7 +7355,7 @@ yy.Update.prototype.compile = function (databaseid) {
 	this.columns.forEach(function(col){
 		s += 'r[\''+col.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
 	});
-	var assignfn = new Function('r,params',s);
+	var assignfn = new Function('r,params,alasql',s);
 
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];
@@ -7366,11 +7379,11 @@ yy.Update.prototype.compile = function (databaseid) {
 //		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
-			if(!wherefn || wherefn(table.data[i], params) ) {
+			if(!wherefn || wherefn(table.data[i], params,alasql) ) {
 				if(table.update) {
 					table.update(assignfn, i, params);
 				} else {
-					assignfn(table.data[i], params);
+					assignfn(table.data[i], params,alasql);
 				}
 				numrows++;
 			}

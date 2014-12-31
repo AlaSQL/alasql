@@ -26,7 +26,7 @@ yy.Update.prototype.compile = function (databaseid) {
 	var tableid = this.table.tableid;
 	
 	if(this.where) {
-		var wherefn = new Function('r,params','return '+this.where.toJavaScript('r',''));
+		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r',''));
 	};
 
 	// Construct update function
@@ -34,7 +34,7 @@ yy.Update.prototype.compile = function (databaseid) {
 	this.columns.forEach(function(col){
 		s += 'r[\''+col.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
 	});
-	var assignfn = new Function('r,params',s);
+	var assignfn = new Function('r,params,alasql',s);
 
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];
@@ -58,11 +58,11 @@ yy.Update.prototype.compile = function (databaseid) {
 //		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
-			if(!wherefn || wherefn(table.data[i], params) ) {
+			if(!wherefn || wherefn(table.data[i], params,alasql) ) {
 				if(table.update) {
 					table.update(assignfn, i, params);
 				} else {
-					assignfn(table.data[i], params);
+					assignfn(table.data[i], params,alasql);
 				}
 				numrows++;
 			}
