@@ -1,19 +1,23 @@
 # Changelog
 
 
-### 0.0.36 (23.12.2014 - .12.2014)
+### 0.0.36 (23.12.2014 - 31.12.2014)
 
 * REDUCE Aggregator
-* LINQ functions:
+* LINQ functions (fluent interface):
  * alasql() or alasql(data)
- * Select()
  * From()
+ * Where()
  * OrderBy()
  * GroupBy()
  * Having()
+ * Select()
  * Top()
 * RANGE(1,10) - from function
 * HTML-from and into functions
+* Clean root directory
+* GO keyword as semicolon
+* global alasql => var alasql
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 
@@ -288,4 +292,7 @@
 * Remove generation of recs after select in case of group by (for memory optimization)
 * Added conversion for type MONEY for INSERT statement 
 
+#### Versions 0.0.1 - 0.0.3 (25.10.2014-27.10.2014)
+
+* First version of Alasql
 

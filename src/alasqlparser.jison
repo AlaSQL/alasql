@@ -102,6 +102,7 @@
 'FIRST'											return 'FIRST'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
+'GO'                                      		return 'SEMICOLON'
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'

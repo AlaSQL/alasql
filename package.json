@@ -1,14 +1,13 @@
 {
   "name": "alasql",
-  "description": "Alasql - fast JavaScript SQL database for browser and Node.js with IndexedDB, localStorage, and DOM-storage support",
-  "version": "0.0.35",
+  "description": "Alasql - JavaScript SQL database and data manipulation library",
+  "version": "0.0.36",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
     "test": "test"
   },
   "devDependencies": {
-    "gulp-uglify": "^1.0.1"
   },
   "engines": [
     "node"
@@ -42,10 +41,8 @@
     "localStorage",
     "IndexedDB",
     "DOM-storage",
-    "SQLite"
+    "SQLite",
+    "JSON"
   ],
-  "license": "MIT",
-  "bin": {
-      "alacon" : "alacon.js"
-  }  
+  "license": "MIT"
 }
