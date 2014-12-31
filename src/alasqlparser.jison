@@ -102,7 +102,7 @@
 'FIRST'											return 'FIRST'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
-'GO'                                      		return 'SEMICOLON'
+'GO'                                      		return 'GO'
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
@@ -291,6 +291,8 @@ ExplainStatement
 Statement
 
 	: { $$ = null; }
+	| GO
+	  { $$ = null; }
 	| AlterTable	
 	| AttachDatabase	
 	| CreateDatabase

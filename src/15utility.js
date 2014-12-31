@@ -6,28 +6,60 @@
 //
 */
 
-// 
+/**
+ Alasql utility functions
+ */
 var utils = alasql.utils = {};
 
-// Stub for non-ecisting WHERE clause 
-// so is faster then if(whenrfn) whenfn()
+/**
+ Return true.
+ Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
+ @return {boolean} true
+ */
 function returnTrue () {return true};
+
+/**
+ Return undefined
+ Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
+ @return undefined
+ */
 function returnUndefined() {};
 
+/**
+ Escape quotes
+ @param {string} s Source string
+ @return {string} Escaped string
+ */
 var escapeq = utils.escapeq = function(s) {
     return s.replace(/\'/g,'\\\'');
 }
 
+/**
+ Replace double quotes
+ @param {string} s Source string
+ @return {string} Replaced string
+ */
 var doubleq = utils.doubleq = function(s) {
     return s.replace(/(\'\')/g,'\\\'');
 }
 
-var doubleqq = utils.doubleqq = function(s) {
+/**
+ Replace sigle quote to escaped single quote
+ @param {string} s Source string
+ @return {string} Replaced string
+ */
+ var doubleqq = utils.doubleqq = function(s) {
     return s.replace(/\'/g,"\'");
 }
 
 
-// For LOAD
+/**
+  Load text file from anywhere
+  @param {string} path File path
+  @param {boolean} asy True - async call, false - sync call
+  @param {function} success Success function
+  @param {function} error Error function
+*/
 var loadFile = utils.loadFile = function(path, asy, success, error) {
 
     if(typeof exports == 'object') {
@@ -83,6 +115,14 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
     }
 };
 
+/**
+  Load binary file from anywhere
+  @param {string} path File path
+  @param {boolean} asy True - async call, false - sync call
+  @param {function} success Success function
+  @param {function} error Error function
+  @return 1 for Async, data - for sync version
+*/
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     if(typeof exports == 'object') {
@@ -122,7 +162,13 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 };
 
 
-// For LOAD
+/**
+  Save text file from anywhere
+  @param {string} path File path
+  @param {array of objects} data Data object
+  @param {function} cb Callback
+*/
+
 var saveFile = utils.saveFile = function(path, data, cb) {
     if(!path) {
         alasql.options.stdout = true;
@@ -154,6 +200,13 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 
 
 // Fast hash function
+
+/**
+  Hash string to integer number
+  @param {string} str Source string
+  @return {integer} hash number
+*/
+
 var hash = utils.hash = function hash(str){
     var h = 0;
     if (str.length == 0) return h;
@@ -353,6 +406,11 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
     });
 };
 
+/**
+    Excel:
+    @param {integer} i Column number
+    @return {string} Column name
+*/
 
 utils.xlsnc = function(i) {
     var addr = String.fromCharCode(65+i%26);
