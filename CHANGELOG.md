@@ -22,7 +22,8 @@
 * SELECT TOP 10 PERCENT * FROM ?
 * ORDER BY _ - fixed
 * ORDER BY formula
-* ...
+...
+* GROUP BY formula..........
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

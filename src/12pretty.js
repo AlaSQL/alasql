@@ -109,7 +109,7 @@ function ID(){
 	if(alasql.prettyflag) {
 		return '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
 	} else {
-		return ' '; //'    ';
+		return ''; //'    ';
 	}	
 };
 

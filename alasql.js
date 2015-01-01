@@ -2061,7 +2061,7 @@ function ID(){
 	if(alasql.prettyflag) {
 		return '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
 	} else {
-		return ' '; //'    ';
+		return ''; //'    ';
 	}	
 };
 
@@ -5009,7 +5009,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	var allgroup = decartes(this.group);
 
-	//console.log(allgroup);
+//	console.log(allgroup);
 	// Prepare groups
 	//var allgroup = [['a'], ['a','b'], ['a', 'b', 'c']];
 
@@ -5056,7 +5056,8 @@ yy.Select.prototype.compileGroup = function(query) {
 		var rg = agroup.map(function(columnid){
 			// Check, if aggregator exists but GROUP BY is not exists
 			if(columnid == '') return '1'; // Create fictive groupping column for fictive GROUP BY
-			else return "r['"+columnid+"']";
+//			else return "r['"+columnid+"']";
+			else return "p['default']['"+columnid+"']";
 		});
 
 		if(rg.length == 0) rg = ["''"];
@@ -5071,7 +5072,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 		s += agroup.map(function(columnid){
 			if(columnid == '') return '';
-			else return "'"+columnid+"':r['"+columnid+"'],";
+			else return "'"+columnid+"':p['default']['"+columnid+"'],";
 		}).join('');
 
 		var neggroup = arrayDiff(allgroups,agroup);
@@ -5212,12 +5213,12 @@ yy.Select.prototype.compileGroup = function(query) {
 		//s += 'group.count++;';
 
 		s += '}';
-//		console.log(s, this.group);
+		console.log('groupfn',s);
 
 	});
 
 //	console.log(s);
-	return new Function('r,params,alasql',s);
+	return new Function('p,params,alasql',s);
 
 }
 
@@ -5548,6 +5549,7 @@ function decartes(gv) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
 			if(gv[t] instanceof yy.Column) {
+//		 		res = res.map(function(r){return r.concat(gv[t].columnid+'\t'+gv[t].toJavaScript('p'))}); 	
 		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
 			} else if(gv[t] instanceof yy.FuncValue) {
 		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
@@ -5556,6 +5558,8 @@ function decartes(gv) {
 				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group));
 				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group));
 			} else {
+//				console.log(gv[t].toString());
+		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
 //				res = res.concat(gv[t]);
 			};
 

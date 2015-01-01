@@ -66,6 +66,7 @@ function decartes(gv) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
 			if(gv[t] instanceof yy.Column) {
+//		 		res = res.map(function(r){return r.concat(gv[t].columnid+'\t'+gv[t].toJavaScript('p'))}); 	
 		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
 			} else if(gv[t] instanceof yy.FuncValue) {
 		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
@@ -74,6 +75,8 @@ function decartes(gv) {
 				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group));
 				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group));
 			} else {
+//				console.log(gv[t].toString());
+		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
 //				res = res.concat(gv[t]);
 			};
 

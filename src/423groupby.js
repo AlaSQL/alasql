@@ -13,7 +13,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	var allgroup = decartes(this.group);
 
-	//console.log(allgroup);
+//	console.log(allgroup);
 	// Prepare groups
 	//var allgroup = [['a'], ['a','b'], ['a', 'b', 'c']];
 
@@ -60,7 +60,8 @@ yy.Select.prototype.compileGroup = function(query) {
 		var rg = agroup.map(function(columnid){
 			// Check, if aggregator exists but GROUP BY is not exists
 			if(columnid == '') return '1'; // Create fictive groupping column for fictive GROUP BY
-			else return "r['"+columnid+"']";
+//			else return "r['"+columnid+"']";
+			else return "p['default']['"+columnid+"']";
 		});
 
 		if(rg.length == 0) rg = ["''"];
@@ -75,7 +76,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 		s += agroup.map(function(columnid){
 			if(columnid == '') return '';
-			else return "'"+columnid+"':r['"+columnid+"'],";
+			else return "'"+columnid+"':p['default']['"+columnid+"'],";
 		}).join('');
 
 		var neggroup = arrayDiff(allgroups,agroup);
@@ -216,11 +217,11 @@ yy.Select.prototype.compileGroup = function(query) {
 		//s += 'group.count++;';
 
 		s += '}';
-//		console.log(s, this.group);
+		console.log('groupfn',s);
 
 	});
 
 //	console.log(s);
-	return new Function('r,params,alasql',s);
+	return new Function('p,params,alasql',s);
 
 }
