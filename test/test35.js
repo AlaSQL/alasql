@@ -39,16 +39,16 @@ describe('Test 35 - LIMIT OFFSET', function() {
 			alasql('INSERT INTO test1 VALUES (?)',[i]);
 		}
 
-		var sql = 'SELECT TOP 2 a FROM test1';
-		var res = alasql.array(sql);
+		var sql = 'SELECT COLUMN TOP 2 a FROM test1';
+		var res = alasql(sql);
 		assert.deepEqual([ 1,2 ], res);
 
-		var sql = 'SELECT a FROM test1 LIMIT 5';
-		var res = alasql.array(sql);
+		var sql = 'SELECT COLUMN a FROM test1 LIMIT 5';
+		var res = alasql(sql);
 		assert.deepEqual([ 1,2,3,4,5 ], res);
 
-		var sql = 'SELECT a FROM test1 LIMIT 5 OFFSET 2';
-		var res = alasql.array(sql);
+		var sql = 'SELECT COLUMN a FROM test1 LIMIT 5 OFFSET 2';
+		var res = alasql(sql);
 		assert.deepEqual([ 2,3,4,5,6 ], res);
 
 		alasql('drop database test35');

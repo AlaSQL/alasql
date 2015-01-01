@@ -13,15 +13,15 @@ describe('Test 47', function() {
 			alasql('CREATE TABLE one (a INT)');
 			alasql('INSERT INTO one VALUES (1),(2),(3),(4),(5)');
 
-			var res = alasql.array('SELECT * FROM (SELECT * FROM one WHERE a < 3)');
+			var res = alasql('SELECT COLUMN * FROM (SELECT * FROM one WHERE a < 3)');
 			assert.deepEqual([1,2],res);
 			done();
 		});
 
 		it('Subsubqueries without alias', function(done) {
-			var res = alasql.value('SELECT SUM(a) FROM (SELECT * FROM one WHERE a < 3)');
+			var res = alasql('SELECT VALUE SUM(a) FROM (SELECT * FROM one WHERE a < 3)');
 			assert.equal(3,res);
-			var res = alasql.value('SELECT COUNT(*) FROM (SELECT * FROM one WHERE a < 3)');
+			var res = alasql('SELECT VALUE COUNT(*) FROM (SELECT * FROM one WHERE a < 3)');
 			assert.equal(2,res);
 
 			alasql('drop database test47');

@@ -13,7 +13,7 @@ describe('Test 115 - CROSS and NATURAL JOINS', function() {
 		for(var i=0; i<100; i++) {
 			alasql('insert into one values (?,?,?)', [i,i*10, i*100]);	
 		}
-		var res = alasql.value('select count(*) from one');
+		var res = alasql('select value count(*) from one');
 		assert(res == 100);
 		done();		
 	});
@@ -23,7 +23,7 @@ describe('Test 115 - CROSS and NATURAL JOINS', function() {
 		for(var i=0; i<100; i++) {
 			alasql('insert into two values (?,?,?)', [i*10,i*100, i%5]);	
 		}
-		var res = alasql.value('select count(*) from two');
+		var res = alasql('select value count(*) from two');
 		assert(res == 100);
 		done();		
 	});

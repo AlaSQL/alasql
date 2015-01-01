@@ -12,7 +12,7 @@ describe('Test 49 - Insert with primary key', function() {
 			alasql('CREATE TABLE one (a INT PRIMARY KEY, b INT)');
 			alasql('INSERT INTO one VALUES (1,1)');
 			alasql('INSERT INTO one VALUES (2,2)');
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(2, res);
 			done();
 		});
@@ -25,7 +25,7 @@ describe('Test 49 - Insert with primary key', function() {
 			}, Error);
 			alasql('INSERT INTO one VALUES (4,1)');
 
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(4, res);
 			done();
 		});
@@ -35,7 +35,7 @@ describe('Test 49 - Insert with primary key', function() {
 			alasql('DELETE FROM one WHERE a = 3');
 			alasql('INSERT INTO one VALUES (3,1)');
 
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(4, res);
 			done();
 		});
@@ -53,7 +53,7 @@ describe('Test 49 - Insert with primary key', function() {
 
 			alasql('INSERT INTO one VALUES (3,1)');
 
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(5, res);
 			done();
 		});

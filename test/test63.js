@@ -13,7 +13,7 @@ describe('Test 63 - PIVOT', function() {
 		alasql('insert into sales values ("Minsk","Pen",100)');
 		alasql('insert into sales values ("Minsk","Pencil",100)');
 		alasql('insert into sales values ("Bratislava","Pen",50)');
-		assert.equal(250, alasql.value('select sum(qty) from sales'));
+		assert.equal(250, alasql('select value sum(qty) from sales'));
 		done();
 	});
 

@@ -15,7 +15,7 @@ describe('Test 50 - Insert with primary key with two columns', function() {
 
 			alasql('INSERT INTO one VALUES (3,1)');
 			alasql('INSERT INTO one VALUES (1,2)');
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(4, res);
 			done();
 		});
@@ -27,7 +27,7 @@ describe('Test 50 - Insert with primary key with two columns', function() {
 			}, Error);
 			alasql('INSERT INTO one VALUES (1,3)');
 
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(5, res);
 			done();
 		});
@@ -37,7 +37,7 @@ describe('Test 50 - Insert with primary key with two columns', function() {
 			alasql('DELETE FROM one WHERE a = 1');
 			alasql('INSERT INTO one VALUES (1,1)');
 
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(3, res);
 			done();
 		});
@@ -57,7 +57,7 @@ describe('Test 50 - Insert with primary key with two columns', function() {
 
 			alasql('INSERT INTO one VALUES (1,1)');
 
-			var res = alasql.queryValue('SELECT COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			assert.equal(5, res);
 			done();
 		});

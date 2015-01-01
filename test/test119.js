@@ -16,7 +16,7 @@ describe('Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE', function() {
 			alasql('insert into one values (1)');
 		}, Error);
 
-		var res = alasql.value('select count(*) from one');
+		var res = alasql('select value count(*) from one');
 		assert.deepEqual(res, 3);
 
 		done();
@@ -33,7 +33,7 @@ if(false) {
 			alasql('insert into two values (1)');
 		}, Error);
 
-		var res = alasql.value('select count(*) from two');
+		var res = alasql('select value count(*) from two');
 		assert.deepEqual(res, 3);
 
 		done();
@@ -48,7 +48,7 @@ if(false) {
 			alasql('create unique index threea on three(a)')
 		}, Error);
 
-		var res = alasql.value('select count(*) from three');
+		var res = alasql('select value count(*) from three');
 		assert.deepEqual(res, 4);
 
 		done();
@@ -64,7 +64,7 @@ if(false) {
 			alasql('insert into four values (1,10)');
 		}, Error);
 
-		var res = alasql.value('select count(*) from three');
+		var res = alasql('select value count(*) from three');
 		assert.deepEqual(res, 4);
 
 		done();

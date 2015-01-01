@@ -15,27 +15,27 @@ describe('Test 117 - Table name resolution', function() {
 	});
 
 	it('5. One table', function(done){
-		var res = alasql.value('select sum(c) from one join two using a');
+		var res = alasql('select value sum(c) from one join two using a');
 		assert(res == 6);
 		done();
 	});
 
 if(false) {
 	it('2. One table', function(done){
-		var res = alasql.value('select sum(b) from one join two using a');
+		var res = alasql('select value sum(b) from one join two using a');
 		assert(res == 600);
 		done();
 	});
 
 
 	it('3. One table', function(done){
-		var res = alasql.value('select sum(one.b) from one join two using a');
+		var res = alasql('select value sum(one.b) from one join two using a');
 		assert(res == 600);
 		done();
 	});
 
 	it('4. One table', function(done){
-		var res = alasql.value('select sum(two.b) from one join two using a');
+		var res = alasql('select value sum(two.b) from one join two using a');
 		assert(res == 6);
 		done();
 	});

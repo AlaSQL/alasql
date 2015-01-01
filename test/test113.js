@@ -48,7 +48,7 @@ describe('Test 113 - SELECT ', function(){
 
 //	console.log(Object.keys(alasql.currentDatabase.sqlcache).length);
 	it('Select COUNT(*) on cross-join', function(done) {
-		assert.equal(25, alasql.queryValue('select count(*) from courses, students'));
+		assert.equal(25, alasql('select value count(*) from courses, students'));
 		done();		
 	});
 
@@ -92,7 +92,7 @@ describe('Test 113 - SELECT ', function(){
 	});
 
 	it('Select on one inner-join/2', function(done) {
-		var res = alasql.exec('SELECT students.schoolid '+
+		var res = alasql('SELECT students.schoolid '+
 			' FROM students '+
 			' INNER JOIN courses USING courseid');
 
@@ -101,7 +101,7 @@ describe('Test 113 - SELECT ', function(){
 	});
 
 	it('Select on one left-join', function(done) {
-		var res = alasql.exec('SELECT students.schoolid '+
+		var res = alasql('SELECT students.schoolid '+
 			' FROM students '+
 			' LEFT JOIN courses USING courseid');
 
@@ -110,7 +110,7 @@ describe('Test 113 - SELECT ', function(){
 	});
 
 	it('Select on one right-join', function(done) {
-		var res = alasql.exec('SELECT students.schoolid '+
+		var res = alasql('SELECT students.schoolid '+
 			' FROM students '+
 			' RIGHT JOIN courses USING courseid');
 

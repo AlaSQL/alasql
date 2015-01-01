@@ -51,12 +51,12 @@ describe('Test 20 - User-defined functions', function() {
 			num++;
 			return num
 		}; 
-		var runspy = alasql.compile('select spy(a) from one', 'array');
+		var runspy = alasql.compile('select column spy(a) from one');
 		var res = runspy();
 		assert.deepEqual(res,[1,2,3]);
 
 		num = 0;
-		var runspy2 = alasql.compile('select max(spy(a)) from one', 'value');
+		var runspy2 = alasql.compile('select value max(spy(a)) from one');
 		var res = runspy2();
 		assert.deepEqual(res,3);
 
@@ -71,7 +71,7 @@ describe('Test 20 - User-defined functions', function() {
 
 		alasql.fn.myfun = function(x) { return x+1; };
 
-		var res = alasql.array('select myfun(a) from one');
+		var res = alasql('select COLUMN myfun(a) from one');
 		assert.deepEqual(res,[11,21,31]);
 
 		alasql('create database test20b;use test20b');
@@ -80,7 +80,7 @@ describe('Test 20 - User-defined functions', function() {
 
 		alasql.fn.myfun = function(x) { return x+2; };
 
-		var res = alasql.array('select myfun(a) from one');
+		var res = alasql('select column myfun(a) from one');
 		assert.deepEqual(res,[12,22,32]);
 
 		// alasql('use test20a');

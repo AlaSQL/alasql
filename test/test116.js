@@ -22,7 +22,7 @@ describe('Test 116', function() {
 		assert(!!alasql.tables.one);
 		alasql('insert into one values (10)')
 		assert(alasql.tables.one.data.length == 1);
-		var res = alasql.value('select sum(a) from one');
+		var res = alasql('select value sum(a) from one');
 		assert(res == 10);
 		alasql('drop database test116');		
 		done();
@@ -37,7 +37,7 @@ describe('Test 116', function() {
 		assert(alasql.tables.one.data.length == 1);
 		var sel = alasql.compile('select sum(a) from one where a = ?','value');
 		var res = sel([10]);
-		var res = alasql.value('select sum(a) from one');
+		var res = alasql('select value sum(a) from one');
 		assert(res == 10);
 		assert(Object.keys(alasql.databases.test116.sqlCache).length == 1);
 		alasql('drop database test116');
@@ -55,7 +55,7 @@ describe('Test 116', function() {
 		alasql('insert into one values (?)', [30]);
 		assert(Object.keys(alasql.databases.test116.sqlCache).length == 2);
 		
-		var res = alasql.array('select a from one order by a');
+		var res = alasql('select column a from one order by a');
 		assert.deepEqual(res,[10,20,30]);
 		alasql.databases.test116.resetSqlCache();
 		assert(Object.keys(alasql.databases.test116.sqlCache).length == 0);
@@ -70,10 +70,10 @@ describe('Test 116', function() {
 		alasql('insert into one (a) values (60); insert into one (a) values (70)');
 		assert(Object.keys(alasql.databases.test116.sqlCache).length == 1);
 
-		var res = alasql.value('select count(*) from one');
+		var res = alasql('select value count(*) from one');
 		assert(res == 7);
 
-		var res = alasql.value('select sum(a) from one');
+		var res = alasql('select value sum(a) from one');
 		assert(res == 280);
 
 		alasql('drop database test116');	
@@ -87,7 +87,7 @@ describe('Test 116', function() {
 		alasql('create table two (a int)');
 		alasql('insert into one (a) values (?)', [10]);
 		alasql('insert into two select * from one');
-		var res = alasql.value('select * from two');
+		var res = alasql('select value * from two');
 		assert(res = 10);
 		alasql('drop database test116');	
 		done();
@@ -100,7 +100,7 @@ describe('Test 116', function() {
 		alasql('create table two (a int)');
 		alasql('insert into one (a) values (?)', [10]);
 		alasql('insert into one (a) values (?)', [5]);
-		var res = alasql.value('select sum(a) from one');	
+		var res = alasql('select value sum(a) from one');	
 		assert(res = 15);
 		alasql('insert into two (a) values (?)', [20]);
 		var res = alasql('select * into two from one');
@@ -108,7 +108,7 @@ describe('Test 116', function() {
 		assert(res == 2);
 		assert(alasql.databases.test116.tables.one.data.length == 2);
 		assert(alasql.databases.test116.tables.two.data.length == 3);
-		var res = alasql.value('select sum(a) from two');	
+		var res = alasql('select value sum(a) from two');	
 //		console.log(res);
 		assert(res == 35);
 		alasql('drop database test116');	

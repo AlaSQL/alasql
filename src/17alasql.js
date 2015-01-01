@@ -175,11 +175,17 @@ alasql.adrun = function (databaseid, ast, params, cb) {
 
 
 
-// Compiler
+/**
+ Compile statement to JavaScript function
+ @param {string} sql SQL statement
+ @param {string} kind
+ @param {string} databaseid Database identificator
+ @return {functions} Compiled statement functions
+*/
 alasql.compile = function(sql, kind, databaseid) {
 	if(!kind) kind = 'collection';
 	if(!databaseid) databaseid = alasql.useid;
-	var ast = alasql.parse(sql);
+	var ast = alasql.parse(sql); // Create AST
 	if(ast.statements.length == 1) {
 		var statementfn = ast.statements[0].compile(databaseid);
 		
@@ -256,6 +262,7 @@ alasql.compile = function(sql, kind, databaseid) {
 // };
 
 
+/*
 // MSSQL-Like aliases
 alasql.query = function (sql, params, cb) {
 	var res = this.exec(sql, params);
@@ -310,7 +317,7 @@ alasql.queryArrayOfArrays = function (sql, params, cb) {
 	if(cb) cb(aa);
 	return aa;
 };
-
+*/
 /*alasql.queryColumn = function (sql, params, cb) {
 	var res = this.exec(sql, params);
 	var keys = Object.keys(res[0]);
@@ -329,10 +336,11 @@ alasql.queryArrayOfArrays = function (sql, params, cb) {
 	return aa;
 };
 */
+/*
 alasql.value = alasql.queryValue;
 alasql.single = alasql.querySingle;
 alasql.row = alasql.queryRow;
 alasql.column = alasql.queryArray;
 alasql.array = alasql.queryArray;
 alasql.matrix = alasql.queryArrayOfArrays;
-
+*/

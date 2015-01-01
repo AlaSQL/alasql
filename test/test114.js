@@ -7,7 +7,7 @@ if(typeof exports === 'object') {
 describe('Test 114 - RANDOM()', function() {
 
 	it('Select random values', function(done) {
-		var res = alasql.row('select random() AS 0, random() AS 1, random(100) AS 2, random(100) AS 3 from ? a',[[1]]);
+		var res = alasql('select row random() AS 0, random() AS 1, random(100) AS 2, random(100) AS 3 from ? a',[[1]]);
 		assert(res.length == 4);
 		assert(res[0] < 1);
 		assert(res[1] < 1);
@@ -21,9 +21,9 @@ describe('Test 114 - RANDOM()', function() {
 		alasql('use rnd');
 		alasql('create table one (a int default random(100))');
 		alasql('insert into one values (10)');
-		var res = alasql.value('select count(*) from one');
+		var res = alasql('select value count(*) from one');
 		assert(res == 1);
-		var res = alasql.value('select a from one where a = 10');
+		var res = alasql('select value a from one where a = 10');
 		assert(res == 10);
 		done();		
 	});
@@ -31,7 +31,7 @@ describe('Test 114 - RANDOM()', function() {
 	it('Fill with random values', function(done) {
 		alasql('insert into one default values');	
 		assert(alasql.databases.rnd.tables.one.data[1].a<100);
-		var res = alasql.value('select count(*) from one');
+		var res = alasql('select value count(*) from one');
 		assert(res == 2);
 		done();
 	});
