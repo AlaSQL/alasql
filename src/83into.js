@@ -4,22 +4,19 @@
 // (c) 2014 Andrey Gershun
 //
 
-utils.emptyChildren = function (container){
-  var len = container.childNodes.length;
-  while (len--) {
-    container.removeChild(container.lastChild);
-  };
-};
-
-alasql.into.HTML = function(selector, opts, data, columns, cb) {
+alasql.into.SQL = function(filename, opts, data, columns, cb) {
+	var res;
+	if(typeof filename == 'object') {
+		opts = filename;
+		filename = "";
+	}
 	var opt = {};
 	alasql.utils.extend(opt, opts);
+	if(typeof opt.tableid == 'undefined') {
+		throw new Error('Table for INSERT TO is not defined.');
+	};
 
-	var sel = document.querySelector(selector);
-	if(!sel) {
-		throw new Error('Selected HTML element is not found');
-	};	
-
+	var s = '';
 	if(columns.length == 0) {
 		if(typeof data[0] == "object") {
 			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
@@ -29,38 +26,93 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 		}
 	}
 
-	var tbe = document.createElement('table');
-	var thead = document.createElement('thead');
-	tbe.appendChild(thead);
-	if(opt.headers) {
-		var tre = document.createElement('tr');
-		for(var i=0;i<columns.length;i++){
-			var the = document.createElement('th');
-			the.textContent = columns[i].columnid;
-			tre.appendChild(the);
-		}
-		thead.appendChild(tre);
+	for(var i=0,ilen=data.length;i<ilen;i++) {
+		s += 'INSERT INTO '+opts.tableid +'(';
+		s += columns.map(function(col){return col.columnid}).join(",");
+		s += ') VALUES (';
+		s += columns.map(function(col){
+			var val = data[i][col.columnid];
+			if(col.typeid) {
+				if(col.typeid == 'STRING' || col.typeid == 'VARCHAR' ||  
+					col.typeid == 'NVARCHAR' || col.typeid == 'CHAR' || col.typeid == 'NCHAR') {
+					val = "'"+escapeqq(val)+"'";
+				}
+			} else {
+				if(typeof val == 'string') {
+					val = "'"+escapeqq(val)+"'";					
+				}
+			}
+			return val;
+		});		
+		s += ');\n';
 	}
+//	if(filename === '') {
+//		res = s;
+//	} else {
+//		res = data.length;
+	res = alasql.utils.saveFile(filename,s);
+	if(cb) res = cb(res);
+	return res;
+};
 
-	var tbody = document.createElement('tbody');
-	tbe.appendChild(tbody);
-	for(var j=0;j<data.length;j++){
-		var tre = document.createElement('tr');
-		for(var i=0;i<columns.length;i++){
-			var the = document.createElement('td');
-			the.textContent = data[j][columns[i].columnid];
-			tre.appendChild(the);
+alasql.into.HTML = function(selector, opts, data, columns, cb) {
+	var res = 1;
+	if(typeof exports == 'object') {
+		var opt = {};
+		alasql.utils.extend(opt, opts);
+
+		var sel = document.querySelector(selector);
+		if(!sel) {
+			throw new Error('Selected HTML element is not found');
+		};	
+
+		if(columns.length == 0) {
+			if(typeof data[0] == "object") {
+				columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+			} else {
+				// What should I do?
+				// columns = [{columnid:"_"}];
+			}
 		}
-		tbody.appendChild(tre);
-	};
-	alasql.utils.emptyChildren(sel);
-	console.log(tbe,columns);
-	sel.appendChild(tbe);
+
+		var tbe = document.createElement('table');
+		var thead = document.createElement('thead');
+		tbe.appendChild(thead);
+		if(opt.headers) {
+			var tre = document.createElement('tr');
+			for(var i=0;i<columns.length;i++){
+				var the = document.createElement('th');
+				the.textContent = columns[i].columnid;
+				tre.appendChild(the);
+			}
+			thead.appendChild(tre);
+		}
+
+		var tbody = document.createElement('tbody');
+		tbe.appendChild(tbody);
+		for(var j=0;j<data.length;j++){
+			var tre = document.createElement('tr');
+			for(var i=0;i<columns.length;i++){
+				var the = document.createElement('td');
+				the.textContent = data[j][columns[i].columnid];
+				tre.appendChild(the);
+			}
+			tbody.appendChild(tre);
+		};
+		alasql.utils.domEmptyChildren(sel);
+	//	console.log(tbe,columns);
+		sel.appendChild(tbe);
+	}
+	if(cb) res = cb(res);
+	return res;
 };
 
 alasql.into.JSON = function(filename, opts, data, columns, cb) {
+	var res = 1;
 	var s = JSON.stringify(data);
 	alasql.utils.saveFile(filename,s);
+	if(cb) res = cb(res);
+	return res;
 };
 
 alasql.into.TXT = function(filename, opts, data, columns, cb) {

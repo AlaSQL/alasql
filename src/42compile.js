@@ -1022,20 +1022,20 @@ yy.Select.prototype.compileOrder = function (query) {
 			// COLLATE NOCASE
 			if(ord.nocase) columnid += '.toUpperCase()';
 
-			if(columnid == '_') {
-				s += 'if(a'+dg+(ord.direction == 'ASC'?'>':'<')+'b'+dg+')return 1;';
-				s += 'if(a'+dg+'==b'+dg+'){';
-			} else {
+//			if(columnid == '_') {
+//				s += 'if(a'+dg+(ord.direction == 'ASC'?'>':'<')+'b'+dg+')return 1;';
+//				s += 'if(a'+dg+'==b'+dg+'){';
+//			} else {
 			// TODO Add date comparision
 				s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
 				s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
-			}
+//			}
 			sk += '}';
 		});
 		s += 'return 0;';
 		s += sk+'return -1';
 		query.orderfns = s;
-
+//console.log(s);
 		return new Function('a,b',s);
 	};
 };

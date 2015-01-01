@@ -224,7 +224,12 @@ function doLimit (query) {
 	if(query.limit) {
 		var offset = 0;
 		if(query.offset) offset = ((query.offset|0)-1)||0;
-		var limit = (query.limit|0) + offset;
+		var limit;
+		if(query.percent) {
+			limit = ((query.data.length*query.limit/100)| 0)+offset;			
+		} else {
+			limit = (query.limit|0) + offset;
+		};
 		query.data = query.data.slice(offset,limit);
 	}
 }

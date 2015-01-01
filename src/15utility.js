@@ -34,6 +34,16 @@ var escapeq = utils.escapeq = function(s) {
     return s.replace(/\'/g,'\\\'');
 }
 
+
+/**
+ Double quotes
+ @param {string} s Source string
+ @return {string} Escaped string
+ */
+var escapeqq = utils.undoubleq = function(s) {
+    return s.replace(/(\')/g,'\'\'');
+}
+
 /**
  Replace double quotes
  @param {string} s Source string
@@ -42,6 +52,7 @@ var escapeq = utils.escapeq = function(s) {
 var doubleq = utils.doubleq = function(s) {
     return s.replace(/(\'\')/g,'\\\'');
 }
+
 
 /**
  Replace sigle quote to escaped single quote
@@ -460,7 +471,7 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
     @return {string} Column name, starting with 'A'
 */
 
-utils.xlsnc = function(i) {
+var xlsnc = utils.xlsnc = function(i) {
     var addr = String.fromCharCode(65+i%26);
     if(i>=26) {
         i=((i/26)|0)-1;
@@ -478,7 +489,7 @@ utils.xlsnc = function(i) {
     @param {integer} i Column number, like 'A' or 'BE'
     @return {string} Column name, starting with 0
 */
-utils.xlscn = function(s) {
+var xlscn = utils.xlscn = function(s) {
     var n = s.charCodeAt(0)-65;
     if(s.length>1) {
         n = n*26+s.charCodeAt(1)-65;
@@ -487,5 +498,12 @@ utils.xlscn = function(s) {
         }
     }
     return n;
+};
+
+var domEmptyChildren = utils.domEmptyChildren = function (container){
+  var len = container.childNodes.length;
+  while (len--) {
+    container.removeChild(container.lastChild);
+  };
 };
 

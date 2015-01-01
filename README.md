@@ -614,12 +614,16 @@ Read my [to do](TODO.md) page
 
 ### Similar and related projects
 
-* [Other similar projects](SIMILAR.md) - list of databases on JavaScript
-* [Alamdx](github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
+* [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
+* [Alamdx](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
+
+### FileSaver
+
+Alasql integrates FileSaver.js library inside for saving files locally in browsers.
 
 ### Credits
 
-Many thanks to Zach Carter for [Jison](http://zaach.github.io/jison/) parser generator, 
+Many thanks to Zach Carter for [Jison](http://zaach.github.io/jison/) parser generator, to the author of FileSaver.js,
 Andrew Kent for his [SQL Parser](https://github.com/forward/sql-parser), 
 authors of [XLSX](https://github.com/SheetJS/js-xlsx) library,
 and other people for useful tools, which make our work much easier.

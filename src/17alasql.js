@@ -36,6 +36,9 @@ alasql.databases = {};
 alasql.databasenum = 0; // Current database
 
 // Deafult options
+/**
+ Alasql options object
+ */
 alasql.options = {};
 alasql.options.valueof = false; // Use valueof in orderfn
 alasql.options.dropifnotexists = false; // DROP database in any case
@@ -62,6 +65,10 @@ alasql.busy = 0;
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
 
+/**
+  Select current database
+  @param {string} databaseid Selected database identificator
+ */
 alasql.use = function (databaseid) {
 	if(!databaseid) databaseid = alasql.DEFAULTDATABASEID;
 	if(alasql.useid == databaseid) return;
@@ -73,16 +80,25 @@ alasql.use = function (databaseid) {
 };
 
 // Run one statement
-alasql.exec = function (sql, params, cb) {
-	return alasql.dexec(alasql.useid, sql, params, cb);
+/**
+ Run SQL statement on current database
+ */
+alasql.exec = function (sql, params, cb, scope) {
+	return alasql.dexec(alasql.useid, sql, params, cb, scope);
 }
 
-alasql.dexec = function (databaseid, sql, params, cb) {
+/**
+ Run SQL statement on specific database
+ */
+alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	var db = alasql.databases[databaseid];
 //	if(db.databaseid != databaseid) console.trace('got!');
 //	console.log(3,db.databaseid,databaseid);
+	
+	// Create hash
 	var hh = hash(sql);
 	var statement = db.sqlCache[hh];
+	// If database structure was not changed sinse lat time return cache
 	if(statement && db.dbversion == statement.dbversion) {
 		return statement(params, cb);
 	}
@@ -106,26 +122,28 @@ alasql.dexec = function (databaseid, sql, params, cb) {
 			}
 			db.sqlCacheSize++;
 			db.sqlCache[hh] = statement;
-			var res = alasql.res = statement(params, cb);
+			var res = alasql.res = statement(params, cb, scope);
 			return res;
 			
 		} else {
 //			console.log(ast.statements[0]);
-			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb);		
+			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);		
 			return res;
 		}
 	} else {
 		// Multiple statements
 		if(cb) {
-			alasql.adrun(databaseid, ast, params, cb);
+			alasql.adrun(databaseid, ast, params, cb, scope);
 		} else {
-			return alasql.drun(databaseid, ast, params, cb);
+			return alasql.drun(databaseid, ast, params, cb, scope);
 		}
 	}
 };
 
-// Run multiple statements and return array of results
-alasql.drun = function (databaseid, ast, params, cb) {
+/**
+  Run multiple statements and return array of results sync
+ */
+alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var useid = alasql.useid;
 	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
@@ -133,7 +151,7 @@ alasql.drun = function (databaseid, ast, params, cb) {
 		if(ast.statements[i]) {
 			if(ast.statements[i].compile) { 
 				var statement = ast.statements[i].compile(alasql.useid);
-				res.push(alasql.res = statement(params));
+				res.push(alasql.res = statement(params,null,scope));
 			} else {
 				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
 			}		
@@ -145,8 +163,10 @@ alasql.drun = function (databaseid, ast, params, cb) {
 	return res;
 };
 
-// Run multiple statements and return array of results
-alasql.adrun = function (databaseid, ast, params, cb) {
+/**
+  Run multiple statements and return array of results async
+ */
+alasql.adrun = function (databaseid, ast, params, cb, scope) {
 //	alasql.busy++;
 	var useid = alasql.useid;
 	if(useid != databaseid) alasql.use(databaseid);
@@ -165,7 +185,7 @@ alasql.adrun = function (databaseid, ast, params, cb) {
 		} else {
 			if(astatement.compile) {
 				var statement = astatement.compile(alasql.useid);
-				statement(params, adrunone);
+				statement(params, adrunone, scope);
 			} else {
 				astatement.execute(alasql.useid, params, adrunone);
 			}

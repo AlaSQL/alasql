@@ -17,7 +17,10 @@ yy.Select.prototype.toString = function() {
 	if(this.explain) s+= K('EXPLAIN')+' ';
 	s += K('SELECT')+' ';
 	if(this.modifier) s += K(this.modifier)+' ';
-	if(this.top) s += K('TOP')+' '+N(this.top.value)+' ';
+	if(this.top) {
+		s += K('TOP')+' '+N(this.top.value)+' ';
+		if(this.percent) s += K('PERCENT')+' ';
+	}
 	s += this.columns.map(function(col){
 		var s = col.toString();
 //		console.log(col);
@@ -127,7 +130,8 @@ yy.Select.prototype.compile = function(databaseid) {
 		if(this.offset) {
 			query.offset = this.offset.value;
 		}
-	}
+	};
+	query.percent = this.percent;
 
 	// 9. Compile ordering function for UNION and UNIONALL
 	if(this.union) {

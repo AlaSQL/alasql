@@ -18,6 +18,9 @@
 * Clean root directory
 * GO keyword as semicolon
 * global alasql => var alasql
+* SELECT * INTO SQL() FROM ? - into-function for generating INSERTS
+* SELECT TOP 10 PERCENT * FROM ?
+* ORDER BY _ - fixed
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

@@ -29,7 +29,7 @@ gulp.task('js-merge', function () {
 //    './src/22store.js',
     './src/23table.js',
     './src/24view.js',
-  	'./src/25query.js',
+  	'./src/25queryclass.js',
     './src/28yy.js',
   	'./src/30statements.js',
     './src/38query.js',

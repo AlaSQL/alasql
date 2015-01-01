@@ -144,6 +144,7 @@
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
+'PERCENT'                                       return 'PERCENT'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'PRIOR'                                        	return 'PRIOR'
@@ -199,7 +200,7 @@
 '-' 											return 'MINUS'
 '*'												return 'STAR'
 '/'												return 'SLASH'
-'%'												return 'PERCENT'
+'%'												return 'MODULO'
 '!==='											return 'NEEQEQEQ'
 '==='											return 'EQEQEQ'
 '!=='											return 'NEEQEQ'
@@ -249,7 +250,7 @@
 %left NOT
 %left LIKE
 %left PLUS MINUS
-%left STAR SLASH PERCENT
+%left STAR SLASH MODULE
 %left DOT ARROW
 /* %left UMINUS */
 
@@ -423,6 +424,8 @@ SelectModifier
 TopClause
 	: TOP NumValue  
 		{ $$ = {top: $2}; }
+	| TOP NumValue PERCENT  
+		{ $$ = {top: $2, percent:true}; }
 	| { $$ = null; }
 	;
 
@@ -900,7 +903,7 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'*', right:$3}); }
 	| Expression SLASH Expression
 		{ $$ = new yy.Op({left:$1, op:'/', right:$3}); }
-	| Expression PERCENT Expression
+	| Expression MODULO Expression
 		{ $$ = new yy.Op({left:$1, op:'%', right:$3}); }
 
 	| Expression ARROW Literal

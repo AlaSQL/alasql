@@ -1,23 +1,17 @@
 # To do
 
 
-
-
 ## Next Versions
 
-1.clean releases file
-2. MENTION FILESAVER IN README
+1. Change GROUP BY and SELECT
+
 3. clean the code - remove comments and unnecessary functions
-4. add go keyword
-5. sql into
-
-SELECT * INTO SQL() FROM ? - generates inserts
-SHOW CREATE 
 
 
-ROW_NUMBER, RANK, DENSE_RANK, and NTILE
 
-0. go keyword
+
+
+0. 
 set nocount off
 object_id(tableid)
 default dbo scheme
@@ -37,7 +31,6 @@ ELECT TOP 100 PERCENT orderid, customerid
          ORDER BY orderid
          GO
 
-GO
 APPLY
 CROSS APPLY
 OUTER APPLY
@@ -80,10 +73,16 @@ GROUP BY pub_id ;
 
 - See more at: http://www.w3resource.com/mysql/aggregate-functions-and-grouping/aggregate-functions-and-grouping-group_concat.php#sthash.e7pAitjF.dpuf
 
+5. sql into
+
+SELECT * INTO SQL() FROM ? - generates inserts
+SHOW CREATE 
+
 FROM HTML()
 1. Social to alasql.org
 2. Wiki
 3. Check Blob.js
+2. MENTION FILESAVER IN README
 
 1. Functions on Aggregator like SUM(x)*2 AS s2
 2. SELECT x,y,z, z*SUM(x) OVER (PARTITION BY y)
@@ -103,6 +102,8 @@ Calculate prime numbers with SQL
 if(trim(s) = +s)
 
 0.Clean the code. Remove modifier functions like queryValue()
+
+ROW_NUMBER, RANK, DENSE_RANK, and NTILE
 
 1. SELECT after GROUP BY
 

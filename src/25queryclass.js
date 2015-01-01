@@ -21,6 +21,9 @@ var Query = alasql.Query = function(params){
 	extend(this,params);
 };
 
+/**
+ @class Recordset data object
+ */
 var Recordset = alasql.Recordset = function(params){
 	// Data array
 	extend(this,params);
