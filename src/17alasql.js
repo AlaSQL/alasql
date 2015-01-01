@@ -178,17 +178,15 @@ alasql.adrun = function (databaseid, ast, params, cb) {
 /**
  Compile statement to JavaScript function
  @param {string} sql SQL statement
- @param {string} kind
  @param {string} databaseid Database identificator
  @return {functions} Compiled statement functions
 */
-alasql.compile = function(sql, kind, databaseid) {
-	if(!kind) kind = 'collection';
+alasql.compile = function(sql, databaseid) {
 	if(!databaseid) databaseid = alasql.useid;
 	var ast = alasql.parse(sql); // Create AST
 	if(ast.statements.length == 1) {
-		var statementfn = ast.statements[0].compile(databaseid);
-		
+		return ast.statements[0].compile(databaseid);
+/*		
 		if(kind == 'value') {
 			return function(params,cb) {
 				var res = statementfn(params);
@@ -242,9 +240,9 @@ alasql.compile = function(sql, kind, databaseid) {
 		} else {
 			return statementfn;
 		}
-
+*/
 	} else {
-		throw new Error('Number of statments in SQL is not equal to 1');
+		throw new Error('Cannot compile, because number of statments in SQL is not equal to 1');
 	}
 }
 

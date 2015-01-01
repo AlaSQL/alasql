@@ -80,8 +80,19 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                success(buff);
             });
         } else {
-            var data = fs.readFileSync(path);
-            success(data.toString());
+            // var data = fs.readFileSync(path);
+            // success(data.toString());
+            if(asy) {
+                fs.readFile(path,function(err,data){
+                    if(err) {
+                        throw err;
+                    }
+                    success(data.toString());
+                });
+            } else {
+              var data = fs.readFileSync(path);
+              success(data.toString());
+            }
         }
     } else {
 
@@ -128,10 +139,22 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
     if(typeof exports == 'object') {
         // For Node.js
         var fs = require('fs');
-        var data = fs.readFileSync(path);
-        var arr = new Array();
-        for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
-        success(arr.join(""));
+        if(asy) {
+            fs.readFile(path,function(err,data){
+                if(err) {
+                    throw err;
+                }
+                var arr = new Array();
+                for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                success(arr.join(""));
+            });
+
+        } else {
+            var data = fs.readFileSync(path);
+            var arr = new Array();
+            for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+            success(arr.join(""));
+        }
 //        success(data);
     } else {
 
@@ -217,19 +240,25 @@ var hash = utils.hash = function hash(str){
     return h;
 };
 
-// Union arrays
+/**
+ Union arrays
+ */
 var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
     return r;
 };
 
-// Array Difference
+/** 
+ Array Difference
+ */
 var arrayDiff = utils.arrayDiff  = function (a,b) {
     return a.filter(function(i) {return b.indexOf(i) < 0;});
 };
 
-// Arrays deep intersect (with records)
+/**
+  Arrays deep intersect (with records)
+ */
 var arrayIntersect = utils.arrayIntersept  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
@@ -247,7 +276,9 @@ var arrayIntersect = utils.arrayIntersept  = function(a,b) {
 };
 
 
-// Arrays deep union (with records)
+/**
+  Arrays deep union (with records)
+ */
 var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
@@ -265,7 +296,9 @@ var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
     return r;
 };
 
-// Arrays deep union (with records)
+/**
+  Arrays deep union (with records)
+ */
 var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
     var r = [];
     a.forEach(function(ai) {
@@ -283,7 +316,9 @@ var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
     return r;
 };
 
-// Arrays deep intersect (with records)
+/**
+  Arrays deep intersect (with records)
+ */
 var arrayIntersectDeep = utils.arrayInterseptDeep  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
@@ -301,7 +336,9 @@ var arrayIntersectDeep = utils.arrayInterseptDeep  = function(a,b) {
     return r;
 };
 
-// Deep clone obects
+/** 
+  Deep clone obects
+ */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(obj == null || typeof(obj) != 'object')
         return obj;
@@ -316,7 +353,9 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     return temp;
 }
 
-// Check equality of objects
+/**
+  Check equality of objects
+*/
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
         if (x == y) return true;
@@ -354,6 +393,9 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     return x == y;
 };
 
+/**
+  COmpare two object in deep
+ */
 var deepEqual = utils.deepEqual = function (x, y) {
   if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
     if (Object.keys(x).length != Object.keys(y).length)
@@ -378,7 +420,9 @@ var deepEqual = utils.deepEqual = function (x, y) {
 }
 
 
-// Extend object
+/** 
+  Extend object
+ */
 var extend = utils.extend = function extend (a,b){
     if(typeof a == 'undefined') a = {};
     for(key in b) {
@@ -389,7 +433,9 @@ var extend = utils.extend = function extend (a,b){
     return a;
 };;
 
-// Flat array by first row
+/**
+   Flat array by first row
+ */
 var flatArray = utils.flatArray = function(a) {
     if(!a || a.length == 0) return [];
     var key = Object.keys(a[0])[0];
@@ -397,7 +443,9 @@ var flatArray = utils.flatArray = function(a) {
     return a.map(function(ai) {return ai[key]});
 };
 
-// Convert array of objects to array of arrays
+/**
+  Convert array of objects to array of arrays
+ */
 var arrayOfArrays = utils.arrayOfArrays = function (a) {
     return a.map(function(aa){
         var ar = [];
@@ -407,9 +455,9 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
 };
 
 /**
-    Excel:
-    @param {integer} i Column number
-    @return {string} Column name
+    Excel:convert number to Excel column, like 1 => 'A'
+    @param {integer} i Column number, starting with 0
+    @return {string} Column name, starting with 'A'
 */
 
 utils.xlsnc = function(i) {
@@ -425,6 +473,11 @@ utils.xlsnc = function(i) {
     return addr;
 };
 
+/**
+    Excel:conver Excel column name to number
+    @param {integer} i Column number, like 'A' or 'BE'
+    @return {string} Column name, starting with 0
+*/
 utils.xlscn = function(s) {
     var n = s.charCodeAt(0)-65;
     if(s.length>1) {

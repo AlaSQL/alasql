@@ -263,7 +263,7 @@ function modify(query, res) {
 	} if(query.modifier == 'ROW') {
 		if(res.length > 0) {
 			var key;
-			if(query.columns) key = query.columns[0].columnid;
+			if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
 			else key = Object.keys(res[0])[0];
 			var a = [];
 			for(var key in res[0]) {

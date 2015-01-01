@@ -35,7 +35,7 @@ describe('Test 116', function() {
 		var ins = alasql.compile('insert into one values (10)');
 		ins();
 		assert(alasql.tables.one.data.length == 1);
-		var sel = alasql.compile('select sum(a) from one where a = ?','value');
+		var sel = alasql.compile('select value sum(a) from one where a = ?');
 		var res = sel([10]);
 		var res = alasql('select value sum(a) from one');
 		assert(res == 10);
