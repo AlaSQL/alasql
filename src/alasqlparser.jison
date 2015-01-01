@@ -250,7 +250,7 @@
 %left NOT
 %left LIKE
 %left PLUS MINUS
-%left STAR SLASH MODULE
+%left STAR SLASH MODULO
 %left DOT ARROW
 /* %left UMINUS */
 
@@ -631,13 +631,13 @@ OrderExpressionsList
 
 OrderExpression
 	: Expression
-		{ $$ = new yy.OrderExpression({expression: $1, direction:'ASC'}) }
+		{ $$ = new yy.Expression({expression: $1, direction:'ASC'}) }
 	| Expression DIRECTION
-		{ $$ = new yy.OrderExpression({expression: $1, direction:$2.toUpperCase()}) }
+		{ $$ = new yy.Expression({expression: $1, direction:$2.toUpperCase()}) }
 	| Expression COLLATE NOCASE
-		{ $$ = new yy.OrderExpression({expression: $1, direction:'ASC', nocase:true}) }
+		{ $$ = new yy.Expression({expression: $1, direction:'ASC', nocase:true}) }
 	| Expression COLLATE NOCASE DIRECTION
-		{ $$ = new yy.OrderExpression({expression: $1, direction:$4.toUpperCase(), nocase:true}) }
+		{ $$ = new yy.Expression({expression: $1, direction:$4.toUpperCase(), nocase:true}) }
 	;
 
 LimitClause

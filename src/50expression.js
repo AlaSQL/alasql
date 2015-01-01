@@ -24,7 +24,10 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 
 yy.Expression = function(params) { return yy.extend(this, params); };
 yy.Expression.prototype.toString = function() {
-	return this.expression.toString();
+	var s = this.expression.toString();
+	if(this.order) s += ' '+this.order.toString();
+	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
+	return s;
 };
 yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
@@ -477,6 +480,7 @@ yy.OrderExpression = function(params){ return yy.extend(this, params); }
 yy.OrderExpression.prototype.toString = function() {
 	var s = this.expression.toString();
 	if(this.order) s += ' '+this.order.toString();
+	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
 	return s;
 }
 

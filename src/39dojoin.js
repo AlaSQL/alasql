@@ -11,13 +11,14 @@ function doJoin (query, scope, h) {
 		if(query.wherefn(scope,query.params, alasql)) {
 
 //			console.log("scope",scope.schools);
-			var res = query.selectfn(scope, query.params, alasql);
+
+//			var res = query.selectfn(scope, query.params, alasql);
 //			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-				query.groupfn(res, query.params, query.alasql)
+				query.groupfn(scope, query.params, query.alasql)
 			} else {
-				query.data.push(res);
+				query.data.push(query.selectfn(scope, query.params, alasql));
 			}	
 		}
 	} else {

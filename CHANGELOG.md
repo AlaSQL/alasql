@@ -1,7 +1,7 @@
 # Changelog
 
 
-### 0.0.36 (23.12.2014 - 31.12.2014)
+### 0.0.36 (23.12.2014 - 01.01.2015)
 
 * REDUCE Aggregator
 * LINQ functions (fluent interface):
@@ -13,7 +13,7 @@
  * Having()
  * Select()
  * Top()
-* RANGE(1,10) - from function
+* RANGE(1,10) - from function => [1,2,3,4,5,6,7,8,9,10]
 * HTML-from and into functions
 * Clean root directory
 * GO keyword as semicolon
@@ -21,6 +21,8 @@
 * SELECT * INTO SQL() FROM ? - into-function for generating INSERTS
 * SELECT TOP 10 PERCENT * FROM ?
 * ORDER BY _ - fixed
+* ORDER BY formula
+* ...
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 
