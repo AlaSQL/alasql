@@ -75,11 +75,10 @@ function decartes(gv,query) {
 	if(gv instanceof Array) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
-//			if(gv[t] instanceof yy.Column) {
-//		 		res = res.map(function(r){return r.concat(gv[t].columnid+'\t'+gv[t].toJavaScript('p'))}); 	
+			if(gv[t] instanceof yy.Column) {
+		 		res = res.map(function(r){return r.concat(gv[t].columnid+'\t'+gv[t].toJavaScript('p'))}); 	
 //		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
-//			} else 
-			if(gv[t] instanceof yy.FuncValue) {
+			} else if(gv[t] instanceof yy.FuncValue) {
 		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
 		 		// to be defined
 			} else if(gv[t] instanceof yy.GroupExpression) {
@@ -87,8 +86,13 @@ function decartes(gv,query) {
 				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group,query));
 				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group,query));
 				else throw new Error('Unknown grouping function');
+			} else if(gv[t] === '') {
+				res = [['\t1']];
 			} else {
+//				if(gv[t])
+//				console.log('>'+gv[t]+'<',gv[t]=='',typeof gv[t]);
 //				console.log(gv[t].toString());
+
 		 		res = res.map(function(r){
 		 			return r.concat(gv[t].toString()
 		 				+'\t'
@@ -112,8 +116,8 @@ function decartes(gv,query) {
 	} else if(gv instanceof yy.FuncValue) {
 //		console.log(gv);
 		return [gv.toString()];
-	// } else if(gv instanceof yy.Column) {
-		// 	return [gv.columnid]; // Is this ever happened?
+	} else if(gv instanceof yy.Column) {
+			return [gv.columnid]; // Is this ever happened?
 		// } else if(gv instanceof yy.Expression) {
 		// 	return [gv.columnid]; // Is this ever happened?
 	} else {

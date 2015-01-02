@@ -17,6 +17,7 @@ var Query = alasql.Query = function(params){
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};
+	this.selectGroup = [];
 	// Data array
 	extend(this,params);
 };

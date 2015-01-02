@@ -26,6 +26,11 @@ yy.FuncValue.prototype.toString = function() {
 	return s;
 }
 
+yy.FuncValue.prototype.findAggregator = function(query) {
+	if(this.args && this.args.length > 0) {
+		this.args.forEach(function(arg){ arg.findAggregator(query); });
+	}
+}
 yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;

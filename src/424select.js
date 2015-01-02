@@ -176,17 +176,28 @@ yy.Select.prototype.compileSelect2 = function(query) {
 	return new Function('p,params,alasql',s+'return r');
 };
 
+
 yy.Select.prototype.compileSelectGroup1 = function(query) {
 	var s = 'var r = {};';
+	this.columns.forEach(function(col,idx){
+//		console.log(idx, col.toString(), col);
+		if(col.findAggregator) col.findAggregator(query);
+	});
+
 	this.columns.forEach(function(col){
 		if(col instanceof yy.Column && col.columnid == '*') {
 			s += 'for(var k in g){r[k]=g[k]};';
 		} else {
-			if(col.as) {
-				s += 'r[\''+escapeq(col.as)+'\']='+col.toJavaScript('g','')+';';
-			} else {
-				s += 'r[\''+escapeq(col.toString())+'\']='+col.toJavaScript('g','')+';';
-			} 
+			var colas = col.as;
+			if(typeof colas == 'undefined') colas = col.toString();
+//			if(col.as) {
+				s += 'r[\''+colas+'\']=';
+			// } else {
+			// 	s += 'r[\''+escapeq()+'\']=';
+			// };
+			// s += ';';
+			s += col.toJavaScript('g','')+';';
+//			s += col.toJavaScript('g','')+';';
 		};
 	});
 	// return new Function('g,params,alasql',s+'return r');

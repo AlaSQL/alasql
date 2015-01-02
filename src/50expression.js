@@ -29,6 +29,10 @@ yy.Expression.prototype.toString = function() {
 	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
 	return s;
 };
+yy.Expression.prototype.findAggregator = function (query){
+	if(this.expression.findAggregator) this.expression.findAggregator(query);
+};
+
 yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 	if(this.expression.reduced) return 'true';
@@ -92,6 +96,15 @@ yy.Op.prototype.toString = function() {
 		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
 	}
 	return this.left.toString()+" "+P(this.op)+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
+};
+
+yy.Op.prototype.findAggregator = function (query){
+	console.log(this.toString());
+	if(this.left && this.left.findAggregator) this.left.findAggregator(query);
+	// Do not go in > ALL
+	if(this.right && this.right.findAggregator && (!this.allsome)) {
+		this.right.findAggregator(query);
+	}
 };
 
 yy.Op.prototype.toType = function(tableid) {
@@ -336,6 +349,10 @@ yy.UniOp.prototype.toString = function() {
 	else if(this.op == null) return '('+this.right.toString()+')';
 };
 
+yy.UniOp.prototype.findAggregator = function (query){
+	if(this.right.findAggregator) this.right.findAggregator(query);
+};
+
 yy.UniOp.prototype.toType = function(tableid) {
 	if(this.op == '-') return 'number';
 	if(this.op == 'NOT') return 'boolean';
@@ -460,6 +477,12 @@ yy.AggrValue.prototype.toString = function() {
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
+yy.AggrValue.prototype.findAggregator = function (query){
+	console.log('aggregator found',this.toString());
+	query.selectGroup.push(this);
+//	this.reduced = true;
+	return;
+};
 
 yy.AggrValue.prototype.toType = function() {
 	if(['SUM','COUNT','AVG','MIN', 'MAX','AGGR'].indexOf(this.aggregatorid)>-1) return 'number';
@@ -472,7 +495,11 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 //	return s;
-	return '';
+//	var s = ''; 
+if(this.as) console.log(499,this.as);
+	var colas = this.as;
+	if(typeof colas == 'undefined') colas = this.toString();
+	return 'g[\''+colas+'\']';
 }
 
 

@@ -130,6 +130,7 @@ function queryfn3(query) {
 	if(query.groupfn) {
 		query.data = [];
 		for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+//			console.log(query.groups[i]);
 			var d = query.selectgfn(query.groups[i],query.params,alasql);
 			if((!query.havingfn) || query.havingfn(d,query.params,alasql))
 				query.data.push(d);

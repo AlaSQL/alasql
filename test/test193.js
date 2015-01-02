@@ -13,7 +13,7 @@ describe('Test 193 - GROUP BY formula', function() {
 
     it("1. GROUP BY column", function(done) {
         var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2}];
-        var res = alasql('SELECT a+1 as b FROM ? GROUP BY a',[data]);
+        var res = alasql('SELECT COUNT(a+1)+1 AS b FROM ? GROUP BY a%2',[data]);
         console.log('Result:',res);
     	done();
     });
