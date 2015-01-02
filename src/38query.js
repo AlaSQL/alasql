@@ -128,16 +128,13 @@ function queryfn3(query) {
 	// If groupping, then filter groups with HAVING function
 //			console.log(query.havingfns);
 	if(query.groupfn) {
-		if(query.havingfn) {
-			query.data = [];
-			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
-				if(query.havingfn(query.groups[i],query.params,alasql))
-					query.data.push(query.groups[i]);
-			}
-//			query.groups = query.groups.filter();
-		} else {
-			query.data = query.groups;
+		query.data = [];
+		for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+			var d = query.selectgfn(query.groups[i],query.params,alasql);
+			if((!query.havingfn) || query.havingfn(d,query.params,alasql))
+				query.data.push(d);
 		}
+//			query.groups = query.groups.filter();
 	};
 
 	// Remove distinct values	

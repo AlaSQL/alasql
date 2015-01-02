@@ -6,9 +6,11 @@
 //
 */
 
-// Calculate ROLLUP() combination
+/** 
+ Calculate ROLLUP() combination
+ */
 
-var rollup = function (a) {
+var rollup = function (a,query) {
 	var rr = [];
 	var mask = 0;
 	var glen = a.length;
@@ -23,8 +25,10 @@ var rollup = function (a) {
 	return rr;
 };
 
-// Calculate CUBE()
-var cube = function (a) {
+/**
+ Calculate CUBE()
+ */
+var cube = function (a,query) {
 	var rr = [];
 	var glen = a.length;
 	for(var g=0;g<(1<<glen);g++) {
@@ -32,7 +36,7 @@ var cube = function (a) {
 		for(var i=0;i<glen;i++) {
 			if(g&(1<<i)) //ss.push(a[i]);
 				//ss = cartes(ss,decartes(a[i]));
-				ss = ss.concat(decartes(a[i]));
+				ss = ss.concat(decartes(a[i],query));
 				//
 		}
 		rr.push(ss);
@@ -40,15 +44,19 @@ var cube = function (a) {
 	return rr;
 }
 
-// GROUPING SETS()
-var groupingsets = function(a) {
+/**
+ GROUPING SETS()
+ */
+var groupingsets = function(a,query) {
 	return a.reduce(function(acc,d){
-		acc = acc.concat(decartes(d));
+		acc = acc.concat(decartes(d,query));
 		return acc;
 	}, []);
 }
 
-// Cartesian production
+/**
+ Cartesian production
+ */
 var cartes = function(a1,a2){
 	var rrr =[];
 	for(var i1=0;i1<a1.length;i1++) {
@@ -59,24 +67,33 @@ var cartes = function(a1,a2){
 	return rrr;
 }
 
-// Prepare function
-function decartes(gv) {
+/**
+ Prepare groups function
+ */
+function decartes(gv,query) {
 //	console.log(gv);
 	if(gv instanceof Array) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
-			if(gv[t] instanceof yy.Column) {
+//			if(gv[t] instanceof yy.Column) {
 //		 		res = res.map(function(r){return r.concat(gv[t].columnid+'\t'+gv[t].toJavaScript('p'))}); 	
-		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
-			} else if(gv[t] instanceof yy.FuncValue) {
+//		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
+//			} else 
+			if(gv[t] instanceof yy.FuncValue) {
 		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
+		 		// to be defined
 			} else if(gv[t] instanceof yy.GroupExpression) {
-				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group));
-				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group));
-				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group));
+				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group,query));
+				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group,query));
+				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group,query));
+				else throw new Error('Unknown grouping function');
 			} else {
 //				console.log(gv[t].toString());
-		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
+		 		res = res.map(function(r){
+		 			return r.concat(gv[t].toString()
+		 				+'\t'
+		 				+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols)) 
+		 		}); 	
 //				res = res.concat(gv[t]);
 			};
 
@@ -90,14 +107,19 @@ function decartes(gv) {
 			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break; 
 			// 	default: res = res.concat(gv[t]);
 			// }
-		}
+		};
 		return res;
+	} else if(gv instanceof yy.FuncValue) {
+//		console.log(gv);
+		return [gv.toString()];
+	// } else if(gv instanceof yy.Column) {
+		// 	return [gv.columnid]; // Is this ever happened?
+		// } else if(gv instanceof yy.Expression) {
+		// 	return [gv.columnid]; // Is this ever happened?
 	} else {
-		if(gv instanceof yy.Column) {
-			return [gv.columnid];
-		} else if(gv instanceof yy.FuncValue) {
-			return [gv.toString()];
-		}
+		return [gv.toString()+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
+//			throw new Error('Single argument in the group without array');			
+	};
 
 
 		// switch(gv.t) {
@@ -108,5 +130,6 @@ function decartes(gv) {
 		// 	default: return [gv];//return decartes(gv.p);
 		// }
 		// return gv;
-	}
-}
+};
+
+

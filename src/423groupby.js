@@ -6,12 +6,14 @@
 //
 */
 
-
-// Compile group of statements
+/**
+ Compile group of statements
+ */
 yy.Select.prototype.compileGroup = function(query) {
 	var self = this;
 
-	var allgroup = decartes(this.group);
+//	console.log(query.sources[0].alias,query.defcols);
+	var allgroup = decartes(this.group,query);
 
 //	console.log(allgroup);
 	// Prepare groups
@@ -28,7 +30,9 @@ yy.Select.prototype.compileGroup = function(query) {
 //console.log(42,294, this.group);
 //console.log(allgroups);
 //		console.log(42,364,query.selectColumns)
-	allgroups.forEach(function(colid){
+
+if(false) {
+	allgroups.forEach(function(col2){
 //		console.log(42,365,colid, query.selectColumns[colid])
 		if(query.selectColumns[colid]) {
 //			console.log(colid,'ok');
@@ -44,10 +48,12 @@ yy.Select.prototype.compileGroup = function(query) {
 			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJavaScript('p',tmpid))+';';
 		}
 	});
+};
 
 	// Create negative array
 
 	var s = '';
+//	s+= query.selectfns;
 
 	allgroup.forEach(function(agroup) {
 //console.log(agroup);
@@ -57,13 +63,14 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
-		var rg = agroup.map(function(columnid){
+		var rg = agroup.map(function(col2){
+			var columnid = col2.split('\t')[0];
+			var coljs = col2.split('\t')[1];
 			// Check, if aggregator exists but GROUP BY is not exists
 			if(columnid == '') return '1'; // Create fictive groupping column for fictive GROUP BY
 //			else return "r['"+columnid+"']";
-			else return "p['default']['"+columnid+"']";
+			else return coljs;
 		});
-
 		if(rg.length == 0) rg = ["''"];
 
 	//	console.log('rg',rg);
@@ -72,16 +79,20 @@ yy.Select.prototype.compileGroup = function(query) {
 		s += '];if(!g) {this.groups.push((g=this.xgroups[';
 		s += rg.join('+"`"+');
 		s += '] = {';
-	//	s += ']=r';
+//		s += ']=r';
+		s += agroup.map(function(col2){
+			var columnid = col2.split('\t')[0];
+			var coljs = col2.split('\t')[1]
 
-		s += agroup.map(function(columnid){
 			if(columnid == '') return '';
-			else return "'"+columnid+"':p['default']['"+columnid+"'],";
+			else return "'"+columnid+"':"+coljs+",";
 		}).join('');
 
 		var neggroup = arrayDiff(allgroups,agroup);
 
-		s += neggroup.map(function(columnid){			
+		s += neggroup.map(function(col2){			
+			var columnid = col2.split('\t')[0];
+			var coljs = col2.split('\t')[1]
 			return "'"+columnid+"':null,";
 		}).join('');
 
@@ -215,13 +226,11 @@ yy.Select.prototype.compileGroup = function(query) {
 
 		//s += '	group.amt += rec.emplid;';
 		//s += 'group.count++;';
-
 		s += '}';
-		console.log('groupfn',s);
 
 	});
 
-//	console.log(s);
+		console.log('groupfn',s);
 	return new Function('p,params,alasql',s);
 
 }

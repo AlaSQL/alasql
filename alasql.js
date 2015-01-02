@@ -3514,16 +3514,13 @@ function queryfn3(query) {
 	// If groupping, then filter groups with HAVING function
 //			console.log(query.havingfns);
 	if(query.groupfn) {
-		if(query.havingfn) {
-			query.data = [];
-			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
-				if(query.havingfn(query.groups[i],query.params,alasql))
-					query.data.push(query.groups[i]);
-			}
-//			query.groups = query.groups.filter();
-		} else {
-			query.data = query.groups;
+		query.data = [];
+		for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+			var d = query.selectgfn(query.groups[i],query.params,alasql);
+			if((!query.havingfn) || query.havingfn(d,query.params,alasql))
+				query.data.push(d);
 		}
+//			query.groups = query.groups.filter();
 	};
 
 	// Remove distinct values	
@@ -4118,7 +4115,12 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 2. Compile JOIN clauses
 	if(this.joins) this.compileJoins(query);
 	// 3. Compile SELECT clause
-	query.selectfns = this.compileSelect1(query);
+	
+	if(this.group) {
+		query.selectgfns = this.compileSelectGroup1(query);
+	} else {
+		query.selectfns = this.compileSelect1(query);
+	}
 	// 5. Optimize WHERE and JOINS
 	if(this.where) this.compileWhereJoins(query);
 
@@ -4132,7 +4134,11 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 6. Compile HAVING
 	if(this.having) query.havingfn = this.compileHaving(query);
 
-	query.selectfn = this.compileSelect2(query);
+	if(this.group) {
+		query.selectgfn = this.compileSelectGroup2(query);
+	} else {
+		query.selectfn = this.compileSelect2(query);
+	}
 
 
 	// 7. Compile DISTINCT, LIMIT and OFFSET
@@ -5002,12 +5008,14 @@ function optimizeWhereJoin (query, ast) {
 //
 */
 
-
-// Compile group of statements
+/**
+ Compile group of statements
+ */
 yy.Select.prototype.compileGroup = function(query) {
 	var self = this;
 
-	var allgroup = decartes(this.group);
+//	console.log(query.sources[0].alias,query.defcols);
+	var allgroup = decartes(this.group,query);
 
 //	console.log(allgroup);
 	// Prepare groups
@@ -5024,7 +5032,9 @@ yy.Select.prototype.compileGroup = function(query) {
 //console.log(42,294, this.group);
 //console.log(allgroups);
 //		console.log(42,364,query.selectColumns)
-	allgroups.forEach(function(colid){
+
+if(false) {
+	allgroups.forEach(function(col2){
 //		console.log(42,365,colid, query.selectColumns[colid])
 		if(query.selectColumns[colid]) {
 //			console.log(colid,'ok');
@@ -5040,10 +5050,12 @@ yy.Select.prototype.compileGroup = function(query) {
 			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJavaScript('p',tmpid))+';';
 		}
 	});
+};
 
 	// Create negative array
 
 	var s = '';
+//	s+= query.selectfns;
 
 	allgroup.forEach(function(agroup) {
 //console.log(agroup);
@@ -5053,13 +5065,14 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
-		var rg = agroup.map(function(columnid){
+		var rg = agroup.map(function(col2){
+			var columnid = col2.split('\t')[0];
+			var coljs = col2.split('\t')[1];
 			// Check, if aggregator exists but GROUP BY is not exists
 			if(columnid == '') return '1'; // Create fictive groupping column for fictive GROUP BY
 //			else return "r['"+columnid+"']";
-			else return "p['default']['"+columnid+"']";
+			else return coljs;
 		});
-
 		if(rg.length == 0) rg = ["''"];
 
 	//	console.log('rg',rg);
@@ -5068,16 +5081,20 @@ yy.Select.prototype.compileGroup = function(query) {
 		s += '];if(!g) {this.groups.push((g=this.xgroups[';
 		s += rg.join('+"`"+');
 		s += '] = {';
-	//	s += ']=r';
+//		s += ']=r';
+		s += agroup.map(function(col2){
+			var columnid = col2.split('\t')[0];
+			var coljs = col2.split('\t')[1]
 
-		s += agroup.map(function(columnid){
 			if(columnid == '') return '';
-			else return "'"+columnid+"':p['default']['"+columnid+"'],";
+			else return "'"+columnid+"':"+coljs+",";
 		}).join('');
 
 		var neggroup = arrayDiff(allgroups,agroup);
 
-		s += neggroup.map(function(columnid){			
+		s += neggroup.map(function(col2){			
+			var columnid = col2.split('\t')[0];
+			var coljs = col2.split('\t')[1]
 			return "'"+columnid+"':null,";
 		}).join('');
 
@@ -5211,13 +5228,11 @@ yy.Select.prototype.compileGroup = function(query) {
 
 		//s += '	group.amt += rec.emplid;';
 		//s += 'group.count++;';
-
 		s += '}';
-		console.log('groupfn',s);
 
 	});
 
-//	console.log(s);
+		console.log('groupfn',s);
 	return new Function('p,params,alasql',s);
 
 }
@@ -5401,6 +5416,28 @@ yy.Select.prototype.compileSelect2 = function(query) {
 	return new Function('p,params,alasql',s+'return r');
 };
 
+yy.Select.prototype.compileSelectGroup1 = function(query) {
+	var s = 'var r = {};';
+	this.columns.forEach(function(col){
+		if(col instanceof yy.Column && col.columnid == '*') {
+			s += 'for(var k in g){r[k]=g[k]};';
+		} else {
+			if(col.as) {
+				s += 'r[\''+escapeq(col.as)+'\']='+col.toJavaScript('g','')+';';
+			} else {
+				s += 'r[\''+escapeq(col.toString())+'\']='+col.toJavaScript('g','')+';';
+			} 
+		};
+	});
+	// return new Function('g,params,alasql',s+'return r');
+	return s;
+}
+
+yy.Select.prototype.compileSelectGroup2 = function(query) {
+	var s = query.selectgfns;
+	console.log('selectg:',s);
+	return new Function('g,params,alasql',s+'return r');
+}
 
 
 yy.Select.prototype.compileHaving = function(query) {
@@ -5489,9 +5526,11 @@ yy.Select.prototype.compileOrder = function (query) {
 //
 */
 
-// Calculate ROLLUP() combination
+/** 
+ Calculate ROLLUP() combination
+ */
 
-var rollup = function (a) {
+var rollup = function (a,query) {
 	var rr = [];
 	var mask = 0;
 	var glen = a.length;
@@ -5506,8 +5545,10 @@ var rollup = function (a) {
 	return rr;
 };
 
-// Calculate CUBE()
-var cube = function (a) {
+/**
+ Calculate CUBE()
+ */
+var cube = function (a,query) {
 	var rr = [];
 	var glen = a.length;
 	for(var g=0;g<(1<<glen);g++) {
@@ -5515,7 +5556,7 @@ var cube = function (a) {
 		for(var i=0;i<glen;i++) {
 			if(g&(1<<i)) //ss.push(a[i]);
 				//ss = cartes(ss,decartes(a[i]));
-				ss = ss.concat(decartes(a[i]));
+				ss = ss.concat(decartes(a[i],query));
 				//
 		}
 		rr.push(ss);
@@ -5523,15 +5564,19 @@ var cube = function (a) {
 	return rr;
 }
 
-// GROUPING SETS()
-var groupingsets = function(a) {
+/**
+ GROUPING SETS()
+ */
+var groupingsets = function(a,query) {
 	return a.reduce(function(acc,d){
-		acc = acc.concat(decartes(d));
+		acc = acc.concat(decartes(d,query));
 		return acc;
 	}, []);
 }
 
-// Cartesian production
+/**
+ Cartesian production
+ */
 var cartes = function(a1,a2){
 	var rrr =[];
 	for(var i1=0;i1<a1.length;i1++) {
@@ -5542,24 +5587,33 @@ var cartes = function(a1,a2){
 	return rrr;
 }
 
-// Prepare function
-function decartes(gv) {
+/**
+ Prepare groups function
+ */
+function decartes(gv,query) {
 //	console.log(gv);
 	if(gv instanceof Array) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
-			if(gv[t] instanceof yy.Column) {
+//			if(gv[t] instanceof yy.Column) {
 //		 		res = res.map(function(r){return r.concat(gv[t].columnid+'\t'+gv[t].toJavaScript('p'))}); 	
-		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
-			} else if(gv[t] instanceof yy.FuncValue) {
+//		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
+//			} else 
+			if(gv[t] instanceof yy.FuncValue) {
 		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
+		 		// to be defined
 			} else if(gv[t] instanceof yy.GroupExpression) {
-				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group));
-				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group));
-				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group));
+				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group,query));
+				else if(gv[t].type == 'CUBE') res = cartes(res,cube(gv[t].group,query));
+				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group,query));
+				else throw new Error('Unknown grouping function');
 			} else {
 //				console.log(gv[t].toString());
-		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
+		 		res = res.map(function(r){
+		 			return r.concat(gv[t].toString()
+		 				+'\t'
+		 				+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols)) 
+		 		}); 	
 //				res = res.concat(gv[t]);
 			};
 
@@ -5573,14 +5627,19 @@ function decartes(gv) {
 			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break; 
 			// 	default: res = res.concat(gv[t]);
 			// }
-		}
+		};
 		return res;
+	} else if(gv instanceof yy.FuncValue) {
+//		console.log(gv);
+		return [gv.toString()];
+	// } else if(gv instanceof yy.Column) {
+		// 	return [gv.columnid]; // Is this ever happened?
+		// } else if(gv instanceof yy.Expression) {
+		// 	return [gv.columnid]; // Is this ever happened?
 	} else {
-		if(gv instanceof yy.Column) {
-			return [gv.columnid];
-		} else if(gv instanceof yy.FuncValue) {
-			return [gv.toString()];
-		}
+		return [gv.toString()+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
+//			throw new Error('Single argument in the group without array');			
+	};
 
 
 		// switch(gv.t) {
@@ -5591,8 +5650,9 @@ function decartes(gv) {
 		// 	default: return [gv];//return decartes(gv.p);
 		// }
 		// return gv;
-	}
-}
+};
+
+
 
 
 /*

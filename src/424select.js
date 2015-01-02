@@ -176,3 +176,25 @@ yy.Select.prototype.compileSelect2 = function(query) {
 	return new Function('p,params,alasql',s+'return r');
 };
 
+yy.Select.prototype.compileSelectGroup1 = function(query) {
+	var s = 'var r = {};';
+	this.columns.forEach(function(col){
+		if(col instanceof yy.Column && col.columnid == '*') {
+			s += 'for(var k in g){r[k]=g[k]};';
+		} else {
+			if(col.as) {
+				s += 'r[\''+escapeq(col.as)+'\']='+col.toJavaScript('g','')+';';
+			} else {
+				s += 'r[\''+escapeq(col.toString())+'\']='+col.toJavaScript('g','')+';';
+			} 
+		};
+	});
+	// return new Function('g,params,alasql',s+'return r');
+	return s;
+}
+
+yy.Select.prototype.compileSelectGroup2 = function(query) {
+	var s = query.selectgfns;
+	console.log('selectg:',s);
+	return new Function('g,params,alasql',s+'return r');
+}
