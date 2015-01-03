@@ -1,8 +1,8 @@
 yy.Select.prototype.compileHaving = function(query) {
 	if(this.having) {
-		s = this.having.toJavaScript('p',-1);
+		s = this.having.toJavaScript('g',-1);
 		query.havingfns = s;
 //		console.log(s);
-		return new Function('p,params,alasql','return '+s);
+		return new Function('g,params,alasql','return '+s);
 	} else return function(){return true};
 };

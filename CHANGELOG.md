@@ -1,7 +1,7 @@
 # Changelog
 
 
-### 0.0.36 (23.12.2014 - 01.01.2015)
+### 0.0.36 "New Year version" (23.12.2014 - 03.01.2015)
 
 * REDUCE Aggregator
 * LINQ functions (fluent interface):
@@ -21,9 +21,10 @@
 * SELECT * INTO SQL() FROM ? - into-function for generating INSERTS
 * SELECT TOP 10 PERCENT * FROM ?
 * ORDER BY _ - fixed
-* ORDER BY formula
-...
-* GROUP BY formula..........
+* ORDER BY formula (ORDER BY MID(a,2,1))
+* GROUP BY formula (GROUP BY MID(a,1,1))
+* HAVING with formulas (HAVING COUNT(*)>1)
+* Fixed COUNT(*) and COUNT(expression)
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

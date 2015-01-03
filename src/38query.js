@@ -131,10 +131,12 @@ function queryfn3(query) {
 		query.data = [];
 		for(var i=0,ilen=query.groups.length;i<ilen;i++) {
 //			console.log(query.groups[i]);
-			var d = query.selectgfn(query.groups[i],query.params,alasql);
-			if((!query.havingfn) || query.havingfn(d,query.params,alasql))
+			var g = query.groups[i];
+			if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
+				var d = query.selectgfn(g,query.params,alasql);
 				query.data.push(d);
-		}
+			};
+		};
 //			query.groups = query.groups.filter();
 	};
 

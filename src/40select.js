@@ -100,7 +100,9 @@ yy.Select.prototype.compile = function(databaseid) {
 	if(this.joins) this.compileJoins(query);
 	// 3. Compile SELECT clause
 	
-	if(this.group) {
+	this.compileSelectGroup0(query);
+
+	if(this.group || query.selectGroup.length>0) {
 		query.selectgfns = this.compileSelectGroup1(query);
 	} else {
 		query.selectfns = this.compileSelect1(query);
@@ -113,12 +115,12 @@ yy.Select.prototype.compile = function(databaseid) {
 
 
 	// 6. Compile GROUP BY
-	if(this.group) query.groupfn = this.compileGroup(query);
+	if(this.group || query.selectGroup.length>0) query.groupfn = this.compileGroup(query);
 
 	// 6. Compile HAVING
 	if(this.having) query.havingfn = this.compileHaving(query);
 
-	if(this.group) {
+	if(this.group || query.selectGroup.length>0) {
 		query.selectgfn = this.compileSelectGroup2(query);
 	} else {
 		query.selectfn = this.compileSelect2(query);

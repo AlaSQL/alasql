@@ -7,14 +7,18 @@ if(typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 193 - GROUP BY formula', function() {
+describe('Test 196 - COUNT(a) vs COUNT(*)', function() {
 
 //    console.log(alasql.parse('SELECT a FROM ? GROUP BY a % 2').toString());
 
-    it("1. GROUP BY column", function(done) {
-        var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2}];
-        var res = alasql('SELECT COUNT(a+1)+1 AS b FROM ? GROUP BY a%2',[data]);
-        console.log('Result:',res);
+    it("1. COUNT(*) vs COUNT(a)", function(done) {
+        var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2},{a:undefined}];
+        var res = alasql('SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a',[data]);
+        assert.deepEqual(res,[ { a: 1, b: 3, c: 3 },
+            { a: 2, b: 2, c: 2 },
+            { a: 3, b: 1, c: 1 },
+            { a: undefined, b: 1, c: 0 } ]);
+        console.log(res);
     	done();
     });
 /*    

@@ -177,14 +177,22 @@ yy.Select.prototype.compileSelect2 = function(query) {
 };
 
 
-yy.Select.prototype.compileSelectGroup1 = function(query) {
-	var s = 'var r = {};';
-	this.columns.forEach(function(col,idx){
-//		console.log(idx, col.toString(), col);
+yy.Select.prototype.compileSelectGroup0 = function(query) {
+	this.columns.forEach(function(col){
 		if(col.findAggregator) col.findAggregator(query);
 	});
 
+	if(this.having) {
+		if(this.having.findAggregator) this.having.findAggregator(query);
+	}
+
+};
+
+yy.Select.prototype.compileSelectGroup1 = function(query) {
+	var s = 'var r = {};';
+
 	this.columns.forEach(function(col){
+		console.log(col);
 		if(col instanceof yy.Column && col.columnid == '*') {
 			s += 'for(var k in g){r[k]=g[k]};';
 		} else {
@@ -196,6 +204,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			// 	s += 'r[\''+escapeq()+'\']=';
 			// };
 			// s += ';';
+//			console.log(col);//,col.toJavaScript('g',''));
 			s += col.toJavaScript('g','')+';';
 //			s += col.toJavaScript('g','')+';';
 		};

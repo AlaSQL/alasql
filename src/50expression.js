@@ -108,7 +108,7 @@ yy.Op.prototype.findAggregator = function (query){
 };
 
 yy.Op.prototype.toType = function(tableid) {
-	if(['-','*','/','%'].indexOf(this.op) >-1) return 'number';
+	if(['-','*','/','%','^'].indexOf(this.op) >-1) return 'number';
 	if(this.op == '+') {
 		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
@@ -269,6 +269,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		op = '&&';
 
 	}
+
+	if(this.op == '^') {
+		return 'Math.pow('+this.left.toJavaScript(context,tableid, defcols)
+			+','+this.right.toJavaScript(context,tableid, defcols)+')';
+	};
 
 
 	// Change names

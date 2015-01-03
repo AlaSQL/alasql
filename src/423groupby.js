@@ -13,9 +13,14 @@ yy.Select.prototype.compileGroup = function(query) {
 	var self = this;
 	var tableid = query.sources[0].alias;
 	var defcols = query.defcols;
+	console.log(16,tableid, defcols);
 
 //	console.log(query.sources[0].alias,query.defcols);
-	var allgroup = decartes(this.group,query);
+	var allgroup = [[]];
+	if(this.group) {
+		allgroup = decartes(this.group,query);
+	}
+	console.log(23,allgroup);
 
 //	console.log(allgroup);
 	// Prepare groups
@@ -120,10 +125,13 @@ if(false) {
 				) { return '\''+colas+'\':'+colexp+','; }//f.field.arguments[0].toJavaScript(); 	
 				else if(col.aggregatorid == 'ARRAY') {
 				 	return '\''+colas+'\':[r[\''+colas+'\']],';
-				} else if(col.aggregatorid == 'COUNT') { return '\''+colas+'\':1,'; }
+				} else if(col.aggregatorid == 'COUNT') { 
+					if(col.expression.columnid == '*') return '\''+colas+'\':1,';
+					else return '\''+colas+'\':(typeof '+colexp+' != "undefined")?1:0,'; 
+
 //				else if(col.aggregatorid == 'MIN') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
 //				else if(col.aggregatorid == 'MAX') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
-				else if(col.aggregatorid == 'AVG') { 
+				} else if(col.aggregatorid == 'AVG') { 
 					query.removeKeys.push('_SUM_'+colas);
 					query.removeKeys.push('_COUNT_'+colas);
 					return '\''+colas+'\':r[\''+colas+'\'],\'_SUM_'+colas+'\':'+colexp+',\'_COUNT_'+colas+'\':1,'; 
@@ -209,7 +217,11 @@ if(false) {
 
 			if (col instanceof yy.AggrValue) { 
 				if (col.aggregatorid == 'SUM') { return 'g[\''+colas+'\']+='+colexp+';'; }//f.field.arguments[0].toJavaScript(); 	
-				else if(col.aggregatorid == 'COUNT') { return 'g[\''+colas+'\']++;'; }
+				else if(col.aggregatorid == 'COUNT') {
+					console.log(221,col.expression.columnid == '*');
+				 if(col.expression.columnid == '*') return 'g[\''+colas+'\']++;'; 
+				 else return 'if(typeof '+colexp+'!="undefined") g[\''+colas+'\']++;';
+				}
 				else if(col.aggregatorid == 'ARRAY') { return 'g[\''+colas+'\'].push('+colexp+');'; }
 				else if(col.aggregatorid == 'MIN') { return 'g[\''+colas+'\']=Math.min(g[\''+colas+'\'],'+colexp+');'; }
 				else if(col.aggregatorid == 'MAX') { return 'g[\''+colas+'\']=Math.max(g[\''+colas+'\'],'+colexp+');'; }

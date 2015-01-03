@@ -144,6 +144,8 @@
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
+'OVER'											return 'OVER'
+'PARTITION'										return 'PARTITION'
 'PERCENT'                                       return 'PERCENT'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
@@ -229,6 +231,7 @@
 ';'												return 'SEMICOLON'
 '$'												return 'DOLLAR'
 '?'												return 'QUESTION'
+'^'												return 'CARET'
 
 
 [a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
@@ -251,6 +254,7 @@
 %left LIKE
 %left PLUS MINUS
 %left STAR SLASH MODULO
+%left CARET
 %left DOT ARROW
 /* %left UMINUS */
 
@@ -905,6 +909,8 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'/', right:$3}); }
 	| Expression MODULO Expression
 		{ $$ = new yy.Op({left:$1, op:'%', right:$3}); }
+	| Expression CARET Expression
+		{ $$ = new yy.Op({left:$1, op:'^', right:$3}); }
 
 	| Expression ARROW Literal
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
