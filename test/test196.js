@@ -21,12 +21,11 @@ describe('Test 196 - COUNT(a) vs COUNT(*)', function() {
         console.log(res);
     	done();
     });
-/*    
-    it("2. GROUP BY formula", function(done) {
+    
+    it("2. COUNT(DISTINCT a)", function(done) {
         var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2}];
-        var res = alasql('SELECT a FROM ? GROUP BY CUBE(a,a%2)',[data]);
+        var res = alasql('SELECT COUNT(DISTINCT a) FROM ?',[data]);
         console.log(res);
         done();
     });
-*/
 });

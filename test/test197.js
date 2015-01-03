@@ -12,8 +12,12 @@ describe('Test 197 - Expression in expression', function() {
 //    console.log(alasql.parse('SELECT a FROM ? GROUP BY a % 2').toString());
 
     it("1. MAX", function(done) {
+        // var ast = alasql.parse('SELECT (SELECT MAX(a) FROM ?) FROM RANGE(1,2)');
+        // console.log(ast.toString());
+        // console.log(ast);
+
         var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2}];
-        var res = alasql('SELECT (SELECT MAX(a) FROM ?) FROM RANGE(1,2)',[data]);
+        var res = alasql('SELECT (SELECT * FROM ?)+1 FROM RANGE(1,2)',[data]);
         console.log(res);
     	done();
     });

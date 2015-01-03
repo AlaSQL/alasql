@@ -9,16 +9,21 @@
 yy.SetVariable = function (params) { return yy.extend(this, params); }
 yy.SetVariable.prototype.toString = function() {
 	var s = K('SET')+' ';
-	if(typeof this.autocommit != 'undefined') {
-		s += K('AUTOCOMMIT')+' '+(this.autocommit?'ON':'OFF');
-	};
+	s += K(this.variable)+' '+(this.value?'ON':'OFF');
 	return s;
 }
 
 yy.SetVariable.prototype.execute = function (databaseid,cb) {
-	if(typeof this.autocommit != 'undefined') {
-		alasql.autocommit = this.autocommit;
-	}
+	var val = this.value;
+	if(val == 'ON') val = true;
+	if(val == 'OFF') val = false;
 
+	alasql.vars[this.variable] = val;
+	// if(typeof this.autocommit != 'undefined') {
+	// 	alasql.vars.autocommit = this.autocommit;
+	// }
+	var res = 1;
+	if(cb) res=cb(res);
+	return res;
 };
 

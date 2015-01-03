@@ -57,7 +57,7 @@
 'ASC'                                      		return 'DIRECTION'
 'ATTACH'                                      	return 'ATTACH'
 'AUTO_INCREMENT'                                return 'AUTO_INCREMENT'
-'AUTOCOMMIT'									return 'AUTOCOMMIT';
+/* 'AUTOCOMMIT'									return 'AUTOCOMMIT'; */
 'AVG'                                      		return 'AVG'
 
 'BEGIN'											return 'BEGIN'
@@ -109,6 +109,7 @@
 'HELP'											return 'HELP'
 'IF'											return 'IF'
 'IDENTITY'										return 'IDENTITY'
+'IS'											return 'IS'
 'IN'											return 'IN'
 'INDEX'											return 'INDEX'
 'INNER'                                         return 'INNER'
@@ -251,6 +252,7 @@
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IN
 %left NOT
+%left IS
 %left LIKE
 %left PLUS MINUS
 %left STAR SLASH MODULO
@@ -280,6 +282,8 @@ main
 Statements
 	: Statements SEMICOLON Statement
 		{ $$ = $1; if($3) $1.push($3); }
+	| Statements GO Statement
+		{ $$ = $1; if($3) $1.push($3); }
 	| Statement
 		{ $$ = [$1]; }
 	| ExplainStatement
@@ -296,9 +300,9 @@ ExplainStatement
 Statement
 
 	: { $$ = null; }
-	| GO
+/*	| GO
 	  { $$ = null; }
-	| AlterTable	
+*/	| AlterTable	
 	| AttachDatabase	
 	| CreateDatabase
 	| CreateIndex
@@ -325,7 +329,7 @@ Statement
 	| UseDatabase
 	| Update
 	| Help
-	| ExpressionStatement
+/*	| ExpressionStatement */
 	| Source
 	| Assert
 	| SetVariable
@@ -336,6 +340,7 @@ Statement
 	| OpenCursor
 	| FetchCursor
 	| CloseCursor
+	| If
 
 
 
@@ -740,7 +745,14 @@ Expression
 */
 /*	| AT LPAR Json RPAR
 		{ $$ = new yy.Json({value:$3}); }			
-*/	;
+*/	| LPAR Select RPAR
+		{
+			if(!yy.queries) yy.queries = []; 
+			yy.queries.push($2);
+			$2.queriesidx = yy.queries.length;
+			$$ = $2;
+		}		
+	;
 
 NewClause
 	: NEW Literal
@@ -776,13 +788,26 @@ PrimitiveValue
 
 
 AggrValue
-	: Aggregator LPAR Expression RPAR
+	: Aggregator LPAR Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3}); }
+	| COUNT LPAR DISTINCT Expression RPAR OverClause
+		{ $$ = new yy.AggrValue({aggregatorid: 'COUNT', expression: $4, distinct:true}); }
+	| COUNT LPAR ALL Expression RPAR OverClause
+		{ $$ = new yy.AggrValue({aggregatorid: 'COUNT', expression: $4}); }
+	| COUNT LPAR Expression RPAR OverClause
+		{ $$ = new yy.AggrValue({aggregatorid: 'COUNT', expression: $3}); }
+	;
+
+OverClause
+	:
+		{$$ = null}
+	| OVER LPAR PARTITION Column RPAR
+		{ $$ = {over: new yy.Over({partition:true, column:$4})}; }
 	;
 
 Aggregator
 	: SUM { $$ = "SUM"; }
-	| COUNT { $$ = "COUNT"; }
+/*	| COUNT { $$ = "COUNT"; } */
 	| MIN { $$ = "MIN"; }
 	| MAX { $$ = "MAX"; }
 	| AVG { $$ = "AVG"; }
@@ -840,7 +865,7 @@ StringValue
 
 NullValue
 	: NULL
-		{ $$ = new yy.NullValue({value:null}); }
+		{ $$ = new yy.NullValue({value:undefined}); }
 	;
 
 ExistsValue
@@ -877,6 +902,7 @@ CaseValue
 	| CASE WhensList ElseClause END
 		{ $$ = new yy.CaseValue({whens: $2, elses: $3}); }
 	;
+
 WhensList
 	: WhensList When
 		{ $$ = $1; $$.push($2); }
@@ -1002,6 +1028,8 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'BETWEEN', right:$3 }); }
 	| Expression NOT_BETWEEN Expression
 		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
+	| Expression IS Expression
+		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
 	;
 
 ColFunc
@@ -1624,8 +1652,8 @@ JsonElementsList
 	;
 
 SetVariable
-	: SET AUTOCOMMIT OnOff
-		{ $$ = new yy.SetVariable({autocommit:$3});}
+	: SET Literal OnOff
+		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
 	;
 
 OnOff
@@ -1669,4 +1697,11 @@ Restore
 	| RESTORE Literal
 		{ $$ = new yy.Restore({databaseid: $2}); }
 	;	
+
+If
+	: IF Expression Statement
+		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
+/*	| IF Expression Statement ELSE Statement
+		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$5}); }
+*/	;
 

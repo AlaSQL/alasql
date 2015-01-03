@@ -25,6 +25,11 @@
 * GROUP BY formula (GROUP BY MID(a,1,1))
 * HAVING with formulas (HAVING COUNT(*)>1)
 * Fixed COUNT(*) and COUNT(expression)
+* COUNT(DISTINCT all)
+* Subquery SELECT (SELECT)
+* IF expr statement 
+* OBJECT_ID(tableid) function
+* IS NULL and IS NOT NULL operators
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

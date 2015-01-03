@@ -196,13 +196,13 @@ yy.Insert.prototype.compile = function (databaseid) {
 			//console.log(databaseid);
 			var db = alasql.databases[databaseid];
 
-			if(alasql.autocommit && db.engineid) {
+			if(alasql.vars.autocommit && db.engineid) {
 				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 			}
 			
 			var res = insertfn(db,params,alasql);
 
-			if(alasql.autocommit && db.engineid) {
+			if(alasql.vars.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 	//		var res = insertfn(db, params);

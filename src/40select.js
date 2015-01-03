@@ -71,6 +71,19 @@ yy.Select.prototype.toString = function() {
 	return s;
 };
 
+/**
+ Select statement in expression
+ */
+yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
+//	console.log('Expression',this);
+//	if(this.expression.reduced) return 'true';
+//	return this.expression.toJavaScript(context, tableid, defcols);
+console.log('Select.toJS', 81, this.queriesidx);
+	var s = 'this.queriesdata['+(this.queriesidx-1)+']';
+	return s;
+};
+
+
 // Compile SELECT statement
 yy.Select.prototype.compile = function(databaseid) {
 	var db = alasql.databases[databaseid];
@@ -179,7 +192,7 @@ yy.Select.prototype.compile = function(databaseid) {
 //	console.log(this.into);
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
-			if(alasql.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
+			if(alasql.vars.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
 				query.intoallfns = 'return alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
 					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data, columns, cb);';
 			} else {

@@ -51,7 +51,7 @@ yy.Select.prototype.compileJoins = function(query) {
 				'\' is not exists in database \''+source.databaseid)+'\'';
 			};
 			// source.data = query.database.tables[source.tableid].data;
-			if(alasql.autocommit && alasql.databases[source.databaseid].engineid) {
+			if(alasql.vars.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 				source.datafn = function(query,params, cb, idx, alasql) {
 //					console.log(777,arguments);

@@ -126,8 +126,16 @@ if(false) {
 				else if(col.aggregatorid == 'ARRAY') {
 				 	return '\''+colas+'\':[r[\''+colas+'\']],';
 				} else if(col.aggregatorid == 'COUNT') { 
-					if(col.expression.columnid == '*') return '\''+colas+'\':1,';
-					else return '\''+colas+'\':(typeof '+colexp+' != "undefined")?1:0,'; 
+					if(col.expression.columnid == '*') {
+						return '\''+colas+'\':1,';
+					} else {
+						if(col.distinct) {
+							aft += ',g[\'$$_VALUES_'+colas+'\']={},g[\'$$_VALUES_'+colas+'\']['+colexp+']=true';
+						};
+//						return '\''+colas+'\':(typeof '+colexp+' != "undefined")?1:0,';  
+//					} else {
+						return '\''+colas+'\':(typeof '+colexp+' != "undefined")?1:0,'; 
+					}
 
 //				else if(col.aggregatorid == 'MIN') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
 //				else if(col.aggregatorid == 'MAX') { return '\''+col.as+'\':r[\''+col.as+'\'],'; }
@@ -218,9 +226,16 @@ if(false) {
 			if (col instanceof yy.AggrValue) { 
 				if (col.aggregatorid == 'SUM') { return 'g[\''+colas+'\']+='+colexp+';'; }//f.field.arguments[0].toJavaScript(); 	
 				else if(col.aggregatorid == 'COUNT') {
-					console.log(221,col.expression.columnid == '*');
+//					console.log(221,col.expression.columnid == '*');
 				 if(col.expression.columnid == '*') return 'g[\''+colas+'\']++;'; 
-				 else return 'if(typeof '+colexp+'!="undefined") g[\''+colas+'\']++;';
+				 else {
+					if(col.distinct) {
+				 		return 'if(typeof '+colexp+'!="undefined" && (!g[\'$$_VALUES_'+colas+'\']['+colexp+'])) \
+				 		 {g[\''+colas+'\']++;g[\'$$_VALUES_'+colas+'\']['+colexp+']=true;}';
+					} else {
+				 		return 'if(typeof '+colexp+'!="undefined") g[\''+colas+'\']++;';
+				 	}
+				 }
 				}
 				else if(col.aggregatorid == 'ARRAY') { return 'g[\''+colas+'\'].push('+colexp+');'; }
 				else if(col.aggregatorid == 'MIN') { return 'g[\''+colas+'\']=Math.min(g[\''+colas+'\'],'+colexp+');'; }

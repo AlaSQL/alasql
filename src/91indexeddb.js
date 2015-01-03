@@ -85,7 +85,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, cb) {
 				db.tables[tblist[i]] = {};
 			};
 
-		// if(!alasql.autocommit) {
+		// if(!alasql.vars.autocommit) {
 		// if(db.tables){
 		// 	for(var tbid in db.tables) {
 		// 		db.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);

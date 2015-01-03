@@ -18,7 +18,7 @@ describe('Test 09', function() {
 		alasql.exec('INSERT INTO test1 VALUES (1,5)');
 		alasql.exec('INSERT INTO test1 VALUES (2,6)');
 
-		var res = alasql.exec('SELECT SUM(b) AS sb,test.a,test1.c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,a');
+		var res = alasql.exec('SELECT SUM(b) AS sb,a,c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,test.a');
 
 		assert.equal(5, res[0].c);
 		assert.equal(6, res[1].c);

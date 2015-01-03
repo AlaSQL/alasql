@@ -197,7 +197,13 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			s += 'for(var k in g){r[k]=g[k]};';
 		} else {
 			var colas = col.as;
-			if(typeof colas == 'undefined') colas = col.toString();
+			if(typeof colas == 'undefined') {
+				if(col instanceof yy.Column) {
+					colas = col.columnid;
+				} else {
+					colas = col.toString();
+				}
+			}
 //			if(col.as) {
 				s += 'r[\''+colas+'\']=';
 			// } else {
@@ -215,6 +221,6 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 
 yy.Select.prototype.compileSelectGroup2 = function(query) {
 	var s = query.selectgfns;
-	console.log('selectg:',s);
+//	console.log('selectg:',s);
 	return new Function('g,params,alasql',s+'return r');
 }

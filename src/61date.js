@@ -13,6 +13,10 @@ alasql.fn.Boolean = Boolean;
 
 stdfn.EXTEND = alasql.utils.extend;
 
+stdfn.OBJECT_ID = function(objid){
+	return !!alasql.tables[objid];
+};
+
 stdfn.DATE = function (d) {
 	return new Date(d);
 };

@@ -114,7 +114,7 @@ yy.Op.prototype.toType = function(tableid) {
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
 	};
 	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE'].indexOf(this.op) >-1 ) return 'boolean';
-	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN') return 'boolean';
+	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN' || this.op == 'IS NULL' || this.op == 'IS NOT NULL') return 'boolean';
 	if(this.allsome) return 'boolean';
 	if(!this.op) return this.left.toType();
 
@@ -147,6 +147,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
 		}
+	}
+
+	if(this.op == 'IS') {
+		return '((typeof '+this.left.toJavaScript(context,tableid, defcols)+"=='undefined') == "
+			+ '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
 	}
 
 
@@ -333,7 +338,7 @@ yy.NullValue.prototype.toString = function() {
 	return 'NULL';
 }
 yy.NullValue.prototype.toJavaScript = function() {
-	return 'null';
+	return 'undefined';
 }
 
 yy.ParamValue = function (params) { return yy.extend(this, params); }

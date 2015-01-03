@@ -47,7 +47,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			return alasql.engines[db.engineid].updateTable(databaseid, tableid, assignfn, wherefn, params, cb);
 		}
 
-		if(alasql.autocommit && db.engineid) {
+		if(alasql.vars.autocommit && db.engineid) {
 			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 		}
 
@@ -68,7 +68,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			}
 		};
 
-		if(alasql.autocommit && db.engineid) {
+		if(alasql.vars.autocommit && db.engineid) {
 			alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 		}
 

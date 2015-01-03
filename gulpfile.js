@@ -60,6 +60,7 @@ gulp.task('js-merge', function () {
     './src/65createindex.js',
     './src/66dropindex.js',
     './src/67createview.js',
+    './src/68if.js',
   	'./src/70insert.js',
     './src/72delete.js',
     './src/74update.js',
