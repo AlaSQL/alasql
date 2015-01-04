@@ -18,7 +18,7 @@ yy.If.prototype.toString = function() {
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.If.prototype.execute = function (databaseid,params,cb,scope) {
 	var res = 1;
-	console.log(this.expression.toJavaScript());
+//	console.log(this.expression.toJavaScript());
 	var fn = new Function('params,alasql','return '+this.expression.toJavaScript());
 	var res = fn(params,alasql);
 	if(res) res = this.thenstat.execute(databaseid,params,cb,scope);

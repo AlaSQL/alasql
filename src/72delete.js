@@ -31,7 +31,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				return alasql.engines[db.engineid].deleteFromTable(databaseid, tableid, wherefn, params, cb);
 			}
 
-			if(alasql.vars.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
+			if(alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 			}
 
@@ -53,7 +53,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //			table.data = table.data.filter(function(r){return !;});
 			table.data = newtable;
 			var res = orignum - table.data.length;
-			if(alasql.vars.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
+			if(alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 
@@ -63,7 +63,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 		}
 	} else {
 		statement = function (params, cb) {
-			if(alasql.vars.autocommit && db.engineid) {
+			if(alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].loadTableData(databaseid,tableid);
 			}
 
@@ -73,7 +73,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 			table.deleteall();
 
-			if(alasql.vars.autocommit && db.engineid) {
+			if(alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 

@@ -19,8 +19,8 @@ yy.Source.prototype.execute = function (databaseid,params,cb) {
 	var res;
 	loadFile(this.url, !!cb, function(data){
 //		console.log(data);
-		res = 1;
-		alasql(data);
+//		res = 1;
+		res = alasql(data);
 		if(cb) res = cb(res);
 		return res;
 	}, function(err){

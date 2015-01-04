@@ -51,6 +51,7 @@
 'AND'											return 'AND'
 'ANTI'											return 'ANTI'
 'ANY'											return 'ANY'
+'APPLY'											return 'APPLY'
 'ARRAY'                                     	return 'ARRAY'
 'AS'                                      		return 'AS'
 'ASSERT'                                      	return 'ASSERT'
@@ -433,6 +434,8 @@ SelectModifier
 TopClause
 	: TOP NumValue  
 		{ $$ = {top: $2}; }
+	| TOP LPAR NumValue RPAR
+		{ $$ = {top: $3}; }
 	| TOP NumValue PERCENT  
 		{ $$ = {top: $2, percent:true}; }
 	| { $$ = null; }
@@ -455,6 +458,22 @@ FromClause
 		{ $$ = { from: [$2], joins: $3 }; }
 	|
 		{ $$ = null; }
+	;
+
+ApplyClause
+	: CROSS APPLY LPAR Select RPAR Literal
+		{ $$ = new yy.Apply({select: $4, apply:'CROSS', as:$6}); }
+	| CROSS APPLY LPAR Select RPAR AS Literal
+		{ 
+			if(!yy.exists) yy.exists = [];
+			$$ = new yy.Apply({select: $4, apply:'CROSS', as:$7,existsidx:yy.exists.length});
+			yy.exists.push($3);
+
+		 }
+	| OUTER APPLY LPAR Select RPAR Literal
+		{ $$ = new yy.Apply({select: $4, apply:'OUTER', as:$6}); }
+	| OUTER APPLY LPAR Select RPAR AS Literal
+		{ $$ = new yy.Apply({select: $4, apply:'OUTER', as:$7}); }
 	;
 
 FromTablesList
@@ -504,13 +523,17 @@ Table
 JoinTablesList
 	: JoinTablesList JoinTable
 		{ $$ = $1; $1.push($2); } 
+	| JoinTablesList ApplyClause
+		{ $$ = $1; $1.push($2); } 
 	| JoinTable
+	 	{ $$ = [$1]; }
+	| ApplyClause
 	 	{ $$ = [$1]; }
 	;
 
 JoinTable
-	: JoinMode JOIN JoinTableAs OnClause
-		{ $$ = new yy.Join($1); yy.extend($$, $3); yy.extend($$, $4); }
+	: JoinMode JoinTableAs OnClause
+		{ $$ = new yy.Join($1); yy.extend($$, $2); yy.extend($$, $3); }
 	;
 
 JoinTableAs
@@ -544,26 +567,27 @@ JoinMode
 	;
 
 JoinModeMode
-	: { $$ = "INNER"; }
-	| INNER 
+	: JOIN 
 		{ $$ = "INNER"; }
-	| LEFT 
+	| INNER JOIN 
+		{ $$ = "INNER"; }
+	| LEFT JOIN
 		{ $$ = "LEFT"; }
-	| LEFT OUTER
+	| LEFT OUTER JOIN
 		{ $$ = "LEFT"; }
-	| RIGHT 
+	| RIGHT JOIN
 		{ $$ = "RIGHT"; }
-	| RIGHT OUTER
+	| RIGHT OUTER JOIN
 		{ $$ = "RIGHT"; }
-	| OUTER 
+	| OUTER JOIN
 		{ $$ = "OUTER"; }
-	| FULL OUTER 
+	| FULL OUTER JOIN
 		{ $$ = "OUTER"; }
-	| SEMI 
+	| SEMI JOIN
 		{ $$ = "SEMI"; }
-	| ANTI
+	| ANTI JOIN
 		{ $$ = "ANTI"; }
-	| CROSS 
+	| CROSS JOIN
 		{ $$ = "CROSS"; }
 	;
 
@@ -790,24 +814,34 @@ PrimitiveValue
 AggrValue
 	: Aggregator LPAR Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3}); }
-	| COUNT LPAR DISTINCT Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: 'COUNT', expression: $4, distinct:true}); }
-	| COUNT LPAR ALL Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: 'COUNT', expression: $4}); }
-	| COUNT LPAR Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: 'COUNT', expression: $3}); }
+	| Aggregator LPAR DISTINCT Expression RPAR OverClause
+		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4, distinct:true}); }
+	| Aggregator LPAR ALL Expression RPAR OverClause
+		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4}); }
 	;
 
 OverClause
 	:
 		{$$ = null}
-	| OVER LPAR PARTITION Column RPAR
-		{ $$ = {over: new yy.Over({partition:true, column:$4})}; }
+	| OVER LPAR OverPartitionClause RPAR
+		{ $$ = {over: new yy.Over()}; yy.extend($$,$3); }
+	| OVER LPAR OverOrderByClause RPAR
+		{ $$ = {over: new yy.Over()}; yy.extend($$,$3); }
+	| OVER LPAR OverPartitionClause OverOrderByClause RPAR
+		{ $$ = {over: new yy.Over()}; yy.extend($$,$3); yy.extend($$,$4);}
 	;
 
+OverPartitionClause
+	: PARTITION BY GroupExpressionsList
+		{ $$ = {partition:$3}; }
+	;
+OverOrderByClause
+	: ORDER BY OrderExpressionsList
+		{ $$ = {order:$3}; }
+	;
 Aggregator
 	: SUM { $$ = "SUM"; }
-/*	| COUNT { $$ = "COUNT"; } */
+	| COUNT { $$ = "COUNT"; } 
 	| MIN { $$ = "MIN"; }
 	| MAX { $$ = "MAX"; }
 	| AVG { $$ = "AVG"; }
@@ -1328,14 +1362,18 @@ ColumnConstraint
 		{$$ = {primarykey:true};}
 	| FOREIGN KEY REFERENCES Literal LPAR Literal RPAR
 		{$$ = {foreignkey:{tableid:$4, columnid: $6}};}
+	| REFERENCES Literal LPAR Literal RPAR
+		{$$ = {foreignkey:{tableid:$2, columnid: $4}};}
 	| AUTO_INCREMENT
 		{$$ = {auto_increment:true};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: [$3,$5]} }
 	| DEFAULT PrimitiveValue
 		{$$ = {default:$2};}
+	| NULL
+		{$$ = {null:true}; }
 	| NOT NULL
-		{$$ = {notnull:true};}
+		{$$ = {notnull:true}; }
 	;
 
 /* DROP TABLE */

@@ -192,7 +192,7 @@ yy.Select.prototype.compile = function(databaseid) {
 //	console.log(this.into);
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
-			if(alasql.vars.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
+			if(alasql.options.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
 				query.intoallfns = 'return alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
 					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data, columns, cb);';
 			} else {

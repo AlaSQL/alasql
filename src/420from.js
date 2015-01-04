@@ -46,7 +46,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 		if(tq instanceof yy.Table) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
-			if(alasql.vars.autocommit && alasql.databases[source.databaseid].engineid) {
+			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 				source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>alasql.js - learn count(*)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  </head>
+  <body>
+
+    <script src="../../alasql.js"></script>
+    <script src="../../lib/sqljs/sql.js"></script>
+
+	<h1>alasql.js - Performance Tests vs sql.js and WebSQL</h1>
+
+	<h3>Results</h3>
+	<p><div id="result"></div></p>
+
+
+    <script>
+
+var NUM_TESTS = 10;
+
+var sql1 = [
+	'CREATE TABLE test (a INT, b INT)',
+	'INSERT INTO test VALUES (1,2)',
+	'INSERT INTO test VALUES (1,2)',
+	'INSERT INTO test VALUES (1,2)',
+	'INSERT INTO test VALUES (2,3)',
+	'INSERT INTO test VALUES (2,3)',
+	'INSERT INTO test VALUES (3,4)',
+	'INSERT INTO test VALUES (NULL,4)',
+];
+
+var db = new SQL.Database();
+sql1.forEach(function(sql) {
+	var res = db.exec(sql);
+//	console.log(res);
+});
+
+var sql = 'SELECT AVG(a),SUM(a),SUM(a) FROM test'
+
+var res = db.exec(sql);
+
+console.table(res[0].columns);
+console.table(res[0].values);
+
+    </script>
+  </body>
+</html>

@@ -3,11 +3,16 @@
 
 ## Next Versions
 
-1. Change GROUP BY and SELECT
+1. CROSS APPLY, OUTER APPLY
+2. PIVOT
+3. OVER () syntax
+4. VAR, STDDEV
+5. FOREIGN KEYS
 
 3. clean the code - remove comments and unnecessary functions
 
 
+4. IS NULL, IS NOT NULL in CREATE TABLE
 
 
 

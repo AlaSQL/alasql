@@ -51,7 +51,7 @@ alasql.options.logprompt = true; // Print SQL at log
 alasql.vars = {};
 
 // AUTOCOMMIT ON | OFF
-alasql.vars.autocommit = true;
+alasql.options.autocommit = true;
 
 alasql.prompthistory = [];
 

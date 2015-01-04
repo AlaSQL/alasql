@@ -1,7 +1,7 @@
 # Changelog
 
 
-### 0.0.36 "New Year version" (23.12.2014 - 03.01.2015)
+### 0.0.36 "New Year version" (23.12.2014 - 04.01.2015)
 
 * REDUCE Aggregator
 * LINQ functions (fluent interface):
@@ -30,6 +30,13 @@
 * IF expr statement 
 * OBJECT_ID(tableid) function
 * IS NULL and IS NOT NULL operators
+* SET variable value (ON/OFF)
+* OVER PARTITION ORDER BY syntax
+* SET option ON/OFF (alasql.options.autocommit)
+* SUM(DISTINCT a)
+* Create table column NULL constraint syntax
+* WebWorker
+
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

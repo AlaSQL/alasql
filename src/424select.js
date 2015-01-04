@@ -189,10 +189,11 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 };
 
 yy.Select.prototype.compileSelectGroup1 = function(query) {
+	var self = this;
 	var s = 'var r = {};';
 
-	this.columns.forEach(function(col){
-		console.log(col);
+	this.columns.forEach(function(col,idx){
+//		console.log(col);
 		if(col instanceof yy.Column && col.columnid == '*') {
 			s += 'for(var k in g){r[k]=g[k]};';
 		} else {
@@ -202,16 +203,27 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 					colas = col.columnid;
 				} else {
 					colas = col.toString();
+					for(var i=0;i<idx;i++) {
+						if(colas == self.columns[i].as) {
+							colas = self.columns[i].as+':'+idx;
+							break;
+						}
+					}
+					col.as = colas;
 				}
 			}
 //			if(col.as) {
-				s += 'r[\''+colas+'\']=';
+			s += 'r[\''+colas+'\']=';
 			// } else {
 			// 	s += 'r[\''+escapeq()+'\']=';
 			// };
 			// s += ';';
 //			console.log(col);//,col.toJavaScript('g',''));
-			s += col.toJavaScript('g','')+';';
+			if(col instanceof yy.Column) {
+				s += 'g[\''+col.columnid+'\'];';
+			} else {
+				s += col.toJavaScript('g','')+';';				
+			}
 //			s += col.toJavaScript('g','')+';';
 		};
 	});

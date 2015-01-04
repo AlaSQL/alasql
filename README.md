@@ -44,6 +44,22 @@ Check Alasql vs other JavaScript SQL databases and data processing libraries:
 
 ## What is new?
 
+### Alasql as a WebWorker
+
+Alasql can work as a webworker. Include alasql-worker.js and open new Worker.
+
+```html
+    <script src="../../alasql-worker.js"></script>
+    <script>
+        alasql.worker = new Worker('../../alasql.min.js');
+
+        var arr = [{a:1},{a:2},{a:1}];
+        alasql('SELECT * FROM ?',[arr],function(data){
+            console.log(data);
+        });
+    </script>    
+```
+
 ### Read and write Excel, CSV, TAB, JSON,  and text files to/from database
 
 Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format

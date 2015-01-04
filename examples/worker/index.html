@@ -1,0 +1,14 @@
+<script src="../../alasql-worker.js"></script>
+<script>
+	alasql.worker = new Worker('../../alasql.min.js');
+
+	var arr = [{a:1},{a:2},{a:1}];
+	alasql('SELECT * FROM ?',[arr],function(data){
+		console.log(data);
+	});
+
+	alasql('CREATE TABLE one (a INT);INSERT INTO one VALUES(10);SELECT * FROM one',[],function(data){
+		console.log(data);
+	});
+
+</script>

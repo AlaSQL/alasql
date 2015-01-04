@@ -20,7 +20,7 @@ yy.SetVariable.prototype.execute = function (databaseid,cb) {
 
 	alasql.vars[this.variable] = val;
 	// if(typeof this.autocommit != 'undefined') {
-	// 	alasql.vars.autocommit = this.autocommit;
+	// 	alasql.options.autocommit = this.autocommit;
 	// }
 	var res = 1;
 	if(cb) res=cb(res);

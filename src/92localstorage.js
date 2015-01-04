@@ -85,7 +85,7 @@ LS.attachDatabase = function(lsdbid, dbid, args, cb){
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
 	// IF AUTOCOMMIT IS OFF then copy data to memory
-	if(!alasql.vars.autocommit) {
+	if(!alasql.options.autocommit) {
 		if(db.tables){
 			for(var tbid in db.tables) {
 				db.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
@@ -209,13 +209,13 @@ LS.rollback = function(databaseid, cb) {
 //	console.log(db.dbversion)
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	lsdb = LS.get(lsdbid);
-//	if(!alasql.vars.autocommit) {
+//	if(!alasql.options.autocommit) {
 		if(lsdb.tables){
 			for(var tbid in lsdb.tables) {
 				var tb = new alasql.Table({columns: db.tables[tbid].columns});
 				extend(tb,lsdb.tables[tbid]);
 				lsdb.tables[tbid] = tb;
-				if(!alasql.vars.autocommit) {
+				if(!alasql.options.autocommit) {
 					lsdb.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
 				}
 				lsdb.tables[tbid].indexColumns();

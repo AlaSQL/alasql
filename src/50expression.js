@@ -99,7 +99,7 @@ yy.Op.prototype.toString = function() {
 };
 
 yy.Op.prototype.findAggregator = function (query){
-	console.log(this.toString());
+//	console.log(this.toString());
 	if(this.left && this.left.findAggregator) this.left.findAggregator(query);
 	// Do not go in > ALL
 	if(this.right && this.right.findAggregator && (!this.allsome)) {
@@ -480,22 +480,24 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
 	var s = '';
-	if(this.aggregatorid == 'REDUCE') s += this.funcid+'(';
+	if(this.aggregatorid == 'REDUCE') s += L(this.funcid)+'(';
 	else s += this.aggregatorid+'(';
+	if(this.distinct) s+= K('DISTINCT')+' ';
 	if(this.expression) s += this.expression.toString();
 	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 yy.AggrValue.prototype.findAggregator = function (query){
-	console.log('aggregator found',this.toString());
+//	console.log('aggregator found',this.toString());
 	query.selectGroup.push(this);
+	query.removeKeys.push(this.toString());
 //	this.reduced = true;
 	return;
 };
 
 yy.AggrValue.prototype.toType = function() {
-	if(['SUM','COUNT','AVG','MIN', 'MAX','AGGR'].indexOf(this.aggregatorid)>-1) return 'number';
+	if(['SUM','COUNT','AVG','MIN', 'MAX','AGGR','VAR','STDDEV'].indexOf(this.aggregatorid)>-1) return 'number';
 	if(['ARRAY'].indexOf(this.aggregatorid)>-1) return 'array';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
@@ -506,7 +508,7 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //	if(this.alias) s += ' AS '+this.alias;
 //	return s;
 //	var s = ''; 
-if(this.as) console.log(499,this.as);
+//if(this.as) console.log(499,this.as);
 	var colas = this.as;
 	if(typeof colas == 'undefined') colas = this.toString();
 	return 'g[\''+colas+'\']';
