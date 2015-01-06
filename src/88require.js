@@ -17,32 +17,20 @@ yy.Require.prototype.toString = function() {
 	return s;
 }
 
-// SOURCE FILE
+/**
+ Attach plug-in for Alasql
+ */
 yy.Require.prototype.execute = function (databaseid,params,cb) {
-//	console.log(this.url);
 	var res = 0;
 	var ss = '';
 	if(this.paths.length > 0) {
-		if(typeof importScripts == 'function') {
-
-		} else if(typeof exports == 'objects') {
-			this.paths.forEach(function(path){
-				require(path);
+		this.paths.forEach(function(path){
+			loadFile(path.value, !!cb, function(data){
+				new Function("alasql",data)(alasql);
+				res++;
 			});
-		} else {
-
-		}
-		// this.paths.forEach(function(path){
-		// 	loadFile(path, !!cb, function(data){
-		// 		ss += ';'+data;
-		// 		res++;
-		// 		if(res < this.paths.length) return;
-		// 		console.log('REQUIRE:',ss);
-		// 		if(cb) res = cb(res);
-		// 	}, function(err){
-		// 		throw err;
-		// 	});
-		// });
+		});
 	}
+	if(cb) res = cb(res);
 	return res;
 };

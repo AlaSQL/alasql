@@ -172,7 +172,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns ;
-	console.log(s);
+//	console.log(s);
 	return new Function('p,params,alasql',s+'return r');
 };
 
