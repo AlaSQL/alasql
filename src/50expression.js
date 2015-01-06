@@ -13,7 +13,7 @@ yy.ExpressionStatement.prototype.toString = function() {
 
 yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
-//		console.log(this.expression);
+		console.log(this.expression.toJavaScript('','', null));
 //		console.log(this.expression.toJavaScript('','', null));
 		var expr =  new Function("params,alasql",'return '+this.expression.toJavaScript('','', null));
 		var res = expr(params,alasql);
@@ -288,6 +288,19 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 
 
+yy.VarValue = function (params) { return yy.extend(this, params); }
+yy.VarValue.prototype.toString = function() {
+	return '@'+L(this.variable);
+};
+
+yy.VarValue.prototype.toType = function() {
+	return 'unknown';
+};
+
+yy.VarValue.prototype.toJavaScript = function() {
+	return "alasql.vars['"+this.variable+"']";
+}
+
 
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
@@ -301,6 +314,8 @@ yy.NumValue.prototype.toType = function() {
 yy.NumValue.prototype.toJavaScript = function() {
 	return ""+this.value;
 }
+
+
 
 
 yy.StringValue = function (params) { return yy.extend(this, params); }

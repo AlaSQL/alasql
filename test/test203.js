@@ -5,15 +5,29 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-describe('Test 203 REQUIRE', function() {
+describe('Test 203 REQUIRE ASYNC', function() {
 
-    it("1. REQUIRE()", function(done) {
+    it("1. REQUIRE() ASYN", function(done) {
     	var data = [1,2,3,4];
-        alasql('REQUIRE "./test203myfn.js"');
+        alasql('REQUIRE "./test203myfn.js1","./test203myfn2.js1"',[],function(){
+            var res = alasql('SELECT COLUMN myfn(_)+myfn2(_) FROM ?',[data]);
+    //        console.log(res);
+            assert.deepEqual(res,[2,12,36,80]);
+            done();            
+        });
 //        console.log(alasql.fn);
-        var res = alasql('SELECT COLUMN myfn(_) FROM ?',[data]);
+    });
+    it("2. REQUIRE SYNC", function(done) {
+        var data = [1,2,3,4];
+        alasql.fn = {};
+      //console.log(alasql.fn);
+        alasql('REQUIRE "./test203myfn.js1","./test203myfn2.js1"');
+//        console.log(alasql.fn);
+        var res = alasql('SELECT COLUMN myfn(_)+myfn2(_) FROM ?',[data]);
+//        var res = alasql('SELECT COLUMN myfn(_) FROM ?',[data]);
 //        console.log(res);
-        assert.deepEqual(res,[1,4,9,16]);
-    	done();
+        assert.deepEqual(res,[2,12,36,80]);
+        done();            
+//        console.log(alasql.fn);
     });
 });

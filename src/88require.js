@@ -21,16 +21,25 @@ yy.Require.prototype.toString = function() {
  Attach plug-in for Alasql
  */
 yy.Require.prototype.execute = function (databaseid,params,cb) {
+	var self = this;
 	var res = 0;
 	var ss = '';
+//	console.log(this.paths);
 	if(this.paths.length > 0) {
 		this.paths.forEach(function(path){
 			loadFile(path.value, !!cb, function(data){
-				new Function("alasql",data)(alasql);
 				res++;
+//				console.log(res,self.paths.length);
+//				console.log(data);
+				ss += data;
+				if(res<self.paths.length) return;
+
+//				console.log(ss);
+				new Function("params,alasql",ss)(params,alasql);
+				if(cb) res = cb(res);
 			});
 		});
 	}
-	if(cb) res = cb(res);
+	if(this.paths.length == 0 && cb) res = cb(res);	
 	return res;
 };

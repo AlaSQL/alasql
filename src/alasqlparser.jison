@@ -758,6 +758,8 @@ Expression
 		{ $$ = $1; }
 	| ParamValue
 		{ $$ = $1; }
+	| VarValue
+		{ $$ = $1; }
 	| ExistsValue
 		{ $$ = $1; }
 	| CaseValue
@@ -906,6 +908,11 @@ StringValue
 NullValue
 	: NULL
 		{ $$ = new yy.NullValue({value:undefined}); }
+	;
+
+VarValue
+	: AT Literal
+		{ $$ = new yy.VarValue({variable:$2}); }
 	;
 
 ExistsValue
@@ -1698,6 +1705,8 @@ JsonElementsList
 SetVariable
 	: SET Literal OnOff
 		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
+	| SET AT Literal EQ Expression
+		{ $$ = new yy.SetVariable({variable:$3, expression:$5});}
 	;
 
 OnOff
@@ -1708,24 +1717,18 @@ OnOff
 	;
 
 CommitTransaction
-	: COMMIT
-		{ $$ = new yy.Commit(); }
-	| COMMIT TRANSACTION
-		{ $$ = new yy.Commit(); }
+	: COMMIT TRANSACTION
+		{ $$ = new yy.CommitTransaction(); }
 	;
 
 RollbackTransaction
-	: ROLLBACK
-		{ $$ = new yy.Rollback(); }
-	| ROLLBACK TRANSACTION
-		{ $$ = new yy.Rollback(); }
+	: ROLLBACK TRANSACTION
+		{ $$ = new yy.RollbackTransaction(); }
 	;
 
 BeginTransaction
-	: BEGIN
-		{ $$ = new yy.Begin(); }
-	| BEGIN TRANSACTION
-		{ $$ = new yy.Begin(); }
+	: BEGIN TRANSACTION
+		{ $$ = new yy.BeginTransaction(); }
 	;
 
 Store

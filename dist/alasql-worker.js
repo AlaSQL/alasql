@@ -8,14 +8,38 @@
     }
 }(this, function () {
 
+/**
+ */
 function alasql(sql,params,cb){
 	alasql.worker.postMessage({sql:sql,params:params});
 	alasql.worker.onmessage = function(event) {
 //		console.log('ok');
-		cb(event.data);
+		if(cb) cb(event.data);
 	};
 	alasql.worker.onerror = function(e){
 		throw e;
+	}
+};
+
+/**
+  Start Alasql WebWorker
+ */
+alasql.work = function(path, paths,cb) {
+//	var path = arguments[0]; 
+	if(typeof path == "undefined") {
+		throw new Error('Path to alasql.js is not specified');
+	}
+	alasql.worker = new Worker(path);
+
+	if(arguments.length > 1) {
+//		var paths = Array.prototype.slice.call(arguments);
+//		paths.shift();
+//		console.log(paths);
+		var sql = 'REQUIRE ' + paths.map(function(p){
+			return '"'+p+'"';
+		}).join(",");
+//		console.log(sql);
+		alasql(sql,[],cb);
 	}
 };
 

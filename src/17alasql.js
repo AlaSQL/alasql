@@ -48,6 +48,7 @@ alasql.options.casesensitive = true; // Table and column names are case sensitiv
 alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
 alasql.options.logprompt = true; // Print SQL at log
 
+// Variables
 alasql.vars = {};
 
 // AUTOCOMMIT ON | OFF

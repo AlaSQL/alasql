@@ -39,7 +39,10 @@
 * GETDATE() returns date 
 * PRINT statement
 * Tests renumbered and fixed
-
+* REQUIRE 'plugin.js'
+* alasql.work(alasql.js, [plugins...], callback)
+* @localvariable
+* SET @localvariable = expression
 
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
