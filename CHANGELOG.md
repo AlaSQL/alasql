@@ -35,7 +35,11 @@
 * SET option ON/OFF (alasql.options.autocommit)
 * SUM(DISTINCT a)
 * Create table column NULL constraint syntax
-* WebWorker
+* WebWorker (alasql-worker.js)
+* GETDATE() returns date 
+* PRINT statement
+* Tests renumbered and fixed
+
 
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)

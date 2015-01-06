@@ -3,13 +3,50 @@
 
 ## Next Versions
 
-1. CROSS APPLY, OUTER APPLY
-2. PIVOT
-3. OVER () syntax
-4. VAR, STDDEV
-5. FOREIGN KEYS
+1. REQUIRE 'addon', 'addon'
+<script src='alasql-worker.js'>
+alasql.work('alasql.js','dates.js','fns.js'); 
+
+1. GETDATE(), CONVERT(), CAST()
+
+2. Add TRIM to CSV reading procedure
+
+if(trim(s) = +s)
+
+2. CSV/TAB export with headers:["header1","header2"] for arrays
+
+6. CROSS APPLY, OUTER APPLY
+3. Fix bug with multiple counts in CASE (test198)
+4. FOREIGN KEYS
+5. Transactions
+
+7. OVER () 
+9. PIVOT - ?
+8. VAR, STDDEV
+
+CROSS APPLY - like join... CROSS JOIN...
+===
+before doJoin stage 
+if(cross apply) -> exists[](new scope) -> doJoin()...
+
+OVER
+===
+
+SELECT orderid, customerid
+FROM dbo.Orders
+WHERE customerid IS NOT NULL
+  AND orderid % 2 = 1
+ORDER BY COUNT(*) OVER(PARTITION BY customerid) DESC;
+
+SELECT COUNT(*) FROM Orders WHERE... GROUP BY customerid???
+
+
 
 3. clean the code - remove comments and unnecessary functions
+
+
+
+
 
 
 4. IS NULL, IS NOT NULL in CREATE TABLE
@@ -100,11 +137,6 @@ http://stackoverflow.com/questions/15441670/intersection-of-arrays-of-objects-ba
 
 Calculate prime numbers with SQL
 
-2. CSV/TAB export with headers:["header1","header2"] for arrays
-
-1. Add TRIM to CSV reading procedure
-
-if(trim(s) = +s)
 
 0.Clean the code. Remove modifier functions like queryValue()
 

@@ -95,7 +95,7 @@ function queryfn2(data,idx,query) {
 	} else {
 		// subqueries
 		query.queriesdata[-idx-1] = flatArray(data);
-		console.log(98,query.queriesdata);
+//		console.log(98,query.queriesdata);
 //		console.log(79,query.queriesdata);
 	}
 
@@ -177,9 +177,7 @@ function queryfn3(query) {
 	// Remove Angular.js artifacts and other unnecessary columns
 	// Issue #25
 
-//	console.log(query.removeKeys);
-
-//	console.log(query.removeKeys);
+//	console.log('removeKeys:',query.removeKeys);
 
     var removeKeys = query.removeKeys;
     if(typeof angular != "undefined") removeKeys.push('$$hashKey');
@@ -189,7 +187,7 @@ function queryfn3(query) {
         for(var j=0; j<jlen;j++)
           delete query.data[i][removeKeys[j]];
       }    
-    }
+    };
 
 //	console.log(query.intoallfns);
 

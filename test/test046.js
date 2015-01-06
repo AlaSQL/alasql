@@ -3,7 +3,7 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 46', function() {
+describe('Test 046', function() {
 	describe('FROM as parameter', function(){
 
 		var years = [
@@ -51,7 +51,10 @@ describe('Test 46', function() {
 		});
 
 		it('FROM array of arrays', function(done){
-			var res = alasql('SELECT MATRIX [2] AS 0, SUM([1]) AS 1 FROM ? d WHERE [0]>2016 GROUP BY [0] ', [data]);
+			var res = alasql('SELECT MATRIX [2] AS 0, SUM([1]) AS 1 \
+				FROM ? d \
+				WHERE [0]>2016 \
+				GROUP BY [2] ', [data]);
 			assert.deepEqual(res,[ [ 2, 4 ], [ 3, 11 ] ]);
 			done();
 		});

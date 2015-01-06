@@ -38,7 +38,7 @@ describe('Test 16', function() {
 	 		' FROM students '+
 	 		' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
 	 		' LEFT JOIN schools ON courses.schoolid = schools.schoolid '+
-	 		' GROUP BY schoolid, courseid, studentname '+
+	 		' GROUP BY students.schoolid, students.courseid, studentname '+
 	 		' ORDER BY studentname DESC' );
 //if(typeof exports === 'object') console.log(res);
 //else console.table(res);

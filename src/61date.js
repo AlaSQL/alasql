@@ -23,10 +23,16 @@ stdfn.DATE = function (d) {
 
 stdfn.NOW = function(){
 	var d = new Date();
-	var s = d.getFullYear()+"."+("0"+d.getMonth()).substr(-2)+"."+("0"+d.getDate()).substr(-2);
+	var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 	s += " "+("0"+d.getHours()).substr(-2)+":"+("0"+d.getMinutes()).substr(-2)+"."+("0"+d.getSeconds()).substr(-2);
 	return s;
 };
+
+stdfn.GETDATE = function(){
+	var d = new Date();
+	var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
+	return s;	
+}
 
 
 stdfn.SECOND = function(d){

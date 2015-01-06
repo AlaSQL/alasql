@@ -58,14 +58,19 @@ describe('Test 113 - SELECT ', function(){
 //	console.log(Object.keys(alasql.currentDatabase.sqlcache).length);
 
 	it('Select COUNT(*) on right-join', function(done) {
-		var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt FROM students '+
-			'RIGHT JOIN courses USING courseid GROUP BY courseid' );
-		assert.equal(5, res.length);
-		assert.equal(1, res[0].cnt);
-		assert.equal(2, res[1].cnt);
-		assert.equal(1, res[2].cnt);
-		assert.equal(1, res[3].cnt);
-		assert.equal(1, res[4].cnt);
+		var res = alasql.exec('SELECT courses.courseid, COUNT(students.studentid) AS cnt \
+			FROM students \
+			RIGHT JOIN courses USING courseid \
+			GROUP BY courses.courseid \
+			ORDER BY courseid' );
+//		console.log(res);
+		assert.deepEqual(res,
+			[ { courseid: 1, cnt: 1 },
+  			{ courseid: 2, cnt: 2 },
+  			{ courseid: 3, cnt: 0 },
+  			{ courseid: 4, cnt: 1 },
+  			{ courseid: 5, cnt: 0 } ]
+		);
 		done();		
 	});
 

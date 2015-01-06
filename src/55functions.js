@@ -28,7 +28,9 @@ yy.FuncValue.prototype.toString = function() {
 
 yy.FuncValue.prototype.findAggregator = function(query) {
 	if(this.args && this.args.length > 0) {
-		this.args.forEach(function(arg){ arg.findAggregator(query); });
+		this.args.forEach(function(arg){ 
+			if(arg.findAggregator) arg.findAggregator(query); 
+		});
 	}
 }
 yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {

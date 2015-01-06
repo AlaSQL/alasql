@@ -56,15 +56,20 @@ var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GRO
         var res = alasql('SELECT _, SUM(_), COUNT(*) FROM ? GROUP BY _',[[1,2,3,1]]);
         console.log(res);
 */
-        var res = alasql('SELECT SUM(_) FROM ? GROUP BY _',[[1,2,3,1]]);
-        console.log(res);
+        var res = alasql('SELECT COLUMN SUM(_) FROM ? GROUP BY _',[[1,2,3,1]]);
+        assert.deepEqual(res,[2,2,3]);
+//        console.log(1,res);
 
 
         var res = alasql('SELECT COLUMN LEN(_) FROM ?',[["aaa","aabbb","sssd"]]);
-        console.log(res);
+        assert.deepEqual(res,[3,5,4]);
+//        console.log(res);
 
         var res = alasql('SELECT _, LEN(_) FROM ?',["aaa\naabbb\nsssd"]);
-        console.log(res);
+        assert.deepEqual(res,[ { _: 'aaa', 'LEN(_)': 3 },
+  { _: 'aabbb', 'LEN(_)': 5 },
+  { _: 'sssd', 'LEN(_)': 4 } ]);
+//        console.log(res);
 
         // var res = alasql('SELECT column _*2 FROM ?',[[1,2,3,1]]);
         // console.log(res);

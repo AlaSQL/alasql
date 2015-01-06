@@ -172,12 +172,13 @@ yy.Select.prototype.compileSelect1 = function(query) {
 yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns ;
-//	console.log(s);
+	console.log(s);
 	return new Function('p,params,alasql',s+'return r');
 };
 
 
 yy.Select.prototype.compileSelectGroup0 = function(query) {
+
 	this.columns.forEach(function(col){
 		if(col.findAggregator) col.findAggregator(query);
 	});
@@ -192,7 +193,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 	var self = this;
 	var s = 'var r = {};';
 
-	this.columns.forEach(function(col,idx){
+	self.columns.forEach(function(col,idx){
 //		console.log(col);
 		if(col instanceof yy.Column && col.columnid == '*') {
 			s += 'for(var k in g){r[k]=g[k]};';
@@ -225,6 +226,14 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 				s += col.toJavaScript('g','')+';';				
 			}
 //			s += col.toJavaScript('g','')+';';
+//console.log(colas,query.removeKeys);
+			for(var i=0;i<query.removeKeys.length;i++) {
+				// THis part should be intellectual
+				if(query.removeKeys[i] == colas) {
+					query.removeKeys.splice(i,1);
+					break;
+				}
+			}
 		};
 	});
 	// return new Function('g,params,alasql',s+'return r');

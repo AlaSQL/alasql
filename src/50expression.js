@@ -490,9 +490,29 @@ yy.AggrValue.prototype.toString = function() {
 };
 yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log('aggregator found',this.toString());
+
+	var colas = this.toString();
+/*	var found = false;
+	for(var i=0;i<query.columns.length;i++) {
+		// THis part should be intellectual
+		if(query.columns[i].as == colas) {
+			found = true;
+			break;
+		}
+	}
+*/	
+//	if(!query.selectColumns[colas]) {
+//	}
 	query.selectGroup.push(this);
-	query.removeKeys.push(this.toString());
-//	this.reduced = true;
+	var found = false;
+	for(var i=0;i<query.removeKeys.length;i++){
+		if(query.removeKeys[i]==colas) {
+			found = true;
+			break;
+		}
+	}
+	if(!found) query.removeKeys.push(colas);
+////	this.reduced = true;
 	return;
 };
 

@@ -5,13 +5,22 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(typeof exports != 'object') {
+if(typeof exports == 'object') {
+
+	var DOMStorage = require("dom-storage")
+	global.localStorage = new DOMStorage("./test149.json", { strict: false, ws: '' });
+
+};
 
 describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function() {
 
 	it("1. Create database", function(done){
+//		console.log(alasql.options.autocommit);
+//		alasql('SET AUTOCOMMIT OFF');
+//		console.log(alasql.options.autocommit);
 		alasql('SET AUTOCOMMIT ON');
-		assert(alasql.autocommit);
+//		console.log(alasql.options.autocommit);
+		assert(alasql.options.autocommit);
 
 		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS ls149');
 		assert(!localStorage['ls149']);
@@ -100,5 +109,5 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function() {
 	});
 });
 
-}
+
 

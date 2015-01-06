@@ -127,7 +127,7 @@ if(false) {
 //				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
 				) { return '\''+colas+'\':'+colexp+','; }//f.field.arguments[0].toJavaScript(); 	
 				else if(col.aggregatorid == 'ARRAY') {
-				 	return '\''+colas+'\':[r[\''+colas+'\']],';
+				 	return '\''+colas+'\':['+colexp+'],';
 				} else if(col.aggregatorid == 'COUNT') { 
 					if(col.expression.columnid == '*') {
 						return '\''+colas+'\':1,';
@@ -142,7 +142,7 @@ if(false) {
 				} else if(col.aggregatorid == 'AVG') { 
 					query.removeKeys.push('_SUM_'+colas);
 					query.removeKeys.push('_COUNT_'+colas);
-					return '\''+colas+'\':r[\''+colas+'\'],\'_SUM_'+colas+'\':'+colexp+',\'_COUNT_'+colas+'\':1,'; 
+					return '\''+colas+'\':p[\''+colas+'\'],\'_SUM_'+colas+'\':'+colexp+',\'_COUNT_'+colas+'\':1,'; 
 				} else if(col.aggregatorid == 'AGGR') {
 					aft += ',g[\''+colas+'\']='+col.expression.toJavaScript('g',-1); 
 					return '';

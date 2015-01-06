@@ -145,13 +145,13 @@ describe('Test 198 - MS SQL compatibility', function() {
         done();
     });
 
-
+if(false) {
     it("13. CROSS APPLY ", function(done) {
         var res = alasql('SELECT C.customerid, city, orderid \
-			FROM dbo.Customers AS C \
+			FROM Customers AS C \
   			CROSS APPLY \
     			(SELECT TOP(2) orderid, customerid \
-     				FROM dbo.Orders AS O \
+     				FROM Orders AS O \
      				WHERE O.customerid = C.customerid \
      				ORDER BY orderid DESC) AS CA;');
         done();
@@ -159,23 +159,71 @@ describe('Test 198 - MS SQL compatibility', function() {
 
     it("14. OUTER APPLY ", function(done) {
         var res = alasql('SELECT C.customerid, city, orderid \
-			FROM dbo.Customers AS C \
+			FROM Customers AS C \
   			OUTER APPLY \
     			(SELECT TOP(2) orderid, customerid \
-     				FROM dbo.Orders AS O \
+     				FROM Orders AS O \
      				WHERE O.customerid = C.customerid \
      				ORDER BY orderid DESC) AS CA;');
         done();
     });
 
-    it("15. OVER PARTITION ", function(done) {
+    it("15. OVER PARTITION in SELECT", function(done) {
         var res = alasql('SELECT orderid, customerid, \
   			COUNT(*) OVER(PARTITION BY customerid) AS num_orders \
-			FROM dbo.Orders \
+			FROM Orders \
 			WHERE customerid IS NOT NULL \
   			AND orderid % 2 = 1;');
         done();
     });
+
+    it("16. OVER PARTITION in WHERE", function(done) {
+        var res = alasql('SELECT orderid, customerid \
+			FROM Orders \
+			WHERE customerid IS NOT NULL \
+  					AND orderid % 2 = 1 \
+			ORDER BY COUNT(*) OVER(PARTITION BY customerid) DESC;');
+        done();
+    });
+};
+    it("17. UNION ALL ", function(done) {
+        var res = alasql("SELECT 'O' AS letter, customerid, orderid \
+        		FROM Orders \
+         		WHERE customerid LIKE '%O%' \
+			UNION ALL \
+         		SELECT 'S' AS letter, customerid, orderid FROM Orders \
+         		WHERE customerid LIKE '%S%' \
+         	ORDER BY letter, customerid, orderid");
+        assert.deepEqual(res,
+        	[ { letter: 'O', customerid: 'FRNDO', orderid: 1 },
+  			  { letter: 'O', customerid: 'FRNDO', orderid: 2 },
+  			  { letter: 'O', customerid: 'KRLOS', orderid: 3 },
+			  { letter: 'O', customerid: 'KRLOS', orderid: 4 },
+			  { letter: 'O', customerid: 'KRLOS', orderid: 5 },
+			  { letter: 'S', customerid: 'KRLOS', orderid: 3 },
+			  { letter: 'S', customerid: 'KRLOS', orderid: 4 },
+			  { letter: 'S', customerid: 'KRLOS', orderid: 5 },
+			  { letter: 'S', customerid: 'MRPHS', orderid: 6 } ]
+			 );
+//        console.log(res);
+        done();
+    });
+
+    it("17. Complex Statement", function(done) {
+        var res = alasql("SELECT C.customerid, city,COUNT(orderid), \
+           CASE \
+             WHEN COUNT(orderid)  = 0 THEN 'no_orders' \
+             WHEN COUNT(orderid) <= 2 THEN 'upto_two_orders' \
+             WHEN COUNT(orderid)  > 2 THEN 'more_than_two_orders' \
+           END AS category \
+         FROM Customers AS C \
+           LEFT OUTER JOIN Orders AS O \
+             ON C.customerid = O.customerid \
+         GROUP BY C.customerid, city");
+        console.log(res);
+        done();
+    });
+
 
     it("99. Drop database", function(done) {
     	alasql('DROP DATABASE test198');

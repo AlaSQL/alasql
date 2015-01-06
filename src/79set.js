@@ -16,9 +16,9 @@ yy.SetVariable.prototype.toString = function() {
 yy.SetVariable.prototype.execute = function (databaseid,cb) {
 	var val = this.value;
 	if(val == 'ON') val = true;
-	if(val == 'OFF') val = false;
+	else if(val == 'OFF') val = false;
 
-	alasql.vars[this.variable] = val;
+	alasql.options[this.variable] = val;
 	// if(typeof this.autocommit != 'undefined') {
 	// 	alasql.options.autocommit = this.autocommit;
 	// }

@@ -68,7 +68,7 @@ describe('Test 03 - '+NUMTESTS+'times', function() {
 
 	it('COUNT(*)', function(done) {
 		var res = alasql('SELECT COUNT(*) FROM schools');
-		console.log(res);
+//		console.log(res);
 		assert.equal(6*NUMTESTS, res[0]['COUNT(*)']);
 		done();
 	});

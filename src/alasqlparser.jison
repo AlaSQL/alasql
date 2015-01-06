@@ -151,6 +151,7 @@
 'PERCENT'                                       return 'PERCENT'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
+'PRINT'                                        	return 'PRINT'
 'PRIOR'                                        	return 'PRIOR'
 'QUERY'                                        	return 'QUERY'
 'RECORDSET'                                     return 'RECORDSET'
@@ -158,6 +159,7 @@
 'REFERENCES'                                    return 'REFERENCES'
 'RELATIVE'                                      return 'RELATIVE'
 'RENAME'                                        return 'RENAME'
+'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLBACK'										return 'ROLLBACK'
@@ -330,10 +332,16 @@ Statement
 	| UseDatabase
 	| Update
 	| Help
-/*	| ExpressionStatement */
+
 	| Source
 	| Assert
+	| If
+	| Print
+	| Require
 	| SetVariable
+
+/*
+	| ExpressionStatement 
 	| Store
 	| Restore
 
@@ -341,8 +349,7 @@ Statement
 	| OpenCursor
 	| FetchCursor
 	| CloseCursor
-	| If
-
+*/
 
 
 /*	
@@ -358,7 +365,6 @@ Statement
 	| IfElse
 	| BeginEnd
 	| While
-	| Print
 	| BulkInsert
 
 	| Declare
@@ -1742,4 +1748,23 @@ If
 /*	| IF Expression Statement ELSE Statement
 		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$5}); }
 */	;
+
+Print
+	: PRINT Select
+		{ $$ = new yy.Print({statement:$2});}
+	| PRINT ExpressionStatement
+		{ $$ = new yy.Print({statement:$2});}	
+	;
+
+Require
+	: REQUIRE StringValuesList
+		{ $$ = new yy.Require({paths:$2}); }
+	;
+
+StringValuesList
+	: StringValuesList COMMA StringValue
+		{ $1.push($3); $$ = $1; }
+	| StringValue
+		{ $$ = [$1]; }
+	;
 

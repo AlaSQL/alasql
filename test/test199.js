@@ -8,8 +8,10 @@ if(typeof exports === 'object') {
 describe('Test 199 IF statement', function() {
 
     it("1. Simple Variant", function(done) {
-        var res = alasql('IF TRUE CREATE TABLE one');
-        console.log(alasql.tables);
+//        alasql('CREATE DATABASE test199;USE test199');
+        var res = alasql('IF TRUE SELECT VALUE 100');
+        assert(res==100);
+//        alasql('DROP DATABASE test199');
     	done();
     });
 

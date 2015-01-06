@@ -5,46 +5,23 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../lib/mocha/mocha.css" />
-    <script src="../lib/assert/assert.js"></script>
-    <script lang="javascript" src="../lib/xlsx/xlsx.core.min.js"></script>
-    <script src="../lib/xlsx/xls.core.min.js"></script>
-    <script>
-//        console.log(XLSX);
-    </script>
   </head>
   <body>
     <div id="mocha"></div>
+    <script src="../lib/assert/assert.js"></script>
+    <script src="../lib/mocha/mocha.js"></script>
+    <script src="../lib/zt/zt.js"></script>
 
-<!--    <script src="../lib/mocha/mocha.js"></script> -->
-<!--    <script src="../lib/zt/zt.js"></script> -->
-<!--    <script>mocha.setup('bdd')</script> -->
-
-<script type="text/javascript">
     
-function describe(s,f) {
-    f(done);
-}
+    <script>mocha.setup('bdd')</script>
 
-function it(s,f) {
-    var s = f.toString();
-    document.getElementById('result').innerHTML += s+'\n';
-    f(done);
-}
-
-function done(){};
-
-</script>
-<pre><code>
-<output/>
-<div id='result'></div>
-</code>
-</pre>
-    <script src="../alasql.js"></script>
-
-    <script src="test149.js"></script>
-
-
-<!--    <script src="test00.js"></script>
+    <script src="../lib/xlsx/xlsx.core.min.js"></script>
+    <script src="../lib/xlsx/xls.core.min.js"></script>
+    <script src="../alasql-worker.js"></script>
+    <script>
+        alasql.worker = new Worker('../alasql.min.js');
+    </script>
+    <script src="test00.js"></script>
     <script src="test01.js"></script>
     <script src="test02.js"></script>
     <script src="test03.js"></script>
@@ -182,7 +159,7 @@ function done(){};
     <script src="test131.js"></script>
     <script src="test132.js"></script>
     <script src="test133.js"></script>
-   <script src="test134.js"></script>
+    <script src="test134.js"></script>
     <script src="test135.js"></script>
     <script src="test136.js"></script>
     <script src="test137.js"></script>
@@ -193,14 +170,45 @@ function done(){};
     <script src="test142.js"></script>
     <script src="test143.js"></script>
     <script src="test144.js"></script>
-   <script src="test145.js"></script>
-     <script src="test146.js"></script>
+    <script src="test145.js"></script>
+    <script src="test146.js"></script>
+    <script src="test147.js"></script>
+    <script src="test148.js"></script>
+    <script src="test149.js"></script>
+    <script src="test150.js"></script>
+    <script src="test151.js"></script>
+    <script src="test152.js"></script>
+    <script src="test153.js"></script>
+    <script src="test154.js"></script>
+    <script src="test155.js"></script>
+    <script src="test156.js"></script>
+    <script src="test157.js"></script>
+    <script src="test158.js"></script>
+    <script src="test159.js"></script>
+    <script src="test160.js"></script>
+    <script src="test161.js"></script>
+    <script src="test162.js"></script>
+    <script src="test163.js"></script>
+<!--    <script src="test164.js"></script>
+    <script src="test165.js"></script>
+    <script src="test166.js"></script>
+    <script src="test167.js"></script>
 -->
-<!--    <script>
+    <script src="test168.js"></script>
+    <script src="test169.js"></script>
+    <script src="test170.js"></script>
+    <script src="test171.js"></script>
+    <script src="test172.js"></script>
+<!--    <script src="test172.js"></script> -->
+    <script src="test174.js"></script>
+    <script src="test175.js"></script>
+    <script src="test176.js"></script>
+    <script src="test177.js"></script>
+    <script src="test178.js"></script>
+    <script src="test179.js"></script>
+    <script>
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
         else { mocha.run(); }
     </script>
-
-
--->  </body>
+  </body>
 </html>

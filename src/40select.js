@@ -353,4 +353,7 @@ function modify(query, res) {
 // 	throw new Error('Select statement should be precompiled');
 
 // };
-
+yy.Select.prototype.execute = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+//	throw new Error('Insert statement is should be compiled')
+}

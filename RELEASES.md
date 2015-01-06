@@ -16,7 +16,6 @@
 
 ### Version 0.0.36
 
-* global.alasql => var alasql
-* Select <=> GroupBy order
-
+1. Fix bugs
+2. GETDATE(), CONVERT(), CAST()
 

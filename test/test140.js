@@ -36,10 +36,10 @@ describe('Test 140 JavaScript Functions', function() {
 	it("3. NEW keyword", function(done){
 		alasql.fn.Date = Date;
 
-		var res = alasql("new Date(2014,0,1)");
+		var res = alasql("SELECT VALUE new Date(2014,0,1)");
 		assert(res.getFullYear() == 2014);
 
-		var res = alasql("new Date(2014,0,1)->getFullYear()");
+		var res = alasql("SELECT VALUE new Date(2014,0,1)->getFullYear()");
 		assert(res == 2014);
 
 		done();
