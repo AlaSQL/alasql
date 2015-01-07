@@ -24,7 +24,7 @@ describe('Test 151 - localStorage Engine', function() {
 
 	it("5.Insert values into localStorage database", function(done) {
 		alasql('USE ls151');
-		alasql('BEGIN');
+		alasql('BEGIN TRANSACTION');
 		var res = alasql('SELECT * FROM ls151.one');
 		assert(res.length == 3);
 
@@ -35,7 +35,7 @@ describe('Test 151 - localStorage Engine', function() {
 //		console.log(alasql.databases.ls151.tables.one);
 //		console.log(localStorage['ls151.one']);
 
-		alasql('ROLLBACK');
+		alasql('ROLLBACK TRANSACTION');
 //		console.log(alasql.databases.ls151.tables.one);
 
 		var res = alasql('SELECT * FROM one');

@@ -84,7 +84,7 @@ describe('Test 150 - localStorage Engine', function() {
 
 	it("8.Select into localStorage table", function(done) {
 		alasql('USE test150');
-		var res = alasql('COMMIT');
+		var res = alasql('COMMIT TRANSACTION');
 //		console.log(res);
 		assert(res,1);
 
