@@ -78,7 +78,7 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
 //	return this.expression.toJavaScript(context, tableid, defcols);
-console.log('Select.toJS', 81, this.queriesidx);
+// console.log('Select.toJS', 81, this.queriesidx);
 	var s = 'this.queriesdata['+(this.queriesidx-1)+']';
 	return s;
 };
@@ -200,6 +200,8 @@ yy.Select.prototype.compile = function(databaseid) {
 				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
 				'[\''+this.into.tableid+'\'].data.push(r);';
 			}
+		} else if(this.into instanceof yy.VarValue) {
+			query.intoallfns = 'alasql.vars["'+this.into.variable+'"]=this.data;res=1;if(cb)res=cb(res);return res;';
 		} else if (this.into instanceof yy.FuncValue) {
 
 /*

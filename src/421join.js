@@ -106,6 +106,25 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			source.datafn = new Function('query,params,cb,idx, alasql',ps);
 			query.aliases[source.alias] = {type:'paramvalue'};
+		} else if(jn.variable) {
+			source = {
+				alias: jn.as,
+//				databaseid: jn.databaseid || query.database.databaseid,
+//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '',	// for optimization
+				srcwherefn: returnTrue
+			};
+			// source.data = ;
+//			var jnparam = jn.param.param;
+//			console.log(jn, jnparam);
+			var ps = "var res=alasql.prepareFromData(alasql.vars['"+jn.variable+"']";
+			if(jn.array) ps += ",true";
+			ps += ");if(cb)res=cb(res, idx, query);return res";
+
+			source.datafn = new Function('query,params,cb,idx, alasql',ps);
+			query.aliases[source.alias] = {type:'varvalue'};
 		} else if(jn.funcid) {
 			source = {
 				alias: jn.as,

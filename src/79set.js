@@ -9,14 +9,14 @@
 yy.SetVariable = function (params) { return yy.extend(this, params); }
 yy.SetVariable.prototype.toString = function() {
 	var s = K('SET')+' ';
-	if(this.value) s += K(this.variable)+' '+(this.value?'ON':'OFF');
+	if(typeof this.value != 'undefined') s += K(this.variable.toUpperCase())+' '+(this.value?'ON':'OFF');
 	if(this.expression) s += '@' + L(this.variable)+' = '+this.expression.toString();
 	return s;
 }
 
 yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 //	console.log(this);
-	if(this.value) {
+	if(typeof this.value != 'undefined') {
 		var val = this.value;
 		if(val == 'ON') val = true;
 		else if(val == 'OFF') val = false;

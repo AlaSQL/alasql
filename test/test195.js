@@ -14,7 +14,7 @@ describe('Test 195 - HAVING with aggregator', function() {
     it("1. HAVING with aggregator", function(done) {
         var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2}];
         var res = alasql('SELECT a FROM ? GROUP BY a HAVING COUNT(*)>1',[data]);
-        console.log('Result:',res);
+//        console.log('Result:',res);
     	done();
     });
 /*    

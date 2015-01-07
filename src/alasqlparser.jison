@@ -459,6 +459,8 @@ IntoClause
 		{$$ = {into: $2} }
 	| INTO ParamValue
 		{$$ = {into: $2} }
+	| INTO VarValue
+		{$$ = {into: $2} }
 	;
 
 FromClause
@@ -521,6 +523,13 @@ FromTable
 		{ $$ = $1; $1.as = $2; }
 	| FuncValue AS Literal
 		{ $$ = $1; $1.as = $3; }
+
+	| VarValue
+		{ $$ = $1; $1.as = 'default'; }
+	| VarValue Literal
+		{ $$ = $1; $1.as = $2; }
+	| VarValue AS Literal
+		{ $$ = $1; $1.as = $3; }
 	;
 
 Table
@@ -567,6 +576,13 @@ JoinTableAs
 		{ $$ = {func:$1, as: $2}; }
 	| FuncValue AS Literal
 		{ $$ = {func:$1, as: $3}; }
+
+	| VarValue
+		{ $$ = {variable:$1,as:'default'}; }
+	| VarValue Literal
+		{ $$ = {variable:$1,as:$2}; }
+	| VarValue AS Literal
+		{ $$ = {variable:$1,as:$3} }
 	;
 
 JoinMode
@@ -800,11 +816,13 @@ NewClause
 
 CastClause
 	: CAST LPAR Expression AS ColumnType RPAR
-		{ $$ = new yy.Cast({expression:$3}) ; yy.extend($$,$5) ; }
+		{ $$ = new yy.Convert({expression:$3}) ; yy.extend($$,$5) ; }
+	| CAST LPAR Expression AS ColumnType COMMA NUMBER RPAR
+		{ $$ = new yy.Convert({expression:$3, style:$7}) ; yy.extend($$,$5) ; }
 	| CONVERT LPAR ColumnType COMMA Expression RPAR
-		{ $$ = new yy.Cast({expression:$5}) ; yy.extend($$,$3) ; }
+		{ $$ = new yy.Convert({expression:$5}) ; yy.extend($$,$3) ; }
 	| CONVERT LPAR ColumnType COMMA Expression COMMA NUMBER RPAR
-		{ $$ = new yy.Cast({expression:$5, style:$7}) ; yy.extend($$,$3) ; }
+		{ $$ = new yy.Convert({expression:$5, style:$7}) ; yy.extend($$,$3) ; }
 	;
 
 PrimitiveValue

@@ -44,6 +44,10 @@
 * @localvariable
 * SET @localvariable = expression
 * WHILE, CONTINUE, BREAK, BEGIN END syntax
+* WHILE statement
+* alasql.worker() - run WebWorker
+* FROM @localvariable
+* SELECT INTO @localvariable
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

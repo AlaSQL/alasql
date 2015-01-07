@@ -11,7 +11,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function() {
     	var data = [{a:1},{a:1},{a:2},{a:3}];
 //        var res = alasql('SELECT ROW SUM(a), SUM(a) FROM ?',[data]);
         var res = alasql('SELECT ROW SUM(a), SUM(a) FROM ?',[data]);
-        console.log(res);
+//        console.log(res);
         assert.deepEqual(res,[7,7]);
     	done();
     });

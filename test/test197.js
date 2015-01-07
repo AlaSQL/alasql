@@ -18,7 +18,7 @@ describe('Test 197 - Expression in expression', function() {
 
         var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2}];
         var res = alasql('SELECT (SELECT * FROM ?)+1 FROM RANGE(1,2)',[data]);
-        console.log(res);
+        //console.log(res);
     	done();
     });
 /*    

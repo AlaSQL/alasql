@@ -5,7 +5,10 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(typeof exports != 'object') {
+if(typeof exports == 'object') {
+	var DOMStorage = require("dom-storage")
+	global.localStorage = new DOMStorage("./test149.json", { strict: false, ws: '' });
+};
 
 describe('Test 151 - localStorage Engine', function() {
 
@@ -52,5 +55,4 @@ describe('Test 151 - localStorage Engine', function() {
 	});
 });
 
-}
 

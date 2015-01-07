@@ -209,7 +209,7 @@ if(false) {
         done();
     });
 
-    it("17. Complex Statement", function(done) {
+    it("18. Complex Statement", function(done) {
         var res = alasql("SELECT C.customerid, city,COUNT(orderid), \
            CASE \
              WHEN COUNT(orderid)  = 0 THEN 'no_orders' \
@@ -220,8 +220,25 @@ if(false) {
            LEFT OUTER JOIN Orders AS O \
              ON C.customerid = O.customerid \
          GROUP BY C.customerid, city");
-        console.log(res);
-        done();
+//        console.log(res);
+        assert.deepEqual(res,
+[ { customerid: 'FISSA',
+    city: 'Madrid',
+//    'COUNT(orderid)': 0,
+    category: 'no_orders' },
+  { customerid: 'FRNDO',
+    city: 'Madrid',
+//    'COUNT(orderid)': 5,
+    category: 'upto_two_orders' },
+  { customerid: 'KRLOS',
+    city: 'Madrid',
+//    'COUNT(orderid)': 9,
+    category: 'more_than_two_orders' },
+  { customerid: 'MRPHS',
+    city: 'Zion',
+    'COUNT(orderid)': 1,
+    category: 'upto_two_orders' } ]);
+       done();
     });
 
 

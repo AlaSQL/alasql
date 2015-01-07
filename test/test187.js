@@ -17,7 +17,8 @@ describe('Test 187 - Calculation of PI', function() {
 //var res = alasql('SELECT COUNT(*) as cnt, AGGR(cnt/$[0]*4) as pi, random() as x, random() as y FROM RANGE(1,$[0]) WHERE x*x+y*y<1',
 //          [n]);
       var res = alasql('SELECT * FROM (SELECT random() AS x, random() AS y FROM RANGE(1,10)) WHERE x*x+y*y<1',[n]);
-      console.log(res);    
+//      console.log(res);    
+//	assert(res.length == 10);
       done();
     });
 

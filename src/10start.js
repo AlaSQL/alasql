@@ -72,24 +72,35 @@ SOFTWARE.
  */
 
 var alasql = function(sql, params, cb, scope) {
-	if(arguments.length == 0) {
-		// Without arguments - Fluent interface
-		return new yy.Select({
-			columns:[new yy.Column({columnid:'*'})],
-			from: [new yy.ParamValue({param:0})]
-		});
-	} else if ((arguments.length == 1) && (sql instanceof Array)) {
-		// One argument data object - fluent interface
-		var select = new yy.Select({
-			columns:[new yy.Column({columnid:'*'})],
-			from: [new yy.ParamValue({param:0})]
-		});
-		select.preparams = [sql];	
-		return select;
+	if(typeof importScripts != 'function' && alasql.webworker) {
+		alasql.webworker.postMessage({sql:sql,params:params});
+		alasql.webworker.onmessage = function(event) {
+//			console.log(event);
+			if(cb) cb(event.data);
+		};
+		alasql.webworker.onerror = function(e){
+			throw e;
+		}
 	} else {
-		// Standard interface
-		return alasql.exec(sql, params, cb, scope);
-	}
+		if(arguments.length == 0) {
+			// Without arguments - Fluent interface
+			return new yy.Select({
+				columns:[new yy.Column({columnid:'*'})],
+				from: [new yy.ParamValue({param:0})]
+			});
+		} else if ((arguments.length == 1) && (sql instanceof Array)) {
+			// One argument data object - fluent interface
+			var select = new yy.Select({
+				columns:[new yy.Column({columnid:'*'})],
+				from: [new yy.ParamValue({param:0})]
+			});
+			select.preparams = [sql];	
+			return select;
+		} else {
+			// Standard interface
+			return alasql.exec(sql, params, cb, scope);
+		}
+	};
 };
 
 /** Current version of alasql */

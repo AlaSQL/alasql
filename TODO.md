@@ -3,11 +3,11 @@
 
 ## Next Versions
 
-0. SET NOCOUNT
-1. While Break Continue
-2. If Else
-
-1. GETDATE(), CONVERT(), CAST()
+0. SELECT FROM @one;
+1. GETDATE(), CONVERT(110), CAST()
+2. Break Continue
+3. If Else Syntax
+4. SET NOCOUNT
 
 2. Add TRIM to CSV reading procedure
 

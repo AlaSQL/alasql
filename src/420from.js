@@ -7,6 +7,7 @@
 */
 
 yy.Select.prototype.compileFrom = function(query) {
+//	console.log(1);
 	var self = this;
 	query.sources = [];
 //	var tableid = this.from[0].tableid;
@@ -16,7 +17,11 @@ yy.Select.prototype.compileFrom = function(query) {
 	query.aliases = {};
 	if(!self.from) return;
 
+//console.log(self.from);
+
 	self.from.forEach(function(tq){
+		//console.log(tq);
+
 		var alias = tq.as || tq.tableid;
 //		console.log(alias);
 		if(tq instanceof yy.Table) {
@@ -28,6 +33,8 @@ yy.Select.prototype.compileFrom = function(query) {
 			query.aliases[alias] = {type:'paramvalue'};
 		} else if(tq instanceof yy.FuncValue) {
 			query.aliases[alias] = {type:'funcvalue'};
+		} else if(tq instanceof yy.VarValue) {
+			query.aliases[alias] = {type:'varvalue'};
 		} else if(tq instanceof yy.FromData) {
 			query.aliases[alias] = {type:'fromdata'};
 		} else {
@@ -83,6 +90,12 @@ yy.Select.prototype.compileFrom = function(query) {
 			}						
 		} else if(tq instanceof yy.ParamValue) {
 			var ps = "var res = alasql.prepareFromData(params['"+tq.param+"']";
+//				console.log(tq);
+			if(tq.array) ps+=",true";
+			ps += ");if(cb)res=cb(res,idx,query);return res"
+			source.datafn = new Function('query,params,cb,idx,alasql',ps);
+		} else if(tq instanceof yy.VarValue) {
+			var ps = "var res = alasql.prepareFromData(alasql.vars['"+tq.variable+"']";
 //				console.log(tq);
 			if(tq.array) ps+=",true";
 			ps += ");if(cb)res=cb(res,idx,query);return res"

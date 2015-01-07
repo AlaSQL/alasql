@@ -42,7 +42,10 @@
     "IndexedDB",
     "DOM-storage",
     "SQLite",
-    "JSON"
+    "JSON",
+    "Excel",
+    "XLSX", 
+    "XLS"
   ],
   "license": "MIT"
 }

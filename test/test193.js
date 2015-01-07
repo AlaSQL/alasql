@@ -23,14 +23,14 @@ describe('Test 193 - GROUP BY formula', function() {
         var res = alasql('SELECT VALUE COUNT(*)*4/$[0] FROM \
             (SELECT RANDOM() AS x, RANDOM() AS y FROM RANGE(1,$[0])) WHERE x*x+y*y<1',[100000]);
         assert(3.1<res && res<3.2);
-        console.log('PI=',res);
+//        console.log('PI=',res);
         done();
     });
 
     it("3. PI calculation #2", function(done) {
         var res = alasql('SELECT VALUE COUNT(*)*4/$[0] FROM RANGE(1,$[0]) WHERE RANDOM()^2+RANDOM()^2<1',[100000]);
         assert(3.1<res && res<3.2);
-        console.log('PI=',res);
+//        console.log('PI=',res);
         done();
     });
 });

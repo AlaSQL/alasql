@@ -32,6 +32,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 			} else if(fr instanceof yy.ParamValue) {
 
+			} else if(fr instanceof yy.VarValue) {
+
 			} else if(fr instanceof yy.FuncValue) {
 
 			} else if(fr instanceof yy.FromData) {

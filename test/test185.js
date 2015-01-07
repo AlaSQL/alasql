@@ -41,7 +41,7 @@ describe('Test 185 - IN Expression', function() {
       var a1 = [{a:1,b:[1,2,3]},{a:2,b:[4,5]},{a:1,b:[1,2,3,4]}];
       var res = alasql('SELECT a,Concat(b),COUNT(*) FROM ? GROUP BY a',[a1]);
 
-      console.log(res);
+//      console.log(res);
       done();
     });
 });

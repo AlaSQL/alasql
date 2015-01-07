@@ -5,13 +5,19 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(typeof exports != 'object') {
+if(typeof exports == 'object') {
+
+	var DOMStorage = require("dom-storage")
+	global.localStorage = new DOMStorage("./test149.json", { strict: false, ws: '' });
+
+};
 
 describe('Test 150 - localStorage Engine', function() {
 
 	it("1. Create database", function(done){
 		alasql('SET AUTOCOMMIT OFF');
-		assert(!alasql.autocommit);
+//		console.log(!alasql.options.autocommit);
+		assert(!alasql.options.autocommit);
 
 //delete localStorage['ls150.one'];
 
@@ -58,7 +64,7 @@ describe('Test 150 - localStorage Engine', function() {
 
 		alasql('insert into test150a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 		var res = alasql('select * into test150.one from test150a.one');
-//		console.log(res);
+//		console.log(alasql.databases.test150.tables);
 		assert.deepEqual(alasql.databases.test150.tables.one.data, [{"a":1,"b":"Moscow"},{"a":2,"b":"Kyiv"},{"a":3,"b":"Minsk"}]);
 
 		var res = alasql('select * from test150.one');
@@ -112,5 +118,4 @@ describe('Test 150 - localStorage Engine', function() {
 	});
 });
 
-}
 
