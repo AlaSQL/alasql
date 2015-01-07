@@ -28,3 +28,4 @@ yy.Statements.prototype.compile = function(db) {
 		}
 	}
 };
+

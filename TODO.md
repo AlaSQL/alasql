@@ -3,9 +3,9 @@
 
 ## Next Versions
 
-1. REQUIRE 'addon', 'addon'
-<script src='alasql-worker.js'>
-alasql.work('alasql.js','dates.js','fns.js'); 
+0. SET NOCOUNT
+1. While Break Continue
+2. If Else
 
 1. GETDATE(), CONVERT(), CAST()
 

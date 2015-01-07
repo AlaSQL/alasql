@@ -63,6 +63,7 @@
 
 'BEGIN'											return 'BEGIN'
 'BETWEEN'										return 'BETWEEN'
+'BREAK'											return 'BREAK'
 'NOT BETWEEN'									return 'NOT_BETWEEN'
 'BY'											return 'BY'
 
@@ -75,6 +76,7 @@
 "COLUMNS"										return "COLUMNS"
 "COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
+"CONTINUE"										return "CONTINUE"
 "CONVERT"										return "CONVERT"
 "COUNT"											return "COUNT"
 'CREATE'										return 'CREATE'
@@ -194,6 +196,7 @@
 'VIEW'											return 'VIEW'
 'WHEN'                                          return 'WHEN'
 'WHERE'                                         return 'WHERE'
+'WHILE'                                         return 'WHILE'
 
 /*
 [0-9]+											return 'NUMBER'
@@ -247,7 +250,7 @@
 .												return 'INVALID'
 
 /lex
-%
+%left If
 %left COMMA
 %left OR
 %left BETWEEN NOT_BETWEEN
@@ -301,11 +304,9 @@ ExplainStatement
 	;
 
 Statement
-
-	: { $$ = null; }
-/*	| GO
-	  { $$ = null; }
-*/	| AlterTable	
+	: { $$ = undefined; }
+	| If
+	| AlterTable	
 	| AttachDatabase	
 	| CreateDatabase
 	| CreateIndex
@@ -335,7 +336,10 @@ Statement
 
 	| Source
 	| Assert
-	| If
+	| While
+	| Continue
+	| Break
+	| BeginEnd
 	| Print
 	| Require
 	| SetVariable
@@ -1746,11 +1750,37 @@ Restore
 	;	
 
 If
-	: IF Expression Statement
+	: IF Expression Statement ElseStatement
+		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); }
+/*	| IF Expression Statement
 		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
-/*	| IF Expression Statement ELSE Statement
-		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$5}); }
 */	;
+
+ElseStatement
+	: ELSE Statement
+		{$$ = $2;}
+	| {$$ = undefined; }
+	;
+
+While
+	: WHILE Expression Statement
+		{ $$ = new yy.While({expression:$2,loopstat:$3}); }
+	;
+
+Continue
+	: CONTINUE
+		{ $$ = new yy.Continue(); } 
+	;
+
+Break
+	: BREAK
+		{ $$ = new yy.Break(); } 
+	;
+
+BeginEnd
+	: BEGIN Statements END
+		{ $$ = new yy.BeginEnd({statements:$2}); } 
+	;
 
 Print
 	: PRINT Select

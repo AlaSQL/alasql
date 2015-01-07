@@ -11,17 +11,23 @@ yy.If.prototype.toString = function() {
 	var s = 'IF ';
 	s += this.expression.toString();
 	s += ' '+this.thenstat.toString();
+	if(this.elsestat) s += ' '+K('ELSE')+NL()+ID()+this.thenstat.toString();
 	return s;
 };
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.If.prototype.execute = function (databaseid,params,cb,scope) {
-	var res = 1;
+	var res;
 //	console.log(this.expression.toJavaScript());
 	var fn = new Function('params,alasql','return '+this.expression.toJavaScript());
-	var res = fn(params,alasql);
-	if(res) res = this.thenstat.execute(databaseid,params,cb,scope);
+	if(fn(params,alasql)) res = this.thenstat.execute(databaseid,params,cb,scope);
+	else {
+		if(this.elsestat) res = this.elsestat.execute(databaseid,params,cb,scope);
+		else {
+			if(cb) res = cb(res);
+		}
+	}
 //	else res = this.elsestat.execute(databaseid,params,cb,scope);
 	return res;
 };

@@ -13,7 +13,7 @@ yy.ExpressionStatement.prototype.toString = function() {
 
 yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
-		console.log(this.expression.toJavaScript('','', null));
+//		console.log(this.expression.toJavaScript('','', null));
 //		console.log(this.expression.toJavaScript('','', null));
 		var expr =  new Function("params,alasql",'return '+this.expression.toJavaScript('','', null));
 		var res = expr(params,alasql);
