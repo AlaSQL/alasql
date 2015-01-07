@@ -14,16 +14,33 @@ yy.While.prototype.toString = function() {
 	return s;
 };
 
-yy.While.prototype.execute = function (databaseid,params,cb,scope) {
+yy.While.prototype.execute = function (databaseid,params,cb) {
 	var self = this;
-	var res;
+	var res = [];
 //	console.log(this.expression.toJavaScript());
 	var fn = new Function('params,alasql','return '+this.expression.toJavaScript());
-	var res = fn(params,alasql);
-	if(res) {
-		res = this.loopstat.execute(databaseid,params,cb,scope);
+	console.log('cb',!!cb);
+	if(cb) {
+		var first = false;
+		loop();
+		function loop(data) {
+			if(first) {
+				res.push(data);
+			} else {
+				first = true;
+			};
+			setTimeout(function(){
+				if(fn(params,alasql)) {
+					self.loopstat.execute(databaseid,params,loop);
+				} else {
+					res = cb(res);
+				}
+			},0);
+		}		
 	} else {
-		if(cb) res = cb(res);
+		while(fn(params,alasql)) {
+			res.push(self.loopstat.execute(databaseid,params));
+		}
 	}
 	return res;
 };

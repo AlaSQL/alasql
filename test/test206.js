@@ -5,7 +5,7 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-describe('Test 206 BEGIN END', function() {
+describe('Test 206 IF and BEGIN END', function() {
 
     it("1. IF BEGIN END", function(done) {
         var res = alasql("IF TRUE BEGIN SELECT VALUE 1; SELECT VALUE 2 END; SELECT VALUE 3");
