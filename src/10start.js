@@ -73,14 +73,9 @@ SOFTWARE.
 
 var alasql = function(sql, params, cb, scope) {
 	if(typeof importScripts != 'function' && alasql.webworker) {
-		alasql.webworker.postMessage({sql:sql,params:params});
-		alasql.webworker.onmessage = function(event) {
-//			console.log(event);
-			if(cb) cb(event.data);
-		};
-		alasql.webworker.onerror = function(e){
-			throw e;
-		}
+		var id = alasql.lastid++;
+		alasql.buffer[id] = cb;
+		alasql.webworker.postMessage({id:id,sql:sql,params:params});
 	} else {
 		if(arguments.length == 0) {
 			// Without arguments - Fluent interface

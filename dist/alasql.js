@@ -73,14 +73,9 @@ SOFTWARE.
 
 var alasql = function(sql, params, cb, scope) {
 	if(typeof importScripts != 'function' && alasql.webworker) {
-		alasql.webworker.postMessage({sql:sql,params:params});
-		alasql.webworker.onmessage = function(event) {
-//			console.log(event);
-			if(cb) cb(event.data);
-		};
-		alasql.webworker.onerror = function(e){
-			throw e;
-		}
+		var id = alasql.lastid++;
+		alasql.buffer[id] = cb;
+		alasql.webworker.postMessage({id:id,sql:sql,params:params});
 	} else {
 		if(arguments.length == 0) {
 			// Without arguments - Fluent interface
@@ -11122,7 +11117,7 @@ if (typeof importScripts === 'function') {
 		// console.log(2);
 		alasql(event.data.sql,event.data.params, function(data){
 			// console.log(3);
-			postMessage(data);
+			postMessage({id:event.data.id, data:data});
 		}); 
 	}	
 } else if(typeof exports != 'object') {
@@ -11140,6 +11135,19 @@ if (typeof importScripts === 'function') {
 				throw new Error('Path to alasql.js is not specified');
 			};
 			alasql.webworker = new Worker(path);
+			alasql.lastid = 0;
+			alasql.buffer = {};
+
+			alasql.webworker.onmessage = function(event) {
+				var id = event.data.id;
+				alasql.buffer[id](event.data.data);
+				delete alasql.buffer[id];
+			};
+
+			alasql.webworker.onerror = function(e){
+				throw e;
+			}
+
 		} else if(path === false) {
 			delete alasql.webworker;
 			return;

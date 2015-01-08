@@ -12,12 +12,13 @@
 	Main procedure
  */
 function alasql(sql,params,cb){
-	alasql.webworker.onmessage = function(event) {
-		if(cb) cb(event.data);
-	};
-	alasql.webworker.postMessage({sql:sql,params:params});
+	var id = alasql.lastid++;
+	alasql.buffer[id] = cb;
+	alasql.webworker.postMessage({id:id,sql:sql,params:params});
 };
 
+alasql.lastid = 0;
+alasql.buffer = {};
 /**
  Run webworker
  */
@@ -35,6 +36,12 @@ if(typeof path == "undefined") {
 };
 
 alasql.webworker = new Worker(path);
+
+alasql.webworker.onmessage = function(event) {
+	var id = event.data.id;
+	alasql.buffer[id](event.data.data);
+	delete alasql.buffer[id];
+};
 
 alasql.webworker.onerror = function(e){
 	throw e;

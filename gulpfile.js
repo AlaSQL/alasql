@@ -116,7 +116,7 @@ gulp.task('copy-dist', function(){
 });
 
 gulp.task('copy-dist-org', function(){
-  gulp.src(['./alasql.min.js'])
+  gulp.src(['./alasql.min.js','./alasql-worker.js'])
     .pipe(gulp.dest('./console/'));
 });
 
@@ -161,6 +161,7 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
   });
   gulp.watch('./alasql-worker.js',function(){ 
     gulp.run('copy-dist'); 
+    gulp.run('copy-dist-org');
   });
   gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });
   // gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); gulp.run('js-merge');});
