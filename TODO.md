@@ -3,27 +3,30 @@
 
 ## Next Versions
 
-1. Break Continue
-2. If Else Syntax bug
-3. GETDATE(), CONVERT(110), CAST()
 
-4. Add TRIM to CSV reading procedure
+2. DECLARE @localvariable TYPE; 
+3. Add CONVERT at assignment time
+4. Fluent interface 
+4. Break Continue Loop
+5. If Else Syntax bug
+
+6. Add TRIM to CSV reading procedure
 
 if(trim(s) = +s)
 
-5. CSV/TAB export with headers:["header1","header2"] for arrays
+7. CSV/TAB export with headers:["header1","header2"] for arrays
 
-6. Fix bug with multiple counts in CASE (test198)
-7. FOREIGN KEYS
-8. Transactions
-9. DEFAULT, IS NULL, IS NOT NULL in CREATE TABLE
+8. FOREIGN KEYS
+9. Transactions
+10. DEFAULT, IS NULL, IS NOT NULL in CREATE TABLE
 
 
-4. SET NOCOUNT
-6. CROSS APPLY, OUTER APPLY
-7. OVER () 
-9. PIVOT - ?
-8. VAR, STDDEV
+11. SET NOCOUNT
+12. CROSS APPLY, OUTER APPLY
+13. OVER () 
+14. PIVOT - ?
+15. Hierarchy, TOTAL, DETAIL
+16. VAR, STDDEV
 
 CROSS APPLY - like join... CROSS JOIN...
 ===

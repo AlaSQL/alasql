@@ -210,7 +210,7 @@ if(false) {
     });
 
     it("18. Complex Statement", function(done) {
-        var res = alasql("SELECT C.customerid, city,COUNT(orderid), \
+        var res = alasql("SELECT C.customerid, city,/*COUNT(orderid),*/ \
            CASE \
              WHEN COUNT(orderid)  = 0 THEN 'no_orders' \
              WHEN COUNT(orderid) <= 2 THEN 'upto_two_orders' \
@@ -228,15 +228,15 @@ if(false) {
     category: 'no_orders' },
   { customerid: 'FRNDO',
     city: 'Madrid',
-//    'COUNT(orderid)': 5,
+//    'COUNT(orderid)': 2,
     category: 'upto_two_orders' },
   { customerid: 'KRLOS',
     city: 'Madrid',
-//    'COUNT(orderid)': 9,
+//    'COUNT(orderid)': 3,
     category: 'more_than_two_orders' },
   { customerid: 'MRPHS',
     city: 'Zion',
-    'COUNT(orderid)': 1,
+//    'COUNT(orderid)': 1,
     category: 'upto_two_orders' } ]);
        done();
     });

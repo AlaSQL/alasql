@@ -5,7 +5,7 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-describe('Test 212 CONVERT', function() {
+describe('Test 212: CONVERT dates with style', function() {
 
     it("1. CONVERT DATES", function(done) {
         alasql('SET @d = DATE("01/08/2015 12:34:56.789"); \

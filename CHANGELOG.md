@@ -1,9 +1,9 @@
 # Changelog
 
 
-### 0.0.36 "New Year version" (23.12.2014 - 04.01.2015)
+### 0.0.36 "New Year version" (23.12.2014 - 08.01.2015)
 
-* REDUCE Aggregator
+* REDUCE Aggregator for custom aggregators
 * LINQ functions (fluent interface):
  * alasql() or alasql(data)
  * From()
@@ -40,14 +40,18 @@
 * PRINT statement
 * Tests renumbered and fixed
 * REQUIRE 'plugin.js'
-* alasql.work(alasql.js, [plugins...], callback)
+* alasql.worker("../alasql.js", ["plugins.js",...], callback)
 * @localvariable
 * SET @localvariable = expression
 * WHILE, CONTINUE, BREAK, BEGIN END syntax
 * WHILE statement
 * alasql.worker() - run WebWorker
+* alasql-worker.js - library to run webworker
 * FROM @localvariable
 * SELECT INTO @localvariable
+* CONVERT(type,value,style)
+* Fixed multiple same aggregators bug
+
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 

@@ -5668,7 +5668,28 @@ yy.Select.prototype.compileSelect2 = function(query) {
 
 
 yy.Select.prototype.compileSelectGroup0 = function(query) {
-
+	var self = this;
+	self.columns.forEach(function(col,idx){
+		if(col instanceof yy.Column && col.columnid == '*') {
+		} else {
+			var colas = col.as;
+			if(typeof colas == 'undefined') {
+				if(col instanceof yy.Column) {
+					colas = col.columnid;
+				} else {
+					colas = col.toString();
+					for(var i=0;i<idx;i++) {
+						if(colas == self.columns[i].as) {
+							colas = self.columns[i].as+':'+idx;
+							break;
+						}
+					}
+				}
+				col.as = colas;
+//				console.log("colas:",colas);
+			}
+		}
+	});
 	this.columns.forEach(function(col){
 		if(col.findAggregator) col.findAggregator(query);
 	});
@@ -5689,7 +5710,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			s += 'for(var k in g){r[k]=g[k]};';
 		} else {
 			var colas = col.as;
-			if(typeof colas == 'undefined') {
+/*			if(typeof colas == 'undefined') {
 				if(col instanceof yy.Column) {
 					colas = col.columnid;
 				} else {
@@ -5703,6 +5724,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 					col.as = colas;
 				}
 			}
+*/
 //			if(col.as) {
 			s += 'r[\''+colas+'\']=';
 			// } else {
@@ -6565,7 +6587,7 @@ yy.AggrValue.prototype.toString = function() {
 yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log('aggregator found',this.toString());
 
-	var colas = this.toString();
+	var colas = this.as || this.toString();
 /*	var found = false;
 	for(var i=0;i<query.columns.length;i++) {
 		// THis part should be intellectual
@@ -6577,15 +6599,31 @@ yy.AggrValue.prototype.findAggregator = function (query){
 */	
 //	if(!query.selectColumns[colas]) {
 //	}
-	query.selectGroup.push(this);
+
 	var found = false;
-	for(var i=0;i<query.removeKeys.length;i++){
-		if(query.removeKeys[i]==colas) {
+	for(var i=0;i<query.selectGroup.length;i++){
+		if(query.selectGroup[i].as==colas) {
 			found = true;
 			break;
-		}
-	}
-	if(!found) query.removeKeys.push(colas);
+		};
+	};
+	if(!found) {
+		if(!this.as) {
+			this.as = colas;
+			var found = false;
+			for(var i=0;i<query.removeKeys.length;i++){
+				if(query.removeKeys[i]==colas) {
+					found = true;
+					break;
+				}
+			};
+			if(!found) query.removeKeys.push(colas);
+		};
+		query.selectGroup.push(this);
+	};
+//	console.log(query.selectGroup);
+
+
 ////	this.reduced = true;
 	return;
 };

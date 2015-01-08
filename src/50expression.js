@@ -506,7 +506,7 @@ yy.AggrValue.prototype.toString = function() {
 yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log('aggregator found',this.toString());
 
-	var colas = this.toString();
+	var colas = this.as || this.toString();
 /*	var found = false;
 	for(var i=0;i<query.columns.length;i++) {
 		// THis part should be intellectual
@@ -518,15 +518,31 @@ yy.AggrValue.prototype.findAggregator = function (query){
 */	
 //	if(!query.selectColumns[colas]) {
 //	}
-	query.selectGroup.push(this);
+
 	var found = false;
-	for(var i=0;i<query.removeKeys.length;i++){
-		if(query.removeKeys[i]==colas) {
+	for(var i=0;i<query.selectGroup.length;i++){
+		if(query.selectGroup[i].as==colas) {
 			found = true;
 			break;
-		}
-	}
-	if(!found) query.removeKeys.push(colas);
+		};
+	};
+	if(!found) {
+		if(!this.as) {
+			this.as = colas;
+			var found = false;
+			for(var i=0;i<query.removeKeys.length;i++){
+				if(query.removeKeys[i]==colas) {
+					found = true;
+					break;
+				}
+			};
+			if(!found) query.removeKeys.push(colas);
+		};
+		query.selectGroup.push(this);
+	};
+//	console.log(query.selectGroup);
+
+
 ////	this.reduced = true;
 	return;
 };
