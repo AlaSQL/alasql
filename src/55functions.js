@@ -126,6 +126,8 @@ stdlib.MID = function(a,b,c){
 
 stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
 
+stdlib.POWER = function(a,b) {return 'Math.pow('+a+','+b+')'};
+
 stdlib.RANDOM = function(r) {
 	if(arguments.length == 0) {
 		return 'Math.random()';
@@ -141,6 +143,8 @@ stdlib.ROUND = function(s,d) {
 	}
 }
 stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
+
+stdlib.TRIM = function(s) {return s+'.trim()'};
 
 stdlib.UPPER = stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}

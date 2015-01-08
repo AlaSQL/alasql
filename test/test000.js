@@ -3,7 +3,7 @@ if(typeof exports === 'object') {
 	var alasql = require('../alasql.js');
 };
 
-describe('Test 00', function() {
+describe('Test 000', function() {
 
 	it('Very beginning: multiple statements', function(done){
 		var res = [];

@@ -124,7 +124,7 @@ function prepareData (defined) {
 //		alasql('drop database test01');
 	};
 
-describe('Test 01', function() {
+describe('Test 001', function() {
 
 	describe('Columns provided', function() {
 		prepareData(true);

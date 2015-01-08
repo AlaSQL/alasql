@@ -3,23 +3,24 @@
 
 ## Next Versions
 
-0. SELECT FROM @one;
-1. GETDATE(), CONVERT(110), CAST()
-2. Break Continue
-3. If Else Syntax
-4. SET NOCOUNT
+1. Break Continue
+2. If Else Syntax bug
+3. GETDATE(), CONVERT(110), CAST()
 
-2. Add TRIM to CSV reading procedure
+4. Add TRIM to CSV reading procedure
 
 if(trim(s) = +s)
 
-2. CSV/TAB export with headers:["header1","header2"] for arrays
+5. CSV/TAB export with headers:["header1","header2"] for arrays
 
+6. Fix bug with multiple counts in CASE (test198)
+7. FOREIGN KEYS
+8. Transactions
+9. DEFAULT, IS NULL, IS NOT NULL in CREATE TABLE
+
+
+4. SET NOCOUNT
 6. CROSS APPLY, OUTER APPLY
-3. Fix bug with multiple counts in CASE (test198)
-4. FOREIGN KEYS
-5. Transactions
-
 7. OVER () 
 9. PIVOT - ?
 8. VAR, STDDEV
@@ -49,7 +50,6 @@ SELECT COUNT(*) FROM Orders WHERE... GROUP BY customerid???
 
 
 
-4. IS NULL, IS NOT NULL in CREATE TABLE
 
 
 

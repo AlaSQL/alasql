@@ -4,12 +4,12 @@
 // (c) 2014, Andrey Gershun
 //
 
-/*
+
 alasql.fn.Date = Date;
 alasql.fn.Number = Number;
 alasql.fn.String = String;
 alasql.fn.Boolean = Boolean;
-*/
+
 
 stdfn.EXTEND = alasql.utils.extend;
 

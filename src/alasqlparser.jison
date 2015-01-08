@@ -1768,8 +1768,11 @@ Restore
 	;	
 
 If
-	: IF Expression Statement ElseStatement
+	: IF Expression Statement
+		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
+	| IF Expression Statement ElseStatement
 		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); }
+
 /*	| IF Expression Statement
 		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
 */	;

@@ -52,7 +52,7 @@ gulp.task('js-merge', function () {
     './src/56datetime.js',
     './src/57case.js',
     './src/58json.js',
-    './src/59cast.js',
+    './src/59convert.js',
   	'./src/60createtable.js',
     './src/61date.js',
     './src/62droptable.js',
