@@ -64,5 +64,93 @@ describe('Test 212 CONVERT', function() {
             });
     });
 
+    it("2. CONVERT DATE TO STRING", function(done) {
+        var res = alasql('SET @d = DATE("01/08/2015 12:34:56.789"); \
+            SELECT VALUE \
+                CONVERT(NVARCHAR(10),@d,110)');
+        assert(res[1] == '01-08-2015');
+        done();
+    });
+
+    it("3. CONVERT JAVASCRIPT DATE TO STRING", function(done) {
+        var res = alasql('SET @d = NEW Date("01/08/2015 12:34:56.789"); \
+            SELECT VALUE \
+                CONVERT(NVARCHAR(10),@d,110)');
+        assert(res[1] == '01-08-2015');
+        done();
+    });
+
+    it("4. CONVERT JAVASCRIPT DATE TO STRING", function(done) {
+        var d = new Date("01/08/2015 12:34:56.789");
+        var res = alasql('SELECT VALUE CONVERT(NVARCHAR(10),?,110)',[d]);
+        assert(res == '01-08-2015');
+        done();
+    });
+
+    it("5. CONVERT DATE TO STRING FROM TABLE", function(done) {
+        var res = alasql('CREATE DATABASE test212; USE test212;\
+            CREATE TABLE one (d DATE); \
+            INSERT INTO one VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO one VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO one VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM one');
+        res = res.pop();
+        assert(res[0] == '01-08-2015');
+        assert(res[1] == '01-08-2015');
+        assert(res[2] == '01-08-2015');
+        done();
+    });
+
+    it("6. CONVERT DATE TO STRING FROM TABLE", function(done) {
+        var res = alasql('CREATE TABLE two (d Date); \
+            INSERT INTO two VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO two VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO two VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM two');
+        res = res.pop();
+        assert(res[0] == '01-08-2015');
+        assert(res[1] == '01-08-2015');
+        assert(res[2] == '01-08-2015');
+        done();
+    });
+
+    it("7. CONVERT DATE TO STRING FROM TABLE", function(done) {
+        var res = alasql('CREATE TABLE three; \
+            INSERT INTO three (d) VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO three (d) VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO three (d) VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM three');
+        res = res.pop();
+        assert(res[0] == '01-08-2015');
+        assert(res[1] == '01-08-2015');
+        assert(res[2] == '01-08-2015');
+        done();
+    });
+
+    it("8. CONVERT DATE TO STRING FROM TABLE without columns", function(done) {
+        var res = alasql('CREATE TABLE four; \
+            INSERT INTO four VALUES {d:"01/08/2015 12:34:56.789"};\
+            INSERT INTO four VALUES {d:DATE("01/08/2015 12:34:56.789")};\
+            INSERT INTO four VALUES {d:(NEW Date("01/08/2015 12:34:56.789"))};\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM four');
+        res = res.pop();
+        assert(res[0] == '01-08-2015');
+        assert(res[1] == '01-08-2015');
+        assert(res[2] == '01-08-2015');
+        done();
+    });
+
+    it("9. CONVERT DATE TO STRING FROM TABLE without columns", function(done) {
+        var d = new Date("01/08/2015 12:34:56.789");
+        var res = alasql('CREATE TABLE five; \
+            INSERT INTO five VALUES @"01/08/2015 12:34:56.789";\
+            INSERT INTO five VALUES ?;\
+            SELECT COLUMN CONVERT(NVARCHAR(10),_,110) FROM five',[d]);
+        res = res.pop();
+        assert(res[0] == '01-08-2015');
+        assert(res[1] == '01-08-2015');
+        done();
+    });
+
 });
 
