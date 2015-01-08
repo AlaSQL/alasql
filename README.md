@@ -46,13 +46,11 @@ Check Alasql vs other JavaScript SQL databases and data processing libraries:
 
 ### Alasql as a WebWorker
 
-Alasql can work as a webworker. Include alasql-worker.js and open new Worker.
+Alasql can work as a webworker. Include alasql-worker.js and that is it: Alasql will work as a webworker.
 
 ```html
     <script src="../../alasql-worker.js"></script>
     <script>
-        alasql.worker = new Worker('../../alasql.min.js');
-
         var arr = [{a:1},{a:2},{a:1}];
         alasql('SELECT * FROM ?',[arr],function(data){
             console.log(data);
