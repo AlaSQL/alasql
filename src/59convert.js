@@ -23,8 +23,8 @@ yy.Convert.prototype.toString = function() {
 yy.Convert.prototype.toJavaScript = function(context, tableid, defcols) {
 
 //	if(this.style) {
-	return 'alasql.stdfn.CONVERT({value:'+this.expression.toJavaScript(context, tableid, defcols)
-		+',dbtypeid:"'+this.dbtypeid+'",dbsize:'+this.dbsize+',style:'+
+	return 'alasql.stdfn.CONVERT('+this.expression.toJavaScript(context, tableid, defcols)
+		+',{dbtypeid:"'+this.dbtypeid+'",dbsize:'+this.dbsize+',style:'+
 		this.style+'})';		
 //	}
 /*
@@ -56,8 +56,8 @@ yy.Convert.prototype.toJavaScript = function(context, tableid, defcols) {
 /**
  Convert one type to another
  */
-alasql.stdfn.CONVERT = function(args) {
-	var val = args.value;
+alasql.stdfn.CONVERT = function(value, args) {
+	var val = value;
 //	console.log(args);
 	if(args.style) {
 		// TODO 9,109, 20,120,21,121,126,130,131 conversions
@@ -139,8 +139,8 @@ alasql.stdfn.CONVERT = function(args) {
 		if(args.dbsize) return (""+val).substr(0,args.dbsize);
 		else return ""+val;
 	} else if(args.dbtypeid == 'CHAR' || args.dbtypeid == 'NCHAR') {
-		if(args.dbsize) return (val+(new Array(args.dbsize+1).join(" "))).substr(0,args.dbsize);
-		else return ""+val.substr(0,1);
+		return (val+(new Array(args.dbsize+1).join(" "))).substr(0,args.dbsize);
+		//else return ""+val.substr(0,1);
 	}
 };
 

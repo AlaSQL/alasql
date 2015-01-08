@@ -312,6 +312,7 @@ Statement
 	| CreateIndex
 	| CreateTable
 	| CreateView
+	| Declare
 	| Delete
 	| DetachDatabase
 	| DropDatabase
@@ -1368,9 +1369,9 @@ ColumnDef
 
 ColumnType
 	: LITERAL LPAR NUMBER COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: $5} }
+		{ $$ = {dbtypeid: $1, dbsize: +$3, dbprecision: +$5} }
 	| LITERAL LPAR NUMBER RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3} }
+		{ $$ = {dbtypeid: $1, dbsize: +$3} }
 	| LITERAL
 		{ $$ = {dbtypeid: $1} }
 	| ENUM LPAR ValuesList RPAR
@@ -1822,3 +1823,7 @@ StringValuesList
 		{ $$ = [$1]; }
 	;
 
+Declare
+	: DECLARE AT Literal ColumnType
+		{ $$ = new yy.Declare({variable:$3}); yy.extend($$,$4); }
+	;

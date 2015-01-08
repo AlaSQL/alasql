@@ -25,6 +25,9 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 //		console.log(this.expression.toJavaScript('','', null));
 		alasql.vars[this.variable] = new Function("params,alasql","return "
 			+this.expression.toJavaScript('','', null))(params,alasql);
+		if(alasql.declares[this.variable]) {
+			alasql.vars[this.variable] = alasql.stdfn.CONVERT(alasql.vars[this.variable],alasql.declares[this.variable]);
+		}
 	}
 	var res = 1;
 	if(cb) res=cb(res);

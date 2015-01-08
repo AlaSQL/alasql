@@ -51,7 +51,7 @@
 * SELECT INTO @localvariable
 * CONVERT(type,value,style)
 * Fixed multiple same aggregators bug
-
+* DECLARE @locarvariable type
 
 ### 0.0.35 (14.12.2014 - 22.12.2014)
 
