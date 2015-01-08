@@ -3,14 +3,12 @@
 
 ## Next Versions
 
+1. SET a->b = 10;
+2. Fluent interface 
+3. Break Continue Loop
+4. If Else Syntax bug
 
-2. DECLARE @localvariable TYPE; 
-3. Add CONVERT at assignment time
-4. Fluent interface 
-4. Break Continue Loop
-5. If Else Syntax bug
-
-6. Add TRIM to CSV reading procedure
+5. Add TRIM to CSV reading procedure
 
 if(trim(s) = +s)
 
