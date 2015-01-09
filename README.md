@@ -49,7 +49,7 @@ Check Alasql vs other JavaScript SQL databases and data processing libraries:
 Alasql can work as a webworker. Include alasql-worker.js and that is it: Alasql will work as a webworker.
 
 ```html
-    <script src="../../alasql-worker.js"></script>
+    <script src="alasql-worker.min.js"></script>
     <script>
         var arr = [{a:1},{a:2},{a:1}];
         alasql('SELECT * FROM ?',[arr],function(data){
@@ -57,6 +57,20 @@ Alasql can work as a webworker. Include alasql-worker.js and that is it: Alasql 
         });
     </script>    
 ```
+Try the example [at jsFiddle](http://jsfiddle.net/agershun/oxv4rzzc/).
+
+Another option - run alasql.worker() function:
+
+```html
+    <script src="alasql.min.js"></script>
+    <script>
+         alasql.worker();
+         var res = alasql('select value 10',[],function(res){
+              console.log(res);
+         });
+    </script>
+```
+Try this example [in jsFiddle](http://jsfiddle.net/agershun/rjwp8u48/3/).
 
 ### Read and write Excel, CSV, TAB, JSON,  and text files to/from database
 
