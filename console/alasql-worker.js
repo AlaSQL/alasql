@@ -9,7 +9,7 @@
 }(this, function () {
 
 /**
-	Main procedure
+	Main procedure for worker
  */
 function alasql(sql,params,cb){
 	var id = alasql.lastid++;
@@ -17,11 +17,10 @@ function alasql(sql,params,cb){
 	alasql.webworker.postMessage({id:id,sql:sql,params:params});
 };
 
-// alasql.lastid = 0;
-// alasql.buffer = {};
-/**
- Run webworker
- */
+
+if (typeof importScripts === 'function') {
+	// Nothing
+} else if(typeof exports != 'object') {
 
 alasql.worker = function(path, paths, cb) {
 //	var path;
@@ -75,7 +74,14 @@ alasql.worker = function(path, paths, cb) {
 	} 
 }
 
+}
+
+
+
 alasql.worker();
 
 return alasql;
 }));
+
+
+//# sourceMappingURL=alasql-worker.js.map

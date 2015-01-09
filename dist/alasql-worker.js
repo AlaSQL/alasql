@@ -9,7 +9,7 @@
 }(this, function () {
 
 /**
-	Main procedure
+	Main procedure for worker
  */
 function alasql(sql,params,cb){
 	var id = alasql.lastid++;
@@ -17,23 +17,32 @@ function alasql(sql,params,cb){
 	alasql.webworker.postMessage({id:id,sql:sql,params:params});
 };
 
-// alasql.lastid = 0;
-// alasql.buffer = {};
-/**
- Run webworker
- */
+
+if (typeof importScripts === 'function') {
+	// Nothing
+} else if(typeof exports != 'object') {
 
 alasql.worker = function(path, paths, cb) {
 //	var path;
-	if(typeof path == "undefined" || path === true) {
+	if (typeof path == "undefined" || path === true) {
 		var sc = document.getElementsByTagName('script');
 		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
-				path = sc[i].src.substr(0,sc[i].src.length-16)+'alasql.min.js';
+				path = sc[i].src.substr(0,sc[i].src.length-16)+'alasql.js'; 
 				break;
-			}
-		}
-	}
+			} else if (sc[i].src.substr(-20).toLowerCase() == 'alasql-worker.min.js') {
+				path = sc[i].src.substr(0,sc[i].src.length-20)+'alasql.min.js';
+				break;
+			} else if (sc[i].src.substr(-9).toLowerCase() == 'alasql.js') {
+				path = sc[i].src; 
+				break;
+			} else if (sc[i].src.substr(-13).toLowerCase() == 'alasql.min.js') {
+				path = sc[i].src.substr(0,sc[i].src.length-13)+'alasql.min.js'; 
+				break;
+			};
+		};
+	};
+
 	if(typeof path == "undefined") {
 		throw new Error('Path to alasql.js is not specified');
 	} else if(path !== false) {
@@ -72,10 +81,17 @@ alasql.worker = function(path, paths, cb) {
 	} else if(path === false) {
 		delete alasql.webworker;
 		return;
-	} 
-}
+	}; 
+};
+
+};
+
+
 
 alasql.worker();
 
 return alasql;
 }));
+
+
+//# sourceMappingURL=alasql-worker.js.map

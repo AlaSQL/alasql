@@ -9,7 +9,7 @@
 }(this, function () {
 
 /**
-	Main procedure
+	Main procedure for worker
  */
 function alasql(sql,params,cb){
 	var id = alasql.lastid++;

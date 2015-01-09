@@ -119,16 +119,18 @@ gulp.task('uglify', function () {
   return gulp.src('./alasql.js', {read: false})
     .pipe(shell([
       'uglifyjs alasql.js -o alasql.min.js',
+      'uglifyjs alasql-worker.js -o alasql-worker.min.js',
     ]));
 });
 
 gulp.task('copy-dist', function(){
-  gulp.src(['./alasql.js','./alasql.min.js','./alasql.js.map','./alasql-worker.js'])
+  gulp.src(['./alasql.js','./alasql.min.js','./alasql.js.map',
+    './alasql-worker.js','./alasql-worker.min.js','./alasql-worker.js.map'])
     .pipe(gulp.dest('dist'));
 });
 
 gulp.task('copy-dist-org', function(){
-  gulp.src(['./alasql.min.js','./alasql-worker.js'])
+  gulp.src(['./alasql.min.js','./alasql-worker.min.js'])
     .pipe(gulp.dest('./console/'));
 });
 
