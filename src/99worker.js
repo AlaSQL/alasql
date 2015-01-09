@@ -4,7 +4,8 @@ if (typeof importScripts === 'function') {
 
 alasql.worker = function(path, paths, cb) {
 //	var path;
-	if (typeof path == "undefined" || path === true) {
+	if(path === true) path = undefined;
+	if (typeof path == "undefined") {
 		var sc = document.getElementsByTagName('script');
 		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
@@ -26,8 +27,6 @@ alasql.worker = function(path, paths, cb) {
 	if(typeof path == "undefined") {
 		throw new Error('Path to alasql.js is not specified');
 	} else if(path !== false) {
-		alasql.lastid = 0;
-		alasql.buffer = {};
 
 		var js = "importScripts('";
 			js += path;
@@ -43,6 +42,7 @@ alasql.worker = function(path, paths, cb) {
 
 		alasql.webworker.onmessage = function(event) {
 			var id = event.data.id;
+//			console.log('onmessage',alasql.buffer,id);
 			alasql.buffer[id](event.data.data);
 			delete alasql.buffer[id];
 		};

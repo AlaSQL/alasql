@@ -279,7 +279,7 @@ preIndex = function(query) {
 //console.log(source);
 		if(k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
-			if(alasql.databases[source.databaseid].tables[source.tableid]) {
+			if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 				if(!alasql.databases[source.databaseid].tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
 					// Check if index already exists
 				var ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
@@ -316,7 +316,7 @@ preIndex = function(query) {
 					}
 					i++;
 				}
-				if(alasql.databases[source.databaseid].tables[source.tableid]){
+				if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]){
 					// Save index to original table				
 					alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
 				};
@@ -408,7 +408,7 @@ preIndex = function(query) {
 			};
 		}			
 		// Change this to another place (this is a wrong)
-		if(alasql.databases[source.databaseid].tables[source.tableid]) {
+		if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 			//query.database.tables[source.tableid].dirty = false;
 		} else {
 			// this is a subquery?

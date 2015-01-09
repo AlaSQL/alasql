@@ -70,6 +70,10 @@ alasql.busy = 0;
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
 
+/* WebWorker */
+alasql.lastid = 0;
+alasql.buffer = {};
+
 /**
   Select current database
   @param {string} databaseid Selected database identificator

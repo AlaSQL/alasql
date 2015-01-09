@@ -2807,6 +2807,10 @@ alasql.busy = 0;
 alasql.MAXSQLCACHESIZE = 10000;
 alasql.DEFAULTDATABASEID = 'alasql';
 
+/* WebWorker */
+alasql.lastid = 0;
+alasql.buffer = {};
+
 /**
   Select current database
   @param {string} databaseid Selected database identificator
@@ -3829,7 +3833,7 @@ preIndex = function(query) {
 //console.log(source);
 		if(k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
-			if(alasql.databases[source.databaseid].tables[source.tableid]) {
+			if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 				if(!alasql.databases[source.databaseid].tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
 					// Check if index already exists
 				var ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
@@ -3866,7 +3870,7 @@ preIndex = function(query) {
 					}
 					i++;
 				}
-				if(alasql.databases[source.databaseid].tables[source.tableid]){
+				if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]){
 					// Save index to original table				
 					alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
 				};
@@ -3958,7 +3962,7 @@ preIndex = function(query) {
 			};
 		}			
 		// Change this to another place (this is a wrong)
-		if(alasql.databases[source.databaseid].tables[source.tableid]) {
+		if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 			//query.database.tables[source.tableid].dirty = false;
 		} else {
 			// this is a subquery?
@@ -11196,7 +11200,8 @@ if (typeof importScripts === 'function') {
 
 alasql.worker = function(path, paths, cb) {
 //	var path;
-	if (typeof path == "undefined" || path === true) {
+	if(path === true) path = undefined;
+	if (typeof path == "undefined") {
 		var sc = document.getElementsByTagName('script');
 		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
@@ -11218,8 +11223,6 @@ alasql.worker = function(path, paths, cb) {
 	if(typeof path == "undefined") {
 		throw new Error('Path to alasql.js is not specified');
 	} else if(path !== false) {
-		alasql.lastid = 0;
-		alasql.buffer = {};
 
 		var js = "importScripts('";
 			js += path;
@@ -11235,6 +11238,7 @@ alasql.worker = function(path, paths, cb) {
 
 		alasql.webworker.onmessage = function(event) {
 			var id = event.data.id;
+//			console.log('onmessage',alasql.buffer,id);
 			alasql.buffer[id](event.data.data);
 			delete alasql.buffer[id];
 		};
