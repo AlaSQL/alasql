@@ -34,4 +34,18 @@ yy.CreateView.prototype.execute = function (databaseid) {
 	return 1;
 };
 
+yy.DropView = function (params) { return yy.extend(this, params); }
+yy.DropView.prototype.toString = function() {
+	var s = K('DROP')+' '+K('VIEW');
+	s += ' '+this.view.toString();
+	return s;
+};
+
+// CREATE TABLE
+//yy.CreateTable.prototype.compile = returnUndefined;
+yy.DropView.prototype.execute = function (databaseid) {
+//	var self = this;
+};
+
+
 

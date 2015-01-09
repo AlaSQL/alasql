@@ -17,6 +17,18 @@ var concat = require('gulp-concat-sourcemap');
 var shell = require('gulp-shell');
 
 
+gulp.task('js-merge-worker', function () {
+  return gulp.src([
+    './src/99worker-start.js', 
+    './src/99worker.js', 
+    './src/99worker-finish.js', 
+    ])
+//    .pipe(changed('./dist/'))
+    .pipe(concat('alasql-worker.js'))
+//    .pipe(uglify())
+    .pipe(gulp.dest('./'))
+});
+
 gulp.task('js-merge', function () {
   return gulp.src([
   	'./src/10start.js', 
@@ -153,6 +165,7 @@ gulp.task('copy-console-org', function(){
 // Главная задача
 gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], function(){
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
+  gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); });
   gulp.watch('./alasql.js',function(){ gulp.run('uglify'); });
   gulp.watch('./alasql.min.js',function(){ 

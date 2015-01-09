@@ -1,45 +1,44 @@
 if (typeof importScripts === 'function') {
-	// console.log(99);
-	self.onmessage = function(event) {	
-		// console.log(2);
-		alasql(event.data.sql,event.data.params, function(data){
-			// console.log(3);
-			postMessage({id:event.data.id, data:data});
-		}); 
-	}	
+	// Nothing
 } else if(typeof exports != 'object') {
-	alasql.worker = function(path, paths,cb) {
-		if(typeof path == "undefined" || path === true) {
-			var sc = document.getElementsByTagName('script');
-			for(var i=0;i<sc.length;i++) {
-//				console.log(sc[i]);
-				if(sc[i].src.substr(-9).toLowerCase() == 'alasql.js' 
-					|| sc[i].src.substr(-13).toLowerCase() == 'alasql.min.js')
-					path = sc[i].src;
+
+alasql.worker = function(path, paths, cb) {
+//	var path;
+	if(typeof path == "undefined" || path === true) {
+		var sc = document.getElementsByTagName('script');
+		for(var i=0;i<sc.length;i++) {
+			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
+				path = sc[i].src.substr(0,sc[i].src.length-16)+'alasql.min.js';
+				break;
 			}
-//			console.log(path);
-			if(typeof path == "undefined") {
-				throw new Error('Path to alasql.js is not specified');
-			};
-			alasql.webworker = new Worker(path);
-			alasql.lastid = 0;
-			alasql.buffer = {};
+		}
+	}
+	if(typeof path == "undefined") {
+		throw new Error('Path to alasql.js is not specified');
+	} else if(path !== false) {
+		alasql.lastid = 0;
+		alasql.buffer = {};
 
-			alasql.webworker.onmessage = function(event) {
-				var id = event.data.id;
-				alasql.buffer[id](event.data.data);
-				delete alasql.buffer[id];
-			};
+		var js = "importScripts('";
+			js += path;
+			js+="');\
+		self.onmessage = function(event) {\
+		alasql(event.data.sql,event.data.params, function(data){\
+		postMessage({id:event.data.id, data:data});\
+		});\
+		}";
 
-			alasql.webworker.onerror = function(e){
-				throw e;
-			}
+		var blob = new Blob([js], {"type": "text\/plain"});
+		alasql.webworker = new Worker(URL.createObjectURL(blob));
 
-		} else if(path === false) {
-			delete alasql.webworker;
-			return;
-		} else {
-			alasql.webworker = new Worker(path);
+		alasql.webworker.onmessage = function(event) {
+			var id = event.data.id;
+			alasql.buffer[id](event.data.data);
+			delete alasql.buffer[id];
+		};
+
+		alasql.webworker.onerror = function(e){
+			throw e;
 		}
 
 		if(arguments.length > 1) {
@@ -48,5 +47,11 @@ if (typeof importScripts === 'function') {
 			}).join(",");
 			alasql(sql,[],cb);
 		}
-	};	
+
+	} else if(path === false) {
+		delete alasql.webworker;
+		return;
+	} 
+}
+
 }

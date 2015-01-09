@@ -1,5 +1,14 @@
 # Changelog
 
+### 0.0.37 "Ararat" (09.01.2015 - .01.2015)
+
+* Added test for "? IN @(?)"
+* Convert  -> correct DATE("20141008")
+* TRUNCATE TABLE table;
+* Fixed bug when COUNT and SUM() aggregators shows 'undefined' with zero groups
+* test-sql tests: world.sql, speedtest.sql
+* SELECT TEXT -> SELECT TEXTSTRING (do not conflict with TEXT data type)
+* Fixed bug: different databases for different FROM and JOIN parts
 
 ### 0.0.36 "New Year version" (23.12.2014 - 08.01.2015)
 
@@ -30,7 +39,7 @@
 * IF expr statement 
 * OBJECT_ID(tableid) function
 * IS NULL and IS NOT NULL operators
-* SET variable value (ON/OFF)
+* SET option value (ON/OFF)
 * OVER PARTITION ORDER BY syntax
 * SET option ON/OFF (alasql.options.autocommit)
 * SUM(DISTINCT a)

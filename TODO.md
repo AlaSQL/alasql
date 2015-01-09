@@ -3,6 +3,33 @@
 
 ## Next Versions
 
+* DECLARE @var type = expression;
+* DECLARE @var type, @var type...
+
+
+0. MS SQL compatibility
+* ROW_NUMBER() aggregator
+* BEGIN TRAN, COMMIT TRAN
+* N'string'
+* DECLARE @var TABLE(coldefs)
+* Database names starting with #
+* INSERT INTO @aaa(cols) VALUES ()...
+* COALESCE() - http://msdn.microsoft.com/en-us/library/ms190349.aspx
+* DB_ID(databaseid)
+* CREATE INDEX syntax
+* SET IDENTITY_INSERT table ON;
+* NUMERIC(a,b) data type and CONVERSION, MONEY, SMALLINT, BIGINT, NVARCHAR(MAX), DECIMAL(a,b)
+* CREATE VIEW
+* SYSDATETIME(), DATEADD(), DATEDIFF(), RIGHT(), LEFT(), CHAR(), ASCII(), ABS(), NEWID(), SUBSTRING()
+* CONSTRAINT CHECK(expression)
+* SET NOCOUNT OFF
+* WITH (Select) AS Literal, ... Select
+
+BIG
+* OVER
+* PIVOT
+* CROSS APPLY
+
 1. SET a->b = 10;
 2. Fluent interface 
 3. Break Continue Loop

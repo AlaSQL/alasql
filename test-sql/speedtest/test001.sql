@@ -1,0 +1,2 @@
+SELECT VALUE COUNT(*) FROM speedtest;
+ASSERT 10999;

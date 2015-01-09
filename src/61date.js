@@ -18,6 +18,7 @@ stdfn.OBJECT_ID = function(objid){
 };
 
 stdfn.DATE = function (d) {
+	if(/\d{8}/.test(d)) return new Date(+d.substr(0,4),+d.substr(4,2)-1,+d.substr(6,2));
 	return new Date(d);
 };
 

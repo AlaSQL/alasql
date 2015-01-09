@@ -335,7 +335,7 @@ function modify(query, res) {
 	} if(query.modifier == 'RECORDSET') {
 		res = new alasql.Recordset({data:res, columns:query.columns});
 //		res = arrayOfArrays(res);
-	} if(query.modifier == 'TEXT') {
+	} if(query.modifier == 'TEXTSTRING') {
 		var key;
 		if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
 		else key = Object.keys(res[0])[0];

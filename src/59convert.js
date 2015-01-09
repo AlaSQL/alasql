@@ -61,7 +61,10 @@ alasql.stdfn.CONVERT = function(value, args) {
 //	console.log(args);
 	if(args.style) {
 		// TODO 9,109, 20,120,21,121,126,130,131 conversions
-		var t = new Date(val);
+		var t;
+		if(/\d{8}/.test(val)) t = new Date(+val.substr(0,4),+val.substr(4,2)-1,+val.substr(6,2));		
+		else t = new Date(val);
+		
 		if(args.style == 1) { 			// mm/dd/yy
 			val =  ("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getDate()).substr(-2)+'/'+("0"+t.getYear()).substr(-2);
 		} else if(args.style == 2) { 	// yy.mm.dd

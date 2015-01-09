@@ -1,0 +1,5 @@
+
+alasql.worker();
+
+return alasql;
+}));

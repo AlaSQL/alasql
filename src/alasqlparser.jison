@@ -26,6 +26,8 @@
 								}
 */
 \`([^\]])*?\`	   								 return 'BRALITERAL'
+N(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
+X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+                       return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+                       return 'STRING'
 
@@ -57,6 +59,7 @@
 'ASSERT'                                      	return 'ASSERT'
 'ASC'                                      		return 'DIRECTION'
 'ATTACH'                                      	return 'ATTACH'
+'AUTOINCREMENT'                                	return 'AUTO_INCREMENT'
 'AUTO_INCREMENT'                                return 'AUTO_INCREMENT'
 /* 'AUTOCOMMIT'									return 'AUTOCOMMIT'; */
 'AVG'                                      		return 'AVG'
@@ -70,6 +73,7 @@
 'CASE'											return 'CASE'
 'CAST'											return 'CAST'
 'CHARSET'										return 'CHARSET'
+'CHECK'											return 'CHECK'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
@@ -179,13 +183,14 @@
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
-'TEXT'											return 'TEXT'
+'TEXTSTRING'									return 'TEXTSTRING'
 'THEN'											return 'THEN'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
 'TRAN'											return 'TRAN'
 'TRANSACTION'									return 'TRANSACTION'
 'TRUE'						  					return 'TRUE'
+'TRUNCATE'					  					return 'TRUNCATE'
 'UNION'                                         return 'UNION'
 'UNIQUE'                                        return 'UNIQUE'
 'UPDATE'                                        return 'UPDATE'
@@ -327,6 +332,7 @@ Statement
 	| ShowDatabases
 	| ShowIndex
 	| ShowTables
+	| TruncateTable
 	| BeginTransaction
 	| CommitTransaction
 	| RollbackTransaction
@@ -434,8 +440,8 @@ SelectModifier
 		{ $$ = {modifier:'COLUMN'}}
 	| SELECT MATRIX
 		{ $$ = {modifier:'MATRIX'}}
-	| SELECT TEXT
-		{ $$ = {modifier:'TEXT'}}
+	| SELECT TEXTSTRING
+		{ $$ = {modifier:'TEXTSTRING'}}
 	| SELECT INDEX
 		{ $$ = {modifier:'INDEX'}}
 	| SELECT RECORDSET
@@ -926,6 +932,8 @@ LogicValue
 StringValue
 	: STRING
 		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
+	| NSTRING
+		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	;
 
 NullValue
@@ -1304,12 +1312,19 @@ Constraint
 		{ $2.constraintid = $1; $$ = $2; }
 	| ConstraintName IndexKey
 		{ $2.constraintid = $1; $$ = $2; }
+	| ConstraintName Check
+		{ $2.constraintid = $1; $$ = $2; }
 	;
 
 ConstraintName
 	:   { $$ = null }
 	| CONSTRAINT Literal
 		{ $$ = $2; }
+	;
+
+Check
+ 	: CHECK LPAR Expression RPAR
+		{ $$ = {type: 'CHECK', expression: $3}; }
 	;
 
 PrimaryKey
@@ -1349,7 +1364,11 @@ IndexKey
 ColsList
 	: Literal
 		{ $$ = [$1]; }
+	| STRING
+		{ $$ = [$1]; }
 	| ColsList COMMA Literal
+		{ $$ = $1; $1.push($3); }
+	| ColsList COMMA STRING
 		{ $$ = $1; $1.push($3); }
 	;
 
@@ -1388,7 +1407,9 @@ ColumnConstraintsClause
 
 ColumnConstraintsList
 	: ColumnConstraintsList ColumnConstraint
-		{ yy.extend($1,$2); $$ = $1;}
+		{ 
+			yy.extend($1,$2); $$ = $1;
+		}
 	| ColumnConstraint
 		{ $$ = $1; }
 	;
@@ -1562,6 +1583,8 @@ CreateView
 DropView
 	: DROP VIEW View
 		{ $$ = new yy.DropView({view:$2}); }
+	| DROP VIEW IF EXISTS View
+		{ $$ = new yy.DropView({view:$5, ifexists:true}); }
 	;
 
 View
@@ -1826,4 +1849,9 @@ StringValuesList
 Declare
 	: DECLARE AT Literal ColumnType
 		{ $$ = new yy.Declare({variable:$3}); yy.extend($$,$4); }
+	;
+
+TruncateTable
+	: TRUNCATE TABLE Table
+		{ $$ = new yy.TruncateTable({table:$3});}
 	;

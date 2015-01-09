@@ -1,6 +1,6 @@
-# Alasql.js - pure JavaScript client-side SQL database with support of localStorage and IndexedDB 
+# Alasql.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.36 Date: January 08, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.37 "Ararat" Date: January 09, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use IndexedDB and localStorage as a persistent storage.
 
@@ -644,5 +644,9 @@ and other people for useful tools, which make our work much easier.
 
 ## License
 
-(c) 2014, Andrey Gershun (agershun@gmail.com), [MIT licence information](LICENSE)
+[MIT licence information](LICENSE).
+
+The MIT license on this repo covers all contents of the repo, but does not supercede the existing licenses for products used for this work, including the Chinook Database (covered by the Microsoft Public License) and other products.
+
+(c) 2014, Andrey Gershun (agershun@gmail.com), 
 

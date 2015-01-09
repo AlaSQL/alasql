@@ -136,6 +136,20 @@ function queryfn3(query) {
 //			console.log(query.havingfns);
 	if(query.groupfn) {
 		query.data = [];
+		if(query.groups.length == 0) {
+			var g = {};
+			if(query.selectGroup.length>0) {
+				query.selectGroup.forEach(function(sg){
+					if(sg.aggregatorid == "COUNT" || sg.aggregatorid == "SUM") {
+						g[sg.as] = 0;
+					} else {
+						g[sg.as] = undefined;
+					}
+				});
+			};
+			query.groups = [g];
+//			console.log();
+		}
 		for(var i=0,ilen=query.groups.length;i<ilen;i++) {
 //			console.log(query.groups[i]);
 			var g = query.groups[i];
@@ -265,11 +279,11 @@ preIndex = function(query) {
 //console.log(source);
 		if(k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
-			if(query.database.tables[source.tableid]) {
-				if(!query.database.tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
+			if(alasql.databases[source.databaseid].tables[source.tableid]) {
+				if(!alasql.databases[source.databaseid].tables[source.tableid].indices) query.database.tables[source.tableid].indices = {};
 					// Check if index already exists
-				var ixx = query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
-				if( !query.database.tables[source.tableid].dirty && ixx) {
+				var ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
+				if( !alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					source.ix = ixx; 
 				}
 			};
@@ -302,9 +316,9 @@ preIndex = function(query) {
 					}
 					i++;
 				}
-				if(query.database.tables[source.tableid]){
+				if(alasql.databases[source.databaseid].tables[source.tableid]){
 					// Save index to original table				
-					query.database.tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
+					alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
 				};
 			}
 //console.log(38,274,source.ix);
@@ -313,9 +327,9 @@ preIndex = function(query) {
 		} else if (source.wxleftfn) {
 				if(!alasql.databases[source.databaseid].engineid) {
 					// Check if index exists
-					var ixx = query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')];
+					var ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.wxleftfns+'`')];
 				}
-				if( !query.database.tables[source.tableid].dirty && ixx) {
+				if( !alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					// Use old index if exists
 					source.ix = ixx;
 					// Reduce data (apply filter)
@@ -346,7 +360,7 @@ preIndex = function(query) {
 					}
 	//					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`'+source.onwherefns)] = source.ix;
 					if(!alasql.databases[source.databaseid].engineid) {
-						query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`')] = source.ix;
+						alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.wxleftfns+'`')] = source.ix;
 					}
 				}
 				// Apply where filter to reduces rows
@@ -394,7 +408,7 @@ preIndex = function(query) {
 			};
 		}			
 		// Change this to another place (this is a wrong)
-		if(query.database.tables[source.tableid]) {
+		if(alasql.databases[source.databaseid].tables[source.tableid]) {
 			//query.database.tables[source.tableid].dirty = false;
 		} else {
 			// this is a subquery?

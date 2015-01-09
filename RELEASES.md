@@ -14,43 +14,42 @@
 
 ## Next Releases:
 
-### Version "Ararat" 0.0.37 (20.01.2015)
+### Version "Armenia" 0.0.40 (20.01.2015)
 
-* SQL Tests
+* T-SQL compatibility and multiple SQL Tests
 * Documentation
 * API documentation with JsDoc
-* Multiple COUNT bug
 * CSV bug and headers
 * If-then-else JISON problem
 * UNION ORDER BY bug
 * WorkerJS for Node (primarily for test)
 
-### Version "Sigirya" 0.0.40 (01.02.2015)
+### Version "Sigirya" 0.0.45 (01.02.2015)
 
 * packege.json
 * Constraint and Foreign Keys
 * CONTINUE/BREAK/FOR/LOOP
 
-### Version "Elbrus" 0.0.45 (10.02.2015)
+### Version "Elbrus" 0.0.50 (10.02.2015)
 
 * Transactions
 
-### Version "Prague" 0.0.50 (20.02.2015)
+### Version "Prague" 0.0.55 (20.02.2015)
 
 * PIVOT/UNPIVOT
 * CROSS APPLY/OUTER APPLY
 * VIEWS
 
-### Version "Manila" 0.0.55 (01.03.2015)
+### Version "Manila" 0.0.60 (01.03.2015)
  
 * GROUP BY HIERARCHY, TOTAL, DETAIL
 
-### Version "Menlo Park" 0.0.60 (10.03.2015)
+### Version "Menlo Park" 0.0.65 (10.03.2015)
 
 * Bugs
 * Documentation
 
-### Version "Vorkuta" 0.0.65 (20.03.2015)
+### Version "Vorkuta" 0.0.70 (20.03.2015)
 
 * Bugs
 * Documentation

@@ -35,3 +35,26 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	}
 	return 0;
 };
+
+
+yy.TruncateTable = function (params) { return yy.extend(this, params); }
+yy.TruncateTable.prototype.toString = function() {
+	var s = K('TRUNCATE')+' '+K('TABLE');
+	s += ' '+this.table.toString();
+	return s;
+}
+
+yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
+	var db = alasql.databases[this.table.databaseid || databaseid];
+	var tableid = this.table.tableid;
+//	console.log(db, this.table.databaseid );
+	if(db.engineid) {
+		return alasql.engines[db.engineid].truncateTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
+	}
+	if(db.tables[tableid]) {
+		db.tables[tableid].data = [];
+	} else {
+		throw new Error('Cannot truncate table becaues it does not exist');
+	}
+	return 0;
+};
