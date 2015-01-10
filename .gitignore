@@ -4,3 +4,6 @@ test/world/world_innodb.sql
 test/world/world.sql
 
 test/world/NeptunoCreacionMySQL.sql
+
+test-sql/*
+test-sql

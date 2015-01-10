@@ -1,14 +1,19 @@
 # Changelog
 
-### 0.0.37 "Ararat" (09.01.2015 - .01.2015)
+### 0.0.37 "Ararat" (09.01.2015 - 10.01.2015)
 
 * Added test for "? IN @(?)"
 * Convert  -> correct DATE("20141008")
 * TRUNCATE TABLE table;
 * Fixed bug when COUNT and SUM() aggregators shows 'undefined' with zero groups
-* test-sql tests: world.sql, speedtest.sql
+* test-sql tests for compatibility with other databases
 * SELECT TEXT -> SELECT TEXTSTRING (do not conflict with TEXT data type)
 * Fixed bug: different databases for different FROM and JOIN parts
+* Google Spreadsheet integration with Tabletop (https://github.com/jsoma/tabletop) FROM-function: alasql('SELECT * FROM TABLETOP(?)',[url]);
+* Changed worker() methid
+* DECLARE with multiple variable definitions and initial value (DECLARE @one int = 123)
+* SET a->property->0->(1+1) = 100
+
 
 ### 0.0.36 "New Year version" (23.12.2014 - 08.01.2015)
 

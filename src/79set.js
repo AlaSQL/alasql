@@ -23,10 +23,30 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 		alasql.options[this.variable] = val;
 	} else if(this.expression) {
 //		console.log(this.expression.toJavaScript('','', null));
-		alasql.vars[this.variable] = new Function("params,alasql","return "
+		var res = new Function("params,alasql","return "
 			+this.expression.toJavaScript('','', null))(params,alasql);
 		if(alasql.declares[this.variable]) {
-			alasql.vars[this.variable] = alasql.stdfn.CONVERT(alasql.vars[this.variable],alasql.declares[this.variable]);
+			res = alasql.stdfn.CONVERT(res,alasql.declares[this.variable]);
+		}
+		if(this.props && this.props.length > 0) {
+			var fs = 'alasql.vars[\''+this.variable+'\']';
+			fs += this.props.map(function(prop){
+				if(typeof prop == 'string') {
+					return '[\''+prop+'\']';
+				} else if(typeof prop == 'number') {
+					return '['+prop+']';
+				} else {
+					// console.log('prop:',prop, prop.toJavaScript());
+					return '['+prop.toJavaScript()+']';
+//				} else {
+//					console.log(prop, typeof );
+//					throw new Error('Wrong SET property');
+				}
+			}).join();
+//				console.log(fs);
+			new Function("value,alasql",fs +'=value')(res,alasql);
+		} else {
+			alasql.vars[this.variable] = res;
 		}
 	}
 	var res = 1;

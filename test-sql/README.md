@@ -12,6 +12,7 @@ To run specific test:
 ```js
     mocha world.js
 ```
+All these databases belong to their owners.
 
 Samples sources:
 * Learn SQL Hard Way []()

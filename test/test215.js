@@ -31,5 +31,22 @@ describe('Test 215 DECLARE', function() {
         done();
     });
 
+    it("4. DECLARE WITH SET", function(done) {
+        alasql('declare @four char(5) = "abcdefghijk"');
+        var res = alasql("SELECT VALUE @four");
+//        console.log(res);
+        assert(res=="abcde");
+        done();
+    });
+
+    it("5. Multiple DECLARE", function(done) {
+        alasql('declare @five char(5) = "abcdefghijk", @six int = 123');
+        var res = alasql("SELECT ROW @five, @six");
+//        console.log(res);
+        assert(res[0]=="abcde");
+        assert(res[1]==123);
+        done();
+    });
+
 });
 

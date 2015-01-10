@@ -1266,6 +1266,7 @@ CreateTableOptions
 	| CreateTableOption
 	;
 
+/* TODO: Remove this section */
 CreateTableOption
 	: DEFAULT
 	| ENGINE EQ Literal
@@ -1594,6 +1595,7 @@ View
 		{ $$ = new yy.View({databaseid:$1, viewid: $3}); }
 	;
 
+/*
 DeclareCursor
 	: DECLARE Literal CURSOR FOR Select
 		{ $$ = new yy.DeclareCursor({cursorid:$2, select:$5}); }
@@ -1628,6 +1630,7 @@ FetchDirection
 	| RELATIVE NumValue
 		{ $$ = {direction: 'RELATIVE', num:$2}; }
 	;
+*/
 
 Help
 	: HELP StringValue 
@@ -1753,6 +1756,24 @@ SetVariable
 		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
 	| SET AT Literal EQ Expression
 		{ $$ = new yy.SetVariable({variable:$3, expression:$5});}
+	| SET AT Literal SetPropsList EQ Expression
+		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6});}
+	;
+
+SetPropsList 
+	: SetPropsList ARROW SetProp
+		{ $1.push($3); $$ = $1; }
+	| ARROW SetProp
+		{ $$ = [$2]; }
+	;
+
+SetProp
+	: Literal
+		{ $$ = $1; }
+	| NUMBER
+		{ $$ = $1; }
+	| LPAR Expression RPAR
+		{ $$ = $2; }
 	;
 
 OnOff
@@ -1777,6 +1798,7 @@ BeginTransaction
 		{ $$ = new yy.BeginTransaction(); }
 	;
 
+/*
 Store
 	: STORE
 		{ $$ = new yy.Store(); }
@@ -1790,6 +1812,7 @@ Restore
 	| RESTORE Literal
 		{ $$ = new yy.Restore({databaseid: $2}); }
 	;	
+*/
 
 If
 	: IF Expression Statement
@@ -1847,8 +1870,26 @@ StringValuesList
 	;
 
 Declare
-	: DECLARE AT Literal ColumnType
-		{ $$ = new yy.Declare({variable:$3}); yy.extend($$,$4); }
+	: DECLARE DeclaresList
+		{ $$ = new yy.Declare({declares:$2}); }
+	;
+
+DeclaresList
+	: DeclareItem
+		{ $$ = [$1]; }
+	| DeclaresList COMMA DeclareItem
+		{ $1.push($3); $$ = $1; }
+	;
+
+DeclareItem
+	: AT Literal ColumnType
+		{ $$ = {variable: $2}; yy.extend($$,$3); }
+	| AT Literal AS ColumnType
+		{ $$ = {variable: $2}; yy.extend($$,$4); }
+	| AT Literal ColumnType EQ Expression
+		{ $$ = {variable: $2, expression:$5}; yy.extend($$,$3);}
+	| AT Literal AS ColumnType EQ Expression
+		{ $$ = {variable: $2, expression:$6}; yy.extend($$,$4);}
 	;
 
 TruncateTable

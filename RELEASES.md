@@ -22,7 +22,6 @@
 * WITH
 * Float numbers like 10e20
 * Wikibooks SQL samples as tests
-* Google Spreadsheet Tabletop (https://github.com/jsoma/tabletop) FROM-function
  * alasql("SELECT * FROM GSHEET(?,{})",[key],function(){});
 
 ### Version "Armenia" 0.0.40 (20.01.2015)
