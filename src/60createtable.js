@@ -24,7 +24,8 @@ yy.CreateTable = function (params) { return yy.extend(this, params); }
 yy.CreateTable.prototype.toString = function() {
 	var s = K('CREATE');
 	if(this.temporary) s+=' '+K('TEMPORARY');
-	s += ' '+K('TABLE');
+	if(this.view) s += ' '+K('VIEW');
+	else s += ' '+K('TABLE');
 	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
 	if(this.as) s += ' '+K('AS')+' '+L(this.as);
@@ -33,6 +34,9 @@ yy.CreateTable.prototype.toString = function() {
 			return col.toString();
 		});
 		s += ' ('+NL()+ID()+ss.join(','+NL()+ID())+')';
+	};
+	if(this.view && this.select) {
+		s += ' AS '+this.select.toString();
 	}
 	return s;
 }
@@ -187,6 +191,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		};
 
 	};
+
+	if(this.view && this.select) {
+		table.view = true;
+//		console.log(this.select.toString());
+//		console.log('this.table.databaseid',this.table.databaseid);
+//		console.log(this.select.compile(this.table.databaseid||databaseid));
+		table.select = this.select.compile(this.table.databaseid||databaseid);
+	}
 //	console.log(databaseid);
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);

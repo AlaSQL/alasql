@@ -59,6 +59,12 @@ yy.Select.prototype.compileFrom = function(query) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
 				}				
+			} else if(alasql.databases[source.databaseid].tables[source.tableid].view){
+				source.datafn = function(query,params,cb,idx, alasql) {
+					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
+					if(cb) res = cb(res,idx,query);
+					return res;
+				}
 			} else {
 				source.datafn = function(query,params,cb,idx, alasql) {
 				// if(!query) console.log('query');

@@ -71,7 +71,7 @@ gulp.task('js-merge', function () {
     './src/64altertable.js',
     './src/65createindex.js',
     './src/66dropindex.js',
-    './src/67createview.js',
+//    './src/67createview.js',
     './src/68if.js',
     './src/69while.js',
   	'./src/70insert.js',

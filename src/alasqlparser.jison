@@ -1246,15 +1246,15 @@ CreateTable
 			yy.extend($$,$3); 
 			yy.extend($$,$6); 
 		}
-	| CREATE TABLE IfNotExists Literal
+	| CREATE TABLE IfNotExists Table
 		{ 
-			$$ = new yy.CreateTable({table:new yy.Table({tableid:$4})}); 
+			$$ = new yy.CreateTable({table:$4}); 
 		}		
-	| CREATE TABLE IfNotExists Literal DOT Literal
+/*	| CREATE TABLE IfNotExists Literal DOT Literal
 		{ 
 			$$ = new yy.CreateTable({table:new yy.Table({tableid:$6, databaseid:$4})}); 
 		}		
-	;
+*/	;
 
 CreateTableOptionsClause
 	:
@@ -1575,26 +1575,48 @@ ShowCreateTable
 	;
 
 CreateView
-	: CREATE VIEW View AS Select
-		{ $$ = new yy.CreateView({view:$3, select: $5}); }
-	| CREATE VIEW View LPAR ColsList RPAR AS Select
-		{ $$ = new yy.CreateView({view:$3, columns: $5, select: $5}); }
+
+	:  CREATE VIEW IfNotExists Table LPAR CreateTableDefClause RPAR AS Select
+		{ 
+			$$ = new yy.CreateTable({table:$4,view:true,select:$9}); 
+			yy.extend($$,$3); 
+			yy.extend($$,$6); 
+		}
+	| CREATE VIEW IfNotExists Table AS Select
+		{ 
+			$$ = new yy.CreateTable({table:$4,view:true,select:$6}); 
+		}
 	;
+/*
+	: CREATE VIEW IfNotExists View AS Select
+		{ $$ = new yy.CreateTable({table:new yy.Table({tableid:$4}), view:true, select: $5}); }
+	| CREATE VIEW View LPAR ColsList RPAR AS Select
+		{ $$ = new yy.CreateTable({table:new yy.Table({tableid:$4}),view:true, select: $5}); }
+	;
+
+		| CREATE TABLE IfNotExists Literal
+		{ 
+			$$ = new yy.CreateTable({table:new yy.Table({tableid:$4})}); 
+		}		
+	| CREATE TABLE IfNotExists Literal DOT Literal
+		{ 
+			$$ = new yy.CreateTable({table:new yy.Table({tableid:$6, databaseid:$4})}); 
+		}		
+	;
+*/
 
 DropView
-	: DROP VIEW View
-		{ $$ = new yy.DropView({view:$2}); }
-	| DROP VIEW IF EXISTS View
-		{ $$ = new yy.DropView({view:$5, ifexists:true}); }
+	: DROP VIEW IfExists Table
+		{ $$ = new yy.DropTable({table:$4, view:true}); yy.extend($$, $3); }
 	;
-
+/*
 View
 	: Literal
 		{ $$ = new yy.View({viewid: $1}); }
 	| Literal DOT Literal
 		{ $$ = new yy.View({databaseid:$1, viewid: $3}); }
 	;
-
+*/
 /*
 DeclareCursor
 	: DECLARE Literal CURSOR FOR Select

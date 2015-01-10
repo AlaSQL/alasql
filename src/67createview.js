@@ -6,6 +6,7 @@
 //
 */
 
+/*
 yy.CreateView = function (params) { return yy.extend(this, params); }
 yy.CreateView.prototype.toString = function() {
 	var s = 'CREATE VIEW';
@@ -47,5 +48,5 @@ yy.DropView.prototype.execute = function (databaseid) {
 //	var self = this;
 };
 
-
+*/
 

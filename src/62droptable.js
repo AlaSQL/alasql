@@ -8,7 +8,9 @@
 
 yy.DropTable = function (params) { return yy.extend(this, params); }
 yy.DropTable.prototype.toString = function() {
-	var s = K('DROP')+' '+K('TABLE');
+	var s = K('DROP')+' ';
+	if(this.view) s += K('VIEW');
+	else s += K('TABLE');
 	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
 	return s;
