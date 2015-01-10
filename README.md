@@ -55,11 +55,11 @@ Now Alasql can read data (and make other manipulations like grouping, filtering,
 <script>
     var url = 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0AmYzu_s7QHsmdDNZUzRlYldnWTZCLXdrMXlYQzVxSFE&output=html';
 
-    alasql('SELECT * INTO HTML("#res",{headers:true}) FROM TABLETOP(?) ORDER BY category',[url]);
+    alasql('SELECT * INTO HTML("#res",{headers:true}) FROM TABLETOP(?) WHERE name < "D" ORDER BY category',[url]);
 </script>
 ```
 
-You can try this example at jsFiddle.
+You can try this example [in jsFiddle](http://jsfiddle.net/ezy7rhhd/2).
 
 ### Alasql as a WebWorker
 
@@ -88,6 +88,12 @@ Another option - run alasql.worker() function:
     </script>
 ```
 Try this example [in jsFiddle](http://jsfiddle.net/agershun/rjwp8u48/3/).
+
+Also you can use Alasql in webworker just simply load it as a script:
+
+```js
+    importScripts('alasql.min.js');
+```
 
 ### Read and write Excel, CSV, TAB, JSON,  and text files to/from database
 
