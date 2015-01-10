@@ -6,6 +6,24 @@
 //
 */
 
+/**
+	Google Spreadsheet reader
+ */
+alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
+	var res = [];
+
+	var opt = {headers:true, simpleSheet:true, key:key};
+	alasql.utils.extend(opt, opts);
+	opt.callback = function(data){
+		res = data;
+		if(cb) res = cb(res, idx, query);
+	};
+
+	Tabletop.init(opt);
+	return res;
+};
+
+
 alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	var opt = {};
 	alasql.utils.extend(opt, opts);

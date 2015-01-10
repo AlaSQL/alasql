@@ -14,28 +14,28 @@ describe('T-SQL Chapter 01',function(){
 		done();
 	});
 
-	a('test001.sql');
-	a('test002.sql');
-	a('test003.sql');
-	a('test004.sql');
-	a('test005.sql');
+	a('01/test001.sql');
+	a('01/test002.sql');
+	a('01/test003.sql');
+	a('01/test004.sql');
+	a('01/test005.sql');
 if(false) {
-	a('test006.sql');
+	a('01/test006.sql');
 }
-	a('test007.sql');
-	a('test008.sql');
-	a('test009.sql');
+	a('01/test007.sql');
+	a('01/test008.sql');
+	a('01/test009.sql');
 if(false) {
-	a('test010.sql');
-	a('test011.sql');
-	a('test012.sql');
-	a('test013.sql');
-	a('test014.sql');
-	a('test015.sql');
-	a('test016.sql');
-	a('test017.sql');
-	a('test018.sql');
-	a('test019.sql');
-	a('test020.sql');
+	a('01/test010.sql');
+	a('01/test011.sql');
+	a('01/test012.sql');
+	a('01/test013.sql');
+	a('01/test014.sql');
+	a('01/test015.sql');
+	a('01/test016.sql');
+	a('01/test017.sql');
+	a('01/test018.sql');
+	a('01/test019.sql');
+	a('01/test020.sql');
 }		
 });

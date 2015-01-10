@@ -44,6 +44,23 @@ Check Alasql vs other JavaScript SQL databases and data processing libraries:
 
 ## What is new?
 
+### Alasql and Google Spreadsheets (with Tabletop)
+
+Now Alasql can read data (and make other manipulations like grouping, filtering, or saving to XLSX) directly from Google Spreadsheets. It uses wonderful [Tabletop library](https://github.com/jsoma/tabletop).
+
+```html
+<script src='../../console/tabletop.js'></script>
+<script src='../../console/alasql.min.js'></script>
+<div id="res"></div>
+<script>
+    var url = 'https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=0AmYzu_s7QHsmdDNZUzRlYldnWTZCLXdrMXlYQzVxSFE&output=html';
+
+    alasql('SELECT * INTO HTML("#res",{headers:true}) FROM TABLETOP(?) ORDER BY category',[url]);
+</script>
+```
+
+You can try this example at jsFiddle.
+
 ### Alasql as a WebWorker
 
 Alasql can work as a webworker. Include alasql-worker.js and that is it: Alasql will work as a webworker.
@@ -632,6 +649,7 @@ You can check next version branches for new experimental features.
 
 1. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
 2. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because Alasql started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
+3. Functionality of FOREIGN KEY, UNIQUE INDEX and CHECK conctraints is not realized in fully.
 
 
 Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
@@ -647,7 +665,7 @@ Read my [to do](TODO.md) page
 
 ### FileSaver
 
-Alasql integrates FileSaver.js library inside for saving files locally in browsers.
+Alasql integrates [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally in browsers. Unfortunately, it cannot save files in Safari.
 
 ### Credits
 

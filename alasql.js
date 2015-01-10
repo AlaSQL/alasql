@@ -9410,7 +9410,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 
 alasql.into.HTML = function(selector, opts, data, columns, cb) {
 	var res = 1;
-	if(typeof exports == 'object') {
+	if(typeof exports != 'object') {
 		var opt = {};
 		alasql.utils.extend(opt, opts);
 
@@ -9453,7 +9453,7 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 			tbody.appendChild(tre);
 		};
 		alasql.utils.domEmptyChildren(sel);
-	//	console.log(tbe,columns);
+//		console.log(tbe,columns);
 		sel.appendChild(tbe);
 	}
 	if(cb) res = cb(res);
@@ -9622,6 +9622,24 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 // (c) 2014, Andrey Gershun
 //
 */
+
+/**
+	Google Spreadsheet reader
+ */
+alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
+	var res = [];
+
+	var opt = {headers:true, simpleSheet:true, key:key};
+	alasql.utils.extend(opt, opts);
+	opt.callback = function(data){
+		res = data;
+		if(cb) res = cb(res, idx, query);
+	};
+
+	Tabletop.init(opt);
+	return res;
+};
+
 
 alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	var opt = {};

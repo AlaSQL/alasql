@@ -3,14 +3,15 @@
 
 ## Next Versions
 
+SQL Examples -> http://en.wikibooks.org/wiki/SQL_Exercises
+
 * DECLARE @var type = expression;
 * DECLARE @var type, @var type...
 
 
 0. MS SQL compatibility
 * ROW_NUMBER() aggregator
-* BEGIN TRAN, COMMIT TRAN
-* N'string'
+* BEGIN TRAN, COMMIT TRAN, COMMIT WORK
 * DECLARE @var TABLE(coldefs)
 * Database names starting with #
 * INSERT INTO @aaa(cols) VALUES ()...
@@ -737,7 +738,6 @@ alasql.compile('SELECT * FROM ? WHERE {qty:[1,?]}'); - ParamValue
 #### Version 0.0.55 - "Types"
 
 * Type resolutions
-* AVG()
 * Third UNION order issue
 * Change xcolumns to ixcolumns for compatibility with Alfina (?)
 * Analyze results of SELECT with statement.query.columns...

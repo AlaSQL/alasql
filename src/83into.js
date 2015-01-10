@@ -57,7 +57,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 
 alasql.into.HTML = function(selector, opts, data, columns, cb) {
 	var res = 1;
-	if(typeof exports == 'object') {
+	if(typeof exports != 'object') {
 		var opt = {};
 		alasql.utils.extend(opt, opts);
 
@@ -100,7 +100,7 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 			tbody.appendChild(tre);
 		};
 		alasql.utils.domEmptyChildren(sel);
-	//	console.log(tbe,columns);
+//		console.log(tbe,columns);
 		sel.appendChild(tbe);
 	}
 	if(cb) res = cb(res);
