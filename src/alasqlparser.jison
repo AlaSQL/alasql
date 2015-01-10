@@ -202,6 +202,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'WHEN'                                          return 'WHEN'
 'WHERE'                                         return 'WHERE'
 'WHILE'                                         return 'WHILE'
+'WITH'                                          return 'WITH'
 
 /*
 [0-9]+											return 'NUMBER'
@@ -327,6 +328,7 @@ Statement
 	| Insert
 	| RenameTable
 	| Select
+	| WithSelect
 	| ShowCreateTable
 	| ShowColumns
 	| ShowDatabases
@@ -388,16 +390,22 @@ Statement
 
 /* WITH */
 
-WithSelectClause
-	: WITH WithTables Select
-		{ $$ = $3; }
-	| WITH RECURSIVE WithTables Select
-		{ $$ = $4; }
-	| Select
-		{ $$ = $1;}
+WithSelect
+	: WITH WithTablesList Select
+		{ $$ = yy.WithSelect({withs: $2, select:$3}); }
 	;
 
-WithTables :;
+WithTablesList
+	: WithTablesList COMMA WithTable
+		{ $1.push($3); $$=$1; }
+	| WithTable
+		{ $$ = [$1]; }
+	;
+
+WithTable
+	: Literal AS LPAR Select RPAR
+		{ $$ = {name:$1, select:$4}; }
+	;
 
 /* SELECT */
 

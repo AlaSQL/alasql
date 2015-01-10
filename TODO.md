@@ -3,11 +3,10 @@
 
 ## Next Versions
 
+0. WITH SELECT semantics
+
+
 SQL Examples -> http://en.wikibooks.org/wiki/SQL_Exercises
-
-* DECLARE @var type = expression;
-* DECLARE @var type, @var type...
-
 
 0. MS SQL compatibility
 * ROW_NUMBER() aggregator
@@ -20,7 +19,6 @@ SQL Examples -> http://en.wikibooks.org/wiki/SQL_Exercises
 * CREATE INDEX syntax
 * SET IDENTITY_INSERT table ON;
 * NUMERIC(a,b) data type and CONVERSION, MONEY, SMALLINT, BIGINT, NVARCHAR(MAX), DECIMAL(a,b)
-* CREATE VIEW
 * SYSDATETIME(), DATEADD(), DATEDIFF(), RIGHT(), LEFT(), CHAR(), ASCII(), ABS(), NEWID(), SUBSTRING()
 * CONSTRAINT CHECK(expression)
 * SET NOCOUNT OFF

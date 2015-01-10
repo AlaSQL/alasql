@@ -14,6 +14,7 @@
 * DECLARE with multiple variable definitions and initial value (DECLARE @one int = 123)
 * SET a->property->0->(1+1) = 100
 * Views: CREATE VIEW, DROP VIEW, SELECT FROM VIEW, JOIN VIEW
+* WITH SELECT syntax
 
 
 ### 0.0.36 "New Year version" (23.12.2014 - 08.01.2015)

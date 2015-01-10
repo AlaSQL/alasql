@@ -16,13 +16,9 @@
 
 ### Version "Ararat" 0.0.37 (20.01.2015)
 
-* DECLARE @a = expr, @b = expr
-* SET a->b = 10;
-* VIEWS
 * WITH
 * Float numbers like 10e20
 * Wikibooks SQL samples as tests
- * alasql("SELECT * FROM GSHEET(?,{})",[key],function(){});
 
 ### Version "Armenia" 0.0.40 (20.01.2015)
 
