@@ -15,7 +15,7 @@
 * SET a->property->0->(1+1) = 100
 * Views: CREATE VIEW, DROP VIEW, SELECT FROM VIEW, JOIN VIEW
 * Multi line comments /* */
-* WITH SELECT syntax 
+* WITH SELECT statement
 
 
 ### 0.0.36 "Happy New Year" (23.12.2014 - 08.01.2015)

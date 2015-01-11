@@ -2774,9 +2774,9 @@ alasql.utils.uncomment = function uncomment(str) {
 			} else if (str[i] == '[' && str[i-1] != "@") {
 				quote = true;
 				quoteSign = ']';
-			} else if (str[i] === '-' &&  str[i + 1] === '-') {
-				str[i] = '';
-				lineComment = true;
+			// } else if (str[i] === '-' &&  str[i + 1] === '-') {
+			// 	str[i] = '';
+			// 	lineComment = true;
 			} else if (str[i] === '/' && str[i + 1] === '*') {
 					// Do not filter out conditional comments /*@ ... */
 					// and comments marked as protected /*! ... */

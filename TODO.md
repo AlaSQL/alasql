@@ -3,7 +3,11 @@
 
 ## Next Versions
 
-0. WITH SELECT semantics
+5. Add TRIM to CSV reading procedure
+
+if(trim(s) = +s)
+
+7. CSV/TAB export with headers:["header1","header2"] for arrays
 
 
 SQL Examples -> http://en.wikibooks.org/wiki/SQL_Exercises
@@ -22,23 +26,16 @@ SQL Examples -> http://en.wikibooks.org/wiki/SQL_Exercises
 * SYSDATETIME(), DATEADD(), DATEDIFF(), RIGHT(), LEFT(), CHAR(), ASCII(), ABS(), NEWID(), SUBSTRING()
 * CONSTRAINT CHECK(expression)
 * SET NOCOUNT OFF
-* WITH (Select) AS Literal, ... Select
 
 BIG
 * OVER
 * PIVOT
 * CROSS APPLY
 
-1. SET a->b = 10;
 2. Fluent interface 
 3. Break Continue Loop
 4. If Else Syntax bug
 
-5. Add TRIM to CSV reading procedure
-
-if(trim(s) = +s)
-
-7. CSV/TAB export with headers:["header1","header2"] for arrays
 
 8. FOREIGN KEYS
 9. Transactions
@@ -73,13 +70,6 @@ SELECT COUNT(*) FROM Orders WHERE... GROUP BY customerid???
 3. clean the code - remove comments and unnecessary functions
 
 
-
-
-
-
-
-
-
 0. 
 set nocount off
 object_id(tableid)
@@ -108,7 +98,6 @@ UNPIVOT
 
 
 group by all
-COUNT(expression)  count if not null
 UPDATE dbo.T1 SET c1 = c1 + (SELECT MAX(c1) FROM dbo.T1);
 
 1. BIT_AND (&), BIT_OR(|), BIT_XOR(^), STD, STDDEV_POP, STDDEV_SAMP, VAR_POP, VAR_SAMP, VAR
