@@ -392,7 +392,7 @@ Statement
 
 WithSelect
 	: WITH WithTablesList Select
-		{ $$ = yy.WithSelect({withs: $2, select:$3}); }
+		{ $$ = new yy.WithSelect({withs: $2, select:$3}); }
 	;
 
 WithTablesList

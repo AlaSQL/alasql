@@ -111,7 +111,7 @@ case 10:
  this.$ = undefined; 
 break;
 case 51:
- this.$ = yy.WithSelect({withs: $$[$0-1], select:$$[$0]}); 
+ this.$ = new yy.WithSelect({withs: $$[$0-1], select:$$[$0]}); 
 break;
 case 52:
  $$[$0-2].push($$[$0]); this.$=$$[$0-2]; 

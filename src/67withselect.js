@@ -1,26 +1,49 @@
 /*
 //
-// CREATE VIEW for Alasql.js
-// Date: 03.11.2014
-// (c) 2014, Andrey Gershun
+// WITH SELECT for Alasql.js
+// Date: 11.01.2015
+// (c) 2015, Andrey Gershun
 //
 */
 
-/*
-yy.CreateView = function (params) { return yy.extend(this, params); }
-yy.CreateView.prototype.toString = function() {
-	var s = 'CREATE VIEW';
-	s += ' '+this.view.toString();
-	if(this.columns) { 
-		var ss = this.columns.map(function(col){
-			return col.toString();
-		});
-		s += ' ('+ss.join(',')+')';
-	}
-	s += ' AS '+this.select.toString();
+
+yy.WithSelect = function (params) { return yy.extend(this, params); }
+yy.WithSelect.prototype.toString = function() {
+	var s = K('WITH')+' ';
+	s += this.withs.map(function(w){
+		return L(w.name)+' '+K('AS')+' ('+w.select.toString()+')';
+	}).join(',')+' ';
+	s += this.select.toString();
 	return s;
 };
 
+yy.WithSelect.prototype.execute = function (databaseid,params,cb) {
+	var self = this;
+	// Create temporary tables
+	var savedTables = [];
+	self.withs.forEach(function(w){
+		savedTables.push(alasql.databases[databaseid].tables[w.name]);
+		var tb = alasql.databases[databaseid].tables[w.name] = new Table({tableid:w.name});
+		tb.data = w.select.execute(databaseid,params);
+	});
+
+	var res = 1;
+	res = this.select.execute(databaseid,params,function(data){
+		// Clear temporary tables
+//		setTimeout(function(){
+			self.withs.forEach(function(w,idx){
+				if(savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx] ;
+				else delete alasql.databases[databaseid].tables[w.name];
+			});			
+//		},0);
+
+		if(cb) data = cb(data);
+		return data;
+	});
+	return res;
+};
+
+/*
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateView.prototype.execute = function (databaseid) {
