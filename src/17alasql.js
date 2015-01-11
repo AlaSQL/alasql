@@ -18,7 +18,9 @@ alasql.parser = parser;
  @param {string} sql SQL statement
  @return {object} AST (Abstract Syntax Tree)
  */
-alasql.parse = parser.parse.bind(parser); // Shortcut
+alasql.parse = function(sql) {
+	return parser.parse(alasql.utils.uncomment(sql));
+}; // Shortcut
 
 // Database Engines
 /**
