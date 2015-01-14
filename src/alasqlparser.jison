@@ -183,7 +183,9 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
+'TD'											return 'TD'
 'TEXTSTRING'									return 'TEXTSTRING'
+'TH'											return 'TH'
 'THEN'											return 'THEN'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
@@ -727,10 +729,20 @@ OffsetClause
 	;
 
 ResultColumns
-	: ResultColumns COMMA ResultColumn
-		{ $1.push($3); $$ = $1; }
-	| ResultColumn
-		{ $$ = [$1]; }
+	: ResultColumns COMMA ResultColumn TDTH
+		{ yy.extend($3,$4); $1.push($3); $$ = $1; }
+	| ResultColumn TDTH
+		{ yy.extend($1,$2); $$ = [$1]; }
+	;
+
+TDTH
+	: { $$ = undefined }
+	| TD Expression
+		{ $$ = {td:$2}; }	
+	| TH Expression
+		{ $$ = {th:$2}; }
+	| TH Expression TD Expression
+		{ $$ = {th:$2,td:$4}; }
 	;
 
 ResultColumn

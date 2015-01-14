@@ -122,7 +122,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 							dbtypeid:tcol.dbtypeid, 
 							dbsize:tcol.dbsize, 
 							dbpecision:tcol.dbprecision,
-							dbenum: tcol.dbenum
+							dbenum: tcol.dbenum,
 						};
 //						console.log(2);
 						query.columns.push(coldef);
@@ -151,7 +151,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				ss.push("'"+escapeq(col.as)+"':1");
 				// Nothing
 			}
-			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = true;
+			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
 
 //			else if (col.aggregatorid == 'MAX') {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))

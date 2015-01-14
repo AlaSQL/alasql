@@ -3,6 +3,21 @@
 
 ## Next Versions
 
+1. Create bower package
+
+2. Write a letter to major JS bloggers
+
+3. Small bug a->(1+1) toString() do not show parenthis
+http://jsfiddle.net/5nmopn3d/
+
+3. Float numbers like 10e20
+
+4. Add TH and TD classifiers {textContent:'Name'} for HTML
+
+SELECT * INTO HTML("#res",{headers:[],columns:[]);
+SELECT col1 TH {width:"100px"} TD {style:{color:col1>0?"green":"red"}} \
+      INTO HTML("#res") FROM ?
+
 5. Add TRIM to CSV reading procedure
 
 if(trim(s) = +s)
@@ -652,7 +667,7 @@ SELECT GROUP(a/b), SUM(a) FROM
 #### Version 0.0.26 - "CAST and CONVERT"
 
 * CAST with more type conversions (dates)
-* Float numbers like 10e20
+
 * xcolumns to ixcolumns for compatibility with Alfina
 * Bugs
 
