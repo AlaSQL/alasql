@@ -3,6 +3,17 @@
 
 ## Next Versions
 
+1. 
+CREATE FILESTORAGE DATABASE IF NOT EXISTS test1("filename.json");
+ATTACH FILESTORAGE DATABASE test1("filename.json");
+USE test1;
+SET AUTOCOMMIT OFF;
+
+COMMIT TRANSACTION;
+DETACH DATABASE test1;
+
+2. Cordova readFile, saveFile if(cordova && cordova.org && ...)
+
 1. Create bower package
 
 2. Write a letter to major JS bloggers
