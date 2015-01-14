@@ -110,8 +110,9 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	var res = 1;
 	var s = JSON.stringify(data);
-	alasql.utils.saveFile(filename,s);
-	if(cb) res = cb(res);
+	alasql.utils.saveFile(filename,s, function(){
+		if(cb) res = cb(res);
+	});
 	return res;
 };
 

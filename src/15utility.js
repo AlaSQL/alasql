@@ -105,6 +105,31 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
               success(data.toString());
             }
         }
+    } else if(cordova && cordova.file) {
+        // console.log('CORDOVA'+path);
+        //         console.log(cordova);
+//         console.log('CORDOVA'+path);
+
+        // Cordova
+        var paths = path.split('/');
+        var filename = paths[paths.length-1];
+        var dirpath = path.substr(0,path.length-filename.length);
+ //       console.log('CORDOVA',filename,dirpath);
+ //return success('[{"a":"'+filename+'"}]');
+
+        window.resolveLocalFileSystemURL(dirpath, function(dir) {
+            dir.getFile(filename, null, function(file) {
+                file.file(function(file) {
+                    var reader = new FileReader();
+ //                   console.log('READ FILE 2');
+                    reader.onloadend = function(e) {
+//                    console.log('READ FILE 3',this.result);
+                        success(this.result);
+                    };
+                    reader.readAsText(file);
+                });
+            });
+        });    
     } else {
 
         if(typeof path == "string") {
@@ -207,14 +232,72 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     if(!path) {
         alasql.options.stdout = true;
         console.log(data);
+        cb();
     } else {
         if(typeof exports == 'object') {
             // For Node.js
             var fs = require('fs');
             var data = fs.writeFileSync(path,data);
+        } else if(cordova && cordova.file) {
+            console.log('saveFile 1');
+        // Cordova
+            var paths = path.split('/');
+            var filename = paths[paths.length-1];
+            var dirpath = path.substr(0,path.length-filename.length);
+     //       console.log('CORDOVA',filename,dirpath);
+     //return success('[{"a":"'+filename+'"}]');
+
+            window.resolveLocalFileSystemURL(dirpath, function(dir) {
+            console.log('saveFile 2');
+
+                dir.getFile(filename, {create:true}, function(file) {
+            console.log('saveFile 3');
+
+//                    file.file(function(file) {
+//            console.log('saveFile 4');
+
+                        file.createWriter(function(fileWriter) {
+        
+//        fileWriter.seek(fileWriter.length);
+        
+                            var blob = new Blob([data], {type:'text/plain'});
+                            fileWriter.write(blob);
+                            fileWriter.onwriteend = function(){
+                                cb();
+                            };
+//                        console.log("ok, in theory i worked");
+                        });          
+
+/*
+                        // Corodva
+                        function writeFinish() {
+                            // ... your done code here...
+                            return cb()
+                        };
+                        var written = 0;
+                          var BLOCK_SIZE = 1*1024*1024; // write 1M every time of write
+                          function writeNext(cbFinish) {
+                            var sz = Math.min(BLOCK_SIZE, data.length - written);
+                            var sub = data.slice(written, written+sz);
+                            writer.write(sub);
+                            written += sz;
+                            writer.onwrite = function(evt) {
+                              if (written < data.length)
+                                writeNext(cbFinish);
+                              else
+                                cbFinish();
+                            };
+                          }
+                          writeNext(writeFinish);
+                        }
+*/                        
+//                     });
+                });
+            });
         } else {
             var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-            saveAs(blob, path);        
+            saveAs(blob, path);
+            cb();        
         }
     }
 };
