@@ -96,6 +96,7 @@ gulp.task('js-merge', function () {
     './src/91indexeddb.js',
     './src/92localstorage.js',
     './src/93sqlite.js',
+    './src/94filestorage.js',
     './src/97saveas.js',
     './src/FileSaver.js',
    	'./src/98finish.js',

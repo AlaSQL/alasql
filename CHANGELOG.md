@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.0.37 "Ararat" (09.01.2015 - 11.01.2015)
+### 0.0.37 "Ararat" (09.01.2015 - 15.01.2015)
 
 * Added test for "? IN @(?)"
 * Convert  -> correct DATE("20141008")
@@ -16,6 +16,10 @@
 * Views: CREATE VIEW, DROP VIEW, SELECT FROM VIEW, JOIN VIEW
 * Multi line comments /* */
 * WITH SELECT statement
+* Appach Cordova loadFile and saveFile procedures
+* Test Alasql with Cordova on iPhone, iOS emulator, and Android emulator, Windows 8
+* Fixed bug with npm install (bin directory)
+* Fixed bug in localStorage with local variable
 
 
 ### 0.0.36 "Happy New Year" (23.12.2014 - 08.01.2015)

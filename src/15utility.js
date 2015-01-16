@@ -221,6 +221,34 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 };
 
 
+var fileExists = utils.fileExists = function(path,callback){
+    if(typeof exports == 'object') {
+        var fs = require('fs');
+        fs.exists(path,callback);
+    } else if(cordova && cordova.file) {
+        try {
+            // Cordova
+            var paths = path.split('/');
+            var filename = paths[paths.length-1];
+            var dirpath = path.substr(0,path.length-filename.length);
+
+            window.resolveLocalFileSystemURL(dirpath, function(dir) {
+                dir.getFile(filename, null, function(file) {
+                    file.file(function(file) {
+                        callback(true);
+                    });
+                });
+            });
+        } catch(err) {
+            callback(false);
+        };
+
+    } else {
+        // TODO Cordova, etc.
+        throw new Error('You can use exists() only in Node.js or Apach Cordova');
+    }
+};
+
 /**
   Save text file from anywhere
   @param {string} path File path
@@ -238,8 +266,9 @@ var saveFile = utils.saveFile = function(path, data, cb) {
             // For Node.js
             var fs = require('fs');
             var data = fs.writeFileSync(path,data);
+            cb();
         } else if(cordova && cordova.file) {
-            console.log('saveFile 1');
+//            console.log('saveFile 1');
         // Cordova
             var paths = path.split('/');
             var filename = paths[paths.length-1];

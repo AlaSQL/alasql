@@ -190,7 +190,7 @@ LS.commit = function(databaseid, cb) {
 //	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-	lsdb = {databaseid:lsdbid, tables:{}};
+	var lsdb = {databaseid:lsdbid, tables:{}};
 	if(db.tables) {
 		for(var tbid in db.tables) {
 			lsdb.tables[tbid] = {columns: db.tables[tbid].columns};
@@ -208,7 +208,7 @@ LS.rollback = function(databaseid, cb) {
 	db.dbversion++;
 //	console.log(db.dbversion)
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-	lsdb = LS.get(lsdbid);
+	var lsdb = LS.get(lsdbid);
 //	if(!alasql.options.autocommit) {
 		if(lsdb.tables){
 			for(var tbid in lsdb.tables) {

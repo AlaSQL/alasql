@@ -3,6 +3,14 @@
 
 ## Next Versions
 
+2. MERGE syntax (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
+1. FileStorage
+1. Win8.1
+
+OUTPUT (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
+3. REPLACE (http://dev.mysql.com/doc/refman/5.0/en/replace.html)
+
+
 1. 
 CREATE FILESTORAGE DATABASE IF NOT EXISTS test1("filename.json");
 ATTACH FILESTORAGE DATABASE test1("filename.json");
