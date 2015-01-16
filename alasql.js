@@ -2450,6 +2450,9 @@ var fileExists = utils.fileExists = function(path,callback){
         var fs = require('fs');
         fs.exists(path,callback);
     } else if(cordova && cordova.file) {
+        function fail(){
+            callback(false);            
+        }
         try {
             // Cordova
             var paths = path.split('/');
@@ -2460,11 +2463,11 @@ var fileExists = utils.fileExists = function(path,callback){
                 dir.getFile(filename, null, function(file) {
                     file.file(function(file) {
                         callback(true);
-                    });
-                });
-            });
+                    },fail);
+                },fail);
+            },fail);
         } catch(err) {
-            callback(false);
+            fail();
         };
 
     } else {
