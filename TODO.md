@@ -3,8 +3,9 @@
 
 ## Next Versions
 
+1. Create bower package
+
 2. MERGE syntax (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
-1. FileStorage
 1. Win8.1
 
 OUTPUT (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
@@ -20,9 +21,8 @@ SET AUTOCOMMIT OFF;
 COMMIT TRANSACTION;
 DETACH DATABASE test1;
 
-2. Cordova readFile, saveFile if(cordova && cordova.org && ...)
+2. Windows Cordova readFile, saveFile if(cordova && cordova.org && ...)
 
-1. Create bower package
 
 2. Write a letter to major JS bloggers
 

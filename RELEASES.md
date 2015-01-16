@@ -15,15 +15,22 @@
 
 ## Next Releases:
 
-### Version "Ararat" 0.0.37 (15.01.2015)
+### Version "Elbrus" 0.0.38 (20.01.2015)
 
+* Tests
+* Tests
+* Tests and Documentation!
+
+### Version "Everest" 0.0.39 (25.01.2015)
+
+* Bower
 * Float numbers like 10e20
 * CSV bug and headers
 * Autoincrement
 * SELECT INDEX, COLUMN, VALUE on column
 * Wikibooks SQL samples as tests
 
-### Version "Armenia" 0.0.40 (20.01.2015)
+### Version "Pacific Ocean" 0.0.40 (01.02.2015)
 
 * T-SQL compatibility and multiple SQL Tests
 * If-then-else JISON problem
@@ -32,7 +39,7 @@
 * API documentation with JsDoc
 * WorkerJS for Node (primarily for test)
 
-### Version "Sigirya" 0.0.45 (01.02.2015)
+### Version "Sigirya" 0.0.45 (05.02.2015)
 
 * package.json
 * Datatypes + CONVERT
