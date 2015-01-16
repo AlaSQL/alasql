@@ -2329,7 +2329,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
               success(data.toString());
             }
         }
-    } else if(cordova && cordova.file) {
+    } else if((typeof cordova == 'object') && cordova.file) {
         // console.log('CORDOVA'+path);
         //         console.log(cordova);
 //         console.log('CORDOVA'+path);
@@ -2449,7 +2449,7 @@ var fileExists = utils.fileExists = function(path,callback){
     if(typeof exports == 'object') {
         var fs = require('fs');
         fs.exists(path,callback);
-    } else if(cordova && cordova.file) {
+    } else if((typeof cordova == 'object') && cordova.file) {
         function fail(){
             callback(false);            
         }
@@ -2487,14 +2487,14 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     if(!path) {
         alasql.options.stdout = true;
         console.log(data);
-        cb();
+        if(cb) cb();
     } else {
         if(typeof exports == 'object') {
             // For Node.js
             var fs = require('fs');
             var data = fs.writeFileSync(path,data);
-            cb();
-        } else if(cordova && cordova.file) {
+            if(cb) cb();
+        } else if((typeof cordova == 'object') && cordova.file) {
 //            console.log('saveFile 1');
         // Cordova
             var paths = path.split('/');
@@ -2504,10 +2504,10 @@ var saveFile = utils.saveFile = function(path, data, cb) {
      //return success('[{"a":"'+filename+'"}]');
 
             window.resolveLocalFileSystemURL(dirpath, function(dir) {
-            console.log('saveFile 2');
+//            console.log('saveFile 2');
 
                 dir.getFile(filename, {create:true}, function(file) {
-            console.log('saveFile 3');
+//            console.log('saveFile 3');
 
 //                    file.file(function(file) {
 //            console.log('saveFile 4');
@@ -2519,7 +2519,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                             var blob = new Blob([data], {type:'text/plain'});
                             fileWriter.write(blob);
                             fileWriter.onwriteend = function(){
-                                cb();
+                                if(cb) cb();
                             };
 //                        console.log("ok, in theory i worked");
                         });          
@@ -2553,7 +2553,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         } else {
             var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
             saveAs(blob, path);
-            cb();        
+            if(cb) cb();        
         }
     }
 };
