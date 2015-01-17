@@ -17,7 +17,10 @@ var rollup = function (a,query) {
 	for(var g=0;g<glen+1;g++) {
 		var ss = [];
 		for(var i=0;i<glen;i++) {
-			if(mask&(1<<i)) ss.push(a[i]);
+			var aaa = a[i].toString()+'\t'
+				+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+
+			if(mask&(1<<i)) ss.push(aaa);
 		}
 		rr.push(ss);
 		mask = (mask<<1)+1; 
@@ -36,6 +39,10 @@ var cube = function (a,query) {
 		for(var i=0;i<glen;i++) {
 			if(g&(1<<i)) //ss.push(a[i]);
 				//ss = cartes(ss,decartes(a[i]));
+
+//				var aaa = a[i].toString()+'\t'
+//					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+
 				ss = ss.concat(decartes(a[i],query));
 				//
 		}

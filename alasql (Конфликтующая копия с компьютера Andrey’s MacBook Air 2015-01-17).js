@@ -5560,7 +5560,7 @@ function optimizeWhereJoin (query, ast) {
  Compile group of statements
  */
 yy.Select.prototype.compileGroup = function(query) {
-//	console.log(this.group);
+	console.log(this.group);
 	var self = this;
 	var tableid = query.sources[0].alias;
 	var defcols = query.defcols;
@@ -5647,8 +5647,6 @@ if(false) {
 		}).join('');
 
 		var neggroup = arrayDiff(allgroups,agroup);
-
-//		console.log(neggroup);
 
 		s += neggroup.map(function(col2){			
 			var columnid = col2.split('\t')[0];
@@ -6205,10 +6203,7 @@ var rollup = function (a,query) {
 	for(var g=0;g<glen+1;g++) {
 		var ss = [];
 		for(var i=0;i<glen;i++) {
-			var aaa = a[i].toString()+'\t'
-				+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
-
-			if(mask&(1<<i)) ss.push(aaa);
+			if(mask&(1<<i)) ss.push(a[i]);
 		}
 		rr.push(ss);
 		mask = (mask<<1)+1; 
@@ -6227,10 +6222,6 @@ var cube = function (a,query) {
 		for(var i=0;i<glen;i++) {
 			if(g&(1<<i)) //ss.push(a[i]);
 				//ss = cartes(ss,decartes(a[i]));
-
-//				var aaa = a[i].toString()+'\t'
-//					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
-
 				ss = ss.concat(decartes(a[i],query));
 				//
 		}

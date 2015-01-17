@@ -10,6 +10,7 @@
  Compile group of statements
  */
 yy.Select.prototype.compileGroup = function(query) {
+//	console.log(this.group);
 	var self = this;
 	var tableid = query.sources[0].alias;
 	var defcols = query.defcols;
@@ -96,6 +97,8 @@ if(false) {
 		}).join('');
 
 		var neggroup = arrayDiff(allgroups,agroup);
+
+//		console.log(neggroup);
 
 		s += neggroup.map(function(col2){			
 			var columnid = col2.split('\t')[0];
