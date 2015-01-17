@@ -1,1 +1,1 @@
-if((typeof exports != 'object') && (typeof importScripts != 'function')) {
+if((typeof exports != 'object') && (typeof importScripts != 'function') && (typeof document == 'object')) {

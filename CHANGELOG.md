@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.0.38 "Ararat" (17.01.2015 - .01.2015)
+
+* Additional wrapper for FileSaver to work with R and V8 (http://cran.r-project.org/web/packages/V8/vignettes/v8_intro.html)
+
+
+
 ### 0.0.37 "Ararat" (09.01.2015 - 16.01.2015)
 
 * Added test for "? IN @(?)"

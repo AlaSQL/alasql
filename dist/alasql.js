@@ -2329,12 +2329,37 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
               success(data.toString());
             }
         }
-    } else if((typeof cordova == 'object') && cordova.file) {
+    } else if(typeof cordova == 'object') {
         // console.log('CORDOVA'+path);
         //         console.log(cordova);
 //         console.log('CORDOVA'+path);
 
         // Cordova
+
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
+
+//                     var reader = new FileReader();
+//  //                   console.log('READ FILE 2');
+//                     reader.onloadend = function(e) {
+// //                    console.log('READ FILE 3',this.result);
+//                         success(this.result);
+//                     };
+//                     reader.readAsText(file);
+
+                fileEntry.file(function(file){
+                    var fileReader = new FileReader();
+                    fileReader.onloadend = function(e){
+                        success(this.result);
+                    };
+                    fileReader.readAsText(file);
+                });
+                // });          
+            });
+        });
+
+/*
+
         var paths = path.split('/');
         var filename = paths[paths.length-1];
         var dirpath = path.substr(0,path.length-filename.length);
@@ -2354,6 +2379,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 });
             });
         });    
+*/
     } else {
 
         if(typeof path == "string") {
@@ -2445,11 +2471,38 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 };
 
 
-var fileExists = utils.fileExists = function(path,callback){
+var removeFile = utils.removeFile = function(path,cb) {
     if(typeof exports == 'object') {
         var fs = require('fs');
-        fs.exists(path,callback);
-    } else if((typeof cordova == 'object') && cordova.file) {
+        fs.remove(path,cb);
+    } else if(typeof cordova == 'object') {
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
+                fileEntry.remove(cb);
+                if(cb) cb();
+            }, function(){
+                if(cb) cb();
+            });
+        });
+    } else {
+        throw new Error('You can remove files only in Node.js and Apache Cordova');
+    };
+};
+
+
+var fileExists = utils.fileExists = function(path,cb){
+    if(typeof exports == 'object') {
+        var fs = require('fs');
+        fs.exists(path,cb);
+    } else if(typeof cordova == 'object') {
+        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
+                cb(true);
+            }, function(){
+                cb(false);
+            });
+        });
+/*        
         function fail(){
             callback(false);            
         }
@@ -2469,7 +2522,7 @@ var fileExists = utils.fileExists = function(path,callback){
         } catch(err) {
             fail();
         };
-
+*/
     } else {
         // TODO Cordova, etc.
         throw new Error('You can use exists() only in Node.js or Apach Cordova');
@@ -2494,6 +2547,22 @@ var saveFile = utils.saveFile = function(path, data, cb) {
             var fs = require('fs');
             var data = fs.writeFileSync(path,data);
             if(cb) cb();
+        } else if(typeof cordova == 'object') {
+            // For Apache Cordova
+            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+//                alasql.utils.removeFile(path,function(){
+                    fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
+                        fileEntry.createWriter(function(fileWriter) {
+                            fileWriter.onwriteend = function(){
+                                if(cb) cb();
+                            };
+                            fileWriter.write(data);
+                        });                                  
+                    });
+ //               });
+            });
+
+/*
         } else if((typeof cordova == 'object') && cordova.file) {
 //            console.log('saveFile 1');
         // Cordova
@@ -2523,7 +2592,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                             };
 //                        console.log("ok, in theory i worked");
                         });          
-
+*/
 /*
                         // Corodva
                         function writeFinish() {
@@ -2548,14 +2617,14 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                         }
 */                        
 //                     });
-                });
-            });
+//                });
+//            });
         } else {
             var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
             saveAs(blob, path);
             if(cb) cb();        
         }
-    }
+    };
 };
 
 
@@ -11549,7 +11618,7 @@ FS.rollback = function(databaseid, cb) {
 
 
 
-if((typeof exports != 'object') && (typeof importScripts != 'function')) {
+if((typeof exports != 'object') && (typeof importScripts != 'function') && (typeof document == 'object')) {
 
 
 /* FileSaver.js
