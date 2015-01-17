@@ -1,11 +1,11 @@
 # Alasql.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.37 "Ararat" Date: January 16, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.38 "Elbrus" Date: January 17, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser and Node.js. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory or use IndexedDB and localStorage as a persistent storage.
+Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
-Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 200Kb) to your project and call 
-```alasql()``` function with SQL statement: 
+Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb) to your project and call 
+```alasql()``` function with SQL statement inside: 
 
 ```html
     <script src="alasql.min.js"></script>  
@@ -27,10 +27,10 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 ## Why Alasql?
 
 * Alasql was written with pure JavaScript and does not use WebSQL database. 
-* Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
-* Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android.
+* Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, VIEWs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
+* Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android, plus Apache Cordova.
 * Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavaScript and NoSQL databases
-* Alasql supports IndexedDB and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)
+* Alasql supports file, IndexedDB, and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)
 * Plus some [JavaScript sugar](#Sugar)
 * Alasql is fast, because it uses some optimization methods. 
 
