@@ -197,7 +197,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		        		var r = {};
 		        		hs.forEach(function(h,idx){
 		        			r[h] = a[idx];
-							if(r[h] == +r[h]) r[h] = +r[h];
+							if(r[h].trim() == +r[h]) r[h] = +r[h];
 		        		});
 						rows.push(r);
 					}
@@ -206,7 +206,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	        		var r = {};
 	        		hs.forEach(function(h,idx){
 	        			r[h] = a[idx];
-						if(r[h] == +r[h]) r[h] = +r[h];
+						if(r[h].trim() == +r[h]) r[h] = +r[h];
 	        		});
 	        		rows.push(r);
 	        	}

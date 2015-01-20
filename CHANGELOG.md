@@ -3,6 +3,7 @@
 ### 0.0.39 "ELbrus" (17.01.2015 - .01.2015)
 
 * `JavaScript()` expressions and statements SELECT `Math.random()*100`
+* Added conversion to number for strings like: ' 123 '
 
 ### 0.0.38 "ELbrus" (17.01.2015 - 17.01.2015)
 
