@@ -45,6 +45,23 @@ yy.Expression.prototype.compile = function(context, tableid, defcols){
 };
 
 
+yy.JavaScript = function(params) { return yy.extend(this, params); };
+yy.JavaScript.prototype.toString = function() {
+	var s = '`'+this.value+'`';
+	return s;
+};
+
+yy.JavaScript.prototype.toJavaScript = function(context, tableid, defcols) {
+//	console.log('Expression',this);
+	return '('+this.value+')';
+};
+yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
+	var res = 1;
+	var expr =  new Function("params,alasql",this.value);
+	expr(params,alasql);
+	if(cb) res = cb(res);
+	return res;
+}
 
 
 yy.Literal = function (params) { return yy.extend(this, params); }

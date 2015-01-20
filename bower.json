@@ -1,0 +1,17 @@
+{
+  "name": "alasql",
+  "description":"JavaScript SQL database library",
+  "version": "0.0.38",
+  "license": "MIT",
+  "keywords": ["javascript","sql","database","indexeddb","excel","localstorage"],
+  "authors": ["Andrey Gershun <agershun@gmail.com>"],
+  "homepage": "alasql.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agershun/alasql.git"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}

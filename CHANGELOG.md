@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.39 "ELbrus" (17.01.2015 - .01.2015)
+
+* `JavaScript()` expressions and statements SELECT `Math.random()*100`
+
 ### 0.0.38 "ELbrus" (17.01.2015 - 17.01.2015)
 
 * Additional wrapper for FileSaver to work with R and V8 (http://cran.r-project.org/web/packages/V8/vignettes/v8_intro.html)

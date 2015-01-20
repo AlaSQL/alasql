@@ -12,6 +12,7 @@
 %options case-insensitive
 %%
 
+\`[^\`]+\`						return 'JAVASCRIPT'
 \[\?\]							return 'BRAQUESTION'
 '@['							return 'ATLBRA'
 \[([^\]])*?\]					return 'BRALITERAL'
@@ -344,6 +345,7 @@ Statement
 	| UseDatabase
 	| Update
 	| Help
+	| JavaScript
 
 	| Source
 	| Assert
@@ -830,7 +832,14 @@ Expression
 			yy.queries.push($2);
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
-		}		
+		}
+	| JavaScript
+		{$$ = $1}
+	;
+
+JavaScript
+	: JAVASCRIPT
+		{ $$ = new yy.JavaScript({value:$1.substr(1,$1.length-2)}); }		
 	;
 
 NewClause

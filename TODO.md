@@ -3,6 +3,18 @@
 
 ## Next Versions
 
+1. New presentation about Alasql
+1. Test with Ionic Framwork
+2. CREATE FILESTORAGE DATABASE IF NOT EXISTS a("filename")
+2. CREATE MEMORY DATABASE alias for CREATE DATABSE
+3. CREATE FILE DATABASE / CREATE FILESTORAGE / CREATE PERSISTENT DATABASE
+4. Add custom read-write parser to FILE: 
+CREATE FILE DATABASE a("a.myjson", {from:"MYJSON", into:"MYJSON"})
+5. Check IF FILEEXISTS("a.json") BEGIN ... END function 
+6. Fix WinPhone utils
+7. Pass http://sqlite.org/sqllogictest/doc/trunk/about.wiki
+8. Extended test FILE database with AUTOCOMMIT OFF mode
+
 1. Create bower package
 
 2. MERGE syntax (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
