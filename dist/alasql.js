@@ -10076,7 +10076,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 
 	if(headers && !(headers instanceof Array)) {
 		headers = [];
-		var ths = sel.querySelector("thead tr").childNodes;
+		var ths = sel.querySelector("thead tr").children;
 		for(var i=0;i<ths.length;i++){
 			if(!(ths.item(i).style && ths.item(i).style.display == "none" && opt.skipdisplaynone)) {
 				headers.push(ths.item(i).textContent);
@@ -10090,10 +10090,10 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	var trs = sel.querySelectorAll("tbody tr");
 
 	for(var j=0;j<trs.length;j++) {
-		var tds = trs.item(j).childNodes;
+		var tds = trs.item(j).children;
 		var r = {};
 		for(var i=0;i<tds.length;i++){
-			if(!(ths.item(i).style && tds.item(i).style.display == "none" && opt.skipdisplaynone)) {
+			if(!(tds.item(i).style && tds.item(i).style.display == "none" && opt.skipdisplaynone)) {
 				if(headers) {
 					r[headers[i]] = tds.item(i).textContent;
 				} else {
