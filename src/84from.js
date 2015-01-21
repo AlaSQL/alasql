@@ -30,7 +30,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 
 	var sel = document.querySelector(selector);
 	if(!sel && sel.tagName != "TABLE") {
-		throw new Error('Selected HTML element is not TABLE');
+		throw new Error('Selected HTML element is not a TABLE');
 	};	
 
 	var res = [];
@@ -40,7 +40,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		headers = [];
 		var ths = sel.querySelector("thead tr").childNodes;
 		for(var i=0;i<ths.length;i++){
-			if(!(ths.item(i).style.display == "none" && opt.skipdisplaynone)) {
+			if(!(ths.item(i).style && ths.item(i).style.display == "none" && opt.skipdisplaynone)) {
 				headers.push(ths.item(i).textContent);
 			} else {
 				headers.push(undefined);
@@ -55,7 +55,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		var tds = trs.item(j).childNodes;
 		var r = {};
 		for(var i=0;i<tds.length;i++){
-			if(!(tds.item(i).style.display == "none" && opt.skipdisplaynone)) {
+			if(!(ths.item(i).style && tds.item(i).style.display == "none" && opt.skipdisplaynone)) {
 				if(headers) {
 					r[headers[i]] = tds.item(i).textContent;
 				} else {
