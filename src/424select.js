@@ -246,6 +246,9 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 				s += 'g[\''+col.columnid+'\'];';
 			} else {
 				s += col.toJavaScript('g','')+';';				
+//				s += 'g[\''+col.toString()+'\'];';
+//				s += 'g[\''+colas+'\'];';
+//				console.log(s);
 			}
 //			s += col.toJavaScript('g','')+';';
 //console.log(colas,query.removeKeys);

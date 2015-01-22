@@ -114,7 +114,7 @@ yy.Op.prototype.toString = function() {
 	}
 	if(this.op == '->') {
 		var s = this.left.toString()+"->";
-		console.log(this.right);
+//		console.log(this.right);
 		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += '(';
 		s += this.right.toString();
 		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += ')';
@@ -223,7 +223,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.op == 'IN') {
 		if(this.right instanceof yy.Select ) {
-			var s = '(this.query.queriesdata['+this.queriesidx+'].indexOf(';
+			var s = '(';
+//			s += 'this.query.queriesdata['+this.queriesidx+']';
+			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s += '.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
 		} else if(this.right instanceof Array ) {
@@ -243,7 +246,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.op == 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
-			var s = '(this.query.queriesdata['+this.queriesidx+'].indexOf(';
+			var s = '('
+				//this.query.queriesdata['+this.queriesidx+']
+			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s +='.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else if(this.right instanceof Array ) {
@@ -257,7 +263,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.allsome == 'ALL') {
 		if(this.right instanceof yy.Select ) {
-			var s = 'this.query.queriesdata['+this.queriesidx+'].every(function(b){return (';
+//			var s = 'this.query.queriesdata['+this.queriesidx+']';
+			var s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+
+			s +='.every(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
@@ -271,7 +280,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
 		if(this.right instanceof yy.Select ) {
-			var s = 'this.query.queriesdata['+this.queriesidx+'].some(function(b){return (';
+//			var s = 'this.query.queriesdata['+this.queriesidx+']';
+			var s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s+='.some(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {

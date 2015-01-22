@@ -3,6 +3,7 @@ function queryfn(query,oldscope,cb, A,B) {
 	var ms;
 		query.sourceslen = query.sources.length;
 		var slen = query.sourceslen;
+		query.query = query; // TODO Remove to prevent memory leaks
 		query.A = A;
 		query.B = B;
 //	console.log(arguments);
@@ -27,8 +28,12 @@ function queryfn(query,oldscope,cb, A,B) {
 // console.log(q);
 			q.query.params = query.params;
 //			query.queriesdata[idx] = 
-			queryfn(q.query,null,queryfn2,(-idx-1),query);
 
+	if(false) {
+			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);
+	} else {
+			queryfn2([],(-idx-1),query);
+	}
 
 //			console.log(27,q);
 
@@ -95,6 +100,7 @@ function queryfn2(data,idx,query) {
 		}
 	} else {
 		// subqueries
+//		console.log("queriesdata",data, flatArray(data));
 		query.queriesdata[-idx-1] = flatArray(data);
 //		console.log(98,query.queriesdata);
 //		console.log(79,query.queriesdata);

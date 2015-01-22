@@ -4,14 +4,31 @@
 // (c) 2014, Andrey Gershun
 //
 
+/** Standard JavaScript data types */
 
+alasql.fn.Date = Object;
 alasql.fn.Date = Date;
 alasql.fn.Number = Number;
 alasql.fn.String = String;
 alasql.fn.Boolean = Boolean;
 
-
+/** Extend Object with properties */
 stdfn.EXTEND = alasql.utils.extend;
+
+/** 
+ Return first non-null argument
+ See https://msdn.microsoft.com/en-us/library/ms190349.aspx
+*/
+stdfn.COALESCE = function() {
+	for(var i=0;i<arguments.length;i++) {
+		if(typeof arguments[i] != 'undefined') {
+			return arguments[i];
+		}
+	}
+	return undefined;
+}
+
+
 
 stdfn.OBJECT_ID = function(objid){
 	return !!alasql.tables[objid];

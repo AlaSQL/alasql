@@ -5,6 +5,9 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
+if(typeof exports === 'object') {
+
+
 describe('Test 225 File Storage', function() {
     it("1. CREATE FILE DATABASE", function(done) {
 
@@ -30,4 +33,6 @@ describe('Test 225 File Storage', function() {
 		});
     });
 });
+
+}
 

@@ -6,7 +6,6 @@
 3. IF problem, UNION bug, merge algorithms, utilities, Prettify, Console, Alacon
 4. Primary Key/Foreign Key/Unique Index/Autoincrement/Default
 5. Transactions
-
 6. PIVOT, UNPIVOT, GROUP BY TOTAL, DETAIL, GROUP BY HIERARCHY
 7. WebSQL and pass-thru databases, better support of with IndexedDB and NeDB, WebWorkers
 8. SYNC, optimiztic blocking
@@ -15,22 +14,16 @@
 
 ## Next Releases:
 
-### Version "Elbrus" 0.0.38 (20.01.2015)
+### Version "Sapsan" 0.0.40 (25.01.2015)
 
-* Tests
-* Tests
-* Tests and Documentation!
-
-### Version "Everest" 0.0.39 (25.01.2015)
-
-* Bower
-* Float numbers like 10e20
-* CSV bug and headers
-* Autoincrement
+* Cordova Support
+* Speed Tests
+* AUTOINCREMENT
 * SELECT INDEX, COLUMN, VALUE on column
+* Bower
 * Wikibooks SQL samples as tests
 
-### Version "Pacific Ocean" 0.0.40 (01.02.2015)
+### Version "Pacific Rim" 0.0.42 (01.02.2015)
 
 * T-SQL compatibility and multiple SQL Tests
 * If-then-else JISON problem
@@ -55,12 +48,14 @@
 ### Version "Prague" 0.0.55 (20.02.2015)
 
 * PIVOT/UNPIVOT
-* CROSS APPLY/OUTER APPLY
 
 ### Version "Manila" 0.0.60 (01.03.2015)
  
-* GROUP BY HIERARCHY, TOTAL, DETAIL
 * OVER PARTITION
+
+### Version "Vanilla" 0.0.63 (01.03.2015)
+ 
+* GROUP BY HIERARCHY, TOTAL, DETAIL
 
 ### Version "Menlo Park" 0.0.65 (10.03.2015)
 

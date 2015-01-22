@@ -27,7 +27,7 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 ## Why Alasql?
 
 * Alasql was written with pure JavaScript and does not use WebSQL database. 
-* Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, VIEWs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS() functions
+* Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, VIEWs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS(), CROSS APPLY, OUTER APPLY, WITH SELECT, views, functions, variables
 * Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android, plus Apache Cordova.
 * Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavaScript and NoSQL databases
 * Alasql supports file, IndexedDB, and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)

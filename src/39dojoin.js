@@ -9,6 +9,7 @@ function doJoin (query, scope, h) {
 	if(h>=query.sources.length) {
 //console.log(query.wherefns);
 		// Then apply where and select
+//		console.log(query);
 		if(query.wherefn(scope,query.params, alasql)) {
 
 //			console.log("scope",scope.schools);
@@ -36,7 +37,7 @@ function doJoin (query, scope, h) {
 					doJoin(query, scope, h+1);
 				};			
 			} else {
-				console.log(source.applymode);
+//				console.log(source.applymode);
 				if (source.applymode == 'OUTER') {
 					scope[source.alias] = {};
 					doJoin(query, scope, h+1);

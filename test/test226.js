@@ -59,15 +59,18 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function() {
     });
 
     it("5. CROSS APPLY", function(done) {
-    	var res = alasql('SELECT one._ AS n,two._ AS sumn FROM RANGE(1,5) AS one \
-    		OUTER APPLY \
-    		(SELECT COLUMN SUM(_) FROM RANGE(1,one._)) two');
-    	console.table(res);
-  //   	assert.deepEqual(res,[ { a: 1, b: 10 },
-  // { a: 2, b: 20 },
-  // { a: 2, b: 30 },
-  // { a: 3, b:undefined },
-  // { a: 4, b: 40 } ]);
+    	var res = alasql('SELECT one._ AS a,two._ AS b FROM RANGE(1,5) AS one \
+    		OUTER APPLY (SELECT COLUMN ARRAY(_) FROM RANGE(1,one._) half GROUP BY half._ % 2) two');
+//    	console.log(res);
+     	assert.deepEqual(res,[ { a: 1, b: [ 1 ] },
+  { a: 2, b: [ 1 ] },
+  { a: 2, b: [ 2 ] },
+  { a: 3, b: [ 1, 3 ] },
+  { a: 3, b: [ 2 ] },
+  { a: 4, b: [ 1, 3 ] },
+  { a: 4, b: [ 2, 4 ] },
+  { a: 5, b: [ 1, 3, 5 ] },
+  { a: 5, b: [ 2, 4 ] } ]);
 		done();
     });
 

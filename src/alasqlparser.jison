@@ -211,6 +211,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 [0-9]+											return 'NUMBER'
 [0-9]+\.[0-9]*									return 'NUMBER'
 */
+(\d*[.])?\d+[eE]\d+								return 'NUMBER'
 (\d*[.])?\d+									return 'NUMBER'
 
 '->'											return 'ARROW'

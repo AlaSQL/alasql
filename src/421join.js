@@ -33,7 +33,7 @@ yy.Select.prototype.compileJoins = function(query) {
 		var tq;
 
 		if(jn instanceof yy.Apply) {
-			console.log('APPLY',jn.applymode);
+//			console.log('APPLY',jn.applymode);
 			source = {
 				alias: jn.as,
 				applymode: jn.applymode,

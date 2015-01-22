@@ -83,7 +83,11 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 //	if(this.expression.reduced) return 'true';
 //	return this.expression.toJavaScript(context, tableid, defcols);
 // console.log('Select.toJS', 81, this.queriesidx);
-	var s = 'this.queriesdata['+(this.queriesidx-1)+']';
+//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
+//console.log(this);
+	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,p))[0]';
+//	s = '(console.log(this.queriesfn[0]),'+s+')';
+
 	return s;
 };
 

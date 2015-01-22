@@ -14,7 +14,8 @@ yy.Select.prototype.compileWhere = function(query) {
 
 
 yy.Select.prototype.compileWhereJoins = function(query) {
-//	console.log(this.where);
+	//console.log(query);
+
 	optimizeWhereJoin(query, this.where.expression);
 
 	//for sources compile wherefs
@@ -35,6 +36,10 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 
 function optimizeWhereJoin (query, ast) {
 	if(!ast) return false;
+	if(!(ast instanceof yy.Op)) return;
+	if(ast.op != '=' && ast.op != 'AND') return;
+	if(ast.allsome) return;
+
 	var s = ast.toJavaScript('p',query.defaultTableid,query.defcols);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {

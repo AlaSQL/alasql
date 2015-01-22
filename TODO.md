@@ -24,10 +24,8 @@ OUTPUT (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
 3. REPLACE (http://dev.mysql.com/doc/refman/5.0/en/replace.html)
 
 
-SET AUTOCOMMIT OFF;
+Test Cordova with SET AUTOCOMMIT OFF;
 
-CREATE FILE DATABASE IF NOT EXISTS "filename.json";
-ATTACH FILE DATABASE "filename.json" 
 
 COMMIT TRANSACTION;
 DETACH DATABASE test1;
@@ -37,10 +35,8 @@ DETACH DATABASE test1;
 
 2. Write a letter to major JS bloggers
 
-3. Small bug a->(1+1) toString() do not show parenthis
 http://jsfiddle.net/5nmopn3d/
 
-3. Float numbers like 10e20
 
 4. Add TH and TD classifiers {textContent:'Name'} for HTML
 
@@ -88,16 +84,11 @@ BIG
 
 
 11. SET NOCOUNT
-12. CROSS APPLY, OUTER APPLY
 13. OVER () 
 14. PIVOT - ?
 15. Hierarchy, TOTAL, DETAIL
 16. VAR, STDDEV
 
-CROSS APPLY - like join... CROSS JOIN...
-===
-before doJoin stage 
-if(cross apply) -> exists[](new scope) -> doJoin()...
 
 OVER
 ===
@@ -124,9 +115,6 @@ char)_
 
 SELECT orderid, customerid FROM dbo.Orders ORDER BY 2, 1;
 
-ELECT TOP 100 PERCENT orderid, customerid
-         FROM dbo.Orders
-         ORDER BY orderid
 
  CREATE VIEW dbo.VSortedOrders
          AS
@@ -135,9 +123,6 @@ ELECT TOP 100 PERCENT orderid, customerid
          ORDER BY orderid
          GO
 
-APPLY
-CROSS APPLY
-OUTER APPLY
 PIVOT
 UNPIVOT
 

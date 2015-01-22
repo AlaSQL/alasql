@@ -8,8 +8,9 @@
 * CREATE FILE DATABASE IF NOT EXISTS "filename.json"
 * DROP FILE DATABASE IF EXISTS "filename.json"
 * SELECT a->(1+1) - show ( and ) in toString() function
-* CROSS APPLY and OUTER APPLY
-
+* CROSS APPLY and OUTER APPLY (!)
+* Float numbers like 10e20
+* SELECT COLUMN a+(SELECT MAX(b) FROM one) FROM one - SELECT in Expressions
 
 ### 0.0.38 "ELbrus" (17.01.2015 - 17.01.2015)
 
