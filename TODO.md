@@ -10,7 +10,7 @@
 3. CREATE FILE DATABASE / CREATE FILESTORAGE / CREATE PERSISTENT DATABASE
 4. Add custom read-write parser to FILE: 
 CREATE FILE DATABASE a("a.myjson", {from:"MYJSON", into:"MYJSON"})
-5. Check IF FILEEXISTS("a.json") BEGIN ... END function 
+5. Check IF FILE_EXISTS("a.json") BEGIN ... END function 
 6. Fix WinPhone utils
 7. Pass http://sqlite.org/sqllogictest/doc/trunk/about.wiki
 8. Extended test FILE database with AUTOCOMMIT OFF mode
@@ -24,11 +24,10 @@ OUTPUT (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
 3. REPLACE (http://dev.mysql.com/doc/refman/5.0/en/replace.html)
 
 
-1. 
-CREATE FILESTORAGE DATABASE IF NOT EXISTS test1("filename.json");
-ATTACH FILESTORAGE DATABASE test1("filename.json");
-USE test1;
 SET AUTOCOMMIT OFF;
+
+CREATE FILE DATABASE IF NOT EXISTS "filename.json";
+ATTACH FILE DATABASE "filename.json" 
 
 COMMIT TRANSACTION;
 DETACH DATABASE test1;
@@ -46,12 +45,12 @@ http://jsfiddle.net/5nmopn3d/
 4. Add TH and TD classifiers {textContent:'Name'} for HTML
 
 SELECT * INTO HTML("#res",{headers:[],columns:[]);
-SELECT col1 TH {width:"100px"} TD {style:{color:col1>0?"green":"red"}} \
-      INTO HTML("#res") FROM ?
+SELECT col1 
+  TH {width:"100px"} 
+  TD {style:{color:col1>0?"green":"red"}} \
+  INTO HTML("#res") 
+  FROM ?
 
-5. Add TRIM to CSV reading procedure
-
-if(trim(s) = +s)
 
 7. CSV/TAB export with headers:["header1","header2"] for arrays
 

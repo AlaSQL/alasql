@@ -29,9 +29,28 @@ yy.Select.prototype.compileJoins = function(query) {
 			}
 		}
 
-
 		var source;
 		var tq;
+
+		if(jn instanceof yy.Apply) {
+			console.log('APPLY',jn.applymode);
+			source = {
+				alias: jn.as,
+				applymode: jn.applymode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '',	// for optimization
+				srcwherefn: returnTrue
+			};
+			source.applyselect = jn.select.compile(query.database.databaseid);
+			source.datafn = function(query,params,cb,idx, alasql) {
+				var res;
+				if(cb) res = cb(res,idx,query);
+				return res;
+			}
+
+			query.sources.push(source);
+		} else {
+
 		if(jn.table) {
 			tq = jn.table;
 			source = {
@@ -79,6 +98,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 
 		} else if(jn.select) {
+			var tq = jn.select;
 			source = {
 				alias: jn.as,
 //				databaseid: jn.databaseid || query.database.databaseid,
@@ -89,9 +109,16 @@ yy.Select.prototype.compileJoins = function(query) {
 				srcwherefn: returnTrue
 			};
 			source.subquery = tq.compile(query.database.databaseid);
-			source.datafn = function(query, params, cb, idx, alasql) {
-				return source.subquery(query.params, null, cb, idx);
-			}				
+//			if(jn instanceof yy.Apply) {
+				source.datafn = function(query, params, cb, idx, alasql) {
+//					return cb(null,idx,alasql);
+					return source.subquery(query.params, null, cb, idx);
+				}				
+			// } else {
+			// 	source.datafn = function(query, params, cb, idx, alasql) {
+			// 		return source.subquery(query.params, null, cb, idx);
+			// 	}				
+			// }
 			query.aliases[source.alias] = {type:'subquery'};
 		} else if(jn.param) {
 			source = {
@@ -162,12 +189,12 @@ yy.Select.prototype.compileJoins = function(query) {
 			// }
 			if(jn.args && jn.args.length>0) {
 				if(jn.args[0]) {
-					s += jn.args[0].toJavaScript()+',';
+					s += jn.args[0].toJavaScript('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
 				if(jn.args[1]) {
-					s += jn.args[1].toJavaScript()+',';
+					s += jn.args[1].toJavaScript('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
@@ -361,6 +388,7 @@ yy.Select.prototype.compileJoins = function(query) {
 		}
 */	
 		query.sources.push(source);
+		};
 	});
 //	console.log('sources',query.sources);
 }

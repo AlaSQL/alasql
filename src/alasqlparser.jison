@@ -493,18 +493,19 @@ FromClause
 
 ApplyClause
 	: CROSS APPLY LPAR Select RPAR Literal
-		{ $$ = new yy.Apply({select: $4, apply:'CROSS', as:$6}); }
+		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$6}); }
 	| CROSS APPLY LPAR Select RPAR AS Literal
-		{ 
+		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$7}); }
+/*		{ 
 			if(!yy.exists) yy.exists = [];
-			$$ = new yy.Apply({select: $4, apply:'CROSS', as:$7,existsidx:yy.exists.length});
+			$$ = new yy.Apply({select: $4, applymode:'CROSS', as:$7,existsidx:yy.exists.length});
 			yy.exists.push($3);
 
 		 }
-	| OUTER APPLY LPAR Select RPAR Literal
-		{ $$ = new yy.Apply({select: $4, apply:'OUTER', as:$6}); }
+*/	| OUTER APPLY LPAR Select RPAR Literal
+		{ $$ = new yy.Apply({select: $4, applymode:'OUTER', as:$6}); }
 	| OUTER APPLY LPAR Select RPAR AS Literal
-		{ $$ = new yy.Apply({select: $4, apply:'OUTER', as:$7}); }
+		{ $$ = new yy.Apply({select: $4, applymode:'OUTER', as:$7}); }
 	;
 
 FromTablesList
@@ -1521,6 +1522,9 @@ CreateDatabase
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, as:$6 }); yy.extend($$,$4); }
 	| CREATE Literal DATABASE IfNotExists Literal LPAR ExprList RPAR AsClause
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, args:$7, as:$9 }); yy.extend($$,$4); }
+	| CREATE Literal DATABASE IfNotExists StringValue AsClause
+		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), 
+		    as:$6, args:[$5] }); yy.extend($$,$4); }
 	;
 
 AsClause
@@ -1541,6 +1545,8 @@ DropDatabase
 	: DROP DATABASE IfExists Literal
 		{ $$ = new yy.DropDatabase({databaseid: $4 }); yy.extend($$,$3); }	
 	| DROP Literal DATABASE IfExists Literal
+		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }	
+	| DROP Literal DATABASE IfExists StringValue
 		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }	
 	;
 

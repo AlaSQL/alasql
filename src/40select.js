@@ -41,8 +41,12 @@ yy.Select.prototype.toString = function() {
 		s += this.joins.map(function(jn){
 			var ss = NL()+ID();
 			if(jn.joinmode) ss += K(jn.joinmode)+' ';
-			ss += K('JOIN')+' ';
-			ss += jn.table.toString();
+			if(jn.table) ss += K('JOIN')+' '+jn.table.toString();
+			else if(jn instanceof yy.Apply) ss += jn.toString();
+			else {
+				throw new Error('Wrong type in JOIN mode');
+			}
+
 			if(jn.using) ss += ' '+K('USING')+' '+jn.using.toString();
 			if(jn.on) ss += ' '+K('ON')+' '+jn.on.toString();
 			return ss;

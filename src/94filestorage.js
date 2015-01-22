@@ -5,7 +5,7 @@
 // (c) Andrey Gershun
 //
 
-var FS = alasql.engines.FILESTORAGE = function (){};
+var FS = alasql.engines.FILESTORAGE = alasql.engines.FILE = function (){};
 
 /*
 FS.get = function(key) {
@@ -31,46 +31,49 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb){
 	var res = 1;
 	var filename = args[0].value;
 //	console.log('filename',filename);
-	var data = {tables:{}};
-	alasql.utils.saveFile(filename,JSON.stringify(data),function(data){
-		if(cb) res = cb(res);
+	alasql.utils.fileExists(filename, function(fex){
+		// console.log('fex:',arguments);
+		if(fex) {
+			if(ifnotexists) {
+				res = 0;
+				if(cb) res = cb(res);
+				return res;
+			} else {
+				throw new Error('Cannot create new database file, because it alreagy exists');
+			} 
+		} else {
+			var data = {tables:{}};
+			alasql.utils.saveFile(filename,JSON.stringify(data),function(data){
+				if(cb) res = cb(res);
+			});
+		}
 	});
 	return res;
 };
 
-/*
-FS.dropDatabase = function(lsdbid, ifexists, cb){
-	var res = 1;
-	var ls = LS.get('alasql');
-	if(!(ifexists && ls && ls.databases && !ls.databases[lsdbid])) {
-		if(!ls) {
-			if(!ifexists) {
-				throw new Error('There are no alasql databases in localStorage');
-			} else {
-				return 0;
-			}
-		};
-//		console.log(999,ls.databases,ls.databases[lsdbid], lsdbid);	
-		if(ls.databases && !ls.databases[lsdbid]) {
-			throw new Error('localStorage: Cannot drop database "'+lsdbid+'" because there is no such database');
-		}
-		delete ls.databases[lsdbid];
-		LS.set('alasql',ls);
-		
-		var db = LS.get(lsdbid);
-		for(var tableid in db.tables) {
-//			console.log('remove',lsdbid,tableid);
-			localStorage.removeItem(lsdbid+'.'+tableid);
-		}
 
-		localStorage.removeItem(lsdbid);
-	} else {
-		res = 0;
-	}
-	if(cb) cb(res);
+FS.dropDatabase = function(fsdbid, ifexists, cb){
+	var res;
+	var filename = fsdbid.value;
+//	console.log('filename',filename);
+	alasql.utils.fileExists(filename, function(fex){
+		if(fex) {
+			res = 1;
+			alasql.utils.deleteFile(filename, function(){
+				res = 1;
+				if(cb) res = cb(res);
+			});
+		} else {
+			if(!ifexists) {
+				throw new Error('Cannot drop database file, because it does not exist');
+			}
+			res = 0;
+			if(cb) res = cb(res);
+		}
+	});
 	return res;
 };
-*/
+
 
 FS.attachDatabase = function(fsdbid, dbid, args, cb){
 //	console.log(arguments);

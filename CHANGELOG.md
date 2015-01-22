@@ -1,9 +1,15 @@
 # Changelog
 
-### 0.0.39 "ELbrus" (17.01.2015 - .01.2015)
+### 0.0.39 "Everest" (17.01.2015 - 22.01.2015)
 
 * `JavaScript()` expressions and statements SELECT `Math.random()*100`
 * Added conversion to number for strings like: ' 123 '
+* Fixed from HTML() function (childNodes -> children)
+* CREATE FILE DATABASE IF NOT EXISTS "filename.json"
+* DROP FILE DATABASE IF EXISTS "filename.json"
+* SELECT a->(1+1) - show ( and ) in toString() function
+* CROSS APPLY and OUTER APPLY
+
 
 ### 0.0.38 "ELbrus" (17.01.2015 - 17.01.2015)
 

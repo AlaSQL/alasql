@@ -120,12 +120,12 @@ yy.Select.prototype.compileFrom = function(query) {
 			// }
 			if(tq.args && tq.args.length>0) {
 				if(tq.args[0]) {
-					s += tq.args[0].toJavaScript()+',';
+					s += tq.args[0].toJavaScript('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
 				if(tq.args[1]) {
-					s += tq.args[1].toJavaScript()+',';
+					s += tq.args[1].toJavaScript('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};

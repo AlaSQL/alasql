@@ -3,6 +3,7 @@
 //
 
 function doJoin (query, scope, h) {
+//	console.log('doJoin', arguments);
 //	console.log(query.sources.length);
 	// Check, if this is a last join?
 	if(h>=query.sources.length) {
@@ -22,6 +23,28 @@ function doJoin (query, scope, h) {
 				query.data.push(query.selectfn(scope, query.params, alasql));
 			}	
 		}
+	} else if(query.sources[h].applyselect) {
+//		console.log('APPLY',scope);
+//			console.log('scope1',scope);
+//				console.log(scope);
+		var source = query.sources[h];
+		source.applyselect(query.params, function(data){
+			if(data.length > 0) {
+	//			console.log('APPLY CB');
+				for(var i=0;i<data.length;i++) {
+					scope[source.alias] = data[i];
+					doJoin(query, scope, h+1);
+				};			
+			} else {
+				console.log(source.applymode);
+				if (source.applymode == 'OUTER') {
+					scope[source.alias] = {};
+					doJoin(query, scope, h+1);
+				}
+			}
+		},scope);
+
+//		console.log(data);
 	} else {
 
 // STEP 1
@@ -57,6 +80,7 @@ function doJoin (query, scope, h) {
 //					console.log(opt, data, data.length);
 				}
 			}
+
 			// Main cycle
 			var i = 0;
 			var ilen=data.length;

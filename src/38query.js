@@ -7,6 +7,7 @@ function queryfn(query,oldscope,cb, A,B) {
 		query.B = B;
 //	console.log(arguments);
 		query.cb = cb;
+		query.oldscope = oldscope;
 
 	// Run all subqueries before main statement
 	if(query.queriesfn) {

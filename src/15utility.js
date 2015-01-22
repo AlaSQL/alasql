@@ -266,6 +266,13 @@ var removeFile = utils.removeFile = function(path,cb) {
 };
 
 
+var deleteFile = utils.deleteFile = function(path,cb){
+    if(typeof exports == 'object') {
+        var fs = require('fs');
+        fs.unlink(path, cb);
+    };
+};
+
 var fileExists = utils.fileExists = function(path,cb){
     if(typeof exports == 'object') {
         var fs = require('fs');

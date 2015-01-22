@@ -112,6 +112,14 @@ yy.Op.prototype.toString = function() {
 	if(this.allsome) {
 		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
 	}
+	if(this.op == '->') {
+		var s = this.left.toString()+"->";
+		console.log(this.right);
+		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += '(';
+		s += this.right.toString();
+		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += ')';
+		return s;
+	}
 	return this.left.toString()+" "+P(this.op)+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
 };
 
