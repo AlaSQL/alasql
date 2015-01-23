@@ -90,7 +90,7 @@ if(false) {
 //		s += ']=r';
 		s += agroup.map(function(col2){
 			var columnid = col2.split('\t')[0];
-			var coljs = col2.split('\t')[1]
+			var coljs = col2.split('\t')[1];
 
 			if(columnid == '') return '';
 			else return "'"+columnid+"':"+coljs+",";
@@ -111,12 +111,12 @@ if(false) {
 //console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup.map(function(col,idx){
 //console.log(idx, col.toString(), col.as);
-			var colas = col.as;
 			var colexp = col.expression.toJavaScript("p",tableid,defcols);
-			if(typeof colas == 'undefined') {
-				if(col instanceof yy.Column) colas = col.columnid;
-				else colas = col.toString();
-			};
+			var colas = col.nick;
+			// if(typeof colas == 'undefined') {
+			// 	if(col instanceof yy.Column) colas = col.columnid;
+			// 	else colas = col.toString();
+			// };
 			if (col instanceof yy.AggrValue) { 
 				if(col.distinct) {
 					aft += ',g[\'$$_VALUES_'+colas+'\']={},g[\'$$_VALUES_'+colas+'\']['+colexp+']=true';
@@ -219,11 +219,11 @@ if(false) {
 	//console.log(query.selectfn);
 //		s += self.columns.map(function(col){
 		s += query.selectGroup.map(function(col,idx){
-			var colas = col.as;
-			if(typeof colas == 'undefined') {
-				if(col instanceof yy.Column) colas = col.columnid;
-				else colas = col.toString();
-			}
+			var colas = col.nick;
+			// if(typeof colas == 'undefined') {
+			// 	if(col instanceof yy.Column) colas = col.columnid;
+			// 	else colas = col.toString();
+			// }
 			var colexp = col.expression.toJavaScript("p",tableid,defcols);
 
 			if (col instanceof yy.AggrValue) { 

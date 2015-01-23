@@ -3769,6 +3769,7 @@ var Query = alasql.Query = function(params){
 	this.columns = [];
 	this.xcolumns = {};
 	this.selectGroup = [];
+	this.groupColumns = {};
 	// Data array
 	extend(this,params);
 };
@@ -4009,25 +4010,34 @@ function queryfn3(query) {
 		if(query.groups.length == 0) {
 			var g = {};
 			if(query.selectGroup.length>0) {
+//				console.log(query.selectGroup);
 				query.selectGroup.forEach(function(sg){
 					if(sg.aggregatorid == "COUNT" || sg.aggregatorid == "SUM") {
-						g[sg.as] = 0;
+						g[sg.nick] = 0;
 					} else {
-						g[sg.as] = undefined;
+						g[sg.nick] = undefined;
 					}
 				});
 			};
 			query.groups = [g];
 //			console.log();
-		}
-		for(var i=0,ilen=query.groups.length;i<ilen;i++) {
-//			console.log(query.groups[i]);
-			var g = query.groups[i];
-			if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
-				var d = query.selectgfn(g,query.params,alasql);
-				query.data.push(d);
-			};
 		};
+		// 	console.log('EMPTY',query.groups);
+		// 	debugger;
+		// if(false && (query.groups.length == 1) && (Object.keys(query.groups[0]).length == 0)) {
+		// 	console.log('EMPTY',query.groups);
+		// } else {
+			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+	//			console.log(query.groups[i]);
+				var g = query.groups[i];
+				if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
+	//				console.log(g);
+					var d = query.selectgfn(g,query.params,alasql);
+					query.data.push(d);
+				};
+			};
+		// }
+
 //			query.groups = query.groups.filter();
 	};
 
@@ -4308,7 +4318,6 @@ function doJoin (query, scope, h) {
 //			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-//				console.log(scope);
 				query.groupfn(scope, query.params, query.alasql)
 			} else {
 				query.data.push(query.selectfn(scope, query.params, alasql));
@@ -4416,6 +4425,12 @@ function doJoin (query, scope, h) {
 
 
 		}
+
+		// When there is no records
+//		if(data.length == 0 && query.groupfn) {
+//			scope[tableid] = undefined;
+//			doJoin(query,scope,h+1);
+//		}
 
 // STEP 2
 
@@ -5729,7 +5744,7 @@ if(false) {
 //		s += ']=r';
 		s += agroup.map(function(col2){
 			var columnid = col2.split('\t')[0];
-			var coljs = col2.split('\t')[1]
+			var coljs = col2.split('\t')[1];
 
 			if(columnid == '') return '';
 			else return "'"+columnid+"':"+coljs+",";
@@ -5750,12 +5765,12 @@ if(false) {
 //console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup.map(function(col,idx){
 //console.log(idx, col.toString(), col.as);
-			var colas = col.as;
 			var colexp = col.expression.toJavaScript("p",tableid,defcols);
-			if(typeof colas == 'undefined') {
-				if(col instanceof yy.Column) colas = col.columnid;
-				else colas = col.toString();
-			};
+			var colas = col.nick;
+			// if(typeof colas == 'undefined') {
+			// 	if(col instanceof yy.Column) colas = col.columnid;
+			// 	else colas = col.toString();
+			// };
 			if (col instanceof yy.AggrValue) { 
 				if(col.distinct) {
 					aft += ',g[\'$$_VALUES_'+colas+'\']={},g[\'$$_VALUES_'+colas+'\']['+colexp+']=true';
@@ -5858,11 +5873,11 @@ if(false) {
 	//console.log(query.selectfn);
 //		s += self.columns.map(function(col){
 		s += query.selectGroup.map(function(col,idx){
-			var colas = col.as;
-			if(typeof colas == 'undefined') {
-				if(col instanceof yy.Column) colas = col.columnid;
-				else colas = col.toString();
-			}
+			var colas = col.nick;
+			// if(typeof colas == 'undefined') {
+			// 	if(col instanceof yy.Column) colas = col.columnid;
+			// 	else colas = col.toString();
+			// }
 			var colexp = col.expression.toJavaScript("p",tableid,defcols);
 
 			if (col instanceof yy.AggrValue) { 
@@ -6110,24 +6125,26 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 	self.columns.forEach(function(col,idx){
 		if(col instanceof yy.Column && col.columnid == '*') {
 		} else {
-			var colas = col.as;
-			if(typeof colas == 'undefined') {
+			var colas;
+			//  = col.as;
 				if(col instanceof yy.Column) {
 					colas = col.columnid;
 				} else {
 					colas = col.toString();
-					for(var i=0;i<idx;i++) {
-						if(colas == self.columns[i].as) {
-							colas = self.columns[i].as+':'+idx;
-							break;
-						}
+				}
+				for(var i=0;i<idx;i++) {
+					if(colas == self.columns[i].nick) {
+						colas = self.columns[i].nick+':'+idx;
+						break;
 					}
 				}
-				col.as = colas;
+				// }
+				col.nick = colas;
 //				console.log("colas:",colas);
-			}
+			// }
 		}
 	});
+	
 	this.columns.forEach(function(col){
 		if(col.findAggregator) col.findAggregator(query);
 	});
@@ -6145,9 +6162,18 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 	self.columns.forEach(function(col,idx){
 //		console.log(col);
 		if(col instanceof yy.Column && col.columnid == '*') {
-			s += 'for(var k in g){r[k]=g[k]};';
+//			s += 'for(var k in g){r[k]=g[k]};';
+			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
+//			console.log(query);
 		} else {
+			// var colas = col.as;
 			var colas = col.as;
+			if(typeof colas == 'undefined') {
+			 	if(col instanceof yy.Column) colas = col.columnid;
+			 	else colas = col.nick;
+			}
+			query.groupColumns[colas]=col.nick;
+
 /*			if(typeof colas == 'undefined') {
 				if(col instanceof yy.Column) {
 					colas = col.columnid;
@@ -6170,14 +6196,30 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			// };
 			// s += ';';
 //			console.log(col);//,col.toJavaScript('g',''));
-			if(col instanceof yy.Column) {
-				s += 'g[\''+col.columnid+'\'];';
-			} else {
-				s += col.toJavaScript('g','')+';';				
+
+
+ 			s += col.toJavaScript('g','')+';';				
+/*
+			s += 'g[\''+col.nick+'\'];';
+
+*/
+			// if(col instanceof yy.Column) {
+			// 	s += 'g[\''+col.columnid+'\'];';
+			// } else {
 //				s += 'g[\''+col.toString()+'\'];';
-//				s += 'g[\''+colas+'\'];';
+
+//				console.log(col);
+				// var kg = col.toJavaScript('g','')+';';				
+				// for(var i=0;i<query.removeKeys.length;i++) {
+				// 	// THis part should be intellectual
+				// 	if(query.removeKeys[i] == colas) {
+				// s += 'g[\''+colas+'\'];';
+				// 		break;
+				// 	}
+				// };
+				// s += kg;
 //				console.log(s);
-			}
+			// }
 //			s += col.toJavaScript('g','')+';';
 //console.log(colas,query.removeKeys);
 			for(var i=0;i<query.removeKeys.length;i++) {
@@ -6297,8 +6339,17 @@ var rollup = function (a,query) {
 	for(var g=0;g<glen+1;g++) {
 		var ss = [];
 		for(var i=0;i<glen;i++) {
-			var aaa = a[i].toString()+'\t'
-				+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+		 	if(a[i] instanceof yy.Column) {
+				a[i].nick = a[i].columnid;
+
+		 		query.groupColumns[a[i].columnid] = a[i].nick;
+				var aaa = a[i].nick+'\t'
+					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+		 	} else {
+		 		query.groupColumns[a[i].toString()] = a[i].toString();
+				var aaa = a[i].toString()+'\t'
+					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+			}
 
 			if(mask&(1<<i)) ss.push(aaa);
 		}
@@ -6363,10 +6414,14 @@ function decartes(gv,query) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
 			if(gv[t] instanceof yy.Column) {
-		 		res = res.map(function(r){return r.concat(gv[t].columnid+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
+			//	console.log('+++',gv[t].columnid,gv[t]);
+				gv[t].nick = gv[t].columnid;
+			 	query.groupColumns[gv[t].columnid] = gv[t].nick;
+		 		res = res.map(function(r){return r.concat(gv[t].nick+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
 //		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
 			} else if(gv[t] instanceof yy.FuncValue) {
-		 		res = res.map(function(r){return r.concat(gv[t].toString())}); 	
+				query.groupColumns[gv[t].toString()] = gv[t].toString();
+		 		res = res.map(function(r){return r.concat(gv[t].toString()+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
 		 		// to be defined
 			} else if(gv[t] instanceof yy.GroupExpression) {
 				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group,query));
@@ -6374,13 +6429,15 @@ function decartes(gv,query) {
 				else if(gv[t].type == 'GROUPING SETS') res = cartes(res,groupingsets(gv[t].group,query));
 				else throw new Error('Unknown grouping function');
 			} else if(gv[t] === '') {
+//				console.log('+++');
 				res = [['1\t1']];
 			} else {
 //				if(gv[t])
 //				console.log('>'+gv[t]+'<',gv[t]=='',typeof gv[t]);
 //				console.log(gv[t].toString());
-
+//console.log('+++');
 		 		res = res.map(function(r){
+ 					query.groupColumns[gv[t].toString()] = gv[t].toString();
 		 			return r.concat(gv[t].toString()
 		 				+'\t'
 		 				+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols)) 
@@ -6402,12 +6459,16 @@ function decartes(gv,query) {
 		return res;
 	} else if(gv instanceof yy.FuncValue) {
 //		console.log(gv);
-		return [gv.toString()];
+		query.groupColumns[gv.toString()] = gv.toString();
+		return [gv.toString()+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
 	} else if(gv instanceof yy.Column) {
-			return [gv.columnid+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)]; // Is this ever happened?
+			gv.nick = gv.columnid;
+		 	query.groupColumns[gv.columnid] = gv.nick;
+			return [gv.nick+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)]; // Is this ever happened?
 		// } else if(gv instanceof yy.Expression) {
 		// 	return [gv.columnid]; // Is this ever happened?
 	} else {
+		query.groupColumns[gv.toString()] = gv.toString();
 		return [gv.toString()+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
 //			throw new Error('Single argument in the group without array');			
 	};
@@ -7027,14 +7088,27 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 		if(this.columnid != '_') {
 			s = context+'[\''+this.columnid+'\']';
 		} else {
-			s = context;
+			if(context == 'g') {
+				s = 'g[\'_\']';						
+			} else {
+				s = context;
+			}
 		}
 	} else {
-		if(this.tableid) {
+		if(context == 'g') {
+			// if(this.columnid == '_') {
+			// } else {
+				s = 'g[\''+this.nick+'\']';						
+			// }
+		} else if(this.tableid) {
 			if(this.columnid != '_') {
 				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
 			} else {
-				s = context+'[\''+(this.tableid) + '\']';
+				if(context == 'g') {
+					s = 'g[\'_\']';						
+				} else {
+					s = context+'[\''+(this.tableid) + '\']';
+				}
 			}
 		} else if(defcols) {
 			var tbid = defcols[this.columnid];
@@ -7089,7 +7163,12 @@ yy.AggrValue.prototype.toString = function() {
 yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log('aggregator found',this.toString());
 
-	var colas = this.as || this.toString();
+//	var colas = this.as || this.toString();
+
+	var colas = this.toString()+':'+query.selectGroup.length;
+//	console.log('findAgg',this);
+
+
 /*	var found = false;
 	for(var i=0;i<query.columns.length;i++) {
 		// THis part should be intellectual
@@ -7103,15 +7182,20 @@ yy.AggrValue.prototype.findAggregator = function (query){
 //	}
 
 	var found = false;
+
+/*	
 	for(var i=0;i<query.selectGroup.length;i++){
-		if(query.selectGroup[i].as==colas) {
-			found = true;
+		if(query.selectGroup[i].nick==colas) {
+			colas = colas+':'+i;
+			found = false;
 			break;
 		};
 	};
+*/
+//	console.log("query.selectGroup",query.selectGroup,found);
 	if(!found) {
-		if(!this.as) {
-			this.as = colas;
+		if(!this.nick) {
+			this.nick = colas;
 			var found = false;
 			for(var i=0;i<query.removeKeys.length;i++){
 				if(query.removeKeys[i]==colas) {
@@ -7143,7 +7227,8 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //	return s;
 //	var s = ''; 
 //if(this.as) console.log(499,this.as);
-	var colas = this.as;
+//	var colas = this.as;
+	var colas = this.nick;
 	if(typeof colas == 'undefined') colas = this.toString();
 	return 'g[\''+colas+'\']';
 }

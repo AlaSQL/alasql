@@ -146,25 +146,34 @@ function queryfn3(query) {
 		if(query.groups.length == 0) {
 			var g = {};
 			if(query.selectGroup.length>0) {
+//				console.log(query.selectGroup);
 				query.selectGroup.forEach(function(sg){
 					if(sg.aggregatorid == "COUNT" || sg.aggregatorid == "SUM") {
-						g[sg.as] = 0;
+						g[sg.nick] = 0;
 					} else {
-						g[sg.as] = undefined;
+						g[sg.nick] = undefined;
 					}
 				});
 			};
 			query.groups = [g];
 //			console.log();
-		}
-		for(var i=0,ilen=query.groups.length;i<ilen;i++) {
-//			console.log(query.groups[i]);
-			var g = query.groups[i];
-			if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
-				var d = query.selectgfn(g,query.params,alasql);
-				query.data.push(d);
-			};
 		};
+		// 	console.log('EMPTY',query.groups);
+		// 	debugger;
+		// if(false && (query.groups.length == 1) && (Object.keys(query.groups[0]).length == 0)) {
+		// 	console.log('EMPTY',query.groups);
+		// } else {
+			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+	//			console.log(query.groups[i]);
+				var g = query.groups[i];
+				if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
+	//				console.log(g);
+					var d = query.selectgfn(g,query.params,alasql);
+					query.data.push(d);
+				};
+			};
+		// }
+
 //			query.groups = query.groups.filter();
 	};
 

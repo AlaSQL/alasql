@@ -18,7 +18,6 @@ function doJoin (query, scope, h) {
 //			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-//				console.log(scope);
 				query.groupfn(scope, query.params, query.alasql)
 			} else {
 				query.data.push(query.selectfn(scope, query.params, alasql));
@@ -126,6 +125,12 @@ function doJoin (query, scope, h) {
 
 
 		}
+
+		// When there is no records
+//		if(data.length == 0 && query.groupfn) {
+//			scope[tableid] = undefined;
+//			doJoin(query,scope,h+1);
+//		}
 
 // STEP 2
 

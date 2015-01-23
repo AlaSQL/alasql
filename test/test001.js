@@ -89,7 +89,7 @@ function prepareData (defined) {
 	
 	function doTests() {
 		it('Select 1.1: COUNT', function(done){
-		 	var res = alasql('SELECT courseid, COUNT(*) AS cnt '+
+		 	var res = alasql('SELECT courses.courseid, COUNT(*) AS cnt '+
 		 		' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid' );
 		 	assert.deepEqual([ 
 		 		{ courseid: 1, cnt: 1 },
@@ -104,7 +104,8 @@ function prepareData (defined) {
 				' FROM students '+
 				' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
 				' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
-				' GROUP BY students.schools, students.courseid, students.studentname' );
+				' GROUP BY students.schoolid, students.courseid, students.studentname' );
+			console.log(res);
 			assert.equal(res[4].studentname,'Astrid Carlson');
 			done();
 		});

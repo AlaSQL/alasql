@@ -182,24 +182,26 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 	self.columns.forEach(function(col,idx){
 		if(col instanceof yy.Column && col.columnid == '*') {
 		} else {
-			var colas = col.as;
-			if(typeof colas == 'undefined') {
+			var colas;
+			//  = col.as;
 				if(col instanceof yy.Column) {
 					colas = col.columnid;
 				} else {
 					colas = col.toString();
-					for(var i=0;i<idx;i++) {
-						if(colas == self.columns[i].as) {
-							colas = self.columns[i].as+':'+idx;
-							break;
-						}
+				}
+				for(var i=0;i<idx;i++) {
+					if(colas == self.columns[i].nick) {
+						colas = self.columns[i].nick+':'+idx;
+						break;
 					}
 				}
-				col.as = colas;
+				// }
+				col.nick = colas;
 //				console.log("colas:",colas);
-			}
+			// }
 		}
 	});
+	
 	this.columns.forEach(function(col){
 		if(col.findAggregator) col.findAggregator(query);
 	});
@@ -217,9 +219,18 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 	self.columns.forEach(function(col,idx){
 //		console.log(col);
 		if(col instanceof yy.Column && col.columnid == '*') {
-			s += 'for(var k in g){r[k]=g[k]};';
+//			s += 'for(var k in g){r[k]=g[k]};';
+			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
+//			console.log(query);
 		} else {
+			// var colas = col.as;
 			var colas = col.as;
+			if(typeof colas == 'undefined') {
+			 	if(col instanceof yy.Column) colas = col.columnid;
+			 	else colas = col.nick;
+			}
+			query.groupColumns[colas]=col.nick;
+
 /*			if(typeof colas == 'undefined') {
 				if(col instanceof yy.Column) {
 					colas = col.columnid;
@@ -242,14 +253,30 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			// };
 			// s += ';';
 //			console.log(col);//,col.toJavaScript('g',''));
-			if(col instanceof yy.Column) {
-				s += 'g[\''+col.columnid+'\'];';
-			} else {
-				s += col.toJavaScript('g','')+';';				
+
+
+ 			s += col.toJavaScript('g','')+';';				
+/*
+			s += 'g[\''+col.nick+'\'];';
+
+*/
+			// if(col instanceof yy.Column) {
+			// 	s += 'g[\''+col.columnid+'\'];';
+			// } else {
 //				s += 'g[\''+col.toString()+'\'];';
-//				s += 'g[\''+colas+'\'];';
+
+//				console.log(col);
+				// var kg = col.toJavaScript('g','')+';';				
+				// for(var i=0;i<query.removeKeys.length;i++) {
+				// 	// THis part should be intellectual
+				// 	if(query.removeKeys[i] == colas) {
+				// s += 'g[\''+colas+'\'];';
+				// 		break;
+				// 	}
+				// };
+				// s += kg;
 //				console.log(s);
-			}
+			// }
 //			s += col.toJavaScript('g','')+';';
 //console.log(colas,query.removeKeys);
 			for(var i=0;i<query.removeKeys.length;i++) {

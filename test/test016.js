@@ -42,6 +42,7 @@ describe('Test 16', function() {
 	 		' ORDER BY studentname DESC' );
 //if(typeof exports === 'object') console.log(res);
 //else console.table(res);
+//console.table(res);
 		assert.equal(5, res.length);
 		assert.equal(1, res[0].courseid);
 		assert.equal(2, res[1].courseid);

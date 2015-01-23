@@ -480,14 +480,27 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 		if(this.columnid != '_') {
 			s = context+'[\''+this.columnid+'\']';
 		} else {
-			s = context;
+			if(context == 'g') {
+				s = 'g[\'_\']';						
+			} else {
+				s = context;
+			}
 		}
 	} else {
-		if(this.tableid) {
+		if(context == 'g') {
+			// if(this.columnid == '_') {
+			// } else {
+				s = 'g[\''+this.nick+'\']';						
+			// }
+		} else if(this.tableid) {
 			if(this.columnid != '_') {
 				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
 			} else {
-				s = context+'[\''+(this.tableid) + '\']';
+				if(context == 'g') {
+					s = 'g[\'_\']';						
+				} else {
+					s = context+'[\''+(this.tableid) + '\']';
+				}
 			}
 		} else if(defcols) {
 			var tbid = defcols[this.columnid];
@@ -542,7 +555,12 @@ yy.AggrValue.prototype.toString = function() {
 yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log('aggregator found',this.toString());
 
-	var colas = this.as || this.toString();
+//	var colas = this.as || this.toString();
+
+	var colas = this.toString()+':'+query.selectGroup.length;
+//	console.log('findAgg',this);
+
+
 /*	var found = false;
 	for(var i=0;i<query.columns.length;i++) {
 		// THis part should be intellectual
@@ -556,15 +574,20 @@ yy.AggrValue.prototype.findAggregator = function (query){
 //	}
 
 	var found = false;
+
+/*	
 	for(var i=0;i<query.selectGroup.length;i++){
-		if(query.selectGroup[i].as==colas) {
-			found = true;
+		if(query.selectGroup[i].nick==colas) {
+			colas = colas+':'+i;
+			found = false;
 			break;
 		};
 	};
+*/
+//	console.log("query.selectGroup",query.selectGroup,found);
 	if(!found) {
-		if(!this.as) {
-			this.as = colas;
+		if(!this.nick) {
+			this.nick = colas;
 			var found = false;
 			for(var i=0;i<query.removeKeys.length;i++){
 				if(query.removeKeys[i]==colas) {
@@ -596,7 +619,8 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //	return s;
 //	var s = ''; 
 //if(this.as) console.log(499,this.as);
-	var colas = this.as;
+//	var colas = this.as;
+	var colas = this.nick;
 	if(typeof colas == 'undefined') colas = this.toString();
 	return 'g[\''+colas+'\']';
 }
