@@ -16,13 +16,15 @@ CREATE FILE DATABASE a("a.myjson", {from:"MYJSON", into:"MYJSON"})
 8. Extended test FILE database with AUTOCOMMIT OFF mode
 
 1. Create bower package
-
-0. Errors!!!
-1. Subqueries in DELETE and UPDATE
-2. MERGE syntax (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
-3. Constraints
-4. Foreign Keys
-1. Win8.1
+2. HTML5 SQL syntax
+2. SQLite tests for Cordova
+3. MERGE syntax (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
+4. Subqueries in DELETE and UPDATE
+5. Constraints
+6. Foreign Keys
+7. Transactions
+8. Over
+9. Pivot
 
 OUTPUT (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
 3. REPLACE (http://dev.mysql.com/doc/refman/5.0/en/replace.html)
@@ -59,11 +61,9 @@ SQL Examples -> http://en.wikibooks.org/wiki/SQL_Exercises
 
 0. MS SQL compatibility
 * ROW_NUMBER() aggregator
-* BEGIN TRAN, COMMIT TRAN, COMMIT WORK
 * DECLARE @var TABLE(coldefs)
 * Database names starting with #
 * INSERT INTO @aaa(cols) VALUES ()...
-* COALESCE() - http://msdn.microsoft.com/en-us/library/ms190349.aspx
 * DB_ID(databaseid)
 * CREATE INDEX syntax
 * SET IDENTITY_INSERT table ON;
@@ -75,7 +75,6 @@ SQL Examples -> http://en.wikibooks.org/wiki/SQL_Exercises
 BIG
 * OVER
 * PIVOT
-* CROSS APPLY
 
 2. Fluent interface 
 3. Break Continue Loop

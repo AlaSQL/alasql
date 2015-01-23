@@ -17,17 +17,17 @@
 ### Version "Sapsan" 0.0.40 (25.01.2015)
 
 * Cordova Support
-* Speed Tests
-* AUTOINCREMENT
+* Tests
+* AUTOINCREMENT / IDENTITY
 * SELECT INDEX, COLUMN, VALUE on column
-* Bower
+* Bower.json
 * Wikibooks SQL samples as tests
 
 ### Version "Pacific Rim" 0.0.42 (01.02.2015)
 
-* T-SQL compatibility and multiple SQL Tests
 * If-then-else JISON problem
 * UNION ORDER BY bug
+* T-SQL compatibility and multiple SQL Tests
 * Documentation
 * API documentation with JsDoc
 * WorkerJS for Node (primarily for test)
