@@ -20,13 +20,16 @@ yy.Delete.prototype.compile = function (databaseid) {
 	var statement;
 			var db = alasql.databases[databaseid];
 
+
+
 	if(this.where) {
 //		try {
 //		console.log(this, 22, this.where.toJavaScript('r',''));
 //	} catch(err){console.log(444,err)};
-		var wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
+//		var query = {};
+		wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
-		statement = function (params, cb) {
+		statement = (function (params, cb) {
 			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {
 				return alasql.engines[db.engineid].deleteFromTable(databaseid, tableid, wherefn, params, cb);
 			}
@@ -60,7 +63,14 @@ yy.Delete.prototype.compile = function (databaseid) {
 //			console.log('deletefn',table.data.length);
 			if(cb) cb(res);
 			return res;
-		}
+		});
+// .bind(query);
+
+// 		if(!this.queries) return;
+// 			query.queriesfn = this.queries.map(function(q) {
+// 			return q.compile(alasql.useid);
+// 		});
+
 	} else {
 		statement = function (params, cb) {
 			if(alasql.options.autocommit && db.engineid) {

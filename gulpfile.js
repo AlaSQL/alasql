@@ -60,6 +60,7 @@ gulp.task('js-merge', function () {
     './src/44defcols.js',
     './src/45union.js',
     './src/46apply.js',
+    './src/47over.js',
   	'./src/50expression.js',
     './src/52linq.js',
     './src/55functions.js',

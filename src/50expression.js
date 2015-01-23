@@ -549,6 +549,8 @@ yy.AggrValue.prototype.toString = function() {
 	if(this.distinct) s+= K('DISTINCT')+' ';
 	if(this.expression) s += this.expression.toString();
 	s += ')';
+	if(this.over) s += ' '+this.over.toString(); 
+//	console.log(this.over);
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };

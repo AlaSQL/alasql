@@ -10,7 +10,7 @@ describe('Test 219 CREATE VIEW', function() {
         alasql('CREATE DATABASE test219;USE test219;\
         	CREATE TABLE one (a INT, b STRING); \
         	INSERT INTO one VALUES (1,"one"),(2,"two"),(3,"three")');
-        alasql('CREATE VIEW myview (a INT) AS SELECT a FROM one');
+        alasql('CREATE VIEW myview (a) AS SELECT a FROM one');
         done();
     });
     it("2. RUN FROM VIEW", function(done) {

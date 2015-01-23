@@ -14,6 +14,9 @@ yy.Select.prototype.compileWhere = function(query) {
 
 
 yy.Select.prototype.compileWhereJoins = function(query) {
+	return;
+
+	// TODO Fix Where optimization
 	//console.log(query);
 
 	optimizeWhereJoin(query, this.where.expression);
@@ -49,6 +52,8 @@ function optimizeWhereJoin (query, ast) {
 			if(s.indexOf('p[\''+source.alias+'\']')>-1) fsrc.push(source);
 		};
 	});
+//console.log(fsrc.length);
+//	if(fsrc.length < query.sources.length) return;
 //	console.log(ast);
 //	console.log(s);
 //	console.log(fsrc.length);

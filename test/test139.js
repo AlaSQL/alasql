@@ -129,8 +129,16 @@ describe('Test 139 JSON', function() {
 
 //		alasql('INSERT INTO five VALUES (?)',[{a:[6,7]}]);
 		alasql('INSERT INTO five VALUES (?)',[1]);
+
+		var res = alasql('SELECT * FROM five');
+		assert.deepEqual(res, [{ a: 1 },
+  { a: 'two' },
+  { a: { b: 'three' } },
+  { a: [ 'F', 'O', 'U', 'R' ] },
+  { a: 1 } ]);
+
 		var res = alasql('SELECT * FROM five WHERE a = 1');
-		assert.deepEqual(res,[{a:1}]);
+		assert.deepEqual(res,[{"a":1},{"a":1}]);
 
 		alasql('INSERT INTO five VALUES (?)',[[6,7]]);
 		var res = alasql('SELECT a FROM five WHERE a == @[6,7]');

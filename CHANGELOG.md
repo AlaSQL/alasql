@@ -11,6 +11,8 @@
 * CROSS APPLY and OUTER APPLY (!)
 * Float numbers like 10e20
 * SELECT COLUMN a+(SELECT MAX(b) FROM one) FROM one - SELECT in Expressions
+* Turned off WHERE optimization (due some problem with indices)
+* OVER PARTITION and OVER ORDER syntax
 
 ### 0.0.38 "ELbrus" (17.01.2015 - 17.01.2015)
 

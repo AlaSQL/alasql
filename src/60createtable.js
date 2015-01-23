@@ -28,6 +28,11 @@ yy.CreateTable.prototype.toString = function() {
 	else s += ' '+K('TABLE');
 	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
+	if(this.viewcolumns) {
+		s += '('+this.viewcolumns.map(function(vcol){
+			return vcol.toString();
+		}).join(',')+')';
+	}
 	if(this.as) s += ' '+K('AS')+' '+L(this.as);
 	else { 
 		var ss = this.columns.map(function(col){
@@ -121,6 +126,13 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.indices[pk.hh] = {};					
 		}
 	});
+
+	if(this.view && this.viewcolumns) {
+		var self = this;
+		this.viewcolumns.forEach(function(vcol,idx){
+			self.select.columns[idx].as = vcol.columnid;
+		});
+	}
 
 //	console.log(100,db.engineid);
 	if(db.engineid) {

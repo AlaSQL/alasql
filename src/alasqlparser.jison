@@ -206,6 +206,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'WHERE'                                         return 'WHERE'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
+'WORK'                                          return 'TRANSACTION'
 
 /*
 [0-9]+											return 'NUMBER'
@@ -784,6 +785,8 @@ Column
 		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}	
 	| Literal DOT Literal
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+	| Literal DOT VALUE
+		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
 	| Literal
 		{ $$ = new yy.Column({columnid: $1});}	
 	;
@@ -881,22 +884,23 @@ PrimitiveValue
 
 AggrValue
 	: Aggregator LPAR Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3}); }
+		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3, over:$5}); }
 	| Aggregator LPAR DISTINCT Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4, distinct:true}); }
+		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4, distinct:true, over:$6}); }
 	| Aggregator LPAR ALL Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4}); }
+		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4,
+		 over:$6}); }
 	;
 
 OverClause
 	:
 		{$$ = null}
 	| OVER LPAR OverPartitionClause RPAR
-		{ $$ = {over: new yy.Over()}; yy.extend($$,$3); }
+		{ $$ = new yy.Over(); yy.extend($$,$3); }
 	| OVER LPAR OverOrderByClause RPAR
-		{ $$ = {over: new yy.Over()}; yy.extend($$,$3); }
+		{ $$ = new yy.Over(); yy.extend($$,$3); }
 	| OVER LPAR OverPartitionClause OverOrderByClause RPAR
-		{ $$ = {over: new yy.Over()}; yy.extend($$,$3); yy.extend($$,$4);}
+		{ $$ = new yy.Over(); yy.extend($$,$3); yy.extend($$,$4);}
 	;
 
 OverPartitionClause
@@ -1463,6 +1467,8 @@ ColumnConstraint
 		{$$ = {null:true}; }
 	| NOT NULL
 		{$$ = {notnull:true}; }
+	| Check
+		{$$ = $1; }
 	;
 
 /* DROP TABLE */
@@ -1612,11 +1618,10 @@ ShowCreateTable
 
 CreateView
 
-	:  CREATE VIEW IfNotExists Table LPAR CreateTableDefClause RPAR AS Select
+	:  CREATE VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select
 		{ 
-			$$ = new yy.CreateTable({table:$4,view:true,select:$9}); 
+			$$ = new yy.CreateTable({table:$4,view:true,select:$9,viewcolumns:$6}); 
 			yy.extend($$,$3); 
-			yy.extend($$,$6); 
 		}
 	| CREATE VIEW IfNotExists Table AS Select
 		{ 
