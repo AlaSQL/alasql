@@ -31,6 +31,7 @@ function returnUndefined() {};
  @return {string} Escaped string
  */
 var escapeq = utils.escapeq = function(s) {
+//    console.log(s);
     return s.replace(/\'/g,'\\\'');
 }
 

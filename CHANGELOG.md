@@ -16,8 +16,9 @@
 * NIST SQL Example Tests passed (except constrains and subquery in delete)
 * Errors handling
 * SET ERRORLOG ON/OFF (trap errors)
+* COALESCE() function skips NaN values as well as NULL
 
-### 0.0.38 "ELbrus" (17.01.2015 - 17.01.2015)
+### 0.0.38 "Elbrus" (17.01.2015 - 17.01.2015)
 
 * Additional wrapper for FileSaver to work with R and V8 (http://cran.r-project.org/web/packages/V8/vignettes/v8_intro.html)
 * Fixed ROLLUP, CUBE and GROUPING SETS()

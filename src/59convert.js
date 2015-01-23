@@ -118,7 +118,9 @@ alasql.stdfn.CONVERT = function(value, args) {
 		}
 	};
 
-	if(args.dbtypeid == 'DATE') {
+	if(args.dbtypeid == 'Date') {
+		return new Date(val);
+	} else if(args.dbtypeid.toUpperCase() == 'DATE') {
 		var d = new Date(val);
 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 		return s;
@@ -128,20 +130,21 @@ alasql.stdfn.CONVERT = function(value, args) {
 		s += " "+("0"+d.getHours()).substr(-2)+":"+("0"+d.getMinutes()).substr(-2)+":"+("0"+d.getSeconds()).substr(-2);
 		s += '.'+("00"+d.getMilliseconds()).substr(-3)
 		return s;
-	} else if(args.dbtypeid == 'Date') {
-		return new Date(val);
-	} else if(args.dbtypeid == 'STRING') {
+	} else if(args.dbtypeid.toUpperCase() == 'STRING') {
 		return ""+val;
-	} else if(args.dbtypeid == 'NUMBER' || args.dbtypeid == 'FLOAT') {
+	} else if(args.dbtypeid.toUpperCase() == 'NUMBER' || args.dbtypeid == 'FLOAT') {
 		return +val;
-	} else if(args.dbtypeid == 'BOOLEAN') {
+	} else if(args.dbtypeid.toUpperCase() == 'MONEY') {
+		var m = +val;
+		return (m|0)+((m*100)%100)/100;
+	} else if(args.dbtypeid.toUpperCase() == 'BOOLEAN') {
 		return !!val;
-	} else if(args.dbtypeid == 'INT') {
+	} else if(args.dbtypeid.toUpperCase() == 'INT') {
 		return val|0;
-	} else if(args.dbtypeid == 'VARCHAR' || args.dbtypeid == 'NVARCHAR') {
+	} else if(args.dbtypeid.toUpperCase() == 'VARCHAR' || args.dbtypeid == 'NVARCHAR') {
 		if(args.dbsize) return (""+val).substr(0,args.dbsize);
 		else return ""+val;
-	} else if(args.dbtypeid == 'CHAR' || args.dbtypeid == 'NCHAR') {
+	} else if(args.dbtypeid.toUpperCase() == 'CHAR' || args.dbtypeid == 'NCHAR') {
 		return (val+(new Array(args.dbsize+1).join(" "))).substr(0,args.dbsize);
 		//else return ""+val.substr(0,1);
 	}

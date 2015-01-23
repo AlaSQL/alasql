@@ -1209,16 +1209,21 @@ Delete
 /* INSERT */
 
 Insert
-	: INSERT INTO Table VALUES ValuesListsList
+	: INSERT Into Table VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
-	| INSERT INTO Table DEFAULT VALUES
+	| INSERT Into Table DEFAULT VALUES
 		{ $$ = new yy.Insert({into:$3, default: true}) ; }
-	| INSERT INTO Table LPAR ColumnsList RPAR VALUES ValuesListsList
+	| INSERT Into Table LPAR ColumnsList RPAR VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
-	| INSERT INTO Table Select
+	| INSERT Into Table Select
 		{ $$ = new yy.Insert({into:$3, select: $4}); }
-	| INSERT INTO Table LPAR ColumnsList RPAR Select
+	| INSERT Into Table LPAR ColumnsList RPAR Select
 		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
+	;
+
+Into 
+	:
+	| INTO
 	;
 /*
 TableParamFunc
@@ -1463,6 +1468,8 @@ ColumnConstraint
 		{$$ = {auto_increment:true};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: [$3,$5]} }
+	| IDENTITY
+		{ $$ = {identity: [1,1]} }
 	| DEFAULT PrimitiveValue
 		{$$ = {default:$2};}
 	| NULL
