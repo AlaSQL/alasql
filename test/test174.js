@@ -25,7 +25,7 @@ describe('Test 174 - HAVING Clause', function() {
 		// group by id_group having count(id) = 2',[groups]);         
 		// var res = alasql('select id_group from ? where id in (4,7)\
 		// group by id_group having count(id) = 2',[groups]);         
-		console.log(res);
+//		console.log(res);
 		assert.deepEqual(res, [{id_group:"2",cnt:2}]);
 		done();
 	});

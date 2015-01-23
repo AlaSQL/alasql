@@ -24,7 +24,7 @@ describe('Test 217 Some T-SQL compatibility tests', function() {
             CREATE TABLE one(a INT);INSERT INTO one VALUES (1),(2),(3); \
             TRUNCATE TABLE one; SELECT VALUE COUNT(*) FROM one \
             ');
-        console.log(res);
+//        console.log(res);
         assert(res.pop()===0);
         done();
     });

@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.0.39 "Everest" (17.01.2015 - 22.01.2015)
+### 0.0.39 "Everest" (17.01.2015 - 23.01.2015)
 
 * `JavaScript()` expressions and statements SELECT `Math.random()*100`
 * Added conversion to number for strings like: ' 123 '
@@ -13,6 +13,9 @@
 * SELECT COLUMN a+(SELECT MAX(b) FROM one) FROM one - SELECT in Expressions
 * Turned off WHERE optimization (due some problem with indices)
 * OVER PARTITION and OVER ORDER syntax
+* NIST SQL Example Tests passed (except constrains and subquery in delete)
+* Errors handling
+* SET ERRORLOG ON/OFF (trap errors)
 
 ### 0.0.38 "ELbrus" (17.01.2015 - 17.01.2015)
 

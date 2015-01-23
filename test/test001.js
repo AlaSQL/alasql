@@ -105,7 +105,7 @@ function prepareData (defined) {
 				' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
 				' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
 				' GROUP BY students.schoolid, students.courseid, students.studentname' );
-			console.log(res);
+//			console.log(res);
 			assert.equal(res[4].studentname,'Astrid Carlson');
 			done();
 		});

@@ -42,6 +42,7 @@ alasql.databasenum = 0; // Current database
  Alasql options object
  */
 alasql.options = {};
+alasql.options.errorlog = false; // Log or throw error
 alasql.options.valueof = false; // Use valueof in orderfn
 alasql.options.dropifnotexists = false; // DROP database in any case
 alasql.options.datetimeformat = 'sql'; // How to handle DATE and DATETIME types
@@ -95,7 +96,17 @@ alasql.use = function (databaseid) {
  Run SQL statement on current database
  */
 alasql.exec = function (sql, params, cb, scope) {
-	return alasql.dexec(alasql.useid, sql, params, cb, scope);
+	delete alasql.error;
+	if(alasql.options.errorlog){
+		try {
+			return alasql.dexec(alasql.useid, sql, params, cb, scope);
+		} catch(err){
+			alasql.error = err;
+			if(cb) cb(null,alasql.error);
+		}
+	} else {
+		return alasql.dexec(alasql.useid, sql, params, cb, scope);
+	}
 }
 
 /**

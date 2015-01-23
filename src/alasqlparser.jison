@@ -136,6 +136,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'SOURCE'										return 'SOURCE'
 'MATRIX'										return 'MATRIX'	
 "MAX"											return "MAX"
+"MERGE"											return "MERGE"
 "MIN"											return "MIN"
 "MINUS"											return "EXCEPT"
 "MODIFY"										return "MODIFY"
@@ -333,6 +334,7 @@ Statement
 	| Insert
 	| RenameTable
 	| Select
+	| Merge
 	| WithSelect
 	| ShowCreateTable
 	| ShowColumns

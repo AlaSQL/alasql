@@ -17,7 +17,11 @@ CREATE FILE DATABASE a("a.myjson", {from:"MYJSON", into:"MYJSON"})
 
 1. Create bower package
 
+0. Errors!!!
+1. Subqueries in DELETE and UPDATE
 2. MERGE syntax (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
+3. Constraints
+4. Foreign Keys
 1. Win8.1
 
 OUTPUT (http://msdn.microsoft.com/en-us/library/ms177564.aspx)
