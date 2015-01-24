@@ -185,9 +185,9 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			var colas;
 			//  = col.as;
 				if(col instanceof yy.Column) {
-					colas = col.columnid;
+					colas = escapeq(col.columnid);
 				} else {
-					colas = col.toString();
+					colas = escapeq(col.toString());
 				}
 				for(var i=0;i<idx;i++) {
 					if(colas == self.columns[i].nick) {
@@ -226,7 +226,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			// var colas = col.as;
 			var colas = col.as;
 			if(typeof colas == 'undefined') {
-			 	if(col instanceof yy.Column) colas = col.columnid;
+			 	if(col instanceof yy.Column) colas = escapeq(col.columnid);
 			 	else colas = col.nick;
 			}
 			query.groupColumns[colas]=col.nick;

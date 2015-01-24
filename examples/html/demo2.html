@@ -1,6 +1,6 @@
 <script src="../../alasql.min.js"></script>
 <div id="res"></div>
-<script id="sql" >
+<script type="text/sql" id="sql" >
 
 DECLARE @a INT = 1;
 IF @a = 1 
@@ -10,13 +10,9 @@ ELSE BEGIN
 END;
 
 </script>
-<script type="text/sql">
-	
+<script type="text/json" id="json">
+	[{"a":1},{"a":2}]
 </script>
-<xmp id="json">
-[{"a":1},{"a":2}]
-</xmp>
 <script>
 	alasql('SOURCE "#sql"');
-	alasql('#sql');
 </script>

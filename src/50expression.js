@@ -559,7 +559,7 @@ yy.AggrValue.prototype.findAggregator = function (query){
 
 //	var colas = this.as || this.toString();
 
-	var colas = this.toString()+':'+query.selectGroup.length;
+	var colas = escapeq(this.toString())+':'+query.selectGroup.length;
 //	console.log('findAgg',this);
 
 

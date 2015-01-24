@@ -3,6 +3,9 @@
 
 ## Next Versions
 
+1. DECLARE @a INT = 1;
+
+
 1. New presentation about Alasql
 1. Test with Ionic Framwork
 2. CREATE FILESTORAGE DATABASE IF NOT EXISTS a("filename")

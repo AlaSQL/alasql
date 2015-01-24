@@ -158,11 +158,12 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         });    
 */
     } else {
+        // if(typeof path == "string") {
+        // } 
         if(typeof path == "string") {
             // For browser read from tag
             if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
                 var data = document.querySelector(path).textContent;
-                 console.log(data);
                 success(data);
             } else {
                     // For browser

@@ -2401,11 +2401,12 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         });    
 */
     } else {
+        // if(typeof path == "string") {
+        // } 
         if(typeof path == "string") {
             // For browser read from tag
             if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
                 var data = document.querySelector(path).textContent;
-                 console.log(data);
                 success(data);
             } else {
                     // For browser
@@ -6167,9 +6168,9 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			var colas;
 			//  = col.as;
 				if(col instanceof yy.Column) {
-					colas = col.columnid;
+					colas = escapeq(col.columnid);
 				} else {
-					colas = col.toString();
+					colas = escapeq(col.toString());
 				}
 				for(var i=0;i<idx;i++) {
 					if(colas == self.columns[i].nick) {
@@ -6208,7 +6209,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			// var colas = col.as;
 			var colas = col.as;
 			if(typeof colas == 'undefined') {
-			 	if(col instanceof yy.Column) colas = col.columnid;
+			 	if(col instanceof yy.Column) colas = escapeq(col.columnid);
 			 	else colas = col.nick;
 			}
 			query.groupColumns[colas]=col.nick;
@@ -6379,14 +6380,14 @@ var rollup = function (a,query) {
 		var ss = [];
 		for(var i=0;i<glen;i++) {
 		 	if(a[i] instanceof yy.Column) {
-				a[i].nick = a[i].columnid;
+				a[i].nick = escapeq(a[i].columnid);
 
-		 		query.groupColumns[a[i].columnid] = a[i].nick;
+		 		query.groupColumns[escapeq(a[i].columnid)] = a[i].nick;
 				var aaa = a[i].nick+'\t'
 					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
 		 	} else {
-		 		query.groupColumns[a[i].toString()] = a[i].toString();
-				var aaa = a[i].toString()+'\t'
+		 		query.groupColumns[escapeq(a[i].toString())] = escapeq(a[i].toString());
+				var aaa = escapeq(a[i].toString())+'\t'
 					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
 			}
 
@@ -6454,13 +6455,13 @@ function decartes(gv,query) {
 		for(var t=0; t<gv.length; t++) {
 			if(gv[t] instanceof yy.Column) {
 			//	console.log('+++',gv[t].columnid,gv[t]);
-				gv[t].nick = gv[t].columnid;
-			 	query.groupColumns[gv[t].columnid] = gv[t].nick;
+				gv[t].nick = escapeq(gv[t].columnid);
+			 	query.groupColumns[gv[t].nick] = gv[t].nick;
 		 		res = res.map(function(r){return r.concat(gv[t].nick+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
 //		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
 			} else if(gv[t] instanceof yy.FuncValue) {
-				query.groupColumns[gv[t].toString()] = gv[t].toString();
-		 		res = res.map(function(r){return r.concat(gv[t].toString()+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
+				query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
+		 		res = res.map(function(r){return r.concat(escapeq(gv[t].toString())+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
 		 		// to be defined
 			} else if(gv[t] instanceof yy.GroupExpression) {
 				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group,query));
@@ -6476,8 +6477,8 @@ function decartes(gv,query) {
 //				console.log(gv[t].toString());
 //console.log('+++');
 		 		res = res.map(function(r){
- 					query.groupColumns[gv[t].toString()] = gv[t].toString();
-		 			return r.concat(gv[t].toString()
+ 					query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
+		 			return r.concat(escapeq(gv[t].toString())
 		 				+'\t'
 		 				+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols)) 
 		 		}); 	
@@ -6498,17 +6499,17 @@ function decartes(gv,query) {
 		return res;
 	} else if(gv instanceof yy.FuncValue) {
 //		console.log(gv);
-		query.groupColumns[gv.toString()] = gv.toString();
+		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
 		return [gv.toString()+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
 	} else if(gv instanceof yy.Column) {
-			gv.nick = gv.columnid;
-		 	query.groupColumns[gv.columnid] = gv.nick;
+			gv.nick = escapeq(gv.columnid);
+		 	query.groupColumns[gv.nick] = gv.nick;
 			return [gv.nick+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)]; // Is this ever happened?
 		// } else if(gv instanceof yy.Expression) {
 		// 	return [gv.columnid]; // Is this ever happened?
 	} else {
-		query.groupColumns[gv.toString()] = gv.toString();
-		return [gv.toString()+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
+		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
+		return [escapeq(gv.toString())+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
 //			throw new Error('Single argument in the group without array');			
 	};
 
@@ -7230,7 +7231,7 @@ yy.AggrValue.prototype.findAggregator = function (query){
 
 //	var colas = this.as || this.toString();
 
-	var colas = this.toString()+':'+query.selectGroup.length;
+	var colas = escapeq(this.toString())+':'+query.selectGroup.length;
 //	console.log('findAgg',this);
 
 
