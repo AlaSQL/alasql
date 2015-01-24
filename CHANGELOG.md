@@ -17,6 +17,8 @@
 * Errors handling
 * SET ERRORLOG ON/OFF (trap errors)
 * COALESCE() function skips NaN values as well as NULL
+* SET CACHE ON/OFF - turn on/off SQL statements caching
+* loadFileFrom('#selector') - to read data from <xmp> tag
 
 ### 0.0.38 "Elbrus" (17.01.2015 - 17.01.2015)
 

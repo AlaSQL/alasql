@@ -158,23 +158,29 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         });    
 */
     } else {
-
         if(typeof path == "string") {
+            // For browser read from tag
+            if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
+                var data = document.querySelector(path).textContent;
+                 console.log(data);
+                success(data);
+            } else {
                     // For browser
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        if (success)
-                            success(xhr.responseText);
-                    } else {
-                        if (error)
-                            error(xhr);
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            if (success)
+                                success(xhr.responseText);
+                        } else {
+                            if (error)
+                                error(xhr);
+                        }
                     }
-                }
-            };
-            xhr.open("GET", path, asy); // Async
-            xhr.send();
+                };
+                xhr.open("GET", path, asy); // Async
+                xhr.send();
+            }
         } else if(path instanceof Event) {
             // console.log("event");
             var files = path.target.files;

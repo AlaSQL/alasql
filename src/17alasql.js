@@ -59,6 +59,8 @@ alasql.declares = {};
 // AUTOCOMMIT ON | OFF
 alasql.options.autocommit = true;
 
+alasql.options.cache = true;
+
 alasql.prompthistory = [];
 
 alasql.from = {}; // FROM functions
@@ -118,11 +120,13 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 //	console.log(3,db.databaseid,databaseid);
 	
 	// Create hash
-	var hh = hash(sql);
-	var statement = db.sqlCache[hh];
-	// If database structure was not changed sinse lat time return cache
-	if(statement && db.dbversion == statement.dbversion) {
-		return statement(params, cb);
+	if(alasql.options.cache) {
+		var hh = hash(sql);
+		var statement = db.sqlCache[hh];
+		// If database structure was not changed sinse lat time return cache
+		if(statement && db.dbversion == statement.dbversion) {
+			return statement(params, cb);
+		}
 	}
 
 	// Create AST
@@ -138,12 +142,14 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			statement.sql = sql;
 			statement.dbversion = db.dbversion;
 			
-			// Secure sqlCache size
-			if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
-				db.resetSqlCache();
+			if(alasql.options.cache) {
+				// Secure sqlCache size
+				if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
+					db.resetSqlCache();
+				}
+				db.sqlCacheSize++;
+				db.sqlCache[hh] = statement;
 			}
-			db.sqlCacheSize++;
-			db.sqlCache[hh] = statement;
 			var res = alasql.res = statement(params, cb, scope);
 			return res;
 			

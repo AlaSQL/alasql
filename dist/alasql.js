@@ -2401,23 +2401,29 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         });    
 */
     } else {
-
         if(typeof path == "string") {
+            // For browser read from tag
+            if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
+                var data = document.querySelector(path).textContent;
+                 console.log(data);
+                success(data);
+            } else {
                     // For browser
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        if (success)
-                            success(xhr.responseText);
-                    } else {
-                        if (error)
-                            error(xhr);
+                var xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            if (success)
+                                success(xhr.responseText);
+                        } else {
+                            if (error)
+                                error(xhr);
+                        }
                     }
-                }
-            };
-            xhr.open("GET", path, asy); // Async
-            xhr.send();
+                };
+                xhr.open("GET", path, asy); // Async
+                xhr.send();
+            }
         } else if(path instanceof Event) {
             // console.log("event");
             var files = path.target.files;
@@ -3114,6 +3120,8 @@ alasql.declares = {};
 // AUTOCOMMIT ON | OFF
 alasql.options.autocommit = true;
 
+alasql.options.cache = true;
+
 alasql.prompthistory = [];
 
 alasql.from = {}; // FROM functions
@@ -3173,11 +3181,13 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 //	console.log(3,db.databaseid,databaseid);
 	
 	// Create hash
-	var hh = hash(sql);
-	var statement = db.sqlCache[hh];
-	// If database structure was not changed sinse lat time return cache
-	if(statement && db.dbversion == statement.dbversion) {
-		return statement(params, cb);
+	if(alasql.options.cache) {
+		var hh = hash(sql);
+		var statement = db.sqlCache[hh];
+		// If database structure was not changed sinse lat time return cache
+		if(statement && db.dbversion == statement.dbversion) {
+			return statement(params, cb);
+		}
 	}
 
 	// Create AST
@@ -3193,12 +3203,14 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			statement.sql = sql;
 			statement.dbversion = db.dbversion;
 			
-			// Secure sqlCache size
-			if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
-				db.resetSqlCache();
+			if(alasql.options.cache) {
+				// Secure sqlCache size
+				if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
+					db.resetSqlCache();
+				}
+				db.sqlCacheSize++;
+				db.sqlCache[hh] = statement;
 			}
-			db.sqlCacheSize++;
-			db.sqlCache[hh] = statement;
 			var res = alasql.res = statement(params, cb, scope);
 			return res;
 			

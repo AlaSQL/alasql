@@ -1,0 +1,16 @@
+<script src="../../alasql.min.js"></script>
+<a href="javascript:run()">Run SQL</a>
+<div>
+<p>SQL statement</p>
+<xmp id="sql" style="display:none">
+SELECT 100 INTO HTML("#res",{headers:true})
+</xmp>
+</div>
+<p>Result</p>
+<div id="res"></div>
+<script>
+function run() {
+	alasql('SET CACHE OFF');
+	alasql('SOURCE "#sql"');
+}
+</script>
