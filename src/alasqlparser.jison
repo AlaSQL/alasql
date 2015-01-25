@@ -1996,66 +1996,88 @@ TruncateTable
 Merge
 	: MERGE MergeInto MergeUsing MergeOn MergeMatchedList OutputClause
 		{ 
-			$$ = $1; yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
-			yy.extend($$,$5);yy.extend($$,$6);
+			$$ = new yy.Merge(); yy.extend($$,$2); yy.extend($$,$3); 
+			yy.extend($$,$4);
+			yy.extend($$,{matches:$5});yy.extend($$,$6);
 		}
 	;
 
 MergeInto
 	: FromTable
-		{ $$ = new yy.Merge({into: $1}); }
+		{ $$ = {into: $1}; }
 	| INTO FromTable
-		{ $$ = new yy.Merge({into: $2}); }
+		{ $$ = {into: $2}; }
 	;
 
 MergeUsing
 	: USING FromTable
-		{ $$ = {using: $1}; }
+		{ $$ = {using: $2}; }
 	;
 
 MergeOn
 	: ON Expression
-		{ $$ = {on:$1}; }
+		{ $$ = {on:$2}; }
 	;
 
 MergeMatchedList
 	: MergeMatchedList MergeMatched
+		{ $$ = $1; $$.push($2); }
 	| MergeMatchedList MergeNotMatched
+		{ $$ = $1; $$.push($2); }
 	| MergeMatched
+		{ $$ = [$1]; }
 	| MergeNotMatched
+		{ $$ = [$1]; }
 	;
 
 MergeMatched
 	: WHEN MATCHED THEN MergeMatchedAction
+		{ $$ = {matched:true, action:$4} }
 	| WHEN MATCHED AND Expression THEN MergeMatchedAction
+		{ $$ = {matched:true, expr: $4, action:$6} }
 	;
 
 MergeMatchedAction
 	: DELETE
+		{ $$ = {delete:true}; }
 	| UPDATE SET SetColumnsList
+		{ $$ = {update:$3}; }
 	;
 
 MergeNotMatched
 	: WHEN NOT MATCHED THEN MergeNotMatchedAction
+		{ $$ = {matched:false, bytarget: true, action:$5} }
 	| WHEN NOT MATCHED BY TARGET THEN MergeNotMatchedAction
+		{ $$ = {matched:false, bytarget: true, action:$7} }
 	| WHEN NOT MATCHED AND Expression THEN MergeNotMatchedAction
+		{ $$ = {matched:false, bytarget: true, expr:$5, action:$7} }
 	| WHEN NOT MATCHED BY TARGET AND Expression THEN MergeNotMatchedAction
+		{ $$ = {matched:false, bytarget: true, expr:$7, action:$9} }
 	| WHEN NOT MATCHED BY SOURCE THEN MergeNotMatchedAction
+		{ $$ = {matched:false, bysource: true, action:$7} }
 	| WHEN NOT MATCHED BY SOURCE AND Expression THEN MergeMatchedAction
-	| WHEN NOT MATCHED THEN MergeNotMatchAction
+		{ $$ = {matched:false, bysource: true, expr:$7, action:$9} }
 	;
 
 MergeNotMatchedAction
 	: INSERT VALUES ValuesListsList
+		{ $$ = {insert:true, values:$3}; }
 	| INSERT LPAR ColumnsList RPAR VALUES ValuesListsList
+		{ $$ = {insert:true, values:$6, columns:$3}; }
 	| INSERT DEFAULT VALUES
+		{ $$ = {insert:true, defaultvalues:true}; }
 	| INSERT LPAR ColumnsList RPAR DEFAULT VALUES
+		{ $$ = {insert:true, defaultvalues:true, columns:$3}; }
 	;
 
 OutputClause
 	: 
 	| OUTPUT ResultColumns
+		{ $$ = {output:{columns:$2}} }
 	| OUTPUT ResultColumns INTO AT Literal
+		{ $$ = {output:{columns:$2, intovar: $5}} }
 	| OUTPUT ResultColumns INTO Table
+		{ $$ = {output:{columns:$2, intotable: $4}} }
 	| OUTPUT ResultColumns INTO Table LPAR ColumnsList RPAR
+		{ $$ = {output:{columns:$2, intotable: $4, intocolumns:$6}} }
 	;
