@@ -81,6 +81,7 @@ gulp.task('js-merge', function () {
     './src/72delete.js',
     './src/74update.js',
     './src/74update.js',
+    './src/75merge.js',
     './src/76usedatabase.js',
     './src/77declare.js',
     './src/78show.js',

@@ -93,6 +93,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
+'DELETED'                                       return 'DELETED'
 'DESC'                                          return 'DIRECTION'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
@@ -122,6 +123,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'INDEX'											return 'INDEX'
 'INNER'                                         return 'INNER'
 'INSERT'                                        return 'INSERT'
+'INSERTED'                                      return 'INSERTED'
 'INTERSECT'                                     return 'INTERSECT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
@@ -134,6 +136,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 'SOURCE'										return 'SOURCE'
+"MATCHED"										return "MATCHED"
 'MATRIX'										return 'MATRIX'	
 "MAX"											return "MAX"
 "MERGE"											return "MERGE"
@@ -185,6 +188,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
+'TARGET'										return 'TARGET'
 'TD'											return 'TD'
 'TEXTSTRING'									return 'TEXTSTRING'
 'TH'											return 'TH'
@@ -1987,4 +1991,71 @@ DeclareItem
 TruncateTable
 	: TRUNCATE TABLE Table
 		{ $$ = new yy.TruncateTable({table:$3});}
+	;
+
+Merge
+	: MERGE MergeInto MergeUsing MergeOn MergeMatchedList OutputClause
+		{ 
+			$$ = $1; yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
+			yy.extend($$,$5);yy.extend($$,$6);
+		}
+	;
+
+MergeInto
+	: FromTable
+		{ $$ = new yy.Merge({into: $1}); }
+	| INTO FromTable
+		{ $$ = new yy.Merge({into: $2}); }
+	;
+
+MergeUsing
+	: USING FromTable
+		{ $$ = {using: $1}; }
+	;
+
+MergeOn
+	: ON Expression
+		{ $$ = {on:$1}; }
+	;
+
+MergeMatchedList
+	: MergeMatchedList MergeMatched
+	| MergeMatchedList MergeNotMatched
+	| MergeMatched
+	| MergeNotMatched
+	;
+
+MergeMatched
+	: WHEN MATCHED THEN MergeMatchedAction
+	| WHEN MATCHED AND Expression THEN MergeMatchedAction
+	;
+
+MergeMatchedAction
+	: DELETE
+	| UPDATE SET SetColumnsList
+	;
+
+MergeNotMatched
+	: WHEN NOT MATCHED THEN MergeNotMatchedAction
+	| WHEN NOT MATCHED BY TARGET THEN MergeNotMatchedAction
+	| WHEN NOT MATCHED AND Expression THEN MergeNotMatchedAction
+	| WHEN NOT MATCHED BY TARGET AND Expression THEN MergeNotMatchedAction
+	| WHEN NOT MATCHED BY SOURCE THEN MergeNotMatchedAction
+	| WHEN NOT MATCHED BY SOURCE AND Expression THEN MergeMatchedAction
+	| WHEN NOT MATCHED THEN MergeNotMatchAction
+	;
+
+MergeNotMatchedAction
+	: INSERT VALUES ValuesListsList
+	| INSERT LPAR ColumnsList RPAR VALUES ValuesListsList
+	| INSERT DEFAULT VALUES
+	| INSERT LPAR ColumnsList RPAR DEFAULT VALUES
+	;
+
+OutputClause
+	: 
+	| OUTPUT ResultColumns
+	| OUTPUT ResultColumns INTO AT Literal
+	| OUTPUT ResultColumns INTO Table
+	| OUTPUT ResultColumns INTO Table LPAR ColumnsList RPAR
 	;

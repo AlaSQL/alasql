@@ -17,7 +17,12 @@ describe('Test 235 SELECT INSIDE IF', function() {
 
     it("2. Throw error", function(done) {
         var data = [{a:1},{a:2}];
-        alasql('IF EXISTS(SELECT * FROM ? WHERE a = 3) PRINT 1 ELSE PRINT 2',[data]);
+        var res = alasql('IF EXISTS(SELECT * FROM ? WHERE a = 2) SELECT VALUE 1 ELSE SELECT VALUE 2',[data]);
+        assert(res==1);
+        var res = alasql('IF EXISTS(SELECT * FROM ? WHERE a = 3) SELECT VALUE 1 ELSE SELECT VALUE 2',[data]);
+        assert(res==2);
+//        console.log(res);
+        done();
     });
 
     it('99. DROP', function(done){
