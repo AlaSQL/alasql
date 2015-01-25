@@ -15,7 +15,7 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression.toJavaScript('','', null));
 //		console.log(this.expression.toJavaScript('','', null));
-		var expr =  new Function("params,alasql",'return '+this.expression.toJavaScript('','', null));
+		var expr =  new Function("params,alasql,p",'return '+this.expression.toJavaScript('','', null));
 		var res = expr(params,alasql);
 		if(cb) res = cb(res);
 		return res;
@@ -57,7 +57,7 @@ yy.JavaScript.prototype.toJavaScript = function(context, tableid, defcols) {
 };
 yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
-	var expr =  new Function("params,alasql",this.value);
+	var expr =  new Function("params,alasql,p",this.value);
 	expr(params,alasql);
 	if(cb) res = cb(res);
 	return res;

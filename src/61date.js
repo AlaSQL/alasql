@@ -21,9 +21,9 @@ stdfn.EXTEND = alasql.utils.extend;
 */
 stdfn.COALESCE = function() {
 	for(var i=0;i<arguments.length;i++) {
-		if(typeof arguments[i] != 'undefined' &&  !isNaN(arguments[i]) ) {
-			return arguments[i];
-		}
+		if(typeof arguments[i] == 'undefined') continue;
+		if(typeof arguments[i] == "number" && isNaN(arguments[i]) ) continue;
+		return arguments[i];
 	}
 	return undefined;
 }

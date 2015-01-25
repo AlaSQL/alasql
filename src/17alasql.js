@@ -155,6 +155,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			
 		} else {
 //			console.log(ast.statements[0]);
+			alasql.precompile(ast.statements[0],alasql.useid,params);
 			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);		
 			return res;
 		}
@@ -181,6 +182,7 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 				var statement = ast.statements[i].compile(alasql.useid);
 				res.push(alasql.res = statement(params,null,scope));
 			} else {
+				alasql.precompile(ast.statements[i],alasql.useid,params);
 				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
 			}		
 		}
@@ -215,6 +217,7 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 				var statement = astatement.compile(alasql.useid);
 				statement(params, adrunone, scope);
 			} else {
+				alasql.precompile(ast.statements[0],alasql.useid,params);
 				astatement.execute(alasql.useid, params, adrunone);
 			}
 		}

@@ -33,3 +33,21 @@ yy.Select.prototype.compileQueries = function(query) {
 		return q.compile(query.database.databaseid);
 	});
 };
+
+alasql.precompile = function(statement,databaseid,params){
+//	console.log(statement);
+	if(!statement) return;
+	statement.params = params;
+	if(statement.queries) {	
+		statement.queriesfn = statement.queries.map(function(q) {
+			return q.compile(databaseid || statement.database.databaseid);
+		});
+	}
+	if(statement.exists) {
+		statement.existsfn = statement.exists.map(function(ex) {
+			return ex.compile(databaseid || statement.database.databaseid);
+		});
+	};
+
+
+}

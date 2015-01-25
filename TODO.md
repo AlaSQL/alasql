@@ -3,6 +3,18 @@
 
 ## Next Versions
 
+
+1. This should work... See http://jsfiddle.net/n4de6433/1/
+
+IF EXISTS (SELECT * FROM [Table] WHERE ID = rowID)
+UPDATE [Table] SET propertyOne = propOne, property2 . . .
+ELSE
+INSERT INTO [Table] (propOne, propTwo . . .)
+
+2. MERGE
+
+3. Firefox 26 tests
+
 1. DECLARE @a INT = 1;
 
 

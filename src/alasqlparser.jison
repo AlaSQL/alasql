@@ -298,21 +298,32 @@ main
 	;
 
 Statements
-	: Statements SEMICOLON Statement
+	: Statements SEMICOLON AStatement
 		{ $$ = $1; if($3) $1.push($3); }
-	| Statements GO Statement
+	| Statements GO AStatement
 		{ $$ = $1; if($3) $1.push($3); }
-	| Statement
+	| AStatement
 		{ $$ = [$1]; }
 	| ExplainStatement
 		{ $$ = [$1]; }
 	;
 
 ExplainStatement
-	: EXPLAIN Statement
+	: EXPLAIN AStatement
 		{ $$ = $2; $2.explain = true; }
-	| EXPLAIN QUERY PLAN Statement
+	| EXPLAIN QUERY PLAN AStatement
 		{ $$ = $4;  $4.explain = true;}
+	;
+
+AStatement
+	: Statement
+		{ 
+			$$ = $1;
+		    if(yy.exists) $$.exists = yy.exists;
+		    delete yy.exists;
+		    if(yy.queries) $$.queries = yy.queries;
+			delete yy.queries;
+		}
 	;
 
 Statement
@@ -423,11 +434,11 @@ Select
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
 		    yy.extend($$,$8); 
 		    $$ = $1;
-		    if(yy.exists) $$.exists = yy.exists;
+/*		    if(yy.exists) $$.exists = yy.exists;
 		    delete yy.exists;
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
-		}
+*/		}
 /*	| SELECT NumValue
 		{ $$ = new yy.Select({value: $2}); }
 */	;
@@ -1887,24 +1898,33 @@ Restore
 */
 
 If
-	: IF Expression Statement
-		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
-	| IF Expression Statement ElseStatement
-		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); }
+	: IF Expression AStatement
+		{ $$ = new yy.If({expression:$2,thenstat:$3}); 
+			if($3.exists) $$.exists = $3.exists;
+			if($3.queries) $$.queries = $3.queries;
+		}
+	| IF Expression AStatement ElseStatement
+		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); 
+			if($3.exists) $$.exists = $3.exists;
+			if($3.queries) $$.queries = $3.queries;
+		}
 
-/*	| IF Expression Statement
+/*	| IF Expression AStatement
 		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
 */	;
 
 ElseStatement
-	: ELSE Statement
+	: ELSE AStatement
 		{$$ = $2;}
 	| {$$ = undefined; }
 	;
 
 While
-	: WHILE Expression Statement
-		{ $$ = new yy.While({expression:$2,loopstat:$3}); }
+	: WHILE Expression AStatement
+		{ $$ = new yy.While({expression:$2,loopstat:$3}); 
+			if($3.exists) $$.exists = $3.exists;
+			if($3.queries) $$.queries = $3.queries;
+		}
 	;
 
 Continue
