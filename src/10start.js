@@ -1,15 +1,15 @@
 //
 // alasql.js
 // Alasql - JavaScript SQL database
-// Date: 14.12.2014
-// Version: 0.0.33
+// Date: 01.02.2015
+// Version: 0.0.40
 // (ñ) 2014, Andrey Gershun
 //
 
 /*
 The MIT License (MIT)
 
-Copyright (c) 2014 Andrey Gershun (agershun@gmail.com)
+Copyright (c) 2014-2015 Andrey Gershun (agershun@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -83,16 +83,26 @@ var alasql = function(sql, params, cb, scope) {
 				columns:[new yy.Column({columnid:'*'})],
 				from: [new yy.ParamValue({param:0})]
 			});
-		} else if ((arguments.length == 1) && (sql instanceof Array)) {
+		} else if (arguments.length == 1 && typeof sql == "object" && sql instanceof Array) {
 			// One argument data object - fluent interface
-			var select = new yy.Select({
-				columns:[new yy.Column({columnid:'*'})],
-				from: [new yy.ParamValue({param:0})]
-			});
-			select.preparams = [sql];	
-			return select;
+				var select = new yy.Select({
+					columns:[new yy.Column({columnid:'*'})],
+					from: [new yy.ParamValue({param:0})]
+				});
+				select.preparams = [sql];	
+				return select;
 		} else {
 			// Standard interface
+			// alasql('#sql');
+			if(typeof sql == 'string' && sql[0]=='#' && typeof document == "object") {
+				sql = document.querySelector(sql).textContent;
+			} else if(typeof sql == 'object' && sql instanceof HTMElement) {
+				sql = sql.textContent;
+			} else if(typeof sql == 'function') {
+				// to run multiline functions
+				sql = sql.toString().slice(14,-3);
+			}
+			// Run SQL			
 			return alasql.exec(sql, params, cb, scope);
 		}
 	};

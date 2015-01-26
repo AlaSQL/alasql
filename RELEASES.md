@@ -16,6 +16,7 @@
 
 ### Version "Sapsan" 0.0.40 (25.01.2015)
 
+* MERGE
 * Cordova Support
 * Tests
 * AUTOINCREMENT / IDENTITY

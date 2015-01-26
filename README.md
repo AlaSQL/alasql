@@ -1,6 +1,6 @@
 # Alasql.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.39 "Everest" Date: January 18, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.40 "Sapsan" Date: January 24, 2014 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -35,9 +35,8 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 * Alasql is fast, because it uses some optimization methods. 
 
 Check Alasql vs other JavaScript SQL databases and data processing libraries: 
- * [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql)
- * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4)
- * [Alasql vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - test on 2^20 records
+* [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql/7) - for in-memory SELECT operations (see discussion at [issue #47](https://github.com/agershun/alasql/issues/47))
+ * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4) - in-memory operations* [Alasql vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - test on 2^20 records
  * Alasql vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
  * [Alasql vs. Lodash](http://jsperf.com/alasql-vs-lodash), [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
  * [Alasql vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).

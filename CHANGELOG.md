@@ -1,5 +1,15 @@
 # Changelog
 
+### 0.0.40 "Sapsan" (24.01.2015 - 25.01.2015)
+
+* IF EXISTS() and subqueries
+* MERGE syntax
+* alasql('#sql1');
+* alasql(document.querySelector('#sql'));
+* alasql(function(){/* SELECT 100 */}); for multiline SQL statements
+* SELECT one.a,one.b INTO "one.xlsx" FROM "one.json" AS one
+
+
 ### 0.0.39 "Everest" (17.01.2015 - 23.01.2015)
 
 * `JavaScript()` expressions and statements SELECT `Math.random()*100`

@@ -15,6 +15,12 @@ alasql.fn.Boolean = Boolean;
 /** Extend Object with properties */
 stdfn.EXTEND = alasql.utils.extend;
 
+
+stdfn.CHAR = String.fromCharCode.bind(String);
+stdfn.ASCII = function(a) {
+    return a.charCodeAt(0);
+};
+
 /** 
  Return first non-null argument
  See https://msdn.microsoft.com/en-us/library/ms190349.aspx

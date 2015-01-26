@@ -3,6 +3,49 @@
 
 ## Next Versions
 
+1. SQLite plugin
+2. Test list
+PouchDB tests
+
+@@res
+
+1. Add alasql(true); <script type="text/x-sql"> run
+
+<script src="alasql.min.js"></script>
+<div id="res"></div>
+<script id="sql1" src="text/x-sql">
+  SELECT 100 INTO "aaa.json";
+  SELECT 100 INTO "aaa.xlsx";
+  SELECT 100 INTO "aaa.csv";
+  SELECT 100 INTO ".res";
+  SELECT 100 INTO "#res";
+</script>
+<script>
+  alasql('#sql1');
+  alasql('.sql1');
+</script>
+
+  alasql('#alasql');
+  alasql($('#alasql'));
+  alasql(document.querySelector('#alasql'));
+
+
+1. Short syntax for variable
+2. Date literal
+DECLARE @one = #01.01.2014#;
+
+
+1. Change prettifier according https://msdn.microsoft.com/en-us/library/ms173443.aspx
+2. Add color module for Node.js for Errors and SQL
+
+3. Add HTML tag by default (string -> HTML(string, {headers:true})) shortcut
+
+SELECT * INTO "#res" FROM one;
+var res = alasql('SELECT * FROM "#table"')
+
+4.
+
+
 
 1. This should work... See http://jsfiddle.net/n4de6433/1/
 

@@ -499,6 +499,20 @@ IntoClause
 		{$$ = {into: $2} }
 	| INTO VarValue
 		{$$ = {into: $2} }
+	| INTO STRING
+		{ 
+			var s = $2;
+			s = s.substr(1,s.length-2);
+			var x3 = s.substr(-3).toUpperCase();
+			var x4 = s.substr(-4).toUpperCase();
+			if(s[1] == '#') {
+				$$ = {into: new yy.FuncValue({funcid: 'HTML', args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]})};
+			} else if(x3=='XLS' || x3 == 'CSV' || x3=='TAB') {
+				$$ = {into: new yy.FuncValue({funcid: x3, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]})};
+			} else if(x4=='XLSX' || x4 == 'JSON') {
+				$$ = {into: new yy.FuncValue({funcid: x4, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]})};
+			}
+		}
 	;
 
 FromClause
@@ -569,6 +583,34 @@ FromTable
 		{ $$ = $1; $1.as = $2; }
 	| VarValue AS Literal
 		{ $$ = $1; $1.as = $3; }
+
+	| FromString
+		{ $$ = $1; $1.as = 'default'; }
+	| FromString Literal
+		{ $$ = $1; $1.as = $2; }
+	| FromString AS Literal
+		{ $$ = $1; $1.as = $3; }
+	;
+
+FromString
+	: STRING
+		{ 
+			var s = $1;
+			s = s.substr(1,s.length-2);
+			var x3 = s.substr(-3).toUpperCase();
+			var x4 = s.substr(-4).toUpperCase();
+			var r;
+			if(s[1] == '#') {
+				r = new yy.FuncValue({funcid: 'HTML', args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
+			} else if(x3=='XLS' || x3 == 'CSV' || x3=='TAB') {
+				r = new yy.FuncValue({funcid: x3, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
+			} else if(x4=='XLSX' || x4 == 'JSON') {
+				r = new yy.FuncValue({funcid: x4, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
+			} else {
+				throw new Error('Unknown string in FROM clause');
+			};
+			$$ = r;
+		}
 	;
 
 Table
@@ -610,11 +652,11 @@ JoinTableAs
 	| LPAR Select RPAR AS Literal
 		{ $$ = {select: $1, as: $5 } ; }
 	| FuncValue
-		{ $$ = {func:$1, as:'default'}; }
+		{ $$ = {funcid:$1, as:'default'}; }
 	| FuncValue Literal
-		{ $$ = {func:$1, as: $2}; }
+		{ $$ = {funcid:$1, as: $2}; }
 	| FuncValue AS Literal
-		{ $$ = {func:$1, as: $3}; }
+		{ $$ = {funcid:$1, as: $3}; }
 
 	| VarValue
 		{ $$ = {variable:$1,as:'default'}; }
