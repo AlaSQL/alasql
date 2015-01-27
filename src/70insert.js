@@ -181,10 +181,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 //    console.log(1,s);
 //    	console.log(s33);
 
-    if(db.engineid && alasql.engines[db.engineid].intoTable) {
+    if(db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
 		var statement = function(params, cb) {
 			var aa = new Function("db,params",s33+'return aa;')(db,params);
-//			console.log(aa);
+//			console.log(s33);
 			var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, null, cb);
 //			if(cb) cb(res);
 			return res;

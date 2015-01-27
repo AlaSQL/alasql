@@ -1,0 +1,5 @@
+{
+  "alasql": "{\"databases\":{\"ls150\":true}}",
+  "ls150": "{\"databaseid\":\"ls150\",\"tables\":{\"one\":{\"columns\":[{\"columnid\":\"a\",\"dbtypeid\":\"INT\"},{\"columnid\":\"b\",\"dbtypeid\":\"STRING\"}]}}}",
+  "ls150.one": "[{\"a\":1,\"b\":\"Moscow\"},{\"a\":2,\"b\":\"Kyiv\"},{\"a\":3,\"b\":\"Minsk\"},{\"a\":2,\"b\":\"Moscow\"},{\"a\":4,\"b\":\"Kyiv\"},{\"a\":6,\"b\":\"Minsk\"}]"
+}

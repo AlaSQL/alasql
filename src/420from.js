@@ -52,9 +52,14 @@ yy.Select.prototype.compileFrom = function(query) {
 		};
 
 		if(tq instanceof yy.Table) {
+//			console.log('test',alasql.options.autocommit);
 //				console.log(997,alasql.databases[source.databaseid].engineid);
+// console.log(0,source.databaseid);
+// console.log(1,alasql.databases[source.databaseid]);
+// console.log(2,alasql.databases[source.databaseid].tables[source.tableid].view);
 			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
+// TODO -- make view for external engine
 				source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
@@ -66,6 +71,8 @@ yy.Select.prototype.compileFrom = function(query) {
 					return res;
 				}
 			} else {
+//				console.log('here');
+//				console.log(420,72,alasql.databases[source.databaseid].tables[source.tableid]);
 				source.datafn = function(query,params,cb,idx, alasql) {
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');

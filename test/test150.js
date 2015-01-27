@@ -8,7 +8,7 @@ if(typeof exports === 'object') {
 if(typeof exports == 'object') {
 
 	var DOMStorage = require("dom-storage")
-	global.localStorage = new DOMStorage("./test149.json", { strict: false, ws: '' });
+	global.localStorage = new DOMStorage("./test150.json", { strict: false, ws: '' });
 
 };
 
@@ -102,6 +102,7 @@ describe('Test 150 - localStorage Engine', function() {
 
 	it("8.Drop localStorage table", function(done) {
 		alasql('DROP TABLE test150.one');
+//		alasql('COMMIT TRANSACTION');
 		assert(!localStorage['ls150.one']);
 		done();
 	});
@@ -109,13 +110,14 @@ describe('Test 150 - localStorage Engine', function() {
 
 	it("99. Detach database", function(done){
 		alasql('DROP DATABASE test150a');
-		assert(!alasql.databases.test149a);
+		assert(!alasql.databases.test150a);
 		alasql('DETACH DATABASE test150');
-		assert(!alasql.databases.test149);
-		alasql('DROP localStorage DATABASE ls150');
+		assert(!alasql.databases.test150);
+		alasql('DROP LOCALSTORAGE DATABASE ls150');
 		assert(!localStorage['ls150']);
 		done();
 	});
+
 });
 
 

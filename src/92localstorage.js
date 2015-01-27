@@ -204,6 +204,7 @@ LS.commit = function(databaseid, cb) {
 LS.begin = LS.commit;
 
 LS.rollback = function(databaseid, cb) {
+//	console.log(207,databaseid);
 	var db = alasql.databases[databaseid];
 	db.dbversion++;
 //	console.log(db.dbversion)
@@ -228,6 +229,7 @@ LS.rollback = function(databaseid, cb) {
 	delete alasql.databases[databaseid];
 	alasql.databases[databaseid] = new alasql.Database(databaseid);
 	extend(alasql.databases[databaseid], lsdb);
+	alasql.databases[databaseid].databaseid = databaseid;
 	alasql.databases[databaseid].engineid = 'LOCALSTORAGE';
 //console.log(999, alasql.databases[databaseid]);
 }

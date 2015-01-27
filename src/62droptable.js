@@ -22,7 +22,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
 //	console.log(db, this.table.databaseid );
-	if(db.engineid) {
+	if(db.engineid && alasql.options.autocommit) {
 		return alasql.engines[db.engineid].dropTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
 	}
 	if(!this.ifexists || this.ifexists && db.tables[tableid]) {

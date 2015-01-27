@@ -5209,9 +5209,14 @@ yy.Select.prototype.compileFrom = function(query) {
 		};
 
 		if(tq instanceof yy.Table) {
+//			console.log('test',alasql.options.autocommit);
 //				console.log(997,alasql.databases[source.databaseid].engineid);
+// console.log(0,source.databaseid);
+// console.log(1,alasql.databases[source.databaseid]);
+// console.log(2,alasql.databases[source.databaseid].tables[source.tableid].view);
 			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
+// TODO -- make view for external engine
 				source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
@@ -5223,6 +5228,8 @@ yy.Select.prototype.compileFrom = function(query) {
 					return res;
 				}
 			} else {
+//				console.log('here');
+//				console.log(420,72,alasql.databases[source.databaseid].tables[source.tableid]);
 				source.datafn = function(query,params,cb,idx, alasql) {
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');
@@ -8475,7 +8482,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
 //	console.log(db, this.table.databaseid );
-	if(db.engineid) {
+	if(db.engineid && alasql.options.autocommit) {
 		return alasql.engines[db.engineid].dropTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
 	}
 	if(!this.ifexists || this.ifexists && db.tables[tableid]) {
@@ -9151,10 +9158,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 //    console.log(1,s);
 //    	console.log(s33);
 
-    if(db.engineid && alasql.engines[db.engineid].intoTable) {
+    if(db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
 		var statement = function(params, cb) {
 			var aa = new Function("db,params",s33+'return aa;')(db,params);
-//			console.log(aa);
+//			console.log(s33);
 			var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, null, cb);
 //			if(cb) cb(res);
 			return res;
@@ -10257,7 +10264,7 @@ yy.BeginTransaction.prototype.toString = function() {
 
 yy.BeginTransaction.prototype.execute = function (databaseid,params, cb) {
 	var res = 1;
-	if(alasql.databases[alasql.useid].engineid) {
+	if(alasql.databases[databaseid].engineid) {
 		return alasql.engines[alasql.databases[alasql.useid].engineid].begin(databaseid, cb);
 	} else {
 		// alasql commit!!!
@@ -10273,7 +10280,7 @@ yy.CommitTransaction.prototype.toString = function() {
 
 yy.CommitTransaction.prototype.execute = function (databaseid,params, cb) {
 	var res = 1;
-	if(alasql.databases[alasql.useid].engineid) {
+	if(alasql.databases[databaseid].engineid) {
 		return alasql.engines[alasql.databases[alasql.useid].engineid].commit(databaseid, cb);
 	} else {
 		// alasql commit!!!
@@ -10289,8 +10296,8 @@ yy.RollbackTransaction.prototype.toString = function() {
 
 yy.RollbackTransaction.prototype.execute = function (databaseid,params,cb) {
 	var res = 1;
-	if(alasql.databases[alasql.useid].engineid) {
-		return alasql.engines[alasql.databases[alasql.useid].engineid].rollback(databaseid, cb);
+	if(alasql.databases[databaseid].engineid) {
+		return alasql.engines[alasql.databases[databaseid].engineid].rollback(databaseid, cb);
 	} else {
 		// alasql commit!!!
 	}
@@ -11755,6 +11762,7 @@ LS.commit = function(databaseid, cb) {
 LS.begin = LS.commit;
 
 LS.rollback = function(databaseid, cb) {
+//	console.log(207,databaseid);
 	var db = alasql.databases[databaseid];
 	db.dbversion++;
 //	console.log(db.dbversion)
@@ -11779,6 +11787,7 @@ LS.rollback = function(databaseid, cb) {
 	delete alasql.databases[databaseid];
 	alasql.databases[databaseid] = new alasql.Database(databaseid);
 	extend(alasql.databases[databaseid], lsdb);
+	alasql.databases[databaseid].databaseid = databaseid;
 	alasql.databases[databaseid].engineid = 'LOCALSTORAGE';
 //console.log(999, alasql.databases[databaseid]);
 }
