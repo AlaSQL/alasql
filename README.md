@@ -666,11 +666,12 @@ Read my [to do](TODO.md) page
 ### Similar and related projects
 
 * [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
+* [WebSQLShim](http://github.com/agershun/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
 * [Alamdx](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
 
 ### FileSaver
 
-Alasql integrates [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally in browsers. Unfortunately, it cannot save files in Safari.
+Alasql includess [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally in browsers. Unfortunately, it cannot save files in Safari 8.0.
 
 ### Credits
 

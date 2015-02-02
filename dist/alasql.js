@@ -2439,6 +2439,11 @@ var doubleq = utils.doubleq = function(s) {
 }
 
 
+var cutbom = function(s) {
+    if(s[0] == String.fromCharCode(65279)) s = s.substr(1);
+    return s;
+};
+
 /**
   Load text file from anywhere
   @param {string} path File path
@@ -2463,7 +2468,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 }
             });
             process.stdin.on('end', function() {
-               success(buff);
+               success(cutbom(buff));
             });
         } else {
             // var data = fs.readFileSync(path);
@@ -2473,11 +2478,11 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     if(err) {
                         throw err;
                     }
-                    success(data.toString());
+                    success(cutbom(data.toString()));
                 });
             } else {
               var data = fs.readFileSync(path);
-              success(data.toString());
+              success(cutbom(data.toString()));
             }
         }
     } else if(typeof cordova == 'object') {
@@ -2501,7 +2506,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 fileEntry.file(function(file){
                     var fileReader = new FileReader();
                     fileReader.onloadend = function(e){
-                        success(this.result);
+                        success(cutbom(this.result));
                     };
                     fileReader.readAsText(file);
                 });
@@ -2546,7 +2551,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
                         if (xhr.status === 200) {
                             if (success)
-                                success(xhr.responseText);
+                                success(cutbom(xhr.responseText));
                         } else {
                             if (error)
                                 error(xhr);
@@ -2563,7 +2568,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
             var name = files[0].name;
             reader.onload = function(e) {
                 var data = e.target.result;
-                success(data);
+                success(cutbom(data));
             };
             reader.readAsText(files[0]);    
         }
@@ -2843,7 +2848,7 @@ var arrayDiff = utils.arrayDiff  = function (a,b) {
 /**
   Arrays deep intersect (with records)
  */
-var arrayIntersect = utils.arrayIntersept  = function(a,b) {
+var arrayIntersect = utils.arrayIntersect  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
@@ -2903,7 +2908,7 @@ var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
 /**
   Arrays deep intersect (with records)
  */
-var arrayIntersectDeep = utils.arrayInterseptDeep  = function(a,b) {
+var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
