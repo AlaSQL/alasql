@@ -33,7 +33,7 @@ In Italian:
 
 In Russian:
 
-* [Habrahabr.ru](http://habrahabr.ru/company/zfort/blog/242709/)
 * [Alasql.js - сервер на JavaScript](http://www.slideshare.net/AndreyGershun/alasqljs-sql-javascript) (Russian)
-
+* [Habrahabr.ru](http://habrahabr.ru/company/zfort/blog/242709/)
+* [RadioJS. Выпуск №16: Код и Калиграфия](http://radiojs.ru/2015/01/radiojs-16/)
 

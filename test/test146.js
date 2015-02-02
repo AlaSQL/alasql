@@ -18,7 +18,7 @@ describe('Test 146 - Async Tests', function() {
 			alasql.busy--;
 			if(n > 3) cb();
 			else cb({a:n,b:n*2});
-		},0);
+		},10);
 	};
 
 	it("1. Nested SQL", function(done){
