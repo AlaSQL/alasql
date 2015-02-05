@@ -266,7 +266,8 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 .												return 'INVALID'
 
 /lex
-%left If
+%left then
+%left else
 %left COMMA
 %left OR
 %left BETWEEN NOT_BETWEEN
@@ -1944,12 +1945,16 @@ Restore
 */
 
 If
-	: IF Expression AStatement
+	: 
+/*	IF Expression AStatement 
 		{ $$ = new yy.If({expression:$2,thenstat:$3}); 
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
-	| IF Expression AStatement ElseStatement
+	| 
+
+*/
+	IF Expression AStatement ElseClause 
 		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); 
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
@@ -1960,9 +1965,10 @@ If
 */	;
 
 ElseStatement
-	: ELSE AStatement
+	: ELSE AStatement %prec else
 		{$$ = $2;}
-	| {$$ = undefined; }
+	| %prec then
+		{$$ = undefined; } 
 	;
 
 While
