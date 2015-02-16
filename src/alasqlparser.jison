@@ -463,7 +463,7 @@ SelectClause
 
 SelectModifier
 	: SELECT
-		{ $$ = null}
+		{ $$ = undefined; }
 	| SELECT VALUE
 		{ $$ = {modifier:'VALUE'}}
 	| SELECT ROW
@@ -487,11 +487,11 @@ TopClause
 		{ $$ = {top: $3}; }
 	| TOP NumValue PERCENT  
 		{ $$ = {top: $2, percent:true}; }
-	| { $$ = null; }
+	| { $$ = undefined; }
 	;
 
 IntoClause
-	: {$$ = null}
+	: {$$ = undefined; }
 	| INTO Table
 		{$$ = {into: $2} }
 	| INTO FuncValue
@@ -522,7 +522,7 @@ FromClause
 	| FROM FromTable JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
 	|
-		{ $$ = null; }
+		{ $$ = undefined; }
 	;
 
 ApplyClause
@@ -705,17 +705,17 @@ OnClause
 	| USING ColumnsList
 		{ $$ = {using: $2}; }
 	|
-		{ $$ = null; }
+		{ $$ = undefined; }
 	;
 
 WhereClause
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| WHERE Expression
 		{ $$ = {where: new yy.Expression({expression:$2})}; }
 	;
 
 GroupClause
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| GROUP BY GroupExpressionsList HavingClause
 		{ $$ = {group:$3}; yy.extend($$,$4); }
 	;
@@ -740,13 +740,13 @@ GroupExpression
 
 
 HavingClause
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| HAVING Expression
 		{ $$ = {having:$2}}
 	;
 
 UnionClause
-	:   { $$ = null; }
+	:   { $$ = undefined; }
 	| UNION Select
 		{ $$ = {union: $2} ; }
 	| UNION ALL Select
@@ -758,7 +758,7 @@ UnionClause
 	;
 
 OrderClause
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| ORDER BY OrderExpressionsList
 		{ $$ = {order:$3}}
 	;
@@ -782,13 +782,13 @@ OrderExpression
 	;
 
 LimitClause
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| LIMIT NumValue OffsetClause
 		{ $$ = {limit:$2}; yy.extend($$, $3)}
 	;
 
 OffsetClause
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| OFFSET NumValue 
 		{ $$ = {offset:$2}}
 	;
@@ -954,7 +954,7 @@ AggrValue
 
 OverClause
 	:
-		{$$ = null}
+		{$$ = undefined; }
 	| OVER LPAR OverPartitionClause RPAR
 		{ $$ = new yy.Over(); yy.extend($$,$3); }
 	| OVER LPAR OverOrderByClause RPAR
@@ -1092,7 +1092,7 @@ ElseClause
 	: ELSE Expression
 		{ $$ = $2; }
 	| 
-		{$$ = null; } 
+		{ $$ = undefined; } 
 	; 
 
 Op
@@ -1375,7 +1375,7 @@ CreateTableOption
 	;
 
 TemporaryClause 
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| TEMPORARY
 		{ $$ = {temporary:true}; }
 	| TEMP
@@ -1383,7 +1383,7 @@ TemporaryClause
 	;
 
 IfNotExists
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| IF NOT EXISTS
 		{ $$ = {ifnotexists: true}; }
 	;
@@ -1418,7 +1418,7 @@ Constraint
 	;
 
 ConstraintName
-	:   { $$ = null }
+	:   { $$ = undefined; }
 	| CONSTRAINT Literal
 		{ $$ = $2; }
 	;
@@ -1440,18 +1440,18 @@ ForeignKey
 
 OnForeignKeyClause
 	:
-		{ $$ = null; }
+		{ $$ = undefined; }
 	| OnDeleteClause OnUpdateClause
-		{ $$ = null; }
+		{ $$ = undefined; }
 	;
 
 OnDeleteClause
 	: ON DELETE NO ACTION
-		{$$ = null; }
+		{$$ = undefined; }
 	;
 OnUpdateClause
 	: ON UPDATE NO ACTION
-		{$$ = null; }
+		{$$ = undefined; }
 	;
 
 UniqueKey
@@ -1500,7 +1500,7 @@ ColumnType
 
 
 ColumnConstraintsClause
-	: {$$ = null}
+	: {$$ = undefined}
 	| ColumnConstraintsList
 		{ $$ = $1; }
 	;
@@ -1546,7 +1546,7 @@ DropTable
 	;
 
 IfExists
-	: { $$ = null; }
+	: { $$ = undefined; }
 	| IF EXISTS
 		{ $$ = {ifexists: true};}
 	;
@@ -1603,7 +1603,7 @@ CreateDatabase
 
 AsClause
 	:	
-		{$$ = null;}
+		{$$ = undefined;}
 	| AS Literal
 		{ $$ = $1; }
 	;

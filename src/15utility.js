@@ -696,9 +696,10 @@ var xlsnc = utils.xlsnc = function(i) {
 var xlscn = utils.xlscn = function(s) {
     var n = s.charCodeAt(0)-65;
     if(s.length>1) {
-        n = n*26+s.charCodeAt(1)-65;
+        n = (n+1)*26+s.charCodeAt(1)-65;
+//        console.log(n, s.charCodeAt(0)-65, s.charCodeAt(1)-65);
         if(s.length>2) {
-            n = n*26+s.charCodeAt(2)-65;
+            n = (n+1)*26+s.charCodeAt(2)-65;
         }
     }
     return n;
