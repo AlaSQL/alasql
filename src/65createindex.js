@@ -7,7 +7,7 @@
 */
 
 yy.CreateIndex = function (params) { return yy.extend(this, params); }
-yy.CreateTable.prototype.toString = function() {
+yy.CreateIndex.prototype.toString = function() {
 	var s = 'CREATE';
 	if(this.unique) s+=' UNIQUE';
 	s += ' INDEX ' + this.indexid + " ON "+this.table.toString();

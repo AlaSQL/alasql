@@ -136,6 +136,7 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 }
 
 LS.dropTable = function (databaseid, tableid, ifexists, cb) {
+//	console.log(arguments);
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var lsdb = LS.get(lsdbid);

@@ -101,7 +101,7 @@ describe('Test 150 - localStorage Engine', function() {
 
 
 	it("8.Drop localStorage table", function(done) {
-		alasql('DROP TABLE test150.one');
+		var res = alasql('DROP TABLE test150.one');
 //		alasql('COMMIT TRANSACTION');
 		assert(!localStorage['ls150.one']);
 		done();

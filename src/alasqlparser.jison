@@ -1954,21 +1954,19 @@ If
 	| 
 
 */
-	IF Expression AStatement ElseClause 
+	IF Expression AStatement ElseStatement 
 		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); 
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
 
-/*	| IF Expression AStatement
+	| IF Expression AStatement
 		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
-*/	;
+	;
 
 ElseStatement
-	: ELSE AStatement %prec else
+	: ELSE AStatement 
 		{$$ = $2;}
-	| %prec then
-		{$$ = undefined; } 
 	;
 
 While
