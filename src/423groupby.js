@@ -145,7 +145,7 @@ if(false) {
 				} else if(col.aggregatorid == 'AVG') { 
 					query.removeKeys.push('_SUM_'+colas);
 					query.removeKeys.push('_COUNT_'+colas);
-					return '\''+colas+'\':p[\''+colas+'\'],\'_SUM_'+colas+'\':'+colexp+',\'_COUNT_'+colas+'\':1,'; 
+					return '\''+colas+'\':'+colexp+',\'_SUM_'+colas+'\':'+colexp+',\'_COUNT_'+colas+'\':1,'; 
 				} else if(col.aggregatorid == 'AGGR') {
 					aft += ',g[\''+colas+'\']='+col.expression.toJavaScript('g',-1); 
 					return '';
