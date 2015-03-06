@@ -198,7 +198,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.op == 'LIKE') {
 		var s = "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*')+'$','g'))"
+		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
 //		console.log(s);
 		return s;
 	};
