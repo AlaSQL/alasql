@@ -21,5 +21,27 @@ describe('Test 244 Case-insensitive LIKE', function() {
     done();
   });
 
+
+  it('2. LIKE',function(done){
+
+  var data = [
+      {a:"Warsaw"},
+      {a:"Berlin"},
+      {a: "Paris"},
+      {a: "London"},
+      {a: "MOSCOW"},
+      {a: "KYIV"},
+      {a: "MINSK"}
+  ];
+
+  var res = alasql('SELECT * FROM ? WHERE a LIKE "m%"',[data]);
+//console.log(res);
+    assert(res,
+      [ { a: 'MOSCOW' }, { a: 'MINSK' } ]
+    );
+    done();
+
+  });
+
 });
 
