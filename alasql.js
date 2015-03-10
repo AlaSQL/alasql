@@ -7683,7 +7683,8 @@ yy.FuncValue.prototype.findAggregator = function(query) {
 			if(arg.findAggregator) arg.findAggregator(query); 
 		});
 	}
-}
+};
+
 yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
@@ -7807,6 +7808,12 @@ stdlib.UPPER = stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 // RTRIM
 // SUBSTR
 // TRIM
+
+
+// Aggregator for joining strings
+alasql.aggr.GROUP_CONCAT = function(v,s){
+    if(typeof s == "undefined") return v; else return s+','+v;
+};
 
 
 
