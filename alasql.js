@@ -8393,6 +8393,7 @@ stdfn.COALESCE = function() {
 }
 
 
+<<<<<<< Updated upstream
 
 stdfn.OBJECT_ID = function(objid){
 	return !!alasql.tables[objid];
@@ -8424,6 +8425,15 @@ stdfn.SECOND = function(d){
 	d = new Date(d);
 	return d.getSeconds();
 };
+=======
+/*
+//
+// Statements class for Alasql.js
+// Date: 03.11.2014
+// (c) 2014, Andrey Gershun
+//
+*/
+>>>>>>> Stashed changes
 
 
 stdfn.MINUTE = function(d){
@@ -10306,6 +10316,7 @@ yy.RollbackTransaction.prototype.execute = function (databaseid,params,cb) {
 };
 
 
+<<<<<<< Updated upstream
 //
 // into functions
 //
@@ -10931,6 +10942,8 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 
 
+=======
+>>>>>>> Stashed changes
 /*
 //
 // HELP for Alasql.js
@@ -12518,6 +12531,7 @@ alasql.worker = function(path, paths, cb) {
 			delete alasql.buffer[id];
 		};
 
+<<<<<<< Updated upstream
 		alasql.webworker.onerror = function(e){
 			throw e;
 		}
@@ -12538,4 +12552,6 @@ alasql.worker = function(path, paths, cb) {
 };
 
 
+=======
+>>>>>>> Stashed changes
 //# sourceMappingURL=alasql.js.map
