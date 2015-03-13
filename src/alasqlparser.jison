@@ -12,7 +12,12 @@
 %options case-insensitive
 %%
 
-\`[^\`]+\`						return 'JAVASCRIPT'
+/*
+\#([^\#])+\#					return 'JAVASCRIPT'
+*/
+
+\`\`([^\`])+\`\`				return 'JAVASCRIPT'
+
 \[\?\]							return 'BRAQUESTION'
 '@['							return 'ATLBRA'
 \[([^\]])*?\]					return 'BRALITERAL'
@@ -26,7 +31,9 @@
 									}
 								}
 */
-\`([^\]])*?\`	   								 return 'BRALITERAL'
+
+\`([^\`])*?\`	   								 return 'BRALITERAL'
+
 N(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+                       return 'STRING'
@@ -506,7 +513,7 @@ IntoClause
 			s = s.substr(1,s.length-2);
 			var x3 = s.substr(-3).toUpperCase();
 			var x4 = s.substr(-4).toUpperCase();
-			if(s[1] == '#') {
+			if(s[0] == '#') {
 				$$ = {into: new yy.FuncValue({funcid: 'HTML', args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]})};
 			} else if(x3=='XLS' || x3 == 'CSV' || x3=='TAB') {
 				$$ = {into: new yy.FuncValue({funcid: x3, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]})};
@@ -601,7 +608,7 @@ FromString
 			var x3 = s.substr(-3).toUpperCase();
 			var x4 = s.substr(-4).toUpperCase();
 			var r;
-			if(s[1] == '#') {
+			if(s[0] == '#') {
 				r = new yy.FuncValue({funcid: 'HTML', args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else if(x3=='XLS' || x3 == 'CSV' || x3=='TAB') {
 				r = new yy.FuncValue({funcid: x3, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
@@ -904,7 +911,7 @@ Expression
 
 JavaScript
 	: JAVASCRIPT
-		{ $$ = new yy.JavaScript({value:$1.substr(1,$1.length-2)}); }		
+		{ $$ = new yy.JavaScript({value:$1.substr(2,$1.length-4)}); }		
 	;
 
 NewClause

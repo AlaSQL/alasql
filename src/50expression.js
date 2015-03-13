@@ -47,7 +47,7 @@ yy.Expression.prototype.compile = function(context, tableid, defcols){
 
 yy.JavaScript = function(params) { return yy.extend(this, params); };
 yy.JavaScript.prototype.toString = function() {
-	var s = '`'+this.value+'`';
+	var s = '``'+this.value+'``';
 	return s;
 };
 
