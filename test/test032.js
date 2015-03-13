@@ -4,7 +4,7 @@ if(typeof exports === 'object') {
 };
 
 describe('Test 32', function() {
-	it('LIKE ', function(done){
+	it('LIKE and NOT LIKE', function(done){
 
 	var db = new alasql.Database("db");
 		db.exec('CREATE TABLE test (a STRING, b INT, t DATETIME)');
@@ -19,6 +19,9 @@ describe('Test 32', function() {
 
 		var sql = "SELECT COLUMN b FROM test WHERE a LIKE '%bc%'";
 		assert.deepEqual([3,4,5],db.exec(sql));
+
+		var sql = "SELECT COLUMN b FROM test WHERE a NOT LIKE '%bc%'";
+		assert.deepEqual([1,2],db.exec(sql));
 
 		done();
 	});

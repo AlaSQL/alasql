@@ -23,6 +23,13 @@ describe('Test 36', function() {
 		var res = db.exec("SELECT * FROM test2");
 		assert.deepEqual([{a:'Gamma'}], res);
 
+		db.exec('CREATE TABLE test3 (a STRING)');
+
+		var sql = "INSERT INTO test3 SELECT * FROM test1 WHERE a NOT LIKE '%e%'";
+		db.exec(sql);
+		
+		var res = db.exec("SELECT * FROM test3");
+		assert.deepEqual([{a:'Alpha'}, {a:'Gamma'}], res);		
 
 		done();
 	});
