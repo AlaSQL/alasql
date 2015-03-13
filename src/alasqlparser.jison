@@ -94,6 +94,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
+"CURRENT_TIMESTAMP"								return "CURRENT_TIMESTAMP"
 "CURSOR"										return "CURSOR"
 'DATABASE'										return 'DATABASE'
 'DATABASES'										return 'DATABASES'
@@ -946,6 +947,8 @@ PrimitiveValue
 		{ $$ = $1; }
 	| FuncValue
 		{ $$ = $1; }
+	| CURRENT_TIMESTAMP
+		{ $$ = undefined; }	
 	;
 
 
