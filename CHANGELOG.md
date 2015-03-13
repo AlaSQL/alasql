@@ -1,9 +1,9 @@
 # Changelog
 
-### 0.0.41 "Eagle" (12.03.2015 - ...)
+### 0.0.41 "Eagle" (12.03.2015 - 13.03.2015)
 * `column` for column names
 * ``JavaScript expression`` for JavaScript
-
+* Changed package.json (main:alasql.js)
 
 ### 0.0.40 "Sapsan" (24.01.2015 - 06.03.2015)
 

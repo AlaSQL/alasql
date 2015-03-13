@@ -20,7 +20,7 @@
     "url": "https://github.com/agershun/alasql/issues"
   },
   "homepage": "https://github.com/agershun/alasql",
-  "main": "index.js",
+  "main": "alasql.js",
   "scripts": {
     "test": "cd test && mocha ."
   },

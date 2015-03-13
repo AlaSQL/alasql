@@ -1,6 +1,8 @@
-var alasql = require('./alasql.js');
+module.exports = require('./alasql.js');
 
-for(var key in alasql) {
-  exports[key] = alasql[key]
-}
+//var alasql = require('./alasql.js');
+
+//for(var key in alasql) {
+//  exports[key] = alasql[key]
+//}
 
