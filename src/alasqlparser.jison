@@ -258,6 +258,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 
 '.'												return 'DOT'
 ','												return 'COMMA'
+'::'											return 'DOUBLECOLON'
 ':'												return 'COLON'
 ';'												return 'SEMICOLON'
 '$'												return 'DOLLAR'
@@ -277,6 +278,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 %left then
 %left else
 %left COMMA
+%left DOUBLECOLON
 %left OR
 %left BETWEEN NOT_BETWEEN
 %left AND
@@ -1213,6 +1215,8 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
 	| Expression IS Expression
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
+	| Expression DOUBLECOLON ColumnType
+		{ $$ = new yy.Convert({expression:$1}) ; yy.extend($$,$3) ; }
 	;
 
 ColFunc
