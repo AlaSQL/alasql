@@ -118,8 +118,8 @@ stdlib.LOWER = stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 
 // LTRIM
-stdlib.MAX = function(){return 'Math.max('+arguments.join(',')+')'};
-stdlib.MIN = function(){return 'Math.min('+arguments.join(',')+')'};
+stdlib.GREATEST = function(){return 'Math.max('+arguments.join(',')+')'};
+stdlib.LEAST = function(){return 'Math.min('+arguments.join(',')+')'};
 stdlib.MID = function(a,b,c){
 	if(arguments.length == 2) return '('+a+').substr('+b+'-1)';
 	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
