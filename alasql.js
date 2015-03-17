@@ -6445,6 +6445,7 @@ yy.Select.prototype.compileHaving = function(query) {
 
 
 yy.Select.prototype.compileOrder = function (query) {
+	var self = this;
 	if(this.order) {
 //			console.log(990, this.order);
 		if(this.order && this.order.length == 1 && this.order[0].expression 
@@ -6469,6 +6470,11 @@ yy.Select.prototype.compileOrder = function (query) {
 			
 			// Date conversion
 			var dg = ''; 
+//console.log(ord.expression, ord.expression instanceof yy.NumValue);
+			if(ord.expression instanceof yy.NumValue) {
+				ord.expression = self.columns[ord.expression.value-1];
+			};
+
 			if(ord.expression instanceof yy.Column) {
 				var columnid = ord.expression.columnid; 
 				if(query.xcolumns[columnid]) {
