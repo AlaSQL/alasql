@@ -1,6 +1,6 @@
 # Alasql.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.41 "Eagle" Date: March 13, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.41 "Eagle" Date: March 17, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -332,6 +332,7 @@ GROUP BY Grouping functions:
 Functions:
 
 * ABS(), IIF(), IFNULL(), INSTR(), LOWER(), UPPER(), LCASE(), UCASE(), LEN(), LENGTH()
+* GREATEST(), LEAST()
 
 SELECT modifiers (non-standard SQL):
 * SELECT VALUE - get single value

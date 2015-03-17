@@ -1,6 +1,11 @@
 # Changelog
 
-### 0.0.41 "Eagle" (12.03.2015 - 13.03.2015)
+
+### 0.0.42 "Robin" (17.03.2015 - ...03.2015)
+* MAX() and MIN() math functions renamed to GREATEST() and LEAST()
+
+
+### 0.0.41 "Eagle" (12.03.2015 - 17.03.2015)
 * `column` for column names
 * ``JavaScript expression`` for JavaScript
 * Changed package.json (main:alasql.js)
