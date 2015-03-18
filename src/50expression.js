@@ -230,6 +230,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
 		} else if(this.right instanceof Array ) {
+//			if(this.right.length == 0) return 'false';
 			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 //console.log(s);
@@ -253,6 +254,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else if(this.right instanceof Array ) {
+//			if(this.right.length == 0) return 'true';
 			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;

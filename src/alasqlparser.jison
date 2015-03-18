@@ -1200,6 +1200,12 @@ Op
 	| Expression NOT IN LPAR ExprList RPAR
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$5}); }
 
+	| Expression IN LPAR RPAR
+		{ $$ = new yy.Op({left: $1, op:'IN', right:[]}); }
+
+	| Expression NOT IN LPAR RPAR
+		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:[]}); }
+
 	| Expression IN ColFunc
 		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
 
