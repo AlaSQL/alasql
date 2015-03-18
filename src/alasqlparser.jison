@@ -1175,6 +1175,8 @@ Op
 		{ $$ = new yy.UniOp({op:'NOT' , right:$2}); }
 	| MINUS Expression
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
+	| PLUS Expression
+		{ $$ = new yy.UniOp({op:'+' , right:$2}); }
 	| LPAR Expression RPAR
 		{ $$ = new yy.UniOp({right: $2}); }
 

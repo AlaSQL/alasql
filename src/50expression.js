@@ -406,6 +406,7 @@ yy.ParamValue.prototype.toJavaScript = function() {
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {
 	if(this.op == '-') return this.op+this.right.toString();
+	if(this.op == '+') return this.op+this.right.toString();
 	if(this.op == 'NOT') return this.op+'('+this.right.toString()+')';
 	else if(this.op == null) return '('+this.right.toString()+')';
 };
@@ -416,11 +417,13 @@ yy.UniOp.prototype.findAggregator = function (query){
 
 yy.UniOp.prototype.toType = function(tableid) {
 	if(this.op == '-') return 'number';
+	if(this.op == '+') return 'number';
 	if(this.op == 'NOT') return 'boolean';
 };
 
 yy.UniOp.prototype.toJavaScript = function(context, tableid, defcols) {
-	if(this.op == '-') return "-"+this.right.toJavaScript(context, tableid, defcols);
+	if(this.op == '-') return "(-("+this.right.toJavaScript(context, tableid, defcols)+"))";
+	if(this.op == '+') return "("+this.right.toJavaScript(context, tableid, defcols)+")";
 	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid, defcols)+')';
 	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid, defcols)+')';
 };
