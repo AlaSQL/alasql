@@ -5,6 +5,7 @@
 * MAX() and MIN() math functions renamed to GREATEST() and LEAST()
 * ORDER BY 2,1
 * :: casting operator
+* UNARY PLUS
 
 ### 0.0.41 "Eagle" (12.03.2015 - 17.03.2015)
 * `column` for column names
