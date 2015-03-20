@@ -138,7 +138,7 @@ yy.Op.prototype.toType = function(tableid) {
 		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
 	};
-	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE'].indexOf(this.op) >-1 ) return 'boolean';
+	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ) return 'boolean';
 	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN' || this.op == 'IS NULL' || this.op == 'IS NOT NULL') return 'boolean';
 	if(this.allsome) return 'boolean';
 	if(!this.op) return this.left.toType();
@@ -203,12 +203,18 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		return s;
 	};
 
+	if(this.op == 'NOT LIKE') {
+		var s = "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
+		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g')))"
+		return s;
+	};
+
 	if(this.op == 'BETWEEN') {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
 			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 		} else {
-			throw new Error('Wrong BETWEEM operator without AND part');
+			throw new Error('Wrong BETWEEN operator without AND part');
 		}
 	};
 
@@ -217,7 +223,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
 			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 		} else {
-			throw new Error('Wrong NOT BETWEEM operator without AND part');
+			throw new Error('Wrong NOT BETWEEN operator without AND part');
 		}
 	};
 

@@ -18,4 +18,8 @@
 		console.log(alasql.parse(sql).toString());
 		console.table(db.exec(sql));
 
+		var sql = "SELECT * FROM test WHERE a NOT LIKE '%bc%'";
+		console.log(alasql.parse(sql).toString());
+		console.table(db.exec(sql));
+
 </script>

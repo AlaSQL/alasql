@@ -75,7 +75,8 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'BEGIN'											return 'BEGIN'
 'BETWEEN'										return 'BETWEEN'
 'BREAK'											return 'BREAK'
-'NOT BETWEEN'									return 'NOT_BETWEEN'
+NOT\s+BETWEEN									return 'NOT_BETWEEN'
+NOT\s+LIKE									    return 'NOT_LIKE'
 'BY'											return 'BY'
 
 'CASE'											return 'CASE'
@@ -286,7 +287,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 %left IN
 %left NOT
 %left IS
-%left LIKE
+%left LIKE NOT_LIKE
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
@@ -1110,6 +1111,8 @@ ElseClause
 Op
 	: Expression LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
+	| Expression NOT_LIKE Expression
+		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3 }); }
 	| Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+', right:$3}); }
 	| Expression MINUS Expression

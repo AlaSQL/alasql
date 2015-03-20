@@ -19,6 +19,10 @@
 
 		console.table(db.exec("SELECT * FROM test2"));
 
+		var sql = "INSERT INTO test2 SELECT * FROM test1 WHERE a NOT LIKE '%e%'";
+		console.log(alasql.parse(sql).toString());
+		console.table(db.exec(sql));
 
+		console.table(db.exec("SELECT * FROM test2"));
 
 </script>
