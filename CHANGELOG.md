@@ -6,6 +6,8 @@
 * ORDER BY 2,1
 * :: casting operator
 * UNARY PLUS
+* NOT LIKE
+* NOT\sLIKE and NOT\sBETWEEN for multiple spaces
 
 ### 0.0.41 "Eagle" (12.03.2015 - 17.03.2015)
 * `column` for column names
