@@ -23,6 +23,9 @@ describe('Test 32', function() {
 		var sql = "SELECT COLUMN b FROM test WHERE a NOT LIKE '%bc%'";
 		assert.deepEqual([1,2],db.exec(sql));
 
+		var sql = "SELECT COLUMN b FROM test WHERE a NOT     LIKE '%bc%'";
+		assert.deepEqual([1,2],db.exec(sql));
+
 		done();
 	});
 });
