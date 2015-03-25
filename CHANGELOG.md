@@ -1,7 +1,11 @@
 # Changelog
 
 
-### 0.0.42 "Robin" (17.03.2015 - ...03.2015)
+### 0.0.43 "The Wall" (25.03.2015 - ...03.2015)
+* Created "develop" branch for git-flow
+
+
+### 0.0.42 "Robin" (17.03.2015 - 25.03.2015)
 * MAX() and MIN() math functions renamed to GREATEST() and LEAST()
 * ORDER BY 2,1
 * :: casting operator
