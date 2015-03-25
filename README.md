@@ -1,6 +1,6 @@
 # Alasql.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.41 "Eagle" Date: March 17, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.42 "Robin" Date: March 25, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -23,6 +23,8 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 * [Alasql Wiki](https://github.com/agershun/alasql/wiki)
 * [Alasql User Manual](http://www.slideshare.net/AndreyGershun/alasql-manual-141220-1)
 * [Alasql Coockbok](https://github.com/agershun/alasql/wiki/Data-manipulation) - Q&A, examples
+* [StackOverflow Alasql Q&A](http://stackoverflow.com/questions/tagged/alasql)
+* [Alasql Issues](https://github.com/agershun/alasql/issues)
 
 ## Why Alasql?
 
@@ -673,6 +675,12 @@ Read my [to do](TODO.md) page
 ### FileSaver
 
 Alasql includess [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally in browsers. Unfortunately, it cannot save files in Safari 8.0.
+
+### Contributors
+
+* Andrey Gershun
+* Mathias Rangel Wulff
+
 
 ### Credits
 

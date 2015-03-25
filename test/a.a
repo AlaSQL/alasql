@@ -1,818 +1,0 @@
-
-[0m[0m
-[0m  Test 000[0m
-  [32m  √[0m[90m Very beginning: multiple statements [0m
-  [32m  √[0m[90m Very beginning: multiple statements in one string [0m
-  [32m  √[0m[90m Very beginning: multiple statements in one string with callback [0m
-
-[0m  Test 001[0m
-[0m    Columns provided[0m
-    [32m  √[0m[90m Select 1.1: COUNT [0m
-    [32m  √[0m[90m Select 1.2: LEFT JOIN ON  [0m
-    [32m  √[0m[90m Select 1.3: LEFT JOIN [0m
-    [32m  √[0m[90m Select 1.4: queryValue [0m
-[0m    Columns are not provided[0m
-    [32m  √[0m[90m Select 1.1: COUNT [0m
-    [32m  √[0m[90m Select 1.2: LEFT JOIN ON  [0m
-    [32m  √[0m[90m Select 1.3: LEFT JOIN [0m
-    [32m  √[0m[90m Select 1.4: queryValue [0m
-
-[0m  Test 02[0m
-  [32m  √[0m[90m Create table [0m
-
-[0m  Test 03 - 10000times[0m
-  [32m  √[0m[90m 0. Create table [0m
-  [32m  √[0m[90m 1. Test insert with columns  [0m
-  [32m  √[0m[90m 2. Test insert without columns [0m
-  [32m  √[0m[90m 3. Test insert without compilation #1 [0m
-  [32m  √[0m[90m 4. Test insert without compilation and caching [0m
-  [32m  √[0m[90m 5. Test compiled insert [0m
-  [32m  √[0m[90m 6. Test compiled insert with parameters [0m
-  [32m  √[0m[90m COUNT(*) [0m
-  [32m  √[0m[90m Drop database [0m
-
-[0m  Test 04[0m
-  [32m  √[0m[90m Callback [0m
-
-[0m  Test 05 - DELETE[0m
-  [32m  √[0m[90m DELETE WHERE  [0m
-
-[0m  Test 06[0m
-  [32m  √[0m[90m Fiddle test  [0m
-
-[0m  Test 07[0m
-  [32m  √[0m[90m UPDATE WHERE test  [0m
-
-[0m  Test 08[0m
-  [32m  √[0m[90m UPDATE WHERE with conditions test  [0m
-
-[0m  Test 09[0m
-  [32m  √[0m[90m Test LEFT JOIN [0m
-
-[0m  Test 10[0m
-  [32m  √[0m[90m Test JOIN ON variations [0m
-
-[0m  Test 11[0m
-  [32m  √[0m[90m Test compile with parameters [0m
-
-[0m  Test 12[0m
-  [32m  √[0m[90m store and restore - test not ready yet!  [0m
-
-[0m  Test 13[0m
-  [32m  √[0m[90m Transactions [0m
-
-[0m  Test 14[0m
-  [32m  √[0m[90m Indices [0m
-
-[0m  Test 15[0m
-  [32m  √[0m[90m GROUPING SETS [0m
-
-[0m  Test 16[0m
-  [32m  √[0m[90m Grouping [0m
-
-[0m  Test 17[0m
-  [32m  √[0m[90m UNION  [0m
-  [32m  √[0m[90m UNION ALL [0m
-
-[0m  Test 18[0m
-  [32m  √[0m[90m Subqueries and cross-joins [0m
-
-[0m  Test 19[0m
-  [32m  √[0m[90m EXISTS and NOT EXISTS [0m
-
-[0m  Test 20 - User-defined functions[0m
-  [32m  √[0m[90m User-defined functions [0m
-  [32m  √[0m[90m 2 - User-defined functions + compilation [0m
-  [32m  √[0m[90m 3 - Database's user-defined functions + compilation [0m
-  [32m  √[0m[90m 4 - Database's specific user-defined functions [0m
-
-[0m  Test 21[0m
-  [32m  √[0m[90m Aggregators [0m
-
-[0m  Test 22[0m
-  [32m  √[0m[90m EXCEPT and INTERSECT [0m
-
-[0m  Test 23[0m
-  [32m  √[0m[90m BETWEEN and NOT BETWEEN [0m
-
-[0m  Test 24[0m
-  [32m  √[0m[90m IN (select) and NOT IN (select) [0m
-
-[0m  Test 25[0m
-  [32m  √[0m[90m JOIN USING [0m
-
-[0m  Test 26[0m
-  [32m  √[0m[90m Modulo operator [0m
-
-[0m  Test 27[0m
-  [32m  √[0m[90m JOIN USING and IN [0m
-
-[0m  Test 28[0m
-  [32m  √[0m[90m >= ANY [0m
-
-[0m  Test 29[0m
-  [32m  √[0m[90m JOIN USING [0m
-
-[0m  Test 30[0m
-  [32m  √[0m[90m JOIN USING [0m
-
-[0m  Test 31[0m
-  [32m  √[0m[90m ALTER TABLE RENAME [0m
-
-[0m  Test 32[0m
-  [32m  √[0m[90m LIKE  [0m
-
-[0m  Test 33[0m
-  [32m  √[0m[90m WHERE IN list of values [0m
-
-[0m  Test 34[0m
-  [32m  √[0m[90m INSERT INTO VALUES [0m
-
-[0m  Test 35 - LIMIT OFFSET[0m
-  [32m  √[0m[90m 1. Test 1 [0m
-  [32m  √[0m[90m 2. Test 1 [0m
-
-[0m  Test 36[0m
-  [32m  √[0m[90m INSERT INTO FROM [0m
-
-[0m  Test 37[0m
-[0m    JOINS[0m
-    [32m  √[0m[90m Prepare database [0m
-    [32m  √[0m[90m CROSS JOIN [0m
-    [32m  √[0m[90m INNER JOIN [0m
-    [32m  √[0m[90m LEFT JOIN [0m
-    [32m  √[0m[90m SEMI JOIN [0m
-    [32m  √[0m[90m RIGHT JOIN [0m
-    [32m  √[0m[90m OUTER JOIN [0m
-    [32m  √[0m[90m ANTI JOIN [0m
-
-[0m  Test 38[0m
-[0m    LEFT AND RIGHT JOINS[0m
-    [32m  √[0m[90m Prepare database [0m
-    [32m  √[0m[90m 1x LEFT JOIN [0m
-    [32m  √[0m[90m 1x RIGHT JOIN [0m
-    [32m  √[0m[90m 2x LEFT JOIN [0m
-    [32m  √[0m[90m 2x INNER JOIN [0m
-    [32m  √[0m[90m 2x INNER JOIN [0m
-
-[0m  Test 39[0m
-[0m    Negative numbers[0m
-    [32m  √[0m[90m Prepare database [0m
-    [32m  √[0m[90m Negative numbers [0m
-
-[0m  Test 40[0m
-  [32m  √[0m[90m Prepare database [0m
-[0m    Float numbers[0m
-    [32m  √[0m[90m Float and negative numbers [0m
-[0m    Strings[0m
-    [32m  √[0m[90m Strings with single and double quaters [0m
-[0m    Strings[0m
-    [32m  √[0m[90m Strings with single and double quaters like keywords [0m
-
-[0m  Test 41[0m
-[0m    CASE WHEN THEN ELSE END[0m
-    [32m  √[0m[90m 1. CASE Expression WHEN THEN END [0m
-    [32m  √[0m[90m 2. CASE and default table (test for defcols) [0m
-
-[0m  Test 42[0m
-[0m    MID function[0m
-    [32m  √[0m[90m MID Function [0m
-    [32m  √[0m[90m ROUND Function [0m
-
-[0m  Test 43[0m
-  [32m  √[0m[90m Create database [0m
-  [32m  √[0m[90m Order by dates ASC [0m
-  [32m  √[0m[90m Order by dates DESC [0m
-  [32m  √[0m[90m Dates parsing in INSERT [0m
-
-[0m  Test 44[0m
-[0m    Dates[0m
-    [32m  √[0m[90m Order by dates ASC [0m
-    [32m  √[0m[90m Dates parsing in INSERT [0m
-
-[0m  Test 45[0m
-[0m    table AS alias[0m
-    [32m  √[0m[90m CASE Expression WHEN THEN END [0m
-
-[0m  Test 046[0m
-[0m    FROM as parameter[0m
-    [32m  √[0m[90m FROM array of objects [0m
-    [32m  √[0m[90m FROM array of arrays [0m
-    [32m  √[0m[90m queryArrayOfArrays() [0m
-    [32m  √[0m[90m queryArrayOfArrays and filter() [0m
-    [32m  √[0m[90m FROM array of arrays [0m
-
-[0m  Test 47[0m
-[0m    No error on subquery without alias[0m
-    [32m  √[0m[90m Query without alias [0m
-    [32m  √[0m[90m Subsubqueries without alias [0m
-
-[0m  Test 48 - Check parser for primary and foreign keys[0m
-[0m    PRIMARY KEY[0m
-    [32m  √[0m[90m 1: COLUMN PRIMARY KEY [0m
-    [32m  √[0m[90m 2: COLUMN PRIMARY KEY (MySQL style) [0m
-    [32m  √[0m[90m 3: PRIMARY KEY [0m
-    [32m  √[0m[90m 4: PRIMARY KEY [0m
-[0m    PRIMARY KEY[0m
-    [32m  √[0m[90m 1: FOREIGN KEY [0m
-
-[0m  Test 49 - Insert with primary key[0m
-[0m    INSERT WITH PRIMARY KEY[0m
-    [32m  √[0m[90m 1: INSERT ONE COLUMN PRIMARY KEY [0m
-    [32m  √[0m[90m 2: INSERT ONE MORE RECORD WITH EXISTING KEY [0m
-    [32m  √[0m[90m 3: DELETE A RECORD AND REMOVE FROM INDEX [0m
-    [32m  √[0m[90m 4.1: UPDATE A RECORD AND TRY TO INSERT INTO NEW VALUE [0m
-    [32m  √[0m[90m 4.2: UPDATE A RECORD AND try to insert into old value [0m
-
-[0m  Test 50 - Insert with primary key with two columns[0m
-[0m    INSERT WITH PRIMARY KEY[0m
-    [32m  √[0m[90m 1: INSERT ONE COLUMN PRIMARY KEY [0m
-    [32m  √[0m[90m 2: INSERT ONE MORE RECORD WITH EXISTING KEY [0m
-    [32m  √[0m[90m 3: DELETE A RECORD AND REMOVE FROM INDEX [0m
-    [32m  √[0m[90m 4.1: UPDATE A RECORD AND TRY TO INSERT INTO NEW VALUE [0m
-    [32m  √[0m[90m 4.2: UPDATE A RECORD AND try to insert into old value [0m
-
-[0m  Test 52 - UPPER CASE and LOWER CASE[0m
-  [32m  √[0m[90m Upper and lower case in CREATE TABLE Category [0m
-  [32m  √[0m[90m Upper and lower case in CREATE TABLE City [0m
-  [32m  √[0m[90m Upper and lower case in SELECT with JOIN [0m
-  [32m  √[0m[90m Upper and lower case in SELECT with JOIN [0m
-
-[0m  Test 53 - Automatic types parsing[0m
-[0m    Primitive types[0m
-    [32m  √[0m[90m Primitive types [0m
-    [32m  √[0m[90m Date type... Not yet realized [0m
-    [32m  √[0m[90m Arifmetic operations [0m
-    [32m  √[0m[90m String operations [0m
-    [32m  √[0m[90m Logic operations [0m
-    [32m  √[0m[90m Logic operations on numbers [0m
-    [32m  √[0m[90m Logic operations on strings [0m
-    [32m  √[0m[90m Logic operations on BETWEEN [0m
-    [32m  √[0m[90m Logic operations on IN [0m
-    [32m  √[0m[90m Logic operations on ALL and SOME [0m
-    [32m  √[0m[90m Logic operations on EXISTS [0m
-    [32m  √[0m[90m Aggregators on SUM, COUNT, AVG [0m
-    [32m  √[0m[90m Aggregators FIRST, LAST, MIN, MAX on numbers [0m
-    [32m  √[0m[90m Aggregators FIRST, LAST, MIN, MAX on strings [0m
-
-[0m  Test 54 - SELECT Number[0m
-  [32m  √[0m[90m SELECT number [0m
-
-[0m  Test 55 - Error in WHERE and preIndex with ParamValue[0m
-  [32m  √[0m[90m SELECT - gives "Cannot find indices of undefined" [0m
-
-[0m  Test 56 - Error in WHERE and preIndex with ParamValue[0m
-  [32m  √[0m[90m SELECT - order by " [0m[31m(158ms)[0m
-
-[0m  Test 59 - Other operators[0m
-  [32m  √[0m[90m CREATE DATABASE [0m
-  [32m  √[0m[90m USE DATABASE [0m
-  [32m  √[0m[90m DROP current DATABASE [0m
-  [32m  √[0m[90m DROP non-current DATABASE [0m
-  [32m  √[0m[90m CREATE DATABASE if exists [0m
-  [32m  √[0m[90m DROP DATABASE if not exists [0m
-
-[0m  Test 60 - Other minor[0m
-  [32m  √[0m[90m DEAFAULT [0m
-  [32m  √[0m[90m USE DATABASE [0m
-  [32m  √[0m[90m SELECT INTO and INTO SELECT [0m
-
-[0m  Test 61 - Increment[0m
-  [32m  √[0m[90m AUTO_INCREMENT [0m
-  [32m  √[0m[90m IDENTITY [0m
-
-[0m  Test 62 - ALTER TABLE[0m
-  [32m  √[0m[90m Create new table [0m
-  [32m  √[0m[90m ADD COLUMN [0m
-  [32m  √[0m[90m MODIFY COLUMN [0m
-  [32m  √[0m[90m DROP COLUMN [0m
-
-[0m  Test 63 - PIVOT[0m
-  [32m  √[0m[90m Create new table [0m
-  [32m  √[0m[90m PIVOT - not yet created [0m
-
-[0m  Test 64 - Console[0m
-  [32m  √[0m[90m Console [0m
-
-[0m  Test 65 - Cursors[0m
-  [32m  √[0m[90m CURSOR [0m
-
-[0m  Test 66 - localStorage database[0m
-  [32m  √[0m[90m localStorage [0m
-
-[0m  Test 06 - Callback[0m
-  [32m  √[0m[90m exec(sql, callback) [0m
-
-[0m  CREATE TABLE[0m
-  [32m  √[0m[90m Create table with same name twice [0m
-
-[0m  CREATE TABLE IF EXISTS[0m
-  [32m  √[0m[90m Try to create table if it already exists [0m
-  [32m  √[0m[90m Create table if it does not exist [0m
-
-[0m  Create database[0m
-  [32m  √[0m[90m Create new database [0m
-
-[0m  Test 109 - DELETE[0m
-  [32m  √[0m[90m DELETE without conditions [0m
-  [32m  √[0m[90m DELETE with conditions [0m
-
-[0m  Test 110: LEFT JOIN[0m
-  [32m  √[0m[90m Left join of two tables [0m
-
-[0m  INNER JOIN[0m
-  [32m  √[0m[90m Inner join of three tables [0m
-  [32m  √[0m[90m Inner join and aggregate of three tables [0m
-
-[0m  Test from jsFiddle[0m
-  [32m  √[0m[90m Simple select test (http://jsfiddle.net/agershun/38hj2uwy/3/) [0m
-
-[0m  SELECT #01[0m
-  [32m  √[0m[90m Select * [0m
-
-[0m  Test 113 - SELECT [0m
-  [32m  √[0m[90m prepare database [0m
-  [32m  √[0m[90m Select COUNT(*) on cross-join [0m
-  [32m  √[0m[90m Select COUNT(*) on right-join [0m
-  [32m  √[0m[90m Select on two left-join [0m
-  [32m  √[0m[90m Select on one inner-join/1 [0m
-  [32m  √[0m[90m Select on one inner-join/2 [0m
-  [32m  √[0m[90m Select on one left-join [0m
-  [32m  √[0m[90m Select on one right-join [0m
-
-[0m  Test 114 - RANDOM()[0m
-  [32m  √[0m[90m Select random values [0m
-  [32m  √[0m[90m Create table with default constraint [0m
-  [32m  √[0m[90m Fill with random values [0m
-
-[0m  Test 115 - CROSS and NATURAL JOINS[0m
-  [32m  √[0m[90m Create first table with default values [0m
-  [32m  √[0m[90m Create second table with default values [0m
-  [32m  √[0m[90m Cross join - FROM form [0m
-  [32m  √[0m[90m Cross join - JOIN form [0m
-  [32m  √[0m[90m Natural join [0m
-  [32m  √[0m[90m Natural left join [0m
-
-[0m  Test 116[0m
-  [32m  √[0m[90m 1. Single statement CREATE, USE and DROP DATABASE [0m
-  [32m  √[0m[90m 2. Single statement CREATE, USE and DROP CREATE TABLE  [0m
-  [32m  √[0m[90m 3. Single statement CREATE, USE and DROP CREATE TABLE  [0m
-  [32m  √[0m[90m 4. Compile and reset cache [0m
-  [32m  √[0m[90m 5. INSERT INTO one SELECT  [0m
-  [32m  √[0m[90m 6. SELECT * INTO one  [0m
-
-[0m  Test 117 - Table name resolution[0m
-  [32m  √[0m[90m 1. Prepare table [0m
-  [32m  √[0m[90m 5. One table [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 118 - ADD COLUMN/MODIFY COLUMN/DROP COLUMN[0m
-  [32m  √[0m[90m ADD COLUMN [0m
-  [32m  √[0m[90m Clear database [0m
-
-[0m  Test 119 - PRIMARY KEY, CREATE INDEX UNIQUE[0m
-  [32m  √[0m[90m PRIMARY KEY [0m
-  [32m  √[0m[90m UNIQUE INDEX-2 after insert [0m
-  [32m  √[0m[90m UNIQUE INDEX-3 two unique indices and primary key [0m
-  [32m  √[0m[90m Clear database [0m
-
-[0m  Test 120 - Tables and column names with dots, commas, spaces, square brackets, and backquotes[0m
-  [32m  √[0m[90m 1. Create database Spaces and dots inside names [0m
-  [32m  √[0m[90m 2. Quotes [0m
-  [32m  √[0m[90m Mix with letter sizes [0m
-  [32m  √[0m[90m Mix with keywords [0m
-  [32m  √[0m[90m Clear database [0m
-
-[0m  Test 122 - PRIMARY KEY, CREATE INDEX UNIQUE[0m
-  [32m  √[0m[90m 1. Create Index [0m
-  [32m  √[0m[90m 99.Clear database [0m
-
-[0m  Test 123 - SHOW DATABASES, TABLES, COLUMNS, INDEX, CREATE TABLE[0m
-  [32m  √[0m[90m 1. SHOW DATABASES [0m
-  [32m  √[0m[90m 2. SHOW TABLES [0m
-  [32m  √[0m[90m 3. SHOW COLUMNS [0m
-  [32m  √[0m[90m 4. SHOW CREATE TABLE [0m
-  [32m  √[0m[90m 99.Clear database [0m
-
-[0m  Test 124 - column AS alias syntax[0m
-  [32m  √[0m[90m 1. Prepare database and select [0m
-
-[0m  Test 125 - remove comments[0m
-  [32m  √[0m[90m 1. usual -- comments [0m
-  [32m  √[0m[90m 2. Double comma [0m
-
-[0m  Test 126 ALTER TABLE RENAME COLUMN[0m
-  [32m  √[0m[90m 1. Rename column [0m
-  [32m  √[0m[90m 2. Rename table [0m
-  [32m  √[0m[90m 3. Drop column [0m
-
-[0m  Test 127 SOURCE[0m
-  [32m  √[0m[90m 1. Load and run statements [0m
-  [32m  √[0m[90m 2. Test on loaded database [0m
-
-[0m  Test 128 ASSERT[0m
-  [32m  √[0m[90m 1. Assert on SOURCE and run statements [0m
-
-[0m  Test 129 - * /STAR / MULTIPLICATION[0m
-  [32m  √[0m[90m UPDATE WHERE with multiplication in assignment and conditions [0m
-
-[0m  Test 130 - UPDATE[0m
-  [32m  √[0m[90m UPDATE without conditions [0m
-  [32m  √[0m[90m UPDATE WHERE with conditions [0m
-
-[0m  Test 132 Alasql + NoSQL[0m
-  [32m  √[0m[90m 1. Prepare database [0m
-  [32m  √[0m[90m 2. INSERT [0m
-  [32m  √[0m[90m 3. SELECT [0m
-  [32m  √[0m[90m 4. DEEP SELECT... [0m
-  [32m  √[0m[90m 5. UPDATE [0m
-  [32m  √[0m[90m 6. UPDATE [0m
-  [32m  √[0m[90m 99. UPDATE [0m
-
-[0m  Test 133 SELECT VALUE, ROW, COLUMN, MATRIX[0m
-  [32m  √[0m[90m 1. Prepare database [0m
-  [32m  √[0m[90m 2. SELECT [0m
-  [32m  √[0m[90m 99. UPDATE [0m
-
-[0m  Test 137 get JSON property[0m
-  [32m  √[0m[90m 1. Get JSON object [0m
-  [32m  √[0m[90m 2. Get JSON property operator [0m
-  [32m  √[0m[90m 3. Get JSON param values [0m
-  [32m  √[0m[90m 4. Get JSON param values in sub-arrays [0m
-
-[0m  Test 138 NoSQL[0m
-  [32m  √[0m[90m 1. deepCopy [0m
-  [32m  √[0m[90m 2. Get JSON property operator [0m
-  [32m  √[0m[90m 4. CREATE TABLE for JSON objects [0m
-  [32m  √[0m[90m 5. Get JSON param values in sub-arrays [0m
-
-[0m  Test 139 JSON[0m
-  [32m  √[0m[90m 1. Simple JSON [0m
-  [32m  √[0m[90m 2. Property [0m
-  [32m  √[0m[90m 3. Property of property [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 140 JavaScript Functions[0m
-  [32m  √[0m[90m 1. Simple Date functions [0m
-  [32m  √[0m[90m 2. Simple String functions [0m
-  [32m  √[0m[90m 3. NEW keyword [0m
-  [32m  √[0m[90m 4. Create table with Date [0m
-  [32m  √[0m[90m 5. Create table with default conversion Date [0m
-  [32m  √[0m[90m 6. Create table with default conversion Date [0m
-  [32m  √[0m[90m 7. Create table with default conversion Date [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 141 text as source[0m
-  [32m  √[0m[90m 1. Create database [0m
-  [32m  √[0m[90m 2. On string [0m
-  [32m  √[0m[90m 2. SELECT on function [0m
-  [32m  √[0m[90m 3. INNER JOIN on stream [0m
-  [32m  √[0m[90m 3. INNER JOIN on stream [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 142 INSTREAM[0m
-  [32m  √[0m[90m 1. Source as a string [0m
-  [32m  √[0m[90m 2. Simple Date functions [0m
-  [32m  √[0m[90m 3. Calculate PI with streaming function [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 143 streamfn[0m
-  [32m  √[0m[90m 1. Create database [0m
-  [32m  √[0m[90m 3. INNER JOIN on stream [0m[33m(39ms)[0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 144 - Use three databases simultaniosly[0m
-  [32m  √[0m[90m 1. Create database [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 146 - Async Tests[0m
-  [32m  √[0m[90m 1. Nested SQL [0m
-  [32m  √[0m[90m 99. Detach database [0m
-
-[0m  Test 148 - EXPLAIN SELECT[0m
-  [32m  √[0m[90m 1. Simple Select [0m
-  [32m  √[0m[90m 99. Detach database [0m
-
-[0m  Test 149 - localStorage Engine with AUTOCOMMIT ON[0m
-  [32m  √[0m[90m 1. Create database [0m
-  [32m  √[0m[90m 2. Show databases [0m
-  [32m  √[0m[90m 3. Attach localStorage database [0m
-  [32m  √[0m[90m 4. Create localStorage databases [0m
-  [32m  √[0m[90m 5.Insert values into localStorage database [0m
-  [32m  √[0m[90m 7.Select into localStorage table [0m
-  [32m  √[0m[90m 8.Drop localStorage table [0m
-  [32m  √[0m[90m 99. Detach database [0m
-
-[0m  Test 150 - localStorage Engine[0m
-  [32m  √[0m[90m 1. Create database [0m
-  [32m  √[0m[90m 2. Show databases [0m
-  [32m  √[0m[90m 3. Attach localStorage database [0m
-  [32m  √[0m[90m 4. Create localStorage databases [0m
-  [32m  √[0m[90m 5.Insert values into localStorage database [0m
-  [32m  √[0m[90m 6.Select from localStorage table [0m
-  [32m  √[0m[90m 7.Select into localStorage table [0m
-  [32m  √[0m[90m 8.Select into localStorage table [0m
-  [32m  √[0m[90m 8.Drop localStorage table [0m
-  [32m  √[0m[90m 99. Detach database [0m
-
-[0m  Test 151 - localStorage Engine[0m
-  [32m  √[0m[90m 1. Create database [0m
-  [32m  √[0m[90m 5.Insert values into localStorage database [0m
-  [32m  √[0m[90m 99. Detach database [0m
-
-[0m  Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT[0m
-  [32m  √[0m[90m 1. Create database [0m
-  [32m  √[0m[90m 2. Create second table (INSERT SELECT) [0m
-  [32m  √[0m[90m 3. DELETE FROM [0m
-  [32m  √[0m[90m 4. UPDATE [0m
-  [32m  √[0m[90m 99. Detach database [0m
-
-[0m  Test 156 - match()[0m
-  [32m  √[0m[90m 1. Multiple lines async [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 157 - json()[0m
-  [32m  √[0m[90m 1. Load text data from file async [0m
-  [32m  √[0m[90m 3. Load text file [0m
-  [32m  √[0m[90m 4. Load tab-separated file [0m
-  [32m  √[0m[90m 5. Load tab-separated file [0m
-  [32m  √[0m[90m 6. Load CSV-file [0m
-  [32m  √[0m[90m 7. Load CSV-file with headers [0m
-
-[0m  Test 159 - test DOM-storage[0m
-  [32m  √[0m[90m 1. Test  [0m
-  [32m  √[0m[90m 2. Multiple statements  [0m
-  [32m  √[0m[90m 3. Multiple call-backs [0m
-
-[0m  Test 162 - PRIMARY & FOREIGN KEYS in memory, localStorage & IndexedDB[0m
-  [32m  √[0m[90m 1. ... [0m
-
-[0m  Test 164 - NeDB[0m
-  [32m  √[0m[90m 1. NeDB support [0m
-
-[0m  Test 168a - read XLSX[0m
-  [31m  1) 1. Read XLSX file[0m
-  [31m  2) 2. Read XLSX file with Headers[0m
-  [31m  3) 3. Read XLSX file with Headers and range[0m
-  [31m  4) 4. Read XLSX file with Headers and sheet[0m
-
-[0m  Test 168b - read XLS[0m
-  [31m  5) 1. Read XLS file[0m
-  [31m  6) 2. Read XLS file with Headers[0m
-  [31m  7) 3. Read XLS file with Headers and range[0m
-  [31m  8) 4. Read XLS file with Headers and sheet[0m
-
-[0m  Test 169 - select into TXT, CSV, XLSX[0m
-  [32m  √[0m[90m 0. Write TXT file [0m
-  [31m  9) 1. Write TXT file[0m
-  [31m  10) 2. Write TAB file[0m
-  [31m  11) 3. Write TAB file with headers[0m
-  [31m  12) 4. Write CSV file with headers[0m
-  [31m  13) 5. Write XLSX file with headers[0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 170 - stdin[0m
-Rome
-Astana
-  [32m  √[0m[90m 1. Write TXT file into stdout [0m
-city,population
-Rome,3400000
-Astana,800000
-
-  [32m  √[0m[90m 2. Write CSV file into stdout [0m
-
-[0m  Test 172 - XLSX to array[0m
-  [32m  √[0m[90m 1. Load XLSX file into array [0m[33m(48ms)[0m
-
-[0m  Test 174 - HAVING Clause[0m
-  [32m  √[0m[90m 1. FROM without select [0m
-
-[0m  Test 175 - JOIN USING TEST[0m
-  [32m  √[0m[90m 1. JOIN ON [0m
-  [32m  √[0m[90m 2. JOIN USING [0m
-
-[0m  Test 176 - CSV and TSV[0m
-  [32m  √[0m[90m 1. TAB [0m
-  [32m  √[0m[90m 2. TAB+headers [0m
-  [32m  √[0m[90m 3. TAB+predfined headers [0m
-  [32m  √[0m[90m 4. CSV on TAB [0m
-  [32m  √[0m[90m 5. CSV with single quote [0m
-  [32m  √[0m[90m 6. CSV with single quote [0m
-  [32m  √[0m[90m 7. Sync CSV [0m
-  [32m  √[0m[90m 8. CSV with commas and strings [0m
-  [32m  √[0m[90m 9. CSV with commas and strings and e-mails [0m
-
-[0m  Test 177 - AVG[0m
-  [32m  √[0m[90m 1. AVG [0m
-  [32m  √[0m[90m 2. AVG [0m
-  [32m  √[0m[90m 3. AGGR [0m
-
-[0m  Test 178 - function in GROUP BY[0m
-  [32m  √[0m[90m 1. Default select from GROUP BY clause [0m
-
-[0m  Test 179 - function in GROUP BY[0m
-  [32m  √[0m[90m 1. SELECT [0m
-  [32m  √[0m[90m 2. SELECT with JOIN [0m
-
-[0m  Test 180 - Array as a source[0m
-  [32m  √[0m[90m 1. SELECT [0m
-  [32m  √[0m[90m 2. JOIN [0m
-
-[0m  Test 181 - ARRAY aggregator[0m
-  [32m  √[0m[90m 1. ARRAY() [0m
-
-[0m  Test 182 - ARRAY aggregator[0m
-  [32m  √[0m[90m 1. ARRAY() [0m
-
-[0m  Test 183 - [] column[0m
-  [32m  √[0m[90m 1. ARRAY() [0m
-
-[0m  Test 184 - SELECT INDEX[0m
-  [32m  √[0m[90m 1. SELECT INDEX [0m
-
-[0m  Test 185 - IN Expression[0m
-  [32m  √[0m[90m 1. IN Field [0m
-  [32m  √[0m[90m 1. REDUCE Aggregator [0m
-
-[0m  Test 187 - Calculation of PI[0m
-  [32m  √[0m[90m 1. RANGE() [0m
-
-[0m  Test 188 - Calculation of PI[0m
-  [32m  √[0m[90m 1. EMPTY [0m
-
-[0m  Test 189 - SELECT INTO SQL()[0m
-  [32m  √[0m[90m 1. From ? [0m
-
-[0m  Test 190 - SELECT TOP 10 PERCENT FROM ?[0m
-  [32m  √[0m[90m 1. From ? [0m
-  [32m  √[0m[90m 2. From ? [0m
-
-[0m  Test 191 - SELECT and GROUP BY execution order[0m
-  [32m  √[0m[90m 1. NO GROUP BY [0m
-  [32m  √[0m[90m 1. From ? [0m
-
-[0m  Test 192 - ORDER BY formula[0m
-  [32m  √[0m[90m 1. ORDER BY column [0m
-  [32m  √[0m[90m 2. ORDER BY column [0m
-
-[0m  Test 193 - GROUP BY formula[0m
-  [32m  √[0m[90m 1. GROUP BY formula, SELECT with formula [0m
-  [32m  √[0m[90m 2. PI calculation #1 [0m[33m(74ms)[0m
-  [32m  √[0m[90m 3. PI calculation #2 [0m[33m(46ms)[0m
-
-[0m  Test 194 - HAVING with aggregator[0m
-  [32m  √[0m[90m 1. HAVING with aggregator [0m
-
-[0m  Test 195 - HAVING with aggregator[0m
-  [32m  √[0m[90m 1. HAVING with aggregator [0m
-
-[0m  Test 196 - COUNT(a) vs COUNT(*)[0m
-  [32m  √[0m[90m 1. COUNT(*) vs COUNT(a) [0m
-  [32m  √[0m[90m 2. COUNT(DISTINCT a) [0m
-
-[0m  Test 197 - Expression in expression[0m
-  [32m  √[0m[90m 1. MAX [0m
-
-[0m  Test 198 - MS SQL compatibility[0m
-  [32m  √[0m[90m 1. Create tables [0m
-  [32m  √[0m[90m 2. Select [0m
-  [32m  √[0m[90m 3. CROSS JOIN [0m
-  [32m  √[0m[90m 4. ON [0m
-  [32m  √[0m[90m 5. LEFT OUTER JOIN  [0m
-  [32m  √[0m[90m 6. LEFT OUTER JOIN  [0m
-  [32m  √[0m[90m 7. GROUP BY  [0m
-  [32m  √[0m[90m 8. HAVING  [0m
-  [32m  √[0m[90m 9. SELECT  [0m
-  [32m  √[0m[90m 10. ORDER BY  [0m
-  [32m  √[0m[90m 11. SELECT  [0m
-  [32m  √[0m[90m 12. TOP  [0m
-  [32m  √[0m[90m 17. UNION ALL  [0m
-  [32m  √[0m[90m 18. Complex Statement [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 199 IF statement[0m
-  [32m  √[0m[90m 1. Simple Variant [0m
-
-[0m  Test 200 IS NULL + IS NOT NULL[0m
-  [32m  √[0m[90m 1. Simple Variant [0m
-
-[0m  Test 201 SUM(DISTINCT), VAR(), STDDEV()[0m
-  [32m  √[0m[90m 1. different SUM()s [0m
-  [32m  √[0m[90m 1a. different COUNT()s [0m
-  [32m  √[0m[90m 2. SUM() vs SUM(DISTINCT a) [0m
-
-[0m  Test 202 GETTIME and CAST[0m
-  [32m  √[0m[90m 1. GETDATE() [0m
-  [32m  √[0m[90m 2. CONVERT(,,110) [0m
-
-[0m  Test 203 REQUIRE ASYNC[0m
-  [32m  √[0m[90m 1. REQUIRE() ASYN [0m
-  [32m  √[0m[90m 2. REQUIRE SYNC [0m
-
-[0m  Test 204 PRINT[0m
-  [32m  √[0m[90m 1. PRINT() [0m
-
-[0m  Test 205 SET Local variables[0m
-  [32m  √[0m[90m 1. @var expression [0m
-  [32m  √[0m[90m 2. SET @var = expression [0m
-  [32m  √[0m[90m 3. SET @var->prop = expression [0m
-  [32m  √[0m[90m 4. SET @var->prop = expression [0m
-
-[0m  Test 206 IF and BEGIN END[0m
-  [32m  √[0m[90m 1. IF BEGIN END [0m
-  [32m  √[0m[90m 2. IF FALSE BEGIN END [0m
-  [32m  √[0m[90m 3. IF TRUE THEN ELSE  [0m
-  [32m  √[0m[90m 4. IF FALSE THEN ELSE  [0m
-  [32m  √[0m[90m 5. Nested IFs  [0m
-  [32m  √[0m[90m 6. Nested IFs  [0m
-  [32m  √[0m[90m 7. Nested IFs  [0m
-
-[0m  Test 207 WHILE[0m
-  [32m  √[0m[90m 1. FALSE WHILE [0m
-  [32m  √[0m[90m 2. ONE WHILE ASYNC [0m[33m(53ms)[0m
-  [32m  √[0m[90m 3. ONE WHILE SYNC [0m
-
-[0m  Test 209 SELECT FROM @localvar[0m
-  [32m  √[0m[90m 1. FROM @localvar [0m
-  [32m  √[0m[90m 2. FROM @localvar [0m
-
-[0m  Test 210 WHILE BREAK CONTINUE[0m
-1
-20
-2
-30
-3
-40
-4
-50
-ok
-  [32m  √[0m[90m 1. WHILE BREAK [0m[33m(66ms)[0m
-
-[0m  Test 212: CONVERT dates with style[0m
-  [32m  √[0m[90m 1. CONVERT DATES [0m
-  [32m  √[0m[90m 2. CONVERT DATE TO STRING [0m
-  [32m  √[0m[90m 3. CONVERT JAVASCRIPT DATE TO STRING [0m
-  [32m  √[0m[90m 4. CONVERT JAVASCRIPT DATE TO STRING [0m
-  [32m  √[0m[90m 5. CONVERT DATE TO STRING FROM TABLE [0m
-  [32m  √[0m[90m 6. CONVERT DATE TO STRING FROM TABLE [0m
-  [32m  √[0m[90m 7. CONVERT DATE TO STRING FROM TABLE [0m
-  [32m  √[0m[90m 8. CONVERT DATE TO STRING FROM TABLE without columns [0m
-  [32m  √[0m[90m 9. CONVERT DATE TO STRING FROM TABLE without columns [0m
-
-[0m  Test 213 CONVERT data types[0m
-  [32m  √[0m[90m 1. INT [0m
-  [32m  √[0m[90m 2. NUMBER [0m
-  [32m  √[0m[90m 3. STRING [0m
-  [32m  √[0m[90m 4. BOOLEAN [0m
-  [32m  √[0m[90m 5. VARCHAR [0m
-  [32m  √[0m[90m 6. CHAR [0m
-
-[0m  Test 214 Multiple same aggregators[0m
-  [32m  √[0m[90m 1. Prepare database [0m
-  [32m  √[0m[90m 2. Test same aggregators [0m
-  [32m  √[0m[90m 3. Test same aggregators [0m
-  [32m  √[0m[90m 4. Test same aggregators [0m
-
-[0m  Test 215 DECLARE[0m
-  [32m  √[0m[90m 1. DECLARE INT [0m
-  [32m  √[0m[90m 2. DECLARE CHAR(N) [0m
-  [32m  √[0m[90m 3. DECLARE CHAR(N) [0m
-  [32m  √[0m[90m 4. DECLARE WITH SET [0m
-  [32m  √[0m[90m 5. Multiple DECLARE [0m
-
-[0m  Test 216 ? IN ?[0m
-  [32m  √[0m[90m 1. Expression IN (,,) [0m
-  [32m  √[0m[90m 2. ? IN ? [0m
-  [32m  √[0m[90m 3. @a IN @b [0m
-  [32m  √[0m[90m 4. @a IN @[] [0m
-
-[0m  Test 217 Some T-SQL compatibility tests[0m
-  [32m  √[0m[90m 1. 20141002 to DATE() [0m
-  [32m  √[0m[90m 2. 20141002 to CONVERT() [0m
-  [32m  √[0m[90m 3. TRUNCATE TABLE [0m
-  [32m  √[0m[90m 99. DROP DATABASE [0m
-
-[0m  Test 218 N string and PRINT "a"[0m
-  [32m  √[0m[90m 1. N'String'  [0m
-
-[0m  Test 219 CREATE VIEW[0m
-  [32m  √[0m[90m 1. CREATE VIEW SYNTAX [0m
-  [32m  √[0m[90m 2. RUN FROM VIEW [0m
-  [32m  √[0m[90m 3. RUN FROM JOIN VIEW [0m
-  [32m  √[0m[90m 4. CHANGE DATA IN VIEW [0m
-  [32m  √[0m[90m 5. DROP VIEW [0m
-  [32m  √[0m[90m 99. Drop database [0m
-
-[0m  Test 220 WITH clause[0m
-  [32m  √[0m[90m 1. One WITH [0m
-
-[0m  Test 221 Multi-line comments[0m
-  [32m  √[0m[90m 1. /* */ [0m
-  [32m  √[0m[90m 2. /* */ [0m
-
-[0m  Test 222 TD TH syntax[0m
-  [32m  √[0m[90m 1. TD [0m
-
-
-[92m [0m[32m 442 passing[0m[90m (2s)[0m
-

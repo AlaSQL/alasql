@@ -37,3 +37,5 @@ In Russian:
 * [Habrahabr.ru](http://habrahabr.ru/company/zfort/blog/242709/)
 * [RadioJS. Выпуск №16: Код и Калиграфия](http://radiojs.ru/2015/01/radiojs-16/)
 
+In Ukranian:
+* [Alasql.js — клієнтська SQL-подібна БД з підтримкою localStorage, IndexedDB і Excel.](http://it-ua.info/news/2015/03/22/klka-ckavinok-korisnostey-dlya-veb-rozrobnika-40.html)
