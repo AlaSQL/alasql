@@ -316,9 +316,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		};
 		var rg = range.split(':');
 		var col0 = rg[0].match(/[A-Z]+/)[0];
-		var row0 = rg[0].match(/[0-9]+/)[0];
+		var row0 = +rg[0].match(/[0-9]+/)[0];
 		var col1 = rg[1].match(/[A-Z]+/)[0];
-		var row1 = rg[1].match(/[0-9]+/)[0];
+		var row1 = +rg[1].match(/[0-9]+/)[0];
 //		console.log(114,rg,col0,col1,row0,row1);
 //		console.log(114,rg,alasql.utils.xlscn(col0),alasql.utils.xlscn(col1));
 

@@ -4,6 +4,7 @@
 ### 0.0.43 "The Wall" (25.03.2015 - ...03.2015)
 * Created "develop" branch for git-flow
 * Fixed GREATEST and LEAST() bugs
+* Added flags {sourcefilename: "aaa", range:"B4"} to INTO XLSX() function
 
 ### 0.0.42 "Robin" (17.03.2015 - 25.03.2015)
 * MAX() and MIN() math functions renamed to GREATEST() and LEAST()
