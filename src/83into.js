@@ -209,7 +209,6 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	var res = data.length;
 
 	var wb = {SheetNames:[], Sheets:{}};
-	var cells = {};
 
 	// Check overwrite flag
 	if(opt.sourcefilename) {
@@ -222,11 +221,14 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	};
 	
 	function doExport() {
+		var cells = {};
+
 		if(wb.SheetNames.indexOf(opt.sheetid) > -1) {
 			cells = wb.Sheets[opt.sheetid];
 		} else {
 			wb.SheetNames.push(opt.sheetid);
-			wb.Sheets[opt.sheetid] = cells;			
+			wb.Sheets[opt.sheetid] = {};
+			cells = wb.Sheets[opt.sheetid];			
 		}
 
 		var range = "A1";
@@ -235,10 +237,20 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		var col0 = alasql.utils.xlscn(range.match(/[A-Z]+/)[0]);
 		var row0 = +range.match(/[0-9]+/)[0]-1;
 
-		console.log(col0,row0);
+		if(wb.Sheets[opt.sheetid]['!ref']) {
+			var rangem = wb.Sheets[opt.sheetid]['!ref'];
+			var colm = alasql.utils.xlscn(rangem.match(/[A-Z]+/)[0]);
+			var rowm = +rangem.match(/[0-9]+/)[0]-1;
+		} else {
+			var colm = 1, rowm = 1;
+		}
+		var colmax = Math.max(col0+columns.length,colm);
+		var rowmax = Math.max(row0+data.length+2,rowm);
+
+//		console.log(col0,row0);
 		var i = row0+1;
 
-//		wb.Sheets[opt.sheetid]['!ref'] = 'A1:'+alasql.utils.xlsnc(col0+columns.length)+(row0+data.length+2);
+		wb.Sheets[opt.sheetid]['!ref'] = 'A1:'+alasql.utils.xlsnc(colmax)+(rowmax);
 //		var i = 1;
 
 		if(opt.headers) {
@@ -255,6 +267,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			i++;
 		}
 
+	//	console.log(wb);
 	//	console.log(wb);
 
 		if(typeof exports == 'object') {
