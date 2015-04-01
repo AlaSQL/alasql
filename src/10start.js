@@ -1,8 +1,8 @@
 //
 // alasql.js
 // Alasql - JavaScript SQL database
-// Date: 25.03.2015
-// Version: 0.0.42
+// Date: 01.04.2015
+// Version: 0.0.43
 // (ñ) 2014, Andrey Gershun
 //
 

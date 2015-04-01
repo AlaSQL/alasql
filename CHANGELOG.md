@@ -1,10 +1,10 @@
 # Changelog
 
-
-### 0.0.43 "The Wall" (25.03.2015 - ...03.2015)
+### 0.0.43 "The Wall" (25.03.2015 - 01.04.2015)
 * Created "develop" branch for git-flow
 * Fixed GREATEST and LEAST() bugs
 * Added flags {sourcefilename: "aaa", range:"B4"} to INTO XLSX() function
+* CREATE TABLE one(two,three) - without coulmn types
 
 ### 0.0.42 "Robin" (17.03.2015 - 25.03.2015)
 * MAX() and MIN() math functions renamed to GREATEST() and LEAST()
