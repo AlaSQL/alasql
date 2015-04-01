@@ -207,57 +207,98 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	alasql.utils.extend(opt, opts);
 
 	var res = data.length;
-	var cells = {};
+
 	var wb = {SheetNames:[], Sheets:{}};
-	wb.SheetNames.push(opt.sheetid);
-	wb.Sheets[opt.sheetid] = cells;
 
-	wb.Sheets[opt.sheetid]['!ref'] = 'A1:'+alasql.utils.xlsnc(columns.length)+(data.length+2);
-	var i = 1;
-
-	if(opt.headers) {
-		columns.forEach(function(col, idx){
-			cells[alasql.utils.xlsnc(idx)+""+i] = {v:col.columnid};
-		});
-		i++;
-	}
-
-	for(var j=0;j<data.length;j++) {
-		columns.forEach(function(col, idx){
-			cells[alasql.utils.xlsnc(idx)+""+i] = {v:data[j][col.columnid]};
-		});		
-		i++;
-	}
-
-//	console.log(wb);
-
-	if(typeof exports == 'object') {
-		XLSX.writeFile(wb, filename);
+	// Check overwrite flag
+	if(opt.sourcefilename) {
+		alasql.utils.loadBinaryFile(opt.sourcefilename,!!cb,function(data){
+			wb = XLSX.read(data,{type:'binary'});
+			doExport();
+        });		
 	} else {
-		//console.log(wb);
-		var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
-		var wbout = XLSX.write(wb,wopts);
+		doExport();
+	};
+	
+	function doExport() {
+		var cells = {};
 
-		function s2ab(s) {
-		  var buf = new ArrayBuffer(s.length);
-		  var view = new Uint8Array(buf);
-		  for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-		  return buf;
+		if(wb.SheetNames.indexOf(opt.sheetid) > -1) {
+			cells = wb.Sheets[opt.sheetid];
+		} else {
+			wb.SheetNames.push(opt.sheetid);
+			wb.Sheets[opt.sheetid] = {};
+			cells = wb.Sheets[opt.sheetid];			
 		}
-		/* the saveAs call downloads a file on the local machine */
-//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
-//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
-//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
-		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
-	}
+
+		var range = "A1";
+		if(opt.range) range = opt.range;
+
+		var col0 = alasql.utils.xlscn(range.match(/[A-Z]+/)[0]);
+		var row0 = +range.match(/[0-9]+/)[0]-1;
+
+		if(wb.Sheets[opt.sheetid]['!ref']) {
+			var rangem = wb.Sheets[opt.sheetid]['!ref'];
+			var colm = alasql.utils.xlscn(rangem.match(/[A-Z]+/)[0]);
+			var rowm = +rangem.match(/[0-9]+/)[0]-1;
+		} else {
+			var colm = 1, rowm = 1;
+		}
+		var colmax = Math.max(col0+columns.length,colm);
+		var rowmax = Math.max(row0+data.length+2,rowm);
+
+//		console.log(col0,row0);
+		var i = row0+1;
+
+		wb.Sheets[opt.sheetid]['!ref'] = 'A1:'+alasql.utils.xlsnc(colmax)+(rowmax);
+//		var i = 1;
+
+		if(opt.headers) {
+			columns.forEach(function(col, idx){
+				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:col.columnid};
+			});
+			i++;
+		}
+
+		for(var j=0;j<data.length;j++) {
+			columns.forEach(function(col, idx){
+				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:data[j][col.columnid]};
+			});		
+			i++;
+		}
+
+	//	console.log(wb);
+	//	console.log(wb);
+
+		if(typeof exports == 'object') {
+			XLSX.writeFile(wb, filename);
+		} else {
+			//console.log(wb);
+			var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
+			var wbout = XLSX.write(wb,wopts);
+
+			function s2ab(s) {
+			  var buf = new ArrayBuffer(s.length);
+			  var view = new Uint8Array(buf);
+			  for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+			  return buf;
+			}
+			/* the saveAs call downloads a file on the local machine */
+	//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
+	//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
+	//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
+			saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
+		}
 
 
-	// data.forEach(function(d){
-	// 	s += columns.map(function(col){
-	// 		return d[col.columnid];
-	// 	}).join(opts.separator)+'\n';	
-	// });
-	// alasql.utils.saveFile(filename,s);
-	if(cb) res = cb(res);
-	return res;
+		// data.forEach(function(d){
+		// 	s += columns.map(function(col){
+		// 		return d[col.columnid];
+		// 	}).join(opts.separator)+'\n';	
+		// });
+		// alasql.utils.saveFile(filename,s);
+		if(cb) res = cb(res);
+		return res;
+
+	};
 };

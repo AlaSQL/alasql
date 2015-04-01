@@ -1511,6 +1511,8 @@ ColumnDef
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
 	| Literal ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
+	| Literal
+		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
 ColumnType

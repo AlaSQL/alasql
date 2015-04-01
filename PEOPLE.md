@@ -6,6 +6,7 @@ In English:
 * ValueType [Pure JavaScript In-Memory Database](http://valuetype.wordpress.com/2014/11/07/pure-javascript-in-memory-database/)
 * SlideShare [Alasql.js fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database)
 * SlideShare [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
+* Glauco Custódio [Local Storage with AlaSQL in Cordova/Ionic Framework](http://blog.glaucocustodio.com/2015/03/30/local-storage-with-alasql-in-cordovaionic-framework/)
 
 
 In Chinese
