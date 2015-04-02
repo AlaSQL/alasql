@@ -14,14 +14,22 @@ SQLITE.dropDatabase = function(databaseid){
 	throw new Error('This is impossible to drop SQLite database. Detach it.');
 };
 
-SQLITE.attachDatabase = function(sqldbid, dbid, args, cb){
+SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
 	};
 
-	if(args[0] && args[0] instanceof yy.StringValue) {
-		alasql.utils.loadBinaryFile(args[0].value,true,function(data){
+
+	if(args[0] && (args[0] instanceof yy.StringValue)
+		|| (args[0] instanceof yy.ParamValue)) {
+
+		if(args[0] instanceof yy.StringValue) {
+			var value = args[0].value;
+		} else if(args[0] instanceof yy.ParamValue) {
+			var value = params[args[0].param];
+		}
+		alasql.utils.loadBinaryFile(value,true,function(data){
 			var db = new alasql.Database(dbid || sqldbid);
 			db.engineid = "SQLITE";
 			db.sqldbid = sqldbid;

@@ -56,7 +56,7 @@ yy.AttachDatabase.prototype.toString = function() {
 	if(args) {
 		s += '(';
 			if(args.length>0) {
-				s += args.map(function(arg){ return arg.toJavaScript(); }).join(', ');
+				s += args.map(function(arg){ return arg.toString(); }).join(', ');
 			}
 		s += ')';
 	}
@@ -70,7 +70,7 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 	if(!alasql.engines[this.engineid]) {
 		throw new Error('Engine "'+this.engineid+'" is not defined.');
 	};
-	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, this.args, cb);
+	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, this.args, params, cb);
 	return res;
 };
 

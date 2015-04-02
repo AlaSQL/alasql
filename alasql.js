@@ -9552,7 +9552,7 @@ yy.AttachDatabase.prototype.toString = function() {
 	if(args) {
 		s += '(';
 			if(args.length>0) {
-				s += args.map(function(arg){ return arg.toJavaScript(); }).join(', ');
+				s += args.map(function(arg){ return arg.toString(); }).join(', ');
 			}
 		s += ')';
 	}
@@ -9566,7 +9566,7 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 	if(!alasql.engines[this.engineid]) {
 		throw new Error('Engine "'+this.engineid+'" is not defined.');
 	};
-	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, this.args, cb);
+	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, this.args, params, cb);
 	return res;
 };
 
@@ -11253,7 +11253,7 @@ WEBSQL.dropDatabase = function(databaseid){
 	throw new Error('This is impossible to drop WebSQL database.');
 };
 
-WEBSQL.attachDatabase = function(databaseid, dbid, cb){
+WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
@@ -11333,7 +11333,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 	};
 };
 
-IDB.attachDatabase = function(ixdbid, dbid, args, cb) {
+IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 	var request1 = indexedDB.webkitGetDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
@@ -11723,7 +11723,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 };
 
 
-LS.attachDatabase = function(lsdbid, dbid, args, cb){
+LS.attachDatabase = function(lsdbid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
@@ -11902,14 +11902,22 @@ SQLITE.dropDatabase = function(databaseid){
 	throw new Error('This is impossible to drop SQLite database. Detach it.');
 };
 
-SQLITE.attachDatabase = function(sqldbid, dbid, args, cb){
+SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
 	};
 
-	if(args[0] && args[0] instanceof yy.StringValue) {
-		alasql.utils.loadBinaryFile(args[0].value,true,function(data){
+
+	if(args[0] && (args[0] instanceof yy.StringValue)
+		|| (args[0] instanceof yy.ParamValue)) {
+
+		if(args[0] instanceof yy.StringValue) {
+			var value = args[0].value;
+		} else if(args[0] instanceof yy.ParamValue) {
+			var value = params[args[0].param];
+		}
+		alasql.utils.loadBinaryFile(value,true,function(data){
 			var db = new alasql.Database(dbid || sqldbid);
 			db.engineid = "SQLITE";
 			db.sqldbid = sqldbid;
@@ -12067,7 +12075,7 @@ FS.dropDatabase = function(fsdbid, ifexists, cb){
 };
 
 
-FS.attachDatabase = function(fsdbid, dbid, args, cb){
+FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 //	console.log(arguments);
 	var res = 1;
 	if(alasql.databases[dbid]) {
