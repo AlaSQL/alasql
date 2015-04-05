@@ -1,6 +1,8 @@
+# 1.0.0 -> 2.0.0
+The option `nodeFlags` was renamed to `v8flags` for accuracy. It can now be a callback taking method that yields an array of flags, **or** an array literal.
+
 # 0.11 -> 0.12
 For the environment passed into the `launch` callback, `configNameRegex` has been renamed to `configNameSearch`.  It now returns an array of valid config names instead of a regular expression.
-
 
 # 0.10 -> 0.11
 The method signature for `launch` was changed in this version of Liftoff.

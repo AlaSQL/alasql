@@ -1,5 +1,5 @@
 var path = require('path');
-var clone = require('lodash').clone;
+var clone = require('clone');
 var cloneStats = require('clone-stats');
 var cloneBuffer = require('./lib/cloneBuffer');
 var isBuffer = require('./lib/isBuffer');
