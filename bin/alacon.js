@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 //
 // Alacon - Command line interface for Alasql
-// Date: 25.11.2014
-// (c) 2014, Andrey Gershun
+// Version: 0.1
+// Date: 07.04.2015
+// (c) 2014-2015, Andrey Gershun
 //
 
-var alasql = require('./alasql.js');
+var alasql = require('alasql');
 var fs = require('fs');
 
 

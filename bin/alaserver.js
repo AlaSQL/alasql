@@ -1,10 +1,11 @@
+#!/usr/bin/env node
 //
 // alaserver.js = Alasql Server
 // Date: 25.11.2014
 // (c) 2014, Andrey Gershun
 //
 
-var alasql = require('./alasql');
+var alasql = require('alasql');
 var http = require('http');
 var url = require('url');
 var port = (process.argv[2] || 1337)|0;

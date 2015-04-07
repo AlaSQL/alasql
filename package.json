@@ -18,6 +18,10 @@
   "bugs": {
     "url": "https://github.com/agershun/alasql/issues"
   },
+  "bin" : { 
+    "alacon" : "./bin/alacon.js",
+    "alaserver" : "./bin/alaserver.js",
+  },
   "homepage": "https://github.com/agershun/alasql",
   "main": "dist/alasql.js",
   "scripts": {

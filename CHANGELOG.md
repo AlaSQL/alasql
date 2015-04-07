@@ -3,6 +3,7 @@
 ### 0.0.44 "Roma" (02.04.2015 - ...04.2015)
 * Added params to SQLite attached database: alasql('ATTACH SQLITE DATABASE a(?)',[event],cb);
 * Root directory was cleaned
+* Gulp version is updated
 
 ### 0.0.43 "The Wall" (25.03.2015 - 01.04.2015)
 * Created "develop" branch for git-flow
