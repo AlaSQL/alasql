@@ -1,7 +1,7 @@
 # Changelog
 
 ### 0.0.45 "Rio de Janeiro" (14.04.2015 - ...04.2015)
-* Added Bower package
+* Changed CRLF for alacon.js and alaserver.js to LF
 
 ### 0.0.44 "Roma" (02.04.2015 - 13.04.2015)
 * Added params to SQLite attached database: alasql('ATTACH SQLITE DATABASE a(?)',[event],cb);
