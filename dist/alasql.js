@@ -3622,7 +3622,11 @@ var Database = alasql.Database = function (databaseid) {
 	var self = this;
 	if(self === alasql) {
 		if(databaseid) {
-			self = alasql.databases[databaseid];
+//			if(alasql.databases[databaseid]) {
+				self = alasql.databases[databaseid];
+//			} else {
+				alasql.databases[databaseid] = self;
+//			}
 			if(!self) {
 				throw new Error('Database "'+databaseid+'" not found');
 			}
@@ -9192,7 +9196,14 @@ yy.Insert.prototype.compile = function (databaseid) {
 	    } else {
 			var insertfn = function(db, params, alasql) {
 				var res = selectfn(params);
-				db.tables[tableid].data = db.tables[tableid].data.concat(res);
+		        if(db.tables[tableid].insert) {
+		        	// If insert() function exists (issue #92)
+		        	for(var i=0,ilen=res.length;i<ilen;i++) {
+		        		db.tables[tableid].insert(res[i]);
+		        	}
+		        } else {
+					db.tables[tableid].data = db.tables[tableid].data.concat(res);
+		        }
 				return res.length;
 			}
 		}
