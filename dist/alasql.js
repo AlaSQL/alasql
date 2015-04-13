@@ -3622,7 +3622,11 @@ var Database = alasql.Database = function (databaseid) {
 	var self = this;
 	if(self === alasql) {
 		if(databaseid) {
-			self = alasql.databases[databaseid];
+//			if(alasql.databases[databaseid]) {
+				self = alasql.databases[databaseid];
+//			} else {
+				alasql.databases[databaseid] = self;
+//			}
 			if(!self) {
 				throw new Error('Database "'+databaseid+'" not found');
 			}

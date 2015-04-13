@@ -7,7 +7,6 @@ if(typeof exports === 'object') {
 
 
 describe('Test 250 Index problem', function() {
-
   it('1. INSERT SELECT problem',function(done){
 
     alasql(function(){/*
@@ -31,7 +30,6 @@ describe('Test 250 Index problem', function() {
     col4: 2.22,
     col5: 'altmp' } 
     ]);
-
 
 //  	assert(res == false);
 
