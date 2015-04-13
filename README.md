@@ -211,8 +211,8 @@ Other examples of Alasql and Angular.js integration:
 Try Alasql in console:
 * Alasql Console [http://alasql.org/console](http://alasql.org/console)
 * [Console source code](console/index.html)
-* [Alacon](alacon.js) - command-line Alasql console (to run: ```node alacon "sql-statement" params...```)
-* [Alaserver](alaserver.js) - very simple Alasql-server (to run: ```node alaserver```, then 
+* [Alacon](alacon.js) - command-line Alasql console (to run: ```alacon "sql-statement" params...```)
+* [Alaserver](alaserver.js) - very simple Alasql-server (to run: ```alaserver```, then 
 type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
 
 Try Alasql in Fiddle: 
@@ -590,11 +590,11 @@ Try Alasql JSON objects in  Console [sample](http://alasql.org/console?drop tabl
 
 You can use Alasql from the command-line:
 ```sql
-    > node alacon "SELECT VALUE 1+1"
+    > alacon "SELECT VALUE 1+1"
     2
-    > node alacon "SELECT VALUE 1+?" 2
+    > alacon "SELECT VALUE 1+?" 2
     3
-    > node alacon "@{a:(1+?)}" 3
+    > alacon "@{a:(1+?)}" 3
     4
 ```
 
@@ -604,7 +604,7 @@ Yes, you can even use Alasql as a very simple server for tests.
 
 To run enter the command: 
 ```
-    node alaserver [port]
+    alaserver [port]
 ```
 then type in browser something like "http://127.0.0.1:1337/?SELECT VALUE 2*2" 
 
