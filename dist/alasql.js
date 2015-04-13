@@ -1,9 +1,9 @@
 //
 // alasql.js
-// Alasql - JavaScript SQL database
-// Date: 01.04.2015
-// Version: 0.0.43
-// (ñ) 2014, Andrey Gershun
+// AlaSQL - JavaScript SQL database
+// Date: 13.04.2015
+// Version: 0.0.44
+// (ñ) 2014-2015, Andrey Gershun
 //
 
 /*
@@ -29,6 +29,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+
 
 /**
  UMD envelope 
@@ -109,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.0.36";
+alasql.version = "0.0.44";
 
 
 
@@ -4832,7 +4834,7 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 // console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 //console.log(this);
-	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,p))[0]';
+	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+'))[0]';
 //	s = '(console.log(this.queriesfn[0]),'+s+')';
 
 	return s;
@@ -5133,9 +5135,9 @@ yy.ExistsValue.prototype.toType = function() {
 	return 'boolean';
 };
 
-yy.ExistsValue.prototype.toJavaScript = function() {
+yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
 //	return 'ww=this.existsfn['+this.existsidx+'](params,null,p).length,console.log(ww),ww';
-	return 'this.existsfn['+this.existsidx+'](params,null,p).length';
+	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {

@@ -19,6 +19,7 @@ var shell = require('gulp-shell');
 
 gulp.task('js-merge-worker', function () {
   return gulp.src([
+    './src/05copyright.js', 
     './src/99worker-start.js', 
     './src/99worker.js', 
     './src/99worker-finish.js', 
@@ -31,6 +32,7 @@ gulp.task('js-merge-worker', function () {
 
 gulp.task('js-merge', function () {
   return gulp.src([
+    './src/05copyright.js', 
   	'./src/10start.js', 
   	'./src/alasqlparser.js', 
     './src/12pretty.js', 

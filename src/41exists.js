@@ -15,9 +15,9 @@ yy.ExistsValue.prototype.toType = function() {
 	return 'boolean';
 };
 
-yy.ExistsValue.prototype.toJavaScript = function() {
+yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
 //	return 'ww=this.existsfn['+this.existsidx+'](params,null,p).length,console.log(ww),ww';
-	return 'this.existsfn['+this.existsidx+'](params,null,p).length';
+	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {

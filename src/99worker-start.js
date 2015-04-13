@@ -1,3 +1,10 @@
+/*
+//
+// AlaSQL Workker
+// Date: 13.04.2014
+// (c) 2014-2015, Andrey Gershun
+//
+*/
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([], factory);

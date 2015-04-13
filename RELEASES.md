@@ -14,7 +14,5 @@
 
 ## Next Releases:
 
-To be defined
-
-### Version "Chess" 0.1.0 (10.04.2015)
+### Version "Chess" 0.1.0 (20.04.2015)
 
