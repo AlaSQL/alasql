@@ -19,6 +19,7 @@ var shell = require('gulp-shell');
 
 gulp.task('js-merge-worker', function () {
   return gulp.src([
+    './src/05copyright.js', 
     './src/99worker-start.js', 
     './src/99worker.js', 
     './src/99worker-finish.js', 
@@ -26,11 +27,12 @@ gulp.task('js-merge-worker', function () {
 //    .pipe(changed('./dist/'))
     .pipe(concat('alasql-worker.js'))
 //    .pipe(uglify())
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('./dist'))
 });
 
 gulp.task('js-merge', function () {
   return gulp.src([
+    './src/05copyright.js', 
   	'./src/10start.js', 
   	'./src/alasqlparser.js', 
     './src/12pretty.js', 
@@ -108,7 +110,7 @@ gulp.task('js-merge', function () {
 //    .pipe(changed('./dist/'))
     .pipe(concat('alasql.js'))
 //    .pipe(uglify())
-    .pipe(gulp.dest('./'))
+    .pipe(gulp.dest('./dist'))
 });
 
 
@@ -123,22 +125,22 @@ gulp.task('jison-compile', function () {
 gulp.task('uglify', function () {
   return gulp.src('./alasql.js', {read: false})
     .pipe(shell([
-      'uglifyjs alasql.js -o alasql.min.js',
-      'uglifyjs alasql-worker.js -o alasql-worker.min.js',
+      'uglifyjs dist/alasql.js -o dist/alasql.min.js',
+      'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.min.js',
     ]));
 });
 
 gulp.task('copy-dist', function(){
-  gulp.src(['./alasql.js','./alasql.min.js','./alasql.js.map',
-    './alasql-worker.js','./alasql-worker.min.js','./alasql-worker.js.map'])
-    .pipe(gulp.dest('dist'));
+  gulp.src(['./dist/alasql.js','./alasql.js.map'])
+    .pipe(gulp.dest('./'));
 });
 
 gulp.task('copy-dist-org', function(){
-  gulp.src(['./alasql.min.js','./alasql-worker.min.js'])
+  gulp.src(['./dist/alasql.min.js','./dist/alasql-worker.min.js'])
     .pipe(gulp.dest('./console/'));
 });
 
+// Additional task to update alasql.org/console directory
 gulp.task('copy-console-org', function(){
   gulp.src(['./console/*'])
     .pipe(gulp.dest('../alasql-org/console/'));
@@ -174,12 +176,12 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); });
-  gulp.watch('./alasql.js',function(){ gulp.run('uglify'); });
-  gulp.watch('./alasql.min.js',function(){ 
+  gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
+  gulp.watch('./dist/alasql.min.js',function(){ 
     gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
   });
-  gulp.watch('./alasql-worker.js',function(){ 
+  gulp.watch('./dist/alasql-worker.js',function(){ 
     gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
   });

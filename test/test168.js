@@ -1,6 +1,6 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('../alasql.js');
+	var alasql = require('..');
 	var dirname = __dirname.replace(/\\/g,"/");
 } else {
 	dirname = '.';

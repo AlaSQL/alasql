@@ -1,8 +1,8 @@
-var colors = require('./colors');
-var date = require('./date');
+var chalk = require('chalk');
+var dateformat = require('dateformat');
 
 module.exports = function(){
-  var time = '['+colors.grey(date(new Date(), 'HH:MM:ss'))+']';
+  var time = '['+chalk.grey(dateformat(new Date(), 'HH:MM:ss'))+']';
   var args = Array.prototype.slice.call(arguments);
   args.unshift(time);
   console.log.apply(console, args);

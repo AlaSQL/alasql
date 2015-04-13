@@ -1,8 +1,6 @@
 'use strict';
 
-var _ = require('lodash');
-var defaults = _.defaults;
-
+var defaults = require('defaults');
 var through = require('through2');
 var gs = require('glob-stream');
 var File = require('vinyl');
@@ -15,6 +13,7 @@ function createFile (globFile, enc, cb) {
 }
 
 function src(glob, opt) {
+  opt = opt || {};
   var pass = through.obj();
 
   if (!isValidGlob(glob)) {
@@ -26,7 +25,7 @@ function src(glob, opt) {
     return pass;
   }
 
-  var options = defaults({}, opt, {
+  var options = defaults(opt, {
     read: true,
     buffer: true
   });

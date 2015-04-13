@@ -1,9 +1,9 @@
 //
 // alasql.js
-// Alasql - JavaScript SQL database
-// Date: 01.04.2015
-// Version: 0.0.43
-// (ñ) 2014, Andrey Gershun
+// AlaSQL - JavaScript SQL database
+// Date: 13.04.2015
+// Version: 0.0.44
+// (ñ) 2014-2015, Andrey Gershun
 //
 
 /*
@@ -29,6 +29,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+
 
 /**
  UMD envelope 
@@ -109,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.0.36";
+alasql.version = "0.0.44";
 
 
 
@@ -4832,7 +4834,7 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 // console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 //console.log(this);
-	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,p))[0]';
+	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+'))[0]';
 //	s = '(console.log(this.queriesfn[0]),'+s+')';
 
 	return s;
@@ -5133,9 +5135,9 @@ yy.ExistsValue.prototype.toType = function() {
 	return 'boolean';
 };
 
-yy.ExistsValue.prototype.toJavaScript = function() {
+yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
 //	return 'ww=this.existsfn['+this.existsidx+'](params,null,p).length,console.log(ww),ww';
-	return 'this.existsfn['+this.existsidx+'](params,null,p).length';
+	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {
@@ -9552,7 +9554,7 @@ yy.AttachDatabase.prototype.toString = function() {
 	if(args) {
 		s += '(';
 			if(args.length>0) {
-				s += args.map(function(arg){ return arg.toJavaScript(); }).join(', ');
+				s += args.map(function(arg){ return arg.toString(); }).join(', ');
 			}
 		s += ')';
 	}
@@ -9566,7 +9568,7 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 	if(!alasql.engines[this.engineid]) {
 		throw new Error('Engine "'+this.engineid+'" is not defined.');
 	};
-	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, this.args, cb);
+	var res = alasql.engines[this.engineid].attachDatabase(this.databaseid, this.as, this.args, params, cb);
 	return res;
 };
 
@@ -11253,7 +11255,7 @@ WEBSQL.dropDatabase = function(databaseid){
 	throw new Error('This is impossible to drop WebSQL database.');
 };
 
-WEBSQL.attachDatabase = function(databaseid, dbid, cb){
+WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
@@ -11333,7 +11335,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 	};
 };
 
-IDB.attachDatabase = function(ixdbid, dbid, args, cb) {
+IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 	var request1 = indexedDB.webkitGetDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
@@ -11723,7 +11725,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 };
 
 
-LS.attachDatabase = function(lsdbid, dbid, args, cb){
+LS.attachDatabase = function(lsdbid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
@@ -11902,14 +11904,22 @@ SQLITE.dropDatabase = function(databaseid){
 	throw new Error('This is impossible to drop SQLite database. Detach it.');
 };
 
-SQLITE.attachDatabase = function(sqldbid, dbid, args, cb){
+SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
 	};
 
-	if(args[0] && args[0] instanceof yy.StringValue) {
-		alasql.utils.loadBinaryFile(args[0].value,true,function(data){
+
+	if(args[0] && (args[0] instanceof yy.StringValue)
+		|| (args[0] instanceof yy.ParamValue)) {
+
+		if(args[0] instanceof yy.StringValue) {
+			var value = args[0].value;
+		} else if(args[0] instanceof yy.ParamValue) {
+			var value = params[args[0].param];
+		}
+		alasql.utils.loadBinaryFile(value,true,function(data){
 			var db = new alasql.Database(dbid || sqldbid);
 			db.engineid = "SQLITE";
 			db.sqldbid = sqldbid;
@@ -12067,7 +12077,7 @@ FS.dropDatabase = function(fsdbid, ifexists, cb){
 };
 
 
-FS.attachDatabase = function(fsdbid, dbid, args, cb){
+FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 //	console.log(arguments);
 	var res = 1;
 	if(alasql.databases[dbid]) {

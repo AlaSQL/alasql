@@ -1,5 +1,5 @@
 var path = require('path');
-var test = require('tap').test;
+var test = require('tape');
 var resolve = require('../');
 
 test('async foo', function (t) {
@@ -9,13 +9,13 @@ test('async foo', function (t) {
     resolve('./foo', { basedir : dir }, function (err, res, pkg) {
         if (err) t.fail(err);
         t.equal(res, dir + '/foo.js');
-        t.equal(pkg, undefined);
+        t.equal(pkg.name, 'resolve');
     });
     
     resolve('./foo.js', { basedir : dir }, function (err, res, pkg) {
         if (err) t.fail(err);
         t.equal(res, dir + '/foo.js');
-        t.equal(pkg, undefined);
+        t.equal(pkg.name, 'resolve');
     });
     
     resolve('./foo', { basedir : dir, package: { main: 'resolver' } }, function (err, res, pkg) {

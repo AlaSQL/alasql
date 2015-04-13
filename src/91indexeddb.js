@@ -66,7 +66,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 	};
 };
 
-IDB.attachDatabase = function(ixdbid, dbid, args, cb) {
+IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 	var request1 = indexedDB.webkitGetDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;

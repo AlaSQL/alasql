@@ -75,7 +75,7 @@ FS.dropDatabase = function(fsdbid, ifexists, cb){
 };
 
 
-FS.attachDatabase = function(fsdbid, dbid, args, cb){
+FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 //	console.log(arguments);
 	var res = 1;
 	if(alasql.databases[dbid]) {

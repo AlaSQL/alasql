@@ -1,6 +1,6 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('../alasql.js');
+	var alasql = require('..');
 };
 
 describe('Test 123 - SHOW DATABASES, TABLES, COLUMNS, INDEX, CREATE TABLE', function() {

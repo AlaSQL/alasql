@@ -1,6 +1,6 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('../alasql.js');
+	var alasql = require('..');
 };
 
 describe('Test 48 - Check parser for primary and foreign keys', function() {

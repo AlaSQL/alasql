@@ -26,7 +26,7 @@ WEBSQL.dropDatabase = function(databaseid){
 	throw new Error('This is impossible to drop WebSQL database.');
 };
 
-WEBSQL.attachDatabase = function(databaseid, dbid, cb){
+WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');

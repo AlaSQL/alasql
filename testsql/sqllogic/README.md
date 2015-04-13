@@ -1,1 +1,0 @@
-The place for SQLLOGICTEST files.
