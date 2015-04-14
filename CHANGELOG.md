@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.0.46 "Cape Town" (14.04.2015 - ...04.2015)
+### 0.0.46 "Cape Town" (14.04.2015 - 14.04.2015)
 * Cleaned 'test' directory
 * Fixed problem with tests
 * Fixed bug with localStorage DELETE FROM (without WHERE)
