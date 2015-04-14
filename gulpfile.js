@@ -2,7 +2,7 @@
 // gulpfile.js
 // Gulp for Alasql
 // Дата: 06.08.2014
-// (c) 2014, Andrey Gershun
+// (c) 2014-2015, Andrey Gershun
 //
 
 var gulp = require('gulp');

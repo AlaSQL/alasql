@@ -1,6 +1,6 @@
 # Alasql.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.44 "Roma" Date: April 13, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.46 "Cape Town" Date: April 15, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Please use [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions or [Issues](https://github.com/agershun/alasql/issues) to report bugs.
 
