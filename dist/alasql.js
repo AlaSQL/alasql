@@ -9343,8 +9343,8 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
-//			console.log(table);
 			//table.deleteall();
+			// Delete all records from the array
 			db.tables[tableid].data.length = 0;
 
 			if(alasql.options.autocommit && db.engineid) {
