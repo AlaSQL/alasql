@@ -1,6 +1,11 @@
 # Changelog
 
-### 0.0.45 "Rio de Janeiro" (14.04.2015 - ...04.2015)
+### 0.0.46 "Cape Town" (14.04.2015 - 14.04.2015)
+* Cleaned 'test' directory
+* Fixed problem with tests
+* Fixed bug with localStorage DELETE FROM (without WHERE)
+
+### 0.0.45 "Rio de Janeiro" (13.04.2015 - 13.04.2015)
 * Changed CRLF for alacon.js and alaserver.js to LF
 
 ### 0.0.44 "Roma" (02.04.2015 - 13.04.2015)

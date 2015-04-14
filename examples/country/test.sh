@@ -1,1 +1,0 @@
-﻿node alacon "select county_name from csv('contry.csv',{headers:true}) where country_code = 'AZ'"

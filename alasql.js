@@ -2,7 +2,7 @@
 // alasql.js
 // AlaSQL - JavaScript SQL database
 // Date: 13.04.2015
-// Version: 0.0.44
+// Version: 0.0.46
 // (ñ) 2014-2015, Andrey Gershun
 //
 
@@ -111,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.0.44";
+alasql.version = "0.0.46";
 
 
 
@@ -9343,8 +9343,9 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
-
-			table.deleteall();
+//			console.log(table);
+			//table.deleteall();
+			db.tables[tableid].data.length = 0;
 
 			if(alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);

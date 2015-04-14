@@ -1,2 +1,0 @@
-# alasql.Table
-
