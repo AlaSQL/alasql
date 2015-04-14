@@ -80,8 +80,9 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
-
-			table.deleteall();
+//			console.log(table);
+			//table.deleteall();
+			db.tables[tableid].data.length = 0;
 
 			if(alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);

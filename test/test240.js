@@ -44,7 +44,8 @@ describe('Test 240 DELETE TEST', function() {
     	{ a: 1, b: 'Moscow' },
   		{ a: 2, b: 'Kyiv' }]);
 
-    alasql('DELETE FROM one WHERE 1=1');
+//    alasql('DELETE FROM one WHERE 1=1');
+    alasql('DELETE FROM one');
 
     var res = alasql('SELECT * FROM one');
     assert.deepEqual(res,[]);
