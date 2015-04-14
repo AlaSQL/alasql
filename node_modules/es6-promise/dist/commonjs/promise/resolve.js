@@ -1,0 +1,15 @@
+"use strict";
+function resolve(value) {
+  /*jshint validthis:true */
+  if (value && typeof value === 'object' && value.constructor === this) {
+    return value;
+  }
+
+  var Promise = this;
+
+  return new Promise(function(resolve) {
+    resolve(value);
+  });
+}
+
+exports.resolve = resolve;

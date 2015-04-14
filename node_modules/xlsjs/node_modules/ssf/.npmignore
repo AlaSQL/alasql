@@ -1,0 +1,12 @@
+test/
+misc/
+node_modules/
+tmp/
+Makefile
+index.html
+.gitignore
+.vocrc
+.jscs.json
+.travis.yml
+v8.log
+perf.log

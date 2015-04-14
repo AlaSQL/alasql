@@ -1,0 +1,72 @@
+{
+  "name": "gulp-concat",
+  "description": "Concatenates files",
+  "version": "2.4.1",
+  "homepage": "http://github.com/wearefractal/gulp-concat",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/wearefractal/gulp-concat.git"
+  },
+  "author": {
+    "name": "Fractal",
+    "email": "contact@wearefractal.com",
+    "url": "http://wearefractal.com/"
+  },
+  "main": "./index.js",
+  "keywords": [
+    "gulpplugin"
+  ],
+  "dependencies": {
+    "concat-with-sourcemaps": "^0.1.3",
+    "gulp-util": "^2.2.5",
+    "through": "^2.3.4"
+  },
+  "devDependencies": {
+    "gulp": "^3.8.7",
+    "gulp-sourcemaps": "^1.1.4",
+    "istanbul": "*",
+    "mocha": "*",
+    "mocha-lcov-reporter": "*",
+    "should": "*",
+    "stream-array": "^0.1.3",
+    "stream-assert": "^2.0.1"
+  },
+  "scripts": {
+    "test": "mocha",
+    "coverage": "istanbul cover _mocha -- -R spec"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">= 0.10"
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/wearefractal/gulp-concat/raw/master/LICENSE"
+    }
+  ],
+  "gitHead": "16beeeef2dd13d51b7f58d93903827408668b8f2",
+  "bugs": {
+    "url": "https://github.com/wearefractal/gulp-concat/issues"
+  },
+  "_id": "gulp-concat@2.4.1",
+  "_shasum": "3097eb348a306708f400cf86cfb7d03ca5a55c94",
+  "_from": "gulp-concat@",
+  "_npmVersion": "1.4.21",
+  "_npmUser": {
+    "name": "fractal",
+    "email": "contact@wearefractal.com"
+  },
+  "maintainers": [
+    {
+      "name": "fractal",
+      "email": "contact@wearefractal.com"
+    }
+  ],
+  "dist": {
+    "shasum": "3097eb348a306708f400cf86cfb7d03ca5a55c94",
+    "tarball": "http://registry.npmjs.org/gulp-concat/-/gulp-concat-2.4.1.tgz"
+  },
+  "directories": {},
+  "_resolved": "https://registry.npmjs.org/gulp-concat/-/gulp-concat-2.4.1.tgz"
+}
