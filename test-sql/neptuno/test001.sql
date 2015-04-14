@@ -1,2 +1,0 @@
-SELECT VALUE COUNT(*) FROM categorias;
-ASSERT 8;
