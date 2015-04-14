@@ -37,9 +37,7 @@ describe('Test 245 Square brackets and JavaScript', function() {
     var res = alasql('SELECT VALUE ``1+1``',[data]);
     //console.log(res);
 
-    assert(res,
-      2
-    );
+    assert(res == 2);
     done();
 
   });

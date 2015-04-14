@@ -21,8 +21,8 @@ describe('Test 247 UNARY PLUS', function() {
   	var res = alasql('SELECT COLUMN - col1 + 4 FROM ?',[data]);
   	assert.deepEqual(res, [3,2]);
 
- 	var res = alasql('SELECT COLUMN col1 - + - col0 FROM ?',[data]);
- 	assert.deepEqual(res, [11,22]);
+  	var res = alasql('SELECT COLUMN col1 - + - col0 FROM ?',[data]);
+  	assert.deepEqual(res, [11,22]);
 
   	var res = alasql('SELECT COLUMN col1 * + col2 FROM ?',[data]);
   	assert.deepEqual(res, [100,400]);
