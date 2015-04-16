@@ -262,7 +262,19 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 		for(var j=0;j<data.length;j++) {
 			columns.forEach(function(col, idx){
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:data[j][col.columnid]};
+				var cell = {v:data[j][col.columnid]};
+				if(typeof data[j][col.columnid] == 'number') {
+					cell.t = 'n';
+				} else if(typeof data[j][col.columnid] == 'string') {
+					cell.t = 's';
+				} else if(typeof data[j][col.columnid] == 'boolean') {				
+					cell.t = 'b';
+				} else if(typeof data[j][col.columnid] == 'object') {
+					if(data[j][col.columnid] instanceof Date) {
+						cell.t = 'd';
+					}
+				}
+				cells[alasql.utils.xlsnc(col0+idx)+""+i] = cell;
 			});		
 			i++;
 		}

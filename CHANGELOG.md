@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.47 "Tokyo" (16.04.2015 - )
+* Added CORRESPONDING keyword to the grammas
+* Fixed export to Excel - with data types
+
 ### 0.0.46 "Cape Town" (14.04.2015 - 14.04.2015)
 * Cleaned 'test' directory
 * Fixed problem with tests

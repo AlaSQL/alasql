@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Alasql - JavaScript SQL database and data manipulation library",
-  "version": "0.0.46",
+  "version": "0.0.47",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",

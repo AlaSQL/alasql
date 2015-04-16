@@ -1,8 +1,8 @@
 //
 // alasql.js
 // AlaSQL - JavaScript SQL database
-// Date: 13.04.2015
-// Version: 0.0.46
+// Date: 16.04.2015
+// Version: 0.0.47
 // (ñ) 2014-2015, Andrey Gershun
 //
 
@@ -111,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.0.46";
+alasql.version = "0.0.47";
 
 
 
@@ -10646,7 +10646,19 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 		for(var j=0;j<data.length;j++) {
 			columns.forEach(function(col, idx){
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:data[j][col.columnid]};
+				var cell = {v:data[j][col.columnid]};
+				if(typeof data[j][col.columnid] == 'number') {
+					cell.t = 'n';
+				} else if(typeof data[j][col.columnid] == 'string') {
+					cell.t = 's';
+				} else if(typeof data[j][col.columnid] == 'boolean') {				
+					cell.t = 'b';
+				} else if(typeof data[j][col.columnid] == 'object') {
+					if(data[j][col.columnid] instanceof Date) {
+						cell.t = 'd';
+					}
+				}
+				cells[alasql.utils.xlsnc(col0+idx)+""+i] = cell;
 			});		
 			i++;
 		}
