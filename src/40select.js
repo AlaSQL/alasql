@@ -197,60 +197,60 @@ yy.Select.prototype.compile = function(databaseid) {
 	};
 
 	// SELECT INTO
-//	console.log(this.into);
 	if(this.into) {
 		if(this.into instanceof yy.Table) {
+			//
+			// Save into the table in database
+			//
 			if(alasql.options.autocommit && alasql.databases[this.into.databaseid||databaseid].engineid) {
+				// For external database when AUTOCOMMIT is ONs
 				query.intoallfns = 'return alasql.engines["'+alasql.databases[this.into.databaseid||databaseid].engineid+'"]'+
 					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data, columns, cb);';
 			} else {
+				// Into AlaSQL tables
 				query.intofns = 
 				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
 				'[\''+this.into.tableid+'\'].data.push(r);';
 			}
 		} else if(this.into instanceof yy.VarValue) {
-			query.intoallfns = 'alasql.vars["'+this.into.variable+'"]=this.data;res=1;if(cb)res=cb(res);return res;';
+			//
+			// Save into local variable
+			// SELECT * INTO @VAR1 FROM ?
+			//
+			query.intoallfns = 'alasql.vars["'+this.into.variable+'"]=this.data;res=this.data.length;if(cb)res=cb(res);return res;';
 		} else if (this.into instanceof yy.FuncValue) {
-
-/*
-			query.intofns = 'alasql.into[\''+this.into.funcid+'\'](';
-			var ss = ['r','i'];
-			if(this.into.args && this.into.args.length>0 ) 	
-				this.into.args.forEach(function(arg){
-					ss.push(arg.toJavaScript());
-				});
-			query.intofns += ss.join(',')+')';	
-*/
-			var qs = 'alasql.into[\''+this.into.funcid.toUpperCase()+'\'](';
+			//
+			// If this is INTO() function, then call it
+			// with one or two parameters
+			//
+			var qs = 'return alasql.into[\''+this.into.funcid.toUpperCase()+'\'](';
 			if(this.into.args && this.into.args.length>0 ) {
 				qs += this.into.args[0].toJavaScript()+',';
 				if(this.into.args.length > 1) {
 					qs += this.into.args[1].toJavaScript()+',';
 				} else {
-					qs += 'null,';
+					qs += 'undefined,';
 				}
 			} else {
-				qs += 'null, null,'
+				qs += 'undefined, undefined,'
 			}
 			query.intoallfns = qs+'this.data,columns,cb)';
 //console.log('999');		
 
 
-
-
 		} else if (this.into instanceof yy.ParamValue) {
-//			console.log(184);
-//			query.intofns = 'params[\''+this.into.param+"\'](r)";	
+			//
+			// Save data into parameters array
+			// like alasql('SELECT * INTO ? FROM ?',[outdata,srcdata]);
+			//
 			query.intofns = "params['"+this.into.param+"'].push(r)";
-
 		};
-//		console.log(query.intofns);
+
 		if(query.intofns) {
+			// Create intofn function
 			query.intofn = new Function("r,i,params,alasql",query.intofns); 
-		};
-
-		if(query.intoallfns) {
-//			console.log(query.intoallfns);
+		} else if(query.intoallfns) {
+			// Create intoallfn function
 			query.intoallfn = new Function("columns,cb,alasql",query.intoallfns); 
 		}
 

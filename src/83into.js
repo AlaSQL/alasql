@@ -120,11 +120,12 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	// If columns is empty
 	if(columns.length == 0 && data.length > 0) {
 		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
-	}
+	};
+	// If one parameter
 	if(typeof filename == 'object') {
 		opts = filename;
-		filename = null;
-	}
+		filename = undefined;
+	};
 
 	var res = data.length;
 	var s = '';
@@ -134,8 +135,9 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 			return d[key];
 		}).join('\n');
 	}
-//	if(filename) {
-		alasql.utils.saveFile(filename,s);
+	if(typeof filename == 'undefined') {
+		res = alasql.utils.saveFile(filename,s);
+	}
 //	} else {
 //		if(typeof exports == 'object') {
 //			process.stdout.write(s);

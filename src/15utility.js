@@ -333,10 +333,15 @@ var fileExists = utils.fileExists = function(path,cb){
 */
 
 var saveFile = utils.saveFile = function(path, data, cb) {
-    if(!path) {
-        alasql.options.stdout = true;
-        console.log(data);
-        if(cb) cb();
+
+    if(typeof path == 'undefined') {
+        //
+        // Return data into result variable
+        // like: alasql('SELECT * INTO TXT() FROM ?',[data]);
+        //
+        var res = data;
+        if(cb) res = cb(res);
+        return res;
     } else {
         if(typeof exports == 'object') {
             // For Node.js
