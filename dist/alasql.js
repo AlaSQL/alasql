@@ -12360,7 +12360,7 @@ if((typeof exports != 'object') && (typeof importScripts != 'function') && (type
 
 /* FileSaver.js
  * A saveAs() FileSaver implementation.
- * 2014-11-29
+ * 2015-03-04
  *
  * By Eli Grey, http://eligrey.com
  * License: X11/MIT
@@ -12495,6 +12495,10 @@ var saveAs = saveAs
 				revoke(object_url);
 				return;
 			}
+			// prepend BOM for UTF-8 XML and text/plain types
+			if (/^\s*(?:text\/(?:plain|xml)|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
+				blob = new Blob(["\ufeff", blob], {type: blob.type});
+			}
 			// Object and web filesystem URLs have a problem saving in Google Chrome when
 			// viewed in a tab, so I force save with application/octet-stream
 			// http://code.google.com/p/chromium/issues/detail?id=91158
@@ -12595,8 +12599,8 @@ var saveAs = saveAs
 // while `this` is nsIContentFrameMessageManager
 // with an attribute `content` that corresponds to the window
 
-if (typeof module !== "undefined" && module !== null) {
-  module.exports = saveAs;
+if (typeof module !== "undefined" && module.exports) {
+  module.exports.saveAs = saveAs;
 } else if ((typeof define !== "undefined" && define !== null) && (define.amd != null)) {
   define([], function() {
     return saveAs;
