@@ -17,21 +17,41 @@ describe('Test 256 INTO() in result and into params array', function() {
     done();
   });
 
-  it('2. INTO TXT result', function(done){
+  it('2. INTO TXT() result', function(done){
     var data = [{a:1},{a:2}];
     var res = alasql('SELECT * INTO TXT() FROM ?',[data]); 
     assert(res == '1\n2')
     done();
   });
 
-  it('3. INTO SQL result', function(done){
+  it('3. INTO JSON() result', function(done){
     var data = [{a:1},{a:2}];
-    var res = alasql('SELECT * INTO SQL() FROM ?',[data]); 
-    console.log(res);
-    assert(res == '1\n2')
+    var res = alasql('SELECT * INTO JSON() FROM ?',[data]); 
+    assert(res == '[{"a":1},{"a":2}]')
     done();
   });
 
+  it('4. INTO SQL() result', function(done){
+    var data = [{a:1,b:2},{a:2,b:2}];
+    var res = alasql('SELECT * INTO SQL({tableid:"one"}) FROM ?',[data]); 
+    assert(res == 'INSERT INTO one(a,b) VALUES (1,2);\nINSERT INTO one(a,b) VALUES (2,2);\n')
+    done();
+  });
+
+  it('4. INTO CSV() result', function(done){
+    var data = [{a:1,b:2},{a:2,b:2}];
+    var res = alasql('SELECT * INTO CSV({headers:true}) FROM ?',[data]); 
+    assert(res == 'a,b\n1,2\n2,2\n')
+    done();
+  });
+
+  it('5. INTO XLSX() result', function(done){
+    var data = [{a:1,b:2},{a:2,b:2}];
+    var res = alasql('SELECT * INTO XLSX({headers:true}) FROM ?',[data]); 
+    console.log(res);
+//    assert(res == 'a,b\n1,2\n2,2\n')
+    done();
+  });
 
 });
 
