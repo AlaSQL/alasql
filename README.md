@@ -670,9 +670,10 @@ Read my [to do](TODO.md) page
 
 ### Similar and related projects
 
-* [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
+* [AlaXLS](http://github.com/agershun/alaxls) - Export to Excel with colors and formats 
 * [WebSQLShim](http://github.com/agershun/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
-* [Alamdx](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
+* [AlaMDX](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
+* [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
 
 ### FileSaver
 
