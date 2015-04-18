@@ -1,16 +1,39 @@
 //
-// 91websql.js
-// 
-//
+// 91indexeddb.js
+// AlaSQL IndexedDB module
+// Date: 18.04.2015
+// (c) Andrey Gershun
 //
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
+// For Chrome it work normally, for Firefox - simple shim
+if(indexedDB.webkitGetDatabaseNames) {
+	IDB.getDatabaseNames = indexedDB.webkitGetDatabaseNames;
+} else {
+	IDB.getDatabaseNames = function () {
+		var request = {};
+		var result = {contains:function(name){
+				return true; // Always return true
+			}
+		};
+		setTimeout(function(){
+			var event = {target:{result:result}}
+			request.onsuccess(event);
+		},0);
+		return request;
+	};
+}
+
+
 IDB.showDatabases = function(like,cb) {
 	// console.log('showDatabases',arguments);
-	var request = indexedDB.webkitGetDatabaseNames();
+	var request = IDB.getDatabaseNames();
 	request.onsuccess = function(event) {
 		var dblist = event.target.result;
+		if(typeof dblist.length == 'undefined') {
+			throw new Error('SHOW DATABASE is not supported in this browser');
+		}
 		var res = [];
 		if(like) {
 			var relike = new RegExp((like.value).replace(/\%/g,'.*'),'g');
@@ -25,7 +48,7 @@ IDB.showDatabases = function(like,cb) {
 };
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
-	var request1 = indexedDB.webkitGetDatabaseNames();
+	var request1 = IDB.getDatabaseNames();
 	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(dblist.contains(ixdbid)){
@@ -47,7 +70,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 };
 
 IDB.dropDatabase = function(ixdbid, ifexists, cb){
-	var request1 = indexedDB.webkitGetDatabaseNames();
+	var request1 = IDB.getDatabaseNames();
 	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
@@ -67,7 +90,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 };
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
-	var request1 = indexedDB.webkitGetDatabaseNames();
+	var request1 = IDB.getDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
@@ -99,11 +122,13 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 };
 
 
+
+
 IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 //	console.log(arguments);
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 //	console.log(ixdbid);
-	var request1 = indexedDB.webkitGetDatabaseNames();
+	var request1 = IDB.getDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
@@ -145,7 +170,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
-	var request1 = indexedDB.webkitGetDatabaseNames();
+	var request1 = IDB.getDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 	
