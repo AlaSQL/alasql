@@ -6,6 +6,7 @@
 * New version of FileSaver is updated
 * New INTO XLS() function with colors(!)
 * Added params parameter to intoallfn()
+* master and develop branches fixed
 
 ### 0.0.46 "Cape Town" (14.04.2015 - 14.04.2015)
 * Cleaned 'test' directory
