@@ -5,6 +5,7 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
+if(typeof exports != 'undefined') {
 
 describe('Test 257 INTO XLS()', function() {
 
@@ -166,5 +167,23 @@ describe('Test 257 INTO XLS()', function() {
     done();
 
   });
+
+  it('3. Areas example',function(done){
+    var data = [
+      {imemid:123,itemname:'Samsung TV', price:123.00, qty:2},
+      {imemid:567,itemname:'LG TV', price:233.00, qty:4},
+      {imemid:897,itemname:'Sony TV', price:323.00, qty:5},
+    ];
+
+    var templ = {
+      areas: [
+        {x:0, y:0, colspan:3, cells:"Invoice"},
+        {x:2, y:5, h:10, headers:true, data:true, totals:'top'},
+      ]
+    };
+
+  });
+
 });
 
+};
