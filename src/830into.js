@@ -115,12 +115,9 @@ alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	}
 	var opt = {};
 	var s = JSON.stringify(data);
-	alasql.utils.saveFile(filename,s, function(data){
-		if(typeof filename == 'undefined') {
-			res = data;
-		};
-		if(cb) res = cb(res);
-	});
+
+	res = alasql.utils.saveFile(filename,s);
+	if(cb) res = cb(res);
 	return res;
 };
 
@@ -143,9 +140,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 			return d[key];
 		}).join('\n');
 	}
-	if(typeof filename == 'undefined') {
-		res = alasql.utils.saveFile(filename,s);
-	}
+
 //	} else {
 //		if(typeof exports == 'object') {
 //			process.stdout.write(s);
@@ -153,6 +148,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 //		console.log(s);
 //		};
 //	}
+	res = alasql.utils.saveFile(filename,s);
 	if(cb) res = cb(res);
 	return res;
 };
@@ -193,11 +189,8 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 			return s;
 		}).join(opt.separator)+'\n';	
 	});
-	if(typeof filename == 'undefined') {
-		res = s;
-	} else {
-		alasql.utils.saveFile(filename,s);
-	}
+
+	res = alasql.utils.saveFile(filename,s);
 	if(cb) res = cb(res);
 	return res;
 };
