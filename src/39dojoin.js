@@ -3,21 +3,48 @@
 //
 
 function doJoin (query, scope, h) {
+//	console.log('doJoin', arguments);
 //	console.log(query.sources.length);
 	// Check, if this is a last join?
 	if(h>=query.sources.length) {
 //console.log(query.wherefns);
 		// Then apply where and select
+//		console.log(query);
 		if(query.wherefn(scope,query.params, alasql)) {
-			var res = query.selectfn(scope, query.params, alasql);
-//			console.log("last",scope);
+
+//			console.log("scope",scope.schools);
+
+//			var res = query.selectfn(scope, query.params, alasql);
+//			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-				query.groupfn(res, query.params, alasql)
+				query.groupfn(scope, query.params, query.alasql)
 			} else {
-				query.data.push(res);
+				query.data.push(query.selectfn(scope, query.params, alasql));
 			}	
 		}
+	} else if(query.sources[h].applyselect) {
+//		console.log('APPLY',scope);
+//			console.log('scope1',scope);
+//				console.log(scope);
+		var source = query.sources[h];
+		source.applyselect(query.params, function(data){
+			if(data.length > 0) {
+	//			console.log('APPLY CB');
+				for(var i=0;i<data.length;i++) {
+					scope[source.alias] = data[i];
+					doJoin(query, scope, h+1);
+				};			
+			} else {
+//				console.log(source.applymode);
+				if (source.applymode == 'OUTER') {
+					scope[source.alias] = {};
+					doJoin(query, scope, h+1);
+				}
+			}
+		},scope);
+
+//		console.log(data);
 	} else {
 
 // STEP 1
@@ -27,7 +54,7 @@ function doJoin (query, scope, h) {
 
 //		if(source.joinmode == "LEFT" || source.joinmode == "INNER" || source.joinmode == "RIGHT"
 //			|| source.joinmode == "OUTER" || source.joinmode == "SEMI") {
-		if(source.joinmode != "ANTI") {
+		if(true) {//source.joinmode != "ANTI") {
 
 			// if(nextsource && nextsource.joinmode == "RIGHT") {
 			// 	if(!nextsource.rightdata) {
@@ -40,23 +67,36 @@ function doJoin (query, scope, h) {
 			var tableid = source.alias || source.tableid; 
 			var pass = false; // For LEFT JOIN
 			var data = source.data;
-
+			var opt = false;
 
 			// Reduce data for looping if there is optimization hint
-			if(source.joinmode != "RIGHT" && source.joinmode != "OUTER" && source.joinmode != "ANTI" && source.optimization == 'ix') {
-				data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
+			if(!source.getfn || (source.getfn && !source.dontcache)) {
+				if(source.joinmode != "RIGHT" && source.joinmode != "OUTER" && source.joinmode != "ANTI" && source.optimization == 'ix') {
+					data = source.ix[ source.onleftfn(scope, query.params, alasql) ] || [];
+					opt = true;
+//					console.log(source.onleftfns);
+//					console.log(source.ix);
+//	console.log(source.onleftfn(scope, query.params, alasql));
+//					console.log(opt, data, data.length);
+				}
 			}
 
 			// Main cycle
-			for(var i=0, ilen=data.length; i<ilen; i++) {
-				scope[tableid] = data[i];
+			var i = 0;
+			var ilen=data.length;
+			var dataw;
+//			console.log(h,opt,source.data,i,source.dontcache);
+			while((dataw = data[i]) || (!opt && (source.getfn && (dataw = source.getfn(i)))) || (i<ilen) ) {
+				if(!opt && source.getfn && !source.dontcache) data[i] = dataw;
+//console.log(h, i, dataw);
+				scope[tableid] = dataw;
 				// Reduce with ON and USING clause
 				if(!source.onleftfn || (source.onleftfn(scope, query.params, alasql) == source.onrightfn(scope, query.params, alasql))) {
 					// For all non-standard JOINs like a-b=0
 					if(source.onmiddlefn(scope, query.params, alasql)) {
 						// Recursively call new join
 //						if(source.joinmode == "LEFT" || source.joinmode == "INNER" || source.joinmode == "OUTER" || source.joinmode == "RIGHT" ) {
-						if(source.joinmode != "SEMI") { 
+						if(source.joinmode != "SEMI" && source.joinmode != "ANTI") { 
 //							console.log(scope);
 							doJoin(query, scope, h+1);
 						}
@@ -65,13 +105,14 @@ function doJoin (query, scope, h) {
 
 //						if(source.joinmode == "RIGHT" || source.joinmode == "ANTI" || source.joinmode == "OUTER") {
 						if(source.joinmode != "LEFT" && source.joinmode != "INNER") {
-							data[i]._rightjoin = true;
+							dataw._rightjoin = true;
 						}
 
 						// for LEFT JOIN
 						pass = true;
 					}
-				}
+				};
+				i++;
 			};
 
 
@@ -85,25 +126,43 @@ function doJoin (query, scope, h) {
 
 		}
 
+		// When there is no records
+//		if(data.length == 0 && query.groupfn) {
+//			scope[tableid] = undefined;
+//			doJoin(query,scope,h+1);
+//		}
+
 // STEP 2
 
 		if(h+1 < query.sources.length) {
 
 			if(nextsource.joinmode == "OUTER" || nextsource.joinmode == "RIGHT" 
 				|| nextsource.joinmode == "ANTI") {
-		
+
+
 				scope[source.alias] = {};
 			
-				for (var j=0; j<nextsource.data.length;j++){
-					if(!nextsource.data[j]._rightjoin) {
-						scope[nextsource.alias] = nextsource.data[j];
+				var j = 0;
+				var jlen = nextsource.data.length;
+				var dataw;
+				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(j))) || (j<jlen)) {
+					if(nextsource.getfn && !nextsource.dontcache) nextsource.data[j] = dataw;
+
+					if(!dataw._rightjoin) {
+						scope[nextsource.alias] = dataw;
 						doJoin(query, scope, h+2);
-						nextsource.data[j]._rightjoin = undefined;
+					} else {
+						//dataw._rightjoin = undefined;	
+						delete dataw._rightjoin;					
 					}
+					j++;
 				}
+//				console.table(nextsource.data);
+//				debugger;	
 
 			};
 		};
+
 
 		scope[tableid] = undefined;
 

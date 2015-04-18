@@ -1,18 +1,13 @@
 {
   "name": "alasql",
-  "description": "Alasql.js - pure JavaScript fast in-memory client-side SQL database",
-  "version": "0.0.15",
+  "description": "Alasql - JavaScript SQL database and data manipulation library",
+  "version": "0.0.46",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
     "test": "test"
   },
-  "dependencies": {
-    "es6-promise": "2.0.0"
-    },
-  "devDependencies": {
-    "gulp-uglify": "^1.0.1"
-  },
+  "devDependencies": {},
   "engines": [
     "node"
   ],
@@ -23,25 +18,35 @@
   "bugs": {
     "url": "https://github.com/agershun/alasql/issues"
   },
+  "bin" : { 
+    "alacon" : "./bin/alacon.js",
+    "alaserver" : "./bin/alaserver.js"
+  },
   "homepage": "https://github.com/agershun/alasql",
-  "main": "index.js",
+  "main": "dist/alasql.js",
   "scripts": {
-    "test": "mocha"
+    "test": "cd test && mocha ."
   },
   "keywords": [
     "sql",
+    "nosql",
     "alasql",
-    "mdx",
-    "olap",
-    "alasql",
+    "javascript",
     "parser",
-    "stand-alone",
-    "relational",
     "database",
-    "RDBMS",
+    "DBMS",
     "data",
     "query",
-    "statement"
+    "localStorage",
+    "IndexedDB",
+    "DOM-storage",
+    "SQLite",
+    "JSON",
+    "Excel",
+    "XLSX",
+    "XLS",
+    "CSV",
+    "worker"
   ],
   "license": "MIT"
 }

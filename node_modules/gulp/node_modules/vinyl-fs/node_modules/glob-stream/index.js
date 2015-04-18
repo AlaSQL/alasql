@@ -84,8 +84,6 @@ var gs = {
     var aggregate = new Combine(streams);
     var uniqueStream = unique('path');
 
-    // TODO: set up streaming queue so items come in order
-
     return aggregate.pipe(uniqueStream);
   }
 };

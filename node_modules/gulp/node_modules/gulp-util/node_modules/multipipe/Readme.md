@@ -81,6 +81,7 @@ $ npm install multipipe
 The MIT License (MIT)
 
 Copyright (c) 2014 Segment.io Inc. &lt;friends@segment.io&gt;
+Copyright (c) 2014 Julian Gruber &lt;julian@juliangruber.com&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

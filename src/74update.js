@@ -20,40 +20,67 @@ yy.SetColumn.prototype.toString = function() {
 	return this.columnid.toString() + '='+this.expression.toString();
 }
 
-yy.Update.prototype.compile = function (db) {
+yy.Update.prototype.compile = function (databaseid) {
 //	console.log(this);
-
+	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	
 	if(this.where) {
-		var wherefn = new Function('r,params','return '+this.where.toJavaScript('r',''));
+		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r',''));
 	};
 
 	// Construct update function
 	var s = '';
 	this.columns.forEach(function(col){
-		s += 'r.'+col.columnid+'='+col.expression.toJavaScript('r','')+';'; 
+		s += 'r[\''+col.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
 	});
-	var assignfn = new Function('r,params',s);
+	var assignfn = new Function('r,params,alasql',s);
 
-	return function(params, cb) {
+	var statement = function(params, cb) {
+		var db = alasql.databases[databaseid];
+
+
+//		console.log(db.engineid);
+//		console.log(db.engineid && alasql.engines[db.engineid].updateTable);
+		if(db.engineid && alasql.engines[db.engineid].updateTable) {
+//			console.log('updateTable');
+			return alasql.engines[db.engineid].updateTable(databaseid, tableid, assignfn, wherefn, params, cb);
+		}
+
+		if(alasql.options.autocommit && db.engineid) {
+			alasql.engines[db.engineid].loadTableData(databaseid,tableid);
+		}
+
 		var table = db.tables[tableid];
 		if(!table) {
 			throw new Error("Table '"+tableid+"' not exists")
 		}
-		table.dirty = true;
+//		table.dirty = true;
 		var numrows = 0;
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
-			if(!wherefn || wherefn(table.data[i], params) ) {
-				table.update(assignfn, i, params);
+			if(!wherefn || wherefn(table.data[i], params,alasql) ) {
+				if(table.update) {
+					table.update(assignfn, i, params);
+				} else {
+					assignfn(table.data[i], params,alasql);
+				}
 				numrows++;
 			}
 		};
+
+		if(alasql.options.autocommit && db.engineid) {
+			alasql.engines[db.engineid].saveTableData(databaseid,tableid);
+		}
+
 		if(cb) cb(numrows);
 		return numrows;
 	};
+	return statement;
 };
 
+yy.Update.prototype.execute = function (databaseid, params, cb) {
+	return this.compile(databaseid)(params,cb);
+}
 
 
 

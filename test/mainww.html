@@ -1,0 +1,9 @@
+<script src="../alasql.js"></script>
+<script>
+	alasql.work('/alasql.min.js',['/test/test203myfn.js1','/test/test203myfn2.js1'],function(){
+		alasql('SELECT COLUMN myfn(_)+myfn2(_) FROM RANGE(1,5)',[],function(res){
+			console.log(res);
+		});
+	});
+
+</script>

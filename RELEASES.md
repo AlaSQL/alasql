@@ -1,51 +1,18 @@
-## RELEASES PLAN
+# Releases Plan
 
-#### Version 0.0.20 - "Battle for SQL-92"
+## Alasql Development Prioritites
+1. Bugs, Speed, Memory Leaks, Better Code, JsDoc, Errors handling, Library Size, Compatibility (Browsers, Mobiles, SQLs)
+2. Documentation, alasql.org website, Social Media, Alasql promotion, Article, Coockbook, Tutorial
+3. IF problem, UNION bug, merge algorithms, utilities, Prettify, Console, Alacon
+4. Primary Key/Foreign Key/Unique Index/Autoincrement/Default
+5. Transactions
+6. PIVOT, UNPIVOT, GROUP BY TOTAL, DETAIL, GROUP BY HIERARCHY
+7. WebSQL and pass-thru databases, better support of with IndexedDB and NeDB, WebWorkers
+8. SYNC, optimiztic blocking
+9. Linq, NoSQL, and MongoDB functions
+10. Streams, cursors,while, Console
 
-* Use parameter arrays and subqueries in JOIN clause
-* Fix Dates issues (comparision, ordering)
-* Dates parsing in SELECT and UPDATE
-* Upper and lower case in tables, columns, and functions names issue
-* Replace magic character '`' to CharCode(0) or something else similar
-* Many-many SQL-92 Tests 
-* Complaience with [SQL-92 specifications](http://savage.net.au/SQL/sql-92.bnf.html) where it is possible 
-* Chrome/FireFox/Safari/IE/Chromium/Opera/Node.Js/Rhino/iOS/Android/Win8 compatibilty tests
-* NULL, IS NULL
-* SQL-errors 
-* AVG()
-* PIVOT like [T-SQL](http://technet.microsoft.com/en-us/library/ms177410(v=sql.105).aspx)
-* Third UNION order issue
-* Float numbers like 10e20
-* INSERT DEFAULT VALUES
-* Development environment (clean gulp code)
+## Next Releases:
 
-#### Version 0.0.30 - "Battle for Performance"
-
-* Remove forEach loops
-* EXPLAIN
-* Optmization parameters
-* Data types reolution for subqueries
-* Indices
-* Transactions
-
-#### Version 0.0.40 - "Battle for Memory"
-
-* Memory leaks
-* Minification
-* Persistence
-* ALTER TABLE
-* CONSTRAINTS, PRIMARY KEYS
-* Triggers
-
-#### Version 0.0.40 - "JavaScript API"
-
-* JavaScript API clarification
-* $.alasql(sql, params) plugin
-* AngularJS plugin
-
-#### Version 0.0.50 - "Battle with Bugs"
-
-* Bug fixing release (alpha for 0.1)
-
-#### Version 0.1.0 - "First Pancake!"
+### Version "Chess" 0.1.0 (20.04.2015)
 

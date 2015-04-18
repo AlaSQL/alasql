@@ -17,21 +17,33 @@ yy.CaseValue.prototype.toString = function() {
 	s += ' END';
 	return s;
 };
-yy.CaseValue.prototype.toJavaScript = function(context, tableid) {
 
-	var s = '(function(p,params,alasql){var r;';
+yy.CaseValue.prototype.findAggregator = function (query){
+//	console.log(this.toString());
+	if(this.expression && this.expression.findAggregator) this.expression.findAggregator(query);
+	if(this.whens && this.whens.length > 0) {
+		this.whens.forEach(function(w) { 
+			if(w.when.findAggregator) w.when.findAggregator(query);
+			if(w.then.findAggregator) w.then.findAggregator(query);
+		});
+	}
+};
+
+yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {
+
+	var s = '(function('+context+',params,alasql){var r;';
 	if(this.expression) {
 //			this.expression.toJavaScript(context, tableid)
-		s += 'v='+this.expression.toJavaScript(context, tableid)+';';
-		s += (this.whens||[]).map(function(w) { return ' if(v=='+w.when.toJavaScript(context,tableid)
-			+') {r='+w.then.toJavaScript(context,tableid)+'}'; }).join(' else ');
-		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid)+'}';
+		s += 'v='+this.expression.toJavaScript(context, tableid, defcols)+';';
+		s += (this.whens||[]).map(function(w) { return ' if(v=='+w.when.toJavaScript(context,tableid, defcols)
+			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
+		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid, defcols)+'}';
 	} else {
-		s += (this.whens||[]).map(function(w) { return ' if('+w.when.toJavaScript(context,tableid)
-			+') {r='+w.then.toJavaScript(context,tableid)+'}'; }).join(' else ');
-		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid)+'}';
+		s += (this.whens||[]).map(function(w) { return ' if('+w.when.toJavaScript(context,tableid, defcols)
+			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
+		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid,defcols)+'}';
 	}
-	s += 'return r;})(p,params,alasql)';
+	s += 'return r;})('+context+',params,alasql)';
 
 	return s;
 };

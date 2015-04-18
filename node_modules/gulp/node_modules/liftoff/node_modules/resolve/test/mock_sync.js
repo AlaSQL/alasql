@@ -1,4 +1,4 @@
-var test = require('tap').test;
+var test = require('tape');
 var resolve = require('../');
 
 test('mock', function (t) {

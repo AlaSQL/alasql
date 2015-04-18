@@ -1,0 +1,17 @@
+<script src="xlsx.core.min.js"></script>
+<script src='alasql.min.js'></script>
+<h1>Alasql - JavaScript SQL database console</h1>
+<p>This is a demo console for Alasql SQL database. Read more information and documentation on 
+<a href="https://github.com/agershun/alasql">https://github.com/agershun/alasql</a></p>
+<p>Type <b>HELP</b> for the list of commands.</p>
+<p>Enter <b>SOURCE 'world.sql'</b> to load sample database, then <b>SHOW TABLES</b>, and then <b>SELECT TOP 10 * FROM City</b>. Then enter <b>SELECT VALUE COUNT(*) FROM TXT('world.sql') WHERE LEN([0])>20</b> to count number of lines with length more than 20 characters</p>
+<div id='myconsole'></div>
+<p>
+	<span id="useid">alasql</span>&gt; <input id='myprompt' style='width:80%;font-weight:bold' autofocus/> 
+</p>
+<script>
+	var first = decodeURI(location.search.substr(1));
+ 	alasql.options.logtarget = 'myconsole';
+	alasql.prompt('myprompt','useid');
+	alasql.prompt('myprompt','useid', first);
+</script> 
