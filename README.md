@@ -1,12 +1,12 @@
-# Alasql.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
+# AlaSQL.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.47 "Antalya" Date: April 16, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.47 "Antalya" Date: April 18, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 Please use [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions or [Issues](https://github.com/agershun/alasql/issues) to report bugs.
 
-Alasql - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of Alasql can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
+AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
-Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb) to your project and call 
+AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb) to your project and call 
 ```alasql()``` function with SQL statement inside: 
 
 ```html
@@ -18,38 +18,67 @@ Alasql is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb
         console.log( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
     </script>
 ```
-Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Alasql console</a>.
+Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">AlaSQL console</a>.
 
 ## Documentation 
 
-* [Alasql Wiki](https://github.com/agershun/alasql/wiki)
-* [Alasql User Manual](http://www.slideshare.net/AndreyGershun/alasql-manual-141220-1)
-* [Alasql Coockbok](https://github.com/agershun/alasql/wiki/Data-manipulation) - Q&A, examples
-* [StackOverflow Alasql Q&A](http://stackoverflow.com/questions/tagged/alasql)
-* [Alasql Issues](https://github.com/agershun/alasql/issues)
+* [AlaSQL Wiki](https://github.com/agershun/alasql/wiki)
+* [AlaSQL User Manual](http://www.slideshare.net/AndreyGershun/alasql-manual-141220-1)
+* [AlaSQL Coockbok](https://github.com/agershun/alasql/wiki/Data-manipulation) - Q&A, examples
+* [StackOverflow AlaSQL Q&A](http://stackoverflow.com/questions/tagged/alasql)
+* [AlaSQL Issues](https://github.com/agershun/alasql/issues)
 
-## Why Alasql?
+## Why AlaSQL?
 
-* Alasql was written with pure JavaScript and does not use WebSQL database. 
-* Alasql uses "good old" SQL with advanced funcionality like multiple JOINs, VIEWs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS(), CROSS APPLY, OUTER APPLY, WITH SELECT, views, functions, variables
-* Alasql works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android, plus Apache Cordova.
-* Alasql can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavaScript and NoSQL databases
-* Alasql supports file, IndexedDB, and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)
+* AlaSQL was written with pure JavaScript and does not use WebSQL database. 
+* AlaSQL uses "good old" SQL with advanced funcionality like multiple JOINs, VIEWs, GROUPs, UNIONs, PRIMARY KEYs, ANY, ALL, IN, subqueries, ROLLUP(), CUBE() and GROUPING SETS(), CROSS APPLY, OUTER APPLY, WITH SELECT, views, functions, variables
+* AlaSQL works with all modern versions of browsers Chrome, Firefox, IE, Safari, Opera, Node.js, and mobile iOS and Android, plus Apache Cordova.
+* AlaSQL can to work directly with JavaScript objects and functions inside SQL, it can search JSON objects like JavaScript and NoSQL databases
+* AlaSQL supports file, IndexedDB, and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes)
 * Plus some [JavaScript sugar](#Sugar)
-* Alasql is fast, because it uses some optimization methods. 
+* AlaSQL is fast, because it uses some optimization methods. 
 
-Check Alasql vs other JavaScript SQL databases and data processing libraries: 
-* [Alasql vs. WebSQL](http://jsperf.com/alasql-js-vs-websql/7) - for in-memory SELECT operations (see discussion at [issue #47](https://github.com/agershun/alasql/issues/47))
- * [Alasql vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4) - in-memory operations* [Alasql vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - test on 2^20 records
- * Alasql vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
- * [Alasql vs. Lodash](http://jsperf.com/alasql-vs-lodash), [Alasql vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
- * [Alasql vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
+Check AlaSQL vs other JavaScript SQL databases and data processing libraries: 
+* [AlaSQL vs. WebSQL](http://jsperf.com/alasql-js-vs-websql/7) - for in-memory SELECT operations (see discussion at [issue #47](https://github.com/agershun/alasql/issues/47))
+ * [AlaSQL vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4) - in-memory operations* [AlaSQL vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - test on 2^20 records
+ * AlaSQL vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
+ * [AlaSQL vs. Lodash](http://jsperf.com/alasql-vs-lodash), [AlaSQL vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
+ * [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
 
 ## What is new?
 
-### Alasql and Google Spreadsheets (with Tabletop)
+### AlaSQL export to Excel with colors
 
-Now Alasql can read data (and make other manipulations like grouping, filtering, or saving to XLSX) directly from Google Spreadsheets. It uses wonderful [Tabletop library](https://github.com/jsoma/tabletop).
+Now AlaSQL can export data to XLS format with coloring cells
+
+```js
+    var opts = {
+      headers: true,
+      sheetid: 'My Birds',
+      style:"background:#00ff00",
+      columns: [
+        {columnid:'a',title:'Albatroses',
+          style:'background:red;font-size:20px',
+          cell:{style:'background:blue'}
+        },
+        {columnid:'b',title:'Bird',cell:{
+          style:function(value,sheet,row,column,rowidx,columnidx){
+            return 'background'+(value==10?'brown':'white')
+        }}},
+        { 
+          columnid: 'b', cell:{value:function(value){ return value * value}}
+        }
+      ]
+    };
+
+    var res = alasql('SELECT * INTO XLS("restest257a.xls",?) FROM ?',[opts,data]); 
+
+```
+Please, see the example with advanced color syntax [in jsFiddle](http://jsfiddle.net/agershun/95j0txwx/2/).
+
+### AlaSQL and Google Spreadsheets (with Tabletop)
+
+Now AlaSQL can read data (and make other manipulations like grouping, filtering, or saving to XLSX) directly from Google Spreadsheets. It uses wonderful [Tabletop library](https://github.com/jsoma/tabletop).
 
 ```html
 <script src='../../console/tabletop.js'></script>
@@ -64,9 +93,9 @@ Now Alasql can read data (and make other manipulations like grouping, filtering,
 
 You can try this example [in jsFiddle](http://jsfiddle.net/ezy7rhhd/2).
 
-### Alasql as a WebWorker
+### AlaSQL as a WebWorker
 
-Alasql can work as a webworker. Include alasql-worker.js and that is it: Alasql will work as a webworker.
+AlaSQL can work as a webworker. Include alasql-worker.js and that is it: AlaSQL will work as a webworker.
 
 ```html
     <script src="alasql-worker.min.js"></script>
@@ -92,7 +121,7 @@ Another option - run alasql.worker() function:
 ```
 Try this example [in jsFiddle](http://jsfiddle.net/agershun/rjwp8u48/3/).
 
-Also you can use Alasql in webworker just simply load it as a script:
+Also you can use AlaSQL in webworker just simply load it as a script:
 
 ```js
     importScripts('alasql.min.js');
@@ -100,7 +129,7 @@ Also you can use Alasql in webworker just simply load it as a script:
 
 ### Read and write Excel, CSV, TAB, JSON,  and text files to/from database
 
-Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
+Now AlaSQL can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 
 ```js
     alasql('select * into one from csv("mydata.csv")');
@@ -112,9 +141,9 @@ Now Alasql can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
 ```
 See [test168](test/test168.js) - [test169](test/test169.js)
 
-### d3.js + Alasql
+### d3.js + AlaSQL
 
-Alasql can be used with d3.js to create diagrams, like the example below. Here Alasql
+AlaSQL can be used with d3.js to create diagrams, like the example below. Here AlaSQL
 read Excel file with Olympic Prizes, group and sort rows by one of the axes, and then
 take top 10 records and create a list with axe values:
 
@@ -138,10 +167,10 @@ take top 10 records and create a list with axe values:
 
 ```
 
-Try the [simple example](http://alasql.org/demo/005d3/) of Alasql + d3.js integration.
+Try the [simple example](http://alasql.org/demo/005d3/) of AlaSQL + d3.js integration.
 
 
-### Google Maps + Alasql
+### Google Maps + AlaSQL
 ```js
     alasql("SELECT * FROM CSV("https://cdn.rawgit.com/albertyw/avenews/master/old/data/average-latitude-longitude-countries.csv",{headers:true})', [], function(country){
         var mapOptions = { zoom : 3, center : new google.maps.LatLng(40, 0),
@@ -160,7 +189,7 @@ Try the [simple example](http://alasql.org/demo/005d3/) of Alasql + d3.js integr
             new google.maps.Circle(opts);
     });
 ```
-Check [this example](http://alasql.org/demo/009geo) and [this example](http://jsfiddle.net/agershun/1o2xq1yh/2/) of integrations Alasql and Google Maps.
+Check [this example](http://alasql.org/demo/009geo) and [this example](http://jsfiddle.net/agershun/1o2xq1yh/2/) of integrations AlaSQL and Google Maps.
 
 ### ETL sample: CSV and IndexedDB database
 
@@ -176,7 +205,7 @@ See [the example](http://alasql.org/demo/001csv/).
 
 ### Read SQLite database files
 
-Alasql can work with SQLite data files on the top of with [SQL.js](https://github.com/kripken/sql.js) library:
+AlaSQL can work with SQLite data files on the top of with [SQL.js](https://github.com/kripken/sql.js) library:
 ```html
     <script src="alasql.js"></script>
     <script src="sql.js"></script>
@@ -191,9 +220,9 @@ Alasql can work with SQLite data files on the top of with [SQL.js](https://githu
 
 See more detailed [the example](http://alasql.org/demo/004sqlite/).
 
-### Angular.js and Alasql.js
+### Angular.js and AlaSQL.js
 
-You can use Alasql together with Angular.js framework:
+You can use AlaSQL together with Angular.js framework:
 
 ```js
     $scope.exportData = function () {
@@ -202,38 +231,38 @@ You can use Alasql together with Angular.js framework:
 ```
 See [simple example in jsFiddle](http://jsfiddle.net/agershun/00nfeq12/).
 
-Other examples of Alasql and Angular.js integration: 
+Other examples of AlaSQL and Angular.js integration: 
 
 * [Calculating average of array](http://jsfiddle.net/agershun/she06Lq3/2/)
 
 ## Examples
 
-Try Alasql in console:
-* Alasql Console [http://alasql.org/console](http://alasql.org/console)
+Try AlaSQL in console:
+* AlaSQL Console [http://alasql.org/console](http://alasql.org/console)
 * [Console source code](console/index.html)
-* [Alacon](alacon.js) - command-line Alasql console (to run: ```alacon "sql-statement" params...```)
-* [Alaserver](alaserver.js) - very simple Alasql-server (to run: ```alaserver```, then 
+* [Alacon](alacon.js) - command-line AlaSQL console (to run: ```alacon "sql-statement" params...```)
+* [Alaserver](alaserver.js) - very simple AlaSQL-server (to run: ```alaserver```, then 
 type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
 
-Try Alasql in Fiddle: 
+Try AlaSQL in Fiddle: 
 * Simple examples: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/), [sample 5](http://jsfiddle.net/agershun/38hj2uwy/40/)
 * [IndexedDB example](http://jsfiddle.net/agershun/1t2rrr78/)
-* [Alasql Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
+* [AlaSQL Sandbox](http://jsfiddle.net/czqfyhat/2/) - [source](examples/sandbox.html)
 * [Sieve of Eratosthenes](http://jsfiddle.net/agershun/1u05op11/) - [source](examples/prime.html)
 
 Other examples:
 * [World database](http://alasql.org/console?source 'world.sql';select top 10 * from City) - [source](console/index.html)
 * Mini-ETL: [upload CSV data to IndexedDB database](http://alasql.org/demo/001csv/)
-* [More than 200 of Alasql tests](test)
+* [More than 200 of AlaSQL tests](test)
 
-### What People Say about Alasql?
+### What People Say about AlaSQL?
 
-* [What people around the world say about Alasql](PEOPLE.md)
+* [What people around the world say about AlaSQL](PEOPLE.md)
 
 ### Presentations
 
-* [Alasql.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database)
-* [SQL and NoSQL in Alasql database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
+* [AlaSQL.js - fast JavaScript in-memory SQL database](http://www.slideshare.net/AndreyGershun/alasqljsfast-javascript-inmemory-sql-database)
+* [SQL and NoSQL in AlaSQL database](http://www.slideshare.net/AndreyGershun/sql-and-nosql-in-alasql)
 
 ## Installation
 
@@ -252,7 +281,7 @@ Include file: [alasql.js](./alasql.js) to the page.
   </script>
 
 ```
-Try this sample in [Alasql console](http://alasql.org/console?CREATE TABLE test (language INT, hello STRING);INSERT INTO test VALUES (1,'Hello!');INSERT INTO test VALUES (2,'Aloha!');INSERT INTO test VALUES (3,'Bonjour!');SELECT * FROM test WHERE language > 1)
+Try this sample in [AlaSQL console](http://alasql.org/console?CREATE TABLE test (language INT, hello STRING);INSERT INTO test VALUES (1,'Hello!');INSERT INTO test VALUES (2,'Aloha!');INSERT INTO test VALUES (3,'Bonjour!');SELECT * FROM test WHERE language > 1)
 
 You can use alasql.js with define()/require() functions in browser as well, because it supports AMD and UMD:
 
@@ -303,11 +332,11 @@ Then require alasql.js file:
 * ASSERT json-object
 * Expression (like SELECT expression)
 
-Try all these statements in [Alasql console](http://alasql.org/console?help)
+Try all these statements in [AlaSQL console](http://alasql.org/console?help)
 
 #### SELECT statement
 
-Alasql.js supports following subset of SELECT syntax:
+AlaSQL.js supports following subset of SELECT syntax:
 
 * SELECT column1, column2 AS alias3, FUNCTION(field4+field5) AS alias6, SUM(expression7) AS alias8, *, table2.*
 * TOP number
@@ -367,7 +396,7 @@ In browser:
         alasql('CREATE TABLE one (two INT)');
     </script>
 ```
-Try this sample in [Alasql console](http://alasql.org/console?CREATE TABLE one (two INT))
+Try this sample in [AlaSQL console](http://alasql.org/console?CREATE TABLE one (two INT))
 
 
 or in Node.js:
@@ -474,9 +503,9 @@ This feature can be used as filter for arrays. Compare:
 
 ### Lower and Upper Case
 
-By default, Alasql is case-insensitive to all standard keywords (like SELECT) and standard functions (like ABS()). All database names, table names, column names, and user-defined functions are case sensitive. 
+By default, AlaSQL is case-insensitive to all standard keywords (like SELECT) and standard functions (like ABS()). All database names, table names, column names, and user-defined functions are case sensitive. 
 
-JavaScript is case-sensitive language, so use the same CaSe for Alasql and JavaScript data.
+JavaScript is case-sensitive language, so use the same CaSe for AlaSQL and JavaScript data.
 
 Now you can use databases, tables, and columns with spaces inside square brackets:
 
@@ -487,12 +516,12 @@ Now you can use databases, tables, and columns with spaces inside square bracket
     INSERT INTO [A.table] VALUES (1),(2);
     SELECT [the-column] AS [AS] FROM [My Database];
 ```
-Try this sample in [Alasql console](http://alasql.org/console?CREATE DATABASE [My Database];USE [My Database];CREATE TABLE [A.table] ([the-column] INT);INSERT INTO [A.table] VALUES (1),(2);SELECT [the-column] AS [AS] FROM [My Database])
+Try this sample in [AlaSQL console](http://alasql.org/console?CREATE DATABASE [My Database];USE [My Database];CREATE TABLE [A.table] ([the-column] INT);INSERT INTO [A.table] VALUES (1),(2);SELECT [the-column] AS [AS] FROM [My Database])
 
 
 ### JavaScript Sugar
 
-Alasql extends "good old" SQL to make it closer to JavaScript. The "sugar" includes:
+AlaSQL extends "good old" SQL to make it closer to JavaScript. The "sugar" includes:
 
 * Json objects - ``` {a:1,b:@[1,2,3]}
 * Object propertires - ```obj->property->subproperty```
@@ -516,7 +545,7 @@ Warning: Sorry, transactions now are temporary unavailable due some complexities
 
 ### SQL to JavaScript parser and compiler
 
-You can use Alasql to parse to AST and compile SQL statements:
+You can use AlaSQL to parse to AST and compile SQL statements:
 
 ```js
     // Parse to AST
@@ -528,7 +557,7 @@ You can use Alasql to parse to AST and compile SQL statements:
     statement([1,5]);
 ```
 
-Alasql uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
+AlaSQL uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
 
 
 ### localStorage and DOM-storage
@@ -543,15 +572,15 @@ You can use browser localStorage and [DOM-storage](https://github.com/node-brows
     console.log(res);
 ```
 Try this sample in [jsFiddle](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample 
-two or three times, and Alasql store more and more data in localStorage. Here, "Atlas" is 
-the name of localStorage database, where "MyAtlas" is a memory Alasql database.
+two or three times, and AlaSQL store more and more data in localStorage. Here, "Atlas" is 
+the name of localStorage database, where "MyAtlas" is a memory AlaSQL database.
 
 You can use localStorage in two modes: SET AUTOCOMMIT ON to immediate save data
 to localStorage after each statement or SET AUTOCOMMIT OFF. In this case you need
 to use COMMIT statement to save all data from in-memory mirror to localStorage.
 
 ### Work with CSV, TAB, TXT, and JSON files
-You can use files in these formats directly from Alasql (in sync and async modes):
+You can use files in these formats directly from AlaSQL (in sync and async modes):
 ```js
     var res1 = alasq("select * from txt('mytext.txt') where [0] like 'M%'");
     var res2 = alasq("select * from tab('mydata.tab') order by [1]");
@@ -584,11 +613,11 @@ You can use JSON objects in your databases (do not forget use == and !== operato
     4
 
 ```
-Try Alasql JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
+Try AlaSQL JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
 
 ### Alacon - command-line utility
 
-You can use Alasql from the command-line:
+You can use AlaSQL from the command-line:
 ```sql
     > alacon "SELECT VALUE 1+1"
     2
@@ -600,7 +629,7 @@ You can use Alasql from the command-line:
 
 ### Alaserver - simple database server
 
-Yes, you can even use Alasql as a very simple server for tests.
+Yes, you can even use AlaSQL as a very simple server for tests.
 
 To run enter the command: 
 ```
@@ -615,7 +644,7 @@ Warning: Alaserver is not multi-thread, not concurent, and not secured.
 
 According the preliminary performance tests alasql.js is faster than [sql.js]() in 5 to 10 times on more than 1000 records tables, and 2 to 3 times to [WebSQL]() on different queries. 
 
-Alasql has four different optimization algorithm:
+AlaSQL has four different optimization algorithm:
 * Caching of compiled queries
 * Joins: Preindexation of joined table
 * Joins: Prefiltering of WHERE expressions
@@ -630,7 +659,7 @@ Now you can use streamming functions to work with longer datasources (see [test/
 ### Tests
 
 ### Tests with Mocha
-Alasql uses ```mocha``` for tests. Run mocha from command line in directory with tests:
+AlaSQL uses ```mocha``` for tests. Run mocha from command line in directory with tests:
 
 ```
     > cd test
@@ -638,9 +667,9 @@ Alasql uses ```mocha``` for tests. Run mocha from command line in directory with
 ```
 or run [test/index.html](test/index.html) for tests in browser.
 
-### Tests with Alasql ASSERT from SQL
+### Tests with AlaSQL ASSERT from SQL
 
-Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previous operation:
+Now you can use AlaSQL [ASSERT](wiki/Assert)  operator to test results of previous operation:
 ```sql
     CREATE TABLE one (a INT);
     ASSERT 1;
@@ -651,14 +680,14 @@ Now you can use Alasql [ASSERT](wiki/Assert)  operator to test results of previo
 ```
 
 ### Warnings 
-Alasql project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
+AlaSQL project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).
 
 You can check next version branches for new experimental features. 
 
 ### Known Bugs and Limitations
 
-1. ORDER BY clause on three or more UNIONS ( [See example in Alasql console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
-2. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because Alasql started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
+1. ORDER BY clause on three or more UNIONS ( [See example in AlaSQL console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
+2. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because AlaSQL started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
 3. Functionality of FOREIGN KEY, UNIQUE INDEX and CHECK conctraints is not realized in fully.
 
 
@@ -677,7 +706,7 @@ Read my [to do](TODO.md) page
 
 ### FileSaver
 
-Alasql includess [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally in browsers. Unfortunately, it cannot save files in Safari 8.0.
+AlaSQL includess [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally in browsers. Unfortunately, it cannot save files in Safari 8.0.
 
 ### Contributors
 

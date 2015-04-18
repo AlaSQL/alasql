@@ -1,10 +1,10 @@
 # Changelog
 
-### 0.0.47 "Tokyo" (16.04.2015 - )
+### 0.0.47 "Antalya" (16.04.2015 - 18.04.2015)
 * Added CORRESPONDING keyword to the grammas
 * Fixed export to Excel - with data types
 * New version of FileSaver is updated
-* New INTO XLS() function with colors
+* New INTO XLS() function with colors(!)
 * Added params parameter to intoallfn()
 
 ### 0.0.46 "Cape Town" (14.04.2015 - 14.04.2015)
