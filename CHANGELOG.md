@@ -1,5 +1,8 @@
 # Changelog
 
+### 0.0.48 "Amsterdam" (19.04.2015 - ...)
+* 
+
 ### 0.0.47 "Antalya" (16.04.2015 - 18.04.2015)
 * Added CORRESPONDING keyword to the grammas
 * Fixed export to Excel - with data types
