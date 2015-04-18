@@ -229,7 +229,7 @@ function queryfn3(query) {
 	if(query.intoallfn) {
 //		console.log(161);
 //		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql); 
-		var res = query.intoallfn(query.columns,query.cb,query.alasql); 
+		var res = query.intoallfn(query.columns,query.cb,query.params,query.alasql); 
 //		console.log(1163,res);
 //		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);

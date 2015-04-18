@@ -251,7 +251,7 @@ yy.Select.prototype.compile = function(databaseid) {
 			query.intofn = new Function("r,i,params,alasql",query.intofns); 
 		} else if(query.intoallfns) {
 			// Create intoallfn function
-			query.intoallfn = new Function("columns,cb,alasql",query.intoallfns); 
+			query.intoallfn = new Function("columns,cb,params,alasql",query.intoallfns); 
 		}
 
 	}

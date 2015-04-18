@@ -4304,7 +4304,7 @@ function queryfn3(query) {
 	if(query.intoallfn) {
 //		console.log(161);
 //		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql); 
-		var res = query.intoallfn(query.columns,query.cb,query.alasql); 
+		var res = query.intoallfn(query.columns,query.cb,query.params,query.alasql); 
 //		console.log(1163,res);
 //		if(query.cb) res = query.cb(res,query.A, query.B);
 //		console.log(1165,res);
@@ -5025,7 +5025,7 @@ yy.Select.prototype.compile = function(databaseid) {
 			query.intofn = new Function("r,i,params,alasql",query.intofns); 
 		} else if(query.intoallfns) {
 			// Create intoallfn function
-			query.intoallfn = new Function("columns,cb,alasql",query.intoallfns); 
+			query.intoallfn = new Function("columns,cb,params,alasql",query.intoallfns); 
 		}
 
 	}
@@ -10725,7 +10725,6 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 // with Excel
 
 alasql.into.XLS = function(filename, opts, data, columns, cb) {
-
 	// If filename is not defined then output to the result
 	if(typeof filename == 'object') {
 		opts = filename;
@@ -10766,7 +10765,17 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 	s += '</x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head>';
 
 	// Generate body
-	s += '<body>';
+	s += '<body';
+	if(typeof sheet.style != 'undefined') {
+		s += ' style="';
+		if(typeof sheet.style == 'function') {
+			s += sheet.style(sheet);
+		} else {
+			s += sheet.style;
+		}
+		s += '"';
+	}
+	s +='>';
 	s += '<table>';
 
 	// Columns
@@ -10798,7 +10807,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 				column.width = sheet.column.width;
 			
 			} else {
-				column.width = "200px";
+				column.width = "120px";
 			}
 		}
 		if(typeof column.width == 'number') column.width = column.width + "px";
@@ -10822,8 +10831,29 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 		// TODO: Skip columns to body
 
 		// Headers
-		columns.forEach(function (column) {
-			s += '<th '+style(sheet.column,column)+'>' + column.title + '</th>';
+		columns.forEach(function (column,columnidx) {
+			s += '<th ';
+			// Column style
+			if(typeof column.style != 'undefined') {
+				s += ' style="';
+				if(typeof column.style == 'function') {
+					s += column.style(sheet,column,columnidx);
+				} else {
+					s += column.style;
+				}
+				s += '" '
+			}
+			s += '>';
+
+			// Column title
+			if(typeof column.title != 'undefined') {
+				if(typeof column.title == 'function') {
+					s += column.title(sheet,column,columnidx);
+				} else {
+					s += column.title;
+				}
+			}
+			s += '</th>';
 		});	
 
 		s += '</tr>';	
@@ -10843,24 +10873,39 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			// Limit number of rows on the sheet
 			if(rowidx>sheet.limit) return;
 			// Create row
-			s += '<tr '+style(sheet.row,row)+'>';
-
+			s += '<tr';
+			// Row style fromdefault sheet
+			if(typeof sheet.row != 'undefined') {
+				if(typeof sheet.row.style != 'undefined') {
+					s += ' style="';
+					if(typeof sheet.row.style == 'function') {
+						s += sheet.row.style(sheet,row,rowidx);
+					} else {
+						s += sheet.row.style;
+					}
+					s += '" '
+				}
+			};
+			s += '>';
 			// Loop over columns
 			columns.forEach(function (column,columnidx) {
-				// Value
-				var value = row[column.columnid];
-				if(typeof value == 'function') value = value(row,column,sheet,rowidx,columnidx);
+				// Parameters
+				var cell = {};
+				extend(cell,sheet.cell);
+				extend(cell,row.cell);
+				extend(cell,column.cell);
 
-				var cell = {value:value};
-				if(typeof value == 'object' && !(value instanceof Date) 
-					&& typeof value.value != 'undefined') {
-					cell = value;
-					value = cell.value;
+				// Create value
+				var value = row[column.columnid];
+				if(typeof cell.value == 'function') {
+					value = cell.value(value,sheet,row,column,cell,rowidx,columnidx);
 				}
 
 				// Define cell type
-				var typeid = cell.typeid || column.typeid;
-				if(typeof typeid == 'function') typeid = typeid(row,column,sheet,rowidx,columnidx);
+				var typeid = cell.typeid;
+				if(typeof typeid == 'function') {
+					typeid = typeid(value,sheet,row,column,cell,rowidx,columnidx);
+				}
 
 				if(typeof typeid == 'undefined') {
 					if(typeof value == 'number') typeid = 'number';
@@ -10887,19 +10932,22 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 				}
 
 				// TODO Replace with extend...
-				typestyle = cell.typestyle || column.typestyle 
-				           || row.typestyle || typestyle || 'mso-number-format:\"\\@\";'; // Default type style
+				typestyle = typestyle || 'mso-number-format:\"\\@\";'; // Default type style
 
 				s += "<td style='" + typestyle+"' " ;
-				s += style(sheet.cell, column.cell, row.cell, cell);
+				if(typeof cell.style != 'undefined') {
+					s += ' style="';
+					if(typeof cell.style == 'function') {
+						s += cell.style(value,sheet,row,column,rowidx,columnidx);
+					} else {
+						s += cell.style;
+					}
+					s += '" '
+				}
 				s += '>';
 
 				// TODO Replace with extend...
-/*				var format = sheet.cell.format 
-					|| (column.cell && column.cell.format) 
-					|| (row.cell && row.cell.format)
-					|| cell.format;
-*/				var format = undefined;
+				var format = cell.format;
 				if(typeof value == 'undefined') {
 					s += '';
 				} else if(typeof format != 'undefined') {
@@ -10937,8 +10985,13 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 	return res;
 
 	// Style function
-	function style() {
-		return '';
+	function style(a) {
+		var s = ' style="';
+		if(a && typeof a.style != 'undefined') {
+			s += a.style + ';';
+		}
+		s += '" ';
+		return s;
 	}
 
 };
