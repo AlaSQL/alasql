@@ -2732,21 +2732,21 @@ var fileExists = utils.fileExists = function(path,cb){
 */
 
 var saveFile = utils.saveFile = function(path, data, cb) {
-
+    var res = 1;
     if(typeof path == 'undefined') {
         //
         // Return data into result variable
         // like: alasql('SELECT * INTO TXT() FROM ?',[data]);
         //
-        var res = data;
+        res = data;
         if(cb) res = cb(res);
-        return res;
     } else {
+
         if(typeof exports == 'object') {
             // For Node.js
             var fs = require('fs');
             var data = fs.writeFileSync(path,data);
-            if(cb) cb();
+            if(cb) res = cb(res);
         } else if(typeof cordova == 'object') {
             // For Apache Cordova
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
@@ -2754,7 +2754,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
                             fileWriter.onwriteend = function(){
-                                if(cb) cb();
+                                if(cb) res = cb(res);
                             };
                             fileWriter.write(data);
                         });                                  
@@ -2822,9 +2822,11 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         } else {
             var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
             saveAs(blob, path);
-            if(cb) cb();        
+            if(cb) res = cb(res);        
         }
     };
+
+    return res;
 };
 
 
@@ -10601,7 +10603,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	var opt = {sheetid:'Sheet1',headers:true};
 	alasql.utils.extend(opt, opts);
 
-	var res = data.length;
+	var res = 1;
 
 	var wb = {SheetNames:[], Sheets:{}};
 
@@ -10719,10 +10721,10 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 //
 // 831xl.js - Coloring Excel
 // 18.04.2015
-// Generate HTM file
+// Generate XLS file with colors and styles
 // with Excel
 
-alasql.into.XL = function(filename, opts, data, columns, cb) {
+alasql.into.XLS = function(filename, opts, data, columns, cb) {
 
 	// If filename is not defined then output to the result
 	if(typeof filename == 'object') {
@@ -10874,7 +10876,7 @@ alasql.into.XL = function(filename, opts, data, columns, cb) {
 				if(typeid == 'money') {
 					typestyle = 'mso-number-format:\"\\#\\,\\#\\#0\\\\ _р_\\.\";white-space:normal;';
 				} else if(typeid == 'number') {
-					typestyle = '';
+					typestyle = ' ';
 				} else if (typeid == 'date') {
 					typestyle = 'mso-number-format:\"Short Date\";'; 
 				} else {
@@ -10885,9 +10887,8 @@ alasql.into.XL = function(filename, opts, data, columns, cb) {
 				}
 
 				// TODO Replace with extend...
-				typestyle = typestyle || cell.typestyle || column.typestyle 
-				           || row.typestyle || 'mso-number-format:\"\\@\";'; // Default type style
-
+				typestyle = cell.typestyle || column.typestyle 
+				           || row.typestyle || typestyle || 'mso-number-format:\"\\@\";'; // Default type style
 
 				s += "<td style='" + typestyle+"' " ;
 				s += style(sheet.cell, column.cell, row.cell, cell);

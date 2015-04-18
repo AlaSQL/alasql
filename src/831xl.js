@@ -1,10 +1,10 @@
 //
 // 831xl.js - Coloring Excel
 // 18.04.2015
-// Generate HTM file
+// Generate XLS file with colors and styles
 // with Excel
 
-alasql.into.XL = function(filename, opts, data, columns, cb) {
+alasql.into.XLS = function(filename, opts, data, columns, cb) {
 
 	// If filename is not defined then output to the result
 	if(typeof filename == 'object') {
@@ -156,7 +156,7 @@ alasql.into.XL = function(filename, opts, data, columns, cb) {
 				if(typeid == 'money') {
 					typestyle = 'mso-number-format:\"\\#\\,\\#\\#0\\\\ _р_\\.\";white-space:normal;';
 				} else if(typeid == 'number') {
-					typestyle = '';
+					typestyle = ' ';
 				} else if (typeid == 'date') {
 					typestyle = 'mso-number-format:\"Short Date\";'; 
 				} else {
@@ -167,9 +167,8 @@ alasql.into.XL = function(filename, opts, data, columns, cb) {
 				}
 
 				// TODO Replace with extend...
-				typestyle = typestyle || cell.typestyle || column.typestyle 
-				           || row.typestyle || 'mso-number-format:\"\\@\";'; // Default type style
-
+				typestyle = cell.typestyle || column.typestyle 
+				           || row.typestyle || typestyle || 'mso-number-format:\"\\@\";'; // Default type style
 
 				s += "<td style='" + typestyle+"' " ;
 				s += style(sheet.cell, column.cell, row.cell, cell);

@@ -212,7 +212,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	var opt = {sheetid:'Sheet1',headers:true};
 	alasql.utils.extend(opt, opts);
 
-	var res = data.length;
+	var res = 1;
 
 	var wb = {SheetNames:[], Sheets:{}};
 

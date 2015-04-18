@@ -333,21 +333,21 @@ var fileExists = utils.fileExists = function(path,cb){
 */
 
 var saveFile = utils.saveFile = function(path, data, cb) {
-
+    var res = 1;
     if(typeof path == 'undefined') {
         //
         // Return data into result variable
         // like: alasql('SELECT * INTO TXT() FROM ?',[data]);
         //
-        var res = data;
+        res = data;
         if(cb) res = cb(res);
-        return res;
     } else {
+
         if(typeof exports == 'object') {
             // For Node.js
             var fs = require('fs');
             var data = fs.writeFileSync(path,data);
-            if(cb) cb();
+            if(cb) res = cb(res);
         } else if(typeof cordova == 'object') {
             // For Apache Cordova
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
@@ -355,7 +355,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
                             fileWriter.onwriteend = function(){
-                                if(cb) cb();
+                                if(cb) res = cb(res);
                             };
                             fileWriter.write(data);
                         });                                  
@@ -423,9 +423,11 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         } else {
             var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
             saveAs(blob, path);
-            if(cb) cb();        
+            if(cb) res = cb(res);        
         }
     };
+
+    return res;
 };
 
 
