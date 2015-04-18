@@ -1,7 +1,13 @@
+0.2.6 / 2015-03-24
+------------------
+
+- Allow ArrayBuffer input.
+
+
 0.2.5 / 2014-07-19
 ------------------
 
-- Workaround for Chrome 38.0.2096.0 script parser bug, #30
+- Workaround for Chrome 38.0.2096.0 script parser bug, #30.
 
 
 0.2.4 / 2014-07-07

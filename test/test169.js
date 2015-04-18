@@ -20,36 +20,36 @@ describe('Test 169 - select into TXT, CSV, XLSX', function() {
 if(typeof exports == 'object') {
 
 	it("1. Write TXT file", function(done) {
-		alasql('select * into txt("'+dirname+'/test169.txt") from one',[],function(res){
-			assert(res == 2);
+		alasql('select * into txt("'+dirname+'/restest169.txt") from one',[],function(res){
+			assert(res == 1);
 			done();		
 		});
 	});
 
 	it("2. Write TAB file", function(done) {
-		alasql('select * into tab("'+dirname+'/test169a.tab") from one',[],function(res){
-			assert(res == 2);
+		alasql('select * into tab("'+dirname+'/restest169a.tab") from one',[],function(res){
+			assert(res == 1);
 			done();		
 		});
 	});
 
 	it("3. Write TAB file with headers", function(done) {
-		alasql('select * into tab("'+dirname+'/test169b.tab",{headers:true}) from one',[],function(res){
-			assert(res == 2);
+		alasql('select * into tab("'+dirname+'/restest169b.tab",{headers:true}) from one',[],function(res){
+			assert(res == 1);
 			done();		
 		});
 	});
 
 	it("4. Write CSV file with headers", function(done) {
-		alasql('select * into csv("'+dirname+'/test169a.csv",{headers:true}) from one',[],function(res){
-			assert(res == 2);
+		alasql('select * into csv("'+dirname+'/restest169a.csv",{headers:true}) from one',[],function(res){
+			assert(res == 1);
 			done();		
 		});
 	});
 
 	it("5. Write XLSX file with headers", function(done) {
-		alasql('select * into xlsx("'+dirname+'/test169a.xlsx",{headers:true}) from one',[],function(res){
-			assert(res == 2);
+		alasql('select * into xlsx("'+dirname+'/restest169a.xlsx",{headers:true}) from one',[],function(res){
+			assert(res == 1);
 			done();		
 		});
 	});

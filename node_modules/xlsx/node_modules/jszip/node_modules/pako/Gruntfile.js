@@ -5,39 +5,39 @@ module.exports = function(grunt) {
   var browsers = [{
     browserName: 'iphone',
     platform: 'OS X 10.8',
-    version: '6'
+    version: '8.1'
   }, {
     browserName: 'android',
     platform: 'Linux',
-    version: '4.0'
+    version: '5.0'
   }, {
     browserName: 'firefox',
     platform: 'XP',
-    version: '27'
+    version: '35'
   }, {
     browserName: 'chrome',
     platform: 'XP',
-    version: '32'
+    version: '41'
   }, {
     browserName: 'internet explorer',
-    platform: 'WIN8',
+    platform: 'WIN7',
+    version: '11'
+  }, {
+    browserName: 'internet explorer',
+    platform: 'WIN7',
     version: '10'
   }, {
     browserName: 'internet explorer',
-    platform: 'VISTA',
+    platform: 'WIN7',
     version: '9'
-  }, {
+  }, {/*
     browserName: 'internet explorer',
-    platform: 'Windows 7',
+    platform: 'WIN7',
     version: '8'
   }, {
     browserName: 'internet explorer',
     platform: 'XP',
     version: '7'
-  }, {/*
-    browserName: 'opera',
-    platform: 'Windows 2008',
-    version: '12'
   }, {*/
     browserName: 'safari',
     platform: 'OS X 10.8',

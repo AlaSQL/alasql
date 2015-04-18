@@ -1,8 +1,8 @@
 # Codepages for JS
 
 [Codepages](https://en.wikipedia.org/wiki/Codepage) are character encodings.  In
-many contexts, single-byte character sets are used in lieu of standard multibyte
-Unicode encodings.  They use 256 characters with a simple mapping.
+many contexts, single- or double-byte character sets are used in lieu of Unicode
+encodings.  The codepages map between characters and numbers.
 
 [unicode.org](http://www.unicode.org/Public/MAPPINGS/) hosts lists of mappings.
 The build script automatically downloads and parses the mappings in order to
@@ -81,7 +81,35 @@ In node:
 
     var cptable = require('codepage/dist/cpexcel.full');
 
-## Building the script
+## Rolling your own script
+
+The `make.sh` script in the repo can take a manifest and generate JS source.
+
+Usage:
+
+    bash make.sh path_to_manifest output_file_name JSVAR
+
+where
+
+- `JSVAR` is the name of the exported variable (generally `cptable`)
+- `output_file_name` is the output file (e.g. `cpexcel.js`, `cptable.js`)
+- `path_to_manifest` is the path to the manifest file.
+
+The manifest file is expected to be a CSV with 3 columns:
+
+    <codepage number>,<source>,<size>
+
+If a source is specified, it will try to download the specified file and parse.
+The file format is expected to follow the format from the unicode.org site.
+The size should be `1` for a single-byte codepage and `2` for a double-byte
+codepage.  For mixed codepages (which use some single- and some double-byte
+codes), the script assumes the mapping is a prefix code and generates efficient
+JS code.
+
+Generated scripts only include the mapping.  `cat` a mapping with `cputils.js`
+to produce a complete script like `cpexcel.full.js`.
+
+## Building the complete script
 
 This script uses [voc](npm.im/voc).  The script to build the codepage tables and
 the JS source is `codepage.md`, so building is as simple as `voc codepage.md`.
@@ -94,10 +122,11 @@ Some codepages are easier to implement algorithmically.  Since these are
 hardcoded in utils, there is no corresponding entry (they are "magic")
 
 | CP# |  Information  | Description |
-| --: |  -----------  | ----------- |
+| --: |  :----------: | :---------- |
 |   37|  unicode.org  |IBM EBCDIC US-Canada
 |  437|  unicode.org  |OEM United States
 |  500|  unicode.org  |IBM EBCDIC International
+|  620|      NLS      |Mazovia (Polish) MS-DOS
 |  708|MakeEncoding.cs|Arabic (ASMO 708)
 |  720|MakeEncoding.cs|Arabic (Transparent ASMO); Arabic (DOS)
 |  737|  unicode.org  |OEM Greek (formerly 437G); Greek (DOS)
@@ -118,6 +147,7 @@ hardcoded in utils, there is no corresponding entry (they are "magic")
 |  870|MakeEncoding.cs|IBM EBCDIC Multilingual/ROECE (Latin 2)
 |  874|  unicode.org  |Windows Thai
 |  875|  unicode.org  |IBM EBCDIC Greek Modern
+|  895|      NLS      |Kamenický (Czech) MS-DOS
 |  932|  unicode.org  |Japanese Shift-JIS
 |  936|  unicode.org  |Simplified Chinese GBK
 |  949|  unicode.org  |Korean

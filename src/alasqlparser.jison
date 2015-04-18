@@ -92,6 +92,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 "CONSTRAINT"									return "CONSTRAINT"
 "CONTINUE"										return "CONTINUE"
 "CONVERT"										return "CONVERT"
+"CORRESPONDING"									return "CORRESPONDING"
 "COUNT"											return "COUNT"
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
@@ -767,6 +768,14 @@ UnionClause
 		{ $$ = {except: $2} ; }
 	| INTERSECT Select
 		{ $$ = {intersect: $2} ; }
+	| UNION CORRESPONDING Select
+		{ $$ = {union: $2, corresponding:true} ; }
+	| UNION ALL CORRESPONDING Select
+		{ $$ = {unionall: $3, corresponding:true} ; }
+	| EXCEPT CORRESPONDING Select
+		{ $$ = {except: $2, corresponding:true} ; }
+	| INTERSECT CORRESPONDING Select
+		{ $$ = {intersect: $2, corresponding:true} ; }
 	;
 
 OrderClause

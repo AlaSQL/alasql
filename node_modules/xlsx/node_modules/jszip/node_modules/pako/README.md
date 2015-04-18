@@ -24,7 +24,6 @@ __Famous projects, using pako:__
   [Tedit](https://chrome.google.com/webstore/detail/tedit-development-environ/ooekdijbnbbjdfjocaiflnjgoohnblgf)
   by [@creatronix](https://github.com/creationix)
 
- 
 
 __Benchmarks:__
 
