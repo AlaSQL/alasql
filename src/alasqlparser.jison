@@ -201,6 +201,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'TABLES'										return 'TABLES'
 'TARGET'										return 'TARGET'
 'TD'											return 'TD'
+'TEMP'											return 'TEMP'
+'TEMPORARY'										return 'TEMPORARY'
 'TEXTSTRING'									return 'TEXTSTRING'
 'TH'											return 'TH'
 'THEN'											return 'THEN'
@@ -1370,20 +1372,19 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-/*
 	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
-
-*/
-	:  CREATE TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{ 
-			$$ = new yy.CreateTable({table:$4}); 
-			//yy.extend($$,$2); 
-			yy.extend($$,$3); 
-			yy.extend($$,$6); 
+			$$ = new yy.CreateTable({table:$5}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
+			yy.extend($$,$7); 
+			yy.extend($$,$9); 
 		}
-	| CREATE TABLE IfNotExists Table
+	| CREATE TemporaryClause TABLE IfNotExists Table
 		{ 
-			$$ = new yy.CreateTable({table:$4}); 
+			$$ = new yy.CreateTable({table:$5}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
 		}		
 ;
 
@@ -1971,7 +1972,11 @@ If
 		}
 
 	| IF Expression AStatement
-		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
+		{ 
+			$$ = new yy.If({expression:$2,thenstat:$3}); 
+			if($3.exists) $$.exists = $3.exists;
+			if($3.queries) $$.queries = $3.queries;
+		}
 	;
 
 ElseStatement

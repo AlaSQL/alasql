@@ -25,17 +25,30 @@ describe('Test 258 SqlLogic Parser Test #1', function() {
   });
 
   it('4. Create temporary view', function(done){
-    var res = alasql('CREATE TEMP VIEW view2 AS SELECT x FROM t1 WHERE x>0');
+    var res = alasql('CREATE TEMPORARY VIEW view2 AS SELECT x FROM t1 WHERE x>0');
     assert(res == 1);    
+    done();
   });
 
-if(false) {
+  it('5. Create temporary table', function(done){
+    var res = alasql('CREATE TEMPORARY TABLE one (x NUMBER, y STRING)');
+    assert(res == 1);    
+    done();
+  });
 
-  it('5. IF EXISTS', function(done){
+  it('6. IF EXISTS', function(done){
+    // Temporary create
+    // Should we create it?
+    alasql('CREATE DATABASE INFORMATION_SCHEMA');
+    alasql('CREATE TABLE INFORMATION_SCHEMA.VIEWS');
+    // Test operator
     alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
         WHERE TABLE_NAME = 'view_1_tab0_153') DROP VIEW view_1_tab0_153");
     done();
   });
+
+if(false) {
+
 
   it('98. Create temporary view', function(done){
 
