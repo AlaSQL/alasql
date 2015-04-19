@@ -1,7 +1,7 @@
 {
   "name": "alasql",
-  "description":"JavaScript SQL database library",
-  "version": "0.0.38",
+  "description":"AlaSQL - JavaScript SQL database library",
+  "version": "0.0.48",
   "license": "MIT",
   "keywords": ["javascript","sql","database","indexeddb","excel","localstorage"],
   "authors": ["Andrey Gershun <agershun@gmail.com>"],

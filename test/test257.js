@@ -181,7 +181,8 @@ describe('Test 257 INTO XLS()', function() {
         {x:2, y:5, h:10, headers:true, data:true, totals:'top'},
       ]
     };
-
+    assert(false);
+    done();
   });
 
 });

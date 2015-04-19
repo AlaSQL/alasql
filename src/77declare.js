@@ -38,7 +38,7 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 			if(declare.expression) {
 	//		console.log(this.expression.toJavaScript('','', null));
 				alasql.vars[declare.variable] = new Function("params,alasql","return "
-					+declare.expression.toJavaScript('','', null))(params,alasql);
+					+declare.expression.toJavaScript('({})','', null))(params,alasql);
 				if(alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(alasql.vars[declare.variable],alasql.declares[declare.variable]);
 				}

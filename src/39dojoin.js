@@ -20,6 +20,8 @@ function doJoin (query, scope, h) {
 			if(query.groupfn) {
 				query.groupfn(scope, query.params, query.alasql)
 			} else {
+//				query.qwerty = 999;
+//console.log(query.qwerty, query.queriesfn && query.queriesfn.length,2);
 				query.data.push(query.selectfn(scope, query.params, alasql));
 			}	
 		}

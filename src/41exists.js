@@ -34,6 +34,9 @@ yy.Select.prototype.compileQueries = function(query) {
 	});
 };
 
+//
+// Prepare subqueries and exists
+//
 alasql.precompile = function(statement,databaseid,params){
 //	console.log(statement);
 	if(!statement) return;
@@ -48,6 +51,4 @@ alasql.precompile = function(statement,databaseid,params){
 			return ex.compile(databaseid || statement.database.databaseid);
 		});
 	};
-
-
 }

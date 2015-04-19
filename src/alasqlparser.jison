@@ -201,6 +201,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'TABLES'										return 'TABLES'
 'TARGET'										return 'TARGET'
 'TD'											return 'TD'
+'TEMP'											return 'TEMP'
+'TEMPORARY'										return 'TEMPORARY'
 'TEXTSTRING'									return 'TEXTSTRING'
 'TH'											return 'TH'
 'THEN'											return 'THEN'
@@ -532,8 +534,14 @@ IntoClause
 FromClause
 	: FROM FromTablesList
 		{ $$ = { from: $2 }; } 
-	| FROM FromTable JoinTablesList
+/*	| FROM FromTable JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
+*/	| FROM FromTablesList JoinTablesList
+		{ $$ = { from: $2, joins: $3 }; }
+/*	| FROM LPAR FromTable JoinTablesList RPAR
+		{ $$ = { from: [$3], joins: $4 }; }
+*/	| FROM LPAR FromTablesList JoinTablesList RPAR
+		{ $$ = { from: $3, joins: $4 }; }
 	|
 		{ $$ = undefined; }
 	;
@@ -1370,26 +1378,21 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-/*
 	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
-
-*/
-	:  CREATE TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{ 
-			$$ = new yy.CreateTable({table:$4}); 
-			//yy.extend($$,$2); 
-			yy.extend($$,$3); 
-			yy.extend($$,$6); 
+			$$ = new yy.CreateTable({table:$5}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
+			yy.extend($$,$7); 
+			yy.extend($$,$9); 
 		}
-	| CREATE TABLE IfNotExists Table
+	| CREATE TemporaryClause TABLE IfNotExists Table
 		{ 
-			$$ = new yy.CreateTable({table:$4}); 
+			$$ = new yy.CreateTable({table:$5}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
 		}		
-/*	| CREATE TABLE IfNotExists Literal DOT Literal
-		{ 
-			$$ = new yy.CreateTable({table:new yy.Table({tableid:$6, databaseid:$4})}); 
-		}		
-*/	;
+;
 
 CreateTableOptionsClause
 	:
@@ -1508,6 +1511,18 @@ ColsList
 		{ $$ = $1; $1.push($3); }
 	;
 
+/*
+OrderedColsList
+	: Literal
+		{ $$ = [$1]; }
+	| STRING
+		{ $$ = [$1]; }
+	| OrderedColsList COMMA Literal
+		{ $$ = $1; $1.push($3); }
+	| OrderedColsList COMMA STRING
+		{ $$ = $1; $1.push($3); }
+	;
+*/
 ColumnDefsList
 	: ColumnDef
 		{ $$ = [$1];}
@@ -1664,9 +1679,9 @@ DropDatabase
 /* INDEXES */
 
 CreateIndex
-	: CREATE INDEX Literal ON Table LPAR ColsList RPAR
+	: CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
-	| CREATE UNIQUE INDEX Literal ON Table LPAR ColsList RPAR
+	| CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 
@@ -1721,47 +1736,24 @@ ShowCreateTable
 	;
 
 CreateView
-
-	:  CREATE VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select
-		{ 
-			$$ = new yy.CreateTable({table:$4,view:true,select:$9,viewcolumns:$6}); 
-			yy.extend($$,$3); 
+	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select
+		{
+			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
 		}
-	| CREATE VIEW IfNotExists Table AS Select
+	| CREATE TemporaryClause VIEW IfNotExists Table AS Select
 		{ 
-			$$ = new yy.CreateTable({table:$4,view:true,select:$6}); 
+			$$ = new yy.CreateTable({table:$5,view:true,select:$7}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
 		}
 	;
-/*
-	: CREATE VIEW IfNotExists View AS Select
-		{ $$ = new yy.CreateTable({table:new yy.Table({tableid:$4}), view:true, select: $5}); }
-	| CREATE VIEW View LPAR ColsList RPAR AS Select
-		{ $$ = new yy.CreateTable({table:new yy.Table({tableid:$4}),view:true, select: $5}); }
-	;
-
-		| CREATE TABLE IfNotExists Literal
-		{ 
-			$$ = new yy.CreateTable({table:new yy.Table({tableid:$4})}); 
-		}		
-	| CREATE TABLE IfNotExists Literal DOT Literal
-		{ 
-			$$ = new yy.CreateTable({table:new yy.Table({tableid:$6, databaseid:$4})}); 
-		}		
-	;
-*/
 
 DropView
 	: DROP VIEW IfExists Table
 		{ $$ = new yy.DropTable({table:$4, view:true}); yy.extend($$, $3); }
 	;
-/*
-View
-	: Literal
-		{ $$ = new yy.View({viewid: $1}); }
-	| Literal DOT Literal
-		{ $$ = new yy.View({databaseid:$1, viewid: $3}); }
-	;
-*/
 /*
 DeclareCursor
 	: DECLARE Literal CURSOR FOR Select
@@ -1998,7 +1990,11 @@ If
 		}
 
 	| IF Expression AStatement
-		{ $$ = new yy.If({expression:$2,thenstat:$3}); }
+		{ 
+			$$ = new yy.If({expression:$2,thenstat:$3}); 
+			if($3.exists) $$.exists = $3.exists;
+			if($3.queries) $$.queries = $3.queries;
+		}
 	;
 
 ElseStatement

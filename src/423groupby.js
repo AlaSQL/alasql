@@ -12,7 +12,12 @@
 yy.Select.prototype.compileGroup = function(query) {
 //	console.log(this.group);
 	var self = this;
-	var tableid = query.sources[0].alias;
+	if(query.sources.length > 0) {
+		var tableid = query.sources[0].alias;
+	} else {
+		// If SELECT contains group aggregators without source tables
+		var tableid = '';
+	}
 	var defcols = query.defcols;
 //	console.log(16,tableid, defcols);
 
