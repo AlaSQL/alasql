@@ -172,13 +172,40 @@ describe('Test 258 SqlLogic Parser Test #1', function() {
       done();
     });
 
-if(false) {
+    it('15. SELECT ALL',function(done){
+//      alasql('CREATE TABLE t1');
+      alasql('SELECT CASE a+1 WHEN b THEN 111 WHEN c THEN 222 WHEN d \
+        THEN 333 WHEN e THEN 444 ELSE 555 END FROM t1 ORDER BY 1');
+//      alasql('DROP TABLE t1');
+      done();
+    });
+
+    it('16. SELECT ALL',function(done){
+//      alasql('CREATE TABLE t1');
+      alasql('SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) \
+        FROM t1 WHERE (a>b-2 AND a<b+2) OR c>d ORDER BY 1');
+//      alasql('DROP TABLE t1');
+      done();
+    });
+
+    it('17. SELECT ALL',function(done){
+      alasql('CREATE TABLE t8(e8,d8,c8,b8,a8)');
+      var res = alasql('CREATE INDEX t8all ON t8(e8, d8 ASC, c8, b8 ASC, a8)');
+      assert(res==1);
+      alasql('DROP TABLE t8');
+      done();
+    });
+
+
     it('14. SELECT ALL',function(done){
       alasql('CREATE TABLE tab0;CREATE TABLE tab2');
       alasql('SELECT * FROM tab0, tab2 AS cor0 CROSS JOIN tab0 AS cor1');
       alasql('DROP TABLE tab0;DROP TABLE tab2');
       done();
     });
+
+
+if(false) {
 
 
 
@@ -203,29 +230,8 @@ if(false) {
     });
 
 
-    it('15. SELECT ALL',function(done){
-      alasql('CREATE TABLE t1');
-      alasql('SELECT CASE a+1 WHEN b THEN 111 WHEN c THEN 222 WHEN d \
-        THEN 333 WHEN e THEN 444 ELSE 555 END FROM t1 ORDER BY 1');
-      alasql('DROP TABLE t1');
-      done();
-    });
 
-    it('16. SELECT ALL',function(done){
-      alasql('CREATE TABLE t1');
-      alasql('SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) \
-        FROM t1 WHERE (a>b-2 AND a<b+2) OR c>d ORDER BY 1');
-      alasql('DROP TABLE t1');
-      done();
-    });
 
-    it('17. SELECT ALL',function(done){
-      alasql('CREATE TABLE t8(e8,d8,c8,b8,a8)');
-      var res = alasql('CREATE INDEX t8all ON t8(e8, d8 ASC, c8, b8 ASC, a8)');
-      assert(res==1);
-      alasql('DROP TABLE t8');
-      done();
-    });
 }
 
   it('99. Drop Database', function(done) {

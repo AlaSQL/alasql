@@ -1507,6 +1507,18 @@ ColsList
 		{ $$ = $1; $1.push($3); }
 	;
 
+/*
+OrderedColsList
+	: Literal
+		{ $$ = [$1]; }
+	| STRING
+		{ $$ = [$1]; }
+	| OrderedColsList COMMA Literal
+		{ $$ = $1; $1.push($3); }
+	| OrderedColsList COMMA STRING
+		{ $$ = $1; $1.push($3); }
+	;
+*/
 ColumnDefsList
 	: ColumnDef
 		{ $$ = [$1];}
@@ -1663,9 +1675,9 @@ DropDatabase
 /* INDEXES */
 
 CreateIndex
-	: CREATE INDEX Literal ON Table LPAR ColsList RPAR
+	: CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
-	| CREATE UNIQUE INDEX Literal ON Table LPAR ColsList RPAR
+	| CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 
