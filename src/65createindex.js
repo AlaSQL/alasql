@@ -16,7 +16,7 @@ yy.CreateIndex.prototype.toString = function() {
 }
 
 // CREATE TABLE
-yy.CreateIndex.prototype.execute = function (databaseid) {
+yy.CreateIndex.prototype.execute = function (databaseid,params,cb) {
 //	var self = this;
 	var db = alasql.databases[databaseid];
 	var tableid = this.table.tableid;
@@ -55,7 +55,9 @@ yy.CreateIndex.prototype.execute = function (databaseid) {
 			}
 		}
 	};
-
+	var res = 1;
+	if(cb) res = cb(res);
+	return res;
 };
 
 

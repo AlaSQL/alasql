@@ -18,6 +18,7 @@ describe('Test 254 UNION of two tables with different columns', function() {
             INSERT INTO t2 VALUES(1,2);  \
             INSERT INTO t2 VALUES(1,5);  \
       ');
+    done();
   });
 
   it('2. UNION',function(done) {
@@ -34,6 +35,7 @@ describe('Test 254 UNION of two tables with different columns', function() {
 
   it('99. Drop database',function(done){
     alasql('DROP DATABASE test254');
+    done();
   });
 
 });

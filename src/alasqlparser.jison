@@ -1385,11 +1385,7 @@ CreateTable
 		{ 
 			$$ = new yy.CreateTable({table:$4}); 
 		}		
-/*	| CREATE TABLE IfNotExists Literal DOT Literal
-		{ 
-			$$ = new yy.CreateTable({table:new yy.Table({tableid:$6, databaseid:$4})}); 
-		}		
-*/	;
+;
 
 CreateTableOptionsClause
 	:
@@ -1721,47 +1717,24 @@ ShowCreateTable
 	;
 
 CreateView
-
-	:  CREATE VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select
-		{ 
-			$$ = new yy.CreateTable({table:$4,view:true,select:$9,viewcolumns:$6}); 
-			yy.extend($$,$3); 
+	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select
+		{
+			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
 		}
-	| CREATE VIEW IfNotExists Table AS Select
+	| CREATE TemporaryClause VIEW IfNotExists Table AS Select
 		{ 
-			$$ = new yy.CreateTable({table:$4,view:true,select:$6}); 
+			$$ = new yy.CreateTable({table:$5,view:true,select:$7}); 
+			yy.extend($$,$2); 
+			yy.extend($$,$4); 
 		}
 	;
-/*
-	: CREATE VIEW IfNotExists View AS Select
-		{ $$ = new yy.CreateTable({table:new yy.Table({tableid:$4}), view:true, select: $5}); }
-	| CREATE VIEW View LPAR ColsList RPAR AS Select
-		{ $$ = new yy.CreateTable({table:new yy.Table({tableid:$4}),view:true, select: $5}); }
-	;
-
-		| CREATE TABLE IfNotExists Literal
-		{ 
-			$$ = new yy.CreateTable({table:new yy.Table({tableid:$4})}); 
-		}		
-	| CREATE TABLE IfNotExists Literal DOT Literal
-		{ 
-			$$ = new yy.CreateTable({table:new yy.Table({tableid:$6, databaseid:$4})}); 
-		}		
-	;
-*/
 
 DropView
 	: DROP VIEW IfExists Table
 		{ $$ = new yy.DropTable({table:$4, view:true}); yy.extend($$, $3); }
 	;
-/*
-View
-	: Literal
-		{ $$ = new yy.View({viewid: $1}); }
-	| Literal DOT Literal
-		{ $$ = new yy.View({databaseid:$1, viewid: $3}); }
-	;
-*/
 /*
 DeclareCursor
 	: DECLARE Literal CURSOR FOR Select
