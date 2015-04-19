@@ -4092,6 +4092,9 @@ yy.Statements.prototype.compile = function(db) {
 
 // Main query procedure
 function queryfn(query,oldscope,cb, A,B) {
+
+//	console.log(query.queriesfn);
+
 	var ms;
 		query.sourceslen = query.sources.length;
 		var slen = query.sourceslen;
@@ -4548,6 +4551,8 @@ function doJoin (query, scope, h) {
 			if(query.groupfn) {
 				query.groupfn(scope, query.params, query.alasql)
 			} else {
+//				query.qwerty = 999;
+//console.log(query.qwerty, query.queriesfn && query.queriesfn.length,2);
 				query.data.push(query.selectfn(scope, query.params, alasql));
 			}	
 		}
@@ -4875,7 +4880,7 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 //	return this.expression.toJavaScript(context, tableid, defcols);
 // console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
-//console.log(this);
+
 	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+'))[0]';
 //	s = '(console.log(this.queriesfn[0]),'+s+')';
 
@@ -6378,7 +6383,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 }
 yy.Select.prototype.compileSelect2 = function(query) {
 
-	var s = query.selectfns ;
+	var s = query.selectfns;
 //	console.log(s);
 	return new Function('p,params,alasql',s+'return r');
 };
@@ -7959,7 +7964,7 @@ yy.CaseValue.prototype.findAggregator = function (query){
 
 yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {
 
-	var s = '(function('+context+',params,alasql){var r;';
+	var s = '((function('+context+',params,alasql){var r;';
 	if(this.expression) {
 //			this.expression.toJavaScript(context, tableid)
 		s += 'v='+this.expression.toJavaScript(context, tableid, defcols)+';';
@@ -7971,7 +7976,8 @@ yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {
 			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
 		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid,defcols)+'}';
 	}
-	s += 'return r;})('+context+',params,alasql)';
+	// TODO remove bind from CASE
+	s += ';return r;}).bind(this))('+context+',params,alasql)';
 
 	return s;
 };

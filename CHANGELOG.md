@@ -1,7 +1,9 @@
 # Changelog
 
-### 0.0.48 "Amsterdam" (19.04.2015 - ...)
-* 
+### 0.0.48 "Amsterdam" (18.04.2015 - 19.04.2015)
+* Fixed bug indexedDB.webGetDatabaseNames in Firefox
+* Some bugs from Sqllogictest fixed (see test258)
+* Bower package registered
 
 ### 0.0.47 "Antalya" (16.04.2015 - 18.04.2015)
 * Added CORRESPONDING keyword to the grammas

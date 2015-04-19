@@ -1,5 +1,8 @@
 // Main query procedure
 function queryfn(query,oldscope,cb, A,B) {
+
+//	console.log(query.queriesfn);
+
 	var ms;
 		query.sourceslen = query.sources.length;
 		var slen = query.sourceslen;

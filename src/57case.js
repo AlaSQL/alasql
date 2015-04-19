@@ -32,7 +32,7 @@ yy.CaseValue.prototype.findAggregator = function (query){
 
 yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {
 
-	var s = '(function('+context+',params,alasql){var r;';
+	var s = '((function('+context+',params,alasql){var r;';
 	if(this.expression) {
 //			this.expression.toJavaScript(context, tableid)
 		s += 'v='+this.expression.toJavaScript(context, tableid, defcols)+';';
@@ -44,7 +44,8 @@ yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {
 			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
 		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid,defcols)+'}';
 	}
-	s += 'return r;})('+context+',params,alasql)';
+	// TODO remove bind from CASE
+	s += ';return r;}).bind(this))('+context+',params,alasql)';
 
 	return s;
 };
