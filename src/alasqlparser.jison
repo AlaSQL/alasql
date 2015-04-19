@@ -534,10 +534,14 @@ IntoClause
 FromClause
 	: FROM FromTablesList
 		{ $$ = { from: $2 }; } 
-	| FROM FromTable JoinTablesList
+/*	| FROM FromTable JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
-	| FROM LPAR FromTable JoinTablesList RPAR
+*/	| FROM FromTablesList JoinTablesList
+		{ $$ = { from: $2, joins: $3 }; }
+/*	| FROM LPAR FromTable JoinTablesList RPAR
 		{ $$ = { from: [$3], joins: $4 }; }
+*/	| FROM LPAR FromTablesList JoinTablesList RPAR
+		{ $$ = { from: $3, joins: $4 }; }
 	|
 		{ $$ = undefined; }
 	;
