@@ -132,7 +132,8 @@ stdlib.MID = function(a,b,c){
 	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
 };
 
-stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?null:'+a+')'};
+// Here we uses undefined instead of null
+stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?undefined:'+a+')'};
 
 stdlib.POWER = function(a,b) {return 'Math.pow('+a+','+b+')'};
 

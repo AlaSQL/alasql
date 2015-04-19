@@ -32,7 +32,8 @@ describe('Test 258 SqlLogic Parser Test #1', function() {
 
   it('5. Create temporary table', function(done){
     var res = alasql('CREATE TEMPORARY TABLE one (x NUMBER, y STRING)');
-    assert(res == 1);    
+    assert(res == 1);
+    alasql('DROP TABLE one');    
     done();
   });
 
@@ -44,28 +45,43 @@ describe('Test 258 SqlLogic Parser Test #1', function() {
     // Test operator
     alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
         WHERE TABLE_NAME = 'view_1_tab0_153') DROP VIEW view_1_tab0_153");
-    done();
-  });
 
-if(false) {
-
-
-  it('98. Create temporary view', function(done){
-
-    alasql('CREATE VIEW view_1_tab0_157 AS SELECT pk, col0 FROM tab0 \
-        WHERE (col0 IN (SELECT col3 FROM tab0 \
-        WHERE ((col0 IS NULL) OR col3 > 5 OR col3 <= 50 OR col1 < 83.11))) \
-        OR col0 > 75');
-
-    alasql('DROP VIEW view_1_tab0_157'); 
-
-     alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
+    alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
           WHERE TABLE_NAME = 'view_1_tab2_381') DROP VIEW view_1_tab2_381");
 
     alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
       WHERE TABLE_NAME = 'view_2_tab4_475') DROP VIEW view_2_tab4_475");
 
-    alasql('CREATE VIEW view_2_tab3_1002 AS \
+    alasql('DROP TABLE INFORMATION_SCHEMA.VIEWS');
+    alasql('DROP DATABASE INFORMATION_SCHEMA');
+    done();
+  });
+
+  it('7. Create and drop temporary view', function(done){
+    // Create tables
+    alasql('CREATE TABLE tab0 (pk, col0, col1, col2, col3)');
+
+    var res = alasql('CREATE VIEW view_1_tab0_157 AS SELECT pk, col0 FROM tab0 \
+        WHERE (col0 IN (SELECT col3 FROM tab0 \
+        WHERE ((col0 IS NULL) OR col3 > 5 OR col3 <= 50 OR col1 < 83.11))) \
+        OR col0 > 75');
+    assert(res == 1);
+
+    var res = alasql('DROP VIEW view_1_tab0_157'); 
+    assert(res == 1);
+
+    var res = alasql('DROP TABLE tab0');
+    assert(res == 1);
+
+    done();
+  });
+
+  it('8. Huge view', function(done){
+    // Create a table
+    alasql('CREATE TABLE tab3 (pk, col0, col1, col2, col3, col4)');
+
+    // Huge view
+    var res = alasql('CREATE VIEW view_2_tab3_1002 AS \
       SELECT pk, col0 FROM tab3 WHERE NOT (((col0 IN \
         (SELECT col3 FROM tab3 WHERE (col0 IS NULL \
         OR (((col3 <= 32)))) OR (col4 > 43.71 AND col4 > 26.46 \
@@ -123,33 +139,93 @@ if(false) {
           OR col3 >= 19 OR col3 >= 0) AND col0 > 54 \
           AND col4 IN (11.6,7.61,98.26,24.65,81.81,48.50)) AND col1 <= 57.49) \
           OR (col3 > 27))))) AND col0 = 54 AND col0 < 39)');
+        assert(res == 1);
 
-    alasql('SELECT - 92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 ) ');
+        alasql('DROP TABLE tab3');
+        done();
+    });
 
-    alasql('SELECT DISTINCT * FROM tab2 cor0 JOIN tab2 cor1 ON + ( 90 ) \
+    it('9. FROM CROSS JOIN ',function(done){  
+      alasql('CREATE TABLE tab1; CREATE TABLE tab2');
+      alasql('SELECT - 92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 ) ');
+      alasql('DROP TABLE tab1; DROP TABLE tab2; ')
+      done();
+    });
+
+
+    it('11a. SELECT AVG',function(done){
+      var res = alasql('SELECT VALUE AVG(10)');
+      assert(res == 10);
+      done();
+    });
+
+    it('11. SELECT ALL',function(done){
+      alasql('SELECT ALL CASE - 18 WHEN + 52 THEN - + 49 * 53 END \
+        * - 5 * + AVG ( 12 ) + + + 95 + 34 * - 53');
+      done();
+    });
+
+    it('12. SELECT ',function(done){
+      alasql('SELECT - 3 * 19 * - CASE + 59 WHEN + 5 THEN NULL \
+        ELSE - - CASE 41 WHEN 84 * NULLIF ( AVG ( + 76 ), - 4 ) \
+        THEN 50 WHEN - 98 * + 32 + - 4 THEN NULL ELSE NULL END END AS col2');
+      done();
+    });
+
+if(false) {
+    it('14. SELECT ALL',function(done){
+      alasql('CREATE TABLE tab0;CREATE TABLE tab2');
+      alasql('SELECT * FROM tab0, tab2 AS cor0 CROSS JOIN tab0 AS cor1');
+      alasql('DROP TABLE tab0;DROP TABLE tab2');
+      done();
+    });
+
+
+
+    it('10. FROM JOIN / CROSS JOIN syntax ',function(done){ 
+        alasql('CREATE TABLE tab0; CREATE TABLE tab2');
+
+        alasql('SELECT DISTINCT * FROM tab2 cor0 JOIN tab2 cor1 ON + ( 90 ) \
           IS NOT NULL, tab0 AS cor2 ');
 
-    alasql('SELECT ALL CASE - 18 WHEN + 52 THEN - + 49 * 53 END \
-      * - 5 * + AVG ( 12 ) + + + 95 + 34 * - 53');
+//        alasql('SELECT DISTINCT * FROM tab2 cor0 JOIN tab2 cor1 ON + ( 90 ) \
+//          IS NOT NULL CROSS JOIN tab0 AS cor2 ');
 
-    alasql('SELECT - 3 * 19 * - CASE + 59 WHEN + 5 THEN NULL \
-      ELSE - - CASE 41 WHEN 84 * NULLIF ( AVG ( + 76 ), - 4 ) \
-      THEN 50 WHEN - 98 * + 32 + - 4 THEN NULL ELSE NULL END END AS col2');
+        alasql('DROP TABLE tab0; DROP TABLE tab2; ')
+      done();
+    });
 
-    alasql('SELECT ALL * FROM tab1 cor0 CROSS JOIN tab1, tab2 AS cor1');
+    it('13. SELECT ALL',function(done){
+      alasql('CREATE TABLE tab1;CREATE TABLE tab2');
+      alasql('SELECT ALL * FROM tab1 cor0 CROSS JOIN tab1, tab2 AS cor1');
+      alasql('DROP TABLE tab1;DROP TABLE tab2');
+      done();
+    });
 
-    alasql('SELECT * FROM tab0, tab2 AS cor0 CROSS JOIN tab0 AS cor1');
 
-    alasql('SELECT CASE a+1 WHEN b THEN 111 WHEN c THEN 222 WHEN d \
-      THEN 333 WHEN e THEN 444 ELSE 555 END FROM t1 ORDER BY 1');
+    it('15. SELECT ALL',function(done){
+      alasql('CREATE TABLE t1');
+      alasql('SELECT CASE a+1 WHEN b THEN 111 WHEN c THEN 222 WHEN d \
+        THEN 333 WHEN e THEN 444 ELSE 555 END FROM t1 ORDER BY 1');
+      alasql('DROP TABLE t1');
+      done();
+    });
 
-    alasql('SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) \
-      FROM t1 WHERE (a>b-2 AND a<b+2) OR c>d ORDER BY 1');
+    it('16. SELECT ALL',function(done){
+      alasql('CREATE TABLE t1');
+      alasql('SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) \
+        FROM t1 WHERE (a>b-2 AND a<b+2) OR c>d ORDER BY 1');
+      alasql('DROP TABLE t1');
+      done();
+    });
 
-    alasql('CREATE INDEX t8all ON t8(e8, d8 ASC, c8, b8 ASC, a8)');
-
-    done();
-  });
+    it('17. SELECT ALL',function(done){
+      alasql('CREATE TABLE t8(e8,d8,c8,b8,a8)');
+      var res = alasql('CREATE INDEX t8all ON t8(e8, d8 ASC, c8, b8 ASC, a8)');
+      assert(res==1);
+      alasql('DROP TABLE t8');
+      done();
+    });
 }
 
   it('99. Drop Database', function(done) {

@@ -26,7 +26,8 @@ yy.CaseValue.prototype.findAggregator = function (query){
 			if(w.when.findAggregator) w.when.findAggregator(query);
 			if(w.then.findAggregator) w.then.findAggregator(query);
 		});
-	}
+	};
+	if(this.elses && this.elses.findAggregator) this.elses.findAggregator(query);
 };
 
 yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {

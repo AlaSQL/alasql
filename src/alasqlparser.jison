@@ -536,6 +536,8 @@ FromClause
 		{ $$ = { from: $2 }; } 
 	| FROM FromTable JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
+	| FROM LPAR FromTable JoinTablesList RPAR
+		{ $$ = { from: [$3], joins: $4 }; }
 	|
 		{ $$ = undefined; }
 	;
