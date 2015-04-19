@@ -205,35 +205,6 @@ describe('Test 258 SqlLogic Parser Test #1', function() {
     });
 
 
-if(false) {
-
-
-
-    it('10. FROM JOIN / CROSS JOIN syntax ',function(done){ 
-        alasql('CREATE TABLE tab0; CREATE TABLE tab2');
-
-        alasql('SELECT DISTINCT * FROM tab2 cor0 JOIN tab2 cor1 ON + ( 90 ) \
-          IS NOT NULL, tab0 AS cor2 ');
-
-//        alasql('SELECT DISTINCT * FROM tab2 cor0 JOIN tab2 cor1 ON + ( 90 ) \
-//          IS NOT NULL CROSS JOIN tab0 AS cor2 ');
-
-        alasql('DROP TABLE tab0; DROP TABLE tab2; ')
-      done();
-    });
-
-    it('13. SELECT ALL',function(done){
-      alasql('CREATE TABLE tab1;CREATE TABLE tab2');
-      alasql('SELECT ALL * FROM tab1 cor0 CROSS JOIN tab1, tab2 AS cor1');
-      alasql('DROP TABLE tab1;DROP TABLE tab2');
-      done();
-    });
-
-
-
-
-}
-
   it('99. Drop Database', function(done) {
     alasql('DROP DATABASE test258');
     done();
