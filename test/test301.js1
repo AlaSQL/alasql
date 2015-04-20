@@ -9,7 +9,6 @@ describe('Test 301 CLASSES', function() {
 
   var john, mary;
 
-
   it('1. CREATE DATABASE',function(done){
     var res = alasql('CREATE DATABASE test301; USE 301');
     done();    
@@ -55,7 +54,6 @@ describe('Test 301 CLASSES', function() {
     var res = alasql('DROP DATABASE test301');
     done();    
   });
-
 
 });
 

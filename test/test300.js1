@@ -15,10 +15,10 @@ describe('Test 300 SEARCH', function() {
       ]
     },
     Asia: {
-        {fruit:'Pineapple'},          
+        fruit:'Pineapple'          
     },
     Africa: {
-        {fruit:'Banana'},          
+        fruit:'Banana'          
     }
   };
 
@@ -42,8 +42,6 @@ describe('Test 300 SEARCH', function() {
     assert.deepEqual(res, [{fruit:'Apple'}]);
     done();    
   });
-
-
 
 
 });

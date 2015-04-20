@@ -28,7 +28,6 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 	var s3 = 'var a,aa=[];';
-	s3 += 'var db=alasql.databases[\''+databaseid+'\'];';
 
 	var s33;
 
@@ -134,10 +133,14 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			// If this is a class
 			if(db.tables[tableid].isclass) {
-				s+= 'db.objects[db.counter++]=a;';
+				s += 'var db=alasql.databases[\''+databaseid+'\'];';
+				s+= 'a.$class="'+tableid+'";';
+				s+= 'a.$id=db.counter++;';
+				s+= 'db.objects[a.$id]=a;';
 			};
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
 	        if(db.tables[tableid].insert) {
+				s += 'var db=alasql.databases[\''+databaseid+'\'];';
 				s += 'db.tables[\''+tableid+'\'].insert(a);';
 	        } else {
 				s += 'aa.push(a);';
@@ -153,7 +156,15 @@ yy.Insert.prototype.compile = function (databaseid) {
             'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data.concat(aa);';
         }
 
-		s += 'return '+self.values.length;
+        if(db.tables[tableid].insert) {
+        	if(db.tables[tableid].isclass) {
+	        	s += 'return a.$id;';
+        	} else {
+	        	s += 'return a;';
+        	}
+        } else {
+			s += 'return '+self.values.length;
+        }
 
 //console.log(s);
 		var insertfn = new Function('db, params, alasql',s3+s);

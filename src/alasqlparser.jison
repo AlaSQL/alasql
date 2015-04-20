@@ -201,11 +201,9 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
 'TARGET'										return 'TARGET'
-'TD'											return 'TD'
 'TEMP'											return 'TEMP'
 'TEMPORARY'										return 'TEMPORARY'
 'TEXTSTRING'									return 'TEXTSTRING'
-'TH'											return 'TH'
 'THEN'											return 'THEN'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
@@ -235,6 +233,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 (\d*[.])?\d+									return 'NUMBER'
 
 '->'											return 'ARROW'
+'#'												return 'SHARP'
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
 '*'												return 'STAR'
@@ -272,7 +271,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 '^'												return 'CARET'
 
 
-[a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
+[a-zA-Z_][a-zA-Z_0-9]*                     	return 'LITERAL'
 
 /*
 [a-zA-ZА-Яа-я_][a-zA-ZА-Яа-я_0-9]*              return 'LITERAL'
@@ -296,7 +295,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
-%left DOT ARROW
+%left DOT ARROW SHARP
 /* %left UMINUS */
 
 %start main
@@ -830,21 +829,10 @@ OffsetClause
 
 ResultColumns
 	: ResultColumns COMMA ResultColumn 
-		{ yy.extend($3,$4); $1.push($3); $$ = $1; }
+		{ $1.push($3); $$ = $1; }
 	| ResultColumn 
-		{ yy.extend($1,$2); $$ = [$1]; }
+		{ $$ = [$1]; }
 	;
-/*
-TDTH
-	: { $$ = undefined }
-	| TD Expression
-		{ $$ = {td:$2}; }	
-	| TH Expression
-		{ $$ = {th:$2}; }
-	| TH Expression TD Expression
-		{ $$ = {th:$2,td:$4}; }
-	;
-*/
 
 ResultColumn
 	: Expression AS Literal
@@ -1157,9 +1145,19 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 	| Expression ARROW LPAR Expression RPAR
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
-
 	| Expression ARROW FuncValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
+
+	| Expression SHARP Literal
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+	| Expression SHARP NumValue
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+	| Expression SHARP LPAR Expression RPAR
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$4}); }
+	| Expression SHARP FuncValue
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+
+
 
 
 	| Expression GT Expression
