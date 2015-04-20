@@ -10002,9 +10002,21 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 		else if(val == 'OFF') val = false;
 		alasql.options[this.variable] = val;
 	} else if(this.expression) {
+
+		if(this.exists) {
+			this.existsfn = this.exists.map(function(ex) {
+				return ex.compile(databaseid);
+			});
+		}
+		if(this.queries) {
+			this.queriesfn = this.queries.map(function(q) {
+				return q.compile(databaseid);
+			});		
+		}
+
 //		console.log(this.expression.toJavaScript('','', null));
 		var res = new Function("params,alasql","return "
-			+this.expression.toJavaScript('({})','', null))(params,alasql);
+			+this.expression.toJavaScript('({})','', null)).bind(this)(params,alasql);
 		if(alasql.declares[this.variable]) {
 			res = alasql.stdfn.CONVERT(res,alasql.declares[this.variable]);
 		}

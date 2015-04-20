@@ -44,14 +44,17 @@ describe('Test 302 CREATE CLASS ', function() {
   });
 
   it('5. SELECT with # operator', function (done) {
-    var res = alasql('SELECT COLUMN DISTINCT city#country#name FROM Person');
-    assert.deepEqual(res,['Italy','Germany']);
+    alasql('SET @egypt = (INSERT INTO Country VALUES {name:"Egypt"})');
+    alasql('SET @cairo = (INSERT INTO City VALUES {name:"Cairo", country:(@egypt)})');
+    alasql('INSERT INTO Person VALUES {name:"Ali",city:(@cairo)}');
+
+    var res = alasql('SELECT COLUMN DISTINCT city#country#name AS country\
+           FROM Person ORDER BY country');
+    assert.deepEqual(res,['Egypt','Germany','Italy']);
     done();
   });
 
   it('6. INSERT function', function (done) {
-    alasql('SET @egypt = (INSERT INTO Country VALUES {name:"Egypt"})');
-    console.log(alasql.vars);
     done();
   });
 
