@@ -178,6 +178,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		if(typeof this.right == "string") {
 			return 'alasql.databases[alasql.useid].objects['+this.left.toJavaScript(context,tableid, defcols)+']["'+this.right+'"]';
 		}		
+		// TODO - add other cases
 	}
 
 	if(this.op == 'IS') {

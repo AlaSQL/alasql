@@ -160,7 +160,7 @@ yy.Insert.prototype.compile = function (databaseid) {
         	if(db.tables[tableid].isclass) {
 	        	s += 'return a.$id;';
         	} else {
-	        	s += 'return a;';
+				s += 'return '+self.values.length;
         	}
         } else {
 			s += 'return '+self.values.length;

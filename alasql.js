@@ -7083,6 +7083,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		if(typeof this.right == "string") {
 			return 'alasql.databases[alasql.useid].objects['+this.left.toJavaScript(context,tableid, defcols)+']["'+this.right+'"]';
 		}		
+		// TODO - add other cases
 	}
 
 	if(this.op == 'IS') {
@@ -9256,7 +9257,7 @@ yy.Insert.prototype.compile = function (databaseid) {
         	if(db.tables[tableid].isclass) {
 	        	s += 'return a.$id;';
         	} else {
-	        	s += 'return a;';
+				s += 'return '+self.values.length;
         	}
         } else {
 			s += 'return '+self.values.length;
