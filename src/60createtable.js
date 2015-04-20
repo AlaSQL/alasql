@@ -25,7 +25,7 @@ yy.CreateTable.prototype.toString = function() {
 	var s = K('CREATE');
 	if(this.temporary) s+=' '+K('TEMPORARY');
 	if(this.view) s += ' '+K('VIEW');
-	else s += ' '+K('TABLE');
+	else s += ' '+(this.class?K('CLASS'):K('TABLE'));
 	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
 	if(this.viewcolumns) {
@@ -76,6 +76,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
+
+	// If this is a class
+	if(this.class) {
+		table.isclass = true;
+	}
 
 	var ss = [];
 	if(this.columns) {

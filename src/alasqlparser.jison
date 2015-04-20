@@ -84,6 +84,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CAST'											return 'CAST'
 'CHARSET'										return 'CHARSET'
 'CHECK'											return 'CHECK'
+'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
@@ -459,12 +460,16 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-/*	| SELECT NumValue
-		{ $$ = new yy.Select({value: $2}); }
-*/	;
+	;
 
 SelectClause
-	: SelectModifier DISTINCT TopClause ResultColumns  
+	: 
+/*
+		{ $$ = new yy.Select({ columns:new yy.Column({columnid:'_'}), modifier: 'COLUMN' }); }
+	| 
+*/
+
+	SelectModifier DISTINCT TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1); yy.extend($$, $3); }
 	| SelectModifier UNIQUE TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1);yy.extend($$, $3); }
@@ -822,13 +827,14 @@ OffsetClause
 		{ $$ = {offset:$2}}
 	;
 
+
 ResultColumns
-	: ResultColumns COMMA ResultColumn TDTH
+	: ResultColumns COMMA ResultColumn 
 		{ yy.extend($3,$4); $1.push($3); $$ = $1; }
-	| ResultColumn TDTH
+	| ResultColumn 
 		{ yy.extend($1,$2); $$ = [$1]; }
 	;
-
+/*
 TDTH
 	: { $$ = undefined }
 	| TD Expression
@@ -838,6 +844,7 @@ TDTH
 	| TH Expression TD Expression
 		{ $$ = {th:$2,td:$4}; }
 	;
+*/
 
 ResultColumn
 	: Expression AS Literal
@@ -1378,21 +1385,30 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
+	:  CREATE TemporaryClause TableClass IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
+			yy.extend($$,$3); 
 			yy.extend($$,$4); 
 			yy.extend($$,$7); 
 			yy.extend($$,$9); 
 		}
-	| CREATE TemporaryClause TABLE IfNotExists Table
+	| CREATE TemporaryClause TableClass IfNotExists Table
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
+			yy.extend($$,$3); 
 			yy.extend($$,$4); 
 		}		
 ;
+
+TableClass
+	: TABLE
+		{ $$ = undefined; }
+	| CLASS
+		{ $$ = {class:true}; }
+	;
 
 CreateTableOptionsClause
 	:

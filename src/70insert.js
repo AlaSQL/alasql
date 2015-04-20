@@ -28,6 +28,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 	var s3 = 'var a,aa=[];';
+	s3 += 'var db=alasql.databases[\''+databaseid+'\'];';
+
 	var s33;
 
 
@@ -129,9 +131,14 @@ yy.Insert.prototype.compile = function (databaseid) {
 			} else {
 				s += 'a={'+ss.join(',')+'};';
 			}
+
+			// If this is a class
+			if(db.tables[tableid].isclass) {
+				s+= 'db.objects[db.counter++]=a;';
+			};
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
 	        if(db.tables[tableid].insert) {
-				s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(a);';
+				s += 'db.tables[\''+tableid+'\'].insert(a);';
 	        } else {
 				s += 'aa.push(a);';
 			}

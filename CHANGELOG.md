@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.49 "Beijing" (19.04.2015 - ...04.2015)
+* 
+
+
 ### 0.0.48 "Amsterdam" (18.04.2015 - 19.04.2015)
 * Fixed bug indexedDB.webGetDatabaseNames in Firefox
 * Some bugs from Sqllogictest fixed (see test258)
