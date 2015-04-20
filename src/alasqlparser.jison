@@ -450,7 +450,8 @@ WithTable
 
 Select
 	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
-		{   yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
+		{   
+			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
 		    yy.extend($$,$8); 
 		    $$ = $1;
@@ -916,6 +917,13 @@ Expression
 /*	| AT LPAR Json RPAR
 		{ $$ = new yy.Json({value:$3}); }			
 */	| LPAR Select RPAR
+		{
+			if(!yy.queries) yy.queries = []; 
+			yy.queries.push($2);
+			$2.queriesidx = yy.queries.length;
+			$$ = $2;
+		}
+	| LPAR Insert RPAR
 		{
 			if(!yy.queries) yy.queries = []; 
 			yy.queries.push($2);

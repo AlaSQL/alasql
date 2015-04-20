@@ -49,6 +49,13 @@ describe('Test 302 CREATE CLASS ', function() {
     done();
   });
 
+  it('6. INSERT function', function (done) {
+    alasql('SET @egypt = (INSERT INTO Country VALUES {name:"Egypt"})');
+    console.log(alasql.vars);
+    done();
+  });
+
+
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test302');
     done();
