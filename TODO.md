@@ -15,6 +15,7 @@ SEARCH IN(Like,Love) FROM ?
 SEARCH BOTH(),BOTHE(), BOTHV() FROM ?
 SEARCH BOTH(Like,Love) FROM ?
 
+???
 SEARCH EXPAND(name) FROM Person; -- all people names
 SEARCH FIRST(name) FROM Person; -- all people names
 SEARCH LAST(name) FROM Person; -- all people names

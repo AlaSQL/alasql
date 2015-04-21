@@ -66,7 +66,7 @@ gulp.task('js-merge', function () {
   	'./src/50expression.js',
     './src/52linq.js',
     './src/55functions.js',
-    './src/56datetime.js',
+//    './src/56sprintf.js',
     './src/57case.js',
     './src/58json.js',
     './src/59convert.js',
