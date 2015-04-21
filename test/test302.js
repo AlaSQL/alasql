@@ -21,7 +21,7 @@ describe('Test 302 CREATE CLASS ', function() {
 
   var italy,rome,milano,romeo,paola,peter,berlin,germany;
 
-  it('3. CREATE CLASS Country and City',function(done){
+  it('3. CREATE CLASS Country and City, INSERT data',function(done){
     alasql('CREATE CLASS Country');
     italy = alasql('INSERT INTO Country VALUES {name:"Italy"}');
     germany = alasql('INSERT INTO Country VALUES {name:"Germany"}');
@@ -43,18 +43,17 @@ describe('Test 302 CREATE CLASS ', function() {
     done();    
   });
 
-  it('5. SELECT with # operator', function (done) {
+  it('5. SET variable = (INSERT)', function (done) {
     alasql('SET @egypt = (INSERT INTO Country VALUES {name:"Egypt"})');
     alasql('SET @cairo = (INSERT INTO City VALUES {name:"Cairo", country:(@egypt)})');
     alasql('INSERT INTO Person VALUES {name:"Ali",city:(@cairo)}');
-
-    var res = alasql('SELECT COLUMN DISTINCT city#country#name AS country\
-           FROM Person ORDER BY country');
-    assert.deepEqual(res,['Egypt','Germany','Italy']);
     done();
   });
 
-  it('6. INSERT function', function (done) {
+  it('7. SELECT #', function(done) {
+    var res = alasql('SELECT COLUMN DISTINCT city#country#name AS country\
+           FROM Person ORDER BY country');
+    assert.deepEqual(res,['Egypt','Germany','Italy']);
     done();
   });
 

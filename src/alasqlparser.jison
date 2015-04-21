@@ -144,10 +144,12 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 */
 'KEY'											return 'KEY'
 'LAST'											return 'LAST'
+'LET'											return 'LET'
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 'SOURCE'										return 'SOURCE'
+'STRATEGY'										return 'STRATEGY'
 "MATCHED"										return "MATCHED"
 'MATRIX'										return 'MATRIX'	
 "MAX"											return "MAX"
@@ -190,6 +192,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'ROW'											return 'ROW'
 'SCHEMA'                                        return 'DATABASE'
 'SCHEMAS'                                       return 'DATABASES'
+'SEARCH'                                        return 'SEARCH'
 'SELECT'                                        return 'SELECT'
 'SEMI'                                        	return 'SEMI'
 'SET'                                        	return 'SET'
@@ -205,6 +208,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'TEMPORARY'										return 'TEMPORARY'
 'TEXTSTRING'									return 'TEXTSTRING'
 'THEN'											return 'THEN'
+'TIMEOUT'										return 'TIMEOUT'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
 'TRAN'											return 'TRAN'
@@ -460,7 +464,50 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
+	| SearchClause SearchFrom SearchLet SearchWhile SearchLimit SearchStrategy SearchTimeout
 	;
+SearchClause
+	: SearchSelector
+	;
+
+SearchSelector
+	: SEARCH Expression
+		{ $$ = [$1] } 
+	| SearchSelector COMMA Expression 
+		{ $$ = $1; $1.push($2); }
+	;
+/*
+
+SearchFrom
+	: FROM Expression
+	;
+
+SearchLet
+	:
+	| LET 
+	;
+
+SearchWhile
+	:
+	| WHILE Expression
+	;
+
+SearchLimit
+	:
+	| LIMIT Expression
+	;
+
+SearchStrategy
+	:
+	| STRATEGY Literal
+	;
+
+SearchTimeout
+	:
+	| TIMEOUT Expression
+	;	
+*/
+
 
 SelectClause
 	: 
