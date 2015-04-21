@@ -1032,8 +1032,14 @@ PrimitiveValue
 
 
 AggrValue
-	: Aggregator LPAR Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3, over:$5}); }
+	: Aggregator LPAR ExprList RPAR OverClause
+		{
+		  if($3.length > 1 && ($1.toUpperCase() == 'MAX' || $1.toUpperCase() == 'MIN')) {
+		  	$$ = new yy.FuncValue({funcid:$1,args:$3});
+		  } else {
+			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3.pop(), over:$5}); 
+		  } 
+		}
 	| Aggregator LPAR DISTINCT Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4, distinct:true, over:$6}); }
 	| Aggregator LPAR ALL Expression RPAR OverClause
@@ -1081,11 +1087,15 @@ FuncValue
 */	
 	: Literal LPAR ExprList RPAR
 		{ 
-		    if(alasql.aggr[$1]) {
+			var funcid = $1;
+			var exprlist = $3;
+			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
+					$$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
+			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
-                      funcid: $1, expression: $3.pop() });
+                      funcid: funcid, expression: exprlist.pop() });
 		    } else {
-			    $$ = new yy.FuncValue({funcid: $1, args: $3}); 
+			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
 			};
 		}
 	| Literal LPAR RPAR
@@ -1670,8 +1680,8 @@ ColumnConstraint
 /* DROP TABLE */
 
 DropTable
-	: DROP TABLE IfExists Table
-		{ $$ = new yy.DropTable({table:$4}); yy.extend($$, $3); }
+	: DROP (TABLE|CLASS) IfExists Table
+		{ $$ = new yy.DropTable({table:$4,type:$2}); yy.extend($$, $3); }
 	;
 
 IfExists
@@ -2255,6 +2265,20 @@ CreateEdge
 	TO Expression
 	(SET SetColumnsList | CONTENT Expression)?
 
-		{ $$ = new yy.CreateEdge({class:$3, from:$5, to:$7, type: $8, expr: $9}); }
+	{ 
+		$$ = new yy.CreateEdge({class:$3, from:$5, to:$7}); 
+		if(typeof $8 != 'undefined') {
+			$$.type = $8;
+			$$.expre = $9;
+		}
+	}
 
+	;
+
+DeleteVertex
+	: DELETE VERTEX Expression (WHERE Expression)?
+	;
+
+DeleteEdge
+	: DELETE EDGE Expression (FROM Expression)? (TO Expression)? (WHERE Expression)?
 	;

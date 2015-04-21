@@ -23,7 +23,7 @@ describe('Test 262 Leaking of "key" variable to global scope', function() {
       });
     }
 
-    alasql('SELECT * FROM ?', mytable);
+    alasql('SELECT * FROM ?', [mytable]);
     assert(typeof global.key == 'undefined'); // undefined
 
     done();    

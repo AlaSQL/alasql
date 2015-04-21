@@ -119,11 +119,11 @@ stdlib.LOWER = stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 // LTRIM
 
-stdlib.GREATEST = function(){
+stdlib.MAX = stdlib.GREATEST = function(){
       return 'Math.max('+Array.prototype.join.call(arguments, ',')+')'
 };
 
-stdlib.LEAST = function(){
+stdlib.MIN = stdlib.LEAST = function(){
       return 'Math.min('+Array.prototype.join.call(arguments, ',')+')'
 };
 

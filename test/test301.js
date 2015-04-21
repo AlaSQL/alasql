@@ -17,16 +17,14 @@ describe('Test 301 Vertices and Edges', function() {
     var res = alasql('CREATE CLASS Person');
 
     alasql('SET @john = (CREATE VERTEX Person SET name = "John",age=23,sex="M")');
-    /*
     alasql('SET @peter = (CREATE VERTEX Person SET name = "Peter",age=18,sex="M")');
     alasql('SET @mike = (CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"})');
     alasql('SET @girls = (CREATE VERTEX Person SELECT * FROM ?',[[{name:"Mary",age:25,sex:"F"},{name:"Helen",age:33,sex:"F"}]]);
     alasql('SET @mary = @girls->0; SET @helen = @girls->1');
     alasql('SET @paola = (CREATE VERTEX Person SET name = "Paola",age:19,sex="M")');
-    */
     done();    
   });
-/*
+
   it('3. Create edges',function(done){
     alasql('CREATE EDGE FROM @john TO @mary SET relation="likes"');
     alasql('CREATE EDGE FROM @peter TO @mary SET relation="loves"');
@@ -42,7 +40,6 @@ describe('Test 301 Vertices and Edges', function() {
     alasql('SEARCH @john # OUT(relation="is friend of") OUT(relation="loves") (class="Person" AND name="Mary")');
   });
 
-*/
   it('99. DROP DATABASE',function(done){
     var res = alasql('DROP DATABASE test301');
     done();    
