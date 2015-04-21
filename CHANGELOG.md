@@ -1,12 +1,13 @@
 # Changelog
 
-### 0.0.49 "Beijing" (19.04.2015 - ...04.2015)
+### 0.0.49 "Beijing" (19.04.2015 - 21.04.2015)
 * CREATE CLASS
 * INSERT INTO class
 * INSERT INTO class returns inserted value
 * # operator
 * Classes support
-* 
+* Tests with SEARCH syntax and tests for CREATE EDGE and CREATE VERTES
+* Fixed bug with leaking to global.key
 
 ### 0.0.48 "Amsterdam" (18.04.2015 - 19.04.2015)
 * Fixed bug indexedDB.webGetDatabaseNames in Firefox

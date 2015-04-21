@@ -3071,7 +3071,7 @@ var deepEqual = utils.deepEqual = function (x, y) {
  */
 var extend = utils.extend = function extend (a,b){
     if(typeof a == 'undefined') a = {};
-    for(key in b) {
+    for(var key in b) {
         if(b.hasOwnProperty(key)) {
             a[key] = b[key]
         }
