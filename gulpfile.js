@@ -73,6 +73,7 @@ gulp.task('js-merge', function () {
   	'./src/60createtable.js',
     './src/61date.js',
     './src/62droptable.js',
+    './src/63createvertex.js',
     './src/64altertable.js',
     './src/65createindex.js',
     './src/66dropindex.js',

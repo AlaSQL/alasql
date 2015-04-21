@@ -3,7 +3,7 @@
 // alasqlparser.jison
 // SQL Parser for Alasql.js
 // Date: 03.11.2014
-// Modified: 20.03.2015
+// Modified: 21.04.2015
 // (c) 2014-2015, Andrey Gershun
 // 
 //
@@ -111,6 +111,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
 
+'EDGE'											return 'EDGE'
 'END'											return 'END'
 'ENGINE'										return 'ENGINE'
 'ENUM'											return 'ENUM'
@@ -222,6 +223,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'USING'                                         return 'USING'
 'VALUE'                                        	return 'VALUE'
 'VALUES'                                        return 'VALUES'
+'VERTEX'										return 'VERTEX'
 'VIEW'											return 'VIEW'
 'WHEN'                                          return 'WHEN'
 'WHERE'                                         return 'WHERE'
@@ -302,6 +304,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 %left DOT ARROW SHARP
 /* %left UMINUS */
 
+%ebnf
+
 %start main
 
 %%
@@ -359,6 +363,8 @@ Statement
 	| CreateIndex
 	| CreateTable
 	| CreateView
+	| CreateEdge
+	| CreateVertex
 	| Declare
 	| Delete
 	| DetachDatabase
@@ -464,49 +470,43 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| SearchClause SearchFrom SearchLet SearchWhile SearchLimit SearchStrategy SearchTimeout
+	| SearchClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
 	;
+
 SearchClause
 	: SearchSelector
 	;
 
 SearchSelector
-	: SEARCH Expression
-		{ $$ = [$1] } 
-	| SearchSelector COMMA Expression 
+	: SEARCH Literal*
+		{ $$ = $2; } 
+/*	| SearchSelector Literal 
 		{ $$ = $1; $1.push($2); }
-	;
-/*
+*/	;
 
 SearchFrom
 	: FROM Expression
 	;
 
 SearchLet
-	:
-	| LET 
+	: LET 
 	;
 
 SearchWhile
-	:
-	| WHILE Expression
+	: WHILE Expression
 	;
 
 SearchLimit
-	:
-	| LIMIT Expression
+	: LIMIT Expression
 	;
 
 SearchStrategy
-	:
-	| STRATEGY Literal
+	: STRATEGY Literal
 	;
 
 SearchTimeout
-	:
-	| TIMEOUT Expression
+	: TIMEOUT Expression
 	;	
-*/
 
 
 SelectClause
@@ -977,6 +977,14 @@ Expression
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
 		}
+	| LPAR (CreateVertex|CreateEdge) RPAR
+		{
+			if(!yy.queries) yy.queries = []; 
+			yy.queries.push($2);
+			$2.queriesidx = yy.queries.length;
+			$$ = $2;
+		}
+
 	| JavaScript
 		{$$ = $1}
 	;
@@ -2228,4 +2236,25 @@ OutputClause
 		{ $$ = {output:{columns:$2, intotable: $4}} }
 	| OUTPUT ResultColumns INTO Table LPAR ColumnsList RPAR
 		{ $$ = {output:{columns:$2, intotable: $4, intocolumns:$6}} }
+	;
+
+
+CreateVertex
+	: CREATE VERTEX Literal? (SET SetColumnsList | CONTENT ExprList | Select)?
+		{ 
+			$$ = new yy.CreateVertex({class:$3, action:$4});
+			if(typeof $5 != 'undefined') {
+				$$.expr = $5;
+			} 
+		}
+	;
+
+CreateEdge
+	: CREATE EDGE Literal? 
+	FROM Expression 
+	TO Expression
+	(SET SetColumnsList | CONTENT Expression)?
+
+		{ $$ = new yy.CreateEdge({class:$3, from:$5, to:$7, type: $8, expr: $9}); }
+
 	;
