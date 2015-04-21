@@ -84,6 +84,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CAST'											return 'CAST'
 'CHARSET'										return 'CHARSET'
 'CHECK'											return 'CHECK'
+'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
@@ -143,10 +144,12 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 */
 'KEY'											return 'KEY'
 'LAST'											return 'LAST'
+'LET'											return 'LET'
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 'SOURCE'										return 'SOURCE'
+'STRATEGY'										return 'STRATEGY'
 "MATCHED"										return "MATCHED"
 'MATRIX'										return 'MATRIX'	
 "MAX"											return "MAX"
@@ -189,6 +192,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'ROW'											return 'ROW'
 'SCHEMA'                                        return 'DATABASE'
 'SCHEMAS'                                       return 'DATABASES'
+'SEARCH'                                        return 'SEARCH'
 'SELECT'                                        return 'SELECT'
 'SEMI'                                        	return 'SEMI'
 'SET'                                        	return 'SET'
@@ -200,12 +204,11 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
 'TARGET'										return 'TARGET'
-'TD'											return 'TD'
 'TEMP'											return 'TEMP'
 'TEMPORARY'										return 'TEMPORARY'
 'TEXTSTRING'									return 'TEXTSTRING'
-'TH'											return 'TH'
 'THEN'											return 'THEN'
+'TIMEOUT'										return 'TIMEOUT'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
 'TRAN'											return 'TRAN'
@@ -234,6 +237,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 (\d*[.])?\d+									return 'NUMBER'
 
 '->'											return 'ARROW'
+'#'												return 'SHARP'
 '+'												return 'PLUS'
 '-' 											return 'MINUS'
 '*'												return 'STAR'
@@ -271,7 +275,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 '^'												return 'CARET'
 
 
-[a-zA-Z_][a-zA-Z_0-9]*                       	return 'LITERAL'
+[a-zA-Z_][a-zA-Z_0-9]*                     	return 'LITERAL'
 
 /*
 [a-zA-ZА-Яа-я_][a-zA-ZА-Яа-я_0-9]*              return 'LITERAL'
@@ -295,7 +299,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
-%left DOT ARROW
+%left DOT ARROW SHARP
 /* %left UMINUS */
 
 %start main
@@ -450,7 +454,8 @@ WithTable
 
 Select
 	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
-		{   yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
+		{   
+			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
 		    yy.extend($$,$8); 
 		    $$ = $1;
@@ -459,12 +464,59 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-/*	| SELECT NumValue
-		{ $$ = new yy.Select({value: $2}); }
-*/	;
+	| SearchClause SearchFrom SearchLet SearchWhile SearchLimit SearchStrategy SearchTimeout
+	;
+SearchClause
+	: SearchSelector
+	;
+
+SearchSelector
+	: SEARCH Expression
+		{ $$ = [$1] } 
+	| SearchSelector COMMA Expression 
+		{ $$ = $1; $1.push($2); }
+	;
+/*
+
+SearchFrom
+	: FROM Expression
+	;
+
+SearchLet
+	:
+	| LET 
+	;
+
+SearchWhile
+	:
+	| WHILE Expression
+	;
+
+SearchLimit
+	:
+	| LIMIT Expression
+	;
+
+SearchStrategy
+	:
+	| STRATEGY Literal
+	;
+
+SearchTimeout
+	:
+	| TIMEOUT Expression
+	;	
+*/
+
 
 SelectClause
-	: SelectModifier DISTINCT TopClause ResultColumns  
+	: 
+/*
+		{ $$ = new yy.Select({ columns:new yy.Column({columnid:'_'}), modifier: 'COLUMN' }); }
+	| 
+*/
+
+	SelectModifier DISTINCT TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1); yy.extend($$, $3); }
 	| SelectModifier UNIQUE TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1);yy.extend($$, $3); }
@@ -822,21 +874,12 @@ OffsetClause
 		{ $$ = {offset:$2}}
 	;
 
-ResultColumns
-	: ResultColumns COMMA ResultColumn TDTH
-		{ yy.extend($3,$4); $1.push($3); $$ = $1; }
-	| ResultColumn TDTH
-		{ yy.extend($1,$2); $$ = [$1]; }
-	;
 
-TDTH
-	: { $$ = undefined }
-	| TD Expression
-		{ $$ = {td:$2}; }	
-	| TH Expression
-		{ $$ = {th:$2}; }
-	| TH Expression TD Expression
-		{ $$ = {th:$2,td:$4}; }
+ResultColumns
+	: ResultColumns COMMA ResultColumn 
+		{ $1.push($3); $$ = $1; }
+	| ResultColumn 
+		{ $$ = [$1]; }
 	;
 
 ResultColumn
@@ -921,6 +964,13 @@ Expression
 /*	| AT LPAR Json RPAR
 		{ $$ = new yy.Json({value:$3}); }			
 */	| LPAR Select RPAR
+		{
+			if(!yy.queries) yy.queries = []; 
+			yy.queries.push($2);
+			$2.queriesidx = yy.queries.length;
+			$$ = $2;
+		}
+	| LPAR Insert RPAR
 		{
 			if(!yy.queries) yy.queries = []; 
 			yy.queries.push($2);
@@ -1150,9 +1200,19 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 	| Expression ARROW LPAR Expression RPAR
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
-
 	| Expression ARROW FuncValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
+
+	| Expression SHARP Literal
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+	| Expression SHARP NumValue
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+	| Expression SHARP LPAR Expression RPAR
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$4}); }
+	| Expression SHARP FuncValue
+		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+
+
 
 
 	| Expression GT Expression
@@ -1378,21 +1438,30 @@ ColumnsList
 /* CREATE TABLE */
 
 CreateTable
-	:  CREATE TemporaryClause TABLE IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
+	:  CREATE TemporaryClause TableClass IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
+			yy.extend($$,$3); 
 			yy.extend($$,$4); 
 			yy.extend($$,$7); 
 			yy.extend($$,$9); 
 		}
-	| CREATE TemporaryClause TABLE IfNotExists Table
+	| CREATE TemporaryClause TableClass IfNotExists Table
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
+			yy.extend($$,$3); 
 			yy.extend($$,$4); 
 		}		
 ;
+
+TableClass
+	: TABLE
+		{ $$ = undefined; }
+	| CLASS
+		{ $$ = {class:true}; }
+	;
 
 CreateTableOptionsClause
 	:

@@ -8,6 +8,7 @@
 
 // Table class
 var Table = alasql.Table = function(params){
+
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};

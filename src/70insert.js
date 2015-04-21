@@ -15,6 +15,20 @@ yy.Insert.prototype.toString = function() {
 	return s;
 }
 
+yy.Insert.prototype.toJavaScript = function(context, tableid, defcols) {
+//	console.log('Expression',this);
+//	if(this.expression.reduced) return 'true';
+//	return this.expression.toJavaScript(context, tableid, defcols);
+// console.log('Select.toJS', 81, this.queriesidx);
+//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
+
+	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
+//	s = '(console.log(this.queriesfn[0]),'+s+')';
+//	console.log(this,s);
+
+	return s;
+};
+
 yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
 	databaseid = self.into.databaseid || databaseid
@@ -28,6 +42,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 	var s3 = 'var a,aa=[];';
+
 	var s33;
 
 
@@ -129,9 +144,18 @@ yy.Insert.prototype.compile = function (databaseid) {
 			} else {
 				s += 'a={'+ss.join(',')+'};';
 			}
+
+			// If this is a class
+			if(db.tables[tableid].isclass) {
+				s += 'var db=alasql.databases[\''+databaseid+'\'];';
+				s+= 'a.$class="'+tableid+'";';
+				s+= 'a.$id=db.counter++;';
+				s+= 'db.objects[a.$id]=a;';
+			};
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
 	        if(db.tables[tableid].insert) {
-				s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].insert(a);';
+				s += 'var db=alasql.databases[\''+databaseid+'\'];';
+				s += 'db.tables[\''+tableid+'\'].insert(a);';
 	        } else {
 				s += 'aa.push(a);';
 			}
@@ -146,7 +170,15 @@ yy.Insert.prototype.compile = function (databaseid) {
             'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data.concat(aa);';
         }
 
-		s += 'return '+self.values.length;
+        if(db.tables[tableid].insert) {
+        	if(db.tables[tableid].isclass) {
+	        	s += 'return a.$id;';
+        	} else {
+				s += 'return '+self.values.length;
+        	}
+        } else {
+			s += 'return '+self.values.length;
+        }
 
 //console.log(s);
 		var insertfn = new Function('db, params, alasql',s3+s);

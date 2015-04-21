@@ -37,6 +37,10 @@ var Database = alasql.Database = function (databaseid) {
 	self.tables = {};
 	self.views = {};
 
+	// Objects storage
+	self.objects = {};
+	self.counter = 0;
+
 	self.indices = {};
 //	self.fn = {};
 	self.resetSqlCache();
