@@ -10,8 +10,8 @@ if(typeof exports == 'object') {
 describe('Test 264 SPRINTF() function', function() {
 
   it('1. Test', function(done) {
-
-//    var res = alasql('SELECT VALUE SPRINTF("%d1.1",123.456)');
+  	var data = [{a:1,b:10},{b:2,a:45}];
+    var res = alasql('SELECT RECORDSET * FROM ?',[data]);
     console.log(res);
 //    assert.deepEqual(res,[ { 'MAX(MAX(a),MIN(a))': 8, 'MIN(MAX(a),MIN(a))': 1 } ]);
     done();    
