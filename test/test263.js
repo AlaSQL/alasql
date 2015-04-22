@@ -32,7 +32,7 @@ describe('Test 263 MIN and MAX: aggregators and functions', function() {
 		var a = [ { a: 1, b:5 }, {a: 2, b: 0}, {a:0, b: -5}, {a: 5, b:5} ];
 		var res = alasql('SELECT b FROM ? GROUP BY b HAVING MIN(MIN(a),5) > 1', [a]);
 		assert.deepEqual(res,[ { b: 0} ]);
-		console.log(res);
+//		console.log(res);
 		done();
    });
 

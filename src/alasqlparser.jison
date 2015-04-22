@@ -91,6 +91,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 "COLUMNS"										return "COLUMNS"
 "COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
+"CONTENT"										return "CONTENT"
 "CONTINUE"										return "CONTINUE"
 "CONVERT"										return "CONVERT"
 "CORRESPONDING"									return "CORRESPONDING"
@@ -1373,7 +1374,8 @@ SetColumnsList
 
 SetColumn
 	: Column EQ Expression
-		{ $$ = new yy.SetColumn({columnid:$1, expression:$3})}
+/* TODO Replace columnid with column */
+		{ $$ = new yy.SetColumn({column:$1, expression:$3})}
 	;
 
 /* DELETE */
@@ -2248,17 +2250,36 @@ OutputClause
 		{ $$ = {output:{columns:$2, intotable: $4, intocolumns:$6}} }
 	;
 
-
+/*
 CreateVertex
-	: CREATE VERTEX Literal? (SET SetColumnsList | CONTENT ExprList | Select)?
-		{ 
-			$$ = new yy.CreateVertex({class:$3, action:$4});
-			if(typeof $5 != 'undefined') {
-				$$.expr = $5;
-			} 
-		}
+	: CREATE VERTEX SET SetColumnsList
+		{ $$ = new yy.CreateVertex({set: $4}); }
+	| CREATE VERTEX Literal SET SetColumnsList
+		{ $$ = new yy.CreateVertex({class:$3, set: $5}); }
+	| CREATE VERTEX CONTENT ExprList
+		{ $$ = new yy.CreateVertex({content: $4}); }
+	| CREATE VERTEX Literal CONTENT ExprList
+		{ $$ = new yy.CreateVertex({class:$3, content: $5}); }
+	| CREATE VERTEX Literal Select
+		{ $$ = new yy.CreateVertex({class:$3, select:$4}); }
+	| CREATE VERTEX Select
+		{ $$ = new yy.CreateVertex({select:$4}); }
+	;
+*/
+CreateVertex
+	: CREATE VERTEX Literal? CreateVertexSet 
+		{ $$ = new yy.CreateVertex({class:$3}); yy.extend($$,$4); }
+	;
+CreateVertexSet
+	: SET SetColumnsList
+		{ $$ = {sets:$2}; }
+	| CONTENT ExprList
+		{ $$ = {content:$2}; }
+	| Select
+		{ $$ = {select:$1}; }
 	;
 
+/*
 CreateEdge
 	: CREATE EDGE Literal? 
 	FROM Expression 
@@ -2274,6 +2295,7 @@ CreateEdge
 	}
 
 	;
+*/
 
 DeleteVertex
 	: DELETE VERTEX Expression (WHERE Expression)?

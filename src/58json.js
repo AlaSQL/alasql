@@ -8,7 +8,7 @@
 
 yy.Json = function (params) { return yy.extend(this, params); }
 yy.Json.prototype.toString = function() {
-	var s = '@';
+	var s = ''; // '@'
 	s += JSONtoString(this.value);
 	s += '';
 	return s;
