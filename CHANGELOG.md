@@ -5,6 +5,11 @@
 * Fixed MIN and MAX functions and aggregators #93
 * Found UPDATE bug with column/columnid
 
+* Todo: INFORMATION_SCHEMA PSEUDO DATABASE
+* columns
+* Fonts
+* Vertices
+
 ### 0.0.49 "Beijing" (19.04.2015 - 21.04.2015)
 * CREATE CLASS
 * INSERT INTO class

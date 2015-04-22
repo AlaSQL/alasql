@@ -7,7 +7,7 @@ if(typeof exports === 'object') {
 
 if(typeof exports == 'object') {
 
-describe('Test 264 SPRINTF() function', function() {
+describe('Test 264 SELECT RECORDSET', function() {
 
   it('1. Test', function(done) {
   	var data = [{a:1,b:10},{b:2,a:45}];

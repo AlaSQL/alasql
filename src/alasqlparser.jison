@@ -2271,7 +2271,9 @@ CreateVertex
 		{ $$ = new yy.CreateVertex({class:$3}); yy.extend($$,$4); }
 	;
 CreateVertexSet
-	: SET SetColumnsList
+	: 
+		{$$ = undefined; }
+	| SET SetColumnsList
 		{ $$ = {sets:$2}; }
 	| CONTENT ExprList
 		{ $$ = {content:$2}; }

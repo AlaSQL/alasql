@@ -18,6 +18,13 @@ describe('Test 301 Vertices and Edges', function() {
     var res = alasql('CREATE VERTEX Person SET name = "Olga",age=56,sex="F"');
     var res = alasql('CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"}');
     var res = alasql('CREATE VERTEX Person SELECT * FROM ?');
+    var res = alasql('CREATE VERTEX Person');
+    var res = alasql('CREATE VERTEX');
+    var res = alasql('SET @v1 = (CREATE VERTEX)');
+    var res = alasql('SET @v2 = (CREATE VERTEX)');
+    var res = alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2)');
+    var res = alasql('SET @e12#name = "Lisa"');
+    var res = alasql('SET @e12#age = 43');
     done();    
   });
 
