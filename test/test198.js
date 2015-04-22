@@ -109,15 +109,18 @@ describe('Test 198 - MS SQL compatibility', function() {
     });
 
     it("10. ORDER BY ", function(done) {
-        var res = alasql('SELECT orderid, customerid FROM Orders ORDER BY customerid, orderid;');
-        assert.deepEqual(res,
-        	[ { orderid: 1, customerid: 'FRNDO' },
-  			{ orderid: 2, customerid: 'FRNDO' },
-  			{ orderid: 3, customerid: 'KRLOS' },
-  			{ orderid: 4, customerid: 'KRLOS' },
-  			{ orderid: 5, customerid: 'KRLOS' },
-  			{ orderid: 6, customerid: 'MRPHS' },
-  			{ orderid: 7, customerid: undefined } ]);
+        var res = alasql('SELECT orderid, customerid FROM Orders \
+          ORDER BY customerid, orderid;');
+//        console.log(res);
+        assert.deepEqual(res,[ 
+          { orderid: 7, customerid: undefined },
+          { orderid: 1, customerid: 'FRNDO' },
+    			{ orderid: 2, customerid: 'FRNDO' },
+    			{ orderid: 3, customerid: 'KRLOS' },
+    			{ orderid: 4, customerid: 'KRLOS' },
+    			{ orderid: 5, customerid: 'KRLOS' },
+    			{ orderid: 6, customerid: 'MRPHS' }
+  			]);
         done();
     });
 
@@ -136,12 +139,14 @@ describe('Test 198 - MS SQL compatibility', function() {
     });
 
     it("12. TOP ", function(done) {
-        var res = alasql('SELECT TOP 50 PERCENT orderid, customerid FROM Orders ORDER BY customerid, orderid;');
+        var res = alasql('SELECT TOP 50 PERCENT orderid, customerid \
+          FROM Orders ORDER BY customerid, orderid;');
 //        console.log(res);
-        assert.deepEqual(res,
-        	[ { orderid: 1, customerid: 'FRNDO' },
-  			{ orderid: 2, customerid: 'FRNDO' },
-  			{ orderid: 3, customerid: 'KRLOS' }]);
+        assert.deepEqual(res,[
+          { orderid: 7, customerid: undefined },
+          { orderid: 1, customerid: 'FRNDO' },
+          { orderid: 2, customerid: 'FRNDO' } 
+        ]);
         done();
     });
 

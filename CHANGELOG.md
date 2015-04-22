@@ -1,14 +1,10 @@
 # Changelog
 
-### 0.0.50 "Seoul" (21.04.2015 - ...04.2015)
+### 0.0.50 "Seoul" (21.04.2015 - 22.04.2015)
 * CREATE VERTEX and CREATE EDGE syntax
 * Fixed MIN and MAX functions and aggregators #93
 * Found UPDATE bug with column/columnid
-
-* Todo: INFORMATION_SCHEMA PSEUDO DATABASE
-* columns
-* Fonts
-* Vertices
+* Fixed bug with valueOf in comparision
 
 ### 0.0.49 "Beijing" (19.04.2015 - 21.04.2015)
 * CREATE CLASS
