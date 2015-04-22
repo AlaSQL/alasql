@@ -17,7 +17,7 @@ yy.Update.prototype.toString = function() {
 
 yy.SetColumn = function (params) { return yy.extend(this, params); }
 yy.SetColumn.prototype.toString = function() {
-	return this.columnid.toString() + '='+this.expression.toString();
+	return this.column.toString() + '='+this.expression.toString();
 }
 
 yy.Update.prototype.compile = function (databaseid) {
@@ -32,8 +32,9 @@ yy.Update.prototype.compile = function (databaseid) {
 	// Construct update function
 	var s = '';
 	this.columns.forEach(function(col){
-		s += 'r[\''+col.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
+		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
 	});
+//	console.log('updatefn',s);
 	var assignfn = new Function('r,params,alasql',s);
 
 	var statement = function(params, cb) {

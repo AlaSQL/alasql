@@ -3,7 +3,7 @@
 // alasqlparser.jison
 // SQL Parser for Alasql.js
 // Date: 03.11.2014
-// Modified: 20.03.2015
+// Modified: 21.04.2015
 // (c) 2014-2015, Andrey Gershun
 // 
 //
@@ -91,6 +91,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 "COLUMNS"										return "COLUMNS"
 "COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
+"CONTENT"										return "CONTENT"
 "CONTINUE"										return "CONTINUE"
 "CONVERT"										return "CONVERT"
 "CORRESPONDING"									return "CORRESPONDING"
@@ -111,6 +112,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
 
+'EDGE'											return 'EDGE'
 'END'											return 'END'
 'ENGINE'										return 'ENGINE'
 'ENUM'											return 'ENUM'
@@ -222,6 +224,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'USING'                                         return 'USING'
 'VALUE'                                        	return 'VALUE'
 'VALUES'                                        return 'VALUES'
+'VERTEX'										return 'VERTEX'
 'VIEW'											return 'VIEW'
 'WHEN'                                          return 'WHEN'
 'WHERE'                                         return 'WHERE'
@@ -302,6 +305,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 %left DOT ARROW SHARP
 /* %left UMINUS */
 
+%ebnf
+
 %start main
 
 %%
@@ -359,6 +364,8 @@ Statement
 	| CreateIndex
 	| CreateTable
 	| CreateView
+	| CreateEdge
+	| CreateVertex
 	| Declare
 	| Delete
 	| DetachDatabase
@@ -464,49 +471,43 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| SearchClause SearchFrom SearchLet SearchWhile SearchLimit SearchStrategy SearchTimeout
+	| SearchClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
 	;
+
 SearchClause
 	: SearchSelector
 	;
 
 SearchSelector
-	: SEARCH Expression
-		{ $$ = [$1] } 
-	| SearchSelector COMMA Expression 
+	: SEARCH Literal*
+		{ $$ = $2; } 
+/*	| SearchSelector Literal 
 		{ $$ = $1; $1.push($2); }
-	;
-/*
+*/	;
 
 SearchFrom
 	: FROM Expression
 	;
 
 SearchLet
-	:
-	| LET 
+	: LET 
 	;
 
 SearchWhile
-	:
-	| WHILE Expression
+	: WHILE Expression
 	;
 
 SearchLimit
-	:
-	| LIMIT Expression
+	: LIMIT Expression
 	;
 
 SearchStrategy
-	:
-	| STRATEGY Literal
+	: STRATEGY Literal
 	;
 
 SearchTimeout
-	:
-	| TIMEOUT Expression
+	: TIMEOUT Expression
 	;	
-*/
 
 
 SelectClause
@@ -977,6 +978,14 @@ Expression
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
 		}
+	| LPAR (CreateVertex|CreateEdge) RPAR
+		{
+			if(!yy.queries) yy.queries = []; 
+			yy.queries.push($2);
+			$2.queriesidx = yy.queries.length;
+			$$ = $2;
+		}
+
 	| JavaScript
 		{$$ = $1}
 	;
@@ -1024,8 +1033,14 @@ PrimitiveValue
 
 
 AggrValue
-	: Aggregator LPAR Expression RPAR OverClause
-		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3, over:$5}); }
+	: Aggregator LPAR ExprList RPAR OverClause
+		{
+		  if($3.length > 1 && ($1.toUpperCase() == 'MAX' || $1.toUpperCase() == 'MIN')) {
+		  	$$ = new yy.FuncValue({funcid:$1,args:$3});
+		  } else {
+			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3.pop(), over:$5}); 
+		  } 
+		}
 	| Aggregator LPAR DISTINCT Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4, distinct:true, over:$6}); }
 	| Aggregator LPAR ALL Expression RPAR OverClause
@@ -1073,11 +1088,15 @@ FuncValue
 */	
 	: Literal LPAR ExprList RPAR
 		{ 
-		    if(alasql.aggr[$1]) {
+			var funcid = $1;
+			var exprlist = $3;
+			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
+					$$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
+			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
-                      funcid: $1, expression: $3.pop() });
+                      funcid: funcid, expression: exprlist.pop() });
 		    } else {
-			    $$ = new yy.FuncValue({funcid: $1, args: $3}); 
+			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
 			};
 		}
 	| Literal LPAR RPAR
@@ -1355,7 +1374,8 @@ SetColumnsList
 
 SetColumn
 	: Column EQ Expression
-		{ $$ = new yy.SetColumn({columnid:$1, expression:$3})}
+/* TODO Replace columnid with column */
+		{ $$ = new yy.SetColumn({column:$1, expression:$3})}
 	;
 
 /* DELETE */
@@ -1662,8 +1682,8 @@ ColumnConstraint
 /* DROP TABLE */
 
 DropTable
-	: DROP TABLE IfExists Table
-		{ $$ = new yy.DropTable({table:$4}); yy.extend($$, $3); }
+	: DROP (TABLE|CLASS) IfExists Table
+		{ $$ = new yy.DropTable({table:$4,type:$2}); yy.extend($$, $3); }
 	;
 
 IfExists
@@ -2228,4 +2248,61 @@ OutputClause
 		{ $$ = {output:{columns:$2, intotable: $4}} }
 	| OUTPUT ResultColumns INTO Table LPAR ColumnsList RPAR
 		{ $$ = {output:{columns:$2, intotable: $4, intocolumns:$6}} }
+	;
+
+/*
+CreateVertex
+	: CREATE VERTEX SET SetColumnsList
+		{ $$ = new yy.CreateVertex({set: $4}); }
+	| CREATE VERTEX Literal SET SetColumnsList
+		{ $$ = new yy.CreateVertex({class:$3, set: $5}); }
+	| CREATE VERTEX CONTENT ExprList
+		{ $$ = new yy.CreateVertex({content: $4}); }
+	| CREATE VERTEX Literal CONTENT ExprList
+		{ $$ = new yy.CreateVertex({class:$3, content: $5}); }
+	| CREATE VERTEX Literal Select
+		{ $$ = new yy.CreateVertex({class:$3, select:$4}); }
+	| CREATE VERTEX Select
+		{ $$ = new yy.CreateVertex({select:$4}); }
+	;
+*/
+CreateVertex
+	: CREATE VERTEX Literal? CreateVertexSet 
+		{ $$ = new yy.CreateVertex({class:$3}); yy.extend($$,$4); }
+	;
+CreateVertexSet
+	: 
+		{$$ = undefined; }
+	| SET SetColumnsList
+		{ $$ = {sets:$2}; }
+	| CONTENT ExprList
+		{ $$ = {content:$2}; }
+	| Select
+		{ $$ = {select:$1}; }
+	;
+
+/*
+CreateEdge
+	: CREATE EDGE Literal? 
+	FROM Expression 
+	TO Expression
+	(SET SetColumnsList | CONTENT Expression)?
+
+	{ 
+		$$ = new yy.CreateEdge({class:$3, from:$5, to:$7}); 
+		if(typeof $8 != 'undefined') {
+			$$.type = $8;
+			$$.expre = $9;
+		}
+	}
+
+	;
+*/
+
+DeleteVertex
+	: DELETE VERTEX Expression (WHERE Expression)?
+	;
+
+DeleteEdge
+	: DELETE EDGE Expression (FROM Expression)? (TO Expression)? (WHERE Expression)?
 	;

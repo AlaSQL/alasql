@@ -4,6 +4,24 @@ This file contanis unstructured ideas for future development of Alasql.
 
 ## Ideas
 
+### Graph Database
+
+#### Edges & Vertices
+
+SEARCH OUT(),OUTE(),OUTV() FROM ?
+SEARCH OUT(Like,Love) FROM ?
+SEARCH IN(),INE(),INV() FROM ?
+SEARCH IN(Like,Love) FROM ?
+SEARCH BOTH(),BOTHE(), BOTHV() FROM ?
+SEARCH BOTH(Like,Love) FROM ?
+
+???
+SEARCH EXPAND(name) FROM Person; -- all people names
+SEARCH FIRST(name) FROM Person; -- all people names
+SEARCH LAST(name) FROM Person; -- all people names
+SEARCH COUNT(name) FROM Person; -- count number of children
+
+
 
 ### Version "Sapsan" 0.0.40 (25.01.2015)
 

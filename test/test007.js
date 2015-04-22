@@ -3,10 +3,10 @@ if(typeof exports === 'object') {
 	var alasql = require('..');
 };
 
-describe('Test 07', function() {
+describe('Test 007', function() {
 	it('UPDATE WHERE test ', function(done){
 
-		var db = new alasql.Database();
+		var db = new alasql.Database('test007');
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
 		db.exec('INSERT INTO test VALUES (1,10,100)');
@@ -17,9 +17,11 @@ describe('Test 07', function() {
 
 		db.exec('UPDATE test SET a=c*100 WHERE b<=3*10');
 
+//		console.log(db.exec('SELECT * FROM test'))
 		var res = db.exec("SELECT VALUE SUM(a) FROM test");
 
 		assert.equal(60009,res);
+		alasql('DROP DATABASE test007')
 		done();
 	});
 });

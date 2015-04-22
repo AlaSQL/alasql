@@ -7,7 +7,17 @@
     "example": "examples",
     "test": "test"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "dom-storage":"2.0.1",
+    "gulp":"3.8.11",
+    "gulp-changed":"1.2.1",
+    "gulp-concat-sourcemap":"1.3.1",
+    "gulp-shell":"0.4.1",
+    "jison":"0.4.15",
+    "lodash":"3.7.0",
+    "xlsjs":"0.7.15",
+    "xlsx":"0.8.0"
+    },
   "engines": [
     "node"
   ],

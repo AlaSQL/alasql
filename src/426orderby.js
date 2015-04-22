@@ -41,15 +41,15 @@ yy.Select.prototype.compileOrder = function (query) {
 				// COLLATE NOCASE
 				if(ord.nocase) dg += '.toUpperCase()';
 
-				s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
-				s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
+				s += 'if((a[\''+columnid+"']||'')"+dg+(ord.direction == 'ASC'?'>':'<')+'(b[\''+columnid+"']||'')"+dg+')return 1;';
+				s += 'if((a[\''+columnid+"']||'')"+dg+'==(b[\''+columnid+"']||'')"+dg+'){';
 
 			} else {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
 				if(ord.nocase) dg += '.toUpperCase()';
-				s += 'if('+ord.toJavaScript('a','')+dg+(ord.direction == 'ASC'?'>':'<')+ord.toJavaScript('b','')+dg+')return 1;';
-				s += 'if('+ord.toJavaScript('a','')+dg+'=='+ord.toJavaScript('b','')+dg+'){';
+				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
+				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+'==('+ord.toJavaScript('b','')+"||'')"+dg+'){';
 			}			
 
 //			if(columnid == '_') {
