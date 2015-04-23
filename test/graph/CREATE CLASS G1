@@ -1,0 +1,39 @@
+CREATE CLASS G1;
+CREATE CLASS G2;
+
+CREATE VERTEX G1;
+CREATE EDGE G1; 
+CREATE EDGE G2;
+
+SEARCH VERTEX() OUTE() CLASS(G2) OUTV() FROM G1;
+
+SEARCH OUTV() :(($node='vertex') AND ($class = 'G1')) age FROM G1
+SEARCH "Napoleon" OUTV() COUNT() FROM Person;
+
+SELECT age, COUNT() ;
+
+SEARCH "Napoleon" BOTHV("loves", "likes") :G1 (age < 33) {name,age,sex,relation:(PARENT(1)->name)} FROM Person;
+
+{headers:self[headers]}
+
+SEARCH :Person "Napoleon" BOTHV("loves", "likes") :G1805 (age < 33) {name,age,sex,relation:(PARENT(1)->name)};
+SEARCH "Napoleon" OUTV() OUTV() NOT("Napoleon") @[PARENT(1),PARENT(2)];
+
+$name
+$class
+$type
+
+$inv
+$outv
+$ine
+$outv
+$bothv
+
+Вопросы:
+1) Синтаксис формул
+2) Двунаправленный граф
+3) Поиск по дереву - компактный однонаправленный граф  
+CREATE TREE G2 ID aasa PARENT aaa CHILDREN ddds FROM (SELECT * FROM ?)
+CREATE VERTEX SET $id=source, name=sourcename SELECT 
+
+GAZE

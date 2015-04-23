@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.0.51 "Aloha" (23.04.2015 - ....04.2015)
+*
+
+
 ### 0.0.50 "Seoul" (21.04.2015 - 22.04.2015)
 * CREATE VERTEX and CREATE EDGE syntax
 * Fixed MIN and MAX functions and aggregators #93
