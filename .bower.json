@@ -1,9 +1,29 @@
 {
   "name": "alasql",
   "description":"AlaSQL - JavaScript SQL database library",
-  "version": "0.0.49",
+  "version": "0.0.50",
   "license": "MIT",
-  "keywords": ["javascript","sql","database","indexeddb","excel","localstorage"],
+  "keywords": [
+    "sql",
+    "nosql",
+    "alasql",
+    "javascript",
+    "parser",
+    "database",
+    "DBMS",
+    "data",
+    "query",
+    "localStorage",
+    "IndexedDB",
+    "DOM-storage",
+    "SQLite",
+    "JSON",
+    "Excel",
+    "XLSX",
+    "XLS",
+    "CSV",
+    "worker"
+  ],
   "authors": ["Andrey Gershun <agershun@gmail.com>"],
   "homepage": "alasql.org",
   "repository": {
@@ -11,7 +31,28 @@
     "url": "https://github.com/agershun/alasql.git"
   },
   "dependencies": {
+    "dom-storage":"2.0.1",
+    "xlsjs":"0.7.15",
+    "xlsx":"0.8.0"
   },
   "devDependencies": {
-  }
+    "gulp":"3.8.11",
+    "gulp-changed":"1.2.1",
+    "gulp-concat-sourcemap":"1.3.1",
+    "gulp-shell":"0.4.1",
+    "jison":"0.4.15",
+    "lodash":"3.7.0",
+  },
+  "ignore": [
+    "src",
+    "test",
+    "test-sql",
+    "node_modules",
+    "bower.json",
+    "gruntfile.js",
+    "package.json",
+    "README.md",
+    "bin",
+    "lib"
+  ]
 }
