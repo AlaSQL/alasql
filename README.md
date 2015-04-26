@@ -2,7 +2,6 @@
 
 Version: 0.0.50 "Seoul" Date: April 22, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-Please use [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions or [Issues](https://github.com/agershun/alasql/issues) to report bugs.
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -19,6 +18,11 @@ AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb
     </script>
 ```
 Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">AlaSQL console</a>.
+
+Please use:
+* [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions
+* [Issues](https://github.com/agershun/alasql/issues) to report bugs.
+* [Feathub](http://feathub.com/agershun/alasql) for voting for new features
 
 ## Documentation 
 
