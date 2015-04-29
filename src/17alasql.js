@@ -54,6 +54,8 @@ alasql.options.logprompt = true; // Print SQL at log
 // Default modifier
 // values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
 alasql.options.modifier = undefined; 
+// How many rows to lookup to define columns
+alasql.options.columnlookup = 10; 
 
 //alasql.options.worker = false;
 // Variables

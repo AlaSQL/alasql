@@ -62,15 +62,29 @@ describe('Test 269 options', function() {
   it('6. MATRIX', function(done) {
     alasql.options.modifier = 'MATRIX';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
+//console.log(res);
     // Wrong with reduced rows
     assert.deepEqual(res,[[1,10,100],[2,20,200],[3,30,undefined],[undefined,40,400]]);
 
     done();    
   });
 
+  it('6a. MATRIX', function(done) {
+    alasql.options.modifier = 'MATRIX';
+    var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b \
+      ORDER BY a',[data1,data2]);
+//console.log(res);
+    // Wrong with reduced rows
+    assert.deepEqual(res,[[undefined,40,400],[1,10,100],[2,20,200],[3,30,undefined]]);
+
+    done();    
+  });
+
+
   it('7. RECORDSET', function(done) {
     alasql.options.modifier = "RECORDSET";
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
+//console.log(res);
     // Wrong with reduced rows
     assert.deepEqual(res, {data:
      [ { a: 1, b: 10, c: 100 },
@@ -79,7 +93,6 @@ describe('Test 269 options', function() {
      { b: 40, c: 400 } ],
      columns: [{columnid:'a'},{columnid:'b'},{columnid:'c'}]}
     );
-
     done();    
   });
 
@@ -99,8 +112,8 @@ describe('Test 269 options', function() {
     done();    
   });
 
-
   it('99. Drop phase', function(done) {
+    delete alasql.options.modifier;    
     alasql('DROP DATABASE test269');
     done();    
   });
