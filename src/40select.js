@@ -288,7 +288,9 @@ yy.Select.prototype.compile = function(databaseid) {
 };
 
 function modify(query, res) {
-	if(query.modifier == 'VALUE') {
+	var modifier = query.modifier || alasql.options.modifier;
+
+	if(modifier == 'VALUE') {
 //		console.log(222,res);
 		if(res.length > 0) {
 			var key;
@@ -298,7 +300,7 @@ function modify(query, res) {
 		} else {
 			res = undefined;
 		}
-	} if(query.modifier == 'ROW') {
+	} if(modifier == 'ROW') {
 		if(res.length > 0) {
 			var key;
 			if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
@@ -311,7 +313,7 @@ function modify(query, res) {
 		} else {
 			res = undefined;
 		}
-	} if(query.modifier == 'COLUMN') {
+	} if(modifier == 'COLUMN') {
 		var ar = [];
 		if(res.length > 0) {
 			var key;
@@ -322,9 +324,9 @@ function modify(query, res) {
 			}
 		};
 		res = ar;
-	} if(query.modifier == 'MATRIX') {
+	} if(modifier == 'MATRIX') {
 		res = arrayOfArrays(res);
-	} if(query.modifier == 'INDEX') {
+	} if(modifier == 'INDEX') {
 		var ar = {};
 		var key,val;
 		if(query.columns && query.columns.length > 0) {
@@ -340,10 +342,10 @@ function modify(query, res) {
 		}
 		res = ar;
 //		res = arrayOfArrays(res);
-	} if(query.modifier == 'RECORDSET') {
+	} if(modifier == 'RECORDSET') {
 		res = new alasql.Recordset({data:res, columns:query.columns});
 //		res = arrayOfArrays(res);
-	} if(query.modifier == 'TEXTSTRING') {
+	} if(modifier == 'TEXTSTRING') {
 		var key;
 		if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
 		else key = Object.keys(res[0])[0];

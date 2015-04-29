@@ -51,6 +51,10 @@ alasql.options.casesensitive = true; // Table and column names are case sensitiv
 alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
 alasql.options.logprompt = true; // Print SQL at log
 
+// Default modifier
+// values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
+alasql.options.modifier = undefined; 
+
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};
