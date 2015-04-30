@@ -2,8 +2,6 @@
 
 Version: 0.0.50 "Seoul" Date: April 22, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
-[![Feature Requests](http://feathub.com/agershun/alasql?format=svg)](http://feathub.com/agershun/alasql)
-
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
 AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb) to your project and call 
@@ -23,7 +21,7 @@ Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it 
 Please use:
 * [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions
 * [Issues](https://github.com/agershun/alasql/issues) to report bugs.
-* [Feathub](http://feathub.com/agershun/alasql) for voting for new features
+* [Feathub](http://feathub.com/agershun/alasql) Please, vote for new features
 
 ## Documentation 
 
