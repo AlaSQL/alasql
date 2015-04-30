@@ -700,7 +700,13 @@ Probably, there are many of others. Please, [give me a chance](https://github.co
   
 ### Future Plans
 
-Read my [to do](TODO.md) page
+Read my [to do](TODO.md) page - there are also the community generated feature requests here:
+
+[![Feature Requests](http://feathub.com/agershun/alasql?format=svg)](http://feathub.com/agershun/alasql)
+
+Take charge and vote on your favorite.
+
+
 
 ### Similar and related projects
 
