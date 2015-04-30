@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description":"AlaSQL - JavaScript SQL database library",
-  "version": "0.0.50",
+  "version": "0.0.51",
   "license": "MIT",
   "keywords": [
     "sql",
