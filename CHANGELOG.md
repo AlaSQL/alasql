@@ -1,8 +1,8 @@
 # Changelog
 
-### 0.0.51 "Aloha" (23.04.2015 - ....04.2015)
-*
-
+### 0.0.51 "Rimini" (23.04.2015 - ....04.2015)
+* alasql.options.modifier flag added
+* alasql.options.columnlookup flag added
 
 ### 0.0.50 "Seoul" (21.04.2015 - 22.04.2015)
 * CREATE VERTEX and CREATE EDGE syntax
