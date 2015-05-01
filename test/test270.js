@@ -116,7 +116,7 @@ describe('Test 270 RECORDSET tests', function() {
   it('9d. Test on table without column definitions', function(done) {
     var res = alasql('SELECT a,*,a*a AS a2 FROM three');
     var colres = _.pluck(res.columns,'columnid');
-    assert.deepEqual(colres,['a','b','a2']);
+    assert.deepEqual(colres,['a','a','b','a2']);
     done();    
   });
 
@@ -144,7 +144,7 @@ describe('Test 270 RECORDSET tests', function() {
   it('11b. Array with column', function(done) {
     var res = alasql('SELECT *,b,a FROM ?',[data1]);  
     var colres = _.pluck(res.columns,'columnid');
-    assert.deepEqual(colres,['a','b']);
+    assert.deepEqual(colres,['a','b','b','a']);
     done();    
   });
 
@@ -156,7 +156,7 @@ describe('Test 270 RECORDSET tests', function() {
   });
 
   it('12a. Array with column', function(done) {
-    var res = alasql('SELECT a,a*a,b AS a2 FROM ?',[data1]);  
+    var res = alasql('SELECT a,a*a AS a2,b FROM ?',[data1]);  
     var colres = _.pluck(res.columns,'columnid');
     assert.deepEqual(colres, ["a","a2",'b']);
     done();
@@ -198,7 +198,7 @@ describe('Test 270 RECORDSET tests', function() {
     alasql('SELECT * INTO two FROM ?',[data2]);
     var res = alasql('SELECT one.*,two.* FROM one JOIN two USING b');
     var colres = _.pluck(res.columns,'columnid');
-    assert.deepEqual(colres, ["a","b","c"]);
+    assert.deepEqual(colres, ["a","b","b","c"]);
     done();    
   });
 

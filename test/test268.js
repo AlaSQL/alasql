@@ -66,7 +66,7 @@ var t50000 = 200;
 
 
   it('4. INNER JOIN on Big Array', function(done) {
-    this.
+
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 ON t1.b = t2.b',[t1,t2]);
     console.log('INNER =',res.length);
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 LEFT JOIN ? t2 ON t1.b = t2.b',[t1,t2]);
