@@ -6,11 +6,6 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(typeof exports == 'object') {
-  var DOMStorage = require("dom-storage")
-  global.localStorage = new DOMStorage("./restest267.json", { strict: false, ws: '' });
-};
-
 
 describe('Test 271 RECORDSET and Excel tests', function() {
 

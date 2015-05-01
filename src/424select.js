@@ -297,3 +297,16 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 //	console.log('selectg:',s);
 	return new Function('g,params,alasql',s+'return r');
 }
+
+yy.Select.prototype.compileRemoveColumns = function(query) {
+	if(typeof this.removecolumns != 'undefined') {
+		query.removeKeys = query.removeKeys.concat(
+			this.removecolumns.filter(function (column) {
+				return (typeof column.like == 'undefined');
+			}).map(function(column){return column.columnid}));
+				
+		query.removeLikeKeys = this.removecolumns.filter(function (column) {
+				return (typeof column.like != 'undefined');
+			}).map(function(column){return column.like});
+	}
+}

@@ -98,6 +98,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	// Create variable for query
 	var query = new Query();
 
+	// Array with columns to be removed
     query.removeKeys = [];
 
 	query.explain = this.explain; // Explain
@@ -128,6 +129,10 @@ yy.Select.prototype.compile = function(databaseid) {
 	} else {
 		query.selectfns = this.compileSelect1(query);
 	}
+
+	// Remove columns clause
+	this.compileRemoveColumns(query);
+
 	// 5. Optimize WHERE and JOINS
 	if(this.where) this.compileWhereJoins(query);
 
