@@ -222,6 +222,21 @@ function queryfn3(query) {
       }    
     };
 
+	// Remove unused columns
+	// SELECT * REMOVE COLUMNS LIKE "%b"
+	if(typeof query.removeLikeKeys != 'undefined' && query.removeLikeKeys.length > 0) {
+		for(var i=0,ilen=query.data.length;i<ilen;i++) {
+			var r = query.data[i];
+			for(var k in r) {
+				for(var j=0;j<query.removeLikeKeys.length;j++) {
+					if(k.match(query.removeLikeKeys[j])) {
+						delete r[k];
+					}				
+				}
+			}; 
+		}
+	}
+
 //	console.log(query.intoallfns);
 
 	// if(query.explain) {
