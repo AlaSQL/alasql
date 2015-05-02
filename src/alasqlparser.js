@@ -144,7 +144,7 @@ case 62:
  this.$ = {removecolumns:$$[$0]}; 
 break;
 case 63:
- this.$ = $$[$0-2]; this.$.push($$[$0-1]); 
+ this.$ = $$[$0-2]; this.$.push($$[$0]); 
 break;
 case 65: case 68: case 112: case 171: case 203: case 211: case 212: case 213: case 214: case 215: case 216: case 217: case 218: case 219: case 220: case 221: case 222: case 223: case 224: case 226: case 238: case 239: case 240: case 241: case 242: case 243: case 284: case 335: case 336: case 337: case 338: case 339: case 340: case 402: case 427: case 429: case 496: case 497: case 498: case 499: case 500: case 501: case 505: case 507: case 508: case 517: case 528: case 529:
  this.$ = $$[$0]; 

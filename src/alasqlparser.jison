@@ -482,7 +482,7 @@ RemoveClause
 
 RemoveColumnsList
 	: RemoveColumnsList COMMA RemoveColumn
-		{ $$ = $1; $$.push($2); }
+		{ $$ = $1; $$.push($3); }
 	| RemoveColumn
 		{ $$ = [$1]; }
 	;

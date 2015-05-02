@@ -1,9 +1,13 @@
 # Changelog
 
-### 0.0.51 "Rimini" (23.04.2015 - ....04.2015)
+### 0.0.51 "Rimini" (23.04.2015 - 02.05.2015)
 * alasql.options.modifier flag added
 * alasql.options.columnlookup flag added
-* 
+* SELECT * REMOVE COLUMNS a,b 
+* SELECT * REMOVE COLUMNS LIKE 'b%' 
+* Remove columns from .columns schema
+* Custom aggregators - added additional calls (init and in the cycle)
+* Added MEDIAN() aggregator
 
 ### 0.0.50 "Seoul" (21.04.2015 - 22.04.2015)
 * CREATE VERTEX and CREATE EDGE syntax

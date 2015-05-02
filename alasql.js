@@ -261,7 +261,7 @@ case 62:
  this.$ = {removecolumns:$$[$0]}; 
 break;
 case 63:
- this.$ = $$[$0-2]; this.$.push($$[$0-1]); 
+ this.$ = $$[$0-2]; this.$.push($$[$0]); 
 break;
 case 65: case 68: case 112: case 171: case 203: case 211: case 212: case 213: case 214: case 215: case 216: case 217: case 218: case 219: case 220: case 221: case 222: case 223: case 224: case 226: case 238: case 239: case 240: case 241: case 242: case 243: case 284: case 335: case 336: case 337: case 338: case 339: case 340: case 402: case 427: case 429: case 496: case 497: case 498: case 499: case 500: case 501: case 505: case 507: case 508: case 517: case 528: case 529:
  this.$ = $$[$0]; 
@@ -4362,19 +4362,41 @@ function queryfn3(query) {
 
 //	console.log('removeKeys:',query.removeKeys);
 
-    var removeKeys = query.removeKeys;
-    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
-    var jlen = removeKeys.length;
-    if(jlen > 0) {
-      for(var i=0,ilen=query.data.length;i<ilen;i++) {
-        for(var j=0; j<jlen;j++)
-          delete query.data[i][removeKeys[j]];
-      }    
-    };
+	if(typeof query.removeKeys != 'undefined' &&  query.removeKeys.length > 0) {
+	    var removeKeys = query.removeKeys;
 
-	// Remove unused columns
-	// SELECT * REMOVE COLUMNS LIKE "%b"
+	    // TODO: Check what artefacts rest from Angular.js
+	    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
+
+	    // Remove from data
+	    var jlen = removeKeys.length;
+	    if(jlen > 0) {
+	      for(var i=0,ilen=query.data.length;i<ilen;i++) {
+	        for(var j=0; j<jlen;j++) {
+	          delete query.data[i][removeKeys[j]];
+	        }
+	      }    
+	    };
+
+	    // Remove from columns list
+		if(query.columns.length > 0) {
+			query.columns = query.columns.filter(function(column){
+				var found = false;
+				removeKeys.forEach(function(key){
+					if(column.columnid == key) found = true;
+				});
+				return !found;
+			});
+		}
+
+	}
+
 	if(typeof query.removeLikeKeys != 'undefined' && query.removeLikeKeys.length > 0) {
+
+	    var removeLikeKeys = query.removeLikeKeys;
+
+		// Remove unused columns
+		// SELECT * REMOVE COLUMNS LIKE "%b"
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
 			var r = query.data[i];
 			for(var k in r) {
@@ -4385,8 +4407,18 @@ function queryfn3(query) {
 				}
 			}; 
 		}
-	}
 
+		if(query.columns.length > 0) {
+			query.columns = query.columns.filter(function(column){
+				var found = false;
+				removeLikeKeys.forEach(function(key){
+					if(column.columnid.match(key)) found = true;
+				});
+				return !found;
+			});
+		}
+
+	}
 //	console.log(query.intoallfns);
 
 	// if(query.explain) {
@@ -4622,7 +4654,7 @@ function doJoin (query, scope, h) {
 //			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-				query.groupfn(scope, query.params, query.alasql)
+				query.groupfn(scope, query.params, alasql)
 			} else {
 //				query.qwerty = 999;
 //console.log(query.qwerty, query.queriesfn && query.queriesfn.length,2);
@@ -6104,7 +6136,7 @@ if(false) {
 //console.log(agroup);
 
 		// Start of group function
-		s += 'var g=this.xgroups[';
+		s += 'var acc,g=this.xgroups[';
 
 	//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
@@ -6187,7 +6219,9 @@ if(false) {
 					aft += ',g[\''+colas+'\']='+col.expression.toJavaScript('g',-1); 
 					return '';
 				} else if(col.aggregatorid == 'REDUCE') {
-					return '\''+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+'),'; 
+					query.removeKeys.push('_REDUCE_'+colas);
+					return '\''+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={})),'
+					+'\'__REDUCE__'+colas+'\':acc,'; 
 				}
 				return '';
 			} else return '';
@@ -6293,7 +6327,7 @@ if(false) {
 				} else if(col.aggregatorid == 'AGGR') {
 					return pre+'g[\''+colas+'\']='+col.expression.toJavaScript('g',-1)+';'+post; 
 				} else if(col.aggregatorid == 'REDUCE') {
-					return pre+'g[\''+colas+'\']=alasql.aggr.'+col.funcid+'('+colexp+',g[\''+colas+'\']);'+post; 
+					return pre+'g[\''+colas+'\']=alasql.aggr.'+col.funcid+'('+colexp+',g[\''+colas+'\'],g[\'__REDUCE__'+colas+'\']);'+post; 
 				}
 				return '';
 			} else return '';
@@ -6624,13 +6658,15 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 	return new Function('g,params,alasql',s+'return r');
 }
 
+// SELECY * REMOVE [COLUMNS] col-list, LIKE ''
 yy.Select.prototype.compileRemoveColumns = function(query) {
 	if(typeof this.removecolumns != 'undefined') {
 		query.removeKeys = query.removeKeys.concat(
 			this.removecolumns.filter(function (column) {
 				return (typeof column.like == 'undefined');
 			}).map(function(column){return column.columnid}));
-				
+
+//console.log(query.removeKeys,this.removecolumns);				
 		query.removeLikeKeys = this.removecolumns.filter(function (column) {
 				return (typeof column.like != 'undefined');
 			}).map(function(column){
@@ -8055,6 +8091,18 @@ alasql.aggr.GROUP_CONCAT = function(v,s){
     if(typeof s == "undefined") return v; else return s+','+v;
 };
 
+alasql.aggr.MEDIAN = function(v,s,acc){
+// Init
+if(typeof acc.arr == 'undefined') {
+  acc.arr = [v];
+  return v; 
+// Pass
+} else {
+  acc.arr.push(v);
+  var p = acc.arr.sort();
+  return p[(p.length/2|0)];     
+};
+};
 
 
 

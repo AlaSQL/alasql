@@ -72,7 +72,7 @@ if(false) {
 //console.log(agroup);
 
 		// Start of group function
-		s += 'var g=this.xgroups[';
+		s += 'var acc,g=this.xgroups[';
 
 	//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
@@ -155,7 +155,9 @@ if(false) {
 					aft += ',g[\''+colas+'\']='+col.expression.toJavaScript('g',-1); 
 					return '';
 				} else if(col.aggregatorid == 'REDUCE') {
-					return '\''+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+'),'; 
+					query.removeKeys.push('_REDUCE_'+colas);
+					return '\''+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={})),'
+					+'\'__REDUCE__'+colas+'\':acc,'; 
 				}
 				return '';
 			} else return '';
@@ -261,7 +263,7 @@ if(false) {
 				} else if(col.aggregatorid == 'AGGR') {
 					return pre+'g[\''+colas+'\']='+col.expression.toJavaScript('g',-1)+';'+post; 
 				} else if(col.aggregatorid == 'REDUCE') {
-					return pre+'g[\''+colas+'\']=alasql.aggr.'+col.funcid+'('+colexp+',g[\''+colas+'\']);'+post; 
+					return pre+'g[\''+colas+'\']=alasql.aggr.'+col.funcid+'('+colexp+',g[\''+colas+'\'],g[\'__REDUCE__'+colas+'\']);'+post; 
 				}
 				return '';
 			} else return '';

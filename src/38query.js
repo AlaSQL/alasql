@@ -212,19 +212,41 @@ function queryfn3(query) {
 
 //	console.log('removeKeys:',query.removeKeys);
 
-    var removeKeys = query.removeKeys;
-    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
-    var jlen = removeKeys.length;
-    if(jlen > 0) {
-      for(var i=0,ilen=query.data.length;i<ilen;i++) {
-        for(var j=0; j<jlen;j++)
-          delete query.data[i][removeKeys[j]];
-      }    
-    };
+	if(typeof query.removeKeys != 'undefined' &&  query.removeKeys.length > 0) {
+	    var removeKeys = query.removeKeys;
 
-	// Remove unused columns
-	// SELECT * REMOVE COLUMNS LIKE "%b"
+	    // TODO: Check what artefacts rest from Angular.js
+	    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
+
+	    // Remove from data
+	    var jlen = removeKeys.length;
+	    if(jlen > 0) {
+	      for(var i=0,ilen=query.data.length;i<ilen;i++) {
+	        for(var j=0; j<jlen;j++) {
+	          delete query.data[i][removeKeys[j]];
+	        }
+	      }    
+	    };
+
+	    // Remove from columns list
+		if(query.columns.length > 0) {
+			query.columns = query.columns.filter(function(column){
+				var found = false;
+				removeKeys.forEach(function(key){
+					if(column.columnid == key) found = true;
+				});
+				return !found;
+			});
+		}
+
+	}
+
 	if(typeof query.removeLikeKeys != 'undefined' && query.removeLikeKeys.length > 0) {
+
+	    var removeLikeKeys = query.removeLikeKeys;
+
+		// Remove unused columns
+		// SELECT * REMOVE COLUMNS LIKE "%b"
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
 			var r = query.data[i];
 			for(var k in r) {
@@ -235,8 +257,18 @@ function queryfn3(query) {
 				}
 			}; 
 		}
-	}
 
+		if(query.columns.length > 0) {
+			query.columns = query.columns.filter(function(column){
+				var found = false;
+				removeLikeKeys.forEach(function(key){
+					if(column.columnid.match(key)) found = true;
+				});
+				return !found;
+			});
+		}
+
+	}
 //	console.log(query.intoallfns);
 
 	// if(query.explain) {

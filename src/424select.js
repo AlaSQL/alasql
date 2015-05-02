@@ -298,13 +298,15 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 	return new Function('g,params,alasql',s+'return r');
 }
 
+// SELECY * REMOVE [COLUMNS] col-list, LIKE ''
 yy.Select.prototype.compileRemoveColumns = function(query) {
 	if(typeof this.removecolumns != 'undefined') {
 		query.removeKeys = query.removeKeys.concat(
 			this.removecolumns.filter(function (column) {
 				return (typeof column.like == 'undefined');
 			}).map(function(column){return column.columnid}));
-				
+
+//console.log(query.removeKeys,this.removecolumns);				
 		query.removeLikeKeys = this.removecolumns.filter(function (column) {
 				return (typeof column.like != 'undefined');
 			}).map(function(column){
