@@ -29,8 +29,6 @@ function compileSelectStar (query,alias) {
 
 		var columns = query.ixsources[alias].columns;
 
-//		console.log(32,alias,columns);
-
 //		if(columns.length == 0 && query.aliases[alias].tableid) {
 //			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
 //		};
@@ -59,6 +57,8 @@ function compileSelectStar (query,alias) {
 			});
 //console.log(999,columns);			
 		} else {
+					console.log(60,alias,columns);
+
 			// if column not exists, then copy all
 			sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
 //console.log(777, sp);

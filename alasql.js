@@ -5417,7 +5417,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			onmiddlefn: returnTrue,			
 			srcwherefns: '',	// for optimization
 			srcwherefn: returnTrue,
-			columns: []			
+//			columns: []			
 		};
 
 		if(tq instanceof yy.Table) {
@@ -5466,6 +5466,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 			source.subquery = tq.compile(query.database.databaseid);
 			source.columns = source.subquery.query.columns;
+//			console.log(101,source.columns);
 //			tq.columns;
 
 			source.datafn = function(query, params, cb, idx, alasql) {
@@ -6409,8 +6410,6 @@ function compileSelectStar (query,alias) {
 
 		var columns = query.ixsources[alias].columns;
 
-//		console.log(32,alias,columns);
-
 //		if(columns.length == 0 && query.aliases[alias].tableid) {
 //			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
 //		};
@@ -6439,6 +6438,8 @@ function compileSelectStar (query,alias) {
 			});
 //console.log(999,columns);			
 		} else {
+					console.log(60,alias,columns);
+
 			// if column not exists, then copy all
 			sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
 //console.log(777, sp);

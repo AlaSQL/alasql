@@ -49,7 +49,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			onmiddlefn: returnTrue,			
 			srcwherefns: '',	// for optimization
 			srcwherefn: returnTrue,
-			columns: []			
+//			columns: []			
 		};
 
 		if(tq instanceof yy.Table) {
@@ -98,6 +98,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 			source.subquery = tq.compile(query.database.databaseid);
 			source.columns = source.subquery.query.columns;
+//			console.log(101,source.columns);
 //			tq.columns;
 
 			source.datafn = function(query, params, cb, idx, alasql) {
