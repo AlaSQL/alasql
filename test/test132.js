@@ -28,13 +28,30 @@ describe('Test 132 Alasql + NoSQL', function() {
 	});
 
 	it("3. SELECT", function(done) {
-		var res1 = alasql('SELECT * FROM one WHERE b IN (2,3)');
+		var res = alasql('SELECT * FROM one');
+		assert.deepEqual(res,
+		[ { a: 1, b: 'One' },
+		  { a: 2, b: 'Two' },
+		  { a: 3, b: 'Three' },
+		  { a: 4, b: 'Four' },
+		  { a: 4, b: 'Four' },
+		  { a: 6, b: 'Six' },
+		  { a: 7, b: 'Seven' },
+		  { a: 7, b: 'Seven' },
+		  { a: 9, b: 'Nine' } ]
+		  );
+
+		var res = alasql('SELECT * FROM one WHERE b IN ("Two","Three")');
+		assert.deepEqual(res,
+			[ { a: 2, b: 'Two' }, { a: 3, b: 'Three' } ]
+		);
 //		var res2 = alasql('SELECT * FROM one WHERE @{b:@[2,3]}');
 //		var res3 = alasql.tables.one.find({b:[2,3]});
 //		assert.deepEqual(res1,res2);
 //		assert.deepEqual(res1,res3);
 
 		var res1 = alasql('SELECT (a = 2) AS alpha FROM one WHERE b IN (2,3)');
+		console.log(res1);
 //		var res2 = alasql('SELECT @{a:2} AS alpha FROM one WHERE @{b:[2,3]}');
 //		assert.deepEqual(res1,res2);
 

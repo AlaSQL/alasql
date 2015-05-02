@@ -88,7 +88,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
 "COLUMN"										return "COLUMN"
-"COLUMNS"										return "COLUMNS"
+"COLUMNS"										return "COLUMN"
 "COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
 "CONTENT"										return "CONTENT"
@@ -150,8 +150,6 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
-'SOURCE'										return 'SOURCE'
-'STRATEGY'										return 'STRATEGY'
 "MATCHED"										return "MATCHED"
 'MATRIX'										return 'MATRIX'	
 "MAX"											return "MAX"
@@ -185,6 +183,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
 'RELATIVE'                                      return 'RELATIVE'
+'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
@@ -201,6 +200,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'SETS'                                        	return 'SETS'
 'SHOW'                                        	return 'SHOW'
 'SOME'                                        	return 'SOME'
+'SOURCE'										return 'SOURCE'
+'STRATEGY'										return 'STRATEGY'
 'STORE'                                        	return 'STORE'
 "SUM"											return "SUM"
 'TABLE'											return 'TABLE'
@@ -460,11 +461,11 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
+	: SelectClause RemoveClause? IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
 		{   
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
-		    yy.extend($$,$8); 
+		    yy.extend($$,$8); yy.extend($$,$9); 
 		    $$ = $1;
 /*		    if(yy.exists) $$.exists = yy.exists;
 		    delete yy.exists;
@@ -472,6 +473,25 @@ Select
 			delete yy.queries;
 */		}
 	| SearchClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
+	;
+
+RemoveClause
+	: REMOVE COLUMN? RemoveColumnsList
+		{ $$ = {removecolumns:$3}; } 
+	;
+
+RemoveColumnsList
+	: RemoveColumnsList COMMA RemoveColumn
+		{ $$ = $1; $$.push($3); }
+	| RemoveColumn
+		{ $$ = [$1]; }
+	;
+
+RemoveColumn
+	: Column
+		{ $$ = $1; }
+	| LIKE StringValue
+		{ $$ = {like:$2}; }	
 	;
 
 SearchClause
@@ -1804,9 +1824,9 @@ ShowTables
 	;
 
 ShowColumns
-	: SHOW COLUMNS FROM Table
+	: SHOW COLUMN FROM Table
 		{ $$ = new yy.ShowColumns({table: $4});}
-	| SHOW COLUMNS FROM Table FROM Literal
+	| SHOW COLUMN FROM Table FROM Literal
 		{ $$ = new yy.ShowColumns({table: $4, databaseid:$6});}
 	;
 

@@ -48,10 +48,13 @@ yy.Select.prototype.compileFrom = function(query) {
 			joinmode: 'INNER',
 			onmiddlefn: returnTrue,			
 			srcwherefns: '',	// for optimization
-			srcwherefn: returnTrue			
+			srcwherefn: returnTrue,
+//			columns: []			
 		};
 
 		if(tq instanceof yy.Table) {
+			// Get columns from table
+			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
 //			console.log('test',alasql.options.autocommit);
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 // console.log(0,source.databaseid);
@@ -89,14 +92,23 @@ yy.Select.prototype.compileFrom = function(query) {
 				};
 			}
 		} else if(tq instanceof yy.Select) {
+			if(typeof tq.modifier == 'undefined') {
+				tq.modifier = 'RECORDSET'; // Subqueries always return recordsets
+			}
+
 			source.subquery = tq.compile(query.database.databaseid);
+			source.columns = source.subquery.query.columns;
+//			console.log(101,source.columns);
+//			tq.columns;
+
 			source.datafn = function(query, params, cb, idx, alasql) {
 //				return source.subquery(query.params, cb, idx, query);
 				var res;
 				source.subquery(query.params, function(data){
-	//				console.log(512,data);
-					if(cb) res = cb(data,idx,query);
-					return data;
+					res = data.data;
+					if(cb) res = cb(res,idx,query);
+					return res;
+//					return data.data;
 				});
 //					console.log(515,res);
 				return res;
@@ -163,6 +175,7 @@ yy.Select.prototype.compileFrom = function(query) {
 };
 
 alasql.prepareFromData = function(data,array) {
+//console.log(177,data,array);
 	var res = data;
 	if(typeof data == "string") {
 		res = data.split(/\r?\n/);

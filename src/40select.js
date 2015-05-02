@@ -98,6 +98,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	// Create variable for query
 	var query = new Query();
 
+	// Array with columns to be removed
     query.removeKeys = [];
 
 	query.explain = this.explain; // Explain
@@ -128,6 +129,10 @@ yy.Select.prototype.compile = function(databaseid) {
 	} else {
 		query.selectfns = this.compileSelect1(query);
 	}
+
+	// Remove columns clause
+	this.compileRemoveColumns(query);
+
 	// 5. Optimize WHERE and JOINS
 	if(this.where) this.compileWhereJoins(query);
 
@@ -288,21 +293,42 @@ yy.Select.prototype.compile = function(databaseid) {
 };
 
 function modify(query, res) {
-	if(query.modifier == 'VALUE') {
+	var modifier = query.modifier || alasql.options.modifier;
+	var columns = query.columns;
+	if(typeof columns == 'undefined' || columns.length == 0) {
+		// Try to create columns
+		if(res.length > 0) {
+			var allcol = {};
+			for(var i=0;i<Math.min(res.length,alasql.options.columnlookup||10);i++) {
+				for(var key in res[i]) {
+					allcol[key] = true;
+				}
+			}
+
+			columns = Object.keys(allcol).map(function(columnid){
+				return {columnid:columnid};
+			});			
+		} else {
+			// Cannot recognize columns
+			columns = [];
+		}
+	}
+
+//	console.log(columns);
+
+	if(modifier == 'VALUE') {
 //		console.log(222,res);
 		if(res.length > 0) {
 			var key;
-			if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
+			if(columns && columns.length > 0) key = columns[0].columnid;
 			else key = Object.keys(res[0])[0];
 			res = res[0][key];
 		} else {
 			res = undefined;
 		}
-	} if(query.modifier == 'ROW') {
+	} if(modifier == 'ROW') {
 		if(res.length > 0) {
 			var key;
-			if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
-			else key = Object.keys(res[0])[0];
 			var a = [];
 			for(var key in res[0]) {
 				a.push(res[0][key]);
@@ -311,25 +337,37 @@ function modify(query, res) {
 		} else {
 			res = undefined;
 		}
-	} if(query.modifier == 'COLUMN') {
+	} if(modifier == 'COLUMN') {
 		var ar = [];
 		if(res.length > 0) {
 			var key;
-			if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
+			if(columns && columns.length > 0) key = columns[0].columnid;
 			else key = Object.keys(res[0])[0];
 			for(var i=0, ilen=res.length; i<ilen; i++){
 				ar.push(res[i][key]);
 			}
 		};
 		res = ar;
-	} if(query.modifier == 'MATRIX') {
-		res = arrayOfArrays(res);
-	} if(query.modifier == 'INDEX') {
+
+	} if(modifier == 'MATRIX') {
+		// Returns square matrix of rows
+		var ar = [];
+		for(var i=0;i<res.length;i++) {		
+			var a = [];
+			var r = res[i];
+			for(var j=0;j<columns.length;j++) {
+				a.push(r[columns[j].columnid]);
+			}
+			ar.push(a);
+		}
+		res = ar;
+
+	} if(modifier == 'INDEX') {
 		var ar = {};
 		var key,val;
-		if(query.columns && query.columns.length > 0) {
-			key = query.columns[0].columnid;
-			val = query.columns[1].columnid;
+		if(columns && columns.length > 0) {
+			key = columns[0].columnid;
+			val = columns[1].columnid;
 		} else {
 			var okeys = Object.keys(res[0]);
 			key = okeys[0];
@@ -340,12 +378,12 @@ function modify(query, res) {
 		}
 		res = ar;
 //		res = arrayOfArrays(res);
-	} if(query.modifier == 'RECORDSET') {
-		res = new alasql.Recordset({data:res, columns:query.columns});
+	} if(modifier == 'RECORDSET') {
+		res = new alasql.Recordset({data:res, columns:columns});
 //		res = arrayOfArrays(res);
-	} if(query.modifier == 'TEXTSTRING') {
+	} if(modifier == 'TEXTSTRING') {
 		var key;
-		if(query.columns && query.columns.length > 0) key = query.columns[0].columnid;
+		if(columns && columns.length > 0) key = columns[0].columnid;
 		else key = Object.keys(res[0])[0];
 		var s = '';
 		for(var i=0, ilen=res.length; i<ilen; i++){

@@ -20,9 +20,21 @@ function compileSelectStar (query,alias) {
 //	if(!alias) {
 //		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
 //	} else 	{
-		if(query.aliases[alias].tableid) {
-			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
-		};
+
+		// TODO move this out of this function 
+		query.ixsources = {};
+		query.sources.forEach(function(source){
+			query.ixsources[source.alias] = source;
+		});
+
+		var columns = query.ixsources[alias].columns;
+
+//		if(columns.length == 0 && query.aliases[alias].tableid) {
+//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
+//		};
+
+
+
 		// Check if this is a Table or other
 
 		if(columns && columns.length > 0) {
@@ -45,6 +57,8 @@ function compileSelectStar (query,alias) {
 			});
 //console.log(999,columns);			
 		} else {
+//					console.log(60,alias,columns);
+
 			// if column not exists, then copy all
 			sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
 //console.log(777, sp);
@@ -296,4 +310,21 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 	var s = query.selectgfns;
 //	console.log('selectg:',s);
 	return new Function('g,params,alasql',s+'return r');
+}
+
+// SELECY * REMOVE [COLUMNS] col-list, LIKE ''
+yy.Select.prototype.compileRemoveColumns = function(query) {
+	if(typeof this.removecolumns != 'undefined') {
+		query.removeKeys = query.removeKeys.concat(
+			this.removecolumns.filter(function (column) {
+				return (typeof column.like == 'undefined');
+			}).map(function(column){return column.columnid}));
+
+//console.log(query.removeKeys,this.removecolumns);				
+		query.removeLikeKeys = this.removecolumns.filter(function (column) {
+				return (typeof column.like != 'undefined');
+			}).map(function(column){
+				return new RegExp(column.like.value.replace(/\%/g,'.*'),'g');
+			});
+	}
 }

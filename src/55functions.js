@@ -172,4 +172,16 @@ alasql.aggr.GROUP_CONCAT = function(v,s){
     if(typeof s == "undefined") return v; else return s+','+v;
 };
 
+alasql.aggr.MEDIAN = function(v,s,acc){
+// Init
+if(typeof acc.arr == 'undefined') {
+  acc.arr = [v];
+  return v; 
+// Pass
+} else {
+  acc.arr.push(v);
+  var p = acc.arr.sort();
+  return p[(p.length/2|0)];     
+};
+};
 

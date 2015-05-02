@@ -18,7 +18,7 @@ function doJoin (query, scope, h) {
 //			console.log("last",res);
 			// If there is a GROUP BY then pipe to groupping function
 			if(query.groupfn) {
-				query.groupfn(scope, query.params, query.alasql)
+				query.groupfn(scope, query.params, alasql)
 			} else {
 //				query.qwerty = 999;
 //console.log(query.qwerty, query.queriesfn && query.queriesfn.length,2);
@@ -85,6 +85,9 @@ function doJoin (query, scope, h) {
 
 			// Main cycle
 			var i = 0;
+			if(typeof data == 'undefined') {
+				throw new Error('Data source number '+h+' in undefined')
+			}
 			var ilen=data.length;
 			var dataw;
 //			console.log(h,opt,source.data,i,source.dontcache);
