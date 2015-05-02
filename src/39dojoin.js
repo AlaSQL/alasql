@@ -150,6 +150,7 @@ function doJoin (query, scope, h) {
 				var j = 0;
 				var jlen = nextsource.data.length;
 				var dataw;
+
 				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(j))) || (j<jlen)) {
 					if(nextsource.getfn && !nextsource.dontcache) nextsource.data[j] = dataw;
 

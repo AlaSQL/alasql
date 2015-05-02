@@ -27,7 +27,11 @@ function compileSelectStar (query,alias) {
 			query.ixsources[source.alias] = source;
 		});
 
-		var columns = query.ixsources[alias].columns;
+		// Fixed
+		var columns;
+		if(query.ixsources[alias]) {
+			var columns = query.ixsources[alias].columns;
+		}
 
 //		if(columns.length == 0 && query.aliases[alias].tableid) {
 //			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;

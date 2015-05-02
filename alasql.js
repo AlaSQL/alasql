@@ -400,7 +400,13 @@ case 125:
 		
 break;
 case 126:
- this.$ = new yy.Table({databaseid: $$[$0-2], tableid:$$[$0]});
+ 	
+			if($$[$0-2] == 'INFORMATION_SCHEMA') {
+				this.$ = new yy.FuncValue({funcid: $$[$0-2], args:[new yy.StringValue({value:$$[$0]})]});
+			} else {
+				this.$ = new yy.Table({databaseid: $$[$0-2], tableid:$$[$0]});
+			}
+		
 break;
 case 127:
  this.$ = new yy.Table({tableid: $$[$0]});
@@ -4786,6 +4792,7 @@ function doJoin (query, scope, h) {
 				var j = 0;
 				var jlen = nextsource.data.length;
 				var dataw;
+
 				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(j))) || (j<jlen)) {
 					if(nextsource.getfn && !nextsource.dontcache) nextsource.data[j] = dataw;
 
@@ -6410,7 +6417,11 @@ function compileSelectStar (query,alias) {
 			query.ixsources[source.alias] = source;
 		});
 
-		var columns = query.ixsources[alias].columns;
+		// Fixed
+		var columns;
+		if(query.ixsources[alias]) {
+			var columns = query.ixsources[alias].columns;
+		}
 
 //		if(columns.length == 0 && query.aliases[alias].tableid) {
 //			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
@@ -8129,16 +8140,16 @@ alasql.aggr.GROUP_CONCAT = function(v,s){
 };
 
 alasql.aggr.MEDIAN = function(v,s,acc){
-// Init
-if(typeof acc.arr == 'undefined') {
-  acc.arr = [v];
-  return v; 
-// Pass
-} else {
-  acc.arr.push(v);
-  var p = acc.arr.sort();
-  return p[(p.length/2|0)];     
-};
+	// Init
+	if(typeof acc.arr == 'undefined') {
+	  acc.arr = [v];
+	  return v; 
+	// Pass
+	} else {
+	  acc.arr.push(v);
+	  var p = acc.arr.sort();
+	  return p[(p.length/2|0)];     
+	};
 };
 
 
@@ -11793,6 +11804,34 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 	return res;
 };
+
+// Pseudo INFORMATION_SCHEMA function
+alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
+	if(filename == 'VIEWS') {
+		var res = [];
+		var tables = alasql.databases[alasql.useid].tables;
+		for(var tableid in tables) {
+			if(tables[tableid].view) {
+				res.push({TABLE_NAME:tableid});
+			}
+		}
+		if(cb) res = cb(res, idx, query);
+		return res;		
+	} else if(filename == 'TABLES') {
+		var res = [];
+		var tables = alasql.databases[alasql.useid].tables;
+		for(var tableid in tables) {
+			if(!tables[tableid].view) {
+				res.push({TABLE_NAME:tableid});
+			}
+		}
+		if(cb) res = cb(res, idx, query);
+		return res;		
+	}
+	throw new Error('Unknown INFORMATION_SCHEMA table');
+}
+
+
 
 
 

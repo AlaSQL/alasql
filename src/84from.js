@@ -357,3 +357,31 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	return res;
 };
 
+// Pseudo INFORMATION_SCHEMA function
+alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
+	if(filename == 'VIEWS') {
+		var res = [];
+		var tables = alasql.databases[alasql.useid].tables;
+		for(var tableid in tables) {
+			if(tables[tableid].view) {
+				res.push({TABLE_NAME:tableid});
+			}
+		}
+		if(cb) res = cb(res, idx, query);
+		return res;		
+	} else if(filename == 'TABLES') {
+		var res = [];
+		var tables = alasql.databases[alasql.useid].tables;
+		for(var tableid in tables) {
+			if(!tables[tableid].view) {
+				res.push({TABLE_NAME:tableid});
+			}
+		}
+		if(cb) res = cb(res, idx, query);
+		return res;		
+	}
+	throw new Error('Unknown INFORMATION_SCHEMA table');
+}
+
+
+

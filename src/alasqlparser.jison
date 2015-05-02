@@ -710,7 +710,13 @@ FromString
 
 Table
 	: Literal DOT Literal
-		{ $$ = new yy.Table({databaseid: $1, tableid:$3});}
+		{ 	
+			if($1 == 'INFORMATION_SCHEMA') {
+				$$ = new yy.FuncValue({funcid: $1, args:[new yy.StringValue({value:$3})]});
+			} else {
+				$$ = new yy.Table({databaseid: $1, tableid:$3});
+			}
+		}
 	| Literal
 		{ $$ = new yy.Table({tableid: $1});}
 	;

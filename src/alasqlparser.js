@@ -283,7 +283,13 @@ case 125:
 		
 break;
 case 126:
- this.$ = new yy.Table({databaseid: $$[$0-2], tableid:$$[$0]});
+ 	
+			if($$[$0-2] == 'INFORMATION_SCHEMA') {
+				this.$ = new yy.FuncValue({funcid: $$[$0-2], args:[new yy.StringValue({value:$$[$0]})]});
+			} else {
+				this.$ = new yy.Table({databaseid: $$[$0-2], tableid:$$[$0]});
+			}
+		
 break;
 case 127:
  this.$ = new yy.Table({tableid: $$[$0]});
