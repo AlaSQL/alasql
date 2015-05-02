@@ -14,5 +14,7 @@
 
 ## Next Releases:
 
-### Version "Chess" 0.1.0 (20.04.2015)
-
+### Version "Bernini" 0.1.0 (9.05.2015)
+* Recordset columns
+* UNION bug fixed
+* IE9 save file problem fixed

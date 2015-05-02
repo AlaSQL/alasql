@@ -5416,10 +5416,13 @@ yy.Select.prototype.compileFrom = function(query) {
 			joinmode: 'INNER',
 			onmiddlefn: returnTrue,			
 			srcwherefns: '',	// for optimization
-			srcwherefn: returnTrue			
+			srcwherefn: returnTrue,
+			columns: []			
 		};
 
 		if(tq instanceof yy.Table) {
+			// Get columns from table
+			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
 //			console.log('test',alasql.options.autocommit);
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 // console.log(0,source.databaseid);
@@ -5457,12 +5460,19 @@ yy.Select.prototype.compileFrom = function(query) {
 				};
 			}
 		} else if(tq instanceof yy.Select) {
+			if(typeof tq.modifier == 'undefined') {
+				tq.modifier = 'RECORDSET'; // Subqueries always return recordsets
+			}
+
 			source.subquery = tq.compile(query.database.databaseid);
+			source.columns = source.subquery.query.columns;
+//			tq.columns;
+
 			source.datafn = function(query, params, cb, idx, alasql) {
 //				return source.subquery(query.params, cb, idx, query);
 				var res;
 				source.subquery(query.params, function(data){
-	//				console.log(512,data);
+
 					if(cb) res = cb(data,idx,query);
 					return data;
 				});
@@ -5600,9 +5610,12 @@ yy.Select.prototype.compileJoins = function(query) {
 				applymode: jn.applymode,
 				onmiddlefn: returnTrue,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue,
+				columns: [] // TODO check this
 			};
 			source.applyselect = jn.select.compile(query.database.databaseid);
+			source.columns = source.applyselect.query.columns;
+
 			source.datafn = function(query,params,cb,idx, alasql) {
 				var res;
 				if(cb) res = cb(res,idx,query);
@@ -5621,7 +5634,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				joinmode: jn.joinmode,
 				onmiddlefn: returnTrue,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue,
+				columns: []				
 			};
 			//
 
@@ -5630,6 +5644,9 @@ yy.Select.prototype.compileJoins = function(query) {
 				throw new Error('Table \''+source.tableid+
 				'\' is not exists in database \''+source.databaseid)+'\'';
 			};
+
+			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
+
 			// source.data = query.database.tables[source.tableid].data;
 			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
@@ -5667,9 +5684,12 @@ yy.Select.prototype.compileJoins = function(query) {
 				joinmode: jn.joinmode,
 				onmiddlefn: returnTrue,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue,
+				columns: []
 			};
 			source.subquery = tq.compile(query.database.databaseid);
+			source.columns = source.subquery.query.columns;
+			
 //			if(jn instanceof yy.Apply) {
 				source.datafn = function(query, params, cb, idx, alasql) {
 //					return cb(null,idx,alasql);
@@ -6380,9 +6400,23 @@ function compileSelectStar (query,alias) {
 //	if(!alias) {
 //		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
 //	} else 	{
-		if(query.aliases[alias].tableid) {
-			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
-		};
+
+		// TODO move this out of this function 
+		query.ixsources = {};
+		query.sources.forEach(function(source){
+			query.ixsources[source.alias] = source;
+		});
+
+		var columns = query.ixsources[alias].columns;
+
+//		console.log(32,alias,columns);
+
+//		if(columns.length == 0 && query.aliases[alias].tableid) {
+//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
+//		};
+
+
+
 		// Check if this is a Table or other
 
 		if(columns && columns.length > 0) {
@@ -11475,6 +11509,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 alasql.from.RANGE = function(start, finish, cb, idx, query) {
 	var res = [];
 	for(i=start;i<=finish;i++) res.push(i);
+//	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});	
 	if(cb) res = cb(res, idx, query);
 	return res;
 }

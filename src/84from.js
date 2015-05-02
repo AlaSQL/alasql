@@ -75,6 +75,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 alasql.from.RANGE = function(start, finish, cb, idx, query) {
 	var res = [];
 	for(i=start;i<=finish;i++) res.push(i);
+//	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});	
 	if(cb) res = cb(res, idx, query);
 	return res;
 }

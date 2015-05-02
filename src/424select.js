@@ -20,9 +20,23 @@ function compileSelectStar (query,alias) {
 //	if(!alias) {
 //		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
 //	} else 	{
-		if(query.aliases[alias].tableid) {
-			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
-		};
+
+		// TODO move this out of this function 
+		query.ixsources = {};
+		query.sources.forEach(function(source){
+			query.ixsources[source.alias] = source;
+		});
+
+		var columns = query.ixsources[alias].columns;
+
+//		console.log(32,alias,columns);
+
+//		if(columns.length == 0 && query.aliases[alias].tableid) {
+//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
+//		};
+
+
+
 		// Check if this is a Table or other
 
 		if(columns && columns.length > 0) {

@@ -39,9 +39,12 @@ yy.Select.prototype.compileJoins = function(query) {
 				applymode: jn.applymode,
 				onmiddlefn: returnTrue,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue,
+				columns: [] // TODO check this
 			};
 			source.applyselect = jn.select.compile(query.database.databaseid);
+			source.columns = source.applyselect.query.columns;
+
 			source.datafn = function(query,params,cb,idx, alasql) {
 				var res;
 				if(cb) res = cb(res,idx,query);
@@ -60,7 +63,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				joinmode: jn.joinmode,
 				onmiddlefn: returnTrue,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue,
+				columns: []				
 			};
 			//
 
@@ -69,6 +73,9 @@ yy.Select.prototype.compileJoins = function(query) {
 				throw new Error('Table \''+source.tableid+
 				'\' is not exists in database \''+source.databaseid)+'\'';
 			};
+
+			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
+
 			// source.data = query.database.tables[source.tableid].data;
 			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
@@ -106,9 +113,12 @@ yy.Select.prototype.compileJoins = function(query) {
 				joinmode: jn.joinmode,
 				onmiddlefn: returnTrue,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue,
+				columns: []
 			};
 			source.subquery = tq.compile(query.database.databaseid);
+			source.columns = source.subquery.query.columns;
+			
 //			if(jn instanceof yy.Apply) {
 				source.datafn = function(query, params, cb, idx, alasql) {
 //					return cb(null,idx,alasql);

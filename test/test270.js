@@ -12,12 +12,11 @@ if(typeof exports == 'object') {
 };
 
 
-
 describe('Test 270 RECORDSET tests', function() {
 
   var emptydata = [];
   var data1 = [{a:1,b:10},{a:2,b:20},{a:3,b:30}];
-  var data2 = [{b:10,c:100},{b:20,c:200},{b:40,c:400},];
+  var data2 = [{b:10,c:100},{b:20,c:200},{b:40,c:400}];
 
   it('1. Create database', function(done) {
     alasql('CREATE DATABASE test270; USE test270');
