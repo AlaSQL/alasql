@@ -105,9 +105,10 @@ yy.Select.prototype.compileFrom = function(query) {
 //				return source.subquery(query.params, cb, idx, query);
 				var res;
 				source.subquery(query.params, function(data){
-
-					if(cb) res = cb(data,idx,query);
-					return data;
+					res = data.data;
+					if(cb) res = cb(res,idx,query);
+					return res;
+//					return data.data;
 				});
 //					console.log(515,res);
 				return res;
@@ -174,6 +175,7 @@ yy.Select.prototype.compileFrom = function(query) {
 };
 
 alasql.prepareFromData = function(data,array) {
+//console.log(177,data,array);
 	var res = data;
 	if(typeof data == "string") {
 		res = data.split(/\r?\n/);

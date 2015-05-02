@@ -57,7 +57,7 @@ function compileSelectStar (query,alias) {
 			});
 //console.log(999,columns);			
 		} else {
-					console.log(60,alias,columns);
+//					console.log(60,alias,columns);
 
 			// if column not exists, then copy all
 			sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';

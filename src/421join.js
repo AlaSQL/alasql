@@ -122,7 +122,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //			if(jn instanceof yy.Apply) {
 				source.datafn = function(query, params, cb, idx, alasql) {
 //					return cb(null,idx,alasql);
-					return source.subquery(query.params, null, cb, idx);
+					return source.subquery(query.params, null, cb, idx).data;
 				}				
 			// } else {
 			// 	source.datafn = function(query, params, cb, idx, alasql) {

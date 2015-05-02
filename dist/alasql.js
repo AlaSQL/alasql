@@ -5473,9 +5473,10 @@ yy.Select.prototype.compileFrom = function(query) {
 //				return source.subquery(query.params, cb, idx, query);
 				var res;
 				source.subquery(query.params, function(data){
-
-					if(cb) res = cb(data,idx,query);
-					return data;
+					res = data.data;
+					if(cb) res = cb(res,idx,query);
+					return res;
+//					return data.data;
 				});
 //					console.log(515,res);
 				return res;
@@ -5542,6 +5543,7 @@ yy.Select.prototype.compileFrom = function(query) {
 };
 
 alasql.prepareFromData = function(data,array) {
+//console.log(177,data,array);
 	var res = data;
 	if(typeof data == "string") {
 		res = data.split(/\r?\n/);
@@ -5694,7 +5696,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //			if(jn instanceof yy.Apply) {
 				source.datafn = function(query, params, cb, idx, alasql) {
 //					return cb(null,idx,alasql);
-					return source.subquery(query.params, null, cb, idx);
+					return source.subquery(query.params, null, cb, idx).data;
 				}				
 			// } else {
 			// 	source.datafn = function(query, params, cb, idx, alasql) {
@@ -6438,7 +6440,7 @@ function compileSelectStar (query,alias) {
 			});
 //console.log(999,columns);			
 		} else {
-					console.log(60,alias,columns);
+//					console.log(60,alias,columns);
 
 			// if column not exists, then copy all
 			sp += 'var w=p["'+alias+'"];for(var k in w){r[k]=w[k]};';
