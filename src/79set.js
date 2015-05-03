@@ -25,12 +25,19 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 
 		if(this.exists) {
 			this.existsfn = this.exists.map(function(ex) {
-				return ex.compile(databaseid);
+				var nq = ex.compile(databaseid);
+				if(!nq.query.modifier) nq.query.modifier='ARRAY';
+				return nq;
+//				return ex.compile(databaseid);
+				// TODO Include modifier
 			});
 		}
 		if(this.queries) {
 			this.queriesfn = this.queries.map(function(q) {
-				return q.compile(databaseid);
+				var nq = q.compile(databaseid);
+				if(!nq.query.modifier) nq.query.modifier='ARRAY';
+				return nq;
+				// TODO Include modifier
 			});		
 		}
 

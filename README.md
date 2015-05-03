@@ -1,6 +1,6 @@
 # AlaSQL.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.51 "Rimini" Date: May 2, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.0.52 "Venice" Date: May 2, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 

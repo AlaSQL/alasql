@@ -1,8 +1,8 @@
 //
 // alasql.js
 // AlaSQL - JavaScript SQL database
-// Date: 22.04.2015
-// Version: 0.0.50
+// Date: 2.05.2015
+// Version: 0.0.52
 // (ñ) 2014-2015, Andrey Gershun
 //
 
@@ -111,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.0.51";
+alasql.version = "0.0.52";
 
 
 
@@ -5336,21 +5336,28 @@ yy.ExistsValue.prototype.toType = function() {
 };
 
 yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
-//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p).length,console.log(ww),ww';
+//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
+	
 	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {
 	if(!this.exists) return;
 	query.existsfn = this.exists.map(function(ex) {
-		return ex.compile(query.database.databaseid);
+		var nq = ex.compile(query.database.databaseid);
+//		console.log(nq);
+		 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
+		 return nq;
 	});
 };
 
 yy.Select.prototype.compileQueries = function(query) {
 	if(!this.queries) return;
 	query.queriesfn = this.queries.map(function(q) {
-		return q.compile(query.database.databaseid);
+		 var nq = q.compile(query.database.databaseid);
+//		console.log(nq);
+//		 nq.query.modifier = undefined;
+		 return nq;
 	});
 };
 
@@ -5363,12 +5370,20 @@ alasql.precompile = function(statement,databaseid,params){
 	statement.params = params;
 	if(statement.queries) {	
 		statement.queriesfn = statement.queries.map(function(q) {
-			return q.compile(databaseid || statement.database.databaseid);
+			var nq = q.compile(databaseid || statement.database.databaseid);
+//			console.log(nq);
+//			 nq.query.modifier = undefined;
+			 return nq;
+
 		});
 	}
 	if(statement.exists) {
 		statement.existsfn = statement.exists.map(function(ex) {
-			return ex.compile(databaseid || statement.database.databaseid);
+			var nq = ex.compile(databaseid || statement.database.databaseid);
+//			console.log(nq.query.modifier);
+			 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
+			 return nq;
+
 		});
 	};
 }
@@ -5467,11 +5482,11 @@ yy.Select.prototype.compileFrom = function(query) {
 				};
 			}
 		} else if(tq instanceof yy.Select) {
-			if(typeof tq.modifier == 'undefined') {
-				tq.modifier = 'RECORDSET'; // Subqueries always return recordsets
-			}
 
 			source.subquery = tq.compile(query.database.databaseid);
+			if(typeof source.subquery.query.modifier == 'undefined') {
+				source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
+			}
 			source.columns = source.subquery.query.columns;
 //			console.log(101,source.columns);
 //			tq.columns;
@@ -5697,7 +5712,11 @@ yy.Select.prototype.compileJoins = function(query) {
 				srcwherefn: returnTrue,
 				columns: []
 			};
+			
 			source.subquery = tq.compile(query.database.databaseid);
+			if(typeof source.subquery.query.modifier == 'undefined') {
+				source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
+			}
 			source.columns = source.subquery.query.columns;
 			
 //			if(jn instanceof yy.Apply) {
@@ -9281,7 +9300,7 @@ yy.DropView.prototype.execute = function (databaseid) {
 
 /*
 //
-// CREATE VIEW for Alasql.js
+// IF for Alasql.js
 // Date: 03.11.2014
 // (c) 2014, Andrey Gershun
 //
@@ -10325,12 +10344,19 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 
 		if(this.exists) {
 			this.existsfn = this.exists.map(function(ex) {
-				return ex.compile(databaseid);
+				var nq = ex.compile(databaseid);
+				if(!nq.query.modifier) nq.query.modifier='ARRAY';
+				return nq;
+//				return ex.compile(databaseid);
+				// TODO Include modifier
 			});
 		}
 		if(this.queries) {
 			this.queriesfn = this.queries.map(function(q) {
-				return q.compile(databaseid);
+				var nq = q.compile(databaseid);
+				if(!nq.query.modifier) nq.query.modifier='ARRAY';
+				return nq;
+				// TODO Include modifier
 			});		
 		}
 
@@ -11807,22 +11833,15 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 // Pseudo INFORMATION_SCHEMA function
 alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
-	if(filename == 'VIEWS') {
+	if(filename == 'VIEWS' || filename == 'TABLES' ) {
 		var res = [];
-		var tables = alasql.databases[alasql.useid].tables;
-		for(var tableid in tables) {
-			if(tables[tableid].view) {
-				res.push({TABLE_NAME:tableid});
-			}
-		}
-		if(cb) res = cb(res, idx, query);
-		return res;		
-	} else if(filename == 'TABLES') {
-		var res = [];
-		var tables = alasql.databases[alasql.useid].tables;
-		for(var tableid in tables) {
-			if(!tables[tableid].view) {
-				res.push({TABLE_NAME:tableid});
+		for(var databaseid in alasql.databases) {			
+			var tables = alasql.databases[databaseid].tables;
+			for(var tableid in tables) {
+				if((tables[tableid].view && filename == 'VIEWS') ||
+					(!tables[tableid].view && filename == 'TABLES')) {
+					res.push({TABLE_CATALOG:databaseid,TABLE_NAME:tableid});
+				}
 			}
 		}
 		if(cb) res = cb(res, idx, query);

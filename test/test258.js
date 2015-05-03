@@ -40,20 +40,14 @@ describe('Test 258 SqlLogic Parser Test #1', function() {
   it('6. IF EXISTS', function(done){
     // Temporary create
     // Should we create it?
-    alasql('CREATE DATABASE INFORMATION_SCHEMA');
-    alasql('CREATE TABLE INFORMATION_SCHEMA.VIEWS');
+//    alasql('CREATE DATABASE INFORMATION_SCHEMA');
+//    alasql('CREATE TABLE INFORMATION_SCHEMA.VIEWS');
     // Test operator
     alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
-        WHERE TABLE_NAME = 'view_1_tab0_153') DROP VIEW view_1_tab0_153");
+        WHERE TABLE_NAME = 'view2') DROP VIEW view2");
 
-    alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
-          WHERE TABLE_NAME = 'view_1_tab2_381') DROP VIEW view_1_tab2_381");
-
-    alasql("IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
-      WHERE TABLE_NAME = 'view_2_tab4_475') DROP VIEW view_2_tab4_475");
-
-    alasql('DROP TABLE INFORMATION_SCHEMA.VIEWS');
-    alasql('DROP DATABASE INFORMATION_SCHEMA');
+//    alasql('DROP TABLE INFORMATION_SCHEMA.VIEWS');
+//    alasql('DROP DATABASE INFORMATION_SCHEMA');
     done();
   });
 

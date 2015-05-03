@@ -359,22 +359,15 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 // Pseudo INFORMATION_SCHEMA function
 alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
-	if(filename == 'VIEWS') {
+	if(filename == 'VIEWS' || filename == 'TABLES' ) {
 		var res = [];
-		var tables = alasql.databases[alasql.useid].tables;
-		for(var tableid in tables) {
-			if(tables[tableid].view) {
-				res.push({TABLE_NAME:tableid});
-			}
-		}
-		if(cb) res = cb(res, idx, query);
-		return res;		
-	} else if(filename == 'TABLES') {
-		var res = [];
-		var tables = alasql.databases[alasql.useid].tables;
-		for(var tableid in tables) {
-			if(!tables[tableid].view) {
-				res.push({TABLE_NAME:tableid});
+		for(var databaseid in alasql.databases) {			
+			var tables = alasql.databases[databaseid].tables;
+			for(var tableid in tables) {
+				if((tables[tableid].view && filename == 'VIEWS') ||
+					(!tables[tableid].view && filename == 'TABLES')) {
+					res.push({TABLE_CATALOG:databaseid,TABLE_NAME:tableid});
+				}
 			}
 		}
 		if(cb) res = cb(res, idx, query);
