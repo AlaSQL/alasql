@@ -21,17 +21,39 @@ describe('Test 254 UNION of two tables with different columns', function() {
     done();
   });
 
+  it('2. UNION ALL CORRESPONDING',function(done) {
+    var res = alasql('SELECT a, b FROM t1 UNION ALL CORRESPONDING SELECT b, a FROM t1');    
+    assert.deepEqual(res,
+      [ { a: 1, b: 2 },
+        { a: 1, b: 3 },
+        { a: 1, b: 4 },
+        { b: 2, a: 1 },
+        { b: 3, a: 1 },
+        { b: 4, a: 1 } ]
+    );
+    done();
+  });
+
+  it('2. UNION ALL not CORRESPONDING',function(done) {
+    var res = alasql('SELECT a, b FROM t1 UNION ALL SELECT b, a FROM t1');    
+    assert.deepEqual(res,
+      [ { a: 1, b: 2 },
+        { a: 1, b: 3 },
+        { a: 1, b: 4 },
+        { a: 2, b: 1 },
+        { a: 3, b: 1 },
+        { a: 4, b: 1 } ]
+    );
+    done();
+  });
+
+/*
   it('2. UNION',function(done) {
   	var res = alasql('SELECT a, b FROM t1 UNION SELECT b, a FROM t1');    
   	console.log(res);
     done();
   });
-
-  it('3. UNION CORRESPONDING',function(done) {
-    var res = alasql('SELECT a, b FROM t1 UNION CORRESPONDING SELECT b, a FROM t1');    
-    console.log(res);
-    done();
-  });
+*/
 
   it('99. Drop database',function(done){
     alasql('DROP DATABASE test254');

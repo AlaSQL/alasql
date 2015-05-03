@@ -90,8 +90,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			var newcol = {
 				columnid: col.columnid,
 				dbtypeid: dbtypeid, 
-				dbsize: col.dbsize, // // Fixed issue #150
-				dbprecision: col.dbprecision // Fixed issue #150
+				dbsize: col.dbsize, 			// Fixed issue #150
+				dbprecision: col.dbprecision 	// Fixed issue #150
 			};
 
 			if(col.default) {

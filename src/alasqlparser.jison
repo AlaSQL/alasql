@@ -856,13 +856,13 @@ UnionClause
 	| INTERSECT Select
 		{ $$ = {intersect: $2} ; }
 	| UNION CORRESPONDING Select
-		{ $$ = {union: $2, corresponding:true} ; }
+		{ $$ = {union: $3, corresponding:true} ; }
 	| UNION ALL CORRESPONDING Select
-		{ $$ = {unionall: $3, corresponding:true} ; }
+		{ $$ = {unionall: $4, corresponding:true} ; }
 	| EXCEPT CORRESPONDING Select
-		{ $$ = {except: $2, corresponding:true} ; }
+		{ $$ = {except: $3, corresponding:true} ; }
 	| INTERSECT CORRESPONDING Select
-		{ $$ = {intersect: $2, corresponding:true} ; }
+		{ $$ = {intersect: $3, corresponding:true} ; }
 	;
 
 OrderClause

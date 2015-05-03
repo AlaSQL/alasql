@@ -186,7 +186,20 @@ function queryfn3(query) {
 
 	// UNION / UNION ALL
 	if(query.unionallfn) {
-		query.data = query.data.concat(query.unionallfn(query.params));
+		if(query.corresponding) {
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'ARRAY';
+			query.data = query.data.concat(query.unionallfn(query.params));
+		} else {
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
+			var nd = query.unionallfn(query.params);
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				query.data.push(r);
+			}
+		}
 	} else if(query.unionfn) {
 		query.data = arrayUnionDeep(query.data, query.unionfn(query.params));
 	} else if(query.exceptfn) {

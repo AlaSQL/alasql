@@ -403,16 +403,16 @@ case 178:
  this.$ = {intersect: $$[$0]} ; 
 break;
 case 179:
- this.$ = {union: $$[$0-1], corresponding:true} ; 
+ this.$ = {union: $$[$0], corresponding:true} ; 
 break;
 case 180:
- this.$ = {unionall: $$[$0-1], corresponding:true} ; 
+ this.$ = {unionall: $$[$0], corresponding:true} ; 
 break;
 case 181:
- this.$ = {except: $$[$0-1], corresponding:true} ; 
+ this.$ = {except: $$[$0], corresponding:true} ; 
 break;
 case 182:
- this.$ = {intersect: $$[$0-1], corresponding:true} ; 
+ this.$ = {intersect: $$[$0], corresponding:true} ; 
 break;
 case 184:
  this.$ = {order:$$[$0]}

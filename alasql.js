@@ -520,16 +520,16 @@ case 178:
  this.$ = {intersect: $$[$0]} ; 
 break;
 case 179:
- this.$ = {union: $$[$0-1], corresponding:true} ; 
+ this.$ = {union: $$[$0], corresponding:true} ; 
 break;
 case 180:
- this.$ = {unionall: $$[$0-1], corresponding:true} ; 
+ this.$ = {unionall: $$[$0], corresponding:true} ; 
 break;
 case 181:
- this.$ = {except: $$[$0-1], corresponding:true} ; 
+ this.$ = {except: $$[$0], corresponding:true} ; 
 break;
 case 182:
- this.$ = {intersect: $$[$0-1], corresponding:true} ; 
+ this.$ = {intersect: $$[$0], corresponding:true} ; 
 break;
 case 184:
  this.$ = {order:$$[$0]}
@@ -4342,7 +4342,20 @@ function queryfn3(query) {
 
 	// UNION / UNION ALL
 	if(query.unionallfn) {
-		query.data = query.data.concat(query.unionallfn(query.params));
+		if(query.corresponding) {
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'ARRAY';
+			query.data = query.data.concat(query.unionallfn(query.params));
+		} else {
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
+			var nd = query.unionallfn(query.params);
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				query.data.push(r);
+			}
+		}
 	} else if(query.unionfn) {
 		query.data = arrayUnionDeep(query.data, query.unionfn(query.params));
 	} else if(query.exceptfn) {
@@ -4979,10 +4992,10 @@ yy.Select.prototype.toString = function() {
 	};
 	if(this.limit) s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
 	if(this.offset) s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
-	if(this.union) s += NL()+K('UNION')+NL()+this.union.toString();
-	if(this.unionall) s += NL()+K('UNION ALL')+NL()+this.unionall.toString();
-	if(this.except) s += NL()+K('EXCEPT')+NL()+this.except.toString();
-	if(this.intersect) s += NL()+K('INTERSECT')+NL()+this.intersect.toString();
+	if(this.union) s += NL()+K('UNION')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.union.toString();
+	if(this.unionall) s += NL()+K('UNION ALL')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.unionall.toString();
+	if(this.except) s += NL()+K('EXCEPT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.except.toString();
+	if(this.intersect) s += NL()+K('INTERSECT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.intersect.toString();
 	return s;
 };
 
@@ -5082,6 +5095,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	query.percent = this.percent;
 
 	// 9. Compile ordering function for UNION and UNIONALL
+	query.corresponding = this.corresponding; // If CORRESPONDING flag exists
 	if(this.union) {
 		query.unionfn = this.union.compile(databaseid);
 		if(this.union.order) {
@@ -8573,8 +8587,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			var newcol = {
 				columnid: col.columnid,
 				dbtypeid: dbtypeid, 
-				dbsize: col.dbsize, // // Fixed issue #150
-				dbprecision: col.dbprecision // Fixed issue #150
+				dbsize: col.dbsize, 			// Fixed issue #150
+				dbprecision: col.dbprecision 	// Fixed issue #150
 			};
 
 			if(col.default) {
