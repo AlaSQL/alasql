@@ -4,6 +4,14 @@ This file contanis unstructured ideas for future development of Alasql.
 
 ## Ideas
 
+1. INTO XLSXML({format:"xml"}) function
+2. CREATE GRAPH
+3. SEARCH JSON
+
+### Graph
+
+
+
 ### Graph Database
 
 #### Edges & Vertices
