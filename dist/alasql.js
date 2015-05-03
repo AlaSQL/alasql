@@ -11454,6 +11454,8 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 
 		// Columns
 
+//		var columns = [];
+
 		// If columns defined in sheet, then take them
 		if(typeof sheet.columns != 'undefined') {
 			columns = sheet.columns;
@@ -11740,22 +11742,117 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 		var s3 = ' </Styles>';
 
 		for (var sheetid in sheets) {
-			// Header
+			var sheet = sheets[sheetid];
 
+			// If columns defined in sheet, then take them
+			if(typeof sheet.columns != 'undefined') {
+				columns = sheet.columns;
+			} else {
+				// Autogenerate columns if they are passed as parameters
+				if(columns.length == 0 && data.length > 0) {
+					if(typeof data[0] == 'object') {
+						if(data[0] instanceof Array) {
+							columns = data[0].map(function(d,columnidx){
+								return {columnid:columnidx};
+							});
+						} else {
+							columns = Object.keys(data[0]).map(function(columnid){
+								return {columnid:columnid};
+							});
+						}
+					}
+				}
+			};
+
+			// Prepare columns
+			columns.forEach(function(column,columnidx){
+				if(typeof sheet.column != 'undefined') {
+					extend(column,sheet.column);
+				}
+
+				if(typeof column.width == 'undefined') {
+					if(sheet.column && sheet.column.width !='undefined') {
+						column.width = sheet.column.width;
+					
+					} else {
+						column.width = 120;
+					}
+				}
+				if(typeof column.width == 'number') column.width = column.width;
+				if(typeof column.columnid == 'undefined') column.columnid = columnidx;
+				if(typeof column.title == 'undefined') column.title = ""+column.columnid;
+				if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[idx];
+			});
+
+
+			// Header
 	 		s3 +='<Worksheet ss:Name="'+sheetid+'"> \
-	  			<Table ss:ExpandedColumnCount="1" ss:ExpandedRowCount="3" x:FullColumns="1" \
+	  			<Table ss:ExpandedColumnCount="'+columns.length
+	  			+'" ss:ExpandedRowCount="'+((sheet.headers?1:0)+Math.min(data.length,sheet.limit||data.length))
+	  				+'" x:FullColumns="1" \
 	   			x:FullRows="1" ss:DefaultColumnWidth="65" ss:DefaultRowHeight="15">';
 
+			columns.forEach(function (column,columnidx) {
 
+	   			s3 += '<Column ss:Index="'+(columnidx+1)
+	   			       +'" ss:AutoFitWidth="0" ss:Width="'+column.width+'"/>'
+	   		});
+
+	   		// Headers
+		if(sheet.headers) {
+   			s3 += '<Row ss:AutoFitHeight="0">';
+
+			// TODO: Skip columns to body
+
+			// Headers
+			columns.forEach(function (column,columnidx) {
+
+	    		s3 += '<Cell><Data ss:Type="String">';
+
+				// Column style
+
+if(false) {				
+				if(typeof column.style != 'undefined') {
+					s += ' style="';
+					if(typeof column.style == 'function') {
+						s += column.style(sheet,column,columnidx);
+					} else {
+						s += column.style;
+					}
+					s += '" '
+				}
+				s += '>';
+};
+				// Column title
+				if(typeof column.title != 'undefined') {
+					if(typeof column.title == 'function') {
+						s3 += column.title(sheet,column,columnidx);
+					} else {
+						s3 += column.title;
+					}
+				}
+				s3 += '</Data></Cell>';
+			});	
+
+			s3 += '</Row>';
+		}
+
+
+
+	   		// Data
 			if(data && data.length > 0) {
 				// Loop over data rows
 				data.forEach(function(row,rowidx){
 					// Limit number of rows on the sheet
 					if(rowidx>sheet.limit) return;
 
-		   			s3 += '<Row ss:AutoFitHeight="0">'; \
+		   			s3 += '<Row ss:AutoFitHeight="0">';
 
-		    		s3 += '<Cell><Data ss:Type="String">Hello World!</Data></Cell>';
+					columns.forEach(function (column,columnidx) {
+			    		s3 += '<Cell><Data ss:Type="String">';
+			    		s3 += row[column.columnid];
+			    		s3 += '</Data></Cell>';
+			    	});
 		   			
 		   			s3 += '</Row>';
 		   		});
