@@ -1112,15 +1112,15 @@ FuncValue
 		    $$ = new yy.FuncValue({funcid: $1, expression: $3}); 
 		}
 */	
-	: Literal LPAR ExprList RPAR
+	: Literal LPAR (DISTINCT|ALL)? ExprList RPAR
 		{ 
 			var funcid = $1;
-			var exprlist = $3;
+			var exprlist = $4;
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
-                      funcid: funcid, expression: exprlist.pop() });
+                      funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT') });
 		    } else {
 			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
 			};

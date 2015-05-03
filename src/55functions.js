@@ -172,6 +172,7 @@ alasql.aggr.GROUP_CONCAT = function(v,s){
     if(typeof s == "undefined") return v; else return s+','+v;
 };
 
+// Median
 alasql.aggr.MEDIAN = function(v,s,acc){
 	// Init
 	if(typeof acc.arr == 'undefined') {
@@ -181,7 +182,56 @@ alasql.aggr.MEDIAN = function(v,s,acc){
 	} else {
 	  acc.arr.push(v);
 	  var p = acc.arr.sort();
-	  return p[(p.length/2|0)];     
+	  return p[(p.length/2)|0];     
 	};
 };
+
+// Standard deviation
+alasql.aggr.VAR = function(v,s,acc){
+	if(typeof acc.arr == 'undefined') {
+		acc.arr = [v];
+		acc.sum = v;
+	} else {
+		acc.arr.push(v);
+		acc.sum += v;
+	}
+	var N = acc.arr.length;
+	var avg = acc.sum / N;
+	var std = 0;
+	for(var i=0;i<N;i++) {
+		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
+	}
+	std = std/(N-1);
+	return std;
+};
+
+alasql.aggr.STDEV = function(v,s,acc){
+	return Math.sqrt(alasql.aggr.VAR(v,s,acc));
+}
+
+// Standard deviation
+alasql.aggr.VARP = function(v,s,acc){
+	if(typeof acc.arr == 'undefined') {
+		acc.arr = [v];
+		acc.sum = v;
+	} else {
+		acc.arr.push(v);
+		acc.sum += v;
+	}
+	var N = acc.arr.length;
+	var avg = acc.sum / N;
+	var std = 0;
+	for(var i=0;i<N;i++) {
+		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
+	}
+	std = std/N;
+	return std;
+};
+
+alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,acc){
+	return Math.sqrt(alasql.aggr.VARP(v,s,acc));
+}
+
+
+
 

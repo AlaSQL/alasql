@@ -1,8 +1,10 @@
 # Changelog
 
-### 0.0.52 "Venice" (02.05.2015 - ...05.2015)
+### 0.0.52 "Venice" (02.05.2015 - 03.05.2015)
 * Added INFORMATION_SCHEMA from variable
 * Fixed localstorage dropTable with AUTOCOMMIT OFF
+* STD() function added, STDEV(),STEDEVP(),VAR(),VARP()
+* DISTINCT and ALL with custom aggregators (like STD(DISTINCT a))
 
 ### 0.0.51 "Rimini" (23.04.2015 - 02.05.2015)
 * alasql.options.modifier flag added
