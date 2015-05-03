@@ -4,11 +4,39 @@ This file contanis unstructured ideas for future development of Alasql.
 
 ## Ideas
 
-1. INTO XLSXML({format:"xml"}) function
-2. CREATE GRAPH
-3. SEARCH JSON
+1. INTO XLSXML() function
+2. SEARCH JSON
+3. CREATE GRAPH
 
 ### Graph
+
+SEARCH FROM {a:1};
+{a:1}
+SEARCH a FROM {a:1};
+[1]
+SEARCH FROM [1,2];
+[1,2]
+SEARCH {a:_} FROM [1,2];
+[{a:1},{a:2}]
+SEARCH AS @x (IDX() < 10) @x FROM [1,2];
+[1,2]
+
+
+
+SEARCH {a:1} a;
+[1]
+SEARCH a FROM {a:1};
+[1]
+SEARCH a FROM {a:{b:1}};
+[{b:1}]
+SEARCH a b FROM {a:{b:1}};
+[1]
+SEARCH > loves: > FROM @Alice;
+
+SEARCH (a=1) AS @c {b:b,a:@c->a} FROM @[{a:1,b:10},{a:2,b:20}];
+
+CREATE GRAPH @Alice, Bob, @Alice > loves: > @Bob;
+SEARCH Alice > loves > IN Person;
 
 
 

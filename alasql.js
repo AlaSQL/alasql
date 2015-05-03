@@ -11741,6 +11741,40 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 
 		var s3 = ' </Styles>';
 
+		var styles = {}; // hash based storage for styles
+		var stylesn = 62; // First style
+
+		// Generate style
+		function hstyle(st) {
+			// Prepare string
+			var s = '';
+			for(var key in st) {
+				s += '<'+key;
+				for(var attr in st[key]) {
+					s += ' ';
+					if(attr.substr(0,2) == 'x:') {
+						s += attr;
+					} else {
+						s += 'ss:';
+					}
+					s += attr+'="'+st[key][attr]+'"';
+				}
+				s += '/>';
+			}
+			
+			var hh = hash(s);
+			// Store in hash
+			if(styles[hh]) {
+			} else {
+				styles[hh] = {styleid:stylesn};
+				s2 += '<Style ss:ID="s'+stylesn+'">';
+				s2 += s;
+				s2 += '</Style>';
+				stylesn++;
+			}
+			return 's'+styles[hh].styleid;
+		}
+
 		for (var sheetid in sheets) {
 			var sheet = sheets[sheetid];
 
@@ -11771,9 +11805,8 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				}
 
 				if(typeof column.width == 'undefined') {
-					if(sheet.column && sheet.column.width !='undefined') {
+					if(sheet.column && (typeof sheet.column.width !='undefined')) {
 						column.width = sheet.column.width;
-					
 					} else {
 						column.width = 120;
 					}
@@ -11799,43 +11832,41 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 	   		});
 
 	   		// Headers
-		if(sheet.headers) {
-   			s3 += '<Row ss:AutoFitHeight="0">';
+			if(sheet.headers) {
+	   			s3 += '<Row ss:AutoFitHeight="0">';
 
-			// TODO: Skip columns to body
+				// TODO: Skip columns to body
 
-			// Headers
-			columns.forEach(function (column,columnidx) {
+				// Headers
+				columns.forEach(function (column,columnidx) {
 
-	    		s3 += '<Cell><Data ss:Type="String">';
+		    		s3 += '<Cell ';
 
-				// Column style
-
-if(false) {				
-				if(typeof column.style != 'undefined') {
-					s += ' style="';
-					if(typeof column.style == 'function') {
-						s += column.style(sheet,column,columnidx);
-					} else {
-						s += column.style;
+					if(typeof column.style != 'undefined') {
+						var st = {};
+						if(typeof column.style == 'function') {
+							extend(st,column.style(sheet,column,columnidx));
+						} else {
+							extend(st,column.style);
+						}
+						s3 += 'ss:StyleID="'+hstyle(st)+'"';
 					}
-					s += '" '
-				}
-				s += '>';
-};
-				// Column title
-				if(typeof column.title != 'undefined') {
-					if(typeof column.title == 'function') {
-						s3 += column.title(sheet,column,columnidx);
-					} else {
-						s3 += column.title;
-					}
-				}
-				s3 += '</Data></Cell>';
-			});	
 
-			s3 += '</Row>';
-		}
+		    		s3 += '><Data ss:Type="String">';
+
+					// Column title
+					if(typeof column.title != 'undefined') {
+						if(typeof column.title == 'function') {
+							s3 += column.title(sheet,column,columnidx);
+						} else {
+							s3 += column.title;
+						}
+					}
+					s3 += '</Data></Cell>';
+				});	
+
+				s3 += '</Row>';
+			};
 
 
 
