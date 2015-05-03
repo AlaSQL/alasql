@@ -1,8 +1,8 @@
 //
 // alasql.js
 // AlaSQL - JavaScript SQL database
-// Date: 2.05.2015
-// Version: 0.0.52
+// Date: 3.05.2015
+// Version: 0.1.0
 // (ñ) 2014-2015, Andrey Gershun
 //
 
@@ -111,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.0.52";
+alasql.version = "0.1.0";
 
 
 
@@ -2890,14 +2890,36 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 //                });
 //            });
         } else {
-            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-            saveAs(blob, path);
-            if(cb) res = cb(res);        
+        	if(isIE() == 9) {
+        		// Solution was taken from 
+        		// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
+//				var URI = 'data:text/plain;charset=utf-8,';
+
+				// Prepare data
+				var ndata = data.replace(/\r\n/g,'&#A;&#D;');
+				ndata = ndata.replace(/\n/g,'&#D;');
+				ndata = ndata.replace(/\t/g,'&#9;');
+				var testlink = window.open("about:blank", "_blank");
+				testlink.document.write(ndata); //fileData has contents for the file
+				testlink.document.close();
+				testlink.document.execCommand('SaveAs', false, path);
+				testlink.close();         		
+        	} else {
+	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+	            saveAs(blob, path);
+	            if(cb) res = cb(res);                		
+        	}
         }
     };
 
     return res;
 };
+
+// For compatibility issues
+function isIE () {
+  var myNav = navigator.userAgent.toLowerCase();
+  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+}
 
 
 // For LOAD
@@ -11303,7 +11325,27 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
-				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
+				if(isIE() == 9) {
+					throw new Error('Cannot save XLSX files in IE9. Please use XLS() export function');
+//					var URI = 'data:text/plain;charset=utf-8,';
+
+/*
+					var testlink = window.open("about:blank", "_blank");
+					var s = '';
+					for(var i=0,ilen=wbout.length;i<ilen;i++) {
+						var ch = wbout.charCodeAt(i);
+						if(i<20) console.log('&#'+ch+';');
+						s += '&#x'+ch.toString(16)+';';
+					};
+					testlink.document.write(s); //fileData has contents for the file
+					testlink.document.close();
+					testlink.document.execCommand('SaveAs', false, filename);
+					testlink.close();         		
+*/
+//					alert('ie9');
+				} else {
+					saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
+				}
 			}
 
 		}

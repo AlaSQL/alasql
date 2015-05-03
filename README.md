@@ -1,6 +1,6 @@
 # AlaSQL.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.0.52 "Venice" Date: May 2, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.0 (aka 0.0.52) "Venice" Date: May 3, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -29,7 +29,6 @@ Please use:
 * [AlaSQL User Manual](http://www.slideshare.net/AndreyGershun/alasql-manual-141220-1)
 * [AlaSQL Coockbok](https://github.com/agershun/alasql/wiki/Data-manipulation) - Q&A, examples
 * [StackOverflow AlaSQL Q&A](http://stackoverflow.com/questions/tagged/alasql)
-* [AlaSQL Issues](https://github.com/agershun/alasql/issues)
 
 ## Why AlaSQL?
 
@@ -49,6 +48,25 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
  * [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
 
 ## What is new?
+
+### Version upgrade from 0.0.51 to 0.1.0
+
+AlaSQL now is 6 month old and it can change minor release number from 0.0 to 0.1. 
+
+As we decided earlier, we will change version number to 0.1 after cleaning some 
+known bugs and problems (including [UNION CORRESPONDING](https://github.com/agershun/alasql/issues/75) issue and [IE9 file saving](https://github.com/agershun/alasql/issues/73)). 
+
+The plans and priorities for development from version 0.1 to 0.2 will be:
+* Wiki documentation
+* Fixing bugs and clean the code
+* Add graph- and document- database paradigm functionality
+* Prepare to convert AlaSQL to modular structure (AlaSQL2)
+
+Other areas of future improvements (please add and vote for new features on [Feathub](http://feathub.com/agershun/alasql)):
+* Better Apache Cordova and other mobile frameworks support
+* Improve export to XLS and XLSX (adding colors and LibreOffice support)
+* Support key-value external storages and NoSQL databases
+* Add some missing SQL functionality (constraints, foreign keys, etc.)
 
 ### AlaSQL export to Excel with colors
 
