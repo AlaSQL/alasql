@@ -4342,26 +4342,81 @@ function queryfn3(query) {
 
 	// UNION / UNION ALL
 	if(query.unionallfn) {
+// TODO Simplify this part of program
 		if(query.corresponding) {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'ARRAY';
-			query.data = query.data.concat(query.unionallfn(query.params));
+			var ud = query.unionallfn(query.params);
 		} else {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
 			var nd = query.unionallfn(query.params);
+			var ud = [];
 			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
 				var r = {};
 				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
-				query.data.push(r);
+				ud.push(r);
 			}
 		}
+		query.data = query.data.concat(ud);
 	} else if(query.unionfn) {
-		query.data = arrayUnionDeep(query.data, query.unionfn(query.params));
+
+		if(query.corresponding) {
+			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'ARRAY';
+			var ud = query.unionfn(query.params);
+		} else {
+			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'RECORDSET';
+			var nd = query.unionfn(query.params);
+			var ud = [];
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+		query.data = arrayUnionDeep(query.data, ud);
+
 	} else if(query.exceptfn) {
-		query.data = arrayExceptDeep(query.data, query.exceptfn(query.params));
+		if(query.corresponding) {
+			if(!query.exceptfn.query.modifier) query.exceptfn.query.modifier = 'ARRAY';
+			var ud = query.exceptfn(query.params);
+		} else {
+			if(!query.exceptfn.query.modifier) query.exceptfn.query.modifier = 'RECORDSET';
+			var nd = query.exceptfn(query.params);
+			var ud = [];
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+
+		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
-		query.data = arrayIntersectDeep(query.data, query.intersectfn(query.params));
+		if(query.corresponding) {
+			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'ARRAY';
+			var ud = query.intersectfn(query.params);
+		} else {
+			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';
+			var nd = query.intersectfn(query.params);
+			var ud = [];
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+
+		query.data = arrayIntersectDeep(query.data, ud);
 	};
 
 	// Ordering
@@ -6507,6 +6562,8 @@ yy.Select.prototype.compileSelect1 = function(query) {
 	var sp = '';
 	var ss = [];
 
+//console.log(42,87,this.columns);
+
 	this.columns.forEach(function(col){
 //console.log(col);		
 		if(col instanceof yy.Column) {
@@ -6569,9 +6626,30 @@ yy.Select.prototype.compileSelect1 = function(query) {
 						query.columns.push(coldef);
 						query.xcolumns[coldef.columnid]=coldef;
 					} else {
+						var coldef = {
+							columnid:col.as || col.columnid, 
+//							dbtypeid:tcol.dbtypeid, 
+//							dbsize:tcol.dbsize, 
+//							dbpecision:tcol.dbprecision,
+//							dbenum: tcol.dbenum,
+						};
+//						console.log(2);
+						query.columns.push(coldef);
+						query.xcolumns[coldef.columnid]=coldef;
+
 						query.dirtyColumns = true;
 					}
 				} else {
+						var coldef = {
+							columnid:col.as || col.columnid, 
+//							dbtypeid:tcol.dbtypeid, 
+//							dbsize:tcol.dbsize, 
+//							dbpecision:tcol.dbprecision,
+//							dbenum: tcol.dbenum,
+						};
+//						console.log(2);
+						query.columns.push(coldef);
+						query.xcolumns[coldef.columnid]=coldef;
 					// This is a subquery? 
 					// throw new Error('There is now such table \''+col.tableid+'\'');
 				};
@@ -6594,16 +6672,40 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			}
 			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
 
+
+						var coldef = {
+							columnid:col.as || col.columnid || col.toString(), 
+//							dbtypeid:tcol.dbtypeid, 
+//							dbsize:tcol.dbsize, 
+//							dbpecision:tcol.dbprecision,
+//							dbenum: tcol.dbenum,
+						};
+//						console.log(2);
+						query.columns.push(coldef);
+						query.xcolumns[coldef.columnid]=coldef;
+
 //			else if (col.aggregatorid == 'MAX') {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			} else if (col.aggregatorid == 'MIN') {
 //				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
 //			}
 		} else {
+//			console.log(203,col.as,col.columnid,col.toString());
 			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid,query.defcols));
 //			ss.push('\''+escapeq(col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
+
+						var coldef = {
+							columnid:col.as || col.columnid || col.toString(), 
+//							dbtypeid:tcol.dbtypeid, 
+//							dbsize:tcol.dbsize, 
+//							dbpecision:tcol.dbprecision,
+//							dbenum: tcol.dbenum,
+						};
+//						console.log(2);
+						query.columns.push(coldef);
+						query.xcolumns[coldef.columnid]=coldef;
 		}
 	});
 	s += ss.join(',')+'};'+sp;

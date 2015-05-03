@@ -75,6 +75,7 @@ describe('Test 275 INNER JOIN on empty tables', function() {
   });
 
   it('99. Drop databases', function(done) {
+    alasql.options.modifier = 'ARRAY';
     alasql('DROP DATABASE test275');
     done();
   });
