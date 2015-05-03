@@ -14,20 +14,28 @@ if(typeof exports == 'object') {
 
 describe('Test 239 AUTOCOMMIT OFF test', function() {
 
-  it('1. Create dtabase', function(done){
+  it('1. Create database', function(done){
     alasql('SET AUTOCOMMIT OFF');
-    alasql('DROP localStorage DATABASE IF EXISTS ls239');
-    alasql('CREATE localStorage DATABASE IF NOT EXISTS ls239');
+//    console.log(1);
+    alasql('DROP LOCALSTORAGE DATABASE IF EXISTS ls239');
+//    console.log(2);
+    alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ls239');
+//    console.log(3);
     alasql('ATTACH LOCALSTORAGE DATABASE ls239 AS test239; USE test239');
+//    console.log(4);
 
     alasql('CREATE TABLE IF NOT EXISTS one (a int, b string)');
+//    console.log(5);
+
     alasql('insert into one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
+//    console.log(6);
     var res = alasql('select * from one');
     assert.deepEqual(res,[ { a: 1, b: 'Moscow' },
   { a: 2, b: 'Kyiv' },
   { a: 3, b: 'Minsk' } ]);
 
     var res = alasql('COMMIT TRANSACTION');
+//    console.log(7);
 //    var res = alasql('BEGIN TRANSACTION');
     alasql('insert into one VALUES (4,"Sochi"), (5, "Vancouver")');
     var res = alasql('select * from one');
@@ -38,15 +46,18 @@ describe('Test 239 AUTOCOMMIT OFF test', function() {
   { a: 5, b: 'Vancouver' } ]);
 
     var res = alasql('ROLLBACK TRANSACTION');
+//    console.log(8);
 //    console.log(alasql.databases.test239.tables.one.data);
 //    console.log(alasql.options);
 //    alasql('insert into one VALUES (4,"Berlin")');
     var res = alasql('select * from one');
+//    console.log(9);
 //      console.log(res);
     assert.deepEqual(res,[ { a: 1, b: 'Moscow' },
   { a: 2, b: 'Kyiv' },
   { a: 3, b: 'Minsk' } ]);
     alasql('DROP TABLE one');
+//    console.log(10);
     done();
   });
 
@@ -80,7 +91,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function() {
 
   it("8.Drop localStorage table", function(done) {
     alasql('DETACH DATABASE test239');
-    alasql('DROP localStorage DATABASE ls239');
+    alasql('DROP LOCALSTORAGE DATABASE ls239');
     done();
   });
 

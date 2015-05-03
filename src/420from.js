@@ -114,6 +114,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				return res;
 			}						
 		} else if(tq instanceof yy.ParamValue) {
+
 			var ps = "var res = alasql.prepareFromData(params['"+tq.param+"']";
 //				console.log(tq);
 			if(tq.array) ps+=",true";

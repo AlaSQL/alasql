@@ -11,7 +11,6 @@ if(typeof exports == 'object') {
 };
 
 
-
 describe('Test 267 LocalStorage test', function() {
 
   it('1. First pass', function(done) {
@@ -68,9 +67,29 @@ describe('Test 267 LocalStorage test', function() {
     done();    
   });
 
-  it('3. Drop phase', function(done) {
+  it('6. Drop phase', function(done) {
     alasql('DETACH DATABASE db');
     alasql('DROP LOCALSTORAGE DATABASE db');
+    done();    
+  });
+
+
+  it('7. Second phase phase', function(done) {
+    alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS test267');
+    alasql('ATTACH LOCALSTORAGE DATABASE test267');
+    alasql('USE test267');
+    alasql('CREATE TABLE IF NOT EXISTS test');
+    alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS test267');
+    alasql('ATTACH LOCALSTORAGE DATABASE test267');
+    alasql('USE test267');
+    alasql('CREATE TABLE IF NOT EXISTS test');
+    done();    
+  });
+
+
+  it('8. Drop phase', function(done) {
+//    alasql('DETACH DATABASE db1');
+//    alasql('DROP LOCALSTORAGE DATABASE db1');
     done();    
   });
 

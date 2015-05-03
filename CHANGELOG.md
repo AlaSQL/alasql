@@ -2,6 +2,7 @@
 
 ### 0.0.52 "Venice" (02.05.2015 - ...05.2015)
 * Added INFORMATION_SCHEMA from variable
+* Fixed localstorage dropTable with AUTOCOMMIT OFF
 
 ### 0.0.51 "Rimini" (23.04.2015 - 02.05.2015)
 * alasql.options.modifier flag added

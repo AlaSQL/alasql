@@ -139,7 +139,11 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 //	console.log(arguments);
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-	var lsdb = LS.get(lsdbid);
+	if(alasql.options.autocommit) {
+		var lsdb = LS.get(lsdbid);
+	} else {
+		var lsdb = alasql.databases[databaseid];
+	}
 	if(!ifexists && !lsdb.tables[tableid]) {
 		throw new Error('Cannot drop table "'+tableid+'" in localStorage, because it does not exist');
 	};
