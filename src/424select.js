@@ -46,7 +46,7 @@ function compileSelectStar (query,alias) {
 				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
 				query.selectColumns[escapeq(tcol.columnid)] = true;
 
-	//		console.log('ok',s);
+//			console.log('ok',tcol);
 
 				var coldef = {
 					columnid:tcol.columnid, 
