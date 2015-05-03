@@ -68,10 +68,10 @@ yy.Select.prototype.toString = function() {
 	};
 	if(this.limit) s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
 	if(this.offset) s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
-	if(this.union) s += NL()+K('UNION')+NL()+this.union.toString();
-	if(this.unionall) s += NL()+K('UNION ALL')+NL()+this.unionall.toString();
-	if(this.except) s += NL()+K('EXCEPT')+NL()+this.except.toString();
-	if(this.intersect) s += NL()+K('INTERSECT')+NL()+this.intersect.toString();
+	if(this.union) s += NL()+K('UNION')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.union.toString();
+	if(this.unionall) s += NL()+K('UNION ALL')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.unionall.toString();
+	if(this.except) s += NL()+K('EXCEPT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.except.toString();
+	if(this.intersect) s += NL()+K('INTERSECT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.intersect.toString();
 	return s;
 };
 
@@ -171,6 +171,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	query.percent = this.percent;
 
 	// 9. Compile ordering function for UNION and UNIONALL
+	query.corresponding = this.corresponding; // If CORRESPONDING flag exists
 	if(this.union) {
 		query.unionfn = this.union.compile(databaseid);
 		if(this.union.order) {

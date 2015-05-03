@@ -116,7 +116,11 @@ yy.Select.prototype.compileJoins = function(query) {
 				srcwherefn: returnTrue,
 				columns: []
 			};
+			
 			source.subquery = tq.compile(query.database.databaseid);
+			if(typeof source.subquery.query.modifier == 'undefined') {
+				source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
+			}
 			source.columns = source.subquery.query.columns;
 			
 //			if(jn instanceof yy.Apply) {

@@ -186,13 +186,81 @@ function queryfn3(query) {
 
 	// UNION / UNION ALL
 	if(query.unionallfn) {
-		query.data = query.data.concat(query.unionallfn(query.params));
+// TODO Simplify this part of program
+		if(query.corresponding) {
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'ARRAY';
+			var ud = query.unionallfn(query.params);
+		} else {
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
+			var nd = query.unionallfn(query.params);
+			var ud = [];
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+		query.data = query.data.concat(ud);
 	} else if(query.unionfn) {
-		query.data = arrayUnionDeep(query.data, query.unionfn(query.params));
+
+		if(query.corresponding) {
+			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'ARRAY';
+			var ud = query.unionfn(query.params);
+		} else {
+			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'RECORDSET';
+			var nd = query.unionfn(query.params);
+			var ud = [];
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+		query.data = arrayUnionDeep(query.data, ud);
+
 	} else if(query.exceptfn) {
-		query.data = arrayExceptDeep(query.data, query.exceptfn(query.params));
+		if(query.corresponding) {
+			if(!query.exceptfn.query.modifier) query.exceptfn.query.modifier = 'ARRAY';
+			var ud = query.exceptfn(query.params);
+		} else {
+			if(!query.exceptfn.query.modifier) query.exceptfn.query.modifier = 'RECORDSET';
+			var nd = query.exceptfn(query.params);
+			var ud = [];
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+
+		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
-		query.data = arrayIntersectDeep(query.data, query.intersectfn(query.params));
+		if(query.corresponding) {
+			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'ARRAY';
+			var ud = query.intersectfn(query.params);
+		} else {
+			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';
+			var nd = query.intersectfn(query.params);
+			var ud = [];
+			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+				var r = {};
+				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				}
+				ud.push(r);
+			}
+		}
+
+
+		query.data = arrayIntersectDeep(query.data, ud);
 	};
 
 	// Ordering

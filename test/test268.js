@@ -44,7 +44,7 @@ describe('Test 268 INNER JOIN stress test', function() {
   });
 
   var t1 = [];
-  for(var i=0;i<50000;i++) {
+  for(var i=0;i<5000;i++) {
     t1.push({a:i,b:i,bb:i});
   }
 

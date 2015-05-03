@@ -92,11 +92,11 @@ yy.Select.prototype.compileFrom = function(query) {
 				};
 			}
 		} else if(tq instanceof yy.Select) {
-			if(typeof tq.modifier == 'undefined') {
-				tq.modifier = 'RECORDSET'; // Subqueries always return recordsets
-			}
 
 			source.subquery = tq.compile(query.database.databaseid);
+			if(typeof source.subquery.query.modifier == 'undefined') {
+				source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
+			}
 			source.columns = source.subquery.query.columns;
 //			console.log(101,source.columns);
 //			tq.columns;
@@ -114,6 +114,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				return res;
 			}						
 		} else if(tq instanceof yy.ParamValue) {
+
 			var ps = "var res = alasql.prepareFromData(params['"+tq.param+"']";
 //				console.log(tq);
 			if(tq.array) ps+=",true";

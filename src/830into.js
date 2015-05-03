@@ -307,7 +307,27 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
-				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
+				if(isIE() == 9) {
+					throw new Error('Cannot save XLSX files in IE9. Please use XLS() export function');
+//					var URI = 'data:text/plain;charset=utf-8,';
+
+/*
+					var testlink = window.open("about:blank", "_blank");
+					var s = '';
+					for(var i=0,ilen=wbout.length;i<ilen;i++) {
+						var ch = wbout.charCodeAt(i);
+						if(i<20) console.log('&#'+ch+';');
+						s += '&#x'+ch.toString(16)+';';
+					};
+					testlink.document.write(s); //fileData has contents for the file
+					testlink.document.close();
+					testlink.document.execCommand('SaveAs', false, filename);
+					testlink.close();         		
+*/
+//					alert('ie9');
+				} else {
+					saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
+				}
 			}
 
 		}

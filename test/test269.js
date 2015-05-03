@@ -10,8 +10,6 @@ if(typeof exports == 'object') {
   global.localStorage = new DOMStorage("./restest267.json", { strict: false, ws: '' });
 };
 
-
-
 describe('Test 269 options', function() {
 
   var data1 = [{a:1,b:10},{a:2,b:20},{a:3,b:30}];
@@ -71,9 +69,10 @@ describe('Test 269 options', function() {
 
   it('6a. MATRIX', function(done) {
     alasql.options.modifier = 'MATRIX';
+//    alasql.options.modifier = 'RECORDSET';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b \
       ORDER BY a',[data1,data2]);
-//console.log(res);
+console.log(res);
     // Wrong with reduced rows
     assert.deepEqual(res,[[undefined,40,400],[1,10,100],[2,20,200],[3,30,undefined]]);
 

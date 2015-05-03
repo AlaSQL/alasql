@@ -89,7 +89,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
 			var newcol = {
 				columnid: col.columnid,
-				dbtypeid: dbtypeid // TODO: Add types table
+				dbtypeid: dbtypeid, 
+				dbsize: col.dbsize, 			// Fixed issue #150
+				dbprecision: col.dbprecision 	// Fixed issue #150
 			};
 
 			if(col.default) {

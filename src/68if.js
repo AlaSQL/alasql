@@ -1,6 +1,6 @@
 /*
 //
-// CREATE VIEW for Alasql.js
+// IF for Alasql.js
 // Date: 03.11.2014
 // (c) 2014, Andrey Gershun
 //
