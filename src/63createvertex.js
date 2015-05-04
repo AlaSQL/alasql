@@ -58,17 +58,24 @@ yy.CreateVertex.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateVertex.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-		if(this.sets && this.sets.length > 0) {
-			var s = this.sets.map(function(st){
-				return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
-			}).join(';');
-			var setfn = new Function('x,params,alasql',s);
-		} else if(this.content) {
 
-		} else if(this.select) {
+	// CREATE VERTEX "Name"
+	if(typeof this.name != 'undefined') {
+		var s = 'x.name='+this.name.toJavaScript();
+		var namefn = new Function('x',s);
+	};
 
-		} else {
-		}
+	if(this.sets && this.sets.length > 0) {
+		var s = this.sets.map(function(st){
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+		}).join(';');
+		var setfn = new Function('x,params,alasql',s);
+	} else if(this.content) {
+
+	} else if(this.select) {
+
+	} else {
+	}
 
 
 	var statement = function(params,cb){
@@ -79,6 +86,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 		var vertex = {$id: db.counter++, $node:'VERTEX'};
 		db.objects[vertex.$id] = vertex;
 		res = vertex;
+		if(namefn) namefn(vertex);
 		if(setfn) setfn(vertex,params,alasql);
 
 		if(cb) res = cb(res);
@@ -135,6 +143,13 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
 	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+
+	// CREATE VERTEX "Name"
+	if(typeof this.name != 'undefined') {
+		var s = 'x.name='+this.name.toJavaScript();
+		var namefn = new Function('x',s);
+	};
+
 	if(this.sets && this.sets.length > 0) {
 		var s = this.sets.map(function(st){
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
@@ -165,6 +180,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 		// Save in objects
 		db.objects[edge.$id] = edge;
 		res = edge;
+		if(namefn) namefn(edge);
 		if(setfn) setfn(edge,params,alasql);
 
 		if(cb) res = cb(res);

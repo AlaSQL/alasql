@@ -1,8 +1,11 @@
 # Changelog
 
-### 0.1.1 "Milano" (03.05.2015 - 04.05.2015)
+### 0.1.1 "Milano" (03.05.2015 - ...05.2015)
 * XLSXML() into- function with colors
 * $$hashKey - remove Angular's key
+* CREATE VERTEX, CREATE EDGE
+* SEARCH objects
+* SEARCH graph
 
 ### 0.1.0 (aka 0.0.52) "Venice" (02.05.2015 - 03.05.2015)
 * Added INFORMATION_SCHEMA from variable

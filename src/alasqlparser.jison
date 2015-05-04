@@ -515,7 +515,7 @@ SearchSelector
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| STRING
-		{ $$ = {srchid:"NAME", args: [$1]}; }
+		{ $$ = {srchid:"NAME", args: [$1.substr(1,$1.length-2)]}; }
 	| SLASH
 		{ $$ = {srchid:"CHILD"}; }
 	| VERTEX
@@ -532,6 +532,8 @@ SearchSelector
 		{ $$ = {srchid:"PARENT"}; }
 	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
+	| AT Literal
+		{ $$ = {srchid:"AS", args:[$2]}; }	
 	| AS AT Literal
 		{ $$ = {srchid:"AS", args:[$3]}; }	
 	| TO AT Literal
@@ -2332,8 +2334,11 @@ CreateVertex
 	;
 */
 CreateVertex
-	: CREATE VERTEX Literal? CreateVertexSet 
-		{ $$ = new yy.CreateVertex({class:$3}); yy.extend($$,$4); }
+	: CREATE VERTEX Literal? StringValue? CreateVertexSet 
+		{
+			$$ = new yy.CreateVertex({class:$3,name:$4}); 
+			yy.extend($$,$5); 
+		}
 	;
 CreateVertexSet
 	: 
@@ -2347,15 +2352,16 @@ CreateVertexSet
 	;
 
 CreateEdge
-	: CREATE EDGE FROM Expression TO Expression
+	: CREATE EDGE StringValue? FROM Expression TO Expression CreateVertexSet
 		{
-			$$ = new yy.CreateEdge({from:$4,to:$6});
+			$$ = new yy.CreateEdge({from:$5,to:$7,name:$3});
+			yy.extend($$,$8); 
 		}
-	| CREATE EDGE FROM Expression TO Expression SET SetColumnsList
+/*	| CREATE EDGE StringValue? FROM Expression TO Expression
 		{
-			$$ = new yy.CreateEdge({from:$4,to:$6,sets:$8});
+			$$ = new yy.CreateEdge({from:$5,to:$7,name:$3});
 		}
-	;
+*/	;
 
 
 /*

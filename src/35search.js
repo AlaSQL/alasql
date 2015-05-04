@@ -27,6 +27,7 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 		var fromdata = Object.keys(alasql.databases[databaseid].objects).map(
 				function(key) {return alasql.databases[databaseid].objects[key]}
 			);
+		this.selectors.unshift({srchid:'CHILD'});
 	} else {
 		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
 		var fromdata = fromfn(params,alasql);		
@@ -139,11 +140,19 @@ alasql.srch.OK = function(val,args) {
   }
 };
 
+alasql.srch.NAME = function(val,args) {
+  if(val.name == args[0]) {
+    return {status: 1, values: [val]};
+  } else {
+    return {status: -1, values: []};        
+  }
+};
+
+
 // Transform expression
 alasql.srch.VERTEX = function(val,args) {
-	var res = val.filter(function(v){ return v.$node=="VERTEX"});
-  if(res.length > 0) {
-    return {status: 1, values: res};
+  if(val.$node == 'VERTEX') {
+    return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
   }
@@ -151,8 +160,7 @@ alasql.srch.VERTEX = function(val,args) {
 
 // Transform expression
 alasql.srch.EDGE = function(val,args) {
-	var res = val.filter(function(v){ return v.$node=="EDGE"});
-  if(res.length > 0) {
+  if(val.$node == 'EDGE') {
     return {status: 1, values: res};
   } else {
     return {status: -1, values: []};        
@@ -175,8 +183,14 @@ alasql.srch.REF = function(val,args) {
 
 // Transform expression
 alasql.srch.OUT = function(val,args) {
-	console.log(val);
-  return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
+	if(val.$out && val.$out.length > 0) {
+		var res = val.$out.map(function(v){ 
+			return alasql.databases[alasql.useid].objects[v]
+		}); 
+		return {status: 1, values: res};
+	} else {
+		return {status: -1, values: []};
+	}
 };
 
 

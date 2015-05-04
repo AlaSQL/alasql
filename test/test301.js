@@ -21,8 +21,30 @@ describe('Test 301 Vertices and Edges', function() {
     alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2 SET name="loves")');
     alasql('SET @e23 = (CREATE EDGE FROM @v2 TO @v3 SET name="loves")');
 
-    var res = alasql('SEARCH VERTEX >');
-  console.log(res);
+    var res = alasql('SEARCH "Olga" > "loves" > name');
+    assert.deepEqual(res,['Peter']);
+
+    var res = alasql('SEARCH "Olga" > @p > "Peter" @(@p) name');
+    assert.deepEqual(res,['loves']);
+
+    var res = alasql('SEARCH @p > "loves" > "Peter" @(@p->name)');
+    assert.deepEqual(res,['Olga']);
+    done();
+  });
+
+  it('3. Create vertices',function(done){
+      alasql('SET @steven = (CREATE VERTEX "Steven")');
+      alasql('CREATE EDGE "loves" FROM @v1 TO @steven')
+      var res = alasql('SEARCH @p > "loves" > @s @[(@p->name),(@s->name)]');
+      assert.deepEqual(res,
+        [ [ 'Olga', 'Peter' ],
+          [ 'Olga', 'Steven' ],
+          [ 'Peter', 'Helen' ] ]      
+      );
+      var res = alasql('SEARCH "Olga" > "loves" > name');
+      assert.deepEqual(res, [ 'Peter', 'Steven' ]);
+      
+ 
 //  console.log(alasql('SEARCH EX(@e23) # FROM 1'));
 //    var res = alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2)');
 if(false) {
