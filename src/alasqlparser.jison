@@ -507,8 +507,16 @@ SearchSelector
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| SLASH
+		{ $$ = {srchid:"CHILD"}; }
 	| Literal LPAR RPAR
 		{ $$ = {srchid:$1}; }	
+	| Literal LPAR ExprList RPAR
+		{ $$ = {srchid:$1, args:$3}; }	
+	| LPAR ExprList RPAR
+		{ $$ = {srchid:"OK", args:$2}; }	
+	| AS AT Literal
+		{ $$ = {srchid:"AS", args:[$3]}; }	
 	;
 
 SearchFrom

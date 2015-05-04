@@ -50,5 +50,53 @@ describe('Test 303 SEARCH over JSON', function() {
     done();    
   });
 
+  it('4. CHILD() and KEYS() selectors',function(done){
+
+    var res = alasql('SEARCH CHILD() FROM @[10,20,30]');
+    assert.deepEqual(res, [10,20,30]);
+
+    var res = alasql('SEARCH CHILD() FROM {a:1,b:2}');
+    assert.deepEqual(res, [1,2]);
+
+    var res = alasql('SEARCH KEYS() FROM @[10,20,30]');
+    assert.deepEqual(res, ["0","1","2"]);
+
+    var res = alasql('SEARCH KEYS() FROM {a:1,b:2}');
+    assert.deepEqual(res, ["a","b"]);
+
+    var res = alasql('SEARCH / name FROM {john:{name:"John"},mary:{name:"Mary"}}');
+    assert.deepEqual(res, ["John","Mary"]);
+
+    var res = alasql('SEARCH / name FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    assert.deepEqual(res, ["John","Mary"]);
+
+    done();    
+  });
+
+  it('4. Test expression',function(done){
+
+    var res = alasql('SEARCH / OK(name = "John") age FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    assert.deepEqual(res, [25]);
+
+    var res = alasql('SEARCH / (name = "Mary") age FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    assert.deepEqual(res, [18]);
+
+    done();
+  });
+
+  it('5. Transform expression',function(done){
+    var res = alasql('SEARCH / EX(age*2) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    assert.deepEqual(res, [50,36]);
+
+    done();
+  });
+
+  it('6. AS function ',function(done){
+    var res = alasql('SEARCH / AS @name EX(age+LEN(@name)) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    assert.deepEqual(res, [29,22]);
+
+    done();
+  });
+
 });
 
