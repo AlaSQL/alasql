@@ -12,7 +12,11 @@ if(typeof exports == 'object') {
 
 describe('Test 280 XLS.XML tests', function() {
 
-	var data = [{city:"London",population:5000000}, {city:"Moscow",population:12000000}, ];
+	var data = [{city:"London",population:5000000}, 
+    {city:"Moscow",population:12000000},
+    {city:"Mexico",population:20000000}, 
+    {city:"New York",population:20000000}, 
+  ];
   
 /*
   it('1. Save XLS', function(done) {
@@ -22,12 +26,14 @@ describe('Test 280 XLS.XML tests', function() {
   });
 */
   it('2. Save XLSXML', function(done) {
-    var opts = {headers:true, column:{style:{
-      Font:{
-        FontName:"Calibri", "x:Family":'',Size:"20", Color:"#FF0077", Bold:"1"}
-      }
-      
-    }};
+    var opts = {
+      headers:true, 
+      column: {style:{Font:{Bold:"1"}}},
+      rows: {1:{style:{Font:{Color:"#FF0077"}}}},
+      cells: {1:{1:{
+        style: {Font:{Color:"#00FFFF"}}
+      }}}
+    };
     alasql('SELECT * INTO XLSXML("restest280b.xls",?) FROM ?',[opts,data],function(){
 	    done();	
     });

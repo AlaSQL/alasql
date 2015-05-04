@@ -11869,7 +11869,6 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 			};
 
 
-
 	   		// Data
 			if(data && data.length > 0) {
 				// Loop over data rows
@@ -11877,11 +11876,136 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 					// Limit number of rows on the sheet
 					if(rowidx>sheet.limit) return;
 
-		   			s3 += '<Row ss:AutoFitHeight="0">';
+					// Extend row properties
+					var srow = {};
+					extend(srow,sheet.row);
+					if(sheet.rows && sheet.rows[rowidx]) {
+						extend(srow,sheet.rows[rowidx]);
+					}
 
+
+		   			s3 += '<Row ';
+
+					// Row style fromdefault sheet
+					if(typeof srow != 'undefined') {
+						var st = {};
+						if(typeof srow.style != 'undefined') {
+							if(typeof srow.style == 'function') {
+								extend(st,srow.style(sheet,row,rowidx));
+							} else {
+								extend(st,srow.style);
+							}
+							s3 += 'ss:StyleID="'+hstyle(st)+'"';
+						}
+					};
+
+					s3 += '>';//'ss:AutoFitHeight="0">'
+
+					// Data
 					columns.forEach(function (column,columnidx) {
-			    		s3 += '<Cell><Data ss:Type="String">';
-			    		s3 += row[column.columnid];
+
+						// Parameters
+						var cell = {};
+						extend(cell,sheet.cell);
+						extend(cell,srow.cell);
+						if(typeof sheet.column != 'undefined') {
+							extend(cell,sheet.column.cell);
+						}
+						extend(cell,column.cell);
+						if(sheet.cells && sheet.cells[rowidx] && sheet.cells[rowidx][columnidx]) {
+							extend(cell,sheet.cells[rowidx][columnidx]);
+						};
+
+						// Create value
+						var value = row[column.columnid];
+						if(typeof cell.value == 'function') {
+							value = cell.value(value,sheet,row,column,cell,rowidx,columnidx);
+						}
+
+						// Define cell type
+						var typeid = cell.typeid;
+						if(typeof typeid == 'function') {
+							typeid = typeid(value,sheet,row,column,cell,rowidx,columnidx);
+						}
+
+						if(typeof typeid == 'undefined') {
+							if(typeof value == 'number') typeid = 'number';
+							else if(typeof value == 'string') typeid = 'string';
+							else if(typeof value == 'boolean') typeid = 'boolean';
+							else if(typeof value == 'object') {
+								if(value instanceof Date) typeid = 'date';
+							}
+						};
+
+						var Type = 'String';
+						if(typeid == 'number') Type = 'Number';
+						else if(typeid == 'date') Type = 'Date';
+						// TODO: What else?
+
+
+						// Prepare Data types styles
+						var typestyle = '';
+
+						if(typeid == 'money') {
+							typestyle = 'mso-number-format:\"\\#\\,\\#\\#0\\\\ _р_\\.\";white-space:normal;';
+						} else if(typeid == 'number') {
+							typestyle = ' ';
+						} else if (typeid == 'date') {
+							typestyle = 'mso-number-format:\"Short Date\";'; 
+						} else {
+							// FOr other types is saved
+							if( opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
+								typestyle = opts.types[typeid].typestyle;
+							} 
+						}
+
+						// TODO Replace with extend...
+						typestyle = typestyle || 'mso-number-format:\"\\@\";'; // Default type style
+
+
+			    		s3 += '<Cell ';
+if(false) {
+						s += "<td style='" + typestyle+"' " ;	
+}			    		
+
+						// Row style fromdefault sheet
+						var st = {};
+						if(typeof cell.style != 'undefined') {
+							if(typeof cell.style == 'function') {
+								extend(st,cell.style(value,sheet,row,column,rowidx,columnidx));
+							} else {
+								extend(st,cell.style);
+							}
+							s3 += 'ss:StyleID="'+hstyle(st)+'"';
+						}
+
+			    		s3 += '>';
+
+			    		s3+='<Data ss:Type="'+Type+'">';
+
+						// TODO Replace with extend...
+						var format = cell.format;
+						if(typeof value == 'undefined') {
+							s3 += '';
+						} else if(typeof format != 'undefined') {
+							if(typeof format == 'function') {
+								s3 += format(value);
+							} else if(typeof format == 'string') {
+								s3 += value; // TODO - add string format
+							} else {
+								throw new Error('Unknown format type. Should be function or string');
+							}
+						} else {
+							if(typeid == 'number' || typeid == 'date') {
+								s3 += value.toString();
+							} else if(typeid == 'money') {
+								s3 += (+value).toFixed(2);
+							} else {
+								s3 += value;
+							}
+						}
+
+//			    		s3 += row[column.columnid];
 			    		s3 += '</Data></Cell>';
 			    	});
 		   			
