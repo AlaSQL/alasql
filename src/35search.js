@@ -41,10 +41,11 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 		this.selectors.forEach(function(selector){
 			if(selector.srchid == 'TO') {
 				alasql.vars[selector.args[0]] = [];
+				// TODO - process nested selectors
 			}
 		});
 
-		res = processSelector(selidx,selvalue);
+		res = processSelector(selectors,selidx,selvalue);
 	} else {
 		res = fromdata; 	
 	}
@@ -67,13 +68,46 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 	
-	function processSelector(sidx,value) {
+	function processSelector(selectors,sidx,value) {
 		var sel = selectors[sidx];
-		if(!alasql.srch[sel.srchid]) {
-			throw new Error('Selector "'+sel.srchid+'" not found');
-		};
+//		console.log(sel);
+//		if(!alasql.srch[sel.srchid]) {
+//			throw new Error('Selector "'+sel.srchid+'" not found');
+//		};
 		
-		var r = alasql.srch[sel.srchid.toUpperCase()](value,sel.args);
+		if(sel.selid) {
+			// TODO Process Selector
+			if(sel.selid == 'NOT') {
+				var nest = processSelector(sel.args,0,value);
+				//console.log(1,nest);
+				if(nest.length>0) {
+					return [];
+				} else {
+					if(sidx+1+1 > selectors.length) {
+						return [value];
+					} else {
+						return processSelector(selectors,sidx+1,value);
+					}
+				}
+			} else 	if(sel.selid == 'IF') {
+				var nest = processSelector(sel.args,0,value);
+				//console.log(1,nest);
+				if(nest.length==0) {
+					return [];
+				} else {
+					if(sidx+1+1 > selectors.length) {
+						return [value];
+					} else {
+						return processSelector(selectors,sidx+1,value);
+					}
+				}
+			}
+
+		} else if(sel.srchid) {
+			var r = alasql.srch[sel.srchid.toUpperCase()](value,sel.args);
+		} else {
+			throw new Error('Selector not found');
+		}
 //		console.log(sidx,r);
 		var res = [];
 		if(r.status == 1) {
@@ -81,7 +115,7 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 				res = r.values;					
 			} else {
 				for(var i=0;i<r.values.length;i++) {
-					res = res.concat(processSelector(sidx+1,r.values[i]));									
+					res = res.concat(processSelector(selectors,sidx+1,r.values[i]));									
 				}
 			}
 		}

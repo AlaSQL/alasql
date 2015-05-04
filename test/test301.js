@@ -14,7 +14,7 @@ describe('Test 301 Vertices and Edges', function() {
   });
 
   it('2. Create vertices',function(done){
-    var res = alasql('CREATE VERTEX');
+//    var res = alasql('CREATE VERTEX');
     alasql('SET @v1 = (CREATE VERTEX SET name="Olga",age=19,sef="F")');
     alasql('SET @v2 = (CREATE VERTEX SET name="Peter",age=21,sef="M")');
     alasql('SET @v3 = (CREATE VERTEX SET name="Helen",age=20,sef="F")');
@@ -44,9 +44,36 @@ describe('Test 301 Vertices and Edges', function() {
       var res = alasql('SEARCH "Olga" > "loves" > name');
       assert.deepEqual(res, [ 'Peter', 'Steven' ]);
       
- 
-//  console.log(alasql('SEARCH EX(@e23) # FROM 1'));
-//    var res = alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2)');
+    done();    
+  });
+  
+  it('4. +() and *() and NOT()',function(done){
+      alasql('SET @heather = (CREATE VERTEX "Heather")');
+      alasql('CREATE EDGE "loves" FROM @steven TO @heather');
+      var res = alasql('SEARCH VERTEX !(>) name');
+      assert.deepEqual(res,[ 'Helen', 'Heather' ]);
+
+      var res = alasql('SEARCH VERTEX !(>"loves">"Steven") name');
+      assert.deepEqual(res,[ 'Peter', 'Helen', 'Steven', 'Heather' ]);
+
+      var res = alasql('SEARCH VERTEX IF(>"loves">"Steven") name');
+      assert.deepEqual(res,[ 'Olga' ]);
+
+      var res = alasql('SEARCH VERTEX @p >"loves">"Steven" @(@p) name');
+      assert.deepEqual(res,[ 'Olga' ]);
+
+
+//      assert.deepEqual(res,
+//        [ [ 'Olga', 'Peter' ],
+//          [ 'Olga', 'Steven' ],
+//          [ 'Peter', 'Helen' ] ]      
+//      );
+      
+    done();    
+  });
+
+if(false) {
+  it('3. Create edges',function(done){
 if(false) {
     var res = alasql('CREATE CLASS Person');
     var res = alasql('CREATE VERTEX Person SET name = "Olga",age=56,sex="F"');  
@@ -56,11 +83,6 @@ if(false) {
     var res = alasql('SET @e12#name = "Lisa"');
     var res = alasql('SET @e12#age = 43');
 }
-    done();    
-  });
-
-if(false) {
-  it('3. Create edges',function(done){
     alasql('SET @john = (CREATE VERTEX Person SET name = "John",age=23,sex="M")');
     alasql('SET @peter = (CREATE VERTEX Person SET name = "Peter",age=18,sex="M")');
     alasql('SET @mike = (CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"})');

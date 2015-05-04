@@ -276,6 +276,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 ';'												return 'SEMICOLON'
 '$'												return 'DOLLAR'
 '?'												return 'QUESTION'
+'!'												return 'EXCLAMATION'
 '^'												return 'CARET'
 
 
@@ -538,9 +539,16 @@ SearchSelector
 		{ $$ = {srchid:"AS", args:[$3]}; }	
 	| TO AT Literal
 		{ $$ = {srchid:"TO", args:[$3]}; }	
-	| STAR LPAR SearchSelector* RPAR
 	| PLUS LPAR SearchSelector* RPAR
+		{ $$ = {selid:"PLUS",args:$3 }; }
+	| STAR LPAR SearchSelector* RPAR
+		{ $$ = {selid:"STAR",args:$3 }; }
+	| EXCLAMATION LPAR SearchSelector* RPAR
+		{ $$ = {selid:"NOT",args:$3 }; }
 	| NOT LPAR SearchSelector* RPAR
+		{ $$ = {selid:"NOT",args:$3 }; }
+	| IF LPAR SearchSelector* RPAR
+		{ $$ = {selid:"IF",args:$3 }; }
 	;
 
 SearchFrom

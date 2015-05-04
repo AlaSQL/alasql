@@ -6,6 +6,7 @@
 * CREATE VERTEX, CREATE EDGE
 * SEARCH objects
 * SEARCH graph
+* "name" as name for graph vertices and edges
 
 ### 0.1.0 (aka 0.0.52) "Venice" (02.05.2015 - 03.05.2015)
 * Added INFORMATION_SCHEMA from variable
