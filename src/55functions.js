@@ -110,7 +110,8 @@ stdlib.IIF = function(a,b,c) {
 stdlib.IFNULL = function(a,b) {return '('+a+'||'+b+')'};
 stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 
-stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
+//stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
+stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+').length';};
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
 stdlib.LOWER = stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}

@@ -57,6 +57,37 @@ describe('Test 302 CREATE CLASS ', function() {
     done();
   });
 
+  it('8. SEARCH #', function(done) {
+    var res = alasql('SEARCH DISTINCT city#country#name FROM Person');
+    assert.deepEqual(res.sort(),['Egypt','Germany','Italy']);
+    done();
+  });
+  
+  it('9. SEARCH AS', function(done) {
+    var res = alasql('search city as @c # ok(name like "M%") ex({city:name,country:(@c#country#name)}) FROM Person');
+    assert.deepEqual(res,[ { city: 'Milano', country: 'Italy' } ]);
+    done();
+  });
+
+  it('10. SEARCH TO', function(done) {
+    var res = alasql('search city to @c # ex({city:name,num:len(@c)}) FROM Person');
+    assert.deepEqual(res,
+      [ { city: 'Rome', num: 1 },
+        { city: 'Milano', num: 2 },
+        { city: 'Berlin', num: 3 },
+        { city: 'Cairo', num: 4 } ]
+    );
+    done();
+  });
+
+  it('11. SEARCH EX JSON', function(done) {
+    var res = alasql('search city to @c # @[name,len(@c)] FROM Person');
+    assert.deepEqual(res,
+      [["Rome",1],["Milano",2],["Berlin",3],["Cairo",4]]
+    );
+    done();
+  });
+
 
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test302');

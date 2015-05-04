@@ -472,9 +472,9 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| SearchClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
+	| SEARCH DISTINCT? SearchSelector* SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
 		{
-			$$ = new yy.Search({selectors:$1, from:$2});
+			$$ = new yy.Search({selectors:$3, from:$4, distinct:($2=="DISTINCT")});
 		}
 	;
 
@@ -497,26 +497,35 @@ RemoveColumn
 		{ $$ = {like:$2}; }	
 	;
 
+/*
 SearchClause
-	: SEARCH SearchSelector*
+	: SearchSelector*
 		{ $$ = $2; }	
 	;
-
+*/
 SearchSelector
 	: Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| STRING
+		{ $$ = {srchid:"NAME", args: [$1]}; }
 	| SLASH
 		{ $$ = {srchid:"CHILD"}; }
+	| SHARP
+		{ $$ = {srchid:"REF"}; }
+	| Json
+		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
 	| Literal LPAR RPAR
-		{ $$ = {srchid:$1}; }	
+		{ $$ = {srchid:$1.toUpperCase()}; }	
 	| Literal LPAR ExprList RPAR
-		{ $$ = {srchid:$1, args:$3}; }	
+		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
 	| LPAR ExprList RPAR
 		{ $$ = {srchid:"OK", args:$2}; }	
 	| AS AT Literal
 		{ $$ = {srchid:"AS", args:[$3]}; }	
+	| TO AT Literal
+		{ $$ = {srchid:"TO", args:[$3]}; }	
 	;
 
 SearchFrom

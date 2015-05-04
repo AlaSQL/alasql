@@ -7,6 +7,12 @@ if(typeof exports === 'object') {
 
 describe('Test 303 SEARCH over JSON', function() {
 
+  it('0. Create database ',function(done){
+    var res = alasql('CREATE DATABASE test303;USE test303');
+    done();
+  });
+
+
   it('1. Simple Search Primitives',function(done){
     var res = alasql('SEARCH FROM TRUE');
     assert.deepEqual(res, true);
@@ -88,13 +94,31 @@ describe('Test 303 SEARCH over JSON', function() {
     var res = alasql('SEARCH / EX(age*2) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
     assert.deepEqual(res, [50,36]);
 
+    // Self variable
+    var res = alasql('SEARCH / EX(age+LEN(_->name)) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    assert.deepEqual(res, [29,22]);
+
     done();
   });
 
   it('6. AS function ',function(done){
+
     var res = alasql('SEARCH / AS @name EX(age+LEN(@name)) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
     assert.deepEqual(res, [29,22]);
 
+    done();
+  });
+
+  it('7. # / REF() function ',function(done){
+    alasql('CREATE CLASS Person');
+    var res = alasql('SEARCH / AS @name EX(age+LEN(@name)) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    assert.deepEqual(res, [29,22]);
+
+    done();
+  });
+
+  it('99. Create database ',function(done){
+    var res = alasql('DROP DATABASE test303');
     done();
   });
 

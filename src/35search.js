@@ -19,18 +19,46 @@ yy.Search.prototype.toString = function () {
 yy.Search.prototype.execute = function (databaseid, params, cb) {
 	var res;
 	var search = {};
-	var fromfn = new Function('return '+this.from.toJavaScript());
-	var fromdata = fromfn();
+
+	if(this.from instanceof yy.Column) {
+		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
+		this.selectors.unshift({srchid:'CHILD'});
+	} else {
+		var fromfn = new Function('return '+this.from.toJavaScript());
+		var fromdata = fromfn();		
+	}
 	var selidx = 0;
 	var selvalue = fromdata;
 	var selectors = this.selectors;
 	
 	if(typeof this.selectors != 'undefined' && this.selectors.length > 0) {
+		// Init variables for TO() selectors
+		this.selectors.forEach(function(selector){
+			if(selector.srchid == 'TO') {
+				alasql.vars[selector.args[0]] = [];
+			}
+		});
+
 		res = processSelector(selidx,selvalue);
 	} else {
 		res = fromdata; 	
 	}
 	
+	if(this.distinct) {
+		var uniq = {};
+		// TODO: Speedup, because Object.keys is slow
+		for(var i=0,ilen=res.length;i<ilen;i++) {
+			if(typeof res[i] == 'object') {
+				var uix = Object.keys(res[i]).map(function(k){return res[i][k]}).join('`');
+			} else {
+				var uix = res[i];	
+			}
+			uniq[uix] = res[i];
+		};
+		res = [];
+		for(var key in uniq) res.push(uniq[key]);
+	}
+
 	if (cb) res = cb(res);
 	return res;
 	
@@ -88,8 +116,8 @@ alasql.srch.KEYS = function(val,args) {
 // Test expression
 alasql.srch.OK = function(val,args) {
   var exprs = args[0].toJavaScript('x','');
-  var exprfn = new Function('x','return '+exprs);
-  if(exprfn(val)) {
+  var exprfn = new Function('x,alasql','return '+exprs);
+  if(exprfn(val,alasql)) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -99,12 +127,22 @@ alasql.srch.OK = function(val,args) {
 // Transform expression
 alasql.srch.EX = function(val,args) {
   var exprs = args[0].toJavaScript('x','');
-  var exprfn = new Function('x','return '+exprs);
-  return {status: 1, values: [exprfn(val)]};
+  var exprfn = new Function('x,alasql','return '+exprs);
+  return {status: 1, values: [exprfn(val,alasql)]};
+};
+
+// Transform expression
+alasql.srch.REF = function(val,args) {
+  return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
 };
 
 // Transform expression
 alasql.srch.AS = function(val,args) {
 	alasql.vars[args[0]] = val;
+  return {status: 1, values: [val]};
+};
+
+alasql.srch.TO = function(val,args) {
+  alasql.vars[args[0]].push(val);
   return {status: 1, values: [val]};
 };
