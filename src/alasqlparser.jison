@@ -506,6 +506,12 @@ SearchClause
 SearchSelector
 	: Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| Literal LPAR RPAR
+		{ $$ = {srchid:$1.toUpperCase()}; }	
+	| Literal LPAR ExprList RPAR
+		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
+	| LPAR ExprList RPAR
+		{ $$ = {srchid:"OK", args:$2}; }	
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| STRING
@@ -514,18 +520,21 @@ SearchSelector
 		{ $$ = {srchid:"CHILD"}; }
 	| SHARP
 		{ $$ = {srchid:"REF"}; }
+	| GT 
+		{ $$ = {srchid:"OUT"}; }
+	| LT 
+		{ $$ = {srchid:"IN"}; }
+	| DOT DOT 
+		{ $$ = {srchid:"PARENT"}; }
 	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
-	| Literal LPAR RPAR
-		{ $$ = {srchid:$1.toUpperCase()}; }	
-	| Literal LPAR ExprList RPAR
-		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
-	| LPAR ExprList RPAR
-		{ $$ = {srchid:"OK", args:$2}; }	
 	| AS AT Literal
 		{ $$ = {srchid:"AS", args:[$3]}; }	
 	| TO AT Literal
 		{ $$ = {srchid:"TO", args:[$3]}; }	
+	| STAR LPAR SearchSelector* RPAR
+	| PLUS LPAR SearchSelector* RPAR
+	| NOT LPAR SearchSelector* RPAR
 	;
 
 SearchFrom

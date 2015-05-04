@@ -24,8 +24,8 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
 		this.selectors.unshift({srchid:'CHILD'});
 	} else {
-		var fromfn = new Function('return '+this.from.toJavaScript());
-		var fromdata = fromfn();		
+		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
+		var fromdata = fromfn(params,alasql);		
 	}
 	var selidx = 0;
 	var selvalue = fromdata;
@@ -87,8 +87,19 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 // List of search functions
 alasql.srch = {};
 alasql.srch.PROP = function(val,args) {
-	return {status: 1, values: [val[args[0]]]};
+	if(typeof val != 'object') {
+		return {status: -1, values: []};
+	} else {
+		return {status: 1, values: [val[args[0]]]};
+	}
 };
+
+alasql.srch.PARENT = function(val,args,stack) {
+	// TODO - finish
+	console.log('PARENT');
+	return {status: -1, values: []};
+};
+
 
 alasql.srch.CHILD = function(val,args) {
   if(typeof val == 'object') {
@@ -135,6 +146,13 @@ alasql.srch.EX = function(val,args) {
 alasql.srch.REF = function(val,args) {
   return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
 };
+
+// Transform expression
+alasql.srch.OUT = function(val,args) {
+	console.log('out');
+  return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
+};
+
 
 // Transform expression
 alasql.srch.AS = function(val,args) {

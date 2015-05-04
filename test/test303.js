@@ -103,15 +103,8 @@ describe('Test 303 SEARCH over JSON', function() {
 
   it('6. AS function ',function(done){
 
-    var res = alasql('SEARCH / AS @name EX(age+LEN(@name)) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
-    assert.deepEqual(res, [29,22]);
-
-    done();
-  });
-
-  it('7. # / REF() function ',function(done){
-    alasql('CREATE CLASS Person');
-    var res = alasql('SEARCH / AS @name EX(age+LEN(@name)) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    var res = alasql('SEARCH / AS @p EX(age+LEN(@p->name)) \
+         FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
     assert.deepEqual(res, [29,22]);
 
     done();

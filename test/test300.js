@@ -30,15 +30,30 @@ describe('Test 300 SEARCH', function() {
       ]}]);
     done();    
   });
-if(false) {
-  it('2. Search fruits',function(done){
-    var res = alasql('SEARCH * fruit FROM ?',[catalog]);
-    assert.deepEqual(res, [{fruit:'Apple'}, {fruit:'Peach'},{fruit:'Pineapple'}, {fruit:'Banana'}]);
+
+  it('2. Search fruits 2',function(done){
+
+    var res = alasql('SEARCH /fruits/ FROM ?',[catalog]);
+    assert.deepEqual(res, [{fruit:'Apple'}, {fruit:'Peach'}]);
+
+    var res = alasql('SEARCH /fruits/fruit FROM ?',[catalog]);
+    assert.deepEqual(res, ['Apple','Peach']);
+
     done();    
   });
 
   it('3. Search fruits',function(done){
-    var res = alasql('SEARCH * fruit="Apple" FROM ?',[catalog]);
+    var res = alasql('SEARCH /fruits/(fruit="Apple") FROM ?',[catalog]);
+    assert.deepEqual(res, [{fruit:'Apple'}]);
+
+    var res = alasql('SEARCH ///(fruit="Apple") FROM ?',[catalog]);
+    assert.deepEqual(res, [{fruit:'Apple'}]);
+    done();    
+  });
+if(false) {
+  
+  it('4. Search fruits',function(done){
+    var res = alasql('SEARCH /// (fruit="Apple") FROM ?',[catalog]);
     assert.deepEqual(res, [{fruit:'Apple'}]);
     done();    
   });
