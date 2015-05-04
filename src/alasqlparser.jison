@@ -518,6 +518,10 @@ SearchSelector
 		{ $$ = {srchid:"NAME", args: [$1]}; }
 	| SLASH
 		{ $$ = {srchid:"CHILD"}; }
+	| VERTEX
+		{ $$ = {srchid:"VERTEX"}; }
+	| EDGE
+		{ $$ = {srchid:"EDGE"}; }
 	| SHARP
 		{ $$ = {srchid:"REF"}; }
 	| GT 
@@ -2346,6 +2350,10 @@ CreateEdge
 	: CREATE EDGE FROM Expression TO Expression
 		{
 			$$ = new yy.CreateEdge({from:$4,to:$6});
+		}
+	| CREATE EDGE FROM Expression TO Expression SET SetColumnsList
+		{
+			$$ = new yy.CreateEdge({from:$4,to:$6,sets:$8});
 		}
 	;
 

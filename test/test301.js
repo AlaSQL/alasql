@@ -15,10 +15,15 @@ describe('Test 301 Vertices and Edges', function() {
 
   it('2. Create vertices',function(done){
     var res = alasql('CREATE VERTEX');
-    alasql('SET @v1 = (CREATE VERTEX)');
-    alasql('SET @v2 = (CREATE VERTEX)');
-    var res = alasql('CREATE EDGE FROM @v1 TO @v2');
+    alasql('SET @v1 = (CREATE VERTEX SET name="Olga",age=19,sef="F")');
+    alasql('SET @v2 = (CREATE VERTEX SET name="Peter",age=21,sef="M")');
+    alasql('SET @v3 = (CREATE VERTEX SET name="Helen",age=20,sef="F")');
+    alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2 SET name="loves")');
+    alasql('SET @e23 = (CREATE EDGE FROM @v2 TO @v3 SET name="loves")');
+
+    var res = alasql('SEARCH VERTEX >');
   console.log(res);
+//  console.log(alasql('SEARCH EX(@e23) # FROM 1'));
 //    var res = alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2)');
 if(false) {
     var res = alasql('CREATE CLASS Person');

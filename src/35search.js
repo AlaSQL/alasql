@@ -23,6 +23,10 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 	if(this.from instanceof yy.Column) {
 		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
 		this.selectors.unshift({srchid:'CHILD'});
+	} else if(typeof this.from == 'undefined') {
+		var fromdata = Object.keys(alasql.databases[databaseid].objects).map(
+				function(key) {return alasql.databases[databaseid].objects[key]}
+			);
 	} else {
 		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
 		var fromdata = fromfn(params,alasql);		
@@ -136,11 +140,33 @@ alasql.srch.OK = function(val,args) {
 };
 
 // Transform expression
+alasql.srch.VERTEX = function(val,args) {
+	var res = val.filter(function(v){ return v.$node=="VERTEX"});
+  if(res.length > 0) {
+    return {status: 1, values: res};
+  } else {
+    return {status: -1, values: []};        
+  }
+};
+
+// Transform expression
+alasql.srch.EDGE = function(val,args) {
+	var res = val.filter(function(v){ return v.$node=="EDGE"});
+  if(res.length > 0) {
+    return {status: 1, values: res};
+  } else {
+    return {status: -1, values: []};        
+  }
+};
+
+// Transform expression
 alasql.srch.EX = function(val,args) {
   var exprs = args[0].toJavaScript('x','');
   var exprfn = new Function('x,alasql','return '+exprs);
   return {status: 1, values: [exprfn(val,alasql)]};
 };
+
+
 
 // Transform expression
 alasql.srch.REF = function(val,args) {
@@ -149,7 +175,7 @@ alasql.srch.REF = function(val,args) {
 
 // Transform expression
 alasql.srch.OUT = function(val,args) {
-	console.log('out');
+	console.log(val);
   return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
 };
 

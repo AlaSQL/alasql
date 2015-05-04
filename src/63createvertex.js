@@ -58,27 +58,28 @@ yy.CreateVertex.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateVertex.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-	var statement = function(params,cb){
-		var res = 0;
-		if(this.sets) {
-			// var obj = {};
-			// if(this.sets.length > 0) {
-			// 	this.sets.forEach(function(st){
-			// 		console.log(st);
-			// 	});
-			// }
-
+		if(this.sets && this.sets.length > 0) {
+			var s = this.sets.map(function(st){
+				return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			}).join(';');
+			var setfn = new Function('x,params,alasql',s);
 		} else if(this.content) {
 
 		} else if(this.select) {
 
 		} else {
-			// CREATE VERTEX without parameters
-			var db = alasql.databases[dbid];
-			var vertex = {$id: db.counter++, $node:'VERTEX'};
-			db.objects[vertex.$id] = vertex;
-			res = vertex;
 		}
+
+
+	var statement = function(params,cb){
+		var res;
+
+		// CREATE VERTEX without parameters
+		var db = alasql.databases[dbid];
+		var vertex = {$id: db.counter++, $node:'VERTEX'};
+		db.objects[vertex.$id] = vertex;
+		res = vertex;
+		if(setfn) setfn(vertex,params,alasql);
 
 		if(cb) res = cb(res);
 		return res;
@@ -134,16 +135,37 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
 	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+	if(this.sets && this.sets.length > 0) {
+		var s = this.sets.map(function(st){
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+		}).join(';');
+		var setfn = new Function('x,params,alasql',s);
+	} else if(this.content) {
+
+	} else if(this.select) {
+
+	} else {
+	}
 
 	var statement = function(params,cb){
 		var res = 0;
 			// CREATE VERTEX without parameters
 		var db = alasql.databases[dbid];
 		var edge = {$id: db.counter++, $node:'EDGE'};
-		edge.$in = [fromfn(params,alasql)];
-		edge.$out = [tofn(params,alasql)];
+		var v1 = fromfn(params,alasql);
+		var v2 = tofn(params,alasql);
+		// Set link
+		edge.$in = [v1.$id];
+		edge.$out = [v2.$id];
+		// Set sides
+		if(typeof v1.$out == 'undefined') v1.$out = [];
+		v1.$out.push(edge.$id);
+		if(typeof v2.$in == 'undefined') v2.$in = [];
+		v2.$in.push(edge.$id);
+		// Save in objects
 		db.objects[edge.$id] = edge;
 		res = edge;
+		if(setfn) setfn(edge,params,alasql);
 
 		if(cb) res = cb(res);
 		return res;
