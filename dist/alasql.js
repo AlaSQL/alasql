@@ -4459,7 +4459,9 @@ function queryfn3(query) {
 //	console.log('removeKeys:',query.removeKeys);
 
     // TODO: Check what artefacts rest from Angular.js
-    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
+    if(typeof angular != "undefined") {
+    	query.removeKeys.push('$$hashKey');
+    }
 
 
 	if(query.removeKeys.length > 0) {
