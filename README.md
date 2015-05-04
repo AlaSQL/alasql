@@ -1,6 +1,6 @@
 # AlaSQL.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.0 (aka 0.0.52) "Venice" Date: May 3, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.1 "Milano" Date: May 4, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -19,9 +19,9 @@ AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb
 Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">AlaSQL console</a>.
 
 Please use:
-* [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions
 * [Issues](https://github.com/agershun/alasql/issues) to report bugs.
-* [Feathub](http://feathub.com/agershun/alasql) Please, vote for new features
+* [Feathub](http://feathub.com/agershun/alasql) to vote for new features
+* [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions
 
 ## Documentation 
 
@@ -68,7 +68,26 @@ Other areas of future improvements (please add and vote for new features on [Fea
 * Support key-value external storages and NoSQL databases
 * Add some missing SQL functionality (constraints, foreign keys, etc.)
 
-### AlaSQL export to Excel with colors
+### AlaSQL export to Excel with colors (2)
+
+Now AlaSQL can save files to Excel and LibreOffice formats with colors and other
+Excel formatting functions. This function also work in IE9. This is a code sample:
+
+```js
+    var mystyle = {
+      headers:true, 
+      column: {style:{Font:{Bold:"1"}}},
+      rows: {1:{style:{Font:{Color:"#FF0077"}}}},
+      cells: {1:{1:{
+        style: {Font:{Color:"#00FFFF"}}
+      }}}
+    };
+    alasql('SELECT * INTO XLSXML("restest280b.xls",?) FROM ?',[mystyle,data]);
+```
+See the working example in [jsFiddle](http://jsfiddle.net/95j0txwx/7/)
+
+
+### AlaSQL export to Excel with colors (1)
 
 Now AlaSQL can export data to XLS format with coloring cells
 

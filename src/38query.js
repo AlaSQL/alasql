@@ -280,11 +280,13 @@ function queryfn3(query) {
 
 //	console.log('removeKeys:',query.removeKeys);
 
-	if(typeof query.removeKeys != 'undefined' &&  query.removeKeys.length > 0) {
+    // TODO: Check what artefacts rest from Angular.js
+    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
+
+
+	if(query.removeKeys.length > 0) {
 	    var removeKeys = query.removeKeys;
 
-	    // TODO: Check what artefacts rest from Angular.js
-	    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
 
 	    // Remove from data
 	    var jlen = removeKeys.length;

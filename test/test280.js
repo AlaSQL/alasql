@@ -18,13 +18,12 @@ describe('Test 280 XLS.XML tests', function() {
     {city:"New York",population:20000000}, 
   ];
   
-/*
   it('1. Save XLS', function(done) {
     alasql('SELECT * INTO XLS("restest280a.xls",{headers:true}) FROM ?',[data],function(){
     	done();
     });
   });
-*/
+
   it('2. Save XLSXML', function(done) {
     var opts = {
       headers:true, 
@@ -38,13 +37,12 @@ describe('Test 280 XLS.XML tests', function() {
 	    done();	
     });
   });
-/*
+
   it('3. Save complex XLSXML', function(done) {
     alasql('SELECT * INTO XLSXML("restest280c.xls",{headers:true, sheets:{Sheet1:{},Sheet2:{}}}) FROM ?',[data],function(){
 	    done();	
     });
   });
-*/
 });
 
 

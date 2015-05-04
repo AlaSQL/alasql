@@ -1,8 +1,8 @@
 //
 // alasql.js
 // AlaSQL - JavaScript SQL database
-// Date: 3.05.2015
-// Version: 0.1.0
+// Date: 4.05.2015
+// Version: 0.1.1
 // (ñ) 2014-2015, Andrey Gershun
 //
 
@@ -111,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.1.0";
+alasql.version = "0.1.1";
 
 
 
@@ -4458,11 +4458,13 @@ function queryfn3(query) {
 
 //	console.log('removeKeys:',query.removeKeys);
 
-	if(typeof query.removeKeys != 'undefined' &&  query.removeKeys.length > 0) {
+    // TODO: Check what artefacts rest from Angular.js
+    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
+
+
+	if(query.removeKeys.length > 0) {
 	    var removeKeys = query.removeKeys;
 
-	    // TODO: Check what artefacts rest from Angular.js
-	    if(typeof angular != "undefined") removeKeys.push('$$hashKey');
 
 	    // Remove from data
 	    var jlen = removeKeys.length;
