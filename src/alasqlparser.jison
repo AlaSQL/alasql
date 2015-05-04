@@ -2311,7 +2311,9 @@ OutputClause
 
 /*
 CreateVertex
-	: CREATE VERTEX SET SetColumnsList
+	: CREATE VERTEX
+		{ $$ = new yy.CreateVertex(); }
+	| CREATE VERTEX SET SetColumnsList
 		{ $$ = new yy.CreateVertex({set: $4}); }
 	| CREATE VERTEX Literal SET SetColumnsList
 		{ $$ = new yy.CreateVertex({class:$3, set: $5}); }
@@ -2339,6 +2341,14 @@ CreateVertexSet
 	| Select
 		{ $$ = {select:$1}; }
 	;
+
+CreateEdge
+	: CREATE EDGE FROM Expression TO Expression
+		{
+			$$ = new yy.CreateEdge({from:$4,to:$6});
+		}
+	;
+
 
 /*
 CreateEdge
