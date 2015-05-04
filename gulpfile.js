@@ -47,6 +47,7 @@ gulp.task('js-merge', function () {
   	'./src/25queryclass.js',
     './src/28yy.js',
   	'./src/30statements.js',
+    './src/35search.js',
     './src/38query.js',
     './src/39dojoin.js',
   	'./src/40select.js',

@@ -473,6 +473,9 @@ Select
 			delete yy.queries;
 */		}
 	| SearchClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
+		{
+			$$ = new yy.Search({selectors:$1, from:$2});
+		}
 	;
 
 RemoveClause
@@ -495,18 +498,22 @@ RemoveColumn
 	;
 
 SearchClause
-	: SearchSelector
+	: SEARCH SearchSelector*
+		{ $$ = $2; }	
 	;
 
 SearchSelector
-	: SEARCH Literal*
-		{ $$ = $2; } 
-/*	| SearchSelector Literal 
-		{ $$ = $1; $1.push($2); }
-*/	;
+	: Literal
+		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| NUMBER
+		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| Literal LPAR RPAR
+		{ $$ = {srchid:$1}; }	
+	;
 
 SearchFrom
 	: FROM Expression
+		{ $$ = $2; }
 	;
 
 SearchLet

@@ -1,12 +1,14 @@
 # TO DO
 
-This file contanis unstructured ideas for future development of Alasql.
+This file contanis unstructured ideas for future development of AlaSQL.
 
 ## Ideas
 
-1. INTO XLSXML() function
 2. SEARCH JSON
 3. CREATE GRAPH
+
+### XLSXML
+Simplify with https://technet.microsoft.com/en-us/magazine/2006.01.blogtales.aspx
 
 ### Graph
 
