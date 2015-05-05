@@ -29,6 +29,8 @@ yy.Select.prototype.compileFrom = function(query) {
 			query.aliases[alias] = {tableid: tq.tableid, databaseid: tq.databaseid || query.database.databaseid, type:'table'};
 		} else if(tq instanceof yy.Select) {
 			query.aliases[alias] = {type:'subquery'};
+		} else if(tq instanceof yy.Search) {
+			query.aliases[alias] = {type:'subsearch'};
 		} else if(tq instanceof yy.ParamValue) {
 			query.aliases[alias] = {type:'paramvalue'};
 		} else if(tq instanceof yy.FuncValue) {
@@ -106,6 +108,30 @@ yy.Select.prototype.compileFrom = function(query) {
 				var res;
 				source.subquery(query.params, function(data){
 					res = data.data;
+					if(cb) res = cb(res,idx,query);
+					return res;
+//					return data.data;
+				});
+//					console.log(515,res);
+				return res;
+			}						
+		} else if(tq instanceof yy.Search) {
+
+			 source.subsearch = tq;
+			 source.columns = [];
+			 //.compile(query.database.databaseid);
+			// if(typeof source.subquery.query.modifier == 'undefined') {
+			// 	source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
+			// }
+			// source.columns = source.subquery.query.columns;
+//			console.log(101,source.columns);
+//			tq.columns;
+
+			source.datafn = function(query, params, cb, idx, alasql) {
+//				return source.subquery(query.params, cb, idx, query);
+				var res;
+				source.subsearch.execute(query.database.databaseid,query.params,function(data){
+					res = data;
 					if(cb) res = cb(res,idx,query);
 					return res;
 //					return data.data;

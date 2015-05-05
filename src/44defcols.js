@@ -30,6 +30,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				}
 			} else if(fr instanceof yy.Select) {
 
+			} else if(fr instanceof yy.Search) {
+
 			} else if(fr instanceof yy.ParamValue) {
 
 			} else if(fr instanceof yy.VarValue) {

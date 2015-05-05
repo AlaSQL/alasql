@@ -13,23 +13,79 @@ describe('Test 301 Vertices and Edges', function() {
     done();    
   });
 
-  it('2. Create vetices',function(done){
-    var res = alasql('CREATE CLASS Person');
-    var res = alasql('CREATE VERTEX Person SET name = "Olga",age=56,sex="F"');
-    var res = alasql('CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"}');
-    var res = alasql('CREATE VERTEX Person SELECT * FROM ?');
-    var res = alasql('CREATE VERTEX Person');
-    var res = alasql('CREATE VERTEX');
-    var res = alasql('SET @v1 = (CREATE VERTEX)');
-    var res = alasql('SET @v2 = (CREATE VERTEX)');
-    var res = alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2)');
-    var res = alasql('SET @e12#name = "Lisa"');
-    var res = alasql('SET @e12#age = 43');
+  it('2. Create vertices',function(done){
+//    var res = alasql('CREATE VERTEX');
+    alasql('SET @v1 = (CREATE VERTEX SET name="Olga",age=19,sef="F")');
+    alasql('SET @v2 = (CREATE VERTEX SET name="Peter",age=21,sef="M")');
+    alasql('SET @v3 = (CREATE VERTEX SET name="Helen",age=20,sef="F")');
+    alasql('SET @e12 = (CREATE EDGE FROM @v1 TO @v2 SET name="loves")');
+    alasql('SET @e23 = (CREATE EDGE FROM @v2 TO @v3 SET name="loves")');
+
+    var res = alasql('SEARCH "Olga" > "loves" > name');
+    assert.deepEqual(res,['Peter']);
+
+    var res = alasql('SEARCH "Olga" > @p > "Peter" @(@p) name');
+    assert.deepEqual(res,['loves']);
+
+    var res = alasql('SEARCH @p > "loves" > "Peter" @(@p->name)');
+    assert.deepEqual(res,['Olga']);
+    done();
+  });
+
+  it('3. Create vertices',function(done){
+      alasql('SET @steven = (CREATE VERTEX "Steven")');
+      alasql('CREATE EDGE "loves" FROM @v1 TO @steven')
+      var res = alasql('SEARCH @p > "loves" > @s @[(@p->name),(@s->name)]');
+      assert.deepEqual(res,
+        [ [ 'Olga', 'Peter' ],
+          [ 'Olga', 'Steven' ],
+          [ 'Peter', 'Helen' ] ]      
+      );
+      var res = alasql('SEARCH "Olga" > "loves" > name');
+      assert.deepEqual(res, [ 'Peter', 'Steven' ]);
+      
+    done();    
+  });
+  
+  it('4. +() and *() and NOT()',function(done){
+      alasql('SET @heather = (CREATE VERTEX "Heather")');
+      alasql('CREATE EDGE "loves" FROM @steven TO @heather');
+      var res = alasql('SEARCH VERTEX NOT(>) name');
+      assert.deepEqual(res,[ 'Helen', 'Heather' ]);
+
+      var res = alasql('SEARCH VERTEX NOT(>"loves">"Steven") name');
+      assert.deepEqual(res,[ 'Peter', 'Helen', 'Steven', 'Heather' ]);
+
+      var res = alasql('SEARCH VERTEX IF(>"loves">"Steven") name');
+      assert.deepEqual(res,[ 'Olga' ]);
+
+      var res = alasql('SEARCH VERTEX @p >"loves">"Steven" @(@p) name');
+      assert.deepEqual(res,[ 'Olga' ]);
+
+//      var res = alasql('SEARCH VERTEX IF(*(>"loves">)"Steven") name');
+//      assert.deepEqual(res,[ 'Olga' ]);
+
+
+//      assert.deepEqual(res,
+//        [ [ 'Olga', 'Peter' ],
+//          [ 'Olga', 'Steven' ],
+//          [ 'Peter', 'Helen' ] ]      
+//      );
+      
     done();    
   });
 
 if(false) {
   it('3. Create edges',function(done){
+if(false) {
+    var res = alasql('CREATE CLASS Person');
+    var res = alasql('CREATE VERTEX Person SET name = "Olga",age=56,sex="F"');  
+    var res = alasql('CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"}');
+    var res = alasql('CREATE VERTEX Person SELECT * FROM ?');
+    var res = alasql('CREATE VERTEX Person');
+    var res = alasql('SET @e12!name = "Lisa"');
+    var res = alasql('SET @e12!age = 43');
+}
     alasql('SET @john = (CREATE VERTEX Person SET name = "John",age=23,sex="M")');
     alasql('SET @peter = (CREATE VERTEX Person SET name = "Peter",age=18,sex="M")');
     alasql('SET @mike = (CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"})');
@@ -51,7 +107,7 @@ if(false) {
 
   it('4. Create edges',function(done){
     alasql('SEARCH OUT(relation="is friend of") FROM @john');
-    alasql('SEARCH @john # OUT(relation="is friend of") OUT(relation="loves") (class="Person" AND name="Mary")');
+    alasql('SEARCH @john ! OUT(relation="is friend of") OUT(relation="loves") (class="Person" AND name="Mary")');
   });
 
 }

@@ -49,6 +49,7 @@ alasql.precompile = function(statement,databaseid,params){
 	if(!statement) return;
 	statement.params = params;
 	if(statement.queries) {	
+//console.log(52,statement.queries[0]);
 		statement.queriesfn = statement.queries.map(function(q) {
 			var nq = q.compile(databaseid || statement.database.databaseid);
 //			console.log(nq);
@@ -58,6 +59,7 @@ alasql.precompile = function(statement,databaseid,params){
 		});
 	}
 	if(statement.exists) {
+//console.log(62,statement.exists);
 		statement.existsfn = statement.exists.map(function(ex) {
 			var nq = ex.compile(databaseid || statement.database.databaseid);
 //			console.log(nq.query.modifier);

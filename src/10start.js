@@ -78,5 +78,5 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.1.0";
+alasql.version = "0.1.1";
 

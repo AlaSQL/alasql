@@ -1,8 +1,146 @@
 # TO DO
 
-This file contanis unstructured ideas for future development of Alasql.
+This file contanis unstructured ideas for future development of AlaSQL.
 
 ## Ideas
+
+Add ! operator;
+
+
+
+#LITERAL a!length(10)
+#NUMBER
+`
+n->length
+n!length
+
+city:country:name 
+
+#Andrey!city!country!name
+#Andrey:city:country:name
+
+#Andrey->city!country!name
+
+search #Andrey :Person ok(city!country!name = "Italy")
+search #Andrey !Person ok(city:country:name = "Italy")
+search class(Person) #Andrey ok(city:country:name = "Italy")
+
+! ->
+
+#100!name
+
+#NUMBER
+!LITERAL
+
+!expression -> objects['expression']
+
+
+city!country!name
+city->country->name
+
+database.table
+table.column
+
+"object"!"property"
+@a!name
+
+
+alasql('SEARCH #Andrey PATH(#Napoleon) SET(color="red")');
+
+
+alasql('create graph Andrey, Napoleon, Josephine,Louis, Andrey >> Josephine, Louis>>Josephine, Jpsephine >> Napoleopn');
+alasql('search edge set(color="black")');
+alasql('search !Andrey path(!Napoleon) set(color="red")');
+
+search attr() / Books  from xml("my.xml")
+
+
+alasql('create graph from gml("my.gml")');
+
+
+var force = d3.layout.force()
+    .charge(-120)
+    .linkDistance(30)
+    .size([width, height]);
+    .nodes(alasql('search vertex into d3()'))
+    .links(alasql('search edge into d3()'))
+    .start();
+
+
+
+.forEach(function(edge){
+	edge.color = 'red';
+});
+
+d3 graphs and AlaSQL
+
+d3
+node : index
+edges:
+source: index
+target: index
+
+
+;
+SEATCH EDGE INTO D3LINKS()
+
+alasql('CREATE GRAPH FROM TXT("mynet.txt")');
+
+Andrey,
+{name:"yes"},
+Andrey>loves>Masha {name:"Masha"}
+
+var force = d3.layout.force()
+    .charge(-120)
+    .linkDistance(30)
+    .size([width, height]);
+    .nodes(alasql('SEARCH !Napoleon >> D3NODE()'))
+    .links(alasql('SEARCH !Napoleon >  D3LINK()'))
+    .start();
+
+alasql('search  >>? d3node()')
+
+
+
+>> >k>
+
+2. SEARCH JSON
+3. CREATE GRAPH
+
+### XLSXML
+Simplify with https://technet.microsoft.com/en-us/magazine/2006.01.blogtales.aspx
+
+### Graph
+
+SEARCH FROM {a:1};
+{a:1}
+SEARCH a FROM {a:1};
+[1]
+SEARCH FROM [1,2];
+[1,2]
+SEARCH {a:_} FROM [1,2];
+[{a:1},{a:2}]
+SEARCH AS @x (IDX() < 10) @x FROM [1,2];
+[1,2]
+
+
+
+SEARCH {a:1} a;
+[1]
+SEARCH a FROM {a:1};
+[1]
+SEARCH a FROM {a:{b:1}};
+[{b:1}]
+SEARCH a b FROM {a:{b:1}};
+[1]
+SEARCH > loves: > FROM @Alice;
+
+SEARCH (a=1) AS @c {b:b,a:@c->a} FROM @[{a:1,b:10},{a:2,b:20}];
+
+CREATE GRAPH @Alice, Bob, @Alice > loves: > @Bob;
+SEARCH Alice > loves > IN Person;
+
+
 
 ### Graph Database
 

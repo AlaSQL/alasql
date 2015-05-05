@@ -112,7 +112,7 @@ yy.Op.prototype.toString = function() {
 	if(this.allsome) {
 		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
 	}
-	if(this.op == '->' || this.op == '#') {
+	if(this.op == '->' || this.op == '!') {
 		var s = this.left.toString()+this.op;
 //		console.log(this.right);
 		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += '(';
@@ -174,7 +174,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		}
 	};
 
-	if(this.op == '#') {
+	if(this.op == '!') {
 		if(typeof this.right == "string") {
 			return 'alasql.databases[alasql.useid].objects['+this.left.toJavaScript(context,tableid, defcols)+']["'+this.right+'"]';
 		}		

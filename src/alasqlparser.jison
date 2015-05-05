@@ -276,6 +276,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 ';'												return 'SEMICOLON'
 '$'												return 'DOLLAR'
 '?'												return 'QUESTION'
+'!'												return 'EXCLAMATION'
 '^'												return 'CARET'
 
 
@@ -303,7 +304,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
-%left DOT ARROW SHARP
+%left DOT ARROW EXCLAMATION
+%left SHARP
 /* %left UMINUS */
 
 %ebnf
@@ -472,7 +474,12 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| SearchClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
+	| SEARCH DISTINCT? SearchSelector* IntoClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
+		{
+			$$ = new yy.Search({selectors:$3, 
+			from:$5, distinct:($2=="DISTINCT")});
+			yy.extend($$,$4);
+		}
 	;
 
 RemoveClause
@@ -494,19 +501,85 @@ RemoveColumn
 		{ $$ = {like:$2}; }	
 	;
 
+/*
 SearchClause
-	: SearchSelector
+	: SearchSelector*
+		{ $$ = $2; }	
+	;
+*/
+SearchSelector
+	: Literal
+		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| Literal LPAR RPAR
+		{ $$ = {srchid:$1.toUpperCase()}; }	
+	| Literal LPAR ExprList RPAR
+		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
+/*	| QUESTION LPAR ExprList RPAR
+		{ $$ = {srchid:"OK", args:$3}; }	
+*/	| CLASS LPAR Literal RPAR
+		{ $$ = {srchid:"CLASS", args:[$3]}; }	
+	| NUMBER
+		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| STRING
+		{ $$ = {srchid:"NAME", args: [$1.substr(1,$1.length-2)]}; }
+	| SLASH
+		{ $$ = {srchid:"CHILD"}; }
+	| VERTEX
+		{ $$ = {srchid:"VERTEX"}; }
+	| EDGE
+		{ $$ = {srchid:"EDGE"}; }
+	| EXCLAMATION
+		{ $$ = {srchid:"REF"}; }
+	| SHARP Literal
+		{ $$ = {srchid:"SHARP", args:[$2]}; }	
+	| MODULO Literal
+		{ $$ = {srchid:"ATTR", args:[$2]}; }	
+	| MODULO
+		{ $$ = {srchid:"ATTR"}; }	
+	| GT 
+		{ $$ = {srchid:"OUT"}; }
+	| LT 
+		{ $$ = {srchid:"IN"}; }
+	| DOLLAR 
+		{ $$ = {srchid:"CONTENT"}; }
+/*	| DELETE LPAR RPAR
+		{ $$ = {srchid:"DELETE"}; }
+*/	| DOT DOT 
+		{ $$ = {srchid:"PARENT"}; }
+	| Json
+		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
+	| AT Literal
+		{ $$ = {srchid:"AS", args:[$2]}; }	
+	| AS AT Literal
+		{ $$ = {srchid:"AS", args:[$3]}; }	
+	| TO AT Literal
+		{ $$ = {srchid:"TO", args:[$3]}; }	
+	| SET LPAR SetColumnsList RPAR
+		{ $$ = {srchid:"SET", args:$3}; }	
+
+	| LPAR SearchSelector* RPAR PlusStar 
+		{ $$ = {selid:$4,args:$2 }; }
+	| SearchSelector PlusStar
+		{ $$ = {selid:$2,args:[$1] }; }
+
+	| NOT LPAR SearchSelector* RPAR
+		{ $$ = {selid:"NOT",args:$3 }; }
+	| IF LPAR SearchSelector* RPAR
+		{ $$ = {selid:"IF",args:$3 }; }
 	;
 
-SearchSelector
-	: SEARCH Literal*
-		{ $$ = $2; } 
-/*	| SearchSelector Literal 
-		{ $$ = $1; $1.push($2); }
-*/	;
+PlusStar
+	: PLUS
+		{ $$ = "PLUS"; }
+	| STAR
+		{ $$ = "STAR"; }
+	| QUESTION
+		{ $$ = "QUESTION"; }
+	;
 
 SearchFrom
 	: FROM Expression
+		{ $$ = $2; }
 	;
 
 SearchLet
@@ -1248,14 +1321,14 @@ Op
 	| Expression ARROW FuncValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 
-	| Expression SHARP Literal
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
-	| Expression SHARP NumValue
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
-	| Expression SHARP LPAR Expression RPAR
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$4}); }
-	| Expression SHARP FuncValue
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+	| Expression EXCLAMATION Literal
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
+	| Expression EXCLAMATION NumValue
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
+	| Expression EXCLAMATION LPAR Expression RPAR
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$4}); }
+	| Expression EXCLAMATION FuncValue
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
 
 
 
@@ -1303,6 +1376,8 @@ Op
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
 	| PLUS Expression
 		{ $$ = new yy.UniOp({op:'+' , right:$2}); }
+	| SHARP Expression
+		{ $$ = new yy.UniOp({op:'#' , right:$2}); }
 	| LPAR Expression RPAR
 		{ $$ = new yy.UniOp({right: $2}); }
 
@@ -2278,7 +2353,9 @@ OutputClause
 
 /*
 CreateVertex
-	: CREATE VERTEX SET SetColumnsList
+	: CREATE VERTEX
+		{ $$ = new yy.CreateVertex(); }
+	| CREATE VERTEX SET SetColumnsList
 		{ $$ = new yy.CreateVertex({set: $4}); }
 	| CREATE VERTEX Literal SET SetColumnsList
 		{ $$ = new yy.CreateVertex({class:$3, set: $5}); }
@@ -2293,8 +2370,11 @@ CreateVertex
 	;
 */
 CreateVertex
-	: CREATE VERTEX Literal? CreateVertexSet 
-		{ $$ = new yy.CreateVertex({class:$3}); yy.extend($$,$4); }
+	: CREATE VERTEX Literal? StringValue? CreateVertexSet 
+		{
+			$$ = new yy.CreateVertex({class:$3,name:$4}); 
+			yy.extend($$,$5); 
+		}
 	;
 CreateVertexSet
 	: 
@@ -2306,6 +2386,19 @@ CreateVertexSet
 	| Select
 		{ $$ = {select:$1}; }
 	;
+
+CreateEdge
+	: CREATE EDGE StringValue? FROM Expression TO Expression CreateVertexSet
+		{
+			$$ = new yy.CreateEdge({from:$5,to:$7,name:$3});
+			yy.extend($$,$8); 
+		}
+/*	| CREATE EDGE StringValue? FROM Expression TO Expression
+		{
+			$$ = new yy.CreateEdge({from:$5,to:$7,name:$3});
+		}
+*/	;
+
 
 /*
 CreateEdge
