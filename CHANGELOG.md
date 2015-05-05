@@ -11,6 +11,7 @@
 * Added CLASS selector
 * * selector, + selector, ? selector, !selector for SEARCH in JSON and graphs
 * XML() from function
+* SEARCH INTO functions
 
 ### 0.1.0 (aka 0.0.52) "Venice" (02.05.2015 - 03.05.2015)
 * Added INFORMATION_SCHEMA from variable

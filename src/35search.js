@@ -82,7 +82,20 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 		for(var key in uniq) res.push(uniq[key]);
 	}
 
-	if (cb) res = cb(res);
+	if(this.into) {
+		var a1,a2;
+		if(typeof this.into.args[0] != 'undefined') {
+			a1 = new Function('params,alasql','return '
+				 +this.into.args[0].toJavaScript())(params,alasql);
+		}
+		if(typeof this.into.args[1] != 'undefined') {
+				a2 =  new Function('params,alasql','return '
+				 +this.into.args[1].toJavaScript())(params,alasql);
+		}
+		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
+	} else {
+		if (cb) res = cb(res);
+	}
 	return res;
 	
 	function processSelector(selectors,sidx,value) {

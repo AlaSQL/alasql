@@ -474,9 +474,11 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| SEARCH DISTINCT? SearchSelector* SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
+	| SEARCH DISTINCT? SearchSelector* IntoClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
 		{
-			$$ = new yy.Search({selectors:$3, from:$4, distinct:($2=="DISTINCT")});
+			$$ = new yy.Search({selectors:$3, 
+			from:$5, distinct:($2=="DISTINCT")});
+			yy.extend($$,$4);
 		}
 	;
 

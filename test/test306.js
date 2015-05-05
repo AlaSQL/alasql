@@ -66,6 +66,13 @@ describe('Test 306 XML reader', function() {
      });
    });
 
+  it('7. SEARCH INTO ',function(done){
+     alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
+        console.log(res);
+//         assert.deepEqual(res, [ { id: '0', source: '0', target: '1' } ]);
+       done();    
+     });
+   });
 
 
   it('99. Drop database ',function(done){
