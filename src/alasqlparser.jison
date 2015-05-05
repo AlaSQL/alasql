@@ -542,7 +542,9 @@ SearchSelector
 		{ $$ = {srchid:"IN"}; }
 	| DOLLAR 
 		{ $$ = {srchid:"CONTENT"}; }
-	| DOT DOT 
+/*	| DELETE LPAR RPAR
+		{ $$ = {srchid:"DELETE"}; }
+*/	| DOT DOT 
 		{ $$ = {srchid:"PARENT"}; }
 	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
@@ -552,6 +554,8 @@ SearchSelector
 		{ $$ = {srchid:"AS", args:[$3]}; }	
 	| TO AT Literal
 		{ $$ = {srchid:"TO", args:[$3]}; }	
+	| SET LPAR SetColumnsList RPAR
+		{ $$ = {srchid:"SET", args:$3}; }	
 
 	| LPAR SearchSelector* RPAR PlusStar 
 		{ $$ = {selid:$4,args:$2 }; }

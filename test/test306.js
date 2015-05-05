@@ -68,7 +68,8 @@ describe('Test 306 XML reader', function() {
 
   it('7. SEARCH INTO ',function(done){
      alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
-        console.log(res);
+//        console.log('>>',res,'<<');
+        assert(res == "id,source,target\n0,0,1\n");
 //         assert.deepEqual(res, [ { id: '0', source: '0', target: '1' } ]);
        done();    
      });

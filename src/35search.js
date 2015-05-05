@@ -223,7 +223,7 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 
 
 		} else if(sel.srchid) {
-			var r = alasql.srch[sel.srchid.toUpperCase()](value,sel.args,stope);
+			var r = alasql.srch[sel.srchid.toUpperCase()](value,sel.args,stope,params);
 		} else {
 			throw new Error('Selector not found');
 		}
@@ -413,7 +413,35 @@ alasql.srch.AS = function(val,args) {
   return {status: 1, values: [val]};
 };
 
+// Transform expression
+alasql.srch.CLONEDEEP = function(val,args) {
+	// TODO something wrong
+	var z = cloneDeep(val);
+  return {status: 1, values: [z]};
+};
+
+// // Transform expression
+// alasql.srch.DELETE = function(val,args) {
+// 	// TODO something wrong
+// 	delete val;
+//   return {status: 1, values: []};
+// };
+
+
 alasql.srch.TO = function(val,args) {
   alasql.vars[args[0]].push(val);
+  return {status: 1, values: [val]};
+};
+
+// Transform expression
+alasql.srch.SET = function(val,args,stope,params) {
+//	console.log(arguments);
+	var s = args.map(function(st){
+		return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+	}).join(';');
+	var setfn = new Function('x,params,alasql',s);
+	
+	setfn(val,params,alasql);
+
   return {status: 1, values: [val]};
 };
