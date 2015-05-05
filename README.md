@@ -1,6 +1,6 @@
-# AlaSQL.js - JavaScript SQL database library with support of localStorage, IndexedDB, and Excel
+# AlaSQL.js - JavaScript SQL database library for relational and graph data with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.1 "Milano" Date: May 4, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.1 "Milano" Date: May 5, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -48,6 +48,51 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
  * [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
 
 ## What is new?
+
+### Documents and graphs paradigms
+
+AlaSQL now is multi-paradigm database with support documents and graphs. Below you can find an example
+how to create graph:
+```js
+    alasql('SET @olga = (CREATE VERTEX "Olga")');
+    alasql('SET @helen = (CREATE VERTEX "Helen")');
+    alasql('SET @pablo = (CREATE VERTEX "Pablo")');
+    alasql('SET @andrey = (CREATE VERTEX "Andrey")');
+    alasql('SET @alice = (CREATE VERTEX "Alice")');
+    alasql('CREATE EDGE FROM @olga TO @pablo');
+    alasql('CREATE EDGE FROM @helen TO @andrey');
+    alasql('CREATE EDGE FROM @pablo TO @alice');
+    alasql('CREATE EDGE FROM @andrey TO @alice');
+```
+and search over it with SEARCH operator:
+```js
+    // Whom loves Olga?
+    alasql('SEARCH "Olga" >> name');
+    // ['Pablo']
+
+    // Whom loves Olga's love objects?
+    alasql('SEARCH "Olga" >> >> name');
+    // ['Alice']
+
+    // Who loves lovers of Alice?
+    alasql('SEARCH IF(>> >> "Alice") name');
+    // ['Olga','Helen']
+
+```
+You also make searches over JSON object with SEARCH operator:
+```js
+    var data = {a:{a:{a:{a:{b:10}}}},b:20};
+    var res = alasql('SEARCH a b FROM ?',[data]);
+    var res = alasql('SEARCH (a)+ b FROM ?',[data]);
+    var res = alasql('SEARCH (a a)+ b FROM ?',[data]);
+    var res = alasql('SEARCH (a a a)+ b FROM ?',[data]);
+    var res = alasql('SEARCH (/)+ b FROM ?',[data]);
+    var res = alasql('SEARCH /+b FROM ?',[data]);
+    var res = alasql('SEARCH a* b FROM ?',[data]);
+    var res = alasql('SEARCH a+ b FROM ?',[data]);
+    var res = alasql('SEARCH a? b FROM ?',[data]);
+```
+Please see more examples in test300-test304.js. All these features will be documented soon.
 
 ### Version upgrade from 0.0.51 to 0.1.0
 

@@ -304,7 +304,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
-%left DOT ARROW SHARP
+%left DOT ARROW EXCLAMATION
+%left SHARP
 /* %left UMINUS */
 
 %ebnf
@@ -511,8 +512,10 @@ SearchSelector
 		{ $$ = {srchid:$1.toUpperCase()}; }	
 	| Literal LPAR ExprList RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
-	| QUESTION LPAR ExprList RPAR
+/*	| QUESTION LPAR ExprList RPAR
 		{ $$ = {srchid:"OK", args:$3}; }	
+*/	| CLASS LPAR Literal RPAR
+		{ $$ = {srchid:"CLASS", args:[$3]}; }	
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| STRING
@@ -523,12 +526,20 @@ SearchSelector
 		{ $$ = {srchid:"VERTEX"}; }
 	| EDGE
 		{ $$ = {srchid:"EDGE"}; }
-	| SHARP
+	| EXCLAMATION
 		{ $$ = {srchid:"REF"}; }
+	| SHARP Literal
+		{ $$ = {srchid:"SHARP", args:[$2]}; }	
+	| MODULO Literal
+		{ $$ = {srchid:"ATTR", args:[$2]}; }	
+	| MODULO
+		{ $$ = {srchid:"ATTR"}; }	
 	| GT 
 		{ $$ = {srchid:"OUT"}; }
 	| LT 
 		{ $$ = {srchid:"IN"}; }
+	| DOLLAR 
+		{ $$ = {srchid:"CONTENT"}; }
 	| DOT DOT 
 		{ $$ = {srchid:"PARENT"}; }
 	| Json
@@ -539,16 +550,25 @@ SearchSelector
 		{ $$ = {srchid:"AS", args:[$3]}; }	
 	| TO AT Literal
 		{ $$ = {srchid:"TO", args:[$3]}; }	
-	| PLUS LPAR SearchSelector* RPAR
-		{ $$ = {selid:"PLUS",args:$3 }; }
-	| STAR LPAR SearchSelector* RPAR
-		{ $$ = {selid:"STAR",args:$3 }; }
-	| EXCLAMATION LPAR SearchSelector* RPAR
-		{ $$ = {selid:"NOT",args:$3 }; }
+
+	| LPAR SearchSelector* RPAR PlusStar 
+		{ $$ = {selid:$4,args:$2 }; }
+	| SearchSelector PlusStar
+		{ $$ = {selid:$2,args:[$1] }; }
+
 	| NOT LPAR SearchSelector* RPAR
 		{ $$ = {selid:"NOT",args:$3 }; }
 	| IF LPAR SearchSelector* RPAR
 		{ $$ = {selid:"IF",args:$3 }; }
+	;
+
+PlusStar
+	: PLUS
+		{ $$ = "PLUS"; }
+	| STAR
+		{ $$ = "STAR"; }
+	| QUESTION
+		{ $$ = "QUESTION"; }
 	;
 
 SearchFrom
@@ -1295,14 +1315,14 @@ Op
 	| Expression ARROW FuncValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 
-	| Expression SHARP Literal
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
-	| Expression SHARP NumValue
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
-	| Expression SHARP LPAR Expression RPAR
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$4}); }
-	| Expression SHARP FuncValue
-		{ $$ = new yy.Op({left:$1, op:'#' , right:$3}); }
+	| Expression EXCLAMATION Literal
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
+	| Expression EXCLAMATION NumValue
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
+	| Expression EXCLAMATION LPAR Expression RPAR
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$4}); }
+	| Expression EXCLAMATION FuncValue
+		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
 
 
 
@@ -1350,6 +1370,8 @@ Op
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
 	| PLUS Expression
 		{ $$ = new yy.UniOp({op:'+' , right:$2}); }
+	| SHARP Expression
+		{ $$ = new yy.UniOp({op:'#' , right:$2}); }
 	| LPAR Expression RPAR
 		{ $$ = new yy.UniOp({right: $2}); }
 

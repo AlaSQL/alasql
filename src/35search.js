@@ -19,10 +19,27 @@ yy.Search.prototype.toString = function () {
 yy.Search.prototype.execute = function (databaseid, params, cb) {
 	var res;
 	var search = {};
+	var stope = {};
+
+	if(this.selectors[0].srchid == 'PROP') {
+
+		if(this.selectors[0].args[0].toUpperCase() == 'XML') {
+			stope.mode = 'XML';
+			this.selectors.shift();
+		} else if(this.selectors[0].args[0].toUpperCase() == 'HTML') {
+			stope.mode = 'HTML';
+			this.selectors.shift();
+		} else if(this.selectors[0].args[0].toUpperCase() == 'JSON') {
+			stope.mode = 'JSON';
+			this.selectors.shift();
+		}
+	}
 
 	if(this.from instanceof yy.Column) {
 		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
 		this.selectors.unshift({srchid:'CHILD'});
+	} else if(this.from instanceof yy.FuncValue && alasql.from[this.from.funcid]) {
+		var fromdata = alasql.from[this.from.funcid](this.from.args[0].value);
 	} else if(typeof this.from == 'undefined') {
 		var fromdata = Object.keys(alasql.databases[databaseid].objects).map(
 				function(key) {return alasql.databases[databaseid].objects[key]}
@@ -75,6 +92,8 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 //			throw new Error('Selector "'+sel.srchid+'" not found');
 //		};
 		
+		var SECURITY_BREAK = 100;
+
 		if(sel.selid) {
 			// TODO Process Selector
 			if(sel.selid == 'NOT') {
@@ -101,10 +120,97 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 						return processSelector(selectors,sidx+1,value);
 					}
 				}
+			} else 	if(sel.selid == 'PLUS') {
+				var retval = [];
+//				retval = retval.concat(processSelector(selectors,sidx+1,n))
+				var nests = processSelector(sel.args,0,value);
+
+
+				if(sidx+1+1 > selectors.length) {
+					//return nests;
+				} else {
+					nests.forEach(function(n){
+						retval = retval.concat(processSelector(selectors,sidx+1,n));
+					});
+				}
+
+
+				var i = 0;
+				while (nests.length > 0) {
+					nest = nests[0];
+					nests.shift();
+//					console.log(nest,nests);
+					nest = processSelector(sel.args,0,nest);
+//					console.log('nest',nest,'nests',nests);
+					nests = nests.concat(nest);
+
+					if(sidx+1+1 > selectors.length) {
+						//return nests;
+					} else {
+						nest.forEach(function(n){
+							retval = retval.concat(processSelector(selectors,sidx+1,n));
+						});
+					}
+
+					// Security brake
+					i++;
+					if(i>SECURITY_BREAK) stop;
+				};
+				return retval;
+				//console.log(1,nest);
+			} else 	if(sel.selid == 'STAR') {
+				var retval = [];
+				retval = retval.concat(processSelector(selectors,sidx+1,value))
+				var nests = processSelector(sel.args,0,value);
+				if(sidx+1+1 > selectors.length) {
+					//return nests;
+				} else {
+					nests.forEach(function(n){
+						retval = retval.concat(processSelector(selectors,sidx+1,n));
+					});
+				}
+				var i = 0;
+				while (nests.length > 0) {
+					nest = nests[0];
+					nests.shift();
+//					console.log(nest,nests);
+					nest = processSelector(sel.args,0,nest);
+//					console.log('nest',nest,'nests',nests);
+					nests = nests.concat(nest);
+
+					if(sidx+1+1 > selectors.length) {
+						//return nests;
+					} else {
+						nest.forEach(function(n){
+							retval = retval.concat(processSelector(selectors,sidx+1,n));
+						});
+					}
+
+					// Security brake
+					i++;
+					if(i>SECURITY_BREAK) stop;
+				};
+
+				return retval;
+			} else 	if(sel.selid == 'QUESTION') {
+				var retval = [];
+				retval = retval.concat(processSelector(selectors,sidx+1,value))
+				var nest = processSelector(sel.args,0,value);
+				if(sidx+1+1 > selectors.length) {
+					//return nests;
+				} else {
+					nest.forEach(function(n){
+						retval = retval.concat(processSelector(selectors,sidx+1,n));
+					});
+				}
+				return retval;
+			} else {
+				throw new Error('Wrong selector '+sel.selid);
 			}
 
+
 		} else if(sel.srchid) {
-			var r = alasql.srch[sel.srchid.toUpperCase()](value,sel.args);
+			var r = alasql.srch[sel.srchid.toUpperCase()](value,sel.args,stope);
 		} else {
 			throw new Error('Selector not found');
 		}
@@ -113,6 +219,7 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 		if(r.status == 1) {
 			if(sidx+1+1 > selectors.length) {
 				res = r.values;					
+//				console.log('res',r)
 			} else {
 				for(var i=0;i<r.values.length;i++) {
 					res = res.concat(processSelector(selectors,sidx+1,r.values[i]));									
@@ -125,27 +232,67 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 
 // List of search functions
 alasql.srch = {};
-alasql.srch.PROP = function(val,args) {
-	if(typeof val != 'object') {
-		return {status: -1, values: []};
+
+alasql.srch.PROP = function(val,args,stope) {
+	if(stope.mode == 'XML') {
+		if(val.name.toUpperCase() == args[0].toUpperCase()) {
+			return {status: 1, values: [val]};
+		} else {
+			return {status: -1, values: []};
+		}		
 	} else {
-		return {status: 1, values: [val[args[0]]]};
+		if((typeof val != 'object') || (typeof val[args[0]] == 'undefined')) {
+			return {status: -1, values: []};
+		} else {
+			return {status: 1, values: [val[args[0]]]};
+		}		
 	}
 };
 
-alasql.srch.PARENT = function(val,args,stack) {
+alasql.srch.ATTR = function(val,args,stope) {
+	if(stope.mode == 'XML') {
+		if(typeof args == 'undefined') {
+	      return {status: 1, values: [val.attributes]};
+		} else {
+			if(typeof val == 'object' && typeof val.attributes == 'object'
+				&& typeof val.attributes[args[0]] != 'undefined') {
+				return {status: 1, values: [val.attributes[args[0]]]};
+			} else {
+				return {status: -1, values: []};			
+			}			
+		}
+
+
+	} else {
+		throw new Error('ATTR is not using in usual mode');
+	}
+};
+
+alasql.srch.CONTENT = function(val,args,stope) {
+	if(stope.mode == 'XML') {
+		return {status: 1, values: [val.content]};
+	} else {
+		throw new Error('ATTR is not using in usual mode');
+	}
+};
+
+alasql.srch.PARENT = function(val,args,stope) {
 	// TODO - finish
 	console.log('PARENT');
 	return {status: -1, values: []};
 };
 
 
-alasql.srch.CHILD = function(val,args) {
+alasql.srch.CHILD = function(val,args,stope) {
   if(typeof val == 'object') {
     if(val instanceof Array) {
       return {status: 1, values: val};
     } else {
-      return {status: 1, values: Object.keys(val).map(function(key){return val[key];})};          
+    	if(stope.mode == 'XML') {
+	      return {status: 1, values: Object.keys(val.children).map(function(key){return val.children[key];})};          
+    	} else {
+	      return {status: 1, values: Object.keys(val).map(function(key){return val[key];})};          
+    	}
     }
   } else {
     // If primitive value
@@ -182,6 +329,15 @@ alasql.srch.NAME = function(val,args) {
   }
 };
 
+alasql.srch.CLASS = function(val,args) {
+//	console.log(val,args);
+  if(val.$class == args) {
+    return {status: 1, values: [val]};
+  } else {
+    return {status: -1, values: []};        
+  }
+};
+
 
 // Transform expression
 alasql.srch.VERTEX = function(val,args) {
@@ -191,6 +347,16 @@ alasql.srch.VERTEX = function(val,args) {
     return {status: -1, values: []};        
   }
 };
+
+// Transform expression
+alasql.srch.INSTANCEOF = function(val,args) {
+  if(val instanceof alasql.fn[args[0]]) {
+    return {status: 1, values: [val]};
+  } else {
+    return {status: -1, values: []};        
+  }
+};
+
 
 // Transform expression
 alasql.srch.EDGE = function(val,args) {

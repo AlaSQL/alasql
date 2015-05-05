@@ -1,0 +1,15 @@
+<script src="../jquery/jquery.min.js"></script>
+<script src="36xml.js"></script>
+<script>
+var a;
+	$.ajax("Workbook1.xml",{dataType:"text"}).done(function(data){
+		var x = xmlparse(data).root;
+		console.log(x.name);
+	});
+
+	$.get("Workbook1.xml").done(function(data){
+		console.log(data.children[0].localName);
+		console.log(data);
+		a = data;
+	});
+</script>

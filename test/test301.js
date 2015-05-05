@@ -83,8 +83,8 @@ if(false) {
     var res = alasql('CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"}');
     var res = alasql('CREATE VERTEX Person SELECT * FROM ?');
     var res = alasql('CREATE VERTEX Person');
-    var res = alasql('SET @e12#name = "Lisa"');
-    var res = alasql('SET @e12#age = 43');
+    var res = alasql('SET @e12!name = "Lisa"');
+    var res = alasql('SET @e12!age = 43');
 }
     alasql('SET @john = (CREATE VERTEX Person SET name = "John",age=23,sex="M")');
     alasql('SET @peter = (CREATE VERTEX Person SET name = "Peter",age=18,sex="M")');
@@ -107,7 +107,7 @@ if(false) {
 
   it('4. Create edges',function(done){
     alasql('SEARCH OUT(relation="is friend of") FROM @john');
-    alasql('SEARCH @john # OUT(relation="is friend of") OUT(relation="loves") (class="Person" AND name="Mary")');
+    alasql('SEARCH @john ! OUT(relation="is friend of") OUT(relation="loves") (class="Person" AND name="Mary")');
   });
 
 }
