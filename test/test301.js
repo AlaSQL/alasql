@@ -50,10 +50,10 @@ describe('Test 301 Vertices and Edges', function() {
   it('4. +() and *() and NOT()',function(done){
       alasql('SET @heather = (CREATE VERTEX "Heather")');
       alasql('CREATE EDGE "loves" FROM @steven TO @heather');
-      var res = alasql('SEARCH VERTEX !(>) name');
+      var res = alasql('SEARCH VERTEX NOT(>) name');
       assert.deepEqual(res,[ 'Helen', 'Heather' ]);
 
-      var res = alasql('SEARCH VERTEX !(>"loves">"Steven") name');
+      var res = alasql('SEARCH VERTEX NOT(>"loves">"Steven") name');
       assert.deepEqual(res,[ 'Peter', 'Helen', 'Steven', 'Heather' ]);
 
       var res = alasql('SEARCH VERTEX IF(>"loves">"Steven") name');

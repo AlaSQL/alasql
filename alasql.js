@@ -4301,20 +4301,23 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 	var search = {};
 	var stope = {};
 
-	if(this.selectors[0].srchid == 'PROP') {
+	if(typeof this.selectors != 'undefined' && this.selectors.length > 0) {
 
-		if(this.selectors[0].args[0].toUpperCase() == 'XML') {
-			stope.mode = 'XML';
-			this.selectors.shift();
-		} else if(this.selectors[0].args[0].toUpperCase() == 'HTML') {
-			stope.mode = 'HTML';
-			this.selectors.shift();
-		} else if(this.selectors[0].args[0].toUpperCase() == 'JSON') {
-			stope.mode = 'JSON';
-			this.selectors.shift();
+		if(this.selectors[0].srchid == 'PROP') {
+
+			if(this.selectors[0].args[0].toUpperCase() == 'XML') {
+				stope.mode = 'XML';
+				this.selectors.shift();
+			} else if(this.selectors[0].args[0].toUpperCase() == 'HTML') {
+				stope.mode = 'HTML';
+				this.selectors.shift();
+			} else if(this.selectors[0].args[0].toUpperCase() == 'JSON') {
+				stope.mode = 'JSON';
+				this.selectors.shift();
+			}
 		}
-	}
-
+	};
+	
 	if(this.from instanceof yy.Column) {
 		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
 		this.selectors.unshift({srchid:'CHILD'});
@@ -7976,7 +7979,7 @@ yy.Op.prototype.toString = function() {
 	if(this.allsome) {
 		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
 	}
-	if(this.op == '->' || this.op == '#') {
+	if(this.op == '->' || this.op == '!') {
 		var s = this.left.toString()+this.op;
 //		console.log(this.right);
 		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += '(';
@@ -8038,7 +8041,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		}
 	};
 
-	if(this.op == '#') {
+	if(this.op == '!') {
 		if(typeof this.right == "string") {
 			return 'alasql.databases[alasql.useid].objects['+this.left.toJavaScript(context,tableid, defcols)+']["'+this.right+'"]';
 		}		

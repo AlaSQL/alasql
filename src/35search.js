@@ -21,20 +21,23 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 	var search = {};
 	var stope = {};
 
-	if(this.selectors[0].srchid == 'PROP') {
+	if(typeof this.selectors != 'undefined' && this.selectors.length > 0) {
 
-		if(this.selectors[0].args[0].toUpperCase() == 'XML') {
-			stope.mode = 'XML';
-			this.selectors.shift();
-		} else if(this.selectors[0].args[0].toUpperCase() == 'HTML') {
-			stope.mode = 'HTML';
-			this.selectors.shift();
-		} else if(this.selectors[0].args[0].toUpperCase() == 'JSON') {
-			stope.mode = 'JSON';
-			this.selectors.shift();
+		if(this.selectors[0].srchid == 'PROP') {
+
+			if(this.selectors[0].args[0].toUpperCase() == 'XML') {
+				stope.mode = 'XML';
+				this.selectors.shift();
+			} else if(this.selectors[0].args[0].toUpperCase() == 'HTML') {
+				stope.mode = 'HTML';
+				this.selectors.shift();
+			} else if(this.selectors[0].args[0].toUpperCase() == 'JSON') {
+				stope.mode = 'JSON';
+				this.selectors.shift();
+			}
 		}
-	}
-
+	};
+	
 	if(this.from instanceof yy.Column) {
 		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
 		this.selectors.unshift({srchid:'CHILD'});
