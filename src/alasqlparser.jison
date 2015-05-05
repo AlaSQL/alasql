@@ -511,8 +511,8 @@ SearchSelector
 		{ $$ = {srchid:$1.toUpperCase()}; }	
 	| Literal LPAR ExprList RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
-	| LPAR ExprList RPAR
-		{ $$ = {srchid:"OK", args:$2}; }	
+	| QUESTION LPAR ExprList RPAR
+		{ $$ = {srchid:"OK", args:$3}; }	
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| STRING

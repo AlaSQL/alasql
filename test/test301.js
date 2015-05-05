@@ -62,6 +62,9 @@ describe('Test 301 Vertices and Edges', function() {
       var res = alasql('SEARCH VERTEX @p >"loves">"Steven" @(@p) name');
       assert.deepEqual(res,[ 'Olga' ]);
 
+//      var res = alasql('SEARCH VERTEX IF(*(>"loves">)"Steven") name');
+//      assert.deepEqual(res,[ 'Olga' ]);
+
 
 //      assert.deepEqual(res,
 //        [ [ 'Olga', 'Peter' ],
