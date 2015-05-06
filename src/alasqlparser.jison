@@ -557,6 +557,8 @@ SearchSelector
 	| SET LPAR SetColumnsList RPAR
 		{ $$ = {srchid:"SET", args:$3}; }	
 
+	| VALUE
+		{ $$ = {srchid:"VALUE"}; }	
 	| LPAR SearchSelector* RPAR PlusStar 
 		{ $$ = {selid:$4,args:$2 }; }
 	| SearchSelector PlusStar
@@ -2355,7 +2357,7 @@ OutputClause
 
 /*
 CreateVertex
-	: CREATE VERTEX
+	: CREATE VERTEX 
 		{ $$ = new yy.CreateVertex(); }
 	| CREATE VERTEX SET SetColumnsList
 		{ $$ = new yy.CreateVertex({set: $4}); }
@@ -2372,12 +2374,18 @@ CreateVertex
 	;
 */
 CreateVertex
-	: CREATE VERTEX Literal? StringValue? CreateVertexSet 
+	: CREATE VERTEX Literal? SharpValue? StringValue? CreateVertexSet 
 		{
-			$$ = new yy.CreateVertex({class:$3,name:$4}); 
-			yy.extend($$,$5); 
+			$$ = new yy.CreateVertex({class:$3,sharp:$4, name:$5}); 
+			yy.extend($$,$6); 
 		}
 	;
+
+SharpValue
+	: SHARP Literal
+		{ $$ = $2; }
+	;
+
 CreateVertexSet
 	: 
 		{$$ = undefined; }

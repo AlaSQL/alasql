@@ -14,11 +14,19 @@ describe('Test 309 # operator and graphs', function() {
 
 
   it('1. SET selector',function(done){
-    alasql('CREATE VERTEX #Andrey');
-    var res = alasql('SELECT #Andrey');
-    console.log(res);
+    alasql('CREATE VERTEX #Andrey SET age = 44');
+    alasql('CREATE VERTEX #Olga SET age = 35');
+    alasql('CREATE VERTEX #Maria SET age = 28');
+    var res = alasql('SELECT VALUE #Andrey->age');
+    assert(res == 44);
+    var res = alasql('SEARCH #Olga age');
+    assert.deepEqual(res,[35]);
+    var res = alasql('SEARCH @p #Olga age');
+    assert.deepEqual(res,[35]);
+    var res = alasql('SEARCH VALUE #Olga age');
+//    console.log(res);
+    assert(res == 35);
 
-//    assert.deepEqual(alasql.vars.q,[ 10, 20 ]);
     done();    
   });
 

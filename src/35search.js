@@ -57,7 +57,12 @@ function doSearch (databaseid, params, cb) {
 				this.selectors.shift();
 			}
 		}
+		if(this.selectors.length > 0 && this.selectors[0].srchid == 'VALUE') {
+			stope.value = true;
+			this.selectors.shift();
+		}
 	};
+
 	
 	if(this.from instanceof yy.Column) {
 		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
@@ -65,10 +70,15 @@ function doSearch (databaseid, params, cb) {
 	} else if(this.from instanceof yy.FuncValue && alasql.from[this.from.funcid]) {
 		var fromdata = alasql.from[this.from.funcid](this.from.args[0].value);
 	} else if(typeof this.from == 'undefined') {
-		var fromdata = Object.keys(alasql.databases[databaseid].objects).map(
-				function(key) {return alasql.databases[databaseid].objects[key]}
-			);
-		this.selectors.unshift({srchid:'CHILD'});
+		if(this.selectors.length > 0 && this.selectors[0].srchid == 'SHARP') {
+			var fromdata = alasql.databases[alasql.useid].objects[this.selectors[0].args[0]];
+			this.selectors.shift();			
+		} else {
+			var fromdata = Object.keys(alasql.databases[databaseid].objects).map(
+					function(key) {return alasql.databases[databaseid].objects[key]}
+				);
+			this.selectors.unshift({srchid:'CHILD'});			
+		}
 	} else {
 		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
 		var fromdata = fromfn(params,alasql);		
@@ -118,6 +128,7 @@ function doSearch (databaseid, params, cb) {
 		}
 		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
 	} else {
+		if(stope.value && res.length > 0) res = res[0];
 		if (cb) res = cb(res);
 	}
 	return res;
@@ -404,6 +415,16 @@ alasql.srch.CONTENT = function(val,args,stope) {
 		throw new Error('ATTR is not using in usual mode');
 	}
 };
+
+alasql.srch.SHARP = function(val,args,stope) {
+	var obj = alasql.databases[alasql.useid].objects[args[0]];
+	if(typeof val != 'undefined' && val == obj) {
+		return {status: 1, values: [val]};
+	} else {
+		return {status: -1, values: []};
+	}
+};
+
 
 alasql.srch.PARENT = function(val,args,stope) {
 	// TODO - finish

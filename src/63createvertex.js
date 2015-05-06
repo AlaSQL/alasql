@@ -10,6 +10,7 @@ yy.CreateVertex = function (params) { return yy.extend(this, params); }
 yy.CreateVertex.prototype.toString = function() {
 	var s = K('CREATE')+' '+K('VERTEX')+' ';
 	if(this.class) s += L(this.class)+' ';
+	if(this.sharp) s += '#'+L(this.sharp)+' ';
 	if(this.sets) {
 		s += this.sets.toString();
 	} else if(this.content) {
@@ -59,6 +60,9 @@ yy.CreateVertex.prototype.execute = function (databaseid,params,cb) {
 yy.CreateVertex.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 
+	// CREATE VERTEX #id
+	var sharp = this.sharp; 
+
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
 		var s = 'x.name='+this.name.toJavaScript();
@@ -83,7 +87,12 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 
 		// CREATE VERTEX without parameters
 		var db = alasql.databases[dbid];
-		var vertex = {$id: db.counter++, $node:'VERTEX'};
+		if(typeof sharp != 'undefined') {
+			var id = sharp;
+		} else {
+			var id = db.counter++;
+		}
+		var vertex = {$id: id, $node:'VERTEX'};
 		db.objects[vertex.$id] = vertex;
 		res = vertex;
 		if(namefn) namefn(vertex);
