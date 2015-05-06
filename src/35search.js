@@ -16,7 +16,28 @@ yy.Search.prototype.toString = function () {
 	return s;
 };
 
-yy.Search.prototype.execute = function (databaseid, params, cb) {
+yy.Search.prototype.toJavaScript = function(context, tableid, defcols) {
+//		console.log('yy.CreateVertex.toJavaScript');
+	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
+	// var s = '';
+	return s;
+};
+
+yy.Search.prototype.compile = function(databaseid) {
+	var dbid = databaseid;
+	var self = this;
+
+	var statement = function(params,cb){
+		var res;
+		res = doSearch.bind(self)(dbid,params,cb);
+//		if(cb) res = cb(res);
+		return res;
+	};
+	return statement;
+};
+
+
+function doSearch (databaseid, params, cb) {
 	var res;
 	var search = {};
 	var stope = {};
@@ -135,6 +156,98 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 					} else {
 						return processSelector(selectors,sidx+1,value);
 					}
+				}
+			} else 	if(sel.selid == 'ARRAY') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest;
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'SUM') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest.reduce(function(sum, current) {
+	  					return sum + current;
+					}, 0);					
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'AVG') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest.reduce(function(sum, current) {
+	  					return sum + current;
+					}, 0)/nest.length;
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'COUNT') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest.length;
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'FIRST') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) var val = nest[0];
+				else return [];
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'LAST') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) var val = nest[nest.length-1];
+				else return [];
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'MIN') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length == 0) return [];
+				var val = nest.reduce(function(min, current) {
+  					return Math.min(min,current);
+				}, Infinity);
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'MAX') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length == 0) return [];
+				var val = nest.reduce(function(max, current) {
+  					return Math.max(max,current);
+				}, -Infinity);
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
 				}
 			} else 	if(sel.selid == 'PLUS') {
 				var retval = [];

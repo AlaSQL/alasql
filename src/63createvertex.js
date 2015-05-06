@@ -133,12 +133,13 @@ yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
 };
 
 // CREATE TABLE
+/*
 yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 	var res = 1;
 	if(cb) res = cb(res);
 	return res;
 };
-
+*/
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());

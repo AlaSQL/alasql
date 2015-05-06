@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.2 "Firenze" (06.05.2015 - ...05.2015)
+* Simple compilation of SEARCH operator
+* SUM(),COUNT(),MIN(),MAX(),FIRST(),LAST() search aggregators
+
 ### 0.1.1 "Milano" (03.05.2015 - 04.05.2015)
 * XLSXML() into- function with colors
 * $$hashKey - remove Angular's key

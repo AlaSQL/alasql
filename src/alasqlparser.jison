@@ -566,6 +566,8 @@ SearchSelector
 		{ $$ = {selid:"NOT",args:$3 }; }
 	| IF LPAR SearchSelector* RPAR
 		{ $$ = {selid:"IF",args:$3 }; }
+	| Aggregator LPAR SearchSelector* RPAR
+		{ $$ = {selid:$1,args:$3 }; }
 	;
 
 PlusStar

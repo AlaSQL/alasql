@@ -4,6 +4,12 @@ This file contanis unstructured ideas for future development of AlaSQL.
 
 ## Ideas
 
+
+SEARCH a @(#SUM(b)+#COUNT(c d))
+
+(SEARCH SUM(c d) FROM _) 
+
+
 Add ! operator;
 
 
