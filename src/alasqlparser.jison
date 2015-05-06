@@ -514,9 +514,9 @@ SearchSelector
 		{ $$ = {srchid:$1.toUpperCase()}; }	
 	| Literal LPAR ExprList RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
-/*	| QUESTION LPAR ExprList RPAR
-		{ $$ = {srchid:"OK", args:$3}; }	
-*/	| CLASS LPAR Literal RPAR
+	| WHERE LPAR Expression RPAR
+		{ $$ = {srchid:"WHERE", args:[$3]}; }	
+	| CLASS LPAR Literal RPAR
 		{ $$ = {srchid:"CLASS", args:[$3]}; }	
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }

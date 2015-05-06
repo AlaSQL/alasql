@@ -21,7 +21,8 @@ describe('Test 306 XML reader', function() {
   });
 
   it('2. Read XML file / SEARCH XML',function(done){
-    alasql('SEARCH xml /Worksheet%[ss:Name] FROM XML("test306.xml")',[],function(res){
+//    alasql('SEARCH xml /Worksheet%[ss:Name] FROM XML("test306.xml")',[],function(res){
+    alasql('SEARCH xml Worksheet%[ss:Name] FROM XML("test306.xml")',[],function(res){
 //      console.log(res);
       assert.deepEqual(res,[ 'Sheet1', 'demo' ]);
       done();    
@@ -29,7 +30,7 @@ describe('Test 306 XML reader', function() {
   });
 
    it('3. Read XML file / SEARCH XML',function(done){
-     alasql('SEARCH XML /+Data$ FROM XML("test306.xml")',[],function(res){
+     alasql('SEARCH XML /*Data$ FROM XML("test306.xml")',[],function(res){
 //       console.log(res);
         assert.deepEqual(res,[ 'aaaa', '2', '3', '5', '6', '7' ]);
        done();    
@@ -37,7 +38,7 @@ describe('Test 306 XML reader', function() {
  });
 
    it('4. Read XML file / SEARCH XML',function(done){
-     alasql('SEARCH XML /+Data$ ok(_>3) FROM XML("test306.xml")',[],function(res){
+     alasql('SEARCH XML /*Data$ ok(_>3) FROM XML("test306.xml")',[],function(res){
         assert.deepEqual(res,['5', '6', '7' ]);
        done();    
      });
@@ -52,14 +53,16 @@ describe('Test 306 XML reader', function() {
    });
 
    it('6. Read GEFX file / SEARCH XML',function(done){
-     alasql('SEARCH XML /graph/nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
+//     alasql('SEARCH XML /graph/nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
+     alasql('SEARCH XML graph nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
         assert.deepEqual(res, [{"$id":"0","name":"Hello"},{"$id":"1","name":"Word"}]);
        done();    
      });
    });
   it('7. Edges ',function(done){
 
-     alasql('SEARCH XML /graph/edges/% FROM XML("test306a.xml")',[],function(res){
+//     alasql('SEARCH XML /graph/edges/% FROM XML("test306a.xml")',[],function(res){
+     alasql('SEARCH XML graph edges/% FROM XML("test306a.xml")',[],function(res){
 //        console.log(res);
          assert.deepEqual(res, [ { id: '0', source: '0', target: '1' } ]);
        done();    
@@ -67,7 +70,8 @@ describe('Test 306 XML reader', function() {
    });
 
   it('7. SEARCH INTO ',function(done){
-     alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
+     alasql('SEARCH XML graph edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
+//     alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
 //        console.log('>>',res,'<<');
         assert(res == "id,source,target\n0,0,1\n");
 //         assert.deepEqual(res, [ { id: '0', source: '0', target: '1' } ]);

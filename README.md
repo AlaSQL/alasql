@@ -54,28 +54,22 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
 AlaSQL now is multi-paradigm database with support documents and graphs. Below you can find an example
 how to create graph:
 ```js
-    alasql('SET @olga = (CREATE VERTEX "Olga")');
-    alasql('SET @helen = (CREATE VERTEX "Helen")');
-    alasql('SET @pablo = (CREATE VERTEX "Pablo")');
-    alasql('SET @andrey = (CREATE VERTEX "Andrey")');
-    alasql('SET @alice = (CREATE VERTEX "Alice")');
-    alasql('CREATE EDGE FROM @olga TO @pablo');
-    alasql('CREATE EDGE FROM @helen TO @andrey');
-    alasql('CREATE EDGE FROM @pablo TO @alice');
-    alasql('CREATE EDGE FROM @andrey TO @alice');
+    alasql('CREATE GRAPH #Olga, #Helen, #Pablo, #Andrey, #Alice, \
+        #Olga >> #Pablo, #Helen >> #Andrey, \
+        #Pablo >> #Alice, #Andrey >> #Alice');
 ```
 and search over it with SEARCH operator:
 ```js
     // Whom loves Olga?
-    alasql('SEARCH "Olga" >> name');
+    alasql('SEARCH #Olga >> name');
     // ['Pablo']
 
     // Whom loves Olga's love objects?
-    alasql('SEARCH "Olga" >> >> name');
+    alasql('SEARCH #Olga >> >> name');
     // ['Alice']
 
     // Who loves lovers of Alice?
-    alasql('SEARCH IF(>> >> "Alice") name');
+    alasql('SEARCH ANY(>> >> #Alice) name');
     // ['Olga','Helen']
 
 ```
@@ -90,9 +84,9 @@ You also make searches over JSON object with SEARCH operator:
     var res = alasql('SEARCH /+b FROM ?',[data]);
     var res = alasql('SEARCH a* b FROM ?',[data]);
     var res = alasql('SEARCH a+ b FROM ?',[data]);
-    var res = alasql('SEARCH a? b FROM ?',[data]);
+    var res = alasql('SEARCH a? b WHERE(b>20) FROM ?',[data]);
 ```
-Please see more examples in test300-test304.js. All these features will be documented soon.
+Please see more examples in test300-test309.js. All these features will be documented soon.
 
 ### Version upgrade from 0.0.51 to 0.1.0
 

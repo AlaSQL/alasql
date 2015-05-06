@@ -5,7 +5,68 @@ This file contanis unstructured ideas for future development of AlaSQL.
 ## Ideas
 
 
-SEARCH a @(#SUM(b)+#COUNT(c d))
+search / ORDER BY(name DESC)
+
+if next selector is order, then 
+
+(/ ORDER BY (no))+
+
+SEARCH c @c sel(a b) ORDER BY(_) @b @[(@c),(@b)]
+
+SEARCH c sel(/ ORDER BY(age))+ @b {name:@c,age:@b}
+
+
+search :person @p where(age > 2) > :loves > where(sex="F") @@p;
+ok = where;
+
+
+Read: Neo.js
+http://neo4j.com/docs/stable/query-unwind.html
+
+
+create graph #Andrey, #Bonapart, #Andrey >> #Bonapart, #Olga {age:26};
+
+alasql('create graph from gedf("my.gedf"');
+alasql('search edge set(color="black"');
+alasql('search #Andrey path(#Bonapart) set(color="red")');
+d3.force()
+.nodes(alasql('search vertex d3()'))
+.links(alasql('search edge d3()'));
+
+
+alasql('search #Andrey path(#Olga) set(color="red")');
+alasql('search #Andrey paths((>>)+ OK(sex="F")) / set(color="red")');
+
+
+1.Change XML mode from '/' to simple tag
+2. Add HTML parser (?)
+
+
+#SUM(_,/b)
+
+alasql('=1+1'); // = operator
+alasql('=#Andrey');
+
+alasql('=#SUM(@1,)');
+alasql('=(SEARCH SUM(VERTEX))');
+
+alasql('=(SEARCH SUM(a) FROM _)');
+alasql('=(SEARCH _ SUM(a))');
+alasql('=#SUM(_,a)');
+alasql('=#SUM(VERTEX)');
+
+alasql('=(SEARCH SUM(VERTEX))');
+alasql('=(SEARCH SUM(EDGE))');
+alasql('=(SEARCH SUM(VERTEX),SUM(EDGE))');
+alasql('=(SEARCH ALL(SUM(VERTEX),SUM(EDGE))');
+alasql('=(SEARCH ANY(SUM(VERTEX),SUM(EDGE))');
+
+
+alasql('SELECT #SUM(/a) FROM one')
+
+SEARCH a EX( COUNT(b) + COUNT(c d))
+
+
 
 (SEARCH SUM(c d) FROM _) 
 

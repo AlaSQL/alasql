@@ -15,7 +15,6 @@
     "query",
     "localStorage",
     "IndexedDB",
-    "DOM-storage",
     "SQLite",
     "JSON",
     "Excel",
@@ -31,7 +30,6 @@
     "url": "https://github.com/agershun/alasql.git"
   },
   "dependencies": {
-    "dom-storage":"2.0.1",
     "xlsjs":"0.7.15",
     "xlsx":"0.8.0"
   },
