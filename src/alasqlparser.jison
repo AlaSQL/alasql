@@ -126,6 +126,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
 'GO'                                      		return 'GO'
+'GRAPH'                                      	return 'GRAPH'
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
@@ -365,6 +366,7 @@ Statement
 	| AttachDatabase	
 	| CreateDatabase
 	| CreateIndex
+	| CreateGraph
 	| CreateTable
 	| CreateView
 	| CreateEdge
@@ -508,11 +510,12 @@ SearchClause
 	;
 */
 SearchSelector
-	: Literal
+	: 
+	Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
-	| Literal LPAR RPAR
+/*	| Literal LPAR RPAR
 		{ $$ = {srchid:$1.toUpperCase()}; }	
-	| Literal LPAR ExprList RPAR
+*/	| Literal LPAR (ExprList)? RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
 	| WHERE LPAR Expression RPAR
 		{ $$ = {srchid:"WHERE", args:[$3]}; }	
@@ -534,9 +537,9 @@ SearchSelector
 		{ $$ = {srchid:"SHARP", args:[$2]}; }	
 	| MODULO Literal
 		{ $$ = {srchid:"ATTR", args:[$2]}; }	
-	| MODULO
+/*	| MODULO
 		{ $$ = {srchid:"ATTR"}; }	
-	| GT 
+*/	| GT 
 		{ $$ = {srchid:"OUT"}; }
 	| LT 
 		{ $$ = {srchid:"IN"}; }
@@ -2427,6 +2430,43 @@ CreateEdge
 
 	;
 */
+
+CreateGraph
+	: CREATE GRAPH GraphList
+		{ $$ = new yy.CreateGraph({graph:$3}); }
+	;
+
+GraphList
+	: GraphList COMMA GraphVertexEdge
+		{ $$ = $1; $$.push($3); }
+	| GraphVertexEdge
+		{ $$ = [$1]; }
+	;
+GraphVertexEdge
+	: GraphElement (Json)?
+		{ 
+			$$ = {json:$2};
+			yy.extend($$,$1);
+		}
+	| GraphElement GT GraphElement (Json)? GT GraphElement 
+		{ 
+			$$ = {source:$1, json:$4, target: $6};
+			yy.extend($$,$3);
+		}
+
+	;
+
+GraphElement
+	: (SharpLiteral)? (STRING)? (COLON Literal)?
+		{ $$ = {sharp:$1, name:$2, class:$3}; }
+	;
+
+SharpLiteral
+	:	SHARP Literal
+		{ $$ = $2; }
+	|	SHARP Number
+		{ $$ = $2; }
+	;
 
 DeleteVertex
 	: DELETE VERTEX Expression (WHERE Expression)?

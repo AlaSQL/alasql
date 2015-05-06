@@ -199,3 +199,81 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 	return statement;
 
 };
+
+
+
+yy.CreateGraph = function (params) { return yy.extend(this, params); }
+yy.CreateGraph.prototype.toString = function() {
+	var s = K('CREATE')+' '+K('GRAPH')+' ';
+	if(this.class) s += L(this.class)+' ';
+	return s;
+}
+
+// yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
+// 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
+// 	return s;
+// };
+
+yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
+	var res = this.graph.length;
+	this.graph.forEach(function(g){
+		if(g.source) {
+			// GREATE EDGE
+		} else {
+			// GREATE VERTEX
+		}
+	});
+	if(cb) res = cb(res);
+	return res;
+};
+
+yy.CreateGraph.prototype.compile1 = function (databaseid) {
+	var dbid = databaseid;
+	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
+	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+
+	// CREATE VERTEX "Name"
+	if(typeof this.name != 'undefined') {
+		var s = 'x.name='+this.name.toJavaScript();
+		var namefn = new Function('x',s);
+	};
+
+	if(this.sets && this.sets.length > 0) {
+		var s = this.sets.map(function(st){
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+		}).join(';');
+		var setfn = new Function('x,params,alasql',s);
+	} else if(this.content) {
+
+	} else if(this.select) {
+
+	} else {
+	}
+
+	var statement = function(params,cb){
+		var res = 0;
+			// CREATE VERTEX without parameters
+		var db = alasql.databases[dbid];
+		var edge = {$id: db.counter++, $node:'EDGE'};
+		var v1 = fromfn(params,alasql);
+		var v2 = tofn(params,alasql);
+		// Set link
+		edge.$in = [v1.$id];
+		edge.$out = [v2.$id];
+		// Set sides
+		if(typeof v1.$out == 'undefined') v1.$out = [];
+		v1.$out.push(edge.$id);
+		if(typeof v2.$in == 'undefined') v2.$in = [];
+		v2.$in.push(edge.$id);
+		// Save in objects
+		db.objects[edge.$id] = edge;
+		res = edge;
+		if(namefn) namefn(edge);
+		if(setfn) setfn(edge,params,alasql);
+
+		if(cb) res = cb(res);
+		return res;
+	};
+	return statement;
+
+};

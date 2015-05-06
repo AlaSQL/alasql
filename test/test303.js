@@ -81,10 +81,10 @@ describe('Test 303 SEARCH over JSON', function() {
 
   it('4. Test expression',function(done){
 
-    var res = alasql('SEARCH / OK(name = "John") age FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    var res = alasql('SEARCH / where(name = "John") age FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
     assert.deepEqual(res, [25]);
 
-    var res = alasql('SEARCH / ok(name = "Mary") age FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+    var res = alasql('SEARCH / where(name = "Mary") age FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
     assert.deepEqual(res, [18]);
 
     done();
