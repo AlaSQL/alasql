@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "AlaSQL.js - JavaScript SQL database library for relational and graph data with support of localStorage, IndexedDB, and Excel",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "directories": {
     "example": "examples",
@@ -16,7 +16,7 @@
     "jison":"0.4.15",
     "lodash":"3.7.0",
     "xlsjs":"0.7.15",
-    "xlsx":"0.8.0"
+    "js-xlsx":"0.8.0"
     },
   "engines": [
     "node"

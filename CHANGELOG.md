@@ -1,6 +1,6 @@
 # Changelog
 
-### 0.1.2 "Firenze" (06.05.2015 - ...05.2015)
+### 0.1.2 "Firenze" (06.05.2015 - 07.05.2015)
 * Simple compilation of SEARCH operator
 * SUM(),COUNT(),MIN(),MAX(),FIRST(),LAST() search aggregators
 * # operator, CREATE VERTEX #
@@ -9,6 +9,9 @@
 * SEARCH VALUE - leave only one first object in the result
 * Bug in browser version (no global object)
 * Changed Bower
+* CREATE GRAPH
+* Minor changes in SEARCH over XML syntax
+* New tests added
 
 ### 0.1.1 "Milano" (03.05.2015 - 04.05.2015)
 * XLSXML() into- function with colors
