@@ -64,7 +64,7 @@ describe('Test 302 CREATE CLASS ', function() {
   });
   
   it('9. SEARCH AS', function(done) {
-    var res = alasql('search city as @c ! ok(name like "M%") ex({city:name,country:(@c!country!name)}) FROM Person');
+    var res = alasql('search city as @c ! where(name like "M%") ex({city:name,country:(@c!country!name)}) FROM Person');
     assert.deepEqual(res,[ { city: 'Milano', country: 'Italy' } ]);
     done();
   });

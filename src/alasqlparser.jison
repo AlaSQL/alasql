@@ -126,6 +126,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
 'GO'                                      		return 'GO'
+'GRAPH'                                      	return 'GRAPH'
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
@@ -365,6 +366,7 @@ Statement
 	| AttachDatabase	
 	| CreateDatabase
 	| CreateIndex
+	| CreateGraph
 	| CreateTable
 	| CreateView
 	| CreateEdge
@@ -508,15 +510,16 @@ SearchClause
 	;
 */
 SearchSelector
-	: Literal
+	: 
+	Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
-	| Literal LPAR RPAR
+/*	| Literal LPAR RPAR
 		{ $$ = {srchid:$1.toUpperCase()}; }	
-	| Literal LPAR ExprList RPAR
+*/	| Literal LPAR (ExprList)? RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
-/*	| QUESTION LPAR ExprList RPAR
-		{ $$ = {srchid:"OK", args:$3}; }	
-*/	| CLASS LPAR Literal RPAR
+	| WHERE LPAR Expression RPAR
+		{ $$ = {srchid:"WHERE", args:[$3]}; }	
+	| CLASS LPAR Literal RPAR
 		{ $$ = {srchid:"CLASS", args:[$3]}; }	
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
@@ -532,11 +535,11 @@ SearchSelector
 		{ $$ = {srchid:"REF"}; }
 	| SHARP Literal
 		{ $$ = {srchid:"SHARP", args:[$2]}; }	
-	| MODULO Literal
-		{ $$ = {srchid:"ATTR", args:[$2]}; }	
-	| MODULO
+	| MODULO Literal?
+		{ $$ = {srchid:"ATTR", args:((typeof $2 == 'undefined')?undefined:[$2])}; }	
+/*	| MODULO
 		{ $$ = {srchid:"ATTR"}; }	
-	| GT 
+*/	| GT 
 		{ $$ = {srchid:"OUT"}; }
 	| LT 
 		{ $$ = {srchid:"IN"}; }
@@ -549,7 +552,7 @@ SearchSelector
 	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
 	| AT Literal
-		{ $$ = {srchid:"AS", args:[$2]}; }	
+		{ $$ = {srchid:"AT", args:[$2]}; }	
 	| AS AT Literal
 		{ $$ = {srchid:"AS", args:[$3]}; }	
 	| TO AT Literal
@@ -557,6 +560,10 @@ SearchSelector
 	| SET LPAR SetColumnsList RPAR
 		{ $$ = {srchid:"SET", args:$3}; }	
 
+	| VALUE
+		{ $$ = {srchid:"VALUE"}; }	
+	| COLON Literal
+		{ $$ = {srchid:"CLASS", args:[$2]}; }	
 	| LPAR SearchSelector* RPAR PlusStar 
 		{ $$ = {selid:$4,args:$2 }; }
 	| SearchSelector PlusStar
@@ -566,6 +573,8 @@ SearchSelector
 		{ $$ = {selid:"NOT",args:$3 }; }
 	| IF LPAR SearchSelector* RPAR
 		{ $$ = {selid:"IF",args:$3 }; }
+	| Aggregator LPAR SearchSelector* RPAR
+		{ $$ = {selid:$1,args:$3 }; }
 	;
 
 PlusStar
@@ -2353,7 +2362,7 @@ OutputClause
 
 /*
 CreateVertex
-	: CREATE VERTEX
+	: CREATE VERTEX 
 		{ $$ = new yy.CreateVertex(); }
 	| CREATE VERTEX SET SetColumnsList
 		{ $$ = new yy.CreateVertex({set: $4}); }
@@ -2370,12 +2379,18 @@ CreateVertex
 	;
 */
 CreateVertex
-	: CREATE VERTEX Literal? StringValue? CreateVertexSet 
+	: CREATE VERTEX Literal? SharpValue? StringValue? CreateVertexSet 
 		{
-			$$ = new yy.CreateVertex({class:$3,name:$4}); 
-			yy.extend($$,$5); 
+			$$ = new yy.CreateVertex({class:$3,sharp:$4, name:$5}); 
+			yy.extend($$,$6); 
 		}
 	;
+
+SharpValue
+	: SHARP Literal
+		{ $$ = $2; }
+	;
+
 CreateVertexSet
 	: 
 		{$$ = undefined; }
@@ -2417,6 +2432,54 @@ CreateEdge
 
 	;
 */
+
+CreateGraph
+	: CREATE GRAPH GraphList
+		{ $$ = new yy.CreateGraph({graph:$3}); }
+	| CREATE GRAPH FROM Expression
+		{ $$ = new yy.CreateGraph({from:$4}); }
+	;
+
+GraphList
+	: GraphList COMMA GraphVertexEdge
+		{ $$ = $1; $$.push($3); }
+	| GraphVertexEdge
+		{ $$ = [$1]; }
+	;
+GraphVertexEdge
+	: GraphElement Json?
+		{ 
+			$$ = $1; 
+			if($2) $$.json = new yy.Json({value:$2});
+		}
+	| GraphElement GT GraphElement Json? GT GraphElement 
+		{ 
+			$$ = {source:$1, target: $6};
+			if($4) $$.json = new yy.Json({value:$4});
+			yy.extend($$,$3);
+		}
+
+	;
+
+GraphElement
+	:  Literal? SharpLiteral? STRING? ColonLiteral?
+		{ 
+			var s3 = $3;
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
+		}
+	;
+
+ColonLiteral
+	: COLON Literal
+		{ $$ = $2; }
+	;
+
+SharpLiteral
+	:	SHARP Literal
+		{ $$ = $2; }
+	|	SHARP Number
+		{ $$ = $2; }
+	;
 
 DeleteVertex
 	: DELETE VERTEX Expression (WHERE Expression)?

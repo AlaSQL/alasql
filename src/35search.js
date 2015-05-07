@@ -16,56 +16,88 @@ yy.Search.prototype.toString = function () {
 	return s;
 };
 
-yy.Search.prototype.execute = function (databaseid, params, cb) {
+yy.Search.prototype.toJavaScript = function(context, tableid, defcols) {
+//		console.log('yy.CreateVertex.toJavaScript');
+	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
+	// var s = '';
+	return s;
+};
+
+yy.Search.prototype.compile = function(databaseid) {
+	var dbid = databaseid;
+	var self = this;
+
+	var statement = function(params,cb){
+//		console.log(31,self);
+		var res;
+		res = doSearch.bind(self)(dbid,params,cb);
+//		if(cb) res = cb(res);
+		return res;
+	};
+	return statement;
+};
+
+
+function doSearch (databaseid, params, cb) {
 	var res;
-	var search = {};
 	var stope = {};
+	var fromdata;
+	var selectors = cloneDeep(this.selectors);
 
-	if(typeof this.selectors != 'undefined' && this.selectors.length > 0) {
+	if(typeof selectors != 'undefined' && selectors.length > 0) {
 
-		if(this.selectors[0].srchid == 'PROP') {
+		if(selectors[0].srchid == 'PROP') {
 
-			if(this.selectors[0].args[0].toUpperCase() == 'XML') {
+			if(selectors[0].args[0].toUpperCase() == 'XML') {
 				stope.mode = 'XML';
-				this.selectors.shift();
-			} else if(this.selectors[0].args[0].toUpperCase() == 'HTML') {
+				selectors.shift();
+			} else if(selectors[0].args[0].toUpperCase() == 'HTML') {
 				stope.mode = 'HTML';
-				this.selectors.shift();
-			} else if(this.selectors[0].args[0].toUpperCase() == 'JSON') {
+				selectors.shift();
+			} else if(selectors[0].args[0].toUpperCase() == 'JSON') {
 				stope.mode = 'JSON';
-				this.selectors.shift();
+				selectors.shift();
 			}
 		}
+		if(selectors.length > 0 && selectors[0].srchid == 'VALUE') {
+			stope.value = true;
+			selectors.shift();
+		}
 	};
+
 	
 	if(this.from instanceof yy.Column) {
-		var fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
-		this.selectors.unshift({srchid:'CHILD'});
+		fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
+		selectors.unshift({srchid:'CHILD'});
 	} else if(this.from instanceof yy.FuncValue && alasql.from[this.from.funcid]) {
-		var fromdata = alasql.from[this.from.funcid](this.from.args[0].value);
+		fromdata = alasql.from[this.from.funcid](this.from.args[0].value);
 	} else if(typeof this.from == 'undefined') {
-		var fromdata = Object.keys(alasql.databases[databaseid].objects).map(
+		if(selectors.length > 0 && selectors[0].srchid == 'SHARP') {
+			fromdata = alasql.databases[alasql.useid].objects[selectors[0].args[0]];
+			selectors.shift();			
+		} else {
+			fromdata = Object.keys(alasql.databases[databaseid].objects).map(
 				function(key) {return alasql.databases[databaseid].objects[key]}
 			);
-		this.selectors.unshift({srchid:'CHILD'});
+			selectors.unshift({srchid:'CHILD'});			
+		}
 	} else {
 		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
-		var fromdata = fromfn(params,alasql);		
+		fromdata = fromfn(params,alasql);		
 	}
-	var selidx = 0;
-	var selvalue = fromdata;
-	var selectors = this.selectors;
+//	var selidx = 0;
+//	var selvalue = fromdata;
 	
-	if(typeof this.selectors != 'undefined' && this.selectors.length > 0) {
+	if(typeof selectors != 'undefined' && selectors.length > 0) {
 		// Init variables for TO() selectors
-		this.selectors.forEach(function(selector){
+		selectors.forEach(function(selector){
 			if(selector.srchid == 'TO') {
 				alasql.vars[selector.args[0]] = [];
 				// TODO - process nested selectors
 			}
 		});
 
-		res = processSelector(selectors,selidx,selvalue);
+		res = processSelector(selectors,0,fromdata);
 	} else {
 		res = fromdata; 	
 	}
@@ -84,7 +116,6 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 		res = [];
 		for(var key in uniq) res.push(uniq[key]);
 	}
-
 	if(this.into) {
 		var a1,a2;
 		if(typeof this.into.args[0] != 'undefined') {
@@ -97,6 +128,7 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 		}
 		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
 	} else {
+		if(stope.value && res.length > 0) res = res[0];
 		if (cb) res = cb(res);
 	}
 	return res;
@@ -136,6 +168,98 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 						return processSelector(selectors,sidx+1,value);
 					}
 				}
+			} else 	if(sel.selid == 'ARRAY') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest;
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'SUM') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest.reduce(function(sum, current) {
+	  					return sum + current;
+					}, 0);					
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'AVG') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest.reduce(function(sum, current) {
+	  					return sum + current;
+					}, 0)/nest.length;
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'COUNT') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					var val = nest.length;
+				} else {
+					return [];
+				}
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'FIRST') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) var val = nest[0];
+				else return [];
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'LAST') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) var val = nest[nest.length-1];
+				else return [];
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'MIN') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length == 0) return [];
+				var val = nest.reduce(function(min, current) {
+  					return Math.min(min,current);
+				}, Infinity);
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
+			} else 	if(sel.selid == 'MAX') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length == 0) return [];
+				var val = nest.reduce(function(max, current) {
+  					return Math.max(max,current);
+				}, -Infinity);
+				if(sidx+1+1 > selectors.length) {
+					return [val];
+				} else {
+					return processSelector(selectors,sidx+1,val);
+				}
 			} else 	if(sel.selid == 'PLUS') {
 				var retval = [];
 //				retval = retval.concat(processSelector(selectors,sidx+1,n))
@@ -153,8 +277,10 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 
 				var i = 0;
 				while (nests.length > 0) {
-					nest = nests[0];
-					nests.shift();
+//					nest = nests[0];
+//					nests.shift();
+					var nest = nests.shift();
+					
 //					console.log(nest,nests);
 					nest = processSelector(sel.args,0,nest);
 //					console.log('nest',nest,'nests',nests);
@@ -187,7 +313,7 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 				}
 				var i = 0;
 				while (nests.length > 0) {
-					nest = nests[0];
+					var nest = nests[0];
 					nests.shift();
 //					console.log(nest,nests);
 					nest = processSelector(sel.args,0,nest);
@@ -227,13 +353,15 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 
 		} else if(sel.srchid) {
 			var r = alasql.srch[sel.srchid.toUpperCase()](value,sel.args,stope,params);
+//			console.log(sel.srchid,r);
 		} else {
 			throw new Error('Selector not found');
 		}
-//		console.log(sidx,r);
+//		console.log(356,sidx,r);
 		var res = [];
 		if(r.status == 1) {
 			if(sidx+1+1 > selectors.length) {
+//			if(sidx+1+1 > selectors.length) {
 				res = r.values;					
 //				console.log('res',r)
 			} else {
@@ -250,9 +378,16 @@ yy.Search.prototype.execute = function (databaseid, params, cb) {
 alasql.srch = {};
 
 alasql.srch.PROP = function(val,args,stope) {
+//		console.log('PROP',args[0],val);
 	if(stope.mode == 'XML') {
-		if(val.name.toUpperCase() == args[0].toUpperCase()) {
-			return {status: 1, values: [val]};
+		var arr = [];
+		val.children.forEach(function(v){
+			if(v.name.toUpperCase() == args[0].toUpperCase()) {
+				arr.push(v)
+			}
+		});
+		if(arr.length>0) {
+			return {status: 1, values: arr};
 		} else {
 			return {status: -1, values: []};
 		}		
@@ -292,6 +427,16 @@ alasql.srch.CONTENT = function(val,args,stope) {
 	}
 };
 
+alasql.srch.SHARP = function(val,args,stope) {
+	var obj = alasql.databases[alasql.useid].objects[args[0]];
+	if(typeof val != 'undefined' && val == obj) {
+		return {status: 1, values: [val]};
+	} else {
+		return {status: -1, values: []};
+	}
+};
+
+
 alasql.srch.PARENT = function(val,args,stope) {
 	// TODO - finish
 	console.log('PARENT');
@@ -327,7 +472,7 @@ alasql.srch.KEYS = function(val,args) {
 };
 
 // Test expression
-alasql.srch.OK = function(val,args) {
+alasql.srch.WHERE = function(val,args) {
   var exprs = args[0].toJavaScript('x','');
   var exprfn = new Function('x,alasql','return '+exprs);
   if(exprfn(val,alasql)) {
@@ -415,6 +560,13 @@ alasql.srch.AS = function(val,args) {
 	alasql.vars[args[0]] = val;
   return {status: 1, values: [val]};
 };
+
+// Transform expression
+alasql.srch.AT = function(val,args) {
+	var v = alasql.vars[args[0]];
+  return {status: 1, values: [v]};
+};
+
 
 // Transform expression
 alasql.srch.CLONEDEEP = function(val,args) {

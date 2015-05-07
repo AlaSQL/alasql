@@ -10,6 +10,7 @@ yy.CreateVertex = function (params) { return yy.extend(this, params); }
 yy.CreateVertex.prototype.toString = function() {
 	var s = K('CREATE')+' '+K('VERTEX')+' ';
 	if(this.class) s += L(this.class)+' ';
+	if(this.sharp) s += '#'+L(this.sharp)+' ';
 	if(this.sets) {
 		s += this.sets.toString();
 	} else if(this.content) {
@@ -59,6 +60,9 @@ yy.CreateVertex.prototype.execute = function (databaseid,params,cb) {
 yy.CreateVertex.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 
+	// CREATE VERTEX #id
+	var sharp = this.sharp; 
+
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
 		var s = 'x.name='+this.name.toJavaScript();
@@ -83,7 +87,12 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 
 		// CREATE VERTEX without parameters
 		var db = alasql.databases[dbid];
-		var vertex = {$id: db.counter++, $node:'VERTEX'};
+		if(typeof sharp != 'undefined') {
+			var id = sharp;
+		} else {
+			var id = db.counter++;
+		}
+		var vertex = {$id: id, $node:'VERTEX'};
 		db.objects[vertex.$id] = vertex;
 		res = vertex;
 		if(namefn) namefn(vertex);
@@ -133,13 +142,174 @@ yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
 };
 
 // CREATE TABLE
+/*
 yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 	var res = 1;
 	if(cb) res = cb(res);
 	return res;
 };
-
+*/
 yy.CreateEdge.prototype.compile = function (databaseid) {
+	var dbid = databaseid;
+	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
+	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+
+	// CREATE VERTEX "Name"
+	if(typeof this.name != 'undefined') {
+		var s = 'x.name='+this.name.toJavaScript();
+		var namefn = new Function('x',s);
+	};
+
+	if(this.sets && this.sets.length > 0) {
+		var s = this.sets.map(function(st){
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+		}).join(';');
+		var setfn = new Function('x,params,alasql',s);
+	} else if(this.content) {
+
+	} else if(this.select) {
+
+	} else {
+	}
+
+	var statement = function(params,cb){
+		var res = 0;
+			// CREATE VERTEX without parameters
+		var db = alasql.databases[dbid];
+		var edge = {$id: db.counter++, $node:'EDGE'};
+		var v1 = fromfn(params,alasql);
+		var v2 = tofn(params,alasql);
+		// Set link
+		edge.$in = [v1.$id];
+		edge.$out = [v2.$id];
+		// Set sides
+		if(typeof v1.$out == 'undefined') v1.$out = [];
+		v1.$out.push(edge.$id);
+		if(typeof v2.$in == 'undefined') v2.$in = [];
+		v2.$in.push(edge.$id);
+		// Save in objects
+		db.objects[edge.$id] = edge;
+		res = edge;
+		if(namefn) namefn(edge);
+		if(setfn) setfn(edge,params,alasql);
+
+		if(cb) res = cb(res);
+		return res;
+	};
+	return statement;
+
+};
+
+
+
+yy.CreateGraph = function (params) { return yy.extend(this, params); }
+yy.CreateGraph.prototype.toString = function() {
+	var s = K('CREATE')+' '+K('GRAPH')+' ';
+	if(this.class) s += L(this.class)+' ';
+	return s;
+}
+
+// yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
+// 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
+// 	return s;
+// };
+
+yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
+	var res = [];
+	if(this.from) {
+		if(alasql.from[this.from.funcid]) {
+			this.graph = alasql.from[this.from.funcid.toUpperCase()]
+				(this.from.args[0].value);
+			console.log(this.graph);
+		}
+	}
+
+	stop;
+		this.graph.forEach(function(g){
+			if(g.source) {
+				// GREATE EDGE
+				var e = {};
+				if(typeof g.prop != 'undefined') {
+	//				e[g.prop] = e;
+	//				v.$id = g.prop; // We do not create $id for edge automatically
+					e.name = g.prop;				
+				};
+				if(typeof g.sharp != 'undefined') e.$id = g.sharp;
+				if(typeof g.name != 'undefined') e.name = g.name;
+				if(typeof g.class != 'undefined') e.$class = g.class;
+
+				var db = alasql.databases[databaseid];
+				if(typeof e.$id == 'undefined') {
+					e.$id = db.counter++;
+				}
+				e.$node='EDGE';
+				if(typeof g.json != 'undefined') {
+					extend(e,(new Function('params,alasql','return '+
+					g.json.toJavaScript()))(params,alasql));
+				}
+
+				v1 = alasql.databases[databaseid].objects[g.source.sharp || g.source.prop];
+				v2 = alasql.databases[databaseid].objects[g.target.sharp || g.target.prop];
+
+				// Set link
+				e.$in = [v1.$id];
+				e.$out = [v2.$id];
+				// Set sides
+				if(typeof v1.$out == 'undefined') v1.$out = [];
+				v1.$out.push(e.$id);
+				if(typeof v2.$in == 'undefined') v2.$in = [];
+				v2.$in.push(e.$id);
+
+				db.objects[e.$id] = e;
+				if(typeof e.$class != 'undefined') {
+					if(typeof alasql.databases[databaseid].tables[e.$class] == 'undefined') {
+						throw new Error('No such class. Pleace use CREATE CLASS');
+					} else {
+						alasql.databases[databaseid].tables[e.$class].data.push(e);
+					}
+				}
+
+				res.push(e.$id);
+
+			} else {
+				// GREATE VERTEX
+				var v = {};
+				if(typeof g.prop != 'undefined') {
+	//				v[g.prop] = true;
+					v.$id = g.prop;
+					v.name = g.prop;				
+				};
+				if(typeof g.sharp != 'undefined') v.$id = g.sharp;
+				if(typeof g.name != 'undefined') v.name = g.name;
+				if(typeof g.class != 'undefined') v.$class = g.class;
+
+				var db = alasql.databases[databaseid];
+				if(typeof v.$id == 'undefined') {
+					v.$id = db.counter++;
+				}
+				v.$node='VERTEX';
+				if(typeof g.json != 'undefined') {
+					extend(v,(new Function('params,alasql','return '+
+					g.json.toJavaScript()))(params,alasql));
+				}
+				db.objects[v.$id] = v;
+				if(typeof v.$class != 'undefined') {
+					if(typeof alasql.databases[databaseid].tables[v.$class] == 'undefined') {
+						throw new Error('No such class. Pleace use CREATE CLASS');
+					} else {
+						alasql.databases[databaseid].tables[v.$class].data.push(v);
+					}
+				}
+
+				res.push(v.$id);
+			}
+		});
+
+	if(cb) res = cb(res);
+	return res;
+};
+
+yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
 	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
 	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
