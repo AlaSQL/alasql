@@ -5,6 +5,10 @@ This file contanis unstructured ideas for future development of AlaSQL.
 ## Ideas
 
 
+
+
+
+
 search / ORDER BY(name DESC)
 
 if next selector is order, then 

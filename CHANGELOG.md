@@ -7,6 +7,8 @@
 * SEARCH # - start with object
 * SERCH smth # - test for object
 * SEARCH VALUE - leave only one first object in the result
+* Bug in browser version (no global object)
+* Changed Bower
 
 ### 0.1.1 "Milano" (03.05.2015 - 04.05.2015)
 * XLSXML() into- function with colors
