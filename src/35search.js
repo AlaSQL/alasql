@@ -380,8 +380,14 @@ alasql.srch = {};
 alasql.srch.PROP = function(val,args,stope) {
 //		console.log('PROP',args[0],val);
 	if(stope.mode == 'XML') {
-		if(val.name.toUpperCase() == args[0].toUpperCase()) {
-			return {status: 1, values: [val]};
+		var arr = [];
+		val.children.forEach(function(v){
+			if(v.name.toUpperCase() == args[0].toUpperCase()) {
+				arr.push(v)
+			}
+		});
+		if(arr.length>0) {
+			return {status: 1, values: arr};
 		} else {
 			return {status: -1, values: []};
 		}		
@@ -554,6 +560,13 @@ alasql.srch.AS = function(val,args) {
 	alasql.vars[args[0]] = val;
   return {status: 1, values: [val]};
 };
+
+// Transform expression
+alasql.srch.AT = function(val,args) {
+	var v = alasql.vars[args[0]];
+  return {status: 1, values: [v]};
+};
+
 
 // Transform expression
 alasql.srch.CLONEDEEP = function(val,args) {

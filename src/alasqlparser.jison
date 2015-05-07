@@ -535,8 +535,8 @@ SearchSelector
 		{ $$ = {srchid:"REF"}; }
 	| SHARP Literal
 		{ $$ = {srchid:"SHARP", args:[$2]}; }	
-	| MODULO Literal
-		{ $$ = {srchid:"ATTR", args:[$2]}; }	
+	| MODULO Literal?
+		{ $$ = {srchid:"ATTR", args:((typeof $2 == 'undefined')?undefined:[$2])}; }	
 /*	| MODULO
 		{ $$ = {srchid:"ATTR"}; }	
 */	| GT 
@@ -552,7 +552,7 @@ SearchSelector
 	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
 	| AT Literal
-		{ $$ = {srchid:"AS", args:[$2]}; }	
+		{ $$ = {srchid:"AT", args:[$2]}; }	
 	| AS AT Literal
 		{ $$ = {srchid:"AS", args:[$3]}; }	
 	| TO AT Literal
@@ -562,6 +562,8 @@ SearchSelector
 
 	| VALUE
 		{ $$ = {srchid:"VALUE"}; }	
+	| COLON Literal
+		{ $$ = {srchid:"CLASS", args:[$2]}; }	
 	| LPAR SearchSelector* RPAR PlusStar 
 		{ $$ = {selid:$4,args:$2 }; }
 	| SearchSelector PlusStar
@@ -2434,6 +2436,8 @@ CreateEdge
 CreateGraph
 	: CREATE GRAPH GraphList
 		{ $$ = new yy.CreateGraph({graph:$3}); }
+	| CREATE GRAPH FROM Expression
+		{ $$ = new yy.CreateGraph({from:$4}); }
 	;
 
 GraphList
@@ -2443,22 +2447,31 @@ GraphList
 		{ $$ = [$1]; }
 	;
 GraphVertexEdge
-	: GraphElement (Json)?
+	: GraphElement Json?
 		{ 
-			$$ = {json:$2};
-			yy.extend($$,$1);
+			$$ = $1; 
+			if($2) $$.json = new yy.Json({value:$2});
 		}
-	| GraphElement GT GraphElement (Json)? GT GraphElement 
+	| GraphElement GT GraphElement Json? GT GraphElement 
 		{ 
-			$$ = {source:$1, json:$4, target: $6};
+			$$ = {source:$1, target: $6};
+			if($4) $$.json = new yy.Json({value:$4});
 			yy.extend($$,$3);
 		}
 
 	;
 
 GraphElement
-	: (SharpLiteral)? (STRING)? (COLON Literal)?
-		{ $$ = {sharp:$1, name:$2, class:$3}; }
+	:  Literal? SharpLiteral? STRING? ColonLiteral?
+		{ 
+			var s3 = $3;
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
+		}
+	;
+
+ColonLiteral
+	: COLON Literal
+		{ $$ = $2; }
 	;
 
 SharpLiteral

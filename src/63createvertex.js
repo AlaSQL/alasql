@@ -215,14 +215,96 @@ yy.CreateGraph.prototype.toString = function() {
 // };
 
 yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
-	var res = this.graph.length;
-	this.graph.forEach(function(g){
-		if(g.source) {
-			// GREATE EDGE
-		} else {
-			// GREATE VERTEX
+	var res = [];
+	if(this.from) {
+		if(alasql.from[this.from.funcid]) {
+			this.graph = alasql.from[this.from.funcid.toUpperCase()]
+				(this.from.args[0].value);
+			console.log(this.graph);
 		}
-	});
+	}
+
+	stop;
+		this.graph.forEach(function(g){
+			if(g.source) {
+				// GREATE EDGE
+				var e = {};
+				if(typeof g.prop != 'undefined') {
+	//				e[g.prop] = e;
+	//				v.$id = g.prop; // We do not create $id for edge automatically
+					e.name = g.prop;				
+				};
+				if(typeof g.sharp != 'undefined') e.$id = g.sharp;
+				if(typeof g.name != 'undefined') e.name = g.name;
+				if(typeof g.class != 'undefined') e.$class = g.class;
+
+				var db = alasql.databases[databaseid];
+				if(typeof e.$id == 'undefined') {
+					e.$id = db.counter++;
+				}
+				e.$node='EDGE';
+				if(typeof g.json != 'undefined') {
+					extend(e,(new Function('params,alasql','return '+
+					g.json.toJavaScript()))(params,alasql));
+				}
+
+				v1 = alasql.databases[databaseid].objects[g.source.sharp || g.source.prop];
+				v2 = alasql.databases[databaseid].objects[g.target.sharp || g.target.prop];
+
+				// Set link
+				e.$in = [v1.$id];
+				e.$out = [v2.$id];
+				// Set sides
+				if(typeof v1.$out == 'undefined') v1.$out = [];
+				v1.$out.push(e.$id);
+				if(typeof v2.$in == 'undefined') v2.$in = [];
+				v2.$in.push(e.$id);
+
+				db.objects[e.$id] = e;
+				if(typeof e.$class != 'undefined') {
+					if(typeof alasql.databases[databaseid].tables[e.$class] == 'undefined') {
+						throw new Error('No such class. Pleace use CREATE CLASS');
+					} else {
+						alasql.databases[databaseid].tables[e.$class].data.push(e);
+					}
+				}
+
+				res.push(e.$id);
+
+			} else {
+				// GREATE VERTEX
+				var v = {};
+				if(typeof g.prop != 'undefined') {
+	//				v[g.prop] = true;
+					v.$id = g.prop;
+					v.name = g.prop;				
+				};
+				if(typeof g.sharp != 'undefined') v.$id = g.sharp;
+				if(typeof g.name != 'undefined') v.name = g.name;
+				if(typeof g.class != 'undefined') v.$class = g.class;
+
+				var db = alasql.databases[databaseid];
+				if(typeof v.$id == 'undefined') {
+					v.$id = db.counter++;
+				}
+				v.$node='VERTEX';
+				if(typeof g.json != 'undefined') {
+					extend(v,(new Function('params,alasql','return '+
+					g.json.toJavaScript()))(params,alasql));
+				}
+				db.objects[v.$id] = v;
+				if(typeof v.$class != 'undefined') {
+					if(typeof alasql.databases[databaseid].tables[v.$class] == 'undefined') {
+						throw new Error('No such class. Pleace use CREATE CLASS');
+					} else {
+						alasql.databases[databaseid].tables[v.$class].data.push(v);
+					}
+				}
+
+				res.push(v.$id);
+			}
+		});
+
 	if(cb) res = cb(res);
 	return res;
 };
