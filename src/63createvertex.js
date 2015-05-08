@@ -224,7 +224,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 		}
 	}
 
-	stop;
+//	stop;
 		this.graph.forEach(function(g){
 			if(g.source) {
 				// GREATE EDGE

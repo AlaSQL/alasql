@@ -173,6 +173,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
 'OVER'											return 'OVER'
+'PATH'                                        	return 'PATH'
 'PARTITION'										return 'PARTITION'
 'PERCENT'                                       return 'PERCENT'
 'PLAN'                                        	return 'PLAN'
@@ -476,11 +477,11 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| SEARCH DISTINCT? SearchSelector* IntoClause SearchFrom? SearchLet? SearchWhile? SearchLimit? SearchStrategy? SearchTimeout?
+	| SEARCH SearchSelector* IntoClause SearchFrom? 
+	/* SearchLimit? SearchStrategy? SearchTimeout? */
 		{
-			$$ = new yy.Search({selectors:$3, 
-			from:$5, distinct:($2=="DISTINCT")});
-			yy.extend($$,$4);
+			$$ = new yy.Search({selectors:$2, from:$4});
+			yy.extend($$,$3);
 		}
 	;
 
@@ -509,10 +510,31 @@ SearchClause
 		{ $$ = $2; }	
 	;
 */
+
 SearchSelector
+	: SearchSelector1 SearchOrder?
+		{ $$ = $1; yy.extend($$,$2);}
+	;
+
+SearchOrder
+	: ORDER BY LPAR OrderExpressionsList RPAR
+		{ $$ = {order:$4}}
+	| ORDER BY LPAR DIRECTION? RPAR
+		{
+			var dir = $4;
+			if(!dir) dir = 'ASC'; 
+			$$ = {order:[{expression: new yy.Column({columnid:'_'}), direction:dir}]};
+		}
+	;
+
+SearchSelector1
 	: 
 	Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| LPAR SearchSelector+ RPAR
+		{ $$ = {selid:"WITH", args: $2}; }
+	| WITH LPAR SearchSelector+ RPAR
+		{ $$ = {selid:"WITH", args: $3}; }
 /*	| Literal LPAR RPAR
 		{ $$ = {srchid:$1.toUpperCase()}; }	
 */	| Literal LPAR (ExprList)? RPAR
@@ -564,9 +586,9 @@ SearchSelector
 		{ $$ = {srchid:"VALUE"}; }	
 	| COLON Literal
 		{ $$ = {srchid:"CLASS", args:[$2]}; }	
-	| LPAR SearchSelector* RPAR PlusStar 
+/*	| LPAR SearchSelector* RPAR PlusStar 
 		{ $$ = {selid:$4,args:$2 }; }
-	| SearchSelector PlusStar
+*/	| SearchSelector PlusStar
 		{ $$ = {selid:$2,args:[$1] }; }
 
 	| NOT LPAR SearchSelector* RPAR
@@ -575,6 +597,29 @@ SearchSelector
 		{ $$ = {selid:"IF",args:$3 }; }
 	| Aggregator LPAR SearchSelector* RPAR
 		{ $$ = {selid:$1,args:$3 }; }
+	| DISTINCT LPAR SearchSelector* RPAR
+		{ $$ = {selid:'DISTINCT',args:$3 }; }
+	| UNION LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'UNION',args:$3 }; }
+	| UNION ALL LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'UNIONALL',args:$4 }; }
+	| INTERSECT LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'INTERSECT',args:$3 }; }
+	| EXCEPT LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'EXCEPT',args:$3 }; }
+	| AND LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'AND',args:$3 }; }
+	| OR LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'OR',args:$3 }; }
+	| PATH LPAR SearchSelector RPAR
+		{ $$ = {selid:'PATH',args:[$3] }; }
+	;
+
+SearchSelectorList
+	: SearchSelectorList COMMA SearchSelector*
+		{ $$ = $1; $$.push($3);}
+	| SearchSelector*
+		{ $$ = [$1]; }
 	;
 
 PlusStar
@@ -591,6 +636,7 @@ SearchFrom
 		{ $$ = $2; }
 	;
 
+/*
 SearchLet
 	: LET 
 	;
@@ -598,7 +644,7 @@ SearchLet
 SearchWhile
 	: WHILE Expression
 	;
-
+*/
 SearchLimit
 	: LIMIT Expression
 	;

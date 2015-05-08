@@ -1,6 +1,6 @@
-# AlaSQL.js - JavaScript SQL database library for relational and graph data with support of localStorage, IndexedDB, and Excel
+# AlaSQL.js - JavaScript SQL database library for relational and graph data manipulation with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.2 "Firenze" Date: May 7, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.3 "Vaticano" Date: May 9, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -48,6 +48,21 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
  * [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
 
 ## What is new?
+
+### Search paths in graph
+
+Now you can search graphs with SEARCH operator:
+```js
+    var res = alasql('CREATE GRAPH Pablo, Maxim, Alex, Napoleon, \
+      Josephine,  Kate, Julia  {age:27}, Paloma, \
+      #Pablo >loves> #Julia, #Maxim >> #Julia, #Alex >> #Kate, \
+      #Kate >> #Julia, #Alex >> #Paloma, #Napoleon > "loves" > #Josephine, \
+      #Josephine >"knows"> #Pablo');
+
+    var res = alasql('SEARCH #Napoleon PATH(#Pablo) name');
+    // returns ['loves','Josephine','knows','Pablo']
+```
+You can play with grpahs in AlaSQL in [this jsFiddle example](http://jsfiddle.net/fgzya692/1/).
 
 ### Documents and graphs paradigms
 
