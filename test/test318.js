@@ -15,7 +15,7 @@ describe('Test 318 PATH in GRAPH', function() {
 
   it('2. Simple graph',function(done){
     var res = alasql('CREATE GRAPH Pablo, Maxim, Alex, Napoleon, \
-      Josephine,  Kate, Julia, Paloma, \
+      Josephine,  Kate, Julia  {age:27}, Paloma, \
       #Pablo >loves> #Julia, #Maxim >> #Julia, #Alex >> #Kate, \
       #Kate >> #Julia, #Alex >> #Paloma, #Napoleon > "loves" > #Josephine, \
       #Josephine >"knows"> #Pablo');
@@ -37,8 +37,17 @@ describe('Test 318 PATH in GRAPH', function() {
     var res = alasql('SEARCH (DISTINCT(#Napoleon PATH(#Julia) EDGE name)) ORDER BY(ASC)');
 //console.log(res);
     assert.deepEqual(res,['knows','loves']);
+
+    var res = alasql('SEARCH #Napoleon PATH(age) name');
+    assert.deepEqual(res,["loves","Josephine","knows","Pablo","loves","Julia"]);
+
     done();
 
+  });
+
+  it('2. D3() selector',function(done){
+
+    done();
   });
 
   it('99. DROP DATABASE',function(done){
