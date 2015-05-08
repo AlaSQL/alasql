@@ -5,6 +5,7 @@
 * ORDER BY for SEARCH operator
 * Brackets for SEARCH selectors (WITH() selector)
 * SEARCH DISTINCT, UNION ALL, UNION selectors
+* Added simple PATH() selector
 
 ### 0.1.2 "Firenze" (06.05.2015 - 07.05.2015)
 * Simple compilation of SEARCH operator

@@ -173,6 +173,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
 'OVER'											return 'OVER'
+'PATH'                                        	return 'PATH'
 'PARTITION'										return 'PARTITION'
 'PERCENT'                                       return 'PERCENT'
 'PLAN'                                        	return 'PLAN'
@@ -610,6 +611,8 @@ SearchSelector1
 		{ $$ = {selid:'AND',args:$3 }; }
 	| OR LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'OR',args:$3 }; }
+	| PATH LPAR SearchSelector RPAR
+		{ $$ = {selid:'PATH',args:[$3] }; }
 	;
 
 SearchSelectorList

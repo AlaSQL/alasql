@@ -131,7 +131,50 @@ function doSearch (databaseid, params, cb) {
 
 		if(sel.selid) {
 			// TODO Process Selector
-			if(sel.selid == 'NOT') {
+			if(sel.selid == 'PATH') {
+				var queue = [{node:value,stack:[]}];
+				var visited = {};
+				var path = [];
+				var objects = alasql.databases[alasql.useid].objects;
+				while (queue.length > 0) {
+					var q = queue.shift()
+					var node = q.node;
+					var stack = q.stack;
+					var r = processSelector(sel.args,0,node);
+					if(r.length > 0) {
+						if(sidx+1+1 > selectors.length) {
+							return stack;
+						} else {
+							var rv = [];
+							if(stack && stack.length > 0) {
+								stack.forEach(function(stv){
+									rv = rv.concat(processSelector(selectors,sidx+1,stv));
+								});								
+							}
+							return rv;							
+//							return processSelector(selectors,sidx+1,stack);
+						}
+					} else {
+						if(typeof visited[node.$id] != 'undefined') {
+							continue;
+						} else {
+//							console.log(node.$id, node.$out);
+							visited[node.$id] = true;
+							if(node.$out && node.$out.length > 0) {
+								node.$out.forEach(function(edgeid){
+									var edge = objects[edgeid];
+									stack = stack.concat(edge);
+									stack.push(objects[edge.$out[0]]);
+									queue.push({node:objects[edge.$out[0]],
+										stack:stack});
+								});
+							}
+						}
+					}
+				}
+				// Else return fail
+				return [];
+			} if(sel.selid == 'NOT') {
 				var nest = processSelector(sel.args,0,value);
 				//console.log(1,nest);
 				if(nest.length>0) {
@@ -630,7 +673,7 @@ alasql.srch.INSTANCEOF = function(val,args) {
 // Transform expression
 alasql.srch.EDGE = function(val,args) {
   if(val.$node == 'EDGE') {
-    return {status: 1, values: res};
+    return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
   }
@@ -785,4 +828,6 @@ compileSearchOrder = function (order) {
 		return new Function('a,b',s);
 	};
 };
+
+
 
