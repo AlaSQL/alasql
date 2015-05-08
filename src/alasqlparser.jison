@@ -509,7 +509,18 @@ SearchClause
 		{ $$ = $2; }	
 	;
 */
+
 SearchSelector
+	: SearchSelector1 SearchOrder?
+		{ $$ = $1; yy.extend($$,$2);}
+	;
+
+SearchOrder
+	: ORDER BY LPAR OrderExpressionsList RPAR
+		{ $$ = {order:$4}}
+	;
+
+SearchSelector1
 	: 
 	Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }

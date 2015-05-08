@@ -360,13 +360,18 @@ function doSearch (databaseid, params, cb) {
 //		console.log(356,sidx,r);
 		var res = [];
 		if(r.status == 1) {
+			var arr = r.values;
+			if(sel.order) {
+				arr = arr.sort(compileSearchOrder(sel.order));
+			}
+
 			if(sidx+1+1 > selectors.length) {
 //			if(sidx+1+1 > selectors.length) {
-				res = r.values;					
+				res = arr;					
 //				console.log('res',r)
 			} else {
 				for(var i=0;i<r.values.length;i++) {
-					res = res.concat(processSelector(selectors,sidx+1,r.values[i]));									
+					res = res.concat(processSelector(selectors,sidx+1,arr[i]));									
 				}
 			}
 		}
@@ -392,7 +397,7 @@ alasql.srch.PROP = function(val,args,stope) {
 			return {status: -1, values: []};
 		}		
 	} else {
-		if((typeof val != 'object') || (typeof val[args[0]] == 'undefined')) {
+		if((typeof val != 'object') || (val === null) || (typeof val[args[0]] == 'undefined')) {
 			return {status: -1, values: []};
 		} else {
 			return {status: 1, values: [val[args[0]]]};
@@ -429,7 +434,7 @@ alasql.srch.CONTENT = function(val,args,stope) {
 
 alasql.srch.SHARP = function(val,args,stope) {
 	var obj = alasql.databases[alasql.useid].objects[args[0]];
-	if(typeof val != 'undefined' && val == obj) {
+	if(typeof val != 'undefined' && val === obj) {
 		return {status: 1, values: [val]};
 	} else {
 		return {status: -1, values: []};
@@ -463,7 +468,7 @@ alasql.srch.CHILD = function(val,args,stope) {
 
 // Return all keys
 alasql.srch.KEYS = function(val,args) {
-  if(typeof val == 'object') {
+  if(typeof val == 'object' && val !== null) {
 	  return {status: 1, values: Object.keys(val)};          
   } else {
     // If primitive value
@@ -600,3 +605,70 @@ alasql.srch.SET = function(val,args,stope,params) {
 
   return {status: 1, values: [val]};
 };
+
+compileSearchOrder = function (order) {
+	if(order) {
+//			console.log(990, this.order);
+		if(order && order.length == 1 && order[0].expression 
+			 && typeof order[0].expression == "function") {
+//			console.log(991, this.order[0]);
+			var func = order[0].expression;
+//			console.log(994, func);
+			return function(a,b){
+				var ra = func(a),rb = func(b);
+				if(ra>rb) return 1;
+				if(ra==rb) return 0;
+				return -1;
+			}
+		};
+
+		var s = '';
+		var sk = '';
+		order.forEach(function(ord,idx){
+			// console.log(ord instanceof yy.Expression);
+			// console.log(ord.toJavaScript('a',''));
+			// console.log(ord.expression instanceof yy.Column);
+			
+			// Date conversion
+			var dg = ''; 
+//console.log(ord.expression, ord.expression instanceof yy.NumValue);
+			if(ord.expression instanceof yy.NumValue) {
+				ord.expression = self.columns[ord.expression.value-1];
+			};
+
+			if(ord.expression instanceof yy.Column) {
+				var columnid = ord.expression.columnid; 
+
+				if(alasql.options.valueof) dg = '.valueOf()'; // TODO Check
+				// COLLATE NOCASE
+				if(ord.nocase) dg += '.toUpperCase()';
+
+				if(columnid == '_') {
+					s += 'if(a'+dg+(ord.direction == 'ASC'?'>':'<')+'b'+dg+')return 1;';
+					s += 'if(a'+dg+'==b'+dg+'){';
+				} else {
+					s += 'if((a[\''+columnid+"']||'')"+dg+(ord.direction == 'ASC'?'>':'<')+'(b[\''+columnid+"']||'')"+dg+')return 1;';
+					s += 'if((a[\''+columnid+"']||'')"+dg+'==(b[\''+columnid+"']||'')"+dg+'){';
+				}
+
+			} else {
+				dg = '.valueOf()';
+				// COLLATE NOCASE
+				if(ord.nocase) dg += '.toUpperCase()';
+				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
+				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+'==('+ord.toJavaScript('b','')+"||'')"+dg+'){';
+			}			
+
+			// TODO Add date comparision
+				// s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
+				// s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
+//			}
+			sk += '}';
+		});
+		s += 'return 0;';
+		s += sk+'return -1';
+//console.log(s);
+		return new Function('a,b',s);
+	};
+};
+
