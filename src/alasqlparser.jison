@@ -606,6 +606,10 @@ SearchSelector1
 		{ $$ = {selid:'INTERSECT',args:$3 }; }
 	| EXCEPT LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'EXCEPT',args:$3 }; }
+	| AND LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'AND',args:$3 }; }
+	| OR LPAR SearchSelectorList RPAR
+		{ $$ = {selid:'OR',args:$3 }; }
 	;
 
 SearchSelectorList

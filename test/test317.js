@@ -15,12 +15,27 @@ describe('Test 317 GRAPH', function() {
 
   it('2. Simple graph',function(done){
     alasql('CREATE CLASS loves; CREATE CLASS hates');
-    var res = alasql('CREATE GRAPH Pablo, Maxim, Alex, Kate, Julia, \
-      #Pablo > loves > #Julia, #Maxim > loves > #Julia, #Alex > loves > #Kate, \
-      #Kate > hates > #Julia');
-    var res = alasql('SEARCH #Alex > :loves > AS @p1 < :hates < #Julia');
-    console.log(res);
+    var res = alasql('CREATE GRAPH Pablo, Maxim, Alex, Kate, Julia, Paloma, \
+      #Pablo > "loves" > #Julia, #Maxim > "loves" > #Julia, #Alex > "loves" > #Kate, \
+      #Kate > "hates" > #Julia, #Alex > "loves" > #Paloma');
+//    var res = alasql('SEARCH #Alex > "loves" > AS @p1 < "hates" < #Julia');
+//    var res = alasql('SEARCH #Alex > "loves" > AS @p < "hates" < #Julia @p');
+//    var res = alasql('SEARCH #Alex > "loves" > AS @p > "hates" > #Julia @p');
+    var res = alasql('SEARCH #Alex > "loves" > name');
+    assert.deepEqual(res,['Kate', 'Paloma']);
 
+    var res = alasql('SEARCH VERTEX AS @p OR(<,>) @p name');
+    assert.deepEqual(res,[ 'Pablo', 'Maxim', 'Alex', 'Kate', 'Julia', 'Paloma' ]);
+
+    var res = alasql('SEARCH VERTEX AS @p AND(<,>) @p name');
+    assert.deepEqual(res,[ 'Kate' ]);
+
+    var res = alasql('SEARCH VERTEX AS @p AND(<"loves",<"hates") @p name');
+    assert.deepEqual(res,["Julia"] );
+
+    var res = alasql('SEARCH VERTEX AS @p < AND("loves","hates") @p name');
+    assert.deepEqual(res,["Julia"] );
+    console.log(res);
 
     done();
 

@@ -170,6 +170,34 @@ function doSearch (databaseid, params, cb) {
 						return processSelector(selectors,sidx+1,res);
 					}
 				}
+			} else if(sel.selid == 'AND') {
+				var res = true;
+				sel.args.forEach(function(se){
+					res = res && (processSelector(se,0,value).length>0);
+				});
+				if(!res) {
+					return [];
+				} else {
+					if(sidx+1+1 > selectors.length) {
+						return [value];
+					} else {
+						return processSelector(selectors,sidx+1,value);
+					}
+				}
+			} else if(sel.selid == 'OR') {
+				var res = false;
+				sel.args.forEach(function(se){
+					res = res || (processSelector(se,0,value).length>0);
+				});
+				if(!res) {
+					return [];
+				} else {
+					if(sidx+1+1 > selectors.length) {
+						return [value];
+					} else {
+						return processSelector(selectors,sidx+1,value);
+					}
+				}
 
 			} else if(sel.selid == 'UNIONALL') {
 				var nest = [];
@@ -634,6 +662,17 @@ alasql.srch.OUT = function(val,args) {
 	}
 };
 
+// Transform expression
+alasql.srch.IN = function(val,args) {
+	if(val.$in && val.$in.length > 0) {
+		var res = val.$in.map(function(v){ 
+			return alasql.databases[alasql.useid].objects[v]
+		}); 
+		return {status: 1, values: res};
+	} else {
+		return {status: -1, values: []};
+	}
+};
 
 // Transform expression
 alasql.srch.AS = function(val,args) {
