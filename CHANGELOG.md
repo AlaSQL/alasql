@@ -1,8 +1,10 @@
 # Changelog
 
-### 0.1.3 "Vaticano" (08.05.2015 - ...05.2015)
+### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
 * Check for null values for SEACRH
 * ORDER BY for SEARCH operator
+* Brackets for SEARCH selectors (WITH() selector)
+* SEARCH DISTINCT, UNION ALL, UNION selectors
 
 ### 0.1.2 "Firenze" (06.05.2015 - 07.05.2015)
 * Simple compilation of SEARCH operator

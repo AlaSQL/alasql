@@ -13,6 +13,7 @@ yy.Search.prototype.toString = function () {
 	var s = K('SEARCH') + ' ';
 	if (this.selectors) s += this.selectors.toString();
 	if (this.from) s += K('FROM') + ' ' + this.from.toString();
+//console.log(s);
 	return s;
 };
 
@@ -102,20 +103,6 @@ function doSearch (databaseid, params, cb) {
 		res = fromdata; 	
 	}
 	
-	if(this.distinct) {
-		var uniq = {};
-		// TODO: Speedup, because Object.keys is slow
-		for(var i=0,ilen=res.length;i<ilen;i++) {
-			if(typeof res[i] == 'object') {
-				var uix = Object.keys(res[i]).map(function(k){return res[i][k]}).join('`');
-			} else {
-				var uix = res[i];	
-			}
-			uniq[uix] = res[i];
-		};
-		res = [];
-		for(var key in uniq) res.push(uniq[key]);
-	}
 	if(this.into) {
 		var a1,a2;
 		if(typeof this.into.args[0] != 'undefined') {
@@ -140,7 +127,7 @@ function doSearch (databaseid, params, cb) {
 //			throw new Error('Selector "'+sel.srchid+'" not found');
 //		};
 		
-		var SECURITY_BREAK = 100;
+		var SECURITY_BREAK = 100000;
 
 		if(sel.selid) {
 			// TODO Process Selector
@@ -154,6 +141,77 @@ function doSearch (databaseid, params, cb) {
 						return [value];
 					} else {
 						return processSelector(selectors,sidx+1,value);
+					}
+				}
+			} else if(sel.selid == 'DISTINCT') {
+				var nest = processSelector(sel.args,0,value);
+//				console.log(1,nest);
+				if(nest.length == 0) {
+					return [];
+				} else {
+
+					var res = nest;
+					var uniq = {};
+					// TODO: Speedup, because Object.keys is slow
+					for(var i=0,ilen=res.length;i<ilen;i++) {
+						if(typeof res[i] == 'object') {
+							var uix = Object.keys(res[i]).map(function(k){return res[i][k]}).join('`');
+						} else {
+							var uix = res[i];	
+						}
+						uniq[uix] = res[i];
+					};
+					res = [];
+					for(var key in uniq) res.push(uniq[key]);
+
+					if(sidx+1+1 > selectors.length) {
+						return res;
+					} else {
+						return processSelector(selectors,sidx+1,res);
+					}
+				}
+
+			} else if(sel.selid == 'UNIONALL') {
+				var nest = [];
+				sel.args.forEach(function(se){
+					nest = nest.concat(processSelector(se,0,value));
+				});
+				if(nest.length == 0) {
+					return [];
+				} else {
+					if(sidx+1+1 > selectors.length) {
+						return nest;
+					} else {
+						return processSelector(selectors,sidx+1,nest);
+					}
+				}
+			} else if(sel.selid == 'UNION') {
+				var nest = [];
+				sel.args.forEach(function(se){
+					nest = nest.concat(processSelector(se,0,value));
+				});
+
+					var res = nest;
+					var uniq = {};
+					// TODO: Speedup, because Object.keys is slow
+					for(var i=0,ilen=res.length;i<ilen;i++) {
+						if(typeof res[i] == 'object') {
+							var uix = Object.keys(res[i]).map(function(k){return res[i][k]}).join('`');
+						} else {
+							var uix = res[i];	
+						}
+						uniq[uix] = res[i];
+					};
+					nest = [];
+					for(var key in uniq) nest.push(uniq[key]);
+
+				if(nest.length == 0) {
+					return [];
+				} else {
+					if(sidx+1+1 > selectors.length) {
+						return nest;
+					} else {
+						return processSelector(selectors,sidx+1,nest);
 					}
 				}
 			} else 	if(sel.selid == 'IF') {
@@ -263,17 +321,14 @@ function doSearch (databaseid, params, cb) {
 			} else 	if(sel.selid == 'PLUS') {
 				var retval = [];
 //				retval = retval.concat(processSelector(selectors,sidx+1,n))
-				var nests = processSelector(sel.args,0,value);
-
-
+				var nests = processSelector(sel.args,0,value).slice();
 				if(sidx+1+1 > selectors.length) {
-					//return nests;
+					retval = retval.concat(nests);
 				} else {
 					nests.forEach(function(n){
 						retval = retval.concat(processSelector(selectors,sidx+1,n));
 					});
 				}
-
 
 				var i = 0;
 				while (nests.length > 0) {
@@ -281,30 +336,40 @@ function doSearch (databaseid, params, cb) {
 //					nests.shift();
 					var nest = nests.shift();
 					
+//					console.log(281,nest);
 //					console.log(nest,nests);
 					nest = processSelector(sel.args,0,nest);
+//					console.log(284,nest);
 //					console.log('nest',nest,'nests',nests);
 					nests = nests.concat(nest);
+//console.log(retval,nests);				
 
 					if(sidx+1+1 > selectors.length) {
-						//return nests;
+						retval = retval.concat(nest);
+						//return retval;
 					} else {
 						nest.forEach(function(n){
-							retval = retval.concat(processSelector(selectors,sidx+1,n));
+//							console.log(293,n);
+							var rn = processSelector(selectors,sidx+1,n);
+//							console.log(294,rn, retval);
+							retval = retval.concat(rn);
 						});
 					}
 
 					// Security brake
 					i++;
-					if(i>SECURITY_BREAK) stop;
+					if(i>SECURITY_BREAK) {
+						throw new Error('Security brake. Number of iterations = '+i);
+					}
 				};
 				return retval;
 				//console.log(1,nest);
 			} else 	if(sel.selid == 'STAR') {
 				var retval = [];
-				retval = retval.concat(processSelector(selectors,sidx+1,value))
-				var nests = processSelector(sel.args,0,value);
+				retval = processSelector(selectors,sidx+1,value);
+				var nests = processSelector(sel.args,0,value).slice();
 				if(sidx+1+1 > selectors.length) {
+					retval = retval.concat(nests);
 					//return nests;
 				} else {
 					nests.forEach(function(n){
@@ -330,7 +395,9 @@ function doSearch (databaseid, params, cb) {
 
 					// Security brake
 					i++;
-					if(i>SECURITY_BREAK) stop;
+					if(i>SECURITY_BREAK) {
+						throw new Error('Security brake. Number of iterations = '+i);
+					}
 				};
 
 				return retval;
@@ -346,6 +413,13 @@ function doSearch (databaseid, params, cb) {
 					});
 				}
 				return retval;
+			} else if(sel.selid == 'WITH') {
+				var nest = processSelector(sel.args,0,value);
+				if(nest.length==0) {
+					return [];
+				} else {
+					var r = {status:1,values:nest};
+				}
 			} else {
 				throw new Error('Wrong selector '+sel.selid);
 			}
@@ -362,6 +436,7 @@ function doSearch (databaseid, params, cb) {
 		if(r.status == 1) {
 			var arr = r.values;
 			if(sel.order) {
+//				console.log(sel.order);
 				arr = arr.sort(compileSearchOrder(sel.order));
 			}
 

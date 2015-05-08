@@ -13,7 +13,7 @@ describe('Test 314 SEARCH with null values', function() {
     var data = [{a:1},null];
 
     var res = alasql('SEARCH / a FROM ?', [data]);
-    console.log(res);
+    assert.deepEqual(res,[1]);
     done();
 
   });
