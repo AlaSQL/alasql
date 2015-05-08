@@ -30,7 +30,7 @@
     "url": "https://github.com/agershun/alasql.git"
   },
   "dependencies": {
-    "xlsjs":"0.7.15",
+    "js-xls": "~0.7.5",
     "js-xlsx":"0.8.0"
   },
   "devDependencies": {
