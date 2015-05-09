@@ -4447,7 +4447,14 @@ function doSearch (databaseid, params, cb) {
 		}
 	} else {
 		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
-		fromdata = fromfn(params,alasql);		
+		fromdata = fromfn(params,alasql);
+
+		// Check for Mogo Collections
+		if(typeof Mongo != 'undefined' && typeof Mongo.Collection != 'undefined'
+			&& fromdata instanceof Mongo.Collection) {
+			fromdata = fromdata.find().fetch();
+		} 
+
 	}
 //	var selidx = 0;
 //	var selvalue = fromdata;
