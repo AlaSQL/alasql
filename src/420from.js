@@ -219,10 +219,16 @@ alasql.prepareFromData = function(data,array) {
 //		console.log(res);
 	} else if(typeof data == 'object' && !(data instanceof Array)) {
 //	} else if(typeof data == 'object' && !(typeof data.length == 'undefined')) {
-		res = [];
-		for(var key in data) {
-			if(data.hasOwnProperty(key)) res.push([key,data[key]]);
-		};
+		if(typeof Mongo != 'undefined' && typeof Mongo.Collection != 'undefined'
+			&& data instanceof Mongo.Collection) {
+			res = data.find().fetch();
+		} else {
+			res = [];
+			for(var key in data) {
+				if(data.hasOwnProperty(key)) res.push([key,data[key]]);
+			};			
+		}
+
 //		console.log(res);
 	};
 //	console.log(typeof data);

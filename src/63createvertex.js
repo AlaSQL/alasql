@@ -229,6 +229,8 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 			if(g.source) {
 				// GREATE EDGE
 				var e = {};
+				if(typeof g.as != 'undefined') alasql.vars[g.as] = e;
+
 				if(typeof g.prop != 'undefined') {
 	//				e[g.prop] = e;
 	//				v.$id = g.prop; // We do not create $id for edge automatically
@@ -274,6 +276,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 			} else {
 				// GREATE VERTEX
 				var v = {};
+				if(typeof g.as != 'undefined') alasql.vars[g.as] = v;
 				if(typeof g.prop != 'undefined') {
 	//				v[g.prop] = true;
 					v.$id = g.prop;

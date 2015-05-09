@@ -2493,25 +2493,38 @@ GraphList
 		{ $$ = [$1]; }
 	;
 GraphVertexEdge
-	: GraphElement Json?
+	: GraphElement Json? GraphAsClause? 
 		{ 
 			$$ = $1; 
 			if($2) $$.json = new yy.Json({value:$2});
+			if($3) $$.as = $3;
 		}
-	| GraphElement GT GraphElement Json? GT GraphElement 
+	| GraphElement GT GraphElement Json? GraphAsClause? GT GraphElement 
 		{ 
-			$$ = {source:$1, target: $6};
+			$$ = {source:$1, target: $7};
 			if($4) $$.json = new yy.Json({value:$4});
+			if($5) $$.as = $5;
 			yy.extend($$,$3);
+			;
 		}
 
 	;
 
+GraphAsClause
+	: AS AT Literal
+		{ $$ = $3; }
+	;
+
+GraphAtClause
+	: AT Literal
+		{ $$ = $2; }
+	;
+
 GraphElement
-	:  Literal? SharpLiteral? STRING? ColonLiteral?
+	:  Literal? SharpLiteral? STRING? ColonLiteral? 
 		{ 
 			var s3 = $3;
-			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4, as:$5}; 
 		}
 	;
 
