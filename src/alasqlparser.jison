@@ -2504,7 +2504,7 @@ GraphVertexEdge
 			if($2) $$.json = new yy.Json({value:$2});
 			if($3) $$.as = $3;
 		}
-	| GraphElement GT GraphElement Json? GraphAsClause? GT GraphElement 
+	| (GraphElement|GraphVar) GT GraphElement Json? GraphAsClause? GT (GraphElement|GraphVar) 
 		{ 
 			$$ = {source:$1, target: $7};
 			if($4) $$.json = new yy.Json({value:$4});
@@ -2513,6 +2513,11 @@ GraphVertexEdge
 			;
 		}
 
+	;
+
+GraphVar
+	: AT Literal
+		{ $$ = {vars:$2}; }
 	;
 
 GraphAsClause

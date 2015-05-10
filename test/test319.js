@@ -15,11 +15,19 @@ describe('Test 319 PATH in GRAPH', function() {
 
   it('2. Simple graph',function(done){
     alasql('CREATE CLASS Person');
-    var res = alasql('CREATE GRAPH :Peson {age:35} AS @p1, \
-      :Peson {age:40} AS @p2, \
-      @p1 > "is older than" > @p2');
+    var res = alasql('CREATE GRAPH :Person {age:35} AS @p1');
+//    console.log(1,res);
+    var res = alasql('CREATE GRAPH :Person {age:40} AS @p2');
+//    console.log(2,res);
+    var res = alasql('CREATE GRAPH @p1 > "is older than" > @p2');
+//    console.log(3,res);
+
+    var res = alasql('SEARCH @p1 >');
+    console.log(res);
+
 
     var res = alasql('SEARCH @p1 PATH(@p2) EDGE name');
+    console.log(res);
     assert.deepEqual(res,['is older than']);
 
     done();

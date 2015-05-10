@@ -77,6 +77,9 @@ function doSearch (databaseid, params, cb) {
 		if(selectors.length > 0 && selectors[0].srchid == 'SHARP') {
 			fromdata = alasql.databases[alasql.useid].objects[selectors[0].args[0]];
 			selectors.shift();			
+		} else if(selectors.length > 0 && selectors[0].srchid == 'AT') {
+			fromdata = alasql.vars[selectors[0].args[0]];
+			selectors.shift();			
 		} else {
 			fromdata = Object.keys(alasql.databases[databaseid].objects).map(
 				function(key) {return alasql.databases[databaseid].objects[key]}
