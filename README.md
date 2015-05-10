@@ -49,6 +49,26 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
 
 ## What is new?
 
+### AlaSQL and Meteor Mongo collections
+
+Now you can use Meteor collections as agruments. To do it simply store alasql.min.js to the client/lib directory and then apply SQL to Meteor Collections: 
+
+```js
+    Template.body.helpers({
+       tasks: function () {
+         return alasql('SELECT * FROM ?',[Tasks]);
+       }
+    });
+```
+
+Or you can use with find() options with special METEOR() from-function:
+```
+    return alasql('SELECT * FROM ?',[Tasks]);
+    return alasql('SELECT * FROM METEOR(?)',[Tasks]);
+    return alasql('SELECT * FROM METEOR(?,?)',[Tasks,{text:"Hello world!"}]);
+    return alasql('SELECT * FROM METEOR(?,{text:"Hello world!"})',[Tasks]);
+```
+
 ### Search paths in graph
 
 Now you can search graphs with SEARCH operator:

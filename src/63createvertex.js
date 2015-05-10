@@ -250,8 +250,13 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 					g.json.toJavaScript()))(params,alasql));
 				}
 
-				v1 = alasql.databases[databaseid].objects[g.source.sharp || g.source.prop];
-				v2 = alasql.databases[databaseid].objects[g.target.sharp || g.target.prop];
+				var av1 = g.source.sharp; 
+				if(typeof av1 == 'undefined') av1 = g.source.prop; 
+				var v1 = alasql.databases[databaseid].objects[av1];
+
+				var av2 = g.target.sharp; 
+				if(typeof av2 == 'undefined') av2 = g.target.prop; 
+				var v2 = alasql.databases[databaseid].objects[av2];
 
 				// Set link
 				e.$in = [v1.$id];
@@ -267,6 +272,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 					if(typeof alasql.databases[databaseid].tables[e.$class] == 'undefined') {
 						throw new Error('No such class. Pleace use CREATE CLASS');
 					} else {
+						// TODO - add insert()
 						alasql.databases[databaseid].tables[e.$class].data.push(e);
 					}
 				}
@@ -300,6 +306,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 					if(typeof alasql.databases[databaseid].tables[v.$class] == 'undefined') {
 						throw new Error('No such class. Pleace use CREATE CLASS');
 					} else {
+						// TODO - add insert()
 						alasql.databases[databaseid].tables[v.$class].data.push(v);
 					}
 				}
@@ -311,6 +318,8 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 	if(cb) res = cb(res);
 	return res;
 };
+
+
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;

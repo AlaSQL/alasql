@@ -4,9 +4,14 @@ This file contanis unstructured ideas for future development of AlaSQL.
 
 ## Ideas
 
+2-chars
+
+Q: How UNION works? - disstinct or only new?
+Check UnionDeep and arrayDistinct
 
 
-
+AlaLISP
+AlaPROLOG
 
 
 search / ORDER BY(name DESC)

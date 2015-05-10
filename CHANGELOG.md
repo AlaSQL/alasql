@@ -2,9 +2,12 @@
 
 ### 0.1.4 "Napoli" (09.05.2015 - ...05.2015)
 * Convert Meteor/Mogo collections on the fly 
+* Added METEOR() from-function
+* Fixed $[0] -> $0 for parameters
+* utils/2ch.js - utility for minification of AlaSQL (calculate size of economy)
 
 ### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
-* Check for null values for SEACRH
+* Check for null values for SEARCH
 * ORDER BY for SEARCH operator
 * Brackets for SEARCH selectors (WITH() selector)
 * SEARCH DISTINCT, UNION ALL, UNION selectors

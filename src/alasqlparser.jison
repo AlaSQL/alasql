@@ -566,7 +566,7 @@ SearchSelector1
 	| LT 
 		{ $$ = {srchid:"IN"}; }
 	| DOLLAR 
-		{ $$ = {srchid:"CONTENT"}; }
+		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
 /*	| DELETE LPAR RPAR
 		{ $$ = {srchid:"DELETE"}; }
 */	| DOT DOT 
@@ -1306,9 +1306,11 @@ ExistsValue
 
 
 ParamValue
-	: DOLLAR Literal
+	: DOLLAR (Literal|NUMBER)
 		{ $$ = new yy.ParamValue({param: $2}); }
-	| COLON Literal
+/*	| DOLLAR NUMBER
+		{ $$ = new yy.ParamValue({param: $2}); }
+*/	| COLON Literal
 		{ $$ = new yy.ParamValue({param: $2}); }
 	| QUESTION
 		{ 
@@ -1833,6 +1835,8 @@ ColumnConstraint
 		{$$ = {notnull:true}; }
 	| Check
 		{$$ = $1; }
+	| UNIQUE
+		{$$ = {unique:true}; }
 	;
 
 /* DROP TABLE */
@@ -2524,7 +2528,7 @@ GraphElement
 	:  Literal? SharpLiteral? STRING? ColonLiteral? 
 		{ 
 			var s3 = $3;
-			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4, as:$5}; 
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
 		}
 	;
 
@@ -2536,8 +2540,8 @@ ColonLiteral
 SharpLiteral
 	:	SHARP Literal
 		{ $$ = $2; }
-	|	SHARP Number
-		{ $$ = $2; }
+	|	SHARP NUMBER
+		{ $$ = +$2; }
 	;
 
 DeleteVertex

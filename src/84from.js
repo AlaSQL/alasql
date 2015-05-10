@@ -7,6 +7,16 @@
 */
 
 /**
+   Meteor
+*/
+
+alasql.from.METEOR = function(filename, opts, cb, idx, query) {
+   var res = filename.find(opts).fetch();
+   if(cb) res = cb(res, idx, query);
+    return res;
+ };
+
+/**
 	Google Spreadsheet reader
  */
 alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
