@@ -287,7 +287,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 					};
 				};
 
-console.log(v1,v2);
+//console.log(v1,v2);
 				// Set link
 				e.$in = [v1.$id];
 				e.$out = [v2.$id];

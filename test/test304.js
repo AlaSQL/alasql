@@ -93,9 +93,9 @@ describe('Test 304 SEARCH over JSON', function() {
     alasql('CREATE EDGE FROM @pablo TO @sofia');
     alasql('CREATE EDGE FROM @andrey TO @sofia');
 
-    var res = alasql('SEARCH @p (>>)+ "Sofia" @(@p) name');
+    var res = alasql('SEARCH AS @p (>>)+ "Sofia" @(@p) name');
     assert.deepEqual(res, ['Olga','Helen','Pablo','Andrey']);
-    var res = alasql('SEARCH @p (>>)* "Sofia" @(@p) name');
+    var res = alasql('SEARCH AS @p (>>)* "Sofia" @(@p) name');
     assert.deepEqual(res, ['Olga','Helen','Pablo','Andrey','Sofia']);
 
     var res = alasql('SEARCH "Olga" >> name');

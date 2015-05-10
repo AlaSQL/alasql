@@ -14,6 +14,8 @@ describe('Test 322 UNION TEST', function() {
   });
 
   it('2. UNION ALL',function(done){
+    alasql.options.modifier = undefined;
+    
     var data = [{a:1},{a:2},{a:2}, {b:2}];
     var res = alasql('SELECT a FROM $0 WHERE NOT a IS NULL \
       UNION ALL CORRESPONDING SELECT b FROM $0 WHERE NOT b IS NULL',[data]);

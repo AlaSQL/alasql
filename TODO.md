@@ -13,6 +13,29 @@ Check UnionDeep and arrayDistinct
 AlaLISP
 AlaPROLOG
 
+age 35.
+name X :- age X.
+:- age X.
+
+EDGE
+VERTEX
+CLUSTER
+FACT
+RULE
+
+CREATE FACT papa loves apples
+SEARCH papa loves @p, WHERE(@p IN ['Apples'])
+
+FACT [John] buys [Apples],[John] buys [Nuts];
+SEARCH [John] buys @x
+[{x:'Apples'},x:'Nuts'];
+
+
+
+
+
+
+
 
 search / ORDER BY(name DESC)
 

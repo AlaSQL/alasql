@@ -58,11 +58,17 @@ describe('Test 302 CREATE CLASS ', function() {
   });
 
   it('8. SEARCH #', function(done) {
-    var res = alasql('SEARCH DISTINCT(city!country!name) FROM Person');
+    var res = alasql('SEARCH DISTINCT(/ city!country!name) FROM Person');
     assert.deepEqual(res.sort(),['Egypt','Germany','Italy']);
     done();
   });
   
+  it('8a. SEARCH #', function(done) {
+    var res = alasql('SEARCH :Person DISTINCT(city!country!name)');
+    assert.deepEqual(res.sort(),['Egypt','Germany','Italy']);
+    done();
+  });
+
   it('9. SEARCH AS', function(done) {
     var res = alasql('search city as @c ! where(name like "M%") ex({city:name,country:(@c!country!name)}) FROM Person');
     assert.deepEqual(res,[ { city: 'Milano', country: 'Italy' } ]);

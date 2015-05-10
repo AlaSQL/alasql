@@ -49,14 +49,14 @@ function doSearch (databaseid, params, cb) {
 
 //			console.log(selectors[0].args[0].toUpperCase());
 		if(selectors && selectors[0] && selectors[0].srchid == 'PROP' && selectors[0].args && selectors[0].args[0]) {
-			console.log(selectors[0].args[0]);
-			if(selectors[0].args[0].columnid.toUpperCase() == 'XML') {
+//			console.log(selectors[0].args[0]);
+			if(selectors[0].args[0].toUpperCase() == 'XML') {
 				stope.mode = 'XML';
 				selectors.shift();
-			} else if(selectors[0].args[0].columnid.toUpperCase() == 'HTML') {
+			} else if(selectors[0].args[0].toUpperCase() == 'HTML') {
 				stope.mode = 'HTML';
 				selectors.shift();
-			} else if(selectors[0].args[0].columnid.toUpperCase() == 'JSON') {
+			} else if(selectors[0].args[0].toUpperCase() == 'JSON') {
 				stope.mode = 'JSON';
 				selectors.shift();
 			}
@@ -69,7 +69,8 @@ function doSearch (databaseid, params, cb) {
 
 	
 	if(this.from instanceof yy.Column) {
-		fromdata = alasql.databases[databaseid].tables[this.from.columnid].data;
+		var dbid = this.from.databaseid || databaseid;
+		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
 		selectors.unshift({srchid:'CHILD'});
 	} else if(this.from instanceof yy.FuncValue && alasql.from[this.from.funcid]) {
 		fromdata = alasql.from[this.from.funcid](this.from.args[0].value);
@@ -80,6 +81,12 @@ function doSearch (databaseid, params, cb) {
 		} else if(selectors.length > 0 && selectors[0].srchid == 'AT') {
 			fromdata = alasql.vars[selectors[0].args[0]];
 			selectors.shift();			
+		} else if(selectors.length > 0 && selectors[0].srchid == 'CLASS') {
+			fromdata = alasql.databases[databaseid].tables[selectors[0].args[0]].data;
+			
+			selectors.shift();
+			selectors.unshift({srchid:'CHILD'});
+
 		} else {
 			fromdata = Object.keys(alasql.databases[databaseid].objects).map(
 				function(key) {return alasql.databases[databaseid].objects[key]}
@@ -554,6 +561,29 @@ alasql.srch.APROP = function(val,args,stope) {
 	}		
 };
 
+// Test expression
+alasql.srch.EQ = function(val,args,stope,params) {
+  var exprs = args[0].toJavaScript('x','');
+  var exprfn = new Function('x,alasql,params','return '+exprs);
+  if(val == exprfn(val,alasql,params)) {
+    return {status: 1, values: [val]};
+  } else {
+    return {status: -1, values: []};        
+  }
+};
+
+// Test expression
+alasql.srch.LIKE = function(val,args,stope,params) {
+  var exprs = args[0].toJavaScript('x','');
+  var exprfn = new Function('x,alasql,params','return '+exprs);
+  if(val.toUpperCase().match(new RegExp('^'+exprfn(val,alasql,params).toUpperCase()
+  	.replace(/%/g,'.*')+'$'),'g')) {
+    return {status: 1, values: [val]};
+  } else {
+    return {status: -1, values: []};        
+  }
+};
+
 
 alasql.srch.ATTR = function(val,args,stope) {
 	if(stope.mode == 'XML') {
@@ -690,6 +720,20 @@ alasql.srch.EX = function(val,args) {
   return {status: 1, values: [exprfn(val,alasql)]};
 };
 
+
+// Transform expression
+alasql.srch.RETURNS = function(val,args,stope,params) {
+	var res = {};
+	if(args && args.length > 0) {
+		args.forEach(function(arg){
+		  	var exprs = arg.toJavaScript('x','');
+  			var exprfn = new Function('x,alasql,params','return '+exprs);
+  			if(typeof arg.as == 'undefined') arg.as = arg.toString();
+  			res[arg.as] = exprfn(val,alasql,params);
+		});
+	}
+  return {status: 1, values: [res]};
+};
 
 
 // Transform expression

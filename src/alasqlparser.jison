@@ -189,6 +189,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'RENAME'                                        return 'RENAME'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
+'RETURNS'                                       return 'RETURNS'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
@@ -532,13 +533,17 @@ SearchSelector1
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| ARROW Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
+	| EQ Expression
+		{ $$ = {srchid:"EQ", args: [$2]}; }
+	| LIKE Expression
+		{ $$ = {srchid:"LIKE", args: [$2]}; }
 	| LPAR SearchSelector+ RPAR
 		{ $$ = {selid:"WITH", args: $2}; }
 	| WITH LPAR SearchSelector+ RPAR
 		{ $$ = {selid:"WITH", args: $3}; }
 /*	| Literal LPAR RPAR
 		{ $$ = {srchid:$1.toUpperCase()}; }	
-*/	| Literal LPAR (ExprList)? RPAR
+*/	| Literal LPAR ExprList? RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
 	| WHERE LPAR Expression RPAR
 		{ $$ = {srchid:"WHERE", args:[$3]}; }	
@@ -587,9 +592,7 @@ SearchSelector1
 		{ $$ = {srchid:"VALUE"}; }	
 	| COLON Literal
 		{ $$ = {srchid:"CLASS", args:[$2]}; }	
-/*	| LPAR SearchSelector* RPAR PlusStar 
-		{ $$ = {selid:$4,args:$2 }; }
-*/	| SearchSelector PlusStar
+	| SearchSelector PlusStar
 		{ $$ = {selid:$2,args:[$1] }; }
 
 	| NOT LPAR SearchSelector* RPAR
@@ -598,7 +601,7 @@ SearchSelector1
 		{ $$ = {selid:"IF",args:$3 }; }
 	| Aggregator LPAR SearchSelector* RPAR
 		{ $$ = {selid:$1,args:$3 }; }
-	| DISTINCT LPAR SearchSelector* RPAR
+	| (DISTINCT|UNIQUE) LPAR SearchSelector* RPAR
 		{ $$ = {selid:'DISTINCT',args:$3 }; }
 	| UNION LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'UNION',args:$3 }; }
@@ -614,6 +617,8 @@ SearchSelector1
 		{ $$ = {selid:'OR',args:$3 }; }
 	| PATH LPAR SearchSelector RPAR
 		{ $$ = {selid:'PATH',args:[$3] }; }
+	| RETURNS LPAR ResultColumns RPAR
+		{ $$ = {srchid:'RETURNS',args:$3 }; }
 	;
 
 SearchSelectorList

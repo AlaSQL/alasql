@@ -348,7 +348,11 @@ I need to iterate on that object to obtain the following:
    { field: "field3", term: "val4"}
   ]
 ]
-If I try to explain this, the idea is to create an array of arrays where each child array are separated by "OR", while each objects inside the child arrays represents the "AND" separated fields; Although I think the code above explains it better than me
+If I try to explain this, the idea is to create an array 
+of arrays where each child array are separated by "OR",
+ while each objects inside the child arrays represents the 
+ "AND" separated fields; Although I think the code above explains 
+ it better than me
 */
 
 });

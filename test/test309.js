@@ -21,7 +21,7 @@ describe('Test 309 # operator and graphs', function() {
     assert(res == 44);
     var res = alasql('SEARCH #Olga age');
     assert.deepEqual(res,[35]);
-    var res = alasql('SEARCH @p #Olga age');
+    var res = alasql('SEARCH AS @p #Olga age');
     assert.deepEqual(res,[35]);
     var res = alasql('SEARCH VALUE #Olga age');
 //    console.log(res);

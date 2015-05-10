@@ -1,12 +1,15 @@
 # Changelog
 
-### 0.1.4 "Napoli" (09.05.2015 - ...05.2015)
-* Convert Meteor/Mogo collections on the fly 
+### 0.1.4 "Napoli" (09.05.2015 - 11.05.2015)
+* Convert Meteor/Mongo collections on the fly 
 * Added METEOR() from-function
 * Fixed $[0] -> $0 for parameters
 * utils/2ch.js - utility for minification of AlaSQL (calculate size of economy)
 * d3 graph path samples
 * alasql.options.autovertex flag - create vertices if not found
+* EQ() selector
+* LIKE selector
+* RETURNS selector - return record with columns like in SELECT
 
 ### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
 * Check for null values for SEARCH

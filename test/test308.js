@@ -67,30 +67,45 @@ describe('Test 308 sub SEARCH', function() {
     alasql('CREATE EDGE FROM @helen TO @andrey');
     alasql('CREATE EDGE FROM @pablo TO @sofia');
     alasql('CREATE EDGE FROM @andrey TO @sofia');
+    done();    
+  });
+  it('5. SUM over graph',function(done){
 
     var res = alasql('SEARCH SUM("Olga" (>>)+ age)');
 //    console.log(res);
     assert.deepEqual(res, [58]);
+    done();    
+  });
+  it('6. SUM over graph',function(done){
 
     var res = alasql('SEARCH "Olga" SUM((>>)+ age)');
 //    console.log(res);
     assert.deepEqual(res, [58]);
+    done();    
+  });
+  it('7. SUM over graph',function(done){
 
     var res = alasql('SEARCH COUNT("Olga" (>>)+ age)');
 //    console.log(res);
     assert.deepEqual(res, [2]);
+    done();    
+  });
+  it('8. SUM over graph',function(done){
 
-    var res = alasql('SEARCH @person \
-      SUM((>>)+ age) @age \
-      OK(@age > 50) \
-      @[(@person->name),(@age)]');
-    assert.deepEqual(res, [ [ 'Olga', 58 ], [ 'Helen', 67 ] ] );
+    var res = alasql('SEARCH AS @person \
+      SUM((>>)+ age) AS @age \
+      WHERE(@age > 50) \
+      @person RETURNS(name,@age AS age)');
+    assert.deepEqual(res, [ {name:'Olga', age:58}, {name:'Helen', age:67} ] );
+    done();    
+  });
+  it('9. SUM over graph',function(done){
 
-    var res = alasql('SEARCH @person \
-      COUNT((>>)+ age) @n \
-      OK(@n > 1) \
+    var res = alasql('SEARCH AS @person \
+      COUNT((>>)+ age) AS @n \
+      WHERE(@n > 1) \
       @(@person->name)');
-    assert.deepEqual(res, [ [ 'Olga', 'Helen' ]] );
+    assert.deepEqual(res, [ 'Olga', 'Helen'] );
 
 
 //   console.log(res);

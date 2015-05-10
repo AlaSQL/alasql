@@ -12,19 +12,37 @@ describe('Test 310 Create graph', function() {
     done();
   });
 
+  it('1. LIKE selector',function(done){
+    var data = [{name:'Moscow'},{name:'St.Petersburg'},{name:'Prague'}];
+//    var res = alasql.parse('CREATE GRAPH #Andrey');
+    var res = alasql('SEARCH / name LIKE "P%" FROM ?',[data]);
+    assert.deepEqual(res, ['Prague']);
+    done();
+  });
 
   it('1. CREATE GRAPH',function(done){
 //    var res = alasql.parse('CREATE GRAPH #Andrey');
     var res = alasql('CREATE GRAPH #Andrey');
-
     var res = alasql('CREATE GRAPH #John,#Mary');
     var res = alasql('CREATE GRAPH #Anton,#Julia,#Anton >> #John');
     var res = alasql('CREATE GRAPH #Victor "Victor Branson"');
     var res = alasql('CREATE GRAPH #[John Smith] {age:23, country:"Canada"}');
     var res = alasql('CREATE GRAPH #[John Smith] > "loves" > #Mary');
     var res = alasql('CREATE GRAPH #Anton > "loves" {power:"too much"} > #Julia');
-    console.log(res);
+    var res = alasql('SEARCH VERTEX [$id]');
+    assert.deepEqual(res,[ 'Andrey',
+  'John',
+  'Mary',
+  'Anton',
+  'Julia',
+  'Victor',
+  'John Smith' ]);
+    done();    
+  });
 
+  it('2. RETURNS',function(done){
+    var res = alasql('SEARCH #[John Smith] RETURNS(country,age AS Age)');
+    assert.deepEqual(res,[ { country: 'Canada', Age: 23 } ]);
     done();    
   });
 
