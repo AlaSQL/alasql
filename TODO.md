@@ -10,6 +10,15 @@ Q: How UNION works? - disstinct or only new?
 Check UnionDeep and arrayDistinct
 
 
+SEARCH @p name;
+SEARCH UNION(/a,/b) FROM @p;
+SEARCH / "Name";
+SEARCH name;
+SEARCH / name;
+SEARCH ;
+SEARCH DISTINCT(name);
+
+
 AlaLISP
 AlaPROLOG
 
@@ -23,7 +32,10 @@ CLUSTER
 FACT
 RULE
 
-CREATE FACT papa loves apples
+PROLOGUE
+=========
+:- papa loves apples;
+RULE :- ;
 SEARCH papa loves @p, WHERE(@p IN ['Apples'])
 
 FACT [John] buys [Apples],[John] buys [Nuts];

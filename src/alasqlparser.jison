@@ -513,24 +513,18 @@ SearchClause
 */
 
 SearchSelector
-	: SearchSelector1 SearchOrder?
-		{ $$ = $1; yy.extend($$,$2);}
-	;
+	: Literal
+		{ $$ = {srchid:"PROP", args: [$1]}; }
 
-SearchOrder
-	: ORDER BY LPAR OrderExpressionsList RPAR
-		{ $$ = {order:$4}}
+	| ORDER BY LPAR OrderExpressionsList RPAR
+		{ $$ = {srchid:"ORDERBY", args: $4}; }
 	| ORDER BY LPAR DIRECTION? RPAR
 		{
 			var dir = $4;
-			if(!dir) dir = 'ASC'; 
-			$$ = {order:[{expression: new yy.Column({columnid:'_'}), direction:dir}]};
+			if(!dir) dir = 'ASC';
+			$$ = {srchid:"ORDERBY", args: [{expression: new yy.Column({columnid:'_'}), direction:dir}]};
 		}
-	;
 
-SearchSelector1
-	: Literal
-		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| ARROW Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
 	| EQ Expression
@@ -563,11 +557,11 @@ SearchSelector1
 		{ $$ = {srchid:"REF"}; }
 	| SHARP Literal
 		{ $$ = {srchid:"SHARP", args:[$2]}; }	
-	| MODULO Literal?
+	| MODULO Literal
 		{ $$ = {srchid:"ATTR", args:((typeof $2 == 'undefined')?undefined:[$2])}; }	
-/*	| MODULO
+	| MODULO SLASH
 		{ $$ = {srchid:"ATTR"}; }	
-*/	| GT 
+	| GT 
 		{ $$ = {srchid:"OUT"}; }
 	| LT 
 		{ $$ = {srchid:"IN"}; }
@@ -607,6 +601,8 @@ SearchSelector1
 		{ $$ = {selid:'UNION',args:$3 }; }
 	| UNION ALL LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'UNIONALL',args:$4 }; }
+	| ALL LPAR SearchSelector* RPAR
+		{ $$ = {selid:'ALL',args:[$3] }; }
 	| INTERSECT LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'INTERSECT',args:$3 }; }
 	| EXCEPT LPAR SearchSelectorList RPAR

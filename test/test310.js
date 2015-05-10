@@ -7,12 +7,12 @@ if(typeof exports === 'object') {
 
 describe('Test 310 Create graph', function() {
 
-  it('0. Create database ',function(done){
+  it('1. Create database ',function(done){
     alasql('CREATE DATABASE test310;USE test310');
     done();
   });
 
-  it('1. LIKE selector',function(done){
+  it('2. LIKE selector',function(done){
     var data = [{name:'Moscow'},{name:'St.Petersburg'},{name:'Prague'}];
 //    var res = alasql.parse('CREATE GRAPH #Andrey');
     var res = alasql('SEARCH / name LIKE "P%" FROM ?',[data]);
@@ -20,7 +20,7 @@ describe('Test 310 Create graph', function() {
     done();
   });
 
-  it('1. CREATE GRAPH',function(done){
+  it('3. CREATE GRAPH',function(done){
 //    var res = alasql.parse('CREATE GRAPH #Andrey');
     var res = alasql('CREATE GRAPH #Andrey');
     var res = alasql('CREATE GRAPH #John,#Mary');
@@ -29,7 +29,7 @@ describe('Test 310 Create graph', function() {
     var res = alasql('CREATE GRAPH #[John Smith] {age:23, country:"Canada"}');
     var res = alasql('CREATE GRAPH #[John Smith] > "loves" > #Mary');
     var res = alasql('CREATE GRAPH #Anton > "loves" {power:"too much"} > #Julia');
-    var res = alasql('SEARCH VERTEX [$id]');
+    var res = alasql('SEARCH / VERTEX [$id]');
     assert.deepEqual(res,[ 'Andrey',
   'John',
   'Mary',
@@ -41,7 +41,7 @@ describe('Test 310 Create graph', function() {
   });
 
   it('2. RETURNS',function(done){
-    var res = alasql('SEARCH #[John Smith] RETURNS(country,age AS Age)');
+    var res = alasql('SEARCH RETURNS(country,age AS Age) FROM #[John Smith] ');
     assert.deepEqual(res,[ { country: 'Canada', Age: 23 } ]);
     done();    
   });

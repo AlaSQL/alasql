@@ -25,41 +25,41 @@ describe('Test 317 GRAPH', function() {
   });
 
   it('3. Simple graph',function(done){
-    var res = alasql('SEARCH #Alex > "loves" > name');
+    var res = alasql('SEARCH > "loves" > name FROM #Alex');
     assert.deepEqual(res,['Kate', 'Paloma']);
     done();
   });
 
   it('4. Simple graph',function(done){
 
-    var res = alasql('SEARCH VERTEX AS @p OR(<,>) @p name');
+    var res = alasql('SEARCH / VERTEX AS @p OR(<,>) @p name');
     assert.deepEqual(res,[ 'Pablo', 'Maxim', 'Alex', 'Kate', 'Julia', 'Paloma' ]);
     done();
   });
 
   it('5. Simple graph',function(done){
 
-    var res = alasql('SEARCH VERTEX AS @p AND(<,>) @p name');
+    var res = alasql('SEARCH / VERTEX AS @p AND(<,>) @p name');
     assert.deepEqual(res,[ 'Kate' ]);
     done();
   });
 
   it('6. Simple graph',function(done){
 
-    var res = alasql('SEARCH VERTEX AS @p AND(<"loves",<"hates") @p name');
+    var res = alasql('SEARCH / VERTEX AS @p AND(<"loves",<"hates") @p name');
     assert.deepEqual(res,["Julia"] );
     done();
   });
 
   it('7. Simple graph',function(done){
 
-    var res = alasql('SEARCH DISTINCT(VERTEX AS @p < OR("loves","hates") @p name)');
+    var res = alasql('SEARCH DISTINCT(/ VERTEX AS @p < OR("loves","hates") @p name)');
     assert.deepEqual(res,["Kate","Julia","Paloma"] );
 
-    var res = alasql('SEARCH VERTEX AS @p IF(< OR("loves","hates") <) name');
+    var res = alasql('SEARCH / VERTEX AS @p IF(< OR("loves","hates") <) name');
     assert.deepEqual(res,["Kate","Julia","Paloma"] );
 
-    var res = alasql('SEARCH VERTEX AS @p IF(< OR("loves","hates")) name');
+    var res = alasql('SEARCH / VERTEX AS @p IF(< OR("loves","hates")) name');
     assert.deepEqual(res,["Kate","Julia","Paloma"] );
     done();
   });

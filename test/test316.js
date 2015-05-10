@@ -20,22 +20,21 @@ describe('Test 316 UNION ALL', function() {
 
   });
 
-  it('1. Simple UNION ALL',function(done){
-
+  it('2. Simple UNION ALL',function(done){
 
     var data = [{a:10},{b:100},{a:5}];
 
-    var res = alasql('SEARCH (/ UNION ALL(a,b)) ORDER BY(_) FROM ?', [data]);
+    var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY() FROM ?', [data]);
     assert.deepEqual(res,[5,10,100]);
 
-    var res = alasql('SEARCH (/ UNION ALL(a,b)) ORDER BY() FROM ?', [data]);
+    var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY() FROM ?', [data]);
 //    console.log(res);
     assert.deepEqual(res,[5,10,100]);
 
-    var res = alasql('SEARCH (/ UNION ALL(a,b)) ORDER BY(ASC) FROM ?', [data]);
+    var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY(ASC) FROM ?', [data]);
     assert.deepEqual(res,[5,10,100]);
 
-    var res = alasql('SEARCH (/ UNION ALL(a,b)) ORDER BY(DESC) FROM ?', [data]);
+    var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY(DESC) FROM ?', [data]);
     assert.deepEqual(res,[100,10,5]);
 
     done();

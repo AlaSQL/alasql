@@ -64,7 +64,7 @@ describe('Test 306 XML reader', function() {
 
    it('6a. Read GEFX file / SEARCH XML',function(done){
 //     alasql('SEARCH XML /graph/nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
-     alasql('SEARCH XML [graph] nodes node % {[$id]:id,name:label,[$node]:"VERTEX"} FROM XML("test306a.xml")',[],function(res){
+     alasql('SEARCH XML [graph] nodes node %/ {[$id]:id,name:label,[$node]:"VERTEX"} FROM XML("test306a.xml")',[],function(res){
 //      console.log(res);
         assert.deepEqual(res, [{"$id":"0","name":"Hello",$node:"VERTEX"},{"$id":"1","name":"Word",$node:"VERTEX"}]);
        done();    
@@ -74,7 +74,7 @@ describe('Test 306 XML reader', function() {
 
    it('6b. Read GEFX file / SEARCH XML',function(done){
 //     alasql('SEARCH XML /graph/nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
-     alasql('SEARCH XML [graph] nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
+     alasql('SEARCH XML [graph] nodes/%/ {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
         assert.deepEqual(res, [{"$id":"0","name":"Hello"},{"$id":"1","name":"Word"}]);
        done();    
      });
@@ -82,7 +82,7 @@ describe('Test 306 XML reader', function() {
   it('7. Edges ',function(done){
 
 //     alasql('SEARCH XML /graph/edges/% FROM XML("test306a.xml")',[],function(res){
-     alasql('SEARCH XML [graph] edges/% FROM XML("test306a.xml")',[],function(res){
+     alasql('SEARCH XML [graph] edges/%/ FROM XML("test306a.xml")',[],function(res){
 //        console.log(res);
          assert.deepEqual(res, [ { id: '0', source: '0', target: '1' } ]);
        done();    
@@ -90,7 +90,7 @@ describe('Test 306 XML reader', function() {
    });
 
   it('7. SEARCH INTO ',function(done){
-     alasql('SEARCH XML [graph] edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
+     alasql('SEARCH XML [graph] edges/%/ INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
 //     alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
 //        console.log('>>',res,'<<');
         assert(res == "id,source,target\n0,0,1\n");

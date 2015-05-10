@@ -23,38 +23,58 @@ describe('Test 301 Vertices and Edges', function() {
 
 //    var res = alasql('SEARCH "Olga" > "loves" > name');
 //    var res = alasql('SEARCH "Olga" > "loves" > name');
-    var res = alasql('SEARCH "Olga" > "loves" > name');
+    var res = alasql('SEARCH / "Olga" > "loves" > name');
     assert.deepEqual(res,['Peter']);
-
-    var res = alasql('SEARCH "Olga" > "loves" > name');
-    assert.deepEqual(res,['Peter']);
-//      var res = alasql('SEARCH "Olga" > "loves" > name');
-//       console.log(res);
-
-    var res = alasql('SEARCH "Olga" > @p > "Peter" @(@p) name');
-    assert.deepEqual(res,['loves']);
-
-    var res = alasql('SEARCH @p > "loves" > "Peter" @(@p->name)');
-    assert.deepEqual(res,['Olga']);
-    done();
+    done();    
   });
 
   it('3. Create vertices',function(done){
 
+    var res = alasql('SEARCH / "Olga" > "loves" > name');
+    assert.deepEqual(res,['Peter']);
+//      var res = alasql('SEARCH "Olga" > "loves" > name');
+//       console.log(res);
+    done();    
+  });
+
+  it('4. Create vertices',function(done){
+
+    var res = alasql('SEARCH / "Olga" > AS @p > "Peter" @p name');
+    assert.deepEqual(res,['loves']);
+    done();    
+  });
+
+  it('5. Create vertices',function(done){
+
+    var res = alasql('SEARCH / AS @p > "loves" > "Peter" @p->name');
+    assert.deepEqual(res,['Olga']);
+    done();
+  });
+
+  it('6. Create vertices',function(done){
+
       alasql('SET @steven = (CREATE VERTEX "Steven")');
       alasql('CREATE EDGE "loves" FROM @v1 TO @steven')
-      var res = alasql('SEARCH @p > "loves" > @s @[(@p->name),(@s->name)]');
+      var res = alasql('SEARCH / VERTEX AS @p > "loves" > AS @s @[(@p->name),(@s->name)]');
       assert.deepEqual(res,
         [ [ 'Olga', 'Peter' ],
           [ 'Olga', 'Steven' ],
           [ 'Peter', 'Helen' ] ]      
       );
-//      var res = alasql('SEARCH "Olga" > "loves" > ');
+//      console.log(res);
+
+/*      var res = alasql('SEARCH / VERTEX AS @p > "loves" > AS @s @[(@p->name),(@s->name)]');
+      assert.deepEqual(res,
+        [ [ 'Olga', 'Peter' ],
+          [ 'Olga', 'Steven' ],
+          [ 'Peter', 'Helen' ] ]      
+      );
+*///      var res = alasql('SEARCH "Olga" > "loves" > ');
 //      console.log(res);
 //      var res = alasql.parse('SEARCH "Olga" > "loves" > name').statements[0].selectors;
 //       console.log(res);
 
-      var res = alasql('SEARCH "Olga" > "loves" > name');
+      var res = alasql('SEARCH / "Olga" > "loves" > name');
       assert.deepEqual(res, [ 'Peter', 'Steven' ]);
       
     done();    
@@ -63,16 +83,16 @@ if(false) {
   it('4. +() and *() and NOT()',function(done){
       alasql('SET @heather = (CREATE VERTEX "Heather")');
       alasql('CREATE EDGE "loves" FROM @steven TO @heather');
-      var res = alasql('SEARCH VERTEX NOT(>) name');
+      var res = alasql('SEARCH / VERTEX NOT(>) name');
       assert.deepEqual(res,[ 'Helen', 'Heather' ]);
 
-      var res = alasql('SEARCH VERTEX NOT(>"loves">"Steven") name');
+      var res = alasql('SEARCH / VERTEX NOT(>"loves">"Steven") name');
       assert.deepEqual(res,[ 'Peter', 'Helen', 'Steven', 'Heather' ]);
 
-      var res = alasql('SEARCH VERTEX IF(>"loves">"Steven") name');
+      var res = alasql('SEARCH / VERTEX IF(>"loves">"Steven") name');
       assert.deepEqual(res,[ 'Olga' ]);
 
-      var res = alasql('SEARCH VERTEX @p >"loves">"Steven" @(@p) name');
+      var res = alasql('SEARCH / VERTEX @p >"loves">"Steven" @(@p) name');
       assert.deepEqual(res,[ 'Olga' ]);
 
 //      var res = alasql('SEARCH VERTEX IF(*(>"loves">)"Steven") name');
@@ -119,8 +139,8 @@ if(false) {
   });
 
   it('4. Create edges',function(done){
-    alasql('SEARCH OUT(relation="is friend of") FROM @john');
-    alasql('SEARCH @john ! OUT(relation="is friend of") OUT(relation="loves") (class="Person" AND name="Mary")');
+    alasql('SEARCH / OUT(relation="is friend of") FROM @john');
+    alasql('SEARCH / @john ! OUT(relation="is friend of") OUT(relation="loves") (class="Person" AND name="Mary")');
   });
 
 
