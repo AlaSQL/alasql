@@ -111,6 +111,18 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.indices[pk.hh] = {};
 			};
 
+			// UNIQUE clause
+			if(col.unique) {
+				var uk = {};
+				if(typeof table.uk == 'undefined') table.uk = [];
+				table.uk.push(uk);
+				uk.columns = [col.columnid];
+				uk.onrightfns = 'r[\''+col.columnid+'\']';
+				uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+				uk.hh = hash(uk.onrightfns);
+				table.indices[uk.hh] = {};
+			};
+
 		});
 	};
 	table.defaultfns = ss.join(',');
@@ -131,7 +143,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.indices[pk.hh] = {};					
-		}
+		} 
 	});
 
 	if(this.view && this.viewcolumns) {
@@ -152,30 +164,49 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	}
 //			if(table.pk) {
 	table.insert = function(r) {
-		if(this.pk) {
-			var pk = this.pk;
+		var table = this;
+		if(table.pk) {
+			var pk = table.pk;
 			var addr = pk.onrightfn(r);
-			if(typeof this.indices[pk.hh][addr] != 'undefined') {
+			if(typeof table.indices[pk.hh][addr] != 'undefined') {
 				throw new Error('Cannot insert record, because it already exists in primary key');
-			} else {
-				table.data.push(r);
-				this.indices[pk.hh][addr]=r;
-			};
-		} else {
-			table.data.push(r);						
+			} 
+			table.indices[pk.hh][addr]=r;
 		}
+		if(table.uk && table.uk.length) {
+			table.uk.forEach(function(uk){
+				var ukaddr = uk.onrightfn(r);
+				if(typeof table.indices[uk.hh][ukaddr] != 'undefined') {
+					throw new Error('Cannot insert record, because it already exists in primary key');
+				} 				
+				table.indices[uk.hh][ukaddr]=r;
+			});
+		}
+	
+		table.data.push(r);
+		// Update indices
 	};
 
 	table.delete = function(i) {
+		var table = this;
+		var r = this.data[i];
 		if(this.pk) {
-			var r = this.data[i];
 			var pk = this.pk;
 			var addr = pk.onrightfn(r);
 			if(typeof this.indices[pk.hh][addr] == 'undefined') {
-				throw new Error('Something wrong with index on table');
+				throw new Error('Something wrong with primary key index on table');
 			} else {
 				this.indices[pk.hh][addr]=undefined;
 			};
+		}
+		if(table.uk && table.uk.length) {
+			table.uk.forEach(function(uk){
+				var ukaddr = uk.onrightfn(r);
+				if(typeof table.indices[uk.hh][ukaddr] == 'undefined') {
+					throw new Error('Something wrong with unique index on table');
+				} 				
+				table.indices[uk.hh][ukaddr]=undefined;
+			});
 		}
 	};
 
@@ -185,30 +216,58 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //						var r = this.data[i];
 			this.indices[this.pk.hh] = {};
 		}
+		if(table.uk && table.uk.length) {
+			table.uk.forEach(function(uk){
+				table.indices[uk.hh]={};
+			});
+		}
 	};
 
 	table.update = function(assignfn, i, params) {
+		// TODO: Analyze the speed
+		var r = cloneDeep(this.data[i]);
+		
 		if(this.pk) {
-			var r = this.data[i];
 			var pk = this.pk;
 			var addr = pk.onrightfn(r,params);
 			if(typeof this.indices[pk.hh][addr] == 'undefined') {
 				throw new Error('Something wrong with index on table');
 			} else {
 				this.indices[pk.hh][addr]=undefined;
-				assignfn(r,params,alasql);
+
+			}
+		}
+		if(table.uk && table.uk.length) {
+			table.uk.forEach(function(uk){
+				var ukaddr = uk.onrightfn(r);
+				if(typeof table.indices[uk.hh][ukaddr] == 'undefined') {
+					throw new Error('Something wrong with unique index on table');
+				} 				
+				table.indices[uk.hh][ukaddr]=undefined;
+			});
+		}
+		
+		assignfn(r,params,alasql);
+
+		if(this.pk) {
 				var newaddr = pk.onrightfn(r);
 				if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
 					throw new Error('Record already exists');
 				} else {
 					this.indices[pk.hh][newaddr] = r;
 				}
-			} 
-
-		} else {
-			assignfn(this.data[i],params,alasql);
 		};
+		if(table.uk && table.uk.length) {
+			table.uk.forEach(function(uk){
+				var newukaddr = uk.onrightfn(r);
+				if(typeof table.indices[uk.hh][newukaddr] != 'undefined') {
+					throw new Error('Record already exists');
+				} 				
+				table.indices[uk.hh][newukaddr]=r;
+			});
+		}
 
+		this.data[i] = r;
 	};
 
 	if(this.view && this.select) {

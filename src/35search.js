@@ -267,6 +267,18 @@ function doSearch (databaseid, params, cb) {
 						return processSelector(selectors,sidx+1,nest);
 					}
 				}
+			} else if(sel.selid == 'ANY') {
+				var nest = processSelector(sel.args[0],0,value);
+//				console.log(272,nest);
+				if(nest.length == 0) {
+					return [];
+				} else {
+					if(sidx+1+1 > selectors.length) {
+						return [nest[0]];
+					} else {
+						return processSelector(selectors,sidx+1,[nest[0]]);
+					}
+				}
 			} else if(sel.selid == 'UNIONALL') {
 				var nest = [];
 				sel.args.forEach(function(se){

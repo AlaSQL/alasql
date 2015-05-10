@@ -603,6 +603,8 @@ SearchSelector
 		{ $$ = {selid:'UNIONALL',args:$4 }; }
 	| ALL LPAR SearchSelector* RPAR
 		{ $$ = {selid:'ALL',args:[$3] }; }
+	| ANY LPAR SearchSelector* RPAR
+		{ $$ = {selid:'ANY',args:[$3] }; }
 	| INTERSECT LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'INTERSECT',args:$3 }; }
 	| EXCEPT LPAR SearchSelectorList RPAR

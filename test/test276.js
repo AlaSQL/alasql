@@ -34,6 +34,8 @@ describe('Test 276 INFORMATION_SCHEMA', function() {
   });
 
   it('99. Drop databases', function(done) {
+    alasql.options.modifier = undefined;
+    
     alasql('DROP DATABASE test276');
     done();
   });

@@ -79,7 +79,7 @@ Now you can search graphs with SEARCH operator:
       #Kate >> #Julia, #Alex >> #Paloma, #Napoleon > "loves" > #Josephine, \
       #Josephine >"knows"> #Pablo');
 
-    var res = alasql('SEARCH #Napoleon PATH(#Pablo) name');
+    var res = alasql('SEARCH PATH(#Pablo) name FROM #Napoleon ');
     // returns ['loves','Josephine','knows','Pablo']
 ```
 You can play with grpahs in AlaSQL in [this jsFiddle example](http://jsfiddle.net/fgzya692/1/).
@@ -96,15 +96,15 @@ how to create graph:
 and search over it with SEARCH operator:
 ```js
     // Whom loves Olga?
-    alasql('SEARCH #Olga >> name');
+    alasql('SEARCH / #Olga >> name');
     // ['Pablo']
 
     // Whom loves Olga's love objects?
-    alasql('SEARCH #Olga >> >> name');
+    alasql('SEARCH / #Olga >> >> name');
     // ['Alice']
 
     // Who loves lovers of Alice?
-    alasql('SEARCH ANY(>> >> #Alice) name');
+    alasql('SEARCH / ANY(>> >> #Alice) name');
     // ['Olga','Helen']
 
 ```

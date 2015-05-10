@@ -10,6 +10,8 @@
 * EQ() selector
 * LIKE selector
 * RETURNS selector - return record with columns like in SELECT
+* ALL() and ANY() selectors
+* Added CREATE TABLE column UNIQUE constraint on INSERT/DELETE/UPDATE
 
 ### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
 * Check for null values for SEARCH
