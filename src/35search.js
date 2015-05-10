@@ -541,6 +541,17 @@ alasql.srch.PROP = function(val,args,stope) {
 	}
 };
 
+alasql.srch.APROP = function(val,args,stope) {
+	if((typeof val != 'object') || (val === null)
+		|| (typeof args != 'object')
+		|| (typeof val[args[0]] == 'undefined')) {
+		return {status: 1, values: [undefined]};
+	} else {
+		return {status: 1, values: [val[args[0]]]};
+	}		
+};
+
+
 alasql.srch.ATTR = function(val,args,stope) {
 	if(stope.mode == 'XML') {
 		if(typeof args == 'undefined') {

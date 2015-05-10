@@ -5,6 +5,8 @@
 * Added METEOR() from-function
 * Fixed $[0] -> $0 for parameters
 * utils/2ch.js - utility for minification of AlaSQL (calculate size of economy)
+* d3 graph path samples
+* alasql.options.autovertex flag - create vertices if not found
 
 ### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
 * Check for null values for SEARCH

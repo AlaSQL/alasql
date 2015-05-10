@@ -56,6 +56,8 @@ alasql.options.logprompt = true; // Print SQL at log
 alasql.options.modifier = undefined; 
 // How many rows to lookup to define columns
 alasql.options.columnlookup = 10; 
+// Create vertex if not found
+alasql.options.autovertex = true;
 
 //alasql.options.worker = false;
 // Variables

@@ -528,9 +528,10 @@ SearchOrder
 	;
 
 SearchSelector1
-	: 
-	Literal
+	: Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| ARROW Literal
+		{ $$ = {srchid:"APROP", args: [$2]}; }
 	| LPAR SearchSelector+ RPAR
 		{ $$ = {selid:"WITH", args: $2}; }
 	| WITH LPAR SearchSelector+ RPAR
