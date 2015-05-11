@@ -38,6 +38,7 @@ describe('Test 325 IDENTITY', function() {
     var res = alasql('INSERT INTO dbo.Messages (msgts, msg, status) \
       VALUES("2015.01.01","I love you!","new")');
     assert(res == 1);
+//    console.log(41,alasql.tables.Messages.data);
     done();
   });
 
@@ -46,6 +47,7 @@ describe('Test 325 IDENTITY', function() {
       var res = alasql('INSERT INTO dbo.Messages (msgts, msg, status) \
         VALUES("2015.01.01","I do not love you!","not new")');
     },Error);
+//    console.log(49,alasql.tables.Messages.data);
     done();
   });
 
@@ -54,6 +56,7 @@ describe('Test 325 IDENTITY', function() {
       var res = alasql('INSERT INTO dbo.Messages (msgts, msg, status) \
         VALUES("2015.01.01","I do not love you!","not new")');
     },Error);
+//    console.log(58,alasql.tables.Messages.uniqs);
     done();
   });
 
@@ -62,14 +65,17 @@ describe('Test 325 IDENTITY', function() {
       var res = alasql('INSERT INTO dbo.Messages (msgts, msg, status) \
         VALUES("2015.01.01","I love you!","new")');
     },Error);
+//    console.log(68,alasql.tables.Messages.uniqs);
     done();
   });
 
     it('9. INSERT INTO with IDENTITY',function(done){
-      console.log(69,alasql.tables.Messages.identities);
-      console.log(69,alasql.tables.Messages.indices);
+      // console.log(69,alasql.tables.Messages.identities);
+      // console.log(69,alasql.tables.Messages.uniqs);
+      // console.log(69,alasql.tables.Messages.pk);
+      // console.log(69,alasql.tables.Messages.uk);
       var res = alasql('SELECT COLUMN msgid FROM dbo.Messages');
-      console.log(res);
+//      console.log(res);
       done();
     });
 
@@ -90,7 +96,8 @@ describe('Test 325 IDENTITY', function() {
 
   it('9. INSERT INTO with IDENTITY',function(done){
     var res = alasql('SELECT COLUMN msgid FROM dbo.Messages');
-    console.log(res);
+    assert.deepEqual(res,[1,2,3]);
+//    console.log(res);
     done();
   });
 

@@ -10033,7 +10033,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				pk.onrightfns = 'r[\''+col.columnid+'\']';
 				pk.onrightfn = new Function("r",'return '+pk.onrightfns);
 				pk.hh = hash(pk.onrightfns);
-				table.indices[pk.hh] = {};
+				table.uniqs[pk.hh] = {};
 			};
 
 			// UNIQUE clause
@@ -10045,7 +10045,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				uk.onrightfns = 'r[\''+col.columnid+'\']';
 				uk.onrightfn = new Function("r",'return '+uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
-				table.indices[uk.hh] = {};
+				table.uniqs[uk.hh] = {};
 			};
 
 		});
@@ -10067,7 +10067,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}).join("+'`'+");
 			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
-			table.indices[pk.hh] = {};					
+			table.uniqs[pk.hh] = {};					
 		} else if(con.type == 'CHECK') {
 //			console.log(con.expression.toJavaScript('r',''));
 			table.checkfn = new Function("r",'return '+con.expression.toJavaScript('r',''));
@@ -10082,7 +10082,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}).join("+'`'+");
 			uk.onrightfn = new Function("r",'return '+uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
-			table.indices[uk.hh] = {};					
+			table.uniqs[uk.hh] = {};					
 		}
 	});
 
@@ -10114,7 +10114,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		// }
 
 		if(table.checkfn && !table.checkfn(r)) {
-			console.log(r,table.checkfn(r));
+//			console.log(r,table.checkfn(r));
 			throw new Error('Violation of CHECK constraint');			
 		};
 
@@ -10126,18 +10126,18 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(table.pk) {
 			var pk = table.pk;
 			var addr = pk.onrightfn(r);
-			if(typeof table.indices[pk.hh][addr] != 'undefined') {
+			if(typeof table.uniqs[pk.hh][addr] != 'undefined') {
 				throw new Error('Cannot insert record, because it already exists in primary key');
 			} 
-			table.indices[pk.hh][addr]=r;
+//			table.uniqs[pk.hh][addr]=r;
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				var ukaddr = uk.onrightfn(r);
-				if(typeof table.indices[uk.hh][ukaddr] != 'undefined') {
+				if(typeof table.uniqs[uk.hh][ukaddr] != 'undefined') {
 					throw new Error('Cannot insert record, because it already exists in primary key');
 				} 				
-				table.indices[uk.hh][ukaddr]=r;
+//				table.uniqs[uk.hh][ukaddr]=r;
 			});
 		};
 
@@ -10145,13 +10145,26 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		for(var columnid in table.identities){
 			var ident = table.identities[columnid];
-			console.log(ident);
+//			console.log(ident);
 			ident.value += ident.step;
-			console.log(ident);
+//			console.log(ident);
 		};
 
 		table.data.push(r);
 		// Update indices
+
+		if(table.pk) {
+			var pk = table.pk;
+			var addr = pk.onrightfn(r);
+			table.uniqs[pk.hh][addr]=r;
+		}
+		if(table.uk && table.uk.length) {
+			table.uk.forEach(function(uk){
+				var ukaddr = uk.onrightfn(r);
+				table.uniqs[uk.hh][ukaddr]=r;
+			});
+		};
+
 	};
 
 	table.delete = function(i) {
@@ -10160,19 +10173,19 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(this.pk) {
 			var pk = this.pk;
 			var addr = pk.onrightfn(r);
-			if(typeof this.indices[pk.hh][addr] == 'undefined') {
+			if(typeof this.uniqs[pk.hh][addr] == 'undefined') {
 				throw new Error('Something wrong with primary key index on table');
 			} else {
-				this.indices[pk.hh][addr]=undefined;
+				this.uniqs[pk.hh][addr]=undefined;
 			};
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				var ukaddr = uk.onrightfn(r);
-				if(typeof table.indices[uk.hh][ukaddr] == 'undefined') {
+				if(typeof table.uniqs[uk.hh][ukaddr] == 'undefined') {
 					throw new Error('Something wrong with unique index on table');
 				} 				
-				table.indices[uk.hh][ukaddr]=undefined;
+				table.uniqs[uk.hh][ukaddr]=undefined;
 			});
 		}
 	};
@@ -10181,11 +10194,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		this.data.length = 0;
 		if(this.pk) {
 //						var r = this.data[i];
-			this.indices[this.pk.hh] = {};
+			this.uniqs[this.pk.hh] = {};
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
-				table.indices[uk.hh]={};
+				table.uniqs[uk.hh]={};
 			});
 		}
 	};
@@ -10198,7 +10211,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(this.pk) {
 			var pk = this.pk;
 			pk.pkaddr = pk.onrightfn(r,params);
-			if(typeof this.indices[pk.hh][pk.pkaddr] == 'undefined') {
+			if(typeof this.uniqs[pk.hh][pk.pkaddr] == 'undefined') {
 				throw new Error('Something wrong with index on table');
 			} else {
 			}
@@ -10206,7 +10219,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				uk.ukaddr = uk.onrightfn(r);
-				if(typeof table.indices[uk.hh][uk.ukaddr] == 'undefined') {
+				if(typeof table.uniqs[uk.hh][uk.ukaddr] == 'undefined') {
 					throw new Error('Something wrong with unique index on table');
 				} 				
 			});
@@ -10226,7 +10239,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		});
 		if(this.pk) {
 				pk.newpkaddr = pk.onrightfn(r);
-				if(typeof this.indices[pk.hh][pk.newpkaddr] != 'undefined'
+				if(typeof this.uniqs[pk.hh][pk.newpkaddr] != 'undefined'
 					&& pk.newpkaddr != pk.pkaddr) {
 					throw new Error('Record already exists');
 				} else {
@@ -10235,7 +10248,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				uk.newukaddr = uk.onrightfn(r);
-				if(typeof table.indices[uk.hh][uk.newukaddr] != 'undefined'
+				if(typeof table.uniqs[uk.hh][uk.newukaddr] != 'undefined'
 					&& uk.newukaddr != uk.ukaddr) {
 					throw new Error('Record already exists');
 				} 				
@@ -10244,13 +10257,13 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		// PART 3 UPDATE
 		if(this.pk) {
-			this.indices[pk.hh][pk.pkaddr]=undefined;
-			this.indices[pk.hh][pk.newpkaddr] = r;			
+			this.uniqs[pk.hh][pk.pkaddr]=undefined;
+			this.uniqs[pk.hh][pk.newpkaddr] = r;			
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
-				table.indices[uk.hh][uk.ukaddr]=undefined;
-				table.indices[uk.hh][uk.newukaddr]=r;
+				table.uniqs[uk.hh][uk.ukaddr]=undefined;
+				table.uniqs[uk.hh][uk.newukaddr]=r;
 			});
 		}
 
