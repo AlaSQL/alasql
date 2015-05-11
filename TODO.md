@@ -4,15 +4,25 @@ This file contanis unstructured ideas for future development of AlaSQL.
 
 ## Ideas
 
+Meteor Package
+GEFX
 Constraints:
 IS NULL / IS NOT NULL 
 CHECK
 
 ----------
 
+Realize OBJECT_ID
+IF OBJECT_ID('dbo.VSortedOrders', 'V') IS NOT NULL
+  DROP VIEW dbo.VSortedOrders;
+GO
+
+
+
+
 2-chars
 
-Q: How UNION works? - disstinct or only new?
+Q: How UNION works? - disstinct or only new? - solved
 Check UnionDeep and arrayDistinct
 
 
@@ -26,7 +36,7 @@ SEARCH DISTINCT(name);
 
 
 AlaLISP
-AlaPROLOG
+AlaPROLOG / RDF
 
 age 35.
 name X :- age X.

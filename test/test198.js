@@ -8,7 +8,7 @@ if(typeof exports === 'object') {
 describe('Test 198 - MS SQL compatibility', function() {
 
     it("1. Create tables", function(done) {
-        alasql('CREATE DATABASE dbo');
+        alasql('CREATE DATABASE test198; USE test198');
         alasql('SOURCE "test198-1.sql"');
         var res = alasql('SELECT * FROM Customers');
         assert.deepEqual(res,

@@ -3613,15 +3613,28 @@ alasql.options.columnlookup = 10;
 // Create vertex if not found
 alasql.options.autovertex = true;
 
+// Use dbo as current database (for partial T-SQL comaptibility)
+alasql.options.usedbo = true;
+
+// AUTOCOMMIT ON | OFF
+alasql.options.autocommit = true;
+
+// Use cache
+alasql.options.cache = true;
+
+// Compatibility flags
+alasql.options.tsql = true;
+alasql.options.mysql = true;
+alasql.options.postgres = true;
+alasql.options.oracle = true;
+alasql.options.sqlite = true;
+alasql.options.orientdb = true;
+
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};
 alasql.declares = {};
 
-// AUTOCOMMIT ON | OFF
-alasql.options.autocommit = true;
-
-alasql.options.cache = true;
 
 alasql.prompthistory = [];
 
@@ -3653,6 +3666,10 @@ alasql.use = function (databaseid) {
 	alasql.tables = db.tables;
 //	alasql.fn = db.fn;
 	db.resetSqlCache();
+	if(alasql.options.usedbo) {
+	    alasql.databases.dbo = db; // Operator???
+	}
+
 };
 
 // Run one statement
@@ -12611,6 +12628,85 @@ yy.RollbackTransaction.prototype.execute = function (databaseid,params,cb) {
 };
 
 
+if(alasql.options.tsql) {
+
+
+//
+// Check tables and views
+// IF OBJECT_ID('dbo.Employees') IS NOT NULL
+//   DROP TABLE dbo.Employees;
+  // IF OBJECT_ID('dbo.VSortedOrders', 'V') IS NOT NULL
+//   DROP VIEW dbo.VSortedOrders;
+
+alasql.stdfn.OBJECT_ID = function(name,type) {
+	if(typeof type == 'undefined') type = 'T';
+	type = type.toUpperCase();
+
+	var sname = name.split('.');
+	var dbid = alasql.useid;
+	var objname = sname[0];
+	if(sname.length == 2) {
+		dbid = sname[0];
+		objname = sname[1];
+	}
+
+	var tables = alasql.databases[dbid].tables;
+	dbid = 	alasql.databases[dbid].databaseid;
+	for(var tableid in tables) {
+		if(tableid == objname) {
+			// TODO: What OBJECT_ID actually returns
+
+			if(tables[tableid].view && type == 'V') return dbid+'.'+tableid;
+			if(!tables[tableid].view && type == 'T') return dbid+'.'+tableid;
+			return undefined;
+		}
+	}
+
+	return undefined;
+};
+
+}
+
+
+
+if(alasql.options.mysql) {
+
+
+
+}
+
+if(alasql.options.mysql || alasql.options.sqlite) {
+
+// Pseudo INFORMATION_SCHEMA function
+alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
+	if(filename == 'VIEWS' || filename == 'TABLES' ) {
+		var res = [];
+		for(var databaseid in alasql.databases) {			
+			var tables = alasql.databases[databaseid].tables;
+			for(var tableid in tables) {
+				if((tables[tableid].view && filename == 'VIEWS') ||
+					(!tables[tableid].view && filename == 'TABLES')) {
+					res.push({TABLE_CATALOG:databaseid,TABLE_NAME:tableid});
+				}
+			}
+		}
+		if(cb) res = cb(res, idx, query);
+		return res;		
+	}
+	throw new Error('Unknown INFORMATION_SCHEMA table');
+}
+
+}
+
+if(alasql.options.postgres) {
+}
+
+if(alasql.options.oracle) {
+}
+
+if(alasql.options.sqlite) {
+}
+
 //
 // into functions
 //
@@ -13988,25 +14084,6 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 	return res;
 };
-
-// Pseudo INFORMATION_SCHEMA function
-alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
-	if(filename == 'VIEWS' || filename == 'TABLES' ) {
-		var res = [];
-		for(var databaseid in alasql.databases) {			
-			var tables = alasql.databases[databaseid].tables;
-			for(var tableid in tables) {
-				if((tables[tableid].view && filename == 'VIEWS') ||
-					(!tables[tableid].view && filename == 'TABLES')) {
-					res.push({TABLE_CATALOG:databaseid,TABLE_NAME:tableid});
-				}
-			}
-		}
-		if(cb) res = cb(res, idx, query);
-		return res;		
-	}
-	throw new Error('Unknown INFORMATION_SCHEMA table');
-}
 
 
 

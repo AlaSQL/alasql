@@ -12,6 +12,8 @@
 * RETURNS selector - return record with columns like in SELECT
 * ALL() and ANY() selectors
 * Added CREATE TABLE column UNIQUE constraint on INSERT/DELETE/UPDATE
+* Added OBJECT_ID() function (like in T-SQL)
+* Added parts and optional for specific database compatibility
 
 ### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
 * Check for null values for SEARCH
