@@ -103,6 +103,21 @@ describe('Test 326 FOREIGN KEYS', function() {
     done();
   });
       
+  it('7. INSERT right FOREIGN KEY',function(done){
+    alasql("INSERT INTO dbo.Cities(cityid, city, region, country) VALUES \
+        ('SVO', 'Sheremetievo', 'Moscow', 'Russia')");
+    var res = alasql("INSERT INTO dbo.Roads(city1, city2, distance) VALUES \
+          ('SFO', 'SVO', 99999)"); // SVO - Sheremetievo - Airport
+    assert(res == 1);
+    done();
+  });
+      
+  it('8. SELECT',function(done){
+    var res = alasql("SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
+    assert(res == 99999);
+    done();
+  });
+
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test326');
     done();
