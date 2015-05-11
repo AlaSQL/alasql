@@ -1106,7 +1106,7 @@ case 493:
 this.$ = {notnull:true}; 
 break;
 case 494:
-this.$ = $$[$0]; 
+this.$ = {check:$$[$0]}; 
 break;
 case 495:
 this.$ = {unique:true}; 

@@ -21,6 +21,8 @@
 * CURRENT_TIMESTAMP function
 * UNIQUE constraint (whole table)
 * VARCHAR(MAX)
+* CHECK constraint for columns
+
 
 ### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
 * Check for null values for SEARCH

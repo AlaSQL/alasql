@@ -1862,7 +1862,7 @@ ColumnConstraint
 	| NOT NULL
 		{$$ = {notnull:true}; }
 	| Check
-		{$$ = $1; }
+		{$$ = {check:$1}; }
 	| UNIQUE
 		{$$ = {unique:true}; }
 	;

@@ -82,6 +82,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		table.isclass = true;
 	}
 	table.identities = {};
+	table.checkfn = [];
 
 	var ss = [];
 	if(this.columns) {
@@ -100,6 +101,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.identities[col.columnid]={value:col.identity.value,step:col.identity.step};
 				ss.push('\''+col.columnid+'\':(alasql.databases[\''+db.databaseid+'\'].tables[\''
 					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
+			}
+			if(col.check) {
+				table.checkfn.push(new Function("r",'return '+col.check.expression.toJavaScript('r','')));
 			}
 
 			if(col.default) {
@@ -153,7 +157,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.uniqs[pk.hh] = {};					
 		} else if(con.type == 'CHECK') {
 //			console.log(con.expression.toJavaScript('r',''));
-			table.checkfn = new Function("r",'return '+con.expression.toJavaScript('r',''));
+			table.checkfn.push(new Function("r",'return '+con.expression.toJavaScript('r','')));
 		} else if(con.type == 'UNIQUE') {
 //			console.log(con);
 			var uk = {};
@@ -196,9 +200,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		// 	});
 		// }
 
-		if(table.checkfn && !table.checkfn(r)) {
-//			console.log(r,table.checkfn(r));
-			throw new Error('Violation of CHECK constraint');			
+		if(table.checkfn && table.checkfn.length>0) {
+			table.checkfn.forEach(function(checkfn){
+				if(!checkfn(r)) {
+					throw new Error('Violation of CHECK constraint');			
+				};
+			});
 		};
 
 		table.columns.forEach(function(column){
@@ -311,8 +318,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		assignfn(r,params,alasql);
 
 		// PART 2 - POST CHECK
-		if(table.checkfn && !table.checkfn(r)) {
-			throw new Error('Violation of CHECK constraint');			
+		if(table.checkfn && table.checkfn.length>0) {
+			table.checkfn.forEach(function(checkfn){
+				if(!checkfn(r)) {
+					throw new Error('Violation of CHECK constraint');			
+				};
+			});
 		};
 
 		table.columns.forEach(function(column){
