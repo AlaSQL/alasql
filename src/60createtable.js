@@ -110,8 +110,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript('r',''));
 			}
 
-			table.columns.push(newcol);
-			table.xcolumns[newcol.columnid] = newcol;
 
 			// Check for primary key
 			if(col.primarykey) {
@@ -134,6 +132,39 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
 			};
+
+			// UNIQUE clause
+			if(col.foreignkey) {
+				var fk = col.foreignkey.table;
+				var fktable = alasql.databases[fk.databaseid].tables[fk.tableid];
+				if(typeof fk.columnid == 'undefined') {
+					fk.columnid = fktable.pk.columns[0];
+//					console.log(fktable.pk);
+					var fkfn = function(r) {
+						var rr = {};
+						rr[fk.columnid] = r[col.columnid];
+						var addr = fktable.pk.onrightfn(rr);
+//						console.log(r, rr, addr);
+//						console.log(fktable.uniqs[fktable.pk.hh][addr]);
+						if(!fktable.uniqs[fktable.pk.hh][addr]) {
+							throw new Error('Foreign key "'+r[col.columnid]+'" is not found');
+						}
+						return true;
+					};
+					table.checkfn.push(fkfn);
+				}
+/*				var uk = {};
+				if(typeof table.uk == 'undefined') table.uk = [];
+				table.uk.push(uk);
+				uk.columns = [col.columnid];
+				uk.onrightfns = 'r[\''+col.columnid+'\']';
+				uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+				uk.hh = hash(uk.onrightfns);
+				table.uniqs[uk.hh] = {};
+*/			};
+
+			table.columns.push(newcol);
+			table.xcolumns[newcol.columnid] = newcol;
 
 		});
 	};
