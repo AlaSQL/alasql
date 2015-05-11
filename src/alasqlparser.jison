@@ -1730,7 +1730,7 @@ ForeignKey
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
 	;
 
-ParColList
+ParColsList
 	: LPAR ColsList RPAR
 		{ $$ = $2; }
 	;

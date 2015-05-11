@@ -105,8 +105,9 @@ describe('Test 324 Roads samples', function() {
   });
 
   it('9. UPDATE wrong NULL in NOT NULL column',function(done){
+    assert.throws(function(){
     var res = alasql('UPDATE dbo.Employees SET mgrid = 3 WHERE empid = 2');
-    assert(res==1);
+    },Error);
     done();
   });
 
@@ -120,7 +121,24 @@ describe('Test 324 Roads samples', function() {
     done();
   });
 
-  it('11. UPDATE table with constraints violation',function(done){
+  it('11. INSERT INTO table with constraints violation',function(done){
+//    console.log(alasql.databases.dbo.tables.Employees);
+   var res = alasql("INSERT INTO dbo.Employees(empid, mgrid, empname, salary) \
+            VALUES (3,  1, 'Samson'  , 45000.00)");
+   assert(res==1);
+//  console.log(res);
+    done();
+  });
+
+  it('12. UPDATE wrong NULL in NOT NULL column',function(done){
+    var res = alasql('UPDATE dbo.Employees SET mgrid = 3 WHERE empid = 2'); 
+   assert(res==1);
+    done();
+  });
+
+
+
+  it('13. UPDATE table with constraints violation',function(done){
 //    console.log(alasql.databases.dbo.tables.Employees);
     assert.throws(function(){
    var res = alasql("UPDATE dbo.Employees SET mgrid = 1 WHERE empid = 1");
@@ -129,7 +147,7 @@ describe('Test 324 Roads samples', function() {
     done();
   });
 
-  it('12. CURRENT_TIMESTAMP',function(done){
+  it('14. CURRENT_TIMESTAMP',function(done){
     var res = alasql('SELECT VALUE CURRENT_TIMESTAMP');
     assert(res.length == '2015.05.11 07:58:20.078'.length);
     assert(res.substr(0,2) == '20');

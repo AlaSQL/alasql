@@ -135,24 +135,30 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 			// UNIQUE clause
 			if(col.foreignkey) {
+//				console.log(138,col.foreignkey);
 				var fk = col.foreignkey.table;
-				var fktable = alasql.databases[fk.databaseid].tables[fk.tableid];
+				var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
 				if(typeof fk.columnid == 'undefined') {
-					fk.columnid = fktable.pk.columns[0];
+					if(fktable.pk.columns && fktable.pk.columns.length >0 ){
+						fk.columnid = fktable.pk.columns[0];
+					} else {
+						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
+					}
+				}
 //					console.log(fktable.pk);
-					var fkfn = function(r) {
-						var rr = {};
-						rr[fk.columnid] = r[col.columnid];
-						var addr = fktable.pk.onrightfn(rr);
+				var fkfn = function(r) {
+					var rr = {};
+					if(typeof r[col.columnid] == 'undefined') return true;
+					rr[fk.columnid] = r[col.columnid];
+					var addr = fktable.pk.onrightfn(rr);
 //						console.log(r, rr, addr);
 //						console.log(fktable.uniqs[fktable.pk.hh][addr]);
-						if(!fktable.uniqs[fktable.pk.hh][addr]) {
-							throw new Error('Foreign key "'+r[col.columnid]+'" is not found');
-						}
-						return true;
-					};
-					table.checkfn.push(fkfn);
-				}
+					if(!fktable.uniqs[fktable.pk.hh][addr]) {
+						throw new Error('Foreign key "'+r[col.columnid]+'" is not found');
+					}
+					return true;
+				};
+				table.checkfn.push(fkfn);
 /*				var uk = {};
 				if(typeof table.uk == 'undefined') table.uk = [];
 				table.uk.push(uk);
@@ -201,6 +207,29 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.onrightfn = new Function("r",'return '+uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};					
+		} else if(con.type == 'FOREIGN KEY') {
+//			console.log(con);
+			var col = table.xcolumns[con.columns[0]];
+			var fk = con.fktable;
+			if(con.fkcolumns && con.fkcolumns.length>0) fk.columnid = con.fkcolumns[0];
+ 			var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
+			if(typeof fk.columnid == 'undefined') {
+				fk.columnid = fktable.pk.columns[0];
+			}
+//					console.log(fktable.pk);
+			var fkfn = function(r) {
+				var rr = {};
+				if(typeof r[col.columnid] == 'undefined') return true;
+				rr[fk.columnid] = r[col.columnid];
+				var addr = fktable.pk.onrightfn(rr);
+//						console.log(r, rr, addr);
+//						console.log(fktable.uniqs[fktable.pk.hh][addr]);
+				if(!fktable.uniqs[fktable.pk.hh][addr]) {
+					throw new Error('Foreign key "'+r[col.columnid]+'" is not found');
+				}
+				return true;
+			};
+			table.checkfn.push(fkfn);
 		}
 	});
 

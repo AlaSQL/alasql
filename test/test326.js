@@ -118,6 +118,17 @@ describe('Test 326 FOREIGN KEYS', function() {
     done();
   });
 
+if(false) {
+  it('9. FOREIGN KEY DOT operator',function(done){
+    var res = alasql.parse("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
+//    console.log(res.statements[0].columns[0].toJavaScript('a','b'));
+    var res = alasql("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
+    assert(res == 99999);
+    done();
+  });
+}
+
+
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test326');
     done();
