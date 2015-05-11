@@ -189,6 +189,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'RENAME'                                        return 'RENAME'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
+'RETURNS'                                       return 'RETURNS'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
@@ -512,32 +513,31 @@ SearchClause
 */
 
 SearchSelector
-	: SearchSelector1 SearchOrder?
-		{ $$ = $1; yy.extend($$,$2);}
-	;
+	: Literal
+		{ $$ = {srchid:"PROP", args: [$1]}; }
 
-SearchOrder
-	: ORDER BY LPAR OrderExpressionsList RPAR
-		{ $$ = {order:$4}}
+	| ORDER BY LPAR OrderExpressionsList RPAR
+		{ $$ = {srchid:"ORDERBY", args: $4}; }
 	| ORDER BY LPAR DIRECTION? RPAR
 		{
 			var dir = $4;
-			if(!dir) dir = 'ASC'; 
-			$$ = {order:[{expression: new yy.Column({columnid:'_'}), direction:dir}]};
+			if(!dir) dir = 'ASC';
+			$$ = {srchid:"ORDERBY", args: [{expression: new yy.Column({columnid:'_'}), direction:dir}]};
 		}
-	;
 
-SearchSelector1
-	: 
-	Literal
-		{ $$ = {srchid:"PROP", args: [$1]}; }
+	| ARROW Literal
+		{ $$ = {srchid:"APROP", args: [$2]}; }
+	| EQ Expression
+		{ $$ = {srchid:"EQ", args: [$2]}; }
+	| LIKE Expression
+		{ $$ = {srchid:"LIKE", args: [$2]}; }
 	| LPAR SearchSelector+ RPAR
 		{ $$ = {selid:"WITH", args: $2}; }
 	| WITH LPAR SearchSelector+ RPAR
 		{ $$ = {selid:"WITH", args: $3}; }
 /*	| Literal LPAR RPAR
 		{ $$ = {srchid:$1.toUpperCase()}; }	
-*/	| Literal LPAR (ExprList)? RPAR
+*/	| Literal LPAR ExprList? RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
 	| WHERE LPAR Expression RPAR
 		{ $$ = {srchid:"WHERE", args:[$3]}; }	
@@ -557,16 +557,16 @@ SearchSelector1
 		{ $$ = {srchid:"REF"}; }
 	| SHARP Literal
 		{ $$ = {srchid:"SHARP", args:[$2]}; }	
-	| MODULO Literal?
+	| MODULO Literal
 		{ $$ = {srchid:"ATTR", args:((typeof $2 == 'undefined')?undefined:[$2])}; }	
-/*	| MODULO
+	| MODULO SLASH
 		{ $$ = {srchid:"ATTR"}; }	
-*/	| GT 
+	| GT 
 		{ $$ = {srchid:"OUT"}; }
 	| LT 
 		{ $$ = {srchid:"IN"}; }
 	| DOLLAR 
-		{ $$ = {srchid:"CONTENT"}; }
+		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
 /*	| DELETE LPAR RPAR
 		{ $$ = {srchid:"DELETE"}; }
 */	| DOT DOT 
@@ -586,9 +586,7 @@ SearchSelector1
 		{ $$ = {srchid:"VALUE"}; }	
 	| COLON Literal
 		{ $$ = {srchid:"CLASS", args:[$2]}; }	
-/*	| LPAR SearchSelector* RPAR PlusStar 
-		{ $$ = {selid:$4,args:$2 }; }
-*/	| SearchSelector PlusStar
+	| SearchSelector PlusStar
 		{ $$ = {selid:$2,args:[$1] }; }
 
 	| NOT LPAR SearchSelector* RPAR
@@ -597,12 +595,16 @@ SearchSelector1
 		{ $$ = {selid:"IF",args:$3 }; }
 	| Aggregator LPAR SearchSelector* RPAR
 		{ $$ = {selid:$1,args:$3 }; }
-	| DISTINCT LPAR SearchSelector* RPAR
+	| (DISTINCT|UNIQUE) LPAR SearchSelector* RPAR
 		{ $$ = {selid:'DISTINCT',args:$3 }; }
 	| UNION LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'UNION',args:$3 }; }
 	| UNION ALL LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'UNIONALL',args:$4 }; }
+	| ALL LPAR SearchSelector* RPAR
+		{ $$ = {selid:'ALL',args:[$3] }; }
+	| ANY LPAR SearchSelector* RPAR
+		{ $$ = {selid:'ANY',args:[$3] }; }
 	| INTERSECT LPAR SearchSelectorList RPAR
 		{ $$ = {selid:'INTERSECT',args:$3 }; }
 	| EXCEPT LPAR SearchSelectorList RPAR
@@ -613,6 +615,8 @@ SearchSelector1
 		{ $$ = {selid:'OR',args:$3 }; }
 	| PATH LPAR SearchSelector RPAR
 		{ $$ = {selid:'PATH',args:[$3] }; }
+	| RETURNS LPAR ResultColumns RPAR
+		{ $$ = {srchid:'RETURNS',args:$3 }; }
 	;
 
 SearchSelectorList
@@ -1142,6 +1146,8 @@ Expression
 
 	| JavaScript
 		{$$ = $1}
+	| CURRENT_TIMESTAMP
+		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
 	;
 
 JavaScript
@@ -1182,7 +1188,7 @@ PrimitiveValue
 	| FuncValue
 		{ $$ = $1; }
 	| CURRENT_TIMESTAMP
-		{ $$ = undefined; }	
+		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }	
 	;
 
 
@@ -1306,9 +1312,11 @@ ExistsValue
 
 
 ParamValue
-	: DOLLAR Literal
+	: DOLLAR (Literal|NUMBER)
 		{ $$ = new yy.ParamValue({param: $2}); }
-	| COLON Literal
+/*	| DOLLAR NUMBER
+		{ $$ = new yy.ParamValue({param: $2}); }
+*/	| COLON Literal
 		{ $$ = new yy.ParamValue({param: $2}); }
 	| QUESTION
 		{ 
@@ -1712,13 +1720,19 @@ Check
 	;
 
 PrimaryKey
-	: PRIMARY KEY LPAR ColsList RPAR
-		{ $$ = {type: 'PRIMARY KEY', columns: $4}; }
+	: PRIMARY KEY Literal? LPAR ColsList RPAR
+		{ $$ = {type: 'PRIMARY KEY', columns: $5, clustered:($3+'').toUpperCase()}; }
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Literal LPAR ColsList RPAR OnForeignKeyClause
-		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktableid: $7, fkcolumns: $9}; }
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList? 
+	     OnForeignKeyClause
+		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
+	;
+
+ParColsList
+	: LPAR ColsList RPAR
+		{ $$ = $2; }
 	;
 
 OnForeignKeyClause
@@ -1738,7 +1752,10 @@ OnUpdateClause
 	;
 
 UniqueKey
-	: UNIQUE 
+	: UNIQUE Literal? LPAR ColumnsList RPAR
+		{ 
+			$$ = {type: 'UNIQUE', columns: $4, clustered:($2+'').toUpperCase()};
+		}
 	;
 
 IndexKey
@@ -1785,16 +1802,22 @@ ColumnDef
 	;
 
 ColumnType
-	: LITERAL LPAR NUMBER COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $1, dbsize: +$3, dbprecision: +$5} }
-	| LITERAL LPAR NUMBER RPAR
-		{ $$ = {dbtypeid: $1, dbsize: +$3} }
+	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
+	| LITERAL LPAR NumberMax RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3} }
 	| LITERAL
 		{ $$ = {dbtypeid: $1} }
 	| ENUM LPAR ValuesList RPAR
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
 
+NumberMax
+	: NUMBER
+		{ $$ = +$1; }
+	| MAX
+		{ $$ = "MAX"; }
+	;
 
 ColumnConstraintsClause
 	: {$$ = undefined}
@@ -1812,27 +1835,36 @@ ColumnConstraintsList
 		{ $$ = $1; }
 	;
 
+ParLiteral
+	: LPAR Literal RPAR
+		{ $$ = $2; }
+	;
+
 ColumnConstraint 
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Literal LPAR Literal RPAR
-		{$$ = {foreignkey:{tableid:$4, columnid: $6}};}
-	| REFERENCES Literal LPAR Literal RPAR
-		{$$ = {foreignkey:{tableid:$2, columnid: $4}};}
+	| FOREIGN KEY REFERENCES Table ParLiteral?
+		{$$ = {foreignkey:{table:$4, columnid: $5}};}
+	| REFERENCES Table ParLiteral?
+		{$$ = {foreignkey:{table:$2, columnid: $3}};}
 	| AUTO_INCREMENT
 		{$$ = {auto_increment:true};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
-		{ $$ = {identity: [$3,$5]} }
+		{ $$ = {identity: {value:$3,step:$5}} }
 	| IDENTITY
-		{ $$ = {identity: [1,1]} }
+		{ $$ = {identity: {value:1,step:1}} }
 	| DEFAULT PrimitiveValue
 		{$$ = {default:$2};}
+	| DEFAULT LPAR Expression RPAR
+		{$$ = {default:$3};}
 	| NULL
 		{$$ = {null:true}; }
 	| NOT NULL
 		{$$ = {notnull:true}; }
 	| Check
-		{$$ = $1; }
+		{$$ = {check:$1}; }
+	| UNIQUE
+		{$$ = {unique:true}; }
 	;
 
 /* DROP TABLE */
@@ -2493,22 +2525,40 @@ GraphList
 		{ $$ = [$1]; }
 	;
 GraphVertexEdge
-	: GraphElement Json?
+	: GraphElement Json? GraphAsClause? 
 		{ 
 			$$ = $1; 
 			if($2) $$.json = new yy.Json({value:$2});
+			if($3) $$.as = $3;
 		}
-	| GraphElement GT GraphElement Json? GT GraphElement 
+	| (GraphElement|GraphVar) GT GraphElement Json? GraphAsClause? GT (GraphElement|GraphVar) 
 		{ 
-			$$ = {source:$1, target: $6};
+			$$ = {source:$1, target: $7};
 			if($4) $$.json = new yy.Json({value:$4});
+			if($5) $$.as = $5;
 			yy.extend($$,$3);
+			;
 		}
 
 	;
 
+GraphVar
+	: AT Literal
+		{ $$ = {vars:$2}; }
+	;
+
+GraphAsClause
+	: AS AT Literal
+		{ $$ = $3; }
+	;
+
+GraphAtClause
+	: AT Literal
+		{ $$ = $2; }
+	;
+
 GraphElement
-	:  Literal? SharpLiteral? STRING? ColonLiteral?
+	:  Literal? SharpLiteral? STRING? ColonLiteral? 
 		{ 
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
@@ -2523,8 +2573,8 @@ ColonLiteral
 SharpLiteral
 	:	SHARP Literal
 		{ $$ = $2; }
-	|	SHARP Number
-		{ $$ = $2; }
+	|	SHARP NUMBER
+		{ $$ = +$2; }
 	;
 
 DeleteVertex

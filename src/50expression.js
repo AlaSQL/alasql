@@ -502,6 +502,10 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 // 	}
 //console.log('yy.Column',this, tableid);
 //	console.log(392,this.columnid);
+
+//console.log(506,this);
+
+
 	var s = '';
 	if(!this.tableid && tableid == '' && !defcols) {
 		if(this.columnid != '_') {

@@ -229,6 +229,8 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 			if(g.source) {
 				// GREATE EDGE
 				var e = {};
+				if(typeof g.as != 'undefined') alasql.vars[g.as] = e;
+
 				if(typeof g.prop != 'undefined') {
 	//				e[g.prop] = e;
 	//				v.$id = g.prop; // We do not create $id for edge automatically
@@ -248,9 +250,44 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 					g.json.toJavaScript()))(params,alasql));
 				}
 
-				v1 = alasql.databases[databaseid].objects[g.source.sharp || g.source.prop];
-				v2 = alasql.databases[databaseid].objects[g.target.sharp || g.target.prop];
+				var v1;
+				if(g.source.vars) {
+					var vo = alasql.vars[g.source.vars];
+					if(typeof vo == 'object') v1 = vo;
+					else v1 = db.objects[vo];
+				} else {
+					var av1 = g.source.sharp; 
+					if(typeof av1 == 'undefined') av1 = g.source.prop; 
+					v1 = alasql.databases[databaseid].objects[av1];
+					if(typeof v1 == 'undefined' && alasql.options.autovertex 
+						&& ((typeof g.source.prop != 'undefined') || (typeof g.source.name != 'undefined'))) {
+						v1 = findVertex(g.source.prop || g.source.name);
+						if(typeof v1 == 'undefined') {
+							v1 = createVertex(g.source);
+						}
+					};
 
+				}
+
+				var v2;
+				if(g.source.vars) {
+					var vo = alasql.vars[g.target.vars];
+					if(typeof vo == 'object') v2 = vo;
+					else v2 = db.objects[vo];
+				} else {
+					var av2 = g.target.sharp; 
+					if(typeof av2 == 'undefined') av2 = g.target.prop; 
+					v2 = alasql.databases[databaseid].objects[av2];
+					if(typeof v2 == 'undefined' && alasql.options.autovertex 
+						&& ((typeof g.target.prop != 'undefined') || (typeof g.target.name != 'undefined'))) {
+						v2 = findVertex(g.target.prop || g.target.name);
+						if(typeof v2 == 'undefined') {
+							v2 = createVertex(g.target);
+						}
+					};
+				};
+
+//console.log(v1,v2);
 				// Set link
 				e.$in = [v1.$id];
 				e.$out = [v2.$id];
@@ -265,6 +302,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 					if(typeof alasql.databases[databaseid].tables[e.$class] == 'undefined') {
 						throw new Error('No such class. Pleace use CREATE CLASS');
 					} else {
+						// TODO - add insert()
 						alasql.databases[databaseid].tables[e.$class].data.push(e);
 					}
 				}
@@ -272,42 +310,64 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 				res.push(e.$id);
 
 			} else {
-				// GREATE VERTEX
-				var v = {};
-				if(typeof g.prop != 'undefined') {
-	//				v[g.prop] = true;
-					v.$id = g.prop;
-					v.name = g.prop;				
-				};
-				if(typeof g.sharp != 'undefined') v.$id = g.sharp;
-				if(typeof g.name != 'undefined') v.name = g.name;
-				if(typeof g.class != 'undefined') v.$class = g.class;
-
-				var db = alasql.databases[databaseid];
-				if(typeof v.$id == 'undefined') {
-					v.$id = db.counter++;
-				}
-				v.$node='VERTEX';
-				if(typeof g.json != 'undefined') {
-					extend(v,(new Function('params,alasql','return '+
-					g.json.toJavaScript()))(params,alasql));
-				}
-				db.objects[v.$id] = v;
-				if(typeof v.$class != 'undefined') {
-					if(typeof alasql.databases[databaseid].tables[v.$class] == 'undefined') {
-						throw new Error('No such class. Pleace use CREATE CLASS');
-					} else {
-						alasql.databases[databaseid].tables[v.$class].data.push(v);
-					}
-				}
-
-				res.push(v.$id);
+				createVertex(g);
 			}
 		});
 
 	if(cb) res = cb(res);
 	return res;
+
+	// Find vertex by name
+	function findVertex(name) {
+		var objects = alasql.databases[alasql.useid].objects;
+		for(var k in objects) {
+			if(objects[k].name == name) {
+				return objects[k];
+			}
+		}
+		return undefined;
+	}
+
+	function createVertex(g) {
+		// GREATE VERTEX
+		var v = {};
+		if(typeof g.as != 'undefined') alasql.vars[g.as] = v;
+		if(typeof g.prop != 'undefined') {
+	//				v[g.prop] = true;
+			v.$id = g.prop;
+			v.name = g.prop;				
+		};
+		if(typeof g.sharp != 'undefined') v.$id = g.sharp;
+		if(typeof g.name != 'undefined') v.name = g.name;
+		if(typeof g.class != 'undefined') v.$class = g.class;
+
+		var db = alasql.databases[databaseid];
+		if(typeof v.$id == 'undefined') {
+			v.$id = db.counter++;
+		}
+		v.$node='VERTEX';
+		if(typeof g.json != 'undefined') {
+			extend(v,(new Function('params,alasql','return '+
+			g.json.toJavaScript()))(params,alasql));
+		}
+		db.objects[v.$id] = v;
+		if(typeof v.$class != 'undefined') {
+			if(typeof alasql.databases[databaseid].tables[v.$class] == 'undefined') {
+				throw new Error('No such class. Pleace use CREATE CLASS');
+			} else {
+				// TODO - add insert()
+				alasql.databases[databaseid].tables[v.$class].data.push(v);
+			}
+		}
+
+		res.push(v.$id);
+		return v;
+	}
+
+
 };
+
+
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;

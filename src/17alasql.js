@@ -56,16 +56,31 @@ alasql.options.logprompt = true; // Print SQL at log
 alasql.options.modifier = undefined; 
 // How many rows to lookup to define columns
 alasql.options.columnlookup = 10; 
+// Create vertex if not found
+alasql.options.autovertex = true;
+
+// Use dbo as current database (for partial T-SQL comaptibility)
+alasql.options.usedbo = true;
+
+// AUTOCOMMIT ON | OFF
+alasql.options.autocommit = true;
+
+// Use cache
+alasql.options.cache = true;
+
+// Compatibility flags
+alasql.options.tsql = true;
+alasql.options.mysql = true;
+alasql.options.postgres = true;
+alasql.options.oracle = true;
+alasql.options.sqlite = true;
+alasql.options.orientdb = true;
 
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};
 alasql.declares = {};
 
-// AUTOCOMMIT ON | OFF
-alasql.options.autocommit = true;
-
-alasql.options.cache = true;
 
 alasql.prompthistory = [];
 
@@ -97,6 +112,10 @@ alasql.use = function (databaseid) {
 	alasql.tables = db.tables;
 //	alasql.fn = db.fn;
 	db.resetSqlCache();
+	if(alasql.options.usedbo) {
+	    alasql.databases.dbo = db; // Operator???
+	}
+
 };
 
 // Run one statement

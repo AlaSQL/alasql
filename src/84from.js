@@ -7,6 +7,16 @@
 */
 
 /**
+   Meteor
+*/
+
+alasql.from.METEOR = function(filename, opts, cb, idx, query) {
+   var res = filename.find(opts).fetch();
+   if(cb) res = cb(res, idx, query);
+    return res;
+ };
+
+/**
 	Google Spreadsheet reader
  */
 alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
@@ -356,25 +366,6 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 	return res;
 };
-
-// Pseudo INFORMATION_SCHEMA function
-alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
-	if(filename == 'VIEWS' || filename == 'TABLES' ) {
-		var res = [];
-		for(var databaseid in alasql.databases) {			
-			var tables = alasql.databases[databaseid].tables;
-			for(var tableid in tables) {
-				if((tables[tableid].view && filename == 'VIEWS') ||
-					(!tables[tableid].view && filename == 'TABLES')) {
-					res.push({TABLE_CATALOG:databaseid,TABLE_NAME:tableid});
-				}
-			}
-		}
-		if(cb) res = cb(res, idx, query);
-		return res;		
-	}
-	throw new Error('Unknown INFORMATION_SCHEMA table');
-}
 
 
 

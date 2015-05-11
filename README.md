@@ -1,6 +1,6 @@
 # AlaSQL.js - JavaScript SQL database library for relational and graph data manipulation with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.3 "Vaticano" Date: May 9, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.4 "Napoli" Date: May 11, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -49,6 +49,26 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
 
 ## What is new?
 
+### AlaSQL and Meteor Mongo collections
+
+Now you can use Meteor collections as agruments. To do it simply store alasql.min.js to the client/lib directory and then apply SQL to Meteor Collections: 
+
+```js
+    Template.body.helpers({
+       tasks: function () {
+         return alasql('SELECT * FROM ?',[Tasks]);
+       }
+    });
+```
+
+Or you can use with find() options with special METEOR() from-function:
+```
+    return alasql('SELECT * FROM ?',[Tasks]);
+    return alasql('SELECT * FROM METEOR(?)',[Tasks]);
+    return alasql('SELECT * FROM METEOR(?,?)',[Tasks,{text:"Hello world!"}]);
+    return alasql('SELECT * FROM METEOR(?,{text:"Hello world!"})',[Tasks]);
+```
+
 ### Search paths in graph
 
 Now you can search graphs with SEARCH operator:
@@ -59,7 +79,7 @@ Now you can search graphs with SEARCH operator:
       #Kate >> #Julia, #Alex >> #Paloma, #Napoleon > "loves" > #Josephine, \
       #Josephine >"knows"> #Pablo');
 
-    var res = alasql('SEARCH #Napoleon PATH(#Pablo) name');
+    var res = alasql('SEARCH PATH(#Pablo) name FROM #Napoleon ');
     // returns ['loves','Josephine','knows','Pablo']
 ```
 You can play with grpahs in AlaSQL in [this jsFiddle example](http://jsfiddle.net/fgzya692/1/).
@@ -76,15 +96,15 @@ how to create graph:
 and search over it with SEARCH operator:
 ```js
     // Whom loves Olga?
-    alasql('SEARCH #Olga >> name');
+    alasql('SEARCH / #Olga >> name');
     // ['Pablo']
 
     // Whom loves Olga's love objects?
-    alasql('SEARCH #Olga >> >> name');
+    alasql('SEARCH / #Olga >> >> name');
     // ['Alice']
 
     // Who loves lovers of Alice?
-    alasql('SEARCH ANY(>> >> #Alice) name');
+    alasql('SEARCH / ANY(>> >> #Alice) name');
     // ['Olga','Helen']
 
 ```
@@ -782,7 +802,6 @@ You can check next version branches for new experimental features.
 
 1. ORDER BY clause on three or more UNIONS ( [See example in AlaSQL console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
 2. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because AlaSQL started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
-3. Functionality of FOREIGN KEY, UNIQUE INDEX and CHECK conctraints is not realized in fully.
 
 
 Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!

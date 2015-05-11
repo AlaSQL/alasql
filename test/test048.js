@@ -33,23 +33,23 @@ describe('Test 48 - Check parser for primary and foreign keys', function() {
 
 	});
 
-	describe('PRIMARY KEY', function(){
+	describe('FOREIGN KEY', function(){
 
 		it('1: FOREIGN KEY', function(done){
 			alasql('DROP TABLE IF EXISTS cities');
 			alasql('DROP TABLE IF EXISTS countries');
+			alasql('CREATE TABLE countries (country STRING  PRIMARY KEY, b STRING)');
 			alasql('CREATE TABLE cities (city STRING, country STRING '+
 				' FOREIGN KEY REFERENCES countries(country))');
-			alasql('CREATE TABLE countries (a STRING, b STRING)');
 			done();
 		});
-/*
+
 		it('2: FOREIGN KEY (MySQL style)', function(done){
 			alasql('DROP TABLE IF EXISTS cities');
 			alasql('DROP TABLE IF EXISTS countries');
 			alasql('CREATE TABLE cities (city STRING, country STRING, '+
 				' FOREIGN KEY (country) REFERENCES countries(country))');
-			alasql('CREATE TABLE countries (a STRING, b STRING)');
+			alasql('CREATE TABLE countries (country STRING  PRIMARY KEY, b STRING)');
 			done();
 		});
 
@@ -58,9 +58,9 @@ describe('Test 48 - Check parser for primary and foreign keys', function() {
 			alasql('DROP TABLE IF EXISTS countries');
 			alasql('CREATE TABLE cities (city STRING, country STRING, '+
 				' CONSTRAINT keycountry FOREIGN KEY (country) REFERENCES countries(country))');
-			alasql('CREATE TABLE countries (a STRING, b STRING)');
+			alasql('CREATE TABLE countries (country STRING PRIMARY KEY, b STRING)');
 			done();
 		});
-*/
+
 	});
 });

@@ -741,3 +741,20 @@ var domEmptyChildren = utils.domEmptyChildren = function (container){
   };
 };
 
+var distinctArray = utils.distinctArray = function(data) {
+    var uniq = {};
+    // TODO: Speedup, because Object.keys is slow
+    for(var i=0,ilen=data.length;i<ilen;i++) {
+        if(typeof data[i] == 'object') {
+            var uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
+        } else {
+            var uix = data[i];  
+        }
+        uniq[uix] = data[i];
+    };
+    var res = [];
+    for(var key in uniq) res.push(uniq[key]);
+    return res;
+}
+
+

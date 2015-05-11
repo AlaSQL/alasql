@@ -54,6 +54,8 @@ stdfn.NOW = function(){
 };
 
 stdfn.GETDATE = stdfn.NOW;
+stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
+
 
 // stdfn.GETDATE = function(){
 // 	var d = new Date();

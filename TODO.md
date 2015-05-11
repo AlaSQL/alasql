@@ -4,6 +4,72 @@ This file contanis unstructured ideas for future development of AlaSQL.
 
 ## Ideas
 
+Meteor Package
+GEFX
+
+
+
+
+
+
+Constraints:
+IS NULL / IS NOT NULL 
+CHECK
+
+----------
+
+Realize OBJECT_ID
+
+IF OBJECT_ID('dbo.Employees') IS NOT NULL
+  DROP TABLE dbo.Employees;
+  
+IF OBJECT_ID('dbo.VSortedOrders', 'V') IS NOT NULL
+  DROP VIEW dbo.VSortedOrders;
+GO
+
+
+
+
+2-chars
+
+Q: How UNION works? - disstinct or only new? - solved
+Check UnionDeep and arrayDistinct
+
+
+SEARCH @p name;
+SEARCH UNION(/a,/b) FROM @p;
+SEARCH / "Name";
+SEARCH name;
+SEARCH / name;
+SEARCH ;
+SEARCH DISTINCT(name);
+
+
+AlaLISP
+AlaPROLOG / RDF
+
+age 35.
+name X :- age X.
+:- age X.
+
+EDGE
+VERTEX
+CLUSTER
+FACT
+RULE
+
+PROLOGUE
+=========
+:- papa loves apples;
+RULE :- ;
+SEARCH papa loves @p, WHERE(@p IN ['Apples'])
+
+FACT [John] buys [Apples],[John] buys [Nuts];
+SEARCH [John] buys @x
+[{x:'Apples'},x:'Nuts'];
+
+
+
 
 
 

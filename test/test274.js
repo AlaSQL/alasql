@@ -22,7 +22,7 @@ describe('Test 274 Count and other bugs', function() {
     console.log(res);
 //    var colres = _.pluck(res.columns,'columnid');
 //    assert.deepEqual(colres, ["a","b"]);
-//    alasql.options.modifier = undefined;
+    alasql.options.modifier = undefined;
     done();    
   });
 

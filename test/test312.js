@@ -296,13 +296,13 @@ var data = {
 }
 
     // Fro test
-    var res = alasql('SEARCH / * AS @obj KEYS() WHERE(@obj->(_) LIKE "%myVar%") FROM ?', [data]);
-    var res = alasql('SEARCH / * IF(WHERE(_ LIKE "%myVar%") \
-      SET(val=val->replace("")) FROM ?', [data]);
+   // var res = alasql('SEARCH / * AS @obj KEYS() WHERE(@obj->(_) LIKE "%myVar%") FROM ?', [data]);
+   // var res = alasql('SEARCH / * IF(WHERE(_ LIKE "%myVar%") \
+   //   SET(val=val->replace("")) FROM ?', [data]);
 
 //    KEYS();
 
-    console.log(res);
+   // console.log(res);
   //   assert.deepEqual(res,[ 'menuOfficeWebControlsForWebApplication',
   // 'menuGettingStarted',
   // 'menuCompilingFromSource',
@@ -312,6 +312,8 @@ var data = {
 
   });
 
+
+  it('5. Recursive find and replace in multidimensional javascript object',function(done){
 
 /*
 
@@ -348,8 +350,16 @@ I need to iterate on that object to obtain the following:
    { field: "field3", term: "val4"}
   ]
 ]
-If I try to explain this, the idea is to create an array of arrays where each child array are separated by "OR", while each objects inside the child arrays represents the "AND" separated fields; Although I think the code above explains it better than me
+If I try to explain this, the idea is to create an array 
+of arrays where each child array are separated by "OR",
+ while each objects inside the child arrays represents the 
+ "AND" separated fields; Although I think the code above explains 
+ it better than me
 */
+
+    done();
+
+  });
 
 });
 
