@@ -6,6 +6,12 @@ This file contanis unstructured ideas for future development of AlaSQL.
 
 Meteor Package
 GEFX
+
+
+
+
+
+
 Constraints:
 IS NULL / IS NOT NULL 
 CHECK

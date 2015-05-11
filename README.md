@@ -1,6 +1,6 @@
 # AlaSQL.js - JavaScript SQL database library for relational and graph data manipulation with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.3 "Vaticano" Date: May 9, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.4 "Napoli" Date: May 11, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -802,7 +802,6 @@ You can check next version branches for new experimental features.
 
 1. ORDER BY clause on three or more UNIONS ( [See example in AlaSQL console](http://alasql.org/console?select 10 as a union all select 20 as a union all select 30 as a order by a desc) )
 2. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because AlaSQL started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in one of the future version.
-3. Functionality of FOREIGN KEY, UNIQUE INDEX and CHECK conctraints is not realized in fully.
 
 
 Probably, there are many of others. Please, [give me a chance](https://github.com/agershun/alasql/issues) to fix them. Thank you!
