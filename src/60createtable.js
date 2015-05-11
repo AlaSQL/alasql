@@ -81,6 +81,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	if(this.class) {
 		table.isclass = true;
 	}
+	table.identities = {};
 
 	var ss = [];
 	if(this.columns) {
@@ -91,11 +92,18 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				columnid: col.columnid,
 				dbtypeid: dbtypeid, 
 				dbsize: col.dbsize, 			// Fixed issue #150
-				dbprecision: col.dbprecision 	// Fixed issue #150
+				dbprecision: col.dbprecision, 	// Fixed issue #150
+				notnull: col.notnull,
+				identity: col.identity
 			};
+			if(col.identity) {
+				table.identities[col.columnid]={value:col.identity.value,step:col.identity.step};
+				ss.push('\''+col.columnid+'\':(alasql.databases[\''+db.databaseid+'\'].tables[\''
+					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
+			}
 
 			if(col.default) {
-				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript());
+				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript('r',''));
 			}
 
 			table.columns.push(newcol);
@@ -143,7 +151,22 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.indices[pk.hh] = {};					
-		} 
+		} else if(con.type == 'CHECK') {
+//			console.log(con.expression.toJavaScript('r',''));
+			table.checkfn = new Function("r",'return '+con.expression.toJavaScript('r',''));
+		} else if(con.type == 'UNIQUE') {
+//			console.log(con);
+			var uk = {};
+			if(!table.uk) table.uk = [];
+			table.uk.push(uk);
+			uk.columns = con.columns;
+			uk.onrightfns = uk.columns.map(function(columnid){
+				return 'r[\''+columnid+'\']'
+			}).join("+'`'+");
+			uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+			uk.hh = hash(uk.onrightfns);
+			table.indices[uk.hh] = {};					
+		}
 	});
 
 	if(this.view && this.viewcolumns) {
@@ -165,6 +188,24 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //			if(table.pk) {
 	table.insert = function(r) {
 		var table = this;
+
+		// IDENTINY or AUTO_INCREMENT
+		// if(table.identities && table.identities.length>0) {
+		// 	table.identities.forEach(function(ident){
+		// 		r[ident.columnid] = ident.value;
+		// 	});
+		// }
+
+		if(table.checkfn && !table.checkfn(r)) {
+			console.log(r,table.checkfn(r));
+			throw new Error('Violation of CHECK constraint');			
+		};
+
+		table.columns.forEach(function(column){
+			if(column.notnull && typeof r[column.columnid] == 'undefined') {
+				throw new Error('Wrong NULL value in NOT NULL column '+column.columnid);
+			}
+		});
 		if(table.pk) {
 			var pk = table.pk;
 			var addr = pk.onrightfn(r);
@@ -181,8 +222,17 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				} 				
 				table.indices[uk.hh][ukaddr]=r;
 			});
-		}
-	
+		};
+
+		// Final change before insert
+
+		for(var columnid in table.identities){
+			var ident = table.identities[columnid];
+			console.log(ident);
+			ident.value += ident.step;
+			console.log(ident);
+		};
+
 		table.data.push(r);
 		// Update indices
 	};
@@ -227,45 +277,66 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		// TODO: Analyze the speed
 		var r = cloneDeep(this.data[i]);
 		
+		// PART 1 - PRECHECK
 		if(this.pk) {
 			var pk = this.pk;
-			var addr = pk.onrightfn(r,params);
-			if(typeof this.indices[pk.hh][addr] == 'undefined') {
+			pk.pkaddr = pk.onrightfn(r,params);
+			if(typeof this.indices[pk.hh][pk.pkaddr] == 'undefined') {
 				throw new Error('Something wrong with index on table');
 			} else {
-				this.indices[pk.hh][addr]=undefined;
-
 			}
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
-				var ukaddr = uk.onrightfn(r);
-				if(typeof table.indices[uk.hh][ukaddr] == 'undefined') {
+				uk.ukaddr = uk.onrightfn(r);
+				if(typeof table.indices[uk.hh][uk.ukaddr] == 'undefined') {
 					throw new Error('Something wrong with unique index on table');
 				} 				
-				table.indices[uk.hh][ukaddr]=undefined;
 			});
 		}
 		
 		assignfn(r,params,alasql);
 
+		// PART 2 - POST CHECK
+		if(table.checkfn && !table.checkfn(r)) {
+			throw new Error('Violation of CHECK constraint');			
+		};
+
+		table.columns.forEach(function(column){
+			if(column.notnull && typeof r[column.columnid] == 'undefined') {
+				throw new Error('Wrong NULL value in NOT NULL column '+column.columnid);
+			}
+		});
 		if(this.pk) {
-				var newaddr = pk.onrightfn(r);
-				if(typeof this.indices[pk.hh][newaddr] != 'undefined') {
+				pk.newpkaddr = pk.onrightfn(r);
+				if(typeof this.indices[pk.hh][pk.newpkaddr] != 'undefined'
+					&& pk.newpkaddr != pk.pkaddr) {
 					throw new Error('Record already exists');
 				} else {
-					this.indices[pk.hh][newaddr] = r;
 				}
 		};
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
-				var newukaddr = uk.onrightfn(r);
-				if(typeof table.indices[uk.hh][newukaddr] != 'undefined') {
+				uk.newukaddr = uk.onrightfn(r);
+				if(typeof table.indices[uk.hh][uk.newukaddr] != 'undefined'
+					&& uk.newukaddr != uk.ukaddr) {
 					throw new Error('Record already exists');
 				} 				
-				table.indices[uk.hh][newukaddr]=r;
 			});
 		}
+
+		// PART 3 UPDATE
+		if(this.pk) {
+			this.indices[pk.hh][pk.pkaddr]=undefined;
+			this.indices[pk.hh][pk.newpkaddr] = r;			
+		}
+		if(table.uk && table.uk.length) {
+			table.uk.forEach(function(uk){
+				table.indices[uk.hh][uk.ukaddr]=undefined;
+				table.indices[uk.hh][uk.newukaddr]=r;
+			});
+		}
+
 
 		this.data[i] = r;
 	};

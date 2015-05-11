@@ -13,6 +13,10 @@ CHECK
 ----------
 
 Realize OBJECT_ID
+
+IF OBJECT_ID('dbo.Employees') IS NOT NULL
+  DROP TABLE dbo.Employees;
+  
 IF OBJECT_ID('dbo.VSortedOrders', 'V') IS NOT NULL
   DROP VIEW dbo.VSortedOrders;
 GO

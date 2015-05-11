@@ -1146,6 +1146,8 @@ Expression
 
 	| JavaScript
 		{$$ = $1}
+	| CURRENT_TIMESTAMP
+		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
 	;
 
 JavaScript
@@ -1186,7 +1188,7 @@ PrimitiveValue
 	| FuncValue
 		{ $$ = $1; }
 	| CURRENT_TIMESTAMP
-		{ $$ = undefined; }	
+		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }	
 	;
 
 
@@ -1718,13 +1720,19 @@ Check
 	;
 
 PrimaryKey
-	: PRIMARY KEY LPAR ColsList RPAR
-		{ $$ = {type: 'PRIMARY KEY', columns: $4}; }
+	: PRIMARY KEY Literal? LPAR ColsList RPAR
+		{ $$ = {type: 'PRIMARY KEY', columns: $5, clustered:($3+'').toUpperCase()}; }
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Literal LPAR ColsList RPAR OnForeignKeyClause
-		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktableid: $7, fkcolumns: $9}; }
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList? 
+	     OnForeignKeyClause
+		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
+	;
+
+ParColList
+	: LPAR ColsList RPAR
+		{ $$ = $2; }
 	;
 
 OnForeignKeyClause
@@ -1744,7 +1752,10 @@ OnUpdateClause
 	;
 
 UniqueKey
-	: UNIQUE 
+	: UNIQUE Literal? LPAR ColumnsList RPAR
+		{ 
+			$$ = {type: 'UNIQUE', columns: $4, clustered:($2+'').toUpperCase()};
+		}
 	;
 
 IndexKey
@@ -1791,16 +1802,22 @@ ColumnDef
 	;
 
 ColumnType
-	: LITERAL LPAR NUMBER COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $1, dbsize: +$3, dbprecision: +$5} }
-	| LITERAL LPAR NUMBER RPAR
-		{ $$ = {dbtypeid: $1, dbsize: +$3} }
+	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
+	| LITERAL LPAR NumberMax RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3} }
 	| LITERAL
 		{ $$ = {dbtypeid: $1} }
 	| ENUM LPAR ValuesList RPAR
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
 
+NumberMax
+	: NUMBER
+		{ $$ = +$1; }
+	| MAX
+		{ $$ = "MAX"; }
+	;
 
 ColumnConstraintsClause
 	: {$$ = undefined}
@@ -1818,21 +1835,28 @@ ColumnConstraintsList
 		{ $$ = $1; }
 	;
 
+ParLiteral
+	: LPAR Literal RPAR
+		{ $$ = $2; }
+	;
+
 ColumnConstraint 
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Literal LPAR Literal RPAR
-		{$$ = {foreignkey:{tableid:$4, columnid: $6}};}
-	| REFERENCES Literal LPAR Literal RPAR
-		{$$ = {foreignkey:{tableid:$2, columnid: $4}};}
+	| FOREIGN KEY REFERENCES Table ParLiteral?
+		{$$ = {foreignkey:{table:$4, columnid: $5}};}
+	| REFERENCES Table ParLiteral?
+		{$$ = {foreignkey:{table:$2, columnid: $3}};}
 	| AUTO_INCREMENT
 		{$$ = {auto_increment:true};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
-		{ $$ = {identity: [$3,$5]} }
+		{ $$ = {identity: {value:$3,step:$5}} }
 	| IDENTITY
-		{ $$ = {identity: [1,1]} }
+		{ $$ = {identity: {value:1,step:1}} }
 	| DEFAULT PrimitiveValue
 		{$$ = {default:$2};}
+	| DEFAULT LPAR Expression RPAR
+		{$$ = {default:$3};}
 	| NULL
 		{$$ = {null:true}; }
 	| NOT NULL

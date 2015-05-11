@@ -41,7 +41,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var s = '';
 	var sw = '';
 //	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
-	var s3 = 'var a,aa=[];';
+	var s3 = 'var a,aa=[],x;';
 
 	var s33;
 
@@ -68,7 +68,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 					var q = "'"+col.columnid +'\':';
 					if(table.xcolumns && table.xcolumns[col.columnid]) { 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
-							q += "+"+values[idx].toJavaScript();
+							//q += ''
+							q += "(x="+values[idx].toJavaScript()+",x==undefined?undefined:+x)";
 						} else if (alasql.fn[table.xcolumns[col.columnid].dbtypeid]) {
 							q += "(new "+table.xcolumns[col.columnid].dbtypeid+"(";
 							q += values[idx].toJavaScript();
@@ -138,7 +139,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 			}
 //console.log(ss);
 
-			if(db.tables[tableid].defaultfns) ss.unshift(db.tables[tableid].defaultfns);
+			if(db.tables[tableid].defaultfns) {
+				ss.unshift(db.tables[tableid].defaultfns);
+			};
 			if(sw) {
 				s += 'a='+sw+';';
 			} else {

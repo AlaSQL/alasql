@@ -14,6 +14,13 @@
 * Added CREATE TABLE column UNIQUE constraint on INSERT/DELETE/UPDATE
 * Added OBJECT_ID() function (like in T-SQL)
 * Added parts and optional for specific database compatibility
+* Changed REFERENCES syntax
+* dbo always as default database (for some compatibility with T-SQL)
+* NOT NULL check on INSERT/UPDATE
+* CHECK constraint (for whole table)
+* CURRENT_TIMESTAMP function
+* UNIQUE constraint (whole table)
+* VARCHAR(MAX)
 
 ### 0.1.3 "Vaticano" (08.05.2015 - 09.05.2015)
 * Check for null values for SEARCH
