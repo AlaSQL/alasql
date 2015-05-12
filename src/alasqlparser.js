@@ -1085,7 +1085,7 @@ case 485: case 486:
 this.$ = {foreignkey:{table:$$[$0-1], columnid: $$[$0]}};
 break;
 case 487:
-this.$ = {auto_increment:true};
+this.$ = {identity:{value:1,step:1}};
 break;
 case 488:
  this.$ = {identity: {value:$$[$0-3],step:$$[$0-1]}} 

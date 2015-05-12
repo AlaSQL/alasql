@@ -1202,7 +1202,7 @@ case 485: case 486:
 this.$ = {foreignkey:{table:$$[$0-1], columnid: $$[$0]}};
 break;
 case 487:
-this.$ = {auto_increment:true};
+this.$ = {identity:{value:1,step:1}};
 break;
 case 488:
  this.$ = {identity: {value:$$[$0-3],step:$$[$0-1]}} 
@@ -10022,8 +10022,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			};
 			if(col.identity) {
 				table.identities[col.columnid]={value:col.identity.value,step:col.identity.step};
-				ss.push('\''+col.columnid+'\':(alasql.databases[\''+db.databaseid+'\'].tables[\''
-					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
+//				ss.push('\''+col.columnid+'\':(alasql.databases[\''+db.databaseid+'\'].tables[\''
+//					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
 			if(col.check) {
 				table.checkfn.push(new Function("r",'return '+col.check.expression.toJavaScript('r','')));
@@ -10077,7 +10077,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //						console.log(r, rr, addr);
 //						console.log(fktable.uniqs[fktable.pk.hh][addr]);
 					if(!fktable.uniqs[fktable.pk.hh][addr]) {
-						throw new Error('Foreign key "'+r[col.columnid]+'" is not found');
+						throw new Error('Foreign key "'+r[col.columnid]+'" is not found in table '+fktable.tableid);
 					}
 					return true;
 				};
@@ -10148,7 +10148,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //						console.log(r, rr, addr);
 //						console.log(fktable.uniqs[fktable.pk.hh][addr]);
 				if(!fktable.uniqs[fktable.pk.hh][addr]) {
-					throw new Error('Foreign key "'+r[col.columnid]+'" is not found');
+	//console.log(228,table,col,fk);
+					throw new Error('Foreign key "'+r[col.columnid]+'" is not found in table '+fktable.tableid);
 				}
 				return true;
 			};
@@ -10182,6 +10183,16 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		// 		r[ident.columnid] = ident.value;
 		// 	});
 		// }
+//console.log(262,r);
+//console.log(263,table.identities)
+		for(var columnid in table.identities){
+			var ident = table.identities[columnid];
+//			console.log(ident);
+			r[columnid] = ident.value;
+//			console.log(ident);
+		};
+//console.log(270,r);
+
 
 		if(table.checkfn && table.checkfn.length>0) {
 			table.checkfn.forEach(function(checkfn){
@@ -10200,7 +10211,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			var pk = table.pk;
 			var addr = pk.onrightfn(r);
 			if(typeof table.uniqs[pk.hh][addr] != 'undefined') {
-				throw new Error('Cannot insert record, because it already exists in primary key');
+				throw new Error('Cannot insert record, because it already exists in primary key index');
 			} 
 //			table.uniqs[pk.hh][addr]=r;
 		}
@@ -10216,15 +10227,17 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		// Final change before insert
 
+
+		table.data.push(r);
+		// Update indices
+
+
 		for(var columnid in table.identities){
 			var ident = table.identities[columnid];
 //			console.log(ident);
 			ident.value += ident.step;
 //			console.log(ident);
 		};
-
-		table.data.push(r);
-		// Update indices
 
 		if(table.pk) {
 			var pk = table.pk;
@@ -11599,7 +11612,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			s += 'return '+self.values.length;
         }
 
-//console.log(s);
+//console.log(186,s3+s);
 		var insertfn = new Function('db, params, alasql',s3+s);
 	
 // INSERT INTO table SELECT

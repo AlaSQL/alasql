@@ -1,5 +1,6 @@
 if(typeof exports == 'object') {
-	var alasql = require('../dist/alasql.js');
+	var alasql = require('../dist/alasql.min.js');
+	var assert = require('assert');
 }
 
 function a(filename) {
@@ -9,23 +10,26 @@ function a(filename) {
 	});
 };
 
-		var tm = Date.now();
-		alasql('CREATE DATABASE w3; USE w3');
-		alasql('SOURCE "w3/w3.sql"',[],function(){
-			console.log(Date.now()-tm);
-		});
-
-/*
+		// var tm = Date.now();
+		// alasql('CREATE DATABASE w3; USE w3');
+		// alasql('SOURCE "w3/w3.sql"',[],function(){
+		// 	console.log(Date.now()-tm);
+		// });
+//console.log(1);
 describe('w3 database',function(){
+//console.log(2);
   it('1. Setup',function(done){
-		this.timeout(10000);
+//console.log(3);
+//		this.timeout(3000);
 		alasql('CREATE DATABASE w3; USE w3');
-		alasql('SOURCE "w3/w3.sql"');
- 		done();
+		alasql('SOURCE "w3/w3.sql"',[],function(res){
+			assert(res.length == 940);
+	 		done();
+		});
 	});
 });
 
-*/
+
 	// it('2. Setup',function(done){
 	// 	this.timeout(10000);
 /*

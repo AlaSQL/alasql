@@ -1,5 +1,5 @@
 if(typeof exports == 'object') {
-	var alasql = require('../..');
+	var alasql = require('../dist/alasql.min.js');
 }
 
 function a(filename) {
@@ -14,9 +14,10 @@ describe('Northwind database',function(){
 		this.timeout(20000);
 		var tm = Date.now();
 		alasql('CREATE DATABASE Northwind; USE Northwind');
-		alasql('SOURCE "northwind/Northwind.sql"',[],function(){
+		alasql('SOURCE "northwind/Northwind.sql"',[],function(res){
+			console.log(res);
 			console.log((tm-Date.now)/1000+" sec");
+		 	done();
 		});
-	 	done();
  	});
 });
