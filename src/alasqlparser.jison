@@ -1848,7 +1848,7 @@ ColumnConstraint
 	| REFERENCES Table ParLiteral?
 		{$$ = {foreignkey:{table:$2, columnid: $3}};}
 	| AUTO_INCREMENT
-		{$$ = {auto_increment:true};}
+		{$$ = {identity:{value:1,step:1}};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
 	| IDENTITY
@@ -1956,9 +1956,12 @@ DropDatabase
 /* INDEXES */
 
 CreateIndex
-	: CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	:
+	 CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
-	| CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
+	| 
+
+	CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
 

@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.1.5 "San Marino" (12.05.2015 - 12.05.2015)
+* Added Meteor package (agershun:alasql) - still does not work - skeleton
+* Northwind test database - test for speed and SQL
+* Added w3 database (Northwind analogue)
+* Fixed FOREIGN KEY problem
+
 ### 0.1.4 "Napoli" (09.05.2015 - 11.05.2015)
 * Convert Meteor/Mongo collections on the fly 
 * Added METEOR() from-function

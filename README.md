@@ -1,10 +1,10 @@
 # AlaSQL.js - JavaScript SQL database library for relational and graph data manipulation with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.4 "Napoli" Date: May 11, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.5 "San Marino" Date: May 12, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
-AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb) to your project and call 
+AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file to your project and call 
 ```alasql()``` function with SQL statement inside: 
 
 ```html
@@ -45,7 +45,7 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
  * [AlaSQL vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4) - in-memory operations* [AlaSQL vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - test on 2^20 records
  * AlaSQL vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
  * [AlaSQL vs. Lodash](http://jsperf.com/alasql-vs-lodash), [AlaSQL vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
- * [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/7) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
+ * [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/10) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
 
 ## What is new?
 
@@ -845,5 +845,5 @@ and other people for useful tools, which make our work much easier.
 
 The MIT license on this repo covers all contents of the repo, but does not supercede the existing licenses for products used for this work, including the Chinook Database (covered by the Microsoft Public License) and other products.
 
-(c) 2014, Andrey Gershun (agershun@gmail.com), 
+(c) 2014-2015, Andrey Gershun (agershun@gmail.com), 
 

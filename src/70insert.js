@@ -183,7 +183,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			s += 'return '+self.values.length;
         }
 
-//console.log(s);
+//console.log(186,s3+s);
 		var insertfn = new Function('db, params, alasql',s3+s);
 	
 // INSERT INTO table SELECT

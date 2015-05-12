@@ -259,7 +259,6 @@ describe('Test 231 NIST SQL Example', function() {
         done();
     });
 
-if(false) {
     it('10. Delete', function(done){
         alasql('DELETE FROM STATS \
             WHERE MONTH = 7 \
@@ -286,7 +285,6 @@ if(false) {
         alasql('INSERT INTO STATS VALUES (44,8,160,.19)');
         done();
     });
-};
 
     it('99. DROP', function(done){
         alasql('DROP DATABASE test231');

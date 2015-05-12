@@ -1,0 +1,194 @@
+hash-threshold 8
+
+statement ok
+CREATE TABLE t1( x INTEGER, y VARCHAR(8) )
+
+statement ok
+INSERT INTO t1 VALUES(1,'true')
+
+statement ok
+INSERT INTO t1 VALUES(0,'false')
+
+statement ok
+INSERT INTO t1 VALUES(NULL,'NULL')
+
+statement ok
+CREATE INDEX t1i1 ON t1(x)
+
+
+# EVIDENCE-OF: R-38515-45264 An UPDATE statement is used to modify a
+# subset of the values stored in zero or more rows of the database table
+# identified by the qualified-table-name specified as part of the UPDATE
+# statement.
+
+statement ok
+UPDATE t1 SET x=1 WHERE x>0
+
+statement ok
+UPDATE t1 SET x=2 WHERE x>0
+
+statement ok
+UPDATE t1 SET y='true' WHERE x>0
+
+statement ok
+UPDATE t1 SET y='unknown' WHERE x>0
+
+statement error
+UPDATE t1 SET z='foo'
+
+statement error
+UPDATE t1 SET z='foo' WHERE x>0
+
+# TBD-EVIDENCE-OF: R-55869-30521 If the UPDATE statement does not have a
+# WHERE clause, all rows in the table are modified by the UPDATE.
+
+statement ok
+UPDATE t1 SET x=3
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE x=3
+----
+3
+
+# EVIDENCE-OF: R-42117-40023 Otherwise, the UPDATE affects only those
+# rows for which the result of evaluating the WHERE clause expression as
+# a boolean expression is true.
+
+statement ok
+UPDATE t1 SET x=1 WHERE y='unknown'
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE x=1
+----
+1
+
+# EVIDENCE-OF: R-58129-20729 It is not an error if the WHERE clause does
+# not evaluate to true for any row in the table - this just means that
+# the UPDATE statement affects zero rows.
+
+statement ok
+UPDATE t1 SET x=1 WHERE y='foo'
+
+# EVIDENCE-OF: R-40598-36595 For each affected row, the named columns
+# are set to the values found by evaluating the corresponding scalar
+# expressions.
+
+statement ok
+UPDATE t1 SET x=3+1
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE x=4
+----
+3
+
+# EVIDENCE-OF: R-34751-18293 If a single column-name appears more than
+# once in the list of assignment expressions, all but the rightmost
+# occurrence is ignored.
+
+statement ok
+UPDATE t1 SET x=3, x=4, x=5
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE x=3
+----
+0
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE x=4
+----
+0
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE x=5
+----
+3
+
+# EVIDENCE-OF: R-40472-60438 Columns that do not appear in the list of
+# assignments are left unmodified.
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE y='unknown'
+----
+1
+
+statement ok
+UPDATE t1 SET x=2
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE y='unknown'
+----
+1
+
+# EVIDENCE-OF: R-36239-04077 The scalar expressions may refer to columns
+# of the row being updated.
+
+# EVIDENCE-OF: R-04558-24451 In this case all scalar expressions are
+# evaluated before any assignments are made.
+
+statement ok
+UPDATE t1 SET x=x+2
+
+query I rowsort
+SELECT count(*) FROM t1 WHERE x=4
+----
+3
+
+# TBD-EVIDENCE-OF: R-12619-24112 The optional conflict-clause allows the
+# user to nominate a specific constraint conflict resolution algorithm
+# to use during this one UPDATE command.
+
+# TBD-EVIDENCE-OF: R-12123-54095 The table-name specified as part of an
+# UPDATE statement within a trigger body must be unqualified.
+
+# TBD-EVIDENCE-OF: R-09690-36749 In other words, the database-name. prefix
+# on the table name of the UPDATE is not allowed within triggers.
+
+# TBD-EVIDENCE-OF: R-06085-13761 Unless the table to which the trigger is
+# attached is in the TEMP database, the table being updated by the
+# trigger program must reside in the same database as it.
+
+# TBD-EVIDENCE-OF: R-29512-54644 If the table to which the trigger is
+# attached is in the TEMP database, then the unqualified name of the
+# table being updated is resolved in the same way as it is for a
+# top-level statement (by searching first the TEMP database, then the
+# main database, then any other databases in the order they were
+# attached).
+
+# TBD-EVIDENCE-OF: R-19619-42762 The INDEXED BY and NOT INDEXED clauses are
+# not allowed on UPDATE statements within triggers.
+
+# TBD-EVIDENCE-OF: R-57359-59558 The LIMIT and ORDER BY clauses for UPDATE
+# are unsupported within triggers, regardless of the compilation options
+# used to build SQLite.
+
+# TBD-EVIDENCE-OF: R-59581-44104 If SQLite is built with the
+# SQLITE_ENABLE_UPDATE_DELETE_LIMIT compile-time option then the syntax
+# of the UPDATE statement is extended with optional ORDER BY and LIMIT
+# clauses
+
+# TBD-EVIDENCE-OF: R-58862-44169 If an UPDATE statement has a LIMIT clause,
+# the maximum number of rows that will be updated is found by evaluating
+# the accompanying expression and casting it to an integer value.
+
+# TBD-EVIDENCE-OF: R-63582-45120 A negative value is interpreted as "no
+# limit".
+
+# TBD-EVIDENCE-OF: R-18628-11938 If the LIMIT expression evaluates to
+# non-negative value N and the UPDATE statement has an ORDER BY clause,
+# then all rows that would be updated in the absence of the LIMIT clause
+# are sorted according to the ORDER BY and the first N updated.
+
+# TBD-EVIDENCE-OF: R-30955-38324 If the UPDATE statement also has an OFFSET
+# clause, then it is similarly evaluated and cast to an integer value.
+# If the OFFSET expression evaluates to a non-negative value M, then the
+# first M rows are skipped and the following N rows updated instead.
+
+# TBD-EVIDENCE-OF: R-19486-35828 If the UPDATE statement has no ORDER BY
+# clause, then all rows that would be updated in the absence of the
+# LIMIT clause are assembled in an arbitrary order before applying the
+# LIMIT and OFFSET clauses to determine which are actually updated.
+
+# TBD-EVIDENCE-OF: R-10927-26133 The ORDER BY clause on an UPDATE statement
+# is used only to determine which rows fall within the LIMIT. The order
+# in which rows are modified is arbitrary and is not influenced by the
+# ORDER BY clause.

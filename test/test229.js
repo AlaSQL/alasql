@@ -16,20 +16,20 @@ describe('Test 229 Calculating simple running totals', function() {
             [value] int not null \
         )');
       // TODO Fix test with AUTOINCREMENT
-          alasql('insert into RunTotalTestData (id,[value]) values (1,1)');
-          alasql('insert into RunTotalTestData (id,[value]) values (2,2)');
-          alasql('insert into RunTotalTestData (id,[value]) values (3,4)');
-          alasql('insert into RunTotalTestData (id,[value]) values (4,7)');
-          alasql('insert into RunTotalTestData (id,[value]) values (5,9)');
-          alasql('insert into RunTotalTestData (id,[value]) values (6,12)');
-          alasql('insert into RunTotalTestData (id,[value]) values (7,13)');
-          alasql('insert into RunTotalTestData (id,[value]) values (8,16)');
-          alasql('insert into RunTotalTestData (id,[value]) values (9,22)');
-          alasql('insert into RunTotalTestData (id,[value]) values (10,42)');
-          alasql('insert into RunTotalTestData (id,[value]) values (11,57)');
-          alasql('insert into RunTotalTestData (id,[value]) values (12,58)');
-          alasql('insert into RunTotalTestData (id,[value]) values (13,59)');
-          alasql('insert into RunTotalTestData (id,[value]) values (14,60)');
+          alasql('insert into RunTotalTestData ([value]) values (1)');
+          alasql('insert into RunTotalTestData ([value]) values (2)');
+          alasql('insert into RunTotalTestData ([value]) values (4)');
+          alasql('insert into RunTotalTestData ([value]) values (7)');
+          alasql('insert into RunTotalTestData ([value]) values (9)');
+          alasql('insert into RunTotalTestData ([value]) values (12)');
+          alasql('insert into RunTotalTestData ([value]) values (13)');
+          alasql('insert into RunTotalTestData ([value]) values (16)');
+          alasql('insert into RunTotalTestData ([value]) values (22)');
+          alasql('insert into RunTotalTestData ([value]) values (42)');
+          alasql('insert into RunTotalTestData ([value]) values (57)');
+          alasql('insert into RunTotalTestData ([value]) values (58)');
+          alasql('insert into RunTotalTestData ([value]) values (59)');
+          alasql('insert into RunTotalTestData ([value]) values (60)');
 
       done();
     });
