@@ -10021,7 +10021,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				identity: col.identity
 			};
 			if(col.identity) {
-				table.identities[col.columnid]={value:col.identity.value,step:col.identity.step};
+				table.identities[col.columnid]={value:+col.identity.value,step:+col.identity.step};
 //				ss.push('\''+col.columnid+'\':(alasql.databases[\''+db.databaseid+'\'].tables[\''
 //					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
