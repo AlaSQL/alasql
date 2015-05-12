@@ -153,9 +153,16 @@ describe('Test 324 Roads samples', function() {
     assert(res.substr(0,2) == '20');
     done();
   });
-  it('99. DROP DATABASE',function(done){
+  it('19. DROP DATABASE',function(done){
     alasql('DROP DATABASE test324b');
     done();
   });
+
+  it('20. Full example',function(done){
+    alasql('SOURCE "test324.sql"');
+    // Check NO COUNT
+    done();
+  });
+
 });
 

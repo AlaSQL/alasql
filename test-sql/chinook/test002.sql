@@ -13,4 +13,4 @@ SELECT VALUE COUNT(*) FROM (
 	    ON Genre.GenreId = Track.GenreId
 );
 
-ASSERT 1;
+ASSERT 3503;

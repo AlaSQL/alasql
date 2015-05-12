@@ -1,4 +1,4 @@
-var alasql = require('../alasql.min.js');
+var alasql = require('../dist/alasql.min.js');
 function a(filename) {
 	it(filename,function(done){
 		alasql('SOURCE "world/'+filename+'"');

@@ -1,8 +1,8 @@
 //
 // alasql.js
 // AlaSQL - JavaScript SQL database
-// Date: 11.05.2015
-// Version: 0.1.4
+// Date: 12.05.2015
+// Version: 0.1.5
 // (ñ) 2014-2015, Andrey Gershun
 //
 
@@ -111,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.1.4";
+alasql.version = "0.1.5";
 
 
 
@@ -4016,6 +4016,8 @@ var Database = alasql.Database = function (databaseid) {
 		} else {
 			// Create new database (or get alasql?)
 			self = alasql.databases.alasql;
+			// For SQL Server examples, USE tempdb
+			if(alasql.options.tsql) alasql.databases.tempdb = alasql.databases.alasql;
 //			self = new Database(databaseid); // to call without new
 		}
 	}

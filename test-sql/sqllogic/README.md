@@ -1,3 +1,8 @@
-This is a place for sqllogic test files from:
+SQLLOGIC TEST
+--
+This folder refers to 
 
-https://github.com/mathiasrw/alasql
+
+
+The format of the tests are desribed here: http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki
+

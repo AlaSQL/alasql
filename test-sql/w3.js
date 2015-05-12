@@ -4,19 +4,28 @@ if(typeof exports == 'object') {
 
 function a(filename) {
 	it(filename,function(done){
-		alasql('SOURCE "northwind/'+filename+'"');
+		alasql('SOURCE "w3/'+filename+'"');
 		done();
 	});
 };
 
-describe('Northwind database',function(){
-//	it('1. Setup',function(done){
+		var tm = Date.now();
+		alasql('CREATE DATABASE w3; USE w3');
+		alasql('SOURCE "w3/w3.sql"',[],function(){
+			console.log(Date.now()-tm);
+		});
+
+/*
+describe('w3 database',function(){
+  it('1. Setup',function(done){
 		this.timeout(10000);
-		alasql('CREATE DATABASE Northwind; USE Northwind');
-//		alasql('SOURCE "northwind/Northwind.sql"');
-		a('n01.sql');
-	// 	done();
-	// });
+		alasql('CREATE DATABASE w3; USE w3');
+		alasql('SOURCE "w3/w3.sql"');
+ 		done();
+	});
+});
+
+*/
 	// it('2. Setup',function(done){
 	// 	this.timeout(10000);
 /*
@@ -53,6 +62,6 @@ describe('Northwind database',function(){
 		a('n08.sql');
 //		done();
 	// });
-*/
 
 });
+*/

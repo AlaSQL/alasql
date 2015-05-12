@@ -1,4 +1,4 @@
-var alasql = require('../dist/alasql.min.js');
+var alasql = require('../alasql.min.js');
 function a(filename) {
 	it(filename,function(done){
 		alasql('SOURCE "chinook/'+filename+'"');
@@ -7,8 +7,9 @@ function a(filename) {
 };
 
 describe('Chinook database',function(){
+	console.log('There is a problem with multiline /* */ comments');
 	it('Setup',function(done){
-		this.timeout(100000);
+		this.timeout(10000);
 		alasql('CREATE DATABASE Chinook; USE Chinook');
 		alasql('SOURCE "chinook/Chinook_Alasql.sql"');
 		done();
@@ -16,13 +17,4 @@ describe('Chinook database',function(){
 	// Set of samples from 
 	// http://gdichicago.com/classes/intro-databases/class4.html#/8
 	a('test001.sql');
-	a('test002.sql');
-	a('test003.sql');
-//	a('test004.sql');
-//	a('test005.sql');
-//	a('test006.sql');
-//	a('test007.sql');
-//	a('test008.sql');
-//	a('test009.sql');
-//	a('test010.sql');
 });

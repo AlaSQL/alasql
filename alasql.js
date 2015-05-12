@@ -10056,7 +10056,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 			// UNIQUE clause
 			if(col.foreignkey) {
-//				console.log(138,col.foreignkey);
+				console.log(138,col.foreignkey);
 				var fk = col.foreignkey.table;
 				var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
 				if(typeof fk.columnid == 'undefined') {

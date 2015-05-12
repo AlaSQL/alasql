@@ -26,6 +26,8 @@ var Database = alasql.Database = function (databaseid) {
 		} else {
 			// Create new database (or get alasql?)
 			self = alasql.databases.alasql;
+			// For SQL Server examples, USE tempdb
+			if(alasql.options.tsql) alasql.databases.tempdb = alasql.databases.alasql;
 //			self = new Database(databaseid); // to call without new
 		}
 	}
