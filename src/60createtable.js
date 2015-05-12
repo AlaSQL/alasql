@@ -330,7 +330,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	};
 
-	table.delete = function(i) {
+	table.delete = function(i,params,alasql) {
 		var table = this;
 		var r = this.data[i];
 		if(this.pk) {

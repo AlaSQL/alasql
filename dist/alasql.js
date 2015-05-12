@@ -10253,7 +10253,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	};
 
-	table.delete = function(i) {
+	table.delete = function(i,params,alasql) {
 		var table = this;
 		var r = this.data[i];
 		if(this.pk) {
@@ -11723,7 +11723,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //		console.log(this, 22, this.where.toJavaScript('r',''));
 //	} catch(err){console.log(444,err)};
 //		var query = {};
-		wherefn = new Function('r,params','return ('+this.where.toJavaScript('r','')+')');
+		wherefn = new Function('r,params,alasql','return ('+this.where.toJavaScript('r','')+')');
 //		console.log(wherefn);
 		statement = (function (params, cb) {
 			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {
@@ -11740,10 +11740,10 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 			var newtable = [];			
 			for(var i=0, ilen=table.data.length;i<ilen;i++) {
-				if(wherefn(table.data[i],params)) {
+				if(wherefn(table.data[i],params,alasql)) {
 					// Check for transaction - if it is not possible then return all back
 					if(table.delete) {
-						table.delete(i);
+						table.delete(i,params,alasql);
 					} else {
 						// SImply do not push
 					}
