@@ -1,4 +1,7 @@
 # Changelog
+### 0.1.6 "Palermo" (13.05.2015 - ...05.2015)
+* SET NOCOUNT OFF (for CREATE and INSERT)
+*
 
 ### 0.1.5 "San Marino" (12.05.2015 - 12.05.2015)
 * Added Meteor package (agershun:alasql) - still does not work - skeleton
