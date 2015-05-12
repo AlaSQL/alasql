@@ -82,7 +82,7 @@ Now you can search graphs with SEARCH operator:
     var res = alasql('SEARCH PATH(#Pablo) name FROM #Napoleon ');
     // returns ['loves','Josephine','knows','Pablo']
 ```
-You can play with grpahs in AlaSQL in [this jsFiddle example](http://jsfiddle.net/fgzya692/1/).
+You can play with grpahs in AlaSQL in [this jsFiddle example](http://jsfiddle.net/fgzya692/2/).
 
 ### Documents and graphs paradigms
 
