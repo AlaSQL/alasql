@@ -3644,6 +3644,9 @@ alasql.options.oracle = true;
 alasql.options.sqlite = true;
 alasql.options.orientdb = true;
 
+// for SET NOCOUNT OFF
+alasql.options.nocount = false;
+
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};
@@ -10371,9 +10374,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(databaseid);
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);
-	if(cb) cb(1);
+	var res;
+	if(!alasql.options.nocount) res = 1;
+	if(cb) res = cb(res);
 
-	return 1;
+	return res;
 };
 
 
@@ -11636,8 +11641,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 		        	}
 		        } else {
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
-		        }
-				return res.length;
+		        };
+		        if(alasql.options.nocount) return;
+				else return res.length;
 			}
 		}
 
@@ -11677,6 +11683,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 	//		var res = insertfn(db, params);
+	        if(alasql.options.nocount) res = undefined;
 			if(cb) cb(res);
 			return res;
 		};

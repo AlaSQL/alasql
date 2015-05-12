@@ -207,8 +207,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 		        	}
 		        } else {
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
-		        }
-				return res.length;
+		        };
+		        if(alasql.options.nocount) return;
+				else return res.length;
 			}
 		}
 
@@ -248,6 +249,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 	//		var res = insertfn(db, params);
+	        if(alasql.options.nocount) res = undefined;
 			if(cb) cb(res);
 			return res;
 		};

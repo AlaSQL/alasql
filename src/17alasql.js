@@ -76,6 +76,9 @@ alasql.options.oracle = true;
 alasql.options.sqlite = true;
 alasql.options.orientdb = true;
 
+// for SET NOCOUNT OFF
+alasql.options.nocount = false;
+
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};

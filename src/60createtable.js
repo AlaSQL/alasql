@@ -448,9 +448,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(databaseid);
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);
-	if(cb) cb(1);
+	var res;
+	if(!alasql.options.nocount) res = 1;
+	if(cb) res = cb(res);
 
-	return 1;
+	return res;
 };
 
 
