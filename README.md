@@ -205,7 +205,7 @@ Now AlaSQL can read data (and make other manipulations like grouping, filtering,
 </script>
 ```
 
-You can try this example [in jsFiddle](http://jsfiddle.net/ezy7rhhd/2).
+You can try this example [in jsFiddle](http://jsfiddle.net/ezy7rhhd/3).
 
 ### AlaSQL as a WebWorker
 
