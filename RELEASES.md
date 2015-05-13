@@ -1,5 +1,14 @@
 # Releases Plan
 
+## Target
+The target for AlaSQLdevelopment is a small compact library with size less than 200kb with support of:
+a) significant subset of SQL-92 to use the same SQL code on the client and server
+b) complex queries on the JavaScript arrays (including search and JSON traversing) 
+c) support some simple ETL operations (import-export from CSV and XLS formats)   
+d) database backend support (IndexedDB in the first)
+
+Plus some other features, like graphs and others in plug-ins.
+
 ## Alasql Development Prioritites
 1. Bugs, Speed, Memory Leaks, Better Code, JsDoc, Errors handling, Library Size, Compatibility (Browsers, Mobiles, SQLs)
 2. Documentation, alasql.org website, Social Media, Alasql promotion, Article, Coockbook, Tutorial
@@ -13,8 +22,26 @@
 
 ## Next Releases:
 
-1. Meteor package
-2. Documentation, Bugs, Size
-3. SQLLOGIC Tests
-4. Like-OrientDB functionality
-5. ADD COLUMN Problem
+### May 2015
+Now (May 2015) is the point, where I am decided to stop a little bit with development of new features, and do the homework with these priorities:
+a) documentation
+b) resolving bugs
+c) document and refactoring code
+
+The target of this phase is to pass SQLLOGIC test. I know, that current 250 unit tests is not enough for such big project.
+
+### June-July 2015
+Plus, I have some features in the short list for the June-July 2015:
+e) extend transactions support
+f) add simple triggers or INSERT OR REPLACE operator
+g) improve database backend functionality (IndexedDB, localStorage, fileStorage) - especially for mobile applications (Cordova, Meteor).
+
+### August 2015 (AlaSQL 0.2)
+h) split alasql.js into core and additional modules to reduce the size of the library
+i) add OrientDB support to search over graphs
+j) work with memory leaks
+
+### September 2015:
+k) improve parser to reduce its size, make it faster (especally for INSERT operator), split grammar files by modules
+
+

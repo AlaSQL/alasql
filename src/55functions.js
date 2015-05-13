@@ -152,6 +152,9 @@ stdlib.ROUND = function(s,d) {
 		return 'Math.round('+s+')';
 	}
 }
+stdlib.ROWNUM = function() {return '1'};
+stdlib.ROW_NUMBER = function() {return '1'};
+
 stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
 stdlib.TRIM = function(s) {return s+'.trim()'};

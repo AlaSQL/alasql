@@ -7,6 +7,80 @@ This file contanis unstructured ideas for future development of AlaSQL.
 Meteor Package
 GEFX
 
+PROLOG QUERY PROCESSOR OVER SQL DATA
+====================================
+
+
+
+ROWNUM()
+
+pure prolog...
+
+:- son(Alex,Bob);
+father(@x,@y) :- son(@y,@x);
+?- father(Bob,@x);
+
+:- son(Alex,Bob);
+{$class:'son',0:'Alex',1:'Bob'};
+
+:- son(name1=Alex,name2=Bob);
+{$class:'son',name1:'Alex',name2:'Bob'};
+
+father(@x,@y) :- son(@y,@x);
+{$class:'father',0:{vars:"x"},1:{vars:"y"},$rule:[{$class:'son',0:{vars:"y"},1:{vars:"x"},}]};
+
+:- son(person1 "Alex",name2=Bob);
+
+
+
+
+
+?- :rel {father:@x, son: "Alex"}, :son {son:@x};
+
+pattern-matching
+?- rel(father:@x, son:"Alex") rel(father=@y,son=@x) RETURNS @x,@y;
+?- rel(@x, @y).
+?- {son:@x, father:@y}, .
+
+CLASS "father/4" [1,2];
+
+son(a,b):-father(b,a);
+son("David","Abraham");
+$rule:"son",length:2, 0:"David",1:"Abraham" 
+
+
+:- son("Alex","David");
+father(@x,@y) :- son(@y,@x); 
+?- father("David",@z);
+
+How to reflects fact to JSON or GRAPH?
+
+son("Alex","David").
+
+{$id:10, $node:'RULE', ruleid: "son", args:["Alex", "David"]}
+{$id:10, $node:'RULE', $class: "son", $arity:2, 0:"Alex", 1:"David"}
+
+, son:"Andrey")
+
+:- rel(papa:"David",son:"Alex");
+?- rel(papa:"David",son:@x);
+
+SELECT * FROM rel;
+
+{$node:'RULE', $class: 'rel', papa:'David', son:'Alex'};
+{$node:'RULE', $class: 'rel', papa:{vars:@x}, son:'Alex', $rule:[{},{},{},{}];
+
+{$class: 'rel', papa:'David', son:'Alex'};
+{$class: 'rel', $arity:1, papa:'David'};
+{$class: 'rel', papa:{vars:@x}, son:'Alex', $rule:[{},{},{},{}];
+
+CREATE CLASS rel;
+INSERT INTO rel VALUES ("David", "Alex");
+?- rel("David",@x);
+
+
+RULE @x > brother > @y :- @z > father > @x, @z > father > @y, where(@x <> @y);
+
 
 
 

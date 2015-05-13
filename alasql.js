@@ -6326,6 +6326,9 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 2. Compile JOIN clauses
 	if(this.joins) this.compileJoins(query);
 	// 3. Compile SELECT clause
+
+	// For ROWNUM()
+	query.rownums = [];
 	
 	this.compileSelectGroup0(query);
 
@@ -6350,6 +6353,7 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 6. Compile HAVING
 	if(this.having) query.havingfn = this.compileHaving(query);
+
 
 	if(this.group || query.selectGroup.length>0) {
 		query.selectgfn = this.compileSelectGroup2(query);
@@ -6475,6 +6479,14 @@ yy.Select.prototype.compile = function(databaseid) {
 
 //console.log(res[0].schoolid);
 //console.log(184,res);
+			if(query.rownums.length>0) {
+				for(var i=0,ilen=res.length;i<ilen;i++) {
+					for(var j=0,jlen=query.rownums.length;j<jlen;j++) {
+						res[i][query.rownums[j]] = i+1;
+					}
+				}
+			}
+
 			var res2 = modify(query, res);
 
 
@@ -8001,6 +8013,10 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 				}
 				// }
 				col.nick = colas;
+				if(col.funcid && (col.funcid.toUpperCase() == 'ROWNUM' 
+					|| col.funcid.toUpperCase() == 'ROW_NUMBER')) {
+					query.rownums.push(col.as);
+				}
 //				console.log("colas:",colas);
 			// }
 		}
@@ -9530,6 +9546,9 @@ stdlib.ROUND = function(s,d) {
 		return 'Math.round('+s+')';
 	}
 }
+stdlib.ROWNUM = function() {return '1'};
+stdlib.ROW_NUMBER = function() {return '1'};
+
 stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
 stdlib.TRIM = function(s) {return s+'.trim()'};

@@ -262,6 +262,10 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 				}
 				// }
 				col.nick = colas;
+				if(col.funcid && (col.funcid.toUpperCase() == 'ROWNUM' 
+					|| col.funcid.toUpperCase() == 'ROW_NUMBER')) {
+					query.rownums.push(col.as);
+				}
 //				console.log("colas:",colas);
 			// }
 		}
