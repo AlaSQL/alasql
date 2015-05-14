@@ -39,6 +39,7 @@ gulp.task('js-merge', function () {
   	'./src/15utility.js', 
     './src/16comments.js', 
     './src/17alasql.js', 
+    './src/18promise.js', 
     './src/20database.js',
     './src/21transaction.js',
 //    './src/22store.js',
