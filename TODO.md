@@ -2,11 +2,62 @@
 
 This file contanis unstructured ideas for future development of AlaSQL.
 
+
+SQLLOGICTEST; time, memory, scores;
+
+
+
+search count(/) where(_>10), / name;
+search / > loves > @y, / > loves >@y where(@x<>@y) return(@x,@y);
+
+a > g > b
+search / AS @x, / son(@x,@y);  COMMA -> start from from again;
+
+from where(age>36), where(a>23)
+
+
+grandson(@a,@c) :- son(@a,@b),son(@b,@c);
+:- son(A,B,C,C);
+?- grandson(Alex,@x);
+
+grandson(@a,@c) :- son(@a,@b),son(@b,@c);
+SEARCH age FROM (QUERY grandson(@person,Alex));
+SEARCH Alex > grandson > @x if(name > "X") name;
+
+SEARCH (SELECT)
+SEARCH  name FROM ?- grandson(@person,Alex);
+
+#22:123 {22:{123:{}}}
+
+QUERY @e 213;
+
+{$node:'$edge',$class:'son',$rel:[12,23,45,67]}
+12: $out
+23: $in
+Others - do not count;
+
+
+
 ## Ideas
 
-SELECT * FROM @[1,2,3]
-SET modifier "value";
+?- son(a,b);
 
+@x >> @b :- @b >> @x;
+
+CREATE GRAPH loves(Andrey,Vera) ; - alternative notation for edges
+loves(Andrey, Vera, Semen);
+$in, $out, ...
+
+rel - $v[0], $v[1], $v[3]
+> $v[1]; -- if edge
+SEARCH loves(A,@x,B), land(@x);
+loves (A,@x,B):- son(),b; 
+
+Eureka!!!
+
+
+SELECT * FROM @[1,2,3] JOIN @[1,2,3]
+SET modifier "value";
 CREATE UNIQUE INDEX
 CREATE INDEX
 INSERT/DELETE/UPDATE indexes loop

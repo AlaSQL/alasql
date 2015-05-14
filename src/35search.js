@@ -520,6 +520,12 @@ function doSearch (databaseid, params, cb) {
 					// }
 					var r = {status:1,values:nest};
 				}
+			} else if(sel.selid == 'COMMA') {
+				if(sidx+1+1 > selectors.length) {
+					return [value];
+				} else {
+					return processSelector(selectors,sidx+1,fromdata);
+				}
 			} else {
 				throw new Error('Wrong selector '+sel.selid);
 			}
