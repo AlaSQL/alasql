@@ -40,7 +40,10 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 			} else if(fr instanceof yy.FromData) {
 
+			} else if(fr instanceof yy.Json) {
+
 			} else {
+//				console.log(fr);
 				throw new Error('Unknown type of FROM clause');
 			};
 		});

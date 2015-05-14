@@ -4,17 +4,23 @@ This file contanis unstructured ideas for future development of AlaSQL.
 
 ## Ideas
 
+SELECT * FROM @[1,2,3]
+SET modifier "value";
+
+CREATE UNIQUE INDEX
+CREATE INDEX
+INSERT/DELETE/UPDATE indexes loop
+
 Meteor Package
 GEFX
 
 PROLOG QUERY PROCESSOR OVER SQL DATA
 ====================================
 
+pure prolog... modified prolog?
 
-
-ROWNUM()
-
-pure prolog...
+son(alex,bob).
+son("Alex","Bob").
 
 :- son(Alex,Bob);
 father(@x,@y) :- son(@y,@x);

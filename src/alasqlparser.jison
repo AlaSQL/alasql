@@ -783,6 +783,9 @@ FromTable
 	| LPAR Select RPAR /* default alias */
 		{ $$ = $2; $$.as = 'default' }	
 
+	| Json AS? Literal?
+		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
+
 	| Table Literal
 		{ $$ = $1; $1.as = $2 }
 	| Table AS Literal
@@ -876,6 +879,8 @@ JoinTableAs
 		{ $$ = {table: $1, as: $2 } ; }
 	| Table AS Literal
 		{ $$ = {table: $1, as: $3 } ; }
+	| Json AS? Literal?
+		{ $$ = {json:new yy.Json({value:$1,as:$3})}; }
 	| ParamValue Literal
 		{ $$ = {param: $1, as: $2 } ; }
 	| ParamValue AS Literal

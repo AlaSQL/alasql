@@ -21,6 +21,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 	self.from.forEach(function(tq){
 		//console.log(tq);
+//console.log(tq,tq.toJavaScript());
 
 		var alias = tq.as || tq.tableid;
 //		console.log(alias);
@@ -39,6 +40,8 @@ yy.Select.prototype.compileFrom = function(query) {
 			query.aliases[alias] = {type:'varvalue'};
 		} else if(tq instanceof yy.FromData) {
 			query.aliases[alias] = {type:'fromdata'};
+		} else if(tq instanceof yy.Json) {
+			query.aliases[alias] = {type:'json'};
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -142,6 +145,13 @@ yy.Select.prototype.compileFrom = function(query) {
 		} else if(tq instanceof yy.ParamValue) {
 
 			var ps = "var res = alasql.prepareFromData(params['"+tq.param+"']";
+//				console.log(tq);
+			if(tq.array) ps+=",true";
+			ps += ");if(cb)res=cb(res,idx,query);return res"
+			source.datafn = new Function('query,params,cb,idx,alasql',ps);
+
+		} else if(tq instanceof yy.Json) {
+			var ps = "var res = alasql.prepareFromData("+tq.toJavaScript();
 //				console.log(tq);
 			if(tq.array) ps+=",true";
 			ps += ");if(cb)res=cb(res,idx,query);return res"
