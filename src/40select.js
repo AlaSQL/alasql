@@ -86,7 +86,9 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
 	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+'))[0]';
-//	s = '(console.log(this.queriesfn[0]),'+s+')';
+
+
+//	var s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
 
 	return s;
 };

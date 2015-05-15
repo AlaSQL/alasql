@@ -3391,7 +3391,14 @@ var extend = utils.extend = function extend (a,b){
    Flat array by first row
  */
 var flatArray = utils.flatArray = function(a) {
+//console.log(684,a);
     if(!a || a.length == 0) return [];
+
+    // For recordsets
+    if(typeof a == 'object' && a instanceof alasql.Recordset) {
+        return a.data.map(function(ai){return ai[a.columns[0].columnid]});
+    }
+    // Else for other arrays
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
     return a.map(function(ai) {return ai[key]});
@@ -6336,7 +6343,9 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
 	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+'))[0]';
-//	s = '(console.log(this.queriesfn[0]),'+s+')';
+
+
+//	var s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
 
 	return s;
 };
@@ -6698,7 +6707,7 @@ yy.Select.prototype.compileWhereExists = function(query) {
 	query.existsfn = this.exists.map(function(ex) {
 		var nq = ex.compile(query.database.databaseid);
 //		console.log(nq);
-		 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
+		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 		 return nq;
 	});
 };
@@ -6708,7 +6717,7 @@ yy.Select.prototype.compileQueries = function(query) {
 	query.queriesfn = this.queries.map(function(q) {
 		 var nq = q.compile(query.database.databaseid);
 //		console.log(nq);
-//		 nq.query.modifier = undefined;
+		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 		 return nq;
 	});
 };
@@ -6726,6 +6735,7 @@ alasql.precompile = function(statement,databaseid,params){
 			var nq = q.compile(databaseid || statement.database.databaseid);
 //			console.log(nq);
 //			 nq.query.modifier = undefined;
+			 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 			 return nq;
 
 		});
@@ -6735,7 +6745,8 @@ alasql.precompile = function(statement,databaseid,params){
 		statement.existsfn = statement.exists.map(function(ex) {
 			var nq = ex.compile(databaseid || statement.database.databaseid);
 //			console.log(nq.query.modifier);
-			 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
+			 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
+//			 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
 			 return nq;
 
 		});

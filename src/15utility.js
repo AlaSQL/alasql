@@ -681,7 +681,14 @@ var extend = utils.extend = function extend (a,b){
    Flat array by first row
  */
 var flatArray = utils.flatArray = function(a) {
+//console.log(684,a);
     if(!a || a.length == 0) return [];
+
+    // For recordsets
+    if(typeof a == 'object' && a instanceof alasql.Recordset) {
+        return a.data.map(function(ai){return ai[a.columns[0].columnid]});
+    }
+    // Else for other arrays
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
     return a.map(function(ai) {return ai[key]});

@@ -1,0 +1,40 @@
+<!DOCTYPE HTML>
+<!--
+/*
+ * JavaScript MD5 Test 1.0.2
+ * https://github.com/blueimp/JavaScript-MD5
+ *
+ * Copyright 2011, Sebastian Tschan
+ * https://blueimp.net
+ *
+ * Licensed under the MIT license:
+ * http://www.opensource.org/licenses/MIT
+ */
+-->
+<html lang="en">
+<head>
+<!--[if IE]>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<![endif]-->
+<meta charset="utf-8">
+<title>JavaScript MD5 Test</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="http://blueimp.github.io/cdn/css/mocha.min.css">
+</head>
+<body>
+<div id="mocha"></div>
+<script src="http://blueimp.github.io/cdn/js/mocha.min.js"></script>
+<script src="http://blueimp.github.io/cdn/js/expect.min.js"></script>
+<script>
+mocha.setup('bdd');
+</script>
+<script src="../js/md5.js"></script>
+<script src="test.js"></script>
+<script>
+if (!window.PHANTOMJS) {
+	mocha.checkLeaks();
+	mocha.run();
+}
+</script>
+</body> 
+</html>
