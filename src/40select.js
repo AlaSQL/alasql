@@ -106,7 +106,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	query.explain = this.explain; // Explain
 	query.explaination = [];
 	query.explid = 1;
-
+//console.log(this.modifier);
 	query.modifier = this.modifier;
 	
 	query.database = db;

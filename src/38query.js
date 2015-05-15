@@ -137,8 +137,11 @@ function queryfn3(query) {
 	// Level of Joins
 	var h = 0;
 
+
 	// Start walking over data
+console.log(142,'1111');
 	doJoin(query, scope, h);
+console.log(144,'2222',query.modifier);
 
 //console.log(85,query.data[0]);
 
@@ -188,7 +191,7 @@ function queryfn3(query) {
 	if(query.unionallfn) {
 // TODO Simplify this part of program
 		if(query.corresponding) {
-			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'ARRAY';
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undedined;
 			var ud = query.unionallfn(query.params);
 		} else {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
@@ -244,7 +247,7 @@ function queryfn3(query) {
 		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
 		if(query.corresponding) {
-			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'ARRAY';
+			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undedined;
 			var ud = query.intersectfn(query.params);
 		} else {
 			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';
