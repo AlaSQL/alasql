@@ -25,17 +25,17 @@ yy.Delete.prototype.compile = function (databaseid) {
 	if(this.where) {
 
 //		console.log(27, this);
-		this.query = {};
+//		this.query = {};
 
 		if(this.exists) {
-			this.query.existsfn = this.exists.map(function(ex) {
+			this.existsfn  = this.exists.map(function(ex) {
 				var nq = ex.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
 			});
 		}
 		if(this.queries) {
-			this.query.queriesfn = this.queries.map(function(q) {
+			this.queriesfn = this.queries.map(function(q) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;

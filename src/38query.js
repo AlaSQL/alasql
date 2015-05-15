@@ -191,7 +191,7 @@ function queryfn3(query) {
 	if(query.unionallfn) {
 // TODO Simplify this part of program
 		if(query.corresponding) {
-			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undedined;
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undefined;
 			var ud = query.unionallfn(query.params);
 		} else {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
@@ -247,7 +247,7 @@ function queryfn3(query) {
 		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
 		if(query.corresponding) {
-			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undedined;
+			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undefined;
 			var ud = query.intersectfn(query.params);
 		} else {
 			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';

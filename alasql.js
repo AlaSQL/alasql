@@ -5620,7 +5620,7 @@ function queryfn3(query) {
 	if(query.unionallfn) {
 // TODO Simplify this part of program
 		if(query.corresponding) {
-			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undedined;
+			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undefined;
 			var ud = query.unionallfn(query.params);
 		} else {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
@@ -5676,7 +5676,7 @@ function queryfn3(query) {
 		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
 		if(query.corresponding) {
-			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undedined;
+			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undefined;
 			var ud = query.intersectfn(query.params);
 		} else {
 			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';
@@ -8849,7 +8849,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		if(this.right instanceof yy.Select ) {
 			var s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
-			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
+//			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
+			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += '.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
@@ -8873,7 +8874,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		if(this.right instanceof yy.Select ) {
 			var s = '('
 				//this.query.queriesdata['+this.queriesidx+']
-			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+//			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
@@ -11579,6 +11581,22 @@ yy.Insert.prototype.compile = function (databaseid) {
 // INSERT INTO table VALUES
 	if(this.values) {
 
+		if(this.exists) {
+			this.existsfn  = this.exists.map(function(ex) {
+				var nq = ex.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});
+		}
+		if(this.queries) {
+			this.queriesfn = this.queries.map(function(q) {
+				var nq = q.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});		
+		}
+
+
 //		console.log(1);
 		self.values.forEach(function(values) {
 			var ss = [];
@@ -11714,7 +11732,7 @@ yy.Insert.prototype.compile = function (databaseid) {
         }
 
 //console.log(186,s3+s);
-		var insertfn = new Function('db, params, alasql',s3+s);
+		var insertfn = new Function('db, params, alasql',s3+s).bind(this);
 	
 // INSERT INTO table SELECT
 
@@ -11824,17 +11842,17 @@ yy.Delete.prototype.compile = function (databaseid) {
 	if(this.where) {
 
 //		console.log(27, this);
-		this.query = {};
+//		this.query = {};
 
 		if(this.exists) {
-			this.query.existsfn = this.exists.map(function(ex) {
+			this.existsfn  = this.exists.map(function(ex) {
 				var nq = ex.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
 			});
 		}
 		if(this.queries) {
-			this.query.queriesfn = this.queries.map(function(q) {
+			this.queriesfn = this.queries.map(function(q) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
@@ -11950,7 +11968,22 @@ yy.Update.prototype.compile = function (databaseid) {
 	var tableid = this.table.tableid;
 	
 	if(this.where) {
-		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r',''));
+		if(this.exists) {
+			this.existsfn  = this.exists.map(function(ex) {
+				var nq = ex.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});
+		}
+		if(this.queries) {
+			this.queriesfn = this.queries.map(function(q) {
+				var nq = q.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});		
+		}
+
+		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r','')).bind(this);
 	};
 
 	// Construct update function

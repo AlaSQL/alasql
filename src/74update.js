@@ -26,7 +26,22 @@ yy.Update.prototype.compile = function (databaseid) {
 	var tableid = this.table.tableid;
 	
 	if(this.where) {
-		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r',''));
+		if(this.exists) {
+			this.existsfn  = this.exists.map(function(ex) {
+				var nq = ex.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});
+		}
+		if(this.queries) {
+			this.queriesfn = this.queries.map(function(q) {
+				var nq = q.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});		
+		}
+
+		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r','')).bind(this);
 	};
 
 	// Construct update function
