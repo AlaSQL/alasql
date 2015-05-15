@@ -2,8 +2,8 @@
 
 This file contanis unstructured ideas for future development of AlaSQL.
 
-
 SQLLOGICTEST; time, memory, scores;
+
 
 
 

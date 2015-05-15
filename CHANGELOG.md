@@ -6,6 +6,7 @@
 * Promised version of alasql() - alasql.async() (based on es6-promises)
 * SELECT * FROM Json
 * SEARCH COMMA selector
+* Fixed bug with ORDER BY 1,2,3
 
 ### 0.1.5 "San Marino" (12.05.2015 - 12.05.2015)
 * Added Meteor package (agershun:alasql) - still does not work - skeleton

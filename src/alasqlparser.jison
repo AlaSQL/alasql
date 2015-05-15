@@ -272,6 +272,9 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 /* '['												return 'LBRA' */
 ']'												return 'RBRA'
 
+
+':-'											return 'COLONDASH'
+'?-'											return 'QUESTIONDASH'
 '.'												return 'DOT'
 ','												return 'COMMA'
 '::'											return 'DOUBLECOLON'
@@ -409,9 +412,12 @@ Statement
 	| Print
 	| Require
 	| SetVariable
+	| ExpressionStatement 
+	| Fact
+	| Rule
+	| QUery
 
 /*
-	| ExpressionStatement 
 	| Store
 	| Restore
 
@@ -2549,7 +2555,7 @@ GraphVertexEdge
 			yy.extend($$,$3);
 			;
 		}
-
+	| Literal LPAR GraphList RPAR
 	;
 
 GraphVar
@@ -2593,4 +2599,25 @@ DeleteVertex
 
 DeleteEdge
 	: DELETE EDGE Expression (FROM Expression)? (TO Expression)? (WHERE Expression)?
+	;
+
+ExpressionStatement 
+	: EQ Expression
+	;
+
+Fact 
+	:COLONDASH FuncValue
+	;
+
+Rule
+	: FuncValue COLONDASH FuncValueList
+	;
+
+FuncValueList
+	: FuncValueList COMMA FuncValue
+	| FuncValue
+	;
+
+QUery
+	: QUESTIONDASH FuncValue
 	;
