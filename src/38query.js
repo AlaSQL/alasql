@@ -139,9 +139,9 @@ function queryfn3(query) {
 
 
 	// Start walking over data
-console.log(142,'1111');
+//console.log(142,'1111');
 	doJoin(query, scope, h);
-console.log(144,'2222',query.modifier);
+//console.log(144,'2222',query.modifier);
 
 //console.log(85,query.data[0]);
 

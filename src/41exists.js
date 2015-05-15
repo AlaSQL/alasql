@@ -18,7 +18,7 @@ yy.ExistsValue.prototype.toType = function() {
 yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
 //	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
 	
-	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').length';
+	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').data.length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {

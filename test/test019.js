@@ -3,9 +3,11 @@ if(typeof exports === 'object') {
 	var alasql = require('..');
 };
 
+var db;
+
 describe('Test 19', function() {
-	it('EXISTS and NOT EXISTS', function(done){
-	var db = new alasql.Database("db");
+	it('1. Create tables', function(done){
+	db = new alasql.Database("db");
 		db.exec('CREATE TABLE test1 (a int)');
 		db.exec('INSERT INTO test1 VALUES (1)');
 		db.exec('INSERT INTO test1 VALUES (2)');
@@ -20,10 +22,18 @@ describe('Test 19', function() {
 		db.exec('INSERT INTO test2 VALUES (1, 2)');
 		db.exec('INSERT INTO test2 VALUES (1, 3)');
 		db.exec('INSERT INTO test2 VALUES (2, 4)');
+		done();
+	});
+
+	it('2. EXISTS', function(done){
 
 		var res = db.exec('SELECT COLUMN a FROM test1 WHERE EXISTS '+
 			'(SELECT * FROM test2 WHERE test1.a = test2.b)');
 		assert.deepEqual(res, [1,2,3,4]);
+		done();
+	});
+
+	it('3. NOT EXISTS', function(done){
 
 		var res = db.exec('SELECT COLUMN a FROM test1 WHERE NOT EXISTS '+
 			'(SELECT * FROM test2 WHERE test1.a = test2.a)');

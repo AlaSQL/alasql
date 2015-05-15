@@ -5568,9 +5568,9 @@ function queryfn3(query) {
 
 
 	// Start walking over data
-console.log(142,'1111');
+//console.log(142,'1111');
 	doJoin(query, scope, h);
-console.log(144,'2222',query.modifier);
+//console.log(144,'2222',query.modifier);
 
 //console.log(85,query.data[0]);
 
@@ -6702,7 +6702,7 @@ yy.ExistsValue.prototype.toType = function() {
 yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
 //	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
 	
-	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').length';
+	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').data.length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {
@@ -8849,7 +8849,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		if(this.right instanceof yy.Select ) {
 			var s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
-			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += '.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
@@ -11822,11 +11822,32 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 
 	if(this.where) {
+
+//		console.log(27, this);
+		this.query = {};
+
+		if(this.exists) {
+			this.query.existsfn = this.exists.map(function(ex) {
+				var nq = ex.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});
+		}
+		if(this.queries) {
+			this.query.queriesfn = this.queries.map(function(q) {
+				var nq = q.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});		
+		}
+
+
 //		try {
 //		console.log(this, 22, this.where.toJavaScript('r',''));
 //	} catch(err){console.log(444,err)};
 //		var query = {};
-		wherefn = new Function('r,params,alasql','return ('+this.where.toJavaScript('r','')+')');
+//console.log(this.where.toJavaScript('r',''));
+		wherefn = new Function('r,params,alasql','return ('+this.where.toJavaScript('r','')+')').bind(this);
 //		console.log(wherefn);
 		statement = (function (params, cb) {
 			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {

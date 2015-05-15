@@ -238,7 +238,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		if(this.right instanceof yy.Select ) {
 			var s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
-			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += '.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 			return s;
