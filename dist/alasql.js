@@ -2963,9 +2963,16 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 */
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
-    if(typeof exports == 'object') {
+    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
         // For Node.js
-        var fs = require('fs');
+        if(typeof Meteor != 'undefined') {
+            var fs = Npm.require('fs'); // For Meteor
+        } else {
+            var fs = require('fs');
+        }
+    // if(typeof exports == 'object') {
+    //     // For Node.js
+    //     var fs = require('fs');
         if(asy) {
             fs.readFile(path,function(err,data){
                 if(err) {
