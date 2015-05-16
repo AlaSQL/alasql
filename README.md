@@ -22,6 +22,7 @@ Please use:
 * [Issues](https://github.com/agershun/alasql/issues) to report bugs.
 * [Feathub](http://feathub.com/agershun/alasql) to vote for new features
 * [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions
+* [AlaSQL Roadmap](https://trello.com/b/qxz65pVi/alasql-roadmap)
 
 ## Documentation 
 
