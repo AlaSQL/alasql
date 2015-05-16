@@ -37,6 +37,7 @@ yy.Select.prototype.compileQueries = function(query) {
 	query.queriesfn = this.queries.map(function(q) {
 		 var nq = q.compile(query.database.databaseid);
 //		console.log(nq);
+//	if(!nq.query) nq.query = {};
 		 nq.query.modifier = 'RECORDSET';
 //		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 		 return nq;

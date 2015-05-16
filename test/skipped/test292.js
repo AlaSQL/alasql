@@ -1,7 +1,6 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
-	var alasql = require('..');
-  var Promise = require('es6-promise').Promise;
+	var alasql = require('../..');
 } else {
 	__dirname = '.';
 };
@@ -17,7 +16,7 @@ describe('Test 292 Nested searches', function() {
 var data = [{a:{b:[{c:1},{c:2},{c:3}]}},{a:{b:[{c:4},{c:5},{c:6}]}}];
 
   it('2. Search inside select',function(done){
-    var res = alasql('SELECT (SEARCH b SUM(/c) FROM _) FROM ?');
+    var res = alasql('SELECT (SEARCH b SUM(/c) FROM _) FROM ?',[data]);
     console.log(res);
     done();
   });
