@@ -2,21 +2,16 @@
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
-## How to use
+## How to use?
 
-AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file (about 280Kb) to your project and call 
-```alasql()``` function with SQL statement inside: 
+AlaSQL is easy to use! Just install ```agershun:alasql```packageto your project and call ```alasql()``` function with SQL statement inside: 
 
-```html
-    <script src="alasql.min.js"></script>  
-    <script>
-        alasql("CREATE TABLE cities (city string, population number)");
-        alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),\
+```js
+    alasql("CREATE TABLE cities (city string, population number)");
+    alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),\
             ('Berlin',3517424), ('Madrid',3041579)");
-        console.log( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
-    </script>
+    console.log( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
 ```
-Run this sample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">AlaSQL console</a>.
 
 Please use:
 * [Issues](https://github.com/agershun/alasql/issues) to report bugs.

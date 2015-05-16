@@ -78,19 +78,24 @@ var alasql = function(sql, params, cb, scope) {
 };
 
 /** Current version of alasql */
-alasql.version = "0.1.5";
+alasql.version = "0.1.6";
 alasql.debug = undefined; // Initial debug variable
 
 getAlaSQLPath();
 
 function getAlaSQLPath() {
+	alasql.path = '';
+
 	if (typeof importScripts === 'function') {
+		alasql.path = '';		
 		// TODO Check how to get path in worker
 	} else if(typeof exports != 'undefined') { 
 		alasql.path = __dirname;
 		// 
 		//console.log(require('alasql').resolve());
-	} else {
+	} else if(typeof Meteor == 'object') {
+			alasql.path = '/packages/dist/';
+	} else if(typeof document != 'undefined') {
 		var sc = document.getElementsByTagName('script');
 		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
@@ -108,4 +113,5 @@ function getAlaSQLPath() {
 			};
 		};	
 	};
-}
+};
+
