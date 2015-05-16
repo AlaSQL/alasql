@@ -1,0 +1,31 @@
+hash-threshold 8
+
+statement ok
+CREATE TABLE t1( x INTEGER, y VARCHAR(8) )
+
+statement ok
+INSERT INTO t1 VALUES(1,'true')
+
+statement ok
+INSERT INTO t1 VALUES(0,'false')
+
+statement ok
+INSERT INTO t1 VALUES(NULL,'NULL')
+
+statement ok
+CREATE INDEX t1i1 ON t1(x)
+
+
+# EVIDENCE-OF: R-42037-15614 The DROP INDEX statement removes an index
+# added with the CREATE INDEX statement.
+
+statement ok
+DROP INDEX t1i1;
+
+# this should error, as already dropped
+statement error
+DROP INDEX t1i1;
+
+# this should error, as never existed
+statement error
+DROP INDEX tXiX;

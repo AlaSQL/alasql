@@ -49,9 +49,29 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
 
 ## What is new?
 
-### AlaSQL and Meteor Mongo collections
+### AlaSQL plug-ins
 
-Now you can use Meteor collections as agruments. To do it simply store alasql.min.js to the client/lib directory and then apply SQL to Meteor Collections: 
+Now AlaSQL supports plugins system. To install the plugin you need to use REQUIRE statement, like:
+```js
+    alasql('REQUIRE ECHO');
+    var res = alasql('ECHO 123');  // Returns simply 123
+```
+You can use the same command in browser or include plugins directly:
+```html
+    <script src="alasql.min.js"></script>
+    <script src="alasql-echo.js"></script>
+```
+The list of packages will be prepared later.
+
+### AlaSQL and Meteor
+
+Now you can install AlaSQL in Meteor from [official package](https://atmospherejs.com/agershun/alasql):
+```
+    meteor add agershun:alasql
+```
+It works on the client and the server side.
+
+Now you can use Meteor Collections as agruments. To do it simply store alasql.min.js to the client/lib directory and then apply SQL to Meteor Collections: 
 
 ```js
     Template.body.helpers({
