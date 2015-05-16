@@ -79,9 +79,13 @@ var cutbom = function(s) {
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
 
-    if(typeof exports == 'object') {
+    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
         // For Node.js
-        var fs = require('fs');
+        if(typeof Meteor != 'undefined') {
+            var fs = Npm.require('fs'); // For Meteor
+        } else {
+            var fs = require('fs');
+        }
 //        console.log(36,path);
 //        console.log(typeof path);
         if(!path) {

@@ -126,8 +126,10 @@ function getAlaSQLPath() {
 		alasql.path = __dirname;
 		// 
 		//console.log(require('alasql').resolve());
-	} else if(typeof Meteor == 'object') {
+	} else if(typeof Meteor == 'object' && Meteor.isClient) {
 			alasql.path = '/packages/dist/';
+	} else if(typeof Meteor == 'object' && Meteor.isServer) {
+			alasql.path = 'assets/packages/dist/';
 	} else if(typeof document != 'undefined') {
 		var sc = document.getElementsByTagName('script');
 		for(var i=0;i<sc.length;i++) {
@@ -2825,9 +2827,13 @@ var cutbom = function(s) {
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
 
-    if(typeof exports == 'object') {
+    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
         // For Node.js
-        var fs = require('fs');
+        if(typeof Meteor != 'undefined') {
+            var fs = Npm.require('fs'); // For Meteor
+        } else {
+            var fs = require('fs');
+        }
 //        console.log(36,path);
 //        console.log(typeof path);
         if(!path) {

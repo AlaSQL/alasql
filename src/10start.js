@@ -93,8 +93,10 @@ function getAlaSQLPath() {
 		alasql.path = __dirname;
 		// 
 		//console.log(require('alasql').resolve());
-	} else if(typeof Meteor == 'object') {
+	} else if(typeof Meteor == 'object' && Meteor.isClient) {
 			alasql.path = '/packages/dist/';
+	} else if(typeof Meteor == 'object' && Meteor.isServer) {
+			alasql.path = 'assets/packages/dist/';
 	} else if(typeof document != 'undefined') {
 		var sc = document.getElementsByTagName('script');
 		for(var i=0;i<sc.length;i++) {
