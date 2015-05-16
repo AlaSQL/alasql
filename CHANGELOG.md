@@ -8,7 +8,8 @@
 * SEARCH COMMA selector
 * Fixed bug with ORDER BY 1,2,3
 * Added subqueries for INSERT/DELETE/UPDATE
-* First ECHO plugin released (REUQUIRE ECHO)
+* First 'official' ECHO plugin released (REQUIRE ECHO)
+* New catalogs added for future plugins
 
 ### 0.1.5 "San Marino" (12.05.2015 - 12.05.2015)
 * Added Meteor package (agershun:alasql) - still does not work - skeleton

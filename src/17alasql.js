@@ -87,6 +87,8 @@ alasql.declares = {};
 
 alasql.prompthistory = [];
 
+alasql.plugins = {}; // If plugin already loaded
+
 alasql.from = {}; // FROM functions
 alasql.into = {}; // INTO functions
 

@@ -414,9 +414,8 @@ Statement
 	| Require
 	| SetVariable
 	| ExpressionStatement 
-	| Fact
-	| Rule
-	| QUery
+	| AddRule
+	| Query
 
 /* PLugins */
 
@@ -2332,11 +2331,24 @@ Print
 	;
 
 Require
-	: REQUIRE StringValuesList
+	: REQUIRE StringValue*
 		{ $$ = new yy.Require({paths:$2}); }
-	| REQUIRE Plugin*
+	| REQUIRE PluginsList
 		{ $$ = new yy.Require({plugins:$2}); }
 	;
+
+/* For test plugin system */
+
+Plugin
+	: ECHO {$$ = $1.toUpperCase(); }
+	| Literal {$$ = $1.toUpperCase(); }
+	;
+
+Echo
+	: ECHO Expression
+		{ $$ = new yy.Echo({expr:$2}); }
+	;
+
 
 StringValuesList
 	: StringValuesList COMMA StringValue
@@ -2344,6 +2356,14 @@ StringValuesList
 	| StringValue
 		{ $$ = [$1]; }
 	;
+
+PluginsList
+	: PluginsList COMMA Plugin
+		{ $1.push($3); $$ = $1; }
+	| Plugin
+		{ $$ = [$1]; }
+	;
+
 
 Declare
 	: DECLARE DeclaresList
@@ -2613,29 +2633,28 @@ ExpressionStatement
 	: EQ Expression
 	;
 
-Fact 
-	:COLONDASH FuncValue
+AddRule
+	: Term COLONDASH TermsList
+		{ $$ = new yy.AddRule({left:$1, right:$3}); }
+	| COLONDASH TermsList
+		{ $$ = new yy.AddRule({right:$2}); }
 	;
 
-Rule
-	: FuncValue COLONDASH FuncValueList
+TermsList
+	: TermsList COMMA Term
+		{ $$ = $1; $$.push($3); } 
+	| Term
+		{ $$ = [$1]; }
 	;
 
-FuncValueList
-	: FuncValueList COMMA FuncValue
-	| FuncValue
+Term
+	: Literal
+		{ $$ = new yy.Term({termid:$1}); }
+	| Literal LPAR TermsList RPAR
+		{ $$ = new yy.Term({termid:$1,args:$3}); }
 	;
 
-QUery
+Query
 	: QUESTIONDASH FuncValue
 	;
 
-/* For test plugin system */
-
-Plugin
-	: ECHO {$$ = $1.toUpperCase(); };
-
-Echo
-	: ECHO Expression
-		{ $$ = new yy.Echo({expr:$2}); }
-	;

@@ -112,7 +112,7 @@ gulp.task('js-merge', function () {
     './src/90websql.js',
     './src/91indexeddb.js',
     './src/92localstorage.js',
-    './src/93sqlite.js',
+    './src/93sqljs.js',
     './src/94filestorage.js',
     './src/97saveas.js',
     './src/FileSaver.js',
@@ -147,11 +147,6 @@ gulp.task('copy-dist', function(){
     .pipe(gulp.dest('./'));
 });
 
-// Echo plugin
-gulp.task('plugin-echo', function(){
-  gulp.src(['./src/echo/alasql-echo.js'])
-    .pipe(gulp.dest('./dist'));
-});
 
 
 gulp.task('copy-dist-org', function(){
@@ -164,6 +159,21 @@ gulp.task('copy-console-org', function(){
   gulp.src(['./console/*'])
     .pipe(gulp.dest('../alasql-org/console/'));
 });
+
+/************************/
+
+// Echo plugin
+gulp.task('plugin-echo', function(){
+  gulp.src(['./src/echo/alasql-echo.js'])
+    .pipe(gulp.dest('./dist'));
+});
+
+// Echo plugin
+gulp.task('plugin-prolog', function(){
+  gulp.src(['./src/prolog/alasql-prolog.js'])
+    .pipe(gulp.dest('./dist'));
+});
+
 
 //    , {
 //      templateData: {
@@ -197,6 +207,7 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
   gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); });
 
   gulp.watch('./src/echo/*.js',function(){ gulp.run('plugin-echo'); });
+  gulp.watch('./src/prolog/*.js',function(){ gulp.run('plugin-prolog'); });
 
   gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
   gulp.watch('./dist/alasql.min.js',function(){ 
