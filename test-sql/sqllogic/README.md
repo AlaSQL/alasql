@@ -1,6 +1,6 @@
 SQLLOGIC TEST
 --
-This folder refers to 
+This folder refers to test scripts duplicated from https://github.com/oriherrnstadt/SQLlogictest/tree/master/test
 
 
 

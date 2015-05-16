@@ -147,6 +147,13 @@ gulp.task('copy-dist', function(){
     .pipe(gulp.dest('./'));
 });
 
+// Echo plugin
+gulp.task('plugin-echo', function(){
+  gulp.src(['./src/echo/alasql-echo.js'])
+    .pipe(gulp.dest('./dist'));
+});
+
+
 gulp.task('copy-dist-org', function(){
   gulp.src(['./dist/alasql.min.js','./dist/alasql-worker.min.js'])
     .pipe(gulp.dest('./console/'));
@@ -188,6 +195,9 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); });
+
+  gulp.watch('./src/echo/*.js',function(){ gulp.run('plugin-echo'); });
+
   gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
   gulp.watch('./dist/alasql.min.js',function(){ 
     gulp.run('copy-dist'); 

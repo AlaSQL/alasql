@@ -80,3 +80,31 @@ var alasql = function(sql, params, cb, scope) {
 /** Current version of alasql */
 alasql.version = "0.1.5";
 
+getAlaSQLPath();
+
+function getAlaSQLPath() {
+	if (typeof importScripts === 'function') {
+		// TODO Check how to get path in worker
+	} else if(typeof exports != 'undefined') { 
+		alasql.path = __dirname;
+		// 
+		//console.log(require('alasql').resolve());
+	} else {
+		var sc = document.getElementsByTagName('script');
+		for(var i=0;i<sc.length;i++) {
+			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
+				alasql.path = sc[i].src.substr(0,sc[i].src.length-16); 
+				break;
+			} else if (sc[i].src.substr(-20).toLowerCase() == 'alasql-worker.min.js') {
+				alasql.path = sc[i].src.substr(0,sc[i].src.length-20);
+				break;
+			} else if (sc[i].src.substr(-9).toLowerCase() == 'alasql.js') {
+				alasql.path = sc[i].src.substr(0,sc[i].src.length-9); 
+				break;
+			} else if (sc[i].src.substr(-13).toLowerCase() == 'alasql.min.js') {
+				alasql.path = sc[i].src.substr(0,sc[i].src.length-13); 
+				break;
+			};
+		};	
+	};
+}

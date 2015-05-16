@@ -14,6 +14,11 @@ yy.Require.prototype.toString = function() {
 			return path.toString()
 		}).join(',');
 	}
+	if(this.plugins && this.plugins.length > 0) {
+		s += this.plugins.map(function(plugin){
+			return plugin.toUpperCase();
+		}).join(',');
+	}
 	return s;
 }
 
@@ -25,7 +30,7 @@ yy.Require.prototype.execute = function (databaseid,params,cb) {
 	var res = 0;
 	var ss = '';
 //	console.log(this.paths);
-	if(this.paths.length > 0) {
+	if(this.paths && this.paths.length > 0) {
 		this.paths.forEach(function(path){
 			loadFile(path.value, !!cb, function(data){
 				res++;
@@ -39,7 +44,20 @@ yy.Require.prototype.execute = function (databaseid,params,cb) {
 				if(cb) res = cb(res);
 			});
 		});
+	} else if(this.plugins && this.plugins.length > 0) {
+
+		this.plugins.forEach(function(plugin){
+			loadFile(alasql.path+'/alasql-'+plugin.toLowerCase()+'.js', !!cb, function(data){
+				// Execute all plugins at the same time
+				res++;
+				ss += data;
+				if(res<self.plugins.length) return;
+
+				new Function("params,alasql",ss)(params,alasql);
+				if(cb) res = cb(res);
+			});
+		});
 	}
-	if(this.paths.length == 0 && cb) res = cb(res);	
+	if(this.paths.length == 0 && this.plugins.length == 0 && cb) res = cb(res);	
 	return res;
 };

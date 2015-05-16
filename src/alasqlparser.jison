@@ -111,6 +111,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
+'ECHO'											return 'ECHO'
 
 'EDGE'											return 'EDGE'
 'END'											return 'END'
@@ -416,6 +417,11 @@ Statement
 	| Fact
 	| Rule
 	| QUery
+
+/* PLugins */
+
+	| Echo
+
 
 /*
 	| Store
@@ -2328,6 +2334,8 @@ Print
 Require
 	: REQUIRE StringValuesList
 		{ $$ = new yy.Require({paths:$2}); }
+	| REQUIRE Plugin*
+		{ $$ = new yy.Require({plugins:$2}); }
 	;
 
 StringValuesList
@@ -2620,4 +2628,14 @@ FuncValueList
 
 QUery
 	: QUESTIONDASH FuncValue
+	;
+
+/* For test plugin system */
+
+Plugin
+	: ECHO {$$ = $1.toUpperCase(); };
+
+Echo
+	: ECHO Expression
+		{ $$ = new yy.Echo({expr:$2}); }
 	;
