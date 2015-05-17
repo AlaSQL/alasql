@@ -250,6 +250,7 @@ VALUE(S)?                                      	return 'VALUE'
 %left COMMA
 %left DOUBLECOLON
 %left OR
+/* %left AND */
 %left AND BETWEEN NOT_BETWEEN
 /*%left AND*/
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
@@ -1368,14 +1369,32 @@ Op
 	| Expression AND Expression
 		{ 
 			if($1.op == 'BETWEEN1') {
-				$$ = new yy.Op({left:$1.left, op:'BETWEEN', 
-					right1:$1.right, right2:$3});
+
+				if($1.left.op == 'AND') {
+					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
+						new yy.Op({left:$1.left.right, op:'BETWEEN', 
+							right1:$1.right, right2:$3})
+					});
+				} else {
+					$$ = new yy.Op({left:$1.left, op:'BETWEEN', 
+						right1:$1.right, right2:$3});
+				}
+
 			} else if($1.op == 'NOT BETWEEN1') {
-				$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN', 
-					right1:$1.right, right2:$3});
+				if($1.left.op == 'AND') {
+					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
+						new yy.Op({left:$1.left.right, op:'NOT BETWEEN', 
+							right1:$1.right, right2:$3})
+					});
+				} else {
+					$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN', 
+						right1:$1.right, right2:$3});
+				}
 			} else {
 				$$ = new yy.Op({left:$1, op:'AND', right:$3});
 			}
+
+
 		}
 	| Expression OR Expression
 		{ $$ = new yy.Op({left:$1, op:'OR' , right:$3}); }

@@ -9,8 +9,8 @@ var md5 = require('blueimp-md5').md5;
 
 // List of tests
 var filenames = [
-//	'./test/select1.test',
- 	'./test/select2.test',
+	'./test/select1.test',
+// 	'./test/select2.test',
 //	'./test/select3.test',
 // 	'./test/select4.test',
 //	'./test/select5.test',
@@ -54,7 +54,7 @@ var restests = []; // Array for result of tests
 // Process all filenames
 filenames.forEach(function(filename,i) {
 	console.log(filename);
-	var rt = test(filename,false);
+	var rt = test(filename,true);
 	restests.push(rt);
 //	console.log(rt);
 });

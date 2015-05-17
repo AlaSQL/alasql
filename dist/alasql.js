@@ -1033,14 +1033,32 @@ break;
 case 365:
  
 			if($$[$0-2].op == 'BETWEEN1') {
-				this.$ = new yy.Op({left:$$[$0-2].left, op:'BETWEEN', 
-					right1:$$[$0-2].right, right2:$$[$0]});
+
+				if($$[$0-2].left.op == 'AND') {
+					this.$ = new yy.Op({left:$$[$0-2].left.left,op:'AND',right:
+						new yy.Op({left:$$[$0-2].left.right, op:'BETWEEN', 
+							right1:$$[$0-2].right, right2:$$[$0]})
+					});
+				} else {
+					this.$ = new yy.Op({left:$$[$0-2].left, op:'BETWEEN', 
+						right1:$$[$0-2].right, right2:$$[$0]});
+				}
+
 			} else if($$[$0-2].op == 'NOT BETWEEN1') {
-				this.$ = new yy.Op({left:$$[$0-2].left, op:'NOT BETWEEN', 
-					right1:$$[$0-2].right, right2:$$[$0]});
+				if($$[$0-2].left.op == 'AND') {
+					this.$ = new yy.Op({left:$$[$0-2].left.left,op:'AND',right:
+						new yy.Op({left:$$[$0-2].left.right, op:'NOT BETWEEN', 
+							right1:$$[$0-2].right, right2:$$[$0]})
+					});
+				} else {
+					this.$ = new yy.Op({left:$$[$0-2].left, op:'NOT BETWEEN', 
+						right1:$$[$0-2].right, right2:$$[$0]});
+				}
 			} else {
 				this.$ = new yy.Op({left:$$[$0-2], op:'AND', right:$$[$0]});
 			}
+
+
 		
 break;
 case 366:

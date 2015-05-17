@@ -105,8 +105,25 @@ describe('Test 331 SLT#1 - test', function() {
     done();
   });
 
-if(false) {
   it('3. SELECT 959',function(done){
+
+    var res = alasql.parse(' \
+SELECT a+b*2, \
+       d, \
+       a, \
+       b-c, \
+       CASE a+1 WHEN b THEN 111 WHEN c THEN 222 \
+        WHEN d THEN 333  WHEN e THEN 444 ELSE 555 END \
+  FROM t1 \
+ WHERE \
+  EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b) \
+    AND \
+   d NOT BETWEEN 110 AND 150 \
+   AND e+d BETWEEN a+b-10 AND c+130 \
+  ORDER BY 1,2,4,5,3 \
+   ');
+//    console.log(res.statements[0].where.expression);
+
 
     alasql.options.modifier = 'MATRIX';
     var res = alasql(function(){/*
@@ -126,28 +143,9 @@ SELECT a+b*2,
 
  assert.deepEqual(res,[ [ 317, 108, 107, -1, 333 ]  ]);
 
-/*
-    var res = alasql.parse(' \
-SELECT a+b*2, \
-       d, \
-       a, \
-       b-c, \
-       CASE a+1 WHEN b THEN 111 WHEN c THEN 222 \
-        WHEN d THEN 333  WHEN e THEN 444 ELSE 555 END \
-  FROM t1 \
- WHERE \
-  EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b) \
-    AND \
-   d NOT BETWEEN 110 AND 150 \
-   AND e+d BETWEEN a+b-10 AND c+130 \
-  ORDER BY 1,2,4,5,3 \
-   ');
-    console.log(res.statements[0].where.expression);
-  */
     done();
   });
 
-}
   it('4. DROP DATABASE',function(done){
     alasql('DROP DATABASE test331');
     alasql.options.modifier = undefined;
