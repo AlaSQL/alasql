@@ -44,9 +44,8 @@ var filenames = [
 ];
 
 
-var limit = 1000000; /*1000000*/
-//var mode = 'PostgreSQL';		// Let say we are a la Oracle :)
-var mode = 'oracle';		// Let say we are a la Oracle :)
+var limit = 100000; /*1000000*/
+var mode = 'PostgreSQL';		// Let say we are a la Oracle :)
 
 
 var restests = []; // Array for result of tests
@@ -210,8 +209,8 @@ function test(filename, show) {
 					if(exphash) { // Special case
 					    var s = res.map(function(d){
 					    	var s1 = '';
-					    	for(var j=0;j<rs.columns.length;j++) {
-					    		s1 += d[rs.columns[j].columnid]+'\n';
+					    	for(var i=0;i<rs.columns.length;i++) {
+					    		s1 += d[rs.columns[i].columnid]+'\n';
 					    	}
 					    	return s1;
 					    }).join('');
@@ -237,22 +236,8 @@ function test(filename, show) {
 								}
 							}				
 						} else {
-							var resvals = [];
-						    res.forEach(function(d){
-						    	for(var j=0;j<rs.columns.length;j++) {
-						    		resvals.push(d[rs.columns[j].columnid]);
-						    	}
-						    });
-
-						    for(var j=0;j<explen;j++) {
-						    	if(resvals[j] != expect[j]) {
-									passed = 'not passed';
-									break;
-						    	}
-
-						    }
-
 							// 
+							passed = 'unclear';
 						}
 						// NUltiple cases
 					}
