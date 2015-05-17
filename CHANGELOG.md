@@ -2,7 +2,8 @@
 
 ### 0.1.6 "Parma" (17.05.2015 - ...05.2015)
 * Fixed BETWEEN AND and AND parsing priority bug (KPI1:95%)
-
+* Fixed SUM() with NULL(undefined) values
+* SLT tests run
 
 ### 0.1.6 "Palermo" (13.05.2015 - 17.05.2015)
 * SET NOCOUNT OFF (for CREATE and INSERT)

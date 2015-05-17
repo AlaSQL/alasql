@@ -7758,14 +7758,17 @@ if(false) {
 					aft += ',g[\'$$_VALUES_'+colas+'\']={},g[\'$$_VALUES_'+colas+'\']['+colexp+']=true';
 				};
 				if (col.aggregatorid == 'SUM'
-					|| col.aggregatorid == 'MIN'
+//					|| col.aggregatorid == 'AVG'
+//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
+				) { return '\''+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJavaScript(); 	
+				} else if (col.aggregatorid == 'MIN'
 					|| col.aggregatorid == 'MAX'
 					|| col.aggregatorid == 'FIRST'
 					|| col.aggregatorid == 'LAST'
 //					|| col.aggregatorid == 'AVG'
 //				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
-				) { return '\''+colas+'\':'+colexp+','; }//f.field.arguments[0].toJavaScript(); 	
-				else if(col.aggregatorid == 'ARRAY') {
+				) { return '\''+colas+'\':'+colexp+','; //f.field.arguments[0].toJavaScript(); 	
+				} else if(col.aggregatorid == 'ARRAY') {
 				 	return '\''+colas+'\':['+colexp+'],';
 				} else if(col.aggregatorid == 'COUNT') { 
 					if(col.expression.columnid == '*') {
@@ -7781,7 +7784,7 @@ if(false) {
 				} else if(col.aggregatorid == 'AVG') { 
 					query.removeKeys.push('_SUM_'+colas);
 					query.removeKeys.push('_COUNT_'+colas);
-					return '\''+colas+'\':'+colexp+',\'_SUM_'+colas+'\':'+colexp+',\'_COUNT_'+colas+'\':1,'; 
+					return '\''+colas+'\':'+colexp+',\'_SUM_'+colas+'\':('+colexp+')||0,\'_COUNT_'+colas+'\':1,'; 
 				} else if(col.aggregatorid == 'AGGR') {
 					aft += ',g[\''+colas+'\']='+col.expression.toJavaScript('g',-1); 
 					return '';
@@ -7872,7 +7875,7 @@ if(false) {
 				} else {
 					var pre = '', post = '';
 				}
-				if (col.aggregatorid == 'SUM') { return pre+'g[\''+colas+'\']+='+colexp+';'+post; }//f.field.arguments[0].toJavaScript(); 	
+				if (col.aggregatorid == 'SUM') { return pre+'g[\''+colas+'\']+=('+colexp+'||0);'+post; }//f.field.arguments[0].toJavaScript(); 	
 				else if(col.aggregatorid == 'COUNT') {
 //					console.log(221,col.expression.columnid == '*');
 					if(col.expression.columnid == '*') return pre+'g[\''+colas+'\']++;'+post; 
@@ -7886,7 +7889,7 @@ if(false) {
 				else if(col.aggregatorid == 'FIRST') { return ''; }
 				else if(col.aggregatorid == 'LAST') { return pre+'g[\''+colas+'\']='+colexp+';'+post; }
 				else if(col.aggregatorid == 'AVG') { 
-						return pre+'g[\'_SUM_'+colas+'\']+='+colexp+';'
+						return pre+'g[\'_SUM_'+colas+'\']+=('+colexp+')||0;'
 						+ 'g[\'_COUNT_'+colas+'\']++;'
 						+ 'g[\''+colas+'\']=g[\'_SUM_'+colas+'\']/g[\'_COUNT_'+colas+'\'];'+post; 
 //					 }
