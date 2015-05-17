@@ -1414,13 +1414,27 @@ Op
 
 
 	/* 
-		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar 
-		at least, I do not know how.
+		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar. 
+		At least, I do not know how.
 	*/
 	| Expression BETWEEN Expression
-		{ $$ = new yy.Op({left:$1, op:'BETWEEN', right:$3 }); }
+		{ 	
+			var expr = $3;
+			if(expr.left && expr.left.op == 'AND') {
+				$$ = new yy.Op({left:new yy.Op({left:$1, op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+			} else {
+				$$ = new yy.Op({left:$1, op:'BETWEEN', right:$3 }); 
+			}
+		}
 	| Expression NOT_BETWEEN Expression
-		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
+		{
+			var expr = $3;
+			if(expr.left && expr.left.op == 'AND') {
+				$$ = new yy.Op({left:new yy.Op({left:$1, op:'NOT BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+			} else {
+				$$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); 
+			}
+		}
 	| Expression IS Expression
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
 	| Expression DOUBLECOLON ColumnType

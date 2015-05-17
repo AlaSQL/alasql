@@ -67,8 +67,37 @@ describe('Test 331 SLT#1 - test', function() {
        AND (a>b-2 AND a<b+2)
      ORDER BY 1,2,3
   */});
-    assert.deepEqual(res,[ [ 131, 1, 133 ], [ 182, 1, 183 ] ]);
 //    console.log(res);
+    assert.deepEqual(res,[ [ 131, 1, 133 ], [ 182, 1, 183 ] ]);
+    done();
+  });
+
+
+
+  it('2. SELECT 1095',function(done){
+    // alasql.options.modifier = undefined;
+  //   var res = alasql.parse(
+  //     'SELECT a,b,c,d \
+  //       FROM t1 \
+  //      WHERE c BETWEEN b-2 AND d+2 \
+  //        AND b>c \
+  //      ORDER BY 1,2\
+  // ');
+  //   console.log(res.statements[0].where.expression);
+
+    alasql.options.modifier = 'MATRIX';
+    var res = alasql(function(){/*
+      SELECT a-b,
+             CASE WHEN a<b-3 THEN 111 WHEN a<=b THEN 222
+              WHEN a<b+3 THEN 333 ELSE 444 END
+        FROM t1
+       WHERE (c BETWEEN b-2 AND d+2)
+         AND b>c
+         AND (a>b-2 AND a<b+2)
+       ORDER BY 1,2
+  */});
+//    console.log(res);
+    assert.deepEqual(res,[ [ -1, 222],[ -1, 222], [ 1, 333 ] ]);
     done();
   });
 

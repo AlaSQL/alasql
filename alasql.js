@@ -1,8 +1,8 @@
 //
 // alasql.js
 // AlaSQL - JavaScript SQL database
-// Date: 12.05.2015
-// Version: 0.1.5
+// Date: 17.05.2015
+// Version: 0.1.6
 // (ñ) 2014-2015, Andrey Gershun
 //
 
@@ -1084,10 +1084,24 @@ case 379:
  this.$ = new yy.Op({left: $$[$0-3], op:'NOT IN', right:$$[$0]}); 
 break;
 case 380:
- this.$ = new yy.Op({left:$$[$0-2], op:'BETWEEN', right:$$[$0] }); 
+ 	
+			var expr = $$[$0];
+			if(expr.left && expr.left.op == 'AND') {
+				this.$ = new yy.Op({left:new yy.Op({left:$$[$0-2], op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+			} else {
+				this.$ = new yy.Op({left:$$[$0-2], op:'BETWEEN', right:$$[$0] }); 
+			}
+		
 break;
 case 381:
- this.$ = new yy.Op({left:$$[$0-2], op:'NOT BETWEEN', right:$$[$0] }); 
+
+			var expr = $$[$0];
+			if(expr.left && expr.left.op == 'AND') {
+				this.$ = new yy.Op({left:new yy.Op({left:$$[$0-2], op:'NOT BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+			} else {
+				this.$ = new yy.Op({left:$$[$0-2], op:'NOT BETWEEN', right:$$[$0] }); 
+			}
+		
 break;
 case 382:
  this.$ = new yy.Op({op:'IS' , left:$$[$0-2], right:$$[$0]}); 
