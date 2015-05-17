@@ -1,7 +1,7 @@
 # Changelog
 
 ### 0.1.6 "Parma" (17.05.2015 - ...05.2015)
-* Fixed BETWEEN AND and AND parsing priority bug
+* Fixed BETWEEN AND and AND parsing priority bug (KPI1:95%)
 
 
 ### 0.1.6 "Palermo" (13.05.2015 - 17.05.2015)

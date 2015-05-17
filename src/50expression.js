@@ -217,21 +217,33 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	};
 
 	if(this.op == 'BETWEEN') {
+		return '(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
+		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
+
+/*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
+
 			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
 			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
+
+
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
 		}
+*/
 	};
 
 	if(this.op == 'NOT BETWEEN') {
-		if(this.right instanceof yy.Op && this.right.op == 'AND') {
-			return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
-		} else {
-			throw new Error('Wrong NOT BETWEEN operator without AND part');
-		}
+		return '!(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
+		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
+
+
+		// if(this.right instanceof yy.Op && this.right.op == 'AND') {
+		// 	return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
+		// 	'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
+		// } else {
+		// 	throw new Error('Wrong NOT BETWEEN operator without AND part');
+		// }
 	};
 
 	if(this.op == 'IN') {

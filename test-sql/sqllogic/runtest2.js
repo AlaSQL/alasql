@@ -54,7 +54,7 @@ var restests = []; // Array for result of tests
 // Process all filenames
 filenames.forEach(function(filename,i) {
 	console.log(filename);
-	var rt = test(filename,false);
+	var rt = test(filename,true);
 	restests.push(rt);
 //	console.log(rt);
 });

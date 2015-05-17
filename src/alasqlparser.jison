@@ -250,8 +250,8 @@ VALUE(S)?                                      	return 'VALUE'
 %left COMMA
 %left DOUBLECOLON
 %left OR
-%left BETWEEN NOT_BETWEEN
-%left AND
+%left AND BETWEEN NOT_BETWEEN
+/*%left AND*/
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IN
 %left NOT
@@ -1366,7 +1366,17 @@ Op
 		}
 
 	| Expression AND Expression
-		{ $$ = new yy.Op({left:$1, op:'AND' , right:$3}); }
+		{ 
+			if($1.op == 'BETWEEN1') {
+				$$ = new yy.Op({left:$1.left, op:'BETWEEN', 
+					right1:$1.right, right2:$3});
+			} else if($1.op == 'NOT BETWEEN1') {
+				$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN', 
+					right1:$1.right, right2:$3});
+			} else {
+				$$ = new yy.Op({left:$1, op:'AND', right:$3});
+			}
+		}
 	| Expression OR Expression
 		{ $$ = new yy.Op({left:$1, op:'OR' , right:$3}); }
 	| NOT Expression
@@ -1419,21 +1429,22 @@ Op
 	*/
 	| Expression BETWEEN Expression
 		{ 	
-			var expr = $3;
+/*			var expr = $3;
 			if(expr.left && expr.left.op == 'AND') {
 				$$ = new yy.Op({left:new yy.Op({left:$1, op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
 			} else {
-				$$ = new yy.Op({left:$1, op:'BETWEEN', right:$3 }); 
-			}
+*/
+				$$ = new yy.Op({left:$1, op:'BETWEEN1', right:$3 }); 
+//			}
 		}
 	| Expression NOT_BETWEEN Expression
 		{
-			var expr = $3;
-			if(expr.left && expr.left.op == 'AND') {
-				$$ = new yy.Op({left:new yy.Op({left:$1, op:'NOT BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
-			} else {
-				$$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); 
-			}
+//			var expr = $3;
+//			if(expr.left && expr.left.op == 'AND') {
+//				$$ = new yy.Op({left:new yy.Op({left:$1, op:'NOT BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+//			} else {
+				$$ = new yy.Op({left:$1, op:'NOT BETWEEN1', right:$3 }); 
+//			}
 		}
 	| Expression IS Expression
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
