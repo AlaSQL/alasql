@@ -1,6 +1,6 @@
 # AlaSQL.js - JavaScript SQL database library for relational and graph data manipulation with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.5 "San Marino" Date: May 12, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md)
+Version: 0.1.6 "Napoli" Date: May 17, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md), [Test log](TESTLOG.md)
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -22,6 +22,7 @@ Please use:
 * [Issues](https://github.com/agershun/alasql/issues) to report bugs.
 * [Feathub](http://feathub.com/agershun/alasql) to vote for new features
 * [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions
+* [AlaSQL Roadmap](https://trello.com/b/qxz65pVi/alasql-roadmap)
 
 ## Documentation 
 
@@ -49,9 +50,29 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
 
 ## What is new?
 
-### AlaSQL and Meteor Mongo collections
+### AlaSQL plug-ins
 
-Now you can use Meteor collections as agruments. To do it simply store alasql.min.js to the client/lib directory and then apply SQL to Meteor Collections: 
+Now AlaSQL supports plugins system. To install the plugin you need to use REQUIRE statement, like:
+```js
+    alasql('REQUIRE ECHO');
+    var res = alasql('ECHO 123');  // Returns simply 123
+```
+You can use the same command in browser or include plugins directly:
+```html
+    <script src="alasql.min.js"></script>
+    <script src="alasql-echo.js"></script>
+```
+The list of packages will be prepared later.
+
+### AlaSQL and Meteor
+
+Now you can install AlaSQL in Meteor from [official package](https://atmospherejs.com/agershun/alasql):
+```
+    meteor add agershun:alasql
+```
+It works on the client and the server side.
+
+Now you can use Meteor Collections as agruments. To do it simply store alasql.min.js to the client/lib directory and then apply SQL to Meteor Collections: 
 
 ```js
     Template.body.helpers({
@@ -546,10 +567,13 @@ Usually, alasql.js works synchronously, but you can use callback.
     });
 ```
 
-or you can use aexec() - promised version of exec (in this case you need to install [es6-promise](https://www.npmjs.org/package/es6-promise) module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):
+or you can use async() - promised version of exec (in this case you need to install [es6-promise](https://www.npmjs.org/package/es6-promise) module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):
 ```js
-    db.aexec('SELECT * FROM test').then(function(res){
-        console.log(res);
+    alasql.async('SELECT * FROM test')
+    }).then(function(res){
+        // Process data
+    }).catch(function(err){
+        // Process errors
     });
 ```
 You can use compile statements:

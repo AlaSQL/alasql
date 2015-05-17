@@ -1,4 +1,5 @@
-hash-threshold 8
+# Test
+hash-threshold 8 # Test
 
 statement ok
 CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER)

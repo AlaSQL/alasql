@@ -249,19 +249,22 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 		} else {
 			var colas;
 			//  = col.as;
-				if(col instanceof yy.Column) {
-					colas = escapeq(col.columnid);
-				} else {
-					colas = escapeq(col.toString());
+			if(col instanceof yy.Column) {
+				colas = escapeq(col.columnid);
+			} else {
+				colas = escapeq(col.toString());
+			}
+			for(var i=0;i<idx;i++) {
+				if(colas == self.columns[i].nick) {
+					colas = self.columns[i].nick+':'+idx;
+					break;
 				}
-				for(var i=0;i<idx;i++) {
-					if(colas == self.columns[i].nick) {
-						colas = self.columns[i].nick+':'+idx;
-						break;
-					}
-				}
-				// }
-				col.nick = colas;
+			}
+			// }
+			col.nick = colas;
+			if(col.funcid && (col.funcid.toUpperCase() == 'ROWNUM' || col.funcid.toUpperCase() == 'ROW_NUMBER')) {
+				query.rownums.push(col.as);
+			}
 //				console.log("colas:",colas);
 			// }
 		}

@@ -13,41 +13,17 @@
 %options case-insensitive
 %%
 
-/*
-\#([^\#])+\#					return 'JAVASCRIPT'
-*/
+\`\`([^\`])+\`\`						return 'JAVASCRIPT'
+\[\?\]									return 'BRAQUESTION'
+'@['									return 'ATLBRA'
+\[([^\]])*?\]							return 'BRALITERAL'
+\`([^\`])*?\`	   						return 'BRALITERAL'
 
-\`\`([^\`])+\`\`				return 'JAVASCRIPT'
+N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
+X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
+(['](\\.|[^']|\\\')*?['])+              return 'STRING'
+(["](\\.|[^"]|\\\")*?["])+              return 'STRING'
 
-\[\?\]							return 'BRAQUESTION'
-'@['							return 'ATLBRA'
-\[([^\]])*?\]					return 'BRALITERAL'
-/*								{
-									console.log(this.matched);
-									if((this.matched+"").substr(0,6).toUpperCase() == 'ASSERT') {
-										//this.less(2);
-										return 'LBRA';
-									} else {
-										return 'BRALITERAL'
-									}
-								}
-*/
-
-\`([^\`])*?\`	   								 return 'BRALITERAL'
-
-N(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
-X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
-(['](\\.|[^']|\\\')*?['])+                       return 'STRING'
-(["](\\.|[^"]|\\\")*?["])+                       return 'STRING'
-
-\/\*(.*?)\*\/									return /* skip comments */
-
-/*
-
-\/\*											
-\*\/											
-
-*/
 "--"(.*?)($|\r\n|\r|\n)							return /* return 'COMMENT' */
 
 \s+                                             /* skip whitespace */
@@ -68,9 +44,7 @@ X(['](\\.|[^']|\\\')*?['])+                      return 'NSTRING'
 'ASSERT'                                      	return 'ASSERT'
 'ASC'                                      		return 'DIRECTION'
 'ATTACH'                                      	return 'ATTACH'
-'AUTOINCREMENT'                                	return 'AUTO_INCREMENT'
-'AUTO_INCREMENT'                                return 'AUTO_INCREMENT'
-/* 'AUTOCOMMIT'									return 'AUTOCOMMIT'; */
+AUTO(_)?INCREMENT                               return 'IDENTITY'
 'AVG'                                      		return 'AVG'
 
 'BEGIN'											return 'BEGIN'
@@ -82,13 +56,11 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 
 'CASE'											return 'CASE'
 'CAST'											return 'CAST'
-'CHARSET'										return 'CHARSET'
 'CHECK'											return 'CHECK'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
-"COLUMN"										return "COLUMN"
-"COLUMNS"										return "COLUMN"
+COLUMN(S)?										return "COLUMN"
 "COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
 "CONTENT"										return "CONTENT"
@@ -101,8 +73,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CUBE'											return 'CUBE'
 "CURRENT_TIMESTAMP"								return "CURRENT_TIMESTAMP"
 "CURSOR"										return "CURSOR"
-'DATABASE'										return 'DATABASE'
-'DATABASES'										return 'DATABASES'
+DATABASE(S)?										return 'DATABASE'
 'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
@@ -111,10 +82,9 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
 'DROP'											return 'DROP'
-
+'ECHO'											return 'ECHO'
 'EDGE'											return 'EDGE'
 'END'											return 'END'
-'ENGINE'										return 'ENGINE'
 'ENUM'											return 'ENUM'
 'ELSE'											return 'ELSE'
 'EXCEPT'										return 'EXCEPT'
@@ -142,16 +112,13 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'INTERSECT'                                     return 'INTERSECT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
-/*
-'JSON'                                         	return 'JSON'
-*/
 'KEY'											return 'KEY'
 'LAST'											return 'LAST'
 'LET'											return 'LET'
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
-"MATCHED"										return "MATCHED"
+'MATCHED'										return 'MATCHED'
 'MATRIX'										return 'MATRIX'	
 "MAX"											return "MAX"
 "MERGE"											return "MERGE"
@@ -194,30 +161,28 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
 'ROW'											return 'ROW'
-'SCHEMA'                                        return 'DATABASE'
-'SCHEMAS'                                       return 'DATABASES'
+SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 'SELECT'                                        return 'SELECT'
 'SEMI'                                        	return 'SEMI'
-'SET'                                        	return 'SET'
-'SETS'                                        	return 'SETS'
+SET(S)?                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
 'SOME'                                        	return 'SOME'
 'SOURCE'										return 'SOURCE'
 'STRATEGY'										return 'STRATEGY'
 'STORE'                                        	return 'STORE'
-"SUM"											return "SUM"
+'SUM'											return 'SUM'
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLES'
 'TARGET'										return 'TARGET'
 'TEMP'											return 'TEMP'
-'TEMPORARY'										return 'TEMPORARY'
+'TEMPORARY'										return 'TEMP'
 'TEXTSTRING'									return 'TEXTSTRING'
 'THEN'											return 'THEN'
 'TIMEOUT'										return 'TIMEOUT'
 'TO'											return 'TO'
 'TOP'											return 'TOP'
-'TRAN'											return 'TRAN'
+'TRAN'											return 'TRANSACTION'
 'TRANSACTION'									return 'TRANSACTION'
 'TRUE'						  					return 'TRUE'
 'TRUNCATE'					  					return 'TRUNCATE'
@@ -226,8 +191,7 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
 'USING'                                         return 'USING'
-'VALUE'                                        	return 'VALUE'
-'VALUES'                                        return 'VALUES'
+VALUE(S)?                                      	return 'VALUE'
 'VERTEX'										return 'VERTEX'
 'VIEW'											return 'VIEW'
 'WHEN'                                          return 'WHEN'
@@ -236,10 +200,6 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'
 
-/*
-[0-9]+											return 'NUMBER'
-[0-9]+\.[0-9]*									return 'NUMBER'
-*/
 (\d*[.])?\d+[eE]\d+								return 'NUMBER'
 (\d*[.])?\d+									return 'NUMBER'
 
@@ -263,15 +223,14 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 '!='											return 'NE'
 '('												return 'LPAR'
 ')'												return 'RPAR'
-
 '@'												return 'AT'
-
 '{'												return 'LCUR'
 '}'												return 'RCUR'
 
-/* '['												return 'LBRA' */
 ']'												return 'RBRA'
 
+':-'											return 'COLONDASH'
+'?-'											return 'QUESTIONDASH'
 '.'												return 'DOT'
 ','												return 'COMMA'
 '::'											return 'DOUBLECOLON'
@@ -282,18 +241,12 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 '!'												return 'EXCLAMATION'
 '^'												return 'CARET'
 
+[a-zA-Z_][a-zA-Z_0-9]*                     		return 'LITERAL'
 
-[a-zA-Z_][a-zA-Z_0-9]*                     	return 'LITERAL'
-
-/*
-[a-zA-ZА-Яа-я_][a-zA-ZА-Яа-я_0-9]*              return 'LITERAL'
-*/
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
 /lex
-%left then
-%left else
 %left COMMA
 %left DOUBLECOLON
 %left OR
@@ -309,12 +262,9 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 %left CARET
 %left DOT ARROW EXCLAMATION
 %left SHARP
-/* %left UMINUS */
 
 %ebnf
-
 %start main
-
 %%
 
 Literal
@@ -333,9 +283,7 @@ main
 	;
 
 Statements
-	: Statements SEMICOLON AStatement
-		{ $$ = $1; if($3) $1.push($3); }
-	| Statements GO AStatement
+	: Statements (SEMICOLON|GO) AStatement
 		{ $$ = $1; if($3) $1.push($3); }
 	| AStatement
 		{ $$ = [$1]; }
@@ -354,6 +302,8 @@ AStatement
 	: Statement
 		{ 
 			$$ = $1;
+
+			// TODO combine exists and queries
 		    if(yy.exists) $$.exists = yy.exists;
 		    delete yy.exists;
 		    if(yy.queries) $$.queries = yy.queries;
@@ -363,7 +313,6 @@ AStatement
 
 Statement
 	: { $$ = undefined; }
-	| If
 	| AlterTable	
 	| AttachDatabase	
 	| CreateDatabase
@@ -380,17 +329,19 @@ Statement
 	| DropIndex
 	| DropTable
 	| DropView
+	| If
 	| Insert
+	| Merge
 	| RenameTable
 	| Select
-	| Merge
-	| WithSelect
 	| ShowCreateTable
 	| ShowColumns
 	| ShowDatabases
 	| ShowIndex
 	| ShowTables
 	| TruncateTable
+	| WithSelect
+
 	| BeginTransaction
 	| CommitTransaction
 	| RollbackTransaction
@@ -409,9 +360,15 @@ Statement
 	| Print
 	| Require
 	| SetVariable
+	| ExpressionStatement 
+	| AddRule
+	| Query
+
+/* PLugins */
+
+	| Echo
 
 /*
-	| ExpressionStatement 
 	| Store
 	| Restore
 
@@ -419,10 +376,7 @@ Statement
 	| OpenCursor
 	| FetchCursor
 	| CloseCursor
-*/
 
-
-/*	
 	| CreateTrigger
 	| DropTrigger
 	| SavePoint
@@ -432,12 +386,9 @@ Statement
 	| RestoreDatabase
 	| RestoreTable
 
-	| IfElse
-	| BeginEnd
 	| While
 	| BulkInsert
 
-	| Declare
 	| CreateFunction
 	| CreateProcedure
 	| Loop
@@ -505,13 +456,6 @@ RemoveColumn
 		{ $$ = {like:$2}; }	
 	;
 
-/*
-SearchClause
-	: SearchSelector*
-		{ $$ = $2; }	
-	;
-*/
-
 SearchSelector
 	: Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
@@ -527,6 +471,8 @@ SearchSelector
 
 	| ARROW Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
+	| COMMA 
+		{ $$ = {selid:"COMMA"};}
 	| EQ Expression
 		{ $$ = {srchid:"EQ", args: [$2]}; }
 	| LIKE Expression
@@ -535,9 +481,7 @@ SearchSelector
 		{ $$ = {selid:"WITH", args: $2}; }
 	| WITH LPAR SearchSelector+ RPAR
 		{ $$ = {selid:"WITH", args: $3}; }
-/*	| Literal LPAR RPAR
-		{ $$ = {srchid:$1.toUpperCase()}; }	
-*/	| Literal LPAR ExprList? RPAR
+	| Literal LPAR ExprList? RPAR
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
 	| WHERE LPAR Expression RPAR
 		{ $$ = {srchid:"WHERE", args:[$3]}; }	
@@ -648,7 +592,6 @@ SearchLet
 SearchWhile
 	: WHILE Expression
 	;
-*/
 SearchLimit
 	: LIMIT Expression
 	;
@@ -661,6 +604,7 @@ SearchTimeout
 	: TIMEOUT Expression
 	;	
 
+*/
 
 SelectClause
 	: 
@@ -701,12 +645,10 @@ SelectModifier
 	;
 
 TopClause
-	: TOP NumValue  
-		{ $$ = {top: $2}; }
+	: TOP NumValue PERCENT?
+		{ $$ = {top: $2, percent:(typeof $3 != 'undefined'?true:undefined)}; }
 	| TOP LPAR NumValue RPAR
 		{ $$ = {top: $3}; }
-	| TOP NumValue PERCENT  
-		{ $$ = {top: $2, percent:true}; }
 	| { $$ = undefined; }
 	;
 
@@ -782,6 +724,9 @@ FromTable
 		{ $$ = $2; $$.as = $5 }	
 	| LPAR Select RPAR /* default alias */
 		{ $$ = $2; $$.as = 'default' }	
+
+	| Json AS? Literal?
+		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
 
 	| Table Literal
 		{ $$ = $1; $1.as = $2 }
@@ -876,6 +821,8 @@ JoinTableAs
 		{ $$ = {table: $1, as: $2 } ; }
 	| Table AS Literal
 		{ $$ = {table: $1, as: $3 } ; }
+	| Json AS? Literal?
+		{ $$ = {json:new yy.Json({value:$1,as:$3})}; }
 	| ParamValue Literal
 		{ $$ = {param: $1, as: $2 } ; }
 	| ParamValue AS Literal
@@ -960,7 +907,7 @@ GroupExpressionsList
 	;
 
 GroupExpression
-	: GROUPING SETS LPAR GroupExpressionsList RPAR
+	: GROUPING SET LPAR GroupExpressionsList RPAR
 		{ $$ = new yy.GroupExpression({type:'GROUPING SETS', group: $4}); }
 	| ROLLUP LPAR GroupExpressionsList RPAR
 		{ $$ = new yy.GroupExpression({type:'ROLLUP', group: $3}); }
@@ -1046,10 +993,6 @@ ResultColumn
 		{ $1.as = $3; $$ = $1;}
 	| Expression Literal
 		{ $1.as = $2; $$ = $1;}
-
-/*	| Expression AS LBRA NUMBER RBRA
-		{ $1.as = $4; $$ = $1;}
-*/
 	| Expression AS NUMBER
 		{ $1.as = $3; $$ = $1;}
 	| Expression NUMBER
@@ -1241,11 +1184,6 @@ Aggregator
 	;
 
 FuncValue
-/*	: LITERAL LPAR Expression RPAR
-		{ 
-		    $$ = new yy.FuncValue({funcid: $1, expression: $3}); 
-		}
-*/	
 	: Literal LPAR (DISTINCT|ALL)? ExprList RPAR
 		{ 
 			var funcid = $1;
@@ -1273,9 +1211,7 @@ ExprList
 NumValue
 	: NUMBER
 		{ $$ = new yy.NumValue({value:+$1}); }
-/*	| MINUS NUMBER
-		{ $$ = new yy.NumValue({value:-$2}); }
-*/	;
+	;
 
 LogicValue
 	: TRUE
@@ -1554,11 +1490,11 @@ Delete
 /* INSERT */
 
 Insert
-	: INSERT Into Table VALUES ValuesListsList
+	: INSERT Into Table VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
-	| INSERT Into Table DEFAULT VALUES
+	| INSERT Into Table DEFAULT VALUE
 		{ $$ = new yy.Insert({into:$3, default: true}) ; }
-	| INSERT Into Table LPAR ColumnsList RPAR VALUES ValuesListsList
+	| INSERT Into Table LPAR ColumnsList RPAR VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT Into Table Select
 		{ $$ = new yy.Insert({into:$3, select: $4}); }
@@ -1660,15 +1596,12 @@ CreateTableOptions
 /* TODO: Remove this section */
 CreateTableOption
 	: DEFAULT
-	| ENGINE EQ Literal
-	| AUTO_INCREMENT EQ NumValue
-	| CHARSET EQ Literal 
+	| LITERAL EQ Literal
+	| IDENTITY EQ NumValue
 	;
 
 TemporaryClause 
 	: { $$ = undefined; }
-	| TEMPORARY
-		{ $$ = {temporary:true}; }
 	| TEMP
 		{ $$ = {temporary:true}; }
 	;
@@ -1847,8 +1780,6 @@ ColumnConstraint
 		{$$ = {foreignkey:{table:$4, columnid: $5}};}
 	| REFERENCES Table ParLiteral?
 		{$$ = {foreignkey:{table:$2, columnid: $3}};}
-	| AUTO_INCREMENT
-		{$$ = {identity:{value:1,step:1}};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
 	| IDENTITY
@@ -1973,13 +1904,13 @@ DropIndex
 /* SHOW COMMAND */
 
 ShowDatabases
-	: SHOW DATABASES
+	: SHOW DATABASE
 		{ $$ = new yy.ShowDatabases();}
-	| SHOW DATABASES LIKE StringValue
+	| SHOW DATABASE LIKE StringValue
 		{ $$ = new yy.ShowDatabases({like:$4});}
-	| SHOW Literal DATABASES
+	| SHOW Literal DATABASE
 		{ $$ = new yy.ShowDatabases({engineid:$2.toUpperCase() });}
-	| SHOW Literal DATABASES LIKE StringValue
+	| SHOW Literal DATABASE LIKE StringValue
 		{ $$ = new yy.ShowDatabases({engineid:$2.toUpperCase() , like:$5});}
 	;
 
@@ -2315,7 +2246,22 @@ Print
 Require
 	: REQUIRE StringValuesList
 		{ $$ = new yy.Require({paths:$2}); }
+	| REQUIRE PluginsList
+		{ $$ = new yy.Require({plugins:$2}); }
 	;
+
+/* For test plugin system */
+
+Plugin
+	: ECHO {$$ = $1.toUpperCase(); }
+	| Literal {$$ = $1.toUpperCase(); }
+	;
+
+Echo
+	: ECHO Expression
+		{ $$ = new yy.Echo({expr:$2}); }
+	;
+
 
 StringValuesList
 	: StringValuesList COMMA StringValue
@@ -2323,6 +2269,14 @@ StringValuesList
 	| StringValue
 		{ $$ = [$1]; }
 	;
+
+PluginsList
+	: PluginsList COMMA Plugin
+		{ $1.push($3); $$ = $1; }
+	| Plugin
+		{ $$ = [$1]; }
+	;
+
 
 Declare
 	: DECLARE DeclaresList
@@ -2419,13 +2373,13 @@ MergeNotMatched
 	;
 
 MergeNotMatchedAction
-	: INSERT VALUES ValuesListsList
+	: INSERT VALUE ValuesListsList
 		{ $$ = {insert:true, values:$3}; }
-	| INSERT LPAR ColumnsList RPAR VALUES ValuesListsList
+	| INSERT LPAR ColumnsList RPAR VALUE ValuesListsList
 		{ $$ = {insert:true, values:$6, columns:$3}; }
-	| INSERT DEFAULT VALUES
+	| INSERT DEFAULT VALUE
 		{ $$ = {insert:true, defaultvalues:true}; }
-	| INSERT LPAR ColumnsList RPAR DEFAULT VALUES
+	| INSERT LPAR ColumnsList RPAR DEFAULT VALUE
 		{ $$ = {insert:true, defaultvalues:true, columns:$3}; }
 	;
 
@@ -2542,7 +2496,7 @@ GraphVertexEdge
 			yy.extend($$,$3);
 			;
 		}
-
+	| Literal LPAR GraphList RPAR
 	;
 
 GraphVar
@@ -2587,3 +2541,33 @@ DeleteVertex
 DeleteEdge
 	: DELETE EDGE Expression (FROM Expression)? (TO Expression)? (WHERE Expression)?
 	;
+
+ExpressionStatement 
+	: EQ Expression
+	;
+
+AddRule
+	: Term COLONDASH TermsList
+		{ $$ = new yy.AddRule({left:$1, right:$3}); }
+	| COLONDASH TermsList
+		{ $$ = new yy.AddRule({right:$2}); }
+	;
+
+TermsList
+	: TermsList COMMA Term
+		{ $$ = $1; $$.push($3); } 
+	| Term
+		{ $$ = [$1]; }
+	;
+
+Term
+	: Literal
+		{ $$ = new yy.Term({termid:$1}); }
+	| Literal LPAR TermsList RPAR
+		{ $$ = new yy.Term({termid:$1,args:$3}); }
+	;
+
+Query
+	: QUESTIONDASH FuncValue
+	;
+

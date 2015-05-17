@@ -18,7 +18,7 @@ yy.ExistsValue.prototype.toType = function() {
 yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
 //	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
 	
-	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').length';
+	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').data.length';
 };
 
 yy.Select.prototype.compileWhereExists = function(query) {
@@ -26,7 +26,8 @@ yy.Select.prototype.compileWhereExists = function(query) {
 	query.existsfn = this.exists.map(function(ex) {
 		var nq = ex.compile(query.database.databaseid);
 //		console.log(nq);
-		 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
+//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
+		 nq.query.modifier = 'RECORDSET';
 		 return nq;
 	});
 };
@@ -36,7 +37,9 @@ yy.Select.prototype.compileQueries = function(query) {
 	query.queriesfn = this.queries.map(function(q) {
 		 var nq = q.compile(query.database.databaseid);
 //		console.log(nq);
-//		 nq.query.modifier = undefined;
+//	if(!nq.query) nq.query = {};
+		 nq.query.modifier = 'RECORDSET';
+//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 		 return nq;
 	});
 };
@@ -54,6 +57,8 @@ alasql.precompile = function(statement,databaseid,params){
 			var nq = q.compile(databaseid || statement.database.databaseid);
 //			console.log(nq);
 //			 nq.query.modifier = undefined;
+//			 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
+		 nq.query.modifier = 'RECORDSET';
 			 return nq;
 
 		});
@@ -63,7 +68,9 @@ alasql.precompile = function(statement,databaseid,params){
 		statement.existsfn = statement.exists.map(function(ex) {
 			var nq = ex.compile(databaseid || statement.database.databaseid);
 //			console.log(nq.query.modifier);
-			 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
+//			 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
+//			 if(!nq.query.modifier) nq.query.modifier = 'ARRAY';
+		 nq.query.modifier = 'RECORDSET';
 			 return nq;
 
 		});

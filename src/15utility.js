@@ -79,9 +79,13 @@ var cutbom = function(s) {
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
 
-    if(typeof exports == 'object') {
+    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
         // For Node.js
-        var fs = require('fs');
+        if(typeof Meteor != 'undefined') {
+            var fs = Npm.require('fs'); // For Meteor
+        } else {
+            var fs = require('fs');
+        }
 //        console.log(36,path);
 //        console.log(typeof path);
         if(!path) {
@@ -211,9 +215,16 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 */
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
-    if(typeof exports == 'object') {
+    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
         // For Node.js
-        var fs = require('fs');
+        if(typeof Meteor != 'undefined') {
+            var fs = Npm.require('fs'); // For Meteor
+        } else {
+            var fs = require('fs');
+        }
+    // if(typeof exports == 'object') {
+    //     // For Node.js
+    //     var fs = require('fs');
         if(asy) {
             fs.readFile(path,function(err,data){
                 if(err) {
@@ -681,7 +692,14 @@ var extend = utils.extend = function extend (a,b){
    Flat array by first row
  */
 var flatArray = utils.flatArray = function(a) {
+//console.log(684,a);
     if(!a || a.length == 0) return [];
+
+    // For recordsets
+    if(typeof a == 'object' && a instanceof alasql.Recordset) {
+        return a.data.map(function(ai){return ai[a.columns[0].columnid]});
+    }
+    // Else for other arrays
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
     return a.map(function(ai) {return ai[key]});

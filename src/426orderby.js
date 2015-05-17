@@ -27,6 +27,8 @@ yy.Select.prototype.compileOrder = function (query) {
 //console.log(ord.expression, ord.expression instanceof yy.NumValue);
 			if(ord.expression instanceof yy.NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
+//console.log(ord.expression);
+				ord.expression = new yy.Column({columnid:ord.expression.nick});
 			};
 
 			if(ord.expression instanceof yy.Column) {
@@ -65,7 +67,7 @@ yy.Select.prototype.compileOrder = function (query) {
 		s += 'return 0;';
 		s += sk+'return -1';
 		query.orderfns = s;
-//console.log(s);
+//console.log('ORDERBY',s);
 		return new Function('a,b',s);
 	};
 };

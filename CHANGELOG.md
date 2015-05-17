@@ -1,5 +1,20 @@
 # Changelog
 
+### 0.1.6 "Palermo" (13.05.2015 - 17.05.2015)
+* SET NOCOUNT OFF (for CREATE and INSERT)
+* ROWNUM() and ROW_NUMBER() functions
+* Promised version of alasql() - alasql.async() (based on es6-promises)
+* SELECT * FROM Json
+* SEARCH COMMA selector
+* Fixed bug with ORDER BY 1,2,3
+* Added subqueries for INSERT/DELETE/UPDATE
+* First 'official' ECHO plugin released (REQUIRE ECHO)
+* New catalogs added for future plugins
+* Meteor package 'agershun:alasql'
+* Changed readFile and readBinaryFile to read data from Meteor server
+* Added alasql.path
+* Test program improved
+
 ### 0.1.5 "San Marino" (12.05.2015 - 12.05.2015)
 * Added Meteor package (agershun:alasql) - still does not work - skeleton
 * Northwind test database - test for speed and SQL

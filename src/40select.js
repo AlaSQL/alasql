@@ -86,7 +86,9 @@ yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
 	var s = 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+'))[0]';
-//	s = '(console.log(this.queriesfn[0]),'+s+')';
+
+
+//	var s = '(ee=alasql.utils.flatArray(this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')),console.log(999,ee),ee[0])';
 
 	return s;
 };
@@ -104,7 +106,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	query.explain = this.explain; // Explain
 	query.explaination = [];
 	query.explid = 1;
-
+//console.log(this.modifier);
 	query.modifier = this.modifier;
 	
 	query.database = db;
@@ -121,6 +123,9 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 2. Compile JOIN clauses
 	if(this.joins) this.compileJoins(query);
 	// 3. Compile SELECT clause
+
+	// For ROWNUM()
+	query.rownums = [];
 	
 	this.compileSelectGroup0(query);
 
@@ -145,6 +150,7 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 6. Compile HAVING
 	if(this.having) query.havingfn = this.compileHaving(query);
+
 
 	if(this.group || query.selectGroup.length>0) {
 		query.selectgfn = this.compileSelectGroup2(query);
@@ -270,6 +276,14 @@ yy.Select.prototype.compile = function(databaseid) {
 
 //console.log(res[0].schoolid);
 //console.log(184,res);
+			if(query.rownums.length>0) {
+				for(var i=0,ilen=res.length;i<ilen;i++) {
+					for(var j=0,jlen=query.rownums.length;j<jlen;j++) {
+						res[i][query.rownums[j]] = i+1;
+					}
+				}
+			}
+
 			var res2 = modify(query, res);
 
 

@@ -26,7 +26,7 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 		if(this.exists) {
 			this.existsfn = this.exists.map(function(ex) {
 				var nq = ex.compile(databaseid);
-				if(nq.query && !nq.query.modifier) nq.query.modifier='ARRAY';
+				if(nq.query && !nq.query.modifier) nq.query.modifier='RECORDSET';
 				return nq;
 //				return ex.compile(databaseid);
 				// TODO Include modifier
@@ -35,7 +35,7 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 		if(this.queries) {
 			this.queriesfn = this.queries.map(function(q) {
 				var nq = q.compile(databaseid);
-				if(nq.query && !nq.query.modifier) nq.query.modifier='ARRAY';
+				if(nq.query && !nq.query.modifier) nq.query.modifier='RECORDSET';
 				return nq;
 				// TODO Include modifier
 			});		

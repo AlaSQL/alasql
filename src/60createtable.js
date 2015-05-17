@@ -287,16 +287,20 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(table.pk) {
 			var pk = table.pk;
 			var addr = pk.onrightfn(r);
+
 			if(typeof table.uniqs[pk.hh][addr] != 'undefined') {
+//console.log(pk,addr,pk.onrightfn({ono:1}));			
+//console.log(r, pk.onrightfn(r), pk.onrightfns);
 				throw new Error('Cannot insert record, because it already exists in primary key index');
 			} 
 //			table.uniqs[pk.hh][addr]=r;
 		}
+
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				var ukaddr = uk.onrightfn(r);
 				if(typeof table.uniqs[uk.hh][ukaddr] != 'undefined') {
-					throw new Error('Cannot insert record, because it already exists in primary key');
+					throw new Error('Cannot insert record, because it already exists in unique index');
 				} 				
 //				table.uniqs[uk.hh][ukaddr]=r;
 			});
@@ -448,9 +452,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(databaseid);
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);
-	if(cb) cb(1);
+	var res;
+	if(!alasql.options.nocount) res = 1;
+	if(cb) res = cb(res);
 
-	return 1;
+	return res;
 };
 
 

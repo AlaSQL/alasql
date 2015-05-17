@@ -2,10 +2,141 @@
 
 This file contanis unstructured ideas for future development of AlaSQL.
 
+SQLLOGICTEST; time, memory, scores;
+
+
+
+
+search count(/) where(_>10), / name;
+search / > loves > @y, / > loves >@y where(@x<>@y) return(@x,@y);
+
+a > g > b
+search / AS @x, / son(@x,@y);  COMMA -> start from from again;
+
+from where(age>36), where(a>23)
+
+
+grandson(@a,@c) :- son(@a,@b),son(@b,@c);
+:- son(A,B,C,C);
+?- grandson(Alex,@x);
+
+grandson(@a,@c) :- son(@a,@b),son(@b,@c);
+SEARCH age FROM (QUERY grandson(@person,Alex));
+SEARCH Alex > grandson > @x if(name > "X") name;
+
+SEARCH (SELECT)
+SEARCH  name FROM ?- grandson(@person,Alex);
+
+#22:123 {22:{123:{}}}
+
+QUERY @e 213;
+
+{$node:'$edge',$class:'son',$rel:[12,23,45,67]}
+12: $out
+23: $in
+Others - do not count;
+
+
+
 ## Ideas
+
+?- son(a,b);
+
+@x >> @b :- @b >> @x;
+
+CREATE GRAPH loves(Andrey,Vera) ; - alternative notation for edges
+loves(Andrey, Vera, Semen);
+$in, $out, ...
+
+rel - $v[0], $v[1], $v[3]
+> $v[1]; -- if edge
+SEARCH loves(A,@x,B), land(@x);
+loves (A,@x,B):- son(),b; 
+
+Eureka!!!
+
+
+SELECT * FROM @[1,2,3] JOIN @[1,2,3]
+SET modifier "value";
+CREATE UNIQUE INDEX
+CREATE INDEX
+INSERT/DELETE/UPDATE indexes loop
 
 Meteor Package
 GEFX
+
+PROLOG QUERY PROCESSOR OVER SQL DATA
+====================================
+
+pure prolog... modified prolog?
+
+son(alex,bob).
+son("Alex","Bob").
+
+:- son(Alex,Bob);
+father(@x,@y) :- son(@y,@x);
+?- father(Bob,@x);
+
+:- son(Alex,Bob);
+{$class:'son',0:'Alex',1:'Bob'};
+
+:- son(name1=Alex,name2=Bob);
+{$class:'son',name1:'Alex',name2:'Bob'};
+
+father(@x,@y) :- son(@y,@x);
+{$class:'father',0:{vars:"x"},1:{vars:"y"},$rule:[{$class:'son',0:{vars:"y"},1:{vars:"x"},}]};
+
+:- son(person1 "Alex",name2=Bob);
+
+
+
+
+
+?- :rel {father:@x, son: "Alex"}, :son {son:@x};
+
+pattern-matching
+?- rel(father:@x, son:"Alex") rel(father=@y,son=@x) RETURNS @x,@y;
+?- rel(@x, @y).
+?- {son:@x, father:@y}, .
+
+CLASS "father/4" [1,2];
+
+son(a,b):-father(b,a);
+son("David","Abraham");
+$rule:"son",length:2, 0:"David",1:"Abraham" 
+
+
+:- son("Alex","David");
+father(@x,@y) :- son(@y,@x); 
+?- father("David",@z);
+
+How to reflects fact to JSON or GRAPH?
+
+son("Alex","David").
+
+{$id:10, $node:'RULE', ruleid: "son", args:["Alex", "David"]}
+{$id:10, $node:'RULE', $class: "son", $arity:2, 0:"Alex", 1:"David"}
+
+, son:"Andrey")
+
+:- rel(papa:"David",son:"Alex");
+?- rel(papa:"David",son:@x);
+
+SELECT * FROM rel;
+
+{$node:'RULE', $class: 'rel', papa:'David', son:'Alex'};
+{$node:'RULE', $class: 'rel', papa:{vars:@x}, son:'Alex', $rule:[{},{},{},{}];
+
+{$class: 'rel', papa:'David', son:'Alex'};
+{$class: 'rel', $arity:1, papa:'David'};
+{$class: 'rel', papa:{vars:@x}, son:'Alex', $rule:[{},{},{},{}];
+
+CREATE CLASS rel;
+INSERT INTO rel VALUES ("David", "Alex");
+?- rel("David",@x);
+
+
+RULE @x > brother > @y :- @z > father > @x, @z > father > @y, where(@x <> @y);
 
 
 

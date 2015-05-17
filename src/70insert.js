@@ -49,6 +49,22 @@ yy.Insert.prototype.compile = function (databaseid) {
 // INSERT INTO table VALUES
 	if(this.values) {
 
+		if(this.exists) {
+			this.existsfn  = this.exists.map(function(ex) {
+				var nq = ex.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});
+		}
+		if(this.queries) {
+			this.queriesfn = this.queries.map(function(q) {
+				var nq = q.compile(databaseid);
+				nq.query.modifier='RECORDSET';
+				return nq;
+			});		
+		}
+
+
 //		console.log(1);
 		self.values.forEach(function(values) {
 			var ss = [];
@@ -184,7 +200,7 @@ yy.Insert.prototype.compile = function (databaseid) {
         }
 
 //console.log(186,s3+s);
-		var insertfn = new Function('db, params, alasql',s3+s);
+		var insertfn = new Function('db, params, alasql',s3+s).bind(this);
 	
 // INSERT INTO table SELECT
 
@@ -207,8 +223,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 		        	}
 		        } else {
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
-		        }
-				return res.length;
+		        };
+		        if(alasql.options.nocount) return;
+				else return res.length;
 			}
 		}
 
@@ -248,6 +265,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}
 	//		var res = insertfn(db, params);
+	        if(alasql.options.nocount) res = undefined;
 			if(cb) cb(res);
 			return res;
 		};
