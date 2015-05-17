@@ -11,6 +11,6 @@ The KPI1 is based on the [select1.test](test-sql/sqllogic/test/select1.test) fil
 
 * tests - 1031
 * parsed ok - 1031 (100%)
-* run ok - 975 (95%)
-* time - 5.7s
+* run ok - 999 (97%)
+* time - 5.8s
 
