@@ -1,9 +1,12 @@
 # Changelog
 
-### 0.1.6 "Parma" (17.05.2015 - ...05.2015)
+### 0.1.7 "Parma" (17.05.2015 - ...05.2015)
 * Fixed BETWEEN AND and AND parsing priority bug (KPI1:95%)
 * Fixed SUM() with NULL(undefined) values
 * SLT tests run
+* select1.test passed 100%
+* Set jsdoc environment
+* Added 'var y' and functions for NULL and undefined conversions
 
 ### 0.1.6 "Palermo" (13.05.2015 - 17.05.2015)
 * SET NOCOUNT OFF (for CREATE and INSERT)

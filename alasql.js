@@ -1,12 +1,12 @@
-//
-// alasql.js
-// AlaSQL - JavaScript SQL database
-// Date: 17.05.2015
-// Version: 0.1.6
-// (ñ) 2014-2015, Andrey Gershun
-//
-
 /*
+@module alasql
+@version 0.1.7
+
+AlaSQL - JavaScript SQL database
+Date: 17.05.2015
+(ñ) 2014-2015, Andrey Gershun
+
+@license
 The MIT License (MIT)
 
 Copyright (c) 2014-2015 Andrey Gershun (agershun@gmail.com)
@@ -31,15 +31,15 @@ SOFTWARE.
 */
 
 
-
-/**
- UMD envelope 
- */
+//
+//	UMD envelope for AlaSQL
+//
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         define([], factory);
     } else if (typeof exports === 'object') {
+    	/** alasql main function */
         module.exports = factory();
     } else {
         root.alasql = factory();
@@ -47,13 +47,15 @@ SOFTWARE.
 }(this, function () {
 
 /**
- alasql - Main Alasql class
- @param {string | Object} sql SQL-statement or data object for fuent interface
- @param {Object} params SQL parameters
- @param {Function} cb callback function
- @param {Object} scope Scope for nested queries
- @return {array} Result data object
- 
+ @function alasql - Main Alasql class
+ @param {string|function|object} sql - SQL-statement or data object for fuent interface
+ @param {object=} params - SQL parameters
+ @param {function=} cb - callback function
+ @param {object=} scope - Scope for nested queries
+ @return {any} - Result data object
+*/
+
+/**
  Standard sync call:
     alasql('CREATE TABLE one');
  Query:
@@ -73,7 +75,7 @@ SOFTWARE.
     alasql().From(data).Where(function(x){return x.a == 10}).exec();
  */
 
-var alasql = function(sql, params, cb, scope) {
+var alasql = function alasql(sql, params, cb, scope) {
 	if(typeof importScripts != 'function' && alasql.webworker) {
 		var id = alasql.lastid++;
 		alasql.buffer[id] = cb;
@@ -110,8 +112,11 @@ var alasql = function(sql, params, cb, scope) {
 	};
 };
 
-/** Current version of alasql */
-alasql.version = "0.1.6";
+/** Current version of alasql 
+ 	@const {string} */
+alasql.version = "0.1.7";
+
+
 alasql.debug = undefined; // Initial debug variable
 
 getAlaSQLPath();
@@ -3141,7 +3146,7 @@ var fileExists = utils.fileExists = function(path,cb){
 /**
   Save text file from anywhere
   @param {string} path File path
-  @param {array of objects} data Data object
+  @param {array} data Data object
   @param {function} cb Callback
 */
 

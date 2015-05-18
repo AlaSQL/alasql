@@ -2,6 +2,13 @@
 
 This file contanis unstructured ideas for future development of AlaSQL.
 
+
+
+# Ideas
+
+1. Check select2.test
+2. Preare list of OrientDB tests for SQL parser
+
 SQLLOGICTEST; time, memory, scores;
 
 

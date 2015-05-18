@@ -350,7 +350,7 @@ var fileExists = utils.fileExists = function(path,cb){
 /**
   Save text file from anywhere
   @param {string} path File path
-  @param {array of objects} data Data object
+  @param {array} data Data object
   @param {function} cb Callback
 */
 
