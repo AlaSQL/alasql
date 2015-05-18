@@ -3759,6 +3759,9 @@ alasql.options.orientdb = true;
 // for SET NOCOUNT OFF
 alasql.options.nocount = false;
 
+// Check for NaN and convert it to undefined
+alasql.options.nan = false;
+
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};
@@ -4673,7 +4676,7 @@ function doSearch (databaseid, params, cb) {
 		fromdata = alasql.databases[databaseid].objects;
 	} else {
 
-		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
+		var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
 		fromdata = fromfn(params,alasql);			
 		// Check for Mogo Collections
 		if(typeof Mongo == 'object' && typeof Mongo.Collection != 'object'
@@ -4707,11 +4710,11 @@ function doSearch (databaseid, params, cb) {
 	if(this.into) {
 		var a1,a2;
 		if(typeof this.into.args[0] != 'undefined') {
-			a1 = new Function('params,alasql','return '
+			a1 = new Function('params,alasql','var y;return '
 				 +this.into.args[0].toJavaScript())(params,alasql);
 		}
 		if(typeof this.into.args[1] != 'undefined') {
-				a2 =  new Function('params,alasql','return '
+				a2 =  new Function('params,alasql','var y;return '
 				 +this.into.args[1].toJavaScript())(params,alasql);
 		}
 		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
@@ -6622,10 +6625,10 @@ yy.Select.prototype.compile = function(databaseid) {
 
 		if(query.intofns) {
 			// Create intofn function
-			query.intofn = new Function("r,i,params,alasql",query.intofns); 
+			query.intofn = new Function("r,i,params,alasql",'var y;'+query.intofns); 
 		} else if(query.intoallfns) {
 			// Create intoallfn function
-			query.intoallfn = new Function("columns,cb,params,alasql",query.intoallfns); 
+			query.intoallfn = new Function("columns,cb,params,alasql",'var y;'+query.intoallfns); 
 		}
 
 	}
@@ -7389,12 +7392,12 @@ yy.Select.prototype.compileJoins = function(query) {
 
 
 
-			source.onleftfn = new Function('p,params,alasql','return '+source.onleftfns);
+			source.onleftfn = new Function('p,params,alasql','var y;return '+source.onleftfns);
 
 			source.onrightfns = jn.using.map(function(col){
 				return "p['"+(source.alias||source.tableid)+"']['"+col.columnid+"']";
 			}).join('+"`"+');
-			source.onrightfn = new Function('p,params,alasql','return '+source.onrightfns);
+			source.onrightfn = new Function('p,params,alasql','var y;return '+source.onrightfns);
 			source.optimization = 'ix';
 //			console.log(151,source.onleftfns, source.onrightfns);
 //			console.log(source);
@@ -7460,9 +7463,9 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.onmiddlefns = middles || 'true';
 //			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
 
-				source.onleftfn = new Function('p,params,alasql', 'return '+source.onleftfns);
-				source.onrightfn = new Function('p,params,alasql', 'return '+source.onrightfns);
-				source.onmiddlefn = new Function('p,params,alasql', 'return '+source.onmiddlefns);
+				source.onleftfn = new Function('p,params,alasql', 'var y;return '+source.onleftfns);
+				source.onrightfn = new Function('p,params,alasql', 'var y;return '+source.onrightfns);
+				source.onmiddlefn = new Function('p,params,alasql', 'var y;return '+source.onmiddlefns);
 
 //			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
 //				console.log('join on and ',jn);
@@ -7473,7 +7476,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
 				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
-				source.onmiddlefn = new Function('p,params,alasql','return '+jn.on.toJavaScript('p',query.defaultTableid,query.defcols));
+				source.onmiddlefn = new Function('p,params,alasql','var y;return '+jn.on.toJavaScript('p',query.defaultTableid,query.defcols));
 			};
 //			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 
@@ -7531,7 +7534,7 @@ yy.Select.prototype.compileWhere = function(query) {
 			s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
 			query.wherefns = s;
 //		console.log(s);
-			return new Function('p,params,alasql','return '+s);
+			return new Function('p,params,alasql','var y;return '+s);
 		}
 	} else return function(){return true};
 };
@@ -7549,13 +7552,13 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 	//for sources compile wherefs
 	query.sources.forEach(function(source) {
 		if(source.srcwherefns) {
-			source.srcwherefn = new Function('p,params,alasql','return '+source.srcwherefns);
+			source.srcwherefn = new Function('p,params,alasql','var y;return '+source.srcwherefns);
 		};
 		if(source.wxleftfns) {
-			source.wxleftfn = new Function('p,params,alasql','return '+source.wxleftfns);
+			source.wxleftfn = new Function('p,params,alasql','var y;return '+source.wxleftfns);
 		};
 		if(source.wxrightfns) {
-			source.wxrightfn = new Function('p,params,alasql','return '+source.wxrightfns);
+			source.wxrightfn = new Function('p,params,alasql','var y;return '+source.wxrightfns);
 		};
 //		console.log(source.alias, source.wherefns)
 //		console.log(source);
@@ -8168,7 +8171,7 @@ yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns;
 //	console.log(s);
-	return new Function('p,params,alasql',s+'return r');
+	return new Function('p,params,alasql','var y;'+s+'return r');
 };
 
 
@@ -8293,7 +8296,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 yy.Select.prototype.compileSelectGroup2 = function(query) {
 	var s = query.selectgfns;
 //	console.log('selectg:',s);
-	return new Function('g,params,alasql',s+'return r');
+	return new Function('g,params,alasql','var y;'+s+'return r');
 }
 
 // SELECY * REMOVE [COLUMNS] col-list, LIKE ''
@@ -8319,7 +8322,7 @@ yy.Select.prototype.compileHaving = function(query) {
 		s = this.having.toJavaScript('g',-1);
 		query.havingfns = s;
 //		console.log(s);
-		return new Function('g,params,alasql','return '+s);
+		return new Function('g,params,alasql','var y;return '+s);
 	} else return function(){return true};
 };
 
@@ -8394,7 +8397,7 @@ yy.Select.prototype.compileOrder = function (query) {
 		s += sk+'return -1';
 		query.orderfns = s;
 //console.log('ORDERBY',s);
-		return new Function('a,b',s);
+		return new Function('a,b','var y;'+s);
 	};
 };
 
@@ -8732,7 +8735,7 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression.toJavaScript('','', null));
 //		console.log(this.expression.toJavaScript('','', null));
-		var expr =  new Function("params,alasql,p",'return '+this.expression.toJavaScript('({})','', null));
+		var expr =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null));
 		var res = expr(params,alasql);
 		if(cb) res = cb(res);
 		return res;
@@ -8758,7 +8761,7 @@ yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 yy.Expression.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 	if(this.reduced) return returnTrue();
-	return new Function('p','return '+this.toJavaScript(context, tableid, defcols));
+	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
 };
 
 
@@ -9136,6 +9139,7 @@ yy.NullValue.prototype.toString = function() {
 }
 yy.NullValue.prototype.toJavaScript = function() {
 	return 'undefined';
+//	return 'undefined';
 }
 
 yy.ParamValue = function (params) { return yy.extend(this, params); }
@@ -9702,10 +9706,20 @@ stdlib.IFNULL = function(a,b) {return '('+a+'||'+b+')'};
 stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
-stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+').length';};
+
+function n2u(s,r) {
+	return '(y='+s+',y===y?'+r+':undefined)';
+}
+
+function und(s,r) {
+	return '(y='+s+',typeof y=="undefined"?undefined:'+r+')'
+}
+
+
+stdlib.LEN = stdlib.LENGTH = function(s) {return und(s,'y.length');}
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
+stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'y.toLowerCase()');}
 //stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 
@@ -9720,8 +9734,8 @@ stdlib.MIN = stdlib.LEAST = function(){
 };
 
 stdlib.MID = function(a,b,c){
-	if(arguments.length == 2) return '('+a+').substr('+b+'-1)';
-	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
+	if(arguments.length == 2) return und(a,'y.substr('+b+'-1)');
+	else if(arguments.length == 3) return und(a,'y.substr('+b+'-1,'+c+')');
 };
 
 // Here we uses undefined instead of null
@@ -9748,9 +9762,9 @@ stdlib.ROW_NUMBER = function() {return '1'};
 
 stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
-stdlib.TRIM = function(s) {return s+'.trim()'};
+stdlib.TRIM = function(s) {return und(s,'y.trim()');}
 
-stdlib.UPPER = stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
+stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'y.toUpperCase()');}
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
@@ -10245,7 +10259,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
 			if(col.check) {
-				table.checkfn.push(new Function("r",'return '+col.check.expression.toJavaScript('r','')));
+				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJavaScript('r','')));
 			}
 
 			if(col.default) {
@@ -10258,7 +10272,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				var pk = table.pk = {};
 				pk.columns = [col.columnid];
 				pk.onrightfns = 'r[\''+col.columnid+'\']';
-				pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+				pk.onrightfn = new Function("r",'var y;return '+pk.onrightfns);
 				pk.hh = hash(pk.onrightfns);
 				table.uniqs[pk.hh] = {};
 			};
@@ -10270,7 +10284,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uk.push(uk);
 				uk.columns = [col.columnid];
 				uk.onrightfns = 'r[\''+col.columnid+'\']';
-				uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+				uk.onrightfn = new Function("r",'var y;return '+uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
 			};
@@ -10331,12 +10345,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.onrightfns = pk.columns.map(function(columnid){
 				return 'r[\''+columnid+'\']'
 			}).join("+'`'+");
-			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+			pk.onrightfn = new Function("r",'var y;return '+pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};					
 		} else if(con.type == 'CHECK') {
 //			console.log(con.expression.toJavaScript('r',''));
-			table.checkfn.push(new Function("r",'return '+con.expression.toJavaScript('r','')));
+			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJavaScript('r','')));
 		} else if(con.type == 'UNIQUE') {
 //			console.log(con);
 			var uk = {};
@@ -10346,7 +10360,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.onrightfns = uk.columns.map(function(columnid){
 				return 'r[\''+columnid+'\']'
 			}).join("+'`'+");
-			uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+			uk.onrightfn = new Function("r",'var y;return '+uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};					
 		} else if(con.type == 'FOREIGN KEY') {
@@ -10925,8 +10939,8 @@ yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
@@ -10938,7 +10952,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 		var s = this.sets.map(function(st){
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
 		}).join(';');
-		var setfn = new Function('x,params,alasql',s);
+		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {
 
 	} else if(this.select) {
@@ -11020,7 +11034,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 				}
 				e.$node='EDGE';
 				if(typeof g.json != 'undefined') {
-					extend(e,(new Function('params,alasql','return '+
+					extend(e,(new Function('params,alasql','var y;return '+
 					g.json.toJavaScript()))(params,alasql));
 				}
 
@@ -11121,7 +11135,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 		}
 		v.$node='VERTEX';
 		if(typeof g.json != 'undefined') {
-			extend(v,(new Function('params,alasql','return '+
+			extend(v,(new Function('params,alasql','var y;return '+
 			g.json.toJavaScript()))(params,alasql));
 		}
 		db.objects[v.$id] = v;
@@ -11145,8 +11159,8 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
@@ -11158,7 +11172,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 		var s = this.sets.map(function(st){
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
 		}).join(';');
-		var setfn = new Function('x,params,alasql',s);
+		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {
 
 	} else if(this.select) {
@@ -11540,7 +11554,7 @@ yy.If.prototype.execute = function (databaseid,params,cb){
 //	console.log(this);
 //	console.log(this.expression.toJavaScript('{}','',null));
 //	console.log();
-	var fn = new Function('params,alasql,p','return '+this.expression.toJavaScript('({})','',null)).bind(this);
+	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJavaScript('({})','',null)).bind(this);
 //	var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJavaScript('({})','',null)).bind(this);
 	if(fn(params,alasql)) res = this.thenstat.execute(databaseid,params,cb);
 	else {
@@ -11576,7 +11590,7 @@ yy.While.prototype.execute = function (databaseid,params,cb) {
 	var self = this;
 	var res = [];
 //	console.log(this.expression.toJavaScript());
-	var fn = new Function('params,alasql,p','return '+this.expression.toJavaScript());
+	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJavaScript());
 //	console.log('cb',!!cb);
 	if(cb) {
 		var first = false;
@@ -11854,7 +11868,7 @@ yy.Insert.prototype.compile = function (databaseid) {
         }
 
 //console.log(186,s3+s);
-		var insertfn = new Function('db, params, alasql',s3+s).bind(this);
+		var insertfn = new Function('db, params, alasql','var y;'+s3+s).bind(this);
 	
 // INSERT INTO table SELECT
 
@@ -11896,7 +11910,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
     if(db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
 		var statement = function(params, cb) {
-			var aa = new Function("db,params",s33+'return aa;')(db,params);
+			var aa = new Function("db,params",'var y;'+s33+'return aa;')(db,params);
 //			console.log(s33);
 			var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa, null, cb);
 //			if(cb) cb(res);
@@ -11987,7 +12001,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //	} catch(err){console.log(444,err)};
 //		var query = {};
 //console.log(this.where.toJavaScript('r',''));
-		wherefn = new Function('r,params,alasql','return ('+this.where.toJavaScript('r','')+')').bind(this);
+		wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJavaScript('r','')+')').bind(this);
 //		console.log(wherefn);
 		statement = (function (params, cb) {
 			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {
@@ -12105,7 +12119,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			});		
 		}
 
-		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r','')).bind(this);
+		var wherefn = new Function('r,params,alasql','var y;return '+this.where.toJavaScript('r','')).bind(this);
 	};
 
 	// Construct update function
@@ -12114,7 +12128,7 @@ yy.Update.prototype.compile = function (databaseid) {
 		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
 	});
 //	console.log('updatefn',s);
-	var assignfn = new Function('r,params,alasql',s);
+	var assignfn = new Function('r,params,alasql','var y;'+s);
 
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];
@@ -12251,7 +12265,7 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	var args;
 	if(this.args && this.args.length > 0) {
 		args = this.args.map(function(arg){
-			return new Function('params','return '+arg.toJavaScript())(params);
+			return new Function('params,alasql','var y;return '+arg.toJavaScript())(params,alasql);
 		});
 	};
 	if(this.engineid) {

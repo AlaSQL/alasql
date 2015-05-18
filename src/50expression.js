@@ -15,7 +15,7 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression.toJavaScript('','', null));
 //		console.log(this.expression.toJavaScript('','', null));
-		var expr =  new Function("params,alasql,p",'return '+this.expression.toJavaScript('({})','', null));
+		var expr =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null));
 		var res = expr(params,alasql);
 		if(cb) res = cb(res);
 		return res;
@@ -41,7 +41,7 @@ yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 yy.Expression.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 	if(this.reduced) return returnTrue();
-	return new Function('p','return '+this.toJavaScript(context, tableid, defcols));
+	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
 };
 
 
@@ -419,6 +419,7 @@ yy.NullValue.prototype.toString = function() {
 }
 yy.NullValue.prototype.toJavaScript = function() {
 	return 'undefined';
+//	return 'undefined';
 }
 
 yy.ParamValue = function (params) { return yy.extend(this, params); }

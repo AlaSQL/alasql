@@ -151,8 +151,8 @@ yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
@@ -164,7 +164,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 		var s = this.sets.map(function(st){
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
 		}).join(';');
-		var setfn = new Function('x,params,alasql',s);
+		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {
 
 	} else if(this.select) {
@@ -246,7 +246,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 				}
 				e.$node='EDGE';
 				if(typeof g.json != 'undefined') {
-					extend(e,(new Function('params,alasql','return '+
+					extend(e,(new Function('params,alasql','var y;return '+
 					g.json.toJavaScript()))(params,alasql));
 				}
 
@@ -347,7 +347,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 		}
 		v.$node='VERTEX';
 		if(typeof g.json != 'undefined') {
-			extend(v,(new Function('params,alasql','return '+
+			extend(v,(new Function('params,alasql','var y;return '+
 			g.json.toJavaScript()))(params,alasql));
 		}
 		db.objects[v.$id] = v;
@@ -371,8 +371,8 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
@@ -384,7 +384,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 		var s = this.sets.map(function(st){
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
 		}).join(';');
-		var setfn = new Function('x,params,alasql',s);
+		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {
 
 	} else if(this.select) {

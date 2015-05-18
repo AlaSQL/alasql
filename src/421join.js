@@ -275,12 +275,12 @@ yy.Select.prototype.compileJoins = function(query) {
 
 
 
-			source.onleftfn = new Function('p,params,alasql','return '+source.onleftfns);
+			source.onleftfn = new Function('p,params,alasql','var y;return '+source.onleftfns);
 
 			source.onrightfns = jn.using.map(function(col){
 				return "p['"+(source.alias||source.tableid)+"']['"+col.columnid+"']";
 			}).join('+"`"+');
-			source.onrightfn = new Function('p,params,alasql','return '+source.onrightfns);
+			source.onrightfn = new Function('p,params,alasql','var y;return '+source.onrightfns);
 			source.optimization = 'ix';
 //			console.log(151,source.onleftfns, source.onrightfns);
 //			console.log(source);
@@ -346,9 +346,9 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.onmiddlefns = middles || 'true';
 //			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
 
-				source.onleftfn = new Function('p,params,alasql', 'return '+source.onleftfns);
-				source.onrightfn = new Function('p,params,alasql', 'return '+source.onrightfns);
-				source.onmiddlefn = new Function('p,params,alasql', 'return '+source.onmiddlefns);
+				source.onleftfn = new Function('p,params,alasql', 'var y;return '+source.onleftfns);
+				source.onrightfn = new Function('p,params,alasql', 'var y;return '+source.onrightfns);
+				source.onmiddlefn = new Function('p,params,alasql', 'var y;return '+source.onmiddlefns);
 
 //			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
 //				console.log('join on and ',jn);
@@ -359,7 +359,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
 				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
-				source.onmiddlefn = new Function('p,params,alasql','return '+jn.on.toJavaScript('p',query.defaultTableid,query.defcols));
+				source.onmiddlefn = new Function('p,params,alasql','var y;return '+jn.on.toJavaScript('p',query.defaultTableid,query.defcols));
 			};
 //			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 

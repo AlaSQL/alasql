@@ -6,7 +6,7 @@ yy.Select.prototype.compileWhere = function(query) {
 			s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
 			query.wherefns = s;
 //		console.log(s);
-			return new Function('p,params,alasql','return '+s);
+			return new Function('p,params,alasql','var y;return '+s);
 		}
 	} else return function(){return true};
 };
@@ -24,13 +24,13 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 	//for sources compile wherefs
 	query.sources.forEach(function(source) {
 		if(source.srcwherefns) {
-			source.srcwherefn = new Function('p,params,alasql','return '+source.srcwherefns);
+			source.srcwherefn = new Function('p,params,alasql','var y;return '+source.srcwherefns);
 		};
 		if(source.wxleftfns) {
-			source.wxleftfn = new Function('p,params,alasql','return '+source.wxleftfns);
+			source.wxleftfn = new Function('p,params,alasql','var y;return '+source.wxleftfns);
 		};
 		if(source.wxrightfns) {
-			source.wxrightfn = new Function('p,params,alasql','return '+source.wxrightfns);
+			source.wxrightfn = new Function('p,params,alasql','var y;return '+source.wxrightfns);
 		};
 //		console.log(source.alias, source.wherefns)
 //		console.log(source);

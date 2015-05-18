@@ -48,7 +48,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //	} catch(err){console.log(444,err)};
 //		var query = {};
 //console.log(this.where.toJavaScript('r',''));
-		wherefn = new Function('r,params,alasql','return ('+this.where.toJavaScript('r','')+')').bind(this);
+		wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJavaScript('r','')+')').bind(this);
 //		console.log(wherefn);
 		statement = (function (params, cb) {
 			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {

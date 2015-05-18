@@ -86,7 +86,7 @@ function doSearch (databaseid, params, cb) {
 		fromdata = alasql.databases[databaseid].objects;
 	} else {
 
-		var fromfn = new Function('params,alasql','return '+this.from.toJavaScript());
+		var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
 		fromdata = fromfn(params,alasql);			
 		// Check for Mogo Collections
 		if(typeof Mongo == 'object' && typeof Mongo.Collection != 'object'
@@ -120,11 +120,11 @@ function doSearch (databaseid, params, cb) {
 	if(this.into) {
 		var a1,a2;
 		if(typeof this.into.args[0] != 'undefined') {
-			a1 = new Function('params,alasql','return '
+			a1 = new Function('params,alasql','var y;return '
 				 +this.into.args[0].toJavaScript())(params,alasql);
 		}
 		if(typeof this.into.args[1] != 'undefined') {
-				a2 =  new Function('params,alasql','return '
+				a2 =  new Function('params,alasql','var y;return '
 				 +this.into.args[1].toJavaScript())(params,alasql);
 		}
 		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);

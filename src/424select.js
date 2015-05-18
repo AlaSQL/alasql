@@ -238,7 +238,7 @@ yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns;
 //	console.log(s);
-	return new Function('p,params,alasql',s+'return r');
+	return new Function('p,params,alasql','var y;'+s+'return r');
 };
 
 
@@ -363,7 +363,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 yy.Select.prototype.compileSelectGroup2 = function(query) {
 	var s = query.selectgfns;
 //	console.log('selectg:',s);
-	return new Function('g,params,alasql',s+'return r');
+	return new Function('g,params,alasql','var y;'+s+'return r');
 }
 
 // SELECY * REMOVE [COLUMNS] col-list, LIKE ''
