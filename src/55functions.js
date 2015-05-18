@@ -112,13 +112,6 @@ stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
 
-function n2u(s,r) {
-	return '(y='+s+',y===y?'+r+':undefined)';
-}
-
-function und(s,r) {
-	return '(y='+s+',typeof y=="undefined"?undefined:'+r+')'
-}
 
 
 stdlib.LEN = stdlib.LENGTH = function(s) {return und(s,'y.length');}

@@ -10,10 +10,10 @@ var md5 = require('blueimp-md5').md5;
 // List of tests
 var filenames = [
 //	'./test/select1.test',
-// 	'./test/select2.test',
+ 	'./test/select2.test',
 //	'./test/select3.test',
 // 	'./test/select4.test',
-	'./test/select5.test',
+//	'./test/select5.test',
 //	'./test/evidence/in1.test',
 //	'./test/evidence/in2.test',
 // 	'./test/evidence/slt_lang_aggfunc.test',
@@ -44,7 +44,7 @@ var filenames = [
 ];
 
 
-var limit = 200000; /*1000000*/
+var limit = 1000; /*1000000*/
 var errlimit = 2;
 var nerrors = 0;
 //var mode = 'PostgreSQL';		// Let say we are a la Oracle :)
@@ -56,7 +56,7 @@ var restests = []; // Array for result of tests
 // Process all filenames
 filenames.forEach(function(filename,i) {
 	console.log(filename);
-	var rt = test(filename,false);
+	var rt = test(filename,true);
 	restests.push(rt);
 //	console.log(rt);
 });
@@ -214,16 +214,15 @@ function test(filename, show) {
 					    var s = res.map(function(d){
 					    	var s1 = '';
 					    	for(var j=0;j<rs.columns.length;j++) {
-					    		if((typeof d[rs.columns[j].columnid] == 'undefined')
-					    		|| isNaN(d[rs.columns[j].columnid])){
+					    		if(typeof d[rs.columns[j].columnid] == 'undefined'){
 						    		s1 += 'NULL\n';
 					    		} else {
 						    		s1 += d[rs.columns[j].columnid]+'\n';
 					    		}
 					    	}
-					    //	console.log(s1);
 					    	return s1;
 					    }).join('');
+//					    	console.log(s);
     					rhash = md5(s);
 //    					console.log(153,s,rhash,exphash);
 						if(rhash == exphash) passed = 'passed';
@@ -296,7 +295,7 @@ function test(filename, show) {
 				}
 			}
 //			if(passed != 'passed' && show) console.log(passed,i,sql,res,expect,reason);
-			if(passed != 'passed' && show) console.log('#',i,expect,reason);
+			if(passed != 'passed' && show) console.log('#',i,sql,expect,reason);
 			if(passed == 'passed') npassed++;
 			else if(passed == 'unclear') upassed++;
 			continue;

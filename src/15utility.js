@@ -11,6 +11,17 @@
  */
 var utils = alasql.utils = {};
 
+// COnvert NaN to undefined
+function n2u(s) {
+    return '(y='+s+',y===y?y:undefined)';
+}
+
+// Return undefined if s undefined
+function und(s,r) {
+    return '(y='+s+',typeof y=="undefined"?undefined:'+r+')'
+}
+
+
 /**
  Return true.
  Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()

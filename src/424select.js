@@ -187,7 +187,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  
 				col.aggregatorid == 'AVG' || col.aggregatorid == 'ARRAY' || col.aggregatorid == 'REDUCE'
 				) {
-				ss.push("'"+escapeq(col.as)+'\':'+col.expression.toJavaScript("p",query.defaultTableid,query.defcols))	
+				ss.push("'"+escapeq(col.as)+'\':'+n2u(col.expression.toJavaScript("p",query.defaultTableid,query.defcols)))	
 			} else if (col.aggregatorid == 'COUNT') {
 				ss.push("'"+escapeq(col.as)+"':1");
 				// Nothing
@@ -213,7 +213,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 //			}
 		} else {
 //			console.log(203,col.as,col.columnid,col.toString());
-			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid,query.defcols));
+			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+n2u(col.toJavaScript("p",query.defaultTableid,query.defcols)));
 //			ss.push('\''+escapeq(col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
@@ -323,7 +323,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 //			console.log(col);//,col.toJavaScript('g',''));
 
 
- 			s += col.toJavaScript('g','')+';';				
+ 			s += n2u(col.toJavaScript('g',''))+';';				
 /*
 			s += 'g[\''+col.nick+'\'];';
 
