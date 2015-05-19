@@ -9,40 +9,40 @@ var md5 = require('blueimp-md5').md5;
 
 // List of tests
 var filenames = [
-	'./test/select1.test',
- 	'./test/select2.test',
-	'./test/select3.test',
-// 	'./test/select4.test',
+	// './test/select1.test',
+ // 	'./test/select2.test',
+	// './test/select3.test',
+	'./test/select4.test',
 //	'./test/select5.test',
-	'./test/evidence/in1.test',
-	'./test/evidence/in2.test',
-	'./test/evidence/slt_lang_aggfunc.test',
-	'./test/evidence/slt_lang_createtrigger.test',
-	'./test/evidence/slt_lang_createview.test',
-	'./test/evidence/slt_lang_dropindex.test',
-	'./test/evidence/slt_lang_droptable.test',
-	'./test/evidence/slt_lang_droptrigger.test',
-	'./test/evidence/slt_lang_dropview.test',
-	'./test/evidence/slt_lang_reindex.test',
-	'./test/evidence/slt_lang_replace.test',
-	'./test/evidence/slt_lang_update.test',
-	 './test/index/between/1/slt_good_0.test',
-	 './test/index/commute/10/slt_good_0.test',
-	 './test/index/delete/1/slt_good_0.test', 
- 	 './test/index/in/10/slt_good_0.test',
-	 './test/index/orderby/10/slt_good_0.test',
-	 './test/index/orderby_nosort/10/slt_good_0.test', 
- 	 './test/index/random/10/slt_good_0.test',
- 	 './test/index/view/10/slt_good_1.test',
-	 './test/random/aggregates/slt_good_0.test',
-	 './test/random/expr/slt_good_0.test',
-	 './test/random/groupby/slt_good_0.test',
-	 './test/random/select/slt_good_0.test'
+	// './test/evidence/in1.test',
+	// './test/evidence/in2.test',
+	// './test/evidence/slt_lang_aggfunc.test',
+	// './test/evidence/slt_lang_createtrigger.test',
+	// './test/evidence/slt_lang_createview.test',
+	// './test/evidence/slt_lang_dropindex.test',
+	// './test/evidence/slt_lang_droptable.test',
+	// './test/evidence/slt_lang_droptrigger.test',
+	// './test/evidence/slt_lang_dropview.test',
+	// './test/evidence/slt_lang_reindex.test',
+	// './test/evidence/slt_lang_replace.test',
+	// './test/evidence/slt_lang_update.test',
+	//  './test/index/between/1/slt_good_0.test',
+	//  './test/index/commute/10/slt_good_0.test',
+	//  './test/index/delete/1/slt_good_0.test', 
+ // 	 './test/index/in/10/slt_good_0.test',
+	//  './test/index/orderby/10/slt_good_0.test',
+	//  './test/index/orderby_nosort/10/slt_good_0.test', 
+ // 	 './test/index/random/10/slt_good_0.test',
+ // 	 './test/index/view/10/slt_good_1.test',
+	//  './test/random/aggregates/slt_good_0.test',
+	//  './test/random/expr/slt_good_0.test',
+	//  './test/random/groupby/slt_good_0.test',
+	//  './test/random/select/slt_good_0.test'
 
 ];
 
 
-var limit = 1000000;//3140; /*1000000*/
+var limit = 3340;//3140; /*1000000*/
 var errlimit = 2;
 var nerrors = 0;
 //var mode = 'PostgreSQL';		// Let say we are a la Oracle :)
@@ -54,7 +54,7 @@ var restests = []; // Array for result of tests
 // Process all filenames
 filenames.forEach(function(filename,i) {
 	console.log(filename);
-	var rt = test(filename,false);
+	var rt = test(filename,true);
 	restests.push(rt);
 //	console.log(rt);
 });
@@ -111,6 +111,9 @@ function test(filename, show) {
 //		if(i>3100 && i<29209) continue;
 		if(i%100 == 0) process.stdout.write('.');
 //		process.stdout.write(i+',');
+
+		var sr, sa, s, exphash, explen, sql;
+
 
 		var line = f[i].trim().split('#')[0];
 		var w = line.split(' '); 
@@ -210,7 +213,8 @@ function test(filename, show) {
 				if(res.length*qtype.length == explen) { // Check if length are the same
 
 					if(exphash) { // Special case
-					    var sa = res.map(function(d){
+					    var sa = [];
+					    res.forEach(function(d){
 					    	var s1 = '';
 					    	for(var j=0;j<rs.columns.length;j++) {
 					    		if(typeof d[rs.columns[j].columnid] == 'undefined'){
@@ -218,14 +222,20 @@ function test(filename, show) {
 					    		} else {
 						    		s1 += d[rs.columns[j].columnid]+'\n';
 					    		}
+						    	if(w[2] == 'valuesort') {
+						    		sa.push(s1);
+						    		s1 = '';
+						    	}					    		
 					    	}
-					    	return s1;
+					    	if(w[2] != 'valuesort') {
+					    		sa.push(s1);
+					    	}
 					    });
-						if(w[2] == 'rowsort') {
+						if(w[2] == 'rowsort' || w[2] == 'valuesort' ) {
 							sa = sa.sort();
 						}
-					    var s = sa.join('');
-    					rhash = md5(s);
+					    var sr = sa.join('');
+    					rhash = md5(sr);
     					//console.log(153,s,rhash,exphash);
 						if(rhash == exphash) passed = 'passed';
 						else passed = 'not passed';
@@ -261,7 +271,8 @@ function test(filename, show) {
 							}				
 						} else {
 							// Array of values
-						    var sa = res.map(function(d){
+						    var sa = [];
+						    res.forEach(function(d){
 						    	var s1 = '';
 						    	for(var j=0;j<rs.columns.length;j++) {
 						    		if(typeof d[rs.columns[j].columnid] == 'undefined'){
@@ -269,11 +280,17 @@ function test(filename, show) {
 						    		} else {
 							    		s1 += d[rs.columns[j].columnid]+'\n';
 						    		}
+						    		if(w[2] == 'valuesort') {
+						    			sa.push(s1);
+						    			s1 = '';
+						    		}
 						    	}
-						    	return s1;
+					    		if(w[2] != 'valuesort') {
+							    	return s1;
+							    }
 						    });
 						    // Sort if required
-							if(w[2] == 'rowsort') {
+							if(w[2] == 'rowsort' ||w[2] == 'valuesort' ) {
 								sa = sa.sort();
 							}
 						    var sr = sa.join('');
@@ -313,7 +330,7 @@ function test(filename, show) {
 				}
 			}
 //			if(passed != 'passed' && show) console.log(passed,i,sql,res,expect,reason);
-			if(passed != 'passed' && show) console.log('#',i,s,sql,expect,rhash,reason);
+			if(passed != 'passed' && show && i>3340) console.log('#',i,sr,sa.length,explen,sql,w[2],expect,rhash,reason);
 			if(passed == 'passed') npassed++;
 			else if(passed == 'unclear') upassed++;
 			continue;

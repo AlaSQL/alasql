@@ -528,7 +528,7 @@ function doSearch (databaseid, params, cb) {
 					// }
 					var r = {status:1,values:nest};
 				}
-			} else if(sel.selid == 'COMMA') {
+			} else if(sel.selid == 'ROOT') {
 				if(sidx+1+1 > selectors.length) {
 					return [value];
 				} else {

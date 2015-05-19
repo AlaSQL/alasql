@@ -472,8 +472,8 @@ SearchSelector
 
 	| ARROW Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
-	| COMMA 
-		{ $$ = {selid:"COMMA"};}
+	| CARET 
+		{ $$ = {selid:"ROOT"};}
 	| EQ Expression
 		{ $$ = {srchid:"EQ", args: [$2]}; }
 	| LIKE Expression
