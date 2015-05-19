@@ -10,9 +10,9 @@ var md5 = require('blueimp-md5').md5;
 // List of tests
 var filenames = [
 //	'./test/select1.test',
- 	'./test/select2.test',
+// 	'./test/select2.test',
 //	'./test/select3.test',
-// 	'./test/select4.test',
+ 	'./test/select4.test',
 //	'./test/select5.test',
 //	'./test/evidence/in1.test',
 //	'./test/evidence/in2.test',
@@ -30,7 +30,7 @@ var filenames = [
 //	 './test/index/commute/10/slt_good_0.test',
  //	 './test/index/delete/1/slt_good_0.test',
  //	 './test/index/in/10/slt_good_0.test',
- //	 './test/index/orderby/10/slt_good_0.test',
+//	 './test/index/orderby/10/slt_good_0.test',
  //	 './test/index/orderby_nosort/10/slt_good_0.test',
  //	 './test/index/random/10/slt_good_0.test',
  //	 './test/index/view/10/slt_good_1.test',
@@ -44,7 +44,7 @@ var filenames = [
 ];
 
 
-var limit = 106; /*1000000*/
+var limit = 3140; /*1000000*/
 var errlimit = 2;
 var nerrors = 0;
 //var mode = 'PostgreSQL';		// Let say we are a la Oracle :)
@@ -111,8 +111,8 @@ function test(filename, show) {
 
 	for(var i = 0;i < Math.min(limit,f.length);i++) {
 //		if(i>3100 && i<29209) continue;
-//		if(i%100 == 0) process.stdout.write('.');
-		process.stdout.write(i+',');
+		if(i%100 == 0) process.stdout.write('.');
+//		process.stdout.write(i+',');
 
 		var line = f[i].trim().split('#')[0];
 		var w = line.split(' '); 
@@ -132,6 +132,8 @@ function test(filename, show) {
 		if(w[0] == 'onlyif') continue; // Simple process
 		if(w[0] == 'halt') continue; // Simple process
 		if(w[0] == 'hash-threshold') continue; // Simple process
+
+		var expect, explen, exphash;
 
 		if(w[0] == 'query') {
 			qtype = w[1]; 
@@ -209,7 +211,6 @@ function test(filename, show) {
 				// console.log(204,res.length,explen);
 				if(res.length*qtype.length == explen) { // Check if length are the same
 
-//				console.log('IK', explen, res.length,exphash);
 					if(exphash) { // Special case
 					    var sa = res.map(function(d){
 					    	var s1 = '';
@@ -225,15 +226,15 @@ function test(filename, show) {
 						if(w[2] == 'rowsort') {
 							sa = sa.sort();
 						}
-					    s = sa.join('');
-//					    	console.log(s);
+					    var s = sa.join('');
     					rhash = md5(s);
-//    					console.log(153,s,rhash,exphash);
+    					//console.log(153,s,rhash,exphash);
 						if(rhash == exphash) passed = 'passed';
 						else passed = 'not passed';
 					} else {
 						// Case with 0
-						if(res.length == 1) {
+
+						if(res.length*qtype.length == 1) {
 			//				console.log(34,expect[0],res[0][rs.columns[0].columnid],rs.columns[0].columnid);
 							if(expect[0] == '0') {
 								if(res[0][rs.columns[0].columnid] == false) {
@@ -247,6 +248,12 @@ function test(filename, show) {
 								} else {
 									passed = 'not passed';
 								}
+							} else if(expect[0] == 'NULL') {
+								if(typeof res[0][rs.columns[0].columnid] == 'undefined') {
+									passed = 'passed';
+								} else {
+									passed = 'not passed';
+								}
 							} else {
 								if((expect[0]||0) == (res[0][rs.columns[0].columnid]||0)) {
 									passed = 'passed';
@@ -255,23 +262,32 @@ function test(filename, show) {
 								}
 							}				
 						} else {
-							var resvals = [];
-						    res.forEach(function(d){
+							// Array of values
+						    var sa = res.map(function(d){
+						    	var s1 = '';
 						    	for(var j=0;j<rs.columns.length;j++) {
-						    		resvals.push(d[rs.columns[j].columnid]);
+						    		if(typeof d[rs.columns[j].columnid] == 'undefined'){
+							    		s1 += 'NULL\n';
+						    		} else {
+							    		s1 += d[rs.columns[j].columnid]+'\n';
+						    		}
 						    	}
+						    	return s1;
 						    });
-						    passed = 'passed';
-						    for(var j=0;j<explen;j++) {
-//						    	console.log(((expect[j] == 'NULL') && ((resvals[j]||0) == 0)));
-						    	if(((resvals[j]||0) == (expect[j]||0))
-									|| ((expect[j] == 'NULL') && ((resvals[j]||0) == 0))){
-//						    		console.log('ok');
-						    	} else {
-									passed = 'not passed';
-									break;
-						    	}
+						    // Sort if required
+							if(w[2] == 'rowsort') {
+								sa = sa.sort();
+							}
+						    var sr = sa.join('');
 
+						    var se = expect.map(function(e){return e+'\n'}).join('');
+
+
+//						   console.log('$$$',sr,se);
+						    if(sr == se) {
+						    	passed = 'passed';
+						    } else {
+						    	passed = 'not passed';
 						    }
 
 							// 
@@ -299,7 +315,7 @@ function test(filename, show) {
 				}
 			}
 //			if(passed != 'passed' && show) console.log(passed,i,sql,res,expect,reason);
-			if(passed != 'passed' && show) console.log('#',i,sql,expect,res,reason);
+			if(passed != 'passed' && show) console.log('#',i,s,sql,expect,rhash,reason);
 			if(passed == 'passed') npassed++;
 			else if(passed == 'unclear') upassed++;
 			continue;
@@ -323,6 +339,7 @@ function test(filename, show) {
 				var ast = alasql.parse(sql);
 				nparsed++;
 			} catch(err) {
+				reason = err;
 			}
 
 
@@ -345,7 +362,7 @@ function test(filename, show) {
 			}
 
 //			if(!passed && show) console.log(i,sql,res,expect,reason);
-			if(!passed && show) console.log('#',i,expect,reason);
+			if(!passed && show) console.log('#',i,reason);
 			if(passed) npassed++;
 
 			continue;

@@ -7,6 +7,7 @@
 * select1.test passed 100%
 * Set jsdoc environment
 * Added 'var y' and functions for NULL and undefined conversions
+* Fixed ABG() aggregator for NULL elements
 
 ### 0.1.6 "Palermo" (13.05.2015 - 17.05.2015)
 * SET NOCOUNT OFF (for CREATE and INSERT)

@@ -69,6 +69,16 @@ describe('Test 331 SLT#2 - test', function() {
     assert.deepEqual(res,[ [undefined,1,undefined,114], [undefined,18,undefined,207] ]);
     done();
   });
+  it('3. SELECT AVG',function(done){
+    alasql.options.modifier = 'MATRIX';
+    var res = alasql(function(){/*
+      SELECT avg(c) FROM t1
+  */});
+    console.log(res);
+//    assert.deepEqual(res.length,30);
+    done();
+  });
+
   it('3. SELECT 97',function(done){
     alasql.options.modifier = 'MATRIX';
     var res = alasql(function(){/*
@@ -79,6 +89,20 @@ describe('Test 331 SLT#2 - test', function() {
     assert.deepEqual(res.length,30);
     done();
   });
+
+  it('4. SELECT 97',function(done){
+    alasql.options.modifier = 'MATRIX';
+    var res = alasql(function(){/*
+      SELECT b-c,
+             c
+        FROM t1
+       WHERE (e>a AND e<b)  */});
+    console.log(res.sort());
+//    assert.deepEqual(res.length,30);
+    done();
+  });
+
+
 
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test332');
