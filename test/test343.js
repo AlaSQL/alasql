@@ -13,9 +13,8 @@ describe('Test 343 Use params for $variables', function() {
   });
 
   it('2. Simple get undefined',function(done){
-    assert.throws(function(){
-      var res = alasql('=$a');
-    },Error);
+    var res = alasql('=$a');
+    assert.deepEqual(res,undefined);
     done();
   });
 

@@ -132,6 +132,7 @@ alasql.use = function (databaseid) {
  */
 alasql.exec = function (sql, params, cb, scope) {
 	delete alasql.error;
+	if(typeof params == 'undefined') params = {}; // Added for $variables
 	if(alasql.options.errorlog){
 		try {
 			return alasql.dexec(alasql.useid, sql, params, cb, scope);
@@ -235,7 +236,7 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 	if(useid != databaseid) alasql.use(databaseid);
 	var res = [];
 
-	adrunone();
+	adrunone(); /** @todo Check, why data is empty here */
 
 	function adrunone(data) {
 		if(typeof data != 'undefined') res.push(data);
