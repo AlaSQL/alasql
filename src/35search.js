@@ -8,6 +8,13 @@
 //
 */
 
+/**	
+	Search class
+	@class
+	@example
+	SEARCH SUM(/a) FROM ? -- search over parameter object
+*/
+
 yy.Search = function (params) { return yy.extend(this, params); }
 yy.Search.prototype.toString = function () {
 	var s = K('SEARCH') + ' ';

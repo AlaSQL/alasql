@@ -7,15 +7,27 @@
 */
 
 /**
-  Expression statement ( = 2*2; )
-  @class 
+  	Expression statement ( = 2*2; )
+  	@class 
+	@param {object} params Initial parameters
 */
-
 yy.ExpressionStatement = function(params) { return yy.extend(this, params); };
+
+/**
+	Convert AST to string
+	@this ExpressionStatement
+	@return {string}
+*/
 yy.ExpressionStatement.prototype.toString = function() {
 	return this.expression.toString();
 };
-
+/**
+	Execute statement
+	@param {string} databaseid Database identificatro
+	@param {object} params Statement parameters
+	@param {statement-callback} cb Callback
+	@return {object} Result value
+*/
 yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression.toJavaScript('','', null));
@@ -23,36 +35,76 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 //        console.log(this.expression.toJavaScript('({})','', null));
 
 		alasql.precompile(this,databaseid,params); // Precompile queries
-		var expr =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null)).bind(this);
-		var res = expr(params,alasql);
+		var exprfn =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null)).bind(this);
+		var res = exprfn(params,alasql);
 		if(cb) res = cb(res);
 		return res;
 	}
 }
 
+/**
+	Expression class
+	@class
+	@param {object} params Initial parameters
+*/
+
 yy.Expression = function(params) { return yy.extend(this, params); };
+
+/**
+	Convert AST to string
+	@this ExpressionStatement
+	@return {string}
+*/
 yy.Expression.prototype.toString = function() {
 	var s = this.expression.toString();
 	if(this.order) s += ' '+this.order.toString();
 	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
 	return s;
 };
+
+/**
+	Find aggregator in AST subtree
+	@this ExpressionStatement
+	@param {object} query Query object
+*/
 yy.Expression.prototype.findAggregator = function (query){
 	if(this.expression.findAggregator) this.expression.findAggregator(query);
 };
+
+/**
+	Convert AST to JavaScript expression
+	@this ExpressionStatement
+	@param {string} context Context string, e.g. 'p','g', or 'x'
+	@param {string} tableid Default table name
+	@param {object} defcols Default columns dictionary
+	@return {string} JavaScript expression
+*/
 
 yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 	if(this.expression.reduced) return 'true';
 	return this.expression.toJavaScript(context, tableid, defcols);
 };
+
+/**
+	Compile AST to JavaScript expression
+	@this ExpressionStatement
+	@param {string} context Context string, e.g. 'p','g', or 'x'
+	@param {string} tableid Default table name
+	@param {object} defcols Default columns dictionary
+	@return {string} JavaScript expression
+*/
+
 yy.Expression.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 	if(this.reduced) return returnTrue();
 	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
 };
 
-
+/**
+	JavaScript class
+	@class
+*/
 yy.JavaScript = function(params) { return yy.extend(this, params); };
 yy.JavaScript.prototype.toString = function() {
 	var s = '``'+this.value+'``';
@@ -72,6 +124,13 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 }
 
 
+/**
+	Literal class
+	@class
+	@example
+	MyVar, [My vairable], `MySQL variable`
+*/
+
 yy.Literal = function (params) { return yy.extend(this, params); }
 yy.Literal.prototype.toString = function() {
 	var s = this.value;
@@ -80,6 +139,10 @@ yy.Literal.prototype.toString = function() {
 	return L(s);
 }
 
+/**
+	Join class
+	@class
+*/
 
 yy.Join = function (params) { return yy.extend(this, params); }
 yy.Join.prototype.toString = function() {
@@ -93,6 +156,10 @@ yy.Join.prototype.toString = function() {
 //	return 'JOIN'+this.table.toString();
 //}
 
+/**
+	Table class
+	@class
+*/
 
 yy.Table = function (params) { return yy.extend(this, params); }
 yy.Table.prototype.toString = function() {
@@ -102,6 +169,10 @@ yy.Table.prototype.toString = function() {
 	return L(s);
 };
 
+/**
+	View class
+	@class
+*/
 
 yy.View = function (params) { return yy.extend(this, params); }
 yy.View.prototype.toString = function() {
@@ -111,6 +182,10 @@ yy.View.prototype.toString = function() {
 	return L(s);
 };
 
+/**
+	Binary operation class
+	@class
+*/
 
 yy.Op = function (params) { return yy.extend(this, params); }
 yy.Op.prototype.toString = function() {

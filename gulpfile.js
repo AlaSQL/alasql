@@ -218,7 +218,18 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
     gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
   });
-  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });
+//  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });
   // gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); gulp.run('js-merge');});
   // gulp.watch('./src/*.jisonlex',function(){ gulp.run('jison-lex-compile'); gulp.run('js-merge');});
+});
+
+gulp.task('doc', function(){
+  return gulp.src('./alasql.js', {read: false})
+    .pipe(shell([
+      'jsdoc dist/alasql.js -d ../alasql-org/api',
+    ]));
+});
+
+gulp.task('console', function(){
+  gulp.run('copy-console-org');
 });

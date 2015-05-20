@@ -1,3 +1,10 @@
+/**
+	Callback from statement
+	@callback statement-callback
+	@param {object} data Result data
+*/
+
+
 //
 //	UMD envelope for AlaSQL
 //
@@ -79,15 +86,24 @@ var alasql = function alasql(sql, params, cb, scope) {
 	};
 };
 
-/** Current version of alasql 
- 	@const {string} */
+/** 
+	Current version of alasql 
+ 	@constant {string} 
+*/
 alasql.version = "0.1.7";
 
-
+/**
+	Debug flag
+	@global
+*/
 alasql.debug = undefined; // Initial debug variable
 
-getAlaSQLPath();
 
+
+getAlaSQLPath();
+/** 
+	Get path of alasql.js
+*/
 function getAlaSQLPath() {
 	alasql.path = '';
 

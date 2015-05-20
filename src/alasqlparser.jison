@@ -2168,10 +2168,17 @@ JsonElementsList
 SetVariable
 	: SET Literal OnOff
 		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
-	| SET (AT|DOLLAR) Literal EQ Expression
+	| SET AtDollar Literal EQ Expression
 		{ $$ = new yy.SetVariable({variable:$3, expression:$5, method:$2});}
-	| SET (AT|DOLLAR) Literal SetPropsList EQ Expression
+	| SET AtDollar Literal SetPropsList EQ Expression
 		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6, method:$2});}
+	;
+
+AtDollar
+	: AT
+		{$$ = '@'; }
+	| DOLLAR
+		{$$ = '$'; }
 	;
 
 SetPropsList 
@@ -2281,10 +2288,10 @@ BeginEnd
 	;
 
 Print
-	: PRINT Select
-		{ $$ = new yy.Print({statement:$2});}
-	| PRINT Expression
-		{ $$ = new yy.Print({statement:$2});}	
+	: PRINT ExprList
+		{ $$ = new yy.Print({exprs:$2});}	
+	| PRINT Select
+		{ $$ = new yy.Print({select:$2});}	
 	;
 
 Require
@@ -2431,7 +2438,7 @@ OutputClause
 	: 
 	| OUTPUT ResultColumns
 		{ $$ = {output:{columns:$2}} }
-	| OUTPUT ResultColumns INTO (AT|DOLLAR) Literal
+	| OUTPUT ResultColumns INTO AtDollar Literal
 		{ $$ = {output:{columns:$2, intovar: $5, method:$4}} }
 	| OUTPUT ResultColumns INTO Table
 		{ $$ = {output:{columns:$2, intotable: $4}} }
@@ -2544,17 +2551,17 @@ GraphVertexEdge
 	;
 
 GraphVar
-	: (AT|DOLLAR) Literal
+	: AtDollar Literal
 		{ $$ = {vars:$2, method:$1}; }
 	;
 
 GraphAsClause
-	: AS AT Literal
+	: AS AtDollar Literal
 		{ $$ = $3; }
 	;
 
 GraphAtClause
-	: AT Literal
+	: AtDollar Literal
 		{ $$ = $2; }
 	;
 
