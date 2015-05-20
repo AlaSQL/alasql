@@ -52,14 +52,14 @@ This table will be updated for each release of AlaSQL.
 
 ### KPI5 ([select5.test](test-sql/sqllogic/test/select5.test)) - cross-joins
 
-* Test failed (freezes at line 3388) - cross-joins of 7 tables
+* Test slowed (freezes at line 3388) - cross-joins of 7+ tables
 
-### KPI5A - first 2950 lines 31949 ([select5.test](test-sql/sqllogic/test/select5.test)) - cross-joins
+### KPI5A - first 3200 lines 31949 ([select5.test](test-sql/sqllogic/test/select5.test)) - cross-joins with more than 7 tables - to be optimized
 
-* tests - 743
-* parsed ok - 743 (100%)
-* run ok - 710 (% is not representable)
-* time - 11.5s
+* tests - 756
+* parsed ok - 756 (100%)
+* run ok - 756 (100%)
+* time - 132.5s
 
 
 

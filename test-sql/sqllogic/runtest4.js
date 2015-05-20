@@ -12,8 +12,8 @@ var filenames = [
 	// './test/select1.test',
  // 	'./test/select2.test',
 	// './test/select3.test',
-	'./test/select4.test',
-//	'./test/select5.test',
+//	'./test/select4.test',
+	'./test/select5.test',
 	// './test/evidence/in1.test',
 	// './test/evidence/in2.test',
 	// './test/evidence/slt_lang_aggfunc.test',
@@ -42,7 +42,7 @@ var filenames = [
 ];
 
 
-var limit = 3340;//3140; /*1000000*/
+var limit = 3200;//3140; /*1000000*/
 var errlimit = 2;
 var nerrors = 0;
 //var mode = 'PostgreSQL';		// Let say we are a la Oracle :)
@@ -110,7 +110,7 @@ function test(filename, show) {
 	for(var i = 0;i < Math.min(limit,f.length);i++) {
 //		if(i>3100 && i<29209) continue;
 		if(i%100 == 0) process.stdout.write('.');
-//		process.stdout.write(i+',');
+		process.stdout.write(i+',');
 
 		var sr, sa, s, exphash, explen, sql;
 
