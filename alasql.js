@@ -8757,7 +8757,10 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
 //		console.log(this.expression.toJavaScript('','', null));
 //		console.log(this.expression.toJavaScript('','', null));
-		var expr =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null));
+//        console.log(this.expression.toJavaScript('({})','', null));
+
+		alasql.precompile(this,databaseid,params); // Precompile queries
+		var expr =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null)).bind(this);
 		var res = expr(params,alasql);
 		if(cb) res = cb(res);
 		return res;

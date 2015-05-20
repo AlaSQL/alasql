@@ -12,12 +12,18 @@ describe('Test 342 Expression Statement', function() {
     done();
   });
 
-
   it('2. Expression',function(done){
     var res = alasql('=2*2');
     assert.deepEqual(res,4);
     done();
   });
+
+  it('3. Expression with SELECT',function(done){
+    var res = alasql('=2*(SELECT VALUE 2)');
+    assert.deepEqual(res,4);
+    done();
+  });
+
 
   it('99. DROP DATABASE',function(done){
     alasql.options.modifier = undefined;
