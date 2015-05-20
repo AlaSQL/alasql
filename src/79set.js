@@ -10,7 +10,7 @@ yy.SetVariable = function (params) { return yy.extend(this, params); }
 yy.SetVariable.prototype.toString = function() {
 	var s = K('SET')+' ';
 	if(typeof this.value != 'undefined') s += K(this.variable.toUpperCase())+' '+(this.value?'ON':'OFF');
-	if(this.expression) s += '@' + L(this.variable)+' = '+this.expression.toString();
+	if(this.expression) s += this.method + L(this.variable)+' = '+this.expression.toString();
 	return s;
 }
 
@@ -20,7 +20,11 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 		var val = this.value;
 		if(val == 'ON') val = true;
 		else if(val == 'OFF') val = false;
-		alasql.options[this.variable] = val;
+//		if(this.method == '@') {
+			alasql.options[this.variable] = val;
+//		} else {
+//			params[this.variable] = val;
+//		}
 	} else if(this.expression) {
 
 		if(this.exists) {
@@ -48,7 +52,11 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 			res = alasql.stdfn.CONVERT(res,alasql.declares[this.variable]);
 		}
 		if(this.props && this.props.length > 0) {
-			var fs = 'alasql.vars[\''+this.variable+'\']';
+			if(this.method == '@') {
+				var fs = 'alasql.vars[\''+this.variable+'\']';
+			} else {
+				var fs = 'params[\''+this.variable+'\']';
+			}
 			fs += this.props.map(function(prop){
 				if(typeof prop == 'string') {
 					return '[\''+prop+'\']';
@@ -63,9 +71,13 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 				}
 			}).join();
 //				console.log(fs);
-			new Function("value,alasql",fs +'=value')(res,alasql);
+			new Function("value,params,alasql",'var y;'+fs +'=value')(res,params,alasql);
 		} else {
-			alasql.vars[this.variable] = res;
+			if(this.method == '@') {
+				alasql.vars[this.variable] = res;
+			} else {
+				params[this.variable] = res;
+			}
 		}
 	}
 	var res = 1;

@@ -1,0 +1,391 @@
+NOTE ***********************************************************************
+NOTE    NIST SQL Test Suite, V6.0, Pseudo-Shell, runsql.all
+NOTE      This file lists all the SQL command files to be run for 
+NOTE      test suite type:  Interactive SQL
+NOTE      Identified by file extension .SQL
+NOTE      Authorization id is shown after the file name
+NOTE ***********************************************************************
+
+NOTE     SQL command file flg005 should be modified before running - see notes
+NOTE     Procedure mpquic.txt contains instructions on testing serializability
+NOTE       for Interactive SQL
+NOTE     For alternate method to test serializability, read files MP*.SQL
+
+NOTE     RUNTEXT indicates instructions to be read and executed manually
+
+NOTE     ------------- Dataload Programs  -------------
+RUNSQL   basetab   HU
+RUNSQL   cugtab    CUGINI
+RUNSQL   flattab   FLATER
+RUNSQL   suntab0   SUN
+RUNSQL   suntab1   SUN
+RUNSQL   suntab2   SUN
+RUNSQL   suntab3   SUN
+RUNSQL   sultab1   SULLIVAN
+NOTE     Programs sc11tab, sc12tab, and cts5tab are not used for Entry SQL
+RUNSQL   sc11tab   FLATER
+RUNSQL   sc12tab   FLATER
+RUNSQL   cts5tab   CTS1
+
+NOTE     ------------- Entry Syntax Flags -------------
+RUNSQL   flg011    FLATER         
+RUNSQL   flg012    FLATER         
+RUNSQL   flg005    HU             
+RUNSQL   flg008    HU             
+
+NOTE     ------------- Entry SQL -------------
+RUNSQL   sdl026    CANWEPARSELENGTH18   
+RUNSQL   sdl005    CUGINI         
+RUNSQL   dml087    FLATER         
+RUNSQL   dml141    FLATER         
+RUNSQL   dml143    FLATER         
+RUNSQL   sdl032    FLATER         
+RUNSQL   dml001    HU             
+RUNSQL   dml004    HU             
+RUNSQL   dml008    HU             
+RUNSQL   dml009    HU             
+RUNSQL   dml010    HU             
+RUNSQL   dml011    HU             
+RUNSQL   dml012    HU             
+RUNSQL   dml013    HU             
+RUNSQL   dml014    HU             
+RUNSQL   dml015    HU             
+RUNSQL   dml018    HU             
+RUNSQL   dml019    HU             
+RUNSQL   dml020    HU             
+RUNSQL   dml021    HU             
+RUNSQL   dml022    HU             
+RUNSQL   dml023    HU             
+RUNSQL   dml024    HU             
+RUNSQL   dml025    HU             
+RUNSQL   dml026    HU             
+RUNSQL   dml027    HU             
+RUNSQL   dml029    HU             
+RUNSQL   dml033    HU             
+RUNSQL   dml034    HU             
+RUNSQL   dml035    HU             
+RUNSQL   dml037    HU             
+RUNSQL   dml038    HU             
+RUNSQL   dml039    HU             
+RUNSQL   dml040    HU             
+RUNSQL   dml041    HU             
+RUNSQL   dml051    HU             
+RUNSQL   dml052    HU             
+RUNSQL   dml053    HU             
+RUNSQL   dml058    HU             
+RUNSQL   dml059    HU             
+RUNSQL   dml060    HU             
+RUNSQL   dml061    HU             
+RUNSQL   dml062    HU             
+RUNSQL   dml064    HU             
+RUNSQL   dml065    HU             
+RUNSQL   dml069    HU             
+RUNSQL   dml070    HU             
+RUNSQL   dml073    HU             
+RUNSQL   dml075    HU             
+RUNSQL   dml076    HU             
+RUNSQL   dml077    HU             
+RUNSQL   dml079    HU             
+RUNSQL   dml086    HU             
+RUNSQL   dml090    HU             
+RUNSQL   dml142    HU             
+RUNSQL   sdl001    HU             
+RUNSQL   sdl012    HU             
+RUNSQL   sdl013    HU             
+RUNSQL   sdl014    HU             
+RUNSQL   sdl015    HU             
+RUNSQL   sdl016    HU             
+RUNSQL   sdl017    HU             
+RUNSQL   sdl018    HU             
+RUNSQL   sdl019    HU             
+RUNSQL   sdl020    HU             
+RUNSQL   sdl024    HU             
+RUNSQL   sdl025    HU             
+RUNSQL   sdl027    HU             
+RUNSQL   sdl028    HU             
+RUNSQL   cdr023    SCHANZLE       
+RUNSQL   cdr028    SCHANZLE       
+RUNSQL   cdr029    SCHANZLE       
+RUNSQL   dml080    SCHANZLE       
+RUNSQL   dml081    SCHANZLE       
+RUNSQL   dml082    SCHANZLE       
+RUNSQL   dml083    SCHANZLE       
+RUNSQL   dml084    SCHANZLE       
+RUNSQL   dml085    SCHANZLE       
+RUNSQL   dml091    SCHANZLE       
+RUNSQL   sdl003    SCHANZLE       
+RUNSQL   sdl023    SCHANZLE       
+RUNSQL   sdl029    SCHANZLE       
+RUNSQL   sdl030    SCHANZLE       
+RUNSQL   sdl031    SCHANZLE       
+RUNSQL   sdl033    SCHANZLE       
+RUNSQL   sdl034    SCHANZLE       
+RUNSQL   sdl035    SCHANZLE       
+RUNSQL   sdl036    SCHANZLE       
+RUNSQL   cdr022    SULLIVAN       
+RUNSQL   dml016    SULLIVAN       
+RUNSQL   sdl002    SULLIVAN       
+RUNSQL   sdl004    SULLIVAN       
+RUNSQL   sdl006    SULLIVAN       
+RUNSQL   sdl007    SULLIVAN       
+RUNSQL   sdl008    SULLIVAN       
+RUNSQL   sdl009    SULLIVAN       
+RUNSQL   sdl010    SULLIVAN       
+RUNSQL   sdl021    SULLIVAN       
+RUNSQL   sdl022    SULLIVAN       
+RUNSQL   sdl011    SULLIVAN1      
+RUNSQL   sdl037    SULLIVAN1      
+RUNSQL   cdr001    SUN            
+RUNSQL   cdr002    SUN            
+RUNSQL   cdr003    SUN            
+RUNSQL   cdr004    SUN            
+RUNSQL   cdr005    SUN            
+RUNSQL   cdr006    SUN            
+RUNSQL   cdr007    SUN            
+RUNSQL   cdr008    SUN            
+RUNSQL   cdr009    SUN            
+RUNSQL   cdr010    SUN            
+RUNSQL   cdr011    SUN            
+RUNSQL   cdr012    SUN            
+RUNSQL   cdr013    SUN            
+RUNSQL   cdr017    SUN            
+RUNSQL   cdr019    SUN            
+RUNSQL   cdr020    SUN            
+RUNSQL   cdr021    SUN            
+RUNSQL   cdr024    SUN            
+RUNSQL   cdr025    SUN            
+RUNSQL   cdr026    SUN            
+RUNSQL   cdr027    SUN            
+RUNSQL   cdr030    SUN            
+
+NOTE     ------------- Transitional Only Features -------------
+RUNSQL   dml099    FLATER         
+RUNSQL   dml100    FLATER         
+RUNSQL   dml104    FLATER         
+RUNSQL   dml106    FLATER         
+RUNSQL   dml108    FLATER         
+RUNSQL   dml112    FLATER         
+RUNSQL   dml114    FLATER         
+RUNSQL   dml117    FLATER         
+RUNSQL   dml119    FLATER         
+RUNSQL   dml121    FLATER         
+RUNSQL   dml130    FLATER         
+RUNSQL   dml131    FLATER         
+RUNSQL   dml133    FLATER         
+RUNSQL   dml134    FLATER         
+RUNSQL   dml135    FLATER         
+RUNSQL   dml136    FLATER         
+RUNSQL   dml137    FLATER         
+RUNSQL   dml144    FLATER         
+RUNSQL   dml147    FLATER         
+RUNSQL   dml148    FLATER         
+RUNSQL   dml149    FLATER         
+RUNSQL   dml153    FLATER         
+RUNSQL   dml154    FLATER
+RUNSQL   dml157    FLATER
+RUNSQL   dml162    FLATER
+RUNSQL   dml185    FLATER
+RUNSQL   ist001    FLATER         
+RUNSQL   ist002    FLATER         
+RUNSQL   ist003    FLATER         
+RUNSQL   ist004    FLATER         
+RUNSQL   ist005    FLATER         
+RUNSQL   ist006    FLATER         
+RUNSQL   ist007    FLATER         
+NOTE     --- mpa010* and mpb010* must be executed in this sequence:
+RUNSQL   mpa010a   FLATER    
+RUNSQL   mpb010a   HU     
+RUNSQL   mpa010b   FLATER    
+RUNSQL   mpb010b   HU     
+RUNSQL   mpa010c   FLATER    
+RUNSQL   mpb010c   HU     
+RUNSQL   mpa010d   FLATER    
+RUNSQL   mpb010d   HU     
+RUNSQL   mpa010e   FLATER    
+RUNSQL   mpb010e   HU     
+RUNSQL   mpa010f   FLATER    
+RUNSQL   mpb010f   HU     
+RUNSQL   mpa010g   FLATER    
+RUNSQL   dml139    HU             
+RUNSQL   dml158    HU
+
+NOTE     ------------- Intermediate Only Features  -------------
+RUNSQL   xts700    CTS1                         
+RUNSQL   xts701    CTS1                         
+RUNSQL   xts702    CTS1                         
+RUNSQL   xts703    CTS1                         
+RUNSQL   xts716    CTS1                         
+RUNSQL   xts717    CTS1                         
+RUNSQL   xts718    CTS1                         
+RUNSQL   xts727    CTS1                         
+RUNSQL   xts728    CTS1                         
+RUNSQL   xts729    CTS1                         
+RUNSQL   xts730    CTS1                         
+RUNSQL   xts731    CTS1                         
+RUNSQL   xts732    CTS1                         
+RUNSQL   xts733    CTS1                         
+RUNSQL   xts734    CTS1                         
+RUNSQL   xts735    CTS1                         
+RUNSQL   xts736    CTS1                         
+RUNSQL   xts740    CTS1                         
+RUNSQL   xts741    CTS1                         
+RUNSQL   xts742    CTS1                         
+RUNSQL   xts744    CTS1                         
+RUNSQL   xts745    CTS1                         
+RUNSQL   xts746    CTS1                         
+RUNSQL   xts747    CTS1                         
+RUNSQL   xts748    CTS1                         
+RUNSQL   xts749    CTS1                         
+RUNSQL   xts750    CTS1                         
+RUNSQL   xts752    CTS1                         
+RUNSQL   xts753    CTS1                         
+RUNSQL   xts754    CTS1                         
+RUNSQL   xts755    CTS1                         
+RUNSQL   xts756    CTS1                         
+RUNSQL   xts760    CTS1                         
+RUNSQL   xts761    CTS1                         
+RUNSQL   xts762    CTS1                         
+RUNSQL   xts763    CTS1                         
+RUNSQL   xts764    CTS1                         
+RUNSQL   xts765    CTS1                         
+RUNSQL   xts766    CTS1                         
+RUNSQL   xts767    CTS1                         
+RUNSQL   xts768    CTS1                         
+RUNSQL   xts798    CTS1                         
+RUNSQL   xts799    CTS1                         
+RUNSQL   yts750    CTS1                         
+RUNSQL   yts751    CTS1                         
+RUNSQL   yts752    CTS1                         
+RUNSQL   yts753    CTS1                         
+RUNSQL   yts754    CTS1                         
+RUNSQL   yts755    CTS1                         
+RUNSQL   yts756    CTS1                         
+RUNSQL   yts757    CTS1                         
+RUNSQL   yts759    CTS1                         
+RUNSQL   yts760    CTS1                         
+RUNSQL   yts761    CTS1                         
+RUNSQL   yts762    CTS1                         
+RUNSQL   yts763    CTS1                         
+RUNSQL   yts764    CTS1                         
+RUNSQL   yts765    CTS1                         
+RUNSQL   yts766    CTS1                         
+RUNSQL   yts767    CTS1                         
+RUNSQL   yts768    CTS1                         
+RUNSQL   yts769    CTS1                         
+RUNSQL   yts770    CTS1                         
+RUNSQL   yts771    CTS1                         
+RUNSQL   yts772    CTS1                         
+RUNSQL   yts773    CTS1                         
+RUNSQL   yts774    CTS1                         
+RUNSQL   yts776    CTS1                         
+RUNSQL   yts778    CTS1                         
+RUNSQL   yts779    CTS1                         
+RUNSQL   yts780    CTS1                         
+RUNSQL   yts781    CTS1                         
+RUNSQL   yts782    CTS1                         
+RUNSQL   yts788    CTS1                         
+RUNSQL   yts789    CTS1                         
+RUNSQL   yts790    CTS1                         
+RUNSQL   yts793    CTS1                         
+RUNSQL   yts796    CTS1                         
+RUNSQL   yts797    CTS1                         
+RUNSQL   yts798    CTS1                         
+RUNSQL   yts799    CTS1                         
+RUNSQL   yts800    CTS1                         
+RUNSQL   yts802    CTS1                         
+RUNSQL   yts803    CTS1                         
+RUNSQL   yts805    CTS1                         
+RUNSQL   yts806    CTS1                         
+RUNSQL   yts807    CTS1                         
+RUNSQL   yts808    CTS1                         
+RUNSQL   yts809    CTS1                         
+RUNSQL   yts810    CTS1                         
+RUNSQL   yts811    CTS1                         
+RUNSQL   yts812    CTS1                         
+RUNSQL   xts714    CTS2                         
+RUNSQL   yts777    CTS2                         
+RUNSQL   yts791    CTS2                         
+RUNSQL   yts794    CTS2                         
+RUNSQL   xts769    CTS3                         
+RUNSQL   xts770    CTS3                         
+RUNSQL   xts771    CTS3                         
+RUNSQL   xts715    CTS4                         
+RUNSQL   xts719    CTS4                         
+RUNSQL   xts720    CTS4                         
+RUNSQL   xts721    CTS4                         
+RUNSQL   xts722    CTS4                         
+RUNSQL   xts723    CTS4                         
+RUNSQL   xts724    CTS4                         
+RUNSQL   yts792    CTS4                         
+RUNSQL   yts795    CTS4                         
+RUNSQL   dml160    FLATER                       
+RUNSQL   dml161    FLATER                       
+RUNSQL   dml163    FLATER                       
+RUNSQL   dml164    FLATER                       
+RUNSQL   dml165    FLATER                       
+RUNSQL   dml167    FLATER                       
+RUNSQL   dml168    FLATER                       
+RUNSQL   dml169    FLATER                       
+RUNSQL   dml170    FLATER                       
+RUNSQL   dml171    FLATER                       
+RUNSQL   dml172    FLATER                       
+RUNSQL   dml184    FLATER                       
+RUNSQL   isi001    FLATER                       
+RUNSQL   isi002    FLATER                       
+RUNSQL   isi003    FLATER                       
+RUNSQL   isi004    FLATER                       
+RUNSQL   isi005    FLATER                       
+RUNSQL   isi006    FLATER                       
+RUNSQL   isi007    FLATER                       
+RUNSQL   xts713    T7013PC
+
+NOTE     ------------- Entry Sizing -------------
+RUNSQL   cdr031    FLATER         
+RUNSQL   dml132    FLATER         
+RUNSQL   dml005    HU             
+RUNSQL   dml042    HU             
+RUNSQL   dml043    HU             
+RUNSQL   dml044    HU             
+RUNSQL   dml045    HU             
+RUNSQL   dml046    HU             
+RUNSQL   dml047    HU             
+RUNSQL   dml049    HU             
+RUNSQL   dml050    HU             
+RUNSQL   dml055    HU             
+RUNSQL   dml056    HU             
+RUNSQL   dml057    HU             
+RUNSQL   cdr014    SUN            
+RUNSQL   cdr015    SUN            
+RUNSQL   cdr016    SUN            
+RUNSQL   cdr017    SUN            
+RUNSQL   cdr018    SUN            
+
+NOTE     ------------- Transitional Sizing -------------
+RUNSQL   dml106    FLATER         
+
+NOTE     ------------- Intermediate Sizing -------------
+RUNSQL   dml173    FLATER                       
+RUNSQL   dml174    FLATER                       
+RUNSQL   dml175    FLATER                       
+RUNSQL   dml176    FLATER                       
+RUNSQL   dml177    FLATER                       
+RUNSQL   dml178    FLATER                       
+RUNSQL   dml179    FLATER                       
+RUNSQL   dml181    FLATER                       
+RUNSQL   dml182    FLATER                       
+RUNSQL   dml183    FLATER                       
+RUNSQL   dml186    FLATER
+
+NOTE     ------------- Optional/Informational Tests -------------
+RUNSQL   flg009    HU             
+RUNSQL   flg006    MCGINN         
+RUNSQL   dml068    HU             
+RUNSQL   dml084    SCHANZLE       
+RUNSQL   cdr025    SUN            
+
+NOTE     ------------- Manual Procedures --------------
+RUNTEXT  mpquic.txt     SULLIVAN1      
+RUNTEXT  check.lst
+
+NOTE     CHECK.LST is a worksheet to record pass/fail results for each test.
+NOTE     CHECK.LST also provides a summary block with expected totals.

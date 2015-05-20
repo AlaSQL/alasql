@@ -1,0 +1,62 @@
+-- SQL Test Suite, V6.0, Schema Definition, schem11.std
+-- 59-byte ID
+-- TEd Version #
+-- date_time print
+-- *******************************************************************
+-- ******                   TRANSITIONAL SQL                    ******
+-- *******************************************************************
+-- *******************************************************************
+-- ****** THIS FILE SHOULD BE RUN UNDER AUTHORIZATION ID FLATER ******
+-- *******************************************************************
+
+-- This is a standard schema definition.
+
+-- This SDL file requires Features 5, 6, 17, and 20 of Transitional SQL.
+-- It also uses the Integrity Enhancement Feature of Entry SQL.
+
+CREATE SCHEMA HYDROGRAPHY
+
+-- Latitude and longitude are given in degrees and minutes.
+-- Latitude examples:  '63 23.7S'  '20  2.4N'  '7  17.4S'
+-- Longitude examples:  '96  54.0E'  '122  2.3W'  '124 13.0W'
+
+  CREATE TABLE STATIONS (
+    STATION_ID DEC (7),
+    DCP INT
+      CHECK (DCP >= 0),
+    STATION_NAME VARCHAR (40),
+    DEG_LATITUDE  CHAR (8) NOT NULL,
+    DEG_LONGITUDE CHAR (9) NOT NULL,
+    MERIDIAN INTERVAL HOUR TO MINUTE
+      CHECK (MERIDIAN BETWEEN INTERVAL -'12:59' HOUR TO MINUTE
+      AND INTERVAL '13:00' HOUR TO MINUTE),
+    FEET_MLLW FLOAT,
+    KNOTS_PERM_CURRENT FLOAT,
+    PRIMARY KEY (STATION_ID, DCP))
+
+-- Table to help with conversion of coordinates to decimal.
+-- Contents:
+--      CVAL    FVAL
+--        N      1.0
+--        S     -1.0
+--        E      1.0
+--        W     -1.0
+  CREATE TABLE CCONV (CVAL CHAR, FVAL FLOAT)
+
+-- Convert latitude and longitude to floats.
+
+  CREATE VIEW STATIONS_D (STATION_ID, DCP, STATION_NAME, DEG_LATITUDE,
+  DEG_LONGITUDE, MERIDIAN, FEET_MLLW, KNOTS_PERM_CURRENT) AS
+    SELECT STATION_ID, DCP, STATION_NAME,
+    (CAST (SUBSTRING (DEG_LATITUDE FROM 1 FOR 2) AS FLOAT) +
+    CAST (SUBSTRING (DEG_LATITUDE FROM 4 FOR 4) AS FLOAT) / 60E0)
+    * LAT.FVAL,
+    (CAST (SUBSTRING (DEG_LONGITUDE FROM 1 FOR 3) AS FLOAT) +
+    CAST (SUBSTRING (DEG_LONGITUDE FROM 5 FOR 4) AS FLOAT) / 60E0)
+    * LONG.FVAL,
+    MERIDIAN, FEET_MLLW, KNOTS_PERM_CURRENT
+    FROM STATIONS, CCONV LAT, CCONV LONG
+    WHERE LAT.CVAL = SUBSTRING (DEG_LATITUDE FROM 8 FOR 1)
+     AND LONG.CVAL = SUBSTRING (DEG_LONGITUDE FROM 9 FOR 1)
+
+-- ************* End of Schema *************

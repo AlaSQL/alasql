@@ -198,7 +198,7 @@ VALUE(S)?                                      	return 'VALUE'
 'WHERE'                                         return 'WHERE'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
-'WORK'                                          return 'TRANSACTION'
+'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 
 (\d*[.])?\d+[eE]\d+								return 'NUMBER'
 (\d*[.])?\d+									return 'NUMBER'
@@ -2168,10 +2168,10 @@ JsonElementsList
 SetVariable
 	: SET Literal OnOff
 		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
-	| SET AT Literal EQ Expression
-		{ $$ = new yy.SetVariable({variable:$3, expression:$5});}
-	| SET AT Literal SetPropsList EQ Expression
-		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6});}
+	| SET (AT|DOLLAR) Literal EQ Expression
+		{ $$ = new yy.SetVariable({variable:$3, expression:$5, method:$2});}
+	| SET (AT|DOLLAR) Literal SetPropsList EQ Expression
+		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6, method:$2});}
 	;
 
 SetPropsList 
@@ -2431,8 +2431,8 @@ OutputClause
 	: 
 	| OUTPUT ResultColumns
 		{ $$ = {output:{columns:$2}} }
-	| OUTPUT ResultColumns INTO AT Literal
-		{ $$ = {output:{columns:$2, intovar: $5}} }
+	| OUTPUT ResultColumns INTO (AT|DOLLAR) Literal
+		{ $$ = {output:{columns:$2, intovar: $5, method:$4}} }
 	| OUTPUT ResultColumns INTO Table
 		{ $$ = {output:{columns:$2, intotable: $4}} }
 	| OUTPUT ResultColumns INTO Table LPAR ColumnsList RPAR
@@ -2544,8 +2544,8 @@ GraphVertexEdge
 	;
 
 GraphVar
-	: AT Literal
-		{ $$ = {vars:$2}; }
+	: (AT|DOLLAR) Literal
+		{ $$ = {vars:$2, method:$1}; }
 	;
 
 GraphAsClause

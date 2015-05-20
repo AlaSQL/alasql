@@ -567,9 +567,9 @@ Usually, alasql.js works synchronously, but you can use callback.
     });
 ```
 
-or you can use async() - promised version of exec (in this case you need to install [es6-promise](https://www.npmjs.org/package/es6-promise) module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):
+or you can use promise() - promised version of exec (in this case you need to install [es6-promise](https://www.npmjs.org/package/es6-promise) module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):
 ```js
-    alasql.async('SELECT * FROM test')
+    alasql.promise('SELECT * FROM test')
     }).then(function(res){
         // Process data
     }).catch(function(err){

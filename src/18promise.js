@@ -11,7 +11,7 @@ if(typeof exports == 'object') {
 //
 
 if(typeof Promise == 'function') {
-	alasql.async = function(sql, params) {
+	alasql.promise = function(sql, params) {
 	    return new Promise(function(resolve, reject){
 	        alasql(sql, params, function(data,err) {
 	             if(err) {
