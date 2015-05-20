@@ -6,6 +6,11 @@
 //
 */
 
+/**
+  Expression statement ( = 2*2; )
+  @class 
+*/
+
 yy.ExpressionStatement = function(params) { return yy.extend(this, params); };
 yy.ExpressionStatement.prototype.toString = function() {
 	return this.expression.toString();
@@ -520,6 +525,7 @@ yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
 
 //console.log(506,this);
 
+//console.log(523, arguments);
 
 	var s = '';
 	if(!this.tableid && tableid == '' && !defcols) {
@@ -600,6 +606,7 @@ yy.AggrValue.prototype.toString = function() {
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
+
 yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log('aggregator found',this.toString());
 

@@ -1,3 +1,5 @@
+REQUIRE ORIENTDB;
+
 CREATE DATABASE IF NOT EXISTS one;
 USE one;
 
@@ -22,6 +24,7 @@ SET PARAMS = {
 };
 
 -- how to run records with params?
+-- :toId or $toId?
 CREATE EDGE link from (select from Owner where id = :fromId) 
 TO (select from Owner where id = :toId) SET foo = :foo;
 
@@ -45,8 +48,9 @@ create class FooType extends V;
 create property FooType.name STRING;
 alter property FooType.name MANDATORY=true;
 
--- LET vs SET
+-- LET or SET
 -- $var vs @var
+-- or set params?
 
 let $v1 = create vertex FooType content {'name':'foo1'};
 let $v2 = create vertex FooType content {'name':'foo2'};

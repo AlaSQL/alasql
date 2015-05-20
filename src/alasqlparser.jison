@@ -2054,8 +2054,8 @@ Help
 	;
 
 ExpressionStatement
-	: Expression
-		{ $$ = new yy.ExpressionStatement({expression:$1}); }
+	: EQ Expression
+		{ $$ = new yy.ExpressionStatement({expression:$2}); }
 	;
 
 Source
@@ -2283,7 +2283,7 @@ BeginEnd
 Print
 	: PRINT Select
 		{ $$ = new yy.Print({statement:$2});}
-	| PRINT ExpressionStatement
+	| PRINT Expression
 		{ $$ = new yy.Print({statement:$2});}	
 	;
 
@@ -2584,10 +2584,6 @@ DeleteVertex
 
 DeleteEdge
 	: DELETE EDGE Expression (FROM Expression)? (TO Expression)? (WHERE Expression)?
-	;
-
-ExpressionStatement 
-	: EQ Expression
 	;
 
 AddRule
