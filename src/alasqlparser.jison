@@ -1,9 +1,7 @@
 /*
 //
 // alasqlparser.jison
-// SQL Parser for Alasql.js
-// Date: 03.11.2014
-// Modified: 21.04.2015
+// SQL Parser for AlaSQL
 // (c) 2014-2015, Andrey Gershun
 // 
 //
@@ -60,7 +58,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
-COLUMN(S)?										return "COLUMN"
+COLUMN											return "COLUMN"
+COLUMNS 										return "COLUMN"
 "COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
 "CONTENT"										return "CONTENT"
@@ -81,6 +80,7 @@ DATABASE(S)?										return 'DATABASE'
 'DESC'                                          return 'DIRECTION'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
+DOUBLE\s+PRECISION								return 'LITERAL'
 'DROP'											return 'DROP'
 'ECHO'											return 'ECHO'
 'EDGE'											return 'EDGE'
@@ -190,6 +190,7 @@ SET(S)?                                        	return 'SET'
 'UNIQUE'                                        return 'UNIQUE'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
+'USER'											return 'USER'
 'USING'                                         return 'USING'
 VALUE(S)?                                      	return 'VALUE'
 'VERTEX'										return 'VERTEX'
@@ -1092,6 +1093,8 @@ Expression
 		{$$ = $1}
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
+	| USER
+		{ $$ = new yy.FuncValue({funcid:'USER'});}
 	;
 
 JavaScript
@@ -1133,6 +1136,8 @@ PrimitiveValue
 		{ $$ = $1; }
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }	
+	| USER
+		{ $$ = new yy.FuncValue({funcid:'USER'}); }	
 	;
 
 

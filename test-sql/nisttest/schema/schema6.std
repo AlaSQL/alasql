@@ -18,6 +18,7 @@
 
      CREATE VIEW NOT_AVAILABLE AS
        SELECT TIMESLOT FROM MEETINGS
+
      CREATE TABLE MEETINGS (TIMESLOT INT, AGENDA CHAR(4))
 
 -- Vendors may add a semicolon here or break this into two separate files
@@ -26,10 +27,12 @@
 -- Implicit AUTHORIZATION
 
    CREATE SCHEMA LEN_GALLAGHER
+
      CREATE TABLE TRAVEL (
        TRAVEL_ORDER CHAR(40) NOT NULL UNIQUE,
        DESTINATION CHAR(40),
        REASON_CODE NUMERIC(9))
+
      GRANT SELECT ON TRAVEL TO PUBLIC
 
 -- ************* End of Schema *************

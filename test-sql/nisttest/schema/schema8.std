@@ -70,8 +70,6 @@
 
         CREATE TABLE STAFF14 (EMPNUM    CHAR(3) NOT NULL,
                 EMPNAME  CHAR(20) DEFAULT USER,
-        -- EMPNAME CHAR precision may be changed to implementation-defined
-        --              precision for value of USER
                 GRADE DECIMAL(4),
                 CITY   CHAR(15))
 

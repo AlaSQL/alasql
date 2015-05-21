@@ -35,6 +35,9 @@ stdfn.COALESCE = function() {
 }
 
 
+stdfn.USER = function(){
+	return 'alasql';
+}
 
 stdfn.OBJECT_ID = function(objid){
 	return !!alasql.tables[objid];
