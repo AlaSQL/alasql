@@ -8,6 +8,9 @@
 * Set jsdoc environment
 * Added 'var y' and functions for NULL and undefined conversions
 * Fixed ABG() aggregator for NULL elements
+* New gulp commands: 'gulp doc' and 'gulp console'
+* Some jsDoc documentation tag added
+* Expression statement ( = 2*2 )
 
 ### 0.1.6 "Palermo" (13.05.2015 - 17.05.2015)
 * SET NOCOUNT OFF (for CREATE and INSERT)
