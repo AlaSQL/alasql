@@ -3,7 +3,6 @@
 @version 0.1.7
 
 AlaSQL - JavaScript SQL database
-Date: 17.05.2015
 (ñ) 2014-2015, Andrey Gershun
 
 @license
