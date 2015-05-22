@@ -4,7 +4,7 @@ Version: 0.1.7 "Parma" Date: May 22, 2015, [SQLLOGICTEST=62%, NIST=24%](TESTLOG.
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
-AlaSQL is easy to use! Just add [alasql.min.js](alasql.min.js) file to your project and call 
+AlaSQL is easy to use! Just add [alasql.min.js](https://cdn.rawgit.com/agershun/alasql/master/dist/alasql.min.js) file to your project and call 
 ```alasql()``` function with SQL statement inside: 
 
 ```html
