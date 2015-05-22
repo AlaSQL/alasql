@@ -1,10 +1,11 @@
-//
-// 12prettyflag.js - prettify
-//
+/**
+   12prettyflag.js - prettify
+   @todo remove this part into the separate plugin
+*/
 
 /**
  	Pretty flag - nice HTML output or standard text without any tags
- 	@global
+	@type {boolean}
 */
 
 alasql.prettyflag = false;

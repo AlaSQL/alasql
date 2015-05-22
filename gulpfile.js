@@ -101,6 +101,7 @@ gulp.task('js-merge', function () {
     './src/830into.js',
     './src/831xls.js',
     './src/832xlsxml.js',
+    './src/833xlsx.js',
     './src/84from.js',
     './src/843xml.js',
     './src/844gexf.js',
