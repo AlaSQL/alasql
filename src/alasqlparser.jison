@@ -22,7 +22,7 @@ X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+              return 'STRING'
 
-"--"(.*?)($|\r\n|\r|\n)							return /* return 'COMMENT' */
+"--"(.*?)($|\r\n|\r|\n)							return /* return COMMENT */
 
 \s+                                             /* skip whitespace */
 '||'											return 'OR'
@@ -58,17 +58,17 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
-COLUMN											return "COLUMN"
-COLUMNS 										return "COLUMN"
-"COMMIT"										return "COMMIT"
-"CONSTRAINT"									return "CONSTRAINT"
-"CONTENT"										return "CONTENT"
-"CONTINUE"										return "CONTINUE"
-"CONVERT"										return "CONVERT"
-"CORRESPONDING"									return "CORRESPONDING"
-"COUNT"											return "COUNT"
+COLUMN											return 'COLUMN'
+COLUMNS 										return 'COLUMN'
+"COMMIT"										return 'COMMIT'
+"CONSTRAINT"									return 'CONSTRAINT'
+"CONTENT"										return 'CONTENT'
+"CONTINUE"										return 'CONTINUE'
+"CONVERT"										return 'CONVERT'
+"CORRESPONDING"									return 'CORRESPONDING'
+"COUNT"											return 'COUNT'
 'CREATE'										return 'CREATE'
-"CROSS"											return "CROSS"
+"CROSS"											return 'CROSS'
 'CUBE'											return 'CUBE'
 "CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
 "CURSOR"										return 'CURSOR'
@@ -621,17 +621,17 @@ SelectClause
 */
 
 	SelectModifier DISTINCT TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1); yy.extend($$, $3); }
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1); yy.extend($$, $3); }
 	| SelectModifier UNIQUE TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1);yy.extend($$, $3); }
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1);yy.extend($$, $3); }
 	| SelectModifier  ALL TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, all:true }); yy,extend($$, $1);yy.extend($$, $3); }
+		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $1);yy.extend($$, $3); }
 	| SelectModifier TopClause ResultColumns?  
 		{ 
 			if(!$3) {
 				$$ = new yy.Select({columns:[new yy.Column({columnid:'_',})], modifier:'COLUMN'});
 			} else {
-				$$ = new yy.Select({ columns:$3 }); yy,extend($$, $1);yy.extend($$, $2); 
+				$$ = new yy.Select({ columns:$3 }); yy.extend($$, $1);yy.extend($$, $2); 
 			}
 		}
 /*	| 

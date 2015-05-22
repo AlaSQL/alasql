@@ -838,7 +838,7 @@ var xlsnc = utils.xlsnc = function(i) {
 
 /**
     Excel:conver Excel column name to number
-    @param {integer} i Column number, like 'A' or 'BE'
+    @param {string} s Column number, like 'A' or 'BE'
     @return {string} Column name, starting with 0
 */
 var xlscn = utils.xlscn = function(s) {

@@ -30,12 +30,9 @@ alasql.worker = function(path, paths, cb) {
 
 		var js = "importScripts('";
 			js += path;
-			js+="');\
-		self.onmessage = function(event) {\
-		alasql(event.data.sql,event.data.params, function(data){\
-		postMessage({id:event.data.id, data:data});\
-		});\
-		}";
+			js+="');self.onmessage = function(event) {"+
+		"alasql(event.data.sql,event.data.params, function(data){"+
+		"postMessage({id:event.data.id, data:data});});}";
 
 		var blob = new Blob([js], {"type": "text\/plain"});
 		alasql.webworker = new Worker(URL.createObjectURL(blob));

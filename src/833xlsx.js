@@ -9,17 +9,17 @@
 	@return {number} Number of files processed
 */
 
-alasql.into.XLSX = function(filename, opts, data1, columns, cb) {
+alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	/** @type {number} result */
 	var res = 1;
 
 	if(deepEqual(columns,[{columnid:'_'}])) {
-		data = data1.map(function(dat){return dat._;});
+		data = data.map(function(dat){return dat._;});
 		columns = undefined;
 //		res = [{_:1}];
 	} else {
-		data = data1;
+//		data = data1;
 	}
 
 //console.log(data);

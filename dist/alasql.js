@@ -57,11 +57,12 @@ SOFTWARE.
 }(this, function () {
 
 /**
- 	@function alasql - Main Alasql class
+	 alasql - Main Alasql class
+ 	@function
  	@param {string|function|object} sql - SQL-statement or data object for fuent interface
- 	@param {object=} params - SQL parameters
- 	@param {function=} cb - callback function
- 	@param {object=} scope - Scope for nested queries
+ 	@param {object} params - SQL parameters
+ 	@param {function} cb - callback function
+ 	@param {object} scope - Scope for nested queries
  	@return {any} - Result data object
 
 	@example
@@ -173,6 +174,10 @@ function getAlaSQLPath() {
 		};	
 	};
 };
+
+/** 
+	@type {function}
+*/
 
 
 
@@ -490,20 +495,20 @@ case 122:
  this.$ = "QUESTION"; 
 break;
 case 124:
- this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy,extend(this.$, $$[$0-3]); yy.extend(this.$, $$[$0-1]); 
+ this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy.extend(this.$, $$[$0-3]); yy.extend(this.$, $$[$0-1]); 
 break;
 case 125:
- this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy,extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]); 
+ this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy.extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]); 
 break;
 case 126:
- this.$ = new yy.Select({ columns:$$[$0], all:true }); yy,extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]); 
+ this.$ = new yy.Select({ columns:$$[$0], all:true }); yy.extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]); 
 break;
 case 127:
  
 			if(!$$[$0]) {
 				this.$ = new yy.Select({columns:[new yy.Column({columnid:'_',})], modifier:'COLUMN'});
 			} else {
-				this.$ = new yy.Select({ columns:$$[$0] }); yy,extend(this.$, $$[$0-2]);yy.extend(this.$, $$[$0-1]); 
+				this.$ = new yy.Select({ columns:$$[$0] }); yy.extend(this.$, $$[$0-2]);yy.extend(this.$, $$[$0-1]); 
 			}
 		
 break;
@@ -2254,7 +2259,7 @@ case 7:return 107
 break;
 case 8:return 107
 break;
-case 9:return /* return 'COMMENT' */
+case 9:return /* return COMMENT */
 break;
 case 10:/* skip whitespace */
 break;
@@ -2320,27 +2325,27 @@ case 40:return 'CLOSE'
 break;
 case 41:return 213
 break;
-case 42:return "COLUMN"
+case 42:return 161
 break;
-case 43:return "COLUMN"
+case 43:return 161
 break;
-case 44:return "COMMIT"
+case 44:return 380
 break;
-case 45:return "CONSTRAINT"
+case 45:return 315
 break;
-case 46:return "CONTENT"
+case 46:return 416
 break;
-case 47:return "CONTINUE"
+case 47:return 386
 break;
-case 48:return "CONVERT"
+case 48:return 234
 break;
-case 49:return "CORRESPONDING"
+case 49:return 210
 break;
-case 50:return "COUNT"
+case 50:return 243
 break;
 case 51:return 295
 break;
-case 52:return "CROSS"
+case 52:return 177
 break;
 case 53:return 208
 break;
@@ -2739,7 +2744,7 @@ alasql.prettyflag = false;
 	Pretty output of SQL functions
 	@function
 	@param {string} sql SQL statement
-	@param {boolean} prettyflag value
+	@param {boolean} flag value
 	@return {string} HTML or text string with pretty output 
 */
 
@@ -2753,7 +2758,7 @@ alasql.pretty = function(sql, flag) {
 
 /**
  Pretty keyword
- @param {string} Keyword
+ @param {string} s Keyword
  @return {string} pretty keyword
 */
 function K(s){
@@ -3683,7 +3688,7 @@ var xlsnc = utils.xlsnc = function(i) {
 
 /**
     Excel:conver Excel column name to number
-    @param {integer} i Column number, like 'A' or 'BE'
+    @param {string} s Column number, like 'A' or 'BE'
     @return {string} Column name, starting with 0
 */
 var xlscn = utils.xlscn = function(s) {
@@ -14332,17 +14337,17 @@ if(false) {
 	@return {number} Number of files processed
 */
 
-alasql.into.XLSX = function(filename, opts, data1, columns, cb) {
+alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	/** @type {number} result */
 	var res = 1;
 
 	if(deepEqual(columns,[{columnid:'_'}])) {
-		data = data1.map(function(dat){return dat._;});
+		data = data.map(function(dat){return dat._;});
 		columns = undefined;
 //		res = [{_:1}];
 	} else {
-		data = data1;
+//		data = data1;
 	}
 
 //console.log(data);
@@ -16858,12 +16863,9 @@ alasql.worker = function(path, paths, cb) {
 
 		var js = "importScripts('";
 			js += path;
-			js+="');\
-		self.onmessage = function(event) {\
-		alasql(event.data.sql,event.data.params, function(data){\
-		postMessage({id:event.data.id, data:data});\
-		});\
-		}";
+			js+="');self.onmessage = function(event) {"+
+		"alasql(event.data.sql,event.data.params, function(data){"+
+		"postMessage({id:event.data.id, data:data});});}";
 
 		var blob = new Blob([js], {"type": "text\/plain"});
 		alasql.webworker = new Worker(URL.createObjectURL(blob));

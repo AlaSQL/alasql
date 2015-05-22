@@ -1,12 +1,11 @@
-//
-// alasql.js
-// AlaSQL - JavaScript SQL database
-// Date: 17.05.2015
-// Version: 0.1.6
-// (ñ) 2014-2015, Andrey Gershun
-//
-
 /*
+@module alasql
+@version 0.1.7
+
+AlaSQL - JavaScript SQL database
+(ñ) 2014-2015, Andrey Gershun
+
+@license
 The MIT License (MIT)
 
 Copyright (c) 2014-2015 Andrey Gershun (agershun@gmail.com)
@@ -50,10 +49,18 @@ SOFTWARE.
 
 /**
 	Main procedure for worker
- */
+    @function
+    @param {string} sql SQL statement
+    @param {object} params List of parameters
+    @param {callback} cb Callback function
+    @return {object} Query result
+*/
 function alasql(sql,params,cb){
+    // Increase last request id
 	var id = alasql.lastid++;
+    // Save callback
 	alasql.buffer[id] = cb;
+    // Send a message to worker
 	alasql.webworker.postMessage({id:id,sql:sql,params:params});
 };
 
@@ -90,12 +97,9 @@ alasql.worker = function(path, paths, cb) {
 
 		var js = "importScripts('";
 			js += path;
-			js+="');\
-		self.onmessage = function(event) {\
-		alasql(event.data.sql,event.data.params, function(data){\
-		postMessage({id:event.data.id, data:data});\
-		});\
-		}";
+			js+="');self.onmessage = function(event) {"+
+		"alasql(event.data.sql,event.data.params, function(data){"+
+		"postMessage({id:event.data.id, data:data});});}";
 
 		var blob = new Blob([js], {"type": "text\/plain"});
 		alasql.webworker = new Worker(URL.createObjectURL(blob));
@@ -129,7 +133,10 @@ alasql.worker = function(path, paths, cb) {
 
 
 /* WebWorker */
+/** @type {number} */
 alasql.lastid = 0;
+
+/** @type {object} */
 alasql.buffer = {};
 
 alasql.worker();

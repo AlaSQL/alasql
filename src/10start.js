@@ -25,11 +25,12 @@
 }(this, function () {
 
 /**
- 	@function alasql - Main Alasql class
+	 alasql - Main Alasql class
+ 	@function
  	@param {string|function|object} sql - SQL-statement or data object for fuent interface
- 	@param {object=} params - SQL parameters
- 	@param {function=} cb - callback function
- 	@param {object=} scope - Scope for nested queries
+ 	@param {object} params - SQL parameters
+ 	@param {function} cb - callback function
+ 	@param {object} scope - Scope for nested queries
  	@return {any} - Result data object
 
 	@example
@@ -141,4 +142,8 @@ function getAlaSQLPath() {
 		};	
 	};
 };
+
+/** 
+	@type {function}
+*/
 
