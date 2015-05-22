@@ -2166,9 +2166,9 @@ case 52:return "CROSS"
 break;
 case 53:return 208
 break;
-case 54:return "CURRENT_TIMESTAMP"
+case 54:return 229
 break;
-case 55:return "CURSOR"
+case 55:return 'CURSOR'
 break;
 case 56:return 349
 break;
@@ -2266,15 +2266,15 @@ case 102:return 406
 break;
 case 103:return 162	
 break;
-case 104:return "MAX"
+case 104:return 245
 break;
-case 105:return "MERGE"
+case 105:return 398
 break;
-case 106:return "MIN"
+case 106:return 244
 break;
-case 107:return "EXCEPT"
+case 107:return 141
 break;
-case 108:return "MODIFY"
+case 108:return 347
 break;
 case 109:return 191
 break;

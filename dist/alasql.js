@@ -2344,9 +2344,9 @@ case 52:return "CROSS"
 break;
 case 53:return 208
 break;
-case 54:return "CURRENT_TIMESTAMP"
+case 54:return 229
 break;
-case 55:return "CURSOR"
+case 55:return 'CURSOR'
 break;
 case 56:return 349
 break;
@@ -2444,15 +2444,15 @@ case 102:return 406
 break;
 case 103:return 162	
 break;
-case 104:return "MAX"
+case 104:return 245
 break;
-case 105:return "MERGE"
+case 105:return 398
 break;
-case 106:return "MIN"
+case 106:return 244
 break;
-case 107:return "EXCEPT"
+case 107:return 141
 break;
-case 108:return "MODIFY"
+case 108:return 347
 break;
 case 109:return 191
 break;
@@ -13658,156 +13658,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.XLSX = function(filename, opts, data, columns, cb) {
-	if(columns.length == 0 && data.length > 0) {
-		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
-	}
 
-	if(typeof exports == 'object') {
-		var XLSX = require('xlsx');
-	} else {
-		var XLSX = window.XLSX;
-	};
-	if(typeof filename == 'object') {
-		opts = filename;
-		filename = undefined;
-	}
-	var opt = {sheetid:'Sheet1',headers:true};
-	alasql.utils.extend(opt, opts);
-
-	var res = 1;
-
-	var wb = {SheetNames:[], Sheets:{}};
-
-	// Check overwrite flag
-	if(opt.sourcefilename) {
-		alasql.utils.loadBinaryFile(opt.sourcefilename,!!cb,function(data){
-			wb = XLSX.read(data,{type:'binary'});
-			res = doExport();
-        });		
-	} else {
-		res = doExport();
-	};
-	
-	function doExport() {
-		var cells = {};
-
-		if(wb.SheetNames.indexOf(opt.sheetid) > -1) {
-			cells = wb.Sheets[opt.sheetid];
-		} else {
-			wb.SheetNames.push(opt.sheetid);
-			wb.Sheets[opt.sheetid] = {};
-			cells = wb.Sheets[opt.sheetid];			
-		}
-
-		var range = "A1";
-		if(opt.range) range = opt.range;
-
-		var col0 = alasql.utils.xlscn(range.match(/[A-Z]+/)[0]);
-		var row0 = +range.match(/[0-9]+/)[0]-1;
-
-		if(wb.Sheets[opt.sheetid]['!ref']) {
-			var rangem = wb.Sheets[opt.sheetid]['!ref'];
-			var colm = alasql.utils.xlscn(rangem.match(/[A-Z]+/)[0]);
-			var rowm = +rangem.match(/[0-9]+/)[0]-1;
-		} else {
-			var colm = 1, rowm = 1;
-		}
-		var colmax = Math.max(col0+columns.length,colm);
-		var rowmax = Math.max(row0+data.length+2,rowm);
-
-//		console.log(col0,row0);
-		var i = row0+1;
-
-		wb.Sheets[opt.sheetid]['!ref'] = 'A1:'+alasql.utils.xlsnc(colmax)+(rowmax);
-//		var i = 1;
-
-		if(opt.headers) {
-			columns.forEach(function(col, idx){
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:col.columnid};
-			});
-			i++;
-		}
-
-		for(var j=0;j<data.length;j++) {
-			columns.forEach(function(col, idx){
-				var cell = {v:data[j][col.columnid]};
-				if(typeof data[j][col.columnid] == 'number') {
-					cell.t = 'n';
-				} else if(typeof data[j][col.columnid] == 'string') {
-					cell.t = 's';
-				} else if(typeof data[j][col.columnid] == 'boolean') {				
-					cell.t = 'b';
-				} else if(typeof data[j][col.columnid] == 'object') {
-					if(data[j][col.columnid] instanceof Date) {
-						cell.t = 'd';
-					}
-				}
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = cell;
-			});		
-			i++;
-		}
-
-	//	console.log(wb);
-	//	console.log(wb);
-
-		if(typeof filename == 'undefined') {
-			res = wb;
-		} else {
-			if(typeof exports == 'object') {
-				XLSX.writeFile(wb, filename);
-			} else {
-				var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
-				var wbout = XLSX.write(wb,wopts);
-
-				function s2ab(s) {
-				  var buf = new ArrayBuffer(s.length);
-				  var view = new Uint8Array(buf);
-				  for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-				  return buf;
-				}
-				/* the saveAs call downloads a file on the local machine */
-		//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
-		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
-		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
-				if(isIE() == 9) {
-					throw new Error('Cannot save XLSX files in IE9. Please use XLS() export function');
-//					var URI = 'data:text/plain;charset=utf-8,';
-
-/*
-					var testlink = window.open("about:blank", "_blank");
-					var s = '';
-					for(var i=0,ilen=wbout.length;i<ilen;i++) {
-						var ch = wbout.charCodeAt(i);
-						if(i<20) console.log('&#'+ch+';');
-						s += '&#x'+ch.toString(16)+';';
-					};
-					testlink.document.write(s); //fileData has contents for the file
-					testlink.document.close();
-					testlink.document.execCommand('SaveAs', false, filename);
-					testlink.close();         		
-*/
-//					alert('ie9');
-				} else {
-					saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
-				}
-			}
-
-		}
-
-
-
-		// data.forEach(function(d){
-		// 	s += columns.map(function(col){
-		// 		return d[col.columnid];
-		// 	}).join(opts.separator)+'\n';	
-		// });
-		// alasql.utils.saveFile(filename,s);
-		if(cb) res = cb(res);
-		return res;
-
-	};
-};
 
 
 //

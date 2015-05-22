@@ -70,9 +70,9 @@ COLUMNS 										return "COLUMN"
 'CREATE'										return 'CREATE'
 "CROSS"											return "CROSS"
 'CUBE'											return 'CUBE'
-"CURRENT_TIMESTAMP"								return "CURRENT_TIMESTAMP"
-"CURSOR"										return "CURSOR"
-DATABASE(S)?										return 'DATABASE'
+"CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
+"CURSOR"										return 'CURSOR'
+DATABASE(S)?									return 'DATABASE'
 'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
@@ -120,11 +120,11 @@ DOUBLE\s+PRECISION								return 'LITERAL'
 'LIMIT'											return 'LIMIT'
 'MATCHED'										return 'MATCHED'
 'MATRIX'										return 'MATRIX'	
-"MAX"											return "MAX"
-"MERGE"											return "MERGE"
-"MIN"											return "MIN"
-"MINUS"											return "EXCEPT"
-"MODIFY"										return "MODIFY"
+"MAX"											return 'MAX'
+"MERGE"											return 'MERGE'
+"MIN"											return 'MIN'
+"MINUS"											return 'EXCEPT'
+"MODIFY"										return 'MODIFY'
 'NATURAL'										return 'NATURAL'
 'NEXT'											return 'NEXT'
 'NEW'											return 'NEW'
@@ -194,7 +194,7 @@ SETS                                        	return 'SET'
 'UNIQUE'                                        return 'UNIQUE'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
-/* 'USER'											return 'USER' */
+/* 'USER'										return 'USER' */
 'USING'                                         return 'USING'
 VALUE(S)?                                      	return 'VALUE'
 'VERTEX'										return 'VERTEX'

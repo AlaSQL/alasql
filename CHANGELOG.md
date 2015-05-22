@@ -1,7 +1,8 @@
 # Changelog
 
-### 0.1.8 "Sienna" (22.05.2015 - ...05.2015)
-* 
+### 0.1.8 "Siena" (22.05.2015 - ...05.2015)
+* SELECT FROM syntax
+* Export to multiple sheets workbook
 
 ### 0.1.7 "Parma" (17.05.2015 - 22.05.2015)
 * Fixed BETWEEN AND and AND parsing priority bug (KPI1:95%)
