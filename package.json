@@ -7,6 +7,9 @@
     "example": "examples",
     "test": "test"
   },
+  "dependencies": {
+    "es6-promise":"2.1.1"
+  },
   "devDependencies": {
     "dom-storage":"2.0.1",
     "gulp":"3.8.11",

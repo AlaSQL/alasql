@@ -134,8 +134,10 @@ DOUBLE\s+PRECISION								return 'LITERAL'
 'NULL'											return 'NULL'
 'OFF'											return 'OFF'
 'ON'											return 'ON'
+'ONLY'											return 'ONLY'
 'OFFSET'										return 'OFFSET'
 'OPEN'											return 'OPEN'
+'OPTION'										return 'OPTION'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
@@ -148,6 +150,7 @@ DOUBLE\s+PRECISION								return 'LITERAL'
 'PRINT'                                        	return 'PRINT'
 'PRIOR'                                        	return 'PRIOR'
 'QUERY'                                        	return 'QUERY'
+'READ'		                                    return 'READ'
 'RECORDSET'                                     return 'RECORDSET'
 'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
@@ -165,7 +168,8 @@ SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 'SELECT'                                        return 'SELECT'
 'SEMI'                                        	return 'SEMI'
-SET(S)?                                        	return 'SET'
+SET 	                                       	return 'SET'
+SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
 'SOME'                                        	return 'SOME'
 'SOURCE'										return 'SOURCE'
@@ -173,7 +177,7 @@ SET(S)?                                        	return 'SET'
 'STORE'                                        	return 'STORE'
 'SUM'											return 'SUM'
 'TABLE'											return 'TABLE'
-'TABLES'										return 'TABLES'
+'TABLES'										return 'TABLE'
 'TARGET'										return 'TARGET'
 'TEMP'											return 'TEMP'
 'TEMPORARY'										return 'TEMP'
@@ -190,7 +194,7 @@ SET(S)?                                        	return 'SET'
 'UNIQUE'                                        return 'UNIQUE'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
-'USER'											return 'USER'
+/* 'USER'											return 'USER' */
 'USING'                                         return 'USING'
 VALUE(S)?                                      	return 'VALUE'
 'VERTEX'										return 'VERTEX'
@@ -1093,9 +1097,9 @@ Expression
 		{$$ = $1}
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
-	| USER
+/*	| USER
 		{ $$ = new yy.FuncValue({funcid:'USER'});}
-	;
+*/	;
 
 JavaScript
 	: JAVASCRIPT
@@ -1136,9 +1140,9 @@ PrimitiveValue
 		{ $$ = $1; }
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }	
-	| USER
+/*	| USER
 		{ $$ = new yy.FuncValue({funcid:'USER'}); }	
-	;
+*/	;
 
 
 AggrValue
@@ -1964,13 +1968,13 @@ ShowDatabases
 	;
 
 ShowTables
-	: SHOW TABLES
+	: SHOW TABLE
 		{ $$ = new yy.ShowTables();}
-	| SHOW TABLES LIKE StringValue
+	| SHOW TABLE LIKE StringValue
 		{ $$ = new yy.ShowTables({like:$4});}
-	| SHOW TABLES FROM Literal 
+	| SHOW TABLE FROM Literal 
 		{ $$ = new yy.ShowTables({databaseid: $4});}
-	| SHOW TABLES FROM Literal LIKE StringValue
+	| SHOW TABLE FROM Literal LIKE StringValue
 		{ $$ = new yy.ShowTables({like:$6, databaseid: $4});}
 	;
 
@@ -1996,19 +2000,26 @@ ShowCreateTable
 	;
 
 CreateView
-	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select
+	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7}); 
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 		}
-	| CREATE TemporaryClause VIEW IfNotExists Table AS Select
+	| CREATE TemporaryClause VIEW IfNotExists Table AS Select SubqueryRestriction?
 		{ 
 			$$ = new yy.CreateTable({table:$5,view:true,select:$7}); 
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 		}
 	;
+
+SubqueryRestriction
+	: WITH READ ONLY
+	| WITH CHECK OPTION 
+	| WITH CHECK OPTION CONSTRAINT Constraint
+	;
+
 
 DropView
 	: DROP VIEW IfExists Table

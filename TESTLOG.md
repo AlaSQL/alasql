@@ -1,8 +1,17 @@
 # Test log
 
-Date: May 19, 2015 15:45 version 0.1.7
+Date: May 20, 2015 15:45 version 0.1.7
 
-This file contains a log of tests runned on the [SQLLOGICTEST](http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki) package. FOr present moment we use only 29 of more than a hundred test files. Each test file was checked for the following criterias:
+AlaSQL is tested by two packages:
+
+* SQLLOGICTEST - current level 62%
+* NIST SQL TestSuite - current level 24% 
+
+Most problems are in test parsers, rather than in AlaSQL.
+
+### SQLLOGICTEST
+
+This file contains a log of tests runned on the [SQLLOGICTEST](http://www.sqlite.org/sqllogictest/doc/trunk/about.wiki) package. For present moment we use only 29 of more than a hundred test files. Each test file was checked for the following criterias:
 
 * Number of tests in the file
 * Number of successfully parsed tests

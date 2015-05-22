@@ -133,7 +133,7 @@ gulp.task('jison-compile', function () {
     ]));
 });
 
-
+/** @todo Replace UglifyJS with Closure */
 gulp.task('uglify', function () {
   return gulp.src('./alasql.js', {read: false})
     .pipe(shell([
@@ -150,9 +150,16 @@ gulp.task('copy-dist', function(){
 
 
 gulp.task('copy-dist-org', function(){
-  gulp.src(['./dist/alasql.min.js','./dist/alasql-worker.min.js'])
+  gulp.src(['./dist/alasql.min.js','./dist/alasql-worker.min.js','/dist/alasql-echo.js'])
     .pipe(gulp.dest('./console/'));
 });
+
+/*
+gulp.task('copy-dist-meteor', function(){
+  gulp.src(['./dist/alasql.min.js','./dist/alasql-worker.min.js','/dist/alasql-echo.js'])
+    .pipe(gulp.dest('./console/'));
+});
+*/
 
 // Additional task to update alasql.org/console directory
 gulp.task('copy-console-org', function(){
@@ -210,9 +217,11 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
   gulp.watch('./src/prolog/*.js',function(){ gulp.run('plugin-prolog'); });
 
   gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
+
   gulp.watch('./dist/alasql.min.js',function(){ 
     gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
+/*    gulp.run('copy-dist-meteor'); */
   });
   gulp.watch('./dist/alasql-worker.js',function(){ 
     gulp.run('copy-dist'); 

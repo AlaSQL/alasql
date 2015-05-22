@@ -439,6 +439,7 @@
 
         CREATE TABLE ACR_SCH_P(P1 DECIMAL(4) NOT NULL UNIQUE,
                                P2 CHAR(4))
+                               
    CREATE TABLE CHAR_DEFAULT
                (SEX_CODE  CHAR(1)  DEFAULT 'F',
                 NICKNAME  CHAR(20) DEFAULT 'No nickname given',
