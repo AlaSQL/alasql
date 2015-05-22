@@ -144,6 +144,7 @@ function getAlaSQLPath() {
 };
 
 /** 
-	@type {function}
+	Parser function
+	@type {object}
 */
 

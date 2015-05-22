@@ -144,8 +144,8 @@ gulp.task('uglify', function () {
       'uglifyjs dist/alasql.js -o dist/alasql.min.js',
       'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.min.js',
 
-//      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.opt.js',
-//      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.opt.js'
+      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.opt.js',
+      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.opt.js'
     ]));
 });
 
