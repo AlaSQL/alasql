@@ -14515,12 +14515,12 @@ alasql.into.XLSX = function(filename, opts, data1, columns, cb) {
 
 	// Check overwrite flag
 	if(opts.sourcefilename) {
-		alasql.utils.loadBinaryFile(opt.sourcefilename,!!cb,function(data){
+		alasql.utils.loadBinaryFile(opts.sourcefilename,!!cb,function(data){
 			wb = XLSX.read(data,{type:'binary'});
-			res = doExport();
+			doExport();
         });		
 	} else {
-		res = doExport();
+		doExport();
 	};
 
 	/* Return result */
