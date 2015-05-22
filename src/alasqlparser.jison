@@ -614,7 +614,8 @@ SearchTimeout
 
 SelectClause
 	: 
-/*
+	/*
+
 		{ $$ = new yy.Select({ columns:new yy.Column({columnid:'_'}), modifier: 'COLUMN' }); }
 	| 
 */
@@ -625,8 +626,14 @@ SelectClause
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1);yy.extend($$, $3); }
 	| SelectModifier  ALL TopClause ResultColumns  
 		{ $$ = new yy.Select({ columns:$4, all:true }); yy,extend($$, $1);yy.extend($$, $3); }
-	| SelectModifier TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$3 }); yy,extend($$, $1);yy.extend($$, $2); }
+	| SelectModifier TopClause ResultColumns?  
+		{ 
+			if(!$3) {
+				$$ = new yy.Select({columns:[new yy.Column({columnid:'_',})], modifier:'COLUMN'});
+			} else {
+				$$ = new yy.Select({ columns:$3 }); yy,extend($$, $1);yy.extend($$, $2); 
+			}
+		}
 /*	| 
 		{ $$ = new yy.Select({columns:[new yy.Column({columnid:'_', modifier:'COLUMN'})]});}
 */	;

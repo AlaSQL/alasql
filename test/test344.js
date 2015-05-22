@@ -12,13 +12,31 @@ describe('Test 344 Multisheet export', function() {
     done();
   });
 
+  it('2. SELECT FROM',function(done){
+    var data1 = [{a:1,b:10},{a:2,b:20}];
+    var res = alasql('SELECT FROM ?',[data1]);
+    assert.deepEqual(res,[ { a: 1, b: 10 }, { a: 2, b: 20 } ]);
+    done();
+  });
+
+
   it('2. XLSX multisheet export',function(done){
     var data1 = [{a:1,b:10},{a:2,b:20}];
     var data2 = [{a:100,b:10},{a:200,b:20}];
     var opts = [{sheetid:'One',header:true},{sheetid:'Two',header:false}];
-    var res = alasql('SELECT * INTO XLSX("restest344.xlsx",?) FROM ?',[opts,[data1,data2]])
-    assert.deepEqual(res,1);
-    done();
+    alasql.into.XLSX("restest344.xlsx",opts,[data1,data2],undefined,function(){
+      done();
+    });
+  });
+
+  it('3. XLSX multisheet export',function(done){
+    var data1 = [{a:1,b:10},{a:2,b:20}];
+    var data2 = [{a:100,b:10},{a:200,b:20}];
+    var opts = [{sheetid:'One',header:true},{sheetid:'Two',header:false}];
+    var res = alasql('SELECT INTO XLSX("restest344b.xlsx",?) FROM ?',[opts,[data1,data2]],
+      function(){
+        done();
+      });
   });
 
 /*

@@ -9,7 +9,20 @@
 	@return {number} Number of files processed
 */
 
-alasql.into.XLSX = function(filename, opts, data, columns, cb) {
+alasql.into.XLSX = function(filename, opts, data1, columns, cb) {
+
+	/** @type {number} result */
+	var res = 1;
+
+	if(deepEqual(columns,[{columnid:'_'}])) {
+		data = data1.map(function(dat){return dat._;});
+		columns = undefined;
+//		res = [{_:1}];
+	} else {
+		data = data1;
+	}
+
+//console.log(data);
 
 	/* If Node.js then require() else in browser take a global */
 	if(typeof exports == 'object') {
@@ -24,64 +37,12 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		filename = undefined;
 	};
 
-	/** @type {number} result */
-	var res = 1;
 
 	/** @type {object} Workbook */
 	var wb = {SheetNames:[], Sheets:{}};
 
-	/* 
-		If opts is array of arrays then this is a 
-		multisheet workboook, else it is a singlesheet
-	*/
-	if(typeof opts == 'object' && opts instanceof Array) {
-		if(data && data.lenght > 0) {
-			data.forEach(function(dat,idx){
-				prepareSheet(opts[idx],dat, null)
-			});
-		}
-	} else {
-		prepareSheet(data,columns);
-	}
-
-	saveWorkbook(wb, cb);
-
-	if(cb) res = cb(res);
-	return res;
-
-	/** 
-		Prepare sheet
-		@params {object} opts 
-		@params {array} data 
-		@params {array} columns Columns
-	*/
-	function prepareSheet(opts, data, columns) {
-
-
-	}
-
-	/** 
-		Save Workbook
-		@params {array} wb Workbook 
-		@params {callback} cb Callback
-	*/
-	function saveWorkbook(wb, cb) {
-
-	}
-
-	var opt = {sheetid:'Sheet1',headers:true};
-	alasql.utils.extend(opt, opts);
-
-
-	if(columns.length == 0 && data.length > 0) {
-		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
-	}
-
-
-
-
 	// Check overwrite flag
-	if(opt.sourcefilename) {
+	if(opts.sourcefilename) {
 		alasql.utils.loadBinaryFile(opt.sourcefilename,!!cb,function(data){
 			wb = XLSX.read(data,{type:'binary'});
 			res = doExport();
@@ -89,8 +50,55 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	} else {
 		res = doExport();
 	};
-	
+
+	/* Return result */
+	if(cb) res = cb(res);
+	return res;
+
+	/**
+		Export workbook
+		@function 
+	*/
 	function doExport() {
+
+		/* 
+			If opts is array of arrays then this is a 
+			multisheet workboook, else it is a singlesheet
+		*/
+		if(typeof opts == 'object' && opts instanceof Array) {
+			if(data && data.length > 0) {
+				data.forEach(function(dat,idx){
+					prepareSheet(opts[idx],dat,undefined,idx+1)
+				});
+			}
+		} else {
+			prepareSheet(opts,data,columns,{},1);
+		}
+
+		saveWorkbook(cb);
+
+	}
+
+
+	/** 
+		Prepare sheet
+		@params {object} opts 
+		@params {array} data 
+		@params {array} columns Columns
+	*/
+	function prepareSheet(opts, data, columns, idx) {
+
+//console.log(82,arguments);
+
+		/** Default options for sheet */
+		var opt = {sheetid:'Sheet'+idx,headers:true};
+		alasql.utils.extend(opt, opts);
+
+		// Generate columns if they are not defined
+		if((!columns || columns.length == 0) && data.length > 0) {
+			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+		}
+
 		var cells = {};
 
 		if(wb.SheetNames.indexOf(opt.sheetid) > -1) {
@@ -149,15 +157,25 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			i++;
 		}
 
-	//	console.log(wb);
-	//	console.log(wb);
+	}
+
+	/** 
+		Save Workbook
+		@params {array} wb Workbook 
+		@params {callback} cb Callback
+	*/
+	function saveWorkbook(cb) {
+
+//console.log(wb);
 
 		if(typeof filename == 'undefined') {
 			res = wb;
 		} else {
 			if(typeof exports == 'object') {
+				/* For Node.js */
 				XLSX.writeFile(wb, filename);
 			} else {
+				/* For browser */
 				var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
 				var wbout = XLSX.write(wb,wopts);
 
@@ -167,6 +185,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				  for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
 				  return buf;
 				}
+
 				/* the saveAs call downloads a file on the local machine */
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
 		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
@@ -174,6 +193,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				if(isIE() == 9) {
 					throw new Error('Cannot save XLSX files in IE9. Please use XLS() export function');
 //					var URI = 'data:text/plain;charset=utf-8,';
+
+		/** @todo Check if this code is required */
 
 /*
 					var testlink = window.open("about:blank", "_blank");
@@ -195,8 +216,6 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			}
 
 		}
-
-
 
 		// data.forEach(function(d){
 		// 	s += columns.map(function(col){
