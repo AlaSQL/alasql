@@ -3,17 +3,19 @@
 //
 
 /**
- Pretty flag - nice HTML output or standard text without any tags
- */
+ 	Pretty flag - nice HTML output or standard text without any tags
+ 	@global
+*/
 
 alasql.prettyflag = false;
 
 /**
- Pretty output of SQL functions
- @param {string} sql SQL statement
- @param {boolean} prettyflag value
- @return {string} HTML or text string with pretty output 
- */
+	Pretty output of SQL functions
+	@function
+	@param {string} sql SQL statement
+	@param {boolean} prettyflag value
+	@return {string} HTML or text string with pretty output 
+*/
 
 alasql.pretty = function(sql, flag) {
 	var pf = alasql.prettyflag;
@@ -27,7 +29,7 @@ alasql.pretty = function(sql, flag) {
  Pretty keyword
  @param {string} Keyword
  @return {string} pretty keyword
- */
+*/
 function K(s){
 	if(alasql.prettyflag) {
 		return '<b style="color:blue">'+s.toUpperCase()+'</b>'; 

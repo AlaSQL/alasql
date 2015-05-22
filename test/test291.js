@@ -29,7 +29,7 @@ describe('Test 291 Promised version', function() {
 
   it('2. Promise',function(done){
 
-    alasql.async('SELECT VALUE 1')
+    alasql.promise('SELECT VALUE 1')
     .then(function(res){
          assert.deepEqual(res,1);
          done();
@@ -40,7 +40,7 @@ describe('Test 291 Promised version', function() {
 
   it('3. Promise Exception',function(done){
 
-    alasql.async('SELECT * FROM one')
+    alasql.promise('SELECT * FROM one')
     .then(function(res){
       console.log(res);
     }).catch(function(err){

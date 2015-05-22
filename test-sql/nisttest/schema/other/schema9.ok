@@ -1,0 +1,38 @@
+-- SQL Test Suite, V6.0, Schema Definition, schema9.ok
+-- 59-byte ID
+-- TEd Version #
+-- date_time print
+-- ***************************************************************
+-- ****** THIS FILE SHOULD BE RUN UNDER AUTHORIZATION ID SULLIVAN
+-- ****** ONLY AFTER SCHEMA9.PV1 DEMONSTRATES A FATAL ERROR
+-- ***************************************************************
+
+-- This file defines base tables used in the CDR tests.
+
+-- This is a standard schema definition.
+
+  CREATE SCHEMA
+  AUTHORIZATION SULLIVAN
+
+  CREATE TABLE WORKS_P
+   (EMPNUM   CHAR(3) REFERENCES SUN.STAFF_P(EMPNUM),
+    PNUM     CHAR(3), 
+    HOURS    DECIMAL(5), 
+    FOREIGN KEY (PNUM)
+    REFERENCES SUN.PROJ_P(PNUM))
+
+  CREATE TABLE TTT(P1 DECIMAL(4) NOT NULL UNIQUE,
+                 P2 CHAR(4))
+
+-- ************* grant statements follow *************
+
+   GRANT SELECT ON TTT TO SCHANZLE
+
+   GRANT REFERENCES ON SUN.ACR_SCH_P TO SCHANZLE
+
+
+
+-- The following illegal grant has been removed from SCHEMA9.STD:
+--   GRANT REFERENCES ON SUN.STAFF_P TO SCHANZLE
+
+-- ************* End of Schema *************

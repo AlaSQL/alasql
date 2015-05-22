@@ -97,13 +97,13 @@ var q1,q2;
     var res = alasql('SELECT avg(c) FROM t1');
     assert.deepEqual(res,[ { 'AVG(c)': 174.36666666666667 } ]);
 //    console.log(res);
-console.log('***')
+//console.log('***')
+if(false) {
     alasql.options.modifier = "RECORDSET";
     var res = alasql('SELECT (SELECT avg(c) FROM t1)');
-console.log('<<<')
+//console.log('<<<')
     console.log(res);
 
-if(false) {
     alasql.options.modifier = "RECORDSET";
     var res = alasql('SELECT (SELECT avg(c) FROM t1)');
     console.log(res);

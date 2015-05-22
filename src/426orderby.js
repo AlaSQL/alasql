@@ -68,7 +68,7 @@ yy.Select.prototype.compileOrder = function (query) {
 		s += sk+'return -1';
 		query.orderfns = s;
 //console.log('ORDERBY',s);
-		return new Function('a,b',s);
+		return new Function('a,b','var y;'+s);
 	};
 };
 

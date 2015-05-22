@@ -1,0 +1,4 @@
+# Prolog queries
+
+:-
+?-

@@ -111,10 +111,13 @@ stdlib.IFNULL = function(a,b) {return '('+a+'||'+b+')'};
 stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
-stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+').length';};
+
+
+
+stdlib.LEN = stdlib.LENGTH = function(s) {return und(s,'y.length');}
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
+stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'y.toLowerCase()');}
 //stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 
@@ -129,8 +132,8 @@ stdlib.MIN = stdlib.LEAST = function(){
 };
 
 stdlib.MID = function(a,b,c){
-	if(arguments.length == 2) return '('+a+').substr('+b+'-1)';
-	else if(arguments.length == 3) return '('+a+').substr('+b+'-1,'+c+')';
+	if(arguments.length == 2) return und(a,'y.substr('+b+'-1)');
+	else if(arguments.length == 3) return und(a,'y.substr('+b+'-1,'+c+')');
 };
 
 // Here we uses undefined instead of null
@@ -157,9 +160,9 @@ stdlib.ROW_NUMBER = function() {return '1'};
 
 stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
-stdlib.TRIM = function(s) {return s+'.trim()'};
+stdlib.TRIM = function(s) {return und(s,'y.trim()');}
 
-stdlib.UPPER = stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
+stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'y.toUpperCase()');}
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM

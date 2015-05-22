@@ -1,6 +1,6 @@
 # AlaSQL.js - JavaScript SQL database library for relational and graph data manipulation with support of localStorage, IndexedDB, and Excel
 
-Version: 0.1.6 "Napoli" Date: May 17, 2015 [Change log](CHANGELOG.md), [Release plan](RELEASES.md), [Test log](TESTLOG.md)
+Version: 0.1.7 "Parma" Date: May 22, 2015, [SQLLOGICTEST=62%, NIST=24%](TESTLOG.md),[Change log](CHANGELOG.md), [Release plan](RELEASES.md). 
 
 AlaSQL - '[à la SQL](http://en.wiktionary.org/wiki/%C3%A0_la)' - is a lightweight JavaScript  SQL database designed to work in browser, Node.js, and Apache Cordova. It supports traditional SQL with some NoSQL functionality. Current version of AlaSQL can work in memory and use file, IndexedDB, and localStorage as a persistent storage.
 
@@ -567,9 +567,9 @@ Usually, alasql.js works synchronously, but you can use callback.
     });
 ```
 
-or you can use async() - promised version of exec (in this case you need to install [es6-promise](https://www.npmjs.org/package/es6-promise) module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):
+or you can use promise() - promised version of exec (in this case you need to install [es6-promise](https://www.npmjs.org/package/es6-promise) module for Node.js) (this feature is experimental and may be removed in a future to reduce dependices):
 ```js
-    alasql.async('SELECT * FROM test')
+    alasql.promise('SELECT * FROM test')
     }).then(function(res){
         // Process data
     }).catch(function(err){
@@ -816,6 +816,20 @@ Now you can use AlaSQL [ASSERT](wiki/Assert)  operator to test results of previo
     SELECT * FROM one ORDER BY a DESC;
     ASSERT [{a:3},{a:2},{a:1}];
 ```
+
+### SQLLOGICTEST
+
+AlaSQL uses SQLLOGICTEST to test it compatibility aith SQL-92. The tests include about 140000 
+different queries and statements.
+
+Result for all test files without select4.test and select5.test in total on May 19, 2015 15:45
+
+* tests - 138365
+* parsed ok - 135205 (98%)
+* run ok - 86330 (62%) <----- this is the most important number in the test
+* time - 452s
+
+See detailed information at [TESTLOG](TESTLOG.md).
 
 ### Warnings 
 AlaSQL project is very young and still in active development phase, therefore it may have some bugs. Please, wait a little bit before start to use it in production. I am going to add more tests and clean the code before relaese more stable version 0.1.0. Please, submit any bugs and suggestions in [Issues page](https://github.com/agershun/alasql/issues).

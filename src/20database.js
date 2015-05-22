@@ -7,6 +7,7 @@
 */
 
 // Main Database class
+
 /**
     @class Database 
  */

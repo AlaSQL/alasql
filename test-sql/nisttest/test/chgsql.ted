@@ -1,0 +1,101 @@
+! ----------------------------------------------------------------------
+!                     IDENTIFICATION SECTION                  
+!                         Interactive SQL
+! ----------------------------------------------------------------------
+!
+sub *.* /59-byte ID/
+/59-byte ID/___________________________________________________________/
+!
+! Document version of TEd used, for audit purposes.
+!
+sub *.* /TEd Version #/ -m
+"TEd Version #"TEd Version $ver"
+!
+!
+! ----------------------------------------------------------------------
+!                     MAINTENANCE SECTION                  
+! ----------------------------------------------------------------------
+!
+! Use the  -t  option on TEd to apply the official maintenance file.
+! Then use a second  -t  option on TEd to apply this file.
+!      OR     
+! Insert the entire maintenance file in this position.
+!
+! ----------------------------------------------------------------------
+!                     LOGIN SECTION                  
+! ----------------------------------------------------------------------
+!
+! Changes to login or to establish the ANSI-standard environment 
+!   would be coded here.
+!
+! ----------------------------------------------------------------------
+!                     IMPLEMENTOR-DEFINED SECTION                  
+! ----------------------------------------------------------------------
+!
+! Install vendor-supplied extensions to demonstrate FIPS Flagging:
+! (Replace the underscores with vendor-supplied extensions.)
+!
+sub *flg005.sql //
+/SUBSTR(EMPNAME,1,3) = 'Ali'/____________________/
+/ABS(GRADE) = 12/_________________/
+!
+! Change 18-character AUTHORIZATION ID to max supported in this DBMS/OS:
+!            sub *.* /CANWEPARSELENGTH18/
+!            /CANWEPARSELENGTH18/WECANPARSE12/
+!
+! ----------------------------------------------------------------------
+!                     APPROVED CHANGES SECTION
+! ----------------------------------------------------------------------
+!
+! Include here any changes approved by NIST for this validation:
+!
+! Changes to automate the testing procedure would be coded here.
+! For example, to use some implementor-defined 4GL command to
+!   prompt the tester for a pass/fail grade at the end of a test,
+!   the following might be coded:
+!            ins> *.sql / <<< END TEST/
+!            COMMIT WORK;
+!            sub *.sql //
+!            /-- END TEST >>> /INSERT INTO HU.TESTREPORT VALUES ('/
+!            / <<< END TEST/','????','SQL');/
+!            sub *cdr*.sql //
+!            /HU.TESTREPORT/SUN.TESTREPORT/
+!
+! ----------------------------------------------------------------------
+!                     DATE-TIME STAMP SECTION
+! ----------------------------------------------------------------------
+! Modify the following, using implementor-defined syntax as needed:        
+!
+! This is date-time print:
+!
+ins> *.sql /date_time print/
+SELECT SYSDATE FROM HU.ECCO;
+!
+! ----------------------------------------------------------------------
+!                     SYNTAX DEFICIENCIES SECTION                  
+! ----------------------------------------------------------------------
+!
+! If an SQL command file cannot be executed because the SQL implementation
+!   issues a fatal syntax error message for a minor deficiency which is not
+!   the purpose of the test case, propose a change to NIST.  
+! A syntax change should be made to allow an SQL implementation 
+!   to demonstrate functionality, i.e. semantic conformance.
+! A global change will be counted as a single deficiency.
+!  
+! ----------------------------------------------------------------------
+!                     DELETED TESTS SECTION                  
+! ----------------------------------------------------------------------
+!
+! If the tests at the end of a file cannot be executed because a fatal
+!   syntax error message is issued for an earlier test, either propose a
+!   change to NIST or delete the entire test so that the rest of the tests
+!   in the program may execute.  If this test is required, and not a FIPS
+!   Flagger test, it will appear as a deficiency on REPORT 4.
+!
+! For example, to remove test number 278, code
+!            del *dml061.sql /-- TEST:0278/>>> 0278 <<</
+! Note that if you are globally changing the -- TEST or the END TEST comments,
+!   the above delete for test number 278 would be coded for the changed
+!   values, rather than the original values.
+!
+!

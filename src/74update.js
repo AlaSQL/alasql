@@ -41,7 +41,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			});		
 		}
 
-		var wherefn = new Function('r,params,alasql','return '+this.where.toJavaScript('r','')).bind(this);
+		var wherefn = new Function('r,params,alasql','var y;return '+this.where.toJavaScript('r','')).bind(this);
 	};
 
 	// Construct update function
@@ -50,7 +50,7 @@ yy.Update.prototype.compile = function (databaseid) {
 		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
 	});
 //	console.log('updatefn',s);
-	var assignfn = new Function('r,params,alasql',s);
+	var assignfn = new Function('r,params,alasql','var y;'+s);
 
 	var statement = function(params, cb) {
 		var db = alasql.databases[databaseid];

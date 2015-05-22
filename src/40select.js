@@ -260,10 +260,10 @@ yy.Select.prototype.compile = function(databaseid) {
 
 		if(query.intofns) {
 			// Create intofn function
-			query.intofn = new Function("r,i,params,alasql",query.intofns); 
+			query.intofn = new Function("r,i,params,alasql",'var y;'+query.intofns); 
 		} else if(query.intoallfns) {
 			// Create intoallfn function
-			query.intoallfn = new Function("columns,cb,params,alasql",query.intoallfns); 
+			query.intoallfn = new Function("columns,cb,params,alasql",'var y;'+query.intoallfns); 
 		}
 
 	}

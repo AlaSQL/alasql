@@ -28,10 +28,10 @@ a) documentation
 b) resolving bugs
 c) document and refactoring code
 
-The target of this phase is to pass SQLLOGIC test. I know, that current 250 unit tests is not enough for such big project.
+The target of this phase is to pass SQLLOGIC test. Current 300 unit tests are not enough for such big project.
 
 ### June-July 2015 (AlaSQL 0.3)
-Plus, I have some features in the short list for the June-July 2015:
+There are some features in the short list for the June-July 2015:
 e) extend transactions support
 f) add simple triggers or INSERT OR REPLACE operator
 g) improve database backend functionality (IndexedDB, localStorage, fileStorage) - especially for mobile applications (Cordova, Meteor).

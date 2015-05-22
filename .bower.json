@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description":"AlaSQL.js - JavaScript SQL database library for relational and graph data manipulation with support of localStorage, IndexedDB, and Excel",
-  "version": "0.1.5",
+  "version": "0.1.7",
   "license": "MIT",
   "keywords": [
     "sql",
@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "js-xls": "~0.7.5",
-    "js-xlsx":"0.8.0"
+    "js-xlsx":"0.8.0",
+    "es6-promise":"2.1.1"
   },
   "devDependencies": {
     "gulp":"3.8.11",

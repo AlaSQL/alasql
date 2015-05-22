@@ -103,7 +103,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
 			if(col.check) {
-				table.checkfn.push(new Function("r",'return '+col.check.expression.toJavaScript('r','')));
+				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJavaScript('r','')));
 			}
 
 			if(col.default) {
@@ -116,7 +116,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				var pk = table.pk = {};
 				pk.columns = [col.columnid];
 				pk.onrightfns = 'r[\''+col.columnid+'\']';
-				pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+				pk.onrightfn = new Function("r",'var y;return '+pk.onrightfns);
 				pk.hh = hash(pk.onrightfns);
 				table.uniqs[pk.hh] = {};
 			};
@@ -128,7 +128,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uk.push(uk);
 				uk.columns = [col.columnid];
 				uk.onrightfns = 'r[\''+col.columnid+'\']';
-				uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+				uk.onrightfn = new Function("r",'var y;return '+uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
 			};
@@ -189,12 +189,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.onrightfns = pk.columns.map(function(columnid){
 				return 'r[\''+columnid+'\']'
 			}).join("+'`'+");
-			pk.onrightfn = new Function("r",'return '+pk.onrightfns);
+			pk.onrightfn = new Function("r",'var y;return '+pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};					
 		} else if(con.type == 'CHECK') {
 //			console.log(con.expression.toJavaScript('r',''));
-			table.checkfn.push(new Function("r",'return '+con.expression.toJavaScript('r','')));
+			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJavaScript('r','')));
 		} else if(con.type == 'UNIQUE') {
 //			console.log(con);
 			var uk = {};
@@ -204,7 +204,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.onrightfns = uk.columns.map(function(columnid){
 				return 'r[\''+columnid+'\']'
 			}).join("+'`'+");
-			uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+			uk.onrightfn = new Function("r",'var y;return '+uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};					
 		} else if(con.type == 'FOREIGN KEY') {

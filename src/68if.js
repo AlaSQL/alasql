@@ -22,7 +22,7 @@ yy.If.prototype.execute = function (databaseid,params,cb){
 //	console.log(this);
 //	console.log(this.expression.toJavaScript('{}','',null));
 //	console.log();
-	var fn = new Function('params,alasql,p','return '+this.expression.toJavaScript('({})','',null)).bind(this);
+	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJavaScript('({})','',null)).bind(this);
 //	var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJavaScript('({})','',null)).bind(this);
 	if(fn(params,alasql)) res = this.thenstat.execute(databaseid,params,cb);
 	else {

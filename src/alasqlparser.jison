@@ -1,9 +1,7 @@
 /*
 //
 // alasqlparser.jison
-// SQL Parser for Alasql.js
-// Date: 03.11.2014
-// Modified: 21.04.2015
+// SQL Parser for AlaSQL
 // (c) 2014-2015, Andrey Gershun
 // 
 //
@@ -60,7 +58,8 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
-COLUMN(S)?										return "COLUMN"
+COLUMN											return "COLUMN"
+COLUMNS 										return "COLUMN"
 "COMMIT"										return "COMMIT"
 "CONSTRAINT"									return "CONSTRAINT"
 "CONTENT"										return "CONTENT"
@@ -81,6 +80,7 @@ DATABASE(S)?										return 'DATABASE'
 'DESC'                                          return 'DIRECTION'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
+DOUBLE\s+PRECISION								return 'LITERAL'
 'DROP'											return 'DROP'
 'ECHO'											return 'ECHO'
 'EDGE'											return 'EDGE'
@@ -134,8 +134,10 @@ DATABASE(S)?										return 'DATABASE'
 'NULL'											return 'NULL'
 'OFF'											return 'OFF'
 'ON'											return 'ON'
+'ONLY'											return 'ONLY'
 'OFFSET'										return 'OFFSET'
 'OPEN'											return 'OPEN'
+'OPTION'										return 'OPTION'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
@@ -148,6 +150,7 @@ DATABASE(S)?										return 'DATABASE'
 'PRINT'                                        	return 'PRINT'
 'PRIOR'                                        	return 'PRIOR'
 'QUERY'                                        	return 'QUERY'
+'READ'		                                    return 'READ'
 'RECORDSET'                                     return 'RECORDSET'
 'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
@@ -165,7 +168,8 @@ SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 'SELECT'                                        return 'SELECT'
 'SEMI'                                        	return 'SEMI'
-SET(S)?                                        	return 'SET'
+SET 	                                       	return 'SET'
+SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
 'SOME'                                        	return 'SOME'
 'SOURCE'										return 'SOURCE'
@@ -173,7 +177,7 @@ SET(S)?                                        	return 'SET'
 'STORE'                                        	return 'STORE'
 'SUM'											return 'SUM'
 'TABLE'											return 'TABLE'
-'TABLES'										return 'TABLES'
+'TABLES'										return 'TABLE'
 'TARGET'										return 'TARGET'
 'TEMP'											return 'TEMP'
 'TEMPORARY'										return 'TEMP'
@@ -190,6 +194,7 @@ SET(S)?                                        	return 'SET'
 'UNIQUE'                                        return 'UNIQUE'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
+/* 'USER'											return 'USER' */
 'USING'                                         return 'USING'
 VALUE(S)?                                      	return 'VALUE'
 'VERTEX'										return 'VERTEX'
@@ -198,7 +203,7 @@ VALUE(S)?                                      	return 'VALUE'
 'WHERE'                                         return 'WHERE'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
-'WORK'                                          return 'TRANSACTION'
+'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 
 (\d*[.])?\d+[eE]\d+								return 'NUMBER'
 (\d*[.])?\d+									return 'NUMBER'
@@ -250,8 +255,9 @@ VALUE(S)?                                      	return 'VALUE'
 %left COMMA
 %left DOUBLECOLON
 %left OR
-%left BETWEEN NOT_BETWEEN
-%left AND
+/* %left AND */
+%left AND BETWEEN NOT_BETWEEN
+/*%left AND*/
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IN
 %left NOT
@@ -471,8 +477,8 @@ SearchSelector
 
 	| ARROW Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
-	| COMMA 
-		{ $$ = {selid:"COMMA"};}
+	| CARET 
+		{ $$ = {selid:"ROOT"};}
 	| EQ Expression
 		{ $$ = {srchid:"EQ", args: [$2]}; }
 	| LIKE Expression
@@ -1091,7 +1097,9 @@ Expression
 		{$$ = $1}
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
-	;
+/*	| USER
+		{ $$ = new yy.FuncValue({funcid:'USER'});}
+*/	;
 
 JavaScript
 	: JAVASCRIPT
@@ -1132,7 +1140,9 @@ PrimitiveValue
 		{ $$ = $1; }
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }	
-	;
+/*	| USER
+		{ $$ = new yy.FuncValue({funcid:'USER'}); }	
+*/	;
 
 
 AggrValue
@@ -1366,7 +1376,35 @@ Op
 		}
 
 	| Expression AND Expression
-		{ $$ = new yy.Op({left:$1, op:'AND' , right:$3}); }
+		{ 
+			if($1.op == 'BETWEEN1') {
+
+				if($1.left.op == 'AND') {
+					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
+						new yy.Op({left:$1.left.right, op:'BETWEEN', 
+							right1:$1.right, right2:$3})
+					});
+				} else {
+					$$ = new yy.Op({left:$1.left, op:'BETWEEN', 
+						right1:$1.right, right2:$3});
+				}
+
+			} else if($1.op == 'NOT BETWEEN1') {
+				if($1.left.op == 'AND') {
+					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
+						new yy.Op({left:$1.left.right, op:'NOT BETWEEN', 
+							right1:$1.right, right2:$3})
+					});
+				} else {
+					$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN', 
+						right1:$1.right, right2:$3});
+				}
+			} else {
+				$$ = new yy.Op({left:$1, op:'AND', right:$3});
+			}
+
+
+		}
 	| Expression OR Expression
 		{ $$ = new yy.Op({left:$1, op:'OR' , right:$3}); }
 	| NOT Expression
@@ -1414,13 +1452,28 @@ Op
 
 
 	/* 
-		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar 
-		at least, I do not know how.
+		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar. 
+		At least, I do not know how.
 	*/
 	| Expression BETWEEN Expression
-		{ $$ = new yy.Op({left:$1, op:'BETWEEN', right:$3 }); }
+		{ 	
+/*			var expr = $3;
+			if(expr.left && expr.left.op == 'AND') {
+				$$ = new yy.Op({left:new yy.Op({left:$1, op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+			} else {
+*/
+				$$ = new yy.Op({left:$1, op:'BETWEEN1', right:$3 }); 
+//			}
+		}
 	| Expression NOT_BETWEEN Expression
-		{ $$ = new yy.Op({left:$1, op:'NOT BETWEEN', right:$3 }); }
+		{
+//			var expr = $3;
+//			if(expr.left && expr.left.op == 'AND') {
+//				$$ = new yy.Op({left:new yy.Op({left:$1, op:'NOT BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+//			} else {
+				$$ = new yy.Op({left:$1, op:'NOT BETWEEN1', right:$3 }); 
+//			}
+		}
 	| Expression IS Expression
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
 	| Expression DOUBLECOLON ColumnType
@@ -1915,13 +1968,13 @@ ShowDatabases
 	;
 
 ShowTables
-	: SHOW TABLES
+	: SHOW TABLE
 		{ $$ = new yy.ShowTables();}
-	| SHOW TABLES LIKE StringValue
+	| SHOW TABLE LIKE StringValue
 		{ $$ = new yy.ShowTables({like:$4});}
-	| SHOW TABLES FROM Literal 
+	| SHOW TABLE FROM Literal 
 		{ $$ = new yy.ShowTables({databaseid: $4});}
-	| SHOW TABLES FROM Literal LIKE StringValue
+	| SHOW TABLE FROM Literal LIKE StringValue
 		{ $$ = new yy.ShowTables({like:$6, databaseid: $4});}
 	;
 
@@ -1947,19 +2000,26 @@ ShowCreateTable
 	;
 
 CreateView
-	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select
+	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select SubqueryRestriction?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7}); 
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 		}
-	| CREATE TemporaryClause VIEW IfNotExists Table AS Select
+	| CREATE TemporaryClause VIEW IfNotExists Table AS Select SubqueryRestriction?
 		{ 
 			$$ = new yy.CreateTable({table:$5,view:true,select:$7}); 
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 		}
 	;
+
+SubqueryRestriction
+	: WITH READ ONLY
+	| WITH CHECK OPTION 
+	| WITH CHECK OPTION CONSTRAINT Constraint
+	;
+
 
 DropView
 	: DROP VIEW IfExists Table
@@ -2010,8 +2070,8 @@ Help
 	;
 
 ExpressionStatement
-	: Expression
-		{ $$ = new yy.ExpressionStatement({expression:$1}); }
+	: EQ Expression
+		{ $$ = new yy.ExpressionStatement({expression:$2}); }
 	;
 
 Source
@@ -2124,10 +2184,17 @@ JsonElementsList
 SetVariable
 	: SET Literal OnOff
 		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
-	| SET AT Literal EQ Expression
-		{ $$ = new yy.SetVariable({variable:$3, expression:$5});}
-	| SET AT Literal SetPropsList EQ Expression
-		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6});}
+	| SET AtDollar Literal EQ Expression
+		{ $$ = new yy.SetVariable({variable:$3, expression:$5, method:$2});}
+	| SET AtDollar Literal SetPropsList EQ Expression
+		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6, method:$2});}
+	;
+
+AtDollar
+	: AT
+		{$$ = '@'; }
+	| DOLLAR
+		{$$ = '$'; }
 	;
 
 SetPropsList 
@@ -2237,10 +2304,10 @@ BeginEnd
 	;
 
 Print
-	: PRINT Select
-		{ $$ = new yy.Print({statement:$2});}
-	| PRINT ExpressionStatement
-		{ $$ = new yy.Print({statement:$2});}	
+	: PRINT ExprList
+		{ $$ = new yy.Print({exprs:$2});}	
+	| PRINT Select
+		{ $$ = new yy.Print({select:$2});}	
 	;
 
 Require
@@ -2387,8 +2454,8 @@ OutputClause
 	: 
 	| OUTPUT ResultColumns
 		{ $$ = {output:{columns:$2}} }
-	| OUTPUT ResultColumns INTO AT Literal
-		{ $$ = {output:{columns:$2, intovar: $5}} }
+	| OUTPUT ResultColumns INTO AtDollar Literal
+		{ $$ = {output:{columns:$2, intovar: $5, method:$4}} }
 	| OUTPUT ResultColumns INTO Table
 		{ $$ = {output:{columns:$2, intotable: $4}} }
 	| OUTPUT ResultColumns INTO Table LPAR ColumnsList RPAR
@@ -2500,17 +2567,17 @@ GraphVertexEdge
 	;
 
 GraphVar
-	: AT Literal
-		{ $$ = {vars:$2}; }
+	: AtDollar Literal
+		{ $$ = {vars:$2, method:$1}; }
 	;
 
 GraphAsClause
-	: AS AT Literal
+	: AS AtDollar Literal
 		{ $$ = $3; }
 	;
 
 GraphAtClause
-	: AT Literal
+	: AtDollar Literal
 		{ $$ = $2; }
 	;
 
@@ -2540,10 +2607,6 @@ DeleteVertex
 
 DeleteEdge
 	: DELETE EDGE Expression (FROM Expression)? (TO Expression)? (WHERE Expression)?
-	;
-
-ExpressionStatement 
-	: EQ Expression
 	;
 
 AddRule

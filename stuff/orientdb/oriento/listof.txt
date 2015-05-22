@@ -1,0 +1,328 @@
+Creating a new database
+
+server.create({
+  name: 'mydb',
+  type: 'graph',
+  storage: 'plocal'
+})
+.then(function (db) {
+  console.log('Created a database called ' + db.name);
+});
+Using an existing database
+
+var db = server.use('mydb');
+console.log('Using database: ' + db.name);
+Using an existing database with credentials
+
+var db = server.use({
+  name: 'mydb',
+  username: 'admin',
+  password: 'admin'
+});
+console.log('Using database: ' + db.name);
+Execute an Insert Query
+
+db.query('insert into OUser (name, password, status) values (:name, :password, :status)',
+  {
+    params: {
+      name: 'Radu',
+      password: 'mypassword',
+      status: 'active'
+    }
+  }
+).then(function (response){
+  console.log(response); //an Array of records inserted
+});
+Execute a Select Query with Params
+
+db.query('select from OUser where name=:name', {
+  params: {
+    name: 'Radu'
+  },
+  limit: 1
+}).then(function (results){
+  console.log(results);
+});
+Raw Execution of a Query String with Params
+
+db.exec('select from OUser where name=:name', {
+  params: {
+    name: 'Radu'
+  }
+}).then(function (response){
+  console.log(response.results);
+});
+Query Builder: Insert Record
+
+db.insert().into('OUser').set({name: 'demo', password: 'demo', status: 'ACTIVE'}).one()
+.then(function (user) {
+  console.log('created', user);
+});
+Query Builder: Update Record
+
+db.update('OUser').set({password: 'changed'}).where({name: 'demo'}).scalar()
+.then(function (total) {
+  console.log('updated', total, 'users');
+});
+Query Builder: Delete Record
+
+db.delete().from('OUser').where({name: 'demo'}).limit(1).scalar()
+.then(function (total) {
+  console.log('deleted', total, 'users');
+});
+Query Builder: Select Records
+
+db.select().from('OUser').where({status: 'ACTIVE'}).all()
+.then(function (users) {
+  console.log('active users', users);
+});
+Query Builder: Text Search
+
+db.select().from('OUser').containsText({name: 'er'}).all()
+.then(function (users) {
+  console.log('found users', users);
+});
+Query Builder: Select Records with Fetch Plan
+
+db.select().from('OUser').where({status: 'ACTIVE'}).fetch({role: 5}).all()
+.then(function (users) {
+  console.log('active users', users);
+});
+Query Builder: Select an expression
+
+db.select('count(*)').from('OUser').where({status: 'ACTIVE'}).scalar()
+.then(function (total) {
+  console.log('total active users', total);
+});
+Query Builder: Traverse Records
+
+db.traverse().from('OUser').where({name: 'guest'}).all()
+.then(function (records) {
+  console.log('found records', records);
+});
+Query Builder: Return a specific column
+
+db
+.select('name')
+.from('OUser')
+.where({status: 'ACTIVE'})
+.column('name')
+.all()
+.then(function (names) {
+  console.log('active user names', names.join(', '));
+});
+Query Builder: Transform a field
+
+db
+.select('name')
+.from('OUser')
+.where({status: 'ACTIVE'})
+.transform({
+  status: function (status) {
+    return status.toLowerCase();
+  }
+})
+.limit(1)
+.one()
+.then(function (user) {
+  console.log('user status: ', user.status); // 'active'
+});
+Query Builder: Transform a record
+
+db
+.select('name')
+.from('OUser')
+.where({status: 'ACTIVE'})
+.transform(function (record) {
+  return new User(record);
+})
+.limit(1)
+.one()
+.then(function (user) {
+  console.log('user is an instance of User?', (user instanceof User)); // true
+});
+Query Builder: Specify default values
+
+db
+.select('name')
+.from('OUser')
+.where({status: 'ACTIVE'})
+.defaults({
+  something: 123
+})
+.limit(1)
+.one()
+.then(function (user) {
+  console.log(user.name, user.something);
+});
+Query Builder: Put a map entry into a map
+
+db
+.update('#1:1')
+.put('mapProperty', {
+  key: 'value',
+  foo: 'bar'
+})
+.scalar()
+.then(function (total) {
+  console.log('updated', total, 'records');
+});
+Loading a record by RID.
+
+db.record.get('#1:1')
+.then(function (record) {
+  console.log('Loaded record:', record);
+});
+Deleting a record
+
+db.record.delete('#1:1')
+.then(function () {
+  console.log('Record deleted');
+});
+Listing all the classes in the database
+
+db.class.list()
+.then(function (classes) {
+  console.log('There are ' + classes.length + ' classes in the db:', classes);
+});
+Creating a new class
+
+db.class.create('MyClass')
+.then(function (MyClass) {
+  console.log('Created class: ' + MyClass.name);
+});
+Creating a new class that extends another
+
+db.class.create('MyOtherClass', 'MyClass')
+.then(function (MyOtherClass) {
+  console.log('Created class: ' + MyOtherClass.name);
+});
+Getting an existing class
+
+db.class.get('MyClass')
+.then(function (MyClass) {
+  console.log('Got class: ' + MyClass.name);
+});
+Updating an existing class
+
+db.class.update({
+  name: 'MyClass',
+  superClass: 'V'
+})
+.then(function (MyClass) {
+  console.log('Updated class: ' + MyClass.name + ' that extends ' + MyClass.superClass);
+});
+Listing properties in a class
+
+MyClass.property.list()
+.then(function (properties) {
+  console.log('The class has the following properties:', properties);
+});
+Adding a property to a class
+
+MyClass.property.create({
+  name: 'name',
+  type: 'String'
+})
+.then(function () {
+  console.log('Property created.')
+});
+Deleting a property from a class
+
+MyClass.property.drop('myprop')
+.then(function () {
+  console.log('Property deleted.');
+});
+Renaming a property on a class
+
+MyClass.property.rename('myprop', 'mypropchanged');
+.then(function () {
+  console.log('Property renamed.');
+});
+Creating a record for a class
+
+MyClass.create({
+  name: 'John McFakerton',
+  email: 'fake@example.com'
+})
+.then(function (record) {
+  console.log('Created record: ', record);
+});
+Listing records in a class
+
+MyClass.list()
+.then(function (records) {
+  console.log('Found ' + records.length + ' records:', records);
+});
+Create a new index for a class property
+
+db.index.create({
+  name: 'MyClass.myProp',
+  type: 'unique'
+})
+.then(function(index){
+  console.log('Created index: ', index);
+});
+Get entry from class property index
+
+db.index.get('MyClass.myProp')
+.then(function (index) {
+  index.get('foo').then(console.log.bind(console));
+});
+Creating a new, empty vertex
+
+db.create('VERTEX', 'V').one()
+.then(function (vertex) {
+  console.log('created vertex', vertex);
+});
+Creating a new vertex with some properties
+
+db.create('VERTEX', 'V')
+.set({
+  key: 'value',
+  foo: 'bar'
+})
+.one()
+.then(function (vertex) {
+  console.log('created vertex', vertex);
+});
+Deleting a vertex
+
+db.delete('VERTEX')
+.where('@rid = #12:12')
+.one()
+.then(function (count) {
+  console.log('deleted ' + count + ' vertices');
+});
+Creating a simple edge between vertices
+
+db.create('EDGE', 'E')
+.from('#12:12')
+.to('#12:13')
+.one()
+.then(function (edge) {
+  console.log('created edge:', edge);
+});
+Creating an edge with properties
+
+db.create('EDGE', 'E')
+.from('#12:12')
+.to('#12:13')
+.set({
+  key: 'value',
+  foo: 'bar'
+})
+.one()
+.then(function (edge) {
+  console.log('created edge:', edge);
+});
+Deleting an edge between vertices
+
+db.delete('EDGE', 'E')
+.from('#12:12')
+.to('#12:13')
+.scalar()
+.then(function (count) {
+  console.log('deleted ' + count + ' edges');
+});
+Cr

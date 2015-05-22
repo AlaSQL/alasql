@@ -12,21 +12,42 @@
 var utils = alasql.utils = {};
 
 /**
- Return true.
- Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
- @return {boolean} true
- */
+    Convert NaN to undefined
+    @function
+    @param {string} s JavaScript string to be modified
+    @return {string} Covered expression
+*/
+function n2u(s) {
+    return '(y='+s+',y===y?y:undefined)';
+}
+
+/**
+    Return undefined if s undefined
+    @param {string} s JavaScript string to be modified
+    @return {string} Covered expression
+*/    
+function und(s,r) {
+    return '(y='+s+',typeof y=="undefined"?undefined:'+r+')'
+}
+
+
+/**
+    Return always true. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
+    @function
+    @return {boolean} Always true
+*/
 function returnTrue () {return true};
 
 /**
- Return undefined
- Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
- @return undefined
- */
+    Return undefined. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
+    @function
+    @return undefined
+*/
 function returnUndefined() {};
 
 /**
  Escape quotes
+ @function
  @param {string} s Source string
  @return {string} Escaped string
  */
@@ -339,7 +360,7 @@ var fileExists = utils.fileExists = function(path,cb){
 /**
   Save text file from anywhere
   @param {string} path File path
-  @param {array of objects} data Data object
+  @param {array} data Data object
   @param {function} cb Callback
 */
 
