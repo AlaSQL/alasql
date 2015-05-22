@@ -1,13 +1,16 @@
 # Changelog
 
-### 0.1.7 "Parma" (17.05.2015 - ...05.2015)
+### 0.1.8 "Sienna" (22.05.2015 - ...05.2015)
+* 
+
+### 0.1.7 "Parma" (17.05.2015 - 22.05.2015)
 * Fixed BETWEEN AND and AND parsing priority bug (KPI1:95%)
 * Fixed SUM() with NULL(undefined) values
 * SLT tests run
 * select1.test passed 100%
 * Set jsdoc environment
 * Added 'var y' and functions for NULL and undefined conversions
-* Fixed ABG() aggregator for NULL elements
+* Fixed AVG() aggregator for NULL elements
 * New gulp commands: 'gulp doc' and 'gulp console'
 * Some jsDoc documentation tag added
 * Expression statement ( = 2*2 )
