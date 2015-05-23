@@ -5,14 +5,16 @@
 // (c) 2014-2015, Andrey Gershun
 //
 
+var closure = false;
+
 var gulp = require('gulp');
 module.exports = gulp;
 //var connect = require('gulp-connect');
 //var livereload = require('gulp-livereload');
 //var changed = require('gulp-changed');
 //var jison = require('gulp-jison');
-var concat = require('gulp-concat-sourcemap');
-//var concat = require('gulp-concat');
+//var concat = require('gulp-concat-sourcemap');
+var concat = require('gulp-concat');
 //var uglify = require('gulp-uglify');
 //var jisonLex = require('gulp-jison-lex');
 var shell = require('gulp-shell');
@@ -131,8 +133,9 @@ gulp.task('js-merge', function () {
 gulp.task('jison-compile', function () {
   return gulp.src('./src/*.jison', {read: false})
     .pipe(shell([
-//      'node ./utils/redj.js',
-      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
+      'node ./utils/redj.js',
+      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
+//      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
 });
@@ -141,11 +144,11 @@ gulp.task('jison-compile', function () {
 gulp.task('uglify', function () {
   return gulp.src('./alasql.js', {read: false})
     .pipe(shell([
-      'uglifyjs dist/alasql.js -o dist/alasql.min.js',
-      'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.min.js',
+      'uglifyjs dist/alasql.js -o dist/alasql.ugl.js',
+      'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.ugl.js',
 
-      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.opt.js',
-      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.opt.js'
+      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.min.js',
+      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
     ]));
 });
 

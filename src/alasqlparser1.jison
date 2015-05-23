@@ -35,7 +35,7 @@ X(['](\\.|[^']|\\\')*?['])+             return 'AF'
 'ALTER'                                    		return 'AQ'
 'AND'											return 'AK'
 'ANTI'											return 'AW'
-'ANY'											return 'DT'
+'ANY'											return 'DW'
 'APPLY'											return 'AU'
 'ARRAY'                                     	return 'AV'
 'AS'                                      		return 'AW'
@@ -48,233 +48,232 @@ AUTO(_)?INCREMENT                               return 'Aa'
 'BEGIN'											return 'Ac'
 'BETWEEN'										return 'Ad'
 'BREAK'											return 'Ae'
-NOT\s+BETWEEN									return 'NOT_BETWEEN'
-NOT\s+LIKE									    return 'NOT_LIKE'
-'BY'											return 'Af'
+NOT\s+BETWEEN									return 'Af'
+NOT\s+LIKE									    return 'Ag'
+'BY'											return 'Ah'
 
-'CASE'											return 'Ag'
-'CAST'											return 'Ah'
-'CHECK'											return 'Ai'
-'CLASS'											return 'Ag'
-'CLOSE'											return 'Ak'
-'COLLATE'										return 'Al'
-COLUMN											return 'Am'
-COLUMNS 										return 'Am'
-"COMMIT"										return 'Ao'
-"CONSTRAINT"									return 'Ap'
-"CONTENT"										return 'Aq'
-"CONTINUE"										return 'Ar'
-"CONVERT"										return 'As'
-"CORRESPONDING"									return 'At'
-"COUNT"											return 'Au'
-'CREATE'										return 'Av'
-"CROSS"											return 'Aw'
-'CUBE'											return 'Ax'
-"CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
-"CURSOR"										return 'Ay'
-DATABASE(S)?									return 'Az'
-'DECLARE'                                       return 'A0'
-'DEFAULT'                                       return 'A1'
-'DELETE'                                        return 'A2'
-'DELETED'                                       return 'A3'
+'CASE'											return 'Ai'
+'CAST'											return 'Ag'
+'CHECK'											return 'Ak'
+'CLASS'											return 'Al'
+'CLOSE'											return 'Am'
+'COLLATE'										return 'An'
+COLUMN											return 'Ao'
+COLUMNS 										return 'Ao'
+"COMMIT"										return 'Aq'
+"CONSTRAINT"									return 'Ar'
+"CONTENT"										return 'As'
+"CONTINUE"										return 'At'
+"CONVERT"										return 'Au'
+"CORRESPONDING"									return 'Av'
+"COUNT"											return 'Aw'
+'CREATE'										return 'Ax'
+"CROSS"											return 'Ay'
+'CUBE'											return 'Az'
+"CURRENT_TIMESTAMP"								return 'A0'
+"CURSOR"										return 'A1'
+DATABASE(S)?									return 'A2'
+'DECLARE'                                       return 'A3'
+'DEFAULT'                                       return 'A4'
+'DELETE'                                        return 'A5'
+'DELETED'                                       return 'A6'
 'DESC'                                          return 'AY'
-'DETACH'										return 'A5'
-'DISTINCT'                                      return 'A6'
-DOUBLE\s+PRECISION								return 'A7'
-'DROP'											return 'A8'
-'ECHO'											return 'A9'
-'EDGE'											return 'BA'
-'END'											return 'BB'
-'ENUM'											return 'BC'
-'ELSE'											return 'BD'
-'EXCEPT'										return 'BE'
-'EXISTS'										return 'BF'
-'EXPLAIN'                                       return 'BG'
-'FALSE'											return 'BH'
-'FETCH'											return 'BI'
-'FIRST'											return 'BJ'
-'FOREIGN'										return 'BK'
-'FROM'                                          return 'BL'
-'GO'                                      		return 'BM'
-'GRAPH'                                      	return 'BN'
-'GROUP'                                      	return 'BO'
-'GROUPING'                                     	return 'BP'
-'HAVING'                                        return 'BQ'
-'HELP'											return 'BR'
-'IF'											return 'BS'
+'DETACH'										return 'A8'
+'DISTINCT'                                      return 'A9'
+DOUBLE\s+PRECISION								return 'BA'
+'DROP'											return 'BB'
+'ECHO'											return 'BC'
+'EDGE'											return 'BD'
+'END'											return 'BE'
+'ENUM'											return 'BF'
+'ELSE'											return 'BG'
+'EXCEPT'										return 'BH'
+'EXISTS'										return 'BI'
+'EXPLAIN'                                       return 'BJ'
+'FALSE'											return 'BK'
+'FETCH'											return 'BL'
+'FIRST'											return 'BM'
+'FOREIGN'										return 'BN'
+'FROM'                                          return 'BO'
+'GO'                                      		return 'BP'
+'GRAPH'                                      	return 'BQ'
+'GROUP'                                      	return 'BR'
+'GROUPING'                                     	return 'BS'
+'HAVING'                                        return 'BT'
+'HELP'											return 'BU'
+'IF'											return 'BV'
 'IDENTITY'										return 'Aa'
-'IS'											return 'BU'
-'IN'											return 'BV'
-'INDEX'											return 'BW'
-'INNER'                                         return 'BX'
-'INSERT'                                        return 'BY'
-'INSERTED'                                      return 'BZ'
-'INTERSECT'                                     return 'Ba'
-'INTO'                                         	return 'Bb'
-'JOIN'                                         	return 'Bc'
-'KEY'											return 'Bd'
-'LAST'											return 'Be'
-'LET'											return 'Bf'
+'IS'											return 'BX'
+'IN'											return 'BY'
+'INDEX'											return 'BZ'
+'INNER'                                         return 'Ba'
+'INSERT'                                        return 'Bb'
+'INSERTED'                                      return 'Bc'
+'INTERSECT'                                     return 'Bd'
+'INTO'                                         	return 'Be'
+'JOIN'                                         	return 'Bf'
+'KEY'											return 'Bg'
+'LAST'											return 'Bh'
+'LET'											return 'Bi'
 'LEFT'											return 'Bg'
-'LIKE'											return 'Bh'
-'LIMIT'											return 'Bi'
-'MATCHED'										return 'Bg'
-'MATRIX'										return 'Bk'	
-"MAX"											return 'Bl'
-"MERGE"											return 'Bm'
-"MIN"											return 'Bn'
-"MINUS"											return 'BE'
-"MODIFY"										return 'Bp'
-'NATURAL'										return 'Bq'
-'NEXT'											return 'Br'
-'NEW'											return 'Bs'
-'NOCASE'										return 'Bt'
-'NO'											return 'Bu'
-'NOT'											return 'Bv'
-'NULL'											return 'Bw'
-'OFF'											return 'Bx'
-'ON'											return 'By'
-'ONLY'											return 'Bz'
-'OFFSET'										return 'B0'
-'OPEN'											return 'B1'
-'OPTION'										return 'B2'
+'LIKE'											return 'Bk'
+'LIMIT'											return 'Bl'
+'MATCHED'										return 'Bm'
+'MATRIX'										return 'Bn'	
+"MAX"											return 'Bo'
+"MERGE"											return 'Bp'
+"MIN"											return 'Bq'
+"MINUS"											return 'BH'
+"MODIFY"										return 'Bs'
+'NATURAL'										return 'Bt'
+'NEXT'											return 'Bu'
+'NEW'											return 'Bv'
+'NOCASE'										return 'Bw'
+'NO'											return 'Bx'
+'NOT'											return 'By'
+'NULL'											return 'Bz'
+'OFF'											return 'B0'
+'ON'											return 'B1'
+'ONLY'											return 'B2'
+'OFFSET'										return 'B3'
+'OPEN'											return 'B4'
+'OPTION'										return 'B5'
 'OR'											return 'AJ'
-'ORDER'	                                      	return 'B4'
-'OUTER'											return 'B5'
-'OVER'											return 'B6'
-'PATH'                                        	return 'B7'
-'PARTITION'										return 'B8'
-'PERCENT'                                       return 'B9'
-'PLAN'                                        	return 'CA'
-'PRIMARY'										return 'CB'
-'PRINT'                                        	return 'CC'
-'PRIOR'                                        	return 'CD'
-'QUERY'                                        	return 'CE'
-'READ'		                                    return 'CF'
-'RECORDSET'                                     return 'CG'
-'REDUCE'                                        return 'CH'
-'REFERENCES'                                    return 'CI'
-'RELATIVE'                                      return 'CJ'
-'REMOVE'                                        return 'CK'
-'RENAME'                                        return 'CL'
-'REQUIRE'                                       return 'CM'
-'RESTORE'                                       return 'CN'
-'RETURNS'                                       return 'CO'
-'RIGHT'                                        	return 'CP'
-'ROLLBACK'										return 'CQ'
-'ROLLUP'										return 'CR'
-'ROW'											return 'CS'
-SCHEMA(S)?                                      return 'Az'
-'SEARCH'                                        return 'CU'
-'SELECT'                                        return 'CV'
-'SEMI'                                        	return 'CW'
-SET 	                                       	return 'CX'
-SETS                                        	return 'CX'
-'SHOW'                                        	return 'CZ'
-'SOME'                                        	return 'Ca'
-'SOURCE'										return 'Cb'
-'STRATEGY'										return 'Cc'
-'STORE'                                        	return 'Cd'
-'SUM'											return 'Ce'
-'TABLE'											return 'Cf'
-'TABLES'										return 'Cf'
-'TARGET'										return 'Ch'
-'TEMP'											return 'Ci'
-'TEMPORARY'										return 'Ci'
-'TEXTSTRING'									return 'Ck'
-'THEN'											return 'Cl'
-'TIMEOUT'										return 'Cm'
-'TO'											return 'Cn'
-'TOP'											return 'Co'
-'TRAN'											return 'Cp'
-'TRANSACTION'									return 'Cp'
-'TRUE'						  					return 'Cr'
-'TRUNCATE'					  					return 'Cs'
-'UNION'                                         return 'Ct'
-'UNIQUE'                                        return 'Cu'
-'UPDATE'                                        return 'Cv'
-'USE'											return 'Cw'
-/* 'USER'										return 'Cx' */
-'USING'                                         return 'Cy'
-VALUE(S)?                                      	return 'Cz'
-'VERTEX'										return 'C0'
-'VIEW'											return 'C1'
-'WHEN'                                          return 'C2'
-'WHERE'                                         return 'C3'
-'WHILE'                                         return 'C4'
-'WITH'                                          return 'C5'
-'WORK'                                          return 'Cp'  /* Is this keyword required? */
+'ORDER'	                                      	return 'B7'
+'OUTER'											return 'B8'
+'OVER'											return 'B9'
+'PATH'                                        	return 'CA'
+'PARTITION'										return 'CB'
+'PERCENT'                                       return 'CC'
+'PLAN'                                        	return 'CD'
+'PRIMARY'										return 'CE'
+'PRINT'                                        	return 'CF'
+'PRIOR'                                        	return 'CG'
+'QUERY'                                        	return 'CH'
+'READ'		                                    return 'CI'
+'RECORDSET'                                     return 'CJ'
+'REDUCE'                                        return 'CK'
+'REFERENCES'                                    return 'CL'
+'RELATIVE'                                      return 'CM'
+'REMOVE'                                        return 'CN'
+'RENAME'                                        return 'CO'
+'REQUIRE'                                       return 'CP'
+'RESTORE'                                       return 'CQ'
+'RETURNS'                                       return 'CR'
+'RIGHT'                                        	return 'CS'
+'ROLLBACK'										return 'CT'
+'ROLLUP'										return 'CU'
+'ROW'											return 'CV'
+SCHEMA(S)?                                      return 'A2'
+'SEARCH'                                        return 'CX'
+'SELECT'                                        return 'CY'
+'SEMI'                                        	return 'CZ'
+SET 	                                       	return 'Ca'
+SETS                                        	return 'Ca'
+'SHOW'                                        	return 'Cc'
+'SOME'                                        	return 'Cd'
+'SOURCE'										return 'Ce'
+'STRATEGY'										return 'Cf'
+'STORE'                                        	return 'Cg'
+'SUM'											return 'Ch'
+'TABLE'											return 'Ci'
+'TABLES'										return 'Ci'
+'TARGET'										return 'Ck'
+'TEMP'											return 'Cl'
+'TEMPORARY'										return 'Cl'
+'TEXTSTRING'									return 'Cn'
+'THEN'											return 'Co'
+'TIMEOUT'										return 'Cp'
+'TO'											return 'Cq'
+'TOP'											return 'Cr'
+'TRAN'											return 'Cs'
+'TRANSACTION'									return 'Cs'
+'TRUE'						  					return 'Cu'
+'TRUNCATE'					  					return 'Cv'
+'UNION'                                         return 'Cw'
+'UNIQUE'                                        return 'Cx'
+'UPDATE'                                        return 'Cy'
+'USE'											return 'Cz'
+/* 'USER'										return 'C0' */
+'USING'                                         return 'C1'
+VALUE(S)?                                      	return 'C2'
+'VERTEX'										return 'C3'
+'VIEW'											return 'C4'
+'WHEN'                                          return 'C5'
+'WHERE'                                         return 'C6'
+'WHILE'                                         return 'C7'
+'WITH'                                          return 'C8'
+'WORK'                                          return 'Cs'  /* Is this keyword required? */
 
-(\d*[.])?\d+[eE]\d+								return 'C7'
-(\d*[.])?\d+									return 'C7'
+(\d*[.])?\d+[eE]\d+								return 'DA'
+(\d*[.])?\d+									return 'DA'
 
-'->'											return 'C9'
-'#'												return 'DA'
-'+'												return 'DB'
-'-' 											return 'DC'
-'*'												return 'DD'
-'/'												return 'DE'
-'%'												return 'DF'
-'!==='											return 'DG'
-'==='											return 'DH'
-'!=='											return 'DI'
-'=='											return 'DJ'
-'>='											return 'DK'
-'>'												return 'DL'
-'<='											return 'DM'
-'<>'											return 'DN'
-'<'												return 'DO'
-'='												return 'DP'
-'!='											return 'DN'
-'('												return 'DR'
-')'												return 'DS'
-'@'												return 'DT'
-'{'												return 'DU'
-'}'												return 'DV'
+'->'											return 'DC'
+'#'												return 'DD'
+'+'												return 'DE'
+'-' 											return 'DF'
+'*'												return 'DG'
+'/'												return 'DH'
+'%'												return 'DI'
+'!==='											return 'DJ'
+'==='											return 'DK'
+'!=='											return 'DL'
+'=='											return 'DM'
+'>='											return 'DN'
+'>'												return 'DO'
+'<='											return 'DP'
+'<>'											return 'DQ'
+'<'												return 'DR'
+'='												return 'DS'
+'!='											return 'DQ'
+'('												return 'DU'
+')'												return 'DV'
+'@'												return 'DW'
+'{'												return 'DX'
+'}'												return 'DY'
 
-']'												return 'DW'
+']'												return 'DZ'
 
-':-'											return 'DX'
-'?-'											return 'DY'
-'.'												return 'DZ'
-','												return 'Da'
-'::'											return 'Db'
-':'												return 'Dc'
-';'												return 'Dd'
-'$'												return 'De'
-'?'												return 'Df'
+':-'											return 'Da'
+'?-'											return 'Db'
+'.'												return 'Dc'
+','												return 'Dd'
+'::'											return 'De'
+':'												return 'Df'
+';'												return 'Dg'
+'$'												return 'Dh'
+'?'												return 'Di'
 '!'												return 'Dg'
-'^'												return 'Dh'
+'^'												return 'Dk'
 
-[a-zA-Z_][a-zA-Z_0-9]*                     		return 'A7'
+[a-zA-Z_][a-zA-Z_0-9]*                     		return 'BA'
 
-<<EOF>>               							return 'Dg'
-.												return 'Dk'
+<<EOF>>               							return 'Dm'
+.												return 'Dn'
 
 /lex
-%left Da 
-%left Db 
+%left Dd 
+%left De 
 %left AJ 
 /* %left AK */
-%left AK Ad NOT_BETWEEN
+%left AK Ad Af 
 /*%left AND*/
-%left DL DK DO DM DP DN DJ DI DH DG 
-%left BV 
-%left Bv 
-%left BU 
-%left Bh NOT_LIKE
-%left DB DC 
-%left DD DE DF 
-%left Dh 
-%left DZ C9 Dg 
-%left DA 
+%left DO DN DR DP DS DQ DM DL DK DJ 
+%left BY 
+%left By 
+%left BX 
+%left Bk Ag 
+%left DE DF 
+%left DG DH DI 
+%left Dk 
+%left Dc DC Dg 
+%left DD 
 
 %ebnf
 %start main
 %%
-
- Gl 
-	: A7 
+ Do 
+	: BA 
 		{
 			if (yy.casesensitive) $$ = $1;
 			else $$ = $1.toLowerCase();
@@ -284,28 +283,25 @@ VALUE(S)?                                      	return 'Cz'
 	;
 
 main
-	: Dl Dg 
+	: Dp Dm 
 		{ return new yy.Statements({statements:$1}); }
 	;
-
- Dl 
-	: Dl (SEMICOLON|GO) Dn 
+ Dp 
+	: Dp (Dg|BP) Dr 
 		{ $$ = $1; if($3) $1.push($3); }
-	| Dn 
+	| Dr 
 		{ $$ = [$1]; }
-	| Dm 
+	| Dq 
 		{ $$ = [$1]; }
 	;
-
- Dm 
-	: BG Dn 
+ Dq 
+	: BJ Dr 
 		{ $$ = $2; $2.explain = true; }
-	| BG CE CA Dn 
+	| BJ CH CD Dr 
 		{ $$ = $4;  $4.explain = true;}
 	;
-
- Dn 
-	: Do 
+ Dr 
+	: Ds 
 		{ 
 			$$ = $1;
 
@@ -316,72 +312,71 @@ main
 			delete yy.queries;
 		}
 	;
-
- Do 
+ Ds 
 	: { $$ = undefined; }
-	| AlterTable	
-	| AttachDatabase	
-	| FW 
-	| CreateIndex
-	| CreateGraph
-	| CreateTable
-	| Ff 
-	| GW 
-	| CreateVertex
-	| GG 
-	| Delete
-	| FV 
-	| FZ 
-	| Fa 
-	| DropTable
-	| Fh 
-	| If
-	| Insert
-	| GK 
-	| FU 
-	| Select
-	| Fe 
-	| Fc 
-	| ShowDatabases
-	| Fd 
-	| Fb 
-	| GJ 
-	| WithSelect
-
-	| F4 
-	| F2 
-	| F3 
-	| EndTransaction
-	| FY 
-	| Update
-	| Help
-	| EX 
-
-	| Fn 
+	| Fm 
 	| Fo 
-	| F7 
-	| F8 
+	| Fq 
+	| Fu 
+	| G1 
+	| FG 
+	| F1 
+	| Gz 
+	| Gv 
+	| Gh 
+	| E8 
+	| Fp 
+	| Ft 
+	| Fv 
+	| Fk 
+	| F3 
+	| GV 
+	| E9 
+	| Gl 
+	| Fn 
+	| Dw 
+	| F0 
+	| Fy 
+	| Fw 
+	| Fz 
+	| Fx 
+	| Gk 
+	| Dt 
+
+	| GS 
+	| GQ 
+	| GR 
+	| EndTransaction
+	| Fs 
+	| E5 
 	| F9 
-	| GA 
+	| Ef 
+
 	| GB 
 	| GC 
-	| Fx 
-	| Fm 
-	| Gh 
-	| Gk 
+	| GX 
+	| GY 
+	| GZ 
+	| Ga 
+	| Gb 
+	| Gc 
+	| GL 
+	| GA 
+	| HC 
+	| HF 
 
 /* PLugins */
 
-	| GD 
+	| Ge 
 
 /*
-	| Store
-	| F5 
+	| GT 
+	| GU 
 
-	| DeclareCursor
-	| Fi 
-	| Fk 
-	| Fg 
+	| F4 
+	| F5 
+	| F7 
+	| F6 
 
 	| CreateTrigger
 	| DropTrigger
@@ -392,7 +387,7 @@ main
 	| RestoreDatabase
 	| RestoreTable
 
-	| F7 
+	| GX 
 	| BulkInsert
 
 	| CreateFunction
@@ -402,29 +397,25 @@ main
 */
 	;
 
-/* C5 */
-
-WithSelect
-	: C5 Dp Select
+/* C8 */
+ Dt 
+	: C8 Du Dw 
 		{ $$ = new yy.WithSelect({withs: $2, select:$3}); }
 	;
-
- Dp 
-	: Dp Da Dq 
+ Du 
+	: Du Dd Dv 
 		{ $1.push($3); $$=$1; }
-	| Dq 
+	| Dv 
 		{ $$ = [$1]; }
 	;
-
- Dq 
-	: Gl AW DR Select DS 
+ Dv 
+	: Do AW DU Dw DV 
 		{ $$ = {name:$1, select:$4}; }
 	;
 
-/* CV */
-
-Select
-	: SelectClause RemoveClause? D4 D5 EH EI EN EQ EM 
+/* CY */
+ Dw 
+	: D9 Dx? EC ED EP EQ EV EY EU 
 		{   
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
@@ -435,184 +426,171 @@ Select
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| CU SearchSelector* D4 SearchFrom? 
-	/* SearchLimit? SearchStrategy? SearchTimeout? */
+	| CX SearchSelector* EC D3? 
+	/* D6? D7? D8? */
 		{
 			$$ = new yy.Search({selectors:$2, from:$4});
 			yy.extend($$,$3);
 		}
 	;
-
- Dr 
-	: CK COLUMN? Ds 
+ Dx 
+	: CN Ao? Dy 
 		{ $$ = {removecolumns:$3}; } 
 	;
-
- Ds 
-	: Ds Da Dt 
+ Dy 
+	: Dy Dd Dz 
 		{ $$ = $1; $$.push($3); }
-	| Dt 
+	| Dz 
 		{ $$ = [$1]; }
 	;
-
- Dt 
-	: EV 
+ Dz 
+	: Ed 
 		{ $$ = $1; }
-	| Bh Ek 
+	| Bk Es 
 		{ $$ = {like:$2}; }	
 	;
-
- Du 
-	: Gl 
+ D0 
+	: Do 
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 
-	| B4 Af DR EO DS 
+	| B7 Ah DU EW DV 
 		{ $$ = {srchid:"ORDERBY", args: $4}; }
-	| B4 Af DR DIRECTION? DS 
+	| B7 Ah DU AY? DV 
 		{
 			var dir = $4;
 			if(!dir) dir = 'ASC';
 			$$ = {srchid:"ORDERBY", args: [{expression: new yy.Column({columnid:'_'}), direction:dir}]};
 		}
 
-	| C9 Gl 
+	| DC Do 
 		{ $$ = {srchid:"APROP", args: [$2]}; }
-	| Dh 
+	| Dk 
 		{ $$ = {selid:"ROOT"};}
-	| DP EW 
+	| DS Ee 
 		{ $$ = {srchid:"EQ", args: [$2]}; }
-	| Bh EW 
+	| Bk Ee 
 		{ $$ = {srchid:"LIKE", args: [$2]}; }
-	| DR SearchSelector+ DS 
+	| DU SearchSelector+ DV 
 		{ $$ = {selid:"WITH", args: $2}; }
-	| C5 DR SearchSelector+ DS 
+	| C8 DU SearchSelector+ DV 
 		{ $$ = {selid:"WITH", args: $3}; }
-	| Gl DR ExprList? DS 
+	| Do DU Ep? DV 
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
-	| C3 DR EW DS 
+	| C6 DU Ee DV 
 		{ $$ = {srchid:"WHERE", args:[$3]}; }	
-	| Ag DR Gl DS 
+	| Al DU Do DV 
 		{ $$ = {srchid:"CLASS", args:[$3]}; }	
-	| C7 
+	| DA 
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| AH 
 		{ $$ = {srchid:"NAME", args: [$1.substr(1,$1.length-2)]}; }
-	| DE 
+	| DH 
 		{ $$ = {srchid:"CHILD"}; }
-	| C0 
+	| C3 
 		{ $$ = {srchid:"VERTEX"}; }
-	| BA 
+	| BD 
 		{ $$ = {srchid:"EDGE"}; }
 	| Dg 
 		{ $$ = {srchid:"REF"}; }
-	| DA Gl 
+	| DD Do 
 		{ $$ = {srchid:"SHARP", args:[$2]}; }	
-	| DF Gl 
+	| DI Do 
 		{ $$ = {srchid:"ATTR", args:((typeof $2 == 'undefined')?undefined:[$2])}; }	
-	| DF DE 
+	| DI DH 
 		{ $$ = {srchid:"ATTR"}; }	
-	| DL 
-		{ $$ = {srchid:"OUT"}; }
 	| DO 
+		{ $$ = {srchid:"OUT"}; }
+	| DR 
 		{ $$ = {srchid:"IN"}; }
-	| De 
+	| Dh 
 		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
-/*	| A2 DR DS 
+/*	| A5 DU DV 
 		{ $$ = {srchid:"DELETE"}; }
-*/	| DZ DOT 
+*/	| Dc DOT 
 		{ $$ = {srchid:"PARENT"}; }
-	| Fp 
+	| GD 
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
-	| DT Gl 
+	| DW Do 
 		{ $$ = {srchid:"AT", args:[$2]}; }	
-	| AW DT Gl 
+	| AW DW Do 
 		{ $$ = {srchid:"AS", args:[$3]}; }	
-	| Cn DT Gl 
+	| Cq DW Do 
 		{ $$ = {srchid:"TO", args:[$3]}; }	
-	| CX DR Ex DS 
+	| Ca DU E6 DV 
 		{ $$ = {srchid:"SET", args:$3}; }	
 
-	| Cz 
+	| C2 
 		{ $$ = {srchid:"VALUE"}; }	
-	| Dc Gl 
+	| Df Do 
 		{ $$ = {srchid:"CLASS", args:[$2]}; }	
-	| Du Dw 
+	| D0 D2 
 		{ $$ = {selid:$2,args:[$1] }; }
 
-	| Bv DR SearchSelector* DS 
+	| By DU SearchSelector* DV 
 		{ $$ = {selid:"NOT",args:$3 }; }
-	| BS DR SearchSelector* DS 
+	| BV DU SearchSelector* DV 
 		{ $$ = {selid:"IF",args:$3 }; }
-	| Ef DR SearchSelector* DS 
+	| En DU SearchSelector* DV 
 		{ $$ = {selid:$1,args:$3 }; }
-	| (DISTINCT|UNIQUE) DR SearchSelector* DS 
+	| (A9|Cx) DU SearchSelector* DV 
 		{ $$ = {selid:'DISTINCT',args:$3 }; }
-	| Ct DR Dv DS 
+	| Cw DU D1 DV 
 		{ $$ = {selid:'UNION',args:$3 }; }
-	| Ct AP DR Dv DS 
+	| Cw AP DU D1 DV 
 		{ $$ = {selid:'UNIONALL',args:$4 }; }
-	| AP DR SearchSelector* DS 
+	| AP DU SearchSelector* DV 
 		{ $$ = {selid:'ALL',args:[$3] }; }
-	| DT DR SearchSelector* DS 
+	| DW DU SearchSelector* DV 
 		{ $$ = {selid:'ANY',args:[$3] }; }
-	| Ba DR Dv DS 
+	| Bd DU D1 DV 
 		{ $$ = {selid:'INTERSECT',args:$3 }; }
-	| BE DR Dv DS 
+	| BH DU D1 DV 
 		{ $$ = {selid:'EXCEPT',args:$3 }; }
-	| AK DR Dv DS 
+	| AK DU D1 DV 
 		{ $$ = {selid:'AND',args:$3 }; }
-	| AJ DR Dv DS 
+	| AJ DU D1 DV 
 		{ $$ = {selid:'OR',args:$3 }; }
-	| B7 DR Du DS 
+	| CA DU D0 DV 
 		{ $$ = {selid:'PATH',args:[$3] }; }
-	| CO DR ES DS 
+	| CR DU Ea DV 
 		{ $$ = {srchid:'RETURNS',args:$3 }; }
 	;
-
- Dv 
-	: Dv Da SearchSelector*
+ D1 
+	: D1 Dd SearchSelector*
 		{ $$ = $1; $$.push($3);}
 	| SearchSelector*
 		{ $$ = [$1]; }
 	;
-
- Dw 
-	: DB 
+ D2 
+	: DE 
 		{ $$ = "PLUS"; }
-	| DD 
+	| DG 
 		{ $$ = "STAR"; }
-	| Df 
+	| Di 
 		{ $$ = "QUESTION"; }
 	;
-
- Dx 
-	: BL EW 
+ D3 
+	: BO Ee 
 		{ $$ = $2; }
 	;
 
-/*
-SearchLet
-	: Bf 
+/* D4 
+	: Bi 
 	;
-
- Dy 
-	: C4 EW 
+ D5 
+	: C7 Ee 
+	; D6 
+	: Bl Ee 
 	;
- Dz 
-	: Bi EW 
+ D7 
+	: Cf Do 
 	;
-
- D0 
-	: Cc Gl 
-	;
-
- D1 
-	: Cm EW 
+ D8 
+	: Cp Ee 
 	;	
 
 */
-
-SelectClause
+ D9 
 	: 
 	/*
 
@@ -620,13 +598,13 @@ SelectClause
 	| 
 */
 
- D2 A6 D3 ES  
+ EA A9 EB Ea  
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1); yy.extend($$, $3); }
-	| D2 Cu D3 ES  
+	| EA Cx EB Ea  
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1);yy.extend($$, $3); }
-	| D2  AP D3 ES  
+	| EA  AP EB Ea  
 		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $1);yy.extend($$, $3); }
-	| D2 D3 ResultColumns?  
+	| EA EB Ea?  
 		{ 
 			if(!$3) {
 				$$ = new yy.Select({columns:[new yy.Column({columnid:'_',})], modifier:'COLUMN'});
@@ -637,45 +615,42 @@ SelectClause
 /*	| 
 		{ $$ = new yy.Select({columns:[new yy.Column({columnid:'_', modifier:'COLUMN'})]});}
 */	;
-
- D2 
-	: CV 
+ EA 
+	: CY 
 		{ $$ = undefined; }
-	| CV Cz 
+	| CY C2 
 		{ $$ = {modifier:'VALUE'}}
-	| CV CS 
+	| CY CV 
 		{ $$ = {modifier:'ROW'}}
-	| CV Am 
+	| CY Ao 
 		{ $$ = {modifier:'COLUMN'}}
-	| CV Bk 
+	| CY Bn 
 		{ $$ = {modifier:'MATRIX'}}
-	| CV Ck 
+	| CY Cn 
 		{ $$ = {modifier:'TEXTSTRING'}}
-	| CV BW 
+	| CY BZ 
 		{ $$ = {modifier:'INDEX'}}
-	| CV CG 
+	| CY CJ 
 		{ $$ = {modifier:'RECORDSET'}}
 	;
-
- D3 
-	: Co Ei PERCENT?
+ EB 
+	: Cr Eq CC?
 		{ $$ = {top: $2, percent:(typeof $3 != 'undefined'?true:undefined)}; }
-	| Co DR Ei DS 
+	| Cr DU Eq DV 
 		{ $$ = {top: $3}; }
 	| { $$ = undefined; }
 	;
-
- D4 
+ EC 
 	: {$$ = undefined; }
-	| Bb EA 
+	| Be EI 
 		{$$ = {into: $2} }
-	| Bb Eg 
+	| Be Eo 
 		{$$ = {into: $2} }
-	| Bb Eo 
+	| Be Ew 
 		{$$ = {into: $2} }
-	| Bb Em 
+	| Be Eu 
 		{$$ = {into: $2} }
-	| Bb AH 
+	| Be AH 
 		{ 
 			var s = $2;
 			s = s.substr(1,s.length-2);
@@ -690,26 +665,24 @@ SelectClause
 			}
 		}
 	;
-
- D5 
-	: BL D7 
+ ED 
+	: BO EF 
 		{ $$ = { from: $2 }; } 
-/*	| BL D8 EB 
+/*	| BO EG EJ 
 		{ $$ = { from: [$2], joins: $3 }; }
-*/	| BL D7 EB 
+*/	| BO EF EJ 
 		{ $$ = { from: $2, joins: $3 }; }
-/*	| BL DR D8 EB DS 
+/*	| BO DU EG EJ DV 
 		{ $$ = { from: [$3], joins: $4 }; }
-*/	| BL DR D7 EB DS 
+*/	| BO DU EF EJ DV 
 		{ $$ = { from: $3, joins: $4 }; }
 	|
 		{ $$ = undefined; }
 	;
-
- D6 
-	: Aw AU DR Select DS Gl 
+ EE 
+	: Ay AU DU Dw DV Do 
 		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$6}); }
-	| Aw AU DR Select DS AW Gl 
+	| Ay AU DU Dw DV AW Do 
 		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$7}); }
 /*		{ 
 			if(!yy.exists) yy.exists = [];
@@ -717,67 +690,64 @@ SelectClause
 			yy.exists.push($3);
 
 		 }
-*/	| B5 AU DR Select DS Gl 
+*/	| B8 AU DU Dw DV Do 
 		{ $$ = new yy.Apply({select: $4, applymode:'OUTER', as:$6}); }
-	| B5 AU DR Select DS AW Gl 
+	| B8 AU DU Dw DV AW Do 
 		{ $$ = new yy.Apply({select: $4, applymode:'OUTER', as:$7}); }
 	;
-
- D7 
-	: D8 
+ EF 
+	: EG 
 		{ $$ = [$1]; }
-	| D7 Da D8 
+	| EF Dd EG 
 		{ $$ = $1; $1.push($3); }
 	;
-
- D8 
-	: DR Select DS Gl 
+ EG 
+	: DU Dw DV Do 
 		{ $$ = $2; $$.as = $4 }	
-	| DR Select DS AW Gl 
+	| DU Dw DV AW Do 
 		{ $$ = $2; $$.as = $5 }	
-	| DR Select DS /* default alias */
+	| DU Dw DV /* default alias */
 		{ $$ = $2; $$.as = 'default' }	
 
-	| Fp AS? Literal?
+	| GD AW? Do?
 		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
 
-	| EA Gl 
+	| EI Do 
 		{ $$ = $1; $1.as = $2 }
-	| EA AW Gl 
+	| EI AW Do 
 		{ $$ = $1; $1.as = $3 }
-	| EA 
+	| EI 
 		{ $$ = $1; }
 
-	| Eo Gl 
+	| Ew Do 
 		{ $$ = $1; $1.as = $2; }
-	| Eo AW Gl 
+	| Ew AW Do 
 		{ $$ = $1; $1.as = $3; }
+	| Ew 
+		{ $$ = $1; $1.as = 'default'; }
+
 	| Eo 
 		{ $$ = $1; $1.as = 'default'; }
-
-	| Eg 
-		{ $$ = $1; $1.as = 'default'; }
-	| Eg Gl 
+	| Eo Do 
 		{ $$ = $1; $1.as = $2; }
-	| Eg AW Gl 
+	| Eo AW Do 
 		{ $$ = $1; $1.as = $3; }
 
-	| Em 
+	| Eu 
 		{ $$ = $1; $1.as = 'default'; }
-	| Em Gl 
+	| Eu Do 
 		{ $$ = $1; $1.as = $2; }
-	| Em AW Gl 
+	| Eu AW Do 
 		{ $$ = $1; $1.as = $3; }
 
-	| D9 
+	| EH 
 		{ $$ = $1; $1.as = 'default'; }
-	| D9 Gl 
+	| EH Do 
 		{ $$ = $1; $1.as = $2; }
-	| D9 AW Gl 
+	| EH AW Do 
 		{ $$ = $1; $1.as = $3; }
 	;
-
- D9 
+ EH 
 	: AH 
 		{ 
 			var s = $1;
@@ -792,14 +762,13 @@ SelectClause
 			} else if(x4=='XLSX' || x4 == 'JSON') {
 				r = new yy.FuncValue({funcid: x4, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else {
-				throw new Error('Unknown string in BL clause');
+				throw new Error('Unknown string in BO clause');
 			};
 			$$ = r;
 		}
 	;
-
- EA 
-	: Gl DZ Gl 
+ EI 
+	: Do Dc Do 
 		{ 	
 			if($1 == 'INFORMATION_SCHEMA') {
 				$$ = new yy.FuncValue({funcid: $1, args:[new yy.StringValue({value:$3})]});
@@ -807,292 +776,270 @@ SelectClause
 				$$ = new yy.Table({databaseid: $1, tableid:$3});
 			}
 		}
-	| Gl 
+	| Do 
 		{ $$ = new yy.Table({tableid: $1});}
 	;
-
- EB 
-	: EB EC 
+ EJ 
+	: EJ EK 
 		{ $$ = $1; $1.push($2); } 
-	| EB D6 
+	| EJ EE 
 		{ $$ = $1; $1.push($2); } 
-	| EC 
+	| EK 
 	 	{ $$ = [$1]; }
-	| D6 
+	| EE 
 	 	{ $$ = [$1]; }
 	;
-
- EC 
-	: EE ED EG 
+ EK 
+	: EM EL EO 
 		{ $$ = new yy.Join($1); yy.extend($$, $2); yy.extend($$, $3); }
 	;
-
- ED 
-	: EA 
+ EL 
+	: EI 
 		{ $$ = {table: $1}; }
-	| EA Gl 
+	| EI Do 
 		{ $$ = {table: $1, as: $2 } ; }
-	| EA AW Gl 
+	| EI AW Do 
 		{ $$ = {table: $1, as: $3 } ; }
-	| Fp AS? Literal?
+	| GD AW? Do?
 		{ $$ = {json:new yy.Json({value:$1,as:$3})}; }
-	| Eo Gl 
+	| Ew Do 
 		{ $$ = {param: $1, as: $2 } ; }
-	| Eo AW Gl 
+	| Ew AW Do 
 		{ $$ = {param: $1, as: $3 } ; }
-	| DR Select DS Gl 
+	| DU Dw DV Do 
 		{ $$ = {select: $1, as: $4} ; }
-	| DR Select DS AW Gl 
+	| DU Dw DV AW Do 
 		{ $$ = {select: $1, as: $5 } ; }
-	| Eg 
+	| Eo 
 		{ $$ = {funcid:$1, as:'default'}; }
-	| Eg Gl 
+	| Eo Do 
 		{ $$ = {funcid:$1, as: $2}; }
-	| Eg AW Gl 
+	| Eo AW Do 
 		{ $$ = {funcid:$1, as: $3}; }
 
-	| Em 
+	| Eu 
 		{ $$ = {variable:$1,as:'default'}; }
-	| Em Gl 
+	| Eu Do 
 		{ $$ = {variable:$1,as:$2}; }
-	| Em AW Gl 
+	| Eu AW Do 
 		{ $$ = {variable:$1,as:$3} }
 	;
-
- EE 
-	: EF 
+ EM 
+	: EN 
 		{ $$ = { joinmode: $1 } ; }
-	| Bq EF 
+	| Bt EN 
 		{ $$ = {joinmode: $1, natural:true} ; }
 	;
-
- EF 
-	: Bc 
+ EN 
+	: Bf 
 		{ $$ = "INNER"; }
-	| BX Bc 
+	| Ba Bf 
 		{ $$ = "INNER"; }
-	| Bg Bc 
+	| Bg Bf 
 		{ $$ = "LEFT"; }
-	| Bg B5 Bc 
+	| Bg B8 Bf 
 		{ $$ = "LEFT"; }
-	| CP Bc 
+	| CS Bf 
 		{ $$ = "RIGHT"; }
-	| CP B5 Bc 
+	| CS B8 Bf 
 		{ $$ = "RIGHT"; }
-	| B5 Bc 
+	| B8 Bf 
 		{ $$ = "OUTER"; }
-	| FULL B5 Bc 
+	| FULL B8 Bf 
 		{ $$ = "OUTER"; }
-	| CW Bc 
+	| CZ Bf 
 		{ $$ = "SEMI"; }
-	| AW Bc 
+	| AW Bf 
 		{ $$ = "ANTI"; }
-	| Aw Bc 
+	| Ay Bf 
 		{ $$ = "CROSS"; }
 	;
-
- EG 
-	: By EW 
+ EO 
+	: B1 Ee 
 		{ $$ = {on: $2}; }
-	| Cy E2 
+	| C1 FF 
 		{ $$ = {using: $2}; }
 	|
 		{ $$ = undefined; }
 	;
-
- EH 
+ EP 
 	: { $$ = undefined; }
-	| C3 EW 
+	| C6 Ee 
 		{ $$ = {where: new yy.Expression({expression:$2})}; }
 	;
-
- EI 
+ EQ 
 	: { $$ = undefined; }
-	| BO Af EJ EL 
+	| BR Ah ER ET 
 		{ $$ = {group:$3}; yy.extend($$,$4); }
 	;
-
- EJ 
-	: EK 
+ ER 
+	: ES 
 		{ $$ = [$1]; }
-	| EJ Da EK 
+	| ER Dd ES 
 		{ $$ = $1; $1.push($3); }
 	;
-
- EK 
-	: BP CX DR EJ DS 
+ ES 
+	: BS Ca DU ER DV 
 		{ $$ = new yy.GroupExpression({type:'GROUPING SETS', group: $4}); }
-	| CR DR EJ DS 
+	| CU DU ER DV 
 		{ $$ = new yy.GroupExpression({type:'ROLLUP', group: $3}); }
-	| Ax DR EJ DS 
+	| Az DU ER DV 
 		{ $$ = new yy.GroupExpression({type:'CUBE', group: $3}); }
-	| EW 
+	| Ee 
 		{ $$ = $1; }
 	;
 
-
- EL 
+ ET 
 	: { $$ = undefined; }
-	| BQ EW 
+	| BT Ee 
 		{ $$ = {having:$2}}
 	;
-
- EM 
+ EU 
 	:   { $$ = undefined; }
-	| Ct Select
+	| Cw Dw 
 		{ $$ = {union: $2} ; }
-	| Ct AP Select
+	| Cw AP Dw 
 		{ $$ = {unionall: $3} ; }
-	| BE Select
+	| BH Dw 
 		{ $$ = {except: $2} ; }
-	| Ba Select
+	| Bd Dw 
 		{ $$ = {intersect: $2} ; }
-	| Ct At Select
+	| Cw Av Dw 
 		{ $$ = {union: $3, corresponding:true} ; }
-	| Ct AP At Select
+	| Cw AP Av Dw 
 		{ $$ = {unionall: $4, corresponding:true} ; }
-	| BE At Select
+	| BH Av Dw 
 		{ $$ = {except: $3, corresponding:true} ; }
-	| Ba At Select
+	| Bd Av Dw 
 		{ $$ = {intersect: $3, corresponding:true} ; }
 	;
-
- EN 
+ EV 
 	: { $$ = undefined; }
-	| B4 Af EO 
+	| B7 Ah EW 
 		{ $$ = {order:$3}}
 	;
-
- EO 
-	: EP 
+ EW 
+	: EX 
 		{ $$ = [$1]; }
-	| EO Da EP 
+	| EW Dd EX 
 		{ $$ = $1; $1.push($3)}
 	;
-
- EP 
-	: EW 
+ EX 
+	: Ee 
 		{ $$ = new yy.Expression({expression: $1, direction:'ASC'}) }
-	| EW AY 
+	| Ee AY 
 		{ $$ = new yy.Expression({expression: $1, direction:$2.toUpperCase()}) }
-	| EW Al Bt 
+	| Ee An Bw 
 		{ $$ = new yy.Expression({expression: $1, direction:'ASC', nocase:true}) }
-	| EW Al Bt AY 
+	| Ee An Bw AY 
 		{ $$ = new yy.Expression({expression: $1, direction:$4.toUpperCase(), nocase:true}) }
 	;
-
- EQ 
+ EY 
 	: { $$ = undefined; }
-	| Bi Ei ER 
+	| Bl Eq EZ 
 		{ $$ = {limit:$2}; yy.extend($$, $3)}
 	;
-
- ER 
+ EZ 
 	: { $$ = undefined; }
-	| B0 Ei 
+	| B3 Eq 
 		{ $$ = {offset:$2}}
 	;
 
-
- ES 
-	: ES Da ET 
+ Ea 
+	: Ea Dd Eb 
 		{ $1.push($3); $$ = $1; }
-	| ET 
+	| Eb 
 		{ $$ = [$1]; }
 	;
-
- ET 
-	: EW AW Gl 
+ Eb 
+	: Ee AW Do 
 		{ $1.as = $3; $$ = $1;}
-	| EW Gl 
+	| Ee Do 
 		{ $1.as = $2; $$ = $1;}
-	| EW AW C7 
+	| Ee AW DA 
 		{ $1.as = $3; $$ = $1;}
-	| EW C7 
+	| Ee DA 
 		{ $1.as = $2; $$ = $1;}
-	| EW AW Ek 
+	| Ee AW Es 
 		{ $1.as = $3; $$ = $1;}
-	| EW Ek 
+	| Ee Es 
 		{ $1.as = $2; $$ = $1;}
-	| EW 
+	| Ee 
 		{ $$ = $1; }
 	;
-
- EU 
-	: Gl DZ Gl DZ DD 
+ Ec 
+	: Do Dc Do Dc DG 
 		{ $$ = new yy.Column({columid: $5, tableid: $3, databaseid:$1}); }	
-	| Gl DZ DD 
+	| Do Dc DG 
 		{ $$ = new yy.Column({columnid: $3, tableid: $1}); }	
-	| DD 
+	| DG 
 		{ $$ = new yy.Column({columnid:$1}); }
 	;
-
- EV 
-	: Gl DZ Gl DZ Gl 
+ Ed 
+	: Do Dc Do Dc Do 
 		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}	
-	| Gl DZ Gl 
+	| Do Dc Do 
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
-	| Gl DZ Cz 
+	| Do Dc C2 
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
-	| Gl 
+	| Do 
 		{ $$ = new yy.Column({columnid: $1});}	
 	;
-
- EW 
-	: Eb 
+ Ee 
+	: Eg 
 		{ $$ = $1; }
-	| Eg 
+	| Eo 
+		{ $$ = $1; }
+	| E1 
+		{ $$ = $1; }
+	| Ed 
+		{ $$ = $1; }
+	| Ec 
+		{ $$ = $1; }
+	| Eq 
+		{ $$ = $1; }
+	| Er 
+		{ $$ = $1; }
+	| Es 
 		{ $$ = $1; }
 	| Et 
 		{ $$ = $1; }
-	| EV 
+	| Ew 
 		{ $$ = $1; }
-	| EU 
+	| Eu 
 		{ $$ = $1; }
-	| Ei 
+	| Ev 
 		{ $$ = $1; }
-	| Eg 
+	| Ex 
 		{ $$ = $1; }
-	| Ek 
+	| Eh 
 		{ $$ = $1; }
-	| El 
-		{ $$ = $1; }
-	| Eo 
-		{ $$ = $1; }
-	| Em 
-		{ $$ = $1; }
-	| En 
-		{ $$ = $1; }
-	| Ep 
-		{ $$ = $1; }
-	| EZ 
-		{ $$ = $1; }
-	| Fp 
+	| GD 
 		{ $$ = new yy.Json({value:$1}); }			
-/*	| AC Ft 
+/*	| AC GH 
 		{ $$ = new yy.Json({value:$2}); }
-*/	| EY 
+*/	| Eg 
 		{ $$ = $1; }
-/*	| DT DR EW DS 
+/*	| DW DU Ee DV 
 		{ $$ = new yy.FuncValue({funcid: 'CLONEDEEP', args:[$3]}); }			
 */
-/*	| DT DR Fp DS 
+/*	| DW DU GD DV 
 		{ $$ = new yy.Json({value:$3}); }			
-*/	| DR Select DS 
+*/	| DU Dw DV 
 		{
 			if(!yy.queries) yy.queries = []; 
 			yy.queries.push($2);
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
 		}
-	| DR Insert DS 
+	| DU E9 DV 
 		{
 			if(!yy.queries) yy.queries = []; 
 			yy.queries.push($2);
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
 		}
-	| DR (CreateVertex|CreateEdge) DS 
+	| DU (Gv|Gz) DV 
 		{
 			if(!yy.queries) yy.queries = []; 
 			yy.queries.push($2);
@@ -1100,60 +1047,55 @@ SelectClause
 			$$ = $2;
 		}
 
-	| EX 
+	| Ef 
 		{$$ = $1}
-	| CURRENT_TIMESTAMP
+	| A0 
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
-/*	| Cx 
+/*	| C0 
 		{ $$ = new yy.FuncValue({funcid:'USER'});}
 */	;
-
- EX 
+ Ef 
 	: AA 
 		{ $$ = new yy.JavaScript({value:$1.substr(2,$1.length-4)}); }		
 	;
-
- EY 
-	: Bs Gl 
+ Eg 
+	: Bv Do 
 		{ $$ = new yy.FuncValue({funcid:$2, newid:true}); }
-	| Bs Eg 
+	| Bv Eo 
 		{ $$ = $2; yy.extend($$,{newid:true}); }
 	;
 
-
- EZ 
-	: Ah DR EW AW FN DS 
+ Eh 
+	: Ag DU Ee AW Fe DV 
 		{ $$ = new yy.Convert({expression:$3}) ; yy.extend($$,$5) ; }
-	| Ah DR EW AW FN Da C7 DS 
+	| Ag DU Ee AW Fe Dd DA DV 
 		{ $$ = new yy.Convert({expression:$3, style:$7}) ; yy.extend($$,$5) ; }
-	| As DR FN Da EW DS 
+	| Au DU Fe Dd Ee DV 
 		{ $$ = new yy.Convert({expression:$5}) ; yy.extend($$,$3) ; }
-	| As DR FN Da EW Da C7 DS 
+	| Au DU Fe Dd Ee Dd DA DV 
 		{ $$ = new yy.Convert({expression:$5, style:$7}) ; yy.extend($$,$3) ; }
 	;
-
- Ea 
-	: Ei 
+ Ei 
+	: Eq 
 		{ $$ = $1; }
-	| Ek 
+	| Es 
 		{ $$ = $1; }
-	| Eg 
+	| Er 
 		{ $$ = $1; }
-	| El 
+	| Et 
+		{ $$ = $1; }
+	| Ew 
 		{ $$ = $1; }
 	| Eo 
 		{ $$ = $1; }
-	| Eg 
-		{ $$ = $1; }
-	| CURRENT_TIMESTAMP
+	| A0 
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }	
-/*	| Cx 
+/*	| C0 
 		{ $$ = new yy.FuncValue({funcid:'USER'}); }	
 */	;
 
-
- Eb 
-	: Ef DR Eh DS Ec 
+ Eg 
+	: En DU Ep DV Ek 
 		{
 		  if($3.length > 1 && ($1.toUpperCase() == 'MAX' || $1.toUpperCase() == 'MIN')) {
 		  	$$ = new yy.FuncValue({funcid:$1,args:$3});
@@ -1161,47 +1103,42 @@ SelectClause
 			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3.pop(), over:$5}); 
 		  } 
 		}
-	| Ef DR A6 EW DS Ec 
+	| En DU A9 Ee DV Ek 
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4, distinct:true, over:$6}); }
-	| Ef DR AP EW DS Ec 
+	| En DU AP Ee DV Ek 
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4,
 		 over:$6}); }
 	;
-
- Ec 
+ Ek 
 	:
 		{$$ = undefined; }
-	| B6 DR Ed DS 
+	| B9 DU El DV 
 		{ $$ = new yy.Over(); yy.extend($$,$3); }
-	| B6 DR Ee DS 
+	| B9 DU Em DV 
 		{ $$ = new yy.Over(); yy.extend($$,$3); }
-	| B6 DR Ed Ee DS 
+	| B9 DU El Em DV 
 		{ $$ = new yy.Over(); yy.extend($$,$3); yy.extend($$,$4);}
 	;
-
- Ed 
-	: B8 Af EJ 
+ El 
+	: CB Ah ER 
 		{ $$ = {partition:$3}; }
-	;
- Ee 
-	: B4 Af EO 
+	; Em 
+	: B7 Ah EW 
 		{ $$ = {order:$3}; }
-	;
- Ef 
-	: Ce { $$ = "SUM"; }
-	| Au { $$ = "COUNT"; } 
-	| Bn { $$ = "MIN"; }
-	| Bl { $$ = "MAX"; }
+	; En 
+	: Ch { $$ = "SUM"; }
+	| Aw { $$ = "COUNT"; } 
+	| Bq { $$ = "MIN"; }
+	| Bo { $$ = "MAX"; }
 	| Ab { $$ = "AVG"; }
-	| BJ { $$ = "FIRST"; }
-	| Be { $$ = "LAST"; }
+	| BM { $$ = "FIRST"; }
+	| Bh { $$ = "LAST"; }
 	| AO { $$ = "AGGR"; }
 	| AV { $$ = "ARRAY"; }
-/*	| CH { $$ = "REDUCE"; } */
+/*	| CK { $$ = "REDUCE"; } */
 	;
-
- Eg 
-	: Gl DR (DISTINCT|ALL)? Eh DS 
+ Eo 
+	: Do DU (A9|AP)? Ep DV 
 		{ 
 			var funcid = $1;
 			var exprlist = $4;
@@ -1214,48 +1151,41 @@ SelectClause
 			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
 			};
 		}
-	| Gl DR DS 
+	| Do DU DV 
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	;
-
- Eh 
-	: EW 
+ Ep 
+	: Ee 
 		{ $$ = [$1]; }
-	| Eh Da EW 
+	| Ep Dd Ee 
 		{ $1.push($3); $$ = $1 }
 	;
-
- Ei 
-	: C7 
+ Eq 
+	: DA 
 		{ $$ = new yy.NumValue({value:+$1}); }
 	;
-
- Eg 
-	: Cr 
+ Er 
+	: Cu 
 		{ $$ = new yy.LogicValue({value:true}); }
-	| BH 
+	| BK 
 		{ $$ = new yy.LogicValue({value:false}); }
 	;
-
- Ek 
+ Es 
 	: AH 
 		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	| AF 
 		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); }
 	;
-
- El 
-	: Bw 
+ Et 
+	: Bz 
 		{ $$ = new yy.NullValue({value:undefined}); }
 	;
-
- Em 
-	: DT Gl 
+ Eu 
+	: DW Do 
 		{ $$ = new yy.VarValue({variable:$2}); }
 	;
-
- En 
-	: BF DR Select DS 
+ Ev 
+	: BI DU Dw DV 
 		{ 
 			if(!yy.exists) yy.exists = [];
 			$$ = new yy.ExistsValue({value:$3, existsidx:yy.exists.length}); 
@@ -1263,15 +1193,14 @@ SelectClause
 		}
 	;
 
-
- Eo 
-	: De (Literal|NUMBER)
+ Ew 
+	: Dh (Do|DA)
 		{ $$ = new yy.ParamValue({param: $2}); }
-/*	| De C7 
+/*	| Dh DA 
 		{ $$ = new yy.ParamValue({param: $2}); }
-*/	| Dc Gl 
+*/	| Df Do 
 		{ $$ = new yy.ParamValue({param: $2}); }
-	| Df 
+	| Di 
 		{ 
 			if(typeof yy.question == 'undefined') yy.question = 0; 
 			$$ = new yy.ParamValue({param: yy.question++}); 
@@ -1283,106 +1212,101 @@ SelectClause
 		}
 	;
 
-
- Ep 
-	: Ag EW Eq Es BB 
+ Ex 
+	: Ai Ee Ey E0 BE 
 		{ $$ = new yy.CaseValue({expression:$2, whens: $3, elses: $4}); }
-	| Ag Eq Es BB 
+	| Ai Ey E0 BE 
 		{ $$ = new yy.CaseValue({whens: $2, elses: $3}); }
 	;
-
- Eq 
-	: Eq Er 
+ Ey 
+	: Ey Ez 
 		{ $$ = $1; $$.push($2); }
-	| Er 
+	| Ez 
 		{ $$ = [$1]; }
 	;
-
- Er 
-	: C2 EW Cl EW 
+ Ez 
+	: C5 Ee Co Ee 
 		{ $$ = {when: $2, then: $4 }; }
 	;
-
- Es 
-	: BD EW 
+ E0 
+	: BG Ee 
 		{ $$ = $2; }
 	| 
 		{ $$ = undefined; } 
 	; 
-
- Et 
-	: EW Bh EW 
+ E1 
+	: Ee Bk Ee 
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
-	| EW NOT_LIKE EW 
+	| Ee Ag Ee 
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3 }); }
-	| EW DB EW 
+	| Ee DE Ee 
 		{ $$ = new yy.Op({left:$1, op:'+', right:$3}); }
-	| EW DC EW 
+	| Ee DF Ee 
 		{ $$ = new yy.Op({left:$1, op:'-', right:$3}); }
-	| EW DD EW 
+	| Ee DG Ee 
 		{ $$ = new yy.Op({left:$1, op:'*', right:$3}); }
-	| EW DE EW 
+	| Ee DH Ee 
 		{ $$ = new yy.Op({left:$1, op:'/', right:$3}); }
-	| EW DF EW 
+	| Ee DI Ee 
 		{ $$ = new yy.Op({left:$1, op:'%', right:$3}); }
-	| EW Dh EW 
+	| Ee Dk Ee 
 		{ $$ = new yy.Op({left:$1, op:'^', right:$3}); }
 
-	| EW C9 Gl 
+	| Ee DC Do 
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
-	| EW C9 Ei 
+	| Ee DC Eq 
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
-	| EW C9 DR EW DS 
+	| Ee DC DU Ee DV 
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
-	| EW C9 Eg 
+	| Ee DC Eo 
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 
-	| EW Dg Gl 
+	| Ee Dg Do 
 		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
-	| EW Dg Ei 
+	| Ee Dg Eq 
 		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
-	| EW Dg DR EW DS 
+	| Ee Dg DU Ee DV 
 		{ $$ = new yy.Op({left:$1, op:'!' , right:$4}); }
-	| EW Dg Eg 
+	| Ee Dg Eo 
 		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
 
 
 
 
-	| EW DL EW 
+	| Ee DO Ee 
 		{ $$ = new yy.Op({left:$1, op:'>' , right:$3}); }
-	| EW DK EW 
+	| Ee DN Ee 
 		{ $$ = new yy.Op({left:$1, op:'>=' , right:$3}); }
-	| EW DO EW 
+	| Ee DR Ee 
 		{ $$ = new yy.Op({left:$1, op:'<' , right:$3}); }
-	| EW DM EW 
+	| Ee DP Ee 
 		{ $$ = new yy.Op({left:$1, op:'<=' , right:$3}); }
-	| EW DP EW 
+	| Ee DS Ee 
 		{ $$ = new yy.Op({left:$1, op:'=' , right:$3}); }
-	| EW DJ EW 
+	| Ee DM Ee 
 		{ $$ = new yy.Op({left:$1, op:'==' , right:$3}); }
-	| EW DH EW 
+	| Ee DK Ee 
 		{ $$ = new yy.Op({left:$1, op:'===' , right:$3}); }
-	| EW DN EW 
+	| Ee DQ Ee 
 		{ $$ = new yy.Op({left:$1, op:'!=' , right:$3}); }
-	| EW DI EW 
+	| Ee DL Ee 
 		{ $$ = new yy.Op({left:$1, op:'!==' , right:$3}); }
-	| EW DG EW 
+	| Ee DJ Ee 
 		{ $$ = new yy.Op({left:$1, op:'!===' , right:$3}); }
 
-	| EW Ev Ew DR Select DS 
+	| Ee E3 E4 DU Dw DV 
 		{ 
 			if(!yy.queries) yy.queries = []; 
 			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
 			yy.queries.push($5);  
 		}
 
-	| EW Ev Ew DR Eh DS 
+	| Ee E3 E4 DU Ep DV 
 		{ 
 			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5}); 
 		}
 
-	| EW AK EW 
+	| Ee AK Ee 
 		{ 
 			if($1.op == 'BETWEEN1') {
 
@@ -1412,49 +1336,49 @@ SelectClause
 
 
 		}
-	| EW AJ EW 
+	| Ee AJ Ee 
 		{ $$ = new yy.Op({left:$1, op:'OR' , right:$3}); }
-	| Bv EW 
+	| By Ee 
 		{ $$ = new yy.UniOp({op:'NOT' , right:$2}); }
-	| DC EW 
+	| DF Ee 
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
-	| DB EW 
+	| DE Ee 
 		{ $$ = new yy.UniOp({op:'+' , right:$2}); }
-	| DA EW 
+	| DD Ee 
 		{ $$ = new yy.UniOp({op:'#' , right:$2}); }
-	| DR EW DS 
+	| DU Ee DV 
 		{ $$ = new yy.UniOp({right: $2}); }
 
-	| EW BV DR Select DS 
+	| Ee BY DU Dw DV 
 		{ 
 			if(!yy.queries) yy.queries = []; 
 			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length});
 			yy.queries.push($4);  
 		}
 
-	| EW Bv BV DR Select DS 
+	| Ee By BY DU Dw DV 
 		{ 
 			if(!yy.queries) yy.queries = []; 
 			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length});
 			yy.queries.push($5);  
 		}
 
-	| EW BV DR Eh DS 
+	| Ee BY DU Ep DV 
 		{ $$ = new yy.Op({left: $1, op:'IN', right:$4}); }
 
-	| EW Bv BV DR Eh DS 
+	| Ee By BY DU Ep DV 
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$5}); }
 
-	| EW BV DR DS 
+	| Ee BY DU DV 
 		{ $$ = new yy.Op({left: $1, op:'IN', right:[]}); }
 
-	| EW Bv BV DR DS 
+	| Ee By BY DU DV 
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:[]}); }
 
-	| EW BV Eu 
+	| Ee BY E2 
 		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
 
-	| EW Bv BV Eu 
+	| Ee By BY E2 
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
 
 
@@ -1462,7 +1386,7 @@ SelectClause
 		Hack - it impossimle to parse Ad AK and AK expressions with grammar. 
 		At least, I do not know how.
 	*/
-	| EW Ad EW 
+	| Ee Ad Ee 
 		{ 	
 /*			var expr = $3;
 			if(expr.left && expr.left.op == 'AND') {
@@ -1472,7 +1396,7 @@ SelectClause
 				$$ = new yy.Op({left:$1, op:'BETWEEN1', right:$3 }); 
 //			}
 		}
-	| EW NOT_BETWEEN EW 
+	| Ee Af Ee 
 		{
 //			var expr = $3;
 //			if(expr.left && expr.left.op == 'AND') {
@@ -1481,144 +1405,129 @@ SelectClause
 				$$ = new yy.Op({left:$1, op:'NOT BETWEEN1', right:$3 }); 
 //			}
 		}
-	| EW BU EW 
+	| Ee BX Ee 
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
-	| EW Db FN 
+	| Ee De Fe 
 		{ $$ = new yy.Convert({expression:$1}) ; yy.extend($$,$3) ; }
 	;
-
- Eu 
-	: EV 
+ E2 
+	: Ed 
 		{ $$ = $1;}
-	| Eg 
+	| Eo 
 		{ $$ = $1;}
-	| DT DR EW DS 
+	| DW DU Ee DV 
 		{ $$ = $3;}	
 	;
-
- Ev 
-	: DL { $$ = $1; }
-	| DK { $$ = $1; }
-	| DO { $$ = $1; }
-	| DM { $$ = $1; }
-	| DP { $$ = $1; }
+ E3 
+	: DO { $$ = $1; }
 	| DN { $$ = $1; }
+	| DR { $$ = $1; }
+	| DP { $$ = $1; }
+	| DS { $$ = $1; }
+	| DQ { $$ = $1; }
 	;
-
- Ew 
+ E4 
 	: AP 
 		{ $$ = 'ALL'; }
-	| Ca 
+	| Cd 
 		{ $$ = 'SOME'; }
-	| DT 
+	| DW 
 		{ $$ = 'ANY'; }
 	;
 
 /* PART TWO */
 
-/* Cv */
-
-Update
-	: Cv EA CX Ex C3 EW 
+/* Cy */
+ E5 
+	: Cy EI Ca E6 C6 Ee 
 		{ $$ = new yy.Update({table:$2, columns:$4, where:$6}); }
-	| Cv EA CX Ex 
+	| Cy EI Ca E6 
 		{ $$ = new yy.Update({table:$2, columns:$4}); }
 	;
-
- Ex 
-	: Ey 
+ E6 
+	: E7 
 		{ $$ = [$1]; }
-	| Ex Da Ey 
+	| E6 Dd E7 
 		{ $$ = $1; $1.push($3); }
 	;
-
- Ey 
-	: EV DP EW 
+ E7 
+	: Ed DS Ee 
 /* TODO Replace columnid with column */
 		{ $$ = new yy.SetColumn({column:$1, expression:$3})}
 	;
 
-/* A2 */
-
-Delete
-	: A2 BL EA C3 EW 
+/* A5 */
+ E8 
+	: A5 BO EI C6 Ee 
 		{ $$ = new yy.Delete({table:$3, where:$5});}
-	| A2 BL EA 
+	| A5 BO EI 
 		{ $$ = new yy.Delete({table:$3});}
 	;
 
-/* BY */
-
-Insert
-	: BY Ez EA Cz ValuesListsList
+/* Bb */
+ E9 
+	: Bb FA EI C2 FC 
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
-	| BY Ez EA A1 Cz 
+	| Bb FA EI A4 C2 
 		{ $$ = new yy.Insert({into:$3, default: true}) ; }
-	| BY Ez EA DR E2 DS Cz ValuesListsList
+	| Bb FA EI DU FF DV C2 FC 
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
-	| BY Ez EA Select
+	| Bb FA EI Dw 
 		{ $$ = new yy.Insert({into:$3, select: $4}); }
-	| BY Ez EA DR E2 DS Select
+	| Bb FA EI DU FF DV Dw 
 		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
 	;
-
- Ez 
+ FA 
 	:
-	| Bb 
+	| Be 
 	;
-/*
-TableParamFunc
-	: EA 
+/* FB 
+	: EI 
+		{ $$ = $1; }
+	| Ew 
 		{ $$ = $1; }
 	| Eo 
-		{ $$ = $1; }
-	| Eg 
 		{ $$ = $1; }
 	;
 */
-
-ValuesListsList
-	: DR E0 DS 
+ FC 
+	: DU FD DV 
 		{ $$ = [$2]; }
-	| Fp 
+	| GD 
 		{ $$ = [$1]; }
-	| Eo 
+	| Ew 
 		{ $$ = [$1]; }
-	| ValuesListsList Da DR E0 DS 
+	| FC Dd DU FD DV 
 		{$$ = $1; $1.push($4)}
-	| ValuesListsList Da Fp 
+	| FC Dd GD 
 		{$$ = $1; $1.push($3)}
-	| ValuesListsList Da Eo 
+	| FC Dd Ew 
 		{$$ = $1; $1.push($3)}
 	;
-
- E0 
-	: EW 
+ FD 
+	: Ee 
 		{ $$ = [$1]; }
-	| E0 Da EW 
+	| FD Dd Ee 
 		{$$ = $1; $1.push($3)}
 	;
-
- E1 
-	: Ei 
-	| Ek 
-	| Eg 
-	| El 
+ FE 
+	: Eq 
+	| Es 
+	| Er 
+	| Et 
 	| DateValue
-	| Eo 
+	| Ew 
 	;
-
- E2 
-	: EV 
+ FF 
+	: Ed 
 		{ $$ = [$1]; }
-	| E2 Da EV 
+	| FF Dd Ed 
 		{$$ = $1; $1.push($3)}
 	;
 
-/* Av Cf */
-
-CreateTable
-	:  Av E6 E3 E7 EA DR E8 DS E4 
+/* Ax Ci */
+ FG 
+	:  Ax FL FH FM EI DU FN DV FI 
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
@@ -1627,7 +1536,7 @@ CreateTable
 			yy.extend($$,$7); 
 			yy.extend($$,$9); 
 		}
-	| Av E6 E3 E7 EA 
+	| Ax FL FH FM EI 
 		{ 
 			$$ = new yy.CreateTable({table:$5}); 
 			yy.extend($$,$2); 
@@ -1635,632 +1544,555 @@ CreateTable
 			yy.extend($$,$4); 
 		}		
 ;
-
- E3 
-	: Cf 
+ FH 
+	: Ci 
 		{ $$ = undefined; }
-	| Ag 
+	| Al 
 		{ $$ = {class:true}; }
 	;
-
- E4 
+ FI 
 	:
-	| E5 
+	| FJ 
+	;
+ FJ 
+	: FJ FK 
+	| FK 
 	;
 
- E5 
-	: E5 CreateTableOption
-	| CreateTableOption
+/* TODO: Remove this section */ FK 
+	: A4 
+	| BA DS Do 
+	| Aa DS Eq 
 	;
-
-/* TODO: Remove this section */
-CreateTableOption
-	: A1 
-	| A7 DP Gl 
-	| Aa DP Ei 
-	;
-
- E6 
+ FL 
 	: { $$ = undefined; }
-	| Ci 
+	| Cl 
 		{ $$ = {temporary:true}; }
 	;
-
- E7 
+ FM 
 	: { $$ = undefined; }
-	| BS Bv BF 
+	| BV By BI 
 		{ $$ = {ifnotexists: true}; }
 	;
-
- E8 
-	: ColumnDefsList Da E9 
+ FN 
+	: Fc Dd FO 
 		{ $$ = {columns: $1, constraints: $3}; }	
-	| ColumnDefsList
+	| Fc 
 		{ $$ = {columns: $1}; }	
-	| AW Select
+	| AW Dw 
 		{ $$ = {as: $2} }
 	;
-
- E9 
-	: FA 
+ FO 
+	: FP 
 		{ $$ = [$1];}
-	| E9 Da FA 
+	| FO Dd FP 
 		{ $1.push($3); $$ = $1; }
 	;
-
- FA 
-	: FB FD 
+ FP 
+	: FQ FS 
 		{ $2.constraintid = $1; $$ = $2; }
-	| FB FE 
+	| FQ FT 
 		{ $2.constraintid = $1; $$ = $2; }
-	| FB FJ 
+	| FQ FY 
 		{ $2.constraintid = $1; $$ = $2; }
-	| FB FK 
+	| FQ FZ 
 		{ $2.constraintid = $1; $$ = $2; }
-	| FB FC 
+	| FQ FR 
 		{ $2.constraintid = $1; $$ = $2; }
 	;
-
- FB 
+ FQ 
 	:   { $$ = undefined; }
-	| Ap Gl 
+	| Ar Do 
 		{ $$ = $2; }
 	;
-
- FC 
- 	: Ai DR EW DS 
+ FR 
+ 	: Ak DU Ee DV 
 		{ $$ = {type: 'CHECK', expression: $3}; }
 	;
-
- FD 
-	: CB Bd Literal? DR FL DS 
+ FS 
+	: CE Bg Do? DU Fa DV 
 		{ $$ = {type: 'PRIMARY KEY', columns: $5, clustered:($3+'').toUpperCase()}; }
 	;
-
- FE 
-	: BK Bd DR FL DS CI EA ParColsList? 
-	     FG 
+ FT 
+	: BN Bg DU Fa DV CL EI FU? 
+	     FV 
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
 	;
-
- FF 
-	: DR FL DS 
+ FU 
+	: DU Fa DV 
 		{ $$ = $2; }
 	;
-
- FG 
+ FV 
 	:
 		{ $$ = undefined; }
-	| FH FI 
+	| FW FX 
 		{ $$ = undefined; }
 	;
-
- FH 
-	: By A2 Bu AM 
+ FW 
+	: B1 A5 Bx AM 
+		{$$ = undefined; }
+	; FX 
+	: B1 Cy Bx AM 
 		{$$ = undefined; }
 	;
- FI 
-	: By Cv Bu AM 
-		{$$ = undefined; }
-	;
-
- FJ 
-	: Cu Literal? DR E2 DS 
+ FY 
+	: Cx Do? DU FF DV 
 		{ 
 			$$ = {type: 'UNIQUE', columns: $4, clustered:($2+'').toUpperCase()};
 		}
 	;
-
- FK 
-	: BW Gl DR E2 DS 
-	| Bd Gl DR E2 DS 
-	;	
- FL 
-	: Gl 
+ FZ 
+	: BZ Do DU FF DV 
+	| Bg Do DU FF DV 
+	;	 Fa 
+	: Do 
 		{ $$ = [$1]; }
 	| AH 
 		{ $$ = [$1]; }
-	| FL Da Gl 
+	| Fa Dd Do 
 		{ $$ = $1; $1.push($3); }
-	| FL Da AH 
+	| Fa Dd AH 
 		{ $$ = $1; $1.push($3); }
 	;
 
-/*
-OrderedColsList
-	: Gl 
+/* Fb 
+	: Do 
 		{ $$ = [$1]; }
 	| AH 
 		{ $$ = [$1]; }
-	| OrderedColsList Da Gl 
+	| Fb Dd Do 
 		{ $$ = $1; $1.push($3); }
-	| OrderedColsList Da AH 
+	| Fb Dd AH 
 		{ $$ = $1; $1.push($3); }
 	;
-*/
-ColumnDefsList
-	: FM 
+*/ Fc 
+	: Fd 
 		{ $$ = [$1];}
-	| ColumnDefsList Da FM 
+	| Fc Dd Fd 
 		{ $1.push($3); $$ = $1; }
 	;
-
- FM 
-	: Gl FN FP 
+ Fd 
+	: Do Fe Fg 
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); yy.extend($$,$3);}
-	| Gl ColumnConstraints
+	| Do ColumnConstraints
 		{ $$ = new yy.ColumnDef({columnid:$1}); yy.extend($$,$2); }
-	| Gl 
+	| Do 
 		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
-
- FN 
-	: A7 DR FO Da C7 DS 
+ Fe 
+	: BA DU Ff Dd DA DV 
 		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
-	| A7 DR FO DS 
+	| BA DU Ff DV 
 		{ $$ = {dbtypeid: $1, dbsize: $3} }
-	| A7 
+	| BA 
 		{ $$ = {dbtypeid: $1} }
-	| BC DR E0 DS 
+	| BF DU FD DV 
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
-
- FO 
-	: C7 
+ Ff 
+	: DA 
 		{ $$ = +$1; }
-	| Bl 
+	| Bo 
 		{ $$ = "MAX"; }
 	;
-
- FP 
+ Fg 
 	: {$$ = undefined}
-	| FQ 
+	| Fh 
 		{ $$ = $1; }
 	;
 
-
- FQ 
-	: FQ FS 
+ Fh 
+	: Fh Fg 
 		{ 
 			yy.extend($1,$2); $$ = $1;
 		}
-	| FS 
+	| Fg 
 		{ $$ = $1; }
 	;
-
- FR 
-	: DR Gl DS 
+ Fi 
+	: DU Do DV 
 		{ $$ = $2; }
 	;
-
- FS 
-	: CB Bd 
+ Fg 
+	: CE Bg 
 		{$$ = {primarykey:true};}
-	| BK Bd CI EA ParLiteral?
+	| BN Bg CL EI Fi?
 		{$$ = {foreignkey:{table:$4, columnid: $5}};}
-	| CI EA ParLiteral?
+	| CL EI Fi?
 		{$$ = {foreignkey:{table:$2, columnid: $3}};}
-	| Aa DR Ei Da Ei DS 
+	| Aa DU Eq Dd Eq DV 
 		{ $$ = {identity: {value:$3,step:$5}} }
 	| Aa 
 		{ $$ = {identity: {value:1,step:1}} }
-	| A1 Ea 
+	| A4 Ei 
 		{$$ = {default:$2};}
-	| A1 DR EW DS 
+	| A4 DU Ee DV 
 		{$$ = {default:$3};}
-	| Bw 
+	| Bz 
 		{$$ = {null:true}; }
-	| Bv Bw 
+	| By Bz 
 		{$$ = {notnull:true}; }
-	| FC 
+	| FR 
 		{$$ = {check:$1}; }
-	| Cu 
+	| Cx 
 		{$$ = {unique:true}; }
 	;
 
-/* A8 Cf */
-
-DropTable
-	: A8 (TABLE|CLASS) FT EA 
+/* BB Ci */
+ Fk 
+	: BB (Ci|Al) Fl EI 
 		{ $$ = new yy.DropTable({table:$4,type:$2}); yy.extend($$, $3); }
 	;
-
- FT 
+ Fl 
 	: { $$ = undefined; }
-	| BS BF 
+	| BV BI 
 		{ $$ = {ifexists: true};}
 	;
 
-/* AQ Cf */
-
-AlterTable
-	: AQ Cf EA CL Cn Gl 
+/* AQ Ci */
+ Fm 
+	: AQ Ci EI CO Cq Do 
 		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
-	| AQ Cf EA AN Am FM 
+	| AQ Ci EI AN Ao Fd 
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
-	| AQ Cf EA Bp Am FM 
+	| AQ Ci EI Bs Ao Fd 
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
-	| AQ Cf EA CL Am Gl Cn Gl 
+	| AQ Ci EI CO Ao Do Cq Do 
 		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
-	| AQ Cf EA A8 Am Gl 
+	| AQ Ci EI BB Ao Do 
 		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
 	;
-
- FU 
-	: CL Cf EA Cn Gl 
+ Fn 
+	: CO Ci EI Cq Do 
 		{ $$ = new yy.AlterTable({table:$3, renameto: $5});}
 	;
 
 /* DATABASES */
-
-AttachDatabase
-	: AZ Gl Az Gl 
+ Fo 
+	: AZ Do A2 Do 
 		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase() });}
-	| AZ Gl Az Gl DR Eh DS 
+	| AZ Do A2 Do DU Ep DV 
 		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase(), args:$6 });}
-	| AZ Gl Az Gl AW Gl 
+	| AZ Do A2 Do AW Do 
 		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase(), as:$6 });}
-	| AZ Gl Az Gl DR Eh DS AW Gl 
+	| AZ Do A2 Do DU Ep DV AW Do 
 		{ $$ = new yy.AttachDatabase({databaseid:$4, engineid:$2.toUpperCase(), as:$9, args:$6});}
 	;
-
- FV 
-	: A5 Az Gl 
+ Fp 
+	: A8 A2 Do 
 		{ $$ = new yy.DetachDatabase({databaseid:$3});}
 	;
-
- FW 
-	: Av Az E7 Gl 
+ Fq 
+	: Ax A2 FM Do 
 		{ $$ = new yy.CreateDatabase({databaseid:$4 }); yy.extend($$,$4); }
-	| Av Gl Az E7 Gl FX 
+	| Ax Do A2 FM Do Fr 
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, as:$6 }); yy.extend($$,$4); }
-	| Av Gl Az E7 Gl DR Eh DS FX 
+	| Ax Do A2 FM Do DU Ep DV Fr 
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, args:$7, as:$9 }); yy.extend($$,$4); }
-	| Av Gl Az E7 Ek FX 
+	| Ax Do A2 FM Es Fr 
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), 
 		    as:$6, args:[$5] }); yy.extend($$,$4); }
 	;
-
- FX 
+ Fr 
 	:	
 		{$$ = undefined;}
-	| AW Gl 
+	| AW Do 
 		{ $$ = $1; }
 	;
-	
- FY 
-	: Cw Az Gl 
+	 Fs 
+	: Cz A2 Do 
 		{ $$ = new yy.UseDatabase({databaseid: $3 });}	
-	| Cw Gl 
+	| Cz Do 
 		{ $$ = new yy.UseDatabase({databaseid: $2 });}	
 	;
-
- FZ 
-	: A8 Az FT Gl 
+ Ft 
+	: BB A2 Fl Do 
 		{ $$ = new yy.DropDatabase({databaseid: $4 }); yy.extend($$,$3); }	
-	| A8 Gl Az FT Gl 
+	| BB Do A2 Fl Do 
 		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }	
-	| A8 Gl Az FT Ek 
+	| BB Do A2 Fl Es 
 		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }	
 	;
 
 /* INDEXES */
-
-CreateIndex
+ Fu 
 	:
-	 Av BW Gl By EA DR EO DS 
+	 Ax BZ Do B1 EI DU EW DV 
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
 	| 
 
- Av Cu BW Gl By EA DR EO DS 
+ Ax Cx BZ Do B1 EI DU EW DV 
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
 	;
-
- Fa 
-	: A8 BW Gl 
+ Fv 
+	: BB BZ Do 
 		{ $$ = new yy.DropIndex({indexid:$3});}
 	;
 
-/* CZ COMMAND */
-
-ShowDatabases
-	: CZ Az 
+/* Cc COMMAND */
+ Fw 
+	: Cc A2 
 		{ $$ = new yy.ShowDatabases();}
-	| CZ Az Bh Ek 
+	| Cc A2 Bk Es 
 		{ $$ = new yy.ShowDatabases({like:$4});}
-	| CZ Gl Az 
+	| Cc Do A2 
 		{ $$ = new yy.ShowDatabases({engineid:$2.toUpperCase() });}
-	| CZ Gl Az Bh Ek 
+	| Cc Do A2 Bk Es 
 		{ $$ = new yy.ShowDatabases({engineid:$2.toUpperCase() , like:$5});}
 	;
-
- Fb 
-	: CZ Cf 
+ Fx 
+	: Cc Ci 
 		{ $$ = new yy.ShowTables();}
-	| CZ Cf Bh Ek 
+	| Cc Ci Bk Es 
 		{ $$ = new yy.ShowTables({like:$4});}
-	| CZ Cf BL Gl 
+	| Cc Ci BO Do 
 		{ $$ = new yy.ShowTables({databaseid: $4});}
-	| CZ Cf BL Gl Bh Ek 
+	| Cc Ci BO Do Bk Es 
 		{ $$ = new yy.ShowTables({like:$6, databaseid: $4});}
 	;
-
- Fc 
-	: CZ Am BL EA 
+ Fy 
+	: Cc Ao BO EI 
 		{ $$ = new yy.ShowColumns({table: $4});}
-	| CZ Am BL EA BL Gl 
+	| Cc Ao BO EI BO Do 
 		{ $$ = new yy.ShowColumns({table: $4, databaseid:$6});}
 	;
-
- Fd 
-	: CZ BW BL EA 
+ Fz 
+	: Cc BZ BO EI 
 		{ $$ = new yy.ShowIndex({table: $4});}
-	| CZ BW BL EA BL Gl 
+	| Cc BZ BO EI BO Do 
 		{ $$ = new yy.ShowIndex({table: $4, databaseid: $6});}
 	;
-
- Fe 
-	: CZ Av Cf EA 
+ F0 
+	: Cc Ax Ci EI 
 		{ $$ = new yy.ShowCreateTable({table: $4});}
-	| CZ Av Cf EA BL Gl 
+	| Cc Ax Ci EI BO Do 
 		{ $$ = new yy.ShowCreateTable({table: $4, databaseid:$6});}
 	;
-
- Ff 
-	:  Av E6 C1 E7 EA DR E2 DS AW Select SubqueryRestriction?
+ F1 
+	:  Ax FL C4 FM EI DU FF DV AW Dw F2?
 		{
 			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7}); 
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 		}
-	| Av E6 C1 E7 EA AW Select SubqueryRestriction?
+	| Ax FL C4 FM EI AW Dw F2?
 		{ 
 			$$ = new yy.CreateTable({table:$5,view:true,select:$7}); 
 			yy.extend($$,$2); 
 			yy.extend($$,$4); 
 		}
 	;
-
- Fg 
-	: C5 CF Bz 
-	| C5 Ai B2 
-	| C5 Ai B2 Ap FA 
+ F2 
+	: C8 CI B2 
+	| C8 Ak B5 
+	| C8 Ak B5 Ar FP 
 	;
 
-
- Fh 
-	: A8 C1 FT EA 
+ F3 
+	: BB C4 Fl EI 
 		{ $$ = new yy.DropTable({table:$4, view:true}); yy.extend($$, $3); }
 	;
-/*
-DeclareCursor
-	: A0 Gl Ay FOR Select
+/* F4 
+	: A3 Do A1 FOR Dw 
 		{ $$ = new yy.DeclareCursor({cursorid:$2, select:$5}); }
 	;
-
- Fi 
-	: B1 Gl 
+ F5 
+	: B4 Do 
 		{ $$ = new yy.OpenCursor({cursorid:$2}); }
 	;
-
- Fg 
-	: Ak Gl 
+ F6 
+	: Am Do 
 		{ $$ = new yy.CloseCursor({cursorid:$2}); }
 	;
-
- Fk 
-	: BI Fl BL Gl 
+ F7 
+	: BL F8 BO Do 
 		{ $$ = new yy.FetchCursor({cursorid:$4}); yy.extend($$,$2); }
 	;
-
- Fl 
-	: Br 
+ F8 
+	: Bu 
 		{ $$ = {direction: 'NEXT'}; }
-	| CD 
+	| CG 
 		{ $$ = {direction: 'PRIOR'}; }
-	| BJ 
+	| BM 
 		{ $$ = {direction: 'FIRST'}; }
-	| Be 
+	| Bh 
 		{ $$ = {direction: 'LAST'}; }
-	| AL Ei 
+	| AL Eq 
 		{ $$ = {direction: 'ABSOLUTE', num:$2}; }
-	| CJ Ei 
+	| CM Eq 
 		{ $$ = {direction: 'RELATIVE', num:$2}; }
 	;
 */
-
-Help
-	: BR Ek 
+ F9 
+	: BU Es 
 		{ $$ = new yy.Help({subject:$2.value.toUpperCase()} ) ; }
-	| BR 
+	| BU 
 		{ $$ = new yy.Help() ; }
 	;
-
- Fm 
-	: DP EW 
+ GA 
+	: DS Ee 
 		{ $$ = new yy.ExpressionStatement({expression:$2}); }
 	;
-
- Fn 
-	: Cb Ek 
+ GB 
+	: Ce Es 
 		{ $$ = new yy.Source({url:$2.value}); }
 	;
-
- Fo 
-	: AX Fp 
+ GC 
+	: AX GD 
 		{ $$ = new yy.Assert({value:$2}); }
-	| AX Ea 
+	| AX Ei 
 		{ $$ = new yy.Assert({value:$2.value}); }
-	| AX AH Da Fp 
+	| AX AH Dd GD 
 		{ $$ = new yy.Assert({value:$4, message:$2}); }
 	;
-
- Fp 
-	: DT DR EW DS 
+ GD 
+	: DW DU Ee DV 
 		{ $$ = $3; }
-	| DT Ek 
+	| DW Es 
 		{ $$ = $2.value; }
-	| DT Ei 
+	| DW Eq 
 		{ $$ = +$2.value; }
-	| DT Eg 
+	| DW Er 
 		{ $$ = (!!$2.value); }
-	| DT Eo 
+	| DW Ew 
 		{ $$ = $2; }
-	| Fs 
+	| GG 
 		{ $$ = $1; }
-	| DT Fs 
+	| DW GG 
 		{ $$ = $2; }
-	| AC Ft 
+	| AC GH 
 		{ $$ = $2; }
 	;
-
- Fq 
-	: Fp 
+ GE 
+	: GD 
 		{ $$ = $1; }
-	| Fr 
+	| GF 
 		{ $$ = $1; }
 	;
-
- Fr 
-	: Ei 
+ GF 
+	: Eq 
 		{ $$ = +$1.value; }
-	| Ek 
+	| Es 
 		{ $$ = ""+$1.value; }
-	| Eg 
+	| Er 
 		{ $$ = $1.value; }
-	| EV 
+	| Ed 
 		{ $$ = $1; }	
-	| El 
+	| Et 
 		{ $$ = $1.value; }
+	| Ew 
+		{ $$ = $1; }
 	| Eo 
 		{ $$ = $1; }
-	| Eg 
-		{ $$ = $1; }
-	| DR EW DS 
+	| DU Ee DV 
 		{ $$ = $2}
 	;
 
-
- Fs 
-	: DU Fu DV 
+ GG 
+	: DX GI DY 
 		{ $$ = $2; }
-	| DU Fu Da DV 
+	| DX GI Dd DY 
 		{ $$ = $2; }
-	| DU DV 
+	| DX DY 
 		{ $$ = {}; }
 	;
-
- Ft 
-	: Fw DW 
+ GH 
+	: GK DZ 
 		{ $$ = $1; } 
-	| Fw Da DW 
+	| GK Dd DZ 
 		{ $$ = $1; } 
-	| DW 
+	| DZ 
 		{ $$ = []; }
 	;
-
- Fu 
-	: Fu Da Fv 
+ GI 
+	: GI Dd GJ 
 		{ yy.extend($1,$3); $$ = $1; }
-	| Fv 
+	| GJ 
 		{ $$ = $1; }
 	;
-
- Fv 
-	: AH Dc Fq 
+ GJ 
+	: AH Df GE 
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
-	| C7 Dc Fq 
+	| DA Df GE 
 		{ $$ = {}; $$[$1] = $3; }		
-	| Gl Dc Fq 
+	| Do Df GE 
 		{ $$ = {}; $$[$1] = $3; }		
-/*	| AH Dc Eo 
+/*	| AH Df Ew 
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }	
-	| C7 Dc Eo 
+	| DA Df Ew 
 		{ $$ = {}; $$[$1] = $3; }		
-	| A7 Dc Eo 
+	| BA Df Ew 
 		{ $$ = {}; $$[$1] = $3; }		
 */	;
-
- Fw 
-	: Fw Da Fq 
+ GK 
+	: GK Dd GE 
 		{ $1.push($3); $$ = $1; }
-	| Fq 
+	| GE 
 		{ $$ = [$1]; }
 	;
-
- Fx 
-	: CX Gl F1 
+ GL 
+	: Ca Do GP 
 		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
-	| CX Fy Gl DP EW 
+	| Ca GM Do DS Ee 
 		{ $$ = new yy.SetVariable({variable:$3, expression:$5, method:$2});}
-	| CX Fy Gl Fz DP EW 
+	| Ca GM Do GN DS Ee 
 		{ $$ = new yy.SetVariable({variable:$3, props: $4, expression:$6, method:$2});}
 	;
-
- Fy 
-	: DT 
+ GM 
+	: DW 
 		{$$ = '@'; }
-	| De 
+	| Dh 
 		{$$ = '$'; }
 	;
-
- Fz 
-	: Fz C9 F0 
+ GN 
+	: GN DC GO 
 		{ $1.push($3); $$ = $1; }
-	| C9 F0 
+	| DC GO 
 		{ $$ = [$2]; }
 	;
-
- F0 
-	: Gl 
+ GO 
+	: Do 
 		{ $$ = $1; }
-	| C7 
+	| DA 
 		{ $$ = $1; }
-	| DR EW DS 
+	| DU Ee DV 
 		{ $$ = $2; }
 	;
-
- F1 
-	: By 
+ GP 
+	: B1 
 		{ $$ = true; }
-	| Bx 
+	| B0 
 		{ $$ = false; }
 	;
-
- F2 
-	: Ao Cp 
+ GQ 
+	: Aq Cs 
 		{ $$ = new yy.CommitTransaction(); }
 	;
-
- F3 
-	: CQ Cp 
+ GR 
+	: CT Cs 
 		{ $$ = new yy.RollbackTransaction(); }
 	;
-
- F4 
-	: Ac Cp 
+ GS 
+	: Ac Cs 
 		{ $$ = new yy.BeginTransaction(); }
 	;
 
-/*
-Store
-	: Cd 
+/* GT 
+	: Cg 
 		{ $$ = new yy.Store(); }
-	| Cd Gl 
+	| Cg Do 
 		{ $$ = new yy.Store({databaseid: $2}); }
 	;
-
- F5 
-	: CN 
+ GU 
+	: CQ 
 		{ $$ = new yy.Restore(); }
-	| CN Gl 
+	| CQ Do 
 		{ $$ = new yy.Restore({databaseid: $2}); }
 	;	
 */
-
-If
+ GV 
 	: 
-/* BS EW Dn 
+/* BV Ee Dr 
 		{ $$ = new yy.If({expression:$2,thenstat:$3}); 
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
@@ -2268,268 +2100,237 @@ If
 	| 
 
 */
- BS EW Dn F6 
+ BV Ee Dr GW 
 		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); 
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
 
-	| BS EW Dn 
+	| BV Ee Dr 
 		{ 
 			$$ = new yy.If({expression:$2,thenstat:$3}); 
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
 	;
-
- F6 
-	: BD Dn 
+ GW 
+	: BG Dr 
 		{$$ = $2;}
 	;
-
- F7 
-	: C4 EW Dn 
+ GX 
+	: C7 Ee Dr 
 		{ $$ = new yy.While({expression:$2,loopstat:$3}); 
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
 	;
-
- F8 
-	: Ar 
+ GY 
+	: At 
 		{ $$ = new yy.Continue(); } 
 	;
-
- F9 
+ GZ 
 	: Ae 
 		{ $$ = new yy.Break(); } 
 	;
-
- GA 
-	: Ac Dl BB 
+ Ga 
+	: Ac Dp BE 
 		{ $$ = new yy.BeginEnd({statements:$2}); } 
 	;
-
- GB 
-	: CC Eh 
+ Gb 
+	: CF Ep 
 		{ $$ = new yy.Print({exprs:$2});}	
-	| CC Select
+	| CF Dw 
 		{ $$ = new yy.Print({select:$2});}	
 	;
-
- GC 
-	: CM GE 
+ Gc 
+	: CP Gf 
 		{ $$ = new yy.Require({paths:$2}); }
-	| CM GF 
+	| CP Gg 
 		{ $$ = new yy.Require({plugins:$2}); }
 	;
 
 /* For test plugin system */
-
-Plugin
-	: A9 {$$ = $1.toUpperCase(); }
-	| Gl {$$ = $1.toUpperCase(); }
+ Gd 
+	: BC {$$ = $1.toUpperCase(); }
+	| Do {$$ = $1.toUpperCase(); }
 	;
-
- GD 
-	: A9 EW 
+ Ge 
+	: BC Ee 
 		{ $$ = new yy.Echo({expr:$2}); }
 	;
 
-
- GE 
-	: GE Da Ek 
+ Gf 
+	: Gf Dd Es 
 		{ $1.push($3); $$ = $1; }
-	| Ek 
+	| Es 
+		{ $$ = [$1]; }
+	;
+ Gg 
+	: Gg Dd Gd 
+		{ $1.push($3); $$ = $1; }
+	| Gd 
 		{ $$ = [$1]; }
 	;
 
- GF 
-	: GF Da Plugin
-		{ $1.push($3); $$ = $1; }
-	| Plugin
-		{ $$ = [$1]; }
-	;
-
-
- GG 
-	: A0 GH 
+ Gh 
+	: A3 Gi 
 		{ $$ = new yy.Declare({declares:$2}); }
 	;
-
- GH 
-	: GI 
+ Gi 
+	: Gg 
 		{ $$ = [$1]; }
-	| GH Da GI 
+	| Gi Dd Gg 
 		{ $1.push($3); $$ = $1; }
 	;
-
- GI 
-	: DT Gl FN 
+ Gg 
+	: DW Do Fe 
 		{ $$ = {variable: $2}; yy.extend($$,$3); }
-	| DT Gl AW FN 
+	| DW Do AW Fe 
 		{ $$ = {variable: $2}; yy.extend($$,$4); }
-	| DT Gl FN DP EW 
+	| DW Do Fe DS Ee 
 		{ $$ = {variable: $2, expression:$5}; yy.extend($$,$3);}
-	| DT Gl AW FN DP EW 
+	| DW Do AW Fe DS Ee 
 		{ $$ = {variable: $2, expression:$6}; yy.extend($$,$4);}
 	;
-
- GJ 
-	: Cs Cf EA 
+ Gk 
+	: Cv Ci EI 
 		{ $$ = new yy.TruncateTable({table:$3});}
 	;
-
- GK 
-	: Bm GL GM GN GO GT 
+ Gl 
+	: Bp Gm Gn Go Gp Gu 
 		{ 
 			$$ = new yy.Merge(); yy.extend($$,$2); yy.extend($$,$3); 
 			yy.extend($$,$4);
 			yy.extend($$,{matches:$5});yy.extend($$,$6);
 		}
 	;
-
- GL 
-	: D8 
+ Gm 
+	: EG 
 		{ $$ = {into: $1}; }
-	| Bb D8 
+	| Be EG 
 		{ $$ = {into: $2}; }
 	;
-
- GM 
-	: Cy D8 
+ Gn 
+	: C1 EG 
 		{ $$ = {using: $2}; }
 	;
-
- GN 
-	: By EW 
+ Go 
+	: B1 Ee 
 		{ $$ = {on:$2}; }
 	;
-
- GO 
-	: GO GP 
+ Gp 
+	: Gp Gq 
 		{ $$ = $1; $$.push($2); }
-	| GO GR 
+	| Gp Gs 
 		{ $$ = $1; $$.push($2); }
-	| GP 
+	| Gq 
 		{ $$ = [$1]; }
-	| GR 
+	| Gs 
 		{ $$ = [$1]; }
 	;
-
- GP 
-	: C2 Bg Cl GQ 
+ Gq 
+	: C5 Bm Co Gr 
 		{ $$ = {matched:true, action:$4} }
-	| C2 Bg AK EW Cl GQ 
+	| C5 Bm AK Ee Co Gr 
 		{ $$ = {matched:true, expr: $4, action:$6} }
 	;
-
- GQ 
-	: A2 
+ Gr 
+	: A5 
 		{ $$ = {delete:true}; }
-	| Cv CX Ex 
+	| Cy Ca E6 
 		{ $$ = {update:$3}; }
 	;
-
- GR 
-	: C2 Bv Bg Cl GS 
+ Gs 
+	: C5 By Bm Co Gt 
 		{ $$ = {matched:false, bytarget: true, action:$5} }
-	| C2 Bv Bg Af Ch Cl GS 
+	| C5 By Bm Ah Ck Co Gt 
 		{ $$ = {matched:false, bytarget: true, action:$7} }
-	| C2 Bv Bg AK EW Cl GS 
+	| C5 By Bm AK Ee Co Gt 
 		{ $$ = {matched:false, bytarget: true, expr:$5, action:$7} }
-	| C2 Bv Bg Af Ch AK EW Cl GS 
+	| C5 By Bm Ah Ck AK Ee Co Gt 
 		{ $$ = {matched:false, bytarget: true, expr:$7, action:$9} }
-	| C2 Bv Bg Af Cb Cl GS 
+	| C5 By Bm Ah Ce Co Gt 
 		{ $$ = {matched:false, bysource: true, action:$7} }
-	| C2 Bv Bg Af Cb AK EW Cl GQ 
+	| C5 By Bm Ah Ce AK Ee Co Gr 
 		{ $$ = {matched:false, bysource: true, expr:$7, action:$9} }
 	;
-
- GS 
-	: BY Cz ValuesListsList
+ Gt 
+	: Bb C2 FC 
 		{ $$ = {insert:true, values:$3}; }
-	| BY DR E2 DS Cz ValuesListsList
+	| Bb DU FF DV C2 FC 
 		{ $$ = {insert:true, values:$6, columns:$3}; }
-	| BY A1 Cz 
+	| Bb A4 C2 
 		{ $$ = {insert:true, defaultvalues:true}; }
-	| BY DR E2 DS A1 Cz 
+	| Bb DU FF DV A4 C2 
 		{ $$ = {insert:true, defaultvalues:true, columns:$3}; }
 	;
-
- GT 
+ Gu 
 	: 
-	| OUTPUT ES 
+	| OUTPUT Ea 
 		{ $$ = {output:{columns:$2}} }
-	| OUTPUT ES Bb Fy Gl 
+	| OUTPUT Ea Be GM Do 
 		{ $$ = {output:{columns:$2, intovar: $5, method:$4}} }
-	| OUTPUT ES Bb EA 
+	| OUTPUT Ea Be EI 
 		{ $$ = {output:{columns:$2, intotable: $4}} }
-	| OUTPUT ES Bb EA DR E2 DS 
+	| OUTPUT Ea Be EI DU FF DV 
 		{ $$ = {output:{columns:$2, intotable: $4, intocolumns:$6}} }
 	;
 
-/*
-CreateVertex
-	: Av C0 
+/* Gv 
+	: Ax C3 
 		{ $$ = new yy.CreateVertex(); }
-	| Av C0 CX Ex 
+	| Ax C3 Ca E6 
 		{ $$ = new yy.CreateVertex({set: $4}); }
-	| Av C0 Gl CX Ex 
+	| Ax C3 Do Ca E6 
 		{ $$ = new yy.CreateVertex({class:$3, set: $5}); }
-	| Av C0 Aq Eh 
+	| Ax C3 As Ep 
 		{ $$ = new yy.CreateVertex({content: $4}); }
-	| Av C0 Gl Aq Eh 
+	| Ax C3 Do As Ep 
 		{ $$ = new yy.CreateVertex({class:$3, content: $5}); }
-	| Av C0 Gl Select
+	| Ax C3 Do Dw 
 		{ $$ = new yy.CreateVertex({class:$3, select:$4}); }
-	| Av C0 Select
+	| Ax C3 Dw 
 		{ $$ = new yy.CreateVertex({select:$4}); }
 	;
-*/
-CreateVertex
-	: Av C0 Literal? SharpValue? StringValue? GV 
+*/ Gv 
+	: Ax C3 Do? Gx? Es? Gy 
 		{
 			$$ = new yy.CreateVertex({class:$3,sharp:$4, name:$5}); 
 			yy.extend($$,$6); 
 		}
 	;
-
- GU 
-	: DA Gl 
+ Gx 
+	: DD Do 
 		{ $$ = $2; }
 	;
-
- GV 
+ Gy 
 	: 
 		{$$ = undefined; }
-	| CX Ex 
+	| Ca E6 
 		{ $$ = {sets:$2}; }
-	| Aq Eh 
+	| As Ep 
 		{ $$ = {content:$2}; }
-	| Select
+	| Dw 
 		{ $$ = {select:$1}; }
 	;
-
- GW 
-	: Av BA StringValue? BL EW Cn EW GV 
+ Gz 
+	: Ax BD Es? BO Ee Cq Ee Gy 
 		{
 			$$ = new yy.CreateEdge({from:$5,to:$7,name:$3});
 			yy.extend($$,$8); 
 		}
-/*	| Av BA StringValue? BL EW Cn EW 
+/*	| Ax BD Es? BO Ee Cq Ee 
 		{
 			$$ = new yy.CreateEdge({from:$5,to:$7,name:$3});
 		}
 */	;
 
 
-/*
- GW 
-	: Av BA Literal? 
- BL EW 
- Cn EW 
-	(SET Ex | Aq Expression)?
+/* Gz 
+	: Ax BD Do? 
+ BO Ee 
+ Cq Ee 
+	(SET E6 | As Expression)?
 
 	{ 
 		$$ = new yy.CreateEdge({class:$3, from:$5, to:$7}); 
@@ -2541,28 +2342,25 @@ CreateVertex
 
 	;
 */
-
-CreateGraph
-	: Av BN GX 
+ G1 
+	: Ax BQ G2 
 		{ $$ = new yy.CreateGraph({graph:$3}); }
-	| Av BN BL EW 
+	| Ax BQ BO Ee 
 		{ $$ = new yy.CreateGraph({from:$4}); }
 	;
-
- GX 
-	: GX Da GY 
+ G2 
+	: G2 Dd G3 
 		{ $$ = $1; $$.push($3); }
-	| GY 
+	| G3 
 		{ $$ = [$1]; }
-	;
- GY 
-	: Gc Json? GraphAsClause? 
+	; G3 
+	: G7 GD? G5? 
 		{ 
 			$$ = $1; 
 			if($2) $$.json = new yy.Json({value:$2});
 			if($3) $$.as = $3;
 		}
-	| (GraphElement|GraphVar) DL Gc Json? GraphAsClause? DL (GraphElement|GraphVar) 
+	| (G7|G4) DO G7 GD? G5? DO (G7|G4) 
 		{ 
 			$$ = {source:$1, target: $7};
 			if($4) $$.json = new yy.Json({value:$4});
@@ -2570,74 +2368,62 @@ CreateGraph
 			yy.extend($$,$3);
 			;
 		}
-	| Gl DR GX DS 
+	| Do DU G2 DV 
 	;
-
- GZ 
-	: Fy Gl 
+ G4 
+	: GM Do 
 		{ $$ = {vars:$2, method:$1}; }
 	;
-
- Ga 
-	: AW Fy Gl 
+ G5 
+	: AW GM Do 
 		{ $$ = $3; }
 	;
-
- Gb 
-	: Fy Gl 
+ G6 
+	: GM Do 
 		{ $$ = $2; }
 	;
-
- Gc 
-	:  Literal? SharpLiteral? STRING? ColonLiteral? 
+ G7 
+	:  Do? G9? AH? G8? 
 		{ 
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
 		}
 	;
-
- Gd 
-	: Dc Gl 
+ G8 
+	: Df Do 
 		{ $$ = $2; }
 	;
-
- Ge 
-	: DA Gl 
+ G9 
+	: DD Do 
 		{ $$ = $2; }
-	| DA C7 
+	| DD DA 
 		{ $$ = +$2; }
 	;
-
- Gf 
-	: A2 C0 EW (WHERE Expression)?
+ HA 
+	: A5 C3 Ee (WHERE Expression)?
 	;
-
- Gg 
-	: A2 BA EW (FROM Expression)? (TO Expression)? (WHERE Expression)?
+ HB 
+	: A5 BD Ee (FROM Expression)? (TO Expression)? (WHERE Expression)?
 	;
-
- Gh 
-	: Gg DX Gi 
+ HC 
+	: HE Da HD 
 		{ $$ = new yy.AddRule({left:$1, right:$3}); }
-	| DX Gi 
+	| Da HD 
 		{ $$ = new yy.AddRule({right:$2}); }
 	;
-
- Gi 
-	: Gi Da Gg 
+ HD 
+	: HD Dd HE 
 		{ $$ = $1; $$.push($3); } 
-	| Gg 
+	| HE 
 		{ $$ = [$1]; }
 	;
-
- Gg 
-	: Gl 
+ HE 
+	: Do 
 		{ $$ = new yy.Term({termid:$1}); }
-	| Gl DR Gi DS 
+	| Do DU HD DV 
 		{ $$ = new yy.Term({termid:$1,args:$3}); }
 	;
-
- Gk 
-	: DY Eg 
+ HF 
+	: Db Eo 
 	;
 

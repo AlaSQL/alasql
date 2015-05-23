@@ -57,10 +57,10 @@ for(var i=0; i<ilen;i++) {
 	}
 };
 
-console.log(alasql('SELECT TOP 10 [0] AS w, [1] as q, \
+console.log(alasql('SELECT TOP 20 [0] AS w, [1] as q, \
 	(LEN([0])-2)*[1] as e FROM ? WHERE LEN([0])>5 ORDER BY e DESC',[dict]));
 
-console.log(alasql('SELECT TOP 10 [0] AS w, [1] as q, \
+console.log(alasql('SELECT TOP 20 [0] AS w, [1] as q, \
 	(LEN([0])-3)*[1] as e FROM ? \
 	WHERE LEN([0])>3 ORDER BY e DESC',[dotdict]));
 
