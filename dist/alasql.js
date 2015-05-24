@@ -1,6 +1,6 @@
 /*
 @module alasql
-@version 0.1.7
+@version 0.1.8
 
 AlaSQL - JavaScript SQL database
 (ñ) 2014-2015, Andrey Gershun
@@ -125,7 +125,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = "0.1.7";
+alasql.version = "0.1.8";
 
 /**
 	Debug flag

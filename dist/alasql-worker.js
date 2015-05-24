@@ -1,6 +1,6 @@
 /*
 @module alasql
-@version 0.1.7
+@version 0.1.8
 
 AlaSQL - JavaScript SQL database
 (ñ) 2014-2015, Andrey Gershun
@@ -28,7 +28,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 
 /*
 //
@@ -63,7 +62,6 @@ function alasql(sql,params,cb){
     // Send a message to worker
 	alasql.webworker.postMessage({id:id,sql:sql,params:params});
 };
-
 
 if (typeof importScripts === 'function') {
 	// Nothing
@@ -131,7 +129,6 @@ alasql.worker = function(path, paths, cb) {
 };
 
 
-
 /* WebWorker */
 /** @type {number} */
 alasql.lastid = 0;
@@ -143,6 +140,3 @@ alasql.worker();
 
 return alasql;
 }));
-
-
-//# sourceMappingURL=alasql-worker.js.map
