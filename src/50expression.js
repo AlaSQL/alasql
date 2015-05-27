@@ -347,6 +347,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else {
 			var s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+//console.log('expression',350,s);
 			return s;
 //		} else {
 //			throw new Error('Wrong IN operator without SELECT part');
@@ -369,7 +370,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else {
-			throw new Error('Wrong NOT IN operator without SELECT part');
+			var s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
+			s += this.left.toJavaScript(context,tableid, defcols)+')==-1)';
+			return s;
+
+//			throw new Error('Wrong NOT IN operator without SELECT part');
 		}
 	};
 

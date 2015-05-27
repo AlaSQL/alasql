@@ -105,6 +105,7 @@ gulp.task('js-merge', function () {
     './src/831xls.js',
     './src/832xlsxml.js',
     './src/833xlsx.js',
+    './src/839zip.js',
     './src/84from.js',
     './src/843xml.js',
     './src/844gexf.js',
@@ -133,9 +134,10 @@ gulp.task('js-merge', function () {
 gulp.task('jison-compile', function () {
   return gulp.src('./src/alasqlparser.jison', {read: false})
     .pipe(shell([
-      'node ./utils/redj.js',
-      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
-//      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
+//      'node ./utils/redj/redj.js',
+//      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
+      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
+
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
 });
@@ -143,7 +145,7 @@ gulp.task('jison-compile', function () {
 gulp.task('jison-compile-fast', function () {
   return gulp.src('./src/alasqlparser.jison', {read: false})
     .pipe(shell([
-      'node ./utils/redj.js',
+      'node ./utils/redj/redj.js',
       'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
 //      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
@@ -171,7 +173,11 @@ gulp.task('copy-dist', function(){
 
 
 gulp.task('copy-dist-org', function(){
-  gulp.src(['./dist/alasql.min.js','./dist/alasql-worker.min.js','/dist/alasql-echo.js'])
+  gulp.src(['./dist/alasql.min.js',
+            './dist/alasql-worker.min.js',
+            '/dist/alasql-echo.js',
+            '/dist/alasql-md.js',
+            ])
     .pipe(gulp.dest('./console/'));
 });
 
@@ -191,9 +197,11 @@ gulp.task('copy-console-org', function(){
 /************************/
 
 // Echo plugin
-gulp.task('plugin-echo', function(){
-  gulp.src(['./src/echo/alasql-echo.js'])
-    .pipe(gulp.dest('./dist'));
+gulp.task('plugin-plugins', function(){
+  gulp.src([
+      './src/echo/alasql-echo.js',
+      './src/md/alasql-md.js',
+  ]).pipe(gulp.dest('./dist'));
 });
 
 // Echo plugin
@@ -234,7 +242,8 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
 
-  gulp.watch('./src/echo/*.js',function(){ gulp.run('plugin-echo'); });
+  gulp.watch('./src/echo/*.js',function(){ gulp.run('plugin-plugins'); });
+  gulp.watch('./src/md/*.js',function(){ gulp.run('plugin-plugins'); });
   gulp.watch('./src/prolog/*.js',function(){ gulp.run('plugin-prolog'); });
 
   gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });

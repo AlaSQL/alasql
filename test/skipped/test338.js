@@ -71,7 +71,7 @@ console.log(res);
     done();
   });
 
-  it('3. SEARCH 8 queens',function(done){
+  it('3. DROP TABLES',function(done){
 
   var res = alasql(function(){/*
 

@@ -157,9 +157,11 @@ DOUBLE\s+PRECISION								return 'LITERAL'
 'RELATIVE'                                      return 'RELATIVE'
 'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
+'REPEAT'										return 'REPEAT'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
-'RETURNS'                                       return 'RETURNS'
+'RETURN'                                       	return 'RETURN'
+'RETURNS'                                       return 'RETURN'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
@@ -527,13 +529,15 @@ SearchSelector
 		{ $$ = {srchid:"AT", args:[$2]}; }	
 	| AS AT Literal
 		{ $$ = {srchid:"AS", args:[$3]}; }	
-	| TO AT Literal
-		{ $$ = {srchid:"TO", args:[$3]}; }	
 	| SET LPAR SetColumnsList RPAR
 		{ $$ = {srchid:"SET", args:$3}; }	
 
+	| TO AT Literal
+		{ $$ = {selid:"TO", args:[$3]}; }	
 	| VALUE
 		{ $$ = {srchid:"VALUE"}; }	
+	| ROW LPAR ExprList RPAR
+		{ $$ = {srchid:"ROW", args:$3}; }	
 	| COLON Literal
 		{ $$ = {srchid:"CLASS", args:[$2]}; }	
 	| SearchSelector PlusStar
@@ -565,8 +569,10 @@ SearchSelector
 		{ $$ = {selid:'OR',args:$3 }; }
 	| PATH LPAR SearchSelector RPAR
 		{ $$ = {selid:'PATH',args:[$3] }; }
-	| RETURNS LPAR ResultColumns RPAR
-		{ $$ = {srchid:'RETURNS',args:$3 }; }
+	| RETURN LPAR ResultColumns RPAR
+		{ $$ = {srchid:'RETURN',args:$3 }; }
+	| REPEAT LPAR SearchSelector* COMMA ExprList RPAR
+		{ $$ = {selid:'REPEAT',sels:$3, args:$5 }; }
 	;
 
 SearchSelectorList
@@ -1457,6 +1463,11 @@ Op
 	| Expression NOT IN ColFunc
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
 
+	| Expression IN VarValue
+		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+
+	| Expression NOT IN VarValue
+		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
 
 	/* 
 		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar. 
@@ -1536,6 +1547,8 @@ SetColumn
 	: Column EQ Expression
 /* TODO Replace columnid with column */
 		{ $$ = new yy.SetColumn({column:$1, expression:$3})}
+	| (AT|DOLLAR) Literal EQ Expression
+		{ $$ = new yy.SetColumn({variable:$2, expression:$4, method:$1})}
 	;
 
 /* DELETE */

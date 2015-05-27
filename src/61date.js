@@ -68,37 +68,41 @@ stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
 
 
 stdfn.SECOND = function(d){
-	d = new Date(d);
+	var d = new Date(d);
 	return d.getSeconds();
 };
 
 
 stdfn.MINUTE = function(d){
-	d = new Date(d);
+	var d = new Date(d);
 	return d.getMinutes();
 };
 
 stdfn.HOUR = function(d){
-	d = new Date(d);
+	var d = new Date(d);
 	return d.getHours();
 };
 
 stdfn.DAYOFWEEK = stdfn.WEEKDAY = function(d){
-	d = new Date(d);
+	var d = new Date(d);
 	return d.getDay();
 };
 
 stdfn.DAY = stdfn.DAYOFMONTH = function(d){
-	d = new Date(d);
+	var d = new Date(d);
 	return d.getDate();
 };
 
 stdfn.MONTH = function(d){
-	d = new Date(d);
+	var d = new Date(d);
 	return d.getMonth()+1;
 };
 
 stdfn.YEAR = function(d){
-	d = new Date(d);
+	var d = new Date(d);
 	return d.getFullYear();
 };
+
+stdfn.DATEDIFF = function(a,b){
+	return (+a) - (+b);
+}
