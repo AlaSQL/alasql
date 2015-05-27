@@ -50,7 +50,7 @@ Play with this exaample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or
 
 ### Node.js
 
-[![NPM](https://nodei.co/npm/alasql.png?downloads=true)](https://nodei.co/npm/alasql/)
+[![NPM](https://nodei.co/npm/alasql.png)](https://nodei.co/npm/alasql/)
 [![NPM](https://nodei.co/npm-dl/alasql.png?months=6)](https://nodei.co/npm/alasql/)
 
 Install with npm
