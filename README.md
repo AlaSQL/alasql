@@ -108,7 +108,14 @@ and require the alasql.js file
 * User-defined JavaScript functions in your SQL (```SELECT myJSfunc(firstname, lastname) as name, seat, time FROM tableA```)
 * AlaSQL supports file, IndexedDB, and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes) as persistent storage. 
 * Use "good old" SQL with all* (expected) functionality like multiple levels of ```JOIN```, ```VIEW```, ```GROUP```, ```UNION```, ```PRIMARY KEY```, ```ANY```, ```ALL```, ```IN```, ```ROLLUP()```, ```CUBE()``` and ```GROUPING SETS()```, ```CROSS APPLY```, ```OUTER APPLY```, ```WITH SELECT```, and subqueries. [*Not totally yet but its under development - see the list here](https://github.com/agershun/alasql/wiki/SQL%20keywords)
-* Plus some [JavaScript sugar](#Sugar)
+
+### Plus: We like it fast 
+Thats why we make sure that
+
+* Compiled queries are cached
+* Joined tables are pre-indexed
+* ```WHERE``` expressions are pre-filtered for joins
+
 
 ###Miss a feature? 
 [Take charge and add your idea](http://feathub.com/agershun/alasql/features/new) or [vote on your favorite feature](http://feathub.com/agershun/alasql) to be implemented:
@@ -149,32 +156,53 @@ Check AlaSQL vs other JavaScript SQL databases and data processing libraries:
 * [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/10) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
 
 
+----
 
+![noSQL](http://i.imgur.com/0sVHEN6.png)
 
+----
 
+#What is new?
 
-## What is new?
-
-### AlaSQL plug-ins
+## AlaSQL now supports plug-ins
 
 Now AlaSQL supports plugins system. To install the plugin you need to use REQUIRE statement, like:
+
 ```js
     alasql('REQUIRE ECHO');
     var res = alasql('ECHO 123');  // Returns simply 123
 ```
+
 You can use the same command in browser or include plugins directly:
+
 ```html
     <script src="alasql.min.js"></script>
     <script src="alasql-echo.js"></script>
 ```
-The list of packages will be prepared later.
 
-### AlaSQL and Meteor
+The list of exsisting packages and how to build your own is on its way...
 
-Now you can install AlaSQL in Meteor from [official package](https://atmospherejs.com/agershun/alasql):
+## AlaSQL and Meteor
+
+Install AlaSQL for Meteor from the [official package](https://atmospherejs.com/agershun/alasql):
+
 ```
     meteor add agershun:alasql
 ```
+
+AlaSQL supports Meteor collections. Sounds awesome but what is it? [Dj Walker-Morgan from compose.io](https://www.compose.io/articles/meteor-sql-and-other-databases/) puts it this way:
+
+_This lets you turn..._
+
+    return Robots.find({}, { sort: { introduced: 1 }} ); 
+     
+_into_
+
+    return alasql('SELECT * FROM ? ORDER BY introduced',[Robots]);  
+
+_which doesn't look like a huge jump, until you realise that this works in both the browser and the server and opens up a way to do JOIN, GROUP BY, UNION, DISTINCT and others._ 
+
+
 It works on the client and the server side.
 
 Now you can use Meteor Collections as arguments. To do it simply store alasql.min.js to the client/lib directory and then apply SQL to Meteor Collections: 
