@@ -145,9 +145,9 @@ gulp.task('jison-compile', function () {
 gulp.task('jison-compile-fast', function () {
   return gulp.src('./src/alasqlparser.jison', {read: false})
     .pipe(shell([
-      'node ./utils/redj/redj.js',
-      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
-//      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
+//      'node ./utils/redj/redj.js',
+//      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
+      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
 });
@@ -155,13 +155,13 @@ gulp.task('jison-compile-fast', function () {
 
 /** @todo Replace UglifyJS with Closure */
 gulp.task('uglify', function () {
-  return gulp.src('./alasql.js', {read: false})
+  return gulp.src('dist/alasql.js', {read: false})
     .pipe(shell([
-//      'uglifyjs dist/alasql.js -o dist/alasql.ugl.js',
-//      'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.ugl.js',
+      'uglifyjs dist/alasql.js -o dist/alasql.min.js',
+      'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.min.js',
 
-      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.min.js',
-      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
+//      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.min.js',
+//      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
     ]));
 });
 
@@ -190,7 +190,7 @@ gulp.task('copy-dist-meteor', function(){
 
 // Additional task to update alasql.org/console directory
 gulp.task('copy-console-org', function(){
-  gulp.src(['./console/*'])
+  gulp.src(['./dist/*'])
     .pipe(gulp.dest('../alasql-org/console/'));
 });
 

@@ -1,9 +1,14 @@
 # Changelog
 
-### 0.1.8 "Pisa" (22.05.2015 - 24.05.2015)
+### 0.1.8 "Pisa" (22.05.2015 - 28.05.2015)
 * SELECT FROM syntax
 * Export to multiple sheets workbook
 * SQL-99 features list
+* Changed README.md
+* PEOPLE.md moved to wiki
+* VALUE OF SELECT operator
+* bitHound file
+
 
 ### 0.1.7 "Parma" (17.05.2015 - 22.05.2015)
 * Fixed BETWEEN AND and AND parsing priority bug (KPI1:95%)
