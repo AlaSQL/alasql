@@ -1,13 +1,17 @@
 /**
+	@fileoverview AlaSQL JavaScript SQL library
+	@see http://github.com/agershun/alasql
+*/
+
+/**
 	Callback from statement
 	@callback statement-callback
 	@param {object} data Result data
 */
 
-
-//
-//	UMD envelope for AlaSQL
-//
+/**
+	UMD envelope for AlaSQL
+*/
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -21,15 +25,15 @@
 }(this, function () {
 
 /**
- @function alasql - Main Alasql class
- @param {string|function|object} sql - SQL-statement or data object for fuent interface
- @param {object=} params - SQL parameters
- @param {function=} cb - callback function
- @param {object=} scope - Scope for nested queries
- @return {any} - Result data object
-*/
+	 alasql - Main Alasql class
+ 	@function
+ 	@param {string|function|object} sql - SQL-statement or data object for fuent interface
+ 	@param {object} params - SQL parameters
+ 	@param {function} cb - callback function
+ 	@param {object} scope - Scope for nested queries
+ 	@return {any} - Result data object
 
-/**
+	@example
  Standard sync call:
     alasql('CREATE TABLE one');
  Query:
@@ -90,11 +94,11 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = "0.1.7";
+alasql.version = "0.1.8";
 
 /**
 	Debug flag
-	@global
+	@type {boolean}
 */
 alasql.debug = undefined; // Initial debug variable
 
@@ -103,17 +107,18 @@ alasql.debug = undefined; // Initial debug variable
 getAlaSQLPath();
 /** 
 	Get path of alasql.js
+	@function 
+	@todo Rewrite and simplify the code. Review, is this function is required separately
 */
 function getAlaSQLPath() {
+	/** type {string} Path to alasql library and plugins */
 	alasql.path = '';
 
 	if (typeof importScripts === 'function') {
 		alasql.path = '';		
-		// TODO Check how to get path in worker
+		/** @todo Check how to get path in worker */
 	} else if(typeof exports != 'undefined') { 
 		alasql.path = __dirname;
-		// 
-		//console.log(require('alasql').resolve());
 	} else if(typeof Meteor == 'object' && Meteor.isClient) {
 			alasql.path = '/packages/dist/';
 	} else if(typeof Meteor == 'object' && Meteor.isServer) {
@@ -137,4 +142,9 @@ function getAlaSQLPath() {
 		};	
 	};
 };
+
+/** 
+	Parser function
+	@type {object}
+*/
 

@@ -1,9 +1,15 @@
 /**
- Strip all comments.
- Based om the https://github.com/lehni/uncomment.js/blob/master/uncomment.js
- I just replaced JavaScript's '//' to SQL's '--' and remove other stuff
- TODO: Fixed [aaa/*bbb] for column names
- TODO: Bug if -- comments in the last line
+ 	Strip all comments.
+ 	@function
+ 	@param {string} str
+ 	@return {string}
+ 	Based om the https://github.com/lehni/uncomment.js/blob/master/uncomment.js
+ 	I just replaced JavaScript's '//' to SQL's '--' and remove other stuff
+ 
+ 	@todo Fixed [aaa/*bbb] for column names
+ 	@todo Bug if -- comments in the last line
+	@todo Check if it possible to model it with Jison parser
+	@todo Remove unused code
  */
 
 alasql.utils.uncomment = function uncomment(str) {

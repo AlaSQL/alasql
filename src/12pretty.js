@@ -1,10 +1,11 @@
-//
-// 12prettyflag.js - prettify
-//
+/**
+   12prettyflag.js - prettify
+   @todo remove this part into the separate plugin
+*/
 
 /**
  	Pretty flag - nice HTML output or standard text without any tags
- 	@global
+	@type {boolean}
 */
 
 alasql.prettyflag = false;
@@ -13,7 +14,7 @@ alasql.prettyflag = false;
 	Pretty output of SQL functions
 	@function
 	@param {string} sql SQL statement
-	@param {boolean} prettyflag value
+	@param {boolean} flag value
 	@return {string} HTML or text string with pretty output 
 */
 
@@ -27,7 +28,7 @@ alasql.pretty = function(sql, flag) {
 
 /**
  Pretty keyword
- @param {string} Keyword
+ @param {string} s Keyword
  @return {string} pretty keyword
 */
 function K(s){

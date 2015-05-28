@@ -49,6 +49,7 @@ if(typeof exports == 'object') {
 
 	it("5. Write XLSX file with headers", function(done) {
 		alasql('select * into xlsx("'+dirname+'/restest169a.xlsx",{headers:true}) from one',[],function(res){
+//			console.log(res);
 			assert(res == 1);
 			done();		
 		});

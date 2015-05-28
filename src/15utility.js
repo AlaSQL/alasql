@@ -1,13 +1,13 @@
 /*
-//
-// Utilities for Alasql.js
-// Date: 03.11.2014
-// (c) 2014, Andrey Gershun
-//
+    Utilities for Alasql.js
+
+    @todo Review the list of utilities
+    @todo Find more effective utilities
 */
 
 /**
- Alasql utility functions
+    Alasql utility functions
+    @type {object}
  */
 var utils = alasql.utils = {};
 
@@ -16,6 +16,13 @@ var utils = alasql.utils = {};
     @function
     @param {string} s JavaScript string to be modified
     @return {string} Covered expression
+
+    @example
+    
+    123         => 123
+    undefined   => undefined
+    NaN         => undefined
+
 */
 function n2u(s) {
     return '(y='+s+',y===y?y:undefined)';
@@ -25,6 +32,13 @@ function n2u(s) {
     Return undefined if s undefined
     @param {string} s JavaScript string to be modified
     @return {string} Covered expression
+
+    @example
+    
+    123,a       => a
+    undefined,a => undefined
+    NaN,a       => undefined
+
 */    
 function und(s,r) {
     return '(y='+s+',typeof y=="undefined"?undefined:'+r+')'
@@ -41,16 +55,20 @@ function returnTrue () {return true};
 /**
     Return undefined. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
     @function
-    @return undefined
+    @return {undefined} Always undefined
 */
 function returnUndefined() {};
 
 /**
- Escape quotes
- @function
- @param {string} s Source string
- @return {string} Escaped string
- */
+    Escape quotes
+    @function
+    @param {string} s Source string
+    @return {string} Escaped string
+    @example
+    
+    Piter's => Piter\'s
+
+*/
 var escapeq = utils.escapeq = function(s) {
 //    console.log(s);
     return s.replace(/\'/g,'\\\'');
@@ -58,18 +76,27 @@ var escapeq = utils.escapeq = function(s) {
 
 
 /**
- Double quotes
- @param {string} s Source string
- @return {string} Escaped string
+    Double quotes for SQL statements
+    @param {string} s Source string
+    @return {string} Escaped string
+
+    @example
+    
+    Piter's => Piter''s
+
  */
 var escapeqq = utils.undoubleq = function(s) {
     return s.replace(/(\')/g,'\'\'');
 }
 
 /**
- Replace double quotes
- @param {string} s Source string
- @return {string} Replaced string
+    Replace double quotes with single quote
+    @param {string} s Source string
+    @return {string} Replaced string
+    @example
+
+    Piter''s => Piter's
+
  */
 var doubleq = utils.doubleq = function(s) {
     return s.replace(/(\'\')/g,'\\\'');
@@ -77,14 +104,22 @@ var doubleq = utils.doubleq = function(s) {
 
 
 /**
- Replace sigle quote to escaped single quote
- @param {string} s Source string
- @return {string} Replaced string
- */
+    Replace sigle quote to escaped single quote
+    @param {string} s Source string
+    @return {string} Replaced string
+
+    @todo Chack this functions
+    
+*/
  var doubleqq = utils.doubleqq = function(s) {
     return s.replace(/\'/g,"\'");
 }
 
+/**
+    Cut BOM first character for UTF-8 files (for merging two files)
+    @param {string} s Source string
+    @return {string} Replaced string    
+*/
 
 var cutbom = function(s) {
     if(s[0] == String.fromCharCode(65279)) s = s.substr(1);
@@ -92,24 +127,30 @@ var cutbom = function(s) {
 };
 
 /**
-  Load text file from anywhere
-  @param {string} path File path
-  @param {boolean} asy True - async call, false - sync call
-  @param {function} success Success function
-  @param {function} error Error function
+    Load text file from anywhere
+    @param {string|object} path File path or HTML event
+    @param {boolean} asy True - async call, false - sync call
+    @param {function} success Success function
+    @param {function} error Error function
+    @return {string} Read data
+
+    @todo Define Event type
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
 
     if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
-        // For Node.js
+
         if(typeof Meteor != 'undefined') {
-            var fs = Npm.require('fs'); // For Meteor
+            /** For Meteor */
+            var fs = Npm.require('fs');
         } else {
+            /** For Node.js */
             var fs = require('fs');
         }
-//        console.log(36,path);
-//        console.log(typeof path);
-        if(!path) {
+
+        /* If path is empty, than read data from stdin (for Node) */
+        if(typeof path == 'undefined') {
+            /* @type {string} Buffer for string*/
             var buff = '';
             process.stdin.setEncoding('utf8');
             process.stdin.on('readable', function() {
@@ -122,8 +163,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                success(cutbom(buff));
             });
         } else {
-            // var data = fs.readFileSync(path);
-            // success(data.toString());
+            /* If async callthen call async*/
             if(asy) {
                 fs.readFile(path,function(err,data){
                     if(err) {
@@ -132,28 +172,15 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     success(cutbom(data.toString()));
                 });
             } else {
-              var data = fs.readFileSync(path);
-              success(cutbom(data.toString()));
+                /* Call sync version */
+                var data = fs.readFileSync(path);
+                success(cutbom(data.toString()));
             }
         }
     } else if(typeof cordova == 'object') {
-        // console.log('CORDOVA'+path);
-        //         console.log(cordova);
-//         console.log('CORDOVA'+path);
-
-        // Cordova
-
+        /* If Cordova */
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
-
-//                     var reader = new FileReader();
-//  //                   console.log('READ FILE 2');
-//                     reader.onloadend = function(e) {
-// //                    console.log('READ FILE 3',this.result);
-//                         success(this.result);
-//                     };
-//                     reader.readAsText(file);
-
                 fileEntry.file(function(file){
                     var fileReader = new FileReader();
                     fileReader.onloadend = function(e){
@@ -161,9 +188,11 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     };
                     fileReader.readAsText(file);
                 });
-                // });          
             });
         });
+
+
+/** @todo Check eliminated code below */
 
 /*
 
@@ -188,15 +217,20 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         });    
 */
     } else {
-        // if(typeof path == "string") {
-        // } 
+        /* For string */
         if(typeof path == "string") {
             // For browser read from tag
+            /*
+                SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
+            */
             if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
                 var data = document.querySelector(path).textContent;
                 success(data);
             } else {
-                    // For browser
+                /* 
+                    Simply read file from HTTP request, like:
+                    SELECT * FROM TXT('http://alasql.org/README.md');
+                */
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -213,9 +247,20 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 xhr.send();
             }
         } else if(path instanceof Event) {
-            // console.log("event");
+            /* 
+                For browser read from files input element
+                <input type="files" onchange="readFile(event)">
+                <script>
+                    function readFile(event) {
+                        alasql('SELECT * FROM TXT(?)',[event])
+                    }
+                </script>
+            */
+            /** @type {array} List of files from <input> element */
             var files = path.target.files;
+            /** type {object} */
             var reader = new FileReader();
+            /** type {string} */
             var name = files[0].name;
             reader.onload = function(e) {
                 var data = e.target.result;
@@ -227,7 +272,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 };
 
 /**
-  Load binary file from anywhere
+  @function Load binary file from anywhere
   @param {string} path File path
   @param {boolean} asy True - async call, false - sync call
   @param {function} success Success function
@@ -478,7 +523,12 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     return res;
 };
 
-// For compatibility issues
+/** 
+    @function Is this IE9 
+    @return {boolean} True for IE9 and false for other browsers
+
+    For IE9 compatibility issues
+*/
 function isIE () {
   var myNav = navigator.userAgent.toLowerCase();
   return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
@@ -501,7 +551,7 @@ function isIE () {
 // Fast hash function
 
 /**
-  Hash string to integer number
+  @function Hash string to integer number
   @param {string} str Source string
   @return {integer} hash number
 */
@@ -517,8 +567,12 @@ var hash = utils.hash = function hash(str){
 };
 
 /**
- Union arrays
- */
+    Union arrays
+    @function
+    @param {array} a
+    @param {array} b
+    @return {array}
+*/
 var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
@@ -696,9 +750,35 @@ var deepEqual = utils.deepEqual = function (x, y) {
 }
 
 
+/**
+    Array with distinct records
+    @param {array} data
+    @return {array}
+*/
+var distinctArray = utils.distinctArray = function(data) {
+    var uniq = {};
+    // TODO: Speedup, because Object.keys is slow
+    for(var i=0,ilen=data.length;i<ilen;i++) {
+        if(typeof data[i] == 'object') {
+            var uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
+        } else {
+            var uix = data[i];  
+        }
+        uniq[uix] = data[i];
+    };
+    var res = [];
+    for(var key in uniq) res.push(uniq[key]);
+    return res;
+}
+
+
 /** 
-  Extend object
- */
+    Extend object a with properties of b
+    @function 
+    @param {object} a
+    @param {object} b
+    @return {object}
+*/
 var extend = utils.extend = function extend (a,b){
     if(typeof a == 'undefined') a = {};
     for(var key in b) {
@@ -758,7 +838,7 @@ var xlsnc = utils.xlsnc = function(i) {
 
 /**
     Excel:conver Excel column name to number
-    @param {integer} i Column number, like 'A' or 'BE'
+    @param {string} s Column number, like 'A' or 'BE'
     @return {string} Column name, starting with 0
 */
 var xlscn = utils.xlscn = function(s) {
@@ -779,21 +859,5 @@ var domEmptyChildren = utils.domEmptyChildren = function (container){
     container.removeChild(container.lastChild);
   };
 };
-
-var distinctArray = utils.distinctArray = function(data) {
-    var uniq = {};
-    // TODO: Speedup, because Object.keys is slow
-    for(var i=0,ilen=data.length;i<ilen;i++) {
-        if(typeof data[i] == 'object') {
-            var uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
-        } else {
-            var uix = data[i];  
-        }
-        uniq[uix] = data[i];
-    };
-    var res = [];
-    for(var key in uniq) res.push(uniq[key]);
-    return res;
-}
 
 

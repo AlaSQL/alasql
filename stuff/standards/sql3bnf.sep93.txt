@@ -1,0 +1,3042 @@
+From: Jeff Fried <jfried@informix.com>
+Subject: Re: Where is SQL syntax spec
+To: Tim Bunce <timbo@ig.co.uk>
+Date: Tue, 24 May 94 15:57:39 PDT
+In-Reply-To: <9405241922.aa19411@post.demon.co.uk>; from "Tim Bunce" at May 24, 94 6:59 pm
+
+Tim,
+
+   I thought i'd add to life's complexity by appending a copy of the
+SQL3 bnf.  SQL3 is a superset of SQL-92 [which is a superset of SQL-89
+level 2].  SQL3 is not yet a standard, but SQL-92 is a standard.  In
+fact ENTRY LEVEL SQL-92 is the "current" implementation state of most
+vendors.  There are only a few differences between SQL-92 ENTRY LEVEL
+and SQL-89 Level II, but two of them are very important:
+
+   - Delimited identifiers
+
+   - The handling of the WITH CHECK option on views defaults to
+     CASCADE.  In SQL-89 the default was [effectively] LOCAL.
+
+... jeff
+
+> 
+for the  language done at about  1-SEP-1993 15:13:55.88.
+The specific version of the BNF included here is:  ANSI-only, SQL3-only.
+
+
+<SQL terminal character> ::=
+    <SQL language character>
+
+<SQL language character> ::=
+      <simple Latin letter>
+    | <digit>
+    | <SQL special character>
+
+<simple Latin letter> ::=
+      <simple Latin upper case letter>
+    | <simple Latin lower case letter>
+
+<simple Latin upper case letter> ::=
+          A | B | C | D | E | F | G | H | I | J | K | L | M | N | O
+    | P | Q | R | S | T | U | V | W | X | Y | Z
+
+<simple Latin lower case letter> ::=
+          a | b | c | d | e | f | g | h | i | j | k | l | m | n | o
+    | p | q | r | s | t | u | v | w | x | y | z
+
+<digit> ::=
+    0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+
+<SQL special character> ::=
+      <space>
+    | <double quote>
+    | <percent>
+    | <ampersand>
+    | <quote>
+    | <left paren>
+    | <right paren>
+    | <asterisk>
+    | <plus sign>
+    | <comma>
+    | <minus sign>
+    | <period>
+    | <solidus>
+    | <colon>
+    | <semicolon>
+    | <less than operator>
+    | <equals operator>
+    | <greater than operator>
+    | <question mark>
+    | <left bracket>
+    | <right bracket>
+    | <circumflex>
+    | <underscore>
+    | <vertical bar>
+
+<space> ::= !! <EMPHASIS>(space character in character set in use)
+
+<double quote> ::= "
+
+<percent> ::= %
+
+<ampersand> ::= &
+
+<quote> ::= '
+
+<left paren> ::= (
+
+<right paren> ::= )
+
+<asterisk> ::= *
+
+<plus sign> ::= +
+
+<comma> ::= ,
+
+<minus sign> ::= -
+
+<period> ::= .
+
+<solidus> ::= /
+
+<colon> ::= :
+
+<semicolon> ::= ;
+
+<less than operator> ::= <
+
+<equals operator> ::= =
+
+<greater than operator> ::= >
+
+<question mark> ::= ?
+
+<left bracket> ::= [
+
+<right bracket> ::= ]
+
+<circumflex> ::= ^
+
+<underscore> ::= _
+
+<vertical bar> ::= |
+
+<separator> ::= { <comment> | <space> | <newline> }...
+
+<comment> ::=
+      <simple comment>
+    | <bracketed comment>
+
+<simple comment> ::=
+    <simple comment introducer> [ <comment character>... ] <newline>
+
+<simple comment introducer> ::= <minus sign><minus sign>[<minus sign>...]
+
+<comment character> ::=
+      <nonquote character>
+    | <quote>
+
+<nonquote character> ::= !! <EMPHASIS>(See the Syntax Rules.)
+
+<newline> ::= !! <EMPHASIS>(implementation-defined end-of-line indicator)
+
+<bracketed comment> ::=             !! (<EMPHASIS>(See the Syntax Rules))
+    <bracketed comment introducer>
+      <bracketed comment contents>
+    <bracketed comment terminator>
+
+<bracketed comment introducer> ::= <solidus><asterisk>
+
+<bracketed comment contents> ::=
+    [ { <comment character> | <separator> }... ]
+
+<bracketed comment terminator> ::= <asterisk><solidus>
+
+<token> ::=
+      <nondelimiter token>
+    | <delimiter token>
+
+<nondelimiter token> ::=
+      <regular identifier>
+    | <key word>
+    | <unsigned numeric literal>
+    | <national character string literal>
+    | <bit string literal>
+    | <hex string literal>
+    | <user-defined operator symbol>
+
+<regular identifier> ::= <identifier body>
+
+<identifier body> ::=
+    <identifier start> [ { <underscore> | <identifier part> }... ]
+
+<identifier start> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<identifier part> ::=
+      <identifier start>
+    | <digit>
+
+<key word> ::=
+      <reserved word>
+    | <non-reserved word>
+
+<reserved word> ::=
+      ABSOLUTE | ACTION | ACTOR | ADD | AFTER | ALIAS
+    | ALL | ALLOCATE | ALTER
+    | AND | ANY | ARE
+    | AS | ASC | ASSERTION
+    | ASYNC | AT
+    | ATTRIBUTES
+    | AUTHORIZATION | AVG
+    | BEFORE | BEGIN | BETWEEN | BIT | BIT_LENGTH
+    | BOOLEAN | BOTH | BREADTH | BY
+    | CASCADE | CASCADED | CASE | CAST
+    | CATALOG
+    | CHAR | CHARACTER
+    | CHAR_LENGTH | CHARACTER_LENGTH | CHECK | CLASS | CLOSE | COALESCE
+    | COLLATE
+    | COLLATION | COLUMN | COMMIT | COMPLETION
+    | CONNECT | CONNECTION | CONSTRAINT
+    | CONSTRAINTS | CONSTRUCTOR | CONTINUE | CONVERT | CORRESPONDING
+    | COUNT
+    | CREATE | CROSS | CURRENT | CURRENT_DATE
+    | CURRENT_PATH
+    | CURRENT_TIME
+    | CURRENT_TIMESTAMP | CURRENT_USER | CURSOR | CYCLE
+    | DATA | DATE | DAY | DEALLOCATE
+    | DEC | DECIMAL | DECLARE | DEFAULT
+    | DEFERRABLE | DEFERRED | DELETE | DEPTH
+    | DESC | DESCRIBE
+    | DESCRIPTOR
+    | DESIGNATOR
+    | DESTROY | DESTRUCTOR | DICTIONARY
+    | DIAGNOSTICS | DISCONNECT | DISTINCT | DOMAIN
+    | DOUBLE | DROP
+    | EACH
+    | ELEMENT
+    | ELSE
+    | END | END-EXEC | EQUALS
+    | ESCAPE | EXCEPT
+    | EXEC | EXECUTE | EXISTS | EXTERNAL | EXTRACT
+    | FACTOR
+    | FALSE | FETCH | FIRST | FLOAT | FOR | FOREIGN
+    | FOUND | FROM | FULL
+    | FUNCTION
+    | GENERAL | GET | GLOBAL | GO | GOTO
+    | GRANT | GROUP
+    | HAVING | HOUR
+    | IDENTITY | IGNORE | IMMEDIATE
+    | IN | INDICATOR
+    | INITIALLY | INNER | INOUT
+    | INPUT | INSENSITIVE | INSERT
+    | INSTEAD
+    | INT | INTEGER | INTERSECT | INTERVAL
+    | INTO | IS | ISOLATION
+    | JOIN
+    | KEY
+    | LANGUAGE | LAST | LEADING | LEFT
+    | LESS | LEVEL | LIKE | LIMIT
+    | LIST
+    | LOCAL | LOWER
+    | MATCH | MAX | MIN | MINUTE | MODIFY | MODULE
+    | MONTH
+    | MOVE | MULTISET
+    | NAMES | NATIONAL | NATURAL | NCHAR | NEW
+    | NEW_TABLE
+    | NEXT | NO
+    | NONE | NOT| NULL | NULLIF | NUMERIC
+    | OCTET_LENGTH | OF | OFF
+    | OID | OLD
+    | OLD_TABLE
+    | ON | ONLY | OPEN | OPERATION
+    | OPERATOR
+    | OPERATORS
+    | OPTION | OR | ORDER
+    | OUT | OUTER | OUTPUT | OVERLAPS
+    | PAD | PARAMETERS | PARTIAL
+    | PATH
+    | PENDANT | POSITION | POSTFIX | PRECISION | PREFIX
+    | PREORDER | PREPARE | PRESERVE | PRIMARY | PRIOR | PRIVATE
+    | PRIVILEGES | PROCEDURE | PROTECTED | PUBLIC
+    | READ | REAL | RECURSIVE
+    | REFERENCES | REFERENCING | RELATIVE | REPRESENTATION
+    | RESTRICT | REVOKE | RIGHT
+    | ROLE | ROLLBACK
+    | ROUTINE
+    | ROW | ROWS
+    | SAVEPOINT | SCHEMA | SCROLL | SEARCH | SECOND | SECTION
+    | SELECT
+    | SENSITIVE
+    | SEQUENCE
+    | SESSION | SESSION_USER | SET
+    | SIMILAR | SIZE | SMALLINT | SOME | SPACE | SPECIFIC
+    | SQL | SQLCODE
+    | SQLERROR | SQLEXCEPTION | SQLSTATE | SQLWARNING
+    | START | STATE
+    | STRUCTURE
+    | SUBSTRING | SUM
+    | SYMBOL
+    | SYSTEM_USER
+    | TABLE | TEMPLATE | TEMPORARY
+    | TERM
+    | TEST | THAN
+    | THEN | THERE | TIME | TIMESTAMP
+    | TIMEZONE_HOUR
+    | TIMEZONE_MINUTE | TO | TRAILING | TRANSACTION
+    | TRANSLATE | TRANSLATION
+    | TRIGGER | TRIM | TRUE | TYPE
+    | UNDER | UNION | UNIQUE | UNKNOWN
+    | UPDATE | UPPER | USAGE | USER | USING
+    | VALUE | VALUES | VARCHAR | VARIABLE | VARIANT
+    | VARYING | VIEW
+    | VIRTUAL | VISIBLE
+    | WAIT | WHEN | WHENEVER | WHERE
+    | WITH | WITHOUT
+    | WORK | WRITE
+    | YEAR
+    | ZONE
+
+<non-reserved word> ::=
+      ADA
+    | C | CATALOG_NAME
+    | CHAIN
+    | CHARACTER_SET_CATALOG | CHARACTER_SET_NAME
+    | CHARACTER_SET_SCHEMA | CLASS_ORIGIN | COBOL | COLLATION_CATALOG
+    | COLLATION_NAME
+    | COLLATION_SCHEMA | COLUMN_NAME | COMMAND_FUNCTION
+    | COMMITTED | CONDITION_NUMBER | CONNECTION_NAME | CONSTRAINT_CATALOG
+    | CONSTRAINT_NAME | CONSTRAINT_SCHEMA | CURSOR_NAME
+    | DATA | DATETIME_INTERVAL_CODE | DATETIME_INTERVAL_PRECISION
+    | DYNAMIC_FUNCTION
+    | FORTRAN
+    | HOLD
+    | KEY_MEMBER | KEY_TYPE
+    | LENGTH
+    | MESSAGE_LENGTH | MESSAGE_OCTET_LENGTH | MESSAGE_TEXT | MORE | MUMPS
+    | NAME | NULLABLE | NUMBER
+    | PASCAL | PLI
+    | REPEATABLE | RETURNED_LENGTH | RETURNED_OCTET_LENGTH | RETURNED_SQLSTATE
+    | ROUTINE_CATALOG | ROUTINE_NAME | ROUTINE_SCHEMA | ROW_COUNT
+    | SCALE | SCHEMA_NAME | SERIALIZABLE | SERVER_NAME | SPECIFIC_NAME
+    | SUBCLASS_ORIGIN
+    | TABLE_NAME | TYPE
+    | UNCOMMITTED | UNNAMED
+
+<unsigned numeric literal> ::=
+      <exact numeric literal>
+    | <approximate numeric literal>
+
+<exact numeric literal> ::=
+      <unsigned integer> [ <period> [ <unsigned integer> ] ]
+    | <period> <unsigned integer>
+
+<unsigned integer> ::= <digit>...
+
+<approximate numeric literal> ::= <mantissa> E <exponent>
+
+<mantissa> ::= <exact numeric literal>
+
+<exponent> ::= <signed integer>
+
+<signed integer> ::= [ <sign> ] <unsigned integer>
+
+<sign> ::= <plus sign> | <minus sign>
+
+<national character string literal> ::=
+    N <quote> [ <character representation>... ] <quote>
+      [ { <separator> <quote> [ <character representation>... ] <quote> }... ]
+
+<character representation> ::=
+      <nonquote character>
+    | <quote symbol>
+
+<quote symbol> ::= <quote><quote>
+
+<bit string literal> ::=
+    B <quote> [ <bit>... ] <quote>
+      [ { <separator> <quote> [ <bit>... ] <quote> }... ]
+
+<bit> ::= 0 | 1
+
+<hex string literal> ::=
+    X <quote> [ <hexit>... ] <quote>
+      [ { <separator> <quote> [ <hexit>... ] <quote> }... ]
+
+<hexit> ::= <digit> | A | B | C | D | E | F | a | b | c | d | e | f
+
+<user-defined operator symbol> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<delimiter token> ::=
+      <character string literal>
+    | <date string>
+    | <time string>
+    | <timestamp string>
+    | <interval string>
+    | <delimited identifier>
+    | <SQL special character>
+    | <not equals operator>
+    | <greater than or equals operator>
+    | <less than or equals operator>
+    | <concatenation operator>
+    | <double period>
+    | <double colon>
+    | <assignment operator>
+    | <left bracket>
+    | <right bracket>
+
+<character string literal> ::=
+    [ <introducer><character set specification> ]
+    <quote> [ <character representation>... ] <quote>
+      [ { <separator> <quote> [ <character representation>... ] <quote> }... ]
+
+<introducer> ::= <underscore>
+
+<character set specification> ::=
+      <standard character repertoire name>
+    | <implementation-defined character repertoire name>
+    | <user-defined character repertoire name>
+    | <standard universal character form-of-use name>
+    | <implementation-defined universal character form-of-use name>
+
+<standard character repertoire name> ::= <character set name>
+
+<character set name> ::= [ <schema name> <period> ]
+      <SQL language identifier>
+
+<schema name> ::=
+    [ <catalog name> <period> ] <unqualified schema name>
+
+<catalog name> ::= <identifier>
+
+<identifier> ::=
+    [ <introducer><character set specification> ] <actual identifier>
+
+<actual identifier> ::=
+      <regular identifier>
+    | <delimited identifier>
+
+<delimited identifier> ::=
+    <double quote> <delimited identifier body> <double quote>
+
+<delimited identifier body> ::= <delimited identifier part>...
+
+<delimited identifier part> ::=
+      <nondoublequote character>
+    | <doublequote symbol>
+
+<nondoublequote character> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<doublequote symbol> ::= <double quote><double quote>
+
+<unqualified schema name> ::= <identifier>
+
+<SQL language identifier> ::=
+    <SQL language identifier start>
+       [ { <underscore> | <SQL language identifier part> }... ]
+
+<SQL language identifier start> ::= <simple Latin letter>
+
+<SQL language identifier part> ::=
+      <simple Latin letter>
+    | <digit>
+
+<implementation-defined character repertoire name> ::=
+    <character set name>
+
+<user-defined character repertoire name> ::= <character set name>
+
+<standard universal character form-of-use name> ::=
+    <character set name>
+
+<implementation-defined universal character form-of-use name> ::=
+    <character set name>
+
+<date string> ::=
+    <quote> <date value> <quote>
+
+<date value> ::=
+    <years value> <minus sign> <months value>
+        <minus sign> <days value>
+
+<years value> ::= <datetime value>
+
+<datetime value> ::= <unsigned integer>
+
+<months value> ::= <datetime value>
+
+<days value> ::= <datetime value>
+
+<time string> ::=
+    <quote> <time value> [ <time zone interval> ] <quote>
+
+<time value> ::=
+    <hours value> <colon> <minutes value> <colon> <seconds value>
+
+<hours value> ::= <datetime value>
+
+<minutes value> ::= <datetime value>
+
+<seconds value> ::=
+      <seconds integer value> [ <period> [ <seconds fraction> ] ]
+
+<seconds integer value> ::= <unsigned integer>
+
+<seconds fraction> ::= <unsigned integer>
+
+<time zone interval> ::=
+    <sign> <hours value> <colon> <minutes value>
+
+<timestamp string> ::=
+    <quote> <date value> <space> <time value>
+        [ <time zone interval> ] <quote>
+
+<interval string> ::=
+    <quote> { <year-month literal> | <day-time literal> } <quote>
+
+<year-month literal> ::=
+      <years value>
+    | [ <years value> <minus sign> ] <months value>
+
+<day-time literal> ::=
+      <day-time interval>
+    | <time interval>
+
+<day-time interval> ::=
+    <days value>
+      [ <space> <hours value> [ <colon> <minutes value>
+        [ <colon> <seconds value> ] ] ]
+
+<time interval> ::=
+      <hours value> [ <colon> <minutes value> [ <colon> <seconds value> ] ]
+    | <minutes value> [ <colon> <seconds value> ]
+    | <seconds value>
+
+<not equals operator> ::= <>
+
+<greater than or equals operator> ::= >=
+
+<less than or equals operator> ::= <=
+
+<concatenation operator> ::= ||
+
+<double period> ::= ..
+
+<double colon> ::= ::
+
+<assignment operator> ::= :=
+
+<SQL-client module definition> ::= <module>
+
+<module> ::=
+    <module name clause>
+      <module remainder>
+    [ END MODULE ]
+
+<module name clause> ::=
+    MODULE [ <module name> ]
+
+<module name> ::=
+      <SQL-server module name>
+    | <SQL-client module name>
+
+<SQL-server module name> ::= <qualified identifier>
+
+<qualified identifier> ::= <identifier>
+
+<SQL-client module name> ::= <identifier>
+
+<module remainder> ::=
+    [ <module character set specification> ]
+    <language clause>
+    <module authorization clause>
+      [ <module path specification> ]
+    <module contents>...
+
+<module character set specification> ::=
+    NAMES ARE <character set specification>
+
+<language clause> ::=
+    LANGUAGE <language name>
+
+<language name> ::=
+    ADA | C | COBOL | FORTRAN | MUMPS | PASCAL | PLI | SQL
+
+<module authorization clause> ::=
+      SCHEMA <schema name>
+    | AUTHORIZATION <module authorization identifier>
+    | SCHEMA <schema name> AUTHORIZATION <module authorization identifier>
+
+<module authorization identifier> ::=
+    <authorization identifier>
+
+<authorization identifier> ::= <identifier>
+
+<module path specification> ::=
+    PATH <schema name list>
+
+<schema name list> ::=
+    <schema name> [ { <comma> <schema name> }... ]
+
+<module contents> ::=
+      <global declaration> [ <semicolon> ]
+    | <routine>
+
+<global declaration> ::=
+      <declare cursor>
+    | <temporary abstract data type declaration>
+    | <temporary table declaration>
+    | <temporary view declaration>
+
+<declare cursor> ::=
+    DECLARE <cursor name> [ <cursor sensitivity> ]
+      [ SCROLL ] CURSOR
+      [ WITH HOLD ]
+      FOR <cursor specification>
+<cursor sensitivity> ::=
+      SENSITIVE
+    | INSENSITIVE
+
+<cursor name> ::= <local qualified name>
+
+<local qualified name> ::=
+    [ <local qualifier> <period> ] <qualified identifier>
+
+<local qualifier> ::= MODULE
+
+<cursor specification> ::=
+    <query expression> [ <order by clause> ]
+      [ <updatability clause> ]
+
+<query expression> ::=
+    <possibly updatable query expression> [ <trigger definition>... ]
+
+<possibly updatable query expression> ::=
+      <non-join query expression>
+    | <joined table>
+
+<non-join query expression> ::=
+      <non-join query term>
+    | <query expression> UNION  [ ALL ]
+          [ <corresponding spec> ] <query term>
+    | <query expression> EXCEPT [ ALL ]
+          [ <corresponding spec> ] <query term>
+
+<non-join query term> ::=
+      <non-join query primary>
+    | <query term> INTERSECT [ ALL ]
+          [ <corresponding spec> ] <query primary>
+    | <recursive union>
+
+<non-join query primary> ::=
+      <simple table>
+    | <left paren> <non-join query expression> <right paren>
+
+<simple table> ::=
+      <query specification>
+    | <table value designator>
+    | <explicit table>
+    | <collection expression>
+
+<query specification> ::=
+    SELECT [ <set quantifier> ] <select list>
+      <table expression>
+
+<set quantifier> ::= DISTINCT | ALL
+
+<select list> ::=
+      <asterisk>
+    | <select sublist> [ { <comma> <select sublist> }... ]
+
+<select sublist> ::=
+      <derived column>
+    | <qualifier> <period> <asterisk>
+
+<derived column> ::=
+    <value expression> [ <as clause> ]
+
+<value expression> ::=
+      <numeric value expression>
+    | <string value expression>
+    | <datetime value expression>
+    | <interval value expression>
+    | <enumerated value expression>
+    | <boolean value expression>
+    | <attributes function>
+    | <abstract data type value expression>
+    | <table value expression>
+    | <collection value expression>
+
+<numeric value expression> ::=
+      <term>
+    | <numeric value expression> <plus sign> <term>
+    | <numeric value expression> <minus sign> <term>
+
+<term> ::=
+      <factor>
+    | <term> <asterisk> <factor>
+    | <term> <solidus> <factor>
+
+<factor> ::=
+    [ <sign> ] <numeric primary>
+
+<numeric primary> ::=
+      <value expression primary>
+    | <numeric value function>
+
+<value expression primary> ::=
+      <unsigned value specification>
+    | <column reference>
+    | <row reference>
+    | <set function specification>
+    | <table subquery>
+    | <case expression>
+    | <left paren> <value expression> <right paren>
+    | <cast specification>
+
+<unsigned value specification> ::=
+      <unsigned literal>
+    | <general value specification>
+
+<unsigned literal> ::=
+      <unsigned numeric literal>
+    | <general literal>
+
+<general literal> ::=
+      <character string literal>
+    | <national character string literal>
+    | <bit string literal>
+    | <hex string literal>
+    | <datetime literal>
+    | <interval literal>
+    | <enumeration literal>
+    | <boolean literal>
+    | <oid literal>
+
+<datetime literal> ::=
+      <date literal>
+    | <time literal>
+    | <timestamp literal>
+
+<date literal> ::=
+    DATE <date string>
+
+<time literal> ::=
+    TIME <time string>
+
+<timestamp literal> ::=
+    TIMESTAMP <timestamp string>
+
+<interval literal> ::=
+    INTERVAL [ <sign> ] <interval string> <interval qualifier>
+
+<interval qualifier> ::=
+      <start field> TO <end field>
+    | <single datetime field>
+
+<start field> ::=
+    <non-second datetime field>
+        [ <left paren> <interval leading field precision> <right paren> ]
+
+<non-second datetime field> ::= YEAR | MONTH | DAY | HOUR | MINUTE
+
+<interval leading field precision> ::= <unsigned integer>
+
+<end field> ::=
+      <non-second datetime field>
+    | SECOND
+        [ <left paren> <interval fractional seconds precision> <right paren> ]
+
+<interval fractional seconds precision> ::= <unsigned integer>
+
+<single datetime field> ::=
+      <non-second datetime field>
+          [ <left paren> <interval leading field precision> <right paren> ]
+    | SECOND [ <left paren> <interval leading field precision>
+          [ <comma> <interval fractional seconds precision> ] <right paren> ]
+
+<enumeration literal> ::=
+    <domain name> <double colon> <enumeration name>
+
+<domain name> ::= <schema qualified name>
+
+<schema qualified name> ::=
+    [ <schema name> <period> ] <qualified identifier>
+
+<enumeration name> ::= <identifier>
+
+<boolean literal> ::=
+      TRUE
+    | FALSE
+
+<oid literal> ::= OID <oid string>
+
+<oid string> ::= <quote> <oid value> <quote>
+
+<oid value> ::= <character representation>...
+
+<general value specification> ::=
+      <item reference>
+    | USER
+    | CURRENT_USER
+    | SESSION_USER
+    | SYSTEM_USER
+    | CURRENT_PATH
+    | VALUE
+    | <function invocation>
+    | <attribute reference>
+    | <template parameter name>
+
+<item reference> ::=
+    <parameter name> [ <indicator parameter> ]
+
+<parameter name> ::= <colon> <identifier>
+
+<indicator parameter> ::= [ INDICATOR ] <parameter name>
+
+<function invocation> ::= <routine invocation>
+
+<routine invocation> ::=
+    <routine name> <argument list>
+
+<routine name> ::= <local or schema qualified name>
+
+<local or schema qualified name> ::=
+    [ <local or schema qualifier> <period> ] <qualified identifier>
+
+<local or schema qualifier> ::=
+      <schema name>
+    | MODULE
+
+<argument list> ::=
+      <left paren> <positional arguments> <comma> <keyword arguments> <right paren>
+    | <left paren> <positional arguments> <right paren>
+    | <left paren> <keyword arguments> <right paren>
+    | <left paren> <right paren>
+
+<positional arguments> ::=
+    <argument> [ { <comma> <argument> }... ]
+
+<argument> ::=
+      <value expression>
+    | <generalized expression>
+
+<generalized expression> ::=
+    <value expression> AS <abstract data type name>
+
+<abstract data type name> ::= <local or schema qualified name>
+<attribute name> ::=
+      <identifier>
+    | OID
+
+<keyword arguments> ::=
+    <keyword argument> [ { <comma> <keyword argument> }... ]
+
+<keyword argument> ::=
+    <parameter name> <keyword parameter tag> <argument>
+
+<keyword parameter tag> ::= =>
+
+<attribute reference> ::=
+    <value specification> <period> <attribute name>
+
+<value specification> ::=
+      <literal>
+    | <general value specification>
+
+<literal> ::=
+      <signed numeric literal>
+    | <general literal>
+
+<signed numeric literal> ::=
+    [ <sign> ] <unsigned numeric literal>
+
+<template parameter name> ::= <colon> <identifier>
+
+<column reference> ::= [ <qualifier> <period> ] <column name>
+
+<qualifier> ::=
+      <table name>
+    | <correlation name>
+
+<table name> ::=
+      <local or schema qualified name>
+
+<correlation name> ::= <identifier>
+
+<column name> ::=
+      <identifier>
+    | OID
+
+<row reference> ::= ROW <qualifier>
+
+<set function specification> ::=
+      COUNT <left paren> <asterisk> <right paren>
+    | <general set function>
+
+<general set function> ::=
+      <set function type>
+          <left paren> [ <set quantifier> ] <value expression> <right paren> ]
+
+<set function type> ::=
+    AVG | MAX | MIN | SUM | COUNT
+
+<table subquery> ::= <subquery>
+
+<subquery> ::= <left paren> <query expression> <right paren>
+
+<case expression> ::=
+      <case abbreviation>
+    | <case specification>
+
+<case abbreviation> ::=
+      NULLIF <left paren> <value expression> <comma>
+            <value expression> <right paren>
+    | COALESCE <left paren> <value expression>
+            { <comma> <value expression> }... <right paren>
+
+<case specification> ::=
+      <simple case>
+    | <searched case>
+
+<simple case> ::=
+    CASE <case operand>
+      <simple when clause>...
+      [ <else clause> ]
+    END
+
+<case operand> ::= <value expression>
+
+<simple when clause> ::= WHEN <when operand> THEN <result>
+
+<when operand> ::= <value expression>
+
+<result> ::= <result expression> | NULL
+
+<result expression> ::= <value expression>
+
+<else clause> ::= ELSE <result>
+
+<searched case> ::=
+    CASE
+      <searched when clause>...
+      [ <else clause> ]
+    END
+
+<searched when clause> ::= WHEN <search condition> THEN <result>
+
+<search condition> ::=
+    <boolean value expression>
+
+<boolean value expression> ::=
+      <boolean term>
+    | <boolean value expression> OR <boolean term>
+
+<boolean term> ::=
+      <boolean factor>
+    | <boolean term> AND <boolean factor>
+
+<boolean factor> ::=
+    [ NOT ] <boolean primary>
+
+<boolean primary> ::=
+      <predicate>
+    | <value expression primary>
+
+<predicate> ::=
+      <comparison predicate>
+    | <between predicate>
+    | <in predicate>
+    | <like predicate>
+    | <null predicate>
+    | <quantified comparison predicate>
+    | <exists predicate>
+    | <unique predicate>
+    | <match predicate>
+    | <overlaps predicate>
+    | <similar predicate>
+    | <quantified predicate>
+    | <there is predicate>
+    | <distinct predicate>
+    | <boolean predicate>
+
+<comparison predicate> ::=
+    <row value designator> <comp op> <row value designator>
+
+<row value designator> ::=
+       <row value designator element>
+    | <left paren> <row value designator list> <right paren>
+    | <row subquery>
+
+<row value designator element> ::=
+      <value expression>
+    | <null specification>
+    | <default specification>
+
+<null specification> ::=
+    NULL [ <left paren> <null state> <right paren> ]
+
+<null state> ::= <identifier>
+
+<default specification> ::=
+    DEFAULT
+
+<row value designator list> ::=
+    <row value designator element>
+        [ { <comma> <row value designator element> }... ]
+
+<row subquery> ::= <subquery>
+
+<comp op> ::=
+      <equals operator>
+    | <not equals operator>
+    | <less than operator>
+    | <greater than operator>
+    | <less than or equals operator>
+    | <greater than or equals operator>
+
+<between predicate> ::=
+    <row value designator> [ NOT ] BETWEEN
+      <row value designator> AND <row value designator>
+
+<in predicate> ::=
+    <row value designator>
+      [ NOT ] IN <in predicate value>
+
+<in predicate value> ::=
+      <table subquery>
+    | <left paren> <in value list> <right paren>
+
+<in value list> ::=
+    <value expression> { <comma> <value expression> }...
+
+<like predicate> ::=
+    <match value> [ NOT ] LIKE <pattern>
+      [ ESCAPE <escape character> ]
+
+<match value> ::= <character value expression>
+
+<character value expression> ::=
+      <concatenation>
+    | <character factor>
+
+<concatenation> ::=
+    <character value expression> <concatenation operator>
+        <character factor>
+
+<character factor> ::=
+    <character primary> [ <collate clause> ]
+
+<character primary> ::=
+      <value expression primary>
+    | <string value function>
+
+<string value function> ::=
+      <character value function>
+    | <bit value function>
+
+<character value function> ::=
+      <character substring function>
+    | <regular expression substring function>
+    | <fold>
+    | <form-of-use conversion>
+    | <character translation>
+    | <trim function>
+
+<character substring function> ::=
+    SUBSTRING <left paren> <character value expression> FROM <start position>
+                [ FOR <string length> ] <right paren>
+
+<start position> ::= <numeric value expression>
+
+<string length> ::= <numeric value expression>
+
+<regular expression substring function> ::=
+    SUBSTRING <left paren> <character value expression> FROM
+                <character value expression> FOR
+                      <escape character> <right paren>
+
+<escape character> ::= <character value expression>
+
+<fold> ::= { UPPER | LOWER }
+     <left paren> <character value expression> <right paren>
+
+<form-of-use conversion> ::=
+    CONVERT <left paren> <character value expression>
+        USING <form-of-use conversion name> <right paren>
+
+<form-of-use conversion name> ::= <schema qualified name>
+
+<character translation> ::=
+    TRANSLATE <left paren> <character value expression>
+        USING <translation name> <right paren>
+
+<translation name> ::= <schema qualified name>
+
+<trim function> ::=
+    TRIM <left paren> <trim operands> <right paren>
+
+<trim operands> ::=
+    [ [ <trim specification> ] [ <trim character> ] FROM ] <trim source>
+
+<trim specification> ::=
+      LEADING
+    | TRAILING
+    | BOTH
+
+<trim character> ::= <character value expression>
+
+<trim source> ::= <character value expression>
+
+<bit value function> ::=
+    <bit substring function>
+
+<bit substring function> ::=
+    SUBSTRING <left paren> <bit value expression> FROM <start position>
+        [ FOR <string length> ] <right paren>
+
+<bit value expression> ::=
+      <bit concatenation>
+    | <bit factor>
+
+<bit concatenation> ::=
+    <bit value expression> <concatenation operator> <bit factor>
+
+<bit factor> ::= <bit primary>
+
+<bit primary> ::=
+      <value expression primary>
+    | <string value function>
+
+<collate clause> ::= COLLATE <collation name>
+
+<collation name> ::= <schema qualified name>
+
+<pattern> ::= <character value expression>
+
+<null predicate> ::= <row value designator>
+    IS [ NOT ] NULL
+        [ <left paren> <null values specification> <right paren> ]
+
+<null values specification> ::= <asterisk> | <null state>
+
+<quantified comparison predicate> ::=
+    <row value designator> <comp op> <quantifier> <table subquery>
+
+<quantifier> ::= <all> | <some>
+
+<all> ::= ALL
+
+<some> ::= SOME | ANY
+
+<exists predicate> ::= EXISTS <table subquery>
+
+<unique predicate> ::= UNIQUE <table subquery>
+
+<match predicate> ::=
+    <row value designator> MATCH [ UNIQUE ]
+        [ PARTIAL | FULL ] <table subquery>
+
+<overlaps predicate> ::=
+    <row value designator 1> OVERLAPS <row value designator 2>
+
+<row value designator 1> ::= <row value designator>
+
+<row value designator 2> ::= <row value designator>
+
+<row value designator 1> ::= <row value designator>
+
+<row value designator 2> ::= <row value designator>
+
+<similar predicate> ::=
+    <match value> [ NOT ] SIMILAR TO
+        <similar pattern>
+      [ ESCAPE <escape character> ]
+
+<similar pattern> ::= <character value expression>
+
+<quantified predicate> ::=
+      <existential clause> <left paren> <search condition> <right paren>
+    | <universal clause> <left paren> <search condition> <right paren>
+    | <quantified comparison predicate>
+
+<existential clause> ::=
+    FOR SOME <table reference list>
+
+<table reference list> ::=
+    <table reference> [ { <comma> <table reference> }... ]
+
+<table reference> ::=
+      <table name> [ [ AS ] <correlation name>
+          [ <left paren> <derived column list> <right paren> ] ]
+    | <derived table> [ AS ] <correlation name>
+          [ <left paren> <derived column list> <right paren> ]
+    | <joined table>
+
+<derived column list> ::= <column name list>
+
+<column name list> ::=
+    <column name> [ { <comma> <column name> }... ]
+
+<derived table> ::= <table subquery>
+
+<joined table> ::=
+      <cross join>
+    | <qualified join>
+    | <left paren> <joined table> <right paren>
+
+<cross join> ::=
+    <table reference> CROSS JOIN <table reference>
+
+<qualified join> ::=
+    <table reference> [ NATURAL ] [ <join type> ] JOIN
+      <table reference> [ <join specification> ]
+
+<join type> ::=
+      INNER
+    | <outer join type> [ OUTER ]
+    | UNION
+
+<outer join type> ::=
+      LEFT
+    | RIGHT
+    | FULL
+
+<join specification> ::=
+      <join condition>
+    | <named columns join>
+    | <constraint join>
+
+<join condition> ::= ON <search condition>
+
+<named columns join> ::=
+    USING <left paren> <join column list> <right paren>
+
+<join column list> ::= <column name list>
+
+<constraint join> ::=
+    | USING PRIMARY KEY
+    | USING FOREIGN KEY
+    | USING CONSTRAINT <constraint name>
+
+<constraint name> ::= <schema qualified name>
+
+<universal clause> ::=
+    FOR ALL <table reference list>
+
+<there is predicate> ::=
+    <left paren> <there is clause> <where clause> <right paren>
+
+<there is clause> ::=
+    THERE IS <table reference list>
+
+<where clause> ::= WHERE <search condition>
+
+<distinct predicate> ::=
+    <row value designator 1> IS DISTINCT FROM
+        <row value designator 2>
+
+<boolean predicate> ::=
+    <boolean value expression> [ IS [ NOT ]
+          <truth value> ]
+
+<truth value> ::=
+      TRUE
+    | FALSE
+    | UNKNOWN
+
+<cast specification> ::=
+    CAST <left paren> <cast operand> AS
+        <cast target> <right paren>
+
+<cast operand> ::=
+      <value expression>
+    | NULL
+
+<cast target> ::=
+      <domain name>
+    | <data type>
+
+<data type> ::=
+      <predefined type>
+    | <abstract data type name>
+    | <generated type reference>
+    | <template parameter name>
+    | <collection type>
+
+<predefined type> ::=
+      <character string type>
+           [ CHARACTER SET <character set specification> ]
+    | <national character string type>
+    | <bit string type>
+    | <numeric type>
+    | <enumerated type>
+    | <boolean type>
+    | <datetime type>
+    | <interval type>
+
+<character string type> ::=
+      CHARACTER [ <left paren> <length> <right paren> ]
+    | CHAR [ <left paren> <length> <right paren> ]
+    | CHARACTER VARYING <left paren> <length> <right paren>
+    | CHAR VARYING <left paren> <length> <right paren>
+    | VARCHAR <left paren> <length> <right paren>
+
+<length> ::= <unsigned integer>
+
+<national character string type> ::=
+      NATIONAL CHARACTER [ <left paren> <length> <right paren> ]
+    | NATIONAL CHAR [ <left paren> <length> <right paren> ]
+    | NCHAR [ <left paren> <length> <right paren> ]
+    | NATIONAL CHARACTER VARYING <left paren> <length> <right paren>
+    | NATIONAL CHAR VARYING <left paren> <length> <right paren>
+    | NCHAR VARYING <left paren> <length> <right paren>
+
+<bit string type> ::=
+      BIT [ <left paren> <length> <right paren> ]
+    | BIT VARYING <left paren> <length> <right paren>
+
+<numeric type> ::=
+      <exact numeric type>
+    | <approximate numeric type>
+
+<exact numeric type> ::=
+      NUMERIC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+    | DECIMAL [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+    | DEC [ <left paren> <precision> [ <comma> <scale> ] <right paren> ]
+    | INTEGER
+    | INT
+    | SMALLINT
+
+<precision> ::= <unsigned integer>
+
+<scale> ::= <unsigned integer>
+
+<approximate numeric type> ::=
+      FLOAT [ <left paren> <precision> <right paren> ]
+    | REAL
+    | DOUBLE PRECISION
+
+<enumerated type> ::=
+    <left paren> <enumeration name list> <right paren>
+
+<enumeration name list> ::=
+    <enumeration name> [ { <comma> <enumeration name> }... ]
+
+<boolean type> ::= BOOLEAN
+
+<datetime type> ::=
+      DATE
+    | TIME [ <left paren> <time precision> <right paren> ]
+          [ WITH TIME ZONE ]
+    | TIMESTAMP [ <left paren> <timestamp precision> <right paren> ]
+          [ WITH TIME ZONE ]
+
+<time precision> ::= <time fractional seconds precision>
+
+<time fractional seconds precision> ::= <unsigned integer>
+
+<timestamp precision> ::= <time fractional seconds precision>
+
+<interval type> ::= INTERVAL <interval qualifier>
+
+<generated type reference> ::=
+    <type template name> <template parameter list>
+
+<type template name> ::= <schema qualified name>
+
+<template parameter list> ::=
+    <left paren>
+      <template parameter> [ { <comma> <template parameter> }... ]
+    <right paren>
+
+<template parameter> ::=
+      <value specification>
+    | <data type>
+
+<collection type> ::=
+      <set type>
+    | <multiset type>
+    | <list type>
+
+<set type> ::= SET <left paren> <data type> <right paren>
+
+<multiset type> ::= MULTISET <left paren> <data type> <right paren>
+
+<list type> ::= LIST <left paren> <data type> <right paren>
+
+<numeric value function> ::=
+      <position expression>
+    | <extract expression>
+    | <length expression>
+
+<position expression> ::=
+    POSITION <left paren> <character value expression>
+        IN <character value expression> <right paren>
+
+<extract expression> ::=
+    EXTRACT <left paren> <extract field>
+        FROM <extract source> <right paren>
+
+<extract field> ::=
+      <datetime field>
+    | <time zone field>
+
+<datetime field> ::=
+      <non-second datetime field>
+    | SECOND
+
+<time zone field> ::=
+      TIMEZONE_HOUR
+    | TIMEZONE_MINUTE
+
+<extract source> ::=
+      <datetime value expression>
+    | <interval value expression>
+
+<datetime value expression> ::=
+      <datetime term>
+    | <interval value expression> <plus sign> <datetime term>
+    | <datetime value expression> <plus sign> <interval term>
+    | <datetime value expression> <minus sign> <interval term>
+
+<interval term> ::=
+      <interval factor>
+    | <interval term 2> <asterisk> <factor>
+    | <interval term 2> <solidus> <factor>
+    | <term> <asterisk> <interval factor>
+
+<interval factor> ::=
+    [ <sign> ] <interval primary>
+
+<interval primary> ::=
+      <value expression primary> [ <interval qualifier> ]
+
+<interval term 2> ::= <interval term>
+
+<interval value expression> ::=
+      <interval term>
+    | <interval value expression 1> <plus sign> <interval term 1>
+    | <interval value expression 1> <minus sign> <interval term 1>
+    | <left paren> <datetime value expression> <minus sign>
+          <datetime term> <right paren> <interval qualifier>
+
+<interval value expression 1> ::= <interval value expression>
+
+<interval term 1> ::= <interval term>
+
+<datetime term> ::=
+      <datetime factor>
+
+<datetime factor> ::=
+      <datetime primary> [ <time zone> ]
+
+<datetime primary> ::=
+      <value expression primary>
+    | <datetime value function>
+
+<datetime value function> ::=
+      <current date value function>
+    | <current time value function>
+    | <current timestamp value function>
+
+<current date value function> ::= CURRENT_DATE
+
+<current time value function> ::=
+      CURRENT_TIME [ <left paren> <time precision> <right paren> ]
+
+<current timestamp value function> ::=
+      CURRENT_TIMESTAMP [ <left paren> <timestamp precision> <right paren> ]
+
+<time zone> ::=
+    AT <time zone specifier>
+
+<time zone specifier> ::=
+      LOCAL
+    | TIME ZONE <interval primary>
+
+<length expression> ::=
+      <char length expression>
+    | <octet length expression>
+    | <bit length expression>
+
+<char length expression> ::=
+    { CHAR_LENGTH | CHARACTER_LENGTH }
+        <left paren> <string value expression> <right paren>
+
+<string value expression> ::=
+      <character value expression>
+    | <bit value expression>
+
+<octet length expression> ::=
+    OCTET_LENGTH <left paren> <string value expression> <right paren>
+
+<bit length expression> ::=
+    BIT_LENGTH <left paren> <string value expression> <right paren>
+
+<enumerated value expression> ::=
+      <domain name> <left paren> <value expression> <right paren>
+    | <enumerated primary>
+
+<enumerated primary> ::=
+      <value expression primary>
+
+<attributes function> ::=
+    ATTRIBUTES
+      <left paren> <abstract data type value expression> <right paren>
+
+<abstract data type value expression> ::= <ADT expression>
+
+<ADT expression> ::=
+    <ADT term>
+    | <ADT expression> <term operator> <ADT term>
+
+<term operator> ::= <ADT operator>
+
+<ADT operator> ::= <user-defined operator symbol)
+
+<ADT term> ::=
+    <ADT factor>
+    | <ADT term> <factor operator> <ADT factor>
+
+<factor operator> ::= <ADT operator>
+
+<ADT factor> ::=
+    <ADT primary>
+    | <prefix operator> <ADT primary>
+    | <ADT primary> <postfix operator>
+
+<ADT primary> ::=
+    <value expression primary>
+
+<prefix operator> ::= <ADT operator>
+
+<postfix operator> ::= <ADT operator>
+
+<table value expression> ::=
+    <table type>
+      <left paren>
+        [ <value expression> [ { <comma> <value expression> }... ] ]
+      <right paren>
+
+<table type> ::=
+      TABLE
+    | SET
+    | LIST
+
+<collection value expression> ::=
+      <set value designator>
+    | <multiset value designator>
+    | <list value designator>
+
+<set value designator> ::=
+    SET <left paren> [ <collection list> ] <right paren>
+
+<collection list> ::=
+    <collection element> [ { <comma> <collection element> }... ]
+
+<collection element> ::= <value expression>
+
+<multiset value designator> ::=
+    MULTISET <left paren> [ <collection list> ] <right paren>
+
+<list value designator> ::=
+    LIST <left paren> [ <collection list> ] <right paren>
+
+<as clause> ::= [ AS ] <column name>
+
+<table expression> ::=
+    <from clause>
+    [ <where clause> ]
+    [ <group by clause> ]
+    [ <having clause> ]
+
+<from clause> ::= FROM <table reference>
+    [ { <comma> <table reference> }... ]
+
+<group by clause> ::=
+    GROUP BY <grouping column reference list>
+
+<grouping column reference list> ::=
+    <grouping column reference>
+        [ { <comma> <grouping column reference> }... ]
+
+<grouping column reference> ::=
+    <column reference> [ <collate clause> ]
+
+<having clause> ::= HAVING <search condition>
+
+<table value designator> ::=
+    VALUES <table value designator list>
+
+<table value designator list> ::=
+    <row value designator> [ { <comma> <row value designator> }... ]
+
+<explicit table> ::= <table type> <table name>
+
+<collection expression> ::=
+    <value expression>
+
+<query term> ::=
+      <non-join query term>
+    | <joined table>
+
+<corresponding spec> ::=
+    CORRESPONDING [ BY <left paren> <corresponding column list> <right paren> ]
+
+<corresponding column list> ::= <column name list>
+
+<query primary> ::=
+      <non-join query primary>
+    | <joined table>
+
+<recursive union> ::=
+    <left paren> <initial expression>
+      RECURSIVE UNION <correlation name list>
+          [ <left paren> <recursive column list> <right paren> ]
+      <iteration expression>
+      [ <search clause> ]
+      [ <cycle clause> ]
+      [ <limit clause> ] <right paren>
+
+<initial expression> ::= <query expression>
+
+<correlation name list> ::=
+    <correlation name> [ { <comma> <correlation name> }... ]
+
+<recursive column list> ::= <column name list>
+
+<iteration expression> ::= <query expression>
+
+<search clause> ::=
+    SEARCH <search order> SET <sequence column>
+
+<search order> ::=
+      PREORDER
+    | { DEPTH | BREADTH } FIRST BY <sort specification list>
+
+<sort specification list> ::=
+    <sort specification> [ { <comma> <sort specification> }... ]
+
+<sort specification> ::=
+    <sort key> [ <collate clause> ] [ <ordering specification> ]
+
+<sort key> ::=
+    <value expression>
+
+<ordering specification> ::= ASC | DESC
+
+<sequence column> ::= <column name>
+
+<cycle clause> ::=
+    CYCLE [ <cycle column list> ]
+      SET <cycle mark column>
+          [ TO <cycle mark value> ]
+
+<cycle column list> ::=
+    <cycle column> [ { <comma> <cycle column> }... ]
+
+<cycle column> ::= <column name>
+
+<cycle mark column> ::= <column name>
+
+<cycle mark value> ::= <value expression>
+
+<limit clause> ::=
+    [ RETURN | EXCEPTION ] LIMIT
+        <left paren> <value specification> <right paren>
+
+<trigger definition> ::=
+    [ CREATE ] TRIGGER [ <trigger name> ]
+      <trigger action time> <trigger event>
+        [ ON <table name> ]
+        [ ORDER <order value> ]
+        [ REFERENCING <old or new values alias list> ]
+      <triggered action>
+
+<trigger name> ::= <schema qualified name>
+
+<trigger action time> ::=
+      BEFORE
+    | AFTER
+    | INSTEAD OF
+
+<trigger event> ::=
+      INSERT
+    | DELETE
+    | UPDATE [ OF <trigger column list> ]
+
+<trigger column list> ::= <column name list>
+
+<order value> ::= <unsigned integer>
+
+<old or new values alias list> ::=
+    <old or new values alias>...
+
+<old or new values alias> ::=
+      OLD [ AS ]
+          <old values correlation name>
+    | NEW [ AS ]
+          <new values correlation name>
+    | OLD_TABLE [ AS ]
+          <old values table alias>
+    | NEW_TABLE [ AS ]
+          <new values table alias>
+
+<old values correlation name> ::= <correlation name>
+
+<new values correlation name> ::= <correlation name>
+
+<old values table alias> ::= <identifier>
+
+<new values table alias> ::= <identifier>
+
+<triggered action> ::=
+    [ FOR EACH { ROW | STATEMENT } ]
+      [ WHEN <left paren> <search condition> <right paren> ]
+      <triggered SQL statement>
+
+<triggered SQL statement> ::=
+    <SQL procedure statement> <semicolon>
+
+<SQL procedure statement> ::=
+    [ ASYNC <left paren> <async statement identifier> <right paren> ]
+          <SQL executable statement>
+
+<async statement identifier> ::= <numeric value expression>
+
+<SQL executable statement> ::=
+      <SQL schema statement>
+    | <SQL data statement>
+    | <SQL transaction statement>
+    | <SQL connection statement>
+    | <SQL session statement>
+    | <SQL diagnostics statement>
+
+<SQL schema statement> ::=
+      <SQL schema definition statement>
+    | <SQL schema manipulation statement>
+
+<SQL schema definition statement> ::=
+      <schema definition>
+    | <table definition>
+    | <view definition>
+    | <grant statement>
+    | <role definition>
+    | <grant role statement>
+    | <domain definition>
+    | <null class definition>
+    | <character set definition>
+    | <collation definition>
+    | <translation definition>
+    | <assertion definition>
+    | <trigger definition>
+    | <routine>
+    | <abstract data type definition>
+    | <type template definition>
+
+<schema definition> ::=
+    CREATE SCHEMA <schema name clause>
+      [ <schema character set specification> ]
+      [ <schema path specification> ]
+      [ <schema element>... ]
+
+<schema name clause> ::=
+      <schema name>
+    | AUTHORIZATION <schema authorization identifier>
+    | <schema name> AUTHORIZATION <schema authorization identifier>
+
+<schema authorization identifier> ::=
+    <authorization identifier>
+
+<schema character set specification> ::=
+    DEFAULT CHARACTER SET <character set specification>
+
+<schema path specification> ::=
+    PATH <schema name list>
+
+<schema element> ::=
+      <table definition>
+    | <view definition>
+    | <domain definition>
+    | <null class definition>
+    | <character set definition>
+    | <collation definition>
+    | <translation definition>
+    | <assertion definition>
+    | <trigger definition>
+    | <routine>
+    | <abstract data type definition>
+    | <type template definition>
+    | <grant statement>
+    | <role definition>
+    | <grant role statement>
+
+<table definition> ::=
+    CREATE [ <table scope> ] <table type> <table name>
+      [ <constant or updatable> ]
+      { <table element list> | <subtable clause> }
+      [ ON COMMIT <table commit action> ROWS ]
+
+<table scope> ::=
+    <global or local> TEMPORARY
+
+<global or local> ::=
+      GLOBAL
+    | LOCAL
+
+<constant or updatable> ::=
+      CONSTANT
+    | UPDATABLE
+
+<table element list> ::=
+    <left paren> <table element> [ { <comma> <table element> }... ] <right paren>
+
+<table element> ::=
+      <column definition>
+    | <table constraint definition>
+    | <like clause>
+
+<column definition> ::=
+    <column name>
+    { <data type> | <domain name> }
+    [ <default clause> ]
+    [ <column constraint definition>... ]
+    [ <collate clause> ]
+    [ <null clause> ]
+
+<default clause> ::=
+      { DEFAULT | <assignment operator> } <default option>
+
+<default option> ::=
+      <literal>
+    | <datetime value function>
+    | USER
+    | CURRENT_USER
+    | SESSION_USER
+    | SYSTEM_USER
+    | NULL [ <left paren> <null state> <right paren> ]
+    | <function invocation>
+
+<column constraint definition> ::=
+    [ <constraint name definition> ]
+    <column constraint> [ <constraint attributes> ]
+
+<constraint name definition> ::= CONSTRAINT <constraint name>
+
+<column constraint> ::=
+      NOT NULL
+    | <unique specification>
+    | <references specification>
+    | <check constraint definition>
+
+<unique specification> ::=
+      UNIQUE
+    | PRIMARY KEY
+
+<references specification> ::=
+    REFERENCES [ PENDANT ] <referenced table and columns>
+      [ MATCH <match type> ]
+      [ <referential triggered action> ]
+
+<referenced table and columns> ::=
+     <table name> [ <left paren> [ <reference column list> ] <right paren> ]
+
+<reference column list> ::= <column name list>
+
+<match type> ::=
+      FULL
+    | PARTIAL
+
+<referential triggered action> ::=
+      <update rule> [ <delete rule> ]
+    | <delete rule> [ <update rule> ]
+
+<update rule> ::= ON UPDATE <referential action>
+
+<referential action> ::=
+      CASCADE
+    | SET NULL [ <left paren> <null state> <right paren> ]
+    | SET DEFAULT
+    | RESTRICT
+    | NO ACTION
+
+<delete rule> ::= ON DELETE <referential action>
+
+<check constraint definition> ::=
+    CHECK <left paren> <search condition> <right paren>
+
+<constraint attributes> ::=
+      <constraint check time> [ [ NOT ] DEFERRABLE ]
+    | [ NOT ] DEFERRABLE [ <constraint check time> ]
+
+<constraint check time> ::=
+      INITIALLY DEFERRED
+    | INITIALLY IMMEDIATE
+
+<null clause> ::=
+    NULL IS <null class name>
+
+<null class name> ::= <schema qualified name>
+
+<null clause> ::=
+    NULL IS <null class name>
+
+<table constraint definition> ::=
+    [ <constraint name definition> ]
+    <table constraint> [ <constraint attributes> ]
+
+<table constraint> ::=
+      <unique constraint definition>
+    | <referential constraint definition>
+    | <check constraint definition>
+
+<unique constraint definition> ::=
+                                even in SQL3)
+      <unique specification> [ <left paren> <unique column list>
+          <right paren> ]
+    | UNIQUE ( VALUE )
+
+<unique column list> ::= <column name list>
+
+<referential constraint definition> ::=
+    FOREIGN KEY [ <left paren> <referencing columns> <right paren> ]
+      <references specification>
+
+<referencing columns> ::=
+    <reference column list>
+
+<like clause> ::= LIKE <table name>
+
+<subtable clause> ::=
+    UNDER <supertable clause>
+        [ { , <supertable clause> }... ]
+
+<supertable clause> ::=
+    <supertable name>
+      [ WITH ( <member renaming element>
+          [ { , <member renaming element> }... ] ) ]
+
+<supertable name> ::= <table name>
+
+<member renaming element> ::=
+    <supertable member name> AS <subtable member name>
+
+<supertable member name> ::=
+      <column name>
+    | <routine name>
+
+<subtable member name> ::=
+      <column name>
+    | <routine name>
+
+<table commit action> ::=
+      PRESERVE
+    | DELETE
+
+<view definition> ::=
+    CREATE VIEW <table name> [ <left paren> <view column list> <right paren> ]
+      AS <query expression>
+      [ WITH [ <levels clause> ] CHECK OPTION ]
+
+<view column list> ::= <column name list>
+
+<levels clause> ::=
+      CASCADED
+    | LOCAL
+
+<domain definition> ::=
+    CREATE DOMAIN <domain name>
+        [ AS ] <data type>
+      [ <default clause> ]
+      [ <domain constraint>... ]
+      [ <collate clause> ]
+      [ <null clause> ]
+
+<domain constraint> ::=
+    [ <constraint name definition> ]
+    <check constraint definition> [ <constraint attributes> ]
+
+<null class definition> ::=
+    CREATE NULL CLASS <null class name> [ AS ]
+        ( <null state list> )
+
+<null state list> ::=
+    <null state> [ { <comma> <null state> }... ]
+
+<character set definition> ::=
+    CREATE CHARACTER SET <character set name>
+        [ AS ]
+      <character set source>
+      <form-of-use specification>
+      [ <collate clause> | <limited collation definition> ]
+
+<character set source> ::=
+      GET <existing character set name>
+          [ <plus sign> <character set source> ]
+    | <left paren> <character list> <right paren>
+
+<character list> ::=
+    <character specification> [ { <comma> <character specification> }... ]
+
+<character specification> ::=
+      <character string literal>
+    | <ISO 10646 position>
+    | <ISO 10646 character name>
+
+<ISO 10646 position> ::=
+    <val> [ <sep> <val> [ <sep> <val> [ <sep> <val> ] ] ]
+
+<val> ::= <unsigned numeric literal>
+
+<sep> ::= <ampersand>
+
+<ISO 10646 character name> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<form-of-use specification> ::= <identifier>
+
+<limited collation definition> ::=
+    COLLATION FROM <collation source>
+
+<collation source> ::=
+      <collating sequence definition>
+    | <translation collation>
+    | <collation dictionary specification>
+    | <collation routine specification>
+
+<collating sequence definition> ::=
+      <external collation>
+    | <schema collation name>
+    | <internal collation source>
+    | DESC <left paren> <collation name> <right paren>
+    | DEFAULT
+
+<external collation> ::=
+    EXTERNAL
+        <left paren> <quote> <external collation name> <quote> <right paren>
+
+<external collation name> ::=
+      <standard collation name>
+    | <implementation-defined collation name>
+
+<standard collation name> ::= <collation name>
+
+<implementation-defined collation name> ::= <collation name>
+
+<schema collation name> ::= <collation name>
+
+<internal collation source> ::= <left paren> <collation options> <right paren>
+
+<collation options> ::=
+    <collation option> [ { <comma> <collation option> }... ]
+
+<collation option> ::=
+      USING <left paren> <collating basis> <right paren>
+    | SEQUENCE <left paren> <enumerated collating sequence> <right paren>
+    | MODIFY <left paren> <collating modifiers> <right paren>
+    | WHEN NOT FOUND
+        { IGNORE | MAX | MIN }
+
+<collating basis> ::=
+    <collating foundation> [ { <plus sign> <collating foundation> }... ]
+
+<collating foundation> ::=
+    <collating sequence definition>
+    <collating sequence definition> [ { <asterisk> <translation name> }... ]
+
+<enumerated collating sequence> ::=
+    <collating chars> [ { <comma> <collating chars> }... ]
+
+<collating chars> ::=
+      <character specification>
+    | <character range>
+
+<character range> ::=
+    <character specification> <minus sign> <character specification>
+
+<collating modifiers> ::=
+      <collating modifier> [ { <comma> <collating modifier> }... ]
+
+<collating modifier> ::=
+    <collating chars>
+      { <less than operator> | <greater than operator> | <equals operator> }
+    <collating chars>
+
+<translation collation> ::=
+    TRANSLATION <translation name>
+        [ THEN COLLATION <collation name> ]
+
+<collation dictionary specification> ::=
+    DICTIONARY <dictionary name> [ <plus sign> <dictionary name> ]
+
+<dictionary name> ::=
+    <quote> <implementation-defined dictionary name> <quote>
+
+<implementation-defined dictionary name> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<collation routine specification> ::=
+      ROUTINE <left paren> <implementation-defined routine name>
+          <left paren> <params> <right paren> <right paren>
+
+<implementation-defined routine name> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<params> ::= !! <EMPHASIS>(Not yet defined)
+
+<params> ::= !! <EMPHASIS>(Not yet defined)
+
+<existing character set name> ::=
+      <standard character repertoire name>
+    | <implementation-defined character repertoire name>
+    | <schema character set name>
+
+<schema character set name> ::= <character set name>
+
+<collation definition> ::=
+    CREATE COLLATION <collation name> FOR
+        <character set specification>
+      FROM <collation source>
+        [ <pad attribute> ]
+
+<pad attribute> ::=
+      NO PAD
+    | PAD SPACE
+
+<translation definition> ::=
+    CREATE TRANSLATION <translation name>
+      FOR <source character set specification>
+        TO <target character set specification>
+      FROM <translation source>
+
+<source character set specification> ::= <character set specification>
+
+<target character set specification> ::= <character set specification>
+
+<translation source> ::=
+      <translation specification>
+    | <translation routine>
+
+<translation specification> ::=
+      <external translation>
+    | IDENTITY
+    | <schema translation name>
+    | <internal translation source>
+
+<external translation> ::=
+    EXTERNAL
+        <left paren> <quote> <external translation name> <quote> <right paren>
+
+<external translation name> ::=
+      <standard translation name>
+    | <implementation-defined translation name>
+
+<standard translation name> ::= <translation name>
+
+<implementation-defined translation name> ::= <translation name>
+
+<schema translation name> ::= <translation name>
+
+<internal translation source> ::=
+    <left paren> <translation options> <right paren>
+
+<translation options> ::=
+    <translation option> [ { <comma> <translation option> }... ]
+
+<translation option> ::=
+      USING <left paren> <translation basis> <right paren>
+    | MODIFY <left paren> <translation modifiers> <right paren>
+
+<translation basis> ::=
+    <translation definition> [ { <asterisk> <translation definition> }... ]
+
+<translation modifiers> ::=
+      <translation modifier> [ { <comma> <translation modifier> }... ]
+
+<translation modifier> ::=
+    <collating chars> <equals operator> <collating chars>
+
+<translation routine> ::=
+      ROUTINE <left paren> <implementation-defined routine name>
+          <left paren> <params> <right paren> <right paren>
+
+<assertion definition> ::=
+    CREATE ASSERTION <constraint name>
+      <assertion trigger>...
+      <triggered assertion> [ <constraint attributes> ]
+
+<assertion trigger> ::=
+      <immediate assertion trigger>
+    | <deferred assertion trigger>
+
+<immediate assertion trigger> ::=
+    AFTER { <assertion trigger statement>
+      [ { <comma> <assertion trigger statement> }... ] ON
+           <table name> }...
+
+<assertion trigger statement> ::=
+      INSERT
+    | DELETE
+    | UPDATE [ OF <left paren> <assertion column list> <right paren> ]
+
+<assertion column list> ::= <column name list>
+
+<deferred assertion trigger> ::= BEFORE COMMIT
+
+<triggered assertion> ::=
+    CHECK <left paren> <search condition> <right paren>
+      [ FOR
+          [ EACH [ ROW OF ] ] <table name> ]
+
+<routine> ::=
+    [ CREATE | DECLARE ] <routine header> <routine name> <parameter list>
+    [ <returns clause> ]
+    [ <caller language clause> ]
+    [ SPECIFIC <specific name> ] <semicolon>
+    <routine body> <semicolon>
+
+<routine header> ::=
+      PROCEDURE
+    | [ <function type> ] FUNCTION
+
+<function type> ::=
+      CONSTRUCTOR
+    | DESTRUCTOR
+    | DESIGNATOR
+    | ACTOR
+
+<parameter list> ::=
+    <left paren>
+      [ <parameter declaration> [ {  <comma> <parameter declaration> }... ] ]
+    <right paren>
+
+<parameter declaration> ::=
+      [ <parameter mode> ] [ <parameter name> ] <data type>
+          [ <default clause> ]
+    | <status parameter>
+
+<parameter mode> ::=
+      IN
+    | OUT
+    | INOUT
+
+<status parameter> ::=
+      SQLSTATE
+    | SQLCODE
+
+<returns clause> ::= RETURNS <returns data type> [ <result cast> ]
+
+<returns data type> ::= <data type>
+
+<result cast> ::= CAST FROM <data type>
+
+<caller language clause> ::= <language clause>
+
+<specific name> ::= <schema qualified name>
+
+<routine body> ::=
+      <SQL routine body>
+    | <external body reference>
+
+<SQL routine body> ::= <SQL procedure statement>
+
+<external body reference> ::=
+    EXTERNAL [ NAME <external routine name> ]
+    <external routine language clause>
+    [ <variant attribute> ]
+
+<external routine name> ::= <identifier>
+
+<external routine language clause> ::= <language clause>
+
+<variant attribute> ::=
+      VARIANT
+    | NOT VARIANT
+
+<abstract data type definition> ::=
+      <distinct type definition>
+    | <explicit abstract data type definition>
+
+<distinct type definition> ::=
+    CREATE DISTINCT TYPE <distinct type name>
+      AS <data type>
+
+<distinct type name> ::= <abstract data type name>
+
+<explicit abstract data type definition> ::=
+    CREATE TYPE <abstract data type name>
+      <abstract data type body>
+
+<abstract data type body> ::=
+    [ <oid options> ]
+    [ <subtype clause> ]
+    [ [ <constant or updatable> ] [ <member list> ] ]
+
+<oid options> ::=
+      WITH OID [ [ NOT ] VISIBLE ]
+    | WITHOUT OID
+
+<subtype clause> ::=
+    UNDER <supertype clause>
+        [ { <comma> <supertype clause> }... ]
+
+<supertype clause> ::=
+    <abstract data type name> [ <component renaming clause> ]
+
+<component renaming clause> ::=
+    WITH <left paren> <component renaming element>
+        [ { , <component renaming element> }... ] <right paren>
+
+<component renaming element> ::=
+    <supertype component name> AS <subtype component name>
+
+<supertype component name> ::= <component name>
+
+<component name> ::= <identifier>
+
+<subtype component name> ::= <component name>
+
+<member list> ::=
+    <left paren> <member> [ { <comma> <member> }... ] <right paren>
+
+<member> ::=
+      <attribute definition>
+    | <routine declaration>
+    | <operator name list>
+    | <equals clause>
+    | <less-than clause>
+    | <cast clause>
+    | <table constraint definition>
+
+<attribute definition> ::=
+      <stored attribute>
+    | <virtual attribute>
+
+<stored attribute> ::=
+    [ <encapsulation level> ]
+    <attribute name> [ <constant or updatable> ]
+    { <data type> | <domain name> }
+    [ <default clause> ]
+    [ <column constraint definition>... ]
+    [ <collate clause> ]
+    [ <null clause> ]
+
+<encapsulation level> ::=
+      PRIVATE
+    | PROTECTED
+    | PUBLIC
+
+<virtual attribute> ::=
+    [ <encapsulation level> ]
+      <attribute name> <derivation clause>
+    [ <check constraint definition>... ]
+    [ <collate clause> ]
+
+<derivation clause> ::=
+    [ READ ONLY | CONSTANT | UPDATABLE ] <data type>
+      VIRTUAL [ <derivation functions> ]
+
+<derivation functions> ::=
+      <get function> [ <set function> ]
+    | <set function> [ <get function> ]
+
+<get function> ::=
+    GET WITH <routine name>
+
+<set function> ::=
+    SET WITH <routine name>
+
+<routine declaration> ::=
+    [ <encapsulation level> ] <routine>
+
+<operator name list> ::=
+    OPERATORS <specific routine designator>...
+
+<specific routine designator> ::=
+      SPECIFIC <specific name>
+    | <member name>
+
+<member name> ::= <routine name> [ <data type list> ]
+
+<data type list> ::=
+    <left paren> <data type> [ { <comma> <data type> }... ] <right paren>
+
+<equals clause> ::=
+    EQUALS <equals function specification> <semicolon>
+
+<equals function specification> ::=
+      <routine name>
+    | STATE
+    | OID
+
+<less-than clause> ::=
+    LESS THAN <less-than function specification> <semicolon>
+
+<less-than function specification> ::=
+      <routine name>
+    | NONE
+
+<cast clause> ::=
+    CAST <left paren> <operand data type> AS
+        <result data type>
+         WITH <cast function> <right paren> <semicolon>
+
+<operand data type> ::= <data type>
+
+<result data type> ::= <data type>
+
+<cast function> ::=
+    <routine name>
+
+<type template definition> ::=
+    CREATE TYPE TEMPLATE <type template name>
+      <template parameter declaration list>
+      <abstract data type body>
+
+<template parameter declaration list> ::=
+    <left paren>
+      <template parameter declaration>
+        [ { <comma> <template parameter declaration>}... ]
+    <right paren>
+
+<template parameter declaration> ::=
+    <template parameter name> <template parameter type>
+
+<template parameter type> ::=
+      <data type>
+    | TYPE
+
+<grant statement> ::=
+    GRANT <privileges>
+      TO <grantee> [ { <comma> <grantee> }... ]
+        [ WITH GRANT OPTION ]
+
+<privileges> ::=
+      ALL SCHEMA PRIVILEGES
+    | <object privileges> ON <object name>
+
+<object privileges> ::=
+      ALL PRIVILEGES
+    | <action> [ { <comma> <action> }... ]
+
+<action> ::=
+      SELECT [ <left paren> <privilege column list> <right paren> ]
+    | DELETE
+    | INSERT [ <left paren> <privilege column list> <right paren> ]
+    | UPDATE [ <left paren> <privilege column list> <right paren> ]
+    | REFERENCES [ <left paren> <privilege column list> <right paren> ]
+    | USAGE
+    | TRIGGER
+    | EXECUTE
+    | UNDER
+
+<privilege column list> ::= <column name list>
+
+<object name> ::=
+      [ <table type> ] <table name>
+    | DOMAIN <domain name>
+    | COLLATION <collation name>
+    | CHARACTER SET <character set name>
+    | TRANSLATION <translation name>
+    | NULL CLASS <null class name>
+    | DATA TYPE <abstract data type name>
+    | MODULE <module name>
+    | TYPE TEMPLATE <type template name>
+    | EXTERNAL ROUTINE <specific routine designator>
+
+<grantee> ::=
+      PUBLIC
+    | <authorization identifier>
+    | <role name>
+
+<role name> ::= <authorization identifier>
+
+<role definition> ::= CREATE ROLE <role name>
+
+<grant role statement> ::=
+    GRANT <role granted> [ { <comma> <role granted> }... ]
+      TO <grantee> [ { <comma> <grantee> }... ]
+        [ WITH ADMIN OPTION ]
+
+<role granted> ::= <role name>
+
+<SQL schema manipulation statement> ::=
+      <drop schema statement>
+    | <alter table statement>
+    | <drop table statement>
+    | <drop view statement>
+    | <revoke statement>
+    | <revoke role statement>
+    | <drop role statement>
+    | <alter domain statement>
+    | <drop domain statement>
+    | <drop null class statement>
+    | <drop character set statement>
+    | <drop collation statement>
+    | <drop translation statement>
+    | <drop assertion statement>
+    | <drop trigger statement>
+    | <drop routine statement>
+    | <drop data type statement>
+    | <drop type template statement>
+
+<drop schema statement> ::=
+    DROP SCHEMA <schema name> <drop behavior>
+
+<drop behavior> ::= CASCADE | RESTRICT
+
+<alter table statement> ::=
+    ALTER <table type> <table name> <alter table action>
+
+<alter table action> ::=
+      <add column definition>
+    | <alter column definition>
+    | <drop column definition>
+    | <add supertable clause>
+    | <drop supertable clause>
+    | <add table constraint definition>
+    | <drop table constraint definition>
+
+<add column definition> ::=
+    ADD [ COLUMN ] <column definition>
+
+<alter column definition> ::=
+    ALTER [ COLUMN ] <column name> <alter column action>
+
+<alter column action> ::=
+      <set column default clause>
+    | <drop column default clause>
+    | <drop column domain clause>
+
+<set column default clause> ::=
+    SET <default clause>
+
+<drop column default clause> ::=
+    DROP DEFAULT
+
+<drop column domain clause> ::=
+    DROP DOMAIN [ <constraint disposition> [ <constraint name list> ] ]
+
+<constraint disposition> ::=
+      KEEP COLUMN CONSTRAINT
+    | DROP COLUMN CONSTRAINT
+
+<constraint name list> ::=
+      ALL
+    | <constraint name> [ { <comma> <constraint name> }... ]
+
+<drop column definition> ::=
+    DROP [ COLUMN ] <column name> <drop behavior>
+
+<add supertable clause> ::=
+    ADD <supertable clause>
+
+<drop supertable clause> ::=
+    DROP <supertable clause> <drop behavior>
+
+<add table constraint definition> ::=
+    ADD <table constraint definition>
+
+<drop table constraint definition> ::=
+    DROP CONSTRAINT <constraint name> <drop behavior>
+
+<drop table statement> ::=
+    DROP <table type> <table name> <drop behavior>
+
+<drop view statement> ::=
+    DROP VIEW <table name> <drop behavior>
+
+<revoke statement> ::=
+    REVOKE [ GRANT OPTION FOR ]
+        <privileges>
+      FROM <grantee> [ { <comma> <grantee> }... ] <drop behavior>
+
+<revoke role statement> ::=
+    REVOKE <role revoked> [ { <comma> <role revoked> }... ]
+      FROM <grantee> [ { <comma> <grantee> }... ]
+
+<role revoked> ::= <role name>
+
+<drop role statement> ::= DROP ROLE <role name>
+
+<alter domain statement> ::=
+    ALTER DOMAIN <domain name> <alter domain action>
+
+<alter domain action> ::=
+      <set domain default clause>
+    | <drop domain default clause>
+    | <add domain constraint definition>
+    | <drop domain constraint definition>
+
+<set domain default clause> ::= SET <default clause>
+
+<drop domain default clause> ::= DROP DEFAULT
+
+<add domain constraint definition> ::=
+    ADD <domain constraint>
+
+<drop domain constraint definition> ::=
+    DROP CONSTRAINT <constraint name>
+      [ <constraint disposition> ]
+
+<drop domain statement> ::=
+    DROP DOMAIN <domain name> <drop behavior>
+      [ <constraint disposition> [ <constraint name list> ] ]
+
+<drop null class statement> ::=
+     DROP NULL CLASS <null class name>
+
+<drop character set statement> ::=
+    DROP CHARACTER SET <character set name>
+
+<drop collation statement> ::=
+    DROP COLLATION <collation name>
+      <drop behavior>
+
+<drop translation statement> ::=
+    DROP TRANSLATION <translation name>
+
+<drop assertion statement> ::=
+    DROP ASSERTION <constraint name>
+
+<drop trigger statement> ::= DROP TRIGGER <trigger name>
+
+<drop routine statement> ::=
+    DROP { PROCEDURE | FUNCTION } <specific routine designator> <drop behavior>
+
+<drop data type statement> ::=
+    DROP DATA TYPE
+        <abstract data type name> <drop behavior>
+
+<drop type template statement> ::=
+    DROP TYPE TEMPLATE <type template name>
+      <drop behavior>
+
+<SQL data statement> ::=
+      <open statement>
+    | <fetch statement>
+    | <close statement>
+    | <select statement: single row>
+    | <new statement>
+    | <destroy statement>
+    | <SQL data change statement>
+
+<open statement> ::=
+    OPEN <cursor name>
+      [ <open cascade option> ]
+
+<open cascade option> ::=
+      CASCADE ON
+    | CASCADE OFF
+
+<fetch statement> ::=
+    FETCH [ [ <fetch orientation> ] FROM ]
+      <cursor name> INTO <fetch target list>
+
+<fetch orientation> ::=
+      NEXT
+    | PRIOR
+    | FIRST
+    | LAST
+    | { ABSOLUTE | RELATIVE } <simple value specification>
+
+<simple value specification> ::=
+      <item reference>
+    | <literal>
+
+<fetch target list> ::=
+    <target specification> [ { <comma> <target specification> }... ]
+
+<target specification> ::=
+      <item reference>
+    | <template parameter name>
+
+<close statement> ::=
+    CLOSE <cursor name>
+
+<select statement: single row> ::=
+    SELECT [ <set quantifier> ] <select list>
+      INTO <select target list>
+        <table expression>
+
+<select target list> ::=
+    <target specification> [ { <comma> <target specification> }... ]
+
+<new statement> ::=
+    NEW <item reference>
+
+<destroy statement> ::=
+    DESTROY <object parameter name>
+
+<object parameter name> ::= <parameter name>
+
+<SQL data change statement> ::=
+      <delete statement: positioned>
+    | <delete statement: searched>
+    | <insert statement>
+    | <update statement: positioned>
+    | <update statement: searched>
+
+<delete statement: positioned> ::=
+    DELETE [ FROM <table name> ]
+      WHERE CURRENT OF <cursor name>
+
+<delete statement: searched> ::=
+    DELETE FROM <table reference>
+      [ WHERE <search condition> ]
+
+<insert statement> ::=
+    INSERT INTO { <table reference> | CURSOR <cursor name> }
+      <insert columns and source>
+      [ <insert point> ]
+
+<insert columns and source> ::=
+      [ <left paren> <insert column list> <right paren> ]
+            <query expression>
+    | DEFAULT VALUES
+
+<insert column list> ::= <column name list>
+
+<insert point> ::=
+    <relative insert point> ELEMENT <where clause>
+
+<relative insert point> ::=
+      BEFORE
+    | AFTER
+
+<update statement: positioned> ::=
+    UPDATE [ <table reference> ]
+      SET [ <update type> ] <set clause list>
+        WHERE CURRENT OF <cursor name>
+
+<update type> ::= ALL | SOME | NONE
+
+<set clause list> ::=
+    <set clause> [ { <comma> <set clause> }... ]
+
+<set clause> ::=
+    <update target> <equals operator> <row value designator>
+
+<update target> ::=
+      <object column>
+    | <left paren> <object column list> <right paren>
+
+<object column> ::= <column name>
+
+<object column list> ::=
+    <object column> [ { <comma> <object column> }... ]
+
+<update statement: searched> ::=
+    UPDATE <table reference>
+      <update mechanism>
+      [ WHERE <search condition> ]
+
+<update mechanism> ::=
+      <update by setting>
+    | <update by moving>
+
+<update by setting> ::=
+    SET [ <update type> ] <set clause list>
+
+<update by moving> ::=
+    MOVE <insert point>
+
+<SQL transaction statement> ::=
+      <start transaction statement>
+    | <set transaction statement>
+    | <set constraints mode statement>
+    | <test completion statement>
+    | <savepoint statement>
+    | <release savepoint statement>
+    | <commit statement>
+    | <rollback statement>
+
+<start transaction statement> ::=
+    START TRANSACTION <transaction mode>
+        [ { <comma> <transaction mode> }...]
+
+<transaction mode> ::=
+      <isolation level>
+    | <transaction access mode>
+    | <diagnostics size>
+
+<isolation level> ::=
+    ISOLATION LEVEL <level of isolation>
+
+<level of isolation> ::=
+      READ UNCOMMITTED
+    | READ COMMITTED
+    | REPEATABLE READ
+    | SERIALIZABLE
+
+<transaction access mode> ::=
+      READ ONLY
+    | READ WRITE
+
+<diagnostics size> ::=
+    DIAGNOSTICS SIZE <number of conditions>
+
+<number of conditions> ::= <simple value specification>
+
+<set transaction statement> ::=
+    SET [ LOCAL ] TRANSACTION <transaction mode>
+        [ { <comma> <transaction mode> }... ]
+
+<set constraints mode statement> ::=
+    SET CONSTRAINTS <constraint name list>
+        { DEFERRED | IMMEDIATE }
+
+<test completion statement> ::=
+    { TEST | WAIT }
+       { ALL | ANY | <async statement identifier list> }
+    COMPLETION
+
+<async statement identifier list> ::=
+    <left paren> <async statement identifier>
+        [ { <comma> <async statement identifier> }... ] <right paren>
+
+<savepoint statement> ::= SAVEPOINT <savepoint specifier>
+
+<savepoint specifier> ::=
+      <savepoint name>
+    | <simple target specification>
+
+<savepoint name> ::= <identifier>
+
+<simple target specification> ::=
+    <item reference>
+
+<release savepoint statement> ::=
+    RELEASE SAVEPOINT <savepoint specifier>
+
+<commit statement> ::=
+    COMMIT [ WORK ] [ AND [ NO ] CHAIN ]
+
+<rollback statement> ::=
+    ROLLBACK [ WORK ] [ AND[ NO ]  CHAIN ]
+      [ <savepoint clause> ]
+
+<savepoint clause> ::=
+    TO SAVEPOINT <savepoint specifier>
+
+<SQL connection statement> ::=
+      <connect statement>
+    | <set connection statement>
+    | <disconnect statement>
+
+<connect statement> ::=
+    CONNECT TO <connection target>
+
+<connection target> ::=
+      <SQL-server name>
+        [ AS <connection name> ]
+          correspondence with Tony Gordon)
+        [ USER <user name> ]
+    | DEFAULT
+
+<SQL-server name> ::= <simple value specification>
+
+<connection name> ::= <simple value specification>
+
+<user name> ::= <simple value specification>
+
+<set connection statement> ::=
+    SET CONNECTION <connection object>
+
+<connection object> ::=
+      DEFAULT
+    | <connection name>
+
+<disconnect statement> ::=
+    DISCONNECT <disconnect object>
+
+<disconnect object> ::=
+      <connection object>
+    | ALL
+    | CURRENT
+
+<SQL session statement> ::=
+      <set session authorization identifier statement>
+    | <set role statement>
+    | <set local time zone statement>
+
+<set session authorization identifier statement> ::=
+    SET SESSION AUTHORIZATION <value specification>
+
+<set role statement> ::=
+    SET ROLE { <role name> | NONE }
+
+<set local time zone statement> ::=
+    SET TIME ZONE
+        <set time zone value>
+
+<set time zone value> ::=
+      <interval value expression>
+    | LOCAL
+
+<SQL diagnostics statement> ::=
+    <get diagnostics statement>
+
+<get diagnostics statement> ::=
+    GET DIAGNOSTICS <sql diagnostics information>
+
+<sql diagnostics information> ::=
+      <statement information>
+    | <condition information>
+
+<statement information> ::=
+    <statement information item> [ { <comma> <statement information item> }... ]
+
+<statement information item> ::=
+    <simple target specification>
+        <equals operator> <statement information item name>
+
+<statement information item name> ::=
+      NUMBER
+    | MORE
+    | COMMAND_FUNCTION
+    | ROW_COUNT
+    | TRANSACTIONS_COMMITTED
+    | TRANSACTIONS_ROLLED_BACK
+    | TRANSACTION_ACTIVE
+
+<condition information> ::=
+    EXCEPTION <condition number>
+      <condition information item>
+          [ { <comma> <condition information item> }... ]
+
+<condition number> ::= <simple value specification>
+
+<condition information item> ::=
+    <simple target specification>
+        <equals operator> <condition information item name>
+
+<condition information item name> ::=
+      CONDITION_NUMBER
+    | RETURNED_SQLSTATE
+    | CLASS_ORIGIN
+    | SUBCLASS_ORIGIN
+    | SERVER_NAME
+    | CONNECTION_NAME
+    | CONSTRAINT_CATALOG
+    | CONSTRAINT_SCHEMA
+    | CONSTRAINT_NAME
+    | TRIGGER_CATALOG
+    | TRIGGER_SCHEMA
+    | TRIGGER_NAME
+    | CATALOG_NAME
+    | SCHEMA_NAME
+    | TABLE_NAME
+    | COLUMN_NAME
+    | CURSOR_NAME
+    | ROUTINE_CATALOG
+    | ROUTINE_SCHEMA
+    | ROUTINE_NAME
+    | SPECIFIC_NAME
+    | MESSAGE_TEXT
+    | MESSAGE_LENGTH
+    | MESSAGE_OCTET_LENGTH
+
+<order by clause> ::=
+    ORDER BY <sort specification list>
+
+<updatability clause> ::=
+    FOR
+        { READ ONLY |
+          UPDATE [ OF <column name list> ] }
+
+<temporary abstract data type declaration> ::=
+    DECLARE TEMPORARY TYPE <abstract data type name>
+        <abstract data type body>
+
+<temporary table declaration> ::=
+    DECLARE LOCAL TEMPORARY <table type> <table name>
+      <table element list>
+      [ ON COMMIT <table commit action> ROWS ]
+
+<temporary view declaration> ::=
+    DECLARE TEMPORARY VIEW <table name>
+        [ <left paren> <view column list> <right paren> ]
+        AS <query expression>
+
+<scalar subquery> ::= <subquery>
+
+<regular expression> ::=
+      <regular term>
+    | <regular expression> <vertical bar> <regular term>
+
+<regular term> ::=
+      <regular factor>
+    | <regular term> <regular factor>
+
+<regular factor> ::=
+      <regular primary>
+    | <regular primary> <asterisk>
+    | <regular primary> <plus sign>
+
+<regular primary> ::=
+      <character specifier>
+    | <percent>
+    | <regular character set>
+    | <left paren> <regular expression> <right paren>
+
+<character specifier> ::=
+      <non-escaped character>
+    | <escaped character>
+
+<non-escaped character> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<escaped character> ::= !! <EMPHASIS>(See the Syntax Rules)
+
+<regular character set> ::=
+      <underscore>
+    | <left bracket> <character enumeration>... <right bracket>
+    | <left bracket> <circumflex> <character enumeration>... <right bracket>
+    | <left bracket> <colon> <regular character set identifier> <colon> <right bracket>
+
+<character enumeration> ::=
+      <character specifier>
+    | <character specifier> <minus sign> <character specifier>
+
+<regular character set identifier> ::= <identifier>
+
+<SQL object identifier> ::=
+    <SQL provenance> <SQL variant>
+
+<SQL provenance> ::= <arc1> <arc2> <arc3>
+
+<arc1> ::= iso | 1 | iso <left paren> 1 <right paren>
+
+<arc2> ::= standard | 0 | standard <left paren> 0 <right paren>
+
+<arc3> ::= 9075
+
+<SQL variant> ::= <SQL edition> <SQL conformance>
+
+<SQL edition> ::= <1987> | <1989> | <1992>
+
+<1987> ::= 0 | edition1987 <left paren> 0 <right paren>
+
+<1989> ::= <1989 base> <1989 package>
+
+<1989 base> ::= 1 | edition1989 <left paren> 1 <right paren>
+
+<1989 package> ::= <integrity no> | <integrity yes>
+
+<integrity no> ::= 0 | IntegrityNo <left paren> 0 <right paren>
+
+<integrity yes> ::= 1 | IntegrityYes <left paren> 1 <right paren>
+
+<1992> ::= 2 | edition1992 <left paren> 2 <right paren>
+
+<SQL conformance> ::= <low> | <intermediate> | <high>
+
+<low> ::= 0 | Low <left paren> 0 <right paren>
+
+<intermediate> ::= 1 | Intermediate <left paren> 1 <right paren>
+
+<high> ::= 2 | High <left paren> 2 <right paren>
+
+
+
+
+---
+

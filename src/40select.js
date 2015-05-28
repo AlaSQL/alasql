@@ -307,7 +307,20 @@ yy.Select.prototype.compile = function(databaseid) {
 	return statement;
 };
 
+/**
+	Modify res according modifier
+	@function
+	@param {object} query Query object
+	@param res {object|number|string|boolean} res Data to be converted 
+*/
 function modify(query, res) {
+//	console.log(arguments);
+
+	/* If source is a primitive value then return it */
+	if(typeof res == 'undefined' || typeof res == 'number' || typeof res == 'string' || typeof res == 'boolean') {
+		return res;
+	}
+
 	var modifier = query.modifier || alasql.options.modifier;
 	var columns = query.columns;
 	if(typeof columns == 'undefined' || columns.length == 0) {

@@ -87,8 +87,17 @@ function doSearch (databaseid, params, cb) {
 		var dbid = this.from.databaseid || databaseid;
 		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
 		//selectors.unshift({srchid:'CHILD'});
-	} else if(this.from instanceof yy.FuncValue && alasql.from[this.from.funcid]) {
-		fromdata = alasql.from[this.from.funcid](this.from.args[0].value);
+	} else if(this.from instanceof yy.FuncValue 
+		&& alasql.from[this.from.funcid.toUpperCase()]) {
+		var args = this.from.args.map(function(arg){
+			var as = arg.toJavaScript();
+//			console.log(as);
+			var fn = new Function('params,alasql','var y;return '+as).bind(this);
+			return fn(params,alasql);
+		});
+//		console.log(args);
+		fromdata = alasql.from[this.from.funcid.toUpperCase()].apply(this,args);
+//		console.log(92,fromdata);
 	} else if(typeof this.from == 'undefined') {
 		fromdata = alasql.databases[databaseid].objects;
 	} else {
@@ -112,12 +121,16 @@ function doSearch (databaseid, params, cb) {
 	
 	if(typeof selectors != 'undefined' && selectors.length > 0) {
 		// Init variables for TO() selectors
+
+
+if(false) {
 		selectors.forEach(function(selector){
-			if(selector.srchid == 'TO') {
+			if(selector.srchid == 'TO') {  //* @todo move to TO selector
 				alasql.vars[selector.args[0]] = [];
 				// TODO - process nested selectors
 			}
 		});
+}
 
 		res = processSelector(selectors,0,fromdata);
 	} else {
@@ -335,6 +348,115 @@ function doSearch (databaseid, params, cb) {
 						return processSelector(selectors,sidx+1,value);
 					}
 				}
+			} else 	if(sel.selid == 'REPEAT') {
+//				console.log(352,sel.sels);
+				var lmin = sel.args[0].value;
+				if(!sel.args[1]) {
+					var lmax = lmin; // Add security break
+				} else {
+					var lmax = sel.args[1].value;
+				}
+				if(sel.args[2]) {
+					var lvar = sel.args[2].variable;
+				} else {
+					var lvar;
+				}
+				var lsel = sel.sels;
+//				console.log(351,lmin,lmax,lvar);
+
+				var retval = [];
+
+				if (lmin == 0) {
+					if(sidx+1+1 > selectors.length) {
+						retval = [value];
+					} else {
+						if(lvar) alasql.vars[lvar] = 0;
+						retval = retval.concat(processSelector(selectors,sidx+1,value));
+					}
+				}
+
+//				console.log(364,retval);
+//console.log(370,sel.sels);
+					// var nests = processSelector(sel.sels,0,value).slice();
+				if(lmax > 0) {
+					var nests = [{value:value,lvl:1}];
+						// if(lvl >= lmin) {
+						// 	if(sidx+1+1 > selectors.length) {
+						// 		retval = retval.concat(nests);
+						// 	} else {
+						// 		retval = retval.concat(processSelector(selectors,sidx+1,value));
+						// 	}						
+						// }
+	//console.log(371,nests);
+					var i = 0;
+					while (nests.length > 0) {
+
+						var nest = nests[0];
+	//console.log(375,nest);
+						nests.shift();
+						if(nest.lvl <= lmax) {
+							if(lvar) alasql.vars[lvar] = nest.lvl;
+//		console.log(394,sel.sels);
+							var nest1 = processSelector(sel.sels,0,nest.value);
+//						console.log(397,nest1);
+							nest1.forEach(function(n){
+								nests.push({value:n,lvl:nest.lvl+1});
+							});
+							if(nest.lvl >= lmin) {
+								if(sidx+1+1 > selectors.length) {
+									retval = retval.concat(nest1);
+									//return nests;
+								} else {
+									nest1.forEach(function(n){
+										retval = retval.concat(processSelector(selectors,sidx+1,n));
+									});
+								}
+							}
+						}
+						// Security brake
+						i++;
+						if(i>SECURITY_BREAK) {
+							throw new Error('Security brake. Number of iterations = '+i);
+						}
+					};
+
+				};
+				return retval;
+
+			} else 	if(sel.selid == 'TO') {
+//				console.log(347,value,sel.args[0]);
+				var oldv = alasql.vars[sel.args[0]];
+				var newv = [];
+				if(typeof oldv != 'undefined') {
+//					console.log(353,typeof oldv);
+					newv = oldv.slice(0);
+//					console.log(429, oldv, newv);
+				} else {
+					newv = [];
+				}
+				newv.push(value);
+				// console.log(428,oldv,newv, value);
+				// console.log(435,sidx+1+1,selectors.length);
+//				console.log(355,alasql.vars[sel.args[0]]);
+				if(sidx+1+1 > selectors.length) {
+					return [value];
+				} else {
+					alasql.vars[sel.args[0]] = newv;
+					var r1 = processSelector(selectors,sidx+1,value);
+//					console.log('r1 =',r1);
+					alasql.vars[sel.args[0]] = oldv;
+					return r1;
+				}
+/*
+
+alasql.srch.TO = function(val,args) {
+  console.log(args[0]);
+
+  alasql.vars[args[0]].push(val);
+  return {status: 1, values: [val]};
+};
+
+*/
 			} else 	if(sel.selid == 'ARRAY') {
 				var nest = processSelector(sel.args,0,value);
 				if(nest.length > 0) {
@@ -553,6 +675,10 @@ function doSearch (databaseid, params, cb) {
 			throw new Error('Selector not found');
 		}
 //		console.log(356,sidx,r);
+		if(typeof r == 'undefined') {
+			r = {status: 1, values: [value]};
+		};
+
 		var res = [];
 		if(r.status == 1) {
 
@@ -771,15 +897,15 @@ alasql.srch.EDGE = function(val,args) {
 };
 
 // Transform expression
-alasql.srch.EX = function(val,args) {
+alasql.srch.EX = function(val,args,stope,params) {
   var exprs = args[0].toJavaScript('x','');
-  var exprfn = new Function('x,alasql','return '+exprs);
-  return {status: 1, values: [exprfn(val,alasql)]};
+  var exprfn = new Function('x,alasql,params','return '+exprs);
+  return {status: 1, values: [exprfn(val,alasql,params)]};
 };
 
 
 // Transform expression
-alasql.srch.RETURNS = function(val,args,stope,params) {
+alasql.srch.RETURN = function(val,args,stope,params) {
 	var res = {};
 	if(args && args.length > 0) {
 		args.forEach(function(arg){
@@ -850,16 +976,18 @@ alasql.srch.CLONEDEEP = function(val,args) {
 // };
 
 
-alasql.srch.TO = function(val,args) {
-  alasql.vars[args[0]].push(val);
-  return {status: 1, values: [val]};
-};
-
 // Transform expression
 alasql.srch.SET = function(val,args,stope,params) {
 //	console.log(arguments);
 	var s = args.map(function(st){
-		return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+//console.log(898,st);		
+		if(st.method == '@') {
+			return 'alasql.vars[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
+		} else if(st.method == '$') {
+			return 'params[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
+		} else {
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+		}
 	}).join(';');
 	var setfn = new Function('x,params,alasql',s);
 	
@@ -868,7 +996,21 @@ alasql.srch.SET = function(val,args,stope,params) {
   return {status: 1, values: [val]};
 };
 
-alasql.srch.D3 = function(val,args) {
+alasql.srch.ROW = function(val,args,stope,params) {
+  var s = 'var y;return [';
+//  console.log(args[0]);
+	s += args.map(function(arg){
+		return arg.toJavaScript('x','');
+	}).join(',');
+	s += ']'
+	var setfn = new Function('x,params,alasql',s);
+	var rv = setfn(val,params,alasql);
+
+  return {status: 1, values: [rv]};
+};
+
+
+alasql.srch.D3 = function(val,args,stope,params) {
 	if(val.$node == 'VERTEX') {
 //		var res = val;
 	} else if(val.$node == 'EDGE') {

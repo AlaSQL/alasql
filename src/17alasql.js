@@ -1,45 +1,53 @@
-/*
-//
-// Database class for Alasql.js
-// Date: 03.11.2014
-// (c) 2014, Andrey Gershun
-//
+/**
+	Database class for Alasql.js
 */
 
 
 // Initial parameters
+
 /**
- Jison parser
- */
+	Jison parser
+*/
 alasql.parser = parser;
 
 /**
- Jison parser
- @param {string} sql SQL statement
- @return {object} AST (Abstract Syntax Tree)
+ 	Jison parser
+ 	@param {string} sql SQL statement
+ 	@return {object} AST (Abstract Syntax Tree)
+
+ 	@todo Create class AST
+ 	@todo Add other parsers
+
+ 	@example
+ 	alasql.parse = function(sql) {
+		// My own parser here
+ 	}
  */
 alasql.parse = function(sql) {
 	return parser.parse(alasql.utils.uncomment(sql));
-}; // Shortcut
+}; 
 
-// Database Engines
 /**
- List of engines of external databases
+ 	List of engines of external databases
+ 	@type {object}
+ 	@todo Create collection type
  */
 alasql.engines = {};
 
-// Databases
 /**
- List of databases
+ 	List of databases
+ 	@type {object}
  */
 alasql.databases = {};
 
-/** Number of databases */
-alasql.databasenum = 0; // Current database
+/** 
+	Number of databases 
+	@type {number}
+*/
+alasql.databasenum = 0; 
 
-// Deafult options
 /**
- Alasql options object
+ 	Alasql options object
  */
 alasql.options = {};
 alasql.options.errorlog = false; // Log or throw error

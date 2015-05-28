@@ -1,0 +1,31 @@
+{
+  "ignore": [
+    "**/deps/**",
+    "**/node_modules/**",
+    "**/vendor/**",
+    "**/**-min-**",
+    "**/**-min.**",
+    "**/**.min.**",
+    "**/**jquery.?(ui|effects)-*.*.?(*).?(cs|j)s",
+    "**/**jquery-*.*.?(*).?(cs|j)s",
+    "**/prototype?(*).js",
+    "**/**.test",
+    "console/**",
+    "dist/**",
+    "examples/**",
+    "meteor/**",
+    "lib/**",
+    "stuff/**",
+    "test-sql/**",
+    "test/**",
+    "utils/**",
+    "alasql.js",
+    "gulpfile.js"
+  ],
+  "test": [
+    "**/test/**",
+    "**/tests/**",
+    "**/spec/**",
+    "**/specs/**"
+  ]
+}

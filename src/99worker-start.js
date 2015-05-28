@@ -17,9 +17,17 @@
 
 /**
 	Main procedure for worker
- */
+    @function
+    @param {string} sql SQL statement
+    @param {object} params List of parameters
+    @param {callback} cb Callback function
+    @return {object} Query result
+*/
 function alasql(sql,params,cb){
+    // Increase last request id
 	var id = alasql.lastid++;
+    // Save callback
 	alasql.buffer[id] = cb;
+    // Send a message to worker
 	alasql.webworker.postMessage({id:id,sql:sql,params:params});
 };

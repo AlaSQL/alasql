@@ -1,6 +1,6 @@
 /*
 @module alasql
-@version 0.1.7
+@version 0.1.8
 
 AlaSQL - JavaScript SQL database
 (ñ) 2014-2015, Andrey Gershun

@@ -22,11 +22,22 @@ X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+              return 'STRING'
 
-"--"(.*?)($|\r\n|\r|\n)							return /* return 'COMMENT' */
+"--"(.*?)($|\r\n|\r|\n)							return /* return COMMENT */
 
 \s+                                             /* skip whitespace */
 '||'											return 'OR'
 '&&'											return 'AND'
+
+VALUE\s+OF\s+SELECT                          	yytext = 'VALUE';return 'SELECT'
+ROW\s+OF\s+SELECT                           	yytext = 'ROW';return 'SELECT'
+COLUMN\s+OF\s+SELECT                          	yytext = 'COLUMN';return 'SELECT'
+MATRIX\s+OF\s+SELECT                          	yytext = 'MATRIX';return 'SELECT'
+INDEX\s+OF\s+SELECT                           	yytext = 'INDEX';return 'SELECT'
+RECORDSET\s+OF\s+SELECT                       	yytext = 'RECORDSET';return 'SELECT'
+TEXT\s+OF\s+SELECT                           	yytext = 'TEXT';return 'SELECT'
+
+'SELECT'                           				yytext = 'SELECT';return 'SELECT'
+
 'ABSOLUTE'                                 		return 'ABSOLUTE'
 'ACTION'                                      	return 'ACTION'
 'ADD'                                      		return 'ADD'
@@ -58,21 +69,21 @@ NOT\s+LIKE									    return 'NOT_LIKE'
 'CLASS'											return 'CLASS'
 'CLOSE'											return 'CLOSE'
 'COLLATE'										return 'COLLATE'
-COLUMN											return "COLUMN"
-COLUMNS 										return "COLUMN"
-"COMMIT"										return "COMMIT"
-"CONSTRAINT"									return "CONSTRAINT"
-"CONTENT"										return "CONTENT"
-"CONTINUE"										return "CONTINUE"
-"CONVERT"										return "CONVERT"
-"CORRESPONDING"									return "CORRESPONDING"
-"COUNT"											return "COUNT"
+COLUMN											return 'COLUMN'
+COLUMNS 										return 'COLUMN'
+"COMMIT"										return 'COMMIT'
+"CONSTRAINT"									return 'CONSTRAINT'
+"CONTENT"										return 'CONTENT'
+"CONTINUE"										return 'CONTINUE'
+"CONVERT"										return 'CONVERT'
+"CORRESPONDING"									return 'CORRESPONDING'
+"COUNT"											return 'COUNT'
 'CREATE'										return 'CREATE'
-"CROSS"											return "CROSS"
+"CROSS"											return 'CROSS'
 'CUBE'											return 'CUBE'
-"CURRENT_TIMESTAMP"								return "CURRENT_TIMESTAMP"
-"CURSOR"										return "CURSOR"
-DATABASE(S)?										return 'DATABASE'
+"CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
+"CURSOR"										return 'CURSOR'
+DATABASE(S)?									return 'DATABASE'
 'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
@@ -80,7 +91,7 @@ DATABASE(S)?										return 'DATABASE'
 'DESC'                                          return 'DIRECTION'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
-DOUBLE\s+PRECISION								return 'LITERAL'
+/* DOUBLE\s+PRECISION								return 'LITERAL' */
 'DROP'											return 'DROP'
 'ECHO'											return 'ECHO'
 'EDGE'											return 'EDGE'
@@ -120,11 +131,11 @@ DOUBLE\s+PRECISION								return 'LITERAL'
 'LIMIT'											return 'LIMIT'
 'MATCHED'										return 'MATCHED'
 'MATRIX'										return 'MATRIX'	
-"MAX"											return "MAX"
-"MERGE"											return "MERGE"
-"MIN"											return "MIN"
-"MINUS"											return "EXCEPT"
-"MODIFY"										return "MODIFY"
+"MAX"											return 'MAX'
+"MERGE"											return 'MERGE'
+"MIN"											return 'MIN'
+"MINUS"											return 'EXCEPT'
+"MODIFY"										return 'MODIFY'
 'NATURAL'										return 'NATURAL'
 'NEXT'											return 'NEXT'
 'NEW'											return 'NEW'
@@ -157,16 +168,18 @@ DOUBLE\s+PRECISION								return 'LITERAL'
 'RELATIVE'                                      return 'RELATIVE'
 'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
+'REPEAT'										return 'REPEAT'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
-'RETURNS'                                       return 'RETURNS'
+'RETURN'                                       	return 'RETURN'
+'RETURNS'                                       return 'RETURN'
 'RIGHT'                                        	return 'RIGHT'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
 'ROW'											return 'ROW'
 SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
-'SELECT'                                        return 'SELECT'
+
 'SEMI'                                        	return 'SEMI'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
@@ -194,7 +207,7 @@ SETS                                        	return 'SET'
 'UNIQUE'                                        return 'UNIQUE'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
-/* 'USER'											return 'USER' */
+/* 'USER'										return 'USER' */
 'USING'                                         return 'USING'
 VALUE(S)?                                      	return 'VALUE'
 'VERTEX'										return 'VERTEX'
@@ -527,13 +540,15 @@ SearchSelector
 		{ $$ = {srchid:"AT", args:[$2]}; }	
 	| AS AT Literal
 		{ $$ = {srchid:"AS", args:[$3]}; }	
-	| TO AT Literal
-		{ $$ = {srchid:"TO", args:[$3]}; }	
 	| SET LPAR SetColumnsList RPAR
 		{ $$ = {srchid:"SET", args:$3}; }	
 
+	| TO AT Literal
+		{ $$ = {selid:"TO", args:[$3]}; }	
 	| VALUE
 		{ $$ = {srchid:"VALUE"}; }	
+	| ROW LPAR ExprList RPAR
+		{ $$ = {srchid:"ROW", args:$3}; }	
 	| COLON Literal
 		{ $$ = {srchid:"CLASS", args:[$2]}; }	
 	| SearchSelector PlusStar
@@ -565,8 +580,10 @@ SearchSelector
 		{ $$ = {selid:'OR',args:$3 }; }
 	| PATH LPAR SearchSelector RPAR
 		{ $$ = {selid:'PATH',args:[$3] }; }
-	| RETURNS LPAR ResultColumns RPAR
-		{ $$ = {srchid:'RETURNS',args:$3 }; }
+	| RETURN LPAR ResultColumns RPAR
+		{ $$ = {srchid:'RETURN',args:$3 }; }
+	| REPEAT LPAR SearchSelector* COMMA ExprList RPAR
+		{ $$ = {selid:'REPEAT',sels:$3, args:$5 }; }
 	;
 
 SearchSelectorList
@@ -614,26 +631,33 @@ SearchTimeout
 
 SelectClause
 	: 
-/*
+	/*
+
 		{ $$ = new yy.Select({ columns:new yy.Column({columnid:'_'}), modifier: 'COLUMN' }); }
 	| 
 */
 
 	SelectModifier DISTINCT TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1); yy.extend($$, $3); }
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1); yy.extend($$, $3); }
 	| SelectModifier UNIQUE TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy,extend($$, $1);yy.extend($$, $3); }
+		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1);yy.extend($$, $3); }
 	| SelectModifier  ALL TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$4, all:true }); yy,extend($$, $1);yy.extend($$, $3); }
-	| SelectModifier TopClause ResultColumns  
-		{ $$ = new yy.Select({ columns:$3 }); yy,extend($$, $1);yy.extend($$, $2); }
+		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $1);yy.extend($$, $3); }
+	| SelectModifier TopClause ResultColumns?  
+		{ 
+			if(!$3) {
+				$$ = new yy.Select({columns:[new yy.Column({columnid:'_',})], modifier:'COLUMN'});
+			} else {
+				$$ = new yy.Select({ columns:$3 }); yy.extend($$, $1);yy.extend($$, $2); 
+			}
+		}
 /*	| 
 		{ $$ = new yy.Select({columns:[new yy.Column({columnid:'_', modifier:'COLUMN'})]});}
 */	;
 
 SelectModifier
 	: SELECT
-		{ $$ = undefined; }
+		{ if($1=='SELECT') $$ = undefined; else $$ = {modifier: $1};  }
 	| SELECT VALUE
 		{ $$ = {modifier:'VALUE'}}
 	| SELECT ROW
@@ -1450,6 +1474,11 @@ Op
 	| Expression NOT IN ColFunc
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
 
+	| Expression IN VarValue
+		{ $$ = new yy.Op({left: $1, op:'IN', right:$3}); }
+
+	| Expression NOT IN VarValue
+		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
 
 	/* 
 		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar. 
@@ -1529,6 +1558,8 @@ SetColumn
 	: Column EQ Expression
 /* TODO Replace columnid with column */
 		{ $$ = new yy.SetColumn({column:$1, expression:$3})}
+	| (AT|DOLLAR) Literal EQ Expression
+		{ $$ = new yy.SetColumn({variable:$2, expression:$4, method:$1})}
 	;
 
 /* DELETE */
@@ -1787,6 +1818,7 @@ ColumnDef
 		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
+/*
 ColumnType
 	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
 		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
@@ -1797,6 +1829,26 @@ ColumnType
 	| ENUM LPAR ValuesList RPAR
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
+*/
+ColumnType
+	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
+	| LITERAL LITERAL LPAR NumberMax COMMA NUMBER RPAR
+		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4, dbprecision: +$6} }
+	| LITERAL LPAR NumberMax RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3} }
+	| LITERAL LITERAL LPAR NumberMax RPAR
+		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4} }
+	| LITERAL
+		{ $$ = {dbtypeid: $1} }
+	| LITERAL LITERAL
+		{ $$ = {dbtypeid: $1+($2?' '+$2:'')} }
+	| ENUM LPAR ValuesList RPAR
+		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
+	;
+
+
+
 
 NumberMax
 	: NUMBER
