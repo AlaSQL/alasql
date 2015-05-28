@@ -11,7 +11,7 @@
     "**/prototype?(*).js",
     "**/**.test",
     "console/**",
-    "dist/**",
+    "src/**",
     "examples/**",
     "meteor/**",
     "lib/**",
