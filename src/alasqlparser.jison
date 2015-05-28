@@ -27,6 +27,17 @@ X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 \s+                                             /* skip whitespace */
 '||'											return 'OR'
 '&&'											return 'AND'
+
+VALUE\s+OF\s+SELECT                          	yytext = 'VALUE';return 'SELECT'
+ROW\s+OF\s+SELECT                           	yytext = 'ROW';return 'SELECT'
+COLUMN\s+OF\s+SELECT                          	yytext = 'COLUMN';return 'SELECT'
+MATRIX\s+OF\s+SELECT                          	yytext = 'MATRIX';return 'SELECT'
+INDEX\s+OF\s+SELECT                           	yytext = 'INDEX';return 'SELECT'
+RECORDSET\s+OF\s+SELECT                       	yytext = 'RECORDSET';return 'SELECT'
+TEXT\s+OF\s+SELECT                           	yytext = 'TEXT';return 'SELECT'
+
+'SELECT'                           				yytext = 'SELECT';return 'SELECT'
+
 'ABSOLUTE'                                 		return 'ABSOLUTE'
 'ACTION'                                      	return 'ACTION'
 'ADD'                                      		return 'ADD'
@@ -80,7 +91,7 @@ DATABASE(S)?									return 'DATABASE'
 'DESC'                                          return 'DIRECTION'
 'DETACH'										return 'DETACH'
 'DISTINCT'                                      return 'DISTINCT'
-DOUBLE\s+PRECISION								return 'LITERAL'
+/* DOUBLE\s+PRECISION								return 'LITERAL' */
 'DROP'											return 'DROP'
 'ECHO'											return 'ECHO'
 'EDGE'											return 'EDGE'
@@ -168,7 +179,7 @@ DOUBLE\s+PRECISION								return 'LITERAL'
 'ROW'											return 'ROW'
 SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
-'SELECT'                                        return 'SELECT'
+
 'SEMI'                                        	return 'SEMI'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
@@ -646,7 +657,7 @@ SelectClause
 
 SelectModifier
 	: SELECT
-		{ $$ = undefined; }
+		{ if($1=='SELECT') $$ = undefined; else $$ = {modifier: $1};  }
 	| SELECT VALUE
 		{ $$ = {modifier:'VALUE'}}
 	| SELECT ROW
@@ -1807,6 +1818,7 @@ ColumnDef
 		{ $$ = new yy.ColumnDef({columnid:$1, dbtypeid: ''}); }
 	;
 
+/*
 ColumnType
 	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
 		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
@@ -1817,6 +1829,26 @@ ColumnType
 	| ENUM LPAR ValuesList RPAR
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
+*/
+ColumnType
+	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
+	| LITERAL LITERAL LPAR NumberMax COMMA NUMBER RPAR
+		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4, dbprecision: +$6} }
+	| LITERAL LPAR NumberMax RPAR
+		{ $$ = {dbtypeid: $1, dbsize: $3} }
+	| LITERAL LITERAL LPAR NumberMax RPAR
+		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4} }
+	| LITERAL
+		{ $$ = {dbtypeid: $1} }
+	| LITERAL LITERAL
+		{ $$ = {dbtypeid: $1+($2?' '+$2:'')} }
+	| ENUM LPAR ValuesList RPAR
+		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
+	;
+
+
+
 
 NumberMax
 	: NUMBER

@@ -191,7 +191,13 @@ alasql.srch.LOG = function(val,args,stope,params) {
     var res = alasql('SEARCH / * a to @h ex(1) to @h ex(2) to @h @h FROM {a:10,b:{a:20},c:{b:{a:30}}}');
 console.log('res1=',res);
 
-    var res = alasql('SEARCH REPEAT(/ ex(@i) to @h @h,0,3,@i) FROM {a:10,b:{a:20},c:{b:{a:30}}}');
+    var res = alasql('SEARCH / a to @h REPEAT(/ ex(@i) to @h @h,2,2,@i) @h FROM {a:10,b:{a:20},c:{b:{a:30}}}');
+console.log('res2=',res);
+
+
+    var res = alasql('SEARCH @[] as @h @[] as @d @[] as @g \
+      repeat(^ / as @f to @h,2,2) \
+     @h FROM @[1,2,3,4]');
 console.log('res2=',res);
 
 

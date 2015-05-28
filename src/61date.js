@@ -104,5 +104,5 @@ stdfn.YEAR = function(d){
 };
 
 stdfn.DATEDIFF = function(a,b){
-	return (+a) - (+b);
-}
+	return (+new Date(a).valueOf()) - (new Date(b).valueOf());
+};
