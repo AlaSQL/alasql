@@ -11,7 +11,7 @@
     "**/prototype?(*).js",
     "**/**.test",
     "console/**",
-    "src/**",
+    "dist/**",
     "examples/**",
     "meteor/**",
     "lib/**",
@@ -20,7 +20,6 @@
     "test/**",
     "utils/**",
     "/alasql.js",
-    "/alasql.js.map",
     "/gulpfile.js"
   ],
   "test": [
