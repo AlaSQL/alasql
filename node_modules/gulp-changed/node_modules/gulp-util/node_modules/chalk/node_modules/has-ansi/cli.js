@@ -1,29 +1,21 @@
 #!/usr/bin/env node
 'use strict';
+var stdin = require('get-stdin');
 var pkg = require('./package.json');
 var hasAnsi = require('./');
-var input = process.argv[2];
-
-function stdin(cb) {
-	var ret = '';
-	process.stdin.setEncoding('utf8');
-	process.stdin.on('data', function (data) {
-		ret += data;
-	});
-	process.stdin.on('end', function () {
-		cb(ret);
-	});
-}
+var argv = process.argv.slice(2);
+var input = argv[0];
 
 function help() {
 	console.log([
-		pkg.description,
 		'',
-		'Usage',
-		'  $ has-ansi <string>',
-		'  $ echo <string> | has-ansi',
+		'  ' + pkg.description,
 		'',
-		'Exits with code 0 if input has ANSI escape codes and 1 if not'
+		'  Usage',
+		'    has-ansi <string>',
+		'    echo <string> | has-ansi',
+		'',
+		'  Exits with code 0 if input has ANSI escape codes and 1 if not'
 	].join('\n'));
 }
 
@@ -31,12 +23,12 @@ function init(data) {
 	process.exit(hasAnsi(data) ? 0 : 1);
 }
 
-if (process.argv.indexOf('--help') !== -1) {
+if (argv.indexOf('--help') !== -1) {
 	help();
 	return;
 }
 
-if (process.argv.indexOf('--version') !== -1) {
+if (argv.indexOf('--version') !== -1) {
 	console.log(pkg.version);
 	return;
 }
