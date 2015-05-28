@@ -19,8 +19,8 @@
     "test-sql/**",
     "test/**",
     "utils/**",
-    "/alasql.js",
-    "/gulpfile.js"
+    "alasql.js",
+    "gulpfile.js"
   ],
   "test": [
     "**/test/**",
