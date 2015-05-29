@@ -19,7 +19,7 @@
     "jison":"0.4.15",
     "lodash":"3.7.0",
     "xlsjs":"0.7.15",
-    "js-xlsx":"0.8.0"
+    "xlsx":"0.8.0"
     },
   "engines": [
     "node"
