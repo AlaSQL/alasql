@@ -89,6 +89,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		this.columns.forEach(function(col) {
 			var dbtypeid = col.dbtypeid;
 			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
+
+			// Process SERIAL data type like Postgress
+			if(['SERIAL','SMALLSERIAL','BIGSERIAL'].indexOf(dbtypeid)>-1) col.identity = {value:1,step:1};
+			
 			var newcol = {
 				columnid: col.columnid,
 				dbtypeid: dbtypeid, 
