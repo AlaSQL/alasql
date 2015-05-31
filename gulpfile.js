@@ -197,6 +197,13 @@ gulp.task('copy-console-org', function(){
 /************************/
 
 // Echo plugin
+gulp.task('typescript', function(){
+  gulp.src(['./src/typescript/alasql.d.ts'])
+    .pipe(gulp.dest('./dist'));
+});
+
+
+// Echo plugin
 gulp.task('plugin-plugins', function(){
   gulp.src([
       './src/echo/alasql-echo.js',
@@ -242,6 +249,7 @@ gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], f
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
 
+  gulp.watch('./src/typescript/alasql.d.ts',function(){ gulp.run('typescript'); });
   gulp.watch('./src/echo/*.js',function(){ gulp.run('plugin-plugins'); });
   gulp.watch('./src/md/*.js',function(){ gulp.run('plugin-plugins'); });
   gulp.watch('./src/prolog/*.js',function(){ gulp.run('plugin-prolog'); });
