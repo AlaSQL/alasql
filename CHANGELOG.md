@@ -1,10 +1,11 @@
 # Changelog
 
-### 0.1.9 "Torino" (29.05.2015 - 30.05.2015)
+### 0.1.9 "Torino" (29.05.2015 - 31.05.2015)
 * SERIAL data type added
 * Changed package.json
 * Sample application AlaSQL Codex (alasql.org/codex)
 * Changed type conversion procedure for INTEGER, JSON and other types
+* TypeScript definition file: alasql.d.ts
 
 ### 0.1.8 "Pisa" (22.05.2015 - 28.05.2015)
 * SELECT FROM syntax
