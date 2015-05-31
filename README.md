@@ -11,7 +11,7 @@
 
 
 
-AlaSQL - ([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL)) **[æl'æ 'ɛs kju: ɛl]** - is probably the most versatile JavaScript SQL database solution out there:  
+AlaSQL - ([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) SQL) [ælæ ɛskjuɛl] - is probably the most versatile javascript SQL database solution out there:  
 
 - Supporting SQL querying against several backend as SQLite, localStorage, IndexedDB, Excel, or your own JSON object. 
 - Designed to work in your browser, Node.js, and Apache Cordova. 
@@ -21,8 +21,8 @@ AlaSQL - ([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wiki
 
 ### This release:
 
-- Version: 0.1.8 "Pisa" 
-- Updated: May 28, 2015, 
+- Version: 0.1.9 "Torino" 
+- Updated: May 31, 2015, 
 - Test cover: [SQLLOGICTEST=62%, NIST=24%](TESTLOG.md)
 - [Change log](CHANGELOG.md)
 - [Release plan](RELEASES.md). 
@@ -96,12 +96,12 @@ and require the alasql.js file
 
 ## Why we are proud of AlaSQL?
 
-* AlaSQL ♥ d3.js [see why](#d3js--alasql)
-* AlaSQL ♥ Meteor [see why](#alasql-and-meteor)
-* AlaSQL ♥ Angular.js [see why](#angularjs-and-alasqljs)
-* AlaSQL ♥ Google Maps [see why](#google-maps--alasql)
-* AlaSQL ♥ your JSON data [see why](#javascript-sugar)
-* AlaSQL ♥ Google Spreadsheets [see why](#google-maps--alasql)
+* AlaSQL ♥ d3.js [see why](https://github.com/agershun/alasql/wiki/readme#d3js--alasql)
+* AlaSQL ♥ Meteor [see why](https://github.com/agershun/alasql/wiki/readme#alasql-and-meteor)
+* AlaSQL ♥ Angular.js [see why](https://github.com/agershun/alasql/wiki/readme#angularjs-and-alasqljs)
+* AlaSQL ♥ Google Maps [see why](https://github.com/agershun/alasql/wiki/readme#google-maps--alasql)
+* AlaSQL ♥ your JSON data [see why](https://github.com/agershun/alasql/wiki/readme#javascript-sugar)
+* AlaSQL ♥ Google Spreadsheets [see why](https://github.com/agershun/alasql/wiki/readme#google-maps--alasql)
 * Search paths in graph data
 * Read and write Excel, CSV, TAB, JSON, and text files to/from the database
 * Got some CPU intensive SQL? AlaSQL plays nice as a WebWorker
@@ -518,7 +518,7 @@ Try AlaSQL in console:
 * [Console source code](console/index.html)
 * [Alacon](alacon.js) - command-line AlaSQL console (to run: ```alacon "sql-statement" params...```)
 * [Alaserver](alaserver.js) - very simple AlaSQL-server (to run: ```alaserver```, then 
-type in browser "http://127.0.0.1:1337/?=2*2" )
+type in browser "http://127.0.0.1:1337/?SELECT VALUE 2*2" )
 
 Try AlaSQL in Fiddle: 
 * Simple examples: [sample 1](http://jsfiddle.net/38hj2uwy/10/), [sample 2](http://jsfiddle.net/38hj2uwy/6/), [sample 3](http://jsfiddle.net/6a06dqhc/3/), [sample 4](http://jsfiddle.net/606ksx2g/1/), [sample 5](http://jsfiddle.net/agershun/38hj2uwy/40/)
@@ -622,10 +622,10 @@ Functions:
 * GREATEST(), LEAST()
 
 SELECT modifiers (non-standard SQL):
-* VALUE OF SELECT- get single value
-* ROW OF SELECT - get first row as an array
-* COLUMN OF SELECT - get first column as an array
-* MATRIX OF SELECT - get all results as an array of arrays
+* SELECT VALUE - get single value
+* SELECT ROW - get first row as an array
+* SELECT COLUMN - get first column as an array
+* SELECT MATRIX - get all results as an array of arrays
 
 #### User-defined JavaScript functions
 
@@ -682,7 +682,7 @@ Usually, alasql.js works synchronously, but you can use callback.
 
 ```js
     db.exec('SELECT * FROM test', [], function(res){
-      console.log(res);
+        console.log(res);
     });
 ```
 
@@ -784,7 +784,7 @@ AlaSQL extends "good old" SQL to make it closer to JavaScript. The "sugar" inclu
 * Object propertires - ```obj->property->subproperty```
 * Object and arrays elements - ```obj->(a*1)```
 * JavaScript functions - ```obj->valueOf()```
-* VALUE, ROW, COLUMN, MATRIX OF SELECT to format results of query
+* SELECT VALUE, ROW, COLUMN, MATRIX to format results of query
 
 ### Transactions
 
@@ -853,19 +853,19 @@ See [test157.js](test/test157.js) as an example.
 
 You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
 ```sql
-    alasql> VALUE OF SELECT @{a:1,b:2}
+    alasql> SELECT VALUE @{a:1,b:2}
 
     {a:1,b:2}
 
-    alasql> = @{a:1,b:2} == @{a:1,b:2}
+    alasql> SELECT VALUE @{a:1,b:2} == @{a:1,b:2}
 
     true
 
-    alasql> = @{a:1,b:2}->b
+    alasql> SELECT VALUE @{a:1,b:2}->b
 
     2
 
-    alasql> = @{a:1,b:(2*2)}->b
+    alasql> SELECT VALUE @{a:1,b:(2*2)}->b
 
     4
 
@@ -876,11 +876,11 @@ Try AlaSQL JSON objects in  Console [sample](http://alasql.org/console?drop tabl
 
 You can use AlaSQL from the command-line:
 ```sql
-    > alacon "= 1+1"
+    > alacon "SELECT VALUE 1+1"
     2
-    > alacon "= 1+?" 2
+    > alacon "SELECT VALUE 1+?" 2
     3
-    > alacon "VALUES OF SELECT @{a:(1+?)}" 3
+    > alacon "@{a:(1+?)}" 3
     4
 ```
 
@@ -892,7 +892,7 @@ To run enter the command:
 ```
     alaserver [port]
 ```
-then type in browser something like "http://127.0.0.1:1337/?= 2*2" 
+then type in browser something like "http://127.0.0.1:1337/?SELECT VALUE 2*2" 
 
 Warning: Alaserver is not multi-thread, not concurent, and not secured.
 
