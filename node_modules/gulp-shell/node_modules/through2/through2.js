@@ -2,6 +2,24 @@ var Transform = require('readable-stream/transform')
   , inherits  = require('util').inherits
   , xtend     = require('xtend')
 
+function DestroyableTransform(opts) {
+  Transform.call(this, opts)
+  this._destroyed = false
+}
+
+inherits(DestroyableTransform, Transform)
+
+DestroyableTransform.prototype.destroy = function(err) {
+  if (this._destroyed) return
+  this._destroyed = true
+  
+  var self = this
+  process.nextTick(function() {
+    if (err)
+      self.emit('error', err)
+    self.emit('close')
+  })
+}
 
 // a noop _transform function
 function noop (chunk, enc, callback) {
@@ -32,7 +50,7 @@ function through2 (construct) {
 
 // main export, just make me a transform stream!
 module.exports = through2(function (options, transform, flush) {
-  var t2 = new Transform(options)
+  var t2 = new DestroyableTransform(options)
 
   t2._transform = transform
 
@@ -52,10 +70,10 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
     this.options = xtend(options, override)
 
-    Transform.call(this, this.options)
+    DestroyableTransform.call(this, this.options)
   }
 
-  inherits(Through2, Transform)
+  inherits(Through2, DestroyableTransform)
 
   Through2.prototype._transform = transform
 
@@ -67,7 +85,7 @@ module.exports.ctor = through2(function (options, transform, flush) {
 
 
 module.exports.obj = through2(function (options, transform, flush) {
-  var t2 = new Transform(xtend({ objectMode: true, highWaterMark: 16 }, options))
+  var t2 = new DestroyableTransform(xtend({ objectMode: true, highWaterMark: 16 }, options))
 
   t2._transform = transform
 

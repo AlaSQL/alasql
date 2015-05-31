@@ -1,3 +1,4 @@
+/*! AlaSQL v0.1.9 (c) 2014-2015 Andrey Gershun | alasql.org/license */
 /*
 @module alasql
 @version 0.1.8

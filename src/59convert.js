@@ -118,35 +118,45 @@ alasql.stdfn.CONVERT = function(value, args) {
 		}
 	};
 
+	var udbtypeid = args.dbtypeid.toUpperCase();
+
 	if(args.dbtypeid == 'Date') {
 		return new Date(val);
-	} else if(args.dbtypeid.toUpperCase() == 'DATE') {
+	} else if(udbtypeid == 'DATE') {
 		var d = new Date(val);
 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 		return s;
-	} else if(args.dbtypeid == 'DATETIME') {
+	} else if(udbtypeid == 'DATETIME') {
 		var d = new Date(val);
 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 		s += " "+("0"+d.getHours()).substr(-2)+":"+("0"+d.getMinutes()).substr(-2)+":"+("0"+d.getSeconds()).substr(-2);
 		s += '.'+("00"+d.getMilliseconds()).substr(-3)
 		return s;
-	} else if(args.dbtypeid.toUpperCase() == 'STRING') {
-		return ""+val;
-	} else if(args.dbtypeid.toUpperCase() == 'NUMBER' || args.dbtypeid == 'FLOAT') {
+	} else if(['NUMBER','FLOAT'].indexOf(udbtypeid)>-1) {
 		return +val;
-	} else if(args.dbtypeid.toUpperCase() == 'MONEY') {
+	} else if(['MONEY'].indexOf(udbtypeid)>-1) {
 		var m = +val;
 		return (m|0)+((m*100)%100)/100;
-	} else if(args.dbtypeid.toUpperCase() == 'BOOLEAN') {
+	} else if(['BOOLEAN'].indexOf(udbtypeid)>-1) {
 		return !!val;
-	} else if(args.dbtypeid.toUpperCase() == 'INT') {
+	} else if(['INT','INTEGER','SMALLINT','BIGINT','SERIAL','SMALLSERIAL','BIGSERIAL'].indexOf(args.dbtypeid.toUpperCase())>-1) {
 		return val|0;
-	} else if(args.dbtypeid.toUpperCase() == 'VARCHAR' || args.dbtypeid == 'NVARCHAR') {
+	} else if(['STRING','VARCHAR','NVARCHAR', 'CHARACTER VARIABLE'].indexOf(args.dbtypeid.toUpperCase())>-1) {
 		if(args.dbsize) return (""+val).substr(0,args.dbsize);
 		else return ""+val;
-	} else if(args.dbtypeid.toUpperCase() == 'CHAR' || args.dbtypeid == 'NCHAR') {
+	} else if(['CHAR','CHARACTER', 'NCHAR'].indexOf(udbtypeid)>-1) {
 		return (val+(new Array(args.dbsize+1).join(" "))).substr(0,args.dbsize);
 		//else return ""+val.substr(0,1);
-	}
+	} else if(['DECIMAL','NUMERIC'].indexOf(udbtypeid)>-1) {
+		var m = +val;
+		var fxd = Math.pow(10,args.dbpecision);
+		return (m|0)+((m*fxd)%fxd)/fxd;
+	} else if(['JSON'].indexOf(udbtypeid)>-1) {
+		if(typeof val == 'object') return val;
+		try {
+			return JSON.parse(val);
+		} catch(err) { throw new Error('Cannot convert string to JSON');};
+	};
+	return val;
 };
 
