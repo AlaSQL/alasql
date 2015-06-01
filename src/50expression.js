@@ -40,7 +40,7 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 		if(cb) res = cb(res);
 		return res;
 	}
-}
+};
 
 /**
 	Expression class
@@ -121,7 +121,7 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 	expr(params,alasql);
 	if(cb) res = cb(res);
 	return res;
-}
+};
 
 
 /**
@@ -131,26 +131,26 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 	MyVar, [My vairable], `MySQL variable`
 */
 
-yy.Literal = function (params) { return yy.extend(this, params); }
+yy.Literal = function (params) { return yy.extend(this, params); };
 yy.Literal.prototype.toString = function() {
 	var s = this.value;
 	if(this.value1) s = this.value1+'.'+s; 
 //	else s = tableid+'.'+s;
 	return L(s);
-}
+};
 
 /**
 	Join class
 	@class
 */
 
-yy.Join = function (params) { return yy.extend(this, params); }
+yy.Join = function (params) { return yy.extend(this, params); };
 yy.Join.prototype.toString = function() {
 	var s = NL()+ID();
 	if(this.joinmode) s += K(this.joinmode)+' ';
 	s += K('JOIN')+this.table.toString();
 	return s;
-}
+};
 
 //yy.Join.prototype.toJavaScript = function(context, tableid) {
 //	return 'JOIN'+this.table.toString();
@@ -161,7 +161,7 @@ yy.Join.prototype.toString = function() {
 	@class
 */
 
-yy.Table = function (params) { return yy.extend(this, params); }
+yy.Table = function (params) { return yy.extend(this, params); };
 yy.Table.prototype.toString = function() {
 	var s = this.tableid;
 //	if(this.joinmode)
@@ -174,7 +174,7 @@ yy.Table.prototype.toString = function() {
 	@class
 */
 
-yy.View = function (params) { return yy.extend(this, params); }
+yy.View = function (params) { return yy.extend(this, params); };
 yy.View.prototype.toString = function() {
 	var s = this.viewid;
 //	if(this.joinmode)
@@ -187,7 +187,7 @@ yy.View.prototype.toString = function() {
 	@class
 */
 
-yy.Op = function (params) { return yy.extend(this, params); }
+yy.Op = function (params) { return yy.extend(this, params); };
 yy.Op.prototype.toString = function() {
 	if(this.op == 'IN' || this.op == 'NOT IN') {
 		return this.left.toString()+" "+P(this.op)+" ("+this.right.toString()+")";
@@ -220,7 +220,7 @@ yy.Op.prototype.toType = function(tableid) {
 	if(this.op == '+') {
 		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
-	};
+	}
 	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ) return 'boolean';
 	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN' || this.op == 'IS NULL' || this.op == 'IS NOT NULL') return 'boolean';
 	if(this.allsome) return 'boolean';
@@ -243,8 +243,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else if(typeof this.right == "number") {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
 		} else if(this.right instanceof yy.FuncValue) {
-			ss = [];
-			if(!this.right.args || this.right.args.length == 0) {
+			var ss = [];
+			if(!this.right.args || 0 === this.right.args.length) {
 			} else {
 				var ss = this.right.args.map(function(arg){
 					return arg.toJavaScript(context,tableid, defcols);
@@ -255,7 +255,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
 		}
-	};
+	}
 
 	if(this.op == '!') {
 		if(typeof this.right == "string") {
@@ -266,7 +266,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.op == 'IS') {
 		return '((typeof '+this.left.toJavaScript(context,tableid, defcols)+"=='undefined') == "
-			+ '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
+			 + '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
 	}
 
 
@@ -286,18 +286,16 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		return '(!alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+'))';
 	}
 
+
 	if(this.op == 'LIKE') {
-		var s = "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
-//		console.log(s);
-		return s;
-	};
+		return "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
+		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))";
+	}
 
 	if(this.op == 'NOT LIKE') {
-		var s = "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
+		return "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
 		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g')))"
-		return s;
-	};
+	}
 
 	if(this.op == 'BETWEEN') {
 		return '(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
@@ -309,12 +307,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
 			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 
-
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
 		}
 */
-	};
+	}
 
 	if(this.op == 'NOT BETWEEN') {
 		return '!(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
@@ -327,11 +324,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		// } else {
 		// 	throw new Error('Wrong NOT BETWEEN operator without AND part');
 		// }
-	};
+	}
 
 	if(this.op == 'IN') {
 		if(this.right instanceof yy.Select ) {
-			var s = '(';
+			s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
@@ -340,24 +337,27 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'false';
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s 	= '(['
+				+ this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')
+				+ '].indexOf('
+				+ this.left.toJavaScript(context,tableid, defcols)
+				+')>-1)';
 //console.log(s);
 			return s;
 		} else {
-			var s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf('
+			  + this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 //console.log('expression',350,s);
 			return s;
 //		} else {
 //			throw new Error('Wrong IN operator without SELECT part');
 		}
-	};
+	}
 
 
 	if(this.op == 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
-			var s = '('
+			s = '(';
 				//this.query.queriesdata['+this.queriesidx+']
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
@@ -366,50 +366,50 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'true';
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
+			s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else {
-			var s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
+			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')==-1)';
 			return s;
 
 //			throw new Error('Wrong NOT IN operator without SELECT part');
 		}
-	};
+	}
 
 	if(this.allsome == 'ALL') {
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
-			var s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+		 	s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 
 			s +='.every(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].every(function(b){return (';
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
 		}		
-	};
+	}
 
 	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
-			var s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
-			s+='.some(function(b){return (';
+			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s +='.some(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].some(function(b){return (';
+			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
 		}		
-	};
+	}
 
 // Special case for AND optimization (if reduced)
 	if(this.op == 'AND') {
@@ -429,15 +429,20 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	}
 
 	if(this.op == '^') {
-		return 'Math.pow('+this.left.toJavaScript(context,tableid, defcols)
-			+','+this.right.toJavaScript(context,tableid, defcols)+')';
+		return 'Math.pow('
+				+this.left.toJavaScript(context,tableid, defcols)
+				+','
+				+this.right.toJavaScript(context,tableid, defcols)
+				+')';
 	};
+
+
 
 
 	// Change names
 //	console.log(this);
 	return '('+this.left.toJavaScript(context,tableid, defcols)+op+this.right.toJavaScript(context,tableid, defcols)+')';
-};
+}
 
 
 

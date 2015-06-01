@@ -20,7 +20,8 @@
     "test/**",
     "utils/**",
     "alasql.js",
-    "gulpfile.js"
+    "gulpfile.js",
+    "**/**_.js"
   ],
   "test": [
     "**/test/**",
