@@ -66,7 +66,7 @@ define(function (require, exports, module) {
 
   /**
    * Converts from a two-complement value to a value where the sign bit is
-   * is placed in the least significant bit.  For example, as decimals:
+   * placed in the least significant bit.  For example, as decimals:
    *   1 becomes 2 (10 binary), -1 becomes 3 (11 binary)
    *   2 becomes 4 (100 binary), -2 becomes 5 (101 binary)
    */
@@ -78,7 +78,7 @@ define(function (require, exports, module) {
 
   /**
    * Converts to a two-complement value from a value where the sign bit is
-   * is placed in the least significant bit.  For example, as decimals:
+   * placed in the least significant bit.  For example, as decimals:
    *   2 (10 binary) becomes 1, 3 (11 binary) becomes -1
    *   4 (100 binary) becomes 2, 5 (101 binary) becomes -2
    */
@@ -117,18 +117,17 @@ define(function (require, exports, module) {
    * Decodes the next base 64 VLQ value from the given string and returns the
    * value and the rest of the string via the out parameter.
    */
-  exports.decode = function base64VLQ_decode(aStr, aOutParam) {
-    var i = 0;
+  exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
     var strLen = aStr.length;
     var result = 0;
     var shift = 0;
     var continuation, digit;
 
     do {
-      if (i >= strLen) {
+      if (aIndex >= strLen) {
         throw new Error("Expected more digits in base 64 VLQ value.");
       }
-      digit = base64.decode(aStr.charAt(i++));
+      digit = base64.decode(aStr.charAt(aIndex++));
       continuation = !!(digit & VLQ_CONTINUATION_BIT);
       digit &= VLQ_BASE_MASK;
       result = result + (digit << shift);
@@ -136,7 +135,7 @@ define(function (require, exports, module) {
     } while (continuation);
 
     aOutParam.value = fromVLQSigned(result);
-    aOutParam.rest = aStr.slice(i);
+    aOutParam.rest = aIndex;
   };
 
 });

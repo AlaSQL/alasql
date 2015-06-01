@@ -1,23 +1,6 @@
 # through2
 
-<!--
-
-soon ...
-
-[![Build Status](https://secure.travis-ci.org/rvagg/through2.png)](http://travis-ci.org/rvagg/through2)
-
-[![Build Status](https://saucelabs.com/browser-matrix/through2-sauce.svg)](https://travis-ci.org/rvagg/through2)
-
--->
-
 [![NPM](https://nodei.co/npm/through2.png?downloads&downloadRank)](https://nodei.co/npm/through2/)
-
-<!--
-not happy with these, we need to peg to readable-stream@1.0.x so it'll always report out-of-date
-
-[![david-dm](https://david-dm.org/rvagg/through2.png)](https://david-dm.org/rvagg/through2/)
-[![david-dm](https://david-dm.org/rvagg/through2/dev-status.png)](https://david-dm.org/rvagg/through2#info=devDependencies/)
--->
 
 **A tiny wrapper around Node streams.Transform (Streams2) to avoid explicit subclassing noise**
 

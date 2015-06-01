@@ -1,22 +1,36 @@
 #!/usr/bin/env node
 'use strict';
-var meow = require('meow');
+var pkg = require('./package.json');
 var repeating = require('./');
+var argv = process.argv.slice(2);
 
-var cli = meow({
-	help: [
-		'Usage',
-		'  repeating <string> <count>',
+function help() {
+	console.log([
 		'',
-		'Example',
-		'  repeating unicorn 2',
-		'  unicornunicorn'
-	].join('\n')
-});
+		'  ' + pkg.description,
+		'',
+		'  Usage',
+		'    $ repeating <string> <count>',
+		'',
+		'  Example',
+		'    $ repeating \'unicorn \' 2',
+		'    unicorn unicorn'
+	].join('\n'));
+}
 
-if (typeof cli.input[1] !== 'number') {
+if (process.argv.indexOf('--help') !== -1) {
+	help();
+	return;
+}
+
+if (process.argv.indexOf('--version') !== -1) {
+	console.log(pkg.version);
+	return;
+}
+
+if (!argv[1]) {
 	console.error('You have to define how many times to repeat the string.');
 	process.exit(1);
 }
 
-console.log(repeating(String(cli.input[0]), cli.input[1]));
+console.log(repeating(argv[0], Number(argv[1])));

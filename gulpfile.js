@@ -136,7 +136,7 @@ gulp.task('jison-compile', function () {
     .pipe(shell([
 //      'node ./utils/redj/redj.js',
 //      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
-      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
+      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js' // Todo: avoid having to install globally with `npm install jison -g`
 
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
@@ -147,7 +147,7 @@ gulp.task('jison-compile-fast', function () {
     .pipe(shell([
 //      'node ./utils/redj/redj.js',
 //      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
-      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'
+      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js'   // Todo: avoid having to install globally with `npm install jison -g`
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
 });

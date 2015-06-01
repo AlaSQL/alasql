@@ -261,7 +261,7 @@ define(function (require, exports, module) {
       return cmp;
     }
 
-    cmp = strcmp(mappingA.name, mappingB.name);
+    cmp = mappingA.generatedColumn - mappingB.generatedColumn;
     if (cmp) {
       return cmp;
     }
@@ -271,7 +271,7 @@ define(function (require, exports, module) {
       return cmp;
     }
 
-    return mappingA.generatedColumn - mappingB.generatedColumn;
+    return strcmp(mappingA.name, mappingB.name);
   };
   exports.compareByOriginalPositions = compareByOriginalPositions;
 

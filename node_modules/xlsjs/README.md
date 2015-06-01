@@ -9,7 +9,7 @@ Source: <http://git.io/xls>
 
 ## Installation
 
-In [nodejs](https://www.npmjs.org/package/xlsjs):
+With [npm](https://www.npmjs.org/package/xlsjs):
 
     npm install xlsjs
 
@@ -17,7 +17,7 @@ In the browser:
 
     <script lang="javascript" src="xls.js"></script>
 
-In [bower](http://bower.io/search/?q=js-xls):
+With [bower](http://bower.io/search/?q=js-xls):
 
     bower install js-xls
 
@@ -26,7 +26,7 @@ CDNjs automatically pulls the latest version and makes all versions available at
 
 ## Optional Modules
 
-The nodejs version automatically requires modules for additional features.  Some
+The node version automatically requires modules for additional features.  Some
 of these modules are rather large in size and are only needed in special
 circumstances, so they do not ship with the core.  For browser use, they must
 be included directly:
@@ -53,7 +53,7 @@ To use the shim, add the shim before the script tag that loads xls.js:
 For parsing, the first step is to read the file.  This involves acquiring the
 data and feeding it into the library.  Here are a few common scenarios:
 
-- nodejs readFile:
+- node readFile:
 
 ```
 if(typeof require !== 'undefined') XLS = require('xlsjs');
@@ -135,9 +135,9 @@ mode is provided for testing.  On OSX you can get the base64 encoding with:
 
 - <http://oss.sheetjs.com/js-xls/ajax.html> XMLHttpRequest
 
-- <https://github.com/SheetJS/js-xls/blob/master/bin/xls.njs> nodejs
+- <https://github.com/SheetJS/js-xls/blob/master/bin/xls.njs> node
 
-The nodejs version installs a binary `xls` which can read XLS and XML2003
+The node version installs a binary `xls` which can read XLS and XML2003
 files and output the contents in various formats.  The source is available at
 `xls.njs` in the bin directory.
 
@@ -149,7 +149,7 @@ Some helper functions in `XLS.utils` generate different views of the sheets:
 
 ## Interface
 
-`XLS` is the exposed variable in the browser and the exported nodejs variable
+`XLS` is the exposed variable in the browser and the exported node variable
 
 `XLS.version` is the version of the library (added by the build script).
 
@@ -309,7 +309,7 @@ The exported `read` and `readFile` functions accept an options argument:
 
 ## Tested Environments
 
- - NodeJS 0.8, 0.10 (latest release), 0.11 (unstable)
+ - NodeJS 0.8, 0.10 (latest release), 0.11.14 (unstable), io.js
  - IE 6/7/8/9/10/11 using Base64 mode (IE10/11 using HTML5 mode)
  - FF 18 using Base64 or HTML5 mode
  - Chrome 24 using Base64 or HTML5 mode
@@ -328,7 +328,7 @@ Running `make init` will refresh the `test_files` submodule and get the files.
 
 ## Testing
 
-`make test` will run the nodejs-based tests.  To run the in-browser tests, clone
+`make test` will run the node-based tests.  To run the in-browser tests, clone
 [the oss.sheetjs.com repo](https://github.com/SheetJS/SheetJS.github.io) and
 replace the xls.js file (then fire up the browser and go to `stress.html`):
 

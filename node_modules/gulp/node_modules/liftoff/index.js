@@ -6,6 +6,7 @@ const EE = require('events').EventEmitter;
 const extend = require('extend');
 const resolve = require('resolve');
 const flaggedRespawn = require('flagged-respawn');
+const rechoir = require('rechoir');
 
 const findCwd = require('./lib/find_cwd');
 const findConfig = require('./lib/find_config');
@@ -13,6 +14,7 @@ const fileSearch = require('./lib/file_search');
 const parseOptions = require('./lib/parse_options');
 const silentRequire = require('./lib/silent_require');
 const buildConfigName = require('./lib/build_config_name');
+
 
 function Liftoff (opts) {
   EE.call(this);
@@ -31,10 +33,10 @@ Liftoff.prototype.requireLocal = function (module, basedir) {
 };
 
 Liftoff.prototype.buildEnvironment = function (opts) {
-  opts = opts||{};
+  opts = opts || {};
 
   // get modules we want to preload
-  var preload = opts.require||[];
+  var preload = opts.require || [];
 
   // ensure items to preload is an array
   if (!Array.isArray(preload)) {
@@ -77,7 +79,7 @@ Liftoff.prototype.buildEnvironment = function (opts) {
       cwd = configBase;
     }
     // resolve symlink if needed
-    if(fs.lstatSync(configPath).isSymbolicLink()) {
+    if (fs.lstatSync(configPath).isSymbolicLink()) {
       configPath = fs.realpathSync(configPath);
     }
   }
@@ -101,7 +103,7 @@ Liftoff.prototype.buildEnvironment = function (opts) {
     modulePackage = silentRequire(modulePackagePath);
     if (modulePackage && modulePackage.name === this.moduleName) {
       // if it does, our module path is `main` inside package.json
-      modulePath = path.join(path.dirname(modulePackagePath), modulePackage.main||'index.js');
+      modulePath = path.join(path.dirname(modulePackagePath), modulePackage.main || 'index.js');
       cwd = configBase;
     } else {
       // clear if we just required a package for some other project
@@ -109,16 +111,7 @@ Liftoff.prototype.buildEnvironment = function (opts) {
     }
   }
 
-  // get extension of config name, taking anything after the -first- dot
-  var configExtension = /(\.[^\/\\]*)?$/.exec(path.basename(configPath))[0];
-
-  // preload module needed for config if any has been specified.
-  var requireForExtension = this.extensions[configExtension];
-  if (requireForExtension) {
-    preload.push(requireForExtension);
-  }
-
-  // preload modules, if any
+  // load any modules which were requested to be required
   if (preload.length) {
     // unique results first
     preload.filter(function (value, index, self) {
@@ -128,6 +121,24 @@ Liftoff.prototype.buildEnvironment = function (opts) {
     }, this);
   }
 
+  // use rechoir to autoload any required modules
+  var autoloads;
+  if (configPath) {
+    autoloads = rechoir.prepare(this.extensions, configPath, cwd, true);
+    if (autoloads instanceof Error) {
+      autoloads = autoloads.failures;
+    }
+    if (Array.isArray(autoloads)) {
+      autoloads.forEach(function (attempt) {
+        if (attempt.error) {
+          this.emit('requireFail', attempt.moduleName, attempt.error);
+        } else {
+          this.emit('require', attempt.moduleName, attempt.module);
+        }
+      }, this);
+    }
+  }
+
   return {
     cwd: cwd,
     require: preload,
@@ -135,7 +146,7 @@ Liftoff.prototype.buildEnvironment = function (opts) {
     configPath: configPath,
     configBase: configBase,
     modulePath: modulePath,
-    modulePackage: modulePackage||{}
+    modulePackage: modulePackage || {}
   };
 };
 

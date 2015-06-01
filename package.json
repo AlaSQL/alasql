@@ -6,22 +6,25 @@
   "directories": {
     "test": "test"
   },
+  "scripts": {
+    "test": "cd test && mocha ."
+  },
   "dependencies": {
-    "es6-promise":"2.1.1",
-    "xlsjs":"0.7.15",
-    "js-xlsx":"0.8.0"
+    "dom-storage": "^2.0.1",
+    "es6-promise": "2.1.1",
+    "lodash": "^3.9.3",
+    "xlsjs": "^0.7.5",
+    "xlsx": "0.8.0"
   },
   "devDependencies": {
-    "dom-storage":"2.0.1",
-    "gulp":"3.8.11",
-    "gulp-changed":"1.2.1",
-    "gulp-concat-sourcemap":"1.3.1",
-    "gulp-shell":"0.4.1",
-    "jison":"0.4.15",
-    "lodash":"3.7.0",
-    "xlsjs":"0.7.15",
-    "xlsx":"0.8.0"
-    },
+    "blueimp-md5": "^1.1.0",
+    "gulp": "3.8.11",
+    "gulp-concat": "^2.5.2",
+    "gulp-shell": "^0.4.1",
+    "jison": "0.4.15",
+    "mocha": "^2.2.5",
+    "uglifyjs": "^2.4.10"
+  },
   "engines": [
     "node"
   ],
@@ -32,15 +35,12 @@
   "bugs": {
     "url": "https://github.com/agershun/alasql/issues"
   },
-  "bin" : { 
-    "alacon" : "./bin/alacon.js",
-    "alaserver" : "./bin/alaserver.js"
+  "bin": {
+    "alacon": "./bin/alacon.js",
+    "alaserver": "./bin/alaserver.js"
   },
   "homepage": "https://github.com/agershun/alasql",
   "main": "dist/alasql.js",
-  "scripts": {
-    "test": "cd test && mocha ."
-  },
   "keywords": [
     "sql",
     "nosql",
