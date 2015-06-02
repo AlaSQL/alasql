@@ -41,7 +41,7 @@ function n2u(s) {
 
 */    
 function und(s,r) {
-    return '(y='+s+',typeof y=="undefined"?undefined:'+r+')'
+    return '(y='+s+',typeof y=="undefined"?undefined:'+r+')';
 }
 
 
@@ -50,14 +50,14 @@ function und(s,r) {
     @function
     @return {boolean} Always true
 */
-function returnTrue () {return true};
+function returnTrue () {return true;}
 
 /**
     Return undefined. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
     @function
     @return {undefined} Always undefined
 */
-function returnUndefined() {};
+function returnUndefined() {}
 
 /**
     Escape quotes
@@ -72,7 +72,7 @@ function returnUndefined() {};
 var escapeq = utils.escapeq = function(s) {
 //    console.log(s);
     return s.replace(/\'/g,'\\\'');
-}
+};
 
 
 /**
@@ -87,7 +87,7 @@ var escapeq = utils.escapeq = function(s) {
  */
 var escapeqq = utils.undoubleq = function(s) {
     return s.replace(/(\')/g,'\'\'');
-}
+};
 
 /**
     Replace double quotes with single quote
@@ -100,7 +100,7 @@ var escapeqq = utils.undoubleq = function(s) {
  */
 var doubleq = utils.doubleq = function(s) {
     return s.replace(/(\'\')/g,'\\\'');
-}
+};
 
 
 /**
@@ -113,7 +113,7 @@ var doubleq = utils.doubleq = function(s) {
 */
  var doubleqq = utils.doubleqq = function(s) {
     return s.replace(/\'/g,"\'");
-}
+};
 
 /**
     Cut BOM first character for UTF-8 files (for merging two files)
@@ -140,12 +140,13 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 
     if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
 
+        var fs;
         if(typeof Meteor != 'undefined') {
             /** For Meteor */
-            var fs = Npm.require('fs');
+            fs = Npm.require('fs');
         } else {
             /** For Node.js */
-            var fs = require('fs');
+            fs = require('fs');
         }
 
         /* If path is empty, than read data from stdin (for Node) */
@@ -224,7 +225,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
             */
             if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
-                var data = document.querySelector(path).textContent;
+                data = document.querySelector(path).textContent;
                 success(data);
             } else {
                 /* 
@@ -296,14 +297,14 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 if(err) {
                     throw err;
                 }
-                var arr = new Array();
+                var arr = [];
                 for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
                 success(arr.join(""));
             });
 
         } else {
             var data = fs.readFileSync(path);
-            var arr = new Array();
+            var arr = [];
             for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
             success(arr.join(""));
         }
@@ -333,7 +334,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
             };
             reader.readAsBinaryString(files[0]);    
         }
-    };
+    }
 };
 
 
@@ -352,7 +353,7 @@ var removeFile = utils.removeFile = function(path,cb) {
         });
     } else {
         throw new Error('You can remove files only in Node.js and Apache Cordova');
-    };
+    }
 };
 
 
@@ -360,7 +361,7 @@ var deleteFile = utils.deleteFile = function(path,cb){
     if(typeof exports == 'object') {
         var fs = require('fs');
         fs.unlink(path, cb);
-    };
+    }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
@@ -423,7 +424,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         if(typeof exports == 'object') {
             // For Node.js
             var fs = require('fs');
-            var data = fs.writeFileSync(path,data);
+            data = fs.writeFileSync(path,data);
             if(cb) res = cb(res);
         } else if(typeof cordova == 'object') {
             // For Apache Cordova
@@ -518,7 +519,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 	            if(cb) res = cb(res);                		
         	}
         }
-    };
+    }
 
     return res;
 };
@@ -558,11 +559,15 @@ function isIE () {
 
 var hash = utils.hash = function hash(str){
     var h = 0;
-    if (str.length == 0) return h;
+    
+    if (0 === str.length) 
+        return h;
+
     for (var i = 0; i < str.length; i++) {
         h = ((h<<5)-h)+str.charCodeAt(i);
         h = h & h; 
    	}
+    
     return h;
 };
 
@@ -670,7 +675,7 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
   Deep clone obects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
-    if(obj == null || typeof(obj) != 'object')
+    if(null === obj || typeof(obj) != 'object')
         return obj;
 
     var temp = obj.constructor(); // changed
@@ -681,7 +686,7 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
         }
     }
     return temp;
-}
+};
 
 /**
   Check equality of objects
@@ -727,7 +732,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
   COmpare two object in deep
  */
 var deepEqual = utils.deepEqual = function (x, y) {
-  if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
+  if ((typeof x == "object" && null !== x) && (typeof y == "object" && null !== y)) {
     if (Object.keys(x).length != Object.keys(y).length)
       return false;
 
@@ -747,7 +752,7 @@ var deepEqual = utils.deepEqual = function (x, y) {
     return false;
   else
     return true;
-}
+};
 
 
 /**
@@ -759,17 +764,18 @@ var distinctArray = utils.distinctArray = function(data) {
     var uniq = {};
     // TODO: Speedup, because Object.keys is slow
     for(var i=0,ilen=data.length;i<ilen;i++) {
+        var uix;
         if(typeof data[i] == 'object') {
-            var uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
+            uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
         } else {
-            var uix = data[i];  
+            uix = data[i];  
         }
         uniq[uix] = data[i];
-    };
+    }
     var res = [];
     for(var key in uniq) res.push(uniq[key]);
     return res;
-}
+};
 
 
 /** 
@@ -783,27 +789,27 @@ var extend = utils.extend = function extend (a,b){
     if(typeof a == 'undefined') a = {};
     for(var key in b) {
         if(b.hasOwnProperty(key)) {
-            a[key] = b[key]
+            a[key] = b[key];
         }
     }
     return a;
-};;
+};
 
 /**
    Flat array by first row
  */
 var flatArray = utils.flatArray = function(a) {
 //console.log(684,a);
-    if(!a || a.length == 0) return [];
+    if(!a || 0 === a.length) return [];
 
     // For recordsets
     if(typeof a == 'object' && a instanceof alasql.Recordset) {
-        return a.data.map(function(ai){return ai[a.columns[0].columnid]});
+        return a.data.map(function(ai){return ai[a.columns[0].columnid];});
     }
     // Else for other arrays
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
-    return a.map(function(ai) {return ai[key]});
+    return a.map(function(ai) {return ai[key];});
 };
 
 /**
@@ -831,8 +837,8 @@ var xlsnc = utils.xlsnc = function(i) {
         if(i>26) {
             i=((i/26)|0)-1;
             addr = String.fromCharCode(65+i%26)+addr;
-        };
-    };
+        }
+    }
     return addr;
 };
 
@@ -857,7 +863,8 @@ var domEmptyChildren = utils.domEmptyChildren = function (container){
   var len = container.childNodes.length;
   while (len--) {
     container.removeChild(container.lastChild);
-  };
+  }
 };
+
 
 

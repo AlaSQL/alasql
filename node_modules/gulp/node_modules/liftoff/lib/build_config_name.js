@@ -12,6 +12,6 @@ module.exports = function (opts) {
     throw new Error('Please provide an array of valid extensions.');
   }
   return extensions.map(function (ext) {
-    return configName+ext;
+    return configName + ext;
   });
 };

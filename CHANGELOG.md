@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.1.10 "Genova" (31.05.2015 - ....06.2015)
+* CALL procedure() statement
+
+
 ### 0.1.9 "Torino" (29.05.2015 - 31.05.2015)
 * SERIAL data type added
 * Changed package.json

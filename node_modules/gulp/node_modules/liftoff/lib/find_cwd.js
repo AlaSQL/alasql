@@ -1,7 +1,9 @@
 const path = require('path');
 
 module.exports = function (opts) {
-  opts = opts||{};
+  if (!opts) {
+    opts = {};
+  }
   var cwd = opts.cwd;
   var configPath = opts.configPath;
   // if a path to the desired config was specified

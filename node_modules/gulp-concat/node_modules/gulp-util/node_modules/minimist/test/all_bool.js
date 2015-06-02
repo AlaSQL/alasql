@@ -23,7 +23,7 @@ test('flag boolean true only affects double hyphen arguments without equals sign
     t.deepEqual(argv, {
         honk: true,
         tacos: 'good',
-        p: '55',
+        p: 55,
         _: ['moo', 'cow']
     });
     

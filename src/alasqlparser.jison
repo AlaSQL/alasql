@@ -63,6 +63,7 @@ NOT\s+BETWEEN									return 'NOT_BETWEEN'
 NOT\s+LIKE									    return 'NOT_LIKE'
 'BY'											return 'BY'
 
+'CALL'											return 'CALL'
 'CASE'											return 'CASE'
 'CAST'											return 'CAST'
 'CHECK'											return 'CHECK'
@@ -99,6 +100,8 @@ DATABASE(S)?									return 'DATABASE'
 'ENUM'											return 'ENUM'
 'ELSE'											return 'ELSE'
 'EXCEPT'										return 'EXCEPT'
+'EXEC'											return 'CALL'
+'EXECUTE'										return 'CALL'
 'EXISTS'										return 'EXISTS'
 'EXPLAIN'                                       return 'EXPLAIN'
 'FALSE'											return 'FALSE'
@@ -334,6 +337,7 @@ Statement
 	: { $$ = undefined; }
 	| AlterTable	
 	| AttachDatabase	
+	| Call
 	| CreateDatabase
 	| CreateIndex
 	| CreateGraph
@@ -2686,3 +2690,7 @@ Query
 	: QUESTIONDASH FuncValue
 	;
 
+Call
+	: CALL FuncValue
+		{ $$ = $2; }
+	;

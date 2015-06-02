@@ -26,6 +26,32 @@ yy.FuncValue.prototype.toString = function() {
 	return s;
 }
 
+
+
+yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
+	var res = 1;
+	alasql.precompile(this,databaseid,params); // Precompile queries
+//	console.log(34,this.toJavaScript('','',null));
+	var expr =  new Function('params,alasql','var y;return '+this.toJavaScript('','',null));
+	expr(params,alasql);
+	if(cb) res = cb(res);
+	return res;
+}
+
+
+//yy.FuncValue.prototype.compile = function(context, tableid, defcols){
+//	console.log('Expression',this);
+//	if(this.reduced) return returnTrue();
+//	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+//};
+
+
+// yy.FuncValue.prototype.compile = function(context, tableid, defcols){
+// //	console.log('Expression',this);
+// 	if(this.reduced) return returnTrue();
+// 	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+// };
+
 yy.FuncValue.prototype.findAggregator = function(query) {
 	if(this.args && this.args.length > 0) {
 		this.args.forEach(function(arg){ 

@@ -63,13 +63,12 @@ function queryfn(query,oldscope,cb, A,B) {
 		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx, alasql); 
 //		console.log(333,rs);
-		if(typeof rs != undefined) {
+		if(typeof rs !== undefined) {
 			// TODO - this is a hack: check if result is array - check all cases and
 			// make it more logical
 			if((query.intofn || query.intoallfn) && rs instanceof Array) rs = rs.length;
 			result = rs;
 		}
-//		console.log(444,result);
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
 // constructions like this.queriesdata['test'].
@@ -78,12 +77,13 @@ function queryfn(query,oldscope,cb, A,B) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
-	if(slen == 0) result = queryfn3(query);
+	if(0 === slen) 
+		result = queryfn3(query);
+	
 	return result;
-};
+}
 
 function queryfn2(data,idx,query) {
-
 //console.log(56,arguments);
 //		console.log(78,data, idx,query);
 //console.trace();
@@ -113,7 +113,7 @@ function queryfn2(data,idx,query) {
 	if(query.sourceslen>0) return;
 
 	return queryfn3(query);
-};
+}
 
 function queryfn3(query) {
 //console.log(55,query);
@@ -149,7 +149,7 @@ function queryfn3(query) {
 //			console.log(query.havingfns);
 	if(query.groupfn) {
 		query.data = [];
-		if(query.groups.length == 0) {
+		if(0 === query.groups.length) {
 			var g = {};
 			if(query.selectGroup.length>0) {
 //				console.log(query.selectGroup);
@@ -160,10 +160,10 @@ function queryfn3(query) {
 						g[sg.nick] = undefined;
 					}
 				});
-			};
+			}
 			query.groups = [g];
 //			console.log();
-		};
+		}
 		// 	console.log('EMPTY',query.groups);
 		// 	debugger;
 		// if(false && (query.groups.length == 1) && (Object.keys(query.groups[0]).length == 0)) {
@@ -171,33 +171,33 @@ function queryfn3(query) {
 		// } else {
 			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
 	//			console.log(query.groups[i]);
-				var g = query.groups[i];
+				g = query.groups[i];
 				if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
 	//				console.log(g);
 					var d = query.selectgfn(g,query.params,alasql);
 					query.data.push(d);
-				};
+				}
 			};
 		// }
 
 //			query.groups = query.groups.filter();
-	};
-
+	}
 	// Remove distinct values	
-	doDistinct(query);	
-
+	doDistinct(query);
 
 	// UNION / UNION ALL
 	if(query.unionallfn) {
 // TODO Simplify this part of program
+		var ud, nd;
 		if(query.corresponding) {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undefined;
-			var ud = query.unionallfn(query.params);
+			ud = query.unionallfn(query.params);
 		} else {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
-			var nd = query.unionallfn(query.params);
-			var ud = [];
-			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+			nd = query.unionallfn(query.params);
+			ud = [];
+			ilen=nd.data.length
+			for(var i=0;i<ilen;i++) {
 				var r = {};
 				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
@@ -210,14 +210,16 @@ function queryfn3(query) {
 
 		if(query.corresponding) {
 			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'ARRAY';
-			var ud = query.unionfn(query.params);
+			ud = query.unionfn(query.params);
 		} else {
 			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'RECORDSET';
-			var nd = query.unionfn(query.params);
-			var ud = [];
-			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
-				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+			nd = query.unionfn(query.params);
+			ud = [];
+			ilen=nd.data.length
+			for(var i=0;i<ilen;i++) {
+				r = {};
+				jlen=Math.min(query.columns.length,nd.columns.length);
+				for(var j=0;j<jlen;j++) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -242,6 +244,7 @@ function queryfn3(query) {
 				ud.push(r);
 			}
 		}
+
 
 
 		query.data = arrayExceptDeep(query.data, ud);

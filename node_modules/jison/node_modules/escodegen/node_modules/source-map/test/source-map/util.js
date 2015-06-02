@@ -71,6 +71,22 @@ define(function (require, exports, module) {
     sourceRoot: '/the/root',
     mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
   };
+  exports.testMapRelativeSources = {
+    version: 3,
+    file: 'min.js',
+    names: ['bar', 'baz', 'n'],
+    sources: ['./one.js', './two.js'],
+    sourcesContent: [
+      ' ONE.foo = function (bar) {\n' +
+      '   return baz(bar);\n' +
+      ' };',
+      ' TWO.inc = function (n) {\n' +
+      '   return n + 1;\n' +
+      ' };'
+    ],
+    sourceRoot: '/the/root',
+    mappings: 'CAAC,IAAI,IAAM,SAAUA,GAClB,OAAOC,IAAID;CCDb,IAAI,IAAM,SAAUE,GAClB,OAAOA'
+  };
   exports.emptyMap = {
     version: 3,
     file: 'min.js',

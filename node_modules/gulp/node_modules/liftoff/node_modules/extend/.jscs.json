@@ -13,6 +13,8 @@
 	"requireSpacesInFunctionDeclaration": { "beforeOpeningCurlyBrace": true },
 	"disallowSpacesInFunctionDeclaration": { "beforeOpeningRoundBrace": true },
 
+	"requireSpaceBetweenArguments": true,
+
 	"disallowSpacesInsideParentheses": true,
 
 	"disallowSpacesInsideArrayBrackets": true,

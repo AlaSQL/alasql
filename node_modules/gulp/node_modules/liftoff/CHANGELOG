@@ -1,3 +1,7 @@
+v2.1.0:
+  date: 2015-05-20
+  changes:
+    - Use rechoir to autoload modules.
 v2.0.3:
   date: 2015-03-31
   changes:

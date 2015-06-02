@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* xls.js (C) 2013-2014 SheetJS -- http://sheetjs.com */
+/* xls.js (C) 2013-2015 SheetJS -- http://sheetjs.com */
 var n = "xls";
 /* vim: set ts=2 ft=javascript: */
 var X = require('../');
