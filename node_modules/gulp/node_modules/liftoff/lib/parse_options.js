@@ -8,13 +8,15 @@ module.exports = function (opts) {
     },
     searchPaths: []
   };
-  opts = opts||{};
+  if (!opts) {
+    opts = {};
+  }
   if (opts.name) {
     if (!opts.processTitle) {
       opts.processTitle = opts.name;
     }
     if (!opts.configName) {
-      opts.configName = opts.name+'file';
+      opts.configName = opts.name + 'file';
     }
     if (!opts.moduleName) {
       opts.moduleName = opts.name;

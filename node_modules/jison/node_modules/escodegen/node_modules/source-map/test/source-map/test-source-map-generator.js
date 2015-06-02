@@ -98,6 +98,27 @@ define(function (require, exports, module) {
     });
   };
 
+  exports['test adding mappings with skipValidation'] = function (assert, util) {
+    var map = new SourceMapGenerator({
+      file: 'generated-foo.js',
+      sourceRoot: '.',
+      skipValidation: true
+    });
+
+    // Not enough info, caught by `util.getArgs`
+    assert.throws(function () {
+      map.addMapping({});
+    });
+
+    // Original file position, but no source. Not checked.
+    assert.doesNotThrow(function () {
+      map.addMapping({
+        generated: { line: 1, column: 1 },
+        original: { line: 1, column: 1 }
+      });
+    });
+  };
+
   exports['test that the correct mappings are being generated'] = function (assert, util) {
     var map = new SourceMapGenerator({
       file: 'min.js',

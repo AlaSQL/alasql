@@ -11,7 +11,7 @@
 
 
 
-AlaSQL - ([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) SQL) [ælæ ɛskjuɛl] - is probably the most versatile javascript SQL database solution out there:  
+AlaSQL - ([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL)) [ælæ ɛskju:ɛl] - is probably the most versatile javascript SQL database solution out there:  
 
 - Supporting SQL querying against several backend as SQLite, localStorage, IndexedDB, Excel, or your own JSON object. 
 - Designed to work in your browser, Node.js, and Apache Cordova. 

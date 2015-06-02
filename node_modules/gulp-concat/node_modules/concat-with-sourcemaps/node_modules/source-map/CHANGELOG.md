@@ -1,5 +1,65 @@
 # Change Log
 
+## 0.4.2
+
+* Add an `.npmignore` file so that the benchmarks aren't pulled down by
+  dependent projects. Issue #169.
+
+* Add an optional `column` argument to
+  `SourceMapConsumer.prototype.allGeneratedPositionsFor` and better handle lines
+  with no mappings. Issues #172 and #173.
+
+## 0.4.1
+
+* Fix accidentally defining a global variable. #170.
+
+## 0.4.0
+
+* The default direction for fuzzy searching was changed back to its original
+  direction. See #164.
+
+* There is now a `bias` option you can supply to `SourceMapConsumer` to control
+  the fuzzy searching direction. See #167.
+
+* About an 8% speed up in parsing source maps. See #159.
+
+* Added a benchmark for parsing and generating source maps.
+
+## 0.3.0
+
+* Change the default direction that searching for positions fuzzes when there is
+  not an exact match. See #154.
+
+* Support for environments using json2.js for JSON serialization. See #156.
+
+## 0.2.0
+
+* Support for consuming "indexed" source maps which do not have any remote
+  sections. See pull request #127. This introduces a minor backwards
+  incompatibility if you are monkey patching `SourceMapConsumer.prototype`
+  methods.
+
+## 0.1.43
+
+* Performance improvements for `SourceMapGenerator` and `SourceNode`. See issue
+  #148 for some discussion and issues #150, #151, and #152 for implementations.
+
+## 0.1.42
+
+* Fix an issue where `SourceNode`s from different versions of the source-map
+  library couldn't be used in conjunction with each other. See issue #142.
+
+## 0.1.41
+
+* Fix a bug with getting the source content of relative sources with a "./"
+  prefix. See issue #145 and [Bug 1090768](bugzil.la/1090768).
+
+* Add the `SourceMapConsumer.prototype.computeColumnSpans` method to compute the
+  column span of each mapping.
+
+* Add the `SourceMapConsumer.prototype.allGeneratedPositionsFor` method to find
+  all generated positions associated with a given original source and line.
+
 ## 0.1.40
 
 * Performance improvements for parsing source maps in SourceMapConsumer.

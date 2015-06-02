@@ -23,17 +23,17 @@ define(function (require, exports, module) {
     //
     //   1. We find the exact element we are looking for.
     //
-    //   2. We did not find the exact element, but we can return the next
-    //      closest element that is less than that element.
+    //   2. We did not find the exact element, but we can return the index of
+    //      the next closest element that is less than that element.
     //
     //   3. We did not find the exact element, and there is no next-closest
     //      element which is less than the one we are searching for, so we
-    //      return null.
+    //      return -1.
     var mid = Math.floor((aHigh - aLow) / 2) + aLow;
     var cmp = aCompare(aNeedle, aHaystack[mid], true);
     if (cmp === 0) {
       // Found the element we are looking for.
-      return aHaystack[mid];
+      return mid;
     }
     else if (cmp > 0) {
       // aHaystack[mid] is greater than our needle.
@@ -43,7 +43,7 @@ define(function (require, exports, module) {
       }
       // We did not find an exact match, return the next closest one
       // (termination case 2).
-      return aHaystack[mid];
+      return mid;
     }
     else {
       // aHaystack[mid] is less than our needle.
@@ -53,18 +53,16 @@ define(function (require, exports, module) {
       }
       // The exact needle element was not found in this haystack. Determine if
       // we are in termination case (2) or (3) and return the appropriate thing.
-      return aLow < 0
-        ? null
-        : aHaystack[aLow];
+      return aLow < 0 ? -1 : aLow;
     }
   }
 
   /**
    * This is an implementation of binary search which will always try and return
-   * the next lowest value checked if there is no exact hit. This is because
-   * mappings between original and generated line/col pairs are single points,
-   * and there is an implicit region between each of them, so a miss just means
-   * that you aren't on the very start of a region.
+   * the index of next lowest value checked if there is no exact hit. This is
+   * because mappings between original and generated line/col pairs are single
+   * points, and there is an implicit region between each of them, so a miss
+   * just means that you aren't on the very start of a region.
    *
    * @param aNeedle The element you are looking for.
    * @param aHaystack The array that is being searched.
@@ -73,9 +71,10 @@ define(function (require, exports, module) {
    *     than, equal to, or greater than the element, respectively.
    */
   exports.search = function search(aNeedle, aHaystack, aCompare) {
-    return aHaystack.length > 0
-      ? recursiveSearch(-1, aHaystack.length, aNeedle, aHaystack, aCompare)
-      : null;
+    if (aHaystack.length === 0) {
+      return -1;
+    }
+    return recursiveSearch(-1, aHaystack.length, aNeedle, aHaystack, aCompare)
   };
 
 });
