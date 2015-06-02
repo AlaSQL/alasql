@@ -94,7 +94,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = "0.1.9";
+alasql.version = "0.1.10";
 
 /**
 	Debug flag
