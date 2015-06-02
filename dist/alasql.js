@@ -2932,7 +2932,7 @@ function n2u(s) {
 
 */    
 function und(s,r) {
-    return '(y='+s+',typeof y=="undefined"?undefined:'+r+')'
+    return '(y='+s+',typeof y=="undefined"?undefined:'+r+')';
 }
 
 
@@ -2941,14 +2941,14 @@ function und(s,r) {
     @function
     @return {boolean} Always true
 */
-function returnTrue () {return true};
+function returnTrue () {return true;}
 
 /**
     Return undefined. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
     @function
     @return {undefined} Always undefined
 */
-function returnUndefined() {};
+function returnUndefined() {}
 
 /**
     Escape quotes
@@ -2963,7 +2963,7 @@ function returnUndefined() {};
 var escapeq = utils.escapeq = function(s) {
 //    console.log(s);
     return s.replace(/\'/g,'\\\'');
-}
+};
 
 
 /**
@@ -2978,7 +2978,7 @@ var escapeq = utils.escapeq = function(s) {
  */
 var escapeqq = utils.undoubleq = function(s) {
     return s.replace(/(\')/g,'\'\'');
-}
+};
 
 /**
     Replace double quotes with single quote
@@ -2991,7 +2991,7 @@ var escapeqq = utils.undoubleq = function(s) {
  */
 var doubleq = utils.doubleq = function(s) {
     return s.replace(/(\'\')/g,'\\\'');
-}
+};
 
 
 /**
@@ -3004,7 +3004,7 @@ var doubleq = utils.doubleq = function(s) {
 */
  var doubleqq = utils.doubleqq = function(s) {
     return s.replace(/\'/g,"\'");
-}
+};
 
 /**
     Cut BOM first character for UTF-8 files (for merging two files)
@@ -3031,12 +3031,13 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 
     if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
 
+        var fs;
         if(typeof Meteor != 'undefined') {
             /** For Meteor */
-            var fs = Npm.require('fs');
+            fs = Npm.require('fs');
         } else {
             /** For Node.js */
-            var fs = require('fs');
+            fs = require('fs');
         }
 
         /* If path is empty, than read data from stdin (for Node) */
@@ -3115,7 +3116,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
             */
             if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
-                var data = document.querySelector(path).textContent;
+                data = document.querySelector(path).textContent;
                 success(data);
             } else {
                 /* 
@@ -3187,14 +3188,14 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 if(err) {
                     throw err;
                 }
-                var arr = new Array();
+                var arr = [];
                 for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
                 success(arr.join(""));
             });
 
         } else {
             var data = fs.readFileSync(path);
-            var arr = new Array();
+            var arr = [];
             for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
             success(arr.join(""));
         }
@@ -3224,7 +3225,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
             };
             reader.readAsBinaryString(files[0]);    
         }
-    };
+    }
 };
 
 
@@ -3243,7 +3244,7 @@ var removeFile = utils.removeFile = function(path,cb) {
         });
     } else {
         throw new Error('You can remove files only in Node.js and Apache Cordova');
-    };
+    }
 };
 
 
@@ -3251,7 +3252,7 @@ var deleteFile = utils.deleteFile = function(path,cb){
     if(typeof exports == 'object') {
         var fs = require('fs');
         fs.unlink(path, cb);
-    };
+    }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
@@ -3314,7 +3315,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         if(typeof exports == 'object') {
             // For Node.js
             var fs = require('fs');
-            var data = fs.writeFileSync(path,data);
+            data = fs.writeFileSync(path,data);
             if(cb) res = cb(res);
         } else if(typeof cordova == 'object') {
             // For Apache Cordova
@@ -3409,7 +3410,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 	            if(cb) res = cb(res);                		
         	}
         }
-    };
+    }
 
     return res;
 };
@@ -3449,11 +3450,15 @@ function isIE () {
 
 var hash = utils.hash = function hash(str){
     var h = 0;
-    if (str.length == 0) return h;
+    
+    if (0 === str.length) 
+        return h;
+
     for (var i = 0; i < str.length; i++) {
         h = ((h<<5)-h)+str.charCodeAt(i);
         h = h & h; 
    	}
+    
     return h;
 };
 
@@ -3561,7 +3566,7 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
   Deep clone obects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
-    if(obj == null || typeof(obj) != 'object')
+    if(null === obj || typeof(obj) != 'object')
         return obj;
 
     var temp = obj.constructor(); // changed
@@ -3572,7 +3577,7 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
         }
     }
     return temp;
-}
+};
 
 /**
   Check equality of objects
@@ -3618,7 +3623,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
   COmpare two object in deep
  */
 var deepEqual = utils.deepEqual = function (x, y) {
-  if ((typeof x == "object" && x != null) && (typeof y == "object" && y != null)) {
+  if ((typeof x == "object" && null !== x) && (typeof y == "object" && null !== y)) {
     if (Object.keys(x).length != Object.keys(y).length)
       return false;
 
@@ -3638,7 +3643,7 @@ var deepEqual = utils.deepEqual = function (x, y) {
     return false;
   else
     return true;
-}
+};
 
 
 /**
@@ -3650,17 +3655,18 @@ var distinctArray = utils.distinctArray = function(data) {
     var uniq = {};
     // TODO: Speedup, because Object.keys is slow
     for(var i=0,ilen=data.length;i<ilen;i++) {
+        var uix;
         if(typeof data[i] == 'object') {
-            var uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
+            uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
         } else {
-            var uix = data[i];  
+            uix = data[i];  
         }
         uniq[uix] = data[i];
-    };
+    }
     var res = [];
     for(var key in uniq) res.push(uniq[key]);
     return res;
-}
+};
 
 
 /** 
@@ -3674,27 +3680,27 @@ var extend = utils.extend = function extend (a,b){
     if(typeof a == 'undefined') a = {};
     for(var key in b) {
         if(b.hasOwnProperty(key)) {
-            a[key] = b[key]
+            a[key] = b[key];
         }
     }
     return a;
-};;
+};
 
 /**
    Flat array by first row
  */
 var flatArray = utils.flatArray = function(a) {
 //console.log(684,a);
-    if(!a || a.length == 0) return [];
+    if(!a || 0 === a.length) return [];
 
     // For recordsets
     if(typeof a == 'object' && a instanceof alasql.Recordset) {
-        return a.data.map(function(ai){return ai[a.columns[0].columnid]});
+        return a.data.map(function(ai){return ai[a.columns[0].columnid];});
     }
     // Else for other arrays
     var key = Object.keys(a[0])[0];
     if(typeof key == 'undefined') return [];
-    return a.map(function(ai) {return ai[key]});
+    return a.map(function(ai) {return ai[key];});
 };
 
 /**
@@ -3722,8 +3728,8 @@ var xlsnc = utils.xlsnc = function(i) {
         if(i>26) {
             i=((i/26)|0)-1;
             addr = String.fromCharCode(65+i%26)+addr;
-        };
-    };
+        }
+    }
     return addr;
 };
 
@@ -3748,8 +3754,9 @@ var domEmptyChildren = utils.domEmptyChildren = function (container){
   var len = container.childNodes.length;
   while (len--) {
     container.removeChild(container.lastChild);
-  };
+  }
 };
+
 
 
 
@@ -5935,13 +5942,12 @@ function queryfn(query,oldscope,cb, A,B) {
 		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx, alasql); 
 //		console.log(333,rs);
-		if(typeof rs != undefined) {
+		if(typeof rs !== undefined) {
 			// TODO - this is a hack: check if result is array - check all cases and
 			// make it more logical
 			if((query.intofn || query.intoallfn) && rs instanceof Array) rs = rs.length;
 			result = rs;
 		}
-//		console.log(444,result);
 //
 // Ugly hack to use in query.wherefn and source.srcwherefns functions
 // constructions like this.queriesdata['test'].
@@ -5950,12 +5956,13 @@ function queryfn(query,oldscope,cb, A,B) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
-	if(slen == 0) result = queryfn3(query);
+	if(0 === slen) 
+		result = queryfn3(query);
+	
 	return result;
-};
+}
 
 function queryfn2(data,idx,query) {
-
 //console.log(56,arguments);
 //		console.log(78,data, idx,query);
 //console.trace();
@@ -5985,7 +5992,7 @@ function queryfn2(data,idx,query) {
 	if(query.sourceslen>0) return;
 
 	return queryfn3(query);
-};
+}
 
 function queryfn3(query) {
 //console.log(55,query);
@@ -6021,7 +6028,7 @@ function queryfn3(query) {
 //			console.log(query.havingfns);
 	if(query.groupfn) {
 		query.data = [];
-		if(query.groups.length == 0) {
+		if(0 === query.groups.length) {
 			var g = {};
 			if(query.selectGroup.length>0) {
 //				console.log(query.selectGroup);
@@ -6032,10 +6039,10 @@ function queryfn3(query) {
 						g[sg.nick] = undefined;
 					}
 				});
-			};
+			}
 			query.groups = [g];
 //			console.log();
-		};
+		}
 		// 	console.log('EMPTY',query.groups);
 		// 	debugger;
 		// if(false && (query.groups.length == 1) && (Object.keys(query.groups[0]).length == 0)) {
@@ -6043,33 +6050,33 @@ function queryfn3(query) {
 		// } else {
 			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
 	//			console.log(query.groups[i]);
-				var g = query.groups[i];
+				g = query.groups[i];
 				if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
 	//				console.log(g);
 					var d = query.selectgfn(g,query.params,alasql);
 					query.data.push(d);
-				};
+				}
 			};
 		// }
 
 //			query.groups = query.groups.filter();
-	};
-
+	}
 	// Remove distinct values	
-	doDistinct(query);	
-
+	doDistinct(query);
 
 	// UNION / UNION ALL
 	if(query.unionallfn) {
 // TODO Simplify this part of program
+		var ud, nd;
 		if(query.corresponding) {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undefined;
-			var ud = query.unionallfn(query.params);
+			ud = query.unionallfn(query.params);
 		} else {
 			if(!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
-			var nd = query.unionallfn(query.params);
-			var ud = [];
-			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
+			nd = query.unionallfn(query.params);
+			ud = [];
+			ilen=nd.data.length
+			for(var i=0;i<ilen;i++) {
 				var r = {};
 				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
@@ -6082,14 +6089,16 @@ function queryfn3(query) {
 
 		if(query.corresponding) {
 			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'ARRAY';
-			var ud = query.unionfn(query.params);
+			ud = query.unionfn(query.params);
 		} else {
 			if(!query.unionfn.query.modifier) query.unionfn.query.modifier = 'RECORDSET';
-			var nd = query.unionfn(query.params);
-			var ud = [];
-			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
-				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+			nd = query.unionfn(query.params);
+			ud = [];
+			ilen=nd.data.length
+			for(var i=0;i<ilen;i++) {
+				r = {};
+				jlen=Math.min(query.columns.length,nd.columns.length);
+				for(var j=0;j<jlen;j++) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -6114,6 +6123,7 @@ function queryfn3(query) {
 				ud.push(r);
 			}
 		}
+
 
 
 		query.data = arrayExceptDeep(query.data, ud);
@@ -9095,7 +9105,7 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 		if(cb) res = cb(res);
 		return res;
 	}
-}
+};
 
 /**
 	Expression class
@@ -9176,7 +9186,7 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 	expr(params,alasql);
 	if(cb) res = cb(res);
 	return res;
-}
+};
 
 
 /**
@@ -9186,26 +9196,26 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 	MyVar, [My vairable], `MySQL variable`
 */
 
-yy.Literal = function (params) { return yy.extend(this, params); }
+yy.Literal = function (params) { return yy.extend(this, params); };
 yy.Literal.prototype.toString = function() {
 	var s = this.value;
 	if(this.value1) s = this.value1+'.'+s; 
 //	else s = tableid+'.'+s;
 	return L(s);
-}
+};
 
 /**
 	Join class
 	@class
 */
 
-yy.Join = function (params) { return yy.extend(this, params); }
+yy.Join = function (params) { return yy.extend(this, params); };
 yy.Join.prototype.toString = function() {
 	var s = NL()+ID();
 	if(this.joinmode) s += K(this.joinmode)+' ';
 	s += K('JOIN')+this.table.toString();
 	return s;
-}
+};
 
 //yy.Join.prototype.toJavaScript = function(context, tableid) {
 //	return 'JOIN'+this.table.toString();
@@ -9216,7 +9226,7 @@ yy.Join.prototype.toString = function() {
 	@class
 */
 
-yy.Table = function (params) { return yy.extend(this, params); }
+yy.Table = function (params) { return yy.extend(this, params); };
 yy.Table.prototype.toString = function() {
 	var s = this.tableid;
 //	if(this.joinmode)
@@ -9229,7 +9239,7 @@ yy.Table.prototype.toString = function() {
 	@class
 */
 
-yy.View = function (params) { return yy.extend(this, params); }
+yy.View = function (params) { return yy.extend(this, params); };
 yy.View.prototype.toString = function() {
 	var s = this.viewid;
 //	if(this.joinmode)
@@ -9242,7 +9252,7 @@ yy.View.prototype.toString = function() {
 	@class
 */
 
-yy.Op = function (params) { return yy.extend(this, params); }
+yy.Op = function (params) { return yy.extend(this, params); };
 yy.Op.prototype.toString = function() {
 	if(this.op == 'IN' || this.op == 'NOT IN') {
 		return this.left.toString()+" "+P(this.op)+" ("+this.right.toString()+")";
@@ -9275,7 +9285,7 @@ yy.Op.prototype.toType = function(tableid) {
 	if(this.op == '+') {
 		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
-	};
+	}
 	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ) return 'boolean';
 	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN' || this.op == 'IS NULL' || this.op == 'IS NOT NULL') return 'boolean';
 	if(this.allsome) return 'boolean';
@@ -9298,8 +9308,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else if(typeof this.right == "number") {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
 		} else if(this.right instanceof yy.FuncValue) {
-			ss = [];
-			if(!this.right.args || this.right.args.length == 0) {
+			var ss = [];
+			if(!this.right.args || 0 === this.right.args.length) {
 			} else {
 				var ss = this.right.args.map(function(arg){
 					return arg.toJavaScript(context,tableid, defcols);
@@ -9310,7 +9320,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
 		}
-	};
+	}
 
 	if(this.op == '!') {
 		if(typeof this.right == "string") {
@@ -9321,7 +9331,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.op == 'IS') {
 		return '((typeof '+this.left.toJavaScript(context,tableid, defcols)+"=='undefined') == "
-			+ '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
+			 + '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
 	}
 
 
@@ -9341,18 +9351,16 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		return '(!alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+'))';
 	}
 
+
 	if(this.op == 'LIKE') {
-		var s = "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
-//		console.log(s);
-		return s;
-	};
+		return "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
+		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))";
+	}
 
 	if(this.op == 'NOT LIKE') {
-		var s = "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
+		return "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
 		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g')))"
-		return s;
-	};
+	}
 
 	if(this.op == 'BETWEEN') {
 		return '(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
@@ -9364,12 +9372,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
 			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 
-
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
 		}
 */
-	};
+	}
 
 	if(this.op == 'NOT BETWEEN') {
 		return '!(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
@@ -9382,11 +9389,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		// } else {
 		// 	throw new Error('Wrong NOT BETWEEN operator without AND part');
 		// }
-	};
+	}
 
 	if(this.op == 'IN') {
 		if(this.right instanceof yy.Select ) {
-			var s = '(';
+			s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
@@ -9395,24 +9402,27 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'false';
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s 	= '(['
+				+ this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')
+				+ '].indexOf('
+				+ this.left.toJavaScript(context,tableid, defcols)
+				+')>-1)';
 //console.log(s);
 			return s;
 		} else {
-			var s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf('
+			  + this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 //console.log('expression',350,s);
 			return s;
 //		} else {
 //			throw new Error('Wrong IN operator without SELECT part');
 		}
-	};
+	}
 
 
 	if(this.op == 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
-			var s = '('
+			s = '(';
 				//this.query.queriesdata['+this.queriesidx+']
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
@@ -9421,50 +9431,50 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'true';
-			var s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].indexOf(';
+			s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
 			return s;
 		} else {
-			var s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
+			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
 			s += this.left.toJavaScript(context,tableid, defcols)+')==-1)';
 			return s;
 
 //			throw new Error('Wrong NOT IN operator without SELECT part');
 		}
-	};
+	}
 
 	if(this.allsome == 'ALL') {
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
-			var s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+		 	s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 
 			s +='.every(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].every(function(b){return (';
+			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
 		}		
-	};
+	}
 
 	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
-			var s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
-			s+='.some(function(b){return (';
+			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
+			s +='.some(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols)}).join(',')+'].some(function(b){return (';
+			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('Wrong NOT IN operator without SELECT part');
 		}		
-	};
+	}
 
 // Special case for AND optimization (if reduced)
 	if(this.op == 'AND') {
@@ -9484,15 +9494,20 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	}
 
 	if(this.op == '^') {
-		return 'Math.pow('+this.left.toJavaScript(context,tableid, defcols)
-			+','+this.right.toJavaScript(context,tableid, defcols)+')';
+		return 'Math.pow('
+				+this.left.toJavaScript(context,tableid, defcols)
+				+','
+				+this.right.toJavaScript(context,tableid, defcols)
+				+')';
 	};
+
+
 
 
 	// Change names
 //	console.log(this);
 	return '('+this.left.toJavaScript(context,tableid, defcols)+op+this.right.toJavaScript(context,tableid, defcols)+')';
-};
+}
 
 
 
