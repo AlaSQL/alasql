@@ -1,8 +1,9 @@
 # Changelog
 
-### 0.1.10 "Genova" (31.05.2015 - ....06.2015)
+### 0.1.10 "Genova" (31.05.2015 - 02.06.2015)
 * CALL procedure() statement
-
+* bitHound advices
+* bower.json file updated
 
 ### 0.1.9 "Torino" (29.05.2015 - 31.05.2015)
 * SERIAL data type added

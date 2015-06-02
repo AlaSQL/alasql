@@ -1,7 +1,7 @@
-/*! AlaSQL v0.1.9 (c) 2014-2015 Andrey Gershun | alasql.org/license */
+/*! AlaSQL v0.1.10 (c) 2014-2015 Andrey Gershun | alasql.org/license */
 /*
 @module alasql
-@version 0.1.8
+@version 0.1.10
 
 AlaSQL - JavaScript SQL database
 (ñ) 2014-2015, Andrey Gershun
