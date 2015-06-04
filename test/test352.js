@@ -9,6 +9,7 @@ if(typeof exports === 'object') {
 describe('Test 352 TEST EQUALITY', function() {
   it('1. CREATE DATABASE',function(done){
     alasql('CREATE DATABASE test352;USE test352');
+    alasql.options.nocount = false;
     done();
   });
 
