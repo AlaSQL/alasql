@@ -6,7 +6,7 @@
 //
 */
 
-yy.DropTable = function (params) { return yy.extend(this, params); }
+yy.DropTable = function (params) { return yy.extend(this, params); };
 yy.DropTable.prototype.toString = function() {
 	var s = K('DROP')+' ';
 	if(this.view) s += K('VIEW');
@@ -14,7 +14,7 @@ yy.DropTable.prototype.toString = function() {
 	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
 	return s;
-}
+};
 
 
 // DROP TABLE
@@ -41,12 +41,12 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 };
 
 
-yy.TruncateTable = function (params) { return yy.extend(this, params); }
+yy.TruncateTable = function (params) { return yy.extend(this, params); };
 yy.TruncateTable.prototype.toString = function() {
 	var s = K('TRUNCATE')+' '+K('TABLE');
 	s += ' '+this.table.toString();
 	return s;
-}
+};
 
 yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
