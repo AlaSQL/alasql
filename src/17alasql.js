@@ -3,7 +3,6 @@
 */
 
 
-
 // Initial parameters
 
 /**
@@ -135,9 +134,8 @@ alasql.use = function (databaseid) {
 
 };
 
-// Run one statement
 /**
- Run SQL statement on current database
+ Run single SQL statement on current database
  */
 alasql.exec = function (sql, params, cb, scope) {
 	delete alasql.error;
@@ -152,7 +150,7 @@ alasql.exec = function (sql, params, cb, scope) {
 	} else {
 		return alasql.dexec(alasql.useid, sql, params, cb, scope);
 	}
-}
+};
 
 /**
  Run SQL statement on specific database
@@ -175,11 +173,11 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	// Create AST
 	var ast = alasql.parse(sql);
 	if(!ast.statements) return;
-	if(ast.statements.length == 0) return 0;
-	else if(ast.statements.length == 1) {
+	if(0 === ast.statements.length) return 0;
+	else if(1 === ast.statements.length) {
 		if(ast.statements[0].compile) {
 
-// Compile and Execute
+			// Compile and Execute
 			var statement = ast.statements[0].compile(databaseid);
 			if(!statement) return;
 			statement.sql = sql;
@@ -217,7 +215,10 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
  */
 alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var useid = alasql.useid;
-	if(useid != databaseid) alasql.use(databaseid);
+	
+	if(useid != databaseid) 
+		alasql.use(databaseid);
+	
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		if(ast.statements[i]) {
@@ -229,10 +230,15 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
 			}		
 		}
-	};
-	if(useid != databaseid) alasql.use(useid);
-	if(cb) cb(res);
+	}
+	if(useid != databaseid) 
+		alasql.use(useid);
+	
+	if(cb) 
+		cb(res);
+	
 	alasql.res = res;
+	
 	return res;
 };
 
@@ -242,16 +248,19 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 alasql.adrun = function (databaseid, ast, params, cb, scope) {
 //	alasql.busy++;
 	var useid = alasql.useid;
-	if(useid != databaseid) alasql.use(databaseid);
+	if(useid != databaseid) 
+		alasql.use(databaseid);
 	var res = [];
 
 	adrunone(); /** @todo Check, why data is empty here */
 
 	function adrunone(data) {
-		if(typeof data != 'undefined') res.push(data);
+		if(data !== undefined) 
+			res.push(data);
 		var astatement = ast.statements.shift();
 		if(!astatement) {
-			if(useid != databaseid) alasql.use(useid);
+			if(useid != databaseid) 
+				alasql.use(useid);
 			cb(res);
 //			alasql.busy--;
 //			if(alasql.busy<0) alasql.busy = 0;
@@ -276,9 +285,12 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
  @return {functions} Compiled statement functions
 */
 alasql.compile = function(sql, databaseid) {
-	if(!databaseid) databaseid = alasql.useid;
+	
+	databaseid = databaseid || alasql.useid;
+	
 	var ast = alasql.parse(sql); // Create AST
-	if(ast.statements.length == 1) {
+	
+	if(1 === ast.statements.length) {
 		return ast.statements[0].compile(databaseid);
 /*		
 		if(kind == 'value') {
@@ -338,7 +350,7 @@ alasql.compile = function(sql, databaseid) {
 	} else {
 		throw new Error('Cannot compile, because number of statments in SQL is not equal to 1');
 	}
-}
+};
 
 // // Default methods to exec SQL statements
 // alasql.run = alasql.exec = function (sql, params, cb) {
