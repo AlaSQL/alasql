@@ -1021,7 +1021,7 @@ alasql.srch.D3 = function(val,args,stope,params) {
 };
 
 
-compileSearchOrder = function (order) {
+var compileSearchOrder = function (order) {
 	if(order) {
 //			console.log(990, this.order);
 		if(order && order.length == 1 && order[0].expression 
