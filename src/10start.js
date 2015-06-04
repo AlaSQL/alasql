@@ -25,7 +25,7 @@
 }(this, function () {
 
 /**
-	 alasql - Main Alasql class
+	AlaSQL - Main Alasql class
  	@function
  	@param {string|function|object} sql - SQL-statement or data object for fuent interface
  	@param {object} params - SQL parameters
@@ -103,8 +103,8 @@ alasql.version = "0.1.10";
 alasql.debug = undefined; // Initial debug variable
 
 
-
 getAlaSQLPath();
+
 /** 
 	Get path of alasql.js
 	@function 
@@ -119,32 +119,36 @@ function getAlaSQLPath() {
 		/** @todo Check how to get path in worker */
 	} else if(typeof exports != 'undefined') { 
 		alasql.path = __dirname;
+	
 	} else if(typeof Meteor == 'object' && Meteor.isClient) {
-			alasql.path = '/packages/dist/';
+		alasql.path = '/packages/dist/';
+	
 	} else if(typeof Meteor == 'object' && Meteor.isServer) {
-			alasql.path = 'assets/packages/dist/';
+		alasql.path = 'assets/packages/dist/';
+	
 	} else if(typeof document != 'undefined') {
 		var sc = document.getElementsByTagName('script');
-		for(var i=0;i<sc.length;i++) {
+		
+		for(var i=0;i<sc.length;i++) {	
 			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-16); 
 				break;
+
 			} else if (sc[i].src.substr(-20).toLowerCase() == 'alasql-worker.min.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-20);
 				break;
+			
 			} else if (sc[i].src.substr(-9).toLowerCase() == 'alasql.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-9); 
 				break;
+			
 			} else if (sc[i].src.substr(-13).toLowerCase() == 'alasql.min.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-13); 
 				break;
-			};
-		};	
-	};
-};
+			}
+		}	
+	}
+}
 
-/** 
-	Parser function
-	@type {object}
-*/
+
 
