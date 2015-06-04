@@ -6,11 +6,17 @@
 //
 */
 
-yy.Apply = function (params) { return yy.extend(this, params); }
+yy.Apply = function (params) { 
+	return yy.extend(this, params); 
+}
+
 yy.Apply.prototype.toString = function () {
-	var s = K(this.applymode)+' '+K('APPLY')+' (';
-	s += this.select.toString()+')';
-	if(this.as) s += ' '+K('AS')+' '+L(this.as);
+	var s = K(this.applymode)+' '+K('APPLY')+' ('+this.select.toString()+')';
+	
+	if(this.as) 
+		s += ' '+K('AS')+' '+L(this.as);
+	
 	return s;
 };
+
 
