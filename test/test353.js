@@ -7,12 +7,10 @@ if(typeof exports === 'object') {
 
 // Data for test
 var data = [{a:1},{a:2}];
-alasql.fn.iamwrong = function() {
-  throw new Error('I am wrong!');
-};
 
 
 describe('Test 353 Compiled Promised Statements', function() {
+  
   it('1. CREATE DATABASE',function(done){
     alasql('CREATE DATABASE test353;USE test353');
     done();
@@ -25,6 +23,9 @@ describe('Test 353 Compiled Promised Statements', function() {
   });
 
   it('3. Compiled Sync with Error',function(done){
+    alasql.fn.iamwrong = function() {
+      throw new Error('I am wrong!');
+    };
     var st = alasql.compile('SELECT iamwrong() FROM ?');
     assert.throws(function(){
       var res = st([data]);
@@ -42,6 +43,9 @@ describe('Test 353 Compiled Promised Statements', function() {
   });
 */
   it('5. Compiles Async',function(done){
+    alasql.fn.iamwrong = function() {
+      throw new Error('I am wrong!');
+    };
     var st = alasql.compile('SELECT * FROM ?');
     st([data],function(res,err){
       assert.deepEqual(res,data);
