@@ -45,6 +45,8 @@ describe('Test 287 SET NOCOUNT OFF/ON', function() {
   // TODO: Add other operators
 
   it('3. DROP DATABASE',function(done){
+     alasql.options.nocount = false;
+ 
     var res = alasql('DROP DATABASE test287');
     done();
   });
