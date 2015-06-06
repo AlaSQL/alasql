@@ -87,18 +87,18 @@ SOFTWARE.
  */
 
 var alasql = function alasql(sql, params, cb, scope) {
-	if(typeof importScripts != 'function' && alasql.webworker) {
+	if(typeof importScripts !== 'function' && alasql.webworker) {
 		var id = alasql.lastid++;
 		alasql.buffer[id] = cb;
 		alasql.webworker.postMessage({id:id,sql:sql,params:params});
 	} else {
-		if(arguments.length == 0) {
+		if(arguments.length === 0) {
 			// Without arguments - Fluent interface
 			return new yy.Select({
 				columns:[new yy.Column({columnid:'*'})],
 				from: [new yy.ParamValue({param:0})]
 			});
-		} else if (arguments.length == 1 && typeof sql == "object" && sql instanceof Array) {
+		} else if (arguments.length === 1 && typeof sql === "object" && sql instanceof Array) {
 			// One argument data object - fluent interface
 				var select = new yy.Select({
 					columns:[new yy.Column({columnid:'*'})],
@@ -109,18 +109,18 @@ var alasql = function alasql(sql, params, cb, scope) {
 		} else {
 			// Standard interface
 			// alasql('#sql');
-			if(typeof sql == 'string' && sql[0]=='#' && typeof document == "object") {
+			if(typeof sql === 'string' && sql[0]==='#' && typeof document === "object") {
 				sql = document.querySelector(sql).textContent;
-			} else if(typeof sql == 'object' && sql instanceof HTMElement) {
+			} else if(typeof sql === 'object' && sql instanceof HTMElement) {
 				sql = sql.textContent;
-			} else if(typeof sql == 'function') {
+			} else if(typeof sql === 'function') {
 				// to run multiline functions
 				sql = sql.toString().slice(14,-3);
 			}
 			// Run SQL			
 			return alasql.exec(sql, params, cb, scope);
 		}
-	};
+	}
 };
 
 /** 
@@ -136,7 +136,7 @@ alasql.version = "0.1.10";
 alasql.debug = undefined; // Initial debug variable
 
 
-getAlaSQLPath();
+
 
 /** 
 	Get path of alasql.js
@@ -150,32 +150,32 @@ function getAlaSQLPath() {
 	if (typeof importScripts === 'function') {
 		alasql.path = '';		
 		/** @todo Check how to get path in worker */
-	} else if(typeof exports != 'undefined') { 
+	} else if(typeof exports !== 'undefined') { 
 		alasql.path = __dirname;
 	
-	} else if(typeof Meteor == 'object' && Meteor.isClient) {
+	} else if(typeof Meteor === 'object' && Meteor.isClient) {
 		alasql.path = '/packages/dist/';
 	
-	} else if(typeof Meteor == 'object' && Meteor.isServer) {
+	} else if(typeof Meteor === 'object' && Meteor.isServer) {
 		alasql.path = 'assets/packages/dist/';
 	
-	} else if(typeof document != 'undefined') {
+	} else if(typeof document !== 'undefined') {
 		var sc = document.getElementsByTagName('script');
 		
 		for(var i=0;i<sc.length;i++) {	
-			if (sc[i].src.substr(-16).toLowerCase() == 'alasql-worker.js') {
+			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-16); 
 				break;
 
-			} else if (sc[i].src.substr(-20).toLowerCase() == 'alasql-worker.min.js') {
+			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-20);
 				break;
 			
-			} else if (sc[i].src.substr(-9).toLowerCase() == 'alasql.js') {
+			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-9); 
 				break;
 			
-			} else if (sc[i].src.substr(-13).toLowerCase() == 'alasql.min.js') {
+			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
 				alasql.path = sc[i].src.substr(0,sc[i].src.length-13); 
 				break;
 			}
@@ -183,6 +183,7 @@ function getAlaSQLPath() {
 	}
 }
 
+getAlaSQLPath();
 
 
 
@@ -2814,7 +2815,7 @@ function K(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty 
@@ -2827,7 +2828,7 @@ function P(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty 
@@ -2840,7 +2841,7 @@ function L(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty number
@@ -2853,7 +2854,7 @@ function N(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty string
@@ -2866,7 +2867,7 @@ function S(s){
 	} else {
 		return s;
 	}
-};
+}
 
 
 /**
@@ -2879,7 +2880,7 @@ function NL(){
 	} else {
 		return ' '; // '\n'
 	}	
-};
+}
 
 /**
  Pretty ident
@@ -2891,7 +2892,7 @@ function ID(){
 	} else {
 		return ''; //'    ';
 	}	
-};
+}
 
 
 /*
@@ -3018,9 +3019,11 @@ var doubleq = utils.doubleq = function(s) {
 */
 
 var cutbom = function(s) {
-    if(s[0] == String.fromCharCode(65279)) s = s.substr(1);
+    if(s[0] === String.fromCharCode(65279)){
+        s = s.substr(1);
+    }
     return s;
-};
+}
 
 /**
     Load text file from anywhere
@@ -3033,11 +3036,11 @@ var cutbom = function(s) {
     @todo Define Event type
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
+    var data, fs;
+    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
 
-    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
-
-        var fs;
-        if(typeof Meteor != 'undefined') {
+        
+        if(typeof Meteor !== 'undefined') {
             /** For Meteor */
             fs = Npm.require('fs');
         } else {
@@ -3046,7 +3049,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         }
 
         /* If path is empty, than read data from stdin (for Node) */
-        if(typeof path == 'undefined') {
+        if(typeof path === 'undefined') {
             /* @type {string} Buffer for string*/
             var buff = '';
             process.stdin.setEncoding('utf8');
@@ -3070,11 +3073,11 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 });
             } else {
                 /* Call sync version */
-                var data = fs.readFileSync(path);
+                data = fs.readFileSync(path);
                 success(cutbom(data.toString()));
             }
         }
-    } else if(typeof cordova == 'object') {
+    } else if(typeof cordova === 'object') {
         /* If Cordova */
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
@@ -3115,12 +3118,12 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 */
     } else {
         /* For string */
-        if(typeof path == "string") {
+        if(typeof path === "string") {
             // For browser read from tag
             /*
                 SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
             */
-            if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
+            if((path.substr(0,1) === '#') && (typeof document !== 'undefined')) {
                 data = document.querySelector(path).textContent;
                 success(data);
             } else {
@@ -3178,9 +3181,10 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 */
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
-    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
+    var fs;
+    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
         // For Node.js
-        if(typeof Meteor != 'undefined') {
+        if(typeof Meteor !== 'undefined') {
             var fs = Npm.require('fs'); // For Meteor
         } else {
             var fs = require('fs');
@@ -3194,30 +3198,36 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                     throw err;
                 }
                 var arr = [];
-                for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                for(var i = 0; i < data.length; ++i){
+                    arr[i] = String.fromCharCode(data[i]);
+                }
                 success(arr.join(""));
             });
 
         } else {
             var data = fs.readFileSync(path);
             var arr = [];
-            for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+            for(var i = 0; i < data.length; ++i){
+                arr[i] = String.fromCharCode(data[i]);
+            }
             success(arr.join(""));
         }
 //        success(data);
     } else {
 
-        if(typeof path == "string") {
+        if(typeof path === "string") {
             // For browser
             var xhr = new XMLHttpRequest();
             xhr.open("GET", path, asy); // Async
             xhr.responseType = "arraybuffer";
             xhr.onload = function() {
                 var data = new Uint8Array(xhr.response);
-                var arr = new Array();
-                for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                var arr = [];
+                for(var i = 0; i < data.length; ++i){
+                    arr[i] = String.fromCharCode(data[i]);
+                }
                 success(arr.join(""));
-            };
+            }
             xhr.send();
         } else if(path instanceof Event) {
             // console.log("event");
@@ -3235,16 +3245,16 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 
 
 var removeFile = utils.removeFile = function(path,cb) {
-    if(typeof exports == 'object') {
+    if(typeof exports === 'object') {
         var fs = require('fs');
         fs.remove(path,cb);
-    } else if(typeof cordova == 'object') {
+    } else if(typeof cordova === 'object') {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
-                if(cb) cb();
+                cb && cb();
             }, function(){
-                if(cb) cb();
+                cb && cb();
             });
         });
     } else {
@@ -3254,17 +3264,17 @@ var removeFile = utils.removeFile = function(path,cb) {
 
 
 var deleteFile = utils.deleteFile = function(path,cb){
-    if(typeof exports == 'object') {
+    if(typeof exports === 'object') {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
-    if(typeof exports == 'object') {
+    if(typeof exports === 'object') {
         var fs = require('fs');
         fs.exists(path,cb);
-    } else if(typeof cordova == 'object') {
+    } else if(typeof cordova === 'object') {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
@@ -3308,29 +3318,35 @@ var fileExists = utils.fileExists = function(path,cb){
 
 var saveFile = utils.saveFile = function(path, data, cb) {
     var res = 1;
-    if(typeof path == 'undefined') {
+    if(path === undefined) {
         //
         // Return data into result variable
         // like: alasql('SELECT * INTO TXT() FROM ?',[data]);
         //
         res = data;
-        if(cb) res = cb(res);
+        if(cb){
+            res = cb(res);
+        }
     } else {
 
-        if(typeof exports == 'object') {
+        if(typeof exports === 'object') {
             // For Node.js
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
-            if(cb) res = cb(res);
-        } else if(typeof cordova == 'object') {
+            if(cb){
+                res = cb(res);
+            }
+        } else if(typeof cordova === 'object') {
             // For Apache Cordova
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
                             fileWriter.onwriteend = function(){
-                                if(cb) res = cb(res);
-                            };
+                                if(cb){
+                                    res = cb(res);
+                                }
+                            }
                             fileWriter.write(data);
                         });                                  
                     });
@@ -3395,7 +3411,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 //                });
 //            });
         } else {
-        	if(isIE() == 9) {
+        	if(isIE() === 9) {
         		// Solution was taken from 
         		// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
 //				var URI = 'data:text/plain;charset=utf-8,';
@@ -3412,13 +3428,15 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         	} else {
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 	            saveAs(blob, path);
-	            if(cb) res = cb(res);                		
+	            if(cb){
+                    res = cb(res);
+                }                		
         	}
         }
     }
 
     return res;
-};
+}
 
 /** 
     @function Is this IE9 
@@ -3428,7 +3446,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 */
 function isIE () {
   var myNav = navigator.userAgent.toLowerCase();
-  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+  return (myNav.indexOf('msie') !== -1) ? parseInt(myNav.split('msie')[1]) : false;
 }
 
 
@@ -3456,8 +3474,9 @@ function isIE () {
 var hash = utils.hash = function hash(str){
     var h = 0;
     
-    if (0 === str.length) 
+    if (0 === str.length){
         return h;
+    }
 
     for (var i = 0; i < str.length; i++) {
         h = ((h<<5)-h)+str.charCodeAt(i);
@@ -3476,9 +3495,13 @@ var hash = utils.hash = function hash(str){
 */
 var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
-    a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
+    a.forEach(function(i){ 
+                            if (r.indexOf(i) < 0){ 
+                                r.push(i);
+                            } 
+                        });
     return r;
-};
+}
 
 /** 
  Array Difference
@@ -3571,8 +3594,9 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
   Deep clone obects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
-    if(null === obj || typeof(obj) != 'object')
+    if(null === obj || typeof(obj) !== 'object'){
         return obj;
+    }
 
     var temp = obj.constructor(); // changed
 
@@ -3589,11 +3613,13 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 */
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
-        if (x == y) return true;
+        if (x == y){
+            return true;
+        }
 
         var p;
         for (p in y) {
-            if (typeof (x[p]) == 'undefined') { return false; }
+            if (typeof (x[p]) === 'undefined') { return false; }
         }
 
         for (p in y) {
@@ -3602,21 +3628,25 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
                     case 'object':
                         if (!equalDeep(y[p],x[p])) { return false; } break;
                     case 'function':
-                        if (typeof (x[p]) == 'undefined' ||
-                  (p != 'equals' && y[p].toString() != x[p].toString()))
-                            return false;
+                        if (
+                                typeof (x[p]) === 'undefined' ||
+                                (p !== 'equals' && y[p].toString() !== x[p].toString())
+                            ){
+                                return false;
+                            }
                         break;
                     default:
-                        if (y[p] != x[p]) { return false; }
+                        if (y[p] !== x[p]) { return false; }
                 }
             } else {
-                if (x[p])
+                if (x[p]){
                     return false;
+                }
             }
         }
 
         for (p in x) {
-            if (typeof (y[p]) == 'undefined') { return false; }
+            if (typeof (y[p]) === 'undefined') { return false; }
         }
 
         return true;
@@ -3627,30 +3657,29 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 /**
   COmpare two object in deep
  */
-var deepEqual = utils.deepEqual = function (x, y) {
-  if ((typeof x == "object" && null !== x) && (typeof y == "object" && null !== y)) {
-    if (Object.keys(x).length != Object.keys(y).length)
-      return false;
-
-    for (var prop in x) {
-      if (y.hasOwnProperty(prop))
-      {  
-        if (! deepEqual(x[prop], y[prop]))
-          return false;
-      }
-      else
-        return false;
+var deepEqual = utils.deepEqual = function(x, y) {
+    if (typeof x === "object" && null !== x && (typeof y === "object" && null !== y)) {
+        if (Object.keys(x).length !== Object.keys(y).length) {
+            return false;
+        }
+        for (var prop in x) {
+            if (y.hasOwnProperty(prop)) {
+                if (!deepEqual(x[prop], y[prop])) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        if (x !== y) {
+            return false;
+        } else {
+            return true;
+        }
     }
-
-    return true;
-  }
-  else if (x !== y)
-    return false;
-  else
-    return true;
 };
-
-
 /**
     Array with distinct records
     @param {array} data
@@ -3661,15 +3690,17 @@ var distinctArray = utils.distinctArray = function(data) {
     // TODO: Speedup, because Object.keys is slow
     for(var i=0,ilen=data.length;i<ilen;i++) {
         var uix;
-        if(typeof data[i] == 'object') {
-            uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
+        if(typeof data[i] === 'object') {
+            uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k];}).join('`');
         } else {
             uix = data[i];  
         }
         uniq[uix] = data[i];
     }
     var res = [];
-    for(var key in uniq) res.push(uniq[key]);
+    for(var key in uniq){
+        res.push(uniq[key]);
+    }
     return res;
 };
 
@@ -3682,7 +3713,7 @@ var distinctArray = utils.distinctArray = function(data) {
     @return {object}
 */
 var extend = utils.extend = function extend (a,b){
-    if(typeof a == 'undefined') a = {};
+    a = a || {};
     for(var key in b) {
         if(b.hasOwnProperty(key)) {
             a[key] = b[key];
@@ -3696,15 +3727,19 @@ var extend = utils.extend = function extend (a,b){
  */
 var flatArray = utils.flatArray = function(a) {
 //console.log(684,a);
-    if(!a || 0 === a.length) return [];
+    if(!a || 0 === a.length){ 
+        return [];
+    }
 
     // For recordsets
-    if(typeof a == 'object' && a instanceof alasql.Recordset) {
+    if(typeof a === 'object' && a instanceof alasql.Recordset) {
         return a.data.map(function(ai){return ai[a.columns[0].columnid];});
     }
     // Else for other arrays
     var key = Object.keys(a[0])[0];
-    if(typeof key == 'undefined') return [];
+    if(key === undefined){
+        return [];
+    }
     return a.map(function(ai) {return ai[key];});
 };
 
@@ -3714,7 +3749,9 @@ var flatArray = utils.flatArray = function(a) {
 var arrayOfArrays = utils.arrayOfArrays = function (a) {
     return a.map(function(aa){
         var ar = [];
-        for(var key in aa) ar.push(aa[key]);
+        for(var key in aa){
+            ar.push(aa[key]);
+        }
         return ar;
     });
 };
@@ -5901,14 +5938,14 @@ function queryfn(query,oldscope,cb, A,B) {
 //	console.log(query.queriesfn);
 
 	var ms;
-		query.sourceslen = query.sources.length;
-		var slen = query.sourceslen;
-		query.query = query; // TODO Remove to prevent memory leaks
-		query.A = A;
-		query.B = B;
+	query.sourceslen = query.sources.length;
+	var slen = query.sourceslen;
+	query.query = query; // TODO Remove to prevent memory leaks
+	query.A = A;
+	query.B = B;
 //	console.log(arguments);
-		query.cb = cb;
-		query.oldscope = oldscope;
+	query.cb = cb;
+	query.oldscope = oldscope;
 
 	// Run all subqueries before main statement
 	if(query.queriesfn) {
@@ -6147,15 +6184,19 @@ function queryfn3(query) {
 		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
 		if(query.corresponding) {
-			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undefined;
-			var ud = query.intersectfn(query.params);
+			if(!query.intersectfn.query.modifier) 
+				query.intersectfn.query.modifier = undefined;
+			ud = query.intersectfn(query.params);
 		} else {
-			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';
-			var nd = query.intersectfn(query.params);
-			var ud = [];
-			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
-				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+			if(!query.intersectfn.query.modifier) 
+				query.intersectfn.query.modifier = 'RECORDSET';
+			nd = query.intersectfn(query.params);
+			ud = [];
+			ilen=nd.data.length;
+			for(i=0;i<ilen;i++) {
+				r = {};
+				jlen=Math.min(query.columns.length,nd.columns.length);
+				for(j=0;j<jlen;j++) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -6164,7 +6205,7 @@ function queryfn3(query) {
 
 
 		query.data = arrayIntersectDeep(query.data, ud);
-	};
+	}
 
 	// Ordering
 	if(query.orderfn) {
@@ -6173,7 +6214,7 @@ function queryfn3(query) {
 		if(query.explain) { 
 			query.explaination.push({explid: query.explid++, description:'QUERY BY',ms:Date.now()-ms});
 		}
-	};
+	}
 
 	// Reduce to limit and offset
 	doLimit(query);
@@ -6194,14 +6235,15 @@ function queryfn3(query) {
 
 
 	    // Remove from data
-	    var jlen = removeKeys.length;
-	    if(jlen > 0) {
-	      for(var i=0,ilen=query.data.length;i<ilen;i++) {
-	        for(var j=0; j<jlen;j++) {
-	          delete query.data[i][removeKeys[j]];
-	        }
-	      }    
-	    };
+		jlen = removeKeys.length;
+		if(jlen > 0) {
+			ilen=query.data.length;	
+			for(i=0;i<ilen;i++) {
+				for(j=0; j<jlen;j++) {
+					delete query.data[i][removeKeys[j]];
+				}
+			}    
+		}
 
 	    // Remove from columns list
 		if(query.columns.length > 0) {
@@ -6223,14 +6265,14 @@ function queryfn3(query) {
 		// Remove unused columns
 		// SELECT * REMOVE COLUMNS LIKE "%b"
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
-			var r = query.data[i];
+			r = query.data[i];
 			for(var k in r) {
-				for(var j=0;j<query.removeLikeKeys.length;j++) {
+				for(j=0;j<query.removeLikeKeys.length;j++) {
 					if(k.match(query.removeLikeKeys[j])) {
 						delete r[k];
 					}				
 				}
-			}; 
+			} 
 		}
 
 		if(query.columns.length > 0) {
@@ -6261,22 +6303,24 @@ function queryfn3(query) {
 //		debugger;
 		return res;	
 	} else if(query.intofn) {
-		for(var i=0,ilen=query.data.length;i<ilen;i++){
+		ilen=query.data.length;
+		for(i=0;i<ilen;i++){
 			query.intofn(query.data[i],i,query.params,query.alasql);
 		}
 //		console.log(query.intofn);
-		if(query.cb) query.cb(query.data.length,query.A, query.B);
+		if(query.cb) 
+			query.cb(query.data.length,query.A, query.B);
 		return query.data.length;
 	} else {
 //		console.log(111,query.cb,query.data);
-		var res = query.data;
-		if(query.cb) res = query.cb(query.data,query.A, query.B);
+		res = query.data;
+		if(query.cb) 
+			res = query.cb(query.data,query.A, query.B);
 //		console.log(777,res)
 		return res;
 	}
 
-	// That's all
-};
+}
 
 // Limiting
 function doLimit (query) {
@@ -6289,7 +6333,7 @@ function doLimit (query) {
 			limit = ((query.data.length*query.limit/100)| 0)+offset;			
 		} else {
 			limit = (query.limit|0) + offset;
-		};
+		}
 		query.data = query.data.slice(offset,limit);
 	}
 }
@@ -6301,19 +6345,20 @@ function doDistinct (query) {
 		// TODO: Speedup, because Object.keys is slow
 		// TODO: Problem with DISTINCT on objects
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
-			var uix = Object.keys(query.data[i]).map(function(k){return query.data[i][k]}).join('`');
+			var uix = Object.keys(query.data[i]).map(function(k){return query.data[i][k];}).join('`');
 			uniq[uix] = query.data[i];
-		};
+		}
 		query.data = [];
 		for(var key in uniq) query.data.push(uniq[key]);
 	}
-};
+}
 
 
 // Optimization: preliminary indexation of joins
 preIndex = function(query) {
 //	console.log(query);
 	// Loop over all sources
+	// Todo: make this loop smaller and more graspable
 	for(var k=0, klen = query.sources.length;k<klen;k++) {
 		var source = query.sources[k];
 		// If there is indexation rule
@@ -6328,7 +6373,7 @@ preIndex = function(query) {
 				if( !alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					source.ix = ixx; 
 				}
-			};
+			}
 			if(!source.ix) {
 				source.ix = {};
 				// Walking over source data
@@ -6358,10 +6403,11 @@ preIndex = function(query) {
 					}
 					i++;
 				}
+
 				if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]){
 					// Save index to original table				
 					alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
-				};
+				}
 			}
 //console.log(38,274,source.ix);
 
@@ -6369,7 +6415,7 @@ preIndex = function(query) {
 		} else if (source.wxleftfn) {
 				if(!alasql.databases[source.databaseid].engineid) {
 					// Check if index exists
-					var ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.wxleftfns+'`')];
+					ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.wxleftfns+'`')];
 				}
 				if( !alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					// Use old index if exists
@@ -6380,22 +6426,23 @@ preIndex = function(query) {
 					// Create new index
 					source.ix = {};
 					// Prepare scope
-					var scope = {};
+					scope = {};
 					// Walking on each source line
-					var i = 0;
-					var ilen = source.data.length;
-					var dataw;
+					i = 0;
+					ilen = source.data.length;
+					dataw;
 	//				while(source.getfn i<ilen) {
 
 					while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
-						if(source.getfn && !source.dontcache) source.data[i] = dataw;
-	//				for(var i=0, ilen=source.data.length; i<ilen; i++) {
+						if(source.getfn && !source.dontcache) 
+							source.data[i] = dataw;
+	//					for(var i=0, ilen=source.data.length; i<ilen; i++) {
 						scope[source.alias || source.tableid] = source.data[i];
 						// Create index entry
-						var addr = source.wxleftfn(scope, query.params, alasql);
-						var group = source.ix [addr]; 
+						addr = source.wxleftfn(scope, query.params, alasql);
+						group = source.ix[addr]; 
 						if(!group) {
-							group = source.ix [addr] = []; 
+							group = source.ix[addr] = []; 
 						}
 						group.push(source.data[i]);
 						i++;
@@ -6408,7 +6455,7 @@ preIndex = function(query) {
 				// Apply where filter to reduces rows
 				if(source.srcwherefns) {
 					if(source.data) {
-						var scope = {};
+						scope = {};
 						source.data = source.data.filter(function(r) {
 							scope[source.alias] = r;
 							return source.srcwherefn(scope, query.params, alasql);
@@ -6430,10 +6477,10 @@ preIndex = function(query) {
 					return source.srcwherefn(scope, query.params, alasql);
 				});
 
-				var scope = {};
-				var i = 0;
-				var ilen = source.data.length;
-				var dataw;
+				scope = {};
+				i = 0;
+				ilen = source.data.length;
+				//var dataw;
 				var res = [];
 //				while(source.getfn i<ilen) {
 
@@ -6447,7 +6494,7 @@ preIndex = function(query) {
 
 			} else {
 				source.data = [];
-			};
+			}
 		}			
 		// Change this to another place (this is a wrong)
 		if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
@@ -6456,7 +6503,7 @@ preIndex = function(query) {
 			// this is a subquery?
 		}
 	}
-}
+};
 
 
 //
@@ -9087,6 +9134,7 @@ yy.Over.prototype.toString = function () {
 };
 
 
+
 /*
 //
 // Expressions for Alasql.js
@@ -9126,7 +9174,9 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 		alasql.precompile(this,databaseid,params); // Precompile queries
 		var exprfn =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null)).bind(this);
 		var res = exprfn(params,alasql);
-		if(cb) res = cb(res);
+		if(cb) {
+			res = cb(res);
+		}
 		return res;
 	}
 };
@@ -9146,8 +9196,12 @@ yy.Expression = function(params) { return yy.extend(this, params); };
 */
 yy.Expression.prototype.toString = function() {
 	var s = this.expression.toString();
-	if(this.order) s += ' '+this.order.toString();
-	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
+	if(this.order) {
+		s += ' '+this.order.toString();
+	}
+	if(this.nocase) {
+		s += ' '+K('COLLATE')+' '+K('NOCASE');
+	}
 	return s;
 };
 
@@ -9157,7 +9211,9 @@ yy.Expression.prototype.toString = function() {
 	@param {object} query Query object
 */
 yy.Expression.prototype.findAggregator = function (query){
-	if(this.expression.findAggregator) this.expression.findAggregator(query);
+	if(this.expression.findAggregator) {
+		this.expression.findAggregator(query);
+	}
 };
 
 /**
@@ -9171,7 +9227,9 @@ yy.Expression.prototype.findAggregator = function (query){
 
 yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
-	if(this.expression.reduced) return 'true';
+	if(this.expression.reduced) {
+		return 'true';
+	}
 	return this.expression.toJavaScript(context, tableid, defcols);
 };
 
@@ -9186,7 +9244,9 @@ yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 
 yy.Expression.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
-	if(this.reduced) return returnTrue();
+	if(this.reduced) {
+		return returnTrue();
+	}
 	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
 };
 
@@ -9208,7 +9268,9 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	var expr =  new Function("params,alasql,p",this.value);
 	expr(params,alasql);
-	if(cb) res = cb(res);
+	if(cb){
+		res = cb(res);
+	}
 	return res;
 };
 
@@ -9223,7 +9285,9 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 yy.Literal = function (params) { return yy.extend(this, params); };
 yy.Literal.prototype.toString = function() {
 	var s = this.value;
-	if(this.value1) s = this.value1+'.'+s; 
+	if(this.value1){
+		s = this.value1+'.'+s; 
+	}
 //	else s = tableid+'.'+s;
 	return L(s);
 };
@@ -9236,7 +9300,9 @@ yy.Literal.prototype.toString = function() {
 yy.Join = function (params) { return yy.extend(this, params); };
 yy.Join.prototype.toString = function() {
 	var s = NL()+ID();
-	if(this.joinmode) s += K(this.joinmode)+' ';
+	if(this.joinmode){
+		s += K(this.joinmode)+' ';
+	}
 	s += K('JOIN')+this.table.toString();
 	return s;
 };
@@ -9254,7 +9320,9 @@ yy.Table = function (params) { return yy.extend(this, params); };
 yy.Table.prototype.toString = function() {
 	var s = this.tableid;
 //	if(this.joinmode)
-	if(this.databaseid) s = this.databaseid+'.'+s;
+	if(this.databaseid){
+		s = this.databaseid+'.'+s;
+	}
 	return L(s);
 };
 
@@ -9267,7 +9335,9 @@ yy.View = function (params) { return yy.extend(this, params); };
 yy.View.prototype.toString = function() {
 	var s = this.viewid;
 //	if(this.joinmode)
-	if(this.databaseid) s = this.databaseid+'.'+s;
+	if(this.databaseid){
+		s = this.databaseid+'.'+s;
+	}
 	return L(s);
 };
 
@@ -9275,29 +9345,40 @@ yy.View.prototype.toString = function() {
 	Binary operation class
 	@class
 */
-
 yy.Op = function (params) { return yy.extend(this, params); };
 yy.Op.prototype.toString = function() {
-	if(this.op == 'IN' || this.op == 'NOT IN') {
+	if(this.op === 'IN' || this.op === 'NOT IN') {
 		return this.left.toString()+" "+P(this.op)+" ("+this.right.toString()+")";
 	}
 	if(this.allsome) {
 		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
 	}
-	if(this.op == '->' || this.op == '!') {
+	if(this.op === '->' || this.op === '!') {
 		var s = this.left.toString()+this.op;
 //		console.log(this.right);
-		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += '(';
+		
+		if(typeof this.right !== 'string' && typeof this.right !== 'number' ){
+			s += '(';
+		}
+		
 		s += this.right.toString();
-		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += ')';
+		
+		if(typeof this.right !== 'string' && typeof this.right !== 'number' ){
+			s += ')';
+		}
+		
 		return s;
 	}
-	return this.left.toString()+" "+P(this.op)+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
+	return 	this.left.toString() + " " + P(this.op) + " " +
+			(this.allsome ? this.allsome+' ' : '') +
+			this.right.toString();
 };
 
 yy.Op.prototype.findAggregator = function (query){
 //	console.log(this.toString());
-	if(this.left && this.left.findAggregator) this.left.findAggregator(query);
+	if(this.left && this.left.findAggregator){
+		this.left.findAggregator(query);
+	}
 	// Do not go in > ALL
 	if(this.right && this.right.findAggregator && (!this.allsome)) {
 		this.right.findAggregator(query);
@@ -9305,7 +9386,9 @@ yy.Op.prototype.findAggregator = function (query){
 };
 
 yy.Op.prototype.toType = function(tableid) {
-	if(['-','*','/','%','^'].indexOf(this.op) >-1) return 'number';
+	if(['-','*','/','%','^'].indexOf(this.op) >-1){
+		return 'number';
+	}
 	if(this.op == '+') {
 		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
@@ -9415,7 +9498,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		// }
 	}
 
-	if(this.op == 'IN') {
+	if(this.op === 'IN') {
 		if(this.right instanceof yy.Select ) {
 			s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
@@ -9859,12 +9942,15 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 
 
 yy.OrderExpression = function(params){ return yy.extend(this, params); }
-yy.OrderExpression.prototype.toString = function() {
+yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString
+/* //Duplicated code
+
+function() {
 	var s = this.expression.toString();
 	if(this.order) s += ' '+this.order.toString();
 	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
 	return s;
-}
+}*/
 
 yy.GroupExpression = function(params){ return yy.extend(this, params); }
 yy.GroupExpression.prototype.toString = function() {
@@ -9872,6 +9958,7 @@ yy.GroupExpression.prototype.toString = function() {
 }
 
 
+/* //Duplicated code
 yy.ColumnDef = function (params) { return yy.extend(this, params); }
 yy.ColumnDef.prototype.toString = function() {
 	var s =  this.columnid;
@@ -9884,7 +9971,7 @@ yy.ColumnDef.prototype.toString = function() {
 	if(this.primarykey) s += ' PRIMARY KEY';
 	if(this.notnull) s += ' NOT NULL';
 	return s;
-}
+}*/
 
 // Alasql Linq library
 
@@ -11224,7 +11311,7 @@ stdfn.DATEDIFF = function(a,b){
 //
 */
 
-yy.DropTable = function (params) { return yy.extend(this, params); }
+yy.DropTable = function (params) { return yy.extend(this, params); };
 yy.DropTable.prototype.toString = function() {
 	var s = K('DROP')+' ';
 	if(this.view) s += K('VIEW');
@@ -11232,7 +11319,7 @@ yy.DropTable.prototype.toString = function() {
 	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
 	s += ' '+this.table.toString();
 	return s;
-}
+};
 
 
 // DROP TABLE
@@ -11259,12 +11346,12 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 };
 
 
-yy.TruncateTable = function (params) { return yy.extend(this, params); }
+yy.TruncateTable = function (params) { return yy.extend(this, params); };
 yy.TruncateTable.prototype.toString = function() {
 	var s = K('TRUNCATE')+' '+K('TABLE');
 	s += ' '+this.table.toString();
 	return s;
-}
+};
 
 yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];

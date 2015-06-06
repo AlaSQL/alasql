@@ -14,7 +14,7 @@
     "wsh"           : true,   // Windows Scripting Host.
  
     "jquery"        : true,
-    "ender"         : false,
+    "ender"         : true,
     "prototypejs"   : false,
     "mootools"      : false,
     "dojo"          : false,
@@ -26,7 +26,10 @@
         "alasql",
         "yy",
         "K",
-        "L"
+        "L",
+        "NL",
+        "ID",
+        "P" 
     ],
  
  
