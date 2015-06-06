@@ -14,7 +14,7 @@
     "wsh"           : true,   // Windows Scripting Host.
  
     "jquery"        : true,
-    "ender"         : false,
+    "ender"         : true,
     "prototypejs"   : false,
     "mootools"      : false,
     "dojo"          : false,
@@ -22,7 +22,14 @@
     "predef"        : [  // Custom globals.
         //"exampleVar",
         //"anotherCoolGlobal",
-        //"iLoveDouglas"
+        //"iLoveDouglas",
+        "alasql",
+        "yy",
+        "K",
+        "L",
+        "NL",
+        "ID",
+        "P" 
     ],
  
  
@@ -45,7 +52,7 @@
     "curly"         : true,   // Require {} for every new block or scope.
     "eqeqeq"        : true,   // Require triple equals i.e. `===`.
     "eqnull"        : false,  // Tolerate use of `== null`.
-    "evil"          : false,  // Tolerate use of `eval`.
+    "evil"          : true,  // Tolerate use of `eval`.
     "expr"          : false,  // Tolerate `ExpressionStatement` as Programs.
     "forin"         : false,  // Tolerate `for in` loops without `hasOwnPrototype`.
     "immed"         : true,   // Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`
@@ -70,5 +77,5 @@
     "sub"           : false,  // Tolerate all forms of subscript notation besides dot notation e.g. `dict['key']` instead of `dict.key`.
     "trailing"      : true,   // Prohibit trailing whitespaces.
     "white"         : false,  // Check against strict whitespace and indentation rules.
-    "indent"        : 4       // Specify indentation spacing
+    "indent"        : 1       // Specify indentation spacing
 }

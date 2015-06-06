@@ -122,9 +122,11 @@ var doubleq = utils.doubleq = function(s) {
 */
 
 var cutbom = function(s) {
-    if(s[0] == String.fromCharCode(65279)) s = s.substr(1);
+    if(s[0] === String.fromCharCode(65279)){
+        s = s.substr(1);
+    }
     return s;
-};
+}
 
 /**
     Load text file from anywhere
@@ -137,11 +139,11 @@ var cutbom = function(s) {
     @todo Define Event type
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
+    var data, fs;
+    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
 
-    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
-
-        var fs;
-        if(typeof Meteor != 'undefined') {
+        
+        if(typeof Meteor !== 'undefined') {
             /** For Meteor */
             fs = Npm.require('fs');
         } else {
@@ -150,7 +152,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         }
 
         /* If path is empty, than read data from stdin (for Node) */
-        if(typeof path == 'undefined') {
+        if(typeof path === 'undefined') {
             /* @type {string} Buffer for string*/
             var buff = '';
             process.stdin.setEncoding('utf8');
@@ -174,11 +176,11 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 });
             } else {
                 /* Call sync version */
-                var data = fs.readFileSync(path);
+                data = fs.readFileSync(path);
                 success(cutbom(data.toString()));
             }
         }
-    } else if(typeof cordova == 'object') {
+    } else if(typeof cordova === 'object') {
         /* If Cordova */
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
@@ -219,12 +221,12 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 */
     } else {
         /* For string */
-        if(typeof path == "string") {
+        if(typeof path === "string") {
             // For browser read from tag
             /*
                 SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
             */
-            if((path.substr(0,1) == '#') && (typeof document != 'undefined')) {
+            if((path.substr(0,1) === '#') && (typeof document !== 'undefined')) {
                 data = document.querySelector(path).textContent;
                 success(data);
             } else {
@@ -282,9 +284,10 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 */
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
-    if((typeof exports == 'object') || (typeof Meteor != 'undefined' && Meteor.isServer)) {
+    var fs;
+    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
         // For Node.js
-        if(typeof Meteor != 'undefined') {
+        if(typeof Meteor !== 'undefined') {
             var fs = Npm.require('fs'); // For Meteor
         } else {
             var fs = require('fs');
@@ -298,30 +301,36 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                     throw err;
                 }
                 var arr = [];
-                for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                for(var i = 0; i < data.length; ++i){
+                    arr[i] = String.fromCharCode(data[i]);
+                }
                 success(arr.join(""));
             });
 
         } else {
             var data = fs.readFileSync(path);
             var arr = [];
-            for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+            for(var i = 0; i < data.length; ++i){
+                arr[i] = String.fromCharCode(data[i]);
+            }
             success(arr.join(""));
         }
 //        success(data);
     } else {
 
-        if(typeof path == "string") {
+        if(typeof path === "string") {
             // For browser
             var xhr = new XMLHttpRequest();
             xhr.open("GET", path, asy); // Async
             xhr.responseType = "arraybuffer";
             xhr.onload = function() {
                 var data = new Uint8Array(xhr.response);
-                var arr = new Array();
-                for(var i = 0; i != data.length; ++i) arr[i] = String.fromCharCode(data[i]);
+                var arr = [];
+                for(var i = 0; i < data.length; ++i){
+                    arr[i] = String.fromCharCode(data[i]);
+                }
                 success(arr.join(""));
-            };
+            }
             xhr.send();
         } else if(path instanceof Event) {
             // console.log("event");
@@ -339,16 +348,16 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 
 
 var removeFile = utils.removeFile = function(path,cb) {
-    if(typeof exports == 'object') {
+    if(typeof exports === 'object') {
         var fs = require('fs');
         fs.remove(path,cb);
-    } else if(typeof cordova == 'object') {
+    } else if(typeof cordova === 'object') {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
-                if(cb) cb();
+                cb && cb();
             }, function(){
-                if(cb) cb();
+                cb && cb();
             });
         });
     } else {
@@ -358,17 +367,17 @@ var removeFile = utils.removeFile = function(path,cb) {
 
 
 var deleteFile = utils.deleteFile = function(path,cb){
-    if(typeof exports == 'object') {
+    if(typeof exports === 'object') {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
-    if(typeof exports == 'object') {
+    if(typeof exports === 'object') {
         var fs = require('fs');
         fs.exists(path,cb);
-    } else if(typeof cordova == 'object') {
+    } else if(typeof cordova === 'object') {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
@@ -412,29 +421,35 @@ var fileExists = utils.fileExists = function(path,cb){
 
 var saveFile = utils.saveFile = function(path, data, cb) {
     var res = 1;
-    if(typeof path == 'undefined') {
+    if(path === undefined) {
         //
         // Return data into result variable
         // like: alasql('SELECT * INTO TXT() FROM ?',[data]);
         //
         res = data;
-        if(cb) res = cb(res);
+        if(cb){
+            res = cb(res);
+        }
     } else {
 
-        if(typeof exports == 'object') {
+        if(typeof exports === 'object') {
             // For Node.js
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
-            if(cb) res = cb(res);
-        } else if(typeof cordova == 'object') {
+            if(cb){
+                res = cb(res);
+            }
+        } else if(typeof cordova === 'object') {
             // For Apache Cordova
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
                             fileWriter.onwriteend = function(){
-                                if(cb) res = cb(res);
-                            };
+                                if(cb){
+                                    res = cb(res);
+                                }
+                            }
                             fileWriter.write(data);
                         });                                  
                     });
@@ -499,7 +514,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 //                });
 //            });
         } else {
-        	if(isIE() == 9) {
+        	if(isIE() === 9) {
         		// Solution was taken from 
         		// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
 //				var URI = 'data:text/plain;charset=utf-8,';
@@ -516,13 +531,15 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         	} else {
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 	            saveAs(blob, path);
-	            if(cb) res = cb(res);                		
+	            if(cb){
+                    res = cb(res);
+                }                		
         	}
         }
     }
 
     return res;
-};
+}
 
 /** 
     @function Is this IE9 
@@ -532,7 +549,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 */
 function isIE () {
   var myNav = navigator.userAgent.toLowerCase();
-  return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+  return (myNav.indexOf('msie') !== -1) ? parseInt(myNav.split('msie')[1]) : false;
 }
 
 
@@ -560,8 +577,9 @@ function isIE () {
 var hash = utils.hash = function hash(str){
     var h = 0;
     
-    if (0 === str.length) 
+    if (0 === str.length){
         return h;
+    }
 
     for (var i = 0; i < str.length; i++) {
         h = ((h<<5)-h)+str.charCodeAt(i);
@@ -580,9 +598,13 @@ var hash = utils.hash = function hash(str){
 */
 var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
-    a.forEach(function(i) { if (r.indexOf(i) < 0) r.push(i); });
+    a.forEach(function(i){ 
+                            if (r.indexOf(i) < 0){ 
+                                r.push(i);
+                            } 
+                        });
     return r;
-};
+}
 
 /** 
  Array Difference
@@ -675,8 +697,9 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
   Deep clone obects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
-    if(null === obj || typeof(obj) != 'object')
+    if(null === obj || typeof(obj) !== 'object'){
         return obj;
+    }
 
     var temp = obj.constructor(); // changed
 
@@ -693,11 +716,13 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 */
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
-        if (x == y) return true;
+        if (x == y){
+            return true;
+        }
 
         var p;
         for (p in y) {
-            if (typeof (x[p]) == 'undefined') { return false; }
+            if (typeof (x[p]) === 'undefined') { return false; }
         }
 
         for (p in y) {
@@ -706,21 +731,25 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
                     case 'object':
                         if (!equalDeep(y[p],x[p])) { return false; } break;
                     case 'function':
-                        if (typeof (x[p]) == 'undefined' ||
-                  (p != 'equals' && y[p].toString() != x[p].toString()))
-                            return false;
+                        if (
+                                typeof (x[p]) === 'undefined' ||
+                                (p !== 'equals' && y[p].toString() !== x[p].toString())
+                            ){
+                                return false;
+                            }
                         break;
                     default:
-                        if (y[p] != x[p]) { return false; }
+                        if (y[p] !== x[p]) { return false; }
                 }
             } else {
-                if (x[p])
+                if (x[p]){
                     return false;
+                }
             }
         }
 
         for (p in x) {
-            if (typeof (y[p]) == 'undefined') { return false; }
+            if (typeof (y[p]) === 'undefined') { return false; }
         }
 
         return true;
@@ -731,30 +760,29 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 /**
   COmpare two object in deep
  */
-var deepEqual = utils.deepEqual = function (x, y) {
-  if ((typeof x == "object" && null !== x) && (typeof y == "object" && null !== y)) {
-    if (Object.keys(x).length != Object.keys(y).length)
-      return false;
-
-    for (var prop in x) {
-      if (y.hasOwnProperty(prop))
-      {  
-        if (! deepEqual(x[prop], y[prop]))
-          return false;
-      }
-      else
-        return false;
+var deepEqual = utils.deepEqual = function(x, y) {
+    if (typeof x === "object" && null !== x && (typeof y === "object" && null !== y)) {
+        if (Object.keys(x).length !== Object.keys(y).length) {
+            return false;
+        }
+        for (var prop in x) {
+            if (y.hasOwnProperty(prop)) {
+                if (!deepEqual(x[prop], y[prop])) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+        return true;
+    } else {
+        if (x !== y) {
+            return false;
+        } else {
+            return true;
+        }
     }
-
-    return true;
-  }
-  else if (x !== y)
-    return false;
-  else
-    return true;
 };
-
-
 /**
     Array with distinct records
     @param {array} data
@@ -765,15 +793,17 @@ var distinctArray = utils.distinctArray = function(data) {
     // TODO: Speedup, because Object.keys is slow
     for(var i=0,ilen=data.length;i<ilen;i++) {
         var uix;
-        if(typeof data[i] == 'object') {
-            uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k]}).join('`');
+        if(typeof data[i] === 'object') {
+            uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k];}).join('`');
         } else {
             uix = data[i];  
         }
         uniq[uix] = data[i];
     }
     var res = [];
-    for(var key in uniq) res.push(uniq[key]);
+    for(var key in uniq){
+        res.push(uniq[key]);
+    }
     return res;
 };
 
@@ -786,7 +816,7 @@ var distinctArray = utils.distinctArray = function(data) {
     @return {object}
 */
 var extend = utils.extend = function extend (a,b){
-    if(typeof a == 'undefined') a = {};
+    a = a || {};
     for(var key in b) {
         if(b.hasOwnProperty(key)) {
             a[key] = b[key];
@@ -800,15 +830,19 @@ var extend = utils.extend = function extend (a,b){
  */
 var flatArray = utils.flatArray = function(a) {
 //console.log(684,a);
-    if(!a || 0 === a.length) return [];
+    if(!a || 0 === a.length){ 
+        return [];
+    }
 
     // For recordsets
-    if(typeof a == 'object' && a instanceof alasql.Recordset) {
+    if(typeof a === 'object' && a instanceof alasql.Recordset) {
         return a.data.map(function(ai){return ai[a.columns[0].columnid];});
     }
     // Else for other arrays
     var key = Object.keys(a[0])[0];
-    if(typeof key == 'undefined') return [];
+    if(key === undefined){
+        return [];
+    }
     return a.map(function(ai) {return ai[key];});
 };
 
@@ -818,7 +852,9 @@ var flatArray = utils.flatArray = function(a) {
 var arrayOfArrays = utils.arrayOfArrays = function (a) {
     return a.map(function(aa){
         var ar = [];
-        for(var key in aa) ar.push(aa[key]);
+        for(var key in aa){
+            ar.push(aa[key]);
+        }
         return ar;
     });
 };

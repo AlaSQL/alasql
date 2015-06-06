@@ -159,7 +159,8 @@ gulp.task('uglify', function () {
     .pipe(shell([
       'uglifyjs dist/alasql.js -o dist/alasql.min.js',
       'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.min.js',
-      'npm test',
+      'cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v karen Tests failed ; else tput bel; fi)',
+      
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.min.js',
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
     ]));
