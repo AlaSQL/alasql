@@ -1,3 +1,4 @@
+
 /*
 //
 // Expressions for Alasql.js
@@ -37,7 +38,9 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 		alasql.precompile(this,databaseid,params); // Precompile queries
 		var exprfn =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null)).bind(this);
 		var res = exprfn(params,alasql);
-		if(cb) res = cb(res);
+		if(cb) {
+			res = cb(res);
+		}
 		return res;
 	}
 };
@@ -57,8 +60,12 @@ yy.Expression = function(params) { return yy.extend(this, params); };
 */
 yy.Expression.prototype.toString = function() {
 	var s = this.expression.toString();
-	if(this.order) s += ' '+this.order.toString();
-	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
+	if(this.order) {
+		s += ' '+this.order.toString();
+	}
+	if(this.nocase) {
+		s += ' '+K('COLLATE')+' '+K('NOCASE');
+	}
 	return s;
 };
 
@@ -68,7 +75,9 @@ yy.Expression.prototype.toString = function() {
 	@param {object} query Query object
 */
 yy.Expression.prototype.findAggregator = function (query){
-	if(this.expression.findAggregator) this.expression.findAggregator(query);
+	if(this.expression.findAggregator) {
+		this.expression.findAggregator(query);
+	}
 };
 
 /**
@@ -82,7 +91,9 @@ yy.Expression.prototype.findAggregator = function (query){
 
 yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 //	console.log('Expression',this);
-	if(this.expression.reduced) return 'true';
+	if(this.expression.reduced) {
+		return 'true';
+	}
 	return this.expression.toJavaScript(context, tableid, defcols);
 };
 
@@ -97,7 +108,9 @@ yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
 
 yy.Expression.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
-	if(this.reduced) return returnTrue();
+	if(this.reduced) {
+		return returnTrue();
+	}
 	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
 };
 
@@ -119,7 +132,9 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	var expr =  new Function("params,alasql,p",this.value);
 	expr(params,alasql);
-	if(cb) res = cb(res);
+	if(cb){
+		res = cb(res);
+	}
 	return res;
 };
 
@@ -134,7 +149,9 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 yy.Literal = function (params) { return yy.extend(this, params); };
 yy.Literal.prototype.toString = function() {
 	var s = this.value;
-	if(this.value1) s = this.value1+'.'+s; 
+	if(this.value1){
+		s = this.value1+'.'+s; 
+	}
 //	else s = tableid+'.'+s;
 	return L(s);
 };
@@ -147,7 +164,9 @@ yy.Literal.prototype.toString = function() {
 yy.Join = function (params) { return yy.extend(this, params); };
 yy.Join.prototype.toString = function() {
 	var s = NL()+ID();
-	if(this.joinmode) s += K(this.joinmode)+' ';
+	if(this.joinmode){
+		s += K(this.joinmode)+' ';
+	}
 	s += K('JOIN')+this.table.toString();
 	return s;
 };
@@ -165,7 +184,9 @@ yy.Table = function (params) { return yy.extend(this, params); };
 yy.Table.prototype.toString = function() {
 	var s = this.tableid;
 //	if(this.joinmode)
-	if(this.databaseid) s = this.databaseid+'.'+s;
+	if(this.databaseid){
+		s = this.databaseid+'.'+s;
+	}
 	return L(s);
 };
 
@@ -178,7 +199,9 @@ yy.View = function (params) { return yy.extend(this, params); };
 yy.View.prototype.toString = function() {
 	var s = this.viewid;
 //	if(this.joinmode)
-	if(this.databaseid) s = this.databaseid+'.'+s;
+	if(this.databaseid){
+		s = this.databaseid+'.'+s;
+	}
 	return L(s);
 };
 
@@ -186,29 +209,40 @@ yy.View.prototype.toString = function() {
 	Binary operation class
 	@class
 */
-
 yy.Op = function (params) { return yy.extend(this, params); };
 yy.Op.prototype.toString = function() {
-	if(this.op == 'IN' || this.op == 'NOT IN') {
+	if(this.op === 'IN' || this.op === 'NOT IN') {
 		return this.left.toString()+" "+P(this.op)+" ("+this.right.toString()+")";
 	}
 	if(this.allsome) {
 		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
 	}
-	if(this.op == '->' || this.op == '!') {
+	if(this.op === '->' || this.op === '!') {
 		var s = this.left.toString()+this.op;
 //		console.log(this.right);
-		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += '(';
+		
+		if(typeof this.right !== 'string' && typeof this.right !== 'number' ){
+			s += '(';
+		}
+		
 		s += this.right.toString();
-		if(typeof this.right != 'string' && typeof this.right != 'number' ) s += ')';
+		
+		if(typeof this.right !== 'string' && typeof this.right !== 'number' ){
+			s += ')';
+		}
+		
 		return s;
 	}
-	return this.left.toString()+" "+P(this.op)+" "+(this.allsome?this.allsome+' ':'')+this.right.toString();
+	return 	this.left.toString() + " " + P(this.op) + " " +
+			(this.allsome ? this.allsome+' ' : '') +
+			this.right.toString();
 };
 
 yy.Op.prototype.findAggregator = function (query){
 //	console.log(this.toString());
-	if(this.left && this.left.findAggregator) this.left.findAggregator(query);
+	if(this.left && this.left.findAggregator){
+		this.left.findAggregator(query);
+	}
 	// Do not go in > ALL
 	if(this.right && this.right.findAggregator && (!this.allsome)) {
 		this.right.findAggregator(query);
@@ -216,7 +250,9 @@ yy.Op.prototype.findAggregator = function (query){
 };
 
 yy.Op.prototype.toType = function(tableid) {
-	if(['-','*','/','%','^'].indexOf(this.op) >-1) return 'number';
+	if(['-','*','/','%','^'].indexOf(this.op) >-1){
+		return 'number';
+	}
 	if(this.op == '+') {
 		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
 		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
@@ -326,7 +362,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		// }
 	}
 
-	if(this.op == 'IN') {
+	if(this.op === 'IN') {
 		if(this.right instanceof yy.Select ) {
 			s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
@@ -770,12 +806,15 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 
 
 yy.OrderExpression = function(params){ return yy.extend(this, params); }
-yy.OrderExpression.prototype.toString = function() {
+yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString
+/* //Duplicated code
+
+function() {
 	var s = this.expression.toString();
 	if(this.order) s += ' '+this.order.toString();
 	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
 	return s;
-}
+}*/
 
 yy.GroupExpression = function(params){ return yy.extend(this, params); }
 yy.GroupExpression.prototype.toString = function() {
@@ -783,6 +822,7 @@ yy.GroupExpression.prototype.toString = function() {
 }
 
 
+/* //Duplicated code
 yy.ColumnDef = function (params) { return yy.extend(this, params); }
 yy.ColumnDef.prototype.toString = function() {
 	var s =  this.columnid;
@@ -795,4 +835,4 @@ yy.ColumnDef.prototype.toString = function() {
 	if(this.primarykey) s += ' PRIMARY KEY';
 	if(this.notnull) s += ' NOT NULL';
 	return s;
-}
+}*/
