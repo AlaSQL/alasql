@@ -4209,7 +4209,20 @@ alasql.compile = function(sql, databaseid) {
 	var ast = alasql.parse(sql); // Create AST
 	
 	if(1 === ast.statements.length) {
-		return ast.statements[0].compile(databaseid);
+		var statement = ast.statements[0].compile(databaseid)
+		statement.promise = function(params){
+		    return new Promise(function(resolve, reject){
+		        statement(params, function(data,err) {
+		             if(err) {
+		                 reject(err);
+		             } else {
+		                 resolve(data);
+		             }
+		        });
+		    });
+		};
+
+		return statement;
 /*		
 		if(kind == 'value') {
 			return function(params,cb) {
@@ -4266,7 +4279,7 @@ alasql.compile = function(sql, databaseid) {
 		}
 */
 	} else {
-		throw new Error('Cannot compile, because number of statments in SQL is not equal to 1');
+		throw new Error('Cannot compile, because number of statements in SQL is not equal to 1');
 	}
 };
 
