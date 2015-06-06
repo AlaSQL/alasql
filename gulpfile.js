@@ -63,6 +63,7 @@ gulp.task('js-merge', function () {
     './src/424select.js',
     './src/425having.js',
     './src/426orderby.js',
+    './src/427pivot.js',
     './src/43rollup.js',    
     './src/44defcols.js',
     './src/45union.js',
@@ -105,7 +106,7 @@ gulp.task('js-merge', function () {
     './src/831xls.js',
     './src/832xlsxml.js',
     './src/833xlsx.js',
-    './src/839zip.js',
+//    './src/839zip.js', // To be added later
     './src/84from.js',
     './src/843xml.js',
     './src/844gexf.js',

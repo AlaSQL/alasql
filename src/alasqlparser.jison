@@ -107,6 +107,7 @@ DATABASE(S)?									return 'DATABASE'
 'FALSE'											return 'FALSE'
 'FETCH'											return 'FETCH'
 'FIRST'											return 'FIRST'
+'FOR'											return 'FOR'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
 'GO'                                      		return 'GO'
@@ -159,6 +160,7 @@ DATABASE(S)?									return 'DATABASE'
 'PATH'                                        	return 'PATH'
 'PARTITION'										return 'PARTITION'
 'PERCENT'                                       return 'PERCENT'
+'PIVOT'                                        	return 'PIVOT'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'PRINT'                                        	return 'PRINT'
@@ -441,11 +443,11 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause RemoveClause? IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  OrderClause LimitClause UnionClause 
 		{   
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
-		    yy.extend($$,$8); yy.extend($$,$9); 
+		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10); 
 		    $$ = $1;
 /*		    if(yy.exists) $$.exists = yy.exists;
 		    delete yy.exists;
@@ -458,6 +460,29 @@ Select
 			$$ = new yy.Search({selectors:$2, from:$4});
 			yy.extend($$,$3);
 		}
+	;
+
+PivotClause
+	: PIVOT LPAR Expression FOR Literal IN LPAR AsList RPAR RPAR AsLiteral?
+		{ $$ = {pivot:{expr:$3, columnid:$5, inlist:$8}};}
+	;
+
+AsLiteral
+	: AS Literal 
+	;
+
+AsList
+	: AsList COMMA AsPart
+		{ $$ = $1; $$.push($3); }
+	| AsPart
+		{ $$ = [$1]; }
+	;
+
+AsPart
+	: Expression
+		{ $$ = {expr:$1}; }
+	| Expression AS Literal
+		{ $$ = {expr:$1,as:$3}; }
 	;
 
 RemoveClause
