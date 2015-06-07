@@ -31,8 +31,9 @@ alasql.utils.uncomment = function uncomment(str) {
 		var unescaped = str[i - 1] !== '\\' || str[i - 2] === '\\';
 
 		if (quote) {
-			if (str[i] === quoteSign && unescaped)
+			if (str[i] === quoteSign && unescaped){
 				quote = false;
+			}
 		// } else if (regularExpression) {
 			// Make sure '/'' inside character classes is not considered the end
 			// of the regular expression.
@@ -57,14 +58,15 @@ alasql.utils.uncomment = function uncomment(str) {
 			}
 		} else if (lineComment) {
 			// One-line comments end with the line-break
-			if (str[i + 1] == '\n' || str[i + 1] == '\r')
+			if (str[i + 1] === '\n' || str[i + 1] === '\r'){
 				lineComment = false;
+			}
 			str[i] = '';
 		} else {
-			if (str[i] == '"' || str[i] == "'") {
+			if (str[i] === '"' || str[i] === "'") {
 				quote = true;
 				quoteSign = str[i];
-			} else if (str[i] == '[' && str[i-1] != "@") {
+			} else if (str[i] === '[' && str[i-1] !== "@") {
 				quote = true;
 				quoteSign = ']';
 			// } else if (str[i] === '-' &&  str[i + 1] === '-') {
@@ -75,7 +77,7 @@ alasql.utils.uncomment = function uncomment(str) {
 					// and comments marked as protected /*! ... */
 //					preserveComment = /[@!]/.test(str[i + 2]);
 //					if (!preserveComment)
-						str[i] = '';
+					str[i] = '';
 					blockComment = true;
 //					console.log('block');
 				// } else if (str[i + 1] === '/') {
