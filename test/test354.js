@@ -59,6 +59,18 @@ describe('Test 354 PIVOT', function() {
 
   alasql(function(){/*
     select * from DailyIncome
+    pivot (avg (IncomeAmount) for IncomeDay)
+  */});
+
+    done();
+  });
+
+
+
+  it('3. Pivot Query',function(done){
+
+  alasql(function(){/*
+    select * from DailyIncome
     pivot (avg (IncomeAmount) for IncomeDay 
       in ([MON],[TUE],[WED],[THU],[FRI],[SAT],[SUN])) as AvgIncomePerDay
   */});

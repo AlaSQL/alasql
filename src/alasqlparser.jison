@@ -463,12 +463,20 @@ Select
 	;
 
 PivotClause
-	: PIVOT LPAR Expression FOR Literal IN LPAR AsList RPAR RPAR AsLiteral?
-		{ $$ = {pivot:{expr:$3, columnid:$5, inlist:$8}};}
+	: PIVOT LPAR Expression FOR Literal PivotClause2? RPAR AsLiteral?
+		{ $$ = {pivot:{expr:$3, columnid:$5, inlist:$7, as:$8}}; }
+	;
+
+PivotClause2
+	: IN LPAR AsList RPAR 
+		{ $$ = $3; }
 	;
 
 AsLiteral
 	: AS Literal 
+		{ $$ = $2; }
+	| Literal
+		{ $$ = $1; }
 	;
 
 AsList

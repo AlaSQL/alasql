@@ -106,7 +106,7 @@ gulp.task('js-merge', function () {
     './src/831xls.js',
     './src/832xlsxml.js',
     './src/833xlsx.js',
-//    './src/839zip.js', // To be added later
+//    './src/839zip.js', // To be added later in XLSX plugin
     './src/84from.js',
     './src/843xml.js',
     './src/844gexf.js',
