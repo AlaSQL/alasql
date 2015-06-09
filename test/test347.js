@@ -78,7 +78,7 @@ describe('Test 347 Efficient Joined Queries Issue #245', function() {
         assignments.class_id = $0;
 
     */},[2]);
-    console.log(res);
+/// console.log(res);
     done();
   });
 

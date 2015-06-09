@@ -102,11 +102,11 @@ if(false) {
     alasql.options.modifier = "RECORDSET";
     var res = alasql('SELECT (SELECT avg(c) FROM t1)');
 //console.log('<<<')
-    console.log(res);
+/// console.log(res);
 
     alasql.options.modifier = "RECORDSET";
     var res = alasql('SELECT (SELECT avg(c) FROM t1)');
-    console.log(res);
+/// console.log(res);
 }
     done();
   });

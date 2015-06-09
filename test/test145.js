@@ -69,15 +69,15 @@ if(false) {
 if(false) {
 //console.log(1);
 		alasql.into.localStorage = function (r,i) {
-			console.log('save to LS',r,i);
+/// console.log('save to LS',r,i);
 			localStorage[r[0]] = JSON.stringify(r[1]);
 		};
 
 //		alasql('INSERT INTO localStorage() VALUES ("mytable.1",@[1,2,3]), ("mytable.2",@{a:1,b:2})'); // key=value
 
 		var res = alasql('SELECT * INTO localStorage() FROM ?',[[1,"wind"],[2,"fire"]]);
-		console.log(res);
-		console.log(localStorage[1],localStorage[2]);
+/// console.log(res);
+/// console.log(localStorage[1],localStorage[2]);
 };
 		done();
 	});
