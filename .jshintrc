@@ -61,6 +61,7 @@
     "supernew"      : false,  // Tolerate `new function () { ... };` and `new Object;`.
     "undef"         : true,   // Require all non-global variables be declared before they are used.
     "unused"        : true,    //This option warns when you define and never use your variables. It is very useful for general code cleanup, especially when used in addition to undef.
+
  
  
     // Personal styling preferences.
@@ -74,5 +75,6 @@
     "trailing"      : true,   // Prohibit trailing whitespaces.
     "white"         : false,  // Check against strict whitespace and indentation rules.
     "indent"        : 1,       // Specify indentation spacing
-    "lastsemic"     : true    // Suppresses warnings about missing semicolons when the semicolon is omitted for the last statement in a one-line block
+    "lastsemic"     : true,    // Suppresses warnings about missing semicolons when the semicolon is omitted for the last statement in a one-line block
+    "multistr"      : true
 }
