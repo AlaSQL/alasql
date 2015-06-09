@@ -36,9 +36,7 @@ for (var i = len; --i >= 0;) {
 var max1 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT([0]) AS cnt FROM [?] GROUP BY [0])', [arr]);
 
 var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GROUP BY _)', [arr]);
-
-
-     console.log(max,max1,max2);
+/// console.log(max,max1,max2);
 //      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
       done();
   });
@@ -48,13 +46,13 @@ var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GRO
 
 /*    
         var res = alasql('SELECT [0],FIRST(_) FROM ? GROUP BY [0]',[[[1,10],[2,20],[3,30]]]);
-        console.log(res);
+/// console.log(res);
 
         var res = alasql('SELECT _ AS one, COUNT(*) AS cnt FROM ? GROUP BY one',[[1,2,3,1]]);
-        console.log(res);
+/// console.log(res);
 
         var res = alasql('SELECT _, SUM(_), COUNT(*) FROM ? GROUP BY _',[[1,2,3,1]]);
-        console.log(res);
+/// console.log(res);
 */
         var res = alasql('SELECT COLUMN SUM(_) FROM ? GROUP BY _',[[1,2,3,1]]);
         assert.deepEqual(res,[2,2,3]);

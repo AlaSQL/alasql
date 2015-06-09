@@ -33,7 +33,7 @@ describe('Test 278 Errors catching', function() {
   it('2. Select from wrong database with errolog', function(done) {
     alasql.options.errorlog = true;
     alasql('SELECT * FROM addresses',[],function(res,err){
-      console.log(err);
+/// console.log(err);
       done();
     });
   });

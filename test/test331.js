@@ -87,9 +87,9 @@ describe('Test 331 SLT#1 - test', function() {
          AND (a>b-2 AND a<b+2) \
        ORDER BY 1,2 \
   ');
-    console.log(res.statements[0].where.expression);
-    console.log('***');    
-    console.log(res.statements[0].where.expression.left);
+/// console.log(res.statements[0].where.expression);
+/// console.log('***');    
+/// console.log(res.statements[0].where.expression.left);
 */
     var res = alasql(function(){/*
       SELECT a-b,
