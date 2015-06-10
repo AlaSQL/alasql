@@ -9,6 +9,30 @@ yy.Select.prototype.compilePivot = function (query) {
 	var columnid = this.pivot.columnid;
 
 
+	return function(data){
+		/** @type {object} Collection of grouped records */
+		var gx = {};
+		/** @type {array} Array of grouped records */
+		var gr = [];
+
+		/** For each row in data array */
+		for(var i=0,ilen=data.length;i<ilen;i++) {
+			var r = data[i];
+			var q = g[r[columnid]];  // Take 
+			if(q === undefined) {
+				q = g[r[columnid]] = clone(r);
+				delete q[columnid];
+				gr.push(q);
+			};
+			if(r[columnid]) {
+				gfn(r,q,query.params,alasql);
+			}
+			q[r[columnid]] = arrfn(r);
+
+		}
+	};
+
+
 
 
 

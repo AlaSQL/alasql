@@ -1,4 +1,5 @@
 # Results of tests
 
 test/res*
+test/res*.xlsx
 

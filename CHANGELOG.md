@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.1.11 "San Remo" (03.06.2015 - ...06.2015)
+* Code partially refactored with help of bitHound 
+* New directory 'partners' added
+* Added file for codecomplexity.com
+
+
 ### 0.1.10 "Genova" (31.05.2015 - 02.06.2015)
 * CALL procedure() statement
 * bitHound advices

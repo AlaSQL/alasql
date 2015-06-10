@@ -1943,9 +1943,17 @@ ColumnConstraint
 /* DROP TABLE */
 
 DropTable
-	: DROP (TABLE|CLASS) IfExists Table
-		{ $$ = new yy.DropTable({table:$4,type:$2}); yy.extend($$, $3); }
+	: DROP (TABLE|CLASS) IfExists TablesList
+		{ $$ = new yy.DropTable({tables:$4,type:$2}); yy.extend($$, $3); }
 	;
+
+TablesList
+	: TablesList COMMA Table
+		{ $1.push($3); $$=$1; }
+	| Table
+		{ $$ = [$1]; }
+	;
+
 
 IfExists
 	: { $$ = undefined; }
