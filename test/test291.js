@@ -42,7 +42,7 @@ describe('Test 291 Promised version', function() {
 
     alasql.promise('SELECT * FROM one')
     .then(function(res){
-      console.log(res);
+/// console.log(res);
     }).catch(function(err){
         assert(err instanceof Error);
         done();

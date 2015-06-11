@@ -18,7 +18,7 @@ describe('Test 210 WHILE BREAK CONTINUE', function() {
                 IF @i % 2 = 0 CONTINUE; \
                 PRINT "ODD";\
              END',[],function(){
-                console.log('ok');
+/// console.log('ok');
                 done();
         });
     });

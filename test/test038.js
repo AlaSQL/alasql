@@ -45,7 +45,7 @@ describe('Test 38', function() {
 			var res = db.exec("SELECT * FROM three "+
 				" RIGHT JOIN two ON two.f = three.g"+
 				" RIGHT JOIN one ON one.a = two.e" );
-			console.table(res);
+/// console.table(res);
 			assert.equal(res.length,4);
 			done();
 		});
@@ -55,7 +55,7 @@ describe('Test 38', function() {
 			var res = db.exec("SELECT * FROM one "+
 				" OUTER JOIN two ON one.a = two.e "+
 				" OUTER JOIN three ON two.f = three.g " );
-			console.table(res);
+/// console.table(res);
 			assert.equal(res.length,2);
 			done();
 		});

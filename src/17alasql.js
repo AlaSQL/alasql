@@ -1,3 +1,4 @@
+
 /**
 	Database class for Alasql.js
 */
@@ -121,8 +122,12 @@ alasql.buffer = {};
   @param {string} databaseid Selected database identificator
  */
 alasql.use = function (databaseid) {
-	if(!databaseid) databaseid = alasql.DEFAULTDATABASEID;
-	if(alasql.useid == databaseid) return;
+	if(!databaseid){
+		databaseid = alasql.DEFAULTDATABASEID;
+	}
+	if(alasql.useid === databaseid){
+		return;
+	}
 	alasql.useid = databaseid;
 	var db = alasql.databases[alasql.useid];
 	alasql.tables = db.tables;
@@ -139,13 +144,15 @@ alasql.use = function (databaseid) {
  */
 alasql.exec = function (sql, params, cb, scope) {
 	delete alasql.error;
-	if(typeof params == 'undefined') params = {}; // Added for $variables
+	params = params || {};
 	if(alasql.options.errorlog){
 		try {
 			return alasql.dexec(alasql.useid, sql, params, cb, scope);
 		} catch(err){
 			alasql.error = err;
-			if(cb) cb(null,alasql.error);
+			if(cb){ 
+				cb(null,alasql.error);
+			}
 		}
 	} else {
 		return alasql.dexec(alasql.useid, sql, params, cb, scope);
@@ -160,26 +167,33 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 //	if(db.databaseid != databaseid) console.trace('got!');
 //	console.log(3,db.databaseid,databaseid);
 	
+	var hh;
 	// Create hash
 	if(alasql.options.cache) {
-		var hh = hash(sql);
+		hh = hash(sql);
 		var statement = db.sqlCache[hh];
 		// If database structure was not changed sinse lat time return cache
-		if(statement && db.dbversion == statement.dbversion) {
+		if(statement && db.dbversion === statement.dbversion) {
 			return statement(params, cb);
 		}
 	}
 
 	// Create AST
 	var ast = alasql.parse(sql);
-	if(!ast.statements) return;
-	if(0 === ast.statements.length) return 0;
+	if(!ast.statements){
+		return;
+	}
+	if(0 === ast.statements.length){
+		return 0;
+	}
 	else if(1 === ast.statements.length) {
 		if(ast.statements[0].compile) {
 
 			// Compile and Execute
 			var statement = ast.statements[0].compile(databaseid);
-			if(!statement) return;
+			if(!statement){
+				return;
+			}
 			statement.sql = sql;
 			statement.dbversion = db.dbversion;
 			
@@ -216,8 +230,9 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var useid = alasql.useid;
 	
-	if(useid != databaseid) 
+	if(useid !== databaseid){
 		alasql.use(databaseid);
+	}
 	
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
@@ -231,11 +246,13 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 			}		
 		}
 	}
-	if(useid != databaseid) 
+	if(useid !== databaseid){
 		alasql.use(useid);
+	}
 	
-	if(cb) 
+	if(cb){
 		cb(res);
+	}
 	
 	alasql.res = res;
 	
@@ -248,19 +265,22 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 alasql.adrun = function (databaseid, ast, params, cb, scope) {
 //	alasql.busy++;
 	var useid = alasql.useid;
-	if(useid != databaseid) 
+	if(useid !== databaseid) {
 		alasql.use(databaseid);
+	}
 	var res = [];
 
-	adrunone(); /** @todo Check, why data is empty here */
+	
 
 	function adrunone(data) {
-		if(data !== undefined) 
+		if(data !== undefined){ 
 			res.push(data);
+		}
 		var astatement = ast.statements.shift();
 		if(!astatement) {
-			if(useid != databaseid) 
+			if(useid !== databaseid){
 				alasql.use(useid);
+			}
 			cb(res);
 //			alasql.busy--;
 //			if(alasql.busy<0) alasql.busy = 0;
@@ -274,6 +294,8 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 			}
 		}
 	}
+
+	adrunone(); /** @todo Check, why data is empty here */
 };
 
 

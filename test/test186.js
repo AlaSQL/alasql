@@ -92,8 +92,7 @@ describe('Test 186 - Linq Syntax', function() {
         var res2 = alasql('SELECT TOP 2 FirstName AS name FROM ? ORDER BY name',[myList]);
       }
       tm3 = Date.now()-tm3;
-
-      console.log(tm0, tm1,tm2, tm3);
+/// console.log(tm0, tm1,tm2, tm3);
 
 //      console.log(58,exampleArray);
     //   done();

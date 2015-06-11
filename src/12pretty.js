@@ -37,7 +37,7 @@ function K(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty 
@@ -50,7 +50,7 @@ function P(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty 
@@ -63,7 +63,7 @@ function L(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty number
@@ -76,7 +76,7 @@ function N(s){
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty string
@@ -89,7 +89,7 @@ function S(s){
 	} else {
 		return s;
 	}
-};
+}
 
 
 /**
@@ -102,7 +102,7 @@ function NL(){
 	} else {
 		return ' '; // '\n'
 	}	
-};
+}
 
 /**
  Pretty ident
@@ -114,5 +114,5 @@ function ID(){
 	} else {
 		return ''; //'    ';
 	}	
-};
+}
 

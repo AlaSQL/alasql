@@ -1,6 +1,7 @@
 The MIT License (MIT)
 
-Copyright (c) 2014-2015 Andrey Gershun (agershun@gmail.com)
+Copyright (c) 2014-2015 Andrey Gershun (agershun@gmail.com) & 
+Mathias Rangel Wulff (mathiasrw@gmail.com)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,3 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+------------------------------------------------------------------------------
+
+The MIT license on this repo covers all contents of the repo, but does not 
+supercede the existing licenses for products used for this work, including the 
+Chinook Database (covered by the Microsoft Public License) and other products.

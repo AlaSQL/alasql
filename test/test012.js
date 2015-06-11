@@ -16,8 +16,8 @@ describe('Test 12', function() {
 			db.exec("INSERT INTO students VALUES (1,'John Johnson')");
 			db.exec("INSERT INTO students VALUES (2,'Peter Peterson')");
 
-			console.table(db.exec('SELECT * FROM students'));
-			console.log(db.queryValue('SELECT COUNT(*) FROM students'));
+//			console.table(db.exec('SELECT * FROM students'));
+//			console.log(db.queryValue('SELECT COUNT(*) FROM students'));
 			alasql.store('mydb');
 
 		}
