@@ -1,67 +1,78 @@
 
-
-# Javascript SQL database library for both relational data and graph manipulation
-
-[![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg)](https://www.bithound.io/github/agershun/alasql)
-[![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm downloads)](https://npmjs.org/package/alasql)
-![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85)
-![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last release)
-![NPM version](https://img.shields.io/npm/l/alasql.svg)
+# AlaSQL - a versatile javascript SQL database
 
 
 
 
-AlaSQL - ([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL)) [ælæ ɛskju:ɛl] - is probably the most versatile javascript SQL database solution out there:  
-
-- Supporting SQL querying against several backend as SQLite, localStorage, IndexedDB, Excel, or your own JSON object. 
-- Designed to work in your browser, Node.js, and Apache Cordova. 
-- Traditional SQL with NoSQL functionality added. 
-- Default backend of AlaSQL work in memory and will use file, IndexedDB, or localStorage as persistent storage.
+[![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg)](https://www.bithound.io/github/agershun/alasql)       [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm downloads)](https://npmjs.org/package/alasql)      ![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85)       ![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last release)      ![NPM version](https://img.shields.io/npm/l/alasql.svg) 
 
 
-### This release:
 
-- Version: 0.1.9 "Torino" 
-- Updated: May 31, 2015, 
-- Test cover: [SQLLOGICTEST=62%, NIST=24%](TESTLOG.md)
-- [Change log](CHANGELOG.md)
-- [Release plan](RELEASES.md). 
+AlaSQL - _([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL)) [ælæ ɛskju:ɛl]_ - is a javascript SQL database library for both relational data and schemaless data with a strong foucus on query speed and flexibillity for datasources. It works in your browser, Node.js, IO.js and Apache Cordova.
+
+
+
+
+We focus on [speed](speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demand real world flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](import+export) and query directly on data stored in your own JSON object, Excel files, localStorage, IndexedDB, and SQLite. 
+
+
+The library brings you the comfort of a full database engine to your javascript app. No, really - its a full database engine complying with SQL-92 and spiced up with additional syntax for handling noSQL (schemaless) data. We are working towards helping projects porting from native databases by letting you specify either AlaSQL, Postgres, ORACLE, MSSQL, MySQL, or SQLite as flavor for the SQL behavior.  
+
+
+----
+
+> Get the file (CDN): [jsDelivr.com](http://www.jsdelivr.com/#!alasql)
+
+> Documentation: [Github wiki](https://github.com/agershun/alasql/wiki)
+
+> Feedback: [open an issue](https://github.com/agershun/alasql/issues/new)
+
+> Website: [alasql.org](http://AlaSQL.org)
+
+----
 
 
 ## Its easy - sweet!
 
-AlaSQL is easy to use! Just add [alasql.min.js](https://cdn.rawgit.com/agershun/alasql/master/dist/alasql.min.js) file to your project and call 
-```alasql()``` function with SQL statement inside: 
+For the browser AlaSQL is easy to use. 
+
+Link to [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js) and call 
+`alasql()` with your SQL statements:
 
 ```html
-    <script src="alasql.min.js"></script>  
-    <script>
+<script src="//cdn.jsdelivr.net/alasql/0.1/alasql.min.js"></script> 
+
+<script>
     
-        alasql("CREATE TABLE cities (city string, population number)");
+	alasql("CREATE TABLE cities (city string, population number)");
         
-        alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424),  ('Madrid',3041579)");
+	alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424),  ('Madrid',3041579)");
         
-        console.log( alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC") );
-    
-    </script>
+	var res = alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC");
+   
+   // res now contains this object:
+   // [{"city":"Madrid","population":3041579},{"city":"Rome","population":2863223},{"city":"Paris","population":2249975}] 	
+   
+</script>
 ```
-Play with this exaample in [jsFiddle](http://jsfiddle.net/agershun/15r1y9hg/) or try it in the <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">AlaSQL console</a>.
+Play with this example in [jsFiddle](http://jsfiddle.net/xxh13gLa/) 
 
 
 ----
 
 ### Node.js
 
-[![NPM](https://nodei.co/npm/alasql.png)](https://nodei.co/npm/alasql/)
-[![NPM](https://nodei.co/npm-dl/alasql.png?months=6)](https://nodei.co/npm/alasql/)
 
+[![NPM](https://nodei.co/npm/alasql.png)](https://nodei.co/npm/alasql/) [![NPM](https://nodei.co/npm-dl/alasql.png?months=6)](https://nodei.co/npm/alasql/)
+
+For node its (also) easy to use. 
 Install with npm
 
 ```
     npm install alasql
 ```
 
-and require the alasql.js file
+require the alasql.js file and go SQL-crazy
 
 
 ```js
@@ -71,13 +82,13 @@ and require the alasql.js file
     
     db.exec("CREATE TABLE test (a INT, b INT)");
 
-    // Insert data directly from javascript object
+    // You can insert data directly from javascript object
     db.tables.test.data = [   
         {a:3,b:4},
         {a:5,b:6},
     ];
 
-    // Or insert data with traditional SQL 
+    // or insert data with normal SQL 
     db.exec("INSERT INTO test VALUES (1,3)");
     
     var data = db.exec("SELECT * FROM test ORDER BY b DESC");
@@ -86,7 +97,6 @@ and require the alasql.js file
     // to get the "a" of the first element
     console.log(data[0].a); // 5
     
-
 ```
 
 
@@ -109,29 +119,30 @@ and require the alasql.js file
 * AlaSQL can to work directly with JavaScript objects and functions inside SQL and it can search JSON objects from your JavaScript and NoSQL databases
 * User-defined JavaScript functions in your SQL (```SELECT myJSfunc(firstname, lastname) as name, seat, time FROM tableA```)
 * AlaSQL supports file, IndexedDB, and localStorage (with AUTOCOMMIT ON and AUTOCOMMIT OFF modes) as persistent storage. 
-* Use "good old" SQL with all* (expected) functionality like multiple levels of ```JOIN```, ```VIEW```, ```GROUP```, ```UNION```, ```PRIMARY KEY```, ```ANY```, ```ALL```, ```IN```, ```ROLLUP()```, ```CUBE()``` and ```GROUPING SETS()```, ```CROSS APPLY```, ```OUTER APPLY```, ```WITH SELECT```, and subqueries. [*Not totally yet but its under development - see the list here](https://github.com/agershun/alasql/wiki/SQL%20keywords)
-
-### Plus: We like it fast 
-Thats why we make sure that
-
-* Compiled queries are cached
-* Joined tables are pre-indexed
-* ```WHERE``` expressions are pre-filtered for joins
+* Use "good old" SQL with all* (expected) functionality including multiple levels of ```JOIN```, ```VIEW```, ```GROUP```, ```UNION```, ```PRIMARY KEY```, ```ANY```, ```ALL```, ```IN```, ```ROLLUP()```, ```CUBE()```, ```GROUPING SETS()```, ```CROSS APPLY```, ```OUTER APPLY```, ```WITH SELECT```, and subqueries. *[Not totally yet but its under development - see the list here](https://github.com/agershun/alasql/wiki/SQL%20keywords)
 
 
 ###Miss a feature? 
-[Take charge and add your idea](http://feathub.com/agershun/alasql/features/new) or [vote on your favorite feature](http://feathub.com/agershun/alasql) to be implemented:
+Take charge and [add your idea](http://feathub.com/agershun/alasql/features/new) or [vote on your favorite feature](http://feathub.com/agershun/alasql) to be implemented:
 
 [![Feature Requests](http://feathub.com/agershun/alasql?format=svg)](http://feathub.com/agershun/alasql)
 
 
+## Speed - We like it fast 
+Thats why we make sure to use all the tricks we can find to make javascript spit out your results as quick as possible. Among other things we make sure that: 
 
-### Please help out: 
+* Queries are cached as compiled functions. 
+* Joined tables are pre-indexed
+* ```WHERE``` expressions are pre-filtered for joins
 
-* [Issues](https://github.com/agershun/alasql/issues) to report bugs.
-* [Feathub](http://feathub.com/agershun/alasql) to vote for new features
-* [AlaSQL Forum](https://groups.google.com/d/forum/alasql) for discussions
-* [AlaSQL Roadmap](https://trello.com/b/qxz65pVi/alasql-roadmap)
+But dont take our word for it. Check out AlaSQL vs other JavaScript SQL databases: 
+
+* [AlaSQL vs. WebSQL](http://jsperf.com/alasql-js-vs-websql/7) - Mixing `SELECT`, `SUM`, `JOIN`, and `GROUP BY` on fake data (in-memory opperations for both - see [this discussion](https://github.com/agershun/alasql/issues/47))
+* [AlaSQL vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/9) - Mixing `SELECT`, `SUM`, `JOIN`, and `GROUP BY` on fake data
+* [AlaSQL vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - `GROUP BY` on 1,048,576 rows
+
+
+See more [speed related info on the wiki](https://github.com/agershun/alasql/wiki/Speed) 
 
 
 
@@ -148,19 +159,7 @@ Thats why we make sure that
 * [StackOverflow AlaSQL Q&A](http://stackoverflow.com/questions/tagged/alasql)
 
 
-## Performance 
-Check AlaSQL vs other JavaScript SQL databases and data processing libraries: 
 
-* [AlaSQL vs. WebSQL](http://jsperf.com/alasql-js-vs-websql/7) - for in-memory SELECT operations (see discussion at [issue #47](https://github.com/agershun/alasql/issues/47))
-* [AlaSQL vs. SQL.js](http://jsperf.com/sql-js-vs-alasql-js/4) - in-memory operations* [AlaSQL vs. Linq](http://jsperf.com/alasql-vs-linq-on-groupby) - test on 2^20 records
-* AlaSQL vs. CrossFilter - [test 1](http://jsperf.com/alasql-vs-crossfilter), [test 2 on 8000 records](http://jsperf.com/alasql-vs-crossfilter-athletic-data)
-* [AlaSQL vs. Lodash](http://jsperf.com/alasql-vs-lodash), [AlaSQL vs. Lodash vs. Underscore](http://jsperf.com/alasql-vs-lodash-sort/3) 
-* [AlaSQL vs. Human](http://jsperf.com/javascript-array-grouping/10) :) - based on SatckOverflow [question on grouping](http://stackoverflow.com/questions/6781722/fast-grouping-of-a-javascript-array).
-
-
-----
-
-![noSQL](http://i.imgur.com/0sVHEN6.png)
 
 ----
 
@@ -819,6 +818,7 @@ AlaSQL uses wonderful [Jison](http://jison.org) parser to produce AST-tree.
 
 ### localStorage and DOM-storage
 You can use browser localStorage and [DOM-storage](https://github.com/node-browser-compat/dom-storage) as a data storage. Here is a sample:
+
 ```
     alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
     alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
@@ -828,6 +828,7 @@ You can use browser localStorage and [DOM-storage](https://github.com/node-brows
     var res = alasql('SELECT * FROM MyAtlas.City');
     console.log(res);
 ```
+
 Try this sample in [jsFiddle](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample 
 two or three times, and AlaSQL store more and more data in localStorage. Here, "Atlas" is 
 the name of localStorage database, where "MyAtlas" is a memory AlaSQL database.
@@ -838,6 +839,7 @@ to use COMMIT statement to save all data from in-memory mirror to localStorage.
 
 ### Work with CSV, TAB, TXT, and JSON files
 You can use files in these formats directly from AlaSQL (in sync and async modes):
+
 ```js
     var res1 = alasq("select * from txt('mytext.txt') where [0] like 'M%'");
     var res2 = alasq("select * from tab('mydata.tab') order by [1]");
@@ -847,29 +849,33 @@ You can use files in these formats directly from AlaSQL (in sync and async modes
         console.log(res4)
     });
 ```
+
 See [test157.js](test/test157.js) as an example.
 
-### JSON-objects
+### JSON-object
 
 You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
+
 ```sql
-    alasql> SELECT VALUE @{a:1,b:2}
 
-    {a:1,b:2}
+alasql> SELECT VALUE @{a:1,b:2}
 
-    alasql> SELECT VALUE @{a:1,b:2} == @{a:1,b:2}
+{a:1,b:2}
 
-    true
+alasql> SELECT VALUE @{a:1,b:2} == @{a:1,b:2}
 
-    alasql> SELECT VALUE @{a:1,b:2}->b
+true
 
-    2
+alasql> SELECT VALUE @{a:1,b:2}->b
 
-    alasql> SELECT VALUE @{a:1,b:(2*2)}->b
+2
 
-    4
+alasql> SELECT VALUE @{a:1,b:(2*2)}->b
+
+4
 
 ```
+
 Try AlaSQL JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
 
 ### Alacon - command-line utility
@@ -910,10 +916,10 @@ Now optimization algorithm has some limitations and therefore "table1 JOIN table
 
 ### Limitations
 
-It is Ok with select for 1000000 records or 2 join two tables by 10000 records in each. 
-Now you can use streamming functions to work with longer datasources (see [test/test143.js](test/test143.js).
+It is Ok with select for 1000000 records or to join two tables by 10000 records in each. 
+Now you can use streamming functions to work with longer datasources (see [test/test143.js](test/test143.js)).
 
-### Tests
+## Tests
 
 ### Tests with Mocha
 AlaSQL uses ```mocha``` for tests. Run mocha from command line in directory with tests:
@@ -927,6 +933,7 @@ or run [test/index.html](test/index.html) for tests in browser.
 ### Tests with AlaSQL ASSERT from SQL
 
 Now you can use AlaSQL [ASSERT](wiki/Assert)  operator to test results of previous operation:
+
 ```sql
     CREATE TABLE one (a INT);
     ASSERT 1;
@@ -967,19 +974,20 @@ Probably, there are many of others. Please, [give me a chance](https://github.co
 
 ### FileSaver
 
-AlaSQL includess [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally in browsers. Unfortunately, it cannot save files in Safari 8.0.
-
-
-### Related projects that have inspired us
-
-* [AlaX](http://github.com/agershun/alax) - Export to Excel with colors and formats 
-* [WebSQLShim](http://github.com/agershun/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
-* [AlaMDX](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
-* [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
+AlaSQL includess [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library inside for saving files locally from browser. Pleae be aware that it does not save files in Safari 8.0.
 
 
 
-## Contributors
+
+##Contributing
+
+All contributions are much welcome and greatly appreciated(!). [Opening an issue](https://github.com/agershun/alasql/issues/new) and lets talk about your idea...
+
+## License
+
+MIT - see [MIT licence information](LICENSE)
+
+## Main contributors
 
 * [Andrey Gershun](http://github.com/agershun)
 * [Mathias Rangel Wulff](https://twitter.com/rangelwulff)
@@ -991,10 +999,16 @@ Many thanks to Zach Carter for [Jison](http://zaach.github.io/jison/) parser gen
 authors of [XLSX](https://github.com/SheetJS/js-xlsx) library,
 and other people for useful tools, which make our work much easier.
 
-## License
+### Related projects that have inspired us
 
-[MIT licence information](LICENSE).
+* [AlaX](http://github.com/agershun/alax) - Export to Excel with colors and formats 
+* [WebSQLShim](http://github.com/agershun/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
+* [AlaMDX](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
+* [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
 
-The MIT license on this repo covers all contents of the repo, but does not supercede the existing licenses for products used for this work, including the Chinook Database (covered by the Microsoft Public License) and other products.
+----
 
-(c) 2014-2015, Andrey Gershun (agershun@gmail.com)
+© 2014-2015, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (mathiasrw@gmail.com)
+
+
+See [the old readme](README_OLD) for reference
