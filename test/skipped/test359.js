@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 var data = [{a:1},{a:2}];
 
 
-describe('Test 355 UNPIVOT', function() {
+describe('Test 359 UNPIVOT', function() {
   
   it('1. CREATE DATABASE',function(done){
     alasql('CREATE DATABASE test355;USE test355');
