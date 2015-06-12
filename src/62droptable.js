@@ -12,7 +12,7 @@ yy.DropTable.prototype.toString = function() {
 	if(this.view) s += K('VIEW');
 	else s += K('TABLE');
 	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
-	s += ' '+this.table.toString();
+	s += ' '+this.tables.toString();
 	return s;
 };
 
@@ -30,7 +30,7 @@ yy.DropTable.prototype.toString = function() {
 */
 yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var ifexists = this.ifexists;
-	var res = 0;
+	var res = 0; // No tables removed
 
 	// For each table in the list
 	this.tables.forEach(function(table){
@@ -41,9 +41,10 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 		/** @todo Test with IndexedDB and multiple tables */
 		
 		if(db.engineid /*&& alasql.options.autocommit*/) {
-			res += alasql.engines[db.engineid].dropTable(table.databaseid || databaseid,tableid, self.ifexists, cb);
-		}
-		if(!ifexists || ifexists && db.tables[tableid]) {
+
+			/** @todo Check with IndexedDB */
+			res += alasql.engines[db.engineid].dropTable(table.databaseid || databaseid,tableid, ifexists/*, cb*/);
+		} else if(!ifexists || ifexists && db.tables[tableid]) {
 			if(!db.tables[tableid]) {
 				if(!alasql.options.dropifnotexists) {
 					throw new Error('Can not drop table \''+table.tableid+'\', because it does not exist in the database.');

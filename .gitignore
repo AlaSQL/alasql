@@ -1,5 +1,8 @@
 # Results of tests
 
 test/res*
-test/res*.xlsx
+test/restest169a.xlsx
+test/restest251.xlsx
+test/restest255.xlsx
+
 

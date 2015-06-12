@@ -86,6 +86,8 @@ yy.DetachDatabase.prototype.toString = function() {
 yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 	// console.log(alasql.useid, databaseid, this.databaseid);
 	// console.trace();
+//console.log(89,this,arguments,alasql.databases);
+
 	if(!alasql.databases[this.databaseid].engineid) {
 		throw new Error('Cannot detach database "'+this.engineid+'", because it was not attached.');
 	};

@@ -2119,8 +2119,8 @@ SubqueryRestriction
 
 
 DropView
-	: DROP VIEW IfExists Table
-		{ $$ = new yy.DropTable({table:$4, view:true}); yy.extend($$, $3); }
+	: DROP VIEW IfExists TablesList
+		{ $$ = new yy.DropTable({tables:$4, view:true}); yy.extend($$, $3); }
 	;
 /*
 DeclareCursor
