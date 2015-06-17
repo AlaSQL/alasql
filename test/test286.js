@@ -32,7 +32,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function() {
 	    // Hypothesis
 	    if((M[1]*M[2]>M[3]*M[4])==(R[0]>R[1])) L++;
 	};
-	console.log(L/K); // Probablity
+/// console.log(L/K); // Probablity
     done();
   });
   it('3. DROP DATABASE',function(done){
@@ -84,7 +84,7 @@ function test(M){
       ');
     var tm2 = Date.now() - tm2;
     if(res1.length != res2.length) {
-    	console.log(M,res1.length,res2.length);
+/// console.log(M,res1.length,res2.length);
     	throw new Error('Different results');
     }
     return [tm1,tm2];

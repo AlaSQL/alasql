@@ -295,8 +295,7 @@ if(false) {
         assert.deepEqual(res,1);
 
         var res3 = alasql('SELECT * FROM STATS');
-
-        console.log(res3);
+/// console.log(res3);
         assert.deepEqual(res1,res3);
 }
         var res = alasql('UPDATE STATS SET RAIN_I = 4.50 WHERE ID = 44 AND MONTH = 7');

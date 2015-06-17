@@ -34,8 +34,7 @@ describe('Test 283 Test for simple example with foreign key', function() {
 
       DROP DATABASE Fruits;
     */});
-
-    console.log(res);
+/// console.log(res);
 
     done();
   });

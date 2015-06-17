@@ -165,7 +165,10 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 8. Compile ORDER BY clause
 	if(this.order) query.orderfn = this.compileOrder(query);
 
-// TOP
+	// 9. Compile PIVOT clause
+	if(this.pivot) query.pivotfn = this.compilePivot(query);
+
+	// 10. Compile TOP/LIMIT/OFFSET/FETCH cleuse
 	if(this.top) {
 		query.limit = this.top.value;
 	} else if(this.limit) {

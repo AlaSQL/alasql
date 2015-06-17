@@ -58,7 +58,7 @@ describe('Test 236 MERGE', function() {
             THEN DELETE
 
     */}.toString().slice(14,-3);
-        console.log(alasql.parse(sql).toString());
+/// console.log(alasql.parse(sql).toString());
 
 //        console.log(res);
         done();
