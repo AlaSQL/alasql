@@ -898,7 +898,7 @@ alasql.srch.NAME = function(val,args) {
 
 alasql.srch.CLASS = function(val,args) {
 //	console.log(val,args);
-  if(val.$class === args) {
+  if(val.$class == args) { // Please avoid `===` here
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
