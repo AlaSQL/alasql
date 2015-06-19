@@ -443,7 +443,7 @@ function doSearch (databaseid, params, cb) {
 				}
 				return retval;
 
-			} else 	if(sel.selid ='TO') {
+			} else 	if(sel.selid =='TO') {
 //				console.log(347,value,sel.args[0]);
 				var oldv = alasql.vars[sel.args[0]];
 				var newv = [];
