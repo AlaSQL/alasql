@@ -3,7 +3,7 @@ if(typeof exports === 'object') {
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
+}
 
 describe('Test 218 N string and PRINT "a"', function() {
     it("1. N'String' ", function(done) {
