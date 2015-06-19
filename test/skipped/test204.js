@@ -14,6 +14,8 @@ describe('Test 204 PRINT', function() {
     	// 	console.log = oldconsolelog;
     	// 	done();
     	// };
+
+        // Please let done() depend on output
     	var data = [1,2,3,4];
         alasql('PRINT (SELECT COLUMN _^2 FROM ?)',[data]);
         alasql('PRINT SELECT COLUMN _^2 FROM ?',[data]);
