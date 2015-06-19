@@ -7,3 +7,10 @@ alasql.min.js binary
 
 *.xlsx binary
 *.xls binary
+
+console/alasql.min.js merge=ours
+dist/alasql.js merge=ours
+dist/alasql.min.js merge=ours
+test/restest169a.xlsx merge=ours
+test/restest251.xlsx merge=ours
+test/restest255.xlsx merge=ours
