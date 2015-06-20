@@ -18,13 +18,17 @@
 yy.Search = function (params) { return yy.extend(this, params); }
 yy.Search.prototype.toString = function () {
 	var s = K('SEARCH') + ' ';
-	if (this.selectors) s += this.selectors.toString();
-	if (this.from) s += K('FROM') + ' ' + this.from.toString();
+	if (this.selectors){
+		s += this.selectors.toString();
+	}
+	if (this.from){
+		s += K('FROM') + ' ' + this.from.toString();
+	}
 //console.log(s);
 	return s;
 };
 
-yy.Search.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Search.prototype.toJavaScript = function(context /*, tableid, defcols*/) {
 //		console.log('yy.CreateVertex.toJavaScript');
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	// var s = '';
@@ -56,7 +60,7 @@ yy.Search.prototype.compile = function(databaseid) {
 };
 
 
-function doSearch (databaseid, params, cb) {
+function doSearch(databaseid, params, cb) {
 	var res;
 	var stope = {};
 	var fromdata;
@@ -201,7 +205,7 @@ function doSearch (databaseid, params, cb) {
 			if(sel.selid === 'PATH') {
 				var queue = [{node:value,stack:[]}];
 				var visited = {};
-				var path = [];
+				//var path = [];
 				var objects = alasql.databases[alasql.useid].objects;
 				while (queue.length > 0) {
 					var q = queue.shift()
@@ -376,7 +380,7 @@ function doSearch (databaseid, params, cb) {
 				if(sel.args[2]) {
 					lvar = sel.args[2].variable;
 				} 
-				var lsel = sel.sels;
+				//var lsel = sel.sels;
 //				console.log(351,lmin,lmax,lvar);
 
 				var retval = [];
@@ -443,7 +447,7 @@ function doSearch (databaseid, params, cb) {
 				}
 				return retval;
 
-			} else 	if(sel.selid =='TO') {
+			} else 	if(sel.selid ==='TO') {
 //				console.log(347,value,sel.args[0]);
 				var oldv = alasql.vars[sel.args[0]];
 				var newv = [];
