@@ -285,6 +285,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //	console.log(this);
 	var s;
 	var op = this.op;
+	var _this = this;
+	var leftJS = function(){return _this.left.toJavaScript(context,tableid, defcols)};
+	var rightJS = function(){return _this.right.toJavaScript(context,tableid, defcols)};
+
 	if(this.op === '='){
 		op = '===';
 	} else if(this.op === '<>'){
@@ -296,10 +300,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	if(this.op === '->') {
 //		console.log(this.right, typeof this.right);
 		if(typeof this.right === "string") {
-			return this.left.toJavaScript(context,tableid, defcols)+'["'+this.right+'"]';
+			return leftJS() +'["'+this.right+'"]';
 		
 		} else if(typeof this.right === "number") {
-			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
+			return leftJS()+'['+this.right+']';
 		
 		} else if(this.right instanceof yy.FuncValue) {
 			var ss = [];
@@ -309,7 +313,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 														});
 			}
 			return 	''
-					+ this.left.toJavaScript(context,tableid, defcols)
+					+ leftJS()
 					+ "['"
 					+ 	this.right.funcid
 					+ "']("
@@ -318,9 +322,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else {
 
 			return 	''
-					+ this.left.toJavaScript(context,tableid, defcols)
+					+ leftJS()
 					+ '['
-					+	this.right.toJavaScript(context,tableid, defcols)
+					+	rightJS()
 					+ ']';
 		}
 	}
@@ -329,7 +333,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		if(typeof this.right === "string") {
 			return 	''
 					+ 'alasql.databases[alasql.useid].objects['
-					+ 	this.left.toJavaScript(context,tableid, defcols)
+					+ 	leftJS()
 					+ ']["'
 					+	this.right
 					+ '"]';
@@ -340,9 +344,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	if(this.op === 'IS') {
 		return 	''
 				+ '('
-				+	'(typeof ' + this.left.toJavaScript(context,tableid, defcols)  + "=='undefined')"
+				+	'(typeof ' + leftJS()  + "==='undefined')"
 				+	" === "
-				+	'(typeof ' + this.right.toJavaScript(context,tableid, defcols) + "=='undefined')"
+				+	'(typeof ' + rightJS() + "==='undefined')"
 				+ ')';
 	}
 
@@ -350,9 +354,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	if(this.op === '==') {
 		return 	''
 				+ 'alasql.utils.deepEqual('
-				+	this.left.toJavaScript(context,tableid, defcols)
+				+	leftJS()
 				+ 	','
-				+ 	this.right.toJavaScript(context,tableid, defcols)
+				+ 	rightJS()
 				+ ')';
 	}
 
@@ -362,9 +366,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 				+ '('
 				+ 	( (this.op === '!===') ? '!' : '')
 				+	'('
-				+		'(' + this.left.toJavaScript(context,tableid, defcols) + ").valueOf()"
+				+		'(' + leftJS() + ").valueOf()"
 				+ 		'==='
-				+ 		'(' + this.right.toJavaScript(context,tableid, defcols) + ").valueOf()"
+				+ 		'(' + rightJS() + ").valueOf()"
 				+ 	')'
 				+ ')';
 		
@@ -374,9 +378,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	if(this.op === '!==') {
 		return 	''
 				+ '(!alasql.utils.deepEqual('
-				+ 	this.left.toJavaScript(context,tableid, defcols)
+				+ 	leftJS()
 				+ 	","
-				+ 	this.right.toJavaScript(context,tableid, defcols)
+				+ 	rightJS()
 				+ '))';
 	}
 
@@ -384,9 +388,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		return 	''
 				+ '('
 				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
-				+ 	'(' + this.left.toJavaScript(context,tableid, defcols)+ "+'')"
+				+ 	'(' + leftJS()+ "+'')"
 				+ 	".toUpperCase().match(new RegExp('^'+("
-				+ 		this.right.toJavaScript(context,tableid, defcols)
+				+ 		rightJS()
 				+ 	").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
 				+ ')';
 	}
@@ -399,9 +403,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 				+ 		'('
 				+ 			this.right1.toJavaScript(context,tableid, defcols)
 				+			'<='
-				+			this.left.toJavaScript(context,tableid, defcols)
+				+			leftJS()
 				+		') && ('
-				+			this.left.toJavaScript(context,tableid, defcols)
+				+			leftJS()
 				+			'<='
 				+			this.right2.toJavaScript(context,tableid, defcols)
 				+		')'
@@ -411,8 +415,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 /*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 
-			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
+			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+leftJS()+')&&'+
+			'('+leftJS()+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
@@ -429,20 +433,20 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += '.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s += leftJS()+')>-1)';
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'false';
 			s 	= '(['
 				+ this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')
 				+ '].indexOf('
-				+ this.left.toJavaScript(context,tableid, defcols)
+				+ leftJS()
 				+ ')>-1)';
 //console.log(s);
 			return s;
 		} else {
-			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf('
-			  	+ this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s = '('+rightJS()+'.indexOf('
+			  	+ leftJS()+')>-1)';
 //console.log('expression',350,s);
 			return s;
 //		} else {
@@ -458,16 +462,16 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
+			s += leftJS()+')<0)';
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'true';
 			s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
+			s += leftJS()+')<0)';
 			return s;
 		} else {
-			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')==-1)';
+			s = '('+rightJS()+'.indexOf(';
+			s += leftJS()+')==-1)';
 			return s;
 
 //			throw new Error('Wrong NOT IN operator without SELECT part');
@@ -481,11 +485,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		 	s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 
 			s +='.every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
 			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('NOT IN operator without SELECT');
@@ -498,11 +502,11 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
 			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
 			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
 			throw new Error('SOME/ANY operator without SELECT');
@@ -515,10 +519,10 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			if(this.right.reduced) {
 				return 'true';
 			} else {
-				return this.right.toJavaScript(context,tableid, defcols);
+				return rightJS();
 			}
 		} else if(this.right.reduced) {
-			return this.left.toJavaScript(context,tableid, defcols);
+			return leftJS();
 		}			
 
 		// Otherwise process as regular operation (see below)
@@ -528,9 +532,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	if(this.op === '^') {
 		return 	'Math.pow('
-				+ this.left.toJavaScript(context,tableid, defcols)
+				+ leftJS()
 				+ ','
-				+ this.right.toJavaScript(context,tableid, defcols)
+				+ rightJS()
 				+ ')';
 	}
 
@@ -541,9 +545,9 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //	console.log(this);
 	return 	''
 			+ '('
-			+ this.left.toJavaScript(context,tableid, defcols)
+			+ leftJS()
 			+ op
-			+ this.right.toJavaScript(context,tableid, defcols)
+			+ rightJS()
 			+ ')';
 }
 
