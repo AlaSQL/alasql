@@ -3,7 +3,9 @@ import {
   isFunction
 } from './utils';
 
-import asap from './asap';
+import {
+  asap
+} from './asap';
 
 function noop() {}
 

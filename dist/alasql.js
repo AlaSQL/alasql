@@ -2908,6 +2908,7 @@ function ID(){
 }
 
 
+/*jshint unused:false*/
 /*
     Utilities for Alasql.js
 
@@ -3148,12 +3149,14 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
                         if (xhr.status === 200) {
-                            if (success)
+                            if (success){
                                 success(cutbom(xhr.responseText));
-                        } else {
-                            if (error)
-                                error(xhr);
+                            }
+                        } else if (error){
+                            error(xhr);
                         }
+                        // Todo: else...?
+                        
                     }
                 };
                 xhr.open("GET", path, asy); // Async
@@ -3265,9 +3268,9 @@ var removeFile = utils.removeFile = function(path,cb) {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
-                cb && cb();
+                cb && cb(); // jshint ignore:line
             }, function(){
-                cb && cb();
+                cb && cb(); // jshint ignore:line
             });
         });
     } else {
@@ -3532,7 +3535,7 @@ var arrayIntersect = utils.arrayIntersect  = function(a,b) {
         var found = false;
         
         b.forEach(function(bi){
-            found = found || (ai==bi);
+            found = found || (ai===bi);
         });
 
         if(found) {
@@ -3626,7 +3629,7 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 */
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
-        if (x == y){
+        if (x === y){
             return true;
         }
 
@@ -3664,7 +3667,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 
         return true;
     }
-    return x == y;
+    return x === y;
 };
 
 /**
@@ -4862,6 +4865,7 @@ Base.prototype.exec = function() {}
 
 
 
+
 /*
 //
 // Statements class for Alasql.js
@@ -4869,6 +4873,7 @@ Base.prototype.exec = function() {}
 // (c) 2014, Andrey Gershun
 //
 */
+
 
 // Statements container
 yy.Statements = function(params) { return yy.extend(this, params); };
@@ -4882,12 +4887,14 @@ yy.Statements.prototype.compile = function(db) {
 	var statements = this.statements.map(function(st){
 		return st.compile(db)
 	});
-	if(statements.length == 1) {
+	if(statements.length === 1) {
 		return statements[0];	
 	} else {
 		return function(params, cb){
 			var res = statements.map(function(st){ return st(params); });
-			if(cb) cb(res);
+			if(cb){
+				cb(res);
+			}
 			return res;
 		}
 	}
@@ -4914,13 +4921,17 @@ yy.Statements.prototype.compile = function(db) {
 yy.Search = function (params) { return yy.extend(this, params); }
 yy.Search.prototype.toString = function () {
 	var s = K('SEARCH') + ' ';
-	if (this.selectors) s += this.selectors.toString();
-	if (this.from) s += K('FROM') + ' ' + this.from.toString();
+	if (this.selectors){
+		s += this.selectors.toString();
+	}
+	if (this.from){
+		s += K('FROM') + ' ' + this.from.toString();
+	}
 //console.log(s);
 	return s;
 };
 
-yy.Search.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Search.prototype.toJavaScript = function(context /*, tableid, defcols*/) {
 //		console.log('yy.CreateVertex.toJavaScript');
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	// var s = '';
@@ -4939,7 +4950,9 @@ yy.Search.prototype.compile = function(databaseid) {
 			// console.log(35,data);
 			res = modify(statement.query,data);
 			// console.log(37,data);
-			if(cb) res = cb(res);
+			if(cb){
+				res = cb(res);
+			}
 		});
 			// console.log(39,res);
 //		if(cb) res = cb(res);
@@ -4950,83 +4963,85 @@ yy.Search.prototype.compile = function(databaseid) {
 };
 
 
-function doSearch (databaseid, params, cb) {
+function doSearch(databaseid, params, cb) {
 	var res;
 	var stope = {};
 	var fromdata;
 	var selectors = cloneDeep(this.selectors);
 
-	if(typeof selectors != 'undefined' && selectors.length > 0) {
+	if(selectors !== undefined && selectors.length > 0) {
 
 //			console.log(selectors[0].args[0].toUpperCase());
-		if(selectors && selectors[0] && selectors[0].srchid == 'PROP' && selectors[0].args && selectors[0].args[0]) {
+		if(selectors && selectors[0] && selectors[0].srchid === 'PROP' && selectors[0].args && selectors[0].args[0]) {
 //			console.log(selectors[0].args[0]);
-			if(selectors[0].args[0].toUpperCase() == 'XML') {
+			if(selectors[0].args[0].toUpperCase() === 'XML') {
 				stope.mode = 'XML';
 				selectors.shift();
-			} else if(selectors[0].args[0].toUpperCase() == 'HTML') {
+			} else if(selectors[0].args[0].toUpperCase() === 'HTML') {
 				stope.mode = 'HTML';
 				selectors.shift();
-			} else if(selectors[0].args[0].toUpperCase() == 'JSON') {
+			} else if(selectors[0].args[0].toUpperCase() === 'JSON') {
 				stope.mode = 'JSON';
 				selectors.shift();
 			}
 		}
-		if(selectors.length > 0 && selectors[0].srchid == 'VALUE') {
+		if(selectors.length > 0 && selectors[0].srchid === 'VALUE') {
 			stope.value = true;
 			selectors.shift();
 		}
-	};
+	}
 
 	
 	if(this.from instanceof yy.Column) {
 		var dbid = this.from.databaseid || databaseid;
 		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
 		//selectors.unshift({srchid:'CHILD'});
-	} else if(this.from instanceof yy.FuncValue 
-		&& alasql.from[this.from.funcid.toUpperCase()]) {
+	} else if(
+				this.from instanceof yy.FuncValue &&				 
+				alasql.from[this.from.funcid.toUpperCase()]
+			) {
 		var args = this.from.args.map(function(arg){
-			var as = arg.toJavaScript();
+		var as = arg.toJavaScript();
 //			console.log(as);
-			var fn = new Function('params,alasql','var y;return '+as).bind(this);
-			return fn(params,alasql);
+		var fn = new Function('params,alasql','var y;return '+as).bind(this);
+		return fn(params,alasql);
 		});
 //		console.log(args);
 		fromdata = alasql.from[this.from.funcid.toUpperCase()].apply(this,args);
 //		console.log(92,fromdata);
-	} else if(typeof this.from == 'undefined') {
+	} else if(typeof this.from === 'undefined') {
 		fromdata = alasql.databases[databaseid].objects;
 	} else {
-
 		var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
 		fromdata = fromfn(params,alasql);			
 		// Check for Mogo Collections
-		if(typeof Mongo == 'object' && typeof Mongo.Collection != 'object'
-			&& fromdata instanceof Mongo.Collection) {
+		if(
+			typeof Mongo === 'object' && typeof Mongo.Collection !== 'object' && 
+			fromdata instanceof Mongo.Collection
+		) {
 			fromdata = fromdata.find().fetch();
-		}; 
+		}
 //console.log(selectors,fromdata);
 //		if(typeof fromdata == 'object' && fromdata instanceof Array) {
 //			selectors.unshift({srchid:'CHILD'});					
 //		}
-	};
+	}
 	
 	// If source data is array than first step is to run over array
 //	var selidx = 0;
 //	var selvalue = fromdata;
 	
-	if(typeof selectors != 'undefined' && selectors.length > 0) {
+	if(selectors !== undefined && selectors.length > 0) {
 		// Init variables for TO() selectors
 
-
-if(false) {
-		selectors.forEach(function(selector){
-			if(selector.srchid == 'TO') {  //* @todo move to TO selector
-				alasql.vars[selector.args[0]] = [];
-				// TODO - process nested selectors
-			}
-		});
-}
+		if(false) {
+			selectors.forEach(function(selector){
+				if(selector.srchid === 'TO') {  //* @todo move to TO selector
+					alasql.vars[selector.args[0]] = [];
+					// TODO - process nested selectors
+				}
+			});
+		}
 
 		res = processSelector(selectors,0,fromdata);
 	} else {
@@ -5035,18 +5050,24 @@ if(false) {
 	
 	if(this.into) {
 		var a1,a2;
-		if(typeof this.into.args[0] != 'undefined') {
-			a1 = new Function('params,alasql','var y;return '
-				 +this.into.args[0].toJavaScript())(params,alasql);
+		if(typeof this.into.args[0] !== 'undefined') {
+			a1 = 
+				new Function('params,alasql','var y;return ' +
+				this.into.args[0].toJavaScript())(params,alasql);
 		}
-		if(typeof this.into.args[1] != 'undefined') {
-				a2 =  new Function('params,alasql','var y;return '
-				 +this.into.args[1].toJavaScript())(params,alasql);
+		if(typeof this.into.args[1] !== 'undefined') {
+			a2 =  
+				new Function('params,alasql','var y;return ' +
+				this.into.args[1].toJavaScript())(params,alasql);
 		}
 		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
 	} else {
-		if(stope.value && res.length > 0) res = res[0];
-		if (cb) res = cb(res);
+		if(stope.value && res.length > 0){
+			res = res[0];
+		}
+		if (cb){
+			res = cb(res);
+		}
 	}
 	return res;
 	
@@ -5071,7 +5092,10 @@ if(false) {
 			}
 		}
 */
-		var sel = selectors[sidx];
+		var 
+			val,	// temp values use many places
+			nest, 	// temp value used many places
+			sel = selectors[sidx];
 //		console.log(sel);
 //		if(!alasql.srch[sel.srchid]) {
 //			throw new Error('Selector "'+sel.srchid+'" not found');
@@ -5081,10 +5105,10 @@ if(false) {
 
 		if(sel.selid) {
 			// TODO Process Selector
-			if(sel.selid == 'PATH') {
+			if(sel.selid === 'PATH') {
 				var queue = [{node:value,stack:[]}];
 				var visited = {};
-				var path = [];
+				//var path = [];
 				var objects = alasql.databases[alasql.useid].objects;
 				while (queue.length > 0) {
 					var q = queue.shift()
@@ -5105,7 +5129,7 @@ if(false) {
 //							return processSelector(selectors,sidx+1,stack);
 						}
 					} else {
-						if(typeof visited[node.$id] != 'undefined') {
+						if(typeof visited[node.$id] !== 'undefined') {
 							continue;
 						} else {
 //							console.log(node.$id, node.$out);
@@ -5124,7 +5148,7 @@ if(false) {
 				}
 				// Else return fail
 				return [];
-			} if(sel.selid == 'NOT') {
+			} if(sel.selid === 'NOT') {
 				var nest = processSelector(sel.args,0,value);
 				//console.log(1,nest);
 				if(nest.length>0) {
@@ -5136,13 +5160,14 @@ if(false) {
 						return processSelector(selectors,sidx+1,value);
 					}
 				}
-			} else if(sel.selid == 'DISTINCT') {
-				if(typeof sel.args == 'undefined' || sel.args.length == 0) {
-					var nest = distinctArray(value);
+			} else if(sel.selid === 'DISTINCT') {
+				var nest;
+				if(typeof sel.args === 'undefined' || sel.args.length == 0) {
+					nest = distinctArray(value);
 				} else {
-					var nest = processSelector(sel.args,0,value);
+					nest = processSelector(sel.args,0,value);
 				}
-				if(nest.length == 0) {
+				if(nest.length === 0) {
 					return [];
 				} else {
 					var res = distinctArray(nest);
@@ -5152,7 +5177,7 @@ if(false) {
 						return processSelector(selectors,sidx+1,res);
 					}
 				}
-			} else if(sel.selid == 'AND') {
+			} else if(sel.selid === 'AND') {
 				var res = true;
 				sel.args.forEach(function(se){
 					res = res && (processSelector(se,0,value).length>0);
@@ -5166,7 +5191,7 @@ if(false) {
 						return processSelector(selectors,sidx+1,value);
 					}
 				}
-			} else if(sel.selid == 'OR') {
+			} else if(sel.selid === 'OR') {
 				var res = false;
 				sel.args.forEach(function(se){
 					res = res || (processSelector(se,0,value).length>0);
@@ -5180,9 +5205,9 @@ if(false) {
 						return processSelector(selectors,sidx+1,value);
 					}
 				}
-			} else if(sel.selid == 'ALL') {
+			} else if(sel.selid === 'ALL') {
 				var nest = processSelector(sel.args[0],0,value);
-				if(nest.length == 0) {
+				if(nest.length === 0) {
 					return [];
 				} else {
 					if(sidx+1+1 > selectors.length) {
@@ -5191,10 +5216,10 @@ if(false) {
 						return processSelector(selectors,sidx+1,nest);
 					}
 				}
-			} else if(sel.selid == 'ANY') {
+			} else if(sel.selid === 'ANY') {
 				var nest = processSelector(sel.args[0],0,value);
 //				console.log(272,nest);
-				if(nest.length == 0) {
+				if(nest.length === 0) {
 					return [];
 				} else {
 					if(sidx+1+1 > selectors.length) {
@@ -5203,12 +5228,12 @@ if(false) {
 						return processSelector(selectors,sidx+1,[nest[0]]);
 					}
 				}
-			} else if(sel.selid == 'UNIONALL') {
+			} else if(sel.selid === 'UNIONALL') {
 				var nest = [];
 				sel.args.forEach(function(se){
 					nest = nest.concat(processSelector(se,0,value));
 				});
-				if(nest.length == 0) {
+				if(nest.length === 0) {
 					return [];
 				} else {
 					if(sidx+1+1 > selectors.length) {
@@ -5217,13 +5242,13 @@ if(false) {
 						return processSelector(selectors,sidx+1,nest);
 					}
 				}
-			} else if(sel.selid == 'UNION') {
+			} else if(sel.selid === 'UNION') {
 				var nest = [];
 				sel.args.forEach(function(se){
 					nest = nest.concat(processSelector(se,0,value));
 				});
 				var nest = distinctArray(nest);
-				if(nest.length == 0) {
+				if(nest.length === 0) {
 					return [];
 				} else {
 					if(sidx+1+1 > selectors.length) {
@@ -5232,10 +5257,10 @@ if(false) {
 						return processSelector(selectors,sidx+1,nest);
 					}
 				}
-			} else 	if(sel.selid == 'IF') {
+			} else 	if(sel.selid === 'IF') {
 				var nest = processSelector(sel.args,0,value);
 				//console.log(1,nest);
-				if(nest.length==0) {
+				if(nest.length===0) {
 					return [];
 				} else {
 					if(sidx+1+1 > selectors.length) {
@@ -5244,29 +5269,32 @@ if(false) {
 						return processSelector(selectors,sidx+1,value);
 					}
 				}
-			} else 	if(sel.selid == 'REPEAT') {
+			} else 	if(sel.selid === 'REPEAT') {
 //				console.log(352,sel.sels);
-				var lmin = sel.args[0].value;
+				var 
+					lvar, 
+					lmax,
+					lmin = sel.args[0].value;
 				if(!sel.args[1]) {
-					var lmax = lmin; // Add security break
+					lmax = lmin; // Add security break
 				} else {
-					var lmax = sel.args[1].value;
+					lmax = sel.args[1].value;
 				}
 				if(sel.args[2]) {
-					var lvar = sel.args[2].variable;
-				} else {
-					var lvar;
-				}
-				var lsel = sel.sels;
+					lvar = sel.args[2].variable;
+				} 
+				//var lsel = sel.sels;
 //				console.log(351,lmin,lmax,lvar);
 
 				var retval = [];
 
-				if (lmin == 0) {
+				if (lmin === 0) {
 					if(sidx+1+1 > selectors.length) {
 						retval = [value];
 					} else {
-						if(lvar) alasql.vars[lvar] = 0;
+						if(lvar){
+							alasql.vars[lvar] = 0;
+						}
 						retval = retval.concat(processSelector(selectors,sidx+1,value));
 					}
 				}
@@ -5291,10 +5319,13 @@ if(false) {
 	//console.log(375,nest);
 						nests.shift();
 						if(nest.lvl <= lmax) {
-							if(lvar) alasql.vars[lvar] = nest.lvl;
+							if(lvar){
+								alasql.vars[lvar] = nest.lvl;
+							}
 //		console.log(394,sel.sels);
 							var nest1 = processSelector(sel.sels,0,nest.value);
 //						console.log(397,nest1);
+
 							nest1.forEach(function(n){
 								nests.push({value:n,lvl:nest.lvl+1});
 							});
@@ -5314,16 +5345,16 @@ if(false) {
 						if(i>SECURITY_BREAK) {
 							throw new Error('Security brake. Number of iterations = '+i);
 						}
-					};
+					}
 
-				};
+				}
 				return retval;
 
-			} else 	if(sel.selid == 'TO') {
+			} else 	if(sel.selid ==='TO') {
 //				console.log(347,value,sel.args[0]);
 				var oldv = alasql.vars[sel.args[0]];
 				var newv = [];
-				if(typeof oldv != 'undefined') {
+				if(oldv !== undefined) {
 //					console.log(353,typeof oldv);
 					newv = oldv.slice(0);
 //					console.log(429, oldv, newv);
@@ -5353,10 +5384,10 @@ alasql.srch.TO = function(val,args) {
 };
 
 */
-			} else 	if(sel.selid == 'ARRAY') {
+			} else if(sel.selid === 'ARRAY') {
 				var nest = processSelector(sel.args,0,value);
 				if(nest.length > 0) {
-					var val = nest;
+					val = nest;
 				} else {
 					return [];
 				}
@@ -5365,7 +5396,7 @@ alasql.srch.TO = function(val,args) {
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'SUM') {
+			} else if(sel.selid === 'SUM') {
 				var nest = processSelector(sel.args,0,value);
 				if(nest.length > 0) {
 					var val = nest.reduce(function(sum, current) {
@@ -5379,10 +5410,10 @@ alasql.srch.TO = function(val,args) {
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'AVG') {
-				var nest = processSelector(sel.args,0,value);
+			} else if(sel.selid === 'AVG') {
+				nest = processSelector(sel.args,0,value);
 				if(nest.length > 0) {
-					var val = nest.reduce(function(sum, current) {
+					val = nest.reduce(function(sum, current) {
 	  					return sum + current;
 					}, 0)/nest.length;
 				} else {
@@ -5393,10 +5424,10 @@ alasql.srch.TO = function(val,args) {
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'COUNT') {
-				var nest = processSelector(sel.args,0,value);
+			} else if(sel.selid === 'COUNT') {
+				nest = processSelector(sel.args,0,value);
 				if(nest.length > 0) {
-					var val = nest.length;
+					val = nest.length;
 				} else {
 					return [];
 				}
@@ -5405,27 +5436,37 @@ alasql.srch.TO = function(val,args) {
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'FIRST') {
-				var nest = processSelector(sel.args,0,value);
-				if(nest.length > 0) var val = nest[0];
-				else return [];
+			} else 	if(sel.selid === 'FIRST') {
+				nest = processSelector(sel.args,0,value);
+				if(nest.length > 0){
+					val = nest[0];
+				} else { 
+					return [];
+				}
+
 				if(sidx+1+1 > selectors.length) {
 					return [val];
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'LAST') {
-				var nest = processSelector(sel.args,0,value);
-				if(nest.length > 0) var val = nest[nest.length-1];
-				else return [];
+			} else 	if(sel.selid === 'LAST') {
+				nest = processSelector(sel.args,0,value);
+				if(nest.length > 0) {
+					val = nest[nest.length-1];
+				} else {
+					return [];
+				}
+				
 				if(sidx+1+1 > selectors.length) {
 					return [val];
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'MIN') {
-				var nest = processSelector(sel.args,0,value);
-				if(nest.length == 0) return [];
+			} else if(sel.selid === 'MIN') {
+				nest = processSelector(sel.args,0,value);
+				if(nest.length === 0){
+					return [];
+				}
 				var val = nest.reduce(function(min, current) {
   					return Math.min(min,current);
 				}, Infinity);
@@ -5434,9 +5475,11 @@ alasql.srch.TO = function(val,args) {
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'MAX') {
+			} else 	if(sel.selid === 'MAX') {
 				var nest = processSelector(sel.args,0,value);
-				if(nest.length == 0) return [];
+				if(nest.length === 0){
+					return [];
+				}
 				var val = nest.reduce(function(max, current) {
   					return Math.max(max,current);
 				}, -Infinity);
@@ -5445,7 +5488,7 @@ alasql.srch.TO = function(val,args) {
 				} else {
 					return processSelector(selectors,sidx+1,val);
 				}
-			} else 	if(sel.selid == 'PLUS') {
+			} else 	if(sel.selid === 'PLUS') {
 				var retval = [];
 //				retval = retval.concat(processSelector(selectors,sidx+1,n))
 				var nests = processSelector(sel.args,0,value).slice();
@@ -5488,10 +5531,10 @@ alasql.srch.TO = function(val,args) {
 					if(i>SECURITY_BREAK) {
 						throw new Error('Security brake. Number of iterations = '+i);
 					}
-				};
+				}
 				return retval;
 				//console.log(1,nest);
-			} else 	if(sel.selid == 'STAR') {
+			} else 	if(sel.selid === 'STAR') {
 				var retval = [];
 				retval = processSelector(selectors,sidx+1,value);
 				var nests = processSelector(sel.args,0,value).slice();
@@ -5525,10 +5568,10 @@ alasql.srch.TO = function(val,args) {
 					if(i>SECURITY_BREAK) {
 						throw new Error('Security brake. Number of iterations = '+i);
 					}
-				};
+				}
 
 				return retval;
-			} else 	if(sel.selid == 'QUESTION') {
+			} else 	if(sel.selid === 'QUESTION') {
 				var retval = [];
 				retval = retval.concat(processSelector(selectors,sidx+1,value))
 				var nest = processSelector(sel.args,0,value);
@@ -5540,10 +5583,10 @@ alasql.srch.TO = function(val,args) {
 					});
 				}
 				return retval;
-			} else if(sel.selid == 'WITH') {
+			} else if(sel.selid === 'WITH') {
 				var nest = processSelector(sel.args,0,value);
 //				console.log('WITH',nest);
-				if(nest.length==0) {
+				if(nest.length===0) {
 					return [];
 				} else {
 					// if(sidx+1+1 > selectors.length) {
@@ -5553,7 +5596,7 @@ alasql.srch.TO = function(val,args) {
 					// }
 					var r = {status:1,values:nest};
 				}
-			} else if(sel.selid == 'ROOT') {
+			} else if(sel.selid === 'ROOT') {
 				if(sidx+1+1 > selectors.length) {
 					return [value];
 				} else {
@@ -5571,12 +5614,12 @@ alasql.srch.TO = function(val,args) {
 			throw new Error('Selector not found');
 		}
 //		console.log(356,sidx,r);
-		if(typeof r == 'undefined') {
+		if(typeof r === 'undefined') {
 			r = {status: 1, values: [value]};
 		};
 
 		var res = [];
-		if(r.status == 1) {
+		if(r.status === 1) {
 
 			var arr = r.values;
 
@@ -5600,7 +5643,7 @@ alasql.srch = {};
 
 alasql.srch.PROP = function(val,args,stope) {
 //		console.log('PROP',args[0],val);
-	if(stope.mode == 'XML') {
+	if(stope.mode === 'XML') {
 		var arr = [];
 		val.children.forEach(function(v){
 			if(v.name.toUpperCase() == args[0].toUpperCase()) {
@@ -5613,9 +5656,12 @@ alasql.srch.PROP = function(val,args,stope) {
 			return {status: -1, values: []};
 		}		
 	} else {
-		if((typeof val != 'object') || (val === null)
-			|| (typeof args != 'object')
-			|| (typeof val[args[0]] == 'undefined')) {
+		if(
+			(typeof val !== 'object') 	|| 
+			(val === null) 				|| 
+			(typeof args !== 'object') 	|| 
+			(typeof val[args[0]] === 'undefined')
+		) {
 			return {status: -1, values: []};
 		} else {
 			return {status: 1, values: [val[args[0]]]};
@@ -5624,9 +5670,11 @@ alasql.srch.PROP = function(val,args,stope) {
 };
 
 alasql.srch.APROP = function(val,args,stope) {
-	if((typeof val != 'object') || (val === null)
-		|| (typeof args != 'object')
-		|| (typeof val[args[0]] == 'undefined')) {
+	if(
+		(typeof val !== 'object') 	|| 
+		(val === null)				||
+		(typeof args !== 'object')	|| 
+		(typeof val[args[0]] === 'undefined')) {
 		return {status: 1, values: [undefined]};
 	} else {
 		return {status: 1, values: [val[args[0]]]};
@@ -5643,7 +5691,7 @@ alasql.srch.ORDERBY = function(val,args,stope) {
 alasql.srch.EQ = function(val,args,stope,params) {
   var exprs = args[0].toJavaScript('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
-  if(val == exprfn(val,alasql,params)) {
+  if(val === exprfn(val,alasql,params)) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -5664,26 +5712,27 @@ alasql.srch.LIKE = function(val,args,stope,params) {
 
 
 alasql.srch.ATTR = function(val,args,stope) {
-	if(stope.mode == 'XML') {
-		if(typeof args == 'undefined') {
+	if(stope.mode === 'XML') {
+		if(typeof args === 'undefined') {
 	      return {status: 1, values: [val.attributes]};
 		} else {
-			if(typeof val == 'object' && typeof val.attributes == 'object'
-				&& typeof val.attributes[args[0]] != 'undefined') {
+			if(
+				typeof val === 'object' 			&& 
+				typeof val.attributes === 'object'	&&
+				typeof val.attributes[args[0]] != 'undefined'
+			){
 				return {status: 1, values: [val.attributes[args[0]]]};
 			} else {
 				return {status: -1, values: []};			
 			}			
 		}
-
-
 	} else {
 		throw new Error('ATTR is not using in usual mode');
 	}
 };
 
 alasql.srch.CONTENT = function(val,args,stope) {
-	if(stope.mode == 'XML') {
+	if(stope.mode === 'XML') {
 		return {status: 1, values: [val.content]};
 	} else {
 		throw new Error('ATTR is not using in usual mode');
@@ -5692,7 +5741,7 @@ alasql.srch.CONTENT = function(val,args,stope) {
 
 alasql.srch.SHARP = function(val,args,stope) {
 	var obj = alasql.databases[alasql.useid].objects[args[0]];
-	if(typeof val != 'undefined' && val === obj) {
+	if(typeof val !== 'undefined' && val === obj) {
 		return {status: 1, values: [val]};
 	} else {
 		return {status: -1, values: []};
@@ -5709,11 +5758,11 @@ alasql.srch.PARENT = function(val,args,stope) {
 
 alasql.srch.CHILD = function(val,args,stope) {
 //    	console.log(641,val);
-  if(typeof val == 'object') {
+  if(typeof val === 'object') {
     if(val instanceof Array) {
       return {status: 1, values: val};
     } else {
-    	if(stope.mode == 'XML') {
+    	if(stope.mode === 'XML') {
 	      return {status: 1, values: Object.keys(val.children).map(function(key){return val.children[key];})};          
     	} else {
 	      return {status: 1, values: Object.keys(val).map(function(key){return val[key];})};          
@@ -5727,7 +5776,7 @@ alasql.srch.CHILD = function(val,args,stope) {
 
 // Return all keys
 alasql.srch.KEYS = function(val,args) {
-  if(typeof val == 'object' && val !== null) {
+  if(typeof val === 'object' && val !== null) {
 	  return {status: 1, values: Object.keys(val)};          
   } else {
     // If primitive value
@@ -5747,7 +5796,7 @@ alasql.srch.WHERE = function(val,args) {
 };
 
 alasql.srch.NAME = function(val,args) {
-  if(val.name == args[0]) {
+  if(val.name === args[0]) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -5756,7 +5805,8 @@ alasql.srch.NAME = function(val,args) {
 
 alasql.srch.CLASS = function(val,args) {
 //	console.log(val,args);
-  if(val.$class == args) {
+  // Please avoid `===` here
+  if(val.$class == args) { 					// jshint ignore:line
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -5766,7 +5816,7 @@ alasql.srch.CLASS = function(val,args) {
 
 // Transform expression
 alasql.srch.VERTEX = function(val,args) {
-  if(val.$node == 'VERTEX') {
+  if(val.$node === 'VERTEX') {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -5785,7 +5835,7 @@ alasql.srch.INSTANCEOF = function(val,args) {
 
 // Transform expression
 alasql.srch.EDGE = function(val,args) {
-  if(val.$node == 'EDGE') {
+  if(val.$node === 'EDGE') {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -5877,9 +5927,9 @@ alasql.srch.SET = function(val,args,stope,params) {
 //	console.log(arguments);
 	var s = args.map(function(st){
 //console.log(898,st);		
-		if(st.method == '@') {
+		if(st.method === '@') {
 			return 'alasql.vars[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
-		} else if(st.method == '$') {
+		} else if(st.method === '$') {
 			return 'params[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
 		} else {
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
@@ -5907,9 +5957,9 @@ alasql.srch.ROW = function(val,args,stope,params) {
 
 
 alasql.srch.D3 = function(val,args,stope,params) {
-	if(val.$node == 'VERTEX') {
+	if(val.$node === 'VERTEX') {
 //		var res = val;
-	} else if(val.$node == 'EDGE') {
+	} else if(val.$node === 'EDGE') {
 		val.source = val.$in[0];
 		val.target = val.$out[0];
 	}
@@ -5920,18 +5970,26 @@ alasql.srch.D3 = function(val,args,stope,params) {
 var compileSearchOrder = function (order) {
 	if(order) {
 //			console.log(990, this.order);
-		if(order && order.length == 1 && order[0].expression 
-			 && typeof order[0].expression == "function") {
+		if(
+			order 				&& 
+			order.length === 1 	&& 
+			order[0].expression &&
+			typeof order[0].expression === "function"
+		){
 //			console.log(991, this.order[0]);
 			var func = order[0].expression;
 //			console.log(994, func);
 			return function(a,b){
 				var ra = func(a),rb = func(b);
-				if(ra>rb) return 1;
-				if(ra==rb) return 0;
+				if(ra>rb){
+					return 1;
+				}
+				if(ra===rb){
+					return 0;
+				}
 				return -1;
 			}
-		};
+		}
 
 		var s = '';
 		var sk = '';
@@ -5945,20 +6003,24 @@ var compileSearchOrder = function (order) {
 //console.log(ord.expression, ord.expression instanceof yy.NumValue);
 			if(ord.expression instanceof yy.NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
-			};
+			}
 
 			if(ord.expression instanceof yy.Column) {
 				var columnid = ord.expression.columnid; 
 
-				if(alasql.options.valueof) dg = '.valueOf()'; // TODO Check
+				if(alasql.options.valueof){
+					dg = '.valueOf()'; // TODO Check
+				}
 				// COLLATE NOCASE
-				if(ord.nocase) dg += '.toUpperCase()';
+				if(ord.nocase){
+					dg += '.toUpperCase()';
+				}
 
-				if(columnid == '_') {
-					s += 'if(a'+dg+(ord.direction == 'ASC'?'>':'<')+'b'+dg+')return 1;';
+				if(columnid === '_') {
+					s += 'if(a'+dg+(ord.direction === 'ASC'?'>':'<')+'b'+dg+')return 1;';
 					s += 'if(a'+dg+'==b'+dg+'){';
 				} else {
-					s += 'if((a[\''+columnid+"']||'')"+dg+(ord.direction == 'ASC'?'>':'<')+'(b[\''+columnid+"']||'')"+dg+')return 1;';
+					s += 'if((a[\''+columnid+"']||'')"+dg+(ord.direction === 'ASC'?'>':'<')+'(b[\''+columnid+"']||'')"+dg+')return 1;';
 					s += 'if((a[\''+columnid+"']||'')"+dg+'==(b[\''+columnid+"']||'')"+dg+'){';
 				}
 
@@ -5966,7 +6028,7 @@ var compileSearchOrder = function (order) {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
 				if(ord.nocase) dg += '.toUpperCase()';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
+				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
 				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+'==('+ord.toJavaScript('b','')+"||'')"+dg+'){';
 			}			
 
@@ -5980,7 +6042,7 @@ var compileSearchOrder = function (order) {
 		s += sk+'return -1';
 //console.log(s);
 		return new Function('a,b',s);
-	};
+	}
 };
 
 
@@ -9401,7 +9463,7 @@ yy.JavaScript.prototype.toString = function() {
 	return s;
 };
 
-yy.JavaScript.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.JavaScript.prototype.toJavaScript = function( /* context, tableid, defcols*/ ) {
 //	console.log('Expression',this);
 	return '('+this.value+')';
 };
@@ -9530,95 +9592,170 @@ yy.Op.prototype.toType = function(tableid) {
 	if(['-','*','/','%','^'].indexOf(this.op) >-1){
 		return 'number';
 	}
-	if(this.op == '+') {
-		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
-		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
+	if(this.op === '+') {
+		if(this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string'){
+			return 'string';
+		}
+		if(this.left.toType(tableid) === 'number' || this.right.toType(tableid) === 'number'){ 
+			return 'number';
+		}
 	}
-	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ) return 'boolean';
-	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN' || this.op == 'IS NULL' || this.op == 'IS NOT NULL') return 'boolean';
-	if(this.allsome) return 'boolean';
-	if(!this.op) return this.left.toType();
+	
+	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ){
+		return 'boolean';
+	}
+
+	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN' || this.op === 'IS NULL' || this.op === 'IS NOT NULL'){
+		return 'boolean';
+	}
+	
+	if(this.allsome){
+		return 'boolean';
+	}
+
+	if(!this.op){
+		return this.left.toType();
+	}
 
 	return 'unknown';
 };
 
 yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //	console.log(this);
+	var s;
 	var op = this.op;
-	if(this.op == '=') op = '===';
-	else if(this.op == '<>') op = '!=';
-	else if(this.op == 'OR') op = '||';
+	var _this = this;
+	var leftJS = function(){return _this.left.toJavaScript(context,tableid, defcols)};
+	var rightJS = function(){return _this.right.toJavaScript(context,tableid, defcols)};
 
-	if(this.op == '->') {
+	if(this.op === '='){
+		op = '===';
+	} else if(this.op === '<>'){
+		op = '!=';
+	} else if(this.op === 'OR'){
+		op = '||';
+	}
+
+	if(this.op === '->') {
 //		console.log(this.right, typeof this.right);
-		if(typeof this.right == "string") {
-			return this.left.toJavaScript(context,tableid, defcols)+'["'+this.right+'"]';
-		} else if(typeof this.right == "number") {
-			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
+		if(typeof this.right === "string") {
+			return leftJS() +'["'+this.right+'"]';
+		
+		} else if(typeof this.right === "number") {
+			return leftJS()+'['+this.right+']';
+		
 		} else if(this.right instanceof yy.FuncValue) {
 			var ss = [];
-			if(!this.right.args || 0 === this.right.args.length) {
-			} else {
+			if(!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(function(arg){
-					return arg.toJavaScript(context,tableid, defcols);
-				});
+															return arg.toJavaScript(context,tableid, defcols);
+														});
 			}
-			return this.left.toJavaScript(context,tableid, defcols)+'[\''+this.right.funcid+'\']('+
-				ss.join(',')+')'; 
+			return 	''
+					+ leftJS()
+					+ "['"
+					+ 	this.right.funcid
+					+ "']("
+					+ 	ss.join(',')
+					+ ')'; 
 		} else {
-			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
+
+			return 	''
+					+ leftJS()
+					+ '['
+					+	rightJS()
+					+ ']';
 		}
 	}
 
-	if(this.op == '!') {
-		if(typeof this.right == "string") {
-			return 'alasql.databases[alasql.useid].objects['+this.left.toJavaScript(context,tableid, defcols)+']["'+this.right+'"]';
+	if(this.op === '!') {
+		if(typeof this.right === "string") {
+			return 	''
+					+ 'alasql.databases[alasql.useid].objects['
+					+ 	leftJS()
+					+ ']["'
+					+	this.right
+					+ '"]';
 		}		
 		// TODO - add other cases
 	}
 
-	if(this.op == 'IS') {
-		return '((typeof '+this.left.toJavaScript(context,tableid, defcols)+"=='undefined') == "
-			 + '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
+	if(this.op === 'IS') {
+		return 	''
+				+ '('
+				+	'(typeof ' + leftJS()  + "==='undefined')"
+				+	" === "
+				+	'(typeof ' + rightJS() + "==='undefined')"
+				+ ')';
 	}
 
 
-	if(this.op == '==') {
-		return 'alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+')';
-	}
-	if(this.op == '===') {
-		return "(("+this.left.toJavaScript(context,tableid, defcols)+").valueOf()===("+this.right.toJavaScript(context,tableid, defcols)+'.valueOf()))';
-	}
-
-	if(this.op == '!===') {
-		return "!(("+this.left.toJavaScript(context,tableid, defcols)+").valueOf()===("+this.right.toJavaScript(context,tableid, defcols)+'.valueOf()))';
+	if(this.op === '==') {
+		return 	''
+				+ 'alasql.utils.deepEqual('
+				+	leftJS()
+				+ 	','
+				+ 	rightJS()
+				+ ')';
 	}
 
 
-	if(this.op == '!==') {
-		return '(!alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+'))';
+	if(this.op === '===' || this.op === '!===') {
+		return 	''
+				+ '('
+				+ 	( (this.op === '!===') ? '!' : '')
+				+	'('
+				+		'(' + leftJS() + ").valueOf()"
+				+ 		'==='
+				+ 		'(' + rightJS() + ").valueOf()"
+				+ 	')'
+				+ ')';
+		
 	}
 
 
-	if(this.op == 'LIKE') {
-		return "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))";
+	if(this.op === '!==') {
+		return 	''
+				+ '(!alasql.utils.deepEqual('
+				+ 	leftJS()
+				+ 	","
+				+ 	rightJS()
+				+ '))';
 	}
 
-	if(this.op == 'NOT LIKE') {
-		return "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g')))"
+	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
+		return 	''
+				+ '('
+				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
+				+ 	'(' + leftJS()+ "+'')"
+				+ 	".toUpperCase().match(new RegExp('^'+("
+				+ 		rightJS()
+				+ 	").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
+				+ ')';
 	}
 
-	if(this.op == 'BETWEEN') {
-		return '(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
+	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
+		return 	''
+				+ '('
+				+ 	( (this.op === 'NOT BETWEEN') ? '!' : '')
+				+ 	'('
+				+ 		'('
+				+ 			this.right1.toJavaScript(context,tableid, defcols)
+				+			'<='
+				+			leftJS()
+				+		') && ('
+				+			leftJS()
+				+			'<='
+				+			this.right2.toJavaScript(context,tableid, defcols)
+				+		')'
+				+ 	')'		
+				+ ')';		
 
 /*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 
-			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
+			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+leftJS()+')&&'+
+			'('+leftJS()+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
 
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
@@ -9626,18 +9763,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 */
 	}
 
-	if(this.op == 'NOT BETWEEN') {
-		return '!(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
-
-
-		// if(this.right instanceof yy.Op && this.right.op == 'AND') {
-		// 	return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		// 	'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
-		// } else {
-		// 	throw new Error('Wrong NOT BETWEEN operator without AND part');
-		// }
-	}
+	
 
 	if(this.op === 'IN') {
 		if(this.right instanceof yy.Select ) {
@@ -9646,20 +9772,20 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += '.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s += leftJS()+')>-1)';
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'false';
 			s 	= '(['
 				+ this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')
 				+ '].indexOf('
-				+ this.left.toJavaScript(context,tableid, defcols)
-				+')>-1)';
+				+ leftJS()
+				+ ')>-1)';
 //console.log(s);
 			return s;
 		} else {
-			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf('
-			  + this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s = '('+rightJS()+'.indexOf('
+			  	+ leftJS()+')>-1)';
 //console.log('expression',350,s);
 			return s;
 //		} else {
@@ -9668,72 +9794,74 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	}
 
 
-	if(this.op == 'NOT IN') {
+	if(this.op === 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
 			s = '(';
 				//this.query.queriesdata['+this.queriesidx+']
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
+			s += leftJS()+')<0)';
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'true';
 			s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
+			s += leftJS()+')<0)';
 			return s;
 		} else {
-			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')==-1)';
+			s = '('+rightJS()+'.indexOf(';
+			s += leftJS()+')==-1)';
 			return s;
 
 //			throw new Error('Wrong NOT IN operator without SELECT part');
 		}
 	}
 
-	if(this.allsome == 'ALL') {
+	if(this.allsome === 'ALL') {
+		var s;
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
 		 	s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 
 			s +='.every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
-			throw new Error('Wrong NOT IN operator without SELECT part');
+			throw new Error('NOT IN operator without SELECT');
 		}		
 	}
 
-	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
+	if(this.allsome === 'SOME' || this.allsome === 'ANY') {
+		var s;
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
 			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
 			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
-			throw new Error('Wrong NOT IN operator without SELECT part');
+			throw new Error('SOME/ANY operator without SELECT');
 		}		
 	}
 
 // Special case for AND optimization (if reduced)
-	if(this.op == 'AND') {
+	if(this.op === 'AND') {
 		if(this.left.reduced) {
 			if(this.right.reduced) {
 				return 'true';
 			} else {
-				return this.right.toJavaScript(context,tableid, defcols);
+				return rightJS();
 			}
 		} else if(this.right.reduced) {
-			return this.left.toJavaScript(context,tableid, defcols);
+			return leftJS();
 		}			
 
 		// Otherwise process as regular operation (see below)
@@ -9741,22 +9869,26 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	}
 
-	if(this.op == '^') {
-		return 'Math.pow('
-				+this.left.toJavaScript(context,tableid, defcols)
-				+','
-				+this.right.toJavaScript(context,tableid, defcols)
-				+')';
-	};
+	if(this.op === '^') {
+		return 	'Math.pow('
+				+ leftJS()
+				+ ','
+				+ rightJS()
+				+ ')';
+	}
 
 
 
 
 	// Change names
 //	console.log(this);
-	return '('+this.left.toJavaScript(context,tableid, defcols)+op+this.right.toJavaScript(context,tableid, defcols)+')';
+	return 	''
+			+ '('
+			+ leftJS()
+			+ op
+			+ rightJS()
+			+ ')';
 }
-
 
 
 yy.VarValue = function (params) { return yy.extend(this, params); }
@@ -10067,7 +10199,7 @@ yy.AggrValue.prototype.toType = function() {
 	if(['ARRAY'].indexOf(this.aggregatorid)>-1) return 'array';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
-yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.AggrValue.prototype.toJavaScript = function(/*context, tableid, defcols*/) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJavaScript(context, tableid);
 //	s += ')';
@@ -10077,7 +10209,9 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //if(this.as) console.log(499,this.as);
 //	var colas = this.as;
 	var colas = this.nick;
-	if(typeof colas == 'undefined') colas = this.toString();
+	if(colas === undefined){ 
+		colas = this.toString();
+	}
 	return 'g[\''+colas+'\']';
 }
 
