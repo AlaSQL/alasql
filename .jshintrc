@@ -24,7 +24,8 @@
         "P",
         "LocalFileSystem",
         "Meteor",
-        "Npm"
+        "Npm",
+        "returnTrue"
     ],
  
  
@@ -41,7 +42,7 @@
  
     // The Good Parts.
     "asi"           : true,  // Tolerate Automatic Semicolon Insertion (no semicolons).
-    "laxbreak"      : false,   // Tolerate unsafe line breaks e.g. `return [\n] x` without semicolons.
+    "laxbreak"      : true,   // Tolerate unsafe line breaks e.g. `return [\n] x` without semicolons.
     "bitwise"       : false,   // Prohibit bitwise operators (&, |, ^, etc.).
     "boss"          : false,  // Tolerate assignments inside if, for & while. Usually conditions & loops are for comparison, not assignments.
     "curly"         : true,   // Require {} for every new block or scope.
@@ -65,7 +66,7 @@
  
  
     // Personal styling preferences.
-    "newcap"        : true,   // Require capitalization of all constructor functions e.g. `new F()`.
+    "newcap"        : false,   // Require capitalization of all constructor functions e.g. `new F()`.
     "noempty"       : true,   // Prohibit use of empty blocks.
     "nonew"         : true,   // Prohibit use of constructors for side-effects.
     "nomen"         : true,   // Prohibit use of initial or trailing underbars in names.

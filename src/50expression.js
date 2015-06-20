@@ -124,7 +124,7 @@ yy.JavaScript.prototype.toString = function() {
 	return s;
 };
 
-yy.JavaScript.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.JavaScript.prototype.toJavaScript = function( /* context, tableid, defcols*/ ) {
 //	console.log('Expression',this);
 	return '('+this.value+')';
 };
@@ -253,89 +253,160 @@ yy.Op.prototype.toType = function(tableid) {
 	if(['-','*','/','%','^'].indexOf(this.op) >-1){
 		return 'number';
 	}
-	if(this.op == '+') {
-		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
-		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
+	if(this.op === '+') {
+		if(this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string'){
+			return 'string';
+		}
+		if(this.left.toType(tableid) === 'number' || this.right.toType(tableid) === 'number'){ 
+			return 'number';
+		}
 	}
-	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ) return 'boolean';
-	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN' || this.op == 'IS NULL' || this.op == 'IS NOT NULL') return 'boolean';
-	if(this.allsome) return 'boolean';
-	if(!this.op) return this.left.toType();
+	
+	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ){
+		return 'boolean';
+	}
+
+	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN' || this.op === 'IS NULL' || this.op === 'IS NOT NULL'){
+		return 'boolean';
+	}
+	
+	if(this.allsome){
+		return 'boolean';
+	}
+
+	if(!this.op){
+		return this.left.toType();
+	}
 
 	return 'unknown';
 };
 
 yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //	console.log(this);
+	var s;
 	var op = this.op;
-	if(this.op == '=') op = '===';
-	else if(this.op == '<>') op = '!=';
-	else if(this.op == 'OR') op = '||';
+	if(this.op === '='){
+		op = '===';
+	} else if(this.op === '<>'){
+		op = '!=';
+	} else if(this.op === 'OR'){
+		op = '||';
+	}
 
-	if(this.op == '->') {
+	if(this.op === '->') {
 //		console.log(this.right, typeof this.right);
-		if(typeof this.right == "string") {
+		if(typeof this.right === "string") {
 			return this.left.toJavaScript(context,tableid, defcols)+'["'+this.right+'"]';
-		} else if(typeof this.right == "number") {
+		
+		} else if(typeof this.right === "number") {
 			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
+		
 		} else if(this.right instanceof yy.FuncValue) {
 			var ss = [];
-			if(!this.right.args || 0 === this.right.args.length) {
-			} else {
+			if(!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(function(arg){
-					return arg.toJavaScript(context,tableid, defcols);
-				});
+															return arg.toJavaScript(context,tableid, defcols);
+														});
 			}
-			return this.left.toJavaScript(context,tableid, defcols)+'[\''+this.right.funcid+'\']('+
-				ss.join(',')+')'; 
+			return 	''
+					+ this.left.toJavaScript(context,tableid, defcols)
+					+ "['"
+					+ 	this.right.funcid
+					+ "']("
+					+ 	ss.join(',')
+					+ ')'; 
 		} else {
-			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
+
+			return 	''
+					+ this.left.toJavaScript(context,tableid, defcols)
+					+ '['
+					+	this.right.toJavaScript(context,tableid, defcols)
+					+ ']';
 		}
 	}
 
-	if(this.op == '!') {
-		if(typeof this.right == "string") {
-			return 'alasql.databases[alasql.useid].objects['+this.left.toJavaScript(context,tableid, defcols)+']["'+this.right+'"]';
+	if(this.op === '!') {
+		if(typeof this.right === "string") {
+			return 	''
+					+ 'alasql.databases[alasql.useid].objects['
+					+ 	this.left.toJavaScript(context,tableid, defcols)
+					+ ']["'
+					+	this.right
+					+ '"]';
 		}		
 		// TODO - add other cases
 	}
 
-	if(this.op == 'IS') {
-		return '((typeof '+this.left.toJavaScript(context,tableid, defcols)+"=='undefined') == "
-			 + '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
+	if(this.op === 'IS') {
+		return 	''
+				+ '('
+				+	'(typeof ' + this.left.toJavaScript(context,tableid, defcols)  + "=='undefined')"
+				+	" === "
+				+	'(typeof ' + this.right.toJavaScript(context,tableid, defcols) + "=='undefined')"
+				+ ')';
 	}
 
 
-	if(this.op == '==') {
-		return 'alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+')';
-	}
-	if(this.op == '===') {
-		return "(("+this.left.toJavaScript(context,tableid, defcols)+").valueOf()===("+this.right.toJavaScript(context,tableid, defcols)+'.valueOf()))';
-	}
-
-	if(this.op == '!===') {
-		return "!(("+this.left.toJavaScript(context,tableid, defcols)+").valueOf()===("+this.right.toJavaScript(context,tableid, defcols)+'.valueOf()))';
+	if(this.op === '==') {
+		return 	''
+				+ 'alasql.utils.deepEqual('
+				+	this.left.toJavaScript(context,tableid, defcols)
+				+ 	','
+				+ 	this.right.toJavaScript(context,tableid, defcols)
+				+ ')';
 	}
 
 
-	if(this.op == '!==') {
-		return '(!alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+'))';
+	if(this.op === '===' || this.op === '!===') {
+		return 	''
+				+ '('
+				+ 	( (this.op === '!===') ? '!' : '')
+				+	'('
+				+		'(' + this.left.toJavaScript(context,tableid, defcols) + ").valueOf()"
+				+ 		'==='
+				+ 		'(' + this.right.toJavaScript(context,tableid, defcols) + ").valueOf()"
+				+ 	')'
+				+ ')';
+		
 	}
 
 
-	if(this.op == 'LIKE') {
-		return "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))";
+	if(this.op === '!==') {
+		return 	''
+				+ '(!alasql.utils.deepEqual('
+				+ 	this.left.toJavaScript(context,tableid, defcols)
+				+ 	","
+				+ 	this.right.toJavaScript(context,tableid, defcols)
+				+ '))';
 	}
 
-	if(this.op == 'NOT LIKE') {
-		return "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g')))"
+	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
+		return 	''
+				+ '('
+				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
+				+ 	'(' + this.left.toJavaScript(context,tableid, defcols)+ "+'')"
+				+ 	".toUpperCase().match(new RegExp('^'+("
+				+ 		this.right.toJavaScript(context,tableid, defcols)
+				+ 	").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
+				+ ')';
 	}
 
-	if(this.op == 'BETWEEN') {
-		return '(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
+	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
+		return 	''
+				+ '('
+				+ 	( (this.op === 'NOT BETWEEN') ? '!' : '')
+				+ 	'('
+				+ 		'('
+				+ 			this.right1.toJavaScript(context,tableid, defcols)
+				+			'<='
+				+			this.left.toJavaScript(context,tableid, defcols)
+				+		') && ('
+				+			this.left.toJavaScript(context,tableid, defcols)
+				+			'<='
+				+			this.right2.toJavaScript(context,tableid, defcols)
+				+		')'
+				+ 	')'		
+				+ ')';		
 
 /*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
@@ -349,18 +420,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 */
 	}
 
-	if(this.op == 'NOT BETWEEN') {
-		return '!(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
-
-
-		// if(this.right instanceof yy.Op && this.right.op == 'AND') {
-		// 	return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		// 	'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
-		// } else {
-		// 	throw new Error('Wrong NOT BETWEEN operator without AND part');
-		// }
-	}
+	
 
 	if(this.op === 'IN') {
 		if(this.right instanceof yy.Select ) {
@@ -377,12 +437,12 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 				+ this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')
 				+ '].indexOf('
 				+ this.left.toJavaScript(context,tableid, defcols)
-				+')>-1)';
+				+ ')>-1)';
 //console.log(s);
 			return s;
 		} else {
 			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf('
-			  + this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			  	+ this.left.toJavaScript(context,tableid, defcols)+')>-1)';
 //console.log('expression',350,s);
 			return s;
 //		} else {
@@ -391,7 +451,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	}
 
 
-	if(this.op == 'NOT IN') {
+	if(this.op === 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
 			s = '(';
 				//this.query.queriesdata['+this.queriesidx+']
@@ -414,7 +474,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		}
 	}
 
-	if(this.allsome == 'ALL') {
+	if(this.allsome === 'ALL') {
+		var s;
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
 		 	s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
@@ -423,15 +484,16 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
+			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
-			throw new Error('Wrong NOT IN operator without SELECT part');
+			throw new Error('NOT IN operator without SELECT');
 		}		
 	}
 
-	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
+	if(this.allsome === 'SOME' || this.allsome === 'ANY') {
+		var s;
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
 			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
@@ -443,12 +505,12 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
 			return s;
 		} else {
-			throw new Error('Wrong NOT IN operator without SELECT part');
+			throw new Error('SOME/ANY operator without SELECT');
 		}		
 	}
 
 // Special case for AND optimization (if reduced)
-	if(this.op == 'AND') {
+	if(this.op === 'AND') {
 		if(this.left.reduced) {
 			if(this.right.reduced) {
 				return 'true';
@@ -464,22 +526,26 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	}
 
-	if(this.op == '^') {
-		return 'Math.pow('
-				+this.left.toJavaScript(context,tableid, defcols)
-				+','
-				+this.right.toJavaScript(context,tableid, defcols)
-				+')';
-	};
+	if(this.op === '^') {
+		return 	'Math.pow('
+				+ this.left.toJavaScript(context,tableid, defcols)
+				+ ','
+				+ this.right.toJavaScript(context,tableid, defcols)
+				+ ')';
+	}
 
 
 
 
 	// Change names
 //	console.log(this);
-	return '('+this.left.toJavaScript(context,tableid, defcols)+op+this.right.toJavaScript(context,tableid, defcols)+')';
+	return 	''
+			+ '('
+			+ this.left.toJavaScript(context,tableid, defcols)
+			+ op
+			+ this.right.toJavaScript(context,tableid, defcols)
+			+ ')';
 }
-
 
 
 yy.VarValue = function (params) { return yy.extend(this, params); }
@@ -790,7 +856,7 @@ yy.AggrValue.prototype.toType = function() {
 	if(['ARRAY'].indexOf(this.aggregatorid)>-1) return 'array';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
-yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.AggrValue.prototype.toJavaScript = function(/*context, tableid, defcols*/) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJavaScript(context, tableid);
 //	s += ')';
@@ -800,7 +866,9 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //if(this.as) console.log(499,this.as);
 //	var colas = this.as;
 	var colas = this.nick;
-	if(typeof colas == 'undefined') colas = this.toString();
+	if(colas === undefined){ 
+		colas = this.toString();
+	}
 	return 'g[\''+colas+'\']';
 }
 

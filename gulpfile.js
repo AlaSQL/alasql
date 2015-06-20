@@ -129,7 +129,7 @@ gulp.task('js-merge', function () {
     .pipe(concat('alasql.js'))
 //    .pipe(uglify())
     .pipe(gulp.dest('./dist'))
-    .pipe(shell(['cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v karen Tests failed ; else tput bel; fi)']))
+    .pipe(shell(['cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v bell Tests failed ; else say -v bell All tests OK; fi)']))
     ;
 });
 
