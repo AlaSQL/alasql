@@ -15,16 +15,16 @@
     "worker"        : true,
  
     "predef"        : [  // Custom globals.
-        //"exampleVar",
-        //"anotherCoolGlobal",
-        //"iLoveDouglas",
         "alasql",
         "yy",
         "K",
         "L",
         "NL",
         "ID",
-        "P" 
+        "P",
+        "LocalFileSystem",
+        "Meteor",
+        "Npm"
     ],
  
  

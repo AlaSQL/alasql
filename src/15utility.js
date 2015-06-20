@@ -1,3 +1,4 @@
+/*jshint unused:false*/
 /*
     Utilities for Alasql.js
 
@@ -238,12 +239,14 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
                         if (xhr.status === 200) {
-                            if (success)
+                            if (success){
                                 success(cutbom(xhr.responseText));
-                        } else {
-                            if (error)
-                                error(xhr);
+                            }
+                        } else if (error){
+                            error(xhr);
                         }
+                        // Todo: else...?
+                        
                     }
                 };
                 xhr.open("GET", path, asy); // Async
@@ -355,9 +358,9 @@ var removeFile = utils.removeFile = function(path,cb) {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
-                cb && cb();
+                cb && cb(); // jshint ignore:line
             }, function(){
-                cb && cb();
+                cb && cb(); // jshint ignore:line
             });
         });
     } else {
@@ -622,7 +625,7 @@ var arrayIntersect = utils.arrayIntersect  = function(a,b) {
         var found = false;
         
         b.forEach(function(bi){
-            found = found || (ai==bi);
+            found = found || (ai===bi);
         });
 
         if(found) {
@@ -716,7 +719,7 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 */
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
-        if (x == y){
+        if (x === y){
             return true;
         }
 
@@ -754,7 +757,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 
         return true;
     }
-    return x == y;
+    return x === y;
 };
 
 /**
