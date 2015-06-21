@@ -626,44 +626,91 @@ yy.ParamValue.prototype.toString = function() {
 	return '$'+this.param;
 }
 yy.ParamValue.prototype.toJS = function() {
-	if(typeof this.param == "string") return "params[\'"+this.param+"\']";
-	else return "params["+this.param+"]";
+	if(typeof this.param === "string"){
+		return "params['"+this.param+"']";
+	}
+	
+	return "params["+this.param+"]";
 }
 
 
 
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {
-	if(this.op == '-') return this.op+this.right.toString();
-	if(this.op == '+') return this.op+this.right.toString();
-	if(this.op == '#') return this.op+this.right.toString();
-	if(this.op == 'NOT') return this.op+'('+this.right.toString()+')';
-	else if(this.op == null) return '('+this.right.toString()+')';
+	if(this.op === '-'){
+		return this.op+this.right.toString();
+	}
+	
+	if(this.op === '+'){
+		return this.op+this.right.toString();
+	}
+	
+	if(this.op === '#'){
+		return this.op+this.right.toString();
+	}
+
+	if(this.op === 'NOT'){
+		return this.op+'('+this.right.toString()+')';
+	}
+	
+	// Please avoid === here
+	if(this.op == null){						// jshint ignore:line
+		return '('+this.right.toString()+')';
+	}
+
+	// todo: implement default case
 };
 
 yy.UniOp.prototype.findAggregator = function (query){
-	if(this.right.findAggregator) this.right.findAggregator(query);
+	if(this.right.findAggregator){
+		this.right.findAggregator(query);
+	}
 };
 
-yy.UniOp.prototype.toType = function(tableid) {
-	if(this.op == '-') return 'number';
-	if(this.op == '+') return 'number';
-	if(this.op == 'NOT') return 'boolean';
+yy.UniOp.prototype.toType = function() {
+	if(this.op === '-'){
+		return 'number';
+	}
+
+	if(this.op === '+'){
+		return 'number';
+	}
+
+	if(this.op === 'NOT'){ 
+		return 'boolean';
+	}
+
+	// Todo: implement default case
 };
 
 yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
-	if(this.op == '-') return "(-("+this.right.toJS(context, tableid, defcols)+"))";
-	if(this.op == '+') return "("+this.right.toJS(context, tableid, defcols)+")";
-	if(this.op == 'NOT') return '!('+this.right.toJS(context, tableid, defcols)+')';
-	if(this.op == '#') {
+	if(this.op === '-'){
+		return "(-("+this.right.toJS(context, tableid, defcols)+"))";
+	}
+
+	if(this.op === '+'){
+		return "("+this.right.toJS(context, tableid, defcols)+")";
+	}
+
+	if(this.op === 'NOT'){
+		return '!('+this.right.toJS(context, tableid, defcols)+')';
+	}
+
+	if(this.op === '#') {
 		if(this.right instanceof yy.Column) {
 			return "(alasql.databases[alasql.useid].objects[\'"+this.right.columnid+"\'])";
 		} else {
 			return "(alasql.databases[alasql.useid].objects["
 				+this.right.toJS(context, tableid, defcols)+"])";
-		};
+		}
 	}
-	else if(this.op == null) return '('+this.right.toJS(context, tableid, defcols)+')';
+
+	// Please avoid === here	
+	if(this.op == null){ 		// jshint ignore:line
+		return '('+this.right.toJS(context, tableid, defcols)+')';
+	}
+
+	// Todo: implement default case.
 };
 
 
@@ -684,13 +731,13 @@ yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
 yy.Column = function(params) { return yy.extend(this, params); }
 yy.Column.prototype.toString = function() {
 	var s;
-	if(this.columnid == +this.columnid) {
+	if(this.columnid === +this.columnid) {
 		s = '['+this.columnid+']';
 	} else {
 		s = this.columnid;
 	}
 	if(this.tableid) {
-		if(+this.columnid == this.columnid) {
+		if(+this.columnid === this.columnid) {
 			s = this.tableid+s;
 		} else {
 			s = this.tableid+'.'+s;
@@ -722,27 +769,27 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 //console.log(523, arguments);
 
 	var s = '';
-	if(!this.tableid && tableid == '' && !defcols) {
-		if(this.columnid != '_') {
+	if(!this.tableid && tableid === '' && !defcols) {
+		if(this.columnid !== '_') {
 			s = context+'[\''+this.columnid+'\']';
 		} else {
-			if(context == 'g') {
+			if(context === 'g') {
 				s = 'g[\'_\']';						
 			} else {
 				s = context;
 			}
 		}
 	} else {
-		if(context == 'g') {
+		if(context === 'g') {
 			// if(this.columnid == '_') {
 			// } else {
 				s = 'g[\''+this.nick+'\']';						
 			// }
 		} else if(this.tableid) {
-			if(this.columnid != '_') {
+			if(this.columnid !== '_') {
 				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
 			} else {
-				if(context == 'g') {
+				if(context === 'g') {
 					s = 'g[\'_\']';						
 				} else {
 					s = context+'[\''+(this.tableid) + '\']';
@@ -750,29 +797,29 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 			}
 		} else if(defcols) {
 			var tbid = defcols[this.columnid];
-			if(tbid == '-') {
+			if(tbid === '-') {
 				throw new Error('Cannot resolve column "'+this.columnid+'" because it exists in two source tables');
 			} else if(tbid) {
-				if(this.columnid != '_') {
+				if(this.columnid !== '_') {
 					s = context+'[\''+(tbid) + '\'][\''+this.columnid+'\']';
 				} else {
 					s = context+'[\''+(tbid) + '\']';
-				};
+				}
 			} else {
-				if(this.columnid != '_') {
+				if(this.columnid !== '_') {
 					s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 				} else {
 					s = context+'[\''+(this.tableid || tableid) + '\']';
-				};
+				}
 			}
-		} else if(tableid == -1) {
+		} else if(tableid === -1) {
 //			if(this.columnid != '') {
 				s = context+'[\''+this.columnid+'\']';
 //			} else {
 //				s = context;				
 //			}
 		} else {
-			if(this.columnid != '_') {
+			if(this.columnid !== '_') {
 				s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
 			} else {
 				s = context+'[\''+(this.tableid || tableid) + '\']';
@@ -790,12 +837,25 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
 	var s = '';
-	if(this.aggregatorid == 'REDUCE') s += L(this.funcid)+'(';
-	else s += this.aggregatorid+'(';
-	if(this.distinct) s+= K('DISTINCT')+' ';
-	if(this.expression) s += this.expression.toString();
+	if(this.aggregatorid === 'REDUCE'){
+		s += L(this.funcid)+'(';
+	} else{
+		s += this.aggregatorid+'(';
+	}
+
+	if(this.distinct){
+		s+= K('DISTINCT')+' ';
+	}
+
+	if(this.expression){
+		s += this.expression.toString();
+	}
+
 	s += ')';
-	if(this.over) s += ' '+this.over.toString(); 
+
+	if(this.over){
+		s += ' '+this.over.toString();
+	} 
 //	console.log(this.over);
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
@@ -839,15 +899,17 @@ yy.AggrValue.prototype.findAggregator = function (query){
 			this.nick = colas;
 			var found = false;
 			for(var i=0;i<query.removeKeys.length;i++){
-				if(query.removeKeys[i]==colas) {
+				if(query.removeKeys[i]===colas) {
 					found = true;
 					break;
 				}
-			};
-			if(!found) query.removeKeys.push(colas);
-		};
+			}
+			if(!found){
+				query.removeKeys.push(colas);
+			}
+		}
 		query.selectGroup.push(this);
-	};
+	}
 //	console.log(query.selectGroup);
 
 
@@ -856,10 +918,22 @@ yy.AggrValue.prototype.findAggregator = function (query){
 };
 
 yy.AggrValue.prototype.toType = function() {
-	if(['SUM','COUNT','AVG','MIN', 'MAX','AGGR','VAR','STDDEV'].indexOf(this.aggregatorid)>-1) return 'number';
-	if(['ARRAY'].indexOf(this.aggregatorid)>-1) return 'array';
-	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
+	if(['SUM','COUNT','AVG','MIN', 'MAX','AGGR','VAR','STDDEV'].indexOf(this.aggregatorid)>-1){
+		return 'number';
+	}
+
+	if(['ARRAY'].indexOf(this.aggregatorid)>-1){
+		return 'array';
+	}
+
+	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1){
+		return this.expression.toType();
+	}
+
+	// todo: implement default;
 }
+
+
 yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJS(context, tableid);

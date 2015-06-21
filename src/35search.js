@@ -8,57 +8,6 @@
 //
 */
 
-/**	
-	Search class
-	@class
-	@example
-	SEARCH SUM(/a) FROM ? -- search over parameter object
-*/
-
-yy.Search = function (params) { return yy.extend(this, params); }
-yy.Search.prototype.toString = function () {
-	var s = K('SEARCH') + ' ';
-	if (this.selectors){
-		s += this.selectors.toString();
-	}
-	if (this.from){
-		s += K('FROM') + ' ' + this.from.toString();
-	}
-//console.log(s);
-	return s;
-};
-
-yy.Search.prototype.toJS = function(context /*, tableid, defcols*/) {
-//		console.log('yy.CreateVertex.toJS');
-	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
-	// var s = '';
-	return s;
-};
-
-yy.Search.prototype.compile = function(databaseid) {
-	var dbid = databaseid;
-	var self = this;
-
-	var statement = function(params,cb){
-				// console.log(31,self);
-				// console.log(32,arguments);
-		var res;
-		doSearch.bind(self)(dbid,params,function(data){
-			// console.log(35,data);
-			res = modify(statement.query,data);
-			// console.log(37,data);
-			if(cb){
-				res = cb(res);
-			}
-		});
-			// console.log(39,res);
-//		if(cb) res = cb(res);
-		return res;
-	};
-	statement.query = {};
-	return statement;
-};
-
 
 function doSearch(databaseid, params, cb) {
 	var res;
@@ -66,108 +15,8 @@ function doSearch(databaseid, params, cb) {
 	var fromdata;
 	var selectors = cloneDeep(this.selectors);
 
-	if(selectors !== undefined && selectors.length > 0) {
 
-//			console.log(selectors[0].args[0].toUpperCase());
-		if(selectors && selectors[0] && selectors[0].srchid === 'PROP' && selectors[0].args && selectors[0].args[0]) {
-//			console.log(selectors[0].args[0]);
-			if(selectors[0].args[0].toUpperCase() === 'XML') {
-				stope.mode = 'XML';
-				selectors.shift();
-			} else if(selectors[0].args[0].toUpperCase() === 'HTML') {
-				stope.mode = 'HTML';
-				selectors.shift();
-			} else if(selectors[0].args[0].toUpperCase() === 'JSON') {
-				stope.mode = 'JSON';
-				selectors.shift();
-			}
-		}
-		if(selectors.length > 0 && selectors[0].srchid === 'VALUE') {
-			stope.value = true;
-			selectors.shift();
-		}
-	}
 
-	
-	if(this.from instanceof yy.Column) {
-		var dbid = this.from.databaseid || databaseid;
-		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
-		//selectors.unshift({srchid:'CHILD'});
-	} else if(
-				this.from instanceof yy.FuncValue &&				 
-				alasql.from[this.from.funcid.toUpperCase()]
-			) {
-		var args = this.from.args.map(function(arg){
-		var as = arg.toJS();
-//			console.log(as);
-		var fn = new Function('params,alasql','var y;return '+as).bind(this);
-		return fn(params,alasql);
-		});
-//		console.log(args);
-		fromdata = alasql.from[this.from.funcid.toUpperCase()].apply(this,args);
-//		console.log(92,fromdata);
-	} else if(typeof this.from === 'undefined') {
-		fromdata = alasql.databases[databaseid].objects;
-	} else {
-		var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
-		fromdata = fromfn(params,alasql);			
-		// Check for Mogo Collections
-		if(
-			typeof Mongo === 'object' && typeof Mongo.Collection !== 'object' && 
-			fromdata instanceof Mongo.Collection
-		) {
-			fromdata = fromdata.find().fetch();
-		}
-//console.log(selectors,fromdata);
-//		if(typeof fromdata == 'object' && fromdata instanceof Array) {
-//			selectors.unshift({srchid:'CHILD'});					
-//		}
-	}
-	
-	// If source data is array than first step is to run over array
-//	var selidx = 0;
-//	var selvalue = fromdata;
-	
-	if(selectors !== undefined && selectors.length > 0) {
-		// Init variables for TO() selectors
-
-		if(false) {
-			selectors.forEach(function(selector){
-				if(selector.srchid === 'TO') {  //* @todo move to TO selector
-					alasql.vars[selector.args[0]] = [];
-					// TODO - process nested selectors
-				}
-			});
-		}
-
-		res = processSelector(selectors,0,fromdata);
-	} else {
-		res = fromdata; 	
-	}
-	
-	if(this.into) {
-		var a1,a2;
-		if(typeof this.into.args[0] !== 'undefined') {
-			a1 = 
-				new Function('params,alasql','var y;return ' +
-				this.into.args[0].toJS())(params,alasql);
-		}
-		if(typeof this.into.args[1] !== 'undefined') {
-			a2 =  
-				new Function('params,alasql','var y;return ' +
-				this.into.args[1].toJS())(params,alasql);
-		}
-		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
-	} else {
-		if(stope.value && res.length > 0){
-			res = res[0];
-		}
-		if (cb){
-			res = cb(res);
-		}
-	}
-	return res;
-	
 	function processSelector(selectors,sidx,value) {
 //		var val;
 /*		if(sidx == 0) {
@@ -192,6 +41,7 @@ function doSearch(databaseid, params, cb) {
 		var 
 			val,	// temp values use many places
 			nest, 	// temp value used many places
+			r,		// temp value used many places
 			sel = selectors[sidx];
 //		console.log(sel);
 //		if(!alasql.srch[sel.srchid]) {
@@ -259,7 +109,7 @@ function doSearch(databaseid, params, cb) {
 				}
 			} else if(sel.selid === 'DISTINCT') {
 				var nest;
-				if(typeof sel.args === 'undefined' || sel.args.length == 0) {
+				if(typeof sel.args === 'undefined' || sel.args.length === 0) {
 					nest = distinctArray(value);
 				} else {
 					nest = processSelector(sel.args,0,value);
@@ -652,9 +502,7 @@ alasql.srch.TO = function(val,args) {
 //					console.log('nest',nest,'nests',nests);
 					nests = nests.concat(nest);
 
-					if(sidx+1+1 > selectors.length) {
-						//return nests;
-					} else {
+					if(sidx+1+1 <= selectors.length) {
 						nest.forEach(function(n){
 							retval = retval.concat(processSelector(selectors,sidx+1,n));
 						});
@@ -663,7 +511,7 @@ alasql.srch.TO = function(val,args) {
 					// Security brake
 					i++;
 					if(i>SECURITY_BREAK) {
-						throw new Error('Security brake. Number of iterations = '+i);
+						throw new Error('Loop brake. Number of iterations = '+i);
 					}
 				}
 
@@ -672,9 +520,7 @@ alasql.srch.TO = function(val,args) {
 				var retval = [];
 				retval = retval.concat(processSelector(selectors,sidx+1,value))
 				var nest = processSelector(sel.args,0,value);
-				if(sidx+1+1 > selectors.length) {
-					//return nests;
-				} else {
+				if(sidx+1+1 <= selectors.length) {
 					nest.forEach(function(n){
 						retval = retval.concat(processSelector(selectors,sidx+1,n));
 					});
@@ -713,7 +559,7 @@ alasql.srch.TO = function(val,args) {
 //		console.log(356,sidx,r);
 		if(typeof r === 'undefined') {
 			r = {status: 1, values: [value]};
-		};
+		}
 
 		var res = [];
 		if(r.status === 1) {
@@ -733,7 +579,165 @@ alasql.srch.TO = function(val,args) {
 		}
 		return res;
 	}
+
+
+	if(selectors !== undefined && selectors.length > 0) {
+
+//			console.log(selectors[0].args[0].toUpperCase());
+		if(selectors && selectors[0] && selectors[0].srchid === 'PROP' && selectors[0].args && selectors[0].args[0]) {
+//			console.log(selectors[0].args[0]);
+			if(selectors[0].args[0].toUpperCase() === 'XML') {
+				stope.mode = 'XML';
+				selectors.shift();
+			} else if(selectors[0].args[0].toUpperCase() === 'HTML') {
+				stope.mode = 'HTML';
+				selectors.shift();
+			} else if(selectors[0].args[0].toUpperCase() === 'JSON') {
+				stope.mode = 'JSON';
+				selectors.shift();
+			}
+		}
+		if(selectors.length > 0 && selectors[0].srchid === 'VALUE') {
+			stope.value = true;
+			selectors.shift();
+		}
+	}
+
+	
+	if(this.from instanceof yy.Column) {
+		var dbid = this.from.databaseid || databaseid;
+		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
+		//selectors.unshift({srchid:'CHILD'});
+	} else if(
+				this.from instanceof yy.FuncValue &&				 
+				alasql.from[this.from.funcid.toUpperCase()]
+			) {
+		var args = this.from.args.map(function(arg){
+		var as = arg.toJS();
+//			console.log(as);
+		var fn = new Function('params,alasql','var y;return '+as).bind(this);
+		return fn(params,alasql);
+		});
+//		console.log(args);
+		fromdata = alasql.from[this.from.funcid.toUpperCase()].apply(this,args);
+//		console.log(92,fromdata);
+	} else if(typeof this.from === 'undefined') {
+		fromdata = alasql.databases[databaseid].objects;
+	} else {
+		var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
+		fromdata = fromfn(params,alasql);			
+		// Check for Mogo Collections
+		if(
+			typeof Mongo === 'object' && typeof Mongo.Collection !== 'object' && 
+			fromdata instanceof Mongo.Collection
+		) {
+			fromdata = fromdata.find().fetch();
+		}
+//console.log(selectors,fromdata);
+//		if(typeof fromdata == 'object' && fromdata instanceof Array) {
+//			selectors.unshift({srchid:'CHILD'});					
+//		}
+	}
+	
+	// If source data is array than first step is to run over array
+//	var selidx = 0;
+//	var selvalue = fromdata;
+	
+	if(selectors !== undefined && selectors.length > 0) {
+		// Init variables for TO() selectors
+
+		if(false) {
+			selectors.forEach(function(selector){
+				if(selector.srchid === 'TO') {  //* @todo move to TO selector
+					alasql.vars[selector.args[0]] = [];
+					// TODO - process nested selectors
+				}
+			});
+		}
+
+		res = processSelector(selectors,0,fromdata);
+	} else {
+		res = fromdata; 	
+	}
+	
+	if(this.into) {
+		var a1,a2;
+		if(typeof this.into.args[0] !== 'undefined') {
+			a1 = 
+				new Function('params,alasql','var y;return ' +
+				this.into.args[0].toJS())(params,alasql);
+		}
+		if(typeof this.into.args[1] !== 'undefined') {
+			a2 =  
+				new Function('params,alasql','var y;return ' +
+				this.into.args[1].toJS())(params,alasql);
+		}
+		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
+	} else {
+		if(stope.value && res.length > 0){
+			res = res[0];
+		}
+		if (cb){
+			res = cb(res);
+		}
+	}
+	return res;
+	
+}
+
+
+/**	
+	Search class
+	@class
+	@example
+	SEARCH SUM(/a) FROM ? -- search over parameter object
+*/
+
+yy.Search = function (params) { return yy.extend(this, params); }
+
+yy.Search.prototype.toString = function () {
+	var s = K('SEARCH') + ' ';
+	if (this.selectors){
+		s += this.selectors.toString();
+	}
+	if (this.from){
+		s += K('FROM') + ' ' + this.from.toString();
+	}
+//console.log(s);
+	return s;
 };
+
+yy.Search.prototype.toJS = function(context) {
+//		console.log('yy.CreateVertex.toJS');
+	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
+	// var s = '';
+	return s;
+};
+
+yy.Search.prototype.compile = function(databaseid) {
+	var dbid = databaseid;
+	var self = this;
+
+	var statement = function(params,cb){
+				// console.log(31,self);
+				// console.log(32,arguments);
+		var res;
+		doSearch.bind(self)(dbid,params,function(data){
+			// console.log(35,data);
+			res = modify(statement.query,data);
+			// console.log(37,data);
+			if(cb){
+				res = cb(res);
+			}
+		});
+			// console.log(39,res);
+//		if(cb) res = cb(res);
+		return res;
+	};
+	statement.query = {};
+	return statement;
+};
+
 
 // List of search functions
 alasql.srch = {};
@@ -743,7 +747,7 @@ alasql.srch.PROP = function(val,args,stope) {
 	if(stope.mode === 'XML') {
 		var arr = [];
 		val.children.forEach(function(v){
-			if(v.name.toUpperCase() == args[0].toUpperCase()) {
+			if(v.name.toUpperCase() === args[0].toUpperCase()) {
 				arr.push(v)
 			}
 		});
@@ -766,7 +770,7 @@ alasql.srch.PROP = function(val,args,stope) {
 	}
 };
 
-alasql.srch.APROP = function(val,args,stope) {
+alasql.srch.APROP = function(val, args) {
 	if(
 		(typeof val !== 'object') 	|| 
 		(val === null)				||
@@ -778,11 +782,6 @@ alasql.srch.APROP = function(val,args,stope) {
 	}		
 };
 
-alasql.srch.ORDERBY = function(val,args,stope) {
-//	console.log(val);
-	var res = val.sort(compileSearchOrder(args));
-	return {status: 1, values: res};
-};
 
 // Test expression
 alasql.srch.EQ = function(val,args,stope,params) {
@@ -816,7 +815,7 @@ alasql.srch.ATTR = function(val,args,stope) {
 			if(
 				typeof val === 'object' 			&& 
 				typeof val.attributes === 'object'	&&
-				typeof val.attributes[args[0]] != 'undefined'
+				typeof val.attributes[args[0]] !== 'undefined'
 			){
 				return {status: 1, values: [val.attributes[args[0]]]};
 			} else {
@@ -836,7 +835,7 @@ alasql.srch.CONTENT = function(val,args,stope) {
 	}
 };
 
-alasql.srch.SHARP = function(val,args,stope) {
+alasql.srch.SHARP = function(val,args) {
 	var obj = alasql.databases[alasql.useid].objects[args[0]];
 	if(typeof val !== 'undefined' && val === obj) {
 		return {status: 1, values: [val]};
@@ -846,9 +845,9 @@ alasql.srch.SHARP = function(val,args,stope) {
 };
 
 
-alasql.srch.PARENT = function(val,args,stope) {
-	// TODO - finish
-	console.log('PARENT');
+alasql.srch.PARENT = function(/*val,args,stope*/) {
+	// TODO: implement
+	console.log('PARENT not implemented');
 	return {status: -1, values: []};
 };
 
@@ -872,7 +871,7 @@ alasql.srch.CHILD = function(val,args,stope) {
 };
 
 // Return all keys
-alasql.srch.KEYS = function(val,args) {
+alasql.srch.KEYS = function(val) {
   if(typeof val === 'object' && val !== null) {
 	  return {status: 1, values: Object.keys(val)};          
   } else {
@@ -912,7 +911,7 @@ alasql.srch.CLASS = function(val,args) {
 
 
 // Transform expression
-alasql.srch.VERTEX = function(val,args) {
+alasql.srch.VERTEX = function(val) {
   if(val.$node === 'VERTEX') {
     return {status: 1, values: [val]};
   } else {
@@ -931,7 +930,7 @@ alasql.srch.INSTANCEOF = function(val,args) {
 
 
 // Transform expression
-alasql.srch.EDGE = function(val,args) {
+alasql.srch.EDGE = function(val ) {
   if(val.$node === 'EDGE') {
     return {status: 1, values: [val]};
   } else {
@@ -954,7 +953,9 @@ alasql.srch.RETURN = function(val,args,stope,params) {
 		args.forEach(function(arg){
 		  	var exprs = arg.toJS('x','');
   			var exprfn = new Function('x,alasql,params','return '+exprs);
-  			if(typeof arg.as == 'undefined') arg.as = arg.toString();
+  			if(typeof arg.as === 'undefined'){
+  				arg.as = arg.toString();
+  			}
   			res[arg.as] = exprfn(val,alasql,params);
 		});
 	}
@@ -963,12 +964,12 @@ alasql.srch.RETURN = function(val,args,stope,params) {
 
 
 // Transform expression
-alasql.srch.REF = function(val,args) {
+alasql.srch.REF = function(val ) {
   return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
 };
 
 // Transform expression
-alasql.srch.OUT = function(val,args) {
+alasql.srch.OUT = function(val ) {
 	if(val.$out && val.$out.length > 0) {
 		var res = val.$out.map(function(v){ 
 			return alasql.databases[alasql.useid].objects[v]
@@ -980,7 +981,7 @@ alasql.srch.OUT = function(val,args) {
 };
 
 // Transform expression
-alasql.srch.IN = function(val,args) {
+alasql.srch.IN = function(val) {
 	if(val.$in && val.$in.length > 0) {
 		var res = val.$in.map(function(v){ 
 			return alasql.databases[alasql.useid].objects[v]
@@ -1005,10 +1006,10 @@ alasql.srch.AT = function(val,args) {
 
 
 // Transform expression
-alasql.srch.CLONEDEEP = function(val,args) {
+alasql.srch.CLONEDEEP = function(val) {
 	// TODO something wrong
 	var z = cloneDeep(val);
-  return {status: 1, values: [z]};
+ 	return {status: 1, values: [z]};
 };
 
 // // Transform expression
@@ -1053,13 +1054,12 @@ alasql.srch.ROW = function(val,args,stope,params) {
 };
 
 
-alasql.srch.D3 = function(val,args,stope,params) {
-	if(val.$node === 'VERTEX') {
-//		var res = val;
-	} else if(val.$node === 'EDGE') {
+alasql.srch.D3 = function(val) {
+	if(val.$node !== 'VERTEX' && val.$node === 'EDGE') {
 		val.source = val.$in[0];
 		val.target = val.$out[0];
 	}
+
   	return {status: 1, values: [val]};
 };
 
@@ -1090,7 +1090,7 @@ var compileSearchOrder = function (order) {
 
 		var s = '';
 		var sk = '';
-		order.forEach(function(ord,idx){
+		order.forEach(function(ord){
 			// console.log(ord instanceof yy.Expression);
 			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
@@ -1124,7 +1124,9 @@ var compileSearchOrder = function (order) {
 			} else {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
-				if(ord.nocase) dg += '.toUpperCase()';
+				if(ord.nocase){
+					dg += '.toUpperCase()';
+				}
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
 			}			
@@ -1140,6 +1142,12 @@ var compileSearchOrder = function (order) {
 //console.log(s);
 		return new Function('a,b',s);
 	}
+};
+
+alasql.srch.ORDERBY = function(val,args /*,stope*/) {
+//	console.log(val);
+	var res = val.sort(compileSearchOrder(args));
+	return {status: 1, values: res};
 };
 
 
