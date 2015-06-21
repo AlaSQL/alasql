@@ -8,57 +8,6 @@
 //
 */
 
-/**	
-	Search class
-	@class
-	@example
-	SEARCH SUM(/a) FROM ? -- search over parameter object
-*/
-
-yy.Search = function (params) { return yy.extend(this, params); }
-yy.Search.prototype.toString = function () {
-	var s = K('SEARCH') + ' ';
-	if (this.selectors){
-		s += this.selectors.toString();
-	}
-	if (this.from){
-		s += K('FROM') + ' ' + this.from.toString();
-	}
-//console.log(s);
-	return s;
-};
-
-yy.Search.prototype.toJS = function(context /*, tableid, defcols*/) {
-//		console.log('yy.CreateVertex.toJS');
-	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
-	// var s = '';
-	return s;
-};
-
-yy.Search.prototype.compile = function(databaseid) {
-	var dbid = databaseid;
-	var self = this;
-
-	var statement = function(params,cb){
-				// console.log(31,self);
-				// console.log(32,arguments);
-		var res;
-		doSearch.bind(self)(dbid,params,function(data){
-			// console.log(35,data);
-			res = modify(statement.query,data);
-			// console.log(37,data);
-			if(cb){
-				res = cb(res);
-			}
-		});
-			// console.log(39,res);
-//		if(cb) res = cb(res);
-		return res;
-	};
-	statement.query = {};
-	return statement;
-};
-
 
 function doSearch(databaseid, params, cb) {
 	var res;
@@ -66,108 +15,8 @@ function doSearch(databaseid, params, cb) {
 	var fromdata;
 	var selectors = cloneDeep(this.selectors);
 
-	if(selectors !== undefined && selectors.length > 0) {
 
-//			console.log(selectors[0].args[0].toUpperCase());
-		if(selectors && selectors[0] && selectors[0].srchid === 'PROP' && selectors[0].args && selectors[0].args[0]) {
-//			console.log(selectors[0].args[0]);
-			if(selectors[0].args[0].toUpperCase() === 'XML') {
-				stope.mode = 'XML';
-				selectors.shift();
-			} else if(selectors[0].args[0].toUpperCase() === 'HTML') {
-				stope.mode = 'HTML';
-				selectors.shift();
-			} else if(selectors[0].args[0].toUpperCase() === 'JSON') {
-				stope.mode = 'JSON';
-				selectors.shift();
-			}
-		}
-		if(selectors.length > 0 && selectors[0].srchid === 'VALUE') {
-			stope.value = true;
-			selectors.shift();
-		}
-	}
 
-	
-	if(this.from instanceof yy.Column) {
-		var dbid = this.from.databaseid || databaseid;
-		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
-		//selectors.unshift({srchid:'CHILD'});
-	} else if(
-				this.from instanceof yy.FuncValue &&				 
-				alasql.from[this.from.funcid.toUpperCase()]
-			) {
-		var args = this.from.args.map(function(arg){
-		var as = arg.toJS();
-//			console.log(as);
-		var fn = new Function('params,alasql','var y;return '+as).bind(this);
-		return fn(params,alasql);
-		});
-//		console.log(args);
-		fromdata = alasql.from[this.from.funcid.toUpperCase()].apply(this,args);
-//		console.log(92,fromdata);
-	} else if(typeof this.from === 'undefined') {
-		fromdata = alasql.databases[databaseid].objects;
-	} else {
-		var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
-		fromdata = fromfn(params,alasql);			
-		// Check for Mogo Collections
-		if(
-			typeof Mongo === 'object' && typeof Mongo.Collection !== 'object' && 
-			fromdata instanceof Mongo.Collection
-		) {
-			fromdata = fromdata.find().fetch();
-		}
-//console.log(selectors,fromdata);
-//		if(typeof fromdata == 'object' && fromdata instanceof Array) {
-//			selectors.unshift({srchid:'CHILD'});					
-//		}
-	}
-	
-	// If source data is array than first step is to run over array
-//	var selidx = 0;
-//	var selvalue = fromdata;
-	
-	if(selectors !== undefined && selectors.length > 0) {
-		// Init variables for TO() selectors
-
-		if(false) {
-			selectors.forEach(function(selector){
-				if(selector.srchid === 'TO') {  //* @todo move to TO selector
-					alasql.vars[selector.args[0]] = [];
-					// TODO - process nested selectors
-				}
-			});
-		}
-
-		res = processSelector(selectors,0,fromdata);
-	} else {
-		res = fromdata; 	
-	}
-	
-	if(this.into) {
-		var a1,a2;
-		if(typeof this.into.args[0] !== 'undefined') {
-			a1 = 
-				new Function('params,alasql','var y;return ' +
-				this.into.args[0].toJS())(params,alasql);
-		}
-		if(typeof this.into.args[1] !== 'undefined') {
-			a2 =  
-				new Function('params,alasql','var y;return ' +
-				this.into.args[1].toJS())(params,alasql);
-		}
-		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
-	} else {
-		if(stope.value && res.length > 0){
-			res = res[0];
-		}
-		if (cb){
-			res = cb(res);
-		}
-	}
-	return res;
-	
 	function processSelector(selectors,sidx,value) {
 //		var val;
 /*		if(sidx == 0) {
@@ -192,6 +41,7 @@ function doSearch(databaseid, params, cb) {
 		var 
 			val,	// temp values use many places
 			nest, 	// temp value used many places
+			r,		// temp value used many places
 			sel = selectors[sidx];
 //		console.log(sel);
 //		if(!alasql.srch[sel.srchid]) {
@@ -259,7 +109,7 @@ function doSearch(databaseid, params, cb) {
 				}
 			} else if(sel.selid === 'DISTINCT') {
 				var nest;
-				if(typeof sel.args === 'undefined' || sel.args.length == 0) {
+				if(typeof sel.args === 'undefined' || sel.args.length === 0) {
 					nest = distinctArray(value);
 				} else {
 					nest = processSelector(sel.args,0,value);
@@ -733,7 +583,165 @@ alasql.srch.TO = function(val,args) {
 		}
 		return res;
 	}
+
+
+	if(selectors !== undefined && selectors.length > 0) {
+
+//			console.log(selectors[0].args[0].toUpperCase());
+		if(selectors && selectors[0] && selectors[0].srchid === 'PROP' && selectors[0].args && selectors[0].args[0]) {
+//			console.log(selectors[0].args[0]);
+			if(selectors[0].args[0].toUpperCase() === 'XML') {
+				stope.mode = 'XML';
+				selectors.shift();
+			} else if(selectors[0].args[0].toUpperCase() === 'HTML') {
+				stope.mode = 'HTML';
+				selectors.shift();
+			} else if(selectors[0].args[0].toUpperCase() === 'JSON') {
+				stope.mode = 'JSON';
+				selectors.shift();
+			}
+		}
+		if(selectors.length > 0 && selectors[0].srchid === 'VALUE') {
+			stope.value = true;
+			selectors.shift();
+		}
+	}
+
+	
+	if(this.from instanceof yy.Column) {
+		var dbid = this.from.databaseid || databaseid;
+		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
+		//selectors.unshift({srchid:'CHILD'});
+	} else if(
+				this.from instanceof yy.FuncValue &&				 
+				alasql.from[this.from.funcid.toUpperCase()]
+			) {
+		var args = this.from.args.map(function(arg){
+		var as = arg.toJS();
+//			console.log(as);
+		var fn = new Function('params,alasql','var y;return '+as).bind(this);
+		return fn(params,alasql);
+		});
+//		console.log(args);
+		fromdata = alasql.from[this.from.funcid.toUpperCase()].apply(this,args);
+//		console.log(92,fromdata);
+	} else if(typeof this.from === 'undefined') {
+		fromdata = alasql.databases[databaseid].objects;
+	} else {
+		var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
+		fromdata = fromfn(params,alasql);			
+		// Check for Mogo Collections
+		if(
+			typeof Mongo === 'object' && typeof Mongo.Collection !== 'object' && 
+			fromdata instanceof Mongo.Collection
+		) {
+			fromdata = fromdata.find().fetch();
+		}
+//console.log(selectors,fromdata);
+//		if(typeof fromdata == 'object' && fromdata instanceof Array) {
+//			selectors.unshift({srchid:'CHILD'});					
+//		}
+	}
+	
+	// If source data is array than first step is to run over array
+//	var selidx = 0;
+//	var selvalue = fromdata;
+	
+	if(selectors !== undefined && selectors.length > 0) {
+		// Init variables for TO() selectors
+
+		if(false) {
+			selectors.forEach(function(selector){
+				if(selector.srchid === 'TO') {  //* @todo move to TO selector
+					alasql.vars[selector.args[0]] = [];
+					// TODO - process nested selectors
+				}
+			});
+		}
+
+		res = processSelector(selectors,0,fromdata);
+	} else {
+		res = fromdata; 	
+	}
+	
+	if(this.into) {
+		var a1,a2;
+		if(typeof this.into.args[0] !== 'undefined') {
+			a1 = 
+				new Function('params,alasql','var y;return ' +
+				this.into.args[0].toJS())(params,alasql);
+		}
+		if(typeof this.into.args[1] !== 'undefined') {
+			a2 =  
+				new Function('params,alasql','var y;return ' +
+				this.into.args[1].toJS())(params,alasql);
+		}
+		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
+	} else {
+		if(stope.value && res.length > 0){
+			res = res[0];
+		}
+		if (cb){
+			res = cb(res);
+		}
+	}
+	return res;
+	
+}
+
+
+/**	
+	Search class
+	@class
+	@example
+	SEARCH SUM(/a) FROM ? -- search over parameter object
+*/
+
+yy.Search = function (params) { return yy.extend(this, params); }
+
+yy.Search.prototype.toString = function () {
+	var s = K('SEARCH') + ' ';
+	if (this.selectors){
+		s += this.selectors.toString();
+	}
+	if (this.from){
+		s += K('FROM') + ' ' + this.from.toString();
+	}
+//console.log(s);
+	return s;
 };
+
+yy.Search.prototype.toJS = function(context /*, tableid, defcols*/) {
+//		console.log('yy.CreateVertex.toJS');
+	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
+	// var s = '';
+	return s;
+};
+
+yy.Search.prototype.compile = function(databaseid) {
+	var dbid = databaseid;
+	var self = this;
+
+	var statement = function(params,cb){
+				// console.log(31,self);
+				// console.log(32,arguments);
+		var res;
+		doSearch.bind(self)(dbid,params,function(data){
+			// console.log(35,data);
+			res = modify(statement.query,data);
+			// console.log(37,data);
+			if(cb){
+				res = cb(res);
+			}
+		});
+			// console.log(39,res);
+//		if(cb) res = cb(res);
+		return res;
+	};
+	statement.query = {};
+	return statement;
+};
+
 
 // List of search functions
 alasql.srch = {};
