@@ -502,9 +502,7 @@ alasql.srch.TO = function(val,args) {
 //					console.log('nest',nest,'nests',nests);
 					nests = nests.concat(nest);
 
-					if(sidx+1+1 > selectors.length) {
-						//return nests;
-					} else {
+					if(sidx+1+1 <= selectors.length) {
 						nest.forEach(function(n){
 							retval = retval.concat(processSelector(selectors,sidx+1,n));
 						});
@@ -513,7 +511,7 @@ alasql.srch.TO = function(val,args) {
 					// Security brake
 					i++;
 					if(i>SECURITY_BREAK) {
-						throw new Error('Security brake. Number of iterations = '+i);
+						throw new Error('Loop brake. Number of iterations = '+i);
 					}
 				}
 
@@ -522,9 +520,7 @@ alasql.srch.TO = function(val,args) {
 				var retval = [];
 				retval = retval.concat(processSelector(selectors,sidx+1,value))
 				var nest = processSelector(sel.args,0,value);
-				if(sidx+1+1 > selectors.length) {
-					//return nests;
-				} else {
+				if(sidx+1+1 <= selectors.length) {
 					nest.forEach(function(n){
 						retval = retval.concat(processSelector(selectors,sidx+1,n));
 					});
@@ -563,7 +559,7 @@ alasql.srch.TO = function(val,args) {
 //		console.log(356,sidx,r);
 		if(typeof r === 'undefined') {
 			r = {status: 1, values: [value]};
-		};
+		}
 
 		var res = [];
 		if(r.status === 1) {
@@ -711,7 +707,7 @@ yy.Search.prototype.toString = function () {
 	return s;
 };
 
-yy.Search.prototype.toJS = function(context /*, tableid, defcols*/) {
+yy.Search.prototype.toJS = function(context) {
 //		console.log('yy.CreateVertex.toJS');
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	// var s = '';
@@ -751,7 +747,7 @@ alasql.srch.PROP = function(val,args,stope) {
 	if(stope.mode === 'XML') {
 		var arr = [];
 		val.children.forEach(function(v){
-			if(v.name.toUpperCase() == args[0].toUpperCase()) {
+			if(v.name.toUpperCase() === args[0].toUpperCase()) {
 				arr.push(v)
 			}
 		});
@@ -774,7 +770,7 @@ alasql.srch.PROP = function(val,args,stope) {
 	}
 };
 
-alasql.srch.APROP = function(val,args,stope) {
+alasql.srch.APROP = function(val, args) {
 	if(
 		(typeof val !== 'object') 	|| 
 		(val === null)				||
@@ -786,11 +782,6 @@ alasql.srch.APROP = function(val,args,stope) {
 	}		
 };
 
-alasql.srch.ORDERBY = function(val,args,stope) {
-//	console.log(val);
-	var res = val.sort(compileSearchOrder(args));
-	return {status: 1, values: res};
-};
 
 // Test expression
 alasql.srch.EQ = function(val,args,stope,params) {
@@ -824,7 +815,7 @@ alasql.srch.ATTR = function(val,args,stope) {
 			if(
 				typeof val === 'object' 			&& 
 				typeof val.attributes === 'object'	&&
-				typeof val.attributes[args[0]] != 'undefined'
+				typeof val.attributes[args[0]] !== 'undefined'
 			){
 				return {status: 1, values: [val.attributes[args[0]]]};
 			} else {
@@ -844,7 +835,7 @@ alasql.srch.CONTENT = function(val,args,stope) {
 	}
 };
 
-alasql.srch.SHARP = function(val,args,stope) {
+alasql.srch.SHARP = function(val,args) {
 	var obj = alasql.databases[alasql.useid].objects[args[0]];
 	if(typeof val !== 'undefined' && val === obj) {
 		return {status: 1, values: [val]};
@@ -854,9 +845,9 @@ alasql.srch.SHARP = function(val,args,stope) {
 };
 
 
-alasql.srch.PARENT = function(val,args,stope) {
-	// TODO - finish
-	console.log('PARENT');
+alasql.srch.PARENT = function(/*val,args,stope*/) {
+	// TODO: implement
+	console.log('PARENT not implemented');
 	return {status: -1, values: []};
 };
 
@@ -880,7 +871,7 @@ alasql.srch.CHILD = function(val,args,stope) {
 };
 
 // Return all keys
-alasql.srch.KEYS = function(val,args) {
+alasql.srch.KEYS = function(val) {
   if(typeof val === 'object' && val !== null) {
 	  return {status: 1, values: Object.keys(val)};          
   } else {
@@ -920,7 +911,7 @@ alasql.srch.CLASS = function(val,args) {
 
 
 // Transform expression
-alasql.srch.VERTEX = function(val,args) {
+alasql.srch.VERTEX = function(val) {
   if(val.$node === 'VERTEX') {
     return {status: 1, values: [val]};
   } else {
@@ -939,7 +930,7 @@ alasql.srch.INSTANCEOF = function(val,args) {
 
 
 // Transform expression
-alasql.srch.EDGE = function(val,args) {
+alasql.srch.EDGE = function(val ) {
   if(val.$node === 'EDGE') {
     return {status: 1, values: [val]};
   } else {
@@ -962,7 +953,9 @@ alasql.srch.RETURN = function(val,args,stope,params) {
 		args.forEach(function(arg){
 		  	var exprs = arg.toJS('x','');
   			var exprfn = new Function('x,alasql,params','return '+exprs);
-  			if(typeof arg.as == 'undefined') arg.as = arg.toString();
+  			if(typeof arg.as === 'undefined'){
+  				arg.as = arg.toString();
+  			}
   			res[arg.as] = exprfn(val,alasql,params);
 		});
 	}
@@ -971,12 +964,12 @@ alasql.srch.RETURN = function(val,args,stope,params) {
 
 
 // Transform expression
-alasql.srch.REF = function(val,args) {
+alasql.srch.REF = function(val ) {
   return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
 };
 
 // Transform expression
-alasql.srch.OUT = function(val,args) {
+alasql.srch.OUT = function(val ) {
 	if(val.$out && val.$out.length > 0) {
 		var res = val.$out.map(function(v){ 
 			return alasql.databases[alasql.useid].objects[v]
@@ -988,7 +981,7 @@ alasql.srch.OUT = function(val,args) {
 };
 
 // Transform expression
-alasql.srch.IN = function(val,args) {
+alasql.srch.IN = function(val) {
 	if(val.$in && val.$in.length > 0) {
 		var res = val.$in.map(function(v){ 
 			return alasql.databases[alasql.useid].objects[v]
@@ -1013,10 +1006,10 @@ alasql.srch.AT = function(val,args) {
 
 
 // Transform expression
-alasql.srch.CLONEDEEP = function(val,args) {
+alasql.srch.CLONEDEEP = function(val) {
 	// TODO something wrong
 	var z = cloneDeep(val);
-  return {status: 1, values: [z]};
+ 	return {status: 1, values: [z]};
 };
 
 // // Transform expression
@@ -1061,13 +1054,12 @@ alasql.srch.ROW = function(val,args,stope,params) {
 };
 
 
-alasql.srch.D3 = function(val,args,stope,params) {
-	if(val.$node === 'VERTEX') {
-//		var res = val;
-	} else if(val.$node === 'EDGE') {
+alasql.srch.D3 = function(val) {
+	if(val.$node !== 'VERTEX' && val.$node === 'EDGE') {
 		val.source = val.$in[0];
 		val.target = val.$out[0];
 	}
+
   	return {status: 1, values: [val]};
 };
 
@@ -1098,7 +1090,7 @@ var compileSearchOrder = function (order) {
 
 		var s = '';
 		var sk = '';
-		order.forEach(function(ord,idx){
+		order.forEach(function(ord){
 			// console.log(ord instanceof yy.Expression);
 			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
@@ -1132,7 +1124,9 @@ var compileSearchOrder = function (order) {
 			} else {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
-				if(ord.nocase) dg += '.toUpperCase()';
+				if(ord.nocase){
+					dg += '.toUpperCase()';
+				}
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
 			}			
@@ -1148,6 +1142,12 @@ var compileSearchOrder = function (order) {
 //console.log(s);
 		return new Function('a,b',s);
 	}
+};
+
+alasql.srch.ORDERBY = function(val,args /*,stope*/) {
+//	console.log(val);
+	var res = val.sort(compileSearchOrder(args));
+	return {status: 1, values: res};
 };
 
 
