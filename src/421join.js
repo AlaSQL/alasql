@@ -193,22 +193,22 @@ yy.Select.prototype.compileJoins = function(query) {
 			var s = "var res=alasql.from['"+js.funcid.toUpperCase()+"'](";
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat('cb,idx,query').join(',');
 			// }
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat().join(',');
 			// }
 			if(jn.args && jn.args.length>0) {
 				if(jn.args[0]) {
-					s += jn.args[0].toJavaScript('query.oldscope')+',';
+					s += jn.args[0].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
 				if(jn.args[1]) {
-					s += jn.args[1].toJavaScript('query.oldscope')+',';
+					s += jn.args[1].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
@@ -287,11 +287,11 @@ yy.Select.prototype.compileJoins = function(query) {
 		} else if(jn.on) {
 //console.log(jn.on);
 			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
-//				console.log('ix optimization', jn.on.toJavaScript('p',query.defaultTableid) );
+//				console.log('ix optimization', jn.on.toJS('p',query.defaultTableid) );
 				source.optimization = 'ix';
-			// 	source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
+			// 	source.onleftfns = jn.on.left.toJS('p',query.defaultTableid);
 			// 	source.onleftfn = new Function('p', 'return '+source.onleftfns);
-			// 	source.onrightfns = jn.on.right.toJavaScript('p',query.defaultTableid);
+			// 	source.onrightfns = jn.on.right.toJS('p',query.defaultTableid);
 			// 	source.onrightfn = new Function('p', 'return '+source.onrightfns);
 
 				var lefts = '';
@@ -299,8 +299,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				var middles = '';
 				var middlef = false;
 				// Test right and left sides
-				var ls = jn.on.left.toJavaScript('p',query.defaultTableid,query.defcols);
-				var rs = jn.on.right.toJavaScript('p',query.defaultTableid,query.defcols);
+				var ls = jn.on.left.toJS('p',query.defaultTableid,query.defcols);
+				var rs = jn.on.right.toJS('p',query.defaultTableid,query.defcols);
 
 				if((ls.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
 					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
@@ -332,11 +332,11 @@ yy.Select.prototype.compileJoins = function(query) {
 //				console.log(alias, 2,lefts, rights, middlef);
 
 				if(middlef) {
-//					middles = jn.on.toJavaScript('p',query.defaultTableid);
+//					middles = jn.on.toJS('p',query.defaultTableid);
 //				} else {
 					rights = '';
 					lefts = '';
-					middles = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
+					middles = jn.on.toJS('p',query.defaultTableid,query.defcols);
 					source.optimization = 'no';
 					// What to here?
 				} 
@@ -358,8 +358,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.optimization = 'no';
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
-				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
-				source.onmiddlefn = new Function('p,params,alasql','var y;return '+jn.on.toJavaScript('p',query.defaultTableid,query.defcols));
+				source.onmiddlefns = jn.on.toJS('p',query.defaultTableid,query.defcols);
+				source.onmiddlefn = new Function('p,params,alasql','var y;return '+jn.on.toJS('p',query.defaultTableid,query.defcols));
 			};
 //			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 

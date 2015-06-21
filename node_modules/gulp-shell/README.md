@@ -120,6 +120,14 @@ default: 16MB(16 * 1024 * 1024)
 
 You won't need to set this option unless you encounter a "stdout maxBuffer exceeded" error.
 
+#### options.timeout
+
+type: `Number`
+
+default: undefined (no timeout)
+
+The maximum amount of time in milliseconds the process is allowed to run.
+
 #### options.env
 
 type: `Object`

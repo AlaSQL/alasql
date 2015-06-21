@@ -31,12 +31,12 @@ yy.ExpressionStatement.prototype.toString = function() {
 */
 yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
-//		console.log(this.expression.toJavaScript('','', null));
-//		console.log(this.expression.toJavaScript('','', null));
-//        console.log(this.expression.toJavaScript('({})','', null));
+//		console.log(this.expression.toJS('','', null));
+//		console.log(this.expression.toJS('','', null));
+//        console.log(this.expression.toJS('({})','', null));
 
 		alasql.precompile(this,databaseid,params); // Precompile queries
-		var exprfn =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null)).bind(this);
+		var exprfn =  new Function("params,alasql,p",'var y;return '+this.expression.toJS('({})','', null)).bind(this);
 		var res = exprfn(params,alasql);
 		if(cb) {
 			res = cb(res);
@@ -89,12 +89,12 @@ yy.Expression.prototype.findAggregator = function (query){
 	@return {string} JavaScript expression
 */
 
-yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Expression.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 	if(this.expression.reduced) {
 		return 'true';
 	}
-	return this.expression.toJavaScript(context, tableid, defcols);
+	return this.expression.toJS(context, tableid, defcols);
 };
 
 /**
@@ -111,7 +111,7 @@ yy.Expression.prototype.compile = function(context, tableid, defcols){
 	if(this.reduced) {
 		return returnTrue();
 	}
-	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 };
 
 /**
@@ -124,7 +124,7 @@ yy.JavaScript.prototype.toString = function() {
 	return s;
 };
 
-yy.JavaScript.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.JavaScript.prototype.toJS = function( /* context, tableid, defcols*/ ) {
 //	console.log('Expression',this);
 	return '('+this.value+')';
 };
@@ -171,7 +171,7 @@ yy.Join.prototype.toString = function() {
 	return s;
 };
 
-//yy.Join.prototype.toJavaScript = function(context, tableid) {
+//yy.Join.prototype.toJS = function(context, tableid) {
 //	return 'JOIN'+this.table.toString();
 //}
 
@@ -253,95 +253,170 @@ yy.Op.prototype.toType = function(tableid) {
 	if(['-','*','/','%','^'].indexOf(this.op) >-1){
 		return 'number';
 	}
-	if(this.op == '+') {
-		if(this.left.toType(tableid) == 'string' || this.right.toType(tableid) == 'string') return 'string';
-		if(this.left.toType(tableid) == 'number' || this.right.toType(tableid) == 'number') return 'number';
+	if(this.op === '+') {
+		if(this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string'){
+			return 'string';
+		}
+		if(this.left.toType(tableid) === 'number' || this.right.toType(tableid) === 'number'){ 
+			return 'number';
+		}
 	}
-	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ) return 'boolean';
-	if(this.op == 'BETWEEN' || this.op == 'NOT BETWEEN' || this.op == 'IS NULL' || this.op == 'IS NOT NULL') return 'boolean';
-	if(this.allsome) return 'boolean';
-	if(!this.op) return this.left.toType();
+	
+	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ){
+		return 'boolean';
+	}
+
+	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN' || this.op === 'IS NULL' || this.op === 'IS NOT NULL'){
+		return 'boolean';
+	}
+	
+	if(this.allsome){
+		return 'boolean';
+	}
+
+	if(!this.op){
+		return this.left.toType();
+	}
 
 	return 'unknown';
 };
 
-yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
+yy.Op.prototype.toJS = function(context,tableid,defcols) {
 //	console.log(this);
+	var s;
 	var op = this.op;
-	if(this.op == '=') op = '===';
-	else if(this.op == '<>') op = '!=';
-	else if(this.op == 'OR') op = '||';
+	var _this = this;
+	var leftJS = function(){return _this.left.toJS(context,tableid, defcols)};
+	var rightJS = function(){return _this.right.toJS(context,tableid, defcols)};
 
-	if(this.op == '->') {
+	if(this.op === '='){
+		op = '===';
+	} else if(this.op === '<>'){
+		op = '!=';
+	} else if(this.op === 'OR'){
+		op = '||';
+	}
+
+	if(this.op === '->') {
 //		console.log(this.right, typeof this.right);
-		if(typeof this.right == "string") {
-			return this.left.toJavaScript(context,tableid, defcols)+'["'+this.right+'"]';
-		} else if(typeof this.right == "number") {
-			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right+']';
+		if(typeof this.right === "string") {
+			return leftJS() +'["'+this.right+'"]';
+		
+		} else if(typeof this.right === "number") {
+			return leftJS()+'['+this.right+']';
+		
 		} else if(this.right instanceof yy.FuncValue) {
 			var ss = [];
-			if(!this.right.args || 0 === this.right.args.length) {
-			} else {
+			if(!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(function(arg){
-					return arg.toJavaScript(context,tableid, defcols);
-				});
+															return arg.toJS(context,tableid, defcols);
+														});
 			}
-			return this.left.toJavaScript(context,tableid, defcols)+'[\''+this.right.funcid+'\']('+
-				ss.join(',')+')'; 
+			return 	''
+					+ leftJS()
+					+ "['"
+					+ 	this.right.funcid
+					+ "']("
+					+ 	ss.join(',')
+					+ ')'; 
 		} else {
-			return this.left.toJavaScript(context,tableid, defcols)+'['+this.right.toJavaScript(context,tableid, defcols)+']';
+
+			return 	''
+					+ leftJS()
+					+ '['
+					+	rightJS()
+					+ ']';
 		}
 	}
 
-	if(this.op == '!') {
-		if(typeof this.right == "string") {
-			return 'alasql.databases[alasql.useid].objects['+this.left.toJavaScript(context,tableid, defcols)+']["'+this.right+'"]';
+	if(this.op === '!') {
+		if(typeof this.right === "string") {
+			return 	''
+					+ 'alasql.databases[alasql.useid].objects['
+					+ 	leftJS()
+					+ ']["'
+					+	this.right
+					+ '"]';
 		}		
 		// TODO - add other cases
 	}
 
-	if(this.op == 'IS') {
-		return '((typeof '+this.left.toJavaScript(context,tableid, defcols)+"=='undefined') == "
-			 + '(typeof '+this.right.toJavaScript(context,tableid, defcols)+"=='undefined'))";
+	if(this.op === 'IS') {
+		return 	''
+				+ '('
+				+	'(typeof ' + leftJS()  + "==='undefined')"
+				+	" === "
+				+	'(typeof ' + rightJS() + "==='undefined')"
+				+ ')';
 	}
 
 
-	if(this.op == '==') {
-		return 'alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+')';
-	}
-	if(this.op == '===') {
-		return "(("+this.left.toJavaScript(context,tableid, defcols)+").valueOf()===("+this.right.toJavaScript(context,tableid, defcols)+'.valueOf()))';
-	}
-
-	if(this.op == '!===') {
-		return "!(("+this.left.toJavaScript(context,tableid, defcols)+").valueOf()===("+this.right.toJavaScript(context,tableid, defcols)+'.valueOf()))';
+	if(this.op === '==') {
+		return 	''
+				+ 'alasql.utils.deepEqual('
+				+	leftJS()
+				+ 	','
+				+ 	rightJS()
+				+ ')';
 	}
 
 
-	if(this.op == '!==') {
-		return '(!alasql.utils.deepEqual('+this.left.toJavaScript(context,tableid, defcols)+","+this.right.toJavaScript(context,tableid, defcols)+'))';
+	if(this.op === '===' || this.op === '!===') {
+		return 	''
+				+ '('
+				+ 	( (this.op === '!===') ? '!' : '')
+				+	'('
+				+		'(' + leftJS() + ").valueOf()"
+				+ 		'==='
+				+ 		'(' + rightJS() + ").valueOf()"
+				+ 	')'
+				+ ')';
+		
 	}
 
 
-	if(this.op == 'LIKE') {
-		return "("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))";
+	if(this.op === '!==') {
+		return 	''
+				+ '(!alasql.utils.deepEqual('
+				+ 	leftJS()
+				+ 	","
+				+ 	rightJS()
+				+ '))';
 	}
 
-	if(this.op == 'NOT LIKE') {
-		return "!(("+this.left.toJavaScript(context,tableid, defcols)+"+'')"+
-		".toUpperCase().match(new RegExp('^'+("+this.right.toJavaScript(context,tableid, defcols)+").replace(/\\\%/g,'.*').toUpperCase()+'$','g')))"
+	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
+		return 	''
+				+ '('
+				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
+				+ 	'(' + leftJS()+ "+'')"
+				+ 	".toUpperCase().match(new RegExp('^'+("
+				+ 		rightJS()
+				+ 	").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
+				+ ')';
 	}
 
-	if(this.op == 'BETWEEN') {
-		return '(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
+	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
+		return 	''
+				+ '('
+				+ 	( (this.op === 'NOT BETWEEN') ? '!' : '')
+				+ 	'('
+				+ 		'('
+				+ 			this.right1.toJS(context,tableid, defcols)
+				+			'<='
+				+			leftJS()
+				+		') && ('
+				+			leftJS()
+				+			'<='
+				+			this.right2.toJS(context,tableid, defcols)
+				+		')'
+				+ 	')'		
+				+ ')';		
 
 /*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 
-			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-			'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
+			return '(('+this.right.left.toJS(context,tableid, defcols)+'<='+leftJS()+')&&'+
+			'('+leftJS()+'<='+this.right.right.toJS(context,tableid, defcols)+'))';		
 
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
@@ -349,18 +424,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 */
 	}
 
-	if(this.op == 'NOT BETWEEN') {
-		return '!(('+this.right1.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right2.toJavaScript(context,tableid, defcols)+'))';		
-
-
-		// if(this.right instanceof yy.Op && this.right.op == 'AND') {
-		// 	return '!(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+this.left.toJavaScript(context,tableid, defcols)+')&&'+
-		// 	'('+this.left.toJavaScript(context,tableid, defcols)+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
-		// } else {
-		// 	throw new Error('Wrong NOT BETWEEN operator without AND part');
-		// }
-	}
+	
 
 	if(this.op === 'IN') {
 		if(this.right instanceof yy.Select ) {
@@ -369,20 +433,20 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
 			s += '.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s += leftJS()+')>-1)';
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'false';
 			s 	= '(['
-				+ this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')
+				+ this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')
 				+ '].indexOf('
-				+ this.left.toJavaScript(context,tableid, defcols)
-				+')>-1)';
+				+ leftJS()
+				+ ')>-1)';
 //console.log(s);
 			return s;
 		} else {
-			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf('
-			  + this.left.toJavaScript(context,tableid, defcols)+')>-1)';
+			s = '('+rightJS()+'.indexOf('
+			  	+ leftJS()+')>-1)';
 //console.log('expression',350,s);
 			return s;
 //		} else {
@@ -391,72 +455,74 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 	}
 
 
-	if(this.op == 'NOT IN') {
+	if(this.op === 'NOT IN') {
 		if(this.right instanceof yy.Select ) {
 			s = '(';
 				//this.query.queriesdata['+this.queriesidx+']
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
+			s += leftJS()+')<0)';
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'true';
-			s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')<0)';
+			s = '(['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].indexOf(';
+			s += leftJS()+')<0)';
 			return s;
 		} else {
-			s = '('+this.right.toJavaScript(context,tableid, defcols)+'.indexOf(';
-			s += this.left.toJavaScript(context,tableid, defcols)+')==-1)';
+			s = '('+rightJS()+'.indexOf(';
+			s += leftJS()+')==-1)';
 			return s;
 
 //			throw new Error('Wrong NOT IN operator without SELECT part');
 		}
 	}
 
-	if(this.allsome == 'ALL') {
+	if(this.allsome === 'ALL') {
+		var s;
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
 		 	s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 
 			s +='.every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			var s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s = '['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
-			throw new Error('Wrong NOT IN operator without SELECT part');
+			throw new Error('NOT IN operator without SELECT');
 		}		
 	}
 
-	if(this.allsome == 'SOME' || this.allsome == 'ANY') {
+	if(this.allsome === 'SOME' || this.allsome === 'ANY') {
+		var s;
 		if(this.right instanceof yy.Select ) {
 //			var s = 'this.query.queriesdata['+this.queriesidx+']';
 			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
-			s += this.left.toJavaScript(context,tableid, defcols)+')'+op+'b})';
+			s = '['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
+			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
-			throw new Error('Wrong NOT IN operator without SELECT part');
+			throw new Error('SOME/ANY operator without SELECT');
 		}		
 	}
 
 // Special case for AND optimization (if reduced)
-	if(this.op == 'AND') {
+	if(this.op === 'AND') {
 		if(this.left.reduced) {
 			if(this.right.reduced) {
 				return 'true';
 			} else {
-				return this.right.toJavaScript(context,tableid, defcols);
+				return rightJS();
 			}
 		} else if(this.right.reduced) {
-			return this.left.toJavaScript(context,tableid, defcols);
+			return leftJS();
 		}			
 
 		// Otherwise process as regular operation (see below)
@@ -464,22 +530,26 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 
 	}
 
-	if(this.op == '^') {
-		return 'Math.pow('
-				+this.left.toJavaScript(context,tableid, defcols)
-				+','
-				+this.right.toJavaScript(context,tableid, defcols)
-				+')';
-	};
+	if(this.op === '^') {
+		return 	'Math.pow('
+				+ leftJS()
+				+ ','
+				+ rightJS()
+				+ ')';
+	}
 
 
 
 
 	// Change names
 //	console.log(this);
-	return '('+this.left.toJavaScript(context,tableid, defcols)+op+this.right.toJavaScript(context,tableid, defcols)+')';
+	return 	''
+			+ '('
+			+ leftJS()
+			+ op
+			+ rightJS()
+			+ ')';
 }
-
 
 
 yy.VarValue = function (params) { return yy.extend(this, params); }
@@ -491,7 +561,7 @@ yy.VarValue.prototype.toType = function() {
 	return 'unknown';
 };
 
-yy.VarValue.prototype.toJavaScript = function() {
+yy.VarValue.prototype.toJS = function() {
 	return "alasql.vars['"+this.variable+"']";
 }
 
@@ -505,7 +575,7 @@ yy.NumValue.prototype.toType = function() {
 	return 'number';
 };
 
-yy.NumValue.prototype.toJavaScript = function() {
+yy.NumValue.prototype.toJS = function() {
 	return ""+this.value;
 }
 
@@ -521,7 +591,7 @@ yy.StringValue.prototype.toType = function() {
 	return 'string';
 }
 
-yy.StringValue.prototype.toJavaScript = function() {
+yy.StringValue.prototype.toJS = function() {
 //	console.log("'"+doubleqq(this.value)+"'");
 //	return "'"+doubleqq(this.value)+"'";
 	return "'"+escapeq(this.value)+"'";
@@ -538,7 +608,7 @@ yy.LogicValue.prototype.toType = function() {
 	return 'boolean';
 }
 
-yy.LogicValue.prototype.toJavaScript = function() {
+yy.LogicValue.prototype.toJS = function() {
 	return this.value?'true':'false';
 }
 
@@ -546,7 +616,7 @@ yy.NullValue = function (params) { return yy.extend(this, params); }
 yy.NullValue.prototype.toString = function() {
 	return 'NULL';
 }
-yy.NullValue.prototype.toJavaScript = function() {
+yy.NullValue.prototype.toJS = function() {
 	return 'undefined';
 //	return 'undefined';
 }
@@ -555,7 +625,7 @@ yy.ParamValue = function (params) { return yy.extend(this, params); }
 yy.ParamValue.prototype.toString = function() {
 	return '$'+this.param;
 }
-yy.ParamValue.prototype.toJavaScript = function() {
+yy.ParamValue.prototype.toJS = function() {
 	if(typeof this.param == "string") return "params[\'"+this.param+"\']";
 	else return "params["+this.param+"]";
 }
@@ -581,19 +651,19 @@ yy.UniOp.prototype.toType = function(tableid) {
 	if(this.op == 'NOT') return 'boolean';
 };
 
-yy.UniOp.prototype.toJavaScript = function(context, tableid, defcols) {
-	if(this.op == '-') return "(-("+this.right.toJavaScript(context, tableid, defcols)+"))";
-	if(this.op == '+') return "("+this.right.toJavaScript(context, tableid, defcols)+")";
-	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid, defcols)+')';
+yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
+	if(this.op == '-') return "(-("+this.right.toJS(context, tableid, defcols)+"))";
+	if(this.op == '+') return "("+this.right.toJS(context, tableid, defcols)+")";
+	if(this.op == 'NOT') return '!('+this.right.toJS(context, tableid, defcols)+')';
 	if(this.op == '#') {
 		if(this.right instanceof yy.Column) {
 			return "(alasql.databases[alasql.useid].objects[\'"+this.right.columnid+"\'])";
 		} else {
 			return "(alasql.databases[alasql.useid].objects["
-				+this.right.toJavaScript(context, tableid, defcols)+"])";
+				+this.right.toJS(context, tableid, defcols)+"])";
 		};
 	}
-	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid, defcols)+')';
+	else if(this.op == null) return '('+this.right.toJS(context, tableid, defcols)+')';
 };
 
 
@@ -633,7 +703,7 @@ yy.Column.prototype.toString = function() {
 	return s;
 };
 
-yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Column.prototype.toJS = function(context, tableid, defcols) {
 //	var s = this.value;
 // 	var s = this.columnid;
 // 	if(this.tableid) {
@@ -790,9 +860,9 @@ yy.AggrValue.prototype.toType = function() {
 	if(['ARRAY'].indexOf(this.aggregatorid)>-1) return 'array';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
-yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
-//	if(this.expression) s += this.expression.toJavaScript(context, tableid);
+//	if(this.expression) s += this.expression.toJS(context, tableid);
 //	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 //	return s;
@@ -800,7 +870,9 @@ yy.AggrValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //if(this.as) console.log(499,this.as);
 //	var colas = this.as;
 	var colas = this.nick;
-	if(typeof colas == 'undefined') colas = this.toString();
+	if(colas === undefined){ 
+		colas = this.toString();
+	}
 	return 'g[\''+colas+'\']';
 }
 

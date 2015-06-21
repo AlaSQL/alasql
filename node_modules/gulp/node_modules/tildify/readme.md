@@ -5,7 +5,7 @@
 
 ## Install
 
-```sh
+```
 $ npm install --save tildify
 ```
 
@@ -16,7 +16,7 @@ $ npm install --save tildify
 var tildify = require('tildify');
 
 tildify('/Users/sindresorhus/dev');
-//=> ~/dev
+//=> '~/dev'
 ```
 
 

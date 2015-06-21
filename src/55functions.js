@@ -31,8 +31,8 @@ yy.FuncValue.prototype.toString = function() {
 yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	alasql.precompile(this,databaseid,params); // Precompile queries
-//	console.log(34,this.toJavaScript('','',null));
-	var expr =  new Function('params,alasql','var y;return '+this.toJavaScript('','',null));
+//	console.log(34,this.toJS('','',null));
+	var expr =  new Function('params,alasql','var y;return '+this.toJS('','',null));
 	expr(params,alasql);
 	if(cb) res = cb(res);
 	return res;
@@ -42,14 +42,14 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 //yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 //	if(this.reduced) return returnTrue();
-//	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+//	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 //};
 
 
 // yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 // //	console.log('Expression',this);
 // 	if(this.reduced) return returnTrue();
-// 	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+// 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 // };
 
 yy.FuncValue.prototype.findAggregator = function(query) {
@@ -60,7 +60,7 @@ yy.FuncValue.prototype.findAggregator = function(query) {
 	}
 };
 
-yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
@@ -70,26 +70,26 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //		var s = '';
 		if(this.newid) s+= 'new ';
 		s += 'alasql.fn.'+this.funcid+'(';
-//		if(this.args) s += this.args.toJavaScript(context, tableid);
+//		if(this.args) s += this.args.toJS(context, tableid);
 		if(this.args && this.args.length > 0) {
 			s += this.args.map(function(arg){
-				return arg.toJavaScript(context, tableid, defcols);
+				return arg.toJS(context, tableid, defcols);
 			}).join(',');
 		};
 		s += ')';
 	} else if(alasql.stdlib[funcid.toUpperCase()]) {
 		if(this.args && this.args.length > 0) {
-			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJavaScript(context, tableid)}));
+			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
 		} else {
 			s += alasql.stdlib[funcid.toUpperCase()]();
 		}
 	} else if(alasql.stdfn[funcid.toUpperCase()]) {
 		if(this.newid) s+= 'new ';
 		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
-//		if(this.args) s += this.args.toJavaScript(context, tableid);
+//		if(this.args) s += this.args.toJS(context, tableid);
 		if(this.args && this.args.length > 0) {
 			s += this.args.map(function(arg){
-				return arg.toJavaScript(context, tableid, defcols);
+				return arg.toJS(context, tableid, defcols);
 			}).join(',');
 		};
 		s += ')';		
@@ -103,10 +103,10 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 }
 
 // // Functions compiler
-// nodes.FunctionValue.prototype.toJavaScript = function (context, tableid) {
+// nodes.FunctionValue.prototype.toJS = function (context, tableid) {
 // 	var s = '';
 // 	s += fns[this.name.toUpperCase()].apply(null,this.arguments.map(function(arg){
-// 		if(arg) return arg.toJavaScript(context, tableid);
+// 		if(arg) return arg.toJS(context, tableid);
 // 		else return '';
 // 	}));
 // 	return s;

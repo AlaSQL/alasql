@@ -24,8 +24,8 @@ yy.AddRule.prototype.toString = function() {
 
 yy.AddRule.prototype.execute = function (databaseid, params, cb) {
 //	var self = this;
-//	console.log(this.expr.toJavaScript());
-//	var fn = new Function('params, alasql','return '+this.expr.toJavaScript());
+//	console.log(this.expr.toJS());
+//	var fn = new Function('params, alasql','return '+this.expr.toJS());
 //	var res = fn(params, alasql);
 	var res = 1;
 	var objects = alasql.databases[databaseid].objects;

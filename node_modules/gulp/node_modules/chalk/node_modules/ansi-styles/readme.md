@@ -4,7 +4,7 @@
 
 You probably want the higher-level [chalk](https://github.com/sindresorhus/chalk) module for styling your strings.
 
-![screenshot](screenshot.png)
+![](screenshot.png)
 
 
 ## Install
@@ -30,7 +30,7 @@ Each style has an `open` and `close` property.
 
 ## Styles
 
-### General
+### Modifiers
 
 - `reset`
 - `bold`
@@ -41,7 +41,7 @@ Each style has an `open` and `close` property.
 - `hidden`
 - `strikethrough` *(not widely supported)*
 
-### Text colors
+### Colors
 
 - `black`
 - `red`
@@ -63,6 +63,22 @@ Each style has an `open` and `close` property.
 - `bgMagenta`
 - `bgCyan`
 - `bgWhite`
+
+
+## Advanced usage
+
+By default you get a map of styles, but the styles are also available as groups. They are non-enumerable so they don't show up unless you access them explicitly. This makes it easier to expose only a subset in a higher-level module.
+
+- `ansi.modifiers`
+- `ansi.colors`
+- `ansi.bgColors`
+
+
+###### Example
+
+```js
+console.log(ansi.colors.green.open);
+```
 
 
 ## License

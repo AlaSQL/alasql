@@ -1,6 +1,7 @@
 'use strict';
-var userHome = require('user-home');
+var osHomedir = require('os-homedir');
+var home = osHomedir();
 
 module.exports = function (str) {
-	return str.replace(userHome, '~');
+	return str.replace(home, '~');
 };

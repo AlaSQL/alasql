@@ -18,7 +18,7 @@ var Base = yy.Base = function (params) { return yy.extend(this, params); };
 
 Base.prototype.toString = function() {}
 Base.prototype.toType = function() {}
-Base.prototype.toJavaScript = function() {}
+Base.prototype.toJS = function() {}
 
 //var BaseClause = yy,BaseClause = function (params) { return yy.extend(this, params); };
 Base.prototype.compile = returnUndefined;

@@ -578,7 +578,7 @@
 
 * Added /test/main.html mocha browser tests
 * Added PERFORMANCE.md and perf.html tests
-* StringValue.toJavaScript()
+* StringValue.toJS()
 * Added callback to Database.exec
 * Sieve of Eratosthenes example
 * Remove generation of recs after select in case of group by (for memory optimization)

@@ -162,7 +162,7 @@ if(false) {
 
   it('9. FOREIGN KEY DOT operator',function(done){
     var res = alasql.parse("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
-//    console.log(res.statements[0].columns[0].toJavaScript('a','b'));
+//    console.log(res.statements[0].columns[0].toJS('a','b'));
     var res = alasql("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
     assert(res == 99999);
     done();

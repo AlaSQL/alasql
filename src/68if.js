@@ -20,10 +20,10 @@ yy.If.prototype.toString = function() {
 yy.If.prototype.execute = function (databaseid,params,cb){
 	var res;
 //	console.log(this);
-//	console.log(this.expression.toJavaScript('{}','',null));
+//	console.log(this.expression.toJS('{}','',null));
 //	console.log();
-	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJavaScript('({})','',null)).bind(this);
-//	var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJavaScript('({})','',null)).bind(this);
+	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJS('({})','',null)).bind(this);
+//	var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJS('({})','',null)).bind(this);
 	if(fn(params,alasql)) res = this.thenstat.execute(databaseid,params,cb);
 	else {
 		if(this.elsestat) res = this.elsestat.execute(databaseid,params,cb);

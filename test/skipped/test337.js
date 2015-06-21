@@ -181,7 +181,7 @@ describe('Test 337 SEARCH 8 queens', function() {
   it('19. SEARCH 8 queens',function(done){
 
 alasql.srch.LOG = function(val,args,stope,params) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   console.log('log=',exprfn(val,alasql,params));
   return {status: 1, values: [exprfn(val,alasql,params)]};
