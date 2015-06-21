@@ -45,9 +45,9 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 			});		
 		}
 
-//		console.log(this.expression.toJavaScript('','', null));
+//		console.log(this.expression.toJS('','', null));
 		var res = new Function("params,alasql","return "
-			+this.expression.toJavaScript('({})','', null)).bind(this)(params,alasql);
+			+this.expression.toJS('({})','', null)).bind(this)(params,alasql);
 		if(alasql.declares[this.variable]) {
 			res = alasql.stdfn.CONVERT(res,alasql.declares[this.variable]);
 		}
@@ -63,8 +63,8 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 				} else if(typeof prop == 'number') {
 					return '['+prop+']';
 				} else {
-					// console.log('prop:',prop, prop.toJavaScript());
-					return '['+prop.toJavaScript()+']';
+					// console.log('prop:',prop, prop.toJS());
+					return '['+prop.toJS()+']';
 //				} else {
 //					console.log(prop, typeof );
 //					throw new Error('Wrong SET property');

@@ -22,8 +22,8 @@ yy.CreateVertex.prototype.toString = function() {
 	return s;
 }
 
-yy.CreateVertex.prototype.toJavaScript = function(context, tableid, defcols) {
-//		console.log('yy.CreateVertex.toJavaScript');
+yy.CreateVertex.prototype.toJS = function(context, tableid, defcols) {
+//		console.log('yy.CreateVertex.toJS');
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	// var s = '';
 	return s;
@@ -65,13 +65,13 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
-		var s = 'x.name='+this.name.toJavaScript();
+		var s = 'x.name='+this.name.toJS();
 		var namefn = new Function('x',s);
 	};
 
 	if(this.sets && this.sets.length > 0) {
 		var s = this.sets.map(function(st){
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql',s);
 	} else if(this.content) {
@@ -136,7 +136,7 @@ yy.CreateEdge.prototype.toString = function() {
 	return s;
 }
 
-yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.CreateEdge.prototype.toJS = function(context, tableid, defcols) {
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	return s;
 };
@@ -151,18 +151,18 @@ yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJS());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
-		var s = 'x.name='+this.name.toJavaScript();
+		var s = 'x.name='+this.name.toJS();
 		var namefn = new Function('x',s);
 	};
 
 	if(this.sets && this.sets.length > 0) {
 		var s = this.sets.map(function(st){
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {
@@ -209,7 +209,7 @@ yy.CreateGraph.prototype.toString = function() {
 	return s;
 }
 
-// yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
+// yy.CreateEdge.prototype.toJS = function(context, tableid, defcols) {
 // 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 // 	return s;
 // };
@@ -247,7 +247,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 				e.$node='EDGE';
 				if(typeof g.json != 'undefined') {
 					extend(e,(new Function('params,alasql','var y;return '+
-					g.json.toJavaScript()))(params,alasql));
+					g.json.toJS()))(params,alasql));
 				}
 
 				var v1;
@@ -348,7 +348,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 		v.$node='VERTEX';
 		if(typeof g.json != 'undefined') {
 			extend(v,(new Function('params,alasql','var y;return '+
-			g.json.toJavaScript()))(params,alasql));
+			g.json.toJS()))(params,alasql));
 		}
 		db.objects[v.$id] = v;
 		if(typeof v.$class != 'undefined') {
@@ -371,18 +371,18 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJS());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
-		var s = 'x.name='+this.name.toJavaScript();
+		var s = 'x.name='+this.name.toJS();
 		var namefn = new Function('x',s);
 	};
 
 	if(this.sets && this.sets.length > 0) {
 		var s = this.sets.map(function(st){
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {

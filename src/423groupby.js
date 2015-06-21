@@ -54,11 +54,11 @@ if(false) {
 //			console.log(colid,'bad');	
 			var tmpid = 'default';
 			if(query.sources.length > 0) tmpid = query.sources[0].alias;
-//			console.log(new yy.Column({columnid:colid}).toJavaScript('p',query.sources[0].alias));
+//			console.log(new yy.Column({columnid:colid}).toJS('p',query.sources[0].alias));
 //			query.selectfns += 'r[\''+colid+'\']=p[\''+tmpid+'\'][\''+colid+'\'];';
 //console.log(374, colid);
 			if(Object.keys(query.selectColumns).length != 0) query.removeKeys.push(colid);
-			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJavaScript('p',tmpid))+';';
+			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJS('p',tmpid))+';';
 		}
 	});
 };
@@ -116,7 +116,7 @@ if(false) {
 //console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup.map(function(col,idx){
 //console.log(idx, col.toString(), col.as);
-			var colexp = col.expression.toJavaScript("p",tableid,defcols);
+			var colexp = col.expression.toJS("p",tableid,defcols);
 			var colas = col.nick;
 			// if(typeof colas == 'undefined') {
 			// 	if(col instanceof yy.Column) colas = col.columnid;
@@ -128,15 +128,15 @@ if(false) {
 				};
 				if (col.aggregatorid == 'SUM'
 //					|| col.aggregatorid == 'AVG'
-//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
-				) { return '\''+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJavaScript(); 	
+//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJS(); 	
+				) { return '\''+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJS(); 	
 				} else if (col.aggregatorid == 'MIN'
 					|| col.aggregatorid == 'MAX'
 					|| col.aggregatorid == 'FIRST'
 					|| col.aggregatorid == 'LAST'
 //					|| col.aggregatorid == 'AVG'
-//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
-				) { return '\''+colas+'\':'+colexp+','; //f.field.arguments[0].toJavaScript(); 	
+//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJS(); 	
+				) { return '\''+colas+'\':'+colexp+','; //f.field.arguments[0].toJS(); 	
 				} else if(col.aggregatorid == 'ARRAY') {
 				 	return '\''+colas+'\':['+colexp+'],';
 				} else if(col.aggregatorid == 'COUNT') { 
@@ -155,7 +155,7 @@ if(false) {
 					query.removeKeys.push('_COUNT_'+colas);
 					return '\''+colas+'\':'+colexp+',\'_SUM_'+colas+'\':('+colexp+')||0,\'_COUNT_'+colas+'\':(typeof '+colexp+' != "undefined")?1:0,'; 
 				} else if(col.aggregatorid == 'AGGR') {
-					aft += ',g[\''+colas+'\']='+col.expression.toJavaScript('g',-1); 
+					aft += ',g[\''+colas+'\']='+col.expression.toJS('g',-1); 
 					return '';
 				} else if(col.aggregatorid == 'REDUCE') {
 					query.removeKeys.push('_REDUCE_'+colas);
@@ -175,7 +175,7 @@ if(false) {
 
 	//	var srg = this.group.map(function(col){
 	//		if(col == '') return '';
-	//		else return col.columnid+':'+col.toJavaScript('r','');
+	//		else return col.columnid+':'+col.toJS('r','');
 	//	});
 
 	// Initializw aggregators
@@ -187,12 +187,12 @@ if(false) {
 
 
 			if (col instanceof yy.AggrValue) { 
-				if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJavaScript(); 	
+				if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJS(); 	
 				else if(col.aggregatorid == 'COUNT') {srg.push( "'"+col.as+'\':0'); }
 				else if(col.aggregatorid == 'MIN') { srg.push( "'"+col.as+'\':Infinity'); }
 				else if(col.aggregatorid == 'MAX') { srg.push( "'"+col.as+'\':-Infinity'); }
 	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
+	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
 			};
 
 		});
@@ -234,7 +234,7 @@ if(false) {
 			// 	if(col instanceof yy.Column) colas = col.columnid;
 			// 	else colas = col.toString();
 			// }
-			var colexp = col.expression.toJavaScript("p",tableid,defcols);
+			var colexp = col.expression.toJS("p",tableid,defcols);
 
 			if (col instanceof yy.AggrValue) { 
 				if(col.distinct) {
@@ -244,7 +244,7 @@ if(false) {
 				} else {
 					var pre = '', post = '';
 				}
-				if (col.aggregatorid == 'SUM') { return pre+'g[\''+colas+'\']+=('+colexp+'||0);'+post; }//f.field.arguments[0].toJavaScript(); 	
+				if (col.aggregatorid == 'SUM') { return pre+'g[\''+colas+'\']+=('+colexp+'||0);'+post; }//f.field.arguments[0].toJS(); 	
 				else if(col.aggregatorid == 'COUNT') {
 //					console.log(221,col.expression.columnid == '*');
 					if(col.expression.columnid == '*') return pre+'g[\''+colas+'\']++;'+post; 
@@ -264,7 +264,7 @@ if(false) {
 //					 }
 	//			else if(col.aggregatorid == 'AVG') { srg.push(colas+':0'); }
 				} else if(col.aggregatorid == 'AGGR') {
-					return pre+'g[\''+colas+'\']='+col.expression.toJavaScript('g',-1)+';'+post; 
+					return pre+'g[\''+colas+'\']='+col.expression.toJS('g',-1)+';'+post; 
 				} else if(col.aggregatorid == 'REDUCE') {
 					return pre+'g[\''+colas+'\']=alasql.aggr.'+col.funcid+'('+colexp+',g[\''+colas+'\'],g[\'__REDUCE__'+colas+'\']);'+post; 
 				}
@@ -278,9 +278,9 @@ if(false) {
 	//			if(f.constructor.name == 'LiteralValue') return '';
 	//			if (f.field instanceof SQLParser.nodes.FunctionValue 
 	//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
-	//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
-	//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJavaScript(); 	
+	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+	//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+	//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJS(); 	
 	//			};
 	//			return '';
 	//		}).join('');

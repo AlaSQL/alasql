@@ -28,8 +28,8 @@ yy.Search.prototype.toString = function () {
 	return s;
 };
 
-yy.Search.prototype.toJavaScript = function(context /*, tableid, defcols*/) {
-//		console.log('yy.CreateVertex.toJavaScript');
+yy.Search.prototype.toJS = function(context /*, tableid, defcols*/) {
+//		console.log('yy.CreateVertex.toJS');
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	// var s = '';
 	return s;
@@ -98,7 +98,7 @@ function doSearch(databaseid, params, cb) {
 				alasql.from[this.from.funcid.toUpperCase()]
 			) {
 		var args = this.from.args.map(function(arg){
-		var as = arg.toJavaScript();
+		var as = arg.toJS();
 //			console.log(as);
 		var fn = new Function('params,alasql','var y;return '+as).bind(this);
 		return fn(params,alasql);
@@ -109,7 +109,7 @@ function doSearch(databaseid, params, cb) {
 	} else if(typeof this.from === 'undefined') {
 		fromdata = alasql.databases[databaseid].objects;
 	} else {
-		var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
+		var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
 		fromdata = fromfn(params,alasql);			
 		// Check for Mogo Collections
 		if(
@@ -150,12 +150,12 @@ function doSearch(databaseid, params, cb) {
 		if(typeof this.into.args[0] !== 'undefined') {
 			a1 = 
 				new Function('params,alasql','var y;return ' +
-				this.into.args[0].toJavaScript())(params,alasql);
+				this.into.args[0].toJS())(params,alasql);
 		}
 		if(typeof this.into.args[1] !== 'undefined') {
 			a2 =  
 				new Function('params,alasql','var y;return ' +
-				this.into.args[1].toJavaScript())(params,alasql);
+				this.into.args[1].toJS())(params,alasql);
 		}
 		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
 	} else {
@@ -786,7 +786,7 @@ alasql.srch.ORDERBY = function(val,args,stope) {
 
 // Test expression
 alasql.srch.EQ = function(val,args,stope,params) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   if(val === exprfn(val,alasql,params)) {
     return {status: 1, values: [val]};
@@ -797,7 +797,7 @@ alasql.srch.EQ = function(val,args,stope,params) {
 
 // Test expression
 alasql.srch.LIKE = function(val,args,stope,params) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   if(val.toUpperCase().match(new RegExp('^'+exprfn(val,alasql,params).toUpperCase()
   	.replace(/%/g,'.*')+'$'),'g')) {
@@ -883,7 +883,7 @@ alasql.srch.KEYS = function(val,args) {
 
 // Test expression
 alasql.srch.WHERE = function(val,args) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql','return '+exprs);
   if(exprfn(val,alasql)) {
     return {status: 1, values: [val]};
@@ -941,7 +941,7 @@ alasql.srch.EDGE = function(val,args) {
 
 // Transform expression
 alasql.srch.EX = function(val,args,stope,params) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   return {status: 1, values: [exprfn(val,alasql,params)]};
 };
@@ -952,7 +952,7 @@ alasql.srch.RETURN = function(val,args,stope,params) {
 	var res = {};
 	if(args && args.length > 0) {
 		args.forEach(function(arg){
-		  	var exprs = arg.toJavaScript('x','');
+		  	var exprs = arg.toJS('x','');
   			var exprfn = new Function('x,alasql,params','return '+exprs);
   			if(typeof arg.as == 'undefined') arg.as = arg.toString();
   			res[arg.as] = exprfn(val,alasql,params);
@@ -1025,11 +1025,11 @@ alasql.srch.SET = function(val,args,stope,params) {
 	var s = args.map(function(st){
 //console.log(898,st);		
 		if(st.method === '@') {
-			return 'alasql.vars[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
+			return 'alasql.vars[\''+st.variable+'\']='+st.expression.toJS('x','');
 		} else if(st.method === '$') {
-			return 'params[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
+			return 'params[\''+st.variable+'\']='+st.expression.toJS('x','');
 		} else {
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}
 	}).join(';');
 	var setfn = new Function('x,params,alasql',s);
@@ -1043,7 +1043,7 @@ alasql.srch.ROW = function(val,args,stope,params) {
   var s = 'var y;return [';
 //  console.log(args[0]);
 	s += args.map(function(arg){
-		return arg.toJavaScript('x','');
+		return arg.toJS('x','');
 	}).join(',');
 	s += ']'
 	var setfn = new Function('x,params,alasql',s);
@@ -1092,7 +1092,7 @@ var compileSearchOrder = function (order) {
 		var sk = '';
 		order.forEach(function(ord,idx){
 			// console.log(ord instanceof yy.Expression);
-			// console.log(ord.toJavaScript('a',''));
+			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
 			
 			// Date conversion
@@ -1125,8 +1125,8 @@ var compileSearchOrder = function (order) {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
 				if(ord.nocase) dg += '.toUpperCase()';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+'==('+ord.toJavaScript('b','')+"||'')"+dg+'){';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
 			}			
 
 			// TODO Add date comparision

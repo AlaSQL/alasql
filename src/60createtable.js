@@ -107,11 +107,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
 			if(col.check) {
-				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJavaScript('r','')));
+				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJS('r','')));
 			}
 
 			if(col.default) {
-				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript('r',''));
+				ss.push('\''+col.columnid+'\':'+col.default.toJS('r',''));
 			}
 
 
@@ -197,8 +197,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};					
 		} else if(con.type == 'CHECK') {
-//			console.log(con.expression.toJavaScript('r',''));
-			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJavaScript('r','')));
+//			console.log(con.expression.toJS('r',''));
+			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJS('r','')));
 		} else if(con.type == 'UNIQUE') {
 //			console.log(con);
 			var uk = {};

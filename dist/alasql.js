@@ -4853,7 +4853,7 @@ var Base = yy.Base = function (params) { return yy.extend(this, params); };
 
 Base.prototype.toString = function() {}
 Base.prototype.toType = function() {}
-Base.prototype.toJavaScript = function() {}
+Base.prototype.toJS = function() {}
 
 //var BaseClause = yy,BaseClause = function (params) { return yy.extend(this, params); };
 Base.prototype.compile = returnUndefined;
@@ -4931,8 +4931,8 @@ yy.Search.prototype.toString = function () {
 	return s;
 };
 
-yy.Search.prototype.toJavaScript = function(context /*, tableid, defcols*/) {
-//		console.log('yy.CreateVertex.toJavaScript');
+yy.Search.prototype.toJS = function(context /*, tableid, defcols*/) {
+//		console.log('yy.CreateVertex.toJS');
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	// var s = '';
 	return s;
@@ -5001,7 +5001,7 @@ function doSearch(databaseid, params, cb) {
 				alasql.from[this.from.funcid.toUpperCase()]
 			) {
 		var args = this.from.args.map(function(arg){
-		var as = arg.toJavaScript();
+		var as = arg.toJS();
 //			console.log(as);
 		var fn = new Function('params,alasql','var y;return '+as).bind(this);
 		return fn(params,alasql);
@@ -5012,7 +5012,7 @@ function doSearch(databaseid, params, cb) {
 	} else if(typeof this.from === 'undefined') {
 		fromdata = alasql.databases[databaseid].objects;
 	} else {
-		var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
+		var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
 		fromdata = fromfn(params,alasql);			
 		// Check for Mogo Collections
 		if(
@@ -5053,12 +5053,12 @@ function doSearch(databaseid, params, cb) {
 		if(typeof this.into.args[0] !== 'undefined') {
 			a1 = 
 				new Function('params,alasql','var y;return ' +
-				this.into.args[0].toJavaScript())(params,alasql);
+				this.into.args[0].toJS())(params,alasql);
 		}
 		if(typeof this.into.args[1] !== 'undefined') {
 			a2 =  
 				new Function('params,alasql','var y;return ' +
-				this.into.args[1].toJavaScript())(params,alasql);
+				this.into.args[1].toJS())(params,alasql);
 		}
 		res = alasql.into[this.into.funcid.toUpperCase()](a1,a2,res,[],cb);
 	} else {
@@ -5689,7 +5689,7 @@ alasql.srch.ORDERBY = function(val,args,stope) {
 
 // Test expression
 alasql.srch.EQ = function(val,args,stope,params) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   if(val === exprfn(val,alasql,params)) {
     return {status: 1, values: [val]};
@@ -5700,7 +5700,7 @@ alasql.srch.EQ = function(val,args,stope,params) {
 
 // Test expression
 alasql.srch.LIKE = function(val,args,stope,params) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   if(val.toUpperCase().match(new RegExp('^'+exprfn(val,alasql,params).toUpperCase()
   	.replace(/%/g,'.*')+'$'),'g')) {
@@ -5786,7 +5786,7 @@ alasql.srch.KEYS = function(val,args) {
 
 // Test expression
 alasql.srch.WHERE = function(val,args) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql','return '+exprs);
   if(exprfn(val,alasql)) {
     return {status: 1, values: [val]};
@@ -5844,7 +5844,7 @@ alasql.srch.EDGE = function(val,args) {
 
 // Transform expression
 alasql.srch.EX = function(val,args,stope,params) {
-  var exprs = args[0].toJavaScript('x','');
+  var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   return {status: 1, values: [exprfn(val,alasql,params)]};
 };
@@ -5855,7 +5855,7 @@ alasql.srch.RETURN = function(val,args,stope,params) {
 	var res = {};
 	if(args && args.length > 0) {
 		args.forEach(function(arg){
-		  	var exprs = arg.toJavaScript('x','');
+		  	var exprs = arg.toJS('x','');
   			var exprfn = new Function('x,alasql,params','return '+exprs);
   			if(typeof arg.as == 'undefined') arg.as = arg.toString();
   			res[arg.as] = exprfn(val,alasql,params);
@@ -5928,11 +5928,11 @@ alasql.srch.SET = function(val,args,stope,params) {
 	var s = args.map(function(st){
 //console.log(898,st);		
 		if(st.method === '@') {
-			return 'alasql.vars[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
+			return 'alasql.vars[\''+st.variable+'\']='+st.expression.toJS('x','');
 		} else if(st.method === '$') {
-			return 'params[\''+st.variable+'\']='+st.expression.toJavaScript('x','');
+			return 'params[\''+st.variable+'\']='+st.expression.toJS('x','');
 		} else {
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}
 	}).join(';');
 	var setfn = new Function('x,params,alasql',s);
@@ -5946,7 +5946,7 @@ alasql.srch.ROW = function(val,args,stope,params) {
   var s = 'var y;return [';
 //  console.log(args[0]);
 	s += args.map(function(arg){
-		return arg.toJavaScript('x','');
+		return arg.toJS('x','');
 	}).join(',');
 	s += ']'
 	var setfn = new Function('x,params,alasql',s);
@@ -5995,7 +5995,7 @@ var compileSearchOrder = function (order) {
 		var sk = '';
 		order.forEach(function(ord,idx){
 			// console.log(ord instanceof yy.Expression);
-			// console.log(ord.toJavaScript('a',''));
+			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
 			
 			// Date conversion
@@ -6028,8 +6028,8 @@ var compileSearchOrder = function (order) {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
 				if(ord.nocase) dg += '.toUpperCase()';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+'==('+ord.toJavaScript('b','')+"||'')"+dg+'){';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
 			}			
 
 			// TODO Add date comparision
@@ -6970,10 +6970,10 @@ yy.Select.prototype.toString = function() {
 /**
  Select statement in expression
  */
-yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Select.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
-//	return this.expression.toJavaScript(context, tableid, defcols);
+//	return this.expression.toJS(context, tableid, defcols);
 // console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
@@ -7132,9 +7132,9 @@ yy.Select.prototype.compile = function(databaseid) {
 			//
 			var qs = 'return alasql.into[\''+this.into.funcid.toUpperCase()+'\'](';
 			if(this.into.args && this.into.args.length>0 ) {
-				qs += this.into.args[0].toJavaScript()+',';
+				qs += this.into.args[0].toJS()+',';
 				if(this.into.args.length > 1) {
-					qs += this.into.args[1].toJavaScript()+',';
+					qs += this.into.args[1].toJS()+',';
 				} else {
 					qs += 'undefined,';
 				}
@@ -7346,7 +7346,7 @@ yy.ExistsValue.prototype.toType = function() {
 	return 'boolean';
 };
 
-yy.ExistsValue.prototype.toJavaScript = function(context,tableid,defcols) {
+yy.ExistsValue.prototype.toJS = function(context,tableid,defcols) {
 //	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
 	
 	return 'this.existsfn['+this.existsidx+'](params,null,'+context+').data.length';
@@ -7430,7 +7430,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 	self.from.forEach(function(tq){
 		//console.log(tq);
-//console.log(tq,tq.toJavaScript());
+//console.log(tq,tq.toJS());
 
 		var alias = tq.as || tq.tableid;
 //		console.log(alias);
@@ -7560,7 +7560,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			source.datafn = new Function('query,params,cb,idx,alasql',ps);
 
 		} else if(tq instanceof yy.Json) {
-			var ps = "var res = alasql.prepareFromData("+tq.toJavaScript();
+			var ps = "var res = alasql.prepareFromData("+tq.toJS();
 //				console.log(tq);
 			if(tq.array) ps+=",true";
 			ps += ");if(cb)res=cb(res,idx,query);return res"
@@ -7575,22 +7575,22 @@ yy.Select.prototype.compileFrom = function(query) {
 			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat('cb,idx,query').join(',');
 			// }
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat().join(',');
 			// }
 			if(tq.args && tq.args.length>0) {
 				if(tq.args[0]) {
-					s += tq.args[0].toJavaScript('query.oldscope')+',';
+					s += tq.args[0].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
 				if(tq.args[1]) {
-					s += tq.args[1].toJavaScript('query.oldscope')+',';
+					s += tq.args[1].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
@@ -7850,22 +7850,22 @@ yy.Select.prototype.compileJoins = function(query) {
 			var s = "var res=alasql.from['"+js.funcid.toUpperCase()+"'](";
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat('cb,idx,query').join(',');
 			// }
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat().join(',');
 			// }
 			if(jn.args && jn.args.length>0) {
 				if(jn.args[0]) {
-					s += jn.args[0].toJavaScript('query.oldscope')+',';
+					s += jn.args[0].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
 				if(jn.args[1]) {
-					s += jn.args[1].toJavaScript('query.oldscope')+',';
+					s += jn.args[1].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
@@ -7944,11 +7944,11 @@ yy.Select.prototype.compileJoins = function(query) {
 		} else if(jn.on) {
 //console.log(jn.on);
 			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
-//				console.log('ix optimization', jn.on.toJavaScript('p',query.defaultTableid) );
+//				console.log('ix optimization', jn.on.toJS('p',query.defaultTableid) );
 				source.optimization = 'ix';
-			// 	source.onleftfns = jn.on.left.toJavaScript('p',query.defaultTableid);
+			// 	source.onleftfns = jn.on.left.toJS('p',query.defaultTableid);
 			// 	source.onleftfn = new Function('p', 'return '+source.onleftfns);
-			// 	source.onrightfns = jn.on.right.toJavaScript('p',query.defaultTableid);
+			// 	source.onrightfns = jn.on.right.toJS('p',query.defaultTableid);
 			// 	source.onrightfn = new Function('p', 'return '+source.onrightfns);
 
 				var lefts = '';
@@ -7956,8 +7956,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				var middles = '';
 				var middlef = false;
 				// Test right and left sides
-				var ls = jn.on.left.toJavaScript('p',query.defaultTableid,query.defcols);
-				var rs = jn.on.right.toJavaScript('p',query.defaultTableid,query.defcols);
+				var ls = jn.on.left.toJS('p',query.defaultTableid,query.defcols);
+				var rs = jn.on.right.toJS('p',query.defaultTableid,query.defcols);
 
 				if((ls.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
 					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
@@ -7989,11 +7989,11 @@ yy.Select.prototype.compileJoins = function(query) {
 //				console.log(alias, 2,lefts, rights, middlef);
 
 				if(middlef) {
-//					middles = jn.on.toJavaScript('p',query.defaultTableid);
+//					middles = jn.on.toJS('p',query.defaultTableid);
 //				} else {
 					rights = '';
 					lefts = '';
-					middles = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
+					middles = jn.on.toJS('p',query.defaultTableid,query.defcols);
 					source.optimization = 'no';
 					// What to here?
 				} 
@@ -8015,8 +8015,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.optimization = 'no';
 //				source.onleftfn = returnTrue;
 //				source.onleftfns = "true";
-				source.onmiddlefns = jn.on.toJavaScript('p',query.defaultTableid,query.defcols);
-				source.onmiddlefn = new Function('p,params,alasql','var y;return '+jn.on.toJavaScript('p',query.defaultTableid,query.defcols));
+				source.onmiddlefns = jn.on.toJS('p',query.defaultTableid,query.defcols);
+				source.onmiddlefn = new Function('p,params,alasql','var y;return '+jn.on.toJS('p',query.defaultTableid,query.defcols));
 			};
 //			console.log(source.onleftfns, source.onrightfns, source.onmiddlefns);
 
@@ -8070,7 +8070,7 @@ yy.Select.prototype.compileWhere = function(query) {
 		if(typeof this.where == "function") {
 			return this.where;
 		} else {
-			s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
+			s = this.where.toJS('p',query.defaultTableid,query.defcols);
 			query.wherefns = s;
 //		console.log(s);
 			return new Function('p,params,alasql','var y;return '+s);
@@ -8110,7 +8110,7 @@ function optimizeWhereJoin (query, ast) {
 	if(ast.op != '=' && ast.op != 'AND') return;
 	if(ast.allsome) return;
 
-	var s = ast.toJavaScript('p',query.defaultTableid,query.defcols);
+	var s = ast.toJS('p',query.defaultTableid,query.defcols);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {
 		// Optimization allowed only for tables only
@@ -8142,15 +8142,15 @@ function optimizeWhereJoin (query, ast) {
 
 		if((ast instanceof yy.Op) && (ast.op == '=' && !ast.allsome)) {
 			if(ast.left instanceof yy.Column) {
-				var ls = ast.left.toJavaScript('p',query.defaultTableid,query.defcols);
-				var rs = ast.right.toJavaScript('p',query.defaultTableid,query.defcols);
+				var ls = ast.left.toJS('p',query.defaultTableid,query.defcols);
+				var rs = ast.right.toJS('p',query.defaultTableid,query.defcols);
 				if(rs.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
 					fsrc[0].wxleftfns = ls; 
 					fsrc[0].wxrightfns = rs; 
 				} 
 			} if(ast.right instanceof yy.Column) {
-				var ls = ast.left.toJavaScript('p',query.defaultTableid,query.defcols);
-				var rs = ast.right.toJavaScript('p',query.defaultTableid,query.defcols);
+				var ls = ast.left.toJS('p',query.defaultTableid,query.defcols);
+				var rs = ast.right.toJS('p',query.defaultTableid,query.defcols);
 				if(ls.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
 					fsrc[0].wxleftfns = rs; 
 					fsrc[0].wxrightfns = ls; 
@@ -8226,11 +8226,11 @@ if(false) {
 //			console.log(colid,'bad');	
 			var tmpid = 'default';
 			if(query.sources.length > 0) tmpid = query.sources[0].alias;
-//			console.log(new yy.Column({columnid:colid}).toJavaScript('p',query.sources[0].alias));
+//			console.log(new yy.Column({columnid:colid}).toJS('p',query.sources[0].alias));
 //			query.selectfns += 'r[\''+colid+'\']=p[\''+tmpid+'\'][\''+colid+'\'];';
 //console.log(374, colid);
 			if(Object.keys(query.selectColumns).length != 0) query.removeKeys.push(colid);
-			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJavaScript('p',tmpid))+';';
+			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJS('p',tmpid))+';';
 		}
 	});
 };
@@ -8288,7 +8288,7 @@ if(false) {
 //console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup.map(function(col,idx){
 //console.log(idx, col.toString(), col.as);
-			var colexp = col.expression.toJavaScript("p",tableid,defcols);
+			var colexp = col.expression.toJS("p",tableid,defcols);
 			var colas = col.nick;
 			// if(typeof colas == 'undefined') {
 			// 	if(col instanceof yy.Column) colas = col.columnid;
@@ -8300,15 +8300,15 @@ if(false) {
 				};
 				if (col.aggregatorid == 'SUM'
 //					|| col.aggregatorid == 'AVG'
-//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
-				) { return '\''+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJavaScript(); 	
+//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJS(); 	
+				) { return '\''+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJS(); 	
 				} else if (col.aggregatorid == 'MIN'
 					|| col.aggregatorid == 'MAX'
 					|| col.aggregatorid == 'FIRST'
 					|| col.aggregatorid == 'LAST'
 //					|| col.aggregatorid == 'AVG'
-//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJavaScript(); 	
-				) { return '\''+colas+'\':'+colexp+','; //f.field.arguments[0].toJavaScript(); 	
+//				) { return '\''+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJS(); 	
+				) { return '\''+colas+'\':'+colexp+','; //f.field.arguments[0].toJS(); 	
 				} else if(col.aggregatorid == 'ARRAY') {
 				 	return '\''+colas+'\':['+colexp+'],';
 				} else if(col.aggregatorid == 'COUNT') { 
@@ -8327,7 +8327,7 @@ if(false) {
 					query.removeKeys.push('_COUNT_'+colas);
 					return '\''+colas+'\':'+colexp+',\'_SUM_'+colas+'\':('+colexp+')||0,\'_COUNT_'+colas+'\':(typeof '+colexp+' != "undefined")?1:0,'; 
 				} else if(col.aggregatorid == 'AGGR') {
-					aft += ',g[\''+colas+'\']='+col.expression.toJavaScript('g',-1); 
+					aft += ',g[\''+colas+'\']='+col.expression.toJS('g',-1); 
 					return '';
 				} else if(col.aggregatorid == 'REDUCE') {
 					query.removeKeys.push('_REDUCE_'+colas);
@@ -8347,7 +8347,7 @@ if(false) {
 
 	//	var srg = this.group.map(function(col){
 	//		if(col == '') return '';
-	//		else return col.columnid+':'+col.toJavaScript('r','');
+	//		else return col.columnid+':'+col.toJS('r','');
 	//	});
 
 	// Initializw aggregators
@@ -8359,12 +8359,12 @@ if(false) {
 
 
 			if (col instanceof yy.AggrValue) { 
-				if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJavaScript(); 	
+				if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJS(); 	
 				else if(col.aggregatorid == 'COUNT') {srg.push( "'"+col.as+'\':0'); }
 				else if(col.aggregatorid == 'MIN') { srg.push( "'"+col.as+'\':Infinity'); }
 				else if(col.aggregatorid == 'MAX') { srg.push( "'"+col.as+'\':-Infinity'); }
 	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
+	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
 			};
 
 		});
@@ -8406,7 +8406,7 @@ if(false) {
 			// 	if(col instanceof yy.Column) colas = col.columnid;
 			// 	else colas = col.toString();
 			// }
-			var colexp = col.expression.toJavaScript("p",tableid,defcols);
+			var colexp = col.expression.toJS("p",tableid,defcols);
 
 			if (col instanceof yy.AggrValue) { 
 				if(col.distinct) {
@@ -8416,7 +8416,7 @@ if(false) {
 				} else {
 					var pre = '', post = '';
 				}
-				if (col.aggregatorid == 'SUM') { return pre+'g[\''+colas+'\']+=('+colexp+'||0);'+post; }//f.field.arguments[0].toJavaScript(); 	
+				if (col.aggregatorid == 'SUM') { return pre+'g[\''+colas+'\']+=('+colexp+'||0);'+post; }//f.field.arguments[0].toJS(); 	
 				else if(col.aggregatorid == 'COUNT') {
 //					console.log(221,col.expression.columnid == '*');
 					if(col.expression.columnid == '*') return pre+'g[\''+colas+'\']++;'+post; 
@@ -8436,7 +8436,7 @@ if(false) {
 //					 }
 	//			else if(col.aggregatorid == 'AVG') { srg.push(colas+':0'); }
 				} else if(col.aggregatorid == 'AGGR') {
-					return pre+'g[\''+colas+'\']='+col.expression.toJavaScript('g',-1)+';'+post; 
+					return pre+'g[\''+colas+'\']='+col.expression.toJS('g',-1)+';'+post; 
 				} else if(col.aggregatorid == 'REDUCE') {
 					return pre+'g[\''+colas+'\']=alasql.aggr.'+col.funcid+'('+colexp+',g[\''+colas+'\'],g[\'__REDUCE__'+colas+'\']);'+post; 
 				}
@@ -8450,9 +8450,9 @@ if(false) {
 	//			if(f.constructor.name == 'LiteralValue') return '';
 	//			if (f.field instanceof SQLParser.nodes.FunctionValue 
 	//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
-	//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJavaScript('rec','')+';'; //f.field.arguments[0].toJavaScript(); 	
-	//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJavaScript(); 	
+	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+	//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+	//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJS(); 	
 	//			};
 	//			return '';
 	//		}).join('');
@@ -8657,7 +8657,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				col.aggregatorid == 'FIRST' || col.aggregatorid == 'LAST' ||  
 				col.aggregatorid == 'AVG' || col.aggregatorid == 'ARRAY' || col.aggregatorid == 'REDUCE'
 				) {
-				ss.push("'"+escapeq(col.as)+'\':'+n2u(col.expression.toJavaScript("p",query.defaultTableid,query.defcols)))	
+				ss.push("'"+escapeq(col.as)+'\':'+n2u(col.expression.toJS("p",query.defaultTableid,query.defcols)))	
 			} else if (col.aggregatorid == 'COUNT') {
 				ss.push("'"+escapeq(col.as)+"':1");
 				// Nothing
@@ -8677,14 +8677,14 @@ yy.Select.prototype.compileSelect1 = function(query) {
 						query.xcolumns[coldef.columnid]=coldef;
 
 //			else if (col.aggregatorid == 'MAX') {
-//				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
+//				ss.push((col.as || col.columnid)+':'+col.toJS("p.",query.defaultTableid))
 //			} else if (col.aggregatorid == 'MIN') {
-//				ss.push((col.as || col.columnid)+':'+col.toJavaScript("p.",query.defaultTableid))
+//				ss.push((col.as || col.columnid)+':'+col.toJS("p.",query.defaultTableid))
 //			}
 		} else {
 //			console.log(203,col.as,col.columnid,col.toString());
-			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+n2u(col.toJavaScript("p",query.defaultTableid,query.defcols)));
-//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJavaScript("p",query.defaultTableid));
+			ss.push('\''+escapeq(col.as || col.columnid || col.toString())+'\':'+n2u(col.toJS("p",query.defaultTableid,query.defcols)));
+//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
 
@@ -8790,10 +8790,10 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			// 	s += 'r[\''+escapeq()+'\']=';
 			// };
 			// s += ';';
-//			console.log(col);//,col.toJavaScript('g',''));
+//			console.log(col);//,col.toJS('g',''));
 
 
- 			s += n2u(col.toJavaScript('g',''))+';';				
+ 			s += n2u(col.toJS('g',''))+';';				
 /*
 			s += 'g[\''+col.nick+'\'];';
 
@@ -8804,7 +8804,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 //				s += 'g[\''+col.toString()+'\'];';
 
 //				console.log(col);
-				// var kg = col.toJavaScript('g','')+';';				
+				// var kg = col.toJS('g','')+';';				
 				// for(var i=0;i<query.removeKeys.length;i++) {
 				// 	// THis part should be intellectual
 				// 	if(query.removeKeys[i] == colas) {
@@ -8815,7 +8815,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 				// s += kg;
 //				console.log(s);
 			// }
-//			s += col.toJavaScript('g','')+';';
+//			s += col.toJS('g','')+';';
 //console.log(colas,query.removeKeys);
 			for(var i=0;i<query.removeKeys.length;i++) {
 				// THis part should be intellectual
@@ -8855,7 +8855,7 @@ yy.Select.prototype.compileRemoveColumns = function(query) {
 
 yy.Select.prototype.compileHaving = function(query) {
 	if(this.having) {
-		s = this.having.toJavaScript('g',-1);
+		s = this.having.toJS('g',-1);
 		query.havingfns = s;
 //		console.log(s);
 		return new Function('g,params,alasql','var y;return '+s);
@@ -8883,7 +8883,7 @@ yy.Select.prototype.compileOrder = function (query) {
 		var sk = '';
 		this.order.forEach(function(ord,idx){
 			// console.log(ord instanceof yy.Expression);
-			// console.log(ord.toJavaScript('a',''));
+			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
 			
 			// Date conversion
@@ -8914,8 +8914,8 @@ yy.Select.prototype.compileOrder = function (query) {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
 				if(ord.nocase) dg += '.toUpperCase()';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+'==('+ord.toJavaScript('b','')+"||'')"+dg+'){';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
 			}			
 
 //			if(columnid == '_') {
@@ -8986,7 +8986,7 @@ if(false) {
 		} else if(ie.expr instanceof yy.StringValue) {
 			return ie.expr.value;
 		} else {
-			return ie.expr.toJavaScript();
+			return ie.expr.toJS();
 		}
 		if(ie.as) {
 			als[v] = ie.as;
@@ -8997,7 +8997,7 @@ if(false) {
 	}).join(',')+'].indexOf(r[\''+columnid+'\'])>-1){z=r[\''+columnid+'\'];';
 	s += 'g[z] = (g[z]||0)+1;';
 	s += '}';
-console.log(this.pivot.expr.toJavaScript());
+console.log(this.pivot.expr.toJS());
 	console.log(this.pivot);
 	console.log(s);
 	var gfn = new Function('g,r,params,alasql','var y;'+s);
@@ -9045,11 +9045,11 @@ var rollup = function (a,query) {
 
 		 		query.groupColumns[escapeq(a[i].columnid)] = a[i].nick;
 				var aaa = a[i].nick+'\t'
-					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+					+a[i].toJS('p',query.sources[0].alias,query.defcols);
 		 	} else {
 		 		query.groupColumns[escapeq(a[i].toString())] = escapeq(a[i].toString());
 				var aaa = escapeq(a[i].toString())+'\t'
-					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+					+a[i].toJS('p',query.sources[0].alias,query.defcols);
 			}
 
 			if(mask&(1<<i)) ss.push(aaa);
@@ -9073,7 +9073,7 @@ var cube = function (a,query) {
 				//ss = cartes(ss,decartes(a[i]));
 
 //				var aaa = a[i].toString()+'\t'
-//					+a[i].toJavaScript('p',query.sources[0].alias,query.defcols);
+//					+a[i].toJS('p',query.sources[0].alias,query.defcols);
 
 				ss = ss.concat(decartes(a[i],query));
 				//
@@ -9118,11 +9118,11 @@ function decartes(gv,query) {
 			//	console.log('+++',gv[t].columnid,gv[t]);
 				gv[t].nick = escapeq(gv[t].columnid);
 			 	query.groupColumns[gv[t].nick] = gv[t].nick;
-		 		res = res.map(function(r){return r.concat(gv[t].nick+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
+		 		res = res.map(function(r){return r.concat(gv[t].nick+'\t'+gv[t].toJS('p',query.sources[0].alias,query.defcols))}); 	
 //		 		res = res.map(function(r){return r.concat(gv[t].columnid)}); 	
 			} else if(gv[t] instanceof yy.FuncValue) {
 				query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
-		 		res = res.map(function(r){return r.concat(escapeq(gv[t].toString())+'\t'+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols))}); 	
+		 		res = res.map(function(r){return r.concat(escapeq(gv[t].toString())+'\t'+gv[t].toJS('p',query.sources[0].alias,query.defcols))}); 	
 		 		// to be defined
 			} else if(gv[t] instanceof yy.GroupExpression) {
 				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group,query));
@@ -9141,7 +9141,7 @@ function decartes(gv,query) {
  					query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
 		 			return r.concat(escapeq(gv[t].toString())
 		 				+'\t'
-		 				+gv[t].toJavaScript('p',query.sources[0].alias,query.defcols)) 
+		 				+gv[t].toJS('p',query.sources[0].alias,query.defcols)) 
 		 		}); 	
 //				res = res.concat(gv[t]);
 			};
@@ -9161,16 +9161,16 @@ function decartes(gv,query) {
 	} else if(gv instanceof yy.FuncValue) {
 //		console.log(gv);
 		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
-		return [gv.toString()+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
+		return [gv.toString()+'\t'+gv.toJS('p',query.sources[0].alias,query.defcols)];
 	} else if(gv instanceof yy.Column) {
 			gv.nick = escapeq(gv.columnid);
 		 	query.groupColumns[gv.nick] = gv.nick;
-			return [gv.nick+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)]; // Is this ever happened?
+			return [gv.nick+'\t'+gv.toJS('p',query.sources[0].alias,query.defcols)]; // Is this ever happened?
 		// } else if(gv instanceof yy.Expression) {
 		// 	return [gv.columnid]; // Is this ever happened?
 	} else {
 		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
-		return [escapeq(gv.toString())+'\t'+gv.toJavaScript('p',query.sources[0].alias,query.defcols)];
+		return [escapeq(gv.toString())+'\t'+gv.toJS('p',query.sources[0].alias,query.defcols)];
 //			throw new Error('Single argument in the group without array');			
 	};
 
@@ -9370,12 +9370,12 @@ yy.ExpressionStatement.prototype.toString = function() {
 */
 yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if(this.expression) {
-//		console.log(this.expression.toJavaScript('','', null));
-//		console.log(this.expression.toJavaScript('','', null));
-//        console.log(this.expression.toJavaScript('({})','', null));
+//		console.log(this.expression.toJS('','', null));
+//		console.log(this.expression.toJS('','', null));
+//        console.log(this.expression.toJS('({})','', null));
 
 		alasql.precompile(this,databaseid,params); // Precompile queries
-		var exprfn =  new Function("params,alasql,p",'var y;return '+this.expression.toJavaScript('({})','', null)).bind(this);
+		var exprfn =  new Function("params,alasql,p",'var y;return '+this.expression.toJS('({})','', null)).bind(this);
 		var res = exprfn(params,alasql);
 		if(cb) {
 			res = cb(res);
@@ -9428,12 +9428,12 @@ yy.Expression.prototype.findAggregator = function (query){
 	@return {string} JavaScript expression
 */
 
-yy.Expression.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Expression.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 	if(this.expression.reduced) {
 		return 'true';
 	}
-	return this.expression.toJavaScript(context, tableid, defcols);
+	return this.expression.toJS(context, tableid, defcols);
 };
 
 /**
@@ -9450,7 +9450,7 @@ yy.Expression.prototype.compile = function(context, tableid, defcols){
 	if(this.reduced) {
 		return returnTrue();
 	}
-	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 };
 
 /**
@@ -9463,7 +9463,7 @@ yy.JavaScript.prototype.toString = function() {
 	return s;
 };
 
-yy.JavaScript.prototype.toJavaScript = function( /* context, tableid, defcols*/ ) {
+yy.JavaScript.prototype.toJS = function( /* context, tableid, defcols*/ ) {
 //	console.log('Expression',this);
 	return '('+this.value+')';
 };
@@ -9510,7 +9510,7 @@ yy.Join.prototype.toString = function() {
 	return s;
 };
 
-//yy.Join.prototype.toJavaScript = function(context, tableid) {
+//yy.Join.prototype.toJS = function(context, tableid) {
 //	return 'JOIN'+this.table.toString();
 //}
 
@@ -9620,13 +9620,13 @@ yy.Op.prototype.toType = function(tableid) {
 	return 'unknown';
 };
 
-yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
+yy.Op.prototype.toJS = function(context,tableid,defcols) {
 //	console.log(this);
 	var s;
 	var op = this.op;
 	var _this = this;
-	var leftJS = function(){return _this.left.toJavaScript(context,tableid, defcols)};
-	var rightJS = function(){return _this.right.toJavaScript(context,tableid, defcols)};
+	var leftJS = function(){return _this.left.toJS(context,tableid, defcols)};
+	var rightJS = function(){return _this.right.toJS(context,tableid, defcols)};
 
 	if(this.op === '='){
 		op = '===';
@@ -9648,7 +9648,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			var ss = [];
 			if(!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(function(arg){
-															return arg.toJavaScript(context,tableid, defcols);
+															return arg.toJS(context,tableid, defcols);
 														});
 			}
 			return 	''
@@ -9740,13 +9740,13 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 				+ 	( (this.op === 'NOT BETWEEN') ? '!' : '')
 				+ 	'('
 				+ 		'('
-				+ 			this.right1.toJavaScript(context,tableid, defcols)
+				+ 			this.right1.toJS(context,tableid, defcols)
 				+			'<='
 				+			leftJS()
 				+		') && ('
 				+			leftJS()
 				+			'<='
-				+			this.right2.toJavaScript(context,tableid, defcols)
+				+			this.right2.toJS(context,tableid, defcols)
 				+		')'
 				+ 	')'		
 				+ ')';		
@@ -9754,8 +9754,8 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 /*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 
-			return '(('+this.right.left.toJavaScript(context,tableid, defcols)+'<='+leftJS()+')&&'+
-			'('+leftJS()+'<='+this.right.right.toJavaScript(context,tableid, defcols)+'))';		
+			return '(('+this.right.left.toJS(context,tableid, defcols)+'<='+leftJS()+')&&'+
+			'('+leftJS()+'<='+this.right.right.toJS(context,tableid, defcols)+'))';		
 
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
@@ -9777,7 +9777,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'false';
 			s 	= '(['
-				+ this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')
+				+ this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')
 				+ '].indexOf('
 				+ leftJS()
 				+ ')>-1)';
@@ -9805,7 +9805,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'true';
-			s = '(['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].indexOf(';
+			s = '(['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].indexOf(';
 			s += leftJS()+')<0)';
 			return s;
 		} else {
@@ -9827,7 +9827,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
+			s = '['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
@@ -9844,7 +9844,7 @@ yy.Op.prototype.toJavaScript = function(context,tableid,defcols) {
 			s += leftJS()+')'+op+'b})';
 			return s;
 		} else if(this.right instanceof Array ) {
-			s = '['+this.right.map(function(a){return a.toJavaScript(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
+			s = '['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
 			return s;
 		} else {
@@ -9900,7 +9900,7 @@ yy.VarValue.prototype.toType = function() {
 	return 'unknown';
 };
 
-yy.VarValue.prototype.toJavaScript = function() {
+yy.VarValue.prototype.toJS = function() {
 	return "alasql.vars['"+this.variable+"']";
 }
 
@@ -9914,7 +9914,7 @@ yy.NumValue.prototype.toType = function() {
 	return 'number';
 };
 
-yy.NumValue.prototype.toJavaScript = function() {
+yy.NumValue.prototype.toJS = function() {
 	return ""+this.value;
 }
 
@@ -9930,7 +9930,7 @@ yy.StringValue.prototype.toType = function() {
 	return 'string';
 }
 
-yy.StringValue.prototype.toJavaScript = function() {
+yy.StringValue.prototype.toJS = function() {
 //	console.log("'"+doubleqq(this.value)+"'");
 //	return "'"+doubleqq(this.value)+"'";
 	return "'"+escapeq(this.value)+"'";
@@ -9947,7 +9947,7 @@ yy.LogicValue.prototype.toType = function() {
 	return 'boolean';
 }
 
-yy.LogicValue.prototype.toJavaScript = function() {
+yy.LogicValue.prototype.toJS = function() {
 	return this.value?'true':'false';
 }
 
@@ -9955,7 +9955,7 @@ yy.NullValue = function (params) { return yy.extend(this, params); }
 yy.NullValue.prototype.toString = function() {
 	return 'NULL';
 }
-yy.NullValue.prototype.toJavaScript = function() {
+yy.NullValue.prototype.toJS = function() {
 	return 'undefined';
 //	return 'undefined';
 }
@@ -9964,7 +9964,7 @@ yy.ParamValue = function (params) { return yy.extend(this, params); }
 yy.ParamValue.prototype.toString = function() {
 	return '$'+this.param;
 }
-yy.ParamValue.prototype.toJavaScript = function() {
+yy.ParamValue.prototype.toJS = function() {
 	if(typeof this.param == "string") return "params[\'"+this.param+"\']";
 	else return "params["+this.param+"]";
 }
@@ -9990,19 +9990,19 @@ yy.UniOp.prototype.toType = function(tableid) {
 	if(this.op == 'NOT') return 'boolean';
 };
 
-yy.UniOp.prototype.toJavaScript = function(context, tableid, defcols) {
-	if(this.op == '-') return "(-("+this.right.toJavaScript(context, tableid, defcols)+"))";
-	if(this.op == '+') return "("+this.right.toJavaScript(context, tableid, defcols)+")";
-	if(this.op == 'NOT') return '!('+this.right.toJavaScript(context, tableid, defcols)+')';
+yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
+	if(this.op == '-') return "(-("+this.right.toJS(context, tableid, defcols)+"))";
+	if(this.op == '+') return "("+this.right.toJS(context, tableid, defcols)+")";
+	if(this.op == 'NOT') return '!('+this.right.toJS(context, tableid, defcols)+')';
 	if(this.op == '#') {
 		if(this.right instanceof yy.Column) {
 			return "(alasql.databases[alasql.useid].objects[\'"+this.right.columnid+"\'])";
 		} else {
 			return "(alasql.databases[alasql.useid].objects["
-				+this.right.toJavaScript(context, tableid, defcols)+"])";
+				+this.right.toJS(context, tableid, defcols)+"])";
 		};
 	}
-	else if(this.op == null) return '('+this.right.toJavaScript(context, tableid, defcols)+')';
+	else if(this.op == null) return '('+this.right.toJS(context, tableid, defcols)+')';
 };
 
 
@@ -10042,7 +10042,7 @@ yy.Column.prototype.toString = function() {
 	return s;
 };
 
-yy.Column.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Column.prototype.toJS = function(context, tableid, defcols) {
 //	var s = this.value;
 // 	var s = this.columnid;
 // 	if(this.tableid) {
@@ -10199,9 +10199,9 @@ yy.AggrValue.prototype.toType = function() {
 	if(['ARRAY'].indexOf(this.aggregatorid)>-1) return 'array';
 	if(['FIRST','LAST' ].indexOf(this.aggregatorid)>-1) return this.expression.toType();
 }
-yy.AggrValue.prototype.toJavaScript = function(/*context, tableid, defcols*/) {
+yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
 //	var s = 'alasql.functions.'+this.funcid+'(';
-//	if(this.expression) s += this.expression.toJavaScript(context, tableid);
+//	if(this.expression) s += this.expression.toJS(context, tableid);
 //	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 //	return s;
@@ -10255,8 +10255,8 @@ yy.FromData.prototype.toString = function() {
 	if(this.data) return K('DATA')+'('+((Math.random()*10e15)|0)+')';
 	else return '?';
 };
-yy.FromData.prototype.toJavaScript = function(){
-//	console.log('yy.FromData.prototype.toJavaScript');
+yy.FromData.prototype.toJS = function(){
+//	console.log('yy.FromData.prototype.toJS');
 };
 
 yy.Select.prototype.exec = function(params,cb) {
@@ -10450,8 +10450,8 @@ yy.FuncValue.prototype.toString = function() {
 yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	alasql.precompile(this,databaseid,params); // Precompile queries
-//	console.log(34,this.toJavaScript('','',null));
-	var expr =  new Function('params,alasql','var y;return '+this.toJavaScript('','',null));
+//	console.log(34,this.toJS('','',null));
+	var expr =  new Function('params,alasql','var y;return '+this.toJS('','',null));
 	expr(params,alasql);
 	if(cb) res = cb(res);
 	return res;
@@ -10461,14 +10461,14 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 //yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 //	if(this.reduced) return returnTrue();
-//	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+//	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 //};
 
 
 // yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 // //	console.log('Expression',this);
 // 	if(this.reduced) return returnTrue();
-// 	return new Function('p','var y;return '+this.toJavaScript(context, tableid, defcols));
+// 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 // };
 
 yy.FuncValue.prototype.findAggregator = function(query) {
@@ -10479,7 +10479,7 @@ yy.FuncValue.prototype.findAggregator = function(query) {
 	}
 };
 
-yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
@@ -10489,26 +10489,26 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 //		var s = '';
 		if(this.newid) s+= 'new ';
 		s += 'alasql.fn.'+this.funcid+'(';
-//		if(this.args) s += this.args.toJavaScript(context, tableid);
+//		if(this.args) s += this.args.toJS(context, tableid);
 		if(this.args && this.args.length > 0) {
 			s += this.args.map(function(arg){
-				return arg.toJavaScript(context, tableid, defcols);
+				return arg.toJS(context, tableid, defcols);
 			}).join(',');
 		};
 		s += ')';
 	} else if(alasql.stdlib[funcid.toUpperCase()]) {
 		if(this.args && this.args.length > 0) {
-			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJavaScript(context, tableid)}));
+			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
 		} else {
 			s += alasql.stdlib[funcid.toUpperCase()]();
 		}
 	} else if(alasql.stdfn[funcid.toUpperCase()]) {
 		if(this.newid) s+= 'new ';
 		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
-//		if(this.args) s += this.args.toJavaScript(context, tableid);
+//		if(this.args) s += this.args.toJS(context, tableid);
 		if(this.args && this.args.length > 0) {
 			s += this.args.map(function(arg){
-				return arg.toJavaScript(context, tableid, defcols);
+				return arg.toJS(context, tableid, defcols);
 			}).join(',');
 		};
 		s += ')';		
@@ -10522,10 +10522,10 @@ yy.FuncValue.prototype.toJavaScript = function(context, tableid, defcols) {
 }
 
 // // Functions compiler
-// nodes.FunctionValue.prototype.toJavaScript = function (context, tableid) {
+// nodes.FunctionValue.prototype.toJS = function (context, tableid) {
 // 	var s = '';
 // 	s += fns[this.name.toUpperCase()].apply(null,this.arguments.map(function(arg){
-// 		if(arg) return arg.toJavaScript(context, tableid);
+// 		if(arg) return arg.toJS(context, tableid);
 // 		else return '';
 // 	}));
 // 	return s;
@@ -10720,19 +10720,19 @@ yy.CaseValue.prototype.findAggregator = function (query){
 	if(this.elses && this.elses.findAggregator) this.elses.findAggregator(query);
 };
 
-yy.CaseValue.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.CaseValue.prototype.toJS = function(context, tableid, defcols) {
 
 	var s = '((function('+context+',params,alasql){var r;';
 	if(this.expression) {
-//			this.expression.toJavaScript(context, tableid)
-		s += 'v='+this.expression.toJavaScript(context, tableid, defcols)+';';
-		s += (this.whens||[]).map(function(w) { return ' if(v=='+w.when.toJavaScript(context,tableid, defcols)
-			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
-		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid, defcols)+'}';
+//			this.expression.toJS(context, tableid)
+		s += 'v='+this.expression.toJS(context, tableid, defcols)+';';
+		s += (this.whens||[]).map(function(w) { return ' if(v=='+w.when.toJS(context,tableid, defcols)
+			+') {r='+w.then.toJS(context,tableid, defcols)+'}'; }).join(' else ');
+		if(this.elses) s += ' else {r='+this.elses.toJS(context,tableid, defcols)+'}';
 	} else {
-		s += (this.whens||[]).map(function(w) { return ' if('+w.when.toJavaScript(context,tableid, defcols)
-			+') {r='+w.then.toJavaScript(context,tableid, defcols)+'}'; }).join(' else ');
-		if(this.elses) s += ' else {r='+this.elses.toJavaScript(context,tableid,defcols)+'}';
+		s += (this.whens||[]).map(function(w) { return ' if('+w.when.toJS(context,tableid, defcols)
+			+') {r='+w.then.toJS(context,tableid, defcols)+'}'; }).join(' else ');
+		if(this.elses) s += ' else {r='+this.elses.toJS(context,tableid,defcols)+'}';
 	}
 	// TODO remove bind from CASE
 	s += ';return r;}).bind(this))('+context+',params,alasql)';
@@ -10765,7 +10765,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 			s += '['+obj.map(function(b){
 				return JSONtoString(b);
 			}).join(',')+']';
-		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
+		} else if(!obj.toJS || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
 			var ss = [];
@@ -10795,7 +10795,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 
 
 
-function JSONtoJavaScript(obj, context, tableid, defcols) {
+function JSONtoJS(obj, context, tableid, defcols) {
 	var s = '';
 	if(typeof obj == "string") s = '"'+obj+'"';
 	else if(typeof obj == "number") s = '('+obj+')';
@@ -10803,9 +10803,9 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 	else if(typeof obj == "object") {
 		if(obj instanceof Array) {
 			s += '['+obj.map(function(b){
-				return JSONtoJavaScript(b, context, tableid, defcols);
+				return JSONtoJS(b, context, tableid, defcols);
 			}).join(',')+']';
-		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
+		} else if(!obj.toJS || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
 			var ss = [];
@@ -10817,12 +10817,12 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 				else {
 					throw new Error('THis is not ES6... no expressions on left side yet');
 				}
-				s1 += ':'+JSONtoJavaScript(obj[k], context, tableid, defcols);
+				s1 += ':'+JSONtoJS(obj[k], context, tableid, defcols);
 				ss.push(s1);
 			};
 			s += ss.join(',')+'}';
-		} else if(obj.toJavaScript)	{
-			s = obj.toJavaScript(context, tableid, defcols);
+		} else if(obj.toJS)	{
+			s = obj.toJS(context, tableid, defcols);
 		} else {
 			throw new Error('1Can not parse JSON object '+JSON.stringify(obj));
 		}
@@ -10833,9 +10833,9 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 	return s;
 }
 
-yy.Json.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Json.prototype.toJS = function(context, tableid, defcols) {
 	// TODO reod
-	return JSONtoJavaScript(this.value,context, tableid, defcols);
+	return JSONtoJS(this.value,context, tableid, defcols);
 }
 
 
@@ -10862,31 +10862,31 @@ yy.Convert.prototype.toString = function() {
 	s += ')';
 	return s;
 };
-yy.Convert.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 
 //	if(this.style) {
-	return 'alasql.stdfn.CONVERT('+this.expression.toJavaScript(context, tableid, defcols)
+	return 'alasql.stdfn.CONVERT('+this.expression.toJS(context, tableid, defcols)
 		+',{dbtypeid:"'+this.dbtypeid+'",dbsize:'+this.dbsize+',style:'+
 		this.style+'})';		
 //	}
 /*
 	if(this.dbtypeid == 'INT') {
-		return '(('+this.expression.toJavaScript(context, tableid, defcols)+')|0)';
+		return '(('+this.expression.toJS(context, tableid, defcols)+')|0)';
 	} if(this.dbtypeid == 'STRING') {
-		return '(""+'+this.expression.toJavaScript(context, tableid, defcols)+')';
+		return '(""+'+this.expression.toJS(context, tableid, defcols)+')';
 	} if(this.dbtypeid == 'NUMBER') {
-		return '(+('+this.expression.toJavaScript(context, tableid, defcols)+'))';
+		return '(+('+this.expression.toJS(context, tableid, defcols)+'))';
 	} if(this.dbtypeid == 'DATE') {
 		if(alasql.options.datetimeformat == 'javascript') {
-			return '(new Date('+this.expression.toJavaScript(context, tableid, defcols)+'))';
+			return '(new Date('+this.expression.toJS(context, tableid, defcols)+'))';
 		} else if(alasql.options.datetimeformat == 'sql') {
-			return this.expression.toJavaScript(context, tableid, defcols);
+			return this.expression.toJS(context, tableid, defcols);
 		}
 	} if(this.dbtypeid == 'DATETIME') {
 		if(alasql.options.datetimeformat == 'javascript') {
-			return '(new Date('+this.expression.toJavaScript(context, tableid, defcols)+'))';
+			return '(new Date('+this.expression.toJS(context, tableid, defcols)+'))';
 		} else if(alasql.options.datetimeformat == 'sql') {
-			return this.expression.toJavaScript(context, tableid, defcols);
+			return this.expression.toJS(context, tableid, defcols);
 		}
 	} else {
 
@@ -11112,11 +11112,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
 			if(col.check) {
-				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJavaScript('r','')));
+				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJS('r','')));
 			}
 
 			if(col.default) {
-				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript('r',''));
+				ss.push('\''+col.columnid+'\':'+col.default.toJS('r',''));
 			}
 
 
@@ -11202,8 +11202,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};					
 		} else if(con.type == 'CHECK') {
-//			console.log(con.expression.toJavaScript('r',''));
-			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJavaScript('r','')));
+//			console.log(con.expression.toJS('r',''));
+			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJS('r','')));
 		} else if(con.type == 'UNIQUE') {
 //			console.log(con);
 			var uk = {};
@@ -11687,8 +11687,8 @@ yy.CreateVertex.prototype.toString = function() {
 	return s;
 }
 
-yy.CreateVertex.prototype.toJavaScript = function(context, tableid, defcols) {
-//		console.log('yy.CreateVertex.toJavaScript');
+yy.CreateVertex.prototype.toJS = function(context, tableid, defcols) {
+//		console.log('yy.CreateVertex.toJS');
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	// var s = '';
 	return s;
@@ -11730,13 +11730,13 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
-		var s = 'x.name='+this.name.toJavaScript();
+		var s = 'x.name='+this.name.toJS();
 		var namefn = new Function('x',s);
 	};
 
 	if(this.sets && this.sets.length > 0) {
 		var s = this.sets.map(function(st){
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql',s);
 	} else if(this.content) {
@@ -11801,7 +11801,7 @@ yy.CreateEdge.prototype.toString = function() {
 	return s;
 }
 
-yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.CreateEdge.prototype.toJS = function(context, tableid, defcols) {
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 	return s;
 };
@@ -11816,18 +11816,18 @@ yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJS());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
-		var s = 'x.name='+this.name.toJavaScript();
+		var s = 'x.name='+this.name.toJS();
 		var namefn = new Function('x',s);
 	};
 
 	if(this.sets && this.sets.length > 0) {
 		var s = this.sets.map(function(st){
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {
@@ -11874,7 +11874,7 @@ yy.CreateGraph.prototype.toString = function() {
 	return s;
 }
 
-// yy.CreateEdge.prototype.toJavaScript = function(context, tableid, defcols) {
+// yy.CreateEdge.prototype.toJS = function(context, tableid, defcols) {
 // 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 // 	return s;
 // };
@@ -11912,7 +11912,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 				e.$node='EDGE';
 				if(typeof g.json != 'undefined') {
 					extend(e,(new Function('params,alasql','var y;return '+
-					g.json.toJavaScript()))(params,alasql));
+					g.json.toJS()))(params,alasql));
 				}
 
 				var v1;
@@ -12013,7 +12013,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 		v.$node='VERTEX';
 		if(typeof g.json != 'undefined') {
 			extend(v,(new Function('params,alasql','var y;return '+
-			g.json.toJavaScript()))(params,alasql));
+			g.json.toJS()))(params,alasql));
 		}
 		db.objects[v.$id] = v;
 		if(typeof v.$class != 'undefined') {
@@ -12036,18 +12036,18 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql','var y;return '+this.from.toJavaScript());
-	var tofn = new Function('params,alasql','var y;return '+this.to.toJavaScript());
+	var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
+	var tofn = new Function('params,alasql','var y;return '+this.to.toJS());
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name != 'undefined') {
-		var s = 'x.name='+this.name.toJavaScript();
+		var s = 'x.name='+this.name.toJS();
 		var namefn = new Function('x',s);
 	};
 
 	if(this.sets && this.sets.length > 0) {
 		var s = this.sets.map(function(st){
-			return 'x[\''+st.column.columnid+'\']='+st.expression.toJavaScript('x','');
+			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql','var y;'+s);
 	} else if(this.content) {
@@ -12424,10 +12424,10 @@ yy.If.prototype.toString = function() {
 yy.If.prototype.execute = function (databaseid,params,cb){
 	var res;
 //	console.log(this);
-//	console.log(this.expression.toJavaScript('{}','',null));
+//	console.log(this.expression.toJS('{}','',null));
 //	console.log();
-	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJavaScript('({})','',null)).bind(this);
-//	var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJavaScript('({})','',null)).bind(this);
+	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJS('({})','',null)).bind(this);
+//	var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJS('({})','',null)).bind(this);
 	if(fn(params,alasql)) res = this.thenstat.execute(databaseid,params,cb);
 	else {
 		if(this.elsestat) res = this.elsestat.execute(databaseid,params,cb);
@@ -12460,8 +12460,8 @@ yy.While.prototype.toString = function() {
 yy.While.prototype.execute = function (databaseid,params,cb) {
 	var self = this;
 	var res = [];
-//	console.log(this.expression.toJavaScript());
-	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJavaScript());
+//	console.log(this.expression.toJS());
+	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJS());
 //	console.log('cb',!!cb);
 	if(cb) {
 		var first = false;
@@ -12553,10 +12553,10 @@ yy.Insert.prototype.toString = function() {
 	return s;
 }
 
-yy.Insert.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Insert.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
-//	return this.expression.toJavaScript(context, tableid, defcols);
+//	return this.expression.toJS(context, tableid, defcols);
 // console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
@@ -12623,16 +12623,16 @@ yy.Insert.prototype.compile = function (databaseid) {
 					if(table.xcolumns && table.xcolumns[col.columnid]) { 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
 							//q += ''
-							q += "(x="+values[idx].toJavaScript()+",x==undefined?undefined:+x)";
+							q += "(x="+values[idx].toJS()+",x==undefined?undefined:+x)";
 						} else if (alasql.fn[table.xcolumns[col.columnid].dbtypeid]) {
 							q += "(new "+table.xcolumns[col.columnid].dbtypeid+"(";
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 							q += "))";
 						} else {
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 						};
 					} else { 
-						q += values[idx].toJavaScript();
+						q += values[idx].toJS();
 					}
 					ss.push(q);
 
@@ -12646,16 +12646,16 @@ yy.Insert.prototype.compile = function (databaseid) {
 					table.columns.forEach(function(col, idx){
 
 						var q = '\''+col.columnid +'\':';
-//						var val = values[idx].toJavaScript();
+//						var val = values[idx].toJS();
 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(col.dbtypeid) >=0) {
-							q += "+"+values[idx].toJavaScript();
+							q += "+"+values[idx].toJS();
 						} else if (alasql.fn[col.dbtypeid]) {
 							q += "(new "+col.dbtypeid+"(";
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 							q += "))";
 						} else { 
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 						}
 
 						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
@@ -12677,7 +12677,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			//			console.log(fld);
 						// TODO: type checking and conversions
-			//			rec[fld.fldid] = eval(self.insertExpression[idx].toJavaScript('',''));
+			//			rec[fld.fldid] = eval(self.insertExpression[idx].toJS('',''));
 			//			console.log(rec[fld.fldid]);
 			//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
 
@@ -12687,8 +12687,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 					});
 				} else {
 //					console.log(222,values);
-//					sw = 'var w='+JSONtoJavaScript(values)+';for(var k in w){r[k]=w[k]};';
-					sw = JSONtoJavaScript(values);
+//					sw = 'var w='+JSONtoJS(values)+';for(var k in w){r[k]=w[k]};';
+					sw = JSONtoJS(values);
 				}
 			}
 //console.log(ss);
@@ -12866,11 +12866,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 
 //		try {
-//		console.log(this, 22, this.where.toJavaScript('r',''));
+//		console.log(this, 22, this.where.toJS('r',''));
 //	} catch(err){console.log(444,err)};
 //		var query = {};
-//console.log(this.where.toJavaScript('r',''));
-		wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJavaScript('r','')+')').bind(this);
+//console.log(this.where.toJS('r',''));
+		wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJS('r','')+')').bind(this);
 //		console.log(wherefn);
 		statement = (function (params, cb) {
 			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {
@@ -12986,13 +12986,13 @@ yy.Update.prototype.compile = function (databaseid) {
 			});		
 		}
 
-		var wherefn = new Function('r,params,alasql','var y;return '+this.where.toJavaScript('r','')).bind(this);
+		var wherefn = new Function('r,params,alasql','var y;return '+this.where.toJS('r','')).bind(this);
 	};
 
 	// Construct update function
 	var s = '';
 	this.columns.forEach(function(col){
-		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJavaScript('r','')+';'; 
+		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJS('r','')+';'; 
 	});
 //	console.log('updatefn',s);
 	var assignfn = new Function('r,params,alasql','var y;'+s);
@@ -13130,7 +13130,7 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	var args;
 	if(this.args && this.args.length > 0) {
 		args = this.args.map(function(arg){
-			return new Function('params,alasql','var y;return '+arg.toJavaScript())(params,alasql);
+			return new Function('params,alasql','var y;return '+arg.toJS())(params,alasql);
 		});
 	};
 	if(this.engineid) {
@@ -13325,9 +13325,9 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 
 			// Set value
 			if(declare.expression) {
-	//		console.log(this.expression.toJavaScript('','', null));
+	//		console.log(this.expression.toJS('','', null));
 				alasql.vars[declare.variable] = new Function("params,alasql","return "
-					+declare.expression.toJavaScript('({})','', null))(params,alasql);
+					+declare.expression.toJS('({})','', null))(params,alasql);
 				if(alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(alasql.vars[declare.variable],alasql.declares[declare.variable]);
 				}
@@ -13517,9 +13517,9 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 			});		
 		}
 
-//		console.log(this.expression.toJavaScript('','', null));
+//		console.log(this.expression.toJS('','', null));
 		var res = new Function("params,alasql","return "
-			+this.expression.toJavaScript('({})','', null)).bind(this)(params,alasql);
+			+this.expression.toJS('({})','', null)).bind(this)(params,alasql);
 		if(alasql.declares[this.variable]) {
 			res = alasql.stdfn.CONVERT(res,alasql.declares[this.variable]);
 		}
@@ -13535,8 +13535,8 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 				} else if(typeof prop == 'number') {
 					return '['+prop+']';
 				} else {
-					// console.log('prop:',prop, prop.toJavaScript());
-					return '['+prop.toJavaScript()+']';
+					// console.log('prop:',prop, prop.toJS());
+					return '['+prop.toJS()+']';
 //				} else {
 //					console.log(prop, typeof );
 //					throw new Error('Wrong SET property');
@@ -15801,8 +15801,8 @@ yy.Print.prototype.execute = function (databaseid,params,cb) {
 	if(this.exprs && this.exprs.length >0) {
 		var rs = this.exprs.map(function(expr){
 
-//			console.log('var y;return '+expr.toJavaScript('({})','', null));
-			var exprfn =  new Function("params,alasql,p",'var y;return '+expr.toJavaScript('({})','', null)).bind(self);
+//			console.log('var y;return '+expr.toJS('({})','', null));
+			var exprfn =  new Function("params,alasql,p",'var y;return '+expr.toJS('({})','', null)).bind(self);
 			var r = exprfn(params,alasql);
 			return JSONtoString(r);
 		});
