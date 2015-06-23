@@ -19,6 +19,7 @@
         "yy",
         "K",
         "L",
+        "N",
         "D",
         "S",
         "escapeq",
@@ -38,6 +39,8 @@
         "extend",
         "distinctArray",
         "arrayDiff",
+        "Query",
+        "queryfn",
         "processSelector",
         "cloneDeep",
         "hash"
