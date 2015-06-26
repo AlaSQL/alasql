@@ -78,10 +78,10 @@ yy.Select.prototype.toString = function() {
 /**
  Select statement in expression
  */
-yy.Select.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Select.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
-//	return this.expression.toJavaScript(context, tableid, defcols);
+//	return this.expression.toJS(context, tableid, defcols);
 // console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
@@ -241,9 +241,9 @@ yy.Select.prototype.compile = function(databaseid) {
 			//
 			var qs = 'return alasql.into[\''+this.into.funcid.toUpperCase()+'\'](';
 			if(this.into.args && this.into.args.length>0 ) {
-				qs += this.into.args[0].toJavaScript()+',';
+				qs += this.into.args[0].toJS()+',';
 				if(this.into.args.length > 1) {
-					qs += this.into.args[1].toJavaScript()+',';
+					qs += this.into.args[1].toJS()+',';
 				} else {
 					qs += 'undefined,';
 				}

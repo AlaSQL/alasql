@@ -19,7 +19,7 @@ yy.Select.prototype.compileOrder = function (query) {
 		var sk = '';
 		this.order.forEach(function(ord,idx){
 			// console.log(ord instanceof yy.Expression);
-			// console.log(ord.toJavaScript('a',''));
+			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
 			
 			// Date conversion
@@ -50,8 +50,8 @@ yy.Select.prototype.compileOrder = function (query) {
 				dg = '.valueOf()';
 				// COLLATE NOCASE
 				if(ord.nocase) dg += '.toUpperCase()';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJavaScript('b','')+"||'')"+dg+')return 1;';
-				s += 'if(('+ord.toJavaScript('a','')+"||'')"+dg+'==('+ord.toJavaScript('b','')+"||'')"+dg+'){';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
+				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
 			}			
 
 //			if(columnid == '_') {

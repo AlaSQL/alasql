@@ -61,7 +61,7 @@ name:
 SEARCH DISTINCT CLASS(users) MANY(OUTV(),1,5) OK(status = "down");
 SEARCH ALL(PROP() ());
 
-toJavaScript(p,'st')
+toJS(p,'st')
 
 SELECT * FROM Cars WHERE EXISTS (SEARCH CLASS(Person) AS p OUT(CLASS(owns)) CLASS(Car) (name = A.a ) p);
 

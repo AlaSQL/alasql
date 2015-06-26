@@ -7,7 +7,7 @@ For API details and how to use promises, see the <a href="http://www.html5rocks.
 ## Downloads
 
 * [es6-promise](https://raw.githubusercontent.com/jakearchibald/es6-promise/master/dist/es6-promise.js)
-* [es6-promise-min](https://raw.githubusercontent.com/jakearchibald/es6-promise/master/dist/es6-promise-min.js)
+* [es6-promise-min](https://raw.githubusercontent.com/jakearchibald/es6-promise/master/dist/es6-promise.min.js)
 
 ## Node.js
 

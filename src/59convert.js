@@ -20,31 +20,31 @@ yy.Convert.prototype.toString = function() {
 	s += ')';
 	return s;
 };
-yy.Convert.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 
 //	if(this.style) {
-	return 'alasql.stdfn.CONVERT('+this.expression.toJavaScript(context, tableid, defcols)
+	return 'alasql.stdfn.CONVERT('+this.expression.toJS(context, tableid, defcols)
 		+',{dbtypeid:"'+this.dbtypeid+'",dbsize:'+this.dbsize+',style:'+
 		this.style+'})';		
 //	}
 /*
 	if(this.dbtypeid == 'INT') {
-		return '(('+this.expression.toJavaScript(context, tableid, defcols)+')|0)';
+		return '(('+this.expression.toJS(context, tableid, defcols)+')|0)';
 	} if(this.dbtypeid == 'STRING') {
-		return '(""+'+this.expression.toJavaScript(context, tableid, defcols)+')';
+		return '(""+'+this.expression.toJS(context, tableid, defcols)+')';
 	} if(this.dbtypeid == 'NUMBER') {
-		return '(+('+this.expression.toJavaScript(context, tableid, defcols)+'))';
+		return '(+('+this.expression.toJS(context, tableid, defcols)+'))';
 	} if(this.dbtypeid == 'DATE') {
 		if(alasql.options.datetimeformat == 'javascript') {
-			return '(new Date('+this.expression.toJavaScript(context, tableid, defcols)+'))';
+			return '(new Date('+this.expression.toJS(context, tableid, defcols)+'))';
 		} else if(alasql.options.datetimeformat == 'sql') {
-			return this.expression.toJavaScript(context, tableid, defcols);
+			return this.expression.toJS(context, tableid, defcols);
 		}
 	} if(this.dbtypeid == 'DATETIME') {
 		if(alasql.options.datetimeformat == 'javascript') {
-			return '(new Date('+this.expression.toJavaScript(context, tableid, defcols)+'))';
+			return '(new Date('+this.expression.toJS(context, tableid, defcols)+'))';
 		} else if(alasql.options.datetimeformat == 'sql') {
-			return this.expression.toJavaScript(context, tableid, defcols);
+			return this.expression.toJS(context, tableid, defcols);
 		}
 	} else {
 

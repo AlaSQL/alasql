@@ -24,7 +24,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 			s += '['+obj.map(function(b){
 				return JSONtoString(b);
 			}).join(',')+']';
-		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
+		} else if(!obj.toJS || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
 			var ss = [];
@@ -54,7 +54,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 
 
 
-function JSONtoJavaScript(obj, context, tableid, defcols) {
+function JSONtoJS(obj, context, tableid, defcols) {
 	var s = '';
 	if(typeof obj == "string") s = '"'+obj+'"';
 	else if(typeof obj == "number") s = '('+obj+')';
@@ -62,9 +62,9 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 	else if(typeof obj == "object") {
 		if(obj instanceof Array) {
 			s += '['+obj.map(function(b){
-				return JSONtoJavaScript(b, context, tableid, defcols);
+				return JSONtoJS(b, context, tableid, defcols);
 			}).join(',')+']';
-		} else if(!obj.toJavaScript || obj instanceof yy.Json) {
+		} else if(!obj.toJS || obj instanceof yy.Json) {
 			// to prevent recursion
 			s = '{';
 			var ss = [];
@@ -76,12 +76,12 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 				else {
 					throw new Error('THis is not ES6... no expressions on left side yet');
 				}
-				s1 += ':'+JSONtoJavaScript(obj[k], context, tableid, defcols);
+				s1 += ':'+JSONtoJS(obj[k], context, tableid, defcols);
 				ss.push(s1);
 			};
 			s += ss.join(',')+'}';
-		} else if(obj.toJavaScript)	{
-			s = obj.toJavaScript(context, tableid, defcols);
+		} else if(obj.toJS)	{
+			s = obj.toJS(context, tableid, defcols);
 		} else {
 			throw new Error('1Can not parse JSON object '+JSON.stringify(obj));
 		}
@@ -92,9 +92,9 @@ function JSONtoJavaScript(obj, context, tableid, defcols) {
 	return s;
 }
 
-yy.Json.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Json.prototype.toJS = function(context, tableid, defcols) {
 	// TODO reod
-	return JSONtoJavaScript(this.value,context, tableid, defcols);
+	return JSONtoJS(this.value,context, tableid, defcols);
 }
 
 

@@ -3,7 +3,7 @@ yy.Select.prototype.compileWhere = function(query) {
 		if(typeof this.where == "function") {
 			return this.where;
 		} else {
-			s = this.where.toJavaScript('p',query.defaultTableid,query.defcols);
+			s = this.where.toJS('p',query.defaultTableid,query.defcols);
 			query.wherefns = s;
 //		console.log(s);
 			return new Function('p,params,alasql','var y;return '+s);
@@ -43,7 +43,7 @@ function optimizeWhereJoin (query, ast) {
 	if(ast.op != '=' && ast.op != 'AND') return;
 	if(ast.allsome) return;
 
-	var s = ast.toJavaScript('p',query.defaultTableid,query.defcols);
+	var s = ast.toJS('p',query.defaultTableid,query.defcols);
 	var fsrc = [];
 	query.sources.forEach(function(source,idx) {
 		// Optimization allowed only for tables only
@@ -75,15 +75,15 @@ function optimizeWhereJoin (query, ast) {
 
 		if((ast instanceof yy.Op) && (ast.op == '=' && !ast.allsome)) {
 			if(ast.left instanceof yy.Column) {
-				var ls = ast.left.toJavaScript('p',query.defaultTableid,query.defcols);
-				var rs = ast.right.toJavaScript('p',query.defaultTableid,query.defcols);
+				var ls = ast.left.toJS('p',query.defaultTableid,query.defcols);
+				var rs = ast.right.toJS('p',query.defaultTableid,query.defcols);
 				if(rs.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
 					fsrc[0].wxleftfns = ls; 
 					fsrc[0].wxrightfns = rs; 
 				} 
 			} if(ast.right instanceof yy.Column) {
-				var ls = ast.left.toJavaScript('p',query.defaultTableid,query.defcols);
-				var rs = ast.right.toJavaScript('p',query.defaultTableid,query.defcols);
+				var ls = ast.left.toJS('p',query.defaultTableid,query.defcols);
+				var rs = ast.right.toJS('p',query.defaultTableid,query.defcols);
 				if(ls.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
 					fsrc[0].wxleftfns = rs; 
 					fsrc[0].wxrightfns = ls; 

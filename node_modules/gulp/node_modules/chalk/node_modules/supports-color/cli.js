@@ -2,25 +2,26 @@
 'use strict';
 var pkg = require('./package.json');
 var supportsColor = require('./');
-var input = process.argv[2];
+var argv = process.argv.slice(2);
 
 function help() {
 	console.log([
-		pkg.description,
 		'',
-		'Usage',
-		'  $ supports-color',
+		'  ' + pkg.description,
 		'',
-		'Exits with code 0 if color is supported and 1 if not'
+		'  Usage',
+		'    supports-color',
+		'',
+		'  Exits with code 0 if color is supported and 1 if not'
 	].join('\n'));
 }
 
-if (!input || process.argv.indexOf('--help') !== -1) {
+if (argv.indexOf('--help') !== -1) {
 	help();
 	return;
 }
 
-if (process.argv.indexOf('--version') !== -1) {
+if (argv.indexOf('--version') !== -1) {
 	console.log(pkg.version);
 	return;
 }

@@ -16,7 +16,7 @@ rules:
   semi: [2, never]
   space-after-keywords: 2
   space-before-blocks: 2
-  space-before-function-parentheses: {anonymous: always, named: never}
+  space-before-function-parentheses: [2, {anonymous: always, named: never}]
   space-in-brackets: [2, never]
   space-in-parens: [2, never]
   space-unary-ops: [2, {words: true, nonwords: false}]

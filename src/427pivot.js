@@ -47,7 +47,7 @@ if(false) {
 		} else if(ie.expr instanceof yy.StringValue) {
 			return ie.expr.value;
 		} else {
-			return ie.expr.toJavaScript();
+			return ie.expr.toJS();
 		}
 		if(ie.as) {
 			als[v] = ie.as;
@@ -58,7 +58,7 @@ if(false) {
 	}).join(',')+'].indexOf(r[\''+columnid+'\'])>-1){z=r[\''+columnid+'\'];';
 	s += 'g[z] = (g[z]||0)+1;';
 	s += '}';
-console.log(this.pivot.expr.toJavaScript());
+console.log(this.pivot.expr.toJS());
 	console.log(this.pivot);
 	console.log(s);
 	var gfn = new Function('g,r,params,alasql','var y;'+s);
