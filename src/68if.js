@@ -8,10 +8,10 @@
 
 yy.If = function (params) { return yy.extend(this, params); }
 yy.If.prototype.toString = function() {
-	var s = K('IF')+' ';
+	var s = 'IF'+' ';
 	s += this.expression.toString();
 	s += ' '+this.thenstat.toString();
-	if(this.elsestat) s += ' '+K('ELSE')+NL()+ID()+this.thenstat.toString();
+	if(this.elsestat) s += ' ELSE '+this.thenstat.toString();
 	return s;
 };
 

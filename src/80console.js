@@ -6,7 +6,7 @@ alasql.con = {
 
 alasql.con.open = function(el) {
 	// For browser only
-	if (typeof exports === 'object') return;
+	if(typeof exports === 'object') return;
 
 	// Find parent element
 	el = el || document.getElementById('alasql-con') || document.getElementsByTagName('body');
@@ -38,14 +38,14 @@ alasql.con.open = function(el) {
 
 alasql.con.clear = function() {
 	// For browser only
-	if (typeof exports === 'object') return;
+	if(typeof exports === 'object') return;
 
 	alasql.con.conel.innerHTML = '';
 };
 
 alasql.con.close = function() {
 	// For browser only
-	if (typeof exports === 'object') return;
+	if(typeof exports === 'object') return;
 
 	alasql.con.conel.removeChild(alasql.con.lenta);
 	alasql.con.conel.removeChild(alasql.con.inel);
@@ -54,7 +54,7 @@ alasql.con.close = function() {
 
 alasql.con.log = function() {
 		// For browser only
-	if (typeof exports === 'object') {
+	if(typeof exports === 'object') {
 		console.log.bind(console).apply(this, arguments);
 	} else {
 		var s = '<div>';
@@ -68,23 +68,25 @@ alasql.con.log = function() {
 };
 */
 alasql.test = function(name, times, fn) {
-	if(arguments.length == 0) {
+	if(arguments.length === 0) {
 		alasql.log(alasql.con.results);
 		return;
-	} else if(arguments.length == 1) {
+	} else if(arguments.length === 1) {
 		var tm = Date.now();
 		fn();
 		alasql.con.log(Date.now()-tm);
 		return;
 	} 
 
-	if(arguments.length == 2) {
+	if(arguments.length === 2) {
 		fn = times;
 		times = 1;
 	}
 
 	var tm = Date.now();
-	for(var i=0;i<times;i++) fn();
+	for(var i=0;i<times;i++){
+		fn();
+	}
 	alasql.con.results[name] = Date.now()-tm;
 };
 
@@ -112,20 +114,22 @@ alasql.log = function(sql, params) {
 	var olduseid = alasql.useid;
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		target = 'console';
 	}
 
 	var res;
-	if(typeof sql == "string") {
+	if(typeof sql === "string") {
 		res = alasql(sql, params);
 	} else {
 		res = sql;
-	};
+	}
 
 	// For Node and console.output
-	if(target == 'console' || typeof exports == 'object') {
-		if(typeof sql == 'string' && alasql.options.logprompt) console.log(olduseid+'>',sql);
+	if(target === 'console' || typeof exports === 'object') {
+		if(typeof sql === 'string' && alasql.options.logprompt){
+			console.log(olduseid+'>',sql);
+		}
 
 		if(res instanceof Array) {
 			if(console.table) {
@@ -141,10 +145,10 @@ alasql.log = function(sql, params) {
 
 	} else {
 		var el;
-		if(target == 'output') {
+		if(target === 'output') {
 			el = document.getElementsByTagName('output')[0];
 		} else {
-			if(typeof target == 'string') {
+			if(typeof target === 'string') {
 				el = document.getElementById(target);
 			} else {
 				// in case of DOM
@@ -155,15 +159,15 @@ alasql.log = function(sql, params) {
 
 		var s = '';
 
-		if(typeof sql == 'string' && alasql.options.logprompt) {
+		if(typeof sql === 'string' && alasql.options.logprompt) {
 //			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
 			s += '<pre><code>'+alasql.pretty(sql)+'</code></pre>';
 		}
 
 		if(res instanceof Array) {
-			if(res.length == 0) {
+			if(res.length === 0) {
 				s += '<p>[ ]</p>'
-			} else if(typeof res[0] != 'object' || res[0] instanceof Array) {
+			} else if(typeof res[0] !== 'object' || res[0] instanceof Array) {
 				for(var i=0,ilen=res.length;i<ilen;i++) {
 					s += '<p>'+loghtml(res[i])+'</p>';
 				}
@@ -180,22 +184,23 @@ alasql.log = function(sql, params) {
 alasql.clear = function() {
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		target = 'console';
-	};
+	}
 
-	if(target == 'console' || typeof exports == 'object') {
+	if(target === 'console' || typeof exports === 'object') {
 		if(console.clear) {
 			console.clear();
-		} else {
-			// Something todo in Node
-		}
+		} 
+		
+		// todo: handle Node
+		
 	} else {
 		var el;
-		if(target == 'output') {
+		if(target === 'output') {
 			el = document.getElementsByTagName('output')[0];
 		} else {
-			if(typeof target == 'string') {
+			if(typeof target === 'string') {
 				el = document.getElementById(target);
 			} else {
 				// in case of DOM
@@ -210,22 +215,23 @@ alasql.write = function(s) {
 //	console.log('write',s);
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		target = 'console';
-	};
+	}
 
-	if(target == 'console' || typeof exports == 'object') {
+	if(target === 'console' || typeof exports === 'object') {
 		if(console.log) {
 			console.log(s);
-		} else {
-			// Something todo in Node
-		}
+		} 
+
+		// todo: handle node
+
 	} else {
 		var el;
-		if(target == 'output') {
+		if(target === 'output') {
 			el = document.getElementsByTagName('output')[0];
 		} else {
-			if(typeof target == 'string') {
+			if(typeof target === 'string') {
 				el = document.getElementById(target);
 			} else {
 				// in case of DOM
@@ -239,7 +245,7 @@ alasql.write = function(s) {
 function loghtml(res) {
 //	console.log(res); 
 	var s  = '';
-	if(typeof res == 'undefined') {
+	if(res === undefined) {
 		s += 'undefined';
 	} else if(res instanceof Array) {
 		s += '<style>';
@@ -249,7 +255,7 @@ function loghtml(res) {
 		s += '</style>';
 		s += '<table>';
 		var cols = [];			
-		for(colid in res[0]) {
+		for(var colid in res[0]) {
 			cols.push(colid);
 		}
 		s += '<tr><th>#';
@@ -260,19 +266,24 @@ function loghtml(res) {
 			s += '<tr><th>'+(i+1);
 			cols.forEach(function(colid){
 				s += '<td> ';
-				if(+res[i][colid] == +res[i][colid]) {
+				if(+res[i][colid] === +res[i][colid]) {
 					s += '<div style="text-align:right">';
-					if(typeof res[i][colid] == 'undefined') s += 'NULL';
-					else s += res[i][colid];
+					if(typeof res[i][colid] === 'undefined'){
+						s += 'NULL';
+					} else {
+						s += res[i][colid];
+					}
 					s += '</div>';
 				} else {
-					if(typeof res[i][colid] == 'undefined') {
+					if(typeof res[i][colid] === 'undefined') {
 						s += 'NULL';
-					} else if (typeof res[i][colid] == 'string') {
+					} else if(typeof res[i][colid] === 'string') {
 						s += res[i][colid];
-					} else s += JSONtoString(res[i][colid]);
+					} else { 
+						s += JSONtoString(res[i][colid]);
+					}
 //					s += res[i][colid];
-				};
+				}
 			});
 		}
 
@@ -280,36 +291,48 @@ function loghtml(res) {
 	} else {
 		s += '<p>'+JSONtoString(res)+'</p>';
 	}
-		// if () {}
+		// if() {}
 
 		// 		if(typeof res == 'object') {
 		// 			s += '<p>'+JSON.stringify(res)+'</p>';
 		// 		} else {
 		// 		}
 	return s;
-};
+}
 
 
 
 function scrollTo(element, to, duration) {
-    if (duration <= 0) return;
+    if(duration <= 0){
+    	return;
+    }
     var difference = to - element.scrollTop;
     var perTick = difference / duration * 10;
 
     setTimeout(function() {
-        if (element.scrollTop==to) return;
+        if(element.scrollTop===to){
+        	return;
+        }
         element.scrollTop = element.scrollTop + perTick;
         scrollTo(element, to, duration - 10);
     }, 10);
 }
 
 alasql.prompt = function(el, useidel, firstsql) {
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		throw new Error('The functionality of prompt is not realized for Node.js');
-	};
+	}
+
 	var prompti = 0;
-	if(typeof el == 'string') el = document.getElementById(el);
-	if(typeof useidel == 'string') useidel = document.getElementById(useidel);
+
+	if(typeof el === 'string'){
+		el = document.getElementById(el);
+	}
+
+	if(typeof useidel === 'string'){
+		useidel = document.getElementById(useidel);
+	}
+
 	useidel.textContent = alasql.useid;
 
 	if(firstsql) {
@@ -323,13 +346,13 @@ alasql.prompt = function(el, useidel, firstsql) {
 			alasql.write('<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>');
 			alasql.write('<p style="color:red">'+err+'<p>');
 		}
-	};
+	}
 
 	var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 	scrollTo(document.getElementsByTagName('body')[0],y,500);
 
 	el.onkeydown = function(event) {
-		if(event.which == 13) {
+		if(event.which === 13) {
 			var sql = el.value;
 			var olduseid = alasql.useid;
 			el.value = '';
@@ -348,14 +371,16 @@ alasql.prompt = function(el, useidel, firstsql) {
 			useidel.textContent = alasql.useid;
 			var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 			scrollTo(document.getElementsByTagName('body')[0],y,500);
-		} else if(event.which == 38) {
-			prompti--; if(prompti<0) prompti = 0;
+		} else if(event.which === 38) {
+			prompti--; if(prompti<0){
+				prompti = 0;
+			}
 			if(alasql.prompthistory[prompti]) {
 				el.value = alasql.prompthistory[prompti];
 				event.preventDefault();
 			}
 
-		} else if(event.which == 40) {
+		} else if(event.which === 40) {
 			prompti++; 
 			if(prompti>=alasql.prompthistory.length) {
 				prompti = alasql.prompthistory.length;

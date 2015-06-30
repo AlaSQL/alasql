@@ -8,9 +8,9 @@
 
 yy.SetVariable = function (params) { return yy.extend(this, params); }
 yy.SetVariable.prototype.toString = function() {
-	var s = K('SET')+' ';
-	if(typeof this.value != 'undefined') s += K(this.variable.toUpperCase())+' '+(this.value?'ON':'OFF');
-	if(this.expression) s += this.method + L(this.variable)+' = '+this.expression.toString();
+	var s = 'SET ';
+	if(typeof this.value != 'undefined') s += this.variable.toUpperCase()+' '+(this.value?'ON':'OFF');
+	if(this.expression) s += this.method + this.variable+' = '+this.expression.toString();
 	return s;
 }
 

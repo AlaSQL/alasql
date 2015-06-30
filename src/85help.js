@@ -8,8 +8,8 @@
 
 yy.Help = function (params) { return yy.extend(this, params); }
 yy.Help.prototype.toString = function() {
-	var s = K('HELP');
-	if(this.subject) s += ' '+L(this.subject);
+	var s = 'HELP';
+	if(this.subject) s += ' '+this.subject;
 	return s;
 }
 

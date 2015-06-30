@@ -8,10 +8,10 @@
 
 yy.DropTable = function (params) { return yy.extend(this, params); };
 yy.DropTable.prototype.toString = function() {
-	var s = K('DROP')+' ';
-	if(this.view) s += K('VIEW');
-	else s += K('TABLE');
-	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
+	var s = 'DROP'+' ';
+	if(this.view) s += 'VIEW';
+	else s += 'TABLE';
+	if(this.ifexists) s += ' IF EXISTS';
 	s += ' '+this.tables.toString();
 	return s;
 };
@@ -63,7 +63,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 
 yy.TruncateTable = function (params) { return yy.extend(this, params); };
 yy.TruncateTable.prototype.toString = function() {
-	var s = K('TRUNCATE')+' '+K('TABLE');
+	var s = 'TRUNCATE TABLE';
 	s += ' '+this.table.toString();
 	return s;
 };

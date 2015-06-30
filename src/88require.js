@@ -8,7 +8,7 @@
 
 yy.Require = function (params) { return yy.extend(this, params); }
 yy.Require.prototype.toString = function() {
-	var s = K('REQUIRE');
+	var s = 'REQUIRE';
 	if(this.paths && this.paths.length > 0) {
 		s += this.paths.map(function(path){
 			return path.toString()

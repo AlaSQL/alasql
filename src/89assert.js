@@ -8,7 +8,7 @@
 
 yy.Assert = function (params) { return yy.extend(this, params); }
 yy.Source.prototype.toString = function() {
-	var s = K('ASSERT');
+	var s = 'ASSERT';
 	if(this.value) s += ' '+JSON.stringify(this.value);
 	return s;
 }

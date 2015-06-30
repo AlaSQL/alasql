@@ -7,7 +7,7 @@
 */
 yy.BeginTransaction = function (params) { return yy.extend(this, params); }
 yy.BeginTransaction.prototype.toString = function() {
-	return K('BEGIN')+' '+K('TRANSACTION');
+	return 'BEGIN TRANSACTION';
 }
 
 yy.BeginTransaction.prototype.execute = function (databaseid,params, cb) {
@@ -23,7 +23,7 @@ yy.BeginTransaction.prototype.execute = function (databaseid,params, cb) {
 
 yy.CommitTransaction = function (params) { return yy.extend(this, params); }
 yy.CommitTransaction.prototype.toString = function() {
-	return K('COMMIT')+' '+K('TRANSACTION');
+	return 'COMMIT TRANSACTION';
 }
 
 yy.CommitTransaction.prototype.execute = function (databaseid,params, cb) {
@@ -39,7 +39,7 @@ yy.CommitTransaction.prototype.execute = function (databaseid,params, cb) {
 
 yy.RollbackTransaction = function (params) { return yy.extend(this, params); }
 yy.RollbackTransaction.prototype.toString = function() {
-	return K('ROLLBACK')+' '+K('TRANSACTION');
+	return 'ROLLBACK TRANSACTION';
 }
 
 yy.RollbackTransaction.prototype.execute = function (databaseid,params,cb) {

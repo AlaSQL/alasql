@@ -14,71 +14,124 @@
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
 	var s = '';
-	if(this.explain) s+= K('EXPLAIN')+' ';
-	s += K('SELECT')+' ';
-	if(this.modifier) s += K(this.modifier)+' ';
+	if(this.explain){
+		s+= 'EXPLAIN ';
+	}
+	s += 'SELECT ';
+	if(this.modifier){
+		s += this.modifier+' ';
+	}
 	if(this.top) {
-		s += K('TOP')+' '+N(this.top.value)+' ';
-		if(this.percent) s += K('PERCENT')+' ';
+		s += 'TOP '+this.top.value+' ';
+		if(this.percent){
+			s += 'PERCENT ';
+		}
 	}
 	s += this.columns.map(function(col){
 		var s = col.toString();
 //		console.log(col);
-		if(typeof col.as != "undefined") s += ' '+K('AS')+' '+L(col.as);
+		if(typeof col.as !== "undefined"){
+			s += ' AS '+col.as;
+		}
 		return s;
 	}).join(', ');
 
 	if(this.from) {
-		s += NL()+ID()+K('FROM')+' '+this.from.map(function(f){
-//			console.log(f);
-			var ss = f.toString();
-			if(f.as) ss += ' '+K('AS')+' '+f.as;
-			return ss;
-		}).join(',');
-	};
+		s += 	' FROM '
+				+ this.from.map(function(f){
+									//			console.log(f);
+												var ss = f.toString();
+												if(f.as){
+													ss += ' AS '+f.as;
+												}
+												return ss;
+											}).join(',');
+										}
 
 	if(this.joins) {
 		s += this.joins.map(function(jn){
-			var ss = NL()+ID();
-			if(jn.joinmode) ss += K(jn.joinmode)+' ';
-			if(jn.table) ss += K('JOIN')+' '+jn.table.toString();
-			else if(jn instanceof yy.Apply) ss += jn.toString();
-			else {
+			var ss = ' ';
+			if(jn.joinmode){
+				ss += jn.joinmode+' ';
+			}
+			
+			if(jn.table){
+				ss += 'JOIN '+jn.table.toString();
+			} else if(jn instanceof yy.Apply){
+				ss += jn.toString();
+			} else {
 				throw new Error('Wrong type in JOIN mode');
 			}
 
-			if(jn.using) ss += ' '+K('USING')+' '+jn.using.toString();
-			if(jn.on) ss += ' '+K('ON')+' '+jn.on.toString();
+			if(jn.using){
+				ss += ' USING '+jn.using.toString();
+			}
+
+			if(jn.on){
+				ss += ' ON '+jn.on.toString();
+			}
 			return ss;
  		});
 	}
 
-	if(this.where) s += NL()+ID()+K('WHERE')+' '+this.where.toString();
+	if(this.where){
+		s += ' WHERE '+this.where.toString();
+	}
 	if(this.group && this.group.length>0) {
-		s += NL()+ID()+K('GROUP BY')+' '+this.group.map(function(grp){
-			return grp.toString();
-		}).join(', ');
-	};
-	if(this.having) s += NL()+ID()+K('HAVING')+' '+this.having.toString();
+		s += ' GROUP BY ' + this.group.map(function(grp){
+															return grp.toString();
+														}).join(', ');
+	}
+
+	if(this.having){
+		s += ' HAVING '+this.having.toString();
+	}
 
 	if(this.order && this.order.length>0) {
-		s += NL()+ID()+K('ORDER BY')+' '+this.order.map(function(ord){
-			return  ord.toString();
-		}).join(', ');
-	};
-	if(this.limit) s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
-	if(this.offset) s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
-	if(this.union) s += NL()+K('UNION')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.union.toString();
-	if(this.unionall) s += NL()+K('UNION ALL')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.unionall.toString();
-	if(this.except) s += NL()+K('EXCEPT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.except.toString();
-	if(this.intersect) s += NL()+K('INTERSECT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.intersect.toString();
+		s += ' ORDER BY '+this.order.map(function(ord){
+														return  ord.toString();
+													}).join(', ');
+	}
+
+	if(this.limit){
+		s += ' LIMIT '+this.limit.value;
+	}
+
+	if(this.offset){
+		s += ' OFFSET '+this.offset.value;
+	}
+
+	if(this.union){
+		s += ' UNION '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.union.toString();
+	}
+
+	if(this.unionall){
+		s += ' UNION ALL '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.unionall.toString();
+	}
+
+	if(this.except){
+		s += ' EXCEPT '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.except.toString();
+	}
+
+	if(this.intersect){
+		s += ' INTERSECT '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.intersect.toString();
+	}
+
 	return s;
 };
 
 /**
  Select statement in expression
  */
-yy.Select.prototype.toJS = function(context, tableid, defcols) {
+yy.Select.prototype.toJS = function(context) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
 //	return this.expression.toJS(context, tableid, defcols);
@@ -120,9 +173,13 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 1. Compile FROM clause
 	query.fromfn = this.compileFrom(query);
+	
 	// 2. Compile JOIN clauses
-	if(this.joins) this.compileJoins(query);
-	// 3. Compile SELECT clause
+	if(this.joins){
+		this.compileJoins(query);
+	}
+
+	// todo?: 3. Compile SELECT clause
 
 	// For ROWNUM()
 	query.rownums = [];
@@ -139,17 +196,23 @@ yy.Select.prototype.compile = function(databaseid) {
 	this.compileRemoveColumns(query);
 
 	// 5. Optimize WHERE and JOINS
-	if(this.where) this.compileWhereJoins(query);
+	if(this.where){
+		this.compileWhereJoins(query);
+	}
 
 	// 4. Compile WHERE clause
 	query.wherefn = this.compileWhere(query);
 
 
 	// 6. Compile GROUP BY
-	if(this.group || query.selectGroup.length>0) query.groupfn = this.compileGroup(query);
+	if(this.group || query.selectGroup.length>0){
+		query.groupfn = this.compileGroup(query);
+	}
 
 	// 6. Compile HAVING
-	if(this.having) query.havingfn = this.compileHaving(query);
+	if(this.having){
+		query.havingfn = this.compileHaving(query);
+	}
 
 
 	if(this.group || query.selectGroup.length>0) {
@@ -163,7 +226,9 @@ yy.Select.prototype.compile = function(databaseid) {
 	query.distinct = this.distinct;
 
 	// 8. Compile ORDER BY clause
-	if(this.order) query.orderfn = this.compileOrder(query);
+	if(this.order){
+		query.orderfn = this.compileOrder(query);
+	}
 
 	// 9. Compile PIVOT clause
 	if(this.pivot) query.pivotfn = this.compilePivot(query);
@@ -177,7 +242,8 @@ yy.Select.prototype.compile = function(databaseid) {
 		if(this.offset) {
 			query.offset = this.offset.value;
 		}
-	};
+	}
+
 	query.percent = this.percent;
 
 	// 9. Compile ordering function for UNION and UNIONALL
@@ -210,7 +276,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		} else {
 			query.orderfn = null;
 		}
-	};
+	}
 
 	// SELECT INTO
 	if(this.into) {
@@ -260,7 +326,7 @@ yy.Select.prototype.compile = function(databaseid) {
 			// like alasql('SELECT * INTO ? FROM ?',[outdata,srcdata]);
 			//
 			query.intofns = "params['"+this.into.param+"'].push(r)";
-		};
+		}
 
 		if(query.intofns) {
 			// Create intofn function
@@ -291,7 +357,9 @@ yy.Select.prototype.compile = function(databaseid) {
 			var res2 = modify(query, res);
 
 
-			if(cb) cb(res2); 
+			if(cb){
+				cb(res2);
+			}
 //console.log(8888,res2);
 			return res2;
 
@@ -317,17 +385,21 @@ yy.Select.prototype.compile = function(databaseid) {
 	@param {object} query Query object
 	@param res {object|number|string|boolean} res Data to be converted 
 */
-function modify(query, res) {
+function modify(query, res) { // jshint ignore:line
 //	console.log(arguments);
 
 	/* If source is a primitive value then return it */
-	if(typeof res == 'undefined' || typeof res == 'number' || typeof res == 'string' || typeof res == 'boolean') {
+	if(		typeof res === 'undefined' 
+		|| 	typeof res === 'number' 
+		|| 	typeof res === 'string' 
+		|| 	typeof res == 'boolean'
+	){
 		return res;
 	}
 
 	var modifier = query.modifier || alasql.options.modifier;
 	var columns = query.columns;
-	if(typeof columns == 'undefined' || columns.length == 0) {
+	if(typeof columns === 'undefined' || columns.length == 0) {
 		// Try to create columns
 		if(res.length > 0) {
 			var allcol = {};
@@ -348,40 +420,46 @@ function modify(query, res) {
 
 //	console.log(columns);
 
-	if(modifier == 'VALUE') {
+	if(modifier === 'VALUE') {
 //		console.log(222,res);
 		if(res.length > 0) {
 			var key;
-			if(columns && columns.length > 0) key = columns[0].columnid;
-			else key = Object.keys(res[0])[0];
+			if(columns && columns.length > 0){
+				key = columns[0].columnid;
+			} else {
+				key = Object.keys(res[0])[0];
+			}
 			res = res[0][key];
 		} else {
 			res = undefined;
 		}
-	} if(modifier == 'ROW') {
+	} else if(modifier === 'ROW') {
 		if(res.length > 0) {
 			var key;
 			var a = [];
 			for(var key in res[0]) {
 				a.push(res[0][key]);
-			};
+			}
 			res = a;
 		} else {
 			res = undefined;
 		}
-	} if(modifier == 'COLUMN') {
+	} else if(modifier === 'COLUMN') {
 		var ar = [];
 		if(res.length > 0) {
 			var key;
-			if(columns && columns.length > 0) key = columns[0].columnid;
-			else key = Object.keys(res[0])[0];
+			if(columns && columns.length > 0){
+				key = columns[0].columnid;
+			} else {
+				key = Object.keys(res[0])[0];
+			}
+
 			for(var i=0, ilen=res.length; i<ilen; i++){
 				ar.push(res[i][key]);
 			}
-		};
+		}
 		res = ar;
-
-	} if(modifier == 'MATRIX') {
+	} else if(modifier === 'MATRIX') {
 		// Returns square matrix of rows
 		var ar = [];
 		for(var i=0;i<res.length;i++) {		
@@ -394,7 +472,7 @@ function modify(query, res) {
 		}
 		res = ar;
 
-	} if(modifier == 'INDEX') {
+	}else if(modifier === 'INDEX') {
 		var ar = {};
 		var key,val;
 		if(columns && columns.length > 0) {
@@ -410,14 +488,17 @@ function modify(query, res) {
 		}
 		res = ar;
 //		res = arrayOfArrays(res);
-	} if(modifier == 'RECORDSET') {
+	}else if(modifier === 'RECORDSET') {
 		res = new alasql.Recordset({data:res, columns:columns});
 //		res = arrayOfArrays(res);
-	} if(modifier == 'TEXTSTRING') {
+	}else if(modifier === 'TEXTSTRING') {
 		var key;
-		if(columns && columns.length > 0) key = columns[0].columnid;
-		else key = Object.keys(res[0])[0];
-		var s = '';
+		if(columns && columns.length > 0){
+			key = columns[0].columnid;
+		} else{
+			key = Object.keys(res[0])[0];
+		}
+
 		for(var i=0, ilen=res.length; i<ilen; i++){
 			res[i] = res[i][key];
 		}
@@ -425,7 +506,7 @@ function modify(query, res) {
 //		res = arrayOfArrays(res);
 	}
 	return res;
-};
+}
 
 
 

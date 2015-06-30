@@ -64,7 +64,7 @@ yy.Expression.prototype.toString = function() {
 		s += ' '+this.order.toString();
 	}
 	if(this.nocase) {
-		s += ' '+K('COLLATE')+' '+K('NOCASE');
+		s += ' COLLATE NOCASE';
 	}
 	return s;
 };
@@ -153,7 +153,7 @@ yy.Literal.prototype.toString = function() {
 		s = this.value1+'.'+s; 
 	}
 //	else s = tableid+'.'+s;
-	return L(s);
+	return s;
 };
 
 /**
@@ -163,11 +163,11 @@ yy.Literal.prototype.toString = function() {
 
 yy.Join = function (params) { return yy.extend(this, params); };
 yy.Join.prototype.toString = function() {
-	var s = NL()+ID();
+	var s = ' ';
 	if(this.joinmode){
-		s += K(this.joinmode)+' ';
+		s += this.joinmode+' ';
 	}
-	s += K('JOIN')+this.table.toString();
+	s += 'JOIN ' + this.table.toString();
 	return s;
 };
 
@@ -187,7 +187,7 @@ yy.Table.prototype.toString = function() {
 	if(this.databaseid){
 		s = this.databaseid+'.'+s;
 	}
-	return L(s);
+	return s;
 };
 
 /**
@@ -202,7 +202,7 @@ yy.View.prototype.toString = function() {
 	if(this.databaseid){
 		s = this.databaseid+'.'+s;
 	}
-	return L(s);
+	return s;
 };
 
 /**
@@ -212,10 +212,10 @@ yy.View.prototype.toString = function() {
 yy.Op = function (params) { return yy.extend(this, params); };
 yy.Op.prototype.toString = function() {
 	if(this.op === 'IN' || this.op === 'NOT IN') {
-		return this.left.toString()+" "+P(this.op)+" ("+this.right.toString()+")";
+		return this.left.toString()+" "+this.op+" ("+this.right.toString()+")";
 	}
 	if(this.allsome) {
-		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
+		return this.left.toString()+" "+this.op+" "+this.allsome+' ('+this.right.toString()+')';
 	}
 	if(this.op === '->' || this.op === '!') {
 		var s = this.left.toString()+this.op;
@@ -233,7 +233,7 @@ yy.Op.prototype.toString = function() {
 		
 		return s;
 	}
-	return 	this.left.toString() + " " + P(this.op) + " " +
+	return 	this.left.toString() + " " + this.op + " " +
 			(this.allsome ? this.allsome+' ' : '') +
 			this.right.toString();
 };
@@ -554,7 +554,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 yy.VarValue = function (params) { return yy.extend(this, params); }
 yy.VarValue.prototype.toString = function() {
-	return '@'+L(this.variable);
+	return '@'+this.variable;
 };
 
 yy.VarValue.prototype.toType = function() {
@@ -568,7 +568,7 @@ yy.VarValue.prototype.toJS = function() {
 
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
-	return N(this.value.toString());
+	return this.value.toString();
 };
 
 yy.NumValue.prototype.toType = function() {
@@ -584,7 +584,7 @@ yy.NumValue.prototype.toJS = function() {
 
 yy.StringValue = function (params) { return yy.extend(this, params); }
 yy.StringValue.prototype.toString = function() {
-	return "'"+S(this.value.toString())+"'";
+	return "'"+this.value.toString()+"'";
 }
 
 yy.StringValue.prototype.toType = function() {
@@ -838,13 +838,13 @@ yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
 	var s = '';
 	if(this.aggregatorid === 'REDUCE'){
-		s += L(this.funcid)+'(';
+		s += this.funcid+'(';
 	} else{
 		s += this.aggregatorid+'(';
 	}
 
 	if(this.distinct){
-		s+= K('DISTINCT')+' ';
+		s+= 'DISTINCT ';
 	}
 
 	if(this.expression){
@@ -958,7 +958,7 @@ yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString
 function() {
 	var s = this.expression.toString();
 	if(this.order) s += ' '+this.order.toString();
-	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
+	if(this.nocase) s += ' '+'COLLATE'+' '+'NOCASE';
 	return s;
 }*/
 

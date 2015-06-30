@@ -10,15 +10,15 @@
 // CREATE DATABASE databaseid
 yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
-	var s = K('CREATE'); 
-	if(this.engineid) s+=' '+L(this.engineid);
-	s += ' '+K('DATABASE');
-	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
-	s += ' '+L(this.databaseid);
+	var s = 'CREATE'; 
+	if(this.engineid) s+=' '+this.engineid;
+	s += ' DATABASE';
+	if(this.ifnotexists) s += ' IF NOT EXISTS';
+	s += ' '+this.databaseid;
 	if(this.args && this.args.length > 0) { 
 		s += '('+this.args.map(function(arg){ return arg.toString()}).join(', ')+')';
 	}
-	if(this.as) s += ' '+K('AS')+' '+L(this.as);
+	if(this.as) s += ' AS '+this.as;
 	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
@@ -49,9 +49,9 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 // CREATE DATABASE databaseid
 yy.AttachDatabase = function (params) { return yy.extend(this, params); };
 yy.AttachDatabase.prototype.toString = function() {
-	var s = K('ATTACH');
-	if(this.engineid) s += ' '+L(this.engineid);
-	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	var s = 'ATTACH';
+	if(this.engineid) s += ' '+this.engineid;
+	s += ' DATABASE'+' '+this.databaseid;
 	// TODO add params
 	if(args) {
 		s += '(';
@@ -60,7 +60,7 @@ yy.AttachDatabase.prototype.toString = function() {
 			}
 		s += ')';
 	}
-	if(this.as) s+= ' '+K('AS')+' '+L(this.as);
+	if(this.as) s+= ' AS'+' '+this.as;
 	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
@@ -78,8 +78,8 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 // CREATE DATABASE databaseid
 yy.DetachDatabase = function (params) { return yy.extend(this, params); };
 yy.DetachDatabase.prototype.toString = function() {
-	var s = K('DETACH');
-	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	var s = 'DETACH';
+	s += ' DATABASE'+' '+this.databaseid;
 	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
@@ -122,7 +122,7 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 // USE databaseid
 yy.UseDatabase = function (params) { return yy.extend(this, params); };
 yy.UseDatabase.prototype.toString = function() {
-	return K('USE') +' '+K('DATABASE')+' '+L(this.databaseid);
+	return 'USE' +' '+'DATABASE'+' '+this.databaseid;
 }
 //yy.UseDatabase.prototype.compile = returnUndefined;
 yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
@@ -139,9 +139,9 @@ yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
 // DROP DATABASE databaseid
 yy.DropDatabase = function (params) { return yy.extend(this, params); }
 yy.DropDatabase.prototype.toString = function() {
-	var s = K('DROP');
-	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
-	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	var s = 'DROP';
+	if(this.ifexists) s += ' IF EXISTS';
+	s += ' DATABASE '+this.databaseid;
 	return s;
 }
 //yy.DropDatabase.prototype.compile = returnUndefined;
