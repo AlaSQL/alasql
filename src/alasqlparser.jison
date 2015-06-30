@@ -1273,6 +1273,8 @@ FuncValue
 		}
 	| Literal LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
+	| IF LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	;
 
 ExprList
