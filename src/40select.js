@@ -15,47 +15,48 @@ yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
 	var s = '';
 	if(this.explain){
-		s+= K('EXPLAIN')+' ';
+		s+= 'EXPLAIN ';
 	}
-	s += K('SELECT')+' ';
+	s += 'SELECT ';
 	if(this.modifier){
-		s += K(this.modifier)+' ';
+		s += this.modifier+' ';
 	}
 	if(this.top) {
-		s += K('TOP')+' '+N(this.top.value)+' ';
+		s += 'TOP '+this.top.value+' ';
 		if(this.percent){
-			s += K('PERCENT')+' ';
+			s += 'PERCENT ';
 		}
 	}
 	s += this.columns.map(function(col){
 		var s = col.toString();
 //		console.log(col);
 		if(typeof col.as !== "undefined"){
-			s += ' '+K('AS')+' '+L(col.as);
+			s += ' AS '+col.as;
 		}
 		return s;
 	}).join(', ');
 
 	if(this.from) {
-		s += NL()+ID()+K('FROM')+' '+this.from.map(function(f){
-//			console.log(f);
-			var ss = f.toString();
-			if(f.as){
-				ss += ' '+K('AS')+' '+f.as;
-			}
-			return ss;
-		}).join(',');
-	}
+		s += 	' FROM '
+				+ this.from.map(function(f){
+									//			console.log(f);
+												var ss = f.toString();
+												if(f.as){
+													ss += ' AS '+f.as;
+												}
+												return ss;
+											}).join(',');
+										}
 
 	if(this.joins) {
 		s += this.joins.map(function(jn){
-			var ss = NL()+ID();
+			var ss = ' ';
 			if(jn.joinmode){
-				ss += K(jn.joinmode)+' ';
+				ss += jn.joinmode+' ';
 			}
 			
 			if(jn.table){
-				ss += K('JOIN')+' '+jn.table.toString();
+				ss += 'JOIN '+jn.table.toString();
 			} else if(jn instanceof yy.Apply){
 				ss += jn.toString();
 			} else {
@@ -63,65 +64,65 @@ yy.Select.prototype.toString = function() {
 			}
 
 			if(jn.using){
-				ss += ' '+K('USING')+' '+jn.using.toString();
+				ss += ' USING '+jn.using.toString();
 			}
 
 			if(jn.on){
-				ss += ' '+K('ON')+' '+jn.on.toString();
+				ss += ' ON '+jn.on.toString();
 			}
 			return ss;
  		});
 	}
 
 	if(this.where){
-		s += NL()+ID()+K('WHERE')+' '+this.where.toString();
+		s += ' WHERE '+this.where.toString();
 	}
 	if(this.group && this.group.length>0) {
-		s += NL()+ID()+K('GROUP BY')+' '+this.group.map(function(grp){
-			return grp.toString();
-		}).join(', ');
+		s += ' GROUP BY ' + this.group.map(function(grp){
+															return grp.toString();
+														}).join(', ');
 	}
 
 	if(this.having){
-		s += NL()+ID()+K('HAVING')+' '+this.having.toString();
+		s += ' HAVING '+this.having.toString();
 	}
 
 	if(this.order && this.order.length>0) {
-		s += NL()+ID()+K('ORDER BY')+' '+this.order.map(function(ord){
-			return  ord.toString();
-		}).join(', ');
+		s += ' ORDER BY '+this.order.map(function(ord){
+														return  ord.toString();
+													}).join(', ');
 	}
 
 	if(this.limit){
-		s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
+		s += ' LIMIT '+this.limit.value;
 	}
 
 	if(this.offset){
-		s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
+		s += ' OFFSET '+this.offset.value;
 	}
 
 	if(this.union){
-		s += NL()+K('UNION')
-		s += (this.corresponding ? (' '+K('CORRESPONDING')) : '')
-		s += NL()+this.union.toString();
+		s += ' UNION '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.union.toString();
 	}
 
 	if(this.unionall){
-		s += NL()+K('UNION ALL')
-		s += (this.corresponding ? (' '+K('CORRESPONDING')) : '')
-		s += NL()+this.unionall.toString();
+		s += ' UNION ALL '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.unionall.toString();
 	}
 
 	if(this.except){
-		s += NL()+K('EXCEPT')
-		s += (this.corresponding ? (' '+K('CORRESPONDING')) : '')
-		s += NL()+this.except.toString();
+		s += ' EXCEPT '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.except.toString();
 	}
 
 	if(this.intersect){
-		s += NL()+K('INTERSECT')
-		s += (this.corresponding ? (' '+K('CORRESPONDING')) : '')
-		s += NL()+this.intersect.toString();
+		s += ' INTERSECT '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.intersect.toString();
 	}
 
 	return s;

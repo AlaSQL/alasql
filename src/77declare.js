@@ -8,14 +8,14 @@
 
 yy.Declare = function (params) { return yy.extend(this, params); }
 yy.Declare.prototype.toString = function() {
-	var s = K('DECLARE')+' ';
+	var s = 'DECLARE ';
 	if(this.declares && this.declares.length > 0) {
 		s = this.declares.map(function(declare){
 			var s = '';
-			s += '@'+L(declare.variable)+' ';
+			s += '@'+declare.variable+' ';
 			s += declare.dbtypeid;
-			if(this.dbsize) s += '('+N(this.dbsize);
-			if(this.dbprecision) s+= ','+N(this.dbprecision);
+			if(this.dbsize) s += '('+this.dbsize;
+			if(this.dbprecision) s+= ','+this.dbprecision;
 			s += ')';
 			if(declare.expression) s += ' = '+declare.expression.toString();
 			return s;

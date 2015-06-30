@@ -8,13 +8,13 @@
 
 yy.Over = function (params) { return yy.extend(this, params); }
 yy.Over.prototype.toString = function () {
-	var s = K('OVER')+' (';
+	var s = 'OVER (';
 	if(this.partition) {
-		s += K('PARTITION')+' '+K('BY')+' '+this.partition.toString();
+		s += 'PARTITION BY '+this.partition.toString();
 		if(this.order) s+=' ';
 	}
 	if(this.order) {
-		s += K('ORDER')+' '+K('BY')+' '+this.order.toString();
+		s += 'ORDER BY '+this.order.toString();
 	}
 	s += ')';
 	return s;

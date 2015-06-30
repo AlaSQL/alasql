@@ -8,8 +8,8 @@
 
 yy.Source = function (params) { return yy.extend(this, params); }
 yy.Source.prototype.toString = function() {
-	var s = K('SOURCE');
-	if(this.url) s += ' '+S('\''+this.url+'\'');
+	var s = 'SOURCE';
+	if(this.url) s += " '"+this.url+" '";
 	return s;
 }
 

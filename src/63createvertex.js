@@ -8,12 +8,12 @@
 
 yy.CreateVertex = function (params) { return yy.extend(this, params); }
 yy.CreateVertex.prototype.toString = function() {
-	var s = K('CREATE')+' '+K('VERTEX')+' ';
+	var s = 'CREATE VERTEX ';
 	if(this.class){
-		s += L(this.class)+' ';
+		s += this.class+' ';
 	}
 	if(this.sharp){
-		s += '#'+L(this.sharp)+' ';
+		s += '#'+this.sharp+' ';
 	}
 	if(this.sets) {
 		s += this.sets.toString();
@@ -144,9 +144,9 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 yy.CreateEdge = function (params) { return yy.extend(this, params); }
 yy.CreateEdge.prototype.toString = function() {
 //	console.log('here!');
-	var s = K('CREATE')+' '+K('EDGE')+' ';
+	var s = 'CREATE EDGE'+' ';
 	if(this.class){
-		s += L(this.class)+' ';
+		s += this.class+' ';
 	}
 	// todo: SET
 	// todo: CONTENT
@@ -241,9 +241,9 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 
 yy.CreateGraph = function (params) { return yy.extend(this, params); }
 yy.CreateGraph.prototype.toString = function() {
-	var s = K('CREATE')+' '+K('GRAPH')+' ';
+	var s = 'CREATE GRAPH'+' ';
 	if(this.class){
-		s += L(this.class)+' ';
+		s += this.class+' ';
 	}
 	return s;
 }

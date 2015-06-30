@@ -11,10 +11,10 @@ yy.Apply = function (params) {
 }
 
 yy.Apply.prototype.toString = function () {
-	var s = K(this.applymode)+' '+K('APPLY')+' ('+this.select.toString()+')';
+	var s = this.applymode+' APPLY ('+this.select.toString()+')';
 	
 	if(this.as) 
-		s += ' '+K('AS')+' '+L(this.as);
+		s += ' AS '+this.as;
 	
 	return s;
 };

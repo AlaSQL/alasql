@@ -696,12 +696,12 @@ alasql.srch.TO = function(val,args) {
 yy.Search = function (params) { return yy.extend(this, params); }
 
 yy.Search.prototype.toString = function () {
-	var s = K('SEARCH') + ' ';
+	var s = 'SEARCH' + ' ';
 	if (this.selectors){
 		s += this.selectors.toString();
 	}
 	if (this.from){
-		s += K('FROM') + ' ' + this.from.toString();
+		s += 'FROM' + ' ' + this.from.toString();
 	}
 //console.log(s);
 	return s;

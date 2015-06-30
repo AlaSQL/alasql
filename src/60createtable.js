@@ -34,19 +34,19 @@ yy.ColumnDef.prototype.toString = function() {
 
 yy.CreateTable = function (params) { return yy.extend(this, params); }
 yy.CreateTable.prototype.toString = function() {
-	var s = K('CREATE');
+	var s = 'CREATE';
 	if(this.temporary){
-		s+=' '+K('TEMPORARY');
+		s+=' TEMPORARY';
 	}
 
 	if(this.view){
-		s += ' '+K('VIEW');
+		s += ' VIEW';
 	} else{
-		s += ' '+(this.class?K('CLASS'):K('TABLE'));
+		s += ' '+(this.class?'CLASS':'TABLE');
 	}
 
 	if(this.ifnotexists){
-		s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
+		s += ' IF  NOT EXISTS';
 	}
 	s += ' '+this.table.toString();
 	if(this.viewcolumns) {
@@ -55,12 +55,12 @@ yy.CreateTable.prototype.toString = function() {
 		}).join(',')+')';
 	}
 	if(this.as){
-		s += ' '+K('AS')+' '+L(this.as);
+		s += ' AS '+this.as;
 	} else { 
 		var ss = this.columns.map(function(col){
 			return col.toString();
 		});
-		s += ' ('+NL()+ID()+ss.join(','+NL()+ID())+')';
+		s += ' ('+ss.join(',')+')';
 	}
 
 	if(this.view && this.select) {

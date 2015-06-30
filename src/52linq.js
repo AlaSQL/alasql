@@ -2,7 +2,7 @@
 
 yy.FromData = function(params) { return yy.extend(this, params); };
 yy.FromData.prototype.toString = function() {
-	if(this.data) return K('DATA')+'('+((Math.random()*10e15)|0)+')';
+	if(this.data) return 'DATA('+((Math.random()*10e15)|0)+')';
 	else return '?';
 };
 yy.FromData.prototype.toJS = function(){
