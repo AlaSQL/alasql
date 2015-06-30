@@ -717,6 +717,8 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 /**
   Check equality of objects
 */
+
+/*
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
         if (x === y){
@@ -759,6 +761,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     }
     return x === y;
 };
+*/
 
 /**
   COmpare two object in deep

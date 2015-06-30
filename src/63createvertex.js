@@ -258,8 +258,6 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 	if(this.from) {
 		if(alasql.from[this.from.funcid]) {
 			this.graph = alasql.from[this.from.funcid.toUpperCase()]
-		//		(this.from.args[0].value);
-		//	console.log(this.graph);
 		}
 	}
 

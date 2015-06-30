@@ -41,6 +41,7 @@
         "arrayDiff",
         "Query",
         "queryfn",
+        "JSONtoString",
         "processSelector",
         "cloneDeep",
         "hash"
@@ -50,10 +51,10 @@
     // Development.
     "debug"         : false,  // Allow debugger statements e.g. browser breakpoints.
     "devel"         : false,   // Allow developments statements e.g. `console.log();`.
- 
+    "evil"          :true,
  
     // ECMAScript 5.
-    //"es5"           : true,   // Allow ECMAScript 5 syntax.
+    "es5"           : true,   // Allow ECMAScript 5 syntax.
     "strict"        : false,  // Require `use strict` pragma  in every file.
     "globalstrict"  : false,  // Allow global "use strict" (also enables 'strict').
  
