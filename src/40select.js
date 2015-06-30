@@ -231,9 +231,8 @@ yy.Select.prototype.compile = function(databaseid) {
 	}
 
 	// 9. Compile PIVOT clause
-	if(this.pivot){
-		query.pivotfn = this.compilePivot(query);
-	}
+	if(this.pivot) query.pivotfn = this.compilePivot(query);
+	if(this.unpivot) query.pivotfn = this.compileUnpivot(query);
 
 	// 10. Compile TOP/LIMIT/OFFSET/FETCH cleuse
 	if(this.top) {

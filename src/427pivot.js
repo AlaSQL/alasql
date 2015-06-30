@@ -82,3 +82,14 @@ console.log(this.pivot.expr.toJS());
 	};
 }
 };
+
+
+/**
+	Compile UNPIVOT clause
+	@param {object} query Query object
+	@return {function} Function for unpivoting
+*/
+yy.Select.prototype.compileUnpivot = function (query) {
+	console.log(93, query.columns);
+
+};

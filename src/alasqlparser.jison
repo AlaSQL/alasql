@@ -210,6 +210,7 @@ SETS                                        	return 'SET'
 'TRUNCATE'					  					return 'TRUNCATE'
 'UNION'                                         return 'UNION'
 'UNIQUE'                                        return 'UNIQUE'
+'UNPIVOT'                                       return 'UNPIVOT'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
 /* 'USER'										return 'USER' */
@@ -465,6 +466,8 @@ Select
 PivotClause
 	: PIVOT LPAR Expression FOR Literal PivotClause2? RPAR AsLiteral?
 		{ $$ = {pivot:{expr:$3, columnid:$5, inlist:$7, as:$8}}; }
+	| UNPIVOT LPAR Literal FOR Literal IN LPAR ColumnsList RPAR RPAR AsLiteral?
+		{ $$ = {unpivot:{tocolumnid:$3, forcolumnid:$5, inlist:$8, as:$11}}; }
 	;
 
 PivotClause2
@@ -1270,6 +1273,8 @@ FuncValue
 		}
 	| Literal LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
+	| IF LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	;
 
 ExprList
