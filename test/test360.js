@@ -36,7 +36,7 @@ FROM ?
 
   */},[data]);
 
-    console.log(res);
+   // console.log(res);
 
     done();
   });
@@ -53,7 +53,7 @@ FROM ?
 
   */},[data]);
 
-    console.log(res);
+   // console.log(res);
 
     done();
   });

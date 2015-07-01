@@ -19,7 +19,7 @@ describe('Test 361 IN (SELECT)', function() {
     var res = alasql('recordset of select 1 in (select 1)');
     var res = alasql('=1 in (select 1)');
     var res = alasql('select 1 where 1 in (select 1)');
-    console.log(res);
+//    console.log(res);
 //    var res = alasql('select 2 where true');
 //    console.log(1,res);
     done();
