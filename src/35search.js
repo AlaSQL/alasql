@@ -799,7 +799,7 @@ alasql.srch.LIKE = function(val,args,stope,params) {
   var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   if(val.toUpperCase().match(new RegExp('^'+exprfn(val,alasql,params).toUpperCase()
-  	.replace(/%/g,'.*')+'$'),'g')) {
+  	.replace(/%/g,'.*').replace(/\?/g,'.')+'$'),'g')) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
