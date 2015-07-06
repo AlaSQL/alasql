@@ -4481,6 +4481,9 @@ if(typeof Promise === 'function') {
 
 var Database = alasql.Database = function (databaseid) {
 	var self = this;
+//		self = function(a){console.log('OK',a);}
+//		self.prototype = this;
+
 	if(self === alasql) {
 		if(databaseid) {
 //			if(alasql.databases[databaseid]) {
@@ -4543,6 +4546,8 @@ Database.prototype.resetSqlCache = function () {
 Database.prototype.exec = function(sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
 };
+
+
 
 // 	// Compile
 // 	var statement = this.compile(sql);
