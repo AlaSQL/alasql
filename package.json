@@ -1,8 +1,12 @@
 {
   "name": "alasql",
-  "description": "Versatile SQL database for browser or node. Handles both your (traditional) relational tables and nested JSON data (noSQL). Export, store, and import data from localStorage, IndexedDB, or Excel.",
+  "description": "Versatile SQL database for browser or node. Handles relational data and nested JSON (noSQL). Export to and import from Excel, localStorage or IndexedDB",
   "version": "0.1.10",
   "author": "Andrey Gershun <agershun@gmail.com>",
+ "contributors": [{
+  "name": "Mathias Rangel Wulff",
+  "email": "mathias@rawu.dk"
+  }],
   "directories": {
     "test": "test"
   },
@@ -14,14 +18,14 @@
     "es6-promise": "^2.1.1",
     "lodash": "^3.9.3",
     "xlsjs": "^0.7.5",
-    "xlsx": "0.8.0"
+    "xlsx": "^0.8.0"
   },
   "devDependencies": {
     "blueimp-md5": "^1.1.0",
     "gulp": "^3.8.11",
     "gulp-concat": "^2.5.2",
     "gulp-shell": "^0.4.1",
-    "jison": "0.4.15",
+    "jison": "^0.4.15",
     "mocha": "^2.2.5",
     "uglifyjs": "^2.4.10"
   },
@@ -36,7 +40,7 @@
     "url": "https://github.com/agershun/alasql/issues"
   },
   "bin": {
-    "alacon": "./bin/alacon.js",
+    "alasql": "./bin/alacon.js",
     "alaserver": "./bin/alaserver.js"
   },
   "homepage": "https://github.com/agershun/alasql",

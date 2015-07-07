@@ -297,23 +297,26 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 		op = '||';
 	}
 
+	// Arrow operator
 	if(this.op === '->') {
-//		console.log(this.right, typeof this.right);
+		// Expression to prevent error if object is empty (#344)
+		var ljs = '('+leftJS()+'||{})';
+
 		if(typeof this.right === "string") {
-			return leftJS() +'["'+this.right+'"]';
+			return ljs +'["'+this.right+'"]';
 		
 		} else if(typeof this.right === "number") {
-			return leftJS()+'['+this.right+']';
+			return ljs+'['+this.right+']';
 		
 		} else if(this.right instanceof yy.FuncValue) {
 			var ss = [];
 			if(!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(function(arg){
-															return arg.toJS(context,tableid, defcols);
-														});
+					return arg.toJS(context,tableid, defcols);
+				});
 			}
 			return 	''
-					+ leftJS()
+					+ ljs
 					+ "['"
 					+ 	this.right.funcid
 					+ "']("
@@ -322,7 +325,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 		} else {
 
 			return 	''
-					+ leftJS()
+					+ ljs
 					+ '['
 					+	rightJS()
 					+ ']';
@@ -391,7 +394,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	'(' + leftJS()+ "+'')"
 				+ 	".toUpperCase().match(new RegExp('^'+("
 				+ 		rightJS()
-				+ 	").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
+				+ 	").replace(/\\\%/g,'.*').replace(/\\\?/g,'.').toUpperCase()+'$','g'))"
 				+ ')';
 	}
 

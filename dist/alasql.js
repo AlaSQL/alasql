@@ -2799,7 +2799,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 /**
    12prettyflag.js - prettify
-   @todo remove this part into the separate plugin
+   @todo move this functionality to plugin
 */
 
 /**
@@ -2829,8 +2829,9 @@ alasql.pretty = function(sql, flag) {
  Pretty keyword
  @param {string} s Keyword
  @return {string} pretty keyword
-*/
+* /
 function K(s){
+	console.log('K')
 	if(alasql.prettyflag) {
 		return '<b style="color:blue">'+s.toUpperCase()+'</b>'; 
 	} else {
@@ -2842,8 +2843,9 @@ function K(s){
  Pretty 
  @param {string} 
  @return {string} pretty keyword
- */
+ * /
 function P(s){
+		console.log('P')
 	if(alasql.prettyflag) {
 		return '<span style="color:green">'+s+'</span>'; 
 	} else {
@@ -2855,8 +2857,9 @@ function P(s){
  Pretty 
  @param {string} 
  @return {string} pretty keyword
- */
+ * /
 function L(s){
+		console.log('L')
 	if(alasql.prettyflag) {
 		return '<span style="color:red">'+s+'</span>'; 
 	} else {
@@ -2868,8 +2871,9 @@ function L(s){
  Pretty number
  @param {string | number} s number 
  @return {string} pretty number
- */
+ * /
 function N(s){
+	console.log('N')
 	if(alasql.prettyflag) {
 		return '<span style="color:green">'+s+'</span>'; 
 	} else {
@@ -2881,8 +2885,9 @@ function N(s){
  Pretty string
  @param {string} s string 
  @return {string} pretty string
- */
+ * /
 function S(s){
+		console.log('S')
 	if(alasql.prettyflag) {
 		return '<span style="color:green">'+s+'</span>'; 
 	} else {
@@ -2894,8 +2899,9 @@ function S(s){
 /**
  Pretty new line
  @return {string} HTML new line character
- */
+ * /
 function NL(){
+		console.log('NL')
 	if(alasql.prettyflag) {
 		return '<br/>'; 
 	} else {
@@ -2906,8 +2912,9 @@ function NL(){
 /**
  Pretty ident
  @return {string} HTML ident
- */
+ * /
 function ID(){
+		console.log('ID')
 	if(alasql.prettyflag) {
 		return '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
 	} else {
@@ -3635,6 +3642,8 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 /**
   Check equality of objects
 */
+
+/*
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
         if (x === y){
@@ -3677,6 +3686,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     }
     return x === y;
 };
+*/
 
 /**
   COmpare two object in deep
@@ -4471,6 +4481,9 @@ if(typeof Promise === 'function') {
 
 var Database = alasql.Database = function (databaseid) {
 	var self = this;
+//		self = function(a){console.log('OK',a);}
+//		self.prototype = this;
+
 	if(self === alasql) {
 		if(databaseid) {
 //			if(alasql.databases[databaseid]) {
@@ -4533,6 +4546,8 @@ Database.prototype.resetSqlCache = function () {
 Database.prototype.exec = function(sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
 };
+
+
 
 // 	// Compile
 // 	var statement = this.compile(sql);
@@ -4887,7 +4902,7 @@ Base.prototype.exec = function() {}
 yy.Statements = function(params) { return yy.extend(this, params); };
 
 yy.Statements.prototype.toString = function () {
-	return this.statements.map(function(st){return st.toString()}).join(';'+NL());
+	return this.statements.map(function(st){return st.toString()}).join('; ');
 };
 
 // Compile array of statements into single statement
@@ -5607,12 +5622,12 @@ alasql.srch.TO = function(val,args) {
 yy.Search = function (params) { return yy.extend(this, params); }
 
 yy.Search.prototype.toString = function () {
-	var s = K('SEARCH') + ' ';
+	var s = 'SEARCH' + ' ';
 	if (this.selectors){
 		s += this.selectors.toString();
 	}
 	if (this.from){
-		s += K('FROM') + ' ' + this.from.toString();
+		s += 'FROM' + ' ' + this.from.toString();
 	}
 //console.log(s);
 	return s;
@@ -5710,7 +5725,7 @@ alasql.srch.LIKE = function(val,args,stope,params) {
   var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   if(val.toUpperCase().match(new RegExp('^'+exprfn(val,alasql,params).toUpperCase()
-  	.replace(/%/g,'.*')+'$'),'g')) {
+  	.replace(/%/g,'.*').replace(/\?/g,'.')+'$'),'g')) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -6922,71 +6937,124 @@ function swapSources(query, h) {
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
 	var s = '';
-	if(this.explain) s+= K('EXPLAIN')+' ';
-	s += K('SELECT')+' ';
-	if(this.modifier) s += K(this.modifier)+' ';
+	if(this.explain){
+		s+= 'EXPLAIN ';
+	}
+	s += 'SELECT ';
+	if(this.modifier){
+		s += this.modifier+' ';
+	}
 	if(this.top) {
-		s += K('TOP')+' '+N(this.top.value)+' ';
-		if(this.percent) s += K('PERCENT')+' ';
+		s += 'TOP '+this.top.value+' ';
+		if(this.percent){
+			s += 'PERCENT ';
+		}
 	}
 	s += this.columns.map(function(col){
 		var s = col.toString();
 //		console.log(col);
-		if(typeof col.as != "undefined") s += ' '+K('AS')+' '+L(col.as);
+		if(typeof col.as !== "undefined"){
+			s += ' AS '+col.as;
+		}
 		return s;
 	}).join(', ');
 
 	if(this.from) {
-		s += NL()+ID()+K('FROM')+' '+this.from.map(function(f){
-//			console.log(f);
-			var ss = f.toString();
-			if(f.as) ss += ' '+K('AS')+' '+f.as;
-			return ss;
-		}).join(',');
-	};
+		s += 	' FROM '
+				+ this.from.map(function(f){
+									//			console.log(f);
+												var ss = f.toString();
+												if(f.as){
+													ss += ' AS '+f.as;
+												}
+												return ss;
+											}).join(',');
+										}
 
 	if(this.joins) {
 		s += this.joins.map(function(jn){
-			var ss = NL()+ID();
-			if(jn.joinmode) ss += K(jn.joinmode)+' ';
-			if(jn.table) ss += K('JOIN')+' '+jn.table.toString();
-			else if(jn instanceof yy.Apply) ss += jn.toString();
-			else {
+			var ss = ' ';
+			if(jn.joinmode){
+				ss += jn.joinmode+' ';
+			}
+			
+			if(jn.table){
+				ss += 'JOIN '+jn.table.toString();
+			} else if(jn instanceof yy.Apply){
+				ss += jn.toString();
+			} else {
 				throw new Error('Wrong type in JOIN mode');
 			}
 
-			if(jn.using) ss += ' '+K('USING')+' '+jn.using.toString();
-			if(jn.on) ss += ' '+K('ON')+' '+jn.on.toString();
+			if(jn.using){
+				ss += ' USING '+jn.using.toString();
+			}
+
+			if(jn.on){
+				ss += ' ON '+jn.on.toString();
+			}
 			return ss;
  		});
 	}
 
-	if(this.where) s += NL()+ID()+K('WHERE')+' '+this.where.toString();
+	if(this.where){
+		s += ' WHERE '+this.where.toString();
+	}
 	if(this.group && this.group.length>0) {
-		s += NL()+ID()+K('GROUP BY')+' '+this.group.map(function(grp){
-			return grp.toString();
-		}).join(', ');
-	};
-	if(this.having) s += NL()+ID()+K('HAVING')+' '+this.having.toString();
+		s += ' GROUP BY ' + this.group.map(function(grp){
+															return grp.toString();
+														}).join(', ');
+	}
+
+	if(this.having){
+		s += ' HAVING '+this.having.toString();
+	}
 
 	if(this.order && this.order.length>0) {
-		s += NL()+ID()+K('ORDER BY')+' '+this.order.map(function(ord){
-			return  ord.toString();
-		}).join(', ');
-	};
-	if(this.limit) s += NL()+ID()+K('LIMIT')+' '+this.limit.value;
-	if(this.offset) s += NL()+ID()+K('OFFSET')+' '+this.offset.value;
-	if(this.union) s += NL()+K('UNION')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.union.toString();
-	if(this.unionall) s += NL()+K('UNION ALL')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.unionall.toString();
-	if(this.except) s += NL()+K('EXCEPT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.except.toString();
-	if(this.intersect) s += NL()+K('INTERSECT')+(this.corresponding?(' '+K('CORRESPONDING')):'')+NL()+this.intersect.toString();
+		s += ' ORDER BY '+this.order.map(function(ord){
+														return  ord.toString();
+													}).join(', ');
+	}
+
+	if(this.limit){
+		s += ' LIMIT '+this.limit.value;
+	}
+
+	if(this.offset){
+		s += ' OFFSET '+this.offset.value;
+	}
+
+	if(this.union){
+		s += ' UNION '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.union.toString();
+	}
+
+	if(this.unionall){
+		s += ' UNION ALL '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.unionall.toString();
+	}
+
+	if(this.except){
+		s += ' EXCEPT '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.except.toString();
+	}
+
+	if(this.intersect){
+		s += ' INTERSECT '
+			+ (this.corresponding ? 'CORRESPONDING ' : '')
+			+ this.intersect.toString();
+	}
+
 	return s;
 };
 
 /**
  Select statement in expression
  */
-yy.Select.prototype.toJS = function(context, tableid, defcols) {
+yy.Select.prototype.toJS = function(context) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
 //	return this.expression.toJS(context, tableid, defcols);
@@ -7028,9 +7096,13 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 1. Compile FROM clause
 	query.fromfn = this.compileFrom(query);
+	
 	// 2. Compile JOIN clauses
-	if(this.joins) this.compileJoins(query);
-	// 3. Compile SELECT clause
+	if(this.joins){
+		this.compileJoins(query);
+	}
+
+	// todo?: 3. Compile SELECT clause
 
 	// For ROWNUM()
 	query.rownums = [];
@@ -7047,17 +7119,23 @@ yy.Select.prototype.compile = function(databaseid) {
 	this.compileRemoveColumns(query);
 
 	// 5. Optimize WHERE and JOINS
-	if(this.where) this.compileWhereJoins(query);
+	if(this.where){
+		this.compileWhereJoins(query);
+	}
 
 	// 4. Compile WHERE clause
 	query.wherefn = this.compileWhere(query);
 
 
 	// 6. Compile GROUP BY
-	if(this.group || query.selectGroup.length>0) query.groupfn = this.compileGroup(query);
+	if(this.group || query.selectGroup.length>0){
+		query.groupfn = this.compileGroup(query);
+	}
 
 	// 6. Compile HAVING
-	if(this.having) query.havingfn = this.compileHaving(query);
+	if(this.having){
+		query.havingfn = this.compileHaving(query);
+	}
 
 
 	if(this.group || query.selectGroup.length>0) {
@@ -7071,7 +7149,9 @@ yy.Select.prototype.compile = function(databaseid) {
 	query.distinct = this.distinct;
 
 	// 8. Compile ORDER BY clause
-	if(this.order) query.orderfn = this.compileOrder(query);
+	if(this.order){
+		query.orderfn = this.compileOrder(query);
+	}
 
 	// 9. Compile PIVOT clause
 	if(this.pivot) query.pivotfn = this.compilePivot(query);
@@ -7085,7 +7165,8 @@ yy.Select.prototype.compile = function(databaseid) {
 		if(this.offset) {
 			query.offset = this.offset.value;
 		}
-	};
+	}
+
 	query.percent = this.percent;
 
 	// 9. Compile ordering function for UNION and UNIONALL
@@ -7118,7 +7199,7 @@ yy.Select.prototype.compile = function(databaseid) {
 		} else {
 			query.orderfn = null;
 		}
-	};
+	}
 
 	// SELECT INTO
 	if(this.into) {
@@ -7168,7 +7249,7 @@ yy.Select.prototype.compile = function(databaseid) {
 			// like alasql('SELECT * INTO ? FROM ?',[outdata,srcdata]);
 			//
 			query.intofns = "params['"+this.into.param+"'].push(r)";
-		};
+		}
 
 		if(query.intofns) {
 			// Create intofn function
@@ -7199,7 +7280,9 @@ yy.Select.prototype.compile = function(databaseid) {
 			var res2 = modify(query, res);
 
 
-			if(cb) cb(res2); 
+			if(cb){
+				cb(res2);
+			}
 //console.log(8888,res2);
 			return res2;
 
@@ -7225,17 +7308,21 @@ yy.Select.prototype.compile = function(databaseid) {
 	@param {object} query Query object
 	@param res {object|number|string|boolean} res Data to be converted 
 */
-function modify(query, res) {
+function modify(query, res) { // jshint ignore:line
 //	console.log(arguments);
 
 	/* If source is a primitive value then return it */
-	if(typeof res == 'undefined' || typeof res == 'number' || typeof res == 'string' || typeof res == 'boolean') {
+	if(		typeof res === 'undefined' 
+		|| 	typeof res === 'number' 
+		|| 	typeof res === 'string' 
+		|| 	typeof res == 'boolean'
+	){
 		return res;
 	}
 
 	var modifier = query.modifier || alasql.options.modifier;
 	var columns = query.columns;
-	if(typeof columns == 'undefined' || columns.length == 0) {
+	if(typeof columns === 'undefined' || columns.length == 0) {
 		// Try to create columns
 		if(res.length > 0) {
 			var allcol = {};
@@ -7256,40 +7343,46 @@ function modify(query, res) {
 
 //	console.log(columns);
 
-	if(modifier == 'VALUE') {
+	if(modifier === 'VALUE') {
 //		console.log(222,res);
 		if(res.length > 0) {
 			var key;
-			if(columns && columns.length > 0) key = columns[0].columnid;
-			else key = Object.keys(res[0])[0];
+			if(columns && columns.length > 0){
+				key = columns[0].columnid;
+			} else {
+				key = Object.keys(res[0])[0];
+			}
 			res = res[0][key];
 		} else {
 			res = undefined;
 		}
-	} if(modifier == 'ROW') {
+	} else if(modifier === 'ROW') {
 		if(res.length > 0) {
 			var key;
 			var a = [];
 			for(var key in res[0]) {
 				a.push(res[0][key]);
-			};
+			}
 			res = a;
 		} else {
 			res = undefined;
 		}
-	} if(modifier == 'COLUMN') {
+	} else if(modifier === 'COLUMN') {
 		var ar = [];
 		if(res.length > 0) {
 			var key;
-			if(columns && columns.length > 0) key = columns[0].columnid;
-			else key = Object.keys(res[0])[0];
+			if(columns && columns.length > 0){
+				key = columns[0].columnid;
+			} else {
+				key = Object.keys(res[0])[0];
+			}
+
 			for(var i=0, ilen=res.length; i<ilen; i++){
 				ar.push(res[i][key]);
 			}
-		};
+		}
 		res = ar;
-
-	} if(modifier == 'MATRIX') {
+	} else if(modifier === 'MATRIX') {
 		// Returns square matrix of rows
 		var ar = [];
 		for(var i=0;i<res.length;i++) {		
@@ -7302,7 +7395,7 @@ function modify(query, res) {
 		}
 		res = ar;
 
-	} if(modifier == 'INDEX') {
+	}else if(modifier === 'INDEX') {
 		var ar = {};
 		var key,val;
 		if(columns && columns.length > 0) {
@@ -7318,14 +7411,17 @@ function modify(query, res) {
 		}
 		res = ar;
 //		res = arrayOfArrays(res);
-	} if(modifier == 'RECORDSET') {
+	}else if(modifier === 'RECORDSET') {
 		res = new alasql.Recordset({data:res, columns:columns});
 //		res = arrayOfArrays(res);
-	} if(modifier == 'TEXTSTRING') {
+	}else if(modifier === 'TEXTSTRING') {
 		var key;
-		if(columns && columns.length > 0) key = columns[0].columnid;
-		else key = Object.keys(res[0])[0];
-		var s = '';
+		if(columns && columns.length > 0){
+			key = columns[0].columnid;
+		} else{
+			key = Object.keys(res[0])[0];
+		}
+
 		for(var i=0, ilen=res.length; i<ilen; i++){
 			res[i] = res[i][key];
 		}
@@ -7333,7 +7429,7 @@ function modify(query, res) {
 //		res = arrayOfArrays(res);
 	}
 	return res;
-};
+}
 
 
 
@@ -8936,7 +9032,7 @@ yy.Select.prototype.compileRemoveColumns = function(query) {
 		query.removeLikeKeys = this.removecolumns.filter(function (column) {
 				return (typeof column.like !== 'undefined');
 			}).map(function(column){
-				return new RegExp(column.like.value.replace(/\%/g,'.*'),'g');
+				return new RegExp((column.like.value||'').replace(/\%/g,'.*').replace(/\?/g,'.'),'g');
 			});
 	}
 }
@@ -9385,7 +9481,7 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 yy.Union = function (params) { return yy.extend(this, params); }
 yy.Union.prototype.toString = function () {
-	return K('UNION');
+	return 'UNION';
 };
 
 yy.Union.prototype.compile = function (tableid) {
@@ -9404,10 +9500,10 @@ yy.Apply = function (params) {
 }
 
 yy.Apply.prototype.toString = function () {
-	var s = K(this.applymode)+' '+K('APPLY')+' ('+this.select.toString()+')';
+	var s = this.applymode+' APPLY ('+this.select.toString()+')';
 	
 	if(this.as) 
-		s += ' '+K('AS')+' '+L(this.as);
+		s += ' AS '+this.as;
 	
 	return s;
 };
@@ -9424,13 +9520,13 @@ yy.Apply.prototype.toString = function () {
 
 yy.Over = function (params) { return yy.extend(this, params); }
 yy.Over.prototype.toString = function () {
-	var s = K('OVER')+' (';
+	var s = 'OVER (';
 	if(this.partition) {
-		s += K('PARTITION')+' '+K('BY')+' '+this.partition.toString();
+		s += 'PARTITION BY '+this.partition.toString();
 		if(this.order) s+=' ';
 	}
 	if(this.order) {
-		s += K('ORDER')+' '+K('BY')+' '+this.order.toString();
+		s += 'ORDER BY '+this.order.toString();
 	}
 	s += ')';
 	return s;
@@ -9503,7 +9599,7 @@ yy.Expression.prototype.toString = function() {
 		s += ' '+this.order.toString();
 	}
 	if(this.nocase) {
-		s += ' '+K('COLLATE')+' '+K('NOCASE');
+		s += ' COLLATE NOCASE';
 	}
 	return s;
 };
@@ -9592,7 +9688,7 @@ yy.Literal.prototype.toString = function() {
 		s = this.value1+'.'+s; 
 	}
 //	else s = tableid+'.'+s;
-	return L(s);
+	return s;
 };
 
 /**
@@ -9602,11 +9698,11 @@ yy.Literal.prototype.toString = function() {
 
 yy.Join = function (params) { return yy.extend(this, params); };
 yy.Join.prototype.toString = function() {
-	var s = NL()+ID();
+	var s = ' ';
 	if(this.joinmode){
-		s += K(this.joinmode)+' ';
+		s += this.joinmode+' ';
 	}
-	s += K('JOIN')+this.table.toString();
+	s += 'JOIN ' + this.table.toString();
 	return s;
 };
 
@@ -9626,7 +9722,7 @@ yy.Table.prototype.toString = function() {
 	if(this.databaseid){
 		s = this.databaseid+'.'+s;
 	}
-	return L(s);
+	return s;
 };
 
 /**
@@ -9641,7 +9737,7 @@ yy.View.prototype.toString = function() {
 	if(this.databaseid){
 		s = this.databaseid+'.'+s;
 	}
-	return L(s);
+	return s;
 };
 
 /**
@@ -9651,10 +9747,10 @@ yy.View.prototype.toString = function() {
 yy.Op = function (params) { return yy.extend(this, params); };
 yy.Op.prototype.toString = function() {
 	if(this.op === 'IN' || this.op === 'NOT IN') {
-		return this.left.toString()+" "+P(this.op)+" ("+this.right.toString()+")";
+		return this.left.toString()+" "+this.op+" ("+this.right.toString()+")";
 	}
 	if(this.allsome) {
-		return this.left.toString()+" "+P(this.op)+" "+this.allsome+' ('+this.right.toString()+')';
+		return this.left.toString()+" "+this.op+" "+this.allsome+' ('+this.right.toString()+')';
 	}
 	if(this.op === '->' || this.op === '!') {
 		var s = this.left.toString()+this.op;
@@ -9672,7 +9768,7 @@ yy.Op.prototype.toString = function() {
 		
 		return s;
 	}
-	return 	this.left.toString() + " " + P(this.op) + " " +
+	return 	this.left.toString() + " " + this.op + " " +
 			(this.allsome ? this.allsome+' ' : '') +
 			this.right.toString();
 };
@@ -9736,23 +9832,26 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 		op = '||';
 	}
 
+	// Arrow operator
 	if(this.op === '->') {
-//		console.log(this.right, typeof this.right);
+		// Expression to prevent error if object is empty (#344)
+		var ljs = '('+leftJS()+'||{})';
+
 		if(typeof this.right === "string") {
-			return leftJS() +'["'+this.right+'"]';
+			return ljs +'["'+this.right+'"]';
 		
 		} else if(typeof this.right === "number") {
-			return leftJS()+'['+this.right+']';
+			return ljs+'['+this.right+']';
 		
 		} else if(this.right instanceof yy.FuncValue) {
 			var ss = [];
 			if(!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(function(arg){
-															return arg.toJS(context,tableid, defcols);
-														});
+					return arg.toJS(context,tableid, defcols);
+				});
 			}
 			return 	''
-					+ leftJS()
+					+ ljs
 					+ "['"
 					+ 	this.right.funcid
 					+ "']("
@@ -9761,7 +9860,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 		} else {
 
 			return 	''
-					+ leftJS()
+					+ ljs
 					+ '['
 					+	rightJS()
 					+ ']';
@@ -9830,7 +9929,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	'(' + leftJS()+ "+'')"
 				+ 	".toUpperCase().match(new RegExp('^'+("
 				+ 		rightJS()
-				+ 	").replace(/\\\%/g,'.*').toUpperCase()+'$','g'))"
+				+ 	").replace(/\\\%/g,'.*').replace(/\\\?/g,'.').toUpperCase()+'$','g'))"
 				+ ')';
 	}
 
@@ -9993,7 +10092,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 yy.VarValue = function (params) { return yy.extend(this, params); }
 yy.VarValue.prototype.toString = function() {
-	return '@'+L(this.variable);
+	return '@'+this.variable;
 };
 
 yy.VarValue.prototype.toType = function() {
@@ -10007,7 +10106,7 @@ yy.VarValue.prototype.toJS = function() {
 
 yy.NumValue = function (params) { return yy.extend(this, params); }
 yy.NumValue.prototype.toString = function() {
-	return N(this.value.toString());
+	return this.value.toString();
 };
 
 yy.NumValue.prototype.toType = function() {
@@ -10023,7 +10122,7 @@ yy.NumValue.prototype.toJS = function() {
 
 yy.StringValue = function (params) { return yy.extend(this, params); }
 yy.StringValue.prototype.toString = function() {
-	return "'"+S(this.value.toString())+"'";
+	return "'"+this.value.toString()+"'";
 }
 
 yy.StringValue.prototype.toType = function() {
@@ -10277,13 +10376,13 @@ yy.AggrValue = function(params){ return yy.extend(this, params); }
 yy.AggrValue.prototype.toString = function() {
 	var s = '';
 	if(this.aggregatorid === 'REDUCE'){
-		s += L(this.funcid)+'(';
+		s += this.funcid+'(';
 	} else{
 		s += this.aggregatorid+'(';
 	}
 
 	if(this.distinct){
-		s+= K('DISTINCT')+' ';
+		s+= 'DISTINCT ';
 	}
 
 	if(this.expression){
@@ -10397,7 +10496,7 @@ yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString
 function() {
 	var s = this.expression.toString();
 	if(this.order) s += ' '+this.order.toString();
-	if(this.nocase) s += ' '+K('COLLATE')+' '+K('NOCASE');
+	if(this.nocase) s += ' '+'COLLATE'+' '+'NOCASE';
 	return s;
 }*/
 
@@ -10426,7 +10525,7 @@ yy.ColumnDef.prototype.toString = function() {
 
 yy.FromData = function(params) { return yy.extend(this, params); };
 yy.FromData.prototype.toString = function() {
-	if(this.data) return K('DATA')+'('+((Math.random()*10e15)|0)+')';
+	if(this.data) return 'DATA('+((Math.random()*10e15)|0)+')';
 	else return '?';
 };
 yy.FromData.prototype.toJS = function(){
@@ -11213,19 +11312,19 @@ yy.ColumnDef.prototype.toString = function() {
 
 yy.CreateTable = function (params) { return yy.extend(this, params); }
 yy.CreateTable.prototype.toString = function() {
-	var s = K('CREATE');
+	var s = 'CREATE';
 	if(this.temporary){
-		s+=' '+K('TEMPORARY');
+		s+=' TEMPORARY';
 	}
 
 	if(this.view){
-		s += ' '+K('VIEW');
+		s += ' VIEW';
 	} else{
-		s += ' '+(this.class?K('CLASS'):K('TABLE'));
+		s += ' '+(this.class?'CLASS':'TABLE');
 	}
 
 	if(this.ifnotexists){
-		s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
+		s += ' IF  NOT EXISTS';
 	}
 	s += ' '+this.table.toString();
 	if(this.viewcolumns) {
@@ -11234,12 +11333,12 @@ yy.CreateTable.prototype.toString = function() {
 		}).join(',')+')';
 	}
 	if(this.as){
-		s += ' '+K('AS')+' '+L(this.as);
+		s += ' AS '+this.as;
 	} else { 
 		var ss = this.columns.map(function(col){
 			return col.toString();
 		});
-		s += ' ('+NL()+ID()+ss.join(','+NL()+ID())+')';
+		s += ' ('+ss.join(',')+')';
 	}
 
 	if(this.view && this.select) {
@@ -11803,10 +11902,10 @@ stdfn.DATEDIFF = function(a,b){
 
 yy.DropTable = function (params) { return yy.extend(this, params); };
 yy.DropTable.prototype.toString = function() {
-	var s = K('DROP')+' ';
-	if(this.view) s += K('VIEW');
-	else s += K('TABLE');
-	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
+	var s = 'DROP'+' ';
+	if(this.view) s += 'VIEW';
+	else s += 'TABLE';
+	if(this.ifexists) s += ' IF EXISTS';
 	s += ' '+this.tables.toString();
 	return s;
 };
@@ -11858,7 +11957,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 
 yy.TruncateTable = function (params) { return yy.extend(this, params); };
 yy.TruncateTable.prototype.toString = function() {
-	var s = K('TRUNCATE')+' '+K('TABLE');
+	var s = 'TRUNCATE TABLE';
 	s += ' '+this.table.toString();
 	return s;
 };
@@ -11888,12 +11987,12 @@ yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 
 yy.CreateVertex = function (params) { return yy.extend(this, params); }
 yy.CreateVertex.prototype.toString = function() {
-	var s = K('CREATE')+' '+K('VERTEX')+' ';
+	var s = 'CREATE VERTEX ';
 	if(this.class){
-		s += L(this.class)+' ';
+		s += this.class+' ';
 	}
 	if(this.sharp){
-		s += '#'+L(this.sharp)+' ';
+		s += '#'+this.sharp+' ';
 	}
 	if(this.sets) {
 		s += this.sets.toString();
@@ -12024,9 +12123,9 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 yy.CreateEdge = function (params) { return yy.extend(this, params); }
 yy.CreateEdge.prototype.toString = function() {
 //	console.log('here!');
-	var s = K('CREATE')+' '+K('EDGE')+' ';
+	var s = 'CREATE EDGE'+' ';
 	if(this.class){
-		s += L(this.class)+' ';
+		s += this.class+' ';
 	}
 	// todo: SET
 	// todo: CONTENT
@@ -12121,9 +12220,9 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 
 yy.CreateGraph = function (params) { return yy.extend(this, params); }
 yy.CreateGraph.prototype.toString = function() {
-	var s = K('CREATE')+' '+K('GRAPH')+' ';
+	var s = 'CREATE GRAPH'+' ';
 	if(this.class){
-		s += L(this.class)+' ';
+		s += this.class+' ';
 	}
 	return s;
 }
@@ -12138,8 +12237,6 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 	if(this.from) {
 		if(alasql.from[this.from.funcid]) {
 			this.graph = alasql.from[this.from.funcid.toUpperCase()]
-		//		(this.from.args[0].value);
-		//	console.log(this.graph);
 		}
 	}
 
@@ -12648,9 +12745,9 @@ yy.DropIndex.prototype.compile = function (db) {
 
 yy.WithSelect = function (params) { return yy.extend(this, params); }
 yy.WithSelect.prototype.toString = function() {
-	var s = K('WITH')+' ';
+	var s = 'WITH ';
 	s += this.withs.map(function(w){
-		return L(w.name)+' '+K('AS')+' ('+w.select.toString()+')';
+		return w.name+' AS ('+w.select.toString()+')';
 	}).join(',')+' ';
 	s += this.select.toString();
 	return s;
@@ -12699,7 +12796,7 @@ yy.CreateView.prototype.execute = function (databaseid) {
 
 yy.DropView = function (params) { return yy.extend(this, params); }
 yy.DropView.prototype.toString = function() {
-	var s = K('DROP')+' '+K('VIEW');
+	var s = 'DROP'+' '+'VIEW';
 	s += ' '+this.view.toString();
 	return s;
 };
@@ -12723,10 +12820,10 @@ yy.DropView.prototype.execute = function (databaseid) {
 
 yy.If = function (params) { return yy.extend(this, params); }
 yy.If.prototype.toString = function() {
-	var s = K('IF')+' ';
+	var s = 'IF'+' ';
 	s += this.expression.toString();
 	s += ' '+this.thenstat.toString();
-	if(this.elsestat) s += ' '+K('ELSE')+NL()+ID()+this.thenstat.toString();
+	if(this.elsestat) s += ' ELSE '+this.thenstat.toString();
 	return s;
 };
 
@@ -12802,7 +12899,7 @@ yy.While.prototype.execute = function (databaseid,params,cb) {
 
 yy.Break = function (params) { return yy.extend(this, params); }
 yy.Break.prototype.toString = function() {
-	var s = K('BREAK');
+	var s = 'BREAK';
 	return s;
 };
 
@@ -12814,7 +12911,7 @@ yy.Break.prototype.execute = function (databaseid,params,cb,scope) {
 
 yy.Continue = function (params) { return yy.extend(this, params); }
 yy.Continue.prototype.toString = function() {
-	var s = K('CONTINUE');
+	var s = 'CONTINUE';
 	return s;
 };
 
@@ -12826,7 +12923,7 @@ yy.Continue.prototype.execute = function (databaseid,params,cb,scope) {
 
 yy.BeginEnd = function (params) { return yy.extend(this, params); }
 yy.BeginEnd.prototype.toString = function() {
-	var s = K('BEGIN')+' '+this.statements.toString()+' '+K('END');
+	var s = 'BEGIN '+this.statements.toString()+' END';
 	return s;
 };
 
@@ -13367,29 +13464,29 @@ yy.Update.prototype.execute = function (databaseid, params, cb) {
 
 yy.Merge = function (params) { return yy.extend(this, params); }
 yy.Merge.prototype.toString = function() {
-	var s = K('MERGE')+' ';
-	s += L(this.into.tableid)+' ';
-	if(this.into.as) s += K('AS')+' '+L(this.into.as)+' ';
-	s += K('USING')+' '+L(this.using.tableid)+' ';
-	if(this.using.as) s += K('AS')+' '+L(this.using.as)+' ';
-	s += K('ON')+' '+this.on.toString()+' ';
+	var s = 'MERGE ';
+	s += this.into.tableid+' ';
+	if(this.into.as) s += 'AS '+this.into.as+' ';
+	s += 'USING '+this.using.tableid+' ';
+	if(this.using.as) s += 'AS '+this.using.as+' ';
+	s += 'ON '+this.on.toString()+' ';
 	this.matches.forEach(function(m){
-		s += K('WHEN')+' ';
-		if(!m.matched) s += K('NOT')+' ';
-		s += K('MATCHED')+' ';
-		if(m.bytarget) s += K('BY')+' '+K('TARGET')+' ';
-		if(m.bysource) s += K('BY')+' '+K('SOURCE')+' ';
-		if(m.expr) s+= K('AND')+' '+m.expr.toString()+' ';
-		s += K('THEN')+' ';
-		if(m.action.delete) s += K('DELETE')+' ';
+		s += 'WHEN ';
+		if(!m.matched) s += 'NOT ';
+		s += 'MATCHED ';
+		if(m.bytarget) s += 'BY TARGET ';
+		if(m.bysource) s += 'BY SOURCE ';
+		if(m.expr) s+= 'AND'+' '+m.expr.toString()+' ';
+		s += 'THEN ';
+		if(m.action.delete) s += 'DELETE ';
 		if(m.action.insert) {
-			s += K('INSERT')+' ';
+			s += 'INSERT ';
 			if(m.action.columns) s += '('+m.action.columns.toString()+') ';
-			if(m.action.values) s += K('VALUES')+' ('+m.action.values.toString()+') ';
-			if(m.action.defaultvalues) s += K('DEFAULT')+' '+K('VALUES')+' ';
+			if(m.action.values) s += 'VALUES ('+m.action.values.toString()+') ';
+			if(m.action.defaultvalues) s += 'DEFAULT VALUES ';
 		}
 		if(m.action.update) {
-			s += K('UPDATE')+' ';
+			s += 'UPDATE ';
 			s += m.action.update.map(function(u){
 				return u.toString();
 			}).join(',')+' ';
@@ -13423,15 +13520,15 @@ yy.Merge.prototype.execute = function (databaseid,params,cb) {
 // CREATE DATABASE databaseid
 yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
-	var s = K('CREATE'); 
-	if(this.engineid) s+=' '+L(this.engineid);
-	s += ' '+K('DATABASE');
-	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
-	s += ' '+L(this.databaseid);
+	var s = 'CREATE'; 
+	if(this.engineid) s+=' '+this.engineid;
+	s += ' DATABASE';
+	if(this.ifnotexists) s += ' IF NOT EXISTS';
+	s += ' '+this.databaseid;
 	if(this.args && this.args.length > 0) { 
 		s += '('+this.args.map(function(arg){ return arg.toString()}).join(', ')+')';
 	}
-	if(this.as) s += ' '+K('AS')+' '+L(this.as);
+	if(this.as) s += ' AS '+this.as;
 	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
@@ -13462,9 +13559,9 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 // CREATE DATABASE databaseid
 yy.AttachDatabase = function (params) { return yy.extend(this, params); };
 yy.AttachDatabase.prototype.toString = function() {
-	var s = K('ATTACH');
-	if(this.engineid) s += ' '+L(this.engineid);
-	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	var s = 'ATTACH';
+	if(this.engineid) s += ' '+this.engineid;
+	s += ' DATABASE'+' '+this.databaseid;
 	// TODO add params
 	if(args) {
 		s += '(';
@@ -13473,7 +13570,7 @@ yy.AttachDatabase.prototype.toString = function() {
 			}
 		s += ')';
 	}
-	if(this.as) s+= ' '+K('AS')+' '+L(this.as);
+	if(this.as) s+= ' AS'+' '+this.as;
 	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
@@ -13491,8 +13588,8 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 // CREATE DATABASE databaseid
 yy.DetachDatabase = function (params) { return yy.extend(this, params); };
 yy.DetachDatabase.prototype.toString = function() {
-	var s = K('DETACH');
-	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	var s = 'DETACH';
+	s += ' DATABASE'+' '+this.databaseid;
 	return s;
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
@@ -13535,7 +13632,7 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 // USE databaseid
 yy.UseDatabase = function (params) { return yy.extend(this, params); };
 yy.UseDatabase.prototype.toString = function() {
-	return K('USE') +' '+K('DATABASE')+' '+L(this.databaseid);
+	return 'USE' +' '+'DATABASE'+' '+this.databaseid;
 }
 //yy.UseDatabase.prototype.compile = returnUndefined;
 yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
@@ -13552,9 +13649,9 @@ yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
 // DROP DATABASE databaseid
 yy.DropDatabase = function (params) { return yy.extend(this, params); }
 yy.DropDatabase.prototype.toString = function() {
-	var s = K('DROP');
-	if(this.ifexists) s += ' '+K('IF')+' '+K('EXISTS');
-	s += ' '+K('DATABASE')+' '+L(this.databaseid);
+	var s = 'DROP';
+	if(this.ifexists) s += ' IF EXISTS';
+	s += ' DATABASE '+this.databaseid;
 	return s;
 }
 //yy.DropDatabase.prototype.compile = returnUndefined;
@@ -13608,14 +13705,14 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 
 yy.Declare = function (params) { return yy.extend(this, params); }
 yy.Declare.prototype.toString = function() {
-	var s = K('DECLARE')+' ';
+	var s = 'DECLARE ';
 	if(this.declares && this.declares.length > 0) {
 		s = this.declares.map(function(declare){
 			var s = '';
-			s += '@'+L(declare.variable)+' ';
+			s += '@'+declare.variable+' ';
 			s += declare.dbtypeid;
-			if(this.dbsize) s += '('+N(this.dbsize);
-			if(this.dbprecision) s+= ','+N(this.dbprecision);
+			if(this.dbsize) s += '('+this.dbsize;
+			if(this.dbprecision) s+= ','+this.dbprecision;
 			s += ')';
 			if(declare.expression) s += ' = '+declare.expression.toString();
 			return s;
@@ -13660,7 +13757,7 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 
 yy.ShowDatabases = function (params) { return yy.extend(this, params); }
 yy.ShowDatabases.prototype.toString = function() {
-	var s = K('SHOW')+' '+K('DATABASES');
+	var s = 'SHOW DATABASES';
 	if(this.like) s += 'LIKE '+this.like.toString();
 	return s;
 }
@@ -13675,7 +13772,7 @@ yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 		};
 		if(self.like && res && res.length > 0) {
 			res = res.filter(function(d){
-				return d.databaseid.match(new RegExp((self.like.value).replace(/\%/g,'.*'),'g'));
+				return d.databaseid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?/g,'.'),'g'));
 			});
 		}
 		if(cb) cb(res);
@@ -13687,9 +13784,9 @@ yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 
 yy.ShowTables = function (params) { return yy.extend(this, params); }
 yy.ShowTables.prototype.toString = function() {
-	var s = K('SHOW')+' '+K('TABLES');
+	var s = 'SHOW TABLES';
 	if(this.databaseid) s += ' FROM '+this.databaseid;
-	if(this.like) s += ' '+K('LIKE')+' '+this.like.toString();
+	if(this.like) s += ' LIKE '+this.like.toString();
 	return s;
 }
 yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
@@ -13702,7 +13799,7 @@ yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 	};
 	if(self.like && res && res.length > 0) {
 		res = res.filter(function(d){
-			return d.tableid.match(new RegExp((self.like.value).replace(/\%/g,'.*'),'g'));
+			return d.tableid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?/g,'.'),'g'));
 		});
 	};
 	if(cb) cb(res);
@@ -13711,9 +13808,9 @@ yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 
 yy.ShowColumns = function (params) { return yy.extend(this, params); }
 yy.ShowColumns.prototype.toString = function() {
-	var s = K('SHOW')+' '+K('COLUMNS');
-	if(this.table.tableid) s += ' '+K('FROM')+' '+this.table.tableid;
-	if(this.databaseid) s += ' '+K('FROM')+' '+this.databaseid;
+	var s = 'SHOW COLUMNS';
+	if(this.table.tableid) s += ' FROM '+this.table.tableid;
+	if(this.databaseid) s += ' FROM '+this.databaseid;
 	return s;
 };
 
@@ -13733,9 +13830,9 @@ yy.ShowColumns.prototype.execute = function (databaseid) {
 
 yy.ShowIndex = function (params) { return yy.extend(this, params); }
 yy.ShowIndex.prototype.toString = function() {
-	var s = K('SHOW')+' '+K('INDEX');
-	if(this.table.tableid) s += ' '+K('FROM')+' '+this.table.tableid;
-	if(this.databaseid) s += ' '+K('FROM')+' '+this.databaseid;
+	var s = 'SHOW INDEX';
+	if(this.table.tableid) s += ' FROM '+this.table.tableid;
+	if(this.databaseid) s += ' FROM '+this.databaseid;
 	return s;
 }
 yy.ShowIndex.prototype.execute = function (databaseid) {
@@ -13753,8 +13850,8 @@ yy.ShowIndex.prototype.execute = function (databaseid) {
 
 yy.ShowCreateTable = function (params) { return yy.extend(this, params); }
 yy.ShowCreateTable.prototype.toString = function() {
-	var s = K('SHOW')+' '+K('CREATE')+' '+K('TABLE')+' '+L(this.table.tableid);
-	if(this.databaseid) s += ' '+K('FROM')+' '+L(this.databaseid);
+	var s = 'SHOW CREATE TABLE '+this.table.tableid;
+	if(this.databaseid) s += ' FROM '+this.databaseid;
 	return s;
 }
 yy.ShowCreateTable.prototype.execute = function (databaseid) {
@@ -13762,13 +13859,13 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 	var table = db.tables[this.table.tableid];
 	var self = this;
 	if(table) {
-		var s = K('CREATE')+' '+K('TABLE')+' '+L(this.table.tableid)+' (';
+		var s = 'CREATE TABLE '+this.table.tableid+' (';
 		var ss = [];
 		if(table.columns) {
 			table.columns.forEach(function(col){
-				var a = L(col.columnid)+' '+K(col.dbtypeid);
-				if(col.dbsize) a += '('+N(col.dbsize)+')';
-				if(col.primarykey) a += ' '+K('PRIMARY')+' '+K('KEY');
+				var a = col.columnid+' '+col.dbtypeid;
+				if(col.dbsize) a += '('+col.dbsize+')';
+				if(col.primarykey) a += ' PRIMARY KEY';
 				// TODO extend
 				ss.push(a); 
 			});
@@ -13791,9 +13888,9 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 
 yy.SetVariable = function (params) { return yy.extend(this, params); }
 yy.SetVariable.prototype.toString = function() {
-	var s = K('SET')+' ';
-	if(typeof this.value != 'undefined') s += K(this.variable.toUpperCase())+' '+(this.value?'ON':'OFF');
-	if(this.expression) s += this.method + L(this.variable)+' = '+this.expression.toString();
+	var s = 'SET ';
+	if(typeof this.value != 'undefined') s += this.variable.toUpperCase()+' '+(this.value?'ON':'OFF');
+	if(this.expression) s += this.method + this.variable+' = '+this.expression.toString();
 	return s;
 }
 
@@ -13877,7 +13974,7 @@ alasql.con = {
 
 alasql.con.open = function(el) {
 	// For browser only
-	if (typeof exports === 'object') return;
+	if(typeof exports === 'object') return;
 
 	// Find parent element
 	el = el || document.getElementById('alasql-con') || document.getElementsByTagName('body');
@@ -13909,14 +14006,14 @@ alasql.con.open = function(el) {
 
 alasql.con.clear = function() {
 	// For browser only
-	if (typeof exports === 'object') return;
+	if(typeof exports === 'object') return;
 
 	alasql.con.conel.innerHTML = '';
 };
 
 alasql.con.close = function() {
 	// For browser only
-	if (typeof exports === 'object') return;
+	if(typeof exports === 'object') return;
 
 	alasql.con.conel.removeChild(alasql.con.lenta);
 	alasql.con.conel.removeChild(alasql.con.inel);
@@ -13925,7 +14022,7 @@ alasql.con.close = function() {
 
 alasql.con.log = function() {
 		// For browser only
-	if (typeof exports === 'object') {
+	if(typeof exports === 'object') {
 		console.log.bind(console).apply(this, arguments);
 	} else {
 		var s = '<div>';
@@ -13939,23 +14036,25 @@ alasql.con.log = function() {
 };
 */
 alasql.test = function(name, times, fn) {
-	if(arguments.length == 0) {
+	if(arguments.length === 0) {
 		alasql.log(alasql.con.results);
 		return;
-	} else if(arguments.length == 1) {
+	} else if(arguments.length === 1) {
 		var tm = Date.now();
 		fn();
 		alasql.con.log(Date.now()-tm);
 		return;
 	} 
 
-	if(arguments.length == 2) {
+	if(arguments.length === 2) {
 		fn = times;
 		times = 1;
 	}
 
 	var tm = Date.now();
-	for(var i=0;i<times;i++) fn();
+	for(var i=0;i<times;i++){
+		fn();
+	}
 	alasql.con.results[name] = Date.now()-tm;
 };
 
@@ -13983,20 +14082,22 @@ alasql.log = function(sql, params) {
 	var olduseid = alasql.useid;
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		target = 'console';
 	}
 
 	var res;
-	if(typeof sql == "string") {
+	if(typeof sql === "string") {
 		res = alasql(sql, params);
 	} else {
 		res = sql;
-	};
+	}
 
 	// For Node and console.output
-	if(target == 'console' || typeof exports == 'object') {
-		if(typeof sql == 'string' && alasql.options.logprompt) console.log(olduseid+'>',sql);
+	if(target === 'console' || typeof exports === 'object') {
+		if(typeof sql === 'string' && alasql.options.logprompt){
+			console.log(olduseid+'>',sql);
+		}
 
 		if(res instanceof Array) {
 			if(console.table) {
@@ -14012,10 +14113,10 @@ alasql.log = function(sql, params) {
 
 	} else {
 		var el;
-		if(target == 'output') {
+		if(target === 'output') {
 			el = document.getElementsByTagName('output')[0];
 		} else {
-			if(typeof target == 'string') {
+			if(typeof target === 'string') {
 				el = document.getElementById(target);
 			} else {
 				// in case of DOM
@@ -14026,15 +14127,15 @@ alasql.log = function(sql, params) {
 
 		var s = '';
 
-		if(typeof sql == 'string' && alasql.options.logprompt) {
+		if(typeof sql === 'string' && alasql.options.logprompt) {
 //			s += '<p>'+olduseid+'&gt;&nbsp;'+alasql.pretty(sql)+'</p>';
 			s += '<pre><code>'+alasql.pretty(sql)+'</code></pre>';
 		}
 
 		if(res instanceof Array) {
-			if(res.length == 0) {
+			if(res.length === 0) {
 				s += '<p>[ ]</p>'
-			} else if(typeof res[0] != 'object' || res[0] instanceof Array) {
+			} else if(typeof res[0] !== 'object' || res[0] instanceof Array) {
 				for(var i=0,ilen=res.length;i<ilen;i++) {
 					s += '<p>'+loghtml(res[i])+'</p>';
 				}
@@ -14051,22 +14152,23 @@ alasql.log = function(sql, params) {
 alasql.clear = function() {
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		target = 'console';
-	};
+	}
 
-	if(target == 'console' || typeof exports == 'object') {
+	if(target === 'console' || typeof exports === 'object') {
 		if(console.clear) {
 			console.clear();
-		} else {
-			// Something todo in Node
-		}
+		} 
+		
+		// todo: handle Node
+		
 	} else {
 		var el;
-		if(target == 'output') {
+		if(target === 'output') {
 			el = document.getElementsByTagName('output')[0];
 		} else {
-			if(typeof target == 'string') {
+			if(typeof target === 'string') {
 				el = document.getElementById(target);
 			} else {
 				// in case of DOM
@@ -14081,22 +14183,23 @@ alasql.write = function(s) {
 //	console.log('write',s);
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		target = 'console';
-	};
+	}
 
-	if(target == 'console' || typeof exports == 'object') {
+	if(target === 'console' || typeof exports === 'object') {
 		if(console.log) {
 			console.log(s);
-		} else {
-			// Something todo in Node
-		}
+		} 
+
+		// todo: handle node
+
 	} else {
 		var el;
-		if(target == 'output') {
+		if(target === 'output') {
 			el = document.getElementsByTagName('output')[0];
 		} else {
-			if(typeof target == 'string') {
+			if(typeof target === 'string') {
 				el = document.getElementById(target);
 			} else {
 				// in case of DOM
@@ -14110,7 +14213,7 @@ alasql.write = function(s) {
 function loghtml(res) {
 //	console.log(res); 
 	var s  = '';
-	if(typeof res == 'undefined') {
+	if(res === undefined) {
 		s += 'undefined';
 	} else if(res instanceof Array) {
 		s += '<style>';
@@ -14120,7 +14223,7 @@ function loghtml(res) {
 		s += '</style>';
 		s += '<table>';
 		var cols = [];			
-		for(colid in res[0]) {
+		for(var colid in res[0]) {
 			cols.push(colid);
 		}
 		s += '<tr><th>#';
@@ -14131,19 +14234,24 @@ function loghtml(res) {
 			s += '<tr><th>'+(i+1);
 			cols.forEach(function(colid){
 				s += '<td> ';
-				if(+res[i][colid] == +res[i][colid]) {
+				if(+res[i][colid] === +res[i][colid]) {
 					s += '<div style="text-align:right">';
-					if(typeof res[i][colid] == 'undefined') s += 'NULL';
-					else s += res[i][colid];
+					if(typeof res[i][colid] === 'undefined'){
+						s += 'NULL';
+					} else {
+						s += res[i][colid];
+					}
 					s += '</div>';
 				} else {
-					if(typeof res[i][colid] == 'undefined') {
+					if(typeof res[i][colid] === 'undefined') {
 						s += 'NULL';
-					} else if (typeof res[i][colid] == 'string') {
+					} else if(typeof res[i][colid] === 'string') {
 						s += res[i][colid];
-					} else s += JSONtoString(res[i][colid]);
+					} else { 
+						s += JSONtoString(res[i][colid]);
+					}
 //					s += res[i][colid];
-				};
+				}
 			});
 		}
 
@@ -14151,36 +14259,48 @@ function loghtml(res) {
 	} else {
 		s += '<p>'+JSONtoString(res)+'</p>';
 	}
-		// if () {}
+		// if() {}
 
 		// 		if(typeof res == 'object') {
 		// 			s += '<p>'+JSON.stringify(res)+'</p>';
 		// 		} else {
 		// 		}
 	return s;
-};
+}
 
 
 
 function scrollTo(element, to, duration) {
-    if (duration <= 0) return;
+    if(duration <= 0){
+    	return;
+    }
     var difference = to - element.scrollTop;
     var perTick = difference / duration * 10;
 
     setTimeout(function() {
-        if (element.scrollTop==to) return;
+        if(element.scrollTop===to){
+        	return;
+        }
         element.scrollTop = element.scrollTop + perTick;
         scrollTo(element, to, duration - 10);
     }, 10);
 }
 
 alasql.prompt = function(el, useidel, firstsql) {
-	if(typeof exports == 'object') {
+	if(typeof exports === 'object') {
 		throw new Error('The functionality of prompt is not realized for Node.js');
-	};
+	}
+
 	var prompti = 0;
-	if(typeof el == 'string') el = document.getElementById(el);
-	if(typeof useidel == 'string') useidel = document.getElementById(useidel);
+
+	if(typeof el === 'string'){
+		el = document.getElementById(el);
+	}
+
+	if(typeof useidel === 'string'){
+		useidel = document.getElementById(useidel);
+	}
+
 	useidel.textContent = alasql.useid;
 
 	if(firstsql) {
@@ -14194,13 +14314,13 @@ alasql.prompt = function(el, useidel, firstsql) {
 			alasql.write('<p>'+olduseid+'&gt;&nbsp;<b>'+sql+'</b></p>');
 			alasql.write('<p style="color:red">'+err+'<p>');
 		}
-	};
+	}
 
 	var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 	scrollTo(document.getElementsByTagName('body')[0],y,500);
 
 	el.onkeydown = function(event) {
-		if(event.which == 13) {
+		if(event.which === 13) {
 			var sql = el.value;
 			var olduseid = alasql.useid;
 			el.value = '';
@@ -14219,14 +14339,16 @@ alasql.prompt = function(el, useidel, firstsql) {
 			useidel.textContent = alasql.useid;
 			var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 			scrollTo(document.getElementsByTagName('body')[0],y,500);
-		} else if(event.which == 38) {
-			prompti--; if(prompti<0) prompti = 0;
+		} else if(event.which === 38) {
+			prompti--; if(prompti<0){
+				prompti = 0;
+			}
 			if(alasql.prompthistory[prompti]) {
 				el.value = alasql.prompthistory[prompti];
 				event.preventDefault();
 			}
 
-		} else if(event.which == 40) {
+		} else if(event.which === 40) {
 			prompti++; 
 			if(prompti>=alasql.prompthistory.length) {
 				prompti = alasql.prompthistory.length;
@@ -14252,7 +14374,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 */
 yy.BeginTransaction = function (params) { return yy.extend(this, params); }
 yy.BeginTransaction.prototype.toString = function() {
-	return K('BEGIN')+' '+K('TRANSACTION');
+	return 'BEGIN TRANSACTION';
 }
 
 yy.BeginTransaction.prototype.execute = function (databaseid,params, cb) {
@@ -14268,7 +14390,7 @@ yy.BeginTransaction.prototype.execute = function (databaseid,params, cb) {
 
 yy.CommitTransaction = function (params) { return yy.extend(this, params); }
 yy.CommitTransaction.prototype.toString = function() {
-	return K('COMMIT')+' '+K('TRANSACTION');
+	return 'COMMIT TRANSACTION';
 }
 
 yy.CommitTransaction.prototype.execute = function (databaseid,params, cb) {
@@ -14284,7 +14406,7 @@ yy.CommitTransaction.prototype.execute = function (databaseid,params, cb) {
 
 yy.RollbackTransaction = function (params) { return yy.extend(this, params); }
 yy.RollbackTransaction.prototype.toString = function() {
-	return K('ROLLBACK')+' '+K('TRANSACTION');
+	return 'ROLLBACK TRANSACTION';
 }
 
 yy.RollbackTransaction.prototype.execute = function (databaseid,params,cb) {
@@ -16070,8 +16192,8 @@ alasql.from.GEXF = function(filename, opts, cb, idx, query) {
 
 yy.Help = function (params) { return yy.extend(this, params); }
 yy.Help.prototype.toString = function() {
-	var s = K('HELP');
-	if(this.subject) s += ' '+L(this.subject);
+	var s = 'HELP';
+	if(this.subject) s += ' '+this.subject;
 	return s;
 }
 
@@ -16141,7 +16263,7 @@ yy.Print = function (params) { return yy.extend(this, params); }
 	@this Print statement object
 */
 yy.Print.prototype.toString = function() {
-	var s = K('PRINT');
+	var s = 'PRINT';
 	if(this.statement) s += ' '+this.statement.toString();
 	return s;
 }
@@ -16191,8 +16313,8 @@ yy.Print.prototype.execute = function (databaseid,params,cb) {
 
 yy.Source = function (params) { return yy.extend(this, params); }
 yy.Source.prototype.toString = function() {
-	var s = K('SOURCE');
-	if(this.url) s += ' '+S('\''+this.url+'\'');
+	var s = 'SOURCE';
+	if(this.url) s += " '"+this.url+" '";
 	return s;
 }
 
@@ -16222,7 +16344,7 @@ yy.Source.prototype.execute = function (databaseid,params,cb) {
 
 yy.Require = function (params) { return yy.extend(this, params); }
 yy.Require.prototype.toString = function() {
-	var s = K('REQUIRE');
+	var s = 'REQUIRE';
 	if(this.paths && this.paths.length > 0) {
 		s += this.paths.map(function(path){
 			return path.toString()
@@ -16291,7 +16413,7 @@ yy.Require.prototype.execute = function (databaseid,params,cb) {
 
 yy.Assert = function (params) { return yy.extend(this, params); }
 yy.Source.prototype.toString = function() {
-	var s = K('ASSERT');
+	var s = 'ASSERT';
 	if(this.value) s += ' '+JSON.stringify(this.value);
 	return s;
 }
