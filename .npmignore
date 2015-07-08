@@ -13,8 +13,3 @@ src/
 bower.json
 gulpfile.js
 inch.json
-.*.swp
-._*
-.DS_Store
-.git
-npm-debug.log
