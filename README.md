@@ -42,7 +42,7 @@ The library brings you the comfort of a full database engine to your javascript 
 
 
 ## Please note
-AlaSQL project is very young and still in active development phase, therefore it may have bugs. Please, wait a little bit before using it in production.  Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new).
+AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have bugs. Please, wait a little bit before using it in production.  Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new).
 AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) so the API can not be considered 100% stable.
 
 All contributions are much welcome and greatly appreciated(!) so just [open an issue](https://github.com/agershun/alasql/issues/new) and lets talk about your idea.
