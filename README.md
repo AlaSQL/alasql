@@ -81,8 +81,15 @@ Play with this example in [jsFiddle](http://jsfiddle.net/xxh13gLa/)
 
 To use AlaSQL via bower install as normal
 
-bower install alasql
+    bower install alasql
 
+----
+
+### Meteor
+
+To use AlaSQL with Meteor install as normal
+
+    meteor install agershun:alasql
 
 ----
 
