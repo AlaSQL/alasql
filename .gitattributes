@@ -1,10 +1,6 @@
-
 *.xlsx binary
 *.xls binary
 
-alasql.js binary merge=ours
-alasql.js.map binary merge=ours
-alasql.min.js binary merge=ours
 
 # absolute paths are ok, as are globs
 #/**/postinst* text eol=lf
