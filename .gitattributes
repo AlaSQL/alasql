@@ -1,32 +1,10 @@
-# Auto detect text files and perform LF normalization
-
-*        text=auto
-*.cs     text diff=csharp eol=lf
-*.java   text diff=java eol=lf
-*.html   text diff=html eol=lf
-*.css    text eol=lf
-*.js     text eol=lf
-*.sql    text eol=lf
-*.php    text eol=lf
-*.md    text eol=lf
-*.json    text eol=lf
-*.csv    text eol=lf
-*.txt    text eol=lf
-*.java    text eol=lf
-*.g4    text eol=lf
-*.shar    text eol=lf
-*.ypp    text eol=lf
-*.jison    text eol=lf
-*.yaml    text eol=lf
-*.yml    text eol=lf
-
-*.csproj text merge=union eol=lf
-*.sln    text merge=union eol=crlf
-
+alacon.js text eol=lf
+alaserver.js text eol=lf
 
 alasql.js binary
 alasql.js.map binary
 alasql.min.js binary
+
 *.xlsx binary
 *.xls binary
 
