@@ -21,7 +21,8 @@ module.exports = function(file, opt) {
   }
 
   var isUsingSourceMaps = false;
-  var firstFile;
+  var latestFile;
+  var latestMod;
   var fileName;
   var concat;
 
@@ -29,7 +30,6 @@ module.exports = function(file, opt) {
     fileName = file;
   } else if (typeof file.path === 'string') {
     fileName = path.basename(file.path);
-    firstFile = new File(file);
   } else {
     throw new PluginError('gulp-concat', 'Missing path in file options for gulp-concat');
   }
@@ -41,7 +41,7 @@ module.exports = function(file, opt) {
       return;
     }
 
-    // we dont do streams (yet)
+    // we don't do streams (yet)
     if (file.isStream()) {
       this.emit('error', new PluginError('gulp-concat',  'Streaming not supported'));
       cb();
@@ -54,9 +54,11 @@ module.exports = function(file, opt) {
       isUsingSourceMaps = true;
     }
 
-    // set first file if not already set
-    if (!firstFile) {
-      firstFile = file;
+    // set latest file if not already set,
+    // or if the current file was modified more recently.
+    if (!latestMod || file.stat && file.stat.mtime > latestMod) {
+      latestFile = file;
+      latestMod = file.stat && file.stat.mtime;
     }
 
     // construct concat instance
@@ -71,7 +73,7 @@ module.exports = function(file, opt) {
 
   function endStream(cb) {
     // no files passed in, no file goes out
-    if (!firstFile || !concat) {
+    if (!latestFile || !concat) {
       cb();
       return;
     }
@@ -79,12 +81,12 @@ module.exports = function(file, opt) {
     var joinedFile;
 
     // if file opt was a file path
-    // clone everything from the first file
+    // clone everything from the latest file
     if (typeof file === 'string') {
-      joinedFile = firstFile.clone({contents: false});
-      joinedFile.path = path.join(firstFile.base, file);
+      joinedFile = latestFile.clone({contents: false});
+      joinedFile.path = path.join(latestFile.base, file);
     } else {
-      joinedFile = firstFile;
+      joinedFile = new File(file);
     }
 
     joinedFile.contents = concat.content;

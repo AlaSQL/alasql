@@ -7,6 +7,7 @@ var isStream = require('./lib/isStream');
 var isNull = require('./lib/isNull');
 var inspectStream = require('./lib/inspectStream');
 var Stream = require('stream');
+var replaceExt = require('replace-ext');
 
 function File(file) {
   if (!file) file = {};
@@ -155,6 +156,39 @@ Object.defineProperty(File.prototype, 'relative', {
   },
   set: function() {
     throw new Error('File.relative is generated from the base and path attributes. Do not modify it.');
+  }
+});
+
+Object.defineProperty(File.prototype, 'dirname', {
+  get: function() {
+    if (!this.path) throw new Error('No path specified! Can not get dirname.');
+    return path.dirname(this.path);
+  },
+  set: function(dirname) {
+    if (!this.path) throw new Error('No path specified! Can not set dirname.');
+    this.path = path.join(dirname, path.basename(this.path));
+  }
+});
+
+Object.defineProperty(File.prototype, 'basename', {
+  get: function() {
+    if (!this.path) throw new Error('No path specified! Can not get basename.');
+    return path.basename(this.path);
+  },
+  set: function(basename) {
+    if (!this.path) throw new Error('No path specified! Can not set basename.');
+    this.path = path.join(path.dirname(this.path), basename);
+  }
+});
+
+Object.defineProperty(File.prototype, 'extname', {
+  get: function() {
+    if (!this.path) throw new Error('No path specified! Can not get extname.');
+    return path.extname(this.path);
+  },
+  set: function(extname) {
+    if (!this.path) throw new Error('No path specified! Can not set extname.');
+    this.path = replaceExt(this.path, extname);
   }
 });
 

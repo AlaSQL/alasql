@@ -100,7 +100,7 @@ var compressed = new Uint8Array();
 //... fill data to uncompress here
 try {
   var result = pako.inflate(compressed);
-catch (err) {
+} catch (err) {
   console.log(err);
 }
 

@@ -1,5 +1,21 @@
 # Change Log
 
+## 0.4.3
+
+* A very large number of performance improvements, particularly when parsing
+  source maps. Collectively about 75% of time shaved off of the source map
+  parsing benchmark!
+
+* Fix a bug in `SourceMapConsumer.prototype.allGeneratedPositionsFor` and fuzzy
+  searching in the presence of a column option. See issue #177.
+
+* Fix a bug with joining a source and its source root when the source is above
+  the root. See issue #182.
+
+* Add the `SourceMapConsumer.prototype.hasContentsOfAllSources` method to
+  determine when all sources' contents are inlined into the source map. See
+  issue #190.
+
 ## 0.4.2
 
 * Add an `.npmignore` file so that the benchmarks aren't pulled down by
