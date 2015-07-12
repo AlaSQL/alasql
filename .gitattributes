@@ -1,41 +1,15 @@
 # Auto detect text files and perform LF normalization
 
-*        text=auto
-*.cs     text diff=csharp eol=lf
-*.java   text diff=java eol=lf
-*.html   text diff=html eol=lf
-*.css    text eol=lf
-*.js     text eol=lf
-*.sql    text eol=lf
-*.php    text eol=lf
-*.md    text eol=lf
-*.json    text eol=lf
-*.csv    text eol=lf
-*.txt    text eol=lf
-*.java    text eol=lf
-*.g4    text eol=lf
-*.shar    text eol=lf
-*.ypp    text eol=lf
-*.jison    text eol=lf
-*.yaml    text eol=lf
-*.yml    text eol=lf
-
-*.csproj text merge=union eol=lf
-*.sln    text merge=union eol=crlf
-
-
-alasql.js binary
-alasql.js.map binary
-alasql.min.js binary
 *.xlsx binary
 *.xls binary
 
-console/alasql.min.js merge=ours
-dist/alasql.js merge=ours
-dist/alasql.min.js merge=ours
-test/restest169a.xlsx merge=ours
-test/restest251.xlsx merge=ours
-test/restest255.xlsx merge=ours
+*.csproj text merge=union 
+*.sln    text merge=union 
+
+
+alasql.js binary merge=ours
+alasql.js.map binary merge=ours
+alasql.min.js binary merge=ours
 
 
 # absolute paths are ok, as are globs
