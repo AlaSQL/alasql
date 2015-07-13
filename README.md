@@ -56,7 +56,7 @@ For the browser: Include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/a
 
 ```html
 
-<script src="//cdn.jsdelivr.net/alasql/0.1/alasql.min.js"></script> 
+<script src="//cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script> 
 
 <script>
     
