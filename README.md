@@ -60,14 +60,14 @@ For the browser: Include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/a
 
 <script>
     
-	alasql("CREATE TABLE cities (city string, population number)");
+    alasql("CREATE TABLE cities (city string, population number)");
         
-	alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424),  ('Madrid',3041579)");
+    alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424),  ('Madrid',3041579)");
         
-	var res = alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC");
+    var res = alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC");
    
    // res now contains this array of object:
-   // [{"city":"Madrid","population":3041579},{"city":"Rome","population":2863223},{"city":"Paris","population":2249975}] 	
+   // [{"city":"Madrid","population":3041579},{"city":"Rome","population":2863223},{"city":"Paris","population":2249975}]   
    
 </script>
 ```
@@ -562,7 +562,7 @@ and other people for useful tools, which make our work much easier.
 
 ### Related projects that have inspired us
 
-* [AlaX](http://github.com/agershun/alax) - Export to Excel with colors and formats 
+* [OLAP.js](http://github.com/agershun/olap) - embeddable extensible JavaScript OLAP server 
 * [WebSQLShim](http://github.com/agershun/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
 * [AlaMDX](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
 * [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
