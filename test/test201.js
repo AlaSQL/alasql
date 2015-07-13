@@ -36,7 +36,7 @@ if(false) {
     it("3. VAR() and STDDEV(a)", function(done) {
     	var data = [{a:1},{a:1},{a:2},{a:3}];
         var res = alasql('SELECT ROW VAR(a), STDEV(a) FROM ?',[data]);
-        console.log(res);
+/// console.log(res);
         assert.deepEqual(res,[1,2]);
     	done();
     });

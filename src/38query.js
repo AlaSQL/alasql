@@ -4,14 +4,14 @@ function queryfn(query,oldscope,cb, A,B) {
 //	console.log(query.queriesfn);
 
 	var ms;
-		query.sourceslen = query.sources.length;
-		var slen = query.sourceslen;
-		query.query = query; // TODO Remove to prevent memory leaks
-		query.A = A;
-		query.B = B;
+	query.sourceslen = query.sources.length;
+	var slen = query.sourceslen;
+	query.query = query; // TODO Remove to prevent memory leaks
+	query.A = A;
+	query.B = B;
 //	console.log(arguments);
-		query.cb = cb;
-		query.oldscope = oldscope;
+	query.cb = cb;
+	query.oldscope = oldscope;
 
 	// Run all subqueries before main statement
 	if(query.queriesfn) {
@@ -250,15 +250,19 @@ function queryfn3(query) {
 		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
 		if(query.corresponding) {
-			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undefined;
-			var ud = query.intersectfn(query.params);
+			if(!query.intersectfn.query.modifier) 
+				query.intersectfn.query.modifier = undefined;
+			ud = query.intersectfn(query.params);
 		} else {
-			if(!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';
-			var nd = query.intersectfn(query.params);
-			var ud = [];
-			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
-				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+			if(!query.intersectfn.query.modifier) 
+				query.intersectfn.query.modifier = 'RECORDSET';
+			nd = query.intersectfn(query.params);
+			ud = [];
+			ilen=nd.data.length;
+			for(i=0;i<ilen;i++) {
+				r = {};
+				jlen=Math.min(query.columns.length,nd.columns.length);
+				for(j=0;j<jlen;j++) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -267,7 +271,7 @@ function queryfn3(query) {
 
 
 		query.data = arrayIntersectDeep(query.data, ud);
-	};
+	}
 
 	// Ordering
 	if(query.orderfn) {
@@ -276,7 +280,7 @@ function queryfn3(query) {
 		if(query.explain) { 
 			query.explaination.push({explid: query.explid++, description:'QUERY BY',ms:Date.now()-ms});
 		}
-	};
+	}
 
 	// Reduce to limit and offset
 	doLimit(query);
@@ -297,14 +301,15 @@ function queryfn3(query) {
 
 
 	    // Remove from data
-	    var jlen = removeKeys.length;
-	    if(jlen > 0) {
-	      for(var i=0,ilen=query.data.length;i<ilen;i++) {
-	        for(var j=0; j<jlen;j++) {
-	          delete query.data[i][removeKeys[j]];
-	        }
-	      }    
-	    };
+		jlen = removeKeys.length;
+		if(jlen > 0) {
+			ilen=query.data.length;	
+			for(i=0;i<ilen;i++) {
+				for(j=0; j<jlen;j++) {
+					delete query.data[i][removeKeys[j]];
+				}
+			}    
+		}
 
 	    // Remove from columns list
 		if(query.columns.length > 0) {
@@ -326,14 +331,14 @@ function queryfn3(query) {
 		// Remove unused columns
 		// SELECT * REMOVE COLUMNS LIKE "%b"
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
-			var r = query.data[i];
+			r = query.data[i];
 			for(var k in r) {
-				for(var j=0;j<query.removeLikeKeys.length;j++) {
+				for(j=0;j<query.removeLikeKeys.length;j++) {
 					if(k.match(query.removeLikeKeys[j])) {
 						delete r[k];
 					}				
 				}
-			}; 
+			} 
 		}
 
 		if(query.columns.length > 0) {
@@ -364,22 +369,24 @@ function queryfn3(query) {
 //		debugger;
 		return res;	
 	} else if(query.intofn) {
-		for(var i=0,ilen=query.data.length;i<ilen;i++){
+		ilen=query.data.length;
+		for(i=0;i<ilen;i++){
 			query.intofn(query.data[i],i,query.params,query.alasql);
 		}
 //		console.log(query.intofn);
-		if(query.cb) query.cb(query.data.length,query.A, query.B);
+		if(query.cb) 
+			query.cb(query.data.length,query.A, query.B);
 		return query.data.length;
 	} else {
 //		console.log(111,query.cb,query.data);
-		var res = query.data;
-		if(query.cb) res = query.cb(query.data,query.A, query.B);
+		res = query.data;
+		if(query.cb) 
+			res = query.cb(query.data,query.A, query.B);
 //		console.log(777,res)
 		return res;
 	}
 
-	// That's all
-};
+}
 
 // Limiting
 function doLimit (query) {
@@ -392,7 +399,7 @@ function doLimit (query) {
 			limit = ((query.data.length*query.limit/100)| 0)+offset;			
 		} else {
 			limit = (query.limit|0) + offset;
-		};
+		}
 		query.data = query.data.slice(offset,limit);
 	}
 }
@@ -404,19 +411,20 @@ function doDistinct (query) {
 		// TODO: Speedup, because Object.keys is slow
 		// TODO: Problem with DISTINCT on objects
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
-			var uix = Object.keys(query.data[i]).map(function(k){return query.data[i][k]}).join('`');
+			var uix = Object.keys(query.data[i]).map(function(k){return query.data[i][k];}).join('`');
 			uniq[uix] = query.data[i];
-		};
+		}
 		query.data = [];
 		for(var key in uniq) query.data.push(uniq[key]);
 	}
-};
+}
 
 
 // Optimization: preliminary indexation of joins
 preIndex = function(query) {
 //	console.log(query);
 	// Loop over all sources
+	// Todo: make this loop smaller and more graspable
 	for(var k=0, klen = query.sources.length;k<klen;k++) {
 		var source = query.sources[k];
 		// If there is indexation rule
@@ -431,7 +439,7 @@ preIndex = function(query) {
 				if( !alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					source.ix = ixx; 
 				}
-			};
+			}
 			if(!source.ix) {
 				source.ix = {};
 				// Walking over source data
@@ -461,10 +469,11 @@ preIndex = function(query) {
 					}
 					i++;
 				}
+
 				if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]){
 					// Save index to original table				
 					alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
-				};
+				}
 			}
 //console.log(38,274,source.ix);
 
@@ -472,7 +481,7 @@ preIndex = function(query) {
 		} else if (source.wxleftfn) {
 				if(!alasql.databases[source.databaseid].engineid) {
 					// Check if index exists
-					var ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.wxleftfns+'`')];
+					ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.wxleftfns+'`')];
 				}
 				if( !alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					// Use old index if exists
@@ -483,22 +492,23 @@ preIndex = function(query) {
 					// Create new index
 					source.ix = {};
 					// Prepare scope
-					var scope = {};
+					scope = {};
 					// Walking on each source line
-					var i = 0;
-					var ilen = source.data.length;
-					var dataw;
+					i = 0;
+					ilen = source.data.length;
+					dataw;
 	//				while(source.getfn i<ilen) {
 
 					while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
-						if(source.getfn && !source.dontcache) source.data[i] = dataw;
-	//				for(var i=0, ilen=source.data.length; i<ilen; i++) {
+						if(source.getfn && !source.dontcache) 
+							source.data[i] = dataw;
+	//					for(var i=0, ilen=source.data.length; i<ilen; i++) {
 						scope[source.alias || source.tableid] = source.data[i];
 						// Create index entry
-						var addr = source.wxleftfn(scope, query.params, alasql);
-						var group = source.ix [addr]; 
+						addr = source.wxleftfn(scope, query.params, alasql);
+						group = source.ix[addr]; 
 						if(!group) {
-							group = source.ix [addr] = []; 
+							group = source.ix[addr] = []; 
 						}
 						group.push(source.data[i]);
 						i++;
@@ -511,7 +521,7 @@ preIndex = function(query) {
 				// Apply where filter to reduces rows
 				if(source.srcwherefns) {
 					if(source.data) {
-						var scope = {};
+						scope = {};
 						source.data = source.data.filter(function(r) {
 							scope[source.alias] = r;
 							return source.srcwherefn(scope, query.params, alasql);
@@ -533,10 +543,10 @@ preIndex = function(query) {
 					return source.srcwherefn(scope, query.params, alasql);
 				});
 
-				var scope = {};
-				var i = 0;
-				var ilen = source.data.length;
-				var dataw;
+				scope = {};
+				i = 0;
+				ilen = source.data.length;
+				//var dataw;
 				var res = [];
 //				while(source.getfn i<ilen) {
 
@@ -550,7 +560,7 @@ preIndex = function(query) {
 
 			} else {
 				source.data = [];
-			};
+			}
 		}			
 		// Change this to another place (this is a wrong)
 		if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
@@ -559,5 +569,5 @@ preIndex = function(query) {
 			// this is a subquery?
 		}
 	}
-}
+};
 

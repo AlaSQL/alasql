@@ -21,7 +21,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 	self.from.forEach(function(tq){
 		//console.log(tq);
-//console.log(tq,tq.toJavaScript());
+//console.log(tq,tq.toJS());
 
 		var alias = tq.as || tq.tableid;
 //		console.log(alias);
@@ -151,7 +151,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			source.datafn = new Function('query,params,cb,idx,alasql',ps);
 
 		} else if(tq instanceof yy.Json) {
-			var ps = "var res = alasql.prepareFromData("+tq.toJavaScript();
+			var ps = "var res = alasql.prepareFromData("+tq.toJS();
 //				console.log(tq);
 			if(tq.array) ps+=",true";
 			ps += ");if(cb)res=cb(res,idx,query);return res"
@@ -166,22 +166,22 @@ yy.Select.prototype.compileFrom = function(query) {
 			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat('cb,idx,query').join(',');
 			// }
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
-			// 		return arg.toJavaScript();
+			// 		return arg.toJS();
 			// 	}).concat().join(',');
 			// }
 			if(tq.args && tq.args.length>0) {
 				if(tq.args[0]) {
-					s += tq.args[0].toJavaScript('query.oldscope')+',';
+					s += tq.args[0].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};
 				if(tq.args[1]) {
-					s += tq.args[1].toJavaScript('query.oldscope')+',';
+					s += tq.args[1].toJS('query.oldscope')+',';
 				} else {
 					s += 'null,';
 				};

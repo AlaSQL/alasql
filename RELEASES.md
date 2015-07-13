@@ -22,19 +22,14 @@ Plus some other features, like graphs and others in plug-ins.
 
 ## Next Releases:
 
-### May 2015 (AlaSQL 0.2)
-Now (May 2015) is the point, where I am decided to stop a little bit with development of new features, and do the homework with these priorities:
-a) documentation
-b) resolving bugs
-c) document and refactoring code
-
-The target of this phase is to pass SQLLOGIC test. Current 300 unit tests are not enough for such big project.
-
-### June-July 2015 (AlaSQL 0.3)
+### July 2015 (AlaSQL 0.3)
 There are some features in the short list for the June-July 2015:
 e) extend transactions support
 f) add simple triggers or INSERT OR REPLACE operator
 g) improve database backend functionality (IndexedDB, localStorage, fileStorage) - especially for mobile applications (Cordova, Meteor).
+
+The target of this phase is to pass SQLLOGIC test. Current 300 unit tests are not enough for such big project.
+
 
 ### August 2015 (AlaSQL 0.4)
 h) split alasql.js into core and additional modules to reduce the size of the library

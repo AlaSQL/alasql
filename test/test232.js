@@ -17,7 +17,7 @@ describe('Test 232 Errors handling', function() {
         alasql('set errorlog off');
         assert.throws(function(){
             alasql('SELECT * FROM one', [], function(data,err){
-                console.log(err);
+/// console.log(err);
             });            
         },Error);
         done();

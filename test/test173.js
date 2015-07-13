@@ -12,7 +12,7 @@ if(false) {
 	it("1. FROM without select", function(done) {
 		var data = [{a:1},{a:2},{a:3}];
 		alasql('FROM ?',[data],function(res){
-			console.log(res);
+/// console.log(res);
 			assert.deepEqual(res,[{a:1},{a:2},{a:3}]);
 			done();
 		});

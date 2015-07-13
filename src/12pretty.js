@@ -1,6 +1,6 @@
 /**
    12prettyflag.js - prettify
-   @todo remove this part into the separate plugin
+   @todo move this functionality to plugin
 */
 
 /**
@@ -30,89 +30,96 @@ alasql.pretty = function(sql, flag) {
  Pretty keyword
  @param {string} s Keyword
  @return {string} pretty keyword
-*/
+* /
 function K(s){
+	console.log('K')
 	if(alasql.prettyflag) {
 		return '<b style="color:blue">'+s.toUpperCase()+'</b>'; 
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty 
  @param {string} 
  @return {string} pretty keyword
- */
+ * /
 function P(s){
+		console.log('P')
 	if(alasql.prettyflag) {
 		return '<span style="color:green">'+s+'</span>'; 
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty 
  @param {string} 
  @return {string} pretty keyword
- */
+ * /
 function L(s){
+		console.log('L')
 	if(alasql.prettyflag) {
 		return '<span style="color:red">'+s+'</span>'; 
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty number
  @param {string | number} s number 
  @return {string} pretty number
- */
+ * /
 function N(s){
+	console.log('N')
 	if(alasql.prettyflag) {
 		return '<span style="color:green">'+s+'</span>'; 
 	} else {
 		return s;
 	}
-};
+}
 
 /**
  Pretty string
  @param {string} s string 
  @return {string} pretty string
- */
+ * /
 function S(s){
+		console.log('S')
 	if(alasql.prettyflag) {
 		return '<span style="color:green">'+s+'</span>'; 
 	} else {
 		return s;
 	}
-};
+}
 
 
 /**
  Pretty new line
  @return {string} HTML new line character
- */
+ * /
 function NL(){
+		console.log('NL')
 	if(alasql.prettyflag) {
 		return '<br/>'; 
 	} else {
 		return ' '; // '\n'
 	}	
-};
+}
 
 /**
  Pretty ident
  @return {string} HTML ident
- */
+ * /
 function ID(){
+		console.log('ID')
 	if(alasql.prettyflag) {
 		return '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'; 
 	} else {
 		return ''; //'    ';
 	}	
-};
+}
 

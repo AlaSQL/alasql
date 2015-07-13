@@ -19,7 +19,7 @@ yy.Print = function (params) { return yy.extend(this, params); }
 	@this Print statement object
 */
 yy.Print.prototype.toString = function() {
-	var s = K('PRINT');
+	var s = 'PRINT';
 	if(this.statement) s += ' '+this.statement.toString();
 	return s;
 }
@@ -42,8 +42,8 @@ yy.Print.prototype.execute = function (databaseid,params,cb) {
 	if(this.exprs && this.exprs.length >0) {
 		var rs = this.exprs.map(function(expr){
 
-//			console.log('var y;return '+expr.toJavaScript('({})','', null));
-			var exprfn =  new Function("params,alasql,p",'var y;return '+expr.toJavaScript('({})','', null)).bind(self);
+//			console.log('var y;return '+expr.toJS('({})','', null));
+			var exprfn =  new Function("params,alasql,p",'var y;return '+expr.toJS('({})','', null)).bind(self);
 			var r = exprfn(params,alasql);
 			return JSONtoString(r);
 		});

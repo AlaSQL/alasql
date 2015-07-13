@@ -63,6 +63,7 @@ gulp.task('js-merge', function () {
     './src/424select.js',
     './src/425having.js',
     './src/426orderby.js',
+    './src/427pivot.js',
     './src/43rollup.js',    
     './src/44defcols.js',
     './src/45union.js',
@@ -105,7 +106,7 @@ gulp.task('js-merge', function () {
     './src/831xls.js',
     './src/832xlsxml.js',
     './src/833xlsx.js',
-    './src/839zip.js',
+//    './src/839zip.js', // To be added later in XLSX plugin
     './src/84from.js',
     './src/843xml.js',
     './src/844gexf.js',
@@ -128,6 +129,8 @@ gulp.task('js-merge', function () {
     .pipe(concat('alasql.js'))
 //    .pipe(uglify())
     .pipe(gulp.dest('./dist'))
+    .pipe(shell(['cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v bell Tests failed ; else say -v bell All tests OK; fi)']))
+    ;
 });
 
 
@@ -159,7 +162,8 @@ gulp.task('uglify', function () {
     .pipe(shell([
       'uglifyjs dist/alasql.js -o dist/alasql.min.js',
       'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.min.js',
-
+      //'cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v karen Tests failed ; else tput bel; fi)',
+      
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.min.js',
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
     ]));

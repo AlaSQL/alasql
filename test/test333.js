@@ -34,7 +34,7 @@ describe('Test 333 Check for NULLs', function() {
     alasql.options.modifier = 'RECORDSET';
 
     var res = alasql('SELECT COUNT(*) FROM test WHERE LEN(test.name) = 0');
-    console.log(res);
+/// console.log(res);
 
     var res = alasql(function(){/*
 
@@ -75,7 +75,7 @@ describe('Test 333 Check for NULLs', function() {
           ) AS combo_count
 
     */});
-    console.log(res);
+/// console.log(res);
 //    assert.deepEqual(res,[ [ 131, 1, 133 ], [ 182, 1, 183 ] ]);
 
 

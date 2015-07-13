@@ -22,7 +22,7 @@ describe('Test 267 LocalStorage test', function() {
     alasql('CREATE TABLE IF NOT EXISTS test');
     alasql('SELECT * INTO test FROM ?',[data])
     var res = alasql('SELECT * FROM test');
-    console.log(res);
+/// console.log(res);
     done();    
   });
 
@@ -34,7 +34,7 @@ describe('Test 267 LocalStorage test', function() {
     alasql('CREATE TABLE IF NOT EXISTS test')
     alasql('SELECT * INTO test FROM ?',[data])
     var res = alasql('SELECT * FROM test');
-    console.log(res);
+/// console.log(res);
     done();    
   });
 
@@ -51,7 +51,7 @@ describe('Test 267 LocalStorage test', function() {
     alasql('CREATE TABLE IF NOT EXISTS test')
     alasql('SELECT * INTO test FROM ?',[data])
     var res = alasql('SELECT * FROM test');
-    console.log(res);
+/// console.log(res);
     done();    
   });
 
@@ -63,7 +63,7 @@ describe('Test 267 LocalStorage test', function() {
     alasql('CREATE TABLE IF NOT EXISTS test')
     alasql('SELECT * INTO test FROM ?',[data])
     var res = alasql('SELECT * FROM test');
-    console.log(res);
+/// console.log(res);
     done();    
   });
 

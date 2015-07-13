@@ -17,8 +17,8 @@ yy.While.prototype.toString = function() {
 yy.While.prototype.execute = function (databaseid,params,cb) {
 	var self = this;
 	var res = [];
-//	console.log(this.expression.toJavaScript());
-	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJavaScript());
+//	console.log(this.expression.toJS());
+	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJS());
 //	console.log('cb',!!cb);
 	if(cb) {
 		var first = false;
@@ -48,7 +48,7 @@ yy.While.prototype.execute = function (databaseid,params,cb) {
 
 yy.Break = function (params) { return yy.extend(this, params); }
 yy.Break.prototype.toString = function() {
-	var s = K('BREAK');
+	var s = 'BREAK';
 	return s;
 };
 
@@ -60,7 +60,7 @@ yy.Break.prototype.execute = function (databaseid,params,cb,scope) {
 
 yy.Continue = function (params) { return yy.extend(this, params); }
 yy.Continue.prototype.toString = function() {
-	var s = K('CONTINUE');
+	var s = 'CONTINUE';
 	return s;
 };
 
@@ -72,7 +72,7 @@ yy.Continue.prototype.execute = function (databaseid,params,cb,scope) {
 
 yy.BeginEnd = function (params) { return yy.extend(this, params); }
 yy.BeginEnd.prototype.toString = function() {
-	var s = K('BEGIN')+' '+this.statements.toString()+' '+K('END');
+	var s = 'BEGIN '+this.statements.toString()+' END';
 	return s;
 };
 

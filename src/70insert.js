@@ -15,10 +15,10 @@ yy.Insert.prototype.toString = function() {
 	return s;
 }
 
-yy.Insert.prototype.toJavaScript = function(context, tableid, defcols) {
+yy.Insert.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
-//	return this.expression.toJavaScript(context, tableid, defcols);
+//	return this.expression.toJS(context, tableid, defcols);
 // console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
@@ -85,16 +85,16 @@ yy.Insert.prototype.compile = function (databaseid) {
 					if(table.xcolumns && table.xcolumns[col.columnid]) { 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
 							//q += ''
-							q += "(x="+values[idx].toJavaScript()+",x==undefined?undefined:+x)";
+							q += "(x="+values[idx].toJS()+",x==undefined?undefined:+x)";
 						} else if (alasql.fn[table.xcolumns[col.columnid].dbtypeid]) {
 							q += "(new "+table.xcolumns[col.columnid].dbtypeid+"(";
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 							q += "))";
 						} else {
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 						};
 					} else { 
-						q += values[idx].toJavaScript();
+						q += values[idx].toJS();
 					}
 					ss.push(q);
 
@@ -108,16 +108,16 @@ yy.Insert.prototype.compile = function (databaseid) {
 					table.columns.forEach(function(col, idx){
 
 						var q = '\''+col.columnid +'\':';
-//						var val = values[idx].toJavaScript();
+//						var val = values[idx].toJS();
 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(col.dbtypeid) >=0) {
-							q += "+"+values[idx].toJavaScript();
+							q += "+"+values[idx].toJS();
 						} else if (alasql.fn[col.dbtypeid]) {
 							q += "(new "+col.dbtypeid+"(";
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 							q += "))";
 						} else { 
-							q += values[idx].toJavaScript();
+							q += values[idx].toJS();
 						}
 
 						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
@@ -139,7 +139,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			//			console.log(fld);
 						// TODO: type checking and conversions
-			//			rec[fld.fldid] = eval(self.insertExpression[idx].toJavaScript('',''));
+			//			rec[fld.fldid] = eval(self.insertExpression[idx].toJS('',''));
 			//			console.log(rec[fld.fldid]);
 			//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
 
@@ -149,8 +149,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 					});
 				} else {
 //					console.log(222,values);
-//					sw = 'var w='+JSONtoJavaScript(values)+';for(var k in w){r[k]=w[k]};';
-					sw = JSONtoJavaScript(values);
+//					sw = 'var w='+JSONtoJS(values)+';for(var k in w){r[k]=w[k]};';
+					sw = JSONtoJS(values);
 				}
 			}
 //console.log(ss);

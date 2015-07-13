@@ -35,6 +35,7 @@ describe('Test 233 COALESCE() test', function() {
     });
 
     it('99. DROP', function(done){
+        alasql.options.nocount = false;
         alasql('DROP DATABASE test233');
         done();
     });

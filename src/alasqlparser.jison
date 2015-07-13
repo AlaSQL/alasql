@@ -107,6 +107,7 @@ DATABASE(S)?									return 'DATABASE'
 'FALSE'											return 'FALSE'
 'FETCH'											return 'FETCH'
 'FIRST'											return 'FIRST'
+'FOR'											return 'FOR'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
 'GO'                                      		return 'GO'
@@ -159,6 +160,7 @@ DATABASE(S)?									return 'DATABASE'
 'PATH'                                        	return 'PATH'
 'PARTITION'										return 'PARTITION'
 'PERCENT'                                       return 'PERCENT'
+'PIVOT'                                        	return 'PIVOT'
 'PLAN'                                        	return 'PLAN'
 'PRIMARY'										return 'PRIMARY'
 'PRINT'                                        	return 'PRINT'
@@ -208,6 +210,7 @@ SETS                                        	return 'SET'
 'TRUNCATE'					  					return 'TRUNCATE'
 'UNION'                                         return 'UNION'
 'UNIQUE'                                        return 'UNIQUE'
+'UNPIVOT'                                       return 'UNPIVOT'
 'UPDATE'                                        return 'UPDATE'
 'USE'											return 'USE'
 /* 'USER'										return 'USER' */
@@ -441,11 +444,11 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause RemoveClause? IntoClause FromClause WhereClause GroupClause OrderClause LimitClause UnionClause 
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  OrderClause LimitClause UnionClause 
 		{   
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
-		    yy.extend($$,$8); yy.extend($$,$9); 
+		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10); 
 		    $$ = $1;
 /*		    if(yy.exists) $$.exists = yy.exists;
 		    delete yy.exists;
@@ -458,6 +461,39 @@ Select
 			$$ = new yy.Search({selectors:$2, from:$4});
 			yy.extend($$,$3);
 		}
+	;
+
+PivotClause
+	: PIVOT LPAR Expression FOR Literal PivotClause2? RPAR AsLiteral?
+		{ $$ = {pivot:{expr:$3, columnid:$5, inlist:$7, as:$8}}; }
+	| UNPIVOT LPAR Literal FOR Literal IN LPAR ColumnsList RPAR RPAR AsLiteral?
+		{ $$ = {unpivot:{tocolumnid:$3, forcolumnid:$5, inlist:$8, as:$11}}; }
+	;
+
+PivotClause2
+	: IN LPAR AsList RPAR 
+		{ $$ = $3; }
+	;
+
+AsLiteral
+	: AS Literal 
+		{ $$ = $2; }
+	| Literal
+		{ $$ = $1; }
+	;
+
+AsList
+	: AsList COMMA AsPart
+		{ $$ = $1; $$.push($3); }
+	| AsPart
+		{ $$ = [$1]; }
+	;
+
+AsPart
+	: Expression
+		{ $$ = {expr:$1}; }
+	| Expression AS Literal
+		{ $$ = {expr:$1,as:$3}; }
 	;
 
 RemoveClause
@@ -1237,6 +1273,8 @@ FuncValue
 		}
 	| Literal LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
+	| IF LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	;
 
 ExprList
@@ -1910,9 +1948,17 @@ ColumnConstraint
 /* DROP TABLE */
 
 DropTable
-	: DROP (TABLE|CLASS) IfExists Table
-		{ $$ = new yy.DropTable({table:$4,type:$2}); yy.extend($$, $3); }
+	: DROP (TABLE|CLASS) IfExists TablesList
+		{ $$ = new yy.DropTable({tables:$4,type:$2}); yy.extend($$, $3); }
 	;
+
+TablesList
+	: TablesList COMMA Table
+		{ $1.push($3); $$=$1; }
+	| Table
+		{ $$ = [$1]; }
+	;
+
 
 IfExists
 	: { $$ = undefined; }
@@ -2078,8 +2124,8 @@ SubqueryRestriction
 
 
 DropView
-	: DROP VIEW IfExists Table
-		{ $$ = new yy.DropTable({table:$4, view:true}); yy.extend($$, $3); }
+	: DROP VIEW IfExists TablesList
+		{ $$ = new yy.DropTable({tables:$4, view:true}); yy.extend($$, $3); }
 	;
 /*
 DeclareCursor

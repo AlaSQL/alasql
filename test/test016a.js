@@ -37,7 +37,7 @@ describe('Test 16b', function() {
 	 		' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
 	 		' GROUP BY schoolid, courseid, studentname '+
 	 		' ORDER BY studentname DESC' );
-console.log(res);
+/// console.log(res);
 		assert.equal(5, res.length);
 		assert.equal(1, res[0].courseid);
 		assert.equal(2, res[1].courseid);

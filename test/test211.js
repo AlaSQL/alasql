@@ -309,7 +309,7 @@ describe('Test 211: Multiple test', function() {
 			DROP TABLE IF EXISTS schools; \
 			CREATE TABLE schools; \
 			SELECT * INTO schools FROM ?',[studentsData,coursesData,schoolsData],function(res){
-				console.log(res);
+/// console.log(res);
 				doTests();
 			});
 

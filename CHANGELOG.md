@@ -1,5 +1,20 @@
 # Changelog
 
+### Version 0.2.1 "Rodos" (13.07.2015 - ...)
+*
+
+## Version 0.2.0 "Athens" (13.07.2015)
+The purpose of this release were hard work on:
+a) documentation
+b) resolving bugs
+c) document and refactoring code
+
+### 0.1.11 "San Remo" (03.06.2015 - 13.07.2015)
+* Code partially refactored with help of bitHound 
+* New directory 'partners' added
+* Added file for codecomplexity.com
+* Released as 0.2.0
+
 ### 0.1.10 "Genova" (31.05.2015 - 02.06.2015)
 * CALL procedure() statement
 * bitHound advices
@@ -572,7 +587,7 @@
 
 * Added /test/main.html mocha browser tests
 * Added PERFORMANCE.md and perf.html tests
-* StringValue.toJavaScript()
+* StringValue.toJS()
 * Added callback to Database.exec
 * Sieve of Eratosthenes example
 * Remove generation of recs after select in case of group by (for memory optimization)

@@ -1,1 +1,0 @@
-:root > object:has(string.first):has(string.last)

@@ -1,10 +1,13 @@
-    var alasql = require('..');
+// Async select
 
-    alasql.exec("CREATE TABLE test (language INT, hello STRING)");
-    alasql.exec("INSERT INTO test VALUES (1,'Hello!')");
-    alasql.exec("INSERT INTO test VALUES (2,'Aloha!')");
-    alasql.exec("INSERT INTO test VALUES (3,'Bonjour!')");
+var db = require('alasql');
 
-    alasql.aexec("SELECT * FROM test WHERE language > 1").then(function(res){
-	    console.log(res);
-    });
+db("CREATE TABLE test (language INT, hello STRING)");
+db("INSERT INTO test VALUES (1,'Hello!')");
+db("INSERT INTO test VALUES (2,'Aloha!')");
+db("INSERT INTO test VALUES (3,'Bonjour!')");
+
+db	.promise("SELECT * FROM test WHERE language > 1")
+	.then(function(res){
+		console.log(res);
+	});

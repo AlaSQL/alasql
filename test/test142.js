@@ -103,7 +103,7 @@ if(false) {
 /*
 	it("3. AGGR functions", function(done){
 		var res = alasql('SELECT SUM(x) AS x, SUM(y) AS y, AGGR(x/y) AS z FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
-		console.log(res);
+/// console.log(res);
 		assert( 0.5 < res[0].z && res[0].z < 2 );
 		done();
 	});
@@ -111,16 +111,16 @@ if(false) {
 	it("4. Output stream", function(done){
 		rndfn.length = 3;
 		var outfn = function(data) {
-			console.log(data);
+/// console.log(data);
 		};
 		var res = alasql('SELECT x, y INTO ? FROM ? WHERE SQRT(x*x+y*y)<1', [outfn,rndfn]);
-		console.log(res);
+/// console.log(res);
 		done();
 	});
 
 	it("4. Output stream with groups", function(done){
 		var res = alasql('SELECT COUNT(*) AS n, SUM(x) AS x, SUM(y) AS y INTO ? AS z FROM ? WHERE SQRT(x*x+y*y)<1', [outfn,rndfn]);
-		console.log(res);
+/// console.log(res);
 		done();
 	});
 

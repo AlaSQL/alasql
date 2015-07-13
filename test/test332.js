@@ -74,7 +74,7 @@ describe('Test 331 SLT#2 - test', function() {
     var res = alasql(function(){/*
       SELECT avg(c) FROM t1
   */});
-    console.log(res);
+/// console.log(res);
 //    assert.deepEqual(res.length,30);
     done();
   });
@@ -97,7 +97,7 @@ describe('Test 331 SLT#2 - test', function() {
              c
         FROM t1
        WHERE (e>a AND e<b)  */});
-    console.log(res.sort());
+/// console.log(res.sort());
 //    assert.deepEqual(res.length,30);
     done();
   });

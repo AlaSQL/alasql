@@ -1,8 +1,9 @@
+
 //
 // Promises for AlaSQL
 //
 
-if(typeof exports == 'object') {
+if(typeof exports === 'object') {
 	var Promise = require('es6-promise').Promise;
 } 
 
@@ -10,7 +11,7 @@ if(typeof exports == 'object') {
 // Only for browsers with Promise support
 //
 
-if(typeof Promise == 'function') {
+if(typeof Promise === 'function') {
 	alasql.promise = function(sql, params) {
 	    return new Promise(function(resolve, reject){
 	        alasql(sql, params, function(data,err) {

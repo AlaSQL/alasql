@@ -9,9 +9,9 @@
 
 yy.WithSelect = function (params) { return yy.extend(this, params); }
 yy.WithSelect.prototype.toString = function() {
-	var s = K('WITH')+' ';
+	var s = 'WITH ';
 	s += this.withs.map(function(w){
-		return L(w.name)+' '+K('AS')+' ('+w.select.toString()+')';
+		return w.name+' AS ('+w.select.toString()+')';
 	}).join(',')+' ';
 	s += this.select.toString();
 	return s;
@@ -60,7 +60,7 @@ yy.CreateView.prototype.execute = function (databaseid) {
 
 yy.DropView = function (params) { return yy.extend(this, params); }
 yy.DropView.prototype.toString = function() {
-	var s = K('DROP')+' '+K('VIEW');
+	var s = 'DROP'+' '+'VIEW';
 	s += ' '+this.view.toString();
 	return s;
 };

@@ -399,6 +399,7 @@ FROM OrderLine WHERE OrderId = O.OrderId)>1
 
 
   it('4. DROP DATABASE',function(done){
+    alasql.options.nocount = false;
     alasql('DROP DATABASE test295');
     done();
   });

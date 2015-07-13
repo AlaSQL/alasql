@@ -1,3 +1,4 @@
+
 /*
 //
 // Database class for Alasql.js
@@ -14,6 +15,9 @@
 
 var Database = alasql.Database = function (databaseid) {
 	var self = this;
+//		self = function(a){console.log('OK',a);}
+//		self.prototype = this;
+
 	if(self === alasql) {
 		if(databaseid) {
 //			if(alasql.databases[databaseid]) {
@@ -28,13 +32,15 @@ var Database = alasql.Database = function (databaseid) {
 			// Create new database (or get alasql?)
 			self = alasql.databases.alasql;
 			// For SQL Server examples, USE tempdb
-			if(alasql.options.tsql) alasql.databases.tempdb = alasql.databases.alasql;
+			if(alasql.options.tsql){
+				alasql.databases.tempdb = alasql.databases.alasql;
+			}
 //			self = new Database(databaseid); // to call without new
 		}
 	}
 	if(!databaseid) {
 		databaseid = "db"+(alasql.databasenum++); // Random name
-	};
+	}
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
 	self.tables = {};
@@ -74,6 +80,8 @@ Database.prototype.resetSqlCache = function () {
 Database.prototype.exec = function(sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
 };
+
+
 
 // 	// Compile
 // 	var statement = this.compile(sql);

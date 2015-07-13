@@ -2,11 +2,11 @@
 
 yy.FromData = function(params) { return yy.extend(this, params); };
 yy.FromData.prototype.toString = function() {
-	if(this.data) return K('DATA')+'('+((Math.random()*10e15)|0)+')';
+	if(this.data) return 'DATA('+((Math.random()*10e15)|0)+')';
 	else return '?';
 };
-yy.FromData.prototype.toJavaScript = function(){
-//	console.log('yy.FromData.prototype.toJavaScript');
+yy.FromData.prototype.toJS = function(){
+//	console.log('yy.FromData.prototype.toJS');
 };
 
 yy.Select.prototype.exec = function(params,cb) {

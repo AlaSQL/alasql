@@ -9,40 +9,64 @@
 yy.ColumnDef = function (params) { return yy.extend(this, params); }
 yy.ColumnDef.prototype.toString = function() {
 	var s =  this.columnid;
-	if(this.dbtypeid) s += ' '+this.dbtypeid;
+	if(this.dbtypeid){
+		s += ' '+this.dbtypeid;
+	}
+
 	if(this.dbsize) {
 		s += '('+this.dbsize;
-		if(this.dbprecision) s += ','+this.dbprecision;
+		if(this.dbprecision){
+			s += ','+this.dbprecision;
+		}
 		s += ')';
-	};
-	if(this.primarykey) s += ' PRIMARY KEY';
-	if(this.notnull) s += ' NOT NULL';
+	}
+	
+	if(this.primarykey){
+		s += ' PRIMARY KEY';
+	}
+
+	if(this.notnull){
+		s += ' NOT NULL';
+	}
+
 	return s;
 }
 
 yy.CreateTable = function (params) { return yy.extend(this, params); }
 yy.CreateTable.prototype.toString = function() {
-	var s = K('CREATE');
-	if(this.temporary) s+=' '+K('TEMPORARY');
-	if(this.view) s += ' '+K('VIEW');
-	else s += ' '+(this.class?K('CLASS'):K('TABLE'));
-	if(this.ifnotexists) s += ' '+K('IF')+' '+K('NOT')+' '+K('EXISTS');
+	var s = 'CREATE';
+	if(this.temporary){
+		s+=' TEMPORARY';
+	}
+
+	if(this.view){
+		s += ' VIEW';
+	} else{
+		s += ' '+(this.class?'CLASS':'TABLE');
+	}
+
+	if(this.ifnotexists){
+		s += ' IF  NOT EXISTS';
+	}
 	s += ' '+this.table.toString();
 	if(this.viewcolumns) {
 		s += '('+this.viewcolumns.map(function(vcol){
 			return vcol.toString();
 		}).join(',')+')';
 	}
-	if(this.as) s += ' '+K('AS')+' '+L(this.as);
-	else { 
+	if(this.as){
+		s += ' AS '+this.as;
+	} else { 
 		var ss = this.columns.map(function(col){
 			return col.toString();
 		});
-		s += ' ('+NL()+ID()+ss.join(','+NL()+ID())+')';
-	};
+		s += ' ('+ss.join(',')+')';
+	}
+
 	if(this.view && this.select) {
 		s += ' AS '+this.select.toString();
 	}
+
 	return s;
 }
 
@@ -68,7 +92,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(this);
 
 	// IF NOT EXISTS
-	if(this.ifnotexists && db.tables[tableid]) return 0;
+	if(this.ifnotexists && db.tables[tableid]){
+		return 0;
+	}
 
 	if(db.tables[tableid]) {
 		throw new Error('Can not create table \''+tableid
@@ -85,13 +111,17 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	table.checkfn = [];
 
 	var ss = [];
-	if(this.columns) {
-		this.columns.forEach(function(col) {
+	if(columns) {
+		columns.forEach(function(col) {
 			var dbtypeid = col.dbtypeid;
-			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
+			if(!alasql.fn[dbtypeid]){
+				dbtypeid = dbtypeid.toUpperCase();
+			}
 
 			// Process SERIAL data type like Postgress
-			if(['SERIAL','SMALLSERIAL','BIGSERIAL'].indexOf(dbtypeid)>-1) col.identity = {value:1,step:1};
+			if(['SERIAL','SMALLSERIAL','BIGSERIAL'].indexOf(dbtypeid)>-1){
+				col.identity = {value:1,step:1};
+			}
 			
 			var newcol = {
 				columnid: col.columnid,
@@ -107,11 +137,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
 			if(col.check) {
-				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJavaScript('r','')));
+				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJS('r','')));
 			}
 
 			if(col.default) {
-				ss.push('\''+col.columnid+'\':'+col.default.toJavaScript('r',''));
+				ss.push('\''+col.columnid+'\':'+col.default.toJS('r',''));
 			}
 
 
@@ -123,26 +153,26 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				pk.onrightfn = new Function("r",'var y;return '+pk.onrightfns);
 				pk.hh = hash(pk.onrightfns);
 				table.uniqs[pk.hh] = {};
-			};
+			}
 
 			// UNIQUE clause
 			if(col.unique) {
 				var uk = {};
-				if(typeof table.uk == 'undefined') table.uk = [];
+				table.uk = table.uk||[];
 				table.uk.push(uk);
 				uk.columns = [col.columnid];
 				uk.onrightfns = 'r[\''+col.columnid+'\']';
 				uk.onrightfn = new Function("r",'var y;return '+uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
-			};
+			}
 
 			// UNIQUE clause
 			if(col.foreignkey) {
 //				console.log(138,col.foreignkey);
 				var fk = col.foreignkey.table;
 				var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
-				if(typeof fk.columnid == 'undefined') {
+				if(typeof fk.columnid === 'undefined') {
 					if(fktable.pk.columns && fktable.pk.columns.length >0 ){
 						fk.columnid = fktable.pk.columns[0];
 					} else {
@@ -152,7 +182,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //					console.log(fktable.pk);
 				var fkfn = function(r) {
 					var rr = {};
-					if(typeof r[col.columnid] == 'undefined') return true;
+					if(typeof r[col.columnid] === 'undefined'){
+						return true;
+					}
 					rr[fk.columnid] = r[col.columnid];
 					var addr = fktable.pk.onrightfn(rr);
 //						console.log(r, rr, addr);
@@ -171,20 +203,20 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				uk.onrightfn = new Function("r",'return '+uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
-*/			};
+*/			}
 
 			table.columns.push(newcol);
 			table.xcolumns[newcol.columnid] = newcol;
 
 		});
-	};
+	}
 	table.defaultfns = ss.join(',');
 
 
 //	if(constraints) {
 	constraints.forEach(function(con) {
 		//console.log(con, con.columns);
-		if(con.type == 'PRIMARY KEY') {
+		if(con.type === 'PRIMARY KEY') {
 			if(table.pk) {
 				throw new Error('Primary key already exists');
 			}
@@ -196,13 +228,13 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.onrightfn = new Function("r",'var y;return '+pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};					
-		} else if(con.type == 'CHECK') {
-//			console.log(con.expression.toJavaScript('r',''));
-			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJavaScript('r','')));
-		} else if(con.type == 'UNIQUE') {
+		} else if(con.type === 'CHECK') {
+//			console.log(con.expression.toJS('r',''));
+			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJS('r','')));
+		} else if(con.type === 'UNIQUE') {
 //			console.log(con);
 			var uk = {};
-			if(!table.uk) table.uk = [];
+			table.uk = table.uk||[];
 			table.uk.push(uk);
 			uk.columns = con.columns;
 			uk.onrightfns = uk.columns.map(function(columnid){
@@ -211,19 +243,23 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.onrightfn = new Function("r",'var y;return '+uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};					
-		} else if(con.type == 'FOREIGN KEY') {
+		} else if(con.type === 'FOREIGN KEY') {
 //			console.log(con);
 			var col = table.xcolumns[con.columns[0]];
 			var fk = con.fktable;
-			if(con.fkcolumns && con.fkcolumns.length>0) fk.columnid = con.fkcolumns[0];
+			if(con.fkcolumns && con.fkcolumns.length>0){
+				fk.columnid = con.fkcolumns[0];
+ 			}
  			var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
-			if(typeof fk.columnid == 'undefined') {
+			if(typeof fk.columnid === 'undefined') {
 				fk.columnid = fktable.pk.columns[0];
 			}
 //					console.log(fktable.pk);
 			var fkfn = function(r) {
 				var rr = {};
-				if(typeof r[col.columnid] == 'undefined') return true;
+				if(typeof r[col.columnid] === 'undefined'){
+					return true;
+				}
 				rr[fk.columnid] = r[col.columnid];
 				var addr = fktable.pk.onrightfn(rr);
 //						console.log(r, rr, addr);
@@ -271,7 +307,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //			console.log(ident);
 			r[columnid] = ident.value;
 //			console.log(ident);
-		};
+		}
 //console.log(270,r);
 
 
@@ -279,12 +315,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.checkfn.forEach(function(checkfn){
 				if(!checkfn(r)) {
 					throw new Error('Violation of CHECK constraint');			
-				};
+				}
 			});
-		};
+		}
 
 		table.columns.forEach(function(column){
-			if(column.notnull && typeof r[column.columnid] == 'undefined') {
+			if(column.notnull && typeof r[column.columnid] === 'undefined') {
 				throw new Error('Wrong NULL value in NOT NULL column '+column.columnid);
 			}
 		});
@@ -292,7 +328,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			var pk = table.pk;
 			var addr = pk.onrightfn(r);
 
-			if(typeof table.uniqs[pk.hh][addr] != 'undefined') {
+			if(typeof table.uniqs[pk.hh][addr] !== 'undefined') {
 //console.log(pk,addr,pk.onrightfn({ono:1}));			
 //console.log(r, pk.onrightfn(r), pk.onrightfns);
 				throw new Error('Cannot insert record, because it already exists in primary key index');
@@ -303,12 +339,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				var ukaddr = uk.onrightfn(r);
-				if(typeof table.uniqs[uk.hh][ukaddr] != 'undefined') {
+				if(typeof table.uniqs[uk.hh][ukaddr] !== 'undefined') {
 					throw new Error('Cannot insert record, because it already exists in unique index');
 				} 				
 //				table.uniqs[uk.hh][ukaddr]=r;
 			});
-		};
+		}
 
 		// Final change before insert
 
@@ -322,7 +358,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //			console.log(ident);
 			ident.value += ident.step;
 //			console.log(ident);
-		};
+		}
 
 		if(table.pk) {
 			var pk = table.pk;
@@ -334,26 +370,26 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				var ukaddr = uk.onrightfn(r);
 				table.uniqs[uk.hh][ukaddr]=r;
 			});
-		};
+		}
 
 	};
 
-	table.delete = function(i,params,alasql) {
+	table.delete = function(index) {
 		var table = this;
-		var r = this.data[i];
+		var r = table.data[index];
 		if(this.pk) {
 			var pk = this.pk;
 			var addr = pk.onrightfn(r);
-			if(typeof this.uniqs[pk.hh][addr] == 'undefined') {
+			if(typeof this.uniqs[pk.hh][addr] === 'undefined') {
 				throw new Error('Something wrong with primary key index on table');
 			} else {
 				this.uniqs[pk.hh][addr]=undefined;
-			};
+			}
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				var ukaddr = uk.onrightfn(r);
-				if(typeof table.uniqs[uk.hh][ukaddr] == 'undefined') {
+				if(typeof table.uniqs[uk.hh][ukaddr] === 'undefined') {
 					throw new Error('Something wrong with unique index on table');
 				} 				
 				table.uniqs[uk.hh][ukaddr]=undefined;
@@ -377,20 +413,19 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	table.update = function(assignfn, i, params) {
 		// TODO: Analyze the speed
 		var r = cloneDeep(this.data[i]);
-		
+		var pk;
 		// PART 1 - PRECHECK
 		if(this.pk) {
-			var pk = this.pk;
+			pk = this.pk;
 			pk.pkaddr = pk.onrightfn(r,params);
-			if(typeof this.uniqs[pk.hh][pk.pkaddr] == 'undefined') {
+			if(typeof this.uniqs[pk.hh][pk.pkaddr] === 'undefined') {
 				throw new Error('Something wrong with index on table');
-			} else {
-			}
+			} 
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				uk.ukaddr = uk.onrightfn(r);
-				if(typeof table.uniqs[uk.hh][uk.ukaddr] == 'undefined') {
+				if(typeof table.uniqs[uk.hh][uk.ukaddr] === 'undefined') {
 					throw new Error('Something wrong with unique index on table');
 				} 				
 			});
@@ -403,28 +438,28 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.checkfn.forEach(function(checkfn){
 				if(!checkfn(r)) {
 					throw new Error('Violation of CHECK constraint');			
-				};
+				}
 			});
-		};
+		}
 
 		table.columns.forEach(function(column){
-			if(column.notnull && typeof r[column.columnid] == 'undefined') {
+			if(column.notnull && typeof r[column.columnid] === 'undefined') {
 				throw new Error('Wrong NULL value in NOT NULL column '+column.columnid);
 			}
 		});
 		if(this.pk) {
 				pk.newpkaddr = pk.onrightfn(r);
-				if(typeof this.uniqs[pk.hh][pk.newpkaddr] != 'undefined'
-					&& pk.newpkaddr != pk.pkaddr) {
+				if(typeof this.uniqs[pk.hh][pk.newpkaddr] !== 'undefined'
+					&& pk.newpkaddr !== pk.pkaddr) {
 					throw new Error('Record already exists');
-				} else {
-				}
-		};
+				} 
+		}
+
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				uk.newukaddr = uk.onrightfn(r);
-				if(typeof table.uniqs[uk.hh][uk.newukaddr] != 'undefined'
-					&& uk.newukaddr != uk.ukaddr) {
+				if(typeof table.uniqs[uk.hh][uk.newukaddr] !== 'undefined'
+					&& uk.newukaddr !== uk.ukaddr) {
 					throw new Error('Record already exists');
 				} 				
 			});
@@ -457,8 +492,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);
 	var res;
-	if(!alasql.options.nocount) res = 1;
-	if(cb) res = cb(res);
+
+	if(!alasql.options.nocount){
+		res = 1;
+	}
+	
+	if(cb){
+		res = cb(res);
+	}
 
 	return res;
 };

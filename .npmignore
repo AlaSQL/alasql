@@ -1,0 +1,15 @@
+console/
+examples/
+lib/
+partners/
+test/
+src/
+*.md
+.bithoundrc
+.codeclimate.yml
+.gitattributes
+.gitignore
+.jshintrc
+bower.json
+gulpfile.js
+inch.json

@@ -1,8 +1,8 @@
 //
-// Alasql.js node.js sample
+// AlaSQL node.js sample
 //
 
-var alasql = require('../alasql.js');
+var alasql = require('alasql');
 
 var db = new alasql.Database();
 
@@ -13,4 +13,5 @@ db.tables.test.data = [   // You can mix SQL and JavaScript
 ];
 
 var res = db.exec("SELECT * FROM test ORDER BY two DESC");
-console.log(res[0].one);
+
+console.log(res);

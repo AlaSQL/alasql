@@ -8,14 +8,14 @@
 
 yy.Declare = function (params) { return yy.extend(this, params); }
 yy.Declare.prototype.toString = function() {
-	var s = K('DECLARE')+' ';
+	var s = 'DECLARE ';
 	if(this.declares && this.declares.length > 0) {
 		s = this.declares.map(function(declare){
 			var s = '';
-			s += '@'+L(declare.variable)+' ';
+			s += '@'+declare.variable+' ';
 			s += declare.dbtypeid;
-			if(this.dbsize) s += '('+N(this.dbsize);
-			if(this.dbprecision) s+= ','+N(this.dbprecision);
+			if(this.dbsize) s += '('+this.dbsize;
+			if(this.dbprecision) s+= ','+this.dbprecision;
 			s += ')';
 			if(declare.expression) s += ' = '+declare.expression.toString();
 			return s;
@@ -36,9 +36,9 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 
 			// Set value
 			if(declare.expression) {
-	//		console.log(this.expression.toJavaScript('','', null));
+	//		console.log(this.expression.toJS('','', null));
 				alasql.vars[declare.variable] = new Function("params,alasql","return "
-					+declare.expression.toJavaScript('({})','', null))(params,alasql);
+					+declare.expression.toJS('({})','', null))(params,alasql);
 				if(alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(alasql.vars[declare.variable],alasql.declares[declare.variable]);
 				}

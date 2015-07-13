@@ -11,9 +11,11 @@
 */
 
 alasql.from.METEOR = function(filename, opts, cb, idx, query) {
-   var res = filename.find(opts).fetch();
-   if(cb) res = cb(res, idx, query);
-    return res;
+	var res = filename.find(opts).fetch();
+	if(cb){
+		res = cb(res, idx, query);
+	}
+	return res;
  };
 
 /**
@@ -26,7 +28,9 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	opt.callback = function(data){
 		res = data;
-		if(cb) res = cb(res, idx, query);
+		if(cb){
+			res = cb(res, idx, query);
+		}
 	};
 
 	Tabletop.init(opt);
@@ -39,9 +43,9 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 
 	var sel = document.querySelector(selector);
-	if(!sel && sel.tagName != "TABLE") {
+	if(!sel && sel.tagName !== "TABLE") {
 		throw new Error('Selected HTML element is not a TABLE');
-	};	
+	}
 
 	var res = [];
 	var headers = opt.headers;
@@ -50,7 +54,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		headers = [];
 		var ths = sel.querySelector("thead tr").children;
 		for(var i=0;i<ths.length;i++){
-			if(!(ths.item(i).style && ths.item(i).style.display == "none" && opt.skipdisplaynone)) {
+			if(!(ths.item(i).style && ths.item(i).style.display === "none" && opt.skipdisplaynone)) {
 				headers.push(ths.item(i).textContent);
 			} else {
 				headers.push(undefined);
@@ -65,7 +69,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		var tds = trs.item(j).children;
 		var r = {};
 		for(var i=0;i<tds.length;i++){
-			if(!(tds.item(i).style && tds.item(i).style.display == "none" && opt.skipdisplaynone)) {
+			if(!(tds.item(i).style && tds.item(i).style.display === "none" && opt.skipdisplaynone)) {
 				if(headers) {
 					r[headers[i]] = tds.item(i).textContent;
 				} else {
@@ -77,28 +81,38 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		res.push(r);
 	}
 //console.log(res);
-	if(cb) res = cb(res, idx, query);
+	if(cb){
+		res = cb(res, idx, query);
+	}
 	return res;
 }
 
 
 alasql.from.RANGE = function(start, finish, cb, idx, query) {
 	var res = [];
-	for(i=start;i<=finish;i++) res.push(i);
+	for(var i=start;i<=finish;i++){
+		res.push(i);
+	}
 //	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});	
-	if(cb) res = cb(res, idx, query);
+	if(cb){
+		res = cb(res, idx, query);
+	}
 	return res;
 }
 
 // Read data from any file
 alasql.from.FILE = function(filename, opts, cb, idx, query) {
-	if(typeof filename == 'string') {
+	var fname;
+	if(typeof filename === 'string') {
 		fname = filename;
+
 	} else if(filename instanceof Event) {
 		fname = filename.target.files[0].name;
+
 	} else {
 		throw new Error("Wrong usage of FILE() function");
 	}
+
 	var parts = fname.split('.');
 //	console.log("parts",parts,parts[parts.length-1]);
 	var ext = parts[parts.length-1].toUpperCase();
@@ -122,7 +136,9 @@ alasql.from.JSON = function(filename, opts, cb, idx, query) {
 //		console.log('DATA:'+data);
 //		res = [{a:1}];
 		res = JSON.parse(data);	
-		if(cb) res = cb(res, idx, query);
+		if(cb){
+			res = cb(res, idx, query);
+		}
 	});
 	return res;
 };
@@ -132,16 +148,21 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
 		for(var i=0, ilen=res.length; i<ilen;i++) {
-			if(res[i] == +res[i]) res[i] = +res[i];
+			// Please avoid '===' here
+			if(res[i] == +res[i]){	// jshint ignore:line
+				res[i] = +res[i];
+			}
 			res[i] = [res[i]];
 		}
-		if(cb) res = cb(res, idx, query);
+		if(cb){
+			res = cb(res, idx, query);
+		}
 	});
 	return res;
 };
 
 alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
-	if(!opts) opts = {};
+	opts = opts || {};
 	opts.separator = '\t';
 	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
@@ -152,91 +173,111 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		quote: '"'
 	};
 	alasql.utils.extend(opt, opts);
-	var res;
+	var res, hs;
 	alasql.utils.loadFile(filename,!!cb,function(text){
 
 		var delimiterCode = opt.separator.charCodeAt(0);
 		var quoteCode = opt.quote.charCodeAt(0);
 
       	var EOL = {}, EOF = {}, rows = [], N = text.length, I = 0, n = 0, t, eol;
-	      function token() {
-	        if (I >= N) return EOF;
-	        if (eol) return eol = false, EOL;
-	        var j = I;
-	        if (text.charCodeAt(j) === quoteCode) {
-	          var i = j;
-	          while (i++ < N) {
-	            if (text.charCodeAt(i) === quoteCode) {
-	              if (text.charCodeAt(i + 1) !== quoteCode) break;
-	              ++i;
-	            }
-	          }
-	          I = i + 2;
-	          var c = text.charCodeAt(i + 1);
-	          if (c === 13) {
-	            eol = true;
-	            if (text.charCodeAt(i + 2) === 10) ++I;
-	          } else if (c === 10) {
-	            eol = true;
-	          }
-	          return text.substring(j + 1, i).replace(/""/g, '"');
-	        }
-	        while (I < N) {
-	          var c = text.charCodeAt(I++), k = 1;
-	          if (c === 10) eol = true; else if (c === 13) {
-	            eol = true;
-	            if (text.charCodeAt(I) === 10) ++I, ++k;
-	          } else if (c !== delimiterCode) continue;
-	          return text.substring(j, I - k);
-	        }
-	        return text.substring(j);
-	      }
-
-	      while ((t = token()) !== EOF) {
-	        var a = [];
-	        while (t !== EOL && t !== EOF) {
-	          a.push(t);
-	          t = token();
-	        }
-
-	        if(opt.headers) {
-	        	if(n == 0) {
-					if(typeof opt.headers == 'boolean') {
-		        		hs = a;
-					} else if(opt.headers instanceof Array) {
-						hs = opt.headers;
-		        		var r = {};
-		        		hs.forEach(function(h,idx){
-		        			r[h] = a[idx];
-							if((typeof r[h] != 'undefined') && (r[h]).trim() == +r[h]) r[h] = +r[h];
-		        		});
-						rows.push(r);
+			function token() {
+			if (I >= N){
+				return EOF;
+			}
+			if (eol){
+				return eol = false, EOL;
+			}
+			var j = I;
+			if (text.charCodeAt(j) === quoteCode) {
+				var i = j;
+				while (i++ < N) {
+					if (text.charCodeAt(i) === quoteCode) {
+						if (text.charCodeAt(i + 1) !== quoteCode){
+							break;
+						}
+						++i;
 					}
+				}
+				I = i + 2;
+				var c = text.charCodeAt(i + 1);
+				if (c === 13) {
+					eol = true;
+					if (text.charCodeAt(i + 2) === 10){
+						++I;
+					}
+				} else if (c === 10) {
+					eol = true;
+				}
+				return text.substring(j + 1, i).replace(/""/g, '"');
+			}
+			while (I < N) {
+				var c = text.charCodeAt(I++), k = 1;
+				if(c === 10){
+					eol = true;
+				} else if (c === 13) {
+					eol = true;
+					if (text.charCodeAt(I) === 10){
+						++I;
+						++k;
+					}
+				} else if(c !== delimiterCode){
+					continue;
+				}
+				return text.substring(j, I - k);
+			}
+			return text.substring(j);
+		}
 
-	        	} else {
+		while ((t = token()) !== EOF) {
+		var a = [];
+		while (t !== EOL && t !== EOF) {
+		a.push(t);
+		t = token();
+		}
+
+        if(opt.headers) {
+        	if(n === 0) {
+				if(typeof opt.headers === 'boolean') {
+	        		hs = a;
+				} else if(opt.headers instanceof Array) {
+					hs = opt.headers;
 	        		var r = {};
 	        		hs.forEach(function(h,idx){
 	        			r[h] = a[idx];
-						if((typeof r[h] != 'undefined') && r[h].trim() == +r[h]) r[h] = +r[h];
+	        			// Please avoid === here 
+						if((typeof r[h] !== 'undefined') && (r[h]).trim() == +r[h]){ // jshint ignore:line
+							r[h] = +r[h];
+						}
 	        		});
-	        		rows.push(r);
-	        	}
-	        	n++;
-	        } else {
-	    	    rows.push(a);
-	    	}
-	      }
+					rows.push(r);
+				}
 
-	      res = rows;
+        	} else {
+        		var r = {};
+        		hs.forEach(function(h,idx){
+        			r[h] = a[idx];
+					if((typeof r[h] !== 'undefined') && r[h].trim() == +r[h]){ // jshint ignore:line
+						r[h] = +r[h];
+					}
+        		});
+        		rows.push(r);
+        	}
+        	n++;
+        } else {
+    	    rows.push(a);
+    	}
+      }
 
-		if(opt.headers) {
-			if(query && query.sources && query.sources[idx]) {
-				var columns = query.sources[idx].columns = [];
-				hs.forEach(function(h){
-					columns.push({columnid:h});
-				});
-			};
-		};
+      res = rows;
+
+	if(opt.headers) {
+		if(query && query.sources && query.sources[idx]) {
+			var columns = query.sources[idx].columns = [];
+			hs.forEach(function(h){
+				columns.push({columnid:h});
+			});
+		}
+	}
 
 /*
 if(false) {
@@ -271,39 +312,18 @@ if(false) {
 
 };
 */
-		if(cb) res = cb(res, idx, query);
+		if(cb){
+			res = cb(res, idx, query);
+		}
 	});
 	return res;
 };
 
 
-alasql.from.XLS = function(filename, opts, cb, idx, query) {
-	if(typeof exports === 'object') {
-		var X = require('xlsjs');
-	} else {
-		var X = window.XLS;
-		if(!X) {
-			throw new Error('XLS library is not attached');
-		}
-	}
-	return XLSXLSX(X,filename, opts, cb, idx, query);
-};
-
-alasql.from.XLSX = function(filename, opts, cb, idx, query) {
-	if(typeof exports === 'object') {
-		var X = require('xlsx');
-	} else {
-		var X = window.XLSX;
-		if(!X) {
-			throw new Error('XLSX library is not attached');
-		}
-	}
-	return XLSXLSX(X,filename, opts, cb, idx, query);
-};
 
 function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var opt = {};
-	if(!opts) opts = {};
+	opts = opts || {};
 	alasql.utils.extend(opt, opts);
 	var res;
 
@@ -313,18 +333,20 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		var workbook = X.read(data,{type:'binary'});
 //		console.log(workbook);
 		var sheetid;
-		if(typeof opt.sheetid == 'undefined') {
+		if(typeof opt.sheetid === 'undefined') {
 			sheetid = workbook.SheetNames[0];
 		} else {
 			sheetid = opt.sheetid;
-		};
+		}
 		var range;
-		if(typeof opt.range == 'undefined') {
+		if(typeof opt.range === 'undefined') {
 			range = workbook.Sheets[sheetid]['!ref'];
 		} else {
 			range = opt.range;
-			if(workbook.Sheets[sheetid][range]) range = workbook.Sheets[sheetid][range];
-		};
+			if(workbook.Sheets[sheetid][range]){
+				range = workbook.Sheets[sheetid][range];
+			}
+		}
 		var rg = range.split(':');
 		var col0 = rg[0].match(/[A-Z]+/)[0];
 		var row0 = +rg[0].match(/[0-9]+/)[0];
@@ -347,7 +369,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			}
 		}
 		var res = [];
-		if(opt.headers) row0++;
+		if(opt.headers){
+			row0++;
+		}
 		for(var i=row0;i<=row1;i++) {
 			var row = {};
 			for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
@@ -359,13 +383,41 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			res.push(row);
 		}
 
-		if(cb) res = cb(res, idx, query);
+		if(cb){
+			res = cb(res, idx, query);
+		}
 	}, function(err){
 		throw err;
 	});
 
 	return res;
-};
+}
 
+
+alasql.from.XLS = function(filename, opts, cb, idx, query) {
+	var X;
+	if(typeof exports === 'object') {
+		X = require('xlsjs');
+	} else {
+		X = window.XLS;
+		if(!X) {
+			throw new Error('XLS library is not attached');
+		}
+	}
+	return XLSXLSX(X,filename, opts, cb, idx, query);
+}
+
+alasql.from.XLSX = function(filename, opts, cb, idx, query) {
+	var X;
+	if(typeof exports === 'object') {
+		X = require('xlsx');
+	} else {
+		X = window.XLSX;
+		if(!X) {
+			throw new Error('XLSX library is not attached');
+		}
+	}
+	return XLSXLSX(X,filename, opts, cb, idx, query);
+};
 
 

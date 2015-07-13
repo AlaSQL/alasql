@@ -22,7 +22,7 @@ describe('Test 194 - HAVING with aggregator', function() {
     it("2. GROUP BY formula", function(done) {
         var data = [{a:1},{a:1},{a:2},{a:3},{a:1},{a:2}];
         var res = alasql('SELECT a FROM ? GROUP BY CUBE(a,a%2)',[data]);
-        console.log(res);
+/// console.log(res);
         done();
     });
 */
