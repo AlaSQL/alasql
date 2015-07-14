@@ -12,7 +12,7 @@ The purpose of this release were hard work on:
  
 Minor verison updated to sync lib, Meteor and npm version
 
-### 0.1.11 "San Remo" (03.06.2015 - 13.07.2015)
+### 0.1.11 "San Remo" (03.06.2015)
 * Code partially refactored with help of bitHound 
 * New directory 'partners' added
 * Added file for codecomplexity.com
