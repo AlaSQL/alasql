@@ -1,13 +1,16 @@
 # Changelog
 
 ### Version 0.2.1 "Rodos" (13.07.2015 - ...)
-*
+
+* ?
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:
-a) documentation
-b) resolving bugs
-c) document and refactoring code
+* documentation
+* resolving bugs
+* document and refactoring code
+ 
+Minor verison updated to sync lib, Meteor and npm version
 
 ### 0.1.11 "San Remo" (03.06.2015 - 13.07.2015)
 * Code partially refactored with help of bitHound 
@@ -126,7 +129,7 @@ c) document and refactoring code
 * XML() from function
 * SEARCH INTO functions
 
-### 0.1.0 (aka 0.0.52) "Venice" (02.05.2015 - 03.05.2015)
+## 0.1.0 (aka 0.0.52) "Venice" (02.05.2015 - 03.05.2015)
 * Added INFORMATION_SCHEMA from variable
 * Fixed localstorage dropTable with AUTOCOMMIT OFF
 * STD() function added, STDEV(),STEDEVP(),VAR(),VARP()
