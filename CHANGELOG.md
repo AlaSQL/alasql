@@ -6,9 +6,9 @@
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:
-* documentation
-* resolving bugs
-* document and refactoring code
+* Documentation
+* Resolving bugs
+* Refactoring code
  
 Minor verison updated to sync lib, Meteor and npm version
 
