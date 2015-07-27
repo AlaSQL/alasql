@@ -6,29 +6,33 @@
 // (c) 2014-2015, Andrey Gershun
 //
 
-var alasql = require('alasql');
+var alasql = require('alasql.js');
 var fs = require('fs');
 
 
 if(process.argv.length <= 2) {
-	console.log('alasql - Alasql command-line utility (version '+alasql.version+') ');
+	console.log('AlaSQL command-line utility (version '+alasql.version+') ');
 	console.log();
 	console.log('Usage:');
-	console.log('  node alasql "sql-statement" [ param0 ]... - run SQL statement');
-	console.log('  node alasql -f file.sql [ param0 ]...     - run SQL from file');
+	console.log('  alasql "sql-statement" [ param0 ]...     - run SQL statement');
+	console.log('  alasql --file file.sql [ param0 ]...     - (or -f) run SQL from file');
+	console.log('  alasql --version                         - (or -v) AlaSQL version');
 	console.log();
 	console.log('Samples:');
-	console.log('  node alasql \'select 2+2\'');	
-	console.log('  node alasql \'select count(*) from txt()\' <city.txt');
-	console.log('  node alasql \'select * into xlsx("city.xlsx") from txt("city.txt")\'');
+	console.log('  alasql \'select 2+2\'');	
+	console.log('  alasql \'select count(*) from txt()\' <city.txt');
+	console.log('  alasql \'select * into xlsx("city.xlsx") from txt("city.txt")\'');
 	console.log();
 } else if(process.argv.length > 2) {
 	var sql = process.argv[2];
 	var parami = 3;
-	if(sql == '-f') {
+	if(sql === '-f' || sql === '--file' ) {
 		console.log(sql);
 		sql = fs.readFile(sql).toString();
 		parami++;
+	} else if(sql === '-v' || sql === '--version' ) {
+		console.log(alasql.version); // Issue #373
+		return;
 	}
 
 	var params = [];
