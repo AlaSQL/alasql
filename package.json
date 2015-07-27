@@ -68,6 +68,7 @@
     "worker"
   ],
   "license": "MIT",
+  "preferGlobal": true,
   "testling":{
     "browsers": [
       "ie/6..latest",
