@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 //
 // Alacon - Command line interface for Alasql
-// Version: 0.2.1
-// Date: 27.07.2015
+// Version: 0.2.2
+// Date: 28.07.2015
 // (c) 2014-2015, Andrey Gershun & M. Rangel Wulff
 //
 
@@ -17,7 +17,6 @@ var fs = require('fs');
  * @param {String} filePath
  * @returns {Boolean}
  */
-
 function isDirectory(filePath){
       	var isDir = false;
       	try {
