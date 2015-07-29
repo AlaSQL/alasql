@@ -1,5 +1,12 @@
 
-[![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg)](https://www.bithound.io/github/agershun/alasql)       [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm downloads)](https://npmjs.org/package/alasql)    [![Inline docs](http://inch-ci.org/github/agershun/alasql.svg?branch=develop)](http://inch-ci.org/github/agershun/alasql)     ![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85)       ![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last release)      ![NPM version](https://img.shields.io/npm/l/alasql.svg) 
+[![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg)](https://www.bithound.io/github/agershun/alasql) 
+[![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql) 
+[![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql) 
+[![Inline docs](http://inch-ci.org/github/agershun/alasql.svg?branch=develop)](http://inch-ci.org/github/agershun/alasql) 
+![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85) 
+![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release) 
+![NPM version](https://img.shields.io/npm/l/alasql.svg) 
+
 
 
 # AlaSQL
@@ -9,10 +16,81 @@
 
 
 
-_([à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL)) [ælæ ɛskju:ɛl]_ - AlaSQL is a versatil javascript SQL database library for both relational data, schemaless data, and graph data with a strong foucus on query speed and flexibillity for datasources. It works in your browser, Node.js, IO.js and Apache Cordova.
+_( [à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is a versatil javascript SQL database library for both relational data, schemaless data, and graph data with a strong foucus on query speed and flexibillity for datasources. It works in your browser, Node.js, IO.js and Apache Cordova.
 
 
+----
 
+> Get the file (CDN): [jsDelivr.com](http://www.jsdelivr.com/#!alasql)
+
+> Documentation: [Github wiki](https://github.com/agershun/alasql/wiki)
+
+> Feedback: [Open an issue](https://github.com/agershun/alasql/issues/new)
+
+> Try online: <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Playground</a>
+
+> Website: [alasql.org](http://AlaSQL.org)
+
+----
+
+
+In short AlaSQL applys SQL opperations to JavaScript arrays and objects:
+ 
+```js
+// A) Traditional SQL
+alasql("CREATE TABLE cities (city string, population number)");
+
+alasql("INSERT INTO cities VALUES ('Rome',2863223),('Paris',2249975),('Berlin',3517424),('Madrid',3041579)");
+
+var res = alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC");
+
+console.log(res);  
+
+/* 
+[
+  {
+    "city": "Madrid",
+    "population": 3041579
+  },
+  {
+    "city": "Rome",
+    "population": 2863223
+  },
+  {
+    "city": "Paris",
+    "population": 2249975
+  }
+]
+*/	
+```
+
+```js
+// B) SQL on array of objects
+var data = [{a:1,b:10}, {a:2,b:20}, {a:1,b:30}];
+
+var res = alasql('SELECT a, SUM(b) AS b FROM ? GROUP BY a',[data]);    
+
+console.log(res); // [{"a":1,"b":40},{"a":2,"b":20}]
+```
+
+```js
+// C) Read from file + promise notation
+alasql.promise('SELECT * FROM XLS("mydata.xls") WHERE lastname LIKE "A%" and city = "London" GROUP BY name ')
+      .then(function(res){
+           console.log(res); // output depends on mydata.xls
+      }).catch(function(err){
+           console.log('Does the file exists? there was an error:', err);
+      });
+```
+    
+jsFiddle with [example A)](http://jsfiddle.net/xxh13gLa/) and [example B)](http://jsfiddle.net/agershun/30to2rh8/1/)
+
+The API is designed for:
+
+* Fast data processing for BI and ERP applications on fat clients
+* Client-side SQL database with option for persistency (as Local Storage and Indexed DB)
+* Versatile data manipulation and easy ETL including filtering, grouping and joining data directly from files in different formats.
+* All major browsers,  Node.js, and mobile applications
 
 We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demands flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in your own JSON object, Excel files, localStorage, IndexedDB, and SQLite. 
 
@@ -21,28 +99,9 @@ The library brings you the comfort of a full database engine to your javascript 
 
 
 
-----
 
-
-> Website: [alasql.org](http://AlaSQL.org)
-
-
-> Try online: <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Playground</a>
-
-
-> Feedback: [Open an issue](https://github.com/agershun/alasql/issues/new)
-
-
-> Documentation: [Github wiki](https://github.com/agershun/alasql/wiki)
-
-
-> Get the file (CDN): [jsDelivr.com](http://www.jsdelivr.com/#!alasql)
-
-----
-
-
-## Please note
-AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have bugs. Please, wait a little bit before using it in production.  Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new).
+### Please note
+AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, wait a little bit before using it in production.  Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new).
 AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) so the API can not be considered 100% stable.
 
 All contributions are much welcome and greatly appreciated(!) so just [open an issue](https://github.com/agershun/alasql/issues/new) and lets talk about your idea.
@@ -55,19 +114,17 @@ For the browser: Include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/a
 `alasql()` with your SQL statements:
 
 ```html
-
-<script src="//cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script> 
-
+<script src="//cdn.jsdelivr.net/alasql/0.1/alasql.min.js"></script> 
 <script>
-    
-    alasql("CREATE TABLE cities (city string, population number)");
-        
-    alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424),  ('Madrid',3041579)");
-        
-    var res = alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC");
    
-   // res now contains this array of object:
-   // [{"city":"Madrid","population":3041579},{"city":"Rome","population":2863223},{"city":"Paris","population":2249975}]   
+	alasql("CREATE TABLE cities (city string, population number)");
+        
+	alasql("INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424),  ('Madrid',3041579)");
+        
+	var res = alasql("SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC");
+   
+	// res now contains this array of object:
+	// [{"city":"Madrid","population":3041579},{"city":"Rome","population":2863223},{"city":"Paris","population":2249975}] 	
    
 </script>
 ```
@@ -81,7 +138,7 @@ Play with this example in [jsFiddle](http://jsfiddle.net/xxh13gLa/)
 
 To use AlaSQL via bower install as normal
 
-    bower install alasql
+    bower install alasql --save
 
 ----
 
@@ -89,19 +146,18 @@ To use AlaSQL via bower install as normal
 
 To use AlaSQL with Meteor install as normal
 
-    meteor install agershun:alasql
+    meteor add agershun:alasql
+
+See the wiki for [more information about Meteor](https://github.com/agershun/alasql/wiki/Meteor)
 
 ----
 
-### Node.js or IO.js
+### Node or IO.js
 
-
-
-
-For node install with npm
+To use AlaSQL with Node or IO.js install with npm
 
 ```
-npm install alasql
+npm install alasql --save
 ```
 
 
@@ -155,7 +211,7 @@ To get get value instead of a JSON you can prepend `VALUE` to the `SELECT`
 `?` will be replaced with the corresponding n'th argument.
 
 ```
-alacon "VALUE SELECT 20-?+?" 5 100
+alasql "VALUE SELECT 20-?+?" 5 100
 ```
 
 See more examples [at the wiki](https://github.com/agershun/alasql/wiki/Alacon) 
@@ -562,12 +618,11 @@ and other people for useful tools, which make our work much easier.
 
 ### Related projects that have inspired us
 
-* [OLAP.js](http://github.com/agershun/olap) - embeddable extensible JavaScript OLAP server 
+* [AlaX](http://github.com/agershun/alax) - Export to Excel with colors and formats 
 * [WebSQLShim](http://github.com/agershun/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
 * [AlaMDX](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
 * [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
 
 ----
 
-© 2014-2015, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (mathiasrw@gmail.com)
-
+© 2014-2015, Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk)
