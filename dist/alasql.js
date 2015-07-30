@@ -14666,7 +14666,8 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	}
 
 	var opt = {};
-	opt.separator = ',';
+	//opt.separator = ','; 
+  opt.separator = ';';
 	opt.quote = '"';
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
@@ -15425,7 +15426,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				});
 			}
 		} else {
-			prepareSheet(opts,data,columns,{},1);
+			prepareSheet(opts,data,columns,1);
 		}
 
 		saveWorkbook(cb);
@@ -15441,10 +15442,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	*/
 	function prepareSheet(opts, data, columns, idx) {
 
-//console.log(82,arguments);
-
 		/** Default options for sheet */
-		var opt = {sheetid:'Sheet'+idx,headers:true};
+		var opt = {sheetid:'Sheet '+idx,headers:true};
 		alasql.utils.extend(opt, opts);
 
 		// Generate columns if they are not defined
