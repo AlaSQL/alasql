@@ -179,7 +179,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	if(opt.headers) {
 		s += columns.map(function(col){
 			return col.columnid;
-		}).join(opt.separator)+'\n';
+		}).join(opt.separator)+'\r\n';
 	}
 
 	data.forEach(function(d, idx){
@@ -188,7 +188,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 			s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
 			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
 			return s;
-		}).join(opt.separator)+'\n';	
+		}).join(opt.separator)+'\r\n';	
 	});
 
 	res = alasql.utils.saveFile(filename,s);
