@@ -5725,7 +5725,7 @@ alasql.srch.LIKE = function(val,args,stope,params) {
   var exprs = args[0].toJS('x','');
   var exprfn = new Function('x,alasql,params','return '+exprs);
   if(val.toUpperCase().match(new RegExp('^'+exprfn(val,alasql,params).toUpperCase()
-  	.replace(/%/g,'.*').replace(/\?/g,'.')+'$'),'g')) {
+  	.replace(/%/g,'.*').replace(/\?|_/g,'.')+'$'),'g')) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -9032,7 +9032,7 @@ yy.Select.prototype.compileRemoveColumns = function(query) {
 		query.removeLikeKeys = this.removecolumns.filter(function (column) {
 				return (typeof column.like !== 'undefined');
 			}).map(function(column){
-				return new RegExp((column.like.value||'').replace(/\%/g,'.*').replace(/\?/g,'.'),'g');
+				return new RegExp((column.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g');
 			});
 	}
 }
@@ -9929,7 +9929,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	'(' + leftJS()+ "+'')"
 				+ 	".toUpperCase().match(new RegExp('^'+("
 				+ 		rightJS()
-				+ 	").replace(/\\\%/g,'.*').replace(/\\\?/g,'.').toUpperCase()+'$','g'))"
+				+ 	").replace(/\\\%/g,'.*').replace(/\\\?|_/g,'.').toUpperCase()+'$','g'))"
 				+ ')';
 	}
 
@@ -13772,7 +13772,7 @@ yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 		};
 		if(self.like && res && res.length > 0) {
 			res = res.filter(function(d){
-				return d.databaseid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?/g,'.'),'g'));
+				return d.databaseid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g'));
 			});
 		}
 		if(cb) cb(res);
@@ -13799,7 +13799,7 @@ yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 	};
 	if(self.like && res && res.length > 0) {
 		res = res.filter(function(d){
-			return d.tableid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?/g,'.'),'g'));
+			return d.tableid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g'));
 		});
 	};
 	if(cb) cb(res);
