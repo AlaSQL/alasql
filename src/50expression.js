@@ -394,7 +394,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	'(' + leftJS()+ "+'')"
 				+ 	".toUpperCase().match(new RegExp('^'+("
 				+ 		rightJS()
-				+ 	").replace(/\\\%/g,'.*').replace(/\\\?/g,'.').toUpperCase()+'$','g'))"
+				+ 	").replace(/\\\%/g,'.*').replace(/\\\?|\\_/g,'.').toUpperCase()+'$','g'))"
 				+ ')';
 	}
 
