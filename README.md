@@ -14,8 +14,6 @@
 
 
 
-
-
 _( [à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is a versatil javascript SQL database library for both relational data, schemaless data, and graph data with a strong foucus on query speed and flexibillity for datasources. It works in your browser, Node.js, IO.js and Apache Cordova.
 
 
