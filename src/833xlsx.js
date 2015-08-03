@@ -131,7 +131,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 		if(opt.headers) {
 			columns.forEach(function(col, idx){
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:col.columnid};
+				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:col.columnid.trim()};
 			});
 			i++;
 		}

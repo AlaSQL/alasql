@@ -14827,7 +14827,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			}
 			if(typeof column.width == 'number') column.width = column.width + "px";
 			if(typeof column.columnid == 'undefined') column.columnid = columnidx;
-			if(typeof column.title == 'undefined') column.title = ""+column.columnid;
+			if(typeof column.title == 'undefined') column.title = ""+column.columnid.trim();
 			if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[idx];
 		});
 
@@ -15147,7 +15147,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				}
 				if(typeof column.width == 'number') column.width = column.width;
 				if(typeof column.columnid == 'undefined') column.columnid = columnidx;
-				if(typeof column.title == 'undefined') column.title = ""+column.columnid;
+				if(typeof column.title == 'undefined') column.title = ""+column.columnid.trim();
 				if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[idx];
 			});
 
@@ -15491,7 +15491,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 		if(opt.headers) {
 			columns.forEach(function(col, idx){
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:col.columnid};
+				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:col.columnid.trim()};
 			});
 			i++;
 		}
