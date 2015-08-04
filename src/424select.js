@@ -404,7 +404,7 @@ yy.Select.prototype.compileRemoveColumns = function(query) {
 		query.removeLikeKeys = this.removecolumns.filter(function (column) {
 				return (typeof column.like !== 'undefined');
 			}).map(function(column){
-				return new RegExp((column.like.value||'').replace(/\%/g,'.*').replace(/\?/g,'.'),'g');
+				return new RegExp((column.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g');
 			});
 	}
 }

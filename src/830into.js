@@ -170,24 +170,31 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	}
 
 	var opt = {};
-	opt.separator = ',';
+	//opt.separator = ','; 
+  opt.separator = ';';
 	opt.quote = '"';
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
-	var s = '';
+	var s = opt.quote;
 	if(opt.headers) {
 		s += columns.map(function(col){
-			return col.columnid;
-		}).join(opt.separator)+'\n';
+			return col.columnid.trim();
+		}).join(opt.quote+opt.separator+opt.quote)+opt.quote+'\r\n';
 	}
 
 	data.forEach(function(d, idx){
 		s += columns.map(function(col){
 			var s = d[col.columnid];
 			s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
-			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
-			return s;
-		}).join(opt.separator)+'\n';	
+			//if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
+      
+      //Excel 2013 needs quotes around strings - thanks for _not_ complying with RFC for CSV 
+      if(+s!=s){  // jshint ignore:line
+          s = opt.quote + s + opt.quote; 
+      }
+			
+      return s;
+		}).join(opt.separator)+'\r\n';	
 	});
 
 	res = alasql.utils.saveFile(filename,s);

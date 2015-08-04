@@ -3,30 +3,37 @@
   "description": "Versatile SQL database for browser or node. Handles relational data and nested JSON (noSQL). Export to and import from Excel, localStorage or IndexedDB",
   "version": "0.2.0",
   "author": "Andrey Gershun <agershun@gmail.com>",
- "contributors": [{
-  "name": "Mathias Rangel Wulff",
-  "email": "mathias@rawu.dk"
-  }],
+  "contributors": [
+    {
+      "name": "Mathias Rangel Wulff",
+      "email": "mathias@rawu.dk"
+    }
+  ],
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "cd test && ../node_modules/.bin/mocha . --reporter dot"
+    "test": "cd test && ../node_modules/.bin/mocha . --reporter dot",
+    "build": "./node_modules/.bin/gulp",
+    "post-build": "npm run test",
+    "build-watch": "./node_modules/.bin/gulp watch",
+    "update": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u"
   },
   "dependencies": {
     "dom-storage": "^2.0.1",
-    "es6-promise": "^2.1.1",
-    "lodash": "^3.9.3",
+    "es6-promise": "^2.3.0",
+    "lodash": "^3.10.0",
     "xlsjs": "^0.7.5",
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
-    "blueimp-md5": "^1.1.0",
-    "gulp": "^3.8.11",
-    "gulp-concat": "^2.5.2",
-    "gulp-shell": "^0.4.1",
+    "blueimp-md5": "^1.1.1",
+    "gulp": "^3.9.0",
+    "gulp-concat": "^2.6.0",
+    "gulp-shell": "^0.4.2",
     "jison": "^0.4.15",
     "mocha": "^2.2.5",
+    "npm-check": "^3.2.10",
     "uglifyjs": "^2.4.10"
   },
   "engines": [
@@ -69,7 +76,7 @@
   ],
   "license": "MIT",
   "preferGlobal": true,
-  "testling":{
+  "testling": {
     "browsers": [
       "ie/6..latest",
       "chrome/22..latest",

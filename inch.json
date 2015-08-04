@@ -1,7 +1,7 @@
 {
   "files": {
     "included": [
-      "src/**/*.js"
+      "src/*.js"
     ],
     "excluded": [
       "!regexp:/vendor/"

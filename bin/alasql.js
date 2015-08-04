@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 //
 // Alacon - Command line interface for Alasql
-// Version: 0.2.1
-// Date: 27.07.2015
+// Version: 0.2.2
+// Date: 28.07.2015
 // (c) 2014-2015, Andrey Gershun & M. Rangel Wulff
 //
 
@@ -17,21 +17,20 @@ var fs = require('fs');
  * @param {String} filePath
  * @returns {Boolean}
  */
-
-function isDirectory(filePath) {
-  var isDir = false;
-  try {
-    var absolutePath = path.resolve(filePath);
-    isDir = fs.lstatSync(absolutePath).isDirectory();
-  } catch (e) {
-    isDir = e.code === 'ENOENT';
-  }
-  return isDir;
+function isDirectory(filePath){
+      	var isDir = false;
+      	try {
+      	      	var absolutePath = path.resolve(filePath);
+      	      	isDir = fs.lstatSync(absolutePath).isDirectory();
+      	} catch (e) {
+      	      	isDir = e.code === 'ENOENT';
+      	}
+      	return isDir;
 }
 
 
 if(process.argv.length <= 2) {
-	console.log('AlaSQL command-line utility (version '+alasql.version+') ');
+	console.log('AlaSQL command-line utility (version '+alasql.version+')');
 	console.log();
 	console.log('Usage:');
 	console.log('  alasql "sql-statement" [ params ]        - Run SQL statement');
@@ -74,7 +73,7 @@ if(sql === '-f' || sql === '--file' ) {
 		process.exit(1);
 	}
 
-	sql = fs.readFileSync('/Users/mrw/git/slet/file.sql', 'utf8').toString();
+	sql = fs.readFileSync(filePath, 'utf8').toString();
 	parami++;
 }
 
@@ -93,17 +92,16 @@ for(var i=parami;i<process.argv.length;i++) {
 
 
 
- alasql
- 	.promise(sql,params)
-    .then(function(res){
-      	if(!alasql.options.stdout){
+ alasql.promise(sql,params)
+      	.then(function(res){
+      	      	if(!alasql.options.stdout){
 			console.log(res);
 		}
 		process.exit(0);
-    }).catch(function(err){
-        console.log(err);
-        process.exit(1);
-    });
+      	}).catch(function(err){
+      	      	console.log(err);
+      	      	process.exit(1);
+      	});
 
 
 
