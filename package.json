@@ -34,6 +34,7 @@
     "gulp-shell": "^0.4.2",
     "jison": "^0.4.15",
     "mocha": "^2.2.5",
+    "mversion": "^1.10.0",
     "npm-check": "^3.2.10",
     "uglifyjs": "^2.4.10"
   },
