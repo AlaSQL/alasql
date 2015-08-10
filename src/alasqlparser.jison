@@ -277,9 +277,9 @@ VALUE(S)?                                      	return 'VALUE'
 /* %left AND */
 %left AND BETWEEN NOT_BETWEEN
 /*%left AND*/
-%left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IN
 %left NOT
+%left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IS
 %left LIKE NOT_LIKE
 %left PLUS MINUS
