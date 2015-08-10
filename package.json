@@ -15,9 +15,10 @@
   "scripts": {
     "test": "cd test && ../node_modules/.bin/mocha . --reporter dot",
     "build": "./node_modules/.bin/gulp",
-    "post-build": "npm run test",
-    "build-watch": "./node_modules/.bin/gulp watch",
-    "update": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u"
+    "postbuild": "npm run test",
+    "build:watch": "./node_modules/.bin/gulp --watch",
+    "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
+    "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f"
   },
   "dependencies": {
     "dom-storage": "^2.0.1",
@@ -33,6 +34,7 @@
     "gulp-shell": "^0.4.2",
     "jison": "^0.4.15",
     "mocha": "^2.2.5",
+    "mversion": "^1.10.0",
     "npm-check": "^3.2.10",
     "uglifyjs": "^2.4.10"
   },
