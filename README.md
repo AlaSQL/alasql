@@ -102,13 +102,6 @@ When you feel you got the grip you can check out the wiki section about [data ma
 
 
 
-
-## Please note
-AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production.  
-
-**All contributions are much welcome and greatly appreciated(!)** so just [open an issue](https://github.com/agershun/alasql/issues/new) and lets talk about your idea. Also: we (really) love pull requests - please use the develop branch.
-
-
 * Documentation: [Github wiki](https://github.com/agershun/alasql/wiki)
 
 * Library CDN: [jsDelivr.com](http://www.jsdelivr.com/#!alasql)
@@ -121,6 +114,15 @@ AlaSQL project is very young and still in active development phase, therefore it
 
 
 
+
+
+
+## Please note
+AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production.  
+
+**All contributions are much welcome and greatly appreciated(!)** so just [open an issue](https://github.com/agershun/alasql/issues/new) and lets talk about your idea. 
+
+Also: we (really) love pull requests. Please use the [develop branch](https://github.com/agershun/alasql/tree/develop) which contains the last build. If you are looking for the last stable version please look at [the `dist/` folder in master branch](https://github.com/agershun/alasql/tree/master/dist/)
 
 
 
