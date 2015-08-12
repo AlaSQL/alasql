@@ -182,6 +182,7 @@ DATABASE(S)?									return 'DATABASE'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
 'ROW'											return 'ROW'
+'ROWS'											return 'ROWS'
 SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 
@@ -1041,13 +1042,15 @@ OrderExpression
 LimitClause
 	: { $$ = undefined; }
 	| LIMIT NumValue OffsetClause
-		{ $$ = {limit:$2}; yy.extend($$, $3)}
+		{ $$ = {limit:$2}; yy.extend($$, $3); }
+	| OFFSET NumValue ROWS? FETCH NEXT? NumValue ROWS? ONLY?
+		{ $$ = {limit:$6,offset:$2}; }
 	;
 
 OffsetClause
 	: { $$ = undefined; }
 	| OFFSET NumValue 
-		{ $$ = {offset:$2}}
+		{ $$ = {offset:$2}; }
 	;
 
 
