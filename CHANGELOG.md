@@ -1,8 +1,10 @@
 # Changelog
 
->### 0.2.1 "Rodos" (13.07.2015 - ...)
->
->* Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
+### 0.2.1 "Rodos" (13.07.2015 - ...)
+
+* Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
+* Added SUBSTR() alias for MID() function (for SQLite compatibility)
+
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:
