@@ -162,6 +162,11 @@ stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function(a,b,c){
 	else if(arguments.length == 3) return und(a,'y.substr('+b+'-1,'+c+')');
 };
 
+stdfn.REGEXP_LIKE = function(a,b,c) {
+//	console.log(a,b,c);
+	return (a||'').search(RegExp(b,c))>-1;
+}
+
 // Here we uses undefined instead of null
 stdlib.ISNULL = stdlib.NULLIF = function(a,b){return '('+a+'=='+b+'?undefined:'+a+')'};
 
@@ -263,7 +268,9 @@ alasql.aggr.VARP = function(v,s,acc){
 
 alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,acc){
 	return Math.sqrt(alasql.aggr.VARP(v,s,acc));
-}
+};
+
+
 
 
 

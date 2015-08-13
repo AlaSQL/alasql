@@ -171,6 +171,7 @@ DATABASE(S)?									return 'DATABASE'
 'RECORDSET'                                     return 'RECORDSET'
 'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
+'REGEXP'		                                return 'REGEXP'
 'RELATIVE'                                      return 'RELATIVE'
 'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
@@ -283,7 +284,7 @@ VALUE(S)?                                      	return 'VALUE'
 %left NOT
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IS
-%left LIKE NOT_LIKE
+%left LIKE NOT_LIKE REGEXP
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
@@ -1374,7 +1375,9 @@ ElseClause
 	; 
 
 Op
-	: Expression LIKE Expression
+	: Expression REGEXP Expression
+		{ $$ = new yy.Op({left:$1, op:'REGEXP', right:$3}); }
+	| Expression LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
 	| Expression LIKE Expression ESCAPE Expression
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3, escape:$5}); }
