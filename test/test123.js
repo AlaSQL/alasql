@@ -13,7 +13,8 @@ describe('Test 123 - SHOW DATABASES, TABLES, COLUMNS, INDEX, CREATE TABLE', func
 		assert(res.length >= 3);
 		assert(res.filter(function(r) {return r.databaseid == 'test123a' || r.databaseid == 'test123b';}).length == 2);
 
-		var res = alasql('show databases like "123%"');
+		var res = alasql('show databases like "%123%"');
+//		console.log(res);
 		assert(res.length == 2);
 		done();
 	});

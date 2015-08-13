@@ -386,16 +386,15 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	rightJS()
 				+ '))';
 	}
-
 	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
-		return 	''
-				+ '('
+		var s = '('
 				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
-				+ 	'(' + leftJS()+ "+'')"
-				+ 	".toUpperCase().match(new RegExp('^'+("
-				+ 		rightJS()
-				+ 	").replace(/\\\%/g,'.*').replace(/\\\?|\\_/g,'.').toUpperCase()+'$','g'))"
-				+ ')';
+				+ 	'alasql.utils.like(' + rightJS()+ "," + leftJS();
+		if(this.escape) {
+			s += ','+this.escape.toJS(context,tableid, defcols);
+		}
+		s += '))';
+		return s;
 	}
 
 	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {

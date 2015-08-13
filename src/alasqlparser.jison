@@ -99,6 +99,7 @@ DATABASE(S)?									return 'DATABASE'
 'END'											return 'END'
 'ENUM'											return 'ENUM'
 'ELSE'											return 'ELSE'
+'ESCAPE'										return 'ESCAPE'
 'EXCEPT'										return 'EXCEPT'
 'EXEC'											return 'CALL'
 'EXECUTE'										return 'CALL'
@@ -1375,8 +1376,12 @@ ElseClause
 Op
 	: Expression LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
+	| Expression LIKE Expression ESCAPE Expression
+		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3, escape:$5}); }
 	| Expression NOT_LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3 }); }
+	| Expression NOT_LIKE Expression ESCAPE Expression
+		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3, escape:$5 }); }
 	| Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+', right:$3}); }
 	| Expression MINUS Expression

@@ -909,4 +909,50 @@ var domEmptyChildren = utils.domEmptyChildren = function (container){
 };
 
 
+/**
+    SQL LIKE emulation
+    @parameter {string} pattern Search pattern
+    @parameter {string} value Searched value
+    @parameter {string} escape Escape character (optional)
+    @return {boolean} If value LIKE pattern ESCAPE escape
+*/
+
+var like = utils.like = function (pattern,value,escape) {
+    // Verify escape character
+    if(!escape) escape = '';
+
+    var i=0;
+    var s = '^';
+
+    while(i<pattern.length) {
+      var c = pattern[i], c1 = '';
+      if(i<pattern.length-1) c1 = pattern[i+1];
+
+      if(c === escape) {
+        s += '\\'+c1;
+        i++;
+      } else if(c==='[' && c1 === '^') {
+        s += '[^';
+        i++;
+      } else if(c==='[' || c===']' ) {
+        s += c;
+      } else if(c==='%') {
+        s += '.*';
+      } else if(c === '_') {
+        s += '.';
+      } else if('/.*+?|(){}'.indexOf(c)>-1) {
+        s += '\\'+c;
+      } else {
+        s += c;
+      }
+      i++;
+    }
+
+    s += '$';
+//    if(value == undefined) return false;
+//console.log(s,value,(value||'').search(RegExp(s))>-1);
+    return (value||'').search(RegExp(s))>-1;
+   }
+
+
 

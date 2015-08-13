@@ -23,7 +23,8 @@ yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 		};
 		if(self.like && res && res.length > 0) {
 			res = res.filter(function(d){
-				return d.databaseid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g'));
+//				return d.databaseid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g'));
+				return alasql.utils.like(self.like.value,d.databaseid);
 			});
 		}
 		if(cb) cb(res);
@@ -50,7 +51,8 @@ yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 	};
 	if(self.like && res && res.length > 0) {
 		res = res.filter(function(d){
-			return d.tableid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g'));
+			//return d.tableid.match(new RegExp((self.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g'));
+			return alasql.utils.like(self.like.value,d.tableid);
 		});
 	};
 	if(cb) cb(res);
