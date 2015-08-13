@@ -157,7 +157,7 @@ stdlib.MIN = stdlib.LEAST = function(){
       return 'Math.min('+Array.prototype.join.call(arguments, ',')+')'
 };
 
-stdlib.SUBSTRING = stdlib.MID = function(a,b,c){
+stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function(a,b,c){
 	if(arguments.length == 2) return und(a,'y.substr('+b+'-1)');
 	else if(arguments.length == 3) return und(a,'y.substr('+b+'-1,'+c+')');
 };
