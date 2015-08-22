@@ -7,6 +7,7 @@
 * Changed LIKE function to alasql.utils.like
 * Added LIKE ESCAPE functionality
 * Added REGEXP operator (like MySQL) and REGEXP_LIKE() function (like in Oracle)
+* INSERT OR REPLACE VALUE, INSERT OR REPLACE SELECT
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:
