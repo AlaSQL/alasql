@@ -176,6 +176,7 @@ DATABASE(S)?									return 'DATABASE'
 'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
 'REPEAT'										return 'REPEAT'
+'REPLACE'										return 'REPLACE'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
 'RETURN'                                       	return 'RETURN'
@@ -1629,12 +1630,16 @@ Delete
 Insert
 	: INSERT Into Table VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
+	| INSERT OR REPLACE Into Table VALUE ValuesListsList
+		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
 	| INSERT Into Table DEFAULT VALUE
 		{ $$ = new yy.Insert({into:$3, default: true}) ; }
 	| INSERT Into Table LPAR ColumnsList RPAR VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT Into Table Select
 		{ $$ = new yy.Insert({into:$3, select: $4}); }
+	| INSERT OR REPLACE Into Table Select
+		{ $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); }
 	| INSERT Into Table LPAR ColumnsList RPAR Select
 		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
 	;

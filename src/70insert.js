@@ -8,7 +8,9 @@
 
 yy.Insert = function (params) { return yy.extend(this, params); }
 yy.Insert.prototype.toString = function() {
-	var s = 'INSERT INTO '+this.into.toString();
+	var s = 'INSERT ';
+	if(this.orreplace) s += 'OR REPLACE ';
+	s += 'INTO '+this.into.toString();
 	if(this.columns) s += '('+this.columns.toString()+')';
 	if(this.values) s += ' VALUES '+this.values.toString();
 	if(this.select) s += ' '+this.select.toString();
@@ -174,7 +176,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
 	        if(db.tables[tableid].insert) {
 				s += 'var db=alasql.databases[\''+databaseid+'\'];';
-				s += 'db.tables[\''+tableid+'\'].insert(a);';
+				s += 'db.tables[\''+tableid+'\'].insert(a,'+(self.orreplace?"true":"false")+');';
 	        } else {
 				s += 'aa.push(a);';
 			}
@@ -219,7 +221,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		        if(db.tables[tableid].insert) {
 		        	// If insert() function exists (issue #92)
 		        	for(var i=0,ilen=res.length;i<ilen;i++) {
-		        		db.tables[tableid].insert(res[i]);
+		        		db.tables[tableid].insert(res[i],self.orreplace);
 		        	}
 		        } else {
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
