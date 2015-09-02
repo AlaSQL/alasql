@@ -3296,7 +3296,9 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 success(data);
             };
             reader.readAsBinaryString(files[0]);    
-        }
+        } else if(path instanceof Blob) {
+        	success(path);
+        } 
     }
 };
 
