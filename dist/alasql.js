@@ -16595,7 +16595,7 @@ WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 //
 
 
- if(typeof window !='undefined' && typeof window.indexedDB != 'undefined') {
+ if(typeof window !='undefined' && window.indexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 

@@ -6,7 +6,7 @@
 //
 
 
- if(typeof window !='undefined' && typeof window.indexedDB != 'undefined') {
+ if(window !='undefined' && window.indexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
