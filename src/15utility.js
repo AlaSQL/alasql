@@ -704,6 +704,10 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
         return obj;
     }
 
+    if(obj instanceof Date) {
+        return new Date(obj);
+    }
+
     var temp = obj.constructor(); // changed
 
     for(var key in obj) {
