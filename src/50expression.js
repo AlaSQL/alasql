@@ -262,7 +262,7 @@ yy.Op.prototype.toType = function(tableid) {
 		}
 	}
 	
-	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE'].indexOf(this.op) >-1 ){
+	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'REGEXP'].indexOf(this.op) >-1 ){
 		return 'boolean';
 	}
 
@@ -386,16 +386,22 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	rightJS()
 				+ '))';
 	}
-
 	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
-		return 	''
-				+ '('
+		var s = '('
 				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
-				+ 	'(' + leftJS()+ "+'')"
-				+ 	".toUpperCase().match(new RegExp('^'+("
-				+ 		rightJS()
-				+ 	").replace(/\\\%/g,'.*').replace(/\\\?/g,'.').toUpperCase()+'$','g'))"
-				+ ')';
+				+ 	'alasql.utils.like(' + rightJS()+ "," + leftJS();
+		if(this.escape) {
+			s += ','+this.escape.toJS(context,tableid, defcols);
+		}
+		s += '))';
+		return s;
+	}
+	if(this.op === 'REGEXP') {
+		return 'alasql.stdfn.REGEXP_LIKE(' 
+			+ leftJS()
+			+ ','
+			+ rightJS()
+			+ ')';
 	}
 
 	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {

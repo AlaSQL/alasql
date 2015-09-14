@@ -1,19 +1,27 @@
 # Changelog
 
-### Version 0.2.1 "Rodos" (13.07.2015 - ...)
-*
+### 0.2.1 "Rodos" (13.07.2015 - ...)
+
+* Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
+* Added SUBSTR() alias for MID() function (for SQLite compatibility)
+* Changed LIKE function to alasql.utils.like
+* Added LIKE ESCAPE functionality
+* Added REGEXP operator (like MySQL) and REGEXP_LIKE() function (like in Oracle)
+* INSERT OR REPLACE VALUE, INSERT OR REPLACE SELECT
+* Read Blob as parameter for from-functions like XLS()
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:
-a) documentation
-b) resolving bugs
-c) document and refactoring code
+* Documentation
+* Resolving bugs
+* Refactoring code
+ 
+Minor verison updated to sync lib, Meteor and npm version
 
-### 0.1.11 "San Remo" (03.06.2015 - 13.07.2015)
+### 0.1.11 "San Remo" (03.06.2015)
 * Code partially refactored with help of bitHound 
 * New directory 'partners' added
 * Added file for codecomplexity.com
-* Released as 0.2.0
 
 ### 0.1.10 "Genova" (31.05.2015 - 02.06.2015)
 * CALL procedure() statement
@@ -126,7 +134,7 @@ c) document and refactoring code
 * XML() from function
 * SEARCH INTO functions
 
-### 0.1.0 (aka 0.0.52) "Venice" (02.05.2015 - 03.05.2015)
+## 0.1.0 (aka 0.0.52) "Venice" (02.05.2015 - 03.05.2015)
 * Added INFORMATION_SCHEMA from variable
 * Fixed localstorage dropTable with AUTOCOMMIT OFF
 * STD() function added, STDEV(),STEDEVP(),VAR(),VARP()

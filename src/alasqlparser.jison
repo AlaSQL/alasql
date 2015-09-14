@@ -99,6 +99,7 @@ DATABASE(S)?									return 'DATABASE'
 'END'											return 'END'
 'ENUM'											return 'ENUM'
 'ELSE'											return 'ELSE'
+'ESCAPE'										return 'ESCAPE'
 'EXCEPT'										return 'EXCEPT'
 'EXEC'											return 'CALL'
 'EXECUTE'										return 'CALL'
@@ -170,10 +171,12 @@ DATABASE(S)?									return 'DATABASE'
 'RECORDSET'                                     return 'RECORDSET'
 'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
+'REGEXP'		                                return 'REGEXP'
 'RELATIVE'                                      return 'RELATIVE'
 'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
 'REPEAT'										return 'REPEAT'
+'REPLACE'										return 'REPLACE'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
 'RETURN'                                       	return 'RETURN'
@@ -182,6 +185,7 @@ DATABASE(S)?									return 'DATABASE'
 'ROLLBACK'										return 'ROLLBACK'
 'ROLLUP'										return 'ROLLUP'
 'ROW'											return 'ROW'
+'ROWS'											return 'ROWS'
 SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 
@@ -277,11 +281,11 @@ VALUE(S)?                                      	return 'VALUE'
 /* %left AND */
 %left AND BETWEEN NOT_BETWEEN
 /*%left AND*/
-%left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IN
 %left NOT
+%left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IS
-%left LIKE NOT_LIKE
+%left LIKE NOT_LIKE REGEXP
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
@@ -1041,13 +1045,15 @@ OrderExpression
 LimitClause
 	: { $$ = undefined; }
 	| LIMIT NumValue OffsetClause
-		{ $$ = {limit:$2}; yy.extend($$, $3)}
+		{ $$ = {limit:$2}; yy.extend($$, $3); }
+	| OFFSET NumValue ROWS? FETCH NEXT? NumValue ROWS? ONLY?
+		{ $$ = {limit:$6,offset:$2}; }
 	;
 
 OffsetClause
 	: { $$ = undefined; }
 	| OFFSET NumValue 
-		{ $$ = {offset:$2}}
+		{ $$ = {offset:$2}; }
 	;
 
 
@@ -1370,10 +1376,16 @@ ElseClause
 	; 
 
 Op
-	: Expression LIKE Expression
+	: Expression REGEXP Expression
+		{ $$ = new yy.Op({left:$1, op:'REGEXP', right:$3}); }
+	| Expression LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
+	| Expression LIKE Expression ESCAPE Expression
+		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3, escape:$5}); }
 	| Expression NOT_LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3 }); }
+	| Expression NOT_LIKE Expression ESCAPE Expression
+		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3, escape:$5 }); }
 	| Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+', right:$3}); }
 	| Expression MINUS Expression
@@ -1618,12 +1630,16 @@ Delete
 Insert
 	: INSERT Into Table VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
+	| INSERT OR REPLACE Into Table VALUE ValuesListsList
+		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
 	| INSERT Into Table DEFAULT VALUE
 		{ $$ = new yy.Insert({into:$3, default: true}) ; }
 	| INSERT Into Table LPAR ColumnsList RPAR VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT Into Table Select
 		{ $$ = new yy.Insert({into:$3, select: $4}); }
+	| INSERT OR REPLACE Into Table Select
+		{ $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); }
 	| INSERT Into Table LPAR ColumnsList RPAR Select
 		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
 	;

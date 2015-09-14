@@ -33,7 +33,7 @@ describe('Test 272 REMOVE columns', function() {
 
   it('3. Remove columns LIKE', function(done) {
     var data = [{a:1,b1:10,b2:100},{a:2,b1:20,b2:200},];
-    var res = alasql('SELECT RECORDSET * REMOVE COLUMNS LIKE "%b" FROM ?',[data]);
+    var res = alasql('SELECT RECORDSET * REMOVE COLUMNS LIKE "b%" FROM ?',[data]);
     var colres = _.pluck(res.columns,"columnid");
     assert.deepEqual(colres,["a"]);
     done();    
@@ -41,7 +41,7 @@ describe('Test 272 REMOVE columns', function() {
 
   it('4. Remove multiple columns', function(done) {
     var data = [{a:1,b1:10,b2:100,c:1000, d:10000},{a:2,b1:20,b2:200,c:2000,d:20000},];
-    var res = alasql('SELECT RECORDSET * REMOVE COLUMNS LIKE "%b",a,d FROM ?',[data]);
+    var res = alasql('SELECT RECORDSET * REMOVE COLUMNS LIKE "b%",a,d FROM ?',[data]);
     var colres = _.pluck(res.columns,"columnid");
     assert.deepEqual(colres,["c"]);
     done();    

@@ -119,7 +119,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				}
 				if(typeof column.width == 'number') column.width = column.width;
 				if(typeof column.columnid == 'undefined') column.columnid = columnidx;
-				if(typeof column.title == 'undefined') column.title = ""+column.columnid;
+				if(typeof column.title == 'undefined') column.title = ""+column.columnid.trim();
 				if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[idx];
 			});
 

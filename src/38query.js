@@ -334,7 +334,8 @@ function queryfn3(query) {
 			r = query.data[i];
 			for(var k in r) {
 				for(j=0;j<query.removeLikeKeys.length;j++) {
-					if(k.match(query.removeLikeKeys[j])) {
+					if(alasql.utils.like(query.removeLikeKeys[j],k)) {
+//					if(k.match(query.removeLikeKeys[j])) {
 						delete r[k];
 					}				
 				}
@@ -345,7 +346,10 @@ function queryfn3(query) {
 			query.columns = query.columns.filter(function(column){
 				var found = false;
 				removeLikeKeys.forEach(function(key){
-					if(column.columnid.match(key)) found = true;
+//					if(column.columnid.match(key)) found = true;
+					if(alasql.utils.like(key,column.columnid)) {
+						found = true;
+					}
 				});
 				return !found;
 			});

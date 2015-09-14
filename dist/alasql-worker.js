@@ -1,14 +1,16 @@
+/*! AlaSQL v0.2.0 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.1.8
+@version 0.2.0
 
 AlaSQL - JavaScript SQL database
-(ñ) 2014-2015, Andrey Gershun
+© 2014-2015	Andrey Gershun & M. Rangel Wulff
+
 
 @license
 The MIT License (MIT)
 
-Copyright (c) 2014-2015 Andrey Gershun (agershun@gmail.com)
+Copyright © 2014-2015 Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk) 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
