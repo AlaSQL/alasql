@@ -705,6 +705,10 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(null === obj || typeof(obj) !== 'object'){
         return obj;
     }
+    
+    if(obj instanceof Date) {
+	return new Date(obj);
+    }
 
     var temp = obj.constructor(); // changed
 
