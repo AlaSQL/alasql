@@ -13,10 +13,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "cd test && ../node_modules/.bin/mocha . --reporter dot",
+    "test": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha . --reporter dot",
     "build": "./node_modules/.bin/gulp",
-    "postbuild": "npm run test",
-    "build:watch": "./node_modules/.bin/gulp --watch",
+    "build:watch": "./node_modules/.bin/gulp watch",
     "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
     "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f"
   },
