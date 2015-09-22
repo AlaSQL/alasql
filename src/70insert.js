@@ -42,7 +42,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 	// Check, if this dirty flag is required
 	var s = '';
 	var sw = '';
-//	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
+	var s = 'db.tables[\''+tableid+'\'].dirty=true;';
 	var s3 = 'var a,aa=[],x;';
 
 	var s33;
