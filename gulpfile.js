@@ -248,7 +248,7 @@ gulp.task('plugin-prolog', function(){
 
 
 // Главная задача
-gulp.task('default', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], function(){
+gulp.task('default', ['js-merge', 'plugin-prolog', 'plugin-plugins' /*, 'jison-compile', 'jison-lex-compile' */], function(){
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
