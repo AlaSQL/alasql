@@ -431,6 +431,7 @@ preIndex = function(query) {
 	// Todo: make this loop smaller and more graspable
 	for(var k=0, klen = query.sources.length;k<klen;k++) {
 		var source = query.sources[k];
+		delete source.ix;
 		// If there is indexation rule
 //console.log('preIndex', source);
 //console.log(source);
@@ -444,6 +445,7 @@ preIndex = function(query) {
 					source.ix = ixx; 
 				}
 			}
+
 			if(!source.ix) {
 				source.ix = {};
 				// Walking over source data
