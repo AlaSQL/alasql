@@ -15,11 +15,9 @@
   "scripts": {
     "test": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha . --reporter dot",
     "test:only": "cd test && ../node_modules/.bin/mocha . --reporter dot",
-
     "build": "./node_modules/.bin/gulp",
     "build:watch": "./node_modules/.bin/gulp watch",
-
-    "bump":"./node_modules/.bin/mversion --no-prefix",
+    "bump": "./node_modules/.bin/mversion --no-prefix",
     "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
     "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f"
   },
@@ -34,7 +32,9 @@
     "blueimp-md5": "^1.1.1",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
+    "gulp-rename": "^1.2.2",
     "gulp-shell": "^0.4.2",
+    "gulp-uglify": "^1.4.1",
     "jison": "^0.4.15",
     "mocha": "^2.3.0",
     "mversion": "^1.10.0",

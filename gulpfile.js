@@ -15,9 +15,10 @@ module.exports = gulp;
 //var jison = require('gulp-jison');
 //var concat = require('gulp-concat-sourcemap');
 var concat = require('gulp-concat');
-//var uglify = require('gulp-uglify');
+var uglify = require('gulp-uglify');
 //var jisonLex = require('gulp-jison-lex');
 var shell = require('gulp-shell');
+var rename = require('gulp-rename');
 
 
 gulp.task('js-merge-worker', function () {
@@ -27,10 +28,11 @@ gulp.task('js-merge-worker', function () {
     './src/99worker.js', 
     './src/99worker-finish.js', 
     ])
-//    .pipe(changed('./dist/'))
     .pipe(concat('alasql-worker.js'))
-//    .pipe(uglify())
     .pipe(gulp.dest('./dist'))
+    .pipe(rename('alasql-worker.min.js'))
+    .pipe(uglify())
+    .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('js-merge', function () {
@@ -125,9 +127,10 @@ gulp.task('js-merge', function () {
    	'./src/98finish.js',
     './src/99worker.js'
     ])
-//    .pipe(changed('./dist/'))
     .pipe(concat('alasql.js'))
-//    .pipe(uglify())
+    .pipe(gulp.dest('./dist'))
+    .pipe(rename('alasql.min.js'))
+    .pipe(uglify())
     .pipe(gulp.dest('./dist'))
     //.pipe(shell(['cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v bell Tests failed ; else say -v bell All tests OK; fi)']))
     ;
@@ -262,7 +265,7 @@ gulp.task('watch', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plug
   gulp.watch('./src/md/*.js',function(){ gulp.run('plugin-plugins'); });
   gulp.watch('./src/prolog/*.js',function(){ gulp.run('plugin-prolog'); });
 
-  gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
+  //gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
 
   gulp.watch('./dist/alasql.min.js',function(){ 
     gulp.run('copy-dist'); 
