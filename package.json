@@ -14,8 +14,12 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha . --reporter dot",
+    "test:only": "cd test && ../node_modules/.bin/mocha . --reporter dot",
+
     "build": "./node_modules/.bin/gulp",
     "build:watch": "./node_modules/.bin/gulp watch",
+
+    "bump":"./node_modules/.bin/mversion --no-prefix",
     "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
     "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f"
   },
