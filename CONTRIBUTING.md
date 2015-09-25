@@ -1,4 +1,4 @@
-# Contributing to AlaAQL
+# Contributing to AlaSQL
 
 **All contributions are much welcome and greatly appreciated(!)** 
 
