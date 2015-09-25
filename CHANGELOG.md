@@ -2,15 +2,19 @@
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
 ### 0.2.1 "Rodos" (xx.09.2015)
-* Added SUBSTR() alias for MID() function (for SQLite compatibility)
-* Changed LIKE function to alasql.utils.like
-* Added LIKE ESCAPE functionality
-* Added REGEXP operator (like MySQL) and REGEXP_LIKE() function (like in Oracle)
-* INSERT OR REPLACE VALUE, INSERT OR REPLACE SELECT
-* Read Blob as parameter for from-functions like XLS()
-* Bugfix related to 'NOT' and '=' predecession
-* Added FETCH NEXT
-* Bugfix alasql for running in cordova on iOS
+* Added: AlaSQL CLI: Support for --version flag
+* Added: AlaSQL CLI: support for CLI exit code 
+* Added: AlaSQL CLI: Missing file now won't throw exception (but log error text) nor if its a folder
+* Added: Support for using _ as a single wildcard in LIKE queries
+* Added: Support for FETCH NEXT syntax in queries (MSSQL/T-SQL)
+* Added: SUBSTR() alias for MID() function (for SQLite compatibility)
+* Added: LIKE ESCAPE functionality
+* Added: REGEXP operator (like MySQL) and REGEXP_LIKE() function (like in Oracle)
+* Added: INSERT OR REPLACE VALUE, INSERT OR REPLACE SELECT
+* Added: Read Blob as parameter for from-functions like XLS()
+* Fix: .CSV files made Excel 2013 compliant 
+* Fix: misbehavour related to 'NOT' and '=' predecession
+* Fix: alasql running from cordova on iOS
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:
