@@ -10,6 +10,6 @@
 - Run `npm test` and verify all tests are OK
 - Pull-request to the develop branch
 
-_Please note that `npm test` will also compile som `src/`
+_Please note that `npm test` will also compile som `src/`_ 
 
  
