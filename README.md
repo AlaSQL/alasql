@@ -20,7 +20,7 @@ The library is designed for:
 * Easy ETL and option for persistency by data import / manipulation / export for several formats
 * All major browsers,  Node.js, and mobile applications
 
-We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demands flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `.xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
+We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demands flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
 
 
 The library brings you the comfort of a full database engine to your javascript app. No, really - its working towards a full database engine complying with [most of SQL-99](https://github.com/agershun/alasql/wiki/Supported-SQL-statements) spiced up with additional syntax for handling noSQL (schema less) data and graph networks. To help porting from native databases you can specify the flavour for the SQL behaviour as either AlaSQL, T-SQL, MySQL, Postgres, ORACLE, SQLite, OrientDB. MSSQL is on its way. 
@@ -89,7 +89,7 @@ npm install -g alasql         # command line interface
 For the browser: include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js)  
 
 ```html
-<script src="//cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script> 
+<script src="http://cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script> 
 ```
 
 
@@ -122,16 +122,8 @@ AlaSQL project is very young and still in active development phase, therefore it
 
 
 **All contributions are much welcome and greatly appreciated(!)** so just [open an issue](https://github.com/agershun/alasql/issues/new) and lets talk about your idea. 
-Also: we really (really) love pull requests:
 
-- Please work with the [develop branch](https://github.com/agershun/alasql/tree/develop) (do a `npm install` first time you clone)
-- Add a test for the issue: Copy and rename `test/test000.js`. Impelement a test that reflects the issue.
-- Run `npm test` to verify the test fails
-- Implement your contributions in `src/`
-- Build from source: `npm run build` 
-- Re-run tests: `npm test` and verify all tests are OK
-- Pull-request to the develop branch 
-
+Also: [we really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)
 
 
 
@@ -144,11 +136,11 @@ AlaSQL is very focused on speed and we make sure to use all the tricks we can fi
 
 The results are good. Check out AlaSQL vs. other javaScript SQL databases: 
 
-* **2x speed** [compared to SQL.js](http://jsperf.com/sql-js-vs-alasql-js/10) selecting with `SUM`, `JOIN`, and `GROUP BY`.
+* **2.5x speed** [compared to SQL.js](http://jsperf.com/sql-js-vs-alasql-js/11) selecting with `SUM`, `JOIN`, and `GROUP BY`.
 
-* **2x speed** [compared to WebSQL](http://jsperf.com/alasql-js-vs-websql/7) selecting with `SUM`, `JOIN`, and `GROUP BY` (in-memory opperations for WebSQL - see [this discussion](https://github.com/agershun/alasql/issues/47))
+* **3x speed** [compared to WebSQL](http://jsperf.com/alasql-js-vs-websql/8) selecting with `SUM`, `JOIN`, and `GROUP BY` (in-memory opperations for WebSQL - see [this discussion](https://github.com/agershun/alasql/issues/47))
 
-* **1.5x speed** [compared to Linq](http://jsperf.com/alasql-vs-linq-on-groupby) for `GROUP BY` on 1,048,576 rows
+* **2x speed** [compared to Linq](http://jsperf.com/alasql-vs-linq-on-groupby/3) for `GROUP BY` on 1,048,576 rows
 
 
 See more [speed related info on the wiki](https://github.com/agershun/alasql/wiki/Speed) 
