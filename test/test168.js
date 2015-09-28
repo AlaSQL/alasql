@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 //if(typeof exports === 'object' && false) {
 
 describe('Test 168a - read XLSX', function() {
-
+	this.timeout(9000);
 	it("1. Read XLSX file", function(done) {
 		var res = alasql('select * from xlsx("'+dirname+'/test168.xlsx")',[],function(res){
 			assert(res.length == 6);
@@ -47,7 +47,7 @@ describe('Test 168a - read XLSX', function() {
 });
 
 describe('Test 168b - read XLS', function() {
-
+	this.timeout(9000);
 	it("1. Read XLS file", function(done) {
 		var res = alasql('select * from xls("'+dirname+'/test168.xls")',[],function(res){
 			assert(res.length == 6);
