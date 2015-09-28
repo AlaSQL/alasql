@@ -1,7 +1,7 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.1 "Rodos" (xx.09.2015)
+### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag
 * Added: AlaSQL CLI: support for CLI exit code 
 * Added: AlaSQL CLI: Missing file now won't throw exception (but log error text) nor if its a folder
