@@ -1,3 +1,9 @@
+# whitelisted branches
+branches:
+  only:
+    - master
+    - develop
+
 language: node_js
 node_js:
   - "iojs"
@@ -5,7 +11,4 @@ node_js:
   - "0.12"
   - "0.11"
   - "0.10"
-  - "0.8"
-  - "0.6"
-  - "0.5"
-  - "0.4"
+

@@ -5,7 +5,7 @@ if(typeof exports === 'object') {
 
 describe('Test 000', function() {
 
-	it('Very beginning: multiple statements', function(done){
+	it('Multiple statements', function(done){
 		var res = [];
 		res.push(alasql('create database test00'));
 		res.push(alasql('use test00'));
@@ -17,7 +17,7 @@ describe('Test 000', function() {
 		done();
 	});
 
-	it('Very beginning: multiple statements in one string', function(done){
+	it('Multiple statements in one string', function(done){
 		var sql = 'create database test00;';
 		sql += 'use test00;';
 		sql += 'create table one (a int);';
@@ -29,7 +29,7 @@ describe('Test 000', function() {
 		done();
 	});
 
-	it('Very beginning: multiple statements in one string with callback', function(done){
+	it('Multiple statements in one string with callback', function(done){
 		var sql = 'create database test00;';
 		sql += 'use test00;';
 		sql += 'create table one (a int);';

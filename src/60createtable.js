@@ -291,8 +291,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 //	}
 //			if(table.pk) {
-	table.insert = function(r) {
+	table.insert = function(r,orreplace) {
 		var table = this;
+
+		var toreplace = false; // For INSERT OR REPLACE
 
 		// IDENTINY or AUTO_INCREMENT
 		// if(table.identities && table.identities.length>0) {
@@ -314,6 +316,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(table.checkfn && table.checkfn.length>0) {
 			table.checkfn.forEach(function(checkfn){
 				if(!checkfn(r)) {
+//					if(orreplace) toreplace=true; else
 					throw new Error('Violation of CHECK constraint');			
 				}
 			});
@@ -331,6 +334,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if(typeof table.uniqs[pk.hh][addr] !== 'undefined') {
 //console.log(pk,addr,pk.onrightfn({ono:1}));			
 //console.log(r, pk.onrightfn(r), pk.onrightfns);
+				if(orreplace) toreplace=table.uniqs[pk.hh][addr]; else
 				throw new Error('Cannot insert record, because it already exists in primary key index');
 			} 
 //			table.uniqs[pk.hh][addr]=r;
@@ -340,36 +344,46 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.uk.forEach(function(uk){
 				var ukaddr = uk.onrightfn(r);
 				if(typeof table.uniqs[uk.hh][ukaddr] !== 'undefined') {
+					if(orreplace) toreplace=table.uniqs[uk.hh][ukaddr]; else
 					throw new Error('Cannot insert record, because it already exists in unique index');
 				} 				
 //				table.uniqs[uk.hh][ukaddr]=r;
 			});
 		}
 
+		if(toreplace) {
+			// Do UPDATE!!!
+//			console.log();
+			table.update(function(t){
+				for(var f in r) t[f] = r[f];
+			},table.data.indexOf(toreplace),params);
+		} else {
+			table.data.push(r);
+
 		// Final change before insert
 
 
-		table.data.push(r);
 		// Update indices
 
 
-		for(var columnid in table.identities){
-			var ident = table.identities[columnid];
-//			console.log(ident);
-			ident.value += ident.step;
-//			console.log(ident);
-		}
+			for(var columnid in table.identities){
+				var ident = table.identities[columnid];
+	//			console.log(ident);
+				ident.value += ident.step;
+	//			console.log(ident);
+			}
 
-		if(table.pk) {
-			var pk = table.pk;
-			var addr = pk.onrightfn(r);
-			table.uniqs[pk.hh][addr]=r;
-		}
-		if(table.uk && table.uk.length) {
-			table.uk.forEach(function(uk){
-				var ukaddr = uk.onrightfn(r);
-				table.uniqs[uk.hh][ukaddr]=r;
-			});
+			if(table.pk) {
+				var pk = table.pk;
+				var addr = pk.onrightfn(r);
+				table.uniqs[pk.hh][addr]=r;
+			}
+			if(table.uk && table.uk.length) {
+				table.uk.forEach(function(uk){
+					var ukaddr = uk.onrightfn(r);
+					table.uniqs[uk.hh][ukaddr]=r;
+				});
+			}
 		}
 
 	};
