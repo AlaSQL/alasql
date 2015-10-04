@@ -177,7 +177,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	var res = data.length;
 	var s = '';
 	if(opt.headers) {
-		s += columns.map(function(col){
+		s += opt.quote+columns.map(function(col){
 			return col.columnid.trim();
 		}).join(opt.quote+opt.separator+opt.quote)+opt.quote+'\r\n';
 	}
