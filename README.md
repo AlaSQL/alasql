@@ -12,7 +12,7 @@
 # AlaSQL
 
 
-_( [à la] (http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong foucus on query speed and datasource flexibillity for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
+_( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong foucus on query speed and datasource flexibillity for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
 
 The library is designed for:
 
@@ -416,8 +416,8 @@ Most of SQL-99. Please [see the wiki](https://github.com/agershun/alasql/wiki/Su
 
 AlaSQL extends "good old" SQL to make it closer to JavaScript. The "sugar" includes:
 
-* Json objects - ``` {a:1,b:@[1,2,3]}
-* Object propertires - ```obj->property->subproperty```
+* Json objects - `{a:1,b:@[1,2,3]}`
+* Object propertires - `obj->property->subproperty`
 * Object and arrays elements - ```obj->(a*1)```
 * JavaScript functions - ```obj->valueOf()```
 * SELECT VALUE, ROW, COLUMN, MATRIX to format results of query
