@@ -19,7 +19,8 @@
     "build:watch": "./node_modules/.bin/gulp watch",
     "bump": "./node_modules/.bin/mversion --no-prefix",
     "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
-    "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f"
+    "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f",
+    "jison": "./node_modules/.bin/jison ./src/alasqlparser.jison -o ./src/alasqlparser.js"
   },
   "dependencies": {
     "dom-storage": "^2.0.1",

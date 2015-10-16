@@ -142,7 +142,7 @@ gulp.task('jison-compile', function () {
     .pipe(shell([
 //      'node ./utils/redj/redj.js',
 //      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
-      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js' // Todo: avoid having to install globally with `npm install jison -g`
+      './node_modules/.bin/jison ./src/alasqlparser.jison -o ./src/alasqlparser.js' // Todo: avoid having to install globally with `npm install jison -g`
 
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
@@ -251,9 +251,10 @@ gulp.task('plugin-prolog', function(){
 
 
 // Главная задача
-gulp.task('default', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' /*, 'jison-compile', 'jison-lex-compile' */], function(){
-
-});
+gulp.task('default', [
+                       /*
+			'jison-compile',  // 'jison-lex-compile', //*/
+                       'js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' ], function(){});
 
 gulp.task('watch', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' /*, 'jison-compile', 'jison-lex-compile' */], function(){
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
