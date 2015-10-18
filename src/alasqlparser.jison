@@ -1633,7 +1633,7 @@ Insert
 	| INSERT OR REPLACE Into Table VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
 	| INSERT Into Table DEFAULT VALUE
-		{ $$ = new yy.Insert({into:$3, default: true}) ; }
+		{ $$ = new yy.Insert({into:$3, "default": true}) ; }
 	| INSERT Into Table LPAR ColumnsList RPAR VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT Into Table Select
@@ -1948,9 +1948,9 @@ ColumnConstraint
 	| IDENTITY
 		{ $$ = {identity: {value:1,step:1}} }
 	| DEFAULT PrimitiveValue
-		{$$ = {default:$2};}
+		{$$ = {"default":$2};}
 	| DEFAULT LPAR Expression RPAR
-		{$$ = {default:$3};}
+		{$$ = {"default":$3};}
 	| NULL
 		{$$ = {null:true}; }
 	| NOT NULL

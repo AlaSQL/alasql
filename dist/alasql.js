@@ -1258,7 +1258,7 @@ case 424:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true}); 
 break;
 case 425:
- this.$ = new yy.Insert({into:$$[$0-2], default: true}) ; 
+ this.$ = new yy.Insert({into:$$[$0-2], "default": true}) ; 
 break;
 case 426:
  this.$ = new yy.Insert({into:$$[$0-5], columns: $$[$0-3], values: $$[$0]}); 
@@ -1391,10 +1391,10 @@ case 513:
  this.$ = {identity: {value:1,step:1}} 
 break;
 case 514:
-this.$ = {default:$$[$0]};
+this.$ = {"default":$$[$0]};
 break;
 case 515:
-this.$ = {default:$$[$0-1]};
+this.$ = {"default":$$[$0-1]};
 break;
 case 516:
 this.$ = {null:true}; 
@@ -4522,12 +4522,13 @@ alasql.matrix = alasql.queryArrayOfArrays;
 //
 
 if(typeof exports === 'object') {
-	require('es6-promise').polyfill();;
+	var Promise = require('es6-promise').Promise;
 } 
 
 //
 // Only for browsers with Promise support
 //
+
 if(typeof Promise === 'function') {
 	alasql.promise = function(sql, params) {
 	    return new Promise(function(resolve, reject){

@@ -502,6 +502,22 @@ then type in browser something like "http://127.0.0.1:1337/?SELECT VALUE 2*2"
 
 Warning: Alaserver is not multi-thread, not concurent, and not secured.
 
+### Webpack
+
+To use alasql with webpack, get [script-loader](https://github.com/webpack/script-loader).
+
+Then:
+```js
+require("script!alasql");
+```
+
+Warning: This is a bad idea if you are using babel-loader
+```js
+import alasql from "script!alasql";
+```
+
+as script-loader does not return the global instance of alasql.
+
 
 ### Miss a feature? 
 Take charge and [add your idea](http://feathub.com/agershun/alasql/features/new) or [vote on your favorite feature](http://feathub.com/agershun/alasql) to be implemented:
