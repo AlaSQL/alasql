@@ -19,6 +19,7 @@ var uglify = require('gulp-uglify');
 //var jisonLex = require('gulp-jison-lex');
 var shell = require('gulp-shell');
 var rename = require('gulp-rename');
+var dereserve = require('gulp-dereserve');
 
 
 gulp.task('js-merge-worker', function () {
@@ -129,6 +130,7 @@ gulp.task('js-merge', function () {
     ])
     .pipe(concat('alasql.js'))
     .pipe(gulp.dest('./dist'))
+    .pipe(dereserve())
     .pipe(rename('alasql.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./dist'))
