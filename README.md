@@ -3,8 +3,8 @@
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123) 
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?) 
 [![Inline docs](http://inch-ci.org/github/agershun/alasql.svg?branch=develop)](http://inch-ci.org/github/agershun/alasql) 
-![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&123) 
-![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&123) 
+![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85) 
+![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release) 
 ![NPM version](https://img.shields.io/npm/l/alasql.svg?123) 
 
 
@@ -136,9 +136,9 @@ AlaSQL is very focused on speed and we make sure to use all the tricks we can fi
 
 The results are good. Check out AlaSQL vs. other javaScript SQL databases: 
 
-* **2.5x speed** [compared to SQL.js](http://jsperf.com/sql-js-vs-alasql-js/11) selecting with `SUM`, `JOIN`, and `GROUP BY`.
+* **3x speed** [compared to SQL.js](http://jsperf.com/sql-js-vs-alasql-js/11) selecting with `SUM`, `JOIN`, and `GROUP BY`.
 
-* **3x speed** [compared to WebSQL](http://jsperf.com/alasql-js-vs-websql/8) selecting with `SUM`, `JOIN`, and `GROUP BY` (in-memory opperations for WebSQL - see [this discussion](https://github.com/agershun/alasql/issues/47))
+* **1x speed** [compared to WebSQL](http://jsperf.com/alasql-js-vs-websql/8) selecting with `SUM`, `JOIN`, and `GROUP BY` (in-memory opperations for WebSQL - see [this discussion](https://github.com/agershun/alasql/issues/47))
 
 * **2x speed** [compared to Linq](http://jsperf.com/alasql-vs-linq-on-groupby/3) for `GROUP BY` on 1,048,576 rows
 
