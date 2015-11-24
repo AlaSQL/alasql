@@ -156,27 +156,38 @@ See more [speed related info on the wiki](https://github.com/agershun/alasql/wik
 ## Fetures you might like
 
 
+
+
 ### Traditional SQL
 
-Use "good old" SQL on your data with multiple levels of: ```JOIN```, ```VIEW```, ```GROUP BY```, ```UNION```, ```PRIMARY KEY```, ```ANY```, ```ALL```, ```IN```, ```ROLLUP()```, ```CUBE()```, ```GROUPING SETS()```, ```CROSS APPLY```, ```OUTER APPLY```, ```WITH SELECT```, and subqueries. See the wiki to [compare supported features with SQL standarts](https://github.com/agershun/alasql/wiki/SQL%20keywords).
+Use "good old" SQL on your data with multiple levels of: `JOIN`, `VIEW`, `GROUP BY`, ```UNION```, ```PRIMARY KEY```, `ANY`, `ALL`, ```IN```, ```ROLLUP()```, ```CUBE()```, ```GROUPING SETS()```, ```CROSS APPLY```, ```OUTER APPLY```, ```WITH SELECT```, and subqueries. See the wiki to [compare supported features with SQL standarts](https://github.com/agershun/alasql/wiki/SQL%20keywords).
 
 
 
-#### User-defined JavaScript functions
+### User defined functions in your SQL
 
-You can use all benefits of SQL and JavaScript togeather by defining user functions. Just add new functions to alasql.fn object:
+You can use all benefits of SQL and JavaScript together by defining you own costume functions. Just add new functions to the alasql.fn object:
+
 
 ```js
-        alasql.fn.double = function(x){return x*2};        
-        alasql.fn.sum10 = function(x,y) { return x+y*10; }
-        db.exec('SELECT a, double(a) AS b, sum10(a,b) FROM test1');
+    alasql.fn.myfn = function(a,b) {
+        return a*b+1;
+    }
+    var res = alasql('SELECT myfn(a,b) FROM one');
 ```
 
+See more [in the wiki](https://github.com/agershun/alasql/wiki/User-Defined-Functions)
 
-### AlaSQL supports plugins
 
-AlaSQL supports plugins. To install the plugin you need to use the `REQUIRE` statement. See more [at the wiki](https://github.com/agershun/alasql/wiki/Plugins)
+### Compiled statements and functions
 
+```js
+    var ins = alasql.compile('INSERT INTO one VALUES (?,?)'); 
+    ins(1,10);
+    ins(2,20);
+```
+
+See more [in the wiki](https://github.com/agershun/alasql/wiki/Compile)
 
 ### Graphs 
 
@@ -210,6 +221,28 @@ See more ideas of creative datamanipulation [in the wiki](https://github.com/age
 
 
 
+
+
+
+### AlaSQL works in the console - CLI
+
+After globally installing AlaSQL `npm install alasql -g` you can access AlaSQL via the commandline  
+
+
+```bash
+> alasql "SET @data = @[{a:1,b:10},{a:2,b:20}];SELECT a, b FROM @data;"
+[ 1, [ { a: 1, b: 10 }, { a: 2, b: 20 } ] ]
+
+> alasql 'select value count(*) from txt("README.md") where length([0]) > 20'
+//Number of lines with length more than 20 characters in a text file
+``` 
+
+See more [in the wiki](https://github.com/agershun/alasql/wiki/AlaSQL-CLI)
+
+
+### AlaSQL supports plugins
+
+AlaSQL supports plugins. To install the plugin you need to use the `REQUIRE` statement. See more [at the wiki](https://github.com/agershun/alasql/wiki/Plugins)
 
 
 
