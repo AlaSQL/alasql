@@ -73,6 +73,27 @@ alasql.promise('SELECT * FROM XLS("mydata.xls") WHERE lastname LIKE "A%" and cit
            console.log('Does the file exists? there was an error:', err);
       });
 ```
+
+
+
+
+```js
+// D) Node example
+var alasql = require('alasql');
+
+alasql("CREATE TABLE example1 (a INT, b INT)");
+
+alasql.tables.example1.data = [                      // Insert data directly from javascript object...
+    {a:5,b:6},
+    {a:3,b:4}
+];
+
+alasql("INSERT INTO example1 VALUES (1,3)");         // ...or you insert data with normal SQL 
+
+var res = alasql("SELECT * FROM example1 ORDER BY b DESC");
+
+console.log(res); // [{a:1,b:3},{a:3,b:4},{a:3,b:4}]
+```
     
 jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http://jsfiddle.net/c1hbytf1/)
 
@@ -83,7 +104,7 @@ jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http:
 npm install alasql --save     # npm
 meteor add agershun:alasql    # meteor
 bower install alasql --save   # bower
-npm install -g alasql         # command line interface
+npm install alasql -g         # command line interface
 ```
 
 For the browser: include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js)  
@@ -170,10 +191,10 @@ You can use all benefits of SQL and JavaScript together by defining you own cost
 
 
 ```js
-    alasql.fn.myfn = function(a,b) {
-        return a*b+1;
-    }
-    var res = alasql('SELECT myfn(a,b) FROM one');
+alasql.fn.myfn = function(a,b) {
+    return a*b+1;
+}
+var res = alasql('SELECT myfn(a,b) FROM one');
 ```
 
 See more [in the wiki](https://github.com/agershun/alasql/wiki/User-Defined-Functions)
@@ -182,30 +203,12 @@ See more [in the wiki](https://github.com/agershun/alasql/wiki/User-Defined-Func
 ### Compiled statements and functions
 
 ```js
-    var ins = alasql.compile('INSERT INTO one VALUES (?,?)'); 
-    ins(1,10);
-    ins(2,20);
+var ins = alasql.compile('INSERT INTO one VALUES (?,?)'); 
+ins(1,10);
+ins(2,20);
 ```
 
 See more [in the wiki](https://github.com/agershun/alasql/wiki/Compile)
-
-### Graphs 
-
-AlaSQL is a multi-paradigm database with support for graphs that can be searched or manipulated. 
-
-
-```js
-    // Who loves lovers of Alice?
-    alasql('SEARCH / ANY(>> >> #Alice) name');
-    // ['Olga','Helen']
-```
-
-See more [at the wiki](https://github.com/agershun/alasql/wiki/GRAPH)
-
-
-### Export data to Excel
-
-AlaSQL can export data to both [Excel 2003 (.xls)](https://github.com/agershun/alasql/wiki/XLS) and [Excel 2007 (.xlsx)](https://github.com/agershun/alasql/wiki/XLSX) with coloring of cells and other Excel formatting functions.  
 
 
 ### Work directly on JSON data
@@ -213,11 +216,12 @@ AlaSQL can export data to both [Excel 2003 (.xls)](https://github.com/agershun/a
 Group your JavaScript array of objects by field and count number of records in each group:
 
 ```js
-    var data = [{a:1,b:1,c:1},{a:1,b:2,c:1},{a:1,b:3,c:1}, {a:2,b:1,c:1}];
-    var res = alasql('SELECT a, COUNT(*) AS b FROM ? GROUP BY a',[data]);
-    console.log(res);
+var data = [{a:1,b:1,c:1},{a:1,b:2,c:1},{a:1,b:3,c:1}, {a:2,b:1,c:1}];
+var res = alasql('SELECT a, COUNT(*) AS b FROM ? GROUP BY a',[data]);
+console.log(res);
 ```
 See more ideas of creative datamanipulation [in the wiki](https://github.com/agershun/alasql/wiki/Getting-started) 
+
 
 
 
@@ -230,26 +234,14 @@ After globally installing AlaSQL `npm install alasql -g` you can access AlaSQL v
 
 
 ```bash
-> alasql "SET @data = @[{a:1,b:10},{a:2,b:20}];SELECT a, b FROM @data;"
+> alasql "SET @data = @[{a:1,b:?},{a:2,b:?}];SELECT a, b FROM @data;" 10 20
 [ 1, [ { a: 1, b: 10 }, { a: 2, b: 20 } ] ]
 
-> alasql 'select value count(*) from txt("README.md") where length([0]) > 20'
-//Number of lines with length more than 20 characters in a text file
+> alasql "VALUE OF SELECT COUNT(*) FROM TXT("README.md") WHERE LENGTH([0]) > ?" 140
+// Number of lines with more than 140 characters in README.md
 ``` 
 
 See more [in the wiki](https://github.com/agershun/alasql/wiki/AlaSQL-CLI)
-
-
-### AlaSQL supports plugins
-
-AlaSQL supports plugins. To install the plugin you need to use the `REQUIRE` statement. See more [at the wiki](https://github.com/agershun/alasql/wiki/Plugins)
-
-
-
-
-
-
-
 
 
 
@@ -257,6 +249,11 @@ AlaSQL supports plugins. To install the plugin you need to use the `REQUIRE` sta
 ### AlaSQL ♥ D3.js
 
 AlaSQL plays nice with d3.js and gives you a convinient way to integrate a specifik subset of your data vis the visual powers of d3. See more about [D3.js and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/d3.js)
+
+
+### AlaSQL ♥ Excel
+
+AlaSQL can export data to both [Excel 2003 (.xls)](https://github.com/agershun/alasql/wiki/XLS) and [Excel 2007 (.xlsx)](https://github.com/agershun/alasql/wiki/XLSX) with coloring of cells and other Excel formatting functions.  
 
 
 ### AlaSQL ♥ Meteor 
@@ -285,74 +282,38 @@ AlaSQL can query data directly from a google spreadsheet. A good "partnership" f
 
 
 
-### Node and IO.js
-
-To use AlaSQL with Node or IO.js install with npm
-
-```
-npm install alasql --save
-```
-
-
-> [![NPM](https://nodei.co/npm/alasql.png)](https://nodei.co/npm/alasql/) [![NPM](https://nodei.co/npm-dl/alasql.png?months=6)](https://nodei.co/npm/alasql/)
 
 
 
-Require `alasql` and create a new database to start executing your SQL.
+
+
+
+
+
+
+
+### AlaSQL supports plugins
+
+AlaSQL supports plugins. To install the plugin you need to use the `REQUIRE` statement. See more [at the wiki](https://github.com/agershun/alasql/wiki/Plugins)
+
+
+
+
+
+
+
+### Graphs 
+
+AlaSQL is a multi-paradigm database with support for graphs that can be searched or manipulated. 
 
 
 ```js
-var alasql = require('alasql');
-
-var db = new alasql.Database();
-
-db.exec("CREATE TABLE example (a INT, b INT)");
-
-// You can insert data directly from javascript object...
-db.tables.example1.data = [ 
-    {a:5,b:6},
-    {a:3,b:4}
-];
-
-// ...or you can insert data with normal SQL 
-db.exec("INSERT INTO example1 VALUES (1,3)");
-
-var res = db.exec("SELECT * FROM example1 ORDER BY b DESC");
-
-// res now contains this array of objects:
-// [{a:1,b:3},{a:3,b:4},{a:3,b:4}]
+// Who loves lovers of Alice?
+var res = alasql('SEARCH / ANY(>> >> #Alice) name');
+console.log(res) // ['Olga','Helen']
 ```
 
-
-
-### Command line interfce (CLI)
-
-You can access AlaSQL [from the comandline](https://github.com/agershun/alasql/wiki/Alacon) by installing from npm globally
-
-```
-npm install alasql -g
-```
-
-Now you can access `alasql` via the commandline
-
-```
-> alasql "SELECT * INTO json('my.json') from xlsx('cities.xlsx',{headers:true}) WHERE population > 20000000"
-```
-
-To get get value instead of a JSON you can prepend `VALUE` to the `SELECT`
-
-`?` will be replaced with the corresponding n'th argument.
-
-```
-alasql "VALUE SELECT 20-?+?" 5 100
-```
-
-See more examples [at the wiki](https://github.com/agershun/alasql/wiki/Alacon) 
-
-
-
-
-
+See more [at the wiki](https://github.com/agershun/alasql/wiki/GRAPH)
 
 
 
@@ -363,27 +324,29 @@ See more examples [at the wiki](https://github.com/agershun/alasql/wiki/Alacon)
 AlaSQL can work as a webworker. Include alasql-worker.js and thats's it: AlaSQL will work as a webworker.
 
 ```html
-    <script src="alasql-worker.min.js"></script>
-    <script>
-        var arr = [{a:1},{a:2},{a:1}];
-        alasql('SELECT * FROM ?',[arr],function(data){
-            console.log(data);
-        });
-    </script>    
+<script src="alasql-worker.min.js"></script>
+<script>
+var arr = [{a:1},{a:2},{a:1}];
+	alasql('SELECT * FROM ?',[arr],function(data){
+		console.log(data);
+	});
+</script>    
 ```
+
 Try the example [at jsFiddle](http://jsfiddle.net/agershun/oxv4rzzc/).
 
 Another option - run alasql.worker() function:
 
 ```html
-    <script src="alasql.min.js"></script>
-    <script>
-         alasql.worker();
-         var res = alasql('select value 10',[],function(res){
-              console.log(res);
-         });
-    </script>
+<script src="alasql.min.js"></script>
+<script>
+     alasql.worker();
+     var res = alasql('select value 10',[],function(res){
+          console.log(res);
+     });
+</script>
 ```
+
 Try this example [in jsFiddle](http://jsfiddle.net/agershun/rjwp8u48/3/).
 
 Also you can use AlaSQL in webworker just simply load it as a script:
@@ -404,7 +367,7 @@ Now AlaSQL can work with files in XLS, XSLX, CSV, TAB, TXT, and JSON format
         console.log(data);
     });
 ```
-See test168 and test169
+See test168 and test169 for examples
 
 ### Read SQLite database files
 
