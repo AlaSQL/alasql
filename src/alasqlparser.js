@@ -1069,7 +1069,7 @@ case 424:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true}); 
 break;
 case 425:
- this.$ = new yy.Insert({into:$$[$0-2], default: true}) ; 
+ this.$ = new yy.Insert({into:$$[$0-2], "default": true}) ; 
 break;
 case 426:
  this.$ = new yy.Insert({into:$$[$0-5], columns: $$[$0-3], values: $$[$0]}); 
@@ -1202,10 +1202,10 @@ case 513:
  this.$ = {identity: {value:1,step:1}} 
 break;
 case 514:
-this.$ = {default:$$[$0]};
+this.$ = {"default":$$[$0]};
 break;
 case 515:
-this.$ = {default:$$[$0-1]};
+this.$ = {"default":$$[$0-1]};
 break;
 case 516:
 this.$ = {null:true}; 
