@@ -234,10 +234,10 @@ After globally installing AlaSQL `npm install alasql -g` you can access AlaSQL v
 
 
 ```bash
-> alasql "SET @data = @[{a:1,b:?},{a:2,b:?}];SELECT a, b FROM @data;" 10 20
+> alasql "SET @data = @[{a:1,b:?},{a:2,b:?}]; SELECT a, b FROM @data;" 10 20
 [ 1, [ { a: 1, b: 10 }, { a: 2, b: 20 } ] ]
 
-> alasql "VALUE OF SELECT COUNT(*) FROM TXT("README.md") WHERE LENGTH([0]) > ?" 140
+> alasql "VALUE OF SELECT COUNT(*) as abc FROM TXT('README.md') WHERE LENGTH([0]) > ?" 140
 // Number of lines with more than 140 characters in README.md
 ``` 
 
