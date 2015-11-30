@@ -84,15 +84,15 @@ var alasql = require('alasql');
 alasql("CREATE TABLE example1 (a INT, b INT)");
 
 alasql.tables.example1.data = [               // Insert data directly from javascript object...
-    {a:5,b:6},
+    {a:2,b:6},
     {a:3,b:4}
 ];
 
-alasql("INSERT INTO example1 VALUES (1,3)");  // ...or you insert data with normal SQL 
+alasql("INSERT INTO example1 VALUES (1,5)");  // ...or you insert data with normal SQL 
 
 var res = alasql("SELECT * FROM example1 ORDER BY b DESC");
 
-console.log(res); // [{a:5,b:6},{a:3,b:4},{a:1,b:3}]
+console.log(res); // [{a:2,b:6},{a:1,b:5},{a:3,b:4}]
 ```
     
 jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http://jsfiddle.net/c1hbytf1/)
