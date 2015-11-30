@@ -84,15 +84,15 @@ var alasql = require('alasql');
 alasql("CREATE TABLE example1 (a INT, b INT)");
 
 alasql.tables.example1.data = [               // Insert data directly from javascript object...
-    {a:5,b:6},
+    {a:2,b:6},
     {a:3,b:4}
 ];
 
-alasql("INSERT INTO example1 VALUES (1,3)");  // ...or you insert data with normal SQL 
+alasql("INSERT INTO example1 VALUES (1,5)");  // ...or you insert data with normal SQL 
 
 var res = alasql("SELECT * FROM example1 ORDER BY b DESC");
 
-console.log(res); // [{a:5,b:6},{a:3,b:4},{a:1,b:3}]
+console.log(res); // [{a:2,b:6},{a:1,b:5},{a:3,b:4}]
 ```
     
 jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http://jsfiddle.net/c1hbytf1/)
@@ -234,10 +234,10 @@ After globally installing AlaSQL `npm install alasql -g` you can access AlaSQL v
 
 
 ```bash
-> alasql "SET @data = @[{a:1,b:?},{a:2,b:?}];SELECT a, b FROM @data;" 10 20
+> alasql "SET @data = @[{a:1,b:?},{a:2,b:?}]; SELECT a, b FROM @data;" 10 20
 [ 1, [ { a: 1, b: 10 }, { a: 2, b: 20 } ] ]
 
-> alasql "VALUE OF SELECT COUNT(*) FROM TXT("README.md") WHERE LENGTH([0]) > ?" 140
+> alasql "VALUE OF SELECT COUNT(*) as abc FROM TXT('README.md') WHERE LENGTH([0]) > ?" 140
 // Number of lines with more than 140 characters in README.md
 ``` 
 
