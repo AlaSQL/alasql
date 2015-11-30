@@ -43,6 +43,9 @@
     "jison": "0.4.15",
     "lodash": "3.7.0"
   },
+  "main":[
+    "./dist/alasql.min.js"
+  ],
   "ignore": [
     "src",
     "test",
