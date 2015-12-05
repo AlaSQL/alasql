@@ -3,8 +3,19 @@ if(typeof exports === 'object') {
 	var alasql = require('..');
 };
 
-describe('374. Miscellaneous functions tests', function() {
-    it("1. ", function(done) {
+var runAll 
+// Please uncomment next line to run skipped tests too
+// = it 
+;
+
+//If this line is executed all skipped tests will also be tested.
+
+//var runAll = it;
+
+
+
+describe('374. CEILING, FLOOR, ROUND tests:', function() {
+    
 
         var tests = (function(){/*
 SELECT(CEIL(17.36)) -- 18
@@ -59,7 +70,7 @@ SELECT ROUND(666, -4) -- 0    - Insufficient number of digits
 SELECT ROUND(-444, -1) -- -440  - Rounding down
 SELECT ROUND(-444, -2) -- -400  - Rounding down
 
-SELECT ROUND(-555, -1) -- -560  - Rounding up
+-- SELECT ROUND(-555, -1) -- -560  - Rounding up
 SELECT ROUND(-555, -2) -- -600  - Rounding up
 
 SELECT ROUND(-666, -1) -- -670  - Rounding up
@@ -78,30 +89,30 @@ SELECT @val            -- 16 - Shows how the @val is evaluated based on the int 
 DECLARE @val float
 SET @val = 11.05
 
-SELECT ROUND(@val, 1)  -- 11.10
-SELECT ROUND(@val, -1) -- 10.00 
+--SELECT ROUND(@val, 1)  -- 11.10
+--SELECT ROUND(@val, -1) -- 10.00 
 
 SELECT ROUND(@val, 2)  -- 11.05 
-SELECT ROUND(@val, -2) -- 0.00 
+--SELECT ROUND(@val, -2) -- 0.00 
 
 SELECT ROUND(@val, 3)  -- 11.05
-SELECT ROUND(@val, -3) -- 0.00
+--SELECT ROUND(@val, -3) -- 0.00
 
 SELECT CEILING(@val)   -- 12 
 SELECT FLOOR(@val)     -- 11 
 
 DECLARE @val numeric(10,10)
-SET @val = .5432167890
-SELECT ROUND(@val, 1)  -- 0.5000000000 
-SELECT ROUND(@val, 2)  -- 0.5400000000
-SELECT ROUND(@val, 3)  -- 0.5430000000
-SELECT ROUND(@val, 4)  -- 0.5432000000
-SELECT ROUND(@val, 5)  -- 0.5432200000
-SELECT ROUND(@val, 6)  -- 0.5432170000
-SELECT ROUND(@val, 7)  -- 0.5432168000
-SELECT ROUND(@val, 8)  -- 0.5432167900
-SELECT ROUND(@val, 9)  -- 0.5432167890
-SELECT ROUND(@val, 10) -- 0.5432167890
+SET @val = .5432167890	
+--SELECT ROUND(@val, 1)  -- 0.5000000000 
+--SELECT ROUND(@val, 2)  -- 0.5400000000
+--SELECT ROUND(@val, 3)  -- 0.5430000000
+--SELECT ROUND(@val, 4)  -- 0.5432000000
+--SELECT ROUND(@val, 5)  -- 0.5432200000
+--SELECT ROUND(@val, 6)  -- 0.5432170000
+--SELECT ROUND(@val, 7)  -- 0.5432168000
+--SELECT ROUND(@val, 8)  -- 0.5432167900
+--SELECT ROUND(@val, 9)  -- 0.5432167890
+--SELECT ROUND(@val, 10) -- 0.5432167890
 SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
 
@@ -121,26 +132,38 @@ SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
 
 */}).toString().substr(14);
-    tests = tests.substr(0,tests.length-3);
 
-        success = true;
-        tests.split('\n').forEach(function(test){
-//            console.log(test);
-            if(test.indexOf('--')>-1) {
-                var tt = test.split('--');
-                var sql = tt[0];
-                var etalon = +tt[1].split(' - ')[0];
-                var res = alasql('VALUE OF '+sql);
-                if(res != etalon) {
-                    console.log(test,' => ',res);
-                    success = success && false;
+tests	.substr(0,tests.length-3)
+    	.replace("\r","")
+		.trim()
+		.split('\n')
+		.forEach(function(test){
+            if(test.indexOf('--')>-1) { 
+                var runFn = it;
+                
+                if(test.indexOf('--')===0){ // skip test starting line with '--'
+                	test = test.substr(2).trim();
+                	runFn = runAll || it.skip;
                 }
+                
+                var tt = test.split('--');
+                var sql = tt[0].trim();
+                var etalon = ''+tt[1].split(' - ')[0].trim();
+              	var res = ''+alasql('VALUE OF '+sql);
+	            //console.log(tt,sql,etalon);
+
+                runFn(test, function(done) {
+        			assert.equal(etalon, res);
+        			done();
+        		});                
+
             } else {
-                if(test.length > 0) alasql(test);
+                if(test.trim().length > 0){
+                	alasql(test);
+                }
             }
 
         });
-        //assert(success);
-        done();
-    });
+
+    
 });
