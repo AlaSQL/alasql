@@ -1,18 +1,13 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
 	var alasql = require('..');
+	var argv = require('yargs').argv || {};
 };
 
-var runAll 
-// Please uncomment next line to run skipped tests too
-// = it 
-;
-
-//If this line is executed all skipped tests will also be tested.
-
-//var runAll = it;
-
-
+var runAll;
+if(argv.forceall){
+	runAll = it;
+}
 
 describe('374. CEILING, FLOOR, ROUND tests:', function() {
     
