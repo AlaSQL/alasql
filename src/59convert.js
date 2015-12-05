@@ -149,7 +149,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 		//else return ""+val.substr(0,1);
 	} else if(['DECIMAL','NUMERIC'].indexOf(udbtypeid)>-1) {
 		var m = +val;
-		var fxd = Math.pow(10,args.dbpecision);
+		var fxd = Math.pow(10,args.dbprecision);
 		return (m|0)+((m*fxd)%fxd)/fxd;
 	} else if(['JSON'].indexOf(udbtypeid)>-1) {
 		if(typeof val == 'object') return val;

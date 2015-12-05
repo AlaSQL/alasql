@@ -178,14 +178,17 @@ stdlib.RANDOM = function(r) {
 	} else {
 		return '(Math.random()*('+r+')|0)';
 	}
-}
+};
 stdlib.ROUND = function(s,d) {
 	if(arguments.length == 2) {
-		return 'Math.round('+s+'*Math.pow(10,'+d+'))/Math.pow(10,'+d+')';
+		return 'Math.round(('+s+')*Math.pow(10,('+d+')))/Math.pow(10,('+d+'))';
 	} else {
 		return 'Math.round('+s+')';
 	}
-}
+};
+stdlib.CEIL = stdlib.CEILING = function(s) {return 'Math.ceil('+s+')'};
+stdlib.FLOOR = function(s) {return 'Math.floor('+s+')'};
+
 stdlib.ROWNUM = function() {return '1'};
 stdlib.ROW_NUMBER = function() {return '1'};
 

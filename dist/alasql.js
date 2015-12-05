@@ -10975,14 +10975,17 @@ stdlib.RANDOM = function(r) {
 	} else {
 		return '(Math.random()*('+r+')|0)';
 	}
-}
+};
 stdlib.ROUND = function(s,d) {
 	if(arguments.length == 2) {
-		return 'Math.round('+s+'*Math.pow(10,'+d+'))/Math.pow(10,'+d+')';
+		return 'Math.round(('+s+')*Math.pow(10,('+d+')))/Math.pow(10,('+d+'))';
 	} else {
 		return 'Math.round('+s+')';
 	}
-}
+};
+stdlib.CEIL = stdlib.CEILING = function(s) {return 'Math.ceil('+s+')'};
+stdlib.FLOOR = function(s) {return 'Math.floor('+s+')'};
+
 stdlib.ROWNUM = function() {return '1'};
 stdlib.ROW_NUMBER = function() {return '1'};
 
@@ -11376,7 +11379,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 		//else return ""+val.substr(0,1);
 	} else if(['DECIMAL','NUMERIC'].indexOf(udbtypeid)>-1) {
 		var m = +val;
-		var fxd = Math.pow(10,args.dbpecision);
+		var fxd = Math.pow(10,args.dbprecision);
 		return (m|0)+((m*fxd)%fxd)/fxd;
 	} else if(['JSON'].indexOf(udbtypeid)>-1) {
 		if(typeof val == 'object') return val;
