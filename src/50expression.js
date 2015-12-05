@@ -58,8 +58,8 @@ yy.Expression = function(params) { return yy.extend(this, params); };
 	@this ExpressionStatement
 	@return {string}
 */
-yy.Expression.prototype.toString = function() {
-	var s = this.expression.toString();
+yy.Expression.prototype.toString = function(dontas) {
+	var s = this.expression.toString(dontas);
 	if(this.order) {
 		s += ' '+this.order.toString();
 	}
@@ -147,11 +147,12 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 */
 
 yy.Literal = function (params) { return yy.extend(this, params); };
-yy.Literal.prototype.toString = function() {
+yy.Literal.prototype.toString = function(dontas) {
 	var s = this.value;
 	if(this.value1){
 		s = this.value1+'.'+s; 
 	}
+	if(this.alias && !dontas) s += ' AS '+this.alias;
 //	else s = tableid+'.'+s;
 	return s;
 };
@@ -738,7 +739,7 @@ yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
 // }
 
 yy.Column = function(params) { return yy.extend(this, params); }
-yy.Column.prototype.toString = function() {
+yy.Column.prototype.toString = function(dontas) {
 	var s;
 	if(this.columnid === +this.columnid) {
 		s = '['+this.columnid+']';
@@ -755,7 +756,7 @@ yy.Column.prototype.toString = function() {
 			s = this.databaseid+'.'+s;
 		}
 	}
-//	if(this.alias) s += ' AS '+this.alias;
+	if(this.alias && !dontas) s += ' AS '+this.alias;
 	return s;
 };
 
@@ -844,7 +845,7 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 
 
 yy.AggrValue = function(params){ return yy.extend(this, params); }
-yy.AggrValue.prototype.toString = function() {
+yy.AggrValue.prototype.toString = function(dontas) {
 	var s = '';
 	if(this.aggregatorid === 'REDUCE'){
 		s += this.funcid+'(';
@@ -866,11 +867,13 @@ yy.AggrValue.prototype.toString = function() {
 		s += ' '+this.over.toString();
 	} 
 //	console.log(this.over);
+	if(this.alias && !dontas) s += ' AS '+this.alias;
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
 yy.AggrValue.prototype.findAggregator = function (query){
+
 //	console.log('aggregator found',this.toString());
 
 //	var colas = this.as || this.toString();

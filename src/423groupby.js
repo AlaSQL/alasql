@@ -39,6 +39,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	query.allgroups = allgroups;
 
+	query.ingroup = [];
 //console.log(42,294, this.group);
 //console.log(allgroups);
 //		console.log(42,364,query.selectColumns)
@@ -67,9 +68,7 @@ if(false) {
 
 	var s = '';
 //	s+= query.selectfns;
-
 	allgroup.forEach(function(agroup) {
-//console.log(agroup);
 
 		// Start of group function
 		s += 'var acc,g=this.xgroups[';
@@ -84,6 +83,8 @@ if(false) {
 				return '1'; // Create fictive groupping column for fictive GROUP BY
 			}
 //			else return "r['"+columnid+"']";
+			query.ingroup.push(columnid);
+//			console.log(429,87,query.ingroup);
 			return coljs;
 		});
 
@@ -105,10 +106,9 @@ if(false) {
 			if(columnid === ''){
 				return '';
 			}
-			
 			return "'"+columnid+"':"+coljs+",";
 		}).join('');
-
+//console.log(agroup);
 		var neggroup = arrayDiff(allgroups,agroup);
 
 //		console.log(neggroup);
@@ -118,7 +118,7 @@ if(false) {
 		//	var coljs = col2.split('\t')[1]
 			return "'"+columnid+"':null,";
 		}).join('');
-
+//console.log(neggroup);
 		var aft = '';
 //		s += self.columns.map(function(col){
 //console.log('query.selectGroup',query.selectGroup);

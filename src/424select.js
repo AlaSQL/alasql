@@ -269,7 +269,8 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			if(col instanceof yy.Column) {
 				colas = escapeq(col.columnid);
 			} else {
-				colas = escapeq(col.toString());
+				colas = escapeq(col.toString(true));
+//				console.log(273,colas);
 			}
 			for(var i=0;i<idx;i++) {
 				if(colas === self.columns[i].nick) {
@@ -287,6 +288,7 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 //				console.log("colas:",colas);
 			// }
 		}
+
 	});
 	
 	this.columns.forEach(function(col){
@@ -387,7 +389,14 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 }
 
 yy.Select.prototype.compileSelectGroup2 = function(query) {
+	var self = this;
 	var s = query.selectgfns;
+	self.columns.forEach(function(col){
+//			 console.log(col);
+		if(query.ingroup.indexOf(col.nick)>-1) {
+			s += 'r[\''+(col.as||col.nick)+'\']=g[\''+col.nick+'\'];'
+		};
+	});
 //	console.log('selectg:',s);
 	return new Function('g,params,alasql','var y;'+s+'return r');
 };

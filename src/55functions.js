@@ -7,7 +7,7 @@
 */
 
 yy.FuncValue = function(params){ return yy.extend(this, params); }
-yy.FuncValue.prototype.toString = function() {
+yy.FuncValue.prototype.toString = function(dontas) {
 	var s = '';
     
     if(alasql.fn[this.funcid]) s += this.funcid;
@@ -21,7 +21,7 @@ yy.FuncValue.prototype.toString = function() {
 		}).join(',');
 	};
 	s += ')';
-	if(this.as) s += ' AS '+this.as.toString();
+	if(this.as && !dontas) s += ' AS '+this.as.toString();
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 }
