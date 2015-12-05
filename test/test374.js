@@ -6,7 +6,7 @@ if(typeof exports === 'object') {
 describe('374. Miscellaneous functions tests', function() {
     it("1. ", function(done) {
 
-        var tests = `
+        var tests = (function(){/*
 SELECT(CEIL(17.36)) -- 18
 SELECT CEIL(-17.36) --  -17
 SELECT CEILING(12.9273) -- 13
@@ -120,7 +120,8 @@ SELECT ROUND(@val, 10) -- 0.1234567891
 SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
 
-`;
+*/}).toString().substr(14);
+    tests = tests.substr(0,tests.length-3);
 
         success = true;
         tests.split('\n').forEach(function(test){
