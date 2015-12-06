@@ -4,13 +4,19 @@ if(typeof exports === 'object') {
 	var argv = require('yargs').argv || {};
 };
 
+
+
+describe('374. CEILING, FLOOR, ROUND tests:', function() {
+    
+
+// to output all including skipped tests please run: mocha ./test/test374.js --forceall
+
 var runAll;
 if(argv.forceall){
 	runAll = it;
 }
 
-describe('374. CEILING, FLOOR, ROUND tests:', function() {
-    
+
 
         var tests = (function(){/*
 SELECT(CEIL(17.36)) -- 18
@@ -133,6 +139,7 @@ tests	.substr(0,tests.length-3)
 		.trim()
 		.split('\n')
 		.forEach(function(test){
+			test = test.trim();
             if(test.indexOf('--')>-1) { 
                 var runFn = it;
                 
