@@ -18,6 +18,7 @@
 * Fix: SELECT can use functions from GROUP BY list
 * Fix: Bug in NUMERIC type conversion
 * Added: functions CEIL/CEILING and FLOOR
+* Added: CONCAT to the list of standard functions
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:

@@ -10923,6 +10923,11 @@ var stdfn = alasql.stdfn = {}
 
 stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
 stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
+
+stdfn.CONCAT = function(){
+	return Array.prototype.slice.call(arguments).join(' ');
+};
+
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
 		return  '(('+a+')?('+b+'):('+c+'))';
