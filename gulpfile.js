@@ -20,6 +20,7 @@ var uglify = require('gulp-uglify');
 var shell = require('gulp-shell');
 var rename = require('gulp-rename');
 var dereserve = require('gulp-dereserve');
+var argv = require('yargs').argv || {};
 
 
 gulp.task('js-merge-worker', function () {
@@ -150,6 +151,7 @@ gulp.task('jison-compile', function () {
     ]));
 });
 
+/*
 gulp.task('jison-compile-fast', function () {
   return gulp.src('./src/alasqlparser.jison', {read: false})
     .pipe(shell([
@@ -159,7 +161,7 @@ gulp.task('jison-compile-fast', function () {
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
 });
-
+*/
 
 /** @todo Replace UglifyJS with Closure */
 gulp.task('uglify', function () {
@@ -174,11 +176,12 @@ gulp.task('uglify', function () {
     ]));
 });
 
+/*
 gulp.task('copy-dist', function(){
-//  gulp.src(['./dist/alasql.js'/*,'./alasql.js.map'*/])
+//  gulp.src(['./dist/alasql.js'/*,'./alasql.js.map'* /])
 //    .pipe(gulp.dest('./'));
 });
-
+*/
 
 
 gulp.task('copy-dist-org', function(){
@@ -252,13 +255,17 @@ gulp.task('plugin-prolog', function(){
 // });
 
 
-// Главная задача
-gulp.task('default', [
-                       /*
-			'jison-compile',  // 'jison-lex-compile', //*/
-                       'js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' ], function(){});
+var toRun = ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' ];
 
-gulp.task('watch', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' /*, 'jison-compile', 'jison-lex-compile' */], function(){
+if(argv.jison){
+    //toRun.unshift('jison-compile'); 
+    toRun = ['jison-compile']; 
+}
+                       
+// Главная задача
+gulp.task('default', toRun, function(){});
+
+gulp.task('watch', toRun, function(){
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
@@ -285,7 +292,7 @@ gulp.task('watch', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plug
 });
 
 gulp.task('fast', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], function(){
-  gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile-fast'); });
+  gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
 });
 

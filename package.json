@@ -16,6 +16,7 @@
     "test": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha . --reporter dot",
     "test:only": "cd test && ../node_modules/.bin/mocha . --reporter dot",
     "build": "./node_modules/.bin/gulp",
+    "build:jison": "./node_modules/.bin/gulp --jison && ./node_modules/.bin/gulp",
     "build:watch": "./node_modules/.bin/gulp watch",
     "bump": "./node_modules/.bin/mversion --no-prefix",
     "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
