@@ -6,6 +6,7 @@
 * Fix: Bug in NUMERIC type conversion
 * Added: functions CEIL/CEILING and FLOOR
 * Added: CONCAT to the list of standard functions
+* Fix: Bug with primary key after DELETE all
 
 
 ### 0.2.1 "Rodos" (28.09.2015)
