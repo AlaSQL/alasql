@@ -13478,6 +13478,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 			//table.deleteall();
 			// Delete all records from the array
 			db.tables[tableid].data.length = 0;
+			db.dbversion++;
 
 			if(alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
