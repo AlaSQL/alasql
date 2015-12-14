@@ -291,7 +291,7 @@ alasql.ZipWriter = function () {
 				entry.csize = entry.size = entry.crc32 = 0;
 
 				data = entry.data = entry.data ? entry.data : new Buffer(0);
-
+/*/*
 				// if (entry.file) {
 				// 	var stats = fs.statSync(entry.file);
 				// 	entry.mtime = stats.mtime;
@@ -300,8 +300,9 @@ alasql.ZipWriter = function () {
 				// 		data = fs.readFileSync(entry.file);
 				// 	}
 				// } else {
+*/
 					entry.mtime = new Date();
-				// }
+//				// }
 
 				if (entry.isFile !== false) {
 					entry.crc32 = calculateCrc32(data);
@@ -326,12 +327,13 @@ alasql.ZipWriter = function () {
 
 		deflateNext();
 	};
-
+/*/*
 	// this.saveAs = function(filePath, callback) {
 	// 	this.toBuffer(function(buf) {
 	// 		fs.writeFile(filePath, buf, callback);
 	// 	});
 	// };
+*/
 }
 
-//module.exports.ZipWriter = ZipWriter;
+//  module.exports.ZipWriter = ZipWriter;

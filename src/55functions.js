@@ -38,7 +38,7 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	return res;
 }
 
-
+/*/*
 //yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 //	if(this.reduced) return returnTrue();
@@ -51,6 +51,8 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 // 	if(this.reduced) return returnTrue();
 // 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 // };
+
+*/
 
 yy.FuncValue.prototype.findAggregator = function(query) {
 	if(this.args && this.args.length > 0) {
@@ -102,6 +104,7 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 	return s;
 }
 
+/*/*
 // // Functions compiler
 // nodes.FunctionValue.prototype.toJS = function (context, tableid) {
 // 	var s = '';
@@ -111,7 +114,9 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 // 	}));
 // 	return s;
 // };
+*/
 
+/*/*
 // 
 // SQL FUNCTIONS COMPILERS
 // Based on SQLite functions
@@ -120,6 +125,7 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 
 //alasql.fn = {}; // Keep for compatibility
 //alasql.userlib = alasql.fn; 
+*/
 
 var stdlib = alasql.stdlib = {}
 var stdfn = alasql.stdfn = {}

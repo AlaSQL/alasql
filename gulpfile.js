@@ -136,6 +136,10 @@ gulp.task('js-merge', function () {
     './src/99worker.js'
     ])
     .pipe(concat('alasql.js'))
+    .pipe(replace(/\/\*\/\*[\S\s]+?\*\//g, ''))         // Remove multiline comments starting with "/*/*" 
+    .pipe(replace(/^\/\/[ \t]{2,}.*/gm, ''))            // Remove single line comments where the // part is first thing and content does not follow imidiatly (probably a "just test" line) 
+    .pipe(replace(/\/\/.*?console\.log\(.*/gm, ''))     // Remove single line comments 'console.log(' is part of the line 
+    .pipe(replace(/\n[\s]+\n/g, "\n\n"))                // Collaps multilinebreak 
     .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version))  // Please set version in package.json file
     .pipe(gulp.dest('./dist'))
     .pipe(dereserve())
@@ -171,6 +175,8 @@ gulp.task('jison-compile-fast', function () {
 */
 
 /** @todo Replace UglifyJS with Closure */
+
+/*
 gulp.task('uglify', function () {
   return gulp.src('dist/alasql.js', {read: false})
     .pipe(shell([
@@ -182,6 +188,7 @@ gulp.task('uglify', function () {
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
     ]));
 });
+*/
 
 /*
 gulp.task('copy-dist', function(){

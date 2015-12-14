@@ -26,7 +26,7 @@ alasql.pretty = function(sql, flag) {
 	return s;
 };
 
-/**
+/*/*
  Pretty keyword
  @param {string} s Keyword
  @return {string} pretty keyword

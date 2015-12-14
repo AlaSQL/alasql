@@ -80,7 +80,7 @@ console.log(arguments);
 		}
 	}
 
-/*	var request1 = IDB.getDatabaseNames();
+/*/*	var request1 = IDB.getDatabaseNames();
 	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(dblist.contains(ixdbid)){
@@ -91,9 +91,10 @@ console.log(arguments);
 				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
 			}
 		};
+
+	};
+	 }
 */
-/*	};
-*/	// }
 };
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
@@ -199,7 +200,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 			for(var i=0;i<tblist.length;i++){
 				db.tables[tblist[i]] = {};
 			};
-
+/*/*
 		// if(!alasql.options.autocommit) {
 		// if(db.tables){
 		// 	for(var tbid in db.tables) {
@@ -207,6 +208,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 		// 	}
 		// 	}
 		// }
+*/
 			event.target.result.close();		
 			cb(1);
 		};
@@ -308,6 +310,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 	};
 }
 
+/*/*
 // IDB.intoTable = function(databaseid, tableid, value, cb) {
 // //	console.log('intoTable',databaseid, tableid, value, cb);
 // 	var ixdbid = alasql.databases[databaseid].ixdbid;
@@ -338,6 +341,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 // 	// if(cb) cb(res);
 // 	// return res;
 // };
+*/
 
 IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 	// console.log(arguments);
@@ -361,7 +365,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 			cb(ilen);
 		}
 	};
-
+/*/*
 	// var tb = LS.get(lsdbid+'.'+tableid);
 	// if(!tb) tb = [];
 	// tb = tb.concat(value);
@@ -370,6 +374,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 //	console.log(localStorage[lsdbid+'.'+tableid]);
 	// if(cb) cb(res);
 	// return res;
+*/
 };
 
 

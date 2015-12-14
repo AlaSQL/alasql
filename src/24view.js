@@ -17,6 +17,7 @@ var View = alasql.View = function(params){
 	extend(this,params);
 };
 
+/*/*
 // View = function(){
 // 	this.data = [];
 // 	this.columns = [];
@@ -26,5 +27,5 @@ var View = alasql.View = function(params){
 // };
 
 // alasql.View = View;
-
+*/
 

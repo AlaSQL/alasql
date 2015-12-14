@@ -259,7 +259,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 						} else if (typeid == 'date') {
 							typestyle = 'mso-number-format:\"Short Date\";'; 
 						} else {
-							// FOr other types is saved
+							// For other types is saved
 							if( opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
 								typestyle = opts.types[typeid].typestyle;
 							} 
@@ -270,10 +270,11 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 
 
 			    		s3 += '<Cell ';
+/*/*
 if(false) {
 						s += "<td style='" + typestyle+"' " ;	
 }			    		
-
+*/
 						// Row style fromdefault sheet
 						var st = {};
 						if(typeof cell.style != 'undefined') {

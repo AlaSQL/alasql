@@ -45,7 +45,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 //		try {
 //		console.log(this, 22, this.where.toJS('r',''));
-//	} catch(err){console.log(444,err)};
+//	 } catch(err){console.log(444,err)};
 //		var query = {};
 //console.log(this.where.toJS('r',''));
 		wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJS('r','')+')').bind(this);
@@ -85,7 +85,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 			if(cb) cb(res);
 			return res;
 		});
-// .bind(query);
+//  .bind(query);
 
 // 		if(!this.queries) return;
 // 			query.queriesfn = this.queries.map(function(q) {

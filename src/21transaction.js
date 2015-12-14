@@ -77,7 +77,7 @@ Transaction.prototype.exec = function(sql, params, cb) {
 
 Transaction.prototype.executeSQL = Transaction.prototype.exec;
 
-/*
+/*/*
 Transaction.prototype.query = Database.prototype.exec;
 Transaction.prototype.run = Database.prototype.exec;
 Transaction.prototype.queryArray = function(sql, params, cb) {

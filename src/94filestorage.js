@@ -7,7 +7,7 @@
 
 var FS = alasql.engines.FILESTORAGE = alasql.engines.FILE = function (){};
 
-/*
+/*/*
 FS.get = function(key) {
 	var s = localStorage.getItem(key);
 	if(typeof s == "undefined") return;
@@ -105,7 +105,7 @@ FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 	return res;
 };
 
-/*
+/*/*
 FS.showDatabases = function(like, cb) {
 	var res = [];
 	var ls = LS.get('alasql');
@@ -269,8 +269,8 @@ FS.rollback = function(databaseid, cb) {
 		},100);		
 	};
 
-//	if(!alasql.options.autocommit) {
-/*		if(lsdb.tables){
+//	 if(!alasql.options.autocommit) {
+/*/*		if(lsdb.tables){
 			for(var tbid in lsdb.tables) {
 				var tb = new alasql.Table({columns: db.tables[tbid].columns});
 				extend(tb,lsdb.tables[tbid]);

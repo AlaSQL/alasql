@@ -34,7 +34,7 @@ alasql.utils.uncomment = function uncomment(str) {
 			if (str[i] === quoteSign && unescaped){
 				quote = false;
 			}
-		// } else if (regularExpression) {
+/*/* 		// } else if (regularExpression) {
 			// Make sure '/'' inside character classes is not considered the end
 			// of the regular expression.
 			// if (str[i] === '[' && unescaped) {
@@ -43,7 +43,8 @@ alasql.utils.uncomment = function uncomment(str) {
 			// 	characterClass = false;
 			// } else if (str[i] === '/' && unescaped && !characterClass) {
 			// 	regularExpression = false;
-			// }
+			// } 
+*/
 		} else if (blockComment) {
 			// Is the block comment closing?
 			if (str[i] === '*' && str[i + 1] === '/') {
@@ -80,7 +81,7 @@ alasql.utils.uncomment = function uncomment(str) {
 					str[i] = '';
 					blockComment = true;
 //					console.log('block');
-				// } else if (str[i + 1] === '/') {
+/*/*			// } else if (str[i + 1] === '/') {
 				// 	str[i] = '';
 				// 	lineComment = true;
 				// } else {
@@ -94,13 +95,14 @@ alasql.utils.uncomment = function uncomment(str) {
 					// 	regularExpression = true;
 					// }
 				// }
+*/
 			}
 		}
 	}
 	// Remove padding again.
 	str = str.join('').slice(2, -2);
 
-/*
+/*/*
 	// Strip empty lines that contain only white space and line breaks, as they
 	// are left-overs from comment removal.
 	str = str.replace(/^[ \t]+(\r\n|\n|\r)/gm, function(all) {

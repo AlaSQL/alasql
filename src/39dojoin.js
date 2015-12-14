@@ -56,8 +56,9 @@ function doJoin (query, scope, h) {
 
 //		if(source.joinmode == "LEFT" || source.joinmode == "INNER" || source.joinmode == "RIGHT"
 //			|| source.joinmode == "OUTER" || source.joinmode == "SEMI") {
+		// Todo: check if this is smart
 		if(true) {//source.joinmode != "ANTI") {
-
+/*/*
 			// if(nextsource && nextsource.joinmode == "RIGHT") {
 			// 	if(!nextsource.rightdata) {
 			// 		console.log("ok");
@@ -65,7 +66,7 @@ function doJoin (query, scope, h) {
 			// 		console.log(nextsource.data.length, nextsource.rightdata);
 			// 	}
 			// }
-
+*/
 			var tableid = source.alias || source.tableid; 
 			var pass = false; // For LEFT JOIN
 			var data = source.data;
@@ -172,7 +173,7 @@ function doJoin (query, scope, h) {
 
 		scope[tableid] = undefined;
 
-/*
+/*/*
 		if(h+1 < query.sources.length) {
 			var nextsource = query.sources[h+1];
 

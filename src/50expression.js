@@ -172,9 +172,9 @@ yy.Join.prototype.toString = function() {
 	return s;
 };
 
-//yy.Join.prototype.toJS = function(context, tableid) {
-//	return 'JOIN'+this.table.toString();
-//}
+//  yy.Join.prototype.toJS = function(context, tableid) {
+//  	return 'JOIN'+this.table.toString();
+// }
 
 /**
 	Table class
@@ -422,7 +422,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	')'		
 				+ ')';		
 
-/*
+/*/*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 
 			return '(('+this.right.left.toJS(context,tableid, defcols)+'<='+leftJS()+')&&'+
@@ -724,7 +724,7 @@ yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
 };
 
 
-
+/*/*
 // yy.Star = function (params) { return yy.extend(this, params); }
 // yy.Star.prototype.toString = function() {
 // 	var s = this.fieldid;
@@ -737,7 +737,7 @@ yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
 // 	if(this.alias) s += ' AS '+this.alias;
 // 	return s;
 // }
-
+*/
 yy.Column = function(params) { return yy.extend(this, params); }
 yy.Column.prototype.toString = function(dontas) {
 	var s;
@@ -761,6 +761,7 @@ yy.Column.prototype.toString = function(dontas) {
 };
 
 yy.Column.prototype.toJS = function(context, tableid, defcols) {
+/*/*
 //	var s = this.value;
 // 	var s = this.columnid;
 // 	if(this.tableid) {
@@ -771,6 +772,7 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 // 	} else {
 // 		s = tableid+'.'+s;
 // 	}
+*/
 //console.log('yy.Column',this, tableid);
 //	console.log(392,this.columnid);
 
@@ -882,7 +884,7 @@ yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log('findAgg',this);
 
 
-/*	var found = false;
+/*/*	var found = false;
 	for(var i=0;i<query.columns.length;i++) {
 		// THis part should be intellectual
 		if(query.columns[i].as == colas) {
@@ -891,12 +893,12 @@ yy.AggrValue.prototype.findAggregator = function (query){
 		}
 	}
 */	
-//	if(!query.selectColumns[colas]) {
-//	}
+//		if(!query.selectColumns[colas]) {
+//		}
 
 	var found = false;
 
-/*	
+/*/*	
 	for(var i=0;i<query.selectGroup.length;i++){
 		if(query.selectGroup[i].nick==colas) {
 			colas = colas+':'+i;
@@ -925,7 +927,7 @@ yy.AggrValue.prototype.findAggregator = function (query){
 //	console.log(query.selectGroup);
 
 
-////	this.reduced = true;
+//		this.reduced = true;
 	return;
 };
 
@@ -947,6 +949,7 @@ yy.AggrValue.prototype.toType = function() {
 
 
 yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
+/*/*
 //	var s = 'alasql.functions.'+this.funcid+'(';
 //	if(this.expression) s += this.expression.toJS(context, tableid);
 //	s += ')';
@@ -955,6 +958,7 @@ yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
 //	var s = ''; 
 //if(this.as) console.log(499,this.as);
 //	var colas = this.as;
+*/
 	var colas = this.nick;
 	if(colas === undefined){ 
 		colas = this.toString();
@@ -965,7 +969,7 @@ yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
 
 yy.OrderExpression = function(params){ return yy.extend(this, params); }
 yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString
-/* //Duplicated code
+/*/* //Duplicated code
 
 function() {
 	var s = this.expression.toString();
@@ -980,7 +984,7 @@ yy.GroupExpression.prototype.toString = function() {
 }
 
 
-/* //Duplicated code
+/*/* //Duplicated code
 yy.ColumnDef = function (params) { return yy.extend(this, params); }
 yy.ColumnDef.prototype.toString = function() {
 	var s =  this.columnid;

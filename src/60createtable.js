@@ -195,7 +195,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return true;
 				};
 				table.checkfn.push(fkfn);
-/*				var uk = {};
+/*/*				var uk = {};
 				if(typeof table.uk == 'undefined') table.uk = [];
 				table.uk.push(uk);
 				uk.columns = [col.columnid];
@@ -295,13 +295,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		var table = this;
 
 		var toreplace = false; // For INSERT OR REPLACE
-
+/*
 		// IDENTINY or AUTO_INCREMENT
 		// if(table.identities && table.identities.length>0) {
 		// 	table.identities.forEach(function(ident){
 		// 		r[ident.columnid] = ident.value;
 		// 	});
 		// }
+*/
 //console.log(262,r);
 //console.log(263,table.identities)
 		for(var columnid in table.identities){

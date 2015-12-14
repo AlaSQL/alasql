@@ -59,8 +59,8 @@ yy.Select.prototype.compileOrder = function (query) {
 //				s += 'if(a'+dg+'==b'+dg+'){';
 //			} else {
 			// TODO Add date comparision
-				// s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
-				// s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
+//				// s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
+//				// s += 'if(a[\''+columnid+"']"+dg+'==b[\''+columnid+"']"+dg+'){';
 //			}
 			sk += '}';
 		});

@@ -184,13 +184,14 @@ yy.Select.prototype.compileJoins = function(query) {
 			};
 			// source.data = ;
 
-/*
+/*/*
 			var jnparam = jn.param.param;
 			source.datafn = new Function('query,params,cb,idx',
 				"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)res=cb(res, idx, query);return res");
 */
 
 			var s = "var res=alasql.from['"+js.funcid.toUpperCase()+"'](";
+/*/*
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
 			// 		return arg.toJS();
@@ -201,6 +202,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			// 		return arg.toJS();
 			// 	}).concat().join(',');
 			// }
+*/
 			if(jn.args && jn.args.length>0) {
 				if(jn.args[0]) {
 					s += jn.args[0].toJS('query.oldscope')+',';
@@ -222,7 +224,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			query.aliases[source.alias] = {type:'funcvalue'};
 		}
-/*
+/*/*
 		} else if(tq instanceof yy.Select) {
 			query.aliases[alias] = {type:'subquery'};
 		} else if(tq instanceof yy.ParamValue) {
@@ -289,11 +291,12 @@ yy.Select.prototype.compileJoins = function(query) {
 			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
 //				console.log('ix optimization', jn.on.toJS('p',query.defaultTableid) );
 				source.optimization = 'ix';
+/*/*
 			// 	source.onleftfns = jn.on.left.toJS('p',query.defaultTableid);
 			// 	source.onleftfn = new Function('p', 'return '+source.onleftfns);
 			// 	source.onrightfns = jn.on.right.toJS('p',query.defaultTableid);
 			// 	source.onrightfn = new Function('p', 'return '+source.onrightfns);
-
+*/
 				var lefts = '';
 				var rights = '';
 				var middles = '';
@@ -369,7 +372,7 @@ yy.Select.prototype.compileJoins = function(query) {
 //		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
 //console.log(source, jn);
 		// TODO SubQueries
-/*		if(source.joinmode == 'RIGHT') {
+/*/*		if(source.joinmode == 'RIGHT') {
 			var prevSource = query.sources.pop();
 			if(prevSource.joinmode == 'INNER') {
 				prevSource.joinmode = 'LEFT';

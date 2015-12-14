@@ -357,11 +357,12 @@ function queryfn3(query) {
 
 	}
 //	console.log(query.intoallfns);
-
+/*/*
 	// if(query.explain) {
 	// 	if(query.cb) query.cb(query.explaination,query.A, query.B);
 	// 	return query.explaination;
 	// } else 
+*/
 //console.log(190,query.intofns);
 	if(query.intoallfn) {
 //		console.log(161);

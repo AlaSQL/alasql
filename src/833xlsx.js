@@ -185,16 +185,16 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				}
 
 				/* the saveAs call downloads a file on the local machine */
-		//		saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
-		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
-		//		saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
+//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
+//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
+//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
 				if(isIE() == 9) {
 					throw new Error('Cannot save XLSX files in IE9. Please use XLS() export function');
 //					var URI = 'data:text/plain;charset=utf-8,';
 
 		/** @todo Check if this code is required */
 
-/*
+/*/*
 					var testlink = window.open("about:blank", "_blank");
 					var s = '';
 					for(var i=0,ilen=wbout.length;i<ilen;i++) {
@@ -214,13 +214,13 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			}
 
 		}
-
+/*/*
 		// data.forEach(function(d){
 		// 	s += columns.map(function(col){
 		// 		return d[col.columnid];
 		// 	}).join(opts.separator)+'\n';	
 		// });
 		// alasql.utils.saveFile(filename,s);
-
+*/
 	};
 };

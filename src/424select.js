@@ -327,7 +327,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			}
 			query.groupColumns[colas]=col.nick;
 
-/*			if(typeof colas == 'undefined') {
+/*/*			if(typeof colas == 'undefined') {
 				if(col instanceof yy.Column) {
 					colas = col.columnid;
 				} else {
@@ -344,18 +344,18 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 */
 //			if(col.as) {
 			s += 'r[\''+colas+'\']=';
-			// } else {
-			// 	s += 'r[\''+escapeq()+'\']=';
-			// };
-			// s += ';';
+//			// } else {
+//			// 	s += 'r[\''+escapeq()+'\']=';
+//			// };
+//			// s += ';';
 //			console.log(col);//,col.toJS('g',''));
 
 
  			s += n2u(col.toJS('g',''))+';';				
-/*
+/*/*
 			s += 'g[\''+col.nick+'\'];';
 
-*/
+* /
 			// if(col instanceof yy.Column) {
 			// 	s += 'g[\''+col.columnid+'\'];';
 			// } else {
@@ -374,6 +374,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 //				console.log(s);
 			// }
 //			s += col.toJS('g','')+';';
+*/
 //console.log(colas,query.removeKeys);
 			for(var i=0;i<query.removeKeys.length;i++) {
 				// THis part should be intellectual

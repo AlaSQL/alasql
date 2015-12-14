@@ -279,7 +279,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		}
 	}
 
-/*
+/*/*
 if(false) {
 		res = data.split(/\r?\n/);
 		if(opt.headers) {

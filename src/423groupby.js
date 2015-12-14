@@ -44,7 +44,7 @@ yy.Select.prototype.compileGroup = function(query) {
 //console.log(allgroups);
 //		console.log(42,364,query.selectColumns)
 
-/*
+/*/*
 if(false) {
 	allgroups.forEach(function(col2){
 //		console.log(42,365,colid, query.selectColumns[colid])
@@ -191,7 +191,7 @@ if(false) {
 
 
 
-
+/*/*
 		// columnid:r.columnid
 	//	var srg = [];//rg.map(function(fn){ return (fn+':'+fn); });
 
@@ -219,9 +219,9 @@ if(false) {
 
 		});
 
-	*/
+	
 
-	/*****************/
+	/***************** /
 
 	//	s += srg.join(',');
 
@@ -231,12 +231,13 @@ if(false) {
 		// });
 		// s += ss.join(',');
 	//	s += '});};';
-
+*/
 		s += '}'+aft+',g));} else {';
+
 	//	console.log(s, this.columns);
 
 
-
+/*
 	// var neggroup = arrayDiff(allgroups,agroup);
 
 	// console.log(agroup,neggroup);
@@ -244,7 +245,7 @@ if(false) {
 	// s += neggroup.map(function(columnid){
 	// 	return "g['"+columnid+"']=null;";
 	// }).join('');
-
+*/
 	// console.log(s);
 
 
@@ -252,10 +253,12 @@ if(false) {
 //		s += self.columns.map(function(col){
 		s += query.selectGroup.map(function(col){
 			var colas = col.nick;
+/*/*
 			// if(typeof colas == 'undefined') {
 			// 	if(col instanceof yy.Column) colas = col.columnid;
 			// 	else colas = col.toString();
 			// }
+*/
 			var colexp = col.expression.toJS("p",tableid,defcols);
 
 			if (col instanceof yy.AggrValue) { 
@@ -318,20 +321,20 @@ if(false) {
 		}).join('');
 
 
-	//	s += selectFields.map(function(f){
-	//			console.log(f);
-	//			if(f.constructor.name == 'LiteralValue') return '';
-	//			if (f.field instanceof SQLParser.nodes.FunctionValue 
-	//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
-	//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
-	//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJS(); 	
-	//			};
-	//			return '';
-	//		}).join('');
+//		s += selectFields.map(function(f){
+//			console.log(f);
+//			if(f.constructor.name == 'LiteralValue') return '';
+//			if (f.field instanceof SQLParser.nodes.FunctionValue 
+//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
+//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJS(); 	
+//			};
+//			return '';
+//		}).join('');
 
-		//s += '	group.amt += rec.emplid;';
-		//s += 'group.count++;';
+//		s += '	group.amt += rec.emplid;';
+//		s += 'group.count++;';
 		s += '}';
 
 	});

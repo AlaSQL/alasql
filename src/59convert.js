@@ -27,7 +27,7 @@ yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 		+',{dbtypeid:"'+this.dbtypeid+'",dbsize:'+this.dbsize+',style:'+
 		this.style+'})';		
 //	}
-/*
+/*/*
 	if(this.dbtypeid == 'INT') {
 		return '(('+this.expression.toJS(context, tableid, defcols)+')|0)';
 	} if(this.dbtypeid == 'STRING') {

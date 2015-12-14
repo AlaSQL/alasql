@@ -122,7 +122,7 @@ function decartes(gv,query) {
 		 		}); 	
 //				res = res.concat(gv[t]);
 			};
-
+/*/*
 			// switch(gv[t].t) {
 			// 	case 'plain': 
 			// 		res = res.map(function(r){return r.concat(gv[t].p)}); 
@@ -133,6 +133,7 @@ function decartes(gv,query) {
 			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break; 
 			// 	default: res = res.concat(gv[t]);
 			// }
+*/
 		};
 		return res;
 	} else if(gv instanceof yy.FuncValue) {
@@ -151,7 +152,7 @@ function decartes(gv,query) {
 //			throw new Error('Single argument in the group without array');			
 	};
 
-
+/*/*
 		// switch(gv.t) {
 		// 	case 'plain': return gv.p; break;
 		// 	case 'rollup': return rollup(gv.p); break; 
@@ -160,6 +161,7 @@ function decartes(gv,query) {
 		// 	default: return [gv];//return decartes(gv.p);
 		// }
 		// return gv;
+*/
 };
 
 

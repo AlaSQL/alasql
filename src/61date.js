@@ -60,11 +60,11 @@ stdfn.GETDATE = stdfn.NOW;
 stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
 
 
-// stdfn.GETDATE = function(){
-// 	var d = new Date();
-// 	var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
-// 	return s;	
-// }
+// 	stdfn.GETDATE = function(){
+// 		var d = new Date();
+// 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
+// 		return s;	
+// 	}
 
 
 stdfn.SECOND = function(d){

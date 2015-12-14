@@ -24,7 +24,7 @@ var Table = alasql.Table = function(params){
 	extend(this,params);
 };
 
-
+/*/*
 // View = function(){
 // 	this.data = [];
 // 	this.columns = [];
@@ -34,6 +34,7 @@ var Table = alasql.Table = function(params){
 // };
 
 // alasql.View = View;
+*/
 
 Table.prototype.indexColumns = function() {
 	var self = this;

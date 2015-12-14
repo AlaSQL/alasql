@@ -82,12 +82,14 @@ yy.Select.prototype.compileFrom = function(query) {
 //				console.log('here');
 //				console.log(420,72,alasql.databases[source.databaseid].tables[source.tableid]);
 				source.datafn = function(query,params,cb,idx, alasql) {
+/*
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');
 				// if(!query.database.tables) console.log('query');
 				// if(!source.tableid) console.log('query');
 				// if(!query.database.tables[source.tableid]) console.log(query);
 				// if(!query.database.tables[source.tableid].data) console.log('query');
+*/
 					var res = alasql.databases[source.databaseid].tables[source.tableid].data;
 //				console.log(500,res);
 					if(cb) res = cb(res,idx,query);
@@ -122,6 +124,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 			 source.subsearch = tq;
 			 source.columns = [];
+/*/*
 			 //.compile(query.database.databaseid);
 			// if(typeof source.subquery.query.modifier == 'undefined') {
 			// 	source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
@@ -129,7 +132,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			// source.columns = source.subquery.query.columns;
 //			console.log(101,source.columns);
 //			tq.columns;
-
+*/
 			source.datafn = function(query, params, cb, idx, alasql) {
 //				return source.subquery(query.params, cb, idx, query);
 				var res;
@@ -164,6 +167,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			source.datafn = new Function('query,params,cb,idx,alasql',ps);
 		} else if(tq instanceof yy.FuncValue) {
 			var s = "var res=alasql.from['"+tq.funcid.toUpperCase()+"'](";
+/*/*
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
 			// 		return arg.toJS();
@@ -174,6 +178,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			// 		return arg.toJS();
 			// 	}).concat().join(',');
 			// }
+*/
 			if(tq.args && tq.args.length>0) {
 				if(tq.args[0]) {
 					s += tq.args[0].toJS('query.oldscope')+',';

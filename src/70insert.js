@@ -21,7 +21,7 @@ yy.Insert.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
 //	return this.expression.toJS(context, tableid, defcols);
-// console.log('Select.toJS', 81, this.queriesidx);
+//  console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
@@ -77,12 +77,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
 //console.log(db.tables, tableid, table);
-		//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
-		//			console.log(rec[f.name.value]);
-		//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
+//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
+//			console.log(rec[f.name.value]);
+//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
 
-		//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
-		//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
+//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
+//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
 					var q = "'"+col.columnid +'\':';
 					if(table.xcolumns && table.xcolumns[col.columnid]) { 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
@@ -121,7 +121,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 						} else { 
 							q += values[idx].toJS();
 						}
-
+/*/*
 						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
 						 //  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
 							// table.xcolumns[col.columnid].dbtypeid == "DATETIME"
@@ -137,8 +137,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 //						q += val;
 
 						// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
+*/						
 						ss.push(q);
-
+/*/*
 			//			console.log(fld);
 						// TODO: type checking and conversions
 			//			rec[fld.fldid] = eval(self.insertExpression[idx].toJS('',''));
@@ -148,6 +149,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			//			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
 			//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
 			//				rec[fld.fldid] = +rec[fld.fldid];
+*/
 					});
 				} else {
 //					console.log(222,values);

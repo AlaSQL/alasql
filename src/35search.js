@@ -19,7 +19,7 @@ function doSearch(databaseid, params, cb) {
 
 	function processSelector(selectors,sidx,value) {
 //		var val;
-/*		if(sidx == 0) {
+/*/*		if(sidx == 0) {
 			if(selectors.length > 0 && selectors[0].srchid == 'SHARP') {
 				val = alasql.databases[alasql.useid].objects[selectors[0].args[0]];
 				return processSelector(selectors,sidx+1,val);
@@ -251,6 +251,7 @@ function doSearch(databaseid, params, cb) {
 					// var nests = processSelector(sel.sels,0,value).slice();
 				if(lmax > 0) {
 					var nests = [{value:value,lvl:1}];
+/*/*
 						// if(lvl >= lmin) {
 						// 	if(sidx+1+1 > selectors.length) {
 						// 		retval = retval.concat(nests);
@@ -258,6 +259,7 @@ function doSearch(databaseid, params, cb) {
 						// 		retval = retval.concat(processSelector(selectors,sidx+1,value));
 						// 	}						
 						// }
+*/
 	//console.log(371,nests);
 					var i = 0;
 					while (nests.length > 0) {
@@ -321,7 +323,7 @@ function doSearch(databaseid, params, cb) {
 					alasql.vars[sel.args[0]] = oldv;
 					return r1;
 				}
-/*
+/*/*
 
 alasql.srch.TO = function(val,args) {
   console.log(args[0]);
@@ -532,11 +534,13 @@ alasql.srch.TO = function(val,args) {
 				if(nest.length===0) {
 					return [];
 				} else {
+					/*/* 
 					// if(sidx+1+1 > selectors.length) {
 					// 	return [nest];
 					// } else {
 					// 	return processSelector(selectors,sidx+1,nest);
-					// }
+					// } 
+					*/
 					var r = {status:1,values:nest};
 				}
 			} else if(sel.selid === 'ROOT') {

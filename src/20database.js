@@ -68,7 +68,7 @@ Database.prototype.resetSqlCache = function () {
 }
 
 
-// // Main SQL function
+// Main SQL function
 
 /**
     Run SQL statement on database
@@ -82,7 +82,7 @@ Database.prototype.exec = function(sql, params, cb) {
 };
 
 
-
+/*/*
 // 	// Compile
 // 	var statement = this.compile(sql);
 // 	// Run
@@ -102,10 +102,10 @@ Database.prototype.exec = function(sql, params, cb) {
 // 		alasql.dexec(this.databaseid,sql,params,resolve);
 // 	});
 // };
-
+*/
 
 // Aliases like MS SQL
-/*
+/*/*
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
 Database.prototype.queryArray = function(sql, params, cb) {
@@ -136,6 +136,8 @@ Database.prototype.compile = function(sql, kind) {
 };
 
 */
+
+/*/*
 // 	var self = this;
 // 	var hh = hash(sql);
 
@@ -163,6 +165,6 @@ Database.prototype.compile = function(sql, kind) {
 
 
 // Added for compatibility with WebSQL
-
+*/
 
 
