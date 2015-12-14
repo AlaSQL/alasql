@@ -17,10 +17,19 @@
 \[([^\]])*?\]							return 'BRALITERAL'
 \`([^\`])*?\`	   						return 'BRALITERAL'
 
+
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+              return 'STRING'
+
+/* 
+N(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
+X(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
+(['](\\.|[^']|\'\')*?['])+              return 'STRING'
+(["](\\.|[^"]|\"\")*?["])+              return 'STRING'
+*/
+
 
 "--"(.*?)($|\r\n|\r|\n)							return /* return COMMENT */
 

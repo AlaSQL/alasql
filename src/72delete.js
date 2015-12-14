@@ -105,6 +105,16 @@ yy.Delete.prototype.compile = function (databaseid) {
 			// Delete all records from the array
 			db.tables[tableid].data.length = 0;
 
+			// Reset PRIMARY KEY and indexes
+			for(var ix in db.tables[tableid].uniqs) {
+				db.tables[tableid].uniqs[ix] = {};
+			}
+
+			for(var ix in db.tables[tableid].indices) {
+				db.tables[tableid].indices[ix] = {};
+			}
+
+
 			if(alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
 			}

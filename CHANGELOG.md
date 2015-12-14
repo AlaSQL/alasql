@@ -1,6 +1,14 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
+### 0.2.2-pre "Mitilini" (XX.XX.20XX)
+* Fix: SELECT can use functions from GROUP BY list
+* Fix: Bug in NUMERIC type conversion
+* Added: functions CEIL/CEILING and FLOOR
+* Added: CONCAT to the list of standard functions
+* Fix: Bug with primary key after DELETE all
+
+
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag
 * Added: AlaSQL CLI: support for CLI exit code 
@@ -15,9 +23,8 @@
 * Fix: .CSV files made Excel 2013 compliant 
 * Fix: misbehavour related to 'NOT' and '=' predecession
 * Fix: alasql running from cordova on iOS
-* Fix: SELECT can use functions from GROUP BY list
-* Fix: Bug in NUMERIC type conversion
-* Added: functions CEIL/CEILING and FLOOR
+
+
 
 ## Version 0.2.0 "Athens" (13.07.2015)
 The purpose of this release were hard work on:

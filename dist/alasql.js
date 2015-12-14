@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.1 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-pre © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.1
+@version 0.2.2-pre
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -10923,6 +10923,11 @@ var stdfn = alasql.stdfn = {}
 
 stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
 stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
+
+stdfn.CONCAT = function(){
+	return Array.prototype.slice.call(arguments).join(' ');
+};
+
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
 		return  '(('+a+')?('+b+'):('+c+'))';
@@ -13473,6 +13478,16 @@ yy.Delete.prototype.compile = function (databaseid) {
 			//table.deleteall();
 			// Delete all records from the array
 			db.tables[tableid].data.length = 0;
+
+			// Reset PRIMARY KEY and indexes
+			for(var ix in db.tables[tableid].uniqs) {
+				db.tables[tableid].uniqs[ix] = {};
+			}
+
+			for(var ix in db.tables[tableid].indices) {
+				db.tables[tableid].indices[ix] = {};
+			}
+
 
 			if(alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
