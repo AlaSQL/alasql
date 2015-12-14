@@ -7,6 +7,7 @@
 
 var closure = false;
 
+var fs = require('fs');
 var gulp = require('gulp');
 module.exports = gulp;
 //var connect = require('gulp-connect');
@@ -21,6 +22,10 @@ var shell = require('gulp-shell');
 var rename = require('gulp-rename');
 var dereserve = require('gulp-dereserve');
 var argv = require('yargs').argv || {};
+var replace = require('gulp-replace');
+var packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+var version = packageData.version;
+
 
 
 gulp.task('js-merge-worker', function () {
@@ -31,6 +36,7 @@ gulp.task('js-merge-worker', function () {
     './src/99worker-finish.js', 
     ])
     .pipe(concat('alasql-worker.js'))
+    .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) 
     .pipe(gulp.dest('./dist'))
     .pipe(rename('alasql-worker.min.js'))
     .pipe(uglify())
@@ -130,6 +136,7 @@ gulp.task('js-merge', function () {
     './src/99worker.js'
     ])
     .pipe(concat('alasql.js'))
+    .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version))  // Please set version in package.json file
     .pipe(gulp.dest('./dist'))
     .pipe(dereserve())
     .pipe(rename('alasql.min.js'))
