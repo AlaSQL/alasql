@@ -19,7 +19,7 @@ yy.DropTable.prototype.toString = function() {
 
 // DROP TABLE
 /**
-	Drop tables 
+	Drop tables
 	@param {string} databaseid Database id
 	@param {object} params Parameters
 	@param {callback} cb Callback function
@@ -39,17 +39,16 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 
 		/** @todo Test with AUTOCOMMIT flag is ON */
 		/** @todo Test with IndexedDB and multiple tables */
-		
-		if(db.engineid /*&& alasql.options.autocommit*/) {
 
-			/** @todo Check with IndexedDB */
-			res += alasql.engines[db.engineid].dropTable(table.databaseid || databaseid,tableid, ifexists/*, cb*/);
-		} else if(!ifexists || ifexists && db.tables[tableid]) {
+		if(!ifexists || ifexists && db.tables[tableid]) {
 			if(!db.tables[tableid]) {
 				if(!alasql.options.dropifnotexists) {
 					throw new Error('Can not drop table \''+table.tableid+'\', because it does not exist in the database.');
 				}
 			} else {
+				if(db.engineid /*&& alasql.options.autocommit*/) {
+					res += alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists/*, cb*/);
+				}
 				delete db.tables[tableid];
 				res++;
 			}
