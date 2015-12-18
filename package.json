@@ -26,7 +26,9 @@
   "dependencies": {
     "dom-storage": "^2.0.1",
     "es6-promise": "^3.0.2",
+    "gulp-rollup": "^1.4.0",
     "lodash": "^3.10.0",
+    "rollup": "^0.21.2",
     "xlsjs": "^0.7.5",
     "xlsx": "^0.8.0"
   },
