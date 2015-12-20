@@ -154,7 +154,7 @@ stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 stdlib.LEN = stdlib.LENGTH = function(s) {return und(s,'y.length');}
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'y.toLowerCase()');}
+stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'String(y).toLowerCase()');}
 //stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 
@@ -207,7 +207,7 @@ stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
 stdlib.TRIM = function(s) {return und(s,'y.trim()');}
 
-stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'y.toUpperCase()');}
+stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'String(y).toUpperCase()');}
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
