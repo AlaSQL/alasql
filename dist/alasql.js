@@ -8074,6 +8074,9 @@ yy.Select.prototype.compilePivot = function (query) {
 		if(inlist) newcols = inlist;
 
 		var ncol = query.columns.filter(function(col){return col.columnid == exprcolid})[0];
+		if(!ncol) {
+			console.log(query.data);
+		}
 		query.columns = query.columns.filter(function(col){
 			return !(col.columnid == columnid || col.columnid == exprcolid); 
 		});
