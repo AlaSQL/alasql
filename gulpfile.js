@@ -292,12 +292,12 @@ gulp.task('watch', toRun, function(){
   //gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
 
   gulp.watch('./dist/alasql.min.js',function(){ 
-    gulp.run('copy-dist'); 
+//    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
 /*    gulp.run('copy-dist-meteor'); */
   });
   gulp.watch('./dist/alasql-worker.js',function(){ 
-    gulp.run('copy-dist'); 
+//    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
   });
 //  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });

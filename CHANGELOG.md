@@ -7,6 +7,8 @@
 * Added: functions CEIL/CEILING and FLOOR
 * Added: CONCAT to the list of standard functions
 * Fix: Bug with primary key after DELETE all
+* Fix: Added String() to UPPER() and LOWER() functions 
+* Added: PIVOT and UNPIVOT functionality
 
 
 ### 0.2.1 "Rodos" (28.09.2015)

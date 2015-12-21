@@ -9,7 +9,7 @@ AlaSQL - JavaScript SQL database
 @license
 The MIT License (MIT)
 
-Copyright © 2014-2015 Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk)
+Copyright © 2014-2015 Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk) 
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -103,7 +103,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 					columns:[new yy.Column({columnid:'*'})],
 					from: [new yy.ParamValue({param:0})]
 				});
-				select.preparams = [sql];
+				select.preparams = [sql];	
 				return select;
 		} else {
 			// Standard interface
@@ -116,15 +116,15 @@ var alasql = function alasql(sql, params, cb, scope) {
 				// to run multiline functions
 				sql = sql.toString().slice(14,-3);
 			}
-			// Run SQL
+			// Run SQL			
 			return alasql.exec(sql, params, cb, scope);
 		}
 	}
 };
 
-/**
-	Current version of alasql
- 	@constant {string}
+/** 
+	Current version of alasql 
+ 	@constant {string} 
 */
 alasql.version = '0.2.2-pre';
 
@@ -134,9 +134,9 @@ alasql.version = '0.2.2-pre';
 */
 alasql.debug = undefined; // Initial debug variable
 
-/**
+/** 
 	Get path of alasql.js
-	@function
+	@function 
 	@todo Rewrite and simplify the code. Review, is this function is required separately
 */
 function getAlaSQLPath() {
@@ -144,9 +144,9 @@ function getAlaSQLPath() {
 	alasql.path = '';
 
 	if (typeof importScripts === 'function') {
-		alasql.path = '';
+		alasql.path = '';		
 		/** @todo Check how to get path in worker */
-	} else if(typeof exports !== 'undefined') {
+	} else if(typeof exports !== 'undefined') { 
 		alasql.path = __dirname;
 
 	} else if(typeof Meteor === 'object' && Meteor.isClient) {
@@ -158,9 +158,9 @@ function getAlaSQLPath() {
 	} else if(typeof document !== 'undefined') {
 		var sc = document.getElementsByTagName('script');
 
-		for(var i=0;i<sc.length;i++) {
+		for(var i=0;i<sc.length;i++) {	
 			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-				alasql.path = sc[i].src.substr(0,sc[i].src.length-16);
+				alasql.path = sc[i].src.substr(0,sc[i].src.length-16); 
 				break;
 
 			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
@@ -168,14 +168,14 @@ function getAlaSQLPath() {
 				break;
 
 			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-				alasql.path = sc[i].src.substr(0,sc[i].src.length-9);
+				alasql.path = sc[i].src.substr(0,sc[i].src.length-9); 
 				break;
 
 			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-				alasql.path = sc[i].src.substr(0,sc[i].src.length-13);
+				alasql.path = sc[i].src.substr(0,sc[i].src.length-13); 
 				break;
 			}
-		}
+		}	
 	}
 }
 
@@ -271,19 +271,19 @@ case 1:
 
 break;
 case 2:
- this.$ = doubleq($$[$0].substr(1,$$[$0].length-2));
+ this.$ = doubleq($$[$0].substr(1,$$[$0].length-2)); 
 break;
 case 3:
- return new yy.Statements({statements:$$[$0-1]});
+ return new yy.Statements({statements:$$[$0-1]}); 
 break;
 case 4:
- this.$ = $$[$0-2]; if($$[$0]) $$[$0-2].push($$[$0]);
+ this.$ = $$[$0-2]; if($$[$0]) $$[$0-2].push($$[$0]); 
 break;
 case 5: case 6: case 63: case 73: case 78: case 131: case 165: case 191: case 192: case 228: case 247: case 259: case 330: case 347: case 417: case 433: case 434: case 438: case 446: case 486: case 487: case 522: case 607: case 614: case 638: case 640: case 642: case 656: case 657: case 687: case 703:
- this.$ = [$$[$0]];
+ this.$ = [$$[$0]]; 
 break;
 case 7:
- this.$ = $$[$0]; $$[$0].explain = true;
+ this.$ = $$[$0]; $$[$0].explain = true; 
 break;
 case 8:
  this.$ = $$[$0];  $$[$0].explain = true;
@@ -300,28 +300,28 @@ case 9:
 
 break;
 case 10: case 150: case 160: case 223: case 224: case 226: case 234: case 236: case 245: case 253: case 256: case 350: case 450: case 459: case 461: case 473: case 479: case 480: case 523:
- this.$ = undefined;
+ this.$ = undefined; 
 break;
 case 61:
- this.$ = new yy.WithSelect({withs: $$[$0-1], select:$$[$0]});
+ this.$ = new yy.WithSelect({withs: $$[$0-1], select:$$[$0]}); 
 break;
 case 62: case 521:
- $$[$0-2].push($$[$0]); this.$=$$[$0-2];
+ $$[$0-2].push($$[$0]); this.$=$$[$0-2]; 
 break;
 case 64:
- this.$ = {name:$$[$0-4], select:$$[$0-1]};
+ this.$ = {name:$$[$0-4], select:$$[$0-1]}; 
 break;
 case 65:
 
-			yy.extend(this.$,$$[$0-9]); yy.extend(this.$,$$[$0-8]); yy.extend(this.$,$$[$0-7]); yy.extend(this.$,$$[$0-6]);
-		    yy.extend(this.$,$$[$0-5]); yy.extend(this.$,$$[$0-4]);yy.extend(this.$,$$[$0-3]);
-		    yy.extend(this.$,$$[$0-2]); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);
+			yy.extend(this.$,$$[$0-9]); yy.extend(this.$,$$[$0-8]); yy.extend(this.$,$$[$0-7]); yy.extend(this.$,$$[$0-6]); 
+		    yy.extend(this.$,$$[$0-5]); yy.extend(this.$,$$[$0-4]);yy.extend(this.$,$$[$0-3]); 
+		    yy.extend(this.$,$$[$0-2]); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]); 
 		    this.$ = $$[$0-9];
 /*		    if(yy.exists) this.$.exists = yy.exists;
 		    delete yy.exists;
 		    if(yy.queries) this.$.queries = yy.queries;
 			delete yy.queries;
-*/
+*/		
 break;
 case 66:
 
@@ -330,37 +330,37 @@ case 66:
 
 break;
 case 67:
- this.$ = {pivot:{expr:$$[$0-5], columnid:$$[$0-3], inlist:$$[$0-1], as:$$[$0]}};
+ this.$ = {pivot:{expr:$$[$0-5], columnid:$$[$0-3], inlist:$$[$0-2], as:$$[$0]}}; 
 break;
 case 68:
- this.$ = {unpivot:{tocolumnid:$$[$0-8], forcolumnid:$$[$0-6], inlist:$$[$0-3], as:$$[$0]}};
+ this.$ = {unpivot:{tocolumnid:$$[$0-8], forcolumnid:$$[$0-6], inlist:$$[$0-3], as:$$[$0]}}; 
 break;
 case 69: case 478: case 508: case 541: case 577: case 595: case 598: case 617:
- this.$ = $$[$0-1];
+ this.$ = $$[$0-1]; 
 break;
 case 70: case 71: case 79: case 135: case 173: case 233: case 266: case 274: case 275: case 276: case 277: case 278: case 279: case 280: case 281: case 282: case 283: case 284: case 285: case 286: case 287: case 289: case 302: case 303: case 304: case 305: case 306: case 307: case 349: case 406: case 407: case 408: case 409: case 410: case 411: case 474: case 505: case 507: case 581: case 582: case 583: case 584: case 585: case 586: case 590: case 592: case 593: case 602: case 615: case 616: case 678: case 692: case 693: case 695: case 696: case 707:
- this.$ = $$[$0];
+ this.$ = $$[$0]; 
 break;
 case 72: case 77: case 686: case 702:
- this.$ = $$[$0-2]; this.$.push($$[$0]);
+ this.$ = $$[$0-2]; this.$.push($$[$0]); 
 break;
 case 74:
- this.$ = {expr:$$[$0]};
+ this.$ = {expr:$$[$0]}; 
 break;
 case 75:
- this.$ = {expr:$$[$0-2],as:$$[$0]};
+ this.$ = {expr:$$[$0-2],as:$$[$0]}; 
 break;
 case 76:
- this.$ = {removecolumns:$$[$0]};
+ this.$ = {removecolumns:$$[$0]}; 
 break;
 case 80:
- this.$ = {like:$$[$0]};
+ this.$ = {like:$$[$0]}; 
 break;
 case 81: case 93:
- this.$ = {srchid:"PROP", args: [$$[$0]]};
+ this.$ = {srchid:"PROP", args: [$$[$0]]}; 
 break;
 case 82:
- this.$ = {srchid:"ORDERBY", args: $$[$0-1]};
+ this.$ = {srchid:"ORDERBY", args: $$[$0-1]}; 
 break;
 case 83:
 
@@ -370,169 +370,169 @@ case 83:
 
 break;
 case 84:
- this.$ = {srchid:"APROP", args: [$$[$0]]};
+ this.$ = {srchid:"APROP", args: [$$[$0]]}; 
 break;
 case 85:
  this.$ = {selid:"ROOT"};
 break;
 case 86:
- this.$ = {srchid:"EQ", args: [$$[$0]]};
+ this.$ = {srchid:"EQ", args: [$$[$0]]}; 
 break;
 case 87:
- this.$ = {srchid:"LIKE", args: [$$[$0]]};
+ this.$ = {srchid:"LIKE", args: [$$[$0]]}; 
 break;
 case 88: case 89:
- this.$ = {selid:"WITH", args: $$[$0-1]};
+ this.$ = {selid:"WITH", args: $$[$0-1]}; 
 break;
 case 90:
- this.$ = {srchid:$$[$0-3].toUpperCase(), args:$$[$0-1]};
+ this.$ = {srchid:$$[$0-3].toUpperCase(), args:$$[$0-1]}; 
 break;
 case 91:
- this.$ = {srchid:"WHERE", args:[$$[$0-1]]};
+ this.$ = {srchid:"WHERE", args:[$$[$0-1]]}; 
 break;
 case 92:
- this.$ = {srchid:"CLASS", args:[$$[$0-1]]};
+ this.$ = {srchid:"CLASS", args:[$$[$0-1]]}; 
 break;
 case 94:
- this.$ = {srchid:"NAME", args: [$$[$0].substr(1,$$[$0].length-2)]};
+ this.$ = {srchid:"NAME", args: [$$[$0].substr(1,$$[$0].length-2)]}; 
 break;
 case 95:
- this.$ = {srchid:"CHILD"};
+ this.$ = {srchid:"CHILD"}; 
 break;
 case 96:
- this.$ = {srchid:"VERTEX"};
+ this.$ = {srchid:"VERTEX"}; 
 break;
 case 97:
- this.$ = {srchid:"EDGE"};
+ this.$ = {srchid:"EDGE"}; 
 break;
 case 98:
- this.$ = {srchid:"REF"};
+ this.$ = {srchid:"REF"}; 
 break;
 case 99:
- this.$ = {srchid:"SHARP", args:[$$[$0]]};
+ this.$ = {srchid:"SHARP", args:[$$[$0]]}; 
 break;
 case 100:
- this.$ = {srchid:"ATTR", args:((typeof $$[$0] == 'undefined')?undefined:[$$[$0]])};
+ this.$ = {srchid:"ATTR", args:((typeof $$[$0] == 'undefined')?undefined:[$$[$0]])}; 
 break;
 case 101:
- this.$ = {srchid:"ATTR"};
+ this.$ = {srchid:"ATTR"}; 
 break;
 case 102:
- this.$ = {srchid:"OUT"};
+ this.$ = {srchid:"OUT"}; 
 break;
 case 103:
- this.$ = {srchid:"IN"};
+ this.$ = {srchid:"IN"}; 
 break;
 case 104:
- this.$ = {srchid:"CONTENT"};
+ this.$ = {srchid:"CONTENT"}; 
 break;
 case 105:
- this.$ = {srchid:"PARENT"};
+ this.$ = {srchid:"PARENT"}; 
 break;
 case 106:
- this.$ = {srchid:"EX",args:[new yy.Json({value:$$[$0]})]};
+ this.$ = {srchid:"EX",args:[new yy.Json({value:$$[$0]})]}; 
 break;
 case 107:
- this.$ = {srchid:"AT", args:[$$[$0]]};
+ this.$ = {srchid:"AT", args:[$$[$0]]}; 
 break;
 case 108:
- this.$ = {srchid:"AS", args:[$$[$0]]};
+ this.$ = {srchid:"AS", args:[$$[$0]]}; 
 break;
 case 109:
- this.$ = {srchid:"SET", args:$$[$0-1]};
+ this.$ = {srchid:"SET", args:$$[$0-1]}; 
 break;
 case 110:
- this.$ = {selid:"TO", args:[$$[$0]]};
+ this.$ = {selid:"TO", args:[$$[$0]]}; 
 break;
 case 111:
- this.$ = {srchid:"VALUE"};
+ this.$ = {srchid:"VALUE"}; 
 break;
 case 112:
- this.$ = {srchid:"ROW", args:$$[$0-1]};
+ this.$ = {srchid:"ROW", args:$$[$0-1]}; 
 break;
 case 113:
- this.$ = {srchid:"CLASS", args:[$$[$0]]};
+ this.$ = {srchid:"CLASS", args:[$$[$0]]}; 
 break;
 case 114:
- this.$ = {selid:$$[$0],args:[$$[$0-1]] };
+ this.$ = {selid:$$[$0],args:[$$[$0-1]] }; 
 break;
 case 115:
- this.$ = {selid:"NOT",args:$$[$0-1] };
+ this.$ = {selid:"NOT",args:$$[$0-1] }; 
 break;
 case 116:
- this.$ = {selid:"IF",args:$$[$0-1] };
+ this.$ = {selid:"IF",args:$$[$0-1] }; 
 break;
 case 117:
- this.$ = {selid:$$[$0-3],args:$$[$0-1] };
+ this.$ = {selid:$$[$0-3],args:$$[$0-1] }; 
 break;
 case 118:
- this.$ = {selid:'DISTINCT',args:$$[$0-1] };
+ this.$ = {selid:'DISTINCT',args:$$[$0-1] }; 
 break;
 case 119:
- this.$ = {selid:'UNION',args:$$[$0-1] };
+ this.$ = {selid:'UNION',args:$$[$0-1] }; 
 break;
 case 120:
- this.$ = {selid:'UNIONALL',args:$$[$0-1] };
+ this.$ = {selid:'UNIONALL',args:$$[$0-1] }; 
 break;
 case 121:
- this.$ = {selid:'ALL',args:[$$[$0-1]] };
+ this.$ = {selid:'ALL',args:[$$[$0-1]] }; 
 break;
 case 122:
- this.$ = {selid:'ANY',args:[$$[$0-1]] };
+ this.$ = {selid:'ANY',args:[$$[$0-1]] }; 
 break;
 case 123:
- this.$ = {selid:'INTERSECT',args:$$[$0-1] };
+ this.$ = {selid:'INTERSECT',args:$$[$0-1] }; 
 break;
 case 124:
- this.$ = {selid:'EXCEPT',args:$$[$0-1] };
+ this.$ = {selid:'EXCEPT',args:$$[$0-1] }; 
 break;
 case 125:
- this.$ = {selid:'AND',args:$$[$0-1] };
+ this.$ = {selid:'AND',args:$$[$0-1] }; 
 break;
 case 126:
- this.$ = {selid:'OR',args:$$[$0-1] };
+ this.$ = {selid:'OR',args:$$[$0-1] }; 
 break;
 case 127:
- this.$ = {selid:'PATH',args:[$$[$0-1]] };
+ this.$ = {selid:'PATH',args:[$$[$0-1]] }; 
 break;
 case 128:
- this.$ = {srchid:'RETURN',args:$$[$0-1] };
+ this.$ = {srchid:'RETURN',args:$$[$0-1] }; 
 break;
 case 129:
- this.$ = {selid:'REPEAT',sels:$$[$0-3], args:$$[$0-1] };
+ this.$ = {selid:'REPEAT',sels:$$[$0-3], args:$$[$0-1] }; 
 break;
 case 130:
  this.$ = $$[$0-2]; this.$.push($$[$0]);
 break;
 case 132:
- this.$ = "PLUS";
+ this.$ = "PLUS"; 
 break;
 case 133:
- this.$ = "STAR";
+ this.$ = "STAR"; 
 break;
 case 134:
- this.$ = "QUESTION";
+ this.$ = "QUESTION"; 
 break;
 case 136:
- this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy.extend(this.$, $$[$0-3]); yy.extend(this.$, $$[$0-1]);
+ this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy.extend(this.$, $$[$0-3]); yy.extend(this.$, $$[$0-1]); 
 break;
 case 137:
- this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy.extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]);
+ this.$ = new yy.Select({ columns:$$[$0], distinct: true }); yy.extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]); 
 break;
 case 138:
- this.$ = new yy.Select({ columns:$$[$0], all:true }); yy.extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]);
+ this.$ = new yy.Select({ columns:$$[$0], all:true }); yy.extend(this.$, $$[$0-3]);yy.extend(this.$, $$[$0-1]); 
 break;
 case 139:
 
 			if(!$$[$0]) {
 				this.$ = new yy.Select({columns:[new yy.Column({columnid:'_',})], modifier:'COLUMN'});
 			} else {
-				this.$ = new yy.Select({ columns:$$[$0] }); yy.extend(this.$, $$[$0-2]);yy.extend(this.$, $$[$0-1]);
+				this.$ = new yy.Select({ columns:$$[$0] }); yy.extend(this.$, $$[$0-2]);yy.extend(this.$, $$[$0-1]); 
 			}
 
 break;
 case 140:
- if($$[$0]=='SELECT') this.$ = undefined; else this.$ = {modifier: $$[$0]};
+ if($$[$0]=='SELECT') this.$ = undefined; else this.$ = {modifier: $$[$0]};  
 break;
 case 141:
  this.$ = {modifier:'VALUE'}
@@ -556,16 +556,16 @@ case 147:
  this.$ = {modifier:'RECORDSET'}
 break;
 case 148:
- this.$ = {top: $$[$0-1], percent:(typeof $$[$0] != 'undefined'?true:undefined)};
+ this.$ = {top: $$[$0-1], percent:(typeof $$[$0] != 'undefined'?true:undefined)}; 
 break;
 case 149:
- this.$ = {top: $$[$0-1]};
+ this.$ = {top: $$[$0-1]}; 
 break;
 case 151: case 312: case 481: case 482: case 679:
-this.$ = undefined;
+this.$ = undefined; 
 break;
 case 152: case 153: case 154: case 155:
-this.$ = {into: $$[$0]}
+this.$ = {into: $$[$0]} 
 break;
 case 156:
 
@@ -583,55 +583,55 @@ case 156:
 
 break;
 case 157:
- this.$ = { from: $$[$0] };
+ this.$ = { from: $$[$0] }; 
 break;
 case 158:
- this.$ = { from: $$[$0-1], joins: $$[$0] };
+ this.$ = { from: $$[$0-1], joins: $$[$0] }; 
 break;
 case 159:
- this.$ = { from: $$[$0-2], joins: $$[$0-1] };
+ this.$ = { from: $$[$0-2], joins: $$[$0-1] }; 
 break;
 case 161:
- this.$ = new yy.Apply({select: $$[$0-2], applymode:'CROSS', as:$$[$0]});
+ this.$ = new yy.Apply({select: $$[$0-2], applymode:'CROSS', as:$$[$0]}); 
 break;
 case 162:
- this.$ = new yy.Apply({select: $$[$0-3], applymode:'CROSS', as:$$[$0]});
+ this.$ = new yy.Apply({select: $$[$0-3], applymode:'CROSS', as:$$[$0]}); 
 break;
 case 163:
- this.$ = new yy.Apply({select: $$[$0-2], applymode:'OUTER', as:$$[$0]});
+ this.$ = new yy.Apply({select: $$[$0-2], applymode:'OUTER', as:$$[$0]}); 
 break;
 case 164:
- this.$ = new yy.Apply({select: $$[$0-3], applymode:'OUTER', as:$$[$0]});
+ this.$ = new yy.Apply({select: $$[$0-3], applymode:'OUTER', as:$$[$0]}); 
 break;
 case 166: case 229: case 418: case 488: case 489:
- this.$ = $$[$0-2]; $$[$0-2].push($$[$0]);
+ this.$ = $$[$0-2]; $$[$0-2].push($$[$0]); 
 break;
 case 167:
- this.$ = $$[$0-2]; this.$.as = $$[$0]
+ this.$ = $$[$0-2]; this.$.as = $$[$0] 
 break;
 case 168:
- this.$ = $$[$0-3]; this.$.as = $$[$0]
+ this.$ = $$[$0-3]; this.$.as = $$[$0] 
 break;
 case 169:
- this.$ = $$[$0-1]; this.$.as = 'default'
+ this.$ = $$[$0-1]; this.$.as = 'default' 
 break;
 case 170:
- this.$ = new yy.Json({value:$$[$0-2]}); $$[$0-2].as = $$[$0]
+ this.$ = new yy.Json({value:$$[$0-2]}); $$[$0-2].as = $$[$0] 
 break;
 case 171:
- this.$ = $$[$0-1]; $$[$0-1].as = $$[$0]
+ this.$ = $$[$0-1]; $$[$0-1].as = $$[$0] 
 break;
 case 172:
- this.$ = $$[$0-2]; $$[$0-2].as = $$[$0]
+ this.$ = $$[$0-2]; $$[$0-2].as = $$[$0] 
 break;
 case 174: case 178: case 181: case 184:
- this.$ = $$[$0-1]; $$[$0-1].as = $$[$0];
+ this.$ = $$[$0-1]; $$[$0-1].as = $$[$0]; 
 break;
 case 175: case 179: case 182: case 185:
- this.$ = $$[$0-2]; $$[$0-2].as = $$[$0];
+ this.$ = $$[$0-2]; $$[$0-2].as = $$[$0]; 
 break;
 case 176: case 177: case 180: case 183:
- this.$ = $$[$0]; $$[$0].as = 'default';
+ this.$ = $$[$0]; $$[$0].as = 'default'; 
 break;
 case 186:
 
@@ -665,127 +665,127 @@ case 188:
  this.$ = new yy.Table({tableid: $$[$0]});
 break;
 case 189: case 190:
- this.$ = $$[$0-1]; $$[$0-1].push($$[$0]);
+ this.$ = $$[$0-1]; $$[$0-1].push($$[$0]); 
 break;
 case 193:
- this.$ = new yy.Join($$[$0-2]); yy.extend(this.$, $$[$0-1]); yy.extend(this.$, $$[$0]);
+ this.$ = new yy.Join($$[$0-2]); yy.extend(this.$, $$[$0-1]); yy.extend(this.$, $$[$0]); 
 break;
 case 194:
- this.$ = {table: $$[$0]};
+ this.$ = {table: $$[$0]}; 
 break;
 case 195:
- this.$ = {table: $$[$0-1], as: $$[$0] } ;
+ this.$ = {table: $$[$0-1], as: $$[$0] } ; 
 break;
 case 196:
- this.$ = {table: $$[$0-2], as: $$[$0] } ;
+ this.$ = {table: $$[$0-2], as: $$[$0] } ; 
 break;
 case 197:
- this.$ = {json:new yy.Json({value:$$[$0-2],as:$$[$0]})};
+ this.$ = {json:new yy.Json({value:$$[$0-2],as:$$[$0]})}; 
 break;
 case 198:
- this.$ = {param: $$[$0-1], as: $$[$0] } ;
+ this.$ = {param: $$[$0-1], as: $$[$0] } ; 
 break;
 case 199:
- this.$ = {param: $$[$0-2], as: $$[$0] } ;
+ this.$ = {param: $$[$0-2], as: $$[$0] } ; 
 break;
 case 200:
- this.$ = {select: $$[$0-3], as: $$[$0]} ;
+ this.$ = {select: $$[$0-3], as: $$[$0]} ; 
 break;
 case 201:
- this.$ = {select: $$[$0-4], as: $$[$0] } ;
+ this.$ = {select: $$[$0-4], as: $$[$0] } ; 
 break;
 case 202:
- this.$ = {funcid:$$[$0], as:'default'};
+ this.$ = {funcid:$$[$0], as:'default'}; 
 break;
 case 203:
- this.$ = {funcid:$$[$0-1], as: $$[$0]};
+ this.$ = {funcid:$$[$0-1], as: $$[$0]}; 
 break;
 case 204:
- this.$ = {funcid:$$[$0-2], as: $$[$0]};
+ this.$ = {funcid:$$[$0-2], as: $$[$0]}; 
 break;
 case 205:
- this.$ = {variable:$$[$0],as:'default'};
+ this.$ = {variable:$$[$0],as:'default'}; 
 break;
 case 206:
- this.$ = {variable:$$[$0-1],as:$$[$0]};
+ this.$ = {variable:$$[$0-1],as:$$[$0]}; 
 break;
 case 207:
- this.$ = {variable:$$[$0-2],as:$$[$0]}
+ this.$ = {variable:$$[$0-2],as:$$[$0]} 
 break;
 case 208:
- this.$ = { joinmode: $$[$0] } ;
+ this.$ = { joinmode: $$[$0] } ; 
 break;
 case 209:
- this.$ = {joinmode: $$[$0-1], natural:true} ;
+ this.$ = {joinmode: $$[$0-1], natural:true} ; 
 break;
 case 210: case 211:
- this.$ = "INNER";
+ this.$ = "INNER"; 
 break;
 case 212: case 213:
- this.$ = "LEFT";
+ this.$ = "LEFT"; 
 break;
 case 214: case 215:
- this.$ = "RIGHT";
+ this.$ = "RIGHT"; 
 break;
 case 216: case 217:
- this.$ = "OUTER";
+ this.$ = "OUTER"; 
 break;
 case 218:
- this.$ = "SEMI";
+ this.$ = "SEMI"; 
 break;
 case 219:
- this.$ = "ANTI";
+ this.$ = "ANTI"; 
 break;
 case 220:
- this.$ = "CROSS";
+ this.$ = "CROSS"; 
 break;
 case 221:
- this.$ = {on: $$[$0]};
+ this.$ = {on: $$[$0]}; 
 break;
 case 222: case 652:
- this.$ = {using: $$[$0]};
+ this.$ = {using: $$[$0]}; 
 break;
 case 225:
- this.$ = {where: new yy.Expression({expression:$$[$0]})};
+ this.$ = {where: new yy.Expression({expression:$$[$0]})}; 
 break;
 case 227:
- this.$ = {group:$$[$0-1]}; yy.extend(this.$,$$[$0]);
+ this.$ = {group:$$[$0-1]}; yy.extend(this.$,$$[$0]); 
 break;
 case 230:
- this.$ = new yy.GroupExpression({type:'GROUPING SETS', group: $$[$0-1]});
+ this.$ = new yy.GroupExpression({type:'GROUPING SETS', group: $$[$0-1]}); 
 break;
 case 231:
- this.$ = new yy.GroupExpression({type:'ROLLUP', group: $$[$0-1]});
+ this.$ = new yy.GroupExpression({type:'ROLLUP', group: $$[$0-1]}); 
 break;
 case 232:
- this.$ = new yy.GroupExpression({type:'CUBE', group: $$[$0-1]});
+ this.$ = new yy.GroupExpression({type:'CUBE', group: $$[$0-1]}); 
 break;
 case 235:
  this.$ = {having:$$[$0]}
 break;
 case 237:
- this.$ = {union: $$[$0]} ;
+ this.$ = {union: $$[$0]} ; 
 break;
 case 238:
- this.$ = {unionall: $$[$0]} ;
+ this.$ = {unionall: $$[$0]} ; 
 break;
 case 239:
- this.$ = {except: $$[$0]} ;
+ this.$ = {except: $$[$0]} ; 
 break;
 case 240:
- this.$ = {intersect: $$[$0]} ;
+ this.$ = {intersect: $$[$0]} ; 
 break;
 case 241:
- this.$ = {union: $$[$0], corresponding:true} ;
+ this.$ = {union: $$[$0], corresponding:true} ; 
 break;
 case 242:
- this.$ = {unionall: $$[$0], corresponding:true} ;
+ this.$ = {unionall: $$[$0], corresponding:true} ; 
 break;
 case 243:
- this.$ = {except: $$[$0], corresponding:true} ;
+ this.$ = {except: $$[$0], corresponding:true} ; 
 break;
 case 244:
- this.$ = {intersect: $$[$0], corresponding:true} ;
+ this.$ = {intersect: $$[$0], corresponding:true} ; 
 break;
 case 246:
  this.$ = {order:$$[$0]}
@@ -794,28 +794,28 @@ case 248:
  this.$ = $$[$0-2]; $$[$0-2].push($$[$0])
 break;
 case 249:
- this.$ = new yy.Expression({expression: $$[$0], direction:'ASC'})
+ this.$ = new yy.Expression({expression: $$[$0], direction:'ASC'}) 
 break;
 case 250:
- this.$ = new yy.Expression({expression: $$[$0-1], direction:$$[$0].toUpperCase()})
+ this.$ = new yy.Expression({expression: $$[$0-1], direction:$$[$0].toUpperCase()}) 
 break;
 case 251:
- this.$ = new yy.Expression({expression: $$[$0-2], direction:'ASC', nocase:true})
+ this.$ = new yy.Expression({expression: $$[$0-2], direction:'ASC', nocase:true}) 
 break;
 case 252:
- this.$ = new yy.Expression({expression: $$[$0-3], direction:$$[$0].toUpperCase(), nocase:true})
+ this.$ = new yy.Expression({expression: $$[$0-3], direction:$$[$0].toUpperCase(), nocase:true}) 
 break;
 case 254:
- this.$ = {limit:$$[$0-1]}; yy.extend(this.$, $$[$0]);
+ this.$ = {limit:$$[$0-1]}; yy.extend(this.$, $$[$0]); 
 break;
 case 255:
- this.$ = {limit:$$[$0-2],offset:$$[$0-6]};
+ this.$ = {limit:$$[$0-2],offset:$$[$0-6]}; 
 break;
 case 257:
- this.$ = {offset:$$[$0]};
+ this.$ = {offset:$$[$0]}; 
 break;
 case 258: case 467: case 491: case 606: case 613: case 637: case 639: case 643:
- $$[$0-2].push($$[$0]); this.$ = $$[$0-2];
+ $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
 case 260: case 262: case 264:
  $$[$0-2].as = $$[$0]; this.$ = $$[$0-2];
@@ -824,13 +824,13 @@ case 261: case 263: case 265:
  $$[$0-1].as = $$[$0]; this.$ = $$[$0-1];
 break;
 case 267:
- this.$ = new yy.Column({columid: $$[$0], tableid: $$[$0-2], databaseid:$$[$0-4]});
+ this.$ = new yy.Column({columid: $$[$0], tableid: $$[$0-2], databaseid:$$[$0-4]}); 
 break;
 case 268:
- this.$ = new yy.Column({columnid: $$[$0], tableid: $$[$0-2]});
+ this.$ = new yy.Column({columnid: $$[$0], tableid: $$[$0-2]}); 
 break;
 case 269:
- this.$ = new yy.Column({columnid:$$[$0]});
+ this.$ = new yy.Column({columnid:$$[$0]}); 
 break;
 case 270:
  this.$ = new yy.Column({columnid: $$[$0], tableid: $$[$0-2], databaseid:$$[$0-4]});
@@ -842,11 +842,11 @@ case 273:
  this.$ = new yy.Column({columnid: $$[$0]});
 break;
 case 288:
- this.$ = new yy.Json({value:$$[$0]});
+ this.$ = new yy.Json({value:$$[$0]}); 
 break;
 case 290: case 291: case 292:
 
-			if(!yy.queries) yy.queries = [];
+			if(!yy.queries) yy.queries = []; 
 			yy.queries.push($$[$0-1]);
 			$$[$0-1].queriesidx = yy.queries.length;
 			this.$ = $$[$0-1];
@@ -859,247 +859,247 @@ case 294:
  this.$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});
 break;
 case 295:
- this.$ = new yy.JavaScript({value:$$[$0].substr(2,$$[$0].length-4)});
+ this.$ = new yy.JavaScript({value:$$[$0].substr(2,$$[$0].length-4)}); 
 break;
 case 296:
- this.$ = new yy.FuncValue({funcid:$$[$0], newid:true});
+ this.$ = new yy.FuncValue({funcid:$$[$0], newid:true}); 
 break;
 case 297:
- this.$ = $$[$0]; yy.extend(this.$,{newid:true});
+ this.$ = $$[$0]; yy.extend(this.$,{newid:true}); 
 break;
 case 298:
- this.$ = new yy.Convert({expression:$$[$0-3]}) ; yy.extend(this.$,$$[$0-1]) ;
+ this.$ = new yy.Convert({expression:$$[$0-3]}) ; yy.extend(this.$,$$[$0-1]) ; 
 break;
 case 299:
- this.$ = new yy.Convert({expression:$$[$0-5], style:$$[$0-1]}) ; yy.extend(this.$,$$[$0-3]) ;
+ this.$ = new yy.Convert({expression:$$[$0-5], style:$$[$0-1]}) ; yy.extend(this.$,$$[$0-3]) ; 
 break;
 case 300:
- this.$ = new yy.Convert({expression:$$[$0-1]}) ; yy.extend(this.$,$$[$0-3]) ;
+ this.$ = new yy.Convert({expression:$$[$0-1]}) ; yy.extend(this.$,$$[$0-3]) ; 
 break;
 case 301:
- this.$ = new yy.Convert({expression:$$[$0-3], style:$$[$0-1]}) ; yy.extend(this.$,$$[$0-5]) ;
+ this.$ = new yy.Convert({expression:$$[$0-3], style:$$[$0-1]}) ; yy.extend(this.$,$$[$0-5]) ; 
 break;
 case 308:
- this.$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});
+ this.$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); 
 break;
 case 309:
 
 		  if($$[$0-2].length > 1 && ($$[$0-4].toUpperCase() == 'MAX' || $$[$0-4].toUpperCase() == 'MIN')) {
 		  	this.$ = new yy.FuncValue({funcid:$$[$0-4],args:$$[$0-2]});
 		  } else {
-			this.$ = new yy.AggrValue({aggregatorid: $$[$0-4].toUpperCase(), expression: $$[$0-2].pop(), over:$$[$0]});
-		  }
+			this.$ = new yy.AggrValue({aggregatorid: $$[$0-4].toUpperCase(), expression: $$[$0-2].pop(), over:$$[$0]}); 
+		  } 
 
 break;
 case 310:
- this.$ = new yy.AggrValue({aggregatorid: $$[$0-5].toUpperCase(), expression: $$[$0-2], distinct:true, over:$$[$0]});
+ this.$ = new yy.AggrValue({aggregatorid: $$[$0-5].toUpperCase(), expression: $$[$0-2], distinct:true, over:$$[$0]}); 
 break;
 case 311:
  this.$ = new yy.AggrValue({aggregatorid: $$[$0-5].toUpperCase(), expression: $$[$0-2],
-		 over:$$[$0]});
+		 over:$$[$0]}); 
 break;
 case 313: case 314:
- this.$ = new yy.Over(); yy.extend(this.$,$$[$0-1]);
+ this.$ = new yy.Over(); yy.extend(this.$,$$[$0-1]); 
 break;
 case 315:
  this.$ = new yy.Over(); yy.extend(this.$,$$[$0-2]); yy.extend(this.$,$$[$0-1]);
 break;
 case 316:
- this.$ = {partition:$$[$0]};
+ this.$ = {partition:$$[$0]}; 
 break;
 case 317:
- this.$ = {order:$$[$0]};
+ this.$ = {order:$$[$0]}; 
 break;
 case 318:
- this.$ = "SUM";
+ this.$ = "SUM"; 
 break;
 case 319:
- this.$ = "COUNT";
+ this.$ = "COUNT"; 
 break;
 case 320:
- this.$ = "MIN";
+ this.$ = "MIN"; 
 break;
 case 321: case 503:
- this.$ = "MAX";
+ this.$ = "MAX"; 
 break;
 case 322:
- this.$ = "AVG";
+ this.$ = "AVG"; 
 break;
 case 323:
- this.$ = "FIRST";
+ this.$ = "FIRST"; 
 break;
 case 324:
- this.$ = "LAST";
+ this.$ = "LAST"; 
 break;
 case 325:
- this.$ = "AGGR";
+ this.$ = "AGGR"; 
 break;
 case 326:
- this.$ = "ARRAY";
+ this.$ = "ARRAY"; 
 break;
 case 327:
 
 			var funcid = $$[$0-4];
 			var exprlist = $$[$0-1];
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
-					this.$ = new yy.FuncValue({funcid: funcid, args: exprlist});
+					this.$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
 			} else if(alasql.aggr[$$[$0-4]]) {
-		    	this.$ = new yy.AggrValue({aggregatorid: 'REDUCE',
+		    	this.$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
                       funcid: funcid, expression: exprlist.pop(),distinct:($$[$0-2]=='DISTINCT') });
 		    } else {
-			    this.$ = new yy.FuncValue({funcid: funcid, args: exprlist});
+			    this.$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
 			};
 
 break;
 case 328:
- this.$ = new yy.FuncValue({ funcid: $$[$0-2] })
+ this.$ = new yy.FuncValue({ funcid: $$[$0-2] }) 
 break;
 case 329:
- this.$ = new yy.FuncValue({ funcid: 'IIF', args:$$[$0-1] })
+ this.$ = new yy.FuncValue({ funcid: 'IIF', args:$$[$0-1] }) 
 break;
 case 331:
- $$[$0-2].push($$[$0]); this.$ = $$[$0-2]
+ $$[$0-2].push($$[$0]); this.$ = $$[$0-2] 
 break;
 case 332:
- this.$ = new yy.NumValue({value:+$$[$0]});
+ this.$ = new yy.NumValue({value:+$$[$0]}); 
 break;
 case 333:
- this.$ = new yy.LogicValue({value:true});
+ this.$ = new yy.LogicValue({value:true}); 
 break;
 case 334:
- this.$ = new yy.LogicValue({value:false});
+ this.$ = new yy.LogicValue({value:false}); 
 break;
 case 335:
- this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")});
+ this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
 break;
 case 336:
- this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")});
+ this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
 break;
 case 337:
- this.$ = new yy.NullValue({value:undefined});
+ this.$ = new yy.NullValue({value:undefined}); 
 break;
 case 338:
- this.$ = new yy.VarValue({variable:$$[$0]});
+ this.$ = new yy.VarValue({variable:$$[$0]}); 
 break;
 case 339:
 
 			if(!yy.exists) yy.exists = [];
-			this.$ = new yy.ExistsValue({value:$$[$0-1], existsidx:yy.exists.length});
+			this.$ = new yy.ExistsValue({value:$$[$0-1], existsidx:yy.exists.length}); 
 			yy.exists.push($$[$0-1]);
 
 break;
 case 340: case 341:
- this.$ = new yy.ParamValue({param: $$[$0]});
+ this.$ = new yy.ParamValue({param: $$[$0]}); 
 break;
 case 342:
 
-			if(typeof yy.question == 'undefined') yy.question = 0;
-			this.$ = new yy.ParamValue({param: yy.question++});
+			if(typeof yy.question == 'undefined') yy.question = 0; 
+			this.$ = new yy.ParamValue({param: yy.question++}); 
 
 break;
 case 343:
 
-			if(typeof yy.question == 'undefined') yy.question = 0;
-			this.$ = new yy.ParamValue({param: yy.question++, array:true});
+			if(typeof yy.question == 'undefined') yy.question = 0; 
+			this.$ = new yy.ParamValue({param: yy.question++, array:true}); 
 
 break;
 case 344:
- this.$ = new yy.CaseValue({expression:$$[$0-3], whens: $$[$0-2], elses: $$[$0-1]});
+ this.$ = new yy.CaseValue({expression:$$[$0-3], whens: $$[$0-2], elses: $$[$0-1]}); 
 break;
 case 345:
- this.$ = new yy.CaseValue({whens: $$[$0-2], elses: $$[$0-1]});
+ this.$ = new yy.CaseValue({whens: $$[$0-2], elses: $$[$0-1]}); 
 break;
 case 346: case 654: case 655:
- this.$ = $$[$0-1]; this.$.push($$[$0]);
+ this.$ = $$[$0-1]; this.$.push($$[$0]); 
 break;
 case 348:
- this.$ = {when: $$[$0-2], then: $$[$0] };
+ this.$ = {when: $$[$0-2], then: $$[$0] }; 
 break;
 case 351:
- this.$ = new yy.Op({left:$$[$0-2], op:'REGEXP', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'REGEXP', right:$$[$0]}); 
 break;
 case 352:
- this.$ = new yy.Op({left:$$[$0-2], op:'LIKE', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'LIKE', right:$$[$0]}); 
 break;
 case 353:
- this.$ = new yy.Op({left:$$[$0-4], op:'LIKE', right:$$[$0-2], escape:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-4], op:'LIKE', right:$$[$0-2], escape:$$[$0]}); 
 break;
 case 354:
- this.$ = new yy.Op({left:$$[$0-2], op:'NOT LIKE', right:$$[$0] });
+ this.$ = new yy.Op({left:$$[$0-2], op:'NOT LIKE', right:$$[$0] }); 
 break;
 case 355:
- this.$ = new yy.Op({left:$$[$0-4], op:'NOT LIKE', right:$$[$0-2], escape:$$[$0] });
+ this.$ = new yy.Op({left:$$[$0-4], op:'NOT LIKE', right:$$[$0-2], escape:$$[$0] }); 
 break;
 case 356:
- this.$ = new yy.Op({left:$$[$0-2], op:'+', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'+', right:$$[$0]}); 
 break;
 case 357:
- this.$ = new yy.Op({left:$$[$0-2], op:'-', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'-', right:$$[$0]}); 
 break;
 case 358:
- this.$ = new yy.Op({left:$$[$0-2], op:'*', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'*', right:$$[$0]}); 
 break;
 case 359:
- this.$ = new yy.Op({left:$$[$0-2], op:'/', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'/', right:$$[$0]}); 
 break;
 case 360:
- this.$ = new yy.Op({left:$$[$0-2], op:'%', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'%', right:$$[$0]}); 
 break;
 case 361:
- this.$ = new yy.Op({left:$$[$0-2], op:'^', right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'^', right:$$[$0]}); 
 break;
 case 362: case 363: case 365:
- this.$ = new yy.Op({left:$$[$0-2], op:'->' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'->' , right:$$[$0]}); 
 break;
 case 364:
- this.$ = new yy.Op({left:$$[$0-4], op:'->' , right:$$[$0-1]});
+ this.$ = new yy.Op({left:$$[$0-4], op:'->' , right:$$[$0-1]}); 
 break;
 case 366: case 367: case 369:
- this.$ = new yy.Op({left:$$[$0-2], op:'!' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'!' , right:$$[$0]}); 
 break;
 case 368:
- this.$ = new yy.Op({left:$$[$0-4], op:'!' , right:$$[$0-1]});
+ this.$ = new yy.Op({left:$$[$0-4], op:'!' , right:$$[$0-1]}); 
 break;
 case 370:
- this.$ = new yy.Op({left:$$[$0-2], op:'>' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'>' , right:$$[$0]}); 
 break;
 case 371:
- this.$ = new yy.Op({left:$$[$0-2], op:'>=' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'>=' , right:$$[$0]}); 
 break;
 case 372:
- this.$ = new yy.Op({left:$$[$0-2], op:'<' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'<' , right:$$[$0]}); 
 break;
 case 373:
- this.$ = new yy.Op({left:$$[$0-2], op:'<=' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'<=' , right:$$[$0]}); 
 break;
 case 374:
- this.$ = new yy.Op({left:$$[$0-2], op:'=' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'=' , right:$$[$0]}); 
 break;
 case 375:
- this.$ = new yy.Op({left:$$[$0-2], op:'==' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'==' , right:$$[$0]}); 
 break;
 case 376:
- this.$ = new yy.Op({left:$$[$0-2], op:'===' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'===' , right:$$[$0]}); 
 break;
 case 377:
- this.$ = new yy.Op({left:$$[$0-2], op:'!=' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'!=' , right:$$[$0]}); 
 break;
 case 378:
- this.$ = new yy.Op({left:$$[$0-2], op:'!==' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'!==' , right:$$[$0]}); 
 break;
 case 379:
- this.$ = new yy.Op({left:$$[$0-2], op:'!===' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'!===' , right:$$[$0]}); 
 break;
 case 380:
 
-			if(!yy.queries) yy.queries = [];
-			this.$ = new yy.Op({left:$$[$0-5], op:$$[$0-4] , allsome:$$[$0-3], right:$$[$0-1], queriesidx: yy.queries.length});
-			yy.queries.push($$[$0-1]);
+			if(!yy.queries) yy.queries = []; 
+			this.$ = new yy.Op({left:$$[$0-5], op:$$[$0-4] , allsome:$$[$0-3], right:$$[$0-1], queriesidx: yy.queries.length}); 
+			yy.queries.push($$[$0-1]);  
 
 break;
 case 381:
 
-			this.$ = new yy.Op({left:$$[$0-5], op:$$[$0-4] , allsome:$$[$0-3], right:$$[$0-1]});
+			this.$ = new yy.Op({left:$$[$0-5], op:$$[$0-4] , allsome:$$[$0-3], right:$$[$0-1]}); 
 
 break;
 case 382:
@@ -1108,22 +1108,22 @@ case 382:
 
 				if($$[$0-2].left.op == 'AND') {
 					this.$ = new yy.Op({left:$$[$0-2].left.left,op:'AND',right:
-						new yy.Op({left:$$[$0-2].left.right, op:'BETWEEN',
+						new yy.Op({left:$$[$0-2].left.right, op:'BETWEEN', 
 							right1:$$[$0-2].right, right2:$$[$0]})
 					});
 				} else {
-					this.$ = new yy.Op({left:$$[$0-2].left, op:'BETWEEN',
+					this.$ = new yy.Op({left:$$[$0-2].left, op:'BETWEEN', 
 						right1:$$[$0-2].right, right2:$$[$0]});
 				}
 
 			} else if($$[$0-2].op == 'NOT BETWEEN1') {
 				if($$[$0-2].left.op == 'AND') {
 					this.$ = new yy.Op({left:$$[$0-2].left.left,op:'AND',right:
-						new yy.Op({left:$$[$0-2].left.right, op:'NOT BETWEEN',
+						new yy.Op({left:$$[$0-2].left.right, op:'NOT BETWEEN', 
 							right1:$$[$0-2].right, right2:$$[$0]})
 					});
 				} else {
-					this.$ = new yy.Op({left:$$[$0-2].left, op:'NOT BETWEEN',
+					this.$ = new yy.Op({left:$$[$0-2].left, op:'NOT BETWEEN', 
 						right1:$$[$0-2].right, right2:$$[$0]});
 				}
 			} else {
@@ -1132,75 +1132,75 @@ case 382:
 
 break;
 case 383:
- this.$ = new yy.Op({left:$$[$0-2], op:'OR' , right:$$[$0]});
+ this.$ = new yy.Op({left:$$[$0-2], op:'OR' , right:$$[$0]}); 
 break;
 case 384:
- this.$ = new yy.UniOp({op:'NOT' , right:$$[$0]});
+ this.$ = new yy.UniOp({op:'NOT' , right:$$[$0]}); 
 break;
 case 385:
- this.$ = new yy.UniOp({op:'-' , right:$$[$0]});
+ this.$ = new yy.UniOp({op:'-' , right:$$[$0]}); 
 break;
 case 386:
- this.$ = new yy.UniOp({op:'+' , right:$$[$0]});
+ this.$ = new yy.UniOp({op:'+' , right:$$[$0]}); 
 break;
 case 387:
- this.$ = new yy.UniOp({op:'#' , right:$$[$0]});
+ this.$ = new yy.UniOp({op:'#' , right:$$[$0]}); 
 break;
 case 388:
- this.$ = new yy.UniOp({right: $$[$0-1]});
+ this.$ = new yy.UniOp({right: $$[$0-1]}); 
 break;
 case 389:
 
-			if(!yy.queries) yy.queries = [];
+			if(!yy.queries) yy.queries = []; 
 			this.$ = new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1], queriesidx: yy.queries.length});
-			yy.queries.push($$[$0-1]);
+			yy.queries.push($$[$0-1]);  
 
 break;
 case 390:
 
-			if(!yy.queries) yy.queries = [];
+			if(!yy.queries) yy.queries = []; 
 			this.$ = new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1], queriesidx: yy.queries.length});
-			yy.queries.push($$[$0-1]);
+			yy.queries.push($$[$0-1]);  
 
 break;
 case 391:
- this.$ = new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1]});
+ this.$ = new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1]}); 
 break;
 case 392:
- this.$ = new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1]});
+ this.$ = new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1]}); 
 break;
 case 393:
- this.$ = new yy.Op({left: $$[$0-3], op:'IN', right:[]});
+ this.$ = new yy.Op({left: $$[$0-3], op:'IN', right:[]}); 
 break;
 case 394:
- this.$ = new yy.Op({left: $$[$0-4], op:'NOT IN', right:[]});
+ this.$ = new yy.Op({left: $$[$0-4], op:'NOT IN', right:[]}); 
 break;
 case 395: case 397:
- this.$ = new yy.Op({left: $$[$0-2], op:'IN', right:$$[$0]});
+ this.$ = new yy.Op({left: $$[$0-2], op:'IN', right:$$[$0]}); 
 break;
 case 396: case 398:
- this.$ = new yy.Op({left: $$[$0-3], op:'NOT IN', right:$$[$0]});
+ this.$ = new yy.Op({left: $$[$0-3], op:'NOT IN', right:$$[$0]}); 
 break;
 case 399:
 
 /*			var expr = $$[$0];
 			if(expr.left && expr.left.op == 'AND') {
-				this.$ = new yy.Op({left:new yy.Op({left:$$[$0-2], op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right });
+				this.$ = new yy.Op({left:new yy.Op({left:$$[$0-2], op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
 			} else {
 */
-				this.$ = new yy.Op({left:$$[$0-2], op:'BETWEEN1', right:$$[$0] });
+				this.$ = new yy.Op({left:$$[$0-2], op:'BETWEEN1', right:$$[$0] }); 
 
 break;
 case 400:
 
-				this.$ = new yy.Op({left:$$[$0-2], op:'NOT BETWEEN1', right:$$[$0] });
+				this.$ = new yy.Op({left:$$[$0-2], op:'NOT BETWEEN1', right:$$[$0] }); 
 
 break;
 case 401:
- this.$ = new yy.Op({op:'IS' , left:$$[$0-2], right:$$[$0]});
+ this.$ = new yy.Op({op:'IS' , left:$$[$0-2], right:$$[$0]}); 
 break;
 case 402:
- this.$ = new yy.Convert({expression:$$[$0-2]}) ; yy.extend(this.$,$$[$0]) ;
+ this.$ = new yy.Convert({expression:$$[$0-2]}) ; yy.extend(this.$,$$[$0]) ; 
 break;
 case 403: case 404:
  this.$ = $$[$0];
@@ -1209,19 +1209,19 @@ case 405:
  this.$ = $$[$0-1];
 break;
 case 412:
- this.$ = 'ALL';
+ this.$ = 'ALL'; 
 break;
 case 413:
- this.$ = 'SOME';
+ this.$ = 'SOME'; 
 break;
 case 414:
- this.$ = 'ANY';
+ this.$ = 'ANY'; 
 break;
 case 415:
- this.$ = new yy.Update({table:$$[$0-4], columns:$$[$0-2], where:$$[$0]});
+ this.$ = new yy.Update({table:$$[$0-4], columns:$$[$0-2], where:$$[$0]}); 
 break;
 case 416:
- this.$ = new yy.Update({table:$$[$0-2], columns:$$[$0]});
+ this.$ = new yy.Update({table:$$[$0-2], columns:$$[$0]}); 
 break;
 case 419:
  this.$ = new yy.SetColumn({column:$$[$0-2], expression:$$[$0]})
@@ -1236,28 +1236,28 @@ case 422:
  this.$ = new yy.Delete({table:$$[$0]});
 break;
 case 423:
- this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0]});
+ this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0]}); 
 break;
 case 424:
- this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true});
+ this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true}); 
 break;
 case 425:
- this.$ = new yy.Insert({into:$$[$0-2], "default": true}) ;
+ this.$ = new yy.Insert({into:$$[$0-2], "default": true}) ; 
 break;
 case 426:
- this.$ = new yy.Insert({into:$$[$0-5], columns: $$[$0-3], values: $$[$0]});
+ this.$ = new yy.Insert({into:$$[$0-5], columns: $$[$0-3], values: $$[$0]}); 
 break;
 case 427:
- this.$ = new yy.Insert({into:$$[$0-1], select: $$[$0]});
+ this.$ = new yy.Insert({into:$$[$0-1], select: $$[$0]}); 
 break;
 case 428:
- this.$ = new yy.Insert({into:$$[$0-1], select: $$[$0], orreplace:true});
+ this.$ = new yy.Insert({into:$$[$0-1], select: $$[$0], orreplace:true}); 
 break;
 case 429:
- this.$ = new yy.Insert({into:$$[$0-4], columns: $$[$0-2], select: $$[$0]});
+ this.$ = new yy.Insert({into:$$[$0-4], columns: $$[$0-2], select: $$[$0]}); 
 break;
 case 432:
- this.$ = [$$[$0-1]];
+ this.$ = [$$[$0-1]]; 
 break;
 case 435:
 this.$ = $$[$0-4]; $$[$0-4].push($$[$0-1])
@@ -1267,54 +1267,54 @@ this.$ = $$[$0-2]; $$[$0-2].push($$[$0])
 break;
 case 448:
 
-			this.$ = new yy.CreateTable({table:$$[$0-4]});
-			yy.extend(this.$,$$[$0-7]);
-			yy.extend(this.$,$$[$0-6]);
-			yy.extend(this.$,$$[$0-5]);
-			yy.extend(this.$,$$[$0-2]);
-			yy.extend(this.$,$$[$0]);
+			this.$ = new yy.CreateTable({table:$$[$0-4]}); 
+			yy.extend(this.$,$$[$0-7]); 
+			yy.extend(this.$,$$[$0-6]); 
+			yy.extend(this.$,$$[$0-5]); 
+			yy.extend(this.$,$$[$0-2]); 
+			yy.extend(this.$,$$[$0]); 
 
 break;
 case 449:
 
-			this.$ = new yy.CreateTable({table:$$[$0]});
-			yy.extend(this.$,$$[$0-3]);
-			yy.extend(this.$,$$[$0-2]);
-			yy.extend(this.$,$$[$0-1]);
+			this.$ = new yy.CreateTable({table:$$[$0]}); 
+			yy.extend(this.$,$$[$0-3]); 
+			yy.extend(this.$,$$[$0-2]); 
+			yy.extend(this.$,$$[$0-1]); 
 
 break;
 case 451:
- this.$ = {class:true};
+ this.$ = {class:true}; 
 break;
 case 460:
- this.$ = {temporary:true};
+ this.$ = {temporary:true}; 
 break;
 case 462:
- this.$ = {ifnotexists: true};
+ this.$ = {ifnotexists: true}; 
 break;
 case 463:
- this.$ = {columns: $$[$0-2], constraints: $$[$0]};
+ this.$ = {columns: $$[$0-2], constraints: $$[$0]}; 
 break;
 case 464:
- this.$ = {columns: $$[$0]};
+ this.$ = {columns: $$[$0]}; 
 break;
 case 465:
- this.$ = {as: $$[$0]}
+ this.$ = {as: $$[$0]} 
 break;
 case 466: case 490:
  this.$ = [$$[$0]];
 break;
 case 468: case 469: case 470: case 471: case 472:
- $$[$0].constraintid = $$[$0-1]; this.$ = $$[$0];
+ $$[$0].constraintid = $$[$0-1]; this.$ = $$[$0]; 
 break;
 case 475:
- this.$ = {type: 'CHECK', expression: $$[$0-1]};
+ this.$ = {type: 'CHECK', expression: $$[$0-1]}; 
 break;
 case 476:
- this.$ = {type: 'PRIMARY KEY', columns: $$[$0-1], clustered:($$[$0-3]+'').toUpperCase()};
+ this.$ = {type: 'PRIMARY KEY', columns: $$[$0-1], clustered:($$[$0-3]+'').toUpperCase()}; 
 break;
 case 477:
- this.$ = {type: 'FOREIGN KEY', columns: $$[$0-5], fktable: $$[$0-2], fkcolumns: $$[$0-1]};
+ this.$ = {type: 'FOREIGN KEY', columns: $$[$0-5], fktable: $$[$0-2], fkcolumns: $$[$0-1]}; 
 break;
 case 483:
 
@@ -1325,34 +1325,34 @@ case 492:
  this.$ = new yy.ColumnDef({columnid:$$[$0-2]}); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);
 break;
 case 493:
- this.$ = new yy.ColumnDef({columnid:$$[$0-1]}); yy.extend(this.$,$$[$0]);
+ this.$ = new yy.ColumnDef({columnid:$$[$0-1]}); yy.extend(this.$,$$[$0]); 
 break;
 case 494:
- this.$ = new yy.ColumnDef({columnid:$$[$0], dbtypeid: ''});
+ this.$ = new yy.ColumnDef({columnid:$$[$0], dbtypeid: ''}); 
 break;
 case 495:
- this.$ = {dbtypeid: $$[$0-5], dbsize: $$[$0-3], dbprecision: +$$[$0-1]}
+ this.$ = {dbtypeid: $$[$0-5], dbsize: $$[$0-3], dbprecision: +$$[$0-1]} 
 break;
 case 496:
- this.$ = {dbtypeid: $$[$0-6]+($$[$0-5]?' '+$$[$0-5]:''), dbsize: $$[$0-3], dbprecision: +$$[$0-1]}
+ this.$ = {dbtypeid: $$[$0-6]+($$[$0-5]?' '+$$[$0-5]:''), dbsize: $$[$0-3], dbprecision: +$$[$0-1]} 
 break;
 case 497:
- this.$ = {dbtypeid: $$[$0-3], dbsize: $$[$0-1]}
+ this.$ = {dbtypeid: $$[$0-3], dbsize: $$[$0-1]} 
 break;
 case 498:
- this.$ = {dbtypeid: $$[$0-4]+($$[$0-3]?' '+$$[$0-3]:''), dbsize: $$[$0-1]}
+ this.$ = {dbtypeid: $$[$0-4]+($$[$0-3]?' '+$$[$0-3]:''), dbsize: $$[$0-1]} 
 break;
 case 499:
- this.$ = {dbtypeid: $$[$0]}
+ this.$ = {dbtypeid: $$[$0]} 
 break;
 case 500:
- this.$ = {dbtypeid: $$[$0-1]+($$[$0]?' '+$$[$0]:'')}
+ this.$ = {dbtypeid: $$[$0-1]+($$[$0]?' '+$$[$0]:'')} 
 break;
 case 501:
- this.$ = {dbtypeid: 'ENUM', enumvalues: $$[$0-1]}
+ this.$ = {dbtypeid: 'ENUM', enumvalues: $$[$0-1]} 
 break;
 case 502: case 697:
- this.$ = +$$[$0];
+ this.$ = +$$[$0]; 
 break;
 case 504:
 this.$ = undefined
@@ -1369,10 +1369,10 @@ case 510: case 511:
 this.$ = {foreignkey:{table:$$[$0-1], columnid: $$[$0]}};
 break;
 case 512:
- this.$ = {identity: {value:$$[$0-3],step:$$[$0-1]}}
+ this.$ = {identity: {value:$$[$0-3],step:$$[$0-1]}} 
 break;
 case 513:
- this.$ = {identity: {value:1,step:1}}
+ this.$ = {identity: {value:1,step:1}} 
 break;
 case 514:
 this.$ = {"default":$$[$0]};
@@ -1381,19 +1381,19 @@ case 515:
 this.$ = {"default":$$[$0-1]};
 break;
 case 516:
-this.$ = {null:true};
+this.$ = {null:true}; 
 break;
 case 517:
-this.$ = {notnull:true};
+this.$ = {notnull:true}; 
 break;
 case 518:
-this.$ = {check:$$[$0]};
+this.$ = {check:$$[$0]}; 
 break;
 case 519:
-this.$ = {unique:true};
+this.$ = {unique:true}; 
 break;
 case 520:
- this.$ = new yy.DropTable({tables:$$[$0],type:$$[$0-2]}); yy.extend(this.$, $$[$0-1]);
+ this.$ = new yy.DropTable({tables:$$[$0],type:$$[$0-2]}); yy.extend(this.$, $$[$0-1]); 
 break;
 case 524:
  this.$ = {ifexists: true};
@@ -1432,17 +1432,17 @@ case 535:
  this.$ = new yy.DetachDatabase({databaseid:$$[$0]});
 break;
 case 536:
- this.$ = new yy.CreateDatabase({databaseid:$$[$0] }); yy.extend(this.$,$$[$0]);
+ this.$ = new yy.CreateDatabase({databaseid:$$[$0] }); yy.extend(this.$,$$[$0]); 
 break;
 case 537:
- this.$ = new yy.CreateDatabase({engineid:$$[$0-4].toUpperCase(), databaseid:$$[$0-1], as:$$[$0] }); yy.extend(this.$,$$[$0-2]);
+ this.$ = new yy.CreateDatabase({engineid:$$[$0-4].toUpperCase(), databaseid:$$[$0-1], as:$$[$0] }); yy.extend(this.$,$$[$0-2]); 
 break;
 case 538:
- this.$ = new yy.CreateDatabase({engineid:$$[$0-7].toUpperCase(), databaseid:$$[$0-4], args:$$[$0-2], as:$$[$0] }); yy.extend(this.$,$$[$0-5]);
+ this.$ = new yy.CreateDatabase({engineid:$$[$0-7].toUpperCase(), databaseid:$$[$0-4], args:$$[$0-2], as:$$[$0] }); yy.extend(this.$,$$[$0-5]); 
 break;
 case 539:
- this.$ = new yy.CreateDatabase({engineid:$$[$0-4].toUpperCase(),
-		    as:$$[$0], args:[$$[$0-1]] }); yy.extend(this.$,$$[$0-2]);
+ this.$ = new yy.CreateDatabase({engineid:$$[$0-4].toUpperCase(), 
+		    as:$$[$0], args:[$$[$0-1]] }); yy.extend(this.$,$$[$0-2]); 
 break;
 case 540:
 this.$ = undefined;
@@ -1451,10 +1451,10 @@ case 542: case 543:
  this.$ = new yy.UseDatabase({databaseid: $$[$0] });
 break;
 case 544:
- this.$ = new yy.DropDatabase({databaseid: $$[$0] }); yy.extend(this.$,$$[$0-1]);
+ this.$ = new yy.DropDatabase({databaseid: $$[$0] }); yy.extend(this.$,$$[$0-1]); 
 break;
 case 545: case 546:
- this.$ = new yy.DropDatabase({databaseid: $$[$0], engineid:$$[$0-3].toUpperCase() }); yy.extend(this.$,$$[$0-1]);
+ this.$ = new yy.DropDatabase({databaseid: $$[$0], engineid:$$[$0-3].toUpperCase() }); yy.extend(this.$,$$[$0-1]); 
 break;
 case 547:
  this.$ = new yy.CreateIndex({indexid:$$[$0-5], table:$$[$0-3], columns:$$[$0-1]})
@@ -1509,74 +1509,74 @@ case 563:
 break;
 case 564:
 
-			this.$ = new yy.CreateTable({table:$$[$0-6],view:true,select:$$[$0-1],viewcolumns:$$[$0-4]});
-			yy.extend(this.$,$$[$0-9]);
-			yy.extend(this.$,$$[$0-7]);
+			this.$ = new yy.CreateTable({table:$$[$0-6],view:true,select:$$[$0-1],viewcolumns:$$[$0-4]}); 
+			yy.extend(this.$,$$[$0-9]); 
+			yy.extend(this.$,$$[$0-7]); 
 
 break;
 case 565:
 
-			this.$ = new yy.CreateTable({table:$$[$0-3],view:true,select:$$[$0-1]});
-			yy.extend(this.$,$$[$0-6]);
-			yy.extend(this.$,$$[$0-4]);
+			this.$ = new yy.CreateTable({table:$$[$0-3],view:true,select:$$[$0-1]}); 
+			yy.extend(this.$,$$[$0-6]); 
+			yy.extend(this.$,$$[$0-4]); 
 
 break;
 case 569:
- this.$ = new yy.DropTable({tables:$$[$0], view:true}); yy.extend(this.$, $$[$0-1]);
+ this.$ = new yy.DropTable({tables:$$[$0], view:true}); yy.extend(this.$, $$[$0-1]); 
 break;
 case 570:
- this.$ = new yy.Help({subject:$$[$0].value.toUpperCase()} ) ;
+ this.$ = new yy.Help({subject:$$[$0].value.toUpperCase()} ) ; 
 break;
 case 571:
- this.$ = new yy.Help() ;
+ this.$ = new yy.Help() ; 
 break;
 case 572:
- this.$ = new yy.ExpressionStatement({expression:$$[$0]});
+ this.$ = new yy.ExpressionStatement({expression:$$[$0]}); 
 break;
 case 573:
- this.$ = new yy.Source({url:$$[$0].value});
+ this.$ = new yy.Source({url:$$[$0].value}); 
 break;
 case 574:
- this.$ = new yy.Assert({value:$$[$0]});
+ this.$ = new yy.Assert({value:$$[$0]}); 
 break;
 case 575:
- this.$ = new yy.Assert({value:$$[$0].value});
+ this.$ = new yy.Assert({value:$$[$0].value}); 
 break;
 case 576:
- this.$ = new yy.Assert({value:$$[$0], message:$$[$0-2]});
+ this.$ = new yy.Assert({value:$$[$0], message:$$[$0-2]}); 
 break;
 case 578: case 589: case 591:
- this.$ = $$[$0].value;
+ this.$ = $$[$0].value; 
 break;
 case 579: case 587:
- this.$ = +$$[$0].value;
+ this.$ = +$$[$0].value; 
 break;
 case 580:
- this.$ = (!!$$[$0].value);
+ this.$ = (!!$$[$0].value); 
 break;
 case 588:
- this.$ = ""+$$[$0].value;
+ this.$ = ""+$$[$0].value; 
 break;
 case 594:
  this.$ = $$[$0-1]
 break;
 case 596: case 599:
- this.$ = $$[$0-2];
+ this.$ = $$[$0-2]; 
 break;
 case 597:
- this.$ = {};
+ this.$ = {}; 
 break;
 case 600:
- this.$ = [];
+ this.$ = []; 
 break;
 case 601:
- yy.extend($$[$0-2],$$[$0]); this.$ = $$[$0-2];
+ yy.extend($$[$0-2],$$[$0]); this.$ = $$[$0-2]; 
 break;
 case 603:
- this.$ = {}; this.$[$$[$0-2].substr(1,$$[$0-2].length-2)] = $$[$0];
+ this.$ = {}; this.$[$$[$0-2].substr(1,$$[$0-2].length-2)] = $$[$0]; 
 break;
 case 604: case 605:
- this.$ = {}; this.$[$$[$0-2]] = $$[$0];
+ this.$ = {}; this.$[$$[$0-2]] = $$[$0]; 
 break;
 case 608:
  this.$ = new yy.SetVariable({variable:$$[$0-1].toLowerCase(), value:$$[$0]});
@@ -1588,35 +1588,35 @@ case 610:
  this.$ = new yy.SetVariable({variable:$$[$0-3], props: $$[$0-2], expression:$$[$0], method:$$[$0-4]});
 break;
 case 611:
-this.$ = '@';
+this.$ = '@'; 
 break;
 case 612:
-this.$ = '$';
+this.$ = '$'; 
 break;
 case 618:
- this.$ = true;
+ this.$ = true; 
 break;
 case 619:
- this.$ = false;
+ this.$ = false; 
 break;
 case 620:
- this.$ = new yy.CommitTransaction();
+ this.$ = new yy.CommitTransaction(); 
 break;
 case 621:
- this.$ = new yy.RollbackTransaction();
+ this.$ = new yy.RollbackTransaction(); 
 break;
 case 622:
- this.$ = new yy.BeginTransaction();
+ this.$ = new yy.BeginTransaction(); 
 break;
 case 623:
- this.$ = new yy.If({expression:$$[$0-2],thenstat:$$[$0-1], elsestat:$$[$0]});
+ this.$ = new yy.If({expression:$$[$0-2],thenstat:$$[$0-1], elsestat:$$[$0]}); 
 			if($$[$0-1].exists) this.$.exists = $$[$0-1].exists;
 			if($$[$0-1].queries) this.$.queries = $$[$0-1].queries;
 
 break;
 case 624:
 
-			this.$ = new yy.If({expression:$$[$0-1],thenstat:$$[$0]});
+			this.$ = new yy.If({expression:$$[$0-1],thenstat:$$[$0]}); 
 			if($$[$0].exists) this.$.exists = $$[$0].exists;
 			if($$[$0].queries) this.$.queries = $$[$0].queries;
 
@@ -1625,19 +1625,19 @@ case 625:
 this.$ = $$[$0];
 break;
 case 626:
- this.$ = new yy.While({expression:$$[$0-1],loopstat:$$[$0]});
+ this.$ = new yy.While({expression:$$[$0-1],loopstat:$$[$0]}); 
 			if($$[$0].exists) this.$.exists = $$[$0].exists;
 			if($$[$0].queries) this.$.queries = $$[$0].queries;
 
 break;
 case 627:
- this.$ = new yy.Continue();
+ this.$ = new yy.Continue(); 
 break;
 case 628:
- this.$ = new yy.Break();
+ this.$ = new yy.Break(); 
 break;
 case 629:
- this.$ = new yy.BeginEnd({statements:$$[$0-1]});
+ this.$ = new yy.BeginEnd({statements:$$[$0-1]}); 
 break;
 case 630:
  this.$ = new yy.Print({exprs:$$[$0]});
@@ -1646,25 +1646,25 @@ case 631:
  this.$ = new yy.Print({select:$$[$0]});
 break;
 case 632:
- this.$ = new yy.Require({paths:$$[$0]});
+ this.$ = new yy.Require({paths:$$[$0]}); 
 break;
 case 633:
- this.$ = new yy.Require({plugins:$$[$0]});
+ this.$ = new yy.Require({plugins:$$[$0]}); 
 break;
 case 634: case 635:
-this.$ = $$[$0].toUpperCase();
+this.$ = $$[$0].toUpperCase(); 
 break;
 case 636:
- this.$ = new yy.Echo({expr:$$[$0]});
+ this.$ = new yy.Echo({expr:$$[$0]}); 
 break;
 case 641:
- this.$ = new yy.Declare({declares:$$[$0]});
+ this.$ = new yy.Declare({declares:$$[$0]}); 
 break;
 case 644:
- this.$ = {variable: $$[$0-1]}; yy.extend(this.$,$$[$0]);
+ this.$ = {variable: $$[$0-1]}; yy.extend(this.$,$$[$0]); 
 break;
 case 645:
- this.$ = {variable: $$[$0-2]}; yy.extend(this.$,$$[$0]);
+ this.$ = {variable: $$[$0-2]}; yy.extend(this.$,$$[$0]); 
 break;
 case 646:
  this.$ = {variable: $$[$0-3], expression:$$[$0]}; yy.extend(this.$,$$[$0-2]);
@@ -1677,95 +1677,95 @@ case 648:
 break;
 case 649:
 
-			this.$ = new yy.Merge(); yy.extend(this.$,$$[$0-4]); yy.extend(this.$,$$[$0-3]);
+			this.$ = new yy.Merge(); yy.extend(this.$,$$[$0-4]); yy.extend(this.$,$$[$0-3]); 
 			yy.extend(this.$,$$[$0-2]);
 			yy.extend(this.$,{matches:$$[$0-1]});yy.extend(this.$,$$[$0]);
 
 break;
 case 650: case 651:
- this.$ = {into: $$[$0]};
+ this.$ = {into: $$[$0]}; 
 break;
 case 653:
- this.$ = {on:$$[$0]};
+ this.$ = {on:$$[$0]}; 
 break;
 case 658:
- this.$ = {matched:true, action:$$[$0]}
+ this.$ = {matched:true, action:$$[$0]} 
 break;
 case 659:
- this.$ = {matched:true, expr: $$[$0-2], action:$$[$0]}
+ this.$ = {matched:true, expr: $$[$0-2], action:$$[$0]} 
 break;
 case 660:
- this.$ = {delete:true};
+ this.$ = {delete:true}; 
 break;
 case 661:
- this.$ = {update:$$[$0]};
+ this.$ = {update:$$[$0]}; 
 break;
 case 662: case 663:
- this.$ = {matched:false, bytarget: true, action:$$[$0]}
+ this.$ = {matched:false, bytarget: true, action:$$[$0]} 
 break;
 case 664: case 665:
- this.$ = {matched:false, bytarget: true, expr:$$[$0-2], action:$$[$0]}
+ this.$ = {matched:false, bytarget: true, expr:$$[$0-2], action:$$[$0]} 
 break;
 case 666:
- this.$ = {matched:false, bysource: true, action:$$[$0]}
+ this.$ = {matched:false, bysource: true, action:$$[$0]} 
 break;
 case 667:
- this.$ = {matched:false, bysource: true, expr:$$[$0-2], action:$$[$0]}
+ this.$ = {matched:false, bysource: true, expr:$$[$0-2], action:$$[$0]} 
 break;
 case 668:
- this.$ = {insert:true, values:$$[$0]};
+ this.$ = {insert:true, values:$$[$0]}; 
 break;
 case 669:
- this.$ = {insert:true, values:$$[$0], columns:$$[$0-3]};
+ this.$ = {insert:true, values:$$[$0], columns:$$[$0-3]}; 
 break;
 case 670:
- this.$ = {insert:true, defaultvalues:true};
+ this.$ = {insert:true, defaultvalues:true}; 
 break;
 case 671:
- this.$ = {insert:true, defaultvalues:true, columns:$$[$0-3]};
+ this.$ = {insert:true, defaultvalues:true, columns:$$[$0-3]}; 
 break;
 case 673:
- this.$ = {output:{columns:$$[$0]}}
+ this.$ = {output:{columns:$$[$0]}} 
 break;
 case 674:
- this.$ = {output:{columns:$$[$0-3], intovar: $$[$0], method:$$[$0-1]}}
+ this.$ = {output:{columns:$$[$0-3], intovar: $$[$0], method:$$[$0-1]}} 
 break;
 case 675:
- this.$ = {output:{columns:$$[$0-2], intotable: $$[$0]}}
+ this.$ = {output:{columns:$$[$0-2], intotable: $$[$0]}} 
 break;
 case 676:
- this.$ = {output:{columns:$$[$0-5], intotable: $$[$0-3], intocolumns:$$[$0-1]}}
+ this.$ = {output:{columns:$$[$0-5], intotable: $$[$0-3], intocolumns:$$[$0-1]}} 
 break;
 case 677:
 
-			this.$ = new yy.CreateVertex({class:$$[$0-3],sharp:$$[$0-2], name:$$[$0-1]});
-			yy.extend(this.$,$$[$0]);
+			this.$ = new yy.CreateVertex({class:$$[$0-3],sharp:$$[$0-2], name:$$[$0-1]}); 
+			yy.extend(this.$,$$[$0]); 
 
 break;
 case 680:
- this.$ = {sets:$$[$0]};
+ this.$ = {sets:$$[$0]}; 
 break;
 case 681:
- this.$ = {content:$$[$0]};
+ this.$ = {content:$$[$0]}; 
 break;
 case 682:
- this.$ = {select:$$[$0]};
+ this.$ = {select:$$[$0]}; 
 break;
 case 683:
 
 			this.$ = new yy.CreateEdge({from:$$[$0-3],to:$$[$0-1],name:$$[$0-5]});
-			yy.extend(this.$,$$[$0]);
+			yy.extend(this.$,$$[$0]); 
 
 break;
 case 684:
- this.$ = new yy.CreateGraph({graph:$$[$0]});
+ this.$ = new yy.CreateGraph({graph:$$[$0]}); 
 break;
 case 685:
- this.$ = new yy.CreateGraph({from:$$[$0]});
+ this.$ = new yy.CreateGraph({from:$$[$0]}); 
 break;
 case 688:
 
-			this.$ = $$[$0-2];
+			this.$ = $$[$0-2]; 
 			if($$[$0-1]) this.$.json = new yy.Json({value:$$[$0-1]});
 			if($$[$0]) this.$.as = $$[$0];
 
@@ -1780,25 +1780,25 @@ case 689:
 
 break;
 case 691:
- this.$ = {vars:$$[$0], method:$$[$0-1]};
+ this.$ = {vars:$$[$0], method:$$[$0-1]}; 
 break;
 case 694:
 
 			var s3 = $$[$0-1];
-			this.$ = {prop:$$[$0-3], sharp:$$[$0-2], name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$$[$0]};
+			this.$ = {prop:$$[$0-3], sharp:$$[$0-2], name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$$[$0]}; 
 
 break;
 case 700:
- this.$ = new yy.AddRule({left:$$[$0-2], right:$$[$0]});
+ this.$ = new yy.AddRule({left:$$[$0-2], right:$$[$0]}); 
 break;
 case 701:
- this.$ = new yy.AddRule({right:$$[$0]});
+ this.$ = new yy.AddRule({right:$$[$0]}); 
 break;
 case 704:
- this.$ = new yy.Term({termid:$$[$0]});
+ this.$ = new yy.Term({termid:$$[$0]}); 
 break;
 case 705:
- this.$ = new yy.Term({termid:$$[$0-3],args:$$[$0-1]});
+ this.$ = new yy.Term({termid:$$[$0-3],args:$$[$0-1]}); 
 break;
 case 714: case 734: case 736: case 738: case 742: case 744: case 746: case 748: case 750: case 752:
 this.$ = [];
@@ -2515,7 +2515,7 @@ case 113:return 232
 break;
 case 114:return 431
 break;
-case 115:return 180
+case 115:return 180	
 break;
 case 116:return 266
 break;
@@ -2823,7 +2823,7 @@ alasql.prettyflag = false;
 	@function
 	@param {string} sql SQL statement
 	@param {boolean} flag value
-	@return {string} HTML or text string with pretty output
+	@return {string} HTML or text string with pretty output 
 */
 
 alasql.pretty = function(sql, flag) {
@@ -2875,7 +2875,7 @@ function n2u(s) {
     undefined,a => undefined
     NaN,a       => undefined
 
-*/
+*/    
 function und(s,r) {
     return '(y='+s+',typeof y=="undefined"?undefined:'+r+')';
 }
@@ -2951,7 +2951,7 @@ var doubleq = utils.doubleq = function(s) {
 /**
     Cut BOM first character for UTF-8 files (for merging two files)
     @param {string} s Source string
-    @return {string} Replaced string
+    @return {string} Replaced string    
 */
 
 var cutbom = function(s) {
@@ -3033,13 +3033,13 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         if(typeof path === "string") {
             // For browser read from tag
             /*
-                SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
+                SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
             */
             if((path.substr(0,1) === '#') && (typeof document !== 'undefined')) {
                 data = document.querySelector(path).textContent;
                 success(data);
             } else {
-                /*
+                /* 
                     Simply read file from HTTP request, like:
                     SELECT * FROM TXT('http://alasql.org/README.md');
                 */
@@ -3061,7 +3061,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 xhr.send();
             }
         } else if(path instanceof Event) {
-            /*
+            /* 
                 For browser read from files input element
                 <input type="files" onchange="readFile(event)">
                 <script>
@@ -3080,7 +3080,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 var data = e.target.result;
                 success(cutbom(data));
             };
-            reader.readAsText(files[0]);
+            reader.readAsText(files[0]);    
         }
     }
 };
@@ -3152,10 +3152,10 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 var data = e.target.result;
                 success(data);
             };
-            reader.readAsBinaryString(files[0]);
+            reader.readAsBinaryString(files[0]);    
         } else if(path instanceof Blob) {
         	success(path);
-        }
+        } 
     }
 };
 
@@ -3242,14 +3242,14 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                                 }
                             }
                             fileWriter.write(data);
-                        });
+                        });                                  
                     });
  //               });
             });
 
         } else {
         	if(isIE() === 9) {
-        		// Solution was taken from
+        		// Solution was taken from 
         		// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
 
 				// Prepare data
@@ -3260,13 +3260,13 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				testlink.document.write(ndata); //fileData has contents for the file
 				testlink.document.close();
 				testlink.document.execCommand('SaveAs', false, path);
-				testlink.close();
+				testlink.close();         		
         	} else {
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 	            saveAs(blob, path);
 	            if(cb){
                     res = cb(res);
-                }
+                }                		
         	}
         }
     }
@@ -3274,8 +3274,8 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     return res;
 }
 
-/**
-    @function Is this IE9
+/** 
+    @function Is this IE9 
     @return {boolean} True for IE9 and false for other browsers
 
     For IE9 compatibility issues
@@ -3302,7 +3302,7 @@ var hash = utils.hash = function hash(str){
 
     for (var i = 0; i < str.length; i++) {
         h = ((h<<5)-h)+str.charCodeAt(i);
-        h = h & h;
+        h = h & h; 
    	}
 
     return h;
@@ -3317,15 +3317,15 @@ var hash = utils.hash = function hash(str){
 */
 var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
-    a.forEach(function(i){
-                            if (r.indexOf(i) < 0){
+    a.forEach(function(i){ 
+                            if (r.indexOf(i) < 0){ 
                                 r.push(i);
-                            }
+                            } 
                         });
     return r;
 }
 
-/**
+/** 
  Array Difference
  */
 var arrayDiff = utils.arrayDiff  = function (a,b) {
@@ -3345,7 +3345,7 @@ var arrayIntersect = utils.arrayIntersect  = function(a,b) {
         });
 
         if(found) {
-            r.push(ai);
+            r.push(ai); 
         }
     });
     return r;
@@ -3365,7 +3365,7 @@ var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
         });
 
         if(!found) {
-            r.push(ai);
+            r.push(ai); 
         }
     });
     return r;
@@ -3385,7 +3385,7 @@ var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
         });
 
         if(!found) {
-            r.push(ai);
+            r.push(ai); 
         }
     });
     return r;
@@ -3405,13 +3405,13 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
         });
 
         if(found) {
-            r.push(ai);
+            r.push(ai); 
         }
     });
     return r;
 };
 
-/**
+/** 
   Deep clone obects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
@@ -3476,7 +3476,7 @@ var distinctArray = utils.distinctArray = function(data) {
         if(typeof data[i] === 'object') {
             uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k];}).join('`');
         } else {
-            uix = data[i];
+            uix = data[i];  
         }
         uniq[uix] = data[i];
     }
@@ -3487,9 +3487,9 @@ var distinctArray = utils.distinctArray = function(data) {
     return res;
 };
 
-/**
+/** 
     Extend object a with properties of b
-    @function
+    @function 
     @param {object} a
     @param {object} b
     @return {object}
@@ -3509,7 +3509,7 @@ var extend = utils.extend = function extend (a,b){
  */
 var flatArray = utils.flatArray = function(a) {
 
-    if(!a || 0 === a.length){
+    if(!a || 0 === a.length){ 
         return [];
     }
 
@@ -3732,7 +3732,7 @@ alasql.parser = parser;
  */
 alasql.parse = function(sql) {
 	return parser.parse(alasql.utils.uncomment(sql));
-};
+}; 
 
 /**
  	List of engines of external databases
@@ -3747,11 +3747,11 @@ alasql.engines = {};
  */
 alasql.databases = {};
 
-/**
-	Number of databases
+/** 
+	Number of databases 
 	@type {number}
 */
-alasql.databasenum = 0;
+alasql.databasenum = 0; 
 
 /**
  	Alasql options object
@@ -3768,9 +3768,9 @@ alasql.options.logprompt = true; // Print SQL at log
 
 // Default modifier
 // values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
-alasql.options.modifier = undefined;
+alasql.options.modifier = undefined; 
 // How many rows to lookup to define columns
-alasql.options.columnlookup = 10;
+alasql.options.columnlookup = 10; 
 // Create vertex if not found
 alasql.options.autovertex = true;
 
@@ -3855,7 +3855,7 @@ alasql.exec = function (sql, params, cb, scope) {
 			return alasql.dexec(alasql.useid, sql, params, cb, scope);
 		} catch(err){
 			alasql.error = err;
-			if(cb){
+			if(cb){ 
 				cb(null,alasql.error);
 			}
 		}
@@ -3915,7 +3915,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		} else {
 
 			alasql.precompile(ast.statements[0],alasql.useid,params);
-			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);
+			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);		
 			return res;
 		}
 	} else {
@@ -3941,13 +3941,13 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		if(ast.statements[i]) {
-			if(ast.statements[i].compile) {
+			if(ast.statements[i].compile) { 
 				var statement = ast.statements[i].compile(alasql.useid);
 				res.push(alasql.res = statement(params,null,scope));
 			} else {
 				alasql.precompile(ast.statements[i],alasql.useid,params);
 				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
-			}
+			}		
 		}
 	}
 	if(useid !== databaseid){
@@ -3975,7 +3975,7 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 	var res = [];
 
 	function adrunone(data) {
-		if(data !== undefined){
+		if(data !== undefined){ 
 			res.push(data);
 		}
 		var astatement = ast.statements.shift();
@@ -4038,7 +4038,7 @@ alasql.compile = function(sql, databaseid) {
 
 if(typeof exports === 'object') {
 	var Promise = require('es6-promise').Promise;
-}
+} 
 
 //
 // Only for browsers with Promise support
@@ -4055,7 +4055,7 @@ if(typeof Promise === 'function') {
 	             }
 	        });
 	    });
-	};
+	};	
 }
 
 /*
@@ -4069,7 +4069,7 @@ if(typeof Promise === 'function') {
 // Main Database class
 
 /**
-    @class Database
+    @class Database 
  */
 
 var Database = alasql.Database = function (databaseid) {
@@ -4120,7 +4120,7 @@ var Database = alasql.Database = function (databaseid) {
 
 Database.prototype.resetSqlCache = function () {
 	this.sqlCache = {}; // Cache for compiled SQL statements
-	this.sqlCacheSize = 0;
+	this.sqlCacheSize = 0;	
 }
 
 // Main SQL function
@@ -4154,7 +4154,7 @@ Database.prototype.transaction = function(cb) {
 
 // Transaction class (for WebSQL compatibility)
 
-/**
+/** 
  Transaction class
  @class Transaction
  */
@@ -4162,7 +4162,7 @@ Database.prototype.transaction = function(cb) {
 var Transaction = alasql.Transaction = function (databaseid) {
 	this.transactionid = Date.now();
 	this.databaseid = databaseid;
-	this.commited = false;
+	this.commited = false; 
 	this.dbversion = alasql.databases[databaseid].dbversion;
 //	this.bank = cloneDeep(alasql.databases[databaseid]);
 	this.bank = JSON.stringify(alasql.databases[databaseid]);
@@ -4171,7 +4171,7 @@ var Transaction = alasql.Transaction = function (databaseid) {
 	return this;
 };
 
-// Main class
+// Main class 
 
 // Commit
 
@@ -4205,7 +4205,7 @@ Transaction.prototype.rollback = function() {
  Execute SQL statement
  @param {string} sql SQL statement
  @param {object} params Parameters
- @param {function} cb Callback function
+ @param {function} cb Callback function 
  @return result
  */
 Transaction.prototype.exec = function(sql, params, cb) {
@@ -4236,7 +4236,7 @@ var Table = alasql.Table = function(params){
 	this.indices = {};
 
 	this.uniqs = {};
-	this.uniqdefs = {};
+	this.uniqdefs = {};	
 
 	extend(this,params);
 };
@@ -4246,7 +4246,7 @@ Table.prototype.indexColumns = function() {
 	self.xcolumns = {};
 	self.columns.forEach(function(col){
 		self.xcolumns[col.columnid] = col;
-	});
+	});	
 }
 
 /*
@@ -4314,7 +4314,7 @@ var yy = parser.yy = alasql.yy = {};
 // Utility
 yy.extend = extend;
 // Option for case sensitive
-yy.casesensitive = alasql.options.casesensitive;
+yy.casesensitive = alasql.options.casesensitive; 
 
 // Base class for all yy classes
 var Base = yy.Base = function (params) { return yy.extend(this, params); };
@@ -4350,7 +4350,7 @@ yy.Statements.prototype.compile = function(db) {
 		return st.compile(db)
 	});
 	if(statements.length === 1) {
-		return statements[0];
+		return statements[0];	
 	} else {
 		return function(params, cb){
 			var res = statements.map(function(st){ return st(params); });
@@ -4380,7 +4380,7 @@ function doSearch(databaseid, params, cb) {
 
 	function processSelector(selectors,sidx,value) {
 
-		var
+		var 
 			val,	// temp values use many places
 			nest, 	// temp value used many places
 			r,		// temp value used many places
@@ -4408,9 +4408,9 @@ function doSearch(databaseid, params, cb) {
 							if(stack && stack.length > 0) {
 								stack.forEach(function(stv){
 									rv = rv.concat(processSelector(selectors,sidx+1,stv));
-								});
+								});								
 							}
-							return rv;
+							return rv;							
 
 						}
 					} else {
@@ -4556,8 +4556,8 @@ function doSearch(databaseid, params, cb) {
 				}
 			} else 	if(sel.selid === 'REPEAT') {
 
-				var
-					lvar,
+				var 
+					lvar, 
 					lmax,
 					lmin = sel.args[0].value;
 				if(!sel.args[1]) {
@@ -4567,7 +4567,7 @@ function doSearch(databaseid, params, cb) {
 				}
 				if(sel.args[2]) {
 					lvar = sel.args[2].variable;
-				}
+				} 
 				//var lsel = sel.sels;
 
 				var retval = [];
@@ -4664,7 +4664,7 @@ function doSearch(databaseid, params, cb) {
 				if(nest.length > 0) {
 					var val = nest.reduce(function(sum, current) {
 	  					return sum + current;
-					}, 0);
+					}, 0);					
 				} else {
 					return [];
 				}
@@ -4703,7 +4703,7 @@ function doSearch(databaseid, params, cb) {
 				nest = processSelector(sel.args,0,value);
 				if(nest.length > 0){
 					val = nest[0];
-				} else {
+				} else { 
 					return [];
 				}
 
@@ -4874,11 +4874,11 @@ function doSearch(databaseid, params, cb) {
 
 			if(sidx+1+1 > selectors.length) {
 
-				res = arr;
+				res = arr;					
 
 			} else {
 				for(var i=0;i<r.values.length;i++) {
-					res = res.concat(processSelector(selectors,sidx+1,arr[i]));
+					res = res.concat(processSelector(selectors,sidx+1,arr[i]));									
 				}
 			}
 		}
@@ -4911,7 +4911,7 @@ function doSearch(databaseid, params, cb) {
 		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
 		//selectors.unshift({srchid:'CHILD'});
 	} else if(
-				this.from instanceof yy.FuncValue &&
+				this.from instanceof yy.FuncValue &&				 
 				alasql.from[this.from.funcid.toUpperCase()]
 			) {
 		var args = this.from.args.map(function(arg){
@@ -4927,10 +4927,10 @@ function doSearch(databaseid, params, cb) {
 		fromdata = alasql.databases[databaseid].objects;
 	} else {
 		var fromfn = new Function('params,alasql','var y;return '+this.from.toJS());
-		fromdata = fromfn(params,alasql);
+		fromdata = fromfn(params,alasql);			
 		// Check for Mogo Collections
 		if(
-			typeof Mongo === 'object' && typeof Mongo.Collection !== 'object' &&
+			typeof Mongo === 'object' && typeof Mongo.Collection !== 'object' && 
 			fromdata instanceof Mongo.Collection
 		) {
 			fromdata = fromdata.find().fetch();
@@ -4956,18 +4956,18 @@ function doSearch(databaseid, params, cb) {
 
 		res = processSelector(selectors,0,fromdata);
 	} else {
-		res = fromdata;
+		res = fromdata; 	
 	}
 
 	if(this.into) {
 		var a1,a2;
 		if(typeof this.into.args[0] !== 'undefined') {
-			a1 =
+			a1 = 
 				new Function('params,alasql','var y;return ' +
 				this.into.args[0].toJS())(params,alasql);
 		}
 		if(typeof this.into.args[1] !== 'undefined') {
-			a2 =
+			a2 =  
 				new Function('params,alasql','var y;return ' +
 				this.into.args[1].toJS())(params,alasql);
 		}
@@ -4984,7 +4984,7 @@ function doSearch(databaseid, params, cb) {
 
 }
 
-/**
+/**	
 	Search class
 	@class
 	@example
@@ -5050,31 +5050,31 @@ alasql.srch.PROP = function(val,args,stope) {
 			return {status: 1, values: arr};
 		} else {
 			return {status: -1, values: []};
-		}
+		}		
 	} else {
 		if(
-			(typeof val !== 'object') 	||
-			(val === null) 				||
-			(typeof args !== 'object') 	||
+			(typeof val !== 'object') 	|| 
+			(val === null) 				|| 
+			(typeof args !== 'object') 	|| 
 			(typeof val[args[0]] === 'undefined')
 		) {
 			return {status: -1, values: []};
 		} else {
 			return {status: 1, values: [val[args[0]]]};
-		}
+		}		
 	}
 };
 
 alasql.srch.APROP = function(val, args) {
 	if(
-		(typeof val !== 'object') 	||
+		(typeof val !== 'object') 	|| 
 		(val === null)				||
-		(typeof args !== 'object')	||
+		(typeof args !== 'object')	|| 
 		(typeof val[args[0]] === 'undefined')) {
 		return {status: 1, values: [undefined]};
 	} else {
 		return {status: 1, values: [val[args[0]]]};
-	}
+	}		
 };
 
 // Test expression
@@ -5084,7 +5084,7 @@ alasql.srch.EQ = function(val,args,stope,params) {
   if(val === exprfn(val,alasql,params)) {
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5096,7 +5096,7 @@ alasql.srch.LIKE = function(val,args,stope,params) {
   	.replace(/%/g,'.*').replace(/\?|_/g,'.')+'$'),'g')) {
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5106,14 +5106,14 @@ alasql.srch.ATTR = function(val,args,stope) {
 	      return {status: 1, values: [val.attributes]};
 		} else {
 			if(
-				typeof val === 'object' 			&&
+				typeof val === 'object' 			&& 
 				typeof val.attributes === 'object'	&&
 				typeof val.attributes[args[0]] !== 'undefined'
 			){
 				return {status: 1, values: [val.attributes[args[0]]]};
 			} else {
-				return {status: -1, values: []};
-			}
+				return {status: -1, values: []};			
+			}			
 		}
 	} else {
 		throw new Error('ATTR is not using in usual mode');
@@ -5150,9 +5150,9 @@ alasql.srch.CHILD = function(val,args,stope) {
       return {status: 1, values: val};
     } else {
     	if(stope.mode === 'XML') {
-	      return {status: 1, values: Object.keys(val.children).map(function(key){return val.children[key];})};
+	      return {status: 1, values: Object.keys(val.children).map(function(key){return val.children[key];})};          
     	} else {
-	      return {status: 1, values: Object.keys(val).map(function(key){return val[key];})};
+	      return {status: 1, values: Object.keys(val).map(function(key){return val[key];})};          
     	}
     }
   } else {
@@ -5164,7 +5164,7 @@ alasql.srch.CHILD = function(val,args,stope) {
 // Return all keys
 alasql.srch.KEYS = function(val) {
   if(typeof val === 'object' && val !== null) {
-	  return {status: 1, values: Object.keys(val)};
+	  return {status: 1, values: Object.keys(val)};          
   } else {
     // If primitive value
     return {status: 1, values:[]};
@@ -5178,7 +5178,7 @@ alasql.srch.WHERE = function(val,args) {
   if(exprfn(val,alasql)) {
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5186,7 +5186,7 @@ alasql.srch.NAME = function(val,args) {
   if(val.name === args[0]) {
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5196,7 +5196,7 @@ alasql.srch.CLASS = function(val,args) {
   if(val.$class == args) { 					// jshint ignore:line
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5205,7 +5205,7 @@ alasql.srch.VERTEX = function(val) {
   if(val.$node === 'VERTEX') {
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5214,7 +5214,7 @@ alasql.srch.INSTANCEOF = function(val,args) {
   if(val instanceof alasql.fn[args[0]]) {
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5223,7 +5223,7 @@ alasql.srch.EDGE = function(val ) {
   if(val.$node === 'EDGE') {
     return {status: 1, values: [val]};
   } else {
-    return {status: -1, values: []};
+    return {status: -1, values: []};        
   }
 };
 
@@ -5258,9 +5258,9 @@ alasql.srch.REF = function(val ) {
 // Transform expression
 alasql.srch.OUT = function(val ) {
 	if(val.$out && val.$out.length > 0) {
-		var res = val.$out.map(function(v){
+		var res = val.$out.map(function(v){ 
 			return alasql.databases[alasql.useid].objects[v]
-		});
+		}); 
 		return {status: 1, values: res};
 	} else {
 		return {status: -1, values: []};
@@ -5270,9 +5270,9 @@ alasql.srch.OUT = function(val ) {
 // Transform expression
 alasql.srch.IN = function(val) {
 	if(val.$in && val.$in.length > 0) {
-		var res = val.$in.map(function(v){
+		var res = val.$in.map(function(v){ 
 			return alasql.databases[alasql.useid].objects[v]
-		});
+		}); 
 		return {status: 1, values: res};
 	} else {
 		return {status: -1, values: []};
@@ -5349,8 +5349,8 @@ var compileSearchOrder = function (order) {
 	if(order) {
 
 		if(
-			order 				&&
-			order.length === 1 	&&
+			order 				&& 
+			order.length === 1 	&& 
 			order[0].expression &&
 			typeof order[0].expression === "function"
 		){
@@ -5374,14 +5374,14 @@ var compileSearchOrder = function (order) {
 		order.forEach(function(ord){
 
 			// Date conversion
-			var dg = '';
+			var dg = ''; 
 
 			if(ord.expression instanceof yy.NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
 			}
 
 			if(ord.expression instanceof yy.Column) {
-				var columnid = ord.expression.columnid;
+				var columnid = ord.expression.columnid; 
 
 				if(alasql.options.valueof){
 					dg = '.valueOf()'; // TODO Check
@@ -5407,7 +5407,7 @@ var compileSearchOrder = function (order) {
 				}
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction === 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
-			}
+			}			
 
 			// TODO Add date comparision
 				// s += 'if(a[\''+columnid+"']"+dg+(ord.direction == 'ASC'?'>':'<')+'b[\''+columnid+"']"+dg+')return 1;';
@@ -5473,7 +5473,7 @@ function queryfn(query,oldscope,cb, A,B) {
 	query.sources.forEach(function(source, idx){
 
 		source.query = query;
-		var rs = source.datafn(query, query.params, queryfn2, idx, alasql);
+		var rs = source.datafn(query, query.params, queryfn2, idx, alasql); 
 
 		if(typeof rs !== undefined) {
 			// TODO - this is a hack: check if result is array - check all cases and
@@ -5486,10 +5486,10 @@ function queryfn(query,oldscope,cb, A,B) {
 // constructions like this.queriesdata['test'].
 // I can elimite it with source.srcwherefn.bind(this)()
 // but it may be slow.
-//
-		source.queriesdata = query.queriesdata;
+// 
+		source.queriesdata = query.queriesdata;  
 	});
-	if(0 === slen)
+	if(0 === slen) 
 		result = queryfn3(query);
 
 	return result;
@@ -5585,7 +5585,7 @@ function queryfn3(query) {
 		// }
 
 	}
-	// Remove distinct values
+	// Remove distinct values	
 	doDistinct(query);
 
 	// UNION / UNION ALL
@@ -5651,11 +5651,11 @@ function queryfn3(query) {
 		query.data = arrayExceptDeep(query.data, ud);
 	} else if(query.intersectfn) {
 		if(query.corresponding) {
-			if(!query.intersectfn.query.modifier)
+			if(!query.intersectfn.query.modifier) 
 				query.intersectfn.query.modifier = undefined;
 			ud = query.intersectfn(query.params);
 		} else {
-			if(!query.intersectfn.query.modifier)
+			if(!query.intersectfn.query.modifier) 
 				query.intersectfn.query.modifier = 'RECORDSET';
 			nd = query.intersectfn(query.params);
 			ud = [];
@@ -5677,7 +5677,7 @@ function queryfn3(query) {
 	if(query.orderfn) {
 		if(query.explain) var ms = Date.now();
 		query.data = query.data.sort(query.orderfn);
-		if(query.explain) {
+		if(query.explain) { 
 			query.explaination.push({explid: query.explid++, description:'QUERY BY',ms:Date.now()-ms});
 		}
 	}
@@ -5699,12 +5699,12 @@ function queryfn3(query) {
 	    // Remove from data
 		jlen = removeKeys.length;
 		if(jlen > 0) {
-			ilen=query.data.length;
+			ilen=query.data.length;	
 			for(i=0;i<ilen;i++) {
 				for(j=0; j<jlen;j++) {
 					delete query.data[i][removeKeys[j]];
 				}
-			}
+			}    
 		}
 
 	    // Remove from columns list
@@ -5733,9 +5733,9 @@ function queryfn3(query) {
 					if(alasql.utils.like(query.removeLikeKeys[j],k)) {
 
 						delete r[k];
-					}
+					}				
 				}
-			}
+			} 
 		}
 
 		if(query.columns.length > 0) {
@@ -5753,24 +5753,27 @@ function queryfn3(query) {
 
 	}
 
+	if(query.pivotfn) query.pivotfn();
+	if(query.unpivotfn) query.unpivotfn();
+
 	if(query.intoallfn) {
 
-		var res = query.intoallfn(query.columns,query.cb,query.params,query.alasql);
+		var res = query.intoallfn(query.columns,query.cb,query.params,query.alasql); 
 
-		return res;
+		return res;	
 	} else if(query.intofn) {
 		ilen=query.data.length;
 		for(i=0;i<ilen;i++){
 			query.intofn(query.data[i],i,query.params,query.alasql);
 		}
 
-		if(query.cb)
+		if(query.cb) 
 			query.cb(query.data.length,query.A, query.B);
 		return query.data.length;
 	} else {
 
 		res = query.data;
-		if(query.cb)
+		if(query.cb) 
 			res = query.cb(query.data,query.A, query.B);
 
 		return res;
@@ -5786,7 +5789,7 @@ function doLimit (query) {
 		if(query.offset) offset = ((query.offset|0)-1)||0;
 		var limit;
 		if(query.percent) {
-			limit = ((query.data.length*query.limit/100)| 0)+offset;
+			limit = ((query.data.length*query.limit/100)| 0)+offset;			
 		} else {
 			limit = (query.limit|0) + offset;
 		}
@@ -5826,7 +5829,7 @@ preIndex = function(query) {
 					// Check if index already exists
 				var ixx = alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)];
 				if( !alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
-					source.ix = ixx;
+					source.ix = ixx; 
 				}
 			}
 
@@ -5844,13 +5847,13 @@ preIndex = function(query) {
 					// Prepare scope for indexation
 					scope[source.alias || source.tableid] = dataw;
 
-					// Check if it apply to where function
+					// Check if it apply to where function 
 					if(source.srcwherefn(scope, query.params, alasql)) {
 						// Create index entry for each address
 						var addr = source.onrightfn(scope, query.params, alasql);
-						var group = source.ix [addr];
+						var group = source.ix [addr]; 
 						if(!group) {
-							group = source.ix [addr] = [];
+							group = source.ix [addr] = []; 
 						}
 						group.push(dataw);
 					}
@@ -5858,7 +5861,7 @@ preIndex = function(query) {
 				}
 
 				if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]){
-					// Save index to original table
+					// Save index to original table				
 					alasql.databases[source.databaseid].tables[source.tableid].indices[hash(source.onrightfns+'`'+source.srcwherefns)] = source.ix;
 				}
 			}
@@ -5873,7 +5876,7 @@ preIndex = function(query) {
 					// Use old index if exists
 					source.ix = ixx;
 					// Reduce data (apply filter)
-					source.data = source.ix[source.wxrightfn(null, query.params, alasql)];
+					source.data = source.ix[source.wxrightfn(null, query.params, alasql)]; 
 				} else {
 					// Create new index
 					source.ix = {};
@@ -5886,15 +5889,15 @@ preIndex = function(query) {
 	//				while(source.getfn i<ilen) {
 
 					while((dataw = source.data[i]) || (source.getfn && (dataw = source.getfn(i))) || (i<ilen)) {
-						if(source.getfn && !source.dontcache)
+						if(source.getfn && !source.dontcache) 
 							source.data[i] = dataw;
 	//					for(var i=0, ilen=source.data.length; i<ilen; i++) {
 						scope[source.alias || source.tableid] = source.data[i];
 						// Create index entry
 						addr = source.wxleftfn(scope, query.params, alasql);
-						group = source.ix[addr];
+						group = source.ix[addr]; 
 						if(!group) {
-							group = source.ix[addr] = [];
+							group = source.ix[addr] = []; 
 						}
 						group.push(source.data[i]);
 						i++;
@@ -5915,7 +5918,7 @@ preIndex = function(query) {
 					} else {
 						source.data = [];
 					}
-				}
+				}		
 
 		// If there is no any optimization than apply srcwhere filter
 		} else if(source.srcwherefns && !source.dontcache) {
@@ -5946,7 +5949,7 @@ preIndex = function(query) {
 			} else {
 				source.data = [];
 			}
-		}
+		}			
 		// Change this to another place (this is a wrong)
 		if(source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 			//query.database.tables[source.tableid].dirty = false;
@@ -5957,7 +5960,7 @@ preIndex = function(query) {
 };
 
 //
-// Join all lines over sources
+// Join all lines over sources 
 //
 
 function doJoin (query, scope, h) {
@@ -5975,7 +5978,7 @@ function doJoin (query, scope, h) {
 			} else {
 
 				query.data.push(query.selectfn(scope, query.params, alasql));
-			}
+			}	
 		}
 	} else if(query.sources[h].applyselect) {
 
@@ -5986,7 +5989,7 @@ function doJoin (query, scope, h) {
 				for(var i=0;i<data.length;i++) {
 					scope[source.alias] = data[i];
 					doJoin(query, scope, h+1);
-				};
+				};			
 			} else {
 
 				if (source.applymode == 'OUTER') {
@@ -6006,7 +6009,7 @@ function doJoin (query, scope, h) {
 		// Todo: check if this is smart
 		if(true) {//source.joinmode != "ANTI") {
 
-			var tableid = source.alias || source.tableid;
+			var tableid = source.alias || source.tableid; 
 			var pass = false; // For LEFT JOIN
 			var data = source.data;
 			var opt = false;
@@ -6038,7 +6041,7 @@ function doJoin (query, scope, h) {
 					if(source.onmiddlefn(scope, query.params, alasql)) {
 						// Recursively call new join
 
-						if(source.joinmode != "SEMI" && source.joinmode != "ANTI") {
+						if(source.joinmode != "SEMI" && source.joinmode != "ANTI") { 
 
 							doJoin(query, scope, h+1);
 						}
@@ -6061,7 +6064,7 @@ function doJoin (query, scope, h) {
 			// Clear the scope after the loop
 				scope[tableid] = {};
 				doJoin(query,scope,h+1);
-			}
+			}	
 
 		}
 
@@ -6071,7 +6074,7 @@ function doJoin (query, scope, h) {
 
 		if(h+1 < query.sources.length) {
 
-			if(nextsource.joinmode == "OUTER" || nextsource.joinmode == "RIGHT"
+			if(nextsource.joinmode == "OUTER" || nextsource.joinmode == "RIGHT" 
 				|| nextsource.joinmode == "ANTI") {
 
 				scope[source.alias] = {};
@@ -6087,8 +6090,8 @@ function doJoin (query, scope, h) {
 						scope[nextsource.alias] = dataw;
 						doJoin(query, scope, h+2);
 					} else {
-						//dataw._rightjoin = undefined;
-						delete dataw._rightjoin;
+						//dataw._rightjoin = undefined;	
+						delete dataw._rightjoin;					
 					}
 					j++;
 				}
@@ -6412,7 +6415,7 @@ yy.Select.prototype.compile = function(databaseid) {
 					'.intoTable("'+(this.into.databaseid||databaseid)+'","'+this.into.tableid+'",this.data, columns, cb);';
 			} else {
 				// Into AlaSQL tables
-				query.intofns =
+				query.intofns = 
 				'alasql.databases[\''+(this.into.databaseid||databaseid)+'\'].tables'+
 				'[\''+this.into.tableid+'\'].data.push(r);';
 			}
@@ -6450,10 +6453,10 @@ yy.Select.prototype.compile = function(databaseid) {
 
 		if(query.intofns) {
 			// Create intofn function
-			query.intofn = new Function("r,i,params,alasql",'var y;'+query.intofns);
+			query.intofn = new Function("r,i,params,alasql",'var y;'+query.intofns); 
 		} else if(query.intoallfns) {
 			// Create intoallfn function
-			query.intoallfn = new Function("columns,cb,params,alasql",'var y;'+query.intoallfns);
+			query.intoallfn = new Function("columns,cb,params,alasql",'var y;'+query.intoallfns); 
 		}
 
 	}
@@ -6479,7 +6482,7 @@ yy.Select.prototype.compile = function(databaseid) {
 
 			return res2;
 
-		});
+		}); 
 
 		return res1;
 
@@ -6495,14 +6498,14 @@ yy.Select.prototype.compile = function(databaseid) {
 	Modify res according modifier
 	@function
 	@param {object} query Query object
-	@param res {object|number|string|boolean} res Data to be converted
+	@param res {object|number|string|boolean} res Data to be converted 
 */
 function modify(query, res) { // jshint ignore:line
 
 	/* If source is a primitive value then return it */
-	if(		typeof res === 'undefined'
-		|| 	typeof res === 'number'
-		|| 	typeof res === 'string'
+	if(		typeof res === 'undefined' 
+		|| 	typeof res === 'number' 
+		|| 	typeof res === 'string' 
 		|| 	typeof res == 'boolean'
 	){
 		return res;
@@ -6522,7 +6525,7 @@ function modify(query, res) { // jshint ignore:line
 
 			columns = Object.keys(allcol).map(function(columnid){
 				return {columnid:columnid};
-			});
+			});			
 		} else {
 			// Cannot recognize columns
 			columns = [];
@@ -6571,7 +6574,7 @@ function modify(query, res) { // jshint ignore:line
 	} else if(modifier === 'MATRIX') {
 		// Returns square matrix of rows
 		var ar = [];
-		for(var i=0;i<res.length;i++) {
+		for(var i=0;i<res.length;i++) {		
 			var a = [];
 			var r = res[i];
 			for(var j=0;j<columns.length;j++) {
@@ -6673,7 +6676,7 @@ alasql.precompile = function(statement,databaseid,params){
 
 	if(!statement) return;
 	statement.params = params;
-	if(statement.queries) {
+	if(statement.queries) {	
 
 		statement.queriesfn = statement.queries.map(function(q) {
 			var nq = q.compile(databaseid || statement.database.databaseid);
@@ -6743,7 +6746,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			databaseid: tq.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
 			joinmode: 'INNER',
-			onmiddlefn: returnTrue,
+			onmiddlefn: returnTrue,			
 			srcwherefns: '',	// for optimization
 			srcwherefn: returnTrue,
 
@@ -6759,7 +6762,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
-				}
+				}				
 			} else if(alasql.databases[source.databaseid].tables[source.tableid].view){
 				source.datafn = function(query,params,cb,idx, alasql) {
 					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
@@ -6799,7 +6802,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				});
 
 				return res;
-			}
+			}						
 		} else if(tq instanceof yy.Search) {
 
 			 source.subsearch = tq;
@@ -6816,7 +6819,7 @@ yy.Select.prototype.compileFrom = function(query) {
 				});
 
 				return res;
-			}
+			}						
 		} else if(tq instanceof yy.ParamValue) {
 
 			var ps = "var res = alasql.prepareFromData(params['"+tq.param+"']";
@@ -6864,7 +6867,7 @@ yy.Select.prototype.compileFrom = function(query) {
 					var res = tq.data;
 					if(cb) res = cb(res,idx,query);
 					return res;
-				}
+				}				
 		} else {
 			throw new Error('Wrong table at FROM');
 		}
@@ -6902,7 +6905,7 @@ alasql.prepareFromData = function(data,array) {
 			res = [];
 			for(var key in data) {
 				if(data.hasOwnProperty(key)) res.push([key,data[key]]);
-			};
+			};			
 		}
 
 	};
@@ -6972,7 +6975,7 @@ yy.Select.prototype.compileJoins = function(query) {
 				onmiddlefn: returnTrue,
 				srcwherefns: '',	// for optimization
 				srcwherefn: returnTrue,
-				columns: []
+				columns: []				
 			};
 			//
 
@@ -6990,7 +6993,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid, cb, idx,query);
-				}
+				}				
 			} else if(alasql.databases[source.databaseid].tables[source.tableid].view){
 				source.datafn = function(query,params,cb,idx, alasql) {
 					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
@@ -7028,11 +7031,11 @@ yy.Select.prototype.compileJoins = function(query) {
 				source.datafn = function(query, params, cb, idx, alasql) {
 
 					return source.subquery(query.params, null, cb, idx).data;
-				}
+				}				
 			// } else {
 			// 	source.datafn = function(query, params, cb, idx, alasql) {
 			// 		return source.subquery(query.params, null, cb, idx);
-			// 	}
+			// 	}				
 			// }
 			query.aliases[source.alias] = {type:'subquery'};
 		} else if(jn.param) {
@@ -7162,25 +7165,25 @@ yy.Select.prototype.compileJoins = function(query) {
 				var rs = jn.on.right.toJS('p',query.defaultTableid,query.defcols);
 
 				if((ls.indexOf("p['"+alias+"']")>-1) && !(rs.indexOf("p['"+alias+"']")>-1)){
-					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){
-						return s == "p['"+alias+"']"})) { rights = ls; }
+					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { rights = ls; } 
 						else { middlef = true };
 
 				} else 	if(!(ls.indexOf("p['"+alias+"']")>-1) && (rs.indexOf("p['"+alias+"']")>-1)){
-					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){
-						return s == "p['"+alias+"']"})) { lefts = ls; }
+					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { lefts = ls; } 
 						else { middlef = true };
 				} else {
 					middlef = true;
 				}
 
 				if((rs.indexOf("p['"+alias+"']")>-1) && !(ls.indexOf("p['"+alias+"']")>-1)){
-					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){
-						return s == "p['"+alias+"']"})) { rights = rs; }
+					if((rs.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { rights = rs; } 
 						else { middlef = true };
 				} else if(!(rs.indexOf("p['"+alias+"']")>-1) && (ls.indexOf("p['"+alias+"']")>-1)){
-					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){
-						return s == "p['"+alias+"']"})) { lefts = rs; }
+					if((ls.match(/p\[\'.*?\'\]/g)||[]).every(function(s){ 
+						return s == "p['"+alias+"']"})) { lefts = rs; } 
 						else { middlef = true };
 				} else {
 					middlef = true;
@@ -7193,7 +7196,7 @@ yy.Select.prototype.compileJoins = function(query) {
 					middles = jn.on.toJS('p',query.defaultTableid,query.defcols);
 					source.optimization = 'no';
 					// What to here?
-				}
+				} 
 
 				source.onleftfns = lefts;
 				source.onrightfns = rights;
@@ -7281,12 +7284,12 @@ function optimizeWhereJoin (query, ast) {
 	} else if (fsrc.length == 1) {
 
 		if(!(s.match(/p\[\'.*?\'\]/g)||[])
-			.every(function(s){
-						return s == "p['"+fsrc[0].alias+"']"})) {
-			return;
+			.every(function(s){ 
+						return s == "p['"+fsrc[0].alias+"']"})) { 
+			return; 
 			// This is means, that we have column from parent query
 			// So we return without optimization
-		}
+		} 
 
 		var src = fsrc[0]; // optmiization source
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns+'&&'+s : s;
@@ -7296,16 +7299,16 @@ function optimizeWhereJoin (query, ast) {
 				var ls = ast.left.toJS('p',query.defaultTableid,query.defcols);
 				var rs = ast.right.toJS('p',query.defaultTableid,query.defcols);
 				if(rs.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
-					fsrc[0].wxleftfns = ls;
-					fsrc[0].wxrightfns = rs;
-				}
+					fsrc[0].wxleftfns = ls; 
+					fsrc[0].wxrightfns = rs; 
+				} 
 			} if(ast.right instanceof yy.Column) {
 				var ls = ast.left.toJS('p',query.defaultTableid,query.defcols);
 				var rs = ast.right.toJS('p',query.defaultTableid,query.defcols);
 				if(ls.indexOf('p[\''+fsrc[0].alias+'\']') == -1) {
-					fsrc[0].wxleftfns = rs;
-					fsrc[0].wxrightfns = ls;
-				}
+					fsrc[0].wxleftfns = rs; 
+					fsrc[0].wxrightfns = ls; 
+				} 
 			}
 		}
 		ast.reduced = true;  // To do not duplicate wherefn and srcwherefn
@@ -7314,7 +7317,7 @@ function optimizeWhereJoin (query, ast) {
 		if(ast.op = 'AND') {
 			optimizeWhereJoin(query,ast.left);
 			optimizeWhereJoin(query,ast.right);
-		}
+		} 
 	}
 
 };
@@ -7403,7 +7406,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 		var neggroup = arrayDiff(allgroups,agroup);
 
-		s += neggroup.map(function(col2){
+		s += neggroup.map(function(col2){			
 			var columnid = col2.split('\t')[0];
 		//	var coljs = col2.split('\t')[1]
 			return "'"+columnid+"':null,";
@@ -7419,14 +7422,14 @@ yy.Select.prototype.compileGroup = function(query) {
 			// 	if(col instanceof yy.Column) colas = col.columnid;
 			// 	else colas = col.toString();
 			// };
-			if (col instanceof yy.AggrValue) {
+			if (col instanceof yy.AggrValue) { 
 				if(col.distinct) {
 					aft += ',g[\'$$_VALUES_'+colas+'\']={},g[\'$$_VALUES_'+colas+'\']['+colexp+']=true';
 				}
 				if (col.aggregatorid === 'SUM'
 
-				){
-					return "'"+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJS();
+				){ 
+					return "'"+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJS(); 	
 
 				} else if (
 							col.aggregatorid === 'MIN'
@@ -7435,21 +7438,21 @@ yy.Select.prototype.compileGroup = function(query) {
 							|| col.aggregatorid === 'LAST'
 		//					|| col.aggregatorid == 'AVG'
 
-				){
-					return "'"+colas+'\':'+colexp+','; //f.field.arguments[0].toJS();
+				){ 
+					return "'"+colas+'\':'+colexp+','; //f.field.arguments[0].toJS(); 	
 
 				} else if(col.aggregatorid === 'ARRAY') {
 				 	return "'"+colas+'\':['+colexp+'],';
 
-				} else if(col.aggregatorid === 'COUNT') {
+				} else if(col.aggregatorid === 'COUNT') { 
 					if(col.expression.columnid === '*') {
 						return "'"+colas+'\':1,';
 					} else {
 
-						return "'"+colas+'\':(typeof '+colexp+' != "undefined")?1:0,';
+						return "'"+colas+'\':(typeof '+colexp+' != "undefined")?1:0,'; 
 					}
 
-				} else if(col.aggregatorid === 'AVG') {
+				} else if(col.aggregatorid === 'AVG') { 
 					query.removeKeys.push('_SUM_'+colas);
 					query.removeKeys.push('_COUNT_'+colas);
 
@@ -7457,17 +7460,17 @@ yy.Select.prototype.compileGroup = function(query) {
 							+ "'" + colas + '\':' + colexp + ',\'_SUM_'
 							+ colas+'\':(' + colexp + ')||0,\'_COUNT_'
 							+ colas + '\':(typeof '
-							+ colexp+' != "undefined")?1:0,';
+							+ colexp+' != "undefined")?1:0,'; 
 				} else if(col.aggregatorid === 'AGGR') {
-					aft += ',g[\''+colas+'\']='+col.expression.toJS('g',-1);
+					aft += ',g[\''+colas+'\']='+col.expression.toJS('g',-1); 
 					return '';
 				} else if(col.aggregatorid === 'REDUCE') {
 					query.removeKeys.push('_REDUCE_'+colas);
 					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={})),'
-					+'\'__REDUCE__'+colas+'\':acc,';
+					+'\'__REDUCE__'+colas+'\':acc,'; 
 				}
 				return '';
-			}
+			} 
 
 			return '';
 
@@ -7488,61 +7491,61 @@ yy.Select.prototype.compileGroup = function(query) {
 
 			var colexp = col.expression.toJS("p",tableid,defcols);
 
-			if (col instanceof yy.AggrValue) {
+			if (col instanceof yy.AggrValue) { 
 				var pre = '', post = '';
 				if(col.distinct) {
 			 		var pre = 'if(typeof '+colexp+'!="undefined" && (!g[\'$$_VALUES_'+colas+'\']['+colexp+'])) \
 				 		 {';
 				 	var post = 'g[\'$$_VALUES_'+colas+'\']['+colexp+']=true;}';
-				}
-				if (col.aggregatorid === 'SUM') {
-					return pre+'g[\''+colas+'\']+=('+colexp+'||0);'+post; //f.field.arguments[0].toJS();
+				} 
+				if (col.aggregatorid === 'SUM') { 
+					return pre+'g[\''+colas+'\']+=('+colexp+'||0);'+post; //f.field.arguments[0].toJS(); 
 				} else if(col.aggregatorid === 'COUNT') {
 
 					if(col.expression.columnid === '*'){
-						return pre+'g[\''+colas+'\']++;'+post;
+						return pre+'g[\''+colas+'\']++;'+post; 
 					} else {
 						return pre+'if(typeof '+colexp+'!="undefined") g[\''+colas+'\']++;'+post;
 					}
 
-				} else if(col.aggregatorid === 'ARRAY') {
-					return pre+'g[\''+colas+'\'].push('+colexp+');'+post;
+				} else if(col.aggregatorid === 'ARRAY') { 
+					return pre+'g[\''+colas+'\'].push('+colexp+');'+post; 
 
-				} else if(col.aggregatorid === 'MIN') {
-					return pre+'g[\''+colas+'\']=Math.min(g[\''+colas+'\'],'+colexp+');'+post;
+				} else if(col.aggregatorid === 'MIN') { 
+					return pre+'g[\''+colas+'\']=Math.min(g[\''+colas+'\'],'+colexp+');'+post; 
 
-				} else if(col.aggregatorid === 'MAX') {
-					return pre+'g[\''+colas+'\']=Math.max(g[\''+colas+'\'],'+colexp+');'+post;
+				} else if(col.aggregatorid === 'MAX') { 
+					return pre+'g[\''+colas+'\']=Math.max(g[\''+colas+'\'],'+colexp+');'+post; 
 
-				} else if(col.aggregatorid === 'FIRST') {
-					return '';
+				} else if(col.aggregatorid === 'FIRST') { 
+					return ''; 
 
-				} else if(col.aggregatorid === 'LAST') {
-					return pre+'g[\''+colas+'\']='+colexp+';'+post;
+				} else if(col.aggregatorid === 'LAST') { 
+					return pre+'g[\''+colas+'\']='+colexp+';'+post; 
 
-				} else if(col.aggregatorid === 'AVG') {
+				} else if(col.aggregatorid === 'AVG') { 
 						return 	''
 								+ pre+'g[\'_SUM_'+colas+'\']+=(y='+colexp+')||0;'
 								+ 'g[\'_COUNT_'+colas+'\']+=(typeof y!="undefined")?1:0;'
 								+ 'g[\''+colas+'\']=g[\'_SUM_'+colas+'\']/g[\'_COUNT_'+colas+'\'];'
-								+ post;
+								+ post; 
 
 	//			else if(col.aggregatorid == 'AVG') { srg.push(colas+':0'); }
 				} else if(col.aggregatorid === 'AGGR') {
 					return 	''
 							+ pre+'g[\''+colas+'\']='
 					     	+ col.expression.toJS('g',-1)+';'
-					     	+ post;
+					     	+ post; 
 
 				} else if(col.aggregatorid === 'REDUCE') {
 					return 	''
 							+ pre+'g[\''+colas+'\']=alasql.aggr.'
 							+ col.funcid+'('+colexp+',g[\''+colas+'\'],g[\'__REDUCE__'+colas+'\']);'
-							+ post;
+							+ post; 
 				}
 
 				return '';
-			}
+			} 
 
 			return '';
 		}).join('');
@@ -7574,7 +7577,7 @@ function compileSelectStar (query,alias) {
 
 //	} else 	{
 
-		// TODO move this out of this function
+		// TODO move this out of this function 
 		query.ixsources = {};
 		query.sources.forEach(function(source){
 			query.ixsources[source.alias] = source;
@@ -7594,9 +7597,9 @@ function compileSelectStar (query,alias) {
 				query.selectColumns[escapeq(tcol.columnid)] = true;
 
 				var coldef = {
-					columnid:tcol.columnid,
-					dbtypeid:tcol.dbtypeid,
-					dbsize:tcol.dbsize,
+					columnid:tcol.columnid, 
+					dbtypeid:tcol.dbtypeid, 
+					dbsize:tcol.dbsize, 
 					dbprecision:tcol.dbprecision,
 					dbenum: tcol.dbenum
 				};
@@ -7651,7 +7654,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 						sp += ret.sp;
 					}
 					// TODO Remove these lines
-					// In case of no information
+					// In case of no information 
 					// sp += 'for(var k1 in p){var w=p[k1];'+
 					// 			'for(k2 in w) {r[k2]=w[k2]}}'
 				}
@@ -7665,7 +7668,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				if(col.columnid !== '_') {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
 				} else {
-					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');
+					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');					
 				}
 				query.selectColumns[escapeq(col.as || col.columnid)] = true;
 
@@ -7675,16 +7678,16 @@ yy.Select.prototype.compileSelect1 = function(query) {
 
 						throw new Error('Table \''+(tbid)+'\' does not exists in database');
 					}
-					var columns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
+					var columns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;					
 					var xcolumns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].xcolumns;
 
 					if(xcolumns && columns.length > 0) {
 
 						var tcol = xcolumns[col.columnid];
 						var coldef = {
-							columnid:col.as || col.columnid,
-							dbtypeid:tcol.dbtypeid,
-							dbsize:tcol.dbsize,
+							columnid:col.as || col.columnid, 
+							dbtypeid:tcol.dbtypeid, 
+							dbsize:tcol.dbsize, 
 							dbpecision:tcol.dbprecision,
 							dbenum: tcol.dbenum,
 						};
@@ -7693,7 +7696,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 						query.xcolumns[coldef.columnid]=coldef;
 					} else {
 						var coldef = {
-							columnid:col.as || col.columnid,
+							columnid:col.as || col.columnid, 
 
 						};
 
@@ -7704,13 +7707,13 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					}
 				} else {
 						var coldef = {
-							columnid:col.as || col.columnid,
+							columnid:col.as || col.columnid, 
 
 						};
 
 						query.columns.push(coldef);
 						query.xcolumns[coldef.columnid]=coldef;
-					// This is a subquery?
+					// This is a subquery? 
 					// throw new Error('There is now such table \''+col.tableid+'\'');
 				}
 
@@ -7725,16 +7728,16 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			}
 
 			if(
-					col.aggregatorid === 'SUM'
-				|| 	col.aggregatorid === 'MAX'
-				||  col.aggregatorid === 'MIN'
-				||	col.aggregatorid === 'FIRST'
-				||	col.aggregatorid === 'LAST'
-				||	col.aggregatorid === 'AVG'
-				|| 	col.aggregatorid === 'ARRAY'
+					col.aggregatorid === 'SUM' 
+				|| 	col.aggregatorid === 'MAX' 
+				||  col.aggregatorid === 'MIN' 
+				||	col.aggregatorid === 'FIRST' 
+				||	col.aggregatorid === 'LAST' 
+				||	col.aggregatorid === 'AVG' 
+				|| 	col.aggregatorid === 'ARRAY' 
 				|| 	col.aggregatorid === 'REDUCE'
 			){
-				ss.push("'"+escapeq(col.as)+"':"+n2u(col.expression.toJS("p",query.defaultTableid,query.defcols)))
+				ss.push("'"+escapeq(col.as)+"':"+n2u(col.expression.toJS("p",query.defaultTableid,query.defcols)))	
 
 			}else if(col.aggregatorid === 'COUNT') {
 				ss.push("'"+escapeq(col.as)+"':1");
@@ -7745,7 +7748,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
 
 						var coldef = {
-							columnid:col.as || col.columnid || col.toString(),
+							columnid:col.as || col.columnid || col.toString(), 
 
 						};
 
@@ -7760,7 +7763,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
 
 						var coldef = {
-							columnid:col.as || col.columnid || col.toString(),
+							columnid:col.as || col.columnid || col.toString(), 
 
 						};
 
@@ -7801,7 +7804,7 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			// }
 			col.nick = colas;
 			if(
-				col.funcid
+				col.funcid 
 				&& (col.funcid.toUpperCase() === 'ROWNUM'|| col.funcid.toUpperCase() === 'ROW_NUMBER')) {
 				query.rownums.push(col.as);
 			}
@@ -7849,7 +7852,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 
 			s += 'r[\''+colas+'\']=';
 
- 			s += n2u(col.toJS('g',''))+';';
+ 			s += n2u(col.toJS('g',''))+';';				
 
 			for(var i=0;i<query.removeKeys.length;i++) {
 				// THis part should be intellectual
@@ -7908,7 +7911,7 @@ yy.Select.prototype.compileOrder = function (query) {
 	var self = this;
 	if(this.order) {
 
-		if(this.order && this.order.length == 1 && this.order[0].expression
+		if(this.order && this.order.length == 1 && this.order[0].expression 
 			 && typeof this.order[0].expression == "function") {
 
 			var func = this.order[0].expression;
@@ -7926,7 +7929,7 @@ yy.Select.prototype.compileOrder = function (query) {
 		this.order.forEach(function(ord,idx){
 
 			// Date conversion
-			var dg = '';
+			var dg = ''; 
 
 			if(ord.expression instanceof yy.NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
@@ -7935,7 +7938,7 @@ yy.Select.prototype.compileOrder = function (query) {
 			};
 
 			if(ord.expression instanceof yy.Column) {
-				var columnid = ord.expression.columnid;
+				var columnid = ord.expression.columnid; 
 				if(query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
 					if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '.valueOf()';
@@ -7955,7 +7958,7 @@ yy.Select.prototype.compileOrder = function (query) {
 				if(ord.nocase) dg += '.toUpperCase()';
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
-			}
+			}			
 
 			// TODO Add date comparision
 
@@ -7976,77 +7979,128 @@ yy.Select.prototype.compileOrder = function (query) {
 	@return {function} Pivoting functions
 */
 yy.Select.prototype.compilePivot = function (query) {
+	var self = this;
 	/** @type {string} Main pivoting column */
-	var columnid = this.pivot.columnid;
 
-	return function(data){
-		/** @type {object} Collection of grouped records */
-		var gx = {};
-		/** @type {array} Array of grouped records */
-		var gr = [];
+	var columnid = self.pivot.columnid;
+	var exprcolid = self.pivot.expr.expression.columnid;
+	var aggr = self.pivot.expr.aggregatorid;
+	var inlist =  self.pivot.inlist;
 
-		/** For each row in data array */
-		for(var i=0,ilen=data.length;i<ilen;i++) {
-			var r = data[i];
-			var q = g[r[columnid]];  // Take
-			if(q === undefined) {
-				q = g[r[columnid]] = clone(r);
-				delete q[columnid];
-				gr.push(q);
-			};
-			if(r[columnid]) {
-				gfn(r,q,query.params,alasql);
+	if(inlist) {
+		inlist = inlist.map(function(l){return l.expr.columnid});
+	}
+
+	// Function for PIVOT post production
+	return function() {
+		var query = this;
+		var cols = query.columns.filter(function(col){
+			return (col.columnid != columnid) && (col.columnid != exprcolid);
+		}).map(function(col){
+			return col.columnid;
+		});
+
+		var newcols = [];
+		var gnewcols = {};
+		var gr = {};
+		var ga = {};
+		var data = [];
+		query.data.forEach(function(d){
+			if(!inlist || inlist.indexOf(d[columnid])>-1 ) {
+				var gx = cols.map(function(colid){return d[colid]}).join('`');
+				var g = gr[gx];
+				if(!g) {
+					g = {};
+					gr[gx] = g;
+					data.push(g);
+					cols.forEach(function(colid){
+						g[colid] = d[colid];
+					});			
+				};
+
+				if(!ga[gx]) {
+					ga[gx] = {};
+				}
+
+				if(ga[gx][d[columnid]]) {
+					ga[gx][d[columnid]]++;
+				} else {
+					ga[gx][d[columnid]] = 1;
+				}
+
+				if(!gnewcols[d[columnid]]) {
+					gnewcols[d[columnid]] = true;
+					newcols.push(d[columnid]);
+				};
+
+				if(aggr=='SUM' || aggr=='AVG' ) {
+					if(typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
+					g[d[columnid]] += d[exprcolid];
+				} else if(aggr=='COUNT') {
+					if(typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
+					g[d[columnid]]++;
+				} else if(aggr=='MIN') {
+					if(typeof g[d[columnid]] == 'undefined') g[d[columnid]] = Infinity;
+					if(d[exprcolid] < g[d[columnid]]) g[d[columnid]] = d[exprcolid];
+				} else if(aggr=='MAX') {
+					if(typeof g[d[columnid]] == 'undefined') g[d[columnid]] = -Infinity;
+					if(d[exprcolid] > g[d[columnid]]) g[d[columnid]] = d[exprcolid];
+				} else if(aggr=='FIRST') {
+					if(typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
+				} else if(aggr=='LAST') {
+					g[d[columnid]] = d[exprcolid];
+				} else if(alasql.aggr[aggr]) { // Custom aggregator
+					alasql.aggr[aggr](g[d[columnid]],d[exprcolid]);
+				} else {
+					throw new Error('Wrong aggregator in PIVOT clause');
+				}
 			}
-			q[r[columnid]] = arrfn(r);
+		});
 
-		}
-	};
-
-if(false) {
-	/** @type {array} Array of values for pivoting */
-	var als = {};
-	var s = 'var z;if(['+this.pivot.inlist.map(function(ie){
-		var v;
-		if(ie.expr instanceof yy.Column) {
-			v = "'"+ie.expr.columnid+"'";
-		} else if(ie.expr instanceof yy.StringValue) {
-			return ie.expr.value;
-		} else {
-			return ie.expr.toJS();
-		}
-		if(ie.as) {
-			als[v] = ie.as;
-		} else {
-			als[v] = v
-		}
-		return "'"+v+"'";
-	}).join(',')+'].indexOf(r[\''+columnid+'\'])>-1){z=r[\''+columnid+'\'];';
-	s += 'g[z] = (g[z]||0)+1;';
-	s += '}';
-console.log(this.pivot.expr.toJS());
-	console.log(this.pivot);
-	console.log(s);
-	var gfn = new Function('g,r,params,alasql','var y;'+s);
-
-	return function(data){
-		var g = {}, gr = [];
-		for(var i=0,ilen=data.length;i<ilen;i++) {
-			var r = data[i];
-			var q = g[r[columnid]];
-			if(q === undefined) {
-				q = g[r[columnid]] = clone(r);
-				delete q[columnid];
-				gr.push(q);
+		if(aggr=='AVG') {
+			for(var gx in gr){
+				var d = gr[gx];
+				for(var colid in d) {
+					if((cols.indexOf(colid) == -1) && (colid != exprcolid)) {
+						d[colid] = d[colid]/ga[gx][colid];
+					}
+				}
 			};
-			if(r[columnid]) {
-				gfn(r,q,query.params,alasql);
-			}
-			q[r[columnid]] = arrfn(r);
+		};
 
-		}
+// columns
+		query.data = data;
+
+		if(inlist) newcols = inlist;
+
+		var ncol = query.columns.filter(function(col){return col.columnid == exprcolid})[0];
+		query.columns = query.columns.filter(function(col){
+			return !(col.columnid == columnid || col.columnid == exprcolid); 
+		});
+		newcols.forEach(function(colid){
+			var nc = cloneDeep(ncol);
+			nc.columnid = colid;
+			query.columns.push(nc);
+		});
 	};
-}
 };
+
+	// var columnid = this.pivot.columnid;
+
+	// return function(data){
+	// 	* @type {object} Collection of grouped records 
+	// 	var gx = {};
+	// 	/** @type {array} Array of grouped records */
+	// 	var gr = [];
+
+// if(false) {
+
+// }
+
+// if(false) {
+
+// }
+// };
 
 /**
 	Compile UNPIVOT clause
@@ -8054,7 +8108,33 @@ console.log(this.pivot.expr.toJS());
 	@return {function} Function for unpivoting
 */
 yy.Select.prototype.compileUnpivot = function (query) {
-	console.log(93, query.columns);
+	var self = this;
+	var tocolumnid = self.unpivot.tocolumnid;
+	var forcolumnid = self.unpivot.forcolumnid;
+	var inlist = self.unpivot.inlist.map(function(l){return l.columnid});
+
+	return function() {
+		var data = [];
+
+		var xcols = query.columns
+		.map(function(col){return col.columnid})
+		.filter(function(colid){
+			return inlist.indexOf(colid)==-1 && colid != forcolumnid && colid != tocolumnid; 
+		});
+
+		query.data.forEach(function(d){
+			inlist.forEach(function(colid){ 
+				var nd = {};
+				xcols.forEach(function(xcolid){ nd[xcolid] = d[xcolid]});
+				nd[forcolumnid] = colid;
+				nd[tocolumnid] = d[colid];
+				data.push(nd);
+			});
+		});
+
+		query.data = data;
+
+	};
 
 };
 
@@ -8066,7 +8146,7 @@ yy.Select.prototype.compileUnpivot = function (query) {
 //
 */
 
-/**
+/** 
  Calculate ROLLUP() combination
  */
 
@@ -8092,7 +8172,7 @@ var rollup = function (a,query) {
 			if(mask&(1<<i)) ss.push(aaa);
 		}
 		rr.push(ss);
-		mask = (mask<<1)+1;
+		mask = (mask<<1)+1; 
 	};
 	return rr;
 };
@@ -8152,11 +8232,11 @@ function decartes(gv,query) {
 
 				gv[t].nick = escapeq(gv[t].columnid);
 			 	query.groupColumns[gv[t].nick] = gv[t].nick;
-		 		res = res.map(function(r){return r.concat(gv[t].nick+'\t'+gv[t].toJS('p',query.sources[0].alias,query.defcols))});
+		 		res = res.map(function(r){return r.concat(gv[t].nick+'\t'+gv[t].toJS('p',query.sources[0].alias,query.defcols))}); 	
 
 			} else if(gv[t] instanceof yy.FuncValue) {
 				query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
-		 		res = res.map(function(r){return r.concat(escapeq(gv[t].toString())+'\t'+gv[t].toJS('p',query.sources[0].alias,query.defcols))});
+		 		res = res.map(function(r){return r.concat(escapeq(gv[t].toString())+'\t'+gv[t].toJS('p',query.sources[0].alias,query.defcols))}); 	
 		 		// to be defined
 			} else if(gv[t] instanceof yy.GroupExpression) {
 				if(gv[t].type == 'ROLLUP') res = cartes(res,rollup(gv[t].group,query));
@@ -8172,8 +8252,8 @@ function decartes(gv,query) {
  					query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
 		 			return r.concat(escapeq(gv[t].toString())
 		 				+'\t'
-		 				+gv[t].toJS('p',query.sources[0].alias,query.defcols))
-		 		});
+		 				+gv[t].toJS('p',query.sources[0].alias,query.defcols)) 
+		 		}); 	
 
 			};
 
@@ -8306,14 +8386,14 @@ yy.Union.prototype.compile = function (tableid) {
 //
 */
 
-yy.Apply = function (params) {
-	return yy.extend(this, params);
+yy.Apply = function (params) { 
+	return yy.extend(this, params); 
 }
 
 yy.Apply.prototype.toString = function () {
 	var s = this.applymode+' APPLY ('+this.select.toString()+')';
 
-	if(this.as)
+	if(this.as) 
 		s += ' AS '+this.as;
 
 	return s;
@@ -8351,7 +8431,7 @@ yy.Over.prototype.toString = function () {
 
 /**
   	Expression statement ( = 2*2; )
-  	@class
+  	@class 
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function(params) { return yy.extend(this, params); };
@@ -8488,7 +8568,7 @@ yy.Literal = function (params) { return yy.extend(this, params); };
 yy.Literal.prototype.toString = function(dontas) {
 	var s = this.value;
 	if(this.value1){
-		s = this.value1+'.'+s;
+		s = this.value1+'.'+s; 
 	}
 	if(this.alias && !dontas) s += ' AS '+this.alias;
 //	else s = tableid+'.'+s;
@@ -8593,7 +8673,7 @@ yy.Op.prototype.toType = function(tableid) {
 		if(this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string'){
 			return 'string';
 		}
-		if(this.left.toType(tableid) === 'number' || this.right.toType(tableid) === 'number'){
+		if(this.left.toType(tableid) === 'number' || this.right.toType(tableid) === 'number'){ 
 			return 'number';
 		}
 	}
@@ -8657,7 +8737,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 					+ 	this.right.funcid
 					+ "']("
 					+ 	ss.join(',')
-					+ ')';
+					+ ')'; 
 		} else {
 
 			return 	''
@@ -8676,7 +8756,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 					+ ']["'
 					+	this.right
 					+ '"]';
-		}
+		}		
 		// TODO - add other cases
 	}
 
@@ -8730,7 +8810,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 		return s;
 	}
 	if(this.op === 'REGEXP') {
-		return 'alasql.stdfn.REGEXP_LIKE('
+		return 'alasql.stdfn.REGEXP_LIKE(' 
 			+ leftJS()
 			+ ','
 			+ rightJS()
@@ -8751,8 +8831,8 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+			'<='
 				+			this.right2.toJS(context,tableid, defcols)
 				+		')'
-				+ 	')'
-				+ ')';
+				+ 	')'		
+				+ ')';		
 
 	}
 
@@ -8819,7 +8899,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			return s;
 		} else {
 			throw new Error('NOT IN operator without SELECT');
-		}
+		}		
 	}
 
 	if(this.allsome === 'SOME' || this.allsome === 'ANY') {
@@ -8836,7 +8916,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			return s;
 		} else {
 			throw new Error('SOME/ANY operator without SELECT');
-		}
+		}		
 	}
 
 // Special case for AND optimization (if reduced)
@@ -8849,7 +8929,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			}
 		} else if(this.right.reduced) {
 			return leftJS();
-		}
+		}			
 
 		// Otherwise process as regular operation (see below)
 		op = '&&';
@@ -8991,7 +9071,7 @@ yy.UniOp.prototype.toType = function() {
 		return 'number';
 	}
 
-	if(this.op === 'NOT'){
+	if(this.op === 'NOT'){ 
 		return 'boolean';
 	}
 
@@ -9020,7 +9100,7 @@ yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
 		}
 	}
 
-	// Please avoid === here
+	// Please avoid === here	
 	if(this.op == null){ 		// jshint ignore:line
 		return '('+this.right.toJS(context, tableid, defcols)+')';
 	}
@@ -9058,7 +9138,7 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 			s = context+'[\''+this.columnid+'\']';
 		} else {
 			if(context === 'g') {
-				s = 'g[\'_\']';
+				s = 'g[\'_\']';						
 			} else {
 				s = context;
 			}
@@ -9067,14 +9147,14 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 		if(context === 'g') {
 			// if(this.columnid == '_') {
 			// } else {
-				s = 'g[\''+this.nick+'\']';
+				s = 'g[\''+this.nick+'\']';						
 			// }
 		} else if(this.tableid) {
 			if(this.columnid !== '_') {
-				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';
+				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
 			} else {
 				if(context === 'g') {
-					s = 'g[\'_\']';
+					s = 'g[\'_\']';						
 				} else {
 					s = context+'[\''+(this.tableid) + '\']';
 				}
@@ -9134,7 +9214,7 @@ yy.AggrValue.prototype.toString = function(dontas) {
 
 	if(this.over){
 		s += ' '+this.over.toString();
-	}
+	} 
 
 	if(this.alias && !dontas) s += ' AS '+this.alias;
 //	if(this.alias) s += ' AS '+this.alias;
@@ -9188,7 +9268,7 @@ yy.AggrValue.prototype.toType = function() {
 yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
 
 	var colas = this.nick;
-	if(colas === undefined){
+	if(colas === undefined){ 
 		colas = this.toString();
 	}
 	return 'g[\''+colas+'\']';
@@ -9284,7 +9364,7 @@ yy.Select.prototype.From = function(tableid){
 		} else {
 			self.preparams = [];
 		}
-		self.preparams.push(tableid);
+		self.preparams.push(tableid); 
 		self.from.push(new yy.ParamValue({param:pari}));
 	} else if(typeof tableid =="string") {
 		self.from.push(new yy.Table({tableid:tableid}));
@@ -9407,8 +9487,8 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 
 yy.FuncValue.prototype.findAggregator = function(query) {
 	if(this.args && this.args.length > 0) {
-		this.args.forEach(function(arg){
-			if(arg.findAggregator) arg.findAggregator(query);
+		this.args.forEach(function(arg){ 
+			if(arg.findAggregator) arg.findAggregator(query); 
 		});
 	}
 };
@@ -9445,7 +9525,7 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 				return arg.toJS(context, tableid, defcols);
 			}).join(',');
 		};
-		s += ')';
+		s += ')';		
 	} else {
 		// Aggregator
 	}
@@ -9479,7 +9559,7 @@ stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 stdlib.LEN = stdlib.LENGTH = function(s) {return und(s,'y.length');}
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'y.toLowerCase()');}
+stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'String(y).toLowerCase()');}
 //stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 // LTRIM
@@ -9531,7 +9611,7 @@ stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
 stdlib.TRIM = function(s) {return und(s,'y.trim()');}
 
-stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'y.toUpperCase()');}
+stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'String(y).toUpperCase()');}
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
@@ -9552,12 +9632,12 @@ alasql.aggr.MEDIAN = function(v,s,acc){
 	// Init
 	if(typeof acc.arr == 'undefined') {
 	  acc.arr = [v];
-	  return v;
+	  return v; 
 	// Pass
 	} else {
 	  acc.arr.push(v);
 	  var p = acc.arr.sort();
-	  return p[(p.length/2)|0];
+	  return p[(p.length/2)|0];     
 	};
 };
 
@@ -9631,7 +9711,7 @@ yy.CaseValue.prototype.findAggregator = function (query){
 
 	if(this.expression && this.expression.findAggregator) this.expression.findAggregator(query);
 	if(this.whens && this.whens.length > 0) {
-		this.whens.forEach(function(w) {
+		this.whens.forEach(function(w) { 
 			if(w.when.findAggregator) w.when.findAggregator(query);
 			if(w.then.findAggregator) w.then.findAggregator(query);
 		});
@@ -9689,7 +9769,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 			s = '{';
 			var ss = [];
 			for(var k in obj) {
-				var s1 = '';
+				var s1 = ''; 
 				if(typeof k == "string") s1 += '"'+k+'"';
 				else if(typeof k == "number") s1 += k;
 				else if(typeof k == "boolean") s1 += k;
@@ -9706,7 +9786,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 			throw new Error('1Can not show JSON object '+JSON.stringify(obj));
 		}
 	} else {
-		throw new Error('2Can not show JSON object '+JSON.stringify(obj));
+		throw new Error('2Can not show JSON object '+JSON.stringify(obj));		
 	}
 
 	return s;
@@ -9727,7 +9807,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 			s = '{';
 			var ss = [];
 			for(var k in obj) {
-				var s1 = '';
+				var s1 = ''; 
 				if(typeof k == "string") s1 += '"'+k+'"';
 				else if(typeof k == "number") s1 += k;
 				else if(typeof k == "boolean") s1 += k;
@@ -9744,7 +9824,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 			throw new Error('1Can not parse JSON object '+JSON.stringify(obj));
 		}
 	} else {
-		throw new Error('2Can not parse JSON object '+JSON.stringify(obj));
+		throw new Error('2Can not parse JSON object '+JSON.stringify(obj));		
 	}
 
 	return s;
@@ -9782,7 +9862,7 @@ yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 //	if(this.style) {
 	return 'alasql.stdfn.CONVERT('+this.expression.toJS(context, tableid, defcols)
 		+',{dbtypeid:"'+this.dbtypeid+'",dbsize:'+this.dbsize+',style:'+
-		this.style+'})';
+		this.style+'})';		
 //	}
 
 	throw new Error('There is not such type conversion for '+this.toString());
@@ -9797,7 +9877,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 	if(args.style) {
 		// TODO 9,109, 20,120,21,121,126,130,131 conversions
 		var t;
-		if(/\d{8}/.test(val)) t = new Date(+val.substr(0,4),+val.substr(4,2)-1,+val.substr(6,2));
+		if(/\d{8}/.test(val)) t = new Date(+val.substr(0,4),+val.substr(4,2)-1,+val.substr(6,2));		
 		else t = new Date(val);
 
 		if(args.style == 1) { 			// mm/dd/yy
@@ -9960,7 +10040,7 @@ yy.CreateTable.prototype.toString = function() {
 	}
 	if(this.as){
 		s += ' AS '+this.as;
-	} else {
+	} else { 
 		var ss = this.columns.map(function(col){
 			return col.toString();
 		});
@@ -10028,7 +10108,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 			var newcol = {
 				columnid: col.columnid,
-				dbtypeid: dbtypeid,
+				dbtypeid: dbtypeid, 
 				dbsize: col.dbsize, 			// Fixed issue #150
 				dbprecision: col.dbprecision, 	// Fixed issue #150
 				notnull: col.notnull,
@@ -10118,7 +10198,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}).join("+'`'+");
 			pk.onrightfn = new Function("r",'var y;return '+pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
-			table.uniqs[pk.hh] = {};
+			table.uniqs[pk.hh] = {};					
 		} else if(con.type === 'CHECK') {
 
 			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJS('r','')));
@@ -10133,7 +10213,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}).join("+'`'+");
 			uk.onrightfn = new Function("r",'var y;return '+uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
-			table.uniqs[uk.hh] = {};
+			table.uniqs[uk.hh] = {};					
 		} else if(con.type === 'FOREIGN KEY') {
 
 			var col = table.xcolumns[con.columns[0]];
@@ -10203,7 +10283,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.checkfn.forEach(function(checkfn){
 				if(!checkfn(r)) {
 
-					throw new Error('Violation of CHECK constraint');
+					throw new Error('Violation of CHECK constraint');			
 				}
 			});
 		}
@@ -10221,7 +10301,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 				if(orreplace) toreplace=table.uniqs[pk.hh][addr]; else
 				throw new Error('Cannot insert record, because it already exists in primary key index');
-			}
+			} 
 
 		}
 
@@ -10231,7 +10311,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if(typeof table.uniqs[uk.hh][ukaddr] !== 'undefined') {
 					if(orreplace) toreplace=table.uniqs[uk.hh][ukaddr]; else
 					throw new Error('Cannot insert record, because it already exists in unique index');
-				}
+				} 				
 
 			});
 		}
@@ -10288,7 +10368,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				var ukaddr = uk.onrightfn(r);
 				if(typeof table.uniqs[uk.hh][ukaddr] === 'undefined') {
 					throw new Error('Something wrong with unique index on table');
-				}
+				} 				
 				table.uniqs[uk.hh][ukaddr]=undefined;
 			});
 		}
@@ -10317,14 +10397,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.pkaddr = pk.onrightfn(r,params);
 			if(typeof this.uniqs[pk.hh][pk.pkaddr] === 'undefined') {
 				throw new Error('Something wrong with index on table');
-			}
+			} 
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
 				uk.ukaddr = uk.onrightfn(r);
 				if(typeof table.uniqs[uk.hh][uk.ukaddr] === 'undefined') {
 					throw new Error('Something wrong with unique index on table');
-				}
+				} 				
 			});
 		}
 
@@ -10334,7 +10414,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(table.checkfn && table.checkfn.length>0) {
 			table.checkfn.forEach(function(checkfn){
 				if(!checkfn(r)) {
-					throw new Error('Violation of CHECK constraint');
+					throw new Error('Violation of CHECK constraint');			
 				}
 			});
 		}
@@ -10349,7 +10429,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if(typeof this.uniqs[pk.hh][pk.newpkaddr] !== 'undefined'
 					&& pk.newpkaddr !== pk.pkaddr) {
 					throw new Error('Record already exists');
-				}
+				} 
 		}
 
 		if(table.uk && table.uk.length) {
@@ -10358,14 +10438,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if(typeof table.uniqs[uk.hh][uk.newukaddr] !== 'undefined'
 					&& uk.newukaddr !== uk.ukaddr) {
 					throw new Error('Record already exists');
-				}
+				} 				
 			});
 		}
 
 		// PART 3 UPDATE
 		if(this.pk) {
 			this.uniqs[pk.hh][pk.pkaddr]=undefined;
-			this.uniqs[pk.hh][pk.newpkaddr] = r;
+			this.uniqs[pk.hh][pk.newpkaddr] = r;			
 		}
 		if(table.uk && table.uk.length) {
 			table.uk.forEach(function(uk){
@@ -10398,7 +10478,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 //
 // Date functions
-//
+// 
 // (c) 2014, Andrey Gershun
 //
 
@@ -10418,7 +10498,7 @@ stdfn.ASCII = function(a) {
     return a.charCodeAt(0);
 };
 
-/**
+/** 
  Return first non-null argument
  See https://msdn.microsoft.com/en-us/library/ms190349.aspx
 */
@@ -10616,7 +10696,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 
 	// CREATE VERTEX #id
-	var sharp = this.sharp;
+	var sharp = this.sharp; 
 
 	// CREATE VERTEX "Name"
 	if(typeof this.name !== 'undefined') {
@@ -10629,7 +10709,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql',s);
-	}
+	} 
 
 	// Todo: check for content, select and default
 
@@ -10698,7 +10778,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql','var y;'+s);
-	}
+	} 
 
 	/*
 	todo: handle content, select and default
@@ -10781,7 +10861,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 				if(typeof g.prop !== 'undefined') {
 	//				e[g.prop] = e;
 	//				v.$id = g.prop; // We do not create $id for edge automatically
-					e.name = g.prop;
+					e.name = g.prop;				
 				}
 				if(typeof g.sharp !== 'undefined'){
 					e.$id = g.sharp;
@@ -10812,14 +10892,14 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 						v1 = db.objects[vo];
 					}
 				} else {
-					var av1 = g.source.sharp;
+					var av1 = g.source.sharp; 
 					if(typeof av1 === 'undefined'){
 						av1 = g.source.prop;
-					}
+					} 
 					v1 = alasql.databases[databaseid].objects[av1];
-					if(
-						typeof v1 === 'undefined' &&
-						alasql.options.autovertex &&
+					if( 
+						typeof v1 === 'undefined' && 
+						alasql.options.autovertex && 
 						((typeof g.source.prop !== 'undefined') || (typeof g.source.name !== 'undefined'))
 					){
 						v1 = findVertex(g.source.prop || g.source.name);
@@ -10839,14 +10919,14 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 						v2 = db.objects[vo];
 					}
 				} else {
-					var av2 = g.target.sharp;
+					var av2 = g.target.sharp; 
 					if(typeof av2 === 'undefined'){
-						av2 = g.target.prop;
+						av2 = g.target.prop; 
 					}
 					v2 = alasql.databases[databaseid].objects[av2];
 					if(
-						typeof v2 === 'undefined' &&
-						alasql.options.autovertex &&
+						typeof v2 === 'undefined' && 
+						alasql.options.autovertex && 
 						((typeof g.target.prop !== 'undefined') || (typeof g.target.name !== 'undefined'))
 					) {
 						v2 = findVertex(g.target.prop || g.target.name);
@@ -10912,7 +10992,7 @@ yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 		if(typeof g.prop !== 'undefined') {
 	//				v[g.prop] = true;
 			v.$id = g.prop;
-			v.name = g.prop;
+			v.name = g.prop;				
 		}
 
 		if(typeof g.sharp !== 'undefined'){
@@ -10966,7 +11046,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 			return 'x[\''+st.column.columnid+'\']='+st.expression.toJS('x','');
 		}).join(';');
 		var setfn = new Function('x,params,alasql','var y;'+s);
-	}
+	} 
 
 	// Todo: handle content, select and default
 
@@ -11020,7 +11100,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 // ALTER TABLE table1 RENAME TO table2
 yy.AlterTable = function (params) { return yy.extend(this, params); }
 yy.AlterTable.prototype.toString = function() {
-	var s = 'ALTER TABLE '+this.table.toString();
+	var s = 'ALTER TABLE '+this.table.toString(); 
 	if(this.renameto) s += ' RENAME TO '+this.renameto;
 	return s;
 }
@@ -11280,7 +11360,7 @@ yy.WithSelect.prototype.execute = function (databaseid,params,cb) {
 			self.withs.forEach(function(w,idx){
 				if(savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx] ;
 				else delete alasql.databases[databaseid].tables[w.name];
-			});
+			});			
 
 		if(cb) data = cb(data);
 		return data;
@@ -11361,10 +11441,10 @@ yy.While.prototype.execute = function (databaseid,params,cb) {
 					res = cb(res);
 				}
 			},0);
-		}
+		}		
 	} else {
 		while(fn(params,alasql)) {
-			var res1 = self.loopstat.execute(databaseid,params);
+			var res1 = self.loopstat.execute(databaseid,params); 
 			res.push(res1);
 		}
 	}
@@ -11391,7 +11471,7 @@ yy.Continue.prototype.toString = function() {
 
 yy.Continue.prototype.execute = function (databaseid,params,cb,scope) {
 	var res = 1;
-	if(cb) res = cb(res);
+	if(cb) res = cb(res);	
 	return res;
 };
 
@@ -11480,7 +11560,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
-			});
+			});		
 		}
 
 		self.values.forEach(function(values) {
@@ -11490,7 +11570,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				self.columns.forEach(function(col, idx){
 
 					var q = "'"+col.columnid +'\':';
-					if(table.xcolumns && table.xcolumns[col.columnid]) {
+					if(table.xcolumns && table.xcolumns[col.columnid]) { 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
 							//q += ''
 							q += "(x="+values[idx].toJS()+",x==undefined?undefined:+x)";
@@ -11501,7 +11581,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 						} else {
 							q += values[idx].toJS();
 						};
-					} else {
+					} else { 
 						q += values[idx].toJS();
 					}
 					ss.push(q);
@@ -11520,7 +11600,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 							q += "(new "+col.dbtypeid+"(";
 							q += values[idx].toJS();
 							q += "))";
-						} else {
+						} else { 
 							q += values[idx].toJS();
 						}
 
@@ -11563,7 +11643,7 @@ yy.Insert.prototype.compile = function (databaseid) {
         if(db.tables[tableid].insert) {
 
         } else {
-            s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data='+
+            s += 'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data='+	
             'alasql.databases[\''+databaseid+'\'].tables[\''+tableid+'\'].data.concat(aa);';
         }
 
@@ -11608,7 +11688,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	} else if(this.default) {
 		var insertfns = 'db.tables[\''+tableid+'\'].data.push({'+table.defaultfns+'});return 1;';
-        var insertfn = new Function('db,params,alasql',insertfns);
+        var insertfn = new Function('db,params,alasql',insertfns); 
     } else {
     	throw new Error('Wrong INSERT parameters');
     }
@@ -11688,7 +11768,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
-			});
+			});		
 		}
 
 		wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJS('r','')+')').bind(this);
@@ -11706,7 +11786,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 			var orignum = table.data.length;
 
-			var newtable = [];
+			var newtable = [];			
 			for(var i=0, ilen=table.data.length;i<ilen;i++) {
 				if(wherefn(table.data[i],params,alasql)) {
 					// Check for transaction - if it is not possible then return all back
@@ -11805,7 +11885,7 @@ yy.Update.prototype.compile = function (databaseid) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
-			});
+			});		
 		}
 
 		var wherefn = new Function('r,params,alasql','var y;return '+this.where.toJS('r','')).bind(this);
@@ -11814,7 +11894,7 @@ yy.Update.prototype.compile = function (databaseid) {
 	// Construct update function
 	var s = '';
 	this.columns.forEach(function(col){
-		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJS('r','')+';';
+		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJS('r','')+';'; 
 	});
 
 	var assignfn = new Function('r,params,alasql','var y;'+s);
@@ -11924,12 +12004,12 @@ yy.Merge.prototype.execute = function (databaseid,params,cb) {
 // CREATE DATABASE databaseid
 yy.CreateDatabase = function (params) { return yy.extend(this, params); };
 yy.CreateDatabase.prototype.toString = function() {
-	var s = 'CREATE';
+	var s = 'CREATE'; 
 	if(this.engineid) s+=' '+this.engineid;
 	s += ' DATABASE';
 	if(this.ifnotexists) s += ' IF NOT EXISTS';
 	s += ' '+this.databaseid;
-	if(this.args && this.args.length > 0) {
+	if(this.args && this.args.length > 0) { 
 		s += '('+this.args.map(function(arg){ return arg.toString()}).join(', ')+')';
 	}
 	if(this.as) s += ' AS '+this.as;
@@ -12008,19 +12088,19 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 	var dbid = this.databaseid;
 
 	if(dbid == alasql.DEFAULTDATABASEID) {
-		throw new Error("Drop of default database is prohibited");
+		throw new Error("Drop of default database is prohibited");			
 	}
 
 	if(!alasql.databases[dbid]) {
 		if(!this.ifexists) {
-			throw new Error("Database '"+dbid+"' does not exist");
+			throw new Error("Database '"+dbid+"' does not exist");	
 		} else {
 			res = 0;
 		}
 	} else {
 		delete alasql.databases[dbid];
 		if(dbid == alasql.useid) {
-			alasql.use();
+			alasql.use();		
 		}
 		res = 1;
 	}
@@ -12067,23 +12147,23 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 	var dbid = this.databaseid;
 
 	if(dbid == alasql.DEFAULTDATABASEID) {
-		throw new Error("Drop of default database is prohibited");
+		throw new Error("Drop of default database is prohibited");			
 	}
 
 	if(!alasql.databases[dbid]) {
 		if(!this.ifexists) {
-			throw new Error("Database '"+dbid+"' does not exist");
+			throw new Error("Database '"+dbid+"' does not exist");	
 		} else {
 			res = 0;
 		}
 	} else {
 		if(alasql.databases[dbid].engineid) {
-			throw new Error("Cannot drop database '"+dbid+"', because it is attached. Detach it.");
+			throw new Error("Cannot drop database '"+dbid+"', because it is attached. Detach it.");	
 		}
 
 		delete alasql.databases[dbid];
 		if(dbid == alasql.useid) {
-			alasql.use();
+			alasql.use();		
 		}
 		res = 1;
 	}
@@ -12263,7 +12343,7 @@ yy.ShowCreateTable.prototype.execute = function (databaseid) {
 				if(col.dbsize) a += '('+col.dbsize+')';
 				if(col.primarykey) a += ' PRIMARY KEY';
 				// TODO extend
-				ss.push(a);
+				ss.push(a); 
 			});
 			s += ss.join(', ');
 		};
@@ -12316,7 +12396,7 @@ yy.SetVariable.prototype.execute = function (databaseid,params,cb) {
 				if(nq.query && !nq.query.modifier) nq.query.modifier='RECORDSET';
 				return nq;
 				// TODO Include modifier
-			});
+			});		
 		}
 
 		var res = new Function("params,alasql","return "
@@ -12367,7 +12447,7 @@ alasql.test = function(name, times, fn) {
 		fn();
 		alasql.con.log(Date.now()-tm);
 		return;
-	}
+	} 
 
 	if(arguments.length === 2) {
 		fn = times;
@@ -12411,13 +12491,13 @@ alasql.log = function(sql, params) {
 		if(res instanceof Array) {
 			if(console.table) {
 				// For Chrome and other consoles
-				console.table(res);
+				console.table(res);		
 			} else {
 				// Add print procedure
 				console.log(JSONtoString(res));
 			}
 		} else {
-			console.log(JSONtoString(res));
+			console.log(JSONtoString(res));				
 		}
 
 	} else {
@@ -12468,7 +12548,7 @@ alasql.clear = function() {
 	if(target === 'console' || typeof exports === 'object') {
 		if(console.clear) {
 			console.clear();
-		}
+		} 
 
 		// todo: handle Node
 
@@ -12484,7 +12564,7 @@ alasql.clear = function() {
 				el = target;
 			}
 		}
-		el.innerHTML = '';
+		el.innerHTML = '';		
 	}
 }
 
@@ -12499,7 +12579,7 @@ alasql.write = function(s) {
 	if(target === 'console' || typeof exports === 'object') {
 		if(console.log) {
 			console.log(s);
-		}
+		} 
 
 		// todo: handle node
 
@@ -12515,7 +12595,7 @@ alasql.write = function(s) {
 				el = target;
 			}
 		}
-		el.innerHTML += s;
+		el.innerHTML += s;		
 	}
 }
 
@@ -12531,7 +12611,7 @@ function loghtml(res) {
 		s += 'th {background-color: #EEE}';
 		s += '</style>';
 		s += '<table>';
-		var cols = [];
+		var cols = [];			
 		for(var colid in res[0]) {
 			cols.push(colid);
 		}
@@ -12556,7 +12636,7 @@ function loghtml(res) {
 						s += 'NULL';
 					} else if(typeof res[i][colid] === 'string') {
 						s += res[i][colid];
-					} else {
+					} else { 
 						s += JSONtoString(res[i][colid]);
 					}
 
@@ -12656,7 +12736,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 			}
 
 		} else if(event.which === 40) {
-			prompti++;
+			prompti++; 
 			if(prompti>=alasql.prompthistory.length) {
 				prompti = alasql.prompthistory.length;
 				el.value = '';
@@ -12771,7 +12851,7 @@ if(alasql.options.mysql || alasql.options.sqlite) {
 alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
 	if(filename == 'VIEWS' || filename == 'TABLES' ) {
 		var res = [];
-		for(var databaseid in alasql.databases) {
+		for(var databaseid in alasql.databases) {			
 			var tables = alasql.databases[databaseid].tables;
 			for(var tableid in tables) {
 				if((tables[tableid].view && filename == 'VIEWS') ||
@@ -12781,7 +12861,7 @@ alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
 			}
 		}
 		if(cb) res = cb(res, idx, query);
-		return res;
+		return res;		
 	}
 	throw new Error('Unknown INFORMATION_SCHEMA table');
 }
@@ -12828,17 +12908,17 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 		s += columns.map(function(col){
 			var val = data[i][col.columnid];
 			if(col.typeid) {
-				if(col.typeid == 'STRING' || col.typeid == 'VARCHAR' ||
+				if(col.typeid == 'STRING' || col.typeid == 'VARCHAR' ||  
 					col.typeid == 'NVARCHAR' || col.typeid == 'CHAR' || col.typeid == 'NCHAR') {
 					val = "'"+escapeqq(val)+"'";
 				}
 			} else {
 				if(typeof val == 'string') {
-					val = "'"+escapeqq(val)+"'";
+					val = "'"+escapeqq(val)+"'";					
 				}
 			}
 			return val;
-		});
+		});		
 		s += ');\n';
 	}
 //	if(filename === '') {
@@ -12859,7 +12939,7 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 		var sel = document.querySelector(selector);
 		if(!sel) {
 			throw new Error('Selected HTML element is not found');
-		};
+		};	
 
 		if(columns.length == 0) {
 			if(typeof data[0] == "object") {
@@ -12958,7 +13038,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	}
 
 	var opt = {};
-	//opt.separator = ',';
+	//opt.separator = ','; 
   opt.separator = ';';
 	opt.quote = '"';
 	alasql.utils.extend(opt, opts);
@@ -12975,13 +13055,13 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 			var s = d[col.columnid];
 			s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
 
-      //Excel 2013 needs quotes around strings - thanks for _not_ complying with RFC for CSV
+      //Excel 2013 needs quotes around strings - thanks for _not_ complying with RFC for CSV 
       if(+s!=s){  // jshint ignore:line
-          s = opt.quote + s + opt.quote;
+          s = opt.quote + s + opt.quote; 
       }
 
       return s;
-		}).join(opt.separator)+'\r\n';
+		}).join(opt.separator)+'\r\n';	
 	});
 
 	res = alasql.utils.saveFile(filename,s);
@@ -13157,9 +13237,9 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 					}
 				}
 				s += '</th>';
-			});
+			});	
 
-			s += '</tr>';
+			s += '</tr>';	
 			s += '</thead>';
 		}
 
@@ -13238,12 +13318,12 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 					} else if(typeid == 'number') {
 						typestyle = ' ';
 					} else if (typeid == 'date') {
-						typestyle = 'mso-number-format:\"Short Date\";';
+						typestyle = 'mso-number-format:\"Short Date\";'; 
 					} else {
 						// FOr other types is saved
 						if( opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
 							typestyle = opts.types[typeid].typestyle;
-						}
+						} 
 					}
 
 					// TODO Replace with extend...
@@ -13481,7 +13561,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 						}
 					}
 					s3 += '</Data></Cell>';
-				});
+				});	
 
 				s3 += '</Row>';
 			};
@@ -13566,12 +13646,12 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 						} else if(typeid == 'number') {
 							typestyle = ' ';
 						} else if (typeid == 'date') {
-							typestyle = 'mso-number-format:\"Short Date\";';
+							typestyle = 'mso-number-format:\"Short Date\";'; 
 						} else {
 							// For other types is saved
 							if( opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
 								typestyle = opts.types[typeid].typestyle;
-							}
+							} 
 						}
 
 						// TODO Replace with extend...
@@ -13634,7 +13714,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 
 };
 
-/**
+/** 
 	Export to XLSX function
 	@function
 	@param {string|object} filename Filename or options
@@ -13679,7 +13759,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		alasql.utils.loadBinaryFile(opts.sourcefilename,!!cb,function(data){
 			wb = XLSX.read(data,{type:'binary'});
 			doExport();
-        });
+        });		
 	} else {
 		doExport();
 	};
@@ -13690,12 +13770,12 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	/**
 		Export workbook
-		@function
+		@function 
 	*/
 	function doExport() {
 
-		/*
-			If opts is array of arrays then this is a
+		/* 
+			If opts is array of arrays then this is a 
 			multisheet workboook, else it is a singlesheet
 		*/
 		if(typeof opts == 'object' && opts instanceof Array) {
@@ -13712,10 +13792,10 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	}
 
-	/**
+	/** 
 		Prepare sheet
-		@params {object} opts
-		@params {array} data
+		@params {object} opts 
+		@params {array} data 
 		@params {array} columns Columns
 	*/
 	function prepareSheet(opts, data, columns, idx) {
@@ -13736,7 +13816,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		} else {
 			wb.SheetNames.push(opt.sheetid);
 			wb.Sheets[opt.sheetid] = {};
-			cells = wb.Sheets[opt.sheetid];
+			cells = wb.Sheets[opt.sheetid];			
 		}
 
 		var range = "A1";
@@ -13773,7 +13853,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 					cell.t = 'n';
 				} else if(typeof data[j][col.columnid] == 'string') {
 					cell.t = 's';
-				} else if(typeof data[j][col.columnid] == 'boolean') {
+				} else if(typeof data[j][col.columnid] == 'boolean') {				
 					cell.t = 'b';
 				} else if(typeof data[j][col.columnid] == 'object') {
 					if(data[j][col.columnid] instanceof Date) {
@@ -13781,15 +13861,15 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 					}
 				}
 				cells[alasql.utils.xlsnc(col0+idx)+""+i] = cell;
-			});
+			});		
 			i++;
 		}
 
 	}
 
-	/**
+	/** 
 		Save Workbook
-		@params {array} wb Workbook
+		@params {array} wb Workbook 
 		@params {callback} cb Callback
 	*/
 	function saveWorkbook(cb) {
@@ -13920,7 +14000,7 @@ alasql.from.RANGE = function(start, finish, cb, idx, query) {
 	for(var i=start;i<=finish;i++){
 		res.push(i);
 	}
-//	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});
+//	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});	
 	if(cb){
 		res = cb(res, idx, query);
 	}
@@ -13959,7 +14039,7 @@ alasql.from.JSON = function(filename, opts, cb, idx, query) {
 
 	alasql.utils.loadFile(filename,!!cb,function(data){
 
-		res = JSON.parse(data);
+		res = JSON.parse(data);	
 		if(cb){
 			res = cb(res, idx, query);
 		}
@@ -14068,7 +14148,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	        		var r = {};
 	        		hs.forEach(function(h,idx){
 	        			r[h] = a[idx];
-	        			// Please avoid === here
+	        			// Please avoid === here 
 						if((typeof r[h] !== 'undefined') && (r[h]).trim() == +r[h]){ // jshint ignore:line
 							r[h] = +r[h];
 						}
@@ -14211,7 +14291,7 @@ alasql.from.XML = function(filename, opts, cb, idx, query) {
 
   alasql.utils.loadFile(filename,!!cb,function(data){
 
-    res = xmlparse(data).root;
+    res = xmlparse(data).root; 
 
     if(cb) res = cb(res, idx, query);
   });
@@ -14450,15 +14530,15 @@ yy.Help.prototype.execute = function (databaseid, params, cb) {
 */
 
 /**
-	Print statement
+	Print statement 
 	@class
 	@param {object} params Initial setup properties
 */
 
 yy.Print = function (params) { return yy.extend(this, params); }
 
-/**
-	Generate SQL string
+/** 
+	Generate SQL string 
 	@this Print statement object
 */
 yy.Print.prototype.toString = function() {
@@ -14471,7 +14551,7 @@ yy.Print.prototype.toString = function() {
  	Print result of select statement or expression
  	@param {string} databaseid Database identificator
  	@param {object} params Query parameters
- 	@param {statement-callback} cb Callback function
+ 	@param {statement-callback} cb Callback function 
 	@this Print statement object
 */
 yy.Print.prototype.execute = function (databaseid,params,cb) {
@@ -14592,8 +14672,8 @@ yy.Require.prototype.execute = function (databaseid,params,cb) {
 			}
 		});
 	} else {
-		if(cb) res = cb(res);
-	}
+		if(cb) res = cb(res);			
+	} 
 	return res;
 };
 
@@ -14736,7 +14816,7 @@ console.log(arguments);
 			if(ifnotexists) {
 				cb(0);
 			} else {
-				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
+				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');				
 			}
 		}
 	}
@@ -14790,7 +14870,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 				if(ifnotexists) {
 					cb(0);
 					return;
-				} else {
+				} else {		
 					throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
 				}
 			};
@@ -14800,7 +14880,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 				event.target.result.close();
 				cb(1);
 			};
-		};
+		};		
 	}
 	// }
 };
@@ -14844,7 +14924,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 				db.tables[tblist[i]] = {};
 			};
 
-			event.target.result.close();
+			event.target.result.close();		
 			cb(1);
 		};
 	};
@@ -14888,7 +14968,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 			request3.onblocked = function(event){
 				throw new Error('Cannot create table "'+tableid+'" because database "'+databaseid+'"  is blocked');
 
-			}
+			}				
 		};
 	};
 };
@@ -14936,7 +15016,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 			request3.onblocked = function(event){
 				throw new Error('Cannot drop table "'+tableid+'" because database "'+databaseid+'" is blocked');
 
-			}
+			}				
 		};
 	};
 }
@@ -14996,7 +15076,7 @@ IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 		  		cb(res, idx, query);
 		  	}
 	  	}
-	}
+	}		
 }
 
 IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
@@ -15036,7 +15116,7 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 		  		cb(num);
 		  	}
 	  	}
-	}
+	}		
 }
 
 IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
@@ -15079,7 +15159,7 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 		  		cb(num);
 		  	}
 	  	}
-	}
+	}		
 }
 
 // Skip
@@ -15099,7 +15179,7 @@ LS.get = function(key) {
 	if(typeof s == "undefined") return;
 	var v = undefined;
 	try {
-		v = JSON.parse(s);
+		v = JSON.parse(s); 
 	} catch(err) {
 		throw new Error('Cannot parse JSON '+s);
 	}
@@ -15108,7 +15188,7 @@ LS.get = function(key) {
 
 LS.set = function(key, value){
 	if(typeof value == 'undefined') localStorage.removeItem(key);
-	else localStorage.setItem(key,JSON.stringify(value));
+	else localStorage.setItem(key,JSON.stringify(value)); 
 }
 
 LS.createDatabase = function(lsdbid, args, ifnotexists, dbid, cb){
@@ -15196,7 +15276,7 @@ LS.showDatabases = function(like, cb) {
 			res = res.filter(function(d){
 				return d.databaseid.match(relike);
 			});
-		}
+		}		
 	};
 	if(cb) cb(res);
 	return res;
@@ -15453,7 +15533,7 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb){
 				return res;
 			} else {
 				throw new Error('Cannot create new database file, because it alreagy exists');
-			}
+			} 
 		} else {
 			var data = {tables:{}};
 			alasql.utils.saveFile(filename,JSON.stringify(data),function(data){
@@ -15528,7 +15608,7 @@ FS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	db.data.tables[tableid] = {columns:table.columns};
 	db.data[tableid] = [];
 
-	FS.updateFile(databaseid);
+	FS.updateFile(databaseid);	
 
 	if(cb) cb(res);
 	return res;
@@ -15563,7 +15643,7 @@ FS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	delete db.tables[tableid];
 	delete db.data.tables[tableid];
 	delete db.data[tableid];
-	FS.updateFile(databaseid);
+	FS.updateFile(databaseid);	
 	if(cb) cb(res);
 	return res;
 }
@@ -15582,7 +15662,7 @@ FS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	var tb = db.data[tableid];
 	if(!tb) tb = [];
 	db.data[tableid] = tb.concat(value);
-	FS.updateFile(databaseid);
+	FS.updateFile(databaseid);	
 	if(cb) cb(res);
 	return res;
 };
@@ -15596,7 +15676,7 @@ FS.saveTableData = function(databaseid, tableid){
 	var db = alasql.databases[databaseid];
 	db.data[tableid] = db.tables[tableid].data;
 	db.tables[tableid].data = null;
-	FS.updateFile(databaseid);
+	FS.updateFile(databaseid);	
 }
 
 FS.commit = function(databaseid, cb) {
@@ -15654,7 +15734,7 @@ FS.rollback = function(databaseid, cb) {
 
 				});
 			};
-		},100);
+		},100);		
 	};
 
 }
@@ -15925,7 +16005,7 @@ return alasql;
 
 /*if (typeof importScripts === 'function') {
 	// Nothing
-} else */
+} else */ 
 if(typeof exports !== 'object') {
 
 	alasql.worker = function(path, paths, cb) {
@@ -15938,16 +16018,16 @@ if(typeof exports !== 'object') {
 			var sc = document.getElementsByTagName('script');
 			for(var i=0;i<sc.length;i++) {
 				if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-					path = sc[i].src.substr(0,sc[i].src.length-16)+'alasql.js';
+					path = sc[i].src.substr(0,sc[i].src.length-16)+'alasql.js'; 
 					break;
 				} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 					path = sc[i].src.substr(0,sc[i].src.length-20)+'alasql.min.js';
 					break;
 				} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-					path = sc[i].src;
+					path = sc[i].src; 
 					break;
 				} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-					path = sc[i].src.substr(0,sc[i].src.length-13)+'alasql.min.js';
+					path = sc[i].src.substr(0,sc[i].src.length-13)+'alasql.min.js'; 
 					break;
 				}
 			}

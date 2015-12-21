@@ -356,6 +356,9 @@ function queryfn3(query) {
 		}
 
 	}
+
+	if(query.pivotfn) query.pivotfn();
+	if(query.unpivotfn) query.unpivotfn();
 //	console.log(query.intoallfns);
 /*/*
 	// if(query.explain) {
