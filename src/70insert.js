@@ -10,6 +10,7 @@ yy.Insert = function (params) { return yy.extend(this, params); }
 yy.Insert.prototype.toString = function() {
 	var s = 'INSERT ';
 	if(this.orreplace) s += 'OR REPLACE ';
+	if(this.replaceonly) s = 'REPLACE ';
 	s += 'INTO '+this.into.toString();
 	if(this.columns) s += '('+this.columns.toString()+')';
 	if(this.values) s += ' VALUES '+this.values.toString();
@@ -178,7 +179,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
 	        if(db.tables[tableid].insert) {
 				s += 'var db=alasql.databases[\''+databaseid+'\'];';
-				s += 'db.tables[\''+tableid+'\'].insert(a,'+(self.orreplace?"true":"false")+');';
+				s += 'db.tables[\''+tableid+'\'].insert(a,'+(self.orreplace?"true":"false")
+					    +(self.replaceonly?",true":",false")+');';
 	        } else {
 				s += 'aa.push(a);';
 			}

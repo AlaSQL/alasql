@@ -9,6 +9,7 @@
 * Fix: Bug with primary key after DELETE all
 * Fix: Added String() to UPPER() and LOWER() functions 
 * Added: PIVOT and UNPIVOT functionality
+* Added: REPLACE INTO command (see issue #467)
 
 
 ### 0.2.1 "Rodos" (28.09.2015)
