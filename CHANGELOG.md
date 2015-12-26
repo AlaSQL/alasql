@@ -10,7 +10,8 @@
 * Fix: Added String() to UPPER() and LOWER() functions 
 * Added: PIVOT and UNPIVOT functionality
 * Added: REPLACE INTO command (see issue #467)
-
+* Added: ON UPDATE - column constraint
+* Fixed: COLLATE and UNIQUE KEY words for CREATE TABLE (see issue #452)
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

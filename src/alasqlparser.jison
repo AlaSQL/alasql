@@ -1751,6 +1751,7 @@ CreateTableOption
 	: DEFAULT
 	| LITERAL EQ Literal
 	| IDENTITY EQ NumValue
+	| COLLATE EQ Literal
 	;
 
 TemporaryClause 
@@ -1838,9 +1839,9 @@ OnUpdateClause
 	;
 
 UniqueKey
-	: UNIQUE Literal? LPAR ColumnsList RPAR
+	: UNIQUE KEY? Literal? LPAR ColumnsList RPAR
 		{ 
-			$$ = {type: 'UNIQUE', columns: $4, clustered:($2+'').toUpperCase()};
+			$$ = {type: 'UNIQUE', columns: $5, clustered:($3+'').toUpperCase()};
 		}
 	;
 
@@ -1970,6 +1971,10 @@ ColumnConstraint
 		{$$ = {check:$1}; }
 	| UNIQUE
 		{$$ = {unique:true}; }
+	| ON UPDATE PrimitiveValue
+		{$$ = {"onupdate":$3};}
+	| ON UPDATE LPAR Expression RPAR
+		{$$ = {"onupdate":$4};}
 	;
 
 /* DROP TABLE */

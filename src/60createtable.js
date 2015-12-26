@@ -110,7 +110,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	table.identities = {};
 	table.checkfn = [];
 
-	var ss = [];
+	var ss = [];  // DEFAULT function components
+	var uss = []; // ON UPDATE function components
 	if(columns) {
 		columns.forEach(function(col) {
 			var dbtypeid = col.dbtypeid;
@@ -205,12 +206,18 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uniqs[uk.hh] = {};
 */			}
 
+			if(col.onupdate) {
+				uss.push('r[\''+col.columnid+'\']='+col.onupdate.toJS('r',''));
+			}
+
 			table.columns.push(newcol);
 			table.xcolumns[newcol.columnid] = newcol;
 
 		});
 	}
 	table.defaultfns = ss.join(',');
+	table.onupdatefns = uss.join(';');
+
 
 
 //	if(constraints) {
