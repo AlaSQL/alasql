@@ -5181,10 +5181,10 @@ alasql.srch.KEYS = function(val) {
 };
 
 // Test expression
-alasql.srch.WHERE = function(val,args) {
+alasql.srch.WHERE = function(val,args,stope,params) {
   var exprs = args[0].toJS('x','');
-  var exprfn = new Function('x,alasql','return '+exprs);
-  if(exprfn(val,alasql)) {
+  var exprfn = new Function('x,alasql,params','return '+exprs);
+  if(exprfn(val,alasql,params)) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
