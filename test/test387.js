@@ -44,6 +44,13 @@ describe('Test 387 - IN (SELECT) issue #469', function() {
   });
 
 
+  it('5. SELECT 1 IN () issue #407', function(done){
+    var res = alasql('select 1 in (select 1) as x');
+    assert.deepEqual(res,[ { 'x': true } ]);
+    done();
+  });
+
+
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test387');
     done();
