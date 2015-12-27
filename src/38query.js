@@ -1,7 +1,7 @@
 // Main query procedure
 function queryfn(query,oldscope,cb, A,B) {
 
-//	console.log(query.queriesfn);
+	var aaa = query.sources.length;
 
 	var ms;
 	query.sourceslen = query.sources.length;
@@ -77,9 +77,9 @@ function queryfn(query,oldscope,cb, A,B) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
-	if(0 === slen) 
+	if(query.sources.length==0 || 0 === slen ) 
 		result = queryfn3(query);
-	
+//	console.log(82,aaa,slen,query.sourceslen, query.sources.length);
 	return result;
 }
 
@@ -116,7 +116,6 @@ function queryfn2(data,idx,query) {
 }
 
 function queryfn3(query) {
-//console.log(55,query);
 
 
 	var scope = query.scope;
@@ -366,6 +365,7 @@ function queryfn3(query) {
 	// 	return query.explaination;
 	// } else 
 */
+
 //console.log(190,query.intofns);
 	if(query.intoallfn) {
 //		console.log(161);
@@ -390,7 +390,6 @@ function queryfn3(query) {
 		res = query.data;
 		if(query.cb) 
 			res = query.cb(query.data,query.A, query.B);
-//		console.log(777,res)
 		return res;
 	}
 

@@ -5440,6 +5440,8 @@ alasql.srch.ORDERBY = function(val,args /*,stope*/) {
 // Main query procedure
 function queryfn(query,oldscope,cb, A,B) {
 
+	var aaa = query.sources.length;
+
 	var ms;
 	query.sourceslen = query.sources.length;
 	var slen = query.sourceslen;
@@ -5498,7 +5500,7 @@ function queryfn(query,oldscope,cb, A,B) {
 // 
 		source.queriesdata = query.queriesdata;  
 	});
-	if(0 === slen) 
+	if(query.sources.length==0 || 0 === slen ) 
 		result = queryfn3(query);
 
 	return result;
@@ -5784,7 +5786,6 @@ function queryfn3(query) {
 		res = query.data;
 		if(query.cb) 
 			res = query.cb(query.data,query.A, query.B);
-
 		return res;
 	}
 
