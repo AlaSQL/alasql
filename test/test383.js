@@ -14,11 +14,14 @@ if(typeof exports === 'object') {
 
 describe('Test 383 - MySQL compatibility issue #452', function() {
 
-  it('1. CREATE DATABASE',function(done){
+  before(function(){
     alasql('CREATE DATABASE test383;USE test383');
-    done();
   });
 
+  after(function(){
+    alasql.options.modifier = undefined;
+    alasql('DROP DATABASE test383');
+  });
 
 	it('2. Create table issue', function(done){
 
@@ -93,7 +96,7 @@ describe('Test 383 - MySQL compatibility issue #452', function() {
   it('6. ON UPDATE', function(done){
     alasql('INSERT INTO org4 (id,name) VALUES (1,"Peter")');
     var res = alasql('SELECT * FROM org4');
-    assert(res[0].lastUpdateTime == 0);
+    assert(res[0].lastUpdateTime === 0);
 
     alasql('UPDATE org4 SET name="George"');
 
@@ -104,11 +107,7 @@ describe('Test 383 - MySQL compatibility issue #452', function() {
   });
 
 
-  it('99. DROP DATABASE',function(done){
-    alasql.options.modifier = undefined;
-    alasql('DROP DATABASE test383');
-    done();
-  });
+
 
 
 });
