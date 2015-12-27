@@ -24,7 +24,7 @@ describe('Test 385 - Nested Search (issue #495)', function() {
 
     // Source data
 
-    var data1 = {
+    var data1 = [{
     "_id" : "2mA82CTSeeTrvMxfR",
     "playlists" : 
       [
@@ -45,12 +45,12 @@ describe('Test 385 - Nested Search (issue #495)', function() {
               ]
           }
       ]
-    };
+    }];
 
 
     // Result data
 
-    var data2 = {
+    var data2 = [{
     "_id" : "2mA82CTSeeTrvMxfR",
     "playlists" : 
       [
@@ -71,11 +71,11 @@ describe('Test 385 - Nested Search (issue #495)', function() {
               ]
           }
       ]
-    };
+    }];
 
 
-    alasql('SEARCH playlists/songs/WHERE(id=$1) SET(position=$2) FROM $0',[data1,"S927n1xUkAM","1"]);
-    alasql('SEARCH playlists/songs/WHERE(id=$1) SET(position=$2) FROM $0',[data1,"dMEwEdkoPLw","2"]);
+    alasql('SEARCH /playlists/songs/WHERE(id=$1) SET(position=$2) FROM $0',[data1,"S927n1xUkAM","1"]);
+    alasql('SEARCH /playlists/songs/WHERE(id=$1) SET(position=$2) FROM $0',[data1,"dMEwEdkoPLw","2"]);
     
     assert.deepEqual(data1,data2);
 		done();
