@@ -79,12 +79,17 @@ describe('Test 386 - Nested Search (issue #495)', function() {
 	});
 
 
-  it('3. Change property', function(done){
+  it('3. Change property in all levels', function(done){
     alasql('SEARCH /+ WHERE(id=77) SET(quantity=31) FROM ?',[data]);
     assert(data[0].medications[0].prescriptions[1].quantity == 31);
     done();
   });
 
+  it('4. Change property in all levels', function(done){
+    alasql('SEARCH / * WHERE(id=77) SET(quantity=32) FROM ?',[data]);
+    assert(data[0].medications[0].prescriptions[1].quantity == 32);
+    done();
+  });
 
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test386');
