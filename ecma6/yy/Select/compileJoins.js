@@ -1,4 +1,7 @@
 import {alasql} from "../../global/alasql.js";
+import {Apply} from "../Apply.js";
+import {Op} from "../Op.js";
+import {returnTrue} from "../../utils/strings.js";
 /*
 //
 // Select compiler part for Alasql.js
@@ -30,7 +33,7 @@ export function compileJoins(query) {
 		var source;
 		var tq;
 
-		if(jn instanceof yy.Apply) {
+		if(jn instanceof Apply) {
 //			console.log('APPLY',jn.applymode);
 			source = {
 				alias: jn.as,
@@ -284,7 +287,7 @@ export function compileJoins(query) {
 //			console.log(source);
 		} else if(jn.on) {
 //console.log(jn.on);
-			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
+			if(jn.on instanceof Op && jn.on.op == '=' && !jn.on.allsome) {
 //				console.log('ix optimization', jn.on.toJS('p',query.defaultTableid) );
 				source.optimization = 'ix';
 			// 	source.onleftfns = jn.on.left.toJS('p',query.defaultTableid);

@@ -1,4 +1,5 @@
-//formerly 426orderby.js
+import {NumValue} from "../NumValue.js";
+import {Column} from "../Column.js";
 //yy.Select.prototype.compileOrder
 export function compileOrder(query) {
 	var self = this;
@@ -27,13 +28,13 @@ export function compileOrder(query) {
 			// Date conversion
 			var dg = '';
 //console.log(ord.expression, ord.expression instanceof yy.NumValue);
-			if(ord.expression instanceof yy.NumValue) {
+			if(ord.expression instanceof NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
 //console.log(ord.expression);
-				ord.expression = new yy.Column({columnid:ord.expression.nick});
+				ord.expression = new Column({columnid:ord.expression.nick});
 			};
 
-			if(ord.expression instanceof yy.Column) {
+			if(ord.expression instanceof Column) {
 				var columnid = ord.expression.columnid;
 				if(query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
