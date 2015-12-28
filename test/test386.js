@@ -66,35 +66,34 @@ describe('Test 386 - Nested Search (issue #495)', function() {
 
 
 
-  it('1. CREATE DATABASE',function(done){
+  before(function(){
     alasql('CREATE DATABASE test386;USE test386');
-    done();
+  });
+
+  after(function(){
+    alasql('DROP DATABASE test386');
   });
 
 
-	it('2. Change property', function(done){
+	it('1. Change property', function(done){
     alasql('SEARCH /medications/prescriptions/WHERE(id=77) SET(quantity=30) FROM ?',[data]);
-    assert(data[0].medications[0].prescriptions[1].quantity == 30);
+    assert.equal(data[0].medications[0].prescriptions[1].quantity,30);
 		done();
 	});
 
 
-  it('3. Change property in all levels', function(done){
+  it('2. Change property in all levels', function(done){
     alasql('SEARCH /+ WHERE(id=77) SET(quantity=31) FROM ?',[data]);
-    assert(data[0].medications[0].prescriptions[1].quantity == 31);
+    assert.equal(data[0].medications[0].prescriptions[1].quantity,31);
     done();
   });
 
-  it('4. Change property in all levels', function(done){
+  it('3. Change property in all levels', function(done){
     alasql('SEARCH / * WHERE(id=77) SET(quantity=32) FROM ?',[data]);
-    assert(data[0].medications[0].prescriptions[1].quantity == 32);
+    assert.equal(data[0].medications[0].prescriptions[1].quantity,32);
     done();
   });
 
-  it('99. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test386');
-    done();
-  });
 
 
 });
