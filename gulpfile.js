@@ -24,6 +24,8 @@ var dereserve = require('gulp-dereserve');
 var argv = require('yargs').argv || {};
 var replace = require('gulp-replace');
 var execSync = require('child_process').execSync;
+var strftime = require('strftime').timezone('0');
+
 
 // Identify name of the build
 var packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'))
@@ -37,9 +39,11 @@ if(!(/^master|^release/.test(branch))){
 //            + 'pre.'
               + branch.replace(/[^0-9A-Za-z-]/ig,'.')
               + '+' 
-              + new Date().toISOString().replace(/\..+$/g,'').replace(/T/g,'.').replace(/[^0-9\.]/g,'').replace(/^20/g,'').replace(/\.0/g,'.'); //todo: make more Elegant
-              ;
-}
+              + (+strftime('%y%m%d'))
+              + '.'
+              + (+strftime('%H%M%S'));
+} 
+
 
 gulp.task('js-merge-worker', function () {
   return gulp.src([
