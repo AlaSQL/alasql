@@ -84,6 +84,83 @@ function extend (a,b){
     return a;
 };
 
+function Expression(params) { return extend(this, params); };
+
+/**
+	Convert AST to string
+	@this ExpressionStatement
+	@return {string}
+*/
+Expression.prototype.toString = function() {
+	var s = this.expression.toString();
+	if(this.order) {
+		s += ' '+this.order.toString();
+	}
+	if(this.nocase) {
+		s += ' COLLATE NOCASE';
+	}
+	return s;
+};
+
+/**
+	Find aggregator in AST subtree
+	@this ExpressionStatement
+	@param {object} query Query object
+*/
+Expression.prototype.findAggregator = function (query){
+	if(this.expression.findAggregator) {
+		this.expression.findAggregator(query);
+	}
+};
+
+/**
+	Convert AST to JavaScript expression
+	@this ExpressionStatement
+	@param {string} context Context string, e.g. 'p','g', or 'x'
+	@param {string} tableid Default table name
+	@param {object} defcols Default columns dictionary
+	@return {string} JavaScript expression
+*/
+
+Expression.prototype.toJS = function(context, tableid, defcols) {
+//	console.log('Expression',this);
+	if(this.expression.reduced) {
+		return 'true';
+	}
+	return this.expression.toJS(context, tableid, defcols);
+};
+
+/**
+	Compile AST to JavaScript expression
+	@this ExpressionStatement
+	@param {string} context Context string, e.g. 'p','g', or 'x'
+	@param {string} tableid Default table name
+	@param {object} defcols Default columns dictionary
+	@return {string} JavaScript expression
+*/
+
+Expression.prototype.compile = function(context, tableid, defcols){
+//	console.log('Expression',this);
+	if(this.reduced) {
+		return returnTrue();
+	}
+	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
+};
+
+function OrderExpression(params){ return extend(this, params); }
+OrderExpression.prototype.toString = Expression.prototype.toString;
+
+function Join(params) { return extend(this, params); };
+
+Join.prototype.toString = function() {
+	var s = ' ';
+	if(this.joinmode){
+		s += this.joinmode+' ';
+	}
+	s += 'JOIN ' + this.table.toString();
+	return s;
+};
+
 function UniOp(params) { return extend(this, params); }
 UniOp.prototype.toString = function() {
 	if(this.op === '-'){
@@ -177,69 +254,6 @@ StringValue.prototype.toJS = function() {
 	return "'"+escapeq(this.value)+"'";
 
 }
-
-function Expression(params) { return extend(this, params); };
-
-/**
-	Convert AST to string
-	@this ExpressionStatement
-	@return {string}
-*/
-Expression.prototype.toString = function() {
-	var s = this.expression.toString();
-	if(this.order) {
-		s += ' '+this.order.toString();
-	}
-	if(this.nocase) {
-		s += ' COLLATE NOCASE';
-	}
-	return s;
-};
-
-/**
-	Find aggregator in AST subtree
-	@this ExpressionStatement
-	@param {object} query Query object
-*/
-Expression.prototype.findAggregator = function (query){
-	if(this.expression.findAggregator) {
-		this.expression.findAggregator(query);
-	}
-};
-
-/**
-	Convert AST to JavaScript expression
-	@this ExpressionStatement
-	@param {string} context Context string, e.g. 'p','g', or 'x'
-	@param {string} tableid Default table name
-	@param {object} defcols Default columns dictionary
-	@return {string} JavaScript expression
-*/
-
-Expression.prototype.toJS = function(context, tableid, defcols) {
-//	console.log('Expression',this);
-	if(this.expression.reduced) {
-		return 'true';
-	}
-	return this.expression.toJS(context, tableid, defcols);
-};
-
-/**
-	Compile AST to JavaScript expression
-	@this ExpressionStatement
-	@param {string} context Context string, e.g. 'p','g', or 'x'
-	@param {string} tableid Default table name
-	@param {object} defcols Default columns dictionary
-	@return {string} JavaScript expression
-*/
-
-Expression.prototype.compile = function(context, tableid, defcols){
-//	console.log('Expression',this);
-	if(this.reduced) {
-		return returnTrue();
-	}
-	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
-};
 
 function Op(params) { return extend(this, params); };
 Op.prototype.toString = function() {
@@ -1217,7 +1231,6 @@ function compileRemoveColumns(query) {
 	}
 };
 
-//formerly 426orderby.js
 //yy.Select.prototype.compileOrder
 function compileOrder(query) {
 	var self = this;
@@ -1246,13 +1259,13 @@ function compileOrder(query) {
 			// Date conversion
 			var dg = '';
 //console.log(ord.expression, ord.expression instanceof yy.NumValue);
-			if(ord.expression instanceof yy.NumValue) {
+			if(ord.expression instanceof NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
 //console.log(ord.expression);
-				ord.expression = new yy.Column({columnid:ord.expression.nick});
+				ord.expression = new Column({columnid:ord.expression.nick});
 			};
 
-			if(ord.expression instanceof yy.Column) {
+			if(ord.expression instanceof Column) {
 				var columnid = ord.expression.columnid;
 				if(query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
@@ -1848,6 +1861,19 @@ alasql$1.compile= function(sql, databaseid) {
 	}
 };
 
+function Apply(params) {
+	return extend(this, params);
+}
+
+Apply.prototype.toString = function () {
+	var s = this.applymode+' APPLY ('+this.select.toString()+')';
+
+	if(this.as)
+		s += ' AS '+this.as;
+
+	return s;
+};
+
 /*
 //
 // Select compiler part for Alasql.js
@@ -1879,14 +1905,14 @@ function compileJoins(query) {
 		var source;
 		var tq;
 
-		if(jn instanceof yy.Apply) {
+		if(jn instanceof Apply) {
 //			console.log('APPLY',jn.applymode);
 			source = {
 				alias: jn.as,
 				applymode: jn.applymode,
-				onmiddlefn: returnTrue,
+				onmiddlefn: returnTrue$1,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue,
+				srcwherefn: returnTrue$1,
 				columns: [] // TODO check this
 			};
 			source.applyselect = jn.select.compile(query.database.databaseid);
@@ -1908,9 +1934,9 @@ function compileJoins(query) {
 				databaseid: tq.databaseid || query.database.databaseid,
 				tableid: tq.tableid,
 				joinmode: jn.joinmode,
-				onmiddlefn: returnTrue,
+				onmiddlefn: returnTrue$1,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue,
+				srcwherefn: returnTrue$1,
 				columns: []
 			};
 			//
@@ -1958,9 +1984,9 @@ function compileJoins(query) {
 //				databaseid: jn.databaseid || query.database.databaseid,
 //				tableid: tq.tableid,
 				joinmode: jn.joinmode,
-				onmiddlefn: returnTrue,
+				onmiddlefn: returnTrue$1,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue,
+				srcwherefn: returnTrue$1,
 				columns: []
 			};
 
@@ -1987,9 +2013,9 @@ function compileJoins(query) {
 //				databaseid: jn.databaseid || query.database.databaseid,
 //				tableid: tq.tableid,
 				joinmode: jn.joinmode,
-				onmiddlefn: returnTrue,
+				onmiddlefn: returnTrue$1,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue$1
 			};
 			// source.data = ;
 			var jnparam = jn.param.param;
@@ -2006,9 +2032,9 @@ function compileJoins(query) {
 //				databaseid: jn.databaseid || query.database.databaseid,
 //				tableid: tq.tableid,
 				joinmode: jn.joinmode,
-				onmiddlefn: returnTrue,
+				onmiddlefn: returnTrue$1,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue$1
 			};
 			// source.data = ;
 //			var jnparam = jn.param.param;
@@ -2025,9 +2051,9 @@ function compileJoins(query) {
 //				databaseid: jn.databaseid || query.database.databaseid,
 //				tableid: tq.tableid,
 				joinmode: jn.joinmode,
-				onmiddlefn: returnTrue,
+				onmiddlefn: returnTrue$1,
 				srcwherefns: '',	// for optimization
-				srcwherefn: returnTrue
+				srcwherefn: returnTrue$1
 			};
 			// source.data = ;
 
@@ -2133,7 +2159,7 @@ function compileJoins(query) {
 //			console.log(source);
 		} else if(jn.on) {
 //console.log(jn.on);
-			if(jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
+			if(jn.on instanceof Op && jn.on.op == '=' && !jn.on.allsome) {
 //				console.log('ix optimization', jn.on.toJS('p',query.defaultTableid) );
 				source.optimization = 'ix';
 			// 	source.onleftfns = jn.on.left.toJS('p',query.defaultTableid);
@@ -3434,19 +3460,6 @@ function compileDefCols(query, databaseid) {
 
 
 if(false) {}
-};
-
-function Apply(params) {
-	return extend(this, params);
-}
-
-Apply.prototype.toString = function () {
-	var s = this.applymode+' APPLY ('+this.select.toString()+')';
-
-	if(this.as)
-		s += ' AS '+this.as;
-
-	return s;
 };
 
 // Table class
@@ -6453,7 +6466,9 @@ var yy$1 = {
   Op:Op,
   Expression:Expression,
   StringValue:StringValue,
-  UniOp:UniOp
+  UniOp:UniOp,
+  Join:Join,
+  OrderExpression:OrderExpression
 };
 
 
