@@ -5,9 +5,18 @@ if(typeof exports === 'object') {
 
 describe('Test 122 - PRIMARY KEY, CREATE INDEX UNIQUE', function() {
 
-	it('1. Create Index', function(done){
+	before(function(){
 		alasql('create database test122');
 		alasql('use test122');
+	});
+
+
+	after(function(){
+		alasql('drop database test122');
+	});
+
+
+	it('1. Create Index', function(done){
 		
 		alasql('create table one (a int, b int)');
 
@@ -18,25 +27,33 @@ describe('Test 122 - PRIMARY KEY, CREATE INDEX UNIQUE', function() {
 
 		alasql('insert into one values (1,10), (2,20), (3,30)');
 
-
 		done();
-		return;
-		alasql('insert into one values (1), (2), (3)');
+	});
+
+
+
+
+
+	it.skip('2. UNIQUE Index with repeated data', function(done){
 
 		assert.throws(function(){
-			alasql('insert into one values (1)');
+			alasql('insert into one values (1,40)');
 		}, Error);
+		done();
 
-		var res = alasql.value('select count(*) from one');
-		assert.deepEqual(res, 3);
+	});
 
+
+	it('3. normal Index with repeated data', function(done){		
+		alasql('insert into one values (4,30)');
 		done();
 	});
 
 
-	it('99.Clear database', function(done){
-		alasql('drop database test122');
+	it('4. same data index', function(done){
+		alasql('insert into one values (4,30)');
 		done();
 	});
+
 
 });

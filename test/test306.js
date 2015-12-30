@@ -7,10 +7,14 @@ if(typeof exports === 'object') {
 
 describe('Test 306 XML reader', function() {
 
-  it('0. Create database ',function(done){
+  before(function(){
     alasql('CREATE DATABASE test306;USE test306');
-    done();
   });
+
+  after(function(){
+    alasql('DROP DATABASE test306');
+  });
+
 
 
   it('1. Read XML file / SEARCH like JSON',function(done){
@@ -93,17 +97,12 @@ describe('Test 306 XML reader', function() {
      alasql('SEARCH XML [graph] edges/%/ INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
 //     alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
 //        console.log('>>',res,'<<');
-        assert(res == '"id";"source";"target"\r\n0;0;1\r\n');
+        assert.deepEqual(res,'"id";"source";"target"\r\n0;0;1\r\n');
 //         assert.deepEqual(res, [ { id: '0', source: '0', target: '1' } ]);
        done();    
      });
    });
 
-
-  it('99. Drop database ',function(done){
-    alasql('DROP DATABASE test306');
-    done();
-  });
 
 });
 

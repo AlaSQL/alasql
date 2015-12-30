@@ -599,6 +599,8 @@ and other people for useful tools, which make our work much easier.
 * [AlaMDX](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progresss) 
 * [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
 
+[![ghit.me](https://ghit.me/badge.svg?repo=agershun/alasql)](https://ghit.me/repo/agershun/alasql)
+
 ----
 
 © 2014-2015, Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk)
