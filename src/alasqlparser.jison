@@ -50,6 +50,7 @@ TEXT\s+OF\s+SELECT                           	yytext = 'TEXT';return 'SELECT'
 'ABSOLUTE'                                 		return 'ABSOLUTE'
 'ACTION'                                      	return 'ACTION'
 'ADD'                                      		return 'ADD'
+'AFTER'                                      	return 'AFTER'
 'AGGR'                                     		return 'AGGR'
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
@@ -65,6 +66,7 @@ TEXT\s+OF\s+SELECT                           	yytext = 'TEXT';return 'SELECT'
 AUTO(_)?INCREMENT                               return 'IDENTITY'
 'AVG'                                      		return 'AVG'
 
+'BEFORE'                                      	return 'BEFORE'
 'BEGIN'											return 'BEGIN'
 'BETWEEN'										return 'BETWEEN'
 'BREAK'											return 'BREAK'
@@ -132,6 +134,7 @@ DATABASE(S)?									return 'DATABASE'
 'IN'											return 'IN'
 'INDEX'											return 'INDEX'
 'INNER'                                         return 'INNER'
+'INSTEAD'                                       return 'INSTEAD'
 'INSERT'                                        return 'INSERT'
 'INSERTED'                                      return 'INSERTED'
 'INTERSECT'                                     return 'INTERSECT'
@@ -160,6 +163,7 @@ DATABASE(S)?									return 'DATABASE'
 'OFF'											return 'OFF'
 'ON'											return 'ON'
 'ONLY'											return 'ONLY'
+'OF'											return 'OF'
 'OFFSET'										return 'OFFSET'
 'OPEN'											return 'OPEN'
 'OPTION'										return 'OPTION'
@@ -219,6 +223,7 @@ SETS                                        	return 'SET'
 'TOP'											return 'TOP'
 'TRAN'											return 'TRANSACTION'
 'TRANSACTION'									return 'TRANSACTION'
+'TRIGGER'										return 'TRIGGER'
 'TRUE'						  					return 'TRUE'
 'TRUNCATE'					  					return 'TRUNCATE'
 'UNION'                                         return 'UNION'
@@ -381,6 +386,9 @@ Statement
 	| TruncateTable
 	| WithSelect
 
+	| CreateTrigger
+	| DropTrigger
+
 	| BeginTransaction
 	| CommitTransaction
 	| RollbackTransaction
@@ -416,8 +424,6 @@ Statement
 	| FetchCursor
 	| CloseCursor
 
-	| CreateTrigger
-	| DropTrigger
 	| SavePoint
 	| Reindex
 	| StoreDatabase
@@ -2770,5 +2776,41 @@ Query
 
 Call
 	: CALL FuncValue
-		{ $$ = $2; }
+		//{ $$ = $2; }
+		{ $$ = new yy.ExpressionStatement({expression:$2}); }
+	;
+
+CreateTrigger 
+	: CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table AStatement
+		{ 
+			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$8}); 
+			if($8.exists) $$.exists = $8.exists;
+			if($8.queries) $$.queries = $8.queries;
+		}
+	| CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table Literal
+		{ 
+			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, funcid:$8}); 
+		}
+	;
+
+BeforeAfter
+	: 
+		{ $$ = 'AFTER'; } 
+	| BEFORE
+		{ $$ = 'BEFORE'; } 
+	| AFTER
+		{ $$ = 'AFTER'; } 		
+	| INSTEAD OF
+		{ $$ = 'INSTEADOF'; } 		
+	;
+
+InsertDeleteUpdate
+	: INSERT { $$ = 'INSERT'; }
+	| DELETE { $$ = 'DELETE'; }
+	| UPDATE { $$ = 'UPDATE'; }
+	;
+
+DropTrigger
+	: DROP TRIGGER Literal
+		{ $$ = new yy.DropTrigger({trigger:$3}); }
 	;

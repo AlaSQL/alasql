@@ -45,6 +45,7 @@ var Database = alasql.Database = function (databaseid) {
 	alasql.databases[databaseid] = self;
 	self.tables = {};
 	self.views = {};
+	self.triggers = {};
 
 	// Objects storage
 	self.objects = {};
