@@ -13,6 +13,8 @@
 * Added: ON UPDATE - column constraint
 * Fixed: COLLATE and UNIQUE KEY words for CREATE TABLE (see issue #452)
 * Fixed: Added params to SEARCH WHERE function
+* Added: TRIGGERs
+* Fixed: Bug with MATRIX modifier
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

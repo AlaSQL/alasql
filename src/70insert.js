@@ -216,13 +216,13 @@ yy.Insert.prototype.compile = function (databaseid) {
 	    if(db.engineid && alasql.engines[db.engineid].intoTable) {
 			var statement = function(params, cb) {
 				var aa = selectfn(params);
-				var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa,null, cb);
+				var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa.data,null, cb);
 				return res;
 			};
 			return statement;
 	    } else {
 			var insertfn = function(db, params, alasql) {
-				var res = selectfn(params);
+				var res = selectfn(params).data;
 		        if(db.tables[tableid].insert) {
 		        	// If insert() function exists (issue #92)
 		        	for(var i=0,ilen=res.length;i<ilen;i++) {
