@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-pre-develop+151230.154347 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-pre-develop+151231.53429 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-pre-develop+151230.154347
+@version 0.2.2-pre-develop+151231.53429
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-pre-develop+151230.154347';
+alasql.version = '0.2.2-pre-develop+151231.53429';
 
 /**
 	Debug flag
@@ -11861,6 +11861,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 // INSERT INTO table SELECT
 
 	} else if(this.select) {
+		this.select.modifier = 'RECORDSET';
 		selectfn = this.select.compile(databaseid);
 	    if(db.engineid && alasql.engines[db.engineid].intoTable) {
 			var statement = function(params, cb) {

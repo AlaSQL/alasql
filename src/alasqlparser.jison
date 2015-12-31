@@ -2796,6 +2796,8 @@ CreateTrigger
 BeforeAfter
 	: 
 		{ $$ = 'AFTER'; } 
+	| FOR
+		{ $$ = 'AFTER'; } 
 	| BEFORE
 		{ $$ = 'BEFORE'; } 
 	| AFTER

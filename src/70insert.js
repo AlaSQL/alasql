@@ -211,6 +211,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 // INSERT INTO table SELECT
 
 	} else if(this.select) {
+		this.select.modifier = 'RECORDSET';
 		selectfn = this.select.compile(databaseid);
 	    if(db.engineid && alasql.engines[db.engineid].intoTable) {
 			var statement = function(params, cb) {
