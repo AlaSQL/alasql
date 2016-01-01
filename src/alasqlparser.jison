@@ -136,7 +136,7 @@ DATABASE(S)?									return 'DATABASE'
 'INNER'                                         return 'INNER'
 'INSTEAD'                                       return 'INSTEAD'
 'INSERT'                                        return 'INSERT'
-'INSERTED'                                      return 'INSERTED'
+/* 'INSERTED'                                      return 'INSERTED' */
 'INTERSECT'                                     return 'INTERSECT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
@@ -2781,15 +2781,21 @@ Call
 	;
 
 CreateTrigger 
-	: CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table AStatement
+	: CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table AS? AStatement
 		{ 
-			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$8}); 
-			if($8.exists) $$.exists = $8.exists;
-			if($8.queries) $$.queries = $8.queries;
+			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$9}); 
+			if($9.exists) $$.exists = $9.exists;
+			if($9.queries) $$.queries = $9.queries;
 		}
 	| CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table Literal
 		{ 
 			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, funcid:$8}); 
+		}
+	| CREATE TRIGGER Literal ON Table BeforeAfter InsertDeleteUpdate AS? AStatement
+		{ 
+			$$ = new yy.CreateTrigger({trigger:$3, when:$5, action:$6, table:$4, statement:$9}); 
+			if($9.exists) $$.exists = $9.exists;
+			if($9.queries) $$.queries = $9.queries;
 		}
 	;
 

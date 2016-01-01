@@ -15,6 +15,7 @@
 * Fixed: Added params to SEARCH WHERE function
 * Added: TRIGGERs
 * Fixed: Bug with MATRIX modifier
+* Fixed: Bug with undefined content variable with IN operation (issue #501)
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

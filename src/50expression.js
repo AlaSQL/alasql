@@ -441,7 +441,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
-			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
+			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,'+context+'))';
 			s += '.indexOf(';
 			s += leftJS()+')>-1)';
 			return s;
