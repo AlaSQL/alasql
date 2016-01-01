@@ -1,6 +1,6 @@
-# SQLlogictest results for alasql@0.2.2-pre-develop+151231.53429
+# SQLlogictest results for AlaSQL 0.2.2-pre-develop+151231.53429
 
-_2015-12-31T14:27:57.305Z_
+_2016-01-01T17:13:28.134Z_
 
 This is a subset of the total 622 tests.
 Results from 125 test files:
@@ -18,38 +18,20 @@ Cannot read property 't1' of undefined
 
 
 ```sql
-SELECT 1 IN (SELECT * FROM t1)
+INSERT INTO t5 SELECT * FROM t4
 
-context is not defined
+Cannot insert record, because it already exists in primary key index
 ```
 
+_Fail found for statement setting up data so skipping rest of tests_
 
-```sql
-SELECT 4 IN t4n
+#### ☓ Ran 216 tests as sqlite
 
-Cannot read property 't4n' of undefined
-```
+* 148 skipped
+* 19 failed
+* 22% was OK
 
-
-```sql
-SELECT 2 NOT IN (SELECT * FROM t4n)
-
-Expected: ["0"] but got ["1"]
-```
-
-
-```sql
-SELECT 1 IN (2,3,4,null)
-
-Expected: ["NULL"] but got ["0"]
-```
-
-#### ☓ Ran 214 tests as sqlite
-
-* 143 failed
-* 33% was OK
-
-Time: 1954ms
+Time: 308ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 2/125 [`./test/evidence/in2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/in2.test)
@@ -57,17 +39,20 @@ Time: 1954ms
 _Mimic sqlite_
 
 ```sql
-SELECT 1 FROM t1 WHERE 1 IN (SELECT 1)
+SELECT 1 FROM t1 WHERE 1 IN (SELECT 1,2)
 
-context is not defined
+No exception thrown
 ```
+
+_Fail found for statement setting up data so skipping rest of tests_
 
 #### ☓ Ran 53 tests as sqlite
 
+* 3 skipped
 * 1 failed
-* 98% was OK
+* 92% was OK
 
-Time: 671ms
+Time: 465ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 3/125 [`./test/evidence/slt_lang_aggfunc.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_aggfunc.test)
@@ -88,7 +73,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 4% was OK
 
-Time: 111ms
+Time: 90ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 4/125 [`./test/evidence/slt_lang_createtrigger.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_createtrigger.test)
@@ -109,7 +94,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 14% was OK
 
-Time: 50ms
+Time: 32ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 5/125 [`./test/evidence/slt_lang_createview.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_createview.test)
@@ -130,7 +115,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 16% was OK
 
-Time: 45ms
+Time: 36ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 6/125 [`./test/evidence/slt_lang_dropindex.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_dropindex.test)
@@ -151,7 +136,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 50% was OK
 
-Time: 24ms
+Time: 27ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 7/125 [`./test/evidence/slt_lang_droptable.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_droptable.test)
@@ -172,7 +157,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 33% was OK
 
-Time: 22ms
+Time: 26ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 8/125 [`./test/evidence/slt_lang_droptrigger.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_droptrigger.test)
@@ -193,7 +178,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 28% was OK
 
-Time: 29ms
+Time: 24ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 9/125 [`./test/evidence/slt_lang_dropview.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_dropview.test)
@@ -214,7 +199,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 30% was OK
 
-Time: 27ms
+Time: 23ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 10/125 [`./test/evidence/slt_lang_reindex.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_reindex.test)
@@ -235,7 +220,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 36% was OK
 
-Time: 21ms
+Time: 20ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 11/125 [`./test/evidence/slt_lang_replace.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_replace.test)
@@ -253,7 +238,7 @@ Query was expected to return results (but did not)
 * 1 failed
 * 92% was OK
 
-Time: 87ms
+Time: 70ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 12/125 [`./test/evidence/slt_lang_update.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_update.test)
@@ -274,7 +259,7 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 1 failed
 * 14% was OK
 
-Time: 32ms
+Time: 25ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 13/125 [`./test/index/between/1/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/1/slt_good_0.test)
@@ -282,63 +267,27 @@ Time: 32ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE (col4 BETWEEN 6.51 AND 4.36) AND ((((col4 > 1.61)))) OR (col0 > 5) AND col0 > 9 OR col1 > 4.37 OR (col3 <= 4 AND col3 < 3 AND col0 >= 6) AND col1 = 3.2
+SELECT pk FROM tab0 WHERE ((col0 IN (SELECT col3 FROM tab0 WHERE (((col0 > 9 OR col3 IN (SELECT col0 FROM tab0 WHERE col1 < 4.40) OR col3 BETWEEN 6 AND 3) AND col1 IS NULL OR (col3 < 1 AND col3 < 2))) OR (col3 IS NULL) AND col0 > 3) OR col3 > 9))
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col4 IN (5.85,5.95,6.30,0.0,1.27) AND (col4 IN (9.41,4.56,2.55,0.83,3.95,6.92) AND (col1 = 6.24)) OR col0 IN (SELECT col3 FROM tab0 WHERE (((((col0 IN (8,1) AND col0 IS NULL AND col1 < 9.21) AND col4 > 8.64 AND (col3 >= 9) OR col0 < 5)))))) AND (col1 < 7.95 OR col0 < 0) AND col3 >= 9 AND col0 < 2 OR col4 BETWEEN 1.13 AND 0.71 AND (col3 > 9) AND (col0 < 3)
-
-context is not defined
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10022 tests as sqlite
 
-* 3396 failed
-* 66% was OK
+* 10 failed
+* 99% was OK
 
-Time: 217263ms
+Time: 159113ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 14/125 [`./test/index/between/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_0.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10033 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col3 > 23 AND ((col0 <= 96)) OR (col3 >= 39) OR col1 < 11.32 AND col1 BETWEEN 5.32 AND 81.71 OR col0 <= 45 OR col4 >= 76.74 OR (col1 <= 49.6)
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col4 IN (SELECT col1 FROM tab0 WHERE (col1 > 13.14) AND (col3 < 54 AND col0 = 24) OR (col1 < 65.83 OR ((col1 BETWEEN 55.69 AND 90.94)) AND (col3 = 81) AND (col3 > 78)))
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE ((((col1 < 41.89)) OR col0 IS NULL OR (col0 > 71) AND ( col0 >= 66 AND col0 <= 80) AND col4 > 41.10))
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE col1 BETWEEN 57.68 AND 81.10
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10033 tests as sqlite
-
-* 5366 failed
-* 46% was OK
-
-Time: 280706ms
+Time: 159478ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 15/125 [`./test/index/between/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_1.test)
@@ -346,31 +295,17 @@ Time: 280706ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE col4 BETWEEN 57.93 AND 43.23 OR ((col3 > 27) AND (col3 >= 59))
+SELECT pk FROM tab0 WHERE col4 < 28.47 AND col1 IN (SELECT col4 FROM tab0 WHERE (((col3 = 64 OR (((col3 IN (SELECT col0 FROM tab0 WHERE col3 BETWEEN 85 AND 52 OR (((col3 < 20)) AND col3 > 60)))))) AND col1 = 95.83)))
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col0 = 46 OR col0 <= 11 AND (col3 < 66) AND col4 < 3.81 OR (col3 < 45) OR col3 = 24 OR col3 < 65 OR (((col1 IN (SELECT col4 FROM tab0 WHERE col3 = 93) OR col0 > 29) AND ((col3 > 65)) OR (col0 > 0) OR (col1 >= 6.23) AND (col0 < 32 AND col3 >= 67) AND (((col0 > 40)) OR col1 > 46.72) OR col1 < 73.29 AND (col0 IS NULL) AND col3 > 71 AND (col4 IS NULL))) AND col0 = 58 AND ((c…
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE col4 < 38.9 AND (col3 <= 61 OR col3 IN (86,41,43,31,41,69) AND (col1 IN (56.54,54.56) AND col0 IS NULL) OR ((col3 > 91 AND (col0 >= 11 AND (col3 >= 46)) AND col4 < 17.57)) OR (col0 >= 24) AND col3 > 26 OR (col3 > 37 OR col0 IS NULL) AND col3 <= 31 OR col0 = 92 OR ((col0 < 75 AND (col0 = 18) OR ((col0 > 44 OR col4 > 12.84) OR (col0 IS NULL)) AND ((col3 = 23) OR col4 IN (S…
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10029 tests as sqlite
 
-* 5240 failed
-* 47% was OK
+* 40 failed
+* 99% was OK
 
-Time: 198130ms
+Time: 118362ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 16/125 [`./test/index/between/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_2.test)
@@ -378,95 +313,37 @@ Time: 198130ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE ((col3 < 42 AND ((col1 <= 42.72)) OR col3 BETWEEN 35 AND 41 AND col4 >= 38.48))
+SELECT pk FROM tab0 WHERE (col3 < 32) AND ((((col3 <= 73 AND col0 < 84 OR col0 >= 3 AND (((col4 < 22.55) OR col0 <= 88 AND (col4 <= 26.20) OR col3 < 9) AND col0 >= 80 AND col0 = 25 AND (((col3 = 9)))) OR (col3 <= 96) AND col1 < 20.30 AND col3 > 2 OR (col4 >= 34.97 OR ((col1 > 27.35))) AND ((col4 < 61.74 AND col4 < 11.32 OR (((col3 BETWEEN 41 AND 25) OR col1 IS NULL OR col0 > 23)) AND col3 > 66) A…
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col0 = 58 AND (col3 BETWEEN 3 AND 52 AND col0 IN (SELECT col3 FROM tab0 WHERE ((col0 < 22 OR col3 >= 66 OR col3 > 41)))) AND (((col0 IN (91,11,67,84,35,45) AND col3 < 27)) AND ((col3 IN (75,51,70)) OR col0 > 19)) AND (((col0 > 68))) AND col0 IS NULL AND (col1 < 77.50 OR (col1 < 78.65) AND col4 < 54.80) OR col4 > 40.35
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE col1 = 24.12 AND col1 >= 27.78 OR (col0 < 21 OR (col1 > 15.34)) OR (col3 < 66 OR (((col1 IN (13.68,87.75) OR (col3 >= 11 AND col0 >= 6 OR col4 < 0.93 OR (col3 <= 41) AND ((col3 <= 20 AND ((((col1 < 39.84)) AND (col3 IN (46,88)) OR (col3 > 12))) AND col4 >= 19.45 AND ((col0 < 51) AND col1 <= 81.3 OR (col3 > 27 OR col0 >= 12 OR (col3 >= 79 AND col4 >= 66.52 AND ((((((col0 …
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10032 tests as sqlite
 
-* 5344 failed
-* 46% was OK
+* 40 failed
+* 99% was OK
 
-Time: 175958ms
+Time: 141589ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 17/125 [`./test/index/between/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_3.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10032 tests as sqlite
 
-```sql
-SELECT pk FROM tab0 WHERE (col0 <= 57 OR col1 IN (SELECT col4 FROM tab0 WHERE col3 = 43 AND col1 BETWEEN 62.29 AND 69.68 AND ((col0 >= 69 AND col0 IS NULL)) AND (col1 > 67.93 AND col3 > 99 OR col3 > 30 AND (col3 < 80) AND (col0 >= 88))) AND col3 < 78) OR col3 < 43
+* 100% was OK
 
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE (col0 <= 57 OR col1 IN (SELECT col4 FROM tab1 WHERE col3 = 43 AND col1 BETWEEN 62.29 AND 69.68 AND ((col0 >= 69 AND col0 IS NULL)) AND (col1 > 67.93 AND col3 > 99 OR col3 > 30 AND (col3 < 80) AND (col0 >= 88))) AND col3 < 78) OR col3 < 43
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE col3 < 57 AND (col0 > 91 OR (( col0 >= 80 AND col0 <= 82))) OR (((col3 IS NULL))) OR ((col0 >= 24) OR (col4 <= 61.24)) OR col1 <= 35.13 OR (((col3 IS NULL) AND col0 >= 82 AND col3 <= 22 OR col0 IN (62,5,26,54,22,40) OR col0 > 14 OR col3 > 51 OR ((col1 IS NULL AND col0 < 68)) OR (((col0 > 59))) AND ((col4 IN (SELECT col1 FROM tab4 WHERE col0 <= 68 AND col4 > 57.68))) OR (…
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10032 tests as sqlite
-
-* 5382 failed
-* 46% was OK
-
-Time: 210190ms
+Time: 162505ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 18/125 [`./test/index/between/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_4.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10032 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE ((col1 > 7.83)) AND (((col0 BETWEEN 41 AND 20 AND col1 < 97.72 OR col0 >= 25 OR (col0 > 59)))) OR col3 >= 35
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE (((col0 BETWEEN 33 AND 1))))
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE (col1 <= 0.14 AND (col1 < 88.23 AND col0 BETWEEN 44 AND 86) AND col0 = 47 OR col3 <= 49 OR col3 > 11 AND (((col1 <= 44.92) OR col3 IN (42,13,27,55,69,60) AND col4 > 13.37 AND (col3 > 53) OR col0 IS NULL OR ((col0 >= 74)))) OR col1 < 17.22 AND col3 > 10 AND col3 > 34 AND ((col1 > 69.50)) OR ((col0 > 83)))
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10032 tests as sqlite
-
-* 5214 failed
-* 48% was OK
-
-Time: 209339ms
+Time: 172877ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 19/125 [`./test/index/between/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_5.test)
@@ -474,31 +351,17 @@ Time: 209339ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE ((col1 > 93.39)) AND col0 <= 43 OR col0 BETWEEN 55 AND 59 OR (((col3 < 6 OR col4 > 71.3)) AND col0 < 24 OR col1 > 74.36 OR col1 >= 19.10 AND col4 <= 52.51 OR (((col0 < 69) AND col1 IS NULL OR (col3 > 27) AND col1 < 51.86)) OR col0 IN (89) OR col3 = 80 OR col0 < 30 OR ((col1 = 70.19 OR ((col3 > 6 OR col3 < 97 OR ((col1 < 16.69)))) AND (col1 > 64.72 AND col0 >= 63))) OR (c…
+SELECT pk FROM tab0 WHERE ((col3 < 49 AND (col4 >= 2.37 AND col3 <= 34 OR (col0 > 45 AND col3 IN (84,55,60,5,10,51) AND col3 > 44)) AND ((col4 BETWEEN 85.7 AND 68.3 AND col0 > 12) OR col3 >= 61 AND col1 < 44.10 OR ((((col1 <= 88.54)) AND col3 BETWEEN 50 AND 64) AND col0 < 7) OR ((col0 > 68)) AND col0 >= 89 OR col0 > 88 AND col3 <= 37 AND col0 > 8) OR col0 >= 62 AND col3 < 85)) OR (col3 IN (SELECT…
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col4 < 53.2 OR (col3 IN (SELECT col0 FROM tab0 WHERE col3 >= 21)) OR col3 >= 24)) OR (col0 > 91) AND (col1 BETWEEN 12.41 AND 14.37) AND (col3 > 76) AND col1 <= 32.8 OR col1 < 61.7
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab2 WHERE (( col0 >= 15 AND col0 <= 76)) OR ((col1 > 39.37) AND col3 >= 5 OR col3 = 79)
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10031 tests as sqlite
 
-* 5320 failed
-* 46% was OK
+* 50 failed
+* 99% was OK
 
-Time: 166897ms
+Time: 160087ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 20/125 [`./test/index/commute/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_0.test)
@@ -506,138 +369,57 @@ Time: 166897ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE ((col1 < 71.25)) OR (col3 IN (53,42,27,44) OR (col3 IS NULL)) AND (col0 >= 42)
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
 SELECT pk FROM tab0 WHERE ((((col4 < 26.48))) AND col4 IN (SELECT col1 FROM tab0 WHERE (col3 < 55 OR ((col0 >= 53 AND (((((col0 > 8) AND (((col3 IN (SELECT col0 FROM tab0 WHERE col0 < 65 AND col1 > 42.32)) OR col1 IS NULL OR col3 > 84 OR (col4 IS NULL)) OR ((col0 <= 9))))) AND col0 IN (1))) OR col3 >= 2 OR ((col1 IS NULL)) AND col0 >= 55 OR col0 > 24 AND col0 > 63 OR col3 = 90))))) OR (col4 = 86.…
 
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab3 WHERE col0 <= 13
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10034 tests as sqlite
 
-* 6168 failed
-* 38% was OK
+* 10 failed
+* 99% was OK
 
-Time: 67506ms
+Time: 78693ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 21/125 [`./test/index/commute/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_1.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10030 tests as sqlite
 
-```sql
-SELECT pk FROM tab0 WHERE col1 BETWEEN 33.32 AND 54.30 AND (col3 < 29) OR col0 IN (SELECT col3 FROM tab0 WHERE col1 >= 86.23) AND (col4 < 42.46) OR col1 = 74.64
+* 100% was OK
 
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE (col0 <= 12 AND (col3 IS NULL)) OR col0 < 68
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10030 tests as sqlite
-
-* 6076 failed
-* 39% was OK
-
-Time: 71687ms
+Time: 71124ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 22/125 [`./test/index/commute/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_2.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10037 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col4 > 94.74
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col3 > 19 AND ((col4 >= 85.9) OR col4 > 25.21) OR col3 > 31 OR col3 > 94) AND (((col3 IN (SELECT col0 FROM tab0 WHERE col1 > 96.78 OR ((col0 BETWEEN 21 AND 0 AND ((col3 >= 86 OR (((col4 <= 66.71))) OR (((col4 = 16.26) OR col4 IS NULL)) AND ((col1 >= 74.85)) AND (col4 IS NULL) AND ((((col0 > 27))) AND col3 > 49 AND (col4 <= 29.6 AND col3 < 4) AND col0 BETWEEN 53 AND 43) …
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab2 WHERE col3 IS NULL OR (((13 < col0 OR 87 > col0 AND (22.34 <= col4))) OR 65.67 < col1) OR (66 <= col3 AND 83 > col0)
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10037 tests as sqlite
-
-* 5974 failed
-* 40% was OK
-
-Time: 73432ms
+Time: 71119ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 23/125 [`./test/index/commute/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_3.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10032 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col1 >= 93.90 OR (col0 > 5) OR col4 > 57.41 AND (col1 < 1.49) OR col0 < 59 OR col4 < 33.12 AND (col3 < 90 AND col3 >= 68) AND col3 >= 35
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col0 >= 8) OR (col0 IN (SELECT col3 FROM tab0 WHERE (((col4 < 80.50) OR (col0 >= 42 AND col1 < 22.93 OR (col0 > 31) AND col0 IS NULL) OR (col4 <= 77.12 AND col1 BETWEEN 27.91 AND 9.60) AND col3 < 16 AND ((col1 < 84.70)) AND (col4 > 58.11) AND ((col3 > 62 AND col0 < 16))))) AND (col3 > 93) OR col0 IS NULL) OR col3 <= 56 OR col0 BETWEEN 24 AND 36 OR col4 IN (18.24,84.20)
-
-context is not defined
-```
-
-#### ☓ Ran 10032 tests as sqlite
-
-* 6094 failed
-* 39% was OK
-
-Time: 77820ms
+Time: 78305ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 24/125 [`./test/index/commute/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_4.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10030 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE (col3 >= 5)
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col3 > 71) OR (((col1 IN (SELECT col4 FROM tab0 WHERE (col0 >= 47 OR col0 > 88 AND col3 <= 3 OR ((((col0 >= 82))) AND (col0 = 42 AND (col0 = 92 AND col0 < 54 OR col0 > 96)) AND col3 > 8 OR col4 > 35.19))) AND ((col0 > 33 AND (col0 <= 47 OR col0 < 70 AND (col3 > 74) AND col0 > 65 AND col1 > 59.56 OR (col4 < 70.94) OR (col4 >= 3.14) OR col3 IS NULL AND col1 < 22.22 AND ((…
-
-context is not defined
-```
-
-#### ☓ Ran 10030 tests as sqlite
-
-* 5648 failed
-* 43% was OK
-
-Time: 79330ms
+Time: 78814ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 25/125 [`./test/index/commute/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_5.test)
@@ -645,31 +427,17 @@ Time: 79330ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE (col1 > 17.98) OR ((col0 >= 40))
+SELECT pk FROM tab0 WHERE col3 <= 88 OR col0 IN (SELECT col3 FROM tab0 WHERE col3 IS NULL AND col3 >= 88 AND col0 = 0 AND (col0 IS NULL) AND col3 <= 25 AND (col4 > 37.85) OR (col1 IN (SELECT col4 FROM tab0 WHERE (col4 IN (92.81,73.37,41.28,48.15,77.90)) OR (col0 > 11) AND col3 >= 77 AND col1 IN (89.60,34.31,17.43,81.68,45.76) OR col3 <= 19 OR (col1 >= 77.65))))
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col1 IN (SELECT col4 FROM tab0 WHERE (col1 >= 3.89 OR (col3 >= 23 AND col1 > 10.55 OR col0 > 8) OR col3 > 54)) OR (col4 < 32.54 OR col3 < 89 AND col0 <= 44 OR col1 > 48.52 AND (((col0 < 84))))))
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab3 WHERE (5.17 < col1)
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10032 tests as sqlite
 
-* 5728 failed
-* 42% was OK
+* 10 failed
+* 99% was OK
 
-Time: 75772ms
+Time: 68803ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 26/125 [`./test/index/commute/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_6.test)
@@ -677,52 +445,17 @@ Time: 75772ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE ((col0 IS NULL) OR (col1 >= 7.87))
+SELECT pk FROM tab0 WHERE col3 >= 22 AND col3 IS NULL OR (col0 <= 92 AND (col3 IN (82,73,69,28,90,98) OR ((col0 > 53))) AND col3 > 41) AND col1 < 7.43 AND ((col0 > 45)) AND col1 >= 86.98 OR col4 IN (98.61) AND col0 < 82 OR col3 IN (SELECT col0 FROM tab0 WHERE ((((col3 <= 2) OR col4 > 64.95 OR (col3 <= 78 AND col0 < 21) AND col1 < 10.55) OR col3 < 43 OR ((((col3 IN (SELECT col0 FROM tab0 WHERE (((…
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col3 = 15 AND col1 < 71.6)) AND (col0 >= 48) AND col1 > 48.67 OR (col3 >= 33) AND col3 IN (SELECT col0 FROM tab0 WHERE col3 IS NULL) AND col1 >= 99.23
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab2 WHERE ((61.99 > col1))
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab2 WHERE ((col0 < 99 OR col1 > 3.42 OR (((col0 >= 29 OR (col3 IS NULL) AND col0 >= 74 AND (col0 > 43 OR col0 <= 83 OR (col3 IS NULL)) AND col3 < 68))) OR col0 > 69 AND col3 IS NULL AND (col1 IN (88.53,10.38,62.27,54.12)) AND (col0 < 84) AND (col4 IN (2.6,70.84))) OR col0 >= 93 AND (((col0 > 27) OR (col1 IN (26.26,77.89,52.51,4.3,24.33,84.13) AND (col1 IS NULL) AND col0 <= 26 OR (…
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE (col4 > 8.3 OR col1 > 65.55 AND ((col4 IN (47.20,85.53,97.59) AND ((col3 < 34)))))
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE col3 <= 19 OR col4 < 33.16
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10036 tests as sqlite
 
-* 5316 failed
-* 47% was OK
+* 20 failed
+* 99% was OK
 
-Time: 83162ms
+Time: 89052ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 27/125 [`./test/index/commute/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_7.test)
@@ -730,56 +463,27 @@ Time: 83162ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE col1 >= 73.70 AND col0 >= 49 OR col4 < 43.15 OR ((col3 = 20 OR col0 < 48))
+SELECT pk FROM tab0 WHERE col1 > 33.14 OR (((col3 > 73 OR (col3 IN (63,42)))) AND ((((col0 IN (SELECT col3 FROM tab0 WHERE (col3 < 37) AND col0 > 24 OR (col1 IN (SELECT col4 FROM tab0 WHERE col1 > 49.28) OR col3 > 9))) OR col3 > 51 OR (col1 > 52.62)))) OR col0 IS NULL) OR ((((col4 = 81.75) OR (col0 >= 28))))
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col1 = 35.92 AND col4 < 7.27)) AND col0 IN (SELECT col3 FROM tab0 WHERE ((col4 < 6.3 AND col0 >= 22))) OR ((col3 < 83 AND (col3 IS NULL AND (col0 > 86)) AND col1 <= 91.73 AND ((col3 IS NULL)) OR col4 IS NULL OR (col1 <= 61.73 OR (col1 IN (SELECT col4 FROM tab0 WHERE col0 > 75)) OR (((col4 IN (45.62,97.82,92.85,39.41) AND ((col0 < 71)) AND col3 > 50)) AND col1 > 30.30 O…
-
-context is not defined
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10034 tests as sqlite
 
-* 5552 failed
-* 44% was OK
+* 10 failed
+* 99% was OK
 
-Time: 74772ms
+Time: 106435ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 28/125 [`./test/index/commute/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_8.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10032 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col1 > 17.65
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (((col0 < 53 OR col0 IN (SELECT col3 FROM tab0 WHERE col4 >= 74.91) AND ((col0 > 54 AND ((col0 < 16 AND col4 IS NULL OR col3 < 91 AND col0 >= 12 OR col3 >= 14 OR col3 < 36 AND (((((col3 <= 26 AND (col3 IN (SELECT col0 FROM tab0 WHERE (col1 IS NULL AND col1 IN (74.63,32.73)))) OR (col1 IS NULL))) OR col3 < 99 OR col0 BETWEEN 74 AND 82))) AND (col0 > 36 AND ((col3 >= 15) A…
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE 84.36 > col1
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10032 tests as sqlite
-
-* 5792 failed
-* 42% was OK
-
-Time: 87631ms
+Time: 96421ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 29/125 [`./test/index/commute/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_9.test)
@@ -787,150 +491,87 @@ Time: 87631ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE col3 > 29 AND (col3 <= 76) AND col3 <= 11 AND col1 > 15.46 OR col4 < 21.97 OR col4 IS NULL OR col3 > 18 OR (col3 IN (40,81,67)) OR col4 > 79.39
+SELECT pk FROM tab0 WHERE (col4 IN (SELECT col1 FROM tab0 WHERE ((col0 IN (SELECT col3 FROM tab0 WHERE col3 >= 39) AND col0 <= 84)))) AND col4 <= 14.38
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col0 IN (SELECT col3 FROM tab0 WHERE col3 < 92)
-
-context is not defined
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10034 tests as sqlite
 
-* 5438 failed
-* 45% was OK
+* 20 failed
+* 99% was OK
 
-Time: 83890ms
+Time: 94488ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 30/125 [`./test/index/delete/1/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/1/slt_good_0.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10907 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE NOT ((col0 > 5 AND col4 < 1.46 AND col3 <= 3 AND (((col0 <= 2 AND ((col3 > 2 OR col1 IN (0.65,5.48,6.60) AND (col1 < 7.35) AND ((col3 < 0) OR (((col1 > 5.97)))) OR col1 >= 4.0))) AND col4 IN (1.62,7.48,3.46,8.30,1.17))) AND (col1 > 5.40) AND col4 = 2.53))
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10907 tests as sqlite
-
-* 820 failed
-* 92% was OK
-
-Time: 45461ms
+Time: 45844ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 31/125 [`./test/index/delete/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_0.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10730 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE NOT ((col0 > 68))
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10730 tests as sqlite
-
-* 1348 failed
-* 87% was OK
-
-Time: 48259ms
+Time: 48425ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 32/125 [`./test/index/delete/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_1.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10774 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE NOT (col1 > 22.17 OR (col0 > 6 AND col1 > 29.22) AND col0 <= 78 AND col0 < 65)
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10774 tests as sqlite
-
-* 1316 failed
-* 87% was OK
-
-Time: 46624ms
+Time: 44548ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 33/125 [`./test/index/delete/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_2.test)
 
 _Mimic sqlite_
+#### ✔ Ran 9390 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE NOT (col0 > 82)
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 9390 tests as sqlite
-
-* 1164 failed
-* 87% was OK
-
-Time: 47474ms
+Time: 51190ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 34/125 [`./test/index/delete/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_3.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10065 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE NOT (col1 < 58.33 OR (((col3 <= 45 AND col3 BETWEEN 34 AND 27 OR col0 >= 81 AND col1 = 84.30 OR (col0 > 6 OR (col3 <= 52) OR col1 < 43.21)) AND col3 > 52 OR col1 < 82.89 AND col0 >= 11 AND col3 < 62 OR ((col4 IS NULL)))))
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10065 tests as sqlite
-
-* 1192 failed
-* 88% was OK
-
-Time: 46126ms
+Time: 43609ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 35/125 [`./test/index/delete/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_4.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10599 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE NOT (col4 > 74.32)
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10599 tests as sqlite
-
-* 1204 failed
-* 88% was OK
-
-Time: 46002ms
+Time: 47817ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 36/125 [`./test/index/delete/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_5.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10353 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE NOT (col0 >= 50)
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10353 tests as sqlite
-
-* 1292 failed
-* 87% was OK
-
-Time: 48032ms
+Time: 46124ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 37/125 [`./test/index/in/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_0.test)
@@ -938,24 +579,17 @@ Time: 48032ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab0 WHERE (col0 > 27 OR col1 <= 41.57 AND col0 <= 46 OR (col3 IS NULL) OR col3 > 87) AND ((col1 IN (SELECT col4 FROM tab0 WHERE (col0 < 85 OR ((col4 <= 45.40)) OR (((col4 >= 8.27 AND col3 IN (25,17) OR col0 >= 0 OR col0 >= 74 OR col3 IN (47,25) AND col3 > 18 OR col4 >= 61.28 OR (col1 IN (97.94,69.95,11.4)) OR col3 = 64) AND col3 > 49 AND col3 <= 20 OR (((((col0 > 93) AND col3 IN (…
+SELECT pk FROM tab0 WHERE col3 > 31 OR col3 <= 49 AND (col0 IN (SELECT col3 FROM tab0 WHERE col3 IN (74,13,49,39,67) OR col4 >= 87.31 OR col1 <= 89.41 AND col0 > 12 AND (col3 < 4 OR col0 <= 52 OR col1 > 0.4 AND col3 > 5 AND col0 = 86 OR ((((col0 = 83 OR (((col0 IN (77) OR ((col1 > 51.39)) AND col3 < 80 AND col0 > 97 OR (col4 < 15.86 AND col1 < 33.96 AND (col3 IN (SELECT col0 FROM tab0 WHERE col0 …
 
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE col4 > 12.48 OR (col1 IN (63.52,29.7,91.86,30.25,44.75,61.15) OR col4 >= 40.21 OR (col4 < 97.92)) AND col3 > 64
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10035 tests as sqlite
 
-* 4866 failed
-* 51% was OK
+* 30 failed
+* 99% was OK
 
-Time: 200437ms
+Time: 192425ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 38/125 [`./test/index/in/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_1.test)
@@ -963,95 +597,37 @@ Time: 200437ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE col3 >= 80 AND col4 IN (61.72,91.69,75.89,68.74) OR (((((col4 >= 34.44 OR col0 IN (18,43,46,71,41) AND (col3 > 22)))) AND (col0 >= 55 OR (col3 > 10))) OR col3 IN (29,14,2,22,10,54) AND col1 > 40.1) AND (col4 > 38.77)
+SELECT pk FROM tab0 WHERE ((col0 IN (SELECT col3 FROM tab0 WHERE (col3 IN (SELECT col0 FROM tab0 WHERE col1 > 74.44))) AND ((col3 IN (73,90)) OR col4 > 54.25 OR (col0 IN (58,68,2) AND col0 = 51 OR col1 > 30.12)))) OR col3 < 34
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col1 >= 88.39) OR col1 IN (SELECT col4 FROM tab0 WHERE col3 < 46) AND col1 IS NULL OR col0 IN (94,63,3,33,55) AND ((((col3 > 12)))) AND ((col0 <= 95)) OR col4 IS NULL AND (((((col3 > 40 OR (col3 IN (59,68,91,47,49,47) AND (col0 >= 36 AND col1 = 20.8 AND col1 > 88.32)) AND (col0 <= 10 OR col0 >= 60)))))) OR col4 > 16.23 OR col4 < 81.56 AND col3 < 76 AND col3 IS NULL OR (…
-
-context is not defined
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10036 tests as sqlite
 
-* 4692 failed
-* 53% was OK
+* 30 failed
+* 99% was OK
 
-Time: 200773ms
+Time: 212644ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 39/125 [`./test/index/in/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_2.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10035 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE ((((col3 IS NULL OR col3 > 23)) OR col3 IN (79,61,90,93) AND (col1 > 2.48) AND col3 > 98 OR (col1 >= 15.24)))
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col1 IN (SELECT col4 FROM tab0 WHERE col3 > 94)) OR col3 > 37 AND (col1 IN (13.32,86.76))) AND col3 > 44
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE ((col3 IS NULL OR col0 IN (58,92,81,13,91,17))) OR col0 > 71
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10035 tests as sqlite
-
-* 4803 failed
-* 52% was OK
-
-Time: 214087ms
+Time: 166548ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 40/125 [`./test/index/in/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_3.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10037 tests as sqlite
 
-```sql
-SELECT pk FROM tab0 WHERE (col0 < 12 OR (col1 > 73.76 AND col4 > 27.56 AND col4 > 78.54) AND col0 > 17 AND (col4 <= 84.75 OR col0 >= 62 AND col0 < 85 AND col0 < 0 AND col0 > 20 OR col0 IS NULL AND (col4 >= 92.35 AND col3 < 85 OR col3 < 29) OR col0 < 70 AND ((col4 IN (63.71,22.52,17.76,39.58,18.13,96.18)))) OR (col0 > 83 AND col0 <= 47 OR col0 < 63 AND col0 > 79 OR ((col0 IN (SELECT col3 FROM tab0…
+* 100% was OK
 
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE (col0 < 12 OR (col1 > 73.76 AND col4 > 27.56 AND col4 > 78.54) AND col0 > 17 AND (col4 <= 84.75 OR col0 >= 62 AND col0 < 85 AND col0 < 0 AND col0 > 20 OR col0 IS NULL AND (col4 >= 92.35 AND col3 < 85 OR col3 < 29) OR col0 < 70 AND ((col4 IN (63.71,22.52,17.76,39.58,18.13,96.18)))) OR (col0 > 83 AND col0 <= 47 OR col0 < 63 AND col0 > 79 OR ((col0 IN (SELECT col3 FROM tab1…
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE ((col1 >= 73.91 OR col3 >= 63 AND col0 <= 28 AND (col0 >= 11) OR col4 > 7.90 OR col0 > 94 OR (col4 = 44.79) AND col3 IS NULL)) OR ((col0 = 76 OR col0 = 60 OR col0 = 65 OR col0 = 46 OR col0 = 73) OR col4 >= 4.49) AND ((col4 <= 43.25))
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col0 >= 49 OR col3 >= 54 OR ((col1 > 70.76)) AND col3 = 7 OR col1 = 65.88 AND ((col0 IN (59,76,63,78,38))) OR col0 IN (SELECT col3 FROM tab0 WHERE ((col4 = 34.83)) OR col3 = 13) AND col4 >= 74.70 AND col1 >= 88.51
-
-context is not defined
-```
-
-#### ☓ Ran 10037 tests as sqlite
-
-* 4776 failed
-* 52% was OK
-
-Time: 211946ms
+Time: 162514ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 41/125 [`./test/index/in/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_4.test)
@@ -1059,24 +635,17 @@ Time: 211946ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab0 WHERE (col0 <= 20 OR col0 IN (SELECT col3 FROM tab0 WHERE col3 IS NULL AND ((col3 > 58)) AND ((col0 < 69)) OR ((((col3 < 73) OR col4 < 36.62) OR col3 >= 60)) OR ((col1 IN (36.28,52.39,78.56) OR (col4 <= 86.71))) AND col1 >= 27.26 AND col1 <= 96.67 OR col3 > 31 OR ((col3 > 8) AND ((col1 >= 2.94 AND (col0 >= 11) AND col3 < 44)))) OR col4 > 91.91 OR (col0 IS NULL) AND (col1 > 5.2…
+SELECT pk FROM tab0 WHERE col0 = 32 AND col0 > 66 AND ((col0 IS NULL)) OR (col4 <= 40.93) AND ((col3 <= 55)) OR ((col3 > 88)) OR ((col3 < 42) AND col0 < 32 OR (col3 > 72) AND col3 IN (99,86,86,87,87,11) AND (((col0 > 51)))) OR ((col4 < 3.44)) OR (col1 IN (92.43) OR ((col3 = 32))) AND (((col3 = 23))) OR col0 IN (SELECT col3 FROM tab0 WHERE col1 <= 42.54 AND (col1 > 29.83 AND (((col3 > 22 AND col0 …
 
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab1 WHERE (col0 <= 20 OR col0 IN (SELECT col3 FROM tab1 WHERE col3 IS NULL AND ((col3 > 58)) AND ((col0 < 69)) OR ((((col3 < 73) OR col4 < 36.62) OR col3 >= 60)) OR ((col1 IN (36.28,52.39,78.56) OR (col4 <= 86.71))) AND col1 >= 27.26 AND col1 <= 96.67 OR col3 > 31 OR ((col3 > 8) AND ((col1 >= 2.94 AND (col0 >= 11) AND col3 < 44)))) OR col4 > 91.91 OR (col0 IS NULL) AND (col1 > 5.2…
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10038 tests as sqlite
 
-* 4866 failed
-* 51% was OK
+* 30 failed
+* 99% was OK
 
-Time: 206096ms
+Time: 155863ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 42/125 [`./test/index/in/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_5.test)
@@ -1084,592 +653,222 @@ Time: 206096ms
 _Mimic sqlite_
 
 ```sql
-SELECT pk FROM tab1 WHERE (col0 IN (55,20,12,17))
+SELECT pk FROM tab0 WHERE (col4 IN (SELECT col1 FROM tab0 WHERE ((col0 > 26)) AND ((((col0 IN (24,73,85,15,54,8))) AND col0 = 39 AND col3 <= 66 AND col4 < 93.31 OR (col0 IS NULL) AND ((((col1 IS NULL) OR col0 = 49) OR (col0 IS NULL AND ((col4 >= 38.72 OR col0 >= 43)) OR col0 IS NULL AND col4 >= 21.95 OR col1 > 63.37 OR col0 > 99 AND col4 < 40.60))) OR col1 > 95.48 AND col0 IS NULL AND (col3 > 48)…
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col4 > 87.16 OR ((col3 >= 36) OR col0 < 40 OR (col1 <= 26.97) OR (col3 IN (59,50,61,94,4,84)) AND col0 <= 59 OR (((col0 <= 44) AND col3 < 19 AND (col1 IS NULL) OR (col0 IN (51)) OR ((col1 <= 3.28 OR ((col1 < 96.29)) AND col3 = 31 AND (((((col3 >= 33))))) OR col0 >= 62)))) AND col0 >= 53 AND (((col1 IS NULL OR col0 > 5)))) OR col0 < 99 AND (((col3 < 19))) OR col1 = 38.60…
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE col3 <= 94 OR ((col1 < 87.39 OR (col1 >= 81.54) AND col3 < 13 OR col0 < 43 AND (((col4 = 63.61 AND ((col1 < 39.33)) OR col3 < 88 OR col1 > 88.80 AND col0 >= 23 AND col3 <= 63 OR (col1 BETWEEN 70.31 AND 40.87) OR col1 >= 21.3 AND col3 > 69 OR col0 < 73 AND col1 <= 14.29 OR (col4 > 55.74) AND col3 < 31 AND (col3 >= 67 AND col3 > 6 OR col4 = 62.75 OR ((col3 = 30 OR col3 = 3…
-
-Query was expected to return results (but did not) 
+Cannot read property '0' of undefined
 ```
 
 #### ☓ Ran 10038 tests as sqlite
 
-* 4800 failed
-* 52% was OK
+* 15 failed
+* 99% was OK
 
-Time: 228679ms
+Time: 171551ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 43/125 [`./test/index/orderby/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_0.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10053 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col3 > 221 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col3 < 204) AND col3 IN (SELECT col0 FROM tab0 WHERE col3 >= 218) AND col4 IN (SELECT col1 FROM tab0 WHERE (((((col3 IN (427) OR col3 <= 404)))) OR ((col0 IS NULL AND (col4 > 802.10 AND col0 = 651))) OR col3 BETWEEN 851 AND 573)) ORDER BY 1 DESC
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab4 WHERE (col0 >= 291 AND (col4 IN (441.11,251.44,563.0,69.27,202.43,499.4)) OR col3 <= 693 AND col3 < 736 OR col0 IS NULL) ORDER BY 1
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10053 tests as sqlite
-
-* 6192 failed
-* 38% was OK
-
-Time: 73505ms
+Time: 49600ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 44/125 [`./test/index/orderby/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_1.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10054 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE ((col4 > 901.6) AND col0 >= 17 AND (col0 IS NULL) AND col0 < 649) AND (col3 > 960) OR (col3 > 58) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col3 <= 161) OR (col0 IN (SELECT col3 FROM tab0 WHERE (col1 > 857.76 OR (col1 >= 322.83) AND ((col4 > 795.47)) AND col0 >= 884 OR ((col3 > 853)) AND (col0 <= 291) AND (col1 <= 344.78 OR col3 > 697 AND ((col0 > 13 OR col0 < 76)) AND col4 IS NULL AND (col3 >= 434 AND col3 < 98 AND col3 BETWEEN 812 AND 2))) AND col0 >= 886)) OR ((col1 = 866.5 AND col1 >= 74.62 AND ((col0 …
-
-context is not defined
-```
-
-#### ☓ Ran 10054 tests as sqlite
-
-* 5748 failed
-* 42% was OK
-
-Time: 73273ms
+Time: 50392ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 45/125 [`./test/index/orderby/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_2.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10051 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE (col3 > 444) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk, col0 FROM tab3 WHERE col4 > 238.95 OR col3 > 121 AND (col3 < 969 AND col0 > 738 AND (col1 >= 812.75 OR col3 = 417 AND col1 > 206.79 AND (col4 < 431.61))) OR col0 <= 488 ORDER BY 1,2 DESC
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col0 < 262 OR (col0 <= 778 AND col0 >= 217 AND col4 IS NULL) AND col3 <= 204 OR col0 >= 31) AND (col0 < 751) AND (col1 = 369.16) OR (col1 IN (SELECT col4 FROM tab0 WHERE ((col3 IS NULL))) AND col0 IS NULL AND col0 > 521) OR col3 BETWEEN 552 AND 745) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10051 tests as sqlite
-
-* 5772 failed
-* 42% was OK
-
-Time: 80993ms
+Time: 55319ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 46/125 [`./test/index/orderby/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_3.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10051 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE (col3 <= 505) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col0 >= 160 AND ((col1 = 94.47) OR col4 IN (SELECT col1 FROM tab0 WHERE col0 >= 17) OR (col4 IN (SELECT col1 FROM tab0 WHERE (col1 < 275.82))) OR ((col0 <= 913) AND col1 <= 968.52 AND col1 >= 515.44 AND (col0 > 289) AND ((((col4 <= 938.95)))) AND col0 = 252 AND col1 < 912.27 OR (col3 >= 299 AND ((col3 > 918 OR (((((col4 >= 461.61)) AND col0 > 146))))))) AND col0 > 499 AN…
-
-context is not defined
-```
-
-#### ☓ Ran 10051 tests as sqlite
-
-* 5736 failed
-* 42% was OK
-
-Time: 85711ms
+Time: 56001ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 47/125 [`./test/index/orderby/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_4.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10052 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col0 > 842 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col0 IN (SELECT col3 FROM tab0 WHERE (col3 = 877)) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10052 tests as sqlite
-
-* 5460 failed
-* 45% was OK
-
-Time: 65861ms
+Time: 42918ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 48/125 [`./test/index/orderby/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_5.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10051 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col3 >= 264 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col1 IN (SELECT col4 FROM tab0 WHERE col1 > 660.38)) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10051 tests as sqlite
-
-* 5556 failed
-* 44% was OK
-
-Time: 66488ms
+Time: 43255ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 49/125 [`./test/index/orderby/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_6.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10048 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE (((((((col0 = 760) OR (col1 IS NULL) OR ((col3 < 689) OR (col0 BETWEEN 904 AND 557 AND col3 > 608 AND (col3 < 683 AND (col1 IS NULL)))) AND col0 > 942 OR (col0 <= 423) OR col3 < 914 AND (col3 > 960) AND col3 >= 620 OR col3 >= 316 OR col0 = 578 AND col0 > 632 OR col3 >= 174 AND col3 > 765 OR col4 < 550.49 OR col0 > 93))) AND col0 > 279) AND col0 < 488 AND (col4 = 299.14) …
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE ((col3 < 606) AND col3 < 289 AND (col0 IN (SELECT col3 FROM tab0 WHERE col3 < 507) OR col0 > 656) AND ((col3 >= 542) OR ((col1 > 553.64)))) OR col0 >= 981 ORDER BY 1 DESC
-
-context is not defined
-```
-
-
-```sql
-SELECT pk, col0 FROM tab4 WHERE (col3 = 854) AND col0 IS NULL OR col0 >= 323 AND col3 > 120 ORDER BY 1 DESC,2
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10048 tests as sqlite
-
-* 6240 failed
-* 37% was OK
-
-Time: 80355ms
+Time: 53511ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 50/125 [`./test/index/orderby/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_7.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10052 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE ((col4 < 975.28)) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col3 >= 598 OR (col3 IN (522,902,237,161,47,598) OR (col0 = 313) AND col0 < 839 OR (((col3 >= 24))) OR (col3 BETWEEN 441 AND 515) OR (((col1 >= 382.32) OR col3 < 351)) AND col0 < 967) AND col4 >= 817.48) AND col3 <= 778 OR (col0 >= 876 AND (col0 >= 664 AND col0 < 582) OR col0 >= 609 AND col0 IN (697,938) AND ((col1 > 340.76) AND col3 IS NULL AND col4 > 446.85 OR (col3 >…
-
-context is not defined
-```
-
-#### ☓ Ran 10052 tests as sqlite
-
-* 5880 failed
-* 41% was OK
-
-Time: 104507ms
+Time: 52777ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 51/125 [`./test/index/orderby/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_8.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10051 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE (((col3 >= 420) OR col3 <= 614 OR col1 <= 720.18)) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (((((col0 IS NULL)))) AND col3 > 548 OR col0 >= 611 OR col1 IN (SELECT col4 FROM tab0 WHERE ((col0 > 617))) AND (col3 > 33 AND col3 = 992 AND ((col3 IN (715,661,944,639))) OR col4 = 529.36 AND ((col1 < 526.36)) OR (col0 IS NULL OR col1 <= 130.61) OR col3 <= 364 AND (col0 < 289) AND (((col0 < 904 AND (col4 < 785.83) OR col0 <= 34 AND (col0 <= 504) OR (col0 >= 545)))) AND …
-
-context is not defined
-```
-
-#### ☓ Ran 10051 tests as sqlite
-
-* 6192 failed
-* 38% was OK
-
-Time: 82377ms
+Time: 54259ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 52/125 [`./test/index/orderby/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_9.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10050 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col3 <= 736 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col1 > 256.15 AND col0 IN (SELECT col3 FROM tab0 WHERE col1 > 61.18 AND ((col3 >= 806))) AND (col3 < 623) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10050 tests as sqlite
-
-* 6036 failed
-* 39% was OK
-
-Time: 78113ms
+Time: 50643ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 53/125 [`./test/index/orderby_nosort/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_0.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10053 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col1 > 71.33 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col3 = 19 OR ((col0 >= 42)) AND col3 = 10 OR (col0 < 75) AND col0 IN (SELECT col3 FROM tab0 WHERE col0 >= 4 OR (col0 IS NULL)) AND col3 >= 25 OR ((col0 = 86)) AND col3 >= 7 AND (col4 IN (SELECT col1 FROM tab0 WHERE ((col4 < 6.77)) AND col4 <= 58.50 OR (col3 < 58 AND (col4 >= 94.0) AND col3 < 44 AND (col3 <= 90) AND ((((col4 >= 48.67)))) AND col4 IN (21.57,71.95,30.46) AN…
-
-context is not defined
-```
-
-#### ☓ Ran 10053 tests as sqlite
-
-* 5904 failed
-* 41% was OK
-
-Time: 75396ms
+Time: 50654ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 54/125 [`./test/index/orderby_nosort/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_1.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10051 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE ((col1 > 88.0 AND ((col3 > 52 AND col4 > 15.54 AND col0 <= 8)) AND col0 = 66)) OR ((col4 >= 77.37)) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col4 IN (10.82,83.31,74.36,13.17,70.75,4.47) OR col3 < 54 OR col0 < 15 OR col3 > 84 AND (col3 < 49) OR ((col3 = 81) AND col3 < 80 AND col4 IS NULL AND col0 BETWEEN 62 AND 84 OR col3 >= 3 AND col1 < 22.36) AND col0 <= 10 AND (((col4 > 87.85)) AND col1 < 97.7)) OR col1 IN (SELECT col4 FROM tab0 WHERE col1 IS NULL) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10051 tests as sqlite
-
-* 5808 failed
-* 42% was OK
-
-Time: 82617ms
+Time: 63155ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 55/125 [`./test/index/orderby_nosort/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_2.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10052 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col3 < 21 OR col4 < 60.23 AND ((col3 > 55)) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE col0 > 49 AND (col1 BETWEEN 79.99 AND 97.43) OR col3 >= 66 AND ((col0 > 76)) OR col3 IN (48,19)) ORDER BY 1 DESC
-
-context is not defined
-```
-
-
-```sql
-SELECT pk FROM tab2 WHERE (((col3 > 4 OR (col4 > 16.2)))) OR col1 < 69.74 ORDER BY 1
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10052 tests as sqlite
-
-* 5628 failed
-* 44% was OK
-
-Time: 74373ms
+Time: 55040ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 56/125 [`./test/index/orderby_nosort/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_3.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10051 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col4 <= 7.70 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col0 IN (SELECT col3 FROM tab0 WHERE ((col0 >= 35 AND col0 >= 95)) OR (col3 < 73))) AND col3 >= 92 OR (col0 <= 78) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10051 tests as sqlite
-
-* 5736 failed
-* 42% was OK
-
-Time: 217111ms
+Time: 54822ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 57/125 [`./test/index/orderby_nosort/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_4.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10053 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col1 BETWEEN 30.27 AND 73.0 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col3 IN (2,23,8,95,19) OR (col0 > 49 AND (col0 <= 8 AND col4 >= 96.56) OR col3 > 6 AND (col4 IN (SELECT col1 FROM tab0 WHERE ((col0 > 54))) AND ((col0 >= 59))) AND ((col1 <= 84.25 AND (col1 <= 65.92 AND col0 > 90)))) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10053 tests as sqlite
-
-* 5916 failed
-* 41% was OK
-
-Time: 301617ms
+Time: 66302ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 58/125 [`./test/index/orderby_nosort/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_5.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10052 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col1 BETWEEN 3.14 AND 7.38 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col3 IN (SELECT col0 FROM tab0 WHERE col3 >= 62) AND (col4 > 25.15) OR col3 > 20) ORDER BY 1 DESC
-
-context is not defined
-```
-
-
-```sql
-SELECT pk, col0 FROM tab4 WHERE col0 >= 67 ORDER BY 2 DESC
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10052 tests as sqlite
-
-* 5352 failed
-* 46% was OK
-
-Time: 90202ms
+Time: 51366ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 59/125 [`./test/index/orderby_nosort/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_6.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10053 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE (col3 >= 34) ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE col4 > 91.70) ORDER BY 1 DESC
-
-context is not defined
-```
-
-
-```sql
-SELECT pk, col0 FROM tab2 WHERE (col0 >= 71) ORDER BY 2
-
-Query was expected to return results (but did not) 
-```
-
-#### ☓ Ran 10053 tests as sqlite
-
-* 6348 failed
-* 36% was OK
-
-Time: 57832ms
+Time: 45530ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 60/125 [`./test/index/orderby_nosort/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_7.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10052 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col4 > 49.52 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk, col0 FROM tab2 WHERE ((col4 <= 96.38)) ORDER BY 1
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE (col4 <= 37.74 AND ((col4 > 38.79 AND col3 < 7 AND (col1 <= 39.55 AND col0 < 90) OR col4 IN (SELECT col1 FROM tab0 WHERE col3 < 2) OR (((col0 IS NULL))) AND ((col0 > 20 OR col3 >= 5 AND col0 >= 77 AND ((col3 < 30) AND col3 < 86) AND col4 IS NULL)) OR (col0 < 60) OR col3 < 41 AND (col4 > 39.35)) OR col1 < 29.20 AND col0 < 78) OR col0 IS NULL AND (((col3 < 0 OR col0 >= 46)…
-
-context is not defined
-```
-
-#### ☓ Ran 10052 tests as sqlite
-
-* 4104 failed
-* 59% was OK
-
-Time: 65923ms
+Time: 57861ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 61/125 [`./test/index/orderby_nosort/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_8.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10054 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE (col3 > 10) OR col1 <= 58.48 ORDER BY 1 DESC
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE (col0 > 57 AND (col3 > 61 OR ((col0 > 47 AND col3 >= 66)) AND (col0 > 62 OR col1 < 82.26)))) AND ((col0 <= 29 AND col3 > 13) OR col4 > 91.89) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10054 tests as sqlite
-
-* 4548 failed
-* 54% was OK
-
-Time: 81413ms
+Time: 72315ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 62/125 [`./test/index/orderby_nosort/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_9.test)
 
 _Mimic sqlite_
+#### ✔ Ran 10055 tests as sqlite
 
-```sql
-SELECT pk FROM tab1 WHERE col3 < 41 AND col1 < 34.22 AND (((((col3 IS NULL AND col4 = 49.2)) OR ((col0 BETWEEN 81 AND 76 AND (col3 < 40) OR col3 >= 27 OR col3 = 17 OR (col0 < 62) OR col0 >= 58 AND col3 < 33 AND (col4 < 62.91) AND col1 > 85.64))) OR (col3 < 87) OR col3 < 83 AND col3 >= 56 AND ((col0 > 40)) AND col3 < 52)) AND col3 > 18 OR (((col3 > 17) OR col0 < 21)) AND (col0 < 31 OR col0 >= 78 O…
+* 100% was OK
 
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT pk FROM tab0 WHERE col0 > 23 AND col3 IN (SELECT col0 FROM tab0 WHERE (col4 IN (87.49,43.86,39.83,73.23,60.73,8.41) OR col0 < 89 AND (col1 IN (SELECT col4 FROM tab0 WHERE (col4 > 21.30))) AND col0 < 96 OR col1 > 78.39)) ORDER BY 1 DESC
-
-context is not defined
-```
-
-#### ☓ Ran 10055 tests as sqlite
-
-* 3624 failed
-* 63% was OK
-
-Time: 64493ms
+Time: 57805ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 63/125 [`./test/index/random/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_0.test)
 
 _Mimic sqlite_
-
-```sql
-SELECT col0 + + col0 AS col4 FROM tab1 AS cor0 WHERE NULL IS NULL
-
-Query was expected to return results (but did not) 
-```
-
 
 ```sql
 SELECT + col2 FROM tab0 AS cor0 WHERE col3 IS NOT NULL
@@ -1682,6 +881,13 @@ Correct amount of values returned but hash was different than expected.
 SELECT ALL + + ( - - COUNT ( * ) ) FROM tab0 cor0 WHERE NULL <> col1
 
 Expected: ["0"] but got ["10"]
+```
+
+
+```sql
+SELECT + col0 AS col0 FROM tab0 WHERE NOT + col0 IN ( - 67 )
+
+Query was expected to return results (but did not) 
 ```
 
 
@@ -1714,36 +920,29 @@ Expected: ["0"] but got ["ijika"]
 
 
 ```sql
-SELECT + MAX ( - 59 ) FROM tab1 WHERE NOT + col4 IS NULL
-
-Expected: ["-59"] but got ["NULL"]
-```
-
-
-```sql
 SELECT + MIN ( ALL 65 ), + CAST ( NULL AS INTEGER ) AS col4 FROM tab0 WHERE NULL IS NOT NULL
 
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
+
+```sql
+SELECT - 49 + + MIN ( - col0 ) FROM tab0 WHERE NOT ( NOT + 99 NOT BETWEEN ( - + ( + col1 ) ) AND - col4 * - 99 * - col3 )
+
+Expected: ["-953"] but got ["NULL"]
+```
+
 #### ☓ Ran 10032 tests as sqlite
 
-* 1514 failed
-* 84% was OK
+* 790 failed
+* 92% was OK
 
-Time: 40831ms
+Time: 36030ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 64/125 [`./test/index/random/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_1.test)
 
 _Mimic sqlite_
-
-```sql
-SELECT ALL 65 * 26 FROM tab1 AS cor0 WHERE NOT NULL IS NOT NULL
-
-Query was expected to return results (but did not) 
-```
-
 
 ```sql
 SELECT col2 col5 FROM tab0 WHERE NOT + col1 * col0 - - 45 = + 75
@@ -1753,16 +952,9 @@ Correct amount of values returned but hash was different than expected.
 
 
 ```sql
-SELECT DISTINCT ( + + COUNT ( * ) ) AS col5 FROM tab1 WHERE + 30 IS NOT NULL
+SELECT DISTINCT - 42 AS col2 FROM tab0 cor0 WHERE NOT CAST ( NULL AS INTEGER ) IS NOT NULL
 
-Expected: ["10"] but got ["0"]
-```
-
-
-```sql
-SELECT + ( - - MIN ( DISTINCT + col0 ) ) FROM tab1 AS cor0 WHERE NOT - col3 IS NULL
-
-Expected: ["98"] but got ["NULL"]
+Query was expected to return results (but did not) 
 ```
 
 
@@ -1781,6 +973,13 @@ Wrong conversion type
 
 
 ```sql
+SELECT ( 92 ) AS col5, COUNT ( * ) FROM tab0 AS cor0 WHERE NOT ( - col3 ) > ( NULL )
+
+Expected: ["92","0"] but got ["92","10"]
+```
+
+
+```sql
 SELECT ALL CAST ( SUM ( ALL + col3 ) AS INTEGER ) FROM tab0 WHERE + - 4 > - col1
 
 g is not defined
@@ -1795,17 +994,17 @@ Expected: ["0","0","0","0"] but got ["hzanm","lktfw","mguub","mwyzu"]
 
 
 ```sql
-SELECT + 82 + - CAST ( NULL AS INTEGER ), + MIN ( ALL + col0 ) + - + 63 FROM tab1 WHERE NOT ( ( NULL ) IS NOT NULL )
+SELECT - 43 * MAX ( ALL - 96 * + col3 ) FROM tab0 WHERE NOT ( - col1 ) IN ( + ( 36 ) )
 
-Expected: ["NULL","35"] but got ["82","NULL"]
+Expected: ["445824"] but got ["NULL"]
 ```
 
 #### ☓ Ran 10034 tests as sqlite
 
-* 1582 failed
-* 84% was OK
+* 730 failed
+* 92% was OK
 
-Time: 38861ms
+Time: 39324ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 65/125 [`./test/index/random/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_2.test)
@@ -1820,16 +1019,16 @@ Wrong conversion type
 
 
 ```sql
-SELECT ALL - COUNT ( * ) FROM tab1 WHERE NOT CAST ( NULL AS REAL ) IS NOT NULL
+SELECT - col3 col3 FROM tab0 WHERE NOT - CAST ( - + col3 AS INTEGER ) BETWEEN NULL AND col1
 
-Expected: ["-10"] but got ["0"]
+Query was expected to return results (but did not) 
 ```
 
 
 ```sql
-SELECT - col3 col3 FROM tab0 WHERE NOT - CAST ( - + col3 AS INTEGER ) BETWEEN NULL AND col1
+SELECT ALL + COUNT ( * ) * 11 AS col3 FROM tab0 AS cor0 WHERE NOT NULL > NULL
 
-Query was expected to return results (but did not) 
+Expected: ["0"] but got ["110"]
 ```
 
 
@@ -1851,13 +1050,6 @@ Expected: ["NULL"] but got ["0"]
 SELECT + 31 + - MIN ( - 42 ) FROM tab0 cor0 WHERE NOT - col3 * + col3 * + + col0 + + col4 BETWEEN col1 AND NULL
 
 Expected: ["73"] but got ["NULL"]
-```
-
-
-```sql
-SELECT ALL + MIN ( + ( - 35 ) ), 25 FROM tab1 AS cor0 WHERE NOT ( NULL ) = + col1 * col3
-
-Expected: ["NULL","25"] but got ["25","NULL"]
 ```
 
 
@@ -1890,29 +1082,15 @@ SELECT - 45 FROM tab0 AS cor0 WHERE NOT + col1 * 41 / + + 82 BETWEEN - col3 AND 
 
 #### ☓ Ran 10034 tests as sqlite
 
-* 1546 failed
-* 84% was OK
+* 910 failed
+* 90% was OK
 
-Time: 41079ms
+Time: 37587ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 66/125 [`./test/index/random/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_3.test)
 
 _Mimic sqlite_
-
-```sql
-SELECT DISTINCT col0 AS col0 FROM tab1 AS cor0 WHERE NOT NULL IS NOT NULL
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT ALL + 46 * COUNT ( * ) FROM tab1 WHERE - col4 IS NOT NULL
-
-Expected: ["460"] but got ["0"]
-```
-
 
 ```sql
 SELECT ALL col5 FROM tab0 AS cor0 WHERE + col4 * + col4 * + 24 IS NOT NULL
@@ -1922,9 +1100,23 @@ Correct amount of values returned but hash was different than expected.
 
 
 ```sql
+SELECT DISTINCT - COUNT ( * ) * 9 FROM tab0 WHERE NOT NULL <= ( + col1 )
+
+Expected: ["0"] but got ["-90"]
+```
+
+
+```sql
 SELECT + col3 AS col0 FROM tab0 AS cor0 WHERE NOT - CAST ( NULL AS REAL ) IS NOT NULL
 
 Wrong conversion type
+```
+
+
+```sql
+SELECT ALL CAST ( + COUNT ( * ) AS INTEGER ) FROM tab0 AS cor0 WHERE NOT 25 IS NOT NULL
+
+Query was expected to return results (but did not) 
 ```
 
 
@@ -1957,36 +1149,29 @@ Expected: ["0","0"] but got ["hkqiq","wjfwi"]
 
 
 ```sql
-SELECT MIN ( ALL + - col0 ) FROM tab1 AS cor0 WHERE NOT - col3 * CAST ( - 83 AS INTEGER ) + + + 40 IS NULL
-
-Expected: ["-659"] but got ["NULL"]
-```
-
-
-```sql
 SELECT DISTINCT 83 * - 92 + CAST ( - CAST ( NULL AS INTEGER ) AS INTEGER ) AS col3, - CAST ( NULL AS INTEGER ) / col4 * + 52 AS col5 FROM tab0 AS cor0 WHERE col3 <= 81
 
 Expected: ["NULL","NULL"] but got ["-7636","0"]
 ```
 
+
+```sql
+SELECT - MIN ( DISTINCT col0 ) + 54 FROM tab0 WHERE NOT ( col1 + + col3 * + col0 ) IN ( col0 )
+
+Expected: ["-130"] but got ["NULL"]
+```
+
 #### ☓ Ran 10034 tests as sqlite
 
-* 1480 failed
-* 85% was OK
+* 680 failed
+* 93% was OK
 
-Time: 40020ms
+Time: 39710ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 67/125 [`./test/index/random/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_4.test)
 
 _Mimic sqlite_
-
-```sql
-SELECT - 49 FROM tab1 AS cor0 WHERE NULL IS NULL
-
-Query was expected to return results (but did not) 
-```
-
 
 ```sql
 SELECT ALL + col5 FROM tab0 AS cor0 WHERE ( NULL ) IS NULL
@@ -2017,6 +1202,13 @@ Wrong conversion type
 
 
 ```sql
+SELECT ALL CAST ( - COUNT ( * ) AS INTEGER ) AS col4 FROM tab0 cor0 WHERE col0 IS NULL
+
+Query was expected to return results (but did not) 
+```
+
+
+```sql
 SELECT - CAST ( ( COUNT ( * ) ) AS INTEGER ) AS col1 FROM tab0 WHERE ( NOT col0 NOT BETWEEN + col4 AND + + col1 )
 
 g is not defined
@@ -2024,17 +1216,17 @@ g is not defined
 
 
 ```sql
-SELECT ALL + ( - MIN ( DISTINCT - 77 ) ) FROM tab1 WHERE NOT - 37 IS NULL
+SELECT DISTINCT + MAX ( + col3 ) FROM tab0 AS cor0 WHERE NOT col1 NOT BETWEEN - + col3 + col3 AND + col0
 
-Expected: ["77"] but got ["NULL"]
+Expected: ["922"] but got ["NULL"]
 ```
 
 #### ☓ Ran 10033 tests as sqlite
 
-* 1531 failed
-* 84% was OK
+* 735 failed
+* 92% was OK
 
-Time: 39583ms
+Time: 39379ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 68/125 [`./test/index/random/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_5.test)
@@ -2042,16 +1234,16 @@ Time: 39583ms
 _Mimic sqlite_
 
 ```sql
-SELECT + + 60 AS col3, 29 AS col2 FROM tab1 WHERE col1 - col0 >= - col1
+SELECT + col2 AS col5 FROM tab0 WHERE NOT ( col0 ) * - - col4 IS NULL
 
-Query was expected to return results (but did not) 
+Correct amount of values returned but hash was different than expected.
 ```
 
 
 ```sql
-SELECT + col2 AS col5 FROM tab0 WHERE NOT ( col0 ) * - - col4 IS NULL
+SELECT ALL - 81 FROM tab0 WHERE NOT col0 IN ( - 9 + + 10 * - + 68, col4 )
 
-Correct amount of values returned but hash was different than expected.
+Query was expected to return results (but did not) 
 ```
 
 
@@ -2063,13 +1255,6 @@ Expected: ["NULL"] but got ["0"]
 
 
 ```sql
-SELECT DISTINCT - + COUNT ( * ) FROM tab1 AS cor0 WHERE + col5 IS NOT NULL
-
-Expected: ["-10"] but got ["0"]
-```
-
-
-```sql
 SELECT * FROM tab0 AS cor0 WHERE NOT NULL NOT BETWEEN ( 72 + - + col4 + col3 ) AND - ( CAST ( NULL AS REAL ) )
 
 Wrong conversion type
@@ -2077,9 +1262,9 @@ Wrong conversion type
 
 
 ```sql
-SELECT + MIN ( + col0 ) FROM tab1 WHERE col3 >= 63 * - col1
+SELECT + - COUNT ( * ) AS col4 FROM tab0 AS cor0 WHERE 64 / col0 NOT BETWEEN - col1 AND + + CAST ( NULL AS INTEGER )
 
-Expected: ["27"] but got ["NULL"]
+Expected: ["0"] but got ["-10"]
 ```
 
 
@@ -2091,29 +1276,15 @@ Expected: ["0","0","0"] but got ["amwpr","ehefd","uxbns"]
 
 #### ☓ Ran 10034 tests as sqlite
 
-* 1515 failed
-* 84% was OK
+* 735 failed
+* 92% was OK
 
-Time: 38963ms
+Time: 38657ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 69/125 [`./test/index/random/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_6.test)
 
 _Mimic sqlite_
-
-```sql
-SELECT - ( 36 ) * + + SUM ( ALL - col0 ) AS col5 FROM tab1 cor0 WHERE + col1 * + col4 IS NOT NULL
-
-Expected: ["219672"] but got ["0"]
-```
-
-
-```sql
-SELECT ALL + - CAST ( 18 AS INTEGER ) FROM tab1 WHERE NULL IS NULL
-
-Query was expected to return results (but did not) 
-```
-
 
 ```sql
 SELECT SUM ( DISTINCT + + 90 ) AS col3 FROM tab0 AS cor0 WHERE NULL IS NOT NULL
@@ -2137,9 +1308,16 @@ Correct amount of values returned but hash was different than expected.
 
 
 ```sql
-SELECT DISTINCT 36 / COUNT ( * ) FROM tab1 WHERE NOT NULL IS NOT NULL
+SELECT DISTINCT 36 / COUNT ( * ) FROM tab0 WHERE NOT NULL IS NOT NULL
 
-Expected: ["3"] but got ["NULL"]
+Expected: ["3"] but got ["3.600"]
+```
+
+
+```sql
+SELECT ALL ( - col0 ) - 31 - - 80 FROM tab0 AS cor0 WHERE NOT col4 / 6 IN ( + col1 / - + col0 * - col1 )
+
+Query was expected to return results (but did not) 
 ```
 
 
@@ -2165,29 +1343,15 @@ Expected: ["0","0"] but got ["naijw","wodwv"]
 
 #### ☓ Ran 10034 tests as sqlite
 
-* 1556 failed
-* 84% was OK
+* 780 failed
+* 92% was OK
 
-Time: 39517ms
+Time: 39798ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 70/125 [`./test/index/random/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_7.test)
 
 _Mimic sqlite_
-
-```sql
-SELECT ALL + col3 AS col5 FROM tab1 WHERE NOT + 15 IS NULL
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
-SELECT ALL - ( - + ( - COUNT ( * ) ) ) col4 FROM tab1 WHERE NOT - 17 + + + 63 IS NULL
-
-Expected: ["-10"] but got ["0"]
-```
-
 
 ```sql
 SELECT + CAST ( + CAST ( NULL AS INTEGER ) AS INTEGER ) FROM tab0 AS cor0 WHERE NULL IS NULL
@@ -2197,9 +1361,9 @@ Correct amount of values returned but hash was different than expected.
 
 
 ```sql
-SELECT ALL - MAX ( - 7 ) AS col2 FROM tab1 AS cor0 WHERE NOT - 76 IS NULL
+SELECT + col2 AS col0 FROM tab0 AS cor0 WHERE ( ( CAST ( NULL AS INTEGER ) ) ) IS NULL
 
-Expected: ["7"] but got ["NULL"]
+Query was expected to return results (but did not) 
 ```
 
 
@@ -2211,6 +1375,13 @@ Expected: ["NULL"] but got ["-73"]
 
 
 ```sql
+SELECT + COUNT ( * ) col3 FROM tab0 AS cor0 WHERE col4 * + col1 <> NULL
+
+Expected: ["0"] but got ["10"]
+```
+
+
+```sql
 SELECT DISTINCT - COUNT ( * ) / + CAST ( NULL AS REAL ) AS col5 FROM tab0 WHERE NOT col0 + CAST ( col3 AS INTEGER ) <> 62 * - ( col1 * - col4 )
 
 Wrong conversion type
@@ -2218,9 +1389,9 @@ Wrong conversion type
 
 
 ```sql
-SELECT ( + SUM ( col3 ) ) AS col5 FROM tab2 WHERE + + col0 * + CAST ( NULL AS INTEGER ) IS NULL
+SELECT DISTINCT + - MAX ( DISTINCT + col3 ) AS col2, + ( + COUNT ( * ) ) + + 71 FROM tab0 WHERE NOT + 13 * CAST ( NULL AS INTEGER ) IS NOT NULL
 
-Expected: ["5016"] but got ["0"]
+Expected: ["-972","81"] but got ["NULL","71"]
 ```
 
 
@@ -2230,31 +1401,17 @@ SELECT ALL col2 AS col5 FROM tab0 WHERE - + col3 BETWEEN - 72 AND 50 + + 78
 Expected: ["0"] but got ["hmsci"]
 ```
 
-
-```sql
-SELECT ALL + 37 AS col5 FROM tab4 AS cor0 WHERE NOT ( NULL ) IS NOT NULL
-
-Query was expected to return results (but did not) 
-```
-
 #### ☓ Ran 10031 tests as sqlite
 
-* 1595 failed
-* 84% was OK
+* 675 failed
+* 93% was OK
 
-Time: 40365ms
+Time: 38763ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 71/125 [`./test/index/random/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_8.test)
 
 _Mimic sqlite_
-
-```sql
-SELECT ALL col0 * - col0 FROM tab1 WHERE col1 * col1 IS NOT NULL
-
-Query was expected to return results (but did not) 
-```
-
 
 ```sql
 SELECT ALL * FROM tab0 AS cor0 WHERE NOT CAST ( NULL AS REAL ) IS NOT NULL AND 57 + col3 + + col0 * + 36 * col4 > NULL
@@ -2285,13 +1442,6 @@ Correct amount of values returned but hash was different than expected.
 
 
 ```sql
-SELECT ALL COUNT ( * ) + - 54 + - + MAX ( + col3 ) FROM tab1 WHERE NOT - col1 IS NULL
-
-Expected: ["-980"] but got ["NULL"]
-```
-
-
-```sql
 SELECT + col5 AS col5 FROM tab0 AS cor0 WHERE + col4 NOT BETWEEN NULL AND + col3
 
 Expected: ["0","0","0"] but got ["apjmo","dubev","ithfo","ktnfz","swsmt","texha","ttvlt","vzeio","ylxxs","zwzyz"]
@@ -2306,6 +1456,20 @@ g is not defined
 
 
 ```sql
+SELECT - col0 col3 FROM tab0 WHERE NOT - col3 IN ( + col0 )
+
+Query was expected to return results (but did not) 
+```
+
+
+```sql
+SELECT - MAX ( ALL + + 78 ) FROM tab0 AS cor0 WHERE NOT + 18 BETWEEN col1 + - ( col1 ) + + ( col1 ) * - - col1 AND 17 * + col0
+
+Expected: ["-78"] but got ["NULL"]
+```
+
+
+```sql
 SELECT col5 AS col1 FROM tab0 AS cor0 WHERE col4 NOT BETWEEN - ( - 32 ) AND - CAST ( - col1 AS INTEGER )
 
 Expected: ["0","0","0","0","0"] but got ["apjmo","dubev","ithfo","ktnfz","vzeio"]
@@ -2313,10 +1477,10 @@ Expected: ["0","0","0","0","0"] but got ["apjmo","dubev","ithfo","ktnfz","vzeio"
 
 #### ☓ Ran 10032 tests as sqlite
 
-* 1537 failed
-* 84% was OK
+* 745 failed
+* 92% was OK
 
-Time: 39757ms
+Time: 39257ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 72/125 [`./test/index/random/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_9.test)
@@ -2345,13 +1509,6 @@ Wrong conversion type
 
 
 ```sql
-SELECT + COUNT ( * ) FROM tab1 AS cor0 WHERE NOT NULL IS NOT NULL
-
-Expected: ["10"] but got ["0"]
-```
-
-
-```sql
 SELECT COUNT ( * ) * - CAST ( NULL AS INTEGER ) + - 76 AS col3 FROM tab0 AS cor0 WHERE NOT - ( col0 ) + - col0 IS NOT NULL
 
 Expected: ["NULL"] but got ["-76"]
@@ -2359,9 +1516,9 @@ Expected: ["NULL"] but got ["-76"]
 
 
 ```sql
-SELECT ALL 55 / ( COUNT ( * ) ) FROM tab1 cor0 WHERE col5 IS NOT NULL
+SELECT ALL 55 / ( COUNT ( * ) ) FROM tab0 cor0 WHERE col5 IS NOT NULL
 
-Expected: ["5"] but got ["NULL"]
+Expected: ["5"] but got ["5.500"]
 ```
 
 
@@ -2378,25 +1535,18 @@ SELECT col5 AS col1 FROM tab0 AS cor0 WHERE + 80 + col4 > - - col1 + col3
 Expected: ["0","0"] but got ["axwip","klkhp"]
 ```
 
-
-```sql
-SELECT + COUNT ( * ) / + - COUNT ( * ) FROM tab2 WHERE NULL IS NULL
-
-Expected: ["-1"] but got ["NULL"]
-```
-
 #### ☓ Ran 10031 tests as sqlite
 
-* 1632 failed
-* 83% was OK
+* 740 failed
+* 92% was OK
 
-Time: 38942ms
+Time: 38680ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 73/125 [`./test/index/view/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_0.test)
 
 _Mimic sqlite_
-Time: 6ms
+Time: 7ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 74/125 [`./test/index/view/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_1.test)
@@ -2407,13 +1557,6 @@ _Mimic sqlite_
 SELECT pk, col0 FROM view_2_tab0_153
 
 Correct amount of values returned but hash was different than expected.
-```
-
-
-```sql
-SELECT pk, col0 FROM tab1 WHERE NOT (col0 = 49)
-
-Query was expected to return results (but did not) 
 ```
 
 
@@ -2449,10 +1592,10 @@ _Fail found for statement setting up data so skipping rest of tests_
 #### ☓ Ran 8137 tests as sqlite
 
 * 7698 skipped
-* 175 failed
-* 3% was OK
+* 91 failed
+* 4% was OK
 
-Time: 4888ms
+Time: 4625ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 75/125 [`./test/index/view/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_2.test)
@@ -2484,13 +1627,6 @@ SELECT pk, col0 FROM view_1_tab0_302 UNION SELECT pk, col0 FROM view_2_tab0_302
 SELECT * FROM view_3_tab0_302
 
 Expected: ["0","1","2","3","5","6","8","9"] but got ["NULL","NULL","NULL","NULL","NULL","NULL","NULL","NULL"]
-```
-
-
-```sql
-SELECT pk, col0 FROM tab1 WHERE col3 < 84
-
-Query was expected to return results (but did not) 
 ```
 
 
@@ -2547,10 +1683,10 @@ _Fail found for statement setting up data so skipping rest of tests_
 #### ☓ Ran 7465 tests as sqlite
 
 * 1028 skipped
-* 2625 failed
-* 51% was OK
+* 1361 failed
+* 67% was OK
 
-Time: 25714ms
+Time: 26498ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 76/125 [`./test/index/view/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_3.test)
@@ -2568,13 +1704,6 @@ Correct amount of values returned but hash was different than expected.
 SELECT pk, col0 FROM view_1_tab0_376 UNION SELECT pk, col0 FROM view_2_tab0_376
 
 2 results returned but expected 20
-```
-
-
-```sql
-SELECT pk, col0 FROM tab1 WHERE col3 = 22 OR (col0 <= 44 OR col3 >= 14 AND col0 <= 14) OR col1 IS NULL AND (col3 < 82 OR col4 IS NULL OR col3 > 4 AND col4 >= 63.44) AND col0 <= 78 OR (col0 >= 43) OR (col1 > 80.15) OR col3 IN (71,67,63) AND ((col4 > 77.87)) AND col0 < 92 OR ((col4 IS NULL)) OR col0 = 8 AND (col3 < 29 AND col0 < 99) AND col1 > 82.0 AND col0 < 61 AND col0 <= 27 AND col1 > 9.48 AND c…
-
-Query was expected to return results (but did not) 
 ```
 
 
@@ -2645,10 +1774,10 @@ _Fail found for statement setting up data so skipping rest of tests_
 #### ☓ Ran 7271 tests as sqlite
 
 * 4133 skipped
-* 1392 failed
-* 24% was OK
+* 716 failed
+* 33% was OK
 
-Time: 13537ms
+Time: 14215ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 77/125 [`./test/index/view/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_4.test)
@@ -2680,13 +1809,6 @@ SELECT pk, col0 FROM view_1_tab0_444 UNION SELECT pk, col0 FROM view_2_tab0_444
 SELECT * FROM view_3_tab0_444
 
 Expected: ["0","2","3","4","6","7","8","9"] but got ["NULL","NULL","NULL","NULL","NULL","NULL","NULL","NULL"]
-```
-
-
-```sql
-SELECT pk, col0 FROM tab1 WHERE (col1 < 55.67)
-
-Query was expected to return results (but did not) 
 ```
 
 
@@ -2743,10 +1865,10 @@ _Fail found for statement setting up data so skipping rest of tests_
 #### ☓ Ran 7563 tests as sqlite
 
 * 223 skipped
-* 2934 failed
-* 58% was OK
+* 1526 failed
+* 76% was OK
 
-Time: 27217ms
+Time: 27558ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 78/125 [`./test/index/view/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_5.test)
@@ -2778,13 +1900,6 @@ SELECT pk, col0 FROM view_1_tab0_660 UNION SELECT pk, col0 FROM view_2_tab0_660
 SELECT * FROM view_3_tab0_660
 
 Expected: ["0","1","4","5","6","7","8","9"] but got ["NULL","NULL","NULL","NULL","NULL","NULL","NULL","NULL"]
-```
-
-
-```sql
-SELECT pk, col0 FROM tab1 WHERE ((col0 <= 62))
-
-Query was expected to return results (but did not) 
 ```
 
 
@@ -2824,13 +1939,6 @@ Expected: ["8"] but got ["NULL"]
 
 
 ```sql
-SELECT pk, col0 FROM view_1_tab4_696 UNION ALL SELECT pk, col0 FROM view_2_tab4_696
-
-Query was expected to return results (but did not) 
-```
-
-
-```sql
 CREATE VIEW view_1_tab0_726 AS SELECT pk, col0 FROM tab0 WHERE col0 > 84 AND col4 <= 74.98 AND col1 IN (SELECT col4 FROM tab0 WHERE (col4 > 35.62) AND ((col3 > 33) AND (((((col3 > 1))) AND (col0 = 21 OR (((col3 > 79))) AND (col1 < 18.85) AND ((col3 > 26)) OR ((col3 > 73) AND col3 <= 84)))) OR ((((col3 <= 35))) AND col1 > 16.74) AND col4 <= 51.42 AND (col1 > 97.18)))
 
 Cannot read property 'columns' of undefined
@@ -2841,10 +1949,10 @@ _Fail found for statement setting up data so skipping rest of tests_
 #### ☓ Ran 7384 tests as sqlite
 
 * 1143 skipped
-* 2655 failed
-* 48% was OK
+* 1371 failed
+* 65% was OK
 
-Time: 24483ms
+Time: 25060ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 79/125 [`./test/index/view/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_6.test)
@@ -2869,13 +1977,6 @@ SELECT pk, col0 FROM view_1_tab0_946 UNION SELECT pk, col0 FROM view_2_tab0_946
 SELECT * FROM view_3_tab0_946
 
 Expected: ["1","2","5","6","9"] but got ["NULL","NULL","NULL","NULL","NULL"]
-```
-
-
-```sql
-SELECT pk, col0 FROM tab1 WHERE col3 >= 49
-
-Query was expected to return results (but did not) 
 ```
 
 
@@ -2939,10 +2040,10 @@ _Fail found for statement setting up data so skipping rest of tests_
 #### ☓ Ran 6492 tests as sqlite
 
 * 2753 skipped
-* 1554 failed
-* 33% was OK
+* 806 failed
+* 45% was OK
 
-Time: 15604ms
+Time: 15532ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 80/125 [`./test/index/view/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_7.test)
@@ -2974,13 +2075,6 @@ SELECT pk, col0 FROM view_1_tab0_1009 UNION SELECT pk, col0 FROM view_2_tab0_100
 SELECT * FROM view_3_tab0_1009
 
 Expected: ["1","2","3","4","6","7","8","9"] but got ["NULL","NULL","NULL","NULL","NULL","NULL","NULL","NULL"]
-```
-
-
-```sql
-SELECT pk, col0 FROM tab1 WHERE (col3 > 2 AND col3 >= 92) AND col1 <= 41.49 OR col1 < 72.14
-
-Query was expected to return results (but did not) 
 ```
 
 
@@ -3037,10 +2131,10 @@ _Fail found for statement setting up data so skipping rest of tests_
 #### ☓ Ran 7533 tests as sqlite
 
 * 4593 skipped
-* 1254 failed
-* 22% was OK
+* 646 failed
+* 30% was OK
 
-Time: 12956ms
+Time: 13191ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 81/125 [`./test/random/aggregates/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_0.test)
@@ -3140,19 +2234,12 @@ SELECT col2 + + 76 / - ( - + col1 ) AS col1, 71 + col0 / + - CAST ( NULL AS INTE
 Expected: ["24","NULL","40","NULL","59","NULL"] but got ["24.490","NULL","40.987","NULL","59.134","NULL"]
 ```
 
-
-```sql
-SELECT 21 / - + 13 + col0 AS col2 FROM tab2 AS cor0
-
-Expected: ["45","63","74"] but got ["44.385","62.385","73.385"]
-```
-
 #### ☓ Ran 10012 tests as sqlite
 
 * 1588 failed
 * 84% was OK
 
-Time: 41393ms
+Time: 41551ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 82/125 [`./test/random/aggregates/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_1.test)
@@ -3233,7 +2320,7 @@ Expected: ["NULL","NULL"] but got ["0"]
 * 1374 failed
 * 86% was OK
 
-Time: 40820ms
+Time: 40591ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 83/125 [`./test/random/aggregates/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_2.test)
@@ -3302,12 +2389,19 @@ SELECT - CAST ( NULL AS INTEGER ), CAST ( NULL AS INTEGER ) * ( - SUM ( col2 ) )
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
+
+```sql
+SELECT ALL - - col2 / + col0 + - 37 AS col0 FROM tab2 AS cor0
+
+Expected: ["-37","-37","-37"] but got ["-36.227","-36.375","-36.500"]
+```
+
 #### ☓ Ran 10012 tests as sqlite
 
 * 1508 failed
 * 84% was OK
 
-Time: 41464ms
+Time: 42607ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 84/125 [`./test/random/aggregates/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_3.test)
@@ -3402,7 +2496,7 @@ Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","51","0","67"
 * 1666 failed
 * 83% was OK
 
-Time: 42818ms
+Time: 41567ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 85/125 [`./test/random/aggregates/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_4.test)
@@ -3459,13 +2553,6 @@ Expected: ["NULL"] but got ["38"]
 
 
 ```sql
-SELECT ALL + 45 / + col2 + 89 AS col0, 23 AS col1 FROM tab2 AS cor0
-
-Expected: ["89","23","90","23","90","23"] but got ["89.776","23","90.125","23","90.957","23"]
-```
-
-
-```sql
 SELECT DISTINCT * FROM tab2, tab2 AS cor0 WHERE 46 IS NOT NULL
 
 18 results returned but expected 54
@@ -3511,7 +2598,7 @@ Expected: ["-77"] but got ["NULL"]
 * 1688 failed
 * 83% was OK
 
-Time: 42773ms
+Time: 41905ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 86/125 [`./test/random/aggregates/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_5.test)
@@ -3602,7 +2689,7 @@ SELECT DISTINCT * FROM tab0, tab0 cor0 WHERE NULL IS NULL
 * 1632 failed
 * 83% was OK
 
-Time: 41757ms
+Time: 41886ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 87/125 [`./test/random/aggregates/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_6.test)
@@ -3666,6 +2753,13 @@ Expected: ["-3","NULL","0","NULL"] but got ["-0.384","0","-0.809","0","-3.800","
 
 
 ```sql
+SELECT + + CAST ( NULL AS INTEGER ) + col0 FROM tab1 cor0
+
+Expected: ["NULL","NULL","NULL"] but got ["51","85","91"]
+```
+
+
+```sql
 SELECT DISTINCT MAX ( ALL - 6 ) FROM tab2 WHERE NOT - col1 BETWEEN 33 + - 90 AND NULL
 
 Expected: ["-6"] but got ["NULL"]
@@ -3690,7 +2784,7 @@ Expected: ["9","NULL","NULL"] but got ["NULL","NULL"]
 * 1649 failed
 * 83% was OK
 
-Time: 42482ms
+Time: 41600ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 88/125 [`./test/random/aggregates/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_7.test)
@@ -3789,6 +2883,13 @@ Expected: ["NULL","NULL"] but got ["NULL"]
 
 
 ```sql
+SELECT + CAST ( NULL AS INTEGER ) * - col0 AS col2 FROM tab1 AS cor0 WHERE + col0 NOT BETWEEN NULL AND ( 38 )
+
+Expected: ["NULL","NULL","NULL"] but got ["0","0","0"]
+```
+
+
+```sql
 SELECT DISTINCT * FROM tab1 AS cor0 LEFT JOIN tab1 cor1 ON NOT 86 IS NOT NULL, tab0 AS cor2
 
 Parse error on line 1:
@@ -3802,7 +2903,7 @@ Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARR
 * 1634 failed
 * 83% was OK
 
-Time: 41919ms
+Time: 41347ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 89/125 [`./test/random/aggregates/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_8.test)
@@ -3890,7 +2991,7 @@ Expected: ["-139","NULL","-172","NULL","-181","NULL"] but got ["NULL","NULL"]
 * 1634 failed
 * 83% was OK
 
-Time: 42293ms
+Time: 41552ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 90/125 [`./test/random/aggregates/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_9.test)
@@ -3964,7 +3065,7 @@ Expected: ["NULL","NULL"] but got ["3","3"]
 * 1565 failed
 * 84% was OK
 
-Time: 42459ms
+Time: 41636ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 91/125 [`./test/random/expr/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_0.test)
@@ -4045,7 +3146,7 @@ Expected: ["-46","NULL"] but got ["NULL","NULL"]
 * 1839 failed
 * 81% was OK
 
-Time: 42780ms
+Time: 45537ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 92/125 [`./test/random/expr/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_1.test)
@@ -4105,7 +3206,7 @@ Expected: ["67","63"] but got ["67","NULL"]
 * 1175 failed
 * 88% was OK
 
-Time: 28160ms
+Time: 26444ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 93/125 [`./test/random/expr/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_2.test)
@@ -4179,7 +3280,7 @@ Expected: ["NULL","NULL"] but got ["0","-15"]
 * 1481 failed
 * 85% was OK
 
-Time: 38579ms
+Time: 36652ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 94/125 [`./test/random/expr/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_3.test)
@@ -4253,7 +3354,7 @@ Expected: ["NULL","NULL","10"] but got ["0","79","10"]
 * 2064 failed
 * 79% was OK
 
-Time: 45794ms
+Time: 45066ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 95/125 [`./test/random/expr/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_4.test)
@@ -4317,16 +3418,16 @@ Expected: ["-55","NULL"] but got ["NULL"]
 
 
 ```sql
-SELECT DISTINCT CAST ( NULL AS REAL ) + 37 AS col0
+SELECT + CAST ( NULL AS INTEGER ) AS col1, CASE + COUNT ( * ) WHEN - - 5 THEN + - 71 * + 32 / - 55 END / + 90 * - - 55 * - + NULLIF ( + - SUM ( ALL + 39 ), - 42 )
 
-Wrong conversion type
+Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
 
 ```sql
-SELECT + CAST ( NULL AS INTEGER ) AS col1, CASE + COUNT ( * ) WHEN - - 5 THEN + - 71 * + 32 / - 55 END / + 90 * - - 55 * - + NULLIF ( + - SUM ( ALL + 39 ), - 42 )
+SELECT 92 * - COUNT ( DISTINCT - 37 ) / 95 AS col1
 
-Expected: ["NULL","NULL"] but got ["0","NULL"]
+Expected: ["0"] but got ["-0.968"]
 ```
 
 #### ☓ Ran 10012 tests as sqlite
@@ -4334,7 +3435,7 @@ Expected: ["NULL","NULL"] but got ["0","NULL"]
 * 2064 failed
 * 79% was OK
 
-Time: 46012ms
+Time: 44398ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 96/125 [`./test/random/expr/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_5.test)
@@ -4422,7 +3523,7 @@ Expected: ["65","NULL"] but got ["NULL","NULL"]
 * 2085 failed
 * 79% was OK
 
-Time: 47749ms
+Time: 45401ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 97/125 [`./test/random/expr/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_6.test)
@@ -4496,7 +3597,7 @@ Expected: ["NULL","10","NULL"] but got ["-69","10","0"]
 * 2043 failed
 * 79% was OK
 
-Time: 46671ms
+Time: 45179ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 98/125 [`./test/random/expr/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_7.test)
@@ -4570,7 +3671,7 @@ Expected: ["NULL","NULL"] but got ["0","NULL"]
 * 2097 failed
 * 79% was OK
 
-Time: 45124ms
+Time: 42452ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 99/125 [`./test/random/expr/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_8.test)
@@ -4634,13 +3735,6 @@ Expected: ["NULL","NULL"] but got ["NULL","-20"]
 
 
 ```sql
-SELECT CAST ( + - 17 AS INTEGER ) * + 6 + + + CAST ( + AVG ( 85 ) AS INTEGER ), + 4 * - - ( + + ( - + NULLIF ( + 80, + + 83 ) ) ) AS col1
-
-g is not defined
-```
-
-
-```sql
 SELECT CAST ( NULL AS INTEGER ) + 7 + - CAST ( - 45 AS INTEGER ) - - - 61 + - - 1 - 74, + AVG ( - - CAST ( NULL AS INTEGER ) ) + 63 AS col2
 
 Expected: ["NULL","NULL"] but got ["-82","63"]
@@ -4658,7 +3752,7 @@ Expected: ["2","NULL"] but got ["NULL","NULL"]
 * 2139 failed
 * 78% was OK
 
-Time: 45259ms
+Time: 43914ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 100/125 [`./test/random/expr/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_9.test)
@@ -4739,7 +3833,7 @@ Expected: ["NULL","NULL"] but got ["-121","0"]
 * 2046 failed
 * 79% was OK
 
-Time: 45259ms
+Time: 43592ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 101/125 [`./test/random/groupby/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_0.test)
@@ -4815,19 +3909,12 @@ SELECT ALL cor0.col1 AS col1 FROM tab2 AS cor0 GROUP BY col1 HAVING NOT ( cor0.c
 Query was expected to return results (but did not) 
 ```
 
-
-```sql
-SELECT cor0.col2 * 85 FROM tab1 AS cor0 GROUP BY cor0.col1, cor0.col2, cor0.col0
-
-Expected: ["3825","6035","680"] but got ["NULL","NULL","NULL"]
-```
-
 #### ☓ Ran 10012 tests as sqlite
 
 * 4287 failed
 * 57% was OK
 
-Time: 36708ms
+Time: 35787ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 102/125 [`./test/random/groupby/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_1.test)
@@ -4943,7 +4030,7 @@ Expected: ["3483","NULL","NULL"] but got ["NULL","NULL","NULL"]
 * 4144 failed
 * 58% was OK
 
-Time: 40797ms
+Time: 37010ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 103/125 [`./test/random/groupby/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_2.test)
@@ -5028,6 +4115,13 @@ Query was expected to return results (but did not)
 
 
 ```sql
+SELECT - cor0.col2 + + 87 / 11 FROM tab1 AS cor0 GROUP BY cor0.col2
+
+Expected: ["-1","-38","-64"] but got ["NULL","NULL","NULL"]
+```
+
+
+```sql
 SELECT DISTINCT - cor0.col2 * - cor1.col0 col2 FROM tab0 AS cor0 CROSS JOIN tab1 cor1 GROUP BY cor0.col2, cor1.col0
 
 1 results returned but expected 9
@@ -5045,7 +4139,7 @@ Expected: ["0","NULL","NULL"] but got ["NULL","NULL","NULL"]
 * 4198 failed
 * 58% was OK
 
-Time: 40564ms
+Time: 35673ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 104/125 [`./test/random/groupby/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_3.test)
@@ -5130,23 +4224,16 @@ Query was expected to return results (but did not)
 
 
 ```sql
+SELECT ALL 83 * - cor0.col0 FROM tab1 AS cor0 GROUP BY cor0.col2, col0
+
+Expected: ["-1826","-2324","-6806"] but got ["NULL","NULL","NULL"]
+```
+
+
+```sql
 SELECT cor1.col1 + - cor0.col1 FROM tab2 AS cor0 CROSS JOIN tab0 AS cor1 GROUP BY cor0.col1, cor1.col1
 
 Expected: ["-41","-59","-61","20","22","40"] but got ["NULL","NULL","NULL","NULL","NULL","NULL"]
-```
-
-
-```sql
-SELECT 98 * cor0.col0 FROM tab2 cor0 GROUP BY cor0.col0
-
-Expected: ["1470","8918","9016"] but got ["NULL","NULL","NULL"]
-```
-
-
-```sql
-SELECT - - ( + 8 ) + tab1.col0 FROM tab1 GROUP BY tab1.col0
-
-Expected: ["30","36","90"] but got ["NULL","NULL","NULL"]
 ```
 
 #### ☓ Ran 10012 tests as sqlite
@@ -5154,7 +4241,7 @@ Expected: ["30","36","90"] but got ["NULL","NULL","NULL"]
 * 4465 failed
 * 55% was OK
 
-Time: 38980ms
+Time: 36301ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 105/125 [`./test/random/groupby/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_4.test)
@@ -5211,6 +4298,13 @@ Expected: ["NULL","NULL"] but got ["0","0"]
 
 
 ```sql
+SELECT ALL cor0.col0 + - cor0.col0 * - cor0.col0 FROM tab2 AS cor0 GROUP BY cor0.col0
+
+Expected: ["240","8372","8556"] but got ["NULL","NULL","NULL"]
+```
+
+
+```sql
 SELECT NULLIF ( + 79, + cor0.col2 ) AS col1 FROM tab0 AS cor0 GROUP BY cor0.col2, cor0.col2, cor0.col1
 
 Expected: ["79","79","NULL"] but got ["79","79","79"]
@@ -5244,12 +4338,19 @@ SELECT ALL - + NULLIF ( tab0.col1, + 29 / - 88 ) AS col0 FROM tab0 GROUP BY tab0
 Expected: ["-81","NULL"] but got ["NULL","NULL"]
 ```
 
+
+```sql
+SELECT - col1 * - cor0.col1 + - cor0.col2 AS col2 FROM tab1 AS cor0 GROUP BY cor0.col2, col1
+
+Expected: ["1865","28","3204"] but got ["NULL","NULL","NULL"]
+```
+
 #### ☓ Ran 10012 tests as sqlite
 
 * 4369 failed
 * 56% was OK
 
-Time: 38443ms
+Time: 36805ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 106/125 [`./test/random/groupby/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_5.test)
@@ -5348,9 +4449,23 @@ Expected: ["205379","68921","NULL"] but got ["NULL","NULL","NULL"]
 
 
 ```sql
+SELECT DISTINCT cor0.col2 + 94 FROM tab2 AS cor0 GROUP BY col2
+
+Expected: ["152","173","181"] but got ["NULL"]
+```
+
+
+```sql
 SELECT DISTINCT NULLIF ( cor0.col1, + cor0.col1 + + cor0.col1 ) AS col0 FROM tab0 AS cor0 GROUP BY cor0.col1
 
 Expected: ["81","NULL"] but got ["NULL"]
+```
+
+
+```sql
+SELECT 93 + 45 * cor0.col1 FROM tab0 AS cor0 GROUP BY cor0.col1
+
+Expected: ["3738","93"] but got ["NULL","NULL"]
 ```
 
 #### ☓ Ran 10012 tests as sqlite
@@ -5358,7 +4473,7 @@ Expected: ["81","NULL"] but got ["NULL"]
 * 4488 failed
 * 55% was OK
 
-Time: 38563ms
+Time: 36127ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 107/125 [`./test/random/groupby/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_6.test)
@@ -5439,7 +4554,7 @@ Query was expected to return results (but did not)
 * 4625 failed
 * 53% was OK
 
-Time: 37828ms
+Time: 36390ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 108/125 [`./test/random/groupby/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_7.test)
@@ -5471,13 +4586,6 @@ Expected: ["41","59","61"] but got ["NULL"]
 SELECT - ( + cor0.col1 * CAST ( NULL AS REAL ) ) + + 69 * col1 AS col2 FROM tab0 AS cor0 GROUP BY cor0.col1, cor0.col2
 
 Wrong conversion type
-```
-
-
-```sql
-SELECT + 85 * + tab0.col1 FROM tab0, tab0 AS cor0 GROUP BY tab0.col1
-
-Expected: ["0","6885"] but got ["NULL","NULL"]
 ```
 
 
@@ -5555,7 +4663,7 @@ Expected: ["-81","NULL"] but got ["NULL"]
 * 4547 failed
 * 54% was OK
 
-Time: 38914ms
+Time: 36519ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 109/125 [`./test/random/groupby/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_8.test)
@@ -5650,7 +4758,7 @@ Expected: ["-3364","-3364","-6241","-6241","-7569","-7569"] but got ["NULL","NUL
 * 2975 failed
 * 70% was OK
 
-Time: 37743ms
+Time: 35036ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 110/125 [`./test/random/groupby/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_9.test)
@@ -5738,7 +4846,7 @@ SELECT ALL col2 AS col1, - AVG ( - col2 ) AS col1, - col2 AS col1 FROM tab0 AS c
 * 503 failed
 * 94% was OK
 
-Time: 36967ms
+Time: 35239ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 111/125 [`./test/random/select/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_0.test)
@@ -5798,9 +4906,9 @@ Expected: ["NULL"] but got ["63"]
 
 
 ```sql
-SELECT DISTINCT * FROM tab0, tab1 cor0, tab2 AS cor1
+SELECT * FROM tab0, tab2 AS cor0, tab1 AS cor1
 
-27 results returned but expected 243
+Correct amount of values returned but hash was different than expected.
 ```
 
 
@@ -5815,7 +4923,7 @@ Query was expected to return results (but did not)
 * 1572 failed
 * 84% was OK
 
-Time: 34851ms
+Time: 32093ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 112/125 [`./test/random/select/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_1.test)
@@ -5885,7 +4993,7 @@ Query was expected to return results (but did not)
 * 1338 failed
 * 86% was OK
 
-Time: 35880ms
+Time: 34759ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 113/125 [`./test/random/select/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_2.test)
@@ -5955,7 +5063,7 @@ Query was expected to return results (but did not)
 * 1291 failed
 * 87% was OK
 
-Time: 35609ms
+Time: 34469ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 114/125 [`./test/random/select/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_3.test)
@@ -6025,7 +5133,7 @@ Query was expected to return results (but did not)
 * 1258 failed
 * 87% was OK
 
-Time: 36653ms
+Time: 37297ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 115/125 [`./test/random/select/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_4.test)
@@ -6090,19 +5198,12 @@ SELECT ALL * FROM tab1 WHERE NOT + col0 NOT BETWEEN + col1 / - col2 AND col2
 Query was expected to return results (but did not) 
 ```
 
-
-```sql
-SELECT DISTINCT - CAST ( NULL AS INTEGER ) * col0 + col1 col2 FROM tab2 AS cor0
-
-Expected: ["NULL"] but got ["17","31","59"]
-```
-
 #### ☓ Ran 10011 tests as sqlite
 
 * 1317 failed
 * 86% was OK
 
-Time: 36430ms
+Time: 37746ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 116/125 [`./test/random/select/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_5.test)
@@ -6172,7 +5273,7 @@ Query was expected to return results (but did not)
 * 1323 failed
 * 86% was OK
 
-Time: 36321ms
+Time: 34640ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 117/125 [`./test/random/select/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_6.test)
@@ -6242,7 +5343,7 @@ Query was expected to return results (but did not)
 * 1345 failed
 * 86% was OK
 
-Time: 36003ms
+Time: 33819ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 118/125 [`./test/random/select/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_7.test)
@@ -6312,7 +5413,7 @@ Expecting 'LITERAL', 'BRALITERAL', 'EOF', 'WITH', 'AS', 'RPAR', 'PIVOT', 'UNPIVO
 * 1283 failed
 * 87% was OK
 
-Time: 36207ms
+Time: 33181ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 119/125 [`./test/random/select/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_8.test)
@@ -6377,12 +5478,19 @@ SELECT - col2 + col0 + - col1 * + col2 FROM tab2 WHERE NOT col2 + - col1 + + col
 Query was expected to return results (but did not) 
 ```
 
+
+```sql
+SELECT DISTINCT * FROM tab0, tab2 AS cor0, tab0 AS cor1, tab2 cor2
+
+36 results returned but expected 972
+```
+
 #### ☓ Ran 10012 tests as sqlite
 
 * 1322 failed
 * 86% was OK
 
-Time: 36409ms
+Time: 33205ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 120/125 [`./test/random/select/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_9.test)
@@ -6452,7 +5560,7 @@ Query was expected to return results (but did not)
 * 1295 failed
 * 87% was OK
 
-Time: 36963ms
+Time: 33224ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 121/125 [`./test/select1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select1.test)
@@ -6462,7 +5570,7 @@ _Mimic sqlite_
 
 * 100% was OK
 
-Time: 14776ms
+Time: 13976ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 122/125 [`./test/select2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select2.test)
@@ -6494,7 +5602,7 @@ Correct amount of values returned but hash was different than expected.
 * 104 failed
 * 89% was OK
 
-Time: 13358ms
+Time: 12509ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 123/125 [`./test/select3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select3.test)
@@ -6533,7 +5641,7 @@ Expected: ["184","195","225"] but got ["155","166","184","195","225"]
 * 358 failed
 * 89% was OK
 
-Time: 45601ms
+Time: 44980ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 124/125 [`./test/select4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select4.test)
@@ -6561,11 +5669,9 @@ _Fail found for statement setting up data so skipping rest of tests_
 * 10 failed
 * 26% was OK
 
-Time: 5661ms
+Time: 5908ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 125/125 [`./test/select5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select5.test)
 
 _Mimic sqlite_
-
-_(test stopped after 10 hours of no result from 125/125)_
