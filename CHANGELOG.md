@@ -16,6 +16,7 @@
 * Added: TRIGGERs
 * Fixed: Bug with MATRIX modifier
 * Fixed: Bug with undefined content variable with IN operation (issue #501)
+* Fixed: Bug with wrong realizaion of REPLACE INTO (issue #505)
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

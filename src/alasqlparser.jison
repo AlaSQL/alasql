@@ -1648,7 +1648,7 @@ Insert
 	| INSERT OR REPLACE Into Table VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
 	| REPLACE Into Table VALUE ValuesListsList
-		{ $$ = new yy.Insert({into:$3, values: $5, orreplace:true, replaceonly:true}); }
+		{ $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); }
 	| INSERT Into Table DEFAULT VALUE
 		{ $$ = new yy.Insert({into:$3, "default": true}) ; }
 	| INSERT Into Table LPAR ColumnsList RPAR VALUE ValuesListsList

@@ -296,7 +296,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 //	}
 //			if(table.pk) {
-	table.insert = function(r,orreplace,replaceonly) {
+	table.insert = function(r,orreplace) {
 		var table = this;
 
 		var toreplace = false; // For INSERT OR REPLACE
@@ -395,7 +395,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.update(function(t){
 				for(var f in r) t[f] = r[f];
 			},table.data.indexOf(toreplace),params);
-		} else if(!replaceonly) {
+		} else {
 			table.data.push(r);
 
 		// Final change before insert

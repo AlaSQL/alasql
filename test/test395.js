@@ -40,6 +40,13 @@ describe('Test 395 SQLLOGICTEST SELECT 1', function() {
     });
   });
 
+  it('5. More tests', function(done){
+    var res = alasql('COLUMN OF SELECT 1 FROM t1 WHERE 1 IN (SELECT 1,2)');
+    assert.deepEqual(res,[1,1,1]);
+    done();      
+  });
+
+
   it('99. DROP DATABASE',function(done){
     alasql('DROP DATABASE test395');
     done();

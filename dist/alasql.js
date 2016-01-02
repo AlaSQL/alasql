@@ -1238,11 +1238,8 @@ break;
 case 425:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0]}); 
 break;
-case 426:
+case 426: case 427:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true}); 
-break;
-case 427:
- this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true, replaceonly:true}); 
 break;
 case 428:
  this.$ = new yy.Insert({into:$$[$0-2], "default": true}) ; 
@@ -10338,7 +10335,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 //	}
 
-	table.insert = function(r,orreplace,replaceonly) {
+	table.insert = function(r,orreplace) {
 		var table = this;
 
 		var toreplace = false; // For INSERT OR REPLACE
@@ -10429,7 +10426,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.update(function(t){
 				for(var f in r) t[f] = r[f];
 			},table.data.indexOf(toreplace),params);
-		} else if(!replaceonly) {
+		} else {
 			table.data.push(r);
 
 		// Final change before insert
@@ -11835,8 +11832,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	        if(db.tables[tableid].insert) {
 				s += 'var db=alasql.databases[\''+databaseid+'\'];';
-				s += 'db.tables[\''+tableid+'\'].insert(a,'+(self.orreplace?"true":"false")
-					    +(self.replaceonly?",true":",false")+');';
+				s += 'db.tables[\''+tableid+'\'].insert(a,'+(self.orreplace?"true":"false")+');';
 	        } else {
 				s += 'aa.push(a);';
 			}

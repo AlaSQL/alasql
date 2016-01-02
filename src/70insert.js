@@ -179,8 +179,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 //			s += 'db.tables[\''+tableid+'\'].insert(r);';
 	        if(db.tables[tableid].insert) {
 				s += 'var db=alasql.databases[\''+databaseid+'\'];';
-				s += 'db.tables[\''+tableid+'\'].insert(a,'+(self.orreplace?"true":"false")
-					    +(self.replaceonly?",true":",false")+');';
+				s += 'db.tables[\''+tableid+'\'].insert(a,'+(self.orreplace?"true":"false")+');';
 	        } else {
 				s += 'aa.push(a);';
 			}

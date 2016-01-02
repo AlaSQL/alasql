@@ -1065,11 +1065,8 @@ break;
 case 425:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0]}); 
 break;
-case 426:
+case 426: case 427:
  this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true}); 
-break;
-case 427:
- this.$ = new yy.Insert({into:$$[$0-2], values: $$[$0], orreplace:true, replaceonly:true}); 
 break;
 case 428:
  this.$ = new yy.Insert({into:$$[$0-2], "default": true}) ; 
