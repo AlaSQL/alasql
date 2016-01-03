@@ -7,7 +7,8 @@
 ![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release) 
 ![NPM version](https://img.shields.io/npm/l/alasql.svg?123) 
 
-
+_Got questions? [Tag a Stack Overflow question](http://stackoverflow.com/questions/ask?tags=AlaSQL) with `alasql`._
+_Input to improvement? [Open an issue](https://github.com/agershun/alasql/issues/new)._ 
 
 # AlaSQL
 
@@ -23,8 +24,7 @@ The library is designed for:
 We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demands flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
 
 
-The library brings you the comfort of a full database engine to your javascript app. No, really - its working towards a full database engine complying with [most of SQL-99](https://github.com/agershun/alasql/wiki/Supported-SQL-statements) spiced up with additional syntax for handling noSQL (schema less) data and graph networks. To help porting from native databases you can specify the flavour for the SQL behaviour as either AlaSQL, T-SQL, MySQL, Postgres, ORACLE, SQLite, OrientDB. MSSQL is on its way. 
-
+The library brings you the comfort of a full database engine to your javascript app. No, really - its working towards a full database engine complying with [most of SQL-99](https://github.com/agershun/alasql/wiki/Supported-SQL-statements) spiced up with additional syntax for handling noSQL (schema less) data and graph networks. 
 
  
 ```js
