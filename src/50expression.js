@@ -554,11 +554,13 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	// Change names
 //	console.log(this);
 	return 	''
-			+ '('
+			+ '(('
 			+ leftJS()
+			+ ')'
 			+ op
+			+ '('
 			+ rightJS()
-			+ ')';
+			+ '))';
 }
 
 

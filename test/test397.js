@@ -17,9 +17,17 @@ describe('Test 397 << and >> ', function() {
   });
 
 	it('2. << and >> and other operations...', function(done){
-    var res = alasql("= 1 >> 2");
-    console.log(res);
-//    assert.deepEqual(res,[ 3, 'insert or replace (new)' ]);
+    var res = alasql("= 1 << 2");
+    assert(res,4);
+
+    var res = alasql("= 256 >> 4");
+    assert(res,16);
+
+    var res = alasql("= 7 & 3");
+    assert(res,3);
+
+    var res = alasql("= 8 | 1");
+    assert(res,9);
 
     done();      
   });

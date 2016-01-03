@@ -257,6 +257,10 @@ VALUE(S)?                                      	return 'VALUE'
 '!=='											return 'NEEQEQ'
 '=='											return 'EQEQ'
 '>='											return 'GE'
+'&'												return 'AMPERSAND'
+'|'												return 'BAR'
+'<<'											return 'LTLT'
+'>>'											return 'GTGT'
 '>'												return 'GT'
 '<='											return 'LE'
 '<>'											return 'NE'
@@ -300,6 +304,7 @@ VALUE(S)?                                      	return 'VALUE'
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IS
 %left LIKE NOT_LIKE REGEXP
+%left GTGT LTLT AMPERSAND BAR
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
@@ -1413,6 +1418,15 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'%', right:$3}); }
 	| Expression CARET Expression
 		{ $$ = new yy.Op({left:$1, op:'^', right:$3}); }
+
+	| Expression GTGT Expression
+		{ $$ = new yy.Op({left:$1, op:'>>', right:$3}); }
+	| Expression LTLT Expression
+		{ $$ = new yy.Op({left:$1, op:'<<', right:$3}); }
+	| Expression AMPERSAND Expression
+		{ $$ = new yy.Op({left:$1, op:'&', right:$3}); }
+	| Expression BAR Expression
+		{ $$ = new yy.Op({left:$1, op:'|', right:$3}); }
 
 	| Expression ARROW Literal
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
