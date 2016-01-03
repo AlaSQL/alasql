@@ -73,7 +73,7 @@ describe('Test 371 INSERT OR REPLACE', function() {
         assert(res == 1);
 
         var res = alasql('SELECT * FROM one');
-        assert.deepEqual(res,[ { a: 1, b: 'Uno' }, { a: 2, b: 'Deux' }, { a: 3, b: 'Three' } ]);
+        assert.deepEqual(res,[ { a: 1, b: 'Uno' }, { a: 2, b: 'Deux' }, { a: 3, b: 'Three' }, { a: 4, b: 'Quarto' }  ]);
 
         done();
       });
