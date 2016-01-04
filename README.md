@@ -100,10 +100,10 @@ jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http:
 
 
 ```bash
-npm install alasql --save     # npm
-meteor add agershun:alasql    # meteor
-bower install alasql --save   # bower
-npm install alasql -g         # command line interface
+npm install --save alasql      # node
+meteor add agershun:alasql     # meteor
+bower install --save alasql    # bower
+npm install -g alasql          # command line
 ```
 
 For the browser: include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js)  
