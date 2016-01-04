@@ -984,6 +984,24 @@ alasql.srch.OUT = function(val ) {
 	}
 };
 
+alasql.srch.OUTOUT = function(val ) {
+	console.log(988,val);
+	if(val.$out && val.$out.length > 0) {
+		var res = [];
+		val.$out.forEach(function(v){ 
+			if(alasql.databases[alasql.useid].objects[v].$out) {
+				alasql.databases[alasql.useid].objects[v].$out.forEach(function(vv){
+					res = res.concat(vv.$out);
+				});
+			}
+		}); 
+		return {status: 1, values: res};
+	} else {
+		return {status: -1, values: []};
+	}
+};
+
+
 // Transform expression
 alasql.srch.IN = function(val) {
 	if(val.$in && val.$in.length > 0) {

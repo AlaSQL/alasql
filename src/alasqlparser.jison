@@ -592,6 +592,10 @@ SearchSelector
 		{ $$ = {srchid:"OUT"}; }
 	| LT 
 		{ $$ = {srchid:"IN"}; }
+	| GTGT 
+		{ $$ = {srchid:"OUTOUT"}; }
+	| LTLT 
+		{ $$ = {srchid:"ININ"}; }
 	| DOLLAR 
 		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
 /*	| DELETE LPAR RPAR
@@ -2708,6 +2712,10 @@ GraphVertexEdge
 			$$ = $1; 
 			if($2) $$.json = new yy.Json({value:$2});
 			if($3) $$.as = $3;
+		}
+	| (GraphElement|GraphVar) GTGT (GraphElement|GraphVar) 
+		{ 
+			$$ = {source:$1, target: $3};
 		}
 	| (GraphElement|GraphVar) GT GraphElement Json? GraphAsClause? GT (GraphElement|GraphVar) 
 		{ 
