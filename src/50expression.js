@@ -254,6 +254,9 @@ yy.Op.prototype.toType = function(tableid) {
 	if(['-','*','/','%','^'].indexOf(this.op) >-1){
 		return 'number';
 	}
+	if(['||'].indexOf(this.op) >-1){
+		return 'string';
+	}
 	if(this.op === '+') {
 		if(this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string'){
 			return 'string';
@@ -384,6 +387,14 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ '(!alasql.utils.deepEqual('
 				+ 	leftJS()
 				+ 	","
+				+ 	rightJS()
+				+ '))';
+	}
+	if(this.op === '||') {
+		return 	''
+				+ '(""+('
+				+ 	leftJS()
+				+ 	")+("
 				+ 	rightJS()
 				+ '))';
 	}

@@ -34,8 +34,9 @@ X(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
 "--"(.*?)($|\r\n|\r|\n)							return /* return COMMENT */
 
 \s+                                             /* skip whitespace */
-'||'											return 'OR'
-'&&'											return 'AND'
+'||'											return 'BARBAR'
+'|'												return 'BAR'
+/* '&&'											return 'AMPERSANDAMPERSAND' */
 
 VALUE\s+OF\s+SELECT                          	yytext = 'VALUE';return 'SELECT'
 ROW\s+OF\s+SELECT                           	yytext = 'ROW';return 'SELECT'
@@ -310,6 +311,7 @@ VALUE(S)?                                      	return 'VALUE'
 %left CARET
 %left DOT ARROW EXCLAMATION
 %left SHARP
+%left BARBAR
 
 %ebnf
 %start main
@@ -1410,6 +1412,8 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3 }); }
 	| Expression NOT_LIKE Expression ESCAPE Expression
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3, escape:$5 }); }
+	| Expression BARBAR Expression
+		{ $$ = new yy.Op({left:$1, op:'||', right:$3}); }
 	| Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+', right:$3}); }
 	| Expression MINUS Expression
