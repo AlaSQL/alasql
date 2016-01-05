@@ -961,7 +961,7 @@ var like = utils.like = function (pattern,value,escape) {
    };
 
 
-var like = utils.glob = function (value,pattern) {
+utils.glob = function (value,pattern) {
 
     var i=0;
     var s = '^';
@@ -990,5 +990,3 @@ var like = utils.glob = function (value,pattern) {
     s += '$';
     return (value||'').search(RegExp(s))>-1;
    };
-
-

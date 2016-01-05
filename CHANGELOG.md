@@ -19,6 +19,7 @@
 * Fixed: Bug with wrong realizaion of REPLACE INTO (issue #505)
 * Added: >>,<<,&,| - binary operations
 * Added: || - string concatenation
+* Added: GLOB operator
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

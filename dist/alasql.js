@@ -3718,7 +3718,7 @@ var like = utils.like = function (pattern,value,escape) {
     return (value||'').search(RegExp(s))>-1;
    };
 
-var like = utils.glob = function (value,pattern) {
+utils.glob = function (value,pattern) {
 
     var i=0;
     var s = '^';

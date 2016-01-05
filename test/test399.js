@@ -18,12 +18,39 @@ describe('Test 399 || string concatenation', function() {
 
 	it('2. ||', function(done){
     var res = alasql('= "apple" || "watch"');
-    assert(res,"applewatch");
+    assert(res == "applewatch");
     done();      
   });
 
+  it('3. Many small tests', function(done){
+    alasql.options.modifier = 'VALUE';
+
+    var res = alasql("SELECT null || true");
+    // No assert here
+
+    var res = alasql("SELECT true || 'a'");
+    // No assert here
+
+    var res = alasql("SELECT 'a' || 'b'");
+    assert(res == 'ab');
+
+    var res = alasql("SELECT 'ab' = 'a' || 'b'");
+    assert(res);
+
+    var res = alasql("SELECT 'ab' = 'ab' || 'b'");
+    assert(!res);
+
+    var res = alasql("SELECT 'ab' = ('a' || 'b')");
+    assert(res);
+
+    var res = alasql("SELECT 'ab' = ('a' || 'ab')");
+    assert(!res);
+
+    done();      
+  });
 
   it('99. DROP DATABASE',function(done){
+    alasql.options.modifier = undefined;
     alasql('DROP DATABASE test399');
     done();
   });
