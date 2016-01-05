@@ -216,8 +216,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	table.defaultfns = ss.join(',');
 	table.onupdatefns = uss.join(';');
 
-
-
 //	if(constraints) {
 	constraints.forEach(function(con) {
 		//console.log(con, con.columns);
@@ -297,9 +295,16 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	}
 //			if(table.pk) {
 	table.insert = function(r,orreplace) {
+		var oldinserted = alasql.inserted;
+		alasql.inserted = [r];
+
+
+
 		var table = this;
 
 		var toreplace = false; // For INSERT OR REPLACE
+
+
 /*
 		// IDENTINY or AUTO_INCREMENT
 		// if(table.identities && table.identities.length>0) {
@@ -435,7 +440,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 			}
 		};
-
+		alasql.inserted = oldinserted;
 	};
 
 	table.delete = function(index) {

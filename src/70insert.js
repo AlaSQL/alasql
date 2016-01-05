@@ -220,12 +220,17 @@ yy.Insert.prototype.compile = function (databaseid) {
 			};
 			return statement;
 	    } else {
+//			console.log(224,table.defaultfns);
+				var defaultfns = 'return alasql.utils.extend(r,{'+table.defaultfns+'})';
+    	    	var defaultfn = new Function('r,db,params,alasql',defaultfns); 
 			var insertfn = function(db, params, alasql) {
 				var res = selectfn(params).data;
 		        if(db.tables[tableid].insert) {
 		        	// If insert() function exists (issue #92)
 		        	for(var i=0,ilen=res.length;i<ilen;i++) {
-		        		db.tables[tableid].insert(res[i],self.orreplace);
+		        		var r = cloneDeep(res[i]);
+		        		defaultfn(r,db,params,alasql);
+		        		db.tables[tableid].insert(r,self.orreplace);
 		        	}
 		        } else {
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);

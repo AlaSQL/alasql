@@ -138,7 +138,7 @@ DATABASE(S)?									return 'DATABASE'
 'INNER'                                         return 'INNER'
 'INSTEAD'                                       return 'INSTEAD'
 'INSERT'                                        return 'INSERT'
-/* 'INSERTED'                                      return 'INSERTED' */
+'INSERTED'                                      return 'INSERTED'
 'INTERSECT'                                     return 'INTERSECT'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
@@ -849,6 +849,9 @@ FromTable
 		{ $$ = $1; $1.as = $2; }
 	| FuncValue AS Literal
 		{ $$ = $1; $1.as = $3; }
+
+	| INSERTED
+		{ $$ = {inserted:true}; $1.as = 'default'; }
 
 	| VarValue
 		{ $$ = $1; $1.as = 'default'; }
