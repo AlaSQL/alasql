@@ -135,6 +135,7 @@ DATABASE(S)?									return 'DATABASE'
 'IS'											return 'IS'
 'IN'											return 'IN'
 'INDEX'											return 'INDEX'
+'INDEXED'										return 'INDEXED'
 'INNER'                                         return 'INNER'
 'INSTEAD'                                       return 'INSTEAD'
 'INSERT'                                        return 'INSERT'
@@ -835,7 +836,8 @@ FromTable
 		{ $$ = $1; $1.as = $3 }
 	| Table 
 		{ $$ = $1; }
-
+	| Table NOT INDEXED
+		{ $$ = $1; }
 	| ParamValue Literal 
 		{ $$ = $1; $1.as = $2; }
 	| ParamValue AS Literal 
