@@ -188,6 +188,7 @@ DATABASE(S)?									return 'DATABASE'
 'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
 'REGEXP'		                                return 'REGEXP'
+'REINDEX'		                                return 'REINDEX'
 'RELATIVE'                                      return 'RELATIVE'
 'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
@@ -385,6 +386,7 @@ Statement
 	| If
 	| Insert
 	| Merge
+	| Reindex	
 	| RenameTable
 	| Select
 	| ShowCreateTable
@@ -434,7 +436,6 @@ Statement
 	| CloseCursor
 
 	| SavePoint
-	| Reindex
 	| StoreDatabase
 	| StoreTable
 	| RestoreDatabase
@@ -2901,4 +2902,9 @@ InsertDeleteUpdate
 DropTrigger
 	: DROP TRIGGER Literal
 		{ $$ = new yy.DropTrigger({trigger:$3}); }
+	;
+
+Reindex
+	: REINDEX Literal 
+		{ $$ = new yy.Reindex({indexid:$2});}
 	;

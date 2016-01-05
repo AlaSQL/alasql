@@ -11,19 +11,20 @@
 * Added: PIVOT and UNPIVOT functionality
 * Added: REPLACE INTO command (see issue #467)
 * Added: ON UPDATE - column constraint
-* Fixed: COLLATE and UNIQUE KEY words for CREATE TABLE (see issue #452)
-* Fixed: Added params to SEARCH WHERE function
+* Fix: COLLATE and UNIQUE KEY words for CREATE TABLE (see issue #452)
+* Fix: Added params to SEARCH WHERE function
 * Added: TRIGGERs
-* Fixed: Bug with MATRIX modifier
-* Fixed: Bug with undefined content variable with IN operation (issue #501)
-* Fixed: Bug with wrong realizaion of REPLACE INTO (issue #505)
+* Fix: Bug with MATRIX modifier
+* Fix: Bug with undefined content variable with IN operation (issue #501)
+* Fix: Bug with wrong realizaion of REPLACE INTO (issue #505)
 * Added: >>,<<,&,| - binary operations
 * Added: || - string concatenation (issue #514)
 * Added: GLOB operator
-* Fixed: >> for binary operation and graphs collisions
+* Fix: >> for binary operation and graphs collisions
 * Added: SELECT * FROM INSERTED (for T-SQL like triggers)
-* Fixed: Added DEFAULT clause to INSERT SELECT statement
+* Fix: Added DEFAULT clause to INSERT SELECT statement
 * Added: expression NOT NULL operator (issue #507)
+* Added and Fix: REINDEX and fixed CREATE INDEX (issues #509, #470)
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag
