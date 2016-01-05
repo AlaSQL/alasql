@@ -23,6 +23,7 @@
 * Fixed: >> for binary operation and graphs collisions
 * Added: SELECT * FROM INSERTED (for T-SQL like triggers)
 * Fixed: Added DEFAULT clause to INSERT SELECT statement
+* Added: expression NOT NULL operator (issue #507)
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

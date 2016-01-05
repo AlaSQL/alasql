@@ -1604,6 +1604,17 @@ Op
 		}
 	| Expression IS Expression
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
+	| Expression NOT NULL
+		{ 
+			$$ = new yy.Op({
+				op:'IS', 
+				left:$1, 
+				right: new yy.UniOp({
+					op:'NOT',
+					right:new yy.NullValue({value:undefined}) 
+				})
+			}); 
+		}
 	| Expression DOUBLECOLON ColumnType
 		{ $$ = new yy.Convert({expression:$1}) ; yy.extend($$,$3) ; }
 	;
