@@ -266,7 +266,7 @@ yy.Op.prototype.toType = function(tableid) {
 		}
 	}
 	
-	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'REGEXP'].indexOf(this.op) >-1 ){
+	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'REGEXP', 'GLOB'].indexOf(this.op) >-1 ){
 		return 'boolean';
 	}
 
@@ -410,6 +410,13 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 	if(this.op === 'REGEXP') {
 		return 'alasql.stdfn.REGEXP_LIKE(' 
+			+ leftJS()
+			+ ','
+			+ rightJS()
+			+ ')';
+	}
+	if(this.op === 'GLOB') {
+		return 'alasql.utils.glob(' 
 			+ leftJS()
 			+ ','
 			+ rightJS()

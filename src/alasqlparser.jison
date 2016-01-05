@@ -123,6 +123,7 @@ DATABASE(S)?									return 'DATABASE'
 'FOR'											return 'FOR'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
+'GLOB'                                     		return 'GLOB'
 'GO'                                      		return 'GO'
 'GRAPH'                                      	return 'GRAPH'
 'GROUP'                                      	return 'GROUP'
@@ -304,7 +305,7 @@ VALUE(S)?                                      	return 'VALUE'
 %left NOT
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IS
-%left LIKE NOT_LIKE REGEXP
+%left LIKE NOT_LIKE REGEXP GLOB
 %left GTGT LTLT AMPERSAND BAR
 %left PLUS MINUS
 %left STAR SLASH MODULO
@@ -1404,6 +1405,8 @@ ElseClause
 Op
 	: Expression REGEXP Expression
 		{ $$ = new yy.Op({left:$1, op:'REGEXP', right:$3}); }
+	| Expression GLOB Expression
+		{ $$ = new yy.Op({left:$1, op:'GLOB', right:$3}); }
 	| Expression LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
 	| Expression LIKE Expression ESCAPE Expression
