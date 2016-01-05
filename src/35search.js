@@ -985,13 +985,13 @@ alasql.srch.OUT = function(val ) {
 };
 
 alasql.srch.OUTOUT = function(val ) {
-	console.log(988,val);
 	if(val.$out && val.$out.length > 0) {
 		var res = [];
 		val.$out.forEach(function(v){ 
-			if(alasql.databases[alasql.useid].objects[v].$out) {
-				alasql.databases[alasql.useid].objects[v].$out.forEach(function(vv){
-					res = res.concat(vv.$out);
+			var av = alasql.databases[alasql.useid].objects[v];
+			if(av && av.$out && av.$out.length > 0) {
+				av.$out.forEach(function(vv){
+					res = res.concat(alasql.databases[alasql.useid].objects[vv]);
 				});
 			}
 		}); 
@@ -1013,6 +1013,25 @@ alasql.srch.IN = function(val) {
 		return {status: -1, values: []};
 	}
 };
+
+
+alasql.srch.ININ = function(val ) {
+	if(val.$in && val.$in.length > 0) {
+		var res = [];
+		val.$in.forEach(function(v){ 
+			var av = alasql.databases[alasql.useid].objects[v];
+			if(av && av.$in && av.$in.length > 0) {
+				av.$in.forEach(function(vv){
+					res = res.concat(alasql.databases[alasql.useid].objects[vv]);
+				});
+			}
+		}); 
+		return {status: 1, values: res};
+	} else {
+		return {status: -1, values: []};
+	}
+};
+
 
 // Transform expression
 alasql.srch.AS = function(val,args) {

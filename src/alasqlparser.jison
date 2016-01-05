@@ -2713,6 +2713,7 @@ GraphList
 	| GraphVertexEdge
 		{ $$ = [$1]; }
 	;
+
 GraphVertexEdge
 	: GraphElement Json? GraphAsClause? 
 		{ 
@@ -2720,19 +2721,29 @@ GraphVertexEdge
 			if($2) $$.json = new yy.Json({value:$2});
 			if($3) $$.as = $3;
 		}
-	| (GraphElement|GraphVar) GTGT (GraphElement|GraphVar) 
-		{ 
-			$$ = {source:$1, target: $3};
-		}
-	| (GraphElement|GraphVar) GT GraphElement Json? GraphAsClause? GT (GraphElement|GraphVar) 
+	| GraphElementVar GT GraphElement Json? GraphAsClause? GT GraphElementVar 
 		{ 
 			$$ = {source:$1, target: $7};
 			if($4) $$.json = new yy.Json({value:$4});
 			if($5) $$.as = $5;
 			yy.extend($$,$3);
-			;
+		}
+	| GraphElementVar GT Json GraphAsClause? GT GraphElementVar 
+		{ 
+			$$ = {source:$1, target: $6};
+			if($4) $$.json = new yy.Json({value:$3});
+			if($5) $$.as = $4;
+		}
+	| GraphElementVar GTGT GraphElementVar 
+		{ 
+			$$ = {source:$1, target: $3};
 		}
 	| Literal LPAR GraphList RPAR
+	;
+
+GraphElementVar
+	: GraphElement { $$ = $1; }
+	| GraphVar { $$ = $1; }
 	;
 
 GraphVar
@@ -2750,13 +2761,37 @@ GraphAtClause
 		{ $$ = $2; }
 	;
 
-GraphElement
+GraphElement2
 	:  Literal? SharpLiteral? STRING? ColonLiteral? 
 		{ 
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
 		}
 	;
+
+GraphElement
+	:  Literal SharpLiteral? STRING? ColonLiteral? 
+		{ 
+			var s3 = $3;
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
+		}
+	|  SharpLiteral STRING? ColonLiteral? 
+		{ 
+			var s2 = $2;
+			$$ = {sharp:$1, name:(typeof s2 == 'undefined')?undefined:s2.substr(1,s2.length-2), class:$3}; 
+		}
+	|  STRING ColonLiteral? 
+		{ 
+			var s1 = $1;
+			$$ = {name:(typeof s1 == 'undefined')?undefined:s1.substr(1,s1.length-2), class:$2}; 
+		}
+	|  ColonLiteral
+		{ 
+			$$ = {class:$1}; 
+		}
+	;
+
+
 
 ColonLiteral
 	: COLON Literal
