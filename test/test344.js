@@ -7,6 +7,9 @@ if(typeof exports === 'object') {
 
 
 describe('Test 344 Multisheet export', function() {
+
+if(typeof exports === 'object') {
+
   it('1. CREATE DATABASE',function(done){
     alasql('CREATE DATABASE test344;USE test344');
     done();
@@ -53,4 +56,5 @@ describe('Test 344 Multisheet export', function() {
     done();
   });
 
+};
 });

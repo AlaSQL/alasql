@@ -35,10 +35,11 @@ describe('Test 390 Export nested array to XLSX', function() {
            {c:'test5', d: 'test6'}]
       }
     ];
+if(typeof exports === 'object') {
 
     var res = alasql('SEARCH / AS @p b / CLONEDEEP() SET(a=@p->a) INTO XLSX("restest390a.xlsx",{headers:true}) FROM ?',[data])
     assert(res==1);
-
+}
 		done();
 	});
 
