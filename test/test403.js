@@ -18,8 +18,8 @@ describe('Test 403 REINDEX', function() {
 
 	it('2. Create table and index before insert', function(done){
     alasql('CREATE TABLE one (a INT)');
-    alasql('INSERT INTO one (a) VALUES (100), (200), (300)');
     alasql('CREATE INDEX xone ON one (a)')
+    alasql('INSERT INTO one (a) VALUES (100), (200), (300)');
     done();
   });
 
@@ -32,6 +32,8 @@ describe('Test 403 REINDEX', function() {
 
   it('4. REINDEX', function(done){
     var res = alasql('REINDEX xone');
+    assert(res==1);
+    var res = alasql('REINDEX xtwo');
     assert(res==1);
     done();
   });
