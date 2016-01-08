@@ -17,6 +17,7 @@ describe('Test 158 - INSERT/DELETE/UPDATE in IndexedDB', function() {
 			drop table if exists cities; \
 			create table cities (city string)",[], function(res) {
 			res[0] = 1;
+			res[3] = 1;
 			assert.deepEqual(res, [1,1,1,1,1]);
 //				console.log(20);
 			alasql("insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')",[],function(res){
