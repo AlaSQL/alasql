@@ -51,7 +51,7 @@ describe('Test 358 DROP TABLE for nultiple tables', function() {
       DROP TABLE IF EXISTS users, hobbies, users_hobbies;
   */});
 
-    assert.deepEqual(res,1);
+    assert.deepEqual(res,3);
     assert.deepEqual(alasql.databases.test358.tables,{})
 
     done();

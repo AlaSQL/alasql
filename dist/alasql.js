@@ -4210,25 +4210,26 @@ alasql.compile = function(sql, databaseid) {
 
 if(typeof exports === 'object') {
 	var Promise = require('es6-promise').Promise;
-} 
+} else if(typeof window === 'object') {
+	var Promise = window.Promise;
+}
 
 //
 // Only for browsers with Promise support
 //
-
-if(typeof Promise === 'function') {
-	alasql.promise = function(sql, params) {
-	    return new Promise(function(resolve, reject){
-	        alasql(sql, params, function(data,err) {
-	             if(err) {
-	                 reject(err);
-	             } else {
-	                 resolve(data);
-	             }
-	        });
-	    });
-	};	
-}
+//if(typeof window !== 'undefined' && typeof window.Promise === 'function') {
+alasql.promise = function(sql, params) {
+    return new Promise(function(resolve, reject){
+        alasql(sql, params, function(data,err) {
+             if(err) {
+                 reject(err);
+             } else {
+                 resolve(data);
+             }
+        });
+    });
+};	
+//}
 
 /*
 //
@@ -11000,6 +11001,7 @@ yy.DropTable.prototype.toString = function() {
 yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var ifexists = this.ifexists;
 	var res = 0; // No tables removed
+	var tlen = this.tables.length;
 
 	// For each table in the list
 	this.tables.forEach(function(table){
@@ -11016,15 +11018,23 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 				}
 			} else {
 				if(db.engineid /*&& alasql.options.autocommit*/) {
-					res += alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists/*, cb*/);
+					alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists, function(res1){
+						delete db.tables[tableid];
+						res+=res1;
+						if(res == tlen && cb) cb(res);	
+					});
+				} else {
+					delete db.tables[tableid];
+					res++;
+					if(res == tlen && cb) cb(res);						
 				}
-				delete db.tables[tableid];
-				res++;
 			}
+		} else {
+			res++;
+			if(res == tlen && cb) cb(res);									
 		}
-
 	});
-	if(cb) res = cb(res);
+	// if(cb) res = cb(res);
 	return res;
 };
 
@@ -15523,7 +15533,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 					delete alasql.databases[databaseid].tables[tableid];
 				} else {
 					if(!ifexists) {
-						throw new Error('IndexedDB: Cannot drop table "'+tableid+'" because it is not exist');
+						throw new Error('IndexedDB: Cannot drop table "'+tableid+'" because it does not exist');
 					}
 				}
 
@@ -15534,8 +15544,8 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 				cb(1);
 			};
 			request3.onerror = function(event){
-				throw event;
 
+				throw event;
 			}
 			request3.onblocked = function(event){
 				throw new Error('Cannot drop table "'+tableid+'" because database "'+databaseid+'" is blocked');

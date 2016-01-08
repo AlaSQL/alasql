@@ -29,7 +29,7 @@ describe('Test 394 T-SQL Triggers', function() {
       alasql('INSERT INTO main VALUES (1)');
 
       var res = alasql('SELECT * FROM log');
-      console.log(res);
+      //console.log(res);
       done();      
   });
 

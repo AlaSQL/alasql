@@ -1,3 +1,5 @@
+if(typeof exports !== 'object') {
+
 // Crappy js from http://www.javascripter.net/faq/browsern.htm
 // please replace with a better version if you find it. 
 
@@ -76,3 +78,4 @@ document.write(''
 )
 
 */
+}

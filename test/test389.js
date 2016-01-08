@@ -33,7 +33,7 @@ describe('Test 389 Autoincrement for localStorage', function() {
     alasql('INSERT INTO test.one (b) VALUES ("three"), ("four")');
     alasql('COMMIT TRANSACTION');
     var res = alasql('SELECT * FROM test.one');
-    console.log(res);
+    //console.log(res);
 		done();
 	});
 

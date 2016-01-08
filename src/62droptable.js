@@ -31,6 +31,7 @@ yy.DropTable.prototype.toString = function() {
 yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var ifexists = this.ifexists;
 	var res = 0; // No tables removed
+	var tlen = this.tables.length;
 
 	// For each table in the list
 	this.tables.forEach(function(table){
@@ -47,15 +48,23 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 				}
 			} else {
 				if(db.engineid /*&& alasql.options.autocommit*/) {
-					res += alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists/*, cb*/);
+					alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists, function(res1){
+						delete db.tables[tableid];
+						res+=res1;
+						if(res == tlen && cb) cb(res);	
+					});
+				} else {
+					delete db.tables[tableid];
+					res++;
+					if(res == tlen && cb) cb(res);						
 				}
-				delete db.tables[tableid];
-				res++;
 			}
+		} else {
+			res++;
+			if(res == tlen && cb) cb(res);									
 		}
-
 	});
-	if(cb) res = cb(res);
+	// if(cb) res = cb(res);
 	return res;
 };
 

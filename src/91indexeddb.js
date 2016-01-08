@@ -287,20 +287,20 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 					delete alasql.databases[databaseid].tables[tableid];
 				} else {
 					if(!ifexists) {
-						throw new Error('IndexedDB: Cannot drop table "'+tableid+'" because it is not exist');
+						throw new Error('IndexedDB: Cannot drop table "'+tableid+'" because it does not exist');
 					}
 				}
 //				var store = ixdb.createObjectStore(tableid);
 				// console.log('deleted');
 			};
 			request3.onsuccess = function(event) {
-				// console.log('opened');
+//				 console.log('opened',typeof cb);
 				event.target.result.close();
 				cb(1);
 			};
 			request3.onerror = function(event){
+//				console.log('error',event);
 				throw event;
-//				console.log('error');
 			}
 			request3.onblocked = function(event){
 				throw new Error('Cannot drop table "'+tableid+'" because database "'+databaseid+'" is blocked');

@@ -53,7 +53,7 @@ var data2 = [
 
   it('3. SELECTs', function(done){
     var res = alasql('SELECT * FROM t1 UNION SELECT * FROM t2');
-    console.log(res);
+    //console.log(res);
 		done();
 	});
 
