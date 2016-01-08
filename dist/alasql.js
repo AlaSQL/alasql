@@ -11001,6 +11001,7 @@ yy.DropTable.prototype.toString = function() {
 yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var ifexists = this.ifexists;
 	var res = 0; // No tables removed
+	var count = 0;
 	var tlen = this.tables.length;
 
 	// For each table in the list
@@ -11021,17 +11022,19 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 					alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists, function(res1){
 						delete db.tables[tableid];
 						res+=res1;
-						if(res == tlen && cb) cb(res);	
+						count++;
+						if(count == tlen && cb) cb(res);	
 					});
 				} else {
 					delete db.tables[tableid];
 					res++;
-					if(res == tlen && cb) cb(res);						
+					count++;
+					if(count == tlen && cb) cb(res);	
 				}
 			}
 		} else {
-			res++;
-			if(res == tlen && cb) cb(res);									
+			count++;
+			if(count == tlen && cb) cb(res);	
 		}
 	});
 	// if(cb) res = cb(res);
@@ -11048,7 +11051,6 @@ yy.TruncateTable.prototype.toString = function() {
 yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
-
 	if(db.engineid) {
 		return alasql.engines[db.engineid].truncateTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
 	}
@@ -12551,8 +12553,6 @@ yy.CreateDatabase.prototype.toString = function() {
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
-
-	// console.trace();
 	var args;
 	if(this.args && this.args.length > 0) {
 		args = this.args.map(function(arg){
@@ -12593,8 +12593,6 @@ yy.AttachDatabase.prototype.toString = function() {
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
-
-	// console.trace();
 	if(!alasql.engines[this.engineid]) {
 		throw new Error('Engine "'+this.engineid+'" is not defined.');
 	};
@@ -12611,9 +12609,6 @@ yy.DetachDatabase.prototype.toString = function() {
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
-
-	// console.trace();
-
 	if(!alasql.databases[this.databaseid].engineid) {
 		throw new Error('Cannot detach database "'+this.engineid+'", because it was not attached.');
 	};
@@ -12683,7 +12678,6 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 	if(dbid == alasql.DEFAULTDATABASEID) {
 		throw new Error("Drop of default database is prohibited");			
 	}
-
 	if(!alasql.databases[dbid]) {
 		if(!this.ifexists) {
 			throw new Error("Database '"+dbid+"' does not exist");	
@@ -15337,7 +15331,7 @@ console.log(arguments);
 		var request2 = window.indexedDB.open(ixdbid,1);
 		request2.onsuccess = function(event) {
 			event.target.result.close();
-			cb(1);
+			if(cb) cb(1);
 		};
 	} else {
 		var request1 = window.indexedDB.open(ixdbid,1);
@@ -15348,7 +15342,7 @@ console.log(arguments);
 		request1.onsuccess = function(e) {
 			console.log('success');
 			if(ifnotexists) {
-				cb(0);
+				if(cb) cb(0);
 			} else {
 				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');				
 			}
@@ -15374,9 +15368,9 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 
 				event.target.result.close();
 				if(dbExists) {
-					cb(0);
+					if(cb) cb(0);
 				} else {
-					cb(1);
+					if(cb) cb(1);
 				}
 			};
 		} else {
@@ -15386,7 +15380,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 			    e.target.transaction.abort();
 			};
 			request1.onabort = function(event) {
-				cb(1);
+				if(cb) cb(1);
 			};
 			request1.onsuccess = function(event) {
 				event.target.result.close();
@@ -15402,7 +15396,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 			var dblist = event.target.result;
 			if(dblist.contains(ixdbid)){
 				if(ifnotexists) {
-					cb(0);
+					if(cb) cb(0);
 					return;
 				} else {		
 					throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
@@ -15412,7 +15406,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 			var request2 = window.indexedDB.open(ixdbid,1);
 			request2.onsuccess = function(event) {
 				event.target.result.close();
-				cb(1);
+				if(cb) cb(1);
 			};
 		};		
 	}
@@ -15425,7 +15419,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			if(ifexists) {
-				cb(0);
+				if(cb) cb(0);
 				return;
 			} else {
 				throw new Error('IndexedDB: Cannot drop new database "'+ixdbid+'" because it does not exist');
@@ -15458,8 +15452,8 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 				db.tables[tblist[i]] = {};
 			};
 
-			event.target.result.close();		
-			cb(1);
+			event.target.result.close();	
+			if(cb) cb(1);
 		};
 	};
 };
@@ -15493,7 +15487,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 			request3.onsuccess = function(event) {
 
 				event.target.result.close();
-				cb(1);
+				if(cb) cb(1);
 			};
 			request3.onerror = function(event){
 				throw event;
@@ -15541,7 +15535,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 			request3.onsuccess = function(event) {
 
 				event.target.result.close();
-				cb(1);
+				if(cb) cb(1);
 			};
 			request3.onerror = function(event){
 
@@ -15572,7 +15566,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 		tx.oncomplete = function() {
 			ixdb.close();
 
-			cb(ilen);
+			if(cb) cb(ilen);
 		}
 	};
 
@@ -15607,7 +15601,7 @@ IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 		  	} else {
 
 		  		ixdb.close();
-		  		cb(res, idx, query);
+		  		if(cb) cb(res, idx, query);
 		  	}
 	  	}
 	}		
@@ -15647,7 +15641,7 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 		  	} else {
 
 		  		ixdb.close();
-		  		cb(num);
+		  		if(cb) cb(num);
 		  	}
 	  	}
 	}		
@@ -15690,7 +15684,7 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 		  	} else {
 
 		  		ixdb.close();
-		  		cb(num);
+		  		if(cb) cb(num);
 		  	}
 	  	}
 	}		
