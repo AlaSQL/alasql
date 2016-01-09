@@ -38,6 +38,7 @@ X(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
 '|'												return 'BAR'
 /* '&&'											return 'AMPERSANDAMPERSAND' */
 
+VALUE\s+OF\s+SEARCH                          	yytext = 'VALUE';return 'SEARCH'
 VALUE\s+OF\s+SELECT                          	yytext = 'VALUE';return 'SELECT'
 ROW\s+OF\s+SELECT                           	yytext = 'ROW';return 'SELECT'
 COLUMN\s+OF\s+SELECT                          	yytext = 'COLUMN';return 'SELECT'
@@ -574,6 +575,8 @@ SearchSelector
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
 	| WHERE LPAR Expression RPAR
 		{ $$ = {srchid:"WHERE", args:[$3]}; }	
+	| OF LPAR Expression RPAR
+		{ $$ = {selid:"OF", args:[$3]}; }	
 	| CLASS LPAR Literal RPAR
 		{ $$ = {srchid:"CLASS", args:[$3]}; }	
 	| NUMBER
