@@ -8,7 +8,7 @@ if(typeof exports === 'object') {
 
 describe('Test 000', function() {
 	
-	if(window) return; // Include this if testing something not ment for the browser.
+//	if(window) return; // Include this if testing something not ment for the browser.
 
 	it('Multiple statements', function(done){
 		var res = [];
