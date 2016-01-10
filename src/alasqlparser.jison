@@ -145,6 +145,7 @@ DATABASE(S)?									return 'DATABASE'
 'INSERT'                                        return 'INSERT'
 'INSERTED'                                      return 'INSERTED'
 'INTERSECT'                                     return 'INTERSECT'
+'INTERVAL'                                      return 'INTERVAL'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
@@ -1328,6 +1329,8 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
 	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
+	| INTERVAL Expression Literal
+		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;
 
 ExprList

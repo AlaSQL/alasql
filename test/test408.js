@@ -77,6 +77,17 @@ SELECT 'millisecond',DATEADD(millisecond,1,@datetime2)
   });
 
 
+  it('4. DATE_ADD() MySQL-style', function(done){
+    var res1 = alasql("= DATE_SUB('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
+    var res2 = alasql("= DATE_ADD('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
+    assert(res1.getDate()==9);
+    assert(res2.getDate()==17);
+//    assert.deepEqual(res,[ { Duration: 1 } ]);
+    done();
+  });
+
+
+
   it('99. DROP DATABASE',function(done){
     alasql.options.modifier = undefined;
     alasql('DROP DATABASE test408');

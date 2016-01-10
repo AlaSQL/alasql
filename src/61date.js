@@ -114,7 +114,8 @@ var PERIODS = {
   'hour': 1000*3600,
   'minute': 1000*60,
   'second': 1000,
-  'millisecond': 1
+  'millisecond': 1,
+  'microsecond': 0.001
 };
 
 alasql.stdfn.DATEDIFF = function(period, d1, d2) {
@@ -124,6 +125,20 @@ alasql.stdfn.DATEDIFF = function(period, d1, d2) {
 
 alasql.stdfn.DATEADD = function(period, interval, d) {
   var nd = (new Date(d)).getTime() + interval*PERIODS[period.toLowerCase()];
+  return new Date(nd);
+};
+
+alasql.stdfn.INTERVAL = function(interval, period) {
+  return interval*PERIODS[period.toLowerCase()];
+};
+
+alasql.stdfn.DATE_ADD = alasql.stdfn.ADDDATE = function(d, interval) {
+  var nd = (new Date(d)).getTime() + interval;
+  return new Date(nd);
+};
+
+alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function(d,interval) {
+  var nd = (new Date(d)).getTime() - interval;
   return new Date(nd);
 };
 
