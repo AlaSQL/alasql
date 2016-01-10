@@ -26,6 +26,8 @@
 * Added: expression NOT NULL operator (issue #507)
 * Added and Fix: REINDEX and fixed CREATE INDEX (issues #509, #470)
 * Fixed: browser tests, IndexedDB tests, DROP TABLE callback for external engines
+* Added: DATETIME2 type for compatibility with T-SQL
+* Added: DATEADD() and DATEDIFF() functions in T-SQL style
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

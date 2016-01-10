@@ -98,6 +98,8 @@ COLUMNS 										return 'COLUMN'
 "CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
 "CURSOR"										return 'CURSOR'
 DATABASE(S)?									return 'DATABASE'
+'DATEADD'                                       return 'DATEADD'
+'DATEDIFF'                                      return 'DATEDIFF'
 'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
@@ -1318,6 +1320,14 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| IF LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
+	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
+	| DATEADD LPAR STRING COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
+	| DATEDIFF LPAR Literal COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
+	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
 	;
 
 ExprList
