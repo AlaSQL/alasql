@@ -209,7 +209,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			// todo: confirm that no default action must be implemented
 
 
-			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
+//			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
 
 
 						var coldef = {
