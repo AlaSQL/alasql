@@ -13793,7 +13793,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			if(typeof column.width == 'number') column.width = column.width + "px";
 			if(typeof column.columnid == 'undefined') column.columnid = columnidx;
 			if(typeof column.title == 'undefined') column.title = ""+column.columnid.trim();
-			if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[idx];
+			if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[columnidx];
 		});
 
 		// Set columns widths
