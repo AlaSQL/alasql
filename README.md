@@ -7,8 +7,11 @@
 ![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release) 
 ![NPM version](https://img.shields.io/npm/l/alasql.svg?123) 
 
-_Got questions? [Tag a Stack Overflow question](http://stackoverflow.com/questions/ask?tags=AlaSQL) with `alasql`._
-_Input to improvement? [Open an issue](https://github.com/agershun/alasql/issues/new)._ 
+
+_Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) and tag with "alasql"._
+
+_Like it? Give us a github star, spread the word, send a tweet._ 
+
 
 # AlaSQL
 
@@ -145,7 +148,7 @@ The project has never received any funding and is based on unpaid voluntary work
 
 AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production.  
 
-
+Please chekout the [limitations of the library](https://github.com/agershun/alasql#limitations)
 
 
 ## Peformance
@@ -522,6 +525,23 @@ Take charge and [add your idea](http://feathub.com/agershun/alasql/features/new)
 
 
 
+## Limitations
+
+Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alasql/labels/Bug). Besides the bugs there are a number of limitations
+
+0. AlaSQL has a (long) list of keywords that must be escaped if used for column names. When selecting a field named `key` please write ``` SELECT `key` FROM ... ``` instead. This is also the case for words like ``` `value` ```, ``` `read` ```, ``` `count` ```, ``` `by` ```, ``` `top` ```, ``` `path` ```, ``` `deleted` ```, ``` `work` ``` and ``` `offset` ```. Please consult the [full list of keywords](https://github.com/agershun/alasql/wiki/AlaSQL-Keywords).
+
+
+0. It is Ok with select for 1000000 records or to join two tables by 10000 records in each (You can use streamming functions to work with longer datasources - see [test/test143.js](test/test143.js)) but be aware that the workload is multiplied so selecting from more than 8 tables with just 100 rows in each will show bad performance. This is one of our top priorities to make better. 
+
+0. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because AlaSQL started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in future version.
+
+0. A `(FULL) OUTER JOIN` on more than 2 tables will not give the expected results
+
+Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
+  
+
+
 
 
 ## Tests
@@ -554,17 +574,6 @@ AlaSQL uses SQLLOGICTEST to test it compatibility with SQL-99. The tests include
 
 The testruns can be found in the [testlog](TESTLOG.md).
 
-
-## Limitations
-
-Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alasql/labels/Bug). Besides the bugs there are a number of limitations
-
-0. It is Ok with select for 1000000 records or to join two tables by 10000 records in each (You can use streamming functions to work with longer datasources - see [test/test143.js](test/test143.js)) but be aware that the workload is multiplied so selecting from more than 8 tables with just 100 rows in each will show bad performance. This is one of our top priorities to make better. 
-0. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because AlaSQL started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in future version.
-0. A `(FULL) OUTER JOIN` on more than 2 tables will not give the expected results
-
-Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
-  
 
 
 ### FileSaver
