@@ -1,6 +1,6 @@
 # SQLlogictest results for AlaSQL 0.2.2-pre-develop+160105.205858
 
-_2016-01-08T23:36:42.911Z_
+_2016-01-10T03:40:02.560Z_
 
 This is a subset of the total 622 tests.
 Results from 620 test files:
@@ -25,13 +25,13 @@ Cannot insert record, because it already exists in primary key index
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 216 tests as sqlite
+#### ☓ Ran 216 tests as _sqlite_
 
 * 148 skipped
 * 19 failed
 * 22% was OK
 
-Time: 179.792ms
+Time: 188.037ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 2/620 [`./test/evidence/in2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/in2.test)
@@ -44,12 +44,12 @@ SELECT 1 FROM t1 WHERE 1 IN (SELECT 1,2)
 Expected to get an error but did not
 ```
 
-#### ☓ Ran 53 tests as sqlite
+#### ☓ Ran 53 tests as _sqlite_
 
 * 4 failed
 * 92% was OK
 
-Time: 110.460ms
+Time: 109.545ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 3/620 [`./test/evidence/slt_lang_aggfunc.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_aggfunc.test)
@@ -104,12 +104,12 @@ SELECT sum(x) FROM t1 WHERE y='null'
 Expected: ["NULL"] but got ["0"]
 ```
 
-#### ☓ Ran 80 tests as sqlite
+#### ☓ Ran 80 tests as _sqlite_
 
 * 37 failed
 * 53% was OK
 
-Time: 159.527ms
+Time: 154.008ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 4/620 [`./test/evidence/slt_lang_createtrigger.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_createtrigger.test)
@@ -131,13 +131,13 @@ Cannot read property 'beforeinsert' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 26 tests as sqlite
+#### ☓ Ran 26 tests as _sqlite_
 
 * 9 skipped
 * 2 failed
 * 57% was OK
 
-Time: 67.301ms
+Time: 35.048ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 5/620 [`./test/evidence/slt_lang_createview.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_createview.test)
@@ -157,12 +157,12 @@ DELETE FROM view1 WHERE x>0
 Expected to get an error but did not
 ```
 
-#### ☓ Ran 23 tests as sqlite
+#### ☓ Ran 23 tests as _sqlite_
 
 * 8 failed
 * 65% was OK
 
-Time: 35.079ms
+Time: 36.993ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 6/620 [`./test/evidence/slt_lang_dropindex.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_dropindex.test)
@@ -175,12 +175,12 @@ DROP INDEX t1i1;
 Expected to get an error but did not
 ```
 
-#### ☓ Ran 8 tests as sqlite
+#### ☓ Ran 8 tests as _sqlite_
 
 * 2 failed
 * 75% was OK
 
-Time: 11.065ms
+Time: 11.594ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 7/620 [`./test/evidence/slt_lang_droptable.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_droptable.test)
@@ -193,12 +193,12 @@ DROP INDEX t1i1;
 Expected to get an error but did not
 ```
 
-#### ☓ Ran 12 tests as sqlite
+#### ☓ Ran 12 tests as _sqlite_
 
 * 1 failed
 * 91% was OK
 
-Time: 12.523ms
+Time: 16.492ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 8/620 [`./test/evidence/slt_lang_droptrigger.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_droptrigger.test)
@@ -213,13 +213,13 @@ Cannot read property 'beforeinsert' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 12 tests as sqlite
+#### ☓ Ran 12 tests as _sqlite_
 
 * 5 skipped
 * 1 failed
 * 50% was OK
 
-Time: 11.702ms
+Time: 13.322ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 9/620 [`./test/evidence/slt_lang_dropview.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_dropview.test)
@@ -232,26 +232,26 @@ SELECT x FROM view2
 Expected: ["0"] but got ["NULL"]
 ```
 
-#### ☓ Ran 13 tests as sqlite
+#### ☓ Ran 13 tests as _sqlite_
 
 * 1 failed
 * 92% was OK
 
-Time: 30.316ms
+Time: 44.738ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 10/620 [`./test/evidence/slt_lang_reindex.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_reindex.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 7 tests still passes as _sqlite_
 
-Time: 0.345ms
+Time: 1.057ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 11/620 [`./test/evidence/slt_lang_replace.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_replace.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 14 tests still passes as _sqlite_
 
-Time: 0.282ms
+Time: 0.496ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 12/620 [`./test/evidence/slt_lang_update.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/evidence/slt_lang_update.test)
@@ -264,12 +264,12 @@ UPDATE t1 SET z='foo'
 Expected to get an error but did not
 ```
 
-#### ☓ Ran 27 tests as sqlite
+#### ☓ Ran 27 tests as _sqlite_
 
 * 2 failed
 * 92% was OK
 
-Time: 51.035ms
+Time: 48.534ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 13/620 [`./test/index/between/1/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/1/slt_good_0.test)
@@ -282,19 +282,19 @@ SELECT pk FROM tab0 WHERE ((col0 IN (SELECT col3 FROM tab0 WHERE (((col0 > 9 OR 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,022 tests as sqlite
+#### ☓ Ran 10,022 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 66721.970ms
+Time: 92702.667ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 14/620 [`./test/index/between/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,033 tests still passes as _sqlite_
 
-Time: 0.252ms
+Time: 0.429ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 15/620 [`./test/index/between/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_1.test)
@@ -307,12 +307,12 @@ SELECT pk FROM tab0 WHERE col4 < 28.47 AND col1 IN (SELECT col4 FROM tab0 WHERE 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,029 tests as sqlite
+#### ☓ Ran 10,029 tests as _sqlite_
 
 * 40 failed
 * 99% was OK
 
-Time: 63865.179ms
+Time: 68290.955ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 16/620 [`./test/index/between/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_2.test)
@@ -325,26 +325,26 @@ SELECT pk FROM tab0 WHERE (col3 < 32) AND ((((col3 <= 73 AND col0 < 84 OR col0 >
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 40 failed
 * 99% was OK
 
-Time: 69098.011ms
+Time: 67443.620ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 17/620 [`./test/index/between/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.339ms
+Time: 0.433ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 18/620 [`./test/index/between/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_4.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.234ms
+Time: 0.313ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 19/620 [`./test/index/between/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/10/slt_good_5.test)
@@ -357,19 +357,19 @@ SELECT pk FROM tab0 WHERE ((col3 < 49 AND (col4 >= 2.37 AND col3 <= 34 OR (col0 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,031 tests as sqlite
+#### ☓ Ran 10,031 tests as _sqlite_
 
 * 50 failed
 * 99% was OK
 
-Time: 73723.291ms
+Time: 74732.447ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 20/620 [`./test/index/between/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/100/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,123 tests still passes as _sqlite_
 
-Time: 0.275ms
+Time: 0.382ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 21/620 [`./test/index/between/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/100/slt_good_1.test)
@@ -382,12 +382,12 @@ SELECT pk FROM tab0 WHERE (col0 < 732) OR (col4 IN (SELECT col1 FROM tab0 WHERE 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,125 tests as sqlite
+#### ☓ Ran 10,125 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 79402.687ms
+Time: 193188.801ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 22/620 [`./test/index/between/100/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/100/slt_good_2.test)
@@ -400,12 +400,12 @@ SELECT pk FROM tab0 WHERE (((((((col1 IN (SELECT col4 FROM tab0 WHERE ((col3 <= 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,121 tests as sqlite
+#### ☓ Ran 10,121 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 79725.040ms
+Time: 193713.625ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 23/620 [`./test/index/between/100/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/100/slt_good_3.test)
@@ -418,12 +418,12 @@ SELECT pk FROM tab0 WHERE col4 IN (SELECT col1 FROM tab0 WHERE col3 IN (808,18,8
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,121 tests as sqlite
+#### ☓ Ran 10,121 tests as _sqlite_
 
 * 40 failed
 * 99% was OK
 
-Time: 83722.707ms
+Time: 96793.785ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 24/620 [`./test/index/between/100/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/100/slt_good_4.test)
@@ -436,12 +436,12 @@ SELECT pk FROM tab0 WHERE (col0 IN (SELECT col3 FROM tab0 WHERE col4 IN (SELECT 
 Cannot read property '1' of undefined
 ```
 
-#### ☓ Ran 10,125 tests as sqlite
+#### ☓ Ran 10,125 tests as _sqlite_
 
 * 50 failed
 * 99% was OK
 
-Time: 95652.649ms
+Time: 93585.358ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 25/620 [`./test/index/between/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/between/1000/slt_good_0.test)
@@ -454,12 +454,12 @@ SELECT pk FROM tab0 WHERE col0 > 2377 OR ((col1 > 2834.62)) AND (col0 IS NULL OR
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 3,792 tests as sqlite
+#### ☓ Ran 3,792 tests as _sqlite_
 
 * 11 failed
 * 99% was OK
 
-Time: 127739.690ms
+Time: 112619.205ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 26/620 [`./test/index/commute/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_0.test)
@@ -472,19 +472,19 @@ SELECT pk FROM tab0 WHERE ((((col4 < 26.48))) AND col4 IN (SELECT col1 FROM tab0
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 28171.052ms
+Time: 29382.311ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 27/620 [`./test/index/commute/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,030 tests still passes as _sqlite_
 
-Time: 0.346ms
+Time: 0.360ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 28/620 [`./test/index/commute/10/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_10.test)
@@ -497,26 +497,26 @@ SELECT pk FROM tab0 WHERE col3 >= 18 AND ((col4 > 53.9)) OR col3 IN (SELECT col0
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 4,261 tests as sqlite
+#### ☓ Ran 4,261 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 15048.953ms
+Time: 15029.990ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 29/620 [`./test/index/commute/10/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_11.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.292ms
+Time: 0.425ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 30/620 [`./test/index/commute/10/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_12.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,031 tests still passes as _sqlite_
 
-Time: 0.226ms
+Time: 0.389ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 31/620 [`./test/index/commute/10/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_13.test)
@@ -529,12 +529,12 @@ SELECT pk FROM tab0 WHERE col0 IN (SELECT col3 FROM tab0 WHERE col0 IN (SELECT c
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 30 failed
 * 99% was OK
 
-Time: 38962.241ms
+Time: 40961.264ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 32/620 [`./test/index/commute/10/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_14.test)
@@ -547,12 +547,12 @@ SELECT pk FROM tab0 WHERE col4 IN (SELECT col1 FROM tab0 WHERE ((col3 >= 17 AND 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 37358.042ms
+Time: 38282.880ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 33/620 [`./test/index/commute/10/slt_good_15.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_15.test)
@@ -565,47 +565,47 @@ SELECT pk FROM tab0 WHERE col0 > 15 OR (col3 IN (SELECT col0 FROM tab0 WHERE col
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,030 tests as sqlite
+#### ☓ Ran 10,030 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 39130.576ms
+Time: 38470.814ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 34/620 [`./test/index/commute/10/slt_good_16.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_16.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.391ms
+Time: 0.362ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 35/620 [`./test/index/commute/10/slt_good_17.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_17.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,031 tests still passes as _sqlite_
 
-Time: 0.320ms
+Time: 0.753ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 36/620 [`./test/index/commute/10/slt_good_18.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_18.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,034 tests still passes as _sqlite_
 
-Time: 0.496ms
+Time: 0.455ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 37/620 [`./test/index/commute/10/slt_good_19.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_19.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,031 tests still passes as _sqlite_
 
-Time: 0.312ms
+Time: 0.421ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 38/620 [`./test/index/commute/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,037 tests still passes as _sqlite_
 
-Time: 0.287ms
+Time: 0.430ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 39/620 [`./test/index/commute/10/slt_good_20.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_20.test)
@@ -618,33 +618,33 @@ SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE col3 IN (SELECT c
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 33182.695ms
+Time: 35823.939ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 40/620 [`./test/index/commute/10/slt_good_21.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_21.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,030 tests still passes as _sqlite_
 
-Time: 0.288ms
+Time: 0.511ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 41/620 [`./test/index/commute/10/slt_good_22.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_22.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,033 tests still passes as _sqlite_
 
-Time: 0.252ms
+Time: 0.337ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 42/620 [`./test/index/commute/10/slt_good_23.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_23.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,033 tests still passes as _sqlite_
 
-Time: 0.285ms
+Time: 0.417ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 43/620 [`./test/index/commute/10/slt_good_24.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_24.test)
@@ -657,40 +657,40 @@ SELECT pk FROM tab0 WHERE col1 IN (SELECT col4 FROM tab0 WHERE col0 IS NULL OR c
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,033 tests as sqlite
+#### ☓ Ran 10,033 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 34018.618ms
+Time: 38470.574ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 44/620 [`./test/index/commute/10/slt_good_25.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_25.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,030 tests still passes as _sqlite_
 
-Time: 0.290ms
+Time: 0.449ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 45/620 [`./test/index/commute/10/slt_good_26.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_26.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,031 tests still passes as _sqlite_
 
-Time: 0.208ms
+Time: 0.302ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 46/620 [`./test/index/commute/10/slt_good_27.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_27.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,033 tests still passes as _sqlite_
 
-Time: 0.272ms
+Time: 0.394ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 47/620 [`./test/index/commute/10/slt_good_28.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_28.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,033 tests still passes as _sqlite_
 
-Time: 0.260ms
+Time: 0.423ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 48/620 [`./test/index/commute/10/slt_good_29.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_29.test)
@@ -703,19 +703,19 @@ SELECT pk FROM tab0 WHERE ((col3 < 0)) OR col3 < 68 AND (col3 = 11) OR col4 IN (
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 35982.477ms
+Time: 38333.589ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 49/620 [`./test/index/commute/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.388ms
+Time: 0.349ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 50/620 [`./test/index/commute/10/slt_good_30.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_30.test)
@@ -728,47 +728,47 @@ SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE col0 = 27 OR (col
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 35668.191ms
+Time: 36324.417ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 51/620 [`./test/index/commute/10/slt_good_31.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_31.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,033 tests still passes as _sqlite_
 
-Time: 0.235ms
+Time: 0.511ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 52/620 [`./test/index/commute/10/slt_good_32.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_32.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.310ms
+Time: 0.305ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 53/620 [`./test/index/commute/10/slt_good_33.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_33.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,034 tests still passes as _sqlite_
 
-Time: 0.294ms
+Time: 0.451ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 54/620 [`./test/index/commute/10/slt_good_34.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_34.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.304ms
+Time: 0.387ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 55/620 [`./test/index/commute/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_4.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,030 tests still passes as _sqlite_
 
-Time: 0.306ms
+Time: 0.419ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 56/620 [`./test/index/commute/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_5.test)
@@ -781,12 +781,12 @@ SELECT pk FROM tab0 WHERE col3 <= 88 OR col0 IN (SELECT col3 FROM tab0 WHERE col
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 35143.203ms
+Time: 30640.777ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 57/620 [`./test/index/commute/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_6.test)
@@ -799,12 +799,12 @@ SELECT pk FROM tab0 WHERE col3 >= 22 AND col3 IS NULL OR (col0 <= 92 AND (col3 I
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,036 tests as sqlite
+#### ☓ Ran 10,036 tests as _sqlite_
 
 * 20 failed
 * 99% was OK
 
-Time: 36423.114ms
+Time: 31652.385ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 58/620 [`./test/index/commute/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_7.test)
@@ -817,19 +817,19 @@ SELECT pk FROM tab0 WHERE col1 > 33.14 OR (((col3 > 73 OR (col3 IN (63,42)))) AN
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 31444.771ms
+Time: 29611.046ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 59/620 [`./test/index/commute/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_8.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,032 tests still passes as _sqlite_
 
-Time: 0.253ms
+Time: 0.490ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 60/620 [`./test/index/commute/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/10/slt_good_9.test)
@@ -842,12 +842,12 @@ SELECT pk FROM tab0 WHERE (col4 IN (SELECT col1 FROM tab0 WHERE ((col0 IN (SELEC
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 20 failed
 * 99% was OK
 
-Time: 30804.806ms
+Time: 34379.344ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 61/620 [`./test/index/commute/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_0.test)
@@ -860,26 +860,26 @@ SELECT pk FROM tab0 WHERE col4 < 749.14 AND (col3 >= 449 AND ((col3 = 703)) AND 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,122 tests as sqlite
+#### ☓ Ran 10,122 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 33282.091ms
+Time: 34981.302ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 62/620 [`./test/index/commute/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,120 tests still passes as _sqlite_
 
-Time: 0.375ms
+Time: 0.371ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 63/620 [`./test/index/commute/100/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_10.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,124 tests still passes as _sqlite_
 
-Time: 0.251ms
+Time: 0.358ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 64/620 [`./test/index/commute/100/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_11.test)
@@ -892,12 +892,12 @@ SELECT pk FROM tab0 WHERE col1 > 934.79 OR (col0 <= 122) AND col3 IN (572,775,93
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,123 tests as sqlite
+#### ☓ Ran 10,123 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 32241.492ms
+Time: 32661.593ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 65/620 [`./test/index/commute/100/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_12.test)
@@ -910,19 +910,19 @@ SELECT pk FROM tab0 WHERE col0 BETWEEN 408 AND 366 OR (col3 IN (SELECT col0 FROM
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,123 tests as sqlite
+#### ☓ Ran 10,123 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 37489.149ms
+Time: 33385.587ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 66/620 [`./test/index/commute/100/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,123 tests still passes as _sqlite_
 
-Time: 0.634ms
+Time: 0.760ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 67/620 [`./test/index/commute/100/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_3.test)
@@ -935,12 +935,12 @@ SELECT pk FROM tab0 WHERE col0 IN (SELECT col3 FROM tab0 WHERE ((((((((col3 < 92
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,121 tests as sqlite
+#### ☓ Ran 10,121 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 32282.604ms
+Time: 34039.562ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 68/620 [`./test/index/commute/100/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_4.test)
@@ -953,19 +953,19 @@ SELECT pk FROM tab0 WHERE col0 >= 640 OR ((col3 IN (SELECT col0 FROM tab0 WHERE 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,124 tests as sqlite
+#### ☓ Ran 10,124 tests as _sqlite_
 
 * 30 failed
 * 99% was OK
 
-Time: 35484.001ms
+Time: 35381.168ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 69/620 [`./test/index/commute/100/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_5.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,121 tests still passes as _sqlite_
 
-Time: 0.451ms
+Time: 0.434ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 70/620 [`./test/index/commute/100/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_6.test)
@@ -978,19 +978,19 @@ SELECT pk FROM tab0 WHERE col1 >= 775.92 OR (col3 < 898 AND (col4 IN (SELECT col
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,122 tests as sqlite
+#### ☓ Ran 10,122 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 32006.356ms
+Time: 32809.571ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 71/620 [`./test/index/commute/100/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_7.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,123 tests still passes as _sqlite_
 
-Time: 0.251ms
+Time: 0.553ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 72/620 [`./test/index/commute/100/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_8.test)
@@ -1003,26 +1003,26 @@ SELECT pk FROM tab0 WHERE (col0 = 783) AND col0 >= 334 OR ((col0 > 336 OR col1 <
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,122 tests as sqlite
+#### ☓ Ran 10,122 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 35051.775ms
+Time: 35417.469ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 73/620 [`./test/index/commute/100/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/100/slt_good_9.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,123 tests still passes as _sqlite_
 
-Time: 0.363ms
+Time: 0.431ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 74/620 [`./test/index/commute/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/1000/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 4,741 tests still passes as _sqlite_
 
-Time: 0.327ms
+Time: 0.340ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 75/620 [`./test/index/commute/1000/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/1000/slt_good_1.test)
@@ -1035,12 +1035,12 @@ SELECT pk FROM tab0 WHERE ((((col0 IN (SELECT col3 FROM tab0 WHERE col3 = 7862 O
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,583 tests as sqlite
+#### ☓ Ran 10,583 tests as _sqlite_
 
 * 20 failed
 * 99% was OK
 
-Time: 157616.861ms
+Time: 156941.856ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 76/620 [`./test/index/commute/1000/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/1000/slt_good_2.test)
@@ -1053,117 +1053,117 @@ SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE (col0 IN (SELECT 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 11,021 tests as sqlite
+#### ☓ Ran 11,021 tests as _sqlite_
 
 * 10 failed
 * 99% was OK
 
-Time: 156256.414ms
+Time: 164624.031ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 77/620 [`./test/index/commute/1000/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/commute/1000/slt_good_3.test)
 
-_sqlite previously passed all tests_
-
-Time: 1.606ms
-
----- ---- ---- ---- ---- ---- ----
-### 78/620 [`./test/index/delete/1/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/1/slt_good_0.test)
-
-_sqlite previously passed all tests_
-
-Time: 0.665ms
-
----- ---- ---- ---- ---- ---- ----
-### 79/620 [`./test/index/delete/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_0.test)
-
-_sqlite previously passed all tests_
-
-Time: 0.369ms
-
----- ---- ---- ---- ---- ---- ----
-### 80/620 [`./test/index/delete/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_1.test)
-
-_sqlite previously passed all tests_
-
-Time: 0.343ms
-
----- ---- ---- ---- ---- ---- ----
-### 81/620 [`./test/index/delete/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_2.test)
-
-_sqlite previously passed all tests_
-
-Time: 2.796ms
-
----- ---- ---- ---- ---- ---- ----
-### 82/620 [`./test/index/delete/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_3.test)
-
-_sqlite previously passed all tests_
-
-Time: 0.344ms
-
----- ---- ---- ---- ---- ---- ----
-### 83/620 [`./test/index/delete/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_4.test)
-
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,025 tests still passes as _sqlite_
 
 Time: 0.348ms
 
 ---- ---- ---- ---- ---- ---- ----
+### 78/620 [`./test/index/delete/1/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/1/slt_good_0.test)
+
+#### ★ Assuming all 10,907 tests still passes as _sqlite_
+
+Time: 0.315ms
+
+---- ---- ---- ---- ---- ---- ----
+### 79/620 [`./test/index/delete/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_0.test)
+
+#### ★ Assuming all 10,730 tests still passes as _sqlite_
+
+Time: 0.404ms
+
+---- ---- ---- ---- ---- ---- ----
+### 80/620 [`./test/index/delete/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_1.test)
+
+#### ★ Assuming all 10,774 tests still passes as _sqlite_
+
+Time: 1.416ms
+
+---- ---- ---- ---- ---- ---- ----
+### 81/620 [`./test/index/delete/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_2.test)
+
+#### ★ Assuming all 9,390 tests still passes as _sqlite_
+
+Time: 1.424ms
+
+---- ---- ---- ---- ---- ---- ----
+### 82/620 [`./test/index/delete/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_3.test)
+
+#### ★ Assuming all 10,065 tests still passes as _sqlite_
+
+Time: 0.397ms
+
+---- ---- ---- ---- ---- ---- ----
+### 83/620 [`./test/index/delete/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_4.test)
+
+#### ★ Assuming all 10,599 tests still passes as _sqlite_
+
+Time: 0.398ms
+
+---- ---- ---- ---- ---- ---- ----
 ### 84/620 [`./test/index/delete/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10/slt_good_5.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,353 tests still passes as _sqlite_
 
-Time: 0.354ms
+Time: 0.413ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 85/620 [`./test/index/delete/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/100/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,145 tests still passes as _sqlite_
 
-Time: 0.353ms
+Time: 0.762ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 86/620 [`./test/index/delete/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/100/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,895 tests still passes as _sqlite_
 
-Time: 0.340ms
+Time: 0.434ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 87/620 [`./test/index/delete/100/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/100/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,033 tests still passes as _sqlite_
 
-Time: 0.340ms
+Time: 0.568ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 88/620 [`./test/index/delete/100/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/100/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,942 tests still passes as _sqlite_
 
-Time: 0.345ms
+Time: 1.827ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 89/620 [`./test/index/delete/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/1000/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,924 tests still passes as _sqlite_
 
-Time: 0.347ms
+Time: 0.846ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 90/620 [`./test/index/delete/1000/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/1000/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,838 tests still passes as _sqlite_
 
-Time: 0.373ms
+Time: 1.505ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 91/620 [`./test/index/delete/10000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/delete/10000/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 20,347 tests still passes as _sqlite_
 
-Time: 0.337ms
+Time: 1.311ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 92/620 [`./test/index/in/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_0.test)
@@ -1176,12 +1176,12 @@ SELECT pk FROM tab0 WHERE col3 > 31 OR col3 <= 49 AND (col0 IN (SELECT col3 FROM
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,035 tests as sqlite
+#### ☓ Ran 10,035 tests as _sqlite_
 
 * 30 failed
 * 99% was OK
 
-Time: 99568.243ms
+Time: 88920.918ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 93/620 [`./test/index/in/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_1.test)
@@ -1194,26 +1194,26 @@ SELECT pk FROM tab0 WHERE ((col0 IN (SELECT col3 FROM tab0 WHERE (col3 IN (SELEC
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,036 tests as sqlite
+#### ☓ Ran 10,036 tests as _sqlite_
 
 * 30 failed
 * 99% was OK
 
-Time: 109010.903ms
+Time: 93600.391ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 94/620 [`./test/index/in/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,035 tests still passes as _sqlite_
 
-Time: 0.395ms
+Time: 0.410ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 95/620 [`./test/index/in/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,037 tests still passes as _sqlite_
 
-Time: 0.633ms
+Time: 0.476ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 96/620 [`./test/index/in/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_4.test)
@@ -1226,12 +1226,12 @@ SELECT pk FROM tab0 WHERE col0 = 32 AND col0 > 66 AND ((col0 IS NULL)) OR (col4 
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,038 tests as sqlite
+#### ☓ Ran 10,038 tests as _sqlite_
 
 * 30 failed
 * 99% was OK
 
-Time: 173697.631ms
+Time: 89210.087ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 97/620 [`./test/index/in/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/10/slt_good_5.test)
@@ -1244,12 +1244,12 @@ SELECT pk FROM tab0 WHERE (col4 IN (SELECT col1 FROM tab0 WHERE ((col0 > 26)) AN
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,038 tests as sqlite
+#### ☓ Ran 10,038 tests as _sqlite_
 
 * 15 failed
 * 99% was OK
 
-Time: 234940.023ms
+Time: 85178.524ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 98/620 [`./test/index/in/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/100/slt_good_0.test)
@@ -1262,12 +1262,12 @@ SELECT pk FROM tab0 WHERE col3 IN (SELECT col0 FROM tab0 WHERE (((col4 IN (SELEC
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,128 tests as sqlite
+#### ☓ Ran 10,128 tests as _sqlite_
 
 * 30 failed
 * 99% was OK
 
-Time: 78781.114ms
+Time: 87362.970ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 99/620 [`./test/index/in/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/100/slt_good_1.test)
@@ -1280,12 +1280,12 @@ SELECT pk FROM tab0 WHERE (col4 > 945.15 AND col0 <= 745 AND (col3 < 668 OR col3
 Cannot read property '1' of undefined
 ```
 
-#### ☓ Ran 10,127 tests as sqlite
+#### ☓ Ran 10,127 tests as _sqlite_
 
 * 15 failed
 * 99% was OK
 
-Time: 79750.294ms
+Time: 97690.576ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 100/620 [`./test/index/in/100/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/100/slt_good_2.test)
@@ -1298,12 +1298,12 @@ SELECT pk FROM tab0 WHERE (col1 >= 196.55 AND ((((col0 <= 274)) AND col0 > 676 O
 Cannot read property '1' of undefined
 ```
 
-#### ☓ Ran 10,128 tests as sqlite
+#### ☓ Ran 10,128 tests as _sqlite_
 
 * 15 failed
 * 99% was OK
 
-Time: 89401.193ms
+Time: 97677.720ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 101/620 [`./test/index/in/100/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/100/slt_good_3.test)
@@ -1316,12 +1316,12 @@ SELECT pk FROM tab0 WHERE (((((((col0 <= 382))) AND col4 IN (SELECT col1 FROM ta
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,126 tests as sqlite
+#### ☓ Ran 10,126 tests as _sqlite_
 
 * 15 failed
 * 99% was OK
 
-Time: 82823.807ms
+Time: 94133.025ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 102/620 [`./test/index/in/100/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/100/slt_good_4.test)
@@ -1334,12 +1334,12 @@ SELECT pk FROM tab0 WHERE (col0 > 793) AND col3 < 242 AND (((((col0 IS NULL AND 
 Cannot read property '1' of undefined
 ```
 
-#### ☓ Ran 10,127 tests as sqlite
+#### ☓ Ran 10,127 tests as _sqlite_
 
 * 15 failed
 * 99% was OK
 
-Time: 123371.501ms
+Time: 102242.393ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 103/620 [`./test/index/in/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/1000/slt_good_0.test)
@@ -1352,110 +1352,110 @@ SELECT pk FROM tab0 WHERE (((col4 >= 6897.58 AND col0 IN (7530,4312)) AND col1 <
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 11,028 tests as sqlite
+#### ☓ Ran 11,028 tests as _sqlite_
 
 * 60 failed
 * 99% was OK
 
-Time: 425172.304ms
+Time: 413129.108ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 104/620 [`./test/index/in/1000/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/in/1000/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,024 tests still passes as _sqlite_
 
-Time: 0.311ms
+Time: 0.372ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 105/620 [`./test/index/orderby/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.263ms
+Time: 0.323ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 106/620 [`./test/index/orderby/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,054 tests still passes as _sqlite_
 
-Time: 0.316ms
+Time: 0.435ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 107/620 [`./test/index/orderby/10/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_10.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.308ms
+Time: 0.360ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 108/620 [`./test/index/orderby/10/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_11.test)
 
-_sqlite previously passed all tests_
-
-Time: 0.462ms
-
----- ---- ---- ---- ---- ---- ----
-### 109/620 [`./test/index/orderby/10/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_12.test)
-
-_sqlite previously passed all tests_
-
-Time: 0.291ms
-
----- ---- ---- ---- ---- ---- ----
-### 110/620 [`./test/index/orderby/10/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_13.test)
-
-_sqlite previously passed all tests_
-
-Time: 0.305ms
-
----- ---- ---- ---- ---- ---- ----
-### 111/620 [`./test/index/orderby/10/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_14.test)
-
-_sqlite previously passed all tests_
-
-Time: 0.373ms
-
----- ---- ---- ---- ---- ---- ----
-### 112/620 [`./test/index/orderby/10/slt_good_15.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_15.test)
-
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
 Time: 0.421ms
 
 ---- ---- ---- ---- ---- ---- ----
+### 109/620 [`./test/index/orderby/10/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_12.test)
+
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
+
+Time: 0.968ms
+
+---- ---- ---- ---- ---- ---- ----
+### 110/620 [`./test/index/orderby/10/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_13.test)
+
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
+
+Time: 0.431ms
+
+---- ---- ---- ---- ---- ---- ----
+### 111/620 [`./test/index/orderby/10/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_14.test)
+
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
+
+Time: 0.732ms
+
+---- ---- ---- ---- ---- ---- ----
+### 112/620 [`./test/index/orderby/10/slt_good_15.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_15.test)
+
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
+
+Time: 1.035ms
+
+---- ---- ---- ---- ---- ---- ----
 ### 113/620 [`./test/index/orderby/10/slt_good_16.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_16.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,050 tests still passes as _sqlite_
 
-Time: 0.351ms
+Time: 0.423ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 114/620 [`./test/index/orderby/10/slt_good_17.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_17.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,054 tests still passes as _sqlite_
 
-Time: 0.408ms
+Time: 0.959ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 115/620 [`./test/index/orderby/10/slt_good_18.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_18.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.322ms
+Time: 0.417ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 116/620 [`./test/index/orderby/10/slt_good_19.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_19.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.477ms
+Time: 1.076ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 117/620 [`./test/index/orderby/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.338ms
+Time: 0.432ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 118/620 [`./test/index/orderby/10/slt_good_20.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_20.test)
@@ -1468,117 +1468,117 @@ SELECT pk FROM tab0 WHERE (col4 < 384.93 OR col1 < 239.78 OR col4 = 233.10 OR (c
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,052 tests as sqlite
+#### ☓ Ran 10,052 tests as _sqlite_
 
 * 60 failed
 * 99% was OK
 
-Time: 36982.950ms
+Time: 30971.566ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 119/620 [`./test/index/orderby/10/slt_good_21.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_21.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.365ms
+Time: 0.397ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 120/620 [`./test/index/orderby/10/slt_good_22.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_22.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.239ms
+Time: 0.416ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 121/620 [`./test/index/orderby/10/slt_good_23.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_23.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.477ms
+Time: 0.424ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 122/620 [`./test/index/orderby/10/slt_good_24.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_24.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.322ms
+Time: 0.406ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 123/620 [`./test/index/orderby/10/slt_good_25.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_25.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.336ms
+Time: 0.406ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 124/620 [`./test/index/orderby/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.316ms
+Time: 0.413ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 125/620 [`./test/index/orderby/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_4.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.379ms
+Time: 0.427ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 126/620 [`./test/index/orderby/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_5.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.364ms
+Time: 0.553ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 127/620 [`./test/index/orderby/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_6.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,048 tests still passes as _sqlite_
 
-Time: 0.331ms
+Time: 0.519ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 128/620 [`./test/index/orderby/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_7.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.327ms
+Time: 0.490ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 129/620 [`./test/index/orderby/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_8.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.349ms
+Time: 0.411ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 130/620 [`./test/index/orderby/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/10/slt_good_9.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,050 tests still passes as _sqlite_
 
-Time: 0.332ms
+Time: 0.440ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 131/620 [`./test/index/orderby/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/100/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,141 tests still passes as _sqlite_
 
-Time: 2.486ms
+Time: 0.419ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 132/620 [`./test/index/orderby/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/100/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,140 tests still passes as _sqlite_
 
-Time: 1.498ms
+Time: 0.410ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 133/620 [`./test/index/orderby/100/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/100/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,142 tests still passes as _sqlite_
 
-Time: 0.311ms
+Time: 0.412ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 134/620 [`./test/index/orderby/100/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/100/slt_good_3.test)
@@ -1591,12 +1591,12 @@ SELECT pk FROM tab0 WHERE ((col1 IN (SELECT col4 FROM tab0 WHERE (col3 IN (SELEC
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 10,140 tests as sqlite
+#### ☓ Ran 10,140 tests as _sqlite_
 
 * 60 failed
 * 99% was OK
 
-Time: 40683.589ms
+Time: 36325.343ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 135/620 [`./test/index/orderby/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby/1000/slt_good_0.test)
@@ -1609,355 +1609,355 @@ SELECT pk FROM tab0 WHERE ((((col1 <= 7103.46 AND col0 > 2211 AND col0 > 4703 AN
 Cannot read property '0' of undefined
 ```
 
-#### ☓ Ran 11,043 tests as sqlite
+#### ☓ Ran 11,043 tests as _sqlite_
 
 * 60 failed
 * 99% was OK
 
-Time: 268697.437ms
+Time: 251753.573ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 136/620 [`./test/index/orderby_nosort/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.559ms
+Time: 0.457ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 137/620 [`./test/index/orderby_nosort/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.402ms
+Time: 0.320ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 138/620 [`./test/index/orderby_nosort/10/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_10.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.504ms
+Time: 0.425ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 139/620 [`./test/index/orderby_nosort/10/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_11.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 1.730ms
+Time: 0.414ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 140/620 [`./test/index/orderby_nosort/10/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_12.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.547ms
+Time: 0.487ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 141/620 [`./test/index/orderby_nosort/10/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_13.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.392ms
+Time: 0.412ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 142/620 [`./test/index/orderby_nosort/10/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_14.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.445ms
+Time: 0.420ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 143/620 [`./test/index/orderby_nosort/10/slt_good_15.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_15.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,054 tests still passes as _sqlite_
 
-Time: 0.400ms
+Time: 0.440ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 144/620 [`./test/index/orderby_nosort/10/slt_good_16.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_16.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.391ms
+Time: 0.417ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 145/620 [`./test/index/orderby_nosort/10/slt_good_17.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_17.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,050 tests still passes as _sqlite_
 
-Time: 0.395ms
+Time: 0.466ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 146/620 [`./test/index/orderby_nosort/10/slt_good_18.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_18.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,050 tests still passes as _sqlite_
 
-Time: 0.398ms
+Time: 0.458ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 147/620 [`./test/index/orderby_nosort/10/slt_good_19.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_19.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.751ms
+Time: 0.421ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 148/620 [`./test/index/orderby_nosort/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.681ms
+Time: 0.388ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 149/620 [`./test/index/orderby_nosort/10/slt_good_20.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_20.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.427ms
+Time: 0.420ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 150/620 [`./test/index/orderby_nosort/10/slt_good_21.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_21.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.408ms
+Time: 0.419ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 151/620 [`./test/index/orderby_nosort/10/slt_good_22.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_22.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,054 tests still passes as _sqlite_
 
-Time: 3.948ms
+Time: 0.470ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 152/620 [`./test/index/orderby_nosort/10/slt_good_23.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_23.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.516ms
+Time: 0.437ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 153/620 [`./test/index/orderby_nosort/10/slt_good_24.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_24.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,054 tests still passes as _sqlite_
 
-Time: 0.702ms
+Time: 0.436ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 154/620 [`./test/index/orderby_nosort/10/slt_good_25.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_25.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 1.651ms
+Time: 0.415ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 155/620 [`./test/index/orderby_nosort/10/slt_good_26.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_26.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.472ms
+Time: 0.419ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 156/620 [`./test/index/orderby_nosort/10/slt_good_27.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_27.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.486ms
+Time: 0.422ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 157/620 [`./test/index/orderby_nosort/10/slt_good_28.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_28.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.731ms
+Time: 0.614ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 158/620 [`./test/index/orderby_nosort/10/slt_good_29.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_29.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,050 tests still passes as _sqlite_
 
-Time: 0.449ms
+Time: 0.416ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 159/620 [`./test/index/orderby_nosort/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,051 tests still passes as _sqlite_
 
-Time: 0.679ms
+Time: 0.442ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 160/620 [`./test/index/orderby_nosort/10/slt_good_30.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_30.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.945ms
+Time: 0.442ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 161/620 [`./test/index/orderby_nosort/10/slt_good_31.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_31.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 2.558ms
+Time: 0.423ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 162/620 [`./test/index/orderby_nosort/10/slt_good_32.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_32.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 7.582ms
+Time: 0.414ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 163/620 [`./test/index/orderby_nosort/10/slt_good_33.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_33.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,050 tests still passes as _sqlite_
 
-Time: 0.697ms
+Time: 0.425ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 164/620 [`./test/index/orderby_nosort/10/slt_good_34.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_34.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.715ms
+Time: 0.414ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 165/620 [`./test/index/orderby_nosort/10/slt_good_35.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_35.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,049 tests still passes as _sqlite_
 
-Time: 0.798ms
+Time: 0.547ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 166/620 [`./test/index/orderby_nosort/10/slt_good_36.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_36.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.649ms
+Time: 0.420ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 167/620 [`./test/index/orderby_nosort/10/slt_good_37.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_37.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.780ms
+Time: 1.452ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 168/620 [`./test/index/orderby_nosort/10/slt_good_38.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_38.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.751ms
+Time: 0.438ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 169/620 [`./test/index/orderby_nosort/10/slt_good_39.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_39.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.534ms
+Time: 0.424ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 170/620 [`./test/index/orderby_nosort/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_4.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.456ms
+Time: 0.410ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 171/620 [`./test/index/orderby_nosort/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_5.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 2.563ms
+Time: 0.417ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 172/620 [`./test/index/orderby_nosort/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_6.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,053 tests still passes as _sqlite_
 
-Time: 0.445ms
+Time: 0.741ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 173/620 [`./test/index/orderby_nosort/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_7.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,052 tests still passes as _sqlite_
 
-Time: 0.872ms
+Time: 0.408ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 174/620 [`./test/index/orderby_nosort/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_8.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,054 tests still passes as _sqlite_
 
-Time: 52.847ms
+Time: 0.458ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 175/620 [`./test/index/orderby_nosort/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/10/slt_good_9.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,055 tests still passes as _sqlite_
 
-Time: 0.623ms
+Time: 0.415ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 176/620 [`./test/index/orderby_nosort/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/100/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,149 tests still passes as _sqlite_
 
-Time: 0.586ms
+Time: 0.409ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 177/620 [`./test/index/orderby_nosort/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/100/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,141 tests still passes as _sqlite_
 
-Time: 0.727ms
+Time: 0.452ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 178/620 [`./test/index/orderby_nosort/100/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/100/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,142 tests still passes as _sqlite_
 
-Time: 1.330ms
+Time: 0.642ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 179/620 [`./test/index/orderby_nosort/100/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/100/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,143 tests still passes as _sqlite_
 
-Time: 0.773ms
+Time: 0.429ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 180/620 [`./test/index/orderby_nosort/100/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/100/slt_good_4.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,141 tests still passes as _sqlite_
 
-Time: 3.330ms
+Time: 0.382ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 181/620 [`./test/index/orderby_nosort/100/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/100/slt_good_5.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,142 tests still passes as _sqlite_
 
-Time: 0.677ms
+Time: 0.549ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 182/620 [`./test/index/orderby_nosort/100/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/100/slt_good_6.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 10,144 tests still passes as _sqlite_
 
-Time: 0.701ms
+Time: 0.412ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 183/620 [`./test/index/orderby_nosort/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/1000/slt_good_0.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,040 tests still passes as _sqlite_
 
-Time: 0.980ms
+Time: 0.421ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 184/620 [`./test/index/orderby_nosort/1000/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/orderby_nosort/1000/slt_good_1.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 11,043 tests still passes as _sqlite_
 
-Time: 0.542ms
+Time: 0.412ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 185/620 [`./test/index/random/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_0.test)
@@ -2026,19 +2026,12 @@ SELECT - 49 + + MIN ( - col0 ) FROM tab0 WHERE NOT ( NOT + 99 NOT BETWEEN ( - + 
 Expected: ["-953"] but got ["NULL"]
 ```
 
-
-```sql
-SELECT - CAST ( NULL AS INTEGER ) / - col1 AS col3 FROM tab3 WHERE NOT - + 97 < - col1
-
-Correct amount of values returned but hash was different than expected.
-```
-
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 790 failed
 * 92% was OK
 
-Time: 58102.650ms
+Time: 18561.874ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 186/620 [`./test/index/random/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_1.test)
@@ -2100,12 +2093,12 @@ SELECT - 43 * MAX ( ALL - 96 * + col3 ) FROM tab0 WHERE NOT ( - col1 ) IN ( + ( 
 Expected: ["445824"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 730 failed
 * 92% was OK
 
-Time: 30875.525ms
+Time: 18642.417ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 187/620 [`./test/index/random/10/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_10.test)
@@ -2167,12 +2160,12 @@ SELECT - 88 + + ( - CAST ( COUNT ( * ) AS INTEGER ) ) AS col0 FROM tab0 WHERE NU
 g is not defined
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 850 failed
 * 91% was OK
 
-Time: 19577.665ms
+Time: 18567.310ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 188/620 [`./test/index/random/10/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_11.test)
@@ -2215,13 +2208,6 @@ Expected: ["NULL"] but got ["0"]
 
 
 ```sql
-SELECT + + 28, 15 - + MAX ( ALL + - col1 ) FROM tab0 WHERE col3 IS NOT NULL
-
-Expected: ["28","127"] but got ["28","127.750"]
-```
-
-
-```sql
 SELECT DISTINCT MAX ( DISTINCT col3 ) AS col0 FROM tab0 AS cor0 WHERE NOT 31 * + - col1 BETWEEN ( col4 + + col3 + - col4 ) AND + 34 * col1
 
 Expected: ["938"] but got ["NULL"]
@@ -2234,12 +2220,12 @@ SELECT CAST ( - COUNT ( * ) AS INTEGER ) + - 21 AS col1 FROM tab0 AS cor0 WHERE 
 g is not defined
 ```
 
-#### ☓ Ran 10,031 tests as sqlite
+#### ☓ Ran 10,031 tests as _sqlite_
 
 * 790 failed
 * 92% was OK
 
-Time: 18214.665ms
+Time: 18448.347ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 189/620 [`./test/index/random/10/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_12.test)
@@ -2294,12 +2280,12 @@ SELECT col5 AS col4 FROM tab0 AS cor0 WHERE col0 NOT BETWEEN ( NULL ) AND ( + co
 Expected: ["0","0","0","0","0","0"] but got ["akvhd","duptn","efltn","gwglv","nermp","qvevz","qxdmc","qywiw","ucstb","ukpjw"]
 ```
 
-#### ☓ Ran 10,033 tests as sqlite
+#### ☓ Ran 10,033 tests as _sqlite_
 
 * 860 failed
 * 91% was OK
 
-Time: 18763.077ms
+Time: 20797.811ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 190/620 [`./test/index/random/10/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_13.test)
@@ -2375,12 +2361,12 @@ SELECT DISTINCT - ( - ( - + CAST ( NULL AS INTEGER ) ) ), CAST ( NULL AS INTEGER
 Expected: ["NULL","NULL"] but got ["0","80"]
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 885 failed
 * 91% was OK
 
-Time: 19604.800ms
+Time: 19281.214ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 191/620 [`./test/index/random/10/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_14.test)
@@ -2442,12 +2428,12 @@ SELECT + ( - - MAX ( DISTINCT - col0 ) ) - - 76 AS col4, 30 FROM tab0 AS cor0 WH
 Expected: ["NULL","30"] but got ["30","NULL"]
 ```
 
-#### ☓ Ran 10,031 tests as sqlite
+#### ☓ Ran 10,031 tests as _sqlite_
 
 * 815 failed
 * 91% was OK
 
-Time: 19453.072ms
+Time: 18427.670ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 192/620 [`./test/index/random/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_2.test)
@@ -2523,12 +2509,12 @@ SELECT - 45 FROM tab0 AS cor0 WHERE NOT + col1 * 41 / + + 82 BETWEEN - col3 AND 
 10 results returned but expected 9
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 910 failed
 * 90% was OK
 
-Time: 20334.700ms
+Time: 18618.049ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 193/620 [`./test/index/random/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_3.test)
@@ -2604,12 +2590,12 @@ SELECT - MIN ( DISTINCT col0 ) + 54 FROM tab0 WHERE NOT ( col1 + + col3 * + col0
 Expected: ["-130"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 680 failed
 * 93% was OK
 
-Time: 18799.990ms
+Time: 18505.896ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 194/620 [`./test/index/random/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_4.test)
@@ -2664,12 +2650,12 @@ SELECT DISTINCT + MAX ( + col3 ) FROM tab0 AS cor0 WHERE NOT col1 NOT BETWEEN - 
 Expected: ["922"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,033 tests as sqlite
+#### ☓ Ran 10,033 tests as _sqlite_
 
 * 735 failed
 * 92% was OK
 
-Time: 20869.081ms
+Time: 18918.783ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 195/620 [`./test/index/random/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_5.test)
@@ -2717,12 +2703,12 @@ SELECT + col2 col5 FROM tab0 AS cor0 WHERE ( col4 ) BETWEEN col0 AND - 96 * - co
 Expected: ["0","0","0"] but got ["amwpr","ehefd","uxbns"]
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 735 failed
 * 92% was OK
 
-Time: 17639.654ms
+Time: 18980.641ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 196/620 [`./test/index/random/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_6.test)
@@ -2784,12 +2770,12 @@ SELECT col2 FROM tab0 WHERE + col0 * + col0 + - col4 * col3 <= ( + col1 + col4 *
 Expected: ["0","0"] but got ["naijw","wodwv"]
 ```
 
-#### ☓ Ran 10,034 tests as sqlite
+#### ☓ Ran 10,034 tests as _sqlite_
 
 * 780 failed
 * 92% was OK
 
-Time: 20188.898ms
+Time: 24105.563ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 197/620 [`./test/index/random/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_7.test)
@@ -2844,12 +2830,12 @@ SELECT ALL col2 AS col5 FROM tab0 WHERE - + col3 BETWEEN - 72 AND 50 + + 78
 Expected: ["0"] but got ["hmsci"]
 ```
 
-#### ☓ Ran 10,031 tests as sqlite
+#### ☓ Ran 10,031 tests as _sqlite_
 
 * 675 failed
 * 93% was OK
 
-Time: 19923.575ms
+Time: 23236.302ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 198/620 [`./test/index/random/10/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_8.test)
@@ -2918,12 +2904,12 @@ SELECT col5 AS col1 FROM tab0 AS cor0 WHERE col4 NOT BETWEEN - ( - 32 ) AND - CA
 Expected: ["0","0","0","0","0"] but got ["apjmo","dubev","ithfo","ktnfz","vzeio"]
 ```
 
-#### ☓ Ran 10,032 tests as sqlite
+#### ☓ Ran 10,032 tests as _sqlite_
 
 * 745 failed
 * 92% was OK
 
-Time: 18582.335ms
+Time: 21403.124ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 199/620 [`./test/index/random/10/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/10/slt_good_9.test)
@@ -2978,12 +2964,12 @@ SELECT col5 AS col1 FROM tab0 AS cor0 WHERE + 80 + col4 > - - col1 + col3
 Expected: ["0","0"] but got ["axwip","klkhp"]
 ```
 
-#### ☓ Ran 10,031 tests as sqlite
+#### ☓ Ran 10,031 tests as _sqlite_
 
 * 740 failed
 * 92% was OK
 
-Time: 18174.566ms
+Time: 22327.347ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 200/620 [`./test/index/random/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/100/slt_good_0.test)
@@ -3045,12 +3031,12 @@ SELECT col0 * + - 7 FROM tab0 WHERE CAST ( col0 AS INTEGER ) NOT BETWEEN NULL AN
 100 results returned but expected 55
 ```
 
-#### ☓ Ran 10,123 tests as sqlite
+#### ☓ Ran 10,123 tests as _sqlite_
 
 * 715 failed
 * 92% was OK
 
-Time: 23965.236ms
+Time: 29195.698ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 201/620 [`./test/index/random/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/100/slt_good_1.test)
@@ -3100,6 +3086,13 @@ Expected: ["NULL"] but got ["-531399"]
 
 
 ```sql
+SELECT ALL col2 AS col0, - col0 AS col1 FROM tab3 AS cor0 WHERE NOT ( NULL ) IS NOT NULL
+
+Correct amount of values returned but hash was different than expected.
+```
+
+
+```sql
 SELECT col5 col5 FROM tab0 WHERE NOT ( ( col1 ) ) >= + ( - 80 ) * - 31 - col0
 
 Expected: ["0","0","0","0"] but got ["kjkvp","rrlwc","uhpvq","ydhme"]
@@ -3119,12 +3112,12 @@ SELECT + - CAST ( COUNT ( * ) AS INTEGER ) FROM tab0 AS cor0 WHERE NOT 75 * - 78
 g is not defined
 ```
 
-#### ☓ Ran 10,123 tests as sqlite
+#### ☓ Ran 10,123 tests as _sqlite_
 
 * 655 failed
 * 93% was OK
 
-Time: 26681.855ms
+Time: 30908.111ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 202/620 [`./test/index/random/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_0.test)
@@ -3165,12 +3158,12 @@ SELECT ALL - + COUNT ( * ) * + + 51 AS col2, - CAST ( NULL AS INTEGER ) FROM tab
 Expected: ["0","NULL"] but got ["-51000","0"]
 ```
 
-#### ☓ Ran 2,067 tests as sqlite
+#### ☓ Ran 2,067 tests as _sqlite_
 
 * 70 failed
 * 96% was OK
 
-Time: 13598.637ms
+Time: 15965.871ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 203/620 [`./test/index/random/1000/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_1.test)
@@ -3183,26 +3176,26 @@ SELECT * FROM tab0 AS cor0 WHERE ( NOT NULL <> + col4 / CAST ( - col0 AS REAL ) 
 Wrong conversion type
 ```
 
-#### ☓ Ran 1,056 tests as sqlite
+#### ☓ Ran 1,056 tests as _sqlite_
 
 * 5 failed
 * 99% was OK
 
-Time: 1792.039ms
+Time: 2153.220ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 204/620 [`./test/index/random/1000/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_2.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 1,027 tests still passes as _sqlite_
 
-Time: 0.230ms
+Time: 0.385ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 205/620 [`./test/index/random/1000/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_3.test)
 
-_sqlite previously passed all tests_
+#### ★ Assuming all 1,033 tests still passes as _sqlite_
 
-Time: 0.227ms
+Time: 0.358ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 206/620 [`./test/index/random/1000/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_4.test)
@@ -3215,12 +3208,12 @@ SELECT * FROM tab0 cor0 WHERE NOT ( NOT ( - CAST ( NULL AS REAL ) + + col0 NOT I
 Wrong conversion type
 ```
 
-#### ☓ Ran 1,032 tests as sqlite
+#### ☓ Ran 1,032 tests as _sqlite_
 
 * 5 failed
 * 99% was OK
 
-Time: 2054.192ms
+Time: 2099.216ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 207/620 [`./test/index/random/1000/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_5.test)
@@ -3268,12 +3261,12 @@ SELECT ALL + CAST ( COUNT ( ALL col0 ) AS INTEGER ) col3 FROM tab0 WHERE NULL IS
 g is not defined
 ```
 
-#### ☓ Ran 4,333 tests as sqlite
+#### ☓ Ran 4,333 tests as _sqlite_
 
 * 265 failed
 * 93% was OK
 
-Time: 23092.475ms
+Time: 26692.580ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 208/620 [`./test/index/random/1000/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_6.test)
@@ -3328,12 +3321,12 @@ SELECT ALL * FROM tab0 AS cor0 WHERE ( col3 ) IN ( + col0 )
 Expected: ["750","79","2150","0","79","1716","0"] but got ["750","79","2150.540","kuzlf","79","1716.500","wqnrb"]
 ```
 
-#### ☓ Ran 11,021 tests as sqlite
+#### ☓ Ran 11,021 tests as _sqlite_
 
 * 725 failed
 * 93% was OK
 
-Time: 64442.337ms
+Time: 71124.085ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 209/620 [`./test/index/random/1000/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_7.test)
@@ -3376,13 +3369,6 @@ Expected: ["0"] but got ["-1000"]
 
 
 ```sql
-SELECT ALL CAST ( NULL AS INTEGER ) + - col0 FROM tab0 AS cor0 WHERE 90 IS NOT NULL
-
-Correct amount of values returned but hash was different than expected.
-```
-
-
-```sql
 SELECT 36 FROM tab0 WHERE - col3 + col0 NOT BETWEEN NULL AND ( + - col0 )
 
 1000 results returned but expected 762
@@ -3402,12 +3388,12 @@ SELECT ALL col2 FROM tab0 WHERE - + col3 BETWEEN - 72 AND 50 + + 78
 Expected: ["0","0","0","0","0"] but got ["ernxs","orpfh","pirjf","tbpkm","zphbq"]
 ```
 
-#### ☓ Ran 11,022 tests as sqlite
+#### ☓ Ran 11,022 tests as _sqlite_
 
 * 780 failed
 * 92% was OK
 
-Time: 67176.894ms
+Time: 63858.007ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 210/620 [`./test/index/random/1000/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/random/1000/slt_good_8.test)
@@ -3455,18 +3441,18 @@ SELECT ALL + CAST ( col3 AS INTEGER ) * col3 + - ( + col0 ) / - col3 AS col2 FRO
 Correct amount of values returned but hash was different than expected.
 ```
 
-#### ☓ Ran 4,841 tests as sqlite
+#### ☓ Ran 4,841 tests as _sqlite_
 
 * 310 failed
 * 93% was OK
 
-Time: 31476.675ms
+Time: 25646.166ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 211/620 [`./test/index/view/10/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_0.test)
 
 _Mimic sqlite_
-Time: 8.109ms
+Time: 6.737ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 212/620 [`./test/index/view/10/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_1.test)
@@ -3509,13 +3495,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 8,137 tests as sqlite
+#### ☓ Ran 8,137 tests as _sqlite_
 
 * 7,698 skipped
 * 91 failed
 * 4% was OK
 
-Time: 2090.417ms
+Time: 2174.696ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 213/620 [`./test/index/view/10/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_2.test)
@@ -3593,6 +3579,13 @@ Expected: ["6"] but got ["NULL"]
 
 
 ```sql
+SELECT * FROM view_3_tab3_360
+
+Expected: ["2"] but got ["NULL"]
+```
+
+
+```sql
 CREATE VIEW view_1_tab0_367 AS SELECT pk, col0 FROM tab0 WHERE col3 IS NULL OR (((col0 < 64 AND (col0 BETWEEN 25 AND 41) AND (col4 >= 33.34) OR (col4 < 22.72 AND (col0 >= 61)) AND (col0 > 4) OR col0 >= 0 OR col0 >= 45 AND col3 IN (SELECT col0 FROM tab0 WHERE col3 > 42) AND col3 IS NULL AND col3 <= …
 
 Cannot read property 'columns' of undefined
@@ -3600,13 +3593,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,465 tests as sqlite
+#### ☓ Ran 7,465 tests as _sqlite_
 
 * 1,028 skipped
 * 1,361 failed
 * 67% was OK
 
-Time: 12779.058ms
+Time: 12566.076ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 214/620 [`./test/index/view/10/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_3.test)
@@ -3691,13 +3684,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,271 tests as sqlite
+#### ☓ Ran 7,271 tests as _sqlite_
 
 * 4,133 skipped
 * 716 failed
 * 33% was OK
 
-Time: 6182.413ms
+Time: 6501.161ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 215/620 [`./test/index/view/10/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_4.test)
@@ -3782,13 +3775,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,563 tests as sqlite
+#### ☓ Ran 7,563 tests as _sqlite_
 
 * 223 skipped
 * 1,526 failed
 * 76% was OK
 
-Time: 12538.111ms
+Time: 13217.953ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 216/620 [`./test/index/view/10/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_5.test)
@@ -3852,16 +3845,16 @@ Expected: ["0","2","3","4","5","7","9"] but got ["NULL","NULL","NULL","NULL","NU
 
 
 ```sql
-SELECT * FROM view_3_tab0_687
+SELECT * FROM view_3_tab0_680
 
-Expected: ["8"] but got ["NULL"]
+Expected: ["2","4","5"] but got ["NULL","NULL","NULL"]
 ```
 
 
 ```sql
-SELECT pk, col0 FROM view_1_tab2_699
+SELECT * FROM view_3_tab0_687
 
-Expected: ["2","85","3","93"] but got ["NULL","NULL","NULL","NULL"]
+Expected: ["8"] but got ["NULL"]
 ```
 
 
@@ -3873,13 +3866,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,384 tests as sqlite
+#### ☓ Ran 7,384 tests as _sqlite_
 
 * 1,143 skipped
 * 1,371 failed
 * 65% was OK
 
-Time: 11793.499ms
+Time: 11997.614ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 217/620 [`./test/index/view/10/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_6.test)
@@ -3964,13 +3957,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 6,492 tests as sqlite
+#### ☓ Ran 6,492 tests as _sqlite_
 
 * 2,753 skipped
 * 806 failed
 * 45% was OK
 
-Time: 10111.642ms
+Time: 7664.010ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 218/620 [`./test/index/view/10/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10/slt_good_7.test)
@@ -4055,13 +4048,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,533 tests as sqlite
+#### ☓ Ran 7,533 tests as _sqlite_
 
 * 4,593 skipped
 * 646 failed
 * 30% was OK
 
-Time: 6151.437ms
+Time: 6030.245ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 219/620 [`./test/index/view/100/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/100/slt_good_0.test)
@@ -4097,13 +4090,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 8,623 tests as sqlite
+#### ☓ Ran 8,623 tests as _sqlite_
 
 * 6,893 skipped
 * 677 failed
 * 12% was OK
 
-Time: 4934.736ms
+Time: 4922.909ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 220/620 [`./test/index/view/100/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/100/slt_good_1.test)
@@ -4158,12 +4151,19 @@ SELECT * FROM view_3_tab0_271
 Expected: ["93"] but got ["NULL"]
 ```
 
-#### ☓ Ran 7,122 tests as sqlite
+
+```sql
+SELECT pk, col0 FROM view_1_tab0_296 UNION SELECT pk, col0 FROM view_2_tab0_296
+
+44 results returned but expected 200
+```
+
+#### ☓ Ran 7,122 tests as _sqlite_
 
 * 2,876 failed
 * 59% was OK
 
-Time: 18654.746ms
+Time: 19133.434ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 221/620 [`./test/index/view/100/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/100/slt_good_2.test)
@@ -4192,13 +4192,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 8,235 tests as sqlite
+#### ☓ Ran 8,235 tests as _sqlite_
 
 * 7,008 skipped
 * 457 failed
 * 9% was OK
 
-Time: 3589.116ms
+Time: 3785.800ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 222/620 [`./test/index/view/100/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/100/slt_good_3.test)
@@ -4241,13 +4241,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,174 tests as sqlite
+#### ☓ Ran 7,174 tests as _sqlite_
 
 * 6,548 skipped
 * 207 failed
 * 5% was OK
 
-Time: 2364.414ms
+Time: 2560.616ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 223/620 [`./test/index/view/100/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/100/slt_good_4.test)
@@ -4311,13 +4311,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 6,935 tests as sqlite
+#### ☓ Ran 6,935 tests as _sqlite_
 
 * 108 skipped
 * 2,712 failed
 * 59% was OK
 
-Time: 18199.966ms
+Time: 17732.078ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 224/620 [`./test/index/view/100/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/100/slt_good_5.test)
@@ -4367,13 +4367,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,949 tests as sqlite
+#### ☓ Ran 7,949 tests as _sqlite_
 
 * 4,823 skipped
 * 1,217 failed
 * 24% was OK
 
-Time: 12649.924ms
+Time: 7817.327ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 225/620 [`./test/index/view/1000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/1000/slt_good_0.test)
@@ -4395,6 +4395,13 @@ SELECT pk, col0 FROM view_1_tab0_739 UNION SELECT pk, col0 FROM view_2_tab0_739
 
 
 ```sql
+SELECT pk, col0 FROM view_1_tab1_741 UNION SELECT pk, col0 FROM view_2_tab1_741
+
+114 results returned but expected 2000
+```
+
+
+```sql
 CREATE VIEW view_1_tab0_742 AS SELECT pk, col0 FROM tab0 WHERE (col0 IN (SELECT col3 FROM tab0 WHERE (col1 < 3863.93))) OR ((col0 >= 5861) AND col0 >= 2066)
 
 Cannot read property 'columns' of undefined
@@ -4402,13 +4409,13 @@ Cannot read property 'columns' of undefined
 
 _Fail found for statement setting up data so skipping rest of tests_
 
-#### ☓ Ran 7,630 tests as sqlite
+#### ☓ Ran 7,630 tests as _sqlite_
 
 * 6,203 skipped
 * 167 failed
 * 16% was OK
 
-Time: 10172.170ms
+Time: 9382.748ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 226/620 [`./test/index/view/10000/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/index/view/10000/slt_good_0.test)
@@ -4428,12 +4435,12 @@ SELECT pk, col0 FROM view_1_tab0_1 UNION SELECT pk, col0 FROM view_2_tab0_1
 6920 results returned but expected 20000
 ```
 
-#### ☓ Ran 10,622 tests as sqlite
+#### ☓ Ran 10,622 tests as _sqlite_
 
 * 271 failed
 * 97% was OK
 
-Time: 1991910.076ms
+Time: 1037952.764ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 227/620 [`./test/random/aggregates/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_0.test)
@@ -4533,12 +4540,12 @@ SELECT col2 + + 76 / - ( - + col1 ) AS col1, 71 + col0 / + - CAST ( NULL AS INTE
 Expected: ["24","NULL","40","NULL","59","NULL"] but got ["24.490","NULL","40.987","NULL","59.134","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,588 failed
 * 84% was OK
 
-Time: 42158.073ms
+Time: 18970.329ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 228/620 [`./test/random/aggregates/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_1.test)
@@ -4614,12 +4621,12 @@ SELECT + CAST ( NULL AS INTEGER ) + 36 / + - 21 AS col1, + CAST ( NULL AS INTEGE
 Expected: ["NULL","NULL"] but got ["0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,374 failed
 * 86% was OK
 
-Time: 36123.357ms
+Time: 18637.440ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 229/620 [`./test/random/aggregates/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_10.test)
@@ -4709,12 +4716,12 @@ SELECT - col2 / + + col1 col1, col2 / + + col1 * + CAST ( NULL AS INTEGER ) FROM
 Expected: ["-99","NULL","0","NULL","0","NULL"] but got ["-0.476","NULL","-0.580","NULL","-99","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,656 failed
 * 83% was OK
 
-Time: 54855.290ms
+Time: 19247.064ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 230/620 [`./test/random/aggregates/slt_good_100.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_100.test)
@@ -4814,12 +4821,12 @@ SELECT CAST ( NULL AS INTEGER ) FROM tab0 WHERE NOT - col0 >= - 17
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,635 failed
 * 83% was OK
 
-Time: 45477.999ms
+Time: 19586.281ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 231/620 [`./test/random/aggregates/slt_good_101.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_101.test)
@@ -4902,12 +4909,12 @@ SELECT - SUM ( + col0 ), SUM ( col1 ) FROM tab0 WHERE NOT ( + - col0 ) IS NOT NU
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,677 failed
 * 83% was OK
 
-Time: 30488.994ms
+Time: 19125.553ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 232/620 [`./test/random/aggregates/slt_good_102.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_102.test)
@@ -4983,12 +4990,12 @@ SELECT DISTINCT + CAST ( NULL AS INTEGER ), - ( + col0 ) / - col2 AS col1 FROM t
 Expected: ["NULL","0","NULL","8"] but got ["0","0.319","0","0.980","0","8.700"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,550 failed
 * 84% was OK
 
-Time: 26356.254ms
+Time: 18757.360ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 233/620 [`./test/random/aggregates/slt_good_103.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_103.test)
@@ -5052,13 +5059,6 @@ SELECT DISTINCT * FROM tab0 AS cor0 CROSS JOIN tab1 cor1 WHERE ( - 43 ) IS NOT N
 
 
 ```sql
-SELECT ALL CAST ( NULL AS INTEGER ) * COUNT ( * ) * - - COUNT ( * ) AS col0 FROM tab1
-
-Expected: ["NULL"] but got ["0"]
-```
-
-
-```sql
 SELECT ALL 64 + MIN ( col0 ) * 42 AS col1 FROM tab2 AS cor0 WHERE NOT col2 * + CAST ( NULL AS INTEGER ) - + ( CAST ( NULL AS INTEGER ) + 66 ) IS NOT NULL
 
 Expected: ["1996"] but got ["NULL"]
@@ -5078,12 +5078,12 @@ SELECT - ( SUM ( - - col2 ) ) col0, SUM ( DISTINCT - col0 ) FROM tab0 AS cor0 WH
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,568 failed
 * 84% was OK
 
-Time: 28548.751ms
+Time: 18989.841ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 234/620 [`./test/random/aggregates/slt_good_104.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_104.test)
@@ -5166,12 +5166,12 @@ SELECT - 14 * - ( - MAX ( ALL - ( - col1 ) ) ) AS col2, + 21 + - ( - SUM ( ALL -
 Expected: ["NULL","NULL"] but got ["NULL","21"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,607 failed
 * 83% was OK
 
-Time: 33983.950ms
+Time: 19923.423ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 235/620 [`./test/random/aggregates/slt_good_105.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_105.test)
@@ -5240,12 +5240,12 @@ SELECT DISTINCT COUNT ( * ) * MIN ( ALL CAST ( + col0 AS INTEGER ) * + col0 ) FR
 Expected: ["7803"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,667 failed
 * 83% was OK
 
-Time: 27499.444ms
+Time: 19388.747ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 236/620 [`./test/random/aggregates/slt_good_106.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_106.test)
@@ -5328,12 +5328,12 @@ SELECT DISTINCT + col0 / + col2 col2, CAST ( NULL AS INTEGER ) FROM tab0 AS cor0
 Expected: ["0","NULL","8","NULL"] but got ["0.319","0","0.980","0","8.700","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,571 failed
 * 84% was OK
 
-Time: 35295.761ms
+Time: 19317.219ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 237/620 [`./test/random/aggregates/slt_good_107.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_107.test)
@@ -5423,12 +5423,12 @@ SELECT DISTINCT CAST ( NULL AS INTEGER ) col2, + col1 + col0 + - - col0 AS col2 
 Expected: ["NULL","111","NULL","195"] but got ["111","111","195","195"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,519 failed
 * 84% was OK
 
-Time: 26128.733ms
+Time: 18108.834ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 238/620 [`./test/random/aggregates/slt_good_108.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_108.test)
@@ -5525,12 +5525,12 @@ SELECT 12 / + - CAST ( NULL AS INTEGER ) AS col0, CAST ( NULL AS INTEGER ) AS co
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["NULL","0","NULL","0","NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,643 failed
 * 83% was OK
 
-Time: 23376.700ms
+Time: 18201.872ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 239/620 [`./test/random/aggregates/slt_good_109.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_109.test)
@@ -5606,12 +5606,12 @@ SELECT DISTINCT * FROM tab2 AS cor0 JOIN tab0 AS cor1 ON + 13 IS NOT NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,629 failed
 * 83% was OK
 
-Time: 23389.124ms
+Time: 18299.550ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 240/620 [`./test/random/aggregates/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_11.test)
@@ -5687,12 +5687,12 @@ SELECT DISTINCT * FROM tab1 AS cor0 LEFT JOIN tab1 AS cor1 ON + 93 IS NOT NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,661 failed
 * 83% was OK
 
-Time: 27441.572ms
+Time: 19188.013ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 241/620 [`./test/random/aggregates/slt_good_110.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_110.test)
@@ -5775,12 +5775,12 @@ SELECT ALL - COUNT ( - + 74 ) * - SUM ( DISTINCT - col1 ) + - CAST ( NULL AS INT
 Expected: ["NULL","NULL"] but got ["-198","234"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,613 failed
 * 83% was OK
 
-Time: 58543.974ms
+Time: 19378.994ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 242/620 [`./test/random/aggregates/slt_good_111.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_111.test)
@@ -5884,12 +5884,12 @@ SELECT 37 + ( + col0 ) * + 95 / - + col1 * - col2 * - CAST ( NULL AS INTEGER ) *
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["NULL","0","NULL","0","NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,651 failed
 * 83% was OK
 
-Time: 50347.077ms
+Time: 19359.096ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 243/620 [`./test/random/aggregates/slt_good_112.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_112.test)
@@ -5965,12 +5965,12 @@ SELECT DISTINCT * FROM tab2 AS cor0 CROSS JOIN tab2 AS cor1 WHERE NOT ( 46 + ( 6
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,566 failed
 * 84% was OK
 
-Time: 31990.229ms
+Time: 19289.049ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 244/620 [`./test/random/aggregates/slt_good_113.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_113.test)
@@ -6046,12 +6046,12 @@ SELECT ALL CAST ( NULL AS INTEGER ), 74 - + - col2 + CAST ( NULL AS INTEGER ) * 
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","114","0","132","0","97"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,598 failed
 * 84% was OK
 
-Time: 40494.536ms
+Time: 20174.719ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 245/620 [`./test/random/aggregates/slt_good_114.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_114.test)
@@ -6141,12 +6141,12 @@ SELECT ALL + CAST ( NULL AS INTEGER ), + CAST ( NULL AS INTEGER ) AS col1 FROM t
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,582 failed
 * 84% was OK
 
-Time: 46445.883ms
+Time: 19321.023ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 246/620 [`./test/random/aggregates/slt_good_115.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_115.test)
@@ -6232,12 +6232,12 @@ Parse error on line 1:
 Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARROW', 'CARET', 'EQ', 'WHERE', 'SLASH', 'EXCLAMATION', 'MODULO', 'GT', 'LT', 'GTGT', 'LTLT', 'NOT', 'UNION', 'INTERSECT', 'EXCEPT', 'AN…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,565 failed
 * 84% was OK
 
-Time: 42320.206ms
+Time: 19238.783ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 247/620 [`./test/random/aggregates/slt_good_116.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_116.test)
@@ -6320,12 +6320,12 @@ SELECT MIN ( - - ( + + 10 ) ), MAX ( + - 39 ) AS col2 FROM tab0 WHERE NOT NULL <
 Expected: ["NULL","NULL"] but got ["10","-39"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,618 failed
 * 83% was OK
 
-Time: 30769.434ms
+Time: 19213.312ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 248/620 [`./test/random/aggregates/slt_good_117.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_117.test)
@@ -6403,9 +6403,9 @@ Expected: ["15","NULL","87","NULL","97","NULL"] but got ["NULL","NULL","NULL","N
 
 
 ```sql
-SELECT - 49 FROM tab2 AS cor0 WHERE NOT - col0 IN ( - col1 / + col1 )
+SELECT ALL col0 + col2 + + 35 / + col0 AS col0, - col2 AS col0 FROM tab1
 
-Query was expected to return results (but did not) 
+Expected: ["144","-59","147","-96","159","-68"] but got ["-59","-59","-68","-68","-96","-96"]
 ```
 
 
@@ -6415,12 +6415,12 @@ SELECT ALL - COUNT ( * ) * + + 3 * + CAST ( NULL AS INTEGER ) AS col2, + MIN ( 7
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,611 failed
 * 83% was OK
 
-Time: 28339.610ms
+Time: 19388.326ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 249/620 [`./test/random/aggregates/slt_good_118.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_118.test)
@@ -6517,12 +6517,12 @@ SELECT ALL - COUNT ( * ) / - CAST ( NULL AS INTEGER ) * 18 AS col0, 20 FROM tab1
 Expected: ["NULL","20"] but got ["20","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,508 failed
 * 84% was OK
 
-Time: 34876.567ms
+Time: 19199.653ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 250/620 [`./test/random/aggregates/slt_good_119.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_119.test)
@@ -6608,12 +6608,12 @@ Parse error on line 1:
 Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARROW', 'CARET', 'EQ', 'WHERE', 'SLASH', 'EXCLAMATION', 'MODULO', 'GT', 'LT', 'GTGT', 'LTLT', 'NOT', 'UNION', 'INTERSECT', 'EXCEPT', 'AN…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,602 failed
 * 83% was OK
 
-Time: 57734.940ms
+Time: 19520.183ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 251/620 [`./test/random/aggregates/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_12.test)
@@ -6703,12 +6703,12 @@ SELECT + - COUNT ( * ) AS col0, + MAX ( - ( + 47 ) ) col0 FROM tab2 AS cor0 WHER
 Expected: ["0","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,646 failed
 * 83% was OK
 
-Time: 36983.897ms
+Time: 19407.167ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 252/620 [`./test/random/aggregates/slt_good_120.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_120.test)
@@ -6793,13 +6793,6 @@ Expected: ["NULL","NULL"] but got ["0","NULL"]
 
 
 ```sql
-SELECT DISTINCT - ( + CAST ( NULL AS INTEGER ) ) + + + col0 * + col0 FROM tab2
-
-Expected: ["NULL"] but got ["2116","4096","5625"]
-```
-
-
-```sql
 SELECT * FROM tab2 AS cor0 JOIN tab0 AS cor1 ON NOT NULL IS NULL, tab0 AS cor2
 
 Parse error on line 1:
@@ -6822,12 +6815,12 @@ SELECT col1 + CAST ( NULL AS INTEGER ) + - col1 * + - col0 AS col0, + CAST ( NUL
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,601 failed
 * 84% was OK
 
-Time: 30287.278ms
+Time: 19404.024ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 253/620 [`./test/random/aggregates/slt_good_121.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_121.test)
@@ -6910,12 +6903,12 @@ SELECT DISTINCT * FROM tab0 AS cor0 CROSS JOIN tab0 AS cor1 WHERE ( 37 ) IS NOT 
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,582 failed
 * 84% was OK
 
-Time: 26700.653ms
+Time: 19339.163ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 254/620 [`./test/random/aggregates/slt_good_122.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_122.test)
@@ -6998,12 +6991,12 @@ SELECT ( + 30 ) / CAST ( - SUM ( DISTINCT + col1 ) AS INTEGER ) * - 34 + ( - MAX
 Expected: ["-1457"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,628 failed
 * 83% was OK
 
-Time: 31645.096ms
+Time: 20605.164ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 255/620 [`./test/random/aggregates/slt_good_123.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_123.test)
@@ -7086,12 +7079,12 @@ SELECT DISTINCT * FROM tab0 AS cor0 CROSS JOIN tab1 AS cor1 WHERE NOT + 90 IS NU
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,644 failed
 * 83% was OK
 
-Time: 28510.698ms
+Time: 19597.670ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 256/620 [`./test/random/aggregates/slt_good_124.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_124.test)
@@ -7174,12 +7167,12 @@ SELECT ALL - MIN ( - col1 ) AS col2 FROM tab1 AS cor0 WHERE NOT - 5 + + - 41 BET
 Expected: ["47"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,605 failed
 * 83% was OK
 
-Time: 27176.520ms
+Time: 19668.248ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 257/620 [`./test/random/aggregates/slt_good_125.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_125.test)
@@ -7248,12 +7241,12 @@ SELECT col0 AS col2, col1 / - CAST ( NULL AS INTEGER ) AS col2 FROM tab1
 Expected: ["51","NULL","85","NULL","91","NULL"] but got ["NULL","NULL","NULL","NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,669 failed
 * 83% was OK
 
-Time: 29288.436ms
+Time: 19493.315ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 258/620 [`./test/random/aggregates/slt_good_126.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_126.test)
@@ -7303,6 +7296,13 @@ Expected: ["NULL","-3584"] but got ["3","-3584"]
 
 
 ```sql
+SELECT DISTINCT CAST ( NULL AS INTEGER ) + + + MAX ( - col1 ) FROM tab2
+
+Expected: ["NULL"] but got ["-51"]
+```
+
+
+```sql
 SELECT * FROM tab0, tab1 AS cor0 WHERE NOT - - 23 IS NULL
 
 Correct amount of values returned but hash was different than expected.
@@ -7331,6 +7331,13 @@ Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","
 
 
 ```sql
+SELECT DISTINCT + CAST ( NULL AS INTEGER ) * + COUNT ( DISTINCT + + col1 ) FROM tab2
+
+Expected: ["NULL"] but got ["0"]
+```
+
+
+```sql
 SELECT DISTINCT * FROM tab2 AS cor0 LEFT OUTER JOIN tab0 AS cor1 ON NOT 1 IS NOT NULL, tab1 AS cor2
 
 Parse error on line 1:
@@ -7346,12 +7353,12 @@ SELECT + SUM ( + 26 ) * - + ( + 36 ) AS col1, - MIN ( - 68 ) FROM tab1 WHERE + -
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,599 failed
 * 84% was OK
 
-Time: 26177.016ms
+Time: 19332.766ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 259/620 [`./test/random/aggregates/slt_good_127.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_127.test)
@@ -7420,12 +7427,12 @@ SELECT DISTINCT - + ( COUNT ( * ) ) + + - COUNT ( * ) / CAST ( + + AVG ( DISTINC
 Expected: ["-3"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,629 failed
 * 83% was OK
 
-Time: 25912.692ms
+Time: 19692.740ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 260/620 [`./test/random/aggregates/slt_good_128.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_128.test)
@@ -7508,12 +7515,12 @@ SELECT ALL CAST ( NULL AS INTEGER ) AS col0, + col2 * + col1 + + CAST ( NULL AS 
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","210","0","3807","0","99"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,645 failed
 * 83% was OK
 
-Time: 26947.153ms
+Time: 19959.498ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 261/620 [`./test/random/aggregates/slt_good_129.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_129.test)
@@ -7582,12 +7589,12 @@ SELECT DISTINCT * FROM ( tab1 cor0 CROSS JOIN tab1 )
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 802 tests as sqlite
+#### ☓ Ran 802 tests as _sqlite_
 
 * 132 failed
 * 83% was OK
 
-Time: 1960.914ms
+Time: 1521.642ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 262/620 [`./test/random/aggregates/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_13.test)
@@ -7661,6 +7668,13 @@ Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARR
 
 
 ```sql
+SELECT ALL - 44 * col2 + + CAST ( NULL AS INTEGER ) * - col1 FROM tab2
+
+Expected: ["NULL","NULL","NULL"] but got ["-1012","-1760","-2552"]
+```
+
+
+```sql
 SELECT - 95 / + CAST ( NULL AS INTEGER ) + + 82, - col0 + - + col1 * CAST ( NULL AS INTEGER ) + - col2 FROM tab1 AS cor0
 
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["NULL","-144","NULL","-147","NULL","-159"]
@@ -7687,12 +7701,12 @@ SELECT ALL + col0 AS col1, 27 - 63 / CAST ( NULL AS INTEGER ) AS col1 FROM tab2
 Expected: ["46","NULL","64","NULL","75","NULL"] but got ["NULL","NULL","NULL","NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,532 failed
 * 84% was OK
 
-Time: 25199.631ms
+Time: 19204.261ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 263/620 [`./test/random/aggregates/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_14.test)
@@ -7778,12 +7792,12 @@ SELECT DISTINCT + AVG ( + col1 ) * + COUNT ( * ) AS col1, CAST ( NULL AS INTEGER
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,667 failed
 * 83% was OK
 
-Time: 23493.859ms
+Time: 19511.832ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 264/620 [`./test/random/aggregates/slt_good_15.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_15.test)
@@ -7873,12 +7887,12 @@ SELECT DISTINCT - COUNT ( * ) AS col1, ( - MIN ( - + 95 ) ) AS col1 FROM tab2 AS
 Expected: ["0","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,625 failed
 * 83% was OK
 
-Time: 25652.882ms
+Time: 19448.003ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 265/620 [`./test/random/aggregates/slt_good_16.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_16.test)
@@ -7942,6 +7956,13 @@ g is not defined
 
 
 ```sql
+SELECT ALL - COUNT ( * ) col1 FROM tab1 cor0 WHERE NOT + col1 NOT BETWEEN + col0 AND NULL
+
+Expected: ["0"] but got ["-3"]
+```
+
+
+```sql
 SELECT ALL - CAST ( NULL AS INTEGER ), + col1 + CAST ( NULL AS INTEGER ) - 37 + + - 62 + + col0 AS col0 FROM tab1 AS cor0
 
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","-34","0","-9","0","39"]
@@ -7996,12 +8017,12 @@ SELECT DISTINCT col0 col0, 17 / - CAST ( NULL AS INTEGER ) AS col0 FROM tab0
 Expected: ["15","NULL","87","NULL","97","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,574 failed
 * 84% was OK
 
-Time: 27195.166ms
+Time: 19618.744ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 266/620 [`./test/random/aggregates/slt_good_17.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_17.test)
@@ -8077,12 +8098,12 @@ SELECT DISTINCT * FROM ( tab0 cor0 CROSS JOIN tab0 AS cor1 ) WHERE NOT - 54 IS N
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,565 failed
 * 84% was OK
 
-Time: 29281.812ms
+Time: 19504.871ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 267/620 [`./test/random/aggregates/slt_good_18.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_18.test)
@@ -8175,12 +8196,12 @@ SELECT - MIN ( - + 28 ) col1, 1 FROM tab2 AS cor0 WHERE NOT + col1 IS NOT NULL
 Expected: ["NULL","1"] but got ["1","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,583 failed
 * 84% was OK
 
-Time: 25263.876ms
+Time: 19714.780ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 268/620 [`./test/random/aggregates/slt_good_19.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_19.test)
@@ -8256,12 +8277,12 @@ SELECT + COUNT ( * ) AS col1, MIN ( - 68 ) AS col1 FROM tab2 WHERE NULL < + + ( 
 Expected: ["0","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,643 failed
 * 83% was OK
 
-Time: 19746.233ms
+Time: 19607.085ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 269/620 [`./test/random/aggregates/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_2.test)
@@ -8330,12 +8351,12 @@ SELECT - CAST ( NULL AS INTEGER ), CAST ( NULL AS INTEGER ) * ( - SUM ( col2 ) )
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,508 failed
 * 84% was OK
 
-Time: 19054.945ms
+Time: 19012.506ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 270/620 [`./test/random/aggregates/slt_good_20.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_20.test)
@@ -8425,12 +8446,12 @@ SELECT MAX ( DISTINCT - col1 ) / - CAST ( COUNT ( * ) AS INTEGER ) AS col0 FROM 
 Expected: ["1"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,606 failed
 * 83% was OK
 
-Time: 19543.790ms
+Time: 19392.626ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 271/620 [`./test/random/aggregates/slt_good_21.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_21.test)
@@ -8513,12 +8534,12 @@ SELECT ALL CAST ( NULL AS INTEGER ) * - col0 AS col0 FROM tab0 WHERE col1 >= ( +
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,591 failed
 * 84% was OK
 
-Time: 20549.794ms
+Time: 19930.773ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 272/620 [`./test/random/aggregates/slt_good_22.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_22.test)
@@ -8594,12 +8615,12 @@ SELECT - CAST ( NULL AS INTEGER ) * - + 74 AS col0, + CAST ( NULL AS INTEGER ) A
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,661 failed
 * 83% was OK
 
-Time: 22261.028ms
+Time: 19633.969ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 273/620 [`./test/random/aggregates/slt_good_23.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_23.test)
@@ -8692,12 +8713,12 @@ Parse error on line 1:
 Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARROW', 'CARET', 'EQ', 'WHERE', 'SLASH', 'EXCLAMATION', 'MODULO', 'GT', 'LT', 'GTGT', 'LTLT', 'NOT', 'UNION', 'INTERSECT', 'EXCEPT', 'AN…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,601 failed
 * 84% was OK
 
-Time: 20192.412ms
+Time: 19616.908ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 274/620 [`./test/random/aggregates/slt_good_24.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_24.test)
@@ -8787,12 +8808,12 @@ SELECT - col0 / - ( + 8 ), - 88 / + + CAST ( NULL AS INTEGER ) AS col2 FROM tab1
 Expected: ["10","NULL","11","NULL","6","NULL"] but got ["10.625","NULL","11.375","NULL","6.375","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,587 failed
 * 84% was OK
 
-Time: 19894.776ms
+Time: 19218.614ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 275/620 [`./test/random/aggregates/slt_good_25.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_25.test)
@@ -8875,12 +8896,12 @@ SELECT DISTINCT ( - - 78 ) / ( - 20 ) * - col2 / - CAST ( NULL AS INTEGER ) / + 
 Expected: ["NULL","0","NULL","1"] but got ["NULL","0.831","NULL","0.902","NULL","1.119"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,691 failed
 * 83% was OK
 
-Time: 19982.042ms
+Time: 19529.934ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 276/620 [`./test/random/aggregates/slt_good_26.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_26.test)
@@ -8977,12 +8998,12 @@ SELECT 58 / + + CAST ( NULL AS INTEGER ), CAST ( NULL AS INTEGER ) + - 10 AS col
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["NULL","-10","NULL","-10","NULL","-10"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,613 failed
 * 83% was OK
 
-Time: 18940.864ms
+Time: 19645.578ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 277/620 [`./test/random/aggregates/slt_good_27.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_27.test)
@@ -9065,12 +9086,12 @@ SELECT + MIN ( DISTINCT col2 ) FROM tab0 AS cor0 WHERE NOT col2 + col1 NOT BETWE
 Expected: ["10"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,634 failed
 * 83% was OK
 
-Time: 18186.614ms
+Time: 19441.756ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 278/620 [`./test/random/aggregates/slt_good_28.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_28.test)
@@ -9153,12 +9174,12 @@ SELECT + CAST ( NULL AS INTEGER ), 42 * + 65 * MAX ( ALL CAST ( NULL AS INTEGER 
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,659 failed
 * 83% was OK
 
-Time: 18806.028ms
+Time: 19579.444ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 279/620 [`./test/random/aggregates/slt_good_29.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_29.test)
@@ -9227,12 +9248,12 @@ SELECT DISTINCT col1 / + 52, 41 * + - CAST ( NULL AS INTEGER ) AS col0 FROM tab0
 Expected: ["0","NULL","1","NULL"] but got ["0.019","0","0.404","0","1.558","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,653 failed
 * 83% was OK
 
-Time: 19177.424ms
+Time: 19603.029ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 280/620 [`./test/random/aggregates/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_3.test)
@@ -9322,12 +9343,12 @@ SELECT + CAST ( NULL AS INTEGER ) AS col2, col1 + + CAST ( NULL AS INTEGER ) FRO
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","51","0","67","0","77"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,666 failed
 * 83% was OK
 
-Time: 20479.228ms
+Time: 19821.931ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 281/620 [`./test/random/aggregates/slt_good_30.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_30.test)
@@ -9417,12 +9438,12 @@ SELECT ( - + CAST ( NULL AS INTEGER ) ) / + COUNT ( + + 72 ) col0, + ( - + 71 ) 
 Expected: ["NULL","NULL"] but got ["0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,615 failed
 * 83% was OK
 
-Time: 19940.490ms
+Time: 20135.544ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 282/620 [`./test/random/aggregates/slt_good_31.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_31.test)
@@ -9454,6 +9475,13 @@ Expected: ["-18"] but got ["-18.333"]
 SELECT DISTINCT - + col2 * col2 FROM tab1 WHERE + CAST ( NULL AS INTEGER ) IS NULL
 
 Query was expected to return results (but did not) 
+```
+
+
+```sql
+SELECT DISTINCT - 12 * - 13 + - col0 / 53 FROM tab0
+
+Expected: ["155","156"] but got ["154.170","154.358","155.717"]
 ```
 
 
@@ -9505,12 +9533,12 @@ SELECT - - AVG ( ALL CAST ( NULL AS INTEGER ) ) * + MIN ( + 39 ), - SUM ( - col2
 Expected: ["NULL","64"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,691 failed
 * 83% was OK
 
-Time: 19988.787ms
+Time: 19669.412ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 283/620 [`./test/random/aggregates/slt_good_32.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_32.test)
@@ -9603,12 +9631,12 @@ SELECT DISTINCT * FROM tab0 AS cor0 CROSS JOIN tab1 AS cor1 WHERE NOT 99 IS NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,635 failed
 * 83% was OK
 
-Time: 20377.598ms
+Time: 19534.389ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 284/620 [`./test/random/aggregates/slt_good_33.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_33.test)
@@ -9701,12 +9729,12 @@ SELECT DISTINCT CAST ( NULL AS INTEGER ) * 63 + 75 AS col2, CAST ( NULL AS INTEG
 Expected: ["NULL","NULL"] but got ["75","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,681 failed
 * 83% was OK
 
-Time: 18528.658ms
+Time: 19512.925ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 285/620 [`./test/random/aggregates/slt_good_34.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_34.test)
@@ -9789,12 +9817,12 @@ SELECT - ( COUNT ( * ) ) + + MIN ( DISTINCT - col0 ) AS col2 FROM tab2 cor0 WHER
 Expected: ["-78"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,501 failed
 * 85% was OK
 
-Time: 18092.677ms
+Time: 18974.508ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 286/620 [`./test/random/aggregates/slt_good_35.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_35.test)
@@ -9884,12 +9912,12 @@ SELECT DISTINCT ( + + CAST ( NULL AS INTEGER ) ) * COUNT ( * ) AS col1, + CAST (
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,539 failed
 * 84% was OK
 
-Time: 19169.427ms
+Time: 19105.725ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 287/620 [`./test/random/aggregates/slt_good_36.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_36.test)
@@ -9953,6 +9981,13 @@ SELECT DISTINCT * FROM ( tab0 AS cor0 CROSS JOIN tab0 )
 
 
 ```sql
+SELECT ALL CAST ( NULL AS INTEGER ) + 1 AS col1 FROM tab0
+
+Expected: ["NULL","NULL","NULL"] but got ["1","1","1"]
+```
+
+
+```sql
 SELECT DISTINCT + CAST ( CAST ( NULL AS INTEGER ) AS INTEGER ) AS col0, CAST ( NULL AS INTEGER ) / + + 5 / - 48 * + - 22 + + + SUM ( col2 ) FROM tab0
 
 Expected: ["NULL","NULL"] but got ["0","156"]
@@ -9972,12 +10007,12 @@ SELECT + 20 * 17 + + + 26 * + MIN ( DISTINCT - col0 ) col1, - 97 / - 70 FROM tab
 Expected: ["NULL","1"] but got ["NULL","1.386"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,546 failed
 * 84% was OK
 
-Time: 19690.491ms
+Time: 19293.208ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 288/620 [`./test/random/aggregates/slt_good_37.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_37.test)
@@ -10053,12 +10088,12 @@ SELECT 56 + CAST ( NULL AS INTEGER ) col0, - ( + SUM ( col1 ) ) * - 43 - - 83 FR
 Expected: ["NULL","NULL"] but got ["56","83"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,573 failed
 * 84% was OK
 
-Time: 23178.389ms
+Time: 19452.552ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 289/620 [`./test/random/aggregates/slt_good_38.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_38.test)
@@ -10155,19 +10190,12 @@ SELECT ALL + + SUM ( col0 ) AS col1, COUNT ( * ) * + - MIN ( ALL - - col1 ) + - 
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-
-```sql
-SELECT - 64 + - + col2 / - ( + 53 ) - col0 FROM tab2 AS cor0
-
-Expected: ["-110","-128","-138"] but got ["-109.566","-127.245","-137.906"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,565 failed
 * 84% was OK
 
-Time: 21804.915ms
+Time: 20291.025ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 290/620 [`./test/random/aggregates/slt_good_39.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_39.test)
@@ -10250,12 +10278,12 @@ SELECT MIN ( ALL + 85 ) FROM tab2 WHERE NOT - col2 BETWEEN NULL AND ( col0 * - 6
 Expected: ["85"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,597 failed
 * 84% was OK
 
-Time: 18163.467ms
+Time: 19691.305ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 291/620 [`./test/random/aggregates/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_4.test)
@@ -10352,12 +10380,12 @@ SELECT ALL - MAX ( ALL - - col1 ) AS col0 FROM tab2 WHERE NOT ( col0 ) + 87 IN (
 Expected: ["-77"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,688 failed
 * 83% was OK
 
-Time: 25605.550ms
+Time: 19712.108ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 292/620 [`./test/random/aggregates/slt_good_40.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_40.test)
@@ -10440,12 +10468,12 @@ SELECT + - CAST ( NULL AS INTEGER ) col1, - CAST ( NULL AS INTEGER ) * COUNT ( *
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,597 failed
 * 84% was OK
 
-Time: 20019.929ms
+Time: 19255.127ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 293/620 [`./test/random/aggregates/slt_good_41.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_41.test)
@@ -10528,12 +10556,12 @@ SELECT COUNT ( * ) / + ( + CAST ( + COUNT ( - - col0 ) AS INTEGER ) ) col2 FROM 
 Expected: ["1"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,464 failed
 * 85% was OK
 
-Time: 22991.624ms
+Time: 18694.601ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 294/620 [`./test/random/aggregates/slt_good_42.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_42.test)
@@ -10597,6 +10625,13 @@ Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","46","0","64"
 
 
 ```sql
+SELECT ALL col0 / ( - - 20 ) FROM tab1 AS cor0
+
+Expected: ["2","4","4"] but got ["2.550","4.250","4.550"]
+```
+
+
+```sql
 SELECT DISTINCT 82 / + - col1 * + CAST ( NULL AS INTEGER ) col0, col1 / + col0 AS col1 FROM tab2 AS cor0
 
 Expected: ["NULL","0","NULL","1"] but got ["NULL","0.893","NULL","1.109","NULL","1.203"]
@@ -10623,12 +10658,12 @@ SELECT - AVG ( DISTINCT + CAST ( NULL AS INTEGER ) ) + + 0 AS col0, COUNT ( * ) 
 Expected: ["NULL","NULL"] but got ["0","3"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,530 failed
 * 84% was OK
 
-Time: 26922.541ms
+Time: 19078.258ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 295/620 [`./test/random/aggregates/slt_good_43.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_43.test)
@@ -10711,19 +10746,12 @@ SELECT DISTINCT + MIN ( ALL + col0 ) FROM tab2 WHERE NOT col2 * 43 IN ( + 38, ( 
 Expected: ["46"] but got ["NULL"]
 ```
 
-
-```sql
-SELECT 93 * COUNT ( * ) * CAST ( NULL AS INTEGER ) FROM tab1
-
-Expected: ["NULL"] but got ["0"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,572 failed
 * 84% was OK
 
-Time: 18983.107ms
+Time: 18991.451ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 296/620 [`./test/random/aggregates/slt_good_44.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_44.test)
@@ -10799,12 +10827,12 @@ SELECT DISTINCT - - CAST ( NULL AS INTEGER ) + - + col2, CAST ( NULL AS INTEGER 
 Expected: ["NULL","NULL"] but got ["-23","-19","-40","-19","-58","-19"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,597 failed
 * 84% was OK
 
-Time: 19341.515ms
+Time: 19083.235ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 297/620 [`./test/random/aggregates/slt_good_45.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_45.test)
@@ -10887,12 +10915,12 @@ SELECT MAX ( ALL col0 ), SUM ( + - 91 ) FROM tab0 WHERE NULL > col0
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,531 failed
 * 84% was OK
 
-Time: 23410.368ms
+Time: 19247.699ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 298/620 [`./test/random/aggregates/slt_good_46.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_46.test)
@@ -10968,12 +10996,12 @@ SELECT DISTINCT * FROM tab1 cor0 CROSS JOIN tab1 AS cor1 WHERE NOT NULL IS NOT N
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,606 failed
 * 83% was OK
 
-Time: 20588.288ms
+Time: 19154.187ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 299/620 [`./test/random/aggregates/slt_good_47.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_47.test)
@@ -11066,12 +11094,12 @@ SELECT col1 / - CAST ( NULL AS INTEGER ) AS col2, 42 / col1 AS col1 FROM tab0
 Expected: ["NULL","0","NULL","2","NULL","42"] but got ["NULL","0.519","NULL","2","NULL","42"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,605 failed
 * 83% was OK
 
-Time: 21197.055ms
+Time: 19156.008ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 300/620 [`./test/random/aggregates/slt_good_48.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_48.test)
@@ -11147,12 +11175,12 @@ SELECT SUM ( ALL + - col0 ) AS col0, 79 + + - MAX ( ( 58 ) ) FROM tab0 AS cor0 W
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,514 failed
 * 84% was OK
 
-Time: 22716.761ms
+Time: 19080.676ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 301/620 [`./test/random/aggregates/slt_good_49.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_49.test)
@@ -11235,12 +11263,12 @@ SELECT - COUNT ( - + 79 ) / - SUM ( ALL + ( + col0 ) ) AS col0 FROM tab2 AS cor0
 Expected: ["0"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,539 failed
 * 84% was OK
 
-Time: 20919.839ms
+Time: 19494.239ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 302/620 [`./test/random/aggregates/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_5.test)
@@ -11326,12 +11354,12 @@ SELECT DISTINCT * FROM tab0, tab0 cor0 WHERE NULL IS NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,632 failed
 * 83% was OK
 
-Time: 21213.817ms
+Time: 19478.344ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 303/620 [`./test/random/aggregates/slt_good_50.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_50.test)
@@ -11414,12 +11442,12 @@ SELECT - MAX ( CAST ( NULL AS INTEGER ) ) AS col0, - CAST ( NULL AS INTEGER ) * 
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,543 failed
 * 84% was OK
 
-Time: 19270.406ms
+Time: 19190.229ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 304/620 [`./test/random/aggregates/slt_good_51.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_51.test)
@@ -11509,12 +11537,12 @@ SELECT 46 - + 33 + - col1 AS col1, - col1 / - + CAST ( NULL AS INTEGER ) + col2 
 Expected: ["-68","NULL","-8","NULL","12","NULL"] but got ["NULL","NULL","NULL","NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,585 failed
 * 84% was OK
 
-Time: 18953.700ms
+Time: 19042.982ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 305/620 [`./test/random/aggregates/slt_good_52.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_52.test)
@@ -11604,12 +11632,12 @@ SELECT MAX ( - col0 ) AS col0, 94 FROM tab2 AS cor0 WHERE NOT NULL BETWEEN - 11 
 Expected: ["NULL","94"] but got ["94","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,491 failed
 * 85% was OK
 
-Time: 23774.879ms
+Time: 18697.389ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 306/620 [`./test/random/aggregates/slt_good_53.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_53.test)
@@ -11685,12 +11713,12 @@ SELECT - CAST ( NULL AS INTEGER ) AS col1, - ( CAST ( NULL AS INTEGER ) ) FROM t
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,596 failed
 * 84% was OK
 
-Time: 20998.056ms
+Time: 19032.973ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 307/620 [`./test/random/aggregates/slt_good_54.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_54.test)
@@ -11780,12 +11808,12 @@ SELECT CAST ( NULL AS INTEGER ) AS col1, CAST ( NULL AS INTEGER ) * 67 AS col1 F
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,558 failed
 * 84% was OK
 
-Time: 20989.237ms
+Time: 19279.710ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 308/620 [`./test/random/aggregates/slt_good_55.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_55.test)
@@ -11861,19 +11889,12 @@ SELECT + 70 - + MIN ( - col0 ) FROM tab0 AS cor0 WHERE NOT col0 IN ( ( col1 ) * 
 Expected: ["167"] but got ["NULL"]
 ```
 
-
-```sql
-SELECT ALL CAST ( - CAST ( NULL AS REAL ) AS REAL ) + COUNT ( * ) FROM tab1
-
-Wrong conversion type
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,521 failed
 * 84% was OK
 
-Time: 21440.632ms
+Time: 19006.730ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 309/620 [`./test/random/aggregates/slt_good_56.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_56.test)
@@ -11949,12 +11970,12 @@ SELECT DISTINCT - COUNT ( * ) + + - ( + 12 ) / + CAST ( NULL AS INTEGER ) col0, 
 Expected: ["NULL","0"] but got ["NULL","0.086"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,544 failed
 * 84% was OK
 
-Time: 18523.467ms
+Time: 19636.382ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 310/620 [`./test/random/aggregates/slt_good_57.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_57.test)
@@ -12037,12 +12058,12 @@ SELECT DISTINCT * FROM tab0, tab2 AS cor0 WHERE NULL IS NOT NULL OR NOT ( NULL )
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,569 failed
 * 84% was OK
 
-Time: 20036.747ms
+Time: 20067.364ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 311/620 [`./test/random/aggregates/slt_good_58.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_58.test)
@@ -12125,12 +12146,12 @@ SELECT ALL + COUNT ( * ) AS col1, + MIN ( ALL col0 ) AS col1 FROM tab0 cor0 WHER
 Expected: ["0","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,477 failed
 * 85% was OK
 
-Time: 18270.064ms
+Time: 19433.008ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 312/620 [`./test/random/aggregates/slt_good_59.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_59.test)
@@ -12194,6 +12215,13 @@ Expected: ["195"] but got ["NULL"]
 
 
 ```sql
+SELECT AVG ( - - CAST ( NULL AS INTEGER ) ) FROM tab0
+
+Expected: ["NULL"] but got ["0"]
+```
+
+
+```sql
 SELECT DISTINCT - + 71 / - - col0 AS col2, 78 + - - CAST ( NULL AS INTEGER ) * - col0 FROM tab0 AS cor0
 
 Expected: ["-4","NULL","0","NULL"] but got ["-0.732","78","-0.816","78","-4.733","78"]
@@ -12216,12 +12244,12 @@ Parse error on line 1:
 Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARROW', 'CARET', 'EQ', 'WHERE', 'SLASH', 'EXCLAMATION', 'MODULO', 'GT', 'LT', 'GTGT', 'LTLT', 'NOT', 'UNION', 'INTERSECT', 'EXCEPT', 'AN…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,519 failed
 * 84% was OK
 
-Time: 18889.530ms
+Time: 19275.441ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 313/620 [`./test/random/aggregates/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_6.test)
@@ -12304,12 +12332,12 @@ SELECT DISTINCT 9 + COUNT ( * ) AS col2, AVG ( DISTINCT + + col2 ) col2, - MAX (
 Expected: ["9","NULL","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,649 failed
 * 83% was OK
 
-Time: 17854.722ms
+Time: 19417.843ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 314/620 [`./test/random/aggregates/slt_good_60.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_60.test)
@@ -12392,12 +12420,12 @@ SELECT DISTINCT - CAST ( NULL AS INTEGER ) AS col1, + col1 * - ( + + ( + - CAST 
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,610 failed
 * 83% was OK
 
-Time: 17392.616ms
+Time: 19290.318ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 315/620 [`./test/random/aggregates/slt_good_61.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_61.test)
@@ -12473,12 +12501,19 @@ SELECT DISTINCT * FROM tab0 AS cor0 LEFT JOIN tab2 AS cor1 ON NOT + 73 IS NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT col0 * + col1 FROM tab1 WHERE ( NOT - col0 BETWEEN col0 AND col1 )
+
+Query was expected to return results (but did not) 
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,533 failed
 * 84% was OK
 
-Time: 18026.815ms
+Time: 19245.549ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 316/620 [`./test/random/aggregates/slt_good_62.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_62.test)
@@ -12568,12 +12603,12 @@ SELECT - 94 + - MIN ( 22 ) AS col1, 24 FROM tab1 cor0 WHERE NULL IS NOT NULL
 Expected: ["NULL","24"] but got ["24","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,496 failed
 * 85% was OK
 
-Time: 18439.584ms
+Time: 19266.273ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 317/620 [`./test/random/aggregates/slt_good_63.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_63.test)
@@ -12658,6 +12693,13 @@ Expected: ["NULL","NULL"] but got ["0","NULL"]
 
 
 ```sql
+SELECT + ( - 77 ) / - ( + col2 ) AS col0 FROM tab2 AS cor0
+
+Expected: ["1","1","3"] but got ["1.328","1.925","3.348"]
+```
+
+
+```sql
 SELECT * FROM tab1 AS cor0 LEFT JOIN tab2 cor1 ON NULL IS NULL, tab1 AS cor2
 
 Parse error on line 1:
@@ -12680,12 +12722,12 @@ SELECT CAST ( NULL AS INTEGER ), - col1 + - CAST ( NULL AS INTEGER ) FROM tab1 W
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","-14","0","-47","0","-5"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,467 failed
 * 85% was OK
 
-Time: 20099.600ms
+Time: 19706.416ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 318/620 [`./test/random/aggregates/slt_good_64.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_64.test)
@@ -12785,12 +12827,12 @@ SELECT ( - CAST ( NULL AS INTEGER ) ), CAST ( NULL AS INTEGER ) - MAX ( ALL + 37
 Expected: ["NULL","NULL"] but got ["0","-37"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,567 failed
 * 84% was OK
 
-Time: 21105.002ms
+Time: 19456.696ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 319/620 [`./test/random/aggregates/slt_good_65.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_65.test)
@@ -12883,12 +12925,12 @@ Parse error on line 1:
 Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARROW', 'CARET', 'EQ', 'WHERE', 'SLASH', 'EXCLAMATION', 'MODULO', 'GT', 'LT', 'GTGT', 'LTLT', 'NOT', 'UNION', 'INTERSECT', 'EXCEPT', 'AN…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,558 failed
 * 84% was OK
 
-Time: 19491.150ms
+Time: 19187.953ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 320/620 [`./test/random/aggregates/slt_good_66.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_66.test)
@@ -12945,6 +12987,13 @@ Correct amount of values returned but hash was different than expected.
 
 
 ```sql
+SELECT ALL - + 26 * CAST ( + + col2 AS INTEGER ) col2, + ( + ( + ( col1 ) ) ) AS col2 FROM tab0 AS cor0
+
+Expected: ["-1222","81","-2574","1","-260","21"] but got ["1","1","21","21","81","81"]
+```
+
+
+```sql
 SELECT DISTINCT col0 / - 40, + col2 * + - CAST ( NULL AS INTEGER ) AS col0 FROM tab1
 
 Expected: ["-1","NULL","-2","NULL"] but got ["-1.275","0","-2.125","0","-2.275","0"]
@@ -12971,12 +13020,12 @@ SELECT + MAX ( 5 ) col1, - SUM ( DISTINCT - 43 ) + ( COUNT ( * ) ) AS col2 FROM 
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,534 failed
 * 84% was OK
 
-Time: 20965.319ms
+Time: 19821.947ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 321/620 [`./test/random/aggregates/slt_good_67.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_67.test)
@@ -13047,6 +13096,13 @@ Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","
 
 
 ```sql
+SELECT DISTINCT + COUNT ( ALL col2 ) * + + COUNT ( * ) + + - 6 + - - CAST ( NULL AS INTEGER ) FROM tab2
+
+Expected: ["NULL"] but got ["3"]
+```
+
+
+```sql
 SELECT DISTINCT * FROM tab2 AS cor0 CROSS JOIN tab0 AS cor1 WHERE ( NOT NULL IS NOT NULL )
 
 18 results returned but expected 54
@@ -13059,12 +13115,12 @@ SELECT + - col0 col1, + col2 / + ( CAST ( NULL AS INTEGER ) ) AS col1 FROM tab0 
 Expected: ["-15","NULL","-87","NULL","-97","NULL"] but got ["NULL","NULL","NULL","NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,602 failed
 * 83% was OK
 
-Time: 20159.267ms
+Time: 19225.204ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 322/620 [`./test/random/aggregates/slt_good_68.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_68.test)
@@ -13147,12 +13203,12 @@ SELECT DISTINCT + col1 + + + col1 AS col0, + col1 / + ( col0 ) * + 1 * + CAST ( 
 Expected: ["10","NULL","28","NULL","94","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,543 failed
 * 84% was OK
 
-Time: 20573.304ms
+Time: 19334.341ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 323/620 [`./test/random/aggregates/slt_good_69.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_69.test)
@@ -13228,12 +13284,12 @@ SELECT DISTINCT + 78 * + CAST ( NULL AS INTEGER ), + ( CAST ( NULL AS INTEGER ) 
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,505 failed
 * 84% was OK
 
-Time: 20131.269ms
+Time: 19067.825ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 324/620 [`./test/random/aggregates/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_7.test)
@@ -13340,12 +13396,12 @@ Parse error on line 1:
 Expecting 'EOF', 'WITH', 'RPAR', 'PIVOT', 'UNPIVOT', 'IN', 'LIKE', 'ORDER', 'ARROW', 'CARET', 'EQ', 'WHERE', 'SLASH', 'EXCLAMATION', 'MODULO', 'GT', 'LT', 'GTGT', 'LTLT', 'NOT', 'UNION', 'INTERSECT', 'EXCEPT', 'AN…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,634 failed
 * 83% was OK
 
-Time: 20001.383ms
+Time: 19350.289ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 325/620 [`./test/random/aggregates/slt_good_70.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_70.test)
@@ -13423,17 +13479,24 @@ Expected: ["NULL","NULL"] but got ["0","0"]
 
 
 ```sql
+SELECT * FROM tab2 AS cor0 CROSS JOIN tab0 WHERE NULL IS NULL
+
+Correct amount of values returned but hash was different than expected.
+```
+
+
+```sql
 SELECT CAST ( NULL AS INTEGER ), AVG ( ALL - + col2 ) - AVG ( col2 ) + + AVG ( ALL col2 ) AS col0 FROM tab2 AS cor0 WHERE NULL = - 30
 
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,578 failed
 * 84% was OK
 
-Time: 19629.861ms
+Time: 19220.751ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 326/620 [`./test/random/aggregates/slt_good_71.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_71.test)
@@ -13509,12 +13572,12 @@ SELECT CAST ( NULL AS INTEGER ) - + CAST ( - col2 AS INTEGER ) * col1 + + 36 * -
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["-2310","35","-2421","124","1287","72"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,566 failed
 * 84% was OK
 
-Time: 20224.205ms
+Time: 19281.846ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 327/620 [`./test/random/aggregates/slt_good_72.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_72.test)
@@ -13600,12 +13663,12 @@ SELECT DISTINCT * FROM tab0 AS cor0 CROSS JOIN tab1 cor1 WHERE ( 8 ) IS NOT NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,538 failed
 * 84% was OK
 
-Time: 21824.370ms
+Time: 19255.257ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 328/620 [`./test/random/aggregates/slt_good_73.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_73.test)
@@ -13709,12 +13772,12 @@ SELECT - + ( 1 ) - + + col2 / + 11, col2 + col2 / - CAST ( NULL AS INTEGER ) AS 
 Expected: ["-1","NULL","-10","NULL","-5","NULL"] but got ["-1.909","NULL","-10","NULL","-5.273","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,552 failed
 * 84% was OK
 
-Time: 20859.819ms
+Time: 19309.384ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 329/620 [`./test/random/aggregates/slt_good_74.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_74.test)
@@ -13785,24 +13848,17 @@ SELECT DISTINCT * FROM tab1 cor0 CROSS JOIN tab2 WHERE NOT ( + 5 ) IS NULL
 
 
 ```sql
-SELECT col0 + + ( - 31 ) / col2 * col2 col2 FROM tab0 AS cor0
-
-Expected: ["15","57","97"] but got ["-16.000","56","66"]
-```
-
-
-```sql
 SELECT - CAST ( NULL AS INTEGER ) col0, 84 * AVG ( 61 ) FROM tab2 AS cor0 WHERE NULL BETWEEN col0 AND col1
 
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,476 failed
 * 85% was OK
 
-Time: 18245.374ms
+Time: 19330.951ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 330/620 [`./test/random/aggregates/slt_good_75.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_75.test)
@@ -13885,12 +13941,12 @@ SELECT DISTINCT CAST ( NULL AS INTEGER ), AVG ( + CAST ( NULL AS INTEGER ) ) / -
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,603 failed
 * 83% was OK
 
-Time: 19326.680ms
+Time: 19424.620ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 331/620 [`./test/random/aggregates/slt_good_76.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_76.test)
@@ -13973,12 +14029,12 @@ SELECT ALL COUNT ( * ) / + CAST ( - MIN ( - col1 ) AS INTEGER ) FROM tab0
 Expected: ["0"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,567 failed
 * 84% was OK
 
-Time: 17625.499ms
+Time: 19823.814ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 332/620 [`./test/random/aggregates/slt_good_77.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_77.test)
@@ -14068,12 +14124,12 @@ SELECT DISTINCT * FROM tab0 AS cor0 CROSS JOIN tab2 cor1 WHERE NOT ( NULL IS NOT
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,557 failed
 * 84% was OK
 
-Time: 17745.429ms
+Time: 19352.473ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 333/620 [`./test/random/aggregates/slt_good_78.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_78.test)
@@ -14158,17 +14214,24 @@ Expected: ["NULL","NULL"] but got ["0","NULL"]
 
 
 ```sql
+SELECT ALL CAST ( NULL AS REAL ) + COUNT ( * ) FROM tab0 AS cor0
+
+Wrong conversion type
+```
+
+
+```sql
 SELECT DISTINCT + 95 / + 20 AS col2, - col1 * - 63 - col0 * + - col2 / - CAST ( NULL AS INTEGER ) + + + ( - col0 ) * + col0 AS col1 FROM tab2 AS cor0 WHERE NOT NULL IS NOT NULL
 
 Expected: ["4","NULL"] but got ["4.750","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,678 failed
 * 83% was OK
 
-Time: 19944.874ms
+Time: 19287.613ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 334/620 [`./test/random/aggregates/slt_good_79.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_79.test)
@@ -14258,19 +14321,12 @@ SELECT ALL COUNT ( * ) / + CAST ( + + SUM ( col1 ) AS INTEGER ) FROM tab2 AS cor
 Expected: ["0"] but got ["NULL"]
 ```
 
-
-```sql
-SELECT DISTINCT + COUNT ( * ) * - - 22 AS col2 FROM tab1 cor0 WHERE NOT ( + + CAST ( NULL AS INTEGER ) IS NOT NULL )
-
-Expected: ["66"] but got ["0"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,536 failed
 * 84% was OK
 
-Time: 19241.174ms
+Time: 19262.351ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 335/620 [`./test/random/aggregates/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_8.test)
@@ -14353,12 +14409,12 @@ SELECT DISTINCT + 6 * - 31 + col1 AS col1, + 34 / - CAST ( NULL AS INTEGER ) col
 Expected: ["-139","NULL","-172","NULL","-181","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,634 failed
 * 83% was OK
 
-Time: 18213.552ms
+Time: 19418.270ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 336/620 [`./test/random/aggregates/slt_good_80.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_80.test)
@@ -14441,12 +14497,12 @@ SELECT MIN ( ( col1 ) ) + - COUNT ( CAST ( col1 AS INTEGER ) ) FROM tab1 AS cor0
 Expected: ["2"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,568 failed
 * 84% was OK
 
-Time: 20612.998ms
+Time: 21711.671ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 337/620 [`./test/random/aggregates/slt_good_81.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_81.test)
@@ -14539,12 +14595,12 @@ SELECT ALL + MIN ( - col1 ) AS col1, - CAST ( NULL AS INTEGER ) * + 98 AS col2 F
 Expected: ["NULL","NULL"] but got ["-47","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,563 failed
 * 84% was OK
 
-Time: 20935.725ms
+Time: 19381.201ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 338/620 [`./test/random/aggregates/slt_good_82.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_82.test)
@@ -14634,12 +14690,12 @@ SELECT DISTINCT * FROM ( tab0 cor0 CROSS JOIN tab0 cor1 ) WHERE NULL IS NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,621 failed
 * 83% was OK
 
-Time: 20439.639ms
+Time: 19923.184ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 339/620 [`./test/random/aggregates/slt_good_83.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_83.test)
@@ -14729,12 +14785,12 @@ SELECT ALL col1 / - - ( + CAST ( NULL AS INTEGER ) ) col0, 39 + + + CAST ( NULL 
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["NULL","27.797","NULL","27.891","NULL","28.107"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,614 failed
 * 83% was OK
 
-Time: 18980.378ms
+Time: 19740.024ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 340/620 [`./test/random/aggregates/slt_good_84.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_84.test)
@@ -14824,12 +14880,12 @@ SELECT DISTINCT - - col2 / - - 62 AS col0, CAST ( NULL AS INTEGER ) FROM tab0 AS
 Expected: ["0","NULL","1","NULL"] but got ["0.161","0","0.758","0","1.597","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,621 failed
 * 83% was OK
 
-Time: 19476.828ms
+Time: 19894.622ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 341/620 [`./test/random/aggregates/slt_good_85.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_85.test)
@@ -14905,12 +14961,12 @@ SELECT - COUNT ( * ) / CAST ( - COUNT ( * ) AS INTEGER ) AS col0 FROM tab0
 Expected: ["1"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,517 failed
 * 84% was OK
 
-Time: 21118.717ms
+Time: 19043.198ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 342/620 [`./test/random/aggregates/slt_good_86.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_86.test)
@@ -15007,12 +15063,12 @@ SELECT ALL CAST ( + MAX ( col2 ) AS INTEGER ), 80 - COUNT ( * ) + - 75 + CAST ( 
 Expected: ["NULL","NULL"] but got ["0","20"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,532 failed
 * 84% was OK
 
-Time: 20939.841ms
+Time: 19177.533ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 343/620 [`./test/random/aggregates/slt_good_87.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_87.test)
@@ -15102,12 +15158,12 @@ SELECT + COUNT ( * ) / + - CAST ( + COUNT ( * ) AS INTEGER ) col1 FROM tab0 AS c
 Expected: ["-1"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,620 failed
 * 83% was OK
 
-Time: 20054.545ms
+Time: 19157.703ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 344/620 [`./test/random/aggregates/slt_good_88.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_88.test)
@@ -15190,12 +15246,12 @@ SELECT ALL SUM ( DISTINCT - col2 ) AS col0, CAST ( NULL AS INTEGER ) col2 FROM t
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,625 failed
 * 83% was OK
 
-Time: 20039.848ms
+Time: 19364.746ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 345/620 [`./test/random/aggregates/slt_good_89.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_89.test)
@@ -15285,12 +15341,12 @@ SELECT 98 AS col1, + AVG ( DISTINCT 53 ) + - - COUNT ( * ) AS col1 FROM tab1 AS 
 Expected: ["98","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,601 failed
 * 84% was OK
 
-Time: 18263.130ms
+Time: 20289.152ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 346/620 [`./test/random/aggregates/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_9.test)
@@ -15359,12 +15415,12 @@ SELECT - + CAST ( NULL AS INTEGER ) + 3 AS col0 FROM tab2 WHERE + + col2 - - - (
 Expected: ["NULL","NULL"] but got ["3","3"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,565 failed
 * 84% was OK
 
-Time: 21734.211ms
+Time: 19488.351ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 347/620 [`./test/random/aggregates/slt_good_90.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_90.test)
@@ -15440,12 +15496,12 @@ SELECT DISTINCT * FROM tab1, tab2 cor0 WHERE NOT NULL IS NOT NULL
 18 results returned but expected 54
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,643 failed
 * 83% was OK
 
-Time: 21513.510ms
+Time: 19532.826ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 348/620 [`./test/random/aggregates/slt_good_91.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_91.test)
@@ -15528,12 +15584,19 @@ SELECT - 92 AS col1, 26 * - + ( + MIN ( - 77 ) ) AS col1 FROM tab1 WHERE NOT - c
 Expected: ["-92","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT ALL col0 * ( - 79 ) * 28 / - ( + col1 ) FROM tab0
+
+Expected: ["214564","409","9164"] but got ["214564","409.630","9164"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,630 failed
 * 83% was OK
 
-Time: 19086.628ms
+Time: 19739.131ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 349/620 [`./test/random/aggregates/slt_good_92.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_92.test)
@@ -15623,12 +15686,12 @@ SELECT SUM ( - col0 ) + + AVG ( ALL - - 30 ) AS col0, 17 FROM tab1 AS cor0 WHERE
 Expected: ["NULL","17"] but got ["17","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,607 failed
 * 83% was OK
 
-Time: 18925.477ms
+Time: 23434.506ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 350/620 [`./test/random/aggregates/slt_good_93.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_93.test)
@@ -15711,12 +15774,12 @@ SELECT DISTINCT + + MAX ( - + col0 ) AS col1 FROM tab2 WHERE NOT - ( + col1 ) BE
 Expected: ["-46"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,581 failed
 * 84% was OK
 
-Time: 20543.264ms
+Time: 25354.283ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 351/620 [`./test/random/aggregates/slt_good_94.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_94.test)
@@ -15823,12 +15886,12 @@ SELECT DISTINCT - 42 / + + ( - col2 ) - 44, ( - CAST ( NULL AS INTEGER ) ) AS co
 Expected: ["-40","NULL","-44","NULL"] but got ["-39.800","0","-43.106","0","-43.576","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,578 failed
 * 84% was OK
 
-Time: 20350.113ms
+Time: 22718.314ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 352/620 [`./test/random/aggregates/slt_good_95.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_95.test)
@@ -15918,12 +15981,12 @@ SELECT CAST ( NULL AS INTEGER ) / - + ( - col1 ) AS col2, + CAST ( NULL AS INTEG
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","0","0","0","0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,586 failed
 * 84% was OK
 
-Time: 21707.419ms
+Time: 22947.721ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 353/620 [`./test/random/aggregates/slt_good_96.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_96.test)
@@ -16020,12 +16083,12 @@ SELECT 85 AS col2, - MAX ( DISTINCT + col0 ) AS col2 FROM tab1 AS cor0 WHERE NOT
 Expected: ["85","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,549 failed
 * 84% was OK
 
-Time: 20481.944ms
+Time: 23057.833ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 354/620 [`./test/random/aggregates/slt_good_97.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_97.test)
@@ -16108,12 +16171,12 @@ SELECT CAST ( NULL AS INTEGER ) AS col1, 91 + - col0 + + + 24 * CAST ( NULL AS I
 Expected: ["NULL","NULL","NULL","NULL","NULL","NULL"] but got ["0","91","0","91","0","91"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,633 failed
 * 83% was OK
 
-Time: 19526.023ms
+Time: 23720.482ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 355/620 [`./test/random/aggregates/slt_good_98.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_98.test)
@@ -16213,12 +16276,12 @@ SELECT - - COUNT ( * ) * - - 52 + - SUM ( - + col0 ) * - + 77, MIN ( DISTINCT 44
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,644 failed
 * 83% was OK
 
-Time: 18358.124ms
+Time: 23322.373ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 356/620 [`./test/random/aggregates/slt_good_99.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/aggregates/slt_good_99.test)
@@ -16301,12 +16364,12 @@ SELECT DISTINCT - MAX ( DISTINCT 49 ) * COUNT ( * ) AS col2 FROM tab0 cor0 WHERE
 Expected: ["-147"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,573 failed
 * 84% was OK
 
-Time: 17948.113ms
+Time: 22501.032ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 357/620 [`./test/random/expr/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_0.test)
@@ -16382,12 +16445,12 @@ SELECT - + 46 AS col2, CASE 10 WHEN + 84 THEN 33 / + + 74 ELSE NULL END col2
 Expected: ["-46","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,839 failed
 * 81% was OK
 
-Time: 21507.239ms
+Time: 22745.319ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 358/620 [`./test/random/expr/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_1.test)
@@ -16442,12 +16505,12 @@ SELECT + MIN ( + + 67 ), 63 / - CAST ( - COUNT ( * ) AS INTEGER ) AS col2
 Expected: ["67","63"] but got ["67","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,175 failed
 * 88% was OK
 
-Time: 13301.165ms
+Time: 12700.626ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 359/620 [`./test/random/expr/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_10.test)
@@ -16497,6 +16560,13 @@ Expected: ["20","NULL"] but got ["NULL","NULL"]
 
 
 ```sql
+SELECT ALL + - 55 AS col0, CAST ( COALESCE ( + NULLIF ( - 16, + 93 ), 9 - - - 32 + + 28 / 35 ) AS INTEGER ) / 74 * 23 AS col0
+
+Expected: ["-55","0"] but got ["-4.973","-4.973"]
+```
+
+
+```sql
 SELECT 61 + - + CAST ( NULL AS INTEGER ) + CAST ( NULL AS INTEGER ) + 54 * - 0 + - 9 + + 37 AS col0, CAST ( NULL AS INTEGER ) * - 92 AS col2
 
 Expected: ["NULL","NULL"] but got ["89","0"]
@@ -16523,12 +16593,12 @@ SELECT ALL - CASE WHEN + 36 NOT IN ( CAST ( NULL AS INTEGER ) ) THEN NULL ELSE +
 Expected: ["-23"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,060 failed
 * 79% was OK
 
-Time: 22513.800ms
+Time: 21288.106ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 360/620 [`./test/random/expr/slt_good_100.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_100.test)
@@ -16604,12 +16674,19 @@ SELECT - 22 AS col0, CASE + - 63 WHEN + 6 * + 80 * - 2 * - - 81 + - 62 THEN + CA
 Expected: ["-22","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT + + NULLIF ( - CAST ( NULL AS INTEGER ), + 96 * + 1 * + - COUNT ( * ) - 39 ) * 24
+
+Expected: ["NULL"] but got ["0"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,110 failed
 * 78% was OK
 
-Time: 24598.910ms
+Time: 21090.017ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 361/620 [`./test/random/expr/slt_good_101.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_101.test)
@@ -16685,12 +16762,12 @@ SELECT - 9 + + 93 AS col2, CASE + 65 WHEN + 25 THEN + + 72 END * 44 + 17 * + 87 
 Expected: ["84","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,061 failed
 * 79% was OK
 
-Time: 24091.150ms
+Time: 21233.258ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 362/620 [`./test/random/expr/slt_good_102.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_102.test)
@@ -16759,12 +16836,12 @@ SELECT 13 * NULLIF ( + - 16, + 36 - - - COUNT ( * ) ) - + CAST ( NULL AS INTEGER
 Expected: ["NULL","NULL"] but got ["-263","52"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,190 failed
 * 78% was OK
 
-Time: 24696.556ms
+Time: 21417.155ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 363/620 [`./test/random/expr/slt_good_103.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_103.test)
@@ -16833,19 +16910,12 @@ SELECT ALL + CAST ( - CAST ( NULL AS INTEGER ) AS INTEGER ) col1, CASE + 90 WHEN
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-
-```sql
-SELECT DISTINCT - + COUNT ( * ) / + 74 * - 96 * - - COUNT ( + 36 ) * 11 + 81 * - + CAST ( NULL AS INTEGER ) + + CAST ( - 93 AS INTEGER ) AS col1
-
-Expected: ["NULL"] but got ["-93.000"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,064 failed
 * 79% was OK
 
-Time: 24461.242ms
+Time: 21334.276ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 364/620 [`./test/random/expr/slt_good_104.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_104.test)
@@ -16921,12 +16991,12 @@ SELECT DISTINCT CAST ( NULL AS INTEGER ) * + - 72 + + - 9 col2, + CASE - + 13 WH
 Expected: ["NULL","NULL"] but got ["-9","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,069 failed
 * 79% was OK
 
-Time: 23525.200ms
+Time: 21317.423ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 365/620 [`./test/random/expr/slt_good_105.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_105.test)
@@ -16995,12 +17065,19 @@ SELECT ALL 75 col1, + CASE + - 5 WHEN + - 2 THEN + 19 / - 61 ELSE NULL END + - 1
 Expected: ["75","NULL","NULL"] but got ["NULL","-43"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT 17 / + 93 * - 88 AS col0, + 53
+
+Expected: ["0","53"] but got ["-0.002","53"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,007 failed
 * 79% was OK
 
-Time: 24945.998ms
+Time: 22116.397ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 366/620 [`./test/random/expr/slt_good_106.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_106.test)
@@ -17064,13 +17141,6 @@ Expected: ["NULL","2"] but got ["NULL","2.500"]
 
 
 ```sql
-SELECT ALL + 32 col0, ( + NULLIF ( - 59, + COALESCE ( + CAST ( - AVG ( DISTINCT - 51 ) AS INTEGER ), + 90 ) * - 6 ) ) AS col1
-
-g is not defined
-```
-
-
-```sql
 SELECT DISTINCT + CAST ( NULL AS INTEGER ) / + 39 + ( SUM ( ALL + + 30 ) ) / + 37, + MAX ( - - CAST ( NULL AS INTEGER ) ) * - 73 - 92 + - 78
 
 Expected: ["NULL","NULL"] but got ["0.811","-170"]
@@ -17083,12 +17153,12 @@ SELECT ALL + 86 AS col2, - 72 + + CASE - + 43 WHEN - 44 THEN NULL WHEN + 15 * 85
 Expected: ["86","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,066 failed
 * 79% was OK
 
-Time: 21395.007ms
+Time: 21315.661ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 367/620 [`./test/random/expr/slt_good_107.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_107.test)
@@ -17164,12 +17234,19 @@ SELECT - CASE + 51 WHEN + 29 * - + 38 / + 41 THEN - - ( + 8 ) END, CAST ( NULL A
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT - 51 / 85 + CAST ( - 66 AS INTEGER )
+
+Expected: ["-66"] but got ["-66.600"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,081 failed
 * 79% was OK
 
-Time: 24571.169ms
+Time: 20960.958ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 368/620 [`./test/random/expr/slt_good_108.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_108.test)
@@ -17240,17 +17317,24 @@ Expected: ["NULL","NULL"] but got ["156","103"]
 
 
 ```sql
+SELECT ALL 46 AS col2, CAST ( + + 86 AS INTEGER ) AS col2
+
+Expected: ["46","86"] but got ["86","86"]
+```
+
+
+```sql
 SELECT + - ( - + MAX ( - - 88 ) ) + + CASE WHEN - 21 NOT BETWEEN ( NULL ) AND + 8 / + 42 / + 21 - - + 46 THEN 31 END + + - 38 + + 63 + 30 + ( ( - 84 ) + - SUM ( 35 ) * 22 ) * ( 97 ) * - NULLIF ( + ( - 83 ) * SUM ( DISTINCT 29 + 33 ) + + 0 * - 74, + 28 ) AS col1
 
 Cannot read property 'toString' of undefined
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,030 failed
 * 79% was OK
 
-Time: 23766.199ms
+Time: 20945.933ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 369/620 [`./test/random/expr/slt_good_109.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_109.test)
@@ -17326,12 +17410,12 @@ SELECT 27 AS col0, + 18 / - CAST ( NULL AS INTEGER ) AS col0
 Expected: ["27","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,863 failed
 * 81% was OK
 
-Time: 34969.555ms
+Time: 20084.143ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 370/620 [`./test/random/expr/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_11.test)
@@ -17395,6 +17479,13 @@ Expected: ["1375","-73"] but got ["NULL","-73"]
 
 
 ```sql
+SELECT 8 / 49 AS col0
+
+Expected: ["0"] but got ["0.163"]
+```
+
+
+```sql
 SELECT CAST ( NULL AS INTEGER ), CAST ( + CAST ( NULL AS INTEGER ) AS INTEGER )
 
 Expected: ["NULL","NULL"] but got ["0","0"]
@@ -17407,12 +17498,12 @@ SELECT + 63 + 78 col2, NULLIF ( CASE + CAST ( NULL AS INTEGER ) WHEN - - 55 + - 
 Expected: ["141","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,096 failed
 * 79% was OK
 
-Time: 25378.747ms
+Time: 21485.189ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 371/620 [`./test/random/expr/slt_good_110.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_110.test)
@@ -17488,12 +17579,12 @@ SELECT ALL - AVG ( ALL CAST ( NULL AS INTEGER ) ), - CAST ( NULL AS INTEGER ) * 
 Expected: ["NULL","NULL"] but got ["0","39"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,056 failed
 * 79% was OK
 
-Time: 20968.264ms
+Time: 21175.470ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 372/620 [`./test/random/expr/slt_good_111.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_111.test)
@@ -17557,23 +17648,9 @@ Expected: ["NULL","NULL"] but got ["0","0"]
 
 
 ```sql
-SELECT + 71 * + + ( - - 27 ) AS col1, 85, COUNT ( * ) + 22 col2
-
-Expected: ["1917","85","23"] but got ["85","1917","23"]
-```
-
-
-```sql
 SELECT - + CAST ( 63 AS INTEGER ) * + - CASE - SUM ( + 1 ) WHEN + - COUNT ( * ) - 0 + - ( ( + COUNT ( + 9 ) ) ) / + SUM ( - 33 ) * + - 71 * - + 62 THEN + + 97 * COUNT ( * ) - + COUNT ( * ) WHEN + + 73 THEN + - 61 * + + 47 + - 72 ELSE NULL END + 57 + + - 55 AS col2
 
 Expected: ["6050"] but got ["NULL"]
-```
-
-
-```sql
-SELECT - 7 * + AVG ( ALL - + 78 ) * + 49 * + 77 + + 42 + - + 16 + + ( - 10 ) * + 88 * + - CAST ( NULL AS REAL ) AS col1
-
-Wrong conversion type
 ```
 
 
@@ -17583,12 +17660,12 @@ SELECT + 99 AS col0, CASE - 92 WHEN - 82 THEN 58 END AS col0
 Expected: ["99","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,043 failed
 * 79% was OK
 
-Time: 20923.164ms
+Time: 21588.269ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 373/620 [`./test/random/expr/slt_good_112.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_112.test)
@@ -17657,12 +17734,12 @@ SELECT ALL CAST ( NULL AS INTEGER ) + + 2 * + 67 * + COUNT ( * ), CAST ( NULL AS
 Expected: ["NULL","NULL"] but got ["134","42"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,093 failed
 * 79% was OK
 
-Time: 20639.721ms
+Time: 21560.088ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 374/620 [`./test/random/expr/slt_good_113.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_113.test)
@@ -17738,12 +17815,12 @@ SELECT ALL 66 col2, 54 * - CASE - - 57 WHEN - 29 THEN NULL WHEN - + 75 THEN 50 -
 Expected: ["66","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,035 failed
 * 79% was OK
 
-Time: 21549.153ms
+Time: 21815.811ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 375/620 [`./test/random/expr/slt_good_114.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_114.test)
@@ -17819,12 +17896,19 @@ SELECT ALL 48 - + NULLIF ( + COUNT ( DISTINCT - 37 ), COUNT ( * ) ) + 67 - - ( +
 Expected: ["NULL","NULL"] but got ["NULL","21"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT + 39 / + + COUNT ( * ) AS col2, 70
+
+Expected: ["39","70"] but got ["70","39"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,088 failed
 * 79% was OK
 
-Time: 23601.837ms
+Time: 21360.085ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 376/620 [`./test/random/expr/slt_good_115.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_115.test)
@@ -17893,12 +17977,12 @@ SELECT ALL CAST ( NULL AS INTEGER ) AS col2, - 33 + 37 + + ( CASE - - 43 WHEN + 
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,096 failed
 * 79% was OK
 
-Time: 24080.015ms
+Time: 21282.811ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 377/620 [`./test/random/expr/slt_good_116.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_116.test)
@@ -17955,13 +18039,6 @@ Cannot read property 'toString' of undefined
 
 
 ```sql
-SELECT CAST ( + MIN ( DISTINCT - 35 ) AS INTEGER ), 96 + - 35 AS col1
-
-g is not defined
-```
-
-
-```sql
 SELECT ALL - CAST ( NULL AS INTEGER ) AS col2, CAST ( NULL AS INTEGER ) col1
 
 Expected: ["NULL","NULL"] but got ["0","0"]
@@ -17974,12 +18051,12 @@ SELECT - CAST ( NULL AS INTEGER ) * + 36, CASE 59 WHEN + 9 THEN + + 65 WHEN - 71
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,038 failed
 * 79% was OK
 
-Time: 24537.354ms
+Time: 21530.803ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 378/620 [`./test/random/expr/slt_good_117.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_117.test)
@@ -18048,12 +18125,12 @@ SELECT DISTINCT + 76 + - + CAST ( NULL AS INTEGER ), CAST ( NULL AS INTEGER ) AS
 Expected: ["NULL","NULL"] but got ["76","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,964 failed
 * 80% was OK
 
-Time: 23894.201ms
+Time: 21469.841ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 379/620 [`./test/random/expr/slt_good_118.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_118.test)
@@ -18122,12 +18199,12 @@ SELECT 27 + CAST ( NULL AS INTEGER ) * + COUNT ( * ), CAST ( - - 75 AS INTEGER )
 Expected: ["NULL","NULL"] but got ["27","75"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,093 failed
 * 79% was OK
 
-Time: 25185.767ms
+Time: 21509.556ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 380/620 [`./test/random/expr/slt_good_119.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_119.test)
@@ -18203,12 +18280,12 @@ SELECT ALL + - 74 + 9 AS col0, CASE - 77 WHEN + - 95 THEN NULL WHEN 82 + + + 62 
 Expected: ["-65","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 8,938 tests as sqlite
+#### ☓ Ran 8,938 tests as _sqlite_
 
 * 1,838 failed
 * 79% was OK
 
-Time: 21499.850ms
+Time: 19057.547ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 381/620 [`./test/random/expr/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_12.test)
@@ -18284,12 +18361,12 @@ SELECT CASE + 67 WHEN - 70 * + 89 * + - 73 THEN - 87 END, 8 * + CAST ( NULL AS I
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,133 failed
 * 78% was OK
 
-Time: 25829.142ms
+Time: 21574.189ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 382/620 [`./test/random/expr/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_13.test)
@@ -18365,12 +18442,12 @@ SELECT + COUNT ( * ) * + CASE WHEN NOT - COALESCE ( + 30, + ( + 65 ) + - COUNT (
 Expected: ["-86"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,659 failed
 * 83% was OK
 
-Time: 25472.132ms
+Time: 18933.562ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 383/620 [`./test/random/expr/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_14.test)
@@ -18434,6 +18511,13 @@ Expected: ["NULL","NULL"] but got ["NULL","0"]
 
 
 ```sql
+SELECT ALL + 80 / + + 77 col0
+
+Expected: ["1"] but got ["1.039"]
+```
+
+
+```sql
 SELECT ALL - NULLIF ( COALESCE ( + + CAST ( NULL AS INTEGER ), + 20 ), 0 ) AS col1
 
 Expected: ["-20"] but got ["NULL"]
@@ -18446,12 +18530,12 @@ SELECT + - 71 AS col2, - 53 / + CAST ( NULL AS INTEGER ) * + + 74 AS col2
 Expected: ["-71","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,130 failed
 * 78% was OK
 
-Time: 20976.785ms
+Time: 22330.264ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 384/620 [`./test/random/expr/slt_good_15.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_15.test)
@@ -18527,12 +18611,12 @@ SELECT ALL + 38 * + 66 + - ( 97 ) col2, ( + - 1 ) * + CASE - ( ( - 44 ) ) WHEN +
 Expected: ["2411","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,139 failed
 * 78% was OK
 
-Time: 22522.205ms
+Time: 21835.683ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 385/620 [`./test/random/expr/slt_good_16.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_16.test)
@@ -18608,12 +18692,12 @@ SELECT 51 AS col0, CASE 87 WHEN - + 70 THEN 78 WHEN - - 15 THEN NULL END AS col0
 Expected: ["51","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,077 failed
 * 79% was OK
 
-Time: 22101.866ms
+Time: 21751.890ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 386/620 [`./test/random/expr/slt_good_17.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_17.test)
@@ -18684,24 +18768,17 @@ Expected: ["23","-3283","NULL"] but got ["NULL","-3283","NULL"]
 
 
 ```sql
-SELECT DISTINCT - 25 + - - ( + COUNT ( 28 ) ) - + + AVG ( DISTINCT + CAST ( NULL AS INTEGER ) ) AS col0
-
-Expected: ["NULL"] but got ["-24"]
-```
-
-
-```sql
 SELECT + 55 / - 43 - + ( + + 57 ) * + 40 / - CAST ( NULL AS INTEGER ) AS col0, CAST ( NULL AS INTEGER )
 
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,095 failed
 * 79% was OK
 
-Time: 23507.740ms
+Time: 21300.398ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 387/620 [`./test/random/expr/slt_good_18.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_18.test)
@@ -18777,12 +18854,12 @@ SELECT COUNT ( ALL + 84 ) * 66 / + + CAST ( - MAX ( ALL ( + - ( 55 ) ) ) AS INTE
 Expected: ["31"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,118 failed
 * 78% was OK
 
-Time: 22379.725ms
+Time: 21272.239ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 388/620 [`./test/random/expr/slt_good_19.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_19.test)
@@ -18858,12 +18935,12 @@ SELECT ALL - - 77 + - CASE + COUNT ( * ) WHEN + 90 THEN NULL WHEN CAST ( + 80 AS
 Expected: ["NULL","NULL"] but got ["NULL","28"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,089 failed
 * 79% was OK
 
-Time: 21050.477ms
+Time: 21051.388ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 389/620 [`./test/random/expr/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_2.test)
@@ -18932,12 +19009,12 @@ SELECT CAST ( NULL AS INTEGER ), - COUNT ( * ) + - - CAST ( NULL AS INTEGER ) + 
 Expected: ["NULL","NULL"] but got ["0","-15"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,481 failed
 * 85% was OK
 
-Time: 17080.842ms
+Time: 18000.742ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 390/620 [`./test/random/expr/slt_good_20.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_20.test)
@@ -19006,12 +19083,12 @@ SELECT + - CASE + 5 WHEN - - 47 * - + 92 THEN - 70 / + 66 + COUNT ( * ) END AS c
 Expected: ["NULL","NULL"] but got ["NULL","47.291"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,096 failed
 * 79% was OK
 
-Time: 21322.700ms
+Time: 20965.111ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 391/620 [`./test/random/expr/slt_good_21.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_21.test)
@@ -19087,12 +19164,12 @@ SELECT DISTINCT + 75 AS col0, 85 / - + CASE + + 91 WHEN 50 / 26 THEN - 11 ELSE N
 Expected: ["75","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,097 failed
 * 79% was OK
 
-Time: 22205.688ms
+Time: 21378.719ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 392/620 [`./test/random/expr/slt_good_22.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_22.test)
@@ -19149,17 +19226,24 @@ Expected: ["1281"] but got ["NULL"]
 
 
 ```sql
+SELECT + 86 / 17 * - - MIN ( ALL CAST ( + 95 AS INTEGER ) ), + 32 AS col0
+
+Expected: ["475","32"] but got ["480.588","32"]
+```
+
+
+```sql
 SELECT - CAST ( NULL AS INTEGER ) + + ( 72 ) / 16 AS col1, + CASE + 59 WHEN - - 24 THEN - CAST ( 8 AS INTEGER ) WHEN + + 72 + + + COUNT ( * ) THEN + 13 WHEN 37 * + 37 + - COUNT ( * ) * + 24 + 60 + - - MIN ( ALL + 77 ) THEN NULL ELSE NULL END col2
 
 Expected: ["NULL","NULL"] but got ["4.500","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,025 failed
 * 79% was OK
 
-Time: 19916.457ms
+Time: 21229.654ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 393/620 [`./test/random/expr/slt_good_23.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_23.test)
@@ -19228,12 +19312,12 @@ SELECT ALL - - COUNT ( * ) * - ( + CAST ( - - 11 AS INTEGER ) ) + - CAST ( NULL 
 Expected: ["NULL","NULL"] but got ["-2304","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,067 failed
 * 79% was OK
 
-Time: 19718.788ms
+Time: 21497.618ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 394/620 [`./test/random/expr/slt_good_24.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_24.test)
@@ -19309,12 +19393,12 @@ SELECT ALL - 48 / 49 * - CAST ( NULL AS INTEGER ) * - 14 * + 21, ( CAST ( NULL A
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,860 failed
 * 81% was OK
 
-Time: 21828.090ms
+Time: 19786.964ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 395/620 [`./test/random/expr/slt_good_25.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_25.test)
@@ -19376,12 +19460,12 @@ SELECT ALL 74 + + 51 - - - CAST ( NULL AS INTEGER ) * - 9, - ( - - CAST ( NULL A
 Expected: ["NULL","NULL"] but got ["125","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,872 failed
 * 81% was OK
 
-Time: 20857.433ms
+Time: 20054.867ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 396/620 [`./test/random/expr/slt_good_26.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_26.test)
@@ -19450,12 +19534,19 @@ SELECT 64 + + CASE 84 WHEN + MIN ( - - 66 ) + + 84 THEN - 93 END + - - 83 + 13 A
 Expected: ["NULL","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT DISTINCT + + 21 + SUM ( ALL - CASE + 4 WHEN 26 THEN + + 23 - 58 - - 46 - - 56 - 88 END ) - - + 59 + - COUNT ( * ) * - 59 AS col0
+
+Expected: ["NULL"] but got ["139"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,876 failed
 * 81% was OK
 
-Time: 21519.009ms
+Time: 19785.959ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 397/620 [`./test/random/expr/slt_good_27.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_27.test)
@@ -19531,12 +19622,12 @@ SELECT - + 46 AS col2, CASE 10 WHEN + 84 THEN 33 / + + 74 ELSE NULL END col2
 Expected: ["-46","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,857 failed
 * 81% was OK
 
-Time: 22020.015ms
+Time: 20428.514ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 398/620 [`./test/random/expr/slt_good_28.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_28.test)
@@ -19605,12 +19696,12 @@ SELECT DISTINCT + + CAST ( NULL AS INTEGER ) * - 64 col2, 95 - - - CAST ( NULL A
 Expected: ["NULL","NULL"] but got ["0","95"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,924 failed
 * 80% was OK
 
-Time: 20227.766ms
+Time: 20397.360ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 399/620 [`./test/random/expr/slt_good_29.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_29.test)
@@ -19686,12 +19777,12 @@ SELECT + COUNT ( * ) * + CASE WHEN NOT - COALESCE ( + 30, + ( + 65 ) + - COUNT (
 Expected: ["-86"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,476 failed
 * 85% was OK
 
-Time: 17817.943ms
+Time: 18248.662ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 400/620 [`./test/random/expr/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_3.test)
@@ -19755,24 +19846,17 @@ Expected: ["0","NULL"] but got ["0.797","NULL"]
 
 
 ```sql
-SELECT ALL 76 + - 84 * - CAST ( NULL AS REAL ) + 65
-
-Wrong conversion type
-```
-
-
-```sql
 SELECT ALL CAST ( NULL AS INTEGER ), ( + CAST ( NULL AS INTEGER ) ) + + 79, - - 10 AS col1
 
 Expected: ["NULL","NULL","10"] but got ["0","79","10"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,064 failed
 * 79% was OK
 
-Time: 20531.759ms
+Time: 22204.567ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 401/620 [`./test/random/expr/slt_good_30.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_30.test)
@@ -19848,12 +19932,12 @@ SELECT + + 13 / - - COUNT ( * ), + CASE WHEN NOT + ( 39 ) BETWEEN 86 + SUM ( ALL
 Cannot read property 'toString' of undefined
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,765 failed
 * 82% was OK
 
-Time: 18071.539ms
+Time: 19158.242ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 402/620 [`./test/random/expr/slt_good_31.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_31.test)
@@ -19915,12 +19999,12 @@ SELECT ALL 74 + + 51 - - - CAST ( NULL AS INTEGER ) * - 9, - ( - - CAST ( NULL A
 Expected: ["NULL","NULL"] but got ["125","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,808 failed
 * 81% was OK
 
-Time: 21123.393ms
+Time: 20134.263ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 403/620 [`./test/random/expr/slt_good_32.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_32.test)
@@ -19963,24 +20047,17 @@ Expected: ["NULL","NULL"] but got ["0","0"]
 
 
 ```sql
-SELECT - - 38 / + COALESCE ( - SUM ( 63 ), 48 ) AS col0
-
-Expected: ["0"] but got ["-0.603"]
-```
-
-
-```sql
 SELECT - CASE WHEN NOT ( NULL ) NOT BETWEEN NULL AND + 44 THEN 5 END
 
 Cannot read property 'toString' of undefined
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,469 failed
 * 85% was OK
 
-Time: 16262.852ms
+Time: 14489.311ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 404/620 [`./test/random/expr/slt_good_33.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_33.test)
@@ -20044,17 +20121,24 @@ Expected: ["NULL","NULL"] but got ["-389416","-389416"]
 
 
 ```sql
+SELECT ALL - CAST ( NULL AS INTEGER ) + + + 69
+
+Expected: ["NULL"] but got ["69"]
+```
+
+
+```sql
 SELECT 64 + + CASE 84 WHEN + MIN ( - - 66 ) + + 84 THEN - 93 END + - - 83 + 13 AS col0, CASE 58 WHEN - 67 + + 84 + + 0 * - 78 THEN + 12 * - ( + - 90 ) END / 91 + + 59 AS col0
 
 Expected: ["NULL","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,852 failed
 * 81% was OK
 
-Time: 25783.940ms
+Time: 19850.232ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 405/620 [`./test/random/expr/slt_good_34.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_34.test)
@@ -20104,13 +20188,6 @@ Expected: ["71"] but got ["NULL"]
 
 
 ```sql
-SELECT + COUNT ( * ) / + 35 AS col0, 73
-
-Expected: ["0","73"] but got ["73","0.029"]
-```
-
-
-```sql
 SELECT - CASE WHEN NOT 93 BETWEEN NULL AND ( NULL ) THEN - 48 + 93 END / 66 + 32
 
 Cannot read property 'toString' of undefined
@@ -20130,12 +20207,12 @@ SELECT + 33 + - CAST ( NULL AS INTEGER ), CASE + - 97 WHEN 82 / + 30 THEN - 39 -
 Expected: ["NULL","NULL"] but got ["33","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,969 failed
 * 80% was OK
 
-Time: 23943.981ms
+Time: 20140.125ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 406/620 [`./test/random/expr/slt_good_35.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_35.test)
@@ -20204,12 +20281,12 @@ SELECT 60 * + + 59 + COUNT ( * ) + 84 / + CAST ( - SUM ( ALL - + 7 ) AS INTEGER 
 Expected: ["3553"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,902 failed
 * 81% was OK
 
-Time: 23980.900ms
+Time: 20514.271ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 407/620 [`./test/random/expr/slt_good_36.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_36.test)
@@ -20278,12 +20355,12 @@ SELECT + CAST ( NULL AS INTEGER ), CAST ( NULL AS INTEGER ) AS col1
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,929 failed
 * 80% was OK
 
-Time: 20590.527ms
+Time: 20493.539ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 408/620 [`./test/random/expr/slt_good_37.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_37.test)
@@ -20340,6 +20417,13 @@ Cannot read property 'toString' of undefined
 
 
 ```sql
+SELECT 79 / + 96 AS col0
+
+Expected: ["0"] but got ["0.823"]
+```
+
+
+```sql
 SELECT 37 AS col2, 50 / + CASE 9 WHEN 29 THEN + 78 ELSE NULL END col2
 
 Expected: ["37","NULL"] but got ["NULL","NULL"]
@@ -20352,12 +20436,12 @@ SELECT ALL 75 / ( + MAX ( - + 2 ) ) * + 55 * 53 AS col0, 56 * + CAST ( NULL AS I
 Expected: ["-107855","NULL"] but got ["-109312.500","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,954 failed
 * 80% was OK
 
-Time: 29051.439ms
+Time: 20556.514ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 409/620 [`./test/random/expr/slt_good_38.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_38.test)
@@ -20433,12 +20517,12 @@ SELECT 93 AS col1, CAST ( NULL AS INTEGER ) - 64 + - 60 * - 95 * - 76 * 91 * CAS
 Expected: ["93","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,990 failed
 * 80% was OK
 
-Time: 27246.248ms
+Time: 20621.992ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 410/620 [`./test/random/expr/slt_good_39.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_39.test)
@@ -20500,12 +20584,12 @@ SELECT ALL + CAST ( NULL AS INTEGER ) / - + 52, - CAST ( NULL AS INTEGER ) * + 8
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,993 failed
 * 80% was OK
 
-Time: 20685.935ms
+Time: 20531.609ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 411/620 [`./test/random/expr/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_4.test)
@@ -20574,12 +20658,12 @@ SELECT + CAST ( NULL AS INTEGER ) AS col1, CASE + COUNT ( * ) WHEN - - 5 THEN + 
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,064 failed
 * 79% was OK
 
-Time: 22550.200ms
+Time: 22661.876ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 412/620 [`./test/random/expr/slt_good_40.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_40.test)
@@ -20648,12 +20732,12 @@ SELECT ALL - COUNT ( * ) / + + 95, - 2 + - + 35 + CASE 96 WHEN - 97 * + 20 THEN 
 Expected: ["0","NULL"] but got ["-0.011","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,984 failed
 * 80% was OK
 
-Time: 22122.797ms
+Time: 21250.333ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 413/620 [`./test/random/expr/slt_good_41.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_41.test)
@@ -20729,12 +20813,12 @@ SELECT ALL - ( + 50 ) AS col2, - 47 * CASE + 55 WHEN + + 18 + + - NULLIF ( + 84,
 Expected: ["-50","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,945 failed
 * 80% was OK
 
-Time: 26371.258ms
+Time: 20892.494ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 414/620 [`./test/random/expr/slt_good_42.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_42.test)
@@ -20803,12 +20887,12 @@ SELECT ALL - 11 * - 65 * 55 col0, CAST ( NULL AS INTEGER ) * CASE 21 WHEN - + 95
 Expected: ["39325","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,939 failed
 * 80% was OK
 
-Time: 20835.999ms
+Time: 20453.745ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 415/620 [`./test/random/expr/slt_good_43.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_43.test)
@@ -20856,12 +20940,12 @@ SELECT - + 16 / COALESCE ( CAST ( NULL AS INTEGER ), + 89, 13 ) AS col1
 Expected: ["0"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,588 failed
 * 84% was OK
 
-Time: 14181.995ms
+Time: 15231.234ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 416/620 [`./test/random/expr/slt_good_44.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_44.test)
@@ -20937,12 +21021,12 @@ SELECT ALL 73 col1, + 95 + - + CASE + - 80 WHEN + + ( + 13 ) + + 31 + 60 * - + 2
 Expected: ["73","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,974 failed
 * 80% was OK
 
-Time: 20545.090ms
+Time: 20840.321ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 417/620 [`./test/random/expr/slt_good_45.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_45.test)
@@ -21018,12 +21102,12 @@ SELECT 45 + - + 1 * + - MAX ( ALL + ( 8 ) ) * - - 88 + + MAX ( ALL + 64 ) - - CA
 Expected: ["NULL","NULL"] but got ["741","-346"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,019 failed
 * 79% was OK
 
-Time: 19659.736ms
+Time: 20507.492ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 418/620 [`./test/random/expr/slt_good_46.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_46.test)
@@ -21092,19 +21176,12 @@ SELECT ALL - 9 + - CAST ( NULL AS INTEGER ) AS col2, + MAX ( + CAST ( NULL AS IN
 Expected: ["NULL","NULL"] but got ["-9","0"]
 ```
 
-
-```sql
-SELECT - - 20 / - 46 * 21 + + CAST ( NULL AS INTEGER ) + CAST ( + 37 AS INTEGER ) * + 61 + + 51 AS col2
-
-Expected: ["NULL"] but got ["2307.979"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,945 failed
 * 80% was OK
 
-Time: 19502.374ms
+Time: 20642.526ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 419/620 [`./test/random/expr/slt_good_47.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_47.test)
@@ -21180,12 +21257,12 @@ SELECT DISTINCT 32 + - 87 AS col1, CASE + - 60 WHEN + + 53 THEN + 17 END * CAST 
 Expected: ["-55","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,925 failed
 * 80% was OK
 
-Time: 20090.604ms
+Time: 20776.613ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 420/620 [`./test/random/expr/slt_good_48.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_48.test)
@@ -21261,12 +21338,12 @@ SELECT ( + 25 ) AS col2, 63 * - + 82 * CASE + 72 WHEN 89 THEN - + 53 + - 79 END 
 Expected: ["25","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,038 failed
 * 79% was OK
 
-Time: 19896.154ms
+Time: 21530.161ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 421/620 [`./test/random/expr/slt_good_49.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_49.test)
@@ -21342,12 +21419,12 @@ SELECT + CAST ( NULL AS INTEGER ) AS col1, + CASE 26 WHEN - - 43 THEN - 78 * - M
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,006 failed
 * 79% was OK
 
-Time: 20939.162ms
+Time: 21054.128ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 422/620 [`./test/random/expr/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_5.test)
@@ -21430,12 +21507,12 @@ SELECT ALL + 65 AS col1, CASE + + 3 WHEN + + 8 THEN 69 ELSE NULL END col1
 Expected: ["65","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,085 failed
 * 79% was OK
 
-Time: 21595.935ms
+Time: 21694.882ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 423/620 [`./test/random/expr/slt_good_50.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_50.test)
@@ -21504,12 +21581,12 @@ SELECT + 22 / - CAST ( - 38 AS INTEGER ) * - 78 + + 20 - - CASE - 24 WHEN - - CA
 Expected: ["-657"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,998 failed
 * 80% was OK
 
-Time: 20867.438ms
+Time: 20883.813ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 424/620 [`./test/random/expr/slt_good_51.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_51.test)
@@ -21578,12 +21655,12 @@ SELECT CAST ( NULL AS INTEGER ) AS col0, + 76 * CAST ( NULL AS INTEGER ) AS col0
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,968 failed
 * 80% was OK
 
-Time: 21471.273ms
+Time: 21220.799ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 425/620 [`./test/random/expr/slt_good_52.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_52.test)
@@ -21647,17 +21724,24 @@ Cannot read property 'toString' of undefined
 
 
 ```sql
+SELECT - ( + 80 ) + + 68 + - - ( + CAST ( NULL AS INTEGER ) )
+
+Expected: ["NULL"] but got ["-12"]
+```
+
+
+```sql
 SELECT - + 4 / + 38 + + + 19 - + - 39 + - COUNT ( * ) + CAST ( NULL AS INTEGER ) / - COUNT ( * ) + 96 * - 91 + - 97, - 82 + 69 * + ( CAST ( NULL AS INTEGER ) )
 
 Expected: ["NULL","NULL"] but got ["-8776.105","-82"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,064 failed
 * 79% was OK
 
-Time: 21271.297ms
+Time: 20897.841ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 426/620 [`./test/random/expr/slt_good_53.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_53.test)
@@ -21700,13 +21784,6 @@ Wrong conversion type
 
 
 ```sql
-SELECT ALL CASE WHEN NOT NULL > + CAST ( NULL AS REAL ) THEN - + 34 + + 19 END / - 40
-
-Wrong conversion type
-```
-
-
-```sql
 SELECT 24 * - - ( + - 85 ) * CASE WHEN NOT ( NULL ) NOT BETWEEN - CAST ( - - 55 AS INTEGER ) AND + COALESCE ( 75, + + 79 ) * - AVG ( ALL - 25 ) THEN + 81 ELSE - + 40 END + 40
 
 Cannot read property 'toString' of undefined
@@ -21740,12 +21817,12 @@ SELECT - 84 AS col1, 47 * - CASE + 47 WHEN ( + 79 ) THEN - 85 END AS col1
 Expected: ["-84","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,981 failed
 * 80% was OK
 
-Time: 23638.347ms
+Time: 20541.157ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 427/620 [`./test/random/expr/slt_good_54.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_54.test)
@@ -21800,12 +21877,12 @@ SELECT ALL 38 + 47 * - + 90 - - CASE WHEN NOT NULL BETWEEN NULL AND 61 THEN + NU
 Cannot read property 'toString' of undefined
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,612 failed
 * 83% was OK
 
-Time: 14961.688ms
+Time: 15828.191ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 428/620 [`./test/random/expr/slt_good_55.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_55.test)
@@ -21848,13 +21925,6 @@ Expected: ["NULL","NULL"] but got ["NULL","-4237"]
 
 
 ```sql
-SELECT ALL 98 * COUNT ( * ) + 72 / 30 * - 56 * + 15 + + 20 AS col1
-
-Expected: ["-1562"] but got ["-1898"]
-```
-
-
-```sql
 SELECT + ( + + NULLIF ( - COUNT ( ALL - CAST ( NULL AS INTEGER ) ), - 14 ) ) AS col1, - CASE + 63 WHEN + - 85 THEN - 42 - - COUNT ( * ) * - - COALESCE ( + 80, + + 99, 28 * + 37 + + 69 ) END / - 26 AS col0
 
 Expected: ["0","NULL"] but got ["-1","NULL"]
@@ -21888,12 +21958,12 @@ SELECT DISTINCT 54 AS col1, 85 / 68 * - 72 * + 98 * + 88 * - - CASE + 0 WHEN 8 +
 Expected: ["54","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,081 failed
 * 79% was OK
 
-Time: 19788.234ms
+Time: 20816.778ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 429/620 [`./test/random/expr/slt_good_56.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_56.test)
@@ -21955,12 +22025,12 @@ SELECT ALL - MIN ( DISTINCT + - 11 ) * CAST ( NULL AS INTEGER ) * + + NULLIF ( 5
 Expected: ["NULL","NULL"] but got ["-2551504","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,014 failed
 * 79% was OK
 
-Time: 20778.447ms
+Time: 21628.606ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 430/620 [`./test/random/expr/slt_good_57.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_57.test)
@@ -22036,19 +22106,12 @@ SELECT DISTINCT - 22 AS col1, + 85 + 41 + + CASE + 22 WHEN 96 THEN NULL WHEN - 9
 Expected: ["-22","NULL"] but got ["NULL","NULL"]
 ```
 
-
-```sql
-SELECT DISTINCT 35 * + CAST ( NULL AS INTEGER ) AS col2
-
-Expected: ["NULL"] but got ["0"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,000 failed
 * 80% was OK
 
-Time: 20865.493ms
+Time: 20903.404ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 431/620 [`./test/random/expr/slt_good_58.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_58.test)
@@ -22098,13 +22161,6 @@ Expected: ["86","NULL"] but got ["NULL"]
 
 
 ```sql
-SELECT ALL COUNT ( + 9 ) / - 88
-
-Expected: ["0"] but got ["-0.011"]
-```
-
-
-```sql
 SELECT CAST ( NULL AS INTEGER ), + 97 + - CAST ( NULL AS INTEGER ) - + 93 AS col0
 
 Expected: ["NULL","NULL"] but got ["0","4"]
@@ -22131,12 +22187,12 @@ SELECT ALL + 54 * + 33 AS col0, 65 / + CAST ( NULL AS INTEGER ) - + - 53 - + 76 
 Expected: ["1782","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,952 failed
 * 80% was OK
 
-Time: 23534.974ms
+Time: 21095.989ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 432/620 [`./test/random/expr/slt_good_59.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_59.test)
@@ -22205,12 +22261,12 @@ SELECT + CASE - 44 WHEN 69 THEN - + 28 + - 92 + + - 32 - + 20 END, - CAST ( NULL
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,977 failed
 * 80% was OK
 
-Time: 21312.632ms
+Time: 20609.086ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 433/620 [`./test/random/expr/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_6.test)
@@ -22279,12 +22335,12 @@ SELECT DISTINCT - 69 + + CAST ( NULL AS INTEGER ) AS col1, - 40 - - 10 * + 5 AS 
 Expected: ["NULL","10","NULL"] but got ["-69","10","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,043 failed
 * 79% was OK
 
-Time: 21402.152ms
+Time: 21384.861ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 434/620 [`./test/random/expr/slt_good_60.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_60.test)
@@ -22360,12 +22416,12 @@ SELECT DISTINCT + CASE 42 WHEN + 66 THEN 36 END, - COUNT ( + 40 ) * CAST ( NULL 
 Expected: ["NULL","NULL"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,007 failed
 * 79% was OK
 
-Time: 20014.428ms
+Time: 20731.221ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 435/620 [`./test/random/expr/slt_good_61.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_61.test)
@@ -22429,13 +22485,6 @@ Expected: ["-79","NULL"] but got ["NULL","NULL"]
 
 
 ```sql
-SELECT ALL + 23 + - COUNT ( ALL - CAST ( NULL AS INTEGER ) ) + - 15 + - - CASE + - 54 WHEN COUNT ( * ) / + NULLIF ( 89, - 5 + CASE - + 90 WHEN - 42 THEN + COALESCE ( + COUNT ( * ), + 85 ) WHEN + - 64 + + 12 THEN + - 68 + - + 74 * + COUNT ( DISTINCT 81 ) * 29 * - COUNT ( * ) + ( + 93 ) END + - 98 ) …
-
-Wrong conversion type
-```
-
-
-```sql
 SELECT + CASE WHEN NOT ( 30 ) >= NULL THEN NULL ELSE 2 END * + 48 + + + 83 * 97 + 12
 
 Expected: ["8159"] but got ["NULL"]
@@ -22448,12 +22497,12 @@ SELECT + MIN ( - CAST ( NULL AS INTEGER ) ) AS col0, + 36 * + 24 - + CASE + + 61
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,025 failed
 * 79% was OK
 
-Time: 19981.146ms
+Time: 21089.110ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 436/620 [`./test/random/expr/slt_good_62.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_62.test)
@@ -22510,6 +22559,13 @@ Expected: ["NULL","NULL"] but got ["-74","NULL"]
 
 
 ```sql
+SELECT ALL - 98 * + - 36 + + 46 + CAST ( NULL AS INTEGER ) * + - 72
+
+Expected: ["NULL"] but got ["3574"]
+```
+
+
+```sql
 SELECT 79 * + + 18 + + - COUNT ( * ) / - CAST ( MAX ( 57 ) AS INTEGER ) AS col1
 
 Expected: ["1422"] but got ["NULL"]
@@ -22529,12 +22585,12 @@ SELECT ALL - 29 AS col0, CASE + 8 WHEN - + 25 THEN - 15 ELSE NULL END * - - 28 A
 Expected: ["-29","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,045 failed
 * 79% was OK
 
-Time: 19940.904ms
+Time: 22241.918ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 437/620 [`./test/random/expr/slt_good_63.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_63.test)
@@ -22591,6 +22647,13 @@ Expected: ["NULL","97"] but got ["97","NULL"]
 
 
 ```sql
+SELECT ALL + 83 + - CAST ( + NULLIF ( + + COUNT ( * ), - - COUNT ( * ) ) AS INTEGER )
+
+g is not defined
+```
+
+
+```sql
 SELECT DISTINCT CAST ( NULL AS INTEGER ) * - COUNT ( * ) + + MAX ( ALL + 49 ) - - CASE + 19 WHEN - + 5 - 9 + + 22 - - - 72 THEN NULL ELSE - 1 * - 57 - + - 84 - - + 24 * - - 86 END + - 37 / + - 75 AS col0, 7 AS col2, - + COUNT ( * ) + - 43 * CASE - COUNT ( * ) WHEN - COALESCE ( - 97, - 11, + - COALE…
 
 Expected: ["NULL","7","NULL"] but got ["NULL","7"]
@@ -22603,12 +22666,12 @@ SELECT + 97 + CAST ( NULL AS INTEGER ), - MAX ( - - CAST ( NULL AS INTEGER ) )
 Expected: ["NULL","NULL"] but got ["97","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,002 failed
 * 80% was OK
 
-Time: 20138.553ms
+Time: 21135.022ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 438/620 [`./test/random/expr/slt_good_64.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_64.test)
@@ -22677,12 +22740,12 @@ SELECT ALL 7 / - CAST ( NULL AS INTEGER ) AS col1, + CAST ( NULL AS INTEGER ) * 
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,056 failed
 * 79% was OK
 
-Time: 20749.840ms
+Time: 21194.456ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 439/620 [`./test/random/expr/slt_good_65.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_65.test)
@@ -22718,13 +22781,6 @@ g is not defined
 
 
 ```sql
-SELECT AVG ( + CAST ( NULL AS INTEGER ) ) col0
-
-Expected: ["NULL"] but got ["0"]
-```
-
-
-```sql
 SELECT + + COUNT ( ALL - 96 ) / + CAST ( - COUNT ( * ) AS INTEGER )
 
 Expected: ["-1"] but got ["NULL"]
@@ -22751,12 +22807,12 @@ SELECT + - 14 / - 71 * 35 col2, COALESCE ( - 94, - 30 * - + 34, - CAST ( NULL AS
 Expected: ["0","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,716 failed
 * 82% was OK
 
-Time: 16816.923ms
+Time: 15148.612ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 440/620 [`./test/random/expr/slt_good_66.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_66.test)
@@ -22825,12 +22881,12 @@ SELECT DISTINCT COALESCE ( + ( + 15 ), + COUNT ( * ) * 83 + + - ( 20 ) ) * - 31 
 Expected: ["-465"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,062 failed
 * 79% was OK
 
-Time: 22702.368ms
+Time: 21343.602ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 441/620 [`./test/random/expr/slt_good_67.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_67.test)
@@ -22906,12 +22962,19 @@ SELECT 94 AS col1, + 69 * + 83 / - + CAST ( NULL AS INTEGER ) + - 43 AS col1
 Expected: ["94","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT 34 - ( - 55 ) + CAST ( NULL AS INTEGER ) * 9
+
+Expected: ["NULL"] but got ["89"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,033 failed
 * 79% was OK
 
-Time: 35271.494ms
+Time: 21009.691ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 442/620 [`./test/random/expr/slt_good_68.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_68.test)
@@ -22987,12 +23050,12 @@ SELECT DISTINCT - CAST ( NULL AS INTEGER ) * - 96 / - 59 * + MAX ( + 17 ) AS col
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,977 failed
 * 80% was OK
 
-Time: 26789.034ms
+Time: 21044.195ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 443/620 [`./test/random/expr/slt_good_69.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_69.test)
@@ -23061,12 +23124,12 @@ SELECT DISTINCT CAST ( NULL AS INTEGER ) + + ( + CAST ( NULL AS INTEGER ) ) AS c
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,019 failed
 * 79% was OK
 
-Time: 27041.577ms
+Time: 20860.555ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 444/620 [`./test/random/expr/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_7.test)
@@ -23135,12 +23198,12 @@ SELECT ALL CAST ( + CAST ( NULL AS INTEGER ) AS INTEGER ) col0, 32 + + 91 + - 95
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,097 failed
 * 79% was OK
 
-Time: 28920.673ms
+Time: 21396.552ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 445/620 [`./test/random/expr/slt_good_70.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_70.test)
@@ -23216,12 +23279,12 @@ SELECT DISTINCT + CASE + 17 WHEN + - ( + COALESCE ( + MIN ( - 87 ), COUNT ( * ) 
 Expected: ["3"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,000 failed
 * 80% was OK
 
-Time: 30573.411ms
+Time: 21087.042ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 446/620 [`./test/random/expr/slt_good_71.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_71.test)
@@ -23290,12 +23353,12 @@ SELECT ALL + SUM ( DISTINCT - 98 ) col1, 81 / - 11 - + + CASE 60 WHEN - AVG ( + 
 Expected: ["-98","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,994 failed
 * 80% was OK
 
-Time: 27701.691ms
+Time: 21073.996ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 447/620 [`./test/random/expr/slt_good_72.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_72.test)
@@ -23371,12 +23434,12 @@ SELECT DISTINCT - ( + 30 ) - 58 AS col1, + 37 * + 68 * - ( 67 ) / CAST ( NULL AS
 Expected: ["-88","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,050 failed
 * 79% was OK
 
-Time: 25340.953ms
+Time: 21269.102ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 448/620 [`./test/random/expr/slt_good_73.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_73.test)
@@ -23452,12 +23515,19 @@ SELECT + 93 * - COUNT ( * ) * + - CASE ( + - 26 ) WHEN - + 41 * - CAST ( + + 8 A
 Expected: ["NULL","NULL"] but got ["NULL","62"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT CAST ( NULL AS INTEGER ) / - + 21 + + + 73 - COUNT ( * ) * - - 26 AS col0
+
+Expected: ["NULL"] but got ["47"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,032 failed
 * 79% was OK
 
-Time: 27391.885ms
+Time: 21975.629ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 449/620 [`./test/random/expr/slt_good_74.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_74.test)
@@ -23533,12 +23603,12 @@ SELECT + 3 AS col2, - CASE - 98 WHEN - 15 THEN - + CAST ( COUNT ( * ) AS INTEGER
 Expected: ["3","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,078 failed
 * 79% was OK
 
-Time: 33935.589ms
+Time: 21242.815ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 450/620 [`./test/random/expr/slt_good_75.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_75.test)
@@ -23614,12 +23684,12 @@ SELECT - CAST ( NULL AS INTEGER ), - CASE - - 28 WHEN + - COUNT ( * ) THEN - 90 
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,056 failed
 * 79% was OK
 
-Time: 25018.956ms
+Time: 20845.877ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 451/620 [`./test/random/expr/slt_good_76.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_76.test)
@@ -23695,12 +23765,12 @@ SELECT ALL - 63 * - CASE - 66 WHEN 19 * - 86 THEN - + MIN ( + - 73 ) END, CAST (
 Expected: ["NULL","1"] but got ["NULL","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,709 failed
 * 82% was OK
 
-Time: 15792.489ms
+Time: 15412.571ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 452/620 [`./test/random/expr/slt_good_77.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_77.test)
@@ -23776,12 +23846,12 @@ SELECT 43 * - + 31 - + 29 AS col0, CASE - ( + + 79 ) WHEN - 9 + - + 99 THEN + 70
 Expected: ["-1362","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,988 failed
 * 80% was OK
 
-Time: 20745.925ms
+Time: 21128.035ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 453/620 [`./test/random/expr/slt_good_78.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_78.test)
@@ -23850,12 +23920,12 @@ SELECT 24 * + MIN ( + NULLIF ( + 63, + 71 ) ) + + AVG ( ALL CAST ( NULL AS INTEG
 Expected: ["NULL","NULL"] but got ["1475","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,030 failed
 * 79% was OK
 
-Time: 25954.138ms
+Time: 20780.112ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 454/620 [`./test/random/expr/slt_good_79.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_79.test)
@@ -23931,12 +24001,12 @@ SELECT 91 / - ( + CAST ( NULL AS INTEGER ) ) AS col1, + MIN ( ALL - - CAST ( NUL
 Expected: ["NULL","NULL"] but got ["NULL","22"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,066 failed
 * 79% was OK
 
-Time: 22886.386ms
+Time: 21177.375ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 455/620 [`./test/random/expr/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_8.test)
@@ -24007,17 +24077,24 @@ Expected: ["NULL","NULL"] but got ["-82","63"]
 
 
 ```sql
+SELECT DISTINCT 14 / - - 32
+
+Expected: ["0"] but got ["0.438"]
+```
+
+
+```sql
 SELECT ALL + 2 col0, ( 32 ) + - 3 + CASE - 81 WHEN - - 81 THEN 21 END + + 27 + + 93 AS col0
 
 Expected: ["2","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,139 failed
 * 78% was OK
 
-Time: 23623.618ms
+Time: 21263.512ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 456/620 [`./test/random/expr/slt_good_80.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_80.test)
@@ -24093,12 +24170,12 @@ SELECT 58 * 86 AS col0, 3 / CASE 35 WHEN - - 70 THEN - 18 WHEN + 19 + 17 THEN NU
 Expected: ["4988","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,050 failed
 * 79% was OK
 
-Time: 22517.022ms
+Time: 20990.870ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 457/620 [`./test/random/expr/slt_good_81.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_81.test)
@@ -24174,12 +24251,12 @@ SELECT DISTINCT + + 54 / COALESCE ( + NULLIF ( - CAST ( NULL AS INTEGER ), + COU
 Expected: ["0"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,042 failed
 * 79% was OK
 
-Time: 22114.000ms
+Time: 21294.265ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 458/620 [`./test/random/expr/slt_good_82.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_82.test)
@@ -24255,12 +24332,12 @@ SELECT ALL 34 AS col0, - CASE - 29 WHEN - + ( 36 ) + + 11 + - 97 - + + 86 THEN -
 Expected: ["34","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,104 failed
 * 78% was OK
 
-Time: 23081.016ms
+Time: 21325.403ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 459/620 [`./test/random/expr/slt_good_83.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_83.test)
@@ -24329,12 +24406,12 @@ SELECT 6 * - CAST ( NULL AS INTEGER ), + CAST ( + + ( - 16 ) AS INTEGER ) * - CO
 Expected: ["NULL","NULL"] but got ["0","-402.515"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,995 failed
 * 80% was OK
 
-Time: 38009.403ms
+Time: 21399.536ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 460/620 [`./test/random/expr/slt_good_84.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_84.test)
@@ -24403,12 +24480,12 @@ SELECT 49 + - 56 + - 27 + 60 AS col2, CASE - 25 WHEN - 92 THEN NULL WHEN - 79 * 
 Expected: ["26","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,992 failed
 * 80% was OK
 
-Time: 26150.494ms
+Time: 21071.220ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 461/620 [`./test/random/expr/slt_good_85.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_85.test)
@@ -24484,12 +24561,12 @@ SELECT - - CASE WHEN NOT - 9 IN ( + 59 - + SUM ( DISTINCT - + ( - 5 ) ) ) THEN -
 Expected: ["-53"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,033 failed
 * 79% was OK
 
-Time: 20844.507ms
+Time: 21225.738ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 462/620 [`./test/random/expr/slt_good_86.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_86.test)
@@ -24553,6 +24630,13 @@ Expected: ["NULL","NULL"] but got ["93","NULL"]
 
 
 ```sql
+SELECT CAST ( NULL AS INTEGER ) + 53 AS col0
+
+Expected: ["NULL"] but got ["53"]
+```
+
+
+```sql
 SELECT ALL + - MIN ( - + 93 ) * - NULLIF ( 0, + CAST ( NULL AS INTEGER ) * - 32 ) * - MIN ( - 70 ) - - 23 + - 25 AS col0
 
 Expected: ["-2"] but got ["NULL"]
@@ -24565,12 +24649,12 @@ SELECT ALL + 13 col1, + 39 * - ( + 90 ) / + - CAST ( NULL AS INTEGER ) col1
 Expected: ["13","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,906 failed
 * 80% was OK
 
-Time: 21484.136ms
+Time: 20795.935ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 463/620 [`./test/random/expr/slt_good_87.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_87.test)
@@ -24632,12 +24716,12 @@ SELECT 94 * COUNT ( * ) / + 77 AS col0, - CASE + - 59 WHEN + 81 THEN - - 47 + CO
 Expected: ["1","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,739 failed
 * 82% was OK
 
-Time: 18648.517ms
+Time: 15803.937ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 464/620 [`./test/random/expr/slt_good_88.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_88.test)
@@ -24708,24 +24792,17 @@ Expected: ["80","NULL"] but got ["NULL","NULL"]
 
 
 ```sql
-SELECT DISTINCT ( - 80 ) * - - CAST ( NULL AS INTEGER ) * - 77
-
-Expected: ["NULL"] but got ["0"]
-```
-
-
-```sql
 SELECT ALL AVG ( - - 41 ) + - - 2 * 48 * - - NULLIF ( + NULLIF ( CAST ( NULL AS INTEGER ), + 84 * + 66 + + + COUNT ( * ) + - 18 ), ( - 35 ) + 61 ) * 61 AS col0, CAST ( NULL AS INTEGER ) AS col1
 
 Expected: ["NULL","NULL"] but got ["41","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,085 failed
 * 79% was OK
 
-Time: 25024.268ms
+Time: 21747.063ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 465/620 [`./test/random/expr/slt_good_89.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_89.test)
@@ -24808,12 +24885,12 @@ SELECT + COALESCE ( + 17, + 23 ) * 5 + + - CASE WHEN NOT NULL > NULL THEN + CASE
 Expected: ["-85"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,004 failed
 * 79% was OK
 
-Time: 20321.050ms
+Time: 21190.691ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 466/620 [`./test/random/expr/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_9.test)
@@ -24889,12 +24966,19 @@ SELECT + ( + + 12 ) + - + 36 + - 83 * - 12 * ( - 71 ) * + CAST ( NULL AS INTEGER
 Expected: ["NULL","NULL"] but got ["-121","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT 54 + + + 26 + + MIN ( + 48 ) / 88 AS col0, 15
+
+Expected: ["80","15"] but got ["15","80.545"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,046 failed
 * 79% was OK
 
-Time: 34006.747ms
+Time: 21316.283ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 467/620 [`./test/random/expr/slt_good_90.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_90.test)
@@ -24937,13 +25021,6 @@ Wrong conversion type
 
 
 ```sql
-SELECT 26 - 5 / + 60
-
-Expected: ["26"] but got ["25.917"]
-```
-
-
-```sql
 SELECT - CASE WHEN NOT 26 IN ( + 95 ) THEN - NULLIF ( 63, + COUNT ( * ) ) * MIN ( DISTINCT 12 ) WHEN NOT ( COUNT ( * ) - 68 * + 98 ) IS NULL THEN NULL ELSE NULL END * + 51
 
 Expected: ["38556"] but got ["NULL"]
@@ -24970,12 +25047,12 @@ SELECT ALL 79 + 54 + - 5 AS col1, CAST ( NULL AS INTEGER ), 10 * - CASE - 51 WHE
 Expected: ["128","NULL","NULL"] but got ["128","0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,060 failed
 * 79% was OK
 
-Time: 26723.436ms
+Time: 21642.402ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 468/620 [`./test/random/expr/slt_good_91.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_91.test)
@@ -25051,19 +25128,12 @@ SELECT - - CAST ( NULL AS INTEGER ) + + 88 AS col2, - CASE 76 WHEN - CASE - 62 W
 Expected: ["NULL","NULL"] but got ["88","NULL"]
 ```
 
-
-```sql
-SELECT + 59 / 45 AS col2
-
-Expected: ["1"] but got ["1.311"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,050 failed
 * 79% was OK
 
-Time: 24240.142ms
+Time: 21261.853ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 469/620 [`./test/random/expr/slt_good_92.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_92.test)
@@ -25139,12 +25209,12 @@ SELECT ALL - ( + CAST ( NULL AS INTEGER ) ), + CASE + 89 WHEN 95 THEN 91 * + - 4
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,097 failed
 * 79% was OK
 
-Time: 23198.652ms
+Time: 21257.436ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 470/620 [`./test/random/expr/slt_good_93.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_93.test)
@@ -25208,17 +25278,24 @@ Expected: ["0","NULL"] but got ["0.581","NULL"]
 
 
 ```sql
+SELECT - COALESCE ( + CAST ( - 91 AS INTEGER ), - 15 * 29 - - + 28 ) AS col0, COUNT ( * ) * CAST ( 98 AS INTEGER ) + 86 col0
+
+Expected: ["91","184"] but got ["184"]
+```
+
+
+```sql
 SELECT 75 + - - CASE WHEN NOT ( NULL ) >= 4 THEN NULL WHEN NOT 24 IN ( 77 * + AVG ( + 27 ) + 72 * 4 ) THEN + 91 + - ( 2 + + ( 55 ) ) / + 18 END AS col2
 
 Expected: ["163"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,047 failed
 * 79% was OK
 
-Time: 22392.120ms
+Time: 21531.636ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 471/620 [`./test/random/expr/slt_good_94.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_94.test)
@@ -25294,12 +25371,12 @@ SELECT - + CAST ( NULL AS INTEGER ) AS col0, COUNT ( + 84 ) - - COALESCE ( - + 2
 Expected: ["NULL","NULL"] but got ["0","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,058 failed
 * 79% was OK
 
-Time: 21773.804ms
+Time: 21352.138ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 472/620 [`./test/random/expr/slt_good_95.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_95.test)
@@ -25375,12 +25452,12 @@ SELECT ALL + CAST ( NULL AS INTEGER ) + - 34 * - + COUNT ( * ) col2, - 73 + + + 
 Expected: ["NULL","NULL"] but got ["34","-73"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,074 failed
 * 79% was OK
 
-Time: 22367.118ms
+Time: 21483.321ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 473/620 [`./test/random/expr/slt_good_96.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_96.test)
@@ -25449,12 +25526,12 @@ SELECT + CAST ( NULL AS INTEGER ) AS col2, CAST ( NULL AS INTEGER )
 Expected: ["NULL","NULL"] but got ["0","0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,024 failed
 * 79% was OK
 
-Time: 20452.145ms
+Time: 21404.123ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 474/620 [`./test/random/expr/slt_good_97.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_97.test)
@@ -25477,6 +25554,13 @@ Wrong conversion type
 
 ```sql
 SELECT + 4 * + - CAST ( - COUNT ( * ) AS INTEGER ) - + - 22
+
+g is not defined
+```
+
+
+```sql
+SELECT DISTINCT 32 * + - CAST ( + - COUNT ( - 57 ) AS INTEGER ) AS col1
 
 g is not defined
 ```
@@ -25530,19 +25614,12 @@ SELECT + 7 * + 13 AS col2, - ( - CASE 24 WHEN + 85 THEN NULL WHEN + 7 THEN COALE
 Expected: ["91","NULL"] but got ["NULL","NULL"]
 ```
 
-
-```sql
-SELECT ALL + 54 + - + ( - 8 ) / - + 31 * - - 12 * - 45 / 18 + + + 73 - - - 68 + - 21 * + ( - COUNT ( * ) )
-
-Expected: ["80"] but got ["80.009"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,033 failed
 * 79% was OK
 
-Time: 24757.196ms
+Time: 21018.686ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 475/620 [`./test/random/expr/slt_good_98.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_98.test)
@@ -25604,12 +25681,12 @@ SELECT ALL CASE + 1 WHEN 35 + 5 / - - 2 THEN 78 END AS col1, - 17 + - + ( - COUN
 Expected: ["NULL","61"] but got ["NULL","61.000"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,793 failed
 * 82% was OK
 
-Time: 15580.407ms
+Time: 15907.962ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 476/620 [`./test/random/expr/slt_good_99.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/expr/slt_good_99.test)
@@ -25678,12 +25755,12 @@ SELECT ALL 96 * + CAST ( NULL AS INTEGER ), CAST ( NULL AS INTEGER ) + 73 * + + 
 Expected: ["NULL","NULL"] but got ["0","5840"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,071 failed
 * 79% was OK
 
-Time: 24810.571ms
+Time: 21615.429ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 477/620 [`./test/random/groupby/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_0.test)
@@ -25759,12 +25836,12 @@ SELECT ALL cor0.col1 AS col1 FROM tab2 AS cor0 GROUP BY col1 HAVING NOT ( cor0.c
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,287 failed
 * 57% was OK
 
-Time: 18789.853ms
+Time: 17803.050ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 478/620 [`./test/random/groupby/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_1.test)
@@ -25870,24 +25947,17 @@ SELECT DISTINCT cor1.col0 - + cor0.col0 * cor0.col0 AS col1 FROM tab2 AS cor0 CR
 
 
 ```sql
-SELECT DISTINCT cor0.col1 * - cor0.col0 FROM tab2 AS cor0 GROUP BY cor0.col1, cor0.col0
-
-Expected: ["-3772","-5369","-915"] but got ["NULL"]
-```
-
-
-```sql
 SELECT NULLIF ( cor0.col1, cor0.col1 * 4 + - col1 ) * + cor0.col0 AS col1 FROM tab0 AS cor0 GROUP BY cor0.col0, cor0.col1, cor0.col1
 
 Expected: ["3483","NULL","NULL"] but got ["NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,144 failed
 * 58% was OK
 
-Time: 26275.020ms
+Time: 18061.305ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 479/620 [`./test/random/groupby/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_10.test)
@@ -25921,12 +25991,12 @@ SELECT DISTINCT col0 AS col1, col0, col0 AS col1 FROM tab0 cor0 GROUP BY col0
 6 results returned but expected 9
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 284 failed
 * 97% was OK
 
-Time: 27421.197ms
+Time: 17472.072ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 480/620 [`./test/random/groupby/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_11.test)
@@ -26016,12 +26086,19 @@ SELECT + CASE WHEN NOT NULL NOT BETWEEN NULL AND NULL THEN - col1 ELSE NULL END 
 Cannot read property 'toString' of undefined
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT - + CAST ( NULL AS INTEGER ) FROM tab0 WHERE NOT NULL IS NOT NULL GROUP BY col0, col2
+
+Expected: ["NULL","NULL","NULL"] but got ["0","0","0"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 873 failed
 * 91% was OK
 
-Time: 23258.146ms
+Time: 20283.873ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 481/620 [`./test/random/groupby/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_12.test)
@@ -26146,12 +26223,12 @@ SELECT + ( NULLIF ( - cor0.col1, col1 ) ) FROM tab0 AS cor0 GROUP BY cor0.col1, 
 Expected: ["-81","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,446 failed
 * 85% was OK
 
-Time: 23371.594ms
+Time: 22851.439ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 482/620 [`./test/random/groupby/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_13.test)
@@ -26234,12 +26311,12 @@ SELECT + cor1.col1 AS col0 FROM tab0 AS cor0 CROSS JOIN tab2 AS cor1 GROUP BY co
 Correct amount of values returned but hash was different than expected.
 ```
 
-#### ☓ Ran 3,182 tests as sqlite
+#### ☓ Ran 3,182 tests as _sqlite_
 
 * 1,259 failed
 * 60% was OK
 
-Time: 5594.058ms
+Time: 5798.519ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 483/620 [`./test/random/groupby/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_2.test)
@@ -26336,12 +26413,12 @@ SELECT + cor0.col1 - + NULLIF ( cor0.col1, COALESCE ( - cor0.col1, - cor0.col0, 
 Expected: ["0","NULL","NULL"] but got ["NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,198 failed
 * 58% was OK
 
-Time: 18856.521ms
+Time: 17719.532ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 484/620 [`./test/random/groupby/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_3.test)
@@ -26431,12 +26508,12 @@ SELECT cor1.col1 + - cor0.col1 FROM tab2 AS cor0 CROSS JOIN tab0 AS cor1 GROUP B
 Expected: ["-41","-59","-61","20","22","40"] but got ["NULL","NULL","NULL","NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,465 failed
 * 55% was OK
 
-Time: 34014.473ms
+Time: 17594.734ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 485/620 [`./test/random/groupby/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_4.test)
@@ -26526,12 +26603,12 @@ SELECT ALL - + NULLIF ( tab0.col1, + 29 / - 88 ) AS col0 FROM tab0 GROUP BY tab0
 Expected: ["-81","NULL"] but got ["NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,369 failed
 * 56% was OK
 
-Time: 19097.122ms
+Time: 17666.095ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 486/620 [`./test/random/groupby/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_5.test)
@@ -26635,12 +26712,12 @@ SELECT DISTINCT NULLIF ( cor0.col1, + cor0.col1 + + cor0.col1 ) AS col0 FROM tab
 Expected: ["81","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,488 failed
 * 55% was OK
 
-Time: 19847.643ms
+Time: 17701.387ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 487/620 [`./test/random/groupby/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_6.test)
@@ -26716,12 +26793,19 @@ SELECT + tab1.col1 FROM tab1 GROUP BY tab1.col1 HAVING tab1.col1 IS NOT NULL
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT - 7 + cor0.col2 AS col1 FROM tab2, tab0 AS cor0 GROUP BY cor0.col2
+
+Expected: ["17","31","72"] but got ["NULL","NULL","NULL"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,625 failed
 * 53% was OK
 
-Time: 18533.060ms
+Time: 18166.258ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 488/620 [`./test/random/groupby/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_7.test)
@@ -26806,6 +26890,13 @@ Expected: ["1","1","NULL"] but got ["NULL","NULL","NULL"]
 
 
 ```sql
+SELECT 5 * cor0.col2 + 94 / cor0.col2 AS col1 FROM tab1 AS cor0 GROUP BY cor0.col2
+
+Expected: ["227","356","51"] but got ["NULL","NULL","NULL"]
+```
+
+
+```sql
 SELECT ALL tab0.col0 FROM tab0 GROUP BY tab0.col0 HAVING NOT tab0.col0 IS NULL
 
 Query was expected to return results (but did not) 
@@ -26825,12 +26916,12 @@ SELECT DISTINCT - NULLIF ( + cor0.col1, cor0.col1 / - 16 ) FROM tab0 AS cor0 GRO
 Expected: ["-81","NULL"] but got ["NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 4,547 failed
 * 54% was OK
 
-Time: 19282.743ms
+Time: 17838.615ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 489/620 [`./test/random/groupby/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_8.test)
@@ -26920,12 +27011,12 @@ SELECT cor0.col2 * - ( + cor0.col2 ) AS col2 FROM tab2 cor0 CROSS JOIN tab0 AS c
 Expected: ["-3364","-3364","-6241","-6241","-7569","-7569"] but got ["NULL","NULL","NULL","NULL","NULL","NULL"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 2,975 failed
 * 70% was OK
 
-Time: 18412.372ms
+Time: 16978.634ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 490/620 [`./test/random/groupby/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/groupby/slt_good_9.test)
@@ -26975,6 +27066,13 @@ Expected: ["NULL","NULL","NULL"] but got ["0","0","0"]
 
 
 ```sql
+SELECT ALL + + cor0.col2 / - cor0.col2 FROM tab0, tab2 AS cor0 GROUP BY cor0.col2
+
+Expected: ["-1","-1","-1"] but got ["NULL","NULL","NULL"]
+```
+
+
+```sql
 SELECT - CAST ( NULL AS INTEGER ) AS col1 FROM tab0 AS cor0 GROUP BY cor0.col1
 
 Expected: ["NULL","NULL"] but got ["0","0"]
@@ -27008,12 +27106,12 @@ SELECT ALL col2 AS col1, - AVG ( - col2 ) AS col1, - col2 AS col1 FROM tab0 AS c
 3 results returned but expected 9
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 503 failed
 * 94% was OK
 
-Time: 25892.086ms
+Time: 16838.996ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 491/620 [`./test/random/select/slt_good_0.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_0.test)
@@ -27078,12 +27176,12 @@ SELECT * FROM tab0 WHERE NOT ( - col2 * + col0 ) IN ( - col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,572 failed
 * 84% was OK
 
-Time: 27845.379ms
+Time: 15580.940ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 492/620 [`./test/random/select/slt_good_1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_1.test)
@@ -27148,12 +27246,19 @@ SELECT col0 FROM tab1 WHERE NOT ( col0 ) IN ( + col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT ALL + + col2 / - cor0.col0 FROM tab2 AS cor0
+
+Expected: ["-3","0","0"] but got ["-0.333","-0.481","-3.857"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,338 failed
 * 86% was OK
 
-Time: 24083.396ms
+Time: 16033.115ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 493/620 [`./test/random/select/slt_good_10.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_10.test)
@@ -27218,12 +27323,12 @@ SELECT - col0 + - col2 FROM tab1 WHERE NOT col0 BETWEEN col1 AND - col2
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,287 failed
 * 87% was OK
 
-Time: 22837.801ms
+Time: 16536.283ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 494/620 [`./test/random/select/slt_good_100.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_100.test)
@@ -27288,12 +27393,12 @@ SELECT DISTINCT * FROM tab0 WHERE NOT + col1 * + col2 BETWEEN ( col0 * col2 ) AN
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,441 failed
 * 85% was OK
 
-Time: 19940.662ms
+Time: 17857.744ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 495/620 [`./test/random/select/slt_good_101.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_101.test)
@@ -27358,12 +27463,12 @@ SELECT DISTINCT * FROM tab0, tab1 cor0, tab1, tab2 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,435 failed
 * 85% was OK
 
-Time: 17313.132ms
+Time: 17247.963ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 496/620 [`./test/random/select/slt_good_102.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_102.test)
@@ -27428,12 +27533,12 @@ SELECT DISTINCT * FROM tab1, tab1 cor0, tab0 AS cor1, tab0, tab2 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,458 failed
 * 85% was OK
 
-Time: 23017.406ms
+Time: 17724.234ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 497/620 [`./test/random/select/slt_good_103.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_103.test)
@@ -27498,12 +27603,12 @@ SELECT DISTINCT * FROM tab1 WHERE NOT col2 IN ( col0 / - col2 + + col0 * col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,457 failed
 * 85% was OK
 
-Time: 19253.335ms
+Time: 17537.349ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 498/620 [`./test/random/select/slt_good_104.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_104.test)
@@ -27568,12 +27673,12 @@ SELECT DISTINCT * FROM tab1, tab1 AS cor0, tab0 AS cor1, tab2, tab0 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,433 failed
 * 85% was OK
 
-Time: 19597.806ms
+Time: 17565.125ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 499/620 [`./test/random/select/slt_good_105.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_105.test)
@@ -27638,12 +27743,12 @@ SELECT DISTINCT * FROM tab1, tab0 cor0, tab2 cor1, tab0 AS cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,443 failed
 * 85% was OK
 
-Time: 22104.783ms
+Time: 19822.286ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 500/620 [`./test/random/select/slt_good_106.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_106.test)
@@ -27708,12 +27813,12 @@ SELECT DISTINCT * FROM tab0, tab2 AS cor0, tab2 cor1, tab1, tab0 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,415 failed
 * 85% was OK
 
-Time: 28532.668ms
+Time: 18310.707ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 501/620 [`./test/random/select/slt_good_107.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_107.test)
@@ -27778,12 +27883,12 @@ SELECT ALL - col2 AS col1 FROM tab1 WHERE NOT ( col0 + + col2 + col2 ) IN ( + co
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,454 failed
 * 85% was OK
 
-Time: 26560.846ms
+Time: 17672.204ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 502/620 [`./test/random/select/slt_good_108.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_108.test)
@@ -27848,12 +27953,12 @@ SELECT DISTINCT * FROM tab0, tab2 cor0, tab0 cor1, tab1, tab1 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,399 failed
 * 86% was OK
 
-Time: 20918.256ms
+Time: 17708.923ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 503/620 [`./test/random/select/slt_good_109.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_109.test)
@@ -27918,12 +28023,12 @@ SELECT DISTINCT * FROM tab0, tab0 cor0, tab1 AS cor1, tab1, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,408 failed
 * 85% was OK
 
-Time: 19997.768ms
+Time: 17498.075ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 504/620 [`./test/random/select/slt_good_11.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_11.test)
@@ -27988,12 +28093,12 @@ SELECT - CAST ( NULL AS REAL ) / 44 AS col1 FROM tab0, tab2 AS cor0, tab1 AS cor
 Wrong conversion type
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,340 failed
 * 86% was OK
 
-Time: 16674.780ms
+Time: 16796.476ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 505/620 [`./test/random/select/slt_good_110.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_110.test)
@@ -28058,12 +28163,12 @@ SELECT DISTINCT * FROM tab0, tab1 cor0, tab0 cor1, tab2, tab1 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,009 tests as sqlite
+#### ☓ Ran 10,009 tests as _sqlite_
 
 * 1,415 failed
 * 85% was OK
 
-Time: 18253.648ms
+Time: 17461.035ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 506/620 [`./test/random/select/slt_good_111.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_111.test)
@@ -28128,19 +28233,12 @@ SELECT DISTINCT * FROM tab2, tab0 AS cor0, tab0 cor1, tab0 cor2
 36 results returned but expected 972
 ```
 
-
-```sql
-SELECT DISTINCT ( 37 ) * cor0.col1 / + col2 AS col0 FROM tab0 AS cor0
-
-Expected: ["3589","41","96"] but got ["3589","41.061","96.424"]
-```
-
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,476 failed
 * 85% was OK
 
-Time: 19321.011ms
+Time: 17450.637ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 507/620 [`./test/random/select/slt_good_112.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_112.test)
@@ -28205,12 +28303,12 @@ SELECT ALL * FROM tab1 WHERE NOT - col0 IN ( tab1.col0 * + col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,452 failed
 * 85% was OK
 
-Time: 32111.468ms
+Time: 17407.886ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 508/620 [`./test/random/select/slt_good_113.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_113.test)
@@ -28275,12 +28373,12 @@ SELECT DISTINCT * FROM tab1, tab0, tab2 cor0, tab2 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,365 failed
 * 86% was OK
 
-Time: 21373.724ms
+Time: 17677.629ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 509/620 [`./test/random/select/slt_good_114.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_114.test)
@@ -28345,12 +28443,12 @@ SELECT DISTINCT + cor0.col2 + + cor1.col2 / tab2.col0 AS col2 FROM tab2, tab0 AS
 27 results returned but expected 9
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,393 failed
 * 86% was OK
 
-Time: 19648.975ms
+Time: 17509.789ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 510/620 [`./test/random/select/slt_good_115.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_115.test)
@@ -28415,12 +28513,12 @@ SELECT DISTINCT col2 AS col0 FROM tab0 WHERE NOT col0 / - col2 IN ( col0 + - col
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,445 failed
 * 85% was OK
 
-Time: 20855.304ms
+Time: 17983.497ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 511/620 [`./test/random/select/slt_good_116.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_116.test)
@@ -28485,12 +28583,12 @@ SELECT DISTINCT * FROM tab1, tab2 AS cor0 CROSS JOIN tab0 cor1
 27 results returned but expected 243
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,466 failed
 * 85% was OK
 
-Time: 24823.157ms
+Time: 17559.408ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 512/620 [`./test/random/select/slt_good_117.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_117.test)
@@ -28555,12 +28653,12 @@ SELECT DISTINCT * FROM tab0, tab2, tab1 cor0, tab1 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,524 failed
 * 84% was OK
 
-Time: 17392.374ms
+Time: 17481.181ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 513/620 [`./test/random/select/slt_good_118.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_118.test)
@@ -28625,12 +28723,12 @@ SELECT DISTINCT * FROM tab2, tab0 AS cor0, tab0 cor1, tab1, tab1 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,447 failed
 * 85% was OK
 
-Time: 17986.962ms
+Time: 17520.671ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 514/620 [`./test/random/select/slt_good_119.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_119.test)
@@ -28695,19 +28793,12 @@ SELECT DISTINCT - col2 FROM tab1 WHERE NOT col0 BETWEEN ( + col1 + col2 ) AND NU
 Query was expected to return results (but did not) 
 ```
 
-
-```sql
-SELECT col2 + + col2 / - 84 FROM tab2
-
-Expected: ["26","27","38"] but got ["25.690","26.679","37.548"]
-```
-
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,441 failed
 * 85% was OK
 
-Time: 22278.742ms
+Time: 17582.641ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 515/620 [`./test/random/select/slt_good_12.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_12.test)
@@ -28772,12 +28863,12 @@ SELECT * FROM tab0 WHERE NOT + col2 - tab0.col1 IN ( col0 * col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,256 failed
 * 87% was OK
 
-Time: 33596.633ms
+Time: 16786.214ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 516/620 [`./test/random/select/slt_good_120.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_120.test)
@@ -28842,12 +28933,12 @@ SELECT DISTINCT * FROM tab0, tab1 AS cor0, tab0 AS cor1, tab1, tab0 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,434 failed
 * 85% was OK
 
-Time: 22302.853ms
+Time: 17537.593ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 517/620 [`./test/random/select/slt_good_121.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_121.test)
@@ -28912,19 +29003,12 @@ SELECT DISTINCT * FROM tab2, tab0, tab1 cor0, tab0 AS cor1
 36 results returned but expected 972
 ```
 
-
-```sql
-SELECT CAST ( NULL AS REAL ) * + col0 + + tab0.col0 / col0 AS col1 FROM tab0
-
-Wrong conversion type
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,397 failed
 * 86% was OK
 
-Time: 20208.340ms
+Time: 17630.128ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 518/620 [`./test/random/select/slt_good_122.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_122.test)
@@ -28989,12 +29073,12 @@ SELECT DISTINCT * FROM tab0 AS cor0 WHERE NOT + col1 - - col0 * + col1 IN ( col1
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,464 failed
 * 85% was OK
 
-Time: 18463.508ms
+Time: 17640.019ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 519/620 [`./test/random/select/slt_good_123.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_123.test)
@@ -29059,12 +29143,12 @@ SELECT DISTINCT * FROM tab0, tab2 cor0, tab2 cor1, tab2, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,443 failed
 * 85% was OK
 
-Time: 37297.292ms
+Time: 17958.648ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 520/620 [`./test/random/select/slt_good_124.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_124.test)
@@ -29129,36 +29213,26 @@ SELECT DISTINCT * FROM tab1, tab0 cor0, tab0, tab0 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 2,865 tests as sqlite
+#### ☓ Ran 2,865 tests as _sqlite_
 
 * 396 failed
 * 86% was OK
 
-Time: 7194.728ms
+Time: 5056.323ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 521/620 [`./test/random/select/slt_good_125.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_125.test)
 
-_Mimic sqlite_
-#### ★ Ran 12 tests as sqlite
+#### ★ Assuming all 12 tests still passes as _sqlite_
 
-* 100% was OK
-
-`sqlite OK: ./test/random/select/slt_good_125.test`
-
-Time: 19.837ms
+Time: 0.364ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 522/620 [`./test/random/select/slt_good_126.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_126.test)
 
-_Mimic sqlite_
-#### ★ Ran 12 tests as sqlite
+#### ★ Assuming all 12 tests still passes as _sqlite_
 
-* 100% was OK
-
-`sqlite OK: ./test/random/select/slt_good_126.test`
-
-Time: 19.834ms
+Time: 0.442ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 523/620 [`./test/random/select/slt_good_13.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_13.test)
@@ -29223,12 +29297,12 @@ SELECT col1 / col0 FROM tab2 WHERE NOT - col2 BETWEEN ( col2 * + col1 ) AND NULL
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,314 failed
 * 86% was OK
 
-Time: 16454.003ms
+Time: 17008.374ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 524/620 [`./test/random/select/slt_good_14.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_14.test)
@@ -29293,12 +29367,12 @@ SELECT + col2 + col1 + + col2 FROM tab2 AS cor0 WHERE NOT col2 IN ( col1 * - col
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,300 failed
 * 87% was OK
 
-Time: 17821.580ms
+Time: 17259.655ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 525/620 [`./test/random/select/slt_good_15.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_15.test)
@@ -29363,12 +29437,12 @@ SELECT DISTINCT * FROM tab1, tab1 cor0, tab0 AS cor1, tab0, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,280 failed
 * 87% was OK
 
-Time: 18553.941ms
+Time: 16638.045ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 526/620 [`./test/random/select/slt_good_16.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_16.test)
@@ -29435,17 +29509,17 @@ Query was expected to return results (but did not)
 
 
 ```sql
-SELECT - 94 / col2 FROM tab0
+SELECT + col2 - - col0 / col2 FROM tab0 AS cor0
 
-Expected: ["-1","-2","-94"] but got ["-1.146","-2.848","-94"]
+Expected: ["33","36","83"] but got ["33.727","36","83.085"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,295 failed
 * 87% was OK
 
-Time: 18578.940ms
+Time: 16714.038ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 527/620 [`./test/random/select/slt_good_17.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_17.test)
@@ -29510,19 +29584,12 @@ SELECT col0 * + col0 FROM tab1 WHERE NOT col0 * + col1 + - col0 * - col2 NOT BET
 Query was expected to return results (but did not) 
 ```
 
-
-```sql
-SELECT + col2 / ( col1 ) FROM tab0
-
-Expected: ["0","0","0"] but got ["0.010","0.384","0.901"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,327 failed
 * 86% was OK
 
-Time: 35285.467ms
+Time: 16732.175ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 528/620 [`./test/random/select/slt_good_18.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_18.test)
@@ -29587,19 +29654,12 @@ SELECT DISTINCT * FROM tab2, tab2 cor0, tab2 AS cor1, tab0 AS cor2
 36 results returned but expected 972
 ```
 
-
-```sql
-SELECT DISTINCT col0 + col0 / col2 FROM tab1 AS cor0
-
-Expected: ["3","65","80"] but got ["3.056","65.123","80.833"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,335 failed
 * 86% was OK
 
-Time: 34359.962ms
+Time: 18221.831ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 529/620 [`./test/random/select/slt_good_19.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_19.test)
@@ -29664,12 +29724,12 @@ SELECT col2 AS col2 FROM tab1 WHERE col0 IN ( - col0 / tab1.col1 + + col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,306 failed
 * 86% was OK
 
-Time: 22495.422ms
+Time: 16869.485ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 530/620 [`./test/random/select/slt_good_2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_2.test)
@@ -29734,12 +29794,12 @@ SELECT * FROM tab1 WHERE NOT ( col1 ) IN ( col2 + col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,291 failed
 * 87% was OK
 
-Time: 17186.352ms
+Time: 16116.282ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 531/620 [`./test/random/select/slt_good_20.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_20.test)
@@ -29804,12 +29864,19 @@ SELECT col2 * col2 FROM tab0 AS cor0 WHERE NOT col1 * col2 * - cor0.col2 BETWEEN
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT - CAST ( NULL AS INTEGER ) + - 33 AS col0 FROM tab1 cor0 CROSS JOIN tab1 AS cor1
+
+Correct amount of values returned but hash was different than expected.
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,299 failed
 * 87% was OK
 
-Time: 18958.325ms
+Time: 16819.720ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 532/620 [`./test/random/select/slt_good_21.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_21.test)
@@ -29874,12 +29941,12 @@ SELECT DISTINCT * FROM tab0, tab2 AS cor0, tab2 AS cor1, tab2, tab1 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,347 failed
 * 86% was OK
 
-Time: 37972.961ms
+Time: 16828.019ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 533/620 [`./test/random/select/slt_good_22.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_22.test)
@@ -29944,12 +30011,12 @@ SELECT DISTINCT * FROM tab1, tab0 AS cor0, tab0, tab1 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,324 failed
 * 86% was OK
 
-Time: 21648.219ms
+Time: 17071.604ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 534/620 [`./test/random/select/slt_good_23.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_23.test)
@@ -30014,12 +30081,12 @@ SELECT * FROM tab1 AS cor0 WHERE NOT col0 + col2 IN ( + col0 - + cor0.col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,346 failed
 * 86% was OK
 
-Time: 21077.438ms
+Time: 17497.887ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 535/620 [`./test/random/select/slt_good_24.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_24.test)
@@ -30084,12 +30151,12 @@ SELECT col1 FROM tab2 WHERE NOT - col1 BETWEEN col2 AND NULL
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,321 failed
 * 86% was OK
 
-Time: 25249.053ms
+Time: 17332.961ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 536/620 [`./test/random/select/slt_good_25.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_25.test)
@@ -30154,12 +30221,12 @@ Parse error on line 1:
 Expecting 'LITERAL', 'BRALITERAL', 'EOF', 'WITH', 'AS', 'RPAR', 'PIVOT', 'UNPIVOT', 'ORDER', 'WHERE', 'UNION', 'INTERSECT', 'EXCEPT', 'CROSS', 'OUTER', 'NATURAL', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'S…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,313 failed
 * 86% was OK
 
-Time: 24762.123ms
+Time: 16783.908ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 537/620 [`./test/random/select/slt_good_26.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_26.test)
@@ -30224,12 +30291,12 @@ SELECT DISTINCT * FROM tab2, tab1 cor0, tab1 AS cor1, tab1 cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,349 failed
 * 86% was OK
 
-Time: 19114.013ms
+Time: 16987.012ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 538/620 [`./test/random/select/slt_good_27.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_27.test)
@@ -30294,12 +30361,12 @@ SELECT DISTINCT + CAST ( NULL AS INTEGER ) * 45 AS col2 FROM tab2 AS cor0
 Expected: ["NULL"] but got ["0"]
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,287 failed
 * 87% was OK
 
-Time: 37147.187ms
+Time: 16869.575ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 539/620 [`./test/random/select/slt_good_28.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_28.test)
@@ -30364,12 +30431,19 @@ SELECT * FROM tab1 cor0 WHERE NOT - col2 IN ( cor0.col2 / - cor0.col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT ALL + col2 / - col0 AS col1 FROM tab0
+
+Expected: ["-1","0","0"] but got ["-0.029","-0.921","-1.375"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,306 failed
 * 86% was OK
 
-Time: 33486.132ms
+Time: 16905.042ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 540/620 [`./test/random/select/slt_good_29.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_29.test)
@@ -30434,12 +30508,12 @@ SELECT ALL + tab2.col0 * col2 AS col1 FROM tab2 WHERE NOT ( + col0 * - col1 ) IN
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,405 failed
 * 85% was OK
 
-Time: 45344.316ms
+Time: 16984.816ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 541/620 [`./test/random/select/slt_good_3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_3.test)
@@ -30499,27 +30573,24 @@ Expected: ["NULL"] but got ["-7396","-8281","-9409"]
 
 
 ```sql
-SELECT ALL * FROM tab0 cor0 CROSS JOIN tab2, tab1 AS cor1
-
-Parse error on line 1:
-...cor0 CROSS JOIN tab2, tab1 AS cor1
------------------------^
-Expecting 'LITERAL', 'BRALITERAL', 'EOF', 'WITH', 'AS', 'RPAR', 'PIVOT', 'UNPIVOT', 'ORDER', 'WHERE', 'UNION', 'INTERSECT', 'EXCEPT', 'CROSS', 'OUTER', 'NATURAL', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'SEMI', …
-```
-
-
-```sql
 SELECT DISTINCT * FROM tab1 WHERE NOT + col1 IN ( col0 + col0 * col0 )
 
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+
+```sql
+SELECT ALL - CAST ( NULL AS INTEGER ) AS col2 FROM tab2, tab1 AS cor0, tab2 AS cor1
+
+Correct amount of values returned but hash was different than expected.
+```
+
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,258 failed
 * 87% was OK
 
-Time: 22846.993ms
+Time: 16288.244ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 542/620 [`./test/random/select/slt_good_30.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_30.test)
@@ -30584,12 +30655,12 @@ SELECT DISTINCT * FROM tab0, tab1 AS cor0, tab1 cor1, tab0 AS cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,409 failed
 * 85% was OK
 
-Time: 24817.683ms
+Time: 18301.582ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 543/620 [`./test/random/select/slt_good_31.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_31.test)
@@ -30654,12 +30725,12 @@ SELECT ALL * FROM tab1 AS cor0 WHERE NOT - col1 * - col1 IN ( col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,382 failed
 * 86% was OK
 
-Time: 22143.038ms
+Time: 17026.777ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 544/620 [`./test/random/select/slt_good_32.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_32.test)
@@ -30724,12 +30795,12 @@ SELECT DISTINCT - col1 AS col1 FROM tab2 WHERE NOT ( col2 ) IN ( - col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,354 failed
 * 86% was OK
 
-Time: 19309.855ms
+Time: 17034.799ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 545/620 [`./test/random/select/slt_good_33.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_33.test)
@@ -30794,12 +30865,12 @@ SELECT DISTINCT * FROM tab0, tab1 AS cor0, tab0 cor1, tab2, tab1 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,384 failed
 * 86% was OK
 
-Time: 18591.838ms
+Time: 16877.160ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 546/620 [`./test/random/select/slt_good_34.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_34.test)
@@ -30864,12 +30935,12 @@ SELECT DISTINCT + col1 AS col0 FROM tab0 WHERE NOT ( col0 ) IN ( + col2 + col2 *
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,385 failed
 * 86% was OK
 
-Time: 19442.905ms
+Time: 19672.892ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 547/620 [`./test/random/select/slt_good_35.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_35.test)
@@ -30934,12 +31005,12 @@ SELECT DISTINCT * FROM tab0, tab1, tab2 cor0, tab0 AS cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,344 failed
 * 86% was OK
 
-Time: 18283.598ms
+Time: 21613.857ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 548/620 [`./test/random/select/slt_good_36.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_36.test)
@@ -31004,12 +31075,12 @@ SELECT * FROM tab0 AS cor0 WHERE NOT ( col1 + + col2 ) BETWEEN - cor0.col2 AND (
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,438 failed
 * 85% was OK
 
-Time: 17339.819ms
+Time: 22717.808ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 549/620 [`./test/random/select/slt_good_37.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_37.test)
@@ -31074,12 +31145,12 @@ SELECT ALL * FROM tab1 WHERE NOT - col1 IN ( col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,300 failed
 * 87% was OK
 
-Time: 17639.687ms
+Time: 20219.388ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 550/620 [`./test/random/select/slt_good_38.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_38.test)
@@ -31144,12 +31215,12 @@ SELECT DISTINCT * FROM tab2, tab2 AS cor0, tab1 AS cor1, tab0, tab2 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,339 failed
 * 86% was OK
 
-Time: 17282.489ms
+Time: 19906.494ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 551/620 [`./test/random/select/slt_good_39.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_39.test)
@@ -31214,12 +31285,12 @@ SELECT * FROM tab1 WHERE NOT - col0 * + col1 IN ( col0 / col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,334 failed
 * 86% was OK
 
-Time: 17151.592ms
+Time: 20640.879ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 552/620 [`./test/random/select/slt_good_4.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_4.test)
@@ -31284,12 +31355,12 @@ SELECT ALL * FROM tab1 WHERE NOT + col0 NOT BETWEEN + col1 / - col2 AND col2
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,317 failed
 * 86% was OK
 
-Time: 16467.747ms
+Time: 20049.738ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 553/620 [`./test/random/select/slt_good_40.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_40.test)
@@ -31354,12 +31425,12 @@ SELECT + col0 AS col2 FROM tab2 WHERE NOT ( col1 ) BETWEEN NULL AND - col0 + - c
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,324 failed
 * 86% was OK
 
-Time: 16689.884ms
+Time: 20224.900ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 554/620 [`./test/random/select/slt_good_41.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_41.test)
@@ -31424,12 +31495,12 @@ SELECT * FROM tab1 WHERE NOT col2 * + col0 IN ( col1 + col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,362 failed
 * 86% was OK
 
-Time: 17163.060ms
+Time: 19931.656ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 555/620 [`./test/random/select/slt_good_42.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_42.test)
@@ -31494,12 +31565,12 @@ SELECT * FROM tab2 WHERE NOT - col2 IN ( col0 * + col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,431 failed
 * 85% was OK
 
-Time: 16749.369ms
+Time: 20833.559ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 556/620 [`./test/random/select/slt_good_43.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_43.test)
@@ -31564,12 +31635,12 @@ SELECT DISTINCT * FROM tab2, tab1 cor0, tab2 AS cor1, tab1, tab2 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,317 failed
 * 86% was OK
 
-Time: 16741.652ms
+Time: 18107.633ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 557/620 [`./test/random/select/slt_good_44.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_44.test)
@@ -31634,12 +31705,12 @@ SELECT DISTINCT * FROM tab0 WHERE NOT col0 * - col0 IN ( col1 * + col1 * + col0 
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,341 failed
 * 86% was OK
 
-Time: 18367.259ms
+Time: 17654.323ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 558/620 [`./test/random/select/slt_good_45.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_45.test)
@@ -31704,12 +31775,12 @@ SELECT * FROM tab2 WHERE NOT ( + col1 + + col0 * col0 ) IN ( + col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,346 failed
 * 86% was OK
 
-Time: 16941.617ms
+Time: 17153.075ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 559/620 [`./test/random/select/slt_good_46.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_46.test)
@@ -31774,12 +31845,12 @@ SELECT DISTINCT * FROM tab1, tab0 cor0, tab1 AS cor1, tab0, tab1 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,389 failed
 * 86% was OK
 
-Time: 17121.645ms
+Time: 17022.795ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 560/620 [`./test/random/select/slt_good_47.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_47.test)
@@ -31844,19 +31915,12 @@ SELECT DISTINCT col2 * CAST ( NULL AS INTEGER ) + 69 FROM tab0
 Expected: ["NULL"] but got ["69"]
 ```
 
-
-```sql
-SELECT - + 82 / + col1 AS col2 FROM tab1 AS cor0
-
-Expected: ["-3","-6","-8"] but got ["-3.154","-6.308","-8.200"]
-```
-
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,374 failed
 * 86% was OK
 
-Time: 17889.884ms
+Time: 16842.793ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 561/620 [`./test/random/select/slt_good_48.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_48.test)
@@ -31921,12 +31985,12 @@ SELECT DISTINCT * FROM tab0, tab2 AS cor0, tab0 cor1, tab2, tab2 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,375 failed
 * 86% was OK
 
-Time: 17281.446ms
+Time: 17305.522ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 562/620 [`./test/random/select/slt_good_49.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_49.test)
@@ -31991,12 +32055,12 @@ SELECT DISTINCT col0 AS col1 FROM tab1 WHERE NOT ( - col2 ) IN ( col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,342 failed
 * 86% was OK
 
-Time: 16850.896ms
+Time: 16956.599ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 563/620 [`./test/random/select/slt_good_5.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_5.test)
@@ -32061,12 +32125,12 @@ SELECT ALL - col0 * + col1 AS col2 FROM tab2 WHERE NOT - col1 * tab2.col1 IN ( c
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,323 failed
 * 86% was OK
 
-Time: 17217.449ms
+Time: 16172.710ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 564/620 [`./test/random/select/slt_good_50.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_50.test)
@@ -32131,12 +32195,12 @@ SELECT DISTINCT * FROM tab0, tab0 AS cor0, tab2 AS cor1, tab2, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,405 failed
 * 85% was OK
 
-Time: 30263.248ms
+Time: 17105.567ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 565/620 [`./test/random/select/slt_good_51.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_51.test)
@@ -32201,12 +32265,12 @@ SELECT DISTINCT - col1 * + col1 * + col2 + + col2 * col1 * + col2 FROM tab0 WHER
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,362 failed
 * 86% was OK
 
-Time: 20243.382ms
+Time: 17659.491ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 566/620 [`./test/random/select/slt_good_52.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_52.test)
@@ -32271,12 +32335,12 @@ SELECT DISTINCT * FROM tab1, tab2 AS cor0, tab2 AS cor1, tab0, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,428 failed
 * 85% was OK
 
-Time: 24514.396ms
+Time: 17164.833ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 567/620 [`./test/random/select/slt_good_53.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_53.test)
@@ -32341,12 +32405,12 @@ SELECT ALL * FROM tab1 WHERE NOT col2 IN ( + tab1.col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,370 failed
 * 86% was OK
 
-Time: 24314.555ms
+Time: 17067.043ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 568/620 [`./test/random/select/slt_good_54.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_54.test)
@@ -32411,12 +32475,19 @@ SELECT DISTINCT * FROM tab2, tab1, tab2 AS cor0, tab0 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT + col1 + - col1 / col0 FROM tab1
+
+Expected: ["10","13","18"] but got ["12.838","17.333","9.844"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,459 failed
 * 85% was OK
 
-Time: 18122.972ms
+Time: 17133.299ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 569/620 [`./test/random/select/slt_good_55.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_55.test)
@@ -32481,12 +32552,12 @@ SELECT * FROM tab0 WHERE NOT - col0 IN ( + col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,009 tests as sqlite
+#### ☓ Ran 10,009 tests as _sqlite_
 
 * 1,391 failed
 * 86% was OK
 
-Time: 22363.307ms
+Time: 17296.966ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 570/620 [`./test/random/select/slt_good_56.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_56.test)
@@ -32551,12 +32622,19 @@ SELECT DISTINCT * FROM tab1, tab1 cor0, tab2 AS cor1, tab2, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT ALL - - CAST ( NULL AS INTEGER ) * - col2 AS col1 FROM tab2 AS cor0
+
+Expected: ["NULL","NULL","NULL"] but got ["0","0","0"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,322 failed
 * 86% was OK
 
-Time: 17477.738ms
+Time: 17176.569ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 571/620 [`./test/random/select/slt_good_57.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_57.test)
@@ -32621,12 +32699,12 @@ SELECT DISTINCT * FROM tab0, tab0 AS cor0, tab0 cor1, tab2 cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,442 failed
 * 85% was OK
 
-Time: 17712.881ms
+Time: 17233.095ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 572/620 [`./test/random/select/slt_good_58.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_58.test)
@@ -32691,12 +32769,12 @@ SELECT DISTINCT * FROM tab2, tab2 cor0, tab2 AS cor1, tab1, tab1 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,411 failed
 * 85% was OK
 
-Time: 17468.046ms
+Time: 17380.242ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 573/620 [`./test/random/select/slt_good_59.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_59.test)
@@ -32761,12 +32839,12 @@ SELECT * FROM tab1 WHERE NOT ( - col2 ) IN ( + col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,418 failed
 * 85% was OK
 
-Time: 17582.672ms
+Time: 17244.971ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 574/620 [`./test/random/select/slt_good_6.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_6.test)
@@ -32831,12 +32909,12 @@ SELECT ALL tab2.col1 * tab2.col0 FROM tab2 WHERE NOT ( + col0 ) IN ( col1 + + co
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,345 failed
 * 86% was OK
 
-Time: 17128.591ms
+Time: 16583.424ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 575/620 [`./test/random/select/slt_good_60.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_60.test)
@@ -32901,12 +32979,22 @@ SELECT DISTINCT * FROM tab2, tab0 cor0, tab2 AS cor1, tab1, tab2 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+
+```sql
+SELECT ALL cor1.col2 AS col1 FROM tab0 AS cor0 CROSS JOIN tab2, tab2 AS cor1
+
+Parse error on line 1:
+...cor0 CROSS JOIN tab2, tab2 AS cor1
+-----------------------^
+Expecting 'LITERAL', 'BRALITERAL', 'EOF', 'WITH', 'AS', 'RPAR', 'PIVOT', 'UNPIVOT', 'ORDER', 'WHERE', 'UNION', 'INTERSECT', 'EXCEPT', 'CROSS', 'OUTER', 'NATURAL', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'SEMI', …
+```
+
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,421 failed
 * 85% was OK
 
-Time: 17542.916ms
+Time: 17985.113ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 576/620 [`./test/random/select/slt_good_61.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_61.test)
@@ -32971,12 +33059,12 @@ SELECT DISTINCT * FROM tab0, tab1 AS cor0, tab2 AS cor1, tab2 cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,417 failed
 * 85% was OK
 
-Time: 16759.950ms
+Time: 17323.068ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 577/620 [`./test/random/select/slt_good_62.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_62.test)
@@ -33041,12 +33129,12 @@ SELECT DISTINCT * FROM tab0, tab1 AS cor0, tab0 AS cor1, tab1 cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,353 failed
 * 86% was OK
 
-Time: 17602.326ms
+Time: 17511.011ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 578/620 [`./test/random/select/slt_good_63.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_63.test)
@@ -33111,12 +33199,12 @@ SELECT DISTINCT * FROM tab2, tab0 AS cor0, tab2 AS cor1, tab0, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,421 failed
 * 85% was OK
 
-Time: 17344.875ms
+Time: 17463.550ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 579/620 [`./test/random/select/slt_good_64.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_64.test)
@@ -33176,17 +33264,34 @@ Query was expected to return results (but did not)
 
 
 ```sql
+SELECT ALL cor0.col0 * - col2 + col1 / col0 AS col0 FROM tab0 AS cor0
+
+Expected: ["-33","-7297","-789"] but got ["-32.229","-7296.978","-788.417"]
+```
+
+
+```sql
 SELECT DISTINCT * FROM tab0, tab0 AS cor0, tab1 AS cor1, tab1, tab1 AS cor2
 
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+
+```sql
+SELECT ALL * FROM tab1 cor0 CROSS JOIN tab0, tab2 AS cor1, tab1, tab0 AS cor2
+
+Parse error on line 1:
+...cor0 CROSS JOIN tab0, tab2 AS cor1, tab1
+-----------------------^
+Expecting 'LITERAL', 'BRALITERAL', 'EOF', 'WITH', 'AS', 'RPAR', 'PIVOT', 'UNPIVOT', 'ORDER', 'WHERE', 'UNION', 'INTERSECT', 'EXCEPT', 'CROSS', 'OUTER', 'NATURAL', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'S…
+```
+
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,367 failed
 * 86% was OK
 
-Time: 19366.444ms
+Time: 17429.958ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 580/620 [`./test/random/select/slt_good_65.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_65.test)
@@ -33251,12 +33356,12 @@ SELECT DISTINCT * FROM tab2, tab0 AS cor0, tab1 AS cor1, tab1, tab1 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,400 failed
 * 86% was OK
 
-Time: 20323.852ms
+Time: 17255.462ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 581/620 [`./test/random/select/slt_good_66.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_66.test)
@@ -33321,12 +33426,12 @@ SELECT DISTINCT * FROM tab2, tab0 AS cor0, tab1 cor1, tab0, tab2 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,377 failed
 * 86% was OK
 
-Time: 21407.230ms
+Time: 17432.383ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 582/620 [`./test/random/select/slt_good_67.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_67.test)
@@ -33391,12 +33496,12 @@ SELECT DISTINCT * FROM tab2, tab1 AS cor0, tab0 AS cor1, tab0, tab2 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,354 failed
 * 86% was OK
 
-Time: 20942.504ms
+Time: 17122.818ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 583/620 [`./test/random/select/slt_good_68.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_68.test)
@@ -33456,24 +33561,17 @@ Query was expected to return results (but did not)
 
 
 ```sql
-SELECT - CAST ( NULL AS REAL ) FROM tab1, tab2 AS cor0
-
-Wrong conversion type
-```
-
-
-```sql
 SELECT DISTINCT * FROM tab2 WHERE NOT col1 * + col0 + - col1 BETWEEN - col2 AND - col2 + col1
 
 6 results returned but expected 9
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,386 failed
 * 86% was OK
 
-Time: 16691.178ms
+Time: 17614.326ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 584/620 [`./test/random/select/slt_good_69.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_69.test)
@@ -33538,12 +33636,12 @@ SELECT DISTINCT * FROM tab0, tab2 AS cor0, tab2 AS cor1, tab1 cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,403 failed
 * 85% was OK
 
-Time: 22857.277ms
+Time: 17288.583ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 585/620 [`./test/random/select/slt_good_7.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_7.test)
@@ -33608,12 +33706,12 @@ Parse error on line 1:
 Expecting 'LITERAL', 'BRALITERAL', 'EOF', 'WITH', 'AS', 'RPAR', 'PIVOT', 'UNPIVOT', 'ORDER', 'WHERE', 'UNION', 'INTERSECT', 'EXCEPT', 'CROSS', 'OUTER', 'NATURAL', 'JOIN', 'INNER', 'LEFT', 'RIGHT', 'FULL', 'S…
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,283 failed
 * 87% was OK
 
-Time: 18866.313ms
+Time: 16622.701ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 586/620 [`./test/random/select/slt_good_70.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_70.test)
@@ -33678,12 +33776,12 @@ SELECT ALL - tab1.col2 * - col1 * + col0 AS col1 FROM tab1 WHERE NOT ( - col1 - 
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,449 failed
 * 85% was OK
 
-Time: 20970.685ms
+Time: 17741.275ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 587/620 [`./test/random/select/slt_good_71.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_71.test)
@@ -33748,12 +33846,12 @@ SELECT DISTINCT * FROM tab2, tab2 AS cor0, tab2 AS cor1, tab1, tab0 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,400 failed
 * 86% was OK
 
-Time: 17895.159ms
+Time: 17490.524ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 588/620 [`./test/random/select/slt_good_72.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_72.test)
@@ -33818,12 +33916,19 @@ SELECT * FROM tab1 WHERE NOT col2 * col0 + + col1 + + col1 * col2 IN ( tab1.col1
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT 4 / + col1 FROM tab0 AS cor0
+
+Expected: ["0","0","0"] but got ["0.041","0.044","0.047"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,437 failed
 * 85% was OK
 
-Time: 17501.615ms
+Time: 17504.011ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 589/620 [`./test/random/select/slt_good_73.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_73.test)
@@ -33888,12 +33993,12 @@ SELECT DISTINCT * FROM tab2, tab0 AS cor0, tab0 AS cor1, tab1, tab2 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,433 failed
 * 85% was OK
 
-Time: 17203.205ms
+Time: 17191.348ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 590/620 [`./test/random/select/slt_good_74.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_74.test)
@@ -33958,12 +34063,12 @@ SELECT DISTINCT * FROM tab1, tab1 AS cor0, tab0 cor1, tab0, tab1 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,400 failed
 * 86% was OK
 
-Time: 17317.186ms
+Time: 17446.067ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 591/620 [`./test/random/select/slt_good_75.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_75.test)
@@ -34028,12 +34133,19 @@ SELECT DISTINCT * FROM tab1, tab0 cor0, tab0 AS cor1, tab2, tab0 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT - - ( + col2 ) * - CAST ( NULL AS INTEGER ) FROM tab1 AS cor0
+
+Expected: ["NULL","NULL","NULL"] but got ["0","0","0"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,336 failed
 * 86% was OK
 
-Time: 17144.860ms
+Time: 17519.492ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 592/620 [`./test/random/select/slt_good_76.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_76.test)
@@ -34098,12 +34210,12 @@ SELECT DISTINCT * FROM tab2, tab1 cor0, tab1, tab0 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,440 failed
 * 85% was OK
 
-Time: 17063.262ms
+Time: 17290.652ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 593/620 [`./test/random/select/slt_good_77.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_77.test)
@@ -34168,12 +34280,12 @@ SELECT ALL col2 + col0 AS col2 FROM tab1 WHERE NOT - col0 + - col1 IN ( - tab1.c
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,415 failed
 * 85% was OK
 
-Time: 16814.565ms
+Time: 17442.974ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 594/620 [`./test/random/select/slt_good_78.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_78.test)
@@ -34238,12 +34350,12 @@ SELECT ALL col1 - col1 * col0 AS col0 FROM tab2 WHERE NOT ( col0 * col0 * col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,395 failed
 * 86% was OK
 
-Time: 17163.228ms
+Time: 17762.592ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 595/620 [`./test/random/select/slt_good_79.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_79.test)
@@ -34308,12 +34420,12 @@ SELECT DISTINCT * FROM tab2, tab0 cor0, tab1 AS cor1, tab0, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,395 failed
 * 86% was OK
 
-Time: 16218.400ms
+Time: 17287.545ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 596/620 [`./test/random/select/slt_good_8.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_8.test)
@@ -34373,24 +34485,24 @@ Wrong conversion type
 
 
 ```sql
-SELECT ALL * FROM tab1, tab0 AS cor0, tab0, tab0 cor1
-
-Correct amount of values returned but hash was different than expected.
-```
-
-
-```sql
 SELECT - col2 + col0 + - col1 * + col2 FROM tab2 WHERE NOT col2 + - col1 + + col0 BETWEEN col2 + + col2 AND ( - col1 )
 
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+
+```sql
+SELECT DISTINCT col1 / col0 FROM tab0 AS cor0
+
+Expected: ["1","2","3"] but got ["1.022","2.771","3.583"]
+```
+
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,322 failed
 * 86% was OK
 
-Time: 15958.005ms
+Time: 17350.709ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 597/620 [`./test/random/select/slt_good_80.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_80.test)
@@ -34455,12 +34567,12 @@ SELECT * FROM tab2 AS cor0 WHERE NOT col2 IN ( - col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,423 failed
 * 85% was OK
 
-Time: 16400.106ms
+Time: 17549.820ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 598/620 [`./test/random/select/slt_good_81.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_81.test)
@@ -34525,12 +34637,12 @@ SELECT * FROM tab1 WHERE NOT col0 BETWEEN + col1 + col1 AND col0
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,406 failed
 * 85% was OK
 
-Time: 17339.951ms
+Time: 17485.671ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 599/620 [`./test/random/select/slt_good_82.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_82.test)
@@ -34595,12 +34707,12 @@ SELECT ALL * FROM tab2 WHERE NOT col0 * - tab2.col1 IN ( col2 - - col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,379 failed
 * 86% was OK
 
-Time: 16493.295ms
+Time: 17427.913ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 600/620 [`./test/random/select/slt_good_83.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_83.test)
@@ -34665,19 +34777,12 @@ SELECT DISTINCT * FROM tab0, tab1, tab2 AS cor0, tab1 cor1
 36 results returned but expected 972
 ```
 
-
-```sql
-SELECT DISTINCT tab1.col0 * col0 / CAST ( + col2 AS INTEGER ) FROM tab1
-
-Expected: ["0","66","71"] but got ["0.167","66.667","71.860"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,430 failed
 * 85% was OK
 
-Time: 17642.341ms
+Time: 17755.032ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 601/620 [`./test/random/select/slt_good_84.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_84.test)
@@ -34742,12 +34847,12 @@ SELECT ALL col2 + tab2.col1 FROM tab2 WHERE NOT + col1 IN ( - col2 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,451 failed
 * 85% was OK
 
-Time: 16661.447ms
+Time: 17464.629ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 602/620 [`./test/random/select/slt_good_85.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_85.test)
@@ -34812,19 +34917,12 @@ SELECT DISTINCT * FROM tab0, tab2 AS cor0, tab0 cor1, tab1 cor2
 36 results returned but expected 972
 ```
 
-
-```sql
-SELECT CAST ( - col0 AS REAL ) * + col2 FROM tab1 AS cor0
-
-Wrong conversion type
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,433 failed
 * 85% was OK
 
-Time: 16984.733ms
+Time: 17592.248ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 603/620 [`./test/random/select/slt_good_86.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_86.test)
@@ -34884,31 +34982,17 @@ Correct amount of values returned but hash was different than expected.
 
 
 ```sql
-SELECT + col0 / - col1 + 4 col2 FROM tab1 AS cor0
-
-Expected: ["-2","-2","4"] but got ["-2.154","-2.400","3.885"]
-```
-
-
-```sql
 SELECT DISTINCT * FROM tab0, tab1 cor0, tab0 cor1, tab2 AS cor2
 
 36 results returned but expected 972
 ```
 
-
-```sql
-SELECT + col1 * - CAST ( NULL AS INTEGER ) / col2 AS col0 FROM tab0 cor0
-
-Expected: ["NULL","NULL","NULL"] but got ["0","0","0"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,378 failed
 * 86% was OK
 
-Time: 16767.321ms
+Time: 17314.293ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 604/620 [`./test/random/select/slt_good_87.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_87.test)
@@ -34973,12 +35057,12 @@ SELECT - col1 * col1 col0 FROM tab1 WHERE NOT col0 BETWEEN ( col1 ) AND tab1.col
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,377 failed
 * 86% was OK
 
-Time: 16622.231ms
+Time: 17259.762ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 605/620 [`./test/random/select/slt_good_88.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_88.test)
@@ -35043,12 +35127,12 @@ SELECT DISTINCT * FROM tab0, tab1 AS cor0, tab0 cor1, tab1 cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,429 failed
 * 85% was OK
 
-Time: 16555.049ms
+Time: 17465.180ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 606/620 [`./test/random/select/slt_good_89.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_89.test)
@@ -35113,12 +35197,12 @@ SELECT DISTINCT * FROM tab1, tab2 AS cor0, tab2 cor1, tab2 cor2
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,404 failed
 * 85% was OK
 
-Time: 16656.140ms
+Time: 19175.806ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 607/620 [`./test/random/select/slt_good_9.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_9.test)
@@ -35183,12 +35267,12 @@ SELECT * FROM tab1 WHERE NOT - col2 * col2 + - col1 IN ( col0 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,010 tests as sqlite
+#### ☓ Ran 10,010 tests as _sqlite_
 
 * 1,295 failed
 * 87% was OK
 
-Time: 15909.617ms
+Time: 16879.985ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 608/620 [`./test/random/select/slt_good_90.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_90.test)
@@ -35253,12 +35337,12 @@ SELECT DISTINCT * FROM tab0, tab0 AS cor0, tab1 cor1, tab2, tab2 cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,375 failed
 * 86% was OK
 
-Time: 16785.128ms
+Time: 17494.406ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 609/620 [`./test/random/select/slt_good_91.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_91.test)
@@ -35323,12 +35407,12 @@ SELECT DISTINCT * FROM tab2 AS cor0 WHERE NOT ( + col0 + col1 ) IN ( col1 )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,371 failed
 * 86% was OK
 
-Time: 17077.022ms
+Time: 17533.260ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 610/620 [`./test/random/select/slt_good_92.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_92.test)
@@ -35393,12 +35477,12 @@ SELECT + col0 FROM tab0 WHERE NOT ( col2 ) BETWEEN col1 * tab0.col2 AND ( NULL )
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,485 failed
 * 85% was OK
 
-Time: 16873.585ms
+Time: 17541.800ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 611/620 [`./test/random/select/slt_good_93.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_93.test)
@@ -35463,12 +35547,12 @@ SELECT DISTINCT * FROM tab2, tab1 cor0, tab0 AS cor1, tab0, tab0 AS cor2
 45 results returned but expected 3645
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,389 failed
 * 86% was OK
 
-Time: 16862.076ms
+Time: 17431.567ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 612/620 [`./test/random/select/slt_good_94.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_94.test)
@@ -35533,12 +35617,12 @@ SELECT DISTINCT * FROM tab2, tab2 cor0, tab1, tab0 cor1
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,435 failed
 * 85% was OK
 
-Time: 18063.930ms
+Time: 17365.724ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 613/620 [`./test/random/select/slt_good_95.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_95.test)
@@ -35603,12 +35687,12 @@ SELECT ALL * FROM tab2 WHERE NOT ( col2 ) IN ( col0 + col0 * - col0 - - col2 * t
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,011 tests as sqlite
+#### ☓ Ran 10,011 tests as _sqlite_
 
 * 1,399 failed
 * 86% was OK
 
-Time: 16816.532ms
+Time: 17528.084ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 614/620 [`./test/random/select/slt_good_96.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_96.test)
@@ -35673,19 +35757,12 @@ SELECT DISTINCT * FROM tab0, tab0 cor0, tab0 AS cor1, tab0 cor2
 36 results returned but expected 972
 ```
 
-
-```sql
-SELECT - + 98 / - col0 FROM tab2 cor0
-
-Expected: ["1","1","14"] but got ["1.241","1.256","14"]
-```
-
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,324 failed
 * 86% was OK
 
-Time: 16594.553ms
+Time: 17452.573ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 615/620 [`./test/random/select/slt_good_97.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_97.test)
@@ -35750,12 +35827,12 @@ SELECT DISTINCT + col0 * - col2 - - col0 FROM tab2 WHERE NOT ( - col1 * col2 ) I
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,412 failed
 * 85% was OK
 
-Time: 16182.180ms
+Time: 17430.832ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 616/620 [`./test/random/select/slt_good_98.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_98.test)
@@ -35820,12 +35897,12 @@ SELECT ALL col0 * - col0 AS col2 FROM tab2 WHERE NOT col2 * col0 IN ( tab2.col1 
 Query was expected to return results (but did not) 
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,404 failed
 * 85% was OK
 
-Time: 16571.429ms
+Time: 18049.049ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 617/620 [`./test/random/select/slt_good_99.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/random/select/slt_good_99.test)
@@ -35885,29 +35962,31 @@ Query was expected to return results (but did not)
 
 
 ```sql
+SELECT DISTINCT + ( 57 ) * col0 / ( col1 * col0 ) AS col0 FROM tab1 AS cor0
+
+Expected: ["2","4","5"] but got ["2.192","4.385","5.700"]
+```
+
+
+```sql
 SELECT DISTINCT * FROM tab2, tab2 cor0, tab1 AS cor1, tab2 cor2
 
 36 results returned but expected 972
 ```
 
-#### ☓ Ran 10,012 tests as sqlite
+#### ☓ Ran 10,012 tests as _sqlite_
 
 * 1,382 failed
 * 86% was OK
 
-Time: 16332.701ms
+Time: 17876.288ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 618/620 [`./test/select1.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select1.test)
 
-_Mimic sqlite_
-#### ★ Ran 1,031 tests as sqlite
+#### ★ Assuming all 1,031 tests still passes as _sqlite_
 
-* 100% was OK
-
-`sqlite OK: ./test/select1.test`
-
-Time: 6771.942ms
+Time: 0.424ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 619/620 [`./test/select2.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select2.test)
@@ -35934,12 +36013,19 @@ SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b), c-d, CASE WHEN a<b-3 THEN 
 Correct amount of values returned but hash was different than expected.
 ```
 
-#### ☓ Ran 1,031 tests as sqlite
+
+```sql
+SELECT abs(b-c), a-b, (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b), CASE WHEN a<b-3 THEN 111 WHEN a<=b THEN 222 WHEN a<b+3 THEN 333 ELSE 444 END, abs(a), b-c FROM t1
+
+Correct amount of values returned but hash was different than expected.
+```
+
+#### ☓ Ran 1,031 tests as _sqlite_
 
 * 104 failed
 * 89% was OK
 
-Time: 6116.125ms
+Time: 6704.499ms
 
 ---- ---- ---- ---- ---- ---- ----
 ### 620/620 [`./test/select3.test`](https://github.com/mathiasrw/alasql-logictest/blob/master/sqllogic/./test/select3.test)
@@ -35973,23 +36059,25 @@ SELECT c FROM t1 WHERE (a>b-2 AND a<b+2) AND d NOT BETWEEN 110 AND 150
 Expected: ["184","195","225"] but got ["155","166","184","195","225"]
 ```
 
-#### ☓ Ran 3,351 tests as sqlite
+#### ☓ Ran 3,351 tests as _sqlite_
 
 * 358 failed
 * 89% was OK
 
-Time: 21226.411ms
+Time: 22741.703ms
 
 -----------------------------
 
+
 ## Final result
 
-* Skipped tests: 53,316
+* Total tested: 4,632,007
 * Failed tests: 688,764
-* Total tested: 4,633,062
-* Final score: 83 % was OK
+* Skipped tests: 53,316
+* Assumed still OK: 1,309,487
+* Final score: 87 % was OK
 
-Total script time: 15043304.180ms
+Total script time: 12798113.076ms
 
 _Please note that repetetive errors are not always printed again_
 
