@@ -15,21 +15,21 @@ describe('Test 410 Raise error on undefined tables', function() {
   });
 
   it('2. CREATE DATABASE',function(done){
-    assert.throws(new Error(),function(){
+    assert.throws(function(){
       alasql('SELECT 1 FROM t1 WHERE 1 IN (SELECT 1,2)');
-    });
+    },Error);
 
-    assert.throws(new Error(),function(){
+    assert.throws(function(){
       alasql('SELECT 1 FROM t1 WHERE 1 IN (SELECT x,y FROM t1)');
-    });
+    },Error);
     
-    assert.throws(new Error(),function(){
+    assert.throws(function(){
       alasql('SELECT 1 FROM t1 WHERE 1 IN (SELECT * FROM t1)');
-    });
+    },Error);
 
-    assert.throws(new Error(),function(){
+    assert.throws(function(){
       alasql('SELECT 1 FROM t1 WHERE 1 IN (SELECT min(x),max(x) FROM t1)');
-    });
+    },Error);
 
     done();
   });
