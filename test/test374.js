@@ -9,6 +9,7 @@ if(typeof exports === 'object') {
 describe('374. CEILING, FLOOR, ROUND tests:', function() {
     
 
+if(typeof exports === 'object') {
 // to output all including skipped tests please run: mocha ./test/test374.js --forceall
 
 var runAll;
@@ -166,6 +167,6 @@ tests	.substr(0,tests.length-3)
             }
 
         });
-
+    };
     
 });

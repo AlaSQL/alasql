@@ -68,6 +68,7 @@ describe('Test 212: CONVERT dates with style', function() {
         var res = alasql('SET @d = DATE("01/08/2015 12:34:56.789"); \
             SELECT VALUE \
                 CONVERT(NVARCHAR(10),@d,110)');
+        console.log(res);
         assert(res[1] == '01-08-2015');
         done();
     });

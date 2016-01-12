@@ -8,6 +8,8 @@ if(typeof exports === 'object') {
 
 describe('Test 251 Overwrite XLSX file', function() {
 
+if(typeof exports === 'object') {
+
   it('1. Overwrite',function(done){
 
     alasql('SELECT HOUR(NOW()), MINUTE(NOW()), SECOND(NOW()) \
@@ -18,6 +20,7 @@ describe('Test 251 Overwrite XLSX file', function() {
     });
 
   });
+};
 
 });
 

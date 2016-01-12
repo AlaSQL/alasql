@@ -254,6 +254,9 @@ yy.Op.prototype.toType = function(tableid) {
 	if(['-','*','/','%','^'].indexOf(this.op) >-1){
 		return 'number';
 	}
+	if(['||'].indexOf(this.op) >-1){
+		return 'string';
+	}
 	if(this.op === '+') {
 		if(this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string'){
 			return 'string';
@@ -263,7 +266,7 @@ yy.Op.prototype.toType = function(tableid) {
 		}
 	}
 	
-	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'REGEXP'].indexOf(this.op) >-1 ){
+	if(['AND','OR','NOT','=','==','===', '!=','!==','!===','>','>=','<','<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE', 'REGEXP', 'GLOB'].indexOf(this.op) >-1 ){
 		return 'boolean';
 	}
 
@@ -387,6 +390,14 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	rightJS()
 				+ '))';
 	}
+	if(this.op === '||') {
+		return 	''
+				+ '(""+('
+				+ 	leftJS()
+				+ 	")+("
+				+ 	rightJS()
+				+ '))';
+	}
 	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
 		var s = '('
 				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
@@ -399,6 +410,13 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 	if(this.op === 'REGEXP') {
 		return 'alasql.stdfn.REGEXP_LIKE(' 
+			+ leftJS()
+			+ ','
+			+ rightJS()
+			+ ')';
+	}
+	if(this.op === 'GLOB') {
+		return 'alasql.utils.glob(' 
 			+ leftJS()
 			+ ','
 			+ rightJS()
@@ -441,7 +459,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s = '(';
 //			s += 'this.query.queriesdata['+this.queriesidx+']';
 //			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
-			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,context))';
+			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,'+context+'))';
 			s += '.indexOf(';
 			s += leftJS()+')>-1)';
 			return s;
@@ -554,11 +572,13 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	// Change names
 //	console.log(this);
 	return 	''
-			+ '('
+			+ '(('
 			+ leftJS()
+			+ ')'
 			+ op
+			+ '('
 			+ rightJS()
-			+ ')';
+			+ '))';
 }
 
 

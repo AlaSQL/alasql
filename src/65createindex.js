@@ -22,9 +22,15 @@ yy.CreateIndex.prototype.execute = function (databaseid,params,cb) {
 	var tableid = this.table.tableid;
 	var table = db.tables[tableid];
 	var indexid = this.indexid;
+	db.indices[indexid] = tableid;
 
+		var rightfns = this.columns.map(function(expr){
+			return expr.expression.toJS('r','')
+		}).join("+'`'+");
+
+		var rightfn = new Function('r,params,alasql','return '+rightfns);
+	
 	if(this.unique) {
-		var rightfns = this.columns.map(function(colid){return "r[\'"+colid+"\']"}).join("+'`'+");
 		table.uniqdefs[indexid] = {
 			rightfns: rightfns
 		};
@@ -39,7 +45,6 @@ yy.CreateIndex.prototype.execute = function (databaseid,params,cb) {
 			}
 		}
 	} else {
-		var rightfns = this.columns.map(function(colid){return "r[\'"+colid+"\']"}).join("+'`'+");
 		var hh = hash(rightfns);
 		table.inddefs[indexid] = {rightfns:rightfns, hh:hh};
 		table.indices[hh] = {};
@@ -47,7 +52,7 @@ yy.CreateIndex.prototype.execute = function (databaseid,params,cb) {
 		var ix = table.indices[hh] = {};
 		if(table.data.length > 0) {
 			for(var i=0, ilen=table.data.length; i<ilen;i++) {
-				var addr = rightfns(table.data[i]);
+				var addr = rightfn(table.data[i],params,alasql);
 				if(!ix[addr]) {
 					ix[addr] = [];
 				};
@@ -60,4 +65,23 @@ yy.CreateIndex.prototype.execute = function (databaseid,params,cb) {
 	return res;
 };
 
+yy.Reindex = function (params) { return yy.extend(this, params); };
+yy.Reindex.prototype.toString = function() {
+	var s = 'REINDEX '+this.indexid;
+	return s;
+};
+
+// CREATE TABLE
+yy.Reindex.prototype.execute = function (databaseid,params,cb) {
+//	var self = this;
+	var db = alasql.databases[databaseid];
+	var indexid = this.indexid;
+//	console.log(db.indices);
+	var tableid = db.indices[indexid];
+	var table = db.tables[tableid];
+	table.indexColumns();
+	var res = 1;
+	if(cb) res = cb(res);
+	return res;
+};
 

@@ -126,7 +126,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 		var d = new Date(val);
 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 		return s;
-	} else if(udbtypeid == 'DATETIME') {
+	} else if(udbtypeid == 'DATETIME' || udbtypeid == 'DATETIME2') {
 		var d = new Date(val);
 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 		s += " "+("0"+d.getHours()).substr(-2)+":"+("0"+d.getMinutes()).substr(-2)+":"+("0"+d.getSeconds()).substr(-2);

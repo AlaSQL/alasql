@@ -8,7 +8,7 @@
 
 yy.DropIndex = function (params) { return yy.extend(this, params); }
 yy.DropIndex.prototype.toString = function() {
-	return 'INDEX TABLE' + this.indexid;
+	return 'DROP INDEX' + this.indexid;
 }
 
 

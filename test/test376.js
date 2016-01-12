@@ -9,6 +9,8 @@ if(typeof exports === 'object') {
 describe('376. ASCII tests:', function() {
     
 
+if(typeof exports === 'object') {
+
 // to output all including skipped tests please run: mocha ./test/test376.js --forceall
 
 var runAll;
@@ -270,6 +272,6 @@ tests	.substr(0,tests.length-3)
             }
 
         });
-
+};
     
 });

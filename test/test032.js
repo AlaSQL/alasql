@@ -25,7 +25,21 @@ describe('Test 32', function() {
 
 		var sql = "SELECT COLUMN b FROM test WHERE a NOT     LIKE '%bc%'";
 		assert.deepEqual([1,2],db.exec(sql));
+		
+		
+		// caseinsensetive
+		var sql = "SELECT COLUMN b FROM test WHERE a LIKE '%BC%'";
+		assert.deepEqual([3,4,5],db.exec(sql));
+
+		var sql = "SELECT COLUMN b FROM test WHERE a NOT LIKE '%BC%'";
+		assert.deepEqual([1,2],db.exec(sql));
+
+		var sql = "SELECT COLUMN b FROM test WHERE a NOT     LIKE '%BC%'";
+		assert.deepEqual([1,2],db.exec(sql));		
+
 
 		done();
 	});
+	
+
 });

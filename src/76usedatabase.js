@@ -23,8 +23,6 @@ yy.CreateDatabase.prototype.toString = function() {
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
-	// console.log(alasql.useid, databaseid, this.databaseid);
-	// console.trace();
 	var args;
 	if(this.args && this.args.length > 0) {
 		args = this.args.map(function(arg){
@@ -65,8 +63,6 @@ yy.AttachDatabase.prototype.toString = function() {
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
-	// console.log(alasql.useid, databaseid, this.databaseid);
-	// console.trace();
 	if(!alasql.engines[this.engineid]) {
 		throw new Error('Engine "'+this.engineid+'" is not defined.');
 	};
@@ -84,10 +80,6 @@ yy.DetachDatabase.prototype.toString = function() {
 }
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
-	// console.log(alasql.useid, databaseid, this.databaseid);
-	// console.trace();
-//console.log(89,this,arguments,alasql.databases);
-
 	if(!alasql.databases[this.databaseid].engineid) {
 		throw new Error('Cannot detach database "'+this.engineid+'", because it was not attached.');
 	};
@@ -98,7 +90,7 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 	if(dbid == alasql.DEFAULTDATABASEID) {
 		throw new Error("Drop of default database is prohibited");			
 	}
-//	console.log(dbid);
+
 	if(!alasql.databases[dbid]) {
 		if(!this.ifexists) {
 			throw new Error("Database '"+dbid+"' does not exist");	
@@ -148,7 +140,6 @@ yy.DropDatabase.prototype.toString = function() {
 yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 	if(this.engineid) {
 
-//		console.log(this,this.databaseid, this.ifexists);
 		return alasql.engines[this.engineid].dropDatabase(this.databaseid, this.ifexists, cb);
 	}
 	var res;
@@ -158,7 +149,6 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 	if(dbid == alasql.DEFAULTDATABASEID) {
 		throw new Error("Drop of default database is prohibited");			
 	}
-//	console.log(dbid);
 	if(!alasql.databases[dbid]) {
 		if(!this.ifexists) {
 			throw new Error("Database '"+dbid+"' does not exist");	

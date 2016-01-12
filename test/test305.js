@@ -29,32 +29,38 @@ describe('Test 305 CREATE GRAPH', function() {
     assert.deepEqual(res,["Serge","Helen",2]);
     done();
   });
-  it('5. CREATE GRAPH',function(done){
+  it('5. Search over graph',function(done){
     var res = alasql('SEARCH FROM #Peter');
     assert.deepEqual(res.age,63);
     done();
   });
-  it('6. CREATE GRAPH',function(done){
+  it('6. Search over graph',function(done){
     var res = alasql('SEARCH FROM #Peter');
     assert.deepEqual(res.age,63);
     done();
   });
-  it('7. CREATE GRAPH',function(done){
+  it('7. Search over graph',function(done){
     var res = alasql('SEARCH / #Peter age');
     assert.deepEqual(res,[63]);
     done();
   });
-  it('8. CREATE GRAPH',function(done){
+  it('8. Search over graph',function(done){
     var res = alasql('SEARCH / :Person age');
     assert.deepEqual(res,[63]);
     done();
   });
-  it('9. CREATE GRAPH',function(done){
-
+  it('9a. Search over graph with >>',function(done){
     var res = alasql('SEARCH / #Andrey >> name');
     assert.deepEqual(res,["Olga Ivanova"]);
     done();
   });
+
+  it('9b. Search over graph with <<',function(done){
+    var res = alasql('SEARCH / #Olga << name');
+    assert.deepEqual(res,["Andrey"]);
+    done();
+  });
+
   it('10. CREATE GRAPH',function(done){
 
     var res = alasql('SEARCH / #Andrey >> >> name');
@@ -62,7 +68,6 @@ describe('Test 305 CREATE GRAPH', function() {
     done();
   });
   it('11. CREATE GRAPH',function(done){
-
     var res = alasql('SEARCH / #Andrey (>>)+ name');
     assert.deepEqual(res,["Olga Ivanova","John"]);
     done();
@@ -92,10 +97,12 @@ describe('Test 305 CREATE GRAPH', function() {
     done();
   });
 
+
   it('16. Create database ',function(done){
     var res = alasql('DROP DATABASE test305');
     done();
   });
+
 
   it('17. Create database ',function(done){
     var res = alasql('CREATE DATABASE test305a;USE test305a');
@@ -111,7 +118,7 @@ describe('Test 305 CREATE GRAPH', function() {
   });
 
 
-  it('19. Create database ',function(done){
+  it('99. Drop database ',function(done){
     var res = alasql('DROP DATABASE test305a');
     done();
   });

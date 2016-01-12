@@ -21,8 +21,14 @@ describe('375. Problem with UPDATE (https://github.com/agershun/alasql/issues/47
 
         alasql('UPDATE RpdAssignments SET Name="id2" WHERE Id=1');
 
-        console.log(alasql('SELECT * FROM RpdAssignments'));
-//        assert(success);
+        var res = alasql('SELECT * FROM RpdAssignments');
+        assert.deepEqual(res,[{
+            Id: 1,
+            Name: "id2",
+            RpdId: "id1",
+            Status: "",
+            VcmtsService: "cat1"
+        }]);
         done();
     });
 });

@@ -45,11 +45,11 @@ yy.Update.prototype.compile = function (databaseid) {
 	};
 
 	// Construct update function
-	var s = '';
+	var s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
+	s += ';';
 	this.columns.forEach(function(col){
 		s += 'r[\''+col.column.columnid+'\']='+col.expression.toJS('r','')+';'; 
 	});
-//	console.log('updatefn',s);
 	var assignfn = new Function('r,params,alasql','var y;'+s);
 
 	var statement = function(params, cb) {

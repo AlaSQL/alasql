@@ -21,6 +21,22 @@ var Table = alasql.Table = function(params){
 	this.uniqs = {};
 	this.uniqdefs = {};	
 
+	this.identities = {};
+	this.checkfn = [];
+
+	// Create trigger hubs
+	this.beforeinsert = {};
+	this.afterinsert = {};
+	this.insteadofinsert = {};
+
+	this.beforedelete = {};
+	this.afterdelete = {};
+	this.insteadofdelete = {};
+
+	this.beforeupdate = {};
+	this.afterupdate = {};
+	this.insteadofupdate = {};
+
 	extend(this,params);
 };
 

@@ -103,6 +103,42 @@ stdfn.YEAR = function(d){
 	return d.getFullYear();
 };
 
-stdfn.DATEDIFF = function(a,b){
-	return (+new Date(a).valueOf()) - (new Date(b).valueOf());
+var PERIODS = {
+  'year': 1000*3600*24*365,
+  'quarter':1000*3600*24*365/4,
+  'month':1000*3600*24*30,
+  'week': 1000*3600*24*7,
+  'day': 1000*3600*24,
+  'dayofyear': 1000*3600*24,
+  'weekday': 1000*3600*24,
+  'hour': 1000*3600,
+  'minute': 1000*60,
+  'second': 1000,
+  'millisecond': 1,
+  'microsecond': 0.001
 };
+
+alasql.stdfn.DATEDIFF = function(period, d1, d2) {
+  var interval = (new Date(d2)).getTime() - (new Date(d1)).getTime();
+  return interval / PERIODS[period.toLowerCase()];
+};
+
+alasql.stdfn.DATEADD = function(period, interval, d) {
+  var nd = (new Date(d)).getTime() + interval*PERIODS[period.toLowerCase()];
+  return new Date(nd);
+};
+
+alasql.stdfn.INTERVAL = function(interval, period) {
+  return interval*PERIODS[period.toLowerCase()];
+};
+
+alasql.stdfn.DATE_ADD = alasql.stdfn.ADDDATE = function(d, interval) {
+  var nd = (new Date(d)).getTime() + interval;
+  return new Date(nd);
+};
+
+alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function(d,interval) {
+  var nd = (new Date(d)).getTime() - interval;
+  return new Date(nd);
+};
+

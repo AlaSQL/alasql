@@ -35,7 +35,7 @@ yy.Select.prototype.compileOrder = function (query) {
 				var columnid = ord.expression.columnid; 
 				if(query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
-					if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME') dg = '.valueOf()';
+					if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2') dg = '.valueOf()';
 					// TODO Add other types mapping
 				} else {
 					if(alasql.options.valueof) dg = '.valueOf()'; // TODO Check

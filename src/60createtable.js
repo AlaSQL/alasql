@@ -107,10 +107,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	if(this.class) {
 		table.isclass = true;
 	}
-	table.identities = {};
-	table.checkfn = [];
 
-	var ss = [];
+	var ss = [];  // DEFAULT function components
+	var uss = []; // ON UPDATE function components
 	if(columns) {
 		columns.forEach(function(col) {
 			var dbtypeid = col.dbtypeid;
@@ -205,13 +204,17 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uniqs[uk.hh] = {};
 */			}
 
+			if(col.onupdate) {
+				uss.push('r[\''+col.columnid+'\']='+col.onupdate.toJS('r',''));
+			}
+
 			table.columns.push(newcol);
 			table.xcolumns[newcol.columnid] = newcol;
 
 		});
 	}
 	table.defaultfns = ss.join(',');
-
+	table.onupdatefns = uss.join(';');
 
 //	if(constraints) {
 	constraints.forEach(function(con) {
@@ -292,9 +295,16 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	}
 //			if(table.pk) {
 	table.insert = function(r,orreplace) {
+		var oldinserted = alasql.inserted;
+		alasql.inserted = [r];
+
+
+
 		var table = this;
 
 		var toreplace = false; // For INSERT OR REPLACE
+
+
 /*
 		// IDENTINY or AUTO_INCREMENT
 		// if(table.identities && table.identities.length>0) {
@@ -303,6 +313,38 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		// 	});
 		// }
 */
+		// Trigger prevent functionality
+		var prevent = false;
+		for(var tr in table.beforeinsert) {
+			var trigger = table.beforeinsert[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					if(alasql.fn[trigger.funcid](r) === false) prevent = prevent || true;
+				} else if(trigger.statement) {
+					if(trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+				}
+			}
+		};
+		if(prevent) return; 
+
+
+		// Trigger prevent functionality
+		var escape = false;
+		for(var tr in table.insteadofinsert) {
+			escape = true;
+			var trigger = table.insteadofinsert[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					alasql.fn[trigger.funcid](r);
+				} else if(trigger.statement) {
+					trigger.statement.execute(databaseid);
+				}
+			}
+		};
+		if(escape) return;
+
+
+
 //console.log(262,r);
 //console.log(263,table.identities)
 		for(var columnid in table.identities){
@@ -387,11 +429,54 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}
 		}
 
+		// Trigger prevent functionality
+		for(var tr in table.afterinsert) {
+			var trigger = table.afterinsert[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					alasql.fn[trigger.funcid](r);
+				} else if(trigger.statement) {
+					trigger.statement.execute(databaseid);
+				}
+			}
+		};
+		alasql.inserted = oldinserted;
 	};
 
 	table.delete = function(index) {
 		var table = this;
 		var r = table.data[index];
+
+		// Prevent trigger
+		var prevent = false;
+		for(var tr in table.beforedelete) {
+			var trigger = table.beforedelete[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					if(alasql.fn[trigger.funcid](r) === false) prevent = prevent || true;
+				} else if(trigger.statement) {
+					if(trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+				}
+			}
+		};
+		if(prevent) return false; 
+
+		// Trigger prevent functionality
+		var escape = false;
+		for(var tr in table.insteadofdelete) {
+			escape = true;
+			var trigger = table.insteadofdelete[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					alasql.fn[trigger.funcid](r);
+				} else if(trigger.statement) {
+					trigger.statement.execute(databaseid);
+				}
+			}
+		};
+		if(escape) return;
+
+
 		if(this.pk) {
 			var pk = this.pk;
 			var addr = pk.onrightfn(r);
@@ -410,6 +495,19 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uniqs[uk.hh][ukaddr]=undefined;
 			});
 		}
+
+		// Trigger prevent functionality
+		for(var tr in table.afterdelete) {
+			var trigger = table.afterdelete[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					alasql.fn[trigger.funcid](r);
+				} else if(trigger.statement) {
+					trigger.statement.execute(databaseid);
+				}
+			}
+		};
+
 	};
 
 	table.deleteall = function() {
@@ -428,6 +526,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	table.update = function(assignfn, i, params) {
 		// TODO: Analyze the speed
 		var r = cloneDeep(this.data[i]);
+
 		var pk;
 		// PART 1 - PRECHECK
 		if(this.pk) {
@@ -445,8 +544,37 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				} 				
 			});
 		}
-		
+
 		assignfn(r,params,alasql);
+
+		// Prevent trigger
+		var prevent = false;
+		for(var tr in table.beforeupdate) {
+			var trigger = table.beforeupdate[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					if(alasql.fn[trigger.funcid](this.data[i],r) === false) prevent = prevent || true;
+				} else if(trigger.statement) {
+					if(trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+				}
+			}
+		};
+		if(prevent) return false; 
+
+		// Trigger prevent functionality
+		var escape = false;
+		for(var tr in table.insteadofupdate) {
+			escape = true;
+			var trigger = table.insteadofupdate[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					alasql.fn[trigger.funcid](this.data[i],r);
+				} else if(trigger.statement) {
+					trigger.statement.execute(databaseid);
+				}
+			}
+		};
+		if(escape) return;
 
 		// PART 2 - POST CHECK
 		if(table.checkfn && table.checkfn.length>0) {
@@ -494,6 +622,19 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 
 		this.data[i] = r;
+
+		// Trigger prevent functionality
+		for(var tr in table.afterupdate) {
+			var trigger = table.afterupdate[tr];
+			if(trigger) {
+				if(trigger.funcid) {
+					alasql.fn[trigger.funcid](this.data[i],r);
+				} else if(trigger.statement) {
+					trigger.statement.execute(databaseid);
+				}
+			}
+		};
+
 	};
 
 	if(this.view && this.select) {
@@ -506,16 +647,15 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	console.log(databaseid);
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);
+
+
 	var res;
 
 	if(!alasql.options.nocount){
 		res = 1;
 	}
 	
-	if(cb){
-		res = cb(res);
-	}
-
+	if(cb) res = cb(res);
 	return res;
 };
 

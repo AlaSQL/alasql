@@ -31,6 +31,8 @@ yy.DropTable.prototype.toString = function() {
 yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var ifexists = this.ifexists;
 	var res = 0; // No tables removed
+	var count = 0;
+	var tlen = this.tables.length;
 
 	// For each table in the list
 	this.tables.forEach(function(table){
@@ -47,15 +49,25 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 				}
 			} else {
 				if(db.engineid /*&& alasql.options.autocommit*/) {
-					res += alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists/*, cb*/);
+					alasql.engines[db.engineid].dropTable(table.databaseid || databaseid, tableid, ifexists, function(res1){
+						delete db.tables[tableid];
+						res+=res1;
+						count++;
+						if(count == tlen && cb) cb(res);	
+					});
+				} else {
+					delete db.tables[tableid];
+					res++;
+					count++;
+					if(count == tlen && cb) cb(res);	
 				}
-				delete db.tables[tableid];
-				res++;
 			}
+		} else {
+			count++;
+			if(count == tlen && cb) cb(res);	
 		}
-
 	});
-	if(cb) res = cb(res);
+	// if(cb) res = cb(res);
 	return res;
 };
 
@@ -70,7 +82,6 @@ yy.TruncateTable.prototype.toString = function() {
 yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
-//	console.log(db, this.table.databaseid );
 	if(db.engineid) {
 		return alasql.engines[db.engineid].truncateTable(this.table.databaseid || databaseid,tableid, this.ifexists, cb);
 	}

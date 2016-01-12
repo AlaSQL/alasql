@@ -23,9 +23,26 @@ var rename = require('gulp-rename');
 var dereserve = require('gulp-dereserve');
 var argv = require('yargs').argv || {};
 var replace = require('gulp-replace');
+var execSync = require('child_process').execSync;
+var strftime = require('strftime').timezone('0');
+
+
+// Identify name of the build
 var packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 var version = packageData.version;
+var branch = execSync('git --work-tree=' + __dirname +' --git-dir=' + __dirname + '/.git branch', {encoding:'utf8'})
+              .match(/^\*\s+(.*)/m)[1]
+              .trim()
 
+if(!(/^master|^release/.test(branch))){
+  version += '-'
+//            + 'pre.'
+              + branch.replace(/[^0-9A-Za-z-]/ig,'.')
+              + '+' 
+              + (+strftime('%y%m%d'))
+              + '.'
+              + (+strftime('%H%M%S'));
+} 
 
 
 gulp.task('js-merge-worker', function () {
@@ -97,6 +114,7 @@ gulp.task('js-merge', function () {
     './src/68if.js',
     './src/69while.js',
   	'./src/70insert.js',
+    './src/71trigger.js',
     './src/72delete.js',
     './src/74update.js',
 //    './src/74update.js',
@@ -292,12 +310,12 @@ gulp.task('watch', toRun, function(){
   //gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
 
   gulp.watch('./dist/alasql.min.js',function(){ 
-    gulp.run('copy-dist'); 
+//    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
 /*    gulp.run('copy-dist-meteor'); */
   });
   gulp.watch('./dist/alasql-worker.js',function(){ 
-    gulp.run('copy-dist'); 
+//    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
   });
 //  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });

@@ -38,7 +38,6 @@ function doJoin (query, scope, h) {
 					doJoin(query, scope, h+1);
 				};			
 			} else {
-//				console.log(source.applymode);
 				if (source.applymode == 'OUTER') {
 					scope[source.alias] = {};
 					doJoin(query, scope, h+1);
@@ -153,21 +152,34 @@ function doJoin (query, scope, h) {
 				var dataw;
 
 				while((dataw = nextsource.data[j]) || (nextsource.getfn && (dataw = nextsource.getfn(j))) || (j<jlen)) {
-					if(nextsource.getfn && !nextsource.dontcache) nextsource.data[j] = dataw;
+					if(nextsource.getfn && !nextsource.dontcache) {
+						nextsource.data[j] = dataw;
+					}
 
-					if(!dataw._rightjoin) {
-						scope[nextsource.alias] = dataw;
-						doJoin(query, scope, h+2);
-					} else {
-						//dataw._rightjoin = undefined;	
+					// console.log(169,dataw._rightjoin,scope);
+					if(dataw._rightjoin) {
 						delete dataw._rightjoin;					
+					} else {
+//						delete dataw._rightjoin;					
+//						console.log(163,h,scope);
+						if(h==0) {
+							scope[nextsource.alias] = dataw;
+							doJoin(query, scope, h+2);
+						} else {
+							//scope[nextsource.alias] = dataw;
+							//doJoin(query, scope, h+2);
+//							console.log(169,scope);
+						}
 					}
 					j++;
 				}
-//				console.table(nextsource.data);
 //				debugger;	
 
+			} else {
+				//console.log(180,scope);	
 			};
+		} else {
+//			console.log(179,scope);
 		};
 
 

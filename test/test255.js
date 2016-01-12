@@ -8,6 +8,7 @@ if(typeof exports === 'object') {
 
 describe('Test 255 Export numbers to Excel as numbers', function() {
 
+if(typeof exports === 'object') {
   it('1. Create database', function(done){
   //    var data = [{a:"1.2",b:"1,2"},{a:"2.2",b:"2,3"}];
     //    alasql('select a::number,b into xlsx("a.xlsx",{headers:true}) from ?',[data]);
@@ -15,6 +16,6 @@ describe('Test 255 Export numbers to Excel as numbers', function() {
 
     done();
   });
-
+};
 });
 

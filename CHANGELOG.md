@@ -7,7 +7,27 @@
 * Added: functions CEIL/CEILING and FLOOR
 * Added: CONCAT to the list of standard functions
 * Fix: Bug with primary key after DELETE all
-
+* Fix: Added String() to UPPER() and LOWER() functions 
+* Added: PIVOT and UNPIVOT functionality
+* Added: REPLACE INTO command (see issue #467)
+* Added: ON UPDATE - column constraint
+* Fix: COLLATE and UNIQUE KEY words for CREATE TABLE (see issue #452)
+* Fix: Added params to SEARCH WHERE function
+* Added: TRIGGERs
+* Fix: Bug with MATRIX modifier
+* Fix: Bug with undefined content variable with IN operation (issue #501)
+* Fix: Bug with wrong realizaion of REPLACE INTO (issue #505)
+* Added: >>,<<,&,| - binary operations
+* Added: || - string concatenation (issue #514)
+* Added: GLOB operator
+* Fix: >> for binary operation and graphs collisions
+* Added: SELECT * FROM INSERTED (for T-SQL like triggers)
+* Fix: Added DEFAULT clause to INSERT SELECT statement
+* Added: expression NOT NULL operator (issue #507)
+* Added and Fix: REINDEX and fixed CREATE INDEX (issues #509, #470)
+* Fixed: browser tests, IndexedDB tests, DROP TABLE callback for external engines
+* Added: DATETIME2 type for compatibility with T-SQL
+* Added: DATEADD() and DATEDIFF() functions in T-SQL style
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag
