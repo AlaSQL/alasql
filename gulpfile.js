@@ -162,6 +162,8 @@ gulp.task('js-merge', function () {
     .pipe(gulp.dest('./dist'))
     .pipe(dereserve())
     .pipe(rename('alasql.min.js'))
+    .pipe(replace(/\/\/\*dev\*/g, "/*dev*"))          // Hidde development specific code 
+    .pipe(replace(/\/\*min\*/g, "//*min*"))             // Show minification specific code
     .pipe(uglify())
     .pipe(gulp.dest('./dist'))
     //.pipe(shell(['cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v bell Tests failed ; else say -v bell All tests OK; fi)']))

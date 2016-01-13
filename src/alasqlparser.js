@@ -474,15 +474,20 @@ case 194:
 			var x3 = s.substr(-3).toUpperCase();
 			var x4 = s.substr(-4).toUpperCase();
 			var r;
-			if(s[0] == '#') {
+			if(s[0] === '#') {
 				r = new yy.FuncValue({funcid: 'HTML', args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else if(x3=='XLS' || x3 == 'CSV' || x3=='TAB') {
 				r = new yy.FuncValue({funcid: x3, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else if(x4=='XLSX' || x4 == 'JSON') {
 				r = new yy.FuncValue({funcid: x4, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else {
-				throw new Error('Unknown string in FROM clause');
-			};
+				//*dev*
+                throw new Error('Unknown string in FROM clause');
+                //*/
+                /*min*
+                throw new Error("e00001")
+                //*/
+			}
 			this.$ = r;
 		
 break;
