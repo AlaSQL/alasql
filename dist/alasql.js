@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-pre-develop+160105.205858 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-pre-develop+160113.233024 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-pre-develop+160105.205858
+@version 0.2.2-pre-develop+160113.233024
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-pre-develop+160105.205858';
+alasql.version = '0.2.2-pre-develop+160113.233024';
 
 /**
 	Debug flag
@@ -655,15 +655,20 @@ case 194:
 			var x3 = s.substr(-3).toUpperCase();
 			var x4 = s.substr(-4).toUpperCase();
 			var r;
-			if(s[0] == '#') {
+			if(s[0] === '#') {
 				r = new yy.FuncValue({funcid: 'HTML', args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else if(x3=='XLS' || x3 == 'CSV' || x3=='TAB') {
 				r = new yy.FuncValue({funcid: x3, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else if(x4=='XLSX' || x4 == 'JSON') {
 				r = new yy.FuncValue({funcid: x4, args:[new yy.StringValue({value: s}), new yy.Json({value:{headers:true}})]});
 			} else {
-				throw new Error('Unknown string in FROM clause');
-			};
+				//*dev*
+                throw new Error('Unknown string in FROM clause');
+                //*/
+                /*min*
+                throw new Error("e00001")
+                //*/
+			}
 			this.$ = r;
 
 break;
@@ -3341,7 +3346,12 @@ var removeFile = utils.removeFile = function(path,cb) {
             });
         });
     } else {
+        //*dev*
         throw new Error('You can remove files only in Node.js and Apache Cordova');
+        //*/
+        /*min*
+        throw new Error("e01501")
+        //*/
     }
 };
 
@@ -3367,7 +3377,13 @@ var fileExists = utils.fileExists = function(path,cb){
 
     } else {
         // TODO Cordova, etc.
-        throw new Error('You can use exists() only in Node.js or Apach Cordova');
+
+        //*dev*
+        throw new Error('You can use exists() only in Node.js or Apache Cordova');
+        //*/
+        /*min*
+        throw new Error("e01502")
+        //*/
     }
 };
 
@@ -12528,7 +12544,12 @@ yy.Update.prototype.compile = function (databaseid) {
 
 		var table = db.tables[tableid];
 		if(!table) {
-			throw new Error("Table '"+tableid+"' not exists")
+			//*dev*
+			throw new Error("Table '"+tableid+"' does not exists")
+			//*/
+			/*min*
+			throw new Error("e07401-"+tableid)
+			//*/
 		}
 
 		var numrows = 0;
@@ -12541,7 +12562,7 @@ yy.Update.prototype.compile = function (databaseid) {
 				}
 				numrows++;
 			}
-		};
+		}
 
 		if(alasql.options.autocommit && db.engineid) {
 			alasql.engines[db.engineid].saveTableData(databaseid,tableid);
@@ -12794,10 +12815,16 @@ yy.Declare.prototype.toString = function() {
 			var s = '';
 			s += '@'+declare.variable+' ';
 			s += declare.dbtypeid;
-			if(this.dbsize) s += '('+this.dbsize;
-			if(this.dbprecision) s+= ','+this.dbprecision;
-			s += ')';
-			if(declare.expression) s += ' = '+declare.expression.toString();
+			if(this.dbsize){
+				s += '('+this.dbsize;
+				if(this.dbprecision){
+					s+= ','+this.dbprecision;
+				}
+				s += ')';
+			}
+			if(declare.expression){
+				s += ' = '+declare.expression.toString();
+			}
 			return s;
 		}).join(',');
 	}
@@ -12809,8 +12836,9 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 	if(this.declares && this.declares.length > 0) {
 		this.declares.map(function(declare){
 			var dbtypeid = declare.dbtypeid;
-			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
-
+			if(!alasql.fn[dbtypeid]){
+				dbtypeid = dbtypeid.toUpperCase();
+			}
 			alasql.declares[declare.variable] = {dbtypeid:dbtypeid,
 				dbsize:declare.dbsize, dbprecision:declare.dbprecision};
 
@@ -12822,10 +12850,14 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 				if(alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(alasql.vars[declare.variable],alasql.declares[declare.variable]);
 				}
-			};
+			}
+
 		});
-	};
-	if(cb) res=cb(res);
+	}
+	if(cb){
+		res=cb(res);
+
+	}
 	return res;
 };
 
@@ -16168,18 +16200,36 @@ LS.rollback = function(databaseid, cb) {
 
 var SQLITE = alasql.engines.SQLITE = function (){};
 
-SQLITE.createDatabase = function(wdbid, args, ifnotexists, dbid, cb){
-	throw new Error('Connot create SQLITE database in memory. Attach it.');
+SQLITE.createDatabase = function(){
+	//*dev*
+	throw new Error('Connot create SQLITE database in memory. Please attach it.');
+	//*/
+	/*min*
+	throw new Error("e09301")
+	//*/
+
 };
 
-SQLITE.dropDatabase = function(databaseid){
-	throw new Error('This is impossible to drop SQLite database. Detach it.');
+SQLITE.dropDatabase = function(databaseid){		
+	//*dev*
+	throw new Error('It not supported to drop SQLite database. Please detach it.');
+	//*/
+	/*min*
+	throw new Error("e09302")
+	//*/
+
 };
 
 SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
+		//*dev*
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
+		//*/
+		/*min*
+		throw new Error("e09303-"+dbid)
+		//*/
+
 	};
 
 	if(args[0] && (args[0] instanceof yy.StringValue)
@@ -16214,12 +16264,24 @@ SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb){
 
 		   	cb(1);
 		}, function(err){
+			//*dev*
 			throw new Error('Cannot open SQLite database file "'+args[0].value+'"');
+			//*/
+			/*min*
+			throw new Error("e09304-"+args[0].value)
+			//*/
+
 		})
 		return res;
 	} else {
+		//*dev*
 		throw new Error('Cannot attach SQLite database without a file');
-	};
+		//*/
+		/*min*
+		throw new Error("e09305")
+		//*/
+
+	}
 
 	return res;
 }
@@ -16289,7 +16351,13 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb){
 				if(cb) res = cb(res);
 				return res;
 			} else {
-				throw new Error('Cannot create new database file, because it alreagy exists');
+				//*dev*
+				throw new Error('Cannot create new database file, because it already exists');
+				//*/
+				/*min*
+				throw new Error("e09401")
+				//*/
+
 			} 
 		} else {
 			var data = {tables:{}};
@@ -16314,7 +16382,13 @@ FS.dropDatabase = function(fsdbid, ifexists, cb){
 			});
 		} else {
 			if(!ifexists) {
+				//*dev*
 				throw new Error('Cannot drop database file, because it does not exist');
+				//*/
+				/*min*
+				throw new Error("e09402")
+				//*/
+
 			}
 			res = 0;
 			if(cb) res = cb(res);
@@ -16327,8 +16401,14 @@ FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 
 	var res = 1;
 	if(alasql.databases[dbid]) {
+		//*dev*
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
-	};
+		//*/
+		/*min*
+		throw new Error("e09403-"+dbid)
+		//*/
+
+	}
 	var db = new alasql.Database(dbid || fsdbid);
 	db.engineid = "FILESTORAGE";
 //	db.fsdbid = fsdbid;
@@ -16337,7 +16417,13 @@ FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 		try {
 			db.data = JSON.parse(s);
 		} catch(err) {
+			//*dev*
 			throw new Error('Data in FileStorage database are corrupted');
+			//*/
+			/*min*
+			throw new Error("e09404")
+			//*/
+
 		}
 		db.tables = db.data.tables;
 		// IF AUTOCOMMIT IS OFF then copy data to memory
@@ -16359,7 +16445,13 @@ FS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var res = 1;
 
 	if(tb && !ifnotexists) {
+		//*dev*
 		throw new Error('Table "'+tableid+'" alsready exists in the database "'+fsdbid+'"');
+		//*/
+		/*min*
+		throw new Error("e09405-"+tableid+"-"+fsdbid)
+		//*/
+
 	};
 	var table = alasql.databases[databaseid].tables[tableid];
 	db.data.tables[tableid] = {columns:table.columns};
@@ -16395,8 +16487,14 @@ FS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
 	if(!ifexists && !db.tables[tableid]) {
+		//*dev*
 		throw new Error('Cannot drop table "'+tableid+'" in fileStorage, because it does not exist');
-	};
+		//*/
+		/*min*
+		throw new Error("e09406-"+tableid)
+		//*/
+
+	}
 	delete db.tables[tableid];
 	delete db.data.tables[tableid];
 	delete db.data[tableid];

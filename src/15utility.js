@@ -366,7 +366,12 @@ var removeFile = utils.removeFile = function(path,cb) {
             });
         });
     } else {
+        //*dev*
         throw new Error('You can remove files only in Node.js and Apache Cordova');
+        //*/
+        /*min*
+        throw new Error("e01501")
+        //*/
     }
 };
 
@@ -413,7 +418,13 @@ var fileExists = utils.fileExists = function(path,cb){
 */
     } else {
         // TODO Cordova, etc.
-        throw new Error('You can use exists() only in Node.js or Apach Cordova');
+
+        //*dev*
+        throw new Error('You can use exists() only in Node.js or Apache Cordova');
+        //*/
+        /*min*
+        throw new Error("e01502")
+        //*/
     }
 };
 
