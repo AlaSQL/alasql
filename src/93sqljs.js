@@ -6,36 +6,18 @@
 
 var SQLITE = alasql.engines.SQLITE = function (){};
 
-SQLITE.createDatabase = function(/*/* wdbid, args, ifnotexists, dbid, cb */){
-	//*dev*
-	throw new Error('Connot create SQLITE database in memory. Please attach it.');
-	//*/
-	/*min*
-	throw new Error("e09301")
-	//*/
-
+SQLITE.createDatabase = function(wdbid, args, ifnotexists, dbid, cb){
+	throw new Error('Connot create SQLITE database in memory. Attach it.');
 };
 
-SQLITE.dropDatabase = function(databaseid){		
-	//*dev*
-	throw new Error('It not supported to drop SQLite database. Please detach it.');
-	//*/
-	/*min*
-	throw new Error("e09302")
-	//*/
-
+SQLITE.dropDatabase = function(databaseid){
+	throw new Error('This is impossible to drop SQLite database. Detach it.');
 };
 
 SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[dbid]) {
-		//*dev*
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
-		//*/
-		/*min*
-		throw new Error("e09303-"+dbid)
-		//*/
-
 	};
 
 
@@ -72,24 +54,12 @@ SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb){
 
 		   	cb(1);
 		}, function(err){
-			//*dev*
 			throw new Error('Cannot open SQLite database file "'+args[0].value+'"');
-			//*/
-			/*min*
-			throw new Error("e09304-"+args[0].value)
-			//*/
-
 		})
 		return res;
 	} else {
-		//*dev*
 		throw new Error('Cannot attach SQLite database without a file');
-		//*/
-		/*min*
-		throw new Error("e09305")
-		//*/
-
-	}
+	};
 
 	return res;
 }

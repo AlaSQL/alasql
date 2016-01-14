@@ -69,12 +69,7 @@ yy.Update.prototype.compile = function (databaseid) {
 
 		var table = db.tables[tableid];
 		if(!table) {
-			//*dev*
-			throw new Error("Table '"+tableid+"' does not exists")
-			//*/
-			/*min*
-			throw new Error("e07401-"+tableid)
-			//*/
+			throw new Error("Table '"+tableid+"' not exists")
 		}
 //		table.dirty = true;
 		var numrows = 0;
@@ -87,7 +82,7 @@ yy.Update.prototype.compile = function (databaseid) {
 				}
 				numrows++;
 			}
-		}
+		};
 
 		if(alasql.options.autocommit && db.engineid) {
 			alasql.engines[db.engineid].saveTableData(databaseid,tableid);

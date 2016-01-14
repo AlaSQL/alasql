@@ -39,14 +39,7 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb){
 				if(cb) res = cb(res);
 				return res;
 			} else {
-				//*dev*
-				throw new Error('Cannot create new database file, because it already exists');
-				//*/
-				/*min*
-				throw new Error("e09401")
-				//*/
-			
-
+				throw new Error('Cannot create new database file, because it alreagy exists');
 			} 
 		} else {
 			var data = {tables:{}};
@@ -72,13 +65,7 @@ FS.dropDatabase = function(fsdbid, ifexists, cb){
 			});
 		} else {
 			if(!ifexists) {
-				//*dev*
 				throw new Error('Cannot drop database file, because it does not exist');
-				//*/
-				/*min*
-				throw new Error("e09402")
-				//*/
-
 			}
 			res = 0;
 			if(cb) res = cb(res);
@@ -92,14 +79,8 @@ FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 //	console.log(arguments);
 	var res = 1;
 	if(alasql.databases[dbid]) {
-		//*dev*
 		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
-		//*/
-		/*min*
-		throw new Error("e09403-"+dbid)
-		//*/
-
-	}
+	};
 	var db = new alasql.Database(dbid || fsdbid);
 	db.engineid = "FILESTORAGE";
 //	db.fsdbid = fsdbid;
@@ -108,13 +89,7 @@ FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
 		try {
 			db.data = JSON.parse(s);
 		} catch(err) {
-			//*dev*
 			throw new Error('Data in FileStorage database are corrupted');
-			//*/
-			/*min*
-			throw new Error("e09404")
-			//*/
-
 		}
 		db.tables = db.data.tables;
 		// IF AUTOCOMMIT IS OFF then copy data to memory
@@ -158,13 +133,7 @@ FS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var res = 1;
 
 	if(tb && !ifnotexists) {
-		//*dev*
 		throw new Error('Table "'+tableid+'" alsready exists in the database "'+fsdbid+'"');
-		//*/
-		/*min*
-		throw new Error("e09405-"+tableid+"-"+fsdbid)
-		//*/
-
 	};
 	var table = alasql.databases[databaseid].tables[tableid];
 	db.data.tables[tableid] = {columns:table.columns};
@@ -201,14 +170,8 @@ FS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
 	if(!ifexists && !db.tables[tableid]) {
-		//*dev*
 		throw new Error('Cannot drop table "'+tableid+'" in fileStorage, because it does not exist');
-		//*/
-		/*min*
-		throw new Error("e09406-"+tableid)
-		//*/
-
-	}
+	};
 	delete db.tables[tableid];
 	delete db.data.tables[tableid];
 	delete db.data[tableid];
