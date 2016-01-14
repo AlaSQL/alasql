@@ -208,6 +208,14 @@ stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 stdlib.TRIM = function(s) {return und(s,'y.trim()');}
 
 stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'String(y).toUpperCase()');}
+
+// Concatination of strings
+stdfn.CONCAT_WS = function() {
+    args = Array.prototype.slice.call(arguments);
+    return args.slice(1, args.length).join(args[0]);
+};
+
+
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
