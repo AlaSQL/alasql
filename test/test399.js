@@ -25,10 +25,18 @@ describe('Test 399 || string concatenation', function() {
   it('3. Many small tests', function(done){
     alasql.options.modifier = 'VALUE';
 
+    var res = alasql("SELECT null || 'a'");
+    assert(res == 'a');
+
+    var res = alasql("SELECT 'a' || null");
+    assert(res == 'a');
+
     var res = alasql("SELECT null || true");
+    assert(res == 'true');
     // No assert here
 
     var res = alasql("SELECT true || 'a'");
+    assert(res == 'truea');
     // No assert here
 
     var res = alasql("SELECT 'a' || 'b'");

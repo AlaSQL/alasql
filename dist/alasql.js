@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-pre-develop+160105.205858 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-pre-develop+160114.144153 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-pre-develop+160105.205858
+@version 0.2.2-pre-develop+160114.144153
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-pre-develop+160105.205858';
+alasql.version = '0.2.2-pre-develop+160114.144153';
 
 /**
 	Debug flag
@@ -9092,11 +9092,11 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 	if(this.op === '||') {
 		return 	''
-				+ '(""+('
+				+ "(''+("
 				+ 	leftJS()
-				+ 	")+("
+				+ 	"||'')+("
 				+ 	rightJS()
-				+ '))';
+				+ '||""))';
 	}
 	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
 		var s = '('
@@ -12794,10 +12794,16 @@ yy.Declare.prototype.toString = function() {
 			var s = '';
 			s += '@'+declare.variable+' ';
 			s += declare.dbtypeid;
-			if(this.dbsize) s += '('+this.dbsize;
-			if(this.dbprecision) s+= ','+this.dbprecision;
-			s += ')';
-			if(declare.expression) s += ' = '+declare.expression.toString();
+			if(this.dbsize){
+				s += '('+this.dbsize;
+				if(this.dbprecision){
+					s+= ','+this.dbprecision;
+				}
+				s += ')';
+			}
+			if(declare.expression){
+				s += ' = '+declare.expression.toString();
+			}
 			return s;
 		}).join(',');
 	}
@@ -12809,8 +12815,9 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 	if(this.declares && this.declares.length > 0) {
 		this.declares.map(function(declare){
 			var dbtypeid = declare.dbtypeid;
-			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
-
+			if(!alasql.fn[dbtypeid]){
+				dbtypeid = dbtypeid.toUpperCase();
+			}
 			alasql.declares[declare.variable] = {dbtypeid:dbtypeid,
 				dbsize:declare.dbsize, dbprecision:declare.dbprecision};
 
@@ -12822,10 +12829,14 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 				if(alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(alasql.vars[declare.variable],alasql.declares[declare.variable]);
 				}
-			};
+			}
+
 		});
-	};
-	if(cb) res=cb(res);
+	}
+	if(cb){
+		res=cb(res);
+
+	}
 	return res;
 };
 

@@ -392,11 +392,11 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 	if(this.op === '||') {
 		return 	''
-				+ '(""+('
+				+ "(''+("
 				+ 	leftJS()
-				+ 	")+("
+				+ 	"||'')+("
 				+ 	rightJS()
-				+ '))';
+				+ '||""))';
 	}
 	if(this.op === 'LIKE' || this.op === 'NOT LIKE') {
 		var s = '('
