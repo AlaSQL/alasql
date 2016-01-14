@@ -28,6 +28,8 @@
 * Fixed: browser tests, IndexedDB tests, DROP TABLE callback for external engines
 * Added: DATETIME2 type for compatibility with T-SQL
 * Added: DATEADD() and DATEDIFF() functions in T-SQL style
+* Added: CONCAT_WS() function
+* Added: OF() selector for SEARCH statement
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag
