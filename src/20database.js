@@ -41,20 +41,23 @@ var Database = alasql.Database = function (databaseid) {
 	if(!databaseid) {
 		databaseid = "db"+(alasql.databasenum++); // Random name
 	}
+
+	// Step 1
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
+	self.dbversion = 0;
+
+	//Steps 2-5
 	self.tables = {};
 	self.views = {};
 	self.triggers = {};
 	self.indices = {};
 
-	// Objects storage
+	// Step 6: Objects storage
 	self.objects = {};
 	self.counter = 0;
 
-//	self.fn = {};
 	self.resetSqlCache();
-	self.dbversion = 0;
 	return self;
 };
 

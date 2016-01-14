@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-pre-develop+160114.144153 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-pre-develop+160114.193126 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-pre-develop+160114.144153
+@version 0.2.2-pre-develop+160114.193126
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-pre-develop+160114.144153';
+alasql.version = '0.2.2-pre-develop+160114.193126';
 
 /**
 	Debug flag
@@ -4297,20 +4297,23 @@ var Database = alasql.Database = function (databaseid) {
 	if(!databaseid) {
 		databaseid = "db"+(alasql.databasenum++); // Random name
 	}
+
+	// Step 1
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
+	self.dbversion = 0;
+
+	//Steps 2-5
 	self.tables = {};
 	self.views = {};
 	self.triggers = {};
 	self.indices = {};
 
-	// Objects storage
+	// Step 6: Objects storage
 	self.objects = {};
 	self.counter = 0;
 
-//	self.fn = {};
 	self.resetSqlCache();
-	self.dbversion = 0;
 	return self;
 };
 
@@ -6622,6 +6625,11 @@ yy.Select.prototype.compile = function(databaseid) {
 		query.havingfn = this.compileHaving(query);
 	}
 
+	// 8. Compile ORDER BY clause
+	if(this.order){
+		query.orderfn = this.compileOrder(query);
+	}
+
 	if(this.group || query.selectGroup.length>0) {
 		query.selectgfn = this.compileSelectGroup2(query);
 	} else {
@@ -6630,11 +6638,6 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// 7. Compile DISTINCT, LIMIT and OFFSET
 	query.distinct = this.distinct;
-
-	// 8. Compile ORDER BY clause
-	if(this.order){
-		query.orderfn = this.compileOrder(query);
-	}
 
 	// 9. Compile PIVOT clause
 	if(this.pivot) query.pivotfn = this.compilePivot(query);
@@ -8064,6 +8067,17 @@ yy.Select.prototype.compileSelect1 = function(query) {
 yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns;
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+			var key = '$$$'+idx;
+			if(v instanceof yy.Column && query.xcolumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('p',query.defaultTableid,query.defcols)+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
 
 	return new Function('p,params,alasql','var y;'+s+'return r');
 };
@@ -8163,6 +8177,20 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 		};
 	});
 
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+
+			var key = '$$$'+idx;
+
+			if(v instanceof yy.Column && query.groupColumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('g','')+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
+
 	return new Function('g,params,alasql','var y;'+s+'return r');
 };
 
@@ -8195,6 +8223,7 @@ yy.Select.prototype.compileHaving = function(query) {
 
 yy.Select.prototype.compileOrder = function (query) {
 	var self = this;
+	self.orderColumns = [];
 	if(this.order) {
 
 		if(this.order && this.order.length == 1 && this.order[0].expression 
@@ -8214,8 +8243,35 @@ yy.Select.prototype.compileOrder = function (query) {
 		var sk = '';
 		this.order.forEach(function(ord,idx){
 
+			if(ord.expression instanceof yy.NumValue) {
+				var v = self.columns[ord.expression.value-1];
+			} else {
+				var v = ord.expression;
+			}
+			self.orderColumns.push(v);
+
+			var key = '$$$'+idx;
+
 			// Date conversion
 			var dg = ''; 
+				//if(alasql.options.valueof) 
+			if(ord.expression instanceof yy.Column) {
+				var columnid = ord.expression.columnid; 
+				if(query.xcolumns[columnid]) {
+					var dbtypeid = query.xcolumns[columnid].dbtypeid;
+					if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2') dg = '.valueOf()';
+					// TODO Add other types mapping
+				} else {
+					if(alasql.options.valueof) dg = '.valueOf()'; // TODO Check
+				}
+
+			}
+			// COLLATE NOCASE
+			if(ord.nocase) dg += '.toUpperCase()';
+			s += "if((a['"+key+"']||'')"+dg+(ord.direction == 'ASC'?'>':"<")+"(b['"+key+"']||'')"+dg+')return 1;';
+			s += "if((a['"+key+"']||'')"+dg+"==(b['"+key+"']||'')"+dg+'){';
+
+if(false) {			
 
 			if(ord.expression instanceof yy.NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
@@ -8247,6 +8303,8 @@ yy.Select.prototype.compileOrder = function (query) {
 			}			
 
 			// TODO Add date comparision
+
+}
 
 			sk += '}';
 		});

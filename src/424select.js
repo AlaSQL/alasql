@@ -254,6 +254,17 @@ yy.Select.prototype.compileSelect1 = function(query) {
 yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns;
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+			var key = '$$$'+idx;
+			if(v instanceof yy.Column && query.xcolumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('p',query.defaultTableid,query.defcols)+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
 //	console.log(s);
 	return new Function('p,params,alasql','var y;'+s+'return r');
 };
@@ -398,6 +409,21 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 			s += 'r[\''+(col.as||col.nick)+'\']=g[\''+col.nick+'\'];'
 		};
 	});
+
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+//			console.log(411,v);
+			var key = '$$$'+idx;
+//			console.log(427,v,query.groupColumns,query.xgroupColumns);
+			if(v instanceof yy.Column && query.groupColumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('g','')+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
+//console.log(425,s);
 //	console.log('selectg:',s);
 	return new Function('g,params,alasql','var y;'+s+'return r');
 };
