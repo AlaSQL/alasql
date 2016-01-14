@@ -9,12 +9,15 @@ if(typeof exports === 'object') {
 
 describe('Test 412 ORDER BY unselected column (issue #379)', function() {
 
-  it('2. CREATE DATABASE',function(done){
-    alasql('CREATE DATABASE test412;USE test412');
-    done();
+  before(function(){
+    alasql('CREATE DATABASE test412; USE test412');
   });
 
-  it.skip('2. CREATE TABLE, INSERT and SELECT',function(done){
+  after(function(){
+     alasql('DROP DATABASE test412');
+  });
+  
+  it.skip('1. CREATE TABLE, INSERT and SELECT',function(done){
     alasql('create table sun (a int, b int); \
 						insert into sun values (1,10),(2,5),(3,20);');
 
@@ -25,7 +28,7 @@ describe('Test 412 ORDER BY unselected column (issue #379)', function() {
 	});
 
 
-  it.skip('3. CREATE TABLE, INSERT and SELECT',function(done){
+  it.skip('2. CREATE TABLE, INSERT and SELECT',function(done){
     var res = alasql('SELECT a FROM ? ORDER BY id', [[{id:2,a:123},{id:1,a:null}]]);
 	//console.log(res);
 	assert(res, [{a:null},{a:123}]);
@@ -34,16 +37,12 @@ describe('Test 412 ORDER BY unselected column (issue #379)', function() {
 	});
 
 
-  it('4. CREATE TABLE, INSERT and SELECT',function(done){
+  it('3. CREATE TABLE, INSERT and SELECT',function(done){
     var res = alasql('SELECT a, id REMOVE id FROM ? ORDER BY id', [[{id:2,a:123},{id:1,a:null}]]);
 	//console.log(res);
 	assert(res, [{a:null},{a:123}]);
     done();
   });
 
-  it('99. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test412');
-    done();
-  });
 
 });
