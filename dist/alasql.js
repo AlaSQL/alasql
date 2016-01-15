@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-develop+160115.215118 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2
+@version 0.2.2-develop+160115.215118
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2';
+alasql.version = '0.2.2-develop+160115.215118';
 
 /**
 	Debug flag
@@ -8271,6 +8271,7 @@ yy.Select.prototype.compileOrder = function (query) {
 			s += "if((a['"+key+"']||'')"+dg+(ord.direction == 'ASC'?'>':"<")+"(b['"+key+"']||'')"+dg+')return 1;';
 			s += "if((a['"+key+"']||'')"+dg+"==(b['"+key+"']||'')"+dg+'){';
 
+/*
 if(false) {			
 
 			if(ord.expression instanceof yy.NumValue) {
@@ -8305,7 +8306,7 @@ if(false) {
 			// TODO Add date comparision
 
 }
-
+*/
 			sk += '}';
 		});
 		s += 'return 0;';
