@@ -27,12 +27,12 @@
   "dependencies": {
     "dom-storage": "^2.0.1",
     "es6-promise": "^3.0.2",
-    "lodash": "^3.10.0",
+    "lodash": "^4.0.0",
     "xlsjs": "^0.7.5",
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
-    "blueimp-md5": "^1.1.1",
+    "blueimp-md5": "^2.1.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-dereserve": "^0.2.1",
