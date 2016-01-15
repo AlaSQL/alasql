@@ -1,3 +1,4 @@
+
 /*! AlaSQL vPACKAGE_VERSION_NUMBER © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
@@ -30,3 +31,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+let a = 234;
+
+`abc er ${a} mol høj`;

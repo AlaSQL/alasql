@@ -96,5 +96,6 @@
     "white"         : false,  // Check against strict whitespace and indentation rules.
     "indent"        : 1,       // Specify indentation spacing
     "lastsemic"     : true,    // Suppresses warnings about missing semicolons when the semicolon is omitted for the last statement in a one-line block
-    "multistr"      : true
+    "multistr"      : true,
+    "esversion"		: 6
 }

@@ -25,6 +25,8 @@ var argv = require('yargs').argv || {};
 var replace = require('gulp-replace');
 var execSync = require('child_process').execSync;
 var strftime = require('strftime').timezone('0');
+var babel = require('gulp-babel');
+var sourcemaps = require('gulp-sourcemaps');
 
 
 // Identify name of the build
@@ -45,6 +47,41 @@ if(!(/^master|^release/.test(branch))){
 } 
 
 
+var babelConf = {	
+					presets: ['es2015'],
+					//plugins: [
+								//"check-es2015-constants",
+								//"transform-es2015-arrow-functions"/*,
+								//"transform-es2015-block-scoped-functions",
+								//"transform-es2015-block-scoping"
+								/*"transform-es2015-classes",
+								"transform-es2015-computed-properties",
+								"transform-es2015-destructuring",
+								"transform-es2015-for-of",
+								"transform-es2015-function-name",
+								"transform-es2015-literals"/*,
+								"transform-es2015-modules-commonjs",
+								"transform-es2015-object-super",
+								"transform-es2015-parameters",
+								"transform-es2015-shorthand-properties",
+								"transform-es2015-spread",
+								"transform-es2015-sticky-regex",
+								"transform-es2015-template-literals"/*,
+								"transform-es2015-typeof-symbol",
+								"transform-es2015-unicode-regex",
+								"transform-regenerator" //*/
+					//]
+					//,
+					retainLines: true,
+					compact: false,
+					//sourceMaps: "both"
+					//sourceMaps: "inline",
+					//sourceRoot: "src/"
+
+				}
+
+
+
 gulp.task('js-merge-worker', function () {
   return gulp.src([
     './src/05copyright.js', 
@@ -54,10 +91,12 @@ gulp.task('js-merge-worker', function () {
     ])
     .pipe(concat('alasql-worker.js'))
     .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) 
+    .pipe(babel(babelConf))
+	.pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./dist'))
-    .pipe(rename('alasql-worker.min.js'))
-    .pipe(uglify())
-    .pipe(gulp.dest('./dist'));
+    //.pipe(rename('alasql-worker.min.js'))
+    //.pipe(uglify())
+    //.pipe(gulp.dest('./dist'));
 });
 
 gulp.task('js-merge', function () {
@@ -159,11 +198,14 @@ gulp.task('js-merge', function () {
     .pipe(replace(/\/\/.*?console\.log\(.*/gm, ''))     // Remove single line comments 'console.log(' is part of the line 
     .pipe(replace(/\n[\s]+\n/g, "\n\n"))                // Collaps multilinebreak 
     .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version))  // Please set version in package.json file
-    .pipe(gulp.dest('./dist'))
+    .pipe(babel(babelConf))
+	.pipe(sourcemaps.write('.'))
     .pipe(dereserve())
-    .pipe(rename('alasql.min.js'))
-    .pipe(uglify())
     .pipe(gulp.dest('./dist'))
+    //.pipe(rename('alasql.min.js'))
+    //.pipe(uglify())
+    //.pipe(gulp.dest('./dist'))
+    
     //.pipe(shell(['cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v bell Tests failed ; else say -v bell All tests OK; fi)']))
     ;
 });
