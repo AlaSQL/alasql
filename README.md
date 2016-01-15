@@ -68,7 +68,7 @@ console.log(res); // [{"a":1,"b":40},{"a":2,"b":20}]
 ```
 
 ```js
-// C) Read from file 
+// C) Promise notation + read from file example
 alasql.promise('SELECT * FROM XLS("mydata.xls") WHERE lastname LIKE "A%" and city = "London" GROUP BY name ')
       .then(function(res){
            console.log(res); // output depends on mydata.xls
