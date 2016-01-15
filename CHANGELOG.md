@@ -1,7 +1,7 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.2-pre "Mitilini" (XX.XX.20XX)
+### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list
 * Fix: Bug in NUMERIC type conversion
 * Added: functions CEIL/CEILING and FLOOR
