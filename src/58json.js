@@ -93,7 +93,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 }
 
 yy.Json.prototype.toJS = function(context, tableid, defcols) {
-	// TODO reod
+	// TODO redo
 	return JSONtoJS(this.value,context, tableid, defcols);
 }
 

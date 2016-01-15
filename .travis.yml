@@ -6,9 +6,8 @@ branches:
 
 language: node_js
 node_js:
-  - "iojs"
   - "node"
+  - "5"
+  - "4"
   - "0.12"
-  - "0.11"
-  - "0.10"
 

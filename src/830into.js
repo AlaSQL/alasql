@@ -141,13 +141,13 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 		}).join('\n');
 	}
 
-//	} else {
+//	 } else {
 //		if(typeof exports == 'object') {
 //			process.stdout.write(s);
 //		} else {
 //		console.log(s);
 //		};
-//	}
+//	 }
 	res = alasql.utils.saveFile(filename,s);
 	if(cb) res = cb(res);
 	return res;
@@ -175,9 +175,9 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	opt.quote = '"';
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
-	var s = opt.quote;
+	var s = '';
 	if(opt.headers) {
-		s += columns.map(function(col){
+		s += opt.quote+columns.map(function(col){
 			return col.columnid.trim();
 		}).join(opt.quote+opt.separator+opt.quote)+opt.quote+'\r\n';
 	}
@@ -186,7 +186,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		s += columns.map(function(col){
 			var s = d[col.columnid];
 			s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
-			//if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
+//			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
       
       //Excel 2013 needs quotes around strings - thanks for _not_ complying with RFC for CSV 
       if(+s!=s){  // jshint ignore:line

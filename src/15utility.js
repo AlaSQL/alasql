@@ -198,7 +198,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 
 /** @todo Check eliminated code below */
 
-/*
+/*/*
 
         var paths = path.split('/');
         var filename = paths[paths.length-1];
@@ -390,7 +390,7 @@ var fileExists = utils.fileExists = function(path,cb){
                 cb(false);
             });
         });
-/*        
+/*/*        
         function fail(){
             callback(false);            
         }
@@ -461,7 +461,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
  //               });
             });
 
-/*
+/*/*
         } else if((typeof cordova == 'object') && cordova.file) {
 //            console.log('saveFile 1');
         // Cordova
@@ -492,7 +492,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 //                        console.log("ok, in theory i worked");
                         });          
 */
-/*
+/*/*
                         // Corodva
                         function writeFinish() {
                             // ... your done code here...
@@ -558,8 +558,8 @@ function isIE () {
 }
 
 
-// For LOAD
-// var saveBinaryFile = utils.saveFile = function(path, data, cb) {
+//  For LOAD
+//  var saveBinaryFile = utils.saveFile = function(path, data, cb) {
 //     if(typeof exports == 'object') {
 //         // For Node.js
 //         var fs = require('fs');
@@ -568,7 +568,7 @@ function isIE () {
 //         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 //         saveAs(blob, path);        
 //     }
-// };
+//  };
 
 
 // Fast hash function
@@ -724,7 +724,7 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
   Check equality of objects
 */
 
-/*
+/*/*
 var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
     if (deep) {
         if (x === y){
@@ -957,8 +957,36 @@ var like = utils.like = function (pattern,value,escape) {
     s += '$';
 //    if(value == undefined) return false;
 //console.log(s,value,(value||'').search(RegExp(s))>-1);
-    return (value||'').search(RegExp(s))>-1;
-   }
+    return (value||'').toUpperCase().search(RegExp(s.toUpperCase()))>-1;
+   };
 
 
+utils.glob = function (value,pattern) {
 
+    var i=0;
+    var s = '^';
+
+    while(i<pattern.length) {
+      var c = pattern[i], c1 = '';
+      if(i<pattern.length-1) c1 = pattern[i+1];
+
+      if(c==='[' && c1 === '^') {
+        s += '[^';
+        i++;
+      } else if(c==='[' || c===']' ) {
+        s += c;
+      } else if(c==='*') {
+        s += '.*';
+      } else if(c === '?') {
+        s += '.';
+      } else if('/.*+?|(){}'.indexOf(c)>-1) {
+        s += '\\'+c;
+      } else {
+        s += c;
+      }
+      i++;
+    }
+
+    s += '$';
+    return (value||'').toUpperCase().search(RegExp(s.toUpperCase()))>-1;
+   };

@@ -17,17 +17,28 @@
 \[([^\]])*?\]							return 'BRALITERAL'
 \`([^\`])*?\`	   						return 'BRALITERAL'
 
+
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+              return 'STRING'
 
+/* 
+N(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
+X(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
+(['](\\.|[^']|\'\')*?['])+              return 'STRING'
+(["](\\.|[^"]|\"\")*?["])+              return 'STRING'
+*/
+
+
 "--"(.*?)($|\r\n|\r|\n)							return /* return COMMENT */
 
 \s+                                             /* skip whitespace */
-'||'											return 'OR'
-'&&'											return 'AND'
+'||'											return 'BARBAR'
+'|'												return 'BAR'
+/* '&&'											return 'AMPERSANDAMPERSAND' */
 
+VALUE\s+OF\s+SEARCH                          	yytext = 'VALUE';return 'SEARCH'
 VALUE\s+OF\s+SELECT                          	yytext = 'VALUE';return 'SELECT'
 ROW\s+OF\s+SELECT                           	yytext = 'ROW';return 'SELECT'
 COLUMN\s+OF\s+SELECT                          	yytext = 'COLUMN';return 'SELECT'
@@ -41,6 +52,7 @@ TEXT\s+OF\s+SELECT                           	yytext = 'TEXT';return 'SELECT'
 'ABSOLUTE'                                 		return 'ABSOLUTE'
 'ACTION'                                      	return 'ACTION'
 'ADD'                                      		return 'ADD'
+'AFTER'                                      	return 'AFTER'
 'AGGR'                                     		return 'AGGR'
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
@@ -56,6 +68,7 @@ TEXT\s+OF\s+SELECT                           	yytext = 'TEXT';return 'SELECT'
 AUTO(_)?INCREMENT                               return 'IDENTITY'
 'AVG'                                      		return 'AVG'
 
+'BEFORE'                                      	return 'BEFORE'
 'BEGIN'											return 'BEGIN'
 'BETWEEN'										return 'BETWEEN'
 'BREAK'											return 'BREAK'
@@ -85,6 +98,8 @@ COLUMNS 										return 'COLUMN'
 "CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
 "CURSOR"										return 'CURSOR'
 DATABASE(S)?									return 'DATABASE'
+'DATEADD'                                       return 'DATEADD'
+'DATEDIFF'                                      return 'DATEDIFF'
 'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
@@ -111,6 +126,8 @@ DATABASE(S)?									return 'DATABASE'
 'FOR'											return 'FOR'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
+'FULL'											return 'FULL'
+'GLOB'                                     		return 'GLOB'
 'GO'                                      		return 'GO'
 'GRAPH'                                      	return 'GRAPH'
 'GROUP'                                      	return 'GROUP'
@@ -122,10 +139,13 @@ DATABASE(S)?									return 'DATABASE'
 'IS'											return 'IS'
 'IN'											return 'IN'
 'INDEX'											return 'INDEX'
+'INDEXED'										return 'INDEXED'
 'INNER'                                         return 'INNER'
+'INSTEAD'                                       return 'INSTEAD'
 'INSERT'                                        return 'INSERT'
 'INSERTED'                                      return 'INSERTED'
 'INTERSECT'                                     return 'INTERSECT'
+'INTERVAL'                                      return 'INTERVAL'
 'INTO'                                         	return 'INTO'
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
@@ -151,6 +171,7 @@ DATABASE(S)?									return 'DATABASE'
 'OFF'											return 'OFF'
 'ON'											return 'ON'
 'ONLY'											return 'ONLY'
+'OF'											return 'OF'
 'OFFSET'										return 'OFFSET'
 'OPEN'											return 'OPEN'
 'OPTION'										return 'OPTION'
@@ -172,6 +193,7 @@ DATABASE(S)?									return 'DATABASE'
 'REDUCE'                                        return 'REDUCE'
 'REFERENCES'                                    return 'REFERENCES'
 'REGEXP'		                                return 'REGEXP'
+'REINDEX'		                                return 'REINDEX'
 'RELATIVE'                                      return 'RELATIVE'
 'REMOVE'                                        return 'REMOVE'
 'RENAME'                                        return 'RENAME'
@@ -210,6 +232,7 @@ SETS                                        	return 'SET'
 'TOP'											return 'TOP'
 'TRAN'											return 'TRANSACTION'
 'TRANSACTION'									return 'TRANSACTION'
+'TRIGGER'										return 'TRIGGER'
 'TRUE'						  					return 'TRUE'
 'TRUNCATE'					  					return 'TRUNCATE'
 'UNION'                                         return 'UNION'
@@ -243,6 +266,10 @@ VALUE(S)?                                      	return 'VALUE'
 '!=='											return 'NEEQEQ'
 '=='											return 'EQEQ'
 '>='											return 'GE'
+'&'												return 'AMPERSAND'
+'|'												return 'BAR'
+'<<'											return 'LTLT'
+'>>'											return 'GTGT'
 '>'												return 'GT'
 '<='											return 'LE'
 '<>'											return 'NE'
@@ -285,12 +312,14 @@ VALUE(S)?                                      	return 'VALUE'
 %left NOT
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
 %left IS
-%left LIKE NOT_LIKE REGEXP
+%left LIKE NOT_LIKE REGEXP GLOB
+%left GTGT LTLT AMPERSAND BAR
 %left PLUS MINUS
 %left STAR SLASH MODULO
 %left CARET
 %left DOT ARROW EXCLAMATION
 %left SHARP
+%left BARBAR
 
 %ebnf
 %start main
@@ -362,6 +391,7 @@ Statement
 	| If
 	| Insert
 	| Merge
+	| Reindex	
 	| RenameTable
 	| Select
 	| ShowCreateTable
@@ -371,6 +401,9 @@ Statement
 	| ShowTables
 	| TruncateTable
 	| WithSelect
+
+	| CreateTrigger
+	| DropTrigger
 
 	| BeginTransaction
 	| CommitTransaction
@@ -407,10 +440,7 @@ Statement
 	| FetchCursor
 	| CloseCursor
 
-	| CreateTrigger
-	| DropTrigger
 	| SavePoint
-	| Reindex
 	| StoreDatabase
 	| StoreTable
 	| RestoreDatabase
@@ -469,7 +499,7 @@ Select
 
 PivotClause
 	: PIVOT LPAR Expression FOR Literal PivotClause2? RPAR AsLiteral?
-		{ $$ = {pivot:{expr:$3, columnid:$5, inlist:$7, as:$8}}; }
+		{ $$ = {pivot:{expr:$3, columnid:$5, inlist:$6, as:$8}}; }
 	| UNPIVOT LPAR Literal FOR Literal IN LPAR ColumnsList RPAR RPAR AsLiteral?
 		{ $$ = {unpivot:{tocolumnid:$3, forcolumnid:$5, inlist:$8, as:$11}}; }
 	;
@@ -548,6 +578,8 @@ SearchSelector
 		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
 	| WHERE LPAR Expression RPAR
 		{ $$ = {srchid:"WHERE", args:[$3]}; }	
+	| OF LPAR Expression RPAR
+		{ $$ = {selid:"OF", args:[$3]}; }	
 	| CLASS LPAR Literal RPAR
 		{ $$ = {srchid:"CLASS", args:[$3]}; }	
 	| NUMBER
@@ -572,6 +604,10 @@ SearchSelector
 		{ $$ = {srchid:"OUT"}; }
 	| LT 
 		{ $$ = {srchid:"IN"}; }
+	| GTGT 
+		{ $$ = {srchid:"OUTOUT"}; }
+	| LTLT 
+		{ $$ = {srchid:"ININ"}; }
 	| DOLLAR 
 		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
 /*	| DELETE LPAR RPAR
@@ -808,7 +844,8 @@ FromTable
 		{ $$ = $1; $1.as = $3 }
 	| Table 
 		{ $$ = $1; }
-
+	| Table NOT INDEXED
+		{ $$ = $1; }
 	| ParamValue Literal 
 		{ $$ = $1; $1.as = $2; }
 	| ParamValue AS Literal 
@@ -822,6 +859,9 @@ FromTable
 		{ $$ = $1; $1.as = $2; }
 	| FuncValue AS Literal
 		{ $$ = $1; $1.as = $3; }
+
+	| INSERTED
+		{ $$ = {inserted:true}; $1.as = 'default'; }
 
 	| VarValue
 		{ $$ = $1; $1.as = 'default'; }
@@ -1281,6 +1321,16 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| IF LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
+	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
+	| DATEADD LPAR STRING COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[$3,$5,$7]}) }
+	| DATEDIFF LPAR Literal COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
+	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
+	| INTERVAL Expression Literal
+		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;
 
 ExprList
@@ -1378,6 +1428,8 @@ ElseClause
 Op
 	: Expression REGEXP Expression
 		{ $$ = new yy.Op({left:$1, op:'REGEXP', right:$3}); }
+	| Expression GLOB Expression
+		{ $$ = new yy.Op({left:$1, op:'GLOB', right:$3}); }
 	| Expression LIKE Expression
 		{ $$ = new yy.Op({left:$1, op:'LIKE', right:$3}); }
 	| Expression LIKE Expression ESCAPE Expression
@@ -1386,6 +1438,8 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3 }); }
 	| Expression NOT_LIKE Expression ESCAPE Expression
 		{ $$ = new yy.Op({left:$1, op:'NOT LIKE', right:$3, escape:$5 }); }
+	| Expression BARBAR Expression
+		{ $$ = new yy.Op({left:$1, op:'||', right:$3}); }
 	| Expression PLUS Expression
 		{ $$ = new yy.Op({left:$1, op:'+', right:$3}); }
 	| Expression MINUS Expression
@@ -1398,6 +1452,15 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'%', right:$3}); }
 	| Expression CARET Expression
 		{ $$ = new yy.Op({left:$1, op:'^', right:$3}); }
+
+	| Expression GTGT Expression
+		{ $$ = new yy.Op({left:$1, op:'>>', right:$3}); }
+	| Expression LTLT Expression
+		{ $$ = new yy.Op({left:$1, op:'<<', right:$3}); }
+	| Expression AMPERSAND Expression
+		{ $$ = new yy.Op({left:$1, op:'&', right:$3}); }
+	| Expression BAR Expression
+		{ $$ = new yy.Op({left:$1, op:'|', right:$3}); }
 
 	| Expression ARROW Literal
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
@@ -1559,6 +1622,17 @@ Op
 		}
 	| Expression IS Expression
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
+	| Expression NOT NULL
+		{ 
+			$$ = new yy.Op({
+				op:'IS', 
+				left:$1, 
+				right: new yy.UniOp({
+					op:'NOT',
+					right:new yy.NullValue({value:undefined}) 
+				})
+			}); 
+		}
 	| Expression DOUBLECOLON ColumnType
 		{ $$ = new yy.Convert({expression:$1}) ; yy.extend($$,$3) ; }
 	;
@@ -1632,8 +1706,10 @@ Insert
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
 	| INSERT OR REPLACE Into Table VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
+	| REPLACE Into Table VALUE ValuesListsList
+		{ $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); }
 	| INSERT Into Table DEFAULT VALUE
-		{ $$ = new yy.Insert({into:$3, default: true}) ; }
+		{ $$ = new yy.Insert({into:$3, "default": true}) ; }
 	| INSERT Into Table LPAR ColumnsList RPAR VALUE ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT Into Table Select
@@ -1740,6 +1816,7 @@ CreateTableOption
 	: DEFAULT
 	| LITERAL EQ Literal
 	| IDENTITY EQ NumValue
+	| COLLATE EQ Literal
 	;
 
 TemporaryClause 
@@ -1827,9 +1904,9 @@ OnUpdateClause
 	;
 
 UniqueKey
-	: UNIQUE Literal? LPAR ColumnsList RPAR
+	: UNIQUE KEY? Literal? LPAR ColumnsList RPAR
 		{ 
-			$$ = {type: 'UNIQUE', columns: $4, clustered:($2+'').toUpperCase()};
+			$$ = {type: 'UNIQUE', columns: $5, clustered:($3+'').toUpperCase()};
 		}
 	;
 
@@ -1948,9 +2025,9 @@ ColumnConstraint
 	| IDENTITY
 		{ $$ = {identity: {value:1,step:1}} }
 	| DEFAULT PrimitiveValue
-		{$$ = {default:$2};}
+		{$$ = {"default":$2};}
 	| DEFAULT LPAR Expression RPAR
-		{$$ = {default:$3};}
+		{$$ = {"default":$3};}
 	| NULL
 		{$$ = {null:true}; }
 	| NOT NULL
@@ -1959,6 +2036,10 @@ ColumnConstraint
 		{$$ = {check:$1}; }
 	| UNIQUE
 		{$$ = {unique:true}; }
+	| ON UPDATE PrimitiveValue
+		{$$ = {"onupdate":$3};}
+	| ON UPDATE LPAR Expression RPAR
+		{$$ = {"onupdate":$4};}
 	;
 
 /* DROP TABLE */
@@ -2666,6 +2747,7 @@ GraphList
 	| GraphVertexEdge
 		{ $$ = [$1]; }
 	;
+
 GraphVertexEdge
 	: GraphElement Json? GraphAsClause? 
 		{ 
@@ -2673,15 +2755,29 @@ GraphVertexEdge
 			if($2) $$.json = new yy.Json({value:$2});
 			if($3) $$.as = $3;
 		}
-	| (GraphElement|GraphVar) GT GraphElement Json? GraphAsClause? GT (GraphElement|GraphVar) 
+	| GraphElementVar GT GraphElement Json? GraphAsClause? GT GraphElementVar 
 		{ 
 			$$ = {source:$1, target: $7};
 			if($4) $$.json = new yy.Json({value:$4});
 			if($5) $$.as = $5;
 			yy.extend($$,$3);
-			;
+		}
+	| GraphElementVar GT Json GraphAsClause? GT GraphElementVar 
+		{ 
+			$$ = {source:$1, target: $6};
+			if($4) $$.json = new yy.Json({value:$3});
+			if($5) $$.as = $4;
+		}
+	| GraphElementVar GTGT GraphElementVar 
+		{ 
+			$$ = {source:$1, target: $3};
 		}
 	| Literal LPAR GraphList RPAR
+	;
+
+GraphElementVar
+	: GraphElement { $$ = $1; }
+	| GraphVar { $$ = $1; }
 	;
 
 GraphVar
@@ -2699,13 +2795,37 @@ GraphAtClause
 		{ $$ = $2; }
 	;
 
-GraphElement
+GraphElement2
 	:  Literal? SharpLiteral? STRING? ColonLiteral? 
 		{ 
 			var s3 = $3;
 			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
 		}
 	;
+
+GraphElement
+	:  Literal SharpLiteral? STRING? ColonLiteral? 
+		{ 
+			var s3 = $3;
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
+		}
+	|  SharpLiteral STRING? ColonLiteral? 
+		{ 
+			var s2 = $2;
+			$$ = {sharp:$1, name:(typeof s2 == 'undefined')?undefined:s2.substr(1,s2.length-2), class:$3}; 
+		}
+	|  STRING ColonLiteral? 
+		{ 
+			var s1 = $1;
+			$$ = {name:(typeof s1 == 'undefined')?undefined:s1.substr(1,s1.length-2), class:$2}; 
+		}
+	|  ColonLiteral
+		{ 
+			$$ = {class:$1}; 
+		}
+	;
+
+
 
 ColonLiteral
 	: COLON Literal
@@ -2754,5 +2874,54 @@ Query
 
 Call
 	: CALL FuncValue
-		{ $$ = $2; }
+		//{ $$ = $2; }
+		{ $$ = new yy.ExpressionStatement({expression:$2}); }
+	;
+
+CreateTrigger 
+	: CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table AS? AStatement
+		{ 
+			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$9}); 
+			if($9.exists) $$.exists = $9.exists;
+			if($9.queries) $$.queries = $9.queries;
+		}
+	| CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table Literal
+		{ 
+			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, funcid:$8}); 
+		}
+	| CREATE TRIGGER Literal ON Table BeforeAfter InsertDeleteUpdate AS? AStatement
+		{ 
+			$$ = new yy.CreateTrigger({trigger:$3, when:$5, action:$6, table:$4, statement:$9}); 
+			if($9.exists) $$.exists = $9.exists;
+			if($9.queries) $$.queries = $9.queries;
+		}
+	;
+
+BeforeAfter
+	: 
+		{ $$ = 'AFTER'; } 
+	| FOR
+		{ $$ = 'AFTER'; } 
+	| BEFORE
+		{ $$ = 'BEFORE'; } 
+	| AFTER
+		{ $$ = 'AFTER'; } 		
+	| INSTEAD OF
+		{ $$ = 'INSTEADOF'; } 		
+	;
+
+InsertDeleteUpdate
+	: INSERT { $$ = 'INSERT'; }
+	| DELETE { $$ = 'DELETE'; }
+	| UPDATE { $$ = 'UPDATE'; }
+	;
+
+DropTrigger
+	: DROP TRIGGER Literal
+		{ $$ = new yy.DropTrigger({trigger:$3}); }
+	;
+
+Reindex
+	: REINDEX Literal 
+		{ $$ = new yy.Reindex({indexid:$2});}
 	;

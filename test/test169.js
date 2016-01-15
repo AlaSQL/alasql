@@ -17,7 +17,7 @@ describe('Test 169 - select into TXT, CSV, XLSX', function() {
 		done();		
 	});
 
-if(typeof exports == 'object') {
+if(typeof exports === 'object') {
 
 	it("1. Write TXT file", function(done) {
 		alasql('select * into txt("'+dirname+'/restest169.txt") from one',[],function(res){

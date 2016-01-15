@@ -327,7 +327,7 @@ alasql.compile = function(sql, databaseid) {
 		};
 
 		return statement;
-/*		
+/*/*		
 		if(kind == 'value') {
 			return function(params,cb) {
 				var res = statementfn(params);
@@ -387,6 +387,7 @@ alasql.compile = function(sql, databaseid) {
 	}
 };
 
+/*/*
 // // Default methods to exec SQL statements
 // alasql.run = alasql.exec = function (sql, params, cb) {
 // 	return this.currentDatabase.exec(sql, params, cb);
@@ -399,9 +400,9 @@ alasql.compile = function(sql, databaseid) {
 // 		self.exec(sql,params,resolve);
 // 	});
 // };
+*/
 
-
-/*
+/*/*
 // MSSQL-Like aliases
 alasql.query = function (sql, params, cb) {
 	var res = this.exec(sql, params);
@@ -457,7 +458,7 @@ alasql.queryArrayOfArrays = function (sql, params, cb) {
 	return aa;
 };
 */
-/*alasql.queryColumn = function (sql, params, cb) {
+/*/*alasql.queryColumn = function (sql, params, cb) {
 	var res = this.exec(sql, params);
 	var keys = Object.keys(res[0]);
 	var klen = keys.length;
@@ -475,7 +476,7 @@ alasql.queryArrayOfArrays = function (sql, params, cb) {
 	return aa;
 };
 */
-/*
+/*/*
 alasql.value = alasql.queryValue;
 alasql.single = alasql.querySingle;
 alasql.row = alasql.queryRow;

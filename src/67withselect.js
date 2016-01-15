@@ -43,7 +43,7 @@ yy.WithSelect.prototype.execute = function (databaseid,params,cb) {
 	return res;
 };
 
-/*
+/*/*
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateView.prototype.execute = function (databaseid) {

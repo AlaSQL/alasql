@@ -16,14 +16,14 @@ yy.If.prototype.toString = function() {
 };
 
 // CREATE TABLE
-//yy.CreateTable.prototype.compile = returnUndefined;
+//  yy.CreateTable.prototype.compile = returnUndefined;
 yy.If.prototype.execute = function (databaseid,params,cb){
 	var res;
 //	console.log(this);
 //	console.log(this.expression.toJS('{}','',null));
 //	console.log();
 	var fn = new Function('params,alasql,p','var y;return '+this.expression.toJS('({})','',null)).bind(this);
-//	var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJS('({})','',null)).bind(this);
+//	 var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJS('({})','',null)).bind(this);
 	if(fn(params,alasql)) res = this.thenstat.execute(databaseid,params,cb);
 	else {
 		if(this.elsestat) res = this.elsestat.execute(databaseid,params,cb);
@@ -31,7 +31,7 @@ yy.If.prototype.execute = function (databaseid,params,cb){
 			if(cb) res = cb(res);
 		}
 	}
-//	else res = this.elsestat.execute(databaseid,params,cb,scope);
+//	 else res = this.elsestat.execute(databaseid,params,cb,scope);
 	return res;
 };
 

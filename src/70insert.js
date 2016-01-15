@@ -10,6 +10,7 @@ yy.Insert = function (params) { return yy.extend(this, params); }
 yy.Insert.prototype.toString = function() {
 	var s = 'INSERT ';
 	if(this.orreplace) s += 'OR REPLACE ';
+	if(this.replaceonly) s = 'REPLACE ';
 	s += 'INTO '+this.into.toString();
 	if(this.columns) s += '('+this.columns.toString()+')';
 	if(this.values) s += ' VALUES '+this.values.toString();
@@ -21,7 +22,7 @@ yy.Insert.prototype.toJS = function(context, tableid, defcols) {
 //	console.log('Expression',this);
 //	if(this.expression.reduced) return 'true';
 //	return this.expression.toJS(context, tableid, defcols);
-// console.log('Select.toJS', 81, this.queriesidx);
+//  console.log('Select.toJS', 81, this.queriesidx);
 //	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
@@ -77,12 +78,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 			if(self.columns) {
 				self.columns.forEach(function(col, idx){
 //console.log(db.tables, tableid, table);
-		//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
-		//			console.log(rec[f.name.value]);
-		//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
+//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
+//			console.log(rec[f.name.value]);
+//			if(rec[f.name.value] == "NULL") rec[f.name.value] = undefined;
 
-		//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
-		//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
+//			if(table.xflds[f.name.value].dbtypeid == "INT") rec[f.name.value] = +rec[f.name.value]|0;
+//			else if(table.xflds[f.name.value].dbtypeid == "FLOAT") rec[f.name.value] = +rec[f.name.value];
 					var q = "'"+col.columnid +'\':';
 					if(table.xcolumns && table.xcolumns[col.columnid]) { 
 						if(["INT","FLOAT","NUMBER","MONEY"].indexOf(table.xcolumns[col.columnid].dbtypeid) >=0) {
@@ -121,7 +122,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 						} else { 
 							q += values[idx].toJS();
 						}
-
+/*/*
 						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
 						 //  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
 							// table.xcolumns[col.columnid].dbtypeid == "DATETIME"
@@ -137,8 +138,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 //						q += val;
 
 						// if(table.xcolumns && table.xcolumns[col.columnid] && table.xcolumns[col.columnid].dbtypeid == "INT") q += '|0';
+*/						
 						ss.push(q);
-
+/*/*
 			//			console.log(fld);
 						// TODO: type checking and conversions
 			//			rec[fld.fldid] = eval(self.insertExpression[idx].toJS('',''));
@@ -148,6 +150,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			//			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
 			//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
 			//				rec[fld.fldid] = +rec[fld.fldid];
+*/
 					});
 				} else {
 //					console.log(222,values);
@@ -207,21 +210,27 @@ yy.Insert.prototype.compile = function (databaseid) {
 // INSERT INTO table SELECT
 
 	} else if(this.select) {
+		this.select.modifier = 'RECORDSET';
 		selectfn = this.select.compile(databaseid);
 	    if(db.engineid && alasql.engines[db.engineid].intoTable) {
 			var statement = function(params, cb) {
 				var aa = selectfn(params);
-				var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa,null, cb);
+				var res = alasql.engines[db.engineid].intoTable(db.databaseid,tableid,aa.data,null, cb);
 				return res;
 			};
 			return statement;
 	    } else {
+//			console.log(224,table.defaultfns);
+				var defaultfns = 'return alasql.utils.extend(r,{'+table.defaultfns+'})';
+    	    	var defaultfn = new Function('r,db,params,alasql',defaultfns); 
 			var insertfn = function(db, params, alasql) {
-				var res = selectfn(params);
+				var res = selectfn(params).data;
 		        if(db.tables[tableid].insert) {
 		        	// If insert() function exists (issue #92)
 		        	for(var i=0,ilen=res.length;i<ilen;i++) {
-		        		db.tables[tableid].insert(res[i],self.orreplace);
+		        		var r = cloneDeep(res[i]);
+		        		defaultfn(r,db,params,alasql);
+		        		db.tables[tableid].insert(r,self.orreplace);
 		        	}
 		        } else {
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);

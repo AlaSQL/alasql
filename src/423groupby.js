@@ -39,11 +39,12 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	query.allgroups = allgroups;
 
+	query.ingroup = [];
 //console.log(42,294, this.group);
 //console.log(allgroups);
 //		console.log(42,364,query.selectColumns)
 
-/*
+/*/*
 if(false) {
 	allgroups.forEach(function(col2){
 //		console.log(42,365,colid, query.selectColumns[colid])
@@ -67,9 +68,7 @@ if(false) {
 
 	var s = '';
 //	s+= query.selectfns;
-
 	allgroup.forEach(function(agroup) {
-//console.log(agroup);
 
 		// Start of group function
 		s += 'var acc,g=this.xgroups[';
@@ -84,6 +83,8 @@ if(false) {
 				return '1'; // Create fictive groupping column for fictive GROUP BY
 			}
 //			else return "r['"+columnid+"']";
+			query.ingroup.push(columnid);
+//			console.log(429,87,query.ingroup);
 			return coljs;
 		});
 
@@ -105,10 +106,9 @@ if(false) {
 			if(columnid === ''){
 				return '';
 			}
-			
 			return "'"+columnid+"':"+coljs+",";
 		}).join('');
-
+//console.log(agroup);
 		var neggroup = arrayDiff(allgroups,agroup);
 
 //		console.log(neggroup);
@@ -118,7 +118,7 @@ if(false) {
 		//	var coljs = col2.split('\t')[1]
 			return "'"+columnid+"':null,";
 		}).join('');
-
+//console.log(neggroup);
 		var aft = '';
 //		s += self.columns.map(function(col){
 //console.log('query.selectGroup',query.selectGroup);
@@ -191,7 +191,7 @@ if(false) {
 
 
 
-
+/*/*
 		// columnid:r.columnid
 	//	var srg = [];//rg.map(function(fn){ return (fn+':'+fn); });
 
@@ -219,9 +219,9 @@ if(false) {
 
 		});
 
-	*/
+	
 
-	/*****************/
+	/***************** /
 
 	//	s += srg.join(',');
 
@@ -231,12 +231,13 @@ if(false) {
 		// });
 		// s += ss.join(',');
 	//	s += '});};';
-
+*/
 		s += '}'+aft+',g));} else {';
+
 	//	console.log(s, this.columns);
 
 
-
+/*
 	// var neggroup = arrayDiff(allgroups,agroup);
 
 	// console.log(agroup,neggroup);
@@ -244,7 +245,7 @@ if(false) {
 	// s += neggroup.map(function(columnid){
 	// 	return "g['"+columnid+"']=null;";
 	// }).join('');
-
+*/
 	// console.log(s);
 
 
@@ -252,10 +253,12 @@ if(false) {
 //		s += self.columns.map(function(col){
 		s += query.selectGroup.map(function(col){
 			var colas = col.nick;
+/*/*
 			// if(typeof colas == 'undefined') {
 			// 	if(col instanceof yy.Column) colas = col.columnid;
 			// 	else colas = col.toString();
 			// }
+*/
 			var colexp = col.expression.toJS("p",tableid,defcols);
 
 			if (col instanceof yy.AggrValue) { 
@@ -318,20 +321,20 @@ if(false) {
 		}).join('');
 
 
-	//	s += selectFields.map(function(f){
-	//			console.log(f);
-	//			if(f.constructor.name == 'LiteralValue') return '';
-	//			if (f.field instanceof SQLParser.nodes.FunctionValue 
-	//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
-	//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
-	//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJS(); 	
-	//			};
-	//			return '';
-	//		}).join('');
+//		s += selectFields.map(function(f){
+//			console.log(f);
+//			if(f.constructor.name == 'LiteralValue') return '';
+//			if (f.field instanceof SQLParser.nodes.FunctionValue 
+//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
+//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJS(); 	
+//			};
+//			return '';
+//		}).join('');
 
-		//s += '	group.amt += rec.emplid;';
-		//s += 'group.count++;';
+//		s += '	group.amt += rec.emplid;';
+//		s += 'group.count++;';
 		s += '}';
 
 	});

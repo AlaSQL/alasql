@@ -8,22 +8,23 @@ if(typeof exports === 'object') {
 
 describe('Test 330 PROLOG', function() {
 
-  it('1. CREATE DATABASE',function(done){
-    alasql('CREATE DATABASE test330; USE test330');
+  before(function(){
+    alasql('CREATE DATABASE test330;');
+    alasql('USE test330');
     alasql('REQUIRE PROLOG')
-    done();
   });
 
-  it('2. FACTS',function(done){
 
-    var res = alasql(':-son(Alex,Larissa)');
-    done();
-  });
-
-  it('99. DROP DATABASE',function(done){
+  after(function(){
     alasql('DROP DATABASE test330');
+  });
+
+  it('1. FACTS',function(done){
+    var res = alasql(':-son(Alex,Larissa)');
+    //Todo - assert something to check if PROLOG is also returning correctly
     done();
   });
+
 
 });
 

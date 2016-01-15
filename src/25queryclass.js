@@ -31,7 +31,7 @@ var Recordset = alasql.Recordset = function(params){
 	extend(this,params);
 };
 
-
+/*/*
 // View = function(){
 // 	this.data = [];
 // 	this.columns = [];
@@ -41,5 +41,5 @@ var Recordset = alasql.Recordset = function(params){
 // };
 
 // alasql.View = View;
-
+*/
 

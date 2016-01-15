@@ -7,6 +7,7 @@
 
 var closure = false;
 
+var fs = require('fs');
 var gulp = require('gulp');
 module.exports = gulp;
 //var connect = require('gulp-connect');
@@ -19,6 +20,29 @@ var uglify = require('gulp-uglify');
 //var jisonLex = require('gulp-jison-lex');
 var shell = require('gulp-shell');
 var rename = require('gulp-rename');
+var dereserve = require('gulp-dereserve');
+var argv = require('yargs').argv || {};
+var replace = require('gulp-replace');
+var execSync = require('child_process').execSync;
+var strftime = require('strftime').timezone('0');
+
+
+// Identify name of the build
+var packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+var version = packageData.version;
+var branch = execSync('git --work-tree=' + __dirname +' --git-dir=' + __dirname + '/.git branch', {encoding:'utf8'})
+              .match(/^\*\s+(.*)/m)[1]
+              .trim()
+
+if(!(/^master|^release/.test(branch))){
+  version += '-'
+//            + 'pre.'
+              + branch.replace(/[^0-9A-Za-z-]/ig,'.')
+              + '+' 
+              + (+strftime('%y%m%d'))
+              + '.'
+              + (+strftime('%H%M%S'));
+} 
 
 
 gulp.task('js-merge-worker', function () {
@@ -29,6 +53,7 @@ gulp.task('js-merge-worker', function () {
     './src/99worker-finish.js', 
     ])
     .pipe(concat('alasql-worker.js'))
+    .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) 
     .pipe(gulp.dest('./dist'))
     .pipe(rename('alasql-worker.min.js'))
     .pipe(uglify())
@@ -89,6 +114,7 @@ gulp.task('js-merge', function () {
     './src/68if.js',
     './src/69while.js',
   	'./src/70insert.js',
+    './src/71trigger.js',
     './src/72delete.js',
     './src/74update.js',
 //    './src/74update.js',
@@ -128,7 +154,13 @@ gulp.task('js-merge', function () {
     './src/99worker.js'
     ])
     .pipe(concat('alasql.js'))
+    .pipe(replace(/\/\*\/\*[\S\s]+?\*\//g, ''))         // Remove multiline comments starting with "/*/*" 
+    .pipe(replace(/^\/\/[ \t]{2,}.*/gm, ''))            // Remove single line comments where the // part is first thing and content does not follow imidiatly (probably a "just test" line) 
+    .pipe(replace(/\/\/.*?console\.log\(.*/gm, ''))     // Remove single line comments 'console.log(' is part of the line 
+    .pipe(replace(/\n[\s]+\n/g, "\n\n"))                // Collaps multilinebreak 
+    .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version))  // Please set version in package.json file
     .pipe(gulp.dest('./dist'))
+    .pipe(dereserve())
     .pipe(rename('alasql.min.js'))
     .pipe(uglify())
     .pipe(gulp.dest('./dist'))
@@ -142,12 +174,13 @@ gulp.task('jison-compile', function () {
     .pipe(shell([
 //      'node ./utils/redj/redj.js',
 //      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
-      'jison ./src/alasqlparser.jison -o ./src/alasqlparser.js' // Todo: avoid having to install globally with `npm install jison -g`
+      './node_modules/.bin/jison ./src/alasqlparser.jison -o ./src/alasqlparser.js' // Todo: avoid having to install globally with `npm install jison -g`
 
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
 });
 
+/*
 gulp.task('jison-compile-fast', function () {
   return gulp.src('./src/alasqlparser.jison', {read: false})
     .pipe(shell([
@@ -157,9 +190,11 @@ gulp.task('jison-compile-fast', function () {
 //      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
     ]));
 });
-
+*/
 
 /** @todo Replace UglifyJS with Closure */
+
+/*
 gulp.task('uglify', function () {
   return gulp.src('dist/alasql.js', {read: false})
     .pipe(shell([
@@ -171,12 +206,14 @@ gulp.task('uglify', function () {
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
     ]));
 });
+*/
 
+/*
 gulp.task('copy-dist', function(){
-//  gulp.src(['./dist/alasql.js'/*,'./alasql.js.map'*/])
+//  gulp.src(['./dist/alasql.js'/*,'./alasql.js.map'* /])
 //    .pipe(gulp.dest('./'));
 });
-
+*/
 
 
 gulp.task('copy-dist-org', function(){
@@ -250,12 +287,17 @@ gulp.task('plugin-prolog', function(){
 // });
 
 
+var toRun = ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' ];
+
+if(argv.jison){
+    //toRun.unshift('jison-compile'); 
+    toRun = ['jison-compile']; 
+}
+                       
 // Главная задача
-gulp.task('default', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' /*, 'jison-compile', 'jison-lex-compile' */], function(){
+gulp.task('default', toRun, function(){});
 
-});
-
-gulp.task('watch', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' /*, 'jison-compile', 'jison-lex-compile' */], function(){
+gulp.task('watch', toRun, function(){
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
@@ -268,12 +310,12 @@ gulp.task('watch', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plug
   //gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
 
   gulp.watch('./dist/alasql.min.js',function(){ 
-    gulp.run('copy-dist'); 
+//    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
 /*    gulp.run('copy-dist-meteor'); */
   });
   gulp.watch('./dist/alasql-worker.js',function(){ 
-    gulp.run('copy-dist'); 
+//    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
   });
 //  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });
@@ -282,7 +324,7 @@ gulp.task('watch', ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plug
 });
 
 gulp.task('fast', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], function(){
-  gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile-fast'); });
+  gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
   gulp.watch('./src/*.js',function(){ gulp.run('js-merge'); });
 });
 

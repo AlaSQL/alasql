@@ -9,22 +9,47 @@
 // Table class
 var Table = alasql.Table = function(params){
 
-	// Columns
-	this.columns = [];
-	this.xcolumns = {};
-	// Data array
+	// Step 1: Data array
 	this.data = [];
 
+	// Step 2: Columns
+	this.columns = [];
+	this.xcolumns = {};
+
+	// Step 3: indices
 	this.inddefs = {};
 	this.indices = {};
-
 	this.uniqs = {};
 	this.uniqdefs = {};	
 
+	// Step 4: identities
+	this.identities = {};
+
+	// Step 5: checkfn...
+	this.checkfn = [];
+	this.checkfns = []; // For restore... to be done...
+
+	// Step 6: INSERT/DELETE/UPDATE
+
+	// Step 7: Triggers...
+	// Create trigger hubs
+	this.beforeinsert = {};
+	this.afterinsert = {};
+	this.insteadofinsert = {};
+
+	this.beforedelete = {};
+	this.afterdelete = {};
+	this.insteadofdelete = {};
+
+	this.beforeupdate = {};
+	this.afterupdate = {};
+	this.insteadofupdate = {};
+
+	// Done
 	extend(this,params);
 };
 
-
+/*/*
 // View = function(){
 // 	this.data = [];
 // 	this.columns = [];
@@ -34,6 +59,7 @@ var Table = alasql.Table = function(params){
 // };
 
 // alasql.View = View;
+*/
 
 Table.prototype.indexColumns = function() {
 	var self = this;

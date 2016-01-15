@@ -209,7 +209,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 			// todo: confirm that no default action must be implemented
 
 
-			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
+//			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
 
 
 						var coldef = {
@@ -254,6 +254,17 @@ yy.Select.prototype.compileSelect1 = function(query) {
 yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns;
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+			var key = '$$$'+idx;
+			if(v instanceof yy.Column && query.xcolumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('p',query.defaultTableid,query.defcols)+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
 //	console.log(s);
 	return new Function('p,params,alasql','var y;'+s+'return r');
 };
@@ -269,7 +280,8 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			if(col instanceof yy.Column) {
 				colas = escapeq(col.columnid);
 			} else {
-				colas = escapeq(col.toString());
+				colas = escapeq(col.toString(true));
+//				console.log(273,colas);
 			}
 			for(var i=0;i<idx;i++) {
 				if(colas === self.columns[i].nick) {
@@ -287,6 +299,7 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 //				console.log("colas:",colas);
 			// }
 		}
+
 	});
 	
 	this.columns.forEach(function(col){
@@ -325,7 +338,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 			}
 			query.groupColumns[colas]=col.nick;
 
-/*			if(typeof colas == 'undefined') {
+/*/*			if(typeof colas == 'undefined') {
 				if(col instanceof yy.Column) {
 					colas = col.columnid;
 				} else {
@@ -342,18 +355,18 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 */
 //			if(col.as) {
 			s += 'r[\''+colas+'\']=';
-			// } else {
-			// 	s += 'r[\''+escapeq()+'\']=';
-			// };
-			// s += ';';
+//			// } else {
+//			// 	s += 'r[\''+escapeq()+'\']=';
+//			// };
+//			// s += ';';
 //			console.log(col);//,col.toJS('g',''));
 
 
  			s += n2u(col.toJS('g',''))+';';				
-/*
+/*/*
 			s += 'g[\''+col.nick+'\'];';
 
-*/
+* /
 			// if(col instanceof yy.Column) {
 			// 	s += 'g[\''+col.columnid+'\'];';
 			// } else {
@@ -372,6 +385,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 //				console.log(s);
 			// }
 //			s += col.toJS('g','')+';';
+*/
 //console.log(colas,query.removeKeys);
 			for(var i=0;i<query.removeKeys.length;i++) {
 				// THis part should be intellectual
@@ -387,7 +401,29 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 }
 
 yy.Select.prototype.compileSelectGroup2 = function(query) {
+	var self = this;
 	var s = query.selectgfns;
+	self.columns.forEach(function(col){
+//			 console.log(col);
+		if(query.ingroup.indexOf(col.nick)>-1) {
+			s += 'r[\''+(col.as||col.nick)+'\']=g[\''+col.nick+'\'];'
+		};
+	});
+
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+//			console.log(411,v);
+			var key = '$$$'+idx;
+//			console.log(427,v,query.groupColumns,query.xgroupColumns);
+			if(v instanceof yy.Column && query.groupColumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('g','')+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
+//console.log(425,s);
 //	console.log('selectg:',s);
 	return new Function('g,params,alasql','var y;'+s+'return r');
 };

@@ -19,7 +19,7 @@ function doSearch(databaseid, params, cb) {
 
 	function processSelector(selectors,sidx,value) {
 //		var val;
-/*		if(sidx == 0) {
+/*/*		if(sidx == 0) {
 			if(selectors.length > 0 && selectors[0].srchid == 'SHARP') {
 				val = alasql.databases[alasql.useid].objects[selectors[0].args[0]];
 				return processSelector(selectors,sidx+1,val);
@@ -251,6 +251,7 @@ function doSearch(databaseid, params, cb) {
 					// var nests = processSelector(sel.sels,0,value).slice();
 				if(lmax > 0) {
 					var nests = [{value:value,lvl:1}];
+/*/*
 						// if(lvl >= lmin) {
 						// 	if(sidx+1+1 > selectors.length) {
 						// 		retval = retval.concat(nests);
@@ -258,6 +259,7 @@ function doSearch(databaseid, params, cb) {
 						// 		retval = retval.concat(processSelector(selectors,sidx+1,value));
 						// 	}						
 						// }
+*/
 	//console.log(371,nests);
 					var i = 0;
 					while (nests.length > 0) {
@@ -296,7 +298,17 @@ function doSearch(databaseid, params, cb) {
 
 				}
 				return retval;
-
+			} else if(sel.selid ==='OF') {
+				if(sidx+1+1 > selectors.length) {
+					return [value];
+				} else {
+					var r1 = [];
+					Object.keys(value).forEach(function(keyv){
+						alasql.vars[sel.args[0].variable] = keyv;
+						r1 = r1.concat(processSelector(selectors,sidx+1,value[keyv]));
+					});
+					return r1;
+				}
 			} else 	if(sel.selid ==='TO') {
 //				console.log(347,value,sel.args[0]);
 				var oldv = alasql.vars[sel.args[0]];
@@ -321,7 +333,7 @@ function doSearch(databaseid, params, cb) {
 					alasql.vars[sel.args[0]] = oldv;
 					return r1;
 				}
-/*
+/*/*
 
 alasql.srch.TO = function(val,args) {
   console.log(args[0]);
@@ -532,11 +544,13 @@ alasql.srch.TO = function(val,args) {
 				if(nest.length===0) {
 					return [];
 				} else {
+					/*/* 
 					// if(sidx+1+1 > selectors.length) {
 					// 	return [nest];
 					// } else {
 					// 	return processSelector(selectors,sidx+1,nest);
-					// }
+					// } 
+					*/
 					var r = {status:1,values:nest};
 				}
 			} else if(sel.selid === 'ROOT') {
@@ -880,11 +894,12 @@ alasql.srch.KEYS = function(val) {
   }
 };
 
+
 // Test expression
-alasql.srch.WHERE = function(val,args) {
+alasql.srch.WHERE = function(val,args,stope,params) {
   var exprs = args[0].toJS('x','');
-  var exprfn = new Function('x,alasql','return '+exprs);
-  if(exprfn(val,alasql)) {
+  var exprfn = new Function('x,alasql,params','return '+exprs);
+  if(exprfn(val,alasql,params)) {
     return {status: 1, values: [val]};
   } else {
     return {status: -1, values: []};        
@@ -980,6 +995,24 @@ alasql.srch.OUT = function(val ) {
 	}
 };
 
+alasql.srch.OUTOUT = function(val ) {
+	if(val.$out && val.$out.length > 0) {
+		var res = [];
+		val.$out.forEach(function(v){ 
+			var av = alasql.databases[alasql.useid].objects[v];
+			if(av && av.$out && av.$out.length > 0) {
+				av.$out.forEach(function(vv){
+					res = res.concat(alasql.databases[alasql.useid].objects[vv]);
+				});
+			}
+		}); 
+		return {status: 1, values: res};
+	} else {
+		return {status: -1, values: []};
+	}
+};
+
+
 // Transform expression
 alasql.srch.IN = function(val) {
 	if(val.$in && val.$in.length > 0) {
@@ -991,6 +1024,25 @@ alasql.srch.IN = function(val) {
 		return {status: -1, values: []};
 	}
 };
+
+
+alasql.srch.ININ = function(val ) {
+	if(val.$in && val.$in.length > 0) {
+		var res = [];
+		val.$in.forEach(function(v){ 
+			var av = alasql.databases[alasql.useid].objects[v];
+			if(av && av.$in && av.$in.length > 0) {
+				av.$in.forEach(function(vv){
+					res = res.concat(alasql.databases[alasql.useid].objects[vv]);
+				});
+			}
+		}); 
+		return {status: 1, values: res};
+	} else {
+		return {status: -1, values: []};
+	}
+};
+
 
 // Transform expression
 alasql.srch.AS = function(val,args) {

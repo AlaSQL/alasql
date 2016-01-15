@@ -41,19 +41,23 @@ var Database = alasql.Database = function (databaseid) {
 	if(!databaseid) {
 		databaseid = "db"+(alasql.databasenum++); // Random name
 	}
+
+	// Step 1
 	self.databaseid = databaseid;
 	alasql.databases[databaseid] = self;
+	self.dbversion = 0;
+
+	//Steps 2-5
 	self.tables = {};
 	self.views = {};
+	self.triggers = {};
+	self.indices = {};
 
-	// Objects storage
+	// Step 6: Objects storage
 	self.objects = {};
 	self.counter = 0;
 
-	self.indices = {};
-//	self.fn = {};
 	self.resetSqlCache();
-	self.dbversion = 0;
 	return self;
 };
 
@@ -68,7 +72,7 @@ Database.prototype.resetSqlCache = function () {
 }
 
 
-// // Main SQL function
+// Main SQL function
 
 /**
     Run SQL statement on database
@@ -82,7 +86,7 @@ Database.prototype.exec = function(sql, params, cb) {
 };
 
 
-
+/*/*
 // 	// Compile
 // 	var statement = this.compile(sql);
 // 	// Run
@@ -102,10 +106,10 @@ Database.prototype.exec = function(sql, params, cb) {
 // 		alasql.dexec(this.databaseid,sql,params,resolve);
 // 	});
 // };
-
+*/
 
 // Aliases like MS SQL
-/*
+/*/*
 Database.prototype.query = Database.prototype.exec;
 Database.prototype.run = Database.prototype.exec;
 Database.prototype.queryArray = function(sql, params, cb) {
@@ -136,6 +140,8 @@ Database.prototype.compile = function(sql, kind) {
 };
 
 */
+
+/*/*
 // 	var self = this;
 // 	var hh = hash(sql);
 
@@ -163,6 +169,6 @@ Database.prototype.compile = function(sql, kind) {
 
 
 // Added for compatibility with WebSQL
-
+*/
 
 

@@ -27,7 +27,7 @@ yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 		+',{dbtypeid:"'+this.dbtypeid+'",dbsize:'+this.dbsize+',style:'+
 		this.style+'})';		
 //	}
-/*
+/*/*
 	if(this.dbtypeid == 'INT') {
 		return '(('+this.expression.toJS(context, tableid, defcols)+')|0)';
 	} if(this.dbtypeid == 'STRING') {
@@ -126,14 +126,12 @@ alasql.stdfn.CONVERT = function(value, args) {
 		var d = new Date(val);
 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 		return s;
-	} else if(udbtypeid == 'DATETIME') {
+	} else if(udbtypeid == 'DATETIME' || udbtypeid == 'DATETIME2') {
 		var d = new Date(val);
 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
 		s += " "+("0"+d.getHours()).substr(-2)+":"+("0"+d.getMinutes()).substr(-2)+":"+("0"+d.getSeconds()).substr(-2);
 		s += '.'+("00"+d.getMilliseconds()).substr(-3)
 		return s;
-	} else if(['NUMBER','FLOAT'].indexOf(udbtypeid)>-1) {
-		return +val;
 	} else if(['MONEY'].indexOf(udbtypeid)>-1) {
 		var m = +val;
 		return (m|0)+((m*100)%100)/100;
@@ -147,15 +145,25 @@ alasql.stdfn.CONVERT = function(value, args) {
 	} else if(['CHAR','CHARACTER', 'NCHAR'].indexOf(udbtypeid)>-1) {
 		return (val+(new Array(args.dbsize+1).join(" "))).substr(0,args.dbsize);
 		//else return ""+val.substr(0,1);
-	} else if(['DECIMAL','NUMERIC'].indexOf(udbtypeid)>-1) {
+	} else if(['NUMBER','FLOAT'].indexOf(udbtypeid)>-1) {
+		if(typeof args.dbprecision != 'undefined') {
+			var m = +val;
+			var fxd = Math.pow(10,args.dbprecision);
+			return (m|0)+((m*fxd)%fxd)/fxd;
+		} else {
+			return +val;
+		}
+	} else if((['DECIMAL','NUMERIC'].indexOf(udbtypeid)>-1)) {
 		var m = +val;
-		var fxd = Math.pow(10,args.dbpecision);
+		var fxd = Math.pow(10,args.dbprecision);
 		return (m|0)+((m*fxd)%fxd)/fxd;
 	} else if(['JSON'].indexOf(udbtypeid)>-1) {
 		if(typeof val == 'object') return val;
 		try {
 			return JSON.parse(val);
 		} catch(err) { throw new Error('Cannot convert string to JSON');};
+	} else {
+		throw new Error('Wrong conversion type');
 	};
 	return val;
 };

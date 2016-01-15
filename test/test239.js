@@ -14,6 +14,7 @@ if(typeof exports == 'object') {
 
 describe('Test 239 AUTOCOMMIT OFF test', function() {
 
+if(false) {
   it('1. Create database', function(done){
     alasql('SET AUTOCOMMIT OFF');
 //    console.log(1);
@@ -94,6 +95,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function() {
     alasql('DROP LOCALSTORAGE DATABASE ls239');
     done();
   });
+}
 
 });
 

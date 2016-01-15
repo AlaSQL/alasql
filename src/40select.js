@@ -215,6 +215,11 @@ yy.Select.prototype.compile = function(databaseid) {
 	}
 
 
+	// 8. Compile ORDER BY clause
+	if(this.order){
+		query.orderfn = this.compileOrder(query);
+	}
+
 	if(this.group || query.selectGroup.length>0) {
 		query.selectgfn = this.compileSelectGroup2(query);
 	} else {
@@ -225,10 +230,6 @@ yy.Select.prototype.compile = function(databaseid) {
 	// 7. Compile DISTINCT, LIMIT and OFFSET
 	query.distinct = this.distinct;
 
-	// 8. Compile ORDER BY clause
-	if(this.order){
-		query.orderfn = this.compileOrder(query);
-	}
 
 	// 9. Compile PIVOT clause
 	if(this.pivot) query.pivotfn = this.compilePivot(query);
@@ -510,10 +511,10 @@ function modify(query, res) { // jshint ignore:line
 
 
 
-// yy.Select.prototype.exec = function(databaseid) {
+//  yy.Select.prototype.exec = function(databaseid) {
 // 	throw new Error('Select statement should be precompiled');
 
-// };
+//  };
 yy.Select.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params,cb);
 //	throw new Error('Insert statement is should be compiled')

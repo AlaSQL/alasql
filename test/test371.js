@@ -54,11 +54,37 @@ describe('Test 371 INSERT OR REPLACE', function() {
         done();
       });
 
-     it('99. DROP DATABASE',function(done){
+     it('5. Test REPLACE with existing record',function(done){
+        alasql('DELETE FROM one WHERE a IN (4,5)');
+        alasql('INSERT OR REPLACE INTO one VALUES (1,"Uno")');
+
+
+        var res = alasql('REPLACE INTO one VALUES (2,"Deux")');
+        assert(res == 1);
+
+        var res = alasql('SELECT * FROM one');
+        assert.deepEqual(res,[ { a: 1, b: 'Uno' }, { a: 2, b: 'Deux' }, { a: 3, b: 'Three' } ]);
+
+        done();
+      });
+
+     it('6. Test REPLACE without existing record',function(done){
+        var res = alasql('REPLACE INTO one VALUES (4,"Quarto")');
+        assert(res == 1);
+
+        var res = alasql('SELECT * FROM one');
+        assert.deepEqual(res,[ { a: 1, b: 'Uno' }, { a: 2, b: 'Deux' }, { a: 3, b: 'Three' }, { a: 4, b: 'Quarto' }  ]);
+
+        done();
+      });
+
+
+
+
+     it('98. DROP TABLE',function(done){
       alasql('DROP TABLE one');
       done();
      });
-
 
      it('99. DROP DATABASE',function(done){
       alasql('DROP DATABASE test371');

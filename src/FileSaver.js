@@ -49,9 +49,11 @@ var saveAs = saveAs
 		}
 		, force_saveable_type = "application/octet-stream"
 		, fs_min_size = 0
+/*/*
 		// See https://code.google.com/p/chromium/issues/detail?id=375297#c7 and
 		// https://github.com/eligrey/FileSaver.js/commit/485930a#commitcomment-8768047
 		// for the reasoning behind the timeout and revocation flow
+*/
 		, arbitrary_revoke_timeout = 500 // in ms
 		, revoke = function(file) {
 			var revoker = function() {
@@ -139,19 +141,23 @@ var saveAs = saveAs
 			if (/^\s*(?:text\/(?:plain|xml)|application\/xml|\S*\/\S*\+xml)\s*;.*charset\s*=\s*utf-8/i.test(blob.type)) {
 				blob = new Blob(["\ufeff", blob], {type: blob.type});
 			}
+/*/*
 			// Object and web filesystem URLs have a problem saving in Google Chrome when
 			// viewed in a tab, so I force save with application/octet-stream
 			// http://code.google.com/p/chromium/issues/detail?id=91158
 			// Update: Google errantly closed 91158, I submitted it again:
 			// https://code.google.com/p/chromium/issues/detail?id=389642
+*/			
 			if (view.chrome && type && type !== force_saveable_type) {
 				slice = blob.slice || blob.webkitSlice;
 				blob = slice.call(blob, 0, blob.size, force_saveable_type);
 				blob_changed = true;
 			}
+/*/*
 			// Since I can't be sure that the guessed media type will trigger a download
 			// in WebKit, I append .download to the filename.
 			// https://bugs.webkit.org/show_bug.cgi?id=65440
+*/
 			if (webkit_req_fs && name !== "download") {
 				name += ".download";
 			}
@@ -235,9 +241,9 @@ var saveAs = saveAs
 	|| typeof window !== "undefined" && window
 	|| this.content
 ));
-// `self` is undefined in Firefox for Android content script context
-// while `this` is nsIContentFrameMessageManager
-// with an attribute `content` that corresponds to the window
+//  `self` is undefined in Firefox for Android content script context
+//  while `this` is nsIContentFrameMessageManager
+//  with an attribute `content` that corresponds to the window
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports.saveAs = saveAs;

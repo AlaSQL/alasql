@@ -7,7 +7,7 @@
 */
 
 yy.FuncValue = function(params){ return yy.extend(this, params); }
-yy.FuncValue.prototype.toString = function() {
+yy.FuncValue.prototype.toString = function(dontas) {
 	var s = '';
     
     if(alasql.fn[this.funcid]) s += this.funcid;
@@ -21,7 +21,7 @@ yy.FuncValue.prototype.toString = function() {
 		}).join(',');
 	};
 	s += ')';
-	if(this.as) s += ' AS '+this.as.toString();
+	if(this.as && !dontas) s += ' AS '+this.as.toString();
 //	if(this.alias) s += ' AS '+this.alias;
 	return s;
 }
@@ -38,7 +38,7 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	return res;
 }
 
-
+/*/*
 //yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 //	if(this.reduced) return returnTrue();
@@ -51,6 +51,8 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 // 	if(this.reduced) return returnTrue();
 // 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 // };
+
+*/
 
 yy.FuncValue.prototype.findAggregator = function(query) {
 	if(this.args && this.args.length > 0) {
@@ -102,6 +104,7 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 	return s;
 }
 
+/*/*
 // // Functions compiler
 // nodes.FunctionValue.prototype.toJS = function (context, tableid) {
 // 	var s = '';
@@ -111,7 +114,9 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 // 	}));
 // 	return s;
 // };
+*/
 
+/*/*
 // 
 // SQL FUNCTIONS COMPILERS
 // Based on SQLite functions
@@ -120,12 +125,18 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 
 //alasql.fn = {}; // Keep for compatibility
 //alasql.userlib = alasql.fn; 
+*/
 
 var stdlib = alasql.stdlib = {}
 var stdfn = alasql.stdfn = {}
 
 stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
 stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
+
+stdfn.CONCAT = function(){
+	return Array.prototype.slice.call(arguments).join(' ');
+};
+
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
 		return  '(('+a+')?('+b+'):('+c+'))';
@@ -143,7 +154,7 @@ stdlib.INSTR = function(s,p) {return '(('+s+').indexOf('+p+')+1)'};
 stdlib.LEN = stdlib.LENGTH = function(s) {return und(s,'y.length');}
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'y.toLowerCase()');}
+stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'String(y).toLowerCase()');}
 //stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 
@@ -178,14 +189,17 @@ stdlib.RANDOM = function(r) {
 	} else {
 		return '(Math.random()*('+r+')|0)';
 	}
-}
+};
 stdlib.ROUND = function(s,d) {
 	if(arguments.length == 2) {
-		return 'Math.round('+s+'*Math.pow(10,'+d+'))/Math.pow(10,'+d+')';
+		return 'Math.round(('+s+')*Math.pow(10,('+d+')))/Math.pow(10,('+d+'))';
 	} else {
 		return 'Math.round('+s+')';
 	}
-}
+};
+stdlib.CEIL = stdlib.CEILING = function(s) {return 'Math.ceil('+s+')'};
+stdlib.FLOOR = function(s) {return 'Math.floor('+s+')'};
+
 stdlib.ROWNUM = function() {return '1'};
 stdlib.ROW_NUMBER = function() {return '1'};
 
@@ -193,7 +207,15 @@ stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 
 stdlib.TRIM = function(s) {return und(s,'y.trim()');}
 
-stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'y.toUpperCase()');}
+stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'String(y).toUpperCase()');}
+
+// Concatination of strings
+stdfn.CONCAT_WS = function() {
+    args = Array.prototype.slice.call(arguments);
+    return args.slice(1, args.length).join(args[0]);
+};
+
+
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM

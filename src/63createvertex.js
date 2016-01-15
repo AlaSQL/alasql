@@ -34,7 +34,7 @@ yy.CreateVertex.prototype.toJS = function(context) {
 };
 
 // CREATE TABLE
-/*
+/*/*
 yy.CreateVertex.prototype.execute = function (databaseid,params,cb) {
 	var res = 0;
 	if(this.sets) {
@@ -80,8 +80,9 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 		var setfn = new Function('x,params,alasql',s);
 	} 
 
-	/*
-	Todo: check for content, select and default
+	
+	// Todo: check for content, select and default
+	/*/*
 	else if(this.content) {
 
 	} else if(this.select) {
@@ -120,7 +121,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 	return statement;
 };
 
-/*
+/*/*
 	console.log('yy.CreateVertex.compile');
 
 	if(this.sets) {
@@ -160,7 +161,7 @@ yy.CreateEdge.prototype.toJS = function(context) {
 };
 
 // CREATE TABLE
-/*
+/*/*
 yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 	var res = 1;
 	if(cb) res = cb(res);
@@ -248,10 +249,10 @@ yy.CreateGraph.prototype.toString = function() {
 	return s;
 }
 
-// yy.CreateEdge.prototype.toJS = function(context, tableid, defcols) {
+//  yy.CreateEdge.prototype.toJS = function(context, tableid, defcols) {
 // 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
 // 	return s;
-// };
+//  };
 
 yy.CreateGraph.prototype.execute = function (databaseid,params,cb) {
 	var res = [];
@@ -464,8 +465,10 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 		var setfn = new Function('x,params,alasql','var y;'+s);
 	} 
 
-	/*
-	Todo: handle content, select and default
+	
+	// Todo: handle content, select and default
+	
+	/*/*
 	else if(this.content) {
 
 	} else if(this.select) {

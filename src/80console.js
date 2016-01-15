@@ -1,5 +1,5 @@
 // Console functions
-/*
+/*/*
 alasql.con = {
 	results:{}
 };

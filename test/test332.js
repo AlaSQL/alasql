@@ -8,10 +8,14 @@ if(typeof exports === 'object') {
 
 
 describe('Test 331 SLT#2 - test', function() {
-  it('1. CREATE DATABASE',function(done){
+ 
+  before(function(){
     alasql('CREATE DATABASE test332;USE test332');
+  });
 
-    done();
+  after(function(){
+    alasql('DROP DATABASE test332');
+    alasql.options.modifier = undefined;
   });
 
   it('2. Create table',function(done){
@@ -104,9 +108,4 @@ describe('Test 331 SLT#2 - test', function() {
 
 
 
-  it('99. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test332');
-    alasql.options.modifier = undefined;
-    done();
-  });
 });
