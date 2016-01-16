@@ -8,7 +8,7 @@
 //formerly 57case.js
 import {extend} from "../utils/object.js";
 //formerly yy.CaseValue
-function CaseValue(params) { return extend(this, params); };
+export function CaseValue(params) { return extend(this, params); };
 CaseValue.prototype.toString = function() {
 	var s = 'CASE ';
 	if(this.expression) s += this.expression.toString();

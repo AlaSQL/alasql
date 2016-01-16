@@ -14,6 +14,7 @@ import {StringValue} from "../../yy/StringValue.js";
 import {UniOp} from "../../yy/UniOp.js";
 import {Join} from "../../yy/Join.js";
 import {OrderExpression} from "../../yy/OrderExpression.js";
+import {CaseValue} from "../../yy/CaseValue";
 
 var yy = {
   extend:extend,
@@ -28,7 +29,8 @@ var yy = {
   StringValue:StringValue,
   UniOp:UniOp,
   Join:Join,
-  OrderExpression:OrderExpression
+  OrderExpression:OrderExpression,
+  CaseValue:CaseValue
 };
 
 
