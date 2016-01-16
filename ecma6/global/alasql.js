@@ -1,7 +1,7 @@
 import {options} from "./options.js";
 import {uncomment} from "../utils/comments.js";
 import {alasql} from "./start.js";
-import {hash} from "../utils/strings.js";
+import {hash,like} from "../utils/strings.js";
 import {precompile} from "./precompile.js";
 import {Table} from "./Table.js";
 
@@ -301,6 +301,15 @@ alasql.compile= function(sql, databaseid) {
 		throw new Error('Cannot compile, because number of statements in SQL is not equal to 1');
 	}
 };
+
+/**
+@description Functions that are used in eval, kept here for research/legacy purposes
+**/
+
+alasql.utils = {
+	like:like
+}
+
 
 export {alasql};
 
