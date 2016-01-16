@@ -19,34 +19,20 @@ describe('Test '+test+' Aggregators', function() {
     alasql('DROP DATABASE test'+test);
   });
 
-  it.skip('3. Test',function(done){
+  it('1. Test',function(done){
 
-    var resultSet = [];
+    var data = [];
     for(var i=0;i<10000;i++) {
-      resultSet.push({_date:new Date('01.01.2015'), selectedChem:1});
+      data.push({a:i});
     }
     
-alasql.aggr.MYMEDIAN = function(v,s,acc){
-  // Init
-  if(typeof acc.arr == 'undefined') {
-    acc.arr = [v];
-    return v; 
-  // Pass
-  } else {
-    acc.arr.push(v);
-    var p = acc.arr.sort();
-    return p[(p.length/2)|0];     
-  };
-};
 
 
-    var res = alasql('SELECT count(1) AS ct, min(_date) AS minDate, max(_date) AS maxDate, \
-      min(selectedChem) AS minparam, max(selectedChem) AS maxparam, \
-      AVG(selectedChem) AS avgparam, MEDIAN(selectedChem) AS medparam, \
-      STDEV( selectedChem) AS sdevparam FROM ? \
-      WHERE selectedChem is not null AND selectedChem != -9999 ORDER BY _date', [ resultSet ]);
+//    var res1 = alasql('SELECT MEDIAN(a) AS medparam FROM ?', [data]);
+//    console.log(res1);
 
-    console.log(res);
+    var res = alasql('SELECT MEDIAN(a) AS medparam FROM ?', [data]);
+    assert.deepEqual(res,[ { medparam: 5499 } ]);
 
 	done();
 	});

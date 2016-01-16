@@ -16,64 +16,51 @@ describe('Test 266 Custom MEDIAN Aggregator', function() {
   		{a:3,b:1},{a:3,b:1},{a:3,b:5},
  	];
 
-  alasql.aggr.MYMEDIAN = function(v,s,acc){
-    // Init
-    if(typeof acc.arr == 'undefined') {
-      acc.arr = [v];
-      return v; 
-    // Pass
+  alasql.aggr.MYMEDIAN = function(v,s,stage){
+    if(stage == 1) {
+      return [v];
+    } else if(stage ==2) {
+      s.push(v);
+      return s;
     } else {
-      acc.arr.push(v);
-      var p = acc.arr.sort();
+      var p = s.sort();
       return p[(p.length/2|0)];     
     };
   };
 
-  alasql.aggr.MYCOUNT = function(v,s,acc){
-    if(typeof acc.cnt == 'undefined') {
-      acc.cnt = 1;
-    } else {
-      acc.cnt++;
-    }
-    return acc.cnt; 
+  alasql.aggr.MYCOUNT = function(v,s,stage){
+    if(stage == 1) return 1;
+    if(stage == 2) return s+1;
+    return s; 
   };
 
-  alasql.aggr.MYSUM = function(v,s,acc){
-    if(typeof acc.sum == 'undefined') {
-      acc.sum = v;
-    } else {
-      acc.sum += v;
-    }
-    return acc.sum; 
+  alasql.aggr.MYSUM = function(v,s,stage){
+    if(stage == 1) return v;
+    if(stage == 2) return s+v;
+    return s; 
   };
 
-  alasql.aggr.MYFIRST = function(v,s,acc){
-    if(typeof acc.val == 'undefined') {
-      acc.val = v;
-    }; 
-    return acc.val; 
+  alasql.aggr.MYFIRST = function(v,s,stage){
+    if(stage == 1) return v;
+    return s; 
   };
 
-  alasql.aggr.MYLAST = function(v,s,acc){
-    return v; 
+  alasql.aggr.MYLAST = function(v,s,stage){
+    if(stage == 1) return v;
+    else if(stage == 2) return v;
+    else return s; 
   };
 
-  alasql.aggr.MYMIN = function(v,s,acc){
-    if(typeof acc.min == 'undefined') {
-      acc.min = v;
-    } else {
-      acc.min = Math.min(acc.min,v);
-    }
-    return acc.min; 
+  alasql.aggr.MYMIN = function(v,s,stage){
+    if(stage == 1) return v;
+    if(stage == 2) return Math.min(s,v);;
+    return s; 
   };
 
-  alasql.aggr.MYMAX = function(v,s,acc){
-    if(typeof acc.max == 'undefined') {
-      acc.max = v;
-    } else {
-      acc.max = Math.max(acc.max,v);
-    }
-    return acc.max; 
+  alasql.aggr.MYMAX = function(v,s,stage){
+    if(stage == 1) return v;
+    if(stage == 2) return Math.max(s,v);;
+    return s; 
   };
 
  	var res = alasql('SELECT a,MYMEDIAN(b),MYCOUNT(b),MYSUM(b),\

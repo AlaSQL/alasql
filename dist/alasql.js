@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-develop+160115.215118 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-develop+160116.214954 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-develop+160115.215118
+@version 0.2.2-develop+160116.214954
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -110,7 +110,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 			// alasql('#sql');
 			if(typeof sql === 'string' && sql[0]==='#' && typeof document === "object") {
 				sql = document.querySelector(sql).textContent;
-			} else if(typeof sql === 'object' && sql instanceof HTMElement) {
+			} else if(typeof sql === 'object' && sql instanceof HTMLElement) {
 				sql = sql.textContent;
 			} else if(typeof sql === 'function') {
 				// to run multiline functions
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-develop+160115.215118';
+alasql.version = '0.2.2-develop+160116.214954';
 
 /**
 	Debug flag
@@ -5726,11 +5726,11 @@ function queryfn(query,oldscope,cb, A,B) {
 
 			q.query.params = query.params;
 
-	if(false) {
-			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);
-	} else {
+//	if(false) {
+
+//	} else {
 			queryfn2([],(-idx-1),query);
-	}
+//	}
 
 		});
 
@@ -5843,13 +5843,30 @@ function queryfn3(query) {
 
 		}
 
+		// ******
+
+		if(query.aggrKeys.length > 0) {
+			var gfns = '';
+			query.aggrKeys.forEach(function(col){
+				gfns += 'g[\''+col.nick+'\']=alasql.aggr[\''+col.funcid+'\'](undefined,g[\''+col.nick+'\'],3);'; 
+
+			});
+
+			var gfn = new Function('g,params,alasql','var y;'+gfns); 
+
+		}
+
+		// *******
+
 		// 	debugger;
 		// if(false && (query.groups.length == 1) && (Object.keys(query.groups[0]).length == 0)) {
 
 		// } else {
 			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+				var g = query.groups[i];
 
-				g = query.groups[i];
+				if(gfn) gfn(g,query.params,alasql);
+
 				if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
 
 					var d = query.selectgfn(g,query.params,alasql);
@@ -6567,6 +6584,7 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// Array with columns to be removed
     query.removeKeys = [];
+    query.aggrKeys = [];
 
 	query.explain = this.explain; // Explain
 	query.explaination = [];
@@ -7659,7 +7677,7 @@ yy.Select.prototype.compileGroup = function(query) {
 	allgroup.forEach(function(agroup) {
 
 		// Start of group function
-		s += 'var acc,g=this.xgroups[';
+		s += 'var g=this.xgroups[';
 
 	//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
@@ -7756,9 +7774,10 @@ yy.Select.prototype.compileGroup = function(query) {
 					aft += ',g[\''+colas+'\']='+col.expression.toJS('g',-1); 
 					return '';
 				} else if(col.aggregatorid === 'REDUCE') {
-					query.removeKeys.push('_REDUCE_'+colas);
-					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={})),'
-					+'\'__REDUCE__'+colas+'\':acc,'; 
+
+					query.aggrKeys.push(col);
+
+					return '\''+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,1),'; 
 				}
 				return '';
 			} 
@@ -7831,7 +7850,7 @@ yy.Select.prototype.compileGroup = function(query) {
 				} else if(col.aggregatorid === 'REDUCE') {
 					return 	''
 							+ pre+'g[\''+colas+'\']=alasql.aggr.'
-							+ col.funcid+'('+colexp+',g[\''+colas+'\'],g[\'__REDUCE__'+colas+'\']);'
+							+ col.funcid+'('+colexp+',g[\''+colas+'\'],2);'
 							+ post; 
 				}
 
@@ -7845,7 +7864,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	});
 
-	return new Function('p,params,alasql',s);
+	return new Function('p,params,alasql','var y;'+s);
 
 }
 
@@ -9997,68 +10016,89 @@ stdfn.CONCAT_WS = function() {
 // TRIM
 
 // Aggregator for joining strings
-alasql.aggr.GROUP_CONCAT = function(v,s){
-    if(typeof s == "undefined") return v; else return s+','+v;
+alasql.aggr.GROUP_CONCAT = function(v,s,stage){
+    if(stage == 1) {
+    	return v; 
+    } else if(stage == 2) {
+    	return s+','+v;
+    }
 };
 
 // Median
-alasql.aggr.MEDIAN = function(v,s,acc){
-	// Init
-	if(typeof acc.arr == 'undefined') {
-	  acc.arr = [v];
-	  return v; 
-	// Pass
-	} else {
-	  acc.arr.push(v);
-	  var p = acc.arr.sort();
-	  return p[(p.length/2)|0];     
-	};
+// alasql.aggr.MEDIAN = function(v,s,acc){
+
+// };
+
+alasql.aggr.MEDIAN = function(v,s,stage){
+  if(stage == 1) {
+    return [v];
+  } else if(stage == 2) {
+    s.push(v);    
+    return s;
+  } else {
+    var p = s.sort();
+    return p[(p.length/2)|0];     
+  };
 };
 
 // Standard deviation
-alasql.aggr.VAR = function(v,s,acc){
-	if(typeof acc.arr == 'undefined') {
-		acc.arr = [v];
-		acc.sum = v;
+alasql.aggr.VAR = function(v,s,stage){
+	if(stage == 1) {
+		return {arr:[v],sum:v};
+	} else if(stage == 2) {
+		s.arr.push(v);
+		s.sum += v;
 	} else {
-		acc.arr.push(v);
-		acc.sum += v;
+		var N = s.arr.length;
+		var avg = s.sum / N;
+		var std = 0;
+		for(var i=0;i<N;i++) {
+			std += (s.arr[i]-avg)*(s.arr[i]-avg);
+		}
+		std = std/(N-1);
+		return std;
 	}
-	var N = acc.arr.length;
-	var avg = acc.sum / N;
-	var std = 0;
-	for(var i=0;i<N;i++) {
-		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-	}
-	std = std/(N-1);
-	return std;
 };
 
-alasql.aggr.STDEV = function(v,s,acc){
-	return Math.sqrt(alasql.aggr.VAR(v,s,acc));
-}
+alasql.aggr.STDEV = function(v,s,stage){
+	if(stage == 1 || stage == 2 ) {
+		return alasql.aggr.VAR(v,s,stage);
+	} else {
+		return Math.sqrt(alasql.aggr.VAR(v,s,stage));
+	}
+};
 
 // Standard deviation
-alasql.aggr.VARP = function(v,s,acc){
-	if(typeof acc.arr == 'undefined') {
-		acc.arr = [v];
-		acc.sum = v;
+// alasql.aggr.VARP = function(v,s,acc){
+
+// };
+
+alasql.aggr.VARP = function(v,s,stage){
+	console.log
+	if(stage == 1) {
+		return {arr:[v],sum:v};
+	} else if(stage == 2) {
+		s.arr.push(v);
+		s.sum += v;
+		return s;
 	} else {
-		acc.arr.push(v);
-		acc.sum += v;
+		var N = s.arr.length;
+		var avg = s.sum / N;
+		var std = 0;
+		for(var i=0;i<N;i++) {
+			std += (s.arr[i]-avg)*(s.arr[i]-avg);
+		}
+		std = std/N;
+		return std;
 	}
-	var N = acc.arr.length;
-	var avg = acc.sum / N;
-	var std = 0;
-	for(var i=0;i<N;i++) {
-		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-	}
-	std = std/N;
-	return std;
 };
 
-alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,acc){
-	return Math.sqrt(alasql.aggr.VARP(v,s,acc));
+alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,stage){
+	if(stage == 1 || stage == 2 ) {
+		return alasql.aggr.VARP(v,s,stage);
+	} else {
+		return Math.sqrt(alasql.aggr.VARP(v,s,stage));
+	}
 };
 
 /*

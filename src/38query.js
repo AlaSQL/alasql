@@ -32,11 +32,12 @@ function queryfn(query,oldscope,cb, A,B) {
 			q.query.params = query.params;
 //			query.queriesdata[idx] = 
 
-	if(false) {
-			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);
-	} else {
+
+//	if(false) {
+//			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);
+//	} else {
 			queryfn2([],(-idx-1),query);
-	}
+//	}
 
 //			console.log(27,q);
 
@@ -163,14 +164,37 @@ function queryfn3(query) {
 			query.groups = [g];
 //			console.log();
 		}
+
+		// ******
+
+		if(query.aggrKeys.length > 0) {
+			var gfns = '';
+			query.aggrKeys.forEach(function(col){
+				gfns += 'g[\''+col.nick+'\']=alasql.aggr[\''+col.funcid+'\'](undefined,g[\''+col.nick+'\'],3);'; 
+//				gfns += 'return g[\''+col.nick+'\];'; 
+			});
+//			console.log(175,gfns);
+			var gfn = new Function('g,params,alasql','var y;'+gfns); 
+
+		}
+
+//					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={}),1),'
+//					+'\'__REDUCE__'+colas+'\':acc,'; 
+
+
+		// *******
 		// 	console.log('EMPTY',query.groups);
 		// 	debugger;
 		// if(false && (query.groups.length == 1) && (Object.keys(query.groups[0]).length == 0)) {
 		// 	console.log('EMPTY',query.groups);
 		// } else {
 			for(var i=0,ilen=query.groups.length;i<ilen;i++) {
+				var g = query.groups[i];
+
+				if(gfn) gfn(g,query.params,alasql);
+
+
 	//			console.log(query.groups[i]);
-				g = query.groups[i];
 				if((!query.havingfn) || query.havingfn(g,query.params,alasql)) {
 	//				console.log(g);
 					var d = query.selectgfn(g,query.params,alasql);
