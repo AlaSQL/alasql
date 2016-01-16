@@ -19,7 +19,7 @@ describe('Test '+test+' Aggregators', function() {
     alasql('DROP DATABASE test'+test);
   });
 
-  it('3. Test',function(done){
+  it.skip('3. Test',function(done){
 
     var resultSet = [];
     for(var i=0;i<10000;i++) {

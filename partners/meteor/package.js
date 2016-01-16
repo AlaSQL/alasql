@@ -15,7 +15,7 @@ Package.onUse(function(api) {
 //  api.use('alasql', ['client', 'server']);
 //  api.export('alasql','client');
   api.addFiles('../../dist/alasql.min.js');
-  api.addFiles('../../dist/alasql-echo.js',["client","server"],{isAsset: true});
+  api.addAssets('../../dist/alasql-echo.js',["client","server"]);
 });
 
 Package.onTest(function(api) {
