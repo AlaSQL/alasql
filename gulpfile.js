@@ -32,7 +32,7 @@ var version = packageData.version;
 var branch = execSync('git --work-tree=' + __dirname +' --git-dir=' + __dirname + '/.git branch', {encoding:'utf8'})
               .match(/^\*\s+(.*)/m)[1]
               .trim()
-var commits = parseInt(execSync('git rev-list '+branch+' --count', {encoding:'utf8'})) | 0;
+var commits = parseInt(execSync('git rev-list HEAD --count', {encoding:'utf8'})) | 0;
 
 
 if(!(/^master|^release\//.test(branch))){
