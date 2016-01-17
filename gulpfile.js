@@ -37,7 +37,7 @@ var commits = parseInt(execSync('git rev-list HEAD --count', {encoding:'utf8'}))
 
 if(!(/^master|^release\//.test(branch))){
   version += '-'
-              + branch.replace(/[^0-9A-Za-z-]/ig,'.')
+              + branch.replace(/[^0-9a-z-]/ig,'.').replace(/^\.+|\.+$/g,'')
               + '-' 
               + commits;
 } 
