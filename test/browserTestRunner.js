@@ -1,4 +1,4 @@
-﻿if(typeof exports !== 'object') {
+﻿if(typeof(describe) !== "function") {
 
 
 var http = require("http"),
