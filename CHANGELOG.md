@@ -1,8 +1,10 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.3-pre "Spetses" (16.01.2016)
+### 0.2.3-pre "Spetses" (xx.xx.2016)
 * Changed: New fast way to calculate aggregators (some parameters changed)
+* Added: User defined aggregators
+
 
 ### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list
