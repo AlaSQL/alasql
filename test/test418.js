@@ -30,11 +30,11 @@ describe('Test '+test+' Load data from internet', function() {
 	describe('.xlsx from URL', function() {
 		var url = 'cdn.rawgit.com/agershun/alasql/6277197ee2db5add9b42c3116f350037e8943cc5/test/test411.xlsx';
 		
-		it('Load http',function(done){
+		it.skip('Load http',function(done){
 			testRequest(4, 'http://'+url, 'true', done);
 		});
 		
-		it('Load https',function(done){
+		it.skip('Load https',function(done){
 			testRequest(4, 'https://'+url, 'true', done);
 		});
 	});
@@ -82,11 +82,11 @@ describe('Test '+test+' Load data from internet', function() {
 	describe('.txt from URL', function() {
 		var url = 'cdn.rawgit.com/agershun/alasql/9191d4726c8fbce7a615a370ce68b79366c16f7e/test/test157.txt';
 		
-		it('Load http',function(done){
+		it.skip('Load http',function(done){
 			testRequest(8, 'http://'+url, 'false', done);
 		});
 		
-		it('Load https',function(done){
+		it.skip('Load https',function(done){
 			testRequest(8, 'https://'+url, 'false', done);
 		});
 	});
