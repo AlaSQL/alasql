@@ -14809,6 +14809,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	var res;
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
+		if(res[res.length-1] === '') res.pop(); // Remove last line if empty
 		for(var i=0, ilen=res.length; i<ilen;i++) {
 			// Please avoid '===' here
 			if(res[i] == +res[i]){	// jshint ignore:line
@@ -14832,7 +14833,8 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	var opt = {
 		separator: ',',
-		quote: '"'
+		quote: '"',
+		headers:true
 	};
 	alasql.utils.extend(opt, opts);
 	var res, hs;
