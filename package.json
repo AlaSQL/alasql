@@ -29,7 +29,8 @@
     "es6-promise": "^3.0.2",
     "lodash": "^4.0.0",
     "xlsjs": "^0.7.5",
-    "xlsx": "^0.8.0"
+    "xlsx": "^0.8.0",
+    "request": "^2.67.0"
   },
   "devDependencies": {
     "blueimp-md5": "^2.1.0",
