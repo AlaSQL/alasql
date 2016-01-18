@@ -69,6 +69,39 @@ describe('Test '+test+' Load data from text file with default headers option', f
     });
   });
 
+  it('4. Load XLSX with {headers:true}',function(done){
+    alasql('SELECT * FROM XLSX("test419.xlsx",{headers:true})',[],function(res){
+      assert.deepEqual(res,
+      [ { words: 'don’t', letters: 1 },
+        { words: 'come', letters: 2 },
+        { words: 'easy', letters: 3 } ]     
+       );
+      done();
+    });
+  });
+
+  it('5. Load XLSX',function(done){
+    alasql('SELECT * FROM XLSX("test419.xlsx")',[],function(res){
+      assert.deepEqual(res,
+      [ { words: 'don’t', letters: 1 },
+        { words: 'come', letters: 2 },
+        { words: 'easy', letters: 3 } ]     
+       );
+      done();
+    });
+  });
+
+  it('6. Load XLSX with {headers:true}',function(done){
+    alasql('SELECT * FROM XLSX("test419.xlsx",{headers:false})',[],function(res){
+      assert.deepEqual(res,
+      [ { A: 'words', B: 'letters' },
+        { A: 'don’t', B: 1 },
+        { A: 'come', B: 2 },
+        { A: 'easy', B: 3 } ]      
+       );
+      done();
+    });
+  });
 
 });
 

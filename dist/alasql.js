@@ -14954,6 +14954,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var opt = {};
 	opts = opts || {};
 	alasql.utils.extend(opt, opts);
+	if(typeof opt.headers == 'undefined') opt.headers = true;
 	var res;
 
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
