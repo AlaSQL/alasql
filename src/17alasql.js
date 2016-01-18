@@ -96,6 +96,8 @@ alasql.options.nocount = false;
 // Check for NaN and convert it to undefined
 alasql.options.nan = false;
 
+alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
+
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};

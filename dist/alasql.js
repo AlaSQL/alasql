@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-develop-1119 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-develop-1127 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-develop-1119
+@version 0.2.2-develop-1127
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-develop-1119';
+alasql.version = '0.2.2-develop-1127';
 
 /**
 	Debug flag
@@ -4029,6 +4029,8 @@ alasql.options.nocount = false;
 // Check for NaN and convert it to undefined
 alasql.options.nan = false;
 
+alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
+
 //alasql.options.worker = false;
 // Variables
 alasql.vars = {};
@@ -7914,7 +7916,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 // };
 
-function compileSelectStar (query,alias) {
+function compileSelectStar (query, alias, joinstar) {
 
 	var sp = '', ss=[];
 //	if(!alias) {
@@ -7934,10 +7936,22 @@ function compileSelectStar (query,alias) {
 		}
 
 		// Check if this is a Table or other
+		if(joinstar && alasql.options.joinstar == 'json') {	
+			sp += 'r[\''+alias+'\']={};';
+		};
 
 		if(columns && columns.length > 0) {
 			columns.forEach(function(tcol){
+
+			if(joinstar && alasql.options.joinstar == 'underscore') {
+				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+			} else if(joinstar && alasql.options.joinstar == 'json') {
+
+				sp += 'r[\''+alias+'\'][\''+tcol.columnid+'\']=p[\''+alias+'\'][\''+tcol.columnid+'\'];';
+			} else { 
 				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+			}
+
 				query.selectColumns[escapeq(tcol.columnid)] = true;
 
 				var coldef = {
@@ -7982,7 +7996,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					sp += 'r=params[\''+col.param+'\'](p[\''+query.sources[0].alias+'\'],p,params,alasql);';
 				} else if(col.tableid) {
 					//Copy all
-					var ret = compileSelectStar(query, col.tableid);
+					var ret = compileSelectStar(query, col.tableid, false);
 					if(ret.s){
 						ss = ss.concat(ret.s);
 					}
@@ -7991,8 +8005,8 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				} else {
 
 					for(var alias in query.aliases) {
-						var ret = compileSelectStar(query, alias); //query.aliases[alias].tableid);
-						if(ret.s){
+						var ret = compileSelectStar(query, alias, true); //query.aliases[alias].tableid);
+						if(ret.s) {
 							ss = ss.concat(ret.s);
 						}
 						sp += ret.sp;
