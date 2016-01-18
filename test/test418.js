@@ -37,7 +37,7 @@ describe('Test '+test+' Load data from internet', function() {
 		it('Load https',function(done){
 			testRequest(4, 'https://'+url, 'true', done);
 		});
-	}
+	});
 
 	
 	describe('.xls from URL', function() {
@@ -50,7 +50,7 @@ describe('Test '+test+' Load data from internet', function() {
 		it('Load https',function(done){
 			testRequest(5, 'https://'+url, 'true', done);
 		});
-	}
+	});
 
 	
 	describe('.json from URL', function() {
@@ -63,7 +63,7 @@ describe('Test '+test+' Load data from internet', function() {
 		it('Load https',function(done){
 			testRequest(2, 'https://'+url, 'false', done);
 		});
-	}
+	});
 
 	
 	describe('.tab from URL', function() {
@@ -76,7 +76,7 @@ describe('Test '+test+' Load data from internet', function() {
 		it('Load https',function(done){
 			testRequest(5, 'https://'+url, 'false', done);
 		});
-	}
+	});
 
 	
 	describe('.txt from URL', function() {
@@ -89,7 +89,7 @@ describe('Test '+test+' Load data from internet', function() {
 		it('Load https',function(done){
 			testRequest(8, 'https://'+url, 'false', done);
 		});
-	}
+	});
 
 	
 	describe('.csv from URL', function() {
@@ -102,7 +102,7 @@ describe('Test '+test+' Load data from internet', function() {
 		it('Load https',function(done){
 			testRequest(5, 'https://'+url, 'false', done);
 		});
-	}
+	});
 
 
 	
