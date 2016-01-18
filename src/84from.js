@@ -386,6 +386,11 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			res.push(row);
 		}
 
+		// Remove last empty line (issue #548)
+		if(res.length > 0 && res[res.length-1] && Object.keys(res[res.length-1]).length == 0) {
+			res.pop();
+		}
+
 		if(cb){
 			res = cb(res, idx, query);
 		}
