@@ -14,6 +14,7 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha . --reporter dot",
+    "test:this": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha ",
     "test:only": "cd test && ../node_modules/.bin/mocha . --reporter dot",
     "test:browser": "node test/browserTestRunner.js 7387",
     "build": "./node_modules/.bin/gulp",
