@@ -286,6 +286,7 @@ VALUE(S)?                                      	return 'VALUE'
 
 ':-'											return 'COLONDASH'
 '?-'											return 'QUESTIONDASH'
+'..'											return 'DOTDOT'
 '.'												return 'DOT'
 ','												return 'COMMA'
 '::'											return 'DOUBLECOLON'
@@ -549,6 +550,11 @@ RemoveColumn
 		{ $$ = {like:$2}; }	
 	;
 
+ArrowDot
+	: ARROW
+	| DOT
+	;
+
 SearchSelector
 	: Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
@@ -562,7 +568,9 @@ SearchSelector
 			$$ = {srchid:"ORDERBY", args: [{expression: new yy.Column({columnid:'_'}), direction:dir}]};
 		}
 
-	| ARROW Literal
+	| DOTDOT 
+		{ $$ = {srchid:"PARENT"}; }
+	| ArrowDot Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
 	| CARET 
 		{ $$ = {selid:"ROOT"};}
@@ -612,9 +620,7 @@ SearchSelector
 		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
 /*	| DELETE LPAR RPAR
 		{ $$ = {srchid:"DELETE"}; }
-*/	| DOT DOT 
-		{ $$ = {srchid:"PARENT"}; }
-	| Json
+*/	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
 	| AT Literal
 		{ $$ = {srchid:"AT", args:[$2]}; }	
@@ -1462,13 +1468,13 @@ Op
 	| Expression BAR Expression
 		{ $$ = new yy.Op({left:$1, op:'|', right:$3}); }
 
-	| Expression ARROW Literal
+	| Expression ArrowDot Literal
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
-	| Expression ARROW NumValue
+	| Expression ArrowDot NumValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
-	| Expression ARROW LPAR Expression RPAR
+	| Expression ArrowDot LPAR Expression RPAR
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
-	| Expression ARROW FuncValue
+	| Expression ArrowDot FuncValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 
 	| Expression EXCLAMATION Literal
@@ -2397,9 +2403,9 @@ AtDollar
 	;
 
 SetPropsList 
-	: SetPropsList ARROW SetProp
+	: SetPropsList ArrowDot SetProp
 		{ $1.push($3); $$ = $1; }
-	| ARROW SetProp
+	| ArrowDot SetProp
 		{ $$ = [$2]; }
 	;
 

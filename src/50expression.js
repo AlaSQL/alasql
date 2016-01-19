@@ -819,7 +819,11 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 			// }
 		} else if(this.tableid) {
 			if(this.columnid !== '_') {
-				s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
+				// if(true) {
+				// 	s = context+'[\''+tableid + '\'][\''+this.tableid+'\'][\''+this.columnid+'\']';
+				// } else {
+					s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
+				// }
 			} else {
 				if(context === 'g') {
 					s = 'g[\'_\']';						
