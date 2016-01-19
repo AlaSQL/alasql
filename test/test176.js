@@ -12,7 +12,7 @@ if(typeof exports === 'object') {
 describe('Test 176 - CSV and TSV', function() {
 
 	it("1. TAB", function(done) {
-		alasql('SELECT * FROM TAB("test176a.tab")',[],function(res) {
+		alasql('SELECT * FROM TAB("test176a.tab",{headers:false})',[],function(res) {
 			assert.deepEqual(res[0],{ '0': 'Country', '1': 'City' });
 			done();
 		});

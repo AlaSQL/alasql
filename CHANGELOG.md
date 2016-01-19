@@ -4,7 +4,9 @@
 ### 0.2.3-pre "Spetses" (xx.xx.2016)
 * Changed: New fast way to calculate aggregators (some parameters changed)
 * Added: User defined aggregators
-
+* Fixed: Remove empty Last line in TXT and XLSX
+* Changed: {headers:true} now is default option
+* Fixed: option.joinstar flag for SELECT * FROM a,b
 
 ### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list

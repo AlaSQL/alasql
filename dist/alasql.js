@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-develop-1116 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-develop-1127 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-develop-1116
+@version 0.2.2-develop-1127
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-develop-1116';
+alasql.version = '0.2.2-develop-1127';
 
 /**
 	Debug flag
@@ -3172,18 +3172,28 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                success(cutbom(buff));
             });
         } else {
-            /* If async callthen call async*/
-            if(asy) {
-                fs.readFile(path,function(err,data){
+            if(/^[a-z]+:\/\//i.test(path)) {
+                var request = require('request');
+                request(path,function(err, response, body) {
                     if(err) {
                         throw err;
                     }
-                    success(cutbom(data.toString()));
+                    success(cutbom(body.toString()));                    
                 });
             } else {
-                /* Call sync version */
-                data = fs.readFileSync(path);
-                success(cutbom(data.toString()));
+                /* If async callthen call async*/
+                if(asy) {
+                    fs.readFile(path,function(err,data){
+                        if(err) {
+                            throw err;
+                        }
+                        success(cutbom(data.toString()));
+                    });
+                } else {
+                    /* Call sync version */
+                    data = fs.readFileSync(path);
+                    success(cutbom(data.toString()));
+                }
             }
         }
     } else if(typeof cordova === 'object') {
@@ -3280,8 +3290,9 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
     // if(typeof exports == 'object') {
     //     // For Node.js
     //     var fs = require('fs');
-        if(asy) {
-            fs.readFile(path,function(err,data){
+        if(/^[a-z]+:\/\//i.test(path)) {
+            var request = require('request');
+            request({url:path,encoding:null},function(err, response, data) {
                 if(err) {
                     throw err;
                 }
@@ -3291,15 +3302,28 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             });
-
         } else {
-            var data = fs.readFileSync(path);
-            var arr = [];
-            for(var i = 0; i < data.length; ++i){
-                arr[i] = String.fromCharCode(data[i]);
+            if(asy) {
+                fs.readFile(path,function(err,data){
+                    if(err) {
+                        throw err;
+                    }
+                    var arr = [];
+                    for(var i = 0; i < data.length; ++i){
+                        arr[i] = String.fromCharCode(data[i]);
+                    }
+                    success(arr.join(""));
+                });
+
+            } else {
+                var data = fs.readFileSync(path);
+                var arr = [];
+                for(var i = 0; i < data.length; ++i){
+                    arr[i] = String.fromCharCode(data[i]);
+                }
+                success(arr.join(""));
             }
-            success(arr.join(""));
-        }
+        };
 
     } else {
 
@@ -4004,6 +4028,8 @@ alasql.options.nocount = false;
 
 // Check for NaN and convert it to undefined
 alasql.options.nan = false;
+
+alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
 
 //alasql.options.worker = false;
 // Variables
@@ -7890,7 +7916,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 // };
 
-function compileSelectStar (query,alias) {
+function compileSelectStar (query, alias, joinstar) {
 
 	var sp = '', ss=[];
 //	if(!alias) {
@@ -7910,10 +7936,22 @@ function compileSelectStar (query,alias) {
 		}
 
 		// Check if this is a Table or other
+		if(joinstar && alasql.options.joinstar == 'json') {	
+			sp += 'r[\''+alias+'\']={};';
+		};
 
 		if(columns && columns.length > 0) {
 			columns.forEach(function(tcol){
+
+			if(joinstar && alasql.options.joinstar == 'underscore') {
+				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+			} else if(joinstar && alasql.options.joinstar == 'json') {
+
+				sp += 'r[\''+alias+'\'][\''+tcol.columnid+'\']=p[\''+alias+'\'][\''+tcol.columnid+'\'];';
+			} else { 
 				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+			}
+
 				query.selectColumns[escapeq(tcol.columnid)] = true;
 
 				var coldef = {
@@ -7958,7 +7996,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					sp += 'r=params[\''+col.param+'\'](p[\''+query.sources[0].alias+'\'],p,params,alasql);';
 				} else if(col.tableid) {
 					//Copy all
-					var ret = compileSelectStar(query, col.tableid);
+					var ret = compileSelectStar(query, col.tableid, false);
 					if(ret.s){
 						ss = ss.concat(ret.s);
 					}
@@ -7967,8 +8005,8 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				} else {
 
 					for(var alias in query.aliases) {
-						var ret = compileSelectStar(query, alias); //query.aliases[alias].tableid);
-						if(ret.s){
+						var ret = compileSelectStar(query, alias, true); //query.aliases[alias].tableid);
+						if(ret.s) {
 							ss = ss.concat(ret.s);
 						}
 						sp += ret.sp;
@@ -14785,6 +14823,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	var res;
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
+		if(res[res.length-1] === '') res.pop(); // Remove last line if empty
 		for(var i=0, ilen=res.length; i<ilen;i++) {
 			// Please avoid '===' here
 			if(res[i] == +res[i]){	// jshint ignore:line
@@ -14808,7 +14847,8 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	var opt = {
 		separator: ',',
-		quote: '"'
+		quote: '"',
+		headers:true
 	};
 	alasql.utils.extend(opt, opts);
 	var res, hs;
@@ -14928,6 +14968,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var opt = {};
 	opts = opts || {};
 	alasql.utils.extend(opt, opts);
+	if(typeof opt.headers == 'undefined') opt.headers = true;
 	var res;
 
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
@@ -14982,6 +15023,11 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 				}
 			}
 			res.push(row);
+		}
+
+		// Remove last empty line (issue #548)
+		if(res.length > 0 && res[res.length-1] && Object.keys(res[res.length-1]).length == 0) {
+			res.pop();
 		}
 
 		if(cb){
