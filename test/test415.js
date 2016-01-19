@@ -52,9 +52,18 @@ describe('Test '+test+' Aggregators', function() {
       {_date:new Date("10.10.2015"), selectedChem:4},
     ];
     var res = alasql('SELECT count(1) AS ct, min(_date) AS minDate, max(_date) AS maxDate, min(selectedChem) AS minparam, max(selectedChem) AS maxparam, AVG(selectedChem) AS avgparam, MEDIAN(selectedChem) AS medparam, STDEV(selectedChem) AS sdevparam FROM ? WHERE selectedChem is not null AND selectedChem != -9999 ORDER BY _date', [ resultSet ]);
-    console.log(res);
+    //console.log(res);
 
-//    assert.deepEqual(res,[ { 'MEDIAN(a)': 2, 'STDEV(a)': 1, 'SQRT(VAR(a))': 1 } ]);
+    assert.deepEqual(res,
+[ { ct: 4,
+    minDate: 1420059600000,
+    maxDate: 1451595600000,
+    minparam: 1,
+    maxparam: 4,
+    avgparam: 2.5,
+    medparam: 3,
+    sdevparam: 1.2909944487358056 } ]
+    );
     done();
   });
 
@@ -66,7 +75,16 @@ describe('Test '+test+' Aggregators', function() {
       {_date:new Date("10.10.2015"), selectedChem:undefined},
     ];
     var res = alasql('SELECT count(1) AS ct, min(_date) AS minDate, max(_date) AS maxDate, min(selectedChem) AS minparam, max(selectedChem) AS maxparam, AVG(selectedChem) AS avgparam, MEDIAN(selectedChem) AS medparam, STDEV(selectedChem) AS sdevparam FROM ? WHERE selectedChem is not null AND selectedChem != -9999 ORDER BY _date', [ resultSet ]);
-    console.log(res);
+    assert.deepEqual(res,
+[ { ct: 3,
+    minDate: 1420059600000,
+    maxDate: 1451595600000,
+    minparam: 1,
+    maxparam: 3,
+    avgparam: 2,
+    medparam: 2,
+    sdevparam: 1 } ]
+    );
 
 //    assert.deepEqual(res,[ { 'MEDIAN(a)': 2, 'STDEV(a)': 1, 'SQRT(VAR(a))': 1 } ]);
     done();
