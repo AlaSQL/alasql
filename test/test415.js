@@ -44,7 +44,7 @@ describe('Test '+test+' Aggregators', function() {
     done();
   });
 
-  it('3. Test',function(done){
+  it.skip('3. Test',function(done){
     var resultSet = [
       {_date:new Date("01.01.2016"), selectedChem:1},
       {_date:new Date("01.01.2015"), selectedChem:2},
@@ -67,7 +67,7 @@ describe('Test '+test+' Aggregators', function() {
     done();
   });
 
-  it('4. Test',function(done){
+  it.skip('4. Test',function(done){
     var resultSet = [
       {_date:new Date("01.01.2016"), selectedChem:1},
       {_date:new Date("01.01.2015"), selectedChem:2},
