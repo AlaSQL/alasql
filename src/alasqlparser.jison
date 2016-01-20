@@ -296,6 +296,7 @@ VALUE(S)?                                      	return 'VALUE'
 '?'												return 'QUESTION'
 '!'												return 'EXCLAMATION'
 '^'												return 'CARET'
+'~'												return 'TILDA'
 
 [a-zA-Z_][a-zA-Z_0-9]*                     		return 'LITERAL'
 
@@ -317,8 +318,9 @@ VALUE(S)?                                      	return 'VALUE'
 %left GTGT LTLT AMPERSAND BAR
 %left PLUS MINUS
 %left STAR SLASH MODULO
-%left CARET
+%left CARET 
 %left DOT ARROW EXCLAMATION
+%left TILDA
 %left SHARP
 %left BARBAR
 
@@ -1560,6 +1562,8 @@ Op
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
 	| PLUS Expression
 		{ $$ = new yy.UniOp({op:'+' , right:$2}); }
+	| TILDA Expression
+		{ $$ = new yy.UniOp({op:'~' , right:$2}); }
 	| SHARP Expression
 		{ $$ = new yy.UniOp({op:'#' , right:$2}); }
 	| LPAR Expression RPAR

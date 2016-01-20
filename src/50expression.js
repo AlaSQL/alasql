@@ -558,13 +558,13 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 	}
 
-	if(this.op === '^') {
-		return 	'Math.pow('
-				+ leftJS()
-				+ ','
-				+ rightJS()
-				+ ')';
-	}
+	// if(this.op === '^') {
+	// 	// return 	'Math.pow('
+	// 	// 		+ leftJS()
+	// 	// 		+ ','
+	// 	// 		+ rightJS()
+	// 	// 		+ ')';
+	// }
 
 
 
@@ -667,6 +667,10 @@ yy.ParamValue.prototype.toJS = function() {
 
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {
+	if(this.op === '~'){
+		return this.op+this.right.toString();
+	}
+
 	if(this.op === '-'){
 		return this.op+this.right.toString();
 	}
@@ -714,6 +718,10 @@ yy.UniOp.prototype.toType = function() {
 };
 
 yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
+	if(this.op === '~'){
+		return "(~("+this.right.toJS(context, tableid, defcols)+"))";
+	}
+
 	if(this.op === '-'){
 		return "(-("+this.right.toJS(context, tableid, defcols)+"))";
 	}
@@ -798,7 +806,7 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 
 //console.log(506,this);
 
-//console.log(523, arguments);
+//console.log(523, this, tableid);
 
 	var s = '';
 	if(!this.tableid && tableid === '' && !defcols) {
@@ -819,8 +827,8 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 			// }
 		} else if(this.tableid) {
 			if(this.columnid !== '_') {
-				// if(true) {
-				// 	s = context+'[\''+tableid + '\'][\''+this.tableid+'\'][\''+this.columnid+'\']';
+				// if() {
+					// s = context+'[\''+tableid + '\'][\''+this.tableid+'\'][\''+this.columnid+'\']';
 				// } else {
 					s = context+'[\''+(this.tableid) + '\'][\''+this.columnid+'\']';			
 				// }
@@ -841,9 +849,16 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 				} else {
 					s = context+'[\''+(tbid) + '\']';
 				}
+//			console.log(836,tbid,s);
 			} else {
 				if(this.columnid !== '_') {
-					s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+					// if(defcols['.'][this.tableid]) {
+					// 	console.log(847,tableid);
+					// 	console.log(context+'[\''+tableid + '\'][\''+this.tableid + '\']','[\''+this.columnid+'\']');
+					// 	s = context+'[\''+tableid + '\'][\''+this.tableid + '\'][\''+this.columnid+'\']';
+					// } else {
+						s = context+'[\''+(this.tableid || tableid) + '\'][\''+this.columnid+'\']';
+					// }
 				} else {
 					s = context+'[\''+(this.tableid || tableid) + '\']';
 				}
@@ -864,6 +879,7 @@ yy.Column.prototype.toJS = function(context, tableid, defcols) {
 	}
 //	console.log(context,s);
 //	console.trace(new Error());
+//console.log(874,s);
 	return s;
 }
 

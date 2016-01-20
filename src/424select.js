@@ -139,7 +139,11 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				if(!tbid) tbid = query.defcols[col.columnid];
 				if(!tbid) tbid = query.defaultTableid;
 				if(col.columnid !== '_') {
-					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+					if(false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
+						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(query.defaultTableid)+'\'][\''+(col.tableid)+'\'][\''+col.columnid+'\']');
+					} else {
+						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+					}
 				} else {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');					
 				}
@@ -282,7 +286,7 @@ yy.Select.prototype.compileSelect2 = function(query) {
 			query.removeKeys.push(key);
 		});
 	}
-//	console.log(s);
+//	console.log(285,s);
 	return new Function('p,params,alasql','var y;'+s+'return r');
 };
 

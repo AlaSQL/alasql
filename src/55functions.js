@@ -136,6 +136,7 @@ stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
 stdfn.CONCAT = function(){
 	return Array.prototype.slice.call(arguments).join(' ');
 };
+stdlib.EXP = function(a) {return 'Math.pow(Math.E,'+a+')'};
 
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
