@@ -155,17 +155,16 @@ DATABASE(S)?									return 'DATABASE'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 'MATCHED'										return 'MATCHED'
-'MATRIX'										return 'MATRIX'	
+'MATRIX'										return 'MATRIX'
 
 /*"MAX"											return 'MAX'*/
-'MAX'(\s+)?/'('									return 'MAX'
-'MAX'(\s+)?/','|')'								return 'MAXNUM'
-
 /*"MIN"											return 'MIN'*/
+
+'MAX'(\s+)?/'('									return 'MAX'
+'MAX'(\s+)?/(','|')')							return 'MAXNUM'
 'MIN'(\s+)?/'('									return 'MIN'
 
 "MERGE"											return 'MERGE'
-
 "MINUS"											return 'EXCEPT'
 "MODIFY"										return 'MODIFY'
 'NATURAL'										return 'NATURAL'
@@ -309,7 +308,6 @@ VALUE(S)?                                      	return 'VALUE'
 
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
-
 
 /lex
 %left COMMA
@@ -1985,26 +1983,27 @@ ColumnType
 */
 ColumnType
 	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $LITERAL, dbsize: $LPAR NumberMax, dbprecision: +$NUMBER} }
+		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
 	| LITERAL LITERAL LPAR NumberMax COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $LITERAL1+($LITERAL2?' '+$LITERAL2:''), dbsize: $LPARNumberMax, dbprecision: +$NUMBER} }
+		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4, dbprecision: +$6} }
 	| LITERAL LPAR NumberMax RPAR
-		{ $$ = {dbtypeid: $LITERAL, dbsize: $LPAR NumberMax} }
+		{ $$ = {dbtypeid: $1, dbsize: $3} }
 	| LITERAL LITERAL LPAR NumberMax RPAR
-		{ $$ = {dbtypeid: $LITERAL1+($LITERAL2?' '+$LITERAL2:''), dbsize: $LPARNumberMax} }
+		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4} }
 	| LITERAL
-		{ $$ = {dbtypeid: $LITERAL} }
+		{ $$ = {dbtypeid: $1} }
 	| LITERAL LITERAL
-		{ $$ = {dbtypeid: $LITERAL1+($LITERAL2?' '+$LITERAL2:'')} }
+		{ $$ = {dbtypeid: $1+($2?' '+$2:'')} }
 	| ENUM LPAR ValuesList RPAR
-		{ $$ = {dbtypeid: 'ENUM', enumvalues: $ValuesList} }
+		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
+
 
 
 
 NumberMax
 	: NUMBER
-		{ $$ = +$NUMBER; }
+		{ $$ = +$1; }
 	| MAXNUM
 		{ $$ = "MAX"; }
 	;
