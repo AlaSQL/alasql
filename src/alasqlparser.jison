@@ -155,10 +155,16 @@ DATABASE(S)?									return 'DATABASE'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 'MATCHED'										return 'MATCHED'
-'MATRIX'										return 'MATRIX'	
-"MAX"											return 'MAX'
+'MATRIX'										return 'MATRIX'
+
+/*"MAX"											return 'MAX'*/
+/*"MIN"											return 'MIN'*/
+
+'MAX'(\s+)?/'('									return 'MAX'
+'MAX'(\s+)?/(','|')')							return 'MAXNUM'
+'MIN'(\s+)?/'('									return 'MIN'
+
 "MERGE"											return 'MERGE'
-"MIN"											return 'MIN'
 "MINUS"											return 'EXCEPT'
 "MODIFY"										return 'MODIFY'
 'NATURAL'										return 'NATURAL'
@@ -1998,7 +2004,7 @@ ColumnType
 NumberMax
 	: NUMBER
 		{ $$ = +$1; }
-	| MAX
+	| MAXNUM
 		{ $$ = "MAX"; }
 	;
 
