@@ -156,9 +156,16 @@ DATABASE(S)?									return 'DATABASE'
 'LIMIT'											return 'LIMIT'
 'MATCHED'										return 'MATCHED'
 'MATRIX'										return 'MATRIX'	
-"MAX"											return 'MAX'
+
+/*"MAX"											return 'MAX'*/
+'MAX'(\s+)?/'('									return 'MAX'
+'MAX'(\s+)?/','|')'								return 'MAXNUM'
+
+/*"MIN"											return 'MIN'*/
+'MIN'(\s+)?/'('									return 'MIN'
+
 "MERGE"											return 'MERGE'
-"MIN"											return 'MIN'
+
 "MINUS"											return 'EXCEPT'
 "MODIFY"										return 'MODIFY'
 'NATURAL'										return 'NATURAL'
@@ -302,6 +309,7 @@ VALUE(S)?                                      	return 'VALUE'
 
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
+
 
 /lex
 %left COMMA
@@ -1977,28 +1985,27 @@ ColumnType
 */
 ColumnType
 	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
+		{ $$ = {dbtypeid: $LITERAL, dbsize: $LPAR NumberMax, dbprecision: +$NUMBER} }
 	| LITERAL LITERAL LPAR NumberMax COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4, dbprecision: +$6} }
+		{ $$ = {dbtypeid: $LITERAL1+($LITERAL2?' '+$LITERAL2:''), dbsize: $LPARNumberMax, dbprecision: +$NUMBER} }
 	| LITERAL LPAR NumberMax RPAR
-		{ $$ = {dbtypeid: $1, dbsize: $3} }
+		{ $$ = {dbtypeid: $LITERAL, dbsize: $LPAR NumberMax} }
 	| LITERAL LITERAL LPAR NumberMax RPAR
-		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4} }
+		{ $$ = {dbtypeid: $LITERAL1+($LITERAL2?' '+$LITERAL2:''), dbsize: $LPARNumberMax} }
 	| LITERAL
-		{ $$ = {dbtypeid: $1} }
+		{ $$ = {dbtypeid: $LITERAL} }
 	| LITERAL LITERAL
-		{ $$ = {dbtypeid: $1+($2?' '+$2:'')} }
+		{ $$ = {dbtypeid: $LITERAL1+($LITERAL2?' '+$LITERAL2:'')} }
 	| ENUM LPAR ValuesList RPAR
-		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
+		{ $$ = {dbtypeid: 'ENUM', enumvalues: $ValuesList} }
 	;
-
 
 
 
 NumberMax
 	: NUMBER
-		{ $$ = +$1; }
-	| MAX
+		{ $$ = +$NUMBER; }
+	| MAXNUM
 		{ $$ = "MAX"; }
 	;
 
