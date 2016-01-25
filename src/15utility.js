@@ -260,6 +260,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     }
                 };
                 xhr.open("GET", path, asy); // Async
+                xhr.responseType = "text";
                 xhr.send();
             }
         } else if(path instanceof Event) {
@@ -358,6 +359,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             }
+            xhr.responseType = "blob";
             xhr.send();
         } else if(path instanceof Event) {
             // console.log("event");
