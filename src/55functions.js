@@ -340,8 +340,8 @@ alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,stage){
 };
 
 // String functions
-alasql.fn.REPLACE = function (str,pattern,newstr)
-    return (str||'').replace(RegExp(pattern,"g"),newstr)
+stdfn.REPLACE = function (target,pattern,replacement) {
+    return target.split(pattern).join(replacement);
 };
 
 

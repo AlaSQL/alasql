@@ -8,6 +8,7 @@
 * Changed: {headers:true} now is default option
 * Fixed: option.joinstar flag for SELECT * FROM a,b
 * Added: EXP() function, ^ now is XOR, ~ binary NOT
+* Added: REPLACE() string function (see issue #560)
 
 ### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list

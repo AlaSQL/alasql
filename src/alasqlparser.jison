@@ -1335,6 +1335,8 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| IF LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
+	| REPLACE LPAR ExprList RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
 	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
 	| DATEADD LPAR STRING COMMA Expression COMMA Expression RPAR
