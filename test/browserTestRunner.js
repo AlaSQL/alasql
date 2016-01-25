@@ -1,4 +1,7 @@
-﻿var http = require("http"),
+﻿if(typeof(describe) !== "function") {
+
+
+var http = require("http"),
     url = require("url"),
     path = require("path"),
     fs = require("fs"),
@@ -97,3 +100,6 @@ function walkFiles(dir, reFilterYes, reFilterNo, oneFolderOnly, onlyFileName) {
     });
     return results;
 }   
+
+
+}

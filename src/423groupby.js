@@ -71,7 +71,7 @@ if(false) {
 	allgroup.forEach(function(agroup) {
 
 		// Start of group function
-		s += 'var acc,g=this.xgroups[';
+		s += 'var g=this.xgroups[';
 
 	//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
@@ -177,9 +177,12 @@ if(false) {
 					aft += ',g[\''+colas+'\']='+col.expression.toJS('g',-1); 
 					return '';
 				} else if(col.aggregatorid === 'REDUCE') {
-					query.removeKeys.push('_REDUCE_'+colas);
-					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={})),'
-					+'\'__REDUCE__'+colas+'\':acc,'; 
+//					query.removeKeys.push('_REDUCE_'+colas);
+					query.aggrKeys.push(col);
+
+//					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={}),1),'
+//					+'\'__REDUCE__'+colas+'\':acc,'; 
+					return '\''+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,1),'; 
 				}
 				return '';
 			} 
@@ -310,7 +313,7 @@ if(false) {
 				} else if(col.aggregatorid === 'REDUCE') {
 					return 	''
 							+ pre+'g[\''+colas+'\']=alasql.aggr.'
-							+ col.funcid+'('+colexp+',g[\''+colas+'\'],g[\'__REDUCE__'+colas+'\']);'
+							+ col.funcid+'('+colexp+',g[\''+colas+'\'],2);'
 							+ post; 
 				}
 
@@ -340,6 +343,6 @@ if(false) {
 	});
 
 //		console.log('groupfn',s);
-	return new Function('p,params,alasql',s);
+	return new Function('p,params,alasql','var y;'+s);
 
 }

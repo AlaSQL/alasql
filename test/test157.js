@@ -16,7 +16,7 @@ describe('Test 157 - json()', function() {
 		});
 	});
 
-	it("3. Load text file", function(done){
+	it("2. Load text file", function(done){
 		alasql('select column * from txt("test157.txt") where [0] like "M%" order by [0]',[],function(res){
 //			console.log(res);
 			assert.deepEqual(res, ["Madrid","Milano","Minsk","Moscow"]);
@@ -24,14 +24,14 @@ describe('Test 157 - json()', function() {
 		});
 	});
 
-	it("4. Load tab-separated file", function(done){
-		alasql('select column * from tab("test157a.tab") where [1] > 100 order by [0]',[],function(res){
+	it("3. Load tab-separated file", function(done){
+		alasql('select column * from tab("test157a.tab",{headers:false}) where [1] > 100 order by [0]',[],function(res){
 			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
 			done();
 		});
 	});
 
-	it("5. Load tab-separated file", function(done){
+	it("4. Load tab-separated file", function(done){
 		alasql('select column city from tab("test157b.tab", {headers:true}) where population > 100 order by city',[],function(res){
 			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
 			done();
@@ -39,14 +39,14 @@ describe('Test 157 - json()', function() {
 	});
 
 
-	it("6. Load CSV-file", function(done){
-		alasql('select column * from csv("test157a.csv") where [1] > 100 order by [0]',[],function(res){
+	it("5. Load CSV-file", function(done){
+		alasql('select column * from csv("test157a.csv",{headers:false}) where [1] > 100 order by [0]',[],function(res){
 			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
 			done();
 		});
 	});
 
-	it("7. Load CSV-file with headers", function(done){
+	it("6. Load CSV-file with headers", function(done){
 		alasql('select column city from csv("test157b.csv",{headers:true}) where population > 100 order by city',[],function(res){
 			assert.deepEqual(res, ["Astana","Tokyo","Vitebsk"]);
 			done();

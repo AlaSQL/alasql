@@ -136,6 +136,7 @@ stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
 stdfn.CONCAT = function(){
 	return Array.prototype.slice.call(arguments).join(' ');
 };
+stdlib.EXP = function(a) {return 'Math.pow(Math.E,'+a+')'};
 
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
@@ -208,6 +209,14 @@ stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 stdlib.TRIM = function(s) {return und(s,'y.trim()');}
 
 stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'String(y).toUpperCase()');}
+
+// Concatination of strings
+stdfn.CONCAT_WS = function() {
+    args = Array.prototype.slice.call(arguments);
+    return args.slice(1, args.length).join(args[0]);
+};
+
+
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
 //REPLACE
 // RTRIM
@@ -220,68 +229,114 @@ stdlib.UPPER = stdlib.UCASE = function(s) {return und(s,'String(y).toUpperCase()
 
 
 // Aggregator for joining strings
-alasql.aggr.GROUP_CONCAT = function(v,s){
-    if(typeof s == "undefined") return v; else return s+','+v;
+alasql.aggr.GROUP_CONCAT = function(v,s,stage){
+    if(stage == 1) {
+    	return v; 
+    } else if(stage == 2) {
+    	return s+','+v;
+    }
 };
 
 // Median
-alasql.aggr.MEDIAN = function(v,s,acc){
-	// Init
-	if(typeof acc.arr == 'undefined') {
-	  acc.arr = [v];
-	  return v; 
-	// Pass
+// alasql.aggr.MEDIAN = function(v,s,acc){
+// 	// Init
+// 	if(typeof acc.arr == 'undefined') {
+// 	  acc.arr = [v];
+// 	  return v; 
+// 	// Pass
+// 	} else {
+// 	  acc.arr.push(v);
+// 	  var p = acc.arr.sort();
+// 	  return p[(p.length/2)|0];     
+// 	};
+// };
+
+alasql.aggr.MEDIAN = function(v,s,stage){
+  if(stage == 1) {
+    return [v];
+  } else if(stage == 2) {
+    s.push(v);    
+    return s;
+  } else {
+    var p = s.sort();
+    return p[(p.length/2)|0];     
+  };
+};
+
+
+
+// Standard deviation
+alasql.aggr.VAR = function(v,s,stage){
+	if(stage == 1) {
+		return {arr:[v],sum:v};
+	} else if(stage == 2) {
+		s.arr.push(v);
+		s.sum += v;
+		return s;
 	} else {
-	  acc.arr.push(v);
-	  var p = acc.arr.sort();
-	  return p[(p.length/2)|0];     
-	};
+		var N = s.arr.length;
+		var avg = s.sum / N;
+		var std = 0;
+		for(var i=0;i<N;i++) {
+			std += (s.arr[i]-avg)*(s.arr[i]-avg);
+		}
+		std = std/(N-1);
+		return std;
+	}
+};
+
+alasql.aggr.STDEV = function(v,s,stage){
+	if(stage == 1 || stage == 2 ) {
+		return alasql.aggr.VAR(v,s,stage);
+	} else {
+		return Math.sqrt(alasql.aggr.VAR(v,s,stage));
+	}
 };
 
 // Standard deviation
-alasql.aggr.VAR = function(v,s,acc){
-	if(typeof acc.arr == 'undefined') {
-		acc.arr = [v];
-		acc.sum = v;
+// alasql.aggr.VARP = function(v,s,acc){
+// 	if(typeof acc.arr == 'undefined') {
+// 		acc.arr = [v];
+// 		acc.sum = v;
+// 	} else {
+// 		acc.arr.push(v);
+// 		acc.sum += v;
+// 	}
+// 	var N = acc.arr.length;
+// 	var avg = acc.sum / N;
+// 	var std = 0;
+// 	for(var i=0;i<N;i++) {
+// 		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
+// 	}
+// 	std = std/N;
+// 	return std;
+// };
+
+alasql.aggr.VARP = function(v,s,stage){
+	if(stage == 1) {
+		return {arr:[v],sum:v};
+	} else if(stage == 2) {
+		s.arr.push(v);
+		s.sum += v;
+		return s;
 	} else {
-		acc.arr.push(v);
-		acc.sum += v;
+		var N = s.arr.length;
+		var avg = s.sum / N;
+		var std = 0;
+		for(var i=0;i<N;i++) {
+			std += (s.arr[i]-avg)*(s.arr[i]-avg);
+		}
+		std = std/N;
+		return std;
 	}
-	var N = acc.arr.length;
-	var avg = acc.sum / N;
-	var std = 0;
-	for(var i=0;i<N;i++) {
-		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-	}
-	std = std/(N-1);
-	return std;
 };
 
-alasql.aggr.STDEV = function(v,s,acc){
-	return Math.sqrt(alasql.aggr.VAR(v,s,acc));
-}
-
-// Standard deviation
-alasql.aggr.VARP = function(v,s,acc){
-	if(typeof acc.arr == 'undefined') {
-		acc.arr = [v];
-		acc.sum = v;
+alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,stage){
+	if(stage == 1 || stage == 2 ) {
+		return alasql.aggr.VARP(v,s,stage);
 	} else {
-		acc.arr.push(v);
-		acc.sum += v;
+		return Math.sqrt(alasql.aggr.VARP(v,s,stage));
 	}
-	var N = acc.arr.length;
-	var avg = acc.sum / N;
-	var std = 0;
-	for(var i=0;i<N;i++) {
-		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-	}
-	std = std/N;
-	return std;
-};
-
-alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,acc){
-	return Math.sqrt(alasql.aggr.VARP(v,s,acc));
 };
 
 

@@ -3,14 +3,13 @@
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123) 
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?) 
 [![Inline docs](http://inch-ci.org/github/agershun/alasql.svg?branch=develop)](http://inch-ci.org/github/agershun/alasql) 
-![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85) 
-![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release) 
+![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a) 
+![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a) 
 ![NPM version](https://img.shields.io/npm/l/alasql.svg?123) 
 
+_AlaSQL is an open source project and we appreciate any and all contributions we can get. Please help out._
 
 _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) and tag with "alasql"._
-
-_Like it? Give us a github star, spread the word, send a tweet._ 
 
 
 # AlaSQL
@@ -68,7 +67,7 @@ console.log(res); // [{"a":1,"b":40},{"a":2,"b":20}]
 ```
 
 ```js
-// C) Read from file 
+// C) Promise notation + read from file example
 alasql.promise('SELECT * FROM XLS("mydata.xls") WHERE lastname LIKE "A%" and city = "London" GROUP BY name ')
       .then(function(res){
            console.log(res); // output depends on mydata.xls
@@ -467,25 +466,25 @@ You can use JSON objects in your databases (do not forget use == and !== operato
 
 ```sql
 
-alasql> SELECT VALUE @{a:'1',b:'2'}
+alasql> SELECT VALUE {a:'1',b:'2'}
 
 {a:1,b:2}
 
-alasql> SELECT VALUE @{a:'1',b:'2'} == @{a:'1',b:'2'}
+alasql> SELECT VALUE {a:'1',b:'2'} == {a:'1',b:'2'}
 
 true
 
-alasql> SELECT VALUE @{a:'1',b:'2'}->b
+alasql> SELECT VALUE {a:'1',b:'2'}->b
 
 2
 
-alasql> SELECT VALUE @{a:'1',b:(2*2)}->b
+alasql> SELECT VALUE {a:'1',b:(2*2)}->b
 
 4
 
 ```
 
-Try AlaSQL JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
+Try AlaSQL JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values {a:@[1,2,3],c:{e:23}}, {a:@[{b:@[1,2,3]}]};select * from one)
 
 
 
@@ -536,7 +535,7 @@ Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alas
 
 0. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because AlaSQL started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in future version.
 
-0. A `(FULL) OUTER JOIN` on more than 2 tables will not give the expected results
+0. A `(FULL) OUTER JOIN` and `RIGHT JOIM` on more than 2 tables will not give the expected results. `INNER JOIN` and `LEFT JOIN` are ok.
 
 Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
   

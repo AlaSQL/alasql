@@ -28,7 +28,8 @@ describe('Test 193 - GROUP BY formula', function() {
     });
 
     it("3. PI calculation #2", function(done) {
-        var res = alasql('SELECT VALUE COUNT(*)*4/$[0] FROM RANGE(1,$[0]) WHERE RANDOM()^2+RANDOM()^2<1',[100000]);
+        var res = alasql('SELECT VALUE COUNT(*)*4/$[0] FROM RANGE(1,$[0]) WHERE POWER(RANDOM(),2)+POWER(RANDOM(),2)<1',[100000]);
+//        console.log(res);
         assert(3.1<res && res<3.2);
 //        console.log('PI=',res);
         done();

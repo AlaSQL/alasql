@@ -1,7 +1,15 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.2-pre "Mitilini" (XX.XX.20XX)
+### 0.2.3-pre "Spetses" (xx.xx.2016)
+* Changed: New fast way to calculate aggregators (some parameters changed)
+* Added: User defined aggregators
+* Fixed: Remove empty Last line in TXT and XLSX
+* Changed: {headers:true} now is default option
+* Fixed: option.joinstar flag for SELECT * FROM a,b
+* Added: EXP() function, ^ now is XOR, ~ binary NOT
+
+### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list
 * Fix: Bug in NUMERIC type conversion
 * Added: functions CEIL/CEILING and FLOOR
@@ -28,6 +36,8 @@
 * Fixed: browser tests, IndexedDB tests, DROP TABLE callback for external engines
 * Added: DATETIME2 type for compatibility with T-SQL
 * Added: DATEADD() and DATEDIFF() functions in T-SQL style
+* Added: CONCAT_WS() function
+* Added: OF() selector for SEARCH statement
 
 ### 0.2.1 "Rodos" (28.09.2015)
 * Added: AlaSQL CLI: Support for --version flag

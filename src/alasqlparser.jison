@@ -155,10 +155,16 @@ DATABASE(S)?									return 'DATABASE'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
 'MATCHED'										return 'MATCHED'
-'MATRIX'										return 'MATRIX'	
-"MAX"											return 'MAX'
+'MATRIX'										return 'MATRIX'
+
+/*"MAX"											return 'MAX'*/
+/*"MIN"											return 'MIN'*/
+
+'MAX'(\s+)?/'('									return 'MAX'
+'MAX'(\s+)?/(','|')')							return 'MAXNUM'
+'MIN'(\s+)?/'('									return 'MIN'
+
 "MERGE"											return 'MERGE'
-"MIN"											return 'MIN'
 "MINUS"											return 'EXCEPT'
 "MODIFY"										return 'MODIFY'
 'NATURAL'										return 'NATURAL'
@@ -286,6 +292,7 @@ VALUE(S)?                                      	return 'VALUE'
 
 ':-'											return 'COLONDASH'
 '?-'											return 'QUESTIONDASH'
+'..'											return 'DOTDOT'
 '.'												return 'DOT'
 ','												return 'COMMA'
 '::'											return 'DOUBLECOLON'
@@ -295,6 +302,7 @@ VALUE(S)?                                      	return 'VALUE'
 '?'												return 'QUESTION'
 '!'												return 'EXCLAMATION'
 '^'												return 'CARET'
+'~'												return 'TILDA'
 
 [a-zA-Z_][a-zA-Z_0-9]*                     		return 'LITERAL'
 
@@ -316,8 +324,9 @@ VALUE(S)?                                      	return 'VALUE'
 %left GTGT LTLT AMPERSAND BAR
 %left PLUS MINUS
 %left STAR SLASH MODULO
-%left CARET
+%left CARET 
 %left DOT ARROW EXCLAMATION
+%left TILDA
 %left SHARP
 %left BARBAR
 
@@ -549,6 +558,11 @@ RemoveColumn
 		{ $$ = {like:$2}; }	
 	;
 
+ArrowDot
+	: ARROW
+	| DOT
+	;
+
 SearchSelector
 	: Literal
 		{ $$ = {srchid:"PROP", args: [$1]}; }
@@ -562,7 +576,9 @@ SearchSelector
 			$$ = {srchid:"ORDERBY", args: [{expression: new yy.Column({columnid:'_'}), direction:dir}]};
 		}
 
-	| ARROW Literal
+	| DOTDOT 
+		{ $$ = {srchid:"PARENT"}; }
+	| ArrowDot Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
 	| CARET 
 		{ $$ = {selid:"ROOT"};}
@@ -612,9 +628,7 @@ SearchSelector
 		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
 /*	| DELETE LPAR RPAR
 		{ $$ = {srchid:"DELETE"}; }
-*/	| DOT DOT 
-		{ $$ = {srchid:"PARENT"}; }
-	| Json
+*/	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
 	| AT Literal
 		{ $$ = {srchid:"AT", args:[$2]}; }	
@@ -1462,13 +1476,13 @@ Op
 	| Expression BAR Expression
 		{ $$ = new yy.Op({left:$1, op:'|', right:$3}); }
 
-	| Expression ARROW Literal
+	| Expression ArrowDot Literal
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
-	| Expression ARROW NumValue
+	| Expression ArrowDot NumValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
-	| Expression ARROW LPAR Expression RPAR
+	| Expression ArrowDot LPAR Expression RPAR
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
-	| Expression ARROW FuncValue
+	| Expression ArrowDot FuncValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
 
 	| Expression EXCLAMATION Literal
@@ -1554,6 +1568,8 @@ Op
 		{ $$ = new yy.UniOp({op:'-' , right:$2}); }
 	| PLUS Expression
 		{ $$ = new yy.UniOp({op:'+' , right:$2}); }
+	| TILDA Expression
+		{ $$ = new yy.UniOp({op:'~' , right:$2}); }
 	| SHARP Expression
 		{ $$ = new yy.UniOp({op:'#' , right:$2}); }
 	| LPAR Expression RPAR
@@ -1988,7 +2004,7 @@ ColumnType
 NumberMax
 	: NUMBER
 		{ $$ = +$1; }
-	| MAX
+	| MAXNUM
 		{ $$ = "MAX"; }
 	;
 
@@ -2397,9 +2413,9 @@ AtDollar
 	;
 
 SetPropsList 
-	: SetPropsList ARROW SetProp
+	: SetPropsList ArrowDot SetProp
 		{ $1.push($3); $$ = $1; }
-	| ARROW SetProp
+	| ArrowDot SetProp
 		{ $$ = [$2]; }
 	;
 

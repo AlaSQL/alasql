@@ -10,7 +10,9 @@
 // 	return sources;
 // };
 
-function compileSelectStar (query,alias) {
+function compileSelectStar (query, alias, joinstar) {
+
+
 	// console.log(query.aliases[alias]);
 //	console.log(query,alias);
 	// console.log(query.aliases[alias].tableid);
@@ -40,10 +42,25 @@ function compileSelectStar (query,alias) {
 
 
 		// Check if this is a Table or other
+		if(joinstar && alasql.options.joinstar == 'json') {	
+			sp += 'r[\''+alias+'\']={};';
+		};
 
 		if(columns && columns.length > 0) {
 			columns.forEach(function(tcol){
+
+
+			if(joinstar && alasql.options.joinstar == 'underscore') {
+				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+			} else if(joinstar && alasql.options.joinstar == 'json') {
+//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+				sp += 'r[\''+alias+'\'][\''+tcol.columnid+'\']=p[\''+alias+'\'][\''+tcol.columnid+'\'];';
+			} else { 
 				ss.push('\''+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+			}
+
+
+
 				query.selectColumns[escapeq(tcol.columnid)] = true;
 
 //			console.log('ok',tcol);
@@ -69,7 +86,7 @@ function compileSelectStar (query,alias) {
 			query.dirtyColumns = true;
 		}
 //	}
-//console.log({s:ss.join(','),sp:sp});
+//console.log(87,{s:ss.join(','),sp:sp});
 	return {s:ss.join(','),sp:sp};
 }
 
@@ -94,7 +111,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					sp += 'r=params[\''+col.param+'\'](p[\''+query.sources[0].alias+'\'],p,params,alasql);';
 				} else if(col.tableid) {
 					//Copy all
-					var ret = compileSelectStar(query, col.tableid);
+					var ret = compileSelectStar(query, col.tableid, false);
 					if(ret.s){
 						ss = ss.concat(ret.s);
 					}
@@ -103,8 +120,8 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				} else {
 //					console.log('aliases', query.aliases);
 					for(var alias in query.aliases) {
-						var ret = compileSelectStar(query, alias); //query.aliases[alias].tableid);
-						if(ret.s){
+						var ret = compileSelectStar(query, alias, true); //query.aliases[alias].tableid);
+						if(ret.s) {
 							ss = ss.concat(ret.s);
 						}
 						sp += ret.sp;
@@ -122,7 +139,11 @@ yy.Select.prototype.compileSelect1 = function(query) {
 				if(!tbid) tbid = query.defcols[col.columnid];
 				if(!tbid) tbid = query.defaultTableid;
 				if(col.columnid !== '_') {
-					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+					if(false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
+						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(query.defaultTableid)+'\'][\''+(col.tableid)+'\'][\''+col.columnid+'\']');
+					} else {
+						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+					}
 				} else {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');					
 				}
@@ -254,7 +275,18 @@ yy.Select.prototype.compileSelect1 = function(query) {
 yy.Select.prototype.compileSelect2 = function(query) {
 
 	var s = query.selectfns;
-//	console.log(s);
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+			var key = '$$$'+idx;
+			if(v instanceof yy.Column && query.xcolumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('p',query.defaultTableid,query.defcols)+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
+//	console.log(285,s);
 	return new Function('p,params,alasql','var y;'+s+'return r');
 };
 
@@ -398,6 +430,21 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 			s += 'r[\''+(col.as||col.nick)+'\']=g[\''+col.nick+'\'];'
 		};
 	});
+
+	if(this.orderColumns && this.orderColumns.length>0) {
+		this.orderColumns.forEach(function(v,idx) {
+//			console.log(411,v);
+			var key = '$$$'+idx;
+//			console.log(427,v,query.groupColumns,query.xgroupColumns);
+			if(v instanceof yy.Column && query.groupColumns[v.columnid]) {
+				s += 'r[\''+key+'\']=r[\''+v.columnid+'\'];';
+			} else {
+				s += 'r[\''+key+'\']='+v.toJS('g','')+';';
+			}
+			query.removeKeys.push(key);
+		});
+	}
+//console.log(425,s);
 //	console.log('selectg:',s);
 	return new Function('g,params,alasql','var y;'+s+'return r');
 };

@@ -14,10 +14,16 @@ yy.Declare.prototype.toString = function() {
 			var s = '';
 			s += '@'+declare.variable+' ';
 			s += declare.dbtypeid;
-			if(this.dbsize) s += '('+this.dbsize;
-			if(this.dbprecision) s+= ','+this.dbprecision;
-			s += ')';
-			if(declare.expression) s += ' = '+declare.expression.toString();
+			if(this.dbsize){
+				s += '('+this.dbsize;
+				if(this.dbprecision){
+					s+= ','+this.dbprecision;
+				}
+				s += ')';
+			}
+			if(declare.expression){
+				s += ' = '+declare.expression.toString();
+			}
 			return s;
 		}).join(',');
 	}
@@ -29,8 +35,9 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 	if(this.declares && this.declares.length > 0) {
 		this.declares.map(function(declare){
 			var dbtypeid = declare.dbtypeid;
-			if(!alasql.fn[dbtypeid]) dbtypeid = dbtypeid.toUpperCase();
-
+			if(!alasql.fn[dbtypeid]){
+				dbtypeid = dbtypeid.toUpperCase();
+			}
 			alasql.declares[declare.variable] = {dbtypeid:dbtypeid,
 				dbsize:declare.dbsize, dbprecision:declare.dbprecision};
 
@@ -42,10 +49,14 @@ yy.Declare.prototype.execute = function (databaseid,params,cb) {
 				if(alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(alasql.vars[declare.variable],alasql.declares[declare.variable]);
 				}
-			};
+			}
+
 		});
-	};
-	if(cb) res=cb(res);
+	}
+	if(cb){
+		res=cb(res);
+
+	}
 	return res;
 };
 

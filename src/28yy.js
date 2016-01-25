@@ -6,7 +6,8 @@
 //
 */
 
-var yy = parser.yy = alasql.yy = {};
+var yy = alasqlparser.yy = alasql.yy = {};
+
 
 // Utility
 yy.extend = extend;

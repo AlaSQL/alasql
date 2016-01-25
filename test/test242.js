@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 describe('Test 242 Multi-columns Excel file', function() {
 
   it('1. Read multi-column file',function(done){
-    alasql('select * from xlsx("'+__dirname+'/test242.xlsx")',[],function(data){
+    alasql('select * from xlsx("'+__dirname+'/test242.xlsx",{headers:false})',[],function(data){
 //      console.log(data[0]);
       assert(data[0].CV == 100);
       done();

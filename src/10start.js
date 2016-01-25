@@ -78,7 +78,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 			// alasql('#sql');
 			if(typeof sql === 'string' && sql[0]==='#' && typeof document === "object") {
 				sql = document.querySelector(sql).textContent;
-			} else if(typeof sql === 'object' && sql instanceof HTMElement) {
+			} else if(typeof sql === 'object' && sql instanceof HTMLElement) {
 				sql = sql.textContent;
 			} else if(typeof sql === 'function') {
 				// to run multiline functions
