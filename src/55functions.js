@@ -341,7 +341,7 @@ alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,stage){
 
 // String functions
 stdfn.REPLACE = function (target,pattern,replacement) {
-    return target.split(pattern).join(replacement);
+    return (target||'').split(pattern).join(replacement);
 };
 
 
