@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.2-develop-1148 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.2-develop-1150 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.2-develop-1148
+@version 0.2.2-develop-1150
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.2-develop-1148';
+alasql.version = '0.2.2-develop-1150';
 
 /**
 	Debug flag
@@ -16151,7 +16151,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 LS.attachDatabase = function(lsdbid, databaseid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[databaseid]) {
-		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
+		throw new Error('Unable to attach database as "'+databaseid+'" because it already exists');
 	};
 	if(!databaseid) databaseid = lsdbid;
 	var db = new alasql.Database(databaseid);
