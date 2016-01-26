@@ -161,7 +161,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 LS.attachDatabase = function(lsdbid, databaseid, args, params, cb){
 	var res = 1;
 	if(alasql.databases[databaseid]) {
-		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
+		throw new Error('Unable to attach database as "'+databaseid+'" because it already exists');
 	};
 	if(!databaseid) databaseid = lsdbid;
 	var db = new alasql.Database(databaseid);
