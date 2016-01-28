@@ -2046,6 +2046,8 @@ ColumnConstraint
 		{$$ = {"default":$2};}
 	| DEFAULT LPAR Expression RPAR
 		{$$ = {"default":$3};}
+	| DEFAULT FuncValue
+		{$$ = {"default":$2};}
 	| NULL
 		{$$ = {null:true}; }
 	| NOT NULL

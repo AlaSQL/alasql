@@ -10,6 +10,7 @@
 * Added: EXP() function, ^ now is XOR, ~ binary NOT
 * Added: REPLACE() string function (see issue #560)
 * Added: NEWID(), UUID() and GEN_RANDOM_UUID() functions for GUID
+* Added: DEFAULT for column can be a function (e.g. DEFAULT NEWID())
 
 ### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list
