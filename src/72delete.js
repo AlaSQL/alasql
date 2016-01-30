@@ -18,7 +18,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
-			var db = alasql.databases[databaseid];
+	var db = alasql.databases[databaseid];
 
 
 
@@ -28,7 +28,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //		this.query = {};
 
 		if(this.exists) {
-			this.existsfn  = this.exists.map(function(ex) {
+			this.existsfn = this.exists.map(function(ex) {
 				var nq = ex.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
@@ -39,7 +39,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier='RECORDSET';
 				return nq;
-			});		
+			});
 		}
 
 
@@ -48,7 +48,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 //	 } catch(err){console.log(444,err)};
 //		var query = {};
 //console.log(this.where.toJS('r',''));
-		wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJS('r','')+')').bind(this);
+		var wherefn = new Function('r,params,alasql','var y;return ('+this.where.toJS('r','')+')').bind(this);
 //		console.log(wherefn);
 		statement = (function (params, cb) {
 			if(db.engineid && alasql.engines[db.engineid].deleteFromTable) {
@@ -63,14 +63,14 @@ yy.Delete.prototype.compile = function (databaseid) {
 //			table.dirty = true;
 			var orignum = table.data.length;
 
-			var newtable = [];			
+			var newtable = [];
 			for(var i=0, ilen=table.data.length;i<ilen;i++) {
 				if(wherefn(table.data[i],params,alasql)) {
 					// Check for transaction - if it is not possible then return all back
 					if(table.delete) {
 						table.delete(i,params,alasql);
 					} else {
-						// SImply do not push
+						// Simply do not push
 					}
 				} else newtable.push(table.data[i]);
 			}
@@ -122,7 +122,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 			if(cb) cb(orignum);
 			return orignum;
 		};
-	};
+	}
 
 	return statement;
 
