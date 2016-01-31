@@ -13,17 +13,17 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha . --reporter dot",
-    "test:this": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha ",
-    "test:only": "cd test && ../node_modules/.bin/mocha . --reporter dot",
+    "test": "gulp && cd test && mocha . --reporter dot",
+    "test:this": "gulp && cd test && mocha",
+    "test:only": "cd test && mocha . --reporter dot",
     "test:browser": "node test/browserTestRunner.js 7387",
-    "build": "./node_modules/.bin/gulp",
-    "build:jison": "./node_modules/.bin/gulp --jison && ./node_modules/.bin/gulp",
-    "build:watch": "./node_modules/.bin/gulp watch",
-    "bump": "./node_modules/.bin/mversion --no-prefix",
-    "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
+    "build": "gulp",
+    "build:jison": "gulp --jison && gulp",
+    "build:watch": "gulp watch",
+    "bump": "mversion --no-prefix",
+    "uptodate": "npm-check && npm-check -u",
     "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f",
-    "jison": "./node_modules/.bin/jison ./src/alasqlparser.jison -o ./src/alasqlparser.js"
+    "jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js"
   },
   "dependencies": {
     "dom-storage": "^2.0.1",
