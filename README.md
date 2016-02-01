@@ -466,25 +466,25 @@ You can use JSON objects in your databases (do not forget use == and !== operato
 
 ```sql
 
-alasql> SELECT VALUE {a:'1',b:'2'}
+alasql> SELECT VALUE @{a:'1',b:'2'}
 
 {a:1,b:2}
 
-alasql> SELECT VALUE {a:'1',b:'2'} == {a:'1',b:'2'}
+alasql> SELECT VALUE @{a:'1',b:'2'} == @{a:'1',b:'2'}
 
 true
 
-alasql> SELECT VALUE {a:'1',b:'2'}->b
+alasql> SELECT VALUE @{a:'1',b:'2'}->b
 
 2
 
-alasql> SELECT VALUE {a:'1',b:(2*2)}->b
+alasql> SELECT VALUE @{a:'1',b:(2*2)}->b
 
 4
 
 ```
 
-Try AlaSQL JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values {a:@[1,2,3],c:{e:23}}, {a:@[{b:@[1,2,3]}]};select * from one)
+Try AlaSQL JSON objects in  Console [sample](http://alasql.org/console?drop table if exists one;create table one;insert into one values @{a:@[1,2,3],c:{e:23}}, @{a:@[{b:@[1,2,3]}]};select * from one)
 
 
 
@@ -535,7 +535,7 @@ Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alas
 
 0. Limited functionality for transactions (supports only for localStorage) - Sorry, transactions are limited, because AlaSQL started to use more complex approach for PRIMARY KEYS / FOREIGN KEYS. Transactions will be fully turned on again in future version.
 
-0. A `(FULL) OUTER JOIN` and `RIGHT JOIM` on more than 2 tables will not give the expected results. `INNER JOIN` and `LEFT JOIN` are ok.
+0. A `(FULL) OUTER JOIN` on more than 2 tables will not give the expected results
 
 Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
   
