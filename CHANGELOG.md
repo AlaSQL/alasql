@@ -1,7 +1,10 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.3-pre "Spetses" (xx.xx.2016)
+### 0.2.4 "Exogi" (xx.xx.2016)
+* ...
+
+### 0.2.3 "Spetses" (02.01.2016)
 * Changed: New fast way to calculate aggregators (some parameters changed)
 * Added: User defined aggregators
 * Fixed: Remove empty Last line in TXT and XLSX
