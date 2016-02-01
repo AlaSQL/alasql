@@ -155,6 +155,7 @@ yy.Select.prototype.compile = function(databaseid) {
 
 	// Array with columns to be removed
     query.removeKeys = [];
+    query.aggrKeys = [];
 
 	query.explain = this.explain; // Explain
 	query.explaination = [];

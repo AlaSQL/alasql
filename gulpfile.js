@@ -24,7 +24,6 @@ var dereserve = require('gulp-dereserve');
 var argv = require('yargs').argv || {};
 var replace = require('gulp-replace');
 var execSync = require('child_process').execSync;
-var strftime = require('strftime').timezone('0');
 
 
 // Identify name of the build
@@ -33,15 +32,14 @@ var version = packageData.version;
 var branch = execSync('git --work-tree=' + __dirname +' --git-dir=' + __dirname + '/.git branch', {encoding:'utf8'})
               .match(/^\*\s+(.*)/m)[1]
               .trim()
+var commits = parseInt(execSync('git rev-list HEAD --count', {encoding:'utf8'})) | 0;
 
-if(!(/^master|^release/.test(branch))){
+
+if(!(/^master|^release\//.test(branch))){
   version += '-'
-//            + 'pre.'
-              + branch.replace(/[^0-9A-Za-z-]/ig,'.')
-              + '+' 
-              + (+strftime('%y%m%d'))
-              + '.'
-              + (+strftime('%H%M%S'));
+              + branch.replace(/[^0-9a-z-]/ig,'.').replace(/^\.+|\.+$/g,'')
+              + '-' 
+              + commits;
 } 
 
 

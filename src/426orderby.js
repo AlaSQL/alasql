@@ -51,6 +51,8 @@ yy.Select.prototype.compileOrder = function (query) {
 			s += "if((a['"+key+"']||'')"+dg+(ord.direction == 'ASC'?'>':"<")+"(b['"+key+"']||'')"+dg+')return 1;';
 			s += "if((a['"+key+"']||'')"+dg+"==(b['"+key+"']||'')"+dg+'){';
 //console.log(37,s);
+
+/*
 if(false) {			
 //console.log(ord.expression, ord.expression instanceof yy.NumValue);
 			if(ord.expression instanceof yy.NumValue) {
@@ -92,7 +94,7 @@ if(false) {
 //			}
 
 }
-
+*/
 			sk += '}';
 		});
 		s += 'return 0;';

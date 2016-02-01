@@ -8,9 +8,10 @@
 
 yy.Select.prototype.compileDefCols = function(query, databaseid) {
 //	console.log('defcols');
-	var defcols = {};
+	var defcols = {'.':{}};
 	if(this.from) {
 		this.from.forEach(function(fr){
+			defcols['.'][fr.as || fr.tableid] = true;
 			if(fr instanceof yy.Table) {
 				var alias = fr.as || fr.tableid;
 //				console.log(alasql.databases[fr.databaseid || databaseid]);
@@ -53,6 +54,8 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 
 	if(this.joins) {
 		this.joins.forEach(function(jn){
+			defcols['.'][jn.as || jn.table.tableid] = true;
+
 //			console.log(jn);
 			if(jn.table) {
 				var alias = jn.table.tableid;
@@ -83,6 +86,6 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 	// for(var k in defcols) {
 	// 	if(defcols[k] == '-') defcols[k] = undefined;
 	// }
-//	console.log(defcols);
+//	console.log(89,defcols);
 	return defcols;
 }

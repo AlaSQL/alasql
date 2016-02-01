@@ -167,18 +167,28 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                success(cutbom(buff));
             });
         } else {
-            /* If async callthen call async*/
-            if(asy) {
-                fs.readFile(path,function(err,data){
+            if(/^[a-z]+:\/\//i.test(path)) {
+                var request = require('request');
+                request(path,function(err, response, body) {
                     if(err) {
                         throw err;
                     }
-                    success(cutbom(data.toString()));
+                    success(cutbom(body.toString()));                    
                 });
             } else {
-                /* Call sync version */
-                data = fs.readFileSync(path);
-                success(cutbom(data.toString()));
+                /* If async callthen call async*/
+                if(asy) {
+                    fs.readFile(path,function(err,data){
+                        if(err) {
+                            throw err;
+                        }
+                        success(cutbom(data.toString()));
+                    });
+                } else {
+                    /* Call sync version */
+                    data = fs.readFileSync(path);
+                    success(cutbom(data.toString()));
+                }
             }
         }
     } else if(typeof cordova === 'object') {
@@ -250,6 +260,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     }
                 };
                 xhr.open("GET", path, asy); // Async
+                xhr.responseType = "text";
                 xhr.send();
             }
         } else if(path instanceof Event) {
@@ -298,8 +309,9 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
     // if(typeof exports == 'object') {
     //     // For Node.js
     //     var fs = require('fs');
-        if(asy) {
-            fs.readFile(path,function(err,data){
+        if(/^[a-z]+:\/\//i.test(path)) {
+            var request = require('request');
+            request({url:path,encoding:null},function(err, response, data) {
                 if(err) {
                     throw err;
                 }
@@ -309,15 +321,28 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             });
-
         } else {
-            var data = fs.readFileSync(path);
-            var arr = [];
-            for(var i = 0; i < data.length; ++i){
-                arr[i] = String.fromCharCode(data[i]);
+            if(asy) {
+                fs.readFile(path,function(err,data){
+                    if(err) {
+                        throw err;
+                    }
+                    var arr = [];
+                    for(var i = 0; i < data.length; ++i){
+                        arr[i] = String.fromCharCode(data[i]);
+                    }
+                    success(arr.join(""));
+                });
+
+            } else {
+                var data = fs.readFileSync(path);
+                var arr = [];
+                for(var i = 0; i < data.length; ++i){
+                    arr[i] = String.fromCharCode(data[i]);
+                }
+                success(arr.join(""));
             }
-            success(arr.join(""));
-        }
+        };
 //        success(data);
     } else {
 
@@ -334,6 +359,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             }
+            xhr.responseType = "blob";
             xhr.send();
         } else if(path instanceof Event) {
             // console.log("event");

@@ -3,14 +3,13 @@
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123) 
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?) 
 [![Inline docs](http://inch-ci.org/github/agershun/alasql.svg?branch=develop)](http://inch-ci.org/github/agershun/alasql) 
-![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85) 
-![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release) 
+![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a) 
+![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a) 
 ![NPM version](https://img.shields.io/npm/l/alasql.svg?123) 
 
+_AlaSQL is an open source project and we appreciate any and all contributions we can get. Please help out._
 
 _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) and tag with "alasql"._
-
-_Like it? Give us a github star, spread the word, send a tweet._ 
 
 
 # AlaSQL

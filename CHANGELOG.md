@@ -1,6 +1,20 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
+### 0.2.4 "Exogi" (xx.xx.2016)
+* ...
+
+### 0.2.3 "Spetses" (02.01.2016)
+* Changed: New fast way to calculate aggregators (some parameters changed)
+* Added: User defined aggregators
+* Fixed: Remove empty Last line in TXT and XLSX
+* Changed: {headers:true} now is default option
+* Fixed: option.joinstar flag for SELECT * FROM a,b
+* Added: EXP() function, ^ now is XOR, ~ binary NOT
+* Added: REPLACE() string function (see issue #560)
+* Added: NEWID(), UUID() and GEN_RANDOM_UUID() functions for GUID
+* Added: DEFAULT for column can be a function (e.g. DEFAULT NEWID())
+
 ### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list
 * Fix: Bug in NUMERIC type conversion

@@ -1,7 +1,7 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
 	var alasql = require('..');
-  var md5 = require('blueimp-md5').md5;
+  var md5 = require('blueimp-md5');
 } else {
 	__dirname = '.';
 

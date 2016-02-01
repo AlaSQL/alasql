@@ -9,7 +9,12 @@
 /**
 	Jison parser
 */
-alasql.parser = parser;
+alasql.parser = alasqlparser;
+
+/*/* This is not working :-/ */
+alasql.parser.parseError = function(str, hash){
+	throw new Error("Have you used a reserved keyword without `escaping` it?\n"+str);	
+}
 
 /**
  	Jison parser
@@ -25,7 +30,7 @@ alasql.parser = parser;
  	}
  */
 alasql.parse = function(sql) {
-	return parser.parse(alasql.utils.uncomment(sql));
+	return alasqlparser.parse(alasql.utils.uncomment(sql));
 }; 
 
 /**
@@ -90,6 +95,8 @@ alasql.options.nocount = false;
 
 // Check for NaN and convert it to undefined
 alasql.options.nan = false;
+
+alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
 
 //alasql.options.worker = false;
 // Variables

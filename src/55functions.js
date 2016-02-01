@@ -136,6 +136,7 @@ stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
 stdfn.CONCAT = function(){
 	return Array.prototype.slice.call(arguments).join(' ');
 };
+stdlib.EXP = function(a) {return 'Math.pow(Math.E,'+a+')'};
 
 stdlib.IIF = function(a,b,c) {
 	if(arguments.length == 3) {
@@ -228,72 +229,132 @@ stdfn.CONCAT_WS = function() {
 
 
 // Aggregator for joining strings
-alasql.aggr.GROUP_CONCAT = function(v,s){
-    if(typeof s == "undefined") return v; else return s+','+v;
+alasql.aggr.GROUP_CONCAT = function(v,s,stage){
+    if(stage == 1) {
+    	return v; 
+    } else if(stage == 2) {
+    	return s+','+v;
+    }
 };
 
 // Median
-alasql.aggr.MEDIAN = function(v,s,acc){
-	// Init
-	if(typeof acc.arr == 'undefined') {
-	  acc.arr = [v];
-	  return v; 
-	// Pass
+// alasql.aggr.MEDIAN = function(v,s,acc){
+// 	// Init
+// 	if(typeof acc.arr == 'undefined') {
+// 	  acc.arr = [v];
+// 	  return v; 
+// 	// Pass
+// 	} else {
+// 	  acc.arr.push(v);
+// 	  var p = acc.arr.sort();
+// 	  return p[(p.length/2)|0];     
+// 	};
+// };
+
+alasql.aggr.MEDIAN = function(v,s,stage){
+  if(stage == 1) {
+    return [v];
+  } else if(stage == 2) {
+    s.push(v);    
+    return s;
+  } else {
+    var p = s.sort();
+    return p[(p.length/2)|0];     
+  };
+};
+
+
+
+// Standard deviation
+alasql.aggr.VAR = function(v,s,stage){
+	if(stage == 1) {
+		return {arr:[v],sum:v};
+	} else if(stage == 2) {
+		s.arr.push(v);
+		s.sum += v;
+		return s;
 	} else {
-	  acc.arr.push(v);
-	  var p = acc.arr.sort();
-	  return p[(p.length/2)|0];     
-	};
+		var N = s.arr.length;
+		var avg = s.sum / N;
+		var std = 0;
+		for(var i=0;i<N;i++) {
+			std += (s.arr[i]-avg)*(s.arr[i]-avg);
+		}
+		std = std/(N-1);
+		return std;
+	}
+};
+
+alasql.aggr.STDEV = function(v,s,stage){
+	if(stage == 1 || stage == 2 ) {
+		return alasql.aggr.VAR(v,s,stage);
+	} else {
+		return Math.sqrt(alasql.aggr.VAR(v,s,stage));
+	}
 };
 
 // Standard deviation
-alasql.aggr.VAR = function(v,s,acc){
-	if(typeof acc.arr == 'undefined') {
-		acc.arr = [v];
-		acc.sum = v;
+// alasql.aggr.VARP = function(v,s,acc){
+// 	if(typeof acc.arr == 'undefined') {
+// 		acc.arr = [v];
+// 		acc.sum = v;
+// 	} else {
+// 		acc.arr.push(v);
+// 		acc.sum += v;
+// 	}
+// 	var N = acc.arr.length;
+// 	var avg = acc.sum / N;
+// 	var std = 0;
+// 	for(var i=0;i<N;i++) {
+// 		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
+// 	}
+// 	std = std/N;
+// 	return std;
+// };
+
+alasql.aggr.VARP = function(v,s,stage){
+	if(stage == 1) {
+		return {arr:[v],sum:v};
+	} else if(stage == 2) {
+		s.arr.push(v);
+		s.sum += v;
+		return s;
 	} else {
-		acc.arr.push(v);
-		acc.sum += v;
+		var N = s.arr.length;
+		var avg = s.sum / N;
+		var std = 0;
+		for(var i=0;i<N;i++) {
+			std += (s.arr[i]-avg)*(s.arr[i]-avg);
+		}
+		std = std/N;
+		return std;
 	}
-	var N = acc.arr.length;
-	var avg = acc.sum / N;
-	var std = 0;
-	for(var i=0;i<N;i++) {
-		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-	}
-	std = std/(N-1);
-	return std;
 };
 
-alasql.aggr.STDEV = function(v,s,acc){
-	return Math.sqrt(alasql.aggr.VAR(v,s,acc));
-}
-
-// Standard deviation
-alasql.aggr.VARP = function(v,s,acc){
-	if(typeof acc.arr == 'undefined') {
-		acc.arr = [v];
-		acc.sum = v;
+alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,stage){
+	if(stage == 1 || stage == 2 ) {
+		return alasql.aggr.VARP(v,s,stage);
 	} else {
-		acc.arr.push(v);
-		acc.sum += v;
+		return Math.sqrt(alasql.aggr.VARP(v,s,stage));
 	}
-	var N = acc.arr.length;
-	var avg = acc.sum / N;
-	var std = 0;
-	for(var i=0;i<N;i++) {
-		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-	}
-	std = std/N;
-	return std;
 };
 
-alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,acc){
-	return Math.sqrt(alasql.aggr.VARP(v,s,acc));
+// String functions
+stdfn.REPLACE = function (target,pattern,replacement) {
+    return (target||'').split(pattern).join(replacement);
 };
 
+// This array is required for fast GUID generation
+var lut = []; for (var i=0; i<256; i++) { lut[i] = (i<16?'0':'')+(i).toString(16); }
 
-
-
-
+stdfn.NEWID = stdfn.UUID = stdfn.GEN_RANDOM_UUID = function() {
+    var d0 = Math.random()*0xffffffff|0;
+    var d1 = Math.random()*0xffffffff|0;
+    var d2 = Math.random()*0xffffffff|0;
+    var d3 = Math.random()*0xffffffff|0;
+    return lut[d0&0xff]+lut[d0>>8&0xff]+lut[d0>>16&0xff]+lut[d0>>24&0xff]+'-'+
+      lut[d1&0xff]+lut[d1>>8&0xff]+'-'+lut[d1>>16&0x0f|0x40]+lut[d1>>24&0xff]+'-'+
+      lut[d2&0x3f|0x80]+lut[d2>>8&0xff]+'-'+lut[d2>>16&0xff]+lut[d2>>24&0xff]+
+      lut[d3&0xff]+lut[d3>>8&0xff]+lut[d3>>16&0xff]+lut[d3>>24&0xff];
+};
 

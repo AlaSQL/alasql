@@ -147,6 +147,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	var res;
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
+		if(res[res.length-1] === '') res.pop(); // Remove last line if empty
 		for(var i=0, ilen=res.length; i<ilen;i++) {
 			// Please avoid '===' here
 			if(res[i] == +res[i]){	// jshint ignore:line
@@ -170,7 +171,8 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	var opt = {
 		separator: ',',
-		quote: '"'
+		quote: '"',
+		headers:true
 	};
 	alasql.utils.extend(opt, opts);
 	var res, hs;
@@ -325,6 +327,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var opt = {};
 	opts = opts || {};
 	alasql.utils.extend(opt, opts);
+	if(typeof opt.headers == 'undefined') opt.headers = true;
 	var res;
 
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
@@ -381,6 +384,11 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 				}
 			}
 			res.push(row);
+		}
+
+		// Remove last empty line (issue #548)
+		if(res.length > 0 && res[res.length-1] && Object.keys(res[res.length-1]).length == 0) {
+			res.pop();
 		}
 
 		if(cb){

@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Versatile SQL database for browser or node. Handles relational data and nested JSON (noSQL). Export to and import from Excel, localStorage or IndexedDB",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "contributors": [
     {
@@ -13,26 +13,28 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/.bin/gulp && cd test && ../node_modules/.bin/mocha . --reporter dot",
-    "test:only": "cd test && ../node_modules/.bin/mocha . --reporter dot",
+    "test": "gulp && cd test && mocha . --reporter dot",
+    "test:this": "gulp && cd test && mocha",
+    "test:only": "cd test && mocha . --reporter dot",
     "test:browser": "node test/browserTestRunner.js 7387",
-    "build": "./node_modules/.bin/gulp",
-    "build:jison": "./node_modules/.bin/gulp --jison && ./node_modules/.bin/gulp",
-    "build:watch": "./node_modules/.bin/gulp watch",
-    "bump": "./node_modules/.bin/mversion --no-prefix",
-    "uptodate": "./node_modules/.bin/npm-check && ./node_modules/.bin/npm-check -u",
+    "build": "gulp",
+    "build:jison": "gulp --jison && gulp",
+    "build:watch": "gulp watch",
+    "bump": "mversion --no-prefix",
+    "uptodate": "npm-check && npm-check -u",
     "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f",
-    "jison": "./node_modules/.bin/jison ./src/alasqlparser.jison -o ./src/alasqlparser.js"
+    "jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js"
   },
   "dependencies": {
     "dom-storage": "^2.0.1",
     "es6-promise": "^3.0.2",
-    "lodash": "^3.10.0",
+    "lodash": "^4.0.0",
     "xlsjs": "^0.7.5",
-    "xlsx": "^0.8.0"
+    "xlsx": "^0.8.0",
+    "request": "^2.67.0"
   },
   "devDependencies": {
-    "blueimp-md5": "^1.1.1",
+    "blueimp-md5": "^2.1.0",
     "gulp": "^3.9.0",
     "gulp-concat": "^2.6.0",
     "gulp-dereserve": "^0.2.1",

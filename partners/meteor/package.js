@@ -1,6 +1,6 @@
 Package.describe({
   name: 'agershun:alasql',
-  version: '0.2.2',
+  version: '0.2.3',
   // Brief, one-line summary of the package.
   summary: 'AlaSQL - JavaScript SQL database library',
   // URL to the Git repository containing the source code for this package.
@@ -15,7 +15,7 @@ Package.onUse(function(api) {
 //  api.use('alasql', ['client', 'server']);
 //  api.export('alasql','client');
   api.addFiles('../../dist/alasql.min.js');
-  api.addFiles('../../dist/alasql-echo.js',["client","server"],{isAsset: true});
+  api.addAssets('../../dist/alasql-echo.js',["client","server"]);
 });
 
 Package.onTest(function(api) {

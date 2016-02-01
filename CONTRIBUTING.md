@@ -18,6 +18,6 @@ Inputs to improvement? [Open an issue](https://github.com/agershun/alasql/issues
 - Run `npm test` and verify all tests are OK
 - Pull-request to the develop branch
 
-_Please note that `npm test` will also compile from `src/`_ 
+_Please note that `npm test` will compile from `src/` before running tests_ 
 
  
