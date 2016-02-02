@@ -7,7 +7,7 @@ if(typeof exports === 'object') {
 // Test for issue #566
 var test = 430;
 
-describe('Test '+test+' UNIQUE keyword in localStorage', function() {
+describe.skip('Test '+test+' UNIQUE keyword in localStorage', function() {
 
   before(function() {
     alasql('CREATE localStorage DATABASE test'+test+'g1; ATTACH localStorage DATABASE test'+test+'g1 as test'+test+'g1');
