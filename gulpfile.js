@@ -29,7 +29,7 @@ var execSync = require('child_process').execSync;
 // Identify name of the build
 var packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 var version = packageData.version;
-var branch = execSync('git --work-tree=' + __dirname +' --git-dir=' + __dirname + '/.git branch', {encoding:'utf8'})
+var branch = execSync('git --work-tree="' + __dirname +'" --git-dir="' + __dirname + '/.git" branch', {encoding:'utf8'})
               .match(/^\*\s+(.*)/m)[1]
               .trim()
 var commits = parseInt(execSync('git rev-list HEAD --count', {encoding:'utf8'})) | 0;
