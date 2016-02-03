@@ -80,7 +80,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 		} else if(args.style == 7) { 	// Mon dd,yy
 			val =  t.toString().substr(4,3)+' '+("0"+t.getDate()).substr(-2)+','+("0"+t.getYear()).substr(-2);
 		} else if(args.style == 8) { 	// hh:mm:ss
-			val =  ("0"+t.getHours()).substr(-2)+':'+("0"+(t.getMinutes()+1)).substr(-2)+':'+("0"+t.getSeconds()).substr(-2);
+			val =  ("0"+t.getHours()).substr(-2)+':'+("0"+(t.getMinutes())).substr(-2)+':'+("0"+t.getSeconds()).substr(-2);
 
 		} else if(args.style == 10) { 	// mm-dd-yy
 			val =  ("0"+(t.getMonth()+1)).substr(-2)+'-'+("0"+t.getDate()).substr(-2)+'-'+("0"+t.getYear()).substr(-2);
@@ -105,7 +105,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 		} else if(args.style == 107) { 	// Mon dd,yy
 			val =  t.toString().substr(4,3)+' '+("0"+t.getDate()).substr(-2)+','+t.getFullYear();
 		} else if(args.style == 108) { 	// hh:mm:ss
-			val =  ("0"+t.getHours()).substr(-2)+':'+("0"+(t.getMinutes()+1)).substr(-2)+':'+("0"+t.getSeconds()).substr(-2);
+			val =  ("0"+t.getHours()).substr(-2)+':'+("0"+(t.getMinutes())).substr(-2)+':'+("0"+t.getSeconds()).substr(-2);
 
 		} else if(args.style == 110) { 	// mm-dd-yy
 			val =  ("0"+(t.getMonth()+1)).substr(-2)+'-'+("0"+t.getDate()).substr(-2)+'-'+t.getFullYear();
