@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.3-develop-1183 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.3-develop-1184 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.3-develop-1183
+@version 0.2.3-develop-1184
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1183';
+alasql.version = '0.2.3-develop-1184';
 
 /**
 	Debug flag
@@ -10511,58 +10511,59 @@ alasql.stdfn.CONVERT = function(value, args) {
 	if(args.style) {
 		// TODO 9,109, 20,120,21,121,126,130,131 conversions
 		var t;
-		if(/\d{8}/.test(val)) t = new Date(+val.substr(0,4),+val.substr(4,2)-1,+val.substr(6,2));		
-		else t = new Date(val);
-
-		if(args.style == 1) { 			// mm/dd/yy
-			val =  ("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getDate()).substr(-2)+'/'+("0"+t.getYear()).substr(-2);
-		} else if(args.style == 2) { 	// yy.mm.dd
-			val =  ("0"+t.getYear()).substr(-2)+'.'+("0"+(t.getMonth()+1)).substr(-2)+'.'+("0"+t.getDate()).substr(-2);
-		} else if(args.style == 3) { 	// dd/mm/yy
-			val =  ("0"+t.getDate()).substr(-2)+'/'+("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getYear()).substr(-2);
-		} else if(args.style == 4) { 	// dd.mm.yy
-			val =  ("0"+t.getDate()).substr(-2)+'.'+("0"+(t.getMonth()+1)).substr(-2)+'.'+("0"+t.getYear()).substr(-2);
-		} else if(args.style == 5) { 	// dd-mm-yy
-			val =  ("0"+t.getDate()).substr(-2)+'-'+("0"+(t.getMonth()+1)).substr(-2)+'-'+("0"+t.getYear()).substr(-2);
-		} else if(args.style == 6) { 	// dd mon yy
-			val =  ("0"+t.getDate()).substr(-2)+' '+t.toString().substr(4,3).toLowerCase()+' '+("0"+t.getYear()).substr(-2);
-		} else if(args.style == 7) { 	// Mon dd,yy
-			val =  t.toString().substr(4,3)+' '+("0"+t.getDate()).substr(-2)+','+("0"+t.getYear()).substr(-2);
-		} else if(args.style == 8) { 	// hh:mm:ss
-			val =  ("0"+t.getHours()).substr(-2)+':'+("0"+(t.getMinutes())).substr(-2)+':'+("0"+t.getSeconds()).substr(-2);
-
-		} else if(args.style == 10) { 	// mm-dd-yy
-			val =  ("0"+(t.getMonth()+1)).substr(-2)+'-'+("0"+t.getDate()).substr(-2)+'-'+("0"+t.getYear()).substr(-2);
-		} else if(args.style == 11) { 	// yy/mm/dd
-			val =  ("0"+t.getYear()).substr(-2)+'/'+("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getDate()).substr(-2);
-		} else if(args.style == 12) { 	// yymmdd
-			val =  ("0"+t.getYear()).substr(-2)+("0"+(t.getMonth()+1)).substr(-2)+("0"+t.getDate()).substr(-2);
-
-		} else if(args.style == 101) { 			// mm/dd/yy
-			val =  ("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getDate()).substr(-2)+'/'+t.getFullYear();
-		} else if(args.style == 102) { 	// yy.mm.dd
-			val =  t.getFullYear()+'.'+("0"+(t.getMonth()+1)).substr(-2)+'.'+("0"+t.getDate()).substr(-2);
-		} else if(args.style == 103) { 	// dd/mm/yy
-			val =  ("0"+t.getDate()).substr(-2)+'/'+("0"+(t.getMonth()+1)).substr(-2)+'/'+t.getFullYear();
-		} else if(args.style == 104) { 	// dd.mm.yy
-			val =  ("0"+t.getDate()).substr(-2)+'.'+("0"+(t.getMonth()+1)).substr(-2)+'.'+t.getFullYear();
-		} else if(args.style == 105) { 	// dd-mm-yy
-			val =  ("0"+t.getDate()).substr(-2)+'-'+("0"+(t.getMonth()+1)).substr(-2)+'-'+t.getFullYear();
-		} else if(args.style == 106) { 	// dd mon yy
-			val =  ("0"+t.getDate()).substr(-2)+' '+t.toString().substr(4,3).toLowerCase()+' '+t.getFullYear();
-		} else if(args.style == 107) { 	// Mon dd,yy
-			val =  t.toString().substr(4,3)+' '+("0"+t.getDate()).substr(-2)+','+t.getFullYear();
-		} else if(args.style == 108) { 	// hh:mm:ss
-			val =  ("0"+t.getHours()).substr(-2)+':'+("0"+(t.getMinutes())).substr(-2)+':'+("0"+t.getSeconds()).substr(-2);
-
-		} else if(args.style == 110) { 	// mm-dd-yy
-			val =  ("0"+(t.getMonth()+1)).substr(-2)+'-'+("0"+t.getDate()).substr(-2)+'-'+t.getFullYear();
-		} else if(args.style == 111) { 	// yy/mm/dd
-			val =  t.getFullYear()+'/'+("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getDate()).substr(-2);
-		} else if(args.style == 112) { 	// yymmdd
-			val =  t.getFullYear()+("0"+(t.getMonth()+1)).substr(-2)+("0"+t.getDate()).substr(-2);
+		if(/\d{8}/.test(val)){
+			t = new Date(+val.substr(0,4),+val.substr(4,2)-1,+val.substr(6,2));		
 		} else {
-			throw new Error('The CONVERT style '+args.style+' is not realized yet.');
+			t = new Date(val);
+		}
+
+		switch(args.style){
+			case 1: 	// mm/dd/yy
+			case 101: 	// mm/dd/yy
+				val =  ("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getDate()).substr(-2)+'/'+("0"+t.getYear()).substr(-2);
+				break;
+			case  2: 	// yy.mm.dd
+			case  102: 	// yy.mm.dd
+				val =  ("0"+t.getYear()).substr(-2)+'.'+("0"+(t.getMonth()+1)).substr(-2)+'.'+("0"+t.getDate()).substr(-2);
+				break;
+			case  3: 	// dd/mm/yy
+			case  103: 	// dd/mm/yy
+				val =  ("0"+t.getDate()).substr(-2)+'/'+("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getYear()).substr(-2);
+				break;
+			case  4: 	// dd.mm.yy
+			case  104: 	// dd.mm.yy
+				val =  ("0"+t.getDate()).substr(-2)+'.'+("0"+(t.getMonth()+1)).substr(-2)+'.'+("0"+t.getYear()).substr(-2);
+				break;
+			case  5: 	// dd-mm-yy
+			case  105: 	// dd-mm-yy
+				val =  ("0"+t.getDate()).substr(-2)+'-'+("0"+(t.getMonth()+1)).substr(-2)+'-'+("0"+t.getYear()).substr(-2);
+				break;
+			case  6: 	// dd mon yy
+			case  106: 	// dd mon yy
+				val =  ("0"+t.getDate()).substr(-2)+' '+t.toString().substr(4,3).toLowerCase()+' '+("0"+t.getYear()).substr(-2);
+				break;
+			case  7: 	// Mon dd,yy
+			case  107: 	// Mon dd,yy
+				val =  t.toString().substr(4,3)+' '+("0"+t.getDate()).substr(-2)+','+("0"+t.getYear()).substr(-2);
+				break;
+			case  8: 	// hh:mm:ss
+			case  108: 	// hh:mm:ss
+				val =  ("0"+t.getHours()).substr(-2)+':'+("0"+(t.getMinutes())).substr(-2)+':'+("0"+t.getSeconds()).substr(-2);
+				break;
+			case  10: 	// mm-dd-yy
+			case  110: 	// mm-dd-yy
+				val =  ("0"+(t.getMonth()+1)).substr(-2)+'-'+("0"+t.getDate()).substr(-2)+'-'+("0"+t.getYear()).substr(-2);
+				break;
+			case  11: 	// yy/mm/dd
+			case  111: 	// yy/mm/dd
+				val =  ("0"+t.getYear()).substr(-2)+'/'+("0"+(t.getMonth()+1)).substr(-2)+'/'+("0"+t.getDate()).substr(-2);
+				break;
+			case  12: 	// yymmdd
+			case  112: 	// yymmdd
+				val =  ("0"+t.getYear()).substr(-2)+("0"+(t.getMonth()+1)).substr(-2)+("0"+t.getDate()).substr(-2);
+				break;
+			default:
+				throw new Error('The CONVERT style '+args.style+' is not realized yet.');
 		}
 	};
 
