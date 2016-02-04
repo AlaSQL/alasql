@@ -129,6 +129,108 @@ var cutbom = function(s) {
     return s;
 }
 
+
+/**
+    Get the blobal scope
+    Inspired by System.global
+    @return {object} The global scope
+*/
+var getGlobal = utils.getGlobal = function(){
+  try {
+    return Function('return this')();
+  }catch(e){
+    //If Content Security Policy
+    var global =  self || window || global;
+    if(global) return global;
+    else throw new Error('unable to locate global object');
+  }
+}
+
+/**
+    Find out if a function is native to the enviroment
+    @param {function} Function to check
+    @return {boolean} True if function is native
+*/
+var isNativeFunction = utils.isNativeFunction = function(fn){
+  return typeof fn === "function" && !!~(fn.toString().indexOf("[native code]"));
+}
+
+/**
+    Find out if code is running in a web worker enviroment
+    @return {boolean} True if code is running in a web worker enviroment
+*/
+var isWebWorker = utils.isWebWorker = function(){
+  try{
+    var importScripts = utils.getGlobal().importScripts;
+    return (utils.isNativeFunction(importScripts));
+  }catch(e){
+    return false;
+  }
+}
+
+/**
+    Find out if code is running in a node enviroment
+    @return {boolean} True if code is running in a node enviroment
+*/
+var isNode = utils.isNode = function(){
+  try{
+    return utils.isNativeFunction(utils.getGlobal().process.reallyExit);
+  }catch(e){
+    return false;
+  }
+}
+
+/**
+    Find out if code is running in a browser enviroment
+    @return {boolean} True if code is running in a browser enviroment
+*/
+var isBrowser = utils.isBrowser = function(){
+  try{
+    return utils.isNativeFunction(utils.getGlobal().location.reload);
+  }catch(e){
+    return false;
+  }
+}
+
+/**
+    Find out if code is running with Meteor in the enviroment
+    @return {boolean} True if code is running with Meteor in the enviroment
+
+    @todo Find out if this is the best way to do this
+*/
+var isMeteor = utils.isMeteor = function(){
+  return (typeof Meteor !== 'undefined' && Meteor.release)
+}
+
+/**
+    Find out if code is running on a Meteor client
+    @return {boolean} True if code is running on a Meteor client
+*/
+var isMeteorClient = utils.isMeteorClient = function(){
+  return isMeteor() && Meteor.isClient;
+}
+
+/**
+    Find out if code is running on a Meteor server
+    @return {boolean} True if code is running on a Meteor server
+*/
+var isMeteorServer = utils.isMeteorServer = function(){
+  return isMeteor() && Meteor.isServer;
+}
+
+
+
+/**
+    Find out code is running in a cordovar enviroment
+    @return {boolean} True if code is running in a web worker enviroment
+
+    @todo Find out if this is the best way to do this
+*/
+var isCordova = utils.isCordova = function(){
+  return (typeof cordova === 'object')
+}
+
+
 /**
     Load text file from anywhere
     @param {string|object} path File path or HTML event
@@ -138,13 +240,14 @@ var cutbom = function(s) {
     @return {string} Read data
 
     @todo Define Event type
+    @todo Smaller if-else structures.
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
     var data, fs;
-    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
+    if(isNode() || isMeteorServer()) {
 
-        
-        if(typeof Meteor !== 'undefined') {
+
+        if(isMeteor()) {
             /** For Meteor */
             fs = Npm.require('fs');
         } else {
@@ -191,7 +294,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 }
             }
         }
-    } else if(typeof cordova === 'object') {
+    } else if(isCordova()) {
         /* If Cordova */
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
@@ -295,13 +398,15 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
   @param {function} success Success function
   @param {function} error Error function
   @return 1 for Async, data - for sync version
+
+  @todo merge functionality from loadFile and LoadBinaryFile
 */
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     var fs;
-    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
+    if(isNode() || isMeteorServer()) {
         // For Node.js
-        if(typeof Meteor !== 'undefined') {
+        if(isMeteor()) {
             var fs = Npm.require('fs'); // For Meteor
         } else {
             var fs = require('fs');
@@ -370,19 +475,19 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 var data = e.target.result;
                 success(data);
             };
-            reader.readAsBinaryString(files[0]);    
+            reader.readAsBinaryString(files[0]);
         } else if(path instanceof Blob) {
         	success(path);
-        } 
+        }
     }
 };
 
 
 var removeFile = utils.removeFile = function(path,cb) {
-    if(typeof exports === 'object') {
+    if(isNode()) {
         var fs = require('fs');
         fs.remove(path,cb);
-    } else if(typeof cordova === 'object') {
+    } else if(isCordova()) {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
@@ -396,19 +501,19 @@ var removeFile = utils.removeFile = function(path,cb) {
     }
 };
 
-
+// Todo: check if it makes sense to support cordova and Meteor server
 var deleteFile = utils.deleteFile = function(path,cb){
-    if(typeof exports === 'object') {
+    if(isNode()) {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
-    if(typeof exports === 'object') {
+    if(isNode()) {
         var fs = require('fs');
         fs.exists(path,cb);
-    } else if(typeof cordova === 'object') {
+    } else if(isCordova()) {
         window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
@@ -463,14 +568,14 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         }
     } else {
 
-        if(typeof exports === 'object') {
+        if(isNode()) {
             // For Node.js
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
             if(cb){
                 res = cb(res);
             }
-        } else if(typeof cordova === 'object') {
+        } else if(isCordova()) {
             // For Apache Cordova
             window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){
@@ -1016,3 +1121,53 @@ utils.glob = function (value,pattern) {
     s += '$';
     return (value||'').toUpperCase().search(RegExp(s.toUpperCase()))>-1;
    };
+
+
+/**
+	Get path of alasql.js
+	@todo Rewrite and simplify the code. Review, is this function is required separately
+*/
+utils.findAlaSQLPath = function() {
+	/** type {string} Path to alasql library and plugins */
+
+	if (isWebWorker()) {
+		return '';		
+		/** @todo Check how to get path in worker */
+	} else if(isNode()) { 
+		return __dirname;
+	
+	} else if(isMeteorClient()) {
+		return '/packages/dist/';
+	
+	} else if(isMeteorServer()) {
+		return 'assets/packages/dist/';
+	
+	} else if(isBrowser()) {
+		var sc = document.getElementsByTagName('script');
+		
+		for(var i=0;i<sc.length;i++) {	
+			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
+				return sc[i].src.substr(0,sc[i].src.length-16); 
+
+			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
+				return sc[i].src.substr(0,sc[i].src.length-20);
+			
+			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
+				return sc[i].src.substr(0,sc[i].src.length-9); 
+			
+			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
+				return sc[i].src.substr(0,sc[i].src.length-13); 
+				
+			}
+		}	
+	}
+	return '';	
+}
+
+
+// set AlaSQl path
+alasql.path = alasql.utils.findAlaSQLPath();
+
+
+
+

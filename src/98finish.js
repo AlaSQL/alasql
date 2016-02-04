@@ -9,7 +9,7 @@
 // This is a final part of Alasql
 
 // FileSaveAs
-	alasql.utils.saveAs = saveAs;
+alasql.utils.saveAs = saveAs;
 
 };
 
@@ -21,3 +21,4 @@ alasql.use("alasql");
 
 return alasql;
 }));
+
