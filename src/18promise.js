@@ -5,10 +5,10 @@
 //nodejs now has Promises
 if(typeof utils.getGlobal().Promise === "object") {
 	var Promise = utils.getGlobal().Promise;
-} else if(typeof exports === 'object'){
+} else if(utils.isNode()){
 	var Promise = require('es6-promise').Promise;
-} else if(typeof window === 'object') {
-	var Promise = utils.getGlobal().Promise;
+} else {
+	throw new Error('Please include a Promise library');
 }
 
 //

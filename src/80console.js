@@ -126,7 +126,7 @@ alasql.log = function(sql, params) {
 	}
 
 	// For Node and console.output
-	if(target === 'console' || typeof exports === 'object') {
+	if(target === 'console' || utils.isNode()) {
 		if(typeof sql === 'string' && alasql.options.logprompt){
 			console.log(olduseid+'>',sql);
 		}
@@ -184,17 +184,11 @@ alasql.log = function(sql, params) {
 alasql.clear = function() {
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
-		target = 'console';
-	}
-
-	if(target === 'console' || typeof exports === 'object') {
+	
+	if(utils.IsNode() || utils.isMeteorServer()) {
 		if(console.clear) {
 			console.clear();
 		} 
-		
-		// todo: handle Node
-		
 	} else {
 		var el;
 		if(target === 'output') {
@@ -215,17 +209,10 @@ alasql.write = function(s) {
 //	console.log('write',s);
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
-		target = 'console';
-	}
-
-	if(target === 'console' || typeof exports === 'object') {
+	if(utils.IsNode() || utils.isMeteorServer()) {
 		if(console.log) {
 			console.log(s);
 		} 
-
-		// todo: handle node
-
 	} else {
 		var el;
 		if(target === 'output') {
@@ -319,8 +306,8 @@ function scrollTo(element, to, duration) {
 }
 
 alasql.prompt = function(el, useidel, firstsql) {
-	if(typeof exports === 'object') {
-		throw new Error('The functionality of prompt is not realized for Node.js');
+	if(utils.isNode()) {
+		throw new Error('The prompt not realized for Node.js');
 	}
 
 	var prompti = 0;
