@@ -19,7 +19,7 @@ var utils = alasql.utils = {};
     @return {string} Covered expression
 
     @example
-    
+
     123         => 123
     undefined   => undefined
     NaN         => undefined
@@ -35,12 +35,12 @@ function n2u(s) {
     @return {string} Covered expression
 
     @example
-    
+
     123,a       => a
     undefined,a => undefined
     NaN,a       => undefined
 
-*/    
+*/
 function und(s,r) {
     return '(y='+s+',typeof y=="undefined"?undefined:'+r+')';
 }
@@ -66,7 +66,7 @@ function returnUndefined() {}
     @param {string} s Source string
     @return {string} Escaped string
     @example
-    
+
     Piter's => Piter\'s
 
 */
@@ -82,7 +82,7 @@ var escapeq = utils.escapeq = function(s) {
     @return {string} Escaped string
 
     @example
-    
+
     Piter's => Piter''s
 
  */
@@ -110,7 +110,7 @@ var doubleq = utils.doubleq = function(s) {
     @return {string} Replaced string
 
     @todo Chack this functions
-    
+
 */
  var doubleqq = utils.doubleqq = function(s) {
     return s.replace(/\'/g,"\'");
@@ -119,7 +119,7 @@ var doubleq = utils.doubleq = function(s) {
 /**
     Cut BOM first character for UTF-8 files (for merging two files)
     @param {string} s Source string
-    @return {string} Replaced string    
+    @return {string} Replaced string
 */
 
 var cutbom = function(s) {
@@ -232,6 +232,22 @@ var isCordova = utils.isCordova = function(){
 
 
 /**
+  Gets the global object
+  @return {object} The global object
+**/
+utils.getGlobal = function getGlobal(){
+  try {
+    //This will always return the global objects
+    return Function('return this')();
+  }catch(e){
+    //unless Content Security Policy is enabled, in which case we do our best
+    var global =  self || window || global;
+    if(global) return global;
+    else throw new Error('unable to locate global object');
+  }
+}
+
+/**
     Load text file from anywhere
     @param {string|object} path File path or HTML event
     @param {boolean} asy True - async call, false - sync call
@@ -245,7 +261,6 @@ var isCordova = utils.isCordova = function(){
 var loadFile = utils.loadFile = function(path, asy, success, error) {
     var data, fs;
     if(isNode() || isMeteorServer()) {
-
 
         if(isMeteor()) {
             /** For Meteor */
@@ -276,7 +291,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     if(err) {
                         throw err;
                     }
-                    success(cutbom(body.toString()));                    
+                    success(cutbom(body.toString()));
                 });
             } else {
                 /* If async callthen call async*/
@@ -296,7 +311,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
         }
     } else if(isCordova()) {
         /* If Cordova */
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.file(function(file){
                     var fileReader = new FileReader();
@@ -331,20 +346,20 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     reader.readAsText(file);
                 });
             });
-        });    
+        });
 */
     } else {
         /* For string */
         if(typeof path === "string") {
             // For browser read from tag
             /*
-                SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
+                SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
             */
             if((path.substr(0,1) === '#') && (typeof document !== 'undefined')) {
                 data = document.querySelector(path).textContent;
                 success(data);
             } else {
-                /* 
+                /*
                     Simply read file from HTTP request, like:
                     SELECT * FROM TXT('http://alasql.org/README.md');
                 */
@@ -359,7 +374,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                             error(xhr);
                         }
                         // Todo: else...?
-                        
+
                     }
                 };
                 xhr.open("GET", path, asy); // Async
@@ -367,7 +382,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 xhr.send();
             }
         } else if(path instanceof Event) {
-            /* 
+            /*
                 For browser read from files input element
                 <input type="files" onchange="readFile(event)">
                 <script>
@@ -386,7 +401,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 var data = e.target.result;
                 success(cutbom(data));
             };
-            reader.readAsText(files[0]);    
+            reader.readAsText(files[0]);
         }
     }
 };
@@ -488,7 +503,7 @@ var removeFile = utils.removeFile = function(path,cb) {
         var fs = require('fs');
         fs.remove(path,cb);
     } else if(isCordova()) {
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
                 cb && cb(); // jshint ignore:line
@@ -514,16 +529,16 @@ var fileExists = utils.fileExists = function(path,cb){
         var fs = require('fs');
         fs.exists(path,cb);
     } else if(isCordova()) {
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
             }, function(){
                 cb(false);
             });
         });
-/*/*        
+/*/*
         function fail(){
-            callback(false);            
+            callback(false);
         }
         try {
             // Cordova
@@ -577,7 +592,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
             }
         } else if(isCordova()) {
             // For Apache Cordova
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
@@ -587,7 +602,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                                 }
                             }
                             fileWriter.write(data);
-                        });                                  
+                        });
                     });
  //               });
             });
@@ -612,16 +627,16 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 //            console.log('saveFile 4');
 
                         file.createWriter(function(fileWriter) {
-        
+
 //        fileWriter.seek(fileWriter.length);
-        
+
                             var blob = new Blob([data], {type:'text/plain'});
                             fileWriter.write(blob);
                             fileWriter.onwriteend = function(){
                                 if(cb) cb();
                             };
 //                        console.log("ok, in theory i worked");
-                        });          
+                        });
 */
 /*/*
                         // Corodva
@@ -645,13 +660,13 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                           }
                           writeNext(writeFinish);
                         }
-*/                        
+*/
 //                     });
 //                });
 //            });
         } else {
         	if(isIE() === 9) {
-        		// Solution was taken from 
+        		// Solution was taken from
         		// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
 //				var URI = 'data:text/plain;charset=utf-8,';
 
@@ -659,17 +674,17 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				var ndata = data.replace(/\r\n/g,'&#A;&#D;');
 				ndata = ndata.replace(/\n/g,'&#D;');
 				ndata = ndata.replace(/\t/g,'&#9;');
-				var testlink = window.open("about:blank", "_blank");
+				var testlink = utils.getGlobal().open("about:blank", "_blank");
 				testlink.document.write(ndata); //fileData has contents for the file
 				testlink.document.close();
 				testlink.document.execCommand('SaveAs', false, path);
-				testlink.close();         		
+				testlink.close();
         	} else {
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 	            saveAs(blob, path);
 	            if(cb){
                     res = cb(res);
-                }                		
+                }
         	}
         }
     }
@@ -677,8 +692,8 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     return res;
 }
 
-/** 
-    @function Is this IE9 
+/**
+    @function Is this IE9
     @return {boolean} True for IE9 and false for other browsers
 
     For IE9 compatibility issues
@@ -697,7 +712,7 @@ function isIE () {
 //         var data = fs.writeFileSync(path,data);
 //     } else {
 //         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-//         saveAs(blob, path);        
+//         saveAs(blob, path);
 //     }
 //  };
 
@@ -712,16 +727,16 @@ function isIE () {
 
 var hash = utils.hash = function hash(str){
     var h = 0;
-    
+
     if (0 === str.length){
         return h;
     }
 
     for (var i = 0; i < str.length; i++) {
         h = ((h<<5)-h)+str.charCodeAt(i);
-        h = h & h; 
+        h = h & h;
    	}
-    
+
     return h;
 };
 
@@ -734,15 +749,15 @@ var hash = utils.hash = function hash(str){
 */
 var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
-    a.forEach(function(i){ 
-                            if (r.indexOf(i) < 0){ 
+    a.forEach(function(i){
+                            if (r.indexOf(i) < 0){
                                 r.push(i);
-                            } 
+                            }
                         });
     return r;
 }
 
-/** 
+/**
  Array Difference
  */
 var arrayDiff = utils.arrayDiff  = function (a,b) {
@@ -756,13 +771,13 @@ var arrayIntersect = utils.arrayIntersect  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
-        
+
         b.forEach(function(bi){
             found = found || (ai===bi);
         });
 
         if(found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
@@ -776,14 +791,14 @@ var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
         var found = false;
-        
+
         r.forEach(function(ri){
 //            found = found || equalDeep(ai, ri, true);
             found = found || deepEqual(ai, ri);
         });
 
         if(!found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
@@ -796,14 +811,14 @@ var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
-        
+
         b.forEach(function(bi){
 //            found = found || equalDeep(ai, bi, true);
             found = found || deepEqual(ai, bi);
         });
 
         if(!found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
@@ -816,27 +831,27 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
-        
+
         b.forEach(function(bi){
 //            found = found || equalDeep(ai, bi, true);
             found = found || deepEqual(ai, bi, true);
         });
 
         if(found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
 };
 
-/** 
+/**
   Deep clone obects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(null === obj || typeof(obj) !== 'object'){
         return obj;
     }
-    
+
     if(obj instanceof Date) {
 	return new Date(obj);
     }
@@ -939,7 +954,7 @@ var distinctArray = utils.distinctArray = function(data) {
         if(typeof data[i] === 'object') {
             uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k];}).join('`');
         } else {
-            uix = data[i];  
+            uix = data[i];
         }
         uniq[uix] = data[i];
     }
@@ -951,9 +966,9 @@ var distinctArray = utils.distinctArray = function(data) {
 };
 
 
-/** 
+/**
     Extend object a with properties of b
-    @function 
+    @function
     @param {object} a
     @param {object} b
     @return {object}
@@ -973,7 +988,7 @@ var extend = utils.extend = function extend (a,b){
  */
 var flatArray = utils.flatArray = function(a) {
 //console.log(684,a);
-    if(!a || 0 === a.length){ 
+    if(!a || 0 === a.length){
         return [];
     }
 

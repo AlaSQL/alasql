@@ -1,4 +1,4 @@
-/** 
+/**
 	Export to XLSX function
 	@function
 	@param {string|object} filename Filename or options
@@ -28,7 +28,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	if(typeof exports == 'object') {
 		var XLSX = require('xlsx');
 	} else {
-		var XLSX = window.XLSX;
+		var XLSX = utils.getGlobal().XLSX;
 	};
 
 	/* If called without filename, use opts */
@@ -46,7 +46,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		alasql.utils.loadBinaryFile(opts.sourcefilename,!!cb,function(data){
 			wb = XLSX.read(data,{type:'binary'});
 			doExport();
-        });		
+        });
 	} else {
 		doExport();
 	};
@@ -57,12 +57,12 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	/**
 		Export workbook
-		@function 
+		@function
 	*/
 	function doExport() {
 
-		/* 
-			If opts is array of arrays then this is a 
+		/*
+			If opts is array of arrays then this is a
 			multisheet workboook, else it is a singlesheet
 		*/
 		if(typeof opts == 'object' && opts instanceof Array) {
@@ -80,10 +80,10 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	}
 
 
-	/** 
+	/**
 		Prepare sheet
-		@params {object} opts 
-		@params {array} data 
+		@params {object} opts
+		@params {array} data
 		@params {array} columns Columns
 	*/
 	function prepareSheet(opts, data, columns, idx) {
@@ -104,7 +104,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		} else {
 			wb.SheetNames.push(opt.sheetid);
 			wb.Sheets[opt.sheetid] = {};
-			cells = wb.Sheets[opt.sheetid];			
+			cells = wb.Sheets[opt.sheetid];
 		}
 
 		var range = "A1";
@@ -143,7 +143,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 					cell.t = 'n';
 				} else if(typeof data[j][col.columnid] == 'string') {
 					cell.t = 's';
-				} else if(typeof data[j][col.columnid] == 'boolean') {				
+				} else if(typeof data[j][col.columnid] == 'boolean') {
 					cell.t = 'b';
 				} else if(typeof data[j][col.columnid] == 'object') {
 					if(data[j][col.columnid] instanceof Date) {
@@ -151,15 +151,15 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 					}
 				}
 				cells[alasql.utils.xlsnc(col0+idx)+""+i] = cell;
-			});		
+			});
 			i++;
 		}
 
 	}
 
-	/** 
+	/**
 		Save Workbook
-		@params {array} wb Workbook 
+		@params {array} wb Workbook
 		@params {callback} cb Callback
 	*/
 	function saveWorkbook(cb) {
@@ -205,7 +205,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 					testlink.document.write(s); //fileData has contents for the file
 					testlink.document.close();
 					testlink.document.execCommand('SaveAs', false, filename);
-					testlink.close();         		
+					testlink.close();
 */
 //					alert('ie9');
 				} else {
@@ -218,7 +218,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		// data.forEach(function(d){
 		// 	s += columns.map(function(col){
 		// 		return d[col.columnid];
-		// 	}).join(opts.separator)+'\n';	
+		// 	}).join(opts.separator)+'\n';
 		// });
 		// alasql.utils.saveFile(filename,s);
 */

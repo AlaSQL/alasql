@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.3-develop-1164 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.3-nickdeis-get-global-1175 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.3-develop-1164
+@version 0.2.3-nickdeis-get-global-1175
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff

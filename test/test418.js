@@ -31,12 +31,12 @@ describe('Test '+test+' Load data from internet', function() {
 		var url = 'cdn.rawgit.com/agershun/alasql/6277197ee2db5add9b42c3116f350037e8943cc5/test/test411.xlsx';
 		
 		it('Load http',function(done){
-			this.timeout(5000);
+			this.timeout(7000);
 			testRequest(4, 'http://'+url, 'true', done);
 		});
 		
 		it('Load https',function(done){
-			this.timeout(5000);
+			this.timeout(7000);
 			testRequest(4, 'https://'+url, 'true', done);
 		});
 	});
