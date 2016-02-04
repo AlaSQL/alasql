@@ -2,11 +2,13 @@
 //
 // Promises for AlaSQL
 //
-
-if(typeof exports === 'object') {
+//nodejs now has Promises
+if(typeof utils.getGlobal().Promise === "object") {
+	var Promise = utils.getGlobal().Promise;
+} else if(typeof exports === 'object'){
 	var Promise = require('es6-promise').Promise;
 } else if(typeof window === 'object') {
-	var Promise = window.Promise;
+	var Promise = utils.getGlobal().Promise;
 }
 
 //
@@ -23,5 +25,5 @@ alasql.promise = function(sql, params) {
              }
         });
     });
-};	
+};
 //}
