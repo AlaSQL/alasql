@@ -703,7 +703,7 @@ function isIE () {
 
 //  For LOAD
 //  var saveBinaryFile = utils.saveFile = function(path, data, cb) {
-//     if(typeof exports == 'object') {
+//     if(utils.isNode) {
 //         // For Node.js
 //         var fs = require('fs');
 //         var data = fs.writeFileSync(path,data);

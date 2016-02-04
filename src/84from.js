@@ -404,7 +404,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	var X;
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		X = require('xlsjs');
 	} else {
 		X = utils.global.XLS;
@@ -417,7 +417,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	var X;
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		X = require('xlsx');
 	} else {
 		X = utils.global.XLSX;

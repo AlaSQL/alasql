@@ -25,7 +25,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 //console.log(data);
 
 	/* If Node.js then require() else in browser take a global */
-	if(typeof exports == 'object') {
+	if(utils.isNode) {
 		var XLSX = require('xlsx');
 	} else {
 		var XLSX = utils.global.XLSX;
@@ -169,7 +169,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		if(typeof filename == 'undefined') {
 			res = wb;
 		} else {
-			if(typeof exports == 'object') {
+			if(utils.isNode) {
 				/* For Node.js */
 				XLSX.writeFile(wb, filename);
 			} else {

@@ -142,7 +142,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	}
 
 //	 } else {
-//		if(typeof exports == 'object') {
+//		if(utils.isNode) {
 //			process.stdout.write(s);
 //		} else {
 //		console.log(s);

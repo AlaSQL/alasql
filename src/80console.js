@@ -6,7 +6,7 @@ alasql.con = {
 
 alasql.con.open = function(el) {
 	// For browser only
-	if(typeof exports === 'object') return;
+	if(utils.isNode) return;
 
 	// Find parent element
 	el = el || document.getElementById('alasql-con') || document.getElementsByTagName('body');
@@ -38,14 +38,14 @@ alasql.con.open = function(el) {
 
 alasql.con.clear = function() {
 	// For browser only
-	if(typeof exports === 'object') return;
+	if(utils.isNode) return;
 
 	alasql.con.conel.innerHTML = '';
 };
 
 alasql.con.close = function() {
 	// For browser only
-	if(typeof exports === 'object') return;
+	if(utils.isNode) return;
 
 	alasql.con.conel.removeChild(alasql.con.lenta);
 	alasql.con.conel.removeChild(alasql.con.inel);
@@ -54,7 +54,7 @@ alasql.con.close = function() {
 
 alasql.con.log = function() {
 		// For browser only
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		console.log.bind(console).apply(this, arguments);
 	} else {
 		var s = '<div>';
@@ -114,7 +114,7 @@ alasql.log = function(sql, params) {
 	var olduseid = alasql.useid;
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		target = 'console';
 	}
 
