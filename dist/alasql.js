@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1184 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.3-develop-1185 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1184
+@version 0.2.3-develop-1185
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1184';
+alasql.version = '0.2.3-develop-1185';
 
 /**
 	Debug flag
@@ -4395,19 +4395,22 @@ alasql.compile = function(sql, databaseid) {
 // Promises for AlaSQL
 //
 //nodejs now has Promises
+
 if(typeof utils.global.Promise === "object") {
 	var Promise = utils.global.Promise;
 } else if(utils.isNode){
 	var Promise = require('es6-promise').Promise;
-} else {
-	throw new Error('Please include a Promise library');
-}
+} 
 
 //
 // Only for browsers with Promise support
 //
 //if(typeof window !== 'undefined' && typeof window.Promise === 'function') {
 alasql.promise = function(sql, params) {
+	if(!utils.global.Promise){
+		throw new Error('Please include a Promise library');
+	}
+
     return new Promise(function(resolve, reject){
         alasql(sql, params, function(data,err) {
              if(err) {
