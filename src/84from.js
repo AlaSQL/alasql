@@ -407,7 +407,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	if(typeof exports === 'object') {
 		X = require('xlsjs');
 	} else {
-		X = utils.getGlobal().XLS;
+		X = utils.global.XLS;
 		if(!X) {
 			throw new Error('XLS library is not attached');
 		}
@@ -420,7 +420,7 @@ alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	if(typeof exports === 'object') {
 		X = require('xlsx');
 	} else {
-		X = utils.getGlobal().XLSX;
+		X = utils.global.XLSX;
 		if(!X) {
 			throw new Error('XLSX library is not attached');
 		}

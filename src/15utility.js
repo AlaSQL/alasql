@@ -135,16 +135,22 @@ var cutbom = function(s) {
     Inspired by System.global
     @return {object} The global scope
 */
-var getGlobal = utils.getGlobal = function(){
+var getGlobal = function(){
   try {
     return Function('return this')();
-  }catch(e){
+ 
+  }catch(e){  
     //If Content Security Policy
     var global =  self || window || global;
-    if(global) return global;
-    else throw new Error('unable to locate global object');
+
+    if(global){
+    	return global;
+    } else {
+    	throw new Error('Unable to locate global object');
+    }
   }
 }
+utils.global = getGlobal();
 
 /**
     Find out if a function is native to the enviroment
@@ -159,38 +165,41 @@ var isNativeFunction = utils.isNativeFunction = function(fn){
     Find out if code is running in a web worker enviroment
     @return {boolean} True if code is running in a web worker enviroment
 */
-var isWebWorker = utils.isWebWorker = function(){
+var isWebWorker = function(){
   try{
-    var importScripts = utils.getGlobal().importScripts;
+    var importScripts = utils.global.importScripts;
     return (utils.isNativeFunction(importScripts));
   }catch(e){
     return false;
   }
 }
+utils.isWebWorker = isWebWorker();
 
 /**
     Find out if code is running in a node enviroment
     @return {boolean} True if code is running in a node enviroment
 */
-var isNode = utils.isNode = function(){
+var isNode = function(){
   try{
-    return utils.isNativeFunction(utils.getGlobal().process.reallyExit);
+    return utils.isNativeFunction(utils.global.process.reallyExit);
   }catch(e){
     return false;
   }
-}
+};
+utils.isNode = isNode();
 
 /**
     Find out if code is running in a browser enviroment
     @return {boolean} True if code is running in a browser enviroment
 */
-var isBrowser = utils.isBrowser = function(){
+var isBrowser = function(){
   try{
-    return utils.isNativeFunction(utils.getGlobal().location.reload);
+    return utils.isNativeFunction(utils.global.location.reload);
   }catch(e){
     return false;
   }
 }
+utils.isBrowser = isBrowser();
 
 /**
     Find out if code is running with Meteor in the enviroment
@@ -198,25 +207,28 @@ var isBrowser = utils.isBrowser = function(){
 
     @todo Find out if this is the best way to do this
 */
-var isMeteor = utils.isMeteor = function(){
+var isMeteor = function(){
   return (typeof Meteor !== 'undefined' && Meteor.release)
 }
+utils.isMeteor = isMeteor();
 
 /**
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
 var isMeteorClient = utils.isMeteorClient = function(){
-  return isMeteor() && Meteor.isClient;
+  return utils.isMeteor && Meteor.isClient;
 }
+utils.isMeteorClient = isMeteorClient();
 
 /**
     Find out if code is running on a Meteor server
     @return {boolean} True if code is running on a Meteor server
 */
-var isMeteorServer = utils.isMeteorServer = function(){
-  return isMeteor() && Meteor.isServer;
+var isMeteorServer = function(){
+  return utils.isMeteor && Meteor.isServer;
 }
+utils.isMeteorServer = isMeteorServer();
 
 
 
@@ -226,26 +238,12 @@ var isMeteorServer = utils.isMeteorServer = function(){
 
     @todo Find out if this is the best way to do this
 */
-var isCordova = utils.isCordova = function(){
+var isCordova = function(){
   return (typeof cordova === 'object')
 }
+utils.isCordova = isCordova();
 
 
-/**
-  Gets the global object
-  @return {object} The global object
-**/
-utils.getGlobal = function getGlobal(){
-  try {
-    //This will always return the global objects
-    return Function('return this')();
-  }catch(e){
-    //unless Content Security Policy is enabled, in which case we do our best
-    var global =  self || window || global;
-    if(global) return global;
-    else throw new Error('unable to locate global object');
-  }
-}
 
 /**
     Load text file from anywhere
@@ -260,9 +258,9 @@ utils.getGlobal = function getGlobal(){
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
     var data, fs;
-    if(isNode() || isMeteorServer()) {
+    if(utils.isNode || utils.isMeteorServer) {
 
-        if(isMeteor()) {
+        if(utils.isMeteor) {
             /** For Meteor */
             fs = Npm.require('fs');
         } else {
@@ -309,9 +307,9 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 }
             }
         }
-    } else if(isCordova()) {
+    } else if(utils.isCordova) {
         /* If Cordova */
-        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.file(function(file){
                     var fileReader = new FileReader();
@@ -419,16 +417,15 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     var fs;
-    if(isNode() || isMeteorServer()) {
+    if(utils.isNode || utils.isMeteorServer) {
+        
         // For Node.js
-        if(isMeteor()) {
-            var fs = Npm.require('fs'); // For Meteor
+        if(utils.isMeteor) {
+            fs = Npm.require('fs'); // For Meteor
         } else {
-            var fs = require('fs');
+            fs = require('fs');
         }
-    // if(typeof exports == 'object') {
-    //     // For Node.js
-    //     var fs = require('fs');
+
         if(/^[a-z]+:\/\//i.test(path)) {
             var request = require('request');
             request({url:path,encoding:null},function(err, response, data) {
@@ -499,11 +496,11 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 
 
 var removeFile = utils.removeFile = function(path,cb) {
-    if(isNode()) {
+    if(isNode) {
         var fs = require('fs');
         fs.remove(path,cb);
-    } else if(isCordova()) {
-        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+    } else if(isCordova) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
                 cb && cb(); // jshint ignore:line
@@ -518,18 +515,18 @@ var removeFile = utils.removeFile = function(path,cb) {
 
 // Todo: check if it makes sense to support cordova and Meteor server
 var deleteFile = utils.deleteFile = function(path,cb){
-    if(isNode()) {
+    if(isNode) {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
-    if(isNode()) {
+    if(isNode) {
         var fs = require('fs');
         fs.exists(path,cb);
-    } else if(isCordova()) {
-        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+    } else if(isCordova) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
             }, function(){
@@ -583,16 +580,16 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         }
     } else {
 
-        if(isNode()) {
+        if(isNode) {
             // For Node.js
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
             if(cb){
                 res = cb(res);
             }
-        } else if(isCordova()) {
+        } else if(isCordova) {
             // For Apache Cordova
-            utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
@@ -674,7 +671,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				var ndata = data.replace(/\r\n/g,'&#A;&#D;');
 				ndata = ndata.replace(/\n/g,'&#D;');
 				ndata = ndata.replace(/\t/g,'&#9;');
-				var testlink = utils.getGlobal().open("about:blank", "_blank");
+				var testlink = utils.global.open("about:blank", "_blank");
 				testlink.document.write(ndata); //fileData has contents for the file
 				testlink.document.close();
 				testlink.document.execCommand('SaveAs', false, path);
@@ -1148,13 +1145,13 @@ utils.findAlaSQLPath = function() {
 	if (isWebWorker()) {
 		return '';		
 		/** @todo Check how to get path in worker */
-	} else if(isNode()) { 
+	} else if(isNode) { 
 		return __dirname;
 	
-	} else if(isMeteorClient()) {
+	} else if(isMeteorClient) {
 		return '/packages/dist/';
 	
-	} else if(isMeteorServer()) {
+	} else if(isMeteorServer) {
 		return 'assets/packages/dist/';
 	
 	} else if(isBrowser()) {

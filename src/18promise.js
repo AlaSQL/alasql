@@ -3,9 +3,9 @@
 // Promises for AlaSQL
 //
 //nodejs now has Promises
-if(typeof utils.getGlobal().Promise === "object") {
-	var Promise = utils.getGlobal().Promise;
-} else if(utils.isNode()){
+if(typeof utils.global.Promise === "object") {
+	var Promise = utils.global.Promise;
+} else if(utils.isNode){
 	var Promise = require('es6-promise').Promise;
 } else {
 	throw new Error('Please include a Promise library');

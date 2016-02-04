@@ -28,7 +28,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	if(typeof exports == 'object') {
 		var XLSX = require('xlsx');
 	} else {
-		var XLSX = utils.getGlobal().XLSX;
+		var XLSX = utils.global.XLSX;
 	};
 
 	/* If called without filename, use opts */

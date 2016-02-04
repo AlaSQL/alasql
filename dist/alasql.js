@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.3-nickdeis-get-global-1175 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.3-develop-1181 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.3-nickdeis-get-global-1175
+@version 0.2.3-develop-1181
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-nickdeis-get-global-1175';
+alasql.version = '0.2.3-develop-1181';
 
 /**
 	Debug flag
@@ -3105,16 +3105,22 @@ var cutbom = function(s) {
     Inspired by System.global
     @return {object} The global scope
 */
-var getGlobal = utils.getGlobal = function(){
+var getGlobal = function(){
   try {
     return Function('return this')();
-  }catch(e){
+
+  }catch(e){  
     //If Content Security Policy
     var global =  self || window || global;
-    if(global) return global;
-    else throw new Error('unable to locate global object');
+
+    if(global){
+    	return global;
+    } else {
+    	throw new Error('Unable to locate global object');
+    }
   }
 }
+utils.global = getGlobal();
 
 /**
     Find out if a function is native to the enviroment
@@ -3129,38 +3135,41 @@ var isNativeFunction = utils.isNativeFunction = function(fn){
     Find out if code is running in a web worker enviroment
     @return {boolean} True if code is running in a web worker enviroment
 */
-var isWebWorker = utils.isWebWorker = function(){
+var isWebWorker = function(){
   try{
-    var importScripts = utils.getGlobal().importScripts;
+    var importScripts = utils.global.importScripts;
     return (utils.isNativeFunction(importScripts));
   }catch(e){
     return false;
   }
 }
+utils.isWebWorker = isWebWorker();
 
 /**
     Find out if code is running in a node enviroment
     @return {boolean} True if code is running in a node enviroment
 */
-var isNode = utils.isNode = function(){
+var isNode = function(){
   try{
-    return utils.isNativeFunction(utils.getGlobal().process.reallyExit);
+    return utils.isNativeFunction(utils.global.process.reallyExit);
   }catch(e){
     return false;
   }
-}
+};
+utils.isNode = isNode();
 
 /**
     Find out if code is running in a browser enviroment
     @return {boolean} True if code is running in a browser enviroment
 */
-var isBrowser = utils.isBrowser = function(){
+var isBrowser = function(){
   try{
-    return utils.isNativeFunction(utils.getGlobal().location.reload);
+    return utils.isNativeFunction(utils.global.location.reload);
   }catch(e){
     return false;
   }
 }
+utils.isBrowser = isBrowser();
 
 /**
     Find out if code is running with Meteor in the enviroment
@@ -3168,25 +3177,28 @@ var isBrowser = utils.isBrowser = function(){
 
     @todo Find out if this is the best way to do this
 */
-var isMeteor = utils.isMeteor = function(){
+var isMeteor = function(){
   return (typeof Meteor !== 'undefined' && Meteor.release)
 }
+utils.isMeteor = isMeteor();
 
 /**
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
 var isMeteorClient = utils.isMeteorClient = function(){
-  return isMeteor() && Meteor.isClient;
+  return utils.isMeteor && Meteor.isClient;
 }
+utils.isMeteorClient = isMeteorClient();
 
 /**
     Find out if code is running on a Meteor server
     @return {boolean} True if code is running on a Meteor server
 */
-var isMeteorServer = utils.isMeteorServer = function(){
-  return isMeteor() && Meteor.isServer;
+var isMeteorServer = function(){
+  return utils.isMeteor && Meteor.isServer;
 }
+utils.isMeteorServer = isMeteorServer();
 
 /**
     Find out code is running in a cordovar enviroment
@@ -3194,25 +3206,10 @@ var isMeteorServer = utils.isMeteorServer = function(){
 
     @todo Find out if this is the best way to do this
 */
-var isCordova = utils.isCordova = function(){
+var isCordova = function(){
   return (typeof cordova === 'object')
 }
-
-/**
-  Gets the global object
-  @return {object} The global object
-**/
-utils.getGlobal = function getGlobal(){
-  try {
-    //This will always return the global objects
-    return Function('return this')();
-  }catch(e){
-    //unless Content Security Policy is enabled, in which case we do our best
-    var global =  self || window || global;
-    if(global) return global;
-    else throw new Error('unable to locate global object');
-  }
-}
+utils.isCordova = isCordova();
 
 /**
     Load text file from anywhere
@@ -3227,9 +3224,9 @@ utils.getGlobal = function getGlobal(){
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
     var data, fs;
-    if(isNode() || isMeteorServer()) {
+    if(utils.isNode || utils.isMeteorServer) {
 
-        if(isMeteor()) {
+        if(utils.isMeteor) {
             /** For Meteor */
             fs = Npm.require('fs');
         } else {
@@ -3276,9 +3273,9 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 }
             }
         }
-    } else if(isCordova()) {
+    } else if(utils.isCordova) {
         /* If Cordova */
-        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.file(function(file){
                     var fileReader = new FileReader();
@@ -3363,16 +3360,15 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     var fs;
-    if(isNode() || isMeteorServer()) {
+    if(utils.isNode || utils.isMeteorServer) {
+
         // For Node.js
-        if(isMeteor()) {
-            var fs = Npm.require('fs'); // For Meteor
+        if(utils.isMeteor) {
+            fs = Npm.require('fs'); // For Meteor
         } else {
-            var fs = require('fs');
+            fs = require('fs');
         }
-    // if(typeof exports == 'object') {
-    //     // For Node.js
-    //     var fs = require('fs');
+
         if(/^[a-z]+:\/\//i.test(path)) {
             var request = require('request');
             request({url:path,encoding:null},function(err, response, data) {
@@ -3442,11 +3438,11 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 };
 
 var removeFile = utils.removeFile = function(path,cb) {
-    if(isNode()) {
+    if(isNode) {
         var fs = require('fs');
         fs.remove(path,cb);
-    } else if(isCordova()) {
-        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+    } else if(isCordova) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
                 cb && cb(); // jshint ignore:line
@@ -3461,18 +3457,18 @@ var removeFile = utils.removeFile = function(path,cb) {
 
 // Todo: check if it makes sense to support cordova and Meteor server
 var deleteFile = utils.deleteFile = function(path,cb){
-    if(isNode()) {
+    if(isNode) {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
-    if(isNode()) {
+    if(isNode) {
         var fs = require('fs');
         fs.exists(path,cb);
-    } else if(isCordova()) {
-        utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+    } else if(isCordova) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
             }, function(){
@@ -3506,16 +3502,16 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         }
     } else {
 
-        if(isNode()) {
+        if(isNode) {
             // For Node.js
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
             if(cb){
                 res = cb(res);
             }
-        } else if(isCordova()) {
+        } else if(isCordova) {
             // For Apache Cordova
-            utils.getGlobal().requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
@@ -3539,7 +3535,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				var ndata = data.replace(/\r\n/g,'&#A;&#D;');
 				ndata = ndata.replace(/\n/g,'&#D;');
 				ndata = ndata.replace(/\t/g,'&#9;');
-				var testlink = utils.getGlobal().open("about:blank", "_blank");
+				var testlink = utils.global.open("about:blank", "_blank");
 				testlink.document.write(ndata); //fileData has contents for the file
 				testlink.document.close();
 				testlink.document.execCommand('SaveAs', false, path);
@@ -3948,13 +3944,13 @@ utils.findAlaSQLPath = function() {
 	if (isWebWorker()) {
 		return '';		
 		/** @todo Check how to get path in worker */
-	} else if(isNode()) { 
+	} else if(isNode) { 
 		return __dirname;
 
-	} else if(isMeteorClient()) {
+	} else if(isMeteorClient) {
 		return '/packages/dist/';
 
-	} else if(isMeteorServer()) {
+	} else if(isMeteorServer) {
 		return 'assets/packages/dist/';
 
 	} else if(isBrowser()) {
@@ -4399,12 +4395,12 @@ alasql.compile = function(sql, databaseid) {
 // Promises for AlaSQL
 //
 //nodejs now has Promises
-if(typeof utils.getGlobal().Promise === "object") {
-	var Promise = utils.getGlobal().Promise;
-} else if(typeof exports === 'object'){
+if(typeof utils.global.Promise === "object") {
+	var Promise = utils.global.Promise;
+} else if(utils.isNode){
 	var Promise = require('es6-promise').Promise;
-} else if(typeof window === 'object') {
-	var Promise = utils.getGlobal().Promise;
+} else {
+	throw new Error('Please include a Promise library');
 }
 
 //
@@ -13432,7 +13428,7 @@ alasql.log = function(sql, params) {
 	}
 
 	// For Node and console.output
-	if(target === 'console' || typeof exports === 'object') {
+	if(target === 'console' || utils.isNode) {
 		if(typeof sql === 'string' && alasql.options.logprompt){
 			console.log(olduseid+'>',sql);
 		}
@@ -13490,17 +13486,11 @@ alasql.log = function(sql, params) {
 alasql.clear = function() {
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
-		target = 'console';
-	}
 
-	if(target === 'console' || typeof exports === 'object') {
+	if(utils.isNode || utils.isMeteorServer) {
 		if(console.clear) {
 			console.clear();
 		} 
-
-		// todo: handle Node
-
 	} else {
 		var el;
 		if(target === 'output') {
@@ -13521,17 +13511,10 @@ alasql.write = function(s) {
 
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
-		target = 'console';
-	}
-
-	if(target === 'console' || typeof exports === 'object') {
+	if(utils.isNode || utils.isMeteorServer) {
 		if(console.log) {
 			console.log(s);
 		} 
-
-		// todo: handle node
-
 	} else {
 		var el;
 		if(target === 'output') {
@@ -13623,8 +13606,8 @@ function scrollTo(element, to, duration) {
 }
 
 alasql.prompt = function(el, useidel, firstsql) {
-	if(typeof exports === 'object') {
-		throw new Error('The functionality of prompt is not realized for Node.js');
+	if(utils.isNode) {
+		throw new Error('The prompt not realized for Node.js');
 	}
 
 	var prompti = 0;
@@ -14691,7 +14674,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	if(typeof exports == 'object') {
 		var XLSX = require('xlsx');
 	} else {
-		var XLSX = utils.getGlobal().XLSX;
+		var XLSX = utils.global.XLSX;
 	};
 
 	/* If called without filename, use opts */
@@ -15222,7 +15205,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	if(typeof exports === 'object') {
 		X = require('xlsjs');
 	} else {
-		X = utils.getGlobal().XLS;
+		X = utils.global.XLS;
 		if(!X) {
 			throw new Error('XLS library is not attached');
 		}
@@ -15235,7 +15218,7 @@ alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	if(typeof exports === 'object') {
 		X = require('xlsx');
 	} else {
-		X = utils.getGlobal().XLSX;
+		X = utils.global.XLSX;
 		if(!X) {
 			throw new Error('XLSX library is not attached');
 		}
@@ -15704,13 +15687,13 @@ WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 // (c) Andrey Gershun
 //
 
-if(typeof(utils.isBrowser()) && utils.getGlobal().indexedDB) {
+if(typeof(utils.isBrowser) && utils.global.indexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
 // For Chrome it work normally, for Firefox - simple shim
-if(typeof utils.getGlobal().indexedDB.webkitGetDatabaseNames == 'function') {
-	IDB.getDatabaseNames = utils.getGlobal().indexedDB.webkitGetDatabaseNames.bind(utils.getGlobal().indexedDB);
+if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
+	IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
 } else {
 	IDB.getDatabaseNames = function () {
 		var request = {};
@@ -15756,7 +15739,7 @@ IDB.showDatabases = function(like,cb) {
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 console.log(arguments);
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	if(ifnotexists) {
 		var request2 = indexedDB.open(ixdbid,1);
 		request2.onsuccess = function(event) {
@@ -15782,7 +15765,7 @@ console.log(arguments);
 };
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	if(IDB.getDatabaseNamesNotSupported) {
 		// Hack for Firefox
 		if(ifnotexists) {
@@ -15846,7 +15829,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 };
 
 IDB.dropDatabase = function(ixdbid, ifexists, cb){
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
 	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
@@ -15867,7 +15850,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 };
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
@@ -15893,7 +15876,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 };
 
 IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
@@ -15937,7 +15920,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 };
 
 IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
@@ -15989,7 +15972,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 
 	// console.trace();
 
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request1 = indexedDB.open(ixdbid);
 	request1.onsuccess = function(event) {
@@ -16012,7 +15995,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 
 	// console.trace();
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
@@ -16048,7 +16031,7 @@ IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 
 	// console.trace();
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
@@ -16089,7 +16072,7 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 
 	// console.trace();
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {

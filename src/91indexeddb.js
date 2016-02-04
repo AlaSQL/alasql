@@ -6,13 +6,13 @@
 //
 
 
-if(typeof(utils.isBrowser()) && utils.getGlobal().indexedDB) {
+if(typeof(utils.isBrowser) && utils.global.indexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
 // For Chrome it work normally, for Firefox - simple shim
-if(typeof utils.getGlobal().indexedDB.webkitGetDatabaseNames == 'function') {
-	IDB.getDatabaseNames = utils.getGlobal().indexedDB.webkitGetDatabaseNames.bind(utils.getGlobal().indexedDB);
+if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
+	IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
 } else {
 	IDB.getDatabaseNames = function () {
 		var request = {};
@@ -58,7 +58,7 @@ IDB.showDatabases = function(like,cb) {
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 console.log(arguments);
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	if(ifnotexists) {
 		var request2 = indexedDB.open(ixdbid,1);
 		request2.onsuccess = function(event) {
@@ -99,7 +99,7 @@ console.log(arguments);
 };
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	if(IDB.getDatabaseNamesNotSupported) {
 		// Hack for Firefox
 		if(ifnotexists) {
@@ -165,7 +165,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 
 
 IDB.dropDatabase = function(ixdbid, ifexists, cb){
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
 	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
@@ -186,7 +186,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 };
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
@@ -223,7 +223,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 
 
 IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 //	console.log(arguments);
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 //	console.log(ixdbid);
@@ -267,7 +267,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 };
 
 IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
@@ -353,7 +353,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 	// console.log(arguments);
 	// console.trace();
 //	console.log('intoTable',databaseid, tableid, value, cb);
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request1 = indexedDB.open(ixdbid);
 	request1.onsuccess = function(event) {
@@ -388,7 +388,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 	// console.log(arguments);
 	// console.trace();
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
@@ -425,7 +425,7 @@ IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 	// console.log(arguments);
 	// console.trace();
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
@@ -467,7 +467,7 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 	// console.log(arguments);
 	// console.trace();
-  var indexedDB = utils.getGlobal().indexedDB;
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
