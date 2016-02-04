@@ -1142,7 +1142,7 @@ utils.glob = function (value,pattern) {
 utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
-	if (utils.isWebWorker()) {
+	if (utils.isWebWorker) {
 		return '';		
 		/** @todo Check how to get path in worker */
 	} else if(utils.isNode) { 

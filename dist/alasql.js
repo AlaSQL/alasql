@@ -1,7 +1,7 @@
-/*! AlaSQL v0.2.3-develop-1181 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
+/*! AlaSQL v0.2.3-develop-1183 © 2014-2015 Andrey Gershun & M. Rangel Wulff | alasql.org/license */
 /*
 @module alasql
-@version 0.2.3-develop-1181
+@version 0.2.3-develop-1183
 
 AlaSQL - JavaScript SQL database
 © 2014-2015	Andrey Gershun & M. Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1181';
+alasql.version = '0.2.3-develop-1183';
 
 /**
 	Debug flag
@@ -3438,10 +3438,10 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 };
 
 var removeFile = utils.removeFile = function(path,cb) {
-    if(isNode) {
+    if(utils.isNode) {
         var fs = require('fs');
         fs.remove(path,cb);
-    } else if(isCordova) {
+    } else if(utils.isCordova) {
         utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
@@ -3457,17 +3457,17 @@ var removeFile = utils.removeFile = function(path,cb) {
 
 // Todo: check if it makes sense to support cordova and Meteor server
 var deleteFile = utils.deleteFile = function(path,cb){
-    if(isNode) {
+    if(utils.isNode) {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
-    if(isNode) {
+    if(utils.isNode) {
         var fs = require('fs');
         fs.exists(path,cb);
-    } else if(isCordova) {
+    } else if(utils.isCordova) {
         utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
@@ -3502,14 +3502,14 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         }
     } else {
 
-        if(isNode) {
+        if(utils.isNode) {
             // For Node.js
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
             if(cb){
                 res = cb(res);
             }
-        } else if(isCordova) {
+        } else if(utils.isCordova) {
             // For Apache Cordova
             utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 
@@ -3941,19 +3941,19 @@ utils.glob = function (value,pattern) {
 utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
-	if (isWebWorker()) {
+	if (utils.isWebWorker) {
 		return '';		
 		/** @todo Check how to get path in worker */
-	} else if(isNode) { 
+	} else if(utils.isNode) { 
 		return __dirname;
 
-	} else if(isMeteorClient) {
+	} else if(utils.isMeteorClient) {
 		return '/packages/dist/';
 
-	} else if(isMeteorServer) {
+	} else if(utils.isMeteorServer) {
 		return 'assets/packages/dist/';
 
-	} else if(isBrowser()) {
+	} else if(utils.isBrowser) {
 		var sc = document.getElementsByTagName('script');
 
 		for(var i=0;i<sc.length;i++) {	
