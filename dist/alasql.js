@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1191 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.3-develop-1193 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1191
+@version 0.2.3-develop-1193
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1191';
+alasql.version = '0.2.3-develop-1193';
 
 /**
 	Debug flag
@@ -3176,7 +3176,7 @@ utils.isBrowser = isBrowser();
     @return {boolean} True if code is running in a browser with a browserify setup
 */
 var isBrowserify = function(){
-	return utils.isBrowser && (typeof exports === 'object');
+	return utils.isBrowser && utils.global.process && utils.global.process.browser
 }
 utils.isBrowserify = isBrowserify();
 
