@@ -202,6 +202,17 @@ var isBrowser = function(){
 utils.isBrowser = isBrowser();
 
 /**
+    Find out if code is running in a browser with a browserify setup
+    @return {boolean} True if code is running in a browser with a browserify setup
+*/
+var isBrowserify = function(){
+	return utils.isBrowser && (typeof exports === 'object');
+}
+utils.isBrowserify = isBrowserify();
+
+
+
+/**
     Find out if code is running with Meteor in the enviroment
     @return {boolean} True if code is running with Meteor in the enviroment
 

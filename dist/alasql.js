@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1185 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.3-develop-1191 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1185
+@version 0.2.3-develop-1191
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1185';
+alasql.version = '0.2.3-develop-1191';
 
 /**
 	Debug flag
@@ -3172,6 +3172,15 @@ var isBrowser = function(){
 utils.isBrowser = isBrowser();
 
 /**
+    Find out if code is running in a browser with a browserify setup
+    @return {boolean} True if code is running in a browser with a browserify setup
+*/
+var isBrowserify = function(){
+	return utils.isBrowser && (typeof exports === 'object');
+}
+utils.isBrowserify = isBrowserify();
+
+/**
     Find out if code is running with Meteor in the enviroment
     @return {boolean} True if code is running with Meteor in the enviroment
 
@@ -3901,7 +3910,7 @@ var like = utils.like = function (pattern,value,escape) {
 
     s += '$';
 
-    return (value||'').toUpperCase().search(RegExp(s.toUpperCase()))>-1;
+    return (''+(value||'')).toUpperCase().search(RegExp(s.toUpperCase()))>-1;
    };
 
 utils.glob = function (value,pattern) {
@@ -3931,7 +3940,7 @@ utils.glob = function (value,pattern) {
     }
 
     s += '$';
-    return (value||'').toUpperCase().search(RegExp(s.toUpperCase()))>-1;
+    return (''+(value||'')).toUpperCase().search(RegExp(s.toUpperCase()))>-1;
    };
 
 /**
@@ -13419,7 +13428,7 @@ alasql.log = function(sql, params) {
 	var olduseid = alasql.useid;
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		target = 'console';
 	}
 
@@ -14674,7 +14683,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	}
 
 	/* If Node.js then require() else in browser take a global */
-	if(typeof exports == 'object') {
+	if(utils.isNode) {
 		var XLSX = require('xlsx');
 	} else {
 		var XLSX = utils.global.XLSX;
@@ -14809,14 +14818,27 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	*/
 	function saveWorkbook(cb) {
 
+		var XLSX;
+
 		if(typeof filename == 'undefined') {
 			res = wb;
 		} else {
-			if(typeof exports == 'object') {
-				/* For Node.js */
+			var XLSX;
+
+			if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
+                                XLSX = require('xlsx');
+
+                        } else {
+				XLSX = utils.global.XLSX;
+			}
+
+			if(utils.isNode || utils.isMeteorServer) {
 				XLSX.writeFile(wb, filename);
 			} else {
-				/* For browser */
+				if(!XLSX) {
+					throw new Error('XLSX library not found');
+				}
+
 				var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
 				var wbout = XLSX.write(wb,wopts);
 
@@ -14843,6 +14865,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	};
 };
+
 /*
 //
 // FROM functions Alasql.js
@@ -15205,7 +15228,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	var X;
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		X = require('xlsjs');
 	} else {
 		X = utils.global.XLS;
@@ -15218,12 +15241,12 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	var X;
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		X = require('xlsx');
 	} else {
 		X = utils.global.XLSX;
 		if(!X) {
-			throw new Error('XLSX library is not attached');
+			throw new Error('XLSX library not found');
 		}
 	}
 	return XLSXLSX(X,filename, opts, cb, idx, query);

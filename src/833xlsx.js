@@ -170,13 +170,19 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		if(typeof filename == 'undefined') {
 			res = wb;
 		} else {
-			if(utils.isNode) {
-				XLSX = require('xlsx');
-				XLSX.writeFile(wb, filename);
-		
-			} else {
+			var XLSX;
+
+			if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
+                                XLSX = require('xlsx');
+                           
+                        } else {
 				XLSX = utils.global.XLSX;
-		
+			}
+
+
+			if(utils.isNode || utils.isMeteorServer) {
+				XLSX.writeFile(wb, filename);
+			} else {
 				if(!XLSX) {
 					throw new Error('XLSX library not found');
 				}
