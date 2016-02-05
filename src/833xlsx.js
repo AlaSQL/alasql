@@ -165,15 +165,22 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	function saveWorkbook(cb) {
 
 //console.log(wb);
-
+		var XLSX;
+		
 		if(typeof filename == 'undefined') {
 			res = wb;
 		} else {
 			if(utils.isNode) {
-				/* For Node.js */
+				XLSX = require('xlsx');
 				XLSX.writeFile(wb, filename);
+		
 			} else {
-				/* For browser */
+				XLSX = utils.global.XLSX;
+		
+				if(!XLSX) {
+					throw new Error('XLSX library not found');
+				}
+		
 				var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
 				var wbout = XLSX.write(wb,wopts);
 
