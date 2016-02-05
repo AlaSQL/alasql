@@ -422,7 +422,7 @@ alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	} else {
 		X = utils.global.XLSX;
 		if(!X) {
-			throw new Error('XLSX library is not attached');
+			throw new Error('XLSX library not found');
 		}
 	}
 	return XLSXLSX(X,filename, opts, cb, idx, query);
