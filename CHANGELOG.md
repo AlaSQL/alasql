@@ -2,7 +2,8 @@
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
 ### 0.2.4 "Exogi" (xx.xx.2016)
-* ...
+* Added: Central enviroment detection
+* Changed: Better support for phonegap, cordova and browserify
 
 ### 0.2.3 "Spetses" (02.01.2016)
 * Changed: New fast way to calculate aggregators (some parameters changed)
