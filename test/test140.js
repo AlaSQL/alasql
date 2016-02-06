@@ -102,7 +102,7 @@ describe('Test 140 JavaScript Functions', function() {
 		assert.deepEqual(res,[2014,2015]);
 
 		var res = alasql("SELECT COLUMN MONTH(d) FROM four");
-		assert.deepEqual(res,[1,1]);
+		assert.deepEqual(res,[6,6]);
 
 		var res = alasql("SELECT COLUMN DAY(d) FROM four");
 		assert.deepEqual(res,[1,2]);
