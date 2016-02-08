@@ -404,12 +404,12 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	var X;
-	if(utils.isNode) {
+	if(utils.isNode || utils.isBrowserify) {
 		X = require('xlsjs');
 	} else {
 		X = utils.global.XLS;
 		if(!X) {
-			throw new Error('XLS library is not attached');
+			throw new Error('XLS library not found');
 		}
 	}
 	return XLSXLSX(X,filename, opts, cb, idx, query);
@@ -417,7 +417,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	var X;
-	if(utils.isNode) {
+	if(utils.isNode || utils.isBrowserify) {
 		X = require('xlsx');
 	} else {
 		X = utils.global.XLSX;

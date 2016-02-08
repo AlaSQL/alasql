@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1193 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.3-develop-1197 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1193
+@version 0.2.3-develop-1197
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1193';
+alasql.version = '0.2.3-develop-1197';
 
 /**
 	Debug flag
@@ -15228,12 +15228,12 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	var X;
-	if(utils.isNode) {
+	if(utils.isNode || utils.isBrowserify) {
 		X = require('xlsjs');
 	} else {
 		X = utils.global.XLS;
 		if(!X) {
-			throw new Error('XLS library is not attached');
+			throw new Error('XLS library not found');
 		}
 	}
 	return XLSXLSX(X,filename, opts, cb, idx, query);
@@ -15241,7 +15241,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	var X;
-	if(utils.isNode) {
+	if(utils.isNode || utils.isBrowserify) {
 		X = require('xlsx');
 	} else {
 		X = utils.global.XLSX;
@@ -16866,7 +16866,7 @@ FS.rollback = function(databaseid, cb) {
 
 }
 
-if((typeof exports != 'object') && (typeof importScripts != 'function') && (typeof document == 'object')) {
+if(utils.isBrowser && !utils.isWebWorker && !utils.isBrowserify) {
 
 /* FileSaver.js
  * A saveAs() FileSaver implementation.
