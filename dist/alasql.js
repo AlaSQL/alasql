@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1197 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.3-develop-1198 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1197
+@version 0.2.3-develop-1198
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1197';
+alasql.version = '0.2.3-develop-1198';
 
 /**
 	Debug flag
@@ -3176,7 +3176,7 @@ utils.isBrowser = isBrowser();
     @return {boolean} True if code is running in a browser with a browserify setup
 */
 var isBrowserify = function(){
-	return utils.isBrowser && utils.global.process && utils.global.process.browser
+	return utils.isBrowser && process && process.browser;
 }
 utils.isBrowserify = isBrowserify();
 
@@ -16866,7 +16866,7 @@ FS.rollback = function(databaseid, cb) {
 
 }
 
-if(utils.isBrowser && !utils.isWebWorker && !utils.isBrowserify) {
+if(utils.isBrowser && !utils.isWebWorker) {
 
 /* FileSaver.js
  * A saveAs() FileSaver implementation.

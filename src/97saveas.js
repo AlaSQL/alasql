@@ -1,1 +1,1 @@
-if(utils.isBrowser && !utils.isWebWorker && !utils.isBrowserify) {
+if(utils.isBrowser && !utils.isWebWorker) {

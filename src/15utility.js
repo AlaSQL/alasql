@@ -206,7 +206,7 @@ utils.isBrowser = isBrowser();
     @return {boolean} True if code is running in a browser with a browserify setup
 */
 var isBrowserify = function(){
-	return utils.isBrowser && utils.global.process && utils.global.process.browser
+	return utils.isBrowser && process && process.browser;
 }
 utils.isBrowserify = isBrowserify();
 
