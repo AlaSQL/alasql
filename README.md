@@ -15,7 +15,7 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 # AlaSQL
 
 
-_( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ?skju:?l]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
+_( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
 
 The library is designed for:
 
@@ -247,34 +247,34 @@ See more [in the wiki](https://github.com/agershun/alasql/wiki/AlaSQL-CLI)
 
 
 
-### AlaSQL ? D3.js
+### AlaSQL ♥ D3.js
 
 AlaSQL plays nice with d3.js and gives you a convenient way to integrate a specific subset of your data vis the visual powers of d3. See more about [D3.js and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/d3.js)
 
 
-### AlaSQL ? Excel
+### AlaSQL ♥ Excel
 
 AlaSQL can export data to both [Excel 2003 (.xls)](https://github.com/agershun/alasql/wiki/XLS) and [Excel 2007 (.xlsx)](https://github.com/agershun/alasql/wiki/XLSX) with coloring of cells and other Excel formatting functions.  
 
 
-### AlaSQL ? Meteor
+### AlaSQL ♥ Meteor
 
 Meteor is amazing. You can now query directly on your Meteor collections with SQL - simple and easy. See more about [Meteor and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Meteor)
 
 
 
-### AlaSQL ? Angular.js
+### AlaSQL ♥ Angular.js
 
 Angular is great. Besides using AlaSQL for normal data manipulation it works like a charm for exporting you present scope to Excel. See more about [Angular and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Angular.js)
 
 
-### AlaSQL ? Google Maps
+### AlaSQL ♥ Google Maps
 
 Pinpointing data on a map should be easy. AlaSQL is great to prepare source data for Google Maps from for example Excel or CSV making a one unit of work for fetching and identifying whats relevant. See more about [Google Maps and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Google-maps)
 
 
 
-### AlaSQL ? Google Spreadsheets
+### AlaSQL ♥ Google Spreadsheets
 
 AlaSQL can query data directly from a google spreadsheet. A good "partnership" for easy editing and powerfull data manipulation. See more about [Google Spreadsheets and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Google-maps)
 
