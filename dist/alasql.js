@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1198 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.3-develop-1204 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1198
+@version 0.2.3-develop-1204
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1198';
+alasql.version = '0.2.3-develop-1204';
 
 /**
 	Debug flag
@@ -3176,7 +3176,7 @@ utils.isBrowser = isBrowser();
     @return {boolean} True if code is running in a browser with a browserify setup
 */
 var isBrowserify = function(){
-	return utils.isBrowser && process && process.browser;
+	return utils.isBrowser && (typeof process !== "undefined") && process.browser;
 }
 utils.isBrowserify = isBrowserify();
 
@@ -7896,7 +7896,14 @@ yy.Select.prototype.compileGroup = function(query) {
 			return "'"+columnid+"':null,";
 		}).join('');
 
-		var aft = '';
+		var aft = '', aft2='';
+
+		if(typeof query.groupStar !== 'undefined') {
+			aft2 += 'for(var f in p[\''+query.groupStar+'\']) {g[f]=p[\''+query.groupStar+'\'][f];};';
+		};
+
+		/*
+		*/
 
 		s += query.selectGroup.map(function(col){
 
@@ -7910,11 +7917,8 @@ yy.Select.prototype.compileGroup = function(query) {
 				if(col.distinct) {
 					aft += ',g[\'$$_VALUES_'+colas+'\']={},g[\'$$_VALUES_'+colas+'\']['+colexp+']=true';
 				}
-				if (col.aggregatorid === 'SUM'
-
-				){ 
-					return "'"+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJS(); 	
-
+				if (col.aggregatorid === 'SUM') { 
+					return "'"+colas+'\':('+colexp+')||0,'; 
 				} else if (
 							col.aggregatorid === 'MIN'
 							|| col.aggregatorid === 'MAX'
@@ -7961,7 +7965,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 		}).join('');
 
-		s += '}'+aft+',g));} else {';
+		s += '}'+aft+',g));'+aft2+'} else {';
 
 /*
 	// var neggroup = arrayDiff(allgroups,agroup);
@@ -8320,6 +8324,8 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			}
 
 			// }
+		} else {
+			query.groupStar = col.tableid || 'default';
 		}
 
 	});
@@ -8346,7 +8352,8 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 
 		if(col instanceof yy.Column && col.columnid === '*') {
 
-			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
+			s += 'for(var k in g) {r[k]=g[k]};';
+			return '';
 
 		} else {
 			// var colas = col.as;
