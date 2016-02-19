@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1204 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.3-develop-1206 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1204
+@version 0.2.3-develop-1206
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1204';
+alasql.version = '0.2.3-develop-1206';
 
 /**
 	Debug flag
@@ -3439,7 +3439,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 var data = e.target.result;
                 success(data);
             };
-            reader.readAsBinaryString(files[0]);
+            reader.readAsArrayBuffer(files[0]);
         } else if(path instanceof Blob) {
         	success(path);
         }
