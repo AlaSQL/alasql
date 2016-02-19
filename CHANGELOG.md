@@ -4,6 +4,7 @@
 ### 0.2.4 "Exogi" (xx.xx.2016)
 * Added: Central enviroment detection
 * Changed: Better support for phonegap, cordova and browserify
+* Changed: SELECT * FROM ? GROUP BY a works as FIRST(*)
 
 ### 0.2.3 "Spetses" (02.01.2016)
 * Changed: New fast way to calculate aggregators (some parameters changed)
@@ -15,7 +16,7 @@
 * Added: REPLACE() string function (see issue #560)
 * Added: NEWID(), UUID() and GEN_RANDOM_UUID() functions for GUID
 * Added: DEFAULT for column can be a function (e.g. DEFAULT NEWID())
-* Changed: SELECT * FROM ? GROUP BY a works as FIRST(*)
+
 
 ### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list
