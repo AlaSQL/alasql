@@ -1,6 +1,6 @@
-
   Running tests on alasql@0.2.3-develop-1206
 
+```
   Environment detected: {
     "alasqlPath": "C:\\Users\\mrw\\git\\alasql\\dist",
     "isBrowser": false,

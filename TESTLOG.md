@@ -57,19 +57,22 @@ See full result [here](https://github.com/agershun/alasql/tree/develop/test/!tes
 - Passes 1034
 
 
-### Chakra
+### Chakra v6.0.0-pre2
 - `alasql@0.2.3-develop-1206`
-- Failures: 80
-- Passes 1044
+-  1360 passing (2m)
+-  66 pending
+-  26 failing
 
 See full result [here](https://github.com/agershun/alasql/tree/develop/test/!testlog/Chakra.md)
 
 
 ### Node
-The regression test is used everytime the library is compiled from `src/` to `dist/` and must always have 100% OK before releaseing a new version. 
+- `alasql@0.2.3-detached.from.b496c74-69`
+- 1386 passing (9s)
+- 66 pending
+  
+The regression test is ran everytime the library is compiled from `src/` to `dist/` and must always be 100% OK before releaseing a new version. 
 
-See last result [here](https://travis-ci.org/agershun/alasql/builds). 
-
-If 100% OK this will be green: 
+If 100% of the regression test is OK for [the lats commit](https://travis-ci.org/agershun/alasql/builds) this will be green: 
 
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
