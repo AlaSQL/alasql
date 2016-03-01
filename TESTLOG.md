@@ -25,8 +25,6 @@ It has not yet been possible to run the SQLlogic tests on the Chrakra engine.
 The [regression tests for AlaSQL](https://github.com/agershun/alasql/tree/develop/test/) consists of more than 1000 test cases (hopefully) covering all of the functionality in the library. By executing `npm run test:only` the regression test will run via node. By executing `npm run test:browser` it will run in a browser. 
 
 
-
-
 ### Chrome 48
 - `alasql@0.2.3-develop-1206`
 - Failures: 61
@@ -57,11 +55,11 @@ See full result [here](https://github.com/agershun/alasql/tree/develop/test/!tes
 - Passes 1034
 
 
-### Chakra v6.0.0-pre2
-- `alasql@0.2.3-develop-1206`
--  1360 passing (2m)
+### Chakra v6.0.0-pre5
+- `alasql@0.2.3-develop-1216`
+-  1364 passing (2m)
 -  66 pending
--  26 failing
+-  22 failing
 
 See full result [here](https://github.com/agershun/alasql/tree/develop/test/!testlog/Chakra.md)
 
