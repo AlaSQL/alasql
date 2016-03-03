@@ -6,7 +6,7 @@
 * Changed: Better support for phonegap, cordova and browserify
 * Changed: SELECT * FROM ? GROUP BY a works as FIRST(*)
 
-### 0.2.3 "Spetses" (02.01.2016)
+### 0.2.3 "Spetses" (01.02.2016)
 * Changed: New fast way to calculate aggregators (some parameters changed)
 * Added: User defined aggregators
 * Fixed: Remove empty Last line in TXT and XLSX
