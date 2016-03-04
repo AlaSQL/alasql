@@ -93,7 +93,7 @@ alasql.from.RANGE = function(start, finish, cb, idx, query) {
 	for(var i=start;i<=finish;i++){
 		res.push(i);
 	}
-//	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});	
+//	res = new alasql.Recordset({data:res,columns:{columnid:'_'}});
 	if(cb){
 		res = cb(res, idx, query);
 	}
@@ -135,7 +135,7 @@ alasql.from.JSON = function(filename, opts, cb, idx, query) {
 	alasql.utils.loadFile(filename,!!cb,function(data){
 //		console.log('DATA:'+data);
 //		res = [{a:1}];
-		res = JSON.parse(data);	
+		res = JSON.parse(data);
 		if(cb){
 			res = cb(res, idx, query);
 		}
@@ -246,7 +246,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	        		var r = {};
 	        		hs.forEach(function(h,idx){
 	        			r[h] = a[idx];
-	        			// Please avoid === here 
+	        			// Please avoid === here
 						if((typeof r[h] !== 'undefined') && r[h].length !== 0 && (r[h]).trim() == +r[h]){ // jshint ignore:line
 							r[h] = +r[h];
 						}
@@ -305,7 +305,7 @@ if(false) {
 					res[i] = b;
 				}
 //				console.log(res[0]);
-			}	
+			}
 		} else {
 			for(var i=0, ilen=res.length; i<ilen;i++) {
 				res[i] = res[i].split(opt.separator);
@@ -404,12 +404,12 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	var X;
-	if(typeof exports === 'object') {
+	if(utils.isNode || utils.isBrowserify) {
 		X = require('xlsjs');
 	} else {
-		X = window.XLS;
+		X = utils.global.XLS;
 		if(!X) {
-			throw new Error('XLS library is not attached');
+			throw new Error('XLS library not found');
 		}
 	}
 	return XLSXLSX(X,filename, opts, cb, idx, query);
@@ -417,12 +417,12 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	var X;
-	if(typeof exports === 'object') {
+	if(utils.isNode || utils.isBrowserify) {
 		X = require('xlsx');
 	} else {
-		X = window.XLSX;
+		X = utils.global.XLSX;
 		if(!X) {
-			throw new Error('XLSX library is not attached');
+			throw new Error('XLSX library not found');
 		}
 	}
 	return XLSXLSX(X,filename, opts, cb, idx, query);

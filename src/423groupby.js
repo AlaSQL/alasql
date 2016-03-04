@@ -119,7 +119,14 @@ if(false) {
 			return "'"+columnid+"':null,";
 		}).join('');
 //console.log(neggroup);
-		var aft = '';
+		var aft = '', aft2='';
+
+		if(typeof query.groupStar !== 'undefined') {
+			aft2 += 'for(var f in p[\''+query.groupStar+'\']) {g[f]=p[\''+query.groupStar+'\'][f];};';
+		};
+
+		/*
+		*/
 //		s += self.columns.map(function(col){
 //console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup.map(function(col){
@@ -134,12 +141,8 @@ if(false) {
 				if(col.distinct) {
 					aft += ',g[\'$$_VALUES_'+colas+'\']={},g[\'$$_VALUES_'+colas+'\']['+colexp+']=true';
 				}
-				if (col.aggregatorid === 'SUM'
-//					|| col.aggregatorid == 'AVG'
-//				) { return "'"+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJS(); 	
-				){ 
-					return "'"+colas+'\':('+colexp+')||0,'; //f.field.arguments[0].toJS(); 	
-				
+				if (col.aggregatorid === 'SUM') { 
+					return "'"+colas+'\':('+colexp+')||0,'; 
 				} else if (
 							col.aggregatorid === 'MIN'
 							|| col.aggregatorid === 'MAX'
@@ -235,7 +238,7 @@ if(false) {
 		// s += ss.join(',');
 	//	s += '});};';
 */
-		s += '}'+aft+',g));} else {';
+		s += '}'+aft+',g));'+aft2+'} else {';
 
 	//	console.log(s, this.columns);
 

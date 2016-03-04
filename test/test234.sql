@@ -15,7 +15,7 @@ INSERT INTO people VALUES ("Larry","Larrison","M"),("Larry","Larrison","M"),("La
 
 --DECLARE @M STRING = "M";
 
-SELECT *  
+SELECT FirstName, LastName  
 	FROM people 
 	GROUP BY FirstName, LastName 
 	HAVING SUM(CASE WHEN Gender = "M" THEN 1 ELSE 0 END) >= 5;

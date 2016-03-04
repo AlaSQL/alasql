@@ -319,6 +319,8 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			}
 //				console.log("colas:",colas);
 			// }
+		} else {
+			query.groupStar = col.tableid || 'default';
 		}
 
 	});
@@ -345,7 +347,11 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 //		console.log(col);
 		if(col instanceof yy.Column && col.columnid === '*') {
 //			s += 'for(var k in g){r[k]=g[k]};';
-			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
+//			s += 'for(var k in this.query.groupColumns){r[k]=g[this.query.groupColumns[k]]};';
+
+			s += 'for(var k in g) {r[k]=g[k]};';
+			return '';
+
 //			console.log(query);
 		} else {
 			// var colas = col.as;

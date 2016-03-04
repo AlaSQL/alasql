@@ -10,14 +10,8 @@ var closure = false;
 var fs = require('fs');
 var gulp = require('gulp');
 module.exports = gulp;
-//var connect = require('gulp-connect');
-//var livereload = require('gulp-livereload');
-//var changed = require('gulp-changed');
-//var jison = require('gulp-jison');
-//var concat = require('gulp-concat-sourcemap');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-//var jisonLex = require('gulp-jison-lex');
 var shell = require('gulp-shell');
 var rename = require('gulp-rename');
 var dereserve = require('gulp-dereserve');
@@ -29,19 +23,16 @@ var execSync = require('child_process').execSync;
 // Identify name of the build
 var packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'))
 var version = packageData.version;
-var branch = execSync('git --work-tree=' + __dirname +' --git-dir=' + __dirname + '/.git branch', {encoding:'utf8'})
+var branch = execSync('git --work-tree="' + __dirname +'" --git-dir="' + __dirname + '/.git" branch', {encoding:'utf8'})
               .match(/^\*\s+(.*)/m)[1]
               .trim()
 var commits = parseInt(execSync('git rev-list HEAD --count', {encoding:'utf8'})) | 0;
-
-
 if(!(/^master|^release\//.test(branch))){
   version += '-'
               + branch.replace(/[^0-9a-z-]/ig,'.').replace(/^\.+|\.+$/g,'')
               + '-' 
               + commits;
 } 
-
 
 gulp.task('js-merge-worker', function () {
   return gulp.src([
@@ -54,7 +45,7 @@ gulp.task('js-merge-worker', function () {
     .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) 
     .pipe(gulp.dest('./dist'))
     .pipe(rename('alasql-worker.min.js'))
-    .pipe(uglify())
+    .pipe(uglify({preserveComments:function(a,b){return 1===b.line && /^!/.test(b.value)}})) // leave first line of comment if starts with a "!"
     .pipe(gulp.dest('./dist'));
 });
 
@@ -160,9 +151,8 @@ gulp.task('js-merge', function () {
     .pipe(gulp.dest('./dist'))
     .pipe(dereserve())
     .pipe(rename('alasql.min.js'))
-    .pipe(uglify())
+    .pipe(uglify({preserveComments:function(a,b){return 1===b.line && /^!/.test(b.value)}})) // leave first line of comment if starts with a "!"
     .pipe(gulp.dest('./dist'))
-    //.pipe(shell(['cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v bell Tests failed ; else say -v bell All tests OK; fi)']))
     ;
 });
 

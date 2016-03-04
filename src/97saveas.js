@@ -1,1 +1,1 @@
-if((typeof exports != 'object') && (typeof importScripts != 'function') && (typeof document == 'object')) {
+if(utils.isBrowser && !utils.isWebWorker) {

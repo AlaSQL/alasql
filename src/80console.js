@@ -6,7 +6,7 @@ alasql.con = {
 
 alasql.con.open = function(el) {
 	// For browser only
-	if(typeof exports === 'object') return;
+	if(utils.isNode) return;
 
 	// Find parent element
 	el = el || document.getElementById('alasql-con') || document.getElementsByTagName('body');
@@ -38,14 +38,14 @@ alasql.con.open = function(el) {
 
 alasql.con.clear = function() {
 	// For browser only
-	if(typeof exports === 'object') return;
+	if(utils.isNode) return;
 
 	alasql.con.conel.innerHTML = '';
 };
 
 alasql.con.close = function() {
 	// For browser only
-	if(typeof exports === 'object') return;
+	if(utils.isNode) return;
 
 	alasql.con.conel.removeChild(alasql.con.lenta);
 	alasql.con.conel.removeChild(alasql.con.inel);
@@ -54,7 +54,7 @@ alasql.con.close = function() {
 
 alasql.con.log = function() {
 		// For browser only
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		console.log.bind(console).apply(this, arguments);
 	} else {
 		var s = '<div>';
@@ -114,7 +114,7 @@ alasql.log = function(sql, params) {
 	var olduseid = alasql.useid;
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
+	if(utils.isNode) {
 		target = 'console';
 	}
 
@@ -126,7 +126,7 @@ alasql.log = function(sql, params) {
 	}
 
 	// For Node and console.output
-	if(target === 'console' || typeof exports === 'object') {
+	if(target === 'console' || utils.isNode) {
 		if(typeof sql === 'string' && alasql.options.logprompt){
 			console.log(olduseid+'>',sql);
 		}
@@ -184,17 +184,11 @@ alasql.log = function(sql, params) {
 alasql.clear = function() {
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
-		target = 'console';
-	}
-
-	if(target === 'console' || typeof exports === 'object') {
+	
+	if(utils.isNode || utils.isMeteorServer) {
 		if(console.clear) {
 			console.clear();
 		} 
-		
-		// todo: handle Node
-		
 	} else {
 		var el;
 		if(target === 'output') {
@@ -215,17 +209,10 @@ alasql.write = function(s) {
 //	console.log('write',s);
 	var target = alasql.options.logtarget;
 	// For node other
-	if(typeof exports === 'object') {
-		target = 'console';
-	}
-
-	if(target === 'console' || typeof exports === 'object') {
+	if(utils.isNode || utils.isMeteorServer) {
 		if(console.log) {
 			console.log(s);
 		} 
-
-		// todo: handle node
-
 	} else {
 		var el;
 		if(target === 'output') {
@@ -319,8 +306,8 @@ function scrollTo(element, to, duration) {
 }
 
 alasql.prompt = function(el, useidel, firstsql) {
-	if(typeof exports === 'object') {
-		throw new Error('The functionality of prompt is not realized for Node.js');
+	if(utils.isNode) {
+		throw new Error('The prompt not realized for Node.js');
 	}
 
 	var prompti = 0;

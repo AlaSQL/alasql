@@ -6,13 +6,13 @@
 //
 
 
- if(typeof window !='undefined' && window.indexedDB) {
+if(typeof(utils.isBrowser) && utils.global.indexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
 // For Chrome it work normally, for Firefox - simple shim
-if(typeof window.indexedDB.webkitGetDatabaseNames == 'function') {
-	IDB.getDatabaseNames = window.indexedDB.webkitGetDatabaseNames.bind(window.indexedDB);
+if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
+	IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
 } else {
 	IDB.getDatabaseNames = function () {
 		var request = {};
@@ -58,14 +58,15 @@ IDB.showDatabases = function(like,cb) {
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 console.log(arguments);
+  var indexedDB = utils.global.indexedDB;
 	if(ifnotexists) {
-		var request2 = window.indexedDB.open(ixdbid,1);
+		var request2 = indexedDB.open(ixdbid,1);
 		request2.onsuccess = function(event) {
 			event.target.result.close();
 			if(cb) cb(1);
 		};
 	} else {
-		var request1 = window.indexedDB.open(ixdbid,1);
+		var request1 = indexedDB.open(ixdbid,1);
 		request1.onupgradeneeded = function (e){
 			console.log('abort');
 		    e.target.transaction.abort();
@@ -75,7 +76,7 @@ console.log(arguments);
 			if(ifnotexists) {
 				if(cb) cb(0);
 			} else {
-				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');				
+				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
 			}
 		}
 	}
@@ -87,7 +88,7 @@ console.log(arguments);
 			if(ifnotexists) {
 				cb(0);
 				return;
-			} else {		
+			} else {
 				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
 			}
 		};
@@ -98,22 +99,23 @@ console.log(arguments);
 };
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
+  var indexedDB = utils.global.indexedDB;
 	if(IDB.getDatabaseNamesNotSupported) {
 		// Hack for Firefox
 		if(ifnotexists) {
-//			console.log('ifnotexists');
+      //			console.log('ifnotexists');
 			var dbExists = true;
-			var request2 = window.indexedDB.open(ixdbid);
-//			console.log(1);
+			var request2 = indexedDB.open(ixdbid);
+      //			console.log(1);
 			request2.onupgradeneeded = function (e){
-//				console.log('abort');
+        //				console.log('abort');
 				dbExists = false;
-//			    e.target.transaction.abort();
-//			    cb(0);				
+        //			    e.target.transaction.abort();
+        //			    cb(0);
 			};
 			request2.onsuccess = function(event) {
-//				console.log('success');
-//console.log(event.target.result);
+        //				console.log('success');
+        //console.log(event.target.result);
 				event.target.result.close();
 				if(dbExists) {
 					if(cb) cb(0);
@@ -122,8 +124,8 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 				}
 			};
 		} else {
-//			console.log('without');
-			var request1 = window.indexedDB.open(ixdbid);
+      //			console.log('without');
+			var request1 = indexedDB.open(ixdbid);
 			request1.onupgradeneeded = function (e){
 			    e.target.transaction.abort();
 			};
@@ -133,7 +135,7 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 			request1.onsuccess = function(event) {
 				event.target.result.close();
 				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
-//				cb(0);
+        //				cb(0);
 			};
 
 		}
@@ -146,23 +148,24 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 				if(ifnotexists) {
 					if(cb) cb(0);
 					return;
-				} else {		
+				} else {
 					throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
 				}
 			};
 
-			var request2 = window.indexedDB.open(ixdbid,1);
+			var request2 = indexedDB.open(ixdbid,1);
 			request2.onsuccess = function(event) {
 				event.target.result.close();
 				if(cb) cb(1);
 			};
-		};		
+		};
 	}
 	// }
 };
 
 
 IDB.dropDatabase = function(ixdbid, ifexists, cb){
+  var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
 	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
@@ -174,7 +177,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 				throw new Error('IndexedDB: Cannot drop new database "'+ixdbid+'" because it does not exist');
 			}
 		};
-		var request2 = window.indexedDB.deleteDatabase(ixdbid);
+		var request2 = indexedDB.deleteDatabase(ixdbid);
 		request2.onsuccess = function(event) {
 //			console.log('dropped');
 			if(cb) cb(1);
@@ -183,13 +186,14 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 };
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
+  var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot attach database "'+ixdbid+'" because it does not exist');
 		};
-		var request2 = window.indexedDB.open(ixdbid);
+		var request2 = indexedDB.open(ixdbid);
 		request2.onsuccess = function(event) {
 			var ixdb = event.target.result;
 			var db = new alasql.Database(dbid || ixdbid);
@@ -209,7 +213,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 		// 	}
 		// }
 */
-			event.target.result.close();	
+			event.target.result.close();
 			if(cb) cb(1);
 		};
 	};
@@ -219,6 +223,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 
 
 IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
+  var indexedDB = utils.global.indexedDB;
 //	console.log(arguments);
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 //	console.log(ixdbid);
@@ -228,7 +233,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot create table in database "'+ixdbid+'" because it does not exist');
 		};
-		var request2 = window.indexedDB.open(ixdbid);
+		var request2 = indexedDB.open(ixdbid);
 		request2.onversionchange = function(event) {
 //			console.log('onversionchange');
 			event.target.result.close();
@@ -237,7 +242,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 			var version = event.target.result.version;
 			event.target.result.close();
 
-			var request3 = window.indexedDB.open(ixdbid, version+1);
+			var request3 = indexedDB.open(ixdbid, version+1);
 			request3.onupgradeneeded = function(event) {
 				var ixdb = event.target.result;
 //				console.log(ixdb);
@@ -256,22 +261,23 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 			request3.onblocked = function(event){
 				throw new Error('Cannot create table "'+tableid+'" because database "'+databaseid+'"  is blocked');
 //				console.log('blocked');
-			}				
+			}
 		};
 	};
 };
 
 IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
 		request1.onsuccess = function(event) {
 		var dblist = event.target.result;
-	
+
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot drop table in database "'+ixdbid+'" because it does not exist');
 		};
-		var request2 = window.indexedDB.open(ixdbid);
+		var request2 = indexedDB.open(ixdbid);
 		request2.onversionchange = function(event) {
 			event.target.result.close();
 		};
@@ -279,7 +285,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 			var version = event.target.result.version;
 			event.target.result.close();
 
-			var request3 = window.indexedDB.open(ixdbid, version+1);
+			var request3 = indexedDB.open(ixdbid, version+1);
 			request3.onupgradeneeded = function(event) {
 				var ixdb = event.target.result;
 				if(ixdb.objectStoreNames.contains(tableid)) {
@@ -305,7 +311,7 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 			request3.onblocked = function(event){
 				throw new Error('Cannot drop table "'+tableid+'" because database "'+databaseid+'" is blocked');
 //				console.log('blocked');
-			}				
+			}
 		};
 	};
 }
@@ -347,8 +353,9 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 	// console.log(arguments);
 	// console.trace();
 //	console.log('intoTable',databaseid, tableid, value, cb);
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
-	var request1 = window.indexedDB.open(ixdbid);
+	var request1 = indexedDB.open(ixdbid);
 	request1.onsuccess = function(event) {
 		var ixdb = event.target.result;
 		var tx = ixdb.transaction([tableid],"readwrite");
@@ -381,8 +388,9 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 	// console.log(arguments);
 	// console.trace();
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
-	var request = window.indexedDB.open(ixdbid);
+	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
 	  	var res = [];
 	  	var ixdb = event.target.result;
@@ -411,14 +419,15 @@ IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 		  		if(cb) cb(res, idx, query);
 		  	}
 	  	}
-	}		
+	}
 }
 
 IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 	// console.log(arguments);
 	// console.trace();
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
-	var request = window.indexedDB.open(ixdbid);
+	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
 	  	var res = [];
 	  	var ixdb = event.target.result;
@@ -452,14 +461,15 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 		  		if(cb) cb(num);
 		  	}
 	  	}
-	}		
+	}
 }
 
 IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 	// console.log(arguments);
 	// console.trace();
+  var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
-	var request = window.indexedDB.open(ixdbid);
+	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
 	  	var res = [];
 	  	var ixdb = event.target.result;
@@ -496,7 +506,7 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 		  		if(cb) cb(num);
 		  	}
 	  	}
-	}		
+	}
 }
 
 // Skip

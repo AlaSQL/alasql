@@ -19,7 +19,7 @@ var utils = alasql.utils = {};
     @return {string} Covered expression
 
     @example
-    
+
     123         => 123
     undefined   => undefined
     NaN         => undefined
@@ -35,12 +35,12 @@ function n2u(s) {
     @return {string} Covered expression
 
     @example
-    
+
     123,a       => a
     undefined,a => undefined
     NaN,a       => undefined
 
-*/    
+*/
 function und(s,r) {
     return '(y='+s+',typeof y=="undefined"?undefined:'+r+')';
 }
@@ -66,7 +66,7 @@ function returnUndefined() {}
     @param {string} s Source string
     @return {string} Escaped string
     @example
-    
+
     Piter's => Piter\'s
 
 */
@@ -82,7 +82,7 @@ var escapeq = utils.escapeq = function(s) {
     @return {string} Escaped string
 
     @example
-    
+
     Piter's => Piter''s
 
  */
@@ -110,7 +110,7 @@ var doubleq = utils.doubleq = function(s) {
     @return {string} Replaced string
 
     @todo Chack this functions
-    
+
 */
  var doubleqq = utils.doubleqq = function(s) {
     return s.replace(/\'/g,"\'");
@@ -119,7 +119,7 @@ var doubleq = utils.doubleq = function(s) {
 /**
     Cut BOM first character for UTF-8 files (for merging two files)
     @param {string} s Source string
-    @return {string} Replaced string    
+    @return {string} Replaced string
 */
 
 var cutbom = function(s) {
@@ -128,6 +128,133 @@ var cutbom = function(s) {
     }
     return s;
 }
+
+
+/**
+    Get the blobal scope
+    Inspired by System.global
+    @return {object} The global scope
+*/
+var getGlobal = function(){
+  try {
+    return Function('return this')();
+ 
+  }catch(e){  
+    //If Content Security Policy
+    var global =  self || window || global;
+
+    if(global){
+    	return global;
+    } else {
+    	throw new Error('Unable to locate global object');
+    }
+  }
+}
+utils.global = getGlobal();
+
+/**
+    Find out if a function is native to the enviroment
+    @param {function} Function to check
+    @return {boolean} True if function is native
+*/
+var isNativeFunction = utils.isNativeFunction = function(fn){
+  return typeof fn === "function" && !!~(fn.toString().indexOf("[native code]"));
+}
+
+/**
+    Find out if code is running in a web worker enviroment
+    @return {boolean} True if code is running in a web worker enviroment
+*/
+var isWebWorker = function(){
+  try{
+    var importScripts = utils.global.importScripts;
+    return (utils.isNativeFunction(importScripts));
+  }catch(e){
+    return false;
+  }
+}
+utils.isWebWorker = isWebWorker();
+
+/**
+    Find out if code is running in a node enviroment
+    @return {boolean} True if code is running in a node enviroment
+*/
+var isNode = function(){
+  try{
+    return utils.isNativeFunction(utils.global.process.reallyExit);
+  }catch(e){
+    return false;
+  }
+};
+utils.isNode = isNode();
+
+/**
+    Find out if code is running in a browser enviroment
+    @return {boolean} True if code is running in a browser enviroment
+*/
+var isBrowser = function(){
+  try{
+    return utils.isNativeFunction(utils.global.location.reload);
+  }catch(e){
+    return false;
+  }
+}
+utils.isBrowser = isBrowser();
+
+/**
+    Find out if code is running in a browser with a browserify setup
+    @return {boolean} True if code is running in a browser with a browserify setup
+*/
+var isBrowserify = function(){
+	return utils.isBrowser && (typeof process !== "undefined") && process.browser;
+}
+utils.isBrowserify = isBrowserify();
+
+
+
+/**
+    Find out if code is running with Meteor in the enviroment
+    @return {boolean} True if code is running with Meteor in the enviroment
+
+    @todo Find out if this is the best way to do this
+*/
+var isMeteor = function(){
+  return (typeof Meteor !== 'undefined' && Meteor.release)
+}
+utils.isMeteor = isMeteor();
+
+/**
+    Find out if code is running on a Meteor client
+    @return {boolean} True if code is running on a Meteor client
+*/
+var isMeteorClient = utils.isMeteorClient = function(){
+  return utils.isMeteor && Meteor.isClient;
+}
+utils.isMeteorClient = isMeteorClient();
+
+/**
+    Find out if code is running on a Meteor server
+    @return {boolean} True if code is running on a Meteor server
+*/
+var isMeteorServer = function(){
+  return utils.isMeteor && Meteor.isServer;
+}
+utils.isMeteorServer = isMeteorServer();
+
+
+
+/**
+    Find out code is running in a cordovar enviroment
+    @return {boolean} True if code is running in a web worker enviroment
+
+    @todo Find out if this is the best way to do this
+*/
+var isCordova = function(){
+  return (typeof cordova === 'object')
+}
+utils.isCordova = isCordova();
+
+
 
 /**
     Load text file from anywhere
@@ -138,13 +265,13 @@ var cutbom = function(s) {
     @return {string} Read data
 
     @todo Define Event type
+    @todo Smaller if-else structures.
 */
 var loadFile = utils.loadFile = function(path, asy, success, error) {
     var data, fs;
-    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
+    if(utils.isNode || utils.isMeteorServer) {
 
-        
-        if(typeof Meteor !== 'undefined') {
+        if(utils.isMeteor) {
             /** For Meteor */
             fs = Npm.require('fs');
         } else {
@@ -173,7 +300,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     if(err) {
                         throw err;
                     }
-                    success(cutbom(body.toString()));                    
+                    success(cutbom(body.toString()));
                 });
             } else {
                 /* If async callthen call async*/
@@ -191,9 +318,9 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 }
             }
         }
-    } else if(typeof cordova === 'object') {
+    } else if(utils.isCordova) {
         /* If Cordova */
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.file(function(file){
                     var fileReader = new FileReader();
@@ -228,20 +355,20 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     reader.readAsText(file);
                 });
             });
-        });    
+        });
 */
     } else {
         /* For string */
         if(typeof path === "string") {
             // For browser read from tag
             /*
-                SELECT * FROM TXT('#one') -- read data from HTML element with id="one" 
+                SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
             */
             if((path.substr(0,1) === '#') && (typeof document !== 'undefined')) {
                 data = document.querySelector(path).textContent;
                 success(data);
             } else {
-                /* 
+                /*
                     Simply read file from HTTP request, like:
                     SELECT * FROM TXT('http://alasql.org/README.md');
                 */
@@ -256,7 +383,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                             error(xhr);
                         }
                         // Todo: else...?
-                        
+
                     }
                 };
                 xhr.open("GET", path, asy); // Async
@@ -264,7 +391,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 xhr.send();
             }
         } else if(path instanceof Event) {
-            /* 
+            /*
                 For browser read from files input element
                 <input type="files" onchange="readFile(event)">
                 <script>
@@ -283,7 +410,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 var data = e.target.result;
                 success(cutbom(data));
             };
-            reader.readAsText(files[0]);    
+            reader.readAsText(files[0]);
         }
     }
 };
@@ -295,20 +422,21 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
   @param {function} success Success function
   @param {function} error Error function
   @return 1 for Async, data - for sync version
+
+  @todo merge functionality from loadFile and LoadBinaryFile
 */
 
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     var fs;
-    if((typeof exports === 'object') || (typeof Meteor !== 'undefined' && Meteor.isServer)) {
+    if(utils.isNode || utils.isMeteorServer) {
+        
         // For Node.js
-        if(typeof Meteor !== 'undefined') {
-            var fs = Npm.require('fs'); // For Meteor
+        if(utils.isMeteor) {
+            fs = Npm.require('fs'); // For Meteor
         } else {
-            var fs = require('fs');
+            fs = require('fs');
         }
-    // if(typeof exports == 'object') {
-    //     // For Node.js
-    //     var fs = require('fs');
+
         if(/^[a-z]+:\/\//i.test(path)) {
             var request = require('request');
             request({url:path,encoding:null},function(err, response, data) {
@@ -370,20 +498,20 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 var data = e.target.result;
                 success(data);
             };
-            reader.readAsBinaryString(files[0]);    
+            reader.readAsArrayBuffer(files[0]);
         } else if(path instanceof Blob) {
         	success(path);
-        } 
+        }
     }
 };
 
 
 var removeFile = utils.removeFile = function(path,cb) {
-    if(typeof exports === 'object') {
+    if(utils.isNode) {
         var fs = require('fs');
         fs.remove(path,cb);
-    } else if(typeof cordova === 'object') {
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+    } else if(utils.isCordova) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 fileEntry.remove(cb);
                 cb && cb(); // jshint ignore:line
@@ -396,29 +524,29 @@ var removeFile = utils.removeFile = function(path,cb) {
     }
 };
 
-
+// Todo: check if it makes sense to support cordova and Meteor server
 var deleteFile = utils.deleteFile = function(path,cb){
-    if(typeof exports === 'object') {
+    if(utils.isNode) {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
 };
 
 var fileExists = utils.fileExists = function(path,cb){
-    if(typeof exports === 'object') {
+    if(utils.isNode) {
         var fs = require('fs');
         fs.exists(path,cb);
-    } else if(typeof cordova === 'object') {
-        window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+    } else if(utils.isCordova) {
+        utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
             fileSystem.root.getFile(path, {create:false}, function (fileEntry) {
                 cb(true);
             }, function(){
                 cb(false);
             });
         });
-/*/*        
+/*/*
         function fail(){
-            callback(false);            
+            callback(false);
         }
         try {
             // Cordova
@@ -463,16 +591,16 @@ var saveFile = utils.saveFile = function(path, data, cb) {
         }
     } else {
 
-        if(typeof exports === 'object') {
+        if(utils.isNode) {
             // For Node.js
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
             if(cb){
                 res = cb(res);
             }
-        } else if(typeof cordova === 'object') {
+        } else if(utils.isCordova) {
             // For Apache Cordova
-            window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+            utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
                         fileEntry.createWriter(function(fileWriter) {
@@ -482,7 +610,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                                 }
                             }
                             fileWriter.write(data);
-                        });                                  
+                        });
                     });
  //               });
             });
@@ -507,16 +635,16 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 //            console.log('saveFile 4');
 
                         file.createWriter(function(fileWriter) {
-        
+
 //        fileWriter.seek(fileWriter.length);
-        
+
                             var blob = new Blob([data], {type:'text/plain'});
                             fileWriter.write(blob);
                             fileWriter.onwriteend = function(){
                                 if(cb) cb();
                             };
 //                        console.log("ok, in theory i worked");
-                        });          
+                        });
 */
 /*/*
                         // Corodva
@@ -540,13 +668,13 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                           }
                           writeNext(writeFinish);
                         }
-*/                        
+*/
 //                     });
 //                });
 //            });
         } else {
         	if(isIE() === 9) {
-        		// Solution was taken from 
+        		// Solution was taken from
         		// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
 //				var URI = 'data:text/plain;charset=utf-8,';
 
@@ -554,17 +682,17 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				var ndata = data.replace(/\r\n/g,'&#A;&#D;');
 				ndata = ndata.replace(/\n/g,'&#D;');
 				ndata = ndata.replace(/\t/g,'&#9;');
-				var testlink = window.open("about:blank", "_blank");
+				var testlink = utils.global.open("about:blank", "_blank");
 				testlink.document.write(ndata); //fileData has contents for the file
 				testlink.document.close();
 				testlink.document.execCommand('SaveAs', false, path);
-				testlink.close();         		
+				testlink.close();
         	} else {
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
 	            saveAs(blob, path);
 	            if(cb){
                     res = cb(res);
-                }                		
+                }
         	}
         }
     }
@@ -572,8 +700,8 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     return res;
 }
 
-/** 
-    @function Is this IE9 
+/**
+    @function Is this IE9
     @return {boolean} True for IE9 and false for other browsers
 
     For IE9 compatibility issues
@@ -586,13 +714,13 @@ function isIE () {
 
 //  For LOAD
 //  var saveBinaryFile = utils.saveFile = function(path, data, cb) {
-//     if(typeof exports == 'object') {
+//     if(utils.isNode) {
 //         // For Node.js
 //         var fs = require('fs');
 //         var data = fs.writeFileSync(path,data);
 //     } else {
 //         var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-//         saveAs(blob, path);        
+//         saveAs(blob, path);
 //     }
 //  };
 
@@ -607,16 +735,16 @@ function isIE () {
 
 var hash = utils.hash = function hash(str){
     var h = 0;
-    
+
     if (0 === str.length){
         return h;
     }
 
     for (var i = 0; i < str.length; i++) {
         h = ((h<<5)-h)+str.charCodeAt(i);
-        h = h & h; 
+        h = h & h;
    	}
-    
+
     return h;
 };
 
@@ -629,15 +757,15 @@ var hash = utils.hash = function hash(str){
 */
 var arrayUnion = utils.arrayUnion = function (a,b) {
     var r = b.slice(0);
-    a.forEach(function(i){ 
-                            if (r.indexOf(i) < 0){ 
+    a.forEach(function(i){
+                            if (r.indexOf(i) < 0){
                                 r.push(i);
-                            } 
+                            }
                         });
     return r;
 }
 
-/** 
+/**
  Array Difference
  */
 var arrayDiff = utils.arrayDiff  = function (a,b) {
@@ -651,13 +779,13 @@ var arrayIntersect = utils.arrayIntersect  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
-        
+
         b.forEach(function(bi){
             found = found || (ai===bi);
         });
 
         if(found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
@@ -671,14 +799,14 @@ var arrayUnionDeep = utils.arrayUnionDeep = function (a,b) {
     var r = b.slice(0);
     a.forEach(function(ai) {
         var found = false;
-        
+
         r.forEach(function(ri){
 //            found = found || equalDeep(ai, ri, true);
             found = found || deepEqual(ai, ri);
         });
 
         if(!found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
@@ -691,14 +819,14 @@ var arrayExceptDeep = utils.arrayExceptDeep = function (a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
-        
+
         b.forEach(function(bi){
 //            found = found || equalDeep(ai, bi, true);
             found = found || deepEqual(ai, bi);
         });
 
         if(!found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
@@ -711,27 +839,27 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
     var r = [];
     a.forEach(function(ai) {
         var found = false;
-        
+
         b.forEach(function(bi){
 //            found = found || equalDeep(ai, bi, true);
             found = found || deepEqual(ai, bi, true);
         });
 
         if(found) {
-            r.push(ai); 
+            r.push(ai);
         }
     });
     return r;
 };
 
-/** 
+/**
   Deep clone obects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(null === obj || typeof(obj) !== 'object'){
         return obj;
     }
-    
+
     if(obj instanceof Date) {
 	return new Date(obj);
     }
@@ -834,7 +962,7 @@ var distinctArray = utils.distinctArray = function(data) {
         if(typeof data[i] === 'object') {
             uix = Object.keys(data[i]).sort().map(function(k){return k+'`'+data[i][k];}).join('`');
         } else {
-            uix = data[i];  
+            uix = data[i];
         }
         uniq[uix] = data[i];
     }
@@ -846,9 +974,9 @@ var distinctArray = utils.distinctArray = function(data) {
 };
 
 
-/** 
+/**
     Extend object a with properties of b
-    @function 
+    @function
     @param {object} a
     @param {object} b
     @return {object}
@@ -868,7 +996,7 @@ var extend = utils.extend = function extend (a,b){
  */
 var flatArray = utils.flatArray = function(a) {
 //console.log(684,a);
-    if(!a || 0 === a.length){ 
+    if(!a || 0 === a.length){
         return [];
     }
 
@@ -983,7 +1111,7 @@ var like = utils.like = function (pattern,value,escape) {
     s += '$';
 //    if(value == undefined) return false;
 //console.log(s,value,(value||'').search(RegExp(s))>-1);
-    return (value||'').toUpperCase().search(RegExp(s.toUpperCase()))>-1;
+    return (''+(value||'')).toUpperCase().search(RegExp(s.toUpperCase()))>-1;
    };
 
 
@@ -1014,5 +1142,55 @@ utils.glob = function (value,pattern) {
     }
 
     s += '$';
-    return (value||'').toUpperCase().search(RegExp(s.toUpperCase()))>-1;
+    return (''+(value||'')).toUpperCase().search(RegExp(s.toUpperCase()))>-1;
    };
+
+
+/**
+	Get path of alasql.js
+	@todo Rewrite and simplify the code. Review, is this function is required separately
+*/
+utils.findAlaSQLPath = function() {
+	/** type {string} Path to alasql library and plugins */
+
+	if (utils.isWebWorker) {
+		return '';		
+		/** @todo Check how to get path in worker */
+	} else if(utils.isNode) { 
+		return __dirname;
+	
+	} else if(utils.isMeteorClient) {
+		return '/packages/dist/';
+	
+	} else if(utils.isMeteorServer) {
+		return 'assets/packages/dist/';
+	
+	} else if(utils.isBrowser) {
+		var sc = document.getElementsByTagName('script');
+		
+		for(var i=0;i<sc.length;i++) {	
+			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
+				return sc[i].src.substr(0,sc[i].src.length-16); 
+
+			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
+				return sc[i].src.substr(0,sc[i].src.length-20);
+			
+			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
+				return sc[i].src.substr(0,sc[i].src.length-9); 
+			
+			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
+				return sc[i].src.substr(0,sc[i].src.length-13); 
+				
+			}
+		}	
+	}
+	return '';	
+}
+
+
+// set AlaSQl path
+alasql.path = alasql.utils.findAlaSQLPath();
+
+
+
+

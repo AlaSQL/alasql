@@ -10,14 +10,14 @@ describe('Test 140 JavaScript Functions', function() {
 	it("1. Simple Date functions", function(done){
 		alasql('CREATE DATABASE test140; use test140');
 
-		var res = alasql('SELECT * FROM ?', [[{d: new Date(2014,0,1)},{d: new Date(2015,11,31)} ]]);
+		var res = alasql('SELECT * FROM ?', [[{d: new Date(2014,0,1)},{d: new Date(2015,11,31)} ]]); 
 		assert(res.length == 2);
-		assert(res[0].d.getFullYear);
+		assert(res[0].d.getFullYear); // be aware This can cause same year for both data here depending on locale settings
 
-		var res = alasql('SELECT COLUMN d->getFullYear() FROM ?', [[{d: new Date(2014,0,1)},{d: new Date(2015,11,31)} ]]);
+		var res = alasql('SELECT COLUMN d->getFullYear() FROM ?', [[{d: new Date(2014,6,1)},{d: new Date(2015,6,31)} ]]);
 		assert.deepEqual(res,[2014,2015]);
 
-		var res = alasql('SELECT d->getFullYear() AS d FROM ?', [[{d: new Date(2014,0,1)},{d: new Date(2015,11,31)} ]]);
+		var res = alasql('SELECT d->getFullYear() AS d FROM ?', [[{d: new Date(2014,6,1)},{d: new Date(2015,6,31)} ]]);
 		assert.deepEqual(res, [{d:2014},{d:2015}]);
 
 		done();
@@ -36,10 +36,10 @@ describe('Test 140 JavaScript Functions', function() {
 	it("3. NEW keyword", function(done){
 		alasql.fn.Date = Date;
 
-		var res = alasql("SELECT VALUE new Date(2014,0,1)");
+		var res = alasql("SELECT VALUE new Date(2014,6,1)");
 		assert(res.getFullYear() == 2014);
 
-		var res = alasql("SELECT VALUE new Date(2014,0,1)->getFullYear()");
+		var res = alasql("SELECT VALUE new Date(2014,6,1)->getFullYear()");
 		assert(res == 2014);
 
 		done();
@@ -50,15 +50,15 @@ describe('Test 140 JavaScript Functions', function() {
 
 		alasql('CREATE TABLE one (d Date)');
 
-		alasql('INSERT INTO one VALUES (new Date(2014,0,1)), (new Date(2015,0,2))');
+		alasql('INSERT INTO one VALUES (new Date(2014,6,1)), (new Date(2015,6,2))');
 
 		var res = alasql("SELECT COLUMN d->getFullYear() FROM one");
 		assert.deepEqual(res,[2014,2015]);
 
-		var res = alasql("SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,0,1)");
+		var res = alasql("SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,1)");
 		assert.deepEqual(res,[]);
 
-		var res = alasql("SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,0,2)");
+		var res = alasql("SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,2)");
 		assert.deepEqual(res,[2015]);
 		done();
 	});
@@ -67,15 +67,15 @@ describe('Test 140 JavaScript Functions', function() {
 	it("5. Create table with default conversion Date", function(done){
 		alasql('CREATE TABLE two (d DATE)');
 
-		alasql('INSERT INTO two VALUES ("2014-01-01"), ("2015-01-02")');
+		alasql('INSERT INTO two VALUES ("2014-06-01"), ("2015-06-02")');
 
 		var res = alasql("SELECT COLUMN d FROM two");
-		assert.deepEqual(res,["2014-01-01", "2015-01-02"]);
+		assert.deepEqual(res,["2014-06-01", "2015-06-02"]);
 //		assert.deepEqual(res,[2014,2015]);
 //		console.log(res);
 
 		var res = alasql("SELECT COLUMN d FROM two");
-		assert.deepEqual(res,["2014-01-01","2015-01-02"]);
+		assert.deepEqual(res,["2014-06-01","2015-06-02"]);
 		done();
 	});
 
@@ -83,7 +83,7 @@ describe('Test 140 JavaScript Functions', function() {
 
 		alasql('CREATE TABLE three (d Date)');
 
-		alasql('INSERT INTO three VALUES ("2014-01-01"), ("2015-01-02")');
+		alasql('INSERT INTO three VALUES ("2014-06-01"), ("2015-06-02")');
 
 		var res = alasql("SELECT COLUMN d->getFullYear() FROM three");
 		assert.deepEqual(res,[2014,2015]);
@@ -96,20 +96,20 @@ describe('Test 140 JavaScript Functions', function() {
 		delete alasql.fn.Date;
 		alasql('CREATE TABLE four (d Date)');
 
-		alasql('INSERT INTO four VALUES ("2014-01-01"), ("2015-01-02")');
+		alasql('INSERT INTO four VALUES ("2014-06-01"), ("2015-06-02")');
 
 		var res = alasql("SELECT COLUMN YEAR(d) FROM four");
 		assert.deepEqual(res,[2014,2015]);
 
 		var res = alasql("SELECT COLUMN MONTH(d) FROM four");
-		assert.deepEqual(res,[1,1]);
+		assert.deepEqual(res,[6,6]);
 
 		var res = alasql("SELECT COLUMN DAY(d) FROM four");
 		assert.deepEqual(res,[1,2]);
 
 //		console.log(res);
 		var res = alasql("SELECT COLUMN d FROM four");
-		assert.deepEqual(res,["2014-01-01","2015-01-02"]);
+		assert.deepEqual(res,["2014-06-01","2015-06-02"]);
 
 		done();
 	});

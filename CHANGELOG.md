@@ -1,10 +1,21 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.4 "Exogi" (xx.xx.2016)
+### 0.2.5 "......" (xx.04.2016)
+* ...
 * ...
 
-### 0.2.3 "Spetses" (02.01.2016)
+
+### 0.2.4 "Exogi" (04.03.2016)
+* Added: Central enviroment detection
+* Added: SELECT * FROM ? GROUP BY a works as FIRST(*)
+* Added: Better detection for browserify, phonegap and cordova
+* Fix: CONCAT without space
+* Fix: IE11: Reading Excel File
+* Fix: Date handeling (in)dependent from locale
+
+
+### 0.2.3 "Spetses" (01.02.2016)
 * Changed: New fast way to calculate aggregators (some parameters changed)
 * Added: User defined aggregators
 * Fixed: Remove empty Last line in TXT and XLSX
@@ -14,6 +25,7 @@
 * Added: REPLACE() string function (see issue #560)
 * Added: NEWID(), UUID() and GEN_RANDOM_UUID() functions for GUID
 * Added: DEFAULT for column can be a function (e.g. DEFAULT NEWID())
+
 
 ### 0.2.2 "Mitilini" (15.01.2016)
 * Fix: SELECT can use functions from GROUP BY list
