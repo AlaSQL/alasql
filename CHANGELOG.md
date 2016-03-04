@@ -1,7 +1,12 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### _0.2.4 "Exogi" (xx.xx.2016)_
+### 0.2.5 "......" (xx.04.2016)
+* ...
+* ...
+
+
+### 0.2.4 "Exogi" (04.03.2016)
 * Added: Central enviroment detection
 * Added: SELECT * FROM ? GROUP BY a works as FIRST(*)
 * Added: Better detection for browserify, phonegap and cordova

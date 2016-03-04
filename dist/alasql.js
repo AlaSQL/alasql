@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.3-develop-1206 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.4 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.3-develop-1206
+@version 0.2.4
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.3-develop-1206';
+alasql.version = '0.2.4';
 
 /**
 	Debug flag
@@ -10146,7 +10146,7 @@ stdlib.ABS = function(a) {return 'Math.abs('+a+')'};
 stdlib.CLONEDEEP = function(a) {return 'alasql.utils.cloneDeep('+a+')'};
 
 stdfn.CONCAT = function(){
-	return Array.prototype.slice.call(arguments).join(' ');
+	return Array.prototype.slice.call(arguments).join('');
 };
 stdlib.EXP = function(a) {return 'Math.pow(Math.E,'+a+')'};
 
