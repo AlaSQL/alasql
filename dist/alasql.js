@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.4 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.4-develop-1229 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.4
+@version 0.2.4-develop-1229
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.4';
+alasql.version = '0.2.4-develop-1229';
 
 /**
 	Debug flag
@@ -15016,7 +15016,11 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	var res;
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
-		if(res[res.length-1] === '') res.pop(); // Remove last line if empty
+
+		// Remove last line if empty
+		if(res[res.length-1] === ''){ 
+			res.pop(); 
+		}
 		for(var i=0, ilen=res.length; i<ilen;i++) {
 			// Please avoid '===' here
 			if(res[i] == +res[i]){	// jshint ignore:line
@@ -15100,43 +15104,43 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		}
 
 		while ((t = token()) !== EOF) {
-		var a = [];
-		while (t !== EOL && t !== EOF) {
-		a.push(t);
-		t = token();
-		}
+			var a = [];
+			while (t !== EOL && t !== EOF) {
+				a.push(t.trim());
+				t = token();
+			}
 
-        if(opt.headers) {
-        	if(n === 0) {
-				if(typeof opt.headers === 'boolean') {
-	        		hs = a;
-				} else if(opt.headers instanceof Array) {
-					hs = opt.headers;
+	        if(opt.headers) {
+	        	if(n === 0) {
+					if(typeof opt.headers === 'boolean') {
+		        		hs = a;
+					} else if(opt.headers instanceof Array) {
+						hs = opt.headers;
+		        		var r = {};
+		        		hs.forEach(function(h,idx){
+		        			r[h] = a[idx];
+		        			// Please avoid === here
+							if((typeof r[h] !== 'undefined') && r[h].length !== 0 && (r[h]).trim() == +r[h]){ // jshint ignore:line
+								r[h] = +r[h];
+							}
+		        		});
+						rows.push(r);
+					}
+
+	        	} else {
 	        		var r = {};
 	        		hs.forEach(function(h,idx){
 	        			r[h] = a[idx];
-	        			// Please avoid === here
-						if((typeof r[h] !== 'undefined') && r[h].length !== 0 && (r[h]).trim() == +r[h]){ // jshint ignore:line
+						if((typeof r[h] !== 'undefined') && r[h].length !== 0 && r[h].trim() == +r[h]){ // jshint ignore:line
 							r[h] = +r[h];
 						}
 	        		});
-					rows.push(r);
-				}
-
-        	} else {
-        		var r = {};
-        		hs.forEach(function(h,idx){
-        			r[h] = a[idx];
-					if((typeof r[h] !== 'undefined') && r[h].length !== 0 && r[h].trim() == +r[h]){ // jshint ignore:line
-						r[h] = +r[h];
-					}
-        		});
-        		rows.push(r);
-        	}
-        	n++;
-        } else {
-    	    rows.push(a);
-    	}
+	        		rows.push(r);
+	        	}
+	        	n++;
+	        } else {
+	    	    rows.push(a);
+	    	}
       }
 
       res = rows;
