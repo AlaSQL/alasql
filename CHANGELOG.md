@@ -1,8 +1,8 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.5 "......" (xx.04.2016)
-* ...
+### 0.2.5 "......" (07.04.2016)
+* Fix: Remove leading whitespace from fields when importing csv files
 * ...
 
 
