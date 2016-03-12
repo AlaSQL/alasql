@@ -564,6 +564,8 @@ Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alas
 
 0. A `(FULL) OUTER JOIN` and `RIGHT JOIN` on more than 2 tables will not give the expected results. `INNER JOIN` and `LEFT JOIN` are ok.
 
+0. Please use alias for field names with the same name (`SELECT a.id as a_id, b.id as b_id FORM ?`).
+
 Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
 
 
