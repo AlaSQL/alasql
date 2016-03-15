@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.4-develop-1235 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.4-develop-1238 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.4-develop-1235
+@version 0.2.4-develop-1238
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.4-develop-1235';
+alasql.version = '0.2.4-develop-1238';
 
 /**
 	Debug flag
@@ -14345,6 +14345,8 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 };
 
 alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
+	opts = opts || {};
+
 	// If filename is not defined then output to the result
 	if(typeof filename == 'object') {
 		opts = filename;
@@ -16871,7 +16873,7 @@ FS.rollback = function(databaseid, cb) {
 					alasql.databases[databaseid].filename = db.filename;
 
 					if(cb) res = cb(res);
-					// Todo: check shy no return
+					// Todo: check why no return
 				});
 			};
 		},100);		
