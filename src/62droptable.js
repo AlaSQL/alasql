@@ -90,5 +90,5 @@ yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		throw new Error('Cannot truncate table becaues it does not exist');
 	}
-	return 0;
+	return cb?cb(0):0;
 };

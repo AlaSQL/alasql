@@ -93,7 +93,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	// IF NOT EXISTS
 	if(this.ifnotexists && db.tables[tableid]){
-		return 0;
+		return cb?cb(0):0;
 	}
 
 	if(db.tables[tableid]) {

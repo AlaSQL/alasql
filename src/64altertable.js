@@ -64,7 +64,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		}
 
 		// TODO
-		return 1;
+		return cb?cb(1):1;
 	} else if(this.modifycolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
@@ -84,7 +84,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 
 		// TODO
-		return 1;
+		return cb?cb(1):1;
 	} else if(this.renamecolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
@@ -119,7 +119,9 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			}
 			return table.data.length;
 		}
-		else return 0;
+		else {
+			return cb?cb(0):0;
+		}
 	} else if(this.dropcolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
@@ -145,7 +147,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			delete table.data[i][columnid];
 		}
-		return table.data.length;
+		return cb?cb(table.data.length):table.data.length;
 	} else {
 		throw Error('Unknown ALTER TABLE method');
 	}
