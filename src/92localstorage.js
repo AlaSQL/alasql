@@ -107,7 +107,7 @@ LS.createDatabase = function(lsdbid, args, ifnotexists, databaseid, cb){
 	} else {
 		res = 0;
 	}
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 };
 
@@ -127,7 +127,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 			if(!ifexists) {
 				throw new Error('There is no any AlaSQL databases in localStorage');
 			} else {
-				return 0;
+				return cb?cb(0):0;
 			}
 		};
 
@@ -148,7 +148,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 	} else {
 		res = 0;
 	}
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 };
 
@@ -204,7 +204,7 @@ LS.showDatabases = function(like, cb) {
 			});
 		}		
 	};
-	if(cb) cb(res);
+	if(cb) res=cb(res);
 	return res;
 };
 
@@ -233,7 +233,7 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	LS.set(lsdbid, lsdb);
 	LS.storeTable(databaseid,tableid);
 
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 }
 
@@ -261,7 +261,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	LS.set(lsdbid, lsdb);
 //	localStorage.removeItem(lsdbid+'.'+tableid);
 	LS.removeTable(databaseid,tableid);
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 }
 
@@ -302,7 +302,7 @@ LS.intoTable = function(databaseid, tableid, value, columns, cb) {
 //	console.log(lsdbid+'.'+tableid, tb);
 //	console.log(localStorage[lsdbid+'.'+tableid]);
 //console.log(165,res);
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 //console.log(167,res);
 	return res;
 };
@@ -347,7 +347,7 @@ LS.commit = function(databaseid, cb) {
 		};
 	}
 	LS.set(lsdbid,lsdb);
-	return 1;
+	return cb?cb(1):1;
 };
 
 /**
