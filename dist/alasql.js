@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.4-develop-1229 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.4-develop-1235 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.4-develop-1229
+@version 0.2.4-develop-1235
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.4-develop-1229';
+alasql.version = '0.2.4-develop-1235';
 
 /**
 	Debug flag
@@ -10729,7 +10729,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	// IF NOT EXISTS
 	if(this.ifnotexists && db.tables[tableid]){
-		return 0;
+		return cb?cb(0):0;
 	}
 
 	if(db.tables[tableid]) {
@@ -11483,7 +11483,7 @@ yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		throw new Error('Cannot truncate table becaues it does not exist');
 	}
-	return 0;
+	return cb?cb(0):0;
 };
 
 /*
@@ -11986,7 +11986,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		}
 
 		// TODO
-		return 1;
+		return cb?cb(1):1;
 	} else if(this.modifycolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
@@ -12005,7 +12005,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		col.dbenum = this.dbenum;
 
 		// TODO
-		return 1;
+		return cb?cb(1):1;
 	} else if(this.renamecolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
@@ -12040,7 +12040,9 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			}
 			return table.data.length;
 		}
-		else return 0;
+		else {
+			return cb?cb(0):0;
+		}
 	} else if(this.dropcolumn) {
 		var db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
@@ -12066,7 +12068,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		for(var i=0, ilen=table.data.length; i<ilen; i++) {
 			delete table.data[i][columnid];
 		}
-		return table.data.length;
+		return cb?cb(table.data.length):table.data.length;
 	} else {
 		throw Error('Unknown ALTER TABLE method');
 	}
@@ -16260,7 +16262,7 @@ LS.createDatabase = function(lsdbid, args, ifnotexists, databaseid, cb){
 	} else {
 		res = 0;
 	}
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 };
 
@@ -16280,7 +16282,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 			if(!ifexists) {
 				throw new Error('There is no any AlaSQL databases in localStorage');
 			} else {
-				return 0;
+				return cb?cb(0):0;
 			}
 		};
 
@@ -16301,7 +16303,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 	} else {
 		res = 0;
 	}
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 };
 
@@ -16356,7 +16358,7 @@ LS.showDatabases = function(like, cb) {
 			});
 		}		
 	};
-	if(cb) cb(res);
+	if(cb) res=cb(res);
 	return res;
 };
 
@@ -16385,7 +16387,7 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	LS.set(lsdbid, lsdb);
 	LS.storeTable(databaseid,tableid);
 
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 }
 
@@ -16412,7 +16414,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	LS.set(lsdbid, lsdb);
 //	localStorage.removeItem(lsdbid+'.'+tableid);
 	LS.removeTable(databaseid,tableid);
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 	return res;
 }
 
@@ -16451,7 +16453,7 @@ LS.intoTable = function(databaseid, tableid, value, columns, cb) {
 //	LS.set(lsdbid+'.'+tableid, tb);
 	LS.storeTable(databaseid,tableid);
 
-	if(cb) cb(res);
+	if(cb) res = cb(res);
 
 	return res;
 };
@@ -16496,7 +16498,7 @@ LS.commit = function(databaseid, cb) {
 		};
 	}
 	LS.set(lsdbid,lsdb);
-	return 1;
+	return cb?cb(1):1;
 };
 
 /**
@@ -16828,7 +16830,7 @@ FS.commit = function(databaseid, cb) {
 		};
 	};
 	FS.updateFile(databaseid);
-	return 1;
+	return cb?cb(1):1;
 };
 
 FS.begin = FS.commit;
@@ -16869,7 +16871,7 @@ FS.rollback = function(databaseid, cb) {
 					alasql.databases[databaseid].filename = db.filename;
 
 					if(cb) res = cb(res);
-
+					// Todo: check shy no return
 				});
 			};
 		},100);		
