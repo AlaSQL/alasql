@@ -1,4 +1,3 @@
-
 [![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg?123)](https://www.bithound.io/github/agershun/alasql)
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?)
@@ -12,9 +11,9 @@ _AlaSQL is an open source project and we appreciate any and all contributions we
 
 _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) and tag with "alasql"._
 
-
 # AlaSQL
 
+<a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/13632161/9fd9cd08-e5e8-11e5-98cc-dca251e7b427.png" align="left" alt="AlaSQL logo" width="82" height="82"/></a>
 
 _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
 
