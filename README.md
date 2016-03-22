@@ -145,7 +145,7 @@ When you feel you got the grip you can check out the wiki section about [data ma
 The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)
 
 
-AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production.  
+AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production. 
 
 Please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
 
@@ -569,7 +569,9 @@ Probably, there are many of others. Please, help us to fix them by [submitting i
 
 
 
+## Bleeding edge
 
+If you want to try the last development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console. 
 
 ## Tests
 
@@ -581,6 +583,12 @@ AlaSQL uses ```mocha``` for tests. Install mocha and run
 
 ```
 or run [test/index.html](test/index.html) for tests in browser (Please serve via localhost with for example `http-server`).
+
+
+
+
+
+
 
 #### Tests with AlaSQL ASSERT from SQL
 
