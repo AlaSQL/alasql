@@ -1,6 +1,6 @@
 Package.describe({
   name: 'agershun:alasql',
-  version: '0.2.4',
+  version: '0.2.5',
   // Brief, one-line summary of the package.
   summary: 'AlaSQL - JavaScript SQL database library',
   // URL to the Git repository containing the source code for this package.

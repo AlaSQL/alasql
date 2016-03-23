@@ -1,4 +1,4 @@
-agershun:alasql@0.2.4
-local-test:agershun:alasql@0.2.4
+agershun:alasql@0.2.5
+local-test:agershun:alasql@0.2.5
 meteor@1.1.6
 underscore@1.0.3
