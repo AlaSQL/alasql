@@ -1,9 +1,14 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.5 "......" (xx.04.2016)
+_0.2.6 "Frikes" (22.04.2016)_
 * ...
-* ...
+
+0.2.5 "Polychrono" (23.03.2016)
+* Added: Promise chain of queries
+* Fix: Remove leading whitespace from fields when importing csv files
+* Fix: Set default option for XLSXML
+* Fix: Use callbacks consistently 
 
 
 ### 0.2.4 "Exogi" (04.03.2016)

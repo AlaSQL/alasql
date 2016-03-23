@@ -222,7 +222,7 @@ FS.commit = function(databaseid, cb) {
 		};
 	};
 	FS.updateFile(databaseid);
-	return 1;
+	return cb?cb(1):1;
 };
 
 FS.begin = FS.commit;
@@ -263,7 +263,7 @@ FS.rollback = function(databaseid, cb) {
 					alasql.databases[databaseid].filename = db.filename;
 
 					if(cb) res = cb(res);
-
+					// Todo: check why no return
 				});
 			};
 		},100);		

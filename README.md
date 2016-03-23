@@ -1,4 +1,3 @@
-
 [![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg?123)](https://www.bithound.io/github/agershun/alasql)
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?)
@@ -12,9 +11,9 @@ _AlaSQL is an open source project and we appreciate any and all contributions we
 
 _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) and tag with "alasql"._
 
-
 # AlaSQL
 
+<a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/13632161/9fd9cd08-e5e8-11e5-98cc-dca251e7b427.png" align="left" alt="AlaSQL logo" width="82" height="82"/></a>
 
 _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
 
@@ -146,7 +145,7 @@ When you feel you got the grip you can check out the wiki section about [data ma
 The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)
 
 
-AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production.  
+AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production. 
 
 Please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
 
@@ -564,11 +563,15 @@ Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alas
 
 0. A `(FULL) OUTER JOIN` and `RIGHT JOIN` on more than 2 tables will not give the expected results. `INNER JOIN` and `LEFT JOIN` are ok.
 
+0. Please use alias for field names with the same name (`SELECT a.id as a_id, b.id as b_id FORM ?`).
+
 Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
 
 
 
+## Bleeding edge
 
+If you want to try the last development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console. 
 
 ## Tests
 
@@ -580,6 +583,12 @@ AlaSQL uses ```mocha``` for tests. Install mocha and run
 
 ```
 or run [test/index.html](test/index.html) for tests in browser (Please serve via localhost with for example `http-server`).
+
+
+
+
+
+
 
 #### Tests with AlaSQL ASSERT from SQL
 

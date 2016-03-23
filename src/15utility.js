@@ -255,7 +255,9 @@ var isCordova = function(){
 utils.isCordova = isCordova();
 
 
-
+utils.isArray = function(obj){
+	return "[object Array]"===Object.prototype.toString.call(obj);
+}
 /**
     Load text file from anywhere
     @param {string|object} path File path or HTML event

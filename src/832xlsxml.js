@@ -1,4 +1,6 @@
 alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
+	opts = opts || {};
+
 	// If filename is not defined then output to the result
 	if(typeof filename == 'object') {
 		opts = filename;
