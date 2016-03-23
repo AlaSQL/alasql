@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.4-develop-1241 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.4-develop-1241
+@version 0.2.5
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.4-develop-1241';
+alasql.version = '0.2.5';
 
 /**
 	Debug flag
@@ -14758,8 +14758,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	}
 
-	/* If Node.js then require() else in browser take a global */
-	if(utils.isNode) {
+	/* If require() shuold be supported else take from global scope */
+	if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
 		var XLSX = require('xlsx');
 	} else {
 		var XLSX = utils.global.XLSX;
@@ -14774,12 +14774,12 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	/** @type {object} Workbook */
 	var wb = {SheetNames:[], Sheets:{}};
 
-	// Check overwrite flag
+	// ToDo: check if cb must be treated differently here
 	if(opts.sourcefilename) {
 		alasql.utils.loadBinaryFile(opts.sourcefilename,!!cb,function(data){
 			wb = XLSX.read(data,{type:'binary'});
 			doExport();
-        });
+        	});
 	} else {
 		doExport();
 	};
