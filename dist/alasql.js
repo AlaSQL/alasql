@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1250 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5
+@version 0.2.5-develop-1250
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5';
+alasql.version = '0.2.5-develop-1250';
 
 /**
 	Debug flag
@@ -6322,7 +6322,7 @@ function doDistinct (query) {
 }
 
 // Optimization: preliminary indexation of joins
-preIndex = function(query) {
+var preIndex = function(query) {
 
 	// Loop over all sources
 	// Todo: make this loop smaller and more graspable
@@ -15523,7 +15523,7 @@ yy.Help.prototype.toString = function() {
 }
 
 // Help string
-helpdocs = [
+var helpdocs = [
 	{command:'ALTER TABLE table RENAME TO table'},
 	{command:'ALTER TABLE table ADD COLUMN column coldef'},
 	{command:'ALTER TABLE table MODIFY COLUMN column coldef'},
