@@ -452,7 +452,7 @@ function doDistinct (query) {
 
 
 // Optimization: preliminary indexation of joins
-preIndex = function(query) {
+var preIndex = function(query) {
 //	console.log(query);
 	// Loop over all sources
 	// Todo: make this loop smaller and more graspable

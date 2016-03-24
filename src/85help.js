@@ -14,7 +14,7 @@ yy.Help.prototype.toString = function() {
 }
 
 // Help string
-helpdocs = [
+var helpdocs = [
 	{command:'ALTER TABLE table RENAME TO table'},
 	{command:'ALTER TABLE table ADD COLUMN column coldef'},
 	{command:'ALTER TABLE table MODIFY COLUMN column coldef'},
