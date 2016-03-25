@@ -1,0 +1,13 @@
+
+*.xlsx binary
+*.xls binary
+
+/dist/* binary merge=ours
+
+# absolute paths are ok, as are globs
+#/**/postinst* text eol=lf
+
+# paths that don't start with / are relative to the .gitattributes folder
+#relative/path/*.txt text eol=lf
+
+

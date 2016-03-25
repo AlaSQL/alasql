@@ -1,0 +1,5 @@
+# Results of tests
+test/res*
+node_modules/
+npm-debug.log
+
