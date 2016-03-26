@@ -6,7 +6,7 @@ branches:
 language: python
 
 python:
-  - "2"
+  - "3"
   
 install: 
   - pip install mkdocs
