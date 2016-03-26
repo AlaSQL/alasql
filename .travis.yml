@@ -2,11 +2,11 @@
 branches:
   only:
     - docs
-
+    
 language: node_js
 
 node_js:
-  - "4"
+  - "node"
 
 install: 
   - pip install mkdocs
@@ -15,5 +15,6 @@ install:
 script: 
   - mkdocs build --clean
 
-deploy: 
-  - surge --project ./site --domain alasql.surge.sh
+after_success: 
+  - "$TRAVIS_PULL_REQUEST == 'false' && surge --project ./site --domain alasql.surge.sh"
+
