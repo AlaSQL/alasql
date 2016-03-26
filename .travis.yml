@@ -3,7 +3,8 @@ branches:
   only:
     - docs
 
-  : node_js
+language: 
+  - node_js
 
 install: 
   - pip install mkdocs
