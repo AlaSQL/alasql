@@ -3,14 +3,14 @@ branches:
   only:
     - docs
     
-language: node_js
+language: python
 
-node_js:
-  - "node"
-
+python:
+  - "2"
+  
 install: 
   - pip install mkdocs
-  - npm install --global surge
+  - npm install -g surge
 
 script: 
   - mkdocs build --clean
