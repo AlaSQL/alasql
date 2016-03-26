@@ -6,6 +6,9 @@ branches:
 language: 
   - "node_js"
 
+node_js:
+  - "4"
+
 install: 
   - "pip install mkdocs"
   - "npm install --global surge"
