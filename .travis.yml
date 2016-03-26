@@ -1,15 +1,16 @@
 # whitelisted branches
 branches:
   only:
-    - master
-    - develop
+    - docs
 
-language: node_js
-node_js:
-  - "node"
-  - "5"
-  - "4"
-  - "0.12"
+  : node_js
 
-before_install:
-  - npm install -g alasql
+install: 
+  - pip install mkdocs
+  - npm install --global surge
+
+script: 
+  - mkdocs build --clean
+
+deploy: 
+  - $TRAVIS_PULL_REQUEST == 'false' && surge --project ./site --domain alasql.surge.sh

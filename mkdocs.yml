@@ -1,5 +1,5 @@
 site_name: AlaSQL docs
 
 theme: spacelab 
-theme: bootstrap 
+#theme: bootstrap 
 #theme: readthedocs 

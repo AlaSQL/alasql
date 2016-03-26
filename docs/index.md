@@ -1,32 +1,46 @@
-[![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg?123)](https://www.bithound.io/github/agershun/alasql)
-[![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
-[![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?)
-[![ghit.me](https://ghit.me/badge.svg?repo=agershun/alasql)](https://ghit.me/repo/agershun/alasql)
-[![Inline docs](http://inch-ci.org/github/agershun/alasql.svg?branch=develop)](http://inch-ci.org/github/agershun/alasql)
-![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)
-![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a)
-![NPM version](https://img.shields.io/npm/l/alasql.svg?)
-
-_AlaSQL is an open source project and we appreciate any and all contributions we can get. Please help out._
-
-_Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) and tag with "alasql"._
-
-# AlaSQL
-
-<a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003945/d6e56888-f156-11e5-95b9-3035a2538ae8.png" align="left" alt="AlaSQL logo" width="82" height="82"/></a>
-
-_( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
-
-The library is designed for:
-
-* Fast SQL based in-memory data processing for BI and ERP applications on fat clients
-* Easy ETL and option for persistency by data import / manipulation / export for several formats
-* All major browsers,  Node.js, and mobile applications
-
-We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demands flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
+<p align="middle"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003948/d6e811aa-f156-11e5-90c0-12c7b9809f3c.png" Qalign="right" alt="AlaSQL logo" width="50%" height="50%" style="margin:0 0 20px 20px;"/></a>
+</p>
+# AlaSQL 
 
 
-The library brings you the comfort of a full database engine to your javascript app. No, really - its working towards a full database engine complying with [most of SQL-99](https://github.com/agershun/alasql/wiki/Supported-SQL-statements) spiced up with additional syntax for handling noSQL (schema less) data and graph networks.
+_( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. [Read more about the library in the readme](https://github.com/agershun/alasql/wiki/readme)
+
+Please note that the AlaSQL project is very young and still in active development phase and the API can not be considered 100% stable. Consider this before using the library in production. 
+
+All contributions are much welcome and greatly appreciated. The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md). 
+
+
+## Documentation
+
+This documentation is devided into 4 sections
+
+* Overview (what you are reading right now)
+* SQL related 
+* Javascript related 
+* Bonus areas
+
+As AlaSQL merge aspects of Javascript and SQL some features will be mentioned en both sections.
+
+
+## How to install
+
+
+```console
+npm install --save alasql      # node
+meteor add agershun:alasql     # meteor
+bower install --save alasql    # bower
+npm install -g alasql          # command line
+```
+
+For the browser: include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js)  
+
+```html
+<script src="http://cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script>
+```
+
+## Short introduction
+
+
 
 
 ```js
@@ -97,82 +111,6 @@ console.log(res); // [{a:2,b:6},{a:1,b:5},{a:3,b:4}]
 ```
 
 jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http://jsfiddle.net/c1hbytf1/)
-
-## Install
-
-
-```bash
-npm install --save alasql      # node
-meteor add agershun:alasql     # meteor
-bower install --save alasql    # bower
-npm install -g alasql          # command line
-```
-
-For the browser: include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js)  
-
-```html
-<script src="http://cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script>
-```
-
-
-## Get started
-
-The wiki has a great section on [how to get started](https://github.com/agershun/alasql/wiki/Getting%20started)
-
-When you feel you got the grip you can check out the wiki section about [data manipulation](https://github.com/agershun/alasql/wiki/Data-manipulation) or getting inspired by the [list of Q&As](http://stackoverflow.com/questions/tagged/alasql)
-
-
-
-
-* Documentation: [Github wiki](https://github.com/agershun/alasql/wiki)
-
-* Library CDN: [jsDelivr.com](http://www.jsdelivr.com/#!alasql)
-
-* Feedback: [Open an issue](https://github.com/agershun/alasql/issues/new)
-
-* Try online: <a href="http://alasql.org/console?CREATE TABLE cities (city string, population number);INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975),('Berlin',3517424), ('Madrid',3041579);SELECT * FROM cities WHERE population < 3500000 ORDER BY population DESC">Playground</a>
-
-* Website: [alasql.org](http://AlaSQL.org)
-
-
-
-
-
-
-## Please note
-
-**All contributions are much welcome and greatly appreciated(!)** -
-The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)
-
-
-AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production. 
-
-Please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
-
-
-## Performance
-AlaSQL is very focused on speed and we make sure to use all the tricks we can find to make javascript spit out your results as quick as possible. For example:
-
-* Queries are cached as compiled functions.
-* Joined tables are pre-indexed
-* ```WHERE``` expressions are pre-filtered for joins
-
-The results are good. Check out AlaSQL vs. other javaScript SQL databases:
-
-* **3x speed** [compared to SQL.js](http://jsperf.com/sql-js-vs-alasql-js/11) selecting with `SUM`, `JOIN`, and `GROUP BY`.
-
-* **1x speed** [compared to WebSQL](http://jsperf.com/alasql-js-vs-websql/8) selecting with `SUM`, `JOIN`, and `GROUP BY` (in-memory operations for WebSQL - see [this discussion](https://github.com/agershun/alasql/issues/47))
-
-* **2x speed** [compared to Linq](http://jsperf.com/alasql-vs-linq-on-groupby/3) for `GROUP BY` on 1,048,576 rows
-
-
-See more [speed related info on the wiki](https://github.com/agershun/alasql/wiki/Speed)
-
-
-
-
-
-
 
 
 ## Features you might like
@@ -500,53 +438,6 @@ then type in browser something like "http://127.0.0.1:1337/?SELECT VALUE 2*2"
 
 Warning: Alaserver is not multi-thread, not concurrent, and not secured.
 
-### Webpack and Browserify
-
-When targeting the browser, several code bundlers like Webpack and Browserify will pick up modules you might not want.
-
-Here's a list of modules that alasql requires
-* fs
-* cptable
-* jszip
-* xlsx
-* xls
-* cpexcel
-* path
-* es6-promise
-
-#### Webpack
-
-Use the built-in IgnorePlugin
-
-```js
-var IgnorePlugin =  require("webpack").IgnorePlugin;
-
-module.exports = {
-  ...
-  //Will ignore the modules fs, path, xlsx, xls
-  plugins:[new IgnorePlugin(/(^fs$|xlsx|xls|^path$)/)]
-};
-```
-
-#### Browserify
-
-Read up on [excluding](https://github.com/substack/browserify-handbook#excluding), [ignoring](https://github.com/substack/browserify-handbook#ignoring), and [shimming](https://github.com/substack/browserify-handbook#shimming)
-
-Example (using excluding)
-
-```js
-var browserify = require("browserify");
-var b = browserify("./main.js").bundle();
-//Will ignore the modules fs, path, xlsx, xls
-["fs","path","xlsx","xls"].map(ignore => b.ignore(ignore));
-```
-
-
-
-### Miss a feature?
-Take charge and [add your idea](http://feathub.com/agershun/alasql/features/new) or [vote on your favorite feature](http://feathub.com/agershun/alasql) to be implemented:
-
-[![Feature Requests](http://feathub.com/agershun/alasql?format=svg)](http://feathub.com/agershun/alasql)
 
 
 
@@ -569,82 +460,9 @@ Probably, there are many of others. Please, help us to fix them by [submitting i
 
 
 
-## Bleeding edge
-
-If you want to try the last development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console. 
-
-## Tests
-
-#### Tests with Mocha
-AlaSQL uses ```mocha``` for tests. Install mocha and run
-
-```
-    > npm test
-
-```
-or run [test/index.html](test/index.html) for tests in browser (Please serve via localhost with for example `http-server`).
-
-
-
-
-
-
-
-#### Tests with AlaSQL ASSERT from SQL
-
-Now you can use AlaSQL [ASSERT](wiki/Assert)  operator to test results of previous operation:
-
-```sql
-    CREATE TABLE one (a INT);
-    ASSERT 1;
-    INSERT INTO one VALUES (1),(2),(3);
-    ASSERT 3;
-    SELECT * FROM one ORDER BY a DESC;
-    ASSERT [{a:3},{a:2},{a:1}];
-```
-
-#### SQLLOGICTEST
-
-AlaSQL uses SQLLOGICTEST to test it compatibility with SQL-99. The tests include about 2.000.000 queries and statements.
-
-The testruns can be found in the [testlog](TESTLOG.md).
-
-
-
-### FileSaver
-
-AlaSQL uses [FileSaver.js](https://github.com/eligrey/FileSaver.js/) library for saving files locally from the browser. Please be aware that it does not save files in Safari 8.0.
-
-
-
-
-## License
-
-MIT - see [MIT licence information](LICENSE)
-
-## Main contributors
-
-* [Andrey Gershun](http://github.com/agershun)
-* [Mathias Rangel Wulff](https://twitter.com/rangelwulff)
-* [Aubert Grégoire](https://github.com/gregaubert)
-
-## Credits
-
-Many thanks to Zach Carter for [Jison](http://zaach.github.io/jison/) parser generator, to the author of FileSaver.js, Andrew Kent for his [SQL Parser](https://github.com/forward/sql-parser),
-authors of [XLSX](https://github.com/SheetJS/js-xlsx) library,
-and other people for useful tools, which make our work much easier.
-
-### Related projects that have inspired us
-
-* [AlaX](http://github.com/agershun/alax) - Export to Excel with colors and formats
-* [WebSQLShim](http://github.com/agershun/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
-* [AlaMDX](http://github.com/agershun/alamdx) - JavaScript MDX OLAP library (work in progress)
-* [Other similar projects](http://github.com/agershun/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
-
 
 ----
 
 
-<a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003946/d6e5c076-f156-11e5-8238-e62d2a8d20dc.png" align="left" alt="AlaSQL logo" width="82" height="82"/></a>
-© 2014-2016, Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk)
-
+<a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003947/d6e7b7be-f156-11e5-8a25-71c785031a5f.png" align="right" alt="AlaSQL logo" width="82" height="82"/></a>
+© 2014-2016, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
