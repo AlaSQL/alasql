@@ -1,20 +1,19 @@
 # whitelisted branches
 branches:
   only:
-    - "docs"
+    - docs
 
-language: 
-  - "node_js"
+language: node_js
 
 node_js:
   - "4"
 
 install: 
-  - "pip install mkdocs"
-  - "npm install --global surge"
+  - pip install mkdocs
+  - npm install --global surge
 
 script: 
-  - "mkdocs build --clean"
+  - mkdocs build --clean
 
 deploy: 
-  - "surge --project ./site --domain alasql.surge.sh"
+  - surge --project ./site --domain alasql.surge.sh
