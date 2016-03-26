@@ -17,4 +17,6 @@ script:
   - "mkdocs build --clean"
 
 deploy: 
-  - "$TRAVIS_PULL_REQUEST == 'false' && surge --project ./site --domain alasql.surge.sh"
+  - "surge --project ./site --domain alasql.surge.sh"
+
+xyz: "$TRAVIS_PULL_REQUEST == 'false' &&"
