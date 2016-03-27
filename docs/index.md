@@ -1,7 +1,10 @@
+
+# Please note: this is a TEST SITE for the future documentation
+
+
 <p align="middle"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003948/d6e811aa-f156-11e5-90c0-12c7b9809f3c.png" Qalign="right" alt="AlaSQL logo" width="50%" height="50%" style="margin:0 0 20px 20px;"/></a>
 </p>
 # AlaSQL 
-
 
 _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. [Read more about the library in the readme](https://github.com/agershun/alasql/wiki/readme)
 
@@ -9,6 +12,9 @@ Please note that the AlaSQL project is very young and still in active developmen
 
 All contributions are much welcome and greatly appreciated. The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md). 
 
+{!https://raw.githubusercontent.com/wiki/agershun/alasql/readme.md!}
+123
+{!SQL.md!}
 
 ## Documentation
 
@@ -460,9 +466,4 @@ Probably, there are many of others. Please, help us to fix them by [submitting i
 
 
 
-
-----
-
-
-<a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003947/d6e7b7be-f156-11e5-8a25-71c785031a5f.png" align="right" alt="AlaSQL logo" width="82" height="82"/></a>
-© 2014-2016, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
+{!footer.md!}

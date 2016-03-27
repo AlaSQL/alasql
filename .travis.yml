@@ -1,22 +1,20 @@
 # whitelisted branches
 branches:
   only:
-    - "docs"
+    - docs
+    
+language: python
 
-language: 
-  - "node_js"
-
-node_js:
-  - "4"
-
+python:
+  - "2.7"
+  
 install: 
-  - "pip install mkdocs"
-  - "npm install --global surge"
+  - pip install mkdocs
+  - pip install markdown-include
+  - npm install -g surge
 
 script: 
-  - "mkdocs build --clean"
+  - echo Go!
 
-deploy: 
-  - "surge --project ./site --domain alasql.surge.sh"
-
-xyz: "$TRAVIS_PULL_REQUEST == 'false' &&"
+after_success: 
+  - "$TRAVIS_PULL_REQUEST == 'false' && npm run deploy"
