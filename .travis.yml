@@ -14,7 +14,4 @@ install:
   - npm install -g surge
 
 script: 
-  - echo Go!
-
-after_success: 
   - "$TRAVIS_PULL_REQUEST == 'false' && npm run deploy"

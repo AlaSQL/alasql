@@ -1,5 +1,5 @@
 
-# Please note: this is a TEST SITE for the future documentation
+# Please note: this is a TEST SITE for the documentation
 
 
 <p align="middle"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003948/d6e811aa-f156-11e5-90c0-12c7b9809f3c.png" Qalign="right" alt="AlaSQL logo" width="50%" height="50%" style="margin:0 0 20px 20px;"/></a>
