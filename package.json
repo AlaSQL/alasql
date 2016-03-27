@@ -1,0 +1,22 @@
+{
+  "name": "alasql-docs",
+  "version": "0.0.1",
+  "description": "Documentation for AlaSQL",
+  "scripts": {
+    "get-wiki": "rm -fr ./docs/wiki && git --git-dir=/dev/null clone --depth 1 https://github.com/agershun/alasql.wiki ./docs/wiki",
+    "build": "mkdocs build --clean",
+    "publish": "surge ./site/",
+    "deploy": "npm run get-wiki && npm run build && npm run publish"
+  },
+  "main": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agershun/alasql.git"
+  },
+  "author": "M. Rangel Wulff",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/agershun/alasql/issues"
+  },
+  "homepage": "https://github.com/agershun/alasql#readme"
+}
