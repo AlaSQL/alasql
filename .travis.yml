@@ -16,4 +16,4 @@ script:
   - npm run build
 
 after_success:   
-  - $TRAVIS_PULL_REQUEST == 'false' && npm run publish 
+  - $TRAVIS_PULL_REQUEST || npm run publish 
