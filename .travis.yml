@@ -14,4 +14,8 @@ install:
   - npm install -g surge
 
 script: 
-  - "[ $TRAVIS_PULL_REQUEST == 'false' ] (rm -fr ./docs/wiki && git --git-dir=/dev/null clone --depth 1 https://github.com/agershun/alasql.wiki ./docs/wiki && mkdocs build --clean && surge ./site/) || false"
+  - $TRAVIS_PULL_REQUEST == 'false'
+  - rm -fr ./docs/wiki 
+  - git --git-dir=/dev/null clone --depth 1 https://github.com/agershun/alasql.wiki ./docs/wiki 
+  - mkdocs build --clean 
+  - surge ./site/"
