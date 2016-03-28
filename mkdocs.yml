@@ -12,6 +12,9 @@ site_description: Documentation for the javscript SQL database AlaSQL
 
 site_author: Mathias Rangel Wulff <m@rawu.dk>
 
+extra_css:
+    - css/extra.css
+
 markdown_extensions:
     - markdown_include.include:
         base_path: "./docs/"

@@ -15,7 +15,5 @@ script:
   - npm run get-wiki
   - npm run build
 
-
 after_success:   
-  - echo $TRAVIS_PULL_REQUEST == 'false' 
-  - npm run publish 
+  - $TRAVIS_PULL_REQUEST == 'false' && npm run publish 
