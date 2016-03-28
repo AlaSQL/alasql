@@ -20,4 +20,5 @@ script:
 
 
 after_success:   
-  - $TRAVIS_PULL_REQUEST == 'false' && surge ./site/ 
+#  - $TRAVIS_PULL_REQUEST == 'false' && surge ./site/ 
+  - surge ./site/ 
