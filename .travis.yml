@@ -9,16 +9,13 @@ python:
   - "2.7"
   
 install: 
-  - pip install mkdocs
-  - pip install markdown-include
-  - npm install -g surge
+  - npm run install
 
 script: 
-  - rm -fr ./docs/wiki
-  - git --git-dir=/dev/null clone --depth 1 https://github.com/agershun/alasql.wiki ./docs/wiki
-  - mkdocs build --clean
+  - npm run get-wiki
+  - npm run build
 
 
 after_success:   
-#  - $TRAVIS_PULL_REQUEST == 'false' && surge ./site/ 
-  - surge ./site/ 
+  - echo $TRAVIS_PULL_REQUEST 
+  - npm run publish 

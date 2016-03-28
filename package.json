@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Documentation for AlaSQL",
   "scripts": {
+	"test": "echo 'No test specified...'",
   	"install": "pip install mkdocs && pip install markdown-include && npm install -g surge",
     "get-wiki": "rm -fr ./docs/wiki && git --git-dir=/dev/null clone --depth 1 https://github.com/agershun/alasql.wiki ./docs/wiki",
     "build": "mkdocs build --clean",
