@@ -1,0 +1,33 @@
+html {
+	font-size: 100%;
+}
+
+code, .rst-content tt {
+	/*font-size: 90%;*/
+	opacity:0.8;
+    background: rgba(227, 217, 217, 0.24);
+
+}
+
+body {
+    color: #434343;
+}
+
+.wy-plain-list-disc, .rst-content .section ul, .rst-content .toctree-wrapper ul, article ul {
+    margin-top: -30px;
+}
+
+
+.hljs {
+    padding: 1em;
+    color: #666;
+    line-height: 1.5em;
+}
+
+.hljs-string, .hljs-tag .hljs-value, .hljs-phpdoc, .hljs-dartdoc, .tex .hljs-formula {
+    color: rgba(219, 15, 66, 0.83);
+}
+
+.hljs-tag, .hljs-tag .hljs-title, .hljs-rule .hljs-property, .django .hljs-tag .hljs-keyword {
+    color: RGBA(0, 0, 128, 0.77);
+}

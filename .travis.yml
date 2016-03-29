@@ -15,5 +15,8 @@ script:
   - npm run get-wiki
   - npm run build
 
-after_success:   
-  - $TRAVIS_PULL_REQUEST || npm run publish 
+deploy:
+  skip_cleanup: true
+
+after_deploy:
+  -  npm run publish 
