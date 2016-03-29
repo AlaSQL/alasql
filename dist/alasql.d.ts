@@ -4,6 +4,7 @@
 // Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 
+
 interface AlaSQLCallback {
 	(data?:any,err?:Error):void
 }
@@ -43,11 +44,20 @@ interface AlaSQLAST {
 	compile(databaseid:string):AlaSQLStatement;
 }
 
+// https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/es6-promise/es6-promise.d.ts
+interface Thenable<T> {
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
+    then<U>(onFulfilled?: (value: T) => U | Thenable<U>, onRejected?: (error: any) => void): Thenable<U>;
+    catch<U>(onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
+}
+
 interface AlaSQL {
 	(sql:any,params?:any,cb?:AlaSQLCallback,scope?:any):any;
 	parse(sql):AlaSQLAST;
 	options:AlaSQLOptions;
 	error: Error;
+	promise(sql:any,params?:any):Thenable;
 }
 
 declare var alasql : AlaSQL;
+

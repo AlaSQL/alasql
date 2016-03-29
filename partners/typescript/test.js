@@ -24,3 +24,12 @@ alasql('SELECT SELECT', [], function (data, err) {
 var data = [{ a: 1 }, { a: 2 }];
 res = alasql(data).Select('a').exec();
 console.log(7, res);
+
+// test 8
+alasql.promise([
+			'select 99', 
+			['select ?', [100]]
+		]).then(function(res){
+			console.log(8, res)
+		})
+
