@@ -81,26 +81,26 @@ describe('Test 604 - CREATE VIEW error with localStorage engine #604', function(
     });
 
 
-    it("* Detach database", function(done){
+    it.skip("* Detach database", function(done){
 	alasql('DETACH DATABASE db604');
 	assert(!alasql.databases.db604);
 	done();
     });
     
-    it("* Reattach database", function(done){
+    it.skip("* Reattach database", function(done){
 	alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604');
 	assert(alasql.databases.db604);
 	assert(alasql.databases.db604.engineid == 'LOCALSTORAGE');
 	done();
     });
 
-    it("* Reselect from table", function(done) {
+    it.skip("* Reselect from table", function(done) {
 	var res = alasql('SELECT * FROM db604.t1');
 	assert(res.length == 3);
 	done();
     });
 
-    it("* Reselect from view", function(done) {
+    it.skip("* Reselect from view", function(done) {
 	alasql.promise('SELECT * FROM db604.v1')
 	    .then(function (res) {
 //		console.log(res);
@@ -114,6 +114,13 @@ describe('Test 604 - CREATE VIEW error with localStorage engine #604', function(
 	var res = alasql('DROP TABLE db604.t1');
 	//		alasql('COMMIT TRANSACTION');
 	assert(!localStorage['db604.t1']);
+	done();
+    });
+    
+    it("* Drop view", function(done) {
+	var res = alasql('DROP VIEW db604.v1');
+	//		alasql('COMMIT TRANSACTION');
+	assert(!localStorage['db604.v1']);
 	done();
     });
     
