@@ -2,9 +2,9 @@ site_name: AlaSQL docs TEST SITE
 
 #theme: spacelab 
 #theme: bootstrap 
-#theme: readthedocs 
+theme: readthedocs 
 
-theme_dir: 'theme'
+#theme_dir: 'theme'
 
 site_favicon: favicon.png
 

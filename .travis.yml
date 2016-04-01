@@ -16,7 +16,11 @@ script:
   - npm run build
 
 deploy:
+  provider: surge
+  project: ./site/
+  edge:
+    source: mathiasrw/dpl
+    branch: master
   skip_cleanup: true
 
-after_deploy:
-  -  npm run publish 
+
