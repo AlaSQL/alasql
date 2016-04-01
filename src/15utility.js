@@ -489,7 +489,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             }
-           # xhr.responseType = "blob";
+           // xhr.responseType = "blob";
             xhr.send();
         } else if(path instanceof Event) {
             // console.log("event");
