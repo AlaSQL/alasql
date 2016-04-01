@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1260 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1262 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1260
+@version 0.2.5-develop-1262
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1260';
+alasql.version = '0.2.5-develop-1262';
 
 /**
 	Debug flag
@@ -8235,6 +8235,11 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					if(xcolumns && columns.length > 0) {
 
 						var tcol = xcolumns[col.columnid];
+
+						if(undefined === tcol){
+							throw new Error("Column does not exists: "+col.columnid);;
+						}
+
 						var coldef = {
 							columnid:col.as || col.columnid, 
 							dbtypeid:tcol.dbtypeid, 
@@ -8903,6 +8908,10 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				var alias = fr.as || fr.tableid;
 
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
+
+				if(undefined === table){
+					throw new Error("Table does not exists: "+fr.tableid);;
+				}
 
 				if(table.columns) {
 					table.columns.forEach(function(col){
