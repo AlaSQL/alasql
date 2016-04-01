@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1250 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1260 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1250
+@version 0.2.5-develop-1260
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1250';
+alasql.version = '0.2.5-develop-1260';
 
 /**
 	Debug flag
@@ -3431,7 +3431,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             }
-            xhr.responseType = "blob";
+           // xhr.responseType = "blob";
             xhr.send();
         } else if(path instanceof Event) {
 
@@ -7275,23 +7275,25 @@ yy.Select.prototype.compileFrom = function(query) {
 
 		};
 
-		if(tq instanceof yy.Table) {
-			// Get columns from table
+	    if(tq instanceof yy.Table) {
+		// Get columns from table
 			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
 
-			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
+		if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid &&
+		   !alasql.databases[source.databaseid].tables[source.tableid].view
+		  ) {
 
 // TODO -- make view for external engine
-				source.datafn = function(query,params,cb,idx, alasql) {
+		    source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
 				}				
-			} else if(alasql.databases[source.databaseid].tables[source.tableid].view){
-				source.datafn = function(query,params,cb,idx, alasql) {
-					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
-					if(cb) res = cb(res,idx,query);
-					return res;
-				}
+	    } else if(alasql.databases[source.databaseid].tables[source.tableid].view){
+		    source.datafn = function(query,params,cb,idx, alasql) {
+			var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
+			if(cb) res = cb(res,idx,query);
+			return res;
+		    }
 			} else {
 
 				source.datafn = function(query,params,cb,idx, alasql) {
@@ -10746,7 +10748,6 @@ yy.CreateTable.prototype.toString = function() {
 	} else{
 		s += ' '+(this.class?'CLASS':'TABLE');
 	}
-
 	if(this.ifnotexists){
 		s += ' IF  NOT EXISTS';
 	}
@@ -10775,7 +10776,7 @@ yy.CreateTable.prototype.toString = function() {
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
-//	var self = this;
+    //	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
 	var tableid = this.table.tableid;
@@ -10803,7 +10804,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
-
 	// If this is a class
 	if(this.class) {
 		table.isclass = true;
@@ -10973,6 +10973,13 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		});
 	}
 
+    //Used in 420from queryfn when table.view = true!
+    if(this.view && this.select) {
+	table.view = true;
+
+	table.select = this.select.compile(this.table.databaseid||databaseid);
+    }
+
 	if(db.engineid) {
 
 		return alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
@@ -10981,7 +10988,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 //	}
 
-	table.insert = function(r,orreplace) {
+    table.insert = function(r,orreplace) {
 		var oldinserted = alasql.inserted;
 		alasql.inserted = [r];
 
@@ -11308,12 +11315,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		};
 
 	};
-
-	if(this.view && this.select) {
-		table.view = true;
-
-		table.select = this.select.compile(this.table.databaseid||databaseid);
-	}
 
 	var res;
 
