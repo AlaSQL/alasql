@@ -22,5 +22,6 @@ deploy:
     source: mathiasrw/dpl
     branch: master
   skip_cleanup: true
-
+  on:
+    all_branches: true
 
