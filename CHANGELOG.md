@@ -2,7 +2,12 @@
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
 _0.2.6 "Frikes" (22.04.2016)_
-* ...
+* Update: Better error message for missing table or column
+* Update: Typescript defenition for .promise
+* Fix: Declaring all variables
+* Fix: Read XLSX files
+* Fix: Selecting a view from localstorage 
+
 
 0.2.5 "Polychrono" (23.03.2016)
 * Added: Promise chain of queries
