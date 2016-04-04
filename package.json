@@ -62,7 +62,7 @@
     "url": "https://github.com/agershun/alasql/issues"
   },
   "bin": {
-    "alasql": "./bin/alasql.js",
+    "alasql": "./bin/alasql-cli.js",
     "alaserver": "./bin/alaserver.js"
   },
   "homepage": "https://github.com/agershun/alasql",
