@@ -31,6 +31,7 @@
     "lodash": "^4.6.1",
     "request": "^2.69.0",
     "xlsjs": "^0.7.5",
+    "yargs": "^4.2.0",
     "xlsx": "^0.8.0"
   },
   "devDependencies": {
@@ -48,8 +49,7 @@
     "npm-check": "^4.0.1",
     "open": "0.0.5",
     "strftime": "^0.9.2",
-    "uglifyjs": "^2.4.10",
-    "yargs": "^4.2.0"
+    "uglifyjs": "^2.4.10"
   },
   "engines": [
     "node"
