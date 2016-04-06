@@ -15,6 +15,6 @@ We have many things to improve:
 * examples
 * [alasql.org web site](https://github.com/agershun/alasql-org)
 
-You can choose any of these areas or issues, related to you need for other projects.
+You can choose any of these areas or issues, related to your needs for other projects.
 
 Thank you!
