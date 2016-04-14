@@ -13,7 +13,7 @@ alasql.parser = alasqlparser;
 
 /*/* This is not working :-/ */
 alasql.parser.parseError = function(str, hash){
-	throw new Error("Have you used a reserved keyword without `escaping` it?\n"+str);	
+	throw new Error("Have you used a reserved keyword without `escaping` it?\n"+str);
 }
 
 /**
@@ -31,7 +31,7 @@ alasql.parser.parseError = function(str, hash){
  */
 alasql.parse = function(sql) {
 	return alasqlparser.parse(alasql.utils.uncomment(sql));
-}; 
+};
 
 /**
  	List of engines of external databases
@@ -46,11 +46,11 @@ alasql.engines = {};
  */
 alasql.databases = {};
 
-/** 
-	Number of databases 
+/**
+	Number of databases
 	@type {number}
 */
-alasql.databasenum = 0; 
+alasql.databasenum = 0;
 
 /**
  	Alasql options object
@@ -65,11 +65,14 @@ alasql.options.casesensitive = true; // Table and column names are case sensitiv
 alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
 alasql.options.logprompt = true; // Print SQL at log
 
+alasql.options.progress = false; // Callback for async queries progress
+
+
 // Default modifier
 // values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
-alasql.options.modifier = undefined; 
+alasql.options.modifier = undefined;
 // How many rows to lookup to define columns
-alasql.options.columnlookup = 10; 
+alasql.options.columnlookup = 10;
 // Create vertex if not found
 alasql.options.autovertex = true;
 
@@ -157,7 +160,7 @@ alasql.exec = function (sql, params, cb, scope) {
 			return alasql.dexec(alasql.useid, sql, params, cb, scope);
 		} catch(err){
 			alasql.error = err;
-			if(cb){ 
+			if(cb){
 				cb(null,alasql.error);
 			}
 		}
@@ -173,7 +176,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	var db = alasql.databases[databaseid];
 //	if(db.databaseid != databaseid) console.trace('got!');
 //	console.log(3,db.databaseid,databaseid);
-	
+
 	var hh;
 	// Create hash
 	if(alasql.options.cache) {
@@ -203,7 +206,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			}
 			statement.sql = sql;
 			statement.dbversion = db.dbversion;
-			
+
 			if(alasql.options.cache) {
 				// Secure sqlCache size
 				if (db.sqlCacheSize > alasql.MAXSQLCACHESIZE) {
@@ -214,11 +217,11 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			}
 			var res = alasql.res = statement(params, cb, scope);
 			return res;
-			
+
 		} else {
 //			console.log(ast.statements[0]);
 			alasql.precompile(ast.statements[0],alasql.useid,params);
-			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);		
+			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);
 			return res;
 		}
 	} else {
@@ -236,33 +239,33 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
  */
 alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var useid = alasql.useid;
-	
+
 	if(useid !== databaseid){
 		alasql.use(databaseid);
 	}
-	
+
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		if(ast.statements[i]) {
-			if(ast.statements[i].compile) { 
+			if(ast.statements[i].compile) {
 				var statement = ast.statements[i].compile(alasql.useid);
 				res.push(alasql.res = statement(params,null,scope));
 			} else {
 				alasql.precompile(ast.statements[i],alasql.useid,params);
 				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
-			}		
+			}
 		}
 	}
 	if(useid !== databaseid){
 		alasql.use(useid);
 	}
-	
+
 	if(cb){
 		cb(res);
 	}
-	
+
 	alasql.res = res;
-	
+
 	return res;
 };
 
@@ -270,6 +273,13 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
   Run multiple statements and return array of results async
  */
 alasql.adrun = function (databaseid, ast, params, cb, scope) {
+
+	var idx = 0;
+	var noqueries = ast.statements.length;
+	if (alasql.options.progress !== false) {
+	  alasql.options.progress(noqueries, idx++);
+	}
+
 //	alasql.busy++;
 	var useid = alasql.useid;
 	if(useid !== databaseid) {
@@ -277,10 +287,10 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 	}
 	var res = [];
 
-	
+
 
 	function adrunone(data) {
-		if(data !== undefined){ 
+		if(data !== undefined){
 			res.push(data);
 		}
 		var astatement = ast.statements.shift();
@@ -295,9 +305,15 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 			if(astatement.compile) {
 				var statement = astatement.compile(alasql.useid);
 				statement(params, adrunone, scope);
+				if (alasql.options.progress !== false) {
+				  alasql.options.progress(noqueries, idx++);
+				}
 			} else {
 				alasql.precompile(ast.statements[0],alasql.useid,params);
 				astatement.execute(alasql.useid, params, adrunone);
+				if (alasql.options.progress !== false) {
+				  alasql.options.progress(noqueries, idx++);
+				}
 			}
 		}
 	}
@@ -314,11 +330,11 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
  @return {functions} Compiled statement functions
 */
 alasql.compile = function(sql, databaseid) {
-	
+
 	databaseid = databaseid || alasql.useid;
-	
+
 	var ast = alasql.parse(sql); // Create AST
-	
+
 	if(1 === ast.statements.length) {
 		var statement = ast.statements[0].compile(databaseid)
 		statement.promise = function(params){
@@ -334,7 +350,7 @@ alasql.compile = function(sql, databaseid) {
 		};
 
 		return statement;
-/*/*		
+/*/*
 		if(kind == 'value') {
 			return function(params,cb) {
 				var res = statementfn(params);
@@ -382,7 +398,7 @@ alasql.compile = function(sql, databaseid) {
 				res = arrayOfArrays(res);
 				if(cb) cb(res);
 				return res;
-			};				
+			};
 		} else if(kind == 'collection') {
 			return statementfn;
 		} else {
@@ -414,7 +430,7 @@ alasql.compile = function(sql, databaseid) {
 alasql.query = function (sql, params, cb) {
 	var res = this.exec(sql, params);
 	if(cb) cb(res);
-	return res;	
+	return res;
 };
 
 alasql.queryArray = function (sql, params, cb) {
