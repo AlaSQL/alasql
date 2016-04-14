@@ -56,14 +56,14 @@ var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	params = active[1]||undefined;
 
 	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.index++);
+    alasql.options.progress(progress.total, progress.idx++);
 	}
 
 	if(typeof lastPromise === 'undefined'){
-		return promiseChain(sqlParamsArray, promiseExec(sql, params));
+		return promiseChain(progress, sqlParamsArray, promiseExec(sql, params));
 	}
 
-	return promiseChain(sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
+	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
 
 }
 
@@ -83,7 +83,7 @@ alasql.promise = function(sql, params) {
 
 	var progress = {idx: 0, total: sql.length};
 	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.index++);
+    alasql.options.progress(progress.total, progress.idx++);
 	}
 
 	return promiseChain(progress, sql);

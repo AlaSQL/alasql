@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1269 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1270 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1269
+@version 0.2.5-develop-1270
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1269';
+alasql.version = '0.2.5-develop-1270';
 
 /**
 	Debug flag
@@ -4454,6 +4454,8 @@ var promiseChain = function(progress, sqlParamsArray, lastPromise){
 		return lastPromise;
 	}
 
+	console.log(progress);
+
 	active = sqlParamsArray.shift();
 
 	if(typeof active === 'string'){
@@ -4468,14 +4470,14 @@ var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	params = active[1]||undefined;
 
 	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.index++);
+    alasql.options.progress(progress.total, progress.idx++);
 	}
 
 	if(typeof lastPromise === 'undefined'){
-		return promiseChain(sqlParamsArray, promiseExec(sql, params));
+		return promiseChain(progress, sqlParamsArray, promiseExec(sql, params));
 	}
 
-	return promiseChain(sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
+	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
 
 }
 
@@ -4494,7 +4496,7 @@ alasql.promise = function(sql, params) {
 
 	var progress = {idx: 0, total: sql.length};
 	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.index++);
+    alasql.options.progress(progress.total, progress.idx++);
 	}
 
 	return promiseChain(progress, sql);
