@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1270 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1271 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1270
+@version 0.2.5-develop-1271
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1270';
+alasql.version = '0.2.5-develop-1271';
 
 /**
 	Debug flag
@@ -3109,7 +3109,7 @@ var getGlobal = function(){
   try {
     return Function('return this')();
 
-  }catch(e){  
+  }catch(e){
     //If Content Security Policy
     var global =  self || window || global;
 
@@ -3219,6 +3219,11 @@ var isCordova = function(){
   return (typeof cordova === 'object')
 }
 utils.isCordova = isCordova();
+
+var isIndexedDB = function(){
+  return (typeof utils.global.indexedDB !== 'undefined');
+}
+utils.isIndexedDB = isIndexedDB();
 
 utils.isArray = function(obj){
 	return "[object Array]"===Object.prototype.toString.call(obj);
@@ -3954,9 +3959,9 @@ utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
 	if (utils.isWebWorker) {
-		return '';		
+		return '';
 		/** @todo Check how to get path in worker */
-	} else if(utils.isNode) { 
+	} else if(utils.isNode) {
 		return __dirname;
 
 	} else if(utils.isMeteorClient) {
@@ -3968,23 +3973,23 @@ utils.findAlaSQLPath = function() {
 	} else if(utils.isBrowser) {
 		var sc = document.getElementsByTagName('script');
 
-		for(var i=0;i<sc.length;i++) {	
+		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-				return sc[i].src.substr(0,sc[i].src.length-16); 
+				return sc[i].src.substr(0,sc[i].src.length-16);
 
 			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 				return sc[i].src.substr(0,sc[i].src.length-20);
 
 			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-				return sc[i].src.substr(0,sc[i].src.length-9); 
+				return sc[i].src.substr(0,sc[i].src.length-9);
 
 			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-				return sc[i].src.substr(0,sc[i].src.length-13); 
+				return sc[i].src.substr(0,sc[i].src.length-13);
 
 			}
-		}	
+		}
 	}
-	return '';	
+	return '';
 }
 
 // set AlaSQl path
@@ -4453,8 +4458,6 @@ var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	if(sqlParamsArray.length<1){
 		return lastPromise;
 	}
-
-	console.log(progress);
 
 	active = sqlParamsArray.shift();
 
@@ -15829,7 +15832,7 @@ WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 // (c) Andrey Gershun
 //
 
-if(typeof(utils.isBrowser) && utils.global.indexedDB) {
+if(utils.isIndexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
@@ -16256,6 +16259,8 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 }
 
 // Skip
+} else {
+	throw new Error('The current browser does not support IndexedDB');
 }
 
 //

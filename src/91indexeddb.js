@@ -6,7 +6,7 @@
 //
 
 
-if(typeof(utils.isBrowser) && utils.global.indexedDB) {
+if(utils.isIndexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
@@ -510,4 +510,6 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 }
 
 // Skip
+} else {
+	throw new Error('The current browser does not support IndexedDB');
 }
