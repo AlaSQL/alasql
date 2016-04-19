@@ -19,7 +19,7 @@ if(utils.isNode){
 
 	/*/*if(typeof utils.global.Promise === "object") {
 		Promise = utils.global.Promise;
-	}*/  
+	}*/
 }
 
 
@@ -36,7 +36,7 @@ var promiseExec = function(sql, params){
 }
 
 
-var promiseChain = function(sqlParamsArray, lastPromise){
+var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	var active, sql, params;
 	if(sqlParamsArray.length<1){
 		return lastPromise;
@@ -54,13 +54,17 @@ var promiseChain = function(sqlParamsArray, lastPromise){
 
 	sql = active[0];
 	params = active[1]||undefined;
-	
-	if(typeof lastPromise === 'undefined'){
-		return promiseChain(sqlParamsArray, promiseExec(sql, params));
+
+	if (alasql.options.progress !== false) {
+    alasql.options.progress(progress.total, progress.idx++);
 	}
 
-	return promiseChain(sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
-	
+	if(typeof lastPromise === 'undefined'){
+		return promiseChain(progress, sqlParamsArray, promiseExec(sql, params));
+	}
+
+	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
+
 }
 
 
@@ -72,17 +76,15 @@ alasql.promise = function(sql, params) {
 	if(typeof sql === 'string'){
 		return promiseExec(sql, params);
 	}
-   
+
 	if(!utils.isArray(sql) || sql.length<1 || typeof params !== "undefined"){
 		throw new Error('Error in .promise parameters');
 	}
 
-	return promiseChain(sql);
+	var progress = {idx: 0, total: sql.length};
+	if (alasql.options.progress !== false) {
+    alasql.options.progress(progress.total, progress.idx++);
+	}
+
+	return promiseChain(progress, sql);
 };
-
-
-
-
-
-
-

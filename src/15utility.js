@@ -138,8 +138,8 @@ var cutbom = function(s) {
 utils.global = function(){
   try {
     return Function('return this')();
- 
-  }catch(e){  
+
+  }catch(e){
     //If Content Security Policy
     var global =  self || window || global;
 
@@ -251,6 +251,12 @@ utils.isMeteorServer = function(){
 utils.isCordova = function(){
   return (typeof cordova === 'object')
 }();
+
+var isIndexedDB = function(){
+  return (typeof utils.global.indexedDB !== 'undefined');
+}
+utils.isIndexedDB = isIndexedDB();
+
 
 utils.isArray = function(obj){
 	return "[object Array]"===Object.prototype.toString.call(obj);
@@ -428,7 +434,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     var fs;
     if(utils.isNode || utils.isMeteorServer) {
-        
+
         // For Node.js
         if(utils.isMeteor) {
             fs = Npm.require('fs'); // For Meteor
@@ -1153,43 +1159,39 @@ utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
 	if (utils.isWebWorker) {
-		return '';		
+		return '';
 		/** @todo Check how to get path in worker */
-	} else if(utils.isNode) { 
+	} else if(utils.isNode) {
 		return __dirname;
-	
+
 	} else if(utils.isMeteorClient) {
 		return '/packages/dist/';
-	
+
 	} else if(utils.isMeteorServer) {
 		return 'assets/packages/dist/';
-	
+
 	} else if(utils.isBrowser) {
 		var sc = document.getElementsByTagName('script');
-		
-		for(var i=0;i<sc.length;i++) {	
+
+		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-				return sc[i].src.substr(0,sc[i].src.length-16); 
+				return sc[i].src.substr(0,sc[i].src.length-16);
 
 			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 				return sc[i].src.substr(0,sc[i].src.length-20);
-			
+
 			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-				return sc[i].src.substr(0,sc[i].src.length-9); 
-			
+				return sc[i].src.substr(0,sc[i].src.length-9);
+
 			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-				return sc[i].src.substr(0,sc[i].src.length-13); 
-				
+				return sc[i].src.substr(0,sc[i].src.length-13);
+
 			}
-		}	
+		}
 	}
-	return '';	
+	return '';
 }
 
 
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();
-
-
-
-

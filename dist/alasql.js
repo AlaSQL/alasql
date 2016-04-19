@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1262 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1271 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1262
+@version 0.2.5-develop-1271
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1262';
+alasql.version = '0.2.5-develop-1271';
 
 /**
 	Debug flag
@@ -3109,7 +3109,7 @@ var getGlobal = function(){
   try {
     return Function('return this')();
 
-  }catch(e){  
+  }catch(e){
     //If Content Security Policy
     var global =  self || window || global;
 
@@ -3219,6 +3219,11 @@ var isCordova = function(){
   return (typeof cordova === 'object')
 }
 utils.isCordova = isCordova();
+
+var isIndexedDB = function(){
+  return (typeof utils.global.indexedDB !== 'undefined');
+}
+utils.isIndexedDB = isIndexedDB();
 
 utils.isArray = function(obj){
 	return "[object Array]"===Object.prototype.toString.call(obj);
@@ -3954,9 +3959,9 @@ utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
 	if (utils.isWebWorker) {
-		return '';		
+		return '';
 		/** @todo Check how to get path in worker */
-	} else if(utils.isNode) { 
+	} else if(utils.isNode) {
 		return __dirname;
 
 	} else if(utils.isMeteorClient) {
@@ -3968,23 +3973,23 @@ utils.findAlaSQLPath = function() {
 	} else if(utils.isBrowser) {
 		var sc = document.getElementsByTagName('script');
 
-		for(var i=0;i<sc.length;i++) {	
+		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-				return sc[i].src.substr(0,sc[i].src.length-16); 
+				return sc[i].src.substr(0,sc[i].src.length-16);
 
 			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 				return sc[i].src.substr(0,sc[i].src.length-20);
 
 			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-				return sc[i].src.substr(0,sc[i].src.length-9); 
+				return sc[i].src.substr(0,sc[i].src.length-9);
 
 			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-				return sc[i].src.substr(0,sc[i].src.length-13); 
+				return sc[i].src.substr(0,sc[i].src.length-13);
 
 			}
-		}	
+		}
 	}
-	return '';	
+	return '';
 }
 
 // set AlaSQl path
@@ -4083,7 +4088,7 @@ alasql.utils.uncomment = function uncomment(str) {
 alasql.parser = alasqlparser;
 
 alasql.parser.parseError = function(str, hash){
-	throw new Error("Have you used a reserved keyword without `escaping` it?\n"+str);	
+	throw new Error("Have you used a reserved keyword without `escaping` it?\n"+str);
 }
 
 /**
@@ -4101,7 +4106,7 @@ alasql.parser.parseError = function(str, hash){
  */
 alasql.parse = function(sql) {
 	return alasqlparser.parse(alasql.utils.uncomment(sql));
-}; 
+};
 
 /**
  	List of engines of external databases
@@ -4116,11 +4121,11 @@ alasql.engines = {};
  */
 alasql.databases = {};
 
-/** 
-	Number of databases 
+/**
+	Number of databases
 	@type {number}
 */
-alasql.databasenum = 0; 
+alasql.databasenum = 0;
 
 /**
  	Alasql options object
@@ -4135,11 +4140,13 @@ alasql.options.casesensitive = true; // Table and column names are case sensitiv
 alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
 alasql.options.logprompt = true; // Print SQL at log
 
+alasql.options.progress = false; // Callback for async queries progress
+
 // Default modifier
 // values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
-alasql.options.modifier = undefined; 
+alasql.options.modifier = undefined;
 // How many rows to lookup to define columns
-alasql.options.columnlookup = 10; 
+alasql.options.columnlookup = 10;
 // Create vertex if not found
 alasql.options.autovertex = true;
 
@@ -4226,7 +4233,7 @@ alasql.exec = function (sql, params, cb, scope) {
 			return alasql.dexec(alasql.useid, sql, params, cb, scope);
 		} catch(err){
 			alasql.error = err;
-			if(cb){ 
+			if(cb){
 				cb(null,alasql.error);
 			}
 		}
@@ -4286,7 +4293,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		} else {
 
 			alasql.precompile(ast.statements[0],alasql.useid,params);
-			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);		
+			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);
 			return res;
 		}
 	} else {
@@ -4312,13 +4319,13 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		if(ast.statements[i]) {
-			if(ast.statements[i].compile) { 
+			if(ast.statements[i].compile) {
 				var statement = ast.statements[i].compile(alasql.useid);
 				res.push(alasql.res = statement(params,null,scope));
 			} else {
 				alasql.precompile(ast.statements[i],alasql.useid,params);
 				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
-			}		
+			}
 		}
 	}
 	if(useid !== databaseid){
@@ -4338,6 +4345,13 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
   Run multiple statements and return array of results async
  */
 alasql.adrun = function (databaseid, ast, params, cb, scope) {
+
+	var idx = 0;
+	var noqueries = ast.statements.length;
+	if (alasql.options.progress !== false) {
+	  alasql.options.progress(noqueries, idx++);
+	}
+
 //	alasql.busy++;
 	var useid = alasql.useid;
 	if(useid !== databaseid) {
@@ -4346,7 +4360,7 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 	var res = [];
 
 	function adrunone(data) {
-		if(data !== undefined){ 
+		if(data !== undefined){
 			res.push(data);
 		}
 		var astatement = ast.statements.shift();
@@ -4360,9 +4374,15 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 			if(astatement.compile) {
 				var statement = astatement.compile(alasql.useid);
 				statement(params, adrunone, scope);
+				if (alasql.options.progress !== false) {
+				  alasql.options.progress(noqueries, idx++);
+				}
 			} else {
 				alasql.precompile(ast.statements[0],alasql.useid,params);
 				astatement.execute(alasql.useid, params, adrunone);
+				if (alasql.options.progress !== false) {
+				  alasql.options.progress(noqueries, idx++);
+				}
 			}
 		}
 	}
@@ -4433,7 +4453,7 @@ var promiseExec = function(sql, params){
     });
 }
 
-var promiseChain = function(sqlParamsArray, lastPromise){
+var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	var active, sql, params;
 	if(sqlParamsArray.length<1){
 		return lastPromise;
@@ -4452,11 +4472,15 @@ var promiseChain = function(sqlParamsArray, lastPromise){
 	sql = active[0];
 	params = active[1]||undefined;
 
-	if(typeof lastPromise === 'undefined'){
-		return promiseChain(sqlParamsArray, promiseExec(sql, params));
+	if (alasql.options.progress !== false) {
+    alasql.options.progress(progress.total, progress.idx++);
 	}
 
-	return promiseChain(sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
+	if(typeof lastPromise === 'undefined'){
+		return promiseChain(progress, sqlParamsArray, promiseExec(sql, params));
+	}
+
+	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
 
 }
 
@@ -4473,7 +4497,12 @@ alasql.promise = function(sql, params) {
 		throw new Error('Error in .promise parameters');
 	}
 
-	return promiseChain(sql);
+	var progress = {idx: 0, total: sql.length};
+	if (alasql.options.progress !== false) {
+    alasql.options.progress(progress.total, progress.idx++);
+	}
+
+	return promiseChain(progress, sql);
 };
 
 /*
@@ -15803,7 +15832,7 @@ WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 // (c) Andrey Gershun
 //
 
-if(typeof(utils.isBrowser) && utils.global.indexedDB) {
+if(utils.isIndexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
@@ -16230,6 +16259,8 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 }
 
 // Skip
+} else {
+	throw new Error('The current browser does not support IndexedDB');
 }
 
 //
