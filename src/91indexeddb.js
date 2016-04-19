@@ -6,30 +6,32 @@
 //
 
 
-if(typeof(utils.isBrowser) && utils.global.indexedDB) {
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
-// For Chrome it work normally, for Firefox - simple shim
-if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
-	IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
-} else {
-	IDB.getDatabaseNames = function () {
-		var request = {};
-		var result = {
-			contains:function(name){
-				return true; // Always return true
-			},
-			notsupported: true
+if(utils.isIndexedDB) {
+	// For Chrome it work normally, for Firefox - simple shim
+	if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
+		IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
+	} else {
+		IDB.getDatabaseNames = function () {
+			var request = {};
+			var result = {
+				contains:function(name){
+					return true; // Always return true
+				},
+				notsupported: true
+			};
+			setTimeout(function(){
+				var event = {target:{result:result}}
+				request.onsuccess(event);
+			},0);
+			return request;
 		};
-		setTimeout(function(){
-			var event = {target:{result:result}}
-			request.onsuccess(event);
-		},0);
-		return request;
-	};
-	IDB.getDatabaseNamesNotSupported = true;
+		IDB.getDatabaseNamesNotSupported = true;
+	}
 }
+
 
 //
 // SHOW DATABASES
@@ -160,7 +162,6 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 			};
 		};
 	}
-	// }
 };
 
 
@@ -186,9 +187,13 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 };
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
-  var indexedDB = utils.global.indexedDB;
+
+	if(!utils.isIndexedDB){
+		throw new Error('The current browser does not support IndexedDB');
+	}
+	var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot attach database "'+ixdbid+'" because it does not exist');
@@ -200,7 +205,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 			db.engineid = "INDEXEDDB";
 			db.ixdbid = ixdbid;
 			db.tables = [];
-		  	var tblist = ixdb.objectStoreNames;
+			var tblist = ixdb.objectStoreNames;
 			for(var i=0;i<tblist.length;i++){
 				db.tables[tblist[i]] = {};
 			};
@@ -228,7 +233,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 //	console.log(ixdbid);
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot create table in database "'+ixdbid+'" because it does not exist');
@@ -271,16 +276,18 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot drop table in database "'+ixdbid+'" because it does not exist');
-		};
+		}
+		
 		var request2 = indexedDB.open(ixdbid);
 		request2.onversionchange = function(event) {
 			event.target.result.close();
 		};
+		
 		request2.onsuccess = function(event) {
 			var version = event.target.result.version;
 			event.target.result.close();
@@ -353,7 +360,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 	// console.log(arguments);
 	// console.trace();
 //	console.log('intoTable',databaseid, tableid, value, cb);
-  var indexedDB = utils.global.indexedDB;
+	var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request1 = indexedDB.open(ixdbid);
 	request1.onsuccess = function(event) {
@@ -388,37 +395,37 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 	// console.log(arguments);
 	// console.trace();
-  var indexedDB = utils.global.indexedDB;
+	var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
-//	  	console.log(444,ixdb, tableid, ixdbid);
-	  	var tx = ixdb.transaction([tableid]);
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
-//	  	console.log(cur);
-	  	cur.onblocked = function(event) {
-//	  		console.log('blocked');
-	  	}
-	  	cur.onerror = function(event) {
-//	  		console.log('error');
-	  	}
-	  	cur.onsuccess = function(event) {
-//	  		console.log('success');
-		  	var cursor = event.target.result;
-//		  		console.log(222,event);
-//		  		console.log(333,cursor);
-		  	if(cursor) {
-		  		res.push(cursor.value);
-		  		cursor.continue();
-		  	} else {
-//		  		console.log(555, res,idx,query);
-		  		ixdb.close();
-		  		if(cb) cb(res, idx, query);
-		  	}
-	  	}
+		var res = [];
+		var ixdb = event.target.result;
+//		console.log(444,ixdb, tableid, ixdbid);
+		var tx = ixdb.transaction([tableid]);
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
+//		console.log(cur);
+		cur.onblocked = function(event) {
+//			console.log('blocked');
+		}
+		cur.onerror = function(event) {
+//			console.log('error');
+		}
+		cur.onsuccess = function(event) {
+//			console.log('success');
+			var cursor = event.target.result;
+//				console.log(222,event);
+//				console.log(333,cursor);
+			if(cursor) {
+				res.push(cursor.value);
+				cursor.continue();
+			} else {
+//				console.log(555, res,idx,query);
+				ixdb.close();
+				if(cb) cb(res, idx, query);
+			}
+		}
 	}
 }
 
@@ -429,38 +436,38 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
-//	  	console.log(444,ixdb, tableid, ixdbid);
-	  	var tx = ixdb.transaction([tableid], 'readwrite');
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
-	  	var num = 0;
-//	  	console.log(cur);
-	  	cur.onblocked = function(event) {
-//	  		console.log('blocked');
-	  	}
-	  	cur.onerror = function(event) {
-//	  		console.log('error');
-	  	}
-	  	cur.onsuccess = function(event) {
-//	  		console.log('success');
-		  	var cursor = event.target.result;
-//		  		console.log(222,event);
-//		  		console.log(333,cursor);
-		  	if(cursor) {
-		  		if((!wherefn) || wherefn(cursor.value,params)) {
-//		  		console.log(cursor);
-		  			cursor.delete();
-		  			num++;
-		  		}
-		  		cursor.continue();
-		  	} else {
-//		  		console.log(555, res,idx,query);
-		  		ixdb.close();
-		  		if(cb) cb(num);
-		  	}
-	  	}
+		var res = [];
+		var ixdb = event.target.result;
+//		console.log(444,ixdb, tableid, ixdbid);
+		var tx = ixdb.transaction([tableid], 'readwrite');
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
+		var num = 0;
+//		console.log(cur);
+		cur.onblocked = function(event) {
+//			console.log('blocked');
+		}
+		cur.onerror = function(event) {
+//			console.log('error');
+		}
+		cur.onsuccess = function(event) {
+//			console.log('success');
+			var cursor = event.target.result;
+//				console.log(222,event);
+//				console.log(333,cursor);
+			if(cursor) {
+				if((!wherefn) || wherefn(cursor.value,params)) {
+//				console.log(cursor);
+					cursor.delete();
+					num++;
+				}
+				cursor.continue();
+			} else {
+//				console.log(555, res,idx,query);
+				ixdb.close();
+				if(cb) cb(num);
+			}
+		}
 	}
 }
 
@@ -471,43 +478,41 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
-//	  	console.log(444,ixdb, tableid, ixdbid);
-	  	var tx = ixdb.transaction([tableid], 'readwrite');
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
-	  	var num = 0;
-//	  	console.log(cur);
-	  	cur.onblocked = function(event) {
-//	  		console.log('blocked');
-	  	}
-	  	cur.onerror = function(event) {
-//	  		console.log('error');
-	  	}
-	  	cur.onsuccess = function(event) {
-//	  		console.log('success');
-		  	var cursor = event.target.result;
-//		  		console.log(222,event);
-//		  		console.log(333,cursor);
-		  	if(cursor) {
-		  		if((!wherefn) || wherefn(cursor.value,params)) {
-		  		//console.log(cursor);
-		  			var r = cursor.value;
+		var res = [];
+		var ixdb = event.target.result;
+//		console.log(444,ixdb, tableid, ixdbid);
+		var tx = ixdb.transaction([tableid], 'readwrite');
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
+		var num = 0;
+//		console.log(cur);
+		cur.onblocked = function(event) {
+//			console.log('blocked');
+		}
+		cur.onerror = function(event) {
+//			console.log('error');
+		}
+		cur.onsuccess = function(event) {
+//			console.log('success');
+			var cursor = event.target.result;
+//				console.log(222,event);
+//				console.log(333,cursor);
+			if(cursor) {
+				if((!wherefn) || wherefn(cursor.value,params)) {
+				//console.log(cursor);
+					var r = cursor.value;
 					assignfn(r,params);
 				//	console.log('update 363',r);
-		  			cursor.update(r);
-		  			num++;
-		  		}
-		  		cursor.continue();
-		  	} else {
-//		  		console.log(555, res,idx,query);
-		  		ixdb.close();
-		  		if(cb) cb(num);
-		  	}
-	  	}
+					cursor.update(r);
+					num++;
+				}
+				cursor.continue();
+			} else {
+//				console.log(555, res,idx,query);
+				ixdb.close();
+				if(cb) cb(num);
+			}
+		}
 	}
 }
 
-// Skip
-}
