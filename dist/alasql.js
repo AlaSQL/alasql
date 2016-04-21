@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1271 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1278 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1271
+@version 0.2.5-develop-1278
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1271';
+alasql.version = '0.2.5-develop-1278';
 
 /**
 	Debug flag
@@ -3105,7 +3105,7 @@ var cutbom = function(s) {
     Inspired by System.global
     @return {object} The global scope
 */
-var getGlobal = function(){
+utils.global = (function(){
   try {
     return Function('return this')();
 
@@ -3119,8 +3119,7 @@ var getGlobal = function(){
     	throw new Error('Unable to locate global object');
     }
   }
-}
-utils.global = getGlobal();
+})();
 
 /**
     Find out if a function is native to the enviroment
@@ -3135,50 +3134,54 @@ var isNativeFunction = utils.isNativeFunction = function(fn){
     Find out if code is running in a web worker enviroment
     @return {boolean} True if code is running in a web worker enviroment
 */
-var isWebWorker = function(){
+utils.isWebWorker = (function(){
   try{
     var importScripts = utils.global.importScripts;
     return (utils.isNativeFunction(importScripts));
   }catch(e){
     return false;
   }
-}
-utils.isWebWorker = isWebWorker();
+})();
 
 /**
     Find out if code is running in a node enviroment
     @return {boolean} True if code is running in a node enviroment
 */
-var isNode = function(){
+utils.isNode = (function(){
   try{
     return utils.isNativeFunction(utils.global.process.reallyExit);
   }catch(e){
     return false;
   }
-};
-utils.isNode = isNode();
+})();
 
 /**
     Find out if code is running in a browser enviroment
     @return {boolean} True if code is running in a browser enviroment
 */
-var isBrowser = function(){
+utils.isBrowser = (function(){
   try{
     return utils.isNativeFunction(utils.global.location.reload);
   }catch(e){
     return false;
   }
-}
-utils.isBrowser = isBrowser();
+})();
 
 /**
     Find out if code is running in a browser with a browserify setup
     @return {boolean} True if code is running in a browser with a browserify setup
 */
-var isBrowserify = function(){
+utils.isBrowserify = (function(){
 	return utils.isBrowser && (typeof process !== "undefined") && process.browser;
-}
-utils.isBrowserify = isBrowserify();
+})();
+
+/**
+    Find out if code is running in a browser with a requireJS setup
+    @return {boolean} True if code is running in a browser with a requireJS setup
+*/
+utils.isRequireJS = (function(){
+	return utils.isBrowser && (typeof require === "function") && (typeof require.specified === "function");
+})();
 
 /**
     Find out if code is running with Meteor in the enviroment
@@ -3186,28 +3189,25 @@ utils.isBrowserify = isBrowserify();
 
     @todo Find out if this is the best way to do this
 */
-var isMeteor = function(){
+utils.isMeteor = (function(){
   return (typeof Meteor !== 'undefined' && Meteor.release)
-}
-utils.isMeteor = isMeteor();
+})();
 
 /**
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
-var isMeteorClient = utils.isMeteorClient = function(){
+utils.isMeteorClient = (utils.isMeteorClient = function(){
   return utils.isMeteor && Meteor.isClient;
-}
-utils.isMeteorClient = isMeteorClient();
+})();
 
 /**
     Find out if code is running on a Meteor server
     @return {boolean} True if code is running on a Meteor server
 */
-var isMeteorServer = function(){
+utils.isMeteorServer = (function(){
   return utils.isMeteor && Meteor.isServer;
-}
-utils.isMeteorServer = isMeteorServer();
+})();
 
 /**
     Find out code is running in a cordovar enviroment
@@ -3215,15 +3215,13 @@ utils.isMeteorServer = isMeteorServer();
 
     @todo Find out if this is the best way to do this
 */
-var isCordova = function(){
+utils.isCordova = (function(){
   return (typeof cordova === 'object')
-}
-utils.isCordova = isCordova();
+})();
 
-var isIndexedDB = function(){
+utils.hasIndexedDB = (function(){
   return (typeof utils.global.indexedDB !== 'undefined');
-}
-utils.isIndexedDB = isIndexedDB();
+})();
 
 utils.isArray = function(obj){
 	return "[object Array]"===Object.prototype.toString.call(obj);
@@ -15832,29 +15830,29 @@ WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 // (c) Andrey Gershun
 //
 
-if(utils.isIndexedDB) {
-
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
-// For Chrome it work normally, for Firefox - simple shim
-if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
-	IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
-} else {
-	IDB.getDatabaseNames = function () {
-		var request = {};
-		var result = {
-			contains:function(name){
-				return true; // Always return true
-			},
-			notsupported: true
+if(utils.hasIndexedDB) {
+	// For Chrome it work normally, for Firefox - simple shim
+	if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
+		IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
+	} else {
+		IDB.getDatabaseNames = function () {
+			var request = {};
+			var result = {
+				contains:function(name){
+					return true; // Always return true
+				},
+				notsupported: true
+			};
+			setTimeout(function(){
+				var event = {target:{result:result}}
+				request.onsuccess(event);
+			},0);
+			return request;
 		};
-		setTimeout(function(){
-			var event = {target:{result:result}}
-			request.onsuccess(event);
-		},0);
-		return request;
-	};
-	IDB.getDatabaseNamesNotSupported = true;
+		IDB.getDatabaseNamesNotSupported = true;
+	}
 }
 
 //
@@ -15970,7 +15968,6 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 			};
 		};
 	}
-	// }
 };
 
 IDB.dropDatabase = function(ixdbid, ifexists, cb){
@@ -15995,9 +15992,13 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 };
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
-  var indexedDB = utils.global.indexedDB;
+
+	if(!utils.hasIndexedDB){
+		throw new Error('The current browser does not support IndexedDB');
+	}
+	var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot attach database "'+ixdbid+'" because it does not exist');
@@ -16009,7 +16010,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 			db.engineid = "INDEXEDDB";
 			db.ixdbid = ixdbid;
 			db.tables = [];
-		  	var tblist = ixdb.objectStoreNames;
+			var tblist = ixdb.objectStoreNames;
 			for(var i=0;i<tblist.length;i++){
 				db.tables[tblist[i]] = {};
 			};
@@ -16026,7 +16027,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot create table in database "'+ixdbid+'" because it does not exist');
@@ -16069,16 +16070,18 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot drop table in database "'+ixdbid+'" because it does not exist');
-		};
+		}
+
 		var request2 = indexedDB.open(ixdbid);
 		request2.onversionchange = function(event) {
 			event.target.result.close();
 		};
+
 		request2.onsuccess = function(event) {
 			var version = event.target.result.version;
 			event.target.result.close();
@@ -16117,7 +16120,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 
 	// console.trace();
 
-  var indexedDB = utils.global.indexedDB;
+	var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request1 = indexedDB.open(ixdbid);
 	request1.onsuccess = function(event) {
@@ -16140,36 +16143,36 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 
 	// console.trace();
-  var indexedDB = utils.global.indexedDB;
+	var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
+		var res = [];
+		var ixdb = event.target.result;
 
-	  	var tx = ixdb.transaction([tableid]);
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
+		var tx = ixdb.transaction([tableid]);
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
 
-	  	cur.onblocked = function(event) {
+		cur.onblocked = function(event) {
 
-	  	}
-	  	cur.onerror = function(event) {
+		}
+		cur.onerror = function(event) {
 
-	  	}
-	  	cur.onsuccess = function(event) {
+		}
+		cur.onsuccess = function(event) {
 
-		  	var cursor = event.target.result;
+			var cursor = event.target.result;
 
-		  	if(cursor) {
-		  		res.push(cursor.value);
-		  		cursor.continue();
-		  	} else {
+			if(cursor) {
+				res.push(cursor.value);
+				cursor.continue();
+			} else {
 
-		  		ixdb.close();
-		  		if(cb) cb(res, idx, query);
-		  	}
-	  	}
+				ixdb.close();
+				if(cb) cb(res, idx, query);
+			}
+		}
 	}
 }
 
@@ -16180,37 +16183,37 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
+		var res = [];
+		var ixdb = event.target.result;
 
-	  	var tx = ixdb.transaction([tableid], 'readwrite');
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
-	  	var num = 0;
+		var tx = ixdb.transaction([tableid], 'readwrite');
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
+		var num = 0;
 
-	  	cur.onblocked = function(event) {
+		cur.onblocked = function(event) {
 
-	  	}
-	  	cur.onerror = function(event) {
+		}
+		cur.onerror = function(event) {
 
-	  	}
-	  	cur.onsuccess = function(event) {
+		}
+		cur.onsuccess = function(event) {
 
-		  	var cursor = event.target.result;
+			var cursor = event.target.result;
 
-		  	if(cursor) {
-		  		if((!wherefn) || wherefn(cursor.value,params)) {
+			if(cursor) {
+				if((!wherefn) || wherefn(cursor.value,params)) {
 
-		  			cursor.delete();
-		  			num++;
-		  		}
-		  		cursor.continue();
-		  	} else {
+					cursor.delete();
+					num++;
+				}
+				cursor.continue();
+			} else {
 
-		  		ixdb.close();
-		  		if(cb) cb(num);
-		  	}
-	  	}
+				ixdb.close();
+				if(cb) cb(num);
+			}
+		}
 	}
 }
 
@@ -16221,46 +16224,41 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
+		var res = [];
+		var ixdb = event.target.result;
 
-	  	var tx = ixdb.transaction([tableid], 'readwrite');
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
-	  	var num = 0;
+		var tx = ixdb.transaction([tableid], 'readwrite');
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
+		var num = 0;
 
-	  	cur.onblocked = function(event) {
+		cur.onblocked = function(event) {
 
-	  	}
-	  	cur.onerror = function(event) {
+		}
+		cur.onerror = function(event) {
 
-	  	}
-	  	cur.onsuccess = function(event) {
+		}
+		cur.onsuccess = function(event) {
 
-		  	var cursor = event.target.result;
+			var cursor = event.target.result;
 
-		  	if(cursor) {
-		  		if((!wherefn) || wherefn(cursor.value,params)) {
+			if(cursor) {
+				if((!wherefn) || wherefn(cursor.value,params)) {
 
-		  			var r = cursor.value;
+					var r = cursor.value;
 					assignfn(r,params);
 
-		  			cursor.update(r);
-		  			num++;
-		  		}
-		  		cursor.continue();
-		  	} else {
+					cursor.update(r);
+					num++;
+				}
+				cursor.continue();
+			} else {
 
-		  		ixdb.close();
-		  		if(cb) cb(num);
-		  	}
-	  	}
+				ixdb.close();
+				if(cb) cb(num);
+			}
+		}
 	}
-}
-
-// Skip
-} else {
-	throw new Error('The current browser does not support IndexedDB');
 }
 
 //
@@ -17254,7 +17252,7 @@ return alasql;
 /*if (typeof importScripts === 'function') {
 	// Nothing
 } else */ 
-if(typeof exports !== 'object') {
+if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
 
 	alasql.worker = function(path, paths, cb) {
 	//	var path;

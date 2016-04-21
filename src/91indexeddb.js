@@ -9,7 +9,7 @@
 
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
-if(utils.isIndexedDB) {
+if(utils.hasIndexedDB) {
 	// For Chrome it work normally, for Firefox - simple shim
 	if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
 		IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
@@ -188,7 +188,7 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 
-	if(!utils.isIndexedDB){
+	if(!utils.hasIndexedDB){
 		throw new Error('The current browser does not support IndexedDB');
 	}
 	var indexedDB = utils.global.indexedDB;

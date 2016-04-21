@@ -135,7 +135,7 @@ var cutbom = function(s) {
     Inspired by System.global
     @return {object} The global scope
 */
-utils.global = function(){
+utils.global = (function(){
   try {
     return Function('return this')();
 
@@ -149,7 +149,7 @@ utils.global = function(){
     	throw new Error('Unable to locate global object');
     }
   }
-}();
+})();
 
 /**
     Find out if a function is native to the enviroment
@@ -164,55 +164,55 @@ var isNativeFunction = utils.isNativeFunction = function(fn){
     Find out if code is running in a web worker enviroment
     @return {boolean} True if code is running in a web worker enviroment
 */
-utils.isWebWorker = function(){
+utils.isWebWorker = (function(){
   try{
     var importScripts = utils.global.importScripts;
     return (utils.isNativeFunction(importScripts));
   }catch(e){
     return false;
   }
-}();
+})();
 
 /**
     Find out if code is running in a node enviroment
     @return {boolean} True if code is running in a node enviroment
 */
-utils.isNode = function(){
+utils.isNode = (function(){
   try{
     return utils.isNativeFunction(utils.global.process.reallyExit);
   }catch(e){
     return false;
   }
-}();
+})();
 
 /**
     Find out if code is running in a browser enviroment
     @return {boolean} True if code is running in a browser enviroment
 */
-utils.isBrowser = function(){
+utils.isBrowser = (function(){
   try{
     return utils.isNativeFunction(utils.global.location.reload);
   }catch(e){
     return false;
   }
-}();
+})();
 
 /**
     Find out if code is running in a browser with a browserify setup
     @return {boolean} True if code is running in a browser with a browserify setup
 */
-utils.isBrowserify = function(){
+utils.isBrowserify = (function(){
 	return utils.isBrowser && (typeof process !== "undefined") && process.browser;
-}();
+})();
 
 
 /**
     Find out if code is running in a browser with a requireJS setup
     @return {boolean} True if code is running in a browser with a requireJS setup
 */
-utils.isRequireJS = function(){
+utils.isRequireJS = (function(){
 	return utils.isBrowser && (typeof require === "function") && (typeof require.specified === "function");
-}();
+})();
 
 
 /**
@@ -221,25 +221,25 @@ utils.isRequireJS = function(){
 
     @todo Find out if this is the best way to do this
 */
-utils.isMeteor = function(){
+utils.isMeteor = (function(){
   return (typeof Meteor !== 'undefined' && Meteor.release)
-}();
+})();
 
 /**
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
-utils.isMeteorClient = utils.isMeteorClient = function(){
+utils.isMeteorClient = (utils.isMeteorClient = function(){
   return utils.isMeteor && Meteor.isClient;
-}();
+})();
 
 /**
     Find out if code is running on a Meteor server
     @return {boolean} True if code is running on a Meteor server
 */
-utils.isMeteorServer = function(){
+utils.isMeteorServer = (function(){
   return utils.isMeteor && Meteor.isServer;
-}();
+})();
 
 
 /**
@@ -248,14 +248,13 @@ utils.isMeteorServer = function(){
 
     @todo Find out if this is the best way to do this
 */
-utils.isCordova = function(){
+utils.isCordova = (function(){
   return (typeof cordova === 'object')
-}();
+})();
 
-var isIndexedDB = function(){
+utils.hasIndexedDB = (function(){
   return (typeof utils.global.indexedDB !== 'undefined');
-}
-utils.isIndexedDB = isIndexedDB();
+})();
 
 
 utils.isArray = function(obj){
