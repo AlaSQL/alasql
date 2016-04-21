@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1278 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1280 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1278
+@version 0.2.5-develop-1280
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -126,7 +126,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1278';
+alasql.version = '0.2.5-develop-1280';
 
 /**
 	Debug flag
