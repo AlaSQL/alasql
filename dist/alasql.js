@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5-develop-1280 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.5-develop-1282 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5-develop-1280
+@version 0.2.5-develop-1282
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -86,6 +86,14 @@ SOFTWARE.
  */
 
 var alasql = function alasql(sql, params, cb, scope) {
+
+	// Avoid setting params if not needed even with callback
+	if(typeof params === 'function'){
+		scope = cb;
+		cb = params;
+		params = {};
+	}
+
 	if(typeof importScripts !== 'function' && alasql.webworker) {
 		var id = alasql.lastid++;
 		alasql.buffer[id] = cb;
@@ -126,7 +134,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5-develop-1280';
+alasql.version = '0.2.5-develop-1282';
 
 /**
 	Debug flag
@@ -4224,6 +4232,14 @@ alasql.use = function (databaseid) {
  Run single SQL statement on current database
  */
 alasql.exec = function (sql, params, cb, scope) {
+
+	// Avoid setting params if not needed even with callback
+	if(typeof params === 'function'){
+		scope = cb;
+		cb = params;
+		params = {};
+	}
+
 	delete alasql.error;
 	params = params || {};
 	if(alasql.options.errorlog){
