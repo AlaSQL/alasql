@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5
+@version 0.2.6
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -67,7 +67,7 @@ function alasql(sql,params,cb){
 /*if (typeof importScripts === 'function') {
 	// Nothing
 } else */ 
-if(typeof exports !== 'object') {
+if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
 
 	alasql.worker = function(path, paths, cb) {
 	//	var path;

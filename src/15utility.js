@@ -135,11 +135,11 @@ var cutbom = function(s) {
     Inspired by System.global
     @return {object} The global scope
 */
-var getGlobal = function(){
+utils.global = (function(){
   try {
     return Function('return this')();
- 
-  }catch(e){  
+
+  }catch(e){
     //If Content Security Policy
     var global =  self || window || global;
 
@@ -149,8 +149,7 @@ var getGlobal = function(){
     	throw new Error('Unable to locate global object');
     }
   }
-}
-utils.global = getGlobal();
+})();
 
 /**
     Find out if a function is native to the enviroment
@@ -165,51 +164,55 @@ var isNativeFunction = utils.isNativeFunction = function(fn){
     Find out if code is running in a web worker enviroment
     @return {boolean} True if code is running in a web worker enviroment
 */
-var isWebWorker = function(){
+utils.isWebWorker = (function(){
   try{
     var importScripts = utils.global.importScripts;
     return (utils.isNativeFunction(importScripts));
   }catch(e){
     return false;
   }
-}
-utils.isWebWorker = isWebWorker();
+})();
 
 /**
     Find out if code is running in a node enviroment
     @return {boolean} True if code is running in a node enviroment
 */
-var isNode = function(){
+utils.isNode = (function(){
   try{
     return utils.isNativeFunction(utils.global.process.reallyExit);
   }catch(e){
     return false;
   }
-};
-utils.isNode = isNode();
+})();
 
 /**
     Find out if code is running in a browser enviroment
     @return {boolean} True if code is running in a browser enviroment
 */
-var isBrowser = function(){
+utils.isBrowser = (function(){
   try{
     return utils.isNativeFunction(utils.global.location.reload);
   }catch(e){
     return false;
   }
-}
-utils.isBrowser = isBrowser();
+})();
 
 /**
     Find out if code is running in a browser with a browserify setup
     @return {boolean} True if code is running in a browser with a browserify setup
 */
-var isBrowserify = function(){
+utils.isBrowserify = (function(){
 	return utils.isBrowser && (typeof process !== "undefined") && process.browser;
-}
-utils.isBrowserify = isBrowserify();
+})();
 
+
+/**
+    Find out if code is running in a browser with a requireJS setup
+    @return {boolean} True if code is running in a browser with a requireJS setup
+*/
+utils.isRequireJS = (function(){
+	return utils.isBrowser && (typeof require === "function") && (typeof require.specified === "function");
+})();
 
 
 /**
@@ -218,29 +221,25 @@ utils.isBrowserify = isBrowserify();
 
     @todo Find out if this is the best way to do this
 */
-var isMeteor = function(){
+utils.isMeteor = (function(){
   return (typeof Meteor !== 'undefined' && Meteor.release)
-}
-utils.isMeteor = isMeteor();
+})();
 
 /**
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
-var isMeteorClient = utils.isMeteorClient = function(){
+utils.isMeteorClient = (utils.isMeteorClient = function(){
   return utils.isMeteor && Meteor.isClient;
-}
-utils.isMeteorClient = isMeteorClient();
+})();
 
 /**
     Find out if code is running on a Meteor server
     @return {boolean} True if code is running on a Meteor server
 */
-var isMeteorServer = function(){
+utils.isMeteorServer = (function(){
   return utils.isMeteor && Meteor.isServer;
-}
-utils.isMeteorServer = isMeteorServer();
-
+})();
 
 
 /**
@@ -249,10 +248,13 @@ utils.isMeteorServer = isMeteorServer();
 
     @todo Find out if this is the best way to do this
 */
-var isCordova = function(){
+utils.isCordova = (function(){
   return (typeof cordova === 'object')
-}
-utils.isCordova = isCordova();
+})();
+
+utils.hasIndexedDB = (function(){
+  return (typeof utils.global.indexedDB !== 'undefined');
+})();
 
 
 utils.isArray = function(obj){
@@ -431,7 +433,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     var fs;
     if(utils.isNode || utils.isMeteorServer) {
-        
+
         // For Node.js
         if(utils.isMeteor) {
             fs = Npm.require('fs'); // For Meteor
@@ -489,7 +491,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             }
-            xhr.responseType = "blob";
+           // xhr.responseType = "blob";
             xhr.send();
         } else if(path instanceof Event) {
             // console.log("event");
@@ -1156,43 +1158,39 @@ utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
 	if (utils.isWebWorker) {
-		return '';		
+		return '';
 		/** @todo Check how to get path in worker */
-	} else if(utils.isNode) { 
+	} else if(utils.isNode) {
 		return __dirname;
-	
+
 	} else if(utils.isMeteorClient) {
 		return '/packages/dist/';
-	
+
 	} else if(utils.isMeteorServer) {
 		return 'assets/packages/dist/';
-	
+
 	} else if(utils.isBrowser) {
 		var sc = document.getElementsByTagName('script');
-		
-		for(var i=0;i<sc.length;i++) {	
+
+		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-				return sc[i].src.substr(0,sc[i].src.length-16); 
+				return sc[i].src.substr(0,sc[i].src.length-16);
 
 			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 				return sc[i].src.substr(0,sc[i].src.length-20);
-			
+
 			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-				return sc[i].src.substr(0,sc[i].src.length-9); 
-			
+				return sc[i].src.substr(0,sc[i].src.length-9);
+
 			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-				return sc[i].src.substr(0,sc[i].src.length-13); 
-				
+				return sc[i].src.substr(0,sc[i].src.length-13);
+
 			}
-		}	
+		}
 	}
-	return '';	
+	return '';
 }
 
 
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();
-
-
-
-

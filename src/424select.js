@@ -162,6 +162,11 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					if(xcolumns && columns.length > 0) {
 //						console.log(1);
 						var tcol = xcolumns[col.columnid];
+						
+						if(undefined === tcol){
+							throw new Error("Column does not exists: "+col.columnid);;
+						}
+
 						var coldef = {
 							columnid:col.as || col.columnid, 
 							dbtypeid:tcol.dbtypeid, 

@@ -23,10 +23,14 @@ describe('Test 153 - Async test1...', function() {
 
 		var res = alasql('SELECT * FROM ?', [getfn], function(res) {
 			assert(res.length == 4);
-//			console.log(998,res);
 			done();
 		});
-//		console.log(999,res);
+
+		// No params
+		var res = alasql('VALUE OF SELECT 123', function(res) {
+			assert.equal(123,res);
+			done();
+		});
 
 	});
 

@@ -5,19 +5,22 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-// See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
 describe('Test 232 Errors handling', function() {
 
-    it('1. Prepare database', function(done){
+	before(function(){
         alasql('CREATE DATABASE test232; USE test232;');
-        done();
+	});
+
+	after(function(){
+        alasql('set errorlog off');
+        alasql('DROP DATABASE test232');
     });
+
 
     it("2. Throw error", function(done) {
         alasql('set errorlog off');
         assert.throws(function(){
-            alasql('SELECT * FROM one', [], function(data,err){
-/// console.log(err);
+            alasql('SELECT * FROM faultyName', [], function(data,err){
             });            
         },Error);
         done();
@@ -25,26 +28,22 @@ describe('Test 232 Errors handling', function() {
 
     it("3. Log error async", function(done) {
         alasql('set errorlog on');
-        alasql('SELECT * FROM one', [], function(data,err){
-            assert(err.message == "Cannot read property 'columns' of undefined");
+        alasql('SELECT * FROM faultyName', [], function(data,err){
+            assert(/^Table does not exists\:/.test(err.message));
+        	done();
         });            
-        done();
+        
     });
 
-    it("4. Log error sync", function(done) {
+    it("4. Log error sync", function() {
         alasql('set errorlog on');
-        alasql('SELECT * FROM one');
-        assert(alasql.error.message == "Cannot read property 'columns' of undefined");
+        alasql('SELECT * FROM faultyName');
+        assert(/^Table does not exists\:/.test(alasql.error.message));
+        
         alasql('SELECT * FROM ?',[{a:1},{a:2}]);
         assert(!alasql.error); 
-        done();
     });
 
-    it('99. DROP', function(done){
-        alasql('set errorlog off');
-        alasql('DROP DATABASE test232');
-        done();
-    });
 
 });
 

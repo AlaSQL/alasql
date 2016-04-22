@@ -44,7 +44,6 @@ yy.CreateTable.prototype.toString = function() {
 	} else{
 		s += ' '+(this.class?'CLASS':'TABLE');
 	}
-
 	if(this.ifnotexists){
 		s += ' IF  NOT EXISTS';
 	}
@@ -73,7 +72,7 @@ yy.CreateTable.prototype.toString = function() {
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
-//	var self = this;
+    //	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
 	var tableid = this.table.tableid;
@@ -102,7 +101,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
-
 	// If this is a class
 	if(this.class) {
 		table.isclass = true;
@@ -284,7 +282,16 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		});
 	}
 
-//	console.log(100,db.engineid);
+
+    //Used in 420from queryfn when table.view = true!
+    if(this.view && this.select) {
+	table.view = true;
+//	console.log(this.select.toString());
+//	console.log('this.table.databaseid',this.table.databaseid);
+//	console.log(this.select.compile(this.table.databaseid||databaseid));
+	table.select = this.select.compile(this.table.databaseid||databaseid);
+    }
+    
 	if(db.engineid) {
 //		console.log(101,db.engineid);
 		return alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
@@ -294,7 +301,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 //	}
 //			if(table.pk) {
-	table.insert = function(r,orreplace) {
+
+
+    table.insert = function(r,orreplace) {
 		var oldinserted = alasql.inserted;
 		alasql.inserted = [r];
 
@@ -637,13 +646,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	};
 
-	if(this.view && this.select) {
-		table.view = true;
-//		console.log(this.select.toString());
-//		console.log('this.table.databaseid',this.table.databaseid);
-//		console.log(this.select.compile(this.table.databaseid||databaseid));
-		table.select = this.select.compile(this.table.databaseid||databaseid);
-	}
+
+    
 //	console.log(databaseid);
 //	console.log(db.databaseid,db.tables);
 //	console.log(table);

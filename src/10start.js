@@ -54,6 +54,14 @@
  */
 
 var alasql = function alasql(sql, params, cb, scope) {
+	
+	// Avoid setting params if not needed even with callback
+	if(typeof params === 'function'){
+		scope = cb;
+		cb = params;
+		params = {};
+	}
+
 	if(typeof importScripts !== 'function' && alasql.webworker) {
 		var id = alasql.lastid++;
 		alasql.buffer[id] = cb;

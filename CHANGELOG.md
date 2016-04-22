@@ -1,10 +1,22 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-_0.2.6 "Frikes" (22.04.2016)_
-* ...
+### 0.2.6 "Frikes" (22.04.2016)
 
-0.2.5 "Polychrono" (23.03.2016)
+* Added: Progress callback
+* Change: CLI defaults to pretty print (with option for compressed output as original)
+* Update: CLI output is guaranteed to be valid JSON 
+* Update: Better error message for missing table or column
+* Update: Typescript defenition for .promise
+* Update: Empty params not needed for async calls
+* Fix: Declaring all variables
+* Fix: Read XLSX files
+* Fix: Selecting a view from localstorage 
+* Fix: CREATE VIEW for localStorage engine 
+* Fix: Better use for RequireJS
+
+
+### 0.2.5 "Polychrono" (23.03.2016)
 * Added: Promise chain of queries
 * Fix: Remove leading whitespace from fields when importing csv files
 * Fix: Set default option for XLSXML

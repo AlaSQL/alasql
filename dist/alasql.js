@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.5
+@version 0.2.6
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -86,6 +86,14 @@ SOFTWARE.
  */
 
 var alasql = function alasql(sql, params, cb, scope) {
+
+	// Avoid setting params if not needed even with callback
+	if(typeof params === 'function'){
+		scope = cb;
+		cb = params;
+		params = {};
+	}
+
 	if(typeof importScripts !== 'function' && alasql.webworker) {
 		var id = alasql.lastid++;
 		alasql.buffer[id] = cb;
@@ -126,7 +134,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.5';
+alasql.version = '0.2.6';
 
 /**
 	Debug flag
@@ -3105,11 +3113,11 @@ var cutbom = function(s) {
     Inspired by System.global
     @return {object} The global scope
 */
-var getGlobal = function(){
+utils.global = (function(){
   try {
     return Function('return this')();
 
-  }catch(e){  
+  }catch(e){
     //If Content Security Policy
     var global =  self || window || global;
 
@@ -3119,8 +3127,7 @@ var getGlobal = function(){
     	throw new Error('Unable to locate global object');
     }
   }
-}
-utils.global = getGlobal();
+})();
 
 /**
     Find out if a function is native to the enviroment
@@ -3135,50 +3142,54 @@ var isNativeFunction = utils.isNativeFunction = function(fn){
     Find out if code is running in a web worker enviroment
     @return {boolean} True if code is running in a web worker enviroment
 */
-var isWebWorker = function(){
+utils.isWebWorker = (function(){
   try{
     var importScripts = utils.global.importScripts;
     return (utils.isNativeFunction(importScripts));
   }catch(e){
     return false;
   }
-}
-utils.isWebWorker = isWebWorker();
+})();
 
 /**
     Find out if code is running in a node enviroment
     @return {boolean} True if code is running in a node enviroment
 */
-var isNode = function(){
+utils.isNode = (function(){
   try{
     return utils.isNativeFunction(utils.global.process.reallyExit);
   }catch(e){
     return false;
   }
-};
-utils.isNode = isNode();
+})();
 
 /**
     Find out if code is running in a browser enviroment
     @return {boolean} True if code is running in a browser enviroment
 */
-var isBrowser = function(){
+utils.isBrowser = (function(){
   try{
     return utils.isNativeFunction(utils.global.location.reload);
   }catch(e){
     return false;
   }
-}
-utils.isBrowser = isBrowser();
+})();
 
 /**
     Find out if code is running in a browser with a browserify setup
     @return {boolean} True if code is running in a browser with a browserify setup
 */
-var isBrowserify = function(){
+utils.isBrowserify = (function(){
 	return utils.isBrowser && (typeof process !== "undefined") && process.browser;
-}
-utils.isBrowserify = isBrowserify();
+})();
+
+/**
+    Find out if code is running in a browser with a requireJS setup
+    @return {boolean} True if code is running in a browser with a requireJS setup
+*/
+utils.isRequireJS = (function(){
+	return utils.isBrowser && (typeof require === "function") && (typeof require.specified === "function");
+})();
 
 /**
     Find out if code is running with Meteor in the enviroment
@@ -3186,28 +3197,25 @@ utils.isBrowserify = isBrowserify();
 
     @todo Find out if this is the best way to do this
 */
-var isMeteor = function(){
+utils.isMeteor = (function(){
   return (typeof Meteor !== 'undefined' && Meteor.release)
-}
-utils.isMeteor = isMeteor();
+})();
 
 /**
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
-var isMeteorClient = utils.isMeteorClient = function(){
+utils.isMeteorClient = (utils.isMeteorClient = function(){
   return utils.isMeteor && Meteor.isClient;
-}
-utils.isMeteorClient = isMeteorClient();
+})();
 
 /**
     Find out if code is running on a Meteor server
     @return {boolean} True if code is running on a Meteor server
 */
-var isMeteorServer = function(){
+utils.isMeteorServer = (function(){
   return utils.isMeteor && Meteor.isServer;
-}
-utils.isMeteorServer = isMeteorServer();
+})();
 
 /**
     Find out code is running in a cordovar enviroment
@@ -3215,10 +3223,13 @@ utils.isMeteorServer = isMeteorServer();
 
     @todo Find out if this is the best way to do this
 */
-var isCordova = function(){
+utils.isCordova = (function(){
   return (typeof cordova === 'object')
-}
-utils.isCordova = isCordova();
+})();
+
+utils.hasIndexedDB = (function(){
+  return (typeof utils.global.indexedDB !== 'undefined');
+})();
 
 utils.isArray = function(obj){
 	return "[object Array]"===Object.prototype.toString.call(obj);
@@ -3431,7 +3442,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             }
-            xhr.responseType = "blob";
+           // xhr.responseType = "blob";
             xhr.send();
         } else if(path instanceof Event) {
 
@@ -3954,9 +3965,9 @@ utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
 	if (utils.isWebWorker) {
-		return '';		
+		return '';
 		/** @todo Check how to get path in worker */
-	} else if(utils.isNode) { 
+	} else if(utils.isNode) {
 		return __dirname;
 
 	} else if(utils.isMeteorClient) {
@@ -3968,23 +3979,23 @@ utils.findAlaSQLPath = function() {
 	} else if(utils.isBrowser) {
 		var sc = document.getElementsByTagName('script');
 
-		for(var i=0;i<sc.length;i++) {	
+		for(var i=0;i<sc.length;i++) {
 			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-				return sc[i].src.substr(0,sc[i].src.length-16); 
+				return sc[i].src.substr(0,sc[i].src.length-16);
 
 			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 				return sc[i].src.substr(0,sc[i].src.length-20);
 
 			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-				return sc[i].src.substr(0,sc[i].src.length-9); 
+				return sc[i].src.substr(0,sc[i].src.length-9);
 
 			} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-				return sc[i].src.substr(0,sc[i].src.length-13); 
+				return sc[i].src.substr(0,sc[i].src.length-13);
 
 			}
-		}	
+		}
 	}
-	return '';	
+	return '';
 }
 
 // set AlaSQl path
@@ -4083,7 +4094,7 @@ alasql.utils.uncomment = function uncomment(str) {
 alasql.parser = alasqlparser;
 
 alasql.parser.parseError = function(str, hash){
-	throw new Error("Have you used a reserved keyword without `escaping` it?\n"+str);	
+	throw new Error("Have you used a reserved keyword without `escaping` it?\n"+str);
 }
 
 /**
@@ -4101,7 +4112,7 @@ alasql.parser.parseError = function(str, hash){
  */
 alasql.parse = function(sql) {
 	return alasqlparser.parse(alasql.utils.uncomment(sql));
-}; 
+};
 
 /**
  	List of engines of external databases
@@ -4116,11 +4127,11 @@ alasql.engines = {};
  */
 alasql.databases = {};
 
-/** 
-	Number of databases 
+/**
+	Number of databases
 	@type {number}
 */
-alasql.databasenum = 0; 
+alasql.databasenum = 0;
 
 /**
  	Alasql options object
@@ -4135,11 +4146,13 @@ alasql.options.casesensitive = true; // Table and column names are case sensitiv
 alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
 alasql.options.logprompt = true; // Print SQL at log
 
+alasql.options.progress = false; // Callback for async queries progress
+
 // Default modifier
 // values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
-alasql.options.modifier = undefined; 
+alasql.options.modifier = undefined;
 // How many rows to lookup to define columns
-alasql.options.columnlookup = 10; 
+alasql.options.columnlookup = 10;
 // Create vertex if not found
 alasql.options.autovertex = true;
 
@@ -4219,6 +4232,14 @@ alasql.use = function (databaseid) {
  Run single SQL statement on current database
  */
 alasql.exec = function (sql, params, cb, scope) {
+
+	// Avoid setting params if not needed even with callback
+	if(typeof params === 'function'){
+		scope = cb;
+		cb = params;
+		params = {};
+	}
+
 	delete alasql.error;
 	params = params || {};
 	if(alasql.options.errorlog){
@@ -4226,7 +4247,7 @@ alasql.exec = function (sql, params, cb, scope) {
 			return alasql.dexec(alasql.useid, sql, params, cb, scope);
 		} catch(err){
 			alasql.error = err;
-			if(cb){ 
+			if(cb){
 				cb(null,alasql.error);
 			}
 		}
@@ -4286,7 +4307,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		} else {
 
 			alasql.precompile(ast.statements[0],alasql.useid,params);
-			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);		
+			var res = alasql.res = ast.statements[0].execute(databaseid, params, cb, scope);
 			return res;
 		}
 	} else {
@@ -4312,13 +4333,13 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var res = [];
 	for (var i=0, ilen=ast.statements.length; i<ilen; i++) {
 		if(ast.statements[i]) {
-			if(ast.statements[i].compile) { 
+			if(ast.statements[i].compile) {
 				var statement = ast.statements[i].compile(alasql.useid);
 				res.push(alasql.res = statement(params,null,scope));
 			} else {
 				alasql.precompile(ast.statements[i],alasql.useid,params);
 				res.push(alasql.res = ast.statements[i].execute(alasql.useid, params));
-			}		
+			}
 		}
 	}
 	if(useid !== databaseid){
@@ -4338,6 +4359,13 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
   Run multiple statements and return array of results async
  */
 alasql.adrun = function (databaseid, ast, params, cb, scope) {
+
+	var idx = 0;
+	var noqueries = ast.statements.length;
+	if (alasql.options.progress !== false) {
+	  alasql.options.progress(noqueries, idx++);
+	}
+
 //	alasql.busy++;
 	var useid = alasql.useid;
 	if(useid !== databaseid) {
@@ -4346,7 +4374,7 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 	var res = [];
 
 	function adrunone(data) {
-		if(data !== undefined){ 
+		if(data !== undefined){
 			res.push(data);
 		}
 		var astatement = ast.statements.shift();
@@ -4360,9 +4388,15 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 			if(astatement.compile) {
 				var statement = astatement.compile(alasql.useid);
 				statement(params, adrunone, scope);
+				if (alasql.options.progress !== false) {
+				  alasql.options.progress(noqueries, idx++);
+				}
 			} else {
 				alasql.precompile(ast.statements[0],alasql.useid,params);
 				astatement.execute(alasql.useid, params, adrunone);
+				if (alasql.options.progress !== false) {
+				  alasql.options.progress(noqueries, idx++);
+				}
 			}
 		}
 	}
@@ -4433,7 +4467,7 @@ var promiseExec = function(sql, params){
     });
 }
 
-var promiseChain = function(sqlParamsArray, lastPromise){
+var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	var active, sql, params;
 	if(sqlParamsArray.length<1){
 		return lastPromise;
@@ -4452,11 +4486,15 @@ var promiseChain = function(sqlParamsArray, lastPromise){
 	sql = active[0];
 	params = active[1]||undefined;
 
-	if(typeof lastPromise === 'undefined'){
-		return promiseChain(sqlParamsArray, promiseExec(sql, params));
+	if (alasql.options.progress !== false) {
+    alasql.options.progress(progress.total, progress.idx++);
 	}
 
-	return promiseChain(sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
+	if(typeof lastPromise === 'undefined'){
+		return promiseChain(progress, sqlParamsArray, promiseExec(sql, params));
+	}
+
+	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
 
 }
 
@@ -4473,7 +4511,12 @@ alasql.promise = function(sql, params) {
 		throw new Error('Error in .promise parameters');
 	}
 
-	return promiseChain(sql);
+	var progress = {idx: 0, total: sql.length};
+	if (alasql.options.progress !== false) {
+    alasql.options.progress(progress.total, progress.idx++);
+	}
+
+	return promiseChain(progress, sql);
 };
 
 /*
@@ -6322,7 +6365,7 @@ function doDistinct (query) {
 }
 
 // Optimization: preliminary indexation of joins
-preIndex = function(query) {
+var preIndex = function(query) {
 
 	// Loop over all sources
 	// Todo: make this loop smaller and more graspable
@@ -7275,23 +7318,25 @@ yy.Select.prototype.compileFrom = function(query) {
 
 		};
 
-		if(tq instanceof yy.Table) {
-			// Get columns from table
+	    if(tq instanceof yy.Table) {
+		// Get columns from table
 			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
 
-			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
+		if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid &&
+		   !alasql.databases[source.databaseid].tables[source.tableid].view
+		  ) {
 
 // TODO -- make view for external engine
-				source.datafn = function(query,params,cb,idx, alasql) {
+		    source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
 				}				
-			} else if(alasql.databases[source.databaseid].tables[source.tableid].view){
-				source.datafn = function(query,params,cb,idx, alasql) {
-					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
-					if(cb) res = cb(res,idx,query);
-					return res;
-				}
+	    } else if(alasql.databases[source.databaseid].tables[source.tableid].view){
+		    source.datafn = function(query,params,cb,idx, alasql) {
+			var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
+			if(cb) res = cb(res,idx,query);
+			return res;
+		    }
 			} else {
 
 				source.datafn = function(query,params,cb,idx, alasql) {
@@ -8233,6 +8278,11 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					if(xcolumns && columns.length > 0) {
 
 						var tcol = xcolumns[col.columnid];
+
+						if(undefined === tcol){
+							throw new Error("Column does not exists: "+col.columnid);;
+						}
+
 						var coldef = {
 							columnid:col.as || col.columnid, 
 							dbtypeid:tcol.dbtypeid, 
@@ -8901,6 +8951,10 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				var alias = fr.as || fr.tableid;
 
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
+
+				if(undefined === table){
+					throw new Error("Table does not exists: "+fr.tableid);;
+				}
 
 				if(table.columns) {
 					table.columns.forEach(function(col){
@@ -10746,7 +10800,6 @@ yy.CreateTable.prototype.toString = function() {
 	} else{
 		s += ' '+(this.class?'CLASS':'TABLE');
 	}
-
 	if(this.ifnotexists){
 		s += ' IF  NOT EXISTS';
 	}
@@ -10775,7 +10828,7 @@ yy.CreateTable.prototype.toString = function() {
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
-//	var self = this;
+    //	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
 	var tableid = this.table.tableid;
@@ -10803,7 +10856,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	var table = db.tables[tableid] = new alasql.Table(); // TODO Can use special object?
-
 	// If this is a class
 	if(this.class) {
 		table.isclass = true;
@@ -10973,6 +11025,13 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		});
 	}
 
+    //Used in 420from queryfn when table.view = true!
+    if(this.view && this.select) {
+	table.view = true;
+
+	table.select = this.select.compile(this.table.databaseid||databaseid);
+    }
+
 	if(db.engineid) {
 
 		return alasql.engines[db.engineid].createTable(this.table.databaseid || databaseid, tableid, this.ifnotexists, cb);
@@ -10981,7 +11040,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 //	}
 
-	table.insert = function(r,orreplace) {
+    table.insert = function(r,orreplace) {
 		var oldinserted = alasql.inserted;
 		alasql.inserted = [r];
 
@@ -11308,12 +11367,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		};
 
 	};
-
-	if(this.view && this.select) {
-		table.view = true;
-
-		table.select = this.select.compile(this.table.databaseid||databaseid);
-	}
 
 	var res;
 
@@ -15523,7 +15576,7 @@ yy.Help.prototype.toString = function() {
 }
 
 // Help string
-helpdocs = [
+var helpdocs = [
 	{command:'ALTER TABLE table RENAME TO table'},
 	{command:'ALTER TABLE table ADD COLUMN column coldef'},
 	{command:'ALTER TABLE table MODIFY COLUMN column coldef'},
@@ -15793,29 +15846,29 @@ WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb){
 // (c) Andrey Gershun
 //
 
-if(typeof(utils.isBrowser) && utils.global.indexedDB) {
-
 var IDB = alasql.engines.INDEXEDDB = function (){};
 
-// For Chrome it work normally, for Firefox - simple shim
-if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
-	IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
-} else {
-	IDB.getDatabaseNames = function () {
-		var request = {};
-		var result = {
-			contains:function(name){
-				return true; // Always return true
-			},
-			notsupported: true
+if(utils.hasIndexedDB) {
+	// For Chrome it work normally, for Firefox - simple shim
+	if(typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
+		IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(utils.global.indexedDB);
+	} else {
+		IDB.getDatabaseNames = function () {
+			var request = {};
+			var result = {
+				contains:function(name){
+					return true; // Always return true
+				},
+				notsupported: true
+			};
+			setTimeout(function(){
+				var event = {target:{result:result}}
+				request.onsuccess(event);
+			},0);
+			return request;
 		};
-		setTimeout(function(){
-			var event = {target:{result:result}}
-			request.onsuccess(event);
-		},0);
-		return request;
-	};
-	IDB.getDatabaseNamesNotSupported = true;
+		IDB.getDatabaseNamesNotSupported = true;
+	}
 }
 
 //
@@ -15931,7 +15984,6 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb){
 			};
 		};
 	}
-	// }
 };
 
 IDB.dropDatabase = function(ixdbid, ifexists, cb){
@@ -15956,9 +16008,13 @@ IDB.dropDatabase = function(ixdbid, ifexists, cb){
 };
 
 IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
-  var indexedDB = utils.global.indexedDB;
+
+	if(!utils.hasIndexedDB){
+		throw new Error('The current browser does not support IndexedDB');
+	}
+	var indexedDB = utils.global.indexedDB;
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot attach database "'+ixdbid+'" because it does not exist');
@@ -15970,7 +16026,7 @@ IDB.attachDatabase = function(ixdbid, dbid, args, params, cb) {
 			db.engineid = "INDEXEDDB";
 			db.ixdbid = ixdbid;
 			db.tables = [];
-		  	var tblist = ixdb.objectStoreNames;
+			var tblist = ixdb.objectStoreNames;
 			for(var i=0;i<tblist.length;i++){
 				db.tables[tblist[i]] = {};
 			};
@@ -15987,7 +16043,7 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot create table in database "'+ixdbid+'" because it does not exist');
@@ -16030,16 +16086,18 @@ IDB.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function(event) {
+	request1.onsuccess = function(event) {
 		var dblist = event.target.result;
 
 		if(!dblist.contains(ixdbid)){
 			throw new Error('IndexedDB: Cannot drop table in database "'+ixdbid+'" because it does not exist');
-		};
+		}
+
 		var request2 = indexedDB.open(ixdbid);
 		request2.onversionchange = function(event) {
 			event.target.result.close();
 		};
+
 		request2.onsuccess = function(event) {
 			var version = event.target.result.version;
 			event.target.result.close();
@@ -16078,7 +16136,7 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 
 	// console.trace();
 
-  var indexedDB = utils.global.indexedDB;
+	var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request1 = indexedDB.open(ixdbid);
 	request1.onsuccess = function(event) {
@@ -16101,36 +16159,36 @@ IDB.intoTable = function(databaseid, tableid, value, columns, cb) {
 IDB.fromTable = function(databaseid, tableid, cb, idx, query){
 
 	// console.trace();
-  var indexedDB = utils.global.indexedDB;
+	var indexedDB = utils.global.indexedDB;
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
+		var res = [];
+		var ixdb = event.target.result;
 
-	  	var tx = ixdb.transaction([tableid]);
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
+		var tx = ixdb.transaction([tableid]);
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
 
-	  	cur.onblocked = function(event) {
+		cur.onblocked = function(event) {
 
-	  	}
-	  	cur.onerror = function(event) {
+		}
+		cur.onerror = function(event) {
 
-	  	}
-	  	cur.onsuccess = function(event) {
+		}
+		cur.onsuccess = function(event) {
 
-		  	var cursor = event.target.result;
+			var cursor = event.target.result;
 
-		  	if(cursor) {
-		  		res.push(cursor.value);
-		  		cursor.continue();
-		  	} else {
+			if(cursor) {
+				res.push(cursor.value);
+				cursor.continue();
+			} else {
 
-		  		ixdb.close();
-		  		if(cb) cb(res, idx, query);
-		  	}
-	  	}
+				ixdb.close();
+				if(cb) cb(res, idx, query);
+			}
+		}
 	}
 }
 
@@ -16141,37 +16199,37 @@ IDB.deleteFromTable = function(databaseid, tableid, wherefn,params, cb){
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
+		var res = [];
+		var ixdb = event.target.result;
 
-	  	var tx = ixdb.transaction([tableid], 'readwrite');
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
-	  	var num = 0;
+		var tx = ixdb.transaction([tableid], 'readwrite');
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
+		var num = 0;
 
-	  	cur.onblocked = function(event) {
+		cur.onblocked = function(event) {
 
-	  	}
-	  	cur.onerror = function(event) {
+		}
+		cur.onerror = function(event) {
 
-	  	}
-	  	cur.onsuccess = function(event) {
+		}
+		cur.onsuccess = function(event) {
 
-		  	var cursor = event.target.result;
+			var cursor = event.target.result;
 
-		  	if(cursor) {
-		  		if((!wherefn) || wherefn(cursor.value,params)) {
+			if(cursor) {
+				if((!wherefn) || wherefn(cursor.value,params)) {
 
-		  			cursor.delete();
-		  			num++;
-		  		}
-		  		cursor.continue();
-		  	} else {
+					cursor.delete();
+					num++;
+				}
+				cursor.continue();
+			} else {
 
-		  		ixdb.close();
-		  		if(cb) cb(num);
-		  	}
-	  	}
+				ixdb.close();
+				if(cb) cb(num);
+			}
+		}
 	}
 }
 
@@ -16182,44 +16240,41 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb){
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	var request = indexedDB.open(ixdbid);
 	request.onsuccess = function(event) {
-	  	var res = [];
-	  	var ixdb = event.target.result;
+		var res = [];
+		var ixdb = event.target.result;
 
-	  	var tx = ixdb.transaction([tableid], 'readwrite');
-	  	var store = tx.objectStore(tableid);
-	  	var cur = store.openCursor();
-	  	var num = 0;
+		var tx = ixdb.transaction([tableid], 'readwrite');
+		var store = tx.objectStore(tableid);
+		var cur = store.openCursor();
+		var num = 0;
 
-	  	cur.onblocked = function(event) {
+		cur.onblocked = function(event) {
 
-	  	}
-	  	cur.onerror = function(event) {
+		}
+		cur.onerror = function(event) {
 
-	  	}
-	  	cur.onsuccess = function(event) {
+		}
+		cur.onsuccess = function(event) {
 
-		  	var cursor = event.target.result;
+			var cursor = event.target.result;
 
-		  	if(cursor) {
-		  		if((!wherefn) || wherefn(cursor.value,params)) {
+			if(cursor) {
+				if((!wherefn) || wherefn(cursor.value,params)) {
 
-		  			var r = cursor.value;
+					var r = cursor.value;
 					assignfn(r,params);
 
-		  			cursor.update(r);
-		  			num++;
-		  		}
-		  		cursor.continue();
-		  	} else {
+					cursor.update(r);
+					num++;
+				}
+				cursor.continue();
+			} else {
 
-		  		ixdb.close();
-		  		if(cb) cb(num);
-		  	}
-	  	}
+				ixdb.close();
+				if(cb) cb(num);
+			}
+		}
 	}
-}
-
-// Skip
 }
 
 //
@@ -17213,7 +17268,7 @@ return alasql;
 /*if (typeof importScripts === 'function') {
 	// Nothing
 } else */ 
-if(typeof exports !== 'object') {
+if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
 
 	alasql.worker = function(path, paths, cb) {
 	//	var path;

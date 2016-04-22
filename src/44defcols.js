@@ -20,6 +20,11 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 //console.log(alasql.databases);
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
 //console.log(table);
+
+				if(undefined === table){
+					throw new Error("Table does not exists: "+fr.tableid);;
+				}
+
 				if(table.columns) {
 					table.columns.forEach(function(col){
 						if(defcols[col.columnid]) {

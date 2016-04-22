@@ -7,7 +7,7 @@
 */
 
 yy.Select.prototype.compileFrom = function(query) {
-//	console.log(1);
+    //	console.log(1);
 	var self = this;
 	query.sources = [];
 //	var tableid = this.from[0].tableid;
@@ -59,29 +59,31 @@ yy.Select.prototype.compileFrom = function(query) {
 //			columns: []			
 		};
 
-		if(tq instanceof yy.Table) {
-			// Get columns from table
+	    if(tq instanceof yy.Table) {
+		// Get columns from table
 			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
 //			console.log('test',alasql.options.autocommit);
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 // console.log(0,source.databaseid);
 // console.log(1,alasql.databases[source.databaseid]);
 // console.log(2,alasql.databases[source.databaseid].tables[source.tableid].view);
-			if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
+		if(alasql.options.autocommit && alasql.databases[source.databaseid].engineid &&
+		   !alasql.databases[source.databaseid].tables[source.tableid].view
+		  ) {
 //				console.log(997,alasql.databases[source.databaseid].engineid);
 // TODO -- make view for external engine
-				source.datafn = function(query,params,cb,idx, alasql) {
+		    source.datafn = function(query,params,cb,idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid, source.tableid,cb,idx,query);
 				}				
-			} else if(alasql.databases[source.databaseid].tables[source.tableid].view){
-				source.datafn = function(query,params,cb,idx, alasql) {
-					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
-					if(cb) res = cb(res,idx,query);
-					return res;
-				}
+	    } else if(alasql.databases[source.databaseid].tables[source.tableid].view){
+		    source.datafn = function(query,params,cb,idx, alasql) {
+			var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
+			if(cb) res = cb(res,idx,query);
+			return res;
+		    }
 			} else {
-//				console.log('here');
+			    //				console.log('here');
 //				console.log(420,72,alasql.databases[source.databaseid].tables[source.tableid]);
 				source.datafn = function(query,params,cb,idx, alasql) {
 /*
