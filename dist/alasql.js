@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.6 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6-develop-1286 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.6
+@version 0.2.6-develop-1286
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -134,7 +134,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.6';
+alasql.version = '0.2.6-develop-1286';
 
 /**
 	Debug flag
@@ -9803,7 +9803,7 @@ yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
 yy.Column = function(params) { return yy.extend(this, params); }
 yy.Column.prototype.toString = function(dontas) {
 	var s;
-	if(this.columnid === +this.columnid) {
+	if(this.columnid == +this.columnid) { // jshint ignore:line
 		s = '['+this.columnid+']';
 	} else {
 		s = this.columnid;
@@ -13694,7 +13694,7 @@ function loghtml(res) {
 			s += '<tr><th>'+(i+1);
 			cols.forEach(function(colid){
 				s += '<td> ';
-				if(+res[i][colid] === +res[i][colid]) {
+				if(res[i][colid] == +res[i][colid]) {       // jshint ignore:line
 					s += '<div style="text-align:right">';
 					if(typeof res[i][colid] === 'undefined'){
 						s += 'NULL';
@@ -15024,6 +15024,13 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var opt = {headers:true, simpleSheet:true, key:key};
 	alasql.utils.extend(opt, opts);
 	opt.callback = function(data){
+		for(var i=0; i<data.length; i++) {
+			for (var prop in data[i]) {
+	        	if(data[i][prop] == +data[i][prop] && data[i].hasOwnProperty(prop)){ // jshint ignore:line
+					data[i][prop] = +data[i][prop];
+				}
+			}
+	    }
 		res = data;
 		if(cb){
 			res = cb(res, idx, query);
@@ -15031,7 +15038,7 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	};
 
 	Tabletop.init(opt);
-	return res;
+	return null;
 };
 
 alasql.from.HTML = function(selector, opts, cb, idx, query) {

@@ -769,7 +769,7 @@ yy.UniOp.prototype.toJS = function(context, tableid, defcols) {
 yy.Column = function(params) { return yy.extend(this, params); }
 yy.Column.prototype.toString = function(dontas) {
 	var s;
-	if(this.columnid === +this.columnid) {
+	if(this.columnid == +this.columnid) { // jshint ignore:line
 		s = '['+this.columnid+']';
 	} else {
 		s = this.columnid;

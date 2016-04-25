@@ -27,6 +27,13 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var opt = {headers:true, simpleSheet:true, key:key};
 	alasql.utils.extend(opt, opts);
 	opt.callback = function(data){
+		for(var i=0; i<data.length; i++) {
+			for (var prop in data[i]) {
+	        	if(data[i][prop] == +data[i][prop] && data[i].hasOwnProperty(prop)){ // jshint ignore:line
+					data[i][prop] = +data[i][prop];
+				}
+			}
+	    }
 		res = data;
 		if(cb){
 			res = cb(res, idx, query);
@@ -34,7 +41,7 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	};
 
 	Tabletop.init(opt);
-	return res;
+	return null;
 };
 
 
