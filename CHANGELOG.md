@@ -1,6 +1,8 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
+_0.2.7 "Corinth" (21.05.2016)_
+
 ### 0.2.6 "Frikes" (22.04.2016)
 
 * Added: Progress callback
