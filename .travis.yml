@@ -6,7 +6,7 @@ branches:
 
 language: node_js
 node_js:
-  - "node"
+#  - "node"
   - "5"
   - "4"
   - "0.12"
