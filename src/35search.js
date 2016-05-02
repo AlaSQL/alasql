@@ -861,7 +861,8 @@ alasql.srch.SHARP = function(val,args) {
 
 alasql.srch.PARENT = function(/*val,args,stope*/) {
 	// TODO: implement
-	console.log('PARENT not implemented');
+	console.log('PARENT not implemented', arguments);
+
 	return {status: -1, values: []};
 };
 

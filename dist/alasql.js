@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.6-develop-1292 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6-develop-1295 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.6-develop-1292
+@version 0.2.6-develop-1295
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -85,13 +85,19 @@ SOFTWARE.
     alasql().From(data).Where(function(x){return x.a == 10}).exec();
  */
 
-var alasql = function alasql(sql, params, cb, scope) {
+var alasql = function(sql, params, cb, scope) {
+
+	params = params||[];
 
 	// Avoid setting params if not needed even with callback
 	if(typeof params === 'function'){
 		scope = cb;
 		cb = params;
-		params = {};
+		params = [];
+	}
+
+	if(typeof params !== 'object'){
+			params = [params];
 	}
 
 	if(typeof importScripts !== 'function' && alasql.webworker) {
@@ -134,7 +140,7 @@ var alasql = function alasql(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.6-develop-1292';
+alasql.version = '0.2.6-develop-1295';
 
 /**
 	Debug flag
@@ -4458,18 +4464,54 @@ if(!utils.global.Promise){
 	}
 }
 
-var promiseExec = function(sql, params){
+var promiseExec = function(sql, params, counterStep, counterTotal){
 	 return new utils.global.Promise(function(resolve, reject){
         alasql(sql, params, function(data,err) {
              if(err) {
                  reject(err);
+	         	console.log(88)
+
              } else {
-                 resolve(data);
+             	console.log(123)
+				if (counterStep && counterTotal && alasql.options.progress !== false) {
+					alasql.options.progress(counterStep, counterTotal);
+				}
+                resolve(data);
              }
         });
     });
 }
 
+var promiseAll = function(sqlParamsArray){
+	if(sqlParamsArray.length<1){
+		return ;
+	}
+
+	var active, sql, params;
+
+	var execArray = []; 
+
+	for (var i = 0; i < sqlParamsArray.length; i++) {
+		active = sqlParamsArray[i];
+
+		if(typeof active === 'string'){
+			active = [active];
+		}
+
+		if(!utils.isArray(active) || active.length<1 || 2<active.length){
+			throw new Error('Error in .promise parameter');
+		}
+
+		sql = active[0];
+		params = active[1]||undefined;
+
+		execArray.push(promiseExec(sql, params, i, sqlParamsArray.length));
+	}
+
+	return utils.global.Promise.all(execArray); 
+}
+
+/*
 var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	var active, sql, params;
 	if(sqlParamsArray.length<1){
@@ -4499,7 +4541,7 @@ var promiseChain = function(progress, sqlParamsArray, lastPromise){
 
 	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
 
-}
+}*/
 
 alasql.promise = function(sql, params) {
 	if(typeof Promise === "undefined"){
@@ -4513,13 +4555,15 @@ alasql.promise = function(sql, params) {
 	if(!utils.isArray(sql) || sql.length<1 || typeof params !== "undefined"){
 		throw new Error('Error in .promise parameters');
 	}
-
+	/*
 	var progress = {idx: 0, total: sql.length};
 	if (alasql.options.progress !== false) {
     alasql.options.progress(progress.total, progress.idx++);
 	}
+	*/
+	return promiseAll(sql);
 
-	return promiseChain(progress, sql);
+	//return promiseChain(progress, sql);
 };
 
 /*
@@ -5642,7 +5686,8 @@ alasql.srch.SHARP = function(val,args) {
 
 alasql.srch.PARENT = function(/*val,args,stope*/) {
 	// TODO: implement
-	console.log('PARENT not implemented');
+	console.log('PARENT not implemented', arguments);
+
 	return {status: -1, values: []};
 };
 
