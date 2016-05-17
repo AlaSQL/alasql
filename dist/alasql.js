@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.6-develop-1295 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6-develop-1298 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.6-develop-1295
+@version 0.2.6-develop-1298
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.6-develop-1295';
+alasql.version = '0.2.6-develop-1298';
 
 /**
 	Debug flag
@@ -4469,10 +4469,7 @@ var promiseExec = function(sql, params, counterStep, counterTotal){
         alasql(sql, params, function(data,err) {
              if(err) {
                  reject(err);
-	         	console.log(88)
-
              } else {
-             	console.log(123)
 				if (counterStep && counterTotal && alasql.options.progress !== false) {
 					alasql.options.progress(counterStep, counterTotal);
 				}
@@ -4511,7 +4508,7 @@ var promiseAll = function(sqlParamsArray){
 	return utils.global.Promise.all(execArray); 
 }
 
-/*
+/**
 var promiseChain = function(progress, sqlParamsArray, lastPromise){
 	var active, sql, params;
 	if(sqlParamsArray.length<1){
@@ -14052,7 +14049,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 alasql.into.HTML = function(selector, opts, data, columns, cb) {
 	var res = 1;
 	if(typeof exports != 'object') {
-		var opt = {};
+		var opt = {headers:true};
 		alasql.utils.extend(opt, opts);
 
 		var sel = document.querySelector(selector);
@@ -14156,7 +14153,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		filename = undefined;
 	}
 
-	var opt = {};
+	var opt = {headers:true};
 	//opt.separator = ','; 
   opt.separator = ';';
 	opt.quote = '"';
@@ -14208,7 +14205,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 	};
 
 	// Default sheet
-	var sheet = {};
+	var sheet = {headers:true};
 	if(typeof sheets['Sheet1'] != 'undefined') {
 		sheet = sheets[0];
 	} else {

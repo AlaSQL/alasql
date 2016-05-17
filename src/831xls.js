@@ -18,7 +18,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 	};
 
 	// Default sheet
-	var sheet = {};
+	var sheet = {headers:true};
 	if(typeof sheets['Sheet1'] != 'undefined') {
 		sheet = sheets[0];
 	} else {
