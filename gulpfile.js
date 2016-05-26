@@ -160,7 +160,7 @@ gulp.task('js-merge', function () {
 
 gulp.task('jison-compile', function () {
   return gulp.src('./src/alasqlparser.jison')
-        .pipe(jison({ moduleType: 'commonjs' }))
+        .pipe(jison({ moduleType: 'commonjs', moduleName: 'alasqlparser' }))
         .pipe(gulp.dest('./src/'));
 });
 
