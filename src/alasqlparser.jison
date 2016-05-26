@@ -1894,10 +1894,15 @@ PrimaryKey
 		{ $$ = {type: 'PRIMARY KEY', columns: $5, clustered:($3+'').toUpperCase()}; }
 	;
 
+ForeignKeyString
+	: FOREIGN KEY
+		{ $$ = $1+' '+$2; }
+	;
+
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList? 
+	: ForeignKeyString LPAR ColsList RPAR REFERENCES Table ParColsList? 
 	     OnForeignKeyClause
-		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
+		{ $$ = {type: 'FOREIGN KEY', columns: $3, fktable: $6, fkcolumns: $7}; }
 	;
 
 ParColsList
@@ -2034,8 +2039,8 @@ ParLiteral
 ColumnConstraint 
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Table ParLiteral?
-		{$$ = {foreignkey:{table:$4, columnid: $5}};}
+	| ForeignKeyString REFERENCES Table ParLiteral?
+		{$$ = {foreignkey:{table:$3, columnid: $4}};}
 	| REFERENCES Table ParLiteral?
 		{$$ = {foreignkey:{table:$2, columnid: $3}};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
@@ -2090,12 +2095,18 @@ AlterTable
 		{ $$ = new yy.AlterTable({table:$3, renameto: $6});}
 	| ALTER TABLE Table ADD COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, addcolumn: $6});}
+	| ALTER TABLE Table ADD ConstraintName? ForeignKey
+		{ $$ = new yy.AlterTable({table:$3, constraintid: $5 , foreignkey: $6});}
 	| ALTER TABLE Table MODIFY COLUMN ColumnDef
 		{ $$ = new yy.AlterTable({table:$3, modifycolumn: $6});}
 	| ALTER TABLE Table RENAME COLUMN Literal TO Literal
 		{ $$ = new yy.AlterTable({table:$3, renamecolumn: $6, to: $8});}
-	| ALTER TABLE Table DROP COLUMN Literal
-		{ $$ = new yy.AlterTable({table:$3, dropcolumn: $6});}
+	| ALTER TABLE Table DROP PRIMARY KEY
+		{ $$ = new yy.AlterTable({table:$3, drop: {type: 'PRIMARY KEY'}});}
+	| ALTER TABLE Table DROP (COLUMN|INDEX|KEY|ForeignKeyString|CONSTRAINT) Literal
+		{ $$ = new yy.AlterTable({table:$3, drop: {type: $5.toUpperCase(), id: $6}});}
+	| ALTER TABLE Table DROP Literal
+		{ $$ = new yy.AlterTable({table:$3, drop: {id: $5}});}
 	;
 
 RenameTable

@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.6-develop-1295 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6-create-drop-foreign-key-1304 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.6-develop-1295
+@version 0.2.6-create-drop-foreign-key-1304
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff

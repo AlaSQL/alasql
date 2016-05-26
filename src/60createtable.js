@@ -191,6 +191,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					}
 					return true;
 				};
+				fkfn.cosntraintid = ['fk', fk.tableid, col.columnid].join('_');
 				table.checkfn.push(fkfn);
 /*/*				var uk = {};
 				if(typeof table.uk == 'undefined') table.uk = [];
@@ -246,12 +247,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.uniqs[uk.hh] = {};					
 		} else if(con.type === 'FOREIGN KEY') {
 //			console.log(con);
-			var col = table.xcolumns[con.columns[0]];
+			var colname = con.columns[0];
+			var col = table.xcolumns[colname];
 			var fk = con.fktable;
 			if(con.fkcolumns && con.fkcolumns.length>0){
 				fk.columnid = con.fkcolumns[0];
  			}
  			var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
+			var cosntraintid = con.constraintid || ['fk', fk.tableid, colname].join('_');
 			if(typeof fk.columnid === 'undefined') {
 				fk.columnid = fktable.pk.columns[0];
 			}
@@ -271,6 +274,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 				return true;
 			};
+			fkfn.constraintid = cosntraintid;
 			table.checkfn.push(fkfn);
 		}
 	});
