@@ -19,6 +19,7 @@ describe('Test 604 - CREATE VIEW error with localStorage engine #604', function(
 	})
 
     it("* Create database", function(done){
+    		this.timeout(5000);
 		alasql('SET AUTOCOMMIT OFF');
 		assert(!alasql.options.autocommit);
 		alasql.promise('DROP localStorage DATABASE IF EXISTS db604ls')
@@ -29,7 +30,7 @@ describe('Test 604 - CREATE VIEW error with localStorage engine #604', function(
 			}).then(function(res){
 				assert(localStorage['db604ls']);
 				done();
-			});
+			}).catch(function(err) { setTimeout(function() { throw err; }); });
     });
 
     it("* Show databases", function(done){
