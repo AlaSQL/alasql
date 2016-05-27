@@ -729,28 +729,23 @@ function isIE () {
 //  };
 
 
-// Fast hash function
+
 
 /**
-  @function Hash string to integer number
-  @param {string} str Source string
+  @function Hash a string to signed integer
+  @param {string} source string
   @return {integer} hash number
 */
 
-var hash = utils.hash = function hash(str){
-    var h = 0;
-
-    if (0 === str.length){
-        return h;
+// sdbm hash function
+var hash = utils.hash = function(str){
+    var hash = 0;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = char + (hash << 6) + (hash << 16) - hash;
     }
-
-    for (var i = 0; i < str.length; i++) {
-        h = ((h<<5)-h)+str.charCodeAt(i);
-        h = h & h;
-   	}
-
-    return h;
-};
+    return hash;
+}
 
 /**
     Union arrays
