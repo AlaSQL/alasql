@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.6-develop-1298 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6-develop-1301 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.6-develop-1298
+@version 0.2.6-develop-1301
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.6-develop-1298';
+alasql.version = '0.2.6-develop-1301';
 
 /**
 	Debug flag
@@ -3593,28 +3593,21 @@ function isIE () {
   return (myNav.indexOf('msie') !== -1) ? parseInt(myNav.split('msie')[1]) : false;
 }
 
-// Fast hash function
-
 /**
-  @function Hash string to integer number
-  @param {string} str Source string
+  @function Hash a string to signed integer
+  @param {string} source string
   @return {integer} hash number
 */
 
-var hash = utils.hash = function hash(str){
-    var h = 0;
-
-    if (0 === str.length){
-        return h;
+// sdbm hash function
+var hash = utils.hash = function(str){
+    var hash = 0;
+    for (i = 0; i < str.length; i++) {
+        char = str.charCodeAt(i);
+        hash = char + (hash << 6) + (hash << 16) - hash;
     }
-
-    for (var i = 0; i < str.length; i++) {
-        h = ((h<<5)-h)+str.charCodeAt(i);
-        h = h & h;
-   	}
-
-    return h;
-};
+    return hash;
+}
 
 /**
     Union arrays
