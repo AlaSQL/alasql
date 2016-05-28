@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.6-develop-1301 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.6-develop-1312 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.6-develop-1301
+@version 0.2.6-develop-1312
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.6-develop-1301';
+alasql.version = '0.2.6-develop-1312';
 
 /**
 	Debug flag
@@ -3601,12 +3601,13 @@ function isIE () {
 
 // sdbm hash function
 var hash = utils.hash = function(str){
-    var hash = 0;
-    for (i = 0; i < str.length; i++) {
-        char = str.charCodeAt(i);
-        hash = char + (hash << 6) + (hash << 16) - hash;
-    }
-    return hash;
+  var hash = 5381,
+      i    = str.length
+
+  while(i)
+    hash = (hash * 33) ^ str.charCodeAt(--i)
+
+  return hash;
 }
 
 /**
