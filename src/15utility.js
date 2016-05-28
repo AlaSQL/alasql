@@ -739,12 +739,13 @@ function isIE () {
 
 // sdbm hash function
 var hash = utils.hash = function(str){
-    var hash = 0;
-    for (i = 0; i < str.length; i++) {
-        char = str.charCodeAt(i);
-        hash = char + (hash << 6) + (hash << 16) - hash;
-    }
-    return hash;
+  var hash = 5381,
+      i    = str.length
+
+  while(i)
+    hash = (hash * 33) ^ str.charCodeAt(--i)
+  
+  return hash;
 }
 
 /**
