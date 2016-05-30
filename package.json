@@ -104,5 +104,6 @@
       "ipad/4..latest",
       "android-browser/4..latest"
     ]
-  }
+  },
+  "typings": "./dist/alasql.d.ts"
 }
