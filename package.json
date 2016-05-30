@@ -27,12 +27,12 @@
   },
   "dependencies": {
     "dom-storage": "^2.0.1",
-    "es6-promise": "^3.2.1",
     "lodash": "^4.12.0",
     "request": "^2.69.0",
     "xlsjs": "^0.7.5",
     "xlsx": "^0.8.0",
-    "yargs": "^4.7.0"
+    "yargs": "^4.7.0",
+    "es6-promise": "^3.2.1"
   },
   "devDependencies": {
     "blueimp-md5": "^2.3.0",
