@@ -1,7 +1,7 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-_0.2.8 "..." (xx.06.2016)_
+_0.2.8 "Ermoupoli" (20.06.2016)_
 
 
 _0.2.7 "Corinth" (30.05.2016)_
