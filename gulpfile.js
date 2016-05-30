@@ -269,7 +269,7 @@ gulp.task('plugin-prolog', function(){
 // });
 
 
-var toRun = ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' ];
+var toRun = ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins', 'typescript' ];
 
 if(argv.jison){
     //toRun.unshift('jison-compile'); 
