@@ -56,7 +56,7 @@ interface AlaSQL {
 	parse(sql):AlaSQLAST;
 	options:AlaSQLOptions;
 	error: Error;
-	promise(sql:any,params?:any):Thenable;
+	promise(sql:any,params?:any):Thenable<any>;
 }
 
 declare var alasql : AlaSQL;
