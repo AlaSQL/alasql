@@ -3,7 +3,7 @@ if(typeof exports === 'object') {
 	var alasql = require('..');
 };
 
-describe('Test 04', function() {
+describe('004 Callbacks', function() {
 	it('Callback', function(done){
 		alasql('CREATE DATABASE test04;use test04');
 //		alasql.exec('DROP TABLE IF EXISTS schools');
@@ -25,4 +25,11 @@ describe('Test 04', function() {
 		});
 //		console.log(888,res);
 	});
+
+	it('Works without params set', function(done){
+		alasql('VALUE OF SELECT 1', function(data){ 
+			assert.equal(1,data);
+			done();
+		});
+	})
 });

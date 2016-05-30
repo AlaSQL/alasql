@@ -5,14 +5,13 @@
 // (c) 2014-2015, Andrey Gershun
 //
 
-var closure = false;
-
 var fs = require('fs');
 var gulp = require('gulp');
+var jison = require('gulp-jison');
 module.exports = gulp;
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
-var shell = require('gulp-shell');
+var shell = require('gulp-exec');
 var rename = require('gulp-rename');
 var dereserve = require('gulp-dereserve');
 var argv = require('yargs').argv || {};
@@ -158,14 +157,9 @@ gulp.task('js-merge', function () {
 
 
 gulp.task('jison-compile', function () {
-  return gulp.src('./src/alasqlparser.jison', {read: false})
-    .pipe(shell([
-//      'node ./utils/redj/redj.js',
-//      'jison ./src/alasqlparser1.jison -o ./src/alasqlparser.js'
-      './node_modules/.bin/jison ./src/alasqlparser.jison -o ./src/alasqlparser.js' // Todo: avoid having to install globally with `npm install jison -g`
-
-//      'java -jar utils/compiler.jar -O "ADVANCED_OPTIMIZATIONS" src/alasqlparser1.js --language_in=ECMASCRIPT5 --js_output_file src/alasqlparser.js',
-    ]));
+  return gulp.src('./src/alasqlparser.jison')
+        .pipe(jison({ moduleType: 'commonjs', moduleName: 'alasqlparser' }))
+        .pipe(gulp.dest('./src/'));
 });
 
 /*
@@ -275,7 +269,7 @@ gulp.task('plugin-prolog', function(){
 // });
 
 
-var toRun = ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins' ];
+var toRun = ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins', 'typescript' ];
 
 if(argv.jison){
     //toRun.unshift('jison-compile'); 
@@ -297,7 +291,7 @@ gulp.task('watch', toRun, function(){
 
   //gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
 
-  gulp.watch('./dist/alasql.min.js',function(){ 
+  gulp.watch('./dist/alasql.min.js',function(){
 //    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
 /*    gulp.run('copy-dist-meteor'); */
@@ -318,9 +312,9 @@ gulp.task('fast', ['js-merge' /*, 'jison-compile', 'jison-lex-compile' */], func
 
 gulp.task('doc', function(){
   return gulp.src('./alasql.js', {read: false})
-    .pipe(shell([
-      'jsdoc dist/alasql.js -d ../alasql-org/api',
-    ]));
+    .pipe(shell(
+      'jsdoc dist/alasql.js -d ../alasql-org/api'
+    ));
 });
 
 gulp.task('console', function(){

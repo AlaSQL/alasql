@@ -58,7 +58,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 alasql.into.HTML = function(selector, opts, data, columns, cb) {
 	var res = 1;
 	if(typeof exports != 'object') {
-		var opt = {};
+		var opt = {headers:true};
 		alasql.utils.extend(opt, opts);
 
 		var sel = document.querySelector(selector);
@@ -169,7 +169,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		filename = undefined;
 	}
 
-	var opt = {};
+	var opt = {headers:true};
 	//opt.separator = ','; 
   opt.separator = ';';
 	opt.quote = '"';

@@ -253,7 +253,7 @@ function loghtml(res) {
 			s += '<tr><th>'+(i+1);
 			cols.forEach(function(colid){
 				s += '<td> ';
-				if(+res[i][colid] === +res[i][colid]) {
+				if(res[i][colid] == +res[i][colid]) {       // jshint ignore:line
 					s += '<div style="text-align:right">';
 					if(typeof res[i][colid] === 'undefined'){
 						s += 'NULL';

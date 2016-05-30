@@ -9,10 +9,14 @@ if(typeof exports === 'object') {
 
 describe('Test 291 Promised version', function() {
 
-  it('1. CREATE DATABASE',function(done){
+  before(function(){
     alasql('CREATE DATABASE test291;USE test291');
-    done();
   });
+
+  after(function(){
+    alasql('DROP DATABASE test291');
+  });
+
 
 // function alasqlp(sql, params) {
 //     return new Promise(function(resolve, reject){
@@ -49,10 +53,16 @@ describe('Test 291 Promised version', function() {
     });;
 
   });
+
+  it('3. Promise all',function(done){
+
+    alasql.promise(['value of SELECT 1', ['value of select ?', 2]])
+			.then(function(res){
+				assert.deepEqual(res, [1,2]);
+				done();
+			}).catch(function(reason){console.log(reason)})
+
+  });
   // TODO: Add other operators
 
-  it('4. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test291');
-    done();
-  });
 });

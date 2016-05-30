@@ -53,13 +53,19 @@
     alasql().From(data).Where(function(x){return x.a == 10}).exec();
  */
 
-var alasql = function alasql(sql, params, cb, scope) {
+var alasql = function(sql, params, cb, scope) {
 	
+	params = params||[];
+
 	// Avoid setting params if not needed even with callback
 	if(typeof params === 'function'){
 		scope = cb;
 		cb = params;
-		params = {};
+		params = [];
+	}
+
+	if(typeof params !== 'object'){
+			params = [params];
 	}
 
 	if(typeof importScripts !== 'function' && alasql.webworker) {

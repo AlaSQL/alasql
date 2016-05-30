@@ -18,34 +18,45 @@ describe('Test 604 - CREATE VIEW error with localStorage engine #604', function(
 		localStorage.clear();
 	})
 
-    it("* Create database", function(){
-	alasql('SET AUTOCOMMIT OFF');
-	//		console.log(!alasql.options.autocommit);
+    it("* Create database", function(done){
+    		this.timeout(5000);
+		alasql('SET AUTOCOMMIT OFF');
 		assert(!alasql.options.autocommit);
-		alasql('DROP localStorage DATABASE IF EXISTS db604ls');
-		assert(!localStorage['db604ls']);
-		assert(!localStorage['db604ls.one']);
-		alasql('CREATE localStorage DATABASE IF NOT EXISTS db604ls');
-		assert(localStorage['db604ls']);
+		alasql.promise('DROP localStorage DATABASE IF EXISTS db604ls')
+			.then(function(res){
+				assert(!localStorage['db604ls']);
+				assert(!localStorage['db604ls.one']);		
+				return alasql.promise('CREATE localStorage DATABASE IF NOT EXISTS db604ls');
+			}).then(function(res){
+				assert(localStorage['db604ls']);
+				done();
+			}).catch(function(err) { setTimeout(function() { throw err; }); });
     });
 
-    it("* Show databases", function(){
-		var res = alasql('SHOW localStorage DATABASES');
-		var found = false;
-		res.forEach(function(d){ found = found || (d.databaseid == "db604ls")});
-		assert(found);
+    it("* Show databases", function(done){
+		var res = alasql('SHOW localStorage DATABASES', function(res){
+			var found = false;
+			res.forEach(function(d){ found = found || (d.databaseid == "db604ls")});
+			assert(found);
+			done();
+		});
+		
     });
 
-    it("* Attach localStorage database", function(){
-		alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604');
-		assert(alasql.databases.db604);
-		assert(alasql.databases.db604.engineid == 'LOCALSTORAGE');
+    it("* Attach localStorage database", function(done){
+		alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604', function(){
+			assert(alasql.databases.db604);
+			assert(alasql.databases.db604.engineid == 'LOCALSTORAGE');	
+			done();
+		});
     });
 
-    it("* Create table", function(){
-		alasql('CREATE TABLE db604.t1 (a int, b string)');
-		assert(localStorage['db604ls.t1']);
-		assert(JSON.parse(localStorage['db604ls']).tables.t1);
+    it("* Create table", function(done){
+		alasql('CREATE TABLE db604.t1 (a int, b string)', function(res){
+			assert(localStorage['db604ls.t1']);
+			assert(JSON.parse(localStorage['db604ls']).tables.t1);
+			done();
+		});
     });
 
     it("* Insert values into table", function(done) {
@@ -62,10 +73,12 @@ describe('Test 604 - CREATE VIEW error with localStorage engine #604', function(
     });
 
 
-    it("* Create view", function(){
-		alasql('CREATE VIEW db604.v1 AS SELECT a,b FROM db604.t1');
-		assert(localStorage['db604ls.v1']);
-		assert(JSON.parse(localStorage['db604ls']).tables.v1);
+    it("* Create view", function(done){
+		alasql('CREATE VIEW db604.v1 AS SELECT a,b FROM db604.t1',function(res){
+			assert(localStorage['db604ls.v1']);
+			assert(JSON.parse(localStorage['db604ls']).tables.v1);
+			done();	
+		});
     });
 
     it("* Select from view", function() {

@@ -17,7 +17,7 @@ describe('Test 392 Observable (issue #499)', function() {
     done();
   });
 
-	it('2. Prepare test data', function(done){
+	it.skip('2. Prepare test data', function(done){
 
 //    var test = 0;
 
