@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.7 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.7-develop-1323 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.7
+@version 0.2.7-develop-1323
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.7';
+alasql.version = '0.2.7-develop-1323';
 
 /**
 	Debug flag
@@ -4502,38 +4502,6 @@ var promiseAll = function(sqlParamsArray){
 	return utils.global.Promise.all(execArray); 
 }
 
-/**
-var promiseChain = function(progress, sqlParamsArray, lastPromise){
-	var active, sql, params;
-	if(sqlParamsArray.length<1){
-		return lastPromise;
-	}
-
-	active = sqlParamsArray.shift();
-
-	if(typeof active === 'string'){
-		active = [active];
-	}
-
-	if(!utils.isArray(active) || active.length<1 || 2<active.length){
-		throw new Error('Error in .promise parameter');
-	}
-
-	sql = active[0];
-	params = active[1]||undefined;
-
-	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.idx++);
-	}
-
-	if(typeof lastPromise === 'undefined'){
-		return promiseChain(progress, sqlParamsArray, promiseExec(sql, params));
-	}
-
-	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
-
-}*/
-
 alasql.promise = function(sql, params) {
 	if(typeof Promise === "undefined"){
 		throw new Error('Please include a Promise/A+ library');
@@ -4546,15 +4514,7 @@ alasql.promise = function(sql, params) {
 	if(!utils.isArray(sql) || sql.length<1 || typeof params !== "undefined"){
 		throw new Error('Error in .promise parameters');
 	}
-	/*
-	var progress = {idx: 0, total: sql.length};
-	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.idx++);
-	}
-	*/
 	return promiseAll(sql);
-
-	//return promiseChain(progress, sql);
 };
 
 /*
@@ -17311,9 +17271,6 @@ alasql.use("alasql");
 return alasql;
 }));
 
-/*if (typeof importScripts === 'function') {
-	// Nothing
-} else */ 
 if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
 
 	alasql.worker = function(path, paths, cb) {
@@ -17379,3 +17336,4 @@ if(typeof location !== "undefined" && location.reload && !(typeof process !== "u
 	};
 
 }
+

@@ -1,6 +1,6 @@
-/*if (typeof importScripts === 'function') {
-	// Nothing
-} else */ 
+
+
+
 if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
 
 	alasql.worker = function(path, paths, cb) {
@@ -66,3 +66,7 @@ if(typeof location !== "undefined" && location.reload && !(typeof process !== "u
 	};
 
 }
+
+
+
+
