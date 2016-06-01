@@ -9,7 +9,6 @@ function queryfn(query,oldscope,cb, A,B) {
 	query.query = query; // TODO Remove to prevent memory leaks
 	query.A = A;
 	query.B = B;
-//	console.log(arguments);
 	query.cb = cb;
 	query.oldscope = oldscope;
 
@@ -31,7 +30,6 @@ function queryfn(query,oldscope,cb, A,B) {
 // console.log(q);
 			q.query.params = query.params;
 //			query.queriesdata[idx] = 
-
 
 //	if(false) {
 //			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);

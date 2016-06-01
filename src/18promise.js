@@ -6,7 +6,9 @@
 if(!utils.global.Promise){
 
 	if(utils.isNode){
+		//*not-for-browser/*
 		utils.global.Promise = require('es6-promise').Promise;
+		//*/
 	} else {
 		/*!
 		 * @overview es6-promise - a tiny implementation of Promises/A+.

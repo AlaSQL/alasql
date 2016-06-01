@@ -9,6 +9,8 @@
 	@return {number} Number of files processed
 */
 
+
+
 alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	/** @type {number} result */
@@ -23,13 +25,9 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	}
 
 //console.log(data);
+	
 
-	/* If require() shuold be supported else take from global scope */
-	if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
-		var XLSX = require('xlsx');
-	} else {
-		var XLSX = utils.global.XLSX;
-	};
+	var XLSX = getXLSX();
 
 	/* If called without filename, use opts */
 	if(typeof filename == 'object') {
@@ -170,22 +168,11 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		if(typeof filename == 'undefined') {
 			res = wb;
 		} else {
-			var XLSX;
-
-			if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
-                                XLSX = require('xlsx');
-                           
-                        } else {
-				XLSX = utils.global.XLSX;
-			}
-
+			XLSX = getXLSX();
 
 			if(utils.isNode || utils.isMeteorServer) {
 				XLSX.writeFile(wb, filename);
 			} else {
-				if(!XLSX) {
-					throw new Error('XLSX library not found');
-				}
 		
 				var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
 				var wbout = XLSX.write(wb,wopts);

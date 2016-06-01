@@ -1,6 +1,6 @@
 Package.describe({
 	name: 'agershun:alasql',
-	version: '0.2.8-pre',
+	version: '0.2.8',
 	// Brief, one-line summary of the package.
 	summary: 'Javascript SQL database library',
 	// URL to the Git repository containing the source code for this package.
@@ -17,11 +17,11 @@ Package.onUse(function(api) {
 	//  api.addFiles('./../../dist/alasql.min.js');
 	//  api.addFiles('./../../dist/alasql-echo.js');
 
-  	api.mainModule('dist/alasql.browser.js');
+  	api.mainModule('alasql.js');
 
 	// Todo: implement browser version for client and fs version for server
-	//api.mainModule('dist/alasql.js', 'server');
-	//api.mainModule('dist/alasql.browser.js', 'client');
+	//api.mainModule('alasql.fs.js', 'server');
+	//api.mainModule('alasql.js', 'client');
 
 });
 

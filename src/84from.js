@@ -414,29 +414,11 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
-	var X;
-	if(utils.isNode || utils.isBrowserify) {
-		X = require('xlsjs');
-	} else {
-		X = utils.global.XLS;
-		if(!X) {
-			throw new Error('XLS library not found');
-		}
-	}
-	return XLSXLSX(X,filename, opts, cb, idx, query);
+	return XLSXLSX(getXLS(),filename, opts, cb, idx, query);
 }
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
-	var X;
-	if(utils.isNode || utils.isBrowserify) {
-		X = require('xlsx');
-	} else {
-		X = utils.global.XLSX;
-		if(!X) {
-			throw new Error('XLSX library not found');
-		}
-	}
-	return XLSXLSX(X,filename, opts, cb, idx, query);
+	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 };
 
 

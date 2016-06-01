@@ -274,18 +274,15 @@ utils.isArray = function(obj){
 var loadFile = utils.loadFile = function(path, asy, success, error) {
     var data, fs;
     if(utils.isNode || utils.isMeteorServer) {
-
+    	//*not-for-browser/*
         if(utils.isMeteor) {
-            /** For Meteor */
             fs = Npm.require('fs');
         } else {
-            /** For Node.js */
             fs = require('fs');
         }
 
-        /* If path is empty, than read data from stdin (for Node) */
+        // If path is empty, than read data from stdin (for Node) 
         if(typeof path === 'undefined') {
-            /* @type {string} Buffer for string*/
             var buff = '';
             process.stdin.setEncoding('utf8');
             process.stdin.on('readable', function() {
@@ -307,7 +304,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                     success(cutbom(body.toString()));
                 });
             } else {
-                /* If async callthen call async*/
+                //If async callthen call async
                 if(asy) {
                     fs.readFile(path,function(err,data){
                         if(err) {
@@ -316,12 +313,13 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                         success(cutbom(data.toString()));
                     });
                 } else {
-                    /* Call sync version */
+                    // Call sync version 
                     data = fs.readFileSync(path);
                     success(cutbom(data.toString()));
                 }
             }
         }
+        //*/
     } else if(utils.isCordova) {
         /* If Cordova */
         utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
@@ -433,9 +431,8 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) {
     var fs;
     if(utils.isNode || utils.isMeteorServer) {
-
-        // For Node.js
-        if(utils.isMeteor) {
+	   	//*not-for-browser/*
+        if(utils.isMeteorServer) {
             fs = Npm.require('fs'); // For Meteor
         } else {
             fs = require('fs');
@@ -474,8 +471,8 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 }
                 success(arr.join(""));
             }
-        };
-//        success(data);
+        }
+		//*/
     } else {
 
         if(typeof path === "string") {
@@ -512,6 +509,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 
 var removeFile = utils.removeFile = function(path,cb) {
     if(utils.isNode) {
+        //*not-for-browser/*
         var fs = require('fs');
         fs.remove(path,cb);
     } else if(utils.isCordova) {
@@ -523,6 +521,7 @@ var removeFile = utils.removeFile = function(path,cb) {
                 cb && cb(); // jshint ignore:line
             });
         });
+      	//*/
     } else {
         throw new Error('You can remove files only in Node.js and Apache Cordova');
     }
@@ -530,14 +529,18 @@ var removeFile = utils.removeFile = function(path,cb) {
 
 // Todo: check if it makes sense to support cordova and Meteor server
 var deleteFile = utils.deleteFile = function(path,cb){
+    //*not-for-browser/*
     if(utils.isNode) {
         var fs = require('fs');
         fs.unlink(path, cb);
     }
+    //*/
+
 };
 
 var fileExists = utils.fileExists = function(path,cb){
     if(utils.isNode) {
+        //*not-for-browser/*
         var fs = require('fs');
         fs.exists(path,cb);
     } else if(utils.isCordova) {
@@ -548,27 +551,7 @@ var fileExists = utils.fileExists = function(path,cb){
                 cb(false);
             });
         });
-/*/*
-        function fail(){
-            callback(false);
-        }
-        try {
-            // Cordova
-            var paths = path.split('/');
-            var filename = paths[paths.length-1];
-            var dirpath = path.substr(0,path.length-filename.length);
-
-            window.resolveLocalFileSystemURL(dirpath, function(dir) {
-                dir.getFile(filename, null, function(file) {
-                    file.file(function(file) {
-                        callback(true);
-                    },fail);
-                },fail);
-            },fail);
-        } catch(err) {
-            fail();
-        };
-*/
+        //*/
     } else {
         // TODO Cordova, etc.
         throw new Error('You can use exists() only in Node.js or Apach Cordova');
@@ -596,14 +579,13 @@ var saveFile = utils.saveFile = function(path, data, cb) {
     } else {
 
         if(utils.isNode) {
-            // For Node.js
+            //*not-for-browser/*
             var fs = require('fs');
             data = fs.writeFileSync(path,data);
             if(cb){
                 res = cb(res);
             }
         } else if(utils.isCordova) {
-            // For Apache Cordova
             utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){
                     fileSystem.root.getFile(path, {create:true}, function (fileEntry) {
@@ -616,8 +598,9 @@ var saveFile = utils.saveFile = function(path, data, cb) {
                             fileWriter.write(data);
                         });
                     });
- //               });
+
             });
+            //*/
 
 /*/*
         } else if((typeof cordova == 'object') && cordova.file) {
@@ -1156,14 +1139,15 @@ utils.findAlaSQLPath = function() {
 	if (utils.isWebWorker) {
 		return '';
 		/** @todo Check how to get path in worker */
-	} else if(utils.isNode) {
-		return __dirname;
-
+	
 	} else if(utils.isMeteorClient) {
 		return '/packages/dist/';
 
 	} else if(utils.isMeteorServer) {
 		return 'assets/packages/dist/';
+	
+	} else if(utils.isNode) {
+		return __dirname;
 
 	} else if(utils.isBrowser) {
 		var sc = document.getElementsByTagName('script');
@@ -1187,6 +1171,43 @@ utils.findAlaSQLPath = function() {
 	return '';
 }
 
+
+var getXLSX = function(){
+	var XLSX = null;
+	/* If require() shuold be supported else take from global scope */
+	if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
+		//*not-for-browser/*
+		XLSX = require('xlsx') || null;
+		//*/
+	} else {
+		XLSX = utils.global.XLSX || null;
+	}
+
+	if(null === XLSX){
+        throw new Error('Please include the xlsx.js library');
+	}
+
+	return XLSX;
+}
+
+
+var getXLS = function(){
+	var XLS = null;
+	/* If require() shuold be supported else take from global scope */
+	if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
+		//*not-for-browser/*
+		XLS = require('xlsjs') || null;
+		//*/
+	} else {
+		XLS = utils.global.XLS || null;
+	}
+
+	if(null === XLS){
+        throw new Error('Please include the xlsjs library');
+	}
+
+	return XLS;
+}
 
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();

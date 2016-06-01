@@ -155,6 +155,7 @@ gulp.task('js-merge', function () {
 	.pipe(replace(/\/\*only-for-browser\/\*/g, "//*only-for-browser/*"))	// Reveal things only for browser build
 	.pipe(rename('alasql.js'))
     .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest('./partners/meteor'))
     .pipe(rename('alasql.min.js'))
     .pipe(uglify({preserveComments:function(a,b){return 1===b.line && /^!/.test(b.value)}})) // leave first line of comment if starts with a "!"
     .pipe(gulp.dest('./dist'))
