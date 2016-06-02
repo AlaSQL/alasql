@@ -1,7 +1,8 @@
 if(typeof exports === 'object') {
 	var assert = require("assert");
 	var alasql = require('..');
-};
+	//var describe = require('mocha.parallel');
+} 
 
 /*
 	Test for issue #379
@@ -11,12 +12,14 @@ var test = 418;
 
 describe('Test '+test+' Load data from internet', function() {
 
-	before(function(){
+	before(function(done){
 		alasql('CREATE DATABASE test'+test+'; USE test'+test);
+		done();
 	});
 
-	after(function(){
+	after(function(done){
 		alasql('DROP DATABASE test'+test);
+		done();
 	});
 
 	function testRequest(expected, url, headers, done){

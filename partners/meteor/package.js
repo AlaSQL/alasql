@@ -17,7 +17,7 @@ Package.onUse(function(api) {
 	//  api.addFiles('./../../dist/alasql.min.js');
 	//  api.addFiles('./../../dist/alasql-echo.js');
 
-  	api.mainModule('alasql.js');
+  	api.mainModule('alasql.min.js');
 
 	// Todo: implement browser version for client and fs version for server
 	//api.mainModule('alasql.fs.js', 'server');

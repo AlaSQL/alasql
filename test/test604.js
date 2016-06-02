@@ -12,7 +12,7 @@ if(typeof exports == 'object') {
 
 }
 
-describe('Test 604 - CREATE VIEW error with localStorage engine #604', function() {
+describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', function() {
 
 	after(function(){
 		localStorage.clear();
