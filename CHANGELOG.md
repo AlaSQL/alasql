@@ -1,10 +1,16 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
+
+
+_Version 0.3.0 "Papeete" (xx.xx.2016)_
+* ...
+
 _0.2.8 "Ermoupoli" (20.06.2016)_
+* ...
 
 
-_0.2.7 "Corinth" (30.05.2016)_
+### 0.2.7 "Corinth" (30.05.2016)
 * Added: Now supports Node 6.0 
 * Added: Let .promise return all responses (not just last) 
 * Change: Headers set as default true for INTO and FROM statements
@@ -101,7 +107,6 @@ _0.2.7 "Corinth" (30.05.2016)_
 * Fix: .CSV files made Excel 2013 compliant 
 * Fix: misbehavour related to 'NOT' and '=' predecession
 * Fix: alasql running from cordova on iOS
-
 
 
 ## Version 0.2.0 "Athens" (13.07.2015)
