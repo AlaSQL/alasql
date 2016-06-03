@@ -8,7 +8,6 @@ interface AlaSQLCallback {
     (data?: any, err?: Error): void;
 }
 
-
 interface AlaSQLOptions {
     errorlog: boolean;
     valueof: boolean;
