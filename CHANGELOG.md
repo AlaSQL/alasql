@@ -6,8 +6,8 @@
 _Version 0.3.0 "Papeete" (xx.xx.2016)_
 * ...
 
-_0.2.8 "Ermoupoli" (20.06.2016)_
-* ...
+_0.2.8 "Ermoupoli" (xx.06.2016)_
+* Web worker now supports .promise notation
 
 
 ### 0.2.7 "Corinth" (30.05.2016)
