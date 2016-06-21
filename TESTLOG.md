@@ -6,7 +6,7 @@ List of final results from [different test runs](https://github.com/agershun/ala
 ## SQLlogic
 
 The Sqllogictest was developed by [the SQLite team](https://www.sqlite.org/sqllogictest/doc/trunk/about.wiki) 
-to verify that SQL database engine computes correct results by comparing the results to identical queries from other SQL database engines. Consists of roughly 6 million SQL statements.
+to verify that SQL database engine computes correct results by comparing the results to identical queries from other SQL database engines. The full test consists of roughly 6 million SQL statements.
 
 ### Node 
 * Total tested: 1,007,187
