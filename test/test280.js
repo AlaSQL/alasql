@@ -19,7 +19,7 @@ describe('Test 280 XLS.XML tests', function() {
   ];
   
   it('1. Save XLS', function(done) {
-    alasql('SELECT * INTO XLS("restest280a.xls",{headers:true}) FROM ?',[data],function(){
+    alasql('SELECT * INTO XLS("'+__dirname+'/restest280a.xls",{headers:true}) FROM ?',[data],function(){
     	done();
     });
   });
@@ -33,13 +33,13 @@ describe('Test 280 XLS.XML tests', function() {
         style: {Font:{Color:"#00FFFF"}}
       }}}
     };
-    alasql('SELECT * INTO XLSXML("restest280b.xls",?) FROM ?',[opts,data],function(){
+    alasql('SELECT * INTO XLSXML("'+__dirname+'/restest280b.xls",?) FROM ?',[opts,data],function(){
 	    done();	
     });
   });
 
   it('3. Save complex XLSXML', function(done) {
-    alasql('SELECT * INTO XLSXML("restest280c.xls",{headers:true, sheets:{Sheet1:{},Sheet2:{}}}) FROM ?',[data],function(){
+    alasql('SELECT * INTO XLSXML("'+__dirname+'/restest280c.xls",{headers:true, sheets:{Sheet1:{},Sheet2:{}}}) FROM ?',[data],function(){
 	    done();	
     });
   });

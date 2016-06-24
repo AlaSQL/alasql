@@ -37,6 +37,7 @@ describe('Test 03 - '+NUMTESTS+'times', function() {
 	});
 
 	it("3. Test insert without compilation #1", function(done) {
+		this.timeout(5000);
 		zt('Test insert without compilation #1', function() {
 			alasql(sql3);
 		});
@@ -44,6 +45,7 @@ describe('Test 03 - '+NUMTESTS+'times', function() {
 	});
 
 	it("4. Test insert without compilation and caching", function(done) {
+		this.timeout(5000);
 		zt('Test insert without compilation and caching', function() {
 			alasql(sql3.replace('999', ((Math.random()*1000)|0)));
 		});
@@ -51,6 +53,7 @@ describe('Test 03 - '+NUMTESTS+'times', function() {
 	});
 
 	it("5. Test compiled insert", function(done) {
+		this.timeout(5000);
 		var insert1 = alasql.compile(sql3);
 		zt('Test compiled insert', function() {
 			insert1();

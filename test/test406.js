@@ -51,7 +51,7 @@ describe('Test 406. Complex SEARCH', function() {
       var res = alasql('SEARCH KEYS() AS @a EX($0->(_)) AS @b \
         KEYS() AS @c EX(@b->(_)) AS @e \
         {a:(@a),c:(@c), [value]:(@e->[value]), id:(@e->id)} \
-        INTO XLSX("restest406.xlsx",{headers:true}) FROM $0',[data]);
+        INTO XLSX("'+__dirname+'/restest406.xlsx",{headers:true}) FROM $0',[data]);
       assert(res==1);
     }
       var res = alasql('SEARCH KEYS() AS @a EX($0->(_)) AS @b \

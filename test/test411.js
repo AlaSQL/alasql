@@ -241,7 +241,7 @@ describe('Test 411 Export to Excel', function() {
             @c->id AS [introduction.resources.id], \
             @c->contentItem->id AS [introduction.resources.contentItem.id] \
           ) \
-        ) INTO XLSX("restest411.xlsx",{headers:true})\
+        ) INTO XLSX("'+__dirname+'/restest411.xlsx",{headers:true})\
         FROM ?',[data]);
     //console.log(res);
     assert(res==1);

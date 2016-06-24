@@ -9,7 +9,7 @@ describe('Test 198 - MS SQL compatibility', function() {
 
     it("1. Create tables", function(done) {
         alasql('CREATE DATABASE test198; USE test198');
-        alasql('SOURCE "test198-1.sql"');
+        alasql('SOURCE "'+__dirname+'/test198-1.sql"');
         var res = alasql('SELECT * FROM Customers');
         assert.deepEqual(res,
         	[ { customerid: 'FISSA', city: 'Madrid' },
@@ -29,7 +29,7 @@ describe('Test 198 - MS SQL compatibility', function() {
     });
 
     it("2. Select", function(done) {
-        var res = alasql('SOURCE "test198-2.sql"');
+        var res = alasql('SOURCE "'+__dirname+'/test198-2.sql"');
         assert.deepEqual(res,
         	[ { customerid: 'FISSA', numorders: 0 },
   			{ customerid: 'FRNDO', numorders: 2 } ]);

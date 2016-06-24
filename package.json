@@ -17,6 +17,7 @@
     "test:this": "gulp && cd test && mocha",
     "test:only": "cd test && mocha . --reporter dot",
     "test:browser": "node test/browserTestRunner.js 7387",
+    "test:cover":"istanbul cover --dir test/coverage _mocha",
     "build": "gulp",
     "build:jison": "gulp --jison && gulp",
     "build:watch": "gulp watch",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "blueimp-md5": "^2.3.0",
+    "codecov": "^1.0.1",
     "gulp": "^3.9.1",
     "gulp-concat": "^2.6.0",
     "gulp-dereserve": "^0.2.1",
@@ -45,6 +47,7 @@
     "gulp-replace": "^0.5.4",
     "gulp-shell": "^0.5.2",
     "gulp-uglify": "^1.5.3",
+    "istanbul": "^0.4.4",
     "jison": "^0.4.17",
     "mocha": "^2.4.5",
     "mocha.parallel": "^0.12.0",
