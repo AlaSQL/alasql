@@ -17,7 +17,7 @@
     "test:this": "gulp && cd test && mocha",
     "test:only": "cd test && mocha . --reporter dot",
     "test:browser": "node test/browserTestRunner.js 7387",
-    "test:cover":"istanbul cover --dir test/coverage _mocha",
+    "test:cover":"istanbul -x 'lib/zt/zt.js' cover --dir test/coverage _mocha",
     "build": "gulp",
     "build:jison": "gulp --jison && gulp",
     "build:watch": "gulp watch",
