@@ -1,4 +1,5 @@
 [![Known bugs](https://img.shields.io/github/issues-raw/agershun/alasql/!%20bug.svg?label=Known Bugs&maxAge=2592000)](https://github.com/agershun/alasql/issues?q=is%3Aissue+is%3Aopen+label%3A%22%21+Bug%22)
+[![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://codecov.io/gh/agershun/alasql/src/develop/dist/alasql.fs.js)
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?)
 [![ghit.me](https://ghit.me/badge.svg?repo=agershun/alasql)](https://ghit.me/repo/agershun/alasql)
@@ -101,8 +102,8 @@ jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http:
 
 ```bash
 npm install --save alasql      # node
-meteor add agershun:alasql     # meteor
 bower install --save alasql    # bower
+import alasql from 'alasql';   # meteor
 npm install -g alasql          # command line
 ```
 
