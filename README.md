@@ -1,4 +1,3 @@
-[![Known bugs](https://img.shields.io/github/issues-raw/agershun/alasql/!%20bug.svg?label=Known Bugs&maxAge=2592000)](https://github.com/agershun/alasql/issues?q=is%3Aissue+is%3Aopen+label%3A%22%21+Bug%22)
 [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://codecov.io/gh/agershun/alasql/src/develop/dist/alasql.fs.js)
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?)
@@ -143,13 +142,15 @@ When you feel you got the grip you can check out the wiki section about [data ma
 **All contributions are much welcome and greatly appreciated(!)** -
 The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)
 
+AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/%21%20Bug). 
+Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). 
+
+[![Known bugs](https://img.shields.io/github/issues-raw/agershun/alasql/!%20bug.svg?label=Known Bugs&maxAge=2592000)](https://github.com/agershun/alasql/issues?q=is%3Aissue+is%3Aopen+label%3A%22%21+Bug%22)
 
 
+AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production and please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
 
-AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/%21%20Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production. 
 
-<a href="https://github.com/agershun/alasql/issues?q=is%3Aissue+is%3Aopen+label%3A%22%21+Bug%22"><img src="https://img.shields.io/github/issues-raw/agershun/alasql/!%20bug.svg?label=Known bugs&maxAge=2592000" align="right" alt="Bugs" /></a>
-Please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
 
 
 ## Performance
