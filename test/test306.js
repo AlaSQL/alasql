@@ -94,7 +94,7 @@ describe('Test 306 XML reader', function() {
    });
 
   it('7. SEARCH INTO ',function(done){
-     alasql('SEARCH XML [graph] edges/%/ INTO CSV({headers:true}) FROM XML("'+__dirname+'/test306a.xml")',[],function(res){
+     alasql('SEARCH XML [graph] edges/%/ INTO CSV({headers:true, utf8Bom:false}) FROM XML("'+__dirname+'/test306a.xml")',[],function(res){
 //     alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
 //        console.log('>>',res,'<<');
         assert.deepEqual(res,'"id";"source";"target"\r\n0;0;1\r\n');

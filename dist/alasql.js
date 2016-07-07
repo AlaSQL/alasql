@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.7-updateTypeScriptDefinition-1338 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.7-develop-1356 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.7-updateTypeScriptDefinition-1338
+@version 0.2.7-develop-1356
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.7-updateTypeScriptDefinition-1338';
+alasql.version = '0.2.7-develop-1356';
 
 /**
 	Debug flag
@@ -14156,11 +14156,17 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 
 	var opt = {headers:true};
 	//opt.separator = ','; 
-  opt.separator = ';';
+	opt.separator = ';';
 	opt.quote = '"';
+
+	opt.utf8Bom = true;
+	if(typeof opts.headers != 'undefined' && !opts.headers){
+		opt.utf8Bom = false;	
+	}
+
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
-	var s = '';
+	var s = opt.utf8Bom ? "\ufeff" : '';
 	if(opt.headers) {
 		s += opt.quote+columns.map(function(col){
 			return col.columnid.trim();

@@ -40,7 +40,7 @@ describe('Test 256 INTO() in result and into params array', function() {
 
   it('4. INTO CSV() result', function(done){
     var data = [{a:1,b:2},{a:2,b:2}];
-    var res = alasql('SELECT * INTO CSV({headers:true}) FROM ?',[data]); 
+    var res = alasql('SELECT * INTO CSV({headers:true, utf8Bom:false}) FROM ?',[data]); 
     assert.equal(res, '"a";"b"\r\n1;2\r\n2;2\r\n')
     done();
   });

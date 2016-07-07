@@ -173,7 +173,12 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	//opt.separator = ','; 
 	opt.separator = ';';
 	opt.quote = '"';
-	opt.utf8Bom = false;
+
+	opt.utf8Bom = true;
+	if(typeof opts.headers != 'undefined' && !opts.headers){
+		opt.utf8Bom = false;	
+	}
+
 	alasql.utils.extend(opt, opts);
 	var res = data.length;
 	var s = opt.utf8Bom ? "\ufeff" : '';
