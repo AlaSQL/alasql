@@ -302,6 +302,15 @@ VALUE(S)?                                      	return 'VALUE'
 '?'												return 'QUESTION'
 '!'												return 'EXCLAMATION'
 '^'												return 'CARET'
+
+/* Postgres aliases */
+'~~*'											return 'LIKE'
+'!~~*'											return 'NOT_LIKE'
+'~~'											return 'LIKE'
+'!~~'											return 'NOT_LIKE'
+'ILIKE'											return 'LIKE'
+NOT\s+ILIKE										return 'NOT_LIKE'
+
 '~'												return 'TILDA'
 
 [a-zA-Z_][a-zA-Z_0-9]*                     		return 'LITERAL'
@@ -1443,6 +1452,8 @@ ElseClause
 
 Op
 	: Expression REGEXP Expression
+		{ $$ = new yy.Op({left:$1, op:'REGEXP', right:$3}); }
+	| Expression TILDA Expression
 		{ $$ = new yy.Op({left:$1, op:'REGEXP', right:$3}); }
 	| Expression GLOB Expression
 		{ $$ = new yy.Op({left:$1, op:'GLOB', right:$3}); }
