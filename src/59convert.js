@@ -182,9 +182,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 		try {
 			return JSON.parse(val);
 		} catch(err) { throw new Error('Cannot convert string to JSON');};
-	} else {
-		throw new Error('Wrong conversion type');
-	};
+	}
 	return val;
 };
 
