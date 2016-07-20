@@ -134,7 +134,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //					+tableid+'\'].identities[\''+col.columnid+'\'].value)');
 			}
 			if(col.check) {
-				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJS('r','')));
+				table.checks.push({id: col.check.constrantid, fn: new Function("r",'var y;return '+col.check.expression.toJS('r',''))});
 			}
 
 			if(col.default) {
@@ -191,7 +191,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					}
 					return true;
 				};
-				table.checkfn.push(fkfn);
+				table.checks.push({fn: fkfn});
 /*/*				var uk = {};
 				if(typeof table.uk == 'undefined') table.uk = [];
 				table.uk.push(uk);
@@ -217,6 +217,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	if(constraints) {
 	constraints.forEach(function(con) {
 		//console.log(con, con.columns);
+		var checkfn;
+
 		if(con.type === 'PRIMARY KEY') {
 			if(table.pk) {
 				throw new Error('Primary key already exists');
@@ -231,7 +233,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.uniqs[pk.hh] = {};					
 		} else if(con.type === 'CHECK') {
 //			console.log(con.expression.toJS('r',''));
-			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJS('r','')));
+			checkfn = new Function("r",'var y;return '+con.expression.toJS('r',''))
 		} else if(con.type === 'UNIQUE') {
 //			console.log(con);
 			var uk = {};
@@ -256,7 +258,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				fk.columnid = fktable.pk.columns[0];
 			}
 //					console.log(fktable.pk);
-			var fkfn = function(r) {
+			checkfn = function(r) {
 				var rr = {};
 				if(typeof r[col.columnid] === 'undefined'){
 					return true;
@@ -271,8 +273,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 				return true;
 			};
-			table.checkfn.push(fkfn);
 		}
+		if (checkfn) table.checks.push({fn: checkfn, id: con.constraintid, fk: con.type === 'FOREIGN KEY'});
 	});
 
 	if(this.view && this.viewcolumns) {
@@ -365,11 +367,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //console.log(270,r);
 
 
-		if(table.checkfn && table.checkfn.length>0) {
-			table.checkfn.forEach(function(checkfn){
-				if(!checkfn(r)) {
+		if(table.checks && table.checks.length>0) {
+			table.checks.forEach(function(check){
+				if(!check.fn(r)) {
 //					if(orreplace) toreplace=true; else
-					throw new Error('Violation of CHECK constraint');			
+					throw new Error('Violation of CHECK constraint ' + (check.id || ''));			
 				}
 			});
 		}
@@ -586,10 +588,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(escape) return;
 
 		// PART 2 - POST CHECK
-		if(table.checkfn && table.checkfn.length>0) {
-			table.checkfn.forEach(function(checkfn){
-				if(!checkfn(r)) {
-					throw new Error('Violation of CHECK constraint');			
+		if(table.checks && table.checks.length>0) {
+			table.checks.forEach(function(check){
+				if(!check.fn(r)) {
+					throw new Error('Violation of CHECK constraint ' + (check.id || ''));			
 				}
 			});
 		}
