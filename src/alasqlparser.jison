@@ -353,6 +353,13 @@ Literal
 		{ $$ = doubleq($1.substr(1,$1.length-2)); }
 	;
 
+LiteralWithSpaces
+	: LITERAL
+		{ $$ = $1 }
+	| LiteralWithSpaces LITERAL
+		{ $$ = $2 ? $1 + ' ' + $2 : $1 }
+	;
+
 main
 	: Statements EOF
 		{ return new yy.Statements({statements:$1}); }
@@ -1995,18 +2002,12 @@ ColumnType
 	;
 */
 ColumnType
-	: LITERAL LPAR NumberMax COMMA NUMBER RPAR
+	: LiteralWithSpaces LPAR NumberMax COMMA NUMBER RPAR
 		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
-	| LITERAL LITERAL LPAR NumberMax COMMA NUMBER RPAR
-		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4, dbprecision: +$6} }
-	| LITERAL LPAR NumberMax RPAR
+	| LiteralWithSpaces LPAR NumberMax RPAR
 		{ $$ = {dbtypeid: $1, dbsize: $3} }
-	| LITERAL LITERAL LPAR NumberMax RPAR
-		{ $$ = {dbtypeid: $1+($2?' '+$2:''), dbsize: $4} }
-	| LITERAL
+	| LiteralWithSpaces
 		{ $$ = {dbtypeid: $1} }
-	| LITERAL LITERAL
-		{ $$ = {dbtypeid: $1+($2?' '+$2:'')} }
 	| ENUM LPAR ValuesList RPAR
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
@@ -2412,8 +2413,14 @@ JsonElementsList
 	;
 
 SetVariable
-	: SET Literal OnOff
+	: SET Literal EQ OnOff
+		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$4});}
+	| SET Literal OnOff
 		{ $$ = new yy.SetVariable({variable:$2.toLowerCase(), value:$3});}
+	| SET Literal EQ Expression
+		{ $$ = new yy.SetVariable({variable:$2, expression:$4});}
+	| SET Literal SetPropsList EQ Expression
+		{ $$ = new yy.SetVariable({variable:$2, props: $3, expression:$5});}
 	| SET AtDollar Literal EQ Expression
 		{ $$ = new yy.SetVariable({variable:$3, expression:$5, method:$2});}
 	| SET AtDollar Literal SetPropsList EQ Expression
