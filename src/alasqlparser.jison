@@ -76,6 +76,14 @@ NOT\s+BETWEEN									return 'NOT_BETWEEN'
 NOT\s+LIKE									    return 'NOT_LIKE'
 'BY'											return 'BY'
 
+/* Postgres aliases */
+'~~*'											return 'LIKE'
+'!~~*'											return 'NOT_LIKE'
+'~~'											return 'LIKE'
+'!~~'											return 'NOT_LIKE'
+'ILIKE'											return 'LIKE'
+NOT\s+ILIKE										return 'NOT_LIKE'
+
 'CALL'											return 'CALL'
 'CASE'											return 'CASE'
 'CAST'											return 'CAST'
@@ -302,14 +310,6 @@ VALUE(S)?                                      	return 'VALUE'
 '?'												return 'QUESTION'
 '!'												return 'EXCLAMATION'
 '^'												return 'CARET'
-
-/* Postgres aliases */
-'~~*'											return 'LIKE'
-'!~~*'											return 'NOT_LIKE'
-'~~'											return 'LIKE'
-'!~~'											return 'NOT_LIKE'
-'ILIKE'											return 'LIKE'
-NOT\s+ILIKE										return 'NOT_LIKE'
 
 '~'												return 'TILDA'
 
