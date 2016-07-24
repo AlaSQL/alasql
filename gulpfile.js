@@ -4,7 +4,7 @@
 // Дата: 06.08.2014
 // (c) 2014-2015, Andrey Gershun
 //
-
+var exec = require('child_process').exec;
 var fs = require('fs');
 var gulp = require('gulp');
 var jison = require('gulp-jison');
@@ -17,6 +17,7 @@ var dereserve = require('gulp-dereserve');
 var argv = require('yargs').argv || {};
 var replace = require('gulp-replace');
 var execSync = require('child_process').execSync;
+
 
 
 // Identify name of the build
@@ -137,21 +138,27 @@ gulp.task('js-merge', function () {
     './src/93sqljs.js',
     './src/94filestorage.js',
     './src/97saveas.js',
+    './src/99worker.js',
     './src/FileSaver.js',
-   	'./src/98finish.js',
-    './src/99worker.js'
+   	'./src/98finish.js'
     ])
-    .pipe(concat('alasql.js'))
+    .pipe(concat('alasql.fs.js'))
     .pipe(replace(/\/\*\/\*[\S\s]+?\*\//g, ''))         // Remove multiline comments starting with "/*/*" 
     .pipe(replace(/^\/\/[ \t]{2,}.*/gm, ''))            // Remove single line comments where the // part is first thing and content does not follow imidiatly (probably a "just test" line) 
     .pipe(replace(/\/\/.*?console\.log\(.*/gm, ''))     // Remove single line comments 'console.log(' is part of the line 
     .pipe(replace(/\n[\s]+\n/g, "\n\n"))                // Collaps multilinebreak 
     .pipe(replace(/PACKAGE_VERSION_NUMBER/g, version))  // Please set version in package.json file
     .pipe(gulp.dest('./dist'))
-    .pipe(dereserve())
+
+    .pipe(dereserve()) 														// Support IE8
+	.pipe(replace(/\/\/\*not-for-browser\/\*/g, "/*not-for-browser/*"))		// Remove things not for browser build
+	.pipe(replace(/\/\*only-for-browser\/\*/g, "//*only-for-browser/*"))	// Reveal things only for browser build
+	.pipe(rename('alasql.js'))
+    .pipe(gulp.dest('./dist'))
     .pipe(rename('alasql.min.js'))
     .pipe(uglify({preserveComments:function(a,b){return 1===b.line && /^!/.test(b.value)}})) // leave first line of comment if starts with a "!"
     .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest('./partners/meteor'))            	// For Meteor publishing
     ;
 });
 
@@ -224,7 +231,7 @@ gulp.task('copy-console-org', function(){
 
 // Echo plugin
 gulp.task('typescript', function(){
-  gulp.src(['./src/typescript/alasql.d.ts'])
+  gulp.src(['partners/typescript/alasql.d.ts'])
     .pipe(gulp.dest('./dist'));
 });
 
@@ -284,7 +291,7 @@ gulp.task('watch', toRun, function(){
   gulp.watch('./src/99worker*.js',function(){ gulp.run('js-merge-worker'); });
   gulp.watch('./src/alasqlparser.jison',function(){ gulp.run('jison-compile'); });
 
-  gulp.watch('./src/typescript/alasql.d.ts',function(){ gulp.run('typescript'); });
+  gulp.watch('partners/typescript/alasql.d.ts',function(){ gulp.run('typescript'); });
   gulp.watch('./src/echo/*.js',function(){ gulp.run('plugin-plugins'); });
   gulp.watch('./src/md/*.js',function(){ gulp.run('plugin-plugins'); });
   gulp.watch('./src/prolog/*.js',function(){ gulp.run('plugin-prolog'); });
@@ -300,6 +307,12 @@ gulp.task('watch', toRun, function(){
 //    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
   });
+
+  gulp.watch('./dist/alasql.min.js',function(){ 
+  	console.log('Initiating mocha test...')
+    exec('npm run test:only', console.log);
+  });
+
 //  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });
   // gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); gulp.run('js-merge');});
   // gulp.watch('./src/*.jisonlex',function(){ gulp.run('jison-lex-compile'); gulp.run('js-merge');});

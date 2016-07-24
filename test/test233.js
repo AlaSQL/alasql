@@ -16,7 +16,7 @@ describe('Test 233 COALESCE() test', function() {
     });
 
     it("2. Throw error", function(done) {
-        alasql('source "test233.sql"',[],function(res){
+        alasql('source "'+__dirname+'/test233.sql"',[],function(res){
             assert.deepEqual(alasql.utils.flatArray(res.pop()),
                 [ 10000,
                   20000,

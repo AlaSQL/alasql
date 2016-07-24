@@ -13,3 +13,8 @@ node_js:
 
 script: npm run test:only && npm test
 
+after_success:
+  - npm run test:cover
+  - bash <(curl -s https://codecov.io/bash)
+  
+sudo: false

@@ -1,11 +1,10 @@
-[![bitHound Score](https://www.bithound.io/github/agershun/alasql/badges/score.svg?123)](https://www.bithound.io/github/agershun/alasql)
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?)
 [![ghit.me](https://ghit.me/badge.svg?repo=agershun/alasql)](https://ghit.me/repo/agershun/alasql)
-[![Inline docs](http://inch-ci.org/github/agershun/alasql.svg?branch=develop)](http://inch-ci.org/github/agershun/alasql)
-![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)
 ![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a)
-![NPM version](https://img.shields.io/npm/l/alasql.svg?)
+![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)
+[![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/agershun/alasql.svg)](http://isitmaintained.com/project/agershun/alasql "Average time to resolve an issue")
 
 _AlaSQL is an open source project and we appreciate any and all contributions we can get. Please help out._
 
@@ -14,7 +13,6 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 # AlaSQL
 
 <a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003945/d6e56888-f156-11e5-95b9-3035a2538ae8.png" align="left" alt="AlaSQL logo" /></a>
-
 _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is an open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
 
 The library is designed for:
@@ -103,8 +101,8 @@ jsFiddle with [example A)](http://jsfiddle.net/hguw3LLk/) and [example B)](http:
 
 ```bash
 npm install --save alasql      # node
-meteor add agershun:alasql     # meteor
 bower install --save alasql    # bower
+import alasql from 'alasql';   # meteor
 npm install -g alasql          # command line
 ```
 
@@ -144,10 +142,15 @@ When you feel you got the grip you can check out the wiki section about [data ma
 **All contributions are much welcome and greatly appreciated(!)** -
 The project has never received any funding and is based on unpaid voluntary work: [We really (really) love pull requests](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)
 
+AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/%21%20Bug). 
+Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). 
 
-AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/%21%20Bug). Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production. 
+[![Known bugs](https://img.shields.io/github/issues-raw/agershun/alasql/!%20bug.svg?label=Known Bugs&maxAge=2592000)](https://github.com/agershun/alasql/issues?q=is%3Aissue+is%3Aopen+label%3A%22%21+Bug%22)
 
-Please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
+
+AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production and please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
+
+
 
 
 ## Performance
@@ -513,6 +516,8 @@ Here's a list of modules that alasql requires
 * cpexcel
 * path
 * es6-promise
+* net
+* tls
 
 #### Webpack
 
@@ -524,7 +529,7 @@ var IgnorePlugin =  require("webpack").IgnorePlugin;
 module.exports = {
   ...
   //Will ignore the modules fs, path, xlsx, xls
-  plugins:[new IgnorePlugin(/(^fs$|xlsx|xls|^path$)/)]
+  plugins:[new IgnorePlugin(/(^fs$|xlsx|xls ... |^path$)/)]
 };
 ```
 
@@ -538,7 +543,7 @@ Example (using excluding)
 var browserify = require("browserify");
 var b = browserify("./main.js").bundle();
 //Will ignore the modules fs, path, xlsx, xls
-["fs","path","xlsx","xls"].map(ignore => b.ignore(ignore));
+["fs","path","xlsx",  ... , "xls"].map(ignore => b.ignore(ignore));
 ```
 
 
@@ -563,7 +568,11 @@ Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alas
 
 0. A `(FULL) OUTER JOIN` and `RIGHT JOIN` on more than 2 tables will not give the expected results. `INNER JOIN` and `LEFT JOIN` are ok.
 
-0. Please use alias for field names with the same name (`SELECT a.id as a_id, b.id as b_id FORM ?`).
+0. Please use alias when you want fields with same name from different tables (`SELECT a.id as a_id, b.id as b_id FROM ?`).
+
+0. At the moment Alasql does not work with jszip 3.0.0 - please use version 2.x 
+
+0. At the moment Alasql is incompatible with xlsx.js 0.8 - please use version [7.x](https://cdnjs.com/libraries/xlsx/0.7.12)
 
 Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
 
@@ -647,4 +656,3 @@ and other people for useful tools, which make our work much easier.
 
 <a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003946/d6e5c076-f156-11e5-8238-e62d2a8d20dc.png" align="right" alt="AlaSQL logo"/></a>
 © 2014-2016, Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk)
-

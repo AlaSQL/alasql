@@ -26,7 +26,7 @@ var Table = alasql.Table = function(params){
 	this.identities = {};
 
 	// Step 5: checkfn...
-	this.checkfn = [];
+	this.checks = [];
 	this.checkfns = []; // For restore... to be done...
 
 	// Step 6: INSERT/DELETE/UPDATE

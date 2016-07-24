@@ -12,7 +12,7 @@ describe('Test 321 CREATE GRAPH', function() {
 
   it('1. READ DATA',function(done){
     alasql.options.modifier = undefined;
-    alasql('SELECT * FROM CSV("test321a.csv",{headers:true})',[],function(data){
+    alasql('SELECT * FROM CSV("'+__dirname+'/test321a.csv",{headers:true})',[],function(data){
       gdata = data;
       // Select unique
       vv = alasql('SEARCH DISTINCT(UNION ALL(/[source],/[target])) FROM ?',[gdata]);

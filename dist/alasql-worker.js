@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.7 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.0 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.7
+@version 0.3.0
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -51,23 +51,122 @@ SOFTWARE.
 	Main procedure for worker
     @function
     @param {string} sql SQL statement
-    @param {object} params List of parameters
+    @param {object} params List of parameters (can be omitted)
     @param {callback} cb Callback function
     @return {object} Query result
 */
 function alasql(sql,params,cb){
+
+	params = params||[];
+
+	// Avoid setting params if not needed even with callback
+	if(typeof params === 'function'){
+		scope = cb;
+		cb = params;
+		params = [];
+	}
+
+	if(typeof params !== 'object'){
+			params = [params];
+	}
+
     // Increase last request id
 	var id = alasql.lastid++;
     // Save callback
 	alasql.buffer[id] = cb;
     // Send a message to worker
 	alasql.webworker.postMessage({id:id,sql:sql,params:params});
-};
+}
 
-/*if (typeof importScripts === 'function') {
-	// Nothing
-} else */ 
-if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
+
+alasql.options = {};
+alasql.options.progress = function(){};
+
+isArray = function(obj){
+	return "[object Array]"===Object.prototype.toString.call(obj);
+}
+
+alasql.promise = function() {
+	throw new Error('Please include a Promise/A+ library');
+}
+
+// From src/18promise.js
+if(typeof Promise !== "undefined"){
+	var promiseExec = function(sql, params, counterStep, counterTotal){
+		 return new Promise(function(resolve, reject){
+	        alasql(sql, params, function(data,err) {
+	             if(err) {
+	                 reject(err);
+	             } else {
+					if (counterStep && counterTotal && alasql.options.progress !== false) {
+						alasql.options.progress(counterStep, counterTotal);
+					}
+	                resolve(data);
+	             }
+	        });
+	    });
+	}
+
+	var promiseAll = function(sqlParamsArray){
+		if(sqlParamsArray.length<1){
+			return ;
+		}
+
+		var active, sql, params;
+
+		var execArray = []; 
+
+		for (var i = 0; i < sqlParamsArray.length; i++) {
+			active = sqlParamsArray[i];
+
+			if(typeof active === 'string'){
+				active = [active];
+			}
+
+			if(!isArray(active) || active.length<1 || 2<active.length){
+				throw new Error('Error in .promise parameter');
+			}
+
+			sql = active[0];
+			params = active[1]||undefined;
+
+			execArray.push(promiseExec(sql, params, i, sqlParamsArray.length));
+		}
+
+		return Promise.all(execArray); 
+	}
+
+	alasql.promise = function(sql, params) {
+		if(typeof Promise === "undefined"){
+			throw new Error('Please include a Promise/A+ library');
+		}
+
+		if(typeof sql === 'string'){
+			return promiseExec(sql, params);
+		}
+
+		if(!isArray(sql) || sql.length<1 || typeof params !== "undefined"){
+			throw new Error('Error in .promise parameters');
+		}
+		return promiseAll(sql);
+	};
+
+}
+
+
+
+alasql = alasql||false;
+
+if(!alasql){
+	throw new Error('alasql was not found');
+}
+
+alasql.worker = function(){
+	throw new Error('Can find webworker in this enviroment');
+
+}
+
+if(typeof(Worker) !== "undefined") {
 
 	alasql.worker = function(path, paths, cb) {
 	//	var path;
@@ -109,7 +208,7 @@ if(typeof location !== "undefined" && location.reload && !(typeof process !== "u
 
 			alasql.webworker.onmessage = function(event) {
 				var id = event.data.id;
-	//			console.log('onmessage',alasql.buffer,id);
+
 				alasql.buffer[id](event.data.data);
 				delete alasql.buffer[id];
 			};
@@ -132,6 +231,10 @@ if(typeof location !== "undefined" && location.reload && !(typeof process !== "u
 	};
 
 }
+
+
+
+
 
 
 /* WebWorker */

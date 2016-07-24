@@ -18,7 +18,7 @@ describe('Test 257 INTO XLS()', function() {
         headers: true
     };
 
-    var res = alasql('SELECT * INTO XLS("restest257a.xls",?) FROM ?',[opts,data]); 
+    var res = alasql('SELECT * INTO XLS("'+__dirname+'/restest257a.xls",?) FROM ?',[opts,data]); 
     assert(res == 1);
 
     // Change sheet
@@ -27,7 +27,7 @@ describe('Test 257 INTO XLS()', function() {
         headers: true
     };
 
-    var res = alasql('SELECT * INTO XLS("restest257a.xls",?) FROM ?',[opts,data]); 
+    var res = alasql('SELECT * INTO XLS("'+__dirname+'/restest257a.xls",?) FROM ?',[opts,data]); 
     assert(res == 1);
 
     // List of sheets
@@ -38,7 +38,7 @@ describe('Test 257 INTO XLS()', function() {
       }]
     };
 
-    var res = alasql('SELECT * INTO XLS("restest257a.xls",?) FROM ?',[opts,data]); 
+    var res = alasql('SELECT * INTO XLS("'+__dirname+'/restest257a.xls",?) FROM ?',[opts,data]); 
     assert(res == 1);
 
     // Background color
@@ -46,7 +46,7 @@ describe('Test 257 INTO XLS()', function() {
       style:"background:#00ff00"
     };
 
-    var res = alasql('SELECT * INTO XLS("restest257a.xls",?) FROM ?',[opts,data]); 
+    var res = alasql('SELECT * INTO XLS("'+__dirname+'/restest257a.xls",?) FROM ?',[opts,data]); 
     assert(res == 1);
 
     // Background color
@@ -69,7 +69,7 @@ describe('Test 257 INTO XLS()', function() {
       ]
     };
 
-    var res = alasql('SELECT * INTO XLS("restest257a.xls",?) FROM ?',[opts,data]); 
+    var res = alasql('SELECT * INTO XLS("'+__dirname+'/restest257a.xls",?) FROM ?',[opts,data]); 
     assert(res == 1);
     done();
   });
@@ -164,7 +164,7 @@ describe('Test 257 INTO XLS()', function() {
         }
     };
 
-    var res = alasql('SELECT * INTO XLS("restest257b.xls",?) FROM ?',[opts,items]);
+    var res = alasql('SELECT * INTO XLS("'+__dirname+'/restest257b.xls",?) FROM ?',[opts,items]);
     assert(res == 1);
     done();
 

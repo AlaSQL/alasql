@@ -20,7 +20,7 @@ describe('Test '+test+' Load data from text file with default headers option', f
   });
 
   it('1. Load TXT',function(done){
-    alasql('SELECT * FROM TXT("test419a.txt")',[],function(res){
+    alasql('SELECT * FROM TXT("'+__dirname+'/test419a.txt")',[],function(res){
       assert.deepEqual(res,
       [ { '0': 'words,letters' },
         { '0': 'There,5' },
@@ -33,7 +33,7 @@ describe('Test '+test+' Load data from text file with default headers option', f
 	});
 
   it('2. Load CSV with {headers:true}',function(done){
-    alasql('SELECT * FROM CSV("test419a.txt",{headers:true})',[],function(res){
+    alasql('SELECT * FROM CSV("'+__dirname+'/test419a.txt",{headers:true})',[],function(res){
       assert.deepEqual(res,
       [ { words: 'There', letters: 5 },
         { words: 'are', letters: 3 },
@@ -45,7 +45,7 @@ describe('Test '+test+' Load data from text file with default headers option', f
   });
 
   it('3. Load CSV by default',function(done){
-    alasql('SELECT * FROM CSV("test419a.txt")',[],function(res){
+    alasql('SELECT * FROM CSV("'+__dirname+'/test419a.txt")',[],function(res){
       assert.deepEqual(res,
       [ { words: 'There', letters: 5 },
         { words: 'are', letters: 3 },
@@ -57,7 +57,7 @@ describe('Test '+test+' Load data from text file with default headers option', f
   });
 
   it('4. Load CSV with {headers:false}',function(done){
-    alasql('SELECT * FROM CSV("test419a.txt",{headers:false})',[],function(res){
+    alasql('SELECT * FROM CSV("'+__dirname+'/test419a.txt",{headers:false})',[],function(res){
       assert.deepEqual(res,
       [ { '0': 'words', '1': 'letters' },
         { '0': 'There', '1': '5' },
@@ -70,7 +70,7 @@ describe('Test '+test+' Load data from text file with default headers option', f
   });
 
   it('4. Load XLSX with {headers:true}',function(done){
-    alasql('SELECT * FROM XLSX("test419.xlsx",{headers:true})',[],function(res){
+    alasql('SELECT * FROM XLSX("'+__dirname+'/test419.xlsx",{headers:true})',[],function(res){
       assert.deepEqual(res,
       [ { words: 'don’t', letters: 1 },
         { words: 'come', letters: 2 },
@@ -81,7 +81,7 @@ describe('Test '+test+' Load data from text file with default headers option', f
   });
 
   it('5. Load XLSX',function(done){
-    alasql('SELECT * FROM XLSX("test419.xlsx")',[],function(res){
+    alasql('SELECT * FROM XLSX("'+__dirname+'/test419.xlsx")',[],function(res){
       assert.deepEqual(res,
       [ { words: 'don’t', letters: 1 },
         { words: 'come', letters: 2 },
@@ -92,7 +92,7 @@ describe('Test '+test+' Load data from text file with default headers option', f
   });
 
   it('6. Load XLSX with {headers:true}',function(done){
-    alasql('SELECT * FROM XLSX("test419.xlsx",{headers:false})',[],function(res){
+    alasql('SELECT * FROM XLSX("'+__dirname+'/test419.xlsx",{headers:false})',[],function(res){
       assert.deepEqual(res,
       [ { A: 'words', B: 'letters' },
         { A: 'don’t', B: 1 },

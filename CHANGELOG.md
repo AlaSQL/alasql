@@ -1,10 +1,17 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-_0.2.8 "..." (xx.06.2016)_
+_0.3.1 "..." (?.08.2016)_
 
+* ...
 
-_0.2.7 "Corinth" (30.05.2016)_
+## Version 0.3.0 "Papeete" (25.07.2016)_
+* Breaking change: CSVs with header will now default have BOM added (for better utf8 support) 
+* Added: Constraint names will now be exported in error message
+* Added: Web worker now supports .promise notation
+* Added: Postgres-specific aliases and fixes
+
+### 0.2.7 "Corinth" (30.05.2016)
 * Added: Now supports Node 6.0 
 * Added: Let .promise return all responses (not just last) 
 * Change: Headers set as default true for INTO and FROM statements
@@ -101,7 +108,6 @@ _0.2.7 "Corinth" (30.05.2016)_
 * Fix: .CSV files made Excel 2013 compliant 
 * Fix: misbehavour related to 'NOT' and '=' predecession
 * Fix: alasql running from cordova on iOS
-
 
 
 ## Version 0.2.0 "Athens" (13.07.2015)

@@ -16,7 +16,7 @@ describe('Test 279 IE9 tests', function() {
     var data = [{city:"London",population:5000000}, {city:"Moscow",population:12000000}, ];
 //    alasql('SELECT * INTO TSV("aaa.txt",{headers:true}) FROM ?',[data]);
 //    alasql('SELECT * INTO XLS("aaa.xls",{headers:true}) FROM ?',[data]);
-    alasql('SELECT * INTO XLSXML("restest279.xls",{headers:true}) FROM ?',[data]);
+    alasql('SELECT * INTO XLSXML("'+__dirname+'/restest279.xls",{headers:true}) FROM ?',[data]);
     done();
   });
 

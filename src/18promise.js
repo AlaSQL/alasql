@@ -6,7 +6,9 @@
 if(!utils.global.Promise){
 
 	if(utils.isNode){
+		//*not-for-browser/*
 		utils.global.Promise = require('es6-promise').Promise;
+		//*/
 	} else {
 		/*!
 		 * @overview es6-promise - a tiny implementation of Promises/A+.
@@ -68,39 +70,6 @@ var promiseAll = function(sqlParamsArray){
 	return utils.global.Promise.all(execArray); 
 }
 
-/**
-var promiseChain = function(progress, sqlParamsArray, lastPromise){
-	var active, sql, params;
-	if(sqlParamsArray.length<1){
-		return lastPromise;
-	}
-
-	active = sqlParamsArray.shift();
-
-	if(typeof active === 'string'){
-		active = [active];
-	}
-
-	if(!utils.isArray(active) || active.length<1 || 2<active.length){
-		throw new Error('Error in .promise parameter');
-	}
-
-	sql = active[0];
-	params = active[1]||undefined;
-
-	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.idx++);
-	}
-
-	if(typeof lastPromise === 'undefined'){
-		return promiseChain(progress, sqlParamsArray, promiseExec(sql, params));
-	}
-
-	return promiseChain(progress, sqlParamsArray, lastPromise.then(function(){return promiseExec(sql, params)}));
-
-}*/
-
-
 alasql.promise = function(sql, params) {
 	if(typeof Promise === "undefined"){
 		throw new Error('Please include a Promise/A+ library');
@@ -113,13 +82,5 @@ alasql.promise = function(sql, params) {
 	if(!utils.isArray(sql) || sql.length<1 || typeof params !== "undefined"){
 		throw new Error('Error in .promise parameters');
 	}
-	/*
-	var progress = {idx: 0, total: sql.length};
-	if (alasql.options.progress !== false) {
-    alasql.options.progress(progress.total, progress.idx++);
-	}
-	*/
 	return promiseAll(sql);
-
-	//return promiseChain(progress, sql);
 };
