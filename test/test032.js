@@ -6,7 +6,7 @@ if(typeof exports === 'object') {
 describe('Test 32', function() {
 	var db = new alasql.Database("db");
 
-	it('LIKE and NOT LIKE', function(done){
+	it('LIKE, NOT LIKE and aliases', function(done){
 
 		db.exec('CREATE TABLE test (a STRING, b INT, t DATETIME)');
 		db.exec("INSERT INTO test (a) VALUES ('a')");
@@ -27,17 +27,20 @@ describe('Test 32', function() {
 		var sql = "SELECT COLUMN b FROM test WHERE a NOT     LIKE '%bc%'";
 		assert.deepEqual([1,2],db.exec(sql));
 		
+		var likeAliases = ['like', 'ilike', '~~', '~~*'],
+			notLikeAliases = ['not like', 'not      like', 'not     ilike', '!~~', '!~~*']
 		
 		// caseinsensetive
-		var sql = "SELECT COLUMN b FROM test WHERE a LIKE '%BC%'";
-		assert.deepEqual([3,4,5],db.exec(sql));
+		for (var i in likeAliases) {
+			var sql = "SELECT COLUMN b FROM test WHERE a " + likeAliases[i] + " '%BC%'";
+			assert.deepEqual([3,4,5],db.exec(sql));
+		}
 
-		var sql = "SELECT COLUMN b FROM test WHERE a NOT LIKE '%BC%'";
-		assert.deepEqual([1,2],db.exec(sql));
-
-		var sql = "SELECT COLUMN b FROM test WHERE a NOT     LIKE '%BC%'";
-		assert.deepEqual([1,2],db.exec(sql));		
-
+		// caseinsensetive
+		for (var i in notLikeAliases) {
+			var sql = "SELECT COLUMN b FROM test WHERE a " + notLikeAliases[i] + " '%BC%'";
+			assert.deepEqual([1,2],db.exec(sql));
+		}
 
 		done();
 	});

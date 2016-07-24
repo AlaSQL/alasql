@@ -516,6 +516,8 @@ Here's a list of modules that alasql requires
 * cpexcel
 * path
 * es6-promise
+* net
+* tls
 
 #### Webpack
 
@@ -527,7 +529,7 @@ var IgnorePlugin =  require("webpack").IgnorePlugin;
 module.exports = {
   ...
   //Will ignore the modules fs, path, xlsx, xls
-  plugins:[new IgnorePlugin(/(^fs$|xlsx|xls|^path$)/)]
+  plugins:[new IgnorePlugin(/(^fs$|xlsx|xls ... |^path$)/)]
 };
 ```
 
@@ -541,7 +543,7 @@ Example (using excluding)
 var browserify = require("browserify");
 var b = browserify("./main.js").bundle();
 //Will ignore the modules fs, path, xlsx, xls
-["fs","path","xlsx","xls"].map(ignore => b.ignore(ignore));
+["fs","path","xlsx",  ... , "xls"].map(ignore => b.ignore(ignore));
 ```
 
 
