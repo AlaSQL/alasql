@@ -1,8 +1,8 @@
 Package.describe({
 	name: 'agershun:alasql',
-	version: '0.2.8',
+	version: '0.2.9',
 	// Brief, one-line summary of the package.
-	summary: 'Javascript SQL database library',
+	summary: 'Please use NPM package of alasql instead.',
 	// URL to the Git repository containing the source code for this package.
 	git: 'http://github.com/agershun/alasql.git',
 	// By default, Meteor will default to using README.md for documentation.
@@ -17,7 +17,7 @@ Package.onUse(function(api) {
 	//  api.addFiles('./../../dist/alasql.min.js');
 	//  api.addFiles('./../../dist/alasql-echo.js');
 
-  	api.mainModule('alasql.min.js');
+  	api.mainModule('alasql.js');
 
 	// Todo: implement browser version for client and fs version for server
 	//api.mainModule('alasql.fs.js', 'server');

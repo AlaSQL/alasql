@@ -1,49 +1,3 @@
-//! AlaSQL v0.2.7-develop-1325 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
-/*
-@module alasql
-@version 0.2.7-develop-1325
-
-AlaSQL - JavaScript SQL database
-© 2014-2016	Andrey Gershun & Mathias Rangel Wulff
-
-@license
-The MIT License (MIT)
-
-Copyright 2014-2016 Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk) 
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-*/
-
-/**
-	@fileoverview AlaSQL JavaScript SQL library
-	@see http://github.com/agershun/alasql
-*/
-
-/**
-	Callback from statement
-	@callback statement-callback
-	@param {object} data Result data
-*/
-
-/**
-	UMD envelope for AlaSQL
-*/
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -87,60 +41,15 @@ SOFTWARE.
 
 var alasql = function(sql, params, cb, scope) {
 
-	params = params||[];
-
-	// Avoid setting params if not needed even with callback
-	if(typeof params === 'function'){
-		scope = cb;
-		cb = params;
-		params = [];
-	}
-
-	if(typeof params !== 'object'){
-			params = [params];
-	}
-
-	if(typeof importScripts !== 'function' && alasql.webworker) {
-		var id = alasql.lastid++;
-		alasql.buffer[id] = cb;
-		alasql.webworker.postMessage({id:id,sql:sql,params:params});
-	} else {
-		if(arguments.length === 0) {
-			// Without arguments - Fluent interface
-			return new yy.Select({
-				columns:[new yy.Column({columnid:'*'})],
-				from: [new yy.ParamValue({param:0})]
-			});
-		} else if (arguments.length === 1 && typeof sql === "object" && sql instanceof Array) {
-			// One argument data object - fluent interface
-				var select = new yy.Select({
-					columns:[new yy.Column({columnid:'*'})],
-					from: [new yy.ParamValue({param:0})]
-				});
-				select.preparams = [sql];	
-				return select;
-		} else {
-			// Standard interface
-			// alasql('#sql');
-			if(typeof sql === 'string' && sql[0]==='#' && typeof document === "object") {
-				sql = document.querySelector(sql).textContent;
-			} else if(typeof sql === 'object' && sql instanceof HTMLElement) {
-				sql = sql.textContent;
-			} else if(typeof sql === 'function') {
-				// to run multiline functions
-				sql = sql.toString().slice(14,-3);
-			}
-			// Run SQL			
-			return alasql.exec(sql, params, cb, scope);
-		}
-	}
+	throw new Error('Please use NPM to include AlaSQL in your meteor project: "import alasql from \'alasql\'"');
+	
 };
 
 /** 
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.7-develop-1325';
+alasql.version = '0.2.9';
 
 /**
 	Debug flag

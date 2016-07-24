@@ -515,3 +515,5 @@ alasql.column = alasql.queryArray;
 alasql.array = alasql.queryArray;
 alasql.matrix = alasql.queryArrayOfArrays;
 */
+
+

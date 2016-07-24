@@ -138,9 +138,9 @@ gulp.task('js-merge', function () {
     './src/93sqljs.js',
     './src/94filestorage.js',
     './src/97saveas.js',
+    './src/99worker.js',
     './src/FileSaver.js',
-   	'./src/98finish.js',
-    './src/99worker.js'
+   	'./src/98finish.js'
     ])
     .pipe(concat('alasql.fs.js'))
     .pipe(replace(/\/\*\/\*[\S\s]+?\*\//g, ''))         // Remove multiline comments starting with "/*/*" 

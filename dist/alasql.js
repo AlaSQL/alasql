@@ -1,7 +1,7 @@
-//! AlaSQL v0.2.7-develop-1356 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.2.7-develop-1359 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.2.7-develop-1356
+@version 0.2.7-develop-1359
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.2.7-develop-1356';
+alasql.version = '0.2.7-develop-1359';
 
 /**
 	Debug flag
@@ -4754,7 +4754,7 @@ var Table = alasql.Table = function(params){
 	this.identities = {};
 
 	// Step 5: checkfn...
-	this.checkfn = [];
+	this.checks = [];
 	this.checkfns = []; // For restore... to be done...
 
 	// Step 6: INSERT/DELETE/UPDATE
@@ -10934,7 +10934,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 			}
 			if(col.check) {
-				table.checkfn.push(new Function("r",'var y;return '+col.check.expression.toJS('r','')));
+				table.checks.push({id: col.check.constrantid, fn: new Function("r",'var y;return '+col.check.expression.toJS('r',''))});
 			}
 
 			if(col["default"]) {
@@ -10989,7 +10989,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					}
 					return true;
 				};
-				table.checkfn.push(fkfn);
+				table.checks.push({fn: fkfn});
 			}
 
 			if(col.onupdate) {
@@ -11007,6 +11007,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 //	if(constraints) {
 	constraints.forEach(function(con) {
 
+		var checkfn;
+
 		if(con.type === 'PRIMARY KEY') {
 			if(table.pk) {
 				throw new Error('Primary key already exists');
@@ -11021,7 +11023,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.uniqs[pk.hh] = {};					
 		} else if(con.type === 'CHECK') {
 
-			table.checkfn.push(new Function("r",'var y;return '+con.expression.toJS('r','')));
+			checkfn = new Function("r",'var y;return '+con.expression.toJS('r',''))
 		} else if(con.type === 'UNIQUE') {
 
 			var uk = {};
@@ -11046,7 +11048,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				fk.columnid = fktable.pk.columns[0];
 			}
 
-			var fkfn = function(r) {
+			checkfn = function(r) {
 				var rr = {};
 				if(typeof r[col.columnid] === 'undefined'){
 					return true;
@@ -11060,8 +11062,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 				return true;
 			};
-			table.checkfn.push(fkfn);
 		}
+		if (checkfn) table.checks.push({fn: checkfn, id: con.constraintid, fk: con.type === 'FOREIGN KEY'});
 	});
 
 	if(this.view && this.viewcolumns) {
@@ -11138,11 +11140,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		}
 
-		if(table.checkfn && table.checkfn.length>0) {
-			table.checkfn.forEach(function(checkfn){
-				if(!checkfn(r)) {
+		if(table.checks && table.checks.length>0) {
+			table.checks.forEach(function(check){
+				if(!check.fn(r)) {
 
-					throw new Error('Violation of CHECK constraint');			
+					throw new Error('Violation of CHECK constraint ' + (check.id || ''));			
 				}
 			});
 		}
@@ -11355,10 +11357,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		if(escape) return;
 
 		// PART 2 - POST CHECK
-		if(table.checkfn && table.checkfn.length>0) {
-			table.checkfn.forEach(function(checkfn){
-				if(!checkfn(r)) {
-					throw new Error('Violation of CHECK constraint');			
+		if(table.checks && table.checks.length>0) {
+			table.checks.forEach(function(check){
+				if(!check.fn(r)) {
+					throw new Error('Violation of CHECK constraint ' + (check.id || ''));			
 				}
 			});
 		}
@@ -17029,6 +17031,83 @@ FS.rollback = function(databaseid, cb) {
 
 if(utils.isBrowser && !utils.isWebWorker) {
 
+alasql = alasql||false;
+
+if(!alasql){
+	throw new Error('alasql was not found');
+}
+
+alasql.worker = function(){
+	throw new Error('Can find webworker in this enviroment');
+
+}
+
+if(typeof(Worker) !== "undefined") {
+
+	alasql.worker = function(path, paths, cb) {
+	//	var path;
+		if(path === true){
+			path = undefined;
+		}
+
+		if (typeof path === "undefined") {
+			var sc = document.getElementsByTagName('script');
+			for(var i=0;i<sc.length;i++) {
+				if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
+					path = sc[i].src.substr(0,sc[i].src.length-16)+'alasql.js'; 
+					break;
+				} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
+					path = sc[i].src.substr(0,sc[i].src.length-20)+'alasql.min.js';
+					break;
+				} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
+					path = sc[i].src; 
+					break;
+				} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
+					path = sc[i].src.substr(0,sc[i].src.length-13)+'alasql.min.js'; 
+					break;
+				}
+			}
+		}
+
+		if(typeof path === "undefined") {
+			throw new Error('Path to alasql.js is not specified');
+		} else if(path !== false) {
+
+			var js = "importScripts('";
+				js += path;
+				js+="');self.onmessage = function(event) {"+
+			"alasql(event.data.sql,event.data.params, function(data){"+
+			"postMessage({id:event.data.id, data:data});});}";
+
+			var blob = new Blob([js], {"type": "text\/plain"});
+			alasql.webworker = new Worker(URL.createObjectURL(blob));
+
+			alasql.webworker.onmessage = function(event) {
+				var id = event.data.id;
+
+				alasql.buffer[id](event.data.data);
+				delete alasql.buffer[id];
+			};
+
+			alasql.webworker.onerror = function(e){
+				throw e;
+			}
+
+			if(arguments.length > 1) {
+				var sql = 'REQUIRE ' + paths.map(function(p){
+					return '"'+p+'"';
+				}).join(",");
+				alasql(sql,[],cb);
+			}
+
+		} else if(path === false) {
+			delete alasql.webworker;
+			return;
+		}
+	};
+
+}
+
 /* FileSaver.js
  * A saveAs() FileSaver implementation.
  * 2015-03-04
@@ -17290,70 +17369,4 @@ alasql.use("alasql");
 
 return alasql;
 }));
-
-if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
-
-	alasql.worker = function(path, paths, cb) {
-	//	var path;
-		if(path === true){
-			path = undefined;
-		}
-
-		if (typeof path === "undefined") {
-			var sc = document.getElementsByTagName('script');
-			for(var i=0;i<sc.length;i++) {
-				if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
-					path = sc[i].src.substr(0,sc[i].src.length-16)+'alasql.js'; 
-					break;
-				} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
-					path = sc[i].src.substr(0,sc[i].src.length-20)+'alasql.min.js';
-					break;
-				} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
-					path = sc[i].src; 
-					break;
-				} else if (sc[i].src.substr(-13).toLowerCase() === 'alasql.min.js') {
-					path = sc[i].src.substr(0,sc[i].src.length-13)+'alasql.min.js'; 
-					break;
-				}
-			}
-		}
-
-		if(typeof path === "undefined") {
-			throw new Error('Path to alasql.js is not specified');
-		} else if(path !== false) {
-
-			var js = "importScripts('";
-				js += path;
-				js+="');self.onmessage = function(event) {"+
-			"alasql(event.data.sql,event.data.params, function(data){"+
-			"postMessage({id:event.data.id, data:data});});}";
-
-			var blob = new Blob([js], {"type": "text\/plain"});
-			alasql.webworker = new Worker(URL.createObjectURL(blob));
-
-			alasql.webworker.onmessage = function(event) {
-				var id = event.data.id;
-
-				alasql.buffer[id](event.data.data);
-				delete alasql.buffer[id];
-			};
-
-			alasql.webworker.onerror = function(e){
-				throw e;
-			}
-
-			if(arguments.length > 1) {
-				var sql = 'REQUIRE ' + paths.map(function(p){
-					return '"'+p+'"';
-				}).join(",");
-				alasql(sql,[],cb);
-			}
-
-		} else if(path === false) {
-			delete alasql.webworker;
-			return;
-		}
-	};
-
-}
 

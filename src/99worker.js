@@ -1,7 +1,16 @@
 
+alasql = alasql||false;
 
+if(!alasql){
+	throw new Error('alasql was not found');
+}
 
-if(typeof location !== "undefined" && location.reload && !(typeof process !== "undefined" && process.browser) && !(typeof require === "function" && typeof require.specified === "function")) {
+alasql.worker = function(){
+	throw new Error('Can find webworker in this enviroment');
+
+}
+
+if(typeof(Worker) !== "undefined") {
 
 	alasql.worker = function(path, paths, cb) {
 	//	var path;
@@ -43,7 +52,7 @@ if(typeof location !== "undefined" && location.reload && !(typeof process !== "u
 
 			alasql.webworker.onmessage = function(event) {
 				var id = event.data.id;
-	//			console.log('onmessage',alasql.buffer,id);
+
 				alasql.buffer[id](event.data.data);
 				delete alasql.buffer[id];
 			};
