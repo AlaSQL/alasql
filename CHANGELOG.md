@@ -1,7 +1,7 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-_0.3.1 "..." (?.08.2016)_
+_0.3.1 "..." (18.08.2016)_
 
 * ...
 
@@ -10,6 +10,9 @@ _0.3.1 "..." (?.08.2016)_
 * Added: Constraint names will now be exported in error message
 * Added: Web worker now supports .promise notation
 * Added: Postgres-specific aliases and fixes
+* Added: Make converting to an unknown type result in a noop rather than an error
+* Added: Support column types consisting of more than 2 words
+
 
 ### 0.2.7 "Corinth" (30.05.2016)
 * Added: Now supports Node 6.0 
