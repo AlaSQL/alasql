@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.0-develop-1367 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.0-develop-1372 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.0-develop-1367
+@version 0.3.0-develop-1372
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.0-develop-1367';
+alasql.version = '0.3.0-develop-1372';
 
 /**
 	Debug flag
@@ -4292,6 +4292,26 @@ alasql.use = function (databaseid) {
 
 };
 
+alasql.autoval = function(tablename, colname, getNext, databaseid){
+
+		var db = databaseid?alasql.databases[databaseid]:alasql.databases[alasql.useid];
+
+		if(!db.tables[tablename]){
+			throw new Error('Tablename not found: '+tablename);
+		}
+
+		if(!db.tables[tablename].identities[colname]){
+			throw new Error('Colname not found: '+colname);
+		}
+
+		if(getNext){
+			return db.tables[tablename].identities[colname].value || null;
+		}
+
+		return (db.tables[tablename].identities[colname].value - db.tables[tablename].identities[colname].step) || null
+
+}
+
 /**
  Run single SQL statement on current database
  */
@@ -4663,6 +4683,10 @@ Database.prototype.resetSqlCache = function () {
 
 Database.prototype.exec = function(sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
+};
+
+Database.prototype.autoval = function(tablename, colname, getNext) {
+	return alasql.autoval(tablename, colname, getNext, this.databaseid);
 };
 
 // Aliases like MS SQL
@@ -10267,7 +10291,23 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
-	if(alasql.fn[funcid]) {
+	if(!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
+		if(this.args && this.args.length > 0) {
+			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
+		} else {
+			s += alasql.stdlib[funcid.toUpperCase()]();
+		}
+	} else if(!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
+		if(this.newid) s+= 'new ';
+		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
+
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJS(context, tableid, defcols);
+			}).join(',');
+		};
+		s += ')';		
+	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
 
@@ -10280,24 +10320,6 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 			}).join(',');
 		};
 		s += ')';
-	} else if(alasql.stdlib[funcid.toUpperCase()]) {
-		if(this.args && this.args.length > 0) {
-			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
-		} else {
-			s += alasql.stdlib[funcid.toUpperCase()]();
-		}
-	} else if(alasql.stdfn[funcid.toUpperCase()]) {
-		if(this.newid) s+= 'new ';
-		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
-
-		if(this.args && this.args.length > 0) {
-			s += this.args.map(function(arg){
-				return arg.toJS(context, tableid, defcols);
-			}).join(',');
-		};
-		s += ')';		
-	} else {
-		// Aggregator
 	}
 
 //	if(this.alias) s += ' AS '+this.alias;

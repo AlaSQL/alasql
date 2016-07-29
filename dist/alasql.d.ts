@@ -73,6 +73,7 @@ declare namespace alaSQLSpace {
         promise(sql: any, params?: any): Thenable<any>;
         fn: userDefinedFunctionLookUp;
         aggr: userAggregatorLookUp;
+        autoval(tablename: string, colname: string, getNext=:boolean): number;
     }
 }
 

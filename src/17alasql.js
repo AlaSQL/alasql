@@ -149,6 +149,27 @@ alasql.use = function (databaseid) {
 
 };
 
+alasql.autoval = function(tablename, colname, getNext, databaseid){
+
+		var db = databaseid?alasql.databases[databaseid]:alasql.databases[alasql.useid];
+
+		if(!db.tables[tablename]){
+			throw new Error('Tablename not found: '+tablename);
+		}
+
+		if(!db.tables[tablename].identities[colname]){
+			throw new Error('Colname not found: '+colname);
+		}
+
+		if(getNext){
+			return db.tables[tablename].identities[colname].value || null;
+		}
+
+		return (db.tables[tablename].identities[colname].value - db.tables[tablename].identities[colname].step) || null
+
+}
+
+
 /**
  Run single SQL statement on current database
  */
