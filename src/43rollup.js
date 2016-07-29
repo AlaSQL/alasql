@@ -43,7 +43,8 @@ var rollup = function (a,query) {
 var cube = function (a,query) {
 	var rr = [];
 	var glen = a.length;
-	for(var g=0;g<(1<<glen);g++) {
+	var glenCube = 1<<glen;
+	for(var g=0;g<(glenCube);g++) {
 		var ss = [];
 		for(var i=0;i<glen;i++) {
 			if(g&(1<<i)) //ss.push(a[i]);

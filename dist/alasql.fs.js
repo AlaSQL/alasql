@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.0 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.0-develop-1367 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.0
+@version 0.3.0-develop-1367
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.0';
+alasql.version = '0.3.0-develop-1367';
 
 /**
 	Debug flag
@@ -6219,7 +6219,7 @@ function queryfn3(query) {
 			ilen=nd.data.length
 			for(var i=0;i<ilen;i++) {
 				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+				for(var j=Math.min(query.columns.length,nd.columns.length)-1;0<=j;j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -6258,7 +6258,7 @@ function queryfn3(query) {
 			var ud = [];
 			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
 				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+				for(var j=Math.min(query.columns.length,nd.columns.length)-1;0<=j;j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -6424,7 +6424,9 @@ function doDistinct (query) {
 			uniq[uix] = query.data[i];
 		}
 		query.data = [];
-		for(var key in uniq) query.data.push(uniq[key]);
+		for(var key in uniq){
+			query.data.push(uniq[key]);
+		}
 	}
 }
 
@@ -7145,7 +7147,7 @@ function modify(query, res) { // jshint ignore:line
 		// Try to create columns
 		if(res.length > 0) {
 			var allcol = {};
-			for(var i=0;i<Math.min(res.length,alasql.options.columnlookup||10);i++) {
+			for(var i=Math.min(res.length,alasql.options.columnlookup||10)-1;0<=i;i--) {
 				for(var key in res[i]) {
 					allcol[key] = true;
 				}
@@ -8903,7 +8905,8 @@ var rollup = function (a,query) {
 var cube = function (a,query) {
 	var rr = [];
 	var glen = a.length;
-	for(var g=0;g<(1<<glen);g++) {
+	var glenCube = 1<<glen;
+	for(var g=0;g<(glenCube);g++) {
 		var ss = [];
 		for(var i=0;i<glen;i++) {
 			if(g&(1<<i)) //ss.push(a[i]);
@@ -15379,7 +15382,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		var row1 = +rg[1].match(/[0-9]+/)[0];
 
 		var hh = {};
-		for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+		var xlscnCol0 = alasql.utils.xlscn(col0);
+		var xlscnCol1 = alasql.utils.xlscn(col1);
+		for(var j=xlscnCol0;j<=xlscnCol1;j++){
 			var col = alasql.utils.xlsnc(j);
 			if(opt.headers) {
 				if(workbook.Sheets[sheetid][col+""+row0]) {
@@ -15397,7 +15402,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		}
 		for(var i=row0;i<=row1;i++) {
 			var row = {};
-			for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+			for(var j=xlscnCol0;j<=xlscnCol1;j++){
 				var col = alasql.utils.xlsnc(j);
 				if(workbook.Sheets[sheetid][col+""+i]) {
 					row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;
