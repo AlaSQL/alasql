@@ -85,6 +85,9 @@ Database.prototype.exec = function(sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
 };
 
+Database.prototype.autoval = function(tablename, colname, getNext) {
+	return alasql.autoval(tablename, colname, getNext, this.databaseid);
+};
 
 /*/*
 // 	// Compile

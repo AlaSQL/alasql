@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.0 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.1 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.0
+@version 0.3.1
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.0';
+alasql.version = '0.3.1';
 
 /**
 	Debug flag
@@ -4292,6 +4292,26 @@ alasql.use = function (databaseid) {
 
 };
 
+alasql.autoval = function(tablename, colname, getNext, databaseid){
+
+		var db = databaseid?alasql.databases[databaseid]:alasql.databases[alasql.useid];
+
+		if(!db.tables[tablename]){
+			throw new Error('Tablename not found: '+tablename);
+		}
+
+		if(!db.tables[tablename].identities[colname]){
+			throw new Error('Colname not found: '+colname);
+		}
+
+		if(getNext){
+			return db.tables[tablename].identities[colname].value || null;
+		}
+
+		return (db.tables[tablename].identities[colname].value - db.tables[tablename].identities[colname].step) || null
+
+}
+
 /**
  Run single SQL statement on current database
  */
@@ -4663,6 +4683,10 @@ Database.prototype.resetSqlCache = function () {
 
 Database.prototype.exec = function(sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
+};
+
+Database.prototype.autoval = function(tablename, colname, getNext) {
+	return alasql.autoval(tablename, colname, getNext, this.databaseid);
 };
 
 // Aliases like MS SQL
@@ -6219,7 +6243,7 @@ function queryfn3(query) {
 			ilen=nd.data.length
 			for(var i=0;i<ilen;i++) {
 				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+				for(var j=Math.min(query.columns.length,nd.columns.length)-1;0<=j;j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -6258,7 +6282,7 @@ function queryfn3(query) {
 			var ud = [];
 			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
 				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+				for(var j=Math.min(query.columns.length,nd.columns.length)-1;0<=j;j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -6424,7 +6448,9 @@ function doDistinct (query) {
 			uniq[uix] = query.data[i];
 		}
 		query.data = [];
-		for(var key in uniq) query.data.push(uniq[key]);
+		for(var key in uniq){
+			query.data.push(uniq[key]);
+		}
 	}
 }
 
@@ -7145,7 +7171,7 @@ function modify(query, res) { // jshint ignore:line
 		// Try to create columns
 		if(res.length > 0) {
 			var allcol = {};
-			for(var i=0;i<Math.min(res.length,alasql.options.columnlookup||10);i++) {
+			for(var i=Math.min(res.length,alasql.options.columnlookup||10)-1;0<=i;i--) {
 				for(var key in res[i]) {
 					allcol[key] = true;
 				}
@@ -8903,7 +8929,8 @@ var rollup = function (a,query) {
 var cube = function (a,query) {
 	var rr = [];
 	var glen = a.length;
-	for(var g=0;g<(1<<glen);g++) {
+	var glenCube = 1<<glen;
+	for(var g=0;g<(glenCube);g++) {
 		var ss = [];
 		for(var i=0;i<glen;i++) {
 			if(g&(1<<i)) //ss.push(a[i]);
@@ -10264,7 +10291,23 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
-	if(alasql.fn[funcid]) {
+	if(!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
+		if(this.args && this.args.length > 0) {
+			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
+		} else {
+			s += alasql.stdlib[funcid.toUpperCase()]();
+		}
+	} else if(!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
+		if(this.newid) s+= 'new ';
+		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
+
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJS(context, tableid, defcols);
+			}).join(',');
+		};
+		s += ')';		
+	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
 
@@ -10277,24 +10320,6 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 			}).join(',');
 		};
 		s += ')';
-	} else if(alasql.stdlib[funcid.toUpperCase()]) {
-		if(this.args && this.args.length > 0) {
-			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
-		} else {
-			s += alasql.stdlib[funcid.toUpperCase()]();
-		}
-	} else if(alasql.stdfn[funcid.toUpperCase()]) {
-		if(this.newid) s+= 'new ';
-		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
-
-		if(this.args && this.args.length > 0) {
-			s += this.args.map(function(arg){
-				return arg.toJS(context, tableid, defcols);
-			}).join(',');
-		};
-		s += ')';		
-	} else {
-		// Aggregator
 	}
 
 //	if(this.alias) s += ' AS '+this.alias;
@@ -10412,22 +10437,34 @@ alasql.aggr.GROUP_CONCAT = function(v,s,stage){
 // };
 
 alasql.aggr.MEDIAN = function(v,s,stage){
-  if(stage == 1) {
-    return [v];
-  } else if(stage == 2) {
-    s.push(v);    
-    return s;
-  } else {
-    var p = s.sort();
-    return p[(p.length/2)|0];     
-  };
+	if(stage === 2) {
+		if(v === null){
+			return s;
+		}
+		s.push(v);    
+		return s;
+	} else if(stage === 1) {
+	  	if(v === null){
+	  		return [];
+	  	}
+	    return [v];
+  	} else {
+		var p = s.sort();
+		return p[(p.length/2)|0];     
+	};
 };
 
 // Standard deviation
 alasql.aggr.VAR = function(v,s,stage){
-	if(stage == 1) {
+	if(stage === 1) {
+		if(v === null){
+			return {arr:[],sum:0};
+		} 
 		return {arr:[v],sum:v};
-	} else if(stage == 2) {
+	} else if(stage === 2) {
+		if(v === null){
+			return s;
+		} 
 		s.arr.push(v);
 		s.sum += v;
 		return s;
@@ -10444,7 +10481,7 @@ alasql.aggr.VAR = function(v,s,stage){
 };
 
 alasql.aggr.STDEV = function(v,s,stage){
-	if(stage == 1 || stage == 2 ) {
+	if(stage === 1 || stage === 2 ) {
 		return alasql.aggr.VAR(v,s,stage);
 	} else {
 		return Math.sqrt(alasql.aggr.VAR(v,s,stage));
@@ -15379,7 +15416,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		var row1 = +rg[1].match(/[0-9]+/)[0];
 
 		var hh = {};
-		for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+		var xlscnCol0 = alasql.utils.xlscn(col0);
+		var xlscnCol1 = alasql.utils.xlscn(col1);
+		for(var j=xlscnCol0;j<=xlscnCol1;j++){
 			var col = alasql.utils.xlsnc(j);
 			if(opt.headers) {
 				if(workbook.Sheets[sheetid][col+""+row0]) {
@@ -15397,7 +15436,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		}
 		for(var i=row0;i<=row1;i++) {
 			var row = {};
-			for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+			for(var j=xlscnCol0;j<=xlscnCol1;j++){
 				var col = alasql.utils.xlsnc(j);
 				if(workbook.Sheets[sheetid][col+""+i]) {
 					row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;

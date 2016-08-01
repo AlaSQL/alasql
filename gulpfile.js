@@ -158,7 +158,6 @@ gulp.task('js-merge', function () {
     .pipe(rename('alasql.min.js'))
     .pipe(uglify({preserveComments:function(a,b){return 1===b.line && /^!/.test(b.value)}})) // leave first line of comment if starts with a "!"
     .pipe(gulp.dest('./dist'))
-    .pipe(gulp.dest('./partners/meteor'))            	// For Meteor publishing
     ;
 });
 
@@ -214,12 +213,6 @@ gulp.task('copy-dist-org', function(){
     .pipe(gulp.dest('./console/'));
 });
 
-/*
-gulp.task('copy-dist-meteor', function(){
-  gulp.src(['./dist/alasql.min.js','./dist/alasql-worker.min.js','/dist/alasql-echo.js'])
-    .pipe(gulp.dest('./console/'));
-});
-*/
 
 // Additional task to update alasql.org/console directory
 gulp.task('copy-console-org', function(){
@@ -301,7 +294,6 @@ gulp.task('watch', toRun, function(){
   gulp.watch('./dist/alasql.min.js',function(){
 //    gulp.run('copy-dist'); 
     gulp.run('copy-dist-org');
-/*    gulp.run('copy-dist-meteor'); */
   });
   gulp.watch('./dist/alasql-worker.js',function(){ 
 //    gulp.run('copy-dist'); 

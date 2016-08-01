@@ -109,7 +109,7 @@ npm install -g alasql          # command line
 For the browser: include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js)  
 
 ```html
-<script src="http://cdn.jsdelivr.net/alasql/0.2/alasql.min.js"></script>
+<script src="http://cdn.jsdelivr.net/alasql/0.3/alasql.min.js"></script>
 ```
 
 
@@ -529,7 +529,7 @@ var IgnorePlugin =  require("webpack").IgnorePlugin;
 module.exports = {
   ...
   //Will ignore the modules fs, path, xlsx, xls
-  plugins:[new IgnorePlugin(/(^fs$|xlsx|xls ... |^path$)/)]
+  plugins:[new IgnorePlugin(/(^fs$|cptable|jszip|xlsx|xls|^es6-promise$|^net$|^tls$|^forever-agent$|^tough-cookie$|cpexcel|^path$)/)]
 };
 ```
 

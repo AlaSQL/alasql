@@ -370,7 +370,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 //		console.log(114,rg,alasql.utils.xlscn(col0),alasql.utils.xlscn(col1));
 
 		var hh = {};
-		for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+		var xlscnCol0 = alasql.utils.xlscn(col0);
+		var xlscnCol1 = alasql.utils.xlscn(col1);
+		for(var j=xlscnCol0;j<=xlscnCol1;j++){
 			var col = alasql.utils.xlsnc(j);
 			if(opt.headers) {
 				if(workbook.Sheets[sheetid][col+""+row0]) {
@@ -388,7 +390,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		}
 		for(var i=row0;i<=row1;i++) {
 			var row = {};
-			for(var j=alasql.utils.xlscn(col0);j<=alasql.utils.xlscn(col1);j++){
+			for(var j=xlscnCol0;j<=xlscnCol1;j++){
 				var col = alasql.utils.xlsnc(j);
 				if(workbook.Sheets[sheetid][col+""+i]) {
 					row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;

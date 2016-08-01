@@ -220,7 +220,7 @@ function queryfn3(query) {
 			ilen=nd.data.length
 			for(var i=0;i<ilen;i++) {
 				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+				for(var j=Math.min(query.columns.length,nd.columns.length)-1;0<=j;j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -259,7 +259,7 @@ function queryfn3(query) {
 			var ud = [];
 			for(var i=0,ilen=nd.data.length;i<ilen;i++) {
 				var r = {};
-				for(var j=0,jlen=Math.min(query.columns.length,nd.columns.length);j<jlen;j++) {
+				for(var j=Math.min(query.columns.length,nd.columns.length)-1;0<=j;j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -444,7 +444,9 @@ function doDistinct (query) {
 			uniq[uix] = query.data[i];
 		}
 		query.data = [];
-		for(var key in uniq) query.data.push(uniq[key]);
+		for(var key in uniq){
+			query.data.push(uniq[key]);
+		}
 	}
 }
 

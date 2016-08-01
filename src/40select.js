@@ -405,7 +405,7 @@ function modify(query, res) { // jshint ignore:line
 		// Try to create columns
 		if(res.length > 0) {
 			var allcol = {};
-			for(var i=0;i<Math.min(res.length,alasql.options.columnlookup||10);i++) {
+			for(var i=Math.min(res.length,alasql.options.columnlookup||10)-1;0<=i;i--) {
 				for(var key in res[i]) {
 					allcol[key] = true;
 				}

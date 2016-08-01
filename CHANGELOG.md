@@ -1,15 +1,25 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-_0.3.1 "..." (?.08.2016)_
+_0.3.2 "..." (18.08.2016)_
 
 * ...
+
+### 0.3.1 "Taravao" (01.08.2016)
+* Allow unknown functions to be defined on alasql.fn afterwards
+* Easy access to AUTOINCREMENT values
+* MEDIAN will ignore null values 
+* STDEV will ignore null values
+
 
 ## Version 0.3.0 "Papeete" (25.07.2016)_
 * Breaking change: CSVs with header will now default have BOM added (for better utf8 support) 
 * Added: Constraint names will now be exported in error message
 * Added: Web worker now supports .promise notation
 * Added: Postgres-specific aliases and fixes
+* Added: Make converting to an unknown type result in a noop rather than an error
+* Added: Support column types consisting of more than 2 words
+
 
 ### 0.2.7 "Corinth" (30.05.2016)
 * Added: Now supports Node 6.0 

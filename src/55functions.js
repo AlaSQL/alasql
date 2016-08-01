@@ -66,7 +66,23 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 	var s = '';
     var funcid = this.funcid;
 	// IF this is standard compile functions
-	if(alasql.fn[funcid]) {
+	if(!alasql.fn[funcid] && alasql.stdlib[funcid.toUpperCase()]) {
+		if(this.args && this.args.length > 0) {
+			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
+		} else {
+			s += alasql.stdlib[funcid.toUpperCase()]();
+		}
+	} else if(!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
+		if(this.newid) s+= 'new ';
+		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
+//		if(this.args) s += this.args.toJS(context, tableid);
+		if(this.args && this.args.length > 0) {
+			s += this.args.map(function(arg){
+				return arg.toJS(context, tableid, defcols);
+			}).join(',');
+		};
+		s += ')';		
+	} else {
 	// This is user-defined run-time function
 	// TODO arguments!!!
 //		var s = '';
@@ -79,24 +95,6 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 			}).join(',');
 		};
 		s += ')';
-	} else if(alasql.stdlib[funcid.toUpperCase()]) {
-		if(this.args && this.args.length > 0) {
-			s += alasql.stdlib[funcid.toUpperCase()].apply(this, this.args.map(function(arg) {return arg.toJS(context, tableid)}));
-		} else {
-			s += alasql.stdlib[funcid.toUpperCase()]();
-		}
-	} else if(alasql.stdfn[funcid.toUpperCase()]) {
-		if(this.newid) s+= 'new ';
-		s += 'alasql.stdfn.'+this.funcid.toUpperCase()+'(';
-//		if(this.args) s += this.args.toJS(context, tableid);
-		if(this.args && this.args.length > 0) {
-			s += this.args.map(function(arg){
-				return arg.toJS(context, tableid, defcols);
-			}).join(',');
-		};
-		s += ')';		
-	} else {
-		// Aggregator
 	}
 //console.log('userfn:',s,this);
 
@@ -252,24 +250,36 @@ alasql.aggr.GROUP_CONCAT = function(v,s,stage){
 // };
 
 alasql.aggr.MEDIAN = function(v,s,stage){
-  if(stage == 1) {
-    return [v];
-  } else if(stage == 2) {
-    s.push(v);    
-    return s;
-  } else {
-    var p = s.sort();
-    return p[(p.length/2)|0];     
-  };
+	if(stage === 2) {
+		if(v === null){
+			return s;
+		}
+		s.push(v);    
+		return s;
+	} else if(stage === 1) {
+	  	if(v === null){
+	  		return [];
+	  	}
+	    return [v];
+  	} else {
+		var p = s.sort();
+		return p[(p.length/2)|0];     
+	};
 };
 
 
 
 // Standard deviation
 alasql.aggr.VAR = function(v,s,stage){
-	if(stage == 1) {
+	if(stage === 1) {
+		if(v === null){
+			return {arr:[],sum:0};
+		} 
 		return {arr:[v],sum:v};
-	} else if(stage == 2) {
+	} else if(stage === 2) {
+		if(v === null){
+			return s;
+		} 
 		s.arr.push(v);
 		s.sum += v;
 		return s;
@@ -286,7 +296,7 @@ alasql.aggr.VAR = function(v,s,stage){
 };
 
 alasql.aggr.STDEV = function(v,s,stage){
-	if(stage == 1 || stage == 2 ) {
+	if(stage === 1 || stage === 2 ) {
 		return alasql.aggr.VAR(v,s,stage);
 	} else {
 		return Math.sqrt(alasql.aggr.VAR(v,s,stage));
