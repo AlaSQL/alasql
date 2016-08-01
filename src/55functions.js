@@ -250,24 +250,36 @@ alasql.aggr.GROUP_CONCAT = function(v,s,stage){
 // };
 
 alasql.aggr.MEDIAN = function(v,s,stage){
-  if(stage == 1) {
-    return [v];
-  } else if(stage == 2) {
-    s.push(v);    
-    return s;
-  } else {
-    var p = s.sort();
-    return p[(p.length/2)|0];     
-  };
+	if(stage === 2) {
+		if(v === null){
+			return s;
+		}
+		s.push(v);    
+		return s;
+	} else if(stage === 1) {
+	  	if(v === null){
+	  		return [];
+	  	}
+	    return [v];
+  	} else {
+		var p = s.sort();
+		return p[(p.length/2)|0];     
+	};
 };
 
 
 
 // Standard deviation
 alasql.aggr.VAR = function(v,s,stage){
-	if(stage == 1) {
+	if(stage === 1) {
+		if(v === null){
+			return {arr:[],sum:0};
+		} 
 		return {arr:[v],sum:v};
-	} else if(stage == 2) {
+	} else if(stage === 2) {
+		if(v === null){
+			return s;
+		} 
 		s.arr.push(v);
 		s.sum += v;
 		return s;
@@ -284,7 +296,7 @@ alasql.aggr.VAR = function(v,s,stage){
 };
 
 alasql.aggr.STDEV = function(v,s,stage){
-	if(stage == 1 || stage == 2 ) {
+	if(stage === 1 || stage === 2 ) {
 		return alasql.aggr.VAR(v,s,stage);
 	} else {
 		return Math.sqrt(alasql.aggr.VAR(v,s,stage));

@@ -1,9 +1,16 @@
 # Changelog
 * Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-_0.3.1 "..." (18.08.2016)_
+_0.3.2 "..." (18.08.2016)_
 
 * ...
+
+### 0.3.1 "Taravao" (01.08.2016)
+* Allow unknown functions to be defined on alasql.fn afterwards
+* Easy access to AUTOINCREMENT values
+* MEDIAN will ignore null values 
+* STDEV will ignore null values
+
 
 ## Version 0.3.0 "Papeete" (25.07.2016)_
 * Breaking change: CSVs with header will now default have BOM added (for better utf8 support) 
