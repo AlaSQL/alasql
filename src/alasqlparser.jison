@@ -14,9 +14,9 @@
 \`\`([^\`])+\`\`						return 'JAVASCRIPT'
 \[\?\]									return 'BRAQUESTION'
 '@['									return 'ATLBRA'
+'ARRAY['								return 'ARRAYLBRA'
 \[([^\]])*?\]							return 'BRALITERAL'
 \`([^\`])*?\`	   						return 'BRALITERAL'
-
 
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
@@ -1370,6 +1370,8 @@ ExprList
 		{ $$ = [$1]; }
 	| ExprList COMMA Expression
 		{ $1.push($3); $$ = $1 }
+	| ARRAYLBRA ExprList RBRA
+		{ $$ = $2 }
 	;
 
 NumValue

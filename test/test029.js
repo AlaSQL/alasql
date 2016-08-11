@@ -23,6 +23,11 @@ describe('Test 29', function() {
 		var res = db.exec(sql);
 		assert.deepEqual([ 2, 3, 4 ], res);
 
+		// Postgres notation
+		var sql = 'SELECT COLUMN a FROM test1 WHERE a = ANY (ARRAY[2,3,4])';
+		var res = db.exec(sql);
+		assert.deepEqual([ 2, 3, 4 ], res);
+
 		done();
 	});
 });
