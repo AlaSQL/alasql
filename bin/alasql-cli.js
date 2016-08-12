@@ -85,7 +85,7 @@ stdin.on('end', function () {
 /**
  * Execute SQL query
  *
- * @param {String} SQL query
+ * @sql {String} SQL query
  * @param {String} Parameters
  * @returns {null} Result will be printet to console.log
  */
