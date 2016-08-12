@@ -253,7 +253,7 @@ utils.isCordova = (function(){
 })();
 
 utils.hasIndexedDB = (function(){
-  return (typeof utils.global.indexedDB !== 'undefined');
+  return !!utils.global.indexedDB;
 })();
 
 
