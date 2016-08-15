@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.1-HEAD.detached.at.origin.develop-1379 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.1-bopjesvla-array-1381 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.1-HEAD.detached.at.origin.develop-1379
+@version 0.3.1-bopjesvla-array-1381
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.1-HEAD.detached.at.origin.develop-1379';
+alasql.version = '0.3.1-bopjesvla-array-1381';
 
 /**
 	Debug flag
@@ -7260,7 +7260,7 @@ function modify(query, res) { // jshint ignore:line
 		res = ar;
 
 	}else if(modifier === 'RECORDSET') {
-		res = new alasql.Recordset({data:res, columns:columns});
+		res = new alasql.Recordset({columns:columns, data:res});
 
 	}else if(modifier === 'TEXTSTRING') {
 		var key;
@@ -14058,19 +14058,19 @@ if(alasql.options.sqlite) {
 
 alasql.into.SQL = function(filename, opts, data, columns, cb) {
 	var res;
-	if(typeof filename == 'object') {
+	if(typeof filename === 'object') {
 		opts = filename;
 		filename = undefined;
 	}
 	var opt = {};
 	alasql.utils.extend(opt, opts);
-	if(typeof opt.tableid == 'undefined') {
+	if(typeof opt.tableid === 'undefined') {
 		throw new Error('Table for INSERT TO is not defined.');
-	};
+	}
 
 	var s = '';
-	if(columns.length == 0) {
-		if(typeof data[0] == "object") {
+	if(columns.length === 0) {
+		if(typeof data[0] === "object") {
 			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
 		} else {
 			// What should I do?
@@ -14085,8 +14085,8 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 		s += columns.map(function(col){
 			var val = data[i][col.columnid];
 			if(col.typeid) {
-				if(col.typeid == 'STRING' || col.typeid == 'VARCHAR' ||  
-					col.typeid == 'NVARCHAR' || col.typeid == 'CHAR' || col.typeid == 'NCHAR') {
+				if(col.typeid === 'STRING' || col.typeid === 'VARCHAR' ||  
+					col.typeid === 'NVARCHAR' || col.typeid === 'CHAR' || col.typeid === 'NCHAR') {
 					val = "'"+escapeqq(val)+"'";
 				}
 			} else {
@@ -14103,13 +14103,15 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 //	} else {
 
 	res = alasql.utils.saveFile(filename,s);
-	if(cb) res = cb(res);
+	if(cb){
+		res = cb(res);
+	}
 	return res;
 };
 
 alasql.into.HTML = function(selector, opts, data, columns, cb) {
 	var res = 1;
-	if(typeof exports != 'object') {
+	if(typeof exports !== 'object') {
 		var opt = {headers:true};
 		alasql.utils.extend(opt, opts);
 
@@ -14118,8 +14120,8 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 			throw new Error('Selected HTML element is not found');
 		};	
 
-		if(columns.length == 0) {
-			if(typeof data[0] == "object") {
+		if(columns.length === 0) {
+			if(typeof data[0] === "object") {
 				columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
 			} else {
 				// What should I do?
@@ -14150,39 +14152,42 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 				tre.appendChild(the);
 			}
 			tbody.appendChild(tre);
-		};
+		}
 		alasql.utils.domEmptyChildren(sel);
 
 		sel.appendChild(tbe);
 	}
-	if(cb) res = cb(res);
+	if(cb){
+		res = cb(res);
+	}
 	return res;
 };
 
 alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	var res = 1;
-	if(typeof filename == 'object') {
+	if(typeof filename === 'object') {
 		opts = filename;
 		filename = undefined;
 	}
-	var opt = {};
 	var s = JSON.stringify(data);
 
 	res = alasql.utils.saveFile(filename,s);
-	if(cb) res = cb(res);
+	if(cb){
+		res = cb(res);
+	}
 	return res;
 };
 
 alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	// If columns is empty
-	if(columns.length == 0 && data.length > 0) {
+	if(columns.length === 0 && data.length > 0) {
 		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
-	};
+	}
 	// If one parameter
-	if(typeof filename == 'object') {
+	if(typeof filename === 'object') {
 		opts = filename;
 		filename = undefined;
-	};
+	}
 
 	var res = data.length;
 	var s = '';
@@ -14194,7 +14199,9 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	}
 
 	res = alasql.utils.saveFile(filename,s);
-	if(cb) res = cb(res);
+	if(cb){
+		res = cb(res);
+	}
 	return res;
 };
 
@@ -14206,10 +14213,10 @@ alasql.into.TAB = alasql.into.TSV = function(filename, opts, data, columns, cb) 
 }
 
 alasql.into.CSV = function(filename, opts, data, columns, cb) {
-	if(columns.length == 0 && data.length > 0) {
+	if(columns.length === 0 && data.length > 0) {
 		columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
 	}
-	if(typeof filename == 'object') {
+	if(typeof filename === 'object') {
 		opts = filename;
 		filename = undefined;
 	}
@@ -14220,7 +14227,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	opt.quote = '"';
 
 	opt.utf8Bom = true;
-	if(typeof opts.headers != 'undefined' && !opts.headers){
+	if(opts && !opts.headers && typeof opts.headers !== 'undefined'){
 		opt.utf8Bom = false;	
 	}
 
@@ -14233,7 +14240,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		}).join(opt.quote+opt.separator+opt.quote)+opt.quote+'\r\n';
 	}
 
-	data.forEach(function(d, idx){
+	data.forEach(function(d){
 		s += columns.map(function(col){
 			var s = d[col.columnid];
 			s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
@@ -14248,7 +14255,9 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	});
 
 	res = alasql.utils.saveFile(filename,s);
-	if(cb) res = cb(res);
+	if(cb){
+		res = cb(res);
+	}
 	return res;
 };
 

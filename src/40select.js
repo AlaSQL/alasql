@@ -491,7 +491,7 @@ function modify(query, res) { // jshint ignore:line
 		res = ar;
 //		res = arrayOfArrays(res);
 	}else if(modifier === 'RECORDSET') {
-		res = new alasql.Recordset({data:res, columns:columns});
+		res = new alasql.Recordset({columns:columns, data:res});
 //		res = arrayOfArrays(res);
 	}else if(modifier === 'TEXTSTRING') {
 		var key;
