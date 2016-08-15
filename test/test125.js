@@ -19,7 +19,7 @@ describe('Test 125 - remove comments', function() {
 		assert.deepEqual(res,[{q:1,w:1}, {q:2,w:2}, {q:6,w:6},]);
 		done();
 	});
-	it('2. Double comma', function(done) {
+	it('2. Escape sequences', function(done) {
 		var res = alasql("select 'Cote'");
 		assert.deepEqual(res,[{"'Cote'":'Cote'}]);
 		var res = alasql("select 'Cote d\\'Ivoir'");
@@ -27,7 +27,11 @@ describe('Test 125 - remove comments', function() {
 		var res = alasql("select 'Cote d\'\'Ivoir'");
 		assert.deepEqual(res,[{"'Cote d'Ivoir'":"Cote d'Ivoir"}]);
 		var res = alasql('select \"Cote d\\"Ivoir\"');
-		assert.deepEqual(res,[{'\'Cote d"Ivoir\'':"Cote d\"Ivoir"}]);
+		assert.deepEqual(res,[{'\'Cote d\\"Ivoir\'':'Cote d\\"Ivoir'}]);
+		var res = alasql('select \"\\r\"');
+		assert.deepEqual(res,[{'\'\\r\'':'\\r'}]);
+		var res = alasql('select \"\\n\"');
+		assert.deepEqual(res,[{'\'\\n\'':'\\n'}]);
 
 		alasql('drop database test125');
 		done();

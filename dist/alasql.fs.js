@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.1-bopjesvla-array-1381 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.1-escape-1390 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.1-bopjesvla-array-1381
+@version 0.3.1-escape-1390
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.1-bopjesvla-array-1381';
+alasql.version = '0.3.1-escape-1390';
 
 /**
 	Debug flag
@@ -3086,9 +3086,29 @@ function returnUndefined() {}
     Piter's => Piter\'s
 
 */
+// based on joliss/js-string-escape
 var escapeq = utils.escapeq = function(s) {
 
-    return s.replace(/\'/g,'\\\'');
+  return ('' + s).replace(/["'\\\n\r\u2028\u2029]/g, function (character) {
+    // Escape all characters not included in SingleStringCharacters and
+    // DoubleStringCharacters on
+    // http://www.ecma-international.org/ecma-262/5.1/#sec-7.8.4
+    switch (character) {
+      case '"':
+      case "'":
+      case '\\':
+        return '\\' + character
+        // Four possible LineTerminator characters need to be escaped:
+      case '\n':
+        return '\\n'
+      case '\r':
+        return '\\r'
+      case '\u2028':
+        return '\\u2028'
+      case '\u2029':
+        return '\\u2029'
+    }
+  })
 };
 
 /**
@@ -3263,7 +3283,7 @@ utils.isCordova = (function(){
 })();
 
 utils.hasIndexedDB = (function(){
-  return (typeof utils.global.indexedDB !== 'undefined');
+  return !!utils.global.indexedDB;
 })();
 
 utils.isArray = function(obj){
