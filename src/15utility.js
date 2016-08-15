@@ -61,13 +61,13 @@ function returnTrue () {return true;}
 function returnUndefined() {}
 
 /**
-    Escape quotes
+    Escape string
     @function
     @param {string} s Source string
     @return {string} Escaped string
     @example
 
-    Piter's => Piter\'s
+    Pit\er's => Pit\\er\'s
 
 */
 // based on joliss/js-string-escape
