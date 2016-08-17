@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.1-escape-1390 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.1-develop-1389 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.1-escape-1390
+@version 0.3.1-develop-1389
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.1-escape-1390';
+alasql.version = '0.3.1-develop-1389';
 
 /**
 	Debug flag
@@ -3077,13 +3077,13 @@ function returnTrue () {return true;}
 function returnUndefined() {}
 
 /**
-    Escape quotes
+    Escape string
     @function
     @param {string} s Source string
     @return {string} Escaped string
     @example
 
-    Piter's => Piter\'s
+    Pit\er's => Pit\\er\'s
 
 */
 // based on joliss/js-string-escape
@@ -7918,7 +7918,7 @@ yy.Select.prototype.compileWhere = function(query) {
 		if(typeof this.where == "function") {
 			return this.where;
 		} else {
-			s = this.where.toJS('p',query.defaultTableid,query.defcols);
+			var s = this.where.toJS('p',query.defaultTableid,query.defcols);
 			query.wherefns = s;
 
 			return new Function('p,params,alasql','var y;return '+s);
