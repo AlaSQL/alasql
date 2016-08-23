@@ -84,7 +84,7 @@ describe('Test '+test+' - get autoval', function() {
 		  ]
 		};
 
-		let res = alasql('SEARCH items / AS @a     \
+		var res = alasql('SEARCH items / AS @a     \
 			spec volumes / WHERE(name="test-data") \
 			RETURN(@a->metadata->name AS name,     \
 	          @a->metadata->namespace AS namespace \
