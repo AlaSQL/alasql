@@ -16,9 +16,9 @@ describe('Test 352 TEST EQUALITY', function() {
     var res = alasql('= 1=1');
     assert.deepEqual(res,true);
     var res = alasql('= 1=NULL');
-    assert.deepEqual(res,false);
+    assert.deepEqual(res,undefined);
     var res = alasql('= 0=NULL');
-    assert.deepEqual(res,false);
+    assert.deepEqual(res,undefined);
     done();
   });
 
@@ -26,9 +26,9 @@ describe('Test 352 TEST EQUALITY', function() {
     var res = alasql('= 1==1');
     assert.deepEqual(res,true);
     var res = alasql('= 1==NULL');
-    assert.deepEqual(res,false);
+    assert.deepEqual(res,undefined);
     var res = alasql('= 0==NULL');
-    assert.deepEqual(res,false);
+    assert.deepEqual(res,undefined);
     done();
   });
 
