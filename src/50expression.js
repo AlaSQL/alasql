@@ -673,30 +673,33 @@ yy.ParamValue.prototype.toJS = function() {
 
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {
+	var s;
 	if(this.op === '~'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 
 	if(this.op === '-'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 	
 	if(this.op === '+'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 	
 	if(this.op === '#'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 
 	if(this.op === 'NOT'){
-		return this.op+'('+this.right.toString()+')';
+		s = this.op+'('+this.right.toString()+')';
 	}
 	
 	// Please avoid === here
 	if(this.op == null){						// jshint ignore:line
-		return '('+this.right.toString()+')';
+		s = '('+this.right.toString()+')';
 	}
+
+	return '(y = ' + s + ', y === void 0 ? void 0 : y)'
 
 	// todo: implement default case
 };
