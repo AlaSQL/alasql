@@ -2007,7 +2007,7 @@ ColumnType
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
 */
-ColumnType
+SingularColumnType
 	: LiteralWithSpaces LPAR NumberMax COMMA NUMBER RPAR
 		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
 	| LiteralWithSpaces LPAR NumberMax RPAR
@@ -2018,7 +2018,12 @@ ColumnType
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
 
-
+ColumnType
+	: SingularColumnType BRALITERAL /* text[] */
+		{ $$ = $1; $1.dbtypeid += '[' + $2 + ']'; }
+	| SingularColumnType
+		{ $$ = $1; }
+	;
 
 
 NumberMax
