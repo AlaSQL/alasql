@@ -1370,8 +1370,6 @@ ExprList
 		{ $$ = [$1]; }
 	| ExprList COMMA Expression
 		{ $1.push($3); $$ = $1 }
-	| ARRAYLBRA ExprList RBRA
-		{ $$ = $2 }
 	;
 
 NumValue
@@ -2336,6 +2334,8 @@ Json
 		{ $$ = $1; }
 	| AT JsonObject
 		{ $$ = $2; }
+	| ARRAYLBRA JsonArray
+		{ $$ = $2; }
 	| ATLBRA JsonArray
 		{ $$ = $2; }
 	;
@@ -2362,8 +2362,8 @@ JsonPrimitiveValue
 		{ $$ = $1; }
 	| FuncValue
 		{ $$ = $1; }
-	| LPAR Expression RPAR
-		{ $$ = $2}
+	| Expression
+		{ $$ = $1; }
 	;
 
 

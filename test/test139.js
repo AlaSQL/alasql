@@ -40,6 +40,12 @@ describe('Test 139 JSON', function() {
 		var res = alasql('SELECT VALUE @[1,2,3]');
 		assert.deepEqual(res, [1,2,3]);
 
+		var res = alasql('SELECT VALUE ARRAY[1,2,3]');
+		assert.deepEqual(res, [1,2,3]);
+
+		var res = alasql('SELECT VALUE @[1,2,3]');
+		assert.deepEqual(res, [1,2,3]);
+
 		var res = alasql('SELECT VALUE @[1,@[2,3]]');
 		assert.deepEqual(res, [1,[2,3]]);
 

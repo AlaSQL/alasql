@@ -522,7 +522,8 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s +='.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
 		} else if(this.right instanceof Array ) {
-			s = '['+this.right.map(ref).join(',')+'].every(function(b){return (';
+			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
+			s += '.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
 		} else {
 			throw new Error('NOT IN operator without SELECT');
@@ -537,7 +538,8 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s +='.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
 		} else if(this.right instanceof Array ) {
-			s = '['+this.right.map(ref).join(',')+'].some(function(b){return (';
+			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
+			s += '.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
 		} else {
 			throw new Error('SOME/ANY operator without SELECT');
