@@ -1202,6 +1202,8 @@ Expression
 		{ $$ = $1; }
 	| Json
 		{ $$ = new yy.Json({value:$1}); }			
+	| ArrayValue
+		{ $$ = $1; }
 /*	| ATLBRA JsonArray
 		{ $$ = new yy.Json({value:$2}); }
 */	| NewClause
@@ -1370,8 +1372,6 @@ ExprList
 		{ $$ = [$1]; }
 	| ExprList COMMA Expression
 		{ $1.push($3); $$ = $1 }
-	| ARRAYLBRA ExprList RBRA
-		{ $$ = $2 }
 	;
 
 NumValue
@@ -1412,6 +1412,10 @@ ExistsValue
 		}
 	;
 
+ArrayValue
+	: ARRAYLBRA ExprList RBRA
+		{ $$ = new yy.ArrayValue({value:$2}); }
+	;
 
 ParamValue
 	: DOLLAR (Literal|NUMBER)
@@ -2003,7 +2007,7 @@ ColumnType
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
 */
-ColumnType
+SingularColumnType
 	: LiteralWithSpaces LPAR NumberMax COMMA NUMBER RPAR
 		{ $$ = {dbtypeid: $1, dbsize: $3, dbprecision: +$5} }
 	| LiteralWithSpaces LPAR NumberMax RPAR
@@ -2014,7 +2018,12 @@ ColumnType
 		{ $$ = {dbtypeid: 'ENUM', enumvalues: $3} }
 	;
 
-
+ColumnType
+	: SingularColumnType BRALITERAL /* text[] */
+		{ $$ = $1; $1.dbtypeid += '[' + $2 + ']'; }
+	| SingularColumnType
+		{ $$ = $1; }
+	;
 
 
 NumberMax
@@ -2363,7 +2372,7 @@ JsonPrimitiveValue
 	| FuncValue
 		{ $$ = $1; }
 	| LPAR Expression RPAR
-		{ $$ = $2}
+		{ $$ = $2; }
 	;
 
 
@@ -2412,6 +2421,11 @@ JsonElementsList
 		{ $1.push($3); $$ = $1; }
 	| JsonValue
 		{ $$ = [$1]; }
+	;
+
+ArrayValue
+	: ARRAYLBRA ExprList RBRA
+		{ $$ = $2; }
 	;
 
 SetVariable

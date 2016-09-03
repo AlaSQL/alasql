@@ -33,6 +33,11 @@ describe('Test 28', function() {
 		assert.deepEqual([ 5, 6], res);
 
 
+		var sql = 'SELECT COLUMN a FROM test2 WHERE a = ANY (array[1,2])';
+		var res = db.exec(sql);
+
+		assert.deepEqual([ 1,2 ], res);
+
 		var sql = 'SELECT COLUMN a FROM test2 WHERE a >= ANY (SELECT a FROM test3)';
 		var res = db.exec(sql);
 
