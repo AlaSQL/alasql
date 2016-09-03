@@ -636,6 +636,24 @@ yy.StringValue.prototype.toJS = function() {
 
 }
 
+yy.ArrayValue = function (params) { return yy.extend(this, params); }
+yy.ArrayValue.prototype.toString = function() {
+	return 'ARRAY[]'
+}
+
+yy.ArrayValue.prototype.toType = function() {
+	return 'object';
+}
+
+yy.ArrayValue.prototype.toJS = function(context, tableid, defcols) {
+//	console.log("'"+doubleqq(this.value)+"'");
+//	return "'"+doubleqq(this.value)+"'";
+	return '[(' + this.value.map(function(el) {
+		return el.toJS(context, tableid, defcols)
+	}).join('), (') + ')]'
+
+}
+
 
 yy.LogicValue = function (params) { return yy.extend(this, params); }
 yy.LogicValue.prototype.toString = function() {

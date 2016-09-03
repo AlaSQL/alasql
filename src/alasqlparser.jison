@@ -1202,6 +1202,8 @@ Expression
 		{ $$ = $1; }
 	| Json
 		{ $$ = new yy.Json({value:$1}); }			
+	| ArrayValue
+		{ $$ = $1; }
 /*	| ATLBRA JsonArray
 		{ $$ = new yy.Json({value:$2}); }
 */	| NewClause
@@ -1410,6 +1412,10 @@ ExistsValue
 		}
 	;
 
+ArrayValue
+	: ARRAYLBRA ExprList RBRA
+		{ $$ = new yy.ArrayValue({value:$2}); }
+	;
 
 ParamValue
 	: DOLLAR (Literal|NUMBER)
@@ -2334,8 +2340,6 @@ Json
 		{ $$ = $1; }
 	| AT JsonObject
 		{ $$ = $2; }
-	| ARRAYLBRA JsonArray
-		{ $$ = $2; }
 	| ATLBRA JsonArray
 		{ $$ = $2; }
 	;
@@ -2362,8 +2366,8 @@ JsonPrimitiveValue
 		{ $$ = $1; }
 	| FuncValue
 		{ $$ = $1; }
-	| Expression
-		{ $$ = $1; }
+	| LPAR Expression RPAR
+		{ $$ = $2; }
 	;
 
 
@@ -2412,6 +2416,11 @@ JsonElementsList
 		{ $1.push($3); $$ = $1; }
 	| JsonValue
 		{ $$ = [$1]; }
+	;
+
+ArrayValue
+	: ARRAYLBRA ExprList RBRA
+		{ $$ = $2; }
 	;
 
 SetVariable
