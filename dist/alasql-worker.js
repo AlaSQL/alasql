@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.1-betterarrays-1401 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.1-betterarrays-1403 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.1-betterarrays-1401
+@version 0.3.1-betterarrays-1403
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
