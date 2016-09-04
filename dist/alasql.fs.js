@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.1-betterarrays-1403 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.1-nonreserved-1407 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.1-betterarrays-1403
+@version 0.3.1-nonreserved-1407
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.1-betterarrays-1403';
+alasql.version = '0.3.1-nonreserved-1407';
 
 /**
 	Debug flag
