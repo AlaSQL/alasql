@@ -5,6 +5,11 @@
 ![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)
 [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/agershun/alasql.svg)](http://isitmaintained.com/project/agershun/alasql "Average time to resolve an issue")
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
+
+
+
+
 
 _AlaSQL is an open source project and we appreciate any and all contributions we can get. Please help out._
 
@@ -499,7 +504,7 @@ To run enter the command:
 ```
     alaserver [port]
 ```
-then type in browser something like "http://127.0.0.1:1337/?SELECT VALUE 2*2"
+then type in browser something like "<a href="http://127.0.0.1:1337/?SELECT VALUE 2*2">http://127.0.0.1:1337/?SELECT VALUE 2*2</a>"
 
 Warning: Alaserver is not multi-thread, not concurrent, and not secured.
 
