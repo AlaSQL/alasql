@@ -636,6 +636,21 @@ yy.StringValue.prototype.toJS = function() {
 
 }
 
+yy.DomainValueValue = function (params) { return yy.extend(this, params); }
+yy.DomainValueValue.prototype.toString = function() {
+	return 'VALUE'
+}
+
+yy.DomainValueValue.prototype.toType = function() {
+	return 'object';
+}
+
+yy.DomainValueValue.prototype.toJS = function(context, tableid, defcols) {
+//	console.log("'"+doubleqq(this.value)+"'");
+//	return "'"+doubleqq(this.value)+"'";
+	return context;
+}
+
 yy.ArrayValue = function (params) { return yy.extend(this, params); }
 yy.ArrayValue.prototype.toString = function() {
 	return 'ARRAY[]'
