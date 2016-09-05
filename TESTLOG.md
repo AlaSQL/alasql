@@ -22,7 +22,7 @@ It has not yet been possible to run the SQLlogic tests on the Chrakra engine.
 
 
 ## Regression test
-The [regression tests for AlaSQL](https://github.com/agershun/alasql/tree/develop/test/) consists of more than 1000 test cases (hopefully) covering all of the functionality in the library. By executing `npm run test:only` the regression test will run via node. By executing `npm run test:browser` it will run in a browser. 
+The [regression tests for AlaSQL](https://github.com/agershun/alasql/tree/develop/test/) consists of more than 1000 test casescovering [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html) of the functionality in the library. By executing `npm run test:only` the regression test will run via node. By executing `npm run test:browser` it will run in a browser. 
 
 
 ### Chrome 48

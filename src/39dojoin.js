@@ -6,7 +6,7 @@ function doJoin (query, scope, h) {
 //	console.log('doJoin', arguments);
 //	console.log(query.sources.length);
 	// Check, if this is a last join?
-	if(h>=query.sources.length) {
+	if(h>=query.sources.length) { // Todo: check if this runs once too many
 //console.log(query.wherefns);
 		// Then apply where and select
 //		console.log(query);

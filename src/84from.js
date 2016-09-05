@@ -186,7 +186,8 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		headers:true
 	};
 	alasql.utils.extend(opt, opts);
-	var res, hs;
+	var res;
+	var hs = [];
 	alasql.utils.loadFile(filename,!!cb,function(text){
 
 		var delimiterCode = opt.separator.charCodeAt(0);

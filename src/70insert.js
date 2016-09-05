@@ -40,6 +40,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var tableid = self.into.tableid;
 	var table = db.tables[tableid];
 
+	if(!table){
+		throw "Table '"+tableid+"' could not be found";
+	}
+
 	// Check, if this dirty flag is required
 	var s = '';
 	var sw = '';

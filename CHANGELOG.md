@@ -1,9 +1,18 @@
 # Changelog
-* Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-_0.3.2 "..." (18.08.2016)_
-
+_0.3.3 "Makemo" (16.09.2016)_
 * ...
+
+
+### 0.3.2 "Maumu" (05.09.2016)
+* Added: Postgres arrays like array[] and text[]
+* Added: Allow non-reserved keywords as identifiers
+* Fix: tsv/csv can now be is an empty file
+* Fix: alasql.d.ts format
+* Fix: Better way to find out if indexedDB is present
+* Fix: `null = null` is (now) null, baby.
+* Update: Column names first for RECORDSETS
+
 
 ### 0.3.1 "Taravao" (01.08.2016)
 * Allow unknown functions to be defined on alasql.fn afterwards
@@ -12,7 +21,7 @@ _0.3.2 "..." (18.08.2016)_
 * STDEV will ignore null values
 
 
-## Version 0.3.0 "Papeete" (25.07.2016)_
+## Version 0.3.0 "Papeete" (25.07.2016)
 * Breaking change: CSVs with header will now default have BOM added (for better utf8 support) 
 * Added: Constraint names will now be exported in error message
 * Added: Web worker now supports .promise notation
@@ -32,7 +41,6 @@ _0.3.2 "..." (18.08.2016)_
 
 
 ### 0.2.6 "Frikes" (22.04.2016)
-
 * Added: Progress callback
 * Change: CLI defaults to pretty print (with option for compressed output as original)
 * Fix: Declaring all variables

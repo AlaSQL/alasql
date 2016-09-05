@@ -23,7 +23,7 @@ describe('Test '+test+' Binary operators', function() {
   it('1. ^',function(done){
 
     var res = alasql('= 60^13');
-    assert(res==49);
+    assert.deepEqual(res, 49);
     done();
   });
 

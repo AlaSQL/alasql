@@ -288,10 +288,25 @@ yy.Op.prototype.toType = function(tableid) {
 yy.Op.prototype.toJS = function(context,tableid,defcols) {
 //	console.log(this);
 	var s;
+	var refs = [];
 	var op = this.op;
 	var _this = this;
-	var leftJS = function(){return _this.left.toJS(context,tableid, defcols)};
-	var rightJS = function(){return _this.right.toJS(context,tableid, defcols)};
+	//var leftJS = function(){return _this.left.toJS(context,tableid, defcols)};
+	//var rightJS = function(){return _this.right.toJS(context,tableid, defcols)};
+	var accessedLeft = false, accessedRight = false
+	var ref = function(expr) {
+		if (expr.toJS) {
+			expr = expr.toJS(context, tableid, defcols)
+		}
+		var i = refs.push(expr) - 1
+		return 'y[' + i + ']'
+	}
+	var leftJS = function() {
+		return ref(_this.left)
+	}
+	var rightJS = function() {
+		return ref(_this.right)
+	}
 
 	if(this.op === '='){
 		op = '===';
@@ -307,19 +322,17 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 		var ljs = '('+leftJS()+'||{})';
 
 		if(typeof this.right === "string") {
-			return ljs +'["'+this.right+'"]';
+			s = ljs +'["'+this.right+'"]';
 		
 		} else if(typeof this.right === "number") {
-			return ljs+'['+this.right+']';
+			s = ljs+'['+this.right+']';
 		
 		} else if(this.right instanceof yy.FuncValue) {
 			var ss = [];
 			if(!(!this.right.args || 0 === this.right.args.length)) {
-				var ss = this.right.args.map(function(arg){
-					return arg.toJS(context,tableid, defcols);
-				});
+				var ss = this.right.args.map(ref);
 			}
-			return 	''
+			s = 	''
 					+ ljs
 					+ "['"
 					+ 	this.right.funcid
@@ -328,7 +341,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 					+ ')'; 
 		} else {
 
-			return 	''
+			s = 	''
 					+ ljs
 					+ '['
 					+	rightJS()
@@ -338,7 +351,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 	if(this.op === '!') {
 		if(typeof this.right === "string") {
-			return 	''
+			s = 	''
 					+ 'alasql.databases[alasql.useid].objects['
 					+ 	leftJS()
 					+ ']["'
@@ -349,7 +362,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 
 	if(this.op === 'IS') {
-		return 	''
+		s = 	''
 				+ '('
 				+	'(typeof ' + leftJS()  + "==='undefined')"
 				+	" === "
@@ -359,7 +372,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 
 	if(this.op === '==') {
-		return 	''
+		s = 	''
 				+ 'alasql.utils.deepEqual('
 				+	leftJS()
 				+ 	','
@@ -369,7 +382,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 
 	if(this.op === '===' || this.op === '!===') {
-		return 	''
+		s = 	''
 				+ '('
 				+ 	( (this.op === '!===') ? '!' : '')
 				+	'('
@@ -383,7 +396,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 
 	if(this.op === '!==') {
-		return 	''
+		s = 	''
 				+ '(!alasql.utils.deepEqual('
 				+ 	leftJS()
 				+ 	","
@@ -391,7 +404,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ '))';
 	}
 	if(this.op === '||') {
-		return 	''
+		s = 	''
 				+ "(''+("
 				+ 	leftJS()
 				+ 	"||'')+("
@@ -403,20 +416,19 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 				+ 	( (this.op === 'NOT LIKE') ? '!' : '')
 				+ 	'alasql.utils.like(' + rightJS()+ "," + leftJS();
 		if(this.escape) {
-			s += ','+this.escape.toJS(context,tableid, defcols);
+			s += ','+ref(this.escape);
 		}
 		s += '))';
-		return s;
 	}
 	if(this.op === 'REGEXP') {
-		return 'alasql.stdfn.REGEXP_LIKE(' 
+		s = 'alasql.stdfn.REGEXP_LIKE(' 
 			+ leftJS()
 			+ ','
 			+ rightJS()
 			+ ')';
 	}
 	if(this.op === 'GLOB') {
-		return 'alasql.utils.glob(' 
+		s = 'alasql.utils.glob(' 
 			+ leftJS()
 			+ ','
 			+ rightJS()
@@ -424,18 +436,19 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 
 	if(this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
-		return 	''
+		var left = leftJS()
+		s = 	''
 				+ '('
 				+ 	( (this.op === 'NOT BETWEEN') ? '!' : '')
 				+ 	'('
 				+ 		'('
-				+ 			this.right1.toJS(context,tableid, defcols)
+				+ 			ref(this.right1)
 				+			'<='
-				+			leftJS()
+				+			left
 				+		') && ('
-				+			leftJS()
+				+			left
 				+			'<='
-				+			this.right2.toJS(context,tableid, defcols)
+				+			ref(this.right2)
 				+		')'
 				+ 	')'		
 				+ ')';		
@@ -443,8 +456,8 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 /*/*
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 
-			return '(('+this.right.left.toJS(context,tableid, defcols)+'<='+leftJS()+')&&'+
-			'('+leftJS()+'<='+this.right.right.toJS(context,tableid, defcols)+'))';		
+			return ref('(('+this.right.left)+'<='+leftJS()+')&&'+
+			ref('('+leftJS()+'<='+this.right.right)+'))';		
 
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
@@ -462,21 +475,18 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,'+context+'))';
 			s += '.indexOf(';
 			s += leftJS()+')>-1)';
-			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'false';
 			s 	= '(['
-				+ this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')
+				+ this.right.map(ref).join(',')
 				+ '].indexOf('
 				+ leftJS()
 				+ ')>-1)';
 //console.log(s);
-			return s;
 		} else {
 			s = '('+rightJS()+'.indexOf('
 			  	+ leftJS()+')>-1)';
 //console.log('expression',350,s);
-			return s;
 //		} else {
 //			throw new Error('Wrong IN operator without SELECT part');
 		}
@@ -491,16 +501,13 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.indexOf(';
 			s += leftJS()+')<0)';
-			return s;
 		} else if(this.right instanceof Array ) {
 //			if(this.right.length == 0) return 'true';
-			s = '(['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].indexOf(';
+			s = '(['+this.right.map(ref).join(',')+'].indexOf(';
 			s += leftJS()+')<0)';
-			return s;
 		} else {
 			s = '('+rightJS()+'.indexOf(';
 			s += leftJS()+')==-1)';
-			return s;
 
 //			throw new Error('Wrong NOT IN operator without SELECT part');
 		}
@@ -514,11 +521,10 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 			s +='.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-			return s;
 		} else if(this.right instanceof Array ) {
-			s = '['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].every(function(b){return (';
+			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
+			s += '.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-			return s;
 		} else {
 			throw new Error('NOT IN operator without SELECT');
 		}		
@@ -531,11 +537,10 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-			return s;
 		} else if(this.right instanceof Array ) {
-			s = '['+this.right.map(function(a){return a.toJS(context,tableid, defcols);}).join(',')+'].some(function(b){return (';
+			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
+			s += '.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-			return s;
 		} else {
 			throw new Error('SOME/ANY operator without SELECT');
 		}		
@@ -547,10 +552,10 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			if(this.right.reduced) {
 				return 'true';
 			} else {
-				return rightJS();
+				s = rightJS();
 			}
 		} else if(this.right.reduced) {
-			return leftJS();
+			s = leftJS();
 		}			
 
 		// Otherwise process as regular operation (see below)
@@ -571,14 +576,17 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 	// Change names
 //	console.log(this);
-	return 	''
-			+ '(('
-			+ leftJS()
-			+ ')'
-			+ op
-			+ '('
-			+ rightJS()
-			+ '))';
+	var expr = s || '(' + leftJS() + op + rightJS() + ')'
+
+	var declareRefs = 'y=[(' + refs.join('), (') + ')]'
+
+	if (op == '&&' || op == '||' || op == 'IS' || op == 'IS NULL' || op == 'IS NOT NULL') {
+		return '(' + declareRefs + ', ' + expr + ')'
+	}
+	else {
+		return '(' + declareRefs + ', '
+			+ 'y.some(function(e){return e === void 0}) ? void 0 : ' + expr + ')' 
+	}
 }
 
 
@@ -628,6 +636,24 @@ yy.StringValue.prototype.toJS = function() {
 
 }
 
+yy.ArrayValue = function (params) { return yy.extend(this, params); }
+yy.ArrayValue.prototype.toString = function() {
+	return 'ARRAY[]'
+}
+
+yy.ArrayValue.prototype.toType = function() {
+	return 'object';
+}
+
+yy.ArrayValue.prototype.toJS = function(context, tableid, defcols) {
+//	console.log("'"+doubleqq(this.value)+"'");
+//	return "'"+doubleqq(this.value)+"'";
+	return '[(' + this.value.map(function(el) {
+		return el.toJS(context, tableid, defcols)
+	}).join('), (') + ')]'
+
+}
+
 
 yy.LogicValue = function (params) { return yy.extend(this, params); }
 yy.LogicValue.prototype.toString = function() {
@@ -667,30 +693,33 @@ yy.ParamValue.prototype.toJS = function() {
 
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {
+	var s;
 	if(this.op === '~'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 
 	if(this.op === '-'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 	
 	if(this.op === '+'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 	
 	if(this.op === '#'){
-		return this.op+this.right.toString();
+		s = this.op+this.right.toString();
 	}
 
 	if(this.op === 'NOT'){
-		return this.op+'('+this.right.toString()+')';
+		s = this.op+'('+this.right.toString()+')';
 	}
 	
 	// Please avoid === here
 	if(this.op == null){						// jshint ignore:line
-		return '('+this.right.toString()+')';
+		s = '('+this.right.toString()+')';
 	}
+
+	return '(y = ' + s + ', y === void 0 ? void 0 : y)'
 
 	// todo: implement default case
 };

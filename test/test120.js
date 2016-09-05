@@ -43,6 +43,18 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 
 		done();
 	});
+	it('3. Non-reserved keywords', function(done){
+//		var res = alasql('select sum([Primary column]) AS [quoted] from [A.table]');
+//		assert.deepEqual(res, [{"'quoted'":31}]);
+
+		alasql('create table key (after int)');
+		alasql('insert into key values (1), (2), (3)');
+
+		var res = alasql('select sum(after) AS c from key');
+		assert.deepEqual(res, [{c:6}]);
+
+		done();
+	});
 
 	it('Mix with letter sizes', function(done){
 
