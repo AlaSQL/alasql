@@ -257,7 +257,8 @@ SETS                                        	return 'SET'
 'USE'											return 'USE'
 /* 'USER'										return 'USER' */
 'USING'                                         return 'USING'
-VALUE(S)?                                      	return 'VALUE'
+'VALUE'                                      	return 'VALUE'
+'VALUES'                                      	return 'VALUES'
 'VERTEX'										return 'VERTEX'
 'VIEW'											return 'VIEW'
 'WHEN'                                          return 'WHEN'
@@ -1203,6 +1204,8 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
+	| VALUE
+		{ $$ = new yy.DomainValueValue(); }
 	| Json
 		{ $$ = new yy.Json({value:$1}); }			
 	| ArrayValue
@@ -1747,15 +1750,15 @@ Delete
 /* INSERT */
 
 Insert
-	: INSERT Into Table VALUE ValuesListsList
+	: INSERT Into Table VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5}); }
-	| INSERT OR REPLACE Into Table VALUE ValuesListsList
+	| INSERT OR REPLACE Into Table VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
-	| REPLACE Into Table VALUE ValuesListsList
+	| REPLACE Into Table VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); }
-	| INSERT Into Table DEFAULT VALUE
+	| INSERT Into Table DEFAULT VALUES
 		{ $$ = new yy.Insert({into:$3, "default": true}) ; }
-	| INSERT Into Table LPAR ColumnsList RPAR VALUE ValuesListsList
+	| INSERT Into Table LPAR ColumnsList RPAR VALUES ValuesListsList
 		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
 	| INSERT Into Table Select
 		{ $$ = new yy.Insert({into:$3, select: $4}); }
@@ -2691,13 +2694,13 @@ MergeNotMatched
 	;
 
 MergeNotMatchedAction
-	: INSERT VALUE ValuesListsList
+	: INSERT VALUES ValuesListsList
 		{ $$ = {insert:true, values:$3}; }
-	| INSERT LPAR ColumnsList RPAR VALUE ValuesListsList
+	| INSERT LPAR ColumnsList RPAR VALUES ValuesListsList
 		{ $$ = {insert:true, values:$6, columns:$3}; }
-	| INSERT DEFAULT VALUE
+	| INSERT DEFAULT VALUES
 		{ $$ = {insert:true, defaultvalues:true}; }
-	| INSERT LPAR ColumnsList RPAR DEFAULT VALUE
+	| INSERT LPAR ColumnsList RPAR DEFAULT VALUES
 		{ $$ = {insert:true, defaultvalues:true, columns:$3}; }
 	;
 

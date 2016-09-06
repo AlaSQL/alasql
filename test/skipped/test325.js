@@ -30,6 +30,8 @@ describe('Test 325 IDENTITY', function() {
         UNIQUE CLUSTERED(status, msg),
       CONSTRAINT CHK_Messages_status
         CHECK (status IN('new', 'open', 'done'))
+      CONSTRAINT FakeDomainCheck
+        CHECK (VALUE->msg != 'Virtue? I spit on virtue!')
     );
   */});
     done();
