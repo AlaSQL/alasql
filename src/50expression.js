@@ -364,9 +364,9 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	if(this.op === 'IS') {
 		s = 	''
 				+ '('
-				+	'(typeof ' + leftJS()  + "==='undefined')"
+				+	'(' + leftJS()  + "==null)"
 				+	" === "
-				+	'(typeof ' + rightJS() + "==='undefined')"
+				+	'(' + rightJS() + "==null)"
 				+ ')';
 	}
 
@@ -585,7 +585,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 	else {
 		return '(' + declareRefs + ', '
-			+ 'y.some(function(e){return e === void 0}) ? void 0 : ' + expr + ')' 
+			+ 'y.some(function(e){return e == null}) ? void 0 : ' + expr + ')' 
 	}
 }
 
