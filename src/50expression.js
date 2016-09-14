@@ -364,9 +364,9 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	if(this.op === 'IS') {
 		s = 	''
 				+ '('
-				+	'(' + leftJS()  + "==null)"
+				+	'(' + leftJS()  + "===null)"
 				+	" === "
-				+	'(' + rightJS() + "==null)"
+				+	'(' + rightJS() + "===null)"
 				+ ')';
 	}
 
