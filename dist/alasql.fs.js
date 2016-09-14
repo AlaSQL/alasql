@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.2-value-1408 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.2-alasql-601-csv-variable-1413 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.2-value-1408
+@version 0.3.2-alasql-601-csv-variable-1413
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.2-value-1408';
+alasql.version = '0.3.2-alasql-601-csv-variable-1413';
 
 /**
 	Debug flag
@@ -9680,9 +9680,9 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	if(this.op === 'IS') {
 		s = 	''
 				+ '('
-				+	'(typeof ' + leftJS()  + "==='undefined')"
+				+	'(' + leftJS()  + "==null)"
 				+	" === "
-				+	'(typeof ' + rightJS() + "==='undefined')"
+				+	'(' + rightJS() + "==null)"
 				+ ')';
 	}
 
@@ -9878,7 +9878,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	}
 	else {
 		return '(' + declareRefs + ', '
-			+ 'y.some(function(e){return e === void 0}) ? void 0 : ' + expr + ')' 
+			+ 'y.some(function(e){return e == null}) ? void 0 : ' + expr + ')' 
 	}
 }
 
@@ -15465,7 +15465,7 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
 
-alasql.from.CSV = function(filename, opts, cb, idx, query) {
+alasql.from.CSV = function(contents, opts, cb, idx, query) {
 	var opt = {
 		separator: ',',
 		quote: '"',
@@ -15474,7 +15474,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	var res;
 	var hs = [];
-	alasql.utils.loadFile(filename,!!cb,function(text){
+	function parseText(text) {
 
 		var delimiterCode = opt.separator.charCodeAt(0);
 		var quoteCode = opt.quote.charCodeAt(0);
@@ -15582,7 +15582,12 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		if(cb){
 			res = cb(res, idx, query);
 		}
-	});
+	}
+	if (opt['fromString']) {
+		parseText(contents)
+	} else {
+		alasql.utils.loadFile(contents,!!cb,parseText);
+	}
 	return res;
 };
 
