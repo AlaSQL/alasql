@@ -330,7 +330,7 @@ if(false) {
 			res = cb(res, idx, query);
 		}
 	}
-	if (opt['fromString']) {
+	if( (new RegExp("\n")).test(contents) ) {
 		parseText(contents)
 	} else {
 		alasql.utils.loadFile(contents,!!cb,parseText);
