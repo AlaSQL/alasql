@@ -7,7 +7,7 @@ _0.3.3 "Makemo" (16.09.2016)_
 ### 0.3.2 "Maumu" (05.09.2016)
 * Added: Postgres arrays like array[] and text[]
 * Added: Allow non-reserved keywords as identifiers
-* Fix: tsv/csv can now be is an empty file
+* Fix: Empty tsv/csv files will no longer raise an error
 * Fix: alasql.d.ts format
 * Fix: Better way to find out if indexedDB is present
 * Fix: `null = null` is (now) null, baby.
