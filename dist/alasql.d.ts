@@ -77,4 +77,4 @@ declare namespace alaSQLSpace {
     }
 }
 
-declare var alasql: alaSQLSpace.AlaSQL;
+export declare var alasql: alaSQLSpace.AlaSQL;
