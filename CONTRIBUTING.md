@@ -2,14 +2,6 @@
 
 Thank you very much or the your intentions! AlaSQL project still has a lot of thing to be improved, and your help is very appreciated!
 
-
-We have many things to improve:
-* [issues and bugs](https://github.com/agershun/alasql/issues)
-* [wiki documentation](https://github.com/agershun/alasql/wiki)
-* code refactoring and documenting 
-* import-export functions
-* [alasql.org web site](https://github.com/agershun/alasql-org)
-
 For you to edit the source please do the following:
 
 - Fork the repo here on Github
@@ -26,21 +18,8 @@ For you to edit the source please do the following:
 _Please note that `npm test` will compile from `src/` before running tests_ 
 
 
+If you would would like to change the alasql.org website please make a PR to https://github.com/agershun/alasql-org
  
-## For documentation
-
-
-### Suggest Content
-- Have you had questions that you wished you had answers to? Are there resources or references that you wish were made available to you in a central location? **Submit them!** as an issue
-
-### Author Content
-- See a question that you can answer or are an expert on? **Answer it!** 
-- See an answer that you can improve, build upon, or provide an alternative perspective to? **Edit it!** 
-- See ways to organize content better, improve the writing style for clarity or simply make the reading experience easier? **Improve it!**
-
-###Review Content
-- Have feedback on the accuracy, clarity or relevance of existing content? **Flag it**.
-
 
 
 Thank you!
