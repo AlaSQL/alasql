@@ -20,7 +20,7 @@ describe('Test '+test+' - TRUNCATE on Local Storage table', function() {
 	});
 
 	it('A) attempt TRUNCATE on table', function(){
-		var res = alasql('TRUNCATE TABLE one (a int)');
+		var res = alasql('TRUNCATE TABLE one');
 		assert.equal(res, 1);
 	});
 });
