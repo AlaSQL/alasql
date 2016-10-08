@@ -117,7 +117,9 @@ function queryfn2(data,idx,query) {
 function queryfn3(query) {
 
 
-	var scope = query.scope;
+	var scope = query.scope,
+        jlen;
+
 	// Preindexation of data sources
 //	if(!oldscope) {
 		preIndex(query);
