@@ -577,7 +577,7 @@ Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alas
 
 0. At the moment Alasql does not work with jszip 3.0.0 - please use version 2.x 
 
-0. At the moment Alasql is incompatible with xlsx.js 0.8 - please use version [7.x](https://cdnjs.com/libraries/xlsx/0.7.12)
+0. At the moment Alasql is incompatible with xlsx.js 0.8 on the website - please use version [7.x](https://cdnjs.com/libraries/xlsx/0.7.12) by using `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.12/xlsx.core.min.js"></script>` on your website 
 
 Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
 
