@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Versatile SQL database for browser or node. Handles relational data and nested JSON (noSQL). Export to and import from Excel, localStorage or IndexedDB",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "contributors": [
     {
@@ -23,7 +23,7 @@
     "build:watch": "gulp watch",
     "bump": "mversion --no-prefix",
     "uptodate": "npm-check && npm-check -u",
-    "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/how-to-release.md > $f && sh $f ; rm $f",
+    "release": "f='/TMP/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
     "jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js"
   },
   "dependencies": {
