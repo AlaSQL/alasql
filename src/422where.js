@@ -3,7 +3,7 @@ yy.Select.prototype.compileWhere = function(query) {
 		if(typeof this.where == "function") {
 			return this.where;
 		} else {
-			s = this.where.toJS('p',query.defaultTableid,query.defcols);
+			var s = this.where.toJS('p',query.defaultTableid,query.defcols);
 			query.wherefns = s;
 //		console.log(s);
 			return new Function('p,params,alasql','var y;return '+s);

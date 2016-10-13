@@ -62,7 +62,7 @@ function queryfn(query,oldscope,cb, A,B) {
 		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx, alasql); 
 //		console.log(333,rs);
-		if(typeof rs !== undefined) {
+		if(typeof rs !== 'undefined') {
 			// TODO - this is a hack: check if result is array - check all cases and
 			// make it more logical
 			if((query.intofn || query.intoallfn) && rs instanceof Array) rs = rs.length;
@@ -117,7 +117,9 @@ function queryfn2(data,idx,query) {
 function queryfn3(query) {
 
 
-	var scope = query.scope;
+	var scope = query.scope,
+        jlen;
+
 	// Preindexation of data sources
 //	if(!oldscope) {
 		preIndex(query);

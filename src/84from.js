@@ -179,15 +179,16 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
 
-alasql.from.CSV = function(filename, opts, cb, idx, query) {
+alasql.from.CSV = function(contents, opts, cb, idx, query) {
 	var opt = {
 		separator: ',',
 		quote: '"',
 		headers:true
 	};
 	alasql.utils.extend(opt, opts);
-	var res, hs;
-	alasql.utils.loadFile(filename,!!cb,function(text){
+	var res;
+	var hs = [];
+	function parseText(text) {
 
 		var delimiterCode = opt.separator.charCodeAt(0);
 		var quoteCode = opt.quote.charCodeAt(0);
@@ -328,7 +329,12 @@ if(false) {
 		if(cb){
 			res = cb(res, idx, query);
 		}
-	});
+	}
+	if( (new RegExp("\n")).test(contents) ) {
+		parseText(contents)
+	} else {
+		alasql.utils.loadFile(contents,!!cb,parseText);
+	}
 	return res;
 };
 

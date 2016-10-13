@@ -32,7 +32,7 @@ yy.CaseValue.prototype.findAggregator = function (query){
 
 yy.CaseValue.prototype.toJS = function(context, tableid, defcols) {
 
-	var s = '((function('+context+',params,alasql){var r;';
+	var s = '((function('+context+',params,alasql){var y,r;';
 	if(this.expression) {
 //			this.expression.toJS(context, tableid)
 		s += 'v='+this.expression.toJS(context, tableid, defcols)+';';
