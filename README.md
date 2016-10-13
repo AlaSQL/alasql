@@ -587,7 +587,7 @@ Probably, there are many of others. Please, help us to fix them by [submitting i
 
 ## Bleeding edge
 
-If you want to try the last development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console. 
+If you want to try the last development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.fs.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console. 
 
 ## Tests
 
