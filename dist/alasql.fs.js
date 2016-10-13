@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.2-develop-1413 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.2-develop-1428 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.2-develop-1413
+@version 0.3.2-develop-1428
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.2-develop-1413';
+alasql.version = '0.3.2-develop-1428';
 
 /**
 	Debug flag
@@ -6297,7 +6297,9 @@ function queryfn2(data,idx,query) {
 
 function queryfn3(query) {
 
-	var scope = query.scope;
+	var scope = query.scope,
+        jlen;
+
 	// Preindexation of data sources
 //	if(!oldscope) {
 		preIndex(query);
@@ -15465,7 +15467,7 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
 
-alasql.from.CSV = function(filename, opts, cb, idx, query) {
+alasql.from.CSV = function(contents, opts, cb, idx, query) {
 	var opt = {
 		separator: ',',
 		quote: '"',
@@ -15474,7 +15476,7 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	var res;
 	var hs = [];
-	alasql.utils.loadFile(filename,!!cb,function(text){
+	function parseText(text) {
 
 		var delimiterCode = opt.separator.charCodeAt(0);
 		var quoteCode = opt.quote.charCodeAt(0);
@@ -15582,7 +15584,12 @@ alasql.from.CSV = function(filename, opts, cb, idx, query) {
 		if(cb){
 			res = cb(res, idx, query);
 		}
-	});
+	}
+	if( (new RegExp("\n")).test(contents) ) {
+		parseText(contents)
+	} else {
+		alasql.utils.loadFile(contents,!!cb,parseText);
+	}
 	return res;
 };
 
@@ -17614,6 +17621,12 @@ if (typeof module !== "undefined" && module.exports) {
 */
 
 // This is a final part of Alasql
+
+/*only-for-browser/*
+if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
+  console.warn('It looks like you are using the browser version of AlaSQL. Please use the alasql.fs.js file instead.')
+}
+//*/
 
 // FileSaveAs
 alasql.utils.saveAs = saveAs;
