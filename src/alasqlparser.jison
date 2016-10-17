@@ -142,7 +142,7 @@ DATABASE(S)?									return 'DATABASE'
 'GROUP'                                      	return 'GROUP'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
-'HELP'											return 'HELP'
+/*'HELP'											return 'HELP'*/
 'IF'											return 'IF'
 'IDENTITY'										return 'IDENTITY'
 'IS'											return 'IS'
@@ -440,7 +440,7 @@ Statement
 	| EndTransaction
 	| UseDatabase
 	| Update
-	| Help
+	/*| Help*/
 	| JavaScript
 
 	| Source
@@ -2310,12 +2310,14 @@ FetchDirection
 	;
 */
 
+/*
 Help
 	: HELP StringValue 
 		{ $$ = new yy.Help({subject:$2.value.toUpperCase()} ) ; }
 	| HELP
 		{ $$ = new yy.Help() ; }
 	;
+*/
 
 ExpressionStatement
 	: EQ Expression
