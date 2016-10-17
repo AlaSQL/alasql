@@ -43,7 +43,7 @@ var helpdocs = [
 	{command:'UPDATE table SET column1 = expression1, ... [WHERE expression]'},
 	{command:'USE [DATABASE] database'},
 	{command:'expression'},
-	{command:'See also <a href="http://github/agershun/alasq">http://github/agershun/alasq</a> for more information'}
+	{command:'See also <a href="http://github/agershun/alasql">http://github/agershun/alasql</a> for more information'}
 ];
 
 // execute
@@ -52,7 +52,7 @@ yy.Help.prototype.execute = function (databaseid, params, cb) {
 	if(!this.subject) {
 		ss = helpdocs;
 	} else {
-		ss.push('See also <a href="http://github/agershun/alasq">http://github/agershun/alasq</a> for more information');
+		ss.push('See also <a href="http://github/agershun/alasql">http://github/agershun/alasql</a> for more information');
 	}
 	if(cb) ss = cb(ss);
 	return ss;
