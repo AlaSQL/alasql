@@ -1,3 +1,5 @@
+// NOT included when building
+
 /*
 //
 // HELP for Alasql.js
