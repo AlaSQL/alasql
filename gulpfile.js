@@ -127,7 +127,7 @@ gulp.task('js-merge', function () {
     './src/84from.js',
     './src/843xml.js',
     './src/844gexf.js',
-    './src/85help.js',
+//    './src/85help.js',
     './src/86print.js',
     './src/87source.js',
     './src/88require.js',
