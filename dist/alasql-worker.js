@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.2-alasql-601-csv-variable-1413 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.2-develop-1426 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.2-alasql-601-csv-variable-1413
+@version 0.3.2-develop-1426
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff

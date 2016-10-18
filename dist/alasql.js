@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.2-alasql-601-csv-variable-1413 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.2-develop-1426 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.2-alasql-601-csv-variable-1413
+@version 0.3.2-develop-1426
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.2-alasql-601-csv-variable-1413';
+alasql.version = '0.3.2-develop-1426';
 
 /**
 	Debug flag
@@ -6297,7 +6297,9 @@ function queryfn2(data,idx,query) {
 
 function queryfn3(query) {
 
-	var scope = query.scope;
+	var scope = query.scope,
+        jlen;
+
 	// Preindexation of data sources
 //	if(!oldscope) {
 		preIndex(query);
@@ -9680,9 +9682,9 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 	if(this.op === 'IS') {
 		s = 	''
 				+ '('
-				+	'(' + leftJS()  + "==null)"
+				+	'(' + leftJS()  + "==null)"	// Cant be ===
 				+	" === "
-				+	'(' + rightJS() + "==null)"
+				+	'(' + rightJS() + "==null)"	// Cant be ===
 				+ ')';
 	}
 
@@ -15583,7 +15585,7 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 			res = cb(res, idx, query);
 		}
 	}
-	if (opt['fromString']) {
+	if( (new RegExp("\n")).test(contents) ) {
 		parseText(contents)
 	} else {
 		alasql.utils.loadFile(contents,!!cb,parseText);
@@ -16588,7 +16590,7 @@ LS.get = function(key) {
 	if(typeof s === "undefined") return;
 	var v = undefined;
 	try {
-		v = JSON.parse(s); 
+		v = JSON.parse(s);
 	} catch(err) {
 		throw new Error('Cannot parse JSON object from localStorage'+s);
 	}
@@ -16602,7 +16604,7 @@ LS.get = function(key) {
 */
 LS.set = function(key, value){
 	if(typeof value === 'undefined') localStorage.removeItem(key);
-	else localStorage.setItem(key,JSON.stringify(value)); 
+	else localStorage.setItem(key,JSON.stringify(value));
 };
 
 /**
@@ -16724,7 +16726,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 /**
 	Attach existing localStorage database to AlaSQL database
 	@param lsdibid {string} localStorage database id
-	@param 
+	@param
 */
 
 LS.attachDatabase = function(lsdbid, databaseid, args, params, cb){
@@ -16737,7 +16739,7 @@ LS.attachDatabase = function(lsdbid, databaseid, args, params, cb){
 	db.engineid = "LOCALSTORAGE";
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
-	// IF AUTOCOMMIT IS OFF then copy data to memory
+	// IF AUTOABORT IS OFF then copy data to memory
 	if(!alasql.options.autocommit) {
 		if(db.tables){
 			for(var tbid in db.tables) {
@@ -16770,7 +16772,7 @@ LS.showDatabases = function(like, cb) {
 			res = res.filter(function(d){
 				return d.databaseid.match(relike);
 			});
-		}		
+		}
 	};
 	if(cb) res=cb(res);
 	return res;
@@ -16803,6 +16805,44 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 
 	if(cb) res = cb(res);
 	return res;
+}
+
+/**
+   Empty table and reset identities
+   @param databaseid {string} AlaSQL database id (not external localStorage)
+   @param tableid {string} Table name
+	 @param ifexists {boolean} If exists flag
+   @param cb {function} Callback
+   @return 1 on success
+*/
+LS.truncateTable = function(databaseid,tableid, ifexists, cb){
+  var res = 1
+  var lsdbid = alasql.databases[databaseid].lsdbid;
+
+	if(alasql.options.autocommit) {
+		var lsdb = LS.get(lsdbid);
+	} else {
+		var lsdb = alasql.databases[databaseid];
+	}
+
+	if(!ifexists && !lsdb.tables[tableid]) {
+		throw (new Error('Cannot truncate table "'+tableid+'" in localStorage, because it does not exist'));
+	};
+
+	//load table
+	var tbl = LS.restoreTable(databaseid,tableid);
+
+  //clear data from table
+  tbl.data = [];
+  //TODO reset all identities
+  //but identities are not working on LOCALSTORAGE
+  //See test 607 for details
+
+	//store table
+	LS.storeTable(databaseid,tableid);
+
+  if(cb) res = cb(res);
+  return res;
 }
 
 /**

@@ -18,7 +18,7 @@ LS.get = function(key) {
 	if(typeof s === "undefined") return;
 	var v = undefined;
 	try {
-		v = JSON.parse(s); 
+		v = JSON.parse(s);
 	} catch(err) {
 		throw new Error('Cannot parse JSON object from localStorage'+s);
 	}
@@ -32,7 +32,7 @@ LS.get = function(key) {
 */
 LS.set = function(key, value){
 	if(typeof value === 'undefined') localStorage.removeItem(key);
-	else localStorage.setItem(key,JSON.stringify(value)); 
+	else localStorage.setItem(key,JSON.stringify(value));
 };
 
 /**
@@ -136,7 +136,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 		}
 		delete ls.databases[lsdbid];
 		LS.set('alasql',ls);
-		
+
 		// 2. Remove tables definitions
 		var db = LS.get(lsdbid);
 		for(var tableid in db.tables) {
@@ -155,7 +155,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb){
 /**
 	Attach existing localStorage database to AlaSQL database
 	@param lsdibid {string} localStorage database id
-	@param 
+	@param
 */
 
 LS.attachDatabase = function(lsdbid, databaseid, args, params, cb){
@@ -168,7 +168,7 @@ LS.attachDatabase = function(lsdbid, databaseid, args, params, cb){
 	db.engineid = "LOCALSTORAGE";
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
-	// IF AUTOCOMMIT IS OFF then copy data to memory
+	// IF AUTOABORT IS OFF then copy data to memory
 	if(!alasql.options.autocommit) {
 		if(db.tables){
 			for(var tbid in db.tables) {
@@ -202,7 +202,7 @@ LS.showDatabases = function(like, cb) {
 			res = res.filter(function(d){
 				return d.databaseid.match(relike);
 			});
-		}		
+		}
 	};
 	if(cb) res=cb(res);
 	return res;
@@ -237,6 +237,43 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	return res;
 }
 
+/**
+   Empty table and reset identities
+   @param databaseid {string} AlaSQL database id (not external localStorage)
+   @param tableid {string} Table name
+	 @param ifexists {boolean} If exists flag
+   @param cb {function} Callback
+   @return 1 on success
+*/
+LS.truncateTable = function(databaseid,tableid, ifexists, cb){
+  var res = 1
+  var lsdbid = alasql.databases[databaseid].lsdbid;
+
+	if(alasql.options.autocommit) {
+		var lsdb = LS.get(lsdbid);
+	} else {
+		var lsdb = alasql.databases[databaseid];
+	}
+
+	if(!ifexists && !lsdb.tables[tableid]) {
+		throw (new Error('Cannot truncate table "'+tableid+'" in localStorage, because it does not exist'));
+	};
+
+	//load table
+	var tbl = LS.restoreTable(databaseid,tableid);
+
+  //clear data from table
+  tbl.data = [];
+  //TODO reset all identities
+  //but identities are not working on LOCALSTORAGE
+  //See test 607 for details
+
+	//store table
+	LS.storeTable(databaseid,tableid);
+
+  if(cb) res = cb(res);
+  return res;
+}
 
 /**
 	Create table in localStorage database
@@ -404,5 +441,3 @@ LS.rollback = function(databaseid, cb) {
 //	}
 //console.log(999, alasql.databases[databaseid]);
 }
-
-
