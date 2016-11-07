@@ -976,9 +976,9 @@ JoinTableAs
 	| ParamValue AS Literal
 		{ $$ = {param: $1, as: $3 } ; }
 	| LPAR Select RPAR Literal
-		{ $$ = {select: $1, as: $4} ; }
+		{ $$ = {select: $2, as: $4} ; }
 	| LPAR Select RPAR AS Literal
-		{ $$ = {select: $1, as: $5 } ; }
+		{ $$ = {select: $2, as: $5 } ; }
 	| FuncValue
 		{ $$ = {funcid:$1, as:'default'}; }
 	| FuncValue Literal
