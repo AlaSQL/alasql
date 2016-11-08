@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.3-773-1444 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.3-develop-1443 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.3-773-1444
+@version 0.3.3-develop-1443
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.3-773-1444';
+alasql.version = '0.3.3-develop-1443';
 
 /**
 	Debug flag
@@ -11512,19 +11512,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uniqs[uk.hh][ukaddr]=undefined;
 			});
 		}
-
-		// Trigger prevent functionality
-		for(var tr in table.afterdelete) {
-			var trigger = table.afterdelete[tr];
-			if(trigger) {
-				if(trigger.funcid) {
-					alasql.fn[trigger.funcid](r);
-				} else if(trigger.statement) {
-					trigger.statement.execute(databaseid);
-				}
-			}
-		};
-
 	};
 
 	table.deleteall = function() {
@@ -13168,6 +13155,19 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 
 			table.data = newtable;
+
+			// Trigger prevent functionality
+			for(var tr in table.afterdelete) {
+				var trigger = table.afterdelete[tr];
+				if(trigger) {
+					if(trigger.funcid) {
+						alasql.fn[trigger.funcid]();
+					} else if(trigger.statement) {
+						trigger.statement.execute(databaseid);
+					}
+				}
+			};
+
 			var res = orignum - table.data.length;
 			if(alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
