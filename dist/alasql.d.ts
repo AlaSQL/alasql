@@ -1,6 +1,9 @@
+// Type definitions for alasql.js v.0.1.8
 // Project: https://github.com/agershun/alasql
+// Definitions by: Andrey Gershun <https://github.com/agershun>
+// Definitions: https://github.com/borisyankov/DefinitelyTyped
 
-export declare namespace alaSQLSpace {
+declare namespace alaSQLSpace {
     interface AlaSQLCallback {
         (data?: any, err?: Error): void;
     }
