@@ -9,7 +9,7 @@ if(typeof exports === 'object') {
 
 describe('Test 360 AGGR function', function() {
   
-  it('1. CREATE DATABASE',function(done){
+  it.skip('1. CREATE DATABASE',function(done){
     alasql('CREATE DATABASE test360;USE test360');
     done();
   });
@@ -19,7 +19,7 @@ describe('Test 360 AGGR function', function() {
  {"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":18,"mails_200er":3795,"mails_400er":0,"mails_500er":132,"mails_total":3945},{"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":1,"is_bounce":0,"mails_no_such_user":0,"mails_200er":0,"mails_400er":0,"mails_500er":0,"mails_total":0},{"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":42,"mails_400er":4,"mails_500er":0,"mails_total":46},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":4,"mails_400er":0,"mails_500er":0,"mails_total":4},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":1,"mails_400er":1,"mails_500er":0,"mails_total":2},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":0,"mails_400er":0,"mails_500er":0,"mails_total":0},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":178,"mails_200er":4752,"mails_400er":0,"mails_500er":855,"mails_total":5785},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":14,"mails_400er":0,"mails_500er":0,"mails_total":14},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":0,"mails_400er":0,"mails_500er":0,"mails_total":0},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":0,"mails_400er":0,"mails_500er":0,"mails_total":0},{"report_date":1435190400000,"srv_class_name":"EU","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":1,"mails_400er":0,"mails_500er":0,"mails_total":1},{"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":0,"is_bounce":1,"mails_no_such_user":3,"mails_200er":20,"mails_400er":5,"mails_500er":12,"mails_total":40},{"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":1,"is_bounce":0,"mails_no_such_user":0,"mails_200er":0,"mails_400er":2011,"mails_500er":3,"mails_total":2014},{"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":1,"mails_200er":699,"mails_400er":6,"mails_500er":8,"mails_total":714},{"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":0,"is_bounce":0,"mails_no_such_user":0,"mails_200er":0,"mails_400er":0,"mails_500er":0,"mails_total":0},{"report_date":1435190400000,"srv_class_name":"US","is_spam_sender":0,"is_bounce":1,"mails_no_such_user":0,"mails_200er":0,"mails_400er":0,"mails_500er":0,"mails_total":0}];
 
 
-  it('2. Prepare Data',function(done){
+  it.skip('2. Prepare Data',function(done){
     var res = alasql(function(){/*
 
 SELECT
@@ -41,7 +41,7 @@ FROM ?
     done();
   });
 
-  it('2. Prepare Data',function(done){
+  it.skip('2. Prepare Data',function(done){
     var res = alasql(function(){/*
 
     SELECT
@@ -62,7 +62,7 @@ FROM ?
 
 
 
-  it('99. DROP DATABASE',function(done){
+  it.skip('99. DROP DATABASE',function(done){
     alasql.options.modifier = undefined;
     alasql('DROP DATABASE test360');
     done();

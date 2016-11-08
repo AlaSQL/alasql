@@ -1,8 +1,17 @@
 # Changelog
 
-_0.3.3 "Makemo" (16.09.2016)_
+
+_0.3.4 "xxx" (xx.11.2016)_
 * ...
 
+
+### 0.3.3 "Makemo" (13.10.2016)
+* Add: support for VALUE inside checks
+* Add: Conflate null and undefined
+* Add: Load CSV data from a string
+* Add: Warn when server side uses browser build of lib
+* Update: typescript definition for native import 
+* Update: filesaver.js updated to 1.3.2
 
 ### 0.3.2 "Maumu" (05.09.2016)
 * Added: Postgres arrays like array[] and text[]

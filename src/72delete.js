@@ -76,6 +76,19 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 //			table.data = table.data.filter(function(r){return !;});
 			table.data = newtable;
+
+			// Trigger prevent functionality
+			for(var tr in table.afterdelete) {
+				var trigger = table.afterdelete[tr];
+				if(trigger) {
+					if(trigger.funcid) {
+						alasql.fn[trigger.funcid]();
+					} else if(trigger.statement) {
+						trigger.statement.execute(databaseid);
+					}
+				}
+			};
+
 			var res = orignum - table.data.length;
 			if(alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
 				alasql.engines[db.engineid].saveTableData(databaseid,tableid);
