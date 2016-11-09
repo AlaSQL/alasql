@@ -4,16 +4,13 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 
 
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
-[![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npmjs.org/package/alasql?)
+[![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=alasql)
 [![ghit.me](https://ghit.me/badge.svg?repo=agershun/alasql)](https://ghit.me/repo/agershun/alasql)
 ![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a)
 ![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/agershun/alasql.svg)](http://isitmaintained.com/project/agershun/alasql "Average time to resolve an issue")
 [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/agershun/alasql.svg)](http://isitmaintained.com/project/agershun/alasql "Average time to resolve an issue")
-
-<div align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
-</div>
 
 
 
@@ -21,6 +18,11 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 
 
 _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is a free and open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
+
+<div align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
+</div>
+
+
 
 The library is designed for:
 
@@ -434,17 +436,17 @@ AlaSQL extends "good old" SQL to make it closer to JavaScript. The "sugar" inclu
 
 
 
-### localStorage and DOM-storage
+### localStorage and DOM-storage (experimental)
 You can use browser localStorage and [DOM-storage](https://github.com/node-browser-compat/dom-storage) as a data storage. Here is a sample:
 
-```
-    alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
-    alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
-    alasql('CREATE TABLE IF NOT EXISTS MyAtlas.City (city string, population number)');
-    alasql('SELECT * INTO MyAtlas.City FROM ?',[[{city:'Vienna', population:1731000},
+```js
+alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
+alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
+alasql('CREATE TABLE IF NOT EXISTS MyAtlas.City (city string, population number)');
+alasql('SELECT * INTO MyAtlas.City FROM ?',[[{city:'Vienna', population:1731000},
         {city:'Budapest', population:1728000}]]);
-    var res = alasql('SELECT * FROM MyAtlas.City');
-    console.log(res);
+var res = alasql('SELECT * FROM MyAtlas.City');
+console.log(res);
 ```
 
 Try this sample in [jsFiddle](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample
@@ -455,20 +457,21 @@ You can use localStorage in two modes: SET AUTOCOMMIT ON to immediate save data
 to localStorage after each statement or SET AUTOCOMMIT OFF. In this case you need
 to use COMMIT statement to save all data from in-memory mirror to localStorage.
 
-### Work with CSV, TAB, TXT, and JSON files
-You can use files in these formats directly from AlaSQL (in sync and async modes):
+### CSV, TAB, TXT, and JSON files
+You can import from and export to CSV, TAB, TXT, and JSON files directly from AlaSQL. Calls to files will always be [[async]] so the approach is to chain the queries if you have more than one:
 
 ```js
-    var res1 = alasq("select * from txt('mytext.txt') where [0] like 'M%'");
-    var res2 = alasq("select * from tab('mydata.tab') order by [1]");
-    var res3 = alasq("select [3] as city,[4] as population from csv('cities.csv')");
+var tabFile = 'mydata.tab'
 
-    alasq("select * from json('array.json')",[],function(res4){
-        console.log(res4)
-    });
+alasql.promise([
+		"select * from txt('mytext.txt') where [0] like 'M%'",
+		["select * from tab(?) order by [1]", [tabFile]],	// note how to pass parameter when promises are chained
+		"select [3] as city,[4] as population from csv('cities.csv')",
+		"select * from json('array.json')"
+	]).then(function(results){
+		console.log(results)
+	}).catch(console.error)
 ```
-
-See [test157.js](test/test157.js) as an example.
 
 ### JSON-object
 
@@ -579,7 +582,6 @@ Please be aware that AlaSQL ~~may~~ have [bugs](https://github.com/agershun/alas
 
 0. At the moment Alasql does not work with jszip 3.0.0 - please use version 2.x 
 
-0. At the moment Alasql is incompatible with xlsx.js 0.8 on the website - please use version [7.x](https://cdnjs.com/libraries/xlsx/0.7.12) by using `<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.12/xlsx.core.min.js"></script>` on your website 
 
 Probably, there are many of others. Please, help us to fix them by [submitting it as an issue](https://github.com/agershun/alasql/issues). Thank you!
 
@@ -587,7 +589,7 @@ Probably, there are many of others. Please, help us to fix them by [submitting i
 
 ## Bleeding edge
 
-If you want to try the last development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.fs.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console. 
+If you want to try the last development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.fs.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/test/testbench.html) to play around in the browser console. 
 
 ## Tests
 
@@ -644,7 +646,7 @@ MIT - see [MIT licence information](LICENSE)
 * [Mathias Rangel Wulff](https://twitter.com/rangelwulff)
 * [Aubert Grégoire](https://github.com/gregaubert)
 
-[![Throughput Graph](https://graphs.waffle.io/agershun/alasql/throughput.svg)](https://waffle.io/agershun/alasql/metrics/throughput)
+<!--[![Throughput Graph](https://graphs.waffle.io/agershun/alasql/throughput.svg)](https://waffle.io/agershun/alasql/metrics/throughput)-->
 
 
 

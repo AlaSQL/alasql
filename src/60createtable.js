@@ -506,19 +506,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uniqs[uk.hh][ukaddr]=undefined;
 			});
 		}
-
-		// Trigger prevent functionality
-		for(var tr in table.afterdelete) {
-			var trigger = table.afterdelete[tr];
-			if(trigger) {
-				if(trigger.funcid) {
-					alasql.fn[trigger.funcid](r);
-				} else if(trigger.statement) {
-					trigger.statement.execute(databaseid);
-				}
-			}
-		};
-
 	};
 
 	table.deleteall = function() {

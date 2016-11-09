@@ -79,19 +79,31 @@ describe('Test 393 Triggers', function() {
     done();      
   });
 
-  it('6. BEFORE DELETE', function(done){
+  it('6. BEFORE AND AFTER DELETE', function(done){
     var test = 0;
-    alasql.fn.onchange6 = function(r) {
+    alasql.fn.onchange61 = function(r) {
       test++;
+      var res = alasql('COLUMN OF SELECT * FROM four');
+      assert.deepEqual(res,[1,2,3,4,5]);
+    };
+    alasql.fn.onchange62 = function() {
+      test++;
+      var res = alasql('COLUMN OF SELECT * FROM four');
+      assert.deepEqual(res,[2,3,4,5]);
+    };
+    alasql.fn.onchange63 = function() {
+      test++;
+      var res = alasql('COLUMN OF SELECT * FROM four');
+      assert.deepEqual(res,[2,3,4,5]);
     };
     alasql('CREATE TABLE four (a INT)');
-    alasql('CREATE TRIGGER tr6 BEFORE DELETE ON four onchange6');
+    alasql('CREATE TRIGGER tr61 BEFORE DELETE ON four onchange61');
+    alasql('CREATE TRIGGER tr62 AFTER DELETE ON four CALL onchange62()');
+    alasql('CREATE TRIGGER tr63 AFTER DELETE ON four onchange63');
     alasql('INSERT INTO four VALUES (1),(2),(3),(4),(5)');  
-    alasql('DELETE FROM four WHERE a = 1');  
+    alasql('DELETE FROM four WHERE a = 1');
 
-    var res = alasql('COLUMN OF SELECT * FROM four');
-    assert.deepEqual(res,[2,3,4,5]);
-    assert(test==1);
+    assert(test==3);
     done();      
   });
 
