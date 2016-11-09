@@ -5,13 +5,12 @@ if(typeof exports === 'object') {
 	__dirname = '.';
 };
 
-if(typeof exports == 'object' && false) {
-
-	var XLS = require('xlsjs');
-	var XLSX = require('js-xlsx');
+if(typeof exports !== 'object') {
 
 } else {
 	// how to attach these files in browser?
+	var XLS = null;
+	var XLSX = null;
 }
 
 if(false) {
