@@ -927,30 +927,28 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 */
 
 /**
-  COmpare two object in deep
+  Compare two object in deep
  */
 var deepEqual = utils.deepEqual = function(x, y) {
+		
+	if(x===y){
+		return true;
+	}
+
     if (typeof x === "object" && null !== x && (typeof y === "object" && null !== y)) {
         if (Object.keys(x).length !== Object.keys(y).length) {
             return false;
         }
         for (var prop in x) {
-            if (y.hasOwnProperty(prop)) {
-                if (!deepEqual(x[prop], y[prop])) {
-                    return false;
-                }
-            } else {
-                return false;
+			if (!deepEqual(x[prop], y[prop])) {
+				return false;
             }
         }
         return true;
-    } else {
-        if (x !== y) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+    }  
+
+    return false;
+    
 };
 /**
     Array with distinct records

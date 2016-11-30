@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.4 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.4-develop-1456 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.4
+@version 0.3.4-develop-1456
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.4';
+alasql.version = '0.3.4-develop-1456';
 
 /**
 	Debug flag
@@ -3905,30 +3905,28 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 */
 
 /**
-  COmpare two object in deep
+  Compare two object in deep
  */
 var deepEqual = utils.deepEqual = function(x, y) {
+
+	if(x===y){
+		return true;
+	}
+
     if (typeof x === "object" && null !== x && (typeof y === "object" && null !== y)) {
         if (Object.keys(x).length !== Object.keys(y).length) {
             return false;
         }
         for (var prop in x) {
-            if (y.hasOwnProperty(prop)) {
-                if (!deepEqual(x[prop], y[prop])) {
-                    return false;
-                }
-            } else {
-                return false;
+			if (!deepEqual(x[prop], y[prop])) {
+				return false;
             }
         }
         return true;
-    } else {
-        if (x !== y) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+    }  
+
+    return false;
+
 };
 /**
     Array with distinct records
