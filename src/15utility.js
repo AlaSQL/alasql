@@ -396,7 +396,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 */
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
                             if (success){
                                 success(cutbom(xhr.responseText));
