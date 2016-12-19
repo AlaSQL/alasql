@@ -696,7 +696,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				testlink.close();
         	} else {
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-	            saveAs(blob, path);
+	            saveAs(blob, path, true);
 	            if(cb){
                     res = cb(res);
                 }

@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.4-develop-1456 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.4-develop-1458 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.4-develop-1456
+@version 0.3.4-develop-1458
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.4-develop-1456';
+alasql.version = '0.3.4-develop-1458';
 
 /**
 	Debug flag
@@ -3495,7 +3495,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 */
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
                             if (success){
                                 success(cutbom(xhr.responseText));
@@ -3736,7 +3736,7 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				testlink.close();
         	} else {
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-	            saveAs(blob, path);
+	            saveAs(blob, path, true);
 	            if(cb){
                     res = cb(res);
                 }
