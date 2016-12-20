@@ -210,7 +210,8 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		}).join(opt.separator)+'\r\n';	
 	});
 
-	res = alasql.utils.saveFile(filename,s);
+
+	res = alasql.utils.saveFile(filename,s, null, {disableAutoBom: true});
 	if(cb){
 		res = cb(res);
 	}
