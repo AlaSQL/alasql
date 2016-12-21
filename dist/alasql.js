@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.4-develop-1456 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.4-793-1459 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.4-develop-1456
+@version 0.3.4-793-1459
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.4-develop-1456';
+alasql.version = '0.3.4-793-1459';
 
 /**
 	Debug flag
@@ -3495,7 +3495,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 */
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
                             if (success){
                                 success(cutbom(xhr.responseText));
@@ -3681,9 +3681,10 @@ var fileExists = utils.fileExists = function(path,cb){
   @param {string} path File path
   @param {array} data Data object
   @param {function} cb Callback
+  @param {object=} opts
 */
 
-var saveFile = utils.saveFile = function(path, data, cb) {
+var saveFile = utils.saveFile = function(path, data, cb, opts) {
     var res = 1;
     if(path === undefined) {
         //
@@ -3735,8 +3736,12 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				testlink.document.execCommand('SaveAs', false, path);
 				testlink.close();
         	} else {
+                var opt = {
+                    disableAutoBom: false
+                };
+                alasql.utils.extend(opt, opts);
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-	            saveAs(blob, path);
+	            saveAs(blob, path, opt.disableAutoBom);
 	            if(cb){
                     res = cb(res);
                 }
@@ -14435,7 +14440,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		}).join(opt.separator)+'\r\n';	
 	});
 
-	res = alasql.utils.saveFile(filename,s);
+	res = alasql.utils.saveFile(filename,s, null, {disableAutoBom: true});
 	if(cb){
 		res = cb(res);
 	}

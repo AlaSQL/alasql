@@ -583,9 +583,10 @@ var fileExists = utils.fileExists = function(path,cb){
   @param {string} path File path
   @param {array} data Data object
   @param {function} cb Callback
+  @param {object=} opts
 */
 
-var saveFile = utils.saveFile = function(path, data, cb) {
+var saveFile = utils.saveFile = function(path, data, cb, opts) {
     var res = 1;
     if(path === undefined) {
         //
@@ -695,8 +696,12 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				testlink.document.execCommand('SaveAs', false, path);
 				testlink.close();
         	} else {
+                var opt = {
+                    disableAutoBom: false
+                };
+                alasql.utils.extend(opt, opts);
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-	            saveAs(blob, path);
+	            saveAs(blob, path, opt.disableAutoBom);
 	            if(cb){
                     res = cb(res);
                 }
