@@ -111,7 +111,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 //	console.log('table1', db, self);
 //console.log(111, table.columns);
 //console.log(74,table);
-				if((values instanceof Array) && table.columns && table.columns.length > 0) {
+				if((Array.isArray(values)) && table.columns && table.columns.length > 0) {
 					table.columns.forEach(function(col, idx){
 
 						var q = '\''+col.columnid +'\':';

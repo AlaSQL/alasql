@@ -96,7 +96,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			// Autogenerate columns if they are passed as parameters
 			if(columns.length == 0 && data.length > 0) {
 				if(typeof data[0] == 'object') {
-					if(data[0] instanceof Array) {
+					if(Array.isArray(data[0])) {
 						columns = data[0].map(function(d,columnidx){
 							return {columnid:columnidx};
 						});
@@ -126,7 +126,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			if(typeof column.width == 'number') column.width = column.width + "px";
 			if(typeof column.columnid == 'undefined') column.columnid = columnidx;
 			if(typeof column.title == 'undefined') column.title = ""+column.columnid.trim();
-			if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[columnidx];
+			if(sheet.headers && Array.isArray(sheet.headers)) column.title = sheet.headers[columnidx];
 		});
 
 		// Set columns widths

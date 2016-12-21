@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.4-793-1459 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.4-develop-1460 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.4-793-1459
+@version 0.3.4-develop-1460
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -111,7 +111,7 @@ var alasql = function(sql, params, cb, scope) {
 				columns:[new yy.Column({columnid:'*'})],
 				from: [new yy.ParamValue({param:0})]
 			});
-		} else if (arguments.length === 1 && typeof sql === "object" && sql instanceof Array) {
+		} else if (arguments.length === 1 && typeof sql === "object" && Array.isArray(sql) ){
 			// One argument data object - fluent interface
 				var select = new yy.Select({
 					columns:[new yy.Column({columnid:'*'})],
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.4-793-1459';
+alasql.version = '0.3.4-develop-1460';
 
 /**
 	Debug flag
@@ -2109,7 +2109,7 @@ _handle_error:
         }
 
         // this shouldn't happen, unless resolve defaults are off
-        if (action[0] instanceof Array && action.length > 1) {
+        if (Array.isArray(action[0]) && action.length > 1) {
             throw new Error('Parse Error: multiple actions possible at state: '+state+', token: '+symbol);
         }
 
@@ -4008,6 +4008,12 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
     });
 };
 
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
+
 /**
     Excel:convert number to Excel column, like 1 => 'A'
     @param {integer} i Column number, starting with 0
@@ -5876,7 +5882,7 @@ alasql.srch.PARENT = function(/*val,args,stope*/) {
 alasql.srch.CHILD = function(val,args,stope) {
 
   if(typeof val === 'object') {
-    if(val instanceof Array) {
+    if(Array.isArray(val)){
       return {status: 1, values: val};
     } else {
     	if(stope.mode === 'XML') {
@@ -6243,7 +6249,7 @@ function queryfn(query,oldscope,cb, A,B) {
 		if(typeof rs !== 'undefined') {
 			// TODO - this is a hack: check if result is array - check all cases and
 			// make it more logical
-			if((query.intofn || query.intoallfn) && rs instanceof Array) rs = rs.length;
+			if((query.intofn || query.intoallfn) && Array.isArray(rs)) rs = rs.length;
 			result = rs;
 		}
 //
@@ -7702,7 +7708,7 @@ alasql.prepareFromData = function(data,array) {
 			res.push([data[i]]);
 		}
 
-	} else if(typeof data == 'object' && !(data instanceof Array)) {
+	} else if(typeof data == 'object' && !(Array.isArray(data) )) {
 //	} else if(typeof data == 'object' && !(typeof data.length == 'undefined')) {
 		if(typeof Mongo != 'undefined' && typeof Mongo.Collection != 'undefined'
 			&& data instanceof Mongo.Collection) {
@@ -9115,7 +9121,7 @@ var cartes = function(a1,a2){
  */
 function decartes(gv,query) {
 
-	if(gv instanceof Array) {
+	if(Array.isArray(gv)) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
 			if(gv[t] instanceof yy.Column) {
@@ -9772,7 +9778,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,'+context+'))';
 			s += '.indexOf(';
 			s += leftJS()+')>-1)';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right)) {
 
 			s 	= '(['
 				+ this.right.map(ref).join(',')
@@ -9795,7 +9801,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.indexOf(';
 			s += leftJS()+')<0)';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right)) {
 
 			s = '(['+this.right.map(ref).join(',')+'].indexOf(';
 			s += leftJS()+')<0)';
@@ -9814,7 +9820,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 			s +='.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right) ) {
 			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
 			s += '.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
@@ -9830,7 +9836,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right) ) {
 			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
 			s += '.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
@@ -10303,7 +10309,7 @@ yy.Select.prototype.Select = function(){
 	if(arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);;
 	} else if(arguments.length == 1) {
-		if(arguments[0] instanceof Array) {
+		if(Array.isArray(arguments[0])) {
 			args = arguments[0];
 		} else {
 			args = [arguments[0]];
@@ -10337,7 +10343,7 @@ yy.Select.prototype.Select = function(){
 yy.Select.prototype.From = function(tableid){
 	var self = this;
 	if(!self.from) self.from = [];
-	if(tableid instanceof Array) {
+	if(Array.isArray(tableid)) {
 		var pari = 0;
 		if(self.preparams) {
 			pari = self.preparams.length;
@@ -10366,7 +10372,7 @@ yy.Select.prototype.OrderBy = function(){
 	} else if(arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);;
 	} else if(arguments.length == 1) {
-		if(arguments[0] instanceof Array) {
+		if(Array.isArray(arguments[0])) {
 			args = arguments[0];
 		} else {
 			args = [arguments[0]];
@@ -10400,7 +10406,7 @@ yy.Select.prototype.GroupBy = function(){
 	if(arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);;
 	} else if(arguments.length == 1) {
-		if(arguments[0] instanceof Array) {
+		if(Array.isArray(arguments[0])) {
 			args = arguments[0];
 		} else {
 			args = [arguments[0]];
@@ -10799,7 +10805,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 	else if(typeof obj == "number") s = obj;
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
-		if(obj instanceof Array) {
+		if(Array.isArray(obj)) {
 			s += '['+obj.map(function(b){
 				return JSONtoString(b);
 			}).join(',')+']';
@@ -10837,7 +10843,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 	else if(typeof obj == "number") s = '('+obj+')';
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
-		if(obj instanceof Array) {
+		if(Array.isArray(obj)) {
 			s += '['+obj.map(function(b){
 				return JSONtoJS(b, context, tableid, defcols);
 			}).join(',')+']';
@@ -12845,7 +12851,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				});
 			} else {
 
-				if((values instanceof Array) && table.columns && table.columns.length > 0) {
+				if((Array.isArray(values)) && table.columns && table.columns.length > 0) {
 					table.columns.forEach(function(col, idx){
 
 						var q = '\''+col.columnid +'\':';
@@ -13864,7 +13870,7 @@ alasql.log = function(sql, params) {
 			console.log(olduseid+'>',sql);
 		}
 
-		if(res instanceof Array) {
+		if(Array.isArray(res)) {
 			if(console.table) {
 				// For Chrome and other consoles
 				console.table(res);		
@@ -13897,10 +13903,10 @@ alasql.log = function(sql, params) {
 			s += '<pre><code>'+alasql.pretty(sql)+'</code></pre>';
 		}
 
-		if(res instanceof Array) {
+		if(Array.isArray(res)) {
 			if(res.length === 0) {
 				s += '<p>[ ]</p>'
-			} else if(typeof res[0] !== 'object' || res[0] instanceof Array) {
+			} else if(typeof res[0] !== 'object' || Array.isArray(res[0])) {
 				for(var i=0,ilen=res.length;i<ilen;i++) {
 					s += '<p>'+loghtml(res[i])+'</p>';
 				}
@@ -13967,7 +13973,7 @@ function loghtml(res) {
 	var s  = '';
 	if(res === undefined) {
 		s += 'undefined';
-	} else if(res instanceof Array) {
+	} else if(Array.isArray(res)) {
 		s += '<style>';
 		s += 'table {border:1px black solid; border-collapse: collapse; border-spacing: 0px;}';
 		s += 'td,th {border:1px black solid; padding-left:5px; padding-right:5px}';
@@ -14543,7 +14549,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			// Autogenerate columns if they are passed as parameters
 			if(columns.length == 0 && data.length > 0) {
 				if(typeof data[0] == 'object') {
-					if(data[0] instanceof Array) {
+					if(Array.isArray(data[0])) {
 						columns = data[0].map(function(d,columnidx){
 							return {columnid:columnidx};
 						});
@@ -14573,7 +14579,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			if(typeof column.width == 'number') column.width = column.width + "px";
 			if(typeof column.columnid == 'undefined') column.columnid = columnidx;
 			if(typeof column.title == 'undefined') column.title = ""+column.columnid.trim();
-			if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[columnidx];
+			if(sheet.headers && Array.isArray(sheet.headers)) column.title = sheet.headers[columnidx];
 		});
 
 		// Set columns widths
@@ -14864,7 +14870,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				// Autogenerate columns if they are passed as parameters
 				if(columns.length == 0 && data.length > 0) {
 					if(typeof data[0] == 'object') {
-						if(data[0] instanceof Array) {
+						if(Array.isArray(data[0])) {
 							columns = data[0].map(function(d,columnidx){
 								return {columnid:columnidx};
 							});
@@ -14893,7 +14899,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				if(typeof column.width == 'number') column.width = column.width;
 				if(typeof column.columnid == 'undefined') column.columnid = columnidx;
 				if(typeof column.title == 'undefined') column.title = ""+column.columnid.trim();
-				if(sheet.headers && sheet.headers instanceof Array) column.title = sheet.headers[idx];
+				if(sheet.headers && Array.isArray(sheet.headers)) column.title = sheet.headers[idx];
 			});
 
 			// Header
@@ -15153,7 +15159,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			If opts is array of arrays then this is a
 			multisheet workboook, else it is a singlesheet
 		*/
-		if(typeof opts == 'object' && opts instanceof Array) {
+		if(typeof opts == 'object' && Array.isArray(opts)) {
 			if(data && data.length > 0) {
 				data.forEach(function(dat,idx){
 					prepareSheet(opts[idx],dat,undefined,idx+1)
@@ -15345,7 +15351,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	var res = [];
 	var headers = opt.headers;
 
-	if(headers && !(headers instanceof Array)) {
+	if(headers && !(Array.isArray(headers))) {
 		headers = [];
 		var ths = sel.querySelector("thead tr").children;
 		for(var i=0;i<ths.length;i++){
@@ -15536,7 +15542,7 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 	        	if(n === 0) {
 					if(typeof opt.headers === 'boolean') {
 		        		hs = a;
-					} else if(opt.headers instanceof Array) {
+					} else if(Array.isArray(opt.headers)) {
 						hs = opt.headers;
 		        		var r = {};
 		        		hs.forEach(function(h,idx){

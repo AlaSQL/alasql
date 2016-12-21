@@ -1031,6 +1031,12 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
     });
 };
 
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
+
 /**
     Excel:convert number to Excel column, like 1 => 'A'
     @param {integer} i Column number, starting with 0

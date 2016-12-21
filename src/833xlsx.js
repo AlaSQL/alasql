@@ -63,7 +63,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			If opts is array of arrays then this is a
 			multisheet workboook, else it is a singlesheet
 		*/
-		if(typeof opts == 'object' && opts instanceof Array) {
+		if(typeof opts == 'object' && Array.isArray(opts)) {
 			if(data && data.length > 0) {
 				data.forEach(function(dat,idx){
 					prepareSheet(opts[idx],dat,undefined,idx+1)

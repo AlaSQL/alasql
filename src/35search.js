@@ -648,7 +648,7 @@ alasql.srch.TO = function(val,args) {
 			fromdata = fromdata.find().fetch();
 		}
 //console.log(selectors,fromdata);
-//		if(typeof fromdata == 'object' && fromdata instanceof Array) {
+//		if(typeof fromdata == 'object' && Array.isArray(fromdata)) {
 //			selectors.unshift({srchid:'CHILD'});					
 //		}
 	}
@@ -870,7 +870,7 @@ alasql.srch.PARENT = function(/*val,args,stope*/) {
 alasql.srch.CHILD = function(val,args,stope) {
 //    	console.log(641,val);
   if(typeof val === 'object') {
-    if(val instanceof Array) {
+    if(Array.isArray(val)){
       return {status: 1, values: val};
     } else {
     	if(stope.mode === 'XML') {

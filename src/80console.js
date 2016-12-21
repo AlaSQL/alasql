@@ -98,7 +98,7 @@ alasql.test = function(name, times, fn) {
 // 	} else {
 // 		res = sql;
 // 	};
-// 	if(res instanceof Array) {
+// 	if(Array.isArray(res)) {
 // 		if(console.table) {
 // 			console.table(res);		
 // 		} else {
@@ -131,7 +131,7 @@ alasql.log = function(sql, params) {
 			console.log(olduseid+'>',sql);
 		}
 
-		if(res instanceof Array) {
+		if(Array.isArray(res)) {
 			if(console.table) {
 				// For Chrome and other consoles
 				console.table(res);		
@@ -164,10 +164,10 @@ alasql.log = function(sql, params) {
 			s += '<pre><code>'+alasql.pretty(sql)+'</code></pre>';
 		}
 
-		if(res instanceof Array) {
+		if(Array.isArray(res)) {
 			if(res.length === 0) {
 				s += '<p>[ ]</p>'
-			} else if(typeof res[0] !== 'object' || res[0] instanceof Array) {
+			} else if(typeof res[0] !== 'object' || Array.isArray(res[0])) {
 				for(var i=0,ilen=res.length;i<ilen;i++) {
 					s += '<p>'+loghtml(res[i])+'</p>';
 				}
@@ -234,7 +234,7 @@ function loghtml(res) {
 	var s  = '';
 	if(res === undefined) {
 		s += 'undefined';
-	} else if(res instanceof Array) {
+	} else if(Array.isArray(res)) {
 		s += '<style>';
 		s += 'table {border:1px black solid; border-collapse: collapse; border-spacing: 0px;}';
 		s += 'td,th {border:1px black solid; padding-left:5px; padding-right:5px}';

@@ -241,7 +241,7 @@ alasql.prepareFromData = function(data,array) {
 			res.push([data[i]]);
 		}
 //		console.log(res);
-	} else if(typeof data == 'object' && !(data instanceof Array)) {
+	} else if(typeof data == 'object' && !(Array.isArray(data) )) {
 //	} else if(typeof data == 'object' && !(typeof data.length == 'undefined')) {
 		if(typeof Mongo != 'undefined' && typeof Mongo.Collection != 'undefined'
 			&& data instanceof Mongo.Collection) {

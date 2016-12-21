@@ -89,7 +89,7 @@ var cartes = function(a1,a2){
  */
 function decartes(gv,query) {
 //	console.log(gv);
-	if(gv instanceof Array) {
+	if(Array.isArray(gv)) {
 		var res = [[]];
 		for(var t=0; t<gv.length; t++) {
 			if(gv[t] instanceof yy.Column) {
