@@ -79,7 +79,7 @@ var alasql = function(sql, params, cb, scope) {
 				columns:[new yy.Column({columnid:'*'})],
 				from: [new yy.ParamValue({param:0})]
 			});
-		} else if (arguments.length === 1 && typeof sql === "object" && sql instanceof Array) {
+		} else if (arguments.length === 1 && typeof sql === "object" && Array.isArray(sql) ){
 			// One argument data object - fluent interface
 				var select = new yy.Select({
 					columns:[new yy.Column({columnid:'*'})],

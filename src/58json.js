@@ -20,7 +20,7 @@ var JSONtoString = alasql.utils.JSONtoString = function (obj) {
 	else if(typeof obj == "number") s = obj;
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
-		if(obj instanceof Array) {
+		if(Array.isArray(obj)) {
 			s += '['+obj.map(function(b){
 				return JSONtoString(b);
 			}).join(',')+']';
@@ -60,7 +60,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 	else if(typeof obj == "number") s = '('+obj+')';
 	else if(typeof obj == "boolean") s = obj;
 	else if(typeof obj == "object") {
-		if(obj instanceof Array) {
+		if(Array.isArray(obj)) {
 			s += '['+obj.map(function(b){
 				return JSONtoJS(b, context, tableid, defcols);
 			}).join(',')+']';

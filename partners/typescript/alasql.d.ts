@@ -1,7 +1,4 @@
-// Type definitions for alasql.js v.0.1.8
 // Project: https://github.com/agershun/alasql
-// Definitions by: Andrey Gershun <https://github.com/agershun>
-// Definitions: https://github.com/borisyankov/DefinitelyTyped
 
 declare namespace alaSQLSpace {
     interface AlaSQLCallback {
@@ -77,4 +74,7 @@ declare namespace alaSQLSpace {
     }
 }
 
-export declare var alasql: alaSQLSpace.AlaSQL;
+declare var alasql: alaSQLSpace.AlaSQL;
+declare module 'alasql' {
+    export = alasql;
+}

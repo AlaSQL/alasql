@@ -57,7 +57,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	var res = [];
 	var headers = opt.headers;
 
-	if(headers && !(headers instanceof Array)) {
+	if(headers && !(Array.isArray(headers))) {
 		headers = [];
 		var ths = sel.querySelector("thead tr").children;
 		for(var i=0;i<ths.length;i++){
@@ -253,7 +253,7 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 	        	if(n === 0) {
 					if(typeof opt.headers === 'boolean') {
 		        		hs = a;
-					} else if(opt.headers instanceof Array) {
+					} else if(Array.isArray(opt.headers)) {
 						hs = opt.headers;
 		        		var r = {};
 		        		hs.forEach(function(h,idx){
@@ -301,7 +301,7 @@ if(false) {
 				var hh = [];
 				if(typeof opt.headers == 'boolean') {
 					hh = res.shift().split(opt.separator);
-				} else if(opt.headers instanceof Array) {
+				} else if(Array.isArray(opt.headers)) {
 					hh = opt.headers;
 				}
 				var columns = query.sources[idx].columns = [];

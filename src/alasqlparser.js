@@ -1964,7 +1964,7 @@ _handle_error:
         }
 
         // this shouldn't happen, unless resolve defaults are off
-        if (action[0] instanceof Array && action.length > 1) {
+        if (Array.isArray(action[0]) && action.length > 1) {
             throw new Error('Parse Error: multiple actions possible at state: '+state+', token: '+symbol);
         }
 

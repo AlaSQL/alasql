@@ -41,7 +41,7 @@ yy.Select.prototype.Select = function(){
 	if(arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);;
 	} else if(arguments.length == 1) {
-		if(arguments[0] instanceof Array) {
+		if(Array.isArray(arguments[0])) {
 			args = arguments[0];
 		} else {
 			args = [arguments[0]];
@@ -76,7 +76,7 @@ yy.Select.prototype.Select = function(){
 yy.Select.prototype.From = function(tableid){
 	var self = this;
 	if(!self.from) self.from = [];
-	if(tableid instanceof Array) {
+	if(Array.isArray(tableid)) {
 		var pari = 0;
 		if(self.preparams) {
 			pari = self.preparams.length;
@@ -105,7 +105,7 @@ yy.Select.prototype.OrderBy = function(){
 	} else if(arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);;
 	} else if(arguments.length == 1) {
-		if(arguments[0] instanceof Array) {
+		if(Array.isArray(arguments[0])) {
 			args = arguments[0];
 		} else {
 			args = [arguments[0]];
@@ -139,7 +139,7 @@ yy.Select.prototype.GroupBy = function(){
 	if(arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);;
 	} else if(arguments.length == 1) {
-		if(arguments[0] instanceof Array) {
+		if(Array.isArray(arguments[0])) {
 			args = arguments[0];
 		} else {
 			args = [arguments[0]];

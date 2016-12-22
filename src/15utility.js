@@ -396,7 +396,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 */
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.readyState === 4) {
                         if (xhr.status === 200) {
                             if (success){
                                 success(cutbom(xhr.responseText));
@@ -583,9 +583,10 @@ var fileExists = utils.fileExists = function(path,cb){
   @param {string} path File path
   @param {array} data Data object
   @param {function} cb Callback
+  @param {object=} opts
 */
 
-var saveFile = utils.saveFile = function(path, data, cb) {
+var saveFile = utils.saveFile = function(path, data, cb, opts) {
     var res = 1;
     if(path === undefined) {
         //
@@ -695,8 +696,12 @@ var saveFile = utils.saveFile = function(path, data, cb) {
 				testlink.document.execCommand('SaveAs', false, path);
 				testlink.close();
         	} else {
+                var opt = {
+                    disableAutoBom: false
+                };
+                alasql.utils.extend(opt, opts);
 	            var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
-	            saveAs(blob, path);
+	            saveAs(blob, path, opt.disableAutoBom);
 	            if(cb){
                     res = cb(res);
                 }
@@ -927,30 +932,28 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 */
 
 /**
-  COmpare two object in deep
+  Compare two object in deep
  */
 var deepEqual = utils.deepEqual = function(x, y) {
+		
+	if(x===y){
+		return true;
+	}
+
     if (typeof x === "object" && null !== x && (typeof y === "object" && null !== y)) {
         if (Object.keys(x).length !== Object.keys(y).length) {
             return false;
         }
         for (var prop in x) {
-            if (y.hasOwnProperty(prop)) {
-                if (!deepEqual(x[prop], y[prop])) {
-                    return false;
-                }
-            } else {
-                return false;
+			if (!deepEqual(x[prop], y[prop])) {
+				return false;
             }
         }
         return true;
-    } else {
-        if (x !== y) {
-            return false;
-        } else {
-            return true;
-        }
-    }
+    }  
+
+    return false;
+    
 };
 /**
     Array with distinct records
@@ -1027,6 +1030,12 @@ var arrayOfArrays = utils.arrayOfArrays = function (a) {
         return ar;
     });
 };
+
+if (!Array.isArray) {
+  Array.isArray = function(arg) {
+    return Object.prototype.toString.call(arg) === '[object Array]';
+  };
+}
 
 /**
     Excel:convert number to Excel column, like 1 => 'A'

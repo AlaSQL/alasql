@@ -475,7 +475,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,'+context+'))';
 			s += '.indexOf(';
 			s += leftJS()+')>-1)';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right)) {
 //			if(this.right.length == 0) return 'false';
 			s 	= '(['
 				+ this.right.map(ref).join(',')
@@ -501,7 +501,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s += 'alasql.utils.flatArray(this.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.indexOf(';
 			s += leftJS()+')<0)';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right)) {
 //			if(this.right.length == 0) return 'true';
 			s = '(['+this.right.map(ref).join(',')+'].indexOf(';
 			s += leftJS()+')<0)';
@@ -521,7 +521,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 
 			s +='.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right) ) {
 			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
 			s += '.every(function(b){return (';
 			s += leftJS()+')'+op+'b})';
@@ -537,7 +537,7 @@ yy.Op.prototype.toJS = function(context,tableid,defcols) {
 			s = 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s +='.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';
-		} else if(this.right instanceof Array ) {
+		} else if(Array.isArray(this.right) ) {
 			s = '' + (this.right.length == 1 ? ref(this.right[0]) : '['+this.right.map(ref).join(',')+']')
 			s += '.some(function(b){return (';
 			s += leftJS()+')'+op+'b})';

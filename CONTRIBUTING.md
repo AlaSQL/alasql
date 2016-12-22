@@ -8,7 +8,7 @@ For you to edit the source please do the following:
 - Clone your forked repo and install dependencies `git clone https://github.com/MYUSERNAME/alasql/ && cd alasql && npm install`  
 - Please work with the code from the develop branch `git checkout develop`
 - Add a test for the issue: Copy `test/test000.js` and replace `000` with a new number. 
-- Impelement a test that reflects the issue.
+- Implement a test that reflects the issue.
 - Run `npm test` to verify only the new test fails
 - Implement your contributions in `src/`
 - Run `npm test` and verify all tests are OK

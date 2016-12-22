@@ -65,7 +65,7 @@ function queryfn(query,oldscope,cb, A,B) {
 		if(typeof rs !== 'undefined') {
 			// TODO - this is a hack: check if result is array - check all cases and
 			// make it more logical
-			if((query.intofn || query.intoallfn) && rs instanceof Array) rs = rs.length;
+			if((query.intofn || query.intoallfn) && Array.isArray(rs)) rs = rs.length;
 			result = rs;
 		}
 //

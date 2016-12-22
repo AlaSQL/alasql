@@ -6,8 +6,8 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 [![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=alasql)
 [![ghit.me](https://ghit.me/badge.svg?repo=agershun/alasql)](https://ghit.me/repo/agershun/alasql)
-![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a)
-![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)
+[![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a)](https://www.npmjs.com/package/alasql)
+[![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)](https://github.com/agershun/alasql)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/agershun/alasql.svg)](http://isitmaintained.com/project/agershun/alasql "Average time to resolve an issue")
 [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
@@ -19,16 +19,14 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 
 _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is a free and open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
 
-<div align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
-</div>
-
-
-
 The library is designed for:
 
 * Fast SQL data processing in-memory for BI and ERP applications on fat clients
 * Easy ETL and option for persistency by data import / manipulation / export for several formats
 * All major browsers, Node.js, and mobile applications
+
+<div align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
+</div>
 
 We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demands flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
 
@@ -154,7 +152,7 @@ The project has never received any funding and is based on unpaid voluntary work
 AlaSQL project is very young and still in active development phase, therefore it <s>may</s> have [bugs](https://github.com/agershun/alasql/labels/%21%20Bug). 
 Please, submit any bugs and suggestions [as an issue](https://github.com/agershun/alasql/issues/new). 
 
-[![Known bugs](https://img.shields.io/github/issues-raw/agershun/alasql/!%20bug.svg?label=Known Bugs&maxAge=2592000)](https://github.com/agershun/alasql/issues?q=is%3Aissue+is%3Aopen+label%3A%22%21+Bug%22)
+[![Known bugs](https://img.shields.io/github/issues-raw/agershun/alasql/!%20bug.svg?label=Known%20Bugs&maxAge=2592000)](https://github.com/agershun/alasql/issues?q=is%3Aissue+is%3Aopen+label%3A%22%21+Bug%22)
 
 
 AlaSQL uses [Semantic Versioning](http://semver.org/) so please note that major version is zero (0.y.z) and the API can not be considered 100% stable. Consider this before using the library in production and please checkout the [limitations of the library](https://github.com/agershun/alasql#limitations)
@@ -556,6 +554,8 @@ var b = browserify("./main.js").bundle();
 ["fs","path","xlsx",  ... , "xls"].map(ignore => b.ignore(ignore));
 ```
 
+#### jQuery
+Please remember to send the original event, and not the jQuery event, for elements. (use `event.originalEvent` instead of `myEvent`)
 
 
 ### Miss a feature?
