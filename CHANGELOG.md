@@ -1,7 +1,17 @@
 # Changelog
 
-_0.3.5 "Maiao" (xx.12.2016)_
+_0.3.6 "???" (xx.01.2017)_
+
 * ...
+
+
+
+### 0.3.5 "Maiao" (22.12.2016)
+* Added: Import data through AngularJS controllers
+* Added: Support for running in VM for nodeJS
+* Fix: Typescript definition
+* Fix: False negatives for deepequal'ing of extended primitives
+* Fix: Double quotation marks in CSV output
 
 
 ### 0.3.4 "Fitii" (09.11.2016)
