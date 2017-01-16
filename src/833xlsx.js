@@ -81,7 +81,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	/**
 		Prepare sheet
 		@params {object} opts
-		@params {array} data
+		@params {array|object} data
 		@params {array} columns Columns
 	*/
 	function prepareSheet(opts, data, columns, idx) {
@@ -91,7 +91,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		alasql.utils.extend(opt, opts);
 
 		// Generate columns if they are not defined
-		if((!columns || columns.length == 0) && data.length > 0) {
+		if((!columns || columns.length == 0) && Object.keys(data).length > 0) {
 			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
 		}
 
@@ -119,7 +119,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			var colm = 1, rowm = 1;
 		}
 		var colmax = Math.max(col0+columns.length,colm);
-		var rowmax = Math.max(row0+data.length+2,rowm);
+		var rowmax = Math.max(row0+Object.keys(data).length+2,rowm);
 
 //		console.log(col0,row0);
 		var i = row0+1;
@@ -134,7 +134,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			i++;
 		}
 
-		for(var j=0;j<data.length;j++) {
+		for(var j=0;j<Object.keys(data).length;j++) {
 			columns.forEach(function(col, idx){
 				var cell = {v:data[j][col.columnid]};
 				if(typeof data[j][col.columnid] == 'number') {
