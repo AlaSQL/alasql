@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.5-782-1467 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.5-782-1468 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.5-782-1467
+@version 0.3.5-782-1468
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.5-782-1467';
+alasql.version = '0.3.5-782-1468';
 
 /**
 	Debug flag
@@ -15185,8 +15185,10 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		var opt = {sheetid:'Sheet '+idx,headers:true};
 		alasql.utils.extend(opt, opts);
 
+		var dataLength = Object.keys(data).length;
+
 		// Generate columns if they are not defined
-		if((!columns || columns.length == 0) && Object.keys(data).length > 0) {
+		if((!columns || columns.length == 0) && dataLength > 0) {
 			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
 		}
 
@@ -15214,7 +15216,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			var colm = 1, rowm = 1;
 		}
 		var colmax = Math.max(col0+columns.length,colm);
-		var rowmax = Math.max(row0+Object.keys(data).length+2,rowm);
+		var rowmax = Math.max(row0+dataLength+2,rowm);
 
 		var i = row0+1;
 
@@ -15227,7 +15229,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			i++;
 		}
 
-		for(var j=0;j<Object.keys(data).length;j++) {
+		for(var j=0;j<dataLength;j++) {
 			columns.forEach(function(col, idx){
 				var cell = {v:data[j][col.columnid]};
 				if(typeof data[j][col.columnid] == 'number') {
