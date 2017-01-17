@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.5-develop-1463 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.5
+@version 0.3.5-develop-1463
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.5';
+alasql.version = '0.3.5-develop-1463';
 
 /**
 	Debug flag
@@ -6947,118 +6947,104 @@ function swapSources(query, h) {
 
 yy.Select = function (params) { return yy.extend(this, params); }
 yy.Select.prototype.toString = function() {
-	var s = '';
-	if(this.explain){
-		s+= 'EXPLAIN ';
+	var s;
+	s = '';
+	if (this.explain) {
+		s += 'EXPLAIN ';
 	}
 	s += 'SELECT ';
-	if(this.modifier){
-		s += this.modifier+' ';
+	if (this.modifier) {
+		s += this.modifier + ' ';
 	}
-	if(this.top) {
-		s += 'TOP '+this.top.value+' ';
-		if(this.percent){
+	if (this.distinct) {
+		s += 'DISTINCT ';
+	}
+	if (this.top) {
+		s += 'TOP ' + this.top.value + ' ';
+		if (this.percent) {
 			s += 'PERCENT ';
 		}
 	}
-	s += this.columns.map(function(col){
-		var s = col.toString();
-
-		if(typeof col.as !== "undefined"){
-			s += ' AS '+col.as;
+	s += this.columns.map(function(col) {
+		var s;
+		s = col.toString();
+		if (typeof col.as !== 'undefined') {
+			s += ' AS ' + col.as;
 		}
 		return s;
 	}).join(', ');
-
-	if(this.from) {
-		s += 	' FROM '
-				+ this.from.map(function(f){
-
-												var ss = f.toString();
-												if(f.as){
-													ss += ' AS '+f.as;
-												}
-												return ss;
-											}).join(',');
-										}
-
-	if(this.joins) {
-		s += this.joins.map(function(jn){
-			var ss = ' ';
-			if(jn.joinmode){
-				ss += jn.joinmode+' ';
+	if (this.from) {
+		s += ' FROM ' + this.from.map(function(f) {
+			var ss;
+			ss = f.toString();
+			if (f.as) {
+				ss += ' AS ' + f.as;
 			}
-
-			if(jn.table){
-				ss += 'JOIN '+jn.table.toString();
-			} else if(jn instanceof yy.Apply){
+			return ss;
+		}).join(',');
+	}
+	if (this.joins) {
+		s += this.joins.map(function(jn) {
+			var ss;
+			ss = ' ';
+			if (jn.joinmode) {
+				ss += jn.joinmode + ' ';
+			}
+			if (jn.table) {
+				ss += 'JOIN ' + jn.table.toString();
+			} else if (jn.select) {
+				ss += 'JOIN (' + jn.select.toString() + ')';
+			} else if (jn instanceof alasql.yy.Apply) {
 				ss += jn.toString();
 			} else {
 				throw new Error('Wrong type in JOIN mode');
 			}
-
-			if(jn.using){
-				ss += ' USING '+jn.using.toString();
+			if (jn.as) {
+				ss += ' AS ' + jn.as;
 			}
-
-			if(jn.on){
-				ss += ' ON '+jn.on.toString();
+			if (jn.using) {
+				ss += ' USING ' + jn.using.toString();
+			}
+			if (jn.on) {
+				ss += ' ON ' + jn.on.toString();
 			}
 			return ss;
- 		});
+		});
 	}
-
-	if(this.where){
-		s += ' WHERE '+this.where.toString();
+	if (this.where) {
+		s += ' WHERE ' + this.where.toString();
 	}
-	if(this.group && this.group.length>0) {
-		s += ' GROUP BY ' + this.group.map(function(grp){
-															return grp.toString();
-														}).join(', ');
+	if (this.group && this.group.length > 0) {
+		s += ' GROUP BY ' + this.group.map(function(grp) {
+			return grp.toString();
+		}).join(', ');
 	}
-
-	if(this.having){
-		s += ' HAVING '+this.having.toString();
+	if (this.having) {
+		s += ' HAVING ' + this.having.toString();
 	}
-
-	if(this.order && this.order.length>0) {
-		s += ' ORDER BY '+this.order.map(function(ord){
-														return  ord.toString();
-													}).join(', ');
+	if (this.order && this.order.length > 0) {
+		s += ' ORDER BY ' + this.order.map(function(ord) {
+			return ord.toString();
+		}).join(', ');
 	}
-
-	if(this.limit){
-		s += ' LIMIT '+this.limit.value;
+	if (this.limit) {
+		s += ' LIMIT ' + this.limit.value;
 	}
-
-	if(this.offset){
-		s += ' OFFSET '+this.offset.value;
+	if (this.offset) {
+		s += ' OFFSET ' + this.offset.value;
 	}
-
-	if(this.union){
-		s += ' UNION '
-			+ (this.corresponding ? 'CORRESPONDING ' : '')
-			+ this.union.toString();
+	if (this.union) {
+		s += ' UNION ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.union.toString();
 	}
-
-	if(this.unionall){
-		s += ' UNION ALL '
-			+ (this.corresponding ? 'CORRESPONDING ' : '')
-			+ this.unionall.toString();
+	if (this.unionall) {
+		s += ' UNION ALL ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.unionall.toString();
 	}
-
-	if(this.except){
-		s += ' EXCEPT '
-			+ (this.corresponding ? 'CORRESPONDING ' : '')
-			+ this.except.toString();
+	if (this.except) {
+		s += ' EXCEPT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.except.toString();
 	}
-
-	if(this.intersect){
-		s += ' INTERSECT '
-			+ (this.corresponding ? 'CORRESPONDING ' : '')
-			+ this.intersect.toString();
+	if (this.intersect) {
+		s += ' INTERSECT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.intersect.toString();
 	}
-
 	return s;
 };
 
@@ -9997,34 +9983,29 @@ yy.ParamValue.prototype.toJS = function() {
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {
 	var s;
-	if(this.op === '~'){
-		s = this.op+this.right.toString();
+	s = void 0;
+	if (this.op === '~') {
+		s = this.op + this.right.toString();
 	}
-
-	if(this.op === '-'){
-		s = this.op+this.right.toString();
+	if (this.op === '-') {
+		s = this.op + this.right.toString();
 	}
-
-	if(this.op === '+'){
-		s = this.op+this.right.toString();
+	if (this.op === '+') {
+		s = this.op + this.right.toString();
 	}
-
-	if(this.op === '#'){
-		s = this.op+this.right.toString();
+	if (this.op === '#') {
+		s = this.op + this.right.toString();
 	}
-
-	if(this.op === 'NOT'){
-		s = this.op+'('+this.right.toString()+')';
+	if (this.op === 'NOT') {
+		s = this.op + '(' + this.right.toString() + ')';
 	}
-
-	// Please avoid === here
-	if(this.op == null){						// jshint ignore:line
-		s = '('+this.right.toString()+')';
+	if (this.op === null) {
+		s = '(' + this.right.toString() + ')';
 	}
-
-	return '(y = ' + s + ', y === void 0 ? void 0 : y)'
-
-	// todo: implement default case
+	if (!s) {
+		s = '(' + this.right.toString() + ')';
+	}
+	return s;
 };
 
 yy.UniOp.prototype.findAggregator = function (query){
