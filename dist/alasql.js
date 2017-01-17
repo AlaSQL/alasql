@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.5-develop-1463 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.5-develop-1464 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.5-develop-1463
+@version 0.3.5-develop-1464
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.5-develop-1463';
+alasql.version = '0.3.5-develop-1464';
 
 /**
 	Debug flag
@@ -12906,7 +12906,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	} else if(this.select) {
 		this.select.modifier = 'RECORDSET';
-		selectfn = this.select.compile(databaseid);
+		var selectfn = this.select.compile(databaseid);
 	    if(db.engineid && alasql.engines[db.engineid].intoTable) {
 			var statement = function(params, cb) {
 				var aa = selectfn(params);
@@ -15157,7 +15157,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	/**
 		Prepare sheet
 		@params {object} opts
-		@params {array} data
+		@params {array|object} data
 		@params {array} columns Columns
 	*/
 	function prepareSheet(opts, data, columns, idx) {
@@ -15166,8 +15166,10 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		var opt = {sheetid:'Sheet '+idx,headers:true};
 		alasql.utils.extend(opt, opts);
 
+		var dataLength = Object.keys(data).length;
+
 		// Generate columns if they are not defined
-		if((!columns || columns.length == 0) && data.length > 0) {
+		if((!columns || columns.length == 0) && dataLength > 0) {
 			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
 		}
 
@@ -15195,7 +15197,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			var colm = 1, rowm = 1;
 		}
 		var colmax = Math.max(col0+columns.length,colm);
-		var rowmax = Math.max(row0+data.length+2,rowm);
+		var rowmax = Math.max(row0+dataLength+2,rowm);
 
 		var i = row0+1;
 
@@ -15208,7 +15210,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			i++;
 		}
 
-		for(var j=0;j<data.length;j++) {
+		for(var j=0;j<dataLength;j++) {
 			columns.forEach(function(col, idx){
 				var cell = {v:data[j][col.columnid]};
 				if(typeof data[j][col.columnid] == 'number') {

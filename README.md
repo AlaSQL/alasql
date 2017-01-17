@@ -529,7 +529,13 @@ Here's a list of modules that alasql requires
 
 #### Webpack
 
-Use the built-in IgnorePlugin
+There are several ways to handled alasql with webpack
+
+
+
+##### IgnorePlugin
+
+Ideal when you want to control which modules you want to import.
 
 ```js
 var IgnorePlugin =  require("webpack").IgnorePlugin;
@@ -540,6 +546,29 @@ module.exports = {
   plugins:[new IgnorePlugin(/(^fs$|cptable|jszip|xlsx|xls|^es6-promise$|^net$|^tls$|^forever-agent$|^tough-cookie$|cpexcel|^path$)/)]
 };
 ```
+
+##### module.noParse
+
+As of alasql 0.3.5, you can simply tell webpack not to parse alasql, which avoids all the dynamic require warnings and avoids using eval/clashing with CSP with script-loader.  
+[Read the webpack docs about noParse](https://webpack.github.io/docs/configuration.html#module-noparse)
+
+```js
+...
+//Don't parse alasql
+{module:noParse:[/alasql/]}
+```
+
+
+##### script-loader
+
+If both of the solutions above fail to meet your requirements, you can load alasql with [script-loader](https://github.com/webpack/script-loader).
+
+```js
+//Load alasql in the global scope with script-loader
+import "script!alasql"
+```
+
+This can cause issues if you have a CSP that doesn't allow eval.
 
 #### Browserify
 
