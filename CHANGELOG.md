@@ -1,8 +1,14 @@
 # Changelog
 
-_0.3.6 "???" (xx.01.2017)_
+_0.3.7 "Niau" (xx.02.2017)_
 
 * ...
+
+### 0.3.6 "Hipu" (24.01.2017)
+
+* Addded: Support for "use strict" 
+* Update: Better and faster deep compare of objects
+* Fix: Select.toString() had bugs
 
 
 

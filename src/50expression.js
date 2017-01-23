@@ -709,34 +709,29 @@ yy.ParamValue.prototype.toJS = function() {
 yy.UniOp = function (params) { return yy.extend(this, params); }
 yy.UniOp.prototype.toString = function() {
 	var s;
-	if(this.op === '~'){
-		s = this.op+this.right.toString();
+	s = void 0;
+	if (this.op === '~') {
+		s = this.op + this.right.toString();
 	}
-
-	if(this.op === '-'){
-		s = this.op+this.right.toString();
+	if (this.op === '-') {
+		s = this.op + this.right.toString();
 	}
-	
-	if(this.op === '+'){
-		s = this.op+this.right.toString();
+	if (this.op === '+') {
+		s = this.op + this.right.toString();
 	}
-	
-	if(this.op === '#'){
-		s = this.op+this.right.toString();
+	if (this.op === '#') {
+		s = this.op + this.right.toString();
 	}
-
-	if(this.op === 'NOT'){
-		s = this.op+'('+this.right.toString()+')';
+	if (this.op === 'NOT') {
+		s = this.op + '(' + this.right.toString() + ')';
 	}
-	
-	// Please avoid === here
-	if(this.op == null){						// jshint ignore:line
-		s = '('+this.right.toString()+')';
+	if (this.op === null) {
+		s = '(' + this.right.toString() + ')';
 	}
-
-	return '(y = ' + s + ', y === void 0 ? void 0 : y)'
-
-	// todo: implement default case
+	if (!s) {
+		s = '(' + this.right.toString() + ')';
+	}
+	return s;
 };
 
 yy.UniOp.prototype.findAggregator = function (query){
