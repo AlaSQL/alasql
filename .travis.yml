@@ -9,7 +9,6 @@ node_js:
   - "node"
   - "5"
   - "4"
-  - "4.7.3"
   - "0.12"
 
 script: npm run test:only && npm test
