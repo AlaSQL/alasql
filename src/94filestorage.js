@@ -193,6 +193,16 @@ FS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	var res = value.length;
 	var tb = db.data[tableid];
 	if(!tb) tb = [];
+
+	for (var columnid in tb.identities){
+		var ident = tb.identities[columnid];
+
+		for (var index in value) {
+			value[index][columnid] = ident.value;
+			ident.value += ident.step;
+		}
+	}
+	
 	db.data[tableid] = tb.concat(value);
 	FS.updateFile(databaseid);	
 	if(cb) cb(res);
