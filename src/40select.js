@@ -134,7 +134,7 @@ yy.Select.prototype.toJS = function(context) {
 
 
 // Compile SELECT statement
-yy.Select.prototype.compile = function(databaseid) {
+yy.Select.prototype.compile = function(databaseid, params) {
 	var db = alasql.databases[databaseid];
 	// Create variable for query
 	var query = new Query();
@@ -176,7 +176,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	if(this.group || query.selectGroup.length>0) {
 		query.selectgfns = this.compileSelectGroup1(query);
 	} else {
-		query.selectfns = this.compileSelect1(query);
+		query.selectfns = this.compileSelect1(query, params);
 	}
 
 	// Remove columns clause

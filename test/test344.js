@@ -52,6 +52,16 @@ if(typeof exports === 'object') {
       });
   });
 
+  it('3c. XLSX multisheet export with custom columns',function(done){
+    var data1 = [{a:1,b:10},{a:2,b:20}];
+    var data2 = [{a:100,b:10},{a:200,b:20}];
+    var opts = [{sheetid:'One',header:true},{sheetid:'Two',header:false}];
+    var res = alasql('SELECT a AS alpha, b as beta INTO XLSX("'+__dirname+'/restest344d.xlsx",?) FROM ?',[opts,[data1,data2]],
+      function(){
+        done();
+      });
+  });
+
 /*
   it('3. XLSXML multisheet export',function(done){
     var res = alasql('=2*2');
