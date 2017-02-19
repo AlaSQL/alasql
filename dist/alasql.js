@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.6-824-temp-1478 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.6-824-temp-1480 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.6-824-temp-1478
+@version 0.3.6-824-temp-1480
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.6-824-temp-1478';
+alasql.version = '0.3.6-824-temp-1480';
 
 /**
 	Debug flag
@@ -8500,12 +8500,19 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						                        params[0][0].hasOwnProperty('sheetid');
 						if (isMultisheetParam) {
 							sp = 'var r={};var w=p[\"' + tbid + '\"];'
-							   + 'var cols=[' + self.columns.map(function(name) {
-								return "'" + name + "'";
-							})
-							.join(',') + '];'+
+							   + 'var cols=[' + self.columns.map(function(col) {
+								    return "'" + col.columnid + "'";
+								})
+							.join(',') + '];var colas=['+
+								self.columns.map(function(col) {
+								    return "'" + (col.as || col.columnid) + "'";
+								})
+								.join(',')
+
+							+ '];' +
 							"for (var i=0;i<Object.keys(p['" + tbid + "']).length;i++)" +
-							" for(var k of cols){if (!r.hasOwnProperty(i)) r[i]={}; r[i][k]=w[i][k]};";
+							" for(var k=0;k<cols.length;k++){if (!r.hasOwnProperty(i)) r[i]={}; r[i][colas[k]]=w[i][cols[k]];}";
+
 						} else {
 							ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
 						}
