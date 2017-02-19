@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.6-develop-1476 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.6-824-temp-1478 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.6-develop-1476
+@version 0.3.6-824-temp-1478
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -140,7 +140,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.6-develop-1476';
+alasql.version = '0.3.6-824-temp-1478';
 
 /**
 	Debug flag
@@ -4526,7 +4526,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		if(ast.statements[0].compile) {
 
 			// Compile and Execute
-			var statement = ast.statements[0].compile(databaseid);
+			var statement = ast.statements[0].compile(databaseid, params);
 			if(!statement){
 				return;
 			}
@@ -7073,7 +7073,7 @@ yy.Select.prototype.toJS = function(context) {
 };
 
 // Compile SELECT statement
-yy.Select.prototype.compile = function(databaseid) {
+yy.Select.prototype.compile = function(databaseid, params) {
 	var db = alasql.databases[databaseid];
 	// Create variable for query
 	var query = new Query();
@@ -7115,7 +7115,7 @@ yy.Select.prototype.compile = function(databaseid) {
 	if(this.group || query.selectGroup.length>0) {
 		query.selectgfns = this.compileSelectGroup1(query);
 	} else {
-		query.selectfns = this.compileSelect1(query);
+		query.selectfns = this.compileSelect1(query, params);
 	}
 
 	// Remove columns clause
@@ -8444,7 +8444,8 @@ function compileSelectStar (query, alias, joinstar) {
 	return {s:ss.join(','),sp:sp};
 }
 
-yy.Select.prototype.compileSelect1 = function(query) {
+yy.Select.prototype.compileSelect1 = function(query, params) {
+
 	var self = this;
 	query.columns = [];
 	query.xcolumns = {};
@@ -8493,7 +8494,21 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					if(false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
 						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(query.defaultTableid)+'\'][\''+(col.tableid)+'\'][\''+col.columnid+'\']');
 					} else {
-						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+						// workaround for multisheet xlsx export with custom COLUMNS
+						var isMultisheetParam = params && params.length > 1 &&
+						                        Array.isArray(params[0]) && params[0].length >= 1 && 
+						                        params[0][0].hasOwnProperty('sheetid');
+						if (isMultisheetParam) {
+							sp = 'var r={};var w=p[\"' + tbid + '\"];'
+							   + 'var cols=[' + self.columns.map(function(name) {
+								return "'" + name + "'";
+							})
+							.join(',') + '];'+
+							"for (var i=0;i<Object.keys(p['" + tbid + "']).length;i++)" +
+							" for(var k of cols){if (!r.hasOwnProperty(i)) r[i]={}; r[i][k]=w[i][k]};";
+						} else {
+							ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+						}
 					}
 				} else {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');					
@@ -17188,6 +17203,16 @@ FS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	var res = value.length;
 	var tb = db.data[tableid];
 	if(!tb) tb = [];
+
+	for (var columnid in tb.identities){
+		var ident = tb.identities[columnid];
+
+		for (var index in value) {
+			value[index][columnid] = ident.value;
+			ident.value += ident.step;
+		}
+	}
+
 	db.data[tableid] = tb.concat(value);
 	FS.updateFile(databaseid);	
 	if(cb) cb(res);
