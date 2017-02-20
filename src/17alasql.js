@@ -174,14 +174,14 @@ alasql.autoval = function(tablename, colname, getNext, databaseid){
  Run single SQL statement on current database
  */
 alasql.exec = function (sql, params, cb, scope) {
-	
+
 	// Avoid setting params if not needed even with callback
 	if(typeof params === 'function'){
 		scope = cb;
 		cb = params;
 		params = {};
 	}
-
+	
 	delete alasql.error;
 	params = params || {};
 	if(alasql.options.errorlog){
