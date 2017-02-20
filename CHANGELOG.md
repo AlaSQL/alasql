@@ -5,7 +5,7 @@ _0.3.8 "XXX" (xx.03.2017)_
 * ...
 
 
-### 0.3.7 "Niau" (xx.02.2017)
+### 0.3.7 "Niau" (20.02.2017)
 
 * Added: Last `S` in `VALUES` can be omitted when insterting (For the lazy ones)
 * Added: The `VALUES` keyword is optional when insterting (For the very lazy ones)
