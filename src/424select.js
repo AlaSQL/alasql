@@ -91,7 +91,8 @@ function compileSelectStar (query, alias, joinstar) {
 }
 
 
-yy.Select.prototype.compileSelect1 = function(query) {
+yy.Select.prototype.compileSelect1 = function(query, params) {
+
 	var self = this;
 	query.columns = [];
 	query.xcolumns = {};
@@ -100,6 +101,7 @@ yy.Select.prototype.compileSelect1 = function(query) {
 	var s = 'var r={';
 	var sp = '';
 	var ss = [];
+
 
 //console.log(42,87,this.columns);
 
@@ -142,7 +144,28 @@ yy.Select.prototype.compileSelect1 = function(query) {
 					if(false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
 						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(query.defaultTableid)+'\'][\''+(col.tableid)+'\'][\''+col.columnid+'\']');
 					} else {
-						ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+						// workaround for multisheet xlsx export with custom COLUMNS
+						var isMultisheetParam = params && params.length > 1 &&
+						                        Array.isArray(params[0]) && params[0].length >= 1 && 
+						                        params[0][0].hasOwnProperty('sheetid');
+						if (isMultisheetParam) {
+							sp = 'var r={};var w=p[\"' + tbid + '\"];'
+							   + 'var cols=[' + self.columns.map(function(col) {
+								    return "'" + col.columnid + "'";
+								})
+							.join(',') + '];var colas=['+
+								self.columns.map(function(col) {
+								    return "'" + (col.as || col.columnid) + "'";
+								})
+								.join(',')
+
+							+ '];' +
+							"for (var i=0;i<Object.keys(p['" + tbid + "']).length;i++)" +
+							" for(var k=0;k<cols.length;k++){if (!r.hasOwnProperty(i)) r[i]={}; r[i][colas[k]]=w[i][cols[k]];}";
+							
+						} else {
+							ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\'][\''+col.columnid+'\']');
+						}
 					}
 				} else {
 					ss.push('\''+escapeq(col.as || col.columnid)+'\':p[\''+(tbid)+'\']');					

@@ -1,15 +1,22 @@
 # Changelog
 
-_0.3.7 "Niau" (xx.02.2017)_
+_0.3.8 "XXX" (xx.03.2017)_
 
 * ...
+
+
+### 0.3.7 "Niau" (xx.02.2017)
+
+* Added: Last `S` in `VALUES` can be omitted when insterting (For the lazy ones)
+* Added: The `VALUES` keyword is optional when insterting (For the very lazy ones)
+* Fix: Multiple worksheet Excel with custom headers 
+
 
 ### 0.3.6 "Hipu" (24.01.2017)
 
 * Addded: Support for "use strict" 
-* Update: Better and faster deep compare of objects
 * Fix: Select.toString() had bugs
-
+* Update: Better and faster deep compare of objects
 
 
 ### 0.3.5 "Maiao" (22.12.2016)

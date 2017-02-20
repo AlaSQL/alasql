@@ -229,7 +229,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		if(ast.statements[0].compile) {
 
 			// Compile and Execute
-			var statement = ast.statements[0].compile(databaseid);
+			var statement = ast.statements[0].compile(databaseid, params);
 			if(!statement){
 				return;
 			}

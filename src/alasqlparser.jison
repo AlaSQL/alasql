@@ -1750,26 +1750,39 @@ Delete
 /* INSERT */
 
 Insert
-	: INSERT Into Table VALUES ValuesListsList
-		{ $$ = new yy.Insert({into:$3, values: $5}); }
-	| INSERT OR REPLACE Into Table VALUES ValuesListsList
-		{ $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
-	| REPLACE Into Table VALUES ValuesListsList
-		{ $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); }
-	| INSERT Into Table DEFAULT VALUES
-		{ $$ = new yy.Insert({into:$3, "default": true}) ; }
-	| INSERT Into Table LPAR ColumnsList RPAR VALUES ValuesListsList
-		{ $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
-	| INSERT Into Table Select
-		{ $$ = new yy.Insert({into:$3, select: $4}); }
-	| INSERT OR REPLACE Into Table Select
-		{ $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); }
-	| INSERT Into Table LPAR ColumnsList RPAR Select
-		{ $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
-	;
+        : INSERT Into Table Values  ValuesListsList
+                { $$ = new yy.Insert({into:$3, values: $5}); }
+        | INSERT Into Table ValuesListsList
+                { $$ = new yy.Insert({into:$3, values: $4}); }
+        | INSERT OR REPLACE Into Table Values  ValuesListsList
+                { $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); }
+        | INSERT OR REPLACE Into Table ValuesListsList
+                { $$ = new yy.Insert({into:$5, values: $6, orreplace:true}); }
+        | REPLACE Into Table Values  ValuesListsList
+                { $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); }
+        | REPLACE Into Table ValuesListsList
+                { $$ = new yy.Insert({into:$3, values: $4, orreplace:true}); }
+        | INSERT Into Table DEFAULT Values
+                { $$ = new yy.Insert({into:$3, "default": true}) ; }
+        | INSERT Into Table LPAR ColumnsList RPAR Values  ValuesListsList
+                { $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
+        | INSERT Into Table LPAR ColumnsList RPAR ValuesListsList
+                { $$ = new yy.Insert({into:$3, columns: $5, values: $7}); }
+        | INSERT Into Table Select
+                { $$ = new yy.Insert({into:$3, select: $4}); }
+        | INSERT OR REPLACE Into Table Select
+                { $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); }
+        | INSERT Into Table LPAR ColumnsList RPAR Select
+                { $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
+        ;
+		
+Values 
+        : VALUES
+        | VALUE
+        ; 
 
 Into 
-	:
+	: 
 	| INTO
 	;
 /*
