@@ -16,6 +16,8 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 
 # AlaSQL
 
+<div align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
+</div>
 
 _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - AlaSQL is a free and open source SQL database for Javascript with a strong focus on query speed and datasource flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
 
@@ -25,8 +27,7 @@ The library is designed for:
 * Easy ETL and option for persistency by data import / manipulation / export for several formats
 * All major browsers, Node.js, and mobile applications
 
-<div align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
-</div>
+
 
 We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demands flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
 
@@ -696,4 +697,4 @@ and other people for useful tools, which make our work much easier.
 
 ----
 <a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003946/d6e5c076-f156-11e5-8238-e62d2a8d20dc.png" align="right" alt="AlaSQL logo"/></a>
-© 2014-2016, Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk)
+© 2014-2017, Andrey Gershun (agershun@gmail.com) & M. Rangel Wulff (m@rawu.dk)
