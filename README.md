@@ -185,13 +185,7 @@ See more [speed related info on the wiki](https://github.com/agershun/alasql/wik
 
 
 
-
-
-
-
 ## Features you might like
-
-
 
 
 ### Traditional SQL
@@ -289,6 +283,34 @@ AlaSQL can read (not write) SQLite data files if you include the [SQL.js](https:
 sql.js calls will always be async. 
 
 
+
+### AlaSQL works in the console - CLI
+
+After globally installing AlaSQL `npm install alasql -g` you can access AlaSQL via the commandline  
+
+
+```bash
+> alasql "SET @data = @[{a:'1',b:?},{a:'2',b:?}]; SELECT a, b FROM @data;" 10 20
+[ 1, [ { a: 1, b: 10 }, { a: 2, b: 20 } ] ]
+
+> alasql "VALUE OF SELECT COUNT(*) as abc FROM TXT('README.md') WHERE LENGTH([0]) > ?" 140
+// Number of lines with more than 140 characters in README.md
+```
+
+See more [in the wiki](https://github.com/agershun/alasql/wiki/AlaSQL-CLI)
+
+
+
+
+
+
+
+
+
+
+
+
+
 ## Features you might love
 
 ### AlaSQL ♥ D3.js
@@ -303,7 +325,7 @@ AlaSQL can export data to both [Excel 2003 (.xls)](https://github.com/agershun/a
 
 ### AlaSQL ♥ Meteor
 
-Meteor is amazing. You can now query directly on your Meteor collections with SQL - simple and easy. See more about [Meteor and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Meteor)
+Meteor is amazing. You can query directly on your Meteor collections with SQL - simple and easy. See more about [Meteor and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Meteor)
 
 
 
@@ -325,59 +347,8 @@ AlaSQL can query data directly from a google spreadsheet. A good "partnership" f
 
 
 
-
-
-
-
-
-
-
-
-
  
 
-
-
-
-
-### localStorage and DOM-storage (experimental)
-You can use browser localStorage and [DOM-storage](https://github.com/node-browser-compat/dom-storage) as a data storage. Here is a sample:
-
-```js
-alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
-alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
-alasql('CREATE TABLE IF NOT EXISTS MyAtlas.City (city string, population number)');
-alasql('SELECT * INTO MyAtlas.City FROM ?',[[{city:'Vienna', population:1731000},
-        {city:'Budapest', population:1728000}]]);
-var res = alasql('SELECT * FROM MyAtlas.City');
-console.log(res);
-```
-
-Try this sample in [jsFiddle](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample
-two or three times, and AlaSQL store more and more data in localStorage. Here, "Atlas" is
-the name of localStorage database, where "MyAtlas" is a memory AlaSQL database.
-
-You can use localStorage in two modes: SET AUTOCOMMIT ON to immediate save data
-to localStorage after each statement or SET AUTOCOMMIT OFF. In this case, you need
-to use COMMIT statement to save all data from in-memory mirror to localStorage.
-
-
-
-
-### AlaSQL works in the console - CLI
-
-After globally installing AlaSQL `npm install alasql -g` you can access AlaSQL via the commandline  
-
-
-```bash
-> alasql "SET @data = @[{a:'1',b:?},{a:'2',b:?}]; SELECT a, b FROM @data;" 10 20
-[ 1, [ { a: 1, b: 10 }, { a: 2, b: 20 } ] ]
-
-> alasql "VALUE OF SELECT COUNT(*) as abc FROM TXT('README.md') WHERE LENGTH([0]) > ?" 140
-// Number of lines with more than 140 characters in README.md
-```
-
-See more [in the wiki](https://github.com/agershun/alasql/wiki/AlaSQL-CLI)
 
 
 
@@ -601,6 +572,31 @@ console.log(res) // ['Olga','Helen']
 
 See more [at the wiki](https://github.com/agershun/alasql/wiki/GRAPH)
 
+
+
+
+
+
+### localStorage and DOM-storage 
+You can use browser localStorage and [DOM-storage](https://github.com/node-browser-compat/dom-storage) as a data storage. Here is a sample:
+
+```js
+alasql('CREATE localStorage DATABASE IF NOT EXISTS Atlas');
+alasql('ATTACH localStorage DATABASE Atlas AS MyAtlas');
+alasql('CREATE TABLE IF NOT EXISTS MyAtlas.City (city string, population number)');
+alasql('SELECT * INTO MyAtlas.City FROM ?',[[{city:'Vienna', population:1731000},
+        {city:'Budapest', population:1728000}]]);
+var res = alasql('SELECT * FROM MyAtlas.City');
+console.log(res);
+```
+
+Try this sample in [jsFiddle](http://jsfiddle.net/agershun/x1gq3wf2/). Run this sample
+two or three times, and AlaSQL store more and more data in localStorage. Here, "Atlas" is
+the name of localStorage database, where "MyAtlas" is a memory AlaSQL database.
+
+You can use localStorage in two modes: SET AUTOCOMMIT ON to immediate save data
+to localStorage after each statement or SET AUTOCOMMIT OFF. In this case, you need
+to use COMMIT statement to save all data from in-memory mirror to localStorage.
 
 
 
