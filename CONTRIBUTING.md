@@ -20,4 +20,3 @@ _Please note that `npm test` will compile from `src/` before running tests_
 
 If you would would like to change the alasql.org website please make a PR to https://github.com/agershun/alasql-org
  
-hyou!
