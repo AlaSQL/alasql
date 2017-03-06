@@ -347,10 +347,26 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	if(typeof opt.headers == 'undefined') opt.headers = true;
 	var res;
 
+	/**
+	 * see https://github.com/SheetJS/js-xlsx/blob/5ae6b1965bfe3764656a96f536b356cd1586fec7/README.md
+	 * for example of using readAsArrayBuffer under `Parsing Workbooks`
+	 */
+	function fixdata(data) {
+		var o = "", l = 0, w = 10240;
+		for(; l<data.byteLength/w; ++l) o+=String.fromCharCode.apply(null,new Uint8Array(data.slice(l*w,l*w+w)));
+		o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(l*w)));
+		return o;
+	}
+
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
 
 //	function processData(data) {
-		var workbook = X.read(data,{type:'binary'});
+		if (data instanceof ArrayBuffer) {
+			var arr = fixdata(data);
+			var workbook = X.read(btoa(arr),{type:'base64'});
+		} else {
+			var workbook = X.read(data,{type:'binary'});
+		}
 //		console.log(workbook);
 		var sheetid;
 		if(typeof opt.sheetid === 'undefined') {

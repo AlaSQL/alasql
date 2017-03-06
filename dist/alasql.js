@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.7-develop-1482 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.7-xls.browser.import-1490 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.7-develop-1482
+@version 0.3.7-xls.browser.import-1490
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.7-develop-1482';
+alasql.version = '0.3.7-xls.browser.import-1490';
 
 /**
 	Debug flag
@@ -15612,10 +15612,26 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	if(typeof opt.headers == 'undefined') opt.headers = true;
 	var res;
 
+	/**
+	 * see https://github.com/SheetJS/js-xlsx/blob/5ae6b1965bfe3764656a96f536b356cd1586fec7/README.md
+	 * for example of using readAsArrayBuffer under `Parsing Workbooks`
+	 */
+	function fixdata(data) {
+		var o = "", l = 0, w = 10240;
+		for(; l<data.byteLength/w; ++l) o+=String.fromCharCode.apply(null,new Uint8Array(data.slice(l*w,l*w+w)));
+		o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(l*w)));
+		return o;
+	}
+
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
 
 //	function processData(data) {
-		var workbook = X.read(data,{type:'binary'});
+		if (data instanceof ArrayBuffer) {
+			var arr = fixdata(data);
+			var workbook = X.read(btoa(arr),{type:'base64'});
+		} else {
+			var workbook = X.read(data,{type:'binary'});
+		}
 
 		var sheetid;
 		if(typeof opt.sheetid === 'undefined') {
