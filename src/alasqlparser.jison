@@ -12,6 +12,10 @@
 
 %%
 
+/*
+\$\$(.+?)\$\$				            return 'DOLLARSTRING'
+*/
+
 \`\`([^\`])+\`\`						return 'JAVASCRIPT'
 \[\?\]									return 'BRAQUESTION'
 '@['									return 'ATLBRA'
@@ -24,15 +28,8 @@ X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 (['](\\.|[^']|\\\')*?['])+              return 'STRING'
 (["](\\.|[^"]|\\\")*?["])+              return 'STRING'
 
-/* 
-N(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
-X(['](\\.|[^']|\'\')*?['])+             return 'NSTRING'
-(['](\\.|[^']|\'\')*?['])+              return 'STRING'
-(["](\\.|[^"]|\"\")*?["])+              return 'STRING'
-*/
 
-
-"--"(.*?)($|\r\n|\r|\n)							return /* return COMMENT */
+"--"(.*?)($|\r\n|\r|\n)							return /* its a COMMENT */
 
 \s+                                             /* skip whitespace */
 '||'											return 'BARBAR'
@@ -55,6 +52,8 @@ TEXT\s+OF\s+SELECT                           	yytext = 'TEXT';return 'SELECT'
 'ADD'                                      		return 'ADD'
 'AFTER'                                      	return 'AFTER'
 'AGGR'                                     		return 'AGGR'
+'AGGREGATE'                                     return 'AGGREGATE'
+'AGGREGATOR'                                    return 'AGGREGATE'
 'ALL'                                      		return 'ALL'
 'ALTER'                                    		return 'ALTER'
 'AND'											return 'AND'
@@ -136,6 +135,7 @@ DATABASE(S)?									return 'DATABASE'
 'FOREIGN'										return 'FOREIGN'
 'FROM'                                          return 'FROM'
 'FULL'											return 'FULL'
+'FUNCTION'										return 'FUNCTION'
 'GLOB'                                     		return 'GLOB'
 'GO'                                      		return 'GO'
 'GRAPH'                                      	return 'GRAPH'
@@ -483,6 +483,9 @@ Statement
 	| Loop
 	| ForLoop
 */
+
+	| CreateFunction
+	| CreateAggregate
 	;
 
 /* WITH */
@@ -1253,6 +1256,17 @@ JavaScript
 	: JAVASCRIPT
 		{ $$ = new yy.JavaScript({value:$1.substr(2,$1.length-4)}); }		
 	;
+
+CreateFunction
+	: CREATE FUNCTION LITERAL AS JAVASCRIPT
+		{ $$ = new yy.JavaScript({value:'alasql.fn["'+$3+'"] = '+$5.substr(2,$5.length-4)}); }		
+	;	
+
+CreateAggregate
+	: CREATE AGGREGATE LITERAL AS JAVASCRIPT
+		{ $$ = new yy.JavaScript({value:'alasql.aggr["'+$3+'"] = '+$5.substr(2,$5.length-4)}); }		
+	;	
+
 
 NewClause
 	: NEW Literal
