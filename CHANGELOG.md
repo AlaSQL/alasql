@@ -2,8 +2,12 @@
 
 _0.3.8 "XXX" (xx.03.2017)_
 
-* ...
-
+* Added: Lazy promise notation
+* Added: Create user defined function via SQL statement
+* Added: Create user defined aggretator via SQL statement 
+* Added: Auto extension for filenames on read + write
+* Fix: `.xlsx` can now be imported via browser "upload"
+* Update: `xls.js` package not needed any more. Only `xlsx` package is needed. 
 
 ### 0.3.7 "Niau" (20.02.2017)
 
