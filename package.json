@@ -32,7 +32,7 @@
     "lodash": "^4.17.4",
     "request": "^2.79.0",
     "xlsjs": "^0.7.5",
-    "xlsx": "^0.8.4",
+    "xlsx": "^0.9.2",
     "yargs": "^5.0.0"
   },
   "devDependencies": {

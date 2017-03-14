@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.7-develop-1491 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.7-develop-1492 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.7-develop-1491
+@version 0.3.7-develop-1492
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.7-develop-1491';
+alasql.version = '0.3.7-develop-1492';
 
 /**
 	Debug flag
@@ -4217,21 +4217,7 @@ var getXLSX = function(){
 }
 
 var getXLS = function(){
-	var XLS = null;
-	/* If require() shuold be supported else take from global scope */
-	if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
-		//*not-for-browser/*
-		XLS = require('xlsjs') || null;
-		//*/
-	} else {
-		XLS = utils.global.XLS || null;
-	}
-
-	if(null === XLS){
-        throw new Error('Please include the xlsjs library');
-	}
-
-	return XLS;
+	return getXLSX();
 }
 
 // set AlaSQl path

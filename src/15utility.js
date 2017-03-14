@@ -1229,21 +1229,7 @@ var getXLSX = function(){
 
 
 var getXLS = function(){
-	var XLS = null;
-	/* If require() shuold be supported else take from global scope */
-	if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
-		//*not-for-browser/*
-		XLS = require('xlsjs') || null;
-		//*/
-	} else {
-		XLS = utils.global.XLS || null;
-	}
-
-	if(null === XLS){
-        throw new Error('Please include the xlsjs library');
-	}
-
-	return XLS;
+	return getXLSX();
 }
 
 // set AlaSQl path
