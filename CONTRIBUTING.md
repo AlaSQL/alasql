@@ -6,7 +6,7 @@ For you to edit the source please do the following:
 
 - Fork the repo here on Github
 - Clone your forked repo and install dependencies `git clone https://github.com/MYUSERNAME/alasql/ && cd alasql && npm install`  
-- Please work with the code from the develop branch `git checkout develop`
+- Make sure you work with the develop branch `git checkout develop`
 - Add a test for the issue: Copy `test/test000.js` and replace `000` with a new number. 
 - Implement a test that reflects the issue.
 - Run `npm test` to verify only the new test fails
@@ -20,6 +20,3 @@ _Please note that `npm test` will compile from `src/` before running tests_
 
 If you would would like to change the alasql.org website please make a PR to https://github.com/agershun/alasql-org
  
-
-
-Thank you!

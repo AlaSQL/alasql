@@ -57,6 +57,14 @@ describe('Test 160 - load text file, csv, tab, and other functions', function() 
 		});
 	});
 
+	it("4. CSV file without extension", function(done){
+		alasql("select column [1] from csv('test160') where [0] like 'M%' order by [1]", [], function(res){
+			assert(res, [10,20,30]);
+			done();
+		});
+	});
+
+
 });
 
 }

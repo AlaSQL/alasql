@@ -11,7 +11,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 		filename = undefined;
 	}
 	var opt = {};
-	alasql.utils.extend(opt, opts);
+	alasql.utils.extend(opt, opts); 
 	if(typeof opt.tableid === 'undefined') {
 		throw new Error('Table for INSERT TO is not defined.');
 	}
@@ -50,6 +50,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 //		res = s;
 //	} else {
 //		res = data.length;
+	filename = alasql.utils.autoExtFilename(filename,'sql',opts);
 	res = alasql.utils.saveFile(filename,s);
 	if(cb){
 		res = cb(res);
@@ -119,6 +120,7 @@ alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	}
 	var s = JSON.stringify(data);
 
+	filename = alasql.utils.autoExtFilename(filename,'json',opts);
 	res = alasql.utils.saveFile(filename,s);
 	if(cb){
 		res = cb(res);
@@ -153,6 +155,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 //		console.log(s);
 //		};
 //	 }
+	filename = alasql.utils.autoExtFilename(filename,'txt',opts);
 	res = alasql.utils.saveFile(filename,s);
 	if(cb){
 		res = cb(res);
@@ -164,6 +167,8 @@ alasql.into.TAB = alasql.into.TSV = function(filename, opts, data, columns, cb) 
 	var opt = {};
 	alasql.utils.extend(opt, opts);
 	opt.separator = '\t';
+	filename = alasql.utils.autoExtFilename(filename,'tab',opts);
+	opt.autoExt = false;
 	return alasql.into.CSV(filename, opt, data, columns, cb);
 }
 
@@ -210,7 +215,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		}).join(opt.separator)+'\r\n';	
 	});
 
-
+	filename = alasql.utils.autoExtFilename(filename,'csv',opts);
 	res = alasql.utils.saveFile(filename,s, null, {disableAutoBom: true});
 	if(cb){
 		res = cb(res);

@@ -57,6 +57,25 @@ var alasql = function(sql, params, cb, scope) {
 	
 	params = params||[];
 
+	if(typeof importScripts !== 'function' && alasql.webworker) {
+		var id = alasql.lastid++;
+		alasql.buffer[id] = cb;
+		alasql.webworker.postMessage({id:id,sql:sql,params:params});
+		return;
+	} 
+
+	if(arguments.length === 0) {
+		// Without arguments - Fluent interface
+		return new yy.Select({
+			columns:[new yy.Column({columnid:'*'})],
+			from: [new yy.ParamValue({param:0})]
+		});
+	} else if(arguments.length === 1){ 
+		// Access promise notation without using `.promise(...)`
+		if(sql.constructor === Array){
+			return alasql.promise(sql);
+		}
+	} 
 	// Avoid setting params if not needed even with callback
 	if(typeof params === 'function'){
 		scope = cb;
@@ -68,40 +87,18 @@ var alasql = function(sql, params, cb, scope) {
 			params = [params];
 	}
 
-	if(typeof importScripts !== 'function' && alasql.webworker) {
-		var id = alasql.lastid++;
-		alasql.buffer[id] = cb;
-		alasql.webworker.postMessage({id:id,sql:sql,params:params});
-	} else {
-		if(arguments.length === 0) {
-			// Without arguments - Fluent interface
-			return new yy.Select({
-				columns:[new yy.Column({columnid:'*'})],
-				from: [new yy.ParamValue({param:0})]
-			});
-		} else if (arguments.length === 1 && typeof sql === "object" && Array.isArray(sql) ){
-			// One argument data object - fluent interface
-				var select = new yy.Select({
-					columns:[new yy.Column({columnid:'*'})],
-					from: [new yy.ParamValue({param:0})]
-				});
-				select.preparams = [sql];	
-				return select;
-		} else {
-			// Standard interface
-			// alasql('#sql');
-			if(typeof sql === 'string' && sql[0]==='#' && typeof document === "object") {
-				sql = document.querySelector(sql).textContent;
-			} else if(typeof sql === 'object' && sql instanceof HTMLElement) {
-				sql = sql.textContent;
-			} else if(typeof sql === 'function') {
-				// to run multiline functions
-				sql = sql.toString().slice(14,-3);
-			}
-			// Run SQL			
-			return alasql.exec(sql, params, cb, scope);
-		}
+	// Standard interface
+	// alasql('#sql');
+	if(typeof sql === 'string' && sql[0]==='#' && typeof document === "object") {
+		sql = document.querySelector(sql).textContent;
+	} else if(typeof sql === 'object' && sql instanceof HTMLElement) {
+		sql = sql.textContent;
+	} else if(typeof sql === 'function') {
+		// to run multiline functions
+		sql = sql.toString().slice(14,-3);
 	}
+	// Run SQL			
+	return alasql.exec(sql, params, cb, scope);
 };
 
 /** 

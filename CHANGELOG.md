@@ -1,11 +1,20 @@
 # Changelog
 
-_0.3.8 "XXX" (xx.03.2017)_
+
+_0.3.9 "Turua" (xx.04.2017)_
 
 * ...
 
+###0.3.8 "Wanaka" (15.03.2017)
 
-### 0.3.7 "Niau" (xx.02.2017)
+* Added: Lazy promise notation
+* Added: Create user defined function via SQL statement
+* Added: Create user defined aggretator via SQL statement 
+* Added: Auto extension for filenames on read + write
+* Fix: `.xlsx` can now be imported via browser "upload"
+* Update: `xls.js` package not needed any more. Only `xlsx` package is needed. 
+
+### 0.3.7 "Niau" (20.02.2017)
 
 * Added: Last `S` in `VALUES` can be omitted when insterting (For the lazy ones)
 * Added: The `VALUES` keyword is optional when insterting (For the very lazy ones)

@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Versatile SQL database for browser or node. Handles relational data and nested JSON (noSQL). Export to and import from Excel, localStorage or IndexedDB",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "contributors": [
     {
@@ -31,8 +31,7 @@
     "es6-promise": "^4.0.5",
     "lodash": "^4.17.4",
     "request": "^2.79.0",
-    "xlsjs": "^0.7.5",
-    "xlsx": "^0.8.4",
+    "xlsx": "^0.9.2",
     "yargs": "^5.0.0"
   },
   "devDependencies": {

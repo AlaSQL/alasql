@@ -558,6 +558,14 @@ var deleteFile = utils.deleteFile = function(path,cb){
 
 };
 
+utils.autoExtFilename = function(filename,ext,config) {
+	if(typeof filename !== 'string' || filename.match(/\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
+		return filename;
+	}
+	return filename+'.'+ext
+}
+
+
 var fileExists = utils.fileExists = function(path,cb){
     if(utils.isNode) {
         //*not-for-browser/*
@@ -1221,21 +1229,7 @@ var getXLSX = function(){
 
 
 var getXLS = function(){
-	var XLS = null;
-	/* If require() shuold be supported else take from global scope */
-	if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
-		//*not-for-browser/*
-		XLS = require('xlsjs') || null;
-		//*/
-	} else {
-		XLS = utils.global.XLS || null;
-	}
-
-	if(null === XLS){
-        throw new Error('Please include the xlsjs library');
-	}
-
-	return XLS;
+	return getXLSX();
 }
 
 // set AlaSQl path
