@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.7-develop-1492 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.8 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.7-develop-1492
+@version 0.3.8
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.7-develop-1492';
+alasql.version = '0.3.8';
 
 /**
 	Debug flag
@@ -3675,7 +3675,7 @@ var deleteFile = utils.deleteFile = function(path,cb){
 };
 
 utils.autoExtFilename = function(filename,ext,config) {
-	if(typeof filename !== 'string' || filename.match(/\..{3,4}$/) || config.autoExt === 0 || config.autoExt === false){
+	if(typeof filename !== 'string' || filename.match(/\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
 		return filename;
 	}
 	return filename+'.'+ext

@@ -1,6 +1,11 @@
 # Changelog
 
-_0.3.8 "XXX" (xx.03.2017)_
+
+_0.3.9 "Turua" (xx.04.2017)_
+
+* ...
+
+###0.3.8 "Wanaka" (15.03.2017)
 
 * Added: Lazy promise notation
 * Added: Create user defined function via SQL statement
