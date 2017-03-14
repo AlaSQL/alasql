@@ -25,7 +25,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 	}
 
 //console.log(data);
-	
+
+	filename = alasql.utils.autoExtFilename(filename,'xlsx',opts);	
 
 	var XLSX = getXLSX();
 

@@ -139,6 +139,7 @@ alasql.from.JSON = function(filename, opts, cb, idx, query) {
 	var res;
 	//console.log('cb',cb);
 //console.log('JSON');
+	filename = alasql.utils.autoExtFilename(filename,'json',opts);
 	alasql.utils.loadFile(filename,!!cb,function(data){
 //		console.log('DATA:'+data);
 //		res = [{a:1}];
@@ -152,6 +153,7 @@ alasql.from.JSON = function(filename, opts, cb, idx, query) {
 
 alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	var res;
+	filename = alasql.utils.autoExtFilename(filename,'txt',opts);
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
 		
@@ -176,6 +178,8 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	opts = opts || {};
 	opts.separator = '\t';
+	filename = alasql.utils.autoExtFilename(filename,'tab',opts);
+	opts.autoext = false;
 	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
 
@@ -333,6 +337,7 @@ if(false) {
 	if( (new RegExp("\n")).test(contents) ) {
 		parseText(contents)
 	} else {
+		contents = alasql.utils.autoExtFilename(contents,'csv',opts);
 		alasql.utils.loadFile(contents,!!cb,parseText);
 	}
 	return res;
@@ -344,7 +349,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var opt = {};
 	opts = opts || {};
 	alasql.utils.extend(opt, opts);
-	if(typeof opt.headers == 'undefined') opt.headers = true;
+	if(typeof opt.headers === 'undefined'){
+		opt.headers = true;
+	}
 	var res;
 
 	/**
@@ -357,7 +364,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(l*w)));
 		return o;
 	}
-
+	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
 
 //	function processData(data) {
@@ -438,10 +445,16 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
+	opts=opts||{};
+	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
+	opts.autoExt = false;
 	return XLSXLSX(getXLS(),filename, opts, cb, idx, query);
 }
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
+	opts=opts||{};
+	filename = alasql.utils.autoExtFilename(filename,'xlsx',opts);
+	opts.autoExt = false;
 	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 };
 

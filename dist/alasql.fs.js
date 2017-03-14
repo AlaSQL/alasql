@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.7-develop-1490 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.7-develop-1491 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.7-develop-1490
+@version 0.3.7-develop-1491
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.7-develop-1490';
+alasql.version = '0.3.7-develop-1491';
 
 /**
 	Debug flag
@@ -3673,6 +3673,13 @@ var deleteFile = utils.deleteFile = function(path,cb){
     //*/
 
 };
+
+utils.autoExtFilename = function(filename,ext,config) {
+	if(typeof filename !== 'string' || filename.match(/\..{3,4}$/) || config.autoExt === 0 || config.autoExt === false){
+		return filename;
+	}
+	return filename+'.'+ext
+}
 
 var fileExists = utils.fileExists = function(path,cb){
     if(utils.isNode) {
@@ -14276,7 +14283,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 		filename = undefined;
 	}
 	var opt = {};
-	alasql.utils.extend(opt, opts);
+	alasql.utils.extend(opt, opts); 
 	if(typeof opt.tableid === 'undefined') {
 		throw new Error('Table for INSERT TO is not defined.');
 	}
@@ -14315,6 +14322,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 
 //	} else {
 
+	filename = alasql.utils.autoExtFilename(filename,'sql',opts);
 	res = alasql.utils.saveFile(filename,s);
 	if(cb){
 		res = cb(res);
@@ -14384,6 +14392,7 @@ alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	}
 	var s = JSON.stringify(data);
 
+	filename = alasql.utils.autoExtFilename(filename,'json',opts);
 	res = alasql.utils.saveFile(filename,s);
 	if(cb){
 		res = cb(res);
@@ -14411,6 +14420,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 		}).join('\n');
 	}
 
+	filename = alasql.utils.autoExtFilename(filename,'txt',opts);
 	res = alasql.utils.saveFile(filename,s);
 	if(cb){
 		res = cb(res);
@@ -14422,6 +14432,8 @@ alasql.into.TAB = alasql.into.TSV = function(filename, opts, data, columns, cb) 
 	var opt = {};
 	alasql.utils.extend(opt, opts);
 	opt.separator = '\t';
+	filename = alasql.utils.autoExtFilename(filename,'tab',opts);
+	opt.autoExt = false;
 	return alasql.into.CSV(filename, opt, data, columns, cb);
 }
 
@@ -14467,6 +14479,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		}).join(opt.separator)+'\r\n';	
 	});
 
+	filename = alasql.utils.autoExtFilename(filename,'csv',opts);
 	res = alasql.utils.saveFile(filename,s, null, {disableAutoBom: true});
 	if(cb){
 		res = cb(res);
@@ -14511,6 +14524,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 	var s = toHTML();
 
 	// File is ready to save
+	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	var res = alasql.utils.saveFile(filename,s);
 	if(cb) res = cb(res);
 	return res;
@@ -14814,6 +14828,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 	};
 
 	// File is ready to save
+	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	var res = alasql.utils.saveFile(filename,toXML());
 	if(cb) res = cb(res);
 	return res;
@@ -15145,6 +15160,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	}
 
+	filename = alasql.utils.autoExtFilename(filename,'xlsx',opts);	
+
 	var XLSX = getXLSX();
 
 	/* If called without filename, use opts */
@@ -15452,6 +15469,7 @@ alasql.from.FILE = function(filename, opts, cb, idx, query) {
 alasql.from.JSON = function(filename, opts, cb, idx, query) {
 	var res;
 
+	filename = alasql.utils.autoExtFilename(filename,'json',opts);
 	alasql.utils.loadFile(filename,!!cb,function(data){
 
 		res = JSON.parse(data);
@@ -15464,6 +15482,7 @@ alasql.from.JSON = function(filename, opts, cb, idx, query) {
 
 alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	var res;
+	filename = alasql.utils.autoExtFilename(filename,'txt',opts);
 	alasql.utils.loadFile(filename,!!cb,function(data){
 		res = data.split(/\r?\n/);
 
@@ -15488,6 +15507,8 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	opts = opts || {};
 	opts.separator = '\t';
+	filename = alasql.utils.autoExtFilename(filename,'tab',opts);
+	opts.autoext = false;
 	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
 
@@ -15612,6 +15633,7 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 	if( (new RegExp("\n")).test(contents) ) {
 		parseText(contents)
 	} else {
+		contents = alasql.utils.autoExtFilename(contents,'csv',opts);
 		alasql.utils.loadFile(contents,!!cb,parseText);
 	}
 	return res;
@@ -15621,7 +15643,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 	var opt = {};
 	opts = opts || {};
 	alasql.utils.extend(opt, opts);
-	if(typeof opt.headers == 'undefined') opt.headers = true;
+	if(typeof opt.headers === 'undefined'){
+		opt.headers = true;
+	}
 	var res;
 
 	/**
@@ -15634,7 +15658,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(l*w)));
 		return o;
 	}
-
+	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
 
 //	function processData(data) {
@@ -15712,10 +15736,16 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 }
 
 alasql.from.XLS = function(filename, opts, cb, idx, query) {
+	opts=opts||{};
+	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
+	opts.autoExt = false;
 	return XLSXLSX(getXLS(),filename, opts, cb, idx, query);
 }
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
+	opts=opts||{};
+	filename = alasql.utils.autoExtFilename(filename,'xlsx',opts);
+	opts.autoExt = false;
 	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 };
 

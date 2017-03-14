@@ -35,6 +35,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 	var s = toHTML();
 
 	// File is ready to save
+	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	var res = alasql.utils.saveFile(filename,s);
 	if(cb) res = cb(res);
 	return res;
