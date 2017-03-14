@@ -29,7 +29,7 @@ The library is designed for:
 
 
 
-We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demand flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
+We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of javascript when building up queries. Real world solutions demand flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `.xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
 
 
 The library brings you the comfort of a full database engine to your javascript app. No, really - its working towards a full database engine complying with [most of the SQL-99](https://github.com/agershun/alasql/wiki/Supported-SQL-statements) spiced up with additional syntax for handling NoSQL (schema-less) data and graph networks.
@@ -402,12 +402,13 @@ Probably, there are many of others. Please, help us to fix them by [submitting i
 ### Use AlaSQL to convert data from CSV to Excel
 
 ETL example:
+
 ```js
     alasql(['CREATE TABLE IF NOT EXISTS geo.country',
             'SELECT * INTO geo.country FROM CSV("country.csv",{headers:true})', 
-            'SELECT * INTO XLSX("asia.xlsx") FROM geo.country WHERE continent_name = "Asia"'
+            'SELECT * INTO XLSX("asia") FROM geo.country WHERE continent_name = "Asia"'
           ).then(function(res){
-          		...
+          		... // results from the file asia.xlsx
           });
 ```
 
@@ -463,7 +464,6 @@ Here's a list of modules that alasql requires
 * cptable
 * jszip
 * xlsx
-* xls
 * cpexcel
 * path
 * es6-promise
@@ -485,8 +485,8 @@ var IgnorePlugin =  require("webpack").IgnorePlugin;
 
 module.exports = {
   ...
-  //Will ignore the modules fs, path, xlsx, xls
-  plugins:[new IgnorePlugin(/(^fs$|cptable|jszip|xlsx|xls|^es6-promise$|^net$|^tls$|^forever-agent$|^tough-cookie$|cpexcel|^path$)/)]
+  //Will ignore the modules fs, path, xlsx
+  plugins:[new IgnorePlugin(/(^fs$|cptable|jszip|xlsx|^es6-promise$|^net$|^tls$|^forever-agent$|^tough-cookie$|cpexcel|^path$)/)]
 };
 ```
 
@@ -522,8 +522,8 @@ Example (using excluding)
 ```js
 var browserify = require("browserify");
 var b = browserify("./main.js").bundle();
-//Will ignore the modules fs, path, xlsx, xls
-["fs","path","xlsx",  ... , "xls"].map(ignore => b.ignore(ignore));
+//Will ignore the modules fs, path, xlsx
+["fs","path","xlsx",  ... ].map(ignore => b.ignore(ignore));
 ```
 
 #### jQuery
