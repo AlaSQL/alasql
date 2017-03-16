@@ -351,6 +351,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 		}).catch((err) => {
 			throw err;
 		});
+	//*/
     } else if(utils.isCordova) {
         /* If Cordova */
         utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
@@ -513,6 +514,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
 			//RNFetchBlob.base64.decode(data) //need more test on excel
 		    success(data);
 		})
+	//*/
     } else {
         if(typeof path === "string") {
             // For browser
@@ -568,6 +570,7 @@ var removeFile = utils.removeFile = function(path,cb) {
 		}).catch((err) => {
 			throw err;
 		});
+	//*/
     } else {
         throw new Error('You can remove files only in Node.js and Apache Cordova');
     }
