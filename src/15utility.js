@@ -616,7 +616,7 @@ var fileExists = utils.fileExists = function(path,cb){
 		}).catch((err) => {
 			throw err;
 		});
-		
+	//*/
     } else {
         // TODO Cordova, etc.
         throw new Error('You can use exists() only in Node.js or Apach Cordova');
