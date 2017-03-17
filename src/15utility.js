@@ -249,7 +249,7 @@ utils.isMeteor = (function(){
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
-utils.isMeteorClient = (utils.isMeteorClient = function(){
+utils.isMeteorClient = utils.isMeteorClient = (function(){
   return utils.isMeteor && Meteor.isClient;
 })();
 
@@ -273,7 +273,15 @@ utils.isCordova = (function(){
 })();
 
 utils.isReactNative = (function(){
-  return (typeof require('react-native') === 'object')
+  var isReact = false;
+  //*not-for-browser/*
+  try{
+	if(typeof require('react-native') === 'object'){
+		isReact = true;
+	}
+  }catch(e){void 0	}
+  //*/
+  return isReact;
 })();
 
 utils.hasIndexedDB = (function(){
@@ -346,9 +354,9 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
 	} else if(utils.isReactNative) {
         // If ReactNative
 		var RNFS = require('react-native-fs');
-        RNFS.readFile(path,'utf8').then((contents)=>{
+        RNFS.readFile(path,'utf8').then(function(contents){
 			success(cutbom(contents));
-		}).catch((err) => {
+		}).catch(function(err){
 			throw err;
 		});
 	//*/
@@ -508,9 +516,9 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
         // If ReactNative
 		//var RNFS = require('react-native-fs');
 		var RNFetchBlob = require('react-native-fetch-blob').default
-		let dirs = RNFetchBlob.fs.dirs
+		var dirs = RNFetchBlob.fs.dirs
 		//should use readStream instead if the file is large
-		RNFetchBlob.fs.readFile(path, 'base64').then((data) => {
+		RNFetchBlob.fs.readFile(path, 'base64').then(function(data){
 			//RNFetchBlob.base64.decode(data) //need more test on excel
 		    success(data);
 		})
@@ -565,9 +573,9 @@ var removeFile = utils.removeFile = function(path,cb) {
 	} else if(utils.isReactNative) {
         // If ReactNative
 		var RNFS = require('react-native-fs');
-        RNFS.unlink(path).then(()=>{
+        RNFS.unlink(path).then(function(){
 			cb && cb();
-		}).catch((err) => {
+		}).catch(function(err){
 			throw err;
 		});
 	//*/
@@ -585,9 +593,9 @@ var deleteFile = utils.deleteFile = function(path,cb){
 	} else if(utils.isReactNative) {
         // If ReactNative
 		var RNFS = require('react-native-fs');
-        RNFS.unlink(path).then(()=>{
+        RNFS.unlink(path).then(function(){
 			cb && cb();
-		}).catch((err) => {
+		}).catch(function(err){
 			throw err;
 		});
     }
@@ -611,9 +619,9 @@ var fileExists = utils.fileExists = function(path,cb){
 	} else if(utils.isReactNative) {
         // If ReactNative
 		var RNFS = require('react-native-fs');
-        RNFS.exists(path).then((yes)=>{
+        RNFS.exists(path).then(function(yes){
 			cb && cb(yes);
-		}).catch((err) => {
+		}).catch(function(err){
 			throw err;
 		});
 	//*/
@@ -651,9 +659,9 @@ var saveFile = utils.saveFile = function(path, data, cb) {
             }
         }else if(utils.isReactNative) {
 			var RNFS = require('react-native-fs');
-			RNFS.writeFile(path, data).then((success) => { //, 'utf8'
+			RNFS.writeFile(path, data).then(function(success){ //, 'utf8'
 				if(cb) res = cb(res);
-			}).catch((err) => {
+			}).catch(function(err){
 				console.log(err.message);
 			});
         } else if(utils.isCordova) {
