@@ -344,7 +344,7 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
             }
         }
 	} else if(utils.isReactNative) {
-        /* If ReactNative */
+        // If ReactNative
 		var RNFS = require('react-native-fs');
         RNFS.readFile(path,'utf8').then((contents)=>{
 			success(cutbom(contents));
@@ -505,7 +505,7 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
             }
         }
 	} else if(utils.isReactNative) {
-        /* If ReactNative */
+        // If ReactNative
 		//var RNFS = require('react-native-fs');
 		var RNFetchBlob = require('react-native-fetch-blob').default
 		let dirs = RNFetchBlob.fs.dirs
@@ -563,7 +563,7 @@ var removeFile = utils.removeFile = function(path,cb) {
             });
         });
 	} else if(utils.isReactNative) {
-        /* If ReactNative */
+        // If ReactNative
 		var RNFS = require('react-native-fs');
         RNFS.unlink(path).then(()=>{
 			cb && cb();
@@ -583,7 +583,7 @@ var deleteFile = utils.deleteFile = function(path,cb){
         var fs = require('fs');
         fs.unlink(path, cb);
 	} else if(utils.isReactNative) {
-        /* If ReactNative */
+        // If ReactNative
 		var RNFS = require('react-native-fs');
         RNFS.unlink(path).then(()=>{
 			cb && cb();
@@ -609,7 +609,7 @@ var fileExists = utils.fileExists = function(path,cb){
             });
         });
 	} else if(utils.isReactNative) {
-        /* If ReactNative */
+        // If ReactNative
 		var RNFS = require('react-native-fs');
         RNFS.exists(path).then((yes)=>{
 			cb && cb(yes);
