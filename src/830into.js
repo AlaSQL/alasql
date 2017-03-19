@@ -200,11 +200,13 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		}).join(opt.quote+opt.separator+opt.quote)+opt.quote+'\r\n';
 	}
 
+	
 	data.forEach(function(d){
 		s += columns.map(function(col){
 			var s = d[col.columnid];
-			var quotereg = (opt.quote === '') ? '' : '\\' + opt.quote;
-			s = (s+"").replace(new RegExp(quotereg,"g"),'""');
+			if (opt.quote !== '') {
+				s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
+			}
 //			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
       
       //Excel 2013 needs quotes around strings - thanks for _not_ complying with RFC for CSV 
