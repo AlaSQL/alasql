@@ -14513,7 +14513,10 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	data.forEach(function(d){
 		s += columns.map(function(col){
 			var s = d[col.columnid];
-			s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
+			// escape the character wherever it appears in the field
+			if (opt.quote !== '') {
+				s = (s+"").replace(new RegExp('\\'+opt.quote,"g"), opt.quote + opt.quote);
+			}
 
       //Excel 2013 needs quotes around strings - thanks for _not_ complying with RFC for CSV 
       if(+s!=s){  // jshint ignore:line
