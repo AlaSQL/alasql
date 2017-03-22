@@ -23,6 +23,7 @@ describe('Test '+test+' - INTO CSV', function() {
 		fs.unlink('test612-1.csv', function(err) {  });
 		fs.unlink('test612-2.csv', function(err) {  });
 		fs.unlink('test612-3.csv', function(err) {  });
+		fs.unlink('test612-4.csv', function(err) {  });
         });
 
 	it('With quote = \'\', single string value', function() {
@@ -58,6 +59,15 @@ describe('Test '+test+' - INTO CSV', function() {
 				var filecontents = fs.readFileSync('test612-3.csv', 'utf8');
 				// must include the BOM at the beginning
 				assert(filecontents === '\ufeff?colname?\r\n?swing out?\r\n');
+		});
+	});
+
+	it('With quote = \'\\?\', single multiword string containing ?', function() {
+		return alasql.promise("SELECT 'swing?out' AS `colname` INTO CSV('test612-4', {quote:'?'})")
+			.then(function(state) {
+				var filecontents = fs.readFileSync('test612-4.csv', 'utf8');
+				// must include the BOM at the beginning
+				assert(filecontents === '\ufeff?colname?\r\n?swing??out?\r\n');
 		});
 	});
 });

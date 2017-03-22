@@ -204,8 +204,9 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	data.forEach(function(d){
 		s += columns.map(function(col){
 			var s = d[col.columnid];
+			// escape the character wherever it appears in the field
 			if (opt.quote !== '') {
-				s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
+				s = (s+"").replace(new RegExp('\\'+opt.quote,"g"), opt.quote + opt.quote);
 			}
 //			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote; 
       

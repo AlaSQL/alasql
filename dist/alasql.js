@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.8-727.into.csv.travis.fix-5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.8-727.into.csv.travis.fix-6 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.8-727.into.csv.travis.fix-5
+@version 0.3.8-727.into.csv.travis.fix-6
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.8-727.into.csv.travis.fix-5';
+alasql.version = '0.3.8-727.into.csv.travis.fix-6';
 
 /**
 	Debug flag
@@ -14514,7 +14514,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		s += columns.map(function(col){
 			var s = d[col.columnid];
 			if (opt.quote !== '') {
-				s = (s+"").replace(new RegExp('\\'+opt.quote,"g"),'""');
+				s = (s+"").replace(new RegExp('\\'+opt.quote,"g"), opt.quote + opt.quote);
 			}
 
       //Excel 2013 needs quotes around strings - thanks for _not_ complying with RFC for CSV 
