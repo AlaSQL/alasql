@@ -249,7 +249,7 @@ utils.isMeteor = (function(){
     Find out if code is running on a Meteor client
     @return {boolean} True if code is running on a Meteor client
 */
-utils.isMeteorClient = (utils.isMeteorClient = function(){
+utils.isMeteorClient = utils.isMeteorClient = (function(){
   return utils.isMeteor && Meteor.isClient;
 })();
 
@@ -270,6 +270,18 @@ utils.isMeteorServer = (function(){
 */
 utils.isCordova = (function(){
   return (typeof cordova === 'object')
+})();
+
+utils.isReactNative = (function(){
+  var isReact = false;
+  //*not-for-browser/*
+  try{
+	if(typeof require('react-native') === 'object'){
+		isReact = true;
+	}
+  }catch(e){void 0	}
+  //*/
+  return isReact;
 })();
 
 utils.hasIndexedDB = (function(){
@@ -339,7 +351,15 @@ var loadFile = utils.loadFile = function(path, asy, success, error) {
                 }
             }
         }
-        //*/
+	} else if(utils.isReactNative) {
+        // If ReactNative
+		var RNFS = require('react-native-fs');
+        RNFS.readFile(path,'utf8').then(function(contents){
+			success(cutbom(contents));
+		}).catch(function(err){
+			throw err;
+		});
+	//*/
     } else if(utils.isCordova) {
         /* If Cordova */
         utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
@@ -492,9 +512,18 @@ var loadBinaryFile = utils.loadBinaryFile = function(path, asy, success, error) 
                 success(arr.join(""));
             }
         }
-		//*/
+	} else if(utils.isReactNative) {
+        // If ReactNative
+		//var RNFS = require('react-native-fs');
+		var RNFetchBlob = require('react-native-fetch-blob').default
+		var dirs = RNFetchBlob.fs.dirs
+		//should use readStream instead if the file is large
+		RNFetchBlob.fs.readFile(path, 'base64').then(function(data){
+			//RNFetchBlob.base64.decode(data) //need more test on excel
+		    success(data);
+		})
+	//*/
     } else {
-
         if(typeof path === "string") {
             // For browser
             var xhr = new XMLHttpRequest();
@@ -541,7 +570,15 @@ var removeFile = utils.removeFile = function(path,cb) {
                 cb && cb(); // jshint ignore:line
             });
         });
-      	//*/
+	} else if(utils.isReactNative) {
+        // If ReactNative
+		var RNFS = require('react-native-fs');
+        RNFS.unlink(path).then(function(){
+			cb && cb();
+		}).catch(function(err){
+			throw err;
+		});
+	//*/
     } else {
         throw new Error('You can remove files only in Node.js and Apache Cordova');
     }
@@ -553,13 +590,22 @@ var deleteFile = utils.deleteFile = function(path,cb){
     if(utils.isNode) {
         var fs = require('fs');
         fs.unlink(path, cb);
+	} else if(utils.isReactNative) {
+        // If ReactNative
+		var RNFS = require('react-native-fs');
+        RNFS.unlink(path).then(function(){
+			cb && cb();
+		}).catch(function(err){
+			throw err;
+		});
     }
     //*/
 
 };
 
 utils.autoExtFilename = function(filename,ext,config) {
-	if(typeof filename !== 'string' || filename.match(/\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
+	config = config || {};
+	if(typeof filename !== 'string' || filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
 		return filename;
 	}
 	return filename+'.'+ext
@@ -579,7 +625,15 @@ var fileExists = utils.fileExists = function(path,cb){
                 cb(false);
             });
         });
-        //*/
+	} else if(utils.isReactNative) {
+        // If ReactNative
+		var RNFS = require('react-native-fs');
+        RNFS.exists(path).then(function(yes){
+			cb && cb(yes);
+		}).catch(function(err){
+			throw err;
+		});
+	//*/
     } else {
         // TODO Cordova, etc.
         throw new Error('You can use exists() only in Node.js or Apach Cordova');
@@ -606,7 +660,6 @@ var saveFile = utils.saveFile = function(path, data, cb, opts) {
             res = cb(res);
         }
     } else {
-
         if(utils.isNode) {
             //*not-for-browser/*
             var fs = require('fs');
@@ -614,6 +667,13 @@ var saveFile = utils.saveFile = function(path, data, cb, opts) {
             if(cb){
                 res = cb(res);
             }
+        }else if(utils.isReactNative) {
+			var RNFS = require('react-native-fs');
+			RNFS.writeFile(path, data).then(function(success){ //, 'utf8'
+				if(cb) res = cb(res);
+			}).catch(function(err){
+				console.log(err.message);
+			});
         } else if(utils.isCordova) {
             utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 //                alasql.utils.removeFile(path,function(){

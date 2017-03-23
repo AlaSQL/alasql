@@ -4,8 +4,8 @@ Thank you very much or the your intentions! AlaSQL project still has a lot of th
 
 For you to edit the source please do the following:
 
-- Fork the repo here on Github
-- Clone your forked repo and install dependencies `git clone https://github.com/MYUSERNAME/alasql/ && cd alasql && npm install`  
+- Fork the repo here on Github 
+- Clone your forked repo and install dependencies `git clone https://github.com/MYUSERNAME/alasql/ --depth 1 && cd alasql && npm install`  
 - Make sure you work with the develop branch `git checkout develop`
 - Add a test for the issue: Copy `test/test000.js` and replace `000` with a new number. 
 - Implement a test that reflects the issue.
