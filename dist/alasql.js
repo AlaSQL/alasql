@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.8-727.into.csv.travis.fix-6 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.9 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.8-727.into.csv.travis.fix-6
+@version 0.3.9
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.8-727.into.csv.travis.fix-6';
+alasql.version = '0.3.9';
 
 /**
 	Debug flag
@@ -3720,7 +3720,8 @@ var deleteFile = utils.deleteFile = function(path,cb){
 };
 
 utils.autoExtFilename = function(filename,ext,config) {
-	if(typeof filename !== 'string' || filename.match(/\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
+	config = config || {};
+	if(typeof filename !== 'string' || filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
 		return filename;
 	}
 	return filename+'.'+ext
@@ -14513,6 +14514,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 	data.forEach(function(d){
 		s += columns.map(function(col){
 			var s = d[col.columnid];
+			// escape the character wherever it appears in the field
 			if (opt.quote !== '') {
 				s = (s+"").replace(new RegExp('\\'+opt.quote,"g"), opt.quote + opt.quote);
 			}

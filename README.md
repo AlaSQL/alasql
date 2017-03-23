@@ -1,10 +1,11 @@
-_AlaSQL is an open source project and we appreciate any and all contributions we can get. [Please help out](https://github.com/agershun/alasql/labels/Please%20help%20out%21)._
+_AlaSQL is an open source project, and we appreciate any and all contributions we can get. [Please help out](https://github.com/agershun/alasql/labels/Please%20help%20out%21)._
 
 _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) and tag with "alasql"._
 
 
-[![Build status](https://api.travis-ci.org/agershun/alasql.svg)](https://travis-ci.org/agershun/alasql?123)
+[![Build Status](https://travis-ci.org/agershun/alasql.svg?branch=develop)](https://travis-ci.org/agershun/alasql)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=alasql)
+[![OPEN open source software](https://img.shields.io/badge/Open--OSS-%E2%9C%94-brightgreen.svg)](http://open-oss.com)
 [![ghit.me](https://ghit.me/badge.svg?repo=agershun/alasql)](https://ghit.me/repo/agershun/alasql)
 [![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a)](https://www.npmjs.com/package/alasql)
 [![Stars](https://img.shields.io/github/stars/agershun/alasql.svg?label=Github%20%E2%98%85&a)](https://github.com/agershun/alasql)
@@ -16,12 +17,12 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 
 # AlaSQL
 
-<div align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
-</div>
+<h2 align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
+</h2>
 
-AlaSQL - _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - is a free and open source SQL database for Javascript with a strong focus on query speed and data source flexibility for relational data, schemaless data, and graph data. It works in your browser, Node.js, IO.js and Cordova.
+AlaSQL - _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - is an open source SQL database for Javascript with a strong focus on query speed and data source flexibility for both relational data and schemaless data. It works in your browser, Node.js, and Cordova.
 
-The library is designed for:
+This library is designed for:
 
 * Fast in-memory SQL data processing for BI and ERP applications on fat clients
 * Easy ETL and options for persistency by data import / manipulation / export of several formats
@@ -32,7 +33,7 @@ The library is designed for:
 We focus on [speed](https://github.com/agershun/alasql/wiki/Speed) by taking advantage of the dynamic nature of JavaScript when building up queries. Real-world solutions demand flexibility regarding where data comes from and where it is to be stored. We focus on flexibility by making sure you can [import/export](https://github.com/agershun/alasql/wiki/Import-export) and query directly on data stored in Excel (both `.xls` and `.xlsx`), CSV, JSON, TAB, IndexedDB, LocalStorage, and SQLite files.
 
 
-The library adds the comfort of a full database engine to your JavaScript app. No, really - it's working towards a full database engine complying with [most of the SQL-99](https://github.com/agershun/alasql/wiki/Supported-SQL-statements) spiced up with additional syntax for handling NoSQL (schema-less) data and graph networks.
+The library adds the comfort of a full database engine to your JavaScript app. No, really - it's working towards a full database engine complying with [most of the SQL-99](https://github.com/agershun/alasql/wiki/Supported-SQL-statements) spiced up with an additional syntax for handling NoSQL (schema-less) data and graph networks.
 
 
 ```js
@@ -694,7 +695,11 @@ MIT - see [MIT licence information](LICENSE)
 * [Andrey Gershun](http://github.com/agershun)
 * [Mathias Rangel Wulff](https://twitter.com/rangelwulff)
 
-_AlaSQL is an open source project and we appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)._
+AlaSQL is an **OPEN Open Source Project**. This means that:
+
+> Individuals making significant and valuable contributions are given commit-access to the project to contribute as they see fit. This project is more like an open wiki than a standard guarded open source project.
+
+We appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/agershun/alasql/blob/develop/CONTRIBUTING.md)._
 
 
 
