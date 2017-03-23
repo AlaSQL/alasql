@@ -604,7 +604,8 @@ var deleteFile = utils.deleteFile = function(path,cb){
 };
 
 utils.autoExtFilename = function(filename,ext,config) {
-	if(typeof filename !== 'string' || filename.match(/\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
+	config = config || {};
+	if(typeof filename !== 'string' || filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
 		return filename;
 	}
 	return filename+'.'+ext
