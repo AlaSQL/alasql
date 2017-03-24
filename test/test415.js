@@ -22,7 +22,7 @@ describe('Test '+test+' Aggregators', function() {
   it('1. Test',function(done){
 
     var data = [];
-    for(var i=0;i<10000;i++) {
+    for(var i=1;i<10000;i++) {
       data.push({a:i});
     }
     
