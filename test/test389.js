@@ -13,6 +13,8 @@ if(typeof exports === 'object') {
 
 describe('Test 389 Autoincrement for localStorage', function() {
 
+
+
   it('1. CREATE DATABASE',function(done){
     alasql('CREATE DATABASE test389;USE test389');
     done();
@@ -27,14 +29,16 @@ describe('Test 389 Autoincrement for localStorage', function() {
     done();
   });
 
-  it('3. SELECTs', function(done){
+  it('3. SELECTs', function(){
     alasql('USE test');
     alasql('INSERT INTO test.one (b) VALUES ("one"), ("two")');
     alasql('INSERT INTO test.one (b) VALUES ("three"), ("four")');
     alasql('COMMIT TRANSACTION');
     var res = alasql('SELECT * FROM test.one');
-    //console.log(res);
-		done();
+    //Missing assert()
+
+    alasql('TRUNCATE TABLE test.one; COMMIT TRANSACTION');
+  
 	});
 
   it('99. DROP DATABASE',function(done){
