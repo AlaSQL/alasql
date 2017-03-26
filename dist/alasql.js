@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.9-develop-1510 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.9-autoincrement-1517 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.9-develop-1510
+@version 0.3.9-autoincrement-1517
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.9-develop-1510';
+alasql.version = '0.3.9-autoincrement-1517';
 
 /**
 	Debug flag
@@ -16956,6 +16956,14 @@ LS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	var res = value.length;
 //	var tb = LS.get(lsdbid+'.'+tableid);
 	var tb = LS.restoreTable(databaseid,tableid);
+	for (var columnid in tb.identities) {
+	  var ident = tb.identities[columnid];
+
+	  for (var index in value) {
+	    value[index][columnid] = ident.value;
+	    ident.value += ident.step;
+	  }      
+	}
 	if(!tb.data) tb.data = [];
 	tb.data = tb.data.concat(value);
 //	LS.set(lsdbid+'.'+tableid, tb);
