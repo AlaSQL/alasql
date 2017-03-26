@@ -53,6 +53,18 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
+	it("5. INSERT with AUTOINCREMENT", function(done){
+		
+		alasql('CREATE TABLE IF NOT EXISTS ls152.three (a int AUTO_INCREMENT, b string)');
+		alasql('INSERT INTO ls152.three (b) VALUES ("Rome"),("London"),("Berlin"),("Paris")');
+//		console.log(alasql.databases.ls152.tables.one.data);
+//		assert(!alasql.databases.ls152.tables.one.data);
+
+		var res = alasql('SELECT * FROM ls152.three');
+		assert.deepEqual(res, [{"a":1,"b":"Rome"},{"a":2,"b":"London"},{"a":3,"b":"Berlin"},{a:4,b:'Paris'}]);
+		done();
+	});
+
 	it("99. Detach database", function(done){
 		alasql('DETACH DATABASE ls152');
 		alasql('DROP localStorage DATABASE ls152');
