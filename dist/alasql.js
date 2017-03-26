@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.8-autoincrement-1504 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.9-develop-1510 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.8-autoincrement-1504
+@version 0.3.9-develop-1510
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.8-autoincrement-1504';
+alasql.version = '0.3.9-develop-1510';
 
 /**
 	Debug flag
@@ -3720,7 +3720,8 @@ var deleteFile = utils.deleteFile = function(path,cb){
 };
 
 utils.autoExtFilename = function(filename,ext,config) {
-	if(typeof filename !== 'string' || filename.match(/\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
+	config = config || {};
+	if(typeof filename !== 'string' || filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) || config.autoExt === 0 || config.autoExt === false){
 		return filename;
 	}
 	return filename+'.'+ext
@@ -10696,27 +10697,22 @@ alasql.aggr.GROUP_CONCAT = function(v,s,stage){
     }
 };
 
-// Median
-// alasql.aggr.MEDIAN = function(v,s,acc){
-
-// };
-
-alasql.aggr.MEDIAN = function(v,s,stage){
-	if(stage === 2) {
-		if(v === null){
-			return s;
-		}
-		s.push(v);    
+alasql.aggr.MEDIAN = function(v, s, stage) {
+	if (stage === 2) {
+		s.push(v);
 		return s;
-	} else if(stage === 1) {
-	  	if(v === null){
-	  		return [];
-	  	}
-	    return [v];
-  	} else {
-		var p = s.sort();
-		return p[(p.length/2)|0];     
-	};
+	} else if (stage === 1) {
+		return [v];
+	} else if (!s.length) {
+		return s;
+	}
+	var r = s.sort();
+	var p = (r.length + 1) / 2;
+	if (Number.isInteger(p)) {
+		return r[p - 1];
+	} else {
+		return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;
+	}
 };
 
 // Standard deviation
@@ -16960,14 +16956,6 @@ LS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	var res = value.length;
 //	var tb = LS.get(lsdbid+'.'+tableid);
 	var tb = LS.restoreTable(databaseid,tableid);
-	for (var columnid in tb.identities) {
-	  var ident = tb.identities[columnid];
-
-	  for (var index in value) {
-	    value[index][columnid] = ident.value;
-	    ident.value += ident.step;
-	  }      
-	}
 	if(!tb.data) tb.data = [];
 	tb.data = tb.data.concat(value);
 //	LS.set(lsdbid+'.'+tableid, tb);

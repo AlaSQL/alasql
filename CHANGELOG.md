@@ -1,11 +1,16 @@
 # Changelog
 
 
-_0.3.9 "Turua" (xx.04.2017)_
+_0.3.10 "???" (xx.04.2017)_
 
 * ...
 
-###0.3.8 "Wanaka" (15.03.2017)
+### 0.3.9 "Turua" (23.03.2017)
+* Add: React native support
+* Fix: CSV error when quote set to empty
+* Fix: autoExt bug when not set for CSV on read
+
+### 0.3.8 "Wanaka" (15.03.2017)
 
 * Added: Lazy promise notation
 * Added: Create user defined function via SQL statement
