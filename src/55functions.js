@@ -235,26 +235,67 @@ alasql.aggr.GROUP_CONCAT = function(v,s,stage){
     }
 };
 
+		
 
-alasql.aggr.MEDIAN = function(v, s, stage) {
-	if (stage === 2) {
-		s.push(v);
+alasql.aggr.MEDIAN = function(v,s,stage){																				
+	if(stage === 2) {
+		if(v !== null) {
+			s.push(v);
+		}
 		return s;
-	} else if (stage === 1) {
+	} else if(stage === 1) {
+		if(v === null) {
+			return [];
+		} 
 		return [v];
-	} else if (!s.length) {
-		return s;
-	}
-	var r = s.sort();
-	var p = (r.length + 1) / 2;
-	if (Number.isInteger(p)) {
-		return r[p - 1];
 	} else {
-		return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;
+		if(!s.length) {
+			return s;
+		}
+
+		var r = s.sort();
+		var p = (r.length+1)/2;
+		if(Number.isInteger(p)) {
+			return r[p-1]; 
+		} 
+
+		return (r[Math.floor(p-1)] + r[Math.ceil(p-1)])/2;
 	}
 };
 
 
+alasql.aggr.QUART = function(v,s,stage,nth){																			//Quartile (first quartile per default or input param)
+	if(stage === 2) {
+		if(v !== null) {
+			s.push(v);	
+		} 
+		return s;
+	} else if(stage === 1) {
+		if(v === null) {
+			return [];
+		} 
+		return [v];		
+	} else {
+		if(!s.length) {
+			return s;
+		} 
+
+		nth = !nth ? 1 : nth;
+		var r = s.sort();
+		var p = nth*(r.length+1)/4;
+		if(Number.isInteger(p)) {
+			return r[p-1];																							//Integer value
+		} 
+		return r[Math.floor(p)];																				//Math.ceil -1 or Math.floor		
+	}
+};
+
+alasql.aggr.QUART2 = function(v,s,stage){																				//Second Quartile
+	return alasql.aggr.QUART(v,s,stage,2);	
+};
+alasql.aggr.QUART3 = function(v,s,stage){																				//Third Quartile
+	return alasql.aggr.QUART(v,s,stage,3);
+};
 
 // Standard deviation
 alasql.aggr.VAR = function(v,s,stage){
