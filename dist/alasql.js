@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.9-develop-1512 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.9-develop-1513 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.9-develop-1512
+@version 0.3.9-develop-1513
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.9-develop-1512';
+alasql.version = '0.3.9-develop-1513';
 
 /**
 	Debug flag
@@ -6646,10 +6646,13 @@ function doLimit (query) {
 
 	if(query.limit) {
 		var offset = 0;
-		if(query.offset) offset = ((query.offset|0)-1)||0;
+		if(query.offset){
+			offset = (query.offset|0)||0;
+			offset = offset<0 ? 0 : offset;
+		}
 		var limit;
 		if(query.percent) {
-			limit = ((query.data.length*query.limit/100)| 0)+offset;			
+			limit = ((query.data.length*query.limit/100)|0)+offset;			
 		} else {
 			limit = (query.limit|0) + offset;
 		}

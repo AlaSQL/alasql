@@ -25,16 +25,16 @@ describe('Test 368 OFFSET ... LIMIT', function() {
 
      it('OFFSET LIMIT',function(done){
      	var res = alasql('SELECT * FROM ? LIMIT 2 OFFSET 3',[data]);
-     	assert.deepEqual(res,[ { a: 3 }, { a: 4 } ]);
+     	assert.deepEqual(res,[ { a: 4 }, { a: 5 } ]);
      	done();
      });
 
      it('OFFSET FETCH',function(done){
      	var res = alasql('SELECT * FROM ? OFFSET 3 FETCH 2',[data]);
-     	assert.deepEqual(res,[ { a: 3 }, { a: 4 } ]);
+     	assert.deepEqual(res,[ { a: 4 }, { a: 5 } ]);
 
      	var res = alasql('SELECT * FROM ? OFFSET 3 ROWS FETCH NEXT 2 ROWS ONLY',[data]);
-     	assert.deepEqual(res,[ { a: 3 }, { a: 4 } ]);
+     	assert.deepEqual(res,[ { a: 4 }, { a: 5 } ]);
      	done();
      });
 

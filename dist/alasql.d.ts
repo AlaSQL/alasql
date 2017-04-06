@@ -71,6 +71,7 @@ declare namespace alaSQLSpace {
         fn: userDefinedFunctionLookUp;
         aggr: userAggregatorLookUp;
         autoval(tablename: string, colname: string, getNext?:boolean): number;
+        yy:{};
     }
 }
 
