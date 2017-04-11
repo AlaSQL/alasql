@@ -96,7 +96,7 @@ describe('Test 140 JavaScript Functions', function() {
 		delete alasql.fn.Date;
 		alasql('CREATE TABLE four (d Date)');
 
-		alasql('INSERT INTO four VALUES ("2014-06-01"), ("2015-06-02")');
+		alasql('INSERT INTO four VALUES ("2014-06-02"), ("2015-06-03")');
 
 		var res = alasql("SELECT COLUMN YEAR(d) FROM four");
 		assert.deepEqual(res,[2014,2015]);
@@ -105,11 +105,11 @@ describe('Test 140 JavaScript Functions', function() {
 		assert.deepEqual(res,[6,6]);
 
 		var res = alasql("SELECT COLUMN DAY(d) FROM four");
-		assert.deepEqual(res,[1,2]);
+		assert.deepEqual(res,[new Date("2014-06-02").getDate(),new Date("2014-06-03").getDate()]);
 
 //		console.log(res);
 		var res = alasql("SELECT COLUMN d FROM four");
-		assert.deepEqual(res,["2014-06-01","2015-06-02"]);
+		assert.deepEqual(res,["2014-06-02","2015-06-03"]);
 
 		done();
 	});
