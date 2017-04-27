@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.9-develop-1513 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.3.9-develop-1517 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.9-develop-1513
+@version 0.3.9-develop-1517
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.9-develop-1513';
+alasql.version = '0.3.9-develop-1517';
 
 /**
 	Debug flag
@@ -13785,16 +13785,18 @@ yy.ShowColumns.prototype.toString = function() {
 	return s;
 };
 
-yy.ShowColumns.prototype.execute = function (databaseid) {
+yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
-	var self = this;
+
 	if(table && table.columns) {
 		var res = table.columns.map(function(col){
 			return {columnid: col.columnid, dbtypeid: col.dbtypeid, dbsize: col.dbsize};
 		});
+		if(cb) cb(res);
 		return res;
 	} else {
+		if(cb) cb([]);
 		return [];
 	}
 };
@@ -13805,17 +13807,18 @@ yy.ShowIndex.prototype.toString = function() {
 	if(this.table.tableid) s += ' FROM '+this.table.tableid;
 	if(this.databaseid) s += ' FROM '+this.databaseid;
 	return s;
-}
-yy.ShowIndex.prototype.execute = function (databaseid) {
+};
+yy.ShowIndex.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
-	var self = this;
 	var res = [];
 	if(table && table.indices) {
 		for(var ind in table.indices) {
 			res.push({hh:ind, len:Object.keys(table.indices[ind]).length});
 		}
 	}
+
+	if(cb) cb(res);
 	return res;
 };
 
@@ -13828,7 +13831,6 @@ yy.ShowCreateTable.prototype.toString = function() {
 yy.ShowCreateTable.prototype.execute = function (databaseid) {
 	var db = alasql.databases[this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
-	var self = this;
 	if(table) {
 		var s = 'CREATE TABLE '+this.table.tableid+' (';
 		var ss = [];
