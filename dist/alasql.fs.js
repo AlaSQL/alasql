@@ -3969,7 +3969,7 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
 };
 
 /**
-  Deep clone obects
+  Deep clone objects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(null === obj || typeof(obj) !== 'object'){
@@ -3995,7 +3995,7 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 */
 
 /**
-  Compare two object in deep
+  Compare two objects in deep
  */
 var deepEqual = utils.deepEqual = function(x, y) {
 
@@ -4570,7 +4570,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	if(alasql.options.cache) {
 		hh = hash(sql);
 		var statement = db.sqlCache[hh];
-		// If database structure was not changed sinse lat time return cache
+		// If database structure was not changed since last time return cache
 		if(statement && db.dbversion === statement.dbversion) {
 			return statement(params, cb);
 		}

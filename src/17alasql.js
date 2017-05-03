@@ -211,7 +211,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	if(alasql.options.cache) {
 		hh = hash(sql);
 		var statement = db.sqlCache[hh];
-		// If database structure was not changed sinse lat time return cache
+		// If database structure was not changed since last time return cache
 		if(statement && db.dbversion === statement.dbversion) {
 			return statement(params, cb);
 		}
