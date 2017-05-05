@@ -929,7 +929,7 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
 };
 
 /**
-  Deep clone obects
+  Deep clone objects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(null === obj || typeof(obj) !== 'object'){
@@ -1000,7 +1000,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 */
 
 /**
-  Compare two object in deep
+  Compare two objects in deep
  */
 var deepEqual = utils.deepEqual = function(x, y) {
 		
