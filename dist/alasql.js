@@ -1,7 +1,7 @@
-//! AlaSQL v0.3.9 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.0 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.3.9
+@version 0.4.0
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.3.9';
+alasql.version = '0.4.0';
 
 /**
 	Debug flag
@@ -3969,7 +3969,7 @@ var arrayIntersectDeep = utils.arrayIntersectDeep  = function(a,b) {
 };
 
 /**
-  Deep clone obects
+  Deep clone objects
  */
 var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
     if(null === obj || typeof(obj) !== 'object'){
@@ -3995,7 +3995,7 @@ var cloneDeep = utils.cloneDeep = function cloneDeep(obj) {
 */
 
 /**
-  Compare two object in deep
+  Compare two objects in deep
  */
 var deepEqual = utils.deepEqual = function(x, y) {
 
@@ -4570,7 +4570,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	if(alasql.options.cache) {
 		hh = hash(sql);
 		var statement = db.sqlCache[hh];
-		// If database structure was not changed sinse lat time return cache
+		// If database structure was not changed since last time return cache
 		if(statement && db.dbversion === statement.dbversion) {
 			return statement(params, cb);
 		}
@@ -6646,10 +6646,13 @@ function doLimit (query) {
 
 	if(query.limit) {
 		var offset = 0;
-		if(query.offset) offset = ((query.offset|0)-1)||0;
+		if(query.offset){
+			offset = (query.offset|0)||0;
+			offset = offset<0 ? 0 : offset;
+		}
 		var limit;
 		if(query.percent) {
-			limit = ((query.data.length*query.limit/100)| 0)+offset;			
+			limit = ((query.data.length*query.limit/100)|0)+offset;			
 		} else {
 			limit = (query.limit|0) + offset;
 		}
@@ -10697,27 +10700,63 @@ alasql.aggr.GROUP_CONCAT = function(v,s,stage){
     }
 };
 
-// Median
-// alasql.aggr.MEDIAN = function(v,s,acc){
-
-// };
-
-alasql.aggr.MEDIAN = function(v,s,stage){
+alasql.aggr.MEDIAN = function(v,s,stage){																				
 	if(stage === 2) {
-		if(v === null){
-			return s;
+		if(v !== null) {
+			s.push(v);
 		}
-		s.push(v);    
 		return s;
 	} else if(stage === 1) {
-	  	if(v === null){
-	  		return [];
-	  	}
-	    return [v];
-  	} else {
-		var p = s.sort();
-		return p[(p.length/2)|0];     
-	};
+		if(v === null) {
+			return [];
+		} 
+		return [v];
+	} else {
+		if(!s.length) {
+			return s;
+		}
+
+		var r = s.sort();
+		var p = (r.length+1)/2;
+		if(Number.isInteger(p)) {
+			return r[p-1]; 
+		} 
+
+		return (r[Math.floor(p-1)] + r[Math.ceil(p-1)])/2;
+	}
+};
+
+alasql.aggr.QUART = function(v,s,stage,nth){																			//Quartile (first quartile per default or input param)
+	if(stage === 2) {
+		if(v !== null) {
+			s.push(v);	
+		} 
+		return s;
+	} else if(stage === 1) {
+		if(v === null) {
+			return [];
+		} 
+		return [v];		
+	} else {
+		if(!s.length) {
+			return s;
+		} 
+
+		nth = !nth ? 1 : nth;
+		var r = s.sort();
+		var p = nth*(r.length+1)/4;
+		if(Number.isInteger(p)) {
+			return r[p-1];																							//Integer value
+		} 
+		return r[Math.floor(p)];																				//Math.ceil -1 or Math.floor		
+	}
+};
+
+alasql.aggr.QUART2 = function(v,s,stage){																				//Second Quartile
+	return alasql.aggr.QUART(v,s,stage,2);	
+};
+alasql.aggr.QUART3 = function(v,s,stage){																				//Third Quartile
+	return alasql.aggr.QUART(v,s,stage,3);
 };
 
 // Standard deviation
@@ -13746,16 +13785,18 @@ yy.ShowColumns.prototype.toString = function() {
 	return s;
 };
 
-yy.ShowColumns.prototype.execute = function (databaseid) {
+yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
-	var self = this;
+
 	if(table && table.columns) {
 		var res = table.columns.map(function(col){
 			return {columnid: col.columnid, dbtypeid: col.dbtypeid, dbsize: col.dbsize};
 		});
+		if(cb) cb(res);
 		return res;
 	} else {
+		if(cb) cb([]);
 		return [];
 	}
 };
@@ -13766,17 +13807,18 @@ yy.ShowIndex.prototype.toString = function() {
 	if(this.table.tableid) s += ' FROM '+this.table.tableid;
 	if(this.databaseid) s += ' FROM '+this.databaseid;
 	return s;
-}
-yy.ShowIndex.prototype.execute = function (databaseid) {
+};
+yy.ShowIndex.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
-	var self = this;
 	var res = [];
 	if(table && table.indices) {
 		for(var ind in table.indices) {
 			res.push({hh:ind, len:Object.keys(table.indices[ind]).length});
 		}
 	}
+
+	if(cb) cb(res);
 	return res;
 };
 
@@ -13789,7 +13831,6 @@ yy.ShowCreateTable.prototype.toString = function() {
 yy.ShowCreateTable.prototype.execute = function (databaseid) {
 	var db = alasql.databases[this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
-	var self = this;
 	if(table) {
 		var s = 'CREATE TABLE '+this.table.tableid+' (';
 		var ss = [];

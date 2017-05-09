@@ -424,10 +424,13 @@ function doLimit (query) {
 //	console.log(query.limit, query.offset)
 	if(query.limit) {
 		var offset = 0;
-		if(query.offset) offset = ((query.offset|0)-1)||0;
+		if(query.offset){
+			offset = (query.offset|0)||0;
+			offset = offset<0 ? 0 : offset;
+		}
 		var limit;
 		if(query.percent) {
-			limit = ((query.data.length*query.limit/100)| 0)+offset;			
+			limit = ((query.data.length*query.limit/100)|0)+offset;			
 		} else {
 			limit = (query.limit|0) + offset;
 		}

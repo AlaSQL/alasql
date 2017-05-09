@@ -22,7 +22,7 @@ describe('Test '+test+' Aggregators', function() {
   it('1. Test',function(done){
 
     var data = [];
-    for(var i=0;i<10000;i++) {
+    for(var i=1;i<10000;i++) {
       data.push({a:i});
     }
     
@@ -37,11 +37,10 @@ describe('Test '+test+' Aggregators', function() {
 	done();
 	});
 
-  it('2. Test',function(done){
+  it('2. Test',function(){
     var data = [{a:1},{a:2},{a:3}];
     var res = alasql('SELECT MEDIAN(a), STDEV(a), SQRT(VAR(a)) FROM ?', [data]);
     assert.deepEqual(res,[ { 'MEDIAN(a)': 2, 'STDEV(a)': 1, 'SQRT(VAR(a))': 1 } ]);
-    done();
   });
 
   it.skip('3. Test',function(done){
@@ -67,7 +66,7 @@ describe('Test '+test+' Aggregators', function() {
     done();
   });
 
-  it.skip('4. Test',function(done){
+  it.skip('4. Test',function(){
     var resultSet = [
       {_date:new Date("01.01.2016"), selectedChem:1},
       {_date:new Date("01.01.2015"), selectedChem:2},
@@ -87,7 +86,14 @@ describe('Test '+test+' Aggregators', function() {
     );
 
 //    assert.deepEqual(res,[ { 'MEDIAN(a)': 2, 'STDEV(a)': 1, 'SQRT(VAR(a))': 1 } ]);
-    done();
+    
+  });
+
+
+  it('4. Quatiles',function(){
+    var data = [{a:2},{a:3},{a:4},{a:5},{a:6},{a:7},{a:8},{a:8}];
+    var res = alasql('SELECT QUART(a), QUART2(a), QUART3(a) FROM ?', [data]);
+    assert.deepEqual(res,[ { 'QUART(a)': 4, 'QUART2(a)': 6, 'QUART3(a)': 8 } ]);
   });
 
 

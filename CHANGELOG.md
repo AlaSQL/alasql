@@ -1,9 +1,19 @@
 # Changelog
 
 
-_0.3.10 "???" (xx.04.2017)_
+_0.4.1 "Sayhut" (xx.06.2017)_
 
 * ...
+
+
+#0.4.0 "Sanaa" (09.05.2017)
+* **Breaking:** OFFSET will now skip the first N rows in a result set before starting to return any rows (before it would skip N-1)
+* Add: Quartile aggregators (QUART, QUART2, QUART3)
+* Add: Typescript definitoin now supports extensions
+* Fix: Aggregate MEDIAN now working with ROLLUP
+* Fix: Aggregate STDEV now working with ROLLUP
+* Fix: SHOW COLUMNS works with the promise interface 
+* Fix: SHOW INDEX works with the promise interface 
 
 ### 0.3.9 "Turua" (23.03.2017)
 * Add: React native support
