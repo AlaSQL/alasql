@@ -405,9 +405,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			var col = alasql.utils.xlsnc(j);
 			if(opt.headers) {
 				if(workbook.Sheets[sheetid][col+""+row0]) {
-					hh[col] = workbook.Sheets[sheetid][col+""+row0].v;
+					hh[col] = alasql.options.casesensitive ? workbook.Sheets[sheetid][col+""+row0].v : (workbook.Sheets[sheetid][col+""+row0].v ? workbook.Sheets[sheetid][col+""+row0].v.toLowerCase() : workbook.Sheets[sheetid][col+""+row0].v);
 				} else {
-					hh[col] = col;
+					hh[col] = alasql.options.casesensitive ? col : (col ? col.toLowerCase() : col);
 				}
 			} else {
 				hh[col] = col;

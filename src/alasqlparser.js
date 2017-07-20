@@ -85,7 +85,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
 
-			if (yy.casesensitive) this.$ = $$[$0];
+			if (alasql.options.casesensitive) this.$ = $$[$0];
 			else this.$ = $$[$0].toLowerCase();
 		
 break;
