@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.0-develop-1521 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.0-develop-2 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.0-develop-1521
+@version 0.4.0-develop-2
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.0-develop-1521';
+alasql.version = '0.4.0-develop-2';
 
 /**
 	Debug flag
@@ -235,7 +235,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
 
-			if (yy.casesensitive) this.$ = $$[$0];
+			if (alasql.options.casesensitive) this.$ = $$[$0];
 			else this.$ = $$[$0].toLowerCase();
 
 break;
@@ -15749,6 +15749,14 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(l*w)));
 		return o;
 	}
+	function getHeaderText(text) {
+		// if casesensitive option is set to false and there is a text value return lowercase value of text
+		if(text && (alasql.options.casesensitive === false)) {
+			return text.toLowerCase();
+		} else {
+			return text;
+		}
+	}
 	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
 
@@ -15788,9 +15796,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			var col = alasql.utils.xlsnc(j);
 			if(opt.headers) {
 				if(workbook.Sheets[sheetid][col+""+row0]) {
-					hh[col] = workbook.Sheets[sheetid][col+""+row0].v;
+					hh[col] = getHeaderText(workbook.Sheets[sheetid][col+""+row0].v);
 				} else {
-					hh[col] = col;
+					hh[col] = getHeaderText(col);
 				}
 			} else {
 				hh[col] = col;

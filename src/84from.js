@@ -364,6 +364,14 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(l*w)));
 		return o;
 	}
+	function getHeaderText(text) {
+		// if casesensitive option is set to false and there is a text value return lowercase value of text
+		if(text && (alasql.options.casesensitive === false)) {
+			return text.toLowerCase();
+		} else {
+			return text;
+		}
+	}
 	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
 
@@ -405,9 +413,9 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			var col = alasql.utils.xlsnc(j);
 			if(opt.headers) {
 				if(workbook.Sheets[sheetid][col+""+row0]) {
-					hh[col] = alasql.options.casesensitive ? workbook.Sheets[sheetid][col+""+row0].v : (workbook.Sheets[sheetid][col+""+row0].v ? workbook.Sheets[sheetid][col+""+row0].v.toLowerCase() : workbook.Sheets[sheetid][col+""+row0].v);
+					hh[col] = getHeaderText(workbook.Sheets[sheetid][col+""+row0].v);
 				} else {
-					hh[col] = alasql.options.casesensitive ? col : (col ? col.toLowerCase() : col);
+					hh[col] = getHeaderText(col);
 				}
 			} else {
 				hh[col] = col;
