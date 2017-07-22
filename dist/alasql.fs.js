@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.0-develop-3 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.1 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.0-develop-3
+@version 0.4.1
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.0-develop-3';
+alasql.version = '0.4.1';
 
 /**
 	Debug flag
@@ -3854,16 +3854,16 @@ function isIE () {
   @return {integer} hash number
 */
 
-// sdbm hash function
+// FNV-1a inspired hashing
 var hash = utils.hash = function(str){
-  var hash = 5381,
-      i    = str.length
-
-  while(i)
-    hash = (hash * 33) ^ str.charCodeAt(--i)
-
-  return hash;
-}
+	var hash = 0x811c9dc5,
+		i = str.length;
+	while(i){
+		hash = hash ^ str.charCodeAt(--i);
+		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+	}	
+	return hash;
+};
 
 /**
     Union arrays
