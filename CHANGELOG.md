@@ -1,9 +1,17 @@
 # Changelog
 
 
-_0.4.1 "Sayhut" (xx.06.2017)_
+_0.4.1 "....." (xx.08.2017)_
 
 * ...
+
+ 
+## 0.4.1 "Sayhut" (23.07.2017)
+
+* Better: Performace on `distinct` selects 
+* Better: Hashing for cashed SQLs 
+* Fix: Case insensetive selects from EXCEL
+* Fix: Select from empty EXCEL
 
 
 #0.4.0 "Sanaa" (09.05.2017)

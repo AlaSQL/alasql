@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.0 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.1 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.0
+@version 0.4.1
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.0';
+alasql.version = '0.4.1';
 
 /**
 	Debug flag
@@ -235,7 +235,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
 
-			if (yy.casesensitive) this.$ = $$[$0];
+			if (alasql.options.casesensitive) this.$ = $$[$0];
 			else this.$ = $$[$0].toLowerCase();
 
 break;
@@ -3854,16 +3854,16 @@ function isIE () {
   @return {integer} hash number
 */
 
-// sdbm hash function
+// FNV-1a inspired hashing
 var hash = utils.hash = function(str){
-  var hash = 5381,
-      i    = str.length
-
-  while(i)
-    hash = (hash * 33) ^ str.charCodeAt(--i)
-
-  return hash;
-}
+	var hash = 0x811c9dc5,
+		i = str.length;
+	while(i){
+		hash = hash ^ str.charCodeAt(--i);
+		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+	}	
+	return hash;
+};
 
 /**
     Union arrays
@@ -6664,10 +6664,11 @@ function doLimit (query) {
 function doDistinct (query) {
 	if(query.distinct) {
 		var uniq = {};
-		// TODO: Speedup, because Object.keys is slow
+		// TODO: Speedup, because Object.keys is slow**
 		// TODO: Problem with DISTINCT on objects
+		var keys=Object.keys(query.data[0]);
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
-			var uix = Object.keys(query.data[i]).map(function(k){return query.data[i][k];}).join('`');
+			var uix = keys.map(function(k){return query.data[i][k];}).join('`');
 			uniq[uix] = query.data[i];
 		}
 		query.data = [];
@@ -15748,6 +15749,14 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 		o+=String.fromCharCode.apply(null, new Uint8Array(data.slice(l*w)));
 		return o;
 	}
+	function getHeaderText(text) {
+		// if casesensitive option is set to false and there is a text value return lowercase value of text
+		if(text && (alasql.options.casesensitive === false)) {
+			return text.toLowerCase();
+		} else {
+			return text;
+		}
+	}
 	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	alasql.utils.loadBinaryFile(filename,!!cb,function(data){
 
@@ -15766,6 +15775,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			sheetid = opt.sheetid;
 		}
 		var range;
+		var res = [];
 		if(typeof opt.range === 'undefined') {
 			range = workbook.Sheets[sheetid]['!ref'];
 		} else {
@@ -15774,40 +15784,45 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 				range = workbook.Sheets[sheetid][range];
 			}
 		}
-		var rg = range.split(':');
-		var col0 = rg[0].match(/[A-Z]+/)[0];
-		var row0 = +rg[0].match(/[0-9]+/)[0];
-		var col1 = rg[1].match(/[A-Z]+/)[0];
-		var row1 = +rg[1].match(/[0-9]+/)[0];
+		// if range has some value then data is present in the current sheet
+		// else current sheet is empty
+		if(range) {
+			var rg = range.split(':');
+			var col0 = rg[0].match(/[A-Z]+/)[0];
+			var row0 = +rg[0].match(/[0-9]+/)[0];
+			var col1 = rg[1].match(/[A-Z]+/)[0];
+			var row1 = +rg[1].match(/[0-9]+/)[0];
 
-		var hh = {};
-		var xlscnCol0 = alasql.utils.xlscn(col0);
-		var xlscnCol1 = alasql.utils.xlscn(col1);
-		for(var j=xlscnCol0;j<=xlscnCol1;j++){
-			var col = alasql.utils.xlsnc(j);
-			if(opt.headers) {
-				if(workbook.Sheets[sheetid][col+""+row0]) {
-					hh[col] = workbook.Sheets[sheetid][col+""+row0].v;
+			var hh = {};
+			var xlscnCol0 = alasql.utils.xlscn(col0);
+			var xlscnCol1 = alasql.utils.xlscn(col1);
+			for(var j=xlscnCol0;j<=xlscnCol1;j++){
+				var col = alasql.utils.xlsnc(j);
+				if(opt.headers) {
+					if(workbook.Sheets[sheetid][col+""+row0]) {
+						hh[col] = getHeaderText(workbook.Sheets[sheetid][col+""+row0].v);
+					} else {
+						hh[col] = getHeaderText(col);
+					}
 				} else {
 					hh[col] = col;
 				}
-			} else {
-				hh[col] = col;
 			}
-		}
-		var res = [];
-		if(opt.headers){
-			row0++;
-		}
-		for(var i=row0;i<=row1;i++) {
-			var row = {};
-			for(var j=xlscnCol0;j<=xlscnCol1;j++){
-				var col = alasql.utils.xlsnc(j);
-				if(workbook.Sheets[sheetid][col+""+i]) {
-					row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;
+			if(opt.headers){
+				row0++;
+			}
+			for(var i=row0;i<=row1;i++) {
+				var row = {};
+				for(var j=xlscnCol0;j<=xlscnCol1;j++){
+					var col = alasql.utils.xlsnc(j);
+					if(workbook.Sheets[sheetid][col+""+i]) {
+						row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;
+					}
 				}
+				res.push(row);
 			}
-			res.push(row);
+		} else {
+			res.push([]);
 		}
 
 		// Remove last empty line (issue #548)
