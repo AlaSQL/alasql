@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.0-develop-2 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.0-develop-3 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.0-develop-2
+@version 0.4.0-develop-3
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.0-develop-2';
+alasql.version = '0.4.0-develop-3';
 
 /**
 	Debug flag
@@ -15775,6 +15775,7 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 			sheetid = opt.sheetid;
 		}
 		var range;
+		var res = [];
 		if(typeof opt.range === 'undefined') {
 			range = workbook.Sheets[sheetid]['!ref'];
 		} else {
@@ -15783,40 +15784,45 @@ function XLSXLSX(X,filename, opts, cb, idx, query) {
 				range = workbook.Sheets[sheetid][range];
 			}
 		}
-		var rg = range.split(':');
-		var col0 = rg[0].match(/[A-Z]+/)[0];
-		var row0 = +rg[0].match(/[0-9]+/)[0];
-		var col1 = rg[1].match(/[A-Z]+/)[0];
-		var row1 = +rg[1].match(/[0-9]+/)[0];
+		// if range has some value then data is present in the current sheet
+		// else current sheet is empty
+		if(range) {
+			var rg = range.split(':');
+			var col0 = rg[0].match(/[A-Z]+/)[0];
+			var row0 = +rg[0].match(/[0-9]+/)[0];
+			var col1 = rg[1].match(/[A-Z]+/)[0];
+			var row1 = +rg[1].match(/[0-9]+/)[0];
 
-		var hh = {};
-		var xlscnCol0 = alasql.utils.xlscn(col0);
-		var xlscnCol1 = alasql.utils.xlscn(col1);
-		for(var j=xlscnCol0;j<=xlscnCol1;j++){
-			var col = alasql.utils.xlsnc(j);
-			if(opt.headers) {
-				if(workbook.Sheets[sheetid][col+""+row0]) {
-					hh[col] = getHeaderText(workbook.Sheets[sheetid][col+""+row0].v);
-				} else {
-					hh[col] = getHeaderText(col);
-				}
-			} else {
-				hh[col] = col;
-			}
-		}
-		var res = [];
-		if(opt.headers){
-			row0++;
-		}
-		for(var i=row0;i<=row1;i++) {
-			var row = {};
+			var hh = {};
+			var xlscnCol0 = alasql.utils.xlscn(col0);
+			var xlscnCol1 = alasql.utils.xlscn(col1);
 			for(var j=xlscnCol0;j<=xlscnCol1;j++){
 				var col = alasql.utils.xlsnc(j);
-				if(workbook.Sheets[sheetid][col+""+i]) {
-					row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;
+				if(opt.headers) {
+					if(workbook.Sheets[sheetid][col+""+row0]) {
+						hh[col] = getHeaderText(workbook.Sheets[sheetid][col+""+row0].v);
+					} else {
+						hh[col] = getHeaderText(col);
+					}
+				} else {
+					hh[col] = col;
 				}
 			}
-			res.push(row);
+			if(opt.headers){
+				row0++;
+			}
+			for(var i=row0;i<=row1;i++) {
+				var row = {};
+				for(var j=xlscnCol0;j<=xlscnCol1;j++){
+					var col = alasql.utils.xlsnc(j);
+					if(workbook.Sheets[sheetid][col+""+i]) {
+						row[hh[col]] = workbook.Sheets[sheetid][col+""+i].v;
+					}
+				}
+				res.push(row);
+			}
+		} else {
+			res.push([]);
 		}
 
 		// Remove last empty line (issue #548)
