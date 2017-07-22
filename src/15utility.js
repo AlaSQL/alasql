@@ -813,16 +813,16 @@ function isIE () {
   @return {integer} hash number
 */
 
-// sdbm hash function
+// FNV-1a inspired hashing
 var hash = utils.hash = function(str){
-  var hash = 5381,
-      i    = str.length
-
-  while(i)
-    hash = (hash * 33) ^ str.charCodeAt(--i)
-  
-  return hash;
-}
+	var hash = 0x811c9dc5,
+		i = str.length;
+	while(i){
+		hash = hash ^ str.charCodeAt(--i);
+		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+	}	
+	return hash;
+};
 
 /**
     Union arrays
