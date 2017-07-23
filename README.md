@@ -460,16 +460,28 @@ If using AlaSQL as Web Worker, you can import it traditionally as a script:
 
 When targeting the browser, several code bundlers like Webpack and Browserify will pick up modules you might not want.
 
-Here's a list of modules that AlaSQL requires:
-* fs
-* cptable
-* jszip
-* xlsx
-* cpexcel
-* path
-* es6-promise
-* net
-* tls
+Here's a list of modules that AlaSQL may require in certain enviroments or for certain features:
+
+* Node.js
+	* fs
+	* net
+	* tls
+	* request
+	* path
+* React Native
+	* react-native
+	* react-native-fs
+	* react-native-fetch-blob
+* Vertx
+	* vertx
+* Agonostic
+	* XLSX/XLS support
+		* cptable
+		* jszip
+		* xlsx
+		* cpexcel
+	* es6-promise
+
 
 #### Webpack
 
@@ -486,8 +498,8 @@ var IgnorePlugin =  require("webpack").IgnorePlugin;
 
 module.exports = {
   ...
-  //Will ignore the modules fs, path, xlsx
-  plugins:[new IgnorePlugin(/(^fs$|cptable|jszip|xlsx|^es6-promise$|^net$|^tls$|^forever-agent$|^tough-cookie$|cpexcel|^path$)/)]
+  //Will ignore the modules fs, path, xlsx, request, vertx, and react-native modules
+  plugins:[new IgnorePlugin(/(^fs$|cptable|jszip|xlsx|^es6-promise$|^net$|^tls$|^forever-agent$|^tough-cookie$|cpexcel|^path$|^request$|react-native|^vertx$)/)]
 };
 ```
 
