@@ -455,8 +455,7 @@ If using AlaSQL as Web Worker, you can import it traditionally as a script:
 
 
 
-
-### Use Webpack and Browserify
+### Webpack, Browserify and React (Native)
 
 When targeting the browser, several code bundlers like Webpack and Browserify will pick up modules you might not want.
 
