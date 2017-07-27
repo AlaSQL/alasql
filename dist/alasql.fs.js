@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.1 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.1-develop-1530 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.1
+@version 0.4.1-develop-1530
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.1';
+alasql.version = '0.4.1-develop-1530';
 
 /**
 	Debug flag
@@ -11327,7 +11327,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if(col.foreignkey) {
 
 				var fk = col.foreignkey.table;
-				var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
+				var fktable = alasql.databases[fk.databaseid||databaseid].tables[fk.tableid];
 				if(typeof fk.columnid === 'undefined') {
 					if(fktable.pk.columns && fktable.pk.columns.length >0 ){
 						fk.columnid = fktable.pk.columns[0];
@@ -11403,7 +11403,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if(con.fkcolumns && con.fkcolumns.length>0){
 				fk.columnid = con.fkcolumns[0];
  			}
- 			var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
+ 			var fktable = alasql.databases[fk.databaseid||databaseid].tables[fk.tableid];
 			if(typeof fk.columnid === 'undefined') {
 				fk.columnid = fktable.pk.columns[0];
 			}
