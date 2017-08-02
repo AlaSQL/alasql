@@ -181,7 +181,7 @@ The results are good. Check out AlaSQL vs. other JavaScript SQL databases:
 
 * **2x speed** [compared to Linq](http://jsperf.com/alasql-vs-linq-on-groupby/3) for `GROUP BY` on 1,048,576 rows
 
-Please remember to set indexes on your tables to speed up your queries. [Have a look here](https://www.tutorialspoint.com/sql/sql-indexes.htm) [SQL Index(http://www.guru99.com/indexes.html) if you are unfamiliar with this concept.
+Please remember to set indexes on your tables to speed up your queries. [Have a look here](https://www.tutorialspoint.com/sql/sql-indexes.htm) [SQL Index(http://www.guru99.com/indexes.html) if you are unfamiliar with this concept (this is a part of [SQL Tutorial](http://www.guru99.com/sql.html)).
 
 
 See more [speed related info on the wiki](https://github.com/agershun/alasql/wiki/Speed)
