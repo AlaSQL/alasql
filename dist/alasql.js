@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.1-feature-rtrimFunctions-1537 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.1-feature-rtrimFunctions-1538 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.1-feature-rtrimFunctions-1537
+@version 0.4.1-feature-rtrimFunctions-1538
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.1-feature-rtrimFunctions-1537';
+alasql.version = '0.4.1-feature-rtrimFunctions-1538';
 
 /**
 	Debug flag
@@ -10628,13 +10628,13 @@ stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'String(y).toLowerCase()
 // Returns a character expression after it removes leading blanks.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/ltrim-transact-sql
 stdlib.LTRIM = function(s) {
-    return und(s, 'y.substr(y.indexOf(y.trim()), y.length)');
+    return und(s, 'y.replace(/^[ ]+/,"")');
 }
 
 // Returns a character string after truncating all trailing spaces.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/rtrim-transact-sql
 stdlib.RTRIM = function(s) {
-    return und(s, 'y.substr(0, y.indexOf(y.trim()) + y.trim().length)');
+    return und(s, 'y.replace(/[ ]+$/,"")');
 }
 
 stdlib.MAX = stdlib.GREATEST = function(){

@@ -160,13 +160,13 @@ stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'String(y).toLowerCase()
 // Returns a character expression after it removes leading blanks.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/ltrim-transact-sql
 stdlib.LTRIM = function(s) {
-    return und(s, 'y.substr(y.indexOf(y.trim()), y.length)');
+    return und(s, 'y.replace(/^[ ]+/,"")');
 }
 
 // Returns a character string after truncating all trailing spaces.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/rtrim-transact-sql
 stdlib.RTRIM = function(s) {
-    return und(s, 'y.substr(0, y.indexOf(y.trim()) + y.trim().length)');
+    return und(s, 'y.replace(/[ ]+$/,"")');
 }
 
 stdlib.MAX = stdlib.GREATEST = function(){
