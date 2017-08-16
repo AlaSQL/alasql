@@ -457,6 +457,8 @@ If using AlaSQL as Web Worker, you can import it traditionally as a script:
 
 ### Webpack, Browserify and React (Native)
 
+To use AlaSQL within a `create-react-app` (CRA) setup **without** ejecting it is: Please [have a look at this comment](https://github.com/agershun/alasql/issues/930#issuecomment-322413745).
+
 When targeting the browser, several code bundlers like Webpack and Browserify will pick up modules you might not want.
 
 Here's a list of modules that AlaSQL may require in certain enviroments or for certain features:
