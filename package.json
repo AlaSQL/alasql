@@ -9,6 +9,7 @@
   "directories": {
     "test": "test"
   },
+  "browser": "./dist/alasql.js",
   "scripts": {
     "test": "gulp && cd test && mocha . --reporter dot",
     "test:this": "gulp && cd test && mocha",
