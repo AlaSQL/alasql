@@ -5,7 +5,7 @@ _0.4.3 "Hajjah" (xx.08.2017)_
 
 * ...
 
-## 0.4.2 "Baraqish" (xx.08.2017)
+## 0.4.2 "Baraqish" (17.08.2017)
 
 * Added: SQL function LTRIM
 * Added: SQL function RTRIM
