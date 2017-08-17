@@ -168,7 +168,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if(col.foreignkey) {
 //				console.log(138,col.foreignkey);
 				var fk = col.foreignkey.table;
-				var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
+				var fktable = alasql.databases[fk.databaseid||databaseid].tables[fk.tableid];
 				if(typeof fk.columnid === 'undefined') {
 					if(fktable.pk.columns && fktable.pk.columns.length >0 ){
 						fk.columnid = fktable.pk.columns[0];
@@ -253,7 +253,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if(con.fkcolumns && con.fkcolumns.length>0){
 				fk.columnid = con.fkcolumns[0];
  			}
- 			var fktable = alasql.databases[fk.databaseid||alasql.useid].tables[fk.tableid];
+ 			var fktable = alasql.databases[fk.databaseid||databaseid].tables[fk.tableid];
 			if(typeof fk.columnid === 'undefined') {
 				fk.columnid = fktable.pk.columns[0];
 			}

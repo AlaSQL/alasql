@@ -157,7 +157,17 @@ stdlib.LOWER = stdlib.LCASE = function(s) {return und(s,'String(y).toLowerCase()
 //stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 
-// LTRIM
+// Returns a character expression after it removes leading blanks.
+// see https://docs.microsoft.com/en-us/sql/t-sql/functions/ltrim-transact-sql
+stdlib.LTRIM = function(s) {
+    return und(s, 'y.replace(/^[ ]+/,"")');
+}
+
+// Returns a character string after truncating all trailing spaces.
+// see https://docs.microsoft.com/en-us/sql/t-sql/functions/rtrim-transact-sql
+stdlib.RTRIM = function(s) {
+    return und(s, 'y.replace(/[ ]+$/,"")');
+}
 
 stdlib.MAX = stdlib.GREATEST = function(){
       return 'Math.max('+Array.prototype.join.call(arguments, ',')+')'
