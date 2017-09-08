@@ -50,6 +50,7 @@
     "npm-check": "^5.2.3",
     "open": "0.0.5",
     "strftime": "^0.10.0",
+    "tabletop": "^1.5.2",
     "uglify-js": "^3.0.1"
   },
   "engines": [
