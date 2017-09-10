@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.1-develop-1530 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.1-develop-4 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.1-develop-1530
+@version 0.4.1-develop-4
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.1-develop-1530';
+alasql.version = '0.4.1-develop-4';
 
 /**
 	Debug flag
@@ -15453,13 +15453,6 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var opt = {headers:true, simpleSheet:true, key:key};
 	alasql.utils.extend(opt, opts);
 	opt.callback = function(data){
-		for(var i=0; i<data.length; i++) {
-			for (var prop in data[i]) {
-	        	if(data[i][prop] == +data[i][prop] && data[i].hasOwnProperty(prop)){ // jshint ignore:line
-					data[i][prop] = +data[i][prop];
-				}
-			}
-	    }
 		res = data;
 		if(cb){
 			res = cb(res, idx, query);

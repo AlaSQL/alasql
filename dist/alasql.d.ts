@@ -66,7 +66,7 @@ declare namespace alaSQLSpace {
         options: AlaSQLOptions;
         error: Error;
         (sql: any, params?: any, cb?: AlaSQLCallback, scope?: any): any;
-        parse(sql: any): AlaSQLAST;
+        parse(sql): AlaSQLAST;
         promise(sql: any, params?: any): Thenable<any>;
         fn: userDefinedFunctionLookUp;
         aggr: userAggregatorLookUp;
