@@ -119,10 +119,10 @@ import alasql from 'alasql';   # meteor
 npm install -g alasql          # command line
 ```
 
-For the browser: include [alasql.min.js](http://cdn.jsdelivr.net/alasql/latest/alasql.min.js)  
+For the browser: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql@latest/dist/alasql.min.js)  
 
 ```html
-<script src="http://cdn.jsdelivr.net/alasql/0.3/alasql.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/alasql@0.4.2/dist/alasql.min.js"></script>
 ```
 
 
@@ -456,6 +456,8 @@ If using AlaSQL as Web Worker, you can import it traditionally as a script:
 
 
 ### Webpack, Browserify and React (Native)
+
+To use AlaSQL within a `create-react-app` (CRA) setup **without** ejecting it is: Please [have a look at this comment](https://github.com/agershun/alasql/issues/930#issuecomment-322413745).
 
 When targeting the browser, several code bundlers like Webpack and Browserify will pick up modules you might not want.
 
