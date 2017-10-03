@@ -462,7 +462,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	opts=opts||{};
 	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	opts.autoExt = false;
-	return XLSXLSX(getXLS(),filename, opts, cb, idx, query);
+	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 }
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
@@ -472,4 +472,10 @@ alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 };
 
+alasql.from.ODS = function(filename, opts, cb, idx, query) {
+	opts=opts||{};
+	filename = alasql.utils.autoExtFilename(filename,'ods',opts);
+	opts.autoExt = false;
+	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
+}
 

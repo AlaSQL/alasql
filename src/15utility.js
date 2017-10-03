@@ -1288,9 +1288,5 @@ var getXLSX = function(){
 }
 
 
-var getXLS = function(){
-	return getXLSX();
-}
-
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();
