@@ -137,7 +137,9 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.2-develop-1555';
+
+alasql.version = '0.4.2';
+
 
 /**
 	Debug flag
@@ -15463,13 +15465,6 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var opt = {headers:true, simpleSheet:true, key:key};
 	alasql.utils.extend(opt, opts);
 	opt.callback = function(data){
-		for(var i=0; i<data.length; i++) {
-			for (var prop in data[i]) {
-	        	if(data[i][prop] == +data[i][prop] && data[i].hasOwnProperty(prop)){ // jshint ignore:line
-					data[i][prop] = +data[i][prop];
-				}
-			}
-	    }
 		res = data;
 		if(cb){
 			res = cb(res, idx, query);
