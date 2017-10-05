@@ -444,7 +444,7 @@ function doDistinct (query) {
 		var uniq = {};
 		// TODO: Speedup, because Object.keys is slow**
 		// TODO: Problem with DISTINCT on objects
-		var keys=Object.keys(query.data[0]);
+		var keys=Object.keys(query.data[0]||[]);
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
 			var uix = keys.map(function(k){return query.data[i][k];}).join('`');
 			uniq[uix] = query.data[i];

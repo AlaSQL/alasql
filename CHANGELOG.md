@@ -1,11 +1,20 @@
 # Changelog
 
 
-_0.4.3 "Hajjah" (xx.08.2017)_
+_0.4.4 "..." (xx.010.2017)_
 
 * ...
 
-## 0.4.2 "Baraqish" (xx.08.2017)
+
+
+## 0.4.3 "Hajjah" (05.09.2017)
+
+* Update: Removed implicit "any" in definition file
+* Fix: Tabletop reads in empty cells as numeric 0 instead of empty string 
+* Fix: DISTINCT on emtpy table produced error
+
+
+## 0.4.2 "Baraqish" (17.08.2017)
 
 * Added: SQL function LTRIM
 * Added: SQL function RTRIM

@@ -27,13 +27,6 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var opt = {headers:true, simpleSheet:true, key:key};
 	alasql.utils.extend(opt, opts);
 	opt.callback = function(data){
-		for(var i=0; i<data.length; i++) {
-			for (var prop in data[i]) {
-	        	if(data[i][prop] == +data[i][prop] && data[i].hasOwnProperty(prop)){ // jshint ignore:line
-					data[i][prop] = +data[i][prop];
-				}
-			}
-	    }
 		res = data;
 		if(cb){
 			res = cb(res, idx, query);
@@ -462,7 +455,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	opts=opts||{};
 	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	opts.autoExt = false;
-	return XLSXLSX(getXLS(),filename, opts, cb, idx, query);
+	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 }
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
@@ -472,4 +465,10 @@ alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 };
 
+alasql.from.ODS = function(filename, opts, cb, idx, query) {
+	opts=opts||{};
+	filename = alasql.utils.autoExtFilename(filename,'ods',opts);
+	opts.autoExt = false;
+	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
+}
 

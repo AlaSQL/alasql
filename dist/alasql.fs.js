@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.2 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.3 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.2
+@version 0.4.3
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.2';
+alasql.version = '0.4.3';
 
 /**
 	Debug flag
@@ -4276,10 +4276,6 @@ var getXLSX = function(){
 	return XLSX;
 }
 
-var getXLS = function(){
-	return getXLSX();
-}
-
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();
 
@@ -6666,7 +6662,7 @@ function doDistinct (query) {
 		var uniq = {};
 		// TODO: Speedup, because Object.keys is slow**
 		// TODO: Problem with DISTINCT on objects
-		var keys=Object.keys(query.data[0]);
+		var keys=Object.keys(query.data[0]||[]);
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
 			var uix = keys.map(function(k){return query.data[i][k];}).join('`');
 			uniq[uix] = query.data[i];
@@ -15463,13 +15459,6 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var opt = {headers:true, simpleSheet:true, key:key};
 	alasql.utils.extend(opt, opts);
 	opt.callback = function(data){
-		for(var i=0; i<data.length; i++) {
-			for (var prop in data[i]) {
-	        	if(data[i][prop] == +data[i][prop] && data[i].hasOwnProperty(prop)){ // jshint ignore:line
-					data[i][prop] = +data[i][prop];
-				}
-			}
-	    }
 		res = data;
 		if(cb){
 			res = cb(res, idx, query);
@@ -15854,7 +15843,7 @@ alasql.from.XLS = function(filename, opts, cb, idx, query) {
 	opts=opts||{};
 	filename = alasql.utils.autoExtFilename(filename,'xls',opts);
 	opts.autoExt = false;
-	return XLSXLSX(getXLS(),filename, opts, cb, idx, query);
+	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 }
 
 alasql.from.XLSX = function(filename, opts, cb, idx, query) {
@@ -15863,6 +15852,13 @@ alasql.from.XLSX = function(filename, opts, cb, idx, query) {
 	opts.autoExt = false;
 	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
 };
+
+alasql.from.ODS = function(filename, opts, cb, idx, query) {
+	opts=opts||{};
+	filename = alasql.utils.autoExtFilename(filename,'ods',opts);
+	opts.autoExt = false;
+	return XLSXLSX(getXLSX(),filename, opts, cb, idx, query);
+}
 
 alasql.from.XML = function(filename, opts, cb, idx, query) {
   var res;

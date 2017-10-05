@@ -31,8 +31,7 @@
     "url": "https://github.com/agershun/alasql.git"
   },
   "dependencies": {
-    "js-xls": "~0.7",
-    "js-xlsx": "~0.8",
+    "js-xlsx": "~0.11.5",
     "es6-promise": "~3.0"
   },
   "devDependencies": {
@@ -58,5 +57,5 @@
     "bin",
     "lib"
   ],
-  "version": "0.4.2"
+  "version": "0.4.3"
 }
