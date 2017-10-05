@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.2 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.2-develop-1555 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.2
+@version 0.4.2-develop-1555
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -139,6 +139,7 @@ var alasql = function(sql, params, cb, scope) {
 */
 
 alasql.version = '0.4.2';
+
 
 /**
 	Debug flag
@@ -6667,7 +6668,7 @@ function doDistinct (query) {
 		var uniq = {};
 		// TODO: Speedup, because Object.keys is slow**
 		// TODO: Problem with DISTINCT on objects
-		var keys=Object.keys(query.data[0]);
+		var keys=Object.keys(query.data[0]||[]);
 		for(var i=0,ilen=query.data.length;i<ilen;i++) {
 			var uix = keys.map(function(k){return query.data[i][k];}).join('`');
 			uniq[uix] = query.data[i];
