@@ -1,10 +1,14 @@
 # Changelog
 
 
-_0.4.4 "..." (xx.010.2017)_
+_0.4.5 "Marib" (xx.01.2018)_
 
 * ...
 
+## 0.4.4 "Alsowm" (03.012.2017)
+
+* Better: Better usage via unpkg.com
+* Better: Better usage via jsdelivr.com
 
 
 ## 0.4.3 "Hajjah" (05.09.2017)
