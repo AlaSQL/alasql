@@ -13,3 +13,11 @@ src/
 bower.json
 gulpfile.js
 inch.json
+utils/
+.npmignore
+.travis.yml
+.versions
+CHANGELOG.md
+tslint.json
+README.md
+LICENSE
