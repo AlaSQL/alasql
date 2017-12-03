@@ -6,10 +6,11 @@
   "contributors": [
     "Mathias Rangel Wulff <m@rawu.dk>"
   ],
+  "main": "dist/alasql.fs.js",
+  "browser": "dist/alasql.min.js",
   "directories": {
     "test": "test"
   },
-  "browser": "./dist/alasql.js",
   "scripts": {
     "test": "gulp && cd test && mocha . --reporter dot",
     "test:this": "gulp && cd test && mocha",
@@ -69,7 +70,6 @@
     "alaserver": "./bin/alaserver.js"
   },
   "homepage": "https://github.com/agershun/alasql",
-  "main": "dist/alasql.fs.js",
   "keywords": [
     "SQL",
     "javascript",
