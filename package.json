@@ -1,15 +1,16 @@
 {
   "name": "alasql",
   "description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "contributors": [
     "Mathias Rangel Wulff <m@rawu.dk>"
   ],
+  "main": "dist/alasql.fs.js",
+  "browser": "dist/alasql.min.js",
   "directories": {
     "test": "test"
   },
-  "browser": "./dist/alasql.js",
   "scripts": {
     "test": "gulp && cd test && mocha . --reporter dot",
     "test:this": "gulp && cd test && mocha",
@@ -69,7 +70,6 @@
     "alaserver": "./bin/alaserver.js"
   },
   "homepage": "https://github.com/agershun/alasql",
-  "main": "dist/alasql.fs.js",
   "keywords": [
     "SQL",
     "javascript",
