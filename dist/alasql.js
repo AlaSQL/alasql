@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.4 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.4-fix-aggregate-empty-sets-1566 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.4
+@version 0.4.4-fix-aggregate-empty-sets-1566
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -137,7 +137,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.4';
+alasql.version = '0.4.4-fix-aggregate-empty-sets-1566';
 
 /**
 	Debug flag
@@ -10831,6 +10831,15 @@ alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v,s,stage){
 		return Math.sqrt(alasql.aggr.VARP(v,s,stage));
 	}
 };
+
+alasql._aggrOriginal = alasql.aggr
+alasql.aggr = {}
+Object.keys(alasql._aggrOriginal).forEach(function(k) {
+	alasql.aggr[k] = function(v, s, stage) {
+		if(stage === 3 && typeof(s) === 'undefined') return undefined;
+		return alasql._aggrOriginal[k].apply(null, arguments)
+	}
+})
 
 // String functions
 stdfn.REPLACE = function (target,pattern,replacement) {

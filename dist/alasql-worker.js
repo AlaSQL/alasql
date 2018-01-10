@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.4 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL v0.4.4-fix-aggregate-empty-sets-1566 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
 /*
 @module alasql
-@version 0.4.4
+@version 0.4.4-fix-aggregate-empty-sets-1566
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
