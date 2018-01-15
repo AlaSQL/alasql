@@ -1,4 +1,4 @@
-//! AlaSQL vPACKAGE_VERSION_NUMBER | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT 
+//! AlaSQL vPACKAGE_VERSION_NUMBER | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
 @version PACKAGE_VERSION_NUMBER

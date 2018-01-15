@@ -12,7 +12,9 @@
 	@param {object} params Initial setup properties
 */
 
-yy.Print = function (params) { return yy.extend(this, params); }
+yy.Print = function(params) {
+	return yy.extend(this, params);
+};
 
 /** 
 	Generate SQL string 
@@ -20,10 +22,9 @@ yy.Print = function (params) { return yy.extend(this, params); }
 */
 yy.Print.prototype.toString = function() {
 	var s = 'PRINT';
-	if(this.statement) s += ' '+this.statement.toString();
+	if (this.statement) s += ' ' + this.statement.toString();
 	return s;
-}
-
+};
 
 /**
  	Print result of select statement or expression
@@ -32,29 +33,31 @@ yy.Print.prototype.toString = function() {
  	@param {statement-callback} cb Callback function 
 	@this Print statement object
 */
-yy.Print.prototype.execute = function (databaseid,params,cb) {
-//	console.log(this.url);
+yy.Print.prototype.execute = function(databaseid, params, cb) {
+	//	console.log(this.url);
 	var self = this;
 	var res = 1;
-//console.log(this);
-	alasql.precompile(this,databaseid,params);  /** @todo Change from alasql to this */
+	//console.log(this);
+	alasql.precompile(this, databaseid, params); /** @todo Change from alasql to this */
 
-	if(this.exprs && this.exprs.length >0) {
-		var rs = this.exprs.map(function(expr){
-
-//			console.log('var y;return '+expr.toJS('({})','', null));
-			var exprfn =  new Function("params,alasql,p",'var y;return '+expr.toJS('({})','', null)).bind(self);
-			var r = exprfn(params,alasql);
+	if (this.exprs && this.exprs.length > 0) {
+		var rs = this.exprs.map(function(expr) {
+			//			console.log('var y;return '+expr.toJS('({})','', null));
+			var exprfn = new Function(
+				'params,alasql,p',
+				'var y;return ' + expr.toJS('({})', '', null)
+			).bind(self);
+			var r = exprfn(params, alasql);
 			return JSONtoString(r);
 		});
-		console.log.apply(console,rs);
-	} else if(this.select) {
-		var r = this.select.execute(databaseid,params);
+		console.log.apply(console, rs);
+	} else if (this.select) {
+		var r = this.select.execute(databaseid, params);
 		console.log(JSONtoString(r));
 	} else {
 		console.log();
 	}
 
-	if(cb) res = cb(res);
+	if (cb) res = cb(res);
 	return res;
 };

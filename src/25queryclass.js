@@ -11,25 +11,25 @@
 /**
  @class Query Main query class
  */
-var Query = alasql.Query = function(params){
+var Query = (alasql.Query = function(params) {
 	this.alasql = alasql;
-//	console.log(12,alasql);
+	//	console.log(12,alasql);
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};
 	this.selectGroup = [];
 	this.groupColumns = {};
 	// Data array
-	extend(this,params);
-};
+	extend(this, params);
+});
 
 /**
  @class Recordset data object
  */
-var Recordset = alasql.Recordset = function(params){
+var Recordset = (alasql.Recordset = function(params) {
 	// Data array
-	extend(this,params);
-};
+	extend(this, params);
+});
 
 /*/*
 // View = function(){
@@ -42,4 +42,3 @@ var Recordset = alasql.Recordset = function(params){
 
 // alasql.View = View;
 */
-
