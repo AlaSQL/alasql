@@ -72,6 +72,9 @@ yy.Expression.prototype.toString = function(dontas) {
 	if (this.nocase) {
 		s += ' COLLATE NOCASE';
 	}
+	if (this.direction) {
+		s += ' ' + this.direction;
+	}
 	return s;
 };
 
