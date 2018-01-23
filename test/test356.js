@@ -1,31 +1,31 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
-
-
+}
 
 describe('Test 356 PIVOT', function() {
-  
-  it.skip('1. CREATE DATABASE',function(done){
-    alasql('CREATE DATABASE test356;USE test356');
-    done();
-  });
+	it.skip('1. CREATE DATABASE', function(done) {
+		alasql('CREATE DATABASE test356;USE test356');
+		done();
+	});
 
-  /* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
-  it.skip('2. Prepare Data',function(done){
-    alasql(function(){/*
+	/* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
+	it.skip('2. Prepare Data', function(done) {
+		alasql(function() {
+			/*
       create table test
       (
         username varchar(10),
         subject varchar(10),
         score int
       )
-  */});
+  */
+		});
 
-  alasql(function(){/*
+		alasql(function() {
+			/*
     insert into test values
       ('Nick', 'Chinese', 80),
       ('Nick', 'Math', 90),
@@ -35,18 +35,18 @@ describe('Test 356 PIVOT', function() {
       ('Kent', 'Math', 90),
       ('Kent', 'English', 70),
       ('Kent', 'Biology', 85)
-  */});
+  */
+		});
 
-    done();
-  });
+		done();
+	});
 
-if(false) {
-  it.skip('3. Select Query',function(done){
+	if (false) {
+		it.skip('3. Select Query', function(done) {
+			var cols = alasql('COLUMN OF SELECT DISTINCT subject from test');
 
-  var cols = alasql('COLUMN OF SELECT DISTINCT subject from test');
-
-
-  alasql(function(){/*
+			alasql(function() {
+				/*
       SELECT username,' + @cols + ' from 
          (
             select username, subject, score
@@ -57,61 +57,71 @@ if(false) {
             avg(score)
             for subject in(' + @cols + ')
          ) p '  
-*/});
+*/
+			});
 
-    done();
-  });
-}
+			done();
+		});
+	}
 
-  it.skip('3. Select Query',function(done){
-    alasql(function(){/*
+	it.skip('3. Select Query', function(done) {
+		alasql(function() {
+			/*
       SELECT Score FROM Scores
       GROUP BY Name
       PIVOT BY Class
-    */});
-    done();
-  });
+    */
+		});
+		done();
+	});
 
-  it.skip('4. Select Query',function(done){
-    alasql(function(){/*
+	it.skip('4. Select Query', function(done) {
+		alasql(function() {
+			/*
       SELECT Name FROM Scores
       GROUP BY Score
       PIVOT BY Class
-    */});
-    done();
-  });
+    */
+		});
+		done();
+	});
 
-  it.skip('5. Select Query',function(done){
-    alasql(function(){/*
+	it.skip('5. Select Query', function(done) {
+		alasql(function() {
+			/*
       SELECT Class FROM Scores
       GROUP BY Name
       PIVOT BY Score
-    */});
-    done();
-  });
+    */
+		});
+		done();
+	});
 
-  it.skip('6. Select Query',function(done){
-    alasql(function(){/*
+	it.skip('6. Select Query', function(done) {
+		alasql(function() {
+			/*
       SELECT Score FROM Scores
       GROUP BY Class
       PIVOT BY Name
-    */});
-    done();
-  });
+    */
+		});
+		done();
+	});
 
-  it.skip('7. Select Query',function(done){
-    alasql(function(){/*
+	it.skip('7. Select Query', function(done) {
+		alasql(function() {
+			/*
       SELECT Class FROM Scores
       GROUP BY Score
       PIVOT BY Name
-    */});
-    done();
-  });
+    */
+		});
+		done();
+	});
 
-  it.skip('99. DROP DATABASE',function(done){
-    alasql.options.modifier = undefined;
-    alasql('DROP DATABASE test355');
-    done();
-  });
-
+	it.skip('99. DROP DATABASE', function(done) {
+		alasql.options.modifier = undefined;
+		alasql('DROP DATABASE test355');
+		done();
+	});
 });

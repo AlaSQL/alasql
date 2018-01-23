@@ -5,7 +5,7 @@
 // (c) Andrey Gershun
 //
 
-var FS = alasql.engines.FILESTORAGE = alasql.engines.FILE = function (){};
+var FS = (alasql.engines.FILESTORAGE = alasql.engines.FILE = function() {});
 
 /*/*
 FS.get = function(key) {
@@ -26,81 +26,79 @@ LS.set = function(key, value){
 }
 */
 
-FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb){
-//	console.log(arguments);
+FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
+	//	console.log(arguments);
 	var res = 1;
 	var filename = args[0].value;
-//	console.log('filename',filename);
-	alasql.utils.fileExists(filename, function(fex){
+	//	console.log('filename',filename);
+	alasql.utils.fileExists(filename, function(fex) {
 		// console.log('fex:',arguments);
-		if(fex) {
-			if(ifnotexists) {
+		if (fex) {
+			if (ifnotexists) {
 				res = 0;
-				if(cb) res = cb(res);
+				if (cb) res = cb(res);
 				return res;
 			} else {
 				throw new Error('Cannot create new database file, because it alreagy exists');
-			} 
+			}
 		} else {
-			var data = {tables:{}};
-			alasql.utils.saveFile(filename,JSON.stringify(data),function(data){
-				if(cb) res = cb(res);
+			var data = {tables: {}};
+			alasql.utils.saveFile(filename, JSON.stringify(data), function(data) {
+				if (cb) res = cb(res);
 			});
 		}
 	});
 	return res;
 };
 
-
-FS.dropDatabase = function(fsdbid, ifexists, cb){
+FS.dropDatabase = function(fsdbid, ifexists, cb) {
 	var res;
 	var filename = fsdbid.value;
-//	console.log('filename',filename);
-	alasql.utils.fileExists(filename, function(fex){
-		if(fex) {
+	//	console.log('filename',filename);
+	alasql.utils.fileExists(filename, function(fex) {
+		if (fex) {
 			res = 1;
-			alasql.utils.deleteFile(filename, function(){
+			alasql.utils.deleteFile(filename, function() {
 				res = 1;
-				if(cb) res = cb(res);
+				if (cb) res = cb(res);
 			});
 		} else {
-			if(!ifexists) {
+			if (!ifexists) {
 				throw new Error('Cannot drop database file, because it does not exist');
 			}
 			res = 0;
-			if(cb) res = cb(res);
+			if (cb) res = cb(res);
 		}
 	});
 	return res;
 };
 
-
-FS.attachDatabase = function(fsdbid, dbid, args, params, cb){
-//	console.log(arguments);
+FS.attachDatabase = function(fsdbid, dbid, args, params, cb) {
+	//	console.log(arguments);
 	var res = 1;
-	if(alasql.databases[dbid]) {
-		throw new Error('Unable to attach database as "'+dbid+'" because it already exists');
-	};
+	if (alasql.databases[dbid]) {
+		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
+	}
 	var db = new alasql.Database(dbid || fsdbid);
-	db.engineid = "FILESTORAGE";
-//	db.fsdbid = fsdbid;
+	db.engineid = 'FILESTORAGE';
+	//	db.fsdbid = fsdbid;
 	db.filename = args[0].value;
-	loadFile(db.filename, !!cb, function(s){
+	loadFile(db.filename, !!cb, function(s) {
 		try {
 			db.data = JSON.parse(s);
-		} catch(err) {
+		} catch (err) {
 			throw new Error('Data in FileStorage database are corrupted');
 		}
 		db.tables = db.data.tables;
 		// IF AUTOCOMMIT IS OFF then copy data to memory
-		if(!alasql.options.autocommit) {
-			if(db.tables){
-				for(var tbid in db.tables) {
+		if (!alasql.options.autocommit) {
+			if (db.tables) {
+				for (var tbid in db.tables) {
 					db.tables[tbid].data = db.data[tbid];
 				}
 			}
 		}
-		if(cb) res = cb(res);
+		if (cb) res = cb(res);
 	});
 	return res;
 };
@@ -132,59 +130,61 @@ FS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var tb = db.data[tableid];
 	var res = 1;
 
-	if(tb && !ifnotexists) {
-		throw new Error('Table "'+tableid+'" alsready exists in the database "'+fsdbid+'"');
-	};
+	if (tb && !ifnotexists) {
+		throw new Error('Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"');
+	}
 	var table = alasql.databases[databaseid].tables[tableid];
-	db.data.tables[tableid] = {columns:table.columns};
+	db.data.tables[tableid] = {columns: table.columns};
 	db.data[tableid] = [];
 
-	FS.updateFile(databaseid);	
+	FS.updateFile(databaseid);
 
-	if(cb) cb(res);
+	if (cb) cb(res);
 	return res;
 };
 
 FS.updateFile = function(databaseid) {
-//	console.log('update start');
+	//	console.log('update start');
 	var db = alasql.databases[databaseid];
-	if(db.issaving) {
+	if (db.issaving) {
 		db.postsave = true;
 		return;
-	};
+	}
 	db.issaving = true;
 	db.postsave = false;
-	alasql.utils.saveFile(db.filename, JSON.stringify(db.data), function(){
+	alasql.utils.saveFile(db.filename, JSON.stringify(db.data), function() {
 		db.issaving = false;
-//		console.log('update finish');
+		//		console.log('update finish');
 
-		if(db.postsave) {
-			setTimeout(function(){
+		if (db.postsave) {
+			setTimeout(function() {
 				FS.updateFile(databaseid);
-			},50); // TODO Test with different timeout parameters
-		};
+			}, 50); // TODO Test with different timeout parameters
+		}
 	});
 };
 
-FS.dropTable = function (databaseid, tableid, ifexists, cb) {
+FS.dropTable = function(databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
-	if(!ifexists && !db.tables[tableid]) {
-		throw new Error('Cannot drop table "'+tableid+'" in fileStorage, because it does not exist');
-	};
+	if (!ifexists && !db.tables[tableid]) {
+		throw new Error(
+			'Cannot drop table "' + tableid + '" in fileStorage, because it does not exist'
+		);
+	}
 	delete db.tables[tableid];
 	delete db.data.tables[tableid];
 	delete db.data[tableid];
-	FS.updateFile(databaseid);	
-	if(cb) cb(res);
+	FS.updateFile(databaseid);
+	if (cb) cb(res);
 	return res;
-}
+};
 
 FS.fromTable = function(databaseid, tableid, cb, idx, query) {
-//	console.log(998, databaseid, tableid, cb);
+	//	console.log(998, databaseid, tableid, cb);
 	var db = alasql.databases[databaseid];
 	var res = db.data[tableid];
-	if(cb) res = cb(res, idx, query);
+	if (cb) res = cb(res, idx, query);
 	return res;
 };
 
@@ -192,37 +192,37 @@ FS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	var db = alasql.databases[databaseid];
 	var res = value.length;
 	var tb = db.data[tableid];
-	if(!tb) tb = [];
+	if (!tb) tb = [];
 	db.data[tableid] = tb.concat(value);
-	FS.updateFile(databaseid);	
-	if(cb) cb(res);
+	FS.updateFile(databaseid);
+	if (cb) cb(res);
 	return res;
 };
 
-FS.loadTableData = function(databaseid, tableid){
+FS.loadTableData = function(databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	db.tables[tableid].data = db.data[tableid];
-}
+};
 
-FS.saveTableData = function(databaseid, tableid){
+FS.saveTableData = function(databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	db.data[tableid] = db.tables[tableid].data;
 	db.tables[tableid].data = null;
-	FS.updateFile(databaseid);	
-}
+	FS.updateFile(databaseid);
+};
 
 FS.commit = function(databaseid, cb) {
-//	console.log('COMMIT');
+	//	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
-	var fsdb = {tables:{}};
-	if(db.tables) {
-		for(var tbid in db.tables) {
+	var fsdb = {tables: {}};
+	if (db.tables) {
+		for (var tbid in db.tables) {
 			db.data.tables[tbid] = {columns: db.tables[tbid].columns};
 			db.data[tbid] = db.tables[tbid].data;
-		};
-	};
+		}
+	}
 	FS.updateFile(databaseid);
-	return cb?cb(1):1;
+	return cb ? cb(1) : 1;
 };
 
 FS.begin = FS.commit;
@@ -231,23 +231,23 @@ FS.rollback = function(databaseid, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
 	db.dbversion++;
-//	console.log(db.dbversion)
-//	var lsdbid = alasql.databases[databaseid].lsdbid;
-//	lsdb = LS.get(lsdbid);
+	//	console.log(db.dbversion)
+	//	var lsdbid = alasql.databases[databaseid].lsdbid;
+	//	lsdb = LS.get(lsdbid);
 	wait();
 	function wait() {
-		setTimeout(function(){
-			if(db.issaving) {
+		setTimeout(function() {
+			if (db.issaving) {
 				return wait();
 			} else {
-				alasql.loadFile(db.filename,!!cb,function(data){
+				alasql.loadFile(db.filename, !!cb, function(data) {
 					db.data = data;
 					db.tables = {};
-					for(var tbid in db.data.tables) {
+					for (var tbid in db.data.tables) {
 						var tb = new alasql.Table({columns: db.data.tables[tbid].columns});
-						extend(tb,db.data.tables[tbid]);
+						extend(tb, db.data.tables[tbid]);
 						db.tables[tbid] = tb;
-						if(!alasql.options.autocommit) {
+						if (!alasql.options.autocommit) {
 							db.tables[tbid].data = db.data[tbid];
 						}
 						db.tables[tbid].indexColumns();
@@ -262,15 +262,15 @@ FS.rollback = function(databaseid, cb) {
 					alasql.databases[databaseid].engineid = 'FILESTORAGE';
 					alasql.databases[databaseid].filename = db.filename;
 
-					if(cb) res = cb(res);
+					if (cb) res = cb(res);
 					// Todo: check why no return
 				});
-			};
-		},100);		
-	};
+			}
+		}, 100);
+	}
 
-//	 if(!alasql.options.autocommit) {
-/*/*		if(lsdb.tables){
+	//	 if(!alasql.options.autocommit) {
+	/*/*		if(lsdb.tables){
 			for(var tbid in lsdb.tables) {
 				var tb = new alasql.Table({columns: db.tables[tbid].columns});
 				extend(tb,lsdb.tables[tbid]);
@@ -286,7 +286,5 @@ FS.rollback = function(databaseid, cb) {
 		}
 //	}
 */
-//console.log(999, alasql.databases[databaseid]);
-}
-
-
+	//console.log(999, alasql.databases[databaseid]);
+};

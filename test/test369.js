@@ -1,10 +1,9 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
-
+}
 
 /*
 Inputs for emprovements:
@@ -26,16 +25,9 @@ Expand the function with an ESCAPE parameter
 
 */
 
-
-
 describe('Test 369 LIKE', function() {
-
-   var specials = [
-     '/', '.', '*', '+', '?', '|',
-     '(', ')', '[', ']', '{', '}', 
-     '\\', '\^', '\%'
-   ];
-/*
+	var specials = ['/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\', '^', '%'];
+	/*
   alasql.utils.like = function (pattern,value,escape) {
     // Verify escape character
     if(!escape) escape = '';
@@ -73,46 +65,43 @@ describe('Test 369 LIKE', function() {
    }
 
 */
-		var data = [
-			{a:'abcdef'},
-               {a:'xyzwt'},
-               {a:'abc123'},
-               {a:'123def'},
-               {a:'ab34ef'},
-               {a:'ab56ef'},
-		];
+	var data = [
+		{a: 'abcdef'},
+		{a: 'xyzwt'},
+		{a: 'abc123'},
+		{a: '123def'},
+		{a: 'ab34ef'},
+		{a: 'ab56ef'},
+	];
 
-     it('1. Test %',function(done){
-     	var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef"',[data]);
-     	assert.deepEqual(res,[ { a: "abcdef" }]);
+	it('1. Test %', function(done) {
+		var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef"', [data]);
+		assert.deepEqual(res, [{a: 'abcdef'}]);
 
-      var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef1"',[data]);
-      assert.deepEqual(res,[]);
+		var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef1"', [data]);
+		assert.deepEqual(res, []);
 
-      var res = alasql('SELECT * FROM ? WHERE a LIKE "%abc%"',[data]);
-      assert.deepEqual(res,[ { a: 'abcdef' }, { a: 'abc123' } ]);
-      done();
-     });
+		var res = alasql('SELECT * FROM ? WHERE a LIKE "%abc%"', [data]);
+		assert.deepEqual(res, [{a: 'abcdef'}, {a: 'abc123'}]);
+		done();
+	});
 
+	it('2. Test alasql.utils.like function', function(done) {
+		assert(alasql.utils.like('%abc%', 'abcd'));
+		assert(!alasql.utils.like('%abc%', 'ab'));
+		assert(alasql.utils.like('%[ab][bc]%', 'abcdef'));
+		assert(!alasql.utils.like('%[aw][qq]%', 'abcdef'));
+		assert(alasql.utils.like('%(%)', 'abc(def)'));
+		assert(!alasql.utils.like('%(%)', 'abc(def'));
 
-     it('2. Test alasql.utils.like function',function(done){
-      assert(alasql.utils.like('%abc%','abcd'));
-      assert(!alasql.utils.like('%abc%','ab'));
-      assert(alasql.utils.like('%[ab][bc]%','abcdef'));
-      assert(!alasql.utils.like('%[aw][qq]%','abcdef'));
-      assert(alasql.utils.like('%(%)','abc(def)'));
-      assert(!alasql.utils.like('%(%)','abc(def'));
+		assert(alasql.utils.like('!%%!)', '%123)', '!'));
+		assert(alasql.utils.like('!%%', '%', '!'));
+		assert(alasql.utils.like('!%![!%!]', '%[%]', '!'));
 
-      assert(alasql.utils.like('!%%!)','%123)','!'));
-      assert(alasql.utils.like('!%%','%','!'));
-      assert(alasql.utils.like('!%![!%!]','%[%]','!'));
+		assert(alasql.utils.like('a_ra_c%', 'abra cadabra', '!'));
+		assert(alasql.utils.like('a!_ra_c%', 'a_ra cadabra', '!'));
+		assert(!alasql.utils.like('a!_ra_c%', 'abra cadabra', '!'));
 
-      assert(alasql.utils.like('a_ra_c%','abra cadabra','!'));
-      assert(alasql.utils.like('a!_ra_c%','a_ra cadabra','!'));
-      assert(!alasql.utils.like('a!_ra_c%','abra cadabra','!'));
-
-     	done();
-     });
-
-
+		done();
+	});
 });

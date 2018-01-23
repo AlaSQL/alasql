@@ -7,8 +7,7 @@
 */
 
 // Table class
-var Table = alasql.Table = function(params){
-
+var Table = (alasql.Table = function(params) {
 	// Step 1: Data array
 	this.data = [];
 
@@ -20,7 +19,7 @@ var Table = alasql.Table = function(params){
 	this.inddefs = {};
 	this.indices = {};
 	this.uniqs = {};
-	this.uniqdefs = {};	
+	this.uniqdefs = {};
 
 	// Step 4: identities
 	this.identities = {};
@@ -46,8 +45,8 @@ var Table = alasql.Table = function(params){
 	this.insteadofupdate = {};
 
 	// Done
-	extend(this,params);
-};
+	extend(this, params);
+});
 
 /*/*
 // View = function(){
@@ -64,9 +63,7 @@ var Table = alasql.Table = function(params){
 Table.prototype.indexColumns = function() {
 	var self = this;
 	self.xcolumns = {};
-	self.columns.forEach(function(col){
+	self.columns.forEach(function(col) {
 		self.xcolumns[col.columnid] = col;
-	});	
-}
-
-
+	});
+};

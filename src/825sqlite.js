@@ -1,2 +1,2 @@
-if(alasql.options.sqlite) {
+if (alasql.options.sqlite) {
 }

@@ -1,11 +1,11 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
 describe('Test 26', function() {
-	it('Modulo operator', function(done){
-	var db = new alasql.Database("db");
+	it('Modulo operator', function(done) {
+		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
 		db.exec('INSERT INTO test1 VALUES (2,2)');
@@ -20,7 +20,7 @@ describe('Test 26', function() {
 		db.exec('INSERT INTO test2 VALUES (3,30)');
 
 		var res = db.exec('SELECT VALUE SUM(a%3) FROM test1');
-		assert.equal(6,res);
+		assert.equal(6, res);
 		done();
 	});
 });

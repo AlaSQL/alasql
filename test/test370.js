@@ -1,10 +1,9 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
-
+}
 
 /*
 Inputs for emprovements:
@@ -26,24 +25,20 @@ Expand the function with an ESCAPE parameter
 
 */
 
-
-
 describe('Test 370 REGEXP_LIKE', function() {
+	it('1. Test REGEXP_LIKE', function(done) {
+		assert(alasql('= REGEXP_LIKE("abcdef","a.*")'));
+		assert(!alasql('= REGEXP_LIKE("abcdef","^d")'));
+		assert(alasql('= REGEXP_LIKE("abcdef","^a.*d")'));
+		done();
+	});
 
-     it('1. Test REGEXP_LIKE',function(done){
-     	assert(alasql('= REGEXP_LIKE("abcdef","a.*")'));
-      assert(!alasql('= REGEXP_LIKE("abcdef","^d")'));
-      assert(alasql('= REGEXP_LIKE("abcdef","^a.*d")'));
-      done();
-     });
-
-     it('2. Test REGEXP',function(done){
-      //console.log(alasql('= "abcdef" REGEXP "a.*"'));
-      assert(alasql('= "abcdef" REGEXP "a.*"'));
-      assert(alasql('= "abcdef" REGEXP "[aq]"'));
-      assert(alasql('= "abcdef" REGEXP "[^qw]"'));
-      assert(!alasql('= "abcdef" REGEXP "[qw]"'));
-      done();
-     });
-
+	it('2. Test REGEXP', function(done) {
+		//console.log(alasql('= "abcdef" REGEXP "a.*"'));
+		assert(alasql('= "abcdef" REGEXP "a.*"'));
+		assert(alasql('= "abcdef" REGEXP "[aq]"'));
+		assert(alasql('= "abcdef" REGEXP "[^qw]"'));
+		assert(!alasql('= "abcdef" REGEXP "[qw]"'));
+		done();
+	});
 });

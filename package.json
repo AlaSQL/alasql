@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-  "version": "0.4.4",
+  "version": "0.4.5",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "contributors": [
     "Mathias Rangel Wulff <m@rawu.dk>"
@@ -12,25 +12,27 @@
     "test": "test"
   },
   "scripts": {
-    "test": "gulp && cd test && mocha . --reporter dot",
+    "test": "npm run build && cd test && mocha . --reporter dot",
     "test:this": "gulp && cd test && mocha",
     "test:only": "cd test && mocha . --reporter dot",
     "test:browser": "node test/browserTestRunner.js 7387",
     "test:cover": "istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
-    "build": "gulp",
+    "build": "npm run format:src && gulp",
     "build:jison": "gulp --jison && gulp",
     "build:watch": "gulp watch",
     "bump": "mversion --no-prefix",
     "uptodate": "npm-check -u --skip-unused",
     "release": "f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
-    "jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js"
+    "jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
+    "format:src": "prettier src/*.js --write",
+    "format:test": "prettier test/*.js --write"
   },
   "dependencies": {
     "dom-storage": "^2.0.1",
-    "es6-promise": "^4.0.5",
+    "es6-promise": "^4.2.2",
     "lodash": "^4.17.4",
-    "request": "2.79.0",
-    "xlsx": "^0.11.5",
+    "request": "^2.83.0",
+    "xlsx": "^0.11.17",
     "yargs": "^5.0.0"
   },
   "devDependencies": {
@@ -49,11 +51,12 @@
     "mocha": "^3.5.3",
     "mocha.parallel": "^0.15.3",
     "mversion": "^1.10.1",
-    "npm-check": "^5.2.3",
+    "npm-check": "^5.5.2",
     "open": "0.0.5",
+    "prettier": "^1.10.2",
     "strftime": "^0.10.0",
     "tabletop": "^1.5.2",
-    "uglify-js": "^3.1.3"
+    "uglify-js": "^3.3.7"
   },
   "engines": [
     "node"

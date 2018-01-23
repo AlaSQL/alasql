@@ -1,19 +1,19 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
+}
 
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
 describe('Test 236 MERGE', function() {
+	it('1. Prepare database and tables', function(done) {
+		alasql('CREATE DATABASE test236; USE test236;');
 
-    it('1. Prepare database and tables', function(done){
-        alasql('CREATE DATABASE test236; USE test236;');
-
-        var sql = function(){/*
+		var sql = function() {
+			/*
             CREATE TABLE [Target](EmployeeID int, EmployeeName varchar(10), 
                  CONSTRAINT Target_PK PRIMARY KEY(EmployeeID));
             CREATE TABLE [Source](EmployeeID int, EmployeeName varchar(10), 
@@ -26,26 +26,31 @@ describe('Test 236 MERGE', function() {
             INSERT [Source](EmployeeID, EmployeeName) Values(103, 'Bob');
             INSERT [Source](EmployeeID, EmployeeName) Values(104, 'Steve');
 
-        */}.toString().slice(14,-3);
+        */
+		};
 
-        alasql(sql);
-        var res = alasql('SELECT * FROM [Target]');
-        assert.deepEqual(res,[ { EmployeeID: 100, EmployeeName: 'Mary' },
-            { EmployeeID: 101, EmployeeName: 'Sara' },
-            { EmployeeID: 102, EmployeeName: 'Stefano' } ]);
-//        console.log(res);
+		alasql(sql);
+		var res = alasql('SELECT * FROM [Target]');
+		assert.deepEqual(res, [
+			{EmployeeID: 100, EmployeeName: 'Mary'},
+			{EmployeeID: 101, EmployeeName: 'Sara'},
+			{EmployeeID: 102, EmployeeName: 'Stefano'},
+		]);
+		//        console.log(res);
 
-        var res = alasql('SELECT * FROM [Source]');
-        assert.deepEqual(res, [ { EmployeeID: 103, EmployeeName: 'Bob' },
-            { EmployeeID: 104, EmployeeName: 'Steve' } ]);
-//        console.log(res);
+		var res = alasql('SELECT * FROM [Source]');
+		assert.deepEqual(res, [
+			{EmployeeID: 103, EmployeeName: 'Bob'},
+			{EmployeeID: 104, EmployeeName: 'Steve'},
+		]);
+		//        console.log(res);
 
-        done();
-    });
+		done();
+	});
 
-    it("2. Merge", function(done) {
-
-    var sql = function(){/*
+	it('2. Merge', function(done) {
+		var sql = function() {
+			/*
 
         MERGE [Target] AS T
         USING [Source] AS S
@@ -57,17 +62,18 @@ describe('Test 236 MERGE', function() {
         WHEN NOT MATCHED BY SOURCE AND T.EmployeeName LIKE 'S%'
             THEN DELETE
 
-    */}.toString().slice(14,-3);
-/// console.log(alasql.parse(sql).toString());
+    */
+		}
+			.toString()
+			.slice(14, -3);
+		/// console.log(alasql.parse(sql).toString());
 
-//        console.log(res);
-        done();
-    });
+		//        console.log(res);
+		done();
+	});
 
-    it('99. DROP', function(done){
-        alasql('DROP DATABASE test236');
-        done();
-    });
-
+	it('99. DROP', function(done) {
+		alasql('DROP DATABASE test236');
+		done();
+	});
 });
-

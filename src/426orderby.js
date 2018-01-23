@@ -1,58 +1,74 @@
-yy.Select.prototype.compileOrder = function (query) {
+yy.Select.prototype.compileOrder = function(query) {
 	var self = this;
 	self.orderColumns = [];
-	if(this.order) {
-//			console.log(990, this.order);
-		if(this.order && this.order.length == 1 && this.order[0].expression 
-			 && typeof this.order[0].expression == "function") {
-//			console.log(991, this.order[0]);
+	if (this.order) {
+		//			console.log(990, this.order);
+		if (
+			this.order &&
+			this.order.length == 1 &&
+			this.order[0].expression &&
+			typeof this.order[0].expression == 'function'
+		) {
+			//			console.log(991, this.order[0]);
 			var func = this.order[0].expression;
-//			console.log(994, func);
-			return function(a,b){
-				var ra = func(a),rb = func(b);
-				if(ra>rb) return 1;
-				if(ra==rb) return 0;
+			//			console.log(994, func);
+			return function(a, b) {
+				var ra = func(a),
+					rb = func(b);
+				if (ra > rb) return 1;
+				if (ra == rb) return 0;
 				return -1;
-			}
-		};
+			};
+		}
 
 		var s = '';
 		var sk = '';
-		this.order.forEach(function(ord,idx){
+		this.order.forEach(function(ord, idx) {
 			// console.log(ord instanceof yy.Expression);
 			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
 
-			if(ord.expression instanceof yy.NumValue) {
-				var v = self.columns[ord.expression.value-1];
+			if (ord.expression instanceof yy.NumValue) {
+				var v = self.columns[ord.expression.value - 1];
 			} else {
 				var v = ord.expression;
 			}
 			self.orderColumns.push(v);
-			
-			var key = '$$$'+idx;
+
+			var key = '$$$' + idx;
 
 			// Date conversion
-			var dg = ''; 
-				//if(alasql.options.valueof) 
-			if(ord.expression instanceof yy.Column) {
-				var columnid = ord.expression.columnid; 
-				if(query.xcolumns[columnid]) {
+			var dg = '';
+			//if(alasql.options.valueof)
+			if (ord.expression instanceof yy.Column) {
+				var columnid = ord.expression.columnid;
+				if (query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
-					if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2') dg = '.valueOf()';
+					if (dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2')
+						dg = '.valueOf()';
 					// TODO Add other types mapping
 				} else {
-					if(alasql.options.valueof) dg = '.valueOf()'; // TODO Check
+					if (alasql.options.valueof) dg = '.valueOf()'; // TODO Check
 				}
-//				dg = '.valueOf()';
+				//				dg = '.valueOf()';
 			}
 			// COLLATE NOCASE
-			if(ord.nocase) dg += '.toUpperCase()';
-			s += "if((a['"+key+"']||'')"+dg+(ord.direction == 'ASC'?'>':"<")+"(b['"+key+"']||'')"+dg+')return 1;';
-			s += "if((a['"+key+"']||'')"+dg+"==(b['"+key+"']||'')"+dg+'){';
-//console.log(37,s);
+			if (ord.nocase) dg += '.toUpperCase()';
+			s +=
+				"if((a['" +
+				key +
+				"']||'')" +
+				dg +
+				(ord.direction == 'ASC' ? '>' : '<') +
+				"(b['" +
+				key +
+				"']||'')" +
+				dg +
+				')return 1;';
+			s += "if((a['" + key + "']||'')" + dg + "==(b['" + key + "']||'')" + dg + '){';
+			//console.log(37,s);
 
-/*
+			/*
 if(false) {			
 //console.log(ord.expression, ord.expression instanceof yy.NumValue);
 			if(ord.expression instanceof yy.NumValue) {
@@ -98,10 +114,9 @@ if(false) {
 			sk += '}';
 		});
 		s += 'return 0;';
-		s += sk+'return -1';
+		s += sk + 'return -1';
 		query.orderfns = s;
-//console.log('ORDERBY',s);
-		return new Function('a,b','var y;'+s);
-	};
+		//console.log('ORDERBY',s);
+		return new Function('a,b', 'var y;' + s);
+	}
 };
-

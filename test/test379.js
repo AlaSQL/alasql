@@ -1,13 +1,12 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-	var DOMStorage = require("dom-storage");
-	global.localStorage = new DOMStorage("./test379.json", { strict: false, ws: '' });
-};
+	var DOMStorage = require('dom-storage');
+	global.localStorage = new DOMStorage('./test379.json', {strict: false, ws: ''});
+}
 
 describe('Test 379', function() {
-
-	it('Recreate dropped table - localStorage engine', function(done){
+	it('Recreate dropped table - localStorage engine', function(done) {
 		alasql('SET AUTOCOMMIT ON');
 		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS ls379');
 		alasql('CREATE LOCALSTORAGE DATABASE ls379');
@@ -19,5 +18,4 @@ describe('Test 379', function() {
 		assert.deepEqual(res, []);
 		done();
 	});
-
 });
