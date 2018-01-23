@@ -1,9 +1,16 @@
 # Changelog
 
 
-_0.4.5 "Marib" (xx.01.2018)_
+_0.4.5 "????" (xx.02.2018)_
 
 * ...
+
+
+## 0.4.5 "Marib" (24.01.2018)
+
+* Fix: Aggregate functions applied to empty sets (#964)
+* Fix: missing ORDER BY direction when calling toString on AST (#970)
+* Fix: Converting the syntax tree back to SQL with multple joins (#972)
 
 ## 0.4.4 "Alsowm" (03.012.2017)
 
