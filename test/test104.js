@@ -1,11 +1,10 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
 describe('Test 104 - RANDOM() and RECURSIVE', function() {
-
-/*
+	/*
 
 DROP TABLE IF EXISTS ttbl;
 CREATE TABLE IF NOT EXISTS ttbl
@@ -17,9 +16,7 @@ CREATE TABLE IF NOT EXISTS ttbl
 WITH (OIDS=FALSE);
 
 */
-
-
-/*
+	/*
 select t.*
 from ttbl t
 where 
@@ -28,14 +25,10 @@ where
 order by random()
 limit 5;
 */
-
-
-//	it('localStorage', function(done){
-//		done();
-//	});
-
-
-/*
+	//	it('localStorage', function(done){
+	//		done();
+	//	});
+	/*
 WITH RECURSIVE r AS (
   WITH b AS (
     SELECT
@@ -80,5 +73,4 @@ SELECT t.* FROM ttbl AS t, r WHERE r.id = t.id
 
 
 */
-
 });

@@ -24,7 +24,8 @@
     "uptodate": "npm-check -u --skip-unused",
     "release": "f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
     "jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
-    "format:src": "prettier src/*.js --write"
+    "format:src": "prettier src/*.js --write",
+    "format:test": "prettier test/*.js --write"
   },
   "dependencies": {
     "dom-storage": "^2.0.1",

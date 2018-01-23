@@ -1,9 +1,9 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-	var DOMStorage = require("dom-storage");
-	global.localStorage = new DOMStorage("./test381.json", { strict: false, ws: '' });
-};
+	var DOMStorage = require('dom-storage');
+	global.localStorage = new DOMStorage('./test381.json', {strict: false, ws: ''});
+}
 
 /*
  This sample beased on this article:
@@ -13,19 +13,18 @@ if(typeof exports === 'object') {
 */
 
 describe('Test 383 - MySQL compatibility issue #452', function() {
+	before(function() {
+		alasql('CREATE DATABASE test383;USE test383');
+	});
 
-  before(function(){
-    alasql('CREATE DATABASE test383;USE test383');
-  });
+	after(function() {
+		alasql.options.modifier = undefined;
+		alasql('DROP DATABASE test383');
+	});
 
-  after(function(){
-    alasql.options.modifier = undefined;
-    alasql('DROP DATABASE test383');
-  });
-
-	it('2. Create table issue', function(done){
-
-    alasql(function(){/*
+	it('2. Create table issue', function(done) {
+		alasql(function() {
+			/*
     CREATE TABLE `org1` (
       `id` CHAR(36) NOT NULL,
       `name` VARCHAR(100) NOT NULL,
@@ -37,14 +36,15 @@ describe('Test 383 - MySQL compatibility issue #452', function() {
       PRIMARY KEY (`id`)
      );
 
-    */});
+    */
+		});
 
 		done();
 	});
 
-  it('3. UNIQUE KEY issue', function(done){
-
-    alasql(function(){/*
+	it('3. UNIQUE KEY issue', function(done) {
+		alasql(function() {
+			/*
     CREATE TABLE `org2` (
       `id` CHAR(36) NOT NULL,
       `name` VARCHAR(100) NOT NULL,
@@ -54,14 +54,15 @@ describe('Test 383 - MySQL compatibility issue #452', function() {
       PRIMARY KEY (`id`),
       UNIQUE KEY `org_u1` (`name`, `deleteId`)
      ) ;
-    */});
+    */
+		});
 
-    done();
-  });
+		done();
+	});
 
-  it('4. COLLATE issue', function(done){
-
-    alasql(function(){/*
+	it('4. COLLATE issue', function(done) {
+		alasql(function() {
+			/*
     CREATE TABLE `org3` (
       `id` CHAR(36) NOT NULL,
       `name` VARCHAR(100) NOT NULL,
@@ -69,14 +70,15 @@ describe('Test 383 - MySQL compatibility issue #452', function() {
       `updateUser` VARCHAR(100),
       PRIMARY KEY (`id`)
      )  CHARSET=utf8 COLLATE=utf8_bin;
-    */});
+    */
+		});
 
-    done();
-  });
+		done();
+	});
 
-  it('5. All issues', function(done){
-
-    alasql(function(){/*
+	it('5. All issues', function(done) {
+		alasql(function() {
+			/*
     CREATE TABLE `org4` (
       `id` CHAR(36) NOT NULL,
       `name` VARCHAR(100) NOT NULL,
@@ -88,26 +90,21 @@ describe('Test 383 - MySQL compatibility issue #452', function() {
       PRIMARY KEY (`id`),
       UNIQUE KEY `org_u1` (`name`, `deleteId`)
      )  CHARSET=utf8 COLLATE=utf8_bin;
-    */});
+    */
+		});
 
-    done();
-  });
+		done();
+	});
 
-  it('6. ON UPDATE', function(done){
-    alasql('INSERT INTO org4 (id,name) VALUES (1,"Peter")');
-    var res = alasql('SELECT * FROM org4');
-    assert(res[0].lastUpdateTime === 0);
+	it('6. ON UPDATE', function(done) {
+		alasql('INSERT INTO org4 (id,name) VALUES (1,"Peter")');
+		var res = alasql('SELECT * FROM org4');
+		assert(res[0].lastUpdateTime === 0);
 
-    alasql('UPDATE org4 SET name="George"');
+		alasql('UPDATE org4 SET name="George"');
 
-    var res = alasql('SELECT * FROM org4');
-    assert(res[0].lastUpdateTime > res[0].createTime);
-    done();
-
-  });
-
-
-
-
-
+		var res = alasql('SELECT * FROM org4');
+		assert(res[0].lastUpdateTime > res[0].createTime);
+		done();
+	});
 });

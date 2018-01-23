@@ -1,27 +1,24 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
+}
 
 //
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
-// 
+//
 describe('Test 335 WITH RECURSIVE CTE', function() {
-  it.skip('1. CREATE DATABASE',function(done){
-    alasql('CREATE DATABASE test335;USE test335');
+	it.skip('1. CREATE DATABASE', function(done) {
+		alasql('CREATE DATABASE test335;USE test335');
 
-    done();
-  });
+		done();
+	});
 
-
-
-
-  it.skip('2. Create table',function(done){
-
-  var res = alasql(function(){/*
+	it.skip('2. Create table', function(done) {
+		var res = alasql(function() {
+			/*
       -- Create an Employee table.
       CREATE TABLE dbo.MyEmployees
       (
@@ -44,13 +41,15 @@ describe('Test 335 WITH RECURSIVE CTE', function() {
       ,(286, N'Lynn', N'Tsoflias', N'Sales Representative',3,285)
       ,(16,  N'David',N'Bradley', N'Marketing Manager', 4, 273)
       ,(23,  N'Mary', N'Gibson', N'Marketing Specialist', 4, 16);
-    */});
-    assert.deepEqual(res,[1,1]);
-    done();
-  });
+    */
+		});
+		assert.deepEqual(res, [1, 1]);
+		done();
+	});
 
-  it.skip('3. WITH SELECT',function(done){
-    var res = alasql(function(){/*
+	it.skip('3. WITH SELECT', function(done) {
+		var res = alasql(function() {
+			/*
 
 WITH DirectReports(ManagerID, EmployeeID, Title, EmployeeLevel) AS 
 (
@@ -67,16 +66,16 @@ SELECT ManagerID, EmployeeID, Title, EmployeeLevel
 FROM DirectReports
 ORDER BY ManagerID;
 
-    */});
-    console.log(res);
-    assert.deepEqual(res,[]  );
+    */
+		});
+		console.log(res);
+		assert.deepEqual(res, []);
 
-    done();
-  });
+		done();
+	});
 
-
-  it.skip('99. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test335');
-    done();
-  });
+	it.skip('99. DROP DATABASE', function(done) {
+		alasql('DROP DATABASE test335');
+		done();
+	});
 });

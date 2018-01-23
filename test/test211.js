@@ -1,47 +1,80 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
-if(typeof exports != 'object') {
+if (typeof exports != 'object') {
+	var studentsData = [
+		{
+			studentid: 58,
+			studentname: 'Sarah Patrik',
+			courseid: 1,
+			startdate: new Date(2014, 0, 10),
+			amt: 10,
+			schoolid: 1,
+		},
+		{
+			studentid: 102,
+			studentname: 'John Stewart',
+			courseid: 2,
+			startdate: new Date(2014, 0, 20),
+			amt: 20,
+			schoolid: 1,
+		},
+		{
+			studentid: 102,
+			studentname: 'Joan Blackmore',
+			courseid: 2,
+			startdate: new Date(2014, 0, 20),
+			amt: 20,
+			schoolid: 1,
+		},
+		{
+			studentid: 104,
+			studentname: 'Anna Wooden',
+			courseid: 4,
+			startdate: new Date(2014, 0, 15),
+			amt: 30,
+			schoolid: 2,
+		},
+		{
+			studentid: 104,
+			studentname: 'Astrid Carlson',
+			courseid: 7,
+			startdate: new Date(2014, 0, 15),
+			amt: 30,
+			schoolid: 1,
+		},
+	];
 
-var studentsData = [
-	{studentid:58,studentname:'Sarah Patrik',courseid:1, startdate: new Date(2014,0,10), amt:10, schoolid:1},
-	{studentid:102,studentname:'John Stewart', courseid:2, startdate: new Date(2014,0,20), amt:20, schoolid:1},
-	{studentid:102,studentname:'Joan Blackmore', courseid:2, startdate: new Date(2014,0,20), amt:20, schoolid:1},
-	{studentid:104,studentname:'Anna Wooden', courseid:4, startdate: new Date(2014,0,15), amt:30, schoolid:2},
-	{studentid:104,studentname:'Astrid Carlson', courseid:7, startdate: new Date(2014,0,15), amt:30, schoolid:1},
-];
+	var coursesData = [
+		{courseid: 1, coursename: 'first', schoolid: 1},
+		{courseid: 2, coursename: 'second', schoolid: 1},
+		{courseid: 3, coursename: 'third', schoolid: 2},
+		{courseid: 4, coursename: 'fourth', schoolid: 2},
+		{courseid: 5, coursename: 'fifth', schoolid: 2},
+	];
 
-var coursesData = [
-	{courseid:1, coursename: 'first', schoolid:1},
-	{courseid:2, coursename: 'second', schoolid:1},
-	{courseid:3, coursename: 'third', schoolid:2},
-	{courseid:4, coursename: 'fourth', schoolid:2},
-	{courseid:5, coursename: 'fifth', schoolid:2}
-];
+	var schoolsData = [
+		{schoolid: 1, schoolname: 'Northern School', regionid: 'north'},
+		{schoolid: 2, schoolname: 'Southern School', regionid: 'south'},
+		{schoolid: 3, schoolname: 'Eastern School', regionid: 'east'},
+		{schoolid: 4, schoolname: 'Western School', regionid: 'west'},
+	];
 
-var schoolsData = [
-	{schoolid:1, schoolname: 'Northern School', regionid:'north'},
-	{schoolid:2, schoolname: 'Southern School', regionid:'south'},
-	{schoolid:3, schoolname: 'Eastern School', regionid:'east'},
-	{schoolid:4, schoolname: 'Western School', regionid:'west'},
-];
+	describe('Test211: webworker test', function() {
+		describe('Init test', function() {
+			it('1. Run worker', function(done) {
+				alasql.worker();
+				assert(!!alasql.webworker);
+				done();
+			});
+		});
 
-
-describe("Test211: webworker test",function(){
-
-describe('Init test', function(){
-	it("1. Run worker", function(done){
-		alasql.worker();
-		assert(!!alasql.webworker);
-		done();
-	});
-});
-
-describe('Database with columns', function(){
-	it("2. Create database A and tables with columns ", function(done){
-		alasql('CREATE DATABASE test211a;\
+		describe('Database with columns', function() {
+			it('2. Create database A and tables with columns ', function(done) {
+				alasql(
+					'CREATE DATABASE test211a;\
 			USE test211a;\
 			\
 			CREATE TABLE students (\
@@ -67,55 +100,68 @@ describe('Database with columns', function(){
 				regionid INT\
 			); \
 			SELECT * INTO schools FROM ?',
-			[studentsData, coursesData, schoolsData],function(res){
-				assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
-				done();
-		});
-	});
-
-	it('3. COUNT', function(done){
-	 	alasql('SELECT courseid, COUNT(*) AS cnt '+
-	 		' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',[],function(res){
-	 		assert.deepEqual(res, [ 
-	 		{ courseid: 1, cnt: 1 },
-			{ courseid: 2, cnt: 2 },
-			{ courseid: 3, cnt: 1 },
-			{ courseid: 4, cnt: 1 },
-			{ courseid: 5, cnt: 1 } ]);
-	 		done();
-	 	});
-	});
-	it('4. LEFT JOIN ON ', function(done){
-		alasql('SELECT * '+
-			' FROM students '+
-			' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
-			' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
-			' GROUP BY students.schools, students.courseid, students.studentname',[],function(res){
-				assert.equal(res[4].studentname,'Astrid Carlson');
-				done();
+					[studentsData, coursesData, schoolsData],
+					function(res) {
+						assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
+						done();
+					}
+				);
 			});
-	});
-	it('5. LEFT JOIN', function(done){
-		alasql('SELECT COLUMN students.schoolid '+
-			' FROM students '+
-			' LEFT JOIN courses USING courseid',
-			[], function(res){
-			assert.deepEqual([1,1,1,2,1], res);
-			done();
-		});
-	});
-	it('6. VALUE', function(done){
-		alasql('SELECT VALUE COUNT(*) FROM courses, students',[],function(res){
-			assert.equal(25,res);
-			done();
-		});
-	});
 
-});
-describe('Database without columns', function(){
-
-	it("7. Create database B and tables without columns", function(done){
-		alasql('CREATE DATABASE test211b;\
+			it('3. COUNT', function(done) {
+				alasql(
+					'SELECT courseid, COUNT(*) AS cnt ' +
+						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
+					[],
+					function(res) {
+						assert.deepEqual(res, [
+							{courseid: 1, cnt: 1},
+							{courseid: 2, cnt: 2},
+							{courseid: 3, cnt: 1},
+							{courseid: 4, cnt: 1},
+							{courseid: 5, cnt: 1},
+						]);
+						done();
+					}
+				);
+			});
+			it('4. LEFT JOIN ON ', function(done) {
+				alasql(
+					'SELECT * ' +
+						' FROM students ' +
+						' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid' +
+						' LEFT JOIN schools ON students.schoolid = schools.schoolid ' +
+						' GROUP BY students.schools, students.courseid, students.studentname',
+					[],
+					function(res) {
+						assert.equal(res[4].studentname, 'Astrid Carlson');
+						done();
+					}
+				);
+			});
+			it('5. LEFT JOIN', function(done) {
+				alasql(
+					'SELECT COLUMN students.schoolid ' +
+						' FROM students ' +
+						' LEFT JOIN courses USING courseid',
+					[],
+					function(res) {
+						assert.deepEqual([1, 1, 1, 2, 1], res);
+						done();
+					}
+				);
+			});
+			it('6. VALUE', function(done) {
+				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function(res) {
+					assert.equal(25, res);
+					done();
+				});
+			});
+		});
+		describe('Database without columns', function() {
+			it('7. Create database B and tables without columns', function(done) {
+				alasql(
+					'CREATE DATABASE test211b;\
 			USE test211b;\
 			\
 			CREATE TABLE students; \
@@ -126,67 +172,79 @@ describe('Database without columns', function(){
 			\
 			CREATE TABLE schools; \
 			SELECT * INTO schools FROM ?',
-			[studentsData, coursesData, schoolsData],function(res){
-				assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
-				done();
-		});
-	});
-	it('3. COUNT', function(done){
-	 	alasql('SELECT courseid, COUNT(*) AS cnt '+
-	 		' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',[],function(res){
-	 		assert.deepEqual(res, [ 
-	 		{ courseid: 1, cnt: 1 },
-			{ courseid: 2, cnt: 2 },
-			{ courseid: 3, cnt: 1 },
-			{ courseid: 4, cnt: 1 },
-			{ courseid: 5, cnt: 1 } ]);
-	 		done();
-	 	});
-	});
-	it('4. LEFT JOIN ON ', function(done){
-		alasql('SELECT * '+
-			' FROM students '+
-			' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
-			' LEFT JOIN schools ON students.schoolid = schools.schoolid '+
-			' GROUP BY students.schools, students.courseid, students.studentname',[],function(res){
-				assert.equal(res[4].studentname,'Astrid Carlson');
-				done();
+					[studentsData, coursesData, schoolsData],
+					function(res) {
+						assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
+						done();
+					}
+				);
 			});
-	});
-	it('5. LEFT JOIN', function(done){
-		alasql('SELECT COLUMN students.schoolid '+
-			' FROM students '+
-			' LEFT JOIN courses USING courseid',
-			[], function(res){
-			assert.deepEqual([1,1,1,2,1], res);
-			done();
+			it('3. COUNT', function(done) {
+				alasql(
+					'SELECT courseid, COUNT(*) AS cnt ' +
+						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
+					[],
+					function(res) {
+						assert.deepEqual(res, [
+							{courseid: 1, cnt: 1},
+							{courseid: 2, cnt: 2},
+							{courseid: 3, cnt: 1},
+							{courseid: 4, cnt: 1},
+							{courseid: 5, cnt: 1},
+						]);
+						done();
+					}
+				);
+			});
+			it('4. LEFT JOIN ON ', function(done) {
+				alasql(
+					'SELECT * ' +
+						' FROM students ' +
+						' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid' +
+						' LEFT JOIN schools ON students.schoolid = schools.schoolid ' +
+						' GROUP BY students.schools, students.courseid, students.studentname',
+					[],
+					function(res) {
+						assert.equal(res[4].studentname, 'Astrid Carlson');
+						done();
+					}
+				);
+			});
+			it('5. LEFT JOIN', function(done) {
+				alasql(
+					'SELECT COLUMN students.schoolid ' +
+						' FROM students ' +
+						' LEFT JOIN courses USING courseid',
+					[],
+					function(res) {
+						assert.deepEqual([1, 1, 1, 2, 1], res);
+						done();
+					}
+				);
+			});
+			it('6. VALUE', function(done) {
+				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function(res) {
+					assert.equal(25, res);
+					done();
+				});
+			});
+		});
+		describe('Drop databases', function() {
+			it('Select 99: queryValue', function(done) {
+				alasql('DROP DATABASE test211a; DROP DATABASE test211b', [], function() {
+					alasql.worker(false);
+					assert(!alasql.webworker);
+					done();
+				});
+			});
 		});
 	});
-	it('6. VALUE', function(done){
-		alasql('SELECT VALUE COUNT(*) FROM courses, students',[],function(res){
-			assert.equal(25,res);
-			done();
-		});
-	});
-});
-describe('Drop databases', function(){
-	it('Select 99: queryValue', function(done){
-		alasql('DROP DATABASE test211a; DROP DATABASE test211b',[],function(){
-			alasql.worker(false);
-			assert(!alasql.webworker);
-			done();
-		});
-	});	
-});
-});
-
-};
+}
 
 //	alasql('create database test01');
 //	alasql('use test01');
 
-
-	// if(!defined) {
+// if(!defined) {
 
 /*
 	// } else {

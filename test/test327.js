@@ -1,33 +1,32 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
-
+}
 
 describe('Test 327 FOREIGN KEYS', function() {
+	it.skip('1. CREATE DATABASE', function(done) {
+		alasql('CREATE DATABASE test327; USE test327');
+		done();
+	});
 
-  it.skip('1. CREATE DATABASE',function(done){
-    alasql('CREATE DATABASE test327; USE test327');
-    done();
-  });
-
-  it.skip('2. CREATE TABLES Parts',function(done){
-
-    alasql(function(){/*
+	it.skip('2. CREATE TABLES Parts', function(done) {
+		alasql(function() {
+			/*
       CREATE TABLE dbo.Parts
       (
         partid   INT         NOT NULL PRIMARY KEY,
         partname VARCHAR(25) NOT NULL
       );
-    */});
-    done();
-  });
+    */
+		});
+		done();
+	});
 
-  it.skip('3. INSERT VALUES INTO Parts',function(done){
-
-    alasql(function(){/*
+	it.skip('3. INSERT VALUES INTO Parts', function(done) {
+		alasql(function() {
+			/*
       INSERT INTO dbo.Parts(partid, partname) VALUES
         ( 1, 'Black Tea'      ),
         ( 2, 'White Tea'      ),
@@ -46,13 +45,15 @@ describe('Test 327 FOREIGN KEYS', function() {
         (15, 'Sugar Bag'      ),
         (16, 'Ground Coffee'  ),
         (17, 'Coffee Beans'   );
-    */});
-    done();
-  });
+    */
+		});
+		done();
+	});
 
-  it.skip('4. CREATE TABLE BOM',function(done){
-if(false) {
-    alasql(function(){/*
+	it.skip('4. CREATE TABLE BOM', function(done) {
+		if (false) {
+			alasql(function() {
+				/*
       CREATE TABLE dbo.BOM
       (
         partid     INT           NOT NULL REFERENCES dbo.Parts,
@@ -62,9 +63,11 @@ if(false) {
         UNIQUE(partid, assemblyid),
         CHECK (partid <> assemblyid)
       );
-    */});
-}
-    alasql(function(){/*
+    */
+			});
+		}
+		alasql(function() {
+			/*
       CREATE TABLE dbo.BOM
       (
         partid     INT           NOT NULL,
@@ -76,14 +79,15 @@ if(false) {
         FOREIGN KEY (partid) REFERENCES dbo.Parts,
         CONSTRAINT assembly_fk FOREIGN KEY (assemblyid) REFERENCES dbo.Parts (partid)
       );
-    */});
+    */
+		});
 
-    done();
-  });
+		done();
+	});
 
-  it.skip('5. INSERT VALUES INTO BOM',function(done){
-
-    alasql(function(){/*
+	it.skip('5. INSERT VALUES INTO BOM', function(done) {
+		alasql(function() {
+			/*
       INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES
         ( 1, NULL, 'EA',   1.00),
         ( 2, NULL, 'EA',   1.00),
@@ -112,47 +116,53 @@ if(false) {
         (14,   12, 'mL',  20.00),
         (16,   12, 'g' ,  15.00),
         (17,   16, 'g' ,  15.00);
-      */});
-    done();
-  });
+      */
+		});
+		done();
+	});
 
-  it.skip('6. SELECT values from BOM',function(done){
-    var res = alasql("SELECT * FROM BOM WHERE assemblyid = 1");  
-    assert.deepEqual(res,
-      [ { partid: 6, assemblyid: 1, unit: 'EA', qty: 1 },
-        { partid: 7, assemblyid: 1, unit: 'EA', qty: 1 },
-        { partid: 10, assemblyid: 1, unit: 'EA', qty: 1 },
-        { partid: 14, assemblyid: 1, unit: 'mL', qty: 230 } ]
-    );
-//    console.log(res);
-    done();
-  });
+	it.skip('6. SELECT values from BOM', function(done) {
+		var res = alasql('SELECT * FROM BOM WHERE assemblyid = 1');
+		assert.deepEqual(res, [
+			{partid: 6, assemblyid: 1, unit: 'EA', qty: 1},
+			{partid: 7, assemblyid: 1, unit: 'EA', qty: 1},
+			{partid: 10, assemblyid: 1, unit: 'EA', qty: 1},
+			{partid: 14, assemblyid: 1, unit: 'mL', qty: 230},
+		]);
+		//    console.log(res);
+		done();
+	});
 
-      
-  it.skip('7. INSERT duplicated key',function(done){
-    assert.throws (function() {
-      alasql("INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
-          ( 1, NULL, 'EA',   1.00)");
-    },Error);
-    done();
-  });
+	it.skip('7. INSERT duplicated key', function(done) {
+		assert.throws(function() {
+			alasql(
+				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
+          ( 1, NULL, 'EA',   1.00)"
+			);
+		}, Error);
+		done();
+	});
 
-  it.skip('8. INSERT with wrong FOREIGN KEY',function(done){
-    assert.throws (function() {
-      alasql("INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
-          ( 1, 99, 'EA',   1.00)");
-    },Error);
-    done();
-  });
+	it.skip('8. INSERT with wrong FOREIGN KEY', function(done) {
+		assert.throws(function() {
+			alasql(
+				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
+          ( 1, 99, 'EA',   1.00)"
+			);
+		}, Error);
+		done();
+	});
 
-  it.skip('8. INSERT with right FOREIGN KEY',function(done){
-    var res = alasql("INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
-          ( 1, 2, 'EA',   1.00)");
-    assert(res == 1);
-    done();
-  });
+	it.skip('8. INSERT with right FOREIGN KEY', function(done) {
+		var res = alasql(
+			"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
+          ( 1, 2, 'EA',   1.00)"
+		);
+		assert(res == 1);
+		done();
+	});
 
-/*
+	/*
       
   it.skip('8. SELECT',function(done){
     var res = alasql("SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
@@ -169,10 +179,8 @@ if(false) {
   });
 
 */
-  it.skip('99. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test327');
-    done();
-  });
-
+	it.skip('99. DROP DATABASE', function(done) {
+		alasql('DROP DATABASE test327');
+		done();
+	});
 });
-

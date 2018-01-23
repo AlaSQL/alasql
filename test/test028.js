@@ -1,12 +1,11 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
 describe('Test 28', function() {
-	it('>= ANY', function(done){
-
-	var db = new alasql.Database("db");
+	it('>= ANY', function(done) {
+		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
 		db.exec('INSERT INTO test1 VALUES (2,2)');
@@ -21,7 +20,6 @@ describe('Test 28', function() {
 		db.exec('INSERT INTO test2 VALUES (3,30)');
 		db.exec('INSERT INTO test2 VALUES (4,30)');
 
-
 		db.exec('CREATE TABLE test3 (a int, b int)');
 		db.exec('INSERT INTO test3 VALUES (3,10)');
 		db.exec('INSERT INTO test3 VALUES (4,20)');
@@ -30,18 +28,17 @@ describe('Test 28', function() {
 
 		var sql = 'SELECT COLUMN a FROM test1 WHERE a > ALL (SELECT a FROM test2)';
 		var res = db.exec(sql);
-		assert.deepEqual([ 5, 6], res);
-
+		assert.deepEqual([5, 6], res);
 
 		var sql = 'SELECT COLUMN a FROM test2 WHERE a = ANY (array[1,2])';
 		var res = db.exec(sql);
 
-		assert.deepEqual([ 1,2 ], res);
+		assert.deepEqual([1, 2], res);
 
 		var sql = 'SELECT COLUMN a FROM test2 WHERE a >= ANY (SELECT a FROM test3)';
 		var res = db.exec(sql);
 
-		assert.deepEqual([ 3,4 ], res);
+		assert.deepEqual([3, 4], res);
 		done();
 	});
 });

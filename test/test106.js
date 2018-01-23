@@ -3,13 +3,12 @@
 // Test for select
 //
 
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
-
-describe('Test 06 - Callback', function(){
+describe('Test 06 - Callback', function() {
 	it('exec(sql, callback)', function(done) {
 		alasql('create database test06; use test06');
 		alasql('CREATE TABLE test (a INT, b INT)');
@@ -17,11 +16,7 @@ describe('Test 06 - Callback', function(){
 		alasql('SELECT * FROM test', [], function(res) {
 			assert(res[0].a == 1);
 			alasql('drop database test06');
-			done();		
+			done();
 		});
-
 	});
-
 });
-
-
