@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.4-develop-1570 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.4-develop-1572 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.4-develop-1570
+@version 0.4.4-develop-1572
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -138,7 +138,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.4-develop-1570';
+alasql.version = '0.4.4-develop-1572';
 
 /**
 	Debug flag
@@ -7689,32 +7689,34 @@ yy.Select.prototype.toString = function() {
 				.join(',');
 	}
 	if (this.joins) {
-		s += this.joins.map(function(jn) {
-			var ss;
-			ss = ' ';
-			if (jn.joinmode) {
-				ss += jn.joinmode + ' ';
-			}
-			if (jn.table) {
-				ss += 'JOIN ' + jn.table.toString();
-			} else if (jn.select) {
-				ss += 'JOIN (' + jn.select.toString() + ')';
-			} else if (jn instanceof alasql.yy.Apply) {
-				ss += jn.toString();
-			} else {
-				throw new Error('Wrong type in JOIN mode');
-			}
-			if (jn.as) {
-				ss += ' AS ' + jn.as;
-			}
-			if (jn.using) {
-				ss += ' USING ' + jn.using.toString();
-			}
-			if (jn.on) {
-				ss += ' ON ' + jn.on.toString();
-			}
-			return ss;
-		});
+		s += this.joins
+			.map(function(jn) {
+				var ss;
+				ss = ' ';
+				if (jn.joinmode) {
+					ss += jn.joinmode + ' ';
+				}
+				if (jn.table) {
+					ss += 'JOIN ' + jn.table.toString();
+				} else if (jn.select) {
+					ss += 'JOIN (' + jn.select.toString() + ')';
+				} else if (jn instanceof alasql.yy.Apply) {
+					ss += jn.toString();
+				} else {
+					throw new Error('Wrong type in JOIN mode');
+				}
+				if (jn.as) {
+					ss += ' AS ' + jn.as;
+				}
+				if (jn.using) {
+					ss += ' USING ' + jn.using.toString();
+				}
+				if (jn.on) {
+					ss += ' ON ' + jn.on.toString();
+				}
+				return ss;
+			})
+			.join('');
 	}
 	if (this.where) {
 		s += ' WHERE ' + this.where.toString();

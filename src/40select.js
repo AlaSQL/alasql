@@ -57,32 +57,34 @@ yy.Select.prototype.toString = function() {
 				.join(',');
 	}
 	if (this.joins) {
-		s += this.joins.map(function(jn) {
-			var ss;
-			ss = ' ';
-			if (jn.joinmode) {
-				ss += jn.joinmode + ' ';
-			}
-			if (jn.table) {
-				ss += 'JOIN ' + jn.table.toString();
-			} else if (jn.select) {
-				ss += 'JOIN (' + jn.select.toString() + ')';
-			} else if (jn instanceof alasql.yy.Apply) {
-				ss += jn.toString();
-			} else {
-				throw new Error('Wrong type in JOIN mode');
-			}
-			if (jn.as) {
-				ss += ' AS ' + jn.as;
-			}
-			if (jn.using) {
-				ss += ' USING ' + jn.using.toString();
-			}
-			if (jn.on) {
-				ss += ' ON ' + jn.on.toString();
-			}
-			return ss;
-		});
+		s += this.joins
+			.map(function(jn) {
+				var ss;
+				ss = ' ';
+				if (jn.joinmode) {
+					ss += jn.joinmode + ' ';
+				}
+				if (jn.table) {
+					ss += 'JOIN ' + jn.table.toString();
+				} else if (jn.select) {
+					ss += 'JOIN (' + jn.select.toString() + ')';
+				} else if (jn instanceof alasql.yy.Apply) {
+					ss += jn.toString();
+				} else {
+					throw new Error('Wrong type in JOIN mode');
+				}
+				if (jn.as) {
+					ss += ' AS ' + jn.as;
+				}
+				if (jn.using) {
+					ss += ' USING ' + jn.using.toString();
+				}
+				if (jn.on) {
+					ss += ' ON ' + jn.on.toString();
+				}
+				return ss;
+			})
+			.join('');
 	}
 	if (this.where) {
 		s += ' WHERE ' + this.where.toString();
