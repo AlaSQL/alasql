@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.4-develop-1567 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.4-develop-1570 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.4-develop-1567
+@version 0.4.4-develop-1570
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -127,7 +127,8 @@ var alasql = function(sql, params, cb, scope) {
 		sql = sql.textContent;
 	} else if(typeof sql === 'function') {
 		// to run multiline functions
-		sql = sql.toString().slice(14,-3);
+		sql = sql.toString();
+		sql = (/\/\*([\S\s]+)\*\//m.exec(sql) || ['','Function given as SQL. Plese Provide SQL string or have a /* ... */ syle comment with SQL in the function.'])[1];	
 	}
 	// Run SQL			
 	return alasql.exec(sql, params, cb, scope);
@@ -137,7 +138,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.4-develop-1567';
+alasql.version = '0.4.4-develop-1570';
 
 /**
 	Debug flag
