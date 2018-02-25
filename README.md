@@ -695,7 +695,7 @@ The testruns can be found in the [testlog](TESTLOG.md).
 
 ## Bleeding edge
 
-If you want to try the most recent development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.fs.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/test/testbench.html) to play around in the browser console. 
+If you want to try the most recent development version of the library please download [this file](https://github.com/agershun/alasql/blob/develop/dist/alasql.fs.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console. 
 
 
 
