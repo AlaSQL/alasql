@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.5-develop-1576 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.5
+@version 0.4.5-develop-1576
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -138,7 +138,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.5';
+alasql.version = '0.4.5-develop-1576';
 
 /**
 	Debug flag
@@ -11907,11 +11907,13 @@ stdfn.CONCAT_WS = function() {
 
 // Aggregator for joining strings
 alasql.aggr.GROUP_CONCAT = function(v, s, stage) {
-	if (stage == 1) {
-		return v;
-	} else if (stage == 2) {
-		return s + ',' + v;
+	if (stage === 1) {
+		return '' + v;
+	} else if (stage === 2) {
+		s += ',' + v;
+		return s;
 	}
+	return s; //todo: add option to select delimitor
 };
 
 alasql.aggr.MEDIAN = function(v, s, stage) {
@@ -19151,7 +19153,7 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 				if (cb) res = cb(res);
 				return res;
 			} else {
-				throw new Error('Cannot create new database file, because it alreagy exists');
+				throw new Error('Cannot create new database file, because it already exists');
 			}
 		} else {
 			var data = {tables: {}};

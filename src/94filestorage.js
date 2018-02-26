@@ -39,7 +39,7 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 				if (cb) res = cb(res);
 				return res;
 			} else {
-				throw new Error('Cannot create new database file, because it alreagy exists');
+				throw new Error('Cannot create new database file, because it already exists');
 			}
 		} else {
 			var data = {tables: {}};
