@@ -5,7 +5,11 @@
 // (c) Andrey Gershun
 //
 
-var IDB = (alasql.engines.INDEXEDDB = function() {});
+/* global alasql, yy, utils*/
+
+var IDB = (alasql.engines.INDEXEDDB = function() {
+	'';
+});
 
 if (utils.hasIndexedDB) {
 	// For Chrome it work normally, for Firefox - simple shim
@@ -58,7 +62,7 @@ IDB.showDatabases = function(like, cb) {
 };
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb) {
-	console.log(arguments);
+	// console.log(arguments);
 	var indexedDB = utils.global.indexedDB;
 	if (ifnotexists) {
 		var request2 = indexedDB.open(ixdbid, 1);
@@ -69,11 +73,11 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb) {
 	} else {
 		var request1 = indexedDB.open(ixdbid, 1);
 		request1.onupgradeneeded = function(e) {
-			console.log('abort');
+			// console.log('abort');
 			e.target.transaction.abort();
 		};
 		request1.onsuccess = function(e) {
-			console.log('success');
+			// console.log('success');
 			if (ifnotexists) {
 				if (cb) cb(0);
 			} else {
@@ -241,8 +245,8 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 	//	console.log(ixdbid);
 	var request1 = IDB.getDatabaseNames();
-	request1.onsuccess = function(event) {
-		var dblist = event.target.result;
+	request1.onsuccess = function(event__) {
+		var dblist = event__.target.result;
 		if (!dblist.contains(ixdbid)) {
 			throw new Error(
 				'IndexedDB: Cannot create table in database "' +
@@ -251,13 +255,13 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 			);
 		}
 		var request2 = indexedDB.open(ixdbid);
-		request2.onversionchange = function(event) {
+		request2.onversionchange = function(event_) {
 			//			console.log('onversionchange');
-			event.target.result.close();
+			event_.target.result.close();
 		};
-		request2.onsuccess = function(event) {
-			var version = event.target.result.version;
-			event.target.result.close();
+		request2.onsuccess = function(event_) {
+			var version = event_.target.result.version;
+			event_.target.result.close();
 
 			var request3 = indexedDB.open(ixdbid, version + 1);
 			request3.onupgradeneeded = function(event) {

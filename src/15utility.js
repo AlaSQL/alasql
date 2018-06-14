@@ -689,7 +689,7 @@ var saveFile = (utils.saveFile = function(path, data, cb, opts) {
 					if (cb) res = cb(res);
 				})
 				.catch(function(err) {
-					console.log(err.message);
+					console.error(err.message);
 				});
 		} else if (utils.isCordova) {
 			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {

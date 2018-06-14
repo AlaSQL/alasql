@@ -111,7 +111,7 @@ FS.showDatabases = function(like, cb) {
 		var relike = new RegExp(like.value.replace(/\%/g,'.*'),'g');
 	}
 	if(ls && ls.databases) {
-		for(dbid in ls.databases) {
+		for(var dbid in ls.databases) {
 			res.push({databaseid: dbid});
 		};
 		if(like && res && res.length > 0) {

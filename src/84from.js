@@ -10,6 +10,8 @@
    Meteor
 */
 
+/* global alasql Tabletop document Event */
+
 alasql.from.METEOR = function(filename, opts, cb, idx, query) {
 	var res = filename.find(opts).fetch();
 	if (cb) {
@@ -69,7 +71,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	for (var j = 0; j < trs.length; j++) {
 		var tds = trs.item(j).children;
 		var r = {};
-		for (var i = 0; i < tds.length; i++) {
+		for (i = 0; i < tds.length; i++) {
 			if (
 				!(tds.item(i).style && tds.item(i).style.display === 'none' && opt.skipdisplaynone)
 			) {
@@ -156,6 +158,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 		for (var i = 0, ilen = res.length; i < ilen; i++) {
 			// Please avoid '===' here
 			if (res[i] == +res[i]) {
+				// eslint:ignore
 				// jshint ignore:line
 				res[i] = +res[i];
 			}

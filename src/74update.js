@@ -6,6 +6,8 @@
 //
 */
 
+/* global yy alasql */
+
 yy.Update = function(params) {
 	return yy.extend(this, params);
 };
@@ -44,6 +46,7 @@ yy.Update.prototype.compile = function(databaseid) {
 			});
 		}
 
+		// console.log(73625, this.where.toJS('r', ''));
 		var wherefn = new Function(
 			'r,params,alasql',
 			'var y;return ' + this.where.toJS('r', '')
@@ -56,6 +59,7 @@ yy.Update.prototype.compile = function(databaseid) {
 	this.columns.forEach(function(col) {
 		s += "r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
 	});
+	// console.log(423623, s);
 	var assignfn = new Function('r,params,alasql', 'var y;' + s);
 
 	var statement = function(params, cb) {

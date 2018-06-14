@@ -178,7 +178,7 @@ function queryfn3(query) {
 					"'],3);";
 				//				gfns += 'return g[\''+col.nick+'\];';
 			});
-			//			console.log(175,gfns);
+			// console.log(175, gfns);
 			var gfn = new Function('g,params,alasql', 'var y;' + gfns);
 		}
 

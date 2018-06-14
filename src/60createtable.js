@@ -6,6 +6,8 @@
 //
 */
 
+/* global alasql, yy, hash */
+
 yy.ColumnDef = function(params) {
 	return yy.extend(this, params);
 };
@@ -307,8 +309,9 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 				return true;
 			};
 		}
-		if (checkfn)
+		if (checkfn) {
 			table.checks.push({fn: checkfn, id: con.constraintid, fk: con.type === 'FOREIGN KEY'});
+		}
 	});
 
 	if (this.view && this.viewcolumns) {
@@ -374,9 +377,9 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 
 		// Trigger prevent functionality
 		var escape = false;
-		for (var tr in table.insteadofinsert) {
+		for (tr in table.insteadofinsert) {
 			escape = true;
-			var trigger = table.insteadofinsert[tr];
+			trigger = table.insteadofinsert[tr];
 			if (trigger) {
 				if (trigger.funcid) {
 					alasql.fn[trigger.funcid](r);

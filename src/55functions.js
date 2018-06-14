@@ -261,7 +261,7 @@ stdlib.UPPER = stdlib.UCASE = function(s) {
 
 // Concatination of strings
 stdfn.CONCAT_WS = function() {
-	args = Array.prototype.slice.call(arguments);
+	var args = Array.prototype.slice.call(arguments);
 	return args.slice(1, args.length).join(args[0]);
 };
 
@@ -283,7 +283,7 @@ alasql.aggr.GROUP_CONCAT = function(v, s, stage) {
 		s += ',' + v;
 		return s;
 	}
-	return s; 
+	return s;
 };
 
 alasql.aggr.MEDIAN = function(v, s, stage) {

@@ -12,7 +12,9 @@
 	@todo Remove unused code
  */
 
-alasql.utils.uncomment = function uncomment(str) {
+/* global alasql */
+
+alasql.utils.uncomment = function(str) {
 	// Add some padding so we can always look ahead and behind by two chars
 	str = ('__' + str + '__').split('');
 	var quote = false,

@@ -47,7 +47,7 @@ yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
 			});
 		}
 
-		//		console.log(this.expression.toJS('','', null));
+		// console.log(547654756, this.expression.toJS('', '', null));
 		var res = new Function(
 			'params,alasql',
 			'return ' + this.expression.toJS('({})', '', null)
@@ -76,7 +76,7 @@ yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
 					}
 				})
 				.join();
-			//				console.log(fs);
+			// console.log(65764765, fs);
 			new Function('value,params,alasql', 'var y;' + fs + '=value')(res, params, alasql);
 		} else {
 			if (this.method == '@') {
