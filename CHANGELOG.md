@@ -1,9 +1,14 @@
 # Changelog
 
 
-_0.4.5 "????" (xx.02.2018)_
+_0.4.6 "Tarim" (xx.07.2018)_
 
 * ...
+
+
+## 0.4.6 "Rahbah" (14.06.2018)
+
+* Better: `Use strict` mode for javascript 
 
 
 ## 0.4.5 "Marib" (24.01.2018)
