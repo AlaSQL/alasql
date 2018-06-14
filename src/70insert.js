@@ -6,6 +6,7 @@
 //
 */
 
+/* global yy alasql*/
 yy.Insert = function(params) {
 	return yy.extend(this, params);
 };

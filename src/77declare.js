@@ -50,7 +50,7 @@ yy.Declare.prototype.execute = function(databaseid, params, cb) {
 
 			// Set value
 			if (declare.expression) {
-				//		console.log(this.expression.toJS('','', null));
+				// console.log(7547654, declare.expression.toJS('', '', null));
 				alasql.vars[declare.variable] = new Function(
 					'params,alasql',
 					'return ' + declare.expression.toJS('({})', '', null)

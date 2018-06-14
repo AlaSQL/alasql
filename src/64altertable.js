@@ -5,6 +5,7 @@
 // (c) 2014, Andrey Gershun
 //
 */
+/* global alasql yy */
 
 // ALTER TABLE table1 RENAME TO table2
 yy.AlterTable = function(params) {
@@ -32,7 +33,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 					newtableid +
 					"', because the table with this name already exists"
 			);
-		} else if (newtableid == oldtableid) {
+		} else if (newtableid === oldtableid) {
 			throw new Error("Can not rename a table '" + oldtableid + "' to itself");
 		} else {
 			db.tables[newtableid] = db.tables[oldtableid];
@@ -42,7 +43,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 		if (cb) cb(res);
 		return res;
 	} else if (this.addcolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
+		db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
@@ -95,7 +96,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 			);
 		}
 
-		var col = table.xcolumns[columnid];
+		col = table.xcolumns[columnid];
 		col.dbtypeid = this.dbtypeid;
 		col.dbsize = this.dbsize;
 		col.dbprecision = this.dbprecision;
@@ -171,7 +172,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 
 		delete table.xcolumns[columnid];
 
-		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
+		for (i = 0, ilen = table.data.length; i < ilen; i++) {
 			delete table.data[i][columnid];
 		}
 		return cb ? cb(table.data.length) : table.data.length;

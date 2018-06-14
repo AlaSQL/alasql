@@ -178,7 +178,7 @@ function queryfn3(query) {
 					"'],3);";
 				//				gfns += 'return g[\''+col.nick+'\];';
 			});
-			//			console.log(175,gfns);
+			// console.log(175, gfns);
 			var gfn = new Function('g,params,alasql', 'var y;' + gfns);
 		}
 
@@ -421,7 +421,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = ((query.data.length * query.limit / 100) | 0) + offset;
+			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}

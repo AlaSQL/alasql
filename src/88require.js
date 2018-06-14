@@ -6,6 +6,8 @@
 //
 */
 
+/* global alasql, yy */
+
 yy.Require = function(params) {
 	return yy.extend(this, params);
 };
@@ -45,7 +47,7 @@ yy.Require.prototype.execute = function(databaseid, params, cb) {
 				ss += data;
 				if (res < self.paths.length) return;
 
-				//				console.log(ss);
+				// console.log(76466, ss);
 				new Function('params,alasql', ss)(params, alasql);
 				if (cb) res = cb(res);
 			});
@@ -61,7 +63,7 @@ yy.Require.prototype.execute = function(databaseid, params, cb) {
 					res++;
 					ss += data;
 					if (res < self.plugins.length) return;
-
+					// console.log(346346, ss);
 					new Function('params,alasql', ss)(params, alasql);
 					alasql.plugins[plugin] = true; // Plugin is loaded
 					if (cb) res = cb(res);

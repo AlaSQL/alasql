@@ -6,6 +6,8 @@
 //
 */
 
+/* global alasql, yy */
+
 yy.Merge = function(params) {
 	return yy.extend(this, params);
 };

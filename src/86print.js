@@ -6,11 +6,15 @@
 //
 */
 
+/* globals: alasql, yy */
+
 /**
 	Print statement 
 	@class
 	@param {object} params Initial setup properties
 */
+
+/* global alasql, yy */
 
 yy.Print = function(params) {
 	return yy.extend(this, params);
@@ -42,7 +46,7 @@ yy.Print.prototype.execute = function(databaseid, params, cb) {
 
 	if (this.exprs && this.exprs.length > 0) {
 		var rs = this.exprs.map(function(expr) {
-			//			console.log('var y;return '+expr.toJS('({})','', null));
+			// console.log(48748747654, 'var y;return ' + expr.toJS('({})', '', null));
 			var exprfn = new Function(
 				'params,alasql,p',
 				'var y;return ' + expr.toJS('({})', '', null)

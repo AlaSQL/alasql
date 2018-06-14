@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.5 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.6 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.5
+@version 0.4.6
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -9,7 +9,7 @@ AlaSQL - JavaScript SQL database
 @license
 The MIT License (MIT)
 
-Copyright 2014-2016 Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk) 
+Copyright 2014-2016 Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -29,6 +29,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
+
+/* eslint-disable */
+
+"use strict";
 
 /**
 	@fileoverview AlaSQL JavaScript SQL library
@@ -138,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.5';
+alasql.version = '0.4.6';
 
 /**
 	Debug flag
@@ -625,7 +629,7 @@ case 189: case 190: case 194: case 197:
  this.$ = $$[$0]; $$[$0].as = 'default'; 
 break;
 case 193:
- this.$ = {inserted:true}; $$[$0].as = 'default'; 
+ this.$ = {inserted:true}; /*$$[$0].as = 'default'*/; 
 break;
 case 200:
 
@@ -3812,7 +3816,7 @@ var saveFile = (utils.saveFile = function(path, data, cb, opts) {
 					if (cb) res = cb(res);
 				})
 				.catch(function(err) {
-					console.log(err.message);
+					console.error(err.message);
 				});
 		} else if (utils.isCordova) {
 			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
@@ -4143,13 +4147,13 @@ if (!Array.isArray) {
 */
 
 var xlsnc = (utils.xlsnc = function(i) {
-	var addr = String.fromCharCode(65 + i % 26);
+	var addr = String.fromCharCode(65 + (i % 26));
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + i % 26) + addr;
+		addr = String.fromCharCode(65 + (i % 26)) + addr;
 		if (i > 26) {
 			i = ((i / 26) | 0) - 1;
-			addr = String.fromCharCode(65 + i % 26) + addr;
+			addr = String.fromCharCode(65 + (i % 26)) + addr;
 		}
 	}
 	return addr;
@@ -4324,7 +4328,9 @@ alasql.path = alasql.utils.findAlaSQLPath();
 	@todo Remove unused code
  */
 
-alasql.utils.uncomment = function uncomment(str) {
+/* global alasql */
+
+alasql.utils.uncomment = function(str) {
 	// Add some padding so we can always look ahead and behind by two chars
 	str = ('__' + str + '__').split('');
 	var quote = false,
@@ -4478,10 +4484,15 @@ alasql.options.cache = true;
 
 // Compatibility flags
 alasql.options.tsql = true;
+
 alasql.options.mysql = true;
+
 alasql.options.postgres = true;
+
 alasql.options.oracle = true;
+
 alasql.options.sqlite = true;
+
 alasql.options.orientdb = true;
 
 // for SET NOCOUNT OFF
@@ -4493,8 +4504,10 @@ alasql.options.nan = false;
 alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
 
 //alasql.options.worker = false;
+
 // Variables
 alasql.vars = {};
+
 alasql.declares = {};
 
 alasql.prompthistory = [];
@@ -4502,9 +4515,11 @@ alasql.prompthistory = [];
 alasql.plugins = {}; // If plugin already loaded
 
 alasql.from = {}; // FROM functions
+
 alasql.into = {}; // INTO functions
 
 alasql.fn = {};
+
 alasql.aggr = {};
 
 alasql.busy = 0;
@@ -4515,6 +4530,7 @@ alasql.DEFAULTDATABASEID = 'alasql';
 
 /* WebWorker */
 alasql.lastid = 0;
+
 alasql.buffer = {};
 
 /**
@@ -4917,14 +4933,18 @@ if (!utils.global.Promise) {
 								function(e) {
 									j(t, e);
 								}
-							);
+						  );
 			}
 			function w(t, n, r) {
 				n.constructor === t.constructor && r === et && constructor.resolve === nt
 					? b(t, n)
 					: r === ut
 						? j(t, ut.error)
-						: void 0 === r ? S(t, n) : e(r) ? m(t, n, r) : S(t, n);
+						: void 0 === r
+							? S(t, n)
+							: e(r)
+								? m(t, n, r)
+								: S(t, n);
 			}
 			function g(e, n) {
 				e === n ? j(e, _()) : t(n) ? w(e, n, v(n)) : S(e, n);
@@ -5014,10 +5034,10 @@ if (!utils.global.Promise) {
 						? function(n, r) {
 								for (var o = t.length, i = 0; o > i; i++)
 									e.resolve(t[i]).then(n, r);
-							}
+						  }
 						: function(t, e) {
 								e(new TypeError('You must pass an array to race.'));
-							}
+						  }
 				);
 			}
 			function F(t) {
@@ -5048,14 +5068,14 @@ if (!utils.global.Promise) {
 					this.promise[rt] || k(this.promise),
 					Array.isArray(e)
 						? ((this._input = e),
-							(this.length = e.length),
-							(this._remaining = e.length),
-							(this._result = new Array(this.length)),
-							0 === this.length
+						  (this.length = e.length),
+						  (this._remaining = e.length),
+						  (this._result = new Array(this.length)),
+						  0 === this.length
 								? S(this.promise, this._result)
 								: ((this.length = this.length || 0),
-									this._enumerate(),
-									0 === this._remaining && S(this.promise, this._result)))
+								  this._enumerate(),
+								  0 === this._remaining && S(this.promise, this._result)))
 						: j(this.promise, U());
 			}
 			function U() {
@@ -5084,7 +5104,7 @@ if (!utils.global.Promise) {
 				? Array.isArray
 				: function(t) {
 						return '[object Array]' === Object.prototype.toString.call(t);
-					};
+				  };
 			var B,
 				G,
 				H,
@@ -5107,7 +5127,13 @@ if (!utils.global.Promise) {
 				tt = new Array(1e3);
 			H = Z
 				? o()
-				: X ? s() : $ ? u() : void 0 === R && 'function' == typeof require ? f() : c();
+				: X
+					? s()
+					: $
+						? u()
+						: void 0 === R && 'function' == typeof require
+							? f()
+							: c();
 			var et = l,
 				nt = h,
 				rt = Math.random()
@@ -5185,7 +5211,7 @@ if (!utils.global.Promise) {
 			'function' == typeof define && define.amd
 				? define(function() {
 						return vt;
-					})
+				  })
 				: 'undefined' != typeof module && module.exports
 					? (module.exports = vt)
 					: 'undefined' != typeof this && (this.ES6Promise = vt),
@@ -6419,7 +6445,7 @@ alasql.srch.SHARP = function(val, args) {
 
 alasql.srch.PARENT = function(/*val,args,stope*/) {
 	// TODO: implement
-	console.log('PARENT not implemented', arguments);
+	console.error('PARENT not implemented', arguments);
 
 	return {status: -1, values: []};
 };
@@ -7203,7 +7229,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = ((query.data.length * query.limit / 100) | 0) + offset;
+			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}
@@ -7642,6 +7668,8 @@ function swapSources(query, h) {
 // Main part of SELECT procedure
 //
 
+/* global yy */
+
 yy.Select = function(params) {
 	return yy.extend(this, params);
 };
@@ -7983,9 +8011,11 @@ yy.Select.prototype.compile = function(databaseid, params) {
 
 		if (query.intofns) {
 			// Create intofn function
+
 			query.intofn = new Function('r,i,params,alasql', 'var y;' + query.intofns);
 		} else if (query.intoallfns) {
 			// Create intoallfn function
+
 			query.intoallfn = new Function('columns,cb,params,alasql', 'var y;' + query.intoallfns);
 		}
 	}
@@ -8241,6 +8271,8 @@ alasql.precompile = function(statement, databaseid, params) {
 //
 */
 
+/* global yy, alasql, Mongo, returnTrue */
+
 yy.Select.prototype.compileFrom = function(query) {
 
 	var self = this;
@@ -8253,6 +8285,8 @@ yy.Select.prototype.compileFrom = function(query) {
 	if (!self.from) return;
 
 	self.from.forEach(function(tq) {
+
+		var ps = '';
 
 		var alias = tq.as || tq.tableid;
 
@@ -8338,7 +8372,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			}
 		} else if (tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
-			if (typeof source.subquery.query.modifier == 'undefined') {
+			if (typeof source.subquery.query.modifier === 'undefined') {
 				source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
 			}
 			source.columns = source.subquery.query.columns;
@@ -8374,49 +8408,49 @@ yy.Select.prototype.compileFrom = function(query) {
 				return res;
 			};
 		} else if (tq instanceof yy.ParamValue) {
-			var ps = "var res = alasql.prepareFromData(params['" + tq.param + "']";
+			ps = "var res = alasql.prepareFromData(params['" + tq.param + "']";
 
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq.inserted) {
-			var ps = 'var res = alasql.prepareFromData(alasql.inserted';
+			ps = 'var res = alasql.prepareFromData(alasql.inserted';
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.Json) {
-			var ps = 'var res = alasql.prepareFromData(' + tq.toJS();
+			ps = 'var res = alasql.prepareFromData(' + tq.toJS();
 
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.VarValue) {
-			var ps = "var res = alasql.prepareFromData(alasql.vars['" + tq.variable + "']";
+			ps = "var res = alasql.prepareFromData(alasql.vars['" + tq.variable + "']";
 
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.FuncValue) {
-			var s = "var res=alasql.from['" + tq.funcid.toUpperCase() + "'](";
+			ps = "var res=alasql.from['" + tq.funcid.toUpperCase() + "'](";
 
 			if (tq.args && tq.args.length > 0) {
 				if (tq.args[0]) {
-					s += tq.args[0].toJS('query.oldscope') + ',';
+					ps += tq.args[0].toJS('query.oldscope') + ',';
 				} else {
-					s += 'null,';
+					ps += 'null,';
 				}
 				if (tq.args[1]) {
-					s += tq.args[1].toJS('query.oldscope') + ',';
+					ps += tq.args[1].toJS('query.oldscope') + ',';
 				} else {
-					s += 'null,';
+					ps += 'null,';
 				}
 			} else {
-				s += 'null,null,';
+				ps += 'null,null,';
 			}
-			s += 'cb,idx,query';
-			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
+			ps += 'cb,idx,query';
+			ps += ');/*if(cb)res=cb(res,idx,query);*/return res';
 
-			source.datafn = new Function('query, params, cb, idx, alasql', s);
+			source.datafn = new Function('query, params, cb, idx, alasql', ps);
 		} else if (tq instanceof yy.FromData) {
 			source.datafn = function(query, params, cb, idx, alasql) {
 				var res = tq.data;
@@ -8436,25 +8470,26 @@ yy.Select.prototype.compileFrom = function(query) {
 
 alasql.prepareFromData = function(data, array) {
 
+	var i, ilen;
 	var res = data;
-	if (typeof data == 'string') {
+	if (typeof data === 'string') {
 		res = data.split(/\r?\n/);
 		if (array) {
-			for (var i = 0, ilen = res.length; i < ilen; i++) {
+			for (i = 0, ilen = res.length; i < ilen; i++) {
 				res[i] = [res[i]];
 			}
 		}
 	} else if (array) {
 		res = [];
-		for (var i = 0, ilen = data.length; i < ilen; i++) {
+		for (i = 0, ilen = data.length; i < ilen; i++) {
 			res.push([data[i]]);
 		}
 
-	} else if (typeof data == 'object' && !Array.isArray(data)) {
+	} else if (typeof data === 'object' && !Array.isArray(data)) {
 		//	} else if(typeof data == 'object' && !(typeof data.length == 'undefined')) {
 		if (
-			typeof Mongo != 'undefined' &&
-			typeof Mongo.Collection != 'undefined' &&
+			typeof Mongo !== 'undefined' &&
+			typeof Mongo.Collection !== 'undefined' &&
 			data instanceof Mongo.Collection
 		) {
 			res = data.find().fetch();
@@ -8480,6 +8515,8 @@ alasql.prepareFromData = function(data, array) {
 
 // SELECT Compile functions
 
+/* global yy, alasql, returnTrue, arrayIntersect */
+
 // Compile JOIN caluese
 yy.Select.prototype.compileJoins = function(query) {
 
@@ -8488,16 +8525,14 @@ yy.Select.prototype.compileJoins = function(query) {
 
 	this.joins.forEach(function(jn) {
 		// Test CROSS-JOIN
-		if (jn.joinmode == 'CROSS') {
+		var tq, ps, source;
+		if (jn.joinmode === 'CROSS') {
 			if (jn.using || jn.on) {
 				throw new Error('CROSS JOIN cannot have USING or ON clauses');
 			} else {
-				jn.joinmode == 'INNER';
+				jn.joinmode = 'INNER';
 			}
 		}
-
-		var source;
-		var tq;
 
 		if (jn instanceof yy.Apply) {
 
@@ -8519,361 +8554,360 @@ yy.Select.prototype.compileJoins = function(query) {
 			};
 
 			query.sources.push(source);
-		} else {
-			if (jn.table) {
-				tq = jn.table;
-				source = {
-					alias: jn.as || tq.tableid,
-					databaseid: tq.databaseid || query.database.databaseid,
-					tableid: tq.tableid,
-					joinmode: jn.joinmode,
-					onmiddlefn: returnTrue,
-					srcwherefns: '', // for optimization
-					srcwherefn: returnTrue,
-					columns: [],
-				};
-				//
 
-				if (!alasql.databases[source.databaseid].tables[source.tableid]) {
-					throw new Error(
-						"Table '" +
-							source.tableid +
-							"' is not exists in database '" +
-							source.databaseid
-					) + "'";
-				}
+			return;
+		}
 
-				source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
+		if (jn.table) {
+			tq = jn.table;
+			source = {
+				alias: jn.as || tq.tableid,
+				databaseid: tq.databaseid || query.database.databaseid,
+				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '', // for optimization
+				srcwherefn: returnTrue,
+				columns: [],
+			};
+			//
 
-				// source.data = query.database.tables[source.tableid].data;
-				if (alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
+			if (!alasql.databases[source.databaseid].tables[source.tableid]) {
+				throw new Error(
+					"Table '" +
+						source.tableid +
+						"' is not exists in database '" +
+						source.databaseid +
+						"'"
+				);
+			}
 
-					source.datafn = function(query, params, cb, idx, alasql) {
+			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
 
-						return alasql.engines[
-							alasql.databases[source.databaseid].engineid
-						].fromTable(source.databaseid, source.tableid, cb, idx, query);
-					};
-				} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
-					source.datafn = function(query, params, cb, idx, alasql) {
-						var res = alasql.databases[source.databaseid].tables[source.tableid].select(
-							params
-						);
-						if (cb) res = cb(res, idx, query);
-						return res;
-					};
-				} else {
-					source.datafn = function(query, params, cb, idx, alasql) {
-						var res = alasql.databases[source.databaseid].tables[source.tableid].data;
-						if (cb) res = cb(res, idx, query);
-						return res;
-					};
-				}
+			// source.data = query.database.tables[source.tableid].data;
+			if (alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
 
-				//		var alias = jn.as || tq.tableid;
-				//		if(tq) {
-				query.aliases[source.alias] = {
-					tableid: tq.tableid,
-					databaseid: tq.databaseid || query.database.databaseid,
-				};
-				//		}
-			} else if (jn.select) {
-				var tq = jn.select;
-				source = {
-					alias: jn.as,
-					//				databaseid: jn.databaseid || query.database.databaseid,
-					//				tableid: tq.tableid,
-					joinmode: jn.joinmode,
-					onmiddlefn: returnTrue,
-					srcwherefns: '', // for optimization
-					srcwherefn: returnTrue,
-					columns: [],
-				};
-
-				source.subquery = tq.compile(query.database.databaseid);
-				if (typeof source.subquery.query.modifier == 'undefined') {
-					source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
-				}
-				source.columns = source.subquery.query.columns;
-
-				//			if(jn instanceof yy.Apply) {
 				source.datafn = function(query, params, cb, idx, alasql) {
-					//					return cb(null,idx,alasql);
-					return source.subquery(query.params, null, cb, idx).data;
+
+					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
+						source.databaseid,
+						source.tableid,
+						cb,
+						idx,
+						query
+					);
 				};
-				// } else {
-				// 	source.datafn = function(query, params, cb, idx, alasql) {
-				// 		return source.subquery(query.params, null, cb, idx);
-				// 	}
-				// }
-				query.aliases[source.alias] = {type: 'subquery'};
-			} else if (jn.param) {
-				source = {
-					alias: jn.as,
-					//				databaseid: jn.databaseid || query.database.databaseid,
-					//				tableid: tq.tableid,
-					joinmode: jn.joinmode,
-					onmiddlefn: returnTrue,
-					srcwherefns: '', // for optimization
-					srcwherefn: returnTrue,
+			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
+				source.datafn = function(query, params, cb, idx, alasql) {
+					var res = alasql.databases[source.databaseid].tables[source.tableid].select(
+						params
+					);
+					if (cb) res = cb(res, idx, query);
+					return res;
 				};
-				// source.data = ;
-				var jnparam = jn.param.param;
-
-				var ps = "var res=alasql.prepareFromData(params['" + jnparam + "']";
-				if (jn.array) ps += ',true';
-				ps += ');if(cb)res=cb(res, idx, query);return res';
-
-				source.datafn = new Function('query,params,cb,idx, alasql', ps);
-				query.aliases[source.alias] = {type: 'paramvalue'};
-			} else if (jn.variable) {
-				source = {
-					alias: jn.as,
-					//				databaseid: jn.databaseid || query.database.databaseid,
-					//				tableid: tq.tableid,
-					joinmode: jn.joinmode,
-					onmiddlefn: returnTrue,
-					srcwherefns: '', // for optimization
-					srcwherefn: returnTrue,
+			} else {
+				source.datafn = function(query, params, cb, idx, alasql) {
+					var res = alasql.databases[source.databaseid].tables[source.tableid].data;
+					if (cb) res = cb(res, idx, query);
+					return res;
 				};
-				// source.data = ;
-				//			var jnparam = jn.param.param;
-
-				var ps = "var res=alasql.prepareFromData(alasql.vars['" + jn.variable + "']";
-				if (jn.array) ps += ',true';
-				ps += ');if(cb)res=cb(res, idx, query);return res';
-
-				source.datafn = new Function('query,params,cb,idx, alasql', ps);
-				query.aliases[source.alias] = {type: 'varvalue'};
-			} else if (jn.funcid) {
-				source = {
-					alias: jn.as,
-					//				databaseid: jn.databaseid || query.database.databaseid,
-					//				tableid: tq.tableid,
-					joinmode: jn.joinmode,
-					onmiddlefn: returnTrue,
-					srcwherefns: '', // for optimization
-					srcwherefn: returnTrue,
-				};
-				// source.data = ;
-
-				var s = "var res=alasql.from['" + js.funcid.toUpperCase() + "'](";
-
-				if (jn.args && jn.args.length > 0) {
-					if (jn.args[0]) {
-						s += jn.args[0].toJS('query.oldscope') + ',';
-					} else {
-						s += 'null,';
-					}
-					if (jn.args[1]) {
-						s += jn.args[1].toJS('query.oldscope') + ',';
-					} else {
-						s += 'null,';
-					}
-				} else {
-					s += 'null,null,';
-				}
-				s += 'cb,idx,query';
-				s += ');/*if(cb)res=cb(res,idx,query);*/return res';
-
-				source.datafn = new Function('query, params, cb, idx, alasql', s);
-
-				query.aliases[source.alias] = {type: 'funcvalue'};
 			}
 
-			var alias = source.alias;
+			//		var alias = jn.as || tq.tableid;
+			//		if(tq) {
+			query.aliases[source.alias] = {
+				tableid: tq.tableid,
+				databaseid: tq.databaseid || query.database.databaseid,
+			};
+			//		}
+		} else if (jn.select) {
+			tq = jn.select;
+			source = {
+				alias: jn.as,
+				//				databaseid: jn.databaseid || query.database.databaseid,
+				//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '', // for optimization
+				srcwherefn: returnTrue,
+				columns: [],
+			};
 
-			// Test NATURAL-JOIN
-			if (jn.natural) {
-				if (jn.using || jn.on) {
-					throw new Error('NATURAL JOIN cannot have USING or ON clauses');
-				} else {
-					//				source.joinmode == "INNER";
-					if (query.sources.length > 0) {
-						var prevSource = query.sources[query.sources.length - 1];
-						var prevTable =
-							alasql.databases[prevSource.databaseid].tables[prevSource.tableid];
-						var table = alasql.databases[source.databaseid].tables[source.tableid];
-
-						if (prevTable && table) {
-							var c1 = prevTable.columns.map(function(col) {
-								return col.columnid;
-							});
-							var c2 = table.columns.map(function(col) {
-								return col.columnid;
-							});
-							jn.using = arrayIntersect(c1, c2).map(function(colid) {
-								return {columnid: colid};
-							});
-
-						} else {
-							throw new Error(
-								'In this version of Alasql NATURAL JOIN ' +
-									'works for tables with predefined columns only'
-							);
-						}
-					}
-				}
+			source.subquery = tq.compile(query.database.databaseid);
+			if (typeof source.subquery.query.modifier === 'undefined') {
+				source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
 			}
+			source.columns = source.subquery.query.columns;
 
-			if (jn.using) {
-				var prevSource = query.sources[query.sources.length - 1];
+			//			if(jn instanceof yy.Apply) {
+			source.datafn = function(query, params, cb, idx, alasql) {
+				//					return cb(null,idx,alasql);
+				return source.subquery(query.params, null, cb, idx).data;
+			};
+			// } else {
+			// 	source.datafn = function(query, params, cb, idx, alasql) {
+			// 		return source.subquery(query.params, null, cb, idx);
+			// 	}
+			// }
+			query.aliases[source.alias] = {type: 'subquery'};
+		} else if (jn.param) {
+			source = {
+				alias: jn.as,
+				//				databaseid: jn.databaseid || query.database.databaseid,
+				//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '', // for optimization
+				srcwherefn: returnTrue,
+			};
+			// source.data = ;
+			var jnparam = jn.param.param;
 
-				source.onleftfns = jn.using
-					.map(function(col) {
+			ps = "var res=alasql.prepareFromData(params['" + jnparam + "']";
+			if (jn.array) ps += ',true';
+			ps += ');if(cb)res=cb(res, idx, query);return res';
 
-						return (
-							"p['" +
-							(prevSource.alias || prevSource.tableid) +
-							"']['" +
-							col.columnid +
-							"']"
+			source.datafn = new Function('query,params,cb,idx, alasql', ps);
+			query.aliases[source.alias] = {type: 'paramvalue'};
+		} else if (jn.variable) {
+			source = {
+				alias: jn.as,
+				//				databaseid: jn.databaseid || query.database.databaseid,
+				//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '', // for optimization
+				srcwherefn: returnTrue,
+			};
+			// source.data = ;
+			//			var jnparam = jn.param.param;
+
+			ps = "var res=alasql.prepareFromData(alasql.vars['" + jn.variable + "']";
+			if (jn.array) ps += ',true';
+			ps += ');if(cb)res=cb(res, idx, query);return res';
+
+			source.datafn = new Function('query,params,cb,idx, alasql', ps);
+			query.aliases[source.alias] = {type: 'varvalue'};
+		} else if (jn.funcid) {
+			source = {
+				alias: jn.as,
+				//				databaseid: jn.databaseid || query.database.databaseid,
+				//				tableid: tq.tableid,
+				joinmode: jn.joinmode,
+				onmiddlefn: returnTrue,
+				srcwherefns: '', // for optimization
+				srcwherefn: returnTrue,
+			};
+			// source.data = ;
+
+			var s = "var res=alasql.from['" + jn.funcid.toUpperCase() + "'](";
+
+			if (jn.args && jn.args.length > 0) {
+				if (jn.args[0]) {
+					s += jn.args[0].toJS('query.oldscope') + ',';
+				} else {
+					s += 'null,';
+				}
+				if (jn.args[1]) {
+					s += jn.args[1].toJS('query.oldscope') + ',';
+				} else {
+					s += 'null,';
+				}
+			} else {
+				s += 'null,null,';
+			}
+			s += 'cb,idx,query';
+			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
+
+			source.datafn = new Function('query, params, cb, idx, alasql', s);
+
+			query.aliases[source.alias] = {type: 'funcvalue'};
+		}
+
+		var alias = source.alias;
+
+		// Test NATURAL-JOIN
+		if (jn.natural) {
+			if (jn.using || jn.on) {
+				throw new Error('NATURAL JOIN cannot have USING or ON clauses');
+			} else {
+				//				source.joinmode == "INNER";
+				if (query.sources.length > 0) {
+					var prevSource = query.sources[query.sources.length - 1];
+					var prevTable =
+						alasql.databases[prevSource.databaseid].tables[prevSource.tableid];
+					var table = alasql.databases[source.databaseid].tables[source.tableid];
+
+					if (prevTable && table) {
+						var c1 = prevTable.columns.map(function(col) {
+							return col.columnid;
+						});
+						var c2 = table.columns.map(function(col) {
+							return col.columnid;
+						});
+						jn.using = arrayIntersect(c1, c2).map(function(colid) {
+							return {columnid: colid};
+						});
+
+					} else {
+						throw new Error(
+							'In this version of Alasql NATURAL JOIN ' +
+								'works for tables with predefined columns only'
 						);
-					})
-					.join('+"`"+');
+					}
+				}
+			}
+		}
+
+		if (jn.using) {
+			prevSource = query.sources[query.sources.length - 1];
+
+			source.onleftfns = jn.using
+				.map(function(col) {
+
+					return (
+						"p['" +
+						(prevSource.alias || prevSource.tableid) +
+						"']['" +
+						col.columnid +
+						"']"
+					);
+				})
+				.join('+"`"+');
+
+			source.onleftfn = new Function('p,params,alasql', 'var y;return ' + source.onleftfns);
+
+			source.onrightfns = jn.using
+				.map(function(col) {
+					return "p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']";
+				})
+				.join('+"`"+');
+			source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
+			source.optimization = 'ix';
+
+		} else if (jn.on) {
+
+			if (jn.on instanceof yy.Op && jn.on.op === '=' && !jn.on.allsome) {
+
+				source.optimization = 'ix';
+
+				var lefts = '';
+				var rights = '';
+				var middles = '';
+				var middlef = false;
+				// Test right and left sides
+				var ls = jn.on.left.toJS('p', query.defaultTableid, query.defcols);
+				var rs = jn.on.right.toJS('p', query.defaultTableid, query.defcols);
+
+				if (
+					ls.indexOf("p['" + alias + "']") > -1 &&
+					!(rs.indexOf("p['" + alias + "']") > -1)
+				) {
+					if (
+						(ls.match(/p\['.*?'\]/g) || []).every(function(s) {
+							return s === "p['" + alias + "']";
+						})
+					) {
+						rights = ls;
+					} else {
+						middlef = true;
+					}
+				} else if (
+					!(ls.indexOf("p['" + alias + "']") > -1) &&
+					rs.indexOf("p['" + alias + "']") > -1
+				) {
+					if (
+						(rs.match(/p\['.*?'\]/g) || []).every(function(s) {
+							return s === "p['" + alias + "']";
+						})
+					) {
+						lefts = ls;
+					} else {
+						middlef = true;
+					}
+				} else {
+					middlef = true;
+				}
+
+				if (
+					rs.indexOf("p['" + alias + "']") > -1 &&
+					!(ls.indexOf("p['" + alias + "']") > -1)
+				) {
+					if (
+						(rs.match(/p\['.*?'\]/g) || []).every(function(s) {
+							return s === "p['" + alias + "']";
+						})
+					) {
+						rights = rs;
+					} else {
+						middlef = true;
+					}
+				} else if (
+					!(rs.indexOf("p['" + alias + "']") > -1) &&
+					ls.indexOf("p['" + alias + "']") > -1
+				) {
+					if (
+						(ls.match(/p\['.*?'\]/g) || []).every(function(s) {
+							return s === "p['" + alias + "']";
+						})
+					) {
+						lefts = rs;
+					} else {
+						middlef = true;
+					}
+				} else {
+					middlef = true;
+				}
+
+				if (middlef) {
+					//					middles = jn.on.toJS('p',query.defaultTableid);
+					//				} else {
+					rights = '';
+					lefts = '';
+					middles = jn.on.toJS('p', query.defaultTableid, query.defcols);
+					source.optimization = 'no';
+					// What to here?
+				}
+
+				source.onleftfns = lefts;
+				source.onrightfns = rights;
+				source.onmiddlefns = middles || 'true';
 
 				source.onleftfn = new Function(
 					'p,params,alasql',
 					'var y;return ' + source.onleftfns
 				);
-
-				source.onrightfns = jn.using
-					.map(function(col) {
-						return (
-							"p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']"
-						);
-					})
-					.join('+"`"+');
 				source.onrightfn = new Function(
 					'p,params,alasql',
 					'var y;return ' + source.onrightfns
 				);
-				source.optimization = 'ix';
+				source.onmiddlefn = new Function(
+					'p,params,alasql',
+					'var y;return ' + source.onmiddlefns
+				);
 
-			} else if (jn.on) {
+				//			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
 
-				if (jn.on instanceof yy.Op && jn.on.op == '=' && !jn.on.allsome) {
+			} else {
 
-					source.optimization = 'ix';
-
-					var lefts = '';
-					var rights = '';
-					var middles = '';
-					var middlef = false;
-					// Test right and left sides
-					var ls = jn.on.left.toJS('p', query.defaultTableid, query.defcols);
-					var rs = jn.on.right.toJS('p', query.defaultTableid, query.defcols);
-
-					if (
-						ls.indexOf("p['" + alias + "']") > -1 &&
-						!(rs.indexOf("p['" + alias + "']") > -1)
-					) {
-						if (
-							(ls.match(/p\[\'.*?\'\]/g) || []).every(function(s) {
-								return s == "p['" + alias + "']";
-							})
-						) {
-							rights = ls;
-						} else {
-							middlef = true;
-						}
-					} else if (
-						!(ls.indexOf("p['" + alias + "']") > -1) &&
-						rs.indexOf("p['" + alias + "']") > -1
-					) {
-						if (
-							(rs.match(/p\[\'.*?\'\]/g) || []).every(function(s) {
-								return s == "p['" + alias + "']";
-							})
-						) {
-							lefts = ls;
-						} else {
-							middlef = true;
-						}
-					} else {
-						middlef = true;
-					}
-
-					if (
-						rs.indexOf("p['" + alias + "']") > -1 &&
-						!(ls.indexOf("p['" + alias + "']") > -1)
-					) {
-						if (
-							(rs.match(/p\[\'.*?\'\]/g) || []).every(function(s) {
-								return s == "p['" + alias + "']";
-							})
-						) {
-							rights = rs;
-						} else {
-							middlef = true;
-						}
-					} else if (
-						!(rs.indexOf("p['" + alias + "']") > -1) &&
-						ls.indexOf("p['" + alias + "']") > -1
-					) {
-						if (
-							(ls.match(/p\[\'.*?\'\]/g) || []).every(function(s) {
-								return s == "p['" + alias + "']";
-							})
-						) {
-							lefts = rs;
-						} else {
-							middlef = true;
-						}
-					} else {
-						middlef = true;
-					}
-
-					if (middlef) {
-						//					middles = jn.on.toJS('p',query.defaultTableid);
-						//				} else {
-						rights = '';
-						lefts = '';
-						middles = jn.on.toJS('p', query.defaultTableid, query.defcols);
-						source.optimization = 'no';
-						// What to here?
-					}
-
-					source.onleftfns = lefts;
-					source.onrightfns = rights;
-					source.onmiddlefns = middles || 'true';
-
-					source.onleftfn = new Function(
-						'p,params,alasql',
-						'var y;return ' + source.onleftfns
-					);
-					source.onrightfn = new Function(
-						'p,params,alasql',
-						'var y;return ' + source.onrightfns
-					);
-					source.onmiddlefn = new Function(
-						'p,params,alasql',
-						'var y;return ' + source.onmiddlefns
-					);
-
-					//			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
-
-				} else {
-
-					source.optimization = 'no';
-					//				source.onleftfn = returnTrue;
-					//				source.onleftfns = "true";
-					source.onmiddlefns = jn.on.toJS('p', query.defaultTableid, query.defcols);
-					source.onmiddlefn = new Function(
-						'p,params,alasql',
-						'var y;return ' + jn.on.toJS('p', query.defaultTableid, query.defcols)
-					);
-				}
-
-				// Optimization function
+				source.optimization = 'no';
+				//				source.onleftfn = returnTrue;
+				//				source.onleftfns = "true";
+				source.onmiddlefns = jn.on.toJS('p', query.defaultTableid, query.defcols);
+				source.onmiddlefn = new Function(
+					'p,params,alasql',
+					'var y;return ' + jn.on.toJS('p', query.defaultTableid, query.defcols)
+				);
 			}
 
-			//		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
-
-			// TODO SubQueries
-
-			query.sources.push(source);
+			// Optimization function
 		}
+
+		//		source.data = alasql.databases[source.databaseid].tables[source.tableid].data;
+
+		// TODO SubQueries
+
+		query.sources.push(source);
 	});
 
 };
@@ -9845,16 +9879,19 @@ yy.Select.prototype.compileRemoveColumns = function(query) {
 	}
 };
 
+/* global yy */
+
 yy.Select.prototype.compileHaving = function(query) {
 	if (this.having) {
-		s = this.having.toJS('g', -1);
+		var s = this.having.toJS('g', -1);
 		query.havingfns = s;
 
 		return new Function('g,params,alasql', 'var y;return ' + s);
-	} else
-		return function() {
-			return true;
-		};
+	}
+
+	return function() {
+		return true;
+	};
 };
 
 yy.Select.prototype.compileOrder = function(query) {
@@ -11067,18 +11104,13 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 
 	var declareRefs = 'y=[(' + refs.join('), (') + ')]';
 
-	if (op == '&&' || op == '||' || op == 'IS' || op == 'IS NULL' || op == 'IS NOT NULL') {
+	if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
 		return '(' + declareRefs + ', ' + expr + ')';
-	} else {
-		return (
-			'(' +
-			declareRefs +
-			', ' +
-			'y.some(function(e){return e == null}) ? void 0 : ' +
-			expr +
-			')'
-		);
 	}
+
+	return (
+		'(' + declareRefs + ', ' + 'y.some(function(e){return e == null}) ? void 0 : ' + expr + ')'
+	);
 };
 
 yy.VarValue = function(params) {
@@ -11896,7 +11928,7 @@ stdlib.UPPER = stdlib.UCASE = function(s) {
 
 // Concatination of strings
 stdfn.CONCAT_WS = function() {
-	args = Array.prototype.slice.call(arguments);
+	var args = Array.prototype.slice.call(arguments);
 	return args.slice(1, args.length).join(args[0]);
 };
 
@@ -11912,11 +11944,13 @@ stdfn.CONCAT_WS = function() {
 
 // Aggregator for joining strings
 alasql.aggr.GROUP_CONCAT = function(v, s, stage) {
-	if (stage == 1) {
-		return v;
-	} else if (stage == 2) {
-		return s + ',' + v;
+	if (stage === 1) {
+		return '' + v;
+	} else if (stage === 2) {
+		s += ',' + v;
+		return s;
 	}
+	return s;
 };
 
 alasql.aggr.MEDIAN = function(v, s, stage) {
@@ -11964,7 +11998,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 
 		nth = !nth ? 1 : nth;
 		var r = s.sort();
-		var p = nth * (r.length + 1) / 4;
+		var p = (nth * (r.length + 1)) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}
@@ -12595,6 +12629,8 @@ alasql.stdfn.CONVERT = function(value, args) {
 //
 */
 
+/* global alasql, yy, hash */
+
 yy.ColumnDef = function(params) {
 	return yy.extend(this, params);
 };
@@ -12885,8 +12921,9 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 				return true;
 			};
 		}
-		if (checkfn)
+		if (checkfn) {
 			table.checks.push({fn: checkfn, id: con.constraintid, fk: con.type === 'FOREIGN KEY'});
+		}
 	});
 
 	if (this.view && this.viewcolumns) {
@@ -12950,9 +12987,9 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 
 		// Trigger prevent functionality
 		var escape = false;
-		for (var tr in table.insteadofinsert) {
+		for (tr in table.insteadofinsert) {
 			escape = true;
-			var trigger = table.insteadofinsert[tr];
+			trigger = table.insteadofinsert[tr];
 			if (trigger) {
 				if (trigger.funcid) {
 					alasql.fn[trigger.funcid](r);
@@ -13364,7 +13401,7 @@ stdfn.YEAR = function(d) {
 
 var PERIODS = {
 	year: 1000 * 3600 * 24 * 365,
-	quarter: 1000 * 3600 * 24 * 365 / 4,
+	quarter: (1000 * 3600 * 24 * 365) / 4,
 	month: 1000 * 3600 * 24 * 30,
 	week: 1000 * 3600 * 24 * 7,
 	day: 1000 * 3600 * 24,
@@ -13964,6 +14001,7 @@ yy.CreateGraph.prototype.compile1 = function(databaseid) {
 // (c) 2014, Andrey Gershun
 //
 */
+/* global alasql yy */
 
 // ALTER TABLE table1 RENAME TO table2
 yy.AlterTable = function(params) {
@@ -13991,7 +14029,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 					newtableid +
 					"', because the table with this name already exists"
 			);
-		} else if (newtableid == oldtableid) {
+		} else if (newtableid === oldtableid) {
 			throw new Error("Can not rename a table '" + oldtableid + "' to itself");
 		} else {
 			db.tables[newtableid] = db.tables[oldtableid];
@@ -14001,7 +14039,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 		if (cb) cb(res);
 		return res;
 	} else if (this.addcolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
+		db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
@@ -14054,7 +14092,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 			);
 		}
 
-		var col = table.xcolumns[columnid];
+		col = table.xcolumns[columnid];
 		col.dbtypeid = this.dbtypeid;
 		col.dbsize = this.dbsize;
 		col.dbprecision = this.dbprecision;
@@ -14130,7 +14168,7 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 
 		delete table.xcolumns[columnid];
 
-		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
+		for (i = 0, ilen = table.data.length; i < ilen; i++) {
 			delete table.data[i][columnid];
 		}
 		return cb ? cb(table.data.length) : table.data.length;
@@ -14455,6 +14493,7 @@ yy.BeginEnd.prototype.execute = function(databaseid, params, cb, scope) {
 //
 */
 
+/* global yy alasql*/
 yy.Insert = function(params) {
 	return yy.extend(this, params);
 };
@@ -14982,6 +15021,8 @@ yy.Delete.prototype.execute = function(databaseid, params, cb) {
 //
 */
 
+/* global yy alasql */
+
 yy.Update = function(params) {
 	return yy.extend(this, params);
 };
@@ -15032,6 +15073,7 @@ yy.Update.prototype.compile = function(databaseid) {
 	this.columns.forEach(function(col) {
 		s += "r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
 	});
+
 	var assignfn = new Function('r,params,alasql', 'var y;' + s);
 
 	var statement = function(params, cb) {
@@ -15092,6 +15134,8 @@ yy.Update.prototype.execute = function(databaseid, params, cb) {
 //
 */
 
+/* global alasql, yy */
+
 yy.Merge = function(params) {
 	return yy.extend(this, params);
 };
@@ -15147,6 +15191,8 @@ yy.Merge.prototype.execute = function(databaseid, params, cb) {
 //
 */
 
+/* global yy alasql */
+
 // CREATE DATABASE databaseid
 yy.CreateDatabase = function(params) {
 	return yy.extend(this, params);
@@ -15175,6 +15221,7 @@ yy.CreateDatabase.prototype.execute = function(databaseid, params, cb) {
 	var args;
 	if (this.args && this.args.length > 0) {
 		args = this.args.map(function(arg) {
+
 			return new Function('params,alasql', 'var y;return ' + arg.toJS())(params, alasql);
 		});
 	}
@@ -15203,7 +15250,7 @@ yy.CreateDatabase.prototype.execute = function(databaseid, params, cb) {
 yy.AttachDatabase = function(params) {
 	return yy.extend(this, params);
 };
-yy.AttachDatabase.prototype.toString = function() {
+yy.AttachDatabase.prototype.toString = function(args) {
 	var s = 'ATTACH';
 	if (this.engineid) s += ' ' + this.engineid;
 	s += ' DATABASE' + ' ' + this.databaseid;
@@ -15257,7 +15304,7 @@ yy.DetachDatabase.prototype.execute = function(databaseid, params, cb) {
 
 	var dbid = this.databaseid;
 
-	if (dbid == alasql.DEFAULTDATABASEID) {
+	if (dbid === alasql.DEFAULTDATABASEID) {
 		throw new Error('Drop of default database is prohibited');
 	}
 
@@ -15269,7 +15316,7 @@ yy.DetachDatabase.prototype.execute = function(databaseid, params, cb) {
 		}
 	} else {
 		delete alasql.databases[dbid];
-		if (dbid == alasql.useid) {
+		if (dbid === alasql.useid) {
 			alasql.use();
 		}
 		res = 1;
@@ -15319,7 +15366,7 @@ yy.DropDatabase.prototype.execute = function(databaseid, params, cb) {
 
 	var dbid = this.databaseid;
 
-	if (dbid == alasql.DEFAULTDATABASEID) {
+	if (dbid === alasql.DEFAULTDATABASEID) {
 		throw new Error('Drop of default database is prohibited');
 	}
 	if (!alasql.databases[dbid]) {
@@ -15336,7 +15383,7 @@ yy.DropDatabase.prototype.execute = function(databaseid, params, cb) {
 		}
 
 		delete alasql.databases[dbid];
-		if (dbid == alasql.useid) {
+		if (dbid === alasql.useid) {
 			alasql.use();
 		}
 		res = 1;
@@ -15439,7 +15486,7 @@ yy.ShowDatabases.prototype.execute = function(databaseid, params, cb) {
 	} else {
 		var self = this;
 		var res = [];
-		for (dbid in alasql.databases) {
+		for (var dbid in alasql.databases) {
 			res.push({databaseid: dbid});
 		}
 		if (self.like && res && res.length > 0) {
@@ -15467,7 +15514,7 @@ yy.ShowTables.prototype.execute = function(databaseid, params, cb) {
 
 	var self = this;
 	var res = [];
-	for (tableid in db.tables) {
+	for (var tableid in db.tables) {
 		res.push({tableid: tableid});
 	}
 	if (self.like && res && res.length > 0) {
@@ -15654,12 +15701,17 @@ yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
 
 // Console functions
 
+/* global alasql, yy */
+
 alasql.test = function(name, times, fn) {
 	if (arguments.length === 0) {
 		alasql.log(alasql.con.results);
 		return;
-	} else if (arguments.length === 1) {
-		var tm = Date.now();
+	}
+
+	var tm = Date.now();
+
+	if (arguments.length === 1) {
 		fn();
 		alasql.con.log(Date.now() - tm);
 		return;
@@ -15670,7 +15722,6 @@ alasql.test = function(name, times, fn) {
 		times = 1;
 	}
 
-	var tm = Date.now();
 	for (var i = 0; i < times; i++) {
 		fn();
 	}
@@ -15681,6 +15732,8 @@ alasql.test = function(name, times, fn) {
 // alasql.log = function(sql, params) {
 
 // };
+
+/* global alasql, yy, utils */
 
 // Console
 alasql.log = function(sql, params) {
@@ -15864,7 +15917,7 @@ function scrollTo(element, to, duration) {
 		return;
 	}
 	var difference = to - element.scrollTop;
-	var perTick = difference / duration * 10;
+	var perTick = (difference / duration) * 10;
 
 	setTimeout(function() {
 		if (element.scrollTop === to) {
@@ -17223,6 +17276,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
    Meteor
 */
 
+/* global alasql Tabletop document Event */
+
 alasql.from.METEOR = function(filename, opts, cb, idx, query) {
 	var res = filename.find(opts).fetch();
 	if (cb) {
@@ -17281,7 +17336,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	for (var j = 0; j < trs.length; j++) {
 		var tds = trs.item(j).children;
 		var r = {};
-		for (var i = 0; i < tds.length; i++) {
+		for (i = 0; i < tds.length; i++) {
 			if (
 				!(tds.item(i).style && tds.item(i).style.display === 'none' && opt.skipdisplaynone)
 			) {
@@ -17367,6 +17422,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 		for (var i = 0, ilen = res.length; i < ilen; i++) {
 			// Please avoid '===' here
 			if (res[i] == +res[i]) {
+				// eslint:ignore
 				// jshint ignore:line
 				res[i] = +res[i];
 			}
@@ -17842,7 +17898,7 @@ alasql.from.GEXF = function(filename, opts, cb, idx, query) {
 	var res;
 	alasql('SEARCH FROM XML(' + filename + ')', [], function(data) {
 		res = data;
-		console.log(res);
+
 		if (cb) res = cb(res);
 	});
 	return res;
@@ -17856,11 +17912,15 @@ alasql.from.GEXF = function(filename, opts, cb, idx, query) {
 //
 */
 
+/* globals: alasql, yy */
+
 /**
 	Print statement 
 	@class
 	@param {object} params Initial setup properties
 */
+
+/* global alasql, yy */
 
 yy.Print = function(params) {
 	return yy.extend(this, params);
@@ -17957,6 +18017,8 @@ yy.Source.prototype.execute = function(databaseid, params, cb) {
 // (c) 2014, Andrey Gershun
 //
 */
+
+/* global alasql, yy */
 
 yy.Require = function(params) {
 	return yy.extend(this, params);
@@ -18104,7 +18166,11 @@ WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb) {
 // (c) Andrey Gershun
 //
 
-var IDB = (alasql.engines.INDEXEDDB = function() {});
+/* global alasql, yy, utils*/
+
+var IDB = (alasql.engines.INDEXEDDB = function() {
+	'';
+});
 
 if (utils.hasIndexedDB) {
 	// For Chrome it work normally, for Firefox - simple shim
@@ -18157,7 +18223,7 @@ IDB.showDatabases = function(like, cb) {
 };
 
 IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb) {
-	console.log(arguments);
+
 	var indexedDB = utils.global.indexedDB;
 	if (ifnotexists) {
 		var request2 = indexedDB.open(ixdbid, 1);
@@ -18168,11 +18234,11 @@ IDB.createDatabase = function(ixdbid, args, ifnotexists, dbid, cb) {
 	} else {
 		var request1 = indexedDB.open(ixdbid, 1);
 		request1.onupgradeneeded = function(e) {
-			console.log('abort');
+
 			e.target.transaction.abort();
 		};
 		request1.onsuccess = function(e) {
-			console.log('success');
+
 			if (ifnotexists) {
 				if (cb) cb(0);
 			} else {
@@ -18316,8 +18382,8 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	var ixdbid = alasql.databases[databaseid].ixdbid;
 
 	var request1 = IDB.getDatabaseNames();
-	request1.onsuccess = function(event) {
-		var dblist = event.target.result;
+	request1.onsuccess = function(event__) {
+		var dblist = event__.target.result;
 		if (!dblist.contains(ixdbid)) {
 			throw new Error(
 				'IndexedDB: Cannot create table in database "' +
@@ -18326,13 +18392,13 @@ IDB.createTable = function(databaseid, tableid, ifnotexists, cb) {
 			);
 		}
 		var request2 = indexedDB.open(ixdbid);
-		request2.onversionchange = function(event) {
+		request2.onversionchange = function(event_) {
 
-			event.target.result.close();
+			event_.target.result.close();
 		};
-		request2.onsuccess = function(event) {
-			var version = event.target.result.version;
-			event.target.result.close();
+		request2.onsuccess = function(event_) {
+			var version = event_.target.result.version;
+			event_.target.result.close();
 
 			var request3 = indexedDB.open(ixdbid, version + 1);
 			request3.onupgradeneeded = function(event) {
@@ -18582,6 +18648,8 @@ IDB.updateTable = function(databaseid, tableid, assignfn, wherefn, params, cb) {
 // (c) Andrey Gershun
 //
 
+/* global alasql, yy, localStorage*/
+
 var LS = (alasql.engines.LOCALSTORAGE = function() {});
 
 /**
@@ -18592,7 +18660,7 @@ var LS = (alasql.engines.LOCALSTORAGE = function() {});
 LS.get = function(key) {
 	var s = localStorage.getItem(key);
 	if (typeof s === 'undefined') return;
-	var v = undefined;
+	var v;
 	try {
 		v = JSON.parse(s);
 	} catch (err) {
@@ -18775,10 +18843,10 @@ LS.showDatabases = function(like, cb) {
 	var ls = LS.get('alasql');
 	if (like) {
 		// TODO: If we have a special function for LIKE patterns?
-		var relike = new RegExp(like.value.replace(/\%/g, '.*'), 'g');
+		var relike = new RegExp(like.value.replace(/%/g, '.*'), 'g');
 	}
 	if (ls && ls.databases) {
-		for (dbid in ls.databases) {
+		for (var dbid in ls.databases) {
 			res.push({databaseid: dbid});
 		}
 		if (like && res && res.length > 0) {
@@ -18826,18 +18894,18 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
    Empty table and reset identities
    @param databaseid {string} AlaSQL database id (not external localStorage)
    @param tableid {string} Table name
-	 @param ifexists {boolean} If exists flag
+   @param ifexists {boolean} If exists flag
    @param cb {function} Callback
    @return 1 on success
 */
 LS.truncateTable = function(databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-
+	var lsdb;
 	if (alasql.options.autocommit) {
-		var lsdb = LS.get(lsdbid);
+		lsdb = LS.get(lsdbid);
 	} else {
-		var lsdb = alasql.databases[databaseid];
+		lsdb = alasql.databases[databaseid];
 	}
 
 	if (!ifexists && !lsdb.tables[tableid]) {
@@ -18873,10 +18941,12 @@ LS.truncateTable = function(databaseid, tableid, ifexists, cb) {
 LS.dropTable = function(databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
+	var lsdb;
+
 	if (alasql.options.autocommit) {
-		var lsdb = LS.get(lsdbid);
+		lsdb = LS.get(lsdbid);
 	} else {
-		var lsdb = alasql.databases[databaseid];
+		lsdb = alasql.databases[databaseid];
 	}
 	if (!ifexists && !lsdb.tables[tableid]) {
 		throw new Error(
@@ -19156,7 +19226,7 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 				if (cb) res = cb(res);
 				return res;
 			} else {
-				throw new Error('Cannot create new database file, because it alreagy exists');
+				throw new Error('Cannot create new database file, because it already exists');
 			}
 		} else {
 			var data = {tables: {}};
@@ -19554,7 +19624,7 @@ var saveAs =
 									: reader.result.replace(
 											/^data:[^;]*;/,
 											'data:attachment/file;'
-										);
+									  );
 								var popup = view.open(url, '_blank');
 								if (!popup) view.location.href = url;
 								url = undefined; // release reference before dispatching
@@ -19639,6 +19709,8 @@ if (typeof module !== 'undefined' && module.exports) {
 		return saveAs;
 	});
 }
+
+/* eslint-disable */ 
 
 /*
 //

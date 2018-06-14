@@ -20,7 +20,7 @@ yy.ShowDatabases.prototype.execute = function(databaseid, params, cb) {
 	} else {
 		var self = this;
 		var res = [];
-		for (dbid in alasql.databases) {
+		for (var dbid in alasql.databases) {
 			res.push({databaseid: dbid});
 		}
 		if (self.like && res && res.length > 0) {
@@ -48,7 +48,7 @@ yy.ShowTables.prototype.execute = function(databaseid, params, cb) {
 
 	var self = this;
 	var res = [];
-	for (tableid in db.tables) {
+	for (var tableid in db.tables) {
 		res.push({tableid: tableid});
 	}
 	if (self.like && res && res.length > 0) {

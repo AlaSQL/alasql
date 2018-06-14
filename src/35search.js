@@ -334,7 +334,7 @@ function doSearch(databaseid, params, cb) {
 				/*/*
 
 alasql.srch.TO = function(val,args) {
-  console.log(args[0]);
+  // console.log(args[0]);
 
   alasql.vars[args[0]].push(val);
   return {status: 1, values: [val]};
@@ -868,7 +868,7 @@ alasql.srch.SHARP = function(val, args) {
 
 alasql.srch.PARENT = function(/*val,args,stope*/) {
 	// TODO: implement
-	console.log('PARENT not implemented', arguments);
+	console.error('PARENT not implemented', arguments);
 
 	return {status: -1, values: []};
 };

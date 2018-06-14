@@ -474,7 +474,7 @@ case 189: case 190: case 194: case 197:
  this.$ = $$[$0]; $$[$0].as = 'default'; 
 break;
 case 193:
- this.$ = {inserted:true}; $$[$0].as = 'default'; 
+ this.$ = {inserted:true}; /*$$[$0].as = 'default'*/; 
 break;
 case 200:
  

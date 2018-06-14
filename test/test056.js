@@ -5,13 +5,14 @@ if (typeof exports === 'object') {
 
 describe('Test 56 - Error in WHERE and preIndex with ParamValue', function() {
 	var q = [];
-	for (var i = 0; i < 100000; i++) {
+	var n = 10000;
+	for (var i = 0; i < n; i++) {
 		q.push({a: i, b: (Math.random() * 1000) | 0});
 	}
 
 	it('SELECT - order by "', function(done) {
 		var w = alasql('SELECT q.* FROM ? q ORDER BY b', [q]);
-		assert(w.length == 100000);
+		assert(w.length == n);
 		done();
 	});
 });

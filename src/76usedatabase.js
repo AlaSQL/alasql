@@ -7,6 +7,8 @@
 //
 */
 
+/* global yy alasql */
+
 // CREATE DATABASE databaseid
 yy.CreateDatabase = function(params) {
 	return yy.extend(this, params);
@@ -35,6 +37,7 @@ yy.CreateDatabase.prototype.execute = function(databaseid, params, cb) {
 	var args;
 	if (this.args && this.args.length > 0) {
 		args = this.args.map(function(arg) {
+			// console.log(346235, arg.toJS());
 			return new Function('params,alasql', 'var y;return ' + arg.toJS())(params, alasql);
 		});
 	}
@@ -63,7 +66,7 @@ yy.CreateDatabase.prototype.execute = function(databaseid, params, cb) {
 yy.AttachDatabase = function(params) {
 	return yy.extend(this, params);
 };
-yy.AttachDatabase.prototype.toString = function() {
+yy.AttachDatabase.prototype.toString = function(args) {
 	var s = 'ATTACH';
 	if (this.engineid) s += ' ' + this.engineid;
 	s += ' DATABASE' + ' ' + this.databaseid;
@@ -117,7 +120,7 @@ yy.DetachDatabase.prototype.execute = function(databaseid, params, cb) {
 
 	var dbid = this.databaseid;
 
-	if (dbid == alasql.DEFAULTDATABASEID) {
+	if (dbid === alasql.DEFAULTDATABASEID) {
 		throw new Error('Drop of default database is prohibited');
 	}
 
@@ -129,7 +132,7 @@ yy.DetachDatabase.prototype.execute = function(databaseid, params, cb) {
 		}
 	} else {
 		delete alasql.databases[dbid];
-		if (dbid == alasql.useid) {
+		if (dbid === alasql.useid) {
 			alasql.use();
 		}
 		res = 1;
@@ -179,7 +182,7 @@ yy.DropDatabase.prototype.execute = function(databaseid, params, cb) {
 
 	var dbid = this.databaseid;
 
-	if (dbid == alasql.DEFAULTDATABASEID) {
+	if (dbid === alasql.DEFAULTDATABASEID) {
 		throw new Error('Drop of default database is prohibited');
 	}
 	if (!alasql.databases[dbid]) {
@@ -196,7 +199,7 @@ yy.DropDatabase.prototype.execute = function(databaseid, params, cb) {
 		}
 
 		delete alasql.databases[dbid];
-		if (dbid == alasql.useid) {
+		if (dbid === alasql.useid) {
 			alasql.use();
 		}
 		res = 1;

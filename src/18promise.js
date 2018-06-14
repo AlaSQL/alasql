@@ -152,14 +152,18 @@ if (!utils.global.Promise) {
 								function(e) {
 									j(t, e);
 								}
-							);
+						  );
 			}
 			function w(t, n, r) {
 				n.constructor === t.constructor && r === et && constructor.resolve === nt
 					? b(t, n)
 					: r === ut
 						? j(t, ut.error)
-						: void 0 === r ? S(t, n) : e(r) ? m(t, n, r) : S(t, n);
+						: void 0 === r
+							? S(t, n)
+							: e(r)
+								? m(t, n, r)
+								: S(t, n);
 			}
 			function g(e, n) {
 				e === n ? j(e, _()) : t(n) ? w(e, n, v(n)) : S(e, n);
@@ -249,10 +253,10 @@ if (!utils.global.Promise) {
 						? function(n, r) {
 								for (var o = t.length, i = 0; o > i; i++)
 									e.resolve(t[i]).then(n, r);
-							}
+						  }
 						: function(t, e) {
 								e(new TypeError('You must pass an array to race.'));
-							}
+						  }
 				);
 			}
 			function F(t) {
@@ -283,14 +287,14 @@ if (!utils.global.Promise) {
 					this.promise[rt] || k(this.promise),
 					Array.isArray(e)
 						? ((this._input = e),
-							(this.length = e.length),
-							(this._remaining = e.length),
-							(this._result = new Array(this.length)),
-							0 === this.length
+						  (this.length = e.length),
+						  (this._remaining = e.length),
+						  (this._result = new Array(this.length)),
+						  0 === this.length
 								? S(this.promise, this._result)
 								: ((this.length = this.length || 0),
-									this._enumerate(),
-									0 === this._remaining && S(this.promise, this._result)))
+								  this._enumerate(),
+								  0 === this._remaining && S(this.promise, this._result)))
 						: j(this.promise, U());
 			}
 			function U() {
@@ -319,7 +323,7 @@ if (!utils.global.Promise) {
 				? Array.isArray
 				: function(t) {
 						return '[object Array]' === Object.prototype.toString.call(t);
-					};
+				  };
 			var B,
 				G,
 				H,
@@ -342,7 +346,13 @@ if (!utils.global.Promise) {
 				tt = new Array(1e3);
 			H = Z
 				? o()
-				: X ? s() : $ ? u() : void 0 === R && 'function' == typeof require ? f() : c();
+				: X
+					? s()
+					: $
+						? u()
+						: void 0 === R && 'function' == typeof require
+							? f()
+							: c();
 			var et = l,
 				nt = h,
 				rt = Math.random()
@@ -420,7 +430,7 @@ if (!utils.global.Promise) {
 			'function' == typeof define && define.amd
 				? define(function() {
 						return vt;
-					})
+				  })
 				: 'undefined' != typeof module && module.exports
 					? (module.exports = vt)
 					: 'undefined' != typeof this && (this.ES6Promise = vt),

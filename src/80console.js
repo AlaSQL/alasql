@@ -67,12 +67,18 @@ alasql.con.log = function() {
 
 };
 */
+
+/* global alasql, yy */
+
 alasql.test = function(name, times, fn) {
 	if (arguments.length === 0) {
 		alasql.log(alasql.con.results);
 		return;
-	} else if (arguments.length === 1) {
-		var tm = Date.now();
+	}
+
+	var tm = Date.now();
+
+	if (arguments.length === 1) {
 		fn();
 		alasql.con.log(Date.now() - tm);
 		return;
@@ -83,7 +89,6 @@ alasql.test = function(name, times, fn) {
 		times = 1;
 	}
 
-	var tm = Date.now();
 	for (var i = 0; i < times; i++) {
 		fn();
 	}
@@ -108,6 +113,8 @@ alasql.test = function(name, times, fn) {
 // 		console.log(res);
 // 	}
 // };
+
+/* global alasql, yy, utils */
 
 // Console
 alasql.log = function(sql, params) {
@@ -291,7 +298,7 @@ function scrollTo(element, to, duration) {
 		return;
 	}
 	var difference = to - element.scrollTop;
-	var perTick = difference / duration * 10;
+	var perTick = (difference / duration) * 10;
 
 	setTimeout(function() {
 		if (element.scrollTop === to) {

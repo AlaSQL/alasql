@@ -10,6 +10,8 @@
 // Main part of SELECT procedure
 //
 
+/* global yy */
+
 yy.Select = function(params) {
 	return yy.extend(this, params);
 };
@@ -353,9 +355,11 @@ yy.Select.prototype.compile = function(databaseid, params) {
 
 		if (query.intofns) {
 			// Create intofn function
+			// console.log(234234, query.intofns);
 			query.intofn = new Function('r,i,params,alasql', 'var y;' + query.intofns);
 		} else if (query.intoallfns) {
 			// Create intoallfn function
+			// console.log(23423234, query.intoallfns);
 			query.intoallfn = new Function('columns,cb,params,alasql', 'var y;' + query.intoallfns);
 		}
 	}

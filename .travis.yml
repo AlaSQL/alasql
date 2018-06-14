@@ -6,7 +6,8 @@ branches:
 
 language: node_js
 node_js:
-  - "node"
+  # - "node" # Looks like travis is having problems with the node 10 setup
+  - "9"
   - "8"
   - "7"
   - "6"

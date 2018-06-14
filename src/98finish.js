@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 /*
 //
 // Last part of Alasql.js

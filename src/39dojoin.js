@@ -214,7 +214,7 @@ function doJoin(query, scope, h) {
 				|| nextsource.joinmode == "ANTI") {
 
 
-				console.log(h,query.sources.length);
+				// console.log(h,query.sources.length);
 				// Swap
 
 
@@ -252,14 +252,14 @@ function doJoin(query, scope, h) {
 					if(!pass) {
 					// Clear the scope after the loop
 //						scope[tableid] = {};
-						console.log(scope);
+						// console.log(scope);
 						doJoin(query,scope,h+2);
 					}	
 				};
 
 				// Additional join for LEFT JOINS
 					scope[query.sources[h+1].tableid] = {};
-					console.log(scope);
+					// console.log(scope);
 
 				scope[tableid] = undefined;
 

@@ -689,7 +689,7 @@ var saveFile = (utils.saveFile = function(path, data, cb, opts) {
 					if (cb) res = cb(res);
 				})
 				.catch(function(err) {
-					console.log(err.message);
+					console.error(err.message);
 				});
 		} else if (utils.isCordova) {
 			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
@@ -1131,13 +1131,13 @@ if (!Array.isArray) {
 */
 
 var xlsnc = (utils.xlsnc = function(i) {
-	var addr = String.fromCharCode(65 + i % 26);
+	var addr = String.fromCharCode(65 + (i % 26));
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + i % 26) + addr;
+		addr = String.fromCharCode(65 + (i % 26)) + addr;
 		if (i > 26) {
 			i = ((i / 26) | 0) - 1;
-			addr = String.fromCharCode(65 + i % 26) + addr;
+			addr = String.fromCharCode(65 + (i % 26)) + addr;
 		}
 	}
 	return addr;

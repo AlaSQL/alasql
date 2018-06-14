@@ -1,3 +1,7 @@
+/* eslint-disable */
+
+"use strict";
+
 /**
 	@fileoverview AlaSQL JavaScript SQL library
 	@see http://github.com/agershun/alasql

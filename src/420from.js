@@ -6,8 +6,11 @@
 //
 */
 
+/* global yy, alasql, Mongo, returnTrue */
+
 yy.Select.prototype.compileFrom = function(query) {
 	//	console.log(1);
+
 	var self = this;
 	query.sources = [];
 	//	var tableid = this.from[0].tableid;
@@ -22,6 +25,7 @@ yy.Select.prototype.compileFrom = function(query) {
 	self.from.forEach(function(tq) {
 		//console.log(tq);
 		//console.log(tq,tq.toJS());
+		var ps = '';
 
 		var alias = tq.as || tq.tableid;
 		//		console.log(alias);
@@ -117,7 +121,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			}
 		} else if (tq instanceof yy.Select) {
 			source.subquery = tq.compile(query.database.databaseid);
-			if (typeof source.subquery.query.modifier == 'undefined') {
+			if (typeof source.subquery.query.modifier === 'undefined') {
 				source.subquery.query.modifier = 'RECORDSET'; // Subqueries always return recordsets
 			}
 			source.columns = source.subquery.query.columns;
@@ -161,30 +165,30 @@ yy.Select.prototype.compileFrom = function(query) {
 				return res;
 			};
 		} else if (tq instanceof yy.ParamValue) {
-			var ps = "var res = alasql.prepareFromData(params['" + tq.param + "']";
+			ps = "var res = alasql.prepareFromData(params['" + tq.param + "']";
 			//				console.log(tq);
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq.inserted) {
-			var ps = 'var res = alasql.prepareFromData(alasql.inserted';
+			ps = 'var res = alasql.prepareFromData(alasql.inserted';
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.Json) {
-			var ps = 'var res = alasql.prepareFromData(' + tq.toJS();
+			ps = 'var res = alasql.prepareFromData(' + tq.toJS();
 			//				console.log(tq);
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.VarValue) {
-			var ps = "var res = alasql.prepareFromData(alasql.vars['" + tq.variable + "']";
+			ps = "var res = alasql.prepareFromData(alasql.vars['" + tq.variable + "']";
 			//				console.log(tq);
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
 			source.datafn = new Function('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.FuncValue) {
-			var s = "var res=alasql.from['" + tq.funcid.toUpperCase() + "'](";
+			ps = "var res=alasql.from['" + tq.funcid.toUpperCase() + "'](";
 			/*/*
 			// if(tq.args && tq.args.length>0) {
 			// 	s += tq.args.map(function(arg){
@@ -199,22 +203,22 @@ yy.Select.prototype.compileFrom = function(query) {
 */
 			if (tq.args && tq.args.length > 0) {
 				if (tq.args[0]) {
-					s += tq.args[0].toJS('query.oldscope') + ',';
+					ps += tq.args[0].toJS('query.oldscope') + ',';
 				} else {
-					s += 'null,';
+					ps += 'null,';
 				}
 				if (tq.args[1]) {
-					s += tq.args[1].toJS('query.oldscope') + ',';
+					ps += tq.args[1].toJS('query.oldscope') + ',';
 				} else {
-					s += 'null,';
+					ps += 'null,';
 				}
 			} else {
-				s += 'null,null,';
+				ps += 'null,null,';
 			}
-			s += 'cb,idx,query';
-			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
+			ps += 'cb,idx,query';
+			ps += ');/*if(cb)res=cb(res,idx,query);*/return res';
 			//	console.log(s);
-			source.datafn = new Function('query, params, cb, idx, alasql', s);
+			source.datafn = new Function('query, params, cb, idx, alasql', ps);
 		} else if (tq instanceof yy.FromData) {
 			source.datafn = function(query, params, cb, idx, alasql) {
 				var res = tq.data;
@@ -234,25 +238,26 @@ yy.Select.prototype.compileFrom = function(query) {
 
 alasql.prepareFromData = function(data, array) {
 	//console.log(177,data,array);
+	var i, ilen;
 	var res = data;
-	if (typeof data == 'string') {
+	if (typeof data === 'string') {
 		res = data.split(/\r?\n/);
 		if (array) {
-			for (var i = 0, ilen = res.length; i < ilen; i++) {
+			for (i = 0, ilen = res.length; i < ilen; i++) {
 				res[i] = [res[i]];
 			}
 		}
 	} else if (array) {
 		res = [];
-		for (var i = 0, ilen = data.length; i < ilen; i++) {
+		for (i = 0, ilen = data.length; i < ilen; i++) {
 			res.push([data[i]]);
 		}
 		//		console.log(res);
-	} else if (typeof data == 'object' && !Array.isArray(data)) {
+	} else if (typeof data === 'object' && !Array.isArray(data)) {
 		//	} else if(typeof data == 'object' && !(typeof data.length == 'undefined')) {
 		if (
-			typeof Mongo != 'undefined' &&
-			typeof Mongo.Collection != 'undefined' &&
+			typeof Mongo !== 'undefined' &&
+			typeof Mongo.Collection !== 'undefined' &&
 			data instanceof Mongo.Collection
 		) {
 			res = data.find().fetch();
@@ -263,7 +268,7 @@ alasql.prepareFromData = function(data, array) {
 			}
 		}
 
-		//		console.log(res);
+		//	console.log(res);
 	}
 	//	console.log(typeof data);
 	return res;

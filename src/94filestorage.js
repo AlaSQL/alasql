@@ -39,7 +39,7 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 				if (cb) res = cb(res);
 				return res;
 			} else {
-				throw new Error('Cannot create new database file, because it alreagy exists');
+				throw new Error('Cannot create new database file, because it already exists');
 			}
 		} else {
 			var data = {tables: {}};
@@ -111,7 +111,7 @@ FS.showDatabases = function(like, cb) {
 		var relike = new RegExp(like.value.replace(/\%/g,'.*'),'g');
 	}
 	if(ls && ls.databases) {
-		for(dbid in ls.databases) {
+		for(var dbid in ls.databases) {
 			res.push({databaseid: dbid});
 		};
 		if(like && res && res.length > 0) {

@@ -261,7 +261,7 @@ stdlib.UPPER = stdlib.UCASE = function(s) {
 
 // Concatination of strings
 stdfn.CONCAT_WS = function() {
-	args = Array.prototype.slice.call(arguments);
+	var args = Array.prototype.slice.call(arguments);
 	return args.slice(1, args.length).join(args[0]);
 };
 
@@ -277,11 +277,13 @@ stdfn.CONCAT_WS = function() {
 
 // Aggregator for joining strings
 alasql.aggr.GROUP_CONCAT = function(v, s, stage) {
-	if (stage == 1) {
-		return v;
-	} else if (stage == 2) {
-		return s + ',' + v;
+	if (stage === 1) {
+		return '' + v;
+	} else if (stage === 2) {
+		s += ',' + v;
+		return s;
 	}
+	return s;
 };
 
 alasql.aggr.MEDIAN = function(v, s, stage) {
@@ -329,7 +331,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 
 		nth = !nth ? 1 : nth;
 		var r = s.sort();
-		var p = nth * (r.length + 1) / 4;
+		var p = (nth * (r.length + 1)) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}

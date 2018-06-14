@@ -5,6 +5,8 @@
 // (c) Andrey Gershun
 //
 
+/* global alasql, yy, localStorage*/
+
 var LS = (alasql.engines.LOCALSTORAGE = function() {});
 
 /**
@@ -15,7 +17,7 @@ var LS = (alasql.engines.LOCALSTORAGE = function() {});
 LS.get = function(key) {
 	var s = localStorage.getItem(key);
 	if (typeof s === 'undefined') return;
-	var v = undefined;
+	var v;
 	try {
 		v = JSON.parse(s);
 	} catch (err) {
@@ -198,10 +200,10 @@ LS.showDatabases = function(like, cb) {
 	var ls = LS.get('alasql');
 	if (like) {
 		// TODO: If we have a special function for LIKE patterns?
-		var relike = new RegExp(like.value.replace(/\%/g, '.*'), 'g');
+		var relike = new RegExp(like.value.replace(/%/g, '.*'), 'g');
 	}
 	if (ls && ls.databases) {
-		for (dbid in ls.databases) {
+		for (var dbid in ls.databases) {
 			res.push({databaseid: dbid});
 		}
 		if (like && res && res.length > 0) {
@@ -249,18 +251,18 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
    Empty table and reset identities
    @param databaseid {string} AlaSQL database id (not external localStorage)
    @param tableid {string} Table name
-	 @param ifexists {boolean} If exists flag
+   @param ifexists {boolean} If exists flag
    @param cb {function} Callback
    @return 1 on success
 */
 LS.truncateTable = function(databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
-
+	var lsdb;
 	if (alasql.options.autocommit) {
-		var lsdb = LS.get(lsdbid);
+		lsdb = LS.get(lsdbid);
 	} else {
-		var lsdb = alasql.databases[databaseid];
+		lsdb = alasql.databases[databaseid];
 	}
 
 	if (!ifexists && !lsdb.tables[tableid]) {
@@ -296,10 +298,12 @@ LS.truncateTable = function(databaseid, tableid, ifexists, cb) {
 LS.dropTable = function(databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
+	var lsdb;
+
 	if (alasql.options.autocommit) {
-		var lsdb = LS.get(lsdbid);
+		lsdb = LS.get(lsdbid);
 	} else {
-		var lsdb = alasql.databases[databaseid];
+		lsdb = alasql.databases[databaseid];
 	}
 	if (!ifexists && !lsdb.tables[tableid]) {
 		throw new Error(

@@ -84,10 +84,15 @@ alasql.options.cache = true;
 
 // Compatibility flags
 alasql.options.tsql = true;
+
 alasql.options.mysql = true;
+
 alasql.options.postgres = true;
+
 alasql.options.oracle = true;
+
 alasql.options.sqlite = true;
+
 alasql.options.orientdb = true;
 
 // for SET NOCOUNT OFF
@@ -99,8 +104,10 @@ alasql.options.nan = false;
 alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
 
 //alasql.options.worker = false;
+
 // Variables
 alasql.vars = {};
+
 alasql.declares = {};
 
 alasql.prompthistory = [];
@@ -108,9 +115,11 @@ alasql.prompthistory = [];
 alasql.plugins = {}; // If plugin already loaded
 
 alasql.from = {}; // FROM functions
+
 alasql.into = {}; // INTO functions
 
 alasql.fn = {};
+
 alasql.aggr = {};
 
 alasql.busy = 0;
@@ -121,6 +130,7 @@ alasql.DEFAULTDATABASEID = 'alasql';
 
 /* WebWorker */
 alasql.lastid = 0;
+
 alasql.buffer = {};
 
 /**

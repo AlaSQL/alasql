@@ -625,18 +625,13 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 
 	var declareRefs = 'y=[(' + refs.join('), (') + ')]';
 
-	if (op == '&&' || op == '||' || op == 'IS' || op == 'IS NULL' || op == 'IS NOT NULL') {
+	if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
 		return '(' + declareRefs + ', ' + expr + ')';
-	} else {
-		return (
-			'(' +
-			declareRefs +
-			', ' +
-			'y.some(function(e){return e == null}) ? void 0 : ' +
-			expr +
-			')'
-		);
 	}
+
+	return (
+		'(' + declareRefs + ', ' + 'y.some(function(e){return e == null}) ? void 0 : ' + expr + ')'
+	);
 };
 
 yy.VarValue = function(params) {
