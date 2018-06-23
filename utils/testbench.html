@@ -9,6 +9,10 @@ console.log('alasql.options.cache = 0;');
 
 console.log('alasql.version:', alasql.version);
 
+console.log(alasql('=1+100+(SELECT SUM(_) FROM RANGE(1,10))'));
+
+console.log(alasql('SELECT FROM RANGE(1,10)'));
+
 </script>
 
 <xmp id="output">Use AlaSQL in the console please...

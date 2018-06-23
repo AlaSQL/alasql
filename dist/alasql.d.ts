@@ -63,15 +63,7 @@ declare namespace alaSQLSpace {
     }
 
     interface AlaSQL {
-        options: AlaSQLOptions;
-        error: Error;
-        (sql: any, params?: any, cb?: AlaSQLCallback, scope?: any): any;
-        parse(sql: any): AlaSQLAST;
-        promise(sql: any, params?: any): Thenable<any>;
-        fn: userDefinedFunctionLookUp;
-        aggr: userAggregatorLookUp;
-        autoval(tablename: string, colname: string, getNext?:boolean): number;
-        yy:{};
+        any;
     }
 }
 

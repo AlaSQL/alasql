@@ -1,6 +1,6 @@
 env:
   node: true
-extends: 'eslint:recommended'
+  es6: true
 rules:
   accessor-pairs: error
   array-bracket-newline: error
@@ -8,8 +8,8 @@ rules:
   array-callback-return: error
   array-element-newline: 0
   arrow-body-style: error
-  arrow-parens: error
-  arrow-spacing: error
+  arrow-parens: 0
+  arrow-spacing: 0
   block-scoped-var: 'off'
   block-spacing: error
   brace-style: 0
@@ -230,3 +230,6 @@ rules:
   globals:
     - alasql: 1
     - yy: 1
+parserOptions:
+  ecmaVersion: 6
+  sourceType: "module"

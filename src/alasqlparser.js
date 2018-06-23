@@ -1898,7 +1898,7 @@ _handle_error:
 
             // Return the rule stack depth where the nearest error rule can be found.
             // Return FALSE when no error recovery rule was found.
-            function locateNearestErrorRecoveryRule(state) {
+            var locateNearestErrorRecoveryRule = function(state) {
                 var stack_probe = stack.length - 1;
                 var depth = 0;
 
@@ -2974,3 +2974,5 @@ if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
 }
 }
+
+export default alasqlparser;

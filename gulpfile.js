@@ -154,16 +154,16 @@ gulp.task('js-merge', function() {
 		.pipe(replace(/^\/\/[ \t]{2,}.*/gm, '')) // Remove single line comments where the // part is first thing and content does not follow imidiatly (probably a "just test" line)
 		.pipe(replace(/\/\/.*?console\.log\(.*/gm, '')) // Remove single line comments 'console.log(' is part of the line
 		.pipe(replace(/\n[\s]+\n/g, '\n\n')) // Collaps multilinebreak
-		.pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) // Please set version in package.json file
+		//.pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) // Please set version in package.json file
 		.pipe(gulp.dest('./dist'))
 
-		.pipe(dereserve()) // Support IE8
-		.pipe(replace(/\/\/\*not-for-browser\/\*/g, '/*not-for-browser/*')) // Remove things not for browser build
-		.pipe(replace(/\/\*only-for-browser\/\*/g, '//*only-for-browser/*')) // Reveal things only for browser build
-		.pipe(rename('alasql.js'))
-		.pipe(gulp.dest('./dist'))
-		.pipe(rename('alasql.min.js'))
-		.pipe(
+		//.pipe(dereserve()) // Support IE8
+		//.pipe(replace(/\/\/\*not-for-browser\/\*/g, '/*not-for-browser/*')) // Remove things not for browser build
+		//.pipe(replace(/\/\*only-for-browser\/\*/g, '//*only-for-browser/*')) // Reveal things only for browser build
+		//.pipe(rename('alasql.js'))
+		//.pipe(gulp.dest('./dist'))
+		//.pipe(rename('alasql.min.js'))
+		/*.pipe(
 			uglify({
 				preserveComments: function(a, b) {
 					return 1 === b.line && /^!/.test(b.value);
@@ -171,6 +171,7 @@ gulp.task('js-merge', function() {
 			})
 		) // leave first line of comment if starts with a "!"
 		.pipe(gulp.dest('./dist'));
+		*/
 });
 
 gulp.task('jison-compile', function() {
