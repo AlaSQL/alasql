@@ -32,7 +32,7 @@ if (typeof exports === 'object') {
 			return e(r ^ (t | ~o), n, t, u, c, f);
 		}
 		function i(n, r) {
-			(n[r >> 5] |= 128 << (r % 32)), (n[(((r + 64) >>> 9) << 4) + 14] = r);
+			(n[r >> 5] |= 128 << r % 32), (n[(((r + 64) >>> 9) << 4) + 14] = r);
 			var e,
 				i,
 				a,
@@ -121,7 +121,7 @@ if (typeof exports === 'object') {
 			var t,
 				r = '';
 			for (t = 0; t < 32 * n.length; t += 8)
-				r += String.fromCharCode((n[t >> 5] >>> (t % 32)) & 255);
+				r += String.fromCharCode((n[t >> 5] >>> t % 32) & 255);
 			return r;
 		}
 		function h(n) {
@@ -129,7 +129,7 @@ if (typeof exports === 'object') {
 				r = [];
 			for (r[(n.length >> 2) - 1] = void 0, t = 0; t < r.length; t += 1) r[t] = 0;
 			for (t = 0; t < 8 * n.length; t += 8)
-				r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << (t % 32);
+				r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << t % 32;
 			return r;
 		}
 		function d(n) {
@@ -179,8 +179,10 @@ if (typeof exports === 'object') {
 		'function' == typeof define && define.amd
 			? define(function() {
 					return A;
-				})
-			: 'object' == typeof module && module.exports ? (module.exports = A) : (n.md5 = A);
+			  })
+			: 'object' == typeof module && module.exports
+				? (module.exports = A)
+				: (n.md5 = A);
 	})(this);
 }
 

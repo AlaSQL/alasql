@@ -73,8 +73,7 @@ describe('Test 353 Compiled Promised Statements', function() {
 
 	it('5. Compile With Error', function(done) {
 		var st = alasql.compile('SELECT iamwrong() FROM ?');
-		st
-			.promise([data])
+		st.promise([data])
 			.then(function(res) {
 				// Should not be here
 			})

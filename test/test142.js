@@ -40,7 +40,7 @@ describe('Test 142 INSTREAM', function() {
 		var tm = Date.now();
 		var res = alasql('SELECT VALUE COUNT(*) FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
 		//		console.log(Date.now() - tm);
-		var pi = res / n * 4;
+		var pi = (res / n) * 4;
 		//		console.log(res,pi);
 		assert(2 < pi && pi < 4);
 

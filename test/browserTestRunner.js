@@ -20,46 +20,44 @@
 	var html = template.replace('@INSERT_TESTFILES', testFilesHtml);
 
 	// Server from https://gist.github.com/ryanflorence/701407
-	http
-		.createServer(function(request, response) {
-			var uri = url.parse(request.url).pathname,
-				filename = path.join(__dirname, uri);
+	http.createServer(function(request, response) {
+		var uri = url.parse(request.url).pathname,
+			filename = path.join(__dirname, uri);
 
-			// all subfolder paths starts from ../ folder
-			if (2 < uri.split('/').length) {
-				filename = path.join(__dirname + '/../', uri);
-			}
+		// all subfolder paths starts from ../ folder
+		if (2 < uri.split('/').length) {
+			filename = path.join(__dirname + '/../', uri);
+		}
 
-			if ('/' === uri) {
-				response.writeHead(200, {'Content-Type': 'text/html'});
-				response.write(html);
+		if ('/' === uri) {
+			response.writeHead(200, {'Content-Type': 'text/html'});
+			response.write(html);
+			response.end();
+			return;
+		}
+
+		fs.exists(filename, function(exists) {
+			if (!exists || fs.statSync(filename).isDirectory()) {
+				response.writeHead(404, {'Content-Type': 'text/plain'});
+				response.write('404 Not Found\n');
 				response.end();
 				return;
 			}
 
-			fs.exists(filename, function(exists) {
-				if (!exists || fs.statSync(filename).isDirectory()) {
-					response.writeHead(404, {'Content-Type': 'text/plain'});
-					response.write('404 Not Found\n');
+			fs.readFile(filename, 'binary', function(err, file) {
+				if (err) {
+					response.writeHead(500, {'Content-Type': 'text/plain'});
+					response.write(err + '\n');
 					response.end();
 					return;
 				}
 
-				fs.readFile(filename, 'binary', function(err, file) {
-					if (err) {
-						response.writeHead(500, {'Content-Type': 'text/plain'});
-						response.write(err + '\n');
-						response.end();
-						return;
-					}
-
-					response.writeHead(200);
-					response.write(file, 'binary');
-					response.end();
-				});
+				response.writeHead(200);
+				response.write(file, 'binary');
+				response.end();
 			});
-		})
-		.listen(parseInt(port, 10));
+		});
+	}).listen(parseInt(port, 10));
 
 	console.log(
 		'Ready to test AlaSQL in the browser at\n  => http://localhost:' +

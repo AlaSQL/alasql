@@ -7,7 +7,7 @@ rules:
   array-bracket-spacing: error
   array-callback-return: error
   array-element-newline: 0
-  arrow-body-style: error
+  arrow-body-style: 0
   arrow-parens: 0
   arrow-spacing: 0
   block-scoped-var: 'off'
@@ -29,7 +29,7 @@ rules:
   default-case: error
   dot-location: 0
   dot-notation: error
-  eol-last: error
+  eol-last: 0
   eqeqeq: error
   for-direction: error
   func-call-spacing: error
@@ -41,7 +41,7 @@ rules:
   function-paren-newline: 0
   generator-star-spacing: error
   getter-return: error
-  global-require: error
+  global-require: 0
   guard-for-in: error
   handle-callback-err: error
   id-blacklist: error
@@ -54,9 +54,9 @@ rules:
   jsx-quotes: 'off'
   key-spacing: error
   keyword-spacing:
-    - error
-    - after: true
-      before: true
+    - 0
+    - after: 0
+    - before: 0
   line-comment-position: 'off'
   linebreak-style: 'off'
   lines-around-comment: 'off'
@@ -81,9 +81,9 @@ rules:
   no-bitwise: 0
   no-buffer-constructor: error
   no-caller: error
-  no-catch-shadow: error
+  no-catch-shadow: 0
   no-confusing-arrow: error
-  no-continue: error
+  no-continue: 0
   no-div-regex: error
   no-duplicate-imports: error
   no-else-return: 'off'
@@ -108,9 +108,9 @@ rules:
   no-labels: error
   no-lone-blocks: error
   no-lonely-if: 'off'
-  no-loop-func: error
+  no-loop-func: 0
   no-magic-numbers: 'off'
-  no-mixed-operators: error
+  no-mixed-operators: 0
   no-mixed-requires: error
   no-multi-assign: 'off'
   no-multi-spaces: error
@@ -171,8 +171,8 @@ rules:
   no-whitespace-before-property: 0
   no-with: error
   nonblock-statement-body-position: 0
-  object-curly-newline: error
-  object-curly-spacing: error
+  object-curly-newline: 0
+  object-curly-spacing: 0
   object-property-newline: 'off'
   object-shorthand: 0
   one-var: 'off'
@@ -192,7 +192,7 @@ rules:
   prefer-template: 'off'
   quote-props: 'off'
   quotes: 'off'
-  radix: error
+  radix: 0
   require-await: error
   require-jsdoc: 'off'
   rest-spread-spacing: error

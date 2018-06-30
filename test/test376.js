@@ -13,7 +13,7 @@ describe('376. ASCII tests:', function() {
 			runAll = it;
 		}
 
-		var tests = (function() {
+		var tests = function() {
 			/*
 SELECT ASCII(' '); -- 32 - Space
 SELECT ASCII('!'); -- 33 - Exclamation mark
@@ -234,11 +234,9 @@ SELECT ASCII('ÿ'); -- 255 - Latin small letter y with diaeresis
 
 
 */
-		})
-			.toString()
-			
-		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
+		}.toString();
 
+		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
 		tests
 			.replace('\r', '')

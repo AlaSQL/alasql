@@ -48,7 +48,7 @@ function test143(dontcache) {
 		for (var k = 0; k < 10; k++) {
 			Math.random();
 		}
-		return {a: i % 25 + 1, c: (i + 1) * 10};
+		return {a: (i % 25) + 1, c: (i + 1) * 10};
 	};
 	myfn2.dontcache = dontcache;
 	//		myfn3.dontcache = true;
