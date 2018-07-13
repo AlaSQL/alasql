@@ -4,6 +4,7 @@ lib/
 partners/
 test/
 src/
+bin/
 *.md
 .bithoundrc
 .codeclimate.yml
@@ -17,7 +18,8 @@ utils/
 .npmignore
 .travis.yml
 .versions
-CHANGELOG.md
+.eslintrc.yml  
+.prettierignore  
+.prettierrc  
+yarn.lock
 tslint.json
-README.md
-LICENSE

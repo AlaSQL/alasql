@@ -1,9 +1,13 @@
 # Changelog
 
-
-_0.4.6 "Tarim" (xx.07.2018)_
+_0.4.7 "???" (xx.08.2018)_
 
 * ...
+
+
+_0.4.6 "Tarim" (14.07.2018)_
+
+* Better: Always find global object 
 
 
 ## 0.4.6 "Rahbah" (14.06.2018)
