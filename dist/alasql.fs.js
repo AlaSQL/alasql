@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.6 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.7 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.6
+@version 0.4.7
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.6';
+alasql.version = '0.4.7';
 
 /**
 	Debug flag
@@ -3298,23 +3298,21 @@ var cutbom = function(s) {
 };
 
 /**
-    Get the blobal scope
+    Get the global scope
     Inspired by System.global
     @return {object} The global scope
 */
 utils.global = (function() {
-	try {
-		return Function('return this')();
-	} catch (e) {
-		//If Content Security Policy
-		var global = self || window || global;
-
-		if (global) {
-			return global;
-		} else {
-			throw new Error('Unable to locate global object');
-		}
+	if (typeof self !== 'undefined') {
+		return self;
 	}
+	if (typeof window !== 'undefined') {
+		return window;
+	}
+	if (typeof global !== 'undefined') {
+		return global;
+	}
+	return Function('return this')();
 })();
 
 /**
