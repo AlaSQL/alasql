@@ -149,23 +149,21 @@ var cutbom = function(s) {
 };
 
 /**
-    Get the blobal scope
+    Get the global scope
     Inspired by System.global
     @return {object} The global scope
 */
 utils.global = (function() {
-	try {
-		return Function('return this')();
-	} catch (e) {
-		//If Content Security Policy
-		var global = self || window || global;
-
-		if (global) {
-			return global;
-		} else {
-			throw new Error('Unable to locate global object');
-		}
+	if (typeof self !== 'undefined') {
+		return self;
 	}
+	if (typeof window !== 'undefined') {
+		return window;
+	}
+	if (typeof global !== 'undefined') {
+		return global;
+	}
+	return Function('return this')();
 })();
 
 /**
