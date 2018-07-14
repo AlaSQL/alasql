@@ -1129,13 +1129,13 @@ if (!Array.isArray) {
 */
 
 var xlsnc = (utils.xlsnc = function(i) {
-	var addr = String.fromCharCode(65 + (i % 26));
+	var addr = String.fromCharCode(65 + i % 26);
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + (i % 26)) + addr;
+		addr = String.fromCharCode(65 + i % 26) + addr;
 		if (i > 26) {
 			i = ((i / 26) | 0) - 1;
-			addr = String.fromCharCode(65 + (i % 26)) + addr;
+			addr = String.fromCharCode(65 + i % 26) + addr;
 		}
 	}
 	return addr;

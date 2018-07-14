@@ -1,7 +1,7 @@
 {
   "name": "alasql",
   "description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "author": "Andrey Gershun <agershun@gmail.com>",
   "contributors": [
     "Mathias Rangel Wulff <m@rawu.dk>"
@@ -32,7 +32,7 @@
     "es6-promise": "^4.2.2",
     "lodash": "^4.17.4",
     "request": "^2.83.0",
-    "xlsx": "^0.11.17",
+    "xlsx": "^0.13.2",
     "yargs": "^5.0.0"
   },
   "devDependencies": {

@@ -421,7 +421,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
+			limit = ((query.data.length * query.limit / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}
