@@ -111,7 +111,7 @@ stdfn.YEAR = function(d) {
 
 var PERIODS = {
 	year: 1000 * 3600 * 24 * 365,
-	quarter: (1000 * 3600 * 24 * 365) / 4,
+	quarter: 1000 * 3600 * 24 * 365 / 4,
 	month: 1000 * 3600 * 24 * 30,
 	week: 1000 * 3600 * 24 * 7,
 	day: 1000 * 3600 * 24,

@@ -1,11 +1,15 @@
 # Changelog
 
-_0.4.7 "???" (xx.08.2018)_
+> 0.4.11 "Lawdar" (xx.11.2018)
+> 0.4.10 "Maoshk" (xx.10.2018)
+> 0.4.9 "Alsalfiah" (xx.09.2018)
 
-* ...
+## 0.4.8 "Nafhan" (14.07.2018)
+
+* Fix: Error when installing caused by missing cli file in npm
 
 
-_0.4.6 "Tarim" (14.07.2018)_
+## 0.4.7 "Tarim" (14.07.2018)
 
 * Better: Always find global object 
 

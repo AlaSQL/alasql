@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.7 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.8 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.7
+@version 0.4.8
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.7';
+alasql.version = '0.4.8';
 
 /**
 	Debug flag
@@ -4145,13 +4145,13 @@ if (!Array.isArray) {
 */
 
 var xlsnc = (utils.xlsnc = function(i) {
-	var addr = String.fromCharCode(65 + (i % 26));
+	var addr = String.fromCharCode(65 + i % 26);
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + (i % 26)) + addr;
+		addr = String.fromCharCode(65 + i % 26) + addr;
 		if (i > 26) {
 			i = ((i / 26) | 0) - 1;
-			addr = String.fromCharCode(65 + (i % 26)) + addr;
+			addr = String.fromCharCode(65 + i % 26) + addr;
 		}
 	}
 	return addr;
@@ -4931,18 +4931,14 @@ if (!utils.global.Promise) {
 								function(e) {
 									j(t, e);
 								}
-						  );
+							);
 			}
 			function w(t, n, r) {
 				n.constructor === t.constructor && r === et && constructor.resolve === nt
 					? b(t, n)
 					: r === ut
 						? j(t, ut.error)
-						: void 0 === r
-							? S(t, n)
-							: e(r)
-								? m(t, n, r)
-								: S(t, n);
+						: void 0 === r ? S(t, n) : e(r) ? m(t, n, r) : S(t, n);
 			}
 			function g(e, n) {
 				e === n ? j(e, _()) : t(n) ? w(e, n, v(n)) : S(e, n);
@@ -5032,10 +5028,10 @@ if (!utils.global.Promise) {
 						? function(n, r) {
 								for (var o = t.length, i = 0; o > i; i++)
 									e.resolve(t[i]).then(n, r);
-						  }
+							}
 						: function(t, e) {
 								e(new TypeError('You must pass an array to race.'));
-						  }
+							}
 				);
 			}
 			function F(t) {
@@ -5066,14 +5062,14 @@ if (!utils.global.Promise) {
 					this.promise[rt] || k(this.promise),
 					Array.isArray(e)
 						? ((this._input = e),
-						  (this.length = e.length),
-						  (this._remaining = e.length),
-						  (this._result = new Array(this.length)),
-						  0 === this.length
+							(this.length = e.length),
+							(this._remaining = e.length),
+							(this._result = new Array(this.length)),
+							0 === this.length
 								? S(this.promise, this._result)
 								: ((this.length = this.length || 0),
-								  this._enumerate(),
-								  0 === this._remaining && S(this.promise, this._result)))
+									this._enumerate(),
+									0 === this._remaining && S(this.promise, this._result)))
 						: j(this.promise, U());
 			}
 			function U() {
@@ -5102,7 +5098,7 @@ if (!utils.global.Promise) {
 				? Array.isArray
 				: function(t) {
 						return '[object Array]' === Object.prototype.toString.call(t);
-				  };
+					};
 			var B,
 				G,
 				H,
@@ -5125,13 +5121,7 @@ if (!utils.global.Promise) {
 				tt = new Array(1e3);
 			H = Z
 				? o()
-				: X
-					? s()
-					: $
-						? u()
-						: void 0 === R && 'function' == typeof require
-							? f()
-							: c();
+				: X ? s() : $ ? u() : void 0 === R && 'function' == typeof require ? f() : c();
 			var et = l,
 				nt = h,
 				rt = Math.random()
@@ -5209,7 +5199,7 @@ if (!utils.global.Promise) {
 			'function' == typeof define && define.amd
 				? define(function() {
 						return vt;
-				  })
+					})
 				: 'undefined' != typeof module && module.exports
 					? (module.exports = vt)
 					: 'undefined' != typeof this && (this.ES6Promise = vt),
@@ -7227,7 +7217,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
+			limit = ((query.data.length * query.limit / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}
@@ -11996,7 +11986,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 
 		nth = !nth ? 1 : nth;
 		var r = s.sort();
-		var p = (nth * (r.length + 1)) / 4;
+		var p = nth * (r.length + 1) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}
@@ -13399,7 +13389,7 @@ stdfn.YEAR = function(d) {
 
 var PERIODS = {
 	year: 1000 * 3600 * 24 * 365,
-	quarter: (1000 * 3600 * 24 * 365) / 4,
+	quarter: 1000 * 3600 * 24 * 365 / 4,
 	month: 1000 * 3600 * 24 * 30,
 	week: 1000 * 3600 * 24 * 7,
 	day: 1000 * 3600 * 24,
@@ -15915,7 +15905,7 @@ function scrollTo(element, to, duration) {
 		return;
 	}
 	var difference = to - element.scrollTop;
-	var perTick = (difference / duration) * 10;
+	var perTick = difference / duration * 10;
 
 	setTimeout(function() {
 		if (element.scrollTop === to) {
@@ -19622,7 +19612,7 @@ var saveAs =
 									: reader.result.replace(
 											/^data:[^;]*;/,
 											'data:attachment/file;'
-									  );
+										);
 								var popup = view.open(url, '_blank');
 								if (!popup) view.location.href = url;
 								url = undefined; // release reference before dispatching

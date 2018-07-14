@@ -4,7 +4,6 @@ lib/
 partners/
 test/
 src/
-bin/
 *.md
 .bithoundrc
 .codeclimate.yml
