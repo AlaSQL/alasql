@@ -331,7 +331,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 
 		nth = !nth ? 1 : nth;
 		var r = s.sort();
-		var p = (nth * (r.length + 1)) / 4;
+		var p = nth * (r.length + 1) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}
