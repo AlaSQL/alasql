@@ -146,7 +146,7 @@ rules:
   no-shadow: 0
   no-shadow-restricted-names: error
   no-spaced-func: error
-  no-sync: error
+  no-sync: 0
   no-tabs: 'off'
   no-template-curly-in-string: 'off'
   no-ternary: 'off'
@@ -154,11 +154,11 @@ rules:
   no-trailing-spaces: 0
   no-undef-init: error
   no-undefined: 'off'
-  no-underscore-dangle: error
+  no-underscore-dangle: 0
   no-unmodified-loop-condition: error
   no-unneeded-ternary: error
   no-unused-expressions: error
-  no-use-before-define: error
+  no-use-before-define: 0
   no-useless-call: error
   no-useless-computed-key: error
   no-useless-concat: 0
@@ -166,7 +166,7 @@ rules:
   no-useless-rename: error
   no-useless-return: error
   no-var: 'off'
-  no-void: error
+  no-void: 0
   no-warning-comments: 0
   no-whitespace-before-property: 0
   no-with: error

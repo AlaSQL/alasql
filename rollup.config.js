@@ -7,11 +7,11 @@ import replace from 'rollup-plugin-replace';
 import hashbang from 'rollup-plugin-hashbang'
 
 */
-import buble from 'rollup-plugin-buble';
-import { uglify } from 'rollup-plugin-uglify';
+//import buble from 'rollup-plugin-buble';
+//import { uglify } from 'rollup-plugin-uglify';
 import resolve from 'rollup-plugin-node-resolve';
-import typescript from 'rollup-plugin-typescript2';
-import filesize from 'rollup-plugin-filesize';
+//import typescript from 'rollup-plugin-typescript2';
+//import filesize from 'rollup-plugin-filesize';
 
 
 // https://github.com/ritz078/rollup-plugin-filesize
@@ -24,21 +24,21 @@ import filesize from 'rollup-plugin-filesize';
 
 export default [
 	{
-		input: 'src/main.ts',
+		input: 'build/ES6/main',
 		output: {
 			name: 'alasql',
 			//file: 'build/ES5/rexreplace.bundle.js',
-			file: 'dist/alasql.es5.js',
+			file: 'build/alasql.es5.js',
 			format: 'umd'
 		},
 		plugins: [
-			typescript(),
+			//typescript(),
 			//replace({
 				//"PACKAGE_VERSION": require('./package.json').version
 			//}),
 			//hashbang(),
 			//progress(),
-			//resolve(), 
+			resolve(), 
 			/*closure({
 				        languageIn: 'ECMASCRIPT6',
 				        languageOut: 'ECMASCRIPT5',
@@ -46,9 +46,9 @@ export default [
 				        warningLevel: 'VERBOSE',
 				        env:'CUSTOM',
     		}),*/
-    		buble(),
-    		uglify({}),
-			filesize(),
+    		//buble(),
+    		//uglify({}),
+			//filesize(),
 			//commonjs() // so Rollup can convert `ms` to an ES module
 		]
 	},/*{

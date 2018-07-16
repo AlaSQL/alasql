@@ -29,58 +29,34 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-
 import utils from './utils';
-
 import addOptions from './options';
-
 import grammar from './alasqlparser';
-
 import expandGrammar from './grammar';
-
 import alasqlObj from './alasqlObj';
-
-import addUtils from './utils';
-
 //import addLogic from './logic';
-
 import addDataStruct from './dataStruct';
-
 //const logic: {[key: string]: any} = {};
-
-const alasql: any = () => {};
-
-const mem: {[key: string]: any} = {grammar, alasql};
-
+const alasql = () => { };
+const mem = { grammar, alasql };
 mem.alasql = alasqlObj(mem);
-
 mem.alasql.version = 'PACKAGE_VERSION_NUMBER';
-
 mem.alasql.debug = false;
-
 addOptions(mem);
-
 expandGrammar(mem);
-
 addDataStruct(mem);
-
 //addHelperFunc(mem);
-
-if (0) mem.alasql.path = utils.findAlaSQLPath();
-
+if (0)
+    mem.alasql.path = utils.findAlaSQLPath();
 /*only-for-browser/*
-//!var require = function(){return null}; // as alasqlparser.js is generated, we can not "remove" referenses to 
+//!var require = function(){return null}; // as alasqlparser.js is generated, we can not "remove" referenses to
 //!var __dirname = '';
 //*/
-
 /*only-for-browser/*
 if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
   console.warn('It looks like you are using the browser version of AlaSQL. Please use the alasql.fs.js file instead.')
 }
 //*/
-
 // Create and set default database
-
 mem.alasql.newDatabase('alasql');
-
 export default mem.alasql;

@@ -1,5 +1,11 @@
-export default mem => {
-	const utils = mem.alasql.utils;
+
+	import env from './enviroment';
+	import trans from './transformation';
+
+	const cutbom = trans.cutbom;			
+
+	const utils = {};
+
 	/**
     Load text file from anywhere
     @param {string|object} path File path or HTML event
@@ -11,9 +17,9 @@ export default mem => {
     @todo Define Event type
     @todo Smaller if-else structures.
 */
-	var loadFile = (utils.loadFile = function(path, asy, success, error) {
+	utils.loadFile = function(path, asy, success, error) {
 		var data, fs;
-		if (utils.isNode || utils.isMeteorServer) {
+		if (env.isNode || env.isMeteorServer) {
 			//*not-for-browser/*
 			if (utils.isMeteor) {
 				fs = Npm.require('fs');
@@ -32,7 +38,7 @@ export default mem => {
 					}
 				});
 				process.stdin.on('end', function() {
-					success(utils.cutbom(buff));
+					success(cutbom(buff));
 				});
 			} else {
 				if (/^[a-z]+:\/\//i.test(path)) {
@@ -163,7 +169,7 @@ export default mem => {
 				reader.readAsText(files[0]);
 			}
 		}
-	});
+	};
 
 	/**
   @function Load binary file from anywhere
@@ -286,7 +292,7 @@ export default mem => {
 			var RNFS = require('react-native-fs');
 			RNFS.unlink(path)
 				.then(function() {
-					cb && cb();
+					if (cb) cb();
 				})
 				.catch(function(err) {
 					throw err;
@@ -308,7 +314,7 @@ export default mem => {
 			var RNFS = require('react-native-fs');
 			RNFS.unlink(path)
 				.then(function() {
-					cb && cb();
+					if (cb) cb();
 				})
 				.catch(function(err) {
 					throw err;
@@ -518,4 +524,6 @@ export default mem => {
 	//         saveAs(blob, path);
 	//     }
 	//  };
-};
+
+
+	export default utils;

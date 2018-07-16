@@ -1,14 +1,17 @@
-export default mem => {
-	const utils = mem.alasql.utils;
+
+import env from './enviroment';
+	
+const utils = {};
+
 	utils.getXLSX = () => {
 		var XLSX = null;
 		/* If require() shuold be supported else take from global scope */
-		if (utils.isNode || utils.isBrowserify || utils.isMeteorServer) {
+		if (env.isNode || env.isBrowserify || env.isMeteorServer) {
 			//*not-for-browser/*
 			XLSX = require('xlsx') || null;
 			//*/
 		} else {
-			XLSX = utils.global.XLSX || null;
+			XLSX = global.XLSX || null;
 		}
 
 		if (null === XLSX) {
@@ -53,4 +56,5 @@ export default mem => {
 		}
 		return n;
 	};
-};
+
+export default utils;

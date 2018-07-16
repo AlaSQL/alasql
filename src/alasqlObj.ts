@@ -30,7 +30,7 @@
 export default function logic(mem) {
 	let yy = mem.grammar.yy;
 
-	return function(sql?: any, params?: any = [], cb?: any, scope?: string) {
+	return function(sql?: any, params?: any, cb?: any, scope?: string) {
 		params = params || [];
 
 		if (typeof importScripts !== 'function' && mem.alasql.webworker) {

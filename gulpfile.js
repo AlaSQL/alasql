@@ -154,7 +154,7 @@ gulp.task('js-merge', function() {
 		.pipe(replace(/^\/\/[ \t]{2,}.*/gm, '')) // Remove single line comments where the // part is first thing and content does not follow imidiatly (probably a "just test" line)
 		.pipe(replace(/\/\/.*?console\.log\(.*/gm, '')) // Remove single line comments 'console.log(' is part of the line
 		.pipe(replace(/\n[\s]+\n/g, '\n\n')) // Collaps multilinebreak
-		//.pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) // Please set version in package.json file
+		.pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) // Please set version in package.json file
 		.pipe(gulp.dest('./dist'))
 
 		//.pipe(dereserve()) // Support IE8

@@ -1,13 +1,14 @@
-export default mem => {
-	const alasql = mem.alasql;
-	const utils = alasql.utils;
+import {Recordset} from '../dataStruct/query';
+
+	const utils = {};
+
 	/**
-    Union arrays
-    @function
-    @param {array} a
-    @param {array} b
-    @return {array}
-*/
+      * Union arrays
+      * @function
+      * @param {array} a
+      * @param {array} b
+      * @return {array}
+	  */
 	utils.arrayUnion = (a, b) => {
 		var r = b.slice(0);
 		a.forEach(function(i) {
@@ -19,17 +20,17 @@ export default mem => {
 	};
 
 	/**
- Array Difference
- */
+	  * Array Difference
+ 	  */
 	utils.arrayDiff = (a, b) => {
 		return a.filter(function(i) {
 			return b.indexOf(i) < 0;
 		});
 	};
 
-	/**
-  Arrays deep intersect (with records)
- */
+	/**	
+	  * Arrays deep intersect (with records)
+	  */
 	utils.arrayIntersect = (a, b) => {
 		var r = [];
 		a.forEach(function(ai) {
@@ -76,7 +77,7 @@ export default mem => {
 
 			b.forEach(function(bi) {
 				//            found = found || equalDeep(ai, bi, true);
-				found = found || deepEqual(ai, bi);
+				found = found || utils.deepEqual(ai, bi);
 			});
 
 			if (!found) {
@@ -239,7 +240,7 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 		}
 
 		// For recordsets
-		if (typeof a === 'object' && a instanceof alasql.Recordset) {
+		if (typeof a === 'object' && a instanceof Recordset) {
 			return a.data.map(function(ai) {
 				return ai[a.columns[0].columnid];
 			});
@@ -260,10 +261,11 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 	utils.arrayOfArrays = a => {
 		return a.map(aa => {
 			var ar = [];
-			for (let val of aa) {
+			for (const val of aa) {
 				ar.push(val);
 			}
 			return ar;
 		});
 	};
-};
+
+	export default utils;
