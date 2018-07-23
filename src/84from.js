@@ -350,7 +350,7 @@ if(false) {
 		parseText(contents);
 	} else {
 		contents = alasql.utils.autoExtFilename(contents, 'csv', opts);
-		alasql.utils.loadFile(contents, !!cb, parseText);
+		alasql.utils.loadFile(contents, !!cb, parseText, query.cb);
 	}
 	return res;
 };

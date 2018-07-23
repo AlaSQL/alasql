@@ -335,13 +335,17 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 				if (asy) {
 					fs.readFile(path, function(err, data) {
 						if (err) {
-							throw err;
+							return error(err, null);
 						}
 						success(cutbom(data.toString()));
 					});
 				} else {
 					// Call sync version
-					data = fs.readFileSync(path);
+					try {
+						data = fs.readFileSync(path);
+					} catch (e) {
+						return error(err, null);
+					}
 					success(cutbom(data.toString()));
 				}
 			}
