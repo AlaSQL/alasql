@@ -322,14 +322,14 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 				success(cutbom(buff));
 			});
 		} else {
-			if (/^[a-z]+:\/\//i.test(path)) {
-				var request = require('request');
-				request(path, function(err, response, body) {
-					if (err) {
-						throw err;
-					}
-					success(cutbom(body.toString()));
-				});
+      if (/^[a-z]+:\/\//i.test(path)) {
+        var request = require('request');
+        request(path, function(err, response, body) {
+          if (err) {
+            return error(err, null);
+          }
+          success(cutbom(body.toString()));
+        });
 			} else {
 				//If async callthen call async
 				if (asy) {
@@ -354,12 +354,12 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.readFile(path, 'utf8')
-			.then(function(contents) {
-				success(cutbom(contents));
-			})
-			.catch(function(err) {
-				throw err;
-			});
+      .then(function(contents) {
+        success(cutbom(contents));
+      })
+      .catch(function(err) {
+        return error(err, null);
+      });
 		//*/
 	} else if (utils.isCordova) {
 		/* If Cordova */
@@ -422,7 +422,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 								success(cutbom(xhr.responseText));
 							}
 						} else if (error) {
-							error(xhr);
+							return error(xhr);
 						}
 						// Todo: else...?
 					}
