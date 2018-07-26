@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.8 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.8-develop-1662cb65undefined | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.8
+@version 0.4.8-develop-1662cb65undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.8';
+alasql.version = '0.4.8-develop-1662cb65undefined';
 
 /**
 	Debug flag
@@ -12317,7 +12317,7 @@ yy.Convert.prototype.toString = function() {
 	s += this.dbtypeid;
 	if (typeof this.dbsize != 'undefined') {
 		s += '(' + this.dbsize;
-		if (this.dbprecision) s += ',' + dbprecision;
+		if (this.dbprecision) s += ',' + this.dbprecision;
 		s += ')';
 	}
 	s += ',' + this.expression.toString();
@@ -12334,6 +12334,8 @@ yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 		this.dbtypeid +
 		'",dbsize:' +
 		this.dbsize +
+		',dbprecision:' +
+		this.dbprecision +
 		',style:' +
 		this.style +
 		'})'
@@ -12586,18 +12588,13 @@ alasql.stdfn.CONVERT = function(value, args) {
 	} else if (['CHAR', 'CHARACTER', 'NCHAR'].indexOf(udbtypeid) > -1) {
 		return (val + new Array(args.dbsize + 1).join(' ')).substr(0, args.dbsize);
 		//else return ""+val.substr(0,1);
-	} else if (['NUMBER', 'FLOAT'].indexOf(udbtypeid) > -1) {
-		if (typeof args.dbprecision != 'undefined') {
-			var m = +val;
-			var fxd = Math.pow(10, args.dbprecision);
-			return (m | 0) + ((m * fxd) % fxd) / fxd;
-		} else {
-			return +val;
-		}
-	} else if (['DECIMAL', 'NUMERIC'].indexOf(udbtypeid) > -1) {
+	} else if (['NUMBER', 'FLOAT', 'DECIMAL', 'NUMERIC'].indexOf(udbtypeid) > -1) {
 		var m = +val;
-		var fxd = Math.pow(10, args.dbprecision);
-		return (m | 0) + ((m * fxd) % fxd) / fxd;
+		//toPrecision sets the number of numbers total in the result
+		m = args.dbsize !== undefined ? parseFloat(m.toPrecision(args.dbsize)) : m;
+		//toFixed sets the number of numbers to the right of the decimal
+		m = args.dbprecision !== undefined ? parseFloat(m.toFixed(args.dbprecision)) : m;
+		return m;
 	} else if (['JSON'].indexOf(udbtypeid) > -1) {
 		if (typeof val == 'object') return val;
 		try {
