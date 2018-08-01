@@ -22,7 +22,7 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				//console.log(table);
 
 				if (undefined === table) {
-					throw new Error('Table does not exists: ' + fr.tableid);
+					throw new Error('Table does not exist: ' + fr.tableid);
 				}
 
 				if (table.columns) {
