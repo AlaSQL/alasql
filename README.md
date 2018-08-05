@@ -66,7 +66,7 @@ console.log(res);
 ```
 
 ```js
-// B) SQL on array of objects
+// B) Select from array of objects
 var data = [{a:1,b:10}, {a:2,b:20}, {a:1,b:30}];
 
 var res = alasql('SELECT a, SUM(b) AS b FROM ? GROUP BY a',[data]);    
