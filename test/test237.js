@@ -1,19 +1,19 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
+}
 
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
 describe('Test 237 Test with local variables', function() {
+	it('1. Prepare database and tables', function(done) {
+		alasql('CREATE DATABASE test237; USE test237;');
 
-    it('1. Prepare database and tables', function(done){
-        alasql('CREATE DATABASE test237; USE test237;');
-
-        var res = alasql(function(){/*
+		var res = alasql(function() {
+			/*
 
 -- Source: https://technet.microsoft.com/en-us/library/ms187953(v=sql.105).aspx
 
@@ -45,22 +45,21 @@ SELECT cola, colb
 FROM TestTable;
 DROP TABLE TestTable;
 
-        */});
+        */
+		});
 
-        assert(res[4].length == 26);
-        assert.deepEqual(res[4][0],{ cola: 0, colb: 'a' });
-        // assert.deepEqual(res,[ { EmployeeID: 100, EmployeeName: 'Mary' },
-        //     { EmployeeID: 101, EmployeeName: 'Sara' },
-        //     { EmployeeID: 102, EmployeeName: 'Stefano' } ]);
-//        console.log(res);
+		assert(res[4].length == 26);
+		assert.deepEqual(res[4][0], {cola: 0, colb: 'a'});
+		// assert.deepEqual(res,[ { EmployeeID: 100, EmployeeName: 'Mary' },
+		//     { EmployeeID: 101, EmployeeName: 'Sara' },
+		//     { EmployeeID: 102, EmployeeName: 'Stefano' } ]);
+		//        console.log(res);
 
-        done();
-    });
+		done();
+	});
 
-    it('99. DROP', function(done){
-        alasql('DROP DATABASE test237');
-        done();
-    });
-
+	it('99. DROP', function(done) {
+		alasql('DROP DATABASE test237');
+		done();
+	});
 });
-

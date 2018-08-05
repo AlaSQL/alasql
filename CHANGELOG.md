@@ -1,9 +1,68 @@
 # Changelog
 
+> 0.4.11 "Lawdar" (xx.11.2018)
+> 0.4.10 "Maoshk" (xx.10.2018)
+> 0.4.9 "Alsalfiah" (xx.09.2018)
 
-_0.3.10 "???" (xx.04.2017)_
+## 0.4.8 "Nafhan" (14.07.2018)
 
-* ...
+* Fix: Error when installing caused by missing cli file in npm
+
+
+## 0.4.7 "Tarim" (14.07.2018)
+
+* Better: Always find global object 
+
+
+## 0.4.6 "Rahbah" (14.06.2018)
+
+* Better: `Use strict` mode for javascript 
+
+
+## 0.4.5 "Marib" (24.01.2018)
+
+* Fix: Aggregate functions applied to empty sets (#964)
+* Fix: missing ORDER BY direction when calling toString on AST (#970)
+* Fix: Converting the syntax tree back to SQL with multple joins (#972)
+
+## 0.4.4 "Alsowm" (03.012.2017)
+
+* Better: Better usage via unpkg.com
+* Better: Better usage via jsdelivr.com
+
+
+## 0.4.3 "Hajjah" (05.09.2017)
+
+* Update: Removed implicit "any" in definition file
+* Fix: Tabletop reads in empty cells as numeric 0 instead of empty string 
+* Fix: DISTINCT on emtpy table produced error
+
+
+## 0.4.2 "Baraqish" (17.08.2017)
+
+* Added: SQL function LTRIM
+* Added: SQL function RTRIM
+* Better: Remove implicit any in type script definitioni
+* Better: Out-of-the-box Webpack and Browserify compatibility without hacks
+* Fix: Use created database id on foreign key check as default database
+
+ 
+## 0.4.1 "Sayhut" (23.07.2017)
+
+* Better: Performace on `distinct` selects 
+* Better: Hashing for cashed SQLs 
+* Fix: Case insensetive selects from EXCEL
+* Fix: Select from empty EXCEL
+
+
+#0.4.0 "Sanaa" (09.05.2017)
+* **Breaking:** OFFSET will now skip the first N rows in a result set before starting to return any rows (before it would skip N-1)
+* Add: Quartile aggregators (QUART, QUART2, QUART3)
+* Add: Typescript definitoin now supports extensions
+* Fix: Aggregate MEDIAN now working with ROLLUP
+* Fix: Aggregate STDEV now working with ROLLUP
+* Fix: SHOW COLUMNS works with the promise interface 
+* Fix: SHOW INDEX works with the promise interface 
 
 ### 0.3.9 "Turua" (23.03.2017)
 * Add: React native support

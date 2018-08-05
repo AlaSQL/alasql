@@ -5,19 +5,20 @@
 //
 */
 
-yy.CreateTrigger = function (params) { return yy.extend(this, params); };
+yy.CreateTrigger = function(params) {
+	return yy.extend(this, params);
+};
 yy.CreateTrigger.prototype.toString = function() {
-	var s = 'CREATE TRIGGER '+this.trigger +' ';
-	if(this.when) s += this.when+' ';
-	s += this.action+' ON ';
-	if(this.table.databaseid) s += this.table.databaseid+'.';
-	s += this.table.tableid+' ';
+	var s = 'CREATE TRIGGER ' + this.trigger + ' ';
+	if (this.when) s += this.when + ' ';
+	s += this.action + ' ON ';
+	if (this.table.databaseid) s += this.table.databaseid + '.';
+	s += this.table.tableid + ' ';
 	s += this.statement.toString();
 	return s;
 };
 
-
-yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
+yy.CreateTrigger.prototype.execute = function(databaseid, params, cb) {
 	var res = 1; // No tables removed
 	var triggerid = this.trigger;
 	databaseid = this.table.databaseid || databaseid;
@@ -28,39 +29,39 @@ yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 		action: this.action,
 		when: this.when,
 		statement: this.statement,
-		funcid: this.funcid
+		funcid: this.funcid,
 	};
 
 	db.triggers[triggerid] = trigger;
-	if(trigger.action == 'INSERT' && trigger.when == 'BEFORE') {
+	if (trigger.action == 'INSERT' && trigger.when == 'BEFORE') {
 		db.tables[tableid].beforeinsert[triggerid] = trigger;
-	} else if(trigger.action == 'INSERT' && trigger.when == 'AFTER') {
+	} else if (trigger.action == 'INSERT' && trigger.when == 'AFTER') {
 		db.tables[tableid].afterinsert[triggerid] = trigger;
-	} else if(trigger.action == 'INSERT' && trigger.when == 'INSTEADOF') {
+	} else if (trigger.action == 'INSERT' && trigger.when == 'INSTEADOF') {
 		db.tables[tableid].insteadofinsert[triggerid] = trigger;
-	} else if(trigger.action == 'DELETE' && trigger.when == 'BEFORE') {
+	} else if (trigger.action == 'DELETE' && trigger.when == 'BEFORE') {
 		db.tables[tableid].beforedelete[triggerid] = trigger;
-	} else if(trigger.action == 'DELETE' && trigger.when == 'AFTER') {
+	} else if (trigger.action == 'DELETE' && trigger.when == 'AFTER') {
 		db.tables[tableid].afterdelete[triggerid] = trigger;
-	} else if(trigger.action == 'DELETE' && trigger.when == 'INSTEADOF') {
+	} else if (trigger.action == 'DELETE' && trigger.when == 'INSTEADOF') {
 		db.tables[tableid].insteadofdelete[triggerid] = trigger;
-	} else if(trigger.action == 'UPDATE' && trigger.when == 'BEFORE') {
+	} else if (trigger.action == 'UPDATE' && trigger.when == 'BEFORE') {
 		db.tables[tableid].beforeupdate[triggerid] = trigger;
-	} else if(trigger.action == 'UPDATE' && trigger.when == 'AFTER') {
+	} else if (trigger.action == 'UPDATE' && trigger.when == 'AFTER') {
 		db.tables[tableid].afterupdate[triggerid] = trigger;
-	} else if(trigger.action == 'UPDATE' && trigger.when == 'INSTEADOF') {
+	} else if (trigger.action == 'UPDATE' && trigger.when == 'INSTEADOF') {
 		db.tables[tableid].insteadofupdate[triggerid] = trigger;
 	}
 
-	if(cb) res = cb(res);
+	if (cb) res = cb(res);
 	return res;
 };
 
-
-
-yy.DropTrigger = function (params) { return yy.extend(this, params); };
+yy.DropTrigger = function(params) {
+	return yy.extend(this, params);
+};
 yy.DropTrigger.prototype.toString = function() {
-	var s = 'DROP TRIGGER '+this.trigger;
+	var s = 'DROP TRIGGER ' + this.trigger;
 	return s;
 };
 
@@ -73,13 +74,13 @@ yy.DropTrigger.prototype.toString = function() {
 	@example
 	DROP TRIGGER one;
 */
-yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
+yy.DropTrigger.prototype.execute = function(databaseid, params, cb) {
 	var res = 0; // No tables removed
 	var db = alasql.databases[databaseid];
 	var triggerid = this.trigger;
 	// For each table in the list
 	var tableid = db.triggers[triggerid];
-	if(tableid) {
+	if (tableid) {
 		res = 1;
 		delete db.tables[tableid].beforeinsert[triggerid];
 		delete db.tables[tableid].afterinsert[triggerid];
@@ -94,6 +95,6 @@ yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		throw new Error('Trigger not found');
 	}
-	if(cb) res = cb(res);
+	if (cb) res = cb(res);
 	return res;
 };

@@ -1,21 +1,20 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
+}
 
 describe('Test 260 SqlLogic Parser Test #3', function() {
+	it.skip('1. Sqllogic', function(done) {
+		alasql('CREATE DATABASE test260; USE test260');
+		done();
+	});
 
-  it.skip('1. Sqllogic', function(done) {
-    alasql('CREATE DATABASE test260; USE test260');
-    done();    
-  });
-
-  it.skip('3. SELECT ALL',function(done){
-    done();
-  });
-/*
+	it.skip('3. SELECT ALL', function(done) {
+		done();
+	});
+	/*
 
  IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME = 'view_1_tab0_153') DROP VIEW view_1_tab0_153
 
@@ -51,11 +50,8 @@ SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) FROM t1 WHERE (a>b-2 AND a<
 
 */
 
-
-  it.skip('99. Drop Database', function(done) {
-    alasql('DROP DATABASE test260');
-    done();
-  });
-
+	it.skip('99. Drop Database', function(done) {
+		alasql('DROP DATABASE test260');
+		done();
+	});
 });
-

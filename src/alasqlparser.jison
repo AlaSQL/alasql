@@ -348,7 +348,7 @@ SETS                                        	return 'SET'
 Literal
 	: LITERAL
 		{
-			if (yy.casesensitive) $$ = $1;
+			if (alasql.options.casesensitive) $$ = $1;
 			else $$ = $1.toLowerCase();
 		}
 	| BRALITERAL

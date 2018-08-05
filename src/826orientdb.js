@@ -1,2 +1,2 @@
-if(alasql.options.orientdb) {
+if (alasql.options.orientdb) {
 }

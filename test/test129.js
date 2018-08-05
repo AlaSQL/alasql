@@ -3,16 +3,13 @@
 // Test for select
 //
 
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
-
-describe('Test 129 - * /STAR / MULTIPLICATION', function(){
-
+describe('Test 129 - * /STAR / MULTIPLICATION', function() {
 	it('UPDATE WHERE with multiplication in assignment and conditions', function(done) {
-
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
@@ -22,11 +19,9 @@ describe('Test 129 - * /STAR / MULTIPLICATION', function(){
 		db.exec('INSERT INTO test VALUES (4,40,400)');
 		db.exec('INSERT INTO test VALUES (5,50,500)');
 
-//		console.log('There is a bug in parser')
+		//		console.log('There is a bug in parser')
 
 		var res = db.exec('UPDATE test SET a = (c*100) WHERE b<=(3*10)');
-
-
 
 		// console.log(res);
 		// console.log(db.tables.test.recs);
@@ -38,10 +33,6 @@ describe('Test 129 - * /STAR / MULTIPLICATION', function(){
 		assert.equal(4, db.tables.test.data[3].a);
 		assert.equal(5, db.tables.test.data[4].a);
 
-
-		done();		
+		done();
 	});
-
 });
-
-

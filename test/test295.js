@@ -1,25 +1,24 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-  var md5 = require('blueimp-md5').md5;
+	var md5 = require('blueimp-md5').md5;
 } else {
 	__dirname = '.';
-};
-
+}
 
 describe('Test 295 TestDatabase', function() {
+	it.skip('1. CREATE DATABASE', function(done) {
+		alasql('CREATE DATABASE test295;USE test295');
 
-  it.skip('1. CREATE DATABASE',function(done){
-    alasql('CREATE DATABASE test295;USE test295');
+		done();
+	});
 
-    done();
-  });
+	// Taken from here
+	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
-// Taken from here
-// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
-
-  it.skip('2. CREATE TABLES',function(done){
-  alasql(function(){/*
+	it.skip('2. CREATE TABLES', function(done) {
+		alasql(function() {
+			/*
 
 SHOW DATABASES;
 
@@ -211,17 +210,19 @@ INSERT INTO products VALUES (2001, 'PEC', 'Pencil 3B', 500, 0.52),
 SELECT * FROM products;
 
 
-  */});
-    done();
-  });
+  */
+		});
+		done();
+	});
 
-// Following
+	// Following
 
-// Taken from here
-// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
+	// Taken from here
+	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
-  it.skip('3. CREATE TABLES',function(done){
-  alasql(function(){/*
+	it.skip('3. CREATE TABLES', function(done) {
+		alasql(function() {
+			/*
 
 USE southwind;
 
@@ -339,14 +340,13 @@ SHOW CREATE TABLE product_details \G
 
 
 
-  */});
-    done();
-  });
+  */
+		});
+		done();
+	});
 
-
-
-  it.skip('4. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test295');
-    done();
-  });
+	it.skip('4. DROP DATABASE', function(done) {
+		alasql('DROP DATABASE test295');
+		done();
+	});
 });

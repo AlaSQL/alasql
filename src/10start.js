@@ -1,3 +1,7 @@
+/* eslint-disable */
+
+"use strict";
+
 /**
 	@fileoverview AlaSQL JavaScript SQL library
 	@see http://github.com/agershun/alasql
@@ -95,7 +99,8 @@ var alasql = function(sql, params, cb, scope) {
 		sql = sql.textContent;
 	} else if(typeof sql === 'function') {
 		// to run multiline functions
-		sql = sql.toString().slice(14,-3);
+		sql = sql.toString();
+		sql = (/\/\*([\S\s]+)\*\//m.exec(sql) || ['','Function given as SQL. Plese Provide SQL string or have a /* ... */ syle comment with SQL in the function.'])[1];	
 	}
 	// Run SQL			
 	return alasql.exec(sql, params, cb, scope);

@@ -7,15 +7,15 @@
 */
 
 // Table class
-var View = alasql.View = function(params){
+var View = (alasql.View = function(params) {
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};
 	// Data array
 	this.query = [];
 
-	extend(this,params);
-};
+	extend(this, params);
+});
 
 /*/*
 // View = function(){
@@ -28,4 +28,3 @@ var View = alasql.View = function(params){
 
 // alasql.View = View;
 */
-

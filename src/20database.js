@@ -1,4 +1,3 @@
-
 /*
 //
 // Database class for Alasql.js
@@ -13,33 +12,33 @@
     @class Database 
  */
 
-var Database = alasql.Database = function (databaseid) {
+var Database = (alasql.Database = function(databaseid) {
 	var self = this;
-//		self = function(a){console.log('OK',a);}
-//		self.prototype = this;
+	//		self = function(a){console.log('OK',a);}
+	//		self.prototype = this;
 
-	if(self === alasql) {
-		if(databaseid) {
-//			if(alasql.databases[databaseid]) {
-				self = alasql.databases[databaseid];
-//			} else {
-				alasql.databases[databaseid] = self;
-//			}
-			if(!self) {
-				throw new Error('Database "'+databaseid+'" not found');
+	if (self === alasql) {
+		if (databaseid) {
+			//			if(alasql.databases[databaseid]) {
+			self = alasql.databases[databaseid];
+			//			} else {
+			alasql.databases[databaseid] = self;
+			//			}
+			if (!self) {
+				throw new Error('Database "' + databaseid + '" not found');
 			}
 		} else {
 			// Create new database (or get alasql?)
 			self = alasql.databases.alasql;
 			// For SQL Server examples, USE tempdb
-			if(alasql.options.tsql){
+			if (alasql.options.tsql) {
 				alasql.databases.tempdb = alasql.databases.alasql;
 			}
-//			self = new Database(databaseid); // to call without new
+			//			self = new Database(databaseid); // to call without new
 		}
 	}
-	if(!databaseid) {
-		databaseid = "db"+(alasql.databasenum++); // Random name
+	if (!databaseid) {
+		databaseid = 'db' + alasql.databasenum++; // Random name
 	}
 
 	// Step 1
@@ -59,18 +58,16 @@ var Database = alasql.Database = function (databaseid) {
 
 	self.resetSqlCache();
 	return self;
-};
-
+});
 
 /**
     Reset SQL statements cache
  */
 
-Database.prototype.resetSqlCache = function () {
+Database.prototype.resetSqlCache = function() {
 	this.sqlCache = {}; // Cache for compiled SQL statements
-	this.sqlCacheSize = 0;	
-}
-
+	this.sqlCacheSize = 0;
+};
 
 // Main SQL function
 
@@ -173,5 +170,3 @@ Database.prototype.compile = function(sql, kind) {
 
 // Added for compatibility with WebSQL
 */
-
-
