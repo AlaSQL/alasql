@@ -91,7 +91,7 @@ function compileSelectStar(query, alias, joinstar) {
 	} else {
 		//					console.log(60,alias,columns);
 
-		// if column not exists, then copy all
+		// if column not exist, then copy all
 		sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
 		//console.log(777, sp);
 		query.dirtyColumns = true;
@@ -221,7 +221,7 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 				if (query.aliases[tbid] && query.aliases[tbid].type === 'table') {
 					if (!alasql.databases[dbid].tables[query.aliases[tbid].tableid]) {
 						//						console.log(query.database,tbid,query.aliases[tbid].tableid);
-						throw new Error("Table '" + tbid + "' does not exists in database");
+						throw new Error("Table '" + tbid + "' does not exist in database");
 					}
 					var columns =
 						alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
@@ -234,7 +234,7 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						var tcol = xcolumns[col.columnid];
 
 						if (undefined === tcol) {
-							throw new Error('Column does not exists: ' + col.columnid);
+							throw new Error('Column does not exist: ' + col.columnid);
 						}
 
 						var coldef = {
