@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 33', function() {
 	it('WHERE IN list of values', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('drop table if exists test1');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1), (2,2), (3,3), (4,4), (5,5), (6,6)');

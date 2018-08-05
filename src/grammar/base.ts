@@ -7,6 +7,8 @@ export default mem => {
 	// Option for case sensitive
 	yy.casesensitive = mem.alasql.options.casesensitive;
 
+	yy.isInAggr = val => !!mem.alasql.aggr[val];
+
 	// Base class for all yy classes
 	yy.Base = function(params) {
 		return yy.extend(this, params);
@@ -25,4 +27,6 @@ export default mem => {
 	yy.Base.prototype.exec = function() {};
 
 	mem.grammar.yy = yy;
+
+
 };

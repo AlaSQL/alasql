@@ -9,7 +9,7 @@ describe('378. Primary key with DELETE ALL', function() {
 			return i ? range(i - 1).concat({id: i}) : [];
 		}
 		var data = range(100);
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('CREATE TABLE test (id INT NOT NULL PRIMARY KEY)');
 		db.exec('INSERT INTO test SELECT * FROM ?', [data]);
 		//console.log(db.exec("SELECT * FROM test"));

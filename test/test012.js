@@ -8,7 +8,7 @@ describe('Test 12', function() {
 		if (false) {
 			var db = alasql.restore('mydb');
 			//	console.log(!!db);
-			if (!db) db = new alasql.Database('mydb');
+			if (!db) db = alasql.newDatabase('mydb');
 			//	console.log(db);
 
 			db.exec('CREATE TABLE IF NOT EXISTS students (studentid INT, studentname STRING)');

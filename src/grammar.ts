@@ -8,6 +8,10 @@ import defcols from './grammar/defcols';
 import from_ from './grammar/from';
 import compile from './grammar/compile';
 import where from './grammar/where';
+import useDatabase from './grammar/useDatabase';
+import functions from './grammar/functions';
+import createtable from './grammar/createtable';
+import insert from './grammar/insert';
 
 export default mem => {
 	mem.alasql.parser = grammar;
@@ -20,4 +24,8 @@ export default mem => {
 	from_(mem);
 	compile(mem);
 	where(mem);
+	useDatabase(mem);
+	functions(mem);
+	createtable(mem);
+	insert(mem);
 };

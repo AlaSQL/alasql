@@ -13,21 +13,20 @@ describe('374. CEILING, FLOOR, ROUND tests:', function() {
 			runAll = it;
 		}
 
-		var tests = function() {
-			/*
+		var tests = `
 SELECT(CEIL(17.36)) -- 18
 SELECT CEIL(-17.36) --  -17
 SELECT CEILING(12.9273) -- 13
 SELECT FLOOR(12.9273)  -- 12    
 
-DECLARE @val int
+--DECLARE @val int
 SET @val = 6
 
 SELECT ROUND(@val, 1)  -- 6 - No rounding with no digits right of the decimal point
 SELECT CEILING(@val)   -- 6 - Smallest integer value
 SELECT FLOOR(@val)     -- 6 - Largest integer value 
 
-DECLARE @val int
+--DECLARE @val int
 SET @val = 6
 
 SELECT ROUND(@val, 1)  -- 6  - No rounding with no digits right of the decimal point
@@ -74,7 +73,7 @@ SELECT ROUND(-666, -1) -- -670  - Rounding up
 SELECT ROUND(-666, -2) -- -700  - Rounding up
 
 
-DECLARE @val int
+--DECLARE @val int
 SET @val = 16.999999
 
 SELECT ROUND(@val,  1) -- 16 - No rounding with no digits right of the decimal point i.e. int
@@ -83,7 +82,7 @@ SELECT CEILING(@val)   -- 16 - Smallest integer value
 SELECT FLOOR(@val)     -- 16 - Largest integer value 
 SELECT @val            -- 16 - Shows how the @val is evaluated based on the int data type 
 
-DECLARE @val float
+--DECLARE @val float
 SET @val = 11.05
 
 --SELECT ROUND(@val, 1)  -- 11.10
@@ -98,7 +97,7 @@ SELECT ROUND(@val, 3)  -- 11.05
 SELECT CEILING(@val)   -- 12 
 SELECT FLOOR(@val)     -- 11 
 
-DECLARE @val numeric(10,10)
+--DECLARE @val numeric(10,10)
 SET @val = .5432167890	
 --SELECT ROUND(@val, 1)  -- 0.5000000000 
 --SELECT ROUND(@val, 2)  -- 0.5400000000
@@ -113,7 +112,7 @@ SET @val = .5432167890
 SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
 
-DECLARE @val float(10)
+--DECLARE @val float(10)
 SET @val = .1234567891
 SELECT ROUND(@val, 1)  -- 0.1
 SELECT ROUND(@val, 2)  -- 0.12
@@ -127,9 +126,7 @@ SELECT ROUND(@val, 9)  -- 0.123456789
 SELECT ROUND(@val, 10) -- 0.1234567891
 SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
-
-*/
-		}.toString();
+`;
 
 		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
@@ -139,30 +136,32 @@ SELECT FLOOR(@val)     -- 0
 			.split('\n')
 			.forEach(function(test) {
 				test = test.trim();
-				if (test.indexOf('--') > -1) {
-					var runFn = it;
-
-					if (test.indexOf('--') === 0) {
-						// skip test starting line with '--'
-						test = test.substr(2).trim();
-						runFn = runAll || it.skip;
-					}
-
-					var tt = test.split('--');
-					var sql = tt[0].trim();
-					var etalon = '' + tt[1].split(' - ')[0].trim();
-					var res = '' + alasql('VALUE OF ' + sql);
-					//console.log(tt,sql,etalon);
-
-					runFn(test, function(done) {
-						assert.equal(etalon, res);
-						done();
-					});
-				} else {
+				if (test.indexOf('--') < 0) {
 					if (test.trim().length > 0) {
 						alasql(test);
 					}
+					return;
 				}
+
+				var runFn = it;
+
+				if (test.indexOf('--') === 0) {
+					// skip test starting line with '--'
+					test = test.substr(2).trim();
+					runFn = runAll || it.skip;
+				}
+
+				var tt = test.split('--');
+				var sql = tt[0].trim();
+				var etalon = '' + tt[1].split(' - ')[0].trim();
+				var res = '' + alasql('VALUE OF ' + sql);
+				//console.log(tt,sql,etalon);
+
+				runFn(test, function(done) {
+					assert.equal(etalon, res);
+					done();
+				});
+
 			});
 	}
 });

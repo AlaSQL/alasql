@@ -737,7 +737,7 @@ yy.Search.prototype.compile = function(databaseid) {
 		var res;
 		doSearch.bind(self)(dbid, params, function(data) {
 			// console.log(35,data);
-			res = modify(statement.query, data);
+			res = modify(alasql, statement.query, data);
 			// console.log(37,data);
 			if (cb) {
 				res = cb(res);

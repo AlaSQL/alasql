@@ -10,7 +10,7 @@ if (typeof exports === 'object') {
 
 describe('Create database', function() {
 	it('Create new database', function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 		assert.deepEqual(db.tables, {});
 		done();
 	});

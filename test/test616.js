@@ -7,7 +7,7 @@ var test = '616'; // insert test file number
 
 describe('Test ' + test + ' - Foreign keys on created database', function() {
 	it("Check foreign key on a created database doesn't fail", function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 
 		db.exec(
 			'CREATE TABLE Parent( ParentId integer, CONSTRAINT PK_Parent PRIMARY KEY(ParentId) )'

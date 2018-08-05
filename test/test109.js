@@ -10,7 +10,7 @@ if (typeof exports === 'object') {
 
 describe('Test 109 - DELETE', function() {
 	it('DELETE without conditions', function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 
 		db.exec('CREATE TABLE test (a int, b int)');
 		db.exec('INSERT INTO test VALUES (1,1)');
@@ -25,7 +25,7 @@ describe('Test 109 - DELETE', function() {
 	});
 
 	it('DELETE with conditions', function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 
 		db.exec('CREATE TABLE test (a int, b int)');
 		//		console.log(db);

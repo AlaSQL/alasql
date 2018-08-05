@@ -1,5 +1,5 @@
 var alasql = require('../../alasql.js'),
-	adb = new alasql.Database(),
+	adb = alasql.newDatabase(),
 	samplecoll = null,
 	arraySize = 100000, // how large of a dataset to generate
 	totalIterations = 200, // how many times we search it

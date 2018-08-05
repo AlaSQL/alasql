@@ -19,7 +19,7 @@ describe('Test 382 - Error in UPDATE', function() {
 	});
 
 	it('1. Create table', function(done) {
-		var sqldb = new alasql.Database('db');
+		var sqldb = alasql.newDatabase('db');
 		sqldb.exec(
 			'CREATE TABLE Locations (' +
 				'idLoc INT PRIMARY KEY AUTOINCREMENT NOT NULL,' +

@@ -84,10 +84,7 @@ var alasqlparser = (function () {
             var $0 = $$.length - 1;
             switch (yystate) {
                 case 1:
-                    if (alasql.options.casesensitive)
-                        this.$ = $$[$0];
-                    else
-                        this.$ = $$[$0].toLowerCase();
+                    this.$ = yy.casesensitive ? $$[$0] : $$[$0].toLowerCase();
                     break;
                 case 2:
                     this.$ = doubleq($$[$0].substr(1, $$[$0].length - 2));
@@ -645,8 +642,8 @@ var alasqlparser = (function () {
                     $$[$0].as = 'default';
                     break;
                 case 193:
-                    this.$ = { inserted: true }; /*$$[$0].as = 'default'*/
-                    ;
+                    this.$ = { inserted: true };
+                    $$[$0].as = 'default';
                     break;
                 case 200:
                     var s = $$[$0];
@@ -1005,7 +1002,7 @@ var alasqlparser = (function () {
                     if (exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
                         this.$ = new yy.FuncValue({ funcid: funcid, args: exprlist });
                     }
-                    else if (alasql.aggr[$$[$0 - 4]]) {
+                    else if (yy.isInAggr($$[$0 - 4])) {
                         this.$ = new yy.AggrValue({ aggregatorid: 'REDUCE',
                             funcid: funcid, expression: exprlist.pop(), distinct: ($$[$0 - 2] == 'DISTINCT') });
                     }

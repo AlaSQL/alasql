@@ -11,13 +11,13 @@ console.log(
 	JSON.stringify(
 		{
 			alasqlPath: alasql.path,
-			isBrowser: alasql.utils.isBrowser,
+			/**isBrowser: alasql.utils.isBrowser,
 			isCordova: alasql.utils.isCordova,
 			isMeteor: alasql.utils.isMeteor,
 			isMeteorClient: alasql.utils.isMeteorClient,
 			isMeteorServer: alasql.utils.isMeteorServer,
 			isNode: alasql.utils.isNode,
-			isWebWorker: alasql.utils.isWebWorker,
+			isWebWorker: alasql.utils.isWebWorker,*/
 		},
 		null,
 		4

@@ -1,7 +1,10 @@
+import {doJoin} from './join';
+
+
 // Main query procedure
 
 
-export function queryfn(query, oldscope, cb, A, B) {
+export function queryfn(alasql, query, oldscope, cb, A, B) {
 	var aaa = query.sources.length;
 
 	var ms;
@@ -35,7 +38,7 @@ export function queryfn(query, oldscope, cb, A, B) {
 			//	if(false) {
 			//			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);
 			//	} else {
-			queryfn2([], -idx - 1, query);
+			queryfn2(alasql, [], -idx - 1, query);
 			//	}
 
 			//			console.log(27,q);
@@ -76,12 +79,12 @@ export function queryfn(query, oldscope, cb, A, B) {
 		//
 		source.queriesdata = query.queriesdata;
 	});
-	if (query.sources.length === 0 || 0 === slen) result = queryfn3(query);
+	if (query.sources.length === 0 || 0 === slen) result = queryfn3(alasql, query);
 	//	console.log(82,aaa,slen,query.sourceslen, query.sources.length);
 	return result;
 }
 
-function queryfn2(data, idx, query) {
+function queryfn2(alasql, data, idx, query) {
 	//console.log(56,arguments);
 	//		console.log(78,data, idx,query);
 	//console.trace();
@@ -114,10 +117,10 @@ function queryfn2(data, idx, query) {
 	query.sourceslen--;
 	if (query.sourceslen > 0) return;
 
-	return queryfn3(query);
+	return queryfn3(alasql, query);
 }
 
-function queryfn3(query) {
+function queryfn3(alasql, query) {
 	var scope = query.scope,
 		jlen;
 
@@ -140,7 +143,7 @@ function queryfn3(query) {
 
 	// Start walking over data
 	//console.log(142,'1111');
-	doJoin(query, scope, h);
+	doJoin(alasql, query, scope, h);
 	//console.log(144,'2222',query.modifier);
 
 	//console.log(85,query.data[0]);
@@ -447,8 +450,8 @@ function doDistinct(query) {
 			uniq[uix] = query.data[i];
 		}
 		query.data = [];
-		for (var val of uniq) {
-			query.data.push(val);
+		for (let ind in uniq) {
+			query.data.push(uniq[ind]);
 		}
 	}
 }

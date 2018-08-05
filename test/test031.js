@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 31', function() {
 	it('ALTER TABLE RENAME', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('DROP TABLE IF EXISTS test1');
 		db.exec('DROP TABLE IF EXISTS test2');
 		db.exec('CREATE TABLE test1 (a int, b int)');

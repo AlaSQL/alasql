@@ -29,7 +29,7 @@ describe('Test ' + test + ' - get autoval', function() {
 
 	it('B) get autoval from new database', function() {
 		//
-		var mydb = new alasql.Database('My Database');
+		var mydb = alasql.newDatabase('My Database');
 		mydb.exec('CREATE TABLE session (id INT AUTOINCREMENT, sessid STRING)');
 		mydb.exec('INSERT INTO session (sessid) VALUES ("TEST"), ("TEST")');
 		assert.equal(mydb.autoval('session', 'id'), 2);

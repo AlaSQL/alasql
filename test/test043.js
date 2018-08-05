@@ -6,7 +6,7 @@ if (typeof exports === 'object') {
 describe('Test 43', function() {
 	//	describe('Dates', function(){
 
-	var db = new alasql.Database('test43');
+	var db = alasql.newDatabase('test43');
 
 	it('Create database', function(done) {
 		// alasql('create database test43');

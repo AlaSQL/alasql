@@ -122,7 +122,7 @@ utils.glob = (value, pattern) => {
     @param {object} query Query object
     @param res {object|number|string|boolean} res Data to be converted
 */
-utils.modify = (query, res, alasql) => {
+utils.modify = (alasql, query, res) => {
     // jshint ignore:line
     //	console.log(arguments);
     /* If source is a primitive value then return it */
@@ -172,8 +172,8 @@ utils.modify = (query, res, alasql) => {
     else if (modifier === 'ROW') {
         if (res.length > 0) {
             var a = [];
-            for (var val of res[0]) {
-                a.push(val);
+            for (var ind in res[0]) {
+                a.push(res[0][ind]);
             }
             res = a;
         }

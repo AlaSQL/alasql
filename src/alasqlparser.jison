@@ -348,8 +348,7 @@ SETS                                        	return 'SET'
 Literal
 	: LITERAL
 		{
-			if (alasql.options.casesensitive) $$ = $1;
-			else $$ = $1.toLowerCase();
+			$$ = yy.casesensitive ? $1 : $1.toLowerCase() ;
 		}
 	| BRALITERAL
 		{ $$ = doubleq($1.substr(1,$1.length-2)); }
@@ -1362,7 +1361,7 @@ FuncValue
 			var exprlist = $4;
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
-			} else if(alasql.aggr[$1]) {
+			} else if(yy.isInAggr($1)) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
                       funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT') });
 		    } else {

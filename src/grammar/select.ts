@@ -10,9 +10,9 @@
 // Main part of SELECT procedure
 //
 
-import { queryfn } from '../handleData/query';
-import utils from '../utils';
+import { queryfn } from '../processing/query';
 
+import utils from '../utils';
 
 export default mem => {
 	const yy = mem.grammar.yy;
@@ -384,7 +384,7 @@ export default mem => {
 		
 		let statement = <_statement>function(params, cb, oldscope) {
 			query.params = params;
-			var res1 = queryfn(query, oldscope, (res) => {
+			var res1 = queryfn(alasql, query, oldscope, (res) => {
 				//console.log(res[0].schoolid);
 				//console.log(184,res);
 				if (query.rownums.length > 0) {
@@ -395,7 +395,7 @@ export default mem => {
 					}
 				}
 
-				var res2 = utils.modify(query, res, alasql);
+				var res2 = utils.modify(alasql, query, res);
 
 				if (cb) {
 					cb(res2);

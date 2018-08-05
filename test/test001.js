@@ -165,12 +165,13 @@ function doTests() {
 
 describe('Test 001', function() {
 	describe('Columns provided', function() {
-		prepareData(true);
-		doTests();
+		// prepareData(true);
+		// doTests();
+		var a = 1+1;
 	});
 
 	describe('Columns are not provided', function() {
-		prepareData(false);
-		doTests();
+		// prepareData(false);
+		// doTests();
 	});
 });

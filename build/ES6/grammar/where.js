@@ -1,9 +1,8 @@
 export default mem => {
     const yy = mem.grammar.yy;
-    const alasql = mem.alasql;
     yy.Select.prototype.compileWhere = function (query) {
         if (this.where) {
-            if (typeof this.where == 'function') {
+            if (typeof this.where === 'function') {
                 return this.where;
             }
             else {
@@ -105,5 +104,4 @@ export default mem => {
         }
     }
     mem.grammar.yy = yy;
-    mem.alasql = alasql;
 };

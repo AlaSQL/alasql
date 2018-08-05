@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 17', function() {
 	it('UNION ', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('CREATE TABLE test (a int)');
 		db.exec('INSERT INTO test VALUES (1)');
 		db.exec('INSERT INTO test VALUES (2)');
@@ -22,7 +22,7 @@ describe('Test 17', function() {
 	});
 
 	it('UNION ALL', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('CREATE TABLE test (a int)');
 		db.exec('INSERT INTO test VALUES (1)');
 		db.exec('INSERT INTO test VALUES (2)');

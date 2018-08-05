@@ -30,9 +30,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-import utils from './utils';
 
 import addOptions from './options';
+
+import utils from './utils';
 
 import grammar from './alasqlparser';
 
@@ -40,13 +41,9 @@ import expandGrammar from './grammar';
 
 import alasqlObj from './alasqlObj';
 
-import addUtils from './utils';
-
-//import addLogic from './logic';
-
 import addDataStruct from './dataStruct';
 
-//const logic: {[key: string]: any} = {};
+import addlogic from './logic';
 
 const alasql: any = () => {};
 
@@ -64,7 +61,7 @@ expandGrammar(mem);
 
 addDataStruct(mem);
 
-//addHelperFunc(mem);
+addlogic(mem);
 
 if (0) mem.alasql.path = utils.findAlaSQLPath();
 

@@ -52,7 +52,7 @@ rules:
   indent-legacy: 'off'
   init-declarations: 'off'
   jsx-quotes: 'off'
-  key-spacing: error
+  key-spacing: 0
   keyword-spacing:
     - 0
     - after: 0
@@ -214,7 +214,7 @@ rules:
     - never
   switch-colon-spacing: error
   symbol-description: error
-  template-curly-spacing: error
+  template-curly-spacing: 0
   template-tag-spacing: error
   unicode-bom:
     - error

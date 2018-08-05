@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 23', function() {
 	it('BETWEEN and NOT BETWEEN', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		//		alasql.use('db');
 		db.exec('CREATE TABLE test (a int, b int)');
 		db.exec('INSERT INTO test VALUES (1,1)');

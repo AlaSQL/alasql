@@ -8,7 +8,7 @@ describe('Test 36', function() {
 
 	it('1. Create Database', function(done) {
 		alasql.options.modifier = undefined;
-		db = new alasql.Database('db');
+		db = alasql.newDatabase('db');
 		done();
 	});
 

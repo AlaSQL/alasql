@@ -79,7 +79,7 @@ FS.attachDatabase = function(fsdbid, dbid, args, params, cb) {
 	if (alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
 	}
-	var db = new alasql.Database(dbid || fsdbid);
+	var db =  alasql.newDatabase(dbid || fsdbid);
 	db.engineid = 'FILESTORAGE';
 	//	db.fsdbid = fsdbid;
 	db.filename = args[0].value;
@@ -244,7 +244,7 @@ FS.rollback = function(databaseid, cb) {
 					db.data = data;
 					db.tables = {};
 					for (var tbid in db.data.tables) {
-						var tb = new alasql.Table({columns: db.data.tables[tbid].columns});
+						var tb =  alasql.newTable({columns: db.data.tables[tbid].columns});
 						extend(tb, db.data.tables[tbid]);
 						db.tables[tbid] = tb;
 						if (!alasql.options.autocommit) {

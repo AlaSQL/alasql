@@ -7,7 +7,7 @@ describe('Test 42', function() {
 	describe('MID function', function() {
 		var db;
 		it('MID Function', function(done) {
-			db = new alasql.Database('db');
+			db = alasql.newDatabase('db');
 
 			db.exec('CREATE TABLE one (a STRING, b FLOAT)');
 			db.exec(

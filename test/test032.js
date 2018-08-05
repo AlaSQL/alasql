@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 32', function() {
-	var db = new alasql.Database('db');
+	var db = alasql.newDatabase('db');
 
 	it('LIKE, NOT LIKE and aliases', function(done) {
 		db.exec('CREATE TABLE test (a STRING, b INT, t DATETIME)');

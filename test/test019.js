@@ -7,7 +7,7 @@ var db;
 
 describe('Test 19', function() {
 	it('1. Create tables', function(done) {
-		db = new alasql.Database('db');
+		db = alasql.newDatabase('db');
 		db.exec('CREATE TABLE test1 (a int)');
 		db.exec('INSERT INTO test1 VALUES (1)');
 		db.exec('INSERT INTO test1 VALUES (2)');

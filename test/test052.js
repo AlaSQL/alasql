@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 52 - UPPER CASE and LOWER CASE', function() {
-	var db1 = new alasql.Database('city');
+	var db1 = alasql.newDatabase('city');
 
 	it('Upper and lower case in CREATE TABLE Category', function(done) {
 		db1.exec('CrEaTe TABle categories (category Int, city strinG)');

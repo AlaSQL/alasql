@@ -8,7 +8,7 @@ if (typeof exports === 'object') {
 var name = '';
 describe('Test 365 Default database function', function() {
 	it('1. CREATE DATABASE', function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 		name = db.databaseid;
 		//    console.log(db);
 		var res = db.exec('VALUE OF SELECT 2+3');

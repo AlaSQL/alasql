@@ -1,8 +1,3 @@
-//
-// Date functions
-//
-// (c) 2014, Andrey Gershun
-//
 
 /** Standard JavaScript data types */
 
@@ -14,11 +9,6 @@ alasql.fn.Boolean = Boolean;
 
 /** Extend Object with properties */
 stdfn.EXTEND = alasql.utils.extend;
-
-stdfn.CHAR = String.fromCharCode.bind(String);
-stdfn.ASCII = function(a) {
-	return a.charCodeAt(0);
-};
 
 /** 
  Return first non-null argument

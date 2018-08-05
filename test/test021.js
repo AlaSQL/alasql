@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 21', function() {
 	it('Aggregators', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('CREATE TABLE test (a int, b int)');
 		db.exec('INSERT INTO test VALUES (1,1)');
 		db.exec('INSERT INTO test VALUES (2,1)');

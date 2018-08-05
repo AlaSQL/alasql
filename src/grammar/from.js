@@ -6,6 +6,7 @@
 //
 */
 
+import utils from '../utils';
 
 export default mem => {
 	const yy = mem.grammar.yy;
@@ -63,9 +64,9 @@ yy.Select.prototype.compileFrom = function(query) {
 			databaseid: tq.databaseid || query.database.databaseid,
 			tableid: tq.tableid,
 			joinmode: 'INNER',
-			onmiddlefn: returnTrue,
+			onmiddlefn: utils.returnTrue,
 			srcwherefns: '', // for optimization
-			srcwherefn: returnTrue,
+			srcwherefn: utils.returnTrue,
 			//			columns: []
 		};
 

@@ -54772,7 +54772,7 @@ yy.CreateDatabase.prototype.execute = function(databaseid, params, cb) {
 		if (alasql.databases[dbid]) {
 			throw new Error("Database '" + dbid + "' already exists");
 		}
-		var a = new alasql.Database(dbid);
+		var a = alasql.newDatabase(dbid);
 		var res = 1;
 		if (cb) return cb(res);
 		return res;
@@ -57894,7 +57894,7 @@ IDB.attachDatabase = <span class="fstat-no" title="function not covered" >functi
 <span class="cstat-no" title="statement not covered" >		var request2 = indexedDB.open(ixdbid);</span>
 <span class="cstat-no" title="statement not covered" >		request2.onsuccess = <span class="fstat-no" title="function not covered" >function(event) {</span></span>
 <span class="cstat-no" title="statement not covered" >			var ixdb = event.target.result;</span>
-<span class="cstat-no" title="statement not covered" >			var db = new alasql.Database(dbid || ixdbid);</span>
+<span class="cstat-no" title="statement not covered" >			var db = alasql.newDatabase(dbid || ixdbid);</span>
 <span class="cstat-no" title="statement not covered" >			db.engineid = 'INDEXEDDB';</span>
 <span class="cstat-no" title="statement not covered" >			db.ixdbid = ixdbid;</span>
 <span class="cstat-no" title="statement not covered" >			db.tables = [];</span>
@@ -58349,7 +58349,7 @@ LS.attachDatabase = function(lsdbid, databaseid, args, params, cb) {
 		);
 	}
 	if (!databaseid) databaseid = lsdbid;
-	var db = new alasql.Database(databaseid);
+	var db = alasql.newDatabase(databaseid);
 	db.engineid = 'LOCALSTORAGE';
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
@@ -58600,7 +58600,7 @@ LS.rollback = function(databaseid, cb) {
 	//	if(!alasql.options.autocommit) {
 &nbsp;
 <span class="cstat-no" title="statement not covered" >	delete alasql.databases[databaseid];</span>
-<span class="cstat-no" title="statement not covered" >	alasql.databases[databaseid] = new alasql.Database(databaseid);</span>
+<span class="cstat-no" title="statement not covered" >	alasql.databases[databaseid] = alasql.newDatabase(databaseid);</span>
 <span class="cstat-no" title="statement not covered" >	extend(alasql.databases[databaseid], lsdb);</span>
 <span class="cstat-no" title="statement not covered" >	alasql.databases[databaseid].databaseid = databaseid;</span>
 <span class="cstat-no" title="statement not covered" >	alasql.databases[databaseid].engineid = 'LOCALSTORAGE';</span>
@@ -58658,7 +58658,7 @@ SQLITE.attachDatabase = <span class="fstat-no" title="function not covered" >fun
 			value,
 			true,
 <span class="fstat-no" title="function not covered" >			function(data) {</span>
-<span class="cstat-no" title="statement not covered" >				var db = new alasql.Database(dbid || sqldbid);</span>
+<span class="cstat-no" title="statement not covered" >				var db = alasql.newDatabase(dbid || sqldbid);</span>
 <span class="cstat-no" title="statement not covered" >				db.engineid = 'SQLITE';</span>
 <span class="cstat-no" title="statement not covered" >				db.sqldbid = sqldbid;</span>
 <span class="cstat-no" title="statement not covered" >				var sqldb = (db.sqldb = new SQL.Database(data));</span>
@@ -58799,7 +58799,7 @@ FS.attachDatabase = <span class="fstat-no" title="function not covered" >functio
 <span class="cstat-no" title="statement not covered" >	if (alasql.databases[dbid]) {</span>
 <span class="cstat-no" title="statement not covered" >		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');</span>
 	}
-<span class="cstat-no" title="statement not covered" >	var db = new alasql.Database(dbid || fsdbid);</span>
+<span class="cstat-no" title="statement not covered" >	var db = alasql.newDatabase(dbid || fsdbid);</span>
 <span class="cstat-no" title="statement not covered" >	db.engineid = 'FILESTORAGE';</span>
 	//	db.fsdbid = fsdbid;
 <span class="cstat-no" title="statement not covered" >	db.filename = args[0].value;</span>
@@ -58954,7 +58954,7 @@ FS.rollback = <span class="fstat-no" title="function not covered" >function(data
 					}
 &nbsp;
 <span class="cstat-no" title="statement not covered" >					delete alasql.databases[databaseid];</span>
-<span class="cstat-no" title="statement not covered" >					alasql.databases[databaseid] = new alasql.Database(databaseid);</span>
+<span class="cstat-no" title="statement not covered" >					alasql.databases[databaseid] = alasql.newDatabase(databaseid);</span>
 <span class="cstat-no" title="statement not covered" >					extend(alasql.databases[databaseid], db);</span>
 <span class="cstat-no" title="statement not covered" >					alasql.databases[databaseid].engineid = 'FILESTORAGE';</span>
 <span class="cstat-no" title="statement not covered" >					alasql.databases[databaseid].filename = db.filename;</span>

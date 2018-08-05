@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 34', function() {
 	it('INSERT INTO VALUES', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('CREATE TABLE test (a STRING)');
 		db.exec("INSERT INTO test (a) VALUES ('a'), ('b'), ('c')");
 

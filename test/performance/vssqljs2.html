@@ -43,7 +43,7 @@ var tres = {alasql:[], sqljs:[], websql:[]};
 // ALASQL
 
 var tm11 = Date.now();
-var adb = new alasql.Database();
+var adb = alasql.newDatabase();
 sql1.forEach(function(sql){adb.exec(sql);});
 tres.alasql.push(Date.now()-tm11); 
 

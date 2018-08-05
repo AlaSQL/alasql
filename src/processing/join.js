@@ -2,7 +2,7 @@
 // Join all lines over sources
 //
 
-function doJoin(query, scope, h) {
+export function doJoin(alasql, query, scope, h) {
 	//	console.log('doJoin', arguments);
 	//	console.log(query.sources.length);
 	// Check, if this is a last join?
@@ -40,7 +40,7 @@ function doJoin(query, scope, h) {
 						doJoin(query, scope, h + 1);
 					}
 				} else {
-					if (source.applymode == 'OUTER') {
+					if (source.applymode === 'OUTER') {
 						scope[source.alias] = {};
 						doJoin(query, scope, h + 1);
 					}
@@ -78,10 +78,10 @@ function doJoin(query, scope, h) {
 			// Reduce data for looping if there is optimization hint
 			if (!source.getfn || (source.getfn && !source.dontcache)) {
 				if (
-					source.joinmode != 'RIGHT' &&
-					source.joinmode != 'OUTER' &&
-					source.joinmode != 'ANTI' &&
-					source.optimization == 'ix'
+					source.joinmode !== 'RIGHT' &&
+					source.joinmode !== 'OUTER' &&
+					source.joinmode !== 'ANTI' &&
+					source.optimization === 'ix'
 				) {
 					data = source.ix[source.onleftfn(scope, query.params, alasql)] || [];
 					opt = true;
@@ -94,7 +94,7 @@ function doJoin(query, scope, h) {
 
 			// Main cycle
 			var i = 0;
-			if (typeof data == 'undefined') {
+			if (typeof data === 'undefined') {
 				throw new Error('Data source number ' + h + ' in undefined');
 			}
 			var ilen = data.length;
@@ -273,7 +273,7 @@ function doJoin(query, scope, h) {
 	}
 }
 
-function swapSources(query, h) {
+export function swapSources(query, h) {
 	var source = query.sources[h];
 	var nextsource = query.sources[h + 1];
 

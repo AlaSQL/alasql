@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 18', function() {
 	it('Subqueries and cross-joins', function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 
 		db.exec('CREATE TABLE test (a int)');
 		db.exec('INSERT INTO test VALUES (1)');

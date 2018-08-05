@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 25', function() {
 	it('JOIN USING', function(done) {
-		var db = new alasql.Database('db');
+		var db = alasql.newDatabase('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
 		db.exec('INSERT INTO test1 VALUES (2,2)');

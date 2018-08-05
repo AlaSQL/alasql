@@ -7,7 +7,7 @@ describe('Test 41', function() {
 	describe('CASE WHEN THEN ELSE END', function() {
 		var db;
 		it('1. CASE Expression WHEN THEN END', function(done) {
-			db = new alasql.Database('db');
+			db = alasql.newDatabase('db');
 
 			db.exec('CREATE TABLE one (a INT, d INT)');
 			db.exec('INSERT INTO one VALUES (1,10),(2,20),(3,30),(4,40),(5,50)');

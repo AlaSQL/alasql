@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 08', function() {
 	it('UPDATE WHERE with conditions test ', function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
 		db.exec('INSERT INTO test VALUES (1,10,100)');

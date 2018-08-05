@@ -85,8 +85,7 @@ var $0 = $$.length - 1;
 switch (yystate) {
 case 1:
 
-			if (alasql.options.casesensitive) this.$ = $$[$0];
-			else this.$ = $$[$0].toLowerCase();
+			this.$ = yy.casesensitive ? $$[$0] : $$[$0].toLowerCase() ;
 		
 break;
 case 2:
@@ -474,7 +473,7 @@ case 189: case 190: case 194: case 197:
  this.$ = $$[$0]; $$[$0].as = 'default'; 
 break;
 case 193:
- this.$ = {inserted:true}; /*$$[$0].as = 'default'*/; 
+ this.$ = {inserted:true}; $$[$0].as = 'default'; 
 break;
 case 200:
  
@@ -795,7 +794,7 @@ case 345:
 			var exprlist = $$[$0-1];
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
 					this.$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
-			} else if(alasql.aggr[$$[$0-4]]) {
+			} else if(yy.isInAggr($$[$0-4])) {
 		    	this.$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
                       funcid: funcid, expression: exprlist.pop(),distinct:($$[$0-2]=='DISTINCT') });
 		    } else {
@@ -1898,7 +1897,7 @@ _handle_error:
 
             // Return the rule stack depth where the nearest error rule can be found.
             // Return FALSE when no error recovery rule was found.
-            var locateNearestErrorRecoveryRule = function(state) {
+            var locateNearestErrorRecoveryRule=function(state) {
                 var stack_probe = stack.length - 1;
                 var depth = 0;
 
@@ -2973,6 +2972,4 @@ exports.main = function commonjsMain(args) {
 if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
 }
-}
-
-export default alasqlparser;
+}export default alasqlparser;

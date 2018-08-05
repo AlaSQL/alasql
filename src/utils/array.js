@@ -224,8 +224,8 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 			uniq[uix] = data[i];
 		}
 		var res = [];
-		for (var val of uniq) {
-			res.push(val);
+		for (let ind in uniq) {
+			res.push(uniq[ind]);
 		}
 		return res;
 	};

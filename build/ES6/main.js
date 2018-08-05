@@ -29,14 +29,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-import utils from './utils';
 import addOptions from './options';
+import utils from './utils';
 import grammar from './alasqlparser';
 import expandGrammar from './grammar';
 import alasqlObj from './alasqlObj';
-//import addLogic from './logic';
 import addDataStruct from './dataStruct';
-//const logic: {[key: string]: any} = {};
+import addlogic from './logic';
 const alasql = () => { };
 const mem = { grammar, alasql };
 mem.alasql = alasqlObj(mem);
@@ -45,7 +44,7 @@ mem.alasql.debug = false;
 addOptions(mem);
 expandGrammar(mem);
 addDataStruct(mem);
-//addHelperFunc(mem);
+addlogic(mem);
 if (0)
     mem.alasql.path = utils.findAlaSQLPath();
 /*only-for-browser/*

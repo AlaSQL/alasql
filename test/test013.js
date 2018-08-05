@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 describe('Test 13', function() {
 	it('Transactions', function(done) {
-		var db = new alasql.Database('mydb');
+		var db = alasql.newDatabase('mydb');
 
 		db.exec('CREATE TABLE students (studentid INT, studentname STRING)');
 

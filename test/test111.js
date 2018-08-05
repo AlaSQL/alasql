@@ -10,7 +10,7 @@ if (typeof exports === 'object') {
 
 describe('Test from jsFiddle', function() {
 	it('Simple select test (http://jsfiddle.net/agershun/38hj2uwy/3/)', function(done) {
-		var db = new alasql.Database();
+		var db = alasql.newDatabase();
 
 		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');
 

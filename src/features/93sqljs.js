@@ -30,7 +30,7 @@ SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb) {
 			value,
 			true,
 			function(data) {
-				var db = new alasql.Database(dbid || sqldbid);
+				var db =  alasql.newDatabase(dbid || sqldbid);
 				db.engineid = 'SQLITE';
 				db.sqldbid = sqldbid;
 				var sqldb = (db.sqldb = new SQL.Database(data));

@@ -63,7 +63,7 @@ LS.storeTable = function(databaseid, tableid) {
 LS.restoreTable = function(databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var tbl = LS.get(db.lsdbid + '.' + tableid);
-	var table = new alasql.Table();
+	var table =  alasql.newTable();
 	for (var f in tbl) {
 		table[f] = tbl[f];
 	}
@@ -173,7 +173,7 @@ LS.attachDatabase = function(lsdbid, databaseid, args, params, cb) {
 		);
 	}
 	if (!databaseid) databaseid = lsdbid;
-	var db = new alasql.Database(databaseid);
+	var db =  alasql.newDatabase(databaseid);
 	db.engineid = 'LOCALSTORAGE';
 	db.lsdbid = lsdbid;
 	db.tables = LS.get(lsdbid).tables;
@@ -427,7 +427,7 @@ LS.rollback = function(databaseid, cb) {
 	//	if(!alasql.options.autocommit) {
 
 	delete alasql.databases[databaseid];
-	alasql.databases[databaseid] = new alasql.Database(databaseid);
+	alasql.databases[databaseid] =  alasql.newDatabase(databaseid);
 	extend(alasql.databases[databaseid], lsdb);
 	alasql.databases[databaseid].databaseid = databaseid;
 	alasql.databases[databaseid].engineid = 'LOCALSTORAGE';

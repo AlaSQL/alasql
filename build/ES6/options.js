@@ -171,7 +171,7 @@ export default mem => {
     alasql.dexec = function (databaseid, sql, params, cb, scope) {
         var db = alasql.databases[databaseid];
         //	if(db.databaseid != databaseid) console.trace('got!');
-        console.log(3, databaseid, alasql.databases);
+        // console.log(3, databaseid, alasql.databases);
         var hh;
         // Create hash
         if (alasql.options.cache) {

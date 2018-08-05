@@ -1,5 +1,7 @@
 # Changelog
-
+Modular
+- Removed: ability to delaire `DECLARE @val int` (just set it directly)
+-   "jison-gho": "^0.6.1-215",
 
 _0.4.6 "Tarim" (xx.07.2018)_
 

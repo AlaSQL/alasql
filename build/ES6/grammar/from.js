@@ -5,6 +5,7 @@
 // (c) 2014, Andrey Gershun
 //
 */
+import utils from '../utils';
 export default mem => {
     const yy = mem.grammar.yy;
     const alasql = mem.alasql;
@@ -66,9 +67,9 @@ export default mem => {
                 databaseid: tq.databaseid || query.database.databaseid,
                 tableid: tq.tableid,
                 joinmode: 'INNER',
-                onmiddlefn: returnTrue,
+                onmiddlefn: utils.returnTrue,
                 srcwherefns: '',
-                srcwherefn: returnTrue,
+                srcwherefn: utils.returnTrue,
             };
             if (tq instanceof yy.Table) {
                 // Get columns from table
