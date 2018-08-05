@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.8-develop-6d434793undefined | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.8-develop-93f86514undefined | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.8-develop-6d434793undefined
+@version 0.4.8-develop-93f86514undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.8-develop-6d434793undefined';
+alasql.version = '0.4.8-develop-93f86514undefined';
 
 /**
 	Debug flag
@@ -3451,11 +3451,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 	var data, fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
-		if (utils.isMeteor) {
-			fs = Npm.require('fs');
-		} else {
-			fs = require('fs');
-		}
+		fs = require('fs');
 
 		// If path is empty, than read data from stdin (for Node)
 		if (typeof path === 'undefined') {
@@ -3598,11 +3594,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error)
 	var fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
-		if (utils.isMeteorServer) {
-			fs = Npm.require('fs'); // For Meteor
-		} else {
-			fs = require('fs');
-		}
+		fs = require('fs');
 
 		if (/^[a-z]+:\/\//i.test(path)) {
 			var request = require('request');
