@@ -368,9 +368,13 @@ yy.Select.prototype.compile = function(databaseid, params) {
 	// Now, compile all togeather into one function with query object in scope
 	var statement = function(params, cb, oldscope) {
 		query.params = params;
-		var res1 = queryfn(query, oldscope, function(res) {
-			//console.log(res[0].schoolid);
-			//console.log(184,res);
+		// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
+		// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
+		// the (data, err) standard is maintained here.
+		var res1 = queryfn(query, oldscope, function(res, err) {
+			if (err) {
+				return cb(err, null);
+			}
 			if (query.rownums.length > 0) {
 				for (var i = 0, ilen = res.length; i < ilen; i++) {
 					for (var j = 0, jlen = query.rownums.length; j < jlen; j++) {
@@ -402,11 +406,11 @@ yy.Select.prototype.compile = function(databaseid, params) {
 };
 
 /**
-	Modify res according modifier
-	@function
-	@param {object} query Query object
-	@param res {object|number|string|boolean} res Data to be converted 
-*/
+ Modify res according modifier
+ @function
+ @param {object} query Query object
+ @param res {object|number|string|boolean} res Data to be converted
+ */
 function modify(query, res) {
 	// jshint ignore:line
 	//	console.log(arguments);
@@ -416,7 +420,7 @@ function modify(query, res) {
 		typeof res === 'undefined' ||
 		typeof res === 'number' ||
 		typeof res === 'string' ||
-		typeof res == 'boolean'
+		typeof res === 'boolean'
 	) {
 		return res;
 	}
