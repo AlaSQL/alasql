@@ -102,8 +102,9 @@ describe('Test 176 - CSV and TSV', function() {
 		) {
 			assert(res.length == 4);
 			//	    console.log(res);
+      done();
 		});
 		//assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
-		done();
+
 	});
 });
