@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.8 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.8-develop-748b0b8undefined | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.8
+@version 0.4.8-develop-748b0b8undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.8';
+alasql.version = '0.4.8-develop-748b0b8undefined';
 
 /**
 	Debug flag
@@ -9441,7 +9441,7 @@ function compileSelectStar(query, alias, joinstar) {
 
 	} else {
 
-		// if column not exists, then copy all
+		// if column not exist, then copy all
 		sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
 
 		query.dirtyColumns = true;
@@ -9569,7 +9569,7 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 				if (query.aliases[tbid] && query.aliases[tbid].type === 'table') {
 					if (!alasql.databases[dbid].tables[query.aliases[tbid].tableid]) {
 
-						throw new Error("Table '" + tbid + "' does not exists in database");
+						throw new Error("Table '" + tbid + "' does not exist in database");
 					}
 					var columns =
 						alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
@@ -9581,7 +9581,7 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						var tcol = xcolumns[col.columnid];
 
 						if (undefined === tcol) {
-							throw new Error('Column does not exists: ' + col.columnid);
+							throw new Error('Column does not exist: ' + col.columnid);
 						}
 
 						var coldef = {
@@ -10349,7 +10349,7 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
 
 				if (undefined === table) {
-					throw new Error('Table does not exists: ' + fr.tableid);
+					throw new Error('Table does not exist: ' + fr.tableid);
 				}
 
 				if (table.columns) {
