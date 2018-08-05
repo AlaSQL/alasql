@@ -7,8 +7,8 @@
 */
 
 /**
-   Meteor
-*/
+ Meteor
+ */
 
 /* global alasql Tabletop document Event */
 
@@ -21,7 +21,7 @@ alasql.from.METEOR = function(filename, opts, cb, idx, query) {
 };
 
 /**
-	Google Spreadsheet reader
+ Google Spreadsheet reader
  */
 alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var res = [];
@@ -311,34 +311,34 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 
 		/*/*
 if(false) {
-		res = data.split(/\r?\n/);
-		if(opt.headers) {
-			if(query && query.sources && query.sources[idx]) {
-				var hh = [];
-				if(typeof opt.headers == 'boolean') {
-					hh = res.shift().split(opt.separator);
-				} else if(Array.isArray(opt.headers)) {
-					hh = opt.headers;
-				}
-				var columns = query.sources[idx].columns = [];
-				hh.forEach(function(h){
-					columns.push({columnid:h});
-				});
-				for(var i=0, ilen=res.length; i<ilen;i++) {
-					var a = res[i].split(opt.separator);
-					var b = {};
-					hh.forEach(function(h,j){
-						b[h] = a[j];
-					});
-					res[i] = b;
-				}
+    res = data.split(/\r?\n/);
+    if(opt.headers) {
+      if(query && query.sources && query.sources[idx]) {
+        var hh = [];
+        if(typeof opt.headers == 'boolean') {
+          hh = res.shift().split(opt.separator);
+        } else if(Array.isArray(opt.headers)) {
+          hh = opt.headers;
+        }
+        var columns = query.sources[idx].columns = [];
+        hh.forEach(function(h){
+          columns.push({columnid:h});
+        });
+        for(var i=0, ilen=res.length; i<ilen;i++) {
+          var a = res[i].split(opt.separator);
+          var b = {};
+          hh.forEach(function(h,j){
+            b[h] = a[j];
+          });
+          res[i] = b;
+        }
 //				console.log(res[0]);
-			}
-		} else {
-			for(var i=0, ilen=res.length; i<ilen;i++) {
-				res[i] = res[i].split(opt.separator);
-			}
-		}
+      }
+    } else {
+      for(var i=0, ilen=res.length; i<ilen;i++) {
+        res[i] = res[i].split(opt.separator);
+      }
+    }
 
 };
 */
@@ -350,7 +350,7 @@ if(false) {
 		parseText(contents);
 	} else {
 		contents = alasql.utils.autoExtFilename(contents, 'csv', opts);
-		alasql.utils.loadFile(contents, !!cb, parseText);
+		alasql.utils.loadFile(contents, !!cb, parseText, query.cb);
 	}
 	return res;
 };

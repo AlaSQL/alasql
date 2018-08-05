@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.8 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.9 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.8
+@version 0.4.9
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.8';
+alasql.version = '0.4.9';
 
 /**
 	Debug flag
@@ -3156,70 +3156,70 @@ alasql.pretty = function(sql, flag) {
 */
 
 /**
-    Alasql utility functions
-    @type {object}
+ Alasql utility functions
+ @type {object}
  */
 var utils = (alasql.utils = {});
 
 /**
-    Convert NaN to undefined
-    @function
-    @param {string} s JavaScript string to be modified
-    @return {string} Covered expression
+ Convert NaN to undefined
+ @function
+ @param {string} s JavaScript string to be modified
+ @return {string} Covered expression
 
-    @example
+ @example
 
-    123         => 123
-    undefined   => undefined
-    NaN         => undefined
+ 123         => 123
+ undefined   => undefined
+ NaN         => undefined
 
-*/
+ */
 function n2u(s) {
 	return '(y=' + s + ',y===y?y:undefined)';
 }
 
 /**
-    Return undefined if s undefined
-    @param {string} s JavaScript string to be modified
-    @return {string} Covered expression
+ Return undefined if s undefined
+ @param {string} s JavaScript string to be modified
+ @return {string} Covered expression
 
-    @example
+ @example
 
-    123,a       => a
-    undefined,a => undefined
-    NaN,a       => undefined
+ 123,a       => a
+ undefined,a => undefined
+ NaN,a       => undefined
 
-*/
+ */
 function und(s, r) {
 	return '(y=' + s + ',typeof y=="undefined"?undefined:' + r + ')';
 }
 
 /**
-    Return always true. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
-    @function
-    @return {boolean} Always true
-*/
+ Return always true. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
+ @function
+ @return {boolean} Always true
+ */
 function returnTrue() {
 	return true;
 }
 
 /**
-    Return undefined. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
-    @function
-    @return {undefined} Always undefined
-*/
+ Return undefined. Stub for non-ecisting WHERE clause, because is faster then if(whenrfn) whenfn()
+ @function
+ @return {undefined} Always undefined
+ */
 function returnUndefined() {}
 
 /**
-    Escape string
-    @function
-    @param {string} s Source string
-    @return {string} Escaped string
-    @example
+ Escape string
+ @function
+ @param {string} s Source string
+ @return {string} Escaped string
+ @example
 
-    Pit\er's => Pit\\er\'s
+ Pit\er's => Pit\\er\'s
 
-*/
+ */
 // based on joliss/js-string-escape
 var escapeq = (utils.escapeq = function(s) {
 
@@ -3246,13 +3246,13 @@ var escapeq = (utils.escapeq = function(s) {
 });
 
 /**
-    Double quotes for SQL statements
-    @param {string} s Source string
-    @return {string} Escaped string
+ Double quotes for SQL statements
+ @param {string} s Source string
+ @return {string} Escaped string
 
-    @example
+ @example
 
-    Piter's => Piter''s
+ Piter's => Piter''s
 
  */
 var escapeqq = (utils.undoubleq = function(s) {
@@ -3260,12 +3260,12 @@ var escapeqq = (utils.undoubleq = function(s) {
 });
 
 /**
-    Replace double quotes with single quote
-    @param {string} s Source string
-    @return {string} Replaced string
-    @example
+ Replace double quotes with single quote
+ @param {string} s Source string
+ @return {string} Replaced string
+ @example
 
-    Piter''s => Piter's
+ Piter''s => Piter's
 
  */
 var doubleq = (utils.doubleq = function(s) {
@@ -3273,22 +3273,22 @@ var doubleq = (utils.doubleq = function(s) {
 });
 
 /**
-    Replace sigle quote to escaped single quote
-    @param {string} s Source string
-    @return {string} Replaced string
+ Replace sigle quote to escaped single quote
+ @param {string} s Source string
+ @return {string} Replaced string
 
-    @todo Chack this functions
+ @todo Chack this functions
 
-*/
+ */
 var doubleqq = (utils.doubleqq = function(s) {
 	return s.replace(/\'/g, "'");
 });
 
 /**
-    Cut BOM first character for UTF-8 files (for merging two files)
-    @param {string} s Source string
-    @return {string} Replaced string
-*/
+ Cut BOM first character for UTF-8 files (for merging two files)
+ @param {string} s Source string
+ @return {string} Replaced string
+ */
 
 var cutbom = function(s) {
 	if (s[0] === String.fromCharCode(65279)) {
@@ -3298,10 +3298,10 @@ var cutbom = function(s) {
 };
 
 /**
-    Get the global scope
-    Inspired by System.global
-    @return {object} The global scope
-*/
+ Get the global scope
+ Inspired by System.global
+ @return {object} The global scope
+ */
 utils.global = (function() {
 	if (typeof self !== 'undefined') {
 		return self;
@@ -3316,18 +3316,18 @@ utils.global = (function() {
 })();
 
 /**
-    Find out if a function is native to the enviroment
-    @param {function} Function to check
-    @return {boolean} True if function is native
-*/
+ Find out if a function is native to the enviroment
+ @param {function} Function to check
+ @return {boolean} True if function is native
+ */
 var isNativeFunction = (utils.isNativeFunction = function(fn) {
 	return typeof fn === 'function' && !!~fn.toString().indexOf('[native code]');
 });
 
 /**
-    Find out if code is running in a web worker enviroment
-    @return {boolean} True if code is running in a web worker enviroment
-*/
+ Find out if code is running in a web worker enviroment
+ @return {boolean} True if code is running in a web worker enviroment
+ */
 utils.isWebWorker = (function() {
 	try {
 		var importScripts = utils.global.importScripts;
@@ -3338,9 +3338,9 @@ utils.isWebWorker = (function() {
 })();
 
 /**
-    Find out if code is running in a node enviroment
-    @return {boolean} True if code is running in a node enviroment
-*/
+ Find out if code is running in a node enviroment
+ @return {boolean} True if code is running in a node enviroment
+ */
 utils.isNode = (function() {
 	try {
 		return utils.isNativeFunction(utils.global.process.reallyExit);
@@ -3350,9 +3350,9 @@ utils.isNode = (function() {
 })();
 
 /**
-    Find out if code is running in a browser enviroment
-    @return {boolean} True if code is running in a browser enviroment
-*/
+ Find out if code is running in a browser enviroment
+ @return {boolean} True if code is running in a browser enviroment
+ */
 utils.isBrowser = (function() {
 	try {
 		return utils.isNativeFunction(utils.global.location.reload);
@@ -3362,17 +3362,17 @@ utils.isBrowser = (function() {
 })();
 
 /**
-    Find out if code is running in a browser with a browserify setup
-    @return {boolean} True if code is running in a browser with a browserify setup
-*/
+ Find out if code is running in a browser with a browserify setup
+ @return {boolean} True if code is running in a browser with a browserify setup
+ */
 utils.isBrowserify = (function() {
 	return utils.isBrowser && typeof process !== 'undefined' && process.browser;
 })();
 
 /**
-    Find out if code is running in a browser with a requireJS setup
-    @return {boolean} True if code is running in a browser with a requireJS setup
-*/
+ Find out if code is running in a browser with a requireJS setup
+ @return {boolean} True if code is running in a browser with a requireJS setup
+ */
 utils.isRequireJS = (function() {
 	return (
 		utils.isBrowser && typeof require === 'function' && typeof require.specified === 'function'
@@ -3380,37 +3380,37 @@ utils.isRequireJS = (function() {
 })();
 
 /**
-    Find out if code is running with Meteor in the enviroment
-    @return {boolean} True if code is running with Meteor in the enviroment
+ Find out if code is running with Meteor in the enviroment
+ @return {boolean} True if code is running with Meteor in the enviroment
 
-    @todo Find out if this is the best way to do this
-*/
+ @todo Find out if this is the best way to do this
+ */
 utils.isMeteor = (function() {
 	return typeof Meteor !== 'undefined' && Meteor.release;
 })();
 
 /**
-    Find out if code is running on a Meteor client
-    @return {boolean} True if code is running on a Meteor client
-*/
+ Find out if code is running on a Meteor client
+ @return {boolean} True if code is running on a Meteor client
+ */
 utils.isMeteorClient = utils.isMeteorClient = (function() {
 	return utils.isMeteor && Meteor.isClient;
 })();
 
 /**
-    Find out if code is running on a Meteor server
-    @return {boolean} True if code is running on a Meteor server
-*/
+ Find out if code is running on a Meteor server
+ @return {boolean} True if code is running on a Meteor server
+ */
 utils.isMeteorServer = (function() {
 	return utils.isMeteor && Meteor.isServer;
 })();
 
 /**
-    Find out code is running in a cordovar enviroment
-    @return {boolean} True if code is running in a web worker enviroment
+ Find out code is running in a cordovar enviroment
+ @return {boolean} True if code is running in a web worker enviroment
 
-    @todo Find out if this is the best way to do this
-*/
+ @todo Find out if this is the best way to do this
+ */
 utils.isCordova = (function() {
 	return typeof cordova === 'object';
 })();
@@ -3437,25 +3437,21 @@ utils.isArray = function(obj) {
 	return '[object Array]' === Object.prototype.toString.call(obj);
 };
 /**
-    Load text file from anywhere
-    @param {string|object} path File path or HTML event
-    @param {boolean} asy True - async call, false - sync call
-    @param {function} success Success function
-    @param {function} error Error function
-    @return {string} Read data
+ Load text file from anywhere
+ @param {string|object} path File path or HTML event
+ @param {boolean} asy True - async call, false - sync call
+ @param {function} success Success function
+ @param {function} error Error function
+ @return {string} Read data
 
-    @todo Define Event type
-    @todo Smaller if-else structures.
-*/
+ @todo Define Event type
+ @todo Smaller if-else structures.
+ */
 var loadFile = (utils.loadFile = function(path, asy, success, error) {
 	var data, fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		/*not-for-browser/*
-		if (utils.isMeteor) {
-			fs = Npm.require('fs');
-		} else {
-			fs = require('fs');
-		}
+		fs = require('fs');
 
 		// If path is empty, than read data from stdin (for Node)
 		if (typeof path === 'undefined') {
@@ -3475,7 +3471,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 				var request = require('request');
 				request(path, function(err, response, body) {
 					if (err) {
-						throw err;
+						return error(err, null);
 					}
 					success(cutbom(body.toString()));
 				});
@@ -3484,13 +3480,17 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 				if (asy) {
 					fs.readFile(path, function(err, data) {
 						if (err) {
-							throw err;
+							return error(err, null);
 						}
 						success(cutbom(data.toString()));
 					});
 				} else {
 					// Call sync version
-					data = fs.readFileSync(path);
+					try {
+						data = fs.readFileSync(path);
+					} catch (e) {
+						return error(err, null);
+					}
 					success(cutbom(data.toString()));
 				}
 			}
@@ -3502,7 +3502,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 			.then(function(contents) {
 				success(cutbom(contents));
 			})["catch"](function(err) {
-				throw err;
+				return error(err, null);
 			});
 		//*/
 	} else if (utils.isCordova) {
@@ -3544,7 +3544,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 								success(cutbom(xhr.responseText));
 							}
 						} else if (error) {
-							error(xhr);
+							return error(xhr);
 						}
 						// Todo: else...?
 					}
@@ -3579,25 +3579,21 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 });
 
 /**
-  @function Load binary file from anywhere
-  @param {string} path File path
-  @param {boolean} asy True - async call, false - sync call
-  @param {function} success Success function
-  @param {function} error Error function
-  @return 1 for Async, data - for sync version
+ @function Load binary file from anywhere
+ @param {string} path File path
+ @param {boolean} asy True - async call, false - sync call
+ @param {function} success Success function
+ @param {function} error Error function
+ @return 1 for Async, data - for sync version
 
-  @todo merge functionality from loadFile and LoadBinaryFile
-*/
+ @todo merge functionality from loadFile and LoadBinaryFile
+ */
 
 var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error) {
 	var fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		/*not-for-browser/*
-		if (utils.isMeteorServer) {
-			fs = Npm.require('fs'); // For Meteor
-		} else {
-			fs = require('fs');
-		}
+		fs = require('fs');
 
 		if (/^[a-z]+:\/\//i.test(path)) {
 			var request = require('request');
@@ -3776,12 +3772,12 @@ var fileExists = (utils.fileExists = function(path, cb) {
 });
 
 /**
-  Save text file from anywhere
-  @param {string} path File path
-  @param {array} data Data object
-  @param {function} cb Callback
-  @param {object=} opts
-*/
+ Save text file from anywhere
+ @param {string} path File path
+ @param {array} data Data object
+ @param {function} cb Callback
+ @param {object=} opts
+ */
 
 var saveFile = (utils.saveFile = function(path, data, cb, opts) {
 	var res = 1;
@@ -3863,40 +3859,40 @@ var saveFile = (utils.saveFile = function(path, data, cb, opts) {
 });
 
 /**
-    @function Is this IE9
-    @return {boolean} True for IE9 and false for other browsers
+ @function Is this IE9
+ @return {boolean} True for IE9 and false for other browsers
 
-    For IE9 compatibility issues
-*/
+ For IE9 compatibility issues
+ */
 function isIE() {
 	var myNav = navigator.userAgent.toLowerCase();
 	return myNav.indexOf('msie') !== -1 ? parseInt(myNav.split('msie')[1]) : false;
 }
 
 /**
-  @function Hash a string to signed integer
-  @param {string} source string
-  @return {integer} hash number
-*/
+ @function Hash a string to signed integer
+ @param {string} source string
+ @return {integer} hash number
+ */
 
 // FNV-1a inspired hashing
 var hash = (utils.hash = function(str) {
 	var hash = 0x811c9dc5,
 		i = str.length;
 	while (i) {
-		hash = hash ^ str.charCodeAt(--i);
+		hash ^= str.charCodeAt(--i);
 		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
 	}
 	return hash;
 });
 
 /**
-    Union arrays
-    @function
-    @param {array} a
-    @param {array} b
-    @return {array}
-*/
+ Union arrays
+ @function
+ @param {array} a
+ @param {array} b
+ @return {array}
+ */
 var arrayUnion = (utils.arrayUnion = function(a, b) {
 	var r = b.slice(0);
 	a.forEach(function(i) {
@@ -3917,7 +3913,7 @@ var arrayDiff = (utils.arrayDiff = function(a, b) {
 });
 
 /**
-  Arrays deep intersect (with records)
+ Arrays deep intersect (with records)
  */
 var arrayIntersect = (utils.arrayIntersect = function(a, b) {
 	var r = [];
@@ -3936,7 +3932,7 @@ var arrayIntersect = (utils.arrayIntersect = function(a, b) {
 });
 
 /**
-  Arrays deep union (with records)
+ Arrays deep union (with records)
  */
 var arrayUnionDeep = (utils.arrayUnionDeep = function(a, b) {
 	var r = b.slice(0);
@@ -3956,7 +3952,7 @@ var arrayUnionDeep = (utils.arrayUnionDeep = function(a, b) {
 });
 
 /**
-  Arrays deep union (with records)
+ Arrays deep union (with records)
  */
 var arrayExceptDeep = (utils.arrayExceptDeep = function(a, b) {
 	var r = [];
@@ -3976,7 +3972,7 @@ var arrayExceptDeep = (utils.arrayExceptDeep = function(a, b) {
 });
 
 /**
-  Arrays deep intersect (with records)
+ Arrays deep intersect (with records)
  */
 var arrayIntersectDeep = (utils.arrayIntersectDeep = function(a, b) {
 	var r = [];
@@ -3996,7 +3992,7 @@ var arrayIntersectDeep = (utils.arrayIntersectDeep = function(a, b) {
 });
 
 /**
-  Deep clone objects
+ Deep clone objects
  */
 var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 	if (null === obj || typeof obj !== 'object') {
@@ -4018,11 +4014,11 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 });
 
 /**
-  Check equality of objects
-*/
+ Check equality of objects
+ */
 
 /**
-  Compare two objects in deep
+ Compare two objects in deep
  */
 var deepEqual = (utils.deepEqual = function(x, y) {
 	if (x === y) {
@@ -4044,10 +4040,10 @@ var deepEqual = (utils.deepEqual = function(x, y) {
 	return false;
 });
 /**
-    Array with distinct records
-    @param {array} data
-    @return {array}
-*/
+ Array with distinct records
+ @param {array} data
+ @return {array}
+ */
 var distinctArray = (utils.distinctArray = function(data) {
 	var uniq = {};
 	// TODO: Speedup, because Object.keys is slow
@@ -4073,12 +4069,12 @@ var distinctArray = (utils.distinctArray = function(data) {
 });
 
 /**
-    Extend object a with properties of b
-    @function
-    @param {object} a
-    @param {object} b
-    @return {object}
-*/
+ Extend object a with properties of b
+ @function
+ @param {object} a
+ @param {object} b
+ @return {object}
+ */
 var extend = (utils.extend = function extend(a, b) {
 	a = a || {};
 	for (var key in b) {
@@ -4090,7 +4086,7 @@ var extend = (utils.extend = function extend(a, b) {
 });
 
 /**
-   Flat array by first row
+ Flat array by first row
  */
 var flatArray = (utils.flatArray = function(a) {
 
@@ -4115,7 +4111,7 @@ var flatArray = (utils.flatArray = function(a) {
 });
 
 /**
-  Convert array of objects to array of arrays
+ Convert array of objects to array of arrays
  */
 var arrayOfArrays = (utils.arrayOfArrays = function(a) {
 	return a.map(function(aa) {
@@ -4134,10 +4130,10 @@ if (!Array.isArray) {
 }
 
 /**
-    Excel:convert number to Excel column, like 1 => 'A'
-    @param {integer} i Column number, starting with 0
-    @return {string} Column name, starting with 'A'
-*/
+ Excel:convert number to Excel column, like 1 => 'A'
+ @param {integer} i Column number, starting with 0
+ @return {string} Column name, starting with 'A'
+ */
 
 var xlsnc = (utils.xlsnc = function(i) {
 	var addr = String.fromCharCode(65 + i % 26);
@@ -4153,10 +4149,10 @@ var xlsnc = (utils.xlsnc = function(i) {
 });
 
 /**
-    Excel:conver Excel column name to number
-    @param {string} s Column number, like 'A' or 'BE'
-    @return {string} Column name, starting with 0
-*/
+ Excel:conver Excel column name to number
+ @param {string} s Column number, like 'A' or 'BE'
+ @return {string} Column name, starting with 0
+ */
 var xlscn = (utils.xlscn = function(s) {
 	var n = s.charCodeAt(0) - 65;
 	if (s.length > 1) {
@@ -4177,12 +4173,12 @@ var domEmptyChildren = (utils.domEmptyChildren = function(container) {
 });
 
 /**
-    SQL LIKE emulation
-    @parameter {string} pattern Search pattern
-    @parameter {string} value Searched value
-    @parameter {string} escape Escape character (optional)
-    @return {boolean} If value LIKE pattern ESCAPE escape
-*/
+ SQL LIKE emulation
+ @parameter {string} pattern Search pattern
+ @parameter {string} value Searched value
+ @parameter {string} escape Escape character (optional)
+ @return {boolean} If value LIKE pattern ESCAPE escape
+ */
 
 var like = (utils.like = function(pattern, value, escape) {
 	// Verify escape character
@@ -4253,9 +4249,9 @@ utils.glob = function(value, pattern) {
 };
 
 /**
-	Get path of alasql.js
-	@todo Rewrite and simplify the code. Review, is this function is required separately
-*/
+ Get path of alasql.js
+ @todo Rewrite and simplify the code. Review, is this function is required separately
+ */
 utils.findAlaSQLPath = function() {
 	/** type {string} Path to alasql library and plugins */
 
@@ -8006,8 +8002,13 @@ yy.Select.prototype.compile = function(databaseid, params) {
 	// Now, compile all togeather into one function with query object in scope
 	var statement = function(params, cb, oldscope) {
 		query.params = params;
-		var res1 = queryfn(query, oldscope, function(res) {
-
+		// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
+		// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
+		// the (data, err) standard is maintained here.
+		var res1 = queryfn(query, oldscope, function(res, err) {
+			if (err) {
+				return cb(err, null);
+			}
 			if (query.rownums.length > 0) {
 				for (var i = 0, ilen = res.length; i < ilen; i++) {
 					for (var j = 0, jlen = query.rownums.length; j < jlen; j++) {
@@ -8037,11 +8038,11 @@ yy.Select.prototype.compile = function(databaseid, params) {
 };
 
 /**
-	Modify res according modifier
-	@function
-	@param {object} query Query object
-	@param res {object|number|string|boolean} res Data to be converted 
-*/
+ Modify res according modifier
+ @function
+ @param {object} query Query object
+ @param res {object|number|string|boolean} res Data to be converted
+ */
 function modify(query, res) {
 	// jshint ignore:line
 
@@ -8050,7 +8051,7 @@ function modify(query, res) {
 		typeof res === 'undefined' ||
 		typeof res === 'number' ||
 		typeof res === 'string' ||
-		typeof res == 'boolean'
+		typeof res === 'boolean'
 	) {
 		return res;
 	}
@@ -9441,7 +9442,7 @@ function compileSelectStar(query, alias, joinstar) {
 
 	} else {
 
-		// if column not exists, then copy all
+		// if column not exist, then copy all
 		sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
 
 		query.dirtyColumns = true;
@@ -9569,7 +9570,7 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 				if (query.aliases[tbid] && query.aliases[tbid].type === 'table') {
 					if (!alasql.databases[dbid].tables[query.aliases[tbid].tableid]) {
 
-						throw new Error("Table '" + tbid + "' does not exists in database");
+						throw new Error("Table '" + tbid + "' does not exist in database");
 					}
 					var columns =
 						alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
@@ -9581,7 +9582,7 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						var tcol = xcolumns[col.columnid];
 
 						if (undefined === tcol) {
-							throw new Error('Column does not exists: ' + col.columnid);
+							throw new Error('Column does not exist: ' + col.columnid);
 						}
 
 						var coldef = {
@@ -10349,7 +10350,7 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
 
 				if (undefined === table) {
-					throw new Error('Table does not exists: ' + fr.tableid);
+					throw new Error('Table does not exist: ' + fr.tableid);
 				}
 
 				if (table.columns) {
@@ -12312,7 +12313,7 @@ yy.Convert.prototype.toString = function() {
 	s += this.dbtypeid;
 	if (typeof this.dbsize != 'undefined') {
 		s += '(' + this.dbsize;
-		if (this.dbprecision) s += ',' + dbprecision;
+		if (this.dbprecision) s += ',' + this.dbprecision;
 		s += ')';
 	}
 	s += ',' + this.expression.toString();
@@ -12329,6 +12330,8 @@ yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 		this.dbtypeid +
 		'",dbsize:' +
 		this.dbsize +
+		',dbprecision:' +
+		this.dbprecision +
 		',style:' +
 		this.style +
 		'})'
@@ -12581,18 +12584,13 @@ alasql.stdfn.CONVERT = function(value, args) {
 	} else if (['CHAR', 'CHARACTER', 'NCHAR'].indexOf(udbtypeid) > -1) {
 		return (val + new Array(args.dbsize + 1).join(' ')).substr(0, args.dbsize);
 		//else return ""+val.substr(0,1);
-	} else if (['NUMBER', 'FLOAT'].indexOf(udbtypeid) > -1) {
-		if (typeof args.dbprecision != 'undefined') {
-			var m = +val;
-			var fxd = Math.pow(10, args.dbprecision);
-			return (m | 0) + ((m * fxd) % fxd) / fxd;
-		} else {
-			return +val;
-		}
-	} else if (['DECIMAL', 'NUMERIC'].indexOf(udbtypeid) > -1) {
+	} else if (['NUMBER', 'FLOAT', 'DECIMAL', 'NUMERIC'].indexOf(udbtypeid) > -1) {
 		var m = +val;
-		var fxd = Math.pow(10, args.dbprecision);
-		return (m | 0) + ((m * fxd) % fxd) / fxd;
+		//toPrecision sets the number of numbers total in the result
+		m = args.dbsize !== undefined ? parseFloat(m.toPrecision(args.dbsize)) : m;
+		//toFixed sets the number of numbers to the right of the decimal
+		m = args.dbprecision !== undefined ? parseFloat(m.toFixed(args.dbprecision)) : m;
+		return m;
 	} else if (['JSON'].indexOf(udbtypeid) > -1) {
 		if (typeof val == 'object') return val;
 		try {
@@ -17256,8 +17254,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 */
 
 /**
-   Meteor
-*/
+ Meteor
+ */
 
 /* global alasql Tabletop document Event */
 
@@ -17270,7 +17268,7 @@ alasql.from.METEOR = function(filename, opts, cb, idx, query) {
 };
 
 /**
-	Google Spreadsheet reader
+ Google Spreadsheet reader
  */
 alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	var res = [];
@@ -17564,7 +17562,7 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 		parseText(contents);
 	} else {
 		contents = alasql.utils.autoExtFilename(contents, 'csv', opts);
-		alasql.utils.loadFile(contents, !!cb, parseText);
+		alasql.utils.loadFile(contents, !!cb, parseText, query.cb);
 	}
 	return res;
 };
@@ -18974,6 +18972,14 @@ LS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	var res = value.length;
 	//	var tb = LS.get(lsdbid+'.'+tableid);
 	var tb = LS.restoreTable(databaseid, tableid);
+	for (var columnid in tb.identities) {
+		var ident = tb.identities[columnid];
+
+		for (var index in value) {
+			value[index][columnid] = ident.value;
+			ident.value += ident.step;
+		}
+	}
 	if (!tb.data) tb.data = [];
 	tb.data = tb.data.concat(value);
 	//	LS.set(lsdbid+'.'+tableid, tb);

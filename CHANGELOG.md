@@ -1,8 +1,16 @@
 # Changelog
 
-> 0.4.11 "Lawdar" (xx.11.2018)
-> 0.4.10 "Maoshk" (xx.10.2018)
-> 0.4.9 "Alsalfiah" (xx.09.2018)
+> 0.4.11 "Lawdar" (xx.10.2018)
+> 0.4.10 "Maoshk" (xx.9.2018)
+
+
+## 0.4.9 "Alsalfiah" (05.08.2018)
+
+* Better: Error message grammar
+* Better: Support for Meteor code standards
+* Fix: dbprecision for select query
+* Fix: Handle promise error when reading one line csv files
+* Fix: AUTO_INCREMENT when using local storage
 
 ## 0.4.8 "Nafhan" (14.07.2018)
 
