@@ -27,7 +27,7 @@ describe('Test 232 Errors handling', function() {
 	it('3. Log error async', function(done) {
 		alasql('set errorlog on');
 		alasql('SELECT * FROM faultyName', [], function(data, err) {
-			assert(/^Table does not exists\:/.test(err.message));
+			assert(/^Table does not exist\:/.test(err.message));
 			done();
 		});
 	});
@@ -35,7 +35,7 @@ describe('Test 232 Errors handling', function() {
 	it('4. Log error sync', function() {
 		alasql('set errorlog on');
 		alasql('SELECT * FROM faultyName');
-		assert(/^Table does not exists\:/.test(alasql.error.message));
+		assert(/^Table does not exist\:/.test(alasql.error.message));
 		alasql('SELECT * FROM ?', [{a: 1}, {a: 2}]);
 		assert(!alasql.error);
 	});
