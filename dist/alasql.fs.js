@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.9 | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.9-develop-c1ca94ccundefined | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.9
+@version 0.4.9-develop-c1ca94ccundefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.9';
+alasql.version = '0.4.9-develop-c1ca94ccundefined';
 
 /**
 	Debug flag
@@ -4288,8 +4288,12 @@ utils.findAlaSQLPath = function() {
 };
 
 var getXLSX = function() {
-	var XLSX = null;
-	/* If require() shuold be supported else take from global scope */
+	var XLSX = alasql.private.externalXlsxLib;
+
+	if (XLSX) {
+		return XLSX;
+	}
+
 	if (utils.isNode || utils.isBrowserify || utils.isMeteorServer) {
 		//*not-for-browser/*
 		XLSX = require('xlsx') || null;
@@ -4526,6 +4530,14 @@ alasql.DEFAULTDATABASEID = 'alasql';
 alasql.lastid = 0;
 
 alasql.buffer = {};
+
+alasql.private = {
+	externalXlsxLib: null,
+};
+
+alasql.setXLSX = function(XLSX) {
+	alasql.private.externalXlsxLib = XLSX;
+};
 
 /**
   Select current database

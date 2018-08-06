@@ -133,6 +133,14 @@ alasql.lastid = 0;
 
 alasql.buffer = {};
 
+alasql.private = {
+	externalXlsxLib: null,
+};
+
+alasql.setXLSX = function(XLSX) {
+	alasql.private.externalXlsxLib = XLSX;
+};
+
 /**
   Select current database
   @param {string} databaseid Selected database identificator
