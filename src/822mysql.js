@@ -1,4 +1,3 @@
-console.log(alasql.options.mysql);
 if (alasql.options.mysql) {
 	alasql.fn.TIMESTAMPDIFF = function(unit, date1, date2) {
 		return alasql.stdfn.DATEDIFF(unit, date1, date2);

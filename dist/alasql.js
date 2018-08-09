@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.9-develop-08f2903undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.9-develop-1d642b7undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.9-develop-08f2903undefined
+@version 0.4.9-develop-1d642b7undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.9-develop-08f2903undefined';
+alasql.version = '0.4.9-develop-1d642b7undefined';
 
 /**
 	Debug flag
@@ -16109,7 +16109,6 @@ if (alasql.options.tsql) {
 	};
 }
 
-console.log(alasql.options.mysql);
 if (alasql.options.mysql) {
 	alasql.fn.TIMESTAMPDIFF = function(unit, date1, date2) {
 		return alasql.stdfn.DATEDIFF(unit, date1, date2);
