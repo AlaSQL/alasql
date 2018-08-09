@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-  var assert = require('assert');
-  var alasql = require('..');
-}
+// Clears previous changes to alasql in tests;
+delete require.cache[require.resolve('..')];
+
+var assert = require('assert');
+var alasql = require('..');
 
 describe('mysql TIMESTAMPDIFF', function() {
   var res;
 
-  before(function() {
+  beforeEach(function() {
     alasql.options.mysql = true;
   });
 
