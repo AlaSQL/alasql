@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.9-develop-c1ca94ccundefined | © 2014-2016 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.9-develop-8f2114b2undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.9-develop-c1ca94ccundefined
+@version 0.4.9-develop-8f2114b2undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.9-develop-c1ca94ccundefined';
+alasql.version = '0.4.9-develop-8f2114b2undefined';
 
 /**
 	Debug flag
@@ -16727,10 +16727,18 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 
 	// Set sheets
 	var sheets = {};
+	var sheetsdata;
+	var sheetscolumns;
 	if (opts && opts.sheets) {
 		sheets = opts.sheets;
+		// data and columns are already an array for the sheets
+		sheetsdata = data;
+		sheetscolumns = columns;
 	} else {
 		sheets.Sheet1 = opts;
+		// wrapd ata and columns array for single sheet
+		sheetsdata = [data];
+		sheetscolumns = [columns];
 	}
 
 	// File is ready to save
@@ -16803,15 +16811,30 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 			return 's' + styles[hh].styleid;
 		}
 
+		function values(obj) {
+			try {
+				return Object.values(obj);
+			} catch (e) {
+				// support for older runtimes
+				return Object.keys(obj).map(function(e) {
+					return obj[e];
+				});
+			}
+		}
+
+		var sheetidx = 0;
 		for (var sheetid in sheets) {
 			var sheet = sheets[sheetid];
-
+			var idx = typeof sheet.dataidx != 'undefined' ? sheet.dataidx : sheetidx++;
+			var data = values(sheetsdata[idx]);
 			// If columns defined in sheet, then take them
+			var columns = undefined;
 			if (typeof sheet.columns != 'undefined') {
 				columns = sheet.columns;
 			} else {
 				// Autogenerate columns if they are passed as parameters
-				if (columns.length == 0 && data.length > 0) {
+				columns = sheetscolumns[idx];
+				if (columns === undefined || (columns.length == 0 && data.length > 0)) {
 					if (typeof data[0] == 'object') {
 						if (Array.isArray(data[0])) {
 							columns = data[0].map(function(d, columnidx) {
@@ -16843,7 +16866,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				if (typeof column.columnid == 'undefined') column.columnid = columnidx;
 				if (typeof column.title == 'undefined') column.title = '' + column.columnid.trim();
 				if (sheet.headers && Array.isArray(sheet.headers))
-					column.title = sheet.headers[idx];
+					column.title = sheet.headers[columnidx];
 			});
 
 			// Header
