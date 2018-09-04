@@ -13,6 +13,8 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
 [![](https://data.jsdelivr.com/v1/package/npm/alasql/badge?style=rounded)](https://www.jsdelivr.com/package/npm/alasql)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fagershun%2Falasql.svg?type=small)](https://app.fossa.io/projects/git%2Bgithub.com%2Fagershun%2Falasql?ref=badge_small)
+
 
 
 

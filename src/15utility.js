@@ -1272,8 +1272,12 @@ utils.findAlaSQLPath = function() {
 };
 
 var getXLSX = function() {
-	var XLSX = null;
-	/* If require() shuold be supported else take from global scope */
+	var XLSX = alasql.private.externalXlsxLib;
+
+	if (XLSX) {
+		return XLSX;
+	}
+
 	if (utils.isNode || utils.isBrowserify || utils.isMeteorServer) {
 		//*not-for-browser/*
 		XLSX = require('xlsx') || null;
