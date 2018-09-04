@@ -1,13 +1,11 @@
 # Changelog
 
-> 0.4.11 "Lawdar" (xx.10.2018)
-
+> 0.4.11 "Lawdar" (xx.11.2018)
 
 
 ## 0.4.10 "Maoshk" (04.10.2018)
 
-
-Add: xlsxml files with multiple sheets
+- Add: xlsxml files with multiple sheets
 
 
 ## 0.4.9 "Alsalfiah" (05.08.2018)
