@@ -11,9 +11,10 @@ _Got a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/agershun/alasql.svg)](http://isitmaintained.com/project/agershun/alasql "Average time to resolve an issue")
 [![Coverage]( https://img.shields.io/codecov/c/github/agershun/alasql/develop.svg)](https://rawgit.com/agershun/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fagershun%2Falasql.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fagershun%2Falasql?ref=badge_shield)
 [![](https://data.jsdelivr.com/v1/package/npm/alasql/badge?style=rounded)](https://www.jsdelivr.com/package/npm/alasql)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fagershun%2Falasql.svg?type=small)](https://app.fossa.io/projects/git%2Bgithub.com%2Fagershun%2Falasql?ref=badge_small)
+
 
 
 
@@ -715,9 +716,6 @@ If you want to try the most recent development version of the library please dow
 ## License
 
 MIT - see [MIT licence information](LICENSE)
-
-
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fagershun%2Falasql.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fagershun%2Falasql?ref=badge_large)
 
 ## Main contributors
 
