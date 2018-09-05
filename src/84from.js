@@ -401,6 +401,8 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			var sheetid;
 			if (typeof opt.sheetid === 'undefined') {
 				sheetid = workbook.SheetNames[0];
+			} else if (typeof opt.sheetid === 'number') {
+				sheetid = workbook.SheetNames[opt.sheetid];
 			} else {
 				sheetid = opt.sheetid;
 			}
