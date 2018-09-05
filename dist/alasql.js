@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.10-develop-1a95b218undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.10-develop-60a97ad2undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.10-develop-1a95b218undefined
+@version 0.4.10-develop-60a97ad2undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.10-develop-1a95b218undefined';
+alasql.version = '0.4.10-develop-60a97ad2undefined';
 
 /**
 	Debug flag
@@ -17648,6 +17648,8 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			var sheetid;
 			if (typeof opt.sheetid === 'undefined') {
 				sheetid = workbook.SheetNames[0];
+			} else if (typeof opt.sheetid === 'number') {
+				sheetid = workbook.SheetNames[opt.sheetid];
 			} else {
 				sheetid = opt.sheetid;
 			}
