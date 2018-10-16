@@ -81,7 +81,7 @@ describe('Test ' + test + ' Load data from internet', function() {
 		});
 	});
 
-	describe('.tab from URL', function() {
+	xdescribe('.tab from URL', function() {
 		var url =
 			'cdn.rawgit.com/agershun/alasql/9191d4726c8fbce7a615a370ce68b79366c16f7e/test/test157.tab';
 
