@@ -522,7 +522,7 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 			//console.log(s);
 		} else {
 			s = '([' + rightJS() + '].indexOf(' + leftJS() + ')>-1)';
-			//console.log('expression',350,s);
+			console.log('50expression',535,JSON.stringify(rightJS()), s);
 			//		} else {
 			//			throw new Error('Wrong IN operator without SELECT part');
 		}
