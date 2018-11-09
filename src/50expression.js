@@ -521,8 +521,9 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 			s = '([' + this.right.map(ref).join(',') + '].indexOf(' + leftJS() + ')>-1)';
 			//console.log(s);
 		} else {
-			s = '([' + rightJS() + '].indexOf(' + leftJS() + ')>-1)';
-			console.log('50expression',535,JSON.stringify(rightJS()), s);
+			var tmpx = rightJS();
+			s = '([' + tmpx + '].indexOf(' + leftJS() + ')>-1)';
+			console.log('50expression',535,tmpx, s);
 			//		} else {
 			//			throw new Error('Wrong IN operator without SELECT part');
 		}
