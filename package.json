@@ -11,6 +11,7 @@
   "directories": {
     "test": "test"
   },
+  "typings": "dist/alasql.d.ts",
   "scripts": {
     "test": "npm run build && cd test && mocha . --reporter dot",
     "test:this": "gulp && cd test && mocha",
