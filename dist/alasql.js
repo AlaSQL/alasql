@@ -12826,7 +12826,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 							'Foreign key "' +
 								r[col.columnid] +
 								'" is not found in table ' +
-								fktable.tableid
+								fk
 						);
 					}
 					return true;
@@ -12908,7 +12908,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 						'Foreign key "' +
 							r[col.columnid] +
 							'" is not found in table ' +
-							fktable.tableid
+							fk
 					);
 				}
 				return true;
