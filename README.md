@@ -213,8 +213,9 @@ See more ideas for creative data manipulation [in the wiki](https://github.com/a
 AlaSQL extends "good old" SQL to make it closer to JavaScript. The "sugar" includes:
 
 * Write Json objects - `{a:'1',b:@['1','2','3']}`
+
 * Accesss object properties - `obj->property->subproperty`
-* Access Object and arrays elements - `obj->(a*1)`
+* Access object and arrays elements - `obj->(a*1)`
 * Access JavaScript functions - `obj->valueOf()`
 * Format query output with `SELECT VALUE, ROW, COLUMN, MATRIX`
 * ES5 multiline SQL with `var SQL = function(){/*SELECT 'MY MULTILINE SQL'*/}` and pass instead of SQL string (will not work if you compress your code)
