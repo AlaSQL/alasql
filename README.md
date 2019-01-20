@@ -213,7 +213,8 @@ See more ideas for creative data manipulation [in the wiki](https://github.com/a
 AlaSQL extends "good old" SQL to make it closer to JavaScript. The "sugar" includes:
 
 * Write Json objects - `{a:'1',b:@['1','2','3']}`
-* Acesss object propertires - `obj->property->subproperty`
+
+* Accesss object properties - `obj->property->subproperty`
 * Access object and arrays elements - `obj->(a*1)`
 * Access JavaScript functions - `obj->valueOf()`
 * Format query output with `SELECT VALUE, ROW, COLUMN, MATRIX`
@@ -302,7 +303,7 @@ Pinpointing data on a map should be easy. AlaSQL is great to prepare source data
 
 ### AlaSQL ♥ Google Spreadsheets
 
-AlaSQL can query data directly from a Google spreadsheet. A good "partnership" for easy editing and powerfull data manipulation. See more about [Google Spreadsheets and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Google-Spreadsheets)
+AlaSQL can query data directly from a Google spreadsheet. A good "partnership" for easy editing and powerful data manipulation. See more about [Google Spreadsheets and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Google-Spreadsheets)
 
 ### Miss a feature?
 Take charge and [add your idea](http://feathub.com/agershun/alasql/features/new) or [vote for your favorite feature](http://feathub.com/agershun/alasql) to be implemented:
