@@ -983,11 +983,11 @@ JoinTableAs
 	| LPAR Select RPAR AS Literal
 		{ $$ = {select: $2, as: $5 } ; }
 	| FuncValue
-		{ $$ = {funcid:$1, as:'default'}; }
+		{ $$ = {func:$1, as:'default'}; }
 	| FuncValue Literal
-		{ $$ = {funcid:$1, as: $2}; }
+		{ $$ = {func:$1, as: $2}; }
 	| FuncValue AS Literal
-		{ $$ = {funcid:$1, as: $3}; }
+		{ $$ = {func:$1, as: $3}; }
 
 	| VarValue
 		{ $$ = {variable:$1,as:'default'}; }

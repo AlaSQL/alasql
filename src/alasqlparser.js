@@ -538,13 +538,13 @@ case 215:
  this.$ = {select: $$[$0-3], as: $$[$0] } ; 
 break;
 case 216:
- this.$ = {funcid:$$[$0], as:'default'}; 
+ this.$ = {func:$$[$0], as:'default'}; 
 break;
 case 217:
- this.$ = {funcid:$$[$0-1], as: $$[$0]}; 
+ this.$ = {func:$$[$0-1], as: $$[$0]}; 
 break;
 case 218:
- this.$ = {funcid:$$[$0-2], as: $$[$0]}; 
+ this.$ = {func:$$[$0-2], as: $$[$0]}; 
 break;
 case 219:
  this.$ = {variable:$$[$0],as:'default'}; 
