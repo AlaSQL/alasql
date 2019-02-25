@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.11-develop-af510181undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11
+@version 0.4.11-develop-af510181undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.11';
+alasql.version = '0.4.11-develop-af510181undefined';
 
 /**
 	Debug flag
@@ -693,13 +693,13 @@ case 215:
  this.$ = {select: $$[$0-3], as: $$[$0] } ; 
 break;
 case 216:
- this.$ = {funcid:$$[$0], as:'default'}; 
+ this.$ = {func:$$[$0], as:'default'}; 
 break;
 case 217:
- this.$ = {funcid:$$[$0-1], as: $$[$0]}; 
+ this.$ = {func:$$[$0-1], as: $$[$0]}; 
 break;
 case 218:
- this.$ = {funcid:$$[$0-2], as: $$[$0]}; 
+ this.$ = {func:$$[$0-2], as: $$[$0]}; 
 break;
 case 219:
  this.$ = {variable:$$[$0],as:'default'}; 
@@ -8689,7 +8689,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			source.datafn = new Function('query,params,cb,idx, alasql', ps);
 			query.aliases[source.alias] = {type: 'varvalue'};
-		} else if (jn.funcid) {
+		} else if (jn.func) {
 			source = {
 				alias: jn.as,
 				//				databaseid: jn.databaseid || query.database.databaseid,
@@ -8701,16 +8701,17 @@ yy.Select.prototype.compileJoins = function(query) {
 			};
 			// source.data = ;
 
-			var s = "var res=alasql.from['" + jn.funcid.toUpperCase() + "'](";
+			var s = "var res=alasql.from['" + jn.func.funcid.toUpperCase() + "'](";
 
-			if (jn.args && jn.args.length > 0) {
-				if (jn.args[0]) {
-					s += jn.args[0].toJS('query.oldscope') + ',';
+			var args = jn.func.args;
+			if (args && args.length > 0) {
+				if (args[0]) {
+					s += args[0].toJS('query.oldscope') + ',';
 				} else {
 					s += 'null,';
 				}
-				if (jn.args[1]) {
-					s += jn.args[1].toJS('query.oldscope') + ',';
+				if (args[1]) {
+					s += args[1].toJS('query.oldscope') + ',';
 				} else {
 					s += 'null,';
 				}
