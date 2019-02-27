@@ -182,7 +182,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			source.datafn = new Function('query,params,cb,idx, alasql', ps);
 			query.aliases[source.alias] = {type: 'varvalue'};
-		} else if (jn.funcid) {
+		} else if (jn.func) {
 			source = {
 				alias: jn.as,
 				//				databaseid: jn.databaseid || query.database.databaseid,
@@ -200,7 +200,7 @@ yy.Select.prototype.compileJoins = function(query) {
 			"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)res=cb(res, idx, query);return res");
 */
 
-			var s = "var res=alasql.from['" + jn.funcid.toUpperCase() + "'](";
+			var s = "var res=alasql.from['" + jn.func.funcid.toUpperCase() + "'](";
 			/*/*
 		// if(tq.args && tq.args.length>0) {
 		// 	s += tq.args.map(function(arg){
@@ -213,14 +213,15 @@ yy.Select.prototype.compileJoins = function(query) {
 		// 	}).concat().join(',');
 		// }
 */
-			if (jn.args && jn.args.length > 0) {
-				if (jn.args[0]) {
-					s += jn.args[0].toJS('query.oldscope') + ',';
+			var args = jn.func.args;
+			if (args && args.length > 0) {
+				if (args[0]) {
+					s += args[0].toJS('query.oldscope') + ',';
 				} else {
 					s += 'null,';
 				}
-				if (jn.args[1]) {
-					s += jn.args[1].toJS('query.oldscope') + ',';
+				if (args[1]) {
+					s += args[1].toJS('query.oldscope') + ',';
 				} else {
 					s += 'null,';
 				}
