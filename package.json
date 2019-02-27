@@ -66,9 +66,9 @@
     "tabletop": "^1.5.2",
     "uglify-js": "^3.3.7"
   },
-  "engines": [
-    "node"
-  ],
+  "engines": {
+    "node": "*"
+  },
   "repository": {
     "type": "git",
     "url": "http://github.com/agershun/alasql.git"
@@ -102,6 +102,5 @@
       "ipad/4..latest",
       "android-browser/4..latest"
     ]
-  },
-  "typings": "./dist/alasql.d.ts"
+  }
 }
