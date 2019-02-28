@@ -898,7 +898,7 @@ FromTable
 		{ $$ = $1; $1.as = $3; }
 
 	| INSERTED
-		{ $$ = {inserted:true}; $1.as = 'default'; }
+		{ $$ = {inserted:true}; /*$1.as = 'default';*/ }
 
 	| VarValue
 		{ $$ = $1; $1.as = 'default'; }
