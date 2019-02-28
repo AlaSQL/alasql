@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11-develop-af510181undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.11-fix-build-e7e78fe6undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11-develop-af510181undefined
+@version 0.4.11-fix-build-e7e78fe6undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
