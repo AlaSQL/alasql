@@ -367,7 +367,7 @@ alasql([['SELECT * FROM ?',[arr]]]).then(function(data){
 </script>
 ```
 
-[Live Demo](http://jsfiddle.net/agershun/oxv4rzzc/).
+[Live Demo](https://jsfiddle.net/3vnmu2fo).
 
 The standard build `alasql.min.js` will use Web Workers if `alasql.worker()` is called:
 
@@ -381,7 +381,7 @@ alasql(['SELECT VALUE 10']).then(function(res){
 </script>
 ```
 
-[Live Demo](http://jsfiddle.net/agershun/rjwp8u48/3/).
+[Live Demo](http://jsfiddle.net/osxvdp5k/).
 
 From a Web Worker, you can import `alasql.min.js` with `importScripts`:
 
