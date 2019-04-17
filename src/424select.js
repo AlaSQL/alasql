@@ -10,94 +10,117 @@
 // 	return sources;
 // };
 
-function compileSelectStar(query, alias, joinstar) {
-	// console.log(query.aliases[alias]);
-	//	console.log(query,alias);
-	// console.log(query.aliases[alias].tableid);
-	//	console.log(42,631,alias);
-	//	console.log(query.aliases);
+function compileSelectStar(query, aliases, joinstar) {
 	var sp = '',
-		ss = [];
-	//	if(!alias) {
-	//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
-	//	} else 	{
+		ss = [],
+		columnIds = {};
 
-	// TODO move this out of this function
-	query.ixsources = {};
-	query.sources.forEach(function(source) {
-		query.ixsources[source.alias] = source;
-	});
+	for (var alias in aliases) {
+		// console.log(query.aliases[alias]);
+		//	console.log(query,alias);
+		// console.log(query.aliases[alias].tableid);
+		//	console.log(42,631,alias);
+		//	console.log(query.aliases);
+		//	if(!alias) {
+		//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
+		//	} else 	{
 
-	// Fixed
-	var columns;
-	if (query.ixsources[alias]) {
-		var columns = query.ixsources[alias].columns;
-	}
+		// TODO move this out of this function
+		query.ixsources = {};
+		query.sources.forEach(function(source) {
+			query.ixsources[source.alias] = source;
+		});
 
-	//		if(columns.length == 0 && query.aliases[alias].tableid) {
-	//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
-	//		};
+		// Fixed
+		var columns;
+		if (query.ixsources[alias]) {
+			var columns = query.ixsources[alias].columns;
+		}
 
-	// Check if this is a Table or other
-	if (joinstar && alasql.options.joinstar == 'json') {
-		sp += "r['" + alias + "']={};";
-	}
+		//		if(columns.length == 0 && query.aliases[alias].tableid) {
+		//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
+		//		};
 
-	if (columns && columns.length > 0) {
-		columns.forEach(function(tcol) {
-			if (joinstar && alasql.options.joinstar == 'underscore') {
-				ss.push(
-					"'" +
-						alias +
-						'_' +
-						tcol.columnid +
-						"':p['" +
+		// Check if this is a Table or other
+		if (joinstar && alasql.options.joinstar == 'json') {
+			sp += "r['" + alias + "']={};";
+		}
+
+		if (columns && columns.length > 0) {
+			columns.forEach(function(tcol) {
+				if (joinstar && alasql.options.joinstar == 'underscore') {
+					ss.push(
+						"'" +
+							alias +
+							'_' +
+							tcol.columnid +
+							"':p['" +
+							alias +
+							"']['" +
+							tcol.columnid +
+							"']"
+					);
+				} else if (joinstar && alasql.options.joinstar == 'json') {
+					//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+					sp +=
+						"r['" +
 						alias +
 						"']['" +
 						tcol.columnid +
-						"']"
-				);
-			} else if (joinstar && alasql.options.joinstar == 'json') {
-				//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
-				sp +=
-					"r['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"']=p['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"'];";
-			} else {
-				ss.push("'" + tcol.columnid + "':p['" + alias + "']['" + tcol.columnid + "']");
-			}
+						"']=p['" +
+						alias +
+						"']['" +
+						tcol.columnid +
+						"'];";
+				} else {
+					var value = "p['" + alias + "']['" + tcol.columnid + "']";
+					if (!columnIds[tcol.columnid]) {
+						var key = "'" + tcol.columnid + "':";
+						ss.push(key + value);
+						columnIds[tcol.columnid] = {
+							id: ss.length - 1,
+							value: value,
+							key: key,
+						};
+					} else {
+						var newValue =
+							value +
+							' !== undefined ? ' +
+							value +
+							' : ' +
+							columnIds[tcol.columnid].value;
+						ss[columnIds[tcol.columnid].id] = columnIds[tcol.columnid].key + newValue;
+						columnIds[tcol.columnid].value = newValue;
+					}
+				}
 
-			query.selectColumns[escapeq(tcol.columnid)] = true;
+				query.selectColumns[escapeq(tcol.columnid)] = true;
 
-			//			console.log('ok',tcol);
+				//			console.log('ok',tcol);
 
-			var coldef = {
-				columnid: tcol.columnid,
-				dbtypeid: tcol.dbtypeid,
-				dbsize: tcol.dbsize,
-				dbprecision: tcol.dbprecision,
-				dbenum: tcol.dbenum,
-			};
-			query.columns.push(coldef);
-			query.xcolumns[coldef.columnid] = coldef;
-		});
-		//console.log(999,columns);
-	} else {
-		//					console.log(60,alias,columns);
+				var coldef = {
+					columnid: tcol.columnid,
+					dbtypeid: tcol.dbtypeid,
+					dbsize: tcol.dbsize,
+					dbprecision: tcol.dbprecision,
+					dbenum: tcol.dbenum,
+				};
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid] = coldef;
+			});
+			//console.log(999,columns);
+		} else {
+			//					console.log(60,alias,columns);
 
-		// if column not exist, then copy all
-		sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
-		//console.log(777, sp);
-		query.dirtyColumns = true;
+			// if column not exist, then copy all
+			sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
+			//console.log(777, sp);
+			query.dirtyColumns = true;
+		}
+		//	}
+		//console.log(87,{s:ss.join(','),sp:sp});
 	}
-	//	}
-	//console.log(87,{s:ss.join(','),sp:sp});
+	console.log(ss.join(','));
 	return {s: ss.join(','), sp: sp};
 }
 
@@ -126,20 +149,21 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						"'],p,params,alasql);";
 				} else if (col.tableid) {
 					//Copy all
-					var ret = compileSelectStar(query, col.tableid, false);
+					var aliases = [];
+					aliases[col.tableid] = col.tableid;
+					var ret = compileSelectStar(query, aliases, false);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}
 					sp += ret.sp;
 				} else {
 					//					console.log('aliases', query.aliases);
-					for (var alias in query.aliases) {
-						var ret = compileSelectStar(query, alias, true); //query.aliases[alias].tableid);
-						if (ret.s) {
-							ss = ss.concat(ret.s);
-						}
-						sp += ret.sp;
+					var ret = compileSelectStar(query, query.aliases, true); //query.aliases[alias].tableid);
+					if (ret.s) {
+						ss = ss.concat(ret.s);
 					}
+					sp += ret.sp;
+
 					// TODO Remove these lines
 					// In case of no information
 					// sp += 'for(var k1 in p){var w=p[k1];'+
