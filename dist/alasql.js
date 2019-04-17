@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11-develop-7d0ef547undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.11-develop-d00d3b02undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11-develop-7d0ef547undefined
+@version 0.4.11-develop-d00d3b02undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.11-develop-7d0ef547undefined';
+alasql.version = '0.4.11-develop-d00d3b02undefined';
 
 /**
 	Debug flag
@@ -9386,7 +9386,7 @@ function compileSelectStar(query, aliases, joinstar) {
 		ss = [],
 		columnIds = {};
 
-	for (var alias in aliases) {
+	aliases.forEach(function(alias) {
 
 		//	if(!alias) {
 		//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
@@ -9483,8 +9483,8 @@ function compileSelectStar(query, aliases, joinstar) {
 		}
 		//	}
 
-	}
-	console.log(ss.join(','));
+	});
+
 	return {s: ss.join(','), sp: sp};
 }
 
@@ -9511,16 +9511,14 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						"'],p,params,alasql);";
 				} else if (col.tableid) {
 					//Copy all
-					var aliases = [];
-					aliases[col.tableid] = col.tableid;
-					var ret = compileSelectStar(query, aliases, false);
+					var ret = compileSelectStar(query, [col.tableid], false);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}
 					sp += ret.sp;
 				} else {
 
-					var ret = compileSelectStar(query, query.aliases, true); //query.aliases[alias].tableid);
+					var ret = compileSelectStar(query, Object.keys(query.aliases), true); //query.aliases[alias].tableid);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}

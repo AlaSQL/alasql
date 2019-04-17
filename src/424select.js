@@ -15,7 +15,7 @@ function compileSelectStar(query, aliases, joinstar) {
 		ss = [],
 		columnIds = {};
 
-	for (var alias in aliases) {
+	aliases.forEach(function(alias) {
 		// console.log(query.aliases[alias]);
 		//	console.log(query,alias);
 		// console.log(query.aliases[alias].tableid);
@@ -119,8 +119,8 @@ function compileSelectStar(query, aliases, joinstar) {
 		}
 		//	}
 		//console.log(87,{s:ss.join(','),sp:sp});
-	}
-	console.log(ss.join(','));
+	});
+
 	return {s: ss.join(','), sp: sp};
 }
 
@@ -149,16 +149,14 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						"'],p,params,alasql);";
 				} else if (col.tableid) {
 					//Copy all
-					var aliases = [];
-					aliases[col.tableid] = col.tableid;
-					var ret = compileSelectStar(query, aliases, false);
+					var ret = compileSelectStar(query, [col.tableid], false);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}
 					sp += ret.sp;
 				} else {
 					//					console.log('aliases', query.aliases);
-					var ret = compileSelectStar(query, query.aliases, true); //query.aliases[alias].tableid);
+					var ret = compileSelectStar(query, Object.keys(query.aliases), true); //query.aliases[alias].tableid);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}
