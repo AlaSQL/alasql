@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11-develop-af510181undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.11-develop-d00d3b02undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11-develop-af510181undefined
+@version 0.4.11-develop-d00d3b02undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.11-develop-af510181undefined';
+alasql.version = '0.4.11-develop-d00d3b02undefined';
 
 /**
 	Debug flag
@@ -9386,86 +9386,109 @@ yy.Select.prototype.compileGroup = function(query) {
 
 // };
 
-function compileSelectStar(query, alias, joinstar) {
-
+function compileSelectStar(query, aliases, joinstar) {
 	var sp = '',
-		ss = [];
-	//	if(!alias) {
-	//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
-	//	} else 	{
+		ss = [],
+		columnIds = {};
 
-	// TODO move this out of this function
-	query.ixsources = {};
-	query.sources.forEach(function(source) {
-		query.ixsources[source.alias] = source;
-	});
+	aliases.forEach(function(alias) {
 
-	// Fixed
-	var columns;
-	if (query.ixsources[alias]) {
-		var columns = query.ixsources[alias].columns;
-	}
+		//	if(!alias) {
+		//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
+		//	} else 	{
 
-	//		if(columns.length == 0 && query.aliases[alias].tableid) {
-	//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
-	//		};
+		// TODO move this out of this function
+		query.ixsources = {};
+		query.sources.forEach(function(source) {
+			query.ixsources[source.alias] = source;
+		});
 
-	// Check if this is a Table or other
-	if (joinstar && alasql.options.joinstar == 'json') {
-		sp += "r['" + alias + "']={};";
-	}
+		// Fixed
+		var columns;
+		if (query.ixsources[alias]) {
+			var columns = query.ixsources[alias].columns;
+		}
 
-	if (columns && columns.length > 0) {
-		columns.forEach(function(tcol) {
-			if (joinstar && alasql.options.joinstar == 'underscore') {
-				ss.push(
-					"'" +
-						alias +
-						'_' +
-						tcol.columnid +
-						"':p['" +
+		//		if(columns.length == 0 && query.aliases[alias].tableid) {
+		//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
+		//		};
+
+		// Check if this is a Table or other
+		if (joinstar && alasql.options.joinstar == 'json') {
+			sp += "r['" + alias + "']={};";
+		}
+
+		if (columns && columns.length > 0) {
+			columns.forEach(function(tcol) {
+				if (joinstar && alasql.options.joinstar == 'underscore') {
+					ss.push(
+						"'" +
+							alias +
+							'_' +
+							tcol.columnid +
+							"':p['" +
+							alias +
+							"']['" +
+							tcol.columnid +
+							"']"
+					);
+				} else if (joinstar && alasql.options.joinstar == 'json') {
+					//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+					sp +=
+						"r['" +
 						alias +
 						"']['" +
 						tcol.columnid +
-						"']"
-				);
-			} else if (joinstar && alasql.options.joinstar == 'json') {
-				//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
-				sp +=
-					"r['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"']=p['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"'];";
-			} else {
-				ss.push("'" + tcol.columnid + "':p['" + alias + "']['" + tcol.columnid + "']");
-			}
+						"']=p['" +
+						alias +
+						"']['" +
+						tcol.columnid +
+						"'];";
+				} else {
+					var value = "p['" + alias + "']['" + tcol.columnid + "']";
+					if (!columnIds[tcol.columnid]) {
+						var key = "'" + tcol.columnid + "':";
+						ss.push(key + value);
+						columnIds[tcol.columnid] = {
+							id: ss.length - 1,
+							value: value,
+							key: key,
+						};
+					} else {
+						var newValue =
+							value +
+							' !== undefined ? ' +
+							value +
+							' : ' +
+							columnIds[tcol.columnid].value;
+						ss[columnIds[tcol.columnid].id] = columnIds[tcol.columnid].key + newValue;
+						columnIds[tcol.columnid].value = newValue;
+					}
+				}
 
-			query.selectColumns[escapeq(tcol.columnid)] = true;
+				query.selectColumns[escapeq(tcol.columnid)] = true;
 
-			var coldef = {
-				columnid: tcol.columnid,
-				dbtypeid: tcol.dbtypeid,
-				dbsize: tcol.dbsize,
-				dbprecision: tcol.dbprecision,
-				dbenum: tcol.dbenum,
-			};
-			query.columns.push(coldef);
-			query.xcolumns[coldef.columnid] = coldef;
-		});
+				var coldef = {
+					columnid: tcol.columnid,
+					dbtypeid: tcol.dbtypeid,
+					dbsize: tcol.dbsize,
+					dbprecision: tcol.dbprecision,
+					dbenum: tcol.dbenum,
+				};
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid] = coldef;
+			});
 
-	} else {
+		} else {
 
-		// if column not exist, then copy all
-		sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
+			// if column not exist, then copy all
+			sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
 
-		query.dirtyColumns = true;
-	}
-	//	}
+			query.dirtyColumns = true;
+		}
+		//	}
+
+	});
 
 	return {s: ss.join(','), sp: sp};
 }
@@ -9493,20 +9516,19 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						"'],p,params,alasql);";
 				} else if (col.tableid) {
 					//Copy all
-					var ret = compileSelectStar(query, col.tableid, false);
+					var ret = compileSelectStar(query, [col.tableid], false);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}
 					sp += ret.sp;
 				} else {
 
-					for (var alias in query.aliases) {
-						var ret = compileSelectStar(query, alias, true); //query.aliases[alias].tableid);
-						if (ret.s) {
-							ss = ss.concat(ret.s);
-						}
-						sp += ret.sp;
+					var ret = compileSelectStar(query, Object.keys(query.aliases), true); //query.aliases[alias].tableid);
+					if (ret.s) {
+						ss = ss.concat(ret.s);
 					}
+					sp += ret.sp;
+
 					// TODO Remove these lines
 					// In case of no information
 					// sp += 'for(var k1 in p){var w=p[k1];'+
