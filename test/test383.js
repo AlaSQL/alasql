@@ -104,7 +104,7 @@ describe('Test 383 - MySQL compatibility issue #452', function() {
 		alasql('UPDATE org4 SET name="George"');
 
 		var res = alasql('SELECT * FROM org4');
-		assert(res[0].lastUpdateTime > res[0].createTime);
+		assert(res[0].lastUpdateTime >= res[0].createTime);
 		done();
 	});
 });
