@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11-develop-d00d3b02undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.11-no.branch..rebasing.update-dependencies-2f7421d4undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11-develop-d00d3b02undefined
+@version 0.4.11-no.branch..rebasing.update-dependencies-2f7421d4undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.11-develop-d00d3b02undefined';
+alasql.version = '0.4.11-no.branch..rebasing.update-dependencies-2f7421d4undefined';
 
 /**
 	Debug flag
@@ -2045,7 +2045,7 @@ _handle_error:
 
             // Return the rule stack depth where the nearest error rule can be found.
             // Return FALSE when no error recovery rule was found.
-            function locateNearestErrorRecoveryRule(state) {
+            var locateNearestErrorRecoveryRule = function(state) {
                 var stack_probe = stack.length - 1;
                 var depth = 0;
 
@@ -3119,6 +3119,7 @@ if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
 }
 }
+
 /**
    12prettyflag.js - prettify
    @todo move this functionality to plugin
@@ -4141,13 +4142,13 @@ if (!Array.isArray) {
  */
 
 var xlsnc = (utils.xlsnc = function(i) {
-	var addr = String.fromCharCode(65 + i % 26);
+	var addr = String.fromCharCode(65 + (i % 26));
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + i % 26) + addr;
+		addr = String.fromCharCode(65 + (i % 26)) + addr;
 		if (i > 26) {
 			i = ((i / 26) | 0) - 1;
-			addr = String.fromCharCode(65 + i % 26) + addr;
+			addr = String.fromCharCode(65 + (i % 26)) + addr;
 		}
 	}
 	return addr;
@@ -4929,24 +4930,28 @@ if (!utils.global.Promise) {
 				e._state === it
 					? S(t, e._result)
 					: e._state === st
-						? j(t, e._result)
-						: E(
-								e,
-								void 0,
-								function(e) {
-									g(t, e);
-								},
-								function(e) {
-									j(t, e);
-								}
-							);
+					? j(t, e._result)
+					: E(
+							e,
+							void 0,
+							function(e) {
+								g(t, e);
+							},
+							function(e) {
+								j(t, e);
+							}
+					  );
 			}
 			function w(t, n, r) {
 				n.constructor === t.constructor && r === et && constructor.resolve === nt
 					? b(t, n)
 					: r === ut
-						? j(t, ut.error)
-						: void 0 === r ? S(t, n) : e(r) ? m(t, n, r) : S(t, n);
+					? j(t, ut.error)
+					: void 0 === r
+					? S(t, n)
+					: e(r)
+					? m(t, n, r)
+					: S(t, n);
 			}
 			function g(e, n) {
 				e === n ? j(e, _()) : t(n) ? w(e, n, v(n)) : S(e, n);
@@ -5036,10 +5041,10 @@ if (!utils.global.Promise) {
 						? function(n, r) {
 								for (var o = t.length, i = 0; o > i; i++)
 									e.resolve(t[i]).then(n, r);
-							}
+						  }
 						: function(t, e) {
 								e(new TypeError('You must pass an array to race.'));
-							}
+						  }
 				);
 			}
 			function F(t) {
@@ -5070,14 +5075,14 @@ if (!utils.global.Promise) {
 					this.promise[rt] || k(this.promise),
 					Array.isArray(e)
 						? ((this._input = e),
-							(this.length = e.length),
-							(this._remaining = e.length),
-							(this._result = new Array(this.length)),
-							0 === this.length
+						  (this.length = e.length),
+						  (this._remaining = e.length),
+						  (this._result = new Array(this.length)),
+						  0 === this.length
 								? S(this.promise, this._result)
 								: ((this.length = this.length || 0),
-									this._enumerate(),
-									0 === this._remaining && S(this.promise, this._result)))
+								  this._enumerate(),
+								  0 === this._remaining && S(this.promise, this._result)))
 						: j(this.promise, U());
 			}
 			function U() {
@@ -5106,7 +5111,7 @@ if (!utils.global.Promise) {
 				? Array.isArray
 				: function(t) {
 						return '[object Array]' === Object.prototype.toString.call(t);
-					};
+				  };
 			var B,
 				G,
 				H,
@@ -5129,7 +5134,13 @@ if (!utils.global.Promise) {
 				tt = new Array(1e3);
 			H = Z
 				? o()
-				: X ? s() : $ ? u() : void 0 === R && 'function' == typeof require ? f() : c();
+				: X
+				? s()
+				: $
+				? u()
+				: void 0 === R && 'function' == typeof require
+				? f()
+				: c();
 			var et = l,
 				nt = h,
 				rt = Math.random()
@@ -5207,10 +5218,10 @@ if (!utils.global.Promise) {
 			'function' == typeof define && define.amd
 				? define(function() {
 						return vt;
-					})
+				  })
 				: 'undefined' != typeof module && module.exports
-					? (module.exports = vt)
-					: 'undefined' != typeof this && (this.ES6Promise = vt),
+				? (module.exports = vt)
+				: 'undefined' != typeof this && (this.ES6Promise = vt),
 				dt();
 		}.call(this));
 
@@ -7225,7 +7236,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = ((query.data.length * query.limit / 100) | 0) + offset;
+			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}
@@ -7321,8 +7332,7 @@ var preIndex = function(query) {
 					// Save index to original table
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 
@@ -7372,8 +7382,7 @@ var preIndex = function(query) {
 				if (!alasql.databases[source.databaseid].engineid) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.wxleftfns + '`')
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 			// Apply where filter to reduces rows
@@ -9124,7 +9133,7 @@ yy.Select.prototype.compileGroup = function(query) {
 		}
 
 		/*
-		*/
+		 */
 		//		s += self.columns.map(function(col){
 
 		s += query.selectGroup
@@ -12022,7 +12031,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 
 		nth = !nth ? 1 : nth;
 		var r = s.sort();
-		var p = nth * (r.length + 1) / 4;
+		var p = (nth * (r.length + 1)) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}
@@ -13422,7 +13431,7 @@ stdfn.YEAR = function(d) {
 
 var PERIODS = {
 	year: 1000 * 3600 * 24 * 365,
-	quarter: 1000 * 3600 * 24 * 365 / 4,
+	quarter: (1000 * 3600 * 24 * 365) / 4,
 	month: 1000 * 3600 * 24 * 30,
 	week: 1000 * 3600 * 24 * 7,
 	day: 1000 * 3600 * 24,
@@ -14429,8 +14438,7 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 
 	if (cb) {
 		var first = false;
-		loop();
-		function loop(data) {
+		var loop = function(data) {
 			if (first) {
 				res.push(data);
 			} else {
@@ -14443,7 +14451,8 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 					res = cb(res);
 				}
 			}, 0);
-		}
+		};
+		loop();
 	} else {
 		while (fn(params, alasql)) {
 			var res1 = self.loopstat.execute(databaseid, params);
@@ -15938,7 +15947,7 @@ function scrollTo(element, to, duration) {
 		return;
 	}
 	var difference = to - element.scrollTop;
-	var perTick = difference / duration * 10;
+	var perTick = (difference / duration) * 10;
 
 	setTimeout(function() {
 		if (element.scrollTop === to) {
@@ -17279,12 +17288,12 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				var wopts = {bookType: 'xlsx', bookSST: false, type: 'binary'};
 				var wbout = XLSX.write(wb, wopts);
 
-				function s2ab(s) {
+				var s2ab = function(s) {
 					var buf = new ArrayBuffer(s.length);
 					var view = new Uint8Array(buf);
 					for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
 					return buf;
-				}
+				};
 
 				/* the saveAs call downloads a file on the local machine */
 				//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
@@ -19678,7 +19687,7 @@ var saveAs =
 									: reader.result.replace(
 											/^data:[^;]*;/,
 											'data:attachment/file;'
-										);
+									  );
 								var popup = view.open(url, '_blank');
 								if (!popup) view.location.href = url;
 								url = undefined; // release reference before dispatching

@@ -1898,7 +1898,7 @@ _handle_error:
 
             // Return the rule stack depth where the nearest error rule can be found.
             // Return FALSE when no error recovery rule was found.
-            function locateNearestErrorRecoveryRule(state) {
+            var locateNearestErrorRecoveryRule = function(state) {
                 var stack_probe = stack.length - 1;
                 var depth = 0;
 
