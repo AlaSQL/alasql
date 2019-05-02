@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11-develop-d00d3b02undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.11-develop-df603f27undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11-develop-d00d3b02undefined
+@version 0.4.11-develop-df603f27undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.11-develop-d00d3b02undefined';
+alasql.version = '0.4.11-develop-df603f27undefined';
 
 /**
 	Debug flag
@@ -7576,49 +7576,45 @@ function doJoin(query, scope, h) {
 
 		// STEP 2
 
-		if (h + 1 < query.sources.length) {
-			if (
-				nextsource.joinmode == 'OUTER' ||
-				nextsource.joinmode == 'RIGHT' ||
-				nextsource.joinmode == 'ANTI'
-			) {
-				scope[source.alias] = {};
-
-				var j = 0;
-				var jlen = nextsource.data.length;
-				var dataw;
-
-				while (
-					(dataw = nextsource.data[j]) ||
-					(nextsource.getfn && (dataw = nextsource.getfn(j))) ||
-					j < jlen
+		if (h == 0) {
+			for (var nh = h + 1; nh < query.sources.length; nh++) {
+				if (
+					nextsource.joinmode == 'OUTER' ||
+					nextsource.joinmode == 'RIGHT' ||
+					nextsource.joinmode == 'ANTI'
 				) {
-					if (nextsource.getfn && !nextsource.dontcache) {
-						nextsource.data[j] = dataw;
-					}
+					scope[source.alias] = {};
 
-					if (dataw._rightjoin) {
-						delete dataw._rightjoin;
-					} else {
-						//						delete dataw._rightjoin;
+					var j = 0;
+					var jlen = nextsource.data.length;
+					var dataw;
 
-						if (h == 0) {
-							scope[nextsource.alias] = dataw;
-							doJoin(query, scope, h + 2);
-						} else {
-							//scope[nextsource.alias] = dataw;
-							//doJoin(query, scope, h+2);
-
+					while (
+						(dataw = nextsource.data[j]) ||
+						(nextsource.getfn && (dataw = nextsource.getfn(j))) ||
+						j < jlen
+					) {
+						if (nextsource.getfn && !nextsource.dontcache) {
+							nextsource.data[j] = dataw;
 						}
+
+						if (dataw._rightjoin) {
+							delete dataw._rightjoin;
+						} else {
+							//						delete dataw._rightjoin;
+
+							scope[nextsource.alias] = dataw;
+							doJoin(query, scope, nh + 1);
+						}
+						j++;
 					}
-					j++;
+					//				debugger;
+				} else {
+
 				}
-				//				debugger;
-			} else {
-
+				source = query.sources[nh];
+				nextsource = query.sources[nh + 1];
 			}
-		} else {
-
 		}
 
 		scope[tableid] = undefined;
