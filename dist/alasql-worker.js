@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11-update-dependencies-7c54b63cundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.4.11-update-dependencies-ac1eccc0undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11-update-dependencies-7c54b63cundefined
+@version 0.4.11-update-dependencies-ac1eccc0undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff

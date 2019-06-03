@@ -6,6 +6,15 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 800 - OUTER JOIN missing ids', function() {
+    before(function() {
+        alasql('CREATE DATABASE test800;USE test800');
+    });
+
+    after(function() {
+        alasql.options.modifier = undefined;
+        alasql('DROP DATABASE test800');
+    });
+    
     it('1. ARRAY()', function(done) {
         var t1 = [
             {id: '1', a: 'one'},
