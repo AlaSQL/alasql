@@ -350,7 +350,7 @@ Pinpointing data on a map should be easy. AlaSQL is great to prepare source data
 
 ### AlaSQL ♥ Google Spreadsheets
 
-AlaSQL can query data directly from a Google spreadsheet. A good "partnership" for easy editing and powerfull data manipulation. See more about [Google Spreadsheets and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Google-Spreadsheets)
+AlaSQL can query data directly from a Google spreadsheet. A good "partnership" for easy editing and powerful data manipulation. See more about [Google Spreadsheets and AlaSQL in the wiki](https://github.com/agershun/alasql/wiki/Google-Spreadsheets)
 
 
 
@@ -465,7 +465,7 @@ To use AlaSQL within a `create-react-app` (CRA) setup **without** ejecting it is
 
 When targeting the browser, several code bundlers like Webpack and Browserify will pick up modules you might not want.
 
-Here's a list of modules that AlaSQL may require in certain enviroments or for certain features:
+Here's a list of modules that AlaSQL may require in certain environments or for certain features:
 
 * Node.js
 	* fs
@@ -562,7 +562,7 @@ Please remember to send the original event, and not the jQuery event, for elemen
 
 ### JSON-object
 
-You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
+You can use JSON objects in your databases (do not forget use == and !== operators for deep comparison of objects):
 
 ```sql
 
