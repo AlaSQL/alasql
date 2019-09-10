@@ -214,7 +214,7 @@ AlaSQL extends "good old" SQL to make it closer to JavaScript. The "sugar" inclu
 
 * Write Json objects - `{a:'1',b:@['1','2','3']}`
 
-* Accesss object properties - `obj->property->subproperty`
+* Access object properties - `obj->property->subproperty`
 * Access object and arrays elements - `obj->(a*1)`
 * Access JavaScript functions - `obj->valueOf()`
 * Format query output with `SELECT VALUE, ROW, COLUMN, MATRIX`
