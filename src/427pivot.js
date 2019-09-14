@@ -9,9 +9,20 @@ yy.Select.prototype.compilePivot = function(query) {
 	/** @type {string} Main pivoting column */
 
 	var columnid = self.pivot.columnid;
-	var exprcolid = self.pivot.expr.expression.columnid;
 	var aggr = self.pivot.expr.aggregatorid;
 	var inlist = self.pivot.inlist;
+
+	var exprcolid = null;
+
+	if (self.pivot.expr.expression.hasOwnProperty('columnid')) {
+		exprcolid = self.pivot.expr.expression.columnid;
+	} else {
+		exprcolid = self.pivot.expr.expression.expression.columnid;
+	}
+
+	if(null==exprcolid){
+		throw 'columnid not found'
+	}
 
 	if (inlist) {
 		inlist = inlist.map(function(l) {
@@ -69,15 +80,15 @@ yy.Select.prototype.compilePivot = function(query) {
 
 				if (aggr == 'SUM' || aggr == 'AVG') {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
-					g[d[columnid]] += d[exprcolid];
+					g[d[columnid]] += +d[exprcolid];
 				} else if (aggr == 'COUNT') {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
 					g[d[columnid]]++;
 				} else if (aggr == 'MIN') {
-					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = Infinity;
+					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
 					if (d[exprcolid] < g[d[columnid]]) g[d[columnid]] = d[exprcolid];
 				} else if (aggr == 'MAX') {
-					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = -Infinity;
+					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
 					if (d[exprcolid] > g[d[columnid]]) g[d[columnid]] = d[exprcolid];
 				} else if (aggr == 'FIRST') {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
