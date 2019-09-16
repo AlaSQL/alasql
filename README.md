@@ -485,7 +485,7 @@ Please remember to send the original event, and not the jQuery event, for elemen
 
 ### JSON-object
 
-You can use JSON objects in your databases (do not forget use == and !== operators for deep comparision of objects):
+You can use JSON objects in your databases (do not forget use == and !== operators for deep comparison of objects):
 
 ```sql
 

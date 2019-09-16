@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11-fix.1096-a34e9d74undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.0 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11-fix.1096-a34e9d74undefined
+@version 0.5.0
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.11-fix.1096-a34e9d74undefined';
+alasql.version = '0.5.0';
 
 /**
 	Debug flag
@@ -2045,7 +2045,7 @@ _handle_error:
 
             // Return the rule stack depth where the nearest error rule can be found.
             // Return FALSE when no error recovery rule was found.
-            function locateNearestErrorRecoveryRule(state) {
+            var locateNearestErrorRecoveryRule = function(state) {
                 var stack_probe = stack.length - 1;
                 var depth = 0;
 
@@ -3119,6 +3119,7 @@ if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
 }
 }
+
 /**
    12prettyflag.js - prettify
    @todo move this functionality to plugin
@@ -14444,8 +14445,7 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 
 	if (cb) {
 		var first = false;
-		loop();
-		function loop(data) {
+		var loop = function(data) {
 			if (first) {
 				res.push(data);
 			} else {
@@ -14458,7 +14458,8 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 					res = cb(res);
 				}
 			}, 0);
-		}
+		};
+		loop();
 	} else {
 		while (fn(params, alasql)) {
 			var res1 = self.loopstat.execute(databaseid, params);
@@ -17294,12 +17295,12 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				var wopts = {bookType: 'xlsx', bookSST: false, type: 'binary'};
 				var wbout = XLSX.write(wb, wopts);
 
-				function s2ab(s) {
+				var s2ab = function(s) {
 					var buf = new ArrayBuffer(s.length);
 					var view = new Uint8Array(buf);
 					for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
 					return buf;
-				}
+				};
 
 				/* the saveAs call downloads a file on the local machine */
 				//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
