@@ -11,8 +11,7 @@ node_js:
   - "8"
   - "7"
   - "6"
-  - "5"
-  - "4"
+
 
 script: npm run test:only && npm test
 

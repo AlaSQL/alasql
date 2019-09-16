@@ -24,8 +24,7 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 	//	console.log('cb',!!cb);
 	if (cb) {
 		var first = false;
-		loop();
-		function loop(data) {
+		var loop = function(data) {
 			if (first) {
 				res.push(data);
 			} else {
@@ -38,7 +37,8 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 					res = cb(res);
 				}
 			}, 0);
-		}
+		};
+		loop();
 	} else {
 		while (fn(params, alasql)) {
 			var res1 = self.loopstat.execute(databaseid, params);
