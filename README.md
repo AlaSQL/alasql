@@ -114,7 +114,7 @@ For the browser: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql)
 
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/alasql@0.4"></script>
+<script src="https://cdn.jsdelivr.net/npm/alasql@0.5"></script>
 ```
 
 
