@@ -1,7 +1,10 @@
 # Changelog
 
 
-#0.5.0 "Qazvin" (16.09.2019)
+
+
+
+#0.5.1 "Qazvin" (16.09.2019)
 - Add: Chain OUTER JOIN's #1105
 - Better: Typescript typings
 - Better: Updated dependencies
