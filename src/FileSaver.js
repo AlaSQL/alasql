@@ -106,7 +106,7 @@ var saveAs =
 									: reader.result.replace(
 											/^data:[^;]*;/,
 											'data:attachment/file;'
-										);
+									  );
 								var popup = view.open(url, '_blank');
 								if (!popup) view.location.href = url;
 								url = undefined; // release reference before dispatching

@@ -421,7 +421,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = ((query.data.length * query.limit / 100) | 0) + offset;
+			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}
@@ -518,8 +518,7 @@ var preIndex = function(query) {
 					// Save index to original table
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 			//console.log(38,274,source.ix);
@@ -570,8 +569,7 @@ var preIndex = function(query) {
 				if (!alasql.databases[source.databaseid].engineid) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.wxleftfns + '`')
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 			// Apply where filter to reduces rows

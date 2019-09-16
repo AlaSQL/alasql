@@ -135,7 +135,7 @@ if(false) {
 		}
 
 		/*
-		*/
+		 */
 		//		s += self.columns.map(function(col){
 		//console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup
