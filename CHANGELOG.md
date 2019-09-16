@@ -1,6 +1,18 @@
 # Changelog
 
 
+
+
+
+#0.5.1 "Qazvin" (16.09.2019)
+- Add: Chain OUTER JOIN's #1105
+- Better: Typescript typings
+- Better: Updated dependencies
+- Fix: Join on CSV files directly
+- Fix: OUTER JOIN bug #1101
+- Fix: Pivot function cast for SUM and AVG 
+
+
 ## 0.4.11 "Lawdar" (05.10.2018)
 
 * Add: Specified XLSX sheet without knowing the name
