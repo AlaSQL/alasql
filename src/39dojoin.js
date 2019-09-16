@@ -158,50 +158,46 @@ function doJoin(query, scope, h) {
 
 		// STEP 2
 
-		if (h + 1 < query.sources.length) {
-			if (
-				nextsource.joinmode == 'OUTER' ||
-				nextsource.joinmode == 'RIGHT' ||
-				nextsource.joinmode == 'ANTI'
-			) {
-				scope[source.alias] = {};
-
-				var j = 0;
-				var jlen = nextsource.data.length;
-				var dataw;
-
-				while (
-					(dataw = nextsource.data[j]) ||
-					(nextsource.getfn && (dataw = nextsource.getfn(j))) ||
-					j < jlen
+		if (h == 0) {
+			for (var nh = h + 1; nh < query.sources.length; nh++) {
+				if (
+					nextsource.joinmode == 'OUTER' ||
+					nextsource.joinmode == 'RIGHT' ||
+					nextsource.joinmode == 'ANTI'
 				) {
-					if (nextsource.getfn && !nextsource.dontcache) {
-						nextsource.data[j] = dataw;
-					}
+					scope[source.alias] = {};
 
-					// console.log(169,dataw._rightjoin,scope);
-					if (dataw._rightjoin) {
-						delete dataw._rightjoin;
-					} else {
-						//						delete dataw._rightjoin;
-						//						console.log(163,h,scope);
-						if (h == 0) {
-							scope[nextsource.alias] = dataw;
-							doJoin(query, scope, h + 2);
-						} else {
-							//scope[nextsource.alias] = dataw;
-							//doJoin(query, scope, h+2);
-							//							console.log(169,scope);
+					var j = 0;
+					var jlen = nextsource.data.length;
+					var dataw;
+
+					while (
+						(dataw = nextsource.data[j]) ||
+						(nextsource.getfn && (dataw = nextsource.getfn(j))) ||
+						j < jlen
+					) {
+						if (nextsource.getfn && !nextsource.dontcache) {
+							nextsource.data[j] = dataw;
 						}
+
+						// console.log(169,dataw._rightjoin,scope);
+						if (dataw._rightjoin) {
+							delete dataw._rightjoin;
+						} else {
+							//						delete dataw._rightjoin;
+							//						console.log(163,h,scope);
+							scope[nextsource.alias] = dataw;
+							doJoin(query, scope, nh + 1);
+						}
+						j++;
 					}
-					j++;
+					//				debugger;
+				} else {
+					//console.log(180,scope);
 				}
-				//				debugger;
-			} else {
-				//console.log(180,scope);
+				source = query.sources[nh];
+				nextsource = query.sources[nh + 1];
 			}
-		} else {
-			//			console.log(179,scope);
 		}
 
 		scope[tableid] = undefined;
@@ -210,7 +206,7 @@ function doJoin(query, scope, h) {
 		if(h+1 < query.sources.length) {
 			var nextsource = query.sources[h+1];
 
-			if(nextsource.joinmode == "OUTER" || nextsource.joinmode == "RIGHT" 
+			if(nextsource.joinmode == "OUTER" || nextsource.joinmode == "RIGHT"
 				|| nextsource.joinmode == "ANTI") {
 
 
@@ -224,7 +220,7 @@ function doJoin(query, scope, h) {
 				//debugger;
 //				var source = query.sources[h];
 
-//				var tableid = source.alias || source.tableid; 
+//				var tableid = source.alias || source.tableid;
 //				var data = source.data;
 
 				// Reduce data for looping if there is optimization hint
@@ -254,7 +250,7 @@ function doJoin(query, scope, h) {
 //						scope[tableid] = {};
 						// console.log(scope);
 						doJoin(query,scope,h+2);
-					}	
+					}
 				};
 
 				// Additional join for LEFT JOINS

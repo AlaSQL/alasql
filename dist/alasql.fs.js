@@ -1,7 +1,7 @@
-//! AlaSQL v0.4.11 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.0 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.4.11
+@version 0.5.0
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.4.11';
+alasql.version = '0.5.0';
 
 /**
 	Debug flag
@@ -693,13 +693,13 @@ case 215:
  this.$ = {select: $$[$0-3], as: $$[$0] } ; 
 break;
 case 216:
- this.$ = {funcid:$$[$0], as:'default'}; 
+ this.$ = {func:$$[$0], as:'default'}; 
 break;
 case 217:
- this.$ = {funcid:$$[$0-1], as: $$[$0]}; 
+ this.$ = {func:$$[$0-1], as: $$[$0]}; 
 break;
 case 218:
- this.$ = {funcid:$$[$0-2], as: $$[$0]}; 
+ this.$ = {func:$$[$0-2], as: $$[$0]}; 
 break;
 case 219:
  this.$ = {variable:$$[$0],as:'default'}; 
@@ -2045,7 +2045,7 @@ _handle_error:
 
             // Return the rule stack depth where the nearest error rule can be found.
             // Return FALSE when no error recovery rule was found.
-            function locateNearestErrorRecoveryRule(state) {
+            var locateNearestErrorRecoveryRule = function(state) {
                 var stack_probe = stack.length - 1;
                 var depth = 0;
 
@@ -3119,6 +3119,7 @@ if (typeof module !== 'undefined' && require.main === module) {
   exports.main(process.argv.slice(1));
 }
 }
+
 /**
    12prettyflag.js - prettify
    @todo move this functionality to plugin
@@ -4141,13 +4142,13 @@ if (!Array.isArray) {
  */
 
 var xlsnc = (utils.xlsnc = function(i) {
-	var addr = String.fromCharCode(65 + i % 26);
+	var addr = String.fromCharCode(65 + (i % 26));
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
-		addr = String.fromCharCode(65 + i % 26) + addr;
+		addr = String.fromCharCode(65 + (i % 26)) + addr;
 		if (i > 26) {
 			i = ((i / 26) | 0) - 1;
-			addr = String.fromCharCode(65 + i % 26) + addr;
+			addr = String.fromCharCode(65 + (i % 26)) + addr;
 		}
 	}
 	return addr;
@@ -4929,24 +4930,28 @@ if (!utils.global.Promise) {
 				e._state === it
 					? S(t, e._result)
 					: e._state === st
-						? j(t, e._result)
-						: E(
-								e,
-								void 0,
-								function(e) {
-									g(t, e);
-								},
-								function(e) {
-									j(t, e);
-								}
-							);
+					? j(t, e._result)
+					: E(
+							e,
+							void 0,
+							function(e) {
+								g(t, e);
+							},
+							function(e) {
+								j(t, e);
+							}
+					  );
 			}
 			function w(t, n, r) {
 				n.constructor === t.constructor && r === et && constructor.resolve === nt
 					? b(t, n)
 					: r === ut
-						? j(t, ut.error)
-						: void 0 === r ? S(t, n) : e(r) ? m(t, n, r) : S(t, n);
+					? j(t, ut.error)
+					: void 0 === r
+					? S(t, n)
+					: e(r)
+					? m(t, n, r)
+					: S(t, n);
 			}
 			function g(e, n) {
 				e === n ? j(e, _()) : t(n) ? w(e, n, v(n)) : S(e, n);
@@ -5036,10 +5041,10 @@ if (!utils.global.Promise) {
 						? function(n, r) {
 								for (var o = t.length, i = 0; o > i; i++)
 									e.resolve(t[i]).then(n, r);
-							}
+						  }
 						: function(t, e) {
 								e(new TypeError('You must pass an array to race.'));
-							}
+						  }
 				);
 			}
 			function F(t) {
@@ -5070,14 +5075,14 @@ if (!utils.global.Promise) {
 					this.promise[rt] || k(this.promise),
 					Array.isArray(e)
 						? ((this._input = e),
-							(this.length = e.length),
-							(this._remaining = e.length),
-							(this._result = new Array(this.length)),
-							0 === this.length
+						  (this.length = e.length),
+						  (this._remaining = e.length),
+						  (this._result = new Array(this.length)),
+						  0 === this.length
 								? S(this.promise, this._result)
 								: ((this.length = this.length || 0),
-									this._enumerate(),
-									0 === this._remaining && S(this.promise, this._result)))
+								  this._enumerate(),
+								  0 === this._remaining && S(this.promise, this._result)))
 						: j(this.promise, U());
 			}
 			function U() {
@@ -5106,7 +5111,7 @@ if (!utils.global.Promise) {
 				? Array.isArray
 				: function(t) {
 						return '[object Array]' === Object.prototype.toString.call(t);
-					};
+				  };
 			var B,
 				G,
 				H,
@@ -5129,7 +5134,13 @@ if (!utils.global.Promise) {
 				tt = new Array(1e3);
 			H = Z
 				? o()
-				: X ? s() : $ ? u() : void 0 === R && 'function' == typeof require ? f() : c();
+				: X
+				? s()
+				: $
+				? u()
+				: void 0 === R && 'function' == typeof require
+				? f()
+				: c();
 			var et = l,
 				nt = h,
 				rt = Math.random()
@@ -5207,10 +5218,10 @@ if (!utils.global.Promise) {
 			'function' == typeof define && define.amd
 				? define(function() {
 						return vt;
-					})
+				  })
 				: 'undefined' != typeof module && module.exports
-					? (module.exports = vt)
-					: 'undefined' != typeof this && (this.ES6Promise = vt),
+				? (module.exports = vt)
+				: 'undefined' != typeof this && (this.ES6Promise = vt),
 				dt();
 		}.call(this));
 
@@ -7225,7 +7236,7 @@ function doLimit(query) {
 		}
 		var limit;
 		if (query.percent) {
-			limit = ((query.data.length * query.limit / 100) | 0) + offset;
+			limit = (((query.data.length * query.limit) / 100) | 0) + offset;
 		} else {
 			limit = (query.limit | 0) + offset;
 		}
@@ -7321,8 +7332,7 @@ var preIndex = function(query) {
 					// Save index to original table
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 
@@ -7372,8 +7382,7 @@ var preIndex = function(query) {
 				if (!alasql.databases[source.databaseid].engineid) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.wxleftfns + '`')
-					] =
-						source.ix;
+					] = source.ix;
 				}
 			}
 			// Apply where filter to reduces rows
@@ -7576,49 +7585,45 @@ function doJoin(query, scope, h) {
 
 		// STEP 2
 
-		if (h + 1 < query.sources.length) {
-			if (
-				nextsource.joinmode == 'OUTER' ||
-				nextsource.joinmode == 'RIGHT' ||
-				nextsource.joinmode == 'ANTI'
-			) {
-				scope[source.alias] = {};
-
-				var j = 0;
-				var jlen = nextsource.data.length;
-				var dataw;
-
-				while (
-					(dataw = nextsource.data[j]) ||
-					(nextsource.getfn && (dataw = nextsource.getfn(j))) ||
-					j < jlen
+		if (h == 0) {
+			for (var nh = h + 1; nh < query.sources.length; nh++) {
+				if (
+					nextsource.joinmode == 'OUTER' ||
+					nextsource.joinmode == 'RIGHT' ||
+					nextsource.joinmode == 'ANTI'
 				) {
-					if (nextsource.getfn && !nextsource.dontcache) {
-						nextsource.data[j] = dataw;
-					}
+					scope[source.alias] = {};
 
-					if (dataw._rightjoin) {
-						delete dataw._rightjoin;
-					} else {
-						//						delete dataw._rightjoin;
+					var j = 0;
+					var jlen = nextsource.data.length;
+					var dataw;
 
-						if (h == 0) {
-							scope[nextsource.alias] = dataw;
-							doJoin(query, scope, h + 2);
-						} else {
-							//scope[nextsource.alias] = dataw;
-							//doJoin(query, scope, h+2);
-
+					while (
+						(dataw = nextsource.data[j]) ||
+						(nextsource.getfn && (dataw = nextsource.getfn(j))) ||
+						j < jlen
+					) {
+						if (nextsource.getfn && !nextsource.dontcache) {
+							nextsource.data[j] = dataw;
 						}
+
+						if (dataw._rightjoin) {
+							delete dataw._rightjoin;
+						} else {
+							//						delete dataw._rightjoin;
+
+							scope[nextsource.alias] = dataw;
+							doJoin(query, scope, nh + 1);
+						}
+						j++;
 					}
-					j++;
+					//				debugger;
+				} else {
+
 				}
-				//				debugger;
-			} else {
-
+				source = query.sources[nh];
+				nextsource = query.sources[nh + 1];
 			}
-		} else {
-
 		}
 
 		scope[tableid] = undefined;
@@ -8689,7 +8694,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			source.datafn = new Function('query,params,cb,idx, alasql', ps);
 			query.aliases[source.alias] = {type: 'varvalue'};
-		} else if (jn.funcid) {
+		} else if (jn.func) {
 			source = {
 				alias: jn.as,
 				//				databaseid: jn.databaseid || query.database.databaseid,
@@ -8701,16 +8706,17 @@ yy.Select.prototype.compileJoins = function(query) {
 			};
 			// source.data = ;
 
-			var s = "var res=alasql.from['" + jn.funcid.toUpperCase() + "'](";
+			var s = "var res=alasql.from['" + jn.func.funcid.toUpperCase() + "'](";
 
-			if (jn.args && jn.args.length > 0) {
-				if (jn.args[0]) {
-					s += jn.args[0].toJS('query.oldscope') + ',';
+			var args = jn.func.args;
+			if (args && args.length > 0) {
+				if (args[0]) {
+					s += args[0].toJS('query.oldscope') + ',';
 				} else {
 					s += 'null,';
 				}
-				if (jn.args[1]) {
-					s += jn.args[1].toJS('query.oldscope') + ',';
+				if (args[1]) {
+					s += args[1].toJS('query.oldscope') + ',';
 				} else {
 					s += 'null,';
 				}
@@ -9123,7 +9129,7 @@ yy.Select.prototype.compileGroup = function(query) {
 		}
 
 		/*
-		*/
+		 */
 		//		s += self.columns.map(function(col){
 
 		s += query.selectGroup
@@ -9385,86 +9391,109 @@ yy.Select.prototype.compileGroup = function(query) {
 
 // };
 
-function compileSelectStar(query, alias, joinstar) {
-
+function compileSelectStar(query, aliases, joinstar) {
 	var sp = '',
-		ss = [];
-	//	if(!alias) {
-	//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
-	//	} else 	{
+		ss = [],
+		columnIds = {};
 
-	// TODO move this out of this function
-	query.ixsources = {};
-	query.sources.forEach(function(source) {
-		query.ixsources[source.alias] = source;
-	});
+	aliases.forEach(function(alias) {
 
-	// Fixed
-	var columns;
-	if (query.ixsources[alias]) {
-		var columns = query.ixsources[alias].columns;
-	}
+		//	if(!alias) {
+		//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
+		//	} else 	{
 
-	//		if(columns.length == 0 && query.aliases[alias].tableid) {
-	//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
-	//		};
+		// TODO move this out of this function
+		query.ixsources = {};
+		query.sources.forEach(function(source) {
+			query.ixsources[source.alias] = source;
+		});
 
-	// Check if this is a Table or other
-	if (joinstar && alasql.options.joinstar == 'json') {
-		sp += "r['" + alias + "']={};";
-	}
+		// Fixed
+		var columns;
+		if (query.ixsources[alias]) {
+			var columns = query.ixsources[alias].columns;
+		}
 
-	if (columns && columns.length > 0) {
-		columns.forEach(function(tcol) {
-			if (joinstar && alasql.options.joinstar == 'underscore') {
-				ss.push(
-					"'" +
-						alias +
-						'_' +
-						tcol.columnid +
-						"':p['" +
+		//		if(columns.length == 0 && query.aliases[alias].tableid) {
+		//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
+		//		};
+
+		// Check if this is a Table or other
+		if (joinstar && alasql.options.joinstar == 'json') {
+			sp += "r['" + alias + "']={};";
+		}
+
+		if (columns && columns.length > 0) {
+			columns.forEach(function(tcol) {
+				if (joinstar && alasql.options.joinstar == 'underscore') {
+					ss.push(
+						"'" +
+							alias +
+							'_' +
+							tcol.columnid +
+							"':p['" +
+							alias +
+							"']['" +
+							tcol.columnid +
+							"']"
+					);
+				} else if (joinstar && alasql.options.joinstar == 'json') {
+					//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+					sp +=
+						"r['" +
 						alias +
 						"']['" +
 						tcol.columnid +
-						"']"
-				);
-			} else if (joinstar && alasql.options.joinstar == 'json') {
-				//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
-				sp +=
-					"r['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"']=p['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"'];";
-			} else {
-				ss.push("'" + tcol.columnid + "':p['" + alias + "']['" + tcol.columnid + "']");
-			}
+						"']=p['" +
+						alias +
+						"']['" +
+						tcol.columnid +
+						"'];";
+				} else {
+					var value = "p['" + alias + "']['" + tcol.columnid + "']";
+					if (!columnIds[tcol.columnid]) {
+						var key = "'" + tcol.columnid + "':";
+						ss.push(key + value);
+						columnIds[tcol.columnid] = {
+							id: ss.length - 1,
+							value: value,
+							key: key,
+						};
+					} else {
+						var newValue =
+							value +
+							' !== undefined ? ' +
+							value +
+							' : ' +
+							columnIds[tcol.columnid].value;
+						ss[columnIds[tcol.columnid].id] = columnIds[tcol.columnid].key + newValue;
+						columnIds[tcol.columnid].value = newValue;
+					}
+				}
 
-			query.selectColumns[escapeq(tcol.columnid)] = true;
+				query.selectColumns[escapeq(tcol.columnid)] = true;
 
-			var coldef = {
-				columnid: tcol.columnid,
-				dbtypeid: tcol.dbtypeid,
-				dbsize: tcol.dbsize,
-				dbprecision: tcol.dbprecision,
-				dbenum: tcol.dbenum,
-			};
-			query.columns.push(coldef);
-			query.xcolumns[coldef.columnid] = coldef;
-		});
+				var coldef = {
+					columnid: tcol.columnid,
+					dbtypeid: tcol.dbtypeid,
+					dbsize: tcol.dbsize,
+					dbprecision: tcol.dbprecision,
+					dbenum: tcol.dbenum,
+				};
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid] = coldef;
+			});
 
-	} else {
+		} else {
 
-		// if column not exist, then copy all
-		sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
+			// if column not exist, then copy all
+			sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
 
-		query.dirtyColumns = true;
-	}
-	//	}
+			query.dirtyColumns = true;
+		}
+		//	}
+
+	});
 
 	return {s: ss.join(','), sp: sp};
 }
@@ -9492,20 +9521,19 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						"'],p,params,alasql);";
 				} else if (col.tableid) {
 					//Copy all
-					var ret = compileSelectStar(query, col.tableid, false);
+					var ret = compileSelectStar(query, [col.tableid], false);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}
 					sp += ret.sp;
 				} else {
 
-					for (var alias in query.aliases) {
-						var ret = compileSelectStar(query, alias, true); //query.aliases[alias].tableid);
-						if (ret.s) {
-							ss = ss.concat(ret.s);
-						}
-						sp += ret.sp;
+					var ret = compileSelectStar(query, Object.keys(query.aliases), true); //query.aliases[alias].tableid);
+					if (ret.s) {
+						ss = ss.concat(ret.s);
 					}
+					sp += ret.sp;
+
 					// TODO Remove these lines
 					// In case of no information
 					// sp += 'for(var k1 in p){var w=p[k1];'+
@@ -10018,9 +10046,20 @@ yy.Select.prototype.compilePivot = function(query) {
 	/** @type {string} Main pivoting column */
 
 	var columnid = self.pivot.columnid;
-	var exprcolid = self.pivot.expr.expression.columnid;
 	var aggr = self.pivot.expr.aggregatorid;
 	var inlist = self.pivot.inlist;
+
+	var exprcolid = null;
+
+	if (self.pivot.expr.expression.hasOwnProperty('columnid')) {
+		exprcolid = self.pivot.expr.expression.columnid;
+	} else {
+		exprcolid = self.pivot.expr.expression.expression.columnid;
+	}
+
+	if (null == exprcolid) {
+		throw 'columnid not found';
+	}
 
 	if (inlist) {
 		inlist = inlist.map(function(l) {
@@ -10078,15 +10117,15 @@ yy.Select.prototype.compilePivot = function(query) {
 
 				if (aggr == 'SUM' || aggr == 'AVG') {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
-					g[d[columnid]] += d[exprcolid];
+					g[d[columnid]] += +d[exprcolid];
 				} else if (aggr == 'COUNT') {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
 					g[d[columnid]]++;
 				} else if (aggr == 'MIN') {
-					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = Infinity;
+					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
 					if (d[exprcolid] < g[d[columnid]]) g[d[columnid]] = d[exprcolid];
 				} else if (aggr == 'MAX') {
-					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = -Infinity;
+					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
 					if (d[exprcolid] > g[d[columnid]]) g[d[columnid]] = d[exprcolid];
 				} else if (aggr == 'FIRST') {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
@@ -11999,7 +12038,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 
 		nth = !nth ? 1 : nth;
 		var r = s.sort();
-		var p = nth * (r.length + 1) / 4;
+		var p = (nth * (r.length + 1)) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}
@@ -13399,7 +13438,7 @@ stdfn.YEAR = function(d) {
 
 var PERIODS = {
 	year: 1000 * 3600 * 24 * 365,
-	quarter: 1000 * 3600 * 24 * 365 / 4,
+	quarter: (1000 * 3600 * 24 * 365) / 4,
 	month: 1000 * 3600 * 24 * 30,
 	week: 1000 * 3600 * 24 * 7,
 	day: 1000 * 3600 * 24,
@@ -14406,8 +14445,7 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 
 	if (cb) {
 		var first = false;
-		loop();
-		function loop(data) {
+		var loop = function(data) {
 			if (first) {
 				res.push(data);
 			} else {
@@ -14420,7 +14458,8 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 					res = cb(res);
 				}
 			}, 0);
-		}
+		};
+		loop();
 	} else {
 		while (fn(params, alasql)) {
 			var res1 = self.loopstat.execute(databaseid, params);
@@ -15915,7 +15954,7 @@ function scrollTo(element, to, duration) {
 		return;
 	}
 	var difference = to - element.scrollTop;
-	var perTick = difference / duration * 10;
+	var perTick = (difference / duration) * 10;
 
 	setTimeout(function() {
 		if (element.scrollTop === to) {
@@ -17256,12 +17295,12 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				var wopts = {bookType: 'xlsx', bookSST: false, type: 'binary'};
 				var wbout = XLSX.write(wb, wopts);
 
-				function s2ab(s) {
+				var s2ab = function(s) {
 					var buf = new ArrayBuffer(s.length);
 					var view = new Uint8Array(buf);
 					for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
 					return buf;
-				}
+				};
 
 				/* the saveAs call downloads a file on the local machine */
 				//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
@@ -19655,7 +19694,7 @@ var saveAs =
 									: reader.result.replace(
 											/^data:[^;]*;/,
 											'data:attachment/file;'
-										);
+									  );
 								var popup = view.open(url, '_blank');
 								if (!popup) view.location.href = url;
 								url = undefined; // release reference before dispatching
