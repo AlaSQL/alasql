@@ -52,16 +52,16 @@ stdfn.SPRINTF = function() {
 	var fn;
 
 	/*
-         * The callback function accepts the following properties
-         *      x.index contains the substring position found at the origin string
-         *      x[0] contains the found substring
-         *      x[1] contains the index specifier (as \d+\$ or \d+#)
-         *      x[2] contains the alignment specifier ("+" or "-" or empty)
-         *      x[3] contains the padding specifier (space char, "0" or defined as '.)
-         *      x[4] contains the width specifier (as \d*)
-         *      x[5] contains the floating-point precision specifier (as \.\d*)
-         *      x[6] contains the type specifier (as [bcdfosuxX])
-         */
+	 * The callback function accepts the following properties
+	 *      x.index contains the substring position found at the origin string
+	 *      x[0] contains the found substring
+	 *      x[1] contains the index specifier (as \d+\$ or \d+#)
+	 *      x[2] contains the alignment specifier ("+" or "-" or empty)
+	 *      x[3] contains the padding specifier (space char, "0" or defined as '.)
+	 *      x[4] contains the width specifier (as \d*)
+	 *      x[5] contains the floating-point precision specifier (as \.\d*)
+	 *      x[6] contains the type specifier (as [bcdfosuxX])
+	 */
 	return args[0].replace(stdfn.SPRINTF.re, function() {
 		if (arguments[0] == '%%') {
 			return '%';

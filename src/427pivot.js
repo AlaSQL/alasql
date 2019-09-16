@@ -20,8 +20,8 @@ yy.Select.prototype.compilePivot = function(query) {
 		exprcolid = self.pivot.expr.expression.expression.columnid;
 	}
 
-	if(null==exprcolid){
-		throw 'columnid not found'
+	if (null == exprcolid) {
+		throw 'columnid not found';
 	}
 
 	if (inlist) {
