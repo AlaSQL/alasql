@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.1 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.1-develop-9afc9193undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.1
+@version 0.5.1-develop-9afc9193undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.1';
+alasql.version = '0.5.1-develop-9afc9193undefined';
 
 /**
 	Debug flag
@@ -14827,6 +14827,7 @@ yy.CreateTrigger.prototype.execute = function(databaseid, params, cb) {
 		when: this.when,
 		statement: this.statement,
 		funcid: this.funcid,
+		tableid: this.table.tableid,
 	};
 
 	db.triggers[triggerid] = trigger;
@@ -14875,20 +14876,29 @@ yy.DropTrigger.prototype.execute = function(databaseid, params, cb) {
 	var res = 0; // No tables removed
 	var db = alasql.databases[databaseid];
 	var triggerid = this.trigger;
-	// For each table in the list
-	var tableid = db.triggers[triggerid];
-	if (tableid) {
-		res = 1;
-		delete db.tables[tableid].beforeinsert[triggerid];
-		delete db.tables[tableid].afterinsert[triggerid];
-		delete db.tables[tableid].insteadofinsert[triggerid];
-		delete db.tables[tableid].beforedelte[triggerid];
-		delete db.tables[tableid].afterdelete[triggerid];
-		delete db.tables[tableid].insteadofdelete[triggerid];
-		delete db.tables[tableid].beforeupdate[triggerid];
-		delete db.tables[tableid].afterupdate[triggerid];
-		delete db.tables[tableid].insteadofupdate[triggerid];
-		delete db.triggers[triggerid];
+
+	// get the trigger
+	var trigger = db.triggers[triggerid];
+
+	//  if the trigger exists
+	if (trigger) {
+		var tableid = db.triggers[triggerid].tableid;
+
+		if (tableid) {
+			res = 1;
+			delete db.tables[tableid].beforeinsert[triggerid];
+			delete db.tables[tableid].afterinsert[triggerid];
+			delete db.tables[tableid].insteadofinsert[triggerid];
+			delete db.tables[tableid].beforedelete[triggerid];
+			delete db.tables[tableid].afterdelete[triggerid];
+			delete db.tables[tableid].insteadofdelete[triggerid];
+			delete db.tables[tableid].beforeupdate[triggerid];
+			delete db.tables[tableid].afterupdate[triggerid];
+			delete db.tables[tableid].insteadofupdate[triggerid];
+			delete db.triggers[triggerid];
+		} else {
+			throw new Error('Trigger Table not found');
+		}
 	} else {
 		throw new Error('Trigger not found');
 	}
