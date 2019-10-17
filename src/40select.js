@@ -228,13 +228,13 @@ yy.Select.prototype.compile = function(databaseid, params) {
 
 	// 8. Compile ORDER BY clause
 	if (this.order) {
-		query.orderfn = this.compileOrder(query);
+		query.orderfn = this.compileOrder(query, params);
 	}
 
 	if (this.group || query.selectGroup.length > 0) {
 		query.selectgfn = this.compileSelectGroup2(query);
 	} else {
-		query.selectfn = this.compileSelect2(query);
+		query.selectfn = this.compileSelect2(query, params);
 	}
 
 	// 7. Compile DISTINCT, LIMIT and OFFSET
@@ -261,28 +261,28 @@ yy.Select.prototype.compile = function(databaseid, params) {
 	if (this.union) {
 		query.unionfn = this.union.compile(databaseid);
 		if (this.union.order) {
-			query.orderfn = this.union.compileOrder(query);
+			query.orderfn = this.union.compileOrder(query, params);
 		} else {
 			query.orderfn = null;
 		}
 	} else if (this.unionall) {
 		query.unionallfn = this.unionall.compile(databaseid);
 		if (this.unionall.order) {
-			query.orderfn = this.unionall.compileOrder(query);
+			query.orderfn = this.unionall.compileOrder(query, params);
 		} else {
 			query.orderfn = null;
 		}
 	} else if (this.except) {
 		query.exceptfn = this.except.compile(databaseid);
 		if (this.except.order) {
-			query.orderfn = this.except.compileOrder(query);
+			query.orderfn = this.except.compileOrder(query, params);
 		} else {
 			query.orderfn = null;
 		}
 	} else if (this.intersect) {
 		query.intersectfn = this.intersect.compile(databaseid);
 		if (this.intersect.order) {
-			query.intersectfn = this.intersect.compileOrder(query);
+			query.intersectfn = this.intersect.compileOrder(query, params);
 		} else {
 			query.orderfn = null;
 		}
