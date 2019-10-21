@@ -244,7 +244,7 @@ yy.Select.prototype.compile = function(databaseid, params) {
 	if (this.pivot) query.pivotfn = this.compilePivot(query);
 	if (this.unpivot) query.pivotfn = this.compileUnpivot(query);
 
-	// 10. Compile TOP/LIMIT/OFFSET/FETCH cleuse
+	// 10. Compile TOP/LIMIT/OFFSET/FETCH clause
 	if (this.top) {
 		query.limit = this.top.value;
 	} else if (this.limit) {
