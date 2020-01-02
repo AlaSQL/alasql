@@ -4,6 +4,15 @@
 
 
 
+## 0.5.3 "Chabahar" (02.01.2020)
+
+- Better: Support csv data from buffer
+- Better: Error message for foreign key constraint fail #1009
+- Fix: ORDER BY supports parameters #1100
+- Fix: Filestorage DELETE FROM #624
+- Fix: Drop trigger #1113
+
+
 #0.5.1 "Qazvin" (16.09.2019)
 - Add: Chain OUTER JOIN's #1105
 - Better: Typescript typings
