@@ -180,6 +180,7 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 };
 
 alasql.from.CSV = function(contents, opts, cb, idx, query) {
+	contents = ''+contents;
 	var opt = {
 		separator: ',',
 		quote: '"',

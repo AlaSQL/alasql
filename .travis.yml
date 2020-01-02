@@ -5,10 +5,13 @@ branches:
     - develop
 
 language: node_js
-node_js:
- # - "node" 
+node_js: # node plus all mentioned here: https://nodejs.org/en/about/releases/
+  - "node"
+  - "13"
+  - "12" 
   - "11"
   - "10"
+  - "8"
 
 
 script: npm run test:only && npm test

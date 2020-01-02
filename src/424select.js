@@ -375,20 +375,22 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 	return s;
 	//console.log(42,753,query.xcolumns, query.selectColumns);
 };
-yy.Select.prototype.compileSelect2 = function(query) {
+yy.Select.prototype.compileSelect2 = function(query, params) {
 	var s = query.selectfns;
 	if (this.orderColumns && this.orderColumns.length > 0) {
 		this.orderColumns.forEach(function(v, idx) {
 			var key = '$$$' + idx;
 			if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
+			} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
+				s += "r['" + key + "']=r['" + params[v.param] + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.defcols) + ';';
 			}
 			query.removeKeys.push(key);
 		});
 	}
-	//	console.log(285,s);
+
 	return new Function('p,params,alasql', 'var y;' + s + 'return r');
 };
 
@@ -498,7 +500,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 //				s += 'g[\''+col.toString()+'\'];';
 
 //				console.log(col);
-				// var kg = col.toJS('g','')+';';				
+				// var kg = col.toJS('g','')+';';
 				// for(var i=0;i<query.removeKeys.length;i++) {
 				// 	// THis part should be intellectual
 				// 	if(query.removeKeys[i] == colas) {
