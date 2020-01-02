@@ -207,12 +207,13 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 					var addr = fktable.pk.onrightfn(rr);
 					//						console.log(r, rr, addr);
 					//						console.log(fktable.uniqs[fktable.pk.hh][addr]);
-					if (!fktable.uniqs[fktable.pk.hh][addr]) {
+					if (!fktable.uniqs[fktable.pk.hh][addr]) {      
 						throw new Error(
-							'Foreign key "' +
-								r[col.columnid] +
-								'" is not found in table ' +
-								fktable.tableid
+// 							'Foreign key "' +
+// 								r[col.columnid] +
+// 								'" is not found in table ' +
+// 								fktable.tableid
+							'Foreign key violation'              //changed error message
 						);
 					}
 					return true;
@@ -300,10 +301,12 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 				if (!fktable.uniqs[fktable.pk.hh][addr]) {
 					//console.log(228,table,col,fk);
 					throw new Error(
-						'Foreign key "' +
-							r[col.columnid] +
-							'" is not found in table ' +
-							fktable.tableid
+// 						'Foreign key "' +
+// 							r[col.columnid] +
+// 							'" is not found in table ' +
+// 							fktable.tableid
+						'Foreign key violation'  //changed error message
+					
 					);
 				}
 				return true;
