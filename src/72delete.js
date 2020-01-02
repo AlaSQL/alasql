@@ -62,7 +62,7 @@ yy.Delete.prototype.compile = function(databaseid) {
 				);
 			}
 
-			if (alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
+			if (alasql.options.autocommit && db.engineid && (db.engineid == 'LOCALSTORAGE' || db.engineid == 'FILESTORAGE')) {
 				alasql.engines[db.engineid].loadTableData(databaseid, tableid);
 			}
 
@@ -97,7 +97,7 @@ yy.Delete.prototype.compile = function(databaseid) {
 			}
 
 			var res = orignum - table.data.length;
-			if (alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
+			if (alasql.options.autocommit && db.engineid && (db.engineid == 'LOCALSTORAGE' || db.engineid == 'FILESTORAGE')) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
