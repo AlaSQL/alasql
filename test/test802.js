@@ -1,37 +1,64 @@
 if (typeof exports === 'object') {
-    var assert = require('assert');
-    var alasql = require('..');
-} else {
-    __dirname = '.';
+	var assert = require('assert');
+	var alasql = require('..');
 }
 
 var test = '802'; // insert test file number
-describe('Test 802 - Drop trigger', function() {
 
-	before(function() {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
-	});
+describe(
+	'Test ' + test + ' - ORDER BY does not support parameter #1100',
+	function() {
+		it('1. Prepare database', function(done) {
+			alasql("CREATE TABLE example1 (a INT, b INT)");
+			alasql.tables.example1.data = [
+				{a:2,b:6},
+				{a:3,b:4},
+				{a:1,b:5}
+			];
+			done();
+		});
 
-	after(function() {
-		alasql('DROP DATABASE test' + test);
-	});
 
-    it('1. Dropped trigger does not execute function', function(done) {
+		it('2. Async ORDERBY operation works without argument', function(done) {
+			//
+			alasql.promise("SELECT * FROM example1 ORDER BY b").then(function(res) {
+				assert.deepEqual(res, [
+					{
+						a: 3,
+						b: 4
+					},
+					{
+						a: 1,
+						b: 5
+					},
+					{
+						a: 2,
+						b: 6
+					}
+				]);
+				done();
+			});
+		});
 
-        var onChangeCalledCount = 0; 
-        var expectedOnChangeCalledCount = 1;
-        alasql.fn.onchange = function(r) {
-            onChangeCalledCount++;
-        }
-
-        alasql('CREATE TABLE one (a INT)');
-        alasql('CREATE TRIGGER myTrigger AFTER INSERT ON one CALL onchange()');
-        alasql('INSERT INTO one VALUES (123)');  // This will fire onchange()
-        alasql('DROP TRIGGER myTrigger');
-        alasql('INSERT INTO one VALUES (231)');  // This should not fire onchange()    
-
-                 
-        assert.deepEqual(onChangeCalledCount, expectedOnChangeCalledCount);
-        done();
-    });
-});
+		it('3. Async ORDERBY operation works with arguments passed', function(done) {
+			//
+			alasql.promise('SELECT * FROM example1 ORDER BY ?', [ 'b' ]).then(function(res) {
+				assert.deepEqual(res, [
+					{
+						a: 3,
+						b: 4
+					},
+					{
+						a: 1,
+						b: 5
+					},
+					{
+						a: 2,
+						b: 6
+					}
+				]);
+				done();
+			});
+		});
+	}
+);

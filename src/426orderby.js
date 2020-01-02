@@ -1,4 +1,4 @@
-yy.Select.prototype.compileOrder = function(query) {
+yy.Select.prototype.compileOrder = function(query, params) {
 	var self = this;
 	self.orderColumns = [];
 	if (this.order) {
@@ -52,6 +52,18 @@ yy.Select.prototype.compileOrder = function(query) {
 				}
 				//				dg = '.valueOf()';
 			}
+			if (ord.expression instanceof yy.ParamValue) {
+				var columnid = params[ord.expression.param];
+				if (query.xcolumns[columnid]) {
+					var dbtypeid = query.xcolumns[columnid].dbtypeid;
+					if (dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2')
+						dg = '.valueOf()';
+					// TODO Add other types mapping
+				} else {
+					if (alasql.options.valueof) dg = '.valueOf()'; // TODO Check
+				}
+				//				dg = '.valueOf()';
+			}
 			// COLLATE NOCASE
 			if (ord.nocase) dg += '.toUpperCase()';
 			s +=
@@ -69,7 +81,7 @@ yy.Select.prototype.compileOrder = function(query) {
 			//console.log(37,s);
 
 			/*
-if(false) {			
+if(false) {
 //console.log(ord.expression, ord.expression instanceof yy.NumValue);
 			if(ord.expression instanceof yy.NumValue) {
 				ord.expression = self.columns[ord.expression.value-1];
@@ -78,7 +90,7 @@ if(false) {
 			};
 
 			if(ord.expression instanceof yy.Column) {
-				var columnid = ord.expression.columnid; 
+				var columnid = ord.expression.columnid;
 				if(query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
 					if( dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2') dg = '.valueOf()';
@@ -98,7 +110,7 @@ if(false) {
 				if(ord.nocase) dg += '.toUpperCase()';
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+(ord.direction == 'ASC'?'>(':'<(')+ord.toJS('b','')+"||'')"+dg+')return 1;';
 				s += 'if(('+ord.toJS('a','')+"||'')"+dg+'==('+ord.toJS('b','')+"||'')"+dg+'){';
-			}			
+			}
 
 //			if(columnid == '_') {
 //				s += 'if(a'+dg+(ord.direction == 'ASC'?'>':'<')+'b'+dg+')return 1;';
