@@ -1,106 +1,140 @@
 {
-  "name": "alasql",
-  "description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-  "version": "0.5.1",
-  "author": "Andrey Gershun <agershun@gmail.com>",
-  "contributors": [
-    "Mathias Rangel Wulff <m@rawu.dk>"
-  ],
-  "main": "dist/alasql.fs.js",
-  "browser": "dist/alasql.min.js",
-  "directories": {
-    "test": "test"
-  },
-  "typings": "dist/alasql.d.ts",
-  "scripts": {
-    "test": "npm run build && cd test && mocha . --reporter dot",
-    "test:this": "gulp && cd test && mocha",
-    "test:only": "cd test && mocha . --reporter dot",
-    "test:browser": "node test/browserTestRunner.js 7387",
-    "test:cover": "istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
-    "build": "npm run format:src && gulp",
-    "build:jison": "gulp --jison && gulp",
-    "build:watch": "gulp watch",
-    "bump": "mversion --no-prefix",
-    "uptodate": "npm-check -u --skip-unused",
-    "release": "f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
-    "jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
-    "format:src": "prettier src/*.js --write",
-    "format:test": "prettier test/*.js --write"
-  },
-  "dependencies": {
-    "dom-storage": "^2.1.0",
-    "es6-promise": "^4.2.6",
-    "lodash": "^4.17.11",
-    "request": "^2.88.0",
-    "xlsx": "^0.14.3",
-    "yargs": "^13.2.2"
-  },
-  "devDependencies": {
-    "blueimp-md5": "^2.10.0",
-    "eslint": "^5.16.0",
-    "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-standard": "^12.0.0",
-    "eslint-plugin-import": "^2.17.2",
-    "eslint-plugin-node": "^8.0.1",
-    "eslint-plugin-promise": "^4.1.1",
-    "eslint-plugin-standard": "^4.0.0",
-    "gulp": "^4.0.1",
-    "gulp-concat": "^2.6.1",
-    "gulp-dereserve": "^0.2.1",
-    "gulp-exec": "^3.0.2",
-    "gulp-jison": "^1.2.0",
-    "gulp-rename": "^1.4.0",
-    "gulp-replace": "^1.0.0",
-    "gulp-shell": "^0.7.0",
-    "gulp-uglify": "^3.0.2",
-    "istanbul": "^0.4.5",
-    "jison": "^0.4.18",
-    "mocha": "^6.1.4",
-    "mocha.parallel": "^0.15.6",
-    "mversion": "^1.13.0",
-    "npm-check": "^5.9.0",
-    "open": "6.2.0",
-    "prettier": "^1.17.0",
-    "strftime": "^0.10.0",
-    "tabletop": "^1.5.2",
-    "uglify-js": "^3.5.10"
-  },
-  "engines": {
-    "node": "*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "http://github.com/agershun/alasql.git"
-  },
-  "bugs": {
-    "url": "https://github.com/agershun/alasql/issues"
-  },
-  "bin": {
-    "alasql": "./bin/alasql-cli.js",
-    "alaserver": "./bin/alaserver.js"
-  },
-  "homepage": "https://github.com/agershun/alasql",
-  "keywords": [
-    "SQL",
-    "javascript",
-    "database",
-    "Excel",
-    "XLSX",
-    "XLS",
-    "CSV"
-  ],
-  "license": "MIT",
-  "testling": {
-    "browsers": [
-      "ie/6..latest",
-      "chrome/22..latest",
-      "firefox/16..latest",
-      "safari/latest",
-      "opera/11.0..latest",
-      "iphone/4..latest",
-      "ipad/4..latest",
-      "android-browser/4..latest"
-    ]
-  }
+	"name": "alasql",
+	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
+	"version": "0.5.2",
+	"author": "Andrey Gershun <agershun@gmail.com>",
+	"contributors": [
+		"Mathias Rangel Wulff <m@rawu.dk>"
+	],
+	"main": "dist/alasql.fs.js",
+	"browser": "dist/alasql.min.js",
+	"directories": {
+		"test": "test"
+	},
+	"typings": "dist/alasql.d.ts",
+	"scripts": {
+		"test": "npm run build && cd test && mocha . --reporter dot",
+		"test:this": "gulp && cd test && mocha",
+		"test:only": "cd test && mocha . --reporter dot",
+		"test:browser": "node test/browserTestRunner.js 7387",
+		"test:cover": "istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
+		"build": "yarn format && gulp",
+		"build:jison": "gulp --jison && gulp",
+		"build:watch": "gulp watch",
+		"bump": "mversion --no-prefix",
+		"uptodate": "yarn-check -u --skip-unused",
+		"release": "f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
+		"jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
+		"format:src": "prettier src/*.js --write",
+		"format:test": "prettier test/*.js --write",
+		"bump-tag": "bump --tag 'v%s'",
+		"fmt": "yarn pretty-commit --write",
+		"format": "yarn pretty-since-dev --write",
+		"format-all": "yarn pretty-all --write",
+		"test-format": "yarn pretty-since-dev --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
+		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
+		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
+		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
+		"push": "git push --force-with-lease && git push --no-verify --tags #",
+		"pull-hard": "git-branch-is '^(release|master|hotfix|develop)' -riq || (git-branch-is --not '^(release|master|hotfix|develop)' && git fetch && git reset --hard $(git merge-base head $(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))) && git pull)",
+		"rebase": "git-branch-is '^(release|master|hotfix|develop)' -riq || (git-branch-is --not '^(release|master|hotfix|develop)' && (git fetch || 1) && git rebase origin/develop)",
+		"repush": "yarn rebase && yarn push",
+		"amend": "git reset --soft HEAD~1 && sleep 1 && git add --all && git commit --file .git/COMMIT_EDITMSG # This works with husky hooks",
+		"tagit": "git tag \"$(git rev-parse --abbrev-ref HEAD | awk -F  '/' '{print $NF}')\"'-r'\"$(git tag -l \"$(git rev-parse --abbrev-ref HEAD | awk -F  '/' '{print $NF}')\"'*' | wc -l | xargs)\" && git push origin --no-verify --tags #",
+		"commit": "cmdmix 'git add --all && git commit -am \"%1\"'",
+		"add": "git add --all",
+		"goto": "git fetch && git checkout",
+		"todo": "git ls-tree --full-tree --name-only -r head | xargs grep -inEro '\\Wtodo[ :].*' #",
+		"tofix": "git ls-tree --full-tree --name-only -r HEAD | xargs grep -lrE '<{5,}' #",
+		"next": "git add --all && git rebase --continue #",
+		"fresh": "cmdmix 'yarn goto '%1' && yarn pull-hard'",
+		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'"
+	},
+	"dependencies": {
+		"dom-storage": "^2.1.0",
+		"es6-promise": "^4.2.6",
+		"lodash": "^4.17.11",
+		"request": "^2.88.0",
+		"xlsx": "0.15.4",
+		"yargs": "^13.2.2"
+	},
+	"devDependencies": {
+		"blueimp-md5": "^2.10.0",
+		"cmdmix": "^2.0.1",
+		"eslint": "^5.16.0",
+		"eslint-config-airbnb-base": "^13.1.0",
+		"eslint-config-standard": "^12.0.0",
+		"eslint-plugin-import": "^2.17.2",
+		"eslint-plugin-node": "^8.0.1",
+		"eslint-plugin-promise": "^4.1.1",
+		"eslint-plugin-standard": "^4.0.0",
+		"gulp": "^4.0.1",
+		"gulp-concat": "^2.6.1",
+		"gulp-dereserve": "^0.2.1",
+		"gulp-exec": "^3.0.2",
+		"gulp-jison": "^1.2.0",
+		"gulp-rename": "^1.4.0",
+		"gulp-replace": "^1.0.0",
+		"gulp-shell": "^0.7.0",
+		"gulp-uglify": "^3.0.2",
+		"husky": "^3.1.0",
+		"istanbul": "^0.4.5",
+		"jison": "^0.4.18",
+		"lint-staged": "^9.5.0",
+		"mocha": "6.2.2",
+		"mocha.parallel": "^0.15.6",
+		"mversion": "^1.13.0",
+		"npm-check": "^5.9.0",
+		"open": "7.0.0",
+		"prettier": "1.19.1",
+		"strftime": "^0.10.0",
+		"tabletop": "1.6.2",
+		"uglify-js": "3.7.3",
+		"version-bump-prompt": "^5.0.7"
+	},
+	"engines": {
+		"node": "*"
+	},
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/agershun/alasql.git"
+	},
+	"bugs": {
+		"url": "https://github.com/agershun/alasql/issues"
+	},
+	"bin": {
+		"alasql": "./bin/alasql-cli.js",
+		"alaserver": "./bin/alaserver.js"
+	},
+	"homepage": "https://github.com/agershun/alasql",
+	"keywords": [
+		"SQL",
+		"javascript",
+		"database",
+		"Excel",
+		"XLSX",
+		"XLS",
+		"CSV"
+	],
+	"license": "MIT",
+	"prettier": {
+		"useTabs": true,
+		"printWidth": 100,
+		"singleQuote": true,
+		"arrowParens": "always",
+		"bracketSpacing": false,
+		"trailingComma": "es5"
+	},
+	"lint-staged": {
+		"*.{scss,css,js,ts,json}": [
+			"prettier --write",
+			"git add"
+		]
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged",
+			"pre-push": "yarn test-format"
+		}
+	}
 }
