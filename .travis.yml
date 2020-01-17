@@ -8,10 +8,8 @@ language: node_js
 node_js: # node plus all mentioned here: https://nodejs.org/en/about/releases/
   - "node"
   - "13"
-  - "12" 
-  - "11"
+  - "12"
   - "10"
-  - "8"
 
 
 script: npm run test:only && npm test
@@ -19,5 +17,5 @@ script: npm run test:only && npm test
 after_success:
   - npm run test:cover
   - bash <(curl -s https://codecov.io/bash)
-  
+
 sudo: false
