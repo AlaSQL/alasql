@@ -52,7 +52,7 @@ if(false) {
 //			console.log(colid,'ok');
 		} else {
 //			if(colid.indexOf())
-//			console.log(colid,'bad');	
+//			console.log(colid,'bad');
 			var tmpid = 'default';
 			if(query.sources.length > 0) tmpid = query.sources[0].alias;
 //			console.log(new yy.Column({columnid:colid}).toJS('p',query.sources[0].alias));
@@ -126,12 +126,7 @@ if(false) {
 			aft2 = '';
 
 		if (typeof query.groupStar !== 'undefined') {
-			aft2 +=
-				"for(var f in p['" +
-				query.groupStar +
-				"']) {g[f]=p['" +
-				query.groupStar +
-				"'][f];};";
+			aft2 += "for(var f in p['" + query.groupStar + "']) {g[f]=p['" + query.groupStar + "'][f];};";
 		}
 
 		/*
@@ -150,13 +145,7 @@ if(false) {
 				if (col instanceof yy.AggrValue) {
 					if (col.distinct) {
 						aft +=
-							",g['$$_VALUES_" +
-							colas +
-							"']={},g['$$_VALUES_" +
-							colas +
-							"'][" +
-							colexp +
-							']=true';
+							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
 						return "'" + colas + "':(" + colexp + ')||0,';
@@ -211,15 +200,7 @@ if(false) {
 
 						//					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={}),1),'
 						//					+'\'__REDUCE__'+colas+'\':acc,';
-						return (
-							"'" +
-							colas +
-							"':alasql.aggr['" +
-							col.funcid +
-							"'](" +
-							colexp +
-							',undefined,1),'
-						);
+						return "'" + colas + "':alasql.aggr['" + col.funcid + "'](" + colexp + ',undefined,1),';
 					}
 					return '';
 				}
@@ -245,18 +226,18 @@ if(false) {
 	//			if(f.constructor.name == 'LiteralValue') return '';
 
 
-			if (col instanceof yy.AggrValue) { 
-				if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJS(); 	
+			if (col instanceof yy.AggrValue) {
+				if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJS();
 				else if(col.aggregatorid == 'COUNT') {srg.push( "'"+col.as+'\':0'); }
 				else if(col.aggregatorid == 'MIN') { srg.push( "'"+col.as+'\':Infinity'); }
 				else if(col.aggregatorid == 'MAX') { srg.push( "'"+col.as+'\':-Infinity'); }
 	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS(); 	
+	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS();
 			};
 
 		});
 
-	
+
 
 	/***************** /
 
@@ -319,41 +300,17 @@ if(false) {
 						if (col.expression.columnid === '*') {
 							return pre + "g['" + colas + "']++;" + post;
 						} else {
-							return (
-								pre +
-								'if(typeof ' +
-								colexp +
-								'!="undefined") g[\'' +
-								colas +
-								"']++;" +
-								post
-							);
+							return pre + 'if(typeof ' + colexp + '!="undefined") g[\'' + colas + "']++;" + post;
 						}
 					} else if (col.aggregatorid === 'ARRAY') {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 					} else if (col.aggregatorid === 'MIN') {
 						return (
-							pre +
-							"g['" +
-							colas +
-							"']=Math.min(g['" +
-							colas +
-							"']," +
-							colexp +
-							');' +
-							post
+							pre + 'if ((y=' + colexp + ") < g['" + colas + "']) g['" + colas + "'] = y;" + post
 						);
 					} else if (col.aggregatorid === 'MAX') {
 						return (
-							pre +
-							"g['" +
-							colas +
-							"']=Math.max(g['" +
-							colas +
-							"']," +
-							colexp +
-							');' +
-							post
+							pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'] = y;" + post
 						);
 					} else if (col.aggregatorid === 'FIRST') {
 						return '';
@@ -383,16 +340,7 @@ if(false) {
 						//					 }
 						//			else if(col.aggregatorid == 'AVG') { srg.push(colas+':0'); }
 					} else if (col.aggregatorid === 'AGGR') {
-						return (
-							'' +
-							pre +
-							"g['" +
-							colas +
-							"']=" +
-							col.expression.toJS('g', -1) +
-							';' +
-							post
-						);
+						return '' + pre + "g['" + colas + "']=" + col.expression.toJS('g', -1) + ';' + post;
 					} else if (col.aggregatorid === 'REDUCE') {
 						return (
 							'' +

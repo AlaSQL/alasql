@@ -127,14 +127,14 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 */
 
 /*/*
-// 
+//
 // SQL FUNCTIONS COMPILERS
 // Based on SQLite functions
 
 // IMPORTANT: These are compiled functions
 
 //alasql.fn = {}; // Keep for compatibility
-//alasql.userlib = alasql.fn; 
+//alasql.userlib = alasql.fn;
 */
 
 var stdlib = (alasql.stdlib = {});
@@ -193,11 +193,19 @@ stdlib.RTRIM = function(s) {
 };
 
 stdlib.MAX = stdlib.GREATEST = function() {
-	return 'Math.max(' + Array.prototype.join.call(arguments, ',') + ')';
+	return (
+		'[' +
+		Array.prototype.join.call(arguments, ',') +
+		'].reduce(function (a, b) { return a > b ? a : b; })'
+	);
 };
 
 stdlib.MIN = stdlib.LEAST = function() {
-	return 'Math.min(' + Array.prototype.join.call(arguments, ',') + ')';
+	return (
+		'[' +
+		Array.prototype.join.call(arguments, ',') +
+		'].reduce(function (a, b) { return a < b ? a : b; })'
+	);
 };
 
 stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function(a, b, c) {
@@ -302,10 +310,22 @@ alasql.aggr.MEDIAN = function(v, s, stage) {
 			return s;
 		}
 
-		var r = s.sort();
+		var r = s.sort(function(a, b) {
+			if (a === b) {
+				return 0;
+			}
+			if (a > b) {
+				return 1;
+			}
+			return -1;
+		});
 		var p = (r.length + 1) / 2;
 		if (Number.isInteger(p)) {
 			return r[p - 1];
+		}
+
+		if (typeof r[Math.floor(p - 1)] !== 'number') {
+			return r[Math.floor(p - 1)];
 		}
 
 		return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;

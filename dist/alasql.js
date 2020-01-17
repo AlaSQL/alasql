@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.3 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.3-develop-8b2fda7fundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.3
+@version 0.5.3-develop-8b2fda7fundefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -143,7 +143,7 @@ SOFTWARE.
 	Current version of alasql 
  	@constant {string} 
 */
-	alasql.version = '0.5.3';
+	alasql.version = '0.5.3-develop-8b2fda7fundefined';
 
 	/**
 	Debug flag
@@ -29515,8 +29515,8 @@ SOFTWARE.
 						action = table[state] && table[state][symbol];
 					}
 
-					_handle_error: // handle parse error
-					if (typeof action === 'undefined' || !action.length || !action[0]) {
+					// handle parse error
+					_handle_error: if (typeof action === 'undefined' || !action.length || !action[0]) {
 						var error_rule_depth;
 						var errStr = '';
 
@@ -37715,9 +37715,13 @@ SOFTWARE.
 						} else if (col.aggregatorid === 'ARRAY') {
 							return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 						} else if (col.aggregatorid === 'MIN') {
-							return pre + "g['" + colas + "']=Math.min(g['" + colas + "']," + colexp + ');' + post;
+							return (
+								pre + 'if ((y=' + colexp + ") < g['" + colas + "']) g['" + colas + "'] = y;" + post
+							);
 						} else if (col.aggregatorid === 'MAX') {
-							return pre + "g['" + colas + "']=Math.max(g['" + colas + "']," + colexp + ');' + post;
+							return (
+								pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'] = y;" + post
+							);
 						} else if (col.aggregatorid === 'FIRST') {
 							return '';
 						} else if (col.aggregatorid === 'LAST') {
@@ -40235,11 +40239,19 @@ if(false) {
 	};
 
 	stdlib.MAX = stdlib.GREATEST = function() {
-		return 'Math.max(' + Array.prototype.join.call(arguments, ',') + ')';
+		return (
+			'[' +
+			Array.prototype.join.call(arguments, ',') +
+			'].reduce(function (a, b) { return a > b ? a : b; })'
+		);
 	};
 
 	stdlib.MIN = stdlib.LEAST = function() {
-		return 'Math.min(' + Array.prototype.join.call(arguments, ',') + ')';
+		return (
+			'[' +
+			Array.prototype.join.call(arguments, ',') +
+			'].reduce(function (a, b) { return a < b ? a : b; })'
+		);
 	};
 
 	stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function(a, b, c) {
@@ -40343,10 +40355,22 @@ if(false) {
 				return s;
 			}
 
-			var r = s.sort();
+			var r = s.sort(function(a, b) {
+				if (a === b) {
+					return 0;
+				}
+				if (a > b) {
+					return 1;
+				}
+				return -1;
+			});
 			var p = (r.length + 1) / 2;
 			if (Number.isInteger(p)) {
 				return r[p - 1];
+			}
+
+			if (typeof r[Math.floor(p - 1)] !== 'number') {
+				return r[Math.floor(p - 1)];
 			}
 
 			return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;
@@ -40371,7 +40395,15 @@ if(false) {
 			}
 
 			nth = !nth ? 1 : nth;
-			var r = s.sort();
+			var r = s.sort(function(a, b) {
+				if (a === b) {
+					return 0;
+				}
+				if (a > b) {
+					return 1;
+				}
+				return -1;
+			});
 			var p = (nth * (r.length + 1)) / 4;
 			if (Number.isInteger(p)) {
 				return r[p - 1]; //Integer value
