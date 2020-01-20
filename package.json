@@ -13,28 +13,26 @@
 	},
 	"typings": "dist/alasql.d.ts",
 	"scripts": {
-		"test": "npm run build && cd test && mocha . --reporter dot",
-		"test:this": "gulp && cd test && mocha",
-		"test:only": "cd test && mocha . --reporter dot",
-		"test:browser": "node test/browserTestRunner.js 7387",
-		"test:cover": "istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
+		"test": "yarn build && yarn test-only",
+		"test-ci": "yarn test-format && yarn test-only && yarn test",
+		"test-only": "mocha ./test --reporter dot",
+		"test-browser": "node test/browserTestRunner.js 7387",
+		"test-cover": "istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && gulp",
-		"build:jison": "gulp --jison && gulp",
-		"build:watch": "gulp watch",
+		"build-jison": "gulp --jison && gulp",
+		"build-watch": "gulp watch",
 		"bump": "mversion --no-prefix",
 		"uptodate": "yarn-check -u --skip-unused",
 		"release": "f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
 		"jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
-		"format:src": "prettier src/*.js --write",
-		"format:test": "prettier test/*.js --write",
 		"bump-tag": "bump --tag 'v%s'",
 		"fmt": "yarn pretty-commit --write",
 		"format": "yarn pretty-since-dev --write",
 		"format-all": "yarn pretty-all --write",
 		"test-format": "yarn pretty-since-dev --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
-		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
-		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
-		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
+		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs yarn prettier",
+		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs yarn prettier",
+		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs yarn prettier",
 		"push": "git push --force-with-lease && git push --no-verify --tags #",
 		"pull-hard": "git-branch-is '^(release|master|hotfix|develop)' -riq || (git-branch-is --not '^(release|master|hotfix|develop)' && git fetch && git reset --hard $(git merge-base head $(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))) && git pull)",
 		"rebase": "git-branch-is '^(release|master|hotfix|develop)' -riq || (git-branch-is --not '^(release|master|hotfix|develop)' && (git fetch || 1) && git rebase origin/develop)",
@@ -77,11 +75,11 @@
 		"gulp-replace": "^1.0.0",
 		"gulp-shell": "^0.7.0",
 		"gulp-uglify": "^3.0.2",
-		"husky": "^3.1.0",
+		"husky": "4.0.10",
 		"istanbul": "^0.4.5",
 		"jison": "^0.4.18",
-		"lint-staged": "^9.5.0",
-		"mocha": "6.2.2",
+		"lint-staged": "10.0.0",
+		"mocha": "7.0.0",
 		"mocha.parallel": "^0.15.6",
 		"mversion": "^1.13.0",
 		"npm-check": "^5.9.0",
@@ -125,16 +123,10 @@
 		"bracketSpacing": false,
 		"trailingComma": "es5"
 	},
-	"lint-staged": {
-		"*.{scss,css,js,ts,json}": [
-			"prettier --write",
-			"git add"
-		]
-	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "lint-staged",
-			"pre-push": "yarn test-format"
+			"pre-commit": "yarn fmt",
+			"pre-push": "yarn test-format || (echo please format using 'yarn format' && exit 0)"
 		}
 	}
 }

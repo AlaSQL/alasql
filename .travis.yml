@@ -12,10 +12,10 @@ node_js: # node plus all mentioned here: https://nodejs.org/en/about/releases/
   - "10"
 
 
-script: npm run test:only && npm test
+script: npm run test-ci
 
 after_success:
-  - npm run test:cover
+  - npm run test-cover
   - bash <(curl -s https://codecov.io/bash)
 
 sudo: false
