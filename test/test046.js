@@ -37,18 +37,31 @@ describe('Test 046', function() {
 		});
 
 		it('queryArrayOfArrays()', function(done) {
-			var res = alasql('SELECT MATRIX [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [
-				data,
-			]);
-			assert.deepEqual([[4, 6], [5, 8], [6, 9]], res);
+			var res = alasql('SELECT MATRIX [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [data]);
+			assert.deepEqual(
+				[
+					[4, 6],
+					[5, 8],
+					[6, 9],
+				],
+				res
+			);
 			done();
 		});
 
 		it('queryArrayOfArrays and filter()', function(done) {
 			var res1 = alasql('SELECT * FROM ? d WHERE [0]>2016', [data]);
-			var res2 = data.filter(function(a) {
-				return a[0] > 2016;
-			});
+			var res2 = data
+				.filter(function(a) {
+					return a[0] > 2016;
+				})
+				.map(function(d) {
+					var res = {};
+					for (var i = 0; i < d.length; i++) {
+						res[i] = d[i];
+					}
+					return res;
+				});
 			assert.deepEqual(res1, res2);
 			done();
 		});
@@ -61,7 +74,10 @@ describe('Test 046', function() {
 				GROUP BY [2] ',
 				[data]
 			);
-			assert.deepEqual(res, [[2, 4], [3, 11]]);
+			assert.deepEqual(res, [
+				[2, 4],
+				[3, 11],
+			]);
 			done();
 		});
 	});
