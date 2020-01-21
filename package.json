@@ -87,7 +87,7 @@
 		"prettier": "1.19.1",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.2",
-		"uglify-js": "3.7.3",
+		"uglify-js": "3.7.6",
 		"version-bump-prompt": "^5.0.7"
 	},
 	"engines": {
