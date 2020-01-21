@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Rangel Wulff <m@rawu.dk>"
@@ -30,9 +30,9 @@
 		"format": "yarn pretty-since-dev --write",
 		"format-all": "yarn pretty-all --write",
 		"test-format": "yarn pretty-since-dev --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
-		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs yarn prettier",
-		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs yarn prettier",
-		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs yarn prettier",
+		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/|^test/coverage' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
+		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/|^test/coverage' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
+		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/|^test/coverage' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs prettier",
 		"push": "git push --force-with-lease && git push --no-verify --tags #",
 		"pull-hard": "git-branch-is '^(release|master|hotfix|develop)' -riq || (git-branch-is --not '^(release|master|hotfix|develop)' && git fetch && git reset --hard $(git merge-base head $(git for-each-ref --format='%(upstream:short)' $(git symbolic-ref -q HEAD))) && git pull)",
 		"rebase": "git-branch-is '^(release|master|hotfix|develop)' -riq || (git-branch-is --not '^(release|master|hotfix|develop)' && (git fetch || 1) && git rebase origin/develop)",
@@ -84,7 +84,7 @@
 		"mversion": "^1.13.0",
 		"npm-check": "^5.9.0",
 		"open": "7.0.0",
-		"prettier": "1.19.1",
+		"prettier": "^1.19.1",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.2",
 		"uglify-js": "3.7.6",

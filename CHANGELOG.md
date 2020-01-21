@@ -4,6 +4,11 @@
 
 
 
+## 0.5.4 "Qom" (19.01.2020)
+
+- Fix: QUART/MEDIAN/MIN/MAX on number/date/string
+
+
 ## 0.5.3 "Chabahar" (02.01.2020)
 
 - Better: Support csv data from buffer
