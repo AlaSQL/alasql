@@ -4,6 +4,10 @@
 
 
 
+## 0.5.4 "Bam" (29.01.2020)
+
+- Fix: Typescript typing
+
 ## 0.5.4 "Qom" (19.01.2020)
 
 - Fix: QUART/MEDIAN/MIN/MAX on number/date/string
