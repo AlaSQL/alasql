@@ -22,7 +22,9 @@
 		"CSV",
 		"worker"
 	],
-	"authors": ["Andrey Gershun <agershun@gmail.com>"],
+	"authors": [
+		"Andrey Gershun <agershun@gmail.com>"
+	],
 	"homepage": "alasql.org",
 	"repository": {
 		"type": "git",
@@ -40,7 +42,9 @@
 		"jison": "0.4.15",
 		"lodash": "3.7.0"
 	},
-	"main": ["./dist/alasql.min.js"],
+	"main": [
+		"./dist/alasql.min.js"
+	],
 	"ignore": [
 		"src",
 		"test",
@@ -53,5 +57,5 @@
 		"bin",
 		"lib"
 	],
-	"version": "0.5.4"
+	"version": "0.5.5"
 }
