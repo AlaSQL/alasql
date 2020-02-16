@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.5 | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.5-develop-a725fec8undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.5
+@version 0.5.5-develop-a725fec8undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.5';
+alasql.version = '0.5.5-develop-a725fec8undefined';
 
 /**
 	Debug flag
@@ -9733,6 +9733,16 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			}
 			// }
 			col.nick = colas;
+
+			if (self.group) {
+				var groupIdx = self.group.findIndex(function(gp) {
+					return gp.columnid === col.columnid && gp.tableid === col.tableid;
+				})
+				if (groupIdx > -1) {
+					self.group[groupIdx].nick = colas;
+				}
+			}
+
 			if (
 				col.funcid &&
 				(col.funcid.toUpperCase() === 'ROWNUM' || col.funcid.toUpperCase() === 'ROW_NUMBER')
@@ -10195,7 +10205,7 @@ yy.Select.prototype.compileUnpivot = function(query) {
 //
 */
 
-/** 
+/**
  Calculate ROLLUP() combination
  */
 
@@ -10285,7 +10295,7 @@ function decartes(gv, query) {
 		for (var t = 0; t < gv.length; t++) {
 			if (gv[t] instanceof yy.Column) {
 
-				gv[t].nick = escapeq(gv[t].columnid);
+				gv[t].nick = gv[t].nick ? escapeq(gv[t].nick) : escapeq(gv[t].columnid);
 				query.groupColumns[gv[t].nick] = gv[t].nick;
 				res = res.map(function(r) {
 					return r.concat(

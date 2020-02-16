@@ -414,6 +414,16 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			}
 			// }
 			col.nick = colas;
+			
+			if (self.group) {
+				var groupIdx = self.group.findIndex(function(gp) {
+					return gp.columnid === col.columnid && gp.tableid === col.tableid;
+				})
+				if (groupIdx > -1) {
+					self.group[groupIdx].nick = colas;
+				}
+			}
+			
 			if (
 				col.funcid &&
 				(col.funcid.toUpperCase() === 'ROWNUM' || col.funcid.toUpperCase() === 'ROW_NUMBER')

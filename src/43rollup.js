@@ -6,7 +6,7 @@
 //
 */
 
-/** 
+/**
  Calculate ROLLUP() combination
  */
 
@@ -96,7 +96,7 @@ function decartes(gv, query) {
 		for (var t = 0; t < gv.length; t++) {
 			if (gv[t] instanceof yy.Column) {
 				//	console.log('+++',gv[t].columnid,gv[t]);
-				gv[t].nick = escapeq(gv[t].columnid);
+				gv[t].nick = gv[t].nick ? escapeq(gv[t].nick) : escapeq(gv[t].columnid);
 				query.groupColumns[gv[t].nick] = gv[t].nick;
 				res = res.map(function(r) {
 					return r.concat(
@@ -140,13 +140,13 @@ function decartes(gv, query) {
 			}
 			/*/*
 			// switch(gv[t].t) {
-			// 	case 'plain': 
-			// 		res = res.map(function(r){return r.concat(gv[t].p)}); 
+			// 	case 'plain':
+			// 		res = res.map(function(r){return r.concat(gv[t].p)});
 
-			// 	break; 
-			// 	case 'rollup': res = cartes(res,rollup(gv[t].p)); break; 
-			// 	case 'cube': res = cartes(res,cube(gv[t].p)); break; 
-			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break; 
+			// 	break;
+			// 	case 'rollup': res = cartes(res,rollup(gv[t].p)); break;
+			// 	case 'cube': res = cartes(res,cube(gv[t].p)); break;
+			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break;
 			// 	default: res = res.concat(gv[t]);
 			// }
 */
@@ -173,9 +173,9 @@ function decartes(gv, query) {
 	/*/*
 		// switch(gv.t) {
 		// 	case 'plain': return gv.p; break;
-		// 	case 'rollup': return rollup(gv.p); break; 
-		// 	case 'cube': return cube(gv.p); break; 
-		// 	case 'groupingsets':  return groupingsets(gv.p); break; 
+		// 	case 'rollup': return rollup(gv.p); break;
+		// 	case 'cube': return cube(gv.p); break;
+		// 	case 'groupingsets':  return groupingsets(gv.p); break;
 		// 	default: return [gv];//return decartes(gv.p);
 		// }
 		// return gv;
