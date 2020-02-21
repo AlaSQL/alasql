@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.5-FixDBUseMethod-34f54b00undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.5-FixDBUseMethod-1e3f60a1undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.5-FixDBUseMethod-34f54b00undefined
+@version 0.5.5-FixDBUseMethod-1e3f60a1undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.5-FixDBUseMethod-34f54b00undefined';
+alasql.version = '0.5.5-FixDBUseMethod-1e3f60a1undefined';
 
 /**
 	Debug flag
@@ -4560,6 +4560,8 @@ alasql.use = function(databaseid) {
 		if (alasql.options.usedbo) {
 			alasql.databases.dbo = db; // Operator???
 		}
+	} else {
+		throw Error('Database does not exist: ' + databaseid);
 	}
 };
 

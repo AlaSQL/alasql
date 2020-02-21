@@ -161,6 +161,8 @@ alasql.use = function(databaseid) {
 		if (alasql.options.usedbo) {
 			alasql.databases.dbo = db; // Operator???
 		}
+	} else {
+		throw Error('Database does not exist: ' + databaseid);
 	}
 };
 

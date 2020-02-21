@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.5-FixDBUseMethod-34f54b00undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.5-FixDBUseMethod-1e3f60a1undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.5-FixDBUseMethod-34f54b00undefined
+@version 0.5.5-FixDBUseMethod-1e3f60a1undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
