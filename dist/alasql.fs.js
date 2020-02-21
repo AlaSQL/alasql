@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.5-develop-a725fec8undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.5-FixDBUseMethod-34f54b00undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.5-develop-a725fec8undefined
+@version 0.5.5-FixDBUseMethod-34f54b00undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.5-develop-a725fec8undefined';
+alasql.version = '0.5.5-FixDBUseMethod-34f54b00undefined';
 
 /**
 	Debug flag
@@ -4551,13 +4551,15 @@ alasql.use = function(databaseid) {
 	if (alasql.useid === databaseid) {
 		return;
 	}
-	alasql.useid = databaseid;
-	var db = alasql.databases[alasql.useid];
-	alasql.tables = db.tables;
-	//	alasql.fn = db.fn;
-	db.resetSqlCache();
-	if (alasql.options.usedbo) {
-		alasql.databases.dbo = db; // Operator???
+	if (alasql.databases[databaseid] !== undefined) {
+		alasql.useid = databaseid;
+		var db = alasql.databases[alasql.useid];
+		alasql.tables = db.tables;
+		//	alasql.fn = db.fn;
+		db.resetSqlCache();
+		if (alasql.options.usedbo) {
+			alasql.databases.dbo = db; // Operator???
+		}
 	}
 };
 
