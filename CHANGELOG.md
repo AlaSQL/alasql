@@ -3,7 +3,8 @@
 
 ## 0.5.6 "Bafq" (22.03.2020)
 
-Add: groupBy within nested array data set/params (#1167)
+Add: GroupBy within nested array data set/params (#1167)
+Fix: Use unknown DB name
 
 ## 0.5.5 "Bam" (29.01.2020)
 
