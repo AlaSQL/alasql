@@ -20,24 +20,24 @@
     </h1>
     <div class='clearfix'>
       <div class='fl pad1y space-right2'>
-        <span class="strong">15.49% </span>
+        <span class="strong">15.5% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>1545/9971</span>
+        <span class='fraction'>1546/9976</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">10.3% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>638/6196</span>
+        <span class='fraction'>639/6204</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">10.27% </span>
+        <span class="strong">10.26% </span>
         <span class="quiet">Functions</span>
-        <span class='fraction'>113/1100</span>
+        <span class='fraction'>113/1101</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">15.88% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>1515/9539</span>
+        <span class='fraction'>1516/9544</span>
       </div>
     </div>
   </div>
@@ -19850,7 +19850,17 @@
 19805
 19806
 19807
-19808</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+19808
+19809
+19810
+19811
+19812
+19813
+19814
+19815
+19816
+19817
+19818</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -29580,6 +29590,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -39657,10 +39677,10 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//! AlaSQL v0.5.5 | © 2014-2018 Andrey Gershun &amp; Mathias Rangel Wulff | License: MIT
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//! AlaSQL v0.5.6-develop-2a28b8f2undefined | © 2014-2018 Andrey Gershun &amp; Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.5
+@version 0.5.6-develop-2a28b8f2undefined
 &nbsp;
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun &amp; Mathias Rangel Wulff
@@ -39801,7 +39821,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.5';
+alasql.version = '0.5.6-develop-2a28b8f2undefined';
 &nbsp;
 /**
 	Debug flag
@@ -49387,6 +49407,16 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			}
 			// }
 			col.nick = colas;
+&nbsp;
+			<span class="missing-if-branch" title="if path not taken" >I</span>if (self.group) {
+<span class="cstat-no" title="statement not covered" >				var groupIdx = self.group.findIndex(<span class="fstat-no" title="function not covered" >function(gp) {</span></span>
+<span class="cstat-no" title="statement not covered" >					return gp.columnid === col.columnid &amp;&amp; gp.tableid === col.tableid;</span>
+				})
+<span class="cstat-no" title="statement not covered" >				if (groupIdx &gt; -1) {</span>
+<span class="cstat-no" title="statement not covered" >					self.group[groupIdx].nick = colas;</span>
+				}
+			}
+&nbsp;
 			<span class="missing-if-branch" title="if path not taken" >I</span>if (
 				col.funcid &amp;&amp;
 				(<span class="branch-1 cbranch-no" title="branch not covered" >col.funcid.toUpperCase() === 'ROWNUM' </span>|| <span class="branch-2 cbranch-no" title="branch not covered" >col.funcid.toUpperCase() === 'ROW_NUMBER')</span>
@@ -49849,7 +49879,7 @@ yy.Select.prototype.compileUnpivot = <span class="fstat-no" title="function not 
 //
 */
 &nbsp;
-/** 
+/**
  Calculate ROLLUP() combination
  */
 &nbsp;
@@ -49939,7 +49969,7 @@ var cartes = <span class="fstat-no" title="function not covered" >function(a1, a
 <span class="cstat-no" title="statement not covered" >		for (var t = 0; t &lt; gv.length; t++) {</span>
 <span class="cstat-no" title="statement not covered" >			if (gv[t] instanceof yy.Column) {</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >				gv[t].nick = escapeq(gv[t].columnid);</span>
+<span class="cstat-no" title="statement not covered" >				gv[t].nick = gv[t].nick ? escapeq(gv[t].nick) : escapeq(gv[t].columnid);</span>
 <span class="cstat-no" title="statement not covered" >				query.groupColumns[gv[t].nick] = gv[t].nick;</span>
 <span class="cstat-no" title="statement not covered" >				res = res.map(<span class="fstat-no" title="function not covered" >function(r) {</span></span>
 <span class="cstat-no" title="statement not covered" >					return r.concat(</span>
@@ -59470,7 +59500,7 @@ return alasql;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Wed Jan 29 2020 05:05:03 GMT+0100 (GMT+01:00)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Mar 22 2020 02:22:39 GMT+0100 (GMT+01:00)
 </div>
 </div>
 <script src="../prettify.js"></script>

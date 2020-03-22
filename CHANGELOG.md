@@ -1,10 +1,11 @@
 # Changelog
 
 
+## 0.5.6 "Bafq" (22.03.2020)
 
+Add: groupBy within nested array data set/params (#1167)
 
-
-## 0.5.4 "Bam" (29.01.2020)
+## 0.5.5 "Bam" (29.01.2020)
 
 - Fix: Typescript typing
 
