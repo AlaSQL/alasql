@@ -17,15 +17,18 @@ yy.FuncValue.prototype.toString = function(dontas) {
 	else if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])
 		s += this.funcid.toUpperCase();
 
-	s += '(';
-	if (this.args && this.args.length > 0) {
-		s += this.args
-			.map(function(arg) {
-				return arg.toString();
-			})
-			.join(',');
+	if (this.funcid !== 'CURRENT_TIMESTAMP') {
+		s += '(';
+		if (this.args && this.args.length > 0) {
+			s += this.args
+				.map(function(arg) {
+					return arg.toString();
+				})
+				.join(',');
+		}
+		s += ')';
 	}
-	s += ')';
+	
 	if (this.as && !dontas) s += ' AS ' + this.as.toString();
 	//	if(this.alias) s += ' AS '+this.alias;
 	return s;

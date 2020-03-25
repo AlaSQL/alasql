@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.6-develop-2fafeef1undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.6-develop-14ed71d1undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.6-develop-2fafeef1undefined
+@version 0.5.6-develop-14ed71d1undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.6-develop-2fafeef1undefined';
+alasql.version = '0.5.6-develop-14ed71d1undefined';
 
 /**
 	Debug flag
@@ -11735,15 +11735,18 @@ yy.FuncValue.prototype.toString = function(dontas) {
 	else if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])
 		s += this.funcid.toUpperCase();
 
-	s += '(';
-	if (this.args && this.args.length > 0) {
-		s += this.args
-			.map(function(arg) {
-				return arg.toString();
-			})
-			.join(',');
+	if (this.funcid !== 'CURRENT_TIMESTAMP') {
+		s += '(';
+		if (this.args && this.args.length > 0) {
+			s += this.args
+				.map(function(arg) {
+					return arg.toString();
+				})
+				.join(',');
+		}
+		s += ')';
 	}
-	s += ')';
+
 	if (this.as && !dontas) s += ' AS ' + this.as.toString();
 	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
