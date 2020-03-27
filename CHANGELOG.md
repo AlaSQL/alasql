@@ -1,6 +1,9 @@
 # Changelog
 
 
+## 0.5.7 (27.03.2020)
+Fix: usage of CURRENT_TIMESTAMP (Fix #1174)
+
 ## 0.5.6 "Bafq" (22.03.2020)
 
 Add: GroupBy within nested array data set/params (#1167)

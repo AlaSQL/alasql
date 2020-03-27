@@ -22,12 +22,12 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">15.5% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>1547/9978</span>
+        <span class='fraction'>1547/9979</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">10.31% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>640/6206</span>
+        <span class='fraction'>640/6208</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">10.26% </span>
@@ -37,7 +37,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">15.89% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>1517/9546</span>
+        <span class='fraction'>1517/9547</span>
       </div>
     </div>
   </div>
@@ -19864,7 +19864,10 @@
 19819
 19820
 19821
-19822</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+19822
+19823
+19824
+19825</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -31604,12 +31607,15 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -39685,10 +39691,10 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//! AlaSQL v0.5.6-develop-2fafeef1undefined | © 2014-2018 Andrey Gershun &amp; Mathias Rangel Wulff | License: MIT
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//! AlaSQL v0.5.8-develop-998ab4e5undefined | © 2014-2018 Andrey Gershun &amp; Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.6-develop-2fafeef1undefined
+@version 0.5.8-develop-998ab4e5undefined
 &nbsp;
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun &amp; Mathias Rangel Wulff
@@ -39829,7 +39835,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.6-develop-2fafeef1undefined';
+alasql.version = '0.5.8-develop-998ab4e5undefined';
 &nbsp;
 /**
 	Debug flag
@@ -51422,15 +51428,18 @@ yy.FuncValue.prototype.toString = <span class="fstat-no" title="function not cov
 	else <span class="cstat-no" title="statement not covered" >if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])</span>
 <span class="cstat-no" title="statement not covered" >		s += this.funcid.toUpperCase();</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >	s += '(';</span>
-<span class="cstat-no" title="statement not covered" >	if (this.args &amp;&amp; this.args.length &gt; 0) {</span>
-<span class="cstat-no" title="statement not covered" >		s += this.args</span>
-			.map(<span class="fstat-no" title="function not covered" >function(arg) {</span>
-<span class="cstat-no" title="statement not covered" >				return arg.toString();</span>
-			})
-			.join(',');
+<span class="cstat-no" title="statement not covered" >	if (this.funcid !== 'CURRENT_TIMESTAMP') {</span>
+<span class="cstat-no" title="statement not covered" >		s += '(';</span>
+<span class="cstat-no" title="statement not covered" >		if (this.args &amp;&amp; this.args.length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >			s += this.args</span>
+				.map(<span class="fstat-no" title="function not covered" >function(arg) {</span>
+<span class="cstat-no" title="statement not covered" >					return arg.toString();</span>
+				})
+				.join(',');
+		}
+<span class="cstat-no" title="statement not covered" >		s += ')';</span>
 	}
-<span class="cstat-no" title="statement not covered" >	s += ')';</span>
+&nbsp;
 <span class="cstat-no" title="statement not covered" >	if (this.as &amp;&amp; !dontas) <span class="cstat-no" title="statement not covered" >s += ' AS ' + this.as.toString();</span></span>
 	//	if(this.alias) s += ' AS '+this.alias;
 <span class="cstat-no" title="statement not covered" >	return s;</span>
@@ -59512,7 +59521,7 @@ return alasql;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun Mar 22 2020 02:36:55 GMT+0100 (GMT+01:00)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Fri Mar 27 2020 03:22:09 GMT+0100 (Centraleuropæisk normaltid)
 </div>
 </div>
 <script src="../prettify.js"></script>
