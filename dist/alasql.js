@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.8-develop-998ab4e5undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.8-KeepParensInInsertToString-17bb51fdundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.8-develop-998ab4e5undefined
+@version 0.5.8-KeepParensInInsertToString-17bb51fdundefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.8-develop-998ab4e5undefined';
+alasql.version = '0.5.8-KeepParensInInsertToString-17bb51fdundefined';
 
 /**
 	Debug flag
@@ -14539,7 +14539,12 @@ yy.Insert.prototype.toString = function() {
 	if (this.replaceonly) s = 'REPLACE ';
 	s += 'INTO ' + this.into.toString();
 	if (this.columns) s += '(' + this.columns.toString() + ')';
-	if (this.values) s += ' VALUES ' + this.values.toString();
+	if (this.values) {
+        var values = this.values.map(function(value) {
+            return '(' + value.toString() + ')';
+        });
+        s += ' VALUES ' + values.join(',');
+    }
 	if (this.select) s += ' ' + this.select.toString();
 	return s;
 };
