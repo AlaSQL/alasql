@@ -9,25 +9,25 @@
     <script src="/lib/jquery/jquery.min.js"></script>
 
     <script src="browser.js"></script>
-   
+
   </head>
   <body>
 
     <div id="mocha">
 
         <div id="sum">
-            
-            
+
+
         </div>
-                
+
 
     </div>
-    
+
     <script src="../lib/assert/assert.js"></script>
     <script src="../lib/mocha/mocha.js"></script>
     <script src="../lib/zt/zt.js"></script>
 
-    
+
     <script>mocha.setup('bdd')</script>
 
     <script src="../lib/xlsx/xlsx.core.min.js"></script>
@@ -297,7 +297,7 @@
     <script src="test256.js"></script>
     <script src="test257.js"></script>
     <script src="test258.js"></script>
-<!--    <script src="test259.js"></script> 
+<!--    <script src="test259.js"></script>
     <script src="test260.js"></script> -->
     <script src="test261.js"></script>
     <script src="test262.js"></script>
@@ -312,7 +312,7 @@
 <!--    <script src="test301.js"></script> -->
 <!--    <script src="test302.js"></script> -->
     <script src="test303.js"></script>
-<!--    <script src="test304.js"></script> 
+<!--    <script src="test304.js"></script>
     <script src="test305.js"></script> -->
     <script src="test306.js"></script>
 <!--    <script src="test307.js"></script> -->
@@ -364,7 +364,7 @@
     <script src="test353.js"></script>
     <script src="test354.js"></script>
 <!--    <script src="test355.js"></script>
-    <script src="test356.js"></script> 
+    <script src="test356.js"></script>
     <script src="test357.js"></script> -->
 <!--    <script src="test358.js"></script>
     <script src="test359.js"></script>
@@ -414,6 +414,7 @@
     <script src="test403.js"></script>
     <script src="test404.js"></script>
     <script src="test405.js"></script>
+    <script src="test806.js"></script>
     <script>
         if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
         else { mocha.run(); }
@@ -423,7 +424,7 @@
 
 setInterval(function(){
                         $('#sum').html(
-                                                               
+
                                         '<div class="suite" style="position:fixed;top:0;background-color:white;z-index:10;"><h1>### '+browserName + " " + majorVersion+' </h1><ul>'+
                                         '<li class="test "><h2>- `alasql@'+alasql.version+'`</h2></li>'+
                                         '<li class="test "><h2>- Passes '+$('#mocha-stats .passes em').text()+'</h2></li>'+
