@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.8-KeepParensInInsertToString-17bb51fdundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.8-xtrem-9eb03a80undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.8-KeepParensInInsertToString-17bb51fdundefined
+@version 0.5.8-xtrem-9eb03a80undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
