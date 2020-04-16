@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.8-xtrem-1-00a030c4undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.8-xtrem-1-a1ced409undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.8-xtrem-1-00a030c4undefined
+@version 0.5.8-xtrem-1-a1ced409undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.8-xtrem-1-00a030c4undefined';
+alasql.version = '0.5.8-xtrem-1-a1ced409undefined';
 
 /**
 	Debug flag
@@ -12935,25 +12935,25 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
 		} else if (con.type === 'FOREIGN KEY') {
-			var col = table.xcolumns[con.columns[0]];
 			var fk = con.fktable;
 			if (con.fkcolumns && con.fkcolumns.length > 0) {
 				//Composite foreign keys
 				fk.fkcolumns = con.fkcolumns;
-				fk.columns = con.columns;
 			}
 			var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 			if (typeof fk.fkcolumns === 'undefined') {
 				//Composite foreign keys
 				fk.fkcolumns = fktable.pk.columns;
-				fk.columns = con.columns;
+			}
+			fk.columns = con.columns;
+
+			if (fk.fkcolumns.length > fk.columns.length) {
+				throw new Error('Invalid foreign key on table ' + table.tableid);
 			}
 
 			checkfn = function (r) {
 				var rr = {};
-				if (fk.fkcolumns.length > fk.columns.length) {
-					throw new Error('Invalid foreign key on table ' + table.tableid);
-				}
+
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
 					if (typeof r[fk.columns[i]] === 'undefined') {

@@ -278,25 +278,25 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
 		} else if (con.type === 'FOREIGN KEY') {
-			var col = table.xcolumns[con.columns[0]];
 			var fk = con.fktable;
 			if (con.fkcolumns && con.fkcolumns.length > 0) {
 				//Composite foreign keys
 				fk.fkcolumns = con.fkcolumns;
-				fk.columns = con.columns;
 			}
 			var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 			if (typeof fk.fkcolumns === 'undefined') {
 				//Composite foreign keys
 				fk.fkcolumns = fktable.pk.columns;
-				fk.columns = con.columns;
+			}
+			fk.columns = con.columns;
+
+			if (fk.fkcolumns.length > fk.columns.length) {
+				throw new Error('Invalid foreign key on table ' + table.tableid);
 			}
 
 			checkfn = function (r) {
 				var rr = {};
-				if (fk.fkcolumns.length > fk.columns.length) {
-					throw new Error('Invalid foreign key on table ' + table.tableid);
-				}
+
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
 					if (typeof r[fk.columns[i]] === 'undefined') {
