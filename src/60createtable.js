@@ -299,12 +299,18 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
-					if (typeof r[fk.columns[i]] === 'undefined') {
-						throw new Error('Invalid foreign key on table ' + table.tableid);
-					}
-
-					rr[colFk] = r[fk.columns[i]];
+					if (typeof r[fk.columns[i]] !== 'undefined') {
+						rr[colFk] = r[fk.columns[i]];
+					}			
 				});
+
+				if (Object.keys(rr).length===0){
+					//all values of foreign key was null
+					return true
+				}
+				if (Object.keys(rr).length!==fk.columns.length){
+					throw new Error('Invalid foreign key on table ' + table.tableid);
+				}
 				//reset fkTable as we need an up to date uniqs
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 				var addr = fktable.pk.onrightfn(rr);

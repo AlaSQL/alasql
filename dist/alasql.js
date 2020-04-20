@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.8-xtrem-1-a1ced409undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.8-xtrem-1-b1cc0be0undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.8-xtrem-1-a1ced409undefined
+@version 0.5.8-xtrem-1-b1cc0be0undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.8-xtrem-1-a1ced409undefined';
+alasql.version = '0.5.8-xtrem-1-b1cc0be0undefined';
 
 /**
 	Debug flag
@@ -12951,12 +12951,18 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
-					if (typeof r[fk.columns[i]] === 'undefined') {
-						throw new Error('Invalid foreign key on table ' + table.tableid);
-					}
-
-					rr[colFk] = r[fk.columns[i]];
+					if (typeof r[fk.columns[i]] !== 'undefined') {
+						rr[colFk] = r[fk.columns[i]];
+					}			
 				});
+
+				if (Object.keys(rr).length===0){
+					//all values of foreign key was null
+					return true
+				}
+				if (Object.keys(rr).length!==fk.columns.length){
+					throw new Error('Invalid foreign key on table ' + table.tableid);
+				}
 				//reset fkTable as we need an up to date uniqs
 				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 				var addr = fktable.pk.onrightfn(rr);
