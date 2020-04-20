@@ -299,7 +299,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
-					if (typeof r[fk.columns[i]] !== 'undefined') {
+					if (r[fk.columns[i]] != null) {
 						rr[colFk] = r[fk.columns[i]];
 					}
 				});

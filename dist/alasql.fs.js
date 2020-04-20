@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.8-xtrem-1-85c0dcd7undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.8-xtrem-27fa69a9undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.8-xtrem-1-85c0dcd7undefined
+@version 0.5.8-xtrem-27fa69a9undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.8-xtrem-1-85c0dcd7undefined';
+alasql.version = '0.5.8-xtrem-27fa69a9undefined';
 
 /**
 	Debug flag
@@ -12956,7 +12956,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
-					if (typeof r[fk.columns[i]] !== 'undefined') {
+					if (r[fk.columns[i]] != null) {
 						rr[colFk] = r[fk.columns[i]];
 					}
 				});
