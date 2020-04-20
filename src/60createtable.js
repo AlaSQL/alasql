@@ -301,14 +301,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				fk.fkcolumns.forEach(function (colFk, i) {
 					if (typeof r[fk.columns[i]] !== 'undefined') {
 						rr[colFk] = r[fk.columns[i]];
-					}			
+					}
 				});
 
-				if (Object.keys(rr).length===0){
+				if (Object.keys(rr).length === 0) {
 					//all values of foreign key was null
-					return true
+					return true;
 				}
-				if (Object.keys(rr).length!==fk.columns.length){
+				if (Object.keys(rr).length !== fk.columns.length) {
 					throw new Error('Invalid foreign key on table ' + table.tableid);
 				}
 				//reset fkTable as we need an up to date uniqs
