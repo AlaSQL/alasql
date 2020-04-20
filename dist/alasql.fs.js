@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.8-KeepParensInInsertToString-17bb51fdundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.8-xtrem-27fa69a9undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.8-KeepParensInInsertToString-17bb51fdundefined
+@version 0.5.8-xtrem-27fa69a9undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.8-KeepParensInInsertToString-17bb51fdundefined';
+alasql.version = '0.5.8-xtrem-27fa69a9undefined';
 
 /**
 	Debug flag
@@ -12675,10 +12675,10 @@ alasql.stdfn.CONVERT = function(value, args) {
 
 /* global alasql, yy, hash */
 
-yy.ColumnDef = function(params) {
+yy.ColumnDef = function (params) {
 	return yy.extend(this, params);
 };
-yy.ColumnDef.prototype.toString = function() {
+yy.ColumnDef.prototype.toString = function () {
 	var s = this.columnid;
 	if (this.dbtypeid) {
 		s += ' ' + this.dbtypeid;
@@ -12703,10 +12703,10 @@ yy.ColumnDef.prototype.toString = function() {
 	return s;
 };
 
-yy.CreateTable = function(params) {
+yy.CreateTable = function (params) {
 	return yy.extend(this, params);
 };
-yy.CreateTable.prototype.toString = function() {
+yy.CreateTable.prototype.toString = function () {
 	var s = 'CREATE';
 	if (this.temporary) {
 		s += ' TEMPORARY';
@@ -12725,7 +12725,7 @@ yy.CreateTable.prototype.toString = function() {
 		s +=
 			'(' +
 			this.viewcolumns
-				.map(function(vcol) {
+				.map(function (vcol) {
 					return vcol.toString();
 				})
 				.join(',') +
@@ -12734,7 +12734,7 @@ yy.CreateTable.prototype.toString = function() {
 	if (this.as) {
 		s += ' AS ' + this.as;
 	} else {
-		var ss = this.columns.map(function(col) {
+		var ss = this.columns.map(function (col) {
 			return col.toString();
 		});
 		s += ' (' + ss.join(',') + ')';
@@ -12749,7 +12749,7 @@ yy.CreateTable.prototype.toString = function() {
 
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
-yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
+yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	//	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 
@@ -12791,7 +12791,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 	var ss = []; // DEFAULT function components
 	var uss = []; // ON UPDATE function components
 	if (columns) {
-		columns.forEach(function(col) {
+		columns.forEach(function (col) {
 			var dbtypeid = col.dbtypeid;
 			if (!alasql.fn[dbtypeid]) {
 				dbtypeid = dbtypeid.toUpperCase();
@@ -12864,7 +12864,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 					}
 				}
 
-				var fkfn = function(r) {
+				var fkfn = function (r) {
 					var rr = {};
 					if (typeof r[col.columnid] === 'undefined') {
 						return true;
@@ -12872,10 +12872,13 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 					rr[fk.columnid] = r[col.columnid];
 					var addr = fktable.pk.onrightfn(rr);
 
-					if (!fktable.uniqs[fktable.pk.hh][addr]) {      
+					if (!fktable.uniqs[fktable.pk.hh][addr]) {
 						throw new Error(
-
-							'Foreign key violation'              //changed error message
+							// 							'Foreign key "' +
+							// 								r[col.columnid] +
+							// 								'" is not found in table ' +
+							// 								fktable.tableid
+							'Foreign key violation' //changed error message
 						);
 					}
 					return true;
@@ -12896,7 +12899,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 	table.onupdatefns = uss.join(';');
 
 	//	if(constraints) {
-	constraints.forEach(function(con) {
+	constraints.forEach(function (con) {
 
 		var checkfn;
 
@@ -12907,7 +12910,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			var pk = (table.pk = {});
 			pk.columns = con.columns;
 			pk.onrightfns = pk.columns
-				.map(function(columnid) {
+				.map(function (columnid) {
 					return "r['" + columnid + "']";
 				})
 				.join("+'`'+");
@@ -12924,7 +12927,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			table.uk.push(uk);
 			uk.columns = con.columns;
 			uk.onrightfns = uk.columns
-				.map(function(columnid) {
+				.map(function (columnid) {
 					return "r['" + columnid + "']";
 				})
 				.join("+'`'+");
@@ -12932,31 +12935,46 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
 		} else if (con.type === 'FOREIGN KEY') {
-
-			var col = table.xcolumns[con.columns[0]];
 			var fk = con.fktable;
 			if (con.fkcolumns && con.fkcolumns.length > 0) {
-				fk.columnid = con.fkcolumns[0];
+				//Composite foreign keys
+				fk.fkcolumns = con.fkcolumns;
 			}
 			var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
-			if (typeof fk.columnid === 'undefined') {
-				fk.columnid = fktable.pk.columns[0];
+			if (typeof fk.fkcolumns === 'undefined') {
+				//Composite foreign keys
+				fk.fkcolumns = fktable.pk.columns;
+			}
+			fk.columns = con.columns;
+
+			if (fk.fkcolumns.length > fk.columns.length) {
+				throw new Error('Invalid foreign key on table ' + table.tableid);
 			}
 
-			checkfn = function(r) {
+			checkfn = function (r) {
 				var rr = {};
-				if (typeof r[col.columnid] === 'undefined') {
+
+				//Composite foreign keys
+				fk.fkcolumns.forEach(function (colFk, i) {
+					if (r[fk.columns[i]] != null) {
+						rr[colFk] = r[fk.columns[i]];
+					}
+				});
+
+				if (Object.keys(rr).length === 0) {
+					//all values of foreign key was null
 					return true;
 				}
-				rr[fk.columnid] = r[col.columnid];
+				if (Object.keys(rr).length !== fk.columns.length) {
+					throw new Error('Invalid foreign key on table ' + table.tableid);
+				}
+				//reset fkTable as we need an up to date uniqs
+				var fktable = alasql.databases[fk.databaseid || databaseid].tables[fk.tableid];
 				var addr = fktable.pk.onrightfn(rr);
 
 				if (!fktable.uniqs[fktable.pk.hh][addr]) {
-
 					throw new Error(
-
-						'Foreign key violation'  //changed error message
-
+						'Foreign key violation' //changed error message
 					);
 				}
 				return true;
@@ -12969,7 +12987,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 
 	if (this.view && this.viewcolumns) {
 		var self = this;
-		this.viewcolumns.forEach(function(vcol, idx) {
+		this.viewcolumns.forEach(function (vcol, idx) {
 			self.select.columns[idx].as = vcol.columnid;
 		});
 	}
@@ -12996,7 +13014,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 	//	}
 	//			if(table.pk) {
 
-	table.insert = function(r, orreplace) {
+	table.insert = function (r, orreplace) {
 		var oldinserted = alasql.inserted;
 		alasql.inserted = [r];
 
@@ -13049,7 +13067,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 		}
 
 		if (table.checks && table.checks.length > 0) {
-			table.checks.forEach(function(check) {
+			table.checks.forEach(function (check) {
 				if (!check.fn(r)) {
 					//					if(orreplace) toreplace=true; else
 					throw new Error('Violation of CHECK constraint ' + (check.id || ''));
@@ -13057,7 +13075,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			});
 		}
 
-		table.columns.forEach(function(column) {
+		table.columns.forEach(function (column) {
 			if (column.notnull && typeof r[column.columnid] === 'undefined') {
 				throw new Error('Wrong NULL value in NOT NULL column ' + column.columnid);
 			}
@@ -13070,22 +13088,17 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 
 				if (orreplace) toreplace = table.uniqs[pk.hh][addr];
 				else
-					throw new Error(
-						'Cannot insert record, because it already exists in primary key index'
-					);
+					throw new Error('Cannot insert record, because it already exists in primary key index');
 			}
 			//			table.uniqs[pk.hh][addr]=r;
 		}
 
 		if (table.uk && table.uk.length) {
-			table.uk.forEach(function(uk) {
+			table.uk.forEach(function (uk) {
 				var ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][ukaddr] !== 'undefined') {
 					if (orreplace) toreplace = table.uniqs[uk.hh][ukaddr];
-					else
-						throw new Error(
-							'Cannot insert record, because it already exists in unique index'
-						);
+					else throw new Error('Cannot insert record, because it already exists in unique index');
 				}
 				//				table.uniqs[uk.hh][ukaddr]=r;
 			});
@@ -13095,7 +13108,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			// Do UPDATE!!!
 
 			table.update(
-				function(t) {
+				function (t) {
 					for (var f in r) t[f] = r[f];
 				},
 				table.data.indexOf(toreplace),
@@ -13121,7 +13134,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 				table.uniqs[pk.hh][addr] = r;
 			}
 			if (table.uk && table.uk.length) {
-				table.uk.forEach(function(uk) {
+				table.uk.forEach(function (uk) {
 					var ukaddr = uk.onrightfn(r);
 					table.uniqs[uk.hh][ukaddr] = r;
 				});
@@ -13142,7 +13155,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 		alasql.inserted = oldinserted;
 	};
 
-	table.delete = function(index) {
+	table.delete = function (index) {
 		var table = this;
 		var r = table.data[index];
 
@@ -13185,7 +13198,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			}
 		}
 		if (table.uk && table.uk.length) {
-			table.uk.forEach(function(uk) {
+			table.uk.forEach(function (uk) {
 				var ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][ukaddr] === 'undefined') {
 					throw new Error('Something wrong with unique index on table');
@@ -13195,20 +13208,20 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 		}
 	};
 
-	table.deleteall = function() {
+	table.deleteall = function () {
 		this.data.length = 0;
 		if (this.pk) {
 			//						var r = this.data[i];
 			this.uniqs[this.pk.hh] = {};
 		}
 		if (table.uk && table.uk.length) {
-			table.uk.forEach(function(uk) {
+			table.uk.forEach(function (uk) {
 				table.uniqs[uk.hh] = {};
 			});
 		}
 	};
 
-	table.update = function(assignfn, i, params) {
+	table.update = function (assignfn, i, params) {
 		// TODO: Analyze the speed
 		var r = cloneDeep(this.data[i]);
 
@@ -13222,7 +13235,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			}
 		}
 		if (table.uk && table.uk.length) {
-			table.uk.forEach(function(uk) {
+			table.uk.forEach(function (uk) {
 				uk.ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][uk.ukaddr] === 'undefined') {
 					throw new Error('Something wrong with unique index on table');
@@ -13238,8 +13251,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			var trigger = table.beforeupdate[tr];
 			if (trigger) {
 				if (trigger.funcid) {
-					if (alasql.fn[trigger.funcid](this.data[i], r) === false)
-						prevent = prevent || true;
+					if (alasql.fn[trigger.funcid](this.data[i], r) === false) prevent = prevent || true;
 				} else if (trigger.statement) {
 					if (trigger.statement.execute(databaseid) === false) prevent = prevent || true;
 				}
@@ -13264,35 +13276,29 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 
 		// PART 2 - POST CHECK
 		if (table.checks && table.checks.length > 0) {
-			table.checks.forEach(function(check) {
+			table.checks.forEach(function (check) {
 				if (!check.fn(r)) {
 					throw new Error('Violation of CHECK constraint ' + (check.id || ''));
 				}
 			});
 		}
 
-		table.columns.forEach(function(column) {
+		table.columns.forEach(function (column) {
 			if (column.notnull && typeof r[column.columnid] === 'undefined') {
 				throw new Error('Wrong NULL value in NOT NULL column ' + column.columnid);
 			}
 		});
 		if (this.pk) {
 			pk.newpkaddr = pk.onrightfn(r);
-			if (
-				typeof this.uniqs[pk.hh][pk.newpkaddr] !== 'undefined' &&
-				pk.newpkaddr !== pk.pkaddr
-			) {
+			if (typeof this.uniqs[pk.hh][pk.newpkaddr] !== 'undefined' && pk.newpkaddr !== pk.pkaddr) {
 				throw new Error('Record already exists');
 			}
 		}
 
 		if (table.uk && table.uk.length) {
-			table.uk.forEach(function(uk) {
+			table.uk.forEach(function (uk) {
 				uk.newukaddr = uk.onrightfn(r);
-				if (
-					typeof table.uniqs[uk.hh][uk.newukaddr] !== 'undefined' &&
-					uk.newukaddr !== uk.ukaddr
-				) {
+				if (typeof table.uniqs[uk.hh][uk.newukaddr] !== 'undefined' && uk.newukaddr !== uk.ukaddr) {
 					throw new Error('Record already exists');
 				}
 			});
@@ -13304,7 +13310,7 @@ yy.CreateTable.prototype.execute = function(databaseid, params, cb) {
 			this.uniqs[pk.hh][pk.newpkaddr] = r;
 		}
 		if (table.uk && table.uk.length) {
-			table.uk.forEach(function(uk) {
+			table.uk.forEach(function (uk) {
 				table.uniqs[uk.hh][uk.ukaddr] = undefined;
 				table.uniqs[uk.hh][uk.newukaddr] = r;
 			});
