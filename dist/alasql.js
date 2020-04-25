@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.8-xtrem-27fa69a9undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.8-develop-ff4ce971undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.8-xtrem-27fa69a9undefined
+@version 0.5.8-develop-ff4ce971undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.8-xtrem-27fa69a9undefined';
+alasql.version = '0.5.8-develop-ff4ce971undefined';
 
 /**
 	Debug flag
@@ -15372,7 +15372,26 @@ yy.DetachDatabase.prototype.execute = function(databaseid, params, cb) {
 			res = 0;
 		}
 	} else {
+		// Usually databases are detached and then dropped. Detaching will delete
+		// the database object from memory. While this is OK for in-memory and
+		// other persistent databases, for FileStorage DBs, we will
+		// not be able to delete the DB file (.json) since we would have lost
+		// the filename by deleting the in-memory database object here.
+		// For this reason, to delete the associated JSON file,
+		// keeping the name of the file alone as a property inside the db object
+		// until it gets DROPped subsequently (only for FileStorage DBs)
+		var isFS = alasql.databases[dbid].engineid && alasql.databases[dbid].engineid == 'FILESTORAGE',
+			filename = alasql.databases[dbid].filename || "";
+
 		delete alasql.databases[dbid];
+
+		if (isFS) {
+			// Create a detached FS database
+			alasql.databases[dbid] = {};
+			alasql.databases[dbid].isDetached = true;
+			alasql.databases[dbid].filename = filename;
+		}
+
 		if (dbid === alasql.useid) {
 			alasql.use();
 		}
@@ -19331,8 +19350,27 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 
 FS.dropDatabase = function(fsdbid, ifexists, cb) {
 	var res;
-	var filename = fsdbid.value;
+	var filename = "";
 
+	if (typeof fsdbid === 'object' && fsdbid.value)  {
+		// Existing tests (test225.js) had DROP directly without DETACH and
+		// without a database id / name. It instead used the filename directly.
+		// This block will handle that
+		filename = fsdbid.value;
+	} else {
+		// When a database id / name is specified in DROP, it will be handled by this block.
+		// Note: Both DETACH + DROP and direct DROP without DETACH will be handled by this block
+		// We will be deleting the database object and the file either way.
+		// However, in the future, if we would like to have a stricter implementation
+		// where we cannot DROP without DETACHing it first, we can handle that case using
+		// the 'isDetached' property of the database object.
+		// (i.e) alasql.databases[fsdbid].isDetached will be set if it is
+		// has been detached first
+		var db = alasql.databases[fsdbid] || {};
+
+		filename = db.filename ||  '';
+		delete alasql.databases[fsdbid];
+	}
 	alasql.utils.fileExists(filename, function(fex) {
 		if (fex) {
 			res = 1;

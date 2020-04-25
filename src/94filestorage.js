@@ -53,8 +53,27 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 
 FS.dropDatabase = function(fsdbid, ifexists, cb) {
 	var res;
-	var filename = fsdbid.value;
-	//	console.log('filename',filename);
+	var filename = "";
+
+	if (typeof fsdbid === 'object' && fsdbid.value)  {
+		// Existing tests (test225.js) had DROP directly without DETACH and
+		// without a database id / name. It instead used the filename directly.
+		// This block will handle that
+		filename = fsdbid.value;
+	} else {
+		// When a database id / name is specified in DROP, it will be handled by this block.
+		// Note: Both DETACH + DROP and direct DROP without DETACH will be handled by this block
+		// We will be deleting the database object and the file either way.
+		// However, in the future, if we would like to have a stricter implementation
+		// where we cannot DROP without DETACHing it first, we can handle that case using
+		// the 'isDetached' property of the database object.
+		// (i.e) alasql.databases[fsdbid].isDetached will be set if it is
+		// has been detached first
+		var db = alasql.databases[fsdbid] || {};
+
+		filename = db.filename ||  '';
+		delete alasql.databases[fsdbid];
+	}
 	alasql.utils.fileExists(filename, function(fex) {
 		if (fex) {
 			res = 1;
