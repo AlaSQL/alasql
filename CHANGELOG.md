@@ -1,7 +1,13 @@
 # Changelog
 
 
-## 0.5.7 (27.03.2020)
+
+## 0.5.9 (26.04.2020)
+Add: Composite foreign keys implementation (#1179) 
+Fix: Insert's toString() (#1177)
+Fix: DROP Filestorage Database with database name (#1184)
+
+## 0.5.8 (27.03.2020)
 Fix: usage of CURRENT_TIMESTAMP (Fix #1174)
 
 ## 0.5.6 "Bafq" (22.03.2020)
