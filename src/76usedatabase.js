@@ -131,7 +131,26 @@ yy.DetachDatabase.prototype.execute = function(databaseid, params, cb) {
 			res = 0;
 		}
 	} else {
+		// Usually databases are detached and then dropped. Detaching will delete
+		// the database object from memory. While this is OK for in-memory and
+		// other persistent databases, for FileStorage DBs, we will
+		// not be able to delete the DB file (.json) since we would have lost
+		// the filename by deleting the in-memory database object here.
+		// For this reason, to delete the associated JSON file,
+		// keeping the name of the file alone as a property inside the db object
+		// until it gets DROPped subsequently (only for FileStorage DBs)
+		var isFS = alasql.databases[dbid].engineid && alasql.databases[dbid].engineid == 'FILESTORAGE',
+			filename = alasql.databases[dbid].filename || "";
+
 		delete alasql.databases[dbid];
+
+		if (isFS) {
+			// Create a detached FS database
+			alasql.databases[dbid] = {};
+			alasql.databases[dbid].isDetached = true;
+			alasql.databases[dbid].filename = filename;
+		}
+
 		if (dbid === alasql.useid) {
 			alasql.use();
 		}
