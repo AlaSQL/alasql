@@ -19,8 +19,8 @@ yy.Select.prototype.compileOrder = function(query, params) {
 				var ra = func(a),
 					rb = func(b);
 				if (nullsOrder) {
-					if (ra === null) return rb === null ? 0 : nullsOrder;
-					if (rb === null) return -nullsOrder;
+					if (ra == null) return rb == null ? 0 : nullsOrder;
+					if (rb == null) return -nullsOrder;
 				}
 				if (ra > rb) return 1;
 				if (ra == rb) return 0;
