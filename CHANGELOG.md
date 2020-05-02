@@ -2,6 +2,12 @@
 
 
 
+# 0.6.0 (02.05.2020)
+Add: NULLS FIRST/LAST clause in ORDER BY (#1187)
+Add: Support table/row names starting with numbers
+
+
+
 ## 0.5.9 (26.04.2020)
 Add: Composite foreign keys implementation (#1179) 
 Fix: Insert's toString() (#1177)
