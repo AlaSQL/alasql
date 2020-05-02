@@ -183,6 +183,7 @@ DATABASE(S)?									return 'DATABASE'
 'NO'											return 'NO'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
+'NULLS'											return 'NULLS'
 'OFF'											return 'OFF'
 'ON'											return 'ON'
 'ONLY'											return 'ONLY'
@@ -898,7 +899,7 @@ FromTable
 		{ $$ = $1; $1.as = $3; }
 
 	| INSERTED
-		{ $$ = {inserted:true}; $1.as = 'default'; }
+		{ $$ = {inserted:true}; /*$1.as = 'default';*/ }
 
 	| VarValue
 		{ $$ = $1; $1.as = 'default'; }
@@ -1108,11 +1109,20 @@ OrderExpressionsList
 		{ $$ = $1; $1.push($3)}
 	;
 
+NullsOrder
+	:  NULLS FIRST
+		{ $$ = {nullsOrder: 'FIRST'}; }
+	|  NULLS LAST
+		{ $$ = {nullsOrder: 'LAST'}; }
+	;
+
 OrderExpression
 	: Expression
 		{ $$ = new yy.Expression({expression: $1, direction:'ASC'}) }
 	| Expression DIRECTION
 		{ $$ = new yy.Expression({expression: $1, direction:$2.toUpperCase()}) }
+	| Expression DIRECTION NullsOrder
+		{ $$ = new yy.Expression({expression: $1, direction:$2.toUpperCase()}); yy.extend($$, $3) }
 	| Expression COLLATE NOCASE
 		{ $$ = new yy.Expression({expression: $1, direction:'ASC', nocase:true}) }
 	| Expression COLLATE NOCASE DIRECTION

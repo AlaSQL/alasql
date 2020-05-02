@@ -12,9 +12,16 @@ yy.Select.prototype.compileOrder = function(query, params) {
 			//			console.log(991, this.order[0]);
 			var func = this.order[0].expression;
 			//			console.log(994, func);
+			var nullsOrder = 
+				this.order[0].nullsOrder == 'FIRST' ? -1 :
+				this.order[0].nullsOrder == 'LAST' ? +1 : 0
 			return function(a, b) {
 				var ra = func(a),
 					rb = func(b);
+				if (nullsOrder) {
+					if (ra == null) return rb == null ? 0 : nullsOrder;
+					if (rb == null) return -nullsOrder;
+				}
 				if (ra > rb) return 1;
 				if (ra == rb) return 0;
 				return -1;
@@ -66,6 +73,17 @@ yy.Select.prototype.compileOrder = function(query, params) {
 			}
 			// COLLATE NOCASE
 			if (ord.nocase) dg += '.toUpperCase()';
+
+			if (ord.nullsOrder) {
+				if (ord.nullsOrder == 'FIRST') {
+					s += "if((a['" + key + "'] != null) && (b['" + key + "'] == null)) return 1;";
+				} else if (ord.nullsOrder == 'LAST')  {
+					s += "if((a['" + key + "'] == null) && (b['" + key + "'] != null)) return 1;";
+				}
+				s += "if((a['" + key + "'] == null) == (b['" + key + "'] == null)) {";
+				sk += '}';
+			}
+
 			s +=
 				"if((a['" +
 				key +
