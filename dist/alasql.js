@@ -1,7 +1,7 @@
-//! AlaSQL v0.5.9-feat.nulls-first-last-e18d534eundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.5.9-develop-5556072fundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.5.9-feat.nulls-first-last-e18d534eundefined
+@version 0.5.9-develop-5556072fundefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.5.9-feat.nulls-first-last-e18d534eundefined';
+alasql.version = '0.5.9-develop-5556072fundefined';
 
 /**
 	Debug flag
@@ -629,7 +629,7 @@ case 189: case 190: case 194: case 197:
  this.$ = $$[$0]; $$[$0].as = 'default'; 
 break;
 case 193:
- this.$ = {inserted:true}; /*$$[$0].as = 'default';*/ 
+ this.$ = {inserted:true}; 
 break;
 case 200:
 
@@ -2054,7 +2054,7 @@ _handle_error:
 
             // Return the rule stack depth where the nearest error rule can be found.
             // Return FALSE when no error recovery rule was found.
-            var locateNearestErrorRecoveryRule = function(state) {
+            var locateNearestErrorRecoveryRule = function (state) {
                 var stack_probe = stack.length - 1;
                 var depth = 0;
 
@@ -3101,7 +3101,7 @@ case 275:return 'INVALID'
 break;
 }
 },
-rules: [/^(?:``([^\`])+``)/i,/^(?:\[\?\])/i,/^(?:@\[)/i,/^(?:ARRAY\[)/i,/^(?:\[([^\]])*?\])/i,/^(?:`([^\`])*?`)/i,/^(?:N(['](\\.|[^']|\\')*?['])+)/i,/^(?:X(['](\\.|[^']|\\')*?['])+)/i,/^(?:(['](\\.|[^']|\\')*?['])+)/i,/^(?:(["](\\.|[^"]|\\")*?["])+)/i,/^(?:--(.*?)($|\r\n|\r|\n))/i,/^(?:\s+)/i,/^(?:\|\|)/i,/^(?:\|)/i,/^(?:VALUE\s+OF\s+SEARCH\b)/i,/^(?:VALUE\s+OF\s+SELECT\b)/i,/^(?:ROW\s+OF\s+SELECT\b)/i,/^(?:COLUMN\s+OF\s+SELECT\b)/i,/^(?:MATRIX\s+OF\s+SELECT\b)/i,/^(?:INDEX\s+OF\s+SELECT\b)/i,/^(?:RECORDSET\s+OF\s+SELECT\b)/i,/^(?:TEXT\s+OF\s+SELECT\b)/i,/^(?:SELECT\b)/i,/^(?:ABSOLUTE\b)/i,/^(?:ACTION\b)/i,/^(?:ADD\b)/i,/^(?:AFTER\b)/i,/^(?:AGGR\b)/i,/^(?:AGGREGATE\b)/i,/^(?:AGGREGATOR\b)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:ANTI\b)/i,/^(?:ANY\b)/i,/^(?:APPLY\b)/i,/^(?:ARRAY\b)/i,/^(?:AS\b)/i,/^(?:ASSERT\b)/i,/^(?:ASC\b)/i,/^(?:ATTACH\b)/i,/^(?:AUTO(_)?INCREMENT\b)/i,/^(?:AVG\b)/i,/^(?:BEFORE\b)/i,/^(?:BEGIN\b)/i,/^(?:BETWEEN\b)/i,/^(?:BREAK\b)/i,/^(?:NOT\s+BETWEEN\b)/i,/^(?:NOT\s+LIKE\b)/i,/^(?:BY\b)/i,/^(?:~~\*)/i,/^(?:!~~\*)/i,/^(?:~~)/i,/^(?:!~~)/i,/^(?:ILIKE\b)/i,/^(?:NOT\s+ILIKE\b)/i,/^(?:CALL\b)/i,/^(?:CASE\b)/i,/^(?:CAST\b)/i,/^(?:CHECK\b)/i,/^(?:CLASS\b)/i,/^(?:CLOSE\b)/i,/^(?:COLLATE\b)/i,/^(?:COLUMN\b)/i,/^(?:COLUMNS\b)/i,/^(?:COMMIT\b)/i,/^(?:CONSTRAINT\b)/i,/^(?:CONTENT\b)/i,/^(?:CONTINUE\b)/i,/^(?:CONVERT\b)/i,/^(?:CORRESPONDING\b)/i,/^(?:COUNT\b)/i,/^(?:CREATE\b)/i,/^(?:CROSS\b)/i,/^(?:CUBE\b)/i,/^(?:CURRENT_TIMESTAMP\b)/i,/^(?:CURSOR\b)/i,/^(?:DATABASE(S)?)/i,/^(?:DATEADD\b)/i,/^(?:DATEDIFF\b)/i,/^(?:DECLARE\b)/i,/^(?:DEFAULT\b)/i,/^(?:DELETE\b)/i,/^(?:DELETED\b)/i,/^(?:DESC\b)/i,/^(?:DETACH\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:ECHO\b)/i,/^(?:EDGE\b)/i,/^(?:END\b)/i,/^(?:ENUM\b)/i,/^(?:ELSE\b)/i,/^(?:ESCAPE\b)/i,/^(?:EXCEPT\b)/i,/^(?:EXEC\b)/i,/^(?:EXECUTE\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FETCH\b)/i,/^(?:FIRST\b)/i,/^(?:FOR\b)/i,/^(?:FOREIGN\b)/i,/^(?:FROM\b)/i,/^(?:FULL\b)/i,/^(?:FUNCTION\b)/i,/^(?:GLOB\b)/i,/^(?:GO\b)/i,/^(?:GRAPH\b)/i,/^(?:GROUP\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:IF\b)/i,/^(?:IDENTITY\b)/i,/^(?:IS\b)/i,/^(?:IN\b)/i,/^(?:INDEX\b)/i,/^(?:INDEXED\b)/i,/^(?:INNER\b)/i,/^(?:INSTEAD\b)/i,/^(?:INSERT\b)/i,/^(?:INSERTED\b)/i,/^(?:INTERSECT\b)/i,/^(?:INTERVAL\b)/i,/^(?:INTO\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:LAST\b)/i,/^(?:LET\b)/i,/^(?:LEFT\b)/i,/^(?:LIKE\b)/i,/^(?:LIMIT\b)/i,/^(?:MATCHED\b)/i,/^(?:MATRIX\b)/i,/^(?:MAX(\s+)?(?=\())/i,/^(?:MAX(\s+)?(?=(,|\))))/i,/^(?:MIN(\s+)?(?=\())/i,/^(?:MERGE\b)/i,/^(?:MINUS\b)/i,/^(?:MODIFY\b)/i,/^(?:NATURAL\b)/i,/^(?:NEXT\b)/i,/^(?:NEW\b)/i,/^(?:NOCASE\b)/i,/^(?:NO\b)/i,/^(?:NOT\b)/i,/^(?:NULL\b)/i,/^(?:NULLS\b)/i,/^(?:OFF\b)/i,/^(?:ON\b)/i,/^(?:ONLY\b)/i,/^(?:OF\b)/i,/^(?:OFFSET\b)/i,/^(?:OPEN\b)/i,/^(?:OPTION\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:OUTER\b)/i,/^(?:OVER\b)/i,/^(?:PATH\b)/i,/^(?:PARTITION\b)/i,/^(?:PERCENT\b)/i,/^(?:PIVOT\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:PRINT\b)/i,/^(?:PRIOR\b)/i,/^(?:QUERY\b)/i,/^(?:READ\b)/i,/^(?:RECORDSET\b)/i,/^(?:REDUCE\b)/i,/^(?:REFERENCES\b)/i,/^(?:REGEXP\b)/i,/^(?:REINDEX\b)/i,/^(?:RELATIVE\b)/i,/^(?:REMOVE\b)/i,/^(?:RENAME\b)/i,/^(?:REPEAT\b)/i,/^(?:REPLACE\b)/i,/^(?:REQUIRE\b)/i,/^(?:RESTORE\b)/i,/^(?:RETURN\b)/i,/^(?:RETURNS\b)/i,/^(?:RIGHT\b)/i,/^(?:ROLLBACK\b)/i,/^(?:ROLLUP\b)/i,/^(?:ROW\b)/i,/^(?:ROWS\b)/i,/^(?:SCHEMA(S)?)/i,/^(?:SEARCH\b)/i,/^(?:SEMI\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SHOW\b)/i,/^(?:SOME\b)/i,/^(?:SOURCE\b)/i,/^(?:STRATEGY\b)/i,/^(?:STORE\b)/i,/^(?:SUM\b)/i,/^(?:TABLE\b)/i,/^(?:TABLES\b)/i,/^(?:TARGET\b)/i,/^(?:TEMP\b)/i,/^(?:TEMPORARY\b)/i,/^(?:TEXTSTRING\b)/i,/^(?:THEN\b)/i,/^(?:TIMEOUT\b)/i,/^(?:TO\b)/i,/^(?:TOP\b)/i,/^(?:TRAN\b)/i,/^(?:TRANSACTION\b)/i,/^(?:TRIGGER\b)/i,/^(?:TRUE\b)/i,/^(?:TRUNCATE\b)/i,/^(?:UNION\b)/i,/^(?:UNIQUE\b)/i,/^(?:UNPIVOT\b)/i,/^(?:UPDATE\b)/i,/^(?:USE\b)/i,/^(?:USING\b)/i,/^(?:VALUE\b)/i,/^(?:VALUES\b)/i,/^(?:VERTEX\b)/i,/^(?:VIEW\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:WHILE\b)/i,/^(?:WITH\b)/i,/^(?:WORK\b)/i,/^(?:(\d*[.])?\d+[eE]\d+)/i,/^(?:(\d*[.])?\d+)/i,/^(?:->)/i,/^(?:#)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:!===)/i,/^(?:===)/i,/^(?:!==)/i,/^(?:==)/i,/^(?:>=)/i,/^(?:&)/i,/^(?:\|)/i,/^(?:<<)/i,/^(?:>>)/i,/^(?:>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:@)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\])/i,/^(?::-)/i,/^(?:\?-)/i,/^(?:\.\.)/i,/^(?:\.)/i,/^(?:,)/i,/^(?:::)/i,/^(?::)/i,/^(?:;)/i,/^(?:\$)/i,/^(?:\?)/i,/^(?:!)/i,/^(?:\^)/i,/^(?:~)/i,/^(?:[a-zA-Z_][a-zA-Z_0-9]*)/i,/^(?:$)/i,/^(?:.)/i],
+rules: [/^(?:``([^\`])+``)/i,/^(?:\[\?\])/i,/^(?:@\[)/i,/^(?:ARRAY\[)/i,/^(?:\[([^\]])*?\])/i,/^(?:`([^\`])*?`)/i,/^(?:N(['](\\.|[^']|\\')*?['])+)/i,/^(?:X(['](\\.|[^']|\\')*?['])+)/i,/^(?:(['](\\.|[^']|\\')*?['])+)/i,/^(?:(["](\\.|[^"]|\\")*?["])+)/i,/^(?:--(.*?)($|\r\n|\r|\n))/i,/^(?:\s+)/i,/^(?:\|\|)/i,/^(?:\|)/i,/^(?:VALUE\s+OF\s+SEARCH\b)/i,/^(?:VALUE\s+OF\s+SELECT\b)/i,/^(?:ROW\s+OF\s+SELECT\b)/i,/^(?:COLUMN\s+OF\s+SELECT\b)/i,/^(?:MATRIX\s+OF\s+SELECT\b)/i,/^(?:INDEX\s+OF\s+SELECT\b)/i,/^(?:RECORDSET\s+OF\s+SELECT\b)/i,/^(?:TEXT\s+OF\s+SELECT\b)/i,/^(?:SELECT\b)/i,/^(?:ABSOLUTE\b)/i,/^(?:ACTION\b)/i,/^(?:ADD\b)/i,/^(?:AFTER\b)/i,/^(?:AGGR\b)/i,/^(?:AGGREGATE\b)/i,/^(?:AGGREGATOR\b)/i,/^(?:ALL\b)/i,/^(?:ALTER\b)/i,/^(?:AND\b)/i,/^(?:ANTI\b)/i,/^(?:ANY\b)/i,/^(?:APPLY\b)/i,/^(?:ARRAY\b)/i,/^(?:AS\b)/i,/^(?:ASSERT\b)/i,/^(?:ASC\b)/i,/^(?:ATTACH\b)/i,/^(?:AUTO(_)?INCREMENT\b)/i,/^(?:AVG\b)/i,/^(?:BEFORE\b)/i,/^(?:BEGIN\b)/i,/^(?:BETWEEN\b)/i,/^(?:BREAK\b)/i,/^(?:NOT\s+BETWEEN\b)/i,/^(?:NOT\s+LIKE\b)/i,/^(?:BY\b)/i,/^(?:~~\*)/i,/^(?:!~~\*)/i,/^(?:~~)/i,/^(?:!~~)/i,/^(?:ILIKE\b)/i,/^(?:NOT\s+ILIKE\b)/i,/^(?:CALL\b)/i,/^(?:CASE\b)/i,/^(?:CAST\b)/i,/^(?:CHECK\b)/i,/^(?:CLASS\b)/i,/^(?:CLOSE\b)/i,/^(?:COLLATE\b)/i,/^(?:COLUMN\b)/i,/^(?:COLUMNS\b)/i,/^(?:COMMIT\b)/i,/^(?:CONSTRAINT\b)/i,/^(?:CONTENT\b)/i,/^(?:CONTINUE\b)/i,/^(?:CONVERT\b)/i,/^(?:CORRESPONDING\b)/i,/^(?:COUNT\b)/i,/^(?:CREATE\b)/i,/^(?:CROSS\b)/i,/^(?:CUBE\b)/i,/^(?:CURRENT_TIMESTAMP\b)/i,/^(?:CURSOR\b)/i,/^(?:DATABASE(S)?)/i,/^(?:DATEADD\b)/i,/^(?:DATEDIFF\b)/i,/^(?:DECLARE\b)/i,/^(?:DEFAULT\b)/i,/^(?:DELETE\b)/i,/^(?:DELETED\b)/i,/^(?:DESC\b)/i,/^(?:DETACH\b)/i,/^(?:DISTINCT\b)/i,/^(?:DROP\b)/i,/^(?:ECHO\b)/i,/^(?:EDGE\b)/i,/^(?:END\b)/i,/^(?:ENUM\b)/i,/^(?:ELSE\b)/i,/^(?:ESCAPE\b)/i,/^(?:EXCEPT\b)/i,/^(?:EXEC\b)/i,/^(?:EXECUTE\b)/i,/^(?:EXISTS\b)/i,/^(?:EXPLAIN\b)/i,/^(?:FALSE\b)/i,/^(?:FETCH\b)/i,/^(?:FIRST\b)/i,/^(?:FOR\b)/i,/^(?:FOREIGN\b)/i,/^(?:FROM\b)/i,/^(?:FULL\b)/i,/^(?:FUNCTION\b)/i,/^(?:GLOB\b)/i,/^(?:GO\b)/i,/^(?:GRAPH\b)/i,/^(?:GROUP\b)/i,/^(?:GROUPING\b)/i,/^(?:HAVING\b)/i,/^(?:IF\b)/i,/^(?:IDENTITY\b)/i,/^(?:IS\b)/i,/^(?:IN\b)/i,/^(?:INDEX\b)/i,/^(?:INDEXED\b)/i,/^(?:INNER\b)/i,/^(?:INSTEAD\b)/i,/^(?:INSERT\b)/i,/^(?:INSERTED\b)/i,/^(?:INTERSECT\b)/i,/^(?:INTERVAL\b)/i,/^(?:INTO\b)/i,/^(?:JOIN\b)/i,/^(?:KEY\b)/i,/^(?:LAST\b)/i,/^(?:LET\b)/i,/^(?:LEFT\b)/i,/^(?:LIKE\b)/i,/^(?:LIMIT\b)/i,/^(?:MATCHED\b)/i,/^(?:MATRIX\b)/i,/^(?:MAX(\s+)?(?=\())/i,/^(?:MAX(\s+)?(?=(,|\))))/i,/^(?:MIN(\s+)?(?=\())/i,/^(?:MERGE\b)/i,/^(?:MINUS\b)/i,/^(?:MODIFY\b)/i,/^(?:NATURAL\b)/i,/^(?:NEXT\b)/i,/^(?:NEW\b)/i,/^(?:NOCASE\b)/i,/^(?:NO\b)/i,/^(?:NOT\b)/i,/^(?:NULL\b)/i,/^(?:NULLS\b)/i,/^(?:OFF\b)/i,/^(?:ON\b)/i,/^(?:ONLY\b)/i,/^(?:OF\b)/i,/^(?:OFFSET\b)/i,/^(?:OPEN\b)/i,/^(?:OPTION\b)/i,/^(?:OR\b)/i,/^(?:ORDER\b)/i,/^(?:OUTER\b)/i,/^(?:OVER\b)/i,/^(?:PATH\b)/i,/^(?:PARTITION\b)/i,/^(?:PERCENT\b)/i,/^(?:PIVOT\b)/i,/^(?:PLAN\b)/i,/^(?:PRIMARY\b)/i,/^(?:PRINT\b)/i,/^(?:PRIOR\b)/i,/^(?:QUERY\b)/i,/^(?:READ\b)/i,/^(?:RECORDSET\b)/i,/^(?:REDUCE\b)/i,/^(?:REFERENCES\b)/i,/^(?:REGEXP\b)/i,/^(?:REINDEX\b)/i,/^(?:RELATIVE\b)/i,/^(?:REMOVE\b)/i,/^(?:RENAME\b)/i,/^(?:REPEAT\b)/i,/^(?:REPLACE\b)/i,/^(?:REQUIRE\b)/i,/^(?:RESTORE\b)/i,/^(?:RETURN\b)/i,/^(?:RETURNS\b)/i,/^(?:RIGHT\b)/i,/^(?:ROLLBACK\b)/i,/^(?:ROLLUP\b)/i,/^(?:ROW\b)/i,/^(?:ROWS\b)/i,/^(?:SCHEMA(S)?)/i,/^(?:SEARCH\b)/i,/^(?:SEMI\b)/i,/^(?:SET\b)/i,/^(?:SETS\b)/i,/^(?:SHOW\b)/i,/^(?:SOME\b)/i,/^(?:SOURCE\b)/i,/^(?:STRATEGY\b)/i,/^(?:STORE\b)/i,/^(?:SUM\b)/i,/^(?:TABLE\b)/i,/^(?:TABLES\b)/i,/^(?:TARGET\b)/i,/^(?:TEMP\b)/i,/^(?:TEMPORARY\b)/i,/^(?:TEXTSTRING\b)/i,/^(?:THEN\b)/i,/^(?:TIMEOUT\b)/i,/^(?:TO\b)/i,/^(?:TOP\b)/i,/^(?:TRAN\b)/i,/^(?:TRANSACTION\b)/i,/^(?:TRIGGER\b)/i,/^(?:TRUE\b)/i,/^(?:TRUNCATE\b)/i,/^(?:UNION\b)/i,/^(?:UNIQUE\b)/i,/^(?:UNPIVOT\b)/i,/^(?:UPDATE\b)/i,/^(?:USE\b)/i,/^(?:USING\b)/i,/^(?:VALUE\b)/i,/^(?:VALUES\b)/i,/^(?:VERTEX\b)/i,/^(?:VIEW\b)/i,/^(?:WHEN\b)/i,/^(?:WHERE\b)/i,/^(?:WHILE\b)/i,/^(?:WITH\b)/i,/^(?:WORK\b)/i,/^(?:(\d*[.])?\d+[eE]\d+)/i,/^(?:(\d*[.])?\d+)/i,/^(?:->)/i,/^(?:#)/i,/^(?:\+)/i,/^(?:-)/i,/^(?:\*)/i,/^(?:\/)/i,/^(?:%)/i,/^(?:!===)/i,/^(?:===)/i,/^(?:!==)/i,/^(?:==)/i,/^(?:>=)/i,/^(?:&)/i,/^(?:\|)/i,/^(?:<<)/i,/^(?:>>)/i,/^(?:>)/i,/^(?:<=)/i,/^(?:<>)/i,/^(?:<)/i,/^(?:=)/i,/^(?:!=)/i,/^(?:\()/i,/^(?:\))/i,/^(?:@)/i,/^(?:\{)/i,/^(?:\})/i,/^(?:\])/i,/^(?::-)/i,/^(?:\?-)/i,/^(?:\.\.)/i,/^(?:\.)/i,/^(?:,)/i,/^(?:::)/i,/^(?::)/i,/^(?:;)/i,/^(?:\$)/i,/^(?:\?)/i,/^(?:!)/i,/^(?:\^)/i,/^(?:~)/i,/^(?:[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]*)/i,/^(?:$)/i,/^(?:.)/i],
 conditions: {"INITIAL":{"rules":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160,161,162,163,164,165,166,167,168,169,170,171,172,173,174,175,176,177,178,179,180,181,182,183,184,185,186,187,188,189,190,191,192,193,194,195,196,197,198,199,200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,232,233,234,235,236,237,238,239,240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255,256,257,258,259,260,261,262,263,264,265,266,267,268,269,270,271,272,273,274,275],"inclusive":true}}
 });
 return lexer;
@@ -9913,8 +9913,8 @@ yy.Select.prototype.compileOrder = function(query, params) {
 				var ra = func(a),
 					rb = func(b);
 				if (nullsOrder) {
-					if (ra === null) return rb === null ? 0 : nullsOrder;
-					if (rb === null) return -nullsOrder;
+					if (ra == null) return rb == null ? 0 : nullsOrder;
+					if (rb == null) return -nullsOrder;
 				}
 				if (ra > rb) return 1;
 				if (ra == rb) return 0;
@@ -11580,22 +11580,22 @@ yy.GroupExpression.prototype.toString = function() {
 
 // Alasql Linq library
 
-yy.FromData = function(params) {
+yy.FromData = function (params) {
 	return yy.extend(this, params);
 };
-yy.FromData.prototype.toString = function() {
+yy.FromData.prototype.toString = function () {
 	if (this.data) return 'DATA(' + ((Math.random() * 10e15) | 0) + ')';
 	else return '?';
 };
-yy.FromData.prototype.toJS = function() {
+yy.FromData.prototype.toJS = function () {
 
 };
 
-yy.Select.prototype.exec = function(params, cb) {
+yy.Select.prototype.exec = function (params, cb) {
 	if (this.preparams) params = this.preparams.concat(params);
 
 	var databaseid = alasql.useid;
-	db = alasql.databases[databaseid];
+	var db = alasql.databases[databaseid];
 	var sql = this.toString();
 	var hh = hash(sql);
 
@@ -11614,9 +11614,9 @@ yy.Select.prototype.exec = function(params, cb) {
 	return res;
 };
 
-yy.Select.prototype.Select = function() {
+yy.Select.prototype.Select = function () {
 	var self = this;
-	var agrs = [];
+	var args = [];
 	if (arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);
 	} else if (arguments.length == 1) {
@@ -11631,7 +11631,7 @@ yy.Select.prototype.Select = function() {
 
 	self.columns = [];
 
-	args.forEach(function(arg) {
+	args.forEach(function (arg) {
 		if (typeof arg == 'string') {
 			self.columns.push(new yy.Column({columnid: arg}));
 		} else if (typeof arg == 'function') {
@@ -11651,7 +11651,7 @@ yy.Select.prototype.Select = function() {
 	return self;
 };
 
-yy.Select.prototype.From = function(tableid) {
+yy.Select.prototype.From = function (tableid) {
 	var self = this;
 	if (!self.from) self.from = [];
 	if (Array.isArray(tableid)) {
@@ -11671,9 +11671,9 @@ yy.Select.prototype.From = function(tableid) {
 	return self;
 };
 
-yy.Select.prototype.OrderBy = function() {
+yy.Select.prototype.OrderBy = function () {
 	var self = this;
-	var agrs = [];
+	var args = [];
 
 	self.order = [];
 
@@ -11693,7 +11693,7 @@ yy.Select.prototype.OrderBy = function() {
 	}
 
 	if (args.length > 0) {
-		args.forEach(function(arg) {
+		args.forEach(function (arg) {
 			var expr = new yy.Column({columnid: arg});
 			if (typeof arg == 'function') {
 				expr = arg;
@@ -11704,15 +11704,15 @@ yy.Select.prototype.OrderBy = function() {
 	return self;
 };
 
-yy.Select.prototype.Top = function(topnum) {
+yy.Select.prototype.Top = function (topnum) {
 	var self = this;
 	self.top = new yy.NumValue({value: topnum});
 	return self;
 };
 
-yy.Select.prototype.GroupBy = function() {
+yy.Select.prototype.GroupBy = function () {
 	var self = this;
-	var agrs = [];
+	var args = [];
 
 	if (arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);
@@ -11728,7 +11728,7 @@ yy.Select.prototype.GroupBy = function() {
 
 	self.group = [];
 
-	args.forEach(function(arg) {
+	args.forEach(function (arg) {
 		var expr = new yy.Column({columnid: arg});
 		self.group.push(expr);
 	});
@@ -11736,7 +11736,7 @@ yy.Select.prototype.GroupBy = function() {
 	return self;
 };
 
-yy.Select.prototype.Where = function(expr) {
+yy.Select.prototype.Where = function (expr) {
 	var self = this;
 	if (typeof expr == 'function') {
 		self.where = expr;
@@ -15807,7 +15807,7 @@ yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
 
 /* global alasql, yy */
 
-alasql.test = function(name, times, fn) {
+alasql.test = function (name, times, fn) {
 	if (arguments.length === 0) {
 		alasql.log(alasql.con.results);
 		return;
@@ -15840,7 +15840,7 @@ alasql.test = function(name, times, fn) {
 /* global alasql, yy, utils */
 
 // Console
-alasql.log = function(sql, params) {
+alasql.log = function (sql, params) {
 	var olduseid = alasql.useid;
 	var target = alasql.options.logtarget;
 	// For node other
@@ -15909,7 +15909,7 @@ alasql.log = function(sql, params) {
 	}
 };
 
-alasql.clear = function() {
+alasql.clear = function () {
 	var target = alasql.options.logtarget;
 	// For node other
 
@@ -15933,7 +15933,7 @@ alasql.clear = function() {
 	}
 };
 
-alasql.write = function(s) {
+alasql.write = function (s) {
 
 	var target = alasql.options.logtarget;
 	// For node other
@@ -15974,12 +15974,12 @@ function loghtml(res) {
 			cols.push(colid);
 		}
 		s += '<tr><th>#';
-		cols.forEach(function(colid) {
+		cols.forEach(function (colid) {
 			s += '<th>' + colid;
 		});
 		for (var i = 0, ilen = res.length; i < ilen; i++) {
 			s += '<tr><th>' + (i + 1);
-			cols.forEach(function(colid) {
+			cols.forEach(function (colid) {
 				s += '<td> ';
 				if (res[i][colid] == +res[i][colid]) {
 					// jshint ignore:line
@@ -16023,7 +16023,7 @@ function scrollTo(element, to, duration) {
 	var difference = to - element.scrollTop;
 	var perTick = (difference / duration) * 10;
 
-	setTimeout(function() {
+	setTimeout(function () {
 		if (element.scrollTop === to) {
 			return;
 		}
@@ -16032,7 +16032,7 @@ function scrollTo(element, to, duration) {
 	}, 10);
 }
 
-alasql.prompt = function(el, useidel, firstsql) {
+alasql.prompt = function (el, useidel, firstsql) {
 	if (utils.isNode) {
 		throw new Error('The prompt not realized for Node.js');
 	}
@@ -16057,7 +16057,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 			alasql.log(firstsql);
 			alasql.write('<p style="color:blue">' + (Date.now() - tm) + ' ms</p>');
 		} catch (err) {
-			alasql.write('<p>' + olduseid + '&gt;&nbsp;<b>' + sql + '</b></p>');
+			alasql.write('<p>' + alasql.useid + '&gt;&nbsp;<b>' + firstsql + '</b></p>');
 			alasql.write('<p style="color:red">' + err + '<p>');
 		}
 	}
@@ -16065,7 +16065,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 	var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 	scrollTo(document.getElementsByTagName('body')[0], y, 500);
 
-	el.onkeydown = function(event) {
+	el.onkeydown = function (event) {
 		if (event.which === 13) {
 			var sql = el.value;
 			var olduseid = alasql.useid;
@@ -16083,8 +16083,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 			el.focus();
 
 			useidel.textContent = alasql.useid;
-			var y =
-				el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
+			var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 			scrollTo(document.getElementsByTagName('body')[0], y, 500);
 		} else if (event.which === 38) {
 			prompti--;
@@ -18258,34 +18257,34 @@ yy.Assert.prototype.execute = function(databaseid) {
 // (c) 2014, Andrey Gershun
 //
 
-var WEBSQL = (alasql.engines.WEBSQL = function() {});
+var WEBSQL = (alasql.engines.WEBSQL = function () {});
 
-WEBSQL.createDatabase = function(wdbid, args, dbid, cb) {
+WEBSQL.createDatabase = function (wdbid, args, dbid, cb) {
 	var res = 1;
 	var wdb = openDatabase(wdbid, args[0], args[1], args[2]);
 	if (this.dbid) {
 		var db = alasql.createDatabase(this.dbid);
 		db.engineid = 'WEBSQL';
 		db.wdbid = wdbid;
-		sb.wdb = db;
+		db.wdb = db;
 	}
 	if (!wdb) {
-		throw new Error('Cannot create WebSQL database "' + databaseid + '"');
+		throw new Error('Cannot create WebSQL database "' + this.dbid + '"');
 	}
 	if (cb) cb(res);
 	return res;
 };
 
-WEBSQL.dropDatabase = function(databaseid) {
+WEBSQL.dropDatabase = function (databaseid) {
 	throw new Error('This is impossible to drop WebSQL database.');
 };
 
-WEBSQL.attachDatabase = function(databaseid, dbid, args, params, cb) {
+WEBSQL.attachDatabase = function (databaseid, dbid, args, params, cb) {
 	var res = 1;
 	if (alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
 	}
-	alasqlopenDatabase(databaseid, args[0], args[1], args[2]);
+	alasql.openDatabase(databaseid, args[0], args[1], args[2]);
 	return res;
 };
 
@@ -19237,17 +19236,17 @@ LS.rollback = function(databaseid, cb) {
 // (c) 2014, Andrey Gershun
 //
 
-var SQLITE = (alasql.engines.SQLITE = function() {});
+var SQLITE = (alasql.engines.SQLITE = function () {});
 
-SQLITE.createDatabase = function(wdbid, args, ifnotexists, dbid, cb) {
+SQLITE.createDatabase = function (wdbid, args, ifnotexists, dbid, cb) {
 	throw new Error('Connot create SQLITE database in memory. Attach it.');
 };
 
-SQLITE.dropDatabase = function(databaseid) {
+SQLITE.dropDatabase = function (databaseid) {
 	throw new Error('This is impossible to drop SQLite database. Detach it.');
 };
 
-SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb) {
+SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 	var res = 1;
 	if (alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
@@ -19262,7 +19261,7 @@ SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb) {
 		alasql.utils.loadBinaryFile(
 			value,
 			true,
-			function(data) {
+			function (data) {
 				var db = new alasql.Database(dbid || sqldbid);
 				db.engineid = 'SQLITE';
 				db.sqldbid = sqldbid;
@@ -19270,14 +19269,14 @@ SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb) {
 				db.tables = [];
 				var tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
 
-				tables.forEach(function(tbl) {
+				tables.forEach(function (tbl) {
 					db.tables[tbl[1]] = {};
 					var columns = (db.tables[tbl[1]].columns = []);
 					var ast = alasql.parse(tbl[4]);
 
 					var coldefs = ast.statements[0].columns;
 					if (coldefs && coldefs.length > 0) {
-						coldefs.forEach(function(cd) {
+						coldefs.forEach(function (cd) {
 							columns.push(cd);
 						});
 					}
@@ -19285,7 +19284,7 @@ SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb) {
 
 				cb(1);
 			},
-			function(err) {
+			function (err) {
 				throw new Error('Cannot open SQLite database file "' + args[0].value + '"');
 			}
 		);
@@ -19297,20 +19296,20 @@ SQLITE.attachDatabase = function(sqldbid, dbid, args, params, cb) {
 	return res;
 };
 
-SQLITE.fromTable = function(databaseid, tableid, cb, idx, query) {
+SQLITE.fromTable = function (databaseid, tableid, cb, idx, query) {
 	var data = alasql.databases[databaseid].sqldb.exec('SELECT * FROM ' + tableid);
 	var columns = (query.sources[idx].columns = []);
 	if (data[0].columns.length > 0) {
-		data[0].columns.forEach(function(columnid) {
+		data[0].columns.forEach(function (columnid) {
 			columns.push({columnid: columnid});
 		});
 	}
 
 	var res = [];
 	if (data[0].values.length > 0) {
-		data[0].values.forEach(function(d) {
+		data[0].values.forEach(function (d) {
 			var r = {};
-			columns.forEach(function(col, idx) {
+			columns.forEach(function (col, idx) {
 				r[col.columnid] = d[idx];
 			});
 			res.push(r);
@@ -19319,7 +19318,7 @@ SQLITE.fromTable = function(databaseid, tableid, cb, idx, query) {
 	if (cb) cb(res, idx, query);
 };
 
-SQLITE.intoTable = function(databaseid, tableid, value, columns, cb) {
+SQLITE.intoTable = function (databaseid, tableid, value, columns, cb) {
 	var sqldb = alasql.databases[databaseid].sqldb;
 	for (var i = 0, ilen = value.length; i < ilen; i++) {
 		var s = 'INSERT INTO ' + tableid + ' (';
@@ -19328,8 +19327,8 @@ SQLITE.intoTable = function(databaseid, tableid, value, columns, cb) {
 		s += keys.join(',');
 		s += ') VALUES (';
 		s += keys
-			.map(function(k) {
-				v = d[k];
+			.map(function (k) {
+				var v = d[k];
 				if (typeof v == 'string') v = "'" + v + "'";
 				return v;
 			})

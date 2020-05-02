@@ -70,7 +70,7 @@ alasql.con.log = function() {
 
 /* global alasql, yy */
 
-alasql.test = function(name, times, fn) {
+alasql.test = function (name, times, fn) {
 	if (arguments.length === 0) {
 		alasql.log(alasql.con.results);
 		return;
@@ -117,7 +117,7 @@ alasql.test = function(name, times, fn) {
 /* global alasql, yy, utils */
 
 // Console
-alasql.log = function(sql, params) {
+alasql.log = function (sql, params) {
 	var olduseid = alasql.useid;
 	var target = alasql.options.logtarget;
 	// For node other
@@ -186,7 +186,7 @@ alasql.log = function(sql, params) {
 	}
 };
 
-alasql.clear = function() {
+alasql.clear = function () {
 	var target = alasql.options.logtarget;
 	// For node other
 
@@ -210,7 +210,7 @@ alasql.clear = function() {
 	}
 };
 
-alasql.write = function(s) {
+alasql.write = function (s) {
 	//	console.log('write',s);
 	var target = alasql.options.logtarget;
 	// For node other
@@ -251,12 +251,12 @@ function loghtml(res) {
 			cols.push(colid);
 		}
 		s += '<tr><th>#';
-		cols.forEach(function(colid) {
+		cols.forEach(function (colid) {
 			s += '<th>' + colid;
 		});
 		for (var i = 0, ilen = res.length; i < ilen; i++) {
 			s += '<tr><th>' + (i + 1);
-			cols.forEach(function(colid) {
+			cols.forEach(function (colid) {
 				s += '<td> ';
 				if (res[i][colid] == +res[i][colid]) {
 					// jshint ignore:line
@@ -300,7 +300,7 @@ function scrollTo(element, to, duration) {
 	var difference = to - element.scrollTop;
 	var perTick = (difference / duration) * 10;
 
-	setTimeout(function() {
+	setTimeout(function () {
 		if (element.scrollTop === to) {
 			return;
 		}
@@ -309,7 +309,7 @@ function scrollTo(element, to, duration) {
 	}, 10);
 }
 
-alasql.prompt = function(el, useidel, firstsql) {
+alasql.prompt = function (el, useidel, firstsql) {
 	if (utils.isNode) {
 		throw new Error('The prompt not realized for Node.js');
 	}
@@ -334,7 +334,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 			alasql.log(firstsql);
 			alasql.write('<p style="color:blue">' + (Date.now() - tm) + ' ms</p>');
 		} catch (err) {
-			alasql.write('<p>' + olduseid + '&gt;&nbsp;<b>' + sql + '</b></p>');
+			alasql.write('<p>' + alasql.useid + '&gt;&nbsp;<b>' + firstsql + '</b></p>');
 			alasql.write('<p style="color:red">' + err + '<p>');
 		}
 	}
@@ -342,7 +342,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 	var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 	scrollTo(document.getElementsByTagName('body')[0], y, 500);
 
-	el.onkeydown = function(event) {
+	el.onkeydown = function (event) {
 		if (event.which === 13) {
 			var sql = el.value;
 			var olduseid = alasql.useid;
@@ -360,8 +360,7 @@ alasql.prompt = function(el, useidel, firstsql) {
 			el.focus();
 			//			console.log(el.getBoundingClientRect().top);
 			useidel.textContent = alasql.useid;
-			var y =
-				el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
+			var y = el.getBoundingClientRect().top + document.getElementsByTagName('body')[0].scrollTop;
 			scrollTo(document.getElementsByTagName('body')[0], y, 500);
 		} else if (event.which === 38) {
 			prompti--;

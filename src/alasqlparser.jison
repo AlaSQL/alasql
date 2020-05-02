@@ -316,7 +316,7 @@ SETS                                        	return 'SET'
 
 '~'												return 'TILDA'
 
-[a-zA-Z_][a-zA-Z_0-9]*                     		return 'LITERAL'
+[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
 
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
@@ -899,7 +899,7 @@ FromTable
 		{ $$ = $1; $1.as = $3; }
 
 	| INSERTED
-		{ $$ = {inserted:true}; /*$1.as = 'default';*/ }
+		{ $$ = {inserted:true}; }
 
 	| VarValue
 		{ $$ = $1; $1.as = 'default'; }
