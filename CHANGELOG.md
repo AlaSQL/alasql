@@ -1,6 +1,53 @@
 # Changelog
 
 
+
+# 0.6.0 (02.05.2020)
+Add: NULLS FIRST/LAST clause in ORDER BY (#1187)
+Add: Support table/row names starting with numbers
+
+
+
+## 0.5.9 (26.04.2020)
+Add: Composite foreign keys implementation (#1179) 
+Fix: Insert's toString() (#1177)
+Fix: DROP Filestorage Database with database name (#1184)
+
+## 0.5.8 (27.03.2020)
+Fix: usage of CURRENT_TIMESTAMP (Fix #1174)
+
+## 0.5.6 "Bafq" (22.03.2020)
+
+Add: GroupBy within nested array data set/params (#1167)
+Fix: Use unknown DB name
+
+## 0.5.5 "Bam" (29.01.2020)
+
+- Fix: Typescript typing
+
+## 0.5.4 "Qom" (19.01.2020)
+
+- Fix: QUART/MEDIAN/MIN/MAX on number/date/string
+
+
+## 0.5.3 "Chabahar" (02.01.2020)
+
+- Better: Support csv data from buffer
+- Better: Error message for foreign key constraint fail #1009
+- Fix: ORDER BY supports parameters #1100
+- Fix: Filestorage DELETE FROM #624
+- Fix: Drop trigger #1113
+
+
+#0.5.1 "Qazvin" (16.09.2019)
+- Add: Chain OUTER JOIN's #1105
+- Better: Typescript typings
+- Better: Updated dependencies
+- Fix: Join on CSV files directly
+- Fix: OUTER JOIN bug #1101
+- Fix: Pivot function cast for SUM and AVG 
+
+
 ## 0.4.11 "Lawdar" (05.10.2018)
 
 * Add: Specified XLSX sheet without knowing the name

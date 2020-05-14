@@ -16,7 +16,12 @@ yy.Insert.prototype.toString = function() {
 	if (this.replaceonly) s = 'REPLACE ';
 	s += 'INTO ' + this.into.toString();
 	if (this.columns) s += '(' + this.columns.toString() + ')';
-	if (this.values) s += ' VALUES ' + this.values.toString();
+	if (this.values) {
+        var values = this.values.map(function(value) {
+            return '(' + value.toString() + ')';
+        });
+        s += ' VALUES ' + values.join(',');
+    }
 	if (this.select) s += ' ' + this.select.toString();
 	return s;
 };
@@ -129,7 +134,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 							q += values[idx].toJS();
 						}
 						/*/*
-						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
+						 // if(table.xcolumns && table.xcolumns[col.columnid] &&
 						 //  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
 							// table.xcolumns[col.columnid].dbtypeid == "DATETIME"
 						 //  )) {
@@ -155,7 +160,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 			//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
 
 			//			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
-			//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
+			//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" )
 			//				rec[fld.fldid] = +rec[fld.fldid];
 */
 					});

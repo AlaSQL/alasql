@@ -17,15 +17,18 @@ yy.FuncValue.prototype.toString = function(dontas) {
 	else if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])
 		s += this.funcid.toUpperCase();
 
-	s += '(';
-	if (this.args && this.args.length > 0) {
-		s += this.args
-			.map(function(arg) {
-				return arg.toString();
-			})
-			.join(',');
+	if (this.funcid !== 'CURRENT_TIMESTAMP') {
+		s += '(';
+		if (this.args && this.args.length > 0) {
+			s += this.args
+				.map(function(arg) {
+					return arg.toString();
+				})
+				.join(',');
+		}
+		s += ')';
 	}
-	s += ')';
+	
 	if (this.as && !dontas) s += ' AS ' + this.as.toString();
 	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
@@ -127,14 +130,14 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 */
 
 /*/*
-// 
+//
 // SQL FUNCTIONS COMPILERS
 // Based on SQLite functions
 
 // IMPORTANT: These are compiled functions
 
 //alasql.fn = {}; // Keep for compatibility
-//alasql.userlib = alasql.fn; 
+//alasql.userlib = alasql.fn;
 */
 
 var stdlib = (alasql.stdlib = {});
@@ -193,11 +196,19 @@ stdlib.RTRIM = function(s) {
 };
 
 stdlib.MAX = stdlib.GREATEST = function() {
-	return 'Math.max(' + Array.prototype.join.call(arguments, ',') + ')';
+	return (
+		'[' +
+		Array.prototype.join.call(arguments, ',') +
+		'].reduce(function (a, b) { return a > b ? a : b; })'
+	);
 };
 
 stdlib.MIN = stdlib.LEAST = function() {
-	return 'Math.min(' + Array.prototype.join.call(arguments, ',') + ')';
+	return (
+		'[' +
+		Array.prototype.join.call(arguments, ',') +
+		'].reduce(function (a, b) { return a < b ? a : b; })'
+	);
 };
 
 stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function(a, b, c) {
@@ -302,10 +313,22 @@ alasql.aggr.MEDIAN = function(v, s, stage) {
 			return s;
 		}
 
-		var r = s.sort();
+		var r = s.sort(function(a, b) {
+			if (a === b) {
+				return 0;
+			}
+			if (a > b) {
+				return 1;
+			}
+			return -1;
+		});
 		var p = (r.length + 1) / 2;
 		if (Number.isInteger(p)) {
 			return r[p - 1];
+		}
+
+		if (typeof r[Math.floor(p - 1)] !== 'number') {
+			return r[Math.floor(p - 1)];
 		}
 
 		return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;
@@ -330,8 +353,16 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 		}
 
 		nth = !nth ? 1 : nth;
-		var r = s.sort();
-		var p = nth * (r.length + 1) / 4;
+		var r = s.sort(function(a, b) {
+			if (a === b) {
+				return 0;
+			}
+			if (a > b) {
+				return 1;
+			}
+			return -1;
+		});
+		var p = (nth * (r.length + 1)) / 4;
 		if (Number.isInteger(p)) {
 			return r[p - 1]; //Integer value
 		}

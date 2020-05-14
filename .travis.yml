@@ -5,19 +5,17 @@ branches:
     - develop
 
 language: node_js
-node_js:
-  # - "node" # Looks like travis is having problems with the node 10 setup
-  - "9"
-  - "8"
-  - "7"
-  - "6"
-  - "5"
-  - "4"
+node_js: # node plus all mentioned here: https://nodejs.org/en/about/releases/
+  - "node"
+  - "13"
+  - "12"
+  - "10"
 
-script: npm run test:only && npm test
+
+script: npm run test-ci
 
 after_success:
-  - npm run test:cover
+  - npm run test-cover
   - bash <(curl -s https://codecov.io/bash)
-  
+
 sudo: false

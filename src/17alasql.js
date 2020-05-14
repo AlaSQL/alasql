@@ -152,13 +152,17 @@ alasql.use = function(databaseid) {
 	if (alasql.useid === databaseid) {
 		return;
 	}
-	alasql.useid = databaseid;
-	var db = alasql.databases[alasql.useid];
-	alasql.tables = db.tables;
-	//	alasql.fn = db.fn;
-	db.resetSqlCache();
-	if (alasql.options.usedbo) {
-		alasql.databases.dbo = db; // Operator???
+	if (alasql.databases[databaseid] !== undefined) {
+		alasql.useid = databaseid;
+		var db = alasql.databases[alasql.useid];
+		alasql.tables = db.tables;
+		//	alasql.fn = db.fn;
+		db.resetSqlCache();
+		if (alasql.options.usedbo) {
+			alasql.databases.dbo = db; // Operator???
+		}
+	} else {
+		throw Error('Database does not exist: ' + databaseid);
 	}
 };
 
