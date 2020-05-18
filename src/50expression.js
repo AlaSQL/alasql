@@ -8,7 +8,7 @@
 
 /**
   	Expression statement ( = 2*2; )
-  	@class 
+  	@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function(params) {
@@ -263,6 +263,12 @@ yy.Op.prototype.toString = function() {
 
 		return s;
 	}
+	if (this.op === 'BETWEEN') {
+		var s = this.left.toString() + ' ' + this.op + ' '
+			+ this.right1.toString() + ' AND ' + this.right2.toString();
+
+		return s;
+	}
 	return (
 		this.left.toString() +
 		' ' +
@@ -495,7 +501,7 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 		if(this.right instanceof yy.Op && this.right.op == 'AND') {
 
 			return ref('(('+this.right.left)+'<='+leftJS()+')&&'+
-			ref('('+leftJS()+'<='+this.right.right)+'))';		
+			ref('('+leftJS()+'<='+this.right.right)+'))';
 
 		} else {
 			throw new Error('Wrong BETWEEN operator without AND part');
@@ -1044,7 +1050,7 @@ yy.AggrValue.prototype.findAggregator = function(query) {
 
 	var found = false;
 
-	/*/*	
+	/*/*
 	for(var i=0;i<query.selectGroup.length;i++){
 		if(query.selectGroup[i].nick==colas) {
 			colas = colas+':'+i;
@@ -1102,7 +1108,7 @@ yy.AggrValue.prototype.toJS = function(/*context, tableid, defcols*/) {
 //	s += ')';
 //	if(this.alias) s += ' AS '+this.alias;
 //	return s;
-//	var s = ''; 
+//	var s = '';
 //if(this.as) console.log(499,this.as);
 //	var colas = this.as;
 */

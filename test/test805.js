@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 }
 
 var current_timestamp = "CURRENT_TIMESTAMP";
-var test = '804'; // insert test file number
+var test = '805'; // insert test file number
 
 describe('Test ' + test + ' - yy.FuncValue for CURRENT_TIMESTAMP returning correct variable string, NOT function string', function() {
 
