@@ -8,3 +8,4 @@ test/test251.xlsx
 .versions
 .npm/
 package-lock.json
+/.idea

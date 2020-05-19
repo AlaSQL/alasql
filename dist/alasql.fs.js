@@ -1,7 +1,7 @@
-//! AlaSQL v0.6.0-develop-d96b07b7undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.6.0-develop-707ffd10undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.6.0-develop-d96b07b7undefined
+@version 0.6.0-develop-707ffd10undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.6.0-develop-d96b07b7undefined';
+alasql.version = '0.6.0-develop-707ffd10undefined';
 
 /**
 	Debug flag
@@ -4512,6 +4512,9 @@ alasql.options.nan = false;
 
 alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
 
+// Custom data conversion performed before operation processed. Default does nothing
+alasql.options.convertData = function (d) { return d; };
+
 //alasql.options.worker = false;
 
 // Variables
@@ -8780,13 +8783,15 @@ yy.Select.prototype.compileJoins = function(query) {
 			}
 		}
 
+		var convertData = alasql.options.convertData || function (data) { return data;	};
+
 		if (jn.using) {
 			prevSource = query.sources[query.sources.length - 1];
 
 			source.onleftfns = jn.using
 				.map(function(col) {
 
-					return (
+					return convertData(
 						"p['" +
 						(prevSource.alias || prevSource.tableid) +
 						"']['" +
@@ -8800,7 +8805,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			source.onrightfns = jn.using
 				.map(function(col) {
-					return "p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']";
+					return convertData("p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']");
 				})
 				.join('+"`"+');
 			source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
@@ -8817,8 +8822,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				var middles = '';
 				var middlef = false;
 				// Test right and left sides
-				var ls = jn.on.left.toJS('p', query.defaultTableid, query.defcols);
-				var rs = jn.on.right.toJS('p', query.defaultTableid, query.defcols);
+				var ls = convertData(jn.on.left.toJS('p', query.defaultTableid, query.defcols));
+				var rs = convertData(jn.on.right.toJS('p', query.defaultTableid, query.defcols));
 
 				if (
 					ls.indexOf("p['" + alias + "']") > -1 &&
@@ -10896,11 +10901,14 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 		var i = refs.push(expr) - 1;
 		return 'y[' + i + ']';
 	};
+
+	var convertData = alasql.options.convertData || function (data) { return data;	};
+
 	var leftJS = function() {
-		return ref(_this.left);
+		return convertData(ref(_this.left));
 	};
 	var rightJS = function() {
-		return ref(_this.right);
+		return convertData(ref(_this.right));
 	};
 
 	if (this.op === '=') {

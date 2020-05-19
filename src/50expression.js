@@ -363,11 +363,14 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 		var i = refs.push(expr) - 1;
 		return 'y[' + i + ']';
 	};
+
+	var convertData = alasql.options.convertData || function (data) { return data;	};
+
 	var leftJS = function() {
-		return ref(_this.left);
+		return convertData(ref(_this.left));
 	};
 	var rightJS = function() {
-		return ref(_this.right);
+		return convertData(ref(_this.right));
 	};
 
 	if (this.op === '=') {

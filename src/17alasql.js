@@ -103,6 +103,9 @@ alasql.options.nan = false;
 
 alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
 
+// Custom data conversion performed before operation processed. Default does nothing
+alasql.options.convertData = function (d) { return d; };
+
 //alasql.options.worker = false;
 
 // Variables

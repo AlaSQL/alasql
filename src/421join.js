@@ -281,13 +281,15 @@ yy.Select.prototype.compileJoins = function(query) {
 			}
 		}
 
+		var convertData = alasql.options.convertData || function (data) { return data;	};
+
 		if (jn.using) {
 			prevSource = query.sources[query.sources.length - 1];
 			//			console.log(query.sources[0],prevSource,source);
 			source.onleftfns = jn.using
 				.map(function(col) {
 					//				console.log(141,colid);
-					return (
+					return convertData(
 						"p['" +
 						(prevSource.alias || prevSource.tableid) +
 						"']['" +
@@ -302,7 +304,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			source.onrightfns = jn.using
 				.map(function(col) {
-					return "p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']";
+					return convertData("p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']");
 				})
 				.join('+"`"+');
 			source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
@@ -325,8 +327,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				var middles = '';
 				var middlef = false;
 				// Test right and left sides
-				var ls = jn.on.left.toJS('p', query.defaultTableid, query.defcols);
-				var rs = jn.on.right.toJS('p', query.defaultTableid, query.defcols);
+				var ls = convertData(jn.on.left.toJS('p', query.defaultTableid, query.defcols));
+				var rs = convertData(jn.on.right.toJS('p', query.defaultTableid, query.defcols));
 
 				if (
 					ls.indexOf("p['" + alias + "']") > -1 &&
