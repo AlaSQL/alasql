@@ -1,7 +1,7 @@
-//! AlaSQL v0.6.0-develop-d96b07b7undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.6.0-develop-c610d72cundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.6.0-develop-d96b07b7undefined
+@version 0.6.0-develop-c610d72cundefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.6.0-develop-d96b07b7undefined';
+alasql.version = '0.6.0-develop-c610d72cundefined';
 
 /**
 	Debug flag
@@ -10547,7 +10547,7 @@ yy.Over.prototype.toString = function() {
 
 /**
   	Expression statement ( = 2*2; )
-  	@class 
+  	@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function(params) {
@@ -10793,6 +10793,12 @@ yy.Op.prototype.toString = function() {
 		if (typeof this.right !== 'string' && typeof this.right !== 'number') {
 			s += ')';
 		}
+
+		return s;
+	}
+	if (this.op === 'BETWEEN') {
+		var s = this.left.toString() + ' ' + this.op + ' '
+			+ this.right1.toString() + ' AND ' + this.right2.toString();
 
 		return s;
 	}
