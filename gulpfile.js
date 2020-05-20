@@ -30,10 +30,13 @@ var branch = execSync(
 var hint = execSync('git rev-parse --short HEAD', {encoding: 'utf8'});
 if (!/^master|^release\//.test(branch)) {
 	version +=
-		'-' + branch.replace(/[^0-9a-z-]/gi, '.').replace(/^\.+|\.+$/g, '') + '-' + hint.replace(/[^0-9a-z-]/gi);
+		'-' +
+		branch.replace(/[^0-9a-z-]/gi, '.').replace(/^\.+|\.+$/g, '') +
+		'-' +
+		hint.replace(/[^0-9a-z-]/gi);
 }
 
-gulp.task('js-merge-worker', function() {
+gulp.task('js-merge-worker', function () {
 	return gulp
 		.src([
 			'./src/05copyright.js',
@@ -48,7 +51,7 @@ gulp.task('js-merge-worker', function() {
 		.pipe(
 			uglify({
 				output: {
-					comments: function(a, b) {
+					comments: function (a, b) {
 						return 1 === b.line && /^!/.test(b.value);
 					},
 				},
@@ -57,7 +60,7 @@ gulp.task('js-merge-worker', function() {
 		.pipe(gulp.dest('./dist'));
 });
 
-gulp.task('js-merge', function() {
+gulp.task('js-merge', function () {
 	return gulp
 		.src([
 			'./src/05copyright.js',
@@ -162,13 +165,19 @@ gulp.task('js-merge', function() {
 		.pipe(dereserve()) // Support IE8
 		.pipe(replace(/\/\/\*not-for-browser\/\*/g, '/*not-for-browser/*')) // Remove things not for browser build
 		.pipe(replace(/\/\*only-for-browser\/\*/g, '//*only-for-browser/*')) // Reveal things only for browser build
+		.pipe(
+			replace(
+				/function locateNearestErrorRecoveryRule\(state\) \{/g,
+				'var locateNearestErrorRecoveryRule = function (state) {'
+			)
+		) // Support "use strict" https://github.com/zaach/jison/pull/373
 		.pipe(rename('alasql.js'))
 		.pipe(gulp.dest('./dist'))
 		.pipe(rename('alasql.min.js'))
 		.pipe(
 			uglify({
 				output: {
-					comments: function(a, b) {
+					comments: function (a, b) {
 						return 1 === b.line && /^!/.test(b.value);
 					},
 				},
@@ -177,7 +186,7 @@ gulp.task('js-merge', function() {
 		.pipe(gulp.dest('./dist'));
 });
 
-gulp.task('jison-compile', function() {
+gulp.task('jison-compile', function () {
 	return gulp
 		.src('./src/alasqlparser.jison')
 		.pipe(jison({moduleType: 'commonjs', moduleName: 'alasqlparser'}))
@@ -219,7 +228,7 @@ gulp.task('copy-dist', function(){
 });
 */
 
-gulp.task('copy-dist-org', function() {
+gulp.task('copy-dist-org', function () {
 	return gulp
 		.src([
 			'./dist/alasql.min.js',
@@ -231,24 +240,26 @@ gulp.task('copy-dist-org', function() {
 });
 
 // Additional task to update alasql.org/console directory
-gulp.task('copy-console-org', function() {
+gulp.task('copy-console-org', function () {
 	return gulp.src(['./dist/*']).pipe(gulp.dest('../alasql-org/console/'));
 });
 
 /************************/
 
 // Echo plugin
-gulp.task('typescript', function() {
+gulp.task('typescript', function () {
 	return gulp.src(['partners/typescript/alasql.d.ts']).pipe(gulp.dest('./dist'));
 });
 
 // Echo plugin
-gulp.task('plugin-plugins', function() {
-	return gulp.src(['./src/echo/alasql-echo.js'/*, './src/md/alasql-md.js'*/]).pipe(gulp.dest('./dist'));
+gulp.task('plugin-plugins', function () {
+	return gulp
+		.src(['./src/echo/alasql-echo.js' /*, './src/md/alasql-md.js'*/])
+		.pipe(gulp.dest('./dist'));
 });
 
 // Echo plugin
-gulp.task('plugin-prolog', function() {
+gulp.task('plugin-prolog', function () {
 	return gulp.src(['./src/prolog/alasql-prolog.js']).pipe(gulp.dest('./dist'));
 });
 
@@ -287,72 +298,81 @@ if (false) {
 }
 
 // Главная задача
-gulp.task('default', gulp.series(...toRun, function(done) {
-	done();
-}));
+gulp.task(
+	'default',
+	gulp.series(...toRun, function (done) {
+		done();
+	})
+);
 
-gulp.task('watch', gulp.series(...toRun, function() {
-	gulp.watch('./src/*.js', function() {
-		gulp.run('js-merge');
-	});
-	gulp.watch('./src/99worker*.js', function() {
-		gulp.run('js-merge-worker');
-	});
-	gulp.watch('./src/alasqlparser.jison', function() {
-		gulp.run('jison-compile');
-	});
+gulp.task(
+	'watch',
+	gulp.series(...toRun, function () {
+		gulp.watch('./src/*.js', function () {
+			gulp.run('js-merge');
+		});
+		gulp.watch('./src/99worker*.js', function () {
+			gulp.run('js-merge-worker');
+		});
+		gulp.watch('./src/alasqlparser.jison', function () {
+			gulp.run('jison-compile');
+		});
 
-	gulp.watch('partners/typescript/alasql.d.ts', function() {
-		gulp.run('typescript');
-	});
-	gulp.watch('./src/echo/*.js', function() {
-		gulp.run('plugin-plugins');
-	});
-	gulp.watch('./src/md/*.js', function() {
-		gulp.run('plugin-plugins');
-	});
-	gulp.watch('./src/prolog/*.js', function() {
-		gulp.run('plugin-prolog');
-	});
+		gulp.watch('partners/typescript/alasql.d.ts', function () {
+			gulp.run('typescript');
+		});
+		gulp.watch('./src/echo/*.js', function () {
+			gulp.run('plugin-plugins');
+		});
+		gulp.watch('./src/md/*.js', function () {
+			gulp.run('plugin-plugins');
+		});
+		gulp.watch('./src/prolog/*.js', function () {
+			gulp.run('plugin-prolog');
+		});
 
-	//gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
+		//gulp.watch('./dist/alasql.js',function(){ gulp.run('uglify'); });
 
-	gulp.watch('./dist/alasql.min.js', function() {
-		//    gulp.run('copy-dist');
-		gulp.run('copy-dist-org');
-	});
-	gulp.watch('./dist/alasql-worker.js', function() {
-		//    gulp.run('copy-dist');
-		gulp.run('copy-dist-org');
-	});
+		gulp.watch('./dist/alasql.min.js', function () {
+			//    gulp.run('copy-dist');
+			gulp.run('copy-dist-org');
+		});
+		gulp.watch('./dist/alasql-worker.js', function () {
+			//    gulp.run('copy-dist');
+			gulp.run('copy-dist-org');
+		});
 
-	gulp.watch('./dist/alasql.min.js', function() {
-		console.log('Initiating mocha test...');
-		exec('npm run test:only', console.log);
-	});
+		gulp.watch('./dist/alasql.min.js', function () {
+			console.log('Initiating mocha test...');
+			exec('npm run test:only', console.log);
+		});
 
-	//  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });
-	// gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); gulp.run('js-merge');});
-	// gulp.watch('./src/*.jisonlex',function(){ gulp.run('jison-lex-compile'); gulp.run('js-merge');});
-}));
+		//  gulp.watch('./console/*',function(){ gulp.run('copy-console-org'); });
+		// gulp.watch('./src/*.jison',function(){ gulp.run('jison-compile'); gulp.run('js-merge');});
+		// gulp.watch('./src/*.jisonlex',function(){ gulp.run('jison-lex-compile'); gulp.run('js-merge');});
+	})
+);
 
-gulp.task('fast', gulp.series('js-merge' /*, 'jison-compile', 'jison-lex-compile' */, function(done) {
-	gulp.watch('./src/alasqlparser.jison', function() {
-		gulp.run('jison-compile');
-	});
-	gulp.watch('./src/*.js', function() {
-		gulp.run('js-merge');
-	});
-	done();
-}));
+gulp.task(
+	'fast',
+	gulp.series('js-merge' /*, 'jison-compile', 'jison-lex-compile' */, function (done) {
+		gulp.watch('./src/alasqlparser.jison', function () {
+			gulp.run('jison-compile');
+		});
+		gulp.watch('./src/*.js', function () {
+			gulp.run('js-merge');
+		});
+		done();
+	})
+);
 
-gulp.task('doc', function() {
+gulp.task('doc', function () {
 	return gulp
 		.src('./alasql.js', {read: false})
 		.pipe(shell('jsdoc dist/alasql.js -d ../alasql-org/api'));
 });
 
-gulp.task('console', function(done) {
+gulp.task('console', function (done) {
 	gulp.run('copy-console-org');
 	done();
 });

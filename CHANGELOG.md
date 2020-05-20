@@ -1,21 +1,46 @@
 # Changelog
 
 
-## 0.5.6 "Bafq" (22.03.2020)
 
-Add: GroupBy within nested array data set/params (#1167)
-Fix: Use unknown DB name
+### 0.6.1 (20.05.2020)
 
-## 0.5.5 "Bam" (29.01.2020)
+- Add: Use BETWEEN without parenthesis. 
+- Fix: Let ADD COLUMN use the given dbtypeid
+
+
+
+## 0.6.0 (02.05.2020)
+
+- Add: NULLS FIRST/LAST clause in ORDER BY (#1187)
+- Add: Support table/row names starting with numbers
+
+
+
+### 0.5.9 (26.04.2020)
+
+- Add: Composite foreign keys implementation (#1179) 
+- Fix: Insert's toString() (#1177)
+- Fix: DROP Filestorage Database with database name (#1184)
+
+### 0.5.8 (27.03.2020)
+
+- Fix: usage of CURRENT_TIMESTAMP (Fix #1174)
+
+### 0.5.6 "Bafq" (22.03.2020)
+
+- Add: GroupBy within nested array data set/params (#1167)
+- Fix: Use unknown DB name
+
+### 0.5.5 "Bam" (29.01.2020)
 
 - Fix: Typescript typing
 
-## 0.5.4 "Qom" (19.01.2020)
+### 0.5.4 "Qom" (19.01.2020)
 
 - Fix: QUART/MEDIAN/MIN/MAX on number/date/string
 
 
-## 0.5.3 "Chabahar" (02.01.2020)
+### 0.5.3 "Chabahar" (02.01.2020)
 
 - Better: Support csv data from buffer
 - Better: Error message for foreign key constraint fail #1009
@@ -24,7 +49,8 @@ Fix: Use unknown DB name
 - Fix: Drop trigger #1113
 
 
-#0.5.1 "Qazvin" (16.09.2019)
+## 0.5.1 "Qazvin" (16.09.2019)
+
 - Add: Chain OUTER JOIN's #1105
 - Better: Typescript typings
 - Better: Updated dependencies
@@ -33,18 +59,18 @@ Fix: Use unknown DB name
 - Fix: Pivot function cast for SUM and AVG 
 
 
-## 0.4.11 "Lawdar" (05.10.2018)
+### 0.4.11 "Lawdar" (05.10.2018)
 
 * Add: Specified XLSX sheet without knowing the name
 
 
-## 0.4.10 "Maoshk" (04.10.2018)
+### 0.4.10 "Maoshk" (04.10.2018)
 
 
 * Add: xlsxml files with multiple sheets
 
 
-## 0.4.9 "Alsalfiah" (05.08.2018)
+### 0.4.9 "Alsalfiah" (05.08.2018)
 
 * Better: Error message grammar
 * Better: Support for Meteor code standards
@@ -52,41 +78,41 @@ Fix: Use unknown DB name
 * Fix: Handle promise error when reading one line csv files
 * Fix: AUTO_INCREMENT when using local storage
 
-## 0.4.8 "Nafhan" (14.07.2018)
+### 0.4.8 "Nafhan" (14.07.2018)
 
 * Fix: Error when installing caused by missing cli file in npm
 
 
-## 0.4.7 "Tarim" (14.07.2018)
+### 0.4.7 "Tarim" (14.07.2018)
 
 * Better: Always find global object 
 
 
-## 0.4.6 "Rahbah" (14.06.2018)
+### 0.4.6 "Rahbah" (14.06.2018)
 
 * Better: `Use strict` mode for javascript 
 
 
-## 0.4.5 "Marib" (24.01.2018)
+### 0.4.5 "Marib" (24.01.2018)
 
 * Fix: Aggregate functions applied to empty sets (#964)
 * Fix: missing ORDER BY direction when calling toString on AST (#970)
 * Fix: Converting the syntax tree back to SQL with multple joins (#972)
 
-## 0.4.4 "Alsowm" (03.012.2017)
+### 0.4.4 "Alsowm" (03.012.2017)
 
 * Better: Better usage via unpkg.com
 * Better: Better usage via jsdelivr.com
 
 
-## 0.4.3 "Hajjah" (05.09.2017)
+### 0.4.3 "Hajjah" (05.09.2017)
 
 * Update: Removed implicit "any" in definition file
 * Fix: Tabletop reads in empty cells as numeric 0 instead of empty string 
 * Fix: DISTINCT on emtpy table produced error
 
 
-## 0.4.2 "Baraqish" (17.08.2017)
+### 0.4.2 "Baraqish" (17.08.2017)
 
 * Added: SQL function LTRIM
 * Added: SQL function RTRIM
@@ -95,7 +121,7 @@ Fix: Use unknown DB name
 * Fix: Use created database id on foreign key check as default database
 
  
-## 0.4.1 "Sayhut" (23.07.2017)
+### 0.4.1 "Sayhut" (23.07.2017)
 
 * Better: Performace on `distinct` selects 
 * Better: Hashing for cashed SQLs 
@@ -103,7 +129,7 @@ Fix: Use unknown DB name
 * Fix: Select from empty EXCEL
 
 
-#0.4.0 "Sanaa" (09.05.2017)
+##0.4.0 "Sanaa" (09.05.2017)
 * **Breaking:** OFFSET will now skip the first N rows in a result set before starting to return any rows (before it would skip N-1)
 * Add: Quartile aggregators (QUART, QUART2, QUART3)
 * Add: Typescript definitoin now supports extensions
@@ -389,7 +415,7 @@ Minor verison updated to sync lib, Meteor and npm version
 ### 0.1.2 "Firenze" (06.05.2015 - 07.05.2015)
 * Simple compilation of SEARCH operator
 * SUM(),COUNT(),MIN(),MAX(),FIRST(),LAST() search aggregators
-* # operator, CREATE VERTEX #
+* The # operator, CREATE VERTEX #
 * SEARCH # - start with object
 * SERCH smth # - test for object
 * SEARCH VALUE - leave only one first object in the result
@@ -439,7 +465,7 @@ Minor verison updated to sync lib, Meteor and npm version
 * CREATE CLASS
 * INSERT INTO class
 * INSERT INTO class returns inserted value
-* # operator
+* The # operator
 * Classes support
 * Tests with SEARCH syntax and tests for CREATE EDGE and CREATE VERTES
 * Fixed bug with leaking to global.key
@@ -865,11 +891,11 @@ Minor verison updated to sync lib, Meteor and npm version
 * Where optimization
 * New names for fields => columns and recs => data
 
-#### 0.0.5 (30.10.2014)
+### 0.0.5 (30.10.2014)
 
 * Changed order of LIMIT and ORDER BY processing
 
-#### Version 0.0.4 (28.10.2014-29.10.2014)
+### Version 0.0.4 (28.10.2014-29.10.2014)
 
 * Added /test/main.html mocha browser tests
 * Added PERFORMANCE.md and perf.html tests
@@ -879,7 +905,7 @@ Minor verison updated to sync lib, Meteor and npm version
 * Remove generation of recs after select in case of group by (for memory optimization)
 * Added conversion for type MONEY for INSERT statement 
 
-#### Versions 0.0.1 - 0.0.3 (25.10.2014-27.10.2014)
+### Versions 0.0.1 - 0.0.3 (25.10.2014-27.10.2014)
 
 * First version of Alasql
 
