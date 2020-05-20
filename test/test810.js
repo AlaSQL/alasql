@@ -22,4 +22,20 @@ describe('Test ' + test + ' - yy.Op for BETWEEN returning correct toString() res
 
 		assert.equal(result, expectedResult);
 	});
+
+	it('yy.Op.toString() returns correct value when op === NOT BETWEEN', function() {
+		var expectedResult = "id NOT BETWEEN 1 AND 3"
+
+		var betweenOp = new alasql.yy.Op({
+			"left": new alasql.yy.Column({columnid: "id"}),
+			"op": "NOT BETWEEN",
+			"right1": new alasql.yy.NumValue({value: 1}),
+			"right2": new alasql.yy.NumValue({value: 3})
+		});
+
+		var result = betweenOp.toString();
+
+
+		assert.equal(result, expectedResult);
+	});
 });
