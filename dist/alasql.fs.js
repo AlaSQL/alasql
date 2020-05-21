@@ -1,7 +1,7 @@
-//! AlaSQL v0.6.0-develop-707ffd10undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.6.1-develop-33910799undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.6.0-develop-707ffd10undefined
+@version 0.6.1-develop-33910799undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.6.0-develop-707ffd10undefined';
+alasql.version = '0.6.1-develop-33910799undefined';
 
 /**
 	Debug flag
@@ -4512,9 +4512,6 @@ alasql.options.nan = false;
 
 alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
 
-// Custom data conversion performed before operation processed. Default does nothing
-alasql.options.convertData = function (d) { return d; };
-
 //alasql.options.worker = false;
 
 // Variables
@@ -8783,15 +8780,13 @@ yy.Select.prototype.compileJoins = function(query) {
 			}
 		}
 
-		var convertData = alasql.options.convertData || function (data) { return data;	};
-
 		if (jn.using) {
 			prevSource = query.sources[query.sources.length - 1];
 
 			source.onleftfns = jn.using
 				.map(function(col) {
 
-					return convertData(
+					return (
 						"p['" +
 						(prevSource.alias || prevSource.tableid) +
 						"']['" +
@@ -8805,7 +8800,7 @@ yy.Select.prototype.compileJoins = function(query) {
 
 			source.onrightfns = jn.using
 				.map(function(col) {
-					return convertData("p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']");
+					return "p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']";
 				})
 				.join('+"`"+');
 			source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
@@ -8822,8 +8817,8 @@ yy.Select.prototype.compileJoins = function(query) {
 				var middles = '';
 				var middlef = false;
 				// Test right and left sides
-				var ls = convertData(jn.on.left.toJS('p', query.defaultTableid, query.defcols));
-				var rs = convertData(jn.on.right.toJS('p', query.defaultTableid, query.defcols));
+				var ls = jn.on.left.toJS('p', query.defaultTableid, query.defcols);
+				var rs = jn.on.right.toJS('p', query.defaultTableid, query.defcols);
 
 				if (
 					ls.indexOf("p['" + alias + "']") > -1 &&
@@ -10552,7 +10547,7 @@ yy.Over.prototype.toString = function() {
 
 /**
   	Expression statement ( = 2*2; )
-  	@class 
+  	@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function(params) {
@@ -10801,6 +10796,12 @@ yy.Op.prototype.toString = function() {
 
 		return s;
 	}
+	if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
+		var s = this.left.toString() + ' ' + this.op + ' '
+			+ this.right1.toString() + ' AND ' + this.right2.toString();
+
+		return s;
+	}
 	return (
 		this.left.toString() +
 		' ' +
@@ -10901,14 +10902,11 @@ yy.Op.prototype.toJS = function(context, tableid, defcols) {
 		var i = refs.push(expr) - 1;
 		return 'y[' + i + ']';
 	};
-
-	var convertData = alasql.options.convertData || function (data) { return data;	};
-
 	var leftJS = function() {
-		return convertData(ref(_this.left));
+		return ref(_this.left);
 	};
 	var rightJS = function() {
-		return convertData(ref(_this.right));
+		return ref(_this.right);
 	};
 
 	if (this.op === '=') {
@@ -14087,16 +14085,16 @@ yy.CreateGraph.prototype.compile1 = function(databaseid) {
 /* global alasql yy */
 
 // ALTER TABLE table1 RENAME TO table2
-yy.AlterTable = function(params) {
+yy.AlterTable = function (params) {
 	return yy.extend(this, params);
 };
-yy.AlterTable.prototype.toString = function() {
+yy.AlterTable.prototype.toString = function () {
 	var s = 'ALTER TABLE ' + this.table.toString();
 	if (this.renameto) s += ' RENAME TO ' + this.renameto;
 	return s;
 };
 
-yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
+yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[databaseid];
 	db.dbversion = Date.now();
 
@@ -14139,14 +14137,14 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 
 		var col = {
 			columnid: columnid,
-			dbtypeid: this.dbtypeid,
+			dbtypeid: this.addcolumn.dbtypeid,
 			dbsize: this.dbsize,
 			dbprecision: this.dbprecision,
 			dbenum: this.dbenum,
 			defaultfns: null, // TODO defaultfns!!!
 		};
 
-		var defaultfn = function() {};
+		var defaultfn = function () {};
 
 		table.columns.push(col);
 		table.xcolumns[columnid] = col;
@@ -14194,14 +14192,10 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 
 		var col;
 		if (!table.xcolumns[columnid]) {
-			throw new Error(
-				'Column "' + columnid + '" is not found in the table "' + tableid + '"'
-			);
+			throw new Error('Column "' + columnid + '" is not found in the table "' + tableid + '"');
 		}
 		if (table.xcolumns[tocolumnid]) {
-			throw new Error(
-				'Column "' + tocolumnid + '" already exists in the table "' + tableid + '"'
-			);
+			throw new Error('Column "' + tocolumnid + '" already exists in the table "' + tableid + '"');
 		}
 
 		if (columnid != tocolumnid) {
