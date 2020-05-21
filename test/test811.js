@@ -26,9 +26,9 @@ class Pair {
     }
 }
 
-describe('Test 810 - object comparisson', function() {
+describe('Test 811 - object comparisson', function() {
     before(function() {
-        alasql('CREATE DATABASE test810;USE test810');
+        alasql('CREATE DATABASE test811;USE test811');
         alasql.options.convertData = function (d) {
             return "('object' === typeof (" + d + ") && (" + d +").constructor.name === 'Pair' ? (" + d + ").valueOf() : " + d + ")";
         };
@@ -36,7 +36,7 @@ describe('Test 810 - object comparisson', function() {
 
     after(function() {
         alasql.options.convertData = function (d) { return d; };
-        alasql('DROP DATABASE test810');
+        alasql('DROP DATABASE test811');
     });
 
     var t1 = [
