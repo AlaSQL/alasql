@@ -263,7 +263,7 @@ yy.Op.prototype.toString = function() {
 
 		return s;
 	}
-	if (this.op === 'BETWEEN') {
+	if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
 		var s = this.left.toString() + ' ' + this.op + ' '
 			+ this.right1.toString() + ' AND ' + this.right2.toString();
 
