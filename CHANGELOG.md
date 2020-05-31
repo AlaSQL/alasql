@@ -1,6 +1,12 @@
 # Changelog
 
 
+### 0.6.2 (31.05.2020)
+
+
+- Add: Use NOT BETWEEN without parenthesis. 
+
+
 
 ### 0.6.1 (20.05.2020)
 
