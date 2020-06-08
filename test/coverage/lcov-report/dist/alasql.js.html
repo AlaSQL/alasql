@@ -22,12 +22,12 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">15.44% </span>
         <span class="quiet">Statements</span>
-        <span class='fraction'>1547/10020</span>
+        <span class='fraction'>1548/10023</span>
       </div>
       <div class='fl pad1y space-right2'>
-        <span class="strong">10.24% </span>
+        <span class="strong">10.28% </span>
         <span class="quiet">Branches</span>
-        <span class='fraction'>640/6252</span>
+        <span class='fraction'>643/6256</span>
       </div>
       <div class='fl pad1y space-right2'>
         <span class="strong">10.24% </span>
@@ -37,7 +37,7 @@
       <div class='fl pad1y space-right2'>
         <span class="strong">15.83% </span>
         <span class="quiet">Lines</span>
-        <span class='fraction'>1517/9585</span>
+        <span class='fraction'>1518/9588</span>
       </div>
     </div>
   </div>
@@ -19943,7 +19943,9 @@
 19898
 19899
 19900
-19901</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+19901
+19902
+19903</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -30737,6 +30739,12 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1×</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -34128,12 +34136,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -39843,10 +39847,10 @@
 <span class="cline-any cline-yes">1×</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//! AlaSQL v0.6.0-develop-d96b07b7undefined | © 2014-2018 Andrey Gershun &amp; Mathias Rangel Wulff | License: MIT
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//! AlaSQL v0.6.2 | © 2014-2018 Andrey Gershun &amp; Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.6.0-develop-d96b07b7undefined
+@version 0.6.2
 &nbsp;
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun &amp; Mathias Rangel Wulff
@@ -39987,7 +39991,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.6.0-develop-d96b07b7undefined';
+alasql.version = '0.6.2';
 &nbsp;
 /**
 	Debug flag
@@ -50387,7 +50391,7 @@ yy.Over.prototype.toString = <span class="fstat-no" title="function not covered"
 &nbsp;
 /**
   	Expression statement ( = 2*2; )
-  	@class 
+  	@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = <span class="fstat-no" title="function not covered" >function(params) {</span>
@@ -50633,6 +50637,12 @@ yy.Op.prototype.toString = function() {
 <span class="cstat-no" title="statement not covered" >		if (typeof this.right !== 'string' &amp;&amp; typeof this.right !== 'number') {</span>
 <span class="cstat-no" title="statement not covered" >			s += ')';</span>
 		}
+&nbsp;
+<span class="cstat-no" title="statement not covered" >		return s;</span>
+	}
+	<span class="missing-if-branch" title="if path not taken" >I</span>if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
+<span class="cstat-no" title="statement not covered" >		var s = this.left.toString() + ' ' + this.op + ' '</span>
+			+ this.right1.toString() + ' AND ' + this.right2.toString();
 &nbsp;
 <span class="cstat-no" title="statement not covered" >		return s;</span>
 	}
@@ -53919,16 +53929,16 @@ yy.CreateGraph.prototype.compile1 = <span class="fstat-no" title="function not c
 /* global alasql yy */
 &nbsp;
 // ALTER TABLE table1 RENAME TO table2
-yy.AlterTable = <span class="fstat-no" title="function not covered" >function(params) {</span>
+yy.AlterTable = <span class="fstat-no" title="function not covered" >function (params) {</span>
 <span class="cstat-no" title="statement not covered" >	return yy.extend(this, params);</span>
 };
-yy.AlterTable.prototype.toString = <span class="fstat-no" title="function not covered" >function() {</span>
+yy.AlterTable.prototype.toString = <span class="fstat-no" title="function not covered" >function () {</span>
 <span class="cstat-no" title="statement not covered" >	var s = 'ALTER TABLE ' + this.table.toString();</span>
 <span class="cstat-no" title="statement not covered" >	if (this.renameto) <span class="cstat-no" title="statement not covered" >s += ' RENAME TO ' + this.renameto;</span></span>
 <span class="cstat-no" title="statement not covered" >	return s;</span>
 };
 &nbsp;
-yy.AlterTable.prototype.execute = <span class="fstat-no" title="function not covered" >function(databaseid, params, cb) {</span>
+yy.AlterTable.prototype.execute = <span class="fstat-no" title="function not covered" >function (databaseid, params, cb) {</span>
 <span class="cstat-no" title="statement not covered" >	var db = alasql.databases[databaseid];</span>
 <span class="cstat-no" title="statement not covered" >	db.dbversion = Date.now();</span>
 &nbsp;
@@ -53971,14 +53981,14 @@ yy.AlterTable.prototype.execute = <span class="fstat-no" title="function not cov
 &nbsp;
 <span class="cstat-no" title="statement not covered" >		var col = {</span>
 			columnid: columnid,
-			dbtypeid: this.dbtypeid,
+			dbtypeid: this.addcolumn.dbtypeid,
 			dbsize: this.dbsize,
 			dbprecision: this.dbprecision,
 			dbenum: this.dbenum,
 			defaultfns: null, // TODO defaultfns!!!
 		};
 &nbsp;
-<span class="cstat-no" title="statement not covered" >		var defaultfn = <span class="fstat-no" title="function not covered" >function() {</span>};</span>
+<span class="cstat-no" title="statement not covered" >		var defaultfn = <span class="fstat-no" title="function not covered" >function () {</span>};</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >		table.columns.push(col);</span>
 <span class="cstat-no" title="statement not covered" >		table.xcolumns[columnid] = col;</span>
@@ -54026,14 +54036,10 @@ yy.AlterTable.prototype.execute = <span class="fstat-no" title="function not cov
 &nbsp;
 <span class="cstat-no" title="statement not covered" >		var col;</span>
 <span class="cstat-no" title="statement not covered" >		if (!table.xcolumns[columnid]) {</span>
-<span class="cstat-no" title="statement not covered" >			throw new Error(</span>
-				'Column "' + columnid + '" is not found in the table "' + tableid + '"'
-			);
+<span class="cstat-no" title="statement not covered" >			throw new Error('Column "' + columnid + '" is not found in the table "' + tableid + '"');</span>
 		}
 <span class="cstat-no" title="statement not covered" >		if (table.xcolumns[tocolumnid]) {</span>
-<span class="cstat-no" title="statement not covered" >			throw new Error(</span>
-				'Column "' + tocolumnid + '" already exists in the table "' + tableid + '"'
-			);
+<span class="cstat-no" title="statement not covered" >			throw new Error('Column "' + tocolumnid + '" already exists in the table "' + tableid + '"');</span>
 		}
 &nbsp;
 <span class="cstat-no" title="statement not covered" >		if (columnid != tocolumnid) {</span>
@@ -59749,7 +59755,7 @@ return alasql;
 </div><!-- /wrapper -->
 <div class='footer quiet pad2 space-top1 center small'>
   Code coverage
-  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat May 02 2020 18:00:16 GMT+0200 (GMT+02:00)
+  generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sun May 31 2020 13:22:19 GMT+0200 (GMT+02:00)
 </div>
 </div>
 <script src="../prettify.js"></script>
