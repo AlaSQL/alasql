@@ -74,7 +74,7 @@
 		"lint-staged": "10.2.2",
 		"mocha": "7.1.2",
 		"mocha.parallel": "^0.15.6",
-		"mversion": "^1.13.0",
+		"mversion": "^2.0.0",
 		"npm-check": "5.9.2",
 		"open": "7.0.3",
 		"prettier": "2.0.5",
