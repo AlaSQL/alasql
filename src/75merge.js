@@ -8,17 +8,17 @@
 
 /* global alasql, yy */
 
-yy.Merge = function(params) {
+yy.Merge = function (params) {
 	return yy.extend(this, params);
 };
-yy.Merge.prototype.toString = function() {
+yy.Merge.prototype.toString = function () {
 	var s = 'MERGE ';
 	s += this.into.tableid + ' ';
 	if (this.into.as) s += 'AS ' + this.into.as + ' ';
 	s += 'USING ' + this.using.tableid + ' ';
 	if (this.using.as) s += 'AS ' + this.using.as + ' ';
 	s += 'ON ' + this.on.toString() + ' ';
-	this.matches.forEach(function(m) {
+	this.matches.forEach(function (m) {
 		s += 'WHEN ';
 		if (!m.matched) s += 'NOT ';
 		s += 'MATCHED ';
@@ -37,7 +37,7 @@ yy.Merge.prototype.toString = function() {
 			s += 'UPDATE ';
 			s +=
 				m.action.update
-					.map(function(u) {
+					.map(function (u) {
 						return u.toString();
 					})
 					.join(',') + ' ';
@@ -48,7 +48,7 @@ yy.Merge.prototype.toString = function() {
 	return s;
 };
 
-yy.Merge.prototype.execute = function(databaseid, params, cb) {
+yy.Merge.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 
 	if (cb) res = cb(res);

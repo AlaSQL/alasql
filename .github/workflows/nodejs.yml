@@ -22,7 +22,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npx yarn install
-    - run: npx prettier src/*.js --list-different || (echo 'Please correct file formatting using `yarn format` and try again. && exit 1) 
+    - run: npx prettier src/*.js --list-different || (echo 'Please correct file formatting using `yarn format` and try again.' && exit 1) 
     - run: npx yarn test-only
     - run: npx yarn test
  

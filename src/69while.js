@@ -6,17 +6,17 @@
 //
 */
 
-yy.While = function(params) {
+yy.While = function (params) {
 	return yy.extend(this, params);
 };
-yy.While.prototype.toString = function() {
+yy.While.prototype.toString = function () {
 	var s = 'WHILE ';
 	s += this.expression.toString();
 	s += ' ' + this.loopstat.toString();
 	return s;
 };
 
-yy.While.prototype.execute = function(databaseid, params, cb) {
+yy.While.prototype.execute = function (databaseid, params, cb) {
 	var self = this;
 	var res = [];
 	//	console.log(this.expression.toJS());
@@ -24,13 +24,13 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 	//	console.log('cb',!!cb);
 	if (cb) {
 		var first = false;
-		var loop = function(data) {
+		var loop = function (data) {
 			if (first) {
 				res.push(data);
 			} else {
 				first = true;
 			}
-			setTimeout(function() {
+			setTimeout(function () {
 				if (fn(params, alasql)) {
 					self.loopstat.execute(databaseid, params, loop);
 				} else {
@@ -48,50 +48,50 @@ yy.While.prototype.execute = function(databaseid, params, cb) {
 	return res;
 };
 
-yy.Break = function(params) {
+yy.Break = function (params) {
 	return yy.extend(this, params);
 };
-yy.Break.prototype.toString = function() {
+yy.Break.prototype.toString = function () {
 	var s = 'BREAK';
 	return s;
 };
 
-yy.Break.prototype.execute = function(databaseid, params, cb, scope) {
+yy.Break.prototype.execute = function (databaseid, params, cb, scope) {
 	var res = 1;
 	if (cb) res = cb(res);
 	return res;
 };
 
-yy.Continue = function(params) {
+yy.Continue = function (params) {
 	return yy.extend(this, params);
 };
-yy.Continue.prototype.toString = function() {
+yy.Continue.prototype.toString = function () {
 	var s = 'CONTINUE';
 	return s;
 };
 
-yy.Continue.prototype.execute = function(databaseid, params, cb, scope) {
+yy.Continue.prototype.execute = function (databaseid, params, cb, scope) {
 	var res = 1;
 	if (cb) res = cb(res);
 	return res;
 };
 
-yy.BeginEnd = function(params) {
+yy.BeginEnd = function (params) {
 	return yy.extend(this, params);
 };
-yy.BeginEnd.prototype.toString = function() {
+yy.BeginEnd.prototype.toString = function () {
 	var s = 'BEGIN ' + this.statements.toString() + ' END';
 	return s;
 };
 
-yy.BeginEnd.prototype.execute = function(databaseid, params, cb, scope) {
+yy.BeginEnd.prototype.execute = function (databaseid, params, cb, scope) {
 	var self = this;
 	var res = [];
 
 	var idx = 0;
 	runone();
 	function runone() {
-		self.statements[idx].execute(databaseid, params, function(data) {
+		self.statements[idx].execute(databaseid, params, function (data) {
 			res.push(data);
 			idx++;
 			if (idx < self.statements.length) return runone();

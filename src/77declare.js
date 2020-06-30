@@ -6,14 +6,14 @@
 //
 */
 
-yy.Declare = function(params) {
+yy.Declare = function (params) {
 	return yy.extend(this, params);
 };
-yy.Declare.prototype.toString = function() {
+yy.Declare.prototype.toString = function () {
 	var s = 'DECLARE ';
 	if (this.declares && this.declares.length > 0) {
 		s = this.declares
-			.map(function(declare) {
+			.map(function (declare) {
 				var s = '';
 				s += '@' + declare.variable + ' ';
 				s += declare.dbtypeid;
@@ -34,10 +34,10 @@ yy.Declare.prototype.toString = function() {
 	return s;
 };
 
-yy.Declare.prototype.execute = function(databaseid, params, cb) {
+yy.Declare.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	if (this.declares && this.declares.length > 0) {
-		this.declares.map(function(declare) {
+		this.declares.map(function (declare) {
 			var dbtypeid = declare.dbtypeid;
 			if (!alasql.fn[dbtypeid]) {
 				dbtypeid = dbtypeid.toUpperCase();

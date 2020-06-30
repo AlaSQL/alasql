@@ -6,10 +6,10 @@
 //
 */
 
-yy.Convert = function(params) {
+yy.Convert = function (params) {
 	return yy.extend(this, params);
 };
-yy.Convert.prototype.toString = function() {
+yy.Convert.prototype.toString = function () {
 	var s = 'CONVERT(';
 	s += this.dbtypeid;
 	if (typeof this.dbsize != 'undefined') {
@@ -22,7 +22,7 @@ yy.Convert.prototype.toString = function() {
 	s += ')';
 	return s;
 };
-yy.Convert.prototype.toJS = function(context, tableid, defcols) {
+yy.Convert.prototype.toJS = function (context, tableid, defcols) {
 	//	if(this.style) {
 	return (
 		'alasql.stdfn.CONVERT(' +
@@ -67,7 +67,7 @@ yy.Convert.prototype.toJS = function(context, tableid, defcols) {
 /**
  Convert one type to another
  */
-alasql.stdfn.CONVERT = function(value, args) {
+alasql.stdfn.CONVERT = function (value, args) {
 	var val = value;
 	//	console.log(args);
 	if (args.style) {
@@ -123,10 +123,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 				val =
 					('0' + t.getDate()).substr(-2) +
 					' ' +
-					t
-						.toString()
-						.substr(4, 3)
-						.toLowerCase() +
+					t.toString().substr(4, 3).toLowerCase() +
 					' ' +
 					('0' + t.getYear()).substr(-2);
 				break;
@@ -213,20 +210,13 @@ alasql.stdfn.CONVERT = function(value, args) {
 				val =
 					('0' + t.getDate()).substr(-2) +
 					' ' +
-					t
-						.toString()
-						.substr(4, 3)
-						.toLowerCase() +
+					t.toString().substr(4, 3).toLowerCase() +
 					' ' +
 					t.getFullYear();
 				break;
 			case 107: // Mon dd,yyyy
 				val =
-					t.toString().substr(4, 3) +
-					' ' +
-					('0' + t.getDate()).substr(-2) +
-					',' +
-					t.getFullYear();
+					t.toString().substr(4, 3) + ' ' + ('0' + t.getDate()).substr(-2) + ',' + t.getFullYear();
 				break;
 			case 110: // mm-dd-yyyy
 				val =
@@ -247,9 +237,7 @@ alasql.stdfn.CONVERT = function(value, args) {
 
 			case 112: // yyyymmdd
 				val =
-					t.getFullYear() +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					('0' + t.getDate()).substr(-2);
+					t.getFullYear() + ('0' + (t.getMonth() + 1)).substr(-2) + ('0' + t.getDate()).substr(-2);
 				break;
 			default:
 				throw new Error('The CONVERT style ' + args.style + ' is not realized yet.');
@@ -298,9 +286,8 @@ alasql.stdfn.CONVERT = function(value, args) {
 	) {
 		return val | 0;
 	} else if (
-		['STRING', 'VARCHAR', 'NVARCHAR', 'CHARACTER VARIABLE'].indexOf(
-			args.dbtypeid.toUpperCase()
-		) > -1
+		['STRING', 'VARCHAR', 'NVARCHAR', 'CHARACTER VARIABLE'].indexOf(args.dbtypeid.toUpperCase()) >
+		-1
 	) {
 		if (args.dbsize) return ('' + val).substr(0, args.dbsize);
 		else return '' + val;

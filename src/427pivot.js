@@ -4,7 +4,7 @@
 	@param {object} query Source query
 	@return {function} Pivoting functions
 */
-yy.Select.prototype.compilePivot = function(query) {
+yy.Select.prototype.compilePivot = function (query) {
 	var self = this;
 	/** @type {string} Main pivoting column */
 
@@ -25,19 +25,19 @@ yy.Select.prototype.compilePivot = function(query) {
 	}
 
 	if (inlist) {
-		inlist = inlist.map(function(l) {
+		inlist = inlist.map(function (l) {
 			return l.expr.columnid;
 		});
 	}
 
 	// Function for PIVOT post production
-	return function() {
+	return function () {
 		var query = this;
 		var cols = query.columns
-			.filter(function(col) {
+			.filter(function (col) {
 				return col.columnid != columnid && col.columnid != exprcolid;
 			})
-			.map(function(col) {
+			.map(function (col) {
 				return col.columnid;
 			});
 
@@ -46,10 +46,10 @@ yy.Select.prototype.compilePivot = function(query) {
 		var gr = {};
 		var ga = {};
 		var data = [];
-		query.data.forEach(function(d) {
+		query.data.forEach(function (d) {
 			if (!inlist || inlist.indexOf(d[columnid]) > -1) {
 				var gx = cols
-					.map(function(colid) {
+					.map(function (colid) {
 						return d[colid];
 					})
 					.join('`');
@@ -58,7 +58,7 @@ yy.Select.prototype.compilePivot = function(query) {
 					g = {};
 					gr[gx] = g;
 					data.push(g);
-					cols.forEach(function(colid) {
+					cols.forEach(function (colid) {
 						g[colid] = d[colid];
 					});
 				}
@@ -120,13 +120,13 @@ yy.Select.prototype.compilePivot = function(query) {
 
 		if (inlist) newcols = inlist;
 
-		var ncol = query.columns.filter(function(col) {
+		var ncol = query.columns.filter(function (col) {
 			return col.columnid == exprcolid;
 		})[0];
-		query.columns = query.columns.filter(function(col) {
+		query.columns = query.columns.filter(function (col) {
 			return !(col.columnid == columnid || col.columnid == exprcolid);
 		});
-		newcols.forEach(function(colid) {
+		newcols.forEach(function (colid) {
 			var nc = cloneDeep(ncol);
 			nc.columnid = colid;
 			query.columns.push(nc);
@@ -210,31 +210,31 @@ yy.Select.prototype.compilePivot = function(query) {
 	@param {object} query Query object
 	@return {function} Function for unpivoting
 */
-yy.Select.prototype.compileUnpivot = function(query) {
+yy.Select.prototype.compileUnpivot = function (query) {
 	var self = this;
 	var tocolumnid = self.unpivot.tocolumnid;
 	var forcolumnid = self.unpivot.forcolumnid;
-	var inlist = self.unpivot.inlist.map(function(l) {
+	var inlist = self.unpivot.inlist.map(function (l) {
 		return l.columnid;
 	});
 
 	//	console.log(inlist, tocolumnid, forcolumnid);
 
-	return function() {
+	return function () {
 		var data = [];
 
 		var xcols = query.columns
-			.map(function(col) {
+			.map(function (col) {
 				return col.columnid;
 			})
-			.filter(function(colid) {
+			.filter(function (colid) {
 				return inlist.indexOf(colid) == -1 && colid != forcolumnid && colid != tocolumnid;
 			});
 
-		query.data.forEach(function(d) {
-			inlist.forEach(function(colid) {
+		query.data.forEach(function (d) {
+			inlist.forEach(function (colid) {
 				var nd = {};
-				xcols.forEach(function(xcolid) {
+				xcols.forEach(function (xcolid) {
 					nd[xcolid] = d[xcolid];
 				});
 				nd[forcolumnid] = colid;

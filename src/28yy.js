@@ -14,18 +14,18 @@ yy.extend = extend;
 yy.casesensitive = alasql.options.casesensitive;
 
 // Base class for all yy classes
-var Base = (yy.Base = function(params) {
+var Base = (yy.Base = function (params) {
 	return yy.extend(this, params);
 });
 
-Base.prototype.toString = function() {};
-Base.prototype.toType = function() {};
-Base.prototype.toJS = function() {};
+Base.prototype.toString = function () {};
+Base.prototype.toType = function () {};
+Base.prototype.toJS = function () {};
 
 //  var BaseClause = yy,BaseClause = function (params) { return yy.extend(this, params); };
 Base.prototype.compile = returnUndefined;
-Base.prototype.exec = function() {};
+Base.prototype.exec = function () {};
 
 //  var BaseStatement = yy,BaseStatement = function (params) { return yy.extend(this, params); };
 Base.prototype.compile = returnUndefined;
-Base.prototype.exec = function() {};
+Base.prototype.exec = function () {};

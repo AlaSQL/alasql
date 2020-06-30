@@ -6,7 +6,7 @@ if (alasql.options.tsql) {
 	// IF OBJECT_ID('dbo.VSortedOrders', 'V') IS NOT NULL
 	//   DROP VIEW dbo.VSortedOrders;
 
-	alasql.stdfn.OBJECT_ID = function(name, type) {
+	alasql.stdfn.OBJECT_ID = function (name, type) {
 		if (typeof type == 'undefined') type = 'T';
 		type = type.toUpperCase();
 

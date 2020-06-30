@@ -8,7 +8,7 @@
 
 /* global yy, alasql, Mongo, returnTrue */
 
-yy.Select.prototype.compileFrom = function(query) {
+yy.Select.prototype.compileFrom = function (query) {
 	//	console.log(1);
 
 	var self = this;
@@ -22,7 +22,7 @@ yy.Select.prototype.compileFrom = function(query) {
 
 	//console.log(self.from);
 
-	self.from.forEach(function(tq) {
+	self.from.forEach(function (tq) {
 		//console.log(tq);
 		//console.log(tq,tq.toJS());
 		var ps = '';
@@ -82,7 +82,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			) {
 				//				console.log(997,alasql.databases[source.databaseid].engineid);
 				// TODO -- make view for external engine
-				source.datafn = function(query, params, cb, idx, alasql) {
+				source.datafn = function (query, params, cb, idx, alasql) {
 					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
 						source.databaseid,
 						source.tableid,
@@ -92,17 +92,15 @@ yy.Select.prototype.compileFrom = function(query) {
 					);
 				};
 			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
-				source.datafn = function(query, params, cb, idx, alasql) {
-					var res = alasql.databases[source.databaseid].tables[source.tableid].select(
-						params
-					);
+				source.datafn = function (query, params, cb, idx, alasql) {
+					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
 					if (cb) res = cb(res, idx, query);
 					return res;
 				};
 			} else {
 				//				console.log('here');
 				//				console.log(420,72,alasql.databases[source.databaseid].tables[source.tableid]);
-				source.datafn = function(query, params, cb, idx, alasql) {
+				source.datafn = function (query, params, cb, idx, alasql) {
 					/*
 				// if(!query) console.log('query');
 				// if(!query.database) console.log('query');
@@ -128,10 +126,10 @@ yy.Select.prototype.compileFrom = function(query) {
 			//			console.log(101,source.columns);
 			//			tq.columns;
 
-			source.datafn = function(query, params, cb, idx, alasql) {
+			source.datafn = function (query, params, cb, idx, alasql) {
 				//				return source.subquery(query.params, cb, idx, query);
 				var res;
-				source.subquery(query.params, function(data) {
+				source.subquery(query.params, function (data) {
 					res = data.data;
 					if (cb) res = cb(res, idx, query);
 					return res;
@@ -152,10 +150,10 @@ yy.Select.prototype.compileFrom = function(query) {
 //			console.log(101,source.columns);
 //			tq.columns;
 */
-			source.datafn = function(query, params, cb, idx, alasql) {
+			source.datafn = function (query, params, cb, idx, alasql) {
 				//				return source.subquery(query.params, cb, idx, query);
 				var res;
-				source.subsearch.execute(query.database.databaseid, query.params, function(data) {
+				source.subsearch.execute(query.database.databaseid, query.params, function (data) {
 					res = data;
 					if (cb) res = cb(res, idx, query);
 					return res;
@@ -220,7 +218,7 @@ yy.Select.prototype.compileFrom = function(query) {
 			//	console.log(s);
 			source.datafn = new Function('query, params, cb, idx, alasql', ps);
 		} else if (tq instanceof yy.FromData) {
-			source.datafn = function(query, params, cb, idx, alasql) {
+			source.datafn = function (query, params, cb, idx, alasql) {
 				var res = tq.data;
 				if (cb) res = cb(res, idx, query);
 				return res;
@@ -236,7 +234,7 @@ yy.Select.prototype.compileFrom = function(query) {
 	//console.log(query.defaultTableid);
 };
 
-alasql.prepareFromData = function(data, array) {
+alasql.prepareFromData = function (data, array) {
 	//console.log(177,data,array);
 	var i, ilen;
 	var res = data;

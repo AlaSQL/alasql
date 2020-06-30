@@ -1,4 +1,4 @@
-alasql.ZipWriter = function() {
+alasql.ZipWriter = function () {
 	/**
 		@type {object} Entries for ZIP file
 	*/
@@ -295,7 +295,7 @@ alasql.ZipWriter = function() {
 
 		// Calculate buffer size
 		items = items.split('');
-		items.forEach(function(type) {
+		items.forEach(function (type) {
 			if (type == 'v') {
 				bufferSize += 2;
 			} else if (type == 'V' || type == 'l') {
@@ -305,7 +305,7 @@ alasql.ZipWriter = function() {
 
 		// Fill buffer
 		buffer = new Buffer(bufferSize);
-		items.forEach(function(type, index) {
+		items.forEach(function (type, index) {
 			if (type == 'v') {
 				buffer.writeUInt16LE(data[index + 1], idx);
 				idx += 2;
@@ -325,7 +325,7 @@ alasql.ZipWriter = function() {
 		return zipPath.replace(/\\/g, '/').replace(/^\/|\/$/g, '');
 	}
 
-	this.addEntry = function(entry) {
+	this.addEntry = function (entry) {
 		entry.path = normalizeZipPath(entry.path);
 		entries.push(entry);
 	};
@@ -337,7 +337,7 @@ alasql.ZipWriter = function() {
 	// 	});
 	// };
 
-	this.addDir = function(zipPath, localPath) {
+	this.addDir = function (zipPath, localPath) {
 		this.addEntry({
 			path: zipPath,
 			file: localPath,
@@ -345,7 +345,7 @@ alasql.ZipWriter = function() {
 		});
 	};
 
-	this.addData = function(zipPath, data) {
+	this.addData = function (zipPath, data) {
 		if (!Buffer.isBuffer(data)) {
 			data = new Buffer(data);
 		}
@@ -369,7 +369,7 @@ alasql.ZipWriter = function() {
 			length += buf.length;
 		}
 
-		entries.forEach(function(entry) {
+		entries.forEach(function (entry) {
 			var mtime, mdate;
 
 			entry.extra = entry.extra || '';
@@ -435,7 +435,7 @@ alasql.ZipWriter = function() {
 		var centralDirSize = 0;
 
 		// Write central directory information
-		entries.forEach(function(entry) {
+		entries.forEach(function (entry) {
 			// Add central directory file header
 			append(
 				pack(
@@ -493,7 +493,7 @@ alasql.ZipWriter = function() {
 		return buffer;
 	}
 
-	this.toBuffer = function(callback) {
+	this.toBuffer = function (callback) {
 		var index = -1;
 
 		function deflateNext() {

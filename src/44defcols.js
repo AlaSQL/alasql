@@ -6,11 +6,11 @@
 //
 */
 
-yy.Select.prototype.compileDefCols = function(query, databaseid) {
+yy.Select.prototype.compileDefCols = function (query, databaseid) {
 	//	console.log('defcols');
 	var defcols = {'.': {}};
 	if (this.from) {
-		this.from.forEach(function(fr) {
+		this.from.forEach(function (fr) {
 			defcols['.'][fr.as || fr.tableid] = true;
 			if (fr instanceof yy.Table) {
 				var alias = fr.as || fr.tableid;
@@ -26,7 +26,7 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				}
 
 				if (table.columns) {
-					table.columns.forEach(function(col) {
+					table.columns.forEach(function (col) {
 						if (defcols[col.columnid]) {
 							defcols[col.columnid] = '-'; // Ambigous
 						} else {
@@ -50,7 +50,7 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 	}
 
 	if (this.joins) {
-		this.joins.forEach(function(jn) {
+		this.joins.forEach(function (jn) {
 			defcols['.'][jn.as || jn.table.tableid] = true;
 
 			//			console.log(jn);
@@ -58,11 +58,10 @@ yy.Select.prototype.compileDefCols = function(query, databaseid) {
 				var alias = jn.table.tableid;
 				if (jn.as) alias = jn.as;
 				var alias = jn.as || jn.table.tableid;
-				var table =
-					alasql.databases[jn.table.databaseid || databaseid].tables[jn.table.tableid];
+				var table = alasql.databases[jn.table.databaseid || databaseid].tables[jn.table.tableid];
 				//				console.log(jn.table.tableid, jn.table.databaseid);
 				if (table.columns) {
-					table.columns.forEach(function(col) {
+					table.columns.forEach(function (col) {
 						if (defcols[col.columnid]) {
 							defcols[col.columnid] = '-'; // Ambigous
 						} else {

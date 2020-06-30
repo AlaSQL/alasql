@@ -6,14 +6,14 @@
 //
 */
 
-yy.WithSelect = function(params) {
+yy.WithSelect = function (params) {
 	return yy.extend(this, params);
 };
-yy.WithSelect.prototype.toString = function() {
+yy.WithSelect.prototype.toString = function () {
 	var s = 'WITH ';
 	s +=
 		this.withs
-			.map(function(w) {
+			.map(function (w) {
 				return w.name + ' AS (' + w.select.toString() + ')';
 			})
 			.join(',') + ' ';
@@ -21,21 +21,21 @@ yy.WithSelect.prototype.toString = function() {
 	return s;
 };
 
-yy.WithSelect.prototype.execute = function(databaseid, params, cb) {
+yy.WithSelect.prototype.execute = function (databaseid, params, cb) {
 	var self = this;
 	// Create temporary tables
 	var savedTables = [];
-	self.withs.forEach(function(w) {
+	self.withs.forEach(function (w) {
 		savedTables.push(alasql.databases[databaseid].tables[w.name]);
 		var tb = (alasql.databases[databaseid].tables[w.name] = new Table({tableid: w.name}));
 		tb.data = w.select.execute(databaseid, params);
 	});
 
 	var res = 1;
-	res = this.select.execute(databaseid, params, function(data) {
+	res = this.select.execute(databaseid, params, function (data) {
 		// Clear temporary tables
 		//		setTimeout(function(){
-		self.withs.forEach(function(w, idx) {
+		self.withs.forEach(function (w, idx) {
 			if (savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx];
 			else delete alasql.databases[databaseid].tables[w.name];
 		});

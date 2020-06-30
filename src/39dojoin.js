@@ -32,7 +32,7 @@ function doJoin(query, scope, h) {
 		var source = query.sources[h];
 		source.applyselect(
 			query.params,
-			function(data) {
+			function (data) {
 				if (data.length > 0) {
 					//			console.log('APPLY CB');
 					for (var i = 0; i < data.length; i++) {
@@ -100,11 +100,7 @@ function doJoin(query, scope, h) {
 			var ilen = data.length;
 			var dataw;
 			//			console.log(h,opt,source.data,i,source.dontcache);
-			while (
-				(dataw = data[i]) ||
-				(!opt && (source.getfn && (dataw = source.getfn(i)))) ||
-				i < ilen
-			) {
+			while ((dataw = data[i]) || (!opt && source.getfn && (dataw = source.getfn(i))) || i < ilen) {
 				if (!opt && source.getfn && !source.dontcache) data[i] = dataw;
 				//console.log(h, i, dataw);
 				scope[tableid] = dataw;
@@ -139,9 +135,7 @@ function doJoin(query, scope, h) {
 
 			// Additional join for LEFT JOINS
 			if (
-				(source.joinmode == 'LEFT' ||
-					source.joinmode == 'OUTER' ||
-					source.joinmode == 'SEMI') &&
+				(source.joinmode == 'LEFT' || source.joinmode == 'OUTER' || source.joinmode == 'SEMI') &&
 				!pass
 			) {
 				// Clear the scope after the loop

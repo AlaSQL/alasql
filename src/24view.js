@@ -7,7 +7,7 @@
 */
 
 // Table class
-var View = (alasql.View = function(params) {
+var View = (alasql.View = function (params) {
 	// Columns
 	this.columns = [];
 	this.xcolumns = {};

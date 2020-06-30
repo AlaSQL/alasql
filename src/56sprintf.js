@@ -43,7 +43,7 @@
  *       using powers of 1000.
  */
 
-stdfn.SPRINTF = function() {
+stdfn.SPRINTF = function () {
 	var args = arguments;
 	var index = 0;
 
@@ -62,7 +62,7 @@ stdfn.SPRINTF = function() {
 	 *      x[5] contains the floating-point precision specifier (as \.\d*)
 	 *      x[6] contains the type specifier (as [bcdfosuxX])
 	 */
-	return args[0].replace(stdfn.SPRINTF.re, function() {
+	return args[0].replace(stdfn.SPRINTF.re, function () {
 		if (arguments[0] == '%%') {
 			return '%';
 		}
@@ -82,16 +82,16 @@ stdfn.SPRINTF = function() {
 
 stdfn.SPRINTF.re = /%%|%(?:(\d+)[\$#])?([+-])?('.|0| )?(\d*)(?:\.(\d+))?([bcdfosuxXhH])/g;
 
-stdfn.SPRINTF.b = function(ins, x) {
+stdfn.SPRINTF.b = function (ins, x) {
 	return Number(ins).bin(x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.c = function(ins, x) {
+stdfn.SPRINTF.c = function (ins, x) {
 	return String.fromCharCode(ins).padding(x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.d = stdfn.SPRINTF.u = function(ins, x) {
+stdfn.SPRINTF.d = stdfn.SPRINTF.u = function (ins, x) {
 	return Number(ins).radix(0x0a, x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.f = function(ins, x) {
+stdfn.SPRINTF.f = function (ins, x) {
 	var ins = Number(ins);
 	//      var fn = String.prototype.padding;
 	if (x[5]) {
@@ -106,19 +106,19 @@ stdfn.SPRINTF.f = function(ins, x) {
 	return ins.padding(x[2] + x[4], x[3]);
 	//      return fn.call(ins, x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.o = function(ins, x) {
+stdfn.SPRINTF.o = function (ins, x) {
 	return Number(ins).oct(x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.s = function(ins, x) {
+stdfn.SPRINTF.s = function (ins, x) {
 	return String(ins).padding(x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.x = function(ins, x) {
+stdfn.SPRINTF.x = function (ins, x) {
 	return Number(ins).hexl(x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.X = function(ins, x) {
+stdfn.SPRINTF.X = function (ins, x) {
 	return Number(ins).hex(x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.h = function(ins, x) {
+stdfn.SPRINTF.h = function (ins, x) {
 	var ins = String.prototype.replace.call(ins, /,/g, '');
 	// Invert sign because this is not number but string
 	x[2] = x[2] == '-' ? '+' : '-';
@@ -126,7 +126,7 @@ stdfn.SPRINTF.h = function(ins, x) {
 		.human(x[5], true)
 		.padding(x[2] + x[4], x[3]);
 };
-stdfn.SPRINTF.H = function(ins, x) {
+stdfn.SPRINTF.H = function (ins, x) {
 	var ins = String.prototype.replace.call(ins, /,/g, '');
 	// Invert sign because this is not number but string
 	x[2] = x[2] == '-' ? '+' : '-';
