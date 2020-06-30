@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 11.x, 12.x, 13.x, 14.x]
+        node-version: [10.x, 12.x, 13.x, 14.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -21,7 +21,10 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npm run test-ci    
+    - run: npx yarn install
+    - run: npx prettier src/*.js --list-different || (echo 'Please correct file formatting using `yarn format` and try again. && exit 1) 
+    - run: npx yarn test-only
+    - run: npx yarn test
+ 
 
   
