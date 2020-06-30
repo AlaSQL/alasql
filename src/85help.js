@@ -8,10 +8,10 @@
 //
 */
 
-yy.Help = function(params) {
+yy.Help = function (params) {
 	return yy.extend(this, params);
 };
-yy.Help.prototype.toString = function() {
+yy.Help.prototype.toString = function () {
 	var s = 'HELP';
 	if (this.subject) s += ' ' + this.subject;
 	return s;
@@ -57,7 +57,7 @@ var helpdocs = [
 ];
 
 // execute
-yy.Help.prototype.execute = function(databaseid, params, cb) {
+yy.Help.prototype.execute = function (databaseid, params, cb) {
 	var ss = [];
 	if (!this.subject) {
 		ss = helpdocs;

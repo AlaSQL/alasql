@@ -4,12 +4,12 @@ if (!alasql) {
 	throw new Error('alasql was not found');
 }
 
-alasql.worker = function() {
+alasql.worker = function () {
 	throw new Error('Can find webworker in this enviroment');
 };
 
 if (typeof Worker !== 'undefined') {
-	alasql.worker = function(path, paths, cb) {
+	alasql.worker = function (path, paths, cb) {
 		//	var path;
 		if (path === true) {
 			path = undefined;
@@ -47,14 +47,14 @@ if (typeof Worker !== 'undefined') {
 			var blob = new Blob([js], {type: 'text/plain'});
 			alasql.webworker = new Worker(URL.createObjectURL(blob));
 
-			alasql.webworker.onmessage = function(event) {
+			alasql.webworker.onmessage = function (event) {
 				var id = event.data.id;
 
 				alasql.buffer[id](event.data.data);
 				delete alasql.buffer[id];
 			};
 
-			alasql.webworker.onerror = function(e) {
+			alasql.webworker.onerror = function (e) {
 				throw e;
 			};
 
@@ -62,7 +62,7 @@ if (typeof Worker !== 'undefined') {
 				var sql =
 					'REQUIRE ' +
 					paths
-						.map(function(p) {
+						.map(function (p) {
 							return '"' + p + '"';
 						})
 						.join(',');

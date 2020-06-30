@@ -12,7 +12,7 @@
     @class Database 
  */
 
-var Database = (alasql.Database = function(databaseid) {
+var Database = (alasql.Database = function (databaseid) {
 	var self = this;
 	//		self = function(a){console.log('OK',a);}
 	//		self.prototype = this;
@@ -64,7 +64,7 @@ var Database = (alasql.Database = function(databaseid) {
     Reset SQL statements cache
  */
 
-Database.prototype.resetSqlCache = function() {
+Database.prototype.resetSqlCache = function () {
 	this.sqlCache = {}; // Cache for compiled SQL statements
 	this.sqlCacheSize = 0;
 };
@@ -78,11 +78,11 @@ Database.prototype.resetSqlCache = function() {
     @param {function} cb callback
  */
 
-Database.prototype.exec = function(sql, params, cb) {
+Database.prototype.exec = function (sql, params, cb) {
 	return alasql.dexec(this.databaseid, sql, params, cb);
 };
 
-Database.prototype.autoval = function(tablename, colname, getNext) {
+Database.prototype.autoval = function (tablename, colname, getNext) {
 	return alasql.autoval(tablename, colname, getNext, this.databaseid);
 };
 

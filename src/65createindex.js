@@ -6,10 +6,10 @@
 //
 */
 
-yy.CreateIndex = function(params) {
+yy.CreateIndex = function (params) {
 	return yy.extend(this, params);
 };
-yy.CreateIndex.prototype.toString = function() {
+yy.CreateIndex.prototype.toString = function () {
 	var s = 'CREATE';
 	if (this.unique) s += ' UNIQUE';
 	s += ' INDEX ' + this.indexid + ' ON ' + this.table.toString();
@@ -18,7 +18,7 @@ yy.CreateIndex.prototype.toString = function() {
 };
 
 // CREATE TABLE
-yy.CreateIndex.prototype.execute = function(databaseid, params, cb) {
+yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 	//	var self = this;
 	var db = alasql.databases[databaseid];
 	var tableid = this.table.tableid;
@@ -27,7 +27,7 @@ yy.CreateIndex.prototype.execute = function(databaseid, params, cb) {
 	db.indices[indexid] = tableid;
 
 	var rightfns = this.columns
-		.map(function(expr) {
+		.map(function (expr) {
 			return expr.expression.toJS('r', '');
 		})
 		.join("+'`'+");
@@ -69,16 +69,16 @@ yy.CreateIndex.prototype.execute = function(databaseid, params, cb) {
 	return res;
 };
 
-yy.Reindex = function(params) {
+yy.Reindex = function (params) {
 	return yy.extend(this, params);
 };
-yy.Reindex.prototype.toString = function() {
+yy.Reindex.prototype.toString = function () {
 	var s = 'REINDEX ' + this.indexid;
 	return s;
 };
 
 // CREATE TABLE
-yy.Reindex.prototype.execute = function(databaseid, params, cb) {
+yy.Reindex.prototype.execute = function (databaseid, params, cb) {
 	//	var self = this;
 	var db = alasql.databases[databaseid];
 	var indexid = this.indexid;

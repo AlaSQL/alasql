@@ -64,7 +64,7 @@ function doSearch(databaseid, params, cb) {
 						} else {
 							var rv = [];
 							if (stack && stack.length > 0) {
-								stack.forEach(function(stv) {
+								stack.forEach(function (stv) {
 									rv = rv.concat(processSelector(selectors, sidx + 1, stv));
 								});
 							}
@@ -78,7 +78,7 @@ function doSearch(databaseid, params, cb) {
 							//							console.log(node.$id, node.$out);
 							visited[node.$id] = true;
 							if (node.$out && node.$out.length > 0) {
-								node.$out.forEach(function(edgeid) {
+								node.$out.forEach(function (edgeid) {
 									var edge = objects[edgeid];
 									var stack2 = stack.concat(edge);
 									stack2.push(objects[edge.$out[0]]);
@@ -125,7 +125,7 @@ function doSearch(databaseid, params, cb) {
 				}
 			} else if (sel.selid === 'AND') {
 				var res = true;
-				sel.args.forEach(function(se) {
+				sel.args.forEach(function (se) {
 					res = res && processSelector(se, 0, value).length > 0;
 				});
 				if (!res) {
@@ -139,7 +139,7 @@ function doSearch(databaseid, params, cb) {
 				}
 			} else if (sel.selid === 'OR') {
 				var res = false;
-				sel.args.forEach(function(se) {
+				sel.args.forEach(function (se) {
 					res = res || processSelector(se, 0, value).length > 0;
 				});
 				if (!res) {
@@ -176,7 +176,7 @@ function doSearch(databaseid, params, cb) {
 				}
 			} else if (sel.selid === 'UNIONALL') {
 				var nest = [];
-				sel.args.forEach(function(se) {
+				sel.args.forEach(function (se) {
 					nest = nest.concat(processSelector(se, 0, value));
 				});
 				if (nest.length === 0) {
@@ -190,7 +190,7 @@ function doSearch(databaseid, params, cb) {
 				}
 			} else if (sel.selid === 'UNION') {
 				var nest = [];
-				sel.args.forEach(function(se) {
+				sel.args.forEach(function (se) {
 					nest = nest.concat(processSelector(se, 0, value));
 				});
 				var nest = distinctArray(nest);
@@ -272,7 +272,7 @@ function doSearch(databaseid, params, cb) {
 							var nest1 = processSelector(sel.sels, 0, nest.value);
 							//						console.log(397,nest1);
 
-							nest1.forEach(function(n) {
+							nest1.forEach(function (n) {
 								nests.push({value: n, lvl: nest.lvl + 1});
 							});
 							if (nest.lvl >= lmin) {
@@ -280,10 +280,8 @@ function doSearch(databaseid, params, cb) {
 									retval = retval.concat(nest1);
 									//return nests;
 								} else {
-									nest1.forEach(function(n) {
-										retval = retval.concat(
-											processSelector(selectors, sidx + 1, n)
-										);
+									nest1.forEach(function (n) {
+										retval = retval.concat(processSelector(selectors, sidx + 1, n));
 									});
 								}
 							}
@@ -301,7 +299,7 @@ function doSearch(databaseid, params, cb) {
 					return [value];
 				} else {
 					var r1 = [];
-					Object.keys(value).forEach(function(keyv) {
+					Object.keys(value).forEach(function (keyv) {
 						alasql.vars[sel.args[0].variable] = keyv;
 						r1 = r1.concat(processSelector(selectors, sidx + 1, value[keyv]));
 					});
@@ -356,7 +354,7 @@ alasql.srch.TO = function(val,args) {
 			} else if (sel.selid === 'SUM') {
 				var nest = processSelector(sel.args, 0, value);
 				if (nest.length > 0) {
-					var val = nest.reduce(function(sum, current) {
+					var val = nest.reduce(function (sum, current) {
 						return sum + current;
 					}, 0);
 				} else {
@@ -371,7 +369,7 @@ alasql.srch.TO = function(val,args) {
 				nest = processSelector(sel.args, 0, value);
 				if (nest.length > 0) {
 					val =
-						nest.reduce(function(sum, current) {
+						nest.reduce(function (sum, current) {
 							return sum + current;
 						}, 0) / nest.length;
 				} else {
@@ -425,7 +423,7 @@ alasql.srch.TO = function(val,args) {
 				if (nest.length === 0) {
 					return [];
 				}
-				var val = nest.reduce(function(min, current) {
+				var val = nest.reduce(function (min, current) {
 					return Math.min(min, current);
 				}, Infinity);
 				if (sidx + 1 + 1 > selectors.length) {
@@ -438,7 +436,7 @@ alasql.srch.TO = function(val,args) {
 				if (nest.length === 0) {
 					return [];
 				}
-				var val = nest.reduce(function(max, current) {
+				var val = nest.reduce(function (max, current) {
 					return Math.max(max, current);
 				}, -Infinity);
 				if (sidx + 1 + 1 > selectors.length) {
@@ -453,7 +451,7 @@ alasql.srch.TO = function(val,args) {
 				if (sidx + 1 + 1 > selectors.length) {
 					retval = retval.concat(nests);
 				} else {
-					nests.forEach(function(n) {
+					nests.forEach(function (n) {
 						retval = retval.concat(processSelector(selectors, sidx + 1, n));
 					});
 				}
@@ -476,7 +474,7 @@ alasql.srch.TO = function(val,args) {
 						retval = retval.concat(nest);
 						//return retval;
 					} else {
-						nest.forEach(function(n) {
+						nest.forEach(function (n) {
 							//							console.log(293,n);
 							var rn = processSelector(selectors, sidx + 1, n);
 							//							console.log(294,rn, retval);
@@ -500,7 +498,7 @@ alasql.srch.TO = function(val,args) {
 					retval = retval.concat(nests);
 					//return nests;
 				} else {
-					nests.forEach(function(n) {
+					nests.forEach(function (n) {
 						retval = retval.concat(processSelector(selectors, sidx + 1, n));
 					});
 				}
@@ -514,7 +512,7 @@ alasql.srch.TO = function(val,args) {
 					nests = nests.concat(nest);
 
 					if (sidx + 1 + 1 <= selectors.length) {
-						nest.forEach(function(n) {
+						nest.forEach(function (n) {
 							retval = retval.concat(processSelector(selectors, sidx + 1, n));
 						});
 					}
@@ -532,7 +530,7 @@ alasql.srch.TO = function(val,args) {
 				retval = retval.concat(processSelector(selectors, sidx + 1, value));
 				var nest = processSelector(sel.args, 0, value);
 				if (sidx + 1 + 1 <= selectors.length) {
-					nest.forEach(function(n) {
+					nest.forEach(function (n) {
 						retval = retval.concat(processSelector(selectors, sidx + 1, n));
 					});
 				}
@@ -621,7 +619,7 @@ alasql.srch.TO = function(val,args) {
 		fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
 		//selectors.unshift({srchid:'CHILD'});
 	} else if (this.from instanceof yy.FuncValue && alasql.from[this.from.funcid.toUpperCase()]) {
-		var args = this.from.args.map(function(arg) {
+		var args = this.from.args.map(function (arg) {
 			var as = arg.toJS();
 			//			console.log(as);
 			var fn = new Function('params,alasql', 'var y;return ' + as).bind(this);
@@ -657,7 +655,7 @@ alasql.srch.TO = function(val,args) {
 		// Init variables for TO() selectors
 
 		if (false) {
-			selectors.forEach(function(selector) {
+			selectors.forEach(function (selector) {
 				if (selector.srchid === 'TO') {
 					//* @todo move to TO selector
 					alasql.vars[selector.args[0]] = [];
@@ -704,11 +702,11 @@ alasql.srch.TO = function(val,args) {
 	SEARCH SUM(/a) FROM ? -- search over parameter object
 */
 
-yy.Search = function(params) {
+yy.Search = function (params) {
 	return yy.extend(this, params);
 };
 
-yy.Search.prototype.toString = function() {
+yy.Search.prototype.toString = function () {
 	var s = 'SEARCH' + ' ';
 	if (this.selectors) {
 		s += this.selectors.toString();
@@ -720,22 +718,22 @@ yy.Search.prototype.toString = function() {
 	return s;
 };
 
-yy.Search.prototype.toJS = function(context) {
+yy.Search.prototype.toJS = function (context) {
 	//		console.log('yy.CreateVertex.toJS');
 	var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
 	// var s = '';
 	return s;
 };
 
-yy.Search.prototype.compile = function(databaseid) {
+yy.Search.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 	var self = this;
 
-	var statement = function(params, cb) {
+	var statement = function (params, cb) {
 		// console.log(31,self);
 		// console.log(32,arguments);
 		var res;
-		doSearch.bind(self)(dbid, params, function(data) {
+		doSearch.bind(self)(dbid, params, function (data) {
 			// console.log(35,data);
 			res = modify(statement.query, data);
 			// console.log(37,data);
@@ -754,11 +752,11 @@ yy.Search.prototype.compile = function(databaseid) {
 // List of search functions
 alasql.srch = {};
 
-alasql.srch.PROP = function(val, args, stope) {
+alasql.srch.PROP = function (val, args, stope) {
 	//		console.log('PROP',args[0],val);
 	if (stope.mode === 'XML') {
 		var arr = [];
-		val.children.forEach(function(v) {
+		val.children.forEach(function (v) {
 			if (v.name.toUpperCase() === args[0].toUpperCase()) {
 				arr.push(v);
 			}
@@ -782,7 +780,7 @@ alasql.srch.PROP = function(val, args, stope) {
 	}
 };
 
-alasql.srch.APROP = function(val, args) {
+alasql.srch.APROP = function (val, args) {
 	if (
 		typeof val !== 'object' ||
 		val === null ||
@@ -796,7 +794,7 @@ alasql.srch.APROP = function(val, args) {
 };
 
 // Test expression
-alasql.srch.EQ = function(val, args, stope, params) {
+alasql.srch.EQ = function (val, args, stope, params) {
 	var exprs = args[0].toJS('x', '');
 	var exprfn = new Function('x,alasql,params', 'return ' + exprs);
 	if (val === exprfn(val, alasql, params)) {
@@ -807,21 +805,20 @@ alasql.srch.EQ = function(val, args, stope, params) {
 };
 
 // Test expression
-alasql.srch.LIKE = function(val, args, stope, params) {
+alasql.srch.LIKE = function (val, args, stope, params) {
 	var exprs = args[0].toJS('x', '');
 	var exprfn = new Function('x,alasql,params', 'return ' + exprs);
 	if (
-		val.toUpperCase().match(
-			new RegExp(
-				'^' +
-					exprfn(val, alasql, params)
-						.toUpperCase()
-						.replace(/%/g, '.*')
-						.replace(/\?|_/g, '.') +
-					'$'
-			),
-			'g'
-		)
+		val
+			.toUpperCase()
+			.match(
+				new RegExp(
+					'^' +
+						exprfn(val, alasql, params).toUpperCase().replace(/%/g, '.*').replace(/\?|_/g, '.') +
+						'$'
+				),
+				'g'
+			)
 	) {
 		return {status: 1, values: [val]};
 	} else {
@@ -829,7 +826,7 @@ alasql.srch.LIKE = function(val, args, stope, params) {
 	}
 };
 
-alasql.srch.ATTR = function(val, args, stope) {
+alasql.srch.ATTR = function (val, args, stope) {
 	if (stope.mode === 'XML') {
 		if (typeof args === 'undefined') {
 			return {status: 1, values: [val.attributes]};
@@ -849,7 +846,7 @@ alasql.srch.ATTR = function(val, args, stope) {
 	}
 };
 
-alasql.srch.CONTENT = function(val, args, stope) {
+alasql.srch.CONTENT = function (val, args, stope) {
 	if (stope.mode === 'XML') {
 		return {status: 1, values: [val.content]};
 	} else {
@@ -857,7 +854,7 @@ alasql.srch.CONTENT = function(val, args, stope) {
 	}
 };
 
-alasql.srch.SHARP = function(val, args) {
+alasql.srch.SHARP = function (val, args) {
 	var obj = alasql.databases[alasql.useid].objects[args[0]];
 	if (typeof val !== 'undefined' && val === obj) {
 		return {status: 1, values: [val]};
@@ -866,14 +863,14 @@ alasql.srch.SHARP = function(val, args) {
 	}
 };
 
-alasql.srch.PARENT = function(/*val,args,stope*/) {
+alasql.srch.PARENT = function (/*val,args,stope*/) {
 	// TODO: implement
 	console.error('PARENT not implemented', arguments);
 
 	return {status: -1, values: []};
 };
 
-alasql.srch.CHILD = function(val, args, stope) {
+alasql.srch.CHILD = function (val, args, stope) {
 	//    	console.log(641,val);
 	if (typeof val === 'object') {
 		if (Array.isArray(val)) {
@@ -882,14 +879,14 @@ alasql.srch.CHILD = function(val, args, stope) {
 			if (stope.mode === 'XML') {
 				return {
 					status: 1,
-					values: Object.keys(val.children).map(function(key) {
+					values: Object.keys(val.children).map(function (key) {
 						return val.children[key];
 					}),
 				};
 			} else {
 				return {
 					status: 1,
-					values: Object.keys(val).map(function(key) {
+					values: Object.keys(val).map(function (key) {
 						return val[key];
 					}),
 				};
@@ -902,7 +899,7 @@ alasql.srch.CHILD = function(val, args, stope) {
 };
 
 // Return all keys
-alasql.srch.KEYS = function(val) {
+alasql.srch.KEYS = function (val) {
 	if (typeof val === 'object' && val !== null) {
 		return {status: 1, values: Object.keys(val)};
 	} else {
@@ -912,7 +909,7 @@ alasql.srch.KEYS = function(val) {
 };
 
 // Test expression
-alasql.srch.WHERE = function(val, args, stope, params) {
+alasql.srch.WHERE = function (val, args, stope, params) {
 	var exprs = args[0].toJS('x', '');
 	var exprfn = new Function('x,alasql,params', 'return ' + exprs);
 	if (exprfn(val, alasql, params)) {
@@ -922,7 +919,7 @@ alasql.srch.WHERE = function(val, args, stope, params) {
 	}
 };
 
-alasql.srch.NAME = function(val, args) {
+alasql.srch.NAME = function (val, args) {
 	if (val.name === args[0]) {
 		return {status: 1, values: [val]};
 	} else {
@@ -930,7 +927,7 @@ alasql.srch.NAME = function(val, args) {
 	}
 };
 
-alasql.srch.CLASS = function(val, args) {
+alasql.srch.CLASS = function (val, args) {
 	//	console.log(val,args);
 	// Please avoid `===` here
 	if (val.$class == args) {
@@ -942,7 +939,7 @@ alasql.srch.CLASS = function(val, args) {
 };
 
 // Transform expression
-alasql.srch.VERTEX = function(val) {
+alasql.srch.VERTEX = function (val) {
 	if (val.$node === 'VERTEX') {
 		return {status: 1, values: [val]};
 	} else {
@@ -951,7 +948,7 @@ alasql.srch.VERTEX = function(val) {
 };
 
 // Transform expression
-alasql.srch.INSTANCEOF = function(val, args) {
+alasql.srch.INSTANCEOF = function (val, args) {
 	if (val instanceof alasql.fn[args[0]]) {
 		return {status: 1, values: [val]};
 	} else {
@@ -960,7 +957,7 @@ alasql.srch.INSTANCEOF = function(val, args) {
 };
 
 // Transform expression
-alasql.srch.EDGE = function(val) {
+alasql.srch.EDGE = function (val) {
 	if (val.$node === 'EDGE') {
 		return {status: 1, values: [val]};
 	} else {
@@ -969,17 +966,17 @@ alasql.srch.EDGE = function(val) {
 };
 
 // Transform expression
-alasql.srch.EX = function(val, args, stope, params) {
+alasql.srch.EX = function (val, args, stope, params) {
 	var exprs = args[0].toJS('x', '');
 	var exprfn = new Function('x,alasql,params', 'return ' + exprs);
 	return {status: 1, values: [exprfn(val, alasql, params)]};
 };
 
 // Transform expression
-alasql.srch.RETURN = function(val, args, stope, params) {
+alasql.srch.RETURN = function (val, args, stope, params) {
 	var res = {};
 	if (args && args.length > 0) {
-		args.forEach(function(arg) {
+		args.forEach(function (arg) {
 			var exprs = arg.toJS('x', '');
 			var exprfn = new Function('x,alasql,params', 'return ' + exprs);
 			if (typeof arg.as === 'undefined') {
@@ -992,14 +989,14 @@ alasql.srch.RETURN = function(val, args, stope, params) {
 };
 
 // Transform expression
-alasql.srch.REF = function(val) {
+alasql.srch.REF = function (val) {
 	return {status: 1, values: [alasql.databases[alasql.useid].objects[val]]};
 };
 
 // Transform expression
-alasql.srch.OUT = function(val) {
+alasql.srch.OUT = function (val) {
 	if (val.$out && val.$out.length > 0) {
-		var res = val.$out.map(function(v) {
+		var res = val.$out.map(function (v) {
 			return alasql.databases[alasql.useid].objects[v];
 		});
 		return {status: 1, values: res};
@@ -1008,13 +1005,13 @@ alasql.srch.OUT = function(val) {
 	}
 };
 
-alasql.srch.OUTOUT = function(val) {
+alasql.srch.OUTOUT = function (val) {
 	if (val.$out && val.$out.length > 0) {
 		var res = [];
-		val.$out.forEach(function(v) {
+		val.$out.forEach(function (v) {
 			var av = alasql.databases[alasql.useid].objects[v];
 			if (av && av.$out && av.$out.length > 0) {
-				av.$out.forEach(function(vv) {
+				av.$out.forEach(function (vv) {
 					res = res.concat(alasql.databases[alasql.useid].objects[vv]);
 				});
 			}
@@ -1026,9 +1023,9 @@ alasql.srch.OUTOUT = function(val) {
 };
 
 // Transform expression
-alasql.srch.IN = function(val) {
+alasql.srch.IN = function (val) {
 	if (val.$in && val.$in.length > 0) {
-		var res = val.$in.map(function(v) {
+		var res = val.$in.map(function (v) {
 			return alasql.databases[alasql.useid].objects[v];
 		});
 		return {status: 1, values: res};
@@ -1037,13 +1034,13 @@ alasql.srch.IN = function(val) {
 	}
 };
 
-alasql.srch.ININ = function(val) {
+alasql.srch.ININ = function (val) {
 	if (val.$in && val.$in.length > 0) {
 		var res = [];
-		val.$in.forEach(function(v) {
+		val.$in.forEach(function (v) {
 			var av = alasql.databases[alasql.useid].objects[v];
 			if (av && av.$in && av.$in.length > 0) {
-				av.$in.forEach(function(vv) {
+				av.$in.forEach(function (vv) {
 					res = res.concat(alasql.databases[alasql.useid].objects[vv]);
 				});
 			}
@@ -1055,19 +1052,19 @@ alasql.srch.ININ = function(val) {
 };
 
 // Transform expression
-alasql.srch.AS = function(val, args) {
+alasql.srch.AS = function (val, args) {
 	alasql.vars[args[0]] = val;
 	return {status: 1, values: [val]};
 };
 
 // Transform expression
-alasql.srch.AT = function(val, args) {
+alasql.srch.AT = function (val, args) {
 	var v = alasql.vars[args[0]];
 	return {status: 1, values: [v]};
 };
 
 // Transform expression
-alasql.srch.CLONEDEEP = function(val) {
+alasql.srch.CLONEDEEP = function (val) {
 	// TODO something wrong
 	var z = cloneDeep(val);
 	return {status: 1, values: [z]};
@@ -1081,10 +1078,10 @@ alasql.srch.CLONEDEEP = function(val) {
 // };
 
 // Transform expression
-alasql.srch.SET = function(val, args, stope, params) {
+alasql.srch.SET = function (val, args, stope, params) {
 	//	console.log(arguments);
 	var s = args
-		.map(function(st) {
+		.map(function (st) {
 			//console.log(898,st);
 			if (st.method === '@') {
 				return "alasql.vars['" + st.variable + "']=" + st.expression.toJS('x', '');
@@ -1102,11 +1099,11 @@ alasql.srch.SET = function(val, args, stope, params) {
 	return {status: 1, values: [val]};
 };
 
-alasql.srch.ROW = function(val, args, stope, params) {
+alasql.srch.ROW = function (val, args, stope, params) {
 	var s = 'var y;return [';
 	//  console.log(args[0]);
 	s += args
-		.map(function(arg) {
+		.map(function (arg) {
 			return arg.toJS('x', '');
 		})
 		.join(',');
@@ -1117,7 +1114,7 @@ alasql.srch.ROW = function(val, args, stope, params) {
 	return {status: 1, values: [rv]};
 };
 
-alasql.srch.D3 = function(val) {
+alasql.srch.D3 = function (val) {
 	if (val.$node !== 'VERTEX' && val.$node === 'EDGE') {
 		val.source = val.$in[0];
 		val.target = val.$out[0];
@@ -1126,7 +1123,7 @@ alasql.srch.D3 = function(val) {
 	return {status: 1, values: [val]};
 };
 
-var compileSearchOrder = function(order) {
+var compileSearchOrder = function (order) {
 	if (order) {
 		//			console.log(990, this.order);
 		if (
@@ -1138,7 +1135,7 @@ var compileSearchOrder = function(order) {
 			//			console.log(991, this.order[0]);
 			var func = order[0].expression;
 			//			console.log(994, func);
-			return function(a, b) {
+			return function (a, b) {
 				var ra = func(a),
 					rb = func(b);
 				if (ra > rb) {
@@ -1153,7 +1150,7 @@ var compileSearchOrder = function(order) {
 
 		var s = '';
 		var sk = '';
-		order.forEach(function(ord) {
+		order.forEach(function (ord) {
 			// console.log(ord instanceof yy.Expression);
 			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
@@ -1177,13 +1174,7 @@ var compileSearchOrder = function(order) {
 				}
 
 				if (columnid === '_') {
-					s +=
-						'if(a' +
-						dg +
-						(ord.direction === 'ASC' ? '>' : '<') +
-						'b' +
-						dg +
-						')return 1;';
+					s += 'if(a' + dg + (ord.direction === 'ASC' ? '>' : '<') + 'b' + dg + ')return 1;';
 					s += 'if(a' + dg + '==b' + dg + '){';
 				} else {
 					s +=
@@ -1197,16 +1188,7 @@ var compileSearchOrder = function(order) {
 						"']||'')" +
 						dg +
 						')return 1;';
-					s +=
-						"if((a['" +
-						columnid +
-						"']||'')" +
-						dg +
-						"==(b['" +
-						columnid +
-						"']||'')" +
-						dg +
-						'){';
+					s += "if((a['" + columnid + "']||'')" + dg + "==(b['" + columnid + "']||'')" + dg + '){';
 				}
 			} else {
 				dg = '.valueOf()';
@@ -1249,7 +1231,7 @@ var compileSearchOrder = function(order) {
 	}
 };
 
-alasql.srch.ORDERBY = function(val, args /*,stope*/) {
+alasql.srch.ORDERBY = function (val, args /*,stope*/) {
 	//	console.log(val);
 	var res = val.sort(compileSearchOrder(args));
 	return {status: 1, values: res};

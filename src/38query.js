@@ -19,7 +19,7 @@ function queryfn(query, oldscope, cb, A, B) {
 		query.queriesdata = [];
 
 		//		console.log(8);
-		query.queriesfn.forEach(function(q, idx) {
+		query.queriesfn.forEach(function (q, idx) {
 			//			if(query.explain) ms = Date.now();
 			//console.log(18,idx);
 			//			var res = flatArray(q(query.params,null,queryfn2,(-idx-1),query));
@@ -54,7 +54,7 @@ function queryfn(query, oldscope, cb, A, B) {
 	// First - refresh data sources
 
 	var result;
-	query.sources.forEach(function(source, idx) {
+	query.sources.forEach(function (source, idx) {
 		//		source.data = query.database.tables[source.tableid].data;
 		//		console.log(666,idx);
 		source.query = query;
@@ -92,11 +92,7 @@ function queryfn2(data, idx, query) {
 			source.dontcache = source.getfn.dontcache;
 
 			//			var prevsource = query.sources[h-1];
-			if (
-				source.joinmode == 'OUTER' ||
-				source.joinmode == 'RIGHT' ||
-				source.joinmode == 'ANTI'
-			) {
+			if (source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
 				source.dontcache = false;
 			}
 			source.data = {};
@@ -151,7 +147,7 @@ function queryfn3(query) {
 			var g = {};
 			if (query.selectGroup.length > 0) {
 				//				console.log(query.selectGroup);
-				query.selectGroup.forEach(function(sg) {
+				query.selectGroup.forEach(function (sg) {
 					if (sg.aggregatorid == 'COUNT' || sg.aggregatorid == 'SUM') {
 						g[sg.nick] = 0;
 					} else {
@@ -167,7 +163,7 @@ function queryfn3(query) {
 
 		if (query.aggrKeys.length > 0) {
 			var gfns = '';
-			query.aggrKeys.forEach(function(col) {
+			query.aggrKeys.forEach(function (col) {
 				gfns +=
 					"g['" +
 					col.nick +
@@ -333,9 +329,9 @@ function queryfn3(query) {
 
 		// Remove from columns list
 		if (query.columns.length > 0) {
-			query.columns = query.columns.filter(function(column) {
+			query.columns = query.columns.filter(function (column) {
 				var found = false;
-				removeKeys.forEach(function(key) {
+				removeKeys.forEach(function (key) {
 					if (column.columnid == key) found = true;
 				});
 				return !found;
@@ -361,9 +357,9 @@ function queryfn3(query) {
 		}
 
 		if (query.columns.length > 0) {
-			query.columns = query.columns.filter(function(column) {
+			query.columns = query.columns.filter(function (column) {
 				var found = false;
-				removeLikeKeys.forEach(function(key) {
+				removeLikeKeys.forEach(function (key) {
 					//					if(column.columnid.match(key)) found = true;
 					if (alasql.utils.like(key, column.columnid)) {
 						found = true;
@@ -438,7 +434,7 @@ function doDistinct(query) {
 		var keys = Object.keys(query.data[0] || []);
 		for (var i = 0, ilen = query.data.length; i < ilen; i++) {
 			var uix = keys
-				.map(function(k) {
+				.map(function (k) {
 					return query.data[i][k];
 				})
 				.join('`');
@@ -452,7 +448,7 @@ function doDistinct(query) {
 }
 
 // Optimization: preliminary indexation of joins
-var preIndex = function(query) {
+var preIndex = function (query) {
 	//	console.log(query);
 	// Loop over all sources
 	// Todo: make this loop smaller and more graspable
@@ -511,10 +507,7 @@ var preIndex = function(query) {
 					i++;
 				}
 
-				if (
-					source.databaseid &&
-					alasql.databases[source.databaseid].tables[source.tableid]
-				) {
+				if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 					// Save index to original table
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
@@ -576,7 +569,7 @@ var preIndex = function(query) {
 			if (source.srcwherefns) {
 				if (source.data) {
 					scope = {};
-					source.data = source.data.filter(function(r) {
+					source.data = source.data.filter(function (r) {
 						scope[source.alias] = r;
 						return source.srcwherefn(scope, query.params, alasql);
 					});
@@ -591,7 +584,7 @@ var preIndex = function(query) {
 				var scope = {};
 				// TODO!!!!! Data as Function
 
-				source.data = source.data.filter(function(r) {
+				source.data = source.data.filter(function (r) {
 					scope[source.alias] = r;
 					//					console.log(288,source);
 					return source.srcwherefn(scope, query.params, alasql);

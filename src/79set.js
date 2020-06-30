@@ -6,10 +6,10 @@
 //
 */
 
-yy.SetVariable = function(params) {
+yy.SetVariable = function (params) {
 	return yy.extend(this, params);
 };
-yy.SetVariable.prototype.toString = function() {
+yy.SetVariable.prototype.toString = function () {
 	var s = 'SET ';
 	if (typeof this.value != 'undefined')
 		s += this.variable.toUpperCase() + ' ' + (this.value ? 'ON' : 'OFF');
@@ -17,7 +17,7 @@ yy.SetVariable.prototype.toString = function() {
 	return s;
 };
 
-yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
+yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 	//	console.log(this);
 	if (typeof this.value != 'undefined') {
 		var val = this.value;
@@ -30,7 +30,7 @@ yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
 		//		}
 	} else if (this.expression) {
 		if (this.exists) {
-			this.existsfn = this.exists.map(function(ex) {
+			this.existsfn = this.exists.map(function (ex) {
 				var nq = ex.compile(databaseid);
 				if (nq.query && !nq.query.modifier) nq.query.modifier = 'RECORDSET';
 				return nq;
@@ -39,7 +39,7 @@ yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
 			});
 		}
 		if (this.queries) {
-			this.queriesfn = this.queries.map(function(q) {
+			this.queriesfn = this.queries.map(function (q) {
 				var nq = q.compile(databaseid);
 				if (nq.query && !nq.query.modifier) nq.query.modifier = 'RECORDSET';
 				return nq;
@@ -62,7 +62,7 @@ yy.SetVariable.prototype.execute = function(databaseid, params, cb) {
 				var fs = "params['" + this.variable + "']";
 			}
 			fs += this.props
-				.map(function(prop) {
+				.map(function (prop) {
 					if (typeof prop == 'string') {
 						return "['" + prop + "']";
 					} else if (typeof prop == 'number') {
