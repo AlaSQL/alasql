@@ -53,8 +53,8 @@
 		"es6-promise": "^4.2.6",
 		"lodash": "^4.17.15",
 		"request": "2.88.2",
-		"xlsx": "0.16.3",
-		"yargs": "15.4.0"
+		"xlsx": "0.16.4",
+		"yargs": "15.4.1"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.16.0",
@@ -76,12 +76,12 @@
 		"mocha.parallel": "^0.15.6",
 		"mversion": "2.0.1",
 		"npm-check": "5.9.2",
-		"open": "7.0.4",
+		"open": "7.1.0",
 		"prettier": "2.0.5",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.3",
 		"uglify-js": "3.10.0",
-		"version-bump-prompt": "6.0.3"
+		"version-bump-prompt": "6.0.6"
 	},
 	"engines": {
 		"node": "*"
