@@ -54,7 +54,7 @@
 		"lodash": "^4.17.15",
 		"request": "2.88.2",
 		"xlsx": "0.16.3",
-		"yargs": "15.3.1"
+		"yargs": "15.4.0"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.16.0",
@@ -74,7 +74,7 @@
 		"lint-staged": "10.2.11",
 		"mocha": "8.0.1",
 		"mocha.parallel": "^0.15.6",
-		"mversion": "2.0.0",
+		"mversion": "2.0.1",
 		"npm-check": "5.9.2",
 		"open": "7.0.4",
 		"prettier": "2.0.5",
