@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 63 - PIVOT', function() {
-	it('Create new table', function(done) {
+describe('Test 63 - PIVOT', function () {
+	it('Create new table', function (done) {
 		alasql('create database test63');
 		alasql('use database test63');
 		alasql('drop table if exists sales');
@@ -16,7 +16,7 @@ describe('Test 63 - PIVOT', function() {
 		done();
 	});
 
-	it('PIVOT - not yet created', function(done) {
+	it('PIVOT - not yet created', function (done) {
 		var res = alasql('select * from sales');
 
 		//		alasql('drop database test63');

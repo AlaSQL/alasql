@@ -1,7 +1,7 @@
-//! AlaSQL v0.6.3-develop-10231230undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.6.3-develop-e15135abundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.6.3-develop-10231230undefined
+@version 0.6.3-develop-e15135abundefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.6.3-develop-10231230undefined';
+alasql.version = '0.6.3-develop-e15135abundefined';
 
 /**
 	Debug flag
@@ -17040,7 +17040,8 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	var XLSX = getXLSX();
 
 	/* If called without filename, use opts */
-	if (typeof filename == 'object') { // todo: check if data, clumns and cb also should be shifted.
+	if (typeof filename == 'object') {
+		// todo: check if data, clumns and cb also should be shifted.
 		opts = filename;
 		filename = undefined;
 	}

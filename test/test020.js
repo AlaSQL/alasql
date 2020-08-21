@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 20 - User-defined functions', function() {
-	it('User-defined functions', function(done) {
+describe('Test 20 - User-defined functions', function () {
+	it('User-defined functions', function (done) {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int)');
 		db.exec('INSERT INTO test1 VALUES (1)');
@@ -20,10 +20,10 @@ describe('Test 20 - User-defined functions', function() {
 		db.exec('INSERT INTO test2 VALUES (1, 3)');
 		db.exec('INSERT INTO test2 VALUES (2, 4)');
 
-		alasql.fn.double = function(x) {
+		alasql.fn.double = function (x) {
 			return x * 2;
 		};
-		alasql.fn.cubic = function(x) {
+		alasql.fn.cubic = function (x) {
 			return x * x * x;
 		};
 
@@ -32,8 +32,8 @@ describe('Test 20 - User-defined functions', function() {
 		done();
 	});
 
-	it('2 - User-defined functions + compilation', function(done) {
-		alasql.fn.cubic3 = function(x) {
+	it('2 - User-defined functions + compilation', function (done) {
+		alasql.fn.cubic3 = function (x) {
 			return x * x * x;
 		};
 		var cub = alasql.compile('SELECT VALUE cubic3(?)');
@@ -44,13 +44,13 @@ describe('Test 20 - User-defined functions', function() {
 		done();
 	});
 
-	it("3 - Database's user-defined functions + compilation", function(done) {
+	it("3 - Database's user-defined functions + compilation", function (done) {
 		alasql('create database test20;use test20');
 		alasql('create table one (a int)');
 		alasql('insert into one values (10), (20), (30)');
 
 		var num = 0;
-		alasql.fn.spy = function(x) {
+		alasql.fn.spy = function (x) {
 			//		alasql.fn.spy = function(x) {
 			num++;
 			return num;
@@ -68,12 +68,12 @@ describe('Test 20 - User-defined functions', function() {
 		done();
 	});
 
-	it("4 - Database's specific user-defined functions", function(done) {
+	it("4 - Database's specific user-defined functions", function (done) {
 		alasql('create database test20a;use test20a');
 		alasql('create table one (a int)');
 		alasql('insert into one values (10), (20), (30)');
 
-		alasql.fn.myfun = function(x) {
+		alasql.fn.myfun = function (x) {
 			return x + 1;
 		};
 
@@ -84,7 +84,7 @@ describe('Test 20 - User-defined functions', function() {
 		alasql('create table one (a int)');
 		alasql('insert into one values (10), (20), (30)');
 
-		alasql.fn.myfun = function(x) {
+		alasql.fn.myfun = function (x) {
 			return x + 2;
 		};
 

@@ -60,8 +60,8 @@ var data = [
 	},
 ];
 
-describe('373. Use functions in group by', function() {
-	it('1. Use functions from GROUP BY without alias ', function(done) {
+describe('373. Use functions in group by', function () {
+	it('1. Use functions from GROUP BY without alias ', function (done) {
 		var res = alasql(
 			'SELECT MONTH(fecha_Venta), \
             SUM(Sales) Sales FROM ? GROUP BY MONTH(fecha_Venta)',
@@ -76,14 +76,17 @@ describe('373. Use functions in group by', function() {
 		done();
 	});
 
-	it('2. Use functions with alias from GROUP BY', function(done) {
+	it('2. Use functions with alias from GROUP BY', function (done) {
 		var res = alasql(
 			'SELECT MONTH(fecha_Venta) AS mes, \
             SUM(Sales) Sales FROM ? GROUP BY MONTH(fecha_Venta)',
 			[data]
 		);
 
-		assert.deepEqual(res, [{mes: 10, Sales: 12500}, {mes: 9, Sales: 25000}]);
+		assert.deepEqual(res, [
+			{mes: 10, Sales: 12500},
+			{mes: 9, Sales: 25000},
+		]);
 
 		done();
 	});

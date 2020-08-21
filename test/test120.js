@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 120 - Tables and column names with dots, commas, spaces, square brackets, and backquotes', function() {
-	it('1. Create database Spaces and dots inside names', function(done) {
+describe('Test 120 - Tables and column names with dots, commas, spaces, square brackets, and backquotes', function () {
+	it('1. Create database Spaces and dots inside names', function (done) {
 		alasql('create database [My database]');
 		assert(!!alasql.databases['My database']);
 
@@ -30,7 +30,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		done();
 	});
 
-	it('2. Quotes', function(done) {
+	it('2. Quotes', function (done) {
 		//		var res = alasql('select sum([Primary column]) AS [quoted] from [A.table]');
 		//		assert.deepEqual(res, [{"'quoted'":31}]);
 
@@ -42,7 +42,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 
 		done();
 	});
-	it('3. Non-reserved keywords', function(done) {
+	it('3. Non-reserved keywords', function (done) {
 		//		var res = alasql('select sum([Primary column]) AS [quoted] from [A.table]');
 		//		assert.deepEqual(res, [{"'quoted'":31}]);
 
@@ -55,7 +55,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		done();
 	});
 
-	it('Mix with letter sizes', function(done) {
+	it('Mix with letter sizes', function (done) {
 		alasql('create table [Big] ([Col] int, [col] int)');
 		alasql('insert into [Big] values (1,10), (2,20), (3,30)');
 
@@ -66,11 +66,14 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 			'select [Big].[col], [big].[col] AS [COL] from [Big] ' +
 				' join [big] using [Col] where [Big].[Col] IN (2,3)'
 		);
-		assert.deepEqual(res, [{col: 20, COL: 200}, {col: 30, COL: 300}]);
+		assert.deepEqual(res, [
+			{col: 20, COL: 200},
+			{col: 30, COL: 300},
+		]);
 		done();
 	});
 
-	it('Mix with keywords', function(done) {
+	it('Mix with keywords', function (done) {
 		alasql('create table [table] ([int] int, [create] int)');
 		alasql('insert into [table] values (1,10), (2,20), (3,30)');
 
@@ -79,7 +82,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		done();
 	});
 
-	it('Clear database', function(done) {
+	it('Clear database', function (done) {
 		alasql('drop database [My database]');
 		done();
 	});

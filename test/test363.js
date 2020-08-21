@@ -5,13 +5,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 363 -> with undefined', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 363 -> with undefined', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test363;USE test363');
 		done();
 	});
 
-	it('2. TEST', function(done) {
+	it('2. TEST', function (done) {
 		var res = alasql('VALUE OF SELECT a->name FROM ?', [[{a: {name: 'hello'}}]]);
 		assert.deepEqual(res, 'hello');
 		var res = alasql('VALUE OF SELECT a->name FROM ?', [{}]);
@@ -23,7 +23,7 @@ describe('Test 363 -> with undefined', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test363');
 		done();
 	});

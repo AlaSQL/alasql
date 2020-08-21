@@ -7,8 +7,12 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 179 - function in GROUP BY', function() {
-	var authors = [{id: 1, name: 'adam'}, {id: 2, name: 'bob'}, {id: 3, name: 'charlie'}];
+describe('Test 179 - function in GROUP BY', function () {
+	var authors = [
+		{id: 1, name: 'adam'},
+		{id: 2, name: 'bob'},
+		{id: 3, name: 'charlie'},
+	];
 
 	var books = [
 		{author_id: 1, title: 'Coloring for beginners'},
@@ -18,7 +22,7 @@ describe('Test 179 - function in GROUP BY', function() {
 		{author_id: 3, title: 'String Theory for Dummies'},
 	];
 
-	it('1. SELECT', function(done) {
+	it('1. SELECT', function (done) {
 		//        var res = alasql('SELECT authors.*, books.author_id, books.title FROM ? authors LEFT JOIN ? books \
 		//        ON authors.id = books.author_id',[authors, books]);
 
@@ -40,7 +44,7 @@ describe('Test 179 - function in GROUP BY', function() {
 		done();
 	});
 
-	it('2. SELECT with JOIN', function(done) {
+	it('2. SELECT with JOIN', function (done) {
 		var res = alasql(
 			'SELECT authors.*, books.author_id, books.title FROM ? authors LEFT JOIN ? books \
         ON authors.id = books.author_id',

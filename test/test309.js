@@ -5,13 +5,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 309 # operator and graphs', function() {
-	it('0. Create database ', function(done) {
+describe('Test 309 # operator and graphs', function () {
+	it('0. Create database ', function (done) {
 		alasql('CREATE DATABASE test309;USE test309');
 		done();
 	});
 
-	it('1. SET selector', function(done) {
+	it('1. SET selector', function (done) {
 		alasql('CREATE VERTEX #Andrey SET age = 44');
 		alasql('CREATE VERTEX #Olga SET age = 35');
 		alasql('CREATE VERTEX #Maria SET age = 28');
@@ -28,7 +28,7 @@ describe('Test 309 # operator and graphs', function() {
 		done();
 	});
 
-	it('99. Drop database ', function(done) {
+	it('99. Drop database ', function (done) {
 		alasql('DROP DATABASE test309');
 		done();
 	});

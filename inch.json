@@ -1,10 +1,6 @@
 {
-  "files": {
-    "included": [
-      "src/*.js"
-    ],
-    "excluded": [
-      "!regexp:/vendor/"
-    ]
-  }
+	"files": {
+		"included": ["src/*.js"],
+		"excluded": ["!regexp:/vendor/"]
+	}
 }

@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 44', function() {
-	describe('Dates', function() {
-		it('Order by dates ASC', function(done) {
+describe('Test 44', function () {
+	describe('Dates', function () {
+		it('Order by dates ASC', function (done) {
 			alasql('create database test44');
 			alasql('use test44');
 
@@ -54,7 +54,7 @@ describe('Test 44', function() {
 			done();
 		});
 
-		it('Dates parsing in INSERT', function(done) {
+		it('Dates parsing in INSERT', function (done) {
 			alasql("INSERT INTO orders VALUES (10,'2015-10-20')");
 
 			var res = alasql('SELECT VALUE orderdate FROM orders WHERE orderid = 10');

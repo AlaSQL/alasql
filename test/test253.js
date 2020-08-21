@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 253 Internal (SELECT) with GROUP BY', function() {
-	it('1. Test', function(done) {
+describe('Test 253 Internal (SELECT) with GROUP BY', function () {
+	it('1. Test', function (done) {
 		var data = [
 			{a: 3.5, b: {c: 'label1'}},
 			{a: 0.5, b: {c: 'label1'}},

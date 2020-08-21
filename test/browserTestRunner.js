@@ -21,7 +21,7 @@
 
 	// Server from https://gist.github.com/ryanflorence/701407
 	http
-		.createServer(function(request, response) {
+		.createServer(function (request, response) {
 			var uri = url.parse(request.url).pathname,
 				filename = path.join(__dirname, uri);
 
@@ -37,7 +37,7 @@
 				return;
 			}
 
-			fs.exists(filename, function(exists) {
+			fs.exists(filename, function (exists) {
 				if (!exists || fs.statSync(filename).isDirectory()) {
 					response.writeHead(404, {'Content-Type': 'text/plain'});
 					response.write('404 Not Found\n');
@@ -45,7 +45,7 @@
 					return;
 				}
 
-				fs.readFile(filename, 'binary', function(err, file) {
+				fs.readFile(filename, 'binary', function (err, file) {
 					if (err) {
 						response.writeHead(500, {'Content-Type': 'text/plain'});
 						response.write(err + '\n');
@@ -79,7 +79,7 @@
 
 		var results = [];
 		var list = fs.readdirSync(dir);
-		list.forEach(function(fileName) {
+		list.forEach(function (fileName) {
 			var file = dir + '/' + fileName;
 			if (reFilterNo && reFilterNo.test(file)) return;
 			var stat = fs.statSync(file);

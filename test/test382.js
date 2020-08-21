@@ -12,13 +12,13 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 382 - Error in UPDATE', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 382 - Error in UPDATE', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test382;USE test382');
 		done();
 	});
 
-	it('1. Create table', function(done) {
+	it('1. Create table', function (done) {
 		var sqldb = new alasql.Database('db');
 		sqldb.exec(
 			'CREATE TABLE Locations (' +
@@ -30,8 +30,8 @@ describe('Test 382 - Error in UPDATE', function() {
 		);
 
 		// CREATE OBJ
-		var _createGpsEntry = function(data) {
-			var Entry = function(id, longitude, latitude) {
+		var _createGpsEntry = function (data) {
+			var Entry = function (id, longitude, latitude) {
 				this.id = id;
 				this.longitude = longitude;
 				this.latitude = latitude;
@@ -55,7 +55,7 @@ describe('Test 382 - Error in UPDATE', function() {
 		];
 
 		//This will not work
-		list.forEach(function(item) {
+		list.forEach(function (item) {
 			//	console.log(59,item);
 			//	console.log(60,[_createGpsEntry(item)]);
 			//  sqldb.exec("INSERT INTO Locations VALUES ?", [_createGpsEntry(item)]);
@@ -72,7 +72,7 @@ describe('Test 382 - Error in UPDATE', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test382');
 		done();

@@ -7,8 +7,8 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 184 - SELECT INDEX', function() {
-	it('0.test _', function(done) {
+describe('Test 184 - SELECT INDEX', function () {
+	it('0.test _', function (done) {
 		var data = [1, 2, 3, 4, 1, 2, 2, 3];
 		var res = alasql('SELECT _, ARRAY(_) FROM ? GROUP BY _', [data]);
 		// console.log(res);
@@ -29,7 +29,7 @@ describe('Test 184 - SELECT INDEX', function() {
 	//   done();
 	// });
 
-	it('1. SELECT INDEX', function(done) {
+	it('1. SELECT INDEX', function (done) {
 		var data = [1, 2, 3, 4, 1, 2, 2, 3];
 		var res = alasql('SELECT INDEX _,ARRAY(_) FROM ? GROUP BY _', [data]);
 		//      console.log(res);

@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 91 - Binary Operators: *, /, %, +, -, <<, >>, &, ^, |, ||', function() {
+describe('Test 91 - Binary Operators: *, /, %, +, -, <<, >>, &, ^, |, ||', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

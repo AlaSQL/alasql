@@ -8,8 +8,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 129 - * /STAR / MULTIPLICATION', function() {
-	it('UPDATE WHERE with multiplication in assignment and conditions', function(done) {
+describe('Test 129 - * /STAR / MULTIPLICATION', function () {
+	it('UPDATE WHERE with multiplication in assignment and conditions', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');

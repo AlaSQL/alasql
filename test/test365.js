@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 }
 
 var name = '';
-describe('Test 365 Default database function', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 365 Default database function', function () {
+	it('1. CREATE DATABASE', function (done) {
 		var db = new alasql.Database();
 		name = db.databaseid;
 		//    console.log(db);
@@ -16,7 +16,7 @@ describe('Test 365 Default database function', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE ' + name);
 		done();
 	});

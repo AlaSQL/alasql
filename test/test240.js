@@ -10,9 +10,9 @@ if (typeof exports == 'object') {
 	global.localStorage = new DOMStorage('./test239.json', {strict: false, ws: ''});
 }
 
-describe('Test 240 DELETE TEST', function() {
-	it('1. Create dtabase', function(done) {
-		alasql(function() {
+describe('Test 240 DELETE TEST', function () {
+	it('1. Create dtabase', function (done) {
+		alasql(function () {
 			/*
 
     SET AUTOCOMMIT OFF;
@@ -29,14 +29,21 @@ describe('Test 240 DELETE TEST', function() {
 		});
 
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [{a: 1, b: 'Moscow'}, {a: 2, b: 'Kyiv'}, {a: 3, b: 'Minsk'}]);
+		assert.deepEqual(res, [
+			{a: 1, b: 'Moscow'},
+			{a: 2, b: 'Kyiv'},
+			{a: 3, b: 'Minsk'},
+		]);
 
 		//    var res = alasql('COMMIT TRANSACTION');
 
 		alasql('DELETE FROM one WHERE a = 3');
 
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [{a: 1, b: 'Moscow'}, {a: 2, b: 'Kyiv'}]);
+		assert.deepEqual(res, [
+			{a: 1, b: 'Moscow'},
+			{a: 2, b: 'Kyiv'},
+		]);
 
 		alasql('DELETE FROM one WHERE 1=1');
 
@@ -47,7 +54,7 @@ describe('Test 240 DELETE TEST', function() {
 		done();
 	});
 
-	it('8.Drop localStorage table', function(done) {
+	it('8.Drop localStorage table', function (done) {
 		alasql('DETACH DATABASE test240');
 		alasql('DROP LOCALSTORAGE DATABASE ls240');
 		done();

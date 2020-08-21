@@ -7,8 +7,8 @@ if (typeof exports === 'object') {
 
 // Only for browser
 if (typeof exports != 'object') {
-	describe('Test 145 - localStorage', function() {
-		it('1. window object', function(done) {
+	describe('Test 145 - localStorage', function () {
+		it('1. window object', function (done) {
 			// For browser only // For node - another
 			if (typeof exports === 'object') {
 				var res = alasql('SELECT [0], [1] FROM ?', [process.argv]);
@@ -25,18 +25,26 @@ if (typeof exports != 'object') {
 			done();
 		});
 
-		it('2. Simple localStorage interface: localStorage as a function', function(done) {
-			localStorage['one'] = JSON.stringify([{a: 1, b: 2}, {a: 2, b: 4}, {a: 3, b: 6}]);
+		it('2. Simple localStorage interface: localStorage as a function', function (done) {
+			localStorage['one'] = JSON.stringify([
+				{a: 1, b: 2},
+				{a: 2, b: 4},
+				{a: 3, b: 6},
+			]);
 			localStorage['two'] = 1;
 			localStorage['three'] = undefined;
 
 			// Transfer to stdlib
-			alasql.fn.localStorage = function(key) {
+			alasql.fn.localStorage = function (key) {
 				return JSON.parse(localStorage[key]);
 			};
 
 			var res = alasql('SELECT * FROM ?', [JSON.parse(localStorage['one'])]);
-			assert.deepEqual(res, [{a: 1, b: 2}, {a: 2, b: 4}, {a: 3, b: 6}]);
+			assert.deepEqual(res, [
+				{a: 1, b: 2},
+				{a: 2, b: 4},
+				{a: 3, b: 6},
+			]);
 			var res = alasql('SELECT a FROM ? WHERE a = localStorage("two")', [
 				JSON.parse(localStorage['one']),
 			]);
@@ -48,9 +56,9 @@ if (typeof exports != 'object') {
 			done();
 		});
 
-		it('3. localStorage as a table name with key, value', function(done) {
+		it('3. localStorage as a table name with key, value', function (done) {
 			if (false) {
-				var lsfn = function(i) {
+				var lsfn = function (i) {
 					if (i >= localStorage.length) return;
 					var k = localStorage.key(i);
 					var v;
@@ -60,33 +68,48 @@ if (typeof exports != 'object') {
 					return [k, v];
 				};
 
-				alasql.from.LOCALSTORAGE = function() {
+				alasql.from.LOCALSTORAGE = function () {
 					return lsfn;
 				};
 				var res = alasql('SELECT COLUMN [1] FROM localStorage() WHERE [0] LIKE "one"');
-				assert.deepEqual(res, [[{a: 1, b: 2}, {a: 2, b: 4}, {a: 3, b: 6}]]);
+				assert.deepEqual(res, [
+					[
+						{a: 1, b: 2},
+						{a: 2, b: 4},
+						{a: 3, b: 6},
+					],
+				]);
 
 				var res = alasql('SELECT COLUMN [1] FROM ? WHERE [0] LIKE "one"', [lsfn]);
-				assert.deepEqual(res, [[{a: 1, b: 2}, {a: 2, b: 4}, {a: 3, b: 6}]]);
+				assert.deepEqual(res, [
+					[
+						{a: 1, b: 2},
+						{a: 2, b: 4},
+						{a: 3, b: 6},
+					],
+				]);
 			}
 			//		console.log(res);
 			if (false) {
 				//console.log(1);
-				alasql.into.localStorage = function(r, i) {
+				alasql.into.localStorage = function (r, i) {
 					/// console.log('save to LS',r,i);
 					localStorage[r[0]] = JSON.stringify(r[1]);
 				};
 
 				//		alasql('INSERT INTO localStorage() VALUES ("mytable.1",@[1,2,3]), ("mytable.2",@{a:1,b:2})'); // key=value
 
-				var res = alasql('SELECT * INTO localStorage() FROM ?', [[1, 'wind'], [2, 'fire']]);
+				var res = alasql('SELECT * INTO localStorage() FROM ?', [
+					[1, 'wind'],
+					[2, 'fire'],
+				]);
 				/// console.log(res);
 				/// console.log(localStorage[1],localStorage[2]);
 			}
 			done();
 		});
 		if (false) {
-			it('3. localStorage AS a database', function(done) {
+			it('3. localStorage AS a database', function (done) {
 				// SELECT * FROM localStorage("and")
 
 				alasql('ATTACH DATABASE localStorage'); // Do we really need this?
@@ -122,7 +145,7 @@ if (typeof exports != 'object') {
 				done();
 			});
 
-			it('99. Detach database', function(done) {
+			it('99. Detach database', function (done) {
 				alasql('DETACH DATABASE localStorage'); // Do we really need this?
 				done();
 			});

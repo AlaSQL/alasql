@@ -8,11 +8,11 @@ if (typeof exports === 'object') {
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
-describe('Test 236 MERGE', function() {
-	it('1. Prepare database and tables', function(done) {
+describe('Test 236 MERGE', function () {
+	it('1. Prepare database and tables', function (done) {
 		alasql('CREATE DATABASE test236; USE test236;');
 
-		var sql = function() {
+		var sql = function () {
 			/*
             CREATE TABLE [Target](EmployeeID int, EmployeeName varchar(10), 
                  CONSTRAINT Target_PK PRIMARY KEY(EmployeeID));
@@ -48,8 +48,8 @@ describe('Test 236 MERGE', function() {
 		done();
 	});
 
-	it('2. Merge', function(done) {
-		var sql = function() {
+	it('2. Merge', function (done) {
+		var sql = function () {
 			/*
 
         MERGE [Target] AS T
@@ -72,7 +72,7 @@ describe('Test 236 MERGE', function() {
 		done();
 	});
 
-	it('99. DROP', function(done) {
+	it('99. DROP', function (done) {
 		alasql('DROP DATABASE test236');
 		done();
 	});

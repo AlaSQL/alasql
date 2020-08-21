@@ -8,8 +8,8 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports === 'object' && false) {
-	describe('Test 167 - database in database', function() {
-		it('1. Temporary tables', function(done) {
+	describe('Test 167 - database in database', function () {
+		it('1. Temporary tables', function (done) {
 			var res = alasql('insert into #city values {city:"Oslo"}, {city:"Helsinki"}');
 			assert.deepEqual(alasql.temp.city, [{city: 'Oslo'}, {city: 'Helsinki'}]);
 

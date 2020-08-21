@@ -5,14 +5,14 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 327 FOREIGN KEYS', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 327 FOREIGN KEYS', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test327; USE test327');
 		done();
 	});
 
-	it.skip('2. CREATE TABLES Parts', function(done) {
-		alasql(function() {
+	it.skip('2. CREATE TABLES Parts', function (done) {
+		alasql(function () {
 			/*
       CREATE TABLE dbo.Parts
       (
@@ -24,8 +24,8 @@ describe('Test 327 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('3. INSERT VALUES INTO Parts', function(done) {
-		alasql(function() {
+	it.skip('3. INSERT VALUES INTO Parts', function (done) {
+		alasql(function () {
 			/*
       INSERT INTO dbo.Parts(partid, partname) VALUES
         ( 1, 'Black Tea'      ),
@@ -50,9 +50,9 @@ describe('Test 327 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('4. CREATE TABLE BOM', function(done) {
+	it.skip('4. CREATE TABLE BOM', function (done) {
 		if (false) {
-			alasql(function() {
+			alasql(function () {
 				/*
       CREATE TABLE dbo.BOM
       (
@@ -66,7 +66,7 @@ describe('Test 327 FOREIGN KEYS', function() {
     */
 			});
 		}
-		alasql(function() {
+		alasql(function () {
 			/*
       CREATE TABLE dbo.BOM
       (
@@ -85,8 +85,8 @@ describe('Test 327 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('5. INSERT VALUES INTO BOM', function(done) {
-		alasql(function() {
+	it.skip('5. INSERT VALUES INTO BOM', function (done) {
+		alasql(function () {
 			/*
       INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES
         ( 1, NULL, 'EA',   1.00),
@@ -121,7 +121,7 @@ describe('Test 327 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('6. SELECT values from BOM', function(done) {
+	it.skip('6. SELECT values from BOM', function (done) {
 		var res = alasql('SELECT * FROM BOM WHERE assemblyid = 1');
 		assert.deepEqual(res, [
 			{partid: 6, assemblyid: 1, unit: 'EA', qty: 1},
@@ -133,8 +133,8 @@ describe('Test 327 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('7. INSERT duplicated key', function(done) {
-		assert.throws(function() {
+	it.skip('7. INSERT duplicated key', function (done) {
+		assert.throws(function () {
 			alasql(
 				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
           ( 1, NULL, 'EA',   1.00)"
@@ -143,8 +143,8 @@ describe('Test 327 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('8. INSERT with wrong FOREIGN KEY', function(done) {
-		assert.throws(function() {
+	it.skip('8. INSERT with wrong FOREIGN KEY', function (done) {
+		assert.throws(function () {
 			alasql(
 				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
           ( 1, 99, 'EA',   1.00)"
@@ -153,7 +153,7 @@ describe('Test 327 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('8. INSERT with right FOREIGN KEY', function(done) {
+	it.skip('8. INSERT with right FOREIGN KEY', function (done) {
 		var res = alasql(
 			"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
           ( 1, 2, 'EA',   1.00)"
@@ -179,7 +179,7 @@ describe('Test 327 FOREIGN KEYS', function() {
   });
 
 */
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test327');
 		done();
 	});

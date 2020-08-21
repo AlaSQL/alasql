@@ -5,19 +5,19 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 271 RECORDSET and Excel tests', function() {
+describe('Test 271 RECORDSET and Excel tests', function () {
 	// missing in lodash 4
-	var pluck = function(arr, key) {
-		return arr.map(function(e) {
+	var pluck = function (arr, key) {
+		return arr.map(function (e) {
 			return e[key];
 		});
 	};
 
-	it('1. Open Excel and columns', function(done) {
+	it('1. Open Excel and columns', function (done) {
 		var res = alasql(
 			'SELECT RECORDSET * FROM XLSX("' + __dirname + '/test168.xlsx",{headers:true})',
 			[],
-			function(res) {
+			function (res) {
 				var colres = pluck(res.columns, 'columnid');
 				assert.deepEqual(colres, ['City', 'Population']);
 				done();

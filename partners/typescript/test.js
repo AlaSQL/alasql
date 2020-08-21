@@ -14,22 +14,18 @@ alasql('SELECT SELECT');
 console.log(alasql.error instanceof Error);
 // test 5
 alasql('=2*3', [], function (data) {
-    console.log(5, data);
+	console.log(5, data);
 });
 // test 6
 alasql('SELECT SELECT', [], function (data, err) {
-    console.log(5, err instanceof Error);
+	console.log(5, err instanceof Error);
 });
 // test 7
-var data = [{ a: 1 }, { a: 2 }];
+var data = [{a: 1}, {a: 2}];
 res = alasql(data).Select('a').exec();
 console.log(7, res);
 
 // test 8
-alasql.promise([
-			'select 99', 
-			['select ?', [100]]
-		]).then(function(res){
-			console.log(8, res)
-		})
-
+alasql.promise(['select 99', ['select ?', [100]]]).then(function (res) {
+	console.log(8, res);
+});

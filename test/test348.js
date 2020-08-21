@@ -5,14 +5,14 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 347 Undescores in names Issue #245', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 347 Undescores in names Issue #245', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test348_a;USE test348_a');
 		done();
 	});
 
-	it('2. TEST', function(done) {
-		var res = alasql(function() {
+	it('2. TEST', function (done) {
+		var res = alasql(function () {
 			/*
       CREATE TABLE students_a (
         _id serial NOT NULL,
@@ -24,8 +24,8 @@ describe('Test 347 Undescores in names Issue #245', function() {
 		done();
 	});
 
-	it('3. TEST', function(done) {
-		var res = alasql(function() {
+	it('3. TEST', function (done) {
+		var res = alasql(function () {
 			/*
       INSERT INTO students_a VALUES
         (1 , 'John Doe'),
@@ -36,8 +36,8 @@ describe('Test 347 Undescores in names Issue #245', function() {
 		done();
 	});
 
-	it('4. TEST', function(done) {
-		var res = alasql(function() {
+	it('4. TEST', function (done) {
+		var res = alasql(function () {
 			/*
       SELECT
         _id, na_me
@@ -45,11 +45,14 @@ describe('Test 347 Undescores in names Issue #245', function() {
         students_a
     */
 		});
-		assert.deepEqual(res, [{_id: 1, na_me: 'John Doe'}, {_id: 2, na_me: 'Larry Loe'}]);
+		assert.deepEqual(res, [
+			{_id: 1, na_me: 'John Doe'},
+			{_id: 2, na_me: 'Larry Loe'},
+		]);
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test348_a');
 		done();

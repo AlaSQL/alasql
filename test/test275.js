@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 275 INNER JOIN on empty tables', function() {
-	it('1. Prepare databases', function(done) {
+describe('Test 275 INNER JOIN on empty tables', function () {
+	it('1. Prepare databases', function (done) {
 		alasql('CREATE DATABASE test275; USE test275');
 		alasql('CREATE TABLE one0 (a INT, b NVARCHAR(10))');
 		alasql('CREATE TABLE one1 (a INT, b NVARCHAR(10))');
@@ -20,7 +20,7 @@ describe('Test 275 INNER JOIN on empty tables', function() {
 		done();
 	});
 
-	it('2. INNER JOIN', function(done) {
+	it('2. INNER JOIN', function (done) {
 		var res = alasql('SELECT one0.*, two0.* FROM one0 INNER JOIN two0 ON one0.b = two0.b');
 		assert.deepEqual(res.data, []);
 
@@ -40,7 +40,7 @@ describe('Test 275 INNER JOIN on empty tables', function() {
 		done();
 	});
 
-	it('2. OUTER JOIN', function(done) {
+	it('2. OUTER JOIN', function (done) {
 		var res = alasql('SELECT one0.*, two0.* FROM one0 OUTER JOIN two0 ON one0.b = two0.b');
 		//    console.log(res.data);
 
@@ -56,7 +56,7 @@ describe('Test 275 INNER JOIN on empty tables', function() {
 		done();
 	});
 
-	it('3. LEFT JOIN', function(done) {
+	it('3. LEFT JOIN', function (done) {
 		var res = alasql('SELECT one0.*, two0.* FROM one0 LEFT JOIN two0 ON one0.b = two0.b');
 		//    console.log(res.data);
 
@@ -72,7 +72,7 @@ describe('Test 275 INNER JOIN on empty tables', function() {
 		done();
 	});
 
-	it('99. Drop databases', function(done) {
+	it('99. Drop databases', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test275');
 		done();

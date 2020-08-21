@@ -10,15 +10,15 @@ if (typeof exports === 'object') {
 //Why NULL Values Should Not Be Used in a Database Unless Required
 //http://www.bennadel.com/blog/85-why-null-values-should-not-be-used-in-a-database-unless-required.htm
 //
-describe('Test 333 Check for NULLs', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 333 Check for NULLs', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test333;USE test333');
 
 		done();
 	});
 
-	it('2. Create table', function(done) {
-		var res = alasql(function() {
+	it('2. Create table', function (done) {
+		var res = alasql(function () {
 			/*
       CREATE TABLE test (name STRING);
       INSERT INTO test VALUES ("Ben"),("Jim"),("Simon"),(NULL),(NULL),("Ye"),(""),(""),("Dave"),("");
@@ -28,13 +28,13 @@ describe('Test 333 Check for NULLs', function() {
 		done();
 	});
 
-	it('3. SELECT for NULLs', function(done) {
+	it('3. SELECT for NULLs', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 
 		var res = alasql('SELECT COUNT(*) FROM test WHERE LEN(test.name) = 0');
 		/// console.log(res);
 
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
 
       SELECT
@@ -87,7 +87,7 @@ describe('Test 333 Check for NULLs', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test333');
 		alasql.options.modifier = undefined;
 		done();

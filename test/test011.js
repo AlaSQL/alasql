@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 11', function() {
-	it('Test compile with parameters', function(done) {
+describe('Test 11', function () {
+	it('Test compile with parameters', function (done) {
 		alasql.exec('DROP TABLE IF EXISTS test');
 
 		alasql.exec('CREATE TABLE test (a int, b int)');

@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 046', function() {
-	describe('FROM as parameter', function() {
+describe('Test 046', function () {
+	describe('FROM as parameter', function () {
 		var years = [
 			{yearid: 2010},
 			{yearid: 2011},
@@ -16,7 +16,7 @@ describe('Test 046', function() {
 			{yearid: 2017},
 		];
 
-		it('FROM array of objects', function(done) {
+		it('FROM array of objects', function (done) {
 			var res = alasql('SELECT COLUMN * FROM ? AS t WHERE t.yearid>?', [years, 2014]);
 			assert.deepEqual([2015, 2016, 2017], res);
 			done();
@@ -30,13 +30,13 @@ describe('Test 046', function() {
 			[2018, 5, 3],
 			[2019, 6, 3],
 		];
-		it('FROM array of arrays', function(done) {
+		it('FROM array of arrays', function (done) {
 			var res = alasql('SELECT VALUE SUM([1]) FROM ? d WHERE [0]>2016', [data]);
 			assert.equal(15, res);
 			done();
 		});
 
-		it('queryArrayOfArrays()', function(done) {
+		it('queryArrayOfArrays()', function (done) {
 			var res = alasql('SELECT MATRIX [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [data]);
 			assert.deepEqual(
 				[
@@ -49,13 +49,13 @@ describe('Test 046', function() {
 			done();
 		});
 
-		it('queryArrayOfArrays and filter()', function(done) {
+		it('queryArrayOfArrays and filter()', function (done) {
 			var res1 = alasql('SELECT * FROM ? d WHERE [0]>2016', [data]);
 			var res2 = data
-				.filter(function(a) {
+				.filter(function (a) {
 					return a[0] > 2016;
 				})
-				.map(function(d) {
+				.map(function (d) {
 					var res = {};
 					for (var i = 0; i < d.length; i++) {
 						res[i] = d[i];
@@ -66,7 +66,7 @@ describe('Test 046', function() {
 			done();
 		});
 
-		it('FROM array of arrays', function(done) {
+		it('FROM array of arrays', function (done) {
 			var res = alasql(
 				'SELECT MATRIX [2] AS 0, SUM([1]) AS 1 \
 				FROM ? d \

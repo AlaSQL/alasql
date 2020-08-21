@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 70 - Streams processing', function() {
+describe('Test 70 - Streams processing', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

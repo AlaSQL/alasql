@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 139 JSON', function() {
-	it('1. Simple JSON', function(done) {
+describe('Test 139 JSON', function () {
+	it('1. Simple JSON', function (done) {
 		alasql('CREATE DATABASE test139; use test139');
 
 		var res = alasql('SELECT VALUE 1');
@@ -54,7 +54,7 @@ describe('Test 139 JSON', function() {
 		done();
 	});
 
-	it('2. Property', function(done) {
+	it('2. Property', function (done) {
 		var res = alasql('SELECT VALUE @{a:1}->a');
 		assert(res == 1);
 		var res = alasql('SELECT VALUE @{a:{b:@[1,2,3]}}->a->b->2');
@@ -102,7 +102,7 @@ describe('Test 139 JSON', function() {
 		done();
 	});
 
-	it('3. Property of property', function(done) {
+	it('3. Property of property', function (done) {
 		alasql('CREATE TABLE two');
 		alasql(
 			'INSERT INTO two VALUES @{a:1,b:@[0,10,20]}, @{a:2,b:@[0,(-10),(-20)]},' +
@@ -177,7 +177,7 @@ describe('Test 139 JSON', function() {
 		done();
 	});
 
-	it('99. Drop database', function(done) {
+	it('99. Drop database', function (done) {
 		alasql('DROP DATABASE test139');
 		done();
 	});

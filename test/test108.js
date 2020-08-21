@@ -8,8 +8,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Create database', function() {
-	it('Create new database', function(done) {
+describe('Create database', function () {
+	it('Create new database', function (done) {
 		var db = new alasql.Database();
 		assert.deepEqual(db.tables, {});
 		done();

@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 014', function() {
-	it('Indices', function(done) {
+describe('Test 014', function () {
+	it('Indices', function (done) {
 		var db = new alasql.Database('db');
 		db.exec('DROP TABLE IF EXISTS test1');
 		db.exec('DROP TABLE IF EXISTS test2');
@@ -23,7 +23,13 @@ describe('Test 014', function() {
 			'SELECT test1.a,b,test2.c FROM test1 LEFT JOIN test2 ON test1.a = test2.a ' +
 				' WHERE test1.a = 1'
 		);
-		assert.deepEqual([{a: 1, b: 1, c: 5}, {a: 1, b: 7, c: 5}], res);
+		assert.deepEqual(
+			[
+				{a: 1, b: 1, c: 5},
+				{a: 1, b: 7, c: 5},
+			],
+			res
+		);
 		//		assert.equal(1,Object.keys(db.tables.test1.indices).length);
 		assert.equal(1, Object.keys(db.tables.test2.indices).length);
 		//console.log(db.tables.test1.indices);

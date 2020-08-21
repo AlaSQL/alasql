@@ -10,14 +10,14 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 408 - DATEADD() and DATEDIFF()', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 408 - DATEADD() and DATEDIFF()', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test408;USE test408');
 		done();
 	});
 
-	it('2. DATEDIFF()', function(done) {
-		alasql(function() {
+	it('2. DATEDIFF()', function (done) {
+		alasql(function () {
 			/*
     CREATE TABLE Duration (
       startDate datetime
@@ -34,8 +34,8 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function() {
 		done();
 	});
 
-	it('3. DATEDIFF()', function(done) {
-		alasql(function() {
+	it('3. DATEDIFF()', function (done) {
+		alasql(function () {
 			/*
       DECLARE @startdate datetime = '2007-05-05 12:10:09.3312722';
       DECLARE @enddate datetime = '2007-05-04 12:10:09.3312722';   
@@ -47,9 +47,9 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function() {
 		done();
 	});
 
-	it('4. DATEADD()', function(done) {
+	it('4. DATEADD()', function (done) {
 		alasql("DECLARE @datetime2 datetime2 = '2007-01-01 13:10:10.1111111'");
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
       MATRIX OF
 SELECT 'year', DATEADD(year,1,@datetime2)
@@ -80,7 +80,7 @@ SELECT 'millisecond',DATEADD(millisecond,1,@datetime2)
 		done();
 	});
 
-	it('4. DATE_ADD() MySQL-style', function(done) {
+	it('4. DATE_ADD() MySQL-style', function (done) {
 		var res1 = alasql("= DATE_SUB('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
 		var res2 = alasql("= DATE_ADD('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
 		assert(res1.getDate() == 9);
@@ -89,7 +89,7 @@ SELECT 'millisecond',DATEADD(millisecond,1,@datetime2)
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test408');
 		done();

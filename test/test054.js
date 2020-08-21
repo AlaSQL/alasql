@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 54 - SELECT Number', function() {
-	it('SELECT number', function(done) {
+describe('Test 54 - SELECT Number', function () {
+	it('SELECT number', function (done) {
 		alasql('create database test54');
 		alasql('use test54');
 

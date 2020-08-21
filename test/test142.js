@@ -5,14 +5,14 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 142 INSTREAM', function() {
-	it('1. Source as a string', function(done) {
+describe('Test 142 INSTREAM', function () {
+	it('1. Source as a string', function (done) {
 		alasql('CREATE DATABASE test142; use test142');
 		done();
 	});
 
-	it('2. Simple Date functions', function(done) {
-		var srcfn = function(i) {
+	it('2. Simple Date functions', function (done) {
+		var srcfn = function (i) {
 			if (i > 2) return;
 			return {i: i, i2: i * 2};
 		};
@@ -21,14 +21,18 @@ describe('Test 142 INSTREAM', function() {
 
 		var res = alasql('SELECT * FROM ?', [srcfn]);
 		//		console.log(res);
-		assert.deepEqual(res, [{i: 0, i2: 0}, {i: 1, i2: 2}, {i: 2, i2: 4}]);
+		assert.deepEqual(res, [
+			{i: 0, i2: 0},
+			{i: 1, i2: 2},
+			{i: 2, i2: 4},
+		]);
 
 		done();
 	});
-	it('3. Calculate PI with streaming function', function(done) {
+	it('3. Calculate PI with streaming function', function (done) {
 		var n = 10000;
 
-		var rndfn = function(i) {
+		var rndfn = function (i) {
 			if (i >= n) return; // EOF
 			return {x: Math.random(), y: Math.random()};
 		};
@@ -40,7 +44,7 @@ describe('Test 142 INSTREAM', function() {
 		var tm = Date.now();
 		var res = alasql('SELECT VALUE COUNT(*) FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
 		//		console.log(Date.now() - tm);
-		var pi = res / n * 4;
+		var pi = (res / n) * 4;
 		//		console.log(res,pi);
 		assert(2 < pi && pi < 4);
 
@@ -124,7 +128,7 @@ if(false) {
 
 
 */
-	it('99. Drop database', function(done) {
+	it('99. Drop database', function (done) {
 		alasql('DROP DATABASE test142');
 		done();
 	});

@@ -8,11 +8,11 @@ if (typeof exports === 'object') {
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
-describe('Test 237 Test with local variables', function() {
-	it('1. Prepare database and tables', function(done) {
+describe('Test 237 Test with local variables', function () {
+	it('1. Prepare database and tables', function (done) {
 		alasql('CREATE DATABASE test237; USE test237;');
 
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
 
 -- Source: https://technet.microsoft.com/en-us/library/ms187953(v=sql.105).aspx
@@ -58,7 +58,7 @@ DROP TABLE TestTable;
 		done();
 	});
 
-	it('99. DROP', function(done) {
+	it('99. DROP', function (done) {
 		alasql('DROP DATABASE test237');
 		done();
 	});

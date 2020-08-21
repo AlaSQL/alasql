@@ -5,14 +5,14 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 298 PLUG-IN TEST', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 298 PLUG-IN TEST', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test298;USE test298');
 		done();
 	});
 
-	it('2.REQURE ECHO plugin', function(done) {
-		assert.throws(function() {
+	it('2.REQURE ECHO plugin', function (done) {
+		assert.throws(function () {
 			var res = alasql('ECHO 1');
 			//      console.log(1,res);
 		}, Error);
@@ -25,7 +25,7 @@ describe('Test 298 PLUG-IN TEST', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test298');
 		done();
 	});

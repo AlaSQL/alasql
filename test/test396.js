@@ -9,13 +9,13 @@ if (typeof exports === 'object') {
  This sample beased on SQLLOGICTEST
 */
 
-describe('Test 396 SQLLOGICTEST ', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 396 SQLLOGICTEST ', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test396;USE test396');
 		done();
 	});
 
-	it('2. Prepare', function(done) {
+	it('2. Prepare', function (done) {
 		alasql('CREATE TABLE t1( x INTEGER NOT NULL PRIMARY KEY, y VARCHAR(16) )');
 		alasql("INSERT INTO t1 VALUES(1, 'true')");
 		alasql("INSERT INTO t1 VALUES(0, 'false')");
@@ -43,14 +43,14 @@ describe('Test 396 SQLLOGICTEST ', function() {
 		done();
 	});
 
-	it('3. Error statement', function(done) {
+	it('3. Error statement', function (done) {
 		alasql("REPLACE INTO t1 VALUES(4, 'replace (new)')");
 		var res = alasql('SELECT x, y FROM t1 WHERE x=4');
 		assert.deepEqual(res, [4, 'replace (new)']);
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test396');
 		done();

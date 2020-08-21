@@ -25,7 +25,7 @@ Expand the function with an ESCAPE parameter
 
 */
 
-describe('Test 369 LIKE', function() {
+describe('Test 369 LIKE', function () {
 	var specials = ['/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\', '^', '%'];
 	/*
   alasql.utils.like = function (pattern,value,escape) {
@@ -74,7 +74,7 @@ describe('Test 369 LIKE', function() {
 		{a: 'ab56ef'},
 	];
 
-	it('1. Test %', function(done) {
+	it('1. Test %', function (done) {
 		var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef"', [data]);
 		assert.deepEqual(res, [{a: 'abcdef'}]);
 
@@ -86,7 +86,7 @@ describe('Test 369 LIKE', function() {
 		done();
 	});
 
-	it('2. Test alasql.utils.like function', function(done) {
+	it('2. Test alasql.utils.like function', function (done) {
 		assert(alasql.utils.like('%abc%', 'abcd'));
 		assert(!alasql.utils.like('%abc%', 'ab'));
 		assert(alasql.utils.like('%[ab][bc]%', 'abcdef'));

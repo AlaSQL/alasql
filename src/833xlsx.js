@@ -31,7 +31,8 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	var XLSX = getXLSX();
 
 	/* If called without filename, use opts */
-	if (typeof filename == 'object') { // todo: check if data, clumns and cb also should be shifted.
+	if (typeof filename == 'object') {
+		// todo: check if data, clumns and cb also should be shifted.
 		opts = filename;
 		filename = undefined;
 	}
