@@ -12,6 +12,7 @@
 alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	/** @type {number} result */
 	var res = 1;
+	opts = opts || {};
 
 	if (deepEqual(columns, [{columnid: '_'}])) {
 		data = data.map(function (dat) {
@@ -30,7 +31,7 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	var XLSX = getXLSX();
 
 	/* If called without filename, use opts */
-	if (typeof filename == 'object') {
+	if (typeof filename == 'object') { // todo: check if data, clumns and cb also should be shifted.
 		opts = filename;
 		filename = undefined;
 	}
