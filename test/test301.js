@@ -54,7 +54,7 @@ describe('Test 301 Vertices and Edges', function () {
 			['Olga', 'Peter'],
 			['Olga', 'Steven'],
 			['Peter', 'Helen'],
-		]); //      var res = alasql('SEARCH "Olga" > "loves" > '); //      console.log(res);
+		]); //      var res = alasql('SEARCH "Olga" > "loves" > '); //      console.log(res); //      var res = alasql.parse('SEARCH "Olga" > "loves" > name').statements[0].selectors;
 		//      console.log(res);
 
 		/*      var res = alasql('SEARCH / VERTEX AS @p > "loves" > AS @s @[(@p->name),(@s->name)]');
@@ -63,8 +63,7 @@ describe('Test 301 Vertices and Edges', function () {
           [ 'Olga', 'Steven' ],
           [ 'Peter', 'Helen' ] ]      
       );
-*/ //      var res = alasql.parse('SEARCH "Olga" > "loves" > name').statements[0].selectors;
-		//       console.log(res);
+*/ //       console.log(res);
 
 		var res = alasql('SEARCH / "Olga" > "loves" > name');
 		assert.deepEqual(res, ['Peter', 'Steven']);
