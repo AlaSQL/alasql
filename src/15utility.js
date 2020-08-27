@@ -947,6 +947,14 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 		return new Date(obj);
 	}
 
+	if (obj instanceof String) {
+		return obj.toString();
+	}
+
+	if (obj instanceof Number) {
+		return +obj;
+	}
+
 	var temp = obj.constructor(); // changed
 
 	for (var key in obj) {

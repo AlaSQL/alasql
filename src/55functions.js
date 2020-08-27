@@ -327,11 +327,12 @@ alasql.aggr.MEDIAN = function (v, s, stage) {
 			return r[p - 1];
 		}
 
-		if (typeof r[Math.floor(p - 1)] !== 'number') {
-			return r[Math.floor(p - 1)];
+		var value = r[Math.floor(p - 1)];
+		if (typeof value !== 'number' && !(value instanceof Number)) {
+			return value;
 		}
 
-		return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;
+		return (value + r[Math.ceil(p - 1)]) / 2;
 	}
 };
 
