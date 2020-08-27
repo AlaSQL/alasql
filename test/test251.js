@@ -16,7 +16,7 @@ describe('Test 251 Overwrite XLSX file', function () {
 				'SELECT HOUR(NOW()), MINUTE(NOW()), SECOND(NOW()) \
         INTO XLSX("' +
 					__dirname +
-					'zrestest251.xlsx",{sourcefilename:"' +
+					'/restest251.xlsx",{sourcefilename:"' +
 					__dirname +
 					'/test251.xlsx", \
           sheetid:"test2", range:"B3"})',
