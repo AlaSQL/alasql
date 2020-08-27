@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 127 SOURCE', function() {
-	it('1. Load and run statements', function(done) {
+describe('Test 127 SOURCE', function () {
+	it('1. Load and run statements', function (done) {
 		alasql('create database test127');
 		alasql('use test127');
 		alasql('source "' + __dirname + '/test127.sql"');
@@ -14,9 +14,12 @@ describe('Test 127 SOURCE', function() {
 		done();
 	});
 
-	it('2. Test on loaded database', function(done) {
+	it('2. Test on loaded database', function (done) {
 		var res = alasql('select * from one');
-		assert.deepEqual(res, [{a: 1, bbb: 1, c: 1}, {a: 2, bbb: 2, c: 2}]);
+		assert.deepEqual(res, [
+			{a: 1, bbb: 1, c: 1},
+			{a: 2, bbb: 2, c: 2},
+		]);
 
 		alasql('drop database test127');
 		done();

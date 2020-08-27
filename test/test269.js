@@ -10,16 +10,24 @@ if (typeof exports == 'object') {
 	global.localStorage = new DOMStorage(__dirname + './restest267.json', {strict: false, ws: ''});
 }
 
-describe('Test 269 options', function() {
-	var data1 = [{a: 1, b: 10}, {a: 2, b: 20}, {a: 3, b: 30}];
-	var data2 = [{b: 10, c: 100}, {b: 20, c: 200}, {b: 40, c: 400}];
+describe('Test 269 options', function () {
+	var data1 = [
+		{a: 1, b: 10},
+		{a: 2, b: 20},
+		{a: 3, b: 30},
+	];
+	var data2 = [
+		{b: 10, c: 100},
+		{b: 20, c: 200},
+		{b: 40, c: 400},
+	];
 
-	it.skip('1. Create database', function(done) {
+	it.skip('1. Create database', function (done) {
 		alasql('CREATE DATABASE test269; USE test269');
 		done();
 	});
 
-	it.skip('2. by default', function(done) {
+	it.skip('2. by default', function (done) {
 		alasql.options.modifier = undefined;
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, [
@@ -32,7 +40,7 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('3. VALUE', function(done) {
+	it.skip('3. VALUE', function (done) {
 		alasql.options.modifier = 'VALUE';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, 1);
@@ -40,7 +48,7 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('4. ROW', function(done) {
+	it.skip('4. ROW', function (done) {
 		alasql.options.modifier = 'ROW';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, [1, 10, 100]);
@@ -48,7 +56,7 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('5. COLUMN', function(done) {
+	it.skip('5. COLUMN', function (done) {
 		alasql.options.modifier = 'COLUMN';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, [1, 2, 3, undefined]);
@@ -56,7 +64,7 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('6. MATRIX', function(done) {
+	it.skip('6. MATRIX', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		//console.log(res);
@@ -71,7 +79,7 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('6a. MATRIX', function(done) {
+	it.skip('6a. MATRIX', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		//    alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b \
@@ -91,19 +99,24 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('7. RECORDSET', function(done) {
+	it.skip('7. RECORDSET', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		//console.log(res);
 		// Wrong with reduced rows
 		assert.deepEqual(res, {
-			data: [{a: 1, b: 10, c: 100}, {a: 2, b: 20, c: 200}, {a: 3, b: 30}, {b: 40, c: 400}],
+			data: [
+				{a: 1, b: 10, c: 100},
+				{a: 2, b: 20, c: 200},
+				{a: 3, b: 30},
+				{b: 40, c: 400},
+			],
 			columns: [{columnid: 'a'}, {columnid: 'b'}, {columnid: 'c'}],
 		});
 		done();
 	});
 
-	it.skip('8. INDEX', function(done) {
+	it.skip('8. INDEX', function (done) {
 		alasql.options.modifier = 'INDEX';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, {'1': 10, '2': 20, '3': 30, undefined: 40});
@@ -111,7 +124,7 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('9. TEXTSTRING', function(done) {
+	it.skip('9. TEXTSTRING', function (done) {
 		alasql.options.modifier = 'TEXTSTRING';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, '1\n2\n3\n');
@@ -119,7 +132,7 @@ describe('Test 269 options', function() {
 		done();
 	});
 
-	it.skip('99. Drop phase', function(done) {
+	it.skip('99. Drop phase', function (done) {
 		delete alasql.options.modifier;
 		alasql('DROP DATABASE test269');
 		done();

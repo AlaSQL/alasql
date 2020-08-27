@@ -9,15 +9,15 @@ if (typeof exports === 'object') {
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
-describe('Test 334 WITH CTE', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 334 WITH CTE', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test334;USE test334');
 
 		done();
 	});
 
-	it.skip('2. Create table', function(done) {
-		var res = alasql(function() {
+	it.skip('2. Create table', function (done) {
+		var res = alasql(function () {
 			/*
       CREATE TABLE grocery (name STRING, price MONEY, quantity INT);
       INSERT INTO test VALUES ("Apples",10,10),("Melons",15,20),("Cucumbers",40,50);
@@ -27,8 +27,8 @@ describe('Test 334 WITH CTE', function() {
 		done();
 	});
 
-	it.skip('3. WITH SELECT', function(done) {
-		var res = alasql(function() {
+	it.skip('3. WITH SELECT', function (done) {
+		var res = alasql(function () {
 			/*
 
  With Totals as
@@ -59,7 +59,7 @@ describe('Test 334 WITH CTE', function() {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test334');
 		done();
 	});

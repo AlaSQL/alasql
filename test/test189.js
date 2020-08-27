@@ -6,13 +6,17 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports == 'object') {
-	describe('Test 189 - SELECT INTO SQL()', function() {
-		it('1. From ?', function(done) {
-			var data = [{a: 1, b: 'Ten'}, {a: 2, b: 'Twenty'}, {a: 3, b: "Val's Deser"}];
+	describe('Test 189 - SELECT INTO SQL()', function () {
+		it('1. From ?', function (done) {
+			var data = [
+				{a: 1, b: 'Ten'},
+				{a: 2, b: 'Twenty'},
+				{a: 3, b: "Val's Deser"},
+			];
 			alasql(
 				'SELECT * INTO SQL("' + __dirname + '/test189.sql",{tableid:"one"}) FROM ?',
 				[data],
-				function() {
+				function () {
 					alasql(
 						'CREATE DATABASE test189;\
 	        	USE test189;\
@@ -22,7 +26,7 @@ if (typeof exports == 'object') {
 							'/test189.sql"; \
 	        	SELECT * FROM one',
 						[],
-						function(res) {
+						function (res) {
 							assert.deepEqual(res.pop(), data);
 							alasql('DROP DATABASE test189');
 							done();

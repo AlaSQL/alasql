@@ -6,9 +6,9 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 283 Test for simple example with foreign key', function() {
-	it('1. CREATE DATABASE', function(done) {
-		var res = alasql(function() {
+describe('Test 283 Test for simple example with foreign key', function () {
+	it('1. CREATE DATABASE', function (done) {
+		var res = alasql(function () {
 			/*
 
       CREATE DATABASE Fruits;

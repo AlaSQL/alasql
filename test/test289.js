@@ -6,13 +6,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 289 SEARCH INSTANCEOF', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 289 SEARCH INSTANCEOF', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test289;USE test289');
 		done();
 	});
 
-	it('2. SEARCH', function(done) {
+	it('2. SEARCH', function (done) {
 		var ast = alasql.parse('SELECT SUM(x)+20 FROM one GROUP BY x');
 
 		// { statements: [ { columns: [
@@ -29,7 +29,7 @@ describe('Test 289 SEARCH INSTANCEOF', function() {
 
 	// TODO: Add other operators
 
-	it('3. DROP DATABASE', function(done) {
+	it('3. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test289');
 		done();
 	});

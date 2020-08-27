@@ -6,13 +6,13 @@ if (typeof exports === 'object') {
 }
 
 // See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
-describe('Test 230 Fix GROUP BY expressions', function() {
-	it('046-1 FROM array of arrays', function(done) {
+describe('Test 230 Fix GROUP BY expressions', function () {
+	it('046-1 FROM array of arrays', function (done) {
 		alasql('CREATE DATABASE test230; USE test230;');
 		done();
 	});
 
-	it('217. TRUNCATE TABLE', function(done) {
+	it('217. TRUNCATE TABLE', function (done) {
 		alasql(
 			'CREATE TABLE one(a INT);\
             INSERT INTO one VALUES (1),(2),(3); \
@@ -25,7 +25,7 @@ describe('Test 230 Fix GROUP BY expressions', function() {
 		done();
 	});
 
-	it('046-1 FROM array of arrays', function(done) {
+	it('046-1 FROM array of arrays', function (done) {
 		var data = [
 			[2014, 1, 1],
 			[2015, 2, 1],
@@ -42,12 +42,15 @@ describe('Test 230 Fix GROUP BY expressions', function() {
             GROUP BY [2] ',
 			[data]
 		);
-		assert.deepEqual(res, [[2, 4], [3, 11]]);
+		assert.deepEqual(res, [
+			[2, 4],
+			[3, 11],
+		]);
 
 		done();
 	});
 
-	it('99. DROP', function(done) {
+	it('99. DROP', function (done) {
 		alasql('DROP DATABASE test230');
 		done();
 	});

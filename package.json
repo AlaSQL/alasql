@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "0.6.0",
+	"version": "0.6.3",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Rangel Wulff <m@rawu.dk>"
@@ -51,25 +51,18 @@
 	"dependencies": {
 		"dom-storage": "^2.1.0",
 		"es6-promise": "^4.2.6",
-		"lodash": "^4.17.11",
+		"lodash": "4.17.20",
 		"request": "2.88.2",
-		"xlsx": "0.16.0",
-		"yargs": "15.3.1"
+		"xlsx": "0.16.6",
+		"yargs": "15.4.1"
 	},
 	"devDependencies": {
-		"blueimp-md5": "2.13.0",
-		"cmdmix": "^2.0.1",
-		"eslint": "6.8.0",
-		"eslint-config-airbnb-base": "14.1.0",
-		"eslint-config-standard": "14.1.1",
-		"eslint-plugin-import": "2.20.2",
-		"eslint-plugin-node": "11.1.0",
-		"eslint-plugin-promise": "^4.1.1",
-		"eslint-plugin-standard": "^4.0.0",
+		"blueimp-md5": "2.17.0",
+		"cmdmix": "2.0.3",
 		"gulp": "^4.0.1",
 		"gulp-concat": "^2.6.1",
 		"gulp-dereserve": "^0.2.1",
-		"gulp-exec": "4.0.0",
+		"gulp-exec": "5.0.0",
 		"gulp-jison": "^1.2.0",
 		"gulp-rename": "2.0.0",
 		"gulp-replace": "^1.0.0",
@@ -78,17 +71,17 @@
 		"husky": "4.2.5",
 		"istanbul": "^0.4.5",
 		"jison-gho": "^0.6.1-216",
-		"lint-staged": "10.2.2",
-		"mocha": "7.1.2",
+		"lint-staged": "10.2.11",
+		"mocha": "8.1.1",
 		"mocha.parallel": "^0.15.6",
-		"mversion": "^1.13.0",
+		"mversion": "2.0.1",
 		"npm-check": "5.9.2",
-		"open": "7.0.3",
+		"open": "7.1.0",
 		"prettier": "2.0.5",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.3",
-		"uglify-js": "3.9.1",
-		"version-bump-prompt": "6.0.3"
+		"uglify-js": "3.10.1",
+		"version-bump-prompt": "6.0.6"
 	},
 	"engines": {
 		"node": "*"

@@ -5,17 +5,17 @@ if (typeof exports === 'object') {
 
 var test = 605;
 
-describe('Test ' + test + ' - get autoval', function() {
-	before(function() {
+describe('Test ' + test + ' - get autoval', function () {
+	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);
 	});
 
-	after(function() {
+	after(function () {
 		alasql('drop database test' + test);
 	});
 
-	it('A) get autoval from default alasql object', function() {
+	it('A) get autoval from default alasql object', function () {
 		alasql('CREATE TABLE session (id INT AUTOINCREMENT, sessid STRING)');
 		alasql('INSERT INTO session (sessid) VALUES ("TEST")');
 
@@ -27,7 +27,7 @@ describe('Test ' + test + ' - get autoval', function() {
 		assert.equal(alasql.autoval('session', 'id', true), 4);
 	});
 
-	it('B) get autoval from new database', function() {
+	it('B) get autoval from new database', function () {
 		//
 		var mydb = new alasql.Database('My Database');
 		mydb.exec('CREATE TABLE session (id INT AUTOINCREMENT, sessid STRING)');

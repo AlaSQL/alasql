@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 23', function() {
-	it('BETWEEN and NOT BETWEEN', function(done) {
+describe('Test 23', function () {
+	it('BETWEEN and NOT BETWEEN', function (done) {
 		var db = new alasql.Database('db');
 		//		alasql.use('db');
 		db.exec('CREATE TABLE test (a int, b int)');

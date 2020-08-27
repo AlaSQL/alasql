@@ -7,8 +7,8 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 182 - ARRAY aggregator', function() {
-	it('1. ARRAY()', function(done) {
+describe('Test 182 - ARRAY aggregator', function () {
+	it('1. ARRAY()', function (done) {
 		var data = [
 			{
 				userId: 1,

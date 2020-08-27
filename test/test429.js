@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	global.localStorage = new DOMStorage('./test429.json', {strict: false, ws: ''});
 }
 
-describe.skip('Test 429', function() {
-	it('Localstorage DELETE with WHERE clause', function(done) {
+describe.skip('Test 429', function () {
+	it('Localstorage DELETE with WHERE clause', function (done) {
 		alasql('SET AUTOCOMMIT ON');
 		alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ls429');
 		alasql('ATTACH LOCALSTORAGE DATABASE ls429');

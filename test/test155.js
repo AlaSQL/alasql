@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports != 'object') {
-	describe('Test 155 - InsexedDB INSERT', function() {
-		it('1. Multiple lines async', function(done) {
+	describe('Test 155 - InsexedDB INSERT', function () {
+		it('1. Multiple lines async', function (done) {
 			alasql(
 				'DROP IndexedDB DATABASE IF EXISTS ag155;' +
 					'CREATE IndexedDB DATABASE ag155;' +
@@ -18,7 +18,7 @@ if (typeof exports != 'object') {
 					'SELECT * FROM test155.one' +
 					'',
 				[[{a: 1}, {a: 2}]],
-				function(res) {
+				function (res) {
 					//				console.trace();
 					//			console.log(res);
 					assert.deepEqual(res, [1, 1, 1, 1, 1, 2, [{a: 1}, {a: 2}]]);

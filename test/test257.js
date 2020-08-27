@@ -6,11 +6,14 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports != 'undefined') {
-	describe('Test 257 INTO XLS()', function() {
-		it('1. INTO XLS()', function(done) {
+	describe('Test 257 INTO XLS()', function () {
+		it('1. INTO XLS()', function (done) {
 			this.timeout(9000);
 
-			var data = [{a: 1, b: 10}, {a: 2, b: 20}];
+			var data = [
+				{a: 1, b: 10},
+				{a: 2, b: 20},
+			];
 			// Show headers
 			var opts = {
 				headers: true,
@@ -77,7 +80,7 @@ if (typeof exports != 'undefined') {
 						columnid: 'b',
 						title: 'Bird',
 						cell: {
-							style: function(value, sheet, row, column, rowidx, columnidx) {
+							style: function (value, sheet, row, column, rowidx, columnidx) {
 								return 'background' + (value == 10 ? 'brown' : 'white');
 							},
 						},
@@ -85,7 +88,7 @@ if (typeof exports != 'undefined') {
 					{
 						columnid: 'b',
 						cell: {
-							value: function(value) {
+							value: function (value) {
 								return value * value;
 							},
 						},
@@ -101,7 +104,7 @@ if (typeof exports != 'undefined') {
 			done();
 		});
 
-		it('2. jsFiddle example', function(done) {
+		it('2. jsFiddle example', function (done) {
 			var items = [
 				{
 					name: 'John Smith',
@@ -180,14 +183,14 @@ if (typeof exports != 'undefined') {
 						title: 'Number of letters in name',
 						width: '300px',
 						cell: {
-							value: function(value) {
+							value: function (value) {
 								return value.length;
 							},
 						},
 					},
 				],
 				row: {
-					style: function(sheet, row, rowidx) {
+					style: function (sheet, row, rowidx) {
 						return 'background:' + (rowidx % 2 ? 'red' : 'yellow');
 					},
 				},
@@ -198,7 +201,7 @@ if (typeof exports != 'undefined') {
 					2: {
 						2: {
 							style: 'font-size:45px;background:pink',
-							value: function(value) {
+							value: function (value) {
 								return value.substr(1, 3);
 							},
 						},
@@ -215,7 +218,7 @@ if (typeof exports != 'undefined') {
 		});
 
 		if (false) {
-			it('3. Areas example', function(done) {
+			it('3. Areas example', function (done) {
 				var data = [
 					{imemid: 123, itemname: 'Samsung TV', price: 123.0, qty: 2},
 					{imemid: 567, itemname: 'LG TV', price: 233.0, qty: 4},

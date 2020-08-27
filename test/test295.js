@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 295 TestDatabase', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 295 TestDatabase', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test295;USE test295');
 
 		done();
@@ -16,8 +16,8 @@ describe('Test 295 TestDatabase', function() {
 	// Taken from here
 	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
-	it.skip('2. CREATE TABLES', function(done) {
-		alasql(function() {
+	it.skip('2. CREATE TABLES', function (done) {
+		alasql(function () {
 			/*
 
 SHOW DATABASES;
@@ -220,8 +220,8 @@ SELECT * FROM products;
 	// Taken from here
 	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
-	it.skip('3. CREATE TABLES', function(done) {
-		alasql(function() {
+	it.skip('3. CREATE TABLES', function (done) {
+		alasql(function () {
 			/*
 
 USE southwind;
@@ -345,7 +345,7 @@ SHOW CREATE TABLE product_details \G
 		done();
 	});
 
-	it.skip('4. DROP DATABASE', function(done) {
+	it.skip('4. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test295');
 		done();
 	});

@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 
 var test = '434'; // insert test file number
 
-describe('Test ' + test + ' - joins SELECT', function() {
-	before(function() {
+describe('Test ' + test + ' - joins SELECT', function () {
+	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);
 
@@ -16,11 +16,11 @@ describe('Test ' + test + ' - joins SELECT', function() {
 		alasql('INSERT INTO bbb VALUES(1, 2)');
 	});
 
-	after(function() {
+	after(function () {
 		alasql('drop database test' + test);
 	});
 
-	it('does not throw error on join SELECT', function() {
+	it('does not throw error on join SELECT', function () {
 		var res = alasql(
 			'SELECT * FROM aaa JOIN (SELECT leftSide FROM bbb) AS bLeft ON (aaa.firstValue = bLeft.leftSide)'
 		);

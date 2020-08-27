@@ -3,10 +3,10 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 32', function() {
+describe('Test 32', function () {
 	var db = new alasql.Database('db');
 
-	it('LIKE, NOT LIKE and aliases', function(done) {
+	it('LIKE, NOT LIKE and aliases', function (done) {
 		db.exec('CREATE TABLE test (a STRING, b INT, t DATETIME)');
 		db.exec("INSERT INTO test (a) VALUES ('a')");
 		db.exec("INSERT INTO test (a) VALUES ('ab')");
@@ -44,7 +44,7 @@ describe('Test 32', function() {
 		done();
 	});
 
-	it('2. Can do LIKE on numbers', function(done) {
+	it('2. Can do LIKE on numbers', function (done) {
 		db.exec('CREATE TABLE test32 (a int)');
 		db.exec('INSERT INTO test32 (a) VALUES (4)');
 		db.exec('INSERT INTO test32 (a) VALUES (44)');

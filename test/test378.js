@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('378. Primary key with DELETE ALL', function() {
-	it('1. ', function(done) {
+describe('378. Primary key with DELETE ALL', function () {
+	it('1. ', function (done) {
 		function range(i) {
 			return i ? range(i - 1).concat({id: i}) : [];
 		}

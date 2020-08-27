@@ -3,7 +3,7 @@ _AlaSQL is an open source project used on more than two million page views per m
 _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
 
 
-[![Build Status](https://travis-ci.org/agershun/alasql.svg?branch=develop)](https://travis-ci.org/agershun/alasql)
+[![CI-test](https://github.com/agershun/alasql/workflows/CI-test/badge.svg)](https://github.com/agershun/alasql/actions)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=alasql)
 [![OPEN open source software](https://img.shields.io/badge/Open--OSS-%E2%9C%94-brightgreen.svg)](http://open-oss.com)
 [![Release](https://img.shields.io/github/release/agershun/alasql.svg?label=Last%20release&a)](https://www.npmjs.com/package/alasql)

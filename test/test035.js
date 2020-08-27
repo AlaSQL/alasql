@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 35 - LIMIT OFFSET', function() {
-	it('1. Test 1', function(done) {
+describe('Test 35 - LIMIT OFFSET', function () {
+	it('1. Test 1', function (done) {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
@@ -29,7 +29,7 @@ describe('Test 35 - LIMIT OFFSET', function() {
 		done();
 	});
 
-	it('2. Test 1', function(done) {
+	it('2. Test 1', function (done) {
 		alasql('CREATE DATABASE test35; use test35');
 		alasql('CREATE TABLE test1 (a int)');
 

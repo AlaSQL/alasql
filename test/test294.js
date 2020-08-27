@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 294 TestDatabase', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 294 TestDatabase', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test294;USE test294');
 		//    alasql.options.casesensitive = false;
 		done();
@@ -15,8 +15,8 @@ describe('Test 294 TestDatabase', function() {
 	// Taken from here
 	// http://www.databasejournal.com/scripts/practice-sql.html
 
-	it('2. Create tables and insert some values', function(done) {
-		alasql(function() {
+	it('2. Create tables and insert some values', function (done) {
+		alasql(function () {
 			/*
 
       create table zipcodes (
@@ -116,13 +116,13 @@ describe('Test 294 TestDatabase', function() {
 		});
 		done();
 	});
-	it('3. Check quantities', function(done) {
+	it('3. Check quantities', function (done) {
 		var res = alasql('SELECT VALUE COUNT(*) FROM odetails');
 		assert.deepEqual(res, 10);
 		done();
 	});
 
-	it('4. DROP DATABASE', function(done) {
+	it('4. DROP DATABASE', function (done) {
 		//    alasql.options.casesensitive = true;
 		alasql('DROP DATABASE test294');
 		done();

@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 274 Count and other bugs', function() {
-	it('2. Select count', function(done) {
+describe('Test 274 Count and other bugs', function () {
+	it('2. Select count', function (done) {
 		var res = alasql('SELECT _ AS a FROM RANGE(1,10)');
 		/// console.log(res);
 

@@ -9,15 +9,15 @@ if (typeof exports === 'object') {
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
-describe('Test 335 WITH RECURSIVE CTE', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 335 WITH RECURSIVE CTE', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test335;USE test335');
 
 		done();
 	});
 
-	it.skip('2. Create table', function(done) {
-		var res = alasql(function() {
+	it.skip('2. Create table', function (done) {
+		var res = alasql(function () {
 			/*
       -- Create an Employee table.
       CREATE TABLE dbo.MyEmployees
@@ -47,8 +47,8 @@ describe('Test 335 WITH RECURSIVE CTE', function() {
 		done();
 	});
 
-	it.skip('3. WITH SELECT', function(done) {
-		var res = alasql(function() {
+	it.skip('3. WITH SELECT', function (done) {
+		var res = alasql(function () {
 			/*
 
 WITH DirectReports(ManagerID, EmployeeID, Title, EmployeeLevel) AS 
@@ -74,7 +74,7 @@ ORDER BY ManagerID;
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test335');
 		done();
 	});

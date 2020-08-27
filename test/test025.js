@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 25', function() {
-	it('JOIN USING', function(done) {
+describe('Test 25', function () {
+	it('JOIN USING', function (done) {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
@@ -27,7 +27,13 @@ describe('Test 25', function() {
 
 		var res = db.exec(sql);
 
-		assert.deepEqual([{a: 3, b: 30}, {a: 4, b: 40}], res);
+		assert.deepEqual(
+			[
+				{a: 3, b: 30},
+				{a: 4, b: 40},
+			],
+			res
+		);
 		done();
 	});
 });

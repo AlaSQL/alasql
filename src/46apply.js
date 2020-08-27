@@ -6,11 +6,11 @@
 //
 */
 
-yy.Apply = function(params) {
+yy.Apply = function (params) {
 	return yy.extend(this, params);
 };
 
-yy.Apply.prototype.toString = function() {
+yy.Apply.prototype.toString = function () {
 	var s = this.applymode + ' APPLY (' + this.select.toString() + ')';
 
 	if (this.as) s += ' AS ' + this.as;

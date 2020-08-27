@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 223 ROLLUP() in GROUP BY', function() {
+describe('Test 223 ROLLUP() in GROUP BY', function () {
 	var testData = [
 		{Phase: 'Phase 1', Step: 'Step 1', Task: 'Task 1', Val: 5},
 		{Phase: 'Phase 1', Step: 'Step 2', Task: 'Task 2', Val: 20},
@@ -13,12 +13,11 @@ describe('Test 223 ROLLUP() in GROUP BY', function() {
 		{Phase: 'Phase 2', Step: 'Step 2', Task: 'Task 2', Val: 40},
 	];
 
-	it('1. ROLLUP', function(done) {
-		var res = alasql(
-			'SELECT Phase, Step, SUM(Val) AS Val FROM ? \
-			GROUP BY ROLLUP(Phase,Step)',
-			[testData]
-		);
+	it('1. ROLLUP', function (done) {
+		var res = alasql('SELECT Phase, Step, SUM(Val) AS Val FROM ? \
+			GROUP BY ROLLUP(Phase,Step)', [
+			testData,
+		]);
 		assert.deepEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
@@ -31,7 +30,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function() {
 		done();
 	});
 
-	it('2. CUBE', function(done) {
+	it('2. CUBE', function (done) {
 		var res = alasql('SELECT Phase, Step, SUM(Val) AS Val FROM ? \
 			GROUP BY CUBE(Phase,Step)', [
 			testData,
@@ -52,7 +51,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function() {
 		done();
 	});
 
-	it('3. GROUPING SETS', function(done) {
+	it('3. GROUPING SETS', function (done) {
 		var res = alasql(
 			'SELECT Phase, Step, SUM(Val) AS Val FROM ? \
 			GROUP BY GROUPING SETS(Phase,Step)',

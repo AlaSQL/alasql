@@ -12,13 +12,13 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 384 - NOT NULL error when copying from another table issue #471', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 384 - NOT NULL error when copying from another table issue #471', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test384;USE test384');
 		done();
 	});
 
-	it('3. Create table issue - many statements', function(done) {
+	it('3. Create table issue - many statements', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		alasql('CREATE TABLE tab3 (pk INTEGER NOT NULL)');
 		alasql('CREATE TABLE tab4 (pk INTEGER NOT NULL)');
@@ -32,9 +32,9 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 	});
 
 	if (false) {
-		it('2. Create table issue - one statement', function(done) {
+		it('2. Create table issue - one statement', function (done) {
 			alasql.options.modifier = 'MATRIX';
-			alasql(function() {
+			alasql(function () {
 				/*
       CREATE TABLE tab0 (pk INTEGER NOT NULL);
       CREATE TABLE tab1 (pk INTEGER NOT NULL);
@@ -50,7 +50,7 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 		});
 	}
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test384');
 		done();

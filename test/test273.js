@@ -5,30 +5,30 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 273 Source columns detextion', function() {
+describe('Test 273 Source columns detextion', function () {
 	// missing in lodash 4
-	var pluck = function(arr, key) {
-		return arr.map(function(e) {
+	var pluck = function (arr, key) {
+		return arr.map(function (e) {
 			return e[key];
 		});
 	};
 
-	before(function() {
+	before(function () {
 		alasql('CREATE DATABASE test273; USE test273');
 	});
 
-	after(function() {
+	after(function () {
 		delete alasql.options.modifier;
 		alasql('DROP DATABASE test273');
 	});
 
-	it('1. Create database', function(done) {
+	it('1. Create database', function (done) {
 		alasql('CREATE TABLE one(a INT, b INT)');
 		alasql('CREATE TABLE two(b INT, c INT)');
 		done();
 	});
 
-	it('2. Empty test on table with columns', function(done) {
+	it('2. Empty test on table with columns', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT * FROM one');
 		var colres = pluck(res.columns, 'columnid');
@@ -37,7 +37,7 @@ describe('Test 273 Source columns detextion', function() {
 		done();
 	});
 
-	it('3. Star and other column', function(done) {
+	it('3. Star and other column', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT *,a FROM one');
 		var colres = pluck(res.columns, 'columnid');
@@ -50,14 +50,14 @@ describe('Test 273 Source columns detextion', function() {
 		done();
 	});
 
-	it('4. Subquery', function(done) {
+	it('4. Subquery', function (done) {
 		var res = alasql('SELECT RECORDSET * FROM (SELECT * FROM one)');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it('5. JOIN subquery', function(done) {
+	it('5. JOIN subquery', function (done) {
 		var res = alasql(
 			'SELECT RECORDSET t.*,s.* FROM (SELECT * FROM one) t \
       JOIN one s USING a'

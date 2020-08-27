@@ -1,5 +1,5 @@
 #!/usr/bin/env node
- //
+//
 // Command line interface for Alasql
 // Version: 0.2.2
 // Date: 28.07.2015
@@ -12,39 +12,46 @@ let fs = require('fs');
 let stdin = process.openStdin();
 let yargs = require('yargs')
 	.strict()
-	.usage('AlaSQL command-line utility (version ' + alasql.version + ')\n\nUsage: $0 [options] [sql] [params]')
+	.usage(
+		'AlaSQL command-line utility (version ' +
+			alasql.version +
+			')\n\nUsage: $0 [options] [sql] [params]'
+	)
 
-.example('$0 "sql-statement"', 'Run SQL statement and output result as JSON')
+	.example('$0 "sql-statement"', 'Run SQL statement and output result as JSON')
 	.example('')
-	.example('$0 \'value of select 2+?\' 40', 'Outputs 42')
+	.example("$0 'value of select 2+?' 40", 'Outputs 42')
 	.example('')
-	.example('$0 \'select count(*) from txt()\' < city.txt', 'Count lines in city.txt')
+	.example("$0 'select count(*) from txt()' < city.txt", 'Count lines in city.txt')
 	.example('')
-	.example('$0 \'select * into xlsx("city.xlsx") from txt("city.txt")\'', 'Convert from txt to xlsx')
+	.example(
+		'$0 \'select * into xlsx("city.xlsx") from txt("city.txt")\'',
+		'Convert from txt to xlsx'
+	)
 	.example('')
 	.example('$0 --file file.sql France 1960', 'Run SQL from file with 2 parameters')
 
-.version('v', 'Echo AlaSQL version', alasql.version)
+	.version('v', 'Echo AlaSQL version', alasql.version)
 	.alias('v', 'version')
 
-.boolean('m')
+	.boolean('m')
 	.describe('m', 'Minify json output')
 	.alias('m', 'minify')
 
-.describe('f', 'Load SQL from file')
+	.describe('f', 'Load SQL from file')
 	.alias('f', 'file')
 	.nargs('f', 1)
 	.normalize('f')
 
-.help('h')
+	.help('h')
 	.alias('h', 'help')
 
-.epilog('\nMore information about the library: www.alasql.org')
+	.epilog('\nMore information about the library: www.alasql.org');
 
 let argv = yargs.argv;
 let sql = '';
 let params = [];
-let pipedData = ''
+let pipedData = '';
 stdin.on('data', function (chunk) {
 	pipedData += chunk;
 });
@@ -67,7 +74,6 @@ if (argv.f) {
 
 	sql = fs.readFileSync(argv.f, 'utf8').toString();
 	execute(sql, argv._);
-
 } else {
 	sql = argv._.shift() || '';
 
@@ -90,9 +96,8 @@ stdin.on('end', function () {
  * @returns {null} Result will be printet to console.log
  */
 function execute(sql, params) {
-
 	if (0 === sql.trim().length) {
-		console.error("\nNo SQL to process\n");
+		console.error('\nNo SQL to process\n');
 		yargs.showHelp();
 		process.exit(1);
 	}
@@ -100,23 +105,28 @@ function execute(sql, params) {
 	for (var i = 1; i < params.length; i++) {
 		var a = params[i];
 		if (a[0] !== '"' && a[0] !== "'") {
-			if (+a == a) { // jshint ignore:line
+			if (+a == a) {
+				// jshint ignore:line
 				params[i] = +a;
 			}
 		}
 	}
 
-	alasql.promise(sql, params)
+	alasql
+		.promise(sql, params)
 		.then(function (res) {
 			if (!alasql.options.stdout) {
 				console.log(formatOutput(res));
 			}
 			process.exit(0);
-		}).catch(function (err) {
+		})
+		.catch(function (err) {
 			let errorJsonObj = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
-			console.error(formatOutput({
-				error: errorJsonObj
-			}));
+			console.error(
+				formatOutput({
+					error: errorJsonObj,
+				})
+			);
 			process.exit(1);
 		});
 }
@@ -137,7 +147,6 @@ function isDirectory(filePath) {
 	}
 	return isDir;
 }
-
 
 /**
  * Format output

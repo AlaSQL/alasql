@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 	var argv = require('yargs').argv || {};
 }
 
-describe('376. ASCII tests:', function() {
+describe('376. ASCII tests:', function () {
 	if (typeof exports === 'object') {
 		// to output all including skipped tests please run: mocha ./test/test376.js --forceall
 
@@ -13,7 +13,7 @@ describe('376. ASCII tests:', function() {
 			runAll = it;
 		}
 
-		var tests = (function() {
+		var tests = function () {
 			/*
 SELECT ASCII(' '); -- 32 - Space
 SELECT ASCII('!'); -- 33 - Exclamation mark
@@ -234,17 +234,15 @@ SELECT ASCII('ÿ'); -- 255 - Latin small letter y with diaeresis
 
 
 */
-		})
-			.toString()
-			
-		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
+		}.toString();
 
+		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
 		tests
 			.replace('\r', '')
 			.trim()
 			.split('\n')
-			.forEach(function(test) {
+			.forEach(function (test) {
 				test = test.trim();
 				if (test.indexOf('--') > -1) {
 					var runFn = it;
@@ -261,7 +259,7 @@ SELECT ASCII('ÿ'); -- 255 - Latin small letter y with diaeresis
 					var res = '' + alasql('VALUE OF ' + sql);
 					//console.log(tt,sql,etalon);
 
-					runFn(test, function(done) {
+					runFn(test, function (done) {
 						assert.equal(etalon, res);
 						done();
 					});

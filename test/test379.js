@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	global.localStorage = new DOMStorage('./test379.json', {strict: false, ws: ''});
 }
 
-describe('Test 379', function() {
-	it('Recreate dropped table - localStorage engine', function(done) {
+describe('Test 379', function () {
+	it('Recreate dropped table - localStorage engine', function (done) {
 		alasql('SET AUTOCOMMIT ON');
 		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS ls379');
 		alasql('CREATE LOCALSTORAGE DATABASE ls379');

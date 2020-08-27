@@ -7,8 +7,8 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', function() {
-	it('1. From ?', function(done) {
+describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', function () {
+	it('1. From ?', function (done) {
 		var data = [];
 		for (var i = 0; i < 200; i++) {
 			data.push({a: i});
@@ -29,7 +29,7 @@ describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', function() {
 		done();
 	});
 
-	it('2. From ?', function(done) {
+	it('2. From ?', function (done) {
 		var data = [];
 		for (var i = 0; i < 200; i++) {
 			data.push(i);

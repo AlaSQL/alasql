@@ -6,9 +6,9 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 284 PRIMARY KEY with AUTOINCREMENT', function() {
-	it('1. CREATE TABLE and INSERT', function(done) {
-		var res = alasql(function() {
+describe('Test 284 PRIMARY KEY with AUTOINCREMENT', function () {
+	it('1. CREATE TABLE and INSERT', function (done) {
+		var res = alasql(function () {
 			/*
 
       CREATE DATABASE test284;

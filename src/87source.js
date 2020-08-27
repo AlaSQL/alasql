@@ -6,30 +6,30 @@
 //
 */
 
-yy.Source = function(params) {
+yy.Source = function (params) {
 	return yy.extend(this, params);
 };
-yy.Source.prototype.toString = function() {
+yy.Source.prototype.toString = function () {
 	var s = 'SOURCE';
 	if (this.url) s += " '" + this.url + " '";
 	return s;
 };
 
 // SOURCE FILE
-yy.Source.prototype.execute = function(databaseid, params, cb) {
+yy.Source.prototype.execute = function (databaseid, params, cb) {
 	//	console.log(this.url);
 	var res;
 	loadFile(
 		this.url,
 		!!cb,
-		function(data) {
+		function (data) {
 			//		console.log(data);
 			//		res = 1;
 			res = alasql(data);
 			if (cb) res = cb(res);
 			return res;
 		},
-		function(err) {
+		function (err) {
 			throw err;
 		}
 	);

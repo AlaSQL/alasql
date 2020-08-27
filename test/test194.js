@@ -7,10 +7,10 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 194 - HAVING with aggregator', function() {
+describe('Test 194 - HAVING with aggregator', function () {
 	//    console.log(alasql.parse('SELECT a FROM ? GROUP BY a % 2').toString());
 
-	it('1. HAVING with aggregator', function(done) {
+	it('1. HAVING with aggregator', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}];
 		var res = alasql('SELECT a FROM ? GROUP BY a HAVING COUNT(*)>1 ORDER BY a', [data]);
 		assert.deepEqual(res, [{a: 1}, {a: 2}]);

@@ -3,20 +3,19 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 36', function() {
+describe('Test 36', function () {
 	var db;
 
-	it('1. Create Database', function(done) {
+	it('1. Create Database', function (done) {
 		alasql.options.modifier = undefined;
 		db = new alasql.Database('db');
 		done();
 	});
 
-	it('2. INSERT INTO FROM 1', function(done) {
+	it('2. INSERT INTO FROM 1', function (done) {
 		db.exec('CREATE TABLE test1 (a STRING)');
 
-		var sql =
-			"INSERT INTO test1 (a) VALUES ('Alpha'), ('Beta'), ('Gamma'), ('Delta'), ('Epsilon')";
+		var sql = "INSERT INTO test1 (a) VALUES ('Alpha'), ('Beta'), ('Gamma'), ('Delta'), ('Epsilon')";
 		db.exec(sql);
 
 		var sql = 'SELECT VALUE COUNT(*) FROM test1';
@@ -24,7 +23,7 @@ describe('Test 36', function() {
 
 		done();
 	});
-	it('3. INSERT INTO FROM 2', function(done) {
+	it('3. INSERT INTO FROM 2', function (done) {
 		db.exec('CREATE TABLE test2 (a STRING)');
 
 		var sql = "INSERT INTO test2 SELECT * FROM test1 WHERE a LIKE '%mm%'";
@@ -35,7 +34,7 @@ describe('Test 36', function() {
 
 		done();
 	});
-	it('4. INSERT INTO FROM 3', function(done) {
+	it('4. INSERT INTO FROM 3', function (done) {
 		db.exec('CREATE TABLE test3 (a STRING)');
 
 		var sql = "INSERT INTO test3 SELECT * FROM test1 WHERE a NOT LIKE '%e%'";
@@ -46,7 +45,7 @@ describe('Test 36', function() {
 
 		done();
 	});
-	it('99. Drop database', function(done) {
+	it('99. Drop database', function (done) {
 		done();
 	});
 });

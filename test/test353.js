@@ -8,24 +8,24 @@ if (typeof exports === 'object') {
 // Data for test
 var data = [{a: 1}, {a: 2}];
 
-describe('Test 353 Compiled Promised Statements', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 353 Compiled Promised Statements', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test353;USE test353');
 		done();
 	});
-	it('2. Compiled Sync', function(done) {
+	it('2. Compiled Sync', function (done) {
 		var st = alasql.compile('SELECT * FROM ?');
 		var res = st([data]);
 		assert.deepEqual(res, data);
 		done();
 	});
 
-	it('3. Compiled Sync with Error', function(done) {
-		alasql.fn.iamwrong = function() {
+	it('3. Compiled Sync with Error', function (done) {
+		alasql.fn.iamwrong = function () {
 			throw new Error('I am wrong!');
 		};
 		var st = alasql.compile('SELECT iamwrong() FROM ?');
-		assert.throws(function() {
+		assert.throws(function () {
 			var res = st([data]);
 		}, Error);
 		done();
@@ -40,12 +40,12 @@ describe('Test 353 Compiled Promised Statements', function() {
     done();
   });
 */
-	it('5. Compiles Async', function(done) {
-		alasql.fn.iamwrong = function() {
+	it('5. Compiles Async', function (done) {
+		alasql.fn.iamwrong = function () {
 			throw new Error('I am wrong!');
 		};
 		var st = alasql.compile('SELECT * FROM ?');
-		st([data], function(res, err) {
+		st([data], function (res, err) {
 			assert.deepEqual(res, data);
 			done();
 		});
@@ -63,28 +63,27 @@ describe('Test 353 Compiled Promised Statements', function() {
   });
 */
 
-	it('7. Compile Promise', function(done) {
+	it('7. Compile Promise', function (done) {
 		var st = alasql.compile('SELECT * FROM ?');
-		st.promise([data]).then(function(res) {
+		st.promise([data]).then(function (res) {
 			assert.deepEqual(res, data);
 			done();
 		});
 	});
 
-	it('5. Compile With Error', function(done) {
+	it('5. Compile With Error', function (done) {
 		var st = alasql.compile('SELECT iamwrong() FROM ?');
-		st
-			.promise([data])
-			.then(function(res) {
+		st.promise([data])
+			.then(function (res) {
 				// Should not be here
 			})
-			.catch(function(err) {
+			.catch(function (err) {
 				assert(err instanceof Error);
 				done();
 			});
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test353');
 		done();

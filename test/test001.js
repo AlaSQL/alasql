@@ -117,7 +117,7 @@ function prepareData(defined) {
 }
 
 function doTests() {
-	it('Select 1.1: COUNT', function(done) {
+	it('Select 1.1: COUNT', function (done) {
 		var res = alasql(
 			'SELECT courses.courseid, COUNT(*) AS cnt ' +
 				' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid'
@@ -134,7 +134,7 @@ function doTests() {
 		);
 		done();
 	});
-	it('Select 1.2: LEFT JOIN ON ', function(done) {
+	it('Select 1.2: LEFT JOIN ON ', function (done) {
 		var res = alasql(
 			'SELECT * ' +
 				' FROM students ' +
@@ -146,16 +146,14 @@ function doTests() {
 		assert.equal(res[4].studentname, 'Astrid Carlson');
 		done();
 	});
-	it('Select 1.3: LEFT JOIN', function(done) {
+	it('Select 1.3: LEFT JOIN', function (done) {
 		var res = alasql(
-			'SELECT COLUMN students.schoolid ' +
-				' FROM students ' +
-				' LEFT JOIN courses USING courseid'
+			'SELECT COLUMN students.schoolid ' + ' FROM students ' + ' LEFT JOIN courses USING courseid'
 		);
 		assert.deepEqual([1, 1, 1, 2, 1], res);
 		done();
 	});
-	it('Select 1.4: queryValue', function(done) {
+	it('Select 1.4: queryValue', function (done) {
 		var res = alasql('SELECT VALUE COUNT(*) FROM courses, students');
 		assert.equal(25, res);
 		done();
@@ -163,13 +161,13 @@ function doTests() {
 	//		alasql('drop database test01');
 }
 
-describe('Test 001', function() {
-	describe('Columns provided', function() {
+describe('Test 001', function () {
+	describe('Columns provided', function () {
 		prepareData(true);
 		doTests();
 	});
 
-	describe('Columns are not provided', function() {
+	describe('Columns are not provided', function () {
 		prepareData(false);
 		doTests();
 	});

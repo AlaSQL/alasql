@@ -7,14 +7,14 @@ if (typeof exports === 'object') {
 
 // Source: http://geekswithblogs.net/DevJef/archive/2011/09/28/quick-performance-test-in-sql-server.aspx
 
-describe('Test 345 Speed test', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 345 Speed test', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test345;USE test345');
 		done();
 	});
 
-	it.skip('2. TEST', function(done) {
-		var res = alasql(function() {
+	it.skip('2. TEST', function (done) {
+		var res = alasql(function () {
 			/*
       DECLARE @Loops INT; 
       SET @Loops = 1;
@@ -24,8 +24,8 @@ describe('Test 345 Speed test', function() {
 		done();
 	});
 
-	it.skip('3. TEST', function(done) {
-		var res = alasql(function() {
+	it.skip('3. TEST', function (done) {
+		var res = alasql(function () {
 			/*
       DECLARE @Loops INT; 
       SET @Loops = 1;
@@ -72,7 +72,7 @@ describe('Test 345 Speed test', function() {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test345');
 		done();

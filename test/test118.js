@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 118 - ADD COLUMN/MODIFY COLUMN/DROP COLUMN', function() {
-	it('ADD COLUMN', function(done) {
+describe('Test 118 - ADD COLUMN/MODIFY COLUMN/DROP COLUMN', function () {
+	it('ADD COLUMN', function (done) {
 		alasql('create database test118');
 		alasql('use test118');
 
@@ -28,7 +28,7 @@ describe('Test 118 - ADD COLUMN/MODIFY COLUMN/DROP COLUMN', function() {
 		done();
 	});
 
-	it('Clear database', function(done) {
+	it('Clear database', function (done) {
 		alasql('drop database test118');
 		done();
 	});

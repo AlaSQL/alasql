@@ -10,7 +10,7 @@
 alasql.parser = alasqlparser;
 
 /*/* This is not working :-/ */
-alasql.parser.parseError = function(str, hash) {
+alasql.parser.parseError = function (str, hash) {
 	throw new Error('Have you used a reserved keyword without `escaping` it?\n' + str);
 };
 
@@ -27,7 +27,7 @@ alasql.parser.parseError = function(str, hash) {
 		// My own parser here
  	}
  */
-alasql.parse = function(sql) {
+alasql.parse = function (sql) {
 	return alasqlparser.parse(alasql.utils.uncomment(sql));
 };
 
@@ -137,7 +137,7 @@ alasql.private = {
 	externalXlsxLib: null,
 };
 
-alasql.setXLSX = function(XLSX) {
+alasql.setXLSX = function (XLSX) {
 	alasql.private.externalXlsxLib = XLSX;
 };
 
@@ -145,7 +145,7 @@ alasql.setXLSX = function(XLSX) {
   Select current database
   @param {string} databaseid Selected database identificator
  */
-alasql.use = function(databaseid) {
+alasql.use = function (databaseid) {
 	if (!databaseid) {
 		databaseid = alasql.DEFAULTDATABASEID;
 	}
@@ -166,7 +166,7 @@ alasql.use = function(databaseid) {
 	}
 };
 
-alasql.autoval = function(tablename, colname, getNext, databaseid) {
+alasql.autoval = function (tablename, colname, getNext, databaseid) {
 	var db = databaseid ? alasql.databases[databaseid] : alasql.databases[alasql.useid];
 
 	if (!db.tables[tablename]) {
@@ -190,7 +190,7 @@ alasql.autoval = function(tablename, colname, getNext, databaseid) {
 /**
  Run single SQL statement on current database
  */
-alasql.exec = function(sql, params, cb, scope) {
+alasql.exec = function (sql, params, cb, scope) {
 	// Avoid setting params if not needed even with callback
 	if (typeof params === 'function') {
 		scope = cb;
@@ -217,7 +217,7 @@ alasql.exec = function(sql, params, cb, scope) {
 /**
  Run SQL statement on specific database
  */
-alasql.dexec = function(databaseid, sql, params, cb, scope) {
+alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	var db = alasql.databases[databaseid];
 	//	if(db.databaseid != databaseid) console.trace('got!');
 	//	console.log(3,db.databaseid,databaseid);
@@ -279,7 +279,7 @@ alasql.dexec = function(databaseid, sql, params, cb, scope) {
 /**
   Run multiple statements and return array of results sync
  */
-alasql.drun = function(databaseid, ast, params, cb, scope) {
+alasql.drun = function (databaseid, ast, params, cb, scope) {
 	var useid = alasql.useid;
 
 	if (useid !== databaseid) {
@@ -314,7 +314,7 @@ alasql.drun = function(databaseid, ast, params, cb, scope) {
 /**
   Run multiple statements and return array of results async
  */
-alasql.adrun = function(databaseid, ast, params, cb, scope) {
+alasql.adrun = function (databaseid, ast, params, cb, scope) {
 	var idx = 0;
 	var noqueries = ast.statements.length;
 	if (alasql.options.progress !== false) {
@@ -366,16 +366,16 @@ alasql.adrun = function(databaseid, ast, params, cb, scope) {
  @param {string} databaseid Database identificator
  @return {functions} Compiled statement functions
 */
-alasql.compile = function(sql, databaseid) {
+alasql.compile = function (sql, databaseid) {
 	databaseid = databaseid || alasql.useid;
 
 	var ast = alasql.parse(sql); // Create AST
 
 	if (1 === ast.statements.length) {
 		var statement = ast.statements[0].compile(databaseid);
-		statement.promise = function(params) {
-			return new Promise(function(resolve, reject) {
-				statement(params, function(data, err) {
+		statement.promise = function (params) {
+			return new Promise(function (resolve, reject) {
+				statement(params, function (data, err) {
 					if (err) {
 						reject(err);
 					} else {

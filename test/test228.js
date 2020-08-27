@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 228 SELECT inside expressions', function() {
-	it('1. UPDATE WITH SELECT', function(done) {
+describe('Test 228 SELECT inside expressions', function () {
+	it('1. UPDATE WITH SELECT', function (done) {
 		alasql('CREATE DATABASE test228; USE test228;');
 		alasql('CREATE TABLE one(a INT, b INT)');
 		alasql('INSERT INTO one VALUES (1,10),(2,20),(3,30),(4,40)');
