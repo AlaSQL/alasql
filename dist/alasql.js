@@ -1,7 +1,7 @@
-//! AlaSQL v0.6.3-develop-e15135abundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.6.3-string-number-object-support-ea5836e6undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.6.3-develop-e15135abundefined
+@version 0.6.3-string-number-object-support-ea5836e6undefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.6.3-develop-e15135abundefined';
+alasql.version = '0.6.3-string-number-object-support-ea5836e6undefined';
 
 /**
 	Debug flag
@@ -4012,6 +4012,14 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 
 	if (obj instanceof Date) {
 		return new Date(obj);
+	}
+
+	if (obj instanceof String) {
+		return obj.toString();
+	}
+
+	if (obj instanceof Number) {
+		return +obj;
 	}
 
 	var temp = obj.constructor(); // changed
@@ -11896,11 +11904,12 @@ alasql.aggr.MEDIAN = function (v, s, stage) {
 			return r[p - 1];
 		}
 
-		if (typeof r[Math.floor(p - 1)] !== 'number') {
-			return r[Math.floor(p - 1)];
+		var value = r[Math.floor(p - 1)];
+		if (typeof value !== 'number' && !(value instanceof Number)) {
+			return value;
 		}
 
-		return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;
+		return (value + r[Math.ceil(p - 1)]) / 2;
 	}
 };
 
