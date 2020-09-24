@@ -163,17 +163,17 @@
     string-argv "^0.3.1"
     type-detect "^4.0.8"
 
-"@jsdevtools/version-bump-prompt@6.0.6":
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/@jsdevtools/version-bump-prompt/-/version-bump-prompt-6.0.6.tgz#d483442312d6ee37a2ac294faee4d31d837d9fa1"
-  integrity sha512-YA8eJU3dCbpKAB1+cObYk0EIrsw6n8ZtoU5vdgEEmpBwCBcd7pXotGehunLGSr4cWHgzQheIOwhz2sGITDfZlA==
+"@jsdevtools/version-bump-prompt@6.1.0":
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/@jsdevtools/version-bump-prompt/-/version-bump-prompt-6.1.0.tgz#5b796c05db9dd2c4e5c01b8674bbae9c98ea0e79"
+  integrity sha512-NJFLJRiD3LLFBgSxAb6B255xhWCGgdtzmh6UjHK2b7SRGX2DDKJH5O4BJ0GTStBu4NnaNgMbkr1TLW3pLOBkOQ==
   dependencies:
     "@jsdevtools/ez-spawn" "^3.0.4"
     command-line-args "^5.1.1"
     detect-indent "^6.0.0"
     detect-newline "^3.1.0"
     globby "^11.0.1"
-    inquirer "^7.3.1"
+    inquirer "^7.3.3"
     log-symbols "^4.0.0"
     semver "^7.3.2"
 
@@ -2941,10 +2941,10 @@ inquirer@^0.12.0:
     strip-ansi "^3.0.0"
     through "^2.3.6"
 
-inquirer@^7.3.1:
-  version "7.3.2"
-  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-7.3.2.tgz#25245d2e32dc9f33dbe26eeaada231daa66e9c7c"
-  integrity sha512-DF4osh1FM6l0RJc5YWYhSDB6TawiBRlbV9Cox8MWlidU218Tb7fm3lQTULyUJDfJ0tjbzl0W4q651mrCCEM55w==
+inquirer@^7.3.3:
+  version "7.3.3"
+  resolved "https://registry.yarnpkg.com/inquirer/-/inquirer-7.3.3.tgz#04d176b2af04afc157a83fd7c100e98ee0aad003"
+  integrity sha512-JG3eIAj5V9CwcGvuOmoo6LB9kbAYT8HXffUl6memuszlwDC/qvFAJw49XJ5NROSFNPxp3iQg1GqkFhaY/CR0IA==
   dependencies:
     ansi-escapes "^4.2.1"
     chalk "^4.1.0"
@@ -2952,7 +2952,7 @@ inquirer@^7.3.1:
     cli-width "^3.0.0"
     external-editor "^3.0.3"
     figures "^3.0.0"
-    lodash "^4.17.16"
+    lodash "^4.17.19"
     mute-stream "0.0.8"
     run-async "^2.4.0"
     rxjs "^6.6.0"
@@ -3842,7 +3842,7 @@ lodash@4.17.20:
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
   integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
 
-"lodash@4.6.1 || ^4.16.1", lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.15, lodash@^4.17.16, lodash@^4.17.19, lodash@^4.3.0:
+"lodash@4.6.1 || ^4.16.1", lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.3.0:
   version "4.17.19"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
   integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
@@ -6241,12 +6241,12 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-version-bump-prompt@6.0.6:
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/version-bump-prompt/-/version-bump-prompt-6.0.6.tgz#317fd24b07b751490df90ffd5ed632a6ca66f0ef"
-  integrity sha512-5sn3kLLYf6k+2Z7smnfKzRKFpI5U2vCDULJqe0SWnGgixcNUXD0lKv5ynZ6JPpHftpBKodc+0SO67KnCRGTdOw==
+version-bump-prompt@6.1.0:
+  version "6.1.0"
+  resolved "https://registry.yarnpkg.com/version-bump-prompt/-/version-bump-prompt-6.1.0.tgz#9f57b9bf3e57ee87f43929ff4f3f2123be07ccdb"
+  integrity sha512-GYC83GP8QOunWueKf2mbtZkdmisXhnBZPhIHWUmN/Yi4XXAQlIi9avM/IGWdI7KkJLfMENzGN1Xee+Zl3VJ5jg==
   dependencies:
-    "@jsdevtools/version-bump-prompt" "6.0.6"
+    "@jsdevtools/version-bump-prompt" "6.1.0"
 
 vinyl-fs@^3.0.0, vinyl-fs@^3.0.3:
   version "3.0.3"

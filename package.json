@@ -81,7 +81,7 @@
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.3",
 		"uglify-js": "3.10.2",
-		"version-bump-prompt": "6.0.6"
+		"version-bump-prompt": "6.1.0"
 	},
 	"engines": {
 		"node": "*"
