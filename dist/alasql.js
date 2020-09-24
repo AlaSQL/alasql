@@ -1,7 +1,7 @@
-//! AlaSQL v0.6.3-string-number-object-support-ea5836e6undefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
+//! AlaSQL v0.6.3-develop-0b0987feundefined | © 2014-2018 Andrey Gershun & Mathias Rangel Wulff | License: MIT
 /*
 @module alasql
-@version 0.6.3-string-number-object-support-ea5836e6undefined
+@version 0.6.3-develop-0b0987feundefined
 
 AlaSQL - JavaScript SQL database
 © 2014-2016	Andrey Gershun & Mathias Rangel Wulff
@@ -142,7 +142,7 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = '0.6.3-string-number-object-support-ea5836e6undefined';
+alasql.version = '0.6.3-develop-0b0987feundefined';
 
 /**
 	Debug flag
@@ -7504,12 +7504,18 @@ function doJoin(query, scope, h) {
 				if (!opt && source.getfn && !source.dontcache) data[i] = dataw;
 
 				scope[tableid] = dataw;
+
 				// Reduce with ON and USING clause
-				if (
-					!source.onleftfn ||
-					source.onleftfn(scope, query.params, alasql) ==
-						source.onrightfn(scope, query.params, alasql)
-				) {
+				var usingPassed = !source.onleftfn;
+				if (!usingPassed) {
+					var left = source.onleftfn(scope, query.params, alasql);
+					var right = source.onrightfn(scope, query.params, alasql);
+					if (left instanceof String || left instanceof Number) left = left.valueOf();
+					if (right instanceof String || right instanceof Number) right = left.valueOf();
+					usingPassed = left == right;
+				}
+
+				if (usingPassed) {
 					// For all non-standard JOINs like a-b=0
 					if (source.onmiddlefn(scope, query.params, alasql)) {
 						// Recursively call new join

@@ -104,12 +104,18 @@ function doJoin(query, scope, h) {
 				if (!opt && source.getfn && !source.dontcache) data[i] = dataw;
 				//console.log(h, i, dataw);
 				scope[tableid] = dataw;
+
 				// Reduce with ON and USING clause
-				if (
-					!source.onleftfn ||
-					source.onleftfn(scope, query.params, alasql) ==
-						source.onrightfn(scope, query.params, alasql)
-				) {
+				var usingPassed = !source.onleftfn;
+				if (!usingPassed) {
+					var left = source.onleftfn(scope, query.params, alasql);
+					var right = source.onrightfn(scope, query.params, alasql);
+					if (left instanceof String || left instanceof Number) left = left.valueOf();
+					if (right instanceof String || right instanceof Number) right = left.valueOf();
+					usingPassed = left == right;
+				}
+
+				if (usingPassed) {
 					// For all non-standard JOINs like a-b=0
 					if (source.onmiddlefn(scope, query.params, alasql)) {
 						// Recursively call new join
