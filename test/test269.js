@@ -119,7 +119,7 @@ describe('Test 269 options', function () {
 	it.skip('8. INDEX', function (done) {
 		alasql.options.modifier = 'INDEX';
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
-		assert.deepEqual(res, {'1': 10, '2': 20, '3': 30, undefined: 40});
+		assert.deepEqual(res, {1: 10, 2: 20, 3: 30, undefined: 40});
 
 		done();
 	});

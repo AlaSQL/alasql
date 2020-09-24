@@ -21,11 +21,11 @@ describe('Test ' + test + ' Load data from text file with default headers option
 	it('1. Load TXT', function (done) {
 		alasql('SELECT * FROM TXT("' + __dirname + '/test419a.txt")', [], function (res) {
 			assert.deepEqual(res, [
-				{'0': 'words,letters'},
-				{'0': 'There,5'},
-				{'0': 'are,3'},
-				{'0': 'five,4'},
-				{'0': 'lines,5'},
+				{0: 'words,letters'},
+				{0: 'There,5'},
+				{0: 'are,3'},
+				{0: 'five,4'},
+				{0: 'lines,5'},
 			]);
 			done();
 		});
@@ -62,11 +62,11 @@ describe('Test ' + test + ' Load data from text file with default headers option
 			res
 		) {
 			assert.deepEqual(res, [
-				{'0': 'words', '1': 'letters'},
-				{'0': 'There', '1': '5'},
-				{'0': 'are', '1': '3'},
-				{'0': 'five', '1': '4'},
-				{'0': 'lines', '1': '5'},
+				{0: 'words', 1: 'letters'},
+				{0: 'There', 1: '5'},
+				{0: 'are', 1: '3'},
+				{0: 'five', 1: '4'},
+				{0: 'lines', 1: '5'},
 			]);
 			done();
 		});
