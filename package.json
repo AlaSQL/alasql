@@ -14,7 +14,7 @@
 	"typings": "dist/alasql.d.ts",
 	"scripts": {
 		"test": "gulp && yarn test-only",
-		"test-ci": "(yarn test-format || 1) && yarn test-only && yarn test",
+		"test-ci": "(yarn test-format || 1) && yarn test",
 		"test-only": "mocha ./test --reporter dot",
 		"test-browser": "node test/browserTestRunner.js 7387",
 		"test-cover": "istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
@@ -76,11 +76,11 @@
 		"mocha.parallel": "^0.15.6",
 		"mversion": "2.0.1",
 		"npm-check": "5.9.2",
-		"open": "7.1.0",
-		"prettier": "2.0.5",
+		"open": "7.2.0",
+		"prettier": "2.1.0",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.3",
-		"uglify-js": "3.10.1",
+		"uglify-js": "3.10.2",
 		"version-bump-prompt": "6.0.6"
 	},
 	"engines": {

@@ -4439,10 +4439,10 @@ onetime@^5.1.0:
   dependencies:
     mimic-fn "^2.1.0"
 
-open@7.1.0:
-  version "7.1.0"
-  resolved "https://registry.yarnpkg.com/open/-/open-7.1.0.tgz#68865f7d3cb238520fa1225a63cf28bcf8368a1c"
-  integrity sha512-lLPI5KgOwEYCDKXf4np7y1PBEkj7HYIyP2DY8mVDRnx0VIIu6bNrRB0R66TuO7Mack6EnTNLm4uvcl1UoklTpA==
+open@7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/open/-/open-7.2.0.tgz#212959bd7b0ce2e8e3676adc76e3cf2f0a2498b4"
+  integrity sha512-4HeyhxCvBTI5uBePsAdi55C5fmqnWZ2e2MlmvWi5KW5tdH5rxoiv/aMtbeVxKZc3eWkT1GymMnLG8XC4Rq4TDQ==
   dependencies:
     is-docker "^2.0.0"
     is-wsl "^2.1.1"
@@ -4801,10 +4801,10 @@ prepend-http@^2.0.0:
   resolved "https://registry.yarnpkg.com/prepend-http/-/prepend-http-2.0.0.tgz#e92434bfa5ea8c19f41cdfd401d741a3c819d897"
   integrity sha1-6SQ0v6XqjBn0HN/UAddBo8gZ2Jc=
 
-prettier@2.0.5:
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.0.5.tgz#d6d56282455243f2f92cc1716692c08aa31522d4"
-  integrity sha512-7PtVymN48hGcO4fGjybyBSIWDsLU4H4XlvOHfq91pz9kkGlonzwTfYkaIEwiRg/dAJF9YlbsduBAgtYLi+8cFg==
+prettier@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.1.0.tgz#5a9789f767a243118c60f3e56d95cb6544914fbb"
+  integrity sha512-lz28cCbA1cDFHVuY8vvj6QuqOwIpyIfPUYkSl8AZ/vxH8qBXMMjE2knfLHCrZCmUsK/H1bg1P0tOo0dJkTJHvw==
 
 pretty-hrtime@^1.0.0:
   version "1.0.3"
@@ -6041,10 +6041,10 @@ typical@^4.0.0:
   resolved "https://registry.yarnpkg.com/typical/-/typical-4.0.0.tgz#cbeaff3b9d7ae1e2bbfaf5a4e6f11eccfde94fc4"
   integrity sha512-VAH4IvQ7BDFYglMd7BPRDfLgxZZX4O4TFcRDA6EN5X7erNJJq+McIEp8np9aVtxrCJ6qx4GTYVfOWNjcqwZgRw==
 
-uglify-js@3.10.1:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.10.1.tgz#dd14767eb7150de97f2573a5ff210db14fffe4ad"
-  integrity sha512-RjxApKkrPJB6kjJxQS3iZlf///REXWYxYJxO/MpmlQzVkDWVI3PSnCBWezMecmTU/TRkNxrl8bmsfFQCp+LO+Q==
+uglify-js@3.10.2:
+  version "3.10.2"
+  resolved "https://registry.yarnpkg.com/uglify-js/-/uglify-js-3.10.2.tgz#8cfa1209fd04199cc8a7f9930ddedb30b0f1912d"
+  integrity sha512-GXCYNwqoo0MbLARghYjxVBxDCnU0tLqN7IPLdHHbibCb1NI5zBkU2EPcy/GaVxc0BtTjqyGXJCINe6JMR2Dpow==
 
 uglify-js@^3.0.5, uglify-js@^3.1.4:
   version "3.10.0"
