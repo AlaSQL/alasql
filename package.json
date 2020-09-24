@@ -76,7 +76,7 @@
 		"mocha.parallel": "^0.15.6",
 		"mversion": "2.0.1",
 		"npm-check": "5.9.2",
-		"open": "7.2.0",
+		"open": "7.2.1",
 		"prettier": "2.1.0",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.3",
