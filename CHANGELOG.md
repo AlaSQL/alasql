@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.6.4 (24.09.2020)
+
+- Add: String and Number objects supported as values
+- Add: `JOIN USING` now supports String and Number objects 
+- Fix: File naming when exporting to Exel
+
 
 ### 0.6.2 (31.05.2020)
 
@@ -105,7 +111,7 @@
 * Fix: missing ORDER BY direction when calling toString on AST (#970)
 * Fix: Converting the syntax tree back to SQL with multple joins (#972)
 
-### 0.4.4 "Alsowm" (03.012.2017)
+### 0.4.4 "Alsowm" (03.12.2017)
 
 * Better: Better usage via unpkg.com
 * Better: Better usage via jsdelivr.com
