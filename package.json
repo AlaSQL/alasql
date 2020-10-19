@@ -54,7 +54,7 @@
 		"lodash": "4.17.20",
 		"request": "2.88.2",
 		"xlsx": "0.16.8",
-		"yargs": "16.0.3"
+		"yargs": "16.1.0"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.18.0",
