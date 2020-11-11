@@ -1,5 +1,11 @@
 # Changelog
 
+### 0.6.5 (11.11.2020)
+
+- Fix: Do not include null in COUNT or AVG fixes #1251
+
+
+
 ### 0.6.4 (24.09.2020)
 
 - Add: String and Number objects supported as values
