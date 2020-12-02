@@ -101,4 +101,35 @@ describe('Test 811 - String / Number objects', function () {
 
         done();
     });
+
+    it('5. Where In', function (done) {
+        var t1 = [
+            {ID: new String("s1")},
+            {ID: new String("s2")},
+            {ID: new String("s3")}
+        ];
+
+        var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")',[t1]);
+
+        assert.equal(res.length, 2);
+
+        done();
+    });
+
+    it('6. ORDER BY two columns', function (done) {
+        var t1 = [
+            {Email: new String("A"), ID: new String("s1")},
+            {Email: new String("B"), ID: new String("s2")},
+            {Email: new String("A"), ID: new String("s3")}
+        ];
+
+        var res = alasql('SELECT * FROM ? ORDER BY Email ASC, ID ASC',[t1]);
+
+        assert.equal(res.length, 3);
+        assert.equal(res[0].Email, "B");
+        assert.equal(res[0].ID, "s3");
+
+        done();
+    });
+
 });
