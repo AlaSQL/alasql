@@ -275,7 +275,7 @@ describe('Test 293 SLT#1', function () {
 	it('5. SELECT 1', function (done) {
 		alasql.options.modifier = undefined;
 		var res = alasql('SELECT 1');
-		assert.deepEqual(res, [{'1': 1}]);
+		assert.deepEqual(res, [{1: 1}]);
 		//    console.log(res);
 
 		var res = alasql('SELECT avg(c) FROM t1');

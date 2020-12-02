@@ -166,7 +166,15 @@ if(false) {
 						} else {
 							//						return "'"+colas+'\':(typeof '+colexp+' != "undefined")?1:0,';
 							//					} else {
-							return "'" + colas + "':(typeof " + colexp + ' != "undefined")?1:0,';
+							return (
+								"'" +
+								colas +
+								"':(typeof " +
+								colexp +
+								' == "undefined" || ' +
+								colexp +
+								' === null) ? 0 : 1,'
+							);
 						}
 
 						//				else if(col.aggregatorid == 'MIN') { return "'"+col.as+'\':r[\''+col.as+'\'],'; }
@@ -189,7 +197,9 @@ if(false) {
 							colas +
 							"':(typeof " +
 							colexp +
-							' != "undefined")?1:0,'
+							' == "undefined" || ' +
+							colexp +
+							' === null) ? 0 : 1,'
 						);
 					} else if (col.aggregatorid === 'AGGR') {
 						aft += ",g['" + colas + "']=" + col.expression.toJS('g', -1);
@@ -300,7 +310,17 @@ if(false) {
 						if (col.expression.columnid === '*') {
 							return pre + "g['" + colas + "']++;" + post;
 						} else {
-							return pre + 'if(typeof ' + colexp + '!="undefined") g[\'' + colas + "']++;" + post;
+							return (
+								pre +
+								'if(typeof ' +
+								colexp +
+								'!="undefined" && ' +
+								colexp +
+								" !== null) g['" +
+								colas +
+								"']++;" +
+								post
+							);
 						}
 					} else if (col.aggregatorid === 'ARRAY') {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
@@ -327,7 +347,7 @@ if(false) {
 							')||0;' +
 							"g['_COUNT_" +
 							colas +
-							'\']+=(typeof y!="undefined")?1:0;' +
+							'\']+=(typeof y == "undefined" || y === null) ? 0 : 1;' +
 							"g['" +
 							colas +
 							"']=g['_SUM_" +

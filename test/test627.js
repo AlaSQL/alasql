@@ -22,7 +22,7 @@ describe('Test ' + test + ' - cast float for SUM, AVG when pivot', function () {
 			'SELECT [productLine], ("Series1"+[month]) AS [month], [extendedPrice] FROM ? PIVOT (SUM([extendedPrice]) FOR [month])',
 			[data()]
 		);
-		console.log(res);
+		//console.log(res);
 		assert.deepEqual(res, [
 			{
 				productLine: 'Trains',

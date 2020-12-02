@@ -112,8 +112,8 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 
 		alasql(
 			'create table COLLABORATOR ( ' +
-			'companyId     varchar(  50) not null, ' +
-			'siteId        varchar(  50), ' + //can be null
+				'companyId     varchar(  50) not null, ' +
+				'siteId        varchar(  50), ' + //can be null
 				'id            varchar(  50) not null, ' +
 				'name          varchar( 255) not null, ' +
 				'constraint COLLABORATOR_PK primary key (companyId, siteId, id), ' +
@@ -155,8 +155,8 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 
 		alasql(
 			'create table COLLABORATOR ( ' +
-			'companyId     varchar(  50), ' + //can be null
-			'siteId        varchar(  50), ' + //can be null
+				'companyId     varchar(  50), ' + //can be null
+				'siteId        varchar(  50), ' + //can be null
 				'id            varchar(  50) not null, ' +
 				'name          varchar( 255) not null, ' +
 				'constraint COLLABORATOR_PK primary key (id), ' +

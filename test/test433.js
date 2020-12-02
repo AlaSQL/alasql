@@ -21,9 +21,9 @@ describe('Test ' + test + ' - read csv from variable', function () {
 		var sql = 'SELECT * FROM CSV(?, {"headers": false, "fromString": true})';
 		alasql(sql, ['a,b,c\nd,e,f\none,two,three\n'], function (res) {
 			assert.deepEqual(res, [
-				{'0': 'a', '1': 'b', '2': 'c'},
-				{'0': 'd', '1': 'e', '2': 'f'},
-				{'0': 'one', '1': 'two', '2': 'three'},
+				{0: 'a', 1: 'b', 2: 'c'},
+				{0: 'd', 1: 'e', 2: 'f'},
+				{0: 'one', 1: 'two', 2: 'three'},
 			]);
 			done();
 		});

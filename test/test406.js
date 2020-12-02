@@ -11,31 +11,31 @@ if (typeof exports === 'object') {
 
 describe('Test 406. Complex SEARCH', function () {
 	var data = {
-		'10': {},
-		'12': {
-			'20': {
+		10: {},
+		12: {
+			20: {
 				value: 1,
 				id: 1,
 			},
-			'100': {
+			100: {
 				value: 12,
 				id: 1,
 			},
 		},
-		'14': {
-			'100': {
+		14: {
+			100: {
 				value: 14,
 				id: 2,
 			},
 		},
-		'16': {},
-		'18': {},
-		'20': {
-			'100': {
+		16: {},
+		18: {},
+		20: {
+			100: {
 				value: 23,
 				id: 1,
 			},
-			'150': {
+			150: {
 				value: 56,
 				id: 3,
 			},
@@ -91,8 +91,8 @@ describe('Test 406. Complex SEARCH', function () {
 
 	it('2. With OF()', function (done) {
 		var data1 = {
-			'1': 10,
-			'2': 20,
+			1: 10,
+			2: 20,
 		};
 
 		var res = alasql('SEARCH OF(@a) \
