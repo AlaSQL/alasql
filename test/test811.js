@@ -125,9 +125,8 @@ describe('Test 811 - String / Number objects', function () {
 
         var res = alasql('SELECT * FROM ? ORDER BY Email ASC, ID ASC',[t1]);
 
-        assert.equal(res.length, 3);
-        assert.equal(res[0].Email, "B");
-        assert.equal(res[0].ID, "s3");
+        assert.equal(res[0].Email, "A");
+        assert.equal(res[0].ID, "s1");
 
         done();
     });
