@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
     __dirname = '.';
 }
 
-describe('Test 813 - Nested SELECT', function () {
+describe.skip('Test 813 - Nested SELECT', function () {
     var t1 = [
         {id: '1', a: 'one'},
         {id: '2', a: 'two'},
