@@ -43,7 +43,7 @@ describe.skip('Test 813 - Nested SELECT', function () {
         done();
     });
 
-    it('1. UNION', function (done) {
+    it('2. UNION', function (done) {
         var expected = [
             {id: '1', b: 'A'},
             {id: '2', b: 'B'},
