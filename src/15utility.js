@@ -1086,7 +1086,9 @@ var extend = (utils.extend = function extend(a, b) {
  * Extracts the primitive data
  */
 var getValueOf = (utils.getValueOf = function (val) {
-	return typeof val === 'object' && (val instanceof String ||  val instanceof Number) ? val.valueOf() : val;
+	return typeof val === 'object' && (val instanceof String || val instanceof Number)
+		? val.valueOf()
+		: val;
 });
 
 /**
