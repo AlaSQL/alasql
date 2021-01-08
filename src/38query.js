@@ -143,7 +143,7 @@ function queryfn3(query) {
 	//			console.log(query.havingfns);
 	if (query.groupfn) {
 		query.data = [];
-		if (0 === query.groups.length) {
+		if (query.groups.length === 0 && query.allgroups.length === 0) {
 			var g = {};
 			if (query.selectGroup.length > 0) {
 				//				console.log(query.selectGroup);
@@ -377,7 +377,7 @@ function queryfn3(query) {
 	// if(query.explain) {
 	// 	if(query.cb) query.cb(query.explaination,query.A, query.B);
 	// 	return query.explaination;
-	// } else 
+	// } else
 */
 
 	//console.log(190,query.intofns);
