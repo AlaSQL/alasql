@@ -58,7 +58,7 @@
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.18.0",
-		"cmdmix": "2.0.3",
+		"cmdmix": "2.1.0",
 		"git-branch-is": "^4.0.0",
 		"gulp": "^4.0.1",
 		"gulp-concat": "^2.6.1",
