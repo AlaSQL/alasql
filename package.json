@@ -51,7 +51,7 @@
 	"dependencies": {
 		"dom-storage": "^2.1.0",
 		"es6-promise": "^4.2.6",
-		"lodash": "4.17.20",
+		"lodash": "4.17.21",
 		"request": "2.88.2",
 		"xlsx": "0.16.8",
 		"yargs": "16.1.0"
