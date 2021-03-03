@@ -1,9 +1,16 @@
 # Changelog
 
+
+## 0.7.0 (03/03/2021)
+
+- Fix: Code injection vulnerability processing literals
+- Fix: Return empty results in group by when input is empty #927
+
+
+
 ### 0.6.5 (11.11.2020)
 
 - Fix: Do not include null in COUNT or AVG fixes #1251
-
 
 
 ### 0.6.4 (24.09.2020)
