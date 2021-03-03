@@ -85,7 +85,7 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		}
 	} else if (!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
 		if (this.newid) s += 'new ';
-		s += 'alasql.stdfn.' + this.funcid.toUpperCase() + '(';
+		s += 'alasql.stdfn[' + JSON.stringify(this.funcid.toUpperCase()) + '](';
 		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
@@ -100,7 +100,7 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		// TODO arguments!!!
 		//		var s = '';
 		if (this.newid) s += 'new ';
-		s += 'alasql.fn.' + this.funcid + '(';
+		s += 'alasql.fn[' + JSON.stringify(this.funcid) + '](';
 		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args

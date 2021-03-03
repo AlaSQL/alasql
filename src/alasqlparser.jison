@@ -20,8 +20,8 @@
 \[\?\]									return 'BRAQUESTION'
 '@['									return 'ATLBRA'
 'ARRAY['								return 'ARRAYLBRA'
-\[([^\]])*?\]							return 'BRALITERAL'
-\`([^\`])*?\`	   						return 'BRALITERAL'
+\[([^\]'])*?\]							return 'BRALITERAL'
+\`([^\`'])*?\`	   						return 'BRALITERAL'
 
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
