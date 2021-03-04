@@ -1,5 +1,5 @@
 <h2>
-Please use version 0.7 as prior versions has a security flaw if you concat your SQL strings instead of providing them as a parameter to AlaSQL. 
+Please use version 0.7 as prior versions has a security flaw if you use user generated data to concat your SQL strings instead of providing them as a parameters to AlaSQL. 
 </h2>
 
 _AlaSQL is an open source project used on more than two million page views per month - and we appreciate any and all contributions we can get. [Please help out](https://github.com/agershun/alasql/labels/Please%20help%20out%21)._
