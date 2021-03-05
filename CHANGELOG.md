@@ -1,7 +1,12 @@
 # Changelog
 
 
-## 0.7.0 (03/03/2021)
+## 0.7.1 (2021-03-05)
+
+- Bump: Update lodash dependency
+
+
+## 0.7.0 (2021-03-03)
 
 - Fix: Code injection vulnerability processing literals
 - Fix: Return empty results in group by when input is empty #927
