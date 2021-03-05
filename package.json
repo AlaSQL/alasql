@@ -53,7 +53,7 @@
 		"es6-promise": "^4.2.6",
 		"lodash": "4.17.21",
 		"request": "2.88.2",
-		"xlsx": "0.16.8",
+		"xlsx": "0.16.9",
 		"yargs": "16.1.0"
 	},
 	"devDependencies": {
