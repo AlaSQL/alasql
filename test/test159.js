@@ -106,18 +106,24 @@ describe('Test 159 - test DOM-storage', function () {
 													[],
 													function (res) {
 														alasql("insert into cities values ('Berlin')", [], function (res) {
-															alasql('select column * from cities order by city', [], function (
-																res
-															) {
-																assert.deepEqual(res, ['Berlin', 'Paris', 'Vilnius']);
-																alasql('detach database test159', [], function (res) {
-																	assert(res == 1);
-																	alasql('drop localstorage database test159', [], function (res) {
+															alasql(
+																'select column * from cities order by city',
+																[],
+																function (res) {
+																	assert.deepEqual(res, ['Berlin', 'Paris', 'Vilnius']);
+																	alasql('detach database test159', [], function (res) {
 																		assert(res == 1);
-																		done();
+																		alasql(
+																			'drop localstorage database test159',
+																			[],
+																			function (res) {
+																				assert(res == 1);
+																				done();
+																			}
+																		);
 																	});
-																});
-															});
+																}
+															);
 														});
 													}
 												);

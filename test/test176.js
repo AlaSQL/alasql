@@ -9,22 +9,26 @@ if (typeof exports === 'object') {
 
 describe('Test 176 - CSV and TSV', function () {
 	it('1. TAB', function (done) {
-		alasql('SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:false})', [], function (
-			res
-		) {
-			assert.deepEqual(res[0], {0: 'Country', 1: 'City'});
-			done();
-		});
+		alasql(
+			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:false})',
+			[],
+			function (res) {
+				assert.deepEqual(res[0], {0: 'Country', 1: 'City'});
+				done();
+			}
+		);
 	});
 
 	it('2. TAB+headers', function (done) {
-		alasql('SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:true})', [], function (
-			res
-		) {
-			//			console.log(res);
-			assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
-			done();
-		});
+		alasql(
+			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:true})',
+			[],
+			function (res) {
+				//			console.log(res);
+				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
+				done();
+			}
+		);
 	});
 
 	it('3. TAB+predfined headers', function (done) {
@@ -97,13 +101,15 @@ describe('Test 176 - CSV and TSV', function () {
 	});
 
 	it('9. CSV with commas and strings and e-mails', function (done) {
-		alasql('SELECT * FROM CSV("' + __dirname + '/test176d.csv",{headers:true})', [], function (
-			res
-		) {
-			assert(res.length == 4);
-			//	    console.log(res);
-			done();
-		});
+		alasql(
+			'SELECT * FROM CSV("' + __dirname + '/test176d.csv",{headers:true})',
+			[],
+			function (res) {
+				assert(res.length == 4);
+				//	    console.log(res);
+				done();
+			}
+		);
 		//assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });
 	});
 });

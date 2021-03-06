@@ -46,7 +46,8 @@
 		"tofix": "git ls-tree --full-tree --name-only -r HEAD | xargs grep -lrE '<{5,}' #",
 		"next": "git add --all && git rebase --continue #",
 		"fresh": "cmdmix 'yarn goto '%1' && yarn pull-hard'",
-		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'"
+		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
+		"prepare": "husky install"
 	},
 	"dependencies": {
 		"dom-storage": "^2.1.0",
@@ -59,7 +60,7 @@
 	"devDependencies": {
 		"blueimp-md5": "2.18.0",
 		"cmdmix": "2.1.0",
-		"git-branch-is": "^4.0.0",
+		"git-branch-is": "4.0.0",
 		"gulp": "^4.0.1",
 		"gulp-concat": "^2.6.1",
 		"gulp-dereserve": "^0.2.1",
@@ -80,7 +81,7 @@
 		"prettier": "2.2.1",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.3",
-		"uglify-js": "3.12.8",
+		"uglify-js": "3.13.0",
 		"version-bump-prompt": "6.1.0"
 	},
 	"engines": {

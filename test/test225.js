@@ -19,13 +19,15 @@ if (typeof exports === 'object') {
 						function (res) {
 							//					console.log('PASS2');
 							assert(res == 0);
-							alasql('DROP FILE DATABASE IF EXISTS "' + __dirname + '/test225.json"', [], function (
-								res
-							) {
-								//						console.log(res);
-								assert(res == 1);
-								done();
-							});
+							alasql(
+								'DROP FILE DATABASE IF EXISTS "' + __dirname + '/test225.json"',
+								[],
+								function (res) {
+									//						console.log(res);
+									assert(res == 1);
+									done();
+								}
+							);
 						}
 					);
 				});

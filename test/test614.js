@@ -35,13 +35,15 @@ describe('Test ' + test + ' - Read data from columns irrespective of case in que
 		});
 
 		it('B) UPPER case header and Lower case header with Camel case select', function (done) {
-			alasql('SELECT Amount, Comments FROM XLSX("' + __dirname + '/test614.xlsx")', [], function (
-				res
-			) {
-				assert.equal(res[0]['Amount'.toLowerCase()], 500);
-				assert.equal(res[0]['Comments'.toLowerCase()], 'present');
-				done();
-			});
+			alasql(
+				'SELECT Amount, Comments FROM XLSX("' + __dirname + '/test614.xlsx")',
+				[],
+				function (res) {
+					assert.equal(res[0]['Amount'.toLowerCase()], 500);
+					assert.equal(res[0]['Comments'.toLowerCase()], 'present');
+					done();
+				}
+			);
 		});
 	});
 

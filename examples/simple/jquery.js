@@ -355,12 +355,12 @@
 				n.promise(t)
 			);
 		}),
-		x.each('Boolean Number String Function Array Date RegExp Object Error'.split(' '), function (
-			e,
-			t
-		) {
-			l['[object ' + t + ']'] = t.toLowerCase();
-		});
+		x.each(
+			'Boolean Number String Function Array Date RegExp Object Error'.split(' '),
+			function (e, t) {
+				l['[object ' + t + ']'] = t.toLowerCase();
+			}
+		);
 	function j(e) {
 		var t = e.length,
 			n = x.type(e);

@@ -18,34 +18,44 @@ describe('Test ' + test + ' - XXS or RCE from BRALITERAL', function () {
 		alasql('drop database test' + test);
 	});
 
-	const genPayload = command => `
+	const genPayload = (command) => `
 	console.log(${JSON.stringify(command)})
 	`;
 
 	//
 
 	it('A) Update SET', function () {
-		assert.throws(()=>alasql( `UPDATE i_am_a_table SET [0'+${genPayload(">&2 echo UPDATE pwned $(whoami)")}+']=42;`))
+		assert.throws(() =>
+			alasql(`UPDATE i_am_a_table SET [0'+${genPayload('>&2 echo UPDATE pwned $(whoami)')}+']=42;`)
+		);
 	});
 
 	it('B) Compare fields', function () {
-		assert.throws(()=>alasql( `SELECT * from i_am_a_table where whatever=['+${genPayload(">&2 echo SELECT pwned $(whoami)")}+'];`))
-	
-		
+		assert.throws(() =>
+			alasql(
+				`SELECT * from i_am_a_table where whatever=['+${genPayload(
+					'>&2 echo SELECT pwned $(whoami)'
+				)}+'];`
+			)
+		);
 	});
 
 	it('C) Select field', function () {
-		assert.throws(()=>alasql( `SELECT \`'+${genPayload(">&2 echo SELECT pwned again, back-quote works too. $(whoami)")}+'\` from i_am_a_table where 1;`))
+		assert.throws(() =>
+			alasql(
+				`SELECT \`'+${genPayload(
+					'>&2 echo SELECT pwned again, back-quote works too. $(whoami)'
+				)}+'\` from i_am_a_table where 1;`
+			)
+		);
 	});
-
 
 	it('D) Function name', function () {
-		assert.throws(()=>alasql( `SELECT [whatever||${genPayload('>&2 echo calling function pwned')}||]('whatever');`))
+		assert.throws(() =>
+			alasql(`SELECT [whatever||${genPayload('>&2 echo calling function pwned')}||]('whatever');`)
+		);
 	});
 
-
-	
-	
 	/*
 	it('C) Multiple statements in one string with callback', function (done) {
 		// Please note that first parameter (here `done`) must be called if defined - and is needed when testing async code

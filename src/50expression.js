@@ -397,7 +397,7 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 			if (!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(ref);
 			}
-			s = '' + ljs + "[" + JSON.stringify(this.right.funcid) + "](" + ss.join(',') + ')';
+			s = '' + ljs + '[' + JSON.stringify(this.right.funcid) + '](' + ss.join(',') + ')';
 		} else {
 			s = '' + ljs + '[' + rightJS() + ']';
 		}

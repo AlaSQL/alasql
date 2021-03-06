@@ -34,14 +34,16 @@ if (typeof exports != 'object') {
 											// console.log(999,res);
 											assert(res8.length == 0);
 											// console.log(alasql.databases.ag154);
-											alasql('DETACH DATABASE ag154;DROP IndexedDB DATABASE ag154', [], function (
-												res9
-											) {
-												assert(res9[0] == 1);
-												assert(res9[1] == 1);
-												//											console.log(res);
-												done();
-											});
+											alasql(
+												'DETACH DATABASE ag154;DROP IndexedDB DATABASE ag154',
+												[],
+												function (res9) {
+													assert(res9[0] == 1);
+													assert(res9[1] == 1);
+													//											console.log(res);
+													done();
+												}
+											);
 										});
 									});
 								});
