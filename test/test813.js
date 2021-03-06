@@ -5,64 +5,30 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe.skip('Test 813 - Nested SELECT', function () {
-	var t1 = [
-		{id: '1', a: 'one'},
-		{id: '2', a: 'two'},
-		{id: '3', a: 'three'},
-		{id: '4', a: 'four'},
-	];
-	var t2 = [
-		{id: '1', b: 'A'},
-		{id: '2', b: 'B'},
-		{id: '5', b: 'E'},
-		{id: '6', b: 'F'},
-	];
-
-	it('1. JOIN', function (done) {
-		var expected = [
-			{id: '1', a: 'one', b: 'A'},
-			{id: '2', a: 'two', b: 'B'},
-			{id: '3', a: 'three'},
-			{id: '4', a: 'four'},
-			{id: '5', b: 'E'},
-			{id: '6', b: 'F'},
+describe('Test 927 group by empty results bug', function () {
+	it('1. Does not return any results if input is empty when using GROUP BY', function (done) {
+		var data = [
+			{a: 1, b: 2, c: undefined},
+			{a: 2, b: 3, c: undefined},
+			{a: undefined, b: 3, c: undefined},
 		];
 
-		var res = alasql('SELECT * FROM ? T1 OUTER JOIN ? T2 ON T1.id = T2.id', [t1, t2]);
-		assert.deepEqual(res, expected);
+		var res = alasql('SELECT COUNT(*) FROM ? WHERE a = b', [data]);
+		assert.deepEqual(res, [{'COUNT(*)': 0}]);
 
-		var res = alasql('SELECT * FROM ? T1 OUTER JOIN (SELECT * FROM ?) T2 ON T1.id = T2.id', [
-			t1,
-			t2,
+		var res = alasql('SELECT a, COUNT(*) FROM ? GROUP BY a', [data]);
+		assert.deepEqual(res, [
+			{a: 1, 'COUNT(*)': 1},
+			{a: 2, 'COUNT(*)': 1},
+			{a: undefined, 'COUNT(*)': 1},
 		]);
-		assert.deepEqual(res, expected);
-		done();
-	});
 
-	it('2. UNION', function (done) {
-		var expected = [
-			{id: '1', b: 'A'},
-			{id: '2', b: 'B'},
-			{id: '5', b: 'E'},
-			{id: '6', b: 'F'},
-			{id: '1', a: 'one', c: 4},
-			{id: '2', a: 'two', c: 4},
-			{id: '3', a: 'three', c: 4},
-			{id: '4', a: 'four', c: 4},
-		];
+		var res = alasql('SELECT c, COUNT(*) FROM ? WHERE a IS NULL GROUP BY c', [data]);
+		assert.deepEqual(res, [{c: undefined, 'COUNT(*)': 1}]);
 
-		var res = alasql(
-			'SELECT *, (SELECT COUNT(*) FROM ?) AS c FROM ? T1 UNION CORRESPONDING SELECT * FROM ?',
-			[t1, t1, t2]
-		);
-		assert.deepEqual(res, expected);
+		var res = alasql('SELECT a, COUNT(*) FROM ? WHERE a = b GROUP BY a', [data]);
+		assert.deepEqual(res, []);
 
-		var res = alasql(
-			'SELECT * FROM(SELECT *, (SELECT COUNT(*) FROM ?) AS c FROM ? T1 UNION CORRESPONDING SELECT * FROM ?)',
-			[t1, t1, t2]
-		);
-		assert.deepEqual(res, expected);
 		done();
 	});
 });

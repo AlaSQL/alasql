@@ -397,7 +397,7 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 			if (!(!this.right.args || 0 === this.right.args.length)) {
 				var ss = this.right.args.map(ref);
 			}
-			s = '' + ljs + "['" + this.right.funcid + "'](" + ss.join(',') + ')';
+			s = '' + ljs + '[' + JSON.stringify(this.right.funcid) + '](' + ss.join(',') + ')';
 		} else {
 			s = '' + ljs + '[' + rightJS() + ']';
 		}
@@ -984,7 +984,7 @@ yy.AggrValue = function (params) {
 yy.AggrValue.prototype.toString = function (dontas) {
 	var s = '';
 	if (this.aggregatorid === 'REDUCE') {
-		s += this.funcid + '(';
+		s += this.funcid.replace(re_invalidFnNameChars, '') + '(';
 	} else {
 		s += this.aggregatorid + '(';
 	}

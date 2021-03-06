@@ -66,64 +66,64 @@ define(['jquery', './sqlite_driver'], function ($, SQLite_driver) {
 
 			_this.db.exec('BEGIN TRANSACTION');
 
-			$.each(this.splitStatement(args['sql'], args['statement_separator']), function (
-				i,
-				statement
-			) {
-				if ($.trim(statement).length) {
-					var startTime = new Date();
+			$.each(
+				this.splitStatement(args['sql'], args['statement_separator']),
+				function (i, statement) {
+					if ($.trim(statement).length) {
+						var startTime = new Date();
 
-					var setArray = [];
-
-					try {
-						setArray = _this.db.exec(statement);
-
-						var thisSet = {
-							SUCCEEDED: true,
-							STATEMENT: statement,
-							EXECUTIONTIME: new Date() - startTime,
-							RESULTS: {
-								COLUMNS: [],
-								DATA: [],
-							},
-							EXECUTIONPLAN: {
-								COLUMNS: [],
-								DATA: [],
-							},
-						};
-
-						if (setArray.length) {
-							$.each(setArray, function () {
-								thisSet['RESULTS']['COLUMNS'] = this.columns;
-								thisSet['RESULTS']['DATA'] = this.values;
-							});
-						}
+						var setArray = [];
 
 						try {
-							exectionPlanArray = _this.db.exec('EXPLAIN QUERY PLAN ' + statement);
+							setArray = _this.db.exec(statement);
 
-							if (exectionPlanArray.length) {
-								$.each(exectionPlanArray, function () {
-									thisSet['EXECUTIONPLAN']['COLUMNS'] = this.columns;
-									thisSet['EXECUTIONPLAN']['DATA'] = this.values;
+							var thisSet = {
+								SUCCEEDED: true,
+								STATEMENT: statement,
+								EXECUTIONTIME: new Date() - startTime,
+								RESULTS: {
+									COLUMNS: [],
+									DATA: [],
+								},
+								EXECUTIONPLAN: {
+									COLUMNS: [],
+									DATA: [],
+								},
+							};
+
+							if (setArray.length) {
+								$.each(setArray, function () {
+									thisSet['RESULTS']['COLUMNS'] = this.columns;
+									thisSet['RESULTS']['DATA'] = this.values;
 								});
 							}
-						} catch (e) {
-							// if we get an error with the execution plan, just ignore and move on.
-						}
 
-						returnSets.push(thisSet);
-					} catch (e) {
-						var thisSet = {
-							SUCCEEDED: false,
-							EXECUTIONTIME: new Date() - startTime,
-							ERRORMESSAGE: e,
-						};
-						returnSets.push(thisSet);
-						return false; // breaks the each loop
+							try {
+								exectionPlanArray = _this.db.exec('EXPLAIN QUERY PLAN ' + statement);
+
+								if (exectionPlanArray.length) {
+									$.each(exectionPlanArray, function () {
+										thisSet['EXECUTIONPLAN']['COLUMNS'] = this.columns;
+										thisSet['EXECUTIONPLAN']['DATA'] = this.values;
+									});
+								}
+							} catch (e) {
+								// if we get an error with the execution plan, just ignore and move on.
+							}
+
+							returnSets.push(thisSet);
+						} catch (e) {
+							var thisSet = {
+								SUCCEEDED: false,
+								EXECUTIONTIME: new Date() - startTime,
+								ERRORMESSAGE: e,
+							};
+							returnSets.push(thisSet);
+							return false; // breaks the each loop
+						}
 					}
 				}
-			});
+			);
 
 			_this.db.exec('ROLLBACK TRANSACTION');
 

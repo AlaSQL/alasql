@@ -1,9 +1,27 @@
 # Changelog
 
+
+# 1.7.1 (2021-03-06)
+
+- Bump: Use semver properly so problem fixes can be roled out as fast as possilbe. 
+
+
+
+## 0.7.1 (2021-03-05)
+
+- Bump: Update lodash dependency
+
+
+## 0.7.0 (2021-03-03)
+
+- Fix: Code injection vulnerability processing literals
+- Fix: Return empty results in group by when input is empty #927
+
+
+
 ### 0.6.5 (11.11.2020)
 
 - Fix: Do not include null in COUNT or AVG fixes #1251
-
 
 
 ### 0.6.4 (24.09.2020)

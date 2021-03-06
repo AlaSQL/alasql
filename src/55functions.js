@@ -9,13 +9,15 @@
 yy.FuncValue = function (params) {
 	return yy.extend(this, params);
 };
+
+var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 yy.FuncValue.prototype.toString = function (dontas) {
 	var s = '';
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
 	else if (alasql.aggr[this.funcid]) s += this.funcid;
 	else if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])
-		s += this.funcid.toUpperCase();
+		s += this.funcid.toUpperCase().replace(re_invalidFnNameChars, '');
 
 	if (this.funcid !== 'CURRENT_TIMESTAMP') {
 		s += '(';
@@ -85,7 +87,7 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		}
 	} else if (!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
 		if (this.newid) s += 'new ';
-		s += 'alasql.stdfn.' + this.funcid.toUpperCase() + '(';
+		s += 'alasql.stdfn[' + JSON.stringify(this.funcid.toUpperCase()) + '](';
 		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
@@ -100,7 +102,7 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		// TODO arguments!!!
 		//		var s = '';
 		if (this.newid) s += 'new ';
-		s += 'alasql.fn.' + this.funcid + '(';
+		s += 'alasql.fn[' + JSON.stringify(this.funcid) + '](';
 		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args

@@ -1,3 +1,7 @@
+<h2>
+Please use version 1.x as prior versions has a security flaw if you use user generated data to concat your SQL strings instead of providing them as a parameters to AlaSQL. 
+</h2>
+
 _AlaSQL is an open source project used on more than two million page views per month - and we appreciate any and all contributions we can get. [Please help out](https://github.com/agershun/alasql/labels/Please%20help%20out%21)._
 
 _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
@@ -22,6 +26,8 @@ _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask
 
 <h2 align="center"><a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/19309516/94f8007e-9085-11e6-810f-62fd60b42185.png" alt="AlaSQL logo" styl="max-width:80%"/></a>
 </h2>
+
+
 
 AlaSQL - _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - is an open source SQL database for JavaScript with a strong focus on query speed and data source flexibility for both relational data and schemaless data.  It works in the web browser, Node.js, and mobile apps.
 
@@ -116,7 +122,7 @@ For the browser: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql)
 
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/alasql@0.6"></script>
+<script src="https://cdn.jsdelivr.net/npm/alasql@1.7"></script>
 ```
 
 

@@ -19,15 +19,17 @@ describe('Test ' + test + ' Load data from XLSX without extra line', function ()
 	});
 
 	it('1. Load XLSX', function (done) {
-		alasql('VALUE OF SELECT COUNT(*) FROM XLSX("' + __dirname + '/test420.xlsx")', [], function (
-			res
-		) {
-			assert(res == 4);
-			//      console.log(res);
-			//       assert.deepEqual(res,
-			// 0
-			//       );
-			done();
-		});
+		alasql(
+			'VALUE OF SELECT COUNT(*) FROM XLSX("' + __dirname + '/test420.xlsx")',
+			[],
+			function (res) {
+				assert(res == 4);
+				//      console.log(res);
+				//       assert.deepEqual(res,
+				// 0
+				//       );
+				done();
+			}
+		);
 	});
 });

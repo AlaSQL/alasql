@@ -114,13 +114,15 @@ describe('Test 306 XML reader', function () {
 	});
 	it('7. Edges ', function (done) {
 		//     alasql('SEARCH XML /graph/edges/% FROM XML("test306a.xml")',[],function(res){
-		alasql('SEARCH XML [graph] edges/%/ FROM XML("' + __dirname + '/test306a.xml")', [], function (
-			res
-		) {
-			//        console.log(res);
-			assert.deepEqual(res, [{id: '0', source: '0', target: '1'}]);
-			done();
-		});
+		alasql(
+			'SEARCH XML [graph] edges/%/ FROM XML("' + __dirname + '/test306a.xml")',
+			[],
+			function (res) {
+				//        console.log(res);
+				assert.deepEqual(res, [{id: '0', source: '0', target: '1'}]);
+				done();
+			}
+		);
 	});
 
 	it('7. SEARCH INTO ', function (done) {

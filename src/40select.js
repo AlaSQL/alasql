@@ -328,7 +328,7 @@ yy.Select.prototype.compile = function (databaseid, params) {
 			// If this is INTO() function, then call it
 			// with one or two parameters
 			//
-			var qs = "return alasql.into['" + this.into.funcid.toUpperCase() + "'](";
+			var qs = 'return alasql.into[' + JSON.stringify(this.into.funcid.toUpperCase()) + '](';
 			if (this.into.args && this.into.args.length > 0) {
 				qs += this.into.args[0].toJS() + ',';
 				if (this.into.args.length > 1) {

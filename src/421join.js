@@ -194,7 +194,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)res=cb(res, idx, query);return res");
 */
 
-			var s = "var res=alasql.from['" + jn.func.funcid.toUpperCase() + "'](";
+			var s = 'var res=alasql.from[' + JSON.stringify(jn.func.funcid.toUpperCase()) + '](';
 			/*/*
 		// if(tq.args && tq.args.length>0) {
 		// 	s += tq.args.map(function(arg){
