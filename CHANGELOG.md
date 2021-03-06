@@ -1,6 +1,12 @@
 # Changelog
 
 
+# 1.7.1 (2021-03-06)
+
+- Bump: Use semver properly so problem fixes can be roled out as fast as possilbe. 
+
+
+
 ## 0.7.1 (2021-03-05)
 
 - Bump: Update lodash dependency
