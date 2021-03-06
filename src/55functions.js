@@ -9,13 +9,15 @@
 yy.FuncValue = function (params) {
 	return yy.extend(this, params);
 };
+
+var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 yy.FuncValue.prototype.toString = function (dontas) {
 	var s = '';
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
 	else if (alasql.aggr[this.funcid]) s += this.funcid;
 	else if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])
-		s += this.funcid.toUpperCase();
+		s += this.funcid.toUpperCase().replace(re_invalidFnNameChars, '');
 
 	if (this.funcid !== 'CURRENT_TIMESTAMP') {
 		s += '(';
