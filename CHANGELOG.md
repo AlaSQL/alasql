@@ -1,6 +1,36 @@
 # Changelog
 
 
+# 1.7.1 (2021-03-06)
+
+- Bump: Use semver properly so problem fixes can be roled out as fast as possilbe. 
+
+
+
+## 0.7.1 (2021-03-05)
+
+- Bump: Update lodash dependency
+
+
+## 0.7.0 (2021-03-03)
+
+- Fix: Code injection vulnerability processing literals
+- Fix: Return empty results in group by when input is empty #927
+
+
+
+### 0.6.5 (11.11.2020)
+
+- Fix: Do not include null in COUNT or AVG fixes #1251
+
+
+### 0.6.4 (24.09.2020)
+
+- Add: String and Number objects supported as values
+- Add: `JOIN USING` now supports String and Number objects 
+- Fix: File naming when exporting to Exel
+
+
 ### 0.6.2 (31.05.2020)
 
 
@@ -105,7 +135,7 @@
 * Fix: missing ORDER BY direction when calling toString on AST (#970)
 * Fix: Converting the syntax tree back to SQL with multple joins (#972)
 
-### 0.4.4 "Alsowm" (03.012.2017)
+### 0.4.4 "Alsowm" (03.12.2017)
 
 * Better: Better usage via unpkg.com
 * Better: Better usage via jsdelivr.com

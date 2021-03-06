@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 286 CREATE UNIQUE INDEX', function() {
-	it('1. CREATE TABLE and FIRST INSERT', function(done) {
+describe('Test 286 CREATE UNIQUE INDEX', function () {
+	it('1. CREATE TABLE and FIRST INSERT', function (done) {
 		alasql('CREATE DATABASE test286;USE test286');
 		alasql('CREATE TABLE one (a int, b int)');
 		alasql('CREATE TABLE two (b int, c int)');
@@ -15,7 +15,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function() {
 		alasql('CREATE TABLE four (e int, e int)');
 		done();
 	});
-	it('2. Fill tables with data', function(done) {
+	it('2. Fill tables with data', function (done) {
 		this.timeout(100000);
 
 		var K = 10; // Number of runs
@@ -39,7 +39,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function() {
 		/// console.log(L/K); // Probablity
 		done();
 	});
-	it('3. DROP DATABASE', function(done) {
+	it('3. DROP DATABASE', function (done) {
 		var res = alasql('DROP DATABASE test286');
 		done();
 	});

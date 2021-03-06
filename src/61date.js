@@ -16,7 +16,7 @@ alasql.fn.Boolean = Boolean;
 stdfn.EXTEND = alasql.utils.extend;
 
 stdfn.CHAR = String.fromCharCode.bind(String);
-stdfn.ASCII = function(a) {
+stdfn.ASCII = function (a) {
 	return a.charCodeAt(0);
 };
 
@@ -24,7 +24,7 @@ stdfn.ASCII = function(a) {
  Return first non-null argument
  See https://msdn.microsoft.com/en-us/library/ms190349.aspx
 */
-stdfn.COALESCE = function() {
+stdfn.COALESCE = function () {
 	for (var i = 0; i < arguments.length; i++) {
 		if (typeof arguments[i] == 'undefined') continue;
 		if (typeof arguments[i] == 'number' && isNaN(arguments[i])) continue;
@@ -33,20 +33,20 @@ stdfn.COALESCE = function() {
 	return undefined;
 };
 
-stdfn.USER = function() {
+stdfn.USER = function () {
 	return 'alasql';
 };
 
-stdfn.OBJECT_ID = function(objid) {
+stdfn.OBJECT_ID = function (objid) {
 	return !!alasql.tables[objid];
 };
 
-stdfn.DATE = function(d) {
+stdfn.DATE = function (d) {
 	if (/\d{8}/.test(d)) return new Date(+d.substr(0, 4), +d.substr(4, 2) - 1, +d.substr(6, 2));
 	return new Date(d);
 };
 
-stdfn.NOW = function() {
+stdfn.NOW = function () {
 	var d = new Date();
 	var s =
 		d.getFullYear() +
@@ -74,37 +74,37 @@ stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
 // 		return s;
 // 	}
 
-stdfn.SECOND = function(d) {
+stdfn.SECOND = function (d) {
 	var d = new Date(d);
 	return d.getSeconds();
 };
 
-stdfn.MINUTE = function(d) {
+stdfn.MINUTE = function (d) {
 	var d = new Date(d);
 	return d.getMinutes();
 };
 
-stdfn.HOUR = function(d) {
+stdfn.HOUR = function (d) {
 	var d = new Date(d);
 	return d.getHours();
 };
 
-stdfn.DAYOFWEEK = stdfn.WEEKDAY = function(d) {
+stdfn.DAYOFWEEK = stdfn.WEEKDAY = function (d) {
 	var d = new Date(d);
 	return d.getDay();
 };
 
-stdfn.DAY = stdfn.DAYOFMONTH = function(d) {
+stdfn.DAY = stdfn.DAYOFMONTH = function (d) {
 	var d = new Date(d);
 	return d.getDate();
 };
 
-stdfn.MONTH = function(d) {
+stdfn.MONTH = function (d) {
 	var d = new Date(d);
 	return d.getMonth() + 1;
 };
 
-stdfn.YEAR = function(d) {
+stdfn.YEAR = function (d) {
 	var d = new Date(d);
 	return d.getFullYear();
 };
@@ -124,26 +124,26 @@ var PERIODS = {
 	microsecond: 0.001,
 };
 
-alasql.stdfn.DATEDIFF = function(period, d1, d2) {
+alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 	var interval = new Date(d2).getTime() - new Date(d1).getTime();
 	return interval / PERIODS[period.toLowerCase()];
 };
 
-alasql.stdfn.DATEADD = function(period, interval, d) {
+alasql.stdfn.DATEADD = function (period, interval, d) {
 	var nd = new Date(d).getTime() + interval * PERIODS[period.toLowerCase()];
 	return new Date(nd);
 };
 
-alasql.stdfn.INTERVAL = function(interval, period) {
+alasql.stdfn.INTERVAL = function (interval, period) {
 	return interval * PERIODS[period.toLowerCase()];
 };
 
-alasql.stdfn.DATE_ADD = alasql.stdfn.ADDDATE = function(d, interval) {
+alasql.stdfn.DATE_ADD = alasql.stdfn.ADDDATE = function (d, interval) {
 	var nd = new Date(d).getTime() + interval;
 	return new Date(nd);
 };
 
-alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function(d, interval) {
+alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 	var nd = new Date(d).getTime() - interval;
 	return new Date(nd);
 };

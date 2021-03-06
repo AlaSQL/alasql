@@ -11,8 +11,8 @@ if (typeof exports == 'object') {
 	global.localStorage = new DOMStorage(__dirname + '/restest278.json', {strict: false, ws: ''});
 }
 
-describe('Test 278 Errors catching', function() {
-	it('1. Prepare databases', function(done) {
+describe('Test 278 Errors catching', function () {
+	it('1. Prepare databases', function (done) {
 		alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS Atlas');
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('ATTACH LOCALSTORAGE DATABASE Atlas AS MyAtlas');
@@ -21,22 +21,22 @@ describe('Test 278 Errors catching', function() {
 		done();
 	});
 
-	it('2. Select from wrong database without errolog', function(done) {
-		assert.throws(function() {
+	it('2. Select from wrong database without errolog', function (done) {
+		assert.throws(function () {
 			alasql('SELECT * FROM addresses');
 		}, Error);
 		done();
 	});
 
-	it('2. Select from wrong database with errolog', function(done) {
+	it('2. Select from wrong database with errolog', function (done) {
 		alasql.options.errorlog = true;
-		alasql('SELECT * FROM addresses', [], function(res, err) {
+		alasql('SELECT * FROM addresses', [], function (res, err) {
 			/// console.log(err);
 			done();
 		});
 	});
 
-	it('99. Drop databases', function(done) {
+	it('99. Drop databases', function (done) {
 		alasql.options.errorlog = false;
 		alasql('DETACH DATABASE MyAtlas');
 		done();

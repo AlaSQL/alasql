@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 12', function() {
-	it('store and restore - test not ready yet! ', function(done) {
+describe('Test 12', function () {
+	it('store and restore - test not ready yet! ', function (done) {
 		if (false) {
 			var db = alasql.restore('mydb');
 			//	console.log(!!db);

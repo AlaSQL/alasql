@@ -8,12 +8,12 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports === 'object' && false) {
-	describe('Test 165 - WebSQL database', function() {
-		it('1. WebSQL database', function(done) {
+	describe('Test 165 - WebSQL database', function () {
+		it('1. WebSQL database', function (done) {
 			alasql(
 				'create websql database if not exists test165; attach websql database test165',
 				[],
-				function(res) {
+				function (res) {
 					assert.deepEqual(res, [1, 1]);
 					alasql('select * from test165(select * from one)');
 					done();

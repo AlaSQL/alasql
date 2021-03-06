@@ -1,4 +1,4 @@
-yy.Select.prototype.compileOrder = function(query, params) {
+yy.Select.prototype.compileOrder = function (query, params) {
 	var self = this;
 	self.orderColumns = [];
 	if (this.order) {
@@ -12,10 +12,9 @@ yy.Select.prototype.compileOrder = function(query, params) {
 			//			console.log(991, this.order[0]);
 			var func = this.order[0].expression;
 			//			console.log(994, func);
-			var nullsOrder = 
-				this.order[0].nullsOrder == 'FIRST' ? -1 :
-				this.order[0].nullsOrder == 'LAST' ? +1 : 0
-			return function(a, b) {
+			var nullsOrder =
+				this.order[0].nullsOrder == 'FIRST' ? -1 : this.order[0].nullsOrder == 'LAST' ? +1 : 0;
+			return function (a, b) {
 				var ra = func(a),
 					rb = func(b);
 				if (nullsOrder) {
@@ -30,7 +29,7 @@ yy.Select.prototype.compileOrder = function(query, params) {
 
 		var s = '';
 		var sk = '';
-		this.order.forEach(function(ord, idx) {
+		this.order.forEach(function (ord, idx) {
 			// console.log(ord instanceof yy.Expression);
 			// console.log(ord.toJS('a',''));
 			// console.log(ord.expression instanceof yy.Column);
@@ -77,7 +76,7 @@ yy.Select.prototype.compileOrder = function(query, params) {
 			if (ord.nullsOrder) {
 				if (ord.nullsOrder == 'FIRST') {
 					s += "if((a['" + key + "'] != null) && (b['" + key + "'] == null)) return 1;";
-				} else if (ord.nullsOrder == 'LAST')  {
+				} else if (ord.nullsOrder == 'LAST') {
 					s += "if((a['" + key + "'] == null) && (b['" + key + "'] != null)) return 1;";
 				}
 				s += "if((a['" + key + "'] == null) == (b['" + key + "'] == null)) {";

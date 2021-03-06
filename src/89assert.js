@@ -6,17 +6,17 @@
 //
 */
 
-yy.Assert = function(params) {
+yy.Assert = function (params) {
 	return yy.extend(this, params);
 };
-yy.Source.prototype.toString = function() {
+yy.Source.prototype.toString = function () {
 	var s = 'ASSERT';
 	if (this.value) s += ' ' + JSON.stringify(this.value);
 	return s;
 };
 
 // SOURCE FILE
-yy.Assert.prototype.execute = function(databaseid) {
+yy.Assert.prototype.execute = function (databaseid) {
 	//	console.log(alasql.res, this.value);
 	if (!deepEqual(alasql.res, this.value)) {
 		//		if(this.message) {

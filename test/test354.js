@@ -8,19 +8,19 @@ if (typeof exports === 'object') {
 // Data for test
 var data = [{a: 1}, {a: 2}];
 
-describe('Test 354 PIVOT', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 354 PIVOT', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test354;USE test354');
 		done();
 	});
 
 	/* Source: http://blogs.msdn.com/b/spike/archive/2009/03/03/pivot-tables-in-sql-server-a-simple-sample.aspx */
-	it('2. Prepare Data', function(done) {
+	it('2. Prepare Data', function (done) {
 		alasql(
 			'create table DailyIncome(VendorId nvarchar(10), IncomeDay nvarchar(10), IncomeAmount int)'
 		);
 
-		alasql(function() {
+		alasql(function () {
 			/*
     insert into DailyIncome values ('SPIKE', 'FRI', 100);
     insert into DailyIncome values ('SPIKE', 'MON', 300);
@@ -57,8 +57,8 @@ describe('Test 354 PIVOT', function() {
 		done();
 	});
 
-	it('3. Pivot Query', function(done) {
-		alasql(function() {
+	it('3. Pivot Query', function (done) {
+		alasql(function () {
 			/*
     select * from DailyIncome
     pivot (avg (IncomeAmount) for IncomeDay)
@@ -68,8 +68,8 @@ describe('Test 354 PIVOT', function() {
 		done();
 	});
 
-	it('3. Pivot Query', function(done) {
-		alasql(function() {
+	it('3. Pivot Query', function (done) {
+		alasql(function () {
 			/*
     select * from DailyIncome
     pivot (avg (IncomeAmount) for IncomeDay 
@@ -80,7 +80,7 @@ describe('Test 354 PIVOT', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test354');
 		done();

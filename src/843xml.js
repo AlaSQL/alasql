@@ -1,8 +1,8 @@
-alasql.from.XML = function(filename, opts, cb, idx, query) {
+alasql.from.XML = function (filename, opts, cb, idx, query) {
 	var res;
 	//console.log('cb',cb);
 	//console.log('JSON');
-	alasql.utils.loadFile(filename, !!cb, function(data) {
+	alasql.utils.loadFile(filename, !!cb, function (data) {
 		//    console.log('DATA:'+data);
 		//    res = [{a:1}];
 

@@ -8,8 +8,8 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports === 'object') {
-	describe('Test 164 - NeDB', function() {
-		it('1. NeDB support', function(done) {
+	describe('Test 164 - NeDB', function () {
+		it('1. NeDB support', function (done) {
 			// TODO - finish the test
 			done();
 		});

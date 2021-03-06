@@ -2,8 +2,8 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 }
-describe('Test 432 Test FIRST(*)', function() {
-	it('1. FIRST(*)', function(done) {
+describe('Test 432 Test FIRST(*)', function () {
+	it('1. FIRST(*)', function (done) {
 		var data = [
 			{a: 1, b: 10, c: 1},
 			{a: 1, b: 20, c: 2},

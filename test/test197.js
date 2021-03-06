@@ -7,10 +7,10 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 197 - Expression in expression', function() {
+describe('Test 197 - Expression in expression', function () {
 	//    console.log(alasql.parse('SELECT a FROM ? GROUP BY a % 2').toString());
 
-	it('1. MAX', function(done) {
+	it('1. MAX', function (done) {
 		// var ast = alasql.parse('SELECT (SELECT MAX(a) FROM ?) FROM RANGE(1,2)');
 		// console.log(ast.toString());
 		// console.log(ast);

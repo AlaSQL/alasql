@@ -72,9 +72,9 @@ function returnUndefined() {}
 
  */
 // based on joliss/js-string-escape
-var escapeq = (utils.escapeq = function(s) {
+var escapeq = (utils.escapeq = function (s) {
 	//    console.log(s);
-	return ('' + s).replace(/["'\\\n\r\u2028\u2029]/g, function(character) {
+	return ('' + s).replace(/["'\\\n\r\u2028\u2029]/g, function (character) {
 		// Escape all characters not included in SingleStringCharacters and
 		// DoubleStringCharacters on
 		// http://www.ecma-international.org/ecma-262/5.1/#sec-7.8.4
@@ -106,7 +106,7 @@ var escapeq = (utils.escapeq = function(s) {
  Piter's => Piter''s
 
  */
-var escapeqq = (utils.undoubleq = function(s) {
+var escapeqq = (utils.undoubleq = function (s) {
 	return s.replace(/(\')/g, "''");
 });
 
@@ -119,7 +119,7 @@ var escapeqq = (utils.undoubleq = function(s) {
  Piter''s => Piter's
 
  */
-var doubleq = (utils.doubleq = function(s) {
+var doubleq = (utils.doubleq = function (s) {
 	return s.replace(/(\'\')/g, "\\'");
 });
 
@@ -131,7 +131,7 @@ var doubleq = (utils.doubleq = function(s) {
  @todo Chack this functions
 
  */
-var doubleqq = (utils.doubleqq = function(s) {
+var doubleqq = (utils.doubleqq = function (s) {
 	return s.replace(/\'/g, "'");
 });
 
@@ -141,7 +141,7 @@ var doubleqq = (utils.doubleqq = function(s) {
  @return {string} Replaced string
  */
 
-var cutbom = function(s) {
+var cutbom = function (s) {
 	if (s[0] === String.fromCharCode(65279)) {
 		s = s.substr(1);
 	}
@@ -153,7 +153,7 @@ var cutbom = function(s) {
  Inspired by System.global
  @return {object} The global scope
  */
-utils.global = (function() {
+utils.global = (function () {
 	if (typeof self !== 'undefined') {
 		return self;
 	}
@@ -171,7 +171,7 @@ utils.global = (function() {
  @param {function} Function to check
  @return {boolean} True if function is native
  */
-var isNativeFunction = (utils.isNativeFunction = function(fn) {
+var isNativeFunction = (utils.isNativeFunction = function (fn) {
 	return typeof fn === 'function' && !!~fn.toString().indexOf('[native code]');
 });
 
@@ -179,7 +179,7 @@ var isNativeFunction = (utils.isNativeFunction = function(fn) {
  Find out if code is running in a web worker enviroment
  @return {boolean} True if code is running in a web worker enviroment
  */
-utils.isWebWorker = (function() {
+utils.isWebWorker = (function () {
 	try {
 		var importScripts = utils.global.importScripts;
 		return utils.isNativeFunction(importScripts);
@@ -192,7 +192,7 @@ utils.isWebWorker = (function() {
  Find out if code is running in a node enviroment
  @return {boolean} True if code is running in a node enviroment
  */
-utils.isNode = (function() {
+utils.isNode = (function () {
 	try {
 		return utils.isNativeFunction(utils.global.process.reallyExit);
 	} catch (e) {
@@ -204,7 +204,7 @@ utils.isNode = (function() {
  Find out if code is running in a browser enviroment
  @return {boolean} True if code is running in a browser enviroment
  */
-utils.isBrowser = (function() {
+utils.isBrowser = (function () {
 	try {
 		return utils.isNativeFunction(utils.global.location.reload);
 	} catch (e) {
@@ -216,7 +216,7 @@ utils.isBrowser = (function() {
  Find out if code is running in a browser with a browserify setup
  @return {boolean} True if code is running in a browser with a browserify setup
  */
-utils.isBrowserify = (function() {
+utils.isBrowserify = (function () {
 	return utils.isBrowser && typeof process !== 'undefined' && process.browser;
 })();
 
@@ -224,7 +224,7 @@ utils.isBrowserify = (function() {
  Find out if code is running in a browser with a requireJS setup
  @return {boolean} True if code is running in a browser with a requireJS setup
  */
-utils.isRequireJS = (function() {
+utils.isRequireJS = (function () {
 	return (
 		utils.isBrowser && typeof require === 'function' && typeof require.specified === 'function'
 	);
@@ -236,7 +236,7 @@ utils.isRequireJS = (function() {
 
  @todo Find out if this is the best way to do this
  */
-utils.isMeteor = (function() {
+utils.isMeteor = (function () {
 	return typeof Meteor !== 'undefined' && Meteor.release;
 })();
 
@@ -244,7 +244,7 @@ utils.isMeteor = (function() {
  Find out if code is running on a Meteor client
  @return {boolean} True if code is running on a Meteor client
  */
-utils.isMeteorClient = utils.isMeteorClient = (function() {
+utils.isMeteorClient = utils.isMeteorClient = (function () {
 	return utils.isMeteor && Meteor.isClient;
 })();
 
@@ -252,7 +252,7 @@ utils.isMeteorClient = utils.isMeteorClient = (function() {
  Find out if code is running on a Meteor server
  @return {boolean} True if code is running on a Meteor server
  */
-utils.isMeteorServer = (function() {
+utils.isMeteorServer = (function () {
 	return utils.isMeteor && Meteor.isServer;
 })();
 
@@ -262,11 +262,11 @@ utils.isMeteorServer = (function() {
 
  @todo Find out if this is the best way to do this
  */
-utils.isCordova = (function() {
+utils.isCordova = (function () {
 	return typeof cordova === 'object';
 })();
 
-utils.isReactNative = (function() {
+utils.isReactNative = (function () {
 	var isReact = false;
 	//*not-for-browser/*
 	try {
@@ -280,11 +280,11 @@ utils.isReactNative = (function() {
 	return isReact;
 })();
 
-utils.hasIndexedDB = (function() {
+utils.hasIndexedDB = (function () {
 	return !!utils.global.indexedDB;
 })();
 
-utils.isArray = function(obj) {
+utils.isArray = function (obj) {
 	return '[object Array]' === Object.prototype.toString.call(obj);
 };
 /**
@@ -298,7 +298,7 @@ utils.isArray = function(obj) {
  @todo Define Event type
  @todo Smaller if-else structures.
  */
-var loadFile = (utils.loadFile = function(path, asy, success, error) {
+var loadFile = (utils.loadFile = function (path, asy, success, error) {
 	var data, fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
@@ -308,19 +308,19 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 		if (typeof path === 'undefined') {
 			var buff = '';
 			process.stdin.setEncoding('utf8');
-			process.stdin.on('readable', function() {
+			process.stdin.on('readable', function () {
 				var chunk = process.stdin.read();
 				if (chunk !== null) {
 					buff += chunk.toString();
 				}
 			});
-			process.stdin.on('end', function() {
+			process.stdin.on('end', function () {
 				success(cutbom(buff));
 			});
 		} else {
 			if (/^[a-z]+:\/\//i.test(path)) {
 				var request = require('request');
-				request(path, function(err, response, body) {
+				request(path, function (err, response, body) {
 					if (err) {
 						return error(err, null);
 					}
@@ -329,7 +329,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 			} else {
 				//If async callthen call async
 				if (asy) {
-					fs.readFile(path, function(err, data) {
+					fs.readFile(path, function (err, data) {
 						if (err) {
 							return error(err, null);
 						}
@@ -350,20 +350,20 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.readFile(path, 'utf8')
-			.then(function(contents) {
+			.then(function (contents) {
 				success(cutbom(contents));
 			})
-			.catch(function(err) {
+			.catch(function (err) {
 				return error(err, null);
 			});
 		//*/
 	} else if (utils.isCordova) {
 		/* If Cordova */
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
-			fileSystem.root.getFile(path, {create: false}, function(fileEntry) {
-				fileEntry.file(function(file) {
+		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
+				fileEntry.file(function (file) {
 					var fileReader = new FileReader();
-					fileReader.onloadend = function(e) {
+					fileReader.onloadend = function (e) {
 						success(cutbom(this.result));
 					};
 					fileReader.readAsText(file);
@@ -411,7 +411,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
                     SELECT * FROM TXT('http://alasql.org/README.md');
                 */
 				var xhr = new XMLHttpRequest();
-				xhr.onreadystatechange = function() {
+				xhr.onreadystatechange = function () {
 					if (xhr.readyState === 4) {
 						if (xhr.status === 200) {
 							if (success) {
@@ -443,7 +443,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
 			var reader = new FileReader();
 			/** type {string} */
 			var name = files[0].name;
-			reader.onload = function(e) {
+			reader.onload = function (e) {
 				var data = e.target.result;
 				success(cutbom(data));
 			};
@@ -463,7 +463,7 @@ var loadFile = (utils.loadFile = function(path, asy, success, error) {
  @todo merge functionality from loadFile and LoadBinaryFile
  */
 
-var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error) {
+var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error) {
 	var fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
@@ -471,7 +471,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error)
 
 		if (/^[a-z]+:\/\//i.test(path)) {
 			var request = require('request');
-			request({url: path, encoding: null}, function(err, response, data) {
+			request({url: path, encoding: null}, function (err, response, data) {
 				if (err) {
 					throw err;
 				}
@@ -483,7 +483,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error)
 			});
 		} else {
 			if (asy) {
-				fs.readFile(path, function(err, data) {
+				fs.readFile(path, function (err, data) {
 					if (err) {
 						throw err;
 					}
@@ -508,7 +508,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error)
 		var RNFetchBlob = require('react-native-fetch-blob').default;
 		var dirs = RNFetchBlob.fs.dirs;
 		//should use readStream instead if the file is large
-		RNFetchBlob.fs.readFile(path, 'base64').then(function(data) {
+		RNFetchBlob.fs.readFile(path, 'base64').then(function (data) {
 			//RNFetchBlob.base64.decode(data) //need more test on excel
 			success(data);
 		});
@@ -519,7 +519,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error)
 			var xhr = new XMLHttpRequest();
 			xhr.open('GET', path, asy); // Async
 			xhr.responseType = 'arraybuffer';
-			xhr.onload = function() {
+			xhr.onload = function () {
 				var data = new Uint8Array(xhr.response);
 				var arr = [];
 				for (var i = 0; i < data.length; ++i) {
@@ -534,7 +534,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error)
 			var files = path.target.files;
 			var reader = new FileReader();
 			var name = files[0].name;
-			reader.onload = function(e) {
+			reader.onload = function (e) {
 				var data = e.target.result;
 				success(data);
 			};
@@ -545,21 +545,21 @@ var loadBinaryFile = (utils.loadBinaryFile = function(path, asy, success, error)
 	}
 });
 
-var removeFile = (utils.removeFile = function(path, cb) {
+var removeFile = (utils.removeFile = function (path, cb) {
 	if (utils.isNode) {
 		//*not-for-browser/*
 		var fs = require('fs');
 		fs.remove(path, cb);
 	} else if (utils.isCordova) {
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
+		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
 				{create: false},
-				function(fileEntry) {
+				function (fileEntry) {
 					fileEntry.remove(cb);
 					cb && cb(); // jshint ignore:line
 				},
-				function() {
+				function () {
 					cb && cb(); // jshint ignore:line
 				}
 			);
@@ -568,10 +568,10 @@ var removeFile = (utils.removeFile = function(path, cb) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.unlink(path)
-			.then(function() {
+			.then(function () {
 				cb && cb();
 			})
-			.catch(function(err) {
+			.catch(function (err) {
 				throw err;
 			});
 		//*/
@@ -581,7 +581,7 @@ var removeFile = (utils.removeFile = function(path, cb) {
 });
 
 // Todo: check if it makes sense to support cordova and Meteor server
-var deleteFile = (utils.deleteFile = function(path, cb) {
+var deleteFile = (utils.deleteFile = function (path, cb) {
 	//*not-for-browser/*
 	if (utils.isNode) {
 		var fs = require('fs');
@@ -590,17 +590,17 @@ var deleteFile = (utils.deleteFile = function(path, cb) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.unlink(path)
-			.then(function() {
+			.then(function () {
 				cb && cb();
 			})
-			.catch(function(err) {
+			.catch(function (err) {
 				throw err;
 			});
 	}
 	//*/
 });
 
-utils.autoExtFilename = function(filename, ext, config) {
+utils.autoExtFilename = function (filename, ext, config) {
 	config = config || {};
 	if (
 		typeof filename !== 'string' ||
@@ -613,20 +613,20 @@ utils.autoExtFilename = function(filename, ext, config) {
 	return filename + '.' + ext;
 };
 
-var fileExists = (utils.fileExists = function(path, cb) {
+var fileExists = (utils.fileExists = function (path, cb) {
 	if (utils.isNode) {
 		//*not-for-browser/*
 		var fs = require('fs');
 		fs.exists(path, cb);
 	} else if (utils.isCordova) {
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
+		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
 				{create: false},
-				function(fileEntry) {
+				function (fileEntry) {
 					cb(true);
 				},
-				function() {
+				function () {
 					cb(false);
 				}
 			);
@@ -635,10 +635,10 @@ var fileExists = (utils.fileExists = function(path, cb) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.exists(path)
-			.then(function(yes) {
+			.then(function (yes) {
 				cb && cb(yes);
 			})
-			.catch(function(err) {
+			.catch(function (err) {
 				throw err;
 			});
 		//*/
@@ -656,7 +656,7 @@ var fileExists = (utils.fileExists = function(path, cb) {
  @param {object=} opts
  */
 
-var saveFile = (utils.saveFile = function(path, data, cb, opts) {
+var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 	var res = 1;
 	if (path === undefined) {
 		//
@@ -678,19 +678,19 @@ var saveFile = (utils.saveFile = function(path, data, cb, opts) {
 		} else if (utils.isReactNative) {
 			var RNFS = require('react-native-fs');
 			RNFS.writeFile(path, data)
-				.then(function(success) {
+				.then(function (success) {
 					//, 'utf8'
 					if (cb) res = cb(res);
 				})
-				.catch(function(err) {
+				.catch(function (err) {
 					console.error(err.message);
 				});
 		} else if (utils.isCordova) {
-			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSystem) {
+			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 				//                alasql.utils.removeFile(path,function(){
-				fileSystem.root.getFile(path, {create: true}, function(fileEntry) {
-					fileEntry.createWriter(function(fileWriter) {
-						fileWriter.onwriteend = function() {
+				fileSystem.root.getFile(path, {create: true}, function (fileEntry) {
+					fileEntry.createWriter(function (fileWriter) {
+						fileWriter.onwriteend = function () {
 							if (cb) {
 								res = cb(res);
 							}
@@ -820,7 +820,7 @@ function isIE() {
  */
 
 // FNV-1a inspired hashing
-var hash = (utils.hash = function(str) {
+var hash = (utils.hash = function (str) {
 	var hash = 0x811c9dc5,
 		i = str.length;
 	while (i) {
@@ -837,9 +837,9 @@ var hash = (utils.hash = function(str) {
  @param {array} b
  @return {array}
  */
-var arrayUnion = (utils.arrayUnion = function(a, b) {
+var arrayUnion = (utils.arrayUnion = function (a, b) {
 	var r = b.slice(0);
-	a.forEach(function(i) {
+	a.forEach(function (i) {
 		if (r.indexOf(i) < 0) {
 			r.push(i);
 		}
@@ -850,8 +850,8 @@ var arrayUnion = (utils.arrayUnion = function(a, b) {
 /**
  Array Difference
  */
-var arrayDiff = (utils.arrayDiff = function(a, b) {
-	return a.filter(function(i) {
+var arrayDiff = (utils.arrayDiff = function (a, b) {
+	return a.filter(function (i) {
 		return b.indexOf(i) < 0;
 	});
 });
@@ -859,12 +859,12 @@ var arrayDiff = (utils.arrayDiff = function(a, b) {
 /**
  Arrays deep intersect (with records)
  */
-var arrayIntersect = (utils.arrayIntersect = function(a, b) {
+var arrayIntersect = (utils.arrayIntersect = function (a, b) {
 	var r = [];
-	a.forEach(function(ai) {
+	a.forEach(function (ai) {
 		var found = false;
 
-		b.forEach(function(bi) {
+		b.forEach(function (bi) {
 			found = found || ai === bi;
 		});
 
@@ -878,12 +878,12 @@ var arrayIntersect = (utils.arrayIntersect = function(a, b) {
 /**
  Arrays deep union (with records)
  */
-var arrayUnionDeep = (utils.arrayUnionDeep = function(a, b) {
+var arrayUnionDeep = (utils.arrayUnionDeep = function (a, b) {
 	var r = b.slice(0);
-	a.forEach(function(ai) {
+	a.forEach(function (ai) {
 		var found = false;
 
-		r.forEach(function(ri) {
+		r.forEach(function (ri) {
 			//            found = found || equalDeep(ai, ri, true);
 			found = found || deepEqual(ai, ri);
 		});
@@ -898,12 +898,12 @@ var arrayUnionDeep = (utils.arrayUnionDeep = function(a, b) {
 /**
  Arrays deep union (with records)
  */
-var arrayExceptDeep = (utils.arrayExceptDeep = function(a, b) {
+var arrayExceptDeep = (utils.arrayExceptDeep = function (a, b) {
 	var r = [];
-	a.forEach(function(ai) {
+	a.forEach(function (ai) {
 		var found = false;
 
-		b.forEach(function(bi) {
+		b.forEach(function (bi) {
 			//            found = found || equalDeep(ai, bi, true);
 			found = found || deepEqual(ai, bi);
 		});
@@ -918,12 +918,12 @@ var arrayExceptDeep = (utils.arrayExceptDeep = function(a, b) {
 /**
  Arrays deep intersect (with records)
  */
-var arrayIntersectDeep = (utils.arrayIntersectDeep = function(a, b) {
+var arrayIntersectDeep = (utils.arrayIntersectDeep = function (a, b) {
 	var r = [];
-	a.forEach(function(ai) {
+	a.forEach(function (ai) {
 		var found = false;
 
-		b.forEach(function(bi) {
+		b.forEach(function (bi) {
 			//            found = found || equalDeep(ai, bi, true);
 			found = found || deepEqual(ai, bi, true);
 		});
@@ -945,6 +945,14 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 
 	if (obj instanceof Date) {
 		return new Date(obj);
+	}
+
+	if (obj instanceof String) {
+		return obj.toString();
+	}
+
+	if (obj instanceof Number) {
+		return +obj;
 	}
 
 	var temp = obj.constructor(); // changed
@@ -1009,12 +1017,12 @@ var equalDeep = utils.equalDeep = function equalDeep (x, y, deep) {
 /**
  Compare two objects in deep
  */
-var deepEqual = (utils.deepEqual = function(x, y) {
+var deepEqual = (utils.deepEqual = function (x, y) {
 	if (x === y) {
 		return true;
 	}
 
-	if (typeof x === 'object' && null !== x && (typeof y === 'object' && null !== y)) {
+	if (typeof x === 'object' && null !== x && typeof y === 'object' && null !== y) {
 		if (Object.keys(x).length !== Object.keys(y).length) {
 			return false;
 		}
@@ -1033,7 +1041,7 @@ var deepEqual = (utils.deepEqual = function(x, y) {
  @param {array} data
  @return {array}
  */
-var distinctArray = (utils.distinctArray = function(data) {
+var distinctArray = (utils.distinctArray = function (data) {
 	var uniq = {};
 	// TODO: Speedup, because Object.keys is slow
 	for (var i = 0, ilen = data.length; i < ilen; i++) {
@@ -1041,7 +1049,7 @@ var distinctArray = (utils.distinctArray = function(data) {
 		if (typeof data[i] === 'object') {
 			uix = Object.keys(data[i])
 				.sort()
-				.map(function(k) {
+				.map(function (k) {
 					return k + '`' + data[i][k];
 				})
 				.join('`');
@@ -1077,7 +1085,7 @@ var extend = (utils.extend = function extend(a, b) {
 /**
  Flat array by first row
  */
-var flatArray = (utils.flatArray = function(a) {
+var flatArray = (utils.flatArray = function (a) {
 	//console.log(684,a);
 	if (!a || 0 === a.length) {
 		return [];
@@ -1085,7 +1093,7 @@ var flatArray = (utils.flatArray = function(a) {
 
 	// For recordsets
 	if (typeof a === 'object' && a instanceof alasql.Recordset) {
-		return a.data.map(function(ai) {
+		return a.data.map(function (ai) {
 			return ai[a.columns[0].columnid];
 		});
 	}
@@ -1094,7 +1102,7 @@ var flatArray = (utils.flatArray = function(a) {
 	if (key === undefined) {
 		return [];
 	}
-	return a.map(function(ai) {
+	return a.map(function (ai) {
 		return ai[key];
 	});
 });
@@ -1102,8 +1110,8 @@ var flatArray = (utils.flatArray = function(a) {
 /**
  Convert array of objects to array of arrays
  */
-var arrayOfArrays = (utils.arrayOfArrays = function(a) {
-	return a.map(function(aa) {
+var arrayOfArrays = (utils.arrayOfArrays = function (a) {
+	return a.map(function (aa) {
 		var ar = [];
 		for (var key in aa) {
 			ar.push(aa[key]);
@@ -1113,7 +1121,7 @@ var arrayOfArrays = (utils.arrayOfArrays = function(a) {
 });
 
 if (!Array.isArray) {
-	Array.isArray = function(arg) {
+	Array.isArray = function (arg) {
 		return Object.prototype.toString.call(arg) === '[object Array]';
 	};
 }
@@ -1124,7 +1132,7 @@ if (!Array.isArray) {
  @return {string} Column name, starting with 'A'
  */
 
-var xlsnc = (utils.xlsnc = function(i) {
+var xlsnc = (utils.xlsnc = function (i) {
 	var addr = String.fromCharCode(65 + (i % 26));
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
@@ -1142,7 +1150,7 @@ var xlsnc = (utils.xlsnc = function(i) {
  @param {string} s Column number, like 'A' or 'BE'
  @return {string} Column name, starting with 0
  */
-var xlscn = (utils.xlscn = function(s) {
+var xlscn = (utils.xlscn = function (s) {
 	var n = s.charCodeAt(0) - 65;
 	if (s.length > 1) {
 		n = (n + 1) * 26 + s.charCodeAt(1) - 65;
@@ -1154,7 +1162,7 @@ var xlscn = (utils.xlscn = function(s) {
 	return n;
 });
 
-var domEmptyChildren = (utils.domEmptyChildren = function(container) {
+var domEmptyChildren = (utils.domEmptyChildren = function (container) {
 	var len = container.childNodes.length;
 	while (len--) {
 		container.removeChild(container.lastChild);
@@ -1169,7 +1177,7 @@ var domEmptyChildren = (utils.domEmptyChildren = function(container) {
  @return {boolean} If value LIKE pattern ESCAPE escape
  */
 
-var like = (utils.like = function(pattern, value, escape) {
+var like = (utils.like = function (pattern, value, escape) {
 	// Verify escape character
 	if (!escape) escape = '';
 
@@ -1207,7 +1215,7 @@ var like = (utils.like = function(pattern, value, escape) {
 	return ('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1;
 });
 
-utils.glob = function(value, pattern) {
+utils.glob = function (value, pattern) {
 	var i = 0;
 	var s = '^';
 
@@ -1241,7 +1249,7 @@ utils.glob = function(value, pattern) {
  Get path of alasql.js
  @todo Rewrite and simplify the code. Review, is this function is required separately
  */
-utils.findAlaSQLPath = function() {
+utils.findAlaSQLPath = function () {
 	/** type {string} Path to alasql library and plugins */
 
 	if (utils.isWebWorker) {
@@ -1271,7 +1279,7 @@ utils.findAlaSQLPath = function() {
 	return '';
 };
 
-var getXLSX = function() {
+var getXLSX = function () {
 	var XLSX = alasql.private.externalXlsxLib;
 
 	if (XLSX) {

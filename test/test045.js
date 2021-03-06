@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 45', function() {
-	describe('table AS alias', function() {
-		it('CASE Expression WHEN THEN END', function(done) {
+describe('Test 45', function () {
+	describe('table AS alias', function () {
+		it('CASE Expression WHEN THEN END', function (done) {
 			alasql('create database test45');
 			alasql('use test45');
 			alasql('CREATE TABLE one (a INT)');

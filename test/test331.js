@@ -6,15 +6,15 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 331 SLT#1 - test', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 331 SLT#1 - test', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test331;USE test331');
 
 		done();
 	});
 
-	it('2. CREATE TABLES', function(done) {
-		alasql(function() {
+	it('2. CREATE TABLES', function (done) {
+		alasql(function () {
 			/*
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(103,102,100,101,104);
@@ -53,9 +53,9 @@ describe('Test 331 SLT#1 - test', function() {
 		done();
 	});
 
-	it('2. SELECT 673', function(done) {
+	it('2. SELECT 673', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
     SELECT a,
            c-d,
@@ -68,11 +68,14 @@ describe('Test 331 SLT#1 - test', function() {
   */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [[131, 1, 133], [182, 1, 183]]);
+		assert.deepEqual(res, [
+			[131, 1, 133],
+			[182, 1, 183],
+		]);
 		done();
 	});
 
-	it('3. SELECT 1095', function(done) {
+	it('3. SELECT 1095', function (done) {
 		/*
     alasql.options.modifier = 'MATRIX';
     var res = alasql.parse(' \
@@ -89,7 +92,7 @@ describe('Test 331 SLT#1 - test', function() {
 /// console.log('***');    
 /// console.log(res.statements[0].where.expression.left);
 */
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
       SELECT a-b,
              CASE WHEN a<b-3 THEN 111 WHEN a<=b THEN 222
@@ -101,11 +104,15 @@ describe('Test 331 SLT#1 - test', function() {
        ORDER BY 1,2
   */
 		});
-		assert.deepEqual(res, [[-1, 222], [-1, 222], [1, 333]]);
+		assert.deepEqual(res, [
+			[-1, 222],
+			[-1, 222],
+			[1, 333],
+		]);
 		done();
 	});
 
-	it('3. SELECT 959', function(done) {
+	it('3. SELECT 959', function (done) {
 		var res = alasql.parse(
 			' \
 SELECT a+b*2, \
@@ -126,7 +133,7 @@ SELECT a+b*2, \
 		//    console.log(res.statements[0].where.expression);
 
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
 
 SELECT a+b*2,
@@ -148,7 +155,7 @@ SELECT a+b*2,
 		done();
 	});
 
-	it('4. DROP DATABASE', function(done) {
+	it('4. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test331');
 		alasql.options.modifier = undefined;
 		done();

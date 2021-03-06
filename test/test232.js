@@ -7,32 +7,32 @@ if (typeof exports === 'object') {
 
 var test = 232;
 
-describe('Test 232 Errors handling', function() {
-	before(function() {
+describe('Test 232 Errors handling', function () {
+	before(function () {
 		alasql('CREATE DATABASE test' + test + '; USE test' + test + ';');
 	});
 
-	after(function() {
+	after(function () {
 		alasql('set errorlog off');
 		alasql('DROP DATABASE test' + test + '');
 	});
 
-	it('2. Throw error', function() {
+	it('2. Throw error', function () {
 		alasql('set errorlog off');
-		assert.throws(function() {
-			alasql('SELECT * FROM faultyName', [], function(data, err) {});
+		assert.throws(function () {
+			alasql('SELECT * FROM faultyName', [], function (data, err) {});
 		}, Error);
 	});
 
-	it('3. Log error async', function(done) {
+	it('3. Log error async', function (done) {
 		alasql('set errorlog on');
-		alasql('SELECT * FROM faultyName', [], function(data, err) {
+		alasql('SELECT * FROM faultyName', [], function (data, err) {
 			assert(/^Table does not exist\:/.test(err.message));
 			done();
 		});
 	});
 
-	it('4. Log error sync', function() {
+	it('4. Log error sync', function () {
 		alasql('set errorlog on');
 		alasql('SELECT * FROM faultyName');
 		assert(/^Table does not exist\:/.test(alasql.error.message));

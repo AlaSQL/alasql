@@ -5,14 +5,14 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 326 FOREIGN KEYS', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 326 FOREIGN KEYS', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test326; USE test326');
 		done();
 	});
 
-	it.skip('2. CREATE TABLES City', function(done) {
-		alasql(function() {
+	it.skip('2. CREATE TABLES City', function (done) {
+		alasql(function () {
 			/*
       CREATE TABLE dbo.Cities
       (
@@ -26,8 +26,8 @@ describe('Test 326 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('3. INSERT VALUES INTO City', function(done) {
-		alasql(function() {
+	it.skip('3. INSERT VALUES INTO City', function (done) {
+		alasql(function () {
 			/*
       INSERT INTO dbo.Cities(cityid, city, region, country) VALUES
         ('ATL', 'Atlanta', 'GA', 'USA'),
@@ -48,8 +48,8 @@ describe('Test 326 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('4. CREATE TABLE Roads', function(done) {
-		alasql(function() {
+	it.skip('4. CREATE TABLE Roads', function (done) {
+		alasql(function () {
 			/*
       CREATE TABLE dbo.Roads
       (
@@ -65,8 +65,8 @@ describe('Test 326 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('5. INSERT VALUES INTO Roads', function(done) {
-		alasql(function() {
+	it.skip('5. INSERT VALUES INTO Roads', function (done) {
+		alasql(function () {
 			/*
       INSERT INTO dbo.Roads(city1, city2, distance) VALUES
         ('ANC', 'FAI',  359),
@@ -96,8 +96,8 @@ describe('Test 326 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('6. INSERT wrong FOREIGN KEY', function(done) {
-		assert.throws(function() {
+	it.skip('6. INSERT wrong FOREIGN KEY', function (done) {
+		assert.throws(function () {
 			alasql(
 				"INSERT INTO dbo.Roads(city1, city2, distance) VALUES \
           ('SFO', 'SVO', 99999)"
@@ -107,7 +107,7 @@ describe('Test 326 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('7. INSERT right FOREIGN KEY', function(done) {
+	it.skip('7. INSERT right FOREIGN KEY', function (done) {
 		alasql(
 			"INSERT INTO dbo.Cities(cityid, city, region, country) VALUES \
         ('SVO', 'Sheremetievo', 'Moscow', 'Russia')"
@@ -120,16 +120,14 @@ describe('Test 326 FOREIGN KEYS', function() {
 		done();
 	});
 
-	it.skip('8. SELECT', function(done) {
-		var res = alasql(
-			"SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'"
-		);
+	it.skip('8. SELECT', function (done) {
+		var res = alasql("SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
 		assert(res == 99999);
 		done();
 	});
 
 	if (false) {
-		it.skip('9. FOREIGN KEY DOT operator', function(done) {
+		it.skip('9. FOREIGN KEY DOT operator', function (done) {
 			var res = alasql.parse(
 				"SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'"
 			);
@@ -142,7 +140,7 @@ describe('Test 326 FOREIGN KEYS', function() {
 		});
 	}
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test326');
 		done();
 	});

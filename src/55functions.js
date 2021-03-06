@@ -6,35 +6,37 @@
 //
 */
 
-yy.FuncValue = function(params) {
+yy.FuncValue = function (params) {
 	return yy.extend(this, params);
 };
-yy.FuncValue.prototype.toString = function(dontas) {
+
+var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
+yy.FuncValue.prototype.toString = function (dontas) {
 	var s = '';
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
 	else if (alasql.aggr[this.funcid]) s += this.funcid;
 	else if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])
-		s += this.funcid.toUpperCase();
+		s += this.funcid.toUpperCase().replace(re_invalidFnNameChars, '');
 
 	if (this.funcid !== 'CURRENT_TIMESTAMP') {
 		s += '(';
 		if (this.args && this.args.length > 0) {
 			s += this.args
-				.map(function(arg) {
+				.map(function (arg) {
 					return arg.toString();
 				})
 				.join(',');
 		}
 		s += ')';
 	}
-	
+
 	if (this.as && !dontas) s += ' AS ' + this.as.toString();
 	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
-yy.FuncValue.prototype.execute = function(databaseid, params, cb) {
+yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	alasql.precompile(this, databaseid, params); // Precompile queries
 	//	console.log(34,this.toJS('','',null));
@@ -60,15 +62,15 @@ yy.FuncValue.prototype.execute = function(databaseid, params, cb) {
 
 */
 
-yy.FuncValue.prototype.findAggregator = function(query) {
+yy.FuncValue.prototype.findAggregator = function (query) {
 	if (this.args && this.args.length > 0) {
-		this.args.forEach(function(arg) {
+		this.args.forEach(function (arg) {
 			if (arg.findAggregator) arg.findAggregator(query);
 		});
 	}
 };
 
-yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
+yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 	var s = '';
 	var funcid = this.funcid;
 	// IF this is standard compile functions
@@ -76,7 +78,7 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 		if (this.args && this.args.length > 0) {
 			s += alasql.stdlib[funcid.toUpperCase()].apply(
 				this,
-				this.args.map(function(arg) {
+				this.args.map(function (arg) {
 					return arg.toJS(context, tableid);
 				})
 			);
@@ -85,11 +87,11 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 		}
 	} else if (!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
 		if (this.newid) s += 'new ';
-		s += 'alasql.stdfn.' + this.funcid.toUpperCase() + '(';
+		s += 'alasql.stdfn[' + JSON.stringify(this.funcid.toUpperCase()) + '](';
 		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
-				.map(function(arg) {
+				.map(function (arg) {
 					return arg.toJS(context, tableid, defcols);
 				})
 				.join(',');
@@ -100,11 +102,11 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 		// TODO arguments!!!
 		//		var s = '';
 		if (this.newid) s += 'new ';
-		s += 'alasql.fn.' + this.funcid + '(';
+		s += 'alasql.fn[' + JSON.stringify(this.funcid) + '](';
 		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
-				.map(function(arg) {
+				.map(function (arg) {
 					return arg.toJS(context, tableid, defcols);
 				})
 				.join(',');
@@ -143,59 +145,59 @@ yy.FuncValue.prototype.toJS = function(context, tableid, defcols) {
 var stdlib = (alasql.stdlib = {});
 var stdfn = (alasql.stdfn = {});
 
-stdlib.ABS = function(a) {
+stdlib.ABS = function (a) {
 	return 'Math.abs(' + a + ')';
 };
-stdlib.CLONEDEEP = function(a) {
+stdlib.CLONEDEEP = function (a) {
 	return 'alasql.utils.cloneDeep(' + a + ')';
 };
 
-stdfn.CONCAT = function() {
+stdfn.CONCAT = function () {
 	return Array.prototype.slice.call(arguments).join('');
 };
-stdlib.EXP = function(a) {
+stdlib.EXP = function (a) {
 	return 'Math.pow(Math.E,' + a + ')';
 };
 
-stdlib.IIF = function(a, b, c) {
+stdlib.IIF = function (a, b, c) {
 	if (arguments.length == 3) {
 		return '((' + a + ')?(' + b + '):(' + c + '))';
 	} else {
 		throw new Error('Number of arguments of IFF is not equals to 3');
 	}
 };
-stdlib.IFNULL = function(a, b) {
+stdlib.IFNULL = function (a, b) {
 	return '(' + a + '||' + b + ')';
 };
-stdlib.INSTR = function(s, p) {
+stdlib.INSTR = function (s, p) {
 	return '((' + s + ').indexOf(' + p + ')+1)';
 };
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
 
-stdlib.LEN = stdlib.LENGTH = function(s) {
+stdlib.LEN = stdlib.LENGTH = function (s) {
 	return und(s, 'y.length');
 };
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-stdlib.LOWER = stdlib.LCASE = function(s) {
+stdlib.LOWER = stdlib.LCASE = function (s) {
 	return und(s, 'String(y).toLowerCase()');
 };
 //stdlib.LCASE = function(s) {return '('+s+').toLowerCase()';}
 
 // Returns a character expression after it removes leading blanks.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/ltrim-transact-sql
-stdlib.LTRIM = function(s) {
+stdlib.LTRIM = function (s) {
 	return und(s, 'y.replace(/^[ ]+/,"")');
 };
 
 // Returns a character string after truncating all trailing spaces.
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/rtrim-transact-sql
-stdlib.RTRIM = function(s) {
+stdlib.RTRIM = function (s) {
 	return und(s, 'y.replace(/[ ]+$/,"")');
 };
 
-stdlib.MAX = stdlib.GREATEST = function() {
+stdlib.MAX = stdlib.GREATEST = function () {
 	return (
 		'[' +
 		Array.prototype.join.call(arguments, ',') +
@@ -203,7 +205,7 @@ stdlib.MAX = stdlib.GREATEST = function() {
 	);
 };
 
-stdlib.MIN = stdlib.LEAST = function() {
+stdlib.MIN = stdlib.LEAST = function () {
 	return (
 		'[' +
 		Array.prototype.join.call(arguments, ',') +
@@ -211,67 +213,67 @@ stdlib.MIN = stdlib.LEAST = function() {
 	);
 };
 
-stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function(a, b, c) {
+stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function (a, b, c) {
 	if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
 	else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
 };
 
-stdfn.REGEXP_LIKE = function(a, b, c) {
+stdfn.REGEXP_LIKE = function (a, b, c) {
 	//	console.log(a,b,c);
 	return (a || '').search(RegExp(b, c)) > -1;
 };
 
 // Here we uses undefined instead of null
-stdlib.ISNULL = stdlib.NULLIF = function(a, b) {
+stdlib.ISNULL = stdlib.NULLIF = function (a, b) {
 	return '(' + a + '==' + b + '?undefined:' + a + ')';
 };
 
-stdlib.POWER = function(a, b) {
+stdlib.POWER = function (a, b) {
 	return 'Math.pow(' + a + ',' + b + ')';
 };
 
-stdlib.RANDOM = function(r) {
+stdlib.RANDOM = function (r) {
 	if (arguments.length == 0) {
 		return 'Math.random()';
 	} else {
 		return '(Math.random()*(' + r + ')|0)';
 	}
 };
-stdlib.ROUND = function(s, d) {
+stdlib.ROUND = function (s, d) {
 	if (arguments.length == 2) {
 		return 'Math.round((' + s + ')*Math.pow(10,(' + d + ')))/Math.pow(10,(' + d + '))';
 	} else {
 		return 'Math.round(' + s + ')';
 	}
 };
-stdlib.CEIL = stdlib.CEILING = function(s) {
+stdlib.CEIL = stdlib.CEILING = function (s) {
 	return 'Math.ceil(' + s + ')';
 };
-stdlib.FLOOR = function(s) {
+stdlib.FLOOR = function (s) {
 	return 'Math.floor(' + s + ')';
 };
 
-stdlib.ROWNUM = function() {
+stdlib.ROWNUM = function () {
 	return '1';
 };
-stdlib.ROW_NUMBER = function() {
+stdlib.ROW_NUMBER = function () {
 	return '1';
 };
 
-stdlib.SQRT = function(s) {
+stdlib.SQRT = function (s) {
 	return 'Math.sqrt(' + s + ')';
 };
 
-stdlib.TRIM = function(s) {
+stdlib.TRIM = function (s) {
 	return und(s, 'y.trim()');
 };
 
-stdlib.UPPER = stdlib.UCASE = function(s) {
+stdlib.UPPER = stdlib.UCASE = function (s) {
 	return und(s, 'String(y).toUpperCase()');
 };
 
 // Concatination of strings
-stdfn.CONCAT_WS = function() {
+stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
 	return args.slice(1, args.length).join(args[0]);
 };
@@ -287,7 +289,7 @@ stdfn.CONCAT_WS = function() {
 // TRIM
 
 // Aggregator for joining strings
-alasql.aggr.GROUP_CONCAT = function(v, s, stage) {
+alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
 	if (stage === 1) {
 		return '' + v;
 	} else if (stage === 2) {
@@ -297,7 +299,7 @@ alasql.aggr.GROUP_CONCAT = function(v, s, stage) {
 	return s;
 };
 
-alasql.aggr.MEDIAN = function(v, s, stage) {
+alasql.aggr.MEDIAN = function (v, s, stage) {
 	if (stage === 2) {
 		if (v !== null) {
 			s.push(v);
@@ -313,7 +315,7 @@ alasql.aggr.MEDIAN = function(v, s, stage) {
 			return s;
 		}
 
-		var r = s.sort(function(a, b) {
+		var r = s.sort(function (a, b) {
 			if (a === b) {
 				return 0;
 			}
@@ -327,15 +329,16 @@ alasql.aggr.MEDIAN = function(v, s, stage) {
 			return r[p - 1];
 		}
 
-		if (typeof r[Math.floor(p - 1)] !== 'number') {
-			return r[Math.floor(p - 1)];
+		var value = r[Math.floor(p - 1)];
+		if (typeof value !== 'number' && !(value instanceof Number)) {
+			return value;
 		}
 
-		return (r[Math.floor(p - 1)] + r[Math.ceil(p - 1)]) / 2;
+		return (value + r[Math.ceil(p - 1)]) / 2;
 	}
 };
 
-alasql.aggr.QUART = function(v, s, stage, nth) {
+alasql.aggr.QUART = function (v, s, stage, nth) {
 	//Quartile (first quartile per default or input param)
 	if (stage === 2) {
 		if (v !== null) {
@@ -353,7 +356,7 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 		}
 
 		nth = !nth ? 1 : nth;
-		var r = s.sort(function(a, b) {
+		var r = s.sort(function (a, b) {
 			if (a === b) {
 				return 0;
 			}
@@ -370,17 +373,17 @@ alasql.aggr.QUART = function(v, s, stage, nth) {
 	}
 };
 
-alasql.aggr.QUART2 = function(v, s, stage) {
+alasql.aggr.QUART2 = function (v, s, stage) {
 	//Second Quartile
 	return alasql.aggr.QUART(v, s, stage, 2);
 };
-alasql.aggr.QUART3 = function(v, s, stage) {
+alasql.aggr.QUART3 = function (v, s, stage) {
 	//Third Quartile
 	return alasql.aggr.QUART(v, s, stage, 3);
 };
 
 // Standard deviation
-alasql.aggr.VAR = function(v, s, stage) {
+alasql.aggr.VAR = function (v, s, stage) {
 	if (stage === 1) {
 		if (v === null) {
 			return {arr: [], sum: 0};
@@ -405,7 +408,7 @@ alasql.aggr.VAR = function(v, s, stage) {
 	}
 };
 
-alasql.aggr.STDEV = function(v, s, stage) {
+alasql.aggr.STDEV = function (v, s, stage) {
 	if (stage === 1 || stage === 2) {
 		return alasql.aggr.VAR(v, s, stage);
 	} else {
@@ -432,7 +435,7 @@ alasql.aggr.STDEV = function(v, s, stage) {
 // 	return std;
 // };
 
-alasql.aggr.VARP = function(v, s, stage) {
+alasql.aggr.VARP = function (v, s, stage) {
 	if (stage == 1) {
 		return {arr: [v], sum: v};
 	} else if (stage == 2) {
@@ -451,7 +454,7 @@ alasql.aggr.VARP = function(v, s, stage) {
 	}
 };
 
-alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v, s, stage) {
+alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function (v, s, stage) {
 	if (stage == 1 || stage == 2) {
 		return alasql.aggr.VARP(v, s, stage);
 	} else {
@@ -461,15 +464,15 @@ alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function(v, s, stage
 
 alasql._aggrOriginal = alasql.aggr;
 alasql.aggr = {};
-Object.keys(alasql._aggrOriginal).forEach(function(k) {
-	alasql.aggr[k] = function(v, s, stage) {
+Object.keys(alasql._aggrOriginal).forEach(function (k) {
+	alasql.aggr[k] = function (v, s, stage) {
 		if (stage === 3 && typeof s === 'undefined') return undefined;
 		return alasql._aggrOriginal[k].apply(null, arguments);
 	};
 });
 
 // String functions
-stdfn.REPLACE = function(target, pattern, replacement) {
+stdfn.REPLACE = function (target, pattern, replacement) {
 	return (target || '').split(pattern).join(replacement);
 };
 
@@ -479,7 +482,7 @@ for (var i = 0; i < 256; i++) {
 	lut[i] = (i < 16 ? '0' : '') + i.toString(16);
 }
 
-stdfn.NEWID = stdfn.UUID = stdfn.GEN_RANDOM_UUID = function() {
+stdfn.NEWID = stdfn.UUID = stdfn.GEN_RANDOM_UUID = function () {
 	var d0 = (Math.random() * 0xffffffff) | 0;
 	var d1 = (Math.random() * 0xffffffff) | 0;
 	var d2 = (Math.random() * 0xffffffff) | 0;

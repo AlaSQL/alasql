@@ -9,16 +9,16 @@ if (typeof exports === 'object') {
 
 var test = 416;
 
-describe('Test ' + test + ' Loosing expression with GROUP BY', function() {
-	before(function() {
+describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
+	before(function () {
 		alasql('CREATE DATABASE test' + test + ';USE test' + test);
 	});
 
-	after(function() {
+	after(function () {
 		alasql('DROP DATABASE test' + test);
 	});
 
-	it('1. Test', function(done) {
+	it('1. Test', function (done) {
 		// prettier-ignore
 		var res = alasql(function(){/*
 	create table data( id INTEGER PRIMARY KEY, grp INTEGER);
@@ -42,7 +42,7 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function() {
 		done();
 	});
 
-	it.skip('2. Test', function(done) {
+	it.skip('2. Test', function (done) {
 		var res = alasql(
 			'matrix of select a.id, a.id +1, CAST(a.id AS INTEGER) +1 from data as a, data as b where a.id < b.id and a.grp = b.grp group by a.id'
 		);
@@ -50,14 +50,22 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function() {
 		assert.deepEqual(
 			res[3],
 
-			[[0, 1, 1], [1, 2, 2], [2, 3, 3], [3, 4, 4], [4, 5, 5], [5, 6, 6], [6, 7, 7]]
+			[
+				[0, 1, 1],
+				[1, 2, 2],
+				[2, 3, 3],
+				[3, 4, 4],
+				[4, 5, 5],
+				[5, 6, 6],
+				[6, 7, 7],
+			]
 		);
 
 		done();
 	});
 
-	it('3. Test Modified', function(done) {
-		var res = alasql(function() {
+	it('3. Test Modified', function (done) {
+		var res = alasql(function () {
 			/*
   drop table if exists data;
 	create table data( id INTEGER PRIMARY KEY, grp INTEGER);
@@ -69,7 +77,15 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function() {
 		assert.deepEqual(
 			res[3],
 
-			[[0, 1, 1], [1, 2, 2], [2, 3, 3], [3, 4, 4], [4, 5, 5], [5, 6, 6], [6, 7, 7]]
+			[
+				[0, 1, 1],
+				[1, 2, 2],
+				[2, 3, 3],
+				[3, 4, 4],
+				[4, 5, 5],
+				[5, 6, 6],
+				[6, 7, 7],
+			]
 		);
 
 		done();

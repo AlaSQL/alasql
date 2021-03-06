@@ -5,15 +5,15 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 357 Test', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 357 Test', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test357;USE test357');
 		done();
 	});
 
 	/* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
-	it.skip('2. Prepare Data', function(done) {
-		alasql(function() {
+	it.skip('2. Prepare Data', function (done) {
+		alasql(function () {
 			/*
 
       CREATE TABLE users( id int, name char(16) ) ; 
@@ -32,8 +32,8 @@ describe('Test 357 Test', function() {
 		done();
 	});
 
-	it.skip('3. Select Query', function(done) {
-		alasql(function() {
+	it.skip('3. Select Query', function (done) {
+		alasql(function () {
 			/*
     SELECT a.user_id, b.user_id, GROUP_CONCAT(a.hobby_id) AS 'Pairwise shared hobbies' 
     FROM users_hobbies a 
@@ -45,7 +45,7 @@ describe('Test 357 Test', function() {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test357');
 		done();

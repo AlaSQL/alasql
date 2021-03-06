@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 300 SEARCH', function() {
+describe('Test 300 SEARCH', function () {
 	var catalog = {
 		Europe: {
 			fruits: [{fruit: 'Apple'}, {fruit: 'Peach'}],
@@ -18,7 +18,7 @@ describe('Test 300 SEARCH', function() {
 		},
 	};
 
-	it('1. Search fruits', function(done) {
+	it('1. Search fruits', function (done) {
 		var res = alasql('SEARCH Europe FROM ?', [catalog]);
 		assert.deepEqual(res, [
 			{
@@ -28,7 +28,7 @@ describe('Test 300 SEARCH', function() {
 		done();
 	});
 
-	it('2. Search fruits 2', function(done) {
+	it('2. Search fruits 2', function (done) {
 		var res = alasql('SEARCH /fruits/ FROM ?', [catalog]);
 		assert.deepEqual(res, [{fruit: 'Apple'}, {fruit: 'Peach'}]);
 
@@ -38,7 +38,7 @@ describe('Test 300 SEARCH', function() {
 		done();
 	});
 
-	it('3. Search fruits', function(done) {
+	it('3. Search fruits', function (done) {
 		var res = alasql('SEARCH /fruits/WHERE(fruit="Apple") FROM ?', [catalog]);
 		assert.deepEqual(res, [{fruit: 'Apple'}]);
 
@@ -47,7 +47,7 @@ describe('Test 300 SEARCH', function() {
 		done();
 	});
 	if (false) {
-		it('4. Search fruits', function(done) {
+		it('4. Search fruits', function (done) {
 			var res = alasql('SEARCH /// WHERE(fruit="Apple") FROM ?', [catalog]);
 			assert.deepEqual(res, [{fruit: 'Apple'}]);
 			done();

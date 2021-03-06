@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 94 - Persistence in Browser and Node', function() {
+describe('Test 94 - Persistence in Browser and Node', function () {
 	//	it.skip('localStorage', function(done){
 	//		done();
 	//	});

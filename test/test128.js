@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 128 ASSERT', function() {
-	it('1. Assert on SOURCE and run statements', function(done) {
+describe('Test 128 ASSERT', function () {
+	it('1. Assert on SOURCE and run statements', function (done) {
 		alasql('create database test128');
 		alasql('assert 1');
 		alasql('use test128');

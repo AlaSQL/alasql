@@ -58,13 +58,13 @@ var data = [
 	},
 ];
 
-describe('Test 413 CONCAT_WS (issue #429)', function() {
-	it('2. CREATE DATABASE', function(done) {
+describe('Test 413 CONCAT_WS (issue #429)', function () {
+	it('2. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test413;USE test413');
 		done();
 	});
 
-	it('3. Test CONCAT_WS', function(done) {
+	it('3. Test CONCAT_WS', function (done) {
 		var res = alasql(
 			' SELECT CONCAT_WS(" ", "prepended string", `Ticket-Kategorie`,`Ticket-Typ`) as series_name FROM ?',
 			[data]
@@ -84,7 +84,7 @@ describe('Test 413 CONCAT_WS (issue #429)', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test413');
 		done();
 	});

@@ -32,7 +32,7 @@ function doJoin(query, scope, h) {
 		var source = query.sources[h];
 		source.applyselect(
 			query.params,
-			function(data) {
+			function (data) {
 				if (data.length > 0) {
 					//			console.log('APPLY CB');
 					for (var i = 0; i < data.length; i++) {
@@ -100,20 +100,22 @@ function doJoin(query, scope, h) {
 			var ilen = data.length;
 			var dataw;
 			//			console.log(h,opt,source.data,i,source.dontcache);
-			while (
-				(dataw = data[i]) ||
-				(!opt && (source.getfn && (dataw = source.getfn(i)))) ||
-				i < ilen
-			) {
+			while ((dataw = data[i]) || (!opt && source.getfn && (dataw = source.getfn(i))) || i < ilen) {
 				if (!opt && source.getfn && !source.dontcache) data[i] = dataw;
 				//console.log(h, i, dataw);
 				scope[tableid] = dataw;
+
 				// Reduce with ON and USING clause
-				if (
-					!source.onleftfn ||
-					source.onleftfn(scope, query.params, alasql) ==
-						source.onrightfn(scope, query.params, alasql)
-				) {
+				var usingPassed = !source.onleftfn;
+				if (!usingPassed) {
+					var left = source.onleftfn(scope, query.params, alasql);
+					var right = source.onrightfn(scope, query.params, alasql);
+					if (left instanceof String || left instanceof Number) left = left.valueOf();
+					if (right instanceof String || right instanceof Number) right = left.valueOf();
+					usingPassed = left == right;
+				}
+
+				if (usingPassed) {
 					// For all non-standard JOINs like a-b=0
 					if (source.onmiddlefn(scope, query.params, alasql)) {
 						// Recursively call new join
@@ -139,9 +141,7 @@ function doJoin(query, scope, h) {
 
 			// Additional join for LEFT JOINS
 			if (
-				(source.joinmode == 'LEFT' ||
-					source.joinmode == 'OUTER' ||
-					source.joinmode == 'SEMI') &&
+				(source.joinmode == 'LEFT' || source.joinmode == 'OUTER' || source.joinmode == 'SEMI') &&
 				!pass
 			) {
 				// Clear the scope after the loop

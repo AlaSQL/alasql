@@ -7,7 +7,7 @@
 */
 
 // Table class
-var Table = (alasql.Table = function(params) {
+var Table = (alasql.Table = function (params) {
 	// Step 1: Data array
 	this.data = [];
 
@@ -60,10 +60,10 @@ var Table = (alasql.Table = function(params) {
 // alasql.View = View;
 */
 
-Table.prototype.indexColumns = function() {
+Table.prototype.indexColumns = function () {
 	var self = this;
 	self.xcolumns = {};
-	self.columns.forEach(function(col) {
+	self.columns.forEach(function (col) {
 		self.xcolumns[col.columnid] = col;
 	});
 };

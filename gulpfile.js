@@ -18,7 +18,7 @@ var argv = require('yargs').argv || {};
 var replace = require('gulp-replace');
 var execSync = require('child_process').execSync;
 // Identify name of the build
-var packageData = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+var packageData = require('./package.json'); // JSON.parse(fs.readFileSync('package.json', 'utf8'));
 var version = packageData.version;
 var branch = execSync(
 	'git --work-tree="' + __dirname + '" --git-dir="' + __dirname + '/.git" branch',

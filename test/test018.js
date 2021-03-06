@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 18', function() {
-	it('Subqueries and cross-joins', function(done) {
+describe('Test 18', function () {
+	it('Subqueries and cross-joins', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int)');

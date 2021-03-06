@@ -15,7 +15,7 @@ if (!utils.global.Promise) {
 		 *            See https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE
 		 * @version   3.2.1
 		 */
-		(function() {
+		(function () {
 			'use strict';
 			function t(t) {
 				return 'function' == typeof t || ('object' == typeof t && null !== t);
@@ -30,12 +30,12 @@ if (!utils.global.Promise) {
 				Q = t;
 			}
 			function o() {
-				return function() {
+				return function () {
 					process.nextTick(a);
 				};
 			}
 			function i() {
-				return function() {
+				return function () {
 					B(a);
 				};
 			}
@@ -45,7 +45,7 @@ if (!utils.global.Promise) {
 					n = document.createTextNode('');
 				return (
 					e.observe(n, {characterData: !0}),
-					function() {
+					function () {
 						n.data = t = ++t % 2;
 					}
 				);
@@ -54,13 +54,13 @@ if (!utils.global.Promise) {
 				var t = new MessageChannel();
 				return (
 					(t.port1.onmessage = a),
-					function() {
+					function () {
 						t.port2.postMessage(0);
 					}
 				);
 			}
 			function c() {
-				return function() {
+				return function () {
 					setTimeout(a, 1);
 				};
 			}
@@ -88,7 +88,7 @@ if (!utils.global.Promise) {
 				var o = n._state;
 				if (o) {
 					var i = arguments[o - 1];
-					Q(function() {
+					Q(function () {
 						x(o, r, i, n._result);
 					});
 				} else E(n, r, t, e);
@@ -122,15 +122,15 @@ if (!utils.global.Promise) {
 				}
 			}
 			function m(t, e, n) {
-				Q(function(t) {
+				Q(function (t) {
 					var r = !1,
 						o = y(
 							n,
 							e,
-							function(n) {
+							function (n) {
 								r || ((r = !0), e !== n ? g(t, n) : S(t, n));
 							},
-							function(e) {
+							function (e) {
 								r || ((r = !0), j(t, e));
 							},
 							'Settle: ' + (t._label || ' unknown promise')
@@ -146,10 +146,10 @@ if (!utils.global.Promise) {
 					: E(
 							e,
 							void 0,
-							function(e) {
+							function (e) {
 								g(t, e);
 							},
-							function(e) {
+							function (e) {
 								j(t, e);
 							}
 					  );
@@ -213,11 +213,7 @@ if (!utils.global.Promise) {
 					c,
 					a = e(r);
 				if (a) {
-					if (
-						((i = P(r, o)),
-						i === ct ? ((c = !0), (s = i.error), (i = null)) : (u = !0),
-						n === i)
-					)
+					if (((i = P(r, o)), i === ct ? ((c = !0), (s = i.error), (i = null)) : (u = !0), n === i))
 						return void j(n, d());
 				} else (i = o), (u = !0);
 				n._state !== ot ||
@@ -226,10 +222,10 @@ if (!utils.global.Promise) {
 			function C(t, e) {
 				try {
 					e(
-						function(e) {
+						function (e) {
 							g(t, e);
 						},
-						function(e) {
+						function (e) {
 							j(t, e);
 						}
 					);
@@ -250,11 +246,10 @@ if (!utils.global.Promise) {
 				var e = this;
 				return new e(
 					I(t)
-						? function(n, r) {
-								for (var o = t.length, i = 0; o > i; i++)
-									e.resolve(t[i]).then(n, r);
+						? function (n, r) {
+								for (var o = t.length, i = 0; o > i; i++) e.resolve(t[i]).then(n, r);
 						  }
-						: function(t, e) {
+						: function (t, e) {
 								e(new TypeError('You must pass an array to race.'));
 						  }
 				);
@@ -278,8 +273,7 @@ if (!utils.global.Promise) {
 				(this[rt] = O()),
 					(this._result = this._state = void 0),
 					(this._subscribers = []),
-					p !== t &&
-						('function' != typeof t && D(), this instanceof L ? C(this, t) : K());
+					p !== t && ('function' != typeof t && D(), this instanceof L ? C(this, t) : K());
 			}
 			function N(t, e) {
 				(this._instanceConstructor = t),
@@ -313,15 +307,13 @@ if (!utils.global.Promise) {
 						);
 					}
 				var n = t.Promise;
-				(!n ||
-					'[object Promise]' !== Object.prototype.toString.call(n.resolve()) ||
-					n.cast) &&
+				(!n || '[object Promise]' !== Object.prototype.toString.call(n.resolve()) || n.cast) &&
 					(t.Promise = pt);
 			}
 			var z;
 			z = Array.isArray
 				? Array.isArray
-				: function(t) {
+				: function (t) {
 						return '[object Array]' === Object.prototype.toString.call(t);
 				  };
 			var B,
@@ -329,7 +321,7 @@ if (!utils.global.Promise) {
 				H,
 				I = z,
 				J = 0,
-				Q = function(t, e) {
+				Q = function (t, e) {
 					(tt[J] = t), (tt[J + 1] = e), (J += 2), 2 === J && (G ? G(a) : H());
 				},
 				R = 'undefined' != typeof window ? window : void 0,
@@ -344,20 +336,10 @@ if (!utils.global.Promise) {
 					'undefined' != typeof importScripts &&
 					'undefined' != typeof MessageChannel,
 				tt = new Array(1e3);
-			H = Z
-				? o()
-				: X
-				? s()
-				: $
-				? u()
-				: void 0 === R && 'function' == typeof require
-				? f()
-				: c();
+			H = Z ? o() : X ? s() : $ ? u() : void 0 === R && 'function' == typeof require ? f() : c();
 			var et = l,
 				nt = h,
-				rt = Math.random()
-					.toString(36)
-					.substring(16),
+				rt = Math.random().toString(36).substring(16),
 				ot = void 0,
 				it = 1,
 				st = 2,
@@ -378,16 +360,16 @@ if (!utils.global.Promise) {
 				(L.prototype = {
 					constructor: L,
 					then: et,
-					catch: function(t) {
+					catch: function (t) {
 						return this.then(null, t);
 					},
 				});
 			var _t = N;
-			(N.prototype._enumerate = function() {
+			(N.prototype._enumerate = function () {
 				for (var t = this.length, e = this._input, n = 0; this._state === ot && t > n; n++)
 					this._eachEntry(e[n], n);
 			}),
-				(N.prototype._eachEntry = function(t, e) {
+				(N.prototype._eachEntry = function (t, e) {
 					var n = this._instanceConstructor,
 						r = n.resolve;
 					if (r === nt) {
@@ -399,28 +381,27 @@ if (!utils.global.Promise) {
 							w(i, t, o), this._willSettleAt(i, e);
 						} else
 							this._willSettleAt(
-								new n(function(e) {
+								new n(function (e) {
 									e(t);
 								}),
 								e
 							);
 					} else this._willSettleAt(r(t), e);
 				}),
-				(N.prototype._settledAt = function(t, e, n) {
+				(N.prototype._settledAt = function (t, e, n) {
 					var r = this.promise;
-					r._state === ot &&
-						(this._remaining--, t === st ? j(r, n) : (this._result[e] = n)),
+					r._state === ot && (this._remaining--, t === st ? j(r, n) : (this._result[e] = n)),
 						0 === this._remaining && S(r, this._result);
 				}),
-				(N.prototype._willSettleAt = function(t, e) {
+				(N.prototype._willSettleAt = function (t, e) {
 					var n = this;
 					E(
 						t,
 						void 0,
-						function(t) {
+						function (t) {
 							n._settledAt(it, e, t);
 						},
-						function(t) {
+						function (t) {
 							n._settledAt(st, e, t);
 						}
 					);
@@ -428,7 +409,7 @@ if (!utils.global.Promise) {
 			var dt = W,
 				vt = {Promise: pt, polyfill: dt};
 			'function' == typeof define && define.amd
-				? define(function() {
+				? define(function () {
 						return vt;
 				  })
 				: 'undefined' != typeof module && module.exports
@@ -443,9 +424,9 @@ if (!utils.global.Promise) {
 	}
 }
 
-var promiseExec = function(sql, params, counterStep, counterTotal) {
-	return new utils.global.Promise(function(resolve, reject) {
-		alasql(sql, params, function(data, err) {
+var promiseExec = function (sql, params, counterStep, counterTotal) {
+	return new utils.global.Promise(function (resolve, reject) {
+		alasql(sql, params, function (data, err) {
 			if (err) {
 				reject(err);
 			} else {
@@ -458,7 +439,7 @@ var promiseExec = function(sql, params, counterStep, counterTotal) {
 	});
 };
 
-var promiseAll = function(sqlParamsArray) {
+var promiseAll = function (sqlParamsArray) {
 	if (sqlParamsArray.length < 1) {
 		return;
 	}
@@ -487,7 +468,7 @@ var promiseAll = function(sqlParamsArray) {
 	return utils.global.Promise.all(execArray);
 };
 
-alasql.promise = function(sql, params) {
+alasql.promise = function (sql, params) {
 	if (typeof Promise === 'undefined') {
 		throw new Error('Please include a Promise/A+ library');
 	}

@@ -8,8 +8,8 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports === 'object' && false) {
-	describe('Test 166 - database in database', function() {
-		it('1. Pass-thru database', function(done) {
+	describe('Test 166 - database in database', function () {
+		it('1. Pass-thru database', function (done) {
 			var res = alasql('create database test166');
 			assert(res == 1);
 
@@ -25,7 +25,7 @@ if (typeof exports === 'object' && false) {
 			done();
 		});
 
-		it('2. Cached sql-statements', function(done) {
+		it('2. Cached sql-statements', function (done) {
 			var res = alasql('select a from cache(select * from test166.one where a > 2)');
 			assert.deepEqual(res, [3, 4]);
 
@@ -40,7 +40,7 @@ if (typeof exports === 'object' && false) {
 		});
 
 		// TODO - Understand the cache
-		it('3. Cache tables', function(done) {
+		it('3. Cache tables', function (done) {
 			var res = alasql('cache table test166a.one to test166.one');
 
 			var res = alasql('select a from cache(select * from test166.one where a > 2)');

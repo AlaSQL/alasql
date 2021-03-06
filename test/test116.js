@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 116', function() {
-	it('1. Single statement CREATE, USE and DROP DATABASE', function(done) {
+describe('Test 116', function () {
+	it('1. Single statement CREATE, USE and DROP DATABASE', function (done) {
 		alasql('create database test116');
 		assert(!!alasql.databases.test116);
 		alasql('use test116');
@@ -15,7 +15,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('2. Single statement CREATE, USE and DROP CREATE TABLE ', function(done) {
+	it('2. Single statement CREATE, USE and DROP CREATE TABLE ', function (done) {
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -28,7 +28,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('3. Single statement CREATE, USE and DROP CREATE TABLE ', function(done) {
+	it('3. Single statement CREATE, USE and DROP CREATE TABLE ', function (done) {
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -44,7 +44,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('4. Compile and reset cache', function(done) {
+	it('4. Compile and reset cache', function (done) {
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -80,7 +80,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('5. INSERT INTO one SELECT ', function(done) {
+	it('5. INSERT INTO one SELECT ', function (done) {
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');
@@ -93,7 +93,7 @@ describe('Test 116', function() {
 		done();
 	});
 
-	it('6. SELECT * INTO one ', function(done) {
+	it('6. SELECT * INTO one ', function (done) {
 		alasql('create database test116');
 		alasql('use test116');
 		alasql('create table one (a int)');

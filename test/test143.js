@@ -5,13 +5,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 143 streamfn', function() {
-	it('1. Create database', function(done) {
+describe('Test 143 streamfn', function () {
+	it('1. Create database', function (done) {
 		alasql('CREATE DATABASE test143; use test143');
 		done();
 	});
 
-	it('3. INNER JOIN on stream', function(done) {
+	it('3. INNER JOIN on stream', function (done) {
 		test143(true);
 		alasql.databases[alasql.useid].dbversion++;
 		test143(false);
@@ -24,7 +24,7 @@ describe('Test 143 streamfn', function() {
 		done();
 	});
 
-	it('99. Drop database', function(done) {
+	it('99. Drop database', function (done) {
 		alasql('DROP DATABASE test143');
 		done();
 	});
@@ -35,20 +35,20 @@ function test143(dontcache) {
 		nc2 = 0,
 		nc3 = 0;
 
-	var myfn = function(i) {
+	var myfn = function (i) {
 		nc1++;
 		if (i >= 100) return;
 		return {a: i, b: i + 2};
 	};
 	myfn.dontcache = dontcache;
 
-	var myfn2 = function(i) {
+	var myfn2 = function (i) {
 		nc2++;
 		if (i >= 100) return;
 		for (var k = 0; k < 10; k++) {
 			Math.random();
 		}
-		return {a: i % 25 + 1, c: (i + 1) * 10};
+		return {a: (i % 25) + 1, c: (i + 1) * 10};
 	};
 	myfn2.dontcache = dontcache;
 	//		myfn3.dontcache = true;
@@ -63,27 +63,18 @@ function test143(dontcache) {
 	//console.table(res);
 	//		console.log('INNER',res.length);
 	//if(false) {
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q SEMI join ? t using a', [
-		myfn,
-		myfn2,
-	]);
+	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q SEMI join ? t using a', [myfn, myfn2]);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('SEMI', res.length);
 	//}
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q ANTI join ? t using a', [
-		myfn,
-		myfn2,
-	]);
+	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q ANTI join ? t using a', [myfn, myfn2]);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('ANTI', res.length);
 
 	//if(true) {
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q LEFT join ? t using a', [
-		myfn,
-		myfn2,
-	]);
+	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q LEFT join ? t using a', [myfn, myfn2]);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('LEFT',res.length);

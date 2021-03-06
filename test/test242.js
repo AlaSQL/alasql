@@ -7,9 +7,9 @@ if (typeof exports === 'object') {
 	var dirname = './';
 }
 
-describe('Test 242 Multi-columns Excel file', function() {
-	it('1. Read multi-column file', function(done) {
-		alasql('select * from xlsx("' + dirname + 'test242.xlsx",{headers:false})', [], function(
+describe('Test 242 Multi-columns Excel file', function () {
+	it('1. Read multi-column file', function (done) {
+		alasql('select * from xlsx("' + dirname + 'test242.xlsx",{headers:false})', [], function (
 			data
 		) {
 			//      console.log(data[0]);
@@ -18,11 +18,11 @@ describe('Test 242 Multi-columns Excel file', function() {
 		});
 	});
 
-	it('2. Read multi-column file', function(done) {
+	it('2. Read multi-column file', function (done) {
 		alasql(
 			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true,sheetid:"Sheet2"})',
 			[],
-			function(data) {
+			function (data) {
 				//      console.log(data[3]);
 				assert(data[3].five == 800);
 				done();

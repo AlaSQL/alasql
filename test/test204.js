@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 204 PRINT', function() {
-	it.skip('1. PRINT()', function(done) {
+describe('Test 204 PRINT', function () {
+	it.skip('1. PRINT()', function (done) {
 		// var oldconsolelog = console.log;
 		// console.log = function(){
 		// 	assert(arguments[0] == '[1,4,9,16]');

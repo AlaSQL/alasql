@@ -7,8 +7,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 162 - PRIMARY & FOREIGN KEYS in memory, localStorage & IndexedDB', function() {
-	it('1. ...', function(done) {
+describe('Test 162 - PRIMARY & FOREIGN KEYS in memory, localStorage & IndexedDB', function () {
+	it('1. ...', function (done) {
 		// TODO - finish the test
 		done();
 	});

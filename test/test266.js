@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports == 'object') {
-	describe('Test 266 Custom MEDIAN Aggregator', function() {
-		it('1. MEDIAN', function(done) {
+	describe('Test 266 Custom MEDIAN Aggregator', function () {
+		it('1. MEDIAN', function (done) {
 			var data = [
 				{a: 1, b: 1},
 				{a: 1, b: 3},
@@ -25,7 +25,7 @@ if (typeof exports == 'object') {
 				{a: 3, b: 5},
 			];
 
-			alasql.aggr.MYMEDIAN = function(v, s, stage) {
+			alasql.aggr.MYMEDIAN = function (v, s, stage) {
 				if (stage == 1) {
 					return [v];
 				} else if (stage == 2) {
@@ -37,36 +37,36 @@ if (typeof exports == 'object') {
 				}
 			};
 
-			alasql.aggr.MYCOUNT = function(v, s, stage) {
+			alasql.aggr.MYCOUNT = function (v, s, stage) {
 				if (stage == 1) return 1;
 				if (stage == 2) return s + 1;
 				return s;
 			};
 
-			alasql.aggr.MYSUM = function(v, s, stage) {
+			alasql.aggr.MYSUM = function (v, s, stage) {
 				if (stage == 1) return v;
 				if (stage == 2) return s + v;
 				return s;
 			};
 
-			alasql.aggr.MYFIRST = function(v, s, stage) {
+			alasql.aggr.MYFIRST = function (v, s, stage) {
 				if (stage == 1) return v;
 				return s;
 			};
 
-			alasql.aggr.MYLAST = function(v, s, stage) {
+			alasql.aggr.MYLAST = function (v, s, stage) {
 				if (stage == 1) return v;
 				else if (stage == 2) return v;
 				else return s;
 			};
 
-			alasql.aggr.MYMIN = function(v, s, stage) {
+			alasql.aggr.MYMIN = function (v, s, stage) {
 				if (stage == 1) return v;
 				if (stage == 2) return Math.min(s, v);
 				return s;
 			};
 
-			alasql.aggr.MYMAX = function(v, s, stage) {
+			alasql.aggr.MYMAX = function (v, s, stage) {
 				if (stage == 1) return v;
 				if (stage == 2) return Math.max(s, v);
 				return s;

@@ -1,5 +1,5 @@
 {
-  "alasql": "{\"databases\":{\"ls151\":true}}",
-  "ls151": "{\"databaseid\":\"ls151\",\"tables\":{\"one\":true}}",
-  "ls151.one": "{\"columns\":[{\"columnid\":\"a\",\"dbtypeid\":\"INT\"},{\"columnid\":\"b\",\"dbtypeid\":\"STRING\"}],\"data\":[{\"a\":1,\"b\":\"Moscow\"},{\"a\":2,\"b\":\"Kyiv\"},{\"a\":3,\"b\":\"Minsk\"}],\"identities\":{}}"
+	"alasql": "{\"databases\":{\"ls151\":true}}",
+	"ls151": "{\"databaseid\":\"ls151\",\"tables\":{\"one\":true}}",
+	"ls151.one": "{\"columns\":[{\"columnid\":\"a\",\"dbtypeid\":\"INT\"},{\"columnid\":\"b\",\"dbtypeid\":\"STRING\"}],\"data\":[{\"a\":1,\"b\":\"Moscow\"},{\"a\":2,\"b\":\"Kyiv\"},{\"a\":3,\"b\":\"Minsk\"}],\"identities\":{}}"
 }

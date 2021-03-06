@@ -6,10 +6,10 @@
 //
 */
 
-yy.If = function(params) {
+yy.If = function (params) {
 	return yy.extend(this, params);
 };
-yy.If.prototype.toString = function() {
+yy.If.prototype.toString = function () {
 	var s = 'IF' + ' ';
 	s += this.expression.toString();
 	s += ' ' + this.thenstat.toString();
@@ -19,7 +19,7 @@ yy.If.prototype.toString = function() {
 
 // CREATE TABLE
 //  yy.CreateTable.prototype.compile = returnUndefined;
-yy.If.prototype.execute = function(databaseid, params, cb) {
+yy.If.prototype.execute = function (databaseid, params, cb) {
 	var res;
 	//	console.log(this);
 	//	console.log(this.expression.toJS('{}','',null));

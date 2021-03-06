@@ -12,14 +12,14 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 380 - PIVOT', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 380 - PIVOT', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test380;USE test380');
 		done();
 	});
 
-	it('1. Create table', function(done) {
-		alasql(function() {
+	it('1. Create table', function (done) {
+		alasql(function () {
 			/*
 
 			create table DailyIncome(VendorId nvarchar(10), IncomeDay nvarchar(10), IncomeAmount int);
@@ -59,7 +59,7 @@ describe('Test 380 - PIVOT', function() {
 		done();
 	});
 
-	it('2. Simple pivot without IN', function(done) {
+	it('2. Simple pivot without IN', function (done) {
 		var res = alasql('select * from DailyIncome  \
 		pivot (AVG(IncomeAmount) for IncomeDay)');
 
@@ -98,7 +98,7 @@ describe('Test 380 - PIVOT', function() {
 		done();
 	});
 
-	it('3. Simple pivot with IN', function(done) {
+	it('3. Simple pivot with IN', function (done) {
 		var res = alasql(
 			'RECORDSET OF SELECT * FROM DailyIncome  \
 		PIVOT (AVG(IncomeAmount) FOR IncomeDay IN ([MON],[TUE]))'
@@ -141,8 +141,8 @@ describe('Test 380 - PIVOT', function() {
 		done();
 	});
 
-	it('4. PIVOT and WHERE', function(done) {
-		var res = alasql(function() {
+	it('4. PIVOT and WHERE', function (done) {
+		var res = alasql(function () {
 			/*
 		select * from DailyIncome
 		pivot (max (IncomeAmount) for IncomeDay in ([MON],[TUE],[WED],[THU],[FRI],[SAT],[SUN])) as MaxIncomePerDay
@@ -167,7 +167,7 @@ describe('Test 380 - PIVOT', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test380');
 		done();

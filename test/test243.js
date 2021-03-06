@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 243 AVG bug', function() {
-	it('1. AVG bug: 3 groups with one and multiple item', function(done) {
+describe('Test 243 AVG bug', function () {
+	it('1. AVG bug: 3 groups with one and multiple item', function (done) {
 		var arr = [
 			{
 				person: 1,
@@ -37,7 +37,7 @@ describe('Test 243 AVG bug', function() {
 		done();
 	});
 
-	it('2. AVG 2 by 2 groups', function(done) {
+	it('2. AVG 2 by 2 groups', function (done) {
 		var arr = [
 			{
 				person: 1,
@@ -60,7 +60,10 @@ describe('Test 243 AVG bug', function() {
 		var res = alasql('SELECT person, avg(sold) FROM ? WHERE 1 GROUP BY person', [arr]);
 
 		//    console.log(res);
-		assert(res, [{person: 1, 'AVG(sold)': 12.5}, {person: 2, 'AVG(sold)': 25}]);
+		assert(res, [
+			{person: 1, 'AVG(sold)': 12.5},
+			{person: 2, 'AVG(sold)': 25},
+		]);
 		done();
 	});
 });

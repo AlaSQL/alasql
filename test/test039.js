@@ -3,10 +3,10 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 39', function() {
-	describe('Negative numbers', function() {
+describe('Test 39', function () {
+	describe('Negative numbers', function () {
 		var db;
-		it('Prepare database', function(done) {
+		it('Prepare database', function (done) {
 			db = new alasql.Database('db');
 
 			db.exec('CREATE TABLE one (a INT, b INT)');
@@ -14,7 +14,7 @@ describe('Test 39', function() {
 			done();
 		});
 
-		it('Negative numbers', function(done) {
+		it('Negative numbers', function (done) {
 			var res = db.exec('SELECT a,b,-1*a AS c FROM one  WHERE b < -15 ORDER BY a');
 			assert.deepEqual(res, [{a: -2, b: -20, c: 2}]);
 			done();

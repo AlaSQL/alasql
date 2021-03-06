@@ -11,7 +11,7 @@
 /**
  @class Query Main query class
  */
-var Query = (alasql.Query = function(params) {
+var Query = (alasql.Query = function (params) {
 	this.alasql = alasql;
 	//	console.log(12,alasql);
 	// Columns
@@ -26,7 +26,7 @@ var Query = (alasql.Query = function(params) {
 /**
  @class Recordset data object
  */
-var Recordset = (alasql.Recordset = function(params) {
+var Recordset = (alasql.Recordset = function (params) {
 	// Data array
 	extend(this, params);
 });

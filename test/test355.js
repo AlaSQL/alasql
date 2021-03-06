@@ -8,17 +8,17 @@ if (typeof exports === 'object') {
 // Data for test
 var data = [{a: 1}, {a: 2}];
 
-describe('Test 355 PIVOT', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 355 PIVOT', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test355;USE test355');
 		done();
 	});
 
 	/* Source: http://blog.sqlauthority.com/2008/06/07/sql-server-pivot-and-unpivot-table-examples/ */
-	it.skip('2. Prepare Data', function(done) {
+	it.skip('2. Prepare Data', function (done) {
 		alasql('CREATE TABLE Product(Cust VARCHAR(25), Product VARCHAR(20), QTY INT)');
 
-		alasql(function() {
+		alasql(function () {
 			/*
     INSERT INTO Product(Cust, Product, QTY)
       VALUES('KATE','VEG',2);
@@ -40,8 +40,8 @@ describe('Test 355 PIVOT', function() {
 		done();
 	});
 
-	it.skip('3. Select Query', function(done) {
-		alasql(function() {
+	it.skip('3. Select Query', function (done) {
+		alasql(function () {
 			/*
     SELECT *
     FROM Product  
@@ -51,8 +51,8 @@ describe('Test 355 PIVOT', function() {
 		done();
 	});
 
-	it.skip('4. Pivot Table ordered by PRODUCT', function(done) {
-		alasql(function() {
+	it.skip('4. Pivot Table ordered by PRODUCT', function (done) {
+		alasql(function () {
 			/*
     SELECT PRODUCT, FRED, KATE
     FROM (
@@ -66,8 +66,8 @@ describe('Test 355 PIVOT', function() {
 		done();
 	});
 
-	it.skip('5. Pivot Table ordered by CUST', function(done) {
-		alasql(function() {
+	it.skip('5. Pivot Table ordered by CUST', function (done) {
+		alasql(function () {
 			/*
     SELECT CUST, VEG, SODA, MILK, BEER, CHIPS
     FROM (
@@ -81,8 +81,8 @@ describe('Test 355 PIVOT', function() {
 		done();
 	});
 
-	it.skip('6. UnPivot Query', function(done) {
-		alasql(function() {
+	it.skip('6. UnPivot Query', function (done) {
+		alasql(function () {
 			/*
     SELECT CUST, PRODUCT, QTY
     FROM
@@ -102,7 +102,7 @@ describe('Test 355 PIVOT', function() {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test355');
 		done();

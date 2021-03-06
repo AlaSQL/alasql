@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 214 Multiple same aggregators', function() {
-	it('1. Prepare database', function(done) {
+describe('Test 214 Multiple same aggregators', function () {
+	it('1. Prepare database', function (done) {
 		var res = alasql(
 			'create database test214;use test214;\
             create table one (a int, b int);\
@@ -19,7 +19,7 @@ describe('Test 214 Multiple same aggregators', function() {
 		done();
 	});
 
-	it('2. Test same aggregators', function(done) {
+	it('2. Test same aggregators', function (done) {
 		var res = alasql(
 			'select row count(a),count(a) from one;\
             select row sum(a),sum(a) from one;'
@@ -30,13 +30,13 @@ describe('Test 214 Multiple same aggregators', function() {
 		done();
 	});
 
-	it('3. Test same aggregators', function(done) {
+	it('3. Test same aggregators', function (done) {
 		var res = alasql('select row count(a)+1,count(a) from one');
 		assert.deepEqual(res, [7, 6]);
 		done();
 	});
 
-	it('4. Test same aggregators', function(done) {
+	it('4. Test same aggregators', function (done) {
 		var res = alasql('select row count(a),count(a)+1 from one');
 		assert.deepEqual(res, [6, 7]);
 		done();

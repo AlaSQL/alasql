@@ -9,27 +9,27 @@ if (typeof exports === 'object') {
  This sample beased on SQLLOGICTEST
 */
 
-describe('Test 403 REINDEX', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 403 REINDEX', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test403;USE test403');
 		done();
 	});
 
-	it('2. Create table and index before insert', function(done) {
+	it('2. Create table and index before insert', function (done) {
 		alasql('CREATE TABLE one (a INT)');
 		alasql('CREATE INDEX xone ON one (a)');
 		alasql('INSERT INTO one (a) VALUES (100), (200), (300)');
 		done();
 	});
 
-	it('3. Create table and index after insert', function(done) {
+	it('3. Create table and index after insert', function (done) {
 		alasql('CREATE TABLE two (a INT)');
 		alasql('INSERT INTO two (a) VALUES (100), (200), (300)');
 		alasql('CREATE INDEX xtwo ON two (a)');
 		done();
 	});
 
-	it('4. REINDEX', function(done) {
+	it('4. REINDEX', function (done) {
 		var res = alasql('REINDEX xone');
 		assert(res == 1);
 		var res = alasql('REINDEX xtwo');
@@ -37,7 +37,7 @@ describe('Test 403 REINDEX', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test403');
 		done();
 	});

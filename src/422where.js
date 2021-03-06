@@ -1,4 +1,4 @@
-yy.Select.prototype.compileWhere = function(query) {
+yy.Select.prototype.compileWhere = function (query) {
 	if (this.where) {
 		if (typeof this.where == 'function') {
 			return this.where;
@@ -9,12 +9,12 @@ yy.Select.prototype.compileWhere = function(query) {
 			return new Function('p,params,alasql', 'var y;return ' + s);
 		}
 	} else
-		return function() {
+		return function () {
 			return true;
 		};
 };
 
-yy.Select.prototype.compileWhereJoins = function(query) {
+yy.Select.prototype.compileWhereJoins = function (query) {
 	return;
 
 	// TODO Fix Where optimization
@@ -23,12 +23,9 @@ yy.Select.prototype.compileWhereJoins = function(query) {
 	optimizeWhereJoin(query, this.where.expression);
 
 	//for sources compile wherefs
-	query.sources.forEach(function(source) {
+	query.sources.forEach(function (source) {
 		if (source.srcwherefns) {
-			source.srcwherefn = new Function(
-				'p,params,alasql',
-				'var y;return ' + source.srcwherefns
-			);
+			source.srcwherefn = new Function('p,params,alasql', 'var y;return ' + source.srcwherefns);
 		}
 		if (source.wxleftfns) {
 			source.wxleftfn = new Function('p,params,alasql', 'var y;return ' + source.wxleftfns);
@@ -49,7 +46,7 @@ function optimizeWhereJoin(query, ast) {
 
 	var s = ast.toJS('p', query.defaultTableid, query.defcols);
 	var fsrc = [];
-	query.sources.forEach(function(source, idx) {
+	query.sources.forEach(function (source, idx) {
 		// Optimization allowed only for tables only
 		if (source.tableid) {
 			// This is a good place to remove all unnecessary optimizations
@@ -66,7 +63,7 @@ function optimizeWhereJoin(query, ast) {
 		return;
 	} else if (fsrc.length == 1) {
 		if (
-			!(s.match(/p\[\'.*?\'\]/g) || []).every(function(s) {
+			!(s.match(/p\[\'.*?\'\]/g) || []).every(function (s) {
 				return s == "p['" + fsrc[0].alias + "']";
 			})
 		) {
@@ -78,7 +75,7 @@ function optimizeWhereJoin(query, ast) {
 		var src = fsrc[0]; // optmiization source
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns + '&&' + s : s;
 
-		if (ast instanceof yy.Op && (ast.op == '=' && !ast.allsome)) {
+		if (ast instanceof yy.Op && ast.op == '=' && !ast.allsome) {
 			if (ast.left instanceof yy.Column) {
 				var ls = ast.left.toJS('p', query.defaultTableid, query.defcols);
 				var rs = ast.right.toJS('p', query.defaultTableid, query.defcols);

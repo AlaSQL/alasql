@@ -9,7 +9,7 @@
 /**
  Compile group of statements
  */
-yy.Select.prototype.compileGroup = function(query) {
+yy.Select.prototype.compileGroup = function (query) {
 	//	console.log(this.group);
 	if (query.sources.length > 0) {
 		var tableid = query.sources[0].alias;
@@ -33,7 +33,7 @@ yy.Select.prototype.compileGroup = function(query) {
 
 	// Union all arrays to get a maximum
 	var allgroups = [];
-	allgroup.forEach(function(a) {
+	allgroup.forEach(function (a) {
 		allgroups = arrayUnion(allgroups, a);
 	});
 
@@ -68,13 +68,13 @@ if(false) {
 
 	var s = '';
 	//	s+= query.selectfns;
-	allgroup.forEach(function(agroup) {
+	allgroup.forEach(function (agroup) {
 		// Start of group function
 		s += 'var g=this.xgroups[';
 
 		//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
-		var rg = agroup.map(function(col2) {
+		var rg = agroup.map(function (col2) {
 			var columnid = col2.split('\t')[0];
 			var coljs = col2.split('\t')[1];
 			// Check, if aggregator exists but GROUP BY is not exists
@@ -99,7 +99,7 @@ if(false) {
 		s += '] = {';
 		//		s += ']=r';
 		s += agroup
-			.map(function(col2) {
+			.map(function (col2) {
 				var columnid = col2.split('\t')[0];
 				var coljs = col2.split('\t')[1];
 
@@ -115,7 +115,7 @@ if(false) {
 		//		console.log(neggroup);
 
 		s += neggroup
-			.map(function(col2) {
+			.map(function (col2) {
 				var columnid = col2.split('\t')[0];
 				//	var coljs = col2.split('\t')[1]
 				return "'" + columnid + "':null,";
@@ -134,7 +134,7 @@ if(false) {
 		//		s += self.columns.map(function(col){
 		//console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup
-			.map(function(col) {
+			.map(function (col) {
 				//console.log(idx, col.toString(), col.as);
 				var colexp = col.expression.toJS('p', tableid, defcols);
 				var colas = col.nick;
@@ -166,7 +166,15 @@ if(false) {
 						} else {
 							//						return "'"+colas+'\':(typeof '+colexp+' != "undefined")?1:0,';
 							//					} else {
-							return "'" + colas + "':(typeof " + colexp + ' != "undefined")?1:0,';
+							return (
+								"'" +
+								colas +
+								"':(typeof " +
+								colexp +
+								' == "undefined" || ' +
+								colexp +
+								' === null) ? 0 : 1,'
+							);
 						}
 
 						//				else if(col.aggregatorid == 'MIN') { return "'"+col.as+'\':r[\''+col.as+'\'],'; }
@@ -189,7 +197,9 @@ if(false) {
 							colas +
 							"':(typeof " +
 							colexp +
-							' != "undefined")?1:0,'
+							' == "undefined" || ' +
+							colexp +
+							' === null) ? 0 : 1,'
 						);
 					} else if (col.aggregatorid === 'AGGR') {
 						aft += ",g['" + colas + "']=" + col.expression.toJS('g', -1);
@@ -268,7 +278,7 @@ if(false) {
 		//console.log(query.selectfn);
 		//		s += self.columns.map(function(col){
 		s += query.selectGroup
-			.map(function(col) {
+			.map(function (col) {
 				var colas = col.nick;
 				/*/*
 			// if(typeof colas == 'undefined') {
@@ -300,7 +310,17 @@ if(false) {
 						if (col.expression.columnid === '*') {
 							return pre + "g['" + colas + "']++;" + post;
 						} else {
-							return pre + 'if(typeof ' + colexp + '!="undefined") g[\'' + colas + "']++;" + post;
+							return (
+								pre +
+								'if(typeof ' +
+								colexp +
+								'!="undefined" && ' +
+								colexp +
+								" !== null) g['" +
+								colas +
+								"']++;" +
+								post
+							);
 						}
 					} else if (col.aggregatorid === 'ARRAY') {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
@@ -327,7 +347,7 @@ if(false) {
 							')||0;' +
 							"g['_COUNT_" +
 							colas +
-							'\']+=(typeof y!="undefined")?1:0;' +
+							'\']+=(typeof y == "undefined" || y === null) ? 0 : 1;' +
 							"g['" +
 							colas +
 							"']=g['_SUM_" +

@@ -7,9 +7,9 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 183 - [] column', function() {
+describe('Test 183 - [] column', function () {
 	if (false) {
-		it('1. ARRAY()', function(done) {
+		it('1. ARRAY()', function (done) {
 			var arr = [];
 			var day, month, year;
 			for (var i = 0; i < 10000; i++) {
@@ -37,16 +37,15 @@ describe('Test 183 - [] column', function() {
 				[arr]
 			);
 
-			var max2 = alasql(
-				'SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GROUP BY _)',
-				[arr]
-			);
+			var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GROUP BY _)', [
+				arr,
+			]);
 			/// console.log(max,max1,max2);
 			//      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
 			done();
 		});
 	}
-	it('1. ARRAY()', function(done) {
+	it('1. ARRAY()', function (done) {
 		/*    
         var res = alasql('SELECT [0],FIRST(_) FROM ? GROUP BY [0]',[[[1,10],[2,20],[3,30]]]);
 /// console.log(res);

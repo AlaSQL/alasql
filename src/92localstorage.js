@@ -7,14 +7,14 @@
 
 /* global alasql, yy, localStorage*/
 
-var LS = (alasql.engines.LOCALSTORAGE = function() {});
+var LS = (alasql.engines.LOCALSTORAGE = function () {});
 
 /**
 	Read data from localStorage with security breaks
 	@param key {string} Address in localStorage
 	@return {object} JSON object
 */
-LS.get = function(key) {
+LS.get = function (key) {
 	var s = localStorage.getItem(key);
 	if (typeof s === 'undefined') return;
 	var v;
@@ -31,7 +31,7 @@ LS.get = function(key) {
 	@param key {string} Address in localStorage
 	@return {object} JSON object
 */
-LS.set = function(key, value) {
+LS.set = function (key, value) {
 	if (typeof value === 'undefined') localStorage.removeItem(key);
 	else localStorage.setItem(key, JSON.stringify(value));
 };
@@ -42,7 +42,7 @@ LS.set = function(key, value) {
 	@param tableid {string} Table name
 	@return Nothing
 */
-LS.storeTable = function(databaseid, tableid) {
+LS.storeTable = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var table = db.tables[tableid];
 	// Create empty structure for table
@@ -60,7 +60,7 @@ LS.storeTable = function(databaseid, tableid) {
 	@param tableid {string} Table name
 	@return Nothing
 */
-LS.restoreTable = function(databaseid, tableid) {
+LS.restoreTable = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var tbl = LS.get(db.lsdbid + '.' + tableid);
 	var table = new alasql.Table();
@@ -79,7 +79,7 @@ LS.restoreTable = function(databaseid, tableid) {
 	@param tableid {string} Table name
 */
 
-LS.removeTable = function(databaseid, tableid) {
+LS.removeTable = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	localStorage.removeItem(db.lsdbid + '.' + tableid);
 };
@@ -93,16 +93,14 @@ LS.removeTable = function(databaseid, tableid) {
 	@param cb {function} Callback
 */
 
-LS.createDatabase = function(lsdbid, args, ifnotexists, databaseid, cb) {
+LS.createDatabase = function (lsdbid, args, ifnotexists, databaseid, cb) {
 	var res = 1;
 	var ls = LS.get('alasql'); // Read list of all databases
 	if (!(ifnotexists && ls && ls.databases && ls.databases[lsdbid])) {
 		if (!ls) ls = {databases: {}}; // Empty record
 		if (ls.databases && ls.databases[lsdbid]) {
 			throw new Error(
-				'localStorage: Cannot create new database "' +
-					lsdbid +
-					'" because it already exists'
+				'localStorage: Cannot create new database "' + lsdbid + '" because it already exists'
 			);
 		}
 		ls.databases[lsdbid] = true;
@@ -121,7 +119,7 @@ LS.createDatabase = function(lsdbid, args, ifnotexists, databaseid, cb) {
 	@param ifexists {boolean} Check if database exists
 	@param cb {function} Callback
 */
-LS.dropDatabase = function(lsdbid, ifexists, cb) {
+LS.dropDatabase = function (lsdbid, ifexists, cb) {
 	var res = 1;
 	var ls = LS.get('alasql');
 	if (!(ifexists && ls && ls.databases && !ls.databases[lsdbid])) {
@@ -136,9 +134,7 @@ LS.dropDatabase = function(lsdbid, ifexists, cb) {
 
 		if (ls.databases && !ls.databases[lsdbid]) {
 			throw new Error(
-				'localStorage: Cannot drop database "' +
-					lsdbid +
-					'" because there is no such database'
+				'localStorage: Cannot drop database "' + lsdbid + '" because there is no such database'
 			);
 		}
 		delete ls.databases[lsdbid];
@@ -165,12 +161,10 @@ LS.dropDatabase = function(lsdbid, ifexists, cb) {
 	@param
 */
 
-LS.attachDatabase = function(lsdbid, databaseid, args, params, cb) {
+LS.attachDatabase = function (lsdbid, databaseid, args, params, cb) {
 	var res = 1;
 	if (alasql.databases[databaseid]) {
-		throw new Error(
-			'Unable to attach database as "' + databaseid + '" because it already exists'
-		);
+		throw new Error('Unable to attach database as "' + databaseid + '" because it already exists');
 	}
 	if (!databaseid) databaseid = lsdbid;
 	var db = new alasql.Database(databaseid);
@@ -195,7 +189,7 @@ LS.attachDatabase = function(lsdbid, databaseid, args, params, cb) {
 	@param like {string} Mathing pattern
 	@param cb {function} Callback
 */
-LS.showDatabases = function(like, cb) {
+LS.showDatabases = function (like, cb) {
 	var res = [];
 	var ls = LS.get('alasql');
 	if (like) {
@@ -207,7 +201,7 @@ LS.showDatabases = function(like, cb) {
 			res.push({databaseid: dbid});
 		}
 		if (like && res && res.length > 0) {
-			res = res.filter(function(d) {
+			res = res.filter(function (d) {
 				return d.databaseid.match(relike);
 			});
 		}
@@ -224,7 +218,7 @@ LS.showDatabases = function(like, cb) {
 	@param cb {function} Callback
 */
 
-LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
+LS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var tb = LS.get(lsdbid + '.' + tableid);
@@ -255,7 +249,7 @@ LS.createTable = function(databaseid, tableid, ifnotexists, cb) {
    @param cb {function} Callback
    @return 1 on success
 */
-LS.truncateTable = function(databaseid, tableid, ifexists, cb) {
+LS.truncateTable = function (databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var lsdb;
@@ -295,7 +289,7 @@ LS.truncateTable = function(databaseid, tableid, ifexists, cb) {
 	@param cb {function} Callback
 */
 
-LS.dropTable = function(databaseid, tableid, ifexists, cb) {
+LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var lsdb;
@@ -322,7 +316,7 @@ LS.dropTable = function(databaseid, tableid, ifexists, cb) {
 	Read all data from table
 */
 
-LS.fromTable = function(databaseid, tableid, cb, idx, query) {
+LS.fromTable = function (databaseid, tableid, cb, idx, query) {
 	//	console.log(998, databaseid, tableid, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	//	var res = LS.get(lsdbid+'.'+tableid);
@@ -342,7 +336,7 @@ LS.fromTable = function(databaseid, tableid, cb, idx, query) {
 	@param cb {function} Callback
 */
 
-LS.intoTable = function(databaseid, tableid, value, columns, cb) {
+LS.intoTable = function (databaseid, tableid, value, columns, cb) {
 	//	console.log('intoTable',databaseid, tableid, value, cb);
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	var res = value.length;
@@ -371,7 +365,7 @@ LS.intoTable = function(databaseid, tableid, value, columns, cb) {
 /**
 	Laad data from table
 */
-LS.loadTableData = function(databaseid, tableid) {
+LS.loadTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	LS.restoreTable(databaseid, tableid);
@@ -382,7 +376,7 @@ LS.loadTableData = function(databaseid, tableid) {
 	Save data to the table
 */
 
-LS.saveTableData = function(databaseid, tableid) {
+LS.saveTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
 	LS.storeTable(lsdbid, tableid);
@@ -394,7 +388,7 @@ LS.saveTableData = function(databaseid, tableid) {
 	Commit
 */
 
-LS.commit = function(databaseid, cb) {
+LS.commit = function (databaseid, cb) {
 	//	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
 	var lsdbid = alasql.databases[databaseid].lsdbid;
@@ -420,7 +414,7 @@ LS.begin = LS.commit;
 	ROLLBACK
 */
 
-LS.rollback = function(databaseid, cb) {
+LS.rollback = function (databaseid, cb) {
 	// This does not work and should be fixed
 	// Plus test 151 and 231
 

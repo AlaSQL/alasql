@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 }
 
 // See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
-describe('Test 229 Calculating simple running totals', function() {
-	it('1. Init database', function(done) {
+describe('Test 229 Calculating simple running totals', function () {
+	it('1. Init database', function (done) {
 		alasql('CREATE DATABASE test229; USE test229;');
 
 		alasql(
@@ -35,7 +35,7 @@ describe('Test 229 Calculating simple running totals', function() {
 		done();
 	});
 
-	it('2. Select accumulated sum', function(done) {
+	it('2. Select accumulated sum', function (done) {
 		var res = alasql(
 			'SELECT a.id, a.[value], (SELECT SUM(b.[value]) \
                              FROM RunTotalTestData b \
@@ -65,7 +65,7 @@ describe('Test 229 Calculating simple running totals', function() {
 		done();
 	});
 
-	it('3. Select accumulated sum', function(done) {
+	it('3. Select accumulated sum', function (done) {
 		var res = alasql(
 			'SELECT a.id, a.[value], SUM(b.[value]) AS total \
                     FROM    RunTotalTestData a, \
@@ -94,7 +94,7 @@ describe('Test 229 Calculating simple running totals', function() {
 		done();
 	});
 
-	it('4. Select accumulated sum', function(done) {
+	it('4. Select accumulated sum', function (done) {
 		var res = alasql(
 			'SELECT a.id, a.[value], (SELECT SUM(b.[value]) \
                        FROM RunTotalTestData b \
@@ -117,7 +117,7 @@ describe('Test 229 Calculating simple running totals', function() {
 		done();
 	});
 
-	it('5. Select accumulated sum', function(done) {
+	it('5. Select accumulated sum', function (done) {
 		var res = alasql(
 			'SELECT a.id, a.[value], SUM(b.[value]) AS runningtotal\
         FROM   RunTotalTestData a, \
@@ -142,7 +142,7 @@ ORDER BY a.id;'
 		done();
 	});
 
-	it('6. Select accumulated sum', function(done) {
+	it('6. Select accumulated sum', function (done) {
 		var res = alasql(
 			'SELECT a.[value]%2 as even, a.id, a.[value], (SELECT SUM(b.[value])  \
                                FROM RunTotalTestData b \
@@ -172,8 +172,8 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	it('7. Select accumulated sum', function(done) {
-		alasql.fn.mod = function(a, b) {
+	it('7. Select accumulated sum', function (done) {
+		alasql.fn.mod = function (a, b) {
 			return a % 2 == b % 2;
 		};
 
@@ -209,7 +209,7 @@ ORDER BY [value]%2, a.id;'
 	//}
 
 	// SQL NOT REALIZED YET
-	it('8. Over 1', function(done) {
+	it('8. Over 1', function (done) {
 		var ast = alasql.parse(
 			'SELECT a.id, a.[value], SUM(a.[value]) OVER (ORDER BY a.id) \
           FROM   RunTotalTestData a \
@@ -219,7 +219,7 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	it('8. Over 2', function(done) {
+	it('8. Over 2', function (done) {
 		var ast = alasql.parse(
 			'SELECT a.id, a.[value], SUM(a.[value]) OVER (ORDER BY a.id) \
             FROM   RunTotalTestData a \
@@ -230,7 +230,7 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	it('9. Over 3', function(done) {
+	it('9. Over 3', function (done) {
 		var ast = alasql.parse(
 			'SELECT a.value%2, a.id, a.[value], SUM(a.[value]) OVER (PARTITION BY a.[value]%2 ORDER BY a.id) \
             FROM   RunTotalTestData a \
@@ -240,7 +240,7 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	it('99. Drop database', function(done) {
+	it('99. Drop database', function (done) {
 		alasql('DROP DATABASE test229');
 		done();
 	});

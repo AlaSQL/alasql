@@ -18,7 +18,7 @@ alasql.prettyflag = false;
 	@return {string} HTML or text string with pretty output 
 */
 
-alasql.pretty = function(sql, flag) {
+alasql.pretty = function (sql, flag) {
 	var pf = alasql.prettyflag;
 	alasql.prettyflag = !flag;
 	var s = alasql.parse(sql).toString();

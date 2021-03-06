@@ -9,15 +9,15 @@ if (typeof exports === 'object') {
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
-describe('Test 336 SLT test #4', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 336 SLT test #4', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test336;USE test336');
 
 		done();
 	});
 
-	it.skip('2. Create table', function(done) {
-		var res = alasql(function() {
+	it.skip('2. Create table', function (done) {
+		var res = alasql(function () {
 			/*
     CREATE TABLE t1(
       a1 INTEGER,
@@ -33,8 +33,8 @@ describe('Test 336 SLT test #4', function() {
 		done();
 	});
 
-	it.skip('3. INSERT some data', function(done) {
-		var res = alasql(function() {
+	it.skip('3. INSERT some data', function (done) {
+		var res = alasql(function () {
 			/*
       INSERT INTO t1 VALUES(382,414,67,992,483,'table tn1 row 1');
 --      INSERT INTO t1 VALUES(231,468,97,414,795,'table tn1 row 2');
@@ -48,8 +48,8 @@ describe('Test 336 SLT test #4', function() {
 		done();
 	});
 
-	it.skip('3. CREATE INDEX', function(done) {
-		var res = alasql(function() {
+	it.skip('3. CREATE INDEX', function (done) {
+		var res = alasql(function () {
 			/*
       CREATE INDEX t1i0 ON t1(a1,b1,c1,d1,e1,x1);
       CREATE INDEX t1i1 ON t1(b1,c1,d1,e1,x1);
@@ -64,7 +64,7 @@ describe('Test 336 SLT test #4', function() {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test336');
 		done();
 	});

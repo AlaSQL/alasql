@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 360 AGGR function', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 360 AGGR function', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test360;USE test360');
 		done();
 	});
@@ -564,9 +564,9 @@ describe('Test 360 AGGR function', function() {
 		},
 	];
 
-	it.skip('2. Prepare Data', function(done) {
+	it.skip('2. Prepare Data', function (done) {
 		var res = alasql(
-			function() {
+			function () {
 				/*
 
 SELECT
@@ -591,9 +591,9 @@ FROM ?
 		done();
 	});
 
-	it.skip('2. Prepare Data', function(done) {
+	it.skip('2. Prepare Data', function (done) {
 		var res = alasql(
-			function() {
+			function () {
 				/*
 
     SELECT
@@ -613,7 +613,7 @@ FROM ?
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test360');
 		done();

@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 314 SEARCH with null values', function() {
-	it('1. Traverse with null', function(done) {
+describe('Test 314 SEARCH with null values', function () {
+	it('1. Traverse with null', function (done) {
 		var data = [{a: 1}, null];
 
 		var res = alasql('SEARCH / a FROM ?', [data]);

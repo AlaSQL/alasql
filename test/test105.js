@@ -3,4 +3,4 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 105 - Synchronization over browsers and Node.js', function() {});
+describe('Test 105 - Synchronization over browsers and Node.js', function () {});

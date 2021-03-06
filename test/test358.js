@@ -5,14 +5,14 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 358 DROP TABLE for nultiple tables', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 358 DROP TABLE for nultiple tables', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test358;USE test358');
 		done();
 	});
 
-	it('2. Prepare Data', function(done) {
-		alasql(function() {
+	it('2. Prepare Data', function (done) {
+		alasql(function () {
 			/*
 
       CREATE TABLE users( id int, name char(16) ) ; 
@@ -31,8 +31,8 @@ describe('Test 358 DROP TABLE for nultiple tables', function() {
 		done();
 	});
 
-	it('3. DROP TABLE', function(done) {
-		var res = alasql(function() {
+	it('3. DROP TABLE', function (done) {
+		var res = alasql(function () {
 			/*
     DROP TABLE users, hobbies;
   */
@@ -45,8 +45,8 @@ describe('Test 358 DROP TABLE for nultiple tables', function() {
 		done();
 	});
 
-	it('4. DROP TABLE IF EXISTS', function(done) {
-		var res = alasql(function() {
+	it('4. DROP TABLE IF EXISTS', function (done) {
+		var res = alasql(function () {
 			/*
       DROP TABLE IF EXISTS users, hobbies, users_hobbies;
   */
@@ -58,7 +58,7 @@ describe('Test 358 DROP TABLE for nultiple tables', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test358');
 		done();

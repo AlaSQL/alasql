@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 316 UNION ALL', function() {
-	it.skip('1. SEARCH DISTINCT', function(done) {
+describe('Test 316 UNION ALL', function () {
+	it.skip('1. SEARCH DISTINCT', function (done) {
 		var data = [{a: 10}, {a: 100}, {a: 10}, {a: 100}, {a: 10}];
 
 		var res = alasql('SEARCH DISTINCT(/ a) FROM ?', [data]);
@@ -15,7 +15,7 @@ describe('Test 316 UNION ALL', function() {
 		done();
 	});
 
-	it.skip('2. Simple UNION ALL', function(done) {
+	it.skip('2. Simple UNION ALL', function (done) {
 		var data = [{a: 10}, {b: 100}, {a: 5}];
 
 		var res = alasql('SEARCH UNION ALL(/a,/b) ORDER BY() FROM ?', [data]);

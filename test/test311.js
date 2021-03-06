@@ -5,13 +5,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 311 Special SEARCHors', function() {
-	it.skip('0. Create database ', function(done) {
+describe('Test 311 Special SEARCHors', function () {
+	it.skip('0. Create database ', function (done) {
 		alasql('CREATE DATABASE test311;USE test311');
 		done();
 	});
 
-	it.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', function(done) {
+	it.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', function (done) {
 		//    var res = alasql.parse('CREATE GRAPH #Andrey');
 		var data = [
 			{a: 1, b: 10},
@@ -58,7 +58,7 @@ describe('Test 311 Special SEARCHors', function() {
 		done();
 	});
 
-	it.skip('99. Drop database ', function(done) {
+	it.skip('99. Drop database ', function (done) {
 		alasql('DROP DATABASE test311');
 		done();
 	});

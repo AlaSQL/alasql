@@ -9,16 +9,16 @@ if (typeof exports === 'object') {
 
 var test = 423;
 
-describe('Test ' + test + ' Merge', function() {
-	before(function() {
+describe('Test ' + test + ' Merge', function () {
+	before(function () {
 		alasql('CREATE DATABASE test' + test + ';USE test' + test);
 	});
 
-	after(function() {
+	after(function () {
 		alasql('DROP DATABASE test' + test);
 	});
 
-	it('2. Join tables', function(done) {
+	it('2. Join tables', function (done) {
 		var res1 = [
 			{
 				inspecteur: 'Jan',
@@ -74,7 +74,7 @@ describe('Test ' + test + ' Merge', function() {
 			[res1, res2]
 		);
 
-		res.forEach(function(d) {
+		res.forEach(function (d) {
 			d.keuring = alasql(
 				'SELECT (a.[date] OR b.[date]) AS [date],\
          (a.[inspecteur] OR b.[inspecteur]) AS inspecteur,\

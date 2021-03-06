@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 var test = '608'; // insert test file number
 
-describe('Test ' + test + ' - Select.toString() ', function() {
+describe('Test ' + test + ' - Select.toString() ', function () {
 	// From http://jsfiddle.net/ndxbxrme/eyLy4zy9/3/
 
 	var tests = [
@@ -29,8 +29,8 @@ describe('Test ' + test + ' - Select.toString() ', function() {
 		},
 	];
 
-	var runTest = function(test) {
-		it(test.description, function() {
+	var runTest = function (test) {
+		it(test.description, function () {
 			var ast = alasql.parse(test.sql);
 			var astSql = ast.statements[0].toString();
 			assert.equal(astSql, test.sql);

@@ -12,13 +12,13 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 385 - Nested Search (issue #495)', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 385 - Nested Search (issue #495)', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test385;USE test385');
 		done();
 	});
 
-	it('2. Create table issue - one statement', function(done) {
+	it('2. Create table issue - one statement', function (done) {
 		// Source data
 
 		var data1 = [
@@ -84,7 +84,7 @@ describe('Test 385 - Nested Search (issue #495)', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test385');
 		done();
 	});

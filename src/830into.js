@@ -4,7 +4,7 @@
 // (c) 2014 Andrey Gershun
 //
 
-alasql.into.SQL = function(filename, opts, data, columns, cb) {
+alasql.into.SQL = function (filename, opts, data, columns, cb) {
 	var res;
 	if (typeof filename === 'object') {
 		opts = filename;
@@ -19,7 +19,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 	var s = '';
 	if (columns.length === 0) {
 		if (typeof data[0] === 'object') {
-			columns = Object.keys(data[0]).map(function(columnid) {
+			columns = Object.keys(data[0]).map(function (columnid) {
 				return {columnid: columnid};
 			});
 		} else {
@@ -31,12 +31,12 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 	for (var i = 0, ilen = data.length; i < ilen; i++) {
 		s += 'INSERT INTO ' + opts.tableid + '(';
 		s += columns
-			.map(function(col) {
+			.map(function (col) {
 				return col.columnid;
 			})
 			.join(',');
 		s += ') VALUES (';
-		s += columns.map(function(col) {
+		s += columns.map(function (col) {
 			var val = data[i][col.columnid];
 			if (col.typeid) {
 				if (
@@ -69,7 +69,7 @@ alasql.into.SQL = function(filename, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.HTML = function(selector, opts, data, columns, cb) {
+alasql.into.HTML = function (selector, opts, data, columns, cb) {
 	var res = 1;
 	if (typeof exports !== 'object') {
 		var opt = {headers: true};
@@ -82,7 +82,7 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 
 		if (columns.length === 0) {
 			if (typeof data[0] === 'object') {
-				columns = Object.keys(data[0]).map(function(columnid) {
+				columns = Object.keys(data[0]).map(function (columnid) {
 					return {columnid: columnid};
 				});
 			} else {
@@ -125,7 +125,7 @@ alasql.into.HTML = function(selector, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.JSON = function(filename, opts, data, columns, cb) {
+alasql.into.JSON = function (filename, opts, data, columns, cb) {
 	var res = 1;
 	if (typeof filename === 'object') {
 		opts = filename;
@@ -141,10 +141,10 @@ alasql.into.JSON = function(filename, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.TXT = function(filename, opts, data, columns, cb) {
+alasql.into.TXT = function (filename, opts, data, columns, cb) {
 	// If columns is empty
 	if (columns.length === 0 && data.length > 0) {
-		columns = Object.keys(data[0]).map(function(columnid) {
+		columns = Object.keys(data[0]).map(function (columnid) {
 			return {columnid: columnid};
 		});
 	}
@@ -159,7 +159,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	if (data.length > 0) {
 		var key = columns[0].columnid;
 		s += data
-			.map(function(d) {
+			.map(function (d) {
 				return d[key];
 			})
 			.join('\n');
@@ -180,7 +180,7 @@ alasql.into.TXT = function(filename, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.TAB = alasql.into.TSV = function(filename, opts, data, columns, cb) {
+alasql.into.TAB = alasql.into.TSV = function (filename, opts, data, columns, cb) {
 	var opt = {};
 	alasql.utils.extend(opt, opts);
 	opt.separator = '\t';
@@ -189,9 +189,9 @@ alasql.into.TAB = alasql.into.TSV = function(filename, opts, data, columns, cb) 
 	return alasql.into.CSV(filename, opt, data, columns, cb);
 };
 
-alasql.into.CSV = function(filename, opts, data, columns, cb) {
+alasql.into.CSV = function (filename, opts, data, columns, cb) {
 	if (columns.length === 0 && data.length > 0) {
-		columns = Object.keys(data[0]).map(function(columnid) {
+		columns = Object.keys(data[0]).map(function (columnid) {
 			return {columnid: columnid};
 		});
 	}
@@ -217,7 +217,7 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 		s +=
 			opt.quote +
 			columns
-				.map(function(col) {
+				.map(function (col) {
 					return col.columnid.trim();
 				})
 				.join(opt.quote + opt.separator + opt.quote) +
@@ -225,17 +225,14 @@ alasql.into.CSV = function(filename, opts, data, columns, cb) {
 			'\r\n';
 	}
 
-	data.forEach(function(d) {
+	data.forEach(function (d) {
 		s +=
 			columns
-				.map(function(col) {
+				.map(function (col) {
 					var s = d[col.columnid];
 					// escape the character wherever it appears in the field
 					if (opt.quote !== '') {
-						s = (s + '').replace(
-							new RegExp('\\' + opt.quote, 'g'),
-							opt.quote + opt.quote
-						);
+						s = (s + '').replace(new RegExp('\\' + opt.quote, 'g'), opt.quote + opt.quote);
 					}
 					//			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote;
 

@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 
 var test = '607'; // insert test file number
 
-describe('Test ' + test + ' - TRUNCATE on table in Local Storage', function() {
-	before(function() {
+describe('Test ' + test + ' - TRUNCATE on table in Local Storage', function () {
+	before(function () {
 		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS test' + test);
 		alasql('CREATE LOCALSTORAGE DATABASE test' + test);
 		alasql('ATTACH LOCALSTORAGE DATABASE test' + test);
@@ -15,16 +15,16 @@ describe('Test ' + test + ' - TRUNCATE on table in Local Storage', function() {
 		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
 	});
 
-	after(function() {
+	after(function () {
 		alasql('DROP LOCALSTORAGE DATABASE test' + test);
 	});
 
-	it('A) Attempt TRUNCATE on table', function() {
+	it('A) Attempt TRUNCATE on table', function () {
 		var res = alasql('TRUNCATE TABLE one');
 		assert.equal(res, 1);
 	});
 
-	it('B) Make sure table is empty', function() {
+	it('B) Make sure table is empty', function () {
 		var res = alasql('SELECT id, name FROM one');
 		assert.equal(res.length, 0);
 	});
@@ -66,7 +66,7 @@ describe('Test ' + test + ' - TRUNCATE on table in Local Storage', function() {
 	// 	assert.equal(rows.length, 0);
 	// });
 
-	it('D) Check TRUNCATE works in a COMMIT', function() {
+	it('D) Check TRUNCATE works in a COMMIT', function () {
 		//populate the table
 		alasql('TRUNCATE TABLE one');
 		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");

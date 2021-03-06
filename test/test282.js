@@ -6,20 +6,18 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 282 ADD COLUMN in LOCALSTORAGE', function() {
-	it.skip('1. CREATE DATABASE', function(done) {
+describe('Test 282 ADD COLUMN in LOCALSTORAGE', function () {
+	it.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test281;USE test281');
 		done();
 	});
 
-	it.skip('2. UNIQUE constraint', function(done) {
+	it.skip('2. UNIQUE constraint', function (done) {
 		localStorage.clear();
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS register');
 		alasql('ATTACH localStorage DATABASE register AS myregister');
 		alasql('USE myregister;');
-		alasql(
-			'CREATE TABLE IF NOT EXISTS transactions(transid STRING, payee STRING, amount DECIMAL)'
-		);
+		alasql('CREATE TABLE IF NOT EXISTS transactions(transid STRING, payee STRING, amount DECIMAL)');
 		for (var x = 0; x <= 3; x++) {
 			alasql('INSERT INTO transactions VALUES (?,?,?)', ['a', 'b', 'c']);
 		}
@@ -33,7 +31,7 @@ describe('Test 282 ADD COLUMN in LOCALSTORAGE', function() {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function(done) {
+	it.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test281');
 		done();
 	});

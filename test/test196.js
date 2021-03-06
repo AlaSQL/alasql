@@ -7,10 +7,10 @@ if (typeof exports === 'object') {
 
 //if(typeof exports != 'object') {
 
-describe('Test 196 - COUNT(a) vs COUNT(*)', function() {
+describe('Test 196 - COUNT(a) vs COUNT(*)', function () {
 	//    console.log(alasql.parse('SELECT a FROM ? GROUP BY a % 2').toString());
 
-	it('1. COUNT(*) vs COUNT(a)', function(done) {
+	it('1. COUNT(*) vs COUNT(a)', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: undefined}];
 		var res = alasql('SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a', [data]);
 		assert.deepEqual(res, [
@@ -23,7 +23,7 @@ describe('Test 196 - COUNT(a) vs COUNT(*)', function() {
 		done();
 	});
 
-	it('2. COUNT(DISTINCT a)', function(done) {
+	it('2. COUNT(DISTINCT a)', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}];
 		var res = alasql('SELECT COUNT(DISTINCT a) FROM ?', [data]);
 		//        console.log(res);

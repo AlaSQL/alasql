@@ -4,8 +4,8 @@ if (typeof exports === 'object') {
 	var zt = require('../lib/zt/zt.js');
 }
 
-describe('Test 114 - RANDOM()', function() {
-	it('Select random values', function(done) {
+describe('Test 114 - RANDOM()', function () {
+	it('Select random values', function (done) {
 		var res = alasql(
 			'select row random() AS 0, random() AS 1, random(100) AS 2, random(100) AS 3 from ? a',
 			[[1]]
@@ -18,7 +18,7 @@ describe('Test 114 - RANDOM()', function() {
 		done();
 	});
 
-	it('Create table with default constraint', function(done) {
+	it('Create table with default constraint', function (done) {
 		alasql('create database rnd');
 		alasql('use rnd');
 		alasql('create table one (a int default random(100))');
@@ -30,7 +30,7 @@ describe('Test 114 - RANDOM()', function() {
 		done();
 	});
 
-	it('Fill with random values', function(done) {
+	it('Fill with random values', function (done) {
 		alasql('insert into one default values');
 		assert(alasql.databases.rnd.tables.one.data[1].a < 100);
 		var res = alasql('select value count(*) from one');
