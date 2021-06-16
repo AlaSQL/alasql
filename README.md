@@ -1,7 +1,3 @@
-<h2>
-Please use version 1.x as prior versions has a security flaw if you use user generated data to concat your SQL strings instead of providing them as a parameters to AlaSQL. 
-</h2>
-
 _AlaSQL is an open source project used on more than two million page views per month - and we appreciate any and all contributions we can get. [Please help out](https://github.com/agershun/alasql/labels/Please%20help%20out%21)._
 
 _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
@@ -605,9 +601,15 @@ The testruns can be found in the [testlog](TESTLOG.md).
 
 
 
-## Bleeding Edge
+## Contributing
 
-If you want to try the most recent development version of the library please download [this file](https://rawgit.com/agershun/alasql/develop/dist/alasql.fs.js) or visit the [testbench](https://rawgit.com/agershun/alasql/develop/utils/testbench.html) to play around in the browser console.
+See [Contributing](CONTRIBUTING.md) for details.
+
+Thanks to all the people who already contributed!
+
+<a href="https://github.com/nushell/nushell/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=nushell/nushell" />
+</a>
 
 
 ## License
