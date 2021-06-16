@@ -63,9 +63,7 @@ describe('Test 301 Vertices and Edges', function () {
           [ 'Olga', 'Steven' ],
           [ 'Peter', 'Helen' ] ]      
       );
-*/ var res = alasql(
-			'SEARCH / "Olga" > "loves" > name'
-		);
+*/ var res = alasql('SEARCH / "Olga" > "loves" > name');
 		assert.deepEqual(res, ['Peter', 'Steven']);
 
 		done();

@@ -44,8 +44,7 @@ var data = [
 					position: 2,
 					contentItem: {
 						id: 12581,
-						url:
-							'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
+						url: 'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
 						itemType: 'Website',
 						embedUrl: null,
 					},
@@ -155,8 +154,7 @@ var data = [
 					position: 2,
 					contentItem: {
 						id: 12581,
-						url:
-							'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
+						url: 'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
 						itemType: 'Website',
 						embedUrl: null,
 					},
