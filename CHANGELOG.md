@@ -1,5 +1,11 @@
 # Changelog
 
+# 1.7.3 (2021-06-17)
+
+- Update: dependencies
+- Code: Introduce safe js fn generation
+
+
 
 # 1.7.1 (2021-03-06)
 
