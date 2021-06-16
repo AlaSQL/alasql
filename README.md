@@ -607,8 +607,8 @@ See [Contributing](CONTRIBUTING.md) for details.
 
 Thanks to all the people who already contributed!
 
-<a href="https://github.com/nushell/nushell/graphs/contributors">
-  <img src="https://contributors-img.web.app/image?repo=nushell/nushell" />
+<a href="https://github.com/agershun/alasql/graphs/contributors">
+  <img src="https://contributors-img.web.app/image?repo=agershun/alasql" />
 </a>
 
 
