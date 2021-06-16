@@ -1301,5 +1301,11 @@ var getXLSX = function () {
 	return XLSX;
 };
 
+var jss = JSON.stringify;
+var reName = /[^a-z\d@-_]+/gi;
+var nss = (e) => e.replace(reName, '');
+var reTick = /`/g;
+var tss = (e) => e.replace(reTick, '');
+
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();

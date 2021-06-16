@@ -720,7 +720,7 @@ yy.Search.prototype.toString = function () {
 
 yy.Search.prototype.toJS = function (context) {
 	//		console.log('yy.CreateVertex.toJS');
-	var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
+	var s = 'this.queriesfn[' + jss(this.queriesidx - 1) + '](this.params,null,' + jss(context) + ')';
 	// var s = '';
 	return s;
 };
@@ -1084,11 +1084,11 @@ alasql.srch.SET = function (val, args, stope, params) {
 		.map(function (st) {
 			//console.log(898,st);
 			if (st.method === '@') {
-				return "alasql.vars['" + st.variable + "']=" + st.expression.toJS('x', '');
+				return 'alasql.vars[' + jss(st.variable) + ']=' + st.expression.toJS('x', '');
 			} else if (st.method === '$') {
-				return "params['" + st.variable + "']=" + st.expression.toJS('x', '');
+				return 'params[' + jss(st.variable) + ']=' + st.expression.toJS('x', '');
 			} else {
-				return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
+				return 'x[' + jss(st.column.columnid) + ']=' + st.expression.toJS('x', '');
 			}
 		})
 		.join(';');
@@ -1178,17 +1178,26 @@ var compileSearchOrder = function (order) {
 					s += 'if(a' + dg + '==b' + dg + '){';
 				} else {
 					s +=
-						"if((a['" +
-						columnid +
-						"']||'')" +
+						'if((a[' +
+						jss(columnid) +
+						"]||'')" +
 						dg +
 						(ord.direction === 'ASC' ? '>' : '<') +
-						"(b['" +
-						columnid +
-						"']||'')" +
+						'(b[' +
+						jss(columnid) +
+						"]||'')" +
 						dg +
 						')return 1;';
-					s += "if((a['" + columnid + "']||'')" + dg + "==(b['" + columnid + "']||'')" + dg + '){';
+					s +=
+						'if((a[' +
+						jss(columnid) +
+						"]||'')" +
+						dg +
+						'==(b[' +
+						jss(columnid) +
+						"]||'')" +
+						dg +
+						'){';
 				}
 			} else {
 				dg = '.valueOf()';
