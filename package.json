@@ -70,7 +70,7 @@
 		"gulp-replace": "^1.0.0",
 		"gulp-shell": "0.8.0",
 		"gulp-uglify": "^3.0.2",
-		"husky": "6.0.0",
+		"husky": "7.0.1",
 		"istanbul": "^0.4.5",
 		"jison-gho": "^0.6.1-216",
 		"lint-staged": "11.0.0",
