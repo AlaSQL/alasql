@@ -73,7 +73,7 @@
 		"husky": "6.0.0",
 		"istanbul": "^0.4.5",
 		"jison-gho": "^0.6.1-216",
-		"lint-staged": "11.0.0",
+		"lint-staged": "11.0.1",
 		"mocha": "9.0.0",
 		"mocha.parallel": "^0.15.6",
 		"mversion": "2.0.1",
