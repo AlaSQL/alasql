@@ -49,34 +49,46 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 
 	it('4. DATEADD()', function (done) {
 		alasql("DECLARE @datetime2 datetime2 = '2007-01-01 13:10:10.1111111'");
-		var res = alasql(function () {
-			/*
-      MATRIX OF
-SELECT 'year', DATEADD(year,1,@datetime2)
-UNION ALL
-SELECT 'quarter',DATEADD(quarter,1,@datetime2)
-UNION ALL
-SELECT 'month',DATEADD(month,1,@datetime2)
-UNION ALL
-SELECT 'dayofyear',DATEADD(dayofyear,1,@datetime2)
-UNION ALL
-SELECT 'day',DATEADD(day,1,@datetime2)
-UNION ALL
-SELECT 'week',DATEADD(week,1,@datetime2)
-UNION ALL
-SELECT 'weekday',DATEADD(weekday,1,@datetime2)
-UNION ALL
-SELECT 'hour',DATEADD(hour,1,@datetime2)
-UNION ALL
-SELECT 'minute',DATEADD(minute,1,@datetime2)
-UNION ALL
-SELECT 'second',DATEADD(second,1,@datetime2)
-UNION ALL
-SELECT 'millisecond',DATEADD(millisecond,1,@datetime2)
-    */
-		});
-		//    console.log(res);
-		//    assert.deepEqual(res,[ { Duration: 1 } ]);
+
+		var res = alasql(`MATRIX OF
+			SELECT 'year', DATEADD(year,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'quarter',DATEADD(quarter,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'month',DATEADD(month,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'dayofyear',DATEADD(dayofyear,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'day',DATEADD(day,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'week',DATEADD(week,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'weekday',DATEADD(weekday,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'hour',DATEADD(hour,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'minute',DATEADD(minute,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'second',DATEADD(second,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
+
+		var expected =	[
+			["year", "2008-01-01T11:10:10.111Z"],
+			["quarter", "2007-04-01T10:10:10.111Z"],
+			["month", "2007-02-01T11:10:10.111Z"],
+			["dayofyear", "2007-01-02T11:10:10.111Z"],
+			["day", "2007-01-02T11:10:10.111Z"],
+			["week", "2007-01-08T11:10:10.111Z"],
+			["weekday", "2007-01-02T11:10:10.111Z"],
+			["hour", "2007-01-01T12:10:10.111Z"],
+			["minute", "2007-01-01T11:11:10.111Z"],
+			["second", "2007-01-01T11:10:11.111Z"],
+			["millisecond", "2007-01-01T11:10:10.112Z"]
+		];
+
+		assert.deepEqual(res, expected);
+
 		done();
 	});
 
