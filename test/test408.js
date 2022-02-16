@@ -48,35 +48,47 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 	});
 
 	it('4. DATEADD()', function (done) {
-		alasql("DECLARE @datetime2 datetime2 = '2007-01-01 13:10:10.1111111'");
-		var res = alasql(function () {
-			/*
-      MATRIX OF
-SELECT 'year', DATEADD(year,1,@datetime2)
-UNION ALL
-SELECT 'quarter',DATEADD(quarter,1,@datetime2)
-UNION ALL
-SELECT 'month',DATEADD(month,1,@datetime2)
-UNION ALL
-SELECT 'dayofyear',DATEADD(dayofyear,1,@datetime2)
-UNION ALL
-SELECT 'day',DATEADD(day,1,@datetime2)
-UNION ALL
-SELECT 'week',DATEADD(week,1,@datetime2)
-UNION ALL
-SELECT 'weekday',DATEADD(weekday,1,@datetime2)
-UNION ALL
-SELECT 'hour',DATEADD(hour,1,@datetime2)
-UNION ALL
-SELECT 'minute',DATEADD(minute,1,@datetime2)
-UNION ALL
-SELECT 'second',DATEADD(second,1,@datetime2)
-UNION ALL
-SELECT 'millisecond',DATEADD(millisecond,1,@datetime2)
-    */
-		});
-		//    console.log(res);
-		//    assert.deepEqual(res,[ { Duration: 1 } ]);
+		alasql("DECLARE @datetime2 datetime2 = '2020-01-01 13:10:10.1111111 GMT'");
+
+		var res = alasql(`MATRIX OF
+			SELECT 'year', DATEADD(year,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'quarter',DATEADD(quarter,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'month',DATEADD(month,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'dayofyear',DATEADD(dayofyear,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'day',DATEADD(day,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'week',DATEADD(week,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'weekday',DATEADD(weekday,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'hour',DATEADD(hour,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'minute',DATEADD(minute,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'second',DATEADD(second,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
+
+		var expected =	[
+			["year", "2021-01-01T13:10:10.111Z"],
+			["quarter", "2020-04-01T13:10:10.111Z"],
+			["month", "2020-02-01T13:10:10.111Z"],
+			["dayofyear", "2020-01-02T13:10:10.111Z"],
+			["day", "2020-01-02T13:10:10.111Z"],
+			["week", "2020-01-08T13:10:10.111Z"],
+			["weekday", "2020-01-02T13:10:10.111Z"],
+			["hour", "2020-01-01T14:10:10.111Z"],
+			["minute", "2020-01-01T13:11:10.111Z"],
+			["second", "2020-01-01T13:10:11.111Z"],
+			["millisecond", "2020-01-01T13:10:10.112Z"]
+		];
+
+		assert.deepEqual(res, expected);
+
 		done();
 	});
 

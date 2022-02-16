@@ -130,8 +130,25 @@ alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 };
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
-	var nd = new Date(d).getTime() + interval * PERIODS[period.toLowerCase()];
-	return new Date(nd);
+	var nd = new Date(d);
+	var	period = period.toLowerCase();
+
+	switch (period) {
+		case "year":
+			nd.setFullYear(nd.getFullYear() + interval);
+			break;
+		case "quarter":
+			nd.setMonth(nd.getMonth() + interval * 3);
+			break;
+		case "month":
+			nd.setMonth(nd.getMonth() + interval);
+			break;
+		default:
+			nd = new Date(nd.getTime() + interval * PERIODS[period]);
+			break;
+	}
+
+	return nd;
 };
 
 alasql.stdfn.INTERVAL = function (interval, period) {
