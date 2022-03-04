@@ -167,7 +167,7 @@ stdlib.IIF = function (a, b, c) {
 	}
 };
 stdlib.IFNULL = function (a, b) {
-	return '(' + a + '||' + b + ')';
+	return '(' + a + '==undefined?' + b + ':' + a + ')';
 };
 stdlib.INSTR = function (s, p) {
 	return '((' + s + ').indexOf(' + p + ')+1)';
