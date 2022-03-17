@@ -961,10 +961,10 @@ cloneable-readable@^1.0.0:
     process-nextick-args "^2.0.0"
     readable-stream "^2.3.5"
 
-cmdmix@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/cmdmix/-/cmdmix-2.1.0.tgz#93c01108f8b374f0ba4de3db72eb765c315473a2"
-  integrity sha512-c1kBtP/D+ms83KY0PA4pyWBCrXwA7fqh9B8rBn1i2x4jhsxSDhVuMXUh7u3SvGwbNVY0zXKIA2nH6lwCMVxZCA==
+cmdmix@2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/cmdmix/-/cmdmix-2.1.1.tgz#168aac97a4162c2ce3ba4226de13c77be14489cc"
+  integrity sha512-Mig+BzpB9elvuTCn30VAhxhfY4Z5EXQmp+5BeALjjx0VbR/hKeB6pfhbtJbbQhQA05VP5yaAMqrJRPQxHgmn4g==
 
 code-point-at@^1.0.0:
   version "1.1.0"
