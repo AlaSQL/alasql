@@ -78,7 +78,7 @@
 		"mocha.parallel": "^0.15.6",
 		"mversion": "2.0.1",
 		"open": "8.2.0",
-		"prettier": "2.2.1",
+		"prettier": "2.6.0",
 		"strftime": "^0.10.0",
 		"tabletop": "1.6.3",
 		"uglify-js": "3.13.9",
