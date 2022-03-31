@@ -30,6 +30,7 @@
 		"format": "yarn pretty-since-dev --write",
 		"format-all": "yarn pretty-all --write",
 		"test-format": "yarn pretty-since-dev --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
+		"lint": "eslint .",
 		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
@@ -60,6 +61,7 @@
 	"devDependencies": {
 		"blueimp-md5": "2.18.0",
 		"cmdmix": "2.1.0",
+		"eslint": "^8.12.0",
 		"git-branch-is": "4.0.0",
 		"gulp": "^4.0.1",
 		"gulp-concat": "^2.6.1",

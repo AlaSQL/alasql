@@ -1,6 +1,13 @@
 env:
   node: true
 extends: 'eslint:recommended'
+globals:
+  alasql: writable
+  yy: writable
+overrides:
+  - files: 'test/**'
+    env:
+      mocha: true
 rules:
   accessor-pairs: error
   array-bracket-newline: error
@@ -227,6 +234,3 @@ rules:
   yoda: 'off'
   no-unused-vars: 0
   no-console: 0
-  globals:
-    - alasql: 1
-    - yy: 1

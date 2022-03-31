@@ -9,3 +9,4 @@ test/test251.xlsx
 .npm/
 package-lock.json
 dist/
+pnpm-lock.yaml
