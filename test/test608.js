@@ -11,13 +11,11 @@ describe('Test ' + test + ' - Select.toString() ', function () {
 	var tests = [
 		{
 			description: '1: Alias ommited from table join',
-			sql:
-				'SELECT i.name AS itemName, f.name FROM items AS i LEFT JOIN feeds AS f ON i.fid = f.id WHERE f.id = $0',
+			sql: 'SELECT i.name AS itemName, f.name FROM items AS i LEFT JOIN feeds AS f ON i.fid = f.id WHERE f.id = $0',
 		},
 		{
 			description: '2: Joined Select',
-			sql:
-				'SELECT i.name AS itemName, f.name FROM items AS i LEFT JOIN (SELECT * FROM feeds) AS f ON i.fid = f.id WHERE f.id = $0',
+			sql: 'SELECT i.name AS itemName, f.name FROM items AS i LEFT JOIN (SELECT * FROM feeds) AS f ON i.fid = f.id WHERE f.id = $0',
 		},
 		{
 			description: '3: Distinct goes missing',
