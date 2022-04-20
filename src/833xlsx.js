@@ -120,7 +120,8 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 			var colm = 1,
 				rowm = 1;
 		}
-		var colmax = Math.max(col0 + columns.length, colm);
+		var zeroColumnFix = columns.length ? 0 : 1;
+		var colmax = Math.max(col0 + columns.length - 1 + zeroColumnFix, colm);
 		var rowmax = Math.max(row0 + dataLength + 2, rowm);
 
 		//		console.log(col0,row0);
