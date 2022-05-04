@@ -64,8 +64,8 @@ yy.Expression = function (params) {
 	@this ExpressionStatement
 	@return {string}
 */
-yy.Expression.prototype.toString = function (dontas) {
-	var s = this.expression.toString(dontas);
+yy.Expression.prototype.toString = function () {
+	var s = this.expression.toString();
 	if (this.order) {
 		s += ' ' + this.order.toString();
 	}
@@ -974,7 +974,7 @@ yy.Column.prototype.toJS = function (context, tableid, defcols) {
 yy.AggrValue = function (params) {
 	return yy.extend(this, params);
 };
-yy.AggrValue.prototype.toString = function (dontas) {
+yy.AggrValue.prototype.toString = function () {
 	var s = '';
 	if (this.aggregatorid === 'REDUCE') {
 		s += this.funcid.replace(re_invalidFnNameChars, '') + '(';

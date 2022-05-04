@@ -11,7 +11,7 @@ yy.FuncValue = function (params) {
 };
 
 var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
-yy.FuncValue.prototype.toString = function (dontas) {
+yy.FuncValue.prototype.toString = function () {
 	var s = '';
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
