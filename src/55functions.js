@@ -30,9 +30,6 @@ yy.FuncValue.prototype.toString = function (dontas) {
 		}
 		s += ')';
 	}
-
-	if (this.as && !dontas) s += ' AS ' + this.as.toString();
-	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
@@ -114,8 +111,6 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		s += ')';
 	}
 	//console.log('userfn:',s,this);
-
-	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
