@@ -15,21 +15,21 @@ let yargs = require('yargs')
 	.usage(
 		'AlaSQL command-line utility (version ' +
 			alasql.version +
-			')\n\nUsage: $0 [options] [sql] [params]'
+			')\n\nUsage: alasql [options] [sql] [params]'
 	)
 
-	.example('$0 "sql-statement"', 'Run SQL statement and output result as JSON')
+	.example('alasql "sql-statement"', 'Run SQL statement and output result as JSON')
 	.example('')
-	.example("$0 'value of select 2+?' 40", 'Outputs 42')
+	.example("alasql 'value of select 2+?' 40", 'Outputs 42')
 	.example('')
-	.example("$0 'select count(*) from txt()' < city.txt", 'Count lines in city.txt')
+	.example("alasql 'select count(*) from txt()' < city.txt", 'Count lines in city.txt')
 	.example('')
 	.example(
-		'$0 \'select * into xlsx("city.xlsx") from txt("city.txt")\'',
+		'alasql \'select * into xlsx("city.xlsx") from txt("city.txt")\'',
 		'Convert from txt to xlsx'
 	)
 	.example('')
-	.example('$0 --file file.sql France 1960', 'Run SQL from file with 2 parameters')
+	.example('alasql --file file.sql France 1960', 'Run SQL from file with 2 parameters')
 
 	.version('v', 'Echo AlaSQL version', alasql.version)
 	.alias('v', 'version')
