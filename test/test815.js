@@ -1,6 +1,6 @@
 if (typeof exports === 'object') {
     var assert = require('assert');
-    var {rm} = require('fs');
+    var { unlink } = require('fs');
     var alasql = require('..');
 } else {
     __dirname = '.';
@@ -9,10 +9,10 @@ if (typeof exports === 'object') {
 describe('Test 833 date parsing options', function () {
     var now = new Date();
     this.beforeAll(() => {
-        rm("test/test815.xlsx", () => {});
+        unlink("test/test815.xlsx", () => { });
     })
     this.afterAll(() => {
-        rm("test/test815.xlsx", () => {});
+        unlink("test/test815.xlsx", () => { });
     })
     it('1. stores date and retrieves date correctly', function (done) {
         alasql('CREATE TABLE dates (date datetime)');
