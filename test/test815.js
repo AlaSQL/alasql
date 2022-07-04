@@ -37,7 +37,10 @@ describe('Test 833 date parsing options', function () {
         return alasql.promise('SELECT * INTO XLSX("test/test815.xlsx") FROM dates').then(function () {
             return alasql.promise('SELECT * FROM xlsx("test/test815.xlsx", {XLSXopts: {cellDates: true}})').then(
                 function (res) {
-                    assert.deepEqual(res[0].date, now);
+                    assert.equal(res[0].date instanceof Date, true);
+                    // next assertion is like this since it is often off by 1 millisecond in CI.
+                    // this asserts that the time difference between now and alasql's date is less than 100 milliseconds
+                    assert.equal((res[0].date.getTime() - now.getTime()) < 100, true);
                 }
             )
         });
