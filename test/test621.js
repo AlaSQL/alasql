@@ -15,7 +15,8 @@ describe('Test ' + test + ' - importing from Tabletop.js', function () {
 
 	after(function () {});
 
-	it('Empty strings should be read as empty strings, not 0', function (done) {
+	// Google no longer support this way of accessing data sheets
+	it.skip('Empty strings should be read as empty strings, not 0', function (done) {
 		this.timeout(10000); // tabletops is slow
 		var res = [];
 		var test_spreadsheet =
