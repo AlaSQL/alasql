@@ -24,7 +24,7 @@
 		"bump": "mversion --no-prefix",
 		"uptodate": "yarn-check -u --skip-unused",
 		"release": "f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
-		"jison": "jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
+		"jison": "npx jison-gho ./src/alasqlparser.jison -o ./src/alasqlparser.js",
 		"bump-tag": "bump --tag 'v%s'",
 		"fmt": "yarn pretty-commit --write",
 		"format": "yarn pretty-since-dev --write",
@@ -83,6 +83,14 @@
 		"tabletop": "1.6.3",
 		"uglify-js": "3.13.9",
 		"version-bump-prompt": "6.1.0"
+	},
+	"resolutions": {
+		"got": "^11.8.5",
+		"axios": "^0.21.2",
+		"marked": "^4.0.10",
+		"underscore": "^1.12.1",
+		"glob-parent": "^5.1.2",
+		"lodash.template": "^4.5.0"
 	},
 	"engines": {
 		"node": "*"
