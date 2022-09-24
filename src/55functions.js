@@ -273,7 +273,8 @@ stdlib.UPPER = stdlib.UCASE = function (s) {
 // Concatination of strings
 stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
-	return args.slice(1, args.length).join(args[0]);
+	args = args.filter((x) => !(x === null || typeof x === 'undefined'));
+	return args.slice(1, args.length).join(args[0] || '');
 };
 
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}

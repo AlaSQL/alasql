@@ -66,7 +66,7 @@ describe('Test 413 CONCAT_WS (issue #429)', function () {
 
 	it('3. Test CONCAT_WS', function (done) {
 		var res = alasql(
-			' SELECT CONCAT_WS(" ", "prepended string", `Ticket-Kategorie`,`Ticket-Typ`) as series_name FROM ?',
+			' SELECT CONCAT_WS(" ", NULL, "prepended string", `Ticket-Kategorie`,`Ticket-Typ`, NULL) as series_name FROM ?',
 			[data]
 		);
 		//	console.log(res);
