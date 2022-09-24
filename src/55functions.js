@@ -162,7 +162,7 @@ stdlib.IIF = function (a, b, c) {
 	}
 };
 stdlib.IFNULL = function (a, b) {
-	return '(' + a + '||' + b + ')';
+	return '((typeof ' + a + ' ==="undefined" || null ===  ' + a + ')?' + b + ':' + a + ')';
 };
 stdlib.INSTR = function (s, p) {
 	return '((' + s + ').indexOf(' + p + ')+1)';
