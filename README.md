@@ -1,6 +1,8 @@
-_AlaSQL is an open source project used on more than three million page views per month - and we appreciate any and all contributions we can get. [Please help out](https://github.com/agershun/alasql/labels/Please%20help%20out%21)._
+- _AlaSQL is an unfunded open source project installed 95k time each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+label%3A%22Good+first+issue%22+sort%3Acreated-desc+). We appreciate any and all contributions we can get._
 
-_Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
+- _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
+
+- _Wondering if you should upgrade to v2? You probably should, but check the two breaking changes [here](https://github.com/AlaSQL/alasql/releases/tag/v2.0.1)_
 
 
 [![CI-test](https://github.com/agershun/alasql/workflows/CI-test/badge.svg)](https://github.com/agershun/alasql/actions)
