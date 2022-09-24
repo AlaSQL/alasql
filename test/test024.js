@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 24', function() {
-	it('IN (select) and NOT IN (select)', function(done) {
+describe('Test 24', function () {
+	it('IN (select) and NOT IN (select)', function (done) {
 		var db = new alasql.Database('test24');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');

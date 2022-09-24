@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 212: CONVERT dates with style', function() {
-	it('1. CONVERT DATES', function(done) {
+describe('Test 212: CONVERT dates with style', function () {
+	it('1. CONVERT DATES', function (done) {
 		alasql(
 			'SET @d = DATE("01/08/2015 12:34:56.789"); \
             SELECT ROW \
@@ -34,7 +34,7 @@ describe('Test 212: CONVERT dates with style', function() {
                 CONVERT(STRING,@d,112)\
             ',
 			[],
-			function(res) {
+			function (res) {
 				assert(res, [
 					1,
 					[
@@ -67,7 +67,7 @@ describe('Test 212: CONVERT dates with style', function() {
 		);
 	});
 
-	it('2. CONVERT DATE TO STRING', function(done) {
+	it('2. CONVERT DATE TO STRING', function (done) {
 		var res = alasql(
 			'SET @d = DATE("01/08/2015 12:34:56.789"); \
             SELECT VALUE \
@@ -78,7 +78,7 @@ describe('Test 212: CONVERT dates with style', function() {
 		done();
 	});
 
-	it('3. CONVERT JAVASCRIPT DATE TO STRING', function(done) {
+	it('3. CONVERT JAVASCRIPT DATE TO STRING', function (done) {
 		var res = alasql(
 			'SET @d = NEW Date("01/08/2015 12:34:56.789"); \
             SELECT VALUE \
@@ -88,14 +88,14 @@ describe('Test 212: CONVERT dates with style', function() {
 		done();
 	});
 
-	it('4. CONVERT JAVASCRIPT DATE TO STRING', function(done) {
+	it('4. CONVERT JAVASCRIPT DATE TO STRING', function (done) {
 		var d = new Date('01/08/2015 12:34:56.789');
 		var res = alasql('SELECT VALUE CONVERT(NVARCHAR(10),?,110)', [d]);
 		assert(res == '01-08-2015');
 		done();
 	});
 
-	it('5. CONVERT DATE TO STRING FROM TABLE', function(done) {
+	it('5. CONVERT DATE TO STRING FROM TABLE', function (done) {
 		var res = alasql(
 			'CREATE DATABASE test212; USE test212;\
             CREATE TABLE one (d DATE); \
@@ -111,7 +111,7 @@ describe('Test 212: CONVERT dates with style', function() {
 		done();
 	});
 
-	it('6. CONVERT DATE TO STRING FROM TABLE', function(done) {
+	it('6. CONVERT DATE TO STRING FROM TABLE', function (done) {
 		var res = alasql(
 			'CREATE TABLE two (d Date); \
             INSERT INTO two VALUES ("01/08/2015 12:34:56.789");\
@@ -126,7 +126,7 @@ describe('Test 212: CONVERT dates with style', function() {
 		done();
 	});
 
-	it('7. CONVERT DATE TO STRING FROM TABLE', function(done) {
+	it('7. CONVERT DATE TO STRING FROM TABLE', function (done) {
 		var res = alasql(
 			'CREATE TABLE three; \
             INSERT INTO three (d) VALUES ("01/08/2015 12:34:56.789");\
@@ -141,7 +141,7 @@ describe('Test 212: CONVERT dates with style', function() {
 		done();
 	});
 
-	it('8. CONVERT DATE TO STRING FROM TABLE without columns', function(done) {
+	it('8. CONVERT DATE TO STRING FROM TABLE without columns', function (done) {
 		var res = alasql(
 			'CREATE TABLE four; \
             INSERT INTO four VALUES {d:"01/08/2015 12:34:56.789"};\
@@ -156,7 +156,7 @@ describe('Test 212: CONVERT dates with style', function() {
 		done();
 	});
 
-	it('9. CONVERT DATE TO STRING FROM TABLE without columns', function(done) {
+	it('9. CONVERT DATE TO STRING FROM TABLE without columns', function (done) {
 		var d = new Date('01/08/2015 12:34:56.789');
 		var res = alasql(
 			'CREATE TABLE five; \

@@ -6,10 +6,10 @@
 //
 */
 
-yy.CreateVertex = function(params) {
+yy.CreateVertex = function (params) {
 	return yy.extend(this, params);
 };
-yy.CreateVertex.prototype.toString = function() {
+yy.CreateVertex.prototype.toString = function () {
 	var s = 'CREATE VERTEX ';
 	if (this.class) {
 		s += this.class + ' ';
@@ -28,7 +28,7 @@ yy.CreateVertex.prototype.toString = function() {
 	return s;
 };
 
-yy.CreateVertex.prototype.toJS = function(context) {
+yy.CreateVertex.prototype.toJS = function (context) {
 	//		console.log('yy.CreateVertex.toJS');
 	var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
 	// var s = '';
@@ -63,7 +63,7 @@ yy.CreateVertex.prototype.execute = function (databaseid,params,cb) {
 	return res;
 };
 */
-yy.CreateVertex.prototype.compile = function(databaseid) {
+yy.CreateVertex.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 
 	// CREATE VERTEX #id
@@ -77,7 +77,7 @@ yy.CreateVertex.prototype.compile = function(databaseid) {
 
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
-			.map(function(st) {
+			.map(function (st) {
 				return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
 			})
 			.join(';');
@@ -94,7 +94,7 @@ yy.CreateVertex.prototype.compile = function(databaseid) {
 	}
 	*/
 
-	var statement = function(params, cb) {
+	var statement = function (params, cb) {
 		var res;
 
 		// CREATE VERTEX without parameters
@@ -144,10 +144,10 @@ yy.CreateVertex.prototype.compile = function(databaseid) {
 
 */
 
-yy.CreateEdge = function(params) {
+yy.CreateEdge = function (params) {
 	return yy.extend(this, params);
 };
-yy.CreateEdge.prototype.toString = function() {
+yy.CreateEdge.prototype.toString = function () {
 	//	console.log('here!');
 	var s = 'CREATE EDGE' + ' ';
 	if (this.class) {
@@ -159,7 +159,7 @@ yy.CreateEdge.prototype.toString = function() {
 	return s;
 };
 
-yy.CreateEdge.prototype.toJS = function(context) {
+yy.CreateEdge.prototype.toJS = function (context) {
 	var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
 	return s;
 };
@@ -172,7 +172,7 @@ yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 	return res;
 };
 */
-yy.CreateEdge.prototype.compile = function(databaseid) {
+yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 	var fromfn = new Function('params,alasql', 'var y;return ' + this.from.toJS());
 	var tofn = new Function('params,alasql', 'var y;return ' + this.to.toJS());
@@ -185,7 +185,7 @@ yy.CreateEdge.prototype.compile = function(databaseid) {
 
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
-			.map(function(st) {
+			.map(function (st) {
 				return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
 			})
 			.join(';');
@@ -202,7 +202,7 @@ yy.CreateEdge.prototype.compile = function(databaseid) {
 	}
 	*/
 
-	var statement = function(params, cb) {
+	var statement = function (params, cb) {
 		var res = 0;
 		// CREATE VERTEX without parameters
 		var db = alasql.databases[dbid];
@@ -243,10 +243,10 @@ yy.CreateEdge.prototype.compile = function(databaseid) {
 	return statement;
 };
 
-yy.CreateGraph = function(params) {
+yy.CreateGraph = function (params) {
 	return yy.extend(this, params);
 };
-yy.CreateGraph.prototype.toString = function() {
+yy.CreateGraph.prototype.toString = function () {
 	var s = 'CREATE GRAPH' + ' ';
 	if (this.class) {
 		s += this.class + ' ';
@@ -259,7 +259,7 @@ yy.CreateGraph.prototype.toString = function() {
 // 	return s;
 //  };
 
-yy.CreateGraph.prototype.execute = function(databaseid, params, cb) {
+yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 	var res = [];
 	if (this.from) {
 		if (alasql.from[this.from.funcid]) {
@@ -268,7 +268,7 @@ yy.CreateGraph.prototype.execute = function(databaseid, params, cb) {
 	}
 
 	//	stop;
-	this.graph.forEach(function(g) {
+	this.graph.forEach(function (g) {
 		if (g.source) {
 			// GREATE EDGE
 			var e = {};
@@ -297,10 +297,7 @@ yy.CreateGraph.prototype.execute = function(databaseid, params, cb) {
 			}
 			e.$node = 'EDGE';
 			if (typeof g.json !== 'undefined') {
-				extend(
-					e,
-					new Function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql)
-				);
+				extend(e, new Function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
 			}
 
 			var v1;
@@ -430,10 +427,7 @@ yy.CreateGraph.prototype.execute = function(databaseid, params, cb) {
 		}
 		v.$node = 'VERTEX';
 		if (typeof g.json !== 'undefined') {
-			extend(
-				v,
-				new Function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql)
-			);
+			extend(v, new Function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
 		}
 		db.objects[v.$id] = v;
 		if (typeof v.$class !== 'undefined') {
@@ -450,7 +444,7 @@ yy.CreateGraph.prototype.execute = function(databaseid, params, cb) {
 	}
 };
 
-yy.CreateGraph.prototype.compile1 = function(databaseid) {
+yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
 	var fromfn = new Function('params,alasql', 'var y;return ' + this.from.toJS());
 	var tofn = new Function('params,alasql', 'var y;return ' + this.to.toJS());
@@ -463,7 +457,7 @@ yy.CreateGraph.prototype.compile1 = function(databaseid) {
 
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
-			.map(function(st) {
+			.map(function (st) {
 				return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
 			})
 			.join(';');
@@ -482,7 +476,7 @@ yy.CreateGraph.prototype.compile1 = function(databaseid) {
 	}
 	*/
 
-	var statement = function(params, cb) {
+	var statement = function (params, cb) {
 		var res = 0;
 		// CREATE VERTEX without parameters
 		var db = alasql.databases[dbid];

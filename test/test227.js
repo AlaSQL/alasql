@@ -5,22 +5,22 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 227 Float numbers and COALESCE', function() {
-	it('1. 1.234', function(done) {
+describe('Test 227 Float numbers and COALESCE', function () {
+	it('1. 1.234', function (done) {
 		var res = alasql('SELECT ROW 1.23, 2.345, 4.56');
 		//      console.log(res);
 		assert.deepEqual(res, [1.23, 2.345, 4.56]);
 		done();
 	});
 
-	it('2. 1.234e10', function(done) {
+	it('2. 1.234e10', function (done) {
 		var res = alasql('SELECT VALUE 1.234e10');
 		//    	console.log(res);
 		assert.deepEqual(res, 1.234e10);
 		done();
 	});
 
-	it('3. COALESCE', function(done) {
+	it('3. COALESCE', function (done) {
 		var cars = [
 			{color: 'blue'},
 			{model: 'Mazda', city: 'Paris'},

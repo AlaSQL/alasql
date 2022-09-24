@@ -1,9 +1,9 @@
 {
-  "alasql": "{\"databases\":{\"test267\":true,\"Atlas\":true,\"test\":true,\"test159\":true,\"test001\":true,\"ls379\":true}}",
-  "test267": "{\"databaseid\":\"test267\",\"tables\":{\"test\":{\"columns\":[]}}}",
-  "Atlas": "{\"databaseid\":\"Atlas\",\"tables\":{}}",
-  "test": "{\"databaseid\":\"test\",\"tables\":{\"one\":{\"columns\":[{\"columnid\":\"a\",\"dbtypeid\":\"INT\",\"identity\":{\"value\":1,\"step\":1}},{\"columnid\":\"b\",\"dbtypeid\":\"STRING\"}]}}}",
-  "test159": "{\"databaseid\":\"test159\",\"tables\":{}}",
-  "test001": "{\"databaseid\":\"test001\",\"tables\":{}}",
-  "ls379": "{\"databaseid\":\"ls379\",\"tables\":{}}"
+	"alasql": "{\"databases\":{\"test267\":true,\"Atlas\":true,\"test\":true,\"test159\":true,\"test001\":true,\"ls379\":true}}",
+	"test267": "{\"databaseid\":\"test267\",\"tables\":{\"test\":{\"columns\":[]}}}",
+	"Atlas": "{\"databaseid\":\"Atlas\",\"tables\":{}}",
+	"test": "{\"databaseid\":\"test\",\"tables\":{\"one\":{\"columns\":[{\"columnid\":\"a\",\"dbtypeid\":\"INT\",\"identity\":{\"value\":1,\"step\":1}},{\"columnid\":\"b\",\"dbtypeid\":\"STRING\"}]}}}",
+	"test159": "{\"databaseid\":\"test159\",\"tables\":{}}",
+	"test001": "{\"databaseid\":\"test001\",\"tables\":{}}",
+	"ls379": "{\"databaseid\":\"ls379\",\"tables\":{}}"
 }

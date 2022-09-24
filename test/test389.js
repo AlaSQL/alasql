@@ -11,13 +11,13 @@ if (typeof exports === 'object') {
   https://jira.mongodb.org/browse/SERVER-831
 */
 
-describe('Test 389 Autoincrement for localStorage', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 389 Autoincrement for localStorage', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test389;USE test389');
 		done();
 	});
 
-	it('2. Prepare tables', function(done) {
+	it('2. Prepare tables', function (done) {
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS test');
 		alasql('ATTACH localStorage DATABASE test');
@@ -25,7 +25,7 @@ describe('Test 389 Autoincrement for localStorage', function() {
 		done();
 	});
 
-	it('3. SELECTs', function() {
+	it('3. SELECTs', function () {
 		alasql('USE test');
 		alasql('INSERT INTO test.one (b) VALUES ("one"), ("two")');
 		alasql('INSERT INTO test.one (b) VALUES ("three"), ("four")');
@@ -36,7 +36,7 @@ describe('Test 389 Autoincrement for localStorage', function() {
 		alasql('TRUNCATE TABLE test.one; COMMIT TRANSACTION');
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test389');
 		done();
 	});

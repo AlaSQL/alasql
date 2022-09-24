@@ -5,13 +5,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 259 SqlLogic Parser Test #2', function() {
-	it.skip('1. Sqllogic', function(done) {
+describe('Test 259 SqlLogic Parser Test #2', function () {
+	it.skip('1. Sqllogic', function (done) {
 		alasql('CREATE DATABASE test259; USE test259');
 		done();
 	});
 
-	it.skip('2. FROM JOIN / CROSS JOIN syntax ', function(done) {
+	it.skip('2. FROM JOIN / CROSS JOIN syntax ', function (done) {
 		alasql('CREATE TABLE tab0; CREATE TABLE tab2');
 
 		alasql(
@@ -26,14 +26,14 @@ describe('Test 259 SqlLogic Parser Test #2', function() {
 		done();
 	});
 
-	it.skip('3. SELECT ALL', function(done) {
+	it.skip('3. SELECT ALL', function (done) {
 		alasql('CREATE TABLE tab1;CREATE TABLE tab2');
 		alasql('SELECT ALL * FROM tab1 cor0 CROSS JOIN tab1, tab2 AS cor1');
 		alasql('DROP TABLE tab1;DROP TABLE tab2');
 		done();
 	});
 
-	it.skip('99. Drop Database', function(done) {
+	it.skip('99. Drop Database', function (done) {
 		alasql('DROP DATABASE test259');
 		done();
 	});

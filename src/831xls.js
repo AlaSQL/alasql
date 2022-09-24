@@ -4,7 +4,7 @@
 // Generate XLS file with colors and styles
 // with Excel
 
-alasql.into.XLS = function(filename, opts, data, columns, cb) {
+alasql.into.XLS = function (filename, opts, data, columns, cb) {
 	// If filename is not defined then output to the result
 	if (typeof filename == 'object') {
 		opts = filename;
@@ -102,11 +102,11 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			if (columns.length == 0 && data.length > 0) {
 				if (typeof data[0] == 'object') {
 					if (Array.isArray(data[0])) {
-						columns = data[0].map(function(d, columnidx) {
+						columns = data[0].map(function (d, columnidx) {
 							return {columnid: columnidx};
 						});
 					} else {
-						columns = Object.keys(data[0]).map(function(columnid) {
+						columns = Object.keys(data[0]).map(function (columnid) {
 							return {columnid: columnid};
 						});
 					}
@@ -115,7 +115,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 		}
 
 		// Prepare columns
-		columns.forEach(function(column, columnidx) {
+		columns.forEach(function (column, columnidx) {
 			if (typeof sheet.column != 'undefined') {
 				extend(column, sheet.column);
 			}
@@ -130,13 +130,12 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			if (typeof column.width == 'number') column.width = column.width + 'px';
 			if (typeof column.columnid == 'undefined') column.columnid = columnidx;
 			if (typeof column.title == 'undefined') column.title = '' + column.columnid.trim();
-			if (sheet.headers && Array.isArray(sheet.headers))
-				column.title = sheet.headers[columnidx];
+			if (sheet.headers && Array.isArray(sheet.headers)) column.title = sheet.headers[columnidx];
 		});
 
 		// Set columns widths
 		s += '<colgroups>';
-		columns.forEach(function(column) {
+		columns.forEach(function (column) {
 			s += '<col style="width: ' + column.width + '"></col>';
 		});
 		s += '</colgroups>';
@@ -149,7 +148,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			// TODO: Skip columns to body
 
 			// Headers
-			columns.forEach(function(column, columnidx) {
+			columns.forEach(function (column, columnidx) {
 				s += '<th ';
 				// Column style
 				if (typeof column.style != 'undefined') {
@@ -186,7 +185,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 			// TODO: Skip columns to body
 
 			// Loop over data rows
-			data.forEach(function(row, rowidx) {
+			data.forEach(function (row, rowidx) {
 				// Limit number of rows on the sheet
 				if (rowidx > sheet.limit) return;
 				// Create row
@@ -211,7 +210,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 				}
 				s += '>';
 				// Loop over columns
-				columns.forEach(function(column, columnidx) {
+				columns.forEach(function (column, columnidx) {
 					// Parameters
 					var cell = {};
 					extend(cell, sheet.cell);
@@ -248,8 +247,7 @@ alasql.into.XLS = function(filename, opts, data, columns, cb) {
 					var typestyle = '';
 
 					if (typeid == 'money') {
-						typestyle =
-							'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
+						typestyle = 'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
 					} else if (typeid == 'number') {
 						typestyle = ' ';
 					} else if (typeid == 'date') {

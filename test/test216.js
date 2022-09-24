@@ -5,8 +5,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 216 ? IN ?', function() {
-	it('1. Expression IN (,,)', function(done) {
+describe('Test 216 ? IN ?', function () {
+	it('1. Expression IN (,,)', function (done) {
 		var res = alasql('SET @a = 10; \
             SELECT VALUE @a IN (10,20,30)');
 		assert(res.pop() === true);
@@ -16,7 +16,7 @@ describe('Test 216 ? IN ?', function() {
 		done();
 	});
 
-	it('2. ? IN ?', function(done) {
+	it('2. ? IN ?', function (done) {
 		var res = alasql('SELECT VALUE ? IN @(?)', [10, [10, 20, 30]]);
 		assert(res === true);
 		var res = alasql('SELECT VALUE ? IN @(?)', [40, [10, 20, 30]]);
@@ -24,11 +24,9 @@ describe('Test 216 ? IN ?', function() {
 		done();
 	});
 
-	it('3. @a IN @b', function(done) {
-		var res = alasql(
-			'SET @a = 10; SET @b = @[10,20,30]; \
-            SELECT VALUE @a IN @(@b)'
-		);
+	it('3. @a IN @b', function (done) {
+		var res = alasql('SET @a = 10; SET @b = @[10,20,30]; \
+            SELECT VALUE @a IN @(@b)');
 		assert(res.pop() === true);
 		var res = alasql('SET @a = 40;\
             SELECT VALUE @a IN @(@b)');
@@ -36,7 +34,7 @@ describe('Test 216 ? IN ?', function() {
 		done();
 	});
 
-	it('4. @a IN @[]', function(done) {
+	it('4. @a IN @[]', function (done) {
 		var res = alasql('SET @a = 10; \
             SELECT VALUE @a IN @(@[10,20,30])');
 		assert(res.pop() === true);

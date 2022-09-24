@@ -8,8 +8,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 109 - DELETE', function() {
-	it('DELETE without conditions', function(done) {
+describe('Test 109 - DELETE', function () {
+	it('DELETE without conditions', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
@@ -24,7 +24,7 @@ describe('Test 109 - DELETE', function() {
 		done();
 	});
 
-	it('DELETE with conditions', function(done) {
+	it('DELETE with conditions', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');

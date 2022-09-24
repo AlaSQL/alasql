@@ -1,12 +1,12 @@
 if (alasql.options.mysql) {
-	alasql.fn.TIMESTAMPDIFF = function(unit, date1, date2) {
+	alasql.fn.TIMESTAMPDIFF = function (unit, date1, date2) {
 		return alasql.stdfn.DATEDIFF(unit, date1, date2);
 	};
 }
 
 if (alasql.options.mysql || alasql.options.sqlite) {
 	// Pseudo INFORMATION_SCHEMA function
-	alasql.from.INFORMATION_SCHEMA = function(filename, opts, cb, idx, query) {
+	alasql.from.INFORMATION_SCHEMA = function (filename, opts, cb, idx, query) {
 		if (filename == 'VIEWS' || filename == 'TABLES') {
 			var res = [];
 			for (var databaseid in alasql.databases) {

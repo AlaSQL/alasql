@@ -6,11 +6,11 @@
 //
 */
 
-/** 
+/**
  Calculate ROLLUP() combination
  */
 
-var rollup = function(a, query) {
+var rollup = function (a, query) {
 	var rr = [];
 	var mask = 0;
 	var glen = a.length;
@@ -25,9 +25,7 @@ var rollup = function(a, query) {
 			} else {
 				query.groupColumns[escapeq(a[i].toString())] = escapeq(a[i].toString());
 				var aaa =
-					escapeq(a[i].toString()) +
-					'\t' +
-					a[i].toJS('p', query.sources[0].alias, query.defcols);
+					escapeq(a[i].toString()) + '\t' + a[i].toJS('p', query.sources[0].alias, query.defcols);
 			}
 
 			if (mask & (1 << i)) ss.push(aaa);
@@ -41,7 +39,7 @@ var rollup = function(a, query) {
 /**
  Calculate CUBE()
  */
-var cube = function(a, query) {
+var cube = function (a, query) {
 	var rr = [];
 	var glen = a.length;
 	var glenCube = 1 << glen;
@@ -66,8 +64,8 @@ var cube = function(a, query) {
 /**
  GROUPING SETS()
  */
-var groupingsets = function(a, query) {
-	return a.reduce(function(acc, d) {
+var groupingsets = function (a, query) {
+	return a.reduce(function (acc, d) {
 		acc = acc.concat(decartes(d, query));
 		return acc;
 	}, []);
@@ -76,7 +74,7 @@ var groupingsets = function(a, query) {
 /**
  Cartesian production
  */
-var cartes = function(a1, a2) {
+var cartes = function (a1, a2) {
 	var rrr = [];
 	for (var i1 = 0; i1 < a1.length; i1++) {
 		for (var i2 = 0; i2 < a2.length; i2++) {
@@ -96,9 +94,9 @@ function decartes(gv, query) {
 		for (var t = 0; t < gv.length; t++) {
 			if (gv[t] instanceof yy.Column) {
 				//	console.log('+++',gv[t].columnid,gv[t]);
-				gv[t].nick = escapeq(gv[t].columnid);
+				gv[t].nick = gv[t].nick ? escapeq(gv[t].nick) : escapeq(gv[t].columnid);
 				query.groupColumns[gv[t].nick] = gv[t].nick;
-				res = res.map(function(r) {
+				res = res.map(function (r) {
 					return r.concat(
 						gv[t].nick + '\t' + gv[t].toJS('p', query.sources[0].alias, query.defcols)
 					);
@@ -106,7 +104,7 @@ function decartes(gv, query) {
 				//		 		res = res.map(function(r){return r.concat(gv[t].columnid)});
 			} else if (gv[t] instanceof yy.FuncValue) {
 				query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
-				res = res.map(function(r) {
+				res = res.map(function (r) {
 					return r.concat(
 						escapeq(gv[t].toString()) +
 							'\t' +
@@ -117,8 +115,7 @@ function decartes(gv, query) {
 			} else if (gv[t] instanceof yy.GroupExpression) {
 				if (gv[t].type == 'ROLLUP') res = cartes(res, rollup(gv[t].group, query));
 				else if (gv[t].type == 'CUBE') res = cartes(res, cube(gv[t].group, query));
-				else if (gv[t].type == 'GROUPING SETS')
-					res = cartes(res, groupingsets(gv[t].group, query));
+				else if (gv[t].type == 'GROUPING SETS') res = cartes(res, groupingsets(gv[t].group, query));
 				else throw new Error('Unknown grouping function');
 			} else if (gv[t] === '') {
 				//				console.log('+++');
@@ -128,7 +125,7 @@ function decartes(gv, query) {
 				//				console.log('>'+gv[t]+'<',gv[t]=='',typeof gv[t]);
 				//				console.log(gv[t].toString());
 				//console.log('+++');
-				res = res.map(function(r) {
+				res = res.map(function (r) {
 					query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
 					return r.concat(
 						escapeq(gv[t].toString()) +
@@ -140,13 +137,13 @@ function decartes(gv, query) {
 			}
 			/*/*
 			// switch(gv[t].t) {
-			// 	case 'plain': 
-			// 		res = res.map(function(r){return r.concat(gv[t].p)}); 
+			// 	case 'plain':
+			// 		res = res.map(function(r){return r.concat(gv[t].p)});
 
-			// 	break; 
-			// 	case 'rollup': res = cartes(res,rollup(gv[t].p)); break; 
-			// 	case 'cube': res = cartes(res,cube(gv[t].p)); break; 
-			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break; 
+			// 	break;
+			// 	case 'rollup': res = cartes(res,rollup(gv[t].p)); break;
+			// 	case 'cube': res = cartes(res,cube(gv[t].p)); break;
+			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break;
 			// 	default: res = res.concat(gv[t]);
 			// }
 */
@@ -164,18 +161,16 @@ function decartes(gv, query) {
 		// 	return [gv.columnid]; // Is this ever happened?
 	} else {
 		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
-		return [
-			escapeq(gv.toString()) + '\t' + gv.toJS('p', query.sources[0].alias, query.defcols),
-		];
+		return [escapeq(gv.toString()) + '\t' + gv.toJS('p', query.sources[0].alias, query.defcols)];
 		//			throw new Error('Single argument in the group without array');
 	}
 
 	/*/*
 		// switch(gv.t) {
 		// 	case 'plain': return gv.p; break;
-		// 	case 'rollup': return rollup(gv.p); break; 
-		// 	case 'cube': return cube(gv.p); break; 
-		// 	case 'groupingsets':  return groupingsets(gv.p); break; 
+		// 	case 'rollup': return rollup(gv.p); break;
+		// 	case 'cube': return cube(gv.p); break;
+		// 	case 'groupingsets':  return groupingsets(gv.p); break;
 		// 	default: return [gv];//return decartes(gv.p);
 		// }
 		// return gv;

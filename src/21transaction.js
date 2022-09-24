@@ -6,7 +6,7 @@
 //
 */
 
-Database.prototype.transaction = function(cb) {
+Database.prototype.transaction = function (cb) {
 	var tx = new alasql.Transaction(this.databaseid);
 	var res = cb(tx);
 	return res;
@@ -19,7 +19,7 @@ Database.prototype.transaction = function(cb) {
  @class Transaction
  */
 
-var Transaction = (alasql.Transaction = function(databaseid) {
+var Transaction = (alasql.Transaction = function (databaseid) {
 	this.transactionid = Date.now();
 	this.databaseid = databaseid;
 	this.commited = false;
@@ -38,7 +38,7 @@ var Transaction = (alasql.Transaction = function(databaseid) {
 /**
  Commit transaction
  */
-Transaction.prototype.commit = function() {
+Transaction.prototype.commit = function () {
 	this.commited = true;
 	alasql.databases[this.databaseid].dbversion = Date.now();
 	delete this.bank;
@@ -48,7 +48,7 @@ Transaction.prototype.commit = function() {
 /**
  Rollback transaction
  */
-Transaction.prototype.rollback = function() {
+Transaction.prototype.rollback = function () {
 	if (!this.commited) {
 		alasql.databases[this.databaseid] = JSON.parse(this.bank);
 		// alasql.databases[this.databaseid].tables = this.bank;
@@ -68,7 +68,7 @@ Transaction.prototype.rollback = function() {
  @param {function} cb Callback function 
  @return result
  */
-Transaction.prototype.exec = function(sql, params, cb) {
+Transaction.prototype.exec = function (sql, params, cb) {
 	//	console.log(this.databaseid);
 	return alasql.dexec(this.databaseid, sql, params, cb);
 };

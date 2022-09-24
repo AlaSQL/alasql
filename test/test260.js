@@ -5,13 +5,13 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 260 SqlLogic Parser Test #3', function() {
-	it.skip('1. Sqllogic', function(done) {
+describe('Test 260 SqlLogic Parser Test #3', function () {
+	it.skip('1. Sqllogic', function (done) {
 		alasql('CREATE DATABASE test260; USE test260');
 		done();
 	});
 
-	it.skip('3. SELECT ALL', function(done) {
+	it.skip('3. SELECT ALL', function (done) {
 		done();
 	});
 	/*
@@ -50,7 +50,7 @@ SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) FROM t1 WHERE (a>b-2 AND a<
 
 */
 
-	it.skip('99. Drop Database', function(done) {
+	it.skip('99. Drop Database', function (done) {
 		alasql('DROP DATABASE test260');
 		done();
 	});

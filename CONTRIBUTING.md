@@ -15,7 +15,7 @@ For you to edit the source please do the following:
 - Run `npm test` to verify only the new test fails
 - Implement your contributions in `src/`
 - Run `npm test` and verify all tests are OK
-- Commit changes to git and push to your forked repo (including the `dist/` folder)
+- Commit changes to git and push to your forked repo
 - Click "Create Pull-request" when looking at your forked repo on Github
 
 _Please note that `npm test` will compile from `src/` and overwrite `dist/` before running all tests_ 

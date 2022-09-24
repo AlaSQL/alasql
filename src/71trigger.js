@@ -5,10 +5,10 @@
 //
 */
 
-yy.CreateTrigger = function(params) {
+yy.CreateTrigger = function (params) {
 	return yy.extend(this, params);
 };
-yy.CreateTrigger.prototype.toString = function() {
+yy.CreateTrigger.prototype.toString = function () {
 	var s = 'CREATE TRIGGER ' + this.trigger + ' ';
 	if (this.when) s += this.when + ' ';
 	s += this.action + ' ON ';
@@ -18,7 +18,7 @@ yy.CreateTrigger.prototype.toString = function() {
 	return s;
 };
 
-yy.CreateTrigger.prototype.execute = function(databaseid, params, cb) {
+yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 	var res = 1; // No tables removed
 	var triggerid = this.trigger;
 	databaseid = this.table.databaseid || databaseid;
@@ -30,6 +30,7 @@ yy.CreateTrigger.prototype.execute = function(databaseid, params, cb) {
 		when: this.when,
 		statement: this.statement,
 		funcid: this.funcid,
+		tableid: this.table.tableid,
 	};
 
 	db.triggers[triggerid] = trigger;
@@ -57,10 +58,10 @@ yy.CreateTrigger.prototype.execute = function(databaseid, params, cb) {
 	return res;
 };
 
-yy.DropTrigger = function(params) {
+yy.DropTrigger = function (params) {
 	return yy.extend(this, params);
 };
-yy.DropTrigger.prototype.toString = function() {
+yy.DropTrigger.prototype.toString = function () {
 	var s = 'DROP TRIGGER ' + this.trigger;
 	return s;
 };
@@ -74,24 +75,33 @@ yy.DropTrigger.prototype.toString = function() {
 	@example
 	DROP TRIGGER one;
 */
-yy.DropTrigger.prototype.execute = function(databaseid, params, cb) {
+yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
 	var res = 0; // No tables removed
 	var db = alasql.databases[databaseid];
 	var triggerid = this.trigger;
-	// For each table in the list
-	var tableid = db.triggers[triggerid];
-	if (tableid) {
-		res = 1;
-		delete db.tables[tableid].beforeinsert[triggerid];
-		delete db.tables[tableid].afterinsert[triggerid];
-		delete db.tables[tableid].insteadofinsert[triggerid];
-		delete db.tables[tableid].beforedelte[triggerid];
-		delete db.tables[tableid].afterdelete[triggerid];
-		delete db.tables[tableid].insteadofdelete[triggerid];
-		delete db.tables[tableid].beforeupdate[triggerid];
-		delete db.tables[tableid].afterupdate[triggerid];
-		delete db.tables[tableid].insteadofupdate[triggerid];
-		delete db.triggers[triggerid];
+
+	// get the trigger
+	var trigger = db.triggers[triggerid];
+
+	//  if the trigger exists
+	if (trigger) {
+		var tableid = db.triggers[triggerid].tableid;
+
+		if (tableid) {
+			res = 1;
+			delete db.tables[tableid].beforeinsert[triggerid];
+			delete db.tables[tableid].afterinsert[triggerid];
+			delete db.tables[tableid].insteadofinsert[triggerid];
+			delete db.tables[tableid].beforedelete[triggerid];
+			delete db.tables[tableid].afterdelete[triggerid];
+			delete db.tables[tableid].insteadofdelete[triggerid];
+			delete db.tables[tableid].beforeupdate[triggerid];
+			delete db.tables[tableid].afterupdate[triggerid];
+			delete db.tables[tableid].insteadofupdate[triggerid];
+			delete db.triggers[triggerid];
+		} else {
+			throw new Error('Trigger Table not found');
+		}
 	} else {
 		throw new Error('Trigger not found');
 	}

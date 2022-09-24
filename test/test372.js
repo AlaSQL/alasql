@@ -3,15 +3,14 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 372', function() {
-	it('should have a new result after insert', function() {
+describe('Test 372', function () {
+	it('should have a new result after insert', function () {
 		var db = new alasql.Database();
 		db.exec('create table someNames (name string)');
 		db.exec('create table otherNames (name string)');
 
 		assert.equal(
-			db.exec('select * from otherNames join someNames on someNames.name = otherNames.name')
-				.length,
+			db.exec('select * from otherNames join someNames on someNames.name = otherNames.name').length,
 			0
 		);
 
@@ -19,8 +18,7 @@ describe('Test 372', function() {
 		db.exec('insert into otherNames values ("Lars"), ("Erik")');
 
 		assert.equal(
-			db.exec('select * from otherNames join someNames on someNames.name = otherNames.name')
-				.length,
+			db.exec('select * from otherNames join someNames on someNames.name = otherNames.name').length,
 			2
 		);
 	});

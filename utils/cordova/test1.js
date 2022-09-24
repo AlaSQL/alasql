@@ -3,9 +3,9 @@ var alasql = require('../alasql.js');
 var filename = './test1.json';
 
 // Check if database exists
-alasql.utils.fileExists(filename,function(res){
-//	console.log('res',res);
-	if(!res) {
+alasql.utils.fileExists(filename, function (res) {
+	//	console.log('res',res);
+	if (!res) {
 		// Create database
 		alasql('CREATE FILESTORAGE DATABASE test1("./test1.json")');
 		alasql('ATTACH FILESTORAGE DATABASE test1("./test1.json")');
@@ -23,5 +23,3 @@ alasql.utils.fileExists(filename,function(res){
 	console.log(res);
 	//console.log(alasql.databases.test1);
 });
-
-

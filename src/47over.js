@@ -6,10 +6,10 @@
 //
 */
 
-yy.Over = function(params) {
+yy.Over = function (params) {
 	return yy.extend(this, params);
 };
-yy.Over.prototype.toString = function() {
+yy.Over.prototype.toString = function () {
 	var s = 'OVER (';
 	if (this.partition) {
 		s += 'PARTITION BY ' + this.partition.toString();

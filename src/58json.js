@@ -6,17 +6,17 @@
 //
 */
 
-yy.Json = function(params) {
+yy.Json = function (params) {
 	return yy.extend(this, params);
 };
-yy.Json.prototype.toString = function() {
+yy.Json.prototype.toString = function () {
 	var s = ''; // '@'
 	s += JSONtoString(this.value);
 	s += '';
 	return s;
 };
 
-var JSONtoString = (alasql.utils.JSONtoString = function(obj) {
+var JSONtoString = (alasql.utils.JSONtoString = function (obj) {
 	var s = '';
 	if (typeof obj == 'string') s = '"' + obj + '"';
 	else if (typeof obj == 'number') s = obj;
@@ -26,7 +26,7 @@ var JSONtoString = (alasql.utils.JSONtoString = function(obj) {
 			s +=
 				'[' +
 				obj
-					.map(function(b) {
+					.map(function (b) {
 						return JSONtoString(b);
 					})
 					.join(',') +
@@ -69,7 +69,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 			s +=
 				'[' +
 				obj
-					.map(function(b) {
+					.map(function (b) {
 						return JSONtoJS(b, context, tableid, defcols);
 					})
 					.join(',') +
@@ -102,7 +102,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 	return s;
 }
 
-yy.Json.prototype.toJS = function(context, tableid, defcols) {
+yy.Json.prototype.toJS = function (context, tableid, defcols) {
 	// TODO redo
 	return JSONtoJS(this.value, context, tableid, defcols);
 };

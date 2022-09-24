@@ -10,98 +10,109 @@
 // 	return sources;
 // };
 
-function compileSelectStar(query, alias, joinstar) {
-	// console.log(query.aliases[alias]);
-	//	console.log(query,alias);
-	// console.log(query.aliases[alias].tableid);
-	//	console.log(42,631,alias);
-	//	console.log(query.aliases);
+function compileSelectStar(query, aliases, joinstar) {
 	var sp = '',
-		ss = [];
-	//	if(!alias) {
-	//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
-	//	} else 	{
+		ss = [],
+		columnIds = {};
 
-	// TODO move this out of this function
-	query.ixsources = {};
-	query.sources.forEach(function(source) {
-		query.ixsources[source.alias] = source;
-	});
+	aliases.forEach(function (alias) {
+		// console.log(query.aliases[alias]);
+		//	console.log(query,alias);
+		// console.log(query.aliases[alias].tableid);
+		//	console.log(42,631,alias);
+		//	console.log(query.aliases);
+		//	if(!alias) {
+		//		sp += 'for(var k1 in p) var w=p[k1];for(var k2 in w){r[k2]=w[k2]};';
+		//	} else 	{
 
-	// Fixed
-	var columns;
-	if (query.ixsources[alias]) {
-		var columns = query.ixsources[alias].columns;
-	}
+		// TODO move this out of this function
+		query.ixsources = {};
+		query.sources.forEach(function (source) {
+			query.ixsources[source.alias] = source;
+		});
 
-	//		if(columns.length == 0 && query.aliases[alias].tableid) {
-	//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
-	//		};
+		// Fixed
+		var columns;
+		if (query.ixsources[alias]) {
+			var columns = query.ixsources[alias].columns;
+		}
 
-	// Check if this is a Table or other
-	if (joinstar && alasql.options.joinstar == 'json') {
-		sp += "r['" + alias + "']={};";
-	}
+		//		if(columns.length == 0 && query.aliases[alias].tableid) {
+		//			var columns = alasql.databases[query.aliases[alias].databaseid].tables[query.aliases[alias].tableid].columns;
+		//		};
 
-	if (columns && columns.length > 0) {
-		columns.forEach(function(tcol) {
-			if (joinstar && alasql.options.joinstar == 'underscore') {
-				ss.push(
-					"'" +
-						alias +
-						'_' +
-						tcol.columnid +
-						"':p['" +
+		// Check if this is a Table or other
+		if (joinstar && alasql.options.joinstar == 'json') {
+			sp += "r['" + alias + "']={};";
+		}
+
+		if (columns && columns.length > 0) {
+			columns.forEach(function (tcol) {
+				if (joinstar && alasql.options.joinstar == 'underscore') {
+					ss.push(
+						"'" + alias + '_' + tcol.columnid + "':p['" + alias + "']['" + tcol.columnid + "']"
+					);
+				} else if (joinstar && alasql.options.joinstar == 'json') {
+					//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
+					sp +=
+						"r['" +
 						alias +
 						"']['" +
 						tcol.columnid +
-						"']"
-				);
-			} else if (joinstar && alasql.options.joinstar == 'json') {
-				//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
-				sp +=
-					"r['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"']=p['" +
-					alias +
-					"']['" +
-					tcol.columnid +
-					"'];";
-			} else {
-				ss.push("'" + tcol.columnid + "':p['" + alias + "']['" + tcol.columnid + "']");
-			}
+						"']=p['" +
+						alias +
+						"']['" +
+						tcol.columnid +
+						"'];";
+				} else {
+					var value = "p['" + alias + "']['" + tcol.columnid + "']";
+					if (!columnIds[tcol.columnid]) {
+						var key = "'" + tcol.columnid + "':";
+						ss.push(key + value);
+						columnIds[tcol.columnid] = {
+							id: ss.length - 1,
+							value: value,
+							key: key,
+						};
+					} else {
+						var newValue =
+							value + ' !== undefined ? ' + value + ' : ' + columnIds[tcol.columnid].value;
+						ss[columnIds[tcol.columnid].id] = columnIds[tcol.columnid].key + newValue;
+						columnIds[tcol.columnid].value = newValue;
+					}
+				}
 
-			query.selectColumns[escapeq(tcol.columnid)] = true;
+				query.selectColumns[escapeq(tcol.columnid)] = true;
 
-			//			console.log('ok',tcol);
+				//			console.log('ok',tcol);
 
-			var coldef = {
-				columnid: tcol.columnid,
-				dbtypeid: tcol.dbtypeid,
-				dbsize: tcol.dbsize,
-				dbprecision: tcol.dbprecision,
-				dbenum: tcol.dbenum,
-			};
-			query.columns.push(coldef);
-			query.xcolumns[coldef.columnid] = coldef;
-		});
-		//console.log(999,columns);
-	} else {
-		//					console.log(60,alias,columns);
+				var coldef = {
+					columnid: tcol.columnid,
+					dbtypeid: tcol.dbtypeid,
+					dbsize: tcol.dbsize,
+					dbprecision: tcol.dbprecision,
+					dbenum: tcol.dbenum,
+				};
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid] = coldef;
+			});
+			//console.log(999,columns);
+		} else {
+			//					console.log(60,alias,columns);
 
-		// if column not exist, then copy all
-		sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
-		//console.log(777, sp);
-		query.dirtyColumns = true;
-	}
-	//	}
-	//console.log(87,{s:ss.join(','),sp:sp});
+			// if column not exist, then copy all
+			sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
+			//console.log(777, sp);
+			query.dirtyColumns = true;
+		}
+		//	}
+		//console.log(87,{s:ss.join(','),sp:sp});
+	});
+
 	return {s: ss.join(','), sp: sp};
 }
 
-yy.Select.prototype.compileSelect1 = function(query, params) {
+yy.Select.prototype.compileSelect1 = function (query, params) {
 	var self = this;
 	query.columns = [];
 	query.xcolumns = {};
@@ -113,33 +124,28 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 
 	//console.log(42,87,this.columns);
 
-	this.columns.forEach(function(col) {
+	this.columns.forEach(function (col) {
 		//console.log(col);
 		if (col instanceof yy.Column) {
 			if (col.columnid === '*') {
 				if (col.func) {
 					sp +=
-						"r=params['" +
-						col.param +
-						"'](p['" +
-						query.sources[0].alias +
-						"'],p,params,alasql);";
+						"r=params['" + col.param + "'](p['" + query.sources[0].alias + "'],p,params,alasql);";
 				} else if (col.tableid) {
 					//Copy all
-					var ret = compileSelectStar(query, col.tableid, false);
+					var ret = compileSelectStar(query, [col.tableid], false);
 					if (ret.s) {
 						ss = ss.concat(ret.s);
 					}
 					sp += ret.sp;
 				} else {
 					//					console.log('aliases', query.aliases);
-					for (var alias in query.aliases) {
-						var ret = compileSelectStar(query, alias, true); //query.aliases[alias].tableid);
-						if (ret.s) {
-							ss = ss.concat(ret.s);
-						}
-						sp += ret.sp;
+					var ret = compileSelectStar(query, Object.keys(query.aliases), true); //query.aliases[alias].tableid);
+					if (ret.s) {
+						ss = ss.concat(ret.s);
 					}
+					sp += ret.sp;
+
 					// TODO Remove these lines
 					// In case of no information
 					// sp += 'for(var k1 in p){var w=p[k1];'+
@@ -149,17 +155,11 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 				// If field, otherwise - expression
 				var tbid = col.tableid;
 				//				console.log(query.sources);
-				var dbid =
-					col.databaseid || query.sources[0].databaseid || query.database.databaseid;
+				var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
 				if (!tbid) tbid = query.defcols[col.columnid];
 				if (!tbid) tbid = query.defaultTableid;
 				if (col.columnid !== '_') {
-					if (
-						false &&
-						tbid &&
-						!query.defcols['.'][col.tableid] &&
-						!query.defcols[col.columnid]
-					) {
+					if (false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
 						ss.push(
 							"'" +
 								escapeq(col.as || col.columnid) +
@@ -186,13 +186,13 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 								'"];' +
 								'var cols=[' +
 								self.columns
-									.map(function(col) {
+									.map(function (col) {
 										return "'" + col.columnid + "'";
 									})
 									.join(',') +
 								'];var colas=[' +
 								self.columns
-									.map(function(col) {
+									.map(function (col) {
 										return "'" + (col.as || col.columnid) + "'";
 									})
 									.join(',') +
@@ -223,10 +223,8 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 						//						console.log(query.database,tbid,query.aliases[tbid].tableid);
 						throw new Error("Table '" + tbid + "' does not exist in database");
 					}
-					var columns =
-						alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
-					var xcolumns =
-						alasql.databases[dbid].tables[query.aliases[tbid].tableid].xcolumns;
+					var columns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
+					var xcolumns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].xcolumns;
 					//console.log(xcolumns, col,123);
 					//					console.log(0);
 					if (xcolumns && columns.length > 0) {
@@ -353,26 +351,28 @@ yy.Select.prototype.compileSelect1 = function(query, params) {
 	return s;
 	//console.log(42,753,query.xcolumns, query.selectColumns);
 };
-yy.Select.prototype.compileSelect2 = function(query) {
+yy.Select.prototype.compileSelect2 = function (query, params) {
 	var s = query.selectfns;
 	if (this.orderColumns && this.orderColumns.length > 0) {
-		this.orderColumns.forEach(function(v, idx) {
+		this.orderColumns.forEach(function (v, idx) {
 			var key = '$$$' + idx;
 			if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
+			} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
+				s += "r['" + key + "']=r['" + params[v.param] + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.defcols) + ';';
 			}
 			query.removeKeys.push(key);
 		});
 	}
-	//	console.log(285,s);
+
 	return new Function('p,params,alasql', 'var y;' + s + 'return r');
 };
 
-yy.Select.prototype.compileSelectGroup0 = function(query) {
+yy.Select.prototype.compileSelectGroup0 = function (query) {
 	var self = this;
-	self.columns.forEach(function(col, idx) {
+	self.columns.forEach(function (col, idx) {
 		if (!(col instanceof yy.Column && col.columnid === '*')) {
 			var colas;
 			//  = col.as;
@@ -390,6 +390,16 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 			}
 			// }
 			col.nick = colas;
+
+			if (self.group) {
+				var groupIdx = self.group.findIndex(function (gp) {
+					return gp.columnid === col.columnid && gp.tableid === col.tableid;
+				});
+				if (groupIdx > -1) {
+					self.group[groupIdx].nick = colas;
+				}
+			}
+
 			if (
 				col.funcid &&
 				(col.funcid.toUpperCase() === 'ROWNUM' || col.funcid.toUpperCase() === 'ROW_NUMBER')
@@ -403,7 +413,7 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 		}
 	});
 
-	this.columns.forEach(function(col) {
+	this.columns.forEach(function (col) {
 		if (col.findAggregator) {
 			col.findAggregator(query);
 		}
@@ -416,11 +426,11 @@ yy.Select.prototype.compileSelectGroup0 = function(query) {
 	}
 };
 
-yy.Select.prototype.compileSelectGroup1 = function(query) {
+yy.Select.prototype.compileSelectGroup1 = function (query) {
 	var self = this;
 	var s = 'var r = {};';
 
-	self.columns.forEach(function(col) {
+	self.columns.forEach(function (col) {
 		//		console.log(col);
 		if (col instanceof yy.Column && col.columnid === '*') {
 			//			s += 'for(var k in g){r[k]=g[k]};';
@@ -476,7 +486,7 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 //				s += 'g[\''+col.toString()+'\'];';
 
 //				console.log(col);
-				// var kg = col.toJS('g','')+';';				
+				// var kg = col.toJS('g','')+';';
 				// for(var i=0;i<query.removeKeys.length;i++) {
 				// 	// THis part should be intellectual
 				// 	if(query.removeKeys[i] == colas) {
@@ -503,10 +513,10 @@ yy.Select.prototype.compileSelectGroup1 = function(query) {
 	return s;
 };
 
-yy.Select.prototype.compileSelectGroup2 = function(query) {
+yy.Select.prototype.compileSelectGroup2 = function (query) {
 	var self = this;
 	var s = query.selectgfns;
-	self.columns.forEach(function(col) {
+	self.columns.forEach(function (col) {
 		//			 console.log(col);
 		if (query.ingroup.indexOf(col.nick) > -1) {
 			s += "r['" + (col.as || col.nick) + "']=g['" + col.nick + "'];";
@@ -514,7 +524,7 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 	});
 
 	if (this.orderColumns && this.orderColumns.length > 0) {
-		this.orderColumns.forEach(function(v, idx) {
+		this.orderColumns.forEach(function (v, idx) {
 			//			console.log(411,v);
 			var key = '$$$' + idx;
 			//			console.log(427,v,query.groupColumns,query.xgroupColumns);
@@ -532,25 +542,25 @@ yy.Select.prototype.compileSelectGroup2 = function(query) {
 };
 
 // SELECY * REMOVE [COLUMNS] col-list, LIKE ''
-yy.Select.prototype.compileRemoveColumns = function(query) {
+yy.Select.prototype.compileRemoveColumns = function (query) {
 	var self = this;
 	if (typeof this.removecolumns !== 'undefined') {
 		query.removeKeys = query.removeKeys.concat(
 			this.removecolumns
-				.filter(function(column) {
+				.filter(function (column) {
 					return typeof column.like === 'undefined';
 				})
-				.map(function(column) {
+				.map(function (column) {
 					return column.columnid;
 				})
 		);
 
 		//console.log(query.removeKeys,this.removecolumns);
 		query.removeLikeKeys = this.removecolumns
-			.filter(function(column) {
+			.filter(function (column) {
 				return typeof column.like !== 'undefined';
 			})
-			.map(function(column) {
+			.map(function (column) {
 				//				return new RegExp((column.like.value||'').replace(/\%/g,'.*').replace(/\?|_/g,'.'),'g');
 				return column.like.value;
 			});

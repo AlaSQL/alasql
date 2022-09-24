@@ -7,21 +7,26 @@
 */
 
 /* global yy alasql*/
-yy.Insert = function(params) {
+yy.Insert = function (params) {
 	return yy.extend(this, params);
 };
-yy.Insert.prototype.toString = function() {
+yy.Insert.prototype.toString = function () {
 	var s = 'INSERT ';
 	if (this.orreplace) s += 'OR REPLACE ';
 	if (this.replaceonly) s = 'REPLACE ';
 	s += 'INTO ' + this.into.toString();
 	if (this.columns) s += '(' + this.columns.toString() + ')';
-	if (this.values) s += ' VALUES ' + this.values.toString();
+	if (this.values) {
+		var values = this.values.map(function (value) {
+			return '(' + value.toString() + ')';
+		});
+		s += ' VALUES ' + values.join(',');
+	}
 	if (this.select) s += ' ' + this.select.toString();
 	return s;
 };
 
-yy.Insert.prototype.toJS = function(context, tableid, defcols) {
+yy.Insert.prototype.toJS = function (context, tableid, defcols) {
 	//	console.log('Expression',this);
 	//	if(this.expression.reduced) return 'true';
 	//	return this.expression.toJS(context, tableid, defcols);
@@ -35,7 +40,7 @@ yy.Insert.prototype.toJS = function(context, tableid, defcols) {
 	return s;
 };
 
-yy.Insert.prototype.compile = function(databaseid) {
+yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
 	databaseid = self.into.databaseid || databaseid;
 	var db = alasql.databases[databaseid];
@@ -58,14 +63,14 @@ yy.Insert.prototype.compile = function(databaseid) {
 	// INSERT INTO table VALUES
 	if (this.values) {
 		if (this.exists) {
-			this.existsfn = this.exists.map(function(ex) {
+			this.existsfn = this.exists.map(function (ex) {
 				var nq = ex.compile(databaseid);
 				nq.query.modifier = 'RECORDSET';
 				return nq;
 			});
 		}
 		if (this.queries) {
-			this.queriesfn = this.queries.map(function(q) {
+			this.queriesfn = this.queries.map(function (q) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier = 'RECORDSET';
 				return nq;
@@ -73,14 +78,14 @@ yy.Insert.prototype.compile = function(databaseid) {
 		}
 
 		//		console.log(1);
-		self.values.forEach(function(values) {
+		self.values.forEach(function (values) {
 			var ss = [];
 
 			//			s += 'db.tables[\''+tableid+'\'].data.push({';
 
 			//			s += '';
 			if (self.columns) {
-				self.columns.forEach(function(col, idx) {
+				self.columns.forEach(function (col, idx) {
 					//console.log(db.tables, tableid, table);
 					//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
 					//			console.log(rec[f.name.value]);
@@ -91,9 +96,8 @@ yy.Insert.prototype.compile = function(databaseid) {
 					var q = "'" + col.columnid + "':";
 					if (table.xcolumns && table.xcolumns[col.columnid]) {
 						if (
-							['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(
-								table.xcolumns[col.columnid].dbtypeid
-							) >= 0
+							['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(table.xcolumns[col.columnid].dbtypeid) >=
+							0
 						) {
 							//q += ''
 							q += '(x=' + values[idx].toJS() + ',x==undefined?undefined:+x)';
@@ -115,7 +119,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 				//console.log(111, table.columns);
 				//console.log(74,table);
 				if (Array.isArray(values) && table.columns && table.columns.length > 0) {
-					table.columns.forEach(function(col, idx) {
+					table.columns.forEach(function (col, idx) {
 						var q = "'" + col.columnid + "':";
 						//						var val = values[idx].toJS();
 
@@ -129,7 +133,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 							q += values[idx].toJS();
 						}
 						/*/*
-						 // if(table.xcolumns && table.xcolumns[col.columnid] && 
+						 // if(table.xcolumns && table.xcolumns[col.columnid] &&
 						 //  (table.xcolumns[col.columnid].dbtypeid == "DATE" ||
 							// table.xcolumns[col.columnid].dbtypeid == "DATETIME"
 						 //  )) {
@@ -155,7 +159,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 			//			if(rec[fld.fldid] == "NULL") rec[fld.fldid] = undefined;
 
 			//			if(table.xflds[fld.fldid].dbtypeid == "INT") rec[fld.fldid] = +rec[fld.fldid]|0;
-			//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" ) 
+			//			else if(table.xflds[fld.fldid].dbtypeid == "FLOAT" || table.xflds[fld.fldid].dbtypeid == "MONEY" )
 			//				rec[fld.fldid] = +rec[fld.fldid];
 */
 					});
@@ -186,12 +190,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 			//			s += 'db.tables[\''+tableid+'\'].insert(r);';
 			if (db.tables[tableid].insert) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
-				s +=
-					"db.tables['" +
-					tableid +
-					"'].insert(a," +
-					(self.orreplace ? 'true' : 'false') +
-					');';
+				s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
 			} else {
 				s += 'aa.push(a);';
 			}
@@ -233,15 +232,9 @@ yy.Insert.prototype.compile = function(databaseid) {
 		this.select.modifier = 'RECORDSET';
 		var selectfn = this.select.compile(databaseid);
 		if (db.engineid && alasql.engines[db.engineid].intoTable) {
-			var statement = function(params, cb) {
+			var statement = function (params, cb) {
 				var aa = selectfn(params);
-				var res = alasql.engines[db.engineid].intoTable(
-					db.databaseid,
-					tableid,
-					aa.data,
-					null,
-					cb
-				);
+				var res = alasql.engines[db.engineid].intoTable(db.databaseid, tableid, aa.data, null, cb);
 				return res;
 			};
 			return statement;
@@ -249,7 +242,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 			//			console.log(224,table.defaultfns);
 			var defaultfns = 'return alasql.utils.extend(r,{' + table.defaultfns + '})';
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
-			var insertfn = function(db, params, alasql) {
+			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
 				if (db.tables[tableid].insert) {
 					// If insert() function exists (issue #92)
@@ -266,8 +259,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 			};
 		}
 	} else if (this.default) {
-		var insertfns =
-			"db.tables['" + tableid + "'].data.push({" + table.defaultfns + '});return 1;';
+		var insertfns = "db.tables['" + tableid + "'].data.push({" + table.defaultfns + '});return 1;';
 		var insertfn = new Function('db,params,alasql', insertfns);
 	} else {
 		throw new Error('Wrong INSERT parameters');
@@ -277,7 +269,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 	//    	console.log(s33);
 
 	if (db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
-		var statement = function(params, cb) {
+		var statement = function (params, cb) {
 			var aa = new Function('db,params', 'var y;' + s33 + 'return aa;')(db, params);
 			//			console.log(s33);
 			var res = alasql.engines[db.engineid].intoTable(db.databaseid, tableid, aa, null, cb);
@@ -285,7 +277,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 			return res;
 		};
 	} else {
-		var statement = function(params, cb) {
+		var statement = function (params, cb) {
 			//console.log(databaseid);
 			var db = alasql.databases[databaseid];
 
@@ -308,7 +300,7 @@ yy.Insert.prototype.compile = function(databaseid) {
 	return statement;
 };
 
-yy.Insert.prototype.execute = function(databaseid, params, cb) {
+yy.Insert.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params, cb);
 	//	throw new Error('Insert statement is should be compiled')
 };

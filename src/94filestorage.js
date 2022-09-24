@@ -5,7 +5,7 @@
 // (c) Andrey Gershun
 //
 
-var FS = (alasql.engines.FILESTORAGE = alasql.engines.FILE = function() {});
+var FS = (alasql.engines.FILESTORAGE = alasql.engines.FILE = function () {});
 
 /*/*
 FS.get = function(key) {
@@ -26,12 +26,12 @@ LS.set = function(key, value){
 }
 */
 
-FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
+FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
 	//	console.log(arguments);
 	var res = 1;
 	var filename = args[0].value;
 	//	console.log('filename',filename);
-	alasql.utils.fileExists(filename, function(fex) {
+	alasql.utils.fileExists(filename, function (fex) {
 		// console.log('fex:',arguments);
 		if (fex) {
 			if (ifnotexists) {
@@ -43,7 +43,7 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 			}
 		} else {
 			var data = {tables: {}};
-			alasql.utils.saveFile(filename, JSON.stringify(data), function(data) {
+			alasql.utils.saveFile(filename, JSON.stringify(data), function (data) {
 				if (cb) res = cb(res);
 			});
 		}
@@ -51,14 +51,33 @@ FS.createDatabase = function(fsdbid, args, ifnotexists, dbid, cb) {
 	return res;
 };
 
-FS.dropDatabase = function(fsdbid, ifexists, cb) {
+FS.dropDatabase = function (fsdbid, ifexists, cb) {
 	var res;
-	var filename = fsdbid.value;
-	//	console.log('filename',filename);
-	alasql.utils.fileExists(filename, function(fex) {
+	var filename = '';
+
+	if (typeof fsdbid === 'object' && fsdbid.value) {
+		// Existing tests (test225.js) had DROP directly without DETACH and
+		// without a database id / name. It instead used the filename directly.
+		// This block will handle that
+		filename = fsdbid.value;
+	} else {
+		// When a database id / name is specified in DROP, it will be handled by this block.
+		// Note: Both DETACH + DROP and direct DROP without DETACH will be handled by this block
+		// We will be deleting the database object and the file either way.
+		// However, in the future, if we would like to have a stricter implementation
+		// where we cannot DROP without DETACHing it first, we can handle that case using
+		// the 'isDetached' property of the database object.
+		// (i.e) alasql.databases[fsdbid].isDetached will be set if it is
+		// has been detached first
+		var db = alasql.databases[fsdbid] || {};
+
+		filename = db.filename || '';
+		delete alasql.databases[fsdbid];
+	}
+	alasql.utils.fileExists(filename, function (fex) {
 		if (fex) {
 			res = 1;
-			alasql.utils.deleteFile(filename, function() {
+			alasql.utils.deleteFile(filename, function () {
 				res = 1;
 				if (cb) res = cb(res);
 			});
@@ -73,7 +92,7 @@ FS.dropDatabase = function(fsdbid, ifexists, cb) {
 	return res;
 };
 
-FS.attachDatabase = function(fsdbid, dbid, args, params, cb) {
+FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 	//	console.log(arguments);
 	var res = 1;
 	if (alasql.databases[dbid]) {
@@ -83,7 +102,7 @@ FS.attachDatabase = function(fsdbid, dbid, args, params, cb) {
 	db.engineid = 'FILESTORAGE';
 	//	db.fsdbid = fsdbid;
 	db.filename = args[0].value;
-	loadFile(db.filename, !!cb, function(s) {
+	loadFile(db.filename, !!cb, function (s) {
 		try {
 			db.data = JSON.parse(s);
 		} catch (err) {
@@ -125,7 +144,7 @@ FS.showDatabases = function(like, cb) {
 };
 */
 
-FS.createTable = function(databaseid, tableid, ifnotexists, cb) {
+FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	var db = alasql.databases[databaseid];
 	var tb = db.data[tableid];
 	var res = 1;
@@ -143,7 +162,7 @@ FS.createTable = function(databaseid, tableid, ifnotexists, cb) {
 	return res;
 };
 
-FS.updateFile = function(databaseid) {
+FS.updateFile = function (databaseid) {
 	//	console.log('update start');
 	var db = alasql.databases[databaseid];
 	if (db.issaving) {
@@ -152,19 +171,19 @@ FS.updateFile = function(databaseid) {
 	}
 	db.issaving = true;
 	db.postsave = false;
-	alasql.utils.saveFile(db.filename, JSON.stringify(db.data), function() {
+	alasql.utils.saveFile(db.filename, JSON.stringify(db.data), function () {
 		db.issaving = false;
 		//		console.log('update finish');
 
 		if (db.postsave) {
-			setTimeout(function() {
+			setTimeout(function () {
 				FS.updateFile(databaseid);
 			}, 50); // TODO Test with different timeout parameters
 		}
 	});
 };
 
-FS.dropTable = function(databaseid, tableid, ifexists, cb) {
+FS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
 	if (!ifexists && !db.tables[tableid]) {
@@ -180,7 +199,7 @@ FS.dropTable = function(databaseid, tableid, ifexists, cb) {
 	return res;
 };
 
-FS.fromTable = function(databaseid, tableid, cb, idx, query) {
+FS.fromTable = function (databaseid, tableid, cb, idx, query) {
 	//	console.log(998, databaseid, tableid, cb);
 	var db = alasql.databases[databaseid];
 	var res = db.data[tableid];
@@ -188,7 +207,7 @@ FS.fromTable = function(databaseid, tableid, cb, idx, query) {
 	return res;
 };
 
-FS.intoTable = function(databaseid, tableid, value, columns, cb) {
+FS.intoTable = function (databaseid, tableid, value, columns, cb) {
 	var db = alasql.databases[databaseid];
 	var res = value.length;
 	var tb = db.data[tableid];
@@ -199,19 +218,19 @@ FS.intoTable = function(databaseid, tableid, value, columns, cb) {
 	return res;
 };
 
-FS.loadTableData = function(databaseid, tableid) {
+FS.loadTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	db.tables[tableid].data = db.data[tableid];
 };
 
-FS.saveTableData = function(databaseid, tableid) {
+FS.saveTableData = function (databaseid, tableid) {
 	var db = alasql.databases[databaseid];
 	db.data[tableid] = db.tables[tableid].data;
 	db.tables[tableid].data = null;
 	FS.updateFile(databaseid);
 };
 
-FS.commit = function(databaseid, cb) {
+FS.commit = function (databaseid, cb) {
 	//	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
 	var fsdb = {tables: {}};
@@ -227,7 +246,7 @@ FS.commit = function(databaseid, cb) {
 
 FS.begin = FS.commit;
 
-FS.rollback = function(databaseid, cb) {
+FS.rollback = function (databaseid, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
 	db.dbversion++;
@@ -236,11 +255,11 @@ FS.rollback = function(databaseid, cb) {
 	//	lsdb = LS.get(lsdbid);
 	wait();
 	function wait() {
-		setTimeout(function() {
+		setTimeout(function () {
 			if (db.issaving) {
 				return wait();
 			} else {
-				alasql.loadFile(db.filename, !!cb, function(data) {
+				alasql.loadFile(db.filename, !!cb, function (data) {
 					db.data = data;
 					db.tables = {};
 					for (var tbid in db.data.tables) {

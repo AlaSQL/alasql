@@ -9,17 +9,17 @@ if (typeof exports === 'object') {
 
 var test = 414;
 
-describe('Test ' + test + ' SELECT FROM VIEW', function() {
-	before(function() {
+describe('Test ' + test + ' SELECT FROM VIEW', function () {
+	before(function () {
 		alasql('CREATE DATABASE test' + test + ';USE test' + test);
 	});
 
-	after(function() {
+	after(function () {
 		alasql('DROP DATABASE test' + test);
 	});
 
-	it('3. Test', function(done) {
-		var res = alasql(function() {
+	it('3. Test', function (done) {
+		var res = alasql(function () {
 			/*
 		create table data( id INTEGER PRIMARY KEY);
 		insert into data values (1);
@@ -33,8 +33,8 @@ describe('Test ' + test + ' SELECT FROM VIEW', function() {
 		done();
 	});
 
-	it('4. Test', function(done) {
-		var res = alasql(function() {
+	it('4. Test', function (done) {
+		var res = alasql(function () {
 			/*
 		create view view1 as select a.id , ifNULL((select MIN(b.id) from data as b where a.id < b.id), 0) b_id from data as a;
     */
@@ -43,8 +43,8 @@ describe('Test ' + test + ' SELECT FROM VIEW', function() {
 		done();
 	});
 
-	it.skip('5. Test', function(done) {
-		var res = alasql(function() {
+	it.skip('5. Test', function (done) {
+		var res = alasql(function () {
 			/*
 		select a.id from view1;
     */

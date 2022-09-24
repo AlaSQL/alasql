@@ -1,6 +1,6 @@
 /* global yy */
 
-yy.Select.prototype.compileHaving = function(query) {
+yy.Select.prototype.compileHaving = function (query) {
 	if (this.having) {
 		var s = this.having.toJS('g', -1);
 		query.havingfns = s;
@@ -8,7 +8,7 @@ yy.Select.prototype.compileHaving = function(query) {
 		return new Function('g,params,alasql', 'var y;return ' + s);
 	}
 
-	return function() {
+	return function () {
 		return true;
 	};
 };

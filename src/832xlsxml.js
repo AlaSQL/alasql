@@ -1,4 +1,4 @@
-alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
+alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	opts = opts || {};
 
 	// If filename is not defined then output to the result
@@ -9,10 +9,18 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 
 	// Set sheets
 	var sheets = {};
+	var sheetsdata;
+	var sheetscolumns;
 	if (opts && opts.sheets) {
 		sheets = opts.sheets;
+		// data and columns are already an array for the sheets
+		sheetsdata = data;
+		sheetscolumns = columns;
 	} else {
 		sheets.Sheet1 = opts;
+		// wrapd ata and columns array for single sheet
+		sheetsdata = [data];
+		sheetscolumns = [columns];
 	}
 
 	// File is ready to save
@@ -85,22 +93,37 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 			return 's' + styles[hh].styleid;
 		}
 
+		function values(obj) {
+			try {
+				return Object.values(obj);
+			} catch (e) {
+				// support for older runtimes
+				return Object.keys(obj).map(function (e) {
+					return obj[e];
+				});
+			}
+		}
+
+		var sheetidx = 0;
 		for (var sheetid in sheets) {
 			var sheet = sheets[sheetid];
-
+			var idx = typeof sheet.dataidx != 'undefined' ? sheet.dataidx : sheetidx++;
+			var data = values(sheetsdata[idx]);
 			// If columns defined in sheet, then take them
+			var columns = undefined;
 			if (typeof sheet.columns != 'undefined') {
 				columns = sheet.columns;
 			} else {
 				// Autogenerate columns if they are passed as parameters
-				if (columns.length == 0 && data.length > 0) {
+				columns = sheetscolumns[idx];
+				if (columns === undefined || (columns.length == 0 && data.length > 0)) {
 					if (typeof data[0] == 'object') {
 						if (Array.isArray(data[0])) {
-							columns = data[0].map(function(d, columnidx) {
+							columns = data[0].map(function (d, columnidx) {
 								return {columnid: columnidx};
 							});
 						} else {
-							columns = Object.keys(data[0]).map(function(columnid) {
+							columns = Object.keys(data[0]).map(function (columnid) {
 								return {columnid: columnid};
 							});
 						}
@@ -109,7 +132,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 			}
 
 			// Prepare columns
-			columns.forEach(function(column, columnidx) {
+			columns.forEach(function (column, columnidx) {
 				if (typeof sheet.column != 'undefined') {
 					extend(column, sheet.column);
 				}
@@ -124,8 +147,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				if (typeof column.width == 'number') column.width = column.width;
 				if (typeof column.columnid == 'undefined') column.columnid = columnidx;
 				if (typeof column.title == 'undefined') column.title = '' + column.columnid.trim();
-				if (sheet.headers && Array.isArray(sheet.headers))
-					column.title = sheet.headers[idx];
+				if (sheet.headers && Array.isArray(sheet.headers)) column.title = sheet.headers[columnidx];
 			});
 
 			// Header
@@ -140,7 +162,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				'" x:FullColumns="1" \
 	   			x:FullRows="1" ss:DefaultColumnWidth="65" ss:DefaultRowHeight="15">';
 
-			columns.forEach(function(column, columnidx) {
+			columns.forEach(function (column, columnidx) {
 				s3 +=
 					'<Column ss:Index="' +
 					(columnidx + 1) +
@@ -156,7 +178,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 				// TODO: Skip columns to body
 
 				// Headers
-				columns.forEach(function(column, columnidx) {
+				columns.forEach(function (column, columnidx) {
 					s3 += '<Cell ';
 
 					if (typeof column.style != 'undefined') {
@@ -188,7 +210,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 			// Data
 			if (data && data.length > 0) {
 				// Loop over data rows
-				data.forEach(function(row, rowidx) {
+				data.forEach(function (row, rowidx) {
 					// Limit number of rows on the sheet
 					if (rowidx > sheet.limit) return;
 
@@ -217,7 +239,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 					s3 += '>'; //'ss:AutoFitHeight="0">'
 
 					// Data
-					columns.forEach(function(column, columnidx) {
+					columns.forEach(function (column, columnidx) {
 						// Parameters
 						var cell = {};
 						extend(cell, sheet.cell);
@@ -260,8 +282,7 @@ alasql.into.XLSXML = function(filename, opts, data, columns, cb) {
 						var typestyle = '';
 
 						if (typeid == 'money') {
-							typestyle =
-								'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
+							typestyle = 'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
 						} else if (typeid == 'number') {
 							typestyle = ' ';
 						} else if (typeid == 'date') {
@@ -286,10 +307,7 @@ if(false) {
 						var st = {};
 						if (typeof cell.style != 'undefined') {
 							if (typeof cell.style == 'function') {
-								extend(
-									st,
-									cell.style(value, sheet, row, column, rowidx, columnidx)
-								);
+								extend(st, cell.style(value, sheet, row, column, rowidx, columnidx));
 							} else {
 								extend(st, cell.style);
 							}
@@ -310,9 +328,7 @@ if(false) {
 							} else if (typeof format == 'string') {
 								s3 += value; // TODO - add string format
 							} else {
-								throw new Error(
-									'Unknown format type. Should be function or string'
-								);
+								throw new Error('Unknown format type. Should be function or string');
 							}
 						} else {
 							if (typeid == 'number' || typeid == 'date') {

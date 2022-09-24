@@ -1,6 +1,7 @@
 
 *.xlsx binary
 *.xls binary
+yarn.lock binary 
 
 /dist/* binary merge=ours
 *.min.js binary

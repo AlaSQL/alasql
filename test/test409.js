@@ -10,8 +10,8 @@ if (typeof exports === 'object') {
 
 */
 
-describe('Test 409 Backup and restore database', function() {
-	alasql.storeDatabase = function(databaseid) {
+describe('Test 409 Backup and restore database', function () {
+	alasql.storeDatabase = function (databaseid) {
 		databaseid = databaseid || alasql.useid;
 		var db = alasql.databases[databaseid];
 		var obj = {};
@@ -40,14 +40,14 @@ describe('Test 409 Backup and restore database', function() {
 		return obj;
 	};
 
-	alasql.restoreDatabase = function(obj, databaseid) {};
+	alasql.restoreDatabase = function (obj, databaseid) {};
 
-	it('2. CREATE DATABASE', function(done) {
+	it('2. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test409;USE test409');
 		done();
 	});
 
-	it.skip('2. CREATE DATABASE', function(done) {
+	it.skip('2. CREATE DATABASE', function (done) {
 		alasql('CREATE TABLE one (a INT UNIQUE); INSERT INTO one VALUES (1),(2),(3)');
 		var obj1 = alasql.storeDatabase();
 		alasql('DROP DATABASE test409');
@@ -58,14 +58,14 @@ describe('Test 409 Backup and restore database', function() {
 		var res = alasql('SELECT * FROM one');
 		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
 
-		assert.throws(new Error(), function() {
+		assert.throws(new Error(), function () {
 			alasql('INSERT INTO one VALUES (1)');
 		});
 
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test409');
 		done();

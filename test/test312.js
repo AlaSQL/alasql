@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 312 JSON traverse', function() {
+describe('Test 312 JSON traverse', function () {
 	/*
 
 ### How to search deep nested JSON?
@@ -45,7 +45,7 @@ var test = {
 
 */
 
-	it('1. How to search deep nested JSON?', function(done) {
+	it('1. How to search deep nested JSON?', function (done) {
 		var data = {
 			menuInputRequestId: 1,
 			catalog: [
@@ -122,7 +122,7 @@ var test = {
 		done();
 	});
 
-	it('2. How do I traverse a complex JSON doc with javascript and extract named values', function(done) {
+	it('2. How do I traverse a complex JSON doc with javascript and extract named values', function (done) {
 		/*
   Source: http://stackoverflow.com/questions/29966520/how-do-i-traverse-a-complex-json-doc-with-javascript-and-extract-named-values
 
@@ -157,7 +157,7 @@ I need some javascript to traverse reasonably complex json with nested objects a
 		done();
 	});
 
-	it('3. Find all parents elements in a Json file', function(done) {
+	it('3. Find all parents elements in a Json file', function (done) {
 		/*
 http://stackoverflow.com/questions/29937203/find-all-parents-elements-in-a-json-file-using-jquery/29937369#29937369
 
@@ -215,14 +215,12 @@ Now, I want to retrieve all the elements which are at a higher level and all the
 					{
 						Id: 'menuDownloadReleasePackage',
 						Title: 'Download Release Package',
-						Resource:
-							'/Documentation/Data/Getting-Started/downloading-release-package.html',
+						Resource: '/Documentation/Data/Getting-Started/downloading-release-package.html',
 					},
 					{
 						Id: 'menuBuildingYourFirstApplication',
 						Title: 'Building your first application',
-						Resource:
-							'/Documentation/Data/Getting-Started/building-your-first-application.html',
+						Resource: '/Documentation/Data/Getting-Started/building-your-first-application.html',
 					},
 				],
 			},
@@ -272,7 +270,7 @@ var testObject = {
 This object is passed into a master function that builds a angularjs resource object using the passed in object.
 */
 
-	it('4. Recursive find and replace in multidimensional javascript object', function(done) {
+	it('4. Recursive find and replace in multidimensional javascript object', function (done) {
 		var data = {
 			name: '/pricing-setups/{folderId}',
 			method: 'POST',
@@ -308,7 +306,7 @@ This object is passed into a master function that builds a angularjs resource ob
 		done();
 	});
 
-	it('5. Recursive find and replace in multidimensional javascript object', function(done) {
+	it('5. Recursive find and replace in multidimensional javascript object', function (done) {
 		/*
 
 http://stackoverflow.com/questions/23024589/javascript-nested-object-to-multidimensional-array-recursive-function?rq=1

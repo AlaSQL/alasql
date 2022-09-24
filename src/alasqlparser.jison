@@ -20,8 +20,8 @@
 \[\?\]									return 'BRAQUESTION'
 '@['									return 'ATLBRA'
 'ARRAY['								return 'ARRAYLBRA'
-\[([^\]])*?\]							return 'BRALITERAL'
-\`([^\`])*?\`	   						return 'BRALITERAL'
+\[([^\]'])*?\]							return 'BRALITERAL'
+\`([^\`'])*?\`	   						return 'BRALITERAL'
 
 N(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
 X(['](\\.|[^']|\\\')*?['])+             return 'NSTRING'
@@ -184,6 +184,7 @@ DATABASE(S)?									return 'DATABASE'
 'NO'											return 'NO'
 'NOT'											return 'NOT'
 'NULL'											return 'NULL'
+'NULLS'											return 'NULLS'
 'OFF'											return 'OFF'
 'ON'											return 'ON'
 'ONLY'											return 'ONLY'
@@ -316,7 +317,7 @@ SETS                                        	return 'SET'
 
 '~'												return 'TILDA'
 
-[a-zA-Z_][a-zA-Z_0-9]*                     		return 'LITERAL'
+[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
 
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
@@ -899,7 +900,7 @@ FromTable
 		{ $$ = $1; $1.as = $3; }
 
 	| INSERTED
-		{ $$ = {inserted:true}; $1.as = 'default'; }
+		{ $$ = {inserted:true}; }
 
 	| VarValue
 		{ $$ = $1; $1.as = 'default'; }
@@ -984,11 +985,11 @@ JoinTableAs
 	| LPAR Select RPAR AS Literal
 		{ $$ = {select: $2, as: $5 } ; }
 	| FuncValue
-		{ $$ = {funcid:$1, as:'default'}; }
+		{ $$ = {func:$1, as:'default'}; }
 	| FuncValue Literal
-		{ $$ = {funcid:$1, as: $2}; }
+		{ $$ = {func:$1, as: $2}; }
 	| FuncValue AS Literal
-		{ $$ = {funcid:$1, as: $3}; }
+		{ $$ = {func:$1, as: $3}; }
 
 	| VarValue
 		{ $$ = {variable:$1,as:'default'}; }
@@ -1109,11 +1110,20 @@ OrderExpressionsList
 		{ $$ = $1; $1.push($3)}
 	;
 
+NullsOrder
+	:  NULLS FIRST
+		{ $$ = {nullsOrder: 'FIRST'}; }
+	|  NULLS LAST
+		{ $$ = {nullsOrder: 'LAST'}; }
+	;
+
 OrderExpression
 	: Expression
 		{ $$ = new yy.Expression({expression: $1, direction:'ASC'}) }
 	| Expression DIRECTION
 		{ $$ = new yy.Expression({expression: $1, direction:$2.toUpperCase()}) }
+	| Expression DIRECTION NullsOrder
+		{ $$ = new yy.Expression({expression: $1, direction:$2.toUpperCase()}); yy.extend($$, $3) }
 	| Expression COLLATE NOCASE
 		{ $$ = new yy.Expression({expression: $1, direction:'ASC', nocase:true}) }
 	| Expression COLLATE NOCASE DIRECTION

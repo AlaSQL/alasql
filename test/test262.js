@@ -6,8 +6,8 @@ if (typeof exports === 'object') {
 }
 
 if (typeof exports == 'object') {
-	describe('Test 262 Leaking of "key" variable to global scope', function() {
-		it('1. Sqllogic', function(done) {
+	describe('Test 262 Leaking of "key" variable to global scope', function () {
+		it('1. Sqllogic', function (done) {
 			mytable = [{name: 'Hello'}, {name: 'Wolrd'}];
 
 			assert(typeof global.key == 'undefined'); // undefined
@@ -15,10 +15,10 @@ if (typeof exports == 'object') {
 			// To catch
 			if (false) {
 				Object.defineProperty(global, 'key', {
-					get: function() {
+					get: function () {
 						assert(false);
 					},
-					set: function(newValue) {
+					set: function (newValue) {
 						assert(false);
 					},
 				});

@@ -6,18 +6,18 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 331 SLT#2 - test', function() {
-	before(function() {
+describe('Test 331 SLT#2 - test', function () {
+	before(function () {
 		alasql('CREATE DATABASE test332;USE test332');
 	});
 
-	after(function() {
+	after(function () {
 		alasql('DROP DATABASE test332');
 		alasql.options.modifier = undefined;
 	});
 
-	it('2. Create table', function(done) {
-		var res = alasql(function() {
+	it('2. Create table', function (done) {
+		var res = alasql(function () {
 			/*
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(NULL,102,NULL,101,104);
@@ -57,9 +57,9 @@ describe('Test 331 SLT#2 - test', function() {
 		done();
 	});
 
-	it('2a. SELECT 126', function(done) {
+	it('2a. SELECT 126', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
       SELECT a,
              (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b),
@@ -71,12 +71,15 @@ describe('Test 331 SLT#2 - test', function() {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [[undefined, 1, undefined, 114], [undefined, 18, undefined, 207]]);
+		assert.deepEqual(res, [
+			[undefined, 1, undefined, 114],
+			[undefined, 18, undefined, 207],
+		]);
 		done();
 	});
-	it('3. SELECT AVG', function(done) {
+	it('3. SELECT AVG', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
       SELECT avg(c) FROM t1
   */
@@ -86,9 +89,9 @@ describe('Test 331 SLT#2 - test', function() {
 		done();
 	});
 
-	it('3. SELECT 97', function(done) {
+	it('3. SELECT 97', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
       SELECT CASE WHEN c>(SELECT avg(c) FROM t1) THEN a*2 ELSE b*10 END
       FROM t1
@@ -99,9 +102,9 @@ describe('Test 331 SLT#2 - test', function() {
 		done();
 	});
 
-	it('4. SELECT 97', function(done) {
+	it('4. SELECT 97', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function() {
+		var res = alasql(function () {
 			/*
       SELECT b-c,
              c

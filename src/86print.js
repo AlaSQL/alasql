@@ -16,7 +16,7 @@
 
 /* global alasql, yy */
 
-yy.Print = function(params) {
+yy.Print = function (params) {
 	return yy.extend(this, params);
 };
 
@@ -24,7 +24,7 @@ yy.Print = function(params) {
 	Generate SQL string 
 	@this Print statement object
 */
-yy.Print.prototype.toString = function() {
+yy.Print.prototype.toString = function () {
 	var s = 'PRINT';
 	if (this.statement) s += ' ' + this.statement.toString();
 	return s;
@@ -37,7 +37,7 @@ yy.Print.prototype.toString = function() {
  	@param {statement-callback} cb Callback function 
 	@this Print statement object
 */
-yy.Print.prototype.execute = function(databaseid, params, cb) {
+yy.Print.prototype.execute = function (databaseid, params, cb) {
 	//	console.log(this.url);
 	var self = this;
 	var res = 1;
@@ -45,7 +45,7 @@ yy.Print.prototype.execute = function(databaseid, params, cb) {
 	alasql.precompile(this, databaseid, params); /** @todo Change from alasql to this */
 
 	if (this.exprs && this.exprs.length > 0) {
-		var rs = this.exprs.map(function(expr) {
+		var rs = this.exprs.map(function (expr) {
 			// console.log(48748747654, 'var y;return ' + expr.toJS('({})', '', null));
 			var exprfn = new Function(
 				'params,alasql,p',

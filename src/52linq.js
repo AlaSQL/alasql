@@ -1,22 +1,22 @@
 // Alasql Linq library
 
-yy.FromData = function(params) {
+yy.FromData = function (params) {
 	return yy.extend(this, params);
 };
-yy.FromData.prototype.toString = function() {
+yy.FromData.prototype.toString = function () {
 	if (this.data) return 'DATA(' + ((Math.random() * 10e15) | 0) + ')';
 	else return '?';
 };
-yy.FromData.prototype.toJS = function() {
+yy.FromData.prototype.toJS = function () {
 	//	console.log('yy.FromData.prototype.toJS');
 };
 
-yy.Select.prototype.exec = function(params, cb) {
+yy.Select.prototype.exec = function (params, cb) {
 	if (this.preparams) params = this.preparams.concat(params);
 	//	console.log(15,this.preparams);
 
 	var databaseid = alasql.useid;
-	db = alasql.databases[databaseid];
+	var db = alasql.databases[databaseid];
 	var sql = this.toString();
 	var hh = hash(sql);
 	//	console.log(sql);
@@ -36,9 +36,9 @@ yy.Select.prototype.exec = function(params, cb) {
 	return res;
 };
 
-yy.Select.prototype.Select = function() {
+yy.Select.prototype.Select = function () {
 	var self = this;
-	var agrs = [];
+	var args = [];
 	if (arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);
 	} else if (arguments.length == 1) {
@@ -53,7 +53,7 @@ yy.Select.prototype.Select = function() {
 
 	self.columns = [];
 
-	args.forEach(function(arg) {
+	args.forEach(function (arg) {
 		if (typeof arg == 'string') {
 			self.columns.push(new yy.Column({columnid: arg}));
 		} else if (typeof arg == 'function') {
@@ -74,7 +74,7 @@ yy.Select.prototype.Select = function() {
 	return self;
 };
 
-yy.Select.prototype.From = function(tableid) {
+yy.Select.prototype.From = function (tableid) {
 	var self = this;
 	if (!self.from) self.from = [];
 	if (Array.isArray(tableid)) {
@@ -94,9 +94,9 @@ yy.Select.prototype.From = function(tableid) {
 	return self;
 };
 
-yy.Select.prototype.OrderBy = function() {
+yy.Select.prototype.OrderBy = function () {
 	var self = this;
-	var agrs = [];
+	var args = [];
 
 	self.order = [];
 
@@ -116,7 +116,7 @@ yy.Select.prototype.OrderBy = function() {
 	}
 
 	if (args.length > 0) {
-		args.forEach(function(arg) {
+		args.forEach(function (arg) {
 			var expr = new yy.Column({columnid: arg});
 			if (typeof arg == 'function') {
 				expr = arg;
@@ -127,15 +127,15 @@ yy.Select.prototype.OrderBy = function() {
 	return self;
 };
 
-yy.Select.prototype.Top = function(topnum) {
+yy.Select.prototype.Top = function (topnum) {
 	var self = this;
 	self.top = new yy.NumValue({value: topnum});
 	return self;
 };
 
-yy.Select.prototype.GroupBy = function() {
+yy.Select.prototype.GroupBy = function () {
 	var self = this;
-	var agrs = [];
+	var args = [];
 
 	if (arguments.length > 1) {
 		args = Array.prototype.slice.call(arguments);
@@ -151,7 +151,7 @@ yy.Select.prototype.GroupBy = function() {
 
 	self.group = [];
 
-	args.forEach(function(arg) {
+	args.forEach(function (arg) {
 		var expr = new yy.Column({columnid: arg});
 		self.group.push(expr);
 	});
@@ -159,7 +159,7 @@ yy.Select.prototype.GroupBy = function() {
 	return self;
 };
 
-yy.Select.prototype.Where = function(expr) {
+yy.Select.prototype.Where = function (expr) {
 	var self = this;
 	if (typeof expr == 'function') {
 		self.where = expr;

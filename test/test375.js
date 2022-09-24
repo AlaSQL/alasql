@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('375. Problem with UPDATE (https://github.com/agershun/alasql/issues/479)', function() {
-	it('1. ', function(done) {
+describe('375. Problem with UPDATE (https://github.com/agershun/alasql/issues/479)', function () {
+	it('1. ', function (done) {
 		alasql(
 			'CREATE TABLE RpdAssignments (' +
 				'Id INT PRIMARY KEY AUTOINCREMENT NOT NULL,' +

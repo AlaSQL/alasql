@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 13', function() {
-	it('Transactions', function(done) {
+describe('Test 13', function () {
+	it('Transactions', function (done) {
 		var db = new alasql.Database('mydb');
 
 		db.exec('CREATE TABLE students (studentid INT, studentname STRING)');
@@ -15,7 +15,7 @@ describe('Test 13', function() {
 		var res = db.exec('SELECT VALUE COUNT(*) FROM students');
 		assert.equal(1000, res);
 
-		db.transaction(function(tx) {
+		db.transaction(function (tx) {
 			for (var i = 0; i < 1000; i++) {
 				tx.exec("INSERT INTO students VALUES (3,'Alemu Abebe')");
 			}

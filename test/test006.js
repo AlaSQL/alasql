@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 06', function() {
-	it('Fiddle test ', function(done) {
+describe('Test 06', function () {
+	it('Fiddle test ', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');

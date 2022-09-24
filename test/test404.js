@@ -9,19 +9,31 @@ if (typeof exports === 'object') {
  This sample beased on SQLLOGICTEST
 */
 
-describe('Test 404 OUTER JOIN', function() {
-	it('1. CREATE DATABASE', function(done) {
+describe('Test 404 OUTER JOIN', function () {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test404;USE test404');
 		done();
 	});
 
 	var data = {
-		COLORS: [{id: 1, name: 'red'}, {id: 2, name: 'blue'}, {id: 3, name: 'orange'}],
-		FRUITS: [{id: 1, name: 'apple'}, {id: 2, name: 'grape'}, {id: 3, name: 'orange'}],
-		MASCOTS: [{id: 1, name: 'redsox'}, {id: 2, name: 'whitesox'}, {id: 3, name: 'orange'}],
+		COLORS: [
+			{id: 1, name: 'red'},
+			{id: 2, name: 'blue'},
+			{id: 3, name: 'orange'},
+		],
+		FRUITS: [
+			{id: 1, name: 'apple'},
+			{id: 2, name: 'grape'},
+			{id: 3, name: 'orange'},
+		],
+		MASCOTS: [
+			{id: 1, name: 'redsox'},
+			{id: 2, name: 'whitesox'},
+			{id: 3, name: 'orange'},
+		],
 	};
 
-	it('2. Create tables and insert data', function(done) {
+	it('2. Create tables and insert data', function (done) {
 		alasql('create table colors (id int, name text)');
 		alasql('create table fruits (id int, name text)');
 		alasql('create table mascots (id int, name text)');
@@ -46,7 +58,7 @@ describe('Test 404 OUTER JOIN', function() {
 		done();
 	});
 
-	it('3. Test FULL OUTER JOIN with 2 tables', function(done) {
+	it('3. Test FULL OUTER JOIN with 2 tables', function (done) {
 		var res = alasql(
 			'select t0.name t0n ,t1.name t1n from colors t0 full outer join fruits t1 on t1.name = t0.name'
 		);
@@ -62,7 +74,7 @@ describe('Test 404 OUTER JOIN', function() {
 		done();
 	});
 
-	it('4. Test FULL OUTER JOIN with 3 tables using cte workaround', function(done) {
+	it('4. Test FULL OUTER JOIN with 3 tables using cte workaround', function (done) {
 		var res = alasql(
 			'with t1 as (select COALESCE(t0.name, t1.name) AS name, t0.name as t0n, t0.id as t0id, t1.name as t1n, t1.id as t1id FROM colors t0 full outer join fruits t1 on t1.name = t0.name) select t0n, t1n, t2.name as t2n from t1 full outer join mascots t2 on t2.name = t1.name'
 		);
@@ -80,7 +92,7 @@ describe('Test 404 OUTER JOIN', function() {
 		done();
 	});
 
-	it.skip('5. Test FULL OUTER JOIN with 3 tables without workaround', function(done) {
+	it.skip('5. Test FULL OUTER JOIN with 3 tables without workaround', function (done) {
 		var res = alasql(
 			'select t0.name t0n ,t1.name t1n, t2.name t2n from colors t0 full outer join fruits t1 on t1.name = t0.name full outer join mascots t2 on t2.name = t0.name or t2.name = t1.name'
 		);
@@ -98,7 +110,7 @@ describe('Test 404 OUTER JOIN', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test404');
 		done();
 	});

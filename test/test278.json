@@ -1,5 +1,5 @@
 {
-  "alasql": "{\"databases\":{\"Atlas\":true}}",
-  "Atlas": "{\"databaseid\":\"Atlas\",\"tables\":{\"transactions\":{\"columns\":[{\"columnid\":\"transid\",\"dbtypeid\":\"\"},{\"columnid\":\"payee\",\"dbtypeid\":\"\"},{\"columnid\":\"amount\",\"dbtypeid\":\"\"}]}}}",
-  "Atlas.transactions": "[]"
+	"alasql": "{\"databases\":{\"Atlas\":true}}",
+	"Atlas": "{\"databaseid\":\"Atlas\",\"tables\":{\"transactions\":{\"columns\":[{\"columnid\":\"transid\",\"dbtypeid\":\"\"},{\"columnid\":\"payee\",\"dbtypeid\":\"\"},{\"columnid\":\"amount\",\"dbtypeid\":\"\"}]}}}",
+	"Atlas.transactions": "[]"
 }

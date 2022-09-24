@@ -6,9 +6,9 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 285 CREATE UNIQUE INDEX', function() {
-	it('1. CREATE TABLE and FIRST INSERT', function(done) {
-		var res = alasql(function() {
+describe('Test 285 CREATE UNIQUE INDEX', function () {
+	it('1. CREATE TABLE and FIRST INSERT', function (done) {
+		var res = alasql(function () {
 			/*
 
       CREATE DATABASE test285;
@@ -32,7 +32,7 @@ describe('Test 285 CREATE UNIQUE INDEX', function() {
 		done();
 	});
 
-	it('1. DROP DATABASE', function(done) {
+	it('1. DROP DATABASE', function (done) {
 		var res = alasql('DROP DATABASE test285');
 		done();
 	});

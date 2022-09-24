@@ -9,12 +9,13 @@
 	@return {number} Number of files processed
 */
 
-alasql.into.XLSX = function(filename, opts, data, columns, cb) {
+alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	/** @type {number} result */
 	var res = 1;
+	opts = opts || {};
 
 	if (deepEqual(columns, [{columnid: '_'}])) {
-		data = data.map(function(dat) {
+		data = data.map(function (dat) {
 			return dat._;
 		});
 		columns = undefined;
@@ -31,6 +32,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	/* If called without filename, use opts */
 	if (typeof filename == 'object') {
+		// todo: check if data, clumns and cb also should be shifted.
 		opts = filename;
 		filename = undefined;
 	}
@@ -40,8 +42,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 	// ToDo: check if cb must be treated differently here
 	if (opts.sourcefilename) {
-		alasql.utils.loadBinaryFile(opts.sourcefilename, !!cb, function(data) {
-			wb = XLSX.read(data, {type: 'binary'});
+		alasql.utils.loadBinaryFile(opts.sourcefilename, !!cb, function (data) {
+			wb = XLSX.read(data, {type: 'binary', ...opts.XLSXopts});
 			doExport();
 		});
 	} else {
@@ -63,7 +65,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		*/
 		if (typeof opts == 'object' && Array.isArray(opts)) {
 			if (data && data.length > 0) {
-				data.forEach(function(dat, idx) {
+				data.forEach(function (dat, idx) {
 					prepareSheet(opts[idx], dat, undefined, idx + 1);
 				});
 			}
@@ -89,7 +91,7 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 
 		// Generate columns if they are not defined
 		if ((!columns || columns.length == 0) && dataLength > 0) {
-			columns = Object.keys(data[0]).map(function(columnid) {
+			columns = Object.keys(data[0]).map(function (columnid) {
 				return {columnid: columnid};
 			});
 		}
@@ -118,7 +120,8 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			var colm = 1,
 				rowm = 1;
 		}
-		var colmax = Math.max(col0 + columns.length, colm);
+		var zeroColumnFix = columns.length ? 0 : 1;
+		var colmax = Math.max(col0 + columns.length - 1 + zeroColumnFix, colm);
 		var rowmax = Math.max(row0 + dataLength + 2, rowm);
 
 		//		console.log(col0,row0);
@@ -128,14 +131,14 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		//		var i = 1;
 
 		if (opt.headers) {
-			columns.forEach(function(col, idx) {
+			columns.forEach(function (col, idx) {
 				cells[alasql.utils.xlsnc(col0 + idx) + '' + i] = {v: col.columnid.trim()};
 			});
 			i++;
 		}
 
 		for (var j = 0; j < dataLength; j++) {
-			columns.forEach(function(col, idx) {
+			columns.forEach(function (col, idx) {
 				var cell = {v: data[j][col.columnid]};
 				if (typeof data[j][col.columnid] == 'number') {
 					cell.t = 'n';
@@ -174,21 +177,19 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 				var wopts = {bookType: 'xlsx', bookSST: false, type: 'binary'};
 				var wbout = XLSX.write(wb, wopts);
 
-				function s2ab(s) {
+				var s2ab = function (s) {
 					var buf = new ArrayBuffer(s.length);
 					var view = new Uint8Array(buf);
 					for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
 					return buf;
-				}
+				};
 
 				/* the saveAs call downloads a file on the local machine */
 				//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
 				//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
 				//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
 				if (isIE() == 9) {
-					throw new Error(
-						'Cannot save XLSX files in IE9. Please use XLS() export function'
-					);
+					throw new Error('Cannot save XLSX files in IE9. Please use XLS() export function');
 					//					var URI = 'data:text/plain;charset=utf-8,';
 
 					/** @todo Check if this code is required */

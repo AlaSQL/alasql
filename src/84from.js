@@ -12,7 +12,7 @@
 
 /* global alasql Tabletop document Event */
 
-alasql.from.METEOR = function(filename, opts, cb, idx, query) {
+alasql.from.METEOR = function (filename, opts, cb, idx, query) {
 	var res = filename.find(opts).fetch();
 	if (cb) {
 		res = cb(res, idx, query);
@@ -23,12 +23,12 @@ alasql.from.METEOR = function(filename, opts, cb, idx, query) {
 /**
  Google Spreadsheet reader
  */
-alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
+alasql.from.TABLETOP = function (key, opts, cb, idx, query) {
 	var res = [];
 
 	var opt = {headers: true, simpleSheet: true, key: key};
 	alasql.utils.extend(opt, opts);
-	opt.callback = function(data) {
+	opt.callback = function (data) {
 		res = data;
 		if (cb) {
 			res = cb(res, idx, query);
@@ -39,7 +39,7 @@ alasql.from.TABLETOP = function(key, opts, cb, idx, query) {
 	return null;
 };
 
-alasql.from.HTML = function(selector, opts, cb, idx, query) {
+alasql.from.HTML = function (selector, opts, cb, idx, query) {
 	var opt = {};
 	alasql.utils.extend(opt, opts);
 
@@ -55,9 +55,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		headers = [];
 		var ths = sel.querySelector('thead tr').children;
 		for (var i = 0; i < ths.length; i++) {
-			if (
-				!(ths.item(i).style && ths.item(i).style.display === 'none' && opt.skipdisplaynone)
-			) {
+			if (!(ths.item(i).style && ths.item(i).style.display === 'none' && opt.skipdisplaynone)) {
 				headers.push(ths.item(i).textContent);
 			} else {
 				headers.push(undefined);
@@ -72,9 +70,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 		var tds = trs.item(j).children;
 		var r = {};
 		for (i = 0; i < tds.length; i++) {
-			if (
-				!(tds.item(i).style && tds.item(i).style.display === 'none' && opt.skipdisplaynone)
-			) {
+			if (!(tds.item(i).style && tds.item(i).style.display === 'none' && opt.skipdisplaynone)) {
 				if (headers) {
 					r[headers[i]] = tds.item(i).textContent;
 				} else {
@@ -92,7 +88,7 @@ alasql.from.HTML = function(selector, opts, cb, idx, query) {
 	return res;
 };
 
-alasql.from.RANGE = function(start, finish, cb, idx, query) {
+alasql.from.RANGE = function (start, finish, cb, idx, query) {
 	var res = [];
 	for (var i = start; i <= finish; i++) {
 		res.push(i);
@@ -105,7 +101,7 @@ alasql.from.RANGE = function(start, finish, cb, idx, query) {
 };
 
 // Read data from any file
-alasql.from.FILE = function(filename, opts, cb, idx, query) {
+alasql.from.FILE = function (filename, opts, cb, idx, query) {
 	var fname;
 	if (typeof filename === 'string') {
 		fname = filename;
@@ -129,12 +125,12 @@ alasql.from.FILE = function(filename, opts, cb, idx, query) {
 
 // Read JSON file
 
-alasql.from.JSON = function(filename, opts, cb, idx, query) {
+alasql.from.JSON = function (filename, opts, cb, idx, query) {
 	var res;
 	//console.log('cb',cb);
 	//console.log('JSON');
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
-	alasql.utils.loadFile(filename, !!cb, function(data) {
+	alasql.utils.loadFile(filename, !!cb, function (data) {
 		//		console.log('DATA:'+data);
 		//		res = [{a:1}];
 		res = JSON.parse(data);
@@ -145,10 +141,10 @@ alasql.from.JSON = function(filename, opts, cb, idx, query) {
 	return res;
 };
 
-alasql.from.TXT = function(filename, opts, cb, idx, query) {
+alasql.from.TXT = function (filename, opts, cb, idx, query) {
 	var res;
 	filename = alasql.utils.autoExtFilename(filename, 'txt', opts);
-	alasql.utils.loadFile(filename, !!cb, function(data) {
+	alasql.utils.loadFile(filename, !!cb, function (data) {
 		res = data.split(/\r?\n/);
 
 		// Remove last line if empty
@@ -171,7 +167,7 @@ alasql.from.TXT = function(filename, opts, cb, idx, query) {
 	return res;
 };
 
-alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
+alasql.from.TAB = alasql.from.TSV = function (filename, opts, cb, idx, query) {
 	opts = opts || {};
 	opts.separator = '\t';
 	filename = alasql.utils.autoExtFilename(filename, 'tab', opts);
@@ -179,7 +175,8 @@ alasql.from.TAB = alasql.from.TSV = function(filename, opts, cb, idx, query) {
 	return alasql.from.CSV(filename, opts, cb, idx, query);
 };
 
-alasql.from.CSV = function(contents, opts, cb, idx, query) {
+alasql.from.CSV = function (contents, opts, cb, idx, query) {
+	contents = '' + contents;
 	var opt = {
 		separator: ',',
 		quote: '"',
@@ -263,14 +260,10 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 					} else if (Array.isArray(opt.headers)) {
 						hs = opt.headers;
 						var r = {};
-						hs.forEach(function(h, idx) {
+						hs.forEach(function (h, idx) {
 							r[h] = a[idx];
 							// Please avoid === here
-							if (
-								typeof r[h] !== 'undefined' &&
-								r[h].length !== 0 &&
-								r[h].trim() == +r[h]
-							) {
+							if (typeof r[h] !== 'undefined' && r[h].length !== 0 && r[h].trim() == +r[h]) {
 								// jshint ignore:line
 								r[h] = +r[h];
 							}
@@ -279,13 +272,9 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 					}
 				} else {
 					var r = {};
-					hs.forEach(function(h, idx) {
+					hs.forEach(function (h, idx) {
 						r[h] = a[idx];
-						if (
-							typeof r[h] !== 'undefined' &&
-							r[h].length !== 0 &&
-							r[h].trim() == +r[h]
-						) {
+						if (typeof r[h] !== 'undefined' && r[h].length !== 0 && r[h].trim() == +r[h]) {
 							// jshint ignore:line
 							r[h] = +r[h];
 						}
@@ -303,7 +292,7 @@ alasql.from.CSV = function(contents, opts, cb, idx, query) {
 		if (opt.headers) {
 			if (query && query.sources && query.sources[idx]) {
 				var columns = (query.sources[idx].columns = []);
-				hs.forEach(function(h) {
+				hs.forEach(function (h) {
 					columns.push({columnid: h});
 				});
 			}
@@ -389,18 +378,20 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 	alasql.utils.loadBinaryFile(
 		filename,
 		!!cb,
-		function(data) {
+		function (data) {
 			//	function processData(data) {
 			if (data instanceof ArrayBuffer) {
 				var arr = fixdata(data);
-				var workbook = X.read(btoa(arr), {type: 'base64'});
+				var workbook = X.read(btoa(arr), {type: 'base64', ...opts.XLSXopts});
 			} else {
-				var workbook = X.read(data, {type: 'binary'});
+				var workbook = X.read(data, {type: 'binary', ...opts.XLSXopts});
 			}
 			//		console.log(workbook);
 			var sheetid;
 			if (typeof opt.sheetid === 'undefined') {
 				sheetid = workbook.SheetNames[0];
+			} else if (typeof opt.sheetid === 'number') {
+				sheetid = workbook.SheetNames[opt.sheetid];
 			} else {
 				sheetid = opt.sheetid;
 			}
@@ -458,11 +449,7 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			}
 
 			// Remove last empty line (issue #548)
-			if (
-				res.length > 0 &&
-				res[res.length - 1] &&
-				Object.keys(res[res.length - 1]).length == 0
-			) {
+			if (res.length > 0 && res[res.length - 1] && Object.keys(res[res.length - 1]).length == 0) {
 				res.pop();
 			}
 
@@ -470,7 +457,7 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 				res = cb(res, idx, query);
 			}
 		},
-		function(err) {
+		function (err) {
 			throw err;
 		}
 	);
@@ -478,21 +465,21 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 	return res;
 }
 
-alasql.from.XLS = function(filename, opts, cb, idx, query) {
+alasql.from.XLS = function (filename, opts, cb, idx, query) {
 	opts = opts || {};
 	filename = alasql.utils.autoExtFilename(filename, 'xls', opts);
 	opts.autoExt = false;
 	return XLSXLSX(getXLSX(), filename, opts, cb, idx, query);
 };
 
-alasql.from.XLSX = function(filename, opts, cb, idx, query) {
+alasql.from.XLSX = function (filename, opts, cb, idx, query) {
 	opts = opts || {};
 	filename = alasql.utils.autoExtFilename(filename, 'xlsx', opts);
 	opts.autoExt = false;
 	return XLSXLSX(getXLSX(), filename, opts, cb, idx, query);
 };
 
-alasql.from.ODS = function(filename, opts, cb, idx, query) {
+alasql.from.ODS = function (filename, opts, cb, idx, query) {
 	opts = opts || {};
 	filename = alasql.utils.autoExtFilename(filename, 'ods', opts);
 	opts.autoExt = false;

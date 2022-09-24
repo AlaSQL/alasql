@@ -8,16 +8,16 @@
 /* global alasql yy */
 
 // ALTER TABLE table1 RENAME TO table2
-yy.AlterTable = function(params) {
+yy.AlterTable = function (params) {
 	return yy.extend(this, params);
 };
-yy.AlterTable.prototype.toString = function() {
+yy.AlterTable.prototype.toString = function () {
 	var s = 'ALTER TABLE ' + this.table.toString();
 	if (this.renameto) s += ' RENAME TO ' + this.renameto;
 	return s;
 };
 
-yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
+yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[databaseid];
 	db.dbversion = Date.now();
 
@@ -60,14 +60,14 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 
 		var col = {
 			columnid: columnid,
-			dbtypeid: this.dbtypeid,
+			dbtypeid: this.addcolumn.dbtypeid,
 			dbsize: this.dbsize,
 			dbprecision: this.dbprecision,
 			dbenum: this.dbenum,
 			defaultfns: null, // TODO defaultfns!!!
 		};
 
-		var defaultfn = function() {};
+		var defaultfn = function () {};
 
 		table.columns.push(col);
 		table.xcolumns[columnid] = col;
@@ -115,14 +115,10 @@ yy.AlterTable.prototype.execute = function(databaseid, params, cb) {
 
 		var col;
 		if (!table.xcolumns[columnid]) {
-			throw new Error(
-				'Column "' + columnid + '" is not found in the table "' + tableid + '"'
-			);
+			throw new Error('Column "' + columnid + '" is not found in the table "' + tableid + '"');
 		}
 		if (table.xcolumns[tocolumnid]) {
-			throw new Error(
-				'Column "' + tocolumnid + '" already exists in the table "' + tableid + '"'
-			);
+			throw new Error('Column "' + tocolumnid + '" already exists in the table "' + tableid + '"');
 		}
 
 		if (columnid != tocolumnid) {

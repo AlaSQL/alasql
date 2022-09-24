@@ -6,10 +6,10 @@
 //
 */
 
-yy.DropTable = function(params) {
+yy.DropTable = function (params) {
 	return yy.extend(this, params);
 };
-yy.DropTable.prototype.toString = function() {
+yy.DropTable.prototype.toString = function () {
 	var s = 'DROP' + ' ';
 	if (this.view) s += 'VIEW';
 	else s += 'TABLE';
@@ -29,14 +29,14 @@ yy.DropTable.prototype.toString = function() {
 	DROP TABLE one;
 	DROP TABLE IF NOT EXISTS two, three;
 */
-yy.DropTable.prototype.execute = function(databaseid, params, cb) {
+yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 	var ifexists = this.ifexists;
 	var res = 0; // No tables removed
 	var count = 0;
 	var tlen = this.tables.length;
 
 	// For each table in the list
-	this.tables.forEach(function(table) {
+	this.tables.forEach(function (table) {
 		var db = alasql.databases[table.databaseid || databaseid];
 		var tableid = table.tableid;
 
@@ -47,9 +47,7 @@ yy.DropTable.prototype.execute = function(databaseid, params, cb) {
 			if (!db.tables[tableid]) {
 				if (!alasql.options.dropifnotexists) {
 					throw new Error(
-						"Can not drop table '" +
-							table.tableid +
-							"', because it does not exist in the database."
+						"Can not drop table '" + table.tableid + "', because it does not exist in the database."
 					);
 				}
 			} else {
@@ -58,7 +56,7 @@ yy.DropTable.prototype.execute = function(databaseid, params, cb) {
 						table.databaseid || databaseid,
 						tableid,
 						ifexists,
-						function(res1) {
+						function (res1) {
 							delete db.tables[tableid];
 							res += res1;
 							count++;
@@ -81,16 +79,16 @@ yy.DropTable.prototype.execute = function(databaseid, params, cb) {
 	return res;
 };
 
-yy.TruncateTable = function(params) {
+yy.TruncateTable = function (params) {
 	return yy.extend(this, params);
 };
-yy.TruncateTable.prototype.toString = function() {
+yy.TruncateTable.prototype.toString = function () {
 	var s = 'TRUNCATE TABLE';
 	s += ' ' + this.table.toString();
 	return s;
 };
 
-yy.TruncateTable.prototype.execute = function(databaseid, params, cb) {
+yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
 	if (db.engineid) {

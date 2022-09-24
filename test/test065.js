@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 65 - Cursors', function() {
-	it.skip('CURSOR', function(done) {
+describe('Test 65 - Cursors', function () {
+	it.skip('CURSOR', function (done) {
 		done();
 	});
 });

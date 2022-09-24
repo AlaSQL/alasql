@@ -17,8 +17,7 @@ if (typeof exports !== 'object') {
 		// In older Opera, the true version is after "Opera" or after "Version"
 		browserName = 'Opera';
 		fullVersion = nAgt.substring(verOffset + 6);
-		if ((verOffset = nAgt.indexOf('Version')) != -1)
-			fullVersion = nAgt.substring(verOffset + 8);
+		if ((verOffset = nAgt.indexOf('Version')) != -1) fullVersion = nAgt.substring(verOffset + 8);
 	} else if ((verOffset = nAgt.indexOf('MSIE')) != -1) {
 		// In MSIE, the true version is after "MSIE" in userAgent
 		browserName = 'Microsoft Internet Explorer';
@@ -31,8 +30,7 @@ if (typeof exports !== 'object') {
 		// In Safari, the true version is after "Safari" or after "Version"
 		browserName = 'Safari';
 		fullVersion = nAgt.substring(verOffset + 7);
-		if ((verOffset = nAgt.indexOf('Version')) != -1)
-			fullVersion = nAgt.substring(verOffset + 8);
+		if ((verOffset = nAgt.indexOf('Version')) != -1) fullVersion = nAgt.substring(verOffset + 8);
 	} else if ((verOffset = nAgt.indexOf('Firefox')) != -1) {
 		// In Firefox, the true version is after "Firefox"
 		browserName = 'Firefox';

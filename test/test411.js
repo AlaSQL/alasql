@@ -44,8 +44,7 @@ var data = [
 					position: 2,
 					contentItem: {
 						id: 12581,
-						url:
-							'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
+						url: 'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
 						itemType: 'Website',
 						embedUrl: null,
 					},
@@ -95,8 +94,7 @@ var data = [
 						position: 1,
 						contentItem: {
 							id: 1666,
-							url:
-								'http://studyjams.scholastic.com/studyjams/jams/science/human-body/touching.htm',
+							url: 'http://studyjams.scholastic.com/studyjams/jams/science/human-body/touching.htm',
 							itemType: 'Website',
 							embedUrl: null,
 						},
@@ -156,8 +154,7 @@ var data = [
 					position: 2,
 					contentItem: {
 						id: 12581,
-						url:
-							'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
+						url: 'https://docs.google.com/a/summitps.org/document/d/1TjF1MY3cyGNKT4s46uk1iz5NvjrY59eNPH8YKYYTC_E/edit',
 						itemType: 'Website',
 						embedUrl: null,
 					},
@@ -207,8 +204,7 @@ var data = [
 						position: 1,
 						contentItem: {
 							id: 1666,
-							url:
-								'http://studyjams.scholastic.com/studyjams/jams/science/human-body/touching.htm',
+							url: 'http://studyjams.scholastic.com/studyjams/jams/science/human-body/touching.htm',
 							itemType: 'Website',
 							embedUrl: null,
 						},
@@ -234,13 +230,13 @@ var data = [
 	},
 ];
 
-describe('Test 411 Export to Excel', function() {
-	it('2. CREATE DATABASE', function(done) {
+describe('Test 411 Export to Excel', function () {
+	it('2. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test411;USE test411');
 		done();
 	});
 
-	it('2. ANALYZE object', function(done) {
+	it('2. ANALYZE object', function (done) {
 		var res = alasql(
 			'SEARCH / AS @a \
         UNION ALL( \
@@ -272,7 +268,7 @@ describe('Test 411 Export to Excel', function() {
 		done();
 	});
 
-	it('99. DROP DATABASE', function(done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test411');
 		done();
 	});

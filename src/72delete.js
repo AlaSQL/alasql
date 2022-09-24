@@ -6,16 +6,16 @@
 //
 */
 
-yy.Delete = function(params) {
+yy.Delete = function (params) {
 	return yy.extend(this, params);
 };
-yy.Delete.prototype.toString = function() {
+yy.Delete.prototype.toString = function () {
 	var s = 'DELETE FROM ' + this.table.toString();
 	if (this.where) s += ' WHERE ' + this.where.toString();
 	return s;
 };
 
-yy.Delete.prototype.compile = function(databaseid) {
+yy.Delete.prototype.compile = function (databaseid) {
 	//  console.log(11,this);
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
@@ -27,14 +27,14 @@ yy.Delete.prototype.compile = function(databaseid) {
 		//		this.query = {};
 
 		if (this.exists) {
-			this.existsfn = this.exists.map(function(ex) {
+			this.existsfn = this.exists.map(function (ex) {
 				var nq = ex.compile(databaseid);
 				nq.query.modifier = 'RECORDSET';
 				return nq;
 			});
 		}
 		if (this.queries) {
-			this.queriesfn = this.queries.map(function(q) {
+			this.queriesfn = this.queries.map(function (q) {
 				var nq = q.compile(databaseid);
 				nq.query.modifier = 'RECORDSET';
 				return nq;
@@ -51,7 +51,7 @@ yy.Delete.prototype.compile = function(databaseid) {
 			'var y;return (' + this.where.toJS('r', '') + ')'
 		).bind(this);
 		//		console.log(wherefn);
-		statement = function(params, cb) {
+		statement = function (params, cb) {
 			if (db.engineid && alasql.engines[db.engineid].deleteFromTable) {
 				return alasql.engines[db.engineid].deleteFromTable(
 					databaseid,
@@ -62,7 +62,11 @@ yy.Delete.prototype.compile = function(databaseid) {
 				);
 			}
 
-			if (alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
+			if (
+				alasql.options.autocommit &&
+				db.engineid &&
+				(db.engineid == 'LOCALSTORAGE' || db.engineid == 'FILESTORAGE')
+			) {
 				alasql.engines[db.engineid].loadTableData(databaseid, tableid);
 			}
 
@@ -97,7 +101,11 @@ yy.Delete.prototype.compile = function(databaseid) {
 			}
 
 			var res = orignum - table.data.length;
-			if (alasql.options.autocommit && db.engineid && db.engineid == 'LOCALSTORAGE') {
+			if (
+				alasql.options.autocommit &&
+				db.engineid &&
+				(db.engineid == 'LOCALSTORAGE' || db.engineid == 'FILESTORAGE')
+			) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
@@ -112,7 +120,7 @@ yy.Delete.prototype.compile = function(databaseid) {
 		// 			return q.compile(alasql.useid);
 		// 		});
 	} else {
-		statement = function(params, cb) {
+		statement = function (params, cb) {
 			if (alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].loadTableData(databaseid, tableid);
 			}
@@ -145,6 +153,6 @@ yy.Delete.prototype.compile = function(databaseid) {
 	return statement;
 };
 
-yy.Delete.prototype.execute = function(databaseid, params, cb) {
+yy.Delete.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params, cb);
 };

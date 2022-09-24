@@ -9,40 +9,40 @@ if (typeof exports === 'object') {
  This sample beased on SQLLOGICTEST
 */
 
-describe('Test 406. Complex SEARCH', function() {
+describe('Test 406. Complex SEARCH', function () {
 	var data = {
-		'10': {},
-		'12': {
-			'20': {
+		10: {},
+		12: {
+			20: {
 				value: 1,
 				id: 1,
 			},
-			'100': {
+			100: {
 				value: 12,
 				id: 1,
 			},
 		},
-		'14': {
-			'100': {
+		14: {
+			100: {
 				value: 14,
 				id: 2,
 			},
 		},
-		'16': {},
-		'18': {},
-		'20': {
-			'100': {
+		16: {},
+		18: {},
+		20: {
+			100: {
 				value: 23,
 				id: 1,
 			},
-			'150': {
+			150: {
 				value: 56,
 				id: 3,
 			},
 		},
 	};
 
-	it('1. Parse complex JSON', function(done) {
+	it('1. Parse complex JSON', function (done) {
 		//      alasql('CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;')
 		if (typeof exports == 'object') {
 			var res = alasql(
@@ -89,19 +89,21 @@ describe('Test 406. Complex SEARCH', function() {
 		done();
 	});
 
-	it('2. With OF()', function(done) {
+	it('2. With OF()', function (done) {
 		var data1 = {
-			'1': 10,
-			'2': 20,
+			1: 10,
+			2: 20,
 		};
 
-		var res = alasql(
-			'SEARCH OF(@a) \
+		var res = alasql('SEARCH OF(@a) \
         RETURN(@a AS [key],_ AS [value]) \
-        FROM ?',
-			[data1]
-		);
-		assert.deepEqual(res, [{key: '1', value: 10}, {key: '2', value: 20}]);
+        FROM ?', [
+			data1,
+		]);
+		assert.deepEqual(res, [
+			{key: '1', value: 10},
+			{key: '2', value: 20},
+		]);
 		//      console.log(res);
 
 		var res = alasql(
