@@ -213,10 +213,13 @@ stdlib.MIN = stdlib.LEAST = function () {
 	);
 };
 
-stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function (a, b, c) {
-	if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
-	else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
-};
+stdlib.SUBSTRING =
+	stdlib.SUBSTR =
+	stdlib.MID =
+		function (a, b, c) {
+			if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
+			else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
+		};
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
 	//	console.log(a,b,c);
@@ -275,10 +278,8 @@ stdlib.UPPER = stdlib.UCASE = function (s) {
 // Concatination of strings
 stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
-	args = args.filter(function(el, i){
-		return !i || (el !== null && el !== undefined);
-	});
-	return args.slice(1, args.length).join(args[0] || "");
+	args = args.filter((x) => !(x === null || typeof x === 'undefined'));
+	return args.slice(1, args.length).join(args[0] || '');
 };
 
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
@@ -457,13 +458,16 @@ alasql.aggr.VARP = function (v, s, stage) {
 	}
 };
 
-alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function (v, s, stage) {
-	if (stage == 1 || stage == 2) {
-		return alasql.aggr.VARP(v, s, stage);
-	} else {
-		return Math.sqrt(alasql.aggr.VARP(v, s, stage));
-	}
-};
+alasql.aggr.STD =
+	alasql.aggr.STDDEV =
+	alasql.aggr.STDEVP =
+		function (v, s, stage) {
+			if (stage == 1 || stage == 2) {
+				return alasql.aggr.VARP(v, s, stage);
+			} else {
+				return Math.sqrt(alasql.aggr.VARP(v, s, stage));
+			}
+		};
 
 alasql._aggrOriginal = alasql.aggr;
 alasql.aggr = {};
@@ -485,31 +489,34 @@ for (var i = 0; i < 256; i++) {
 	lut[i] = (i < 16 ? '0' : '') + i.toString(16);
 }
 
-stdfn.NEWID = stdfn.UUID = stdfn.GEN_RANDOM_UUID = function () {
-	var d0 = (Math.random() * 0xffffffff) | 0;
-	var d1 = (Math.random() * 0xffffffff) | 0;
-	var d2 = (Math.random() * 0xffffffff) | 0;
-	var d3 = (Math.random() * 0xffffffff) | 0;
-	return (
-		lut[d0 & 0xff] +
-		lut[(d0 >> 8) & 0xff] +
-		lut[(d0 >> 16) & 0xff] +
-		lut[(d0 >> 24) & 0xff] +
-		'-' +
-		lut[d1 & 0xff] +
-		lut[(d1 >> 8) & 0xff] +
-		'-' +
-		lut[((d1 >> 16) & 0x0f) | 0x40] +
-		lut[(d1 >> 24) & 0xff] +
-		'-' +
-		lut[(d2 & 0x3f) | 0x80] +
-		lut[(d2 >> 8) & 0xff] +
-		'-' +
-		lut[(d2 >> 16) & 0xff] +
-		lut[(d2 >> 24) & 0xff] +
-		lut[d3 & 0xff] +
-		lut[(d3 >> 8) & 0xff] +
-		lut[(d3 >> 16) & 0xff] +
-		lut[(d3 >> 24) & 0xff]
-	);
-};
+stdfn.NEWID =
+	stdfn.UUID =
+	stdfn.GEN_RANDOM_UUID =
+		function () {
+			var d0 = (Math.random() * 0xffffffff) | 0;
+			var d1 = (Math.random() * 0xffffffff) | 0;
+			var d2 = (Math.random() * 0xffffffff) | 0;
+			var d3 = (Math.random() * 0xffffffff) | 0;
+			return (
+				lut[d0 & 0xff] +
+				lut[(d0 >> 8) & 0xff] +
+				lut[(d0 >> 16) & 0xff] +
+				lut[(d0 >> 24) & 0xff] +
+				'-' +
+				lut[d1 & 0xff] +
+				lut[(d1 >> 8) & 0xff] +
+				'-' +
+				lut[((d1 >> 16) & 0x0f) | 0x40] +
+				lut[(d1 >> 24) & 0xff] +
+				'-' +
+				lut[(d2 & 0x3f) | 0x80] +
+				lut[(d2 >> 8) & 0xff] +
+				'-' +
+				lut[(d2 >> 16) & 0xff] +
+				lut[(d2 >> 24) & 0xff] +
+				lut[d3 & 0xff] +
+				lut[(d3 >> 8) & 0xff] +
+				lut[(d3 >> 16) & 0xff] +
+				lut[(d3 >> 24) & 0xff]
+			);
+		};
