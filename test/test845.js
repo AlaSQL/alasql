@@ -7,7 +7,7 @@ if (typeof exports === 'object') {
   Test for issue #845
 */
 
-var test = '815'; // insert test file number
+var test = '845'; // insert test file number
 
 describe('Test ' + test + ' - use NOW() function', function () {
 	it('1. NOW()', function () {
