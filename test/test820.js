@@ -20,7 +20,7 @@ if (typeof exports === 'object') {
 
 */
 
-var test = '815'; // insert test file number
+var test = '820'; // insert test file number
 
 describe('Test ' + test + ' for issue #1276', function () {
 
@@ -36,7 +36,7 @@ describe('Test ' + test + ' for issue #1276', function () {
   it('A) Dont fails a SELECT from local CSV source ', function () {         
      var res = alasql([
        'CREATE TABLE testcvs',
-       'SELECT * INTO testcvs FROM CSV("./test815.csv",{headers:true}) AS csv',
+       'SELECT * INTO testcvs FROM CSV("./test820.csv",{headers:true}) AS csv',
        'SELECT FROM testcvs'
      ])
       
@@ -47,7 +47,7 @@ describe('Test ' + test + ' for issue #1276', function () {
 
 
   it('B) WITH using a CSV source, works as expected', function () {
-    var sql = 'with c as ( SELECT * FROM CSV("./test815.csv",{headers:true}))';
+    var sql = 'with c as ( SELECT * FROM CSV("./test820.csv",{headers:true}))';
     sql += 'select * from c';
 
     alasql(sql).then(res => {
