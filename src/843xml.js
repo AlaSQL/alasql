@@ -1,17 +1,16 @@
-
 alasql.from.XML = function(filename, opts, cb, idx, query) {
-  var res;
-  //console.log('cb',cb);
-//console.log('JSON');
-  alasql.utils.loadFile(filename,!!cb,function(data){
-//    console.log('DATA:'+data);
-//    res = [{a:1}];
+	var res;
+	//console.log('cb',cb);
+	//console.log('JSON');
+	alasql.utils.loadFile(filename, !!cb, function(data) {
+		//    console.log('DATA:'+data);
+		//    res = [{a:1}];
 
-    res = xmlparse(data).root; 
-//    console.log(res);
-    if(cb) res = cb(res, idx, query);
-  });
-  return res;
+		res = xmlparse(data).root;
+		//    console.log(res);
+		if (cb) res = cb(res, idx, query);
+	});
+	return res;
 };
 
 /**
@@ -23,145 +22,145 @@ alasql.from.XML = function(filename, opts, cb, idx, query) {
  */
 
 function xmlparse(xml) {
-  xml = xml.trim();
+	xml = xml.trim();
 
-  // strip comments
-  xml = xml.replace(/<!--[\s\S]*?-->/g, '');
+	// strip comments
+	xml = xml.replace(/<!--[\s\S]*?-->/g, '');
 
-  return document();
+	return document();
 
-  /**
-   * XML document.
-   */
+	/**
+	 * XML document.
+	 */
 
-  function document() {
-    return {
-      declaration: declaration(),
-      root: tag()
-    }
-  }
+	function document() {
+		return {
+			declaration: declaration(),
+			root: tag(),
+		};
+	}
 
-  /**
-   * Declaration.
-   */
+	/**
+	 * Declaration.
+	 */
 
-  function declaration() {
-    var m = match(/^<\?xml\s*/);
-    if (!m) return;
+	function declaration() {
+		var m = match(/^<\?xml\s*/);
+		if (!m) return;
 
-    // tag
-    var node = {
-      attributes: {}
-    };
+		// tag
+		var node = {
+			attributes: {},
+		};
 
-    // attributes
-    while (!(eos() || is('?>'))) {
-      var attr = attribute();
-      if (!attr) return node;
-      node.attributes[attr.name] = attr.value;
-    }
+		// attributes
+		while (!(eos() || is('?>'))) {
+			var attr = attribute();
+			if (!attr) return node;
+			node.attributes[attr.name] = attr.value;
+		}
 
-    match(/\?>\s*/);
+		match(/\?>\s*/);
 
-    return node;
-  }
+		return node;
+	}
 
-  /**
-   * Tag.
-   */
+	/**
+	 * Tag.
+	 */
 
-  function tag() {
-    var m = match(/^<([\w-:.]+)\s*/);
-    if (!m) return;
+	function tag() {
+		var m = match(/^<([\w-:.]+)\s*/);
+		if (!m) return;
 
-    // name
-    var node = {
-      name: m[1],
-      attributes: {},
-      children: []
-    };
+		// name
+		var node = {
+			name: m[1],
+			attributes: {},
+			children: [],
+		};
 
-    // attributes
-    while (!(eos() || is('>') || is('?>') || is('/>'))) {
-      var attr = attribute();
-      if (!attr) return node;
-      node.attributes[attr.name] = attr.value;
-    }
+		// attributes
+		while (!(eos() || is('>') || is('?>') || is('/>'))) {
+			var attr = attribute();
+			if (!attr) return node;
+			node.attributes[attr.name] = attr.value;
+		}
 
-    // self closing tag
-    if (match(/^\s*\/>\s*/)) {
-      return node;
-    }
+		// self closing tag
+		if (match(/^\s*\/>\s*/)) {
+			return node;
+		}
 
-    match(/\??>\s*/);
+		match(/\??>\s*/);
 
-    // content
-    node.content = content();
+		// content
+		node.content = content();
 
-    // children
-    var child;
-    while (child = tag()) {
-      node.children.push(child);
-    }
+		// children
+		var child;
+		while ((child = tag())) {
+			node.children.push(child);
+		}
 
-    // closing
-    match(/^<\/[\w-:.]+>\s*/);
+		// closing
+		match(/^<\/[\w-:.]+>\s*/);
 
-    return node;
-  }
+		return node;
+	}
 
-  /**
-   * Text content.
-   */
+	/**
+	 * Text content.
+	 */
 
-  function content() {
-    var m = match(/^([^<]*)/);
-    if (m) return m[1];
-    return '';
-  }
+	function content() {
+		var m = match(/^([^<]*)/);
+		if (m) return m[1];
+		return '';
+	}
 
-  /**
-   * Attribute.
-   */
+	/**
+	 * Attribute.
+	 */
 
-  function attribute() {
-    var m = match(/([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
-    if (!m) return;
-    return { name: m[1], value: strip(m[2]) }
-  }
+	function attribute() {
+		var m = match(/([\w:-]+)\s*=\s*("[^"]*"|'[^']*'|\w+)\s*/);
+		if (!m) return;
+		return {name: m[1], value: strip(m[2])};
+	}
 
-  /**
-   * Strip quotes from `val`.
-   */
+	/**
+	 * Strip quotes from `val`.
+	 */
 
-  function strip(val) {
-    return val.replace(/^['"]|['"]$/g, '');
-  }
+	function strip(val) {
+		return val.replace(/^['"]|['"]$/g, '');
+	}
 
-  /**
-   * Match `re` and advance the string.
-   */
+	/**
+	 * Match `re` and advance the string.
+	 */
 
-  function match(re) {
-    var m = xml.match(re);
-    if (!m) return;
-    xml = xml.slice(m[0].length);
-    return m;
-  }
+	function match(re) {
+		var m = xml.match(re);
+		if (!m) return;
+		xml = xml.slice(m[0].length);
+		return m;
+	}
 
-  /**
-   * End-of-source.
-   */
+	/**
+	 * End-of-source.
+	 */
 
-  function eos() {
-    return 0 == xml.length;
-  }
+	function eos() {
+		return 0 == xml.length;
+	}
 
-  /**
-   * Check for `prefix`.
-   */
+	/**
+	 * Check for `prefix`.
+	 */
 
-  function is(prefix) {
-    return 0 == xml.indexOf(prefix);
-  }
-};
+	function is(prefix) {
+		return 0 == xml.indexOf(prefix);
+	}
+}

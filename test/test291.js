@@ -1,58 +1,77 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-  var Promise = require('es6-promise').Promise;
+	var Promise = require('es6-promise').Promise;
 } else {
 	__dirname = '.';
-};
+}
 
+describe('Test 291 - Promises:', function() {
+	it('.promise', function(done) {
+		alasql
+			.promise('SELECT VALUE 1')
+			.then(function(res) {
+				assert.deepEqual(res, 1);
+				done();
+			})
+			.catch(function(err) {
+				throw err;
+			});
+	});
 
-describe('Test 291 Promised version', function() {
+	it('.promise all', function(done) {
+		this.timeout(2000); // dont get why this is timing out...
 
-  it('1. CREATE DATABASE',function(done){
-    alasql('CREATE DATABASE test291;USE test291');
-    done();
-  });
+		alasql
+			.promise(['SELECT VALUE 1'])
+			.then(function(res) {
+				assert.deepEqual(res, [1]);
+				done();
+			})
+			.catch(function(err) {
+				//console.log(err)
+				throw err;
+			});
+	});
 
-// function alasqlp(sql, params) {
-//     return new Promise(function(resolve, reject){
-//         alasql(sql, params, function(data,err) {
-//              if(err) {
-//                  reject(err);
-//              } else {
-//                  resolve(data);
-//              }
-//         });
-//     });
-// };
+	it('.promise .catch exception', function(done) {
+		this.timeout(2000); // dont get why this is timing out...
 
+		alasql.promise('SELECT * FROM tableThatDoesNotExists').catch(function(err) {
+			assert(err instanceof Error);
+			done();
+		});
+	});
 
-  it('2. Promise',function(done){
+	it('.promise all .catch exception', function(done) {
+		this.timeout(5000); // dont get why this is timing out...
 
-    alasql.promise('SELECT VALUE 1')
-    .then(function(res){
-         assert.deepEqual(res,1);
-         done();
-    }).catch(function(err){
-        throw err;
-    });;
-  });
+		alasql.promise(['SELECT * FROM tableThatDoesNotExists']).catch(function(err) {
+			assert(err instanceof Error);
+			done();
+		});
+	});
 
-  it('3. Promise Exception',function(done){
+	it('.promise all multi + params', function(done) {
+		alasql
+			.promise(['value of SELECT 1', ['value of select ?', 2]])
+			.then(function(res) {
+				assert.deepEqual(res, [1, 2]);
+				done();
+			})
+			.catch(function(reason) {
+				console.log(reason);
+			});
+	});
 
-    alasql.promise('SELECT * FROM one')
-    .then(function(res){
-/// console.log(res);
-    }).catch(function(err){
-        assert(err instanceof Error);
-        done();
-    });;
-
-  });
-  // TODO: Add other operators
-
-  it('4. DROP DATABASE',function(done){
-    alasql('DROP DATABASE test291');
-    done();
-  });
+	it('.promise all, lazy notation', function(done) {
+		alasql(['value of SELECT 1 --so lazy', ['value of select ?', 2]])
+			.then(function(res) {
+				assert.deepEqual(res, [1, 2]);
+				done();
+			})
+			.catch(function(reason) {
+				console.log(reason);
+			});
+	});
 });

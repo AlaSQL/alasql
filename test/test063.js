@@ -1,15 +1,14 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
 describe('Test 63 - PIVOT', function() {
-
 	it('Create new table', function(done) {
 		alasql('create database test63');
 		alasql('use database test63');
-		alasql("drop table if exists sales");
-		alasql("create table sales (city string, product string, qty int)");
+		alasql('drop table if exists sales');
+		alasql('create table sales (city string, product string, qty int)');
 		alasql('insert into sales values ("Minsk","Pen",100)');
 		alasql('insert into sales values ("Minsk","Pencil",100)');
 		alasql('insert into sales values ("Bratislava","Pen",50)');
@@ -17,12 +16,10 @@ describe('Test 63 - PIVOT', function() {
 		done();
 	});
 
-	it('PIVOT - not yet created', function(done){
+	it('PIVOT - not yet created', function(done) {
 		var res = alasql('select * from sales');
 
-//		alasql('drop database test63');
+		//		alasql('drop database test63');
 		done();
 	});
-
-
 });

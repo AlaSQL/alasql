@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mocha</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../lib/mocha/mocha.css" />
+    <script src="../lib/assert/assert.js"></script>
+    <script lang="javascript" src="../lib/xlsx/xlsx.core.min.js"></script>
+    <script src="../lib/typedarray/typedarray.js"></script>
+    <script>
+//        console.log(XLSX);
+    </script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+
+<!--    <script src="../lib/mocha/mocha.js"></script> -->
+<!--    <script src="../lib/zt/zt.js"></script> -->
+<!--    <script>mocha.setup('bdd')</script> -->
+
+<script type="text/javascript">
+    
+function describe(s,f) {
+    f(done);
+}
+
+function it(s,f) {
+    var s = f.toString();
+    document.getElementById('result').innerHTML += s+'\n';
+    f(done);
+}
+
+function done(){};
+
+</script>
+<pre><code>
+<output/>
+<div id='result'></div>
+</code>
+</pre>
+    <script src="../dist/alasql.js"></script>
+
+    <script src="test388.js"></script>
+
+
+<!--    <script src="test00.js"></script>
+    <script src="test01.js"></script>
+    <script src="test02.js"></script>
+    <script src="test03.js"></script>
+    <script src="test04.js"></script>
+    <script src="test05.js"></script>
+    <script src="test06.js"></script>
+    <script src="test07.js"></script>
+    <script src="test08.js"></script>
+    <script src="test09.js"></script>
+
+    <script src="test10.js"></script>
+    <script src="test11.js"></script>
+    <script src="test12.js"></script>
+
+    <script src="test13.js"></script>
+
+    <script src="test14.js"></script>
+    <script src="test15.js"></script>
+    <script src="test16.js"></script>
+    <script src="test17.js"></script>
+    <script src="test18.js"></script>
+    <script src="test19.js"></script>
+    <script src="test20.js"></script>
+    <script src="test21.js"></script>
+    <script src="test22.js"></script>
+    <script src="test23.js"></script>
+    <script src="test24.js"></script>
+    <script src="test25.js"></script>
+    <script src="test26.js"></script>
+    <script src="test27.js"></script>
+    <script src="test28.js"></script>
+    <script src="test29.js"></script>
+    <script src="test30.js"></script>
+    <script src="test31.js"></script>
+    <script src="test32.js"></script>
+    <script src="test33.js"></script>
+    <script src="test34.js"></script>
+    <script src="test35.js"></script>
+    <script src="test36.js"></script>
+    <script src="test37.js"></script>
+    <script src="test38.js"></script>
+    <script src="test39.js"></script>
+    <script src="test40.js"></script>
+    <script src="test41.js"></script>
+    <script src="test42.js"></script>
+    <script src="test43.js"></script>
+    <script src="test44.js"></script>
+    <script src="test45.js"></script>
+    <script src="test46.js"></script>
+    <script src="test47.js"></script>
+    <script src="test48.js"></script>
+    <script src="test49.js"></script>
+    <script src="test50.js"></script>
+    <script src="test51.js"></script>
+    <script src="test52.js"></script>
+    <script src="test53.js"></script>
+    <script src="test54.js"></script>
+    <script src="test55.js"></script>
+    <script src="test56.js"></script>
+    <script src="test57.js"></script>
+    <script src="test58.js"></script>
+    <script src="test59.js"></script>
+    <script src="test60.js"></script>
+    <script src="test61.js"></script>
+    <script src="test62.js"></script>
+    <script src="test63.js"></script>
+    <script src="test64.js"></script>
+    <script src="test65.js"></script>
+    <script src="test66.js"></script>
+    <script src="test67.js"></script>
+    <script src="test68.js"></script>
+    <script src="test69.js"></script>
+    <script src="test70.js"></script>
+    <script src="test71.js"></script>
+    <script src="test72.js"></script>
+    <script src="test73.js"></script>
+    <script src="test74.js"></script>
+    <script src="test75.js"></script>
+    <script src="test76.js"></script>
+    <script src="test77.js"></script>
+    <script src="test78.js"></script>
+    <script src="test79.js"></script>
+    <script src="test80.js"></script>
+    <script src="test81.js"></script>
+    <script src="test82.js"></script>
+    <script src="test83.js"></script>
+    <script src="test84.js"></script>
+    <script src="test85.js"></script>
+    <script src="test86.js"></script>
+    <script src="test87.js"></script>
+    <script src="test88.js"></script>
+    <script src="test89.js"></script>
+    <script src="test90.js"></script>
+    <script src="test91.js"></script>
+    <script src="test92.js"></script>
+    <script src="test93.js"></script>
+    <script src="test94.js"></script>
+    <script src="test95.js"></script>
+    <script src="test96.js"></script>
+    <script src="test97.js"></script>
+    <script src="test98.js"></script>
+    <script src="test99.js"></script>
+    <script src="test100.js"></script>
+    <script src="test101.js"></script>
+    <script src="test102.js"></script>
+    <script src="test103.js"></script>
+    <script src="test104.js"></script>
+    <script src="test105.js"></script>
+    <script src="test106.js"></script>
+    <script src="test107.js"></script>
+    <script src="test108.js"></script>
+    <script src="test109.js"></script>
+    <script src="test110.js"></script>
+    <script src="test111.js"></script>
+    <script src="test112.js"></script>
+    <script src="test113.js"></script>
+    <script src="test114.js"></script>
+    <script src="test115.js"></script>
+
+    <script src="test116.js"></script>
+    <script src="test117.js"></script>
+    <script src="test118.js"></script>
+    <script src="test119.js"></script>
+    <script src="test120.js"></script>
+    <script src="test121.js"></script>
+    <script src="test122.js"></script>
+    <script src="test123.js"></script>
+    <script src="test124.js"></script>
+    <script src="test125.js"></script>
+    <script src="test126.js"></script>
+    <script src="test127.js"></script>
+    <script src="test128.js"></script>
+    <script src="test129.js"></script>
+    <script src="test130.js"></script>
+    <script src="test131.js"></script>
+    <script src="test132.js"></script>
+    <script src="test133.js"></script>
+   <script src="test134.js"></script>
+    <script src="test135.js"></script>
+    <script src="test136.js"></script>
+    <script src="test137.js"></script>
+    <script src="test138.js"></script>
+    <script src="test139.js"></script>
+    <script src="test140.js"></script>
+    <script src="test141.js"></script>
+    <script src="test142.js"></script>
+    <script src="test143.js"></script>
+    <script src="test144.js"></script>
+   <script src="test145.js"></script>
+     <script src="test146.js"></script>
+-->
+<!--    <script>
+        if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+        else { mocha.run(); }
+    </script>
+
+
+-->  </body>
+</html>

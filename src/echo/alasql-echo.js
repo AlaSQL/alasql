@@ -10,7 +10,7 @@ yy.Echo.prototype.toString = function() {
 
 yy.Echo.prototype.execute = function (databaseid, params, cb) {
 //	var self = this;
-//	console.log(this.expr.toJS());
+	// console.log(76336,this.expr.toJS());
 	var fn = new Function('params, alasql','return '+this.expr.toJS());
 	var res = fn(params, alasql);
 	if(cb) res = cb(res);

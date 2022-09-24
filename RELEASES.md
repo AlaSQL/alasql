@@ -28,7 +28,7 @@ e) extend transactions support
 f) add simple triggers or INSERT OR REPLACE operator
 g) improve database backend functionality (IndexedDB, localStorage, fileStorage) - especially for mobile applications (Cordova, Meteor).
 
-The target of this phase is to pass SQLLOGIC test. Current 300 unit tests are not enough for such big project.
+The target of this phase is to pass SQLLOGIC test. 
 
 
 ### AlaSQL 0.4

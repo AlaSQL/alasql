@@ -1,2 +1,2 @@
-if(alasql.options.postgres) {
+if (alasql.options.postgres) {
 }

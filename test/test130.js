@@ -3,15 +3,13 @@
 // Test for select
 //
 
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
-
-describe('Test 130 - UPDATE', function(){
+describe('Test 130 - UPDATE', function() {
 	it('UPDATE without conditions', function(done) {
-
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
@@ -24,12 +22,10 @@ describe('Test 130 - UPDATE', function(){
 
 		assert.equal(4, res);
 		assert.equal(101, db.tables.test.data[0].a);
-		done();		
+		done();
 	});
 
-
 	it('UPDATE WHERE with conditions', function(done) {
-
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
@@ -51,9 +47,6 @@ describe('Test 130 - UPDATE', function(){
 		assert.equal(4, db.tables.test.data[3].a);
 		assert.equal(5, db.tables.test.data[4].a);
 
-		done();		
+		done();
 	});
-
 });
-
-

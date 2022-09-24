@@ -1,18 +1,17 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 } else {
 	__dirname = '.';
-};
+}
 
 describe('Test 128 ASSERT', function() {
-
-	it('1. Assert on SOURCE and run statements', function(done){
+	it('1. Assert on SOURCE and run statements', function(done) {
 		alasql('create database test128');
 		alasql('assert 1');
 		alasql('use test128');
 		alasql('assert 1');
-		alasql('source "'+__dirname+'/test128.sql"');
+		alasql('source "' + __dirname + '/test128.sql"');
 		alasql('assert @[1,1,2,1,2,1]');
 
 		alasql('select * from one');
@@ -22,5 +21,4 @@ describe('Test 128 ASSERT', function() {
 		alasql('assert 1');
 		done();
 	});
-
 });

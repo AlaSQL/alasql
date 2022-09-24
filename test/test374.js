@@ -1,25 +1,20 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
 	var argv = require('yargs').argv || {};
-};
-
-
-
-describe('374. CEILING, FLOOR, ROUND tests:', function() {
-    
-
-if(typeof exports === 'object') {
-// to output all including skipped tests please run: mocha ./test/test374.js --forceall
-
-var runAll;
-if(argv.forceall){
-	runAll = it;
 }
 
+describe('374. CEILING, FLOOR, ROUND tests:', function() {
+	if (typeof exports === 'object') {
+		// to output all including skipped tests please run: mocha ./test/test374.js --forceall
 
+		var runAll;
+		if (argv.forceall) {
+			runAll = it;
+		}
 
-        var tests = (function(){/*
+		var tests = function() {
+			/*
 SELECT(CEIL(17.36)) -- 18
 SELECT CEIL(-17.36) --  -17
 SELECT CEILING(12.9273) -- 13
@@ -133,40 +128,41 @@ SELECT ROUND(@val, 10) -- 0.1234567891
 SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
 
-*/}).toString().substr(14);
+*/
+		}.toString();
 
-tests	.substr(0,tests.length-3)
-    	.replace("\r","")
-		.trim()
-		.split('\n')
-		.forEach(function(test){
-			test = test.trim();
-            if(test.indexOf('--')>-1) { 
-                var runFn = it;
-                
-                if(test.indexOf('--')===0){ // skip test starting line with '--'
-                	test = test.substr(2).trim();
-                	runFn = runAll || it.skip;
-                }
-                
-                var tt = test.split('--');
-                var sql = tt[0].trim();
-                var etalon = ''+tt[1].split(' - ')[0].trim();
-              	var res = ''+alasql('VALUE OF '+sql);
-	            //console.log(tt,sql,etalon);
+		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
-                runFn(test, function(done) {
-        			assert.equal(etalon, res);
-        			done();
-        		});                
+		tests
+			.replace('\r', '')
+			.trim()
+			.split('\n')
+			.forEach(function(test) {
+				test = test.trim();
+				if (test.indexOf('--') > -1) {
+					var runFn = it;
 
-            } else {
-                if(test.trim().length > 0){
-                	alasql(test);
-                }
-            }
+					if (test.indexOf('--') === 0) {
+						// skip test starting line with '--'
+						test = test.substr(2).trim();
+						runFn = runAll || it.skip;
+					}
 
-        });
-    };
-    
+					var tt = test.split('--');
+					var sql = tt[0].trim();
+					var etalon = '' + tt[1].split(' - ')[0].trim();
+					var res = '' + alasql('VALUE OF ' + sql);
+					//console.log(tt,sql,etalon);
+
+					runFn(test, function(done) {
+						assert.equal(etalon, res);
+						done();
+					});
+				} else {
+					if (test.trim().length > 0) {
+						alasql(test);
+					}
+				}
+			});
+	}
 });

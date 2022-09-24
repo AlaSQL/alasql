@@ -3,6 +3,7 @@
 *.xls binary
 
 /dist/* binary merge=ours
+*.min.js binary
 
 # absolute paths are ok, as are globs
 #/**/postinst* text eol=lf

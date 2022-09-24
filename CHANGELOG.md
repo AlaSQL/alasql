@@ -1,9 +1,184 @@
 # Changelog
-* Check https://trello.com/b/qxz65pVi/alasql-roadmap for roadmap
 
-### 0.2.5 "......" (xx.04.2016)
-* ...
-* ...
+> 0.4.11 "Lawdar" (xx.10.2018)
+> 0.4.10 "Maoshk" (xx.9.2018)
+
+
+## 0.4.9 "Alsalfiah" (05.08.2018)
+
+* Better: Error message grammar
+* Better: Support for Meteor code standards
+* Fix: dbprecision for select query
+* Fix: Handle promise error when reading one line csv files
+* Fix: AUTO_INCREMENT when using local storage
+
+## 0.4.8 "Nafhan" (14.07.2018)
+
+* Fix: Error when installing caused by missing cli file in npm
+
+
+## 0.4.7 "Tarim" (14.07.2018)
+
+* Better: Always find global object 
+
+
+## 0.4.6 "Rahbah" (14.06.2018)
+
+* Better: `Use strict` mode for javascript 
+
+
+## 0.4.5 "Marib" (24.01.2018)
+
+* Fix: Aggregate functions applied to empty sets (#964)
+* Fix: missing ORDER BY direction when calling toString on AST (#970)
+* Fix: Converting the syntax tree back to SQL with multple joins (#972)
+
+## 0.4.4 "Alsowm" (03.012.2017)
+
+* Better: Better usage via unpkg.com
+* Better: Better usage via jsdelivr.com
+
+
+## 0.4.3 "Hajjah" (05.09.2017)
+
+* Update: Removed implicit "any" in definition file
+* Fix: Tabletop reads in empty cells as numeric 0 instead of empty string 
+* Fix: DISTINCT on emtpy table produced error
+
+
+## 0.4.2 "Baraqish" (17.08.2017)
+
+* Added: SQL function LTRIM
+* Added: SQL function RTRIM
+* Better: Remove implicit any in type script definitioni
+* Better: Out-of-the-box Webpack and Browserify compatibility without hacks
+* Fix: Use created database id on foreign key check as default database
+
+ 
+## 0.4.1 "Sayhut" (23.07.2017)
+
+* Better: Performace on `distinct` selects 
+* Better: Hashing for cashed SQLs 
+* Fix: Case insensetive selects from EXCEL
+* Fix: Select from empty EXCEL
+
+
+#0.4.0 "Sanaa" (09.05.2017)
+* **Breaking:** OFFSET will now skip the first N rows in a result set before starting to return any rows (before it would skip N-1)
+* Add: Quartile aggregators (QUART, QUART2, QUART3)
+* Add: Typescript definitoin now supports extensions
+* Fix: Aggregate MEDIAN now working with ROLLUP
+* Fix: Aggregate STDEV now working with ROLLUP
+* Fix: SHOW COLUMNS works with the promise interface 
+* Fix: SHOW INDEX works with the promise interface 
+
+### 0.3.9 "Turua" (23.03.2017)
+* Add: React native support
+* Fix: CSV error when quote set to empty
+* Fix: autoExt bug when not set for CSV on read
+
+### 0.3.8 "Wanaka" (15.03.2017)
+
+* Added: Lazy promise notation
+* Added: Create user defined function via SQL statement
+* Added: Create user defined aggretator via SQL statement 
+* Added: Auto extension for filenames on read + write
+* Fix: `.xlsx` can now be imported via browser "upload"
+* Update: `xls.js` package not needed any more. Only `xlsx` package is needed. 
+
+### 0.3.7 "Niau" (20.02.2017)
+
+* Added: Last `S` in `VALUES` can be omitted when insterting (For the lazy ones)
+* Added: The `VALUES` keyword is optional when insterting (For the very lazy ones)
+* Fix: Multiple worksheet Excel with custom headers 
+
+
+### 0.3.6 "Hipu" (24.01.2017)
+
+* Addded: Support for "use strict" 
+* Fix: Select.toString() had bugs
+* Update: Better and faster deep compare of objects
+
+
+### 0.3.5 "Maiao" (22.12.2016)
+* Added: Import data through AngularJS controllers
+* Added: Support for running in VM for nodeJS
+* Fix: Typescript definition
+* Fix: False negatives for deepequal'ing of extended primitives
+* Fix: Double quotation marks in CSV output
+
+
+### 0.3.4 "Fitii" (09.11.2016)
+* Added: trigger `AFTER DELETE`
+* Fix: `TRUNCATE TABLE` now works for local storage DB
+* Fix: `JOIN` a sub select
+* Removed: The `HELP` command (to save space) 
+
+
+### 0.3.3 "Makemo" (13.10.2016)
+* Add: support for VALUE inside checks
+* Add: Conflate null and undefined
+* Add: Load CSV data from a string
+* Add: Warn when server side uses browser build of lib
+* Update: typescript definition for native import 
+* Update: filesaver.js updated to 1.3.2
+
+
+### 0.3.2 "Maumu" (05.09.2016)
+* Added: Postgres arrays like array[] and text[]
+* Added: Allow non-reserved keywords as identifiers
+* Fix: Empty tsv/csv files will no longer raise an error
+* Fix: alasql.d.ts format
+* Fix: Better way to find out if indexedDB is present
+* Fix: `null = null` is (now) null, baby.
+* Update: Column names first for RECORDSETS
+
+
+### 0.3.1 "Taravao" (01.08.2016)
+* Allow unknown functions to be defined on alasql.fn afterwards
+* Easy access to AUTOINCREMENT values
+* MEDIAN will ignore null values 
+* STDEV will ignore null values
+
+
+## Version 0.3.0 "Papeete" (25.07.2016)
+* Breaking change: CSVs with header will now default have BOM added (for better utf8 support) 
+* Added: Constraint names will now be exported in error message
+* Added: Web worker now supports .promise notation
+* Added: Postgres-specific aliases and fixes
+* Added: Make converting to an unknown type result in a noop rather than an error
+* Added: Support column types consisting of more than 2 words
+
+
+### 0.2.7 "Corinth" (30.05.2016)
+* Added: Now supports Node 6.0 
+* Added: Let .promise return all responses (not just last) 
+* Change: Headers set as default true for INTO and FROM statements
+* Fix: Back on track (for good) with supporting Meteor 
+* Fix: Default tentative string to numbers conversion when reading data from google spreadsheets 
+* Update: No need for empty params when async
+* Update: Better hashing for cashing
+
+
+### 0.2.6 "Frikes" (22.04.2016)
+* Added: Progress callback
+* Change: CLI defaults to pretty print (with option for compressed output as original)
+* Fix: Declaring all variables
+* Fix: Read XLSX files
+* Fix: Selecting a view from localstorage 
+* Fix: CREATE VIEW for localStorage engine 
+* Fix: Better use for RequireJS
+* Update: CLI output is guaranteed to be valid JSON 
+* Update: Better error message for missing table or column
+* Update: Typescript defenition for .promise
+* Update: Empty params not needed for async calls
+
+
+### 0.2.5 "Polychrono" (23.03.2016)
+* Added: Promise chain of queries
+* Fix: Remove leading whitespace from fields when importing csv files
+* Fix: Set default option for XLSXML
+* Fix: Use callbacks consistently 
 
 
 ### 0.2.4 "Exogi" (04.03.2016)
@@ -71,7 +246,6 @@
 * Fix: .CSV files made Excel 2013 compliant 
 * Fix: misbehavour related to 'NOT' and '=' predecession
 * Fix: alasql running from cordova on iOS
-
 
 
 ## Version 0.2.0 "Athens" (13.07.2015)

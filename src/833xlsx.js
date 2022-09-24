@@ -10,49 +10,46 @@
 */
 
 alasql.into.XLSX = function(filename, opts, data, columns, cb) {
-
 	/** @type {number} result */
 	var res = 1;
 
-	if(deepEqual(columns,[{columnid:'_'}])) {
-		data = data.map(function(dat){return dat._;});
+	if (deepEqual(columns, [{columnid: '_'}])) {
+		data = data.map(function(dat) {
+			return dat._;
+		});
 		columns = undefined;
-//		res = [{_:1}];
+		//		res = [{_:1}];
 	} else {
-//		data = data1;
+		//		data = data1;
 	}
 
-//console.log(data);
+	//console.log(data);
 
-	/* If Node.js then require() else in browser take a global */
-	if(utils.isNode) {
-		var XLSX = require('xlsx');
-	} else {
-		var XLSX = utils.global.XLSX;
-	};
+	filename = alasql.utils.autoExtFilename(filename, 'xlsx', opts);
+
+	var XLSX = getXLSX();
 
 	/* If called without filename, use opts */
-	if(typeof filename == 'object') {
+	if (typeof filename == 'object') {
 		opts = filename;
 		filename = undefined;
-	};
-
+	}
 
 	/** @type {object} Workbook */
-	var wb = {SheetNames:[], Sheets:{}};
+	var wb = {SheetNames: [], Sheets: {}};
 
-	// Check overwrite flag
-	if(opts.sourcefilename) {
-		alasql.utils.loadBinaryFile(opts.sourcefilename,!!cb,function(data){
-			wb = XLSX.read(data,{type:'binary'});
+	// ToDo: check if cb must be treated differently here
+	if (opts.sourcefilename) {
+		alasql.utils.loadBinaryFile(opts.sourcefilename, !!cb, function(data) {
+			wb = XLSX.read(data, {type: 'binary'});
 			doExport();
-        });
+		});
 	} else {
 		doExport();
-	};
+	}
 
 	/* Return result */
-	if(cb) res = cb(res);
+	if (cb) res = cb(res);
 	return res;
 
 	/**
@@ -60,46 +57,46 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		@function
 	*/
 	function doExport() {
-
 		/*
 			If opts is array of arrays then this is a
 			multisheet workboook, else it is a singlesheet
 		*/
-		if(typeof opts == 'object' && opts instanceof Array) {
-			if(data && data.length > 0) {
-				data.forEach(function(dat,idx){
-					prepareSheet(opts[idx],dat,undefined,idx+1)
+		if (typeof opts == 'object' && Array.isArray(opts)) {
+			if (data && data.length > 0) {
+				data.forEach(function(dat, idx) {
+					prepareSheet(opts[idx], dat, undefined, idx + 1);
 				});
 			}
 		} else {
-			prepareSheet(opts,data,columns,1);
+			prepareSheet(opts, data, columns, 1);
 		}
 
 		saveWorkbook(cb);
-
 	}
-
 
 	/**
 		Prepare sheet
 		@params {object} opts
-		@params {array} data
+		@params {array|object} data
 		@params {array} columns Columns
 	*/
 	function prepareSheet(opts, data, columns, idx) {
-
 		/** Default options for sheet */
-		var opt = {sheetid:'Sheet '+idx,headers:true};
+		var opt = {sheetid: 'Sheet ' + idx, headers: true};
 		alasql.utils.extend(opt, opts);
 
+		var dataLength = Object.keys(data).length;
+
 		// Generate columns if they are not defined
-		if((!columns || columns.length == 0) && data.length > 0) {
-			columns = Object.keys(data[0]).map(function(columnid){return {columnid:columnid}});
+		if ((!columns || columns.length == 0) && dataLength > 0) {
+			columns = Object.keys(data[0]).map(function(columnid) {
+				return {columnid: columnid};
+			});
 		}
 
 		var cells = {};
 
-		if(wb.SheetNames.indexOf(opt.sheetid) > -1) {
+		if (wb.SheetNames.indexOf(opt.sheetid) > -1) {
 			cells = wb.Sheets[opt.sheetid];
 		} else {
 			wb.SheetNames.push(opt.sheetid);
@@ -107,54 +104,54 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 			cells = wb.Sheets[opt.sheetid];
 		}
 
-		var range = "A1";
-		if(opt.range) range = opt.range;
+		var range = 'A1';
+		if (opt.range) range = opt.range;
 
 		var col0 = alasql.utils.xlscn(range.match(/[A-Z]+/)[0]);
-		var row0 = +range.match(/[0-9]+/)[0]-1;
+		var row0 = +range.match(/[0-9]+/)[0] - 1;
 
-		if(wb.Sheets[opt.sheetid]['!ref']) {
+		if (wb.Sheets[opt.sheetid]['!ref']) {
 			var rangem = wb.Sheets[opt.sheetid]['!ref'];
 			var colm = alasql.utils.xlscn(rangem.match(/[A-Z]+/)[0]);
-			var rowm = +rangem.match(/[0-9]+/)[0]-1;
+			var rowm = +rangem.match(/[0-9]+/)[0] - 1;
 		} else {
-			var colm = 1, rowm = 1;
+			var colm = 1,
+				rowm = 1;
 		}
-		var colmax = Math.max(col0+columns.length,colm);
-		var rowmax = Math.max(row0+data.length+2,rowm);
+		var colmax = Math.max(col0 + columns.length, colm);
+		var rowmax = Math.max(row0 + dataLength + 2, rowm);
 
-//		console.log(col0,row0);
-		var i = row0+1;
+		//		console.log(col0,row0);
+		var i = row0 + 1;
 
-		wb.Sheets[opt.sheetid]['!ref'] = 'A1:'+alasql.utils.xlsnc(colmax)+(rowmax);
-//		var i = 1;
+		wb.Sheets[opt.sheetid]['!ref'] = 'A1:' + alasql.utils.xlsnc(colmax) + rowmax;
+		//		var i = 1;
 
-		if(opt.headers) {
-			columns.forEach(function(col, idx){
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = {v:col.columnid.trim()};
+		if (opt.headers) {
+			columns.forEach(function(col, idx) {
+				cells[alasql.utils.xlsnc(col0 + idx) + '' + i] = {v: col.columnid.trim()};
 			});
 			i++;
 		}
 
-		for(var j=0;j<data.length;j++) {
-			columns.forEach(function(col, idx){
-				var cell = {v:data[j][col.columnid]};
-				if(typeof data[j][col.columnid] == 'number') {
+		for (var j = 0; j < dataLength; j++) {
+			columns.forEach(function(col, idx) {
+				var cell = {v: data[j][col.columnid]};
+				if (typeof data[j][col.columnid] == 'number') {
 					cell.t = 'n';
-				} else if(typeof data[j][col.columnid] == 'string') {
+				} else if (typeof data[j][col.columnid] == 'string') {
 					cell.t = 's';
-				} else if(typeof data[j][col.columnid] == 'boolean') {
+				} else if (typeof data[j][col.columnid] == 'boolean') {
 					cell.t = 'b';
-				} else if(typeof data[j][col.columnid] == 'object') {
-					if(data[j][col.columnid] instanceof Date) {
+				} else if (typeof data[j][col.columnid] == 'object') {
+					if (data[j][col.columnid] instanceof Date) {
 						cell.t = 'd';
 					}
 				}
-				cells[alasql.utils.xlsnc(col0+idx)+""+i] = cell;
+				cells[alasql.utils.xlsnc(col0 + idx) + '' + i] = cell;
 			});
 			i++;
 		}
-
 	}
 
 	/**
@@ -163,51 +160,40 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		@params {callback} cb Callback
 	*/
 	function saveWorkbook(cb) {
-
-//console.log(wb);
+		//console.log(wb);
 		var XLSX;
-		
-		if(typeof filename == 'undefined') {
+
+		if (typeof filename == 'undefined') {
 			res = wb;
 		} else {
-			var XLSX;
+			XLSX = getXLSX();
 
-			if(utils.isNode || utils.isBrowserify  || utils.isMeteorServer) {
-                                XLSX = require('xlsx');
-                           
-                        } else {
-				XLSX = utils.global.XLSX;
-			}
-
-
-			if(utils.isNode || utils.isMeteorServer) {
+			if (utils.isNode || utils.isMeteorServer) {
 				XLSX.writeFile(wb, filename);
 			} else {
-				if(!XLSX) {
-					throw new Error('XLSX library not found');
-				}
-		
-				var wopts = { bookType:'xlsx', bookSST:false, type:'binary' };
-				var wbout = XLSX.write(wb,wopts);
+				var wopts = {bookType: 'xlsx', bookSST: false, type: 'binary'};
+				var wbout = XLSX.write(wb, wopts);
 
 				function s2ab(s) {
-				  var buf = new ArrayBuffer(s.length);
-				  var view = new Uint8Array(buf);
-				  for (var i=0; i!=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
-				  return buf;
+					var buf = new ArrayBuffer(s.length);
+					var view = new Uint8Array(buf);
+					for (var i = 0; i != s.length; ++i) view[i] = s.charCodeAt(i) & 0xff;
+					return buf;
 				}
 
 				/* the saveAs call downloads a file on the local machine */
-//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
-//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
-//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
-				if(isIE() == 9) {
-					throw new Error('Cannot save XLSX files in IE9. Please use XLS() export function');
-//					var URI = 'data:text/plain;charset=utf-8,';
+				//				saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '"'+filename+'"')
+				//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), filename)
+				//				saveAs(new Blob([s2ab(wbout)],{type:"application/vnd.ms-excel"}), '"'+filename+'"');
+				if (isIE() == 9) {
+					throw new Error(
+						'Cannot save XLSX files in IE9. Please use XLS() export function'
+					);
+					//					var URI = 'data:text/plain;charset=utf-8,';
 
-		/** @todo Check if this code is required */
+					/** @todo Check if this code is required */
 
-/*/*
+					/*/*
 					var testlink = window.open("about:blank", "_blank");
 					var s = '';
 					for(var i=0,ilen=wbout.length;i<ilen;i++) {
@@ -220,14 +206,13 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 					testlink.document.execCommand('SaveAs', false, filename);
 					testlink.close();
 */
-//					alert('ie9');
+					//					alert('ie9');
 				} else {
-					saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), filename);
+					saveAs(new Blob([s2ab(wbout)], {type: 'application/octet-stream'}), filename);
 				}
 			}
-
 		}
-/*/*
+		/*/*
 		// data.forEach(function(d){
 		// 	s += columns.map(function(col){
 		// 		return d[col.columnid];
@@ -235,5 +220,5 @@ alasql.into.XLSX = function(filename, opts, data, columns, cb) {
 		// });
 		// alasql.utils.saveFile(filename,s);
 */
-	};
+	}
 };

@@ -1,70 +1,45 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
+var test = '000'; // insert test file number
 
+describe('Test ' + test + ' - multiple statements', function() {
+	before(function() {
+		alasql('create database test' + test);
+		alasql('use test' + test);
+	});
 
+	after(function() {
+		alasql('drop database test' + test);
+	});
 
-describe('Test 000', function() {
-	
-//	if(window) return; // Include this if testing something not ment for the browser.
-
-	it('Multiple statements', function(done){
+	it('A) From single lines', function() {
 		var res = [];
-		res.push(alasql('create database test00'));
-		res.push(alasql('use test00'));
 		res.push(alasql('create table one (a int)'));
 		res.push(alasql('insert into one values (1),(2),(3),(4),(5)'));
 		res.push(alasql('select * from one'));
-		res.push(alasql('drop database test00'));
-		assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
-		done();
+		assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 	});
 
-	it('Multiple statements in one string', function(done){
-		var sql = 'create database test00;';
-		sql += 'use test00;';
-		sql += 'create table one (a int);';
-		sql += 'insert into one values (1),(2),(3),(4),(5);';
-		sql += 'select * from one;';
-		sql += 'drop database test00';
+	it('B) Multiple statements in one string', function() {
+		//
+		var sql = 'create table two (a int);';
+		sql += 'insert into two values (1),(2),(3),(4),(5);';
+		sql += 'select * from two;';
 		var res = alasql(sql);
-		assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
-		done();
+		assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 	});
 
-	it('Multiple statements in one string with callback', function(done){
-		var sql = 'create database test00;';
-		sql += 'use test00;';
-		sql += 'create table one (a int);';
-		sql += 'insert into one values (1),(2),(3),(4),(5);';
-		sql += 'select * from one;';
-		sql += 'drop database test00';
-		alasql(sql, [], function(res){
-			assert.deepEqual(res, [1,1,1,5,[{a:1},{a:2},{a:3},{a:4},{a:5}],1]);
+	it('C) Multiple statements in one string with callback', function(done) {
+		// Please note that first parameter (here `done`) must be called if defined - and is needed when testing async code
+		var sql = 'create table three (a int);';
+		sql += 'insert into three values (1),(2),(3),(4),(5);';
+		sql += 'select * from three;';
+		alasql(sql, function(res) {
+			assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 			done();
 		});
 	});
-
-// TODO - convert to NoSQL interface
-
- 	// it('Very beginning: single expression', function(done){
- 	// 	var db = new alasql.Database('test00');
- 	// 	alasql.use('test00');
-		
-// 		alasql.createTable(db, {tableid:'one',columns:[{columnid:'a', dbtypeid:'int'}]);
-// 		alasql.insert(db,);
-// 		sql += 'insert into one values (1),(2),(3),(4),(5);';
-// 		sql += 'select * from one;';
-
-// 		alasql.dropDatabase('test00');
-// 		var res2 = alasql(sql);
-// 		console.log(res2);
-
-// //		assert.deepEqual(res1,res2);
-// 		done();
-// 	});
-
-
 });

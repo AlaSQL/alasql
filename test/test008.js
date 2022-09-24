@@ -1,11 +1,10 @@
-if(typeof exports === 'object') {
-	var assert = require("assert");
+if (typeof exports === 'object') {
+	var assert = require('assert');
 	var alasql = require('..');
-};
+}
 
 describe('Test 08', function() {
-	it('UPDATE WHERE with conditions test ', function(done){
-
+	it('UPDATE WHERE with conditions test ', function(done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
@@ -17,11 +16,11 @@ describe('Test 08', function() {
 
 		db.exec('UPDATE test SET a=a*100, b=-b WHERE b<=3*10 AND a<>2');
 
-		var res = db.exec("SELECT VALUE SUM(a) FROM test");
-		assert.equal(411,res);
+		var res = db.exec('SELECT VALUE SUM(a) FROM test');
+		assert.equal(411, res);
 
-		var res = db.exec("SELECT VALUE MIN(b) FROM test");
-		assert.equal(-30,res);
+		var res = db.exec('SELECT VALUE MIN(b) FROM test');
+		assert.equal(-30, res);
 		done();
 	});
 });

@@ -13,3 +13,12 @@ src/
 bower.json
 gulpfile.js
 inch.json
+utils/
+.npmignore
+.travis.yml
+.versions
+.eslintrc.yml  
+.prettierignore  
+.prettierrc  
+yarn.lock
+tslint.json

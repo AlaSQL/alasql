@@ -1,2 +1,2 @@
-if(alasql.options.oracle) {
+if (alasql.options.oracle) {
 }

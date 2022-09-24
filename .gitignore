@@ -2,4 +2,7 @@
 test/res*
 node_modules/
 npm-debug.log
-
+site/
+test/test604.json
+.versions
+.npm/

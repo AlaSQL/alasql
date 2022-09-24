@@ -1,3 +1,5 @@
+/* eslint-disable */ 
+
 /*
 //
 // Last part of Alasql.js
@@ -7,6 +9,14 @@
 */
 
 // This is a final part of Alasql
+
+
+/*only-for-browser/*
+if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
+  console.warn('It looks like you are using the browser version of AlaSQL. Please use the alasql.fs.js file instead.')
+}
+//*/
+
 
 // FileSaveAs
 alasql.utils.saveAs = saveAs;
