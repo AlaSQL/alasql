@@ -96,6 +96,8 @@ stdin.on('end', function () {
  * @returns {null} Result will be printet to console.log
  */
 function execute(sql, params) {
+	if ('' === sql) sql = params.shift() || '';
+
 	if (0 === sql.trim().length) {
 		console.error('\nNo SQL to process\n');
 		yargs.showHelp();
