@@ -71,7 +71,7 @@ alasql.into.SQL = function (filename, opts, data, columns, cb) {
 
 alasql.into.HTML = function (selector, opts, data, columns, cb) {
 	var res = 1;
-	if (typeof exports !== 'object') {
+	if (typeof document !== 'object') {
 		var opt = {headers: true};
 		alasql.utils.extend(opt, opts);
 
