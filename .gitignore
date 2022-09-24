@@ -8,5 +8,6 @@ test/test251.xlsx
 .versions
 .npm/
 *.log
+yarn-error.log
 package-lock.json
 dist/
