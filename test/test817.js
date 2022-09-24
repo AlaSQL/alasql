@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('../dist/alasql');
 }
 
-describe('Test 815 IFNULL bug', function () {
+describe('Test 817 IFNULL bug', function () {
 	it('1. Does return 0', function (done) {
 		var data = [
 			{
