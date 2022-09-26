@@ -9,5 +9,6 @@
       "automerge": true
     }
   ],
-  "automergeStrategy": "squash"
+  "automergeStrategy": "squash",
+  "dependencyDashboard": true
 }
