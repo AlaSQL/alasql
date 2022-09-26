@@ -85,7 +85,7 @@
 	},
 	"resolutions": {
 		"got": "^11.8.5",
-		"axios": "^0.21.2",
+		"axios": "^0.27.0",
 		"marked": "^4.0.10",
 		"underscore": "^1.12.1",
 		"glob-parent": "^5.1.2",
