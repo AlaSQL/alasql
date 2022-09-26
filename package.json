@@ -88,7 +88,7 @@
 		"axios": "^0.27.0",
 		"marked": "^4.0.10",
 		"underscore": "^1.12.1",
-		"glob-parent": "^5.1.2",
+		"glob-parent": "^6.0.0",
 		"lodash.template": "^4.5.0"
 	},
 	"engines": {
