@@ -547,7 +547,7 @@ bluebird@^2.9.34:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-2.11.0.tgz#534b9033c022c9579c56ba3b3e5a5caafbb650e1"
   integrity sha512-UfFSr22dmHPQqPP9XWHRhq+gWnHCYguQGkXQlbyPtW5qTnhFWA8/iXg765tH0cAjy7l/zPJ1aBTO0g5XgA7kvQ==
 
-blueimp-md5@^2.19.0:
+blueimp-md5@2.19.0:
   version "2.19.0"
   resolved "https://registry.yarnpkg.com/blueimp-md5/-/blueimp-md5-2.19.0.tgz#b53feea5498dcb53dc6ec4b823adb84b729c4af0"
   integrity sha512-DRQrD6gJyy8FbiE4s+bDoXS9hiW3Vbx5uCdwvcCf3zLHL+Iv7LtGHLpr+GZV8rHG8tK766FGYBwRbu8pELTt+w==
@@ -926,7 +926,7 @@ cloneable-readable@^1.0.0:
     process-nextick-args "^2.0.0"
     readable-stream "^2.3.5"
 
-cmdmix@^2.1.1:
+cmdmix@2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/cmdmix/-/cmdmix-2.1.1.tgz#168aac97a4162c2ce3ba4226de13c77be14489cc"
   integrity sha512-Mig+BzpB9elvuTCn30VAhxhfY4Z5EXQmp+5BeALjjx0VbR/hKeB6pfhbtJbbQhQA05VP5yaAMqrJRPQxHgmn4g==
@@ -2027,7 +2027,7 @@ gulp-cli@^2.2.0:
     v8flags "^3.2.0"
     yargs "^7.1.0"
 
-gulp-concat@^2.6.1:
+gulp-concat@2.6.1:
   version "2.6.1"
   resolved "https://registry.yarnpkg.com/gulp-concat/-/gulp-concat-2.6.1.tgz#633d16c95d88504628ad02665663cee5a4793353"
   integrity sha512-a2scActrQrDBpBbR3WUZGyGS1JEPLg5PZJdIa7/Bi3GuKAmPYDK6SFhy/NZq5R8KsKKFvtfR0fakbUCcKGCCjg==
@@ -2036,7 +2036,7 @@ gulp-concat@^2.6.1:
     through2 "^2.0.0"
     vinyl "^2.0.0"
 
-gulp-dereserve@^0.2.1:
+gulp-dereserve@0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/gulp-dereserve/-/gulp-dereserve-0.2.1.tgz#7e5e99778476878345360803ca8f8b1278b0c53e"
   integrity sha512-y3fgoLOsEzxGq+p0BeTTcEDsgAbWQfS5rhbUbGJhwbb3WOlEkkCwVJ3n5HwTd+wyks353NAYrmZmwCuMyKYg3w==
@@ -2056,7 +2056,7 @@ gulp-exec@5.0.0:
     plugin-error "^1.0.1"
     through2 "^3.0.1"
 
-gulp-jison@^1.2.0:
+gulp-jison@1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/gulp-jison/-/gulp-jison-1.2.0.tgz#3a81fdb5c58d40709578dc08183fa38a4112aa49"
   integrity sha512-Q34pgcdLXs/787hsj+pDfzI0skwR1op6HctzmzdRpRIfrjnuFjVfI13vw0h+PM+77O86acpqeHTKOXZLKwl3sw==
@@ -2070,7 +2070,7 @@ gulp-rename@2.0.0:
   resolved "https://registry.yarnpkg.com/gulp-rename/-/gulp-rename-2.0.0.tgz#9bbc3962b0c0f52fc67cd5eaff6c223ec5b9cf6c"
   integrity sha512-97Vba4KBzbYmR5VBs9mWmK+HwIf5mj+/zioxfZhOKeXtx5ZjBk57KFlePf5nxq9QsTtFl0ejnHE3zTC9MHXqyQ==
 
-gulp-replace@^1.1.3:
+gulp-replace@1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/gulp-replace/-/gulp-replace-1.1.3.tgz#8641cdca78e683e8573ca4a012e7e4ebb7e4db60"
   integrity sha512-HcPHpWY4XdF8zxYkDODHnG2+7a3nD/Y8Mfu3aBgMiCFDW3X2GiOKXllsAmILcxe3KZT2BXoN18WrpEFm48KfLQ==
@@ -2093,7 +2093,7 @@ gulp-shell@0.8.0:
     through2 "^3.0.1"
     tslib "^1.10.0"
 
-gulp-uglify@^3.0.2:
+gulp-uglify@3.0.2:
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/gulp-uglify/-/gulp-uglify-3.0.2.tgz#5f5b2e8337f879ca9dec971feb1b82a5a87850b0"
   integrity sha512-gk1dhB74AkV2kzqPMQBLA3jPoIAPd/nlNzP2XMDSG8XZrqnlCiDGAqC+rZOumzFvB5zOphlFh6yr3lgcAb/OOg==
@@ -2133,7 +2133,7 @@ gulp-util@^3.0.1, gulp-util@~3.0.4:
     through2 "^2.0.0"
     vinyl "^0.5.0"
 
-gulp@^4.0.1:
+gulp@4.0.2:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/gulp/-/gulp-4.0.2.tgz#543651070fd0f6ab0a0650c6a3e6ff5a7cb09caa"
   integrity sha512-dvEs27SCZt2ibF29xYgmnwwCYZxdxhQ/+LFWlbAW8y7jt68L/65402Lz3+CKy0Ov4rOs+NERmDq7YlZaDqUIfA==
@@ -3198,7 +3198,7 @@ mkdirp@0.5.x:
   dependencies:
     minimist "^1.2.6"
 
-mocha.parallel@^0.15.6:
+mocha.parallel@0.15.6:
   version "0.15.6"
   resolved "https://registry.yarnpkg.com/mocha.parallel/-/mocha.parallel-0.15.6.tgz#e6df27157c32c1b3c3a00b8703ee04a1f08fe7dc"
   integrity sha512-pWph+QieKGjk7cHY2hB78wyKJDOQLyOMDuBLQLrFL7riJb8qbQBlCY3XztFHv0D1d4I1gCpiwFNjd4LhVOXPew==
@@ -3206,7 +3206,7 @@ mocha.parallel@^0.15.6:
     bluebird "^2.9.34"
     semaphore "^1.0.5"
 
-mocha@^10.0.0:
+mocha@10.0.0:
   version "10.0.0"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-10.0.0.tgz#205447d8993ec755335c4b13deba3d3a13c4def9"
   integrity sha512-0Wl+elVUD43Y0BqPZBzZt8Tnkw9CMUdNYnUsTfOM1vuhJVZL+kiesFYsqwBkEEuEixaiPe5ZQdqDgX2jddhmoA==
@@ -3500,7 +3500,7 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
-open@^8.4.0:
+open@8.4.0:
   version "8.4.0"
   resolved "https://registry.yarnpkg.com/open/-/open-8.4.0.tgz#345321ae18f8138f82565a910fdc6b39e8c244f8"
   integrity sha512-XgFPPM+B28FtCCgSb9I+s9szOC1vZRSwgWsRUA5ylIxRTgKozqjOCrVOqGsYABPYK5qnfqClxZTFBa8PKt2v6Q==
