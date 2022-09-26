@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "2.0.3",
+	"version": "2.0.5",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -17,15 +17,13 @@
 		"test-ci": "(yarn test-format || 1) && yarn test",
 		"test-only": "mocha ./test --reporter dot",
 		"test-browser": "node test/browserTestRunner.js 7387",
-		"test-cover": "istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
+		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && gulp",
 		"build-jison": "gulp --jison && gulp",
 		"build-watch": "gulp watch",
-		"bump": "mversion --no-prefix",
 		"uptodate": "yarn-check -u --skip-unused",
-		"release": "f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
+		"release": "yarn version #f='/tmp/alasql.tmp' && curl https://raw.githubusercontent.com/wiki/agershun/alasql/How-to-release.md > $f && sh $f ; rm $f",
 		"jison": "npx jison-gho ./src/alasqlparser.jison -o ./src/alasqlparser.js",
-		"bump-tag": "bump --tag 'v%s'",
 		"fmt": "yarn pretty-commit --write",
 		"format": "yarn pretty-since-dev --write",
 		"format-all": "yarn pretty-all --write",
@@ -47,7 +45,9 @@
 		"next": "git add --all && git rebase --continue #",
 		"fresh": "cmdmix 'yarn goto '%1' && yarn pull-hard'",
 		"pre-pr": "cmdmix 'yarn fresh '%1' && yarn repush'",
-		"prepare": "husky install"
+		"prepare": "husky install",
+		"preversion": "yarn && yarn test",
+		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
 		"dom-storage": "^2.1.0",
@@ -71,17 +71,14 @@
 		"gulp-shell": "0.8.0",
 		"gulp-uglify": "3.0.2",
 		"husky": "6.0.0",
-		"istanbul": "0.4.5",
 		"lint-staged": "13.0.3",
 		"mocha": "10.0.0",
 		"mocha.parallel": "0.15.6",
-		"mversion": "2.0.1",
 		"open": "8.4.0",
 		"prettier": "2.7.1",
 		"strftime": "0.10.1",
 		"tabletop": "1.6.3",
-		"uglify-js": "3.17.2",
-		"version-bump-prompt": "6.1.0"
+		"uglify-js": "3.17.2"
 	},
 	"resolutions": {
 		"got": "^12.0.0",
