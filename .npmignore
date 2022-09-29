@@ -22,3 +22,5 @@ utils/
 .prettierrc  
 yarn.lock
 tslint.json
+.husky
+.github
