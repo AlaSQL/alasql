@@ -26,6 +26,7 @@ stdfn.ASCII = function (a) {
 */
 stdfn.COALESCE = function () {
 	for (var i = 0; i < arguments.length; i++) {
+		if (arguments[i] ===  null) continue;
 		if (typeof arguments[i] == 'undefined') continue;
 		if (typeof arguments[i] == 'number' && isNaN(arguments[i])) continue;
 		return arguments[i];
