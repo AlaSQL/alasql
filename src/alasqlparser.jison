@@ -3,7 +3,7 @@
 // alasqlparser.jison
 // SQL Parser for AlaSQL
 // (c) 2014-2015, Andrey Gershun
-// 
+//
 //
 */
 
@@ -108,6 +108,7 @@ COLUMNS 										return 'COLUMN'
 DATABASE(S)?									return 'DATABASE'
 'DATEADD'                                       return 'DATEADD'
 'DATEDIFF'                                      return 'DATEDIFF'
+'TIMESTAMPDIFF'                                      return 'TIMESTAMPDIFF'
 'DECLARE'                                       return 'DECLARE'
 'DEFAULT'                                       return 'DEFAULT'
 'DELETE'                                        return 'DELETE'
@@ -336,7 +337,7 @@ SETS                                        	return 'SET'
 %left GTGT LTLT AMPERSAND BAR
 %left PLUS MINUS
 %left STAR SLASH MODULO
-%left CARET 
+%left CARET
 %left DOT ARROW EXCLAMATION
 %left TILDA
 %left SHARP
@@ -388,7 +389,7 @@ ExplainStatement
 
 AStatement
 	: Statement
-		{ 
+		{
 			$$ = $1;
 
 			// TODO combine exists and queries
@@ -401,8 +402,8 @@ AStatement
 
 Statement
 	: { $$ = undefined; }
-	| AlterTable	
-	| AttachDatabase	
+	| AlterTable
+	| AttachDatabase
 	| Call
 	| CreateDatabase
 	| CreateIndex
@@ -421,7 +422,7 @@ Statement
 	| If
 	| Insert
 	| Merge
-	| Reindex	
+	| Reindex
 	| RenameTable
 	| Select
 	| ShowCreateTable
@@ -453,7 +454,7 @@ Statement
 	| Print
 	| Require
 	| SetVariable
-	| ExpressionStatement 
+	| ExpressionStatement
 	| AddRule
 	| Query
 
@@ -511,18 +512,18 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  OrderClause LimitClause UnionClause 
-		{   
-			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4); 
-		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7); 
-		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10); 
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  OrderClause LimitClause UnionClause
+		{
+			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
+		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
+		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10);
 		    $$ = $1;
 /*		    if(yy.exists) $$.exists = yy.exists;
 		    delete yy.exists;
 		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
-	| SEARCH SearchSelector* IntoClause SearchFrom? 
+	| SEARCH SearchSelector* IntoClause SearchFrom?
 	/* SearchLimit? SearchStrategy? SearchTimeout? */
 		{
 			$$ = new yy.Search({selectors:$2, from:$4});
@@ -538,12 +539,12 @@ PivotClause
 	;
 
 PivotClause2
-	: IN LPAR AsList RPAR 
+	: IN LPAR AsList RPAR
 		{ $$ = $3; }
 	;
 
 AsLiteral
-	: AS Literal 
+	: AS Literal
 		{ $$ = $2; }
 	| Literal
 		{ $$ = $1; }
@@ -565,7 +566,7 @@ AsPart
 
 RemoveClause
 	: REMOVE COLUMN? RemoveColumnsList
-		{ $$ = {removecolumns:$3}; } 
+		{ $$ = {removecolumns:$3}; }
 	;
 
 RemoveColumnsList
@@ -579,7 +580,7 @@ RemoveColumn
 	: Column
 		{ $$ = $1; }
 	| LIKE StringValue
-		{ $$ = {like:$2}; }	
+		{ $$ = {like:$2}; }
 	;
 
 ArrowDot
@@ -600,11 +601,11 @@ SearchSelector
 			$$ = {srchid:"ORDERBY", args: [{expression: new yy.Column({columnid:'_'}), direction:dir}]};
 		}
 
-	| DOTDOT 
+	| DOTDOT
 		{ $$ = {srchid:"PARENT"}; }
 	| ArrowDot Literal
 		{ $$ = {srchid:"APROP", args: [$2]}; }
-	| CARET 
+	| CARET
 		{ $$ = {selid:"ROOT"};}
 	| EQ Expression
 		{ $$ = {srchid:"EQ", args: [$2]}; }
@@ -615,13 +616,13 @@ SearchSelector
 	| WITH LPAR SearchSelector+ RPAR
 		{ $$ = {selid:"WITH", args: $3}; }
 	| Literal LPAR ExprList? RPAR
-		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }	
+		{ $$ = {srchid:$1.toUpperCase(), args:$3}; }
 	| WHERE LPAR Expression RPAR
-		{ $$ = {srchid:"WHERE", args:[$3]}; }	
+		{ $$ = {srchid:"WHERE", args:[$3]}; }
 	| OF LPAR Expression RPAR
-		{ $$ = {selid:"OF", args:[$3]}; }	
+		{ $$ = {selid:"OF", args:[$3]}; }
 	| CLASS LPAR Literal RPAR
-		{ $$ = {srchid:"CLASS", args:[$3]}; }	
+		{ $$ = {srchid:"CLASS", args:[$3]}; }
 	| NUMBER
 		{ $$ = {srchid:"PROP", args: [$1]}; }
 	| STRING
@@ -635,40 +636,40 @@ SearchSelector
 	| EXCLAMATION
 		{ $$ = {srchid:"REF"}; }
 	| SHARP Literal
-		{ $$ = {srchid:"SHARP", args:[$2]}; }	
+		{ $$ = {srchid:"SHARP", args:[$2]}; }
 	| MODULO Literal
-		{ $$ = {srchid:"ATTR", args:((typeof $2 == 'undefined')?undefined:[$2])}; }	
+		{ $$ = {srchid:"ATTR", args:((typeof $2 == 'undefined')?undefined:[$2])}; }
 	| MODULO SLASH
-		{ $$ = {srchid:"ATTR"}; }	
-	| GT 
+		{ $$ = {srchid:"ATTR"}; }
+	| GT
 		{ $$ = {srchid:"OUT"}; }
-	| LT 
+	| LT
 		{ $$ = {srchid:"IN"}; }
-	| GTGT 
+	| GTGT
 		{ $$ = {srchid:"OUTOUT"}; }
-	| LTLT 
+	| LTLT
 		{ $$ = {srchid:"ININ"}; }
-	| DOLLAR 
+	| DOLLAR
 		{ $$ = {srchid:"CONTENT"}; } /* TODO Decide! */
 /*	| DELETE LPAR RPAR
 		{ $$ = {srchid:"DELETE"}; }
 */	| Json
 		{ $$ = {srchid:"EX",args:[new yy.Json({value:$1})]}; }
 	| AT Literal
-		{ $$ = {srchid:"AT", args:[$2]}; }	
+		{ $$ = {srchid:"AT", args:[$2]}; }
 	| AS AT Literal
-		{ $$ = {srchid:"AS", args:[$3]}; }	
+		{ $$ = {srchid:"AS", args:[$3]}; }
 	| SET LPAR SetColumnsList RPAR
-		{ $$ = {srchid:"SET", args:$3}; }	
+		{ $$ = {srchid:"SET", args:$3}; }
 
 	| TO AT Literal
-		{ $$ = {selid:"TO", args:[$3]}; }	
+		{ $$ = {selid:"TO", args:[$3]}; }
 	| VALUE
-		{ $$ = {srchid:"VALUE"}; }	
+		{ $$ = {srchid:"VALUE"}; }
 	| ROW LPAR ExprList RPAR
-		{ $$ = {srchid:"ROW", args:$3}; }	
+		{ $$ = {srchid:"ROW", args:$3}; }
 	| COLON Literal
-		{ $$ = {srchid:"CLASS", args:[$2]}; }	
+		{ $$ = {srchid:"CLASS", args:[$2]}; }
 	| SearchSelector PlusStar
 		{ $$ = {selid:$2,args:[$1] }; }
 
@@ -727,7 +728,7 @@ SearchFrom
 
 /*
 SearchLet
-	: LET 
+	: LET
 	;
 
 SearchWhile
@@ -743,33 +744,33 @@ SearchStrategy
 
 SearchTimeout
 	: TIMEOUT Expression
-	;	
+	;
 
 */
 
 SelectClause
-	: 
+	:
 	/*
 
 		{ $$ = new yy.Select({ columns:new yy.Column({columnid:'_'}), modifier: 'COLUMN' }); }
-	| 
+	|
 */
 
-	SelectModifier DISTINCT TopClause ResultColumns  
+	SelectModifier DISTINCT TopClause ResultColumns
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1); yy.extend($$, $3); }
-	| SelectModifier UNIQUE TopClause ResultColumns  
+	| SelectModifier UNIQUE TopClause ResultColumns
 		{ $$ = new yy.Select({ columns:$4, distinct: true }); yy.extend($$, $1);yy.extend($$, $3); }
-	| SelectModifier  ALL TopClause ResultColumns  
+	| SelectModifier  ALL TopClause ResultColumns
 		{ $$ = new yy.Select({ columns:$4, all:true }); yy.extend($$, $1);yy.extend($$, $3); }
-	| SelectModifier TopClause ResultColumns?  
-		{ 
+	| SelectModifier TopClause ResultColumns?
+		{
 			if(!$3) {
 				$$ = new yy.Select({columns:[new yy.Column({columnid:'_',})], modifier:'COLUMN'});
 			} else {
-				$$ = new yy.Select({ columns:$3 }); yy.extend($$, $1);yy.extend($$, $2); 
+				$$ = new yy.Select({ columns:$3 }); yy.extend($$, $1);yy.extend($$, $2);
 			}
 		}
-/*	| 
+/*	|
 		{ $$ = new yy.Select({columns:[new yy.Column({columnid:'_', modifier:'COLUMN'})]});}
 */	;
 
@@ -811,7 +812,7 @@ IntoClause
 	| INTO VarValue
 		{$$ = {into: $2} }
 	| INTO STRING
-		{ 
+		{
 			var s = $2;
 			s = s.substr(1,s.length-2);
 			var x3 = s.substr(-3).toUpperCase();
@@ -828,7 +829,7 @@ IntoClause
 
 FromClause
 	: FROM FromTablesList
-		{ $$ = { from: $2 }; } 
+		{ $$ = { from: $2 }; }
 /*	| FROM FromTable JoinTablesList
 		{ $$ = { from: [$2], joins: $3 }; }
 */	| FROM FromTablesList JoinTablesList
@@ -846,7 +847,7 @@ ApplyClause
 		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$6}); }
 	| CROSS APPLY LPAR Select RPAR AS Literal
 		{ $$ = new yy.Apply({select: $4, applymode:'CROSS', as:$7}); }
-/*		{ 
+/*		{
 			if(!yy.exists) yy.exists = [];
 			$$ = new yy.Apply({select: $4, applymode:'CROSS', as:$7,existsidx:yy.exists.length});
 			yy.exists.push($3);
@@ -867,11 +868,11 @@ FromTablesList
 
 FromTable
 	: LPAR Select RPAR Literal
-		{ $$ = $2; $$.as = $4 }	
+		{ $$ = $2; $$.as = $4 }
 	| LPAR Select RPAR AS Literal
-		{ $$ = $2; $$.as = $5 }	
+		{ $$ = $2; $$.as = $5 }
 	| LPAR Select RPAR /* default alias */
-		{ $$ = $2; $$.as = 'default' }	
+		{ $$ = $2; $$.as = 'default' }
 
 	| Json AS? Literal?
 		{ $$ = new yy.Json({value:$1}); $1.as = $3 }
@@ -880,13 +881,13 @@ FromTable
 		{ $$ = $1; $1.as = $2 }
 	| Table AS Literal
 		{ $$ = $1; $1.as = $3 }
-	| Table 
+	| Table
 		{ $$ = $1; }
 	| Table NOT INDEXED
 		{ $$ = $1; }
-	| ParamValue Literal 
+	| ParamValue Literal
 		{ $$ = $1; $1.as = $2; }
-	| ParamValue AS Literal 
+	| ParamValue AS Literal
 		{ $$ = $1; $1.as = $3; }
 	| ParamValue
 		{ $$ = $1; $1.as = 'default'; }
@@ -918,7 +919,7 @@ FromTable
 
 FromString
 	: STRING
-		{ 
+		{
 			var s = $1;
 			s = s.substr(1,s.length-2);
 			var x3 = s.substr(-3).toUpperCase();
@@ -939,7 +940,7 @@ FromString
 
 Table
 	: Literal DOT Literal
-		{ 	
+		{
 			if($1 == 'INFORMATION_SCHEMA') {
 				$$ = new yy.FuncValue({funcid: $1, args:[new yy.StringValue({value:$3})]});
 			} else {
@@ -952,9 +953,9 @@ Table
 
 JoinTablesList
 	: JoinTablesList JoinTable
-		{ $$ = $1; $1.push($2); } 
+		{ $$ = $1; $1.push($2); }
 	| JoinTablesList ApplyClause
-		{ $$ = $1; $1.push($2); } 
+		{ $$ = $1; $1.push($2); }
 	| JoinTable
 	 	{ $$ = [$1]; }
 	| ApplyClause
@@ -1006,9 +1007,9 @@ JoinMode
 	;
 
 JoinModeMode
-	: JOIN 
+	: JOIN
 		{ $$ = "INNER"; }
-	| INNER JOIN 
+	| INNER JOIN
 		{ $$ = "INNER"; }
 	| LEFT JOIN
 		{ $$ = "LEFT"; }
@@ -1139,15 +1140,15 @@ LimitClause
 
 OffsetClause
 	: { $$ = undefined; }
-	| OFFSET NumValue 
+	| OFFSET NumValue
 		{ $$ = {offset:$2}; }
 	;
 
 
 ResultColumns
-	: ResultColumns COMMA ResultColumn 
+	: ResultColumns COMMA ResultColumn
 		{ $1.push($3); $$ = $1; }
-	| ResultColumn 
+	| ResultColumn
 		{ $$ = [$1]; }
 	;
 
@@ -1170,22 +1171,22 @@ ResultColumn
 
 Star
 	: Literal DOT Literal DOT STAR
-		{ $$ = new yy.Column({columid: $5, tableid: $3, databaseid:$1}); }	
+		{ $$ = new yy.Column({columid: $5, tableid: $3, databaseid:$1}); }
 	| Literal DOT STAR
-		{ $$ = new yy.Column({columnid: $3, tableid: $1}); }	
+		{ $$ = new yy.Column({columnid: $3, tableid: $1}); }
 	| STAR
 		{ $$ = new yy.Column({columnid:$1}); }
 	;
 
 Column
 	: Literal DOT Literal DOT Literal
-		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}	
+		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}
 	| Literal DOT Literal
-		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal DOT VALUE
-		{ $$ = new yy.Column({columnid: $3, tableid: $1});}	
+		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal
-		{ $$ = new yy.Column({columnid: $1});}	
+		{ $$ = new yy.Column({columnid: $1});}
 	;
 
 Expression
@@ -1220,7 +1221,7 @@ Expression
 	| VALUE
 		{ $$ = new yy.DomainValueValue(); }
 	| Json
-		{ $$ = new yy.Json({value:$1}); }			
+		{ $$ = new yy.Json({value:$1}); }
 	| ArrayValue
 		{ $$ = $1; }
 /*	| ATLBRA JsonArray
@@ -1228,27 +1229,27 @@ Expression
 */	| NewClause
 		{ $$ = $1; }
 /*	| AT LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({funcid: 'CLONEDEEP', args:[$3]}); }			
+		{ $$ = new yy.FuncValue({funcid: 'CLONEDEEP', args:[$3]}); }
 */
 /*	| AT LPAR Json RPAR
-		{ $$ = new yy.Json({value:$3}); }			
+		{ $$ = new yy.Json({value:$3}); }
 */	| LPAR Select RPAR
 		{
-			if(!yy.queries) yy.queries = []; 
+			if(!yy.queries) yy.queries = [];
 			yy.queries.push($2);
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
 		}
 	| LPAR Insert RPAR
 		{
-			if(!yy.queries) yy.queries = []; 
+			if(!yy.queries) yy.queries = [];
 			yy.queries.push($2);
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
 		}
 	| LPAR (CreateVertex|CreateEdge) RPAR
 		{
-			if(!yy.queries) yy.queries = []; 
+			if(!yy.queries) yy.queries = [];
 			yy.queries.push($2);
 			$2.queriesidx = yy.queries.length;
 			$$ = $2;
@@ -1264,18 +1265,18 @@ Expression
 
 JavaScript
 	: JAVASCRIPT
-		{ $$ = new yy.JavaScript({value:$1.substr(2,$1.length-4)}); }		
+		{ $$ = new yy.JavaScript({value:$1.substr(2,$1.length-4)}); }
 	;
 
 CreateFunction
 	: CREATE FUNCTION LITERAL AS JAVASCRIPT
-		{ $$ = new yy.JavaScript({value:'alasql.fn["'+$3+'"] = '+$5.substr(2,$5.length-4)}); }		
-	;	
+		{ $$ = new yy.JavaScript({value:'alasql.fn["'+$3+'"] = '+$5.substr(2,$5.length-4)}); }
+	;
 
 CreateAggregate
 	: CREATE AGGREGATE LITERAL AS JAVASCRIPT
-		{ $$ = new yy.JavaScript({value:'alasql.aggr["'+$3+'"] = '+$5.substr(2,$5.length-4)}); }		
-	;	
+		{ $$ = new yy.JavaScript({value:'alasql.aggr["'+$3+'"] = '+$5.substr(2,$5.length-4)}); }
+	;
 
 
 NewClause
@@ -1311,9 +1312,9 @@ PrimitiveValue
 	| FuncValue
 		{ $$ = $1; }
 	| CURRENT_TIMESTAMP
-		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }	
+		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }
 /*	| USER
-		{ $$ = new yy.FuncValue({funcid:'USER'}); }	
+		{ $$ = new yy.FuncValue({funcid:'USER'}); }
 */	;
 
 
@@ -1323,8 +1324,8 @@ AggrValue
 		  if($3.length > 1 && ($1.toUpperCase() == 'MAX' || $1.toUpperCase() == 'MIN')) {
 		  	$$ = new yy.FuncValue({funcid:$1,args:$3});
 		  } else {
-			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3.pop(), over:$5}); 
-		  } 
+			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3.pop(), over:$5});
+		  }
 		}
 	| Aggregator LPAR DISTINCT Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4, distinct:true, over:$6}); }
@@ -1354,7 +1355,7 @@ OverOrderByClause
 	;
 Aggregator
 	: SUM { $$ = "SUM"; }
-	| COUNT { $$ = "COUNT"; } 
+	| COUNT { $$ = "COUNT"; }
 	| MIN { $$ = "MIN"; }
 	| MAX { $$ = "MAX"; }
 	| AVG { $$ = "AVG"; }
@@ -1367,16 +1368,16 @@ Aggregator
 
 FuncValue
 	: Literal LPAR (DISTINCT|ALL)? ExprList RPAR
-		{ 
+		{
 			var funcid = $1;
 			var exprlist = $4;
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
-					$$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
+					$$ = new yy.FuncValue({funcid: funcid, args: exprlist});
 			} else if(alasql.aggr[$1]) {
-		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', 
+		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
                       funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT') });
 		    } else {
-			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist}); 
+			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist});
 			};
 		}
 	| Literal LPAR RPAR
@@ -1393,6 +1394,8 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
 	| DATEDIFF LPAR STRING COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEDIFF', args:[$3,$5,$7]}) }
+	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args:[new yy.StringValue({value:$3}),$5,$7]}) }
 	| INTERVAL Expression Literal
 		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args:[$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
 	;
@@ -1435,9 +1438,9 @@ VarValue
 
 ExistsValue
 	: EXISTS LPAR Select RPAR
-		{ 
+		{
 			if(!yy.exists) yy.exists = [];
-			$$ = new yy.ExistsValue({value:$3, existsidx:yy.exists.length}); 
+			$$ = new yy.ExistsValue({value:$3, existsidx:yy.exists.length});
 			yy.exists.push($3);
 		}
 	;
@@ -1455,14 +1458,14 @@ ParamValue
 */	| COLON Literal
 		{ $$ = new yy.ParamValue({param: $2}); }
 	| QUESTION
-		{ 
-			if(typeof yy.question == 'undefined') yy.question = 0; 
-			$$ = new yy.ParamValue({param: yy.question++}); 
+		{
+			if(typeof yy.question == 'undefined') yy.question = 0;
+			$$ = new yy.ParamValue({param: yy.question++});
 		}
 	| BRAQUESTION
-		{ 
-			if(typeof yy.question == 'undefined') yy.question = 0; 
-			$$ = new yy.ParamValue({param: yy.question++, array:true}); 
+		{
+			if(typeof yy.question == 'undefined') yy.question = 0;
+			$$ = new yy.ParamValue({param: yy.question++, array:true});
 		}
 	;
 
@@ -1489,9 +1492,9 @@ When
 ElseClause
 	: ELSE Expression
 		{ $$ = $2; }
-	| 
-		{ $$ = undefined; } 
-	; 
+	|
+		{ $$ = undefined; }
+	;
 
 Op
 	: Expression REGEXP Expression
@@ -1575,39 +1578,39 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'!===' , right:$3}); }
 
 	| Expression CondOp AllSome LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length}); 
-			yy.queries.push($5);  
+		{
+			if(!yy.queries) yy.queries = [];
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length});
+			yy.queries.push($5);
 		}
 
 	| Expression CondOp AllSome LPAR ExprList RPAR
-		{ 
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5}); 
+		{
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5});
 		}
 
 	| Expression AND Expression
-		{ 
+		{
 			if($1.op == 'BETWEEN1') {
 
 				if($1.left.op == 'AND') {
 					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
-						new yy.Op({left:$1.left.right, op:'BETWEEN', 
+						new yy.Op({left:$1.left.right, op:'BETWEEN',
 							right1:$1.right, right2:$3})
 					});
 				} else {
-					$$ = new yy.Op({left:$1.left, op:'BETWEEN', 
+					$$ = new yy.Op({left:$1.left, op:'BETWEEN',
 						right1:$1.right, right2:$3});
 				}
 
 			} else if($1.op == 'NOT BETWEEN1') {
 				if($1.left.op == 'AND') {
 					$$ = new yy.Op({left:$1.left.left,op:'AND',right:
-						new yy.Op({left:$1.left.right, op:'NOT BETWEEN', 
+						new yy.Op({left:$1.left.right, op:'NOT BETWEEN',
 							right1:$1.right, right2:$3})
 					});
 				} else {
-					$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN', 
+					$$ = new yy.Op({left:$1.left, op:'NOT BETWEEN',
 						right1:$1.right, right2:$3});
 				}
 			} else {
@@ -1632,17 +1635,17 @@ Op
 		{ $$ = new yy.UniOp({right: $2}); }
 
 	| Expression IN LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
+		{
+			if(!yy.queries) yy.queries = [];
 			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length});
-			yy.queries.push($4);  
+			yy.queries.push($4);
 		}
 
 	| Expression NOT IN LPAR Select RPAR
-		{ 
-			if(!yy.queries) yy.queries = []; 
+		{
+			if(!yy.queries) yy.queries = [];
 			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length});
-			yy.queries.push($5);  
+			yy.queries.push($5);
 		}
 
 	| Expression IN LPAR ExprList RPAR
@@ -1669,41 +1672,41 @@ Op
 	| Expression NOT IN VarValue
 		{ $$ = new yy.Op({left: $1, op:'NOT IN', right:$4}); }
 
-	/* 
-		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar. 
+	/*
+		Hack - it impossimle to parse BETWEEN AND and AND expressions with grammar.
 		At least, I do not know how.
 	*/
 	| Expression BETWEEN Expression
-		{ 	
+		{
 /*			var expr = $3;
 			if(expr.left && expr.left.op == 'AND') {
-				$$ = new yy.Op({left:new yy.Op({left:$1, op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+				$$ = new yy.Op({left:new yy.Op({left:$1, op:'BETWEEN', right:expr.left}), op:'AND', right:expr.right });
 			} else {
 */
-				$$ = new yy.Op({left:$1, op:'BETWEEN1', right:$3 }); 
+				$$ = new yy.Op({left:$1, op:'BETWEEN1', right:$3 });
 //			}
 		}
 	| Expression NOT_BETWEEN Expression
 		{
 //			var expr = $3;
 //			if(expr.left && expr.left.op == 'AND') {
-//				$$ = new yy.Op({left:new yy.Op({left:$1, op:'NOT BETWEEN', right:expr.left}), op:'AND', right:expr.right }); 
+//				$$ = new yy.Op({left:new yy.Op({left:$1, op:'NOT BETWEEN', right:expr.left}), op:'AND', right:expr.right });
 //			} else {
-				$$ = new yy.Op({left:$1, op:'NOT BETWEEN1', right:$3 }); 
+				$$ = new yy.Op({left:$1, op:'NOT BETWEEN1', right:$3 });
 //			}
 		}
 	| Expression IS Expression
 		{ $$ = new yy.Op({op:'IS' , left:$1, right:$3}); }
 	| Expression NOT NULL
-		{ 
+		{
 			$$ = new yy.Op({
-				op:'IS', 
-				left:$1, 
+				op:'IS',
+				left:$1,
 				right: new yy.UniOp({
 					op:'NOT',
-					right:new yy.NullValue({value:undefined}) 
+					right:new yy.NullValue({value:undefined})
 				})
-			}); 
+			});
 		}
 	| Expression DOUBLECOLON ColumnType
 		{ $$ = new yy.Convert({expression:$1}) ; yy.extend($$,$3) ; }
@@ -1715,10 +1718,10 @@ ColFunc
 	| FuncValue
 		{ $$ = $1;}
 	| AT LPAR Expression RPAR
-		{ $$ = $3;}	
+		{ $$ = $3;}
 	;
 
-CondOp 
+CondOp
 	: GT { $$ = $1; }
 	| GE { $$ = $1; }
 	| LT { $$ = $1; }
@@ -1799,14 +1802,14 @@ Insert
         | INSERT Into Table LPAR ColumnsList RPAR Select
                 { $$ = new yy.Insert({into:$3, columns: $5, select: $7}); }
         ;
-		
-Values 
+
+Values
         : VALUES
         | VALUE
-        ; 
+        ;
 
-Into 
-	: 
+Into
+	:
 	| INTO
 	;
 /*
@@ -1862,21 +1865,21 @@ ColumnsList
 
 CreateTable
 	:  CREATE TemporaryClause TableClass IfNotExists Table LPAR CreateTableDefClause RPAR CreateTableOptionsClause
-		{ 
-			$$ = new yy.CreateTable({table:$5}); 
-			yy.extend($$,$2); 
-			yy.extend($$,$3); 
-			yy.extend($$,$4); 
-			yy.extend($$,$7); 
-			yy.extend($$,$9); 
+		{
+			$$ = new yy.CreateTable({table:$5});
+			yy.extend($$,$2);
+			yy.extend($$,$3);
+			yy.extend($$,$4);
+			yy.extend($$,$7);
+			yy.extend($$,$9);
 		}
 	| CREATE TemporaryClause TableClass IfNotExists Table
-		{ 
-			$$ = new yy.CreateTable({table:$5}); 
-			yy.extend($$,$2); 
-			yy.extend($$,$3); 
-			yy.extend($$,$4); 
-		}		
+		{
+			$$ = new yy.CreateTable({table:$5});
+			yy.extend($$,$2);
+			yy.extend($$,$3);
+			yy.extend($$,$4);
+		}
 ;
 
 TableClass
@@ -1904,7 +1907,7 @@ CreateTableOption
 	| COLLATE EQ Literal
 	;
 
-TemporaryClause 
+TemporaryClause
 	: { $$ = undefined; }
 	| TEMP
 		{ $$ = {temporary:true}; }
@@ -1918,9 +1921,9 @@ IfNotExists
 
 CreateTableDefClause
 	: ColumnDefsList COMMA ConstraintsList
-		{ $$ = {columns: $1, constraints: $3}; }	
+		{ $$ = {columns: $1, constraints: $3}; }
 	| ColumnDefsList
-		{ $$ = {columns: $1}; }	
+		{ $$ = {columns: $1}; }
 	| AS Select
 		{ $$ = {as: $2} }
 	;
@@ -1962,7 +1965,7 @@ PrimaryKey
 	;
 
 ForeignKey
-	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList? 
+	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList?
 	     OnForeignKeyClause
 		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
 	;
@@ -1990,7 +1993,7 @@ OnUpdateClause
 
 UniqueKey
 	: UNIQUE KEY? Literal? LPAR ColumnsList RPAR
-		{ 
+		{
 			$$ = {type: 'UNIQUE', columns: $5, clustered:($3+'').toUpperCase()};
 		}
 	;
@@ -1998,7 +2001,7 @@ UniqueKey
 IndexKey
 	: INDEX Literal LPAR ColumnsList RPAR
 	| KEY Literal LPAR ColumnsList RPAR
-	;	
+	;
 ColsList
 	: Literal
 		{ $$ = [$1]; }
@@ -2085,7 +2088,7 @@ ColumnConstraintsClause
 
 ColumnConstraintsList
 	: ColumnConstraintsList ColumnConstraint
-		{ 
+		{
 			yy.extend($1,$2); $$ = $1;
 		}
 	| ColumnConstraint
@@ -2097,7 +2100,7 @@ ParLiteral
 		{ $$ = $2; }
 	;
 
-ColumnConstraint 
+ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
 	| FOREIGN KEY REFERENCES Table ParLiteral?
@@ -2195,31 +2198,31 @@ CreateDatabase
 	| CREATE Literal DATABASE IfNotExists Literal LPAR ExprList RPAR AsClause
 		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), databaseid:$5, args:$7, as:$9 }); yy.extend($$,$4); }
 	| CREATE Literal DATABASE IfNotExists StringValue AsClause
-		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(), 
+		{ $$ = new yy.CreateDatabase({engineid:$2.toUpperCase(),
 		    as:$6, args:[$5] }); yy.extend($$,$4); }
 	;
 
 AsClause
-	:	
+	:
 		{$$ = undefined;}
 	| AS Literal
 		{ $$ = $1; }
 	;
-	
+
 UseDatabase
 	: USE DATABASE Literal
-		{ $$ = new yy.UseDatabase({databaseid: $3 });}	
+		{ $$ = new yy.UseDatabase({databaseid: $3 });}
 	| USE Literal
-		{ $$ = new yy.UseDatabase({databaseid: $2 });}	
+		{ $$ = new yy.UseDatabase({databaseid: $2 });}
 	;
 
 DropDatabase
 	: DROP DATABASE IfExists Literal
-		{ $$ = new yy.DropDatabase({databaseid: $4 }); yy.extend($$,$3); }	
+		{ $$ = new yy.DropDatabase({databaseid: $4 }); yy.extend($$,$3); }
 	| DROP Literal DATABASE IfExists Literal
-		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }	
+		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }
 	| DROP Literal DATABASE IfExists StringValue
-		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }	
+		{ $$ = new yy.DropDatabase({databaseid: $5, engineid:$2.toUpperCase() }); yy.extend($$,$4); }
 	;
 
 /* INDEXES */
@@ -2228,7 +2231,7 @@ CreateIndex
 	:
 	 CREATE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$3, table:$5, columns:$7})}
-	| 
+	|
 
 	CREATE UNIQUE INDEX Literal ON Table LPAR OrderExpressionsList RPAR
 		{ $$ = new yy.CreateIndex({indexid:$4, table:$6, columns:$8, unique:true})}
@@ -2257,7 +2260,7 @@ ShowTables
 		{ $$ = new yy.ShowTables();}
 	| SHOW TABLE LIKE StringValue
 		{ $$ = new yy.ShowTables({like:$4});}
-	| SHOW TABLE FROM Literal 
+	| SHOW TABLE FROM Literal
 		{ $$ = new yy.ShowTables({databaseid: $4});}
 	| SHOW TABLE FROM Literal LIKE StringValue
 		{ $$ = new yy.ShowTables({like:$6, databaseid: $4});}
@@ -2287,21 +2290,21 @@ ShowCreateTable
 CreateView
 	:  CREATE TemporaryClause VIEW IfNotExists Table LPAR ColumnsList RPAR AS Select SubqueryRestriction?
 		{
-			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7}); 
-			yy.extend($$,$2); 
-			yy.extend($$,$4); 
+			$$ = new yy.CreateTable({table:$5,view:true,select:$10,viewcolumns:$7});
+			yy.extend($$,$2);
+			yy.extend($$,$4);
 		}
 	| CREATE TemporaryClause VIEW IfNotExists Table AS Select SubqueryRestriction?
-		{ 
-			$$ = new yy.CreateTable({table:$5,view:true,select:$7}); 
-			yy.extend($$,$2); 
-			yy.extend($$,$4); 
+		{
+			$$ = new yy.CreateTable({table:$5,view:true,select:$7});
+			yy.extend($$,$2);
+			yy.extend($$,$4);
 		}
 	;
 
 SubqueryRestriction
 	: WITH READ ONLY
-	| WITH CHECK OPTION 
+	| WITH CHECK OPTION
 	| WITH CHECK OPTION CONSTRAINT Constraint
 	;
 
@@ -2349,7 +2352,7 @@ FetchDirection
 
 /*
 Help
-	: HELP StringValue 
+	: HELP StringValue
 		{ $$ = new yy.Help({subject:$2.value.toUpperCase()} ) ; }
 	| HELP
 		{ $$ = new yy.Help() ; }
@@ -2371,7 +2374,7 @@ Assert
 		{ $$ = new yy.Assert({value:$2}); }
 	| ASSERT PrimitiveValue
 		{ $$ = new yy.Assert({value:$2.value}); }
-	| ASSERT STRING COMMA Json	
+	| ASSERT STRING COMMA Json
 		{ $$ = new yy.Assert({value:$4, message:$2}); }
 	;
 
@@ -2409,7 +2412,7 @@ JsonPrimitiveValue
 	| LogicValue
 		{ $$ = $1.value; }
 	| Column
-		{ $$ = $1; }	
+		{ $$ = $1; }
 	| NullValue
 		{ $$ = $1.value; }
 	| ParamValue
@@ -2432,9 +2435,9 @@ JsonObject
 
 JsonArray
 	: JsonElementsList RBRA
-		{ $$ = $1; } 
+		{ $$ = $1; }
 	| JsonElementsList COMMA RBRA
-		{ $$ = $1; } 
+		{ $$ = $1; }
 	| RBRA
 		{ $$ = []; }
 	;
@@ -2450,15 +2453,15 @@ JsonProperty
 	: STRING COLON JsonValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON JsonValue
-		{ $$ = {}; $$[$1] = $3; }		
+		{ $$ = {}; $$[$1] = $3; }
 	| Literal COLON JsonValue
-		{ $$ = {}; $$[$1] = $3; }		
+		{ $$ = {}; $$[$1] = $3; }
 /*	| STRING COLON ParamValue
-		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }	
+		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON ParamValue
-		{ $$ = {}; $$[$1] = $3; }		
+		{ $$ = {}; $$[$1] = $3; }
 	| LITERAL COLON ParamValue
-		{ $$ = {}; $$[$1] = $3; }		
+		{ $$ = {}; $$[$1] = $3; }
 */	;
 
 JsonElementsList
@@ -2490,7 +2493,7 @@ AtDollar
 		{$$ = '$'; }
 	;
 
-SetPropsList 
+SetPropsList
 	: SetPropsList ArrowDot SetProp
 		{ $1.push($3); $$ = $1; }
 	| ArrowDot SetProp
@@ -2541,41 +2544,41 @@ Restore
 		{ $$ = new yy.Restore(); }
 	| RESTORE Literal
 		{ $$ = new yy.Restore({databaseid: $2}); }
-	;	
+	;
 */
 
 If
-	: 
-/*	IF Expression AStatement 
-		{ $$ = new yy.If({expression:$2,thenstat:$3}); 
+	:
+/*	IF Expression AStatement
+		{ $$ = new yy.If({expression:$2,thenstat:$3});
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
-	| 
+	|
 
 */
-	IF Expression AStatement ElseStatement 
-		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4}); 
+	IF Expression AStatement ElseStatement
+		{ $$ = new yy.If({expression:$2,thenstat:$3, elsestat:$4});
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
 
 	| IF Expression AStatement
-		{ 
-			$$ = new yy.If({expression:$2,thenstat:$3}); 
+		{
+			$$ = new yy.If({expression:$2,thenstat:$3});
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
 	;
 
 ElseStatement
-	: ELSE AStatement 
+	: ELSE AStatement
 		{$$ = $2;}
 	;
 
 While
 	: WHILE Expression AStatement
-		{ $$ = new yy.While({expression:$2,loopstat:$3}); 
+		{ $$ = new yy.While({expression:$2,loopstat:$3});
 			if($3.exists) $$.exists = $3.exists;
 			if($3.queries) $$.queries = $3.queries;
 		}
@@ -2583,24 +2586,24 @@ While
 
 Continue
 	: CONTINUE
-		{ $$ = new yy.Continue(); } 
+		{ $$ = new yy.Continue(); }
 	;
 
 Break
 	: BREAK
-		{ $$ = new yy.Break(); } 
+		{ $$ = new yy.Break(); }
 	;
 
 BeginEnd
 	: BEGIN Statements END
-		{ $$ = new yy.BeginEnd({statements:$2}); } 
+		{ $$ = new yy.BeginEnd({statements:$2}); }
 	;
 
 Print
 	: PRINT ExprList
-		{ $$ = new yy.Print({exprs:$2});}	
+		{ $$ = new yy.Print({exprs:$2});}
 	| PRINT Select
-		{ $$ = new yy.Print({select:$2});}	
+		{ $$ = new yy.Print({select:$2});}
 	;
 
 Require
@@ -2668,8 +2671,8 @@ TruncateTable
 
 Merge
 	: MERGE MergeInto MergeUsing MergeOn MergeMatchedList OutputClause
-		{ 
-			$$ = new yy.Merge(); yy.extend($$,$2); yy.extend($$,$3); 
+		{
+			$$ = new yy.Merge(); yy.extend($$,$2); yy.extend($$,$3);
 			yy.extend($$,$4);
 			yy.extend($$,{matches:$5});yy.extend($$,$6);
 		}
@@ -2744,7 +2747,7 @@ MergeNotMatchedAction
 	;
 
 OutputClause
-	: 
+	:
 	| OUTPUT ResultColumns
 		{ $$ = {output:{columns:$2}} }
 	| OUTPUT ResultColumns INTO AtDollar Literal
@@ -2757,7 +2760,7 @@ OutputClause
 
 /*
 CreateVertex
-	: CREATE VERTEX 
+	: CREATE VERTEX
 		{ $$ = new yy.CreateVertex(); }
 	| CREATE VERTEX SET SetColumnsList
 		{ $$ = new yy.CreateVertex({set: $4}); }
@@ -2774,10 +2777,10 @@ CreateVertex
 	;
 */
 CreateVertex
-	: CREATE VERTEX Literal? SharpValue? StringValue? CreateVertexSet 
+	: CREATE VERTEX Literal? SharpValue? StringValue? CreateVertexSet
 		{
-			$$ = new yy.CreateVertex({class:$3,sharp:$4, name:$5}); 
-			yy.extend($$,$6); 
+			$$ = new yy.CreateVertex({class:$3,sharp:$4, name:$5});
+			yy.extend($$,$6);
 		}
 	;
 
@@ -2787,7 +2790,7 @@ SharpValue
 	;
 
 CreateVertexSet
-	: 
+	:
 		{$$ = undefined; }
 	| SET SetColumnsList
 		{ $$ = {sets:$2}; }
@@ -2801,7 +2804,7 @@ CreateEdge
 	: CREATE EDGE StringValue? FROM Expression TO Expression CreateVertexSet
 		{
 			$$ = new yy.CreateEdge({from:$5,to:$7,name:$3});
-			yy.extend($$,$8); 
+			yy.extend($$,$8);
 		}
 /*	| CREATE EDGE StringValue? FROM Expression TO Expression
 		{
@@ -2812,13 +2815,13 @@ CreateEdge
 
 /*
 CreateEdge
-	: CREATE EDGE Literal? 
-	FROM Expression 
+	: CREATE EDGE Literal?
+	FROM Expression
 	TO Expression
 	(SET SetColumnsList | CONTENT Expression)?
 
-	{ 
-		$$ = new yy.CreateEdge({class:$3, from:$5, to:$7}); 
+	{
+		$$ = new yy.CreateEdge({class:$3, from:$5, to:$7});
 		if(typeof $8 != 'undefined') {
 			$$.type = $8;
 			$$.expre = $9;
@@ -2843,27 +2846,27 @@ GraphList
 	;
 
 GraphVertexEdge
-	: GraphElement Json? GraphAsClause? 
-		{ 
-			$$ = $1; 
+	: GraphElement Json? GraphAsClause?
+		{
+			$$ = $1;
 			if($2) $$.json = new yy.Json({value:$2});
 			if($3) $$.as = $3;
 		}
-	| GraphElementVar GT GraphElement Json? GraphAsClause? GT GraphElementVar 
-		{ 
+	| GraphElementVar GT GraphElement Json? GraphAsClause? GT GraphElementVar
+		{
 			$$ = {source:$1, target: $7};
 			if($4) $$.json = new yy.Json({value:$4});
 			if($5) $$.as = $5;
 			yy.extend($$,$3);
 		}
-	| GraphElementVar GT Json GraphAsClause? GT GraphElementVar 
-		{ 
+	| GraphElementVar GT Json GraphAsClause? GT GraphElementVar
+		{
 			$$ = {source:$1, target: $6};
 			if($4) $$.json = new yy.Json({value:$3});
 			if($5) $$.as = $4;
 		}
-	| GraphElementVar GTGT GraphElementVar 
-		{ 
+	| GraphElementVar GTGT GraphElementVar
+		{
 			$$ = {source:$1, target: $3};
 		}
 	| Literal LPAR GraphList RPAR
@@ -2890,32 +2893,32 @@ GraphAtClause
 	;
 
 GraphElement2
-	:  Literal? SharpLiteral? STRING? ColonLiteral? 
-		{ 
+	:  Literal? SharpLiteral? STRING? ColonLiteral?
+		{
 			var s3 = $3;
-			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
 		}
 	;
 
 GraphElement
-	:  Literal SharpLiteral? STRING? ColonLiteral? 
-		{ 
+	:  Literal SharpLiteral? STRING? ColonLiteral?
+		{
 			var s3 = $3;
-			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4}; 
+			$$ = {prop:$1, sharp:$2, name:(typeof s3 == 'undefined')?undefined:s3.substr(1,s3.length-2), class:$4};
 		}
-	|  SharpLiteral STRING? ColonLiteral? 
-		{ 
+	|  SharpLiteral STRING? ColonLiteral?
+		{
 			var s2 = $2;
-			$$ = {sharp:$1, name:(typeof s2 == 'undefined')?undefined:s2.substr(1,s2.length-2), class:$3}; 
+			$$ = {sharp:$1, name:(typeof s2 == 'undefined')?undefined:s2.substr(1,s2.length-2), class:$3};
 		}
-	|  STRING ColonLiteral? 
-		{ 
+	|  STRING ColonLiteral?
+		{
 			var s1 = $1;
-			$$ = {name:(typeof s1 == 'undefined')?undefined:s1.substr(1,s1.length-2), class:$2}; 
+			$$ = {name:(typeof s1 == 'undefined')?undefined:s1.substr(1,s1.length-2), class:$2};
 		}
 	|  ColonLiteral
-		{ 
-			$$ = {class:$1}; 
+		{
+			$$ = {class:$1};
 		}
 	;
 
@@ -2950,7 +2953,7 @@ AddRule
 
 TermsList
 	: TermsList COMMA Term
-		{ $$ = $1; $$.push($3); } 
+		{ $$ = $1; $$.push($3); }
 	| Term
 		{ $$ = [$1]; }
 	;
@@ -2972,36 +2975,36 @@ Call
 		{ $$ = new yy.ExpressionStatement({expression:$2}); }
 	;
 
-CreateTrigger 
+CreateTrigger
 	: CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table AS? AStatement
-		{ 
-			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$9}); 
+		{
+			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, statement:$9});
 			if($9.exists) $$.exists = $9.exists;
 			if($9.queries) $$.queries = $9.queries;
 		}
 	| CREATE TRIGGER Literal BeforeAfter InsertDeleteUpdate ON Table Literal
-		{ 
-			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, funcid:$8}); 
+		{
+			$$ = new yy.CreateTrigger({trigger:$3, when:$4, action:$5, table:$7, funcid:$8});
 		}
 	| CREATE TRIGGER Literal ON Table BeforeAfter InsertDeleteUpdate AS? AStatement
-		{ 
-			$$ = new yy.CreateTrigger({trigger:$3, when:$5, action:$6, table:$4, statement:$9}); 
+		{
+			$$ = new yy.CreateTrigger({trigger:$3, when:$5, action:$6, table:$4, statement:$9});
 			if($9.exists) $$.exists = $9.exists;
 			if($9.queries) $$.queries = $9.queries;
 		}
 	;
 
 BeforeAfter
-	: 
-		{ $$ = 'AFTER'; } 
+	:
+		{ $$ = 'AFTER'; }
 	| FOR
-		{ $$ = 'AFTER'; } 
+		{ $$ = 'AFTER'; }
 	| BEFORE
-		{ $$ = 'BEFORE'; } 
+		{ $$ = 'BEFORE'; }
 	| AFTER
-		{ $$ = 'AFTER'; } 		
+		{ $$ = 'AFTER'; }
 	| INSTEAD OF
-		{ $$ = 'INSTEADOF'; } 		
+		{ $$ = 'INSTEADOF'; }
 	;
 
 InsertDeleteUpdate
@@ -3016,7 +3019,7 @@ DropTrigger
 	;
 
 Reindex
-	: REINDEX Literal 
+	: REINDEX Literal
 		{ $$ = new yy.Reindex({indexid:$2});}
 	;
 

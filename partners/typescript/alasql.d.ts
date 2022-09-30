@@ -30,6 +30,7 @@ declare namespace alaSQLSpace {
 		oracle: boolean;
 		sqlite: boolean;
 		orientdb: boolean;
+		excel: any;
 	}
 
 	// compiled Statement
@@ -57,7 +58,7 @@ declare namespace alaSQLSpace {
 
 	// see https://github.com/agershun/alasql/wiki/User%20Defined%20Functions
 	interface userDefinedFunction {
-		(x: any): any;
+		(...x: any[]): any;
 	}
 	interface userDefinedFunctionLookUp {
 		[x: string]: userDefinedFunction;

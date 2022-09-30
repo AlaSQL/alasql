@@ -43,7 +43,7 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	// ToDo: check if cb must be treated differently here
 	if (opts.sourcefilename) {
 		alasql.utils.loadBinaryFile(opts.sourcefilename, !!cb, function (data) {
-			wb = XLSX.read(data, {type: 'binary'});
+			wb = XLSX.read(data, {type: 'binary', ...alasql.options.excel, ...opts});
 			doExport();
 		});
 	} else {
