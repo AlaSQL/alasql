@@ -65,7 +65,6 @@ gulp.task('js-merge', function () {
 		.src([
 			'./src/05copyright.js',
 			'./src/10start.js',
-			'./src/newDate.js',
 			'./src/alasqlparser.js',
 			'./src/12pretty.js',
 			'./src/15utility.js',
