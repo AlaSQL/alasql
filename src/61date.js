@@ -132,16 +132,16 @@ alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
 	var nd = newDate(d);
-	var	period = period.toLowerCase();
+	var period = period.toLowerCase();
 
 	switch (period) {
-		case "year":
+		case 'year':
 			nd.setFullYear(nd.getFullYear() + interval);
 			break;
-		case "quarter":
+		case 'quarter':
 			nd.setMonth(nd.getMonth() + interval * 3);
 			break;
-		case "month":
+		case 'month':
 			nd.setMonth(nd.getMonth() + interval);
 			break;
 		default:
@@ -166,14 +166,12 @@ alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 	return new Date(nd);
 };
 
-
 var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}\.\d+$/;
 function newDate(d) {
-    if (typeof d === "string") {
-        if (dateRegexp.test(d)) {
-            d = d.replace(".", "-").replace(".", "-");
-        }
-    }
-    return new Date(d);
+	if (typeof d === 'string') {
+		if (dateRegexp.test(d)) {
+			d = d.replace('.', '-').replace('.', '-');
+		}
+	}
+	return new Date(d);
 }
-
