@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-process.env.TZ = 'UTC'
+process.env.TZ = 'UTC';
 
 /*
  This sample beased on this article:
@@ -75,18 +75,18 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			UNION ALL
 			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
 
-		var expected =	[
-			["year", "2021-01-01T13:10:10.111Z"],
-			["quarter", "2020-04-01T13:10:10.111Z"],
-			["month", "2020-02-01T13:10:10.111Z"],
-			["dayofyear", "2020-01-02T13:10:10.111Z"],
-			["day", "2020-01-02T13:10:10.111Z"],
-			["week", "2020-01-08T13:10:10.111Z"],
-			["weekday", "2020-01-02T13:10:10.111Z"],
-			["hour", "2020-01-01T14:10:10.111Z"],
-			["minute", "2020-01-01T13:11:10.111Z"],
-			["second", "2020-01-01T13:10:11.111Z"],
-			["millisecond", "2020-01-01T13:10:10.112Z"]
+		var expected = [
+			['year', '2021-01-01T13:10:10.111Z'],
+			['quarter', '2020-04-01T13:10:10.111Z'],
+			['month', '2020-02-01T13:10:10.111Z'],
+			['dayofyear', '2020-01-02T13:10:10.111Z'],
+			['day', '2020-01-02T13:10:10.111Z'],
+			['week', '2020-01-08T13:10:10.111Z'],
+			['weekday', '2020-01-02T13:10:10.111Z'],
+			['hour', '2020-01-01T14:10:10.111Z'],
+			['minute', '2020-01-01T13:11:10.111Z'],
+			['second', '2020-01-01T13:10:11.111Z'],
+			['millisecond', '2020-01-01T13:10:10.112Z'],
 		];
 
 		assert.deepEqual(res, expected);
@@ -120,18 +120,18 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			UNION ALL
 			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
 
-		var expected =	[
-			["year", "2021-01-01T13:10:10.111Z"],
-			["quarter", "2020-04-01T13:10:10.111Z"],
-			["month", "2020-02-01T13:10:10.111Z"],
-			["dayofyear", "2020-01-02T13:10:10.111Z"],
-			["day", "2020-01-02T13:10:10.111Z"],
-			["week", "2020-01-08T13:10:10.111Z"],
-			["weekday", "2020-01-02T13:10:10.111Z"],
-			["hour", "2020-01-01T14:10:10.111Z"],
-			["minute", "2020-01-01T13:11:10.111Z"],
-			["second", "2020-01-01T13:10:11.111Z"],
-			["millisecond", "2020-01-01T13:10:10.112Z"]
+		var expected = [
+			['year', '2021-01-01T13:10:10.111Z'],
+			['quarter', '2020-04-01T13:10:10.111Z'],
+			['month', '2020-02-01T13:10:10.111Z'],
+			['dayofyear', '2020-01-02T13:10:10.111Z'],
+			['day', '2020-01-02T13:10:10.111Z'],
+			['week', '2020-01-08T13:10:10.111Z'],
+			['weekday', '2020-01-02T13:10:10.111Z'],
+			['hour', '2020-01-01T14:10:10.111Z'],
+			['minute', '2020-01-01T13:11:10.111Z'],
+			['second', '2020-01-01T13:10:11.111Z'],
+			['millisecond', '2020-01-01T13:10:10.112Z'],
 		];
 
 		assert.deepEqual(res, expected);
