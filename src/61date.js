@@ -131,16 +131,16 @@ alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
 	var nd = new Date(d);
-	var	period = period.toLowerCase();
+	var period = period.toLowerCase();
 
 	switch (period) {
-		case "year":
+		case 'year':
 			nd.setFullYear(nd.getFullYear() + interval);
 			break;
-		case "quarter":
+		case 'quarter':
 			nd.setMonth(nd.getMonth() + interval * 3);
 			break;
-		case "month":
+		case 'month':
 			nd.setMonth(nd.getMonth() + interval);
 			break;
 		default:
