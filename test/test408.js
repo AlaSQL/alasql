@@ -3,6 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+process.env.TZ = 'UTC'
+
 /*
  This sample beased on this article:
 
