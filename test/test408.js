@@ -3,6 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+process.env.TZ = 'UTC'
+
 /*
  This sample beased on this article:
 
@@ -48,7 +50,7 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 	});
 
 	it('4. DATEADD()', function (done) {
-		alasql("DECLARE @datetime2 datetime2 = '2020-01-01 13:10:10.1111111 GMT'");
+		alasql("DECLARE @datetime2 datetime2 = '2020-01-01 13:10:10.1111111 UTC'");
 
 		var res = alasql(`MATRIX OF
 			SELECT 'year', DATEADD(year,1,@datetime2).toISOString()
