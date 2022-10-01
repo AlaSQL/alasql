@@ -1083,6 +1083,15 @@ var extend = (utils.extend = function extend(a, b) {
 });
 
 /**
+ * Extracts the primitive data
+ */
+var getValueOf = (utils.getValueOf = function (val) {
+	return typeof val === 'object' && (val instanceof String || val instanceof Number)
+		? val.valueOf()
+		: val;
+});
+
+/**
  Flat array by first row
  */
 var flatArray = (utils.flatArray = function (a) {
@@ -1094,7 +1103,7 @@ var flatArray = (utils.flatArray = function (a) {
 	// For recordsets
 	if (typeof a === 'object' && a instanceof alasql.Recordset) {
 		return a.data.map(function (ai) {
-			return ai[a.columns[0].columnid];
+			return getValueOf(ai[a.columns[0].columnid]);
 		});
 	}
 	// Else for other arrays

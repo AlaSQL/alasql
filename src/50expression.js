@@ -508,10 +508,15 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 				context +
 				'))';
 			s += '.indexOf(';
-			s += leftJS() + ')>-1)';
+			s += 'alasql.utils.getValueOf(' + leftJS() + '))>-1)';
 		} else if (Array.isArray(this.right)) {
 			//			if(this.right.length == 0) return 'false';
-			s = '([' + this.right.map(ref).join(',') + '].indexOf(' + leftJS() + ')>-1)';
+			s =
+				'([' +
+				this.right.map(ref).join(',') +
+				'].indexOf(alasql.utils.getValueOf(' +
+				leftJS() +
+				'))>-1)';
 			//console.log(s);
 		} else {
 			s = '(' + rightJS() + '.indexOf(' + leftJS() + ')>-1)';
@@ -528,11 +533,11 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 			//			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s += 'alasql.utils.flatArray(this.queriesfn[' + this.queriesidx + '](params,null,p))';
 			s += '.indexOf(';
-			s += leftJS() + ')<0)';
+			s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 		} else if (Array.isArray(this.right)) {
 			//			if(this.right.length == 0) return 'true';
 			s = '([' + this.right.map(ref).join(',') + '].indexOf(';
-			s += leftJS() + ')<0)';
+			s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 		} else {
 			s = '(' + rightJS() + '.indexOf(';
 			s += leftJS() + ')==-1)';
