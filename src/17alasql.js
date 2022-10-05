@@ -28,7 +28,8 @@ alasql.parser.parseError = function (str, hash) {
  	}
  */
 alasql.parse = function (sql) {
-	return alasqlparser.parse(alasql.utils.uncomment(sql));
+	const command = Array.isArray(sql) ? sql[0] : sql;
+	return alasqlparser.parse(alasql.utils.uncomment(command));
 };
 
 /**
