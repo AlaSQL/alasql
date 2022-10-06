@@ -1,12 +1,13 @@
 #!/usr/bin/env node
+
 //
 // Command line interface for Alasql
-// Version: 0.2.2
+// Version: 0.2.3
 // Date: 28.07.2015
-// (c) 2014-2015, Andrey Gershun & M. Rangel Wulff
+// (c) 2014-2022, Andrey Gershun & Mathias Wulff
 //
 
-let alasql = require('alasql');
+let alasql = require('../dist/alasql.fs.js');
 let path = require('path');
 let fs = require('fs');
 let stdin = process.openStdin();
