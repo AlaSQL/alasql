@@ -22,7 +22,9 @@ var packageData = require('./package.json'); // JSON.parse(fs.readFileSync('pack
 var version = packageData.version;
 var branch = execSync(
 	'git --work-tree="' + __dirname + '" --git-dir="' + __dirname + '/.git" branch',
-	{encoding: 'utf8'}
+	{
+		encoding: 'utf8',
+	}
 )
 	.match(/^\*\s+(.*)/m)[1]
 	.trim();
