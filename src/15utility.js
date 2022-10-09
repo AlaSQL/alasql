@@ -463,7 +463,14 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
  @todo merge functionality from loadFile and LoadBinaryFile
  */
 
-var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error) {
+var loadBinaryFile = (utils.loadBinaryFile = function (
+	path,
+	runAsync,
+	success,
+	error = (x) => {
+		throw x;
+	}
+) {
 	var fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
@@ -473,7 +480,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error
 			var request = require('request');
 			request({url: path, encoding: null}, function (err, response, data) {
 				if (err) {
-					throw err;
+					return error(err);
 				}
 				var arr = [];
 				for (var i = 0; i < data.length; ++i) {
@@ -482,10 +489,10 @@ var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error
 				success(arr.join(''));
 			});
 		} else {
-			if (asy) {
+			if (runAsync) {
 				fs.readFile(path, function (err, data) {
 					if (err) {
-						throw err;
+						return error(err);
 					}
 					var arr = [];
 					for (var i = 0; i < data.length; ++i) {
@@ -494,7 +501,12 @@ var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error
 					success(arr.join(''));
 				});
 			} else {
-				var data = fs.readFileSync(path);
+				var data;
+				try {
+					data = fs.readFileSync(path);
+				} catch (e) {
+					return error(e);
+				}
 				var arr = [];
 				for (var i = 0; i < data.length; ++i) {
 					arr[i] = String.fromCharCode(data[i]);
@@ -508,16 +520,18 @@ var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error
 		var RNFetchBlob = require('react-native-fetch-blob').default;
 		var dirs = RNFetchBlob.fs.dirs;
 		//should use readStream instead if the file is large
-		RNFetchBlob.fs.readFile(path, 'base64').then(function (data) {
-			//RNFetchBlob.base64.decode(data) //need more test on excel
-			success(data);
-		});
+		RNFetchBlob.fs
+			.readFile(path, 'base64')
+			.then(function (data) {
+				success(data);
+			})
+			.catch(error);
 		//*/
 	} else {
 		if (typeof path === 'string') {
 			// For browser
 			var xhr = new XMLHttpRequest();
-			xhr.open('GET', path, asy); // Async
+			xhr.open('GET', path, runAsync); // Async
 			xhr.responseType = 'arraybuffer';
 			xhr.onload = function () {
 				var data = new Uint8Array(xhr.response);
@@ -527,7 +541,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error
 				}
 				success(arr.join(''));
 			};
-			// xhr.responseType = "blob";
+			xhr.onerror = error;
 			xhr.send();
 		} else if (path instanceof Event) {
 			// console.log("event");
@@ -538,6 +552,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (path, asy, success, error
 				var data = e.target.result;
 				success(data);
 			};
+			reader.onerror = error();
 			reader.readAsArrayBuffer(files[0]);
 		} else if (path instanceof Blob) {
 			success(path);
