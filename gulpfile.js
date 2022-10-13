@@ -28,13 +28,13 @@ var branch = execSync(
 	.trim();
 // var hint = parseInt(execSync('git rev-list HEAD --count', {encoding:'utf8'})) | 0; // removed as it does not work on shallow cloning
 var hint = execSync('git rev-parse --short HEAD', {encoding: 'utf8'});
-if (!/^master|^release\//.test(branch)) {
-	version +=
-		'-' +
-		branch.replace(/[^0-9a-z-]/gi, '.').replace(/^\.+|\.+$/g, '') +
-		'-' +
-		hint.replace(/[^0-9a-z-]/gi);
-}
+//if (!/^(master|release|develop)/.test(branch)) {
+version +=
+	'-' +
+	branch.replace(/[^0-9a-z-]/gi, '.').replace(/^\.+|\.+$/g, '') +
+	'-' +
+	hint.replace(/[^0-9a-z-]/gi, '');
+//}
 
 gulp.task('js-merge-worker', function () {
 	return gulp

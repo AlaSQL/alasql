@@ -5,7 +5,6 @@ partners/
 test/
 src/
 *.md
-.bithoundrc
 .codeclimate.yml
 .gitattributes
 .gitignore

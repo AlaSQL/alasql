@@ -54,7 +54,7 @@ var res = alasql("SELECT * FROM cities WHERE pop < 3500000 ORDER BY pop DESC");
 // res = [ { "city": "Madrid", "pop": 3041579 }, { "city": "Paris", "pop": 2249975 } ]
 ```
 
-[Live Demo](http://jsfiddle.net/2aorhk1d/)
+[Live Demo](https://jsfiddle.net/jqk80ard/)
 
 #### Array of Objects
 
@@ -66,7 +66,7 @@ var res = alasql('SELECT a, SUM(b) AS b FROM ? GROUP BY a',[data]);
 // res = [ { "a": 1, "b": 40},{ "a": 2, "b": 20 } ]
 ```
 
-[Live Demo](http://jsfiddle.net/ztfhdrsv/)
+[Live Demo](https://jsfiddle.net/8brvex4f/)
 
 #### Spreadsheet
 
@@ -653,4 +653,4 @@ and other people for useful tools, which make our work much easier.
 
 ----
 <a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003946/d6e5c076-f156-11e5-8238-e62d2a8d20dc.png" align="right" alt="AlaSQL logo"/></a>
-© 2014-2018, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
+© 2014-2022, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
