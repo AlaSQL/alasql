@@ -1,4 +1,7 @@
 if (alasql.options.mysql) {
+	alasql.fn.TIMESTAMPDIFF = function (unit, date1, date2) {
+		return alasql.stdfn.DATEDIFF(unit, date1, date2);
+	};
 }
 
 if (alasql.options.mysql || alasql.options.sqlite) {

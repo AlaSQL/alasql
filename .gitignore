@@ -7,5 +7,14 @@ test/test604.json
 test/test251.xlsx
 .versions
 .npm/
+*.log
+yarn-error.log
 package-lock.json
 dist/
+/.idea/.gitignore
+/.idea/alasql.iml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/jsLinters/jshint.xml
+/.idea/modules.xml
+/.idea/runConfigurations.xml
+/.idea/vcs.xml

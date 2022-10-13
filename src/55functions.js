@@ -11,7 +11,7 @@ yy.FuncValue = function (params) {
 };
 
 var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
-yy.FuncValue.prototype.toString = function (dontas) {
+yy.FuncValue.prototype.toString = function () {
 	var s = '';
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
@@ -30,9 +30,6 @@ yy.FuncValue.prototype.toString = function (dontas) {
 		}
 		s += ')';
 	}
-
-	if (this.as && !dontas) s += ' AS ' + this.as.toString();
-	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
@@ -114,8 +111,6 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		s += ')';
 	}
 	//console.log('userfn:',s,this);
-
-	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
@@ -167,7 +162,7 @@ stdlib.IIF = function (a, b, c) {
 	}
 };
 stdlib.IFNULL = function (a, b) {
-	return '(' + a + '||' + b + ')';
+	return '((typeof ' + a + ' ==="undefined" || null ===  ' + a + ')?' + b + ':' + a + ')';
 };
 stdlib.INSTR = function (s, p) {
 	return '((' + s + ').indexOf(' + p + ')+1)';
@@ -278,10 +273,8 @@ stdlib.UPPER = stdlib.UCASE = function (s) {
 // Concatination of strings
 stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
-	args = args.filter(function(el, i){
-		return !i || (el !== null && el !== undefined);
-	});
-	return args.slice(1, args.length).join(args[0] || "");
+	args = args.filter((x) => !(x === null || typeof x === 'undefined'));
+	return args.slice(1, args.length).join(args[0] || '');
 };
 
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
