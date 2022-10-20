@@ -413,6 +413,21 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 		s =
 			'' +
 			'(' +
+			leftJS() +
+			"=="+
+			rightJS()+
+			')'+
+			'||'+
+			'('+
+			`Number.isInteger(${leftJS()}) && (${leftJS()} < 0 ? true === ${rightJS()} : false === ${rightJS()})`+
+			')'
+			''
+	}
+
+	if (this.op === 'IS NULL' || this.op === 'IS NOT NULL'){
+		s =
+			'' +
+			'(' +
 			'(' +
 			leftJS() +
 			'==null)' + // Cant be ===
@@ -612,7 +627,6 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 	var declareRefs = 'y=[(' + refs.join('), (') + ')]';
-
 	if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
 		return '(' + declareRefs + ', ' + expr + ')';
 	}
@@ -817,7 +831,7 @@ yy.UniOp.prototype.toJS = function (context, tableid, defcols) {
 	}
 
 	if (this.op === 'NOT') {
-		return '!(' + this.right.toJS(context, tableid, defcols) + ')';
+		return '!(' + this.right.toJS(context, tableid, defcols) + ')'
 	}
 
 	if (this.op === '#') {
