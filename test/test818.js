@@ -76,7 +76,7 @@ describe('Test 818 IS condition check on premitives', function () {
             {
                 "0 IS NOT(TRUE)": true,
                 "-1 IS -2": false,
-                "1 IS NOT(TRUE)": true
+                "1 IS NOT(TRUE)": false
             }
         ])
         done()
