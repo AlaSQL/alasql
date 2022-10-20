@@ -417,10 +417,6 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 			"=="+
 			rightJS()+
 			')'+
-			'||'+
-			'('+
-			`Number.isInteger(${leftJS()}) && (${leftJS()} < 0 ? true === ${rightJS()} : false === ${rightJS()})`+
-			')'
 			''
 	}
 
