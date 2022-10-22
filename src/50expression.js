@@ -268,15 +268,17 @@ yy.Op.prototype.toString = function () {
 		return s;
 	}
 
-	if (this.op ==='IS NOT NULL' || this.op === 'IS NULL') {
-		return this.left.toString() +
+	if (this.op === 'IS NOT NULL' || this.op === 'IS NULL') {
+		return (
+			this.left.toString() +
 			' ' +
 			'IS' +
 			' ' +
 			(this.allsome ? this.allsome + ' ' : '') +
 			this.right.toString()
+		);
 	}
-	
+
 	return (
 		this.left.toString() +
 		' ' +
@@ -420,27 +422,27 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	}
 
 	if (this.op === 'IS') {
-		const leftOperand=leftJS()
-		const rightOperand=rightJS()
+		const leftOperand = leftJS();
+		const rightOperand = rightJS();
 		s =
 			'' +
-			'('+
 			'(' +
-			leftOperand+
-			"=="+
-			rightOperand+
-			')'+
-			' '+
-			'||'+
-			' '+
-			'('+
-			leftOperand+
-			' < 0 && '+
-			'true == '+
+			'(' +
+			leftOperand +
+			'==' +
 			rightOperand +
-			') '+
-			')'+
-			''
+			')' +
+			' ' +
+			'||' +
+			' ' +
+			'(' +
+			leftOperand +
+			' < 0 && ' +
+			'true == ' +
+			rightOperand +
+			') ' +
+			')' +
+			'';
 	}
 
 	if (this.op === 'IS NULL' || this.op === 'IS NOT NULL') {
@@ -850,7 +852,7 @@ yy.UniOp.prototype.toJS = function (context, tableid, defcols) {
 	}
 
 	if (this.op === 'NOT') {
-		return '!(' + this.right.toJS(context, tableid, defcols) + ')'
+		return '!(' + this.right.toJS(context, tableid, defcols) + ')';
 	}
 
 	if (this.op === '#') {
