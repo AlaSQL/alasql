@@ -78,7 +78,7 @@
 		"prettier": "2.7.1",
 		"strftime": "0.10.1",
 		"tabletop": "1.6.3",
-		"uglify-js": "3.17.3"
+		"uglify-js": "3.17.4"
 	},
 	"resolutions": {
 		"got": "^12.0.0",
