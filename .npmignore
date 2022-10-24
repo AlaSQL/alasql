@@ -5,7 +5,6 @@ partners/
 test/
 src/
 *.md
-.bithoundrc
 .codeclimate.yml
 .gitattributes
 .gitignore
@@ -22,3 +21,5 @@ utils/
 .prettierrc  
 yarn.lock
 tslint.json
+.husky
+.github

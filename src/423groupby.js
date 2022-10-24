@@ -299,8 +299,7 @@ if(false) {
 							colas +
 							"'][" +
 							colexp +
-							'])) \
-				 		 {';
+							'])) {';
 						var post = "g['$$_VALUES_" + colas + "'][" + colexp + ']=true;}';
 					}
 					if (col.aggregatorid === 'SUM') {

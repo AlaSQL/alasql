@@ -76,7 +76,7 @@ alasql.stdfn.CONVERT = function (value, args) {
 		if (/\d{8}/.test(val)) {
 			t = new Date(+val.substr(0, 4), +val.substr(4, 2) - 1, +val.substr(6, 2));
 		} else {
-			t = new Date(val);
+			t = newDate(val);
 		}
 		switch (args.style) {
 			case 1: // mm/dd/yy
@@ -247,9 +247,9 @@ alasql.stdfn.CONVERT = function (value, args) {
 	var udbtypeid = args.dbtypeid.toUpperCase();
 
 	if (args.dbtypeid == 'Date') {
-		return new Date(val);
+		return newDate(val);
 	} else if (udbtypeid == 'DATE') {
-		var d = new Date(val);
+		var d = newDate(val);
 		var s =
 			d.getFullYear() +
 			'.' +
@@ -258,7 +258,7 @@ alasql.stdfn.CONVERT = function (value, args) {
 			('0' + d.getDate()).substr(-2);
 		return s;
 	} else if (udbtypeid == 'DATETIME' || udbtypeid == 'DATETIME2') {
-		var d = new Date(val);
+		var d = newDate(val);
 		var s =
 			d.getFullYear() +
 			'.' +

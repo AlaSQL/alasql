@@ -1,12 +1,13 @@
 #!/usr/bin/env node
+
 //
 // Command line interface for Alasql
-// Version: 0.2.2
+// Version: 0.2.3
 // Date: 28.07.2015
-// (c) 2014-2015, Andrey Gershun & M. Rangel Wulff
+// (c) 2014-2022, Andrey Gershun & Mathias Wulff
 //
 
-let alasql = require('alasql');
+let alasql = require('../dist/alasql.fs.js');
 let path = require('path');
 let fs = require('fs');
 let stdin = process.openStdin();
@@ -42,6 +43,14 @@ let yargs = require('yargs')
 	.alias('f', 'file')
 	.nargs('f', 1)
 	.normalize('f')
+
+	.boolean('ast')
+	.describe('ast', 'Print AST instead of result')
+	.normalize('ast')
+
+	/*.boolean('comp')
+	.describe('comp', 'Print compiled function instead of result')
+	.normalize('comp')*/
 
 	.help('h')
 	.alias('h', 'help')
@@ -96,6 +105,8 @@ stdin.on('end', function () {
  * @returns {null} Result will be printet to console.log
  */
 function execute(sql, params) {
+	if ('' === sql) sql = params.shift() || '';
+
 	if (0 === sql.trim().length) {
 		console.error('\nNo SQL to process\n');
 		yargs.showHelp();
@@ -111,6 +122,26 @@ function execute(sql, params) {
 			}
 		}
 	}
+
+	if (argv.ast) {
+		try {
+			console.log(formatOutput(alasql.parse(sql, params)));
+			process.exit(0);
+		} catch (e) {
+			console.error(e);
+			process.exit(1);
+		}
+	}
+
+	/*if (argv.comp) {
+		try {
+			console.log(alasql.compile(sql, params));
+			process.exit(0);
+		} catch (e) {
+			console.error(e);
+			process.exit(1);
+		}
+	}*/
 
 	alasql
 		.promise(sql, params)

@@ -26,6 +26,7 @@ stdfn.ASCII = function (a) {
 */
 stdfn.COALESCE = function () {
 	for (var i = 0; i < arguments.length; i++) {
+		if (arguments[i] === null) continue;
 		if (typeof arguments[i] == 'undefined') continue;
 		if (typeof arguments[i] == 'number' && isNaN(arguments[i])) continue;
 		return arguments[i];
@@ -43,16 +44,16 @@ stdfn.OBJECT_ID = function (objid) {
 
 stdfn.DATE = function (d) {
 	if (/\d{8}/.test(d)) return new Date(+d.substr(0, 4), +d.substr(4, 2) - 1, +d.substr(6, 2));
-	return new Date(d);
+	return newDate(d);
 };
 
 stdfn.NOW = function () {
 	var d = new Date();
 	var s =
 		d.getFullYear() +
-		'.' +
+		'-' +
 		('0' + (d.getMonth() + 1)).substr(-2) +
-		'.' +
+		'-' +
 		('0' + d.getDate()).substr(-2);
 	s +=
 		' ' +
@@ -75,37 +76,37 @@ stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
 // 	}
 
 stdfn.SECOND = function (d) {
-	var d = new Date(d);
+	var d = newDate(d);
 	return d.getSeconds();
 };
 
 stdfn.MINUTE = function (d) {
-	var d = new Date(d);
+	var d = newDate(d);
 	return d.getMinutes();
 };
 
 stdfn.HOUR = function (d) {
-	var d = new Date(d);
+	var d = newDate(d);
 	return d.getHours();
 };
 
 stdfn.DAYOFWEEK = stdfn.WEEKDAY = function (d) {
-	var d = new Date(d);
+	var d = newDate(d);
 	return d.getDay();
 };
 
 stdfn.DAY = stdfn.DAYOFMONTH = function (d) {
-	var d = new Date(d);
+	var d = newDate(d);
 	return d.getDate();
 };
 
 stdfn.MONTH = function (d) {
-	var d = new Date(d);
+	var d = newDate(d);
 	return d.getMonth() + 1;
 };
 
 stdfn.YEAR = function (d) {
-	var d = new Date(d);
+	var d = newDate(d);
 	return d.getFullYear();
 };
 
@@ -125,13 +126,30 @@ var PERIODS = {
 };
 
 alasql.stdfn.DATEDIFF = function (period, d1, d2) {
-	var interval = new Date(d2).getTime() - new Date(d1).getTime();
+	var interval = newDate(d2).getTime() - newDate(d1).getTime();
 	return interval / PERIODS[period.toLowerCase()];
 };
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
-	var nd = new Date(d).getTime() + interval * PERIODS[period.toLowerCase()];
-	return new Date(nd);
+	var nd = newDate(d);
+	var period = period.toLowerCase();
+
+	switch (period) {
+		case 'year':
+			nd.setFullYear(nd.getFullYear() + interval);
+			break;
+		case 'quarter':
+			nd.setMonth(nd.getMonth() + interval * 3);
+			break;
+		case 'month':
+			nd.setMonth(nd.getMonth() + interval);
+			break;
+		default:
+			nd = new Date(nd.getTime() + interval * PERIODS[period]);
+			break;
+	}
+
+	return nd;
 };
 
 alasql.stdfn.INTERVAL = function (interval, period) {
@@ -139,11 +157,21 @@ alasql.stdfn.INTERVAL = function (interval, period) {
 };
 
 alasql.stdfn.DATE_ADD = alasql.stdfn.ADDDATE = function (d, interval) {
-	var nd = new Date(d).getTime() + interval;
+	var nd = newDate(d).getTime() + interval;
 	return new Date(nd);
 };
 
 alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
-	var nd = new Date(d).getTime() - interval;
+	var nd = newDate(d).getTime() - interval;
 	return new Date(nd);
 };
+
+var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}/;
+function newDate(d) {
+	if (typeof d === 'string') {
+		if (dateRegexp.test(d)) {
+			d = d.replace('.', '-').replace('.', '-');
+		}
+	}
+	return new Date(d);
+}

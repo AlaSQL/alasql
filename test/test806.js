@@ -13,8 +13,9 @@ describe(
 			var expectedToStringValue2 =
 				"INSERT INTO cities VALUES ('Rome',2863223),('Paris',2249975),('Berlin',3517424),('Madrid',3041579)";
 
-			var statements = alasql.parse(expectedToStringValue1 + ';' + expectedToStringValue2)
-				.statements;
+			var statements = alasql.parse(
+				expectedToStringValue1 + ';' + expectedToStringValue2
+			).statements;
 
 			assert.equal(statements[0].toString(), expectedToStringValue1);
 			assert.equal(statements[1].toString(), expectedToStringValue2);

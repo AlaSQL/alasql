@@ -101,7 +101,13 @@ alasql.options.nocount = false;
 // Check for NaN and convert it to undefined
 alasql.options.nan = false;
 
+alasql.options.excel = {cellDates: true};
+
 alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
+
+alasql.options.loopbreak = 100000;
+
+alasql.options;
 
 //alasql.options.worker = false;
 

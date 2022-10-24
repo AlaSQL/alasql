@@ -11,7 +11,7 @@ yy.FuncValue = function (params) {
 };
 
 var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
-yy.FuncValue.prototype.toString = function (dontas) {
+yy.FuncValue.prototype.toString = function () {
 	var s = '';
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
@@ -30,9 +30,6 @@ yy.FuncValue.prototype.toString = function (dontas) {
 		}
 		s += ')';
 	}
-
-	if (this.as && !dontas) s += ' AS ' + this.as.toString();
-	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
@@ -114,8 +111,6 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		s += ')';
 	}
 	//console.log('userfn:',s,this);
-
-	//	if(this.alias) s += ' AS '+this.alias;
 	return s;
 };
 
@@ -167,7 +162,7 @@ stdlib.IIF = function (a, b, c) {
 	}
 };
 stdlib.IFNULL = function (a, b) {
-	return '(' + a + '||' + b + ')';
+	return '((typeof ' + a + ' ==="undefined" || null ===  ' + a + ')?' + b + ':' + a + ')';
 };
 stdlib.INSTR = function (s, p) {
 	return '((' + s + ').indexOf(' + p + ')+1)';
@@ -213,10 +208,13 @@ stdlib.MIN = stdlib.LEAST = function () {
 	);
 };
 
-stdlib.SUBSTRING = stdlib.SUBSTR = stdlib.MID = function (a, b, c) {
-	if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
-	else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
-};
+stdlib.SUBSTRING =
+	stdlib.SUBSTR =
+	stdlib.MID =
+		function (a, b, c) {
+			if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
+			else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
+		};
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
 	//	console.log(a,b,c);
@@ -275,7 +273,8 @@ stdlib.UPPER = stdlib.UCASE = function (s) {
 // Concatination of strings
 stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
-	return args.slice(1, args.length).join(args[0]);
+	args = args.filter((x) => !(x === null || typeof x === 'undefined'));
+	return args.slice(1, args.length).join(args[0] || '');
 };
 
 //stdlib.UCASE = function(s) {return '('+s+').toUpperCase()';}
@@ -299,42 +298,39 @@ alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
 	return s;
 };
 
-alasql.aggr.MEDIAN = function (v, s, stage) {
+alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	if (stage === 2) {
 		if (v !== null) {
 			s.push(v);
 		}
 		return s;
-	} else if (stage === 1) {
+	}
+
+	if (stage === 1) {
 		if (v === null) {
 			return [];
 		}
 		return [v];
+	}
+
+	if (!s.length) {
+		return null;
+	}
+
+	var r = s.sort((a, b) => {
+		if (a > b) return 1;
+		if (a < b) return -1;
+		return 0;
+	});
+
+	var middle = (r.length + 1) / 2;
+	var middleFloor = middle | 0;
+	var el = r[middleFloor - 1];
+
+	if (middle === middleFloor || (typeof el !== 'number' && !(el instanceof Number))) {
+		return el;
 	} else {
-		if (!s.length) {
-			return s;
-		}
-
-		var r = s.sort(function (a, b) {
-			if (a === b) {
-				return 0;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return -1;
-		});
-		var p = (r.length + 1) / 2;
-		if (Number.isInteger(p)) {
-			return r[p - 1];
-		}
-
-		var value = r[Math.floor(p - 1)];
-		if (typeof value !== 'number' && !(value instanceof Number)) {
-			return value;
-		}
-
-		return (value + r[Math.ceil(p - 1)]) / 2;
+		return (el + r[middleFloor]) / 2;
 	}
 };
 
@@ -454,13 +450,16 @@ alasql.aggr.VARP = function (v, s, stage) {
 	}
 };
 
-alasql.aggr.STD = alasql.aggr.STDDEV = alasql.aggr.STDEVP = function (v, s, stage) {
-	if (stage == 1 || stage == 2) {
-		return alasql.aggr.VARP(v, s, stage);
-	} else {
-		return Math.sqrt(alasql.aggr.VARP(v, s, stage));
-	}
-};
+alasql.aggr.STD =
+	alasql.aggr.STDDEV =
+	alasql.aggr.STDEVP =
+		function (v, s, stage) {
+			if (stage == 1 || stage == 2) {
+				return alasql.aggr.VARP(v, s, stage);
+			} else {
+				return Math.sqrt(alasql.aggr.VARP(v, s, stage));
+			}
+		};
 
 alasql._aggrOriginal = alasql.aggr;
 alasql.aggr = {};
@@ -482,31 +481,34 @@ for (var i = 0; i < 256; i++) {
 	lut[i] = (i < 16 ? '0' : '') + i.toString(16);
 }
 
-stdfn.NEWID = stdfn.UUID = stdfn.GEN_RANDOM_UUID = function () {
-	var d0 = (Math.random() * 0xffffffff) | 0;
-	var d1 = (Math.random() * 0xffffffff) | 0;
-	var d2 = (Math.random() * 0xffffffff) | 0;
-	var d3 = (Math.random() * 0xffffffff) | 0;
-	return (
-		lut[d0 & 0xff] +
-		lut[(d0 >> 8) & 0xff] +
-		lut[(d0 >> 16) & 0xff] +
-		lut[(d0 >> 24) & 0xff] +
-		'-' +
-		lut[d1 & 0xff] +
-		lut[(d1 >> 8) & 0xff] +
-		'-' +
-		lut[((d1 >> 16) & 0x0f) | 0x40] +
-		lut[(d1 >> 24) & 0xff] +
-		'-' +
-		lut[(d2 & 0x3f) | 0x80] +
-		lut[(d2 >> 8) & 0xff] +
-		'-' +
-		lut[(d2 >> 16) & 0xff] +
-		lut[(d2 >> 24) & 0xff] +
-		lut[d3 & 0xff] +
-		lut[(d3 >> 8) & 0xff] +
-		lut[(d3 >> 16) & 0xff] +
-		lut[(d3 >> 24) & 0xff]
-	);
-};
+stdfn.NEWID =
+	stdfn.UUID =
+	stdfn.GEN_RANDOM_UUID =
+		function () {
+			var d0 = (Math.random() * 0xffffffff) | 0;
+			var d1 = (Math.random() * 0xffffffff) | 0;
+			var d2 = (Math.random() * 0xffffffff) | 0;
+			var d3 = (Math.random() * 0xffffffff) | 0;
+			return (
+				lut[d0 & 0xff] +
+				lut[(d0 >> 8) & 0xff] +
+				lut[(d0 >> 16) & 0xff] +
+				lut[(d0 >> 24) & 0xff] +
+				'-' +
+				lut[d1 & 0xff] +
+				lut[(d1 >> 8) & 0xff] +
+				'-' +
+				lut[((d1 >> 16) & 0x0f) | 0x40] +
+				lut[(d1 >> 24) & 0xff] +
+				'-' +
+				lut[(d2 & 0x3f) | 0x80] +
+				lut[(d2 >> 8) & 0xff] +
+				'-' +
+				lut[(d2 >> 16) & 0xff] +
+				lut[(d2 >> 24) & 0xff] +
+				lut[d3 & 0xff] +
+				lut[(d3 >> 8) & 0xff] +
+				lut[(d3 >> 16) & 0xff] +
+				lut[(d3 >> 24) & 0xff]
+			);
+		};

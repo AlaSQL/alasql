@@ -100,4 +100,32 @@ describe('Test 811 - String / Number objects', function () {
 
 		done();
 	});
+
+	it('5. Where In', function (done) {
+		var t1 = [{ID: new String('s1')}, {ID: new String('s2')}, {ID: new String('s3')}];
+
+		var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")', [t1]);
+
+		assert.equal(res.length, 2);
+
+		done();
+	});
+
+	it('6. ORDER BY two columns', function (done) {
+		var t4 = [
+			{Email: new String('A'), ID: new String('s1')},
+			{Email: new String('B'), ID: new String('s2')},
+			{Email: new String('A'), ID: new String('s3')},
+		];
+		//alasql.options.valueof = true;
+		alasql('CREATE TABLE T4 (Email string, ID string)');
+		alasql.tables['T4'].data = t4;
+
+		var res = alasql('SELECT * FROM T4 ORDER BY Email ASC, ID ASC', [t4]);
+
+		assert.equal(res[0].Email.valueOf(), 'A');
+		assert.equal(res[0].ID.valueOf(), 's1');
+
+		done();
+	});
 });

@@ -50,7 +50,13 @@ yy.Select.prototype.compileOrder = function (query, params) {
 				var columnid = ord.expression.columnid;
 				if (query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
-					if (dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2')
+					if (
+						dbtypeid == 'DATE' ||
+						dbtypeid == 'DATETIME' ||
+						dbtypeid == 'DATETIME2' ||
+						dbtypeid == 'STRING' ||
+						dbtypeid == 'NUMBER'
+					)
 						dg = '.valueOf()';
 					// TODO Add other types mapping
 				} else {
@@ -62,7 +68,13 @@ yy.Select.prototype.compileOrder = function (query, params) {
 				var columnid = params[ord.expression.param];
 				if (query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
-					if (dbtypeid == 'DATE' || dbtypeid == 'DATETIME' || dbtypeid == 'DATETIME2')
+					if (
+						dbtypeid == 'DATE' ||
+						dbtypeid == 'DATETIME' ||
+						dbtypeid == 'DATETIME2' ||
+						dbtypeid == 'STRING' ||
+						dbtypeid == 'NUMBER'
+					)
 						dg = '.valueOf()';
 					// TODO Add other types mapping
 				} else {
