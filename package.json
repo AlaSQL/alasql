@@ -59,8 +59,8 @@
 		"yargs": "16"
 	},
 	"devDependencies": {
-		"blueimp-md5": "2.18.0",
-		"cmdmix": "2.1.0",
+		"blueimp-md5": "2.19.0",
+		"cmdmix": "2.1.1",
 		"eslint": "^8.12.0",
 		"git-branch-is": "4.0.0",
 		"gulp": "4.0.2",
