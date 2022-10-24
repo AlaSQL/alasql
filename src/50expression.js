@@ -7,8 +7,8 @@
 */
 
 /**
-  	Expression statement ( = 2*2; )
-  	@class
+		Expression statement ( = 2*2; )
+		@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function (params) {
@@ -268,17 +268,6 @@ yy.Op.prototype.toString = function () {
 		return s;
 	}
 
-	if (this.op === 'IS NOT NULL' || this.op === 'IS NULL') {
-		return (
-			this.left.toString() +
-			' ' +
-			'IS' +
-			' ' +
-			(this.allsome ? this.allsome + ' ' : '') +
-			this.right.toString()
-		);
-	}
-
 	return (
 		this.left.toString() +
 		' ' +
@@ -424,39 +413,42 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	if (this.op === 'IS') {
 		const leftOperand = leftJS();
 		const rightOperand = rightJS();
-		s =
-			'' +
-			'(' +
-			'(' +
-			leftOperand +
-			'==' +
-			rightOperand +
-			')' +
-			' ' +
-			'||' +
-			' ' +
-			'(' +
-			leftOperand +
-			' < 0 && ' +
-			'true == ' +
-			rightOperand +
-			') ' +
-			')' +
-			'';
-	}
-
-	if (this.op === 'IS NULL' || this.op === 'IS NOT NULL') {
-		s =
-			'' +
-			'(' +
-			'(' +
-			leftJS() +
-			'==null)' + // Cant be ===
-			' === ' +
-			'(' +
-			rightJS() +
-			'==null)' + // Cant be ===
-			')';
+		if (
+			this.right instanceof yy.NullValue ||
+			(this.right.op === 'NOT' && this.right.right instanceof yy.NullValue)
+		) {
+			s =
+				'' +
+				'(' +
+				'(' +
+				leftJS() +
+				'==null)' + // Cant be ===
+				' === ' +
+				'(' +
+				rightJS() +
+				'==null)' + // Cant be ===
+				')';
+		} else {
+			s =
+				'' +
+				'(' +
+				'(' +
+				leftOperand +
+				'==' +
+				rightOperand +
+				')' +
+				' ' +
+				'||' +
+				' ' +
+				'(' +
+				leftOperand +
+				' < 0 && ' +
+				'true == ' +
+				rightOperand +
+				') ' +
+				')' +
+				'';
+		}
 	}
 
 	if (this.op === '==') {
