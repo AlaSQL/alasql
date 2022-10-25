@@ -421,11 +421,11 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 				'' +
 				'(' +
 				'(' +
-				leftJS() +
+				leftOperand +
 				'==null)' + // Cant be ===
 				' === ' +
 				'(' +
-				rightJS() +
+				rightOperand +
 				'==null)' + // Cant be ===
 				')';
 		} else {
