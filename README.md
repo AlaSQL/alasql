@@ -1,4 +1,4 @@
-- _AlaSQL is an unfunded open source project installed 95k time each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+label%3A%22Good+first+issue%22+sort%3Acreated-desc+). We appreciate any and all contributions we can get._
+- _AlaSQL is an unfunded open source project installed 95k time each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Acreated-desc). We appreciate any and all contributions we can get._
 
 - _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
 

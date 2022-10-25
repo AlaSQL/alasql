@@ -27,7 +27,7 @@ describe('Test ' + test + ' Aggregators', function () {
 		//    var res1 = alasql('SELECT MEDIAN(a) AS medparam FROM ?', [data]);
 		//    console.log(res1);
 
-		var res = alasql('SELECT MEDIAN(a) AS medparam FROM ?', [data]);
+		var res = alasql('SELECT median(a) AS medparam FROM ?', [data]);
 		assert.deepEqual(res, [{medparam: 5000}]);
 
 		done();

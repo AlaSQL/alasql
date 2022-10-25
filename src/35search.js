@@ -44,7 +44,7 @@ function doSearch(databaseid, params, cb) {
 		//			throw new Error('Selector "'+sel.srchid+'" not found');
 		//		};
 
-		var SECURITY_BREAK = 100000;
+		var INFINITE_LOOP_BREAK = alasql.options.loopbreak || 100000;
 
 		if (sel.selid) {
 			// TODO Process Selector
@@ -288,8 +288,8 @@ function doSearch(databaseid, params, cb) {
 						}
 						// Security brake
 						i++;
-						if (i > SECURITY_BREAK) {
-							throw new Error('Security brake. Number of iterations = ' + i);
+						if (i > INFINITE_LOOP_BREAK) {
+							throw new Error('Infinite loop brake. Number of iterations = ' + i);
 						}
 					}
 				}
@@ -484,8 +484,8 @@ alasql.srch.TO = function(val,args) {
 
 					// Security brake
 					i++;
-					if (i > SECURITY_BREAK) {
-						throw new Error('Security brake. Number of iterations = ' + i);
+					if (i > INFINITE_LOOP_BREAK) {
+						throw new Error('Infinite loop brake. Number of iterations = ' + i);
 					}
 				}
 				return retval;
@@ -519,8 +519,8 @@ alasql.srch.TO = function(val,args) {
 
 					// Security brake
 					i++;
-					if (i > SECURITY_BREAK) {
-						throw new Error('Loop brake. Number of iterations = ' + i);
+					if (i > INFINITE_LOOP_BREAK) {
+						throw new Error('Infinite loop brake. Number of iterations = ' + i);
 					}
 				}
 

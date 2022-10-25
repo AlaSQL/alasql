@@ -1100,7 +1100,7 @@ yy.AggrValue.prototype.toType = function () {
 		return this.expression.toType();
 	}
 
-	// todo: implement default;
+	return this.expression.toType();
 };
 
 yy.AggrValue.prototype.toJS = function (/*context, tableid, defcols*/) {
