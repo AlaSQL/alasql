@@ -20,7 +20,7 @@ stdfn.ASCII = function (a) {
 	return a.charCodeAt(0);
 };
 
-/** 
+/**
  Return first non-null argument
  See https://msdn.microsoft.com/en-us/library/ms190349.aspx
 */
@@ -49,11 +49,12 @@ stdfn.DATE = function (d) {
 
 stdfn.NOW = function () {
 	var d = new Date();
+	var separator = alasql.options.nowdateseparator;
 	var s =
 		d.getFullYear() +
-		'-' +
+		separator +
 		('0' + (d.getMonth() + 1)).substr(-2) +
-		'-' +
+		separator +
 		('0' + d.getDate()).substr(-2);
 	s +=
 		' ' +
@@ -166,12 +167,25 @@ alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 	return new Date(nd);
 };
 
-var dateRegexp = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}:\d{2}/;
+var dateRegexp =
+	/^(?<year>\d{4})[-\.](?<month>\d{1,2})[-\.](?<day>\d{1,2})( (?<hours>\d{2}):(?<minutes>\d{2})(:(?<seconds>\d{2})(\.(?<milliseconds>)\d{3})?)?)?/;
 function newDate(d) {
-	if (typeof d === 'string') {
-		if (dateRegexp.test(d)) {
-			d = d.replace('.', '-').replace('.', '-');
+	let date = new Date(d);
+
+	if (isNaN(date)) {
+		if (typeof d === 'string') {
+			const match = d.match(dateRegexp);
+			if (match) {
+				const {year, month, day, hours, minutes, seconds, milliseconds} = match.groups;
+				const dateArrguments = [year, month - 1, day];
+				if (hours) {
+					dateArrguments.push(hours, minutes, seconds || 0, milliseconds || 0);
+				}
+
+				date = new Date(...dateArrguments);
+			}
 		}
 	}
-	return new Date(d);
+
+	return date;
 }

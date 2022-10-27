@@ -21,4 +21,22 @@ describe('Test ' + test + ' - use NOW() function', function () {
 		//02/25/22
 		assert(/\d{2}\/\d{2}\/\d{2}/.test(res[0].conv));
 	});
+
+	it('3. NOW() with point', function () {
+		var currentSeparator = alasql.options.nowdateseparator;
+		alasql.options.nowdateseparator = '.';
+		var res = alasql('SELECT NOW() AS now');
+		//2022.02.25 19:21:27.839
+		assert(/\d{4}.\d{2}.\d{2} \d{2}:\d{2}:\d{2}.\d{3}/.test(res[0].now));
+		alasql.options.nowdateseparator = currentSeparator;
+	});
+
+	it('4. CONVERT with NOW() with point as an argument', function () {
+		var currentSeparator = alasql.options.nowdateseparator;
+		alasql.options.nowdateseparator = '.';
+		var res = alasql('SELECT CONVERT(STRING,NOW(),1) AS conv');
+		//02/25/22
+		assert(/\d{2}\/\d{2}\/\d{2}/.test(res[0].conv));
+		alasql.options.nowdateseparator = currentSeparator;
+	});
 });
