@@ -148,15 +148,28 @@ function queryfn3(query) {
 			if (query.selectGroup.length > 0) {
 				//				console.log(query.selectGroup);
 				query.selectGroup.forEach(function (sg) {
-					if (sg.aggregatorid == 'COUNT' || sg.aggregatorid == 'SUM') {
+					if (sg.aggregatorid == 'COUNT') {
 						g[sg.nick] = 0;
-					} else {
+					} else if(sg.aggregatorid == 'SUM'){
+						g[sg.nick] = 'NULL';
+					}else {
 						g[sg.nick] = undefined;
 					}
 				});
 			}
 			query.groups = [g];
 			//			console.log();
+		}else{
+			
+			query.selectGroup.forEach(function (sg) {
+				if(sg.aggregatorid == 'SUM' || sg.aggregatorid == 'MAX' || sg.aggregatorid == 'MIN'){
+					query.groups.forEach(function (obj){
+						if(obj.hasOwnProperty(sg.nick) && isNaN(obj[sg.nick])){
+							obj[sg.nick] = 0;
+						}
+					});
+				}
+			});
 		}
 
 		// ******
