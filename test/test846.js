@@ -18,7 +18,7 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 				mAx(c) as c, 
 				mAx(c2) as c2, 
 				MaX(d) as d,
-				MAX(e) as e	
+				MAX(e) as e,	
 				MAX(f) as f	
 			FROM ?`,
 			[data]
@@ -38,7 +38,7 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 				mIn(c) as c, 
 				mIn(c2) as c2, 
 				MiN(d) as d,
-				MIN(e) as e	
+				MIN(e) as e,
 				MIN(f) as f	
 			FROM ?`,
 			[data]
@@ -58,7 +58,7 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 				sUm(c) as c, 
 				sUm(c2) as c2, 
 				SuM(d) as d,
-				SUM(e) as e	
+				SUM(e) as e,
 				SUM(f) as f	
 			FROM ?`,
 			[data]
