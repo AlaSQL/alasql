@@ -319,13 +319,19 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		} else {
 			if (/^[a-z]+:\/\//i.test(path)) {
-				var request = require('request');
-				request(path, function (err, response, body) {
-					if (err) {
-						return error(err, null);
-					}
-					success(cutbom(body.toString()));
-				});
+				var fetch = require('node-fetch');
+				fetch(path)
+					.then((response) => response.arrayBuffer())
+					.then((buf) => {
+						var a = new Uint8Array(buf);
+						var b = [...a].map((e) => String.fromCharCode(e)).join('');
+						success(cutbom(b));
+					})
+					.catch((e) => {
+						if (error) return error(e);
+						console.error(e);
+						throw e;
+					});
 			} else {
 				//If async callthen call async
 				if (asy) {
@@ -477,17 +483,19 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 		fs = require('fs');
 
 		if (/^[a-z]+:\/\//i.test(path)) {
-			var request = require('request');
-			request({url: path, encoding: null}, function (err, response, data) {
-				if (err) {
-					return error(err);
-				}
-				var arr = [];
-				for (var i = 0; i < data.length; ++i) {
-					arr[i] = String.fromCharCode(data[i]);
-				}
-				success(arr.join(''));
-			});
+			var fetch = require('node-fetch');
+			fetch(path)
+				.then((response) => response.arrayBuffer())
+				.then((buf) => {
+					var a = new Uint8Array(buf);
+					var b = [...a].map((e) => String.fromCharCode(e)).join('');
+					success(b);
+				})
+				.catch((e) => {
+					if (error) return error(e);
+					console.error(e);
+					throw e;
+				});
 		} else {
 			if (runAsync) {
 				fs.readFile(path, function (err, data) {

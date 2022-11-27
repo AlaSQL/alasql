@@ -54,7 +54,7 @@
 		"dom-storage": "2.1.0",
 		"es6-promise": "4.2.8",
 		"lodash": "4.17.21",
-		"request": "2.88.2",
+		"node-fetch": "2",
 		"xlsx": "0.18",
 		"yargs": "16"
 	},
