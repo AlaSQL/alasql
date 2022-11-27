@@ -17,8 +17,10 @@ describe('Test 412 ORDER BY unselected column (issue #379)', function () {
 	});
 
 	it('1. CREATE TABLE, INSERT and SELECT', function (done) {
-		alasql('create table sun (a int, b int); \
-						insert into sun values (1,10),(2,5),(3,20);');
+		alasql(
+			'create table sun (a int, b int); \
+						insert into sun values (1,10),(2,5),(3,20);'
+		);
 
 		var res1 = alasql('select a from sun order by b');
 		var res2 = alasql('select a,b remove columns b from sun order by b');

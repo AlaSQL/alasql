@@ -29,8 +29,10 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
       VALUES('2007-05-06 12:10:09','2007-05-07 12:10:09');
   */
 		});
-		var res = alasql('SELECT DATEDIFF(day,startDate,endDate) AS Duration \
-      FROM Duration');
+		var res = alasql(
+			'SELECT DATEDIFF(day,startDate,endDate) AS Duration \
+      FROM Duration'
+		);
 		assert.deepEqual(res, [{Duration: 1}]);
 
 		done();

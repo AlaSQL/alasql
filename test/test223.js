@@ -14,10 +14,11 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 	];
 
 	it('1. ROLLUP', function (done) {
-		var res = alasql('SELECT Phase, Step, SUM(Val) AS Val FROM ? \
-			GROUP BY ROLLUP(Phase,Step)', [
-			testData,
-		]);
+		var res = alasql(
+			'SELECT Phase, Step, SUM(Val) AS Val FROM ? \
+			GROUP BY ROLLUP(Phase,Step)',
+			[testData]
+		);
 		assert.deepEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
@@ -31,10 +32,11 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 	});
 
 	it('2. CUBE', function (done) {
-		var res = alasql('SELECT Phase, Step, SUM(Val) AS Val FROM ? \
-			GROUP BY CUBE(Phase,Step)', [
-			testData,
-		]);
+		var res = alasql(
+			'SELECT Phase, Step, SUM(Val) AS Val FROM ? \
+			GROUP BY CUBE(Phase,Step)',
+			[testData]
+		);
 		//		console.log(res);
 
 		assert.deepEqual(res, [

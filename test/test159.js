@@ -54,8 +54,10 @@ describe('Test 159 - test DOM-storage', function () {
 		res = alasql('select column * from cities order by city');
 		assert.deepEqual(res, ['Berlin', 'Paris', 'Vilnius']);
 
-		res = alasql('detach database test159; \
-				drop localstorage database test159');
+		res = alasql(
+			`detach database test159; 
+			 drop localstorage database test159`
+		);
 		assert.deepEqual(res, [1, 1]);
 
 		done();
@@ -78,8 +80,10 @@ describe('Test 159 - test DOM-storage', function () {
 		res = alasql('select column * from cities order by city');
 		assert.deepEqual(res, ['Berlin', 'Paris', 'Vilnius']);
 
-		res = alasql('detach database test159; \
-				drop localstorage database test159');
+		res = alasql(
+			'detach database test159; \
+				drop localstorage database test159'
+		);
 		assert.deepEqual(res, [1, 1]);
 
 		done();
