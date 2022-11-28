@@ -1165,6 +1165,12 @@ if (!Array.isArray) {
  */
 
 var xlsnc = (utils.xlsnc = function (i) {
+	var first = "";
+	if (i > 701) {
+		let x = (((i - 26) / (26 * 26)) | 0) - 1;
+		first = String.fromCharCode(65 + (x % 26));
+		i = i % (26 * 26)
+	}
 	var addr = String.fromCharCode(65 + (i % 26));
 	if (i >= 26) {
 		i = ((i / 26) | 0) - 1;
@@ -1174,7 +1180,7 @@ var xlsnc = (utils.xlsnc = function (i) {
 			addr = String.fromCharCode(65 + (i % 26)) + addr;
 		}
 	}
-	return addr;
+	return first + addr;
 });
 
 /**
