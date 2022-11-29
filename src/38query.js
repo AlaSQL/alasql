@@ -159,16 +159,6 @@ function queryfn3(query) {
 			}
 			query.groups = [g];
 			//			console.log();
-		} else {
-			query.selectGroup.forEach(function (sg) {
-				if (sg.aggregatorid == 'SUM' || sg.aggregatorid == 'MAX' || sg.aggregatorid == 'MIN') {
-					query.groups.forEach(function (obj) {
-						if (obj.hasOwnProperty(sg.nick) && isNaN(obj[sg.nick])) {
-							obj[sg.nick] = 0;
-						}
-					});
-				}
-			});
 		}
 
 		// ******

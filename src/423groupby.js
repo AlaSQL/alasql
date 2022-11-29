@@ -148,16 +148,18 @@ if(false) {
 							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
-						return "'" + colas + "':(" + colexp + ')||0,';
+						return "'" + colas + "':("+colexp+")||null,"
 					} else if (
-						col.aggregatorid === 'MIN' ||
-						col.aggregatorid === 'MAX' ||
 						col.aggregatorid === 'FIRST' ||
 						col.aggregatorid === 'LAST'
 						//					|| col.aggregatorid == 'AVG'
 						//							) { return "'"+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJS();
 					) {
 						return "'" + colas + "':" + colexp + ','; //f.field.arguments[0].toJS();
+					}  else if (col.aggregatorid === 'MIN'){
+						return "'" + colas + "': (typeof " + colexp + " == 'number' ? "+ colexp +": typeof " + colexp + " == 'object' ? typeof Number(" + colexp + ") == 'number' && " + colexp + "!== null?  "+ colexp +" : null : null),";
+					}else if (col.aggregatorid === 'MAX' || col.aggregatorid === 'MIN'){
+						return "'" + colas + "': (typeof " + colexp + " == 'number' ? "+ colexp +": typeof " + colexp + " == 'object' ? typeof Number(" + colexp + ") == 'number' ?  "+ colexp +" : null : null),";
 					} else if (col.aggregatorid === 'ARRAY') {
 						return "'" + colas + "':[" + colexp + '],';
 					} else if (col.aggregatorid === 'COUNT') {
@@ -303,7 +305,8 @@ if(false) {
 						var post = "g['$$_VALUES_" + colas + "'][" + colexp + ']=true;}';
 					}
 					if (col.aggregatorid === 'SUM') {
-						return pre + "g['" + colas + "']+=(" + colexp + '||0);' + post; //f.field.arguments[0].toJS();
+						return pre + "if(g['" + colas + "'] == null && " + colexp + " == null){g['" + colas + "'] = null} else if(typeof g['" + colas + "']!== 'object' && typeof g['" + colas + "'] !== 'number' && typeof " + colexp + "!== 'object' && typeof " + colexp + "!== 'number'){g['" + colas + "'] = null} else if(typeof g['" + colas + "'] !== 'object' && typeof g['" + colas + "'] !== 'number' && typeof " + colexp + " == 'number'){g['" + colas + "'] = " + colexp + "} else if(typeof g['" + colas + "'] == 'number' && typeof " + colexp + " !== 'number' && typeof " + colexp + " !== 'object'){g['" + colas + "'] = g['" + colas + "']} else if((g['" + colas + "'] == null || (typeof g['" + colas + "'] !== 'number' && typeof g['" + colas + "'] !== 'object')) && (" + colexp + " == null || (typeof " + colexp + " !== 'number' && typeof " + colexp + " !== 'object'))){g['" + colas + "'] = null} else {g['" + colas + "']+=(" + colexp + '||0);}'+ post;
+						//return pre + "g['" + colas + "']+=(" + colexp + '||0);' + post; //f.field.arguments[0].toJS();
 					} else if (col.aggregatorid === 'COUNT') {
 						//					console.log(221,col.expression.columnid == '*');
 						if (col.expression.columnid === '*') {
@@ -325,11 +328,13 @@ if(false) {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 					} else if (col.aggregatorid === 'MIN') {
 						return (
-							pre + 'if ((y=' + colexp + ") < g['" + colas + "']) g['" + colas + "'] = y;" + post
+							pre + "if((g['" + colas + "'] == null && "+ colexp +"!== null) ? y =  "+ colexp +" : (g['" + colas + "'] !== null && "+ colexp +" == null) ? y = g['" + colas + "'] : ((y=" + colexp + ") < g['" + colas + "'])){ if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" + colas + "'] = y;}else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}else if(g['" + colas + "']!== null && typeof g['" + colas + "'] == 'object' && y instanceof Date){g['" + colas + "'] = g['" + colas + "']}else if(g['" + colas + "']!== null && typeof g['" + colas + "'] == 'object'){g['" + colas + "'] = Number(g['" + colas + "'])}" + post
+							//pre + 'if ((y=' + colexp + ") < g['" + colas + "']) { if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(y!== null && typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}" + post
 						);
 					} else if (col.aggregatorid === 'MAX') {
 						return (
-							pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'] = y;" + post
+							pre + 'if ((y=' + colexp + ") > g['" + colas + "']){ if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}" + post
+							//pre + 'if ((y=' + colexp + "&& !isNaN("+colexp+")) > g['" + colas + "']){ g['" + colas + "'] = y;} else if(isNaN(" + colexp + ")){g['" + colas + "'] = null}" + post
 						);
 					} else if (col.aggregatorid === 'FIRST') {
 						return '';
@@ -401,6 +406,6 @@ if(false) {
 		s += '}';
 	});
 
-	//		console.log('groupfn',s);
+			console.log('groupfn',JSON.stringify(s));
 	return new Function('p,params,alasql', 'var y;' + s);
 };

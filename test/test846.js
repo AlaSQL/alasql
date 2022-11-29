@@ -8,8 +8,8 @@ var test = '846';
 describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function () {
 	it('MAX dealing with non-numeric values', function () {
 		var data = [
-			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
-			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: new Number(11)},
+			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: 0},
+			{a: null, b: 0, c: false, c2: false, d: 5, e: 'XYZ2', f: new Number(11)},
 		];
 		res = alasql(
 			`SELECT 
@@ -28,9 +28,9 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 
 	it('MIN dealing with non-numeric values', function () {
 		var data = [
-			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
-			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: new Number(11)},
-		];
+			{a: null, b: 9, c: new Date('01.01.2016'), c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
+			{a: null, b: 0, c: new Date('02.01.2016'), c2: false, d: 5, e: 'XYZ2', f: 1},
+		];	
 		res = alasql(
 			`SELECT 
 				MIN(a) AS a, 
@@ -43,7 +43,7 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: null, b: 1, c: null, c2: 1, d: 5, e: null, f: 2}]);
+		assert.deepEqual(res, [{a: null, b: 0, c: null, c2: 1, d: 5, e: null, f: 1}]);
 	});
 
 	it('SUM dealing with non-numeric values', function () {
@@ -64,23 +64,5 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			[data]
 		);
 		assert.deepEqual(res, [{a: null, b: 10, c: null, c2: 1, d: 5, e: null, f: 13}]);
-	});
-
-	it('Simple select test', function (done) {
-		// http://jsfiddle.net/agershun/38hj2uwy/3/
-		var db = new alasql.Database();
-
-		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');
-
-		db.tables.person.data = [
-			{name: 'bill', sex: 'M', income: 50000},
-			{name: 'sara', sex: 'F', income: 100000},
-		];
-
-		assert.deepEqual([{'SUM(income)': 150000}], db.exec('SELECT SUM(income) FROM person'));
-		assert.deepEqual([{'SUM(name)': 0}], db.exec('SELECT SUM(name) FROM person'));
-		assert.deepEqual([{'MAX(name)': 0}], db.exec('SELECT MAX(name) FROM person'));
-		assert.deepEqual([{'MIN(name)': 0}], db.exec('SELECT MIN(name) FROM person'));
-		done();
 	});
 });
