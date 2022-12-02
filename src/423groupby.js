@@ -148,6 +148,11 @@ if(false) {
 							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
+						if('funcid' in col.expression){
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols)
+							return "'" + colas + "':("+colexp1+")||null,"
+						}
 						return "'" + colas + "':("+colexp+")||null,"
 					} else if (
 						col.aggregatorid === 'FIRST' ||
@@ -157,8 +162,18 @@ if(false) {
 					) {
 						return "'" + colas + "':" + colexp + ','; //f.field.arguments[0].toJS();
 					}  else if (col.aggregatorid === 'MIN'){
+						if('funcid' in col.expression){
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols)
+							return "'" + colas + "': (typeof " + colexp1 + " == 'number' ? "+ colexp1 +": typeof " + colexp1 + " == 'object' ? typeof Number(" + colexp1 + ") == 'number' && " + colexp1 + "!== null?  "+ colexp1 +" : null : null),";
+						}
 						return "'" + colas + "': (typeof " + colexp + " == 'number' ? "+ colexp +": typeof " + colexp + " == 'object' ? typeof Number(" + colexp + ") == 'number' && " + colexp + "!== null?  "+ colexp +" : null : null),";
-					}else if (col.aggregatorid === 'MAX' || col.aggregatorid === 'MIN'){
+					}else if (col.aggregatorid === 'MAX'){
+						if('funcid' in col.expression){
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols)
+							return "'" + colas + "': (typeof " + colexp1 + " == 'number' ? "+ colexp1 +": typeof " + colexp1 + " == 'object' ? typeof Number(" + colexp1 + ") == 'number' ?  "+ colexp1 +" : null : null),"; 
+						}
 						return "'" + colas + "': (typeof " + colexp + " == 'number' ? "+ colexp +": typeof " + colexp + " == 'object' ? typeof Number(" + colexp + ") == 'number' ?  "+ colexp +" : null : null),";
 					} else if (col.aggregatorid === 'ARRAY') {
 						return "'" + colas + "':[" + colexp + '],';
@@ -305,8 +320,12 @@ if(false) {
 						var post = "g['$$_VALUES_" + colas + "'][" + colexp + ']=true;}';
 					}
 					if (col.aggregatorid === 'SUM') {
+						if('funcid' in col.expression){
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols)
+							return pre + "if(g['" + colas + "'] == null && " + colexp1 + " == null){g['" + colas + "'] = null} else if(typeof g['" + colas + "']!== 'object' && typeof g['" + colas + "'] !== 'number' && typeof " + colexp1 + "!== 'object' && typeof " + colexp1 + "!== 'number'){g['" + colas + "'] = null} else if(typeof g['" + colas + "'] !== 'object' && typeof g['" + colas + "'] !== 'number' && typeof " + colexp1 + " == 'number'){g['" + colas + "'] = " + colexp1 + "} else if(typeof g['" + colas + "'] == 'number' && typeof " + colexp1 + " !== 'number' && typeof " + colexp1 + " !== 'object'){g['" + colas + "'] = g['" + colas + "']} else if((g['" + colas + "'] == null || (typeof g['" + colas + "'] !== 'number' && typeof g['" + colas + "'] !== 'object')) && (" + colexp1 + " == null || (typeof " + colexp1 + " !== 'number' && typeof " + colexp1 + " !== 'object'))){g['" + colas + "'] = null} else {g['" + colas + "']+=(" + colexp1 + '||0);}'+ post;
+						}
 						return pre + "if(g['" + colas + "'] == null && " + colexp + " == null){g['" + colas + "'] = null} else if(typeof g['" + colas + "']!== 'object' && typeof g['" + colas + "'] !== 'number' && typeof " + colexp + "!== 'object' && typeof " + colexp + "!== 'number'){g['" + colas + "'] = null} else if(typeof g['" + colas + "'] !== 'object' && typeof g['" + colas + "'] !== 'number' && typeof " + colexp + " == 'number'){g['" + colas + "'] = " + colexp + "} else if(typeof g['" + colas + "'] == 'number' && typeof " + colexp + " !== 'number' && typeof " + colexp + " !== 'object'){g['" + colas + "'] = g['" + colas + "']} else if((g['" + colas + "'] == null || (typeof g['" + colas + "'] !== 'number' && typeof g['" + colas + "'] !== 'object')) && (" + colexp + " == null || (typeof " + colexp + " !== 'number' && typeof " + colexp + " !== 'object'))){g['" + colas + "'] = null} else {g['" + colas + "']+=(" + colexp + '||0);}'+ post;
-						//return pre + "g['" + colas + "']+=(" + colexp + '||0);' + post; //f.field.arguments[0].toJS();
 					} else if (col.aggregatorid === 'COUNT') {
 						//					console.log(221,col.expression.columnid == '*');
 						if (col.expression.columnid === '*') {
@@ -327,14 +346,24 @@ if(false) {
 					} else if (col.aggregatorid === 'ARRAY') {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 					} else if (col.aggregatorid === 'MIN') {
+						if('funcid' in col.expression){
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols)
+							return (
+								pre + "if((g['" + colas + "'] == null && "+ colexp1 +"!== null) ? y =  "+ colexp1 +" : (g['" + colas + "'] !== null && "+ colexp1 +" == null) ? y = g['" + colas + "'] : ((y=" + colexp1 + ") < g['" + colas + "'])){ if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" + colas + "'] = y;}else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}else if(g['" + colas + "']!== null && typeof g['" + colas + "'] == 'object' && y instanceof Date){g['" + colas + "'] = g['" + colas + "']}else if(g['" + colas + "']!== null && typeof g['" + colas + "'] == 'object'){g['" + colas + "'] = Number(g['" + colas + "'])}" + post
+							);
+						}
 						return (
 							pre + "if((g['" + colas + "'] == null && "+ colexp +"!== null) ? y =  "+ colexp +" : (g['" + colas + "'] !== null && "+ colexp +" == null) ? y = g['" + colas + "'] : ((y=" + colexp + ") < g['" + colas + "'])){ if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" + colas + "'] = y;}else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}else if(g['" + colas + "']!== null && typeof g['" + colas + "'] == 'object' && y instanceof Date){g['" + colas + "'] = g['" + colas + "']}else if(g['" + colas + "']!== null && typeof g['" + colas + "'] == 'object'){g['" + colas + "'] = Number(g['" + colas + "'])}" + post
-							//pre + 'if ((y=' + colexp + ") < g['" + colas + "']) { if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(y!== null && typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}" + post
 						);
 					} else if (col.aggregatorid === 'MAX') {
+						if('funcid' in col.expression){
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols)
+							return 	pre + 'if ((y=' + colexp1 + ") > g['" + colas + "']){ if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" + colas + "'] = y;} else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}" + post
+						}
 						return (
-							pre + 'if ((y=' + colexp + ") > g['" + colas + "']){ if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}" + post
-							//pre + 'if ((y=' + colexp + "&& !isNaN("+colexp+")) > g['" + colas + "']){ g['" + colas + "'] = y;} else if(isNaN(" + colexp + ")){g['" + colas + "'] = null}" + post
+							pre + 'if ((y=' + colexp + ") > g['" + colas + "']){ if((typeof y == 'number')) {g['" + colas + "'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" + colas + "'] = y;} else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" + colas + "'] = Number(y);}}" + post
 						);
 					} else if (col.aggregatorid === 'FIRST') {
 						return '';
@@ -405,7 +434,5 @@ if(false) {
 		//		s += 'group.count++;';
 		s += '}';
 	});
-
-			console.log('groupfn',JSON.stringify(s));
 	return new Function('p,params,alasql', 'var y;' + s);
 };
