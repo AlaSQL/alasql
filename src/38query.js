@@ -148,8 +148,10 @@ function queryfn3(query) {
 			if (query.selectGroup.length > 0) {
 				//				console.log(query.selectGroup);
 				query.selectGroup.forEach(function (sg) {
-					if (sg.aggregatorid == 'COUNT' || sg.aggregatorid == 'SUM') {
+					if (sg.aggregatorid == 'COUNT') {
 						g[sg.nick] = 0;
+					} else if (sg.aggregatorid == 'SUM') {
+						g[sg.nick] = 'NULL';
 					} else {
 						g[sg.nick] = undefined;
 					}
