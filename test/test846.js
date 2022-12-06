@@ -125,4 +125,22 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		res = alasql(`select sum(v) from ?`, [data]);
 		assert.deepEqual(res, [{v: 0}]);
 	});
+
+	it('MIN zero is zero', function () {
+		var data = [{v: 0}];
+		res = alasql(`select min(v) from ?`, [data]);
+		assert.deepEqual(res, [{v: 0}]);
+	});
+
+	it('MAX zero is zero', function () {
+		var data = [{v: 0}];
+		res = alasql(`select max(v) from ?`, [data]);
+		assert.deepEqual(res, [{v: 0}]);
+	});
+
+	it('AVG zero is zero', function () {
+		var data = [{v: 0}];
+		res = alasql(`select avg(v) from ?`, [data]);
+		assert.deepEqual(res, [{v: 0}]);
+	});
 });
