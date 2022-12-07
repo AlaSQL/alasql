@@ -6,7 +6,7 @@ if (typeof exports === 'object') {
 var test = '846';
 
 describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function () {
-	it('MAX dealing with non-numeric values', function () {
+	it.only('MAX dealing with non-numeric values', function () {
 		var data = [
 			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
 			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: new Number(11)},
@@ -41,6 +41,26 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			[data]
 		);
 		assert.deepEqual(res, [{a: new Date('12.12.2022'), b: 9, c: new Date('01.01.2023'), c2: 1, d: 5, e: null, f: 11}]);
+
+		var data = [{a: new Date('12.12.2022')}];
+		res = alasql(`SELECT MAX(a) AS a FROM ?`,[data]);
+		assert.deepEqual(res, [{a: new Date('12.12.2022')}]);
+
+		var data = [{a: 'a'}];
+		res = alasql(`SELECT MAX(a) AS a FROM ?`,[data]);
+		assert.deepEqual(res, [{a: null}]);
+
+		var data = [{a: null}];
+		res = alasql(`SELECT MAX(a) AS a FROM ?`,[data]);
+		assert.deepEqual(res, [{a: null}]);
+
+		var data = [{a: 0}];
+		res = alasql(`SELECT MAX(a) AS a FROM ?`,[data]);
+		assert.deepEqual(res, [{a: 0}]);
+
+		var data = [{a: new Number(10)}];
+		res = alasql(`SELECT MAX(a) AS a FROM ?`,[data]);
+		assert.deepEqual(res, [{a: 10}]);
 	});
 
 	it('MIN dealing with non-numeric values', function () {
@@ -98,5 +118,31 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			[data]
 		);
 		assert.deepEqual(res, [{a: null, b: 10, c: null, c2: 1, d: 5, e: null, f: 13}]);
+		var data = [[{a: 0}]];
+		res = alasql(
+			`SELECT 
+				SUM(a) AS a
+			FROM ?`,
+			data
+		);
+		assert.deepEqual(res, [{a: 0}]);
+
+		var data = [[{a: null}]];
+		res = alasql(
+			`SELECT 
+				SUM(a) AS a
+			FROM ?`,
+			data
+		);
+		assert.deepEqual(res, [{a: null}]);
+
+		var data = [[{a: 2}]];
+		res = alasql(
+			`SELECT 
+				SUM(a) AS a
+			FROM ?`,
+			data
+		);
+		assert.deepEqual(res, [{a: 2}]);
 	});
 });

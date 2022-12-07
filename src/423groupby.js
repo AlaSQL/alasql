@@ -150,10 +150,10 @@ if(false) {
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
 							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
-							return "'" + colas + "':(" + colexp1 + ')||null,';
+							let colexp1 = colexpression.toJS('p', tableid, defcols); 
+							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp1} : null,`
 						}
-						return "'" + colas + "':(" + colexp + ')||null,';
+						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? ${colexp} : null,`
 					} else if (
 						col.aggregatorid === 'FIRST' ||
 						col.aggregatorid === 'LAST'
@@ -204,6 +204,7 @@ if(false) {
 						if ('funcid' in col.expression) {
 							let colexpression = col.expression.args[0];
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							//`'${colas}':(typeof ${colexp1} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ? typeof Number(${colexp}) == 'number' ? ${colexp} : null : null)`
 							return (
 								"'" +
 								colas +
@@ -385,122 +386,28 @@ if(false) {
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
 							return (
 								pre +
-								"if(g['" +
-								colas +
-								"'] == null && " +
-								colexp1 +
-								" == null){g['" +
-								colas +
-								"'] = null} else if(typeof g['" +
-								colas +
-								"']!== 'object' && typeof g['" +
-								colas +
-								"'] !== 'number' && typeof " +
-								colexp1 +
-								"!== 'object' && typeof " +
-								colexp1 +
-								"!== 'number'){g['" +
-								colas +
-								"'] = null} else if(typeof g['" +
-								colas +
-								"'] !== 'object' && typeof g['" +
-								colas +
-								"'] !== 'number' && typeof " +
-								colexp1 +
-								" == 'number'){g['" +
-								colas +
-								"'] = " +
-								colexp1 +
-								"} else if(typeof g['" +
-								colas +
-								"'] == 'number' && typeof " +
-								colexp1 +
-								" !== 'number' && typeof " +
-								colexp1 +
-								" !== 'object'){g['" +
-								colas +
-								"'] = g['" +
-								colas +
-								"']} else if((g['" +
-								colas +
-								"'] == null || (typeof g['" +
-								colas +
-								"'] !== 'number' && typeof g['" +
-								colas +
-								"'] !== 'object')) && (" +
-								colexp1 +
-								' == null || (typeof ' +
-								colexp1 +
-								" !== 'number' && typeof " +
-								colexp1 +
-								" !== 'object'))){g['" +
-								colas +
-								"'] = null} else {g['" +
-								colas +
-								"']+=(" +
-								colexp1 +
-								'||0);}' +
-								post
+							`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null} 
+							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'object' && typeof ${colexp1}!== 'number'){g['${colas}'] = null}
+							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
+							else if(typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'){g['${colas}'] = g['${colas}']}
+							else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp1} == null || (typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'))){g['${colas}'] = null}
+							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} ==null){g['${colas}'] = g['${colas}']}
+							else if(typeof g['${colas}'] == null && typeof ${colexp1} =='number'){g['${colas}'] = ${colexp1}}
+							else{g['${colas}'] += ${colexp1}||0}`	 +
+							post
 							);
 						}
 						return (
 							pre +
-							"if(g['" +
-							colas +
-							"'] == null && " +
-							colexp +
-							" == null){g['" +
-							colas +
-							"'] = null} else if(typeof g['" +
-							colas +
-							"']!== 'object' && typeof g['" +
-							colas +
-							"'] !== 'number' && typeof " +
-							colexp +
-							"!== 'object' && typeof " +
-							colexp +
-							"!== 'number'){g['" +
-							colas +
-							"'] = null} else if(typeof g['" +
-							colas +
-							"'] !== 'object' && typeof g['" +
-							colas +
-							"'] !== 'number' && typeof " +
-							colexp +
-							" == 'number'){g['" +
-							colas +
-							"'] = " +
-							colexp +
-							"} else if(typeof g['" +
-							colas +
-							"'] == 'number' && typeof " +
-							colexp +
-							" !== 'number' && typeof " +
-							colexp +
-							" !== 'object'){g['" +
-							colas +
-							"'] = g['" +
-							colas +
-							"']} else if((g['" +
-							colas +
-							"'] == null || (typeof g['" +
-							colas +
-							"'] !== 'number' && typeof g['" +
-							colas +
-							"'] !== 'object')) && (" +
-							colexp +
-							' == null || (typeof ' +
-							colexp +
-							" !== 'number' && typeof " +
-							colexp +
-							" !== 'object'))){g['" +
-							colas +
-							"'] = null} else {g['" +
-							colas +
-							"']+=(" +
-							colexp +
-							'||0);}' +
-							post
+							`if(g['${colas}'] == null && ${colexp} == null){g['${colas}'] = null} 
+							 else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number'&& typeof ${colexp}!== 'object' && typeof ${colexp}!== 'number'){g['${colas}'] = null}
+							 else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
+							 else if(typeof g['${colas}']!== 'number' && typeof ${colexp}!== 'number' && typeof ${colexp}!== 'object'){g['${colas}'] = g['${colas}']}
+							 else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp} == null || (typeof ${colexp}!== 'number' && typeof ${colexp}!== 'object'))){g['${colas}'] = null}
+							 else if(typeof g['${colas}'] == 'number' && typeof ${colexp} ==null){g['${colas}'] = g['${colas}']}
+							 else if(typeof g['${colas}'] == null && typeof ${colexp} =='number'){g['${colas}'] = ${colexp}}
+							 else{g['${colas}'] += ${colexp}||0}`
+							+post
 						);
 					} else if (col.aggregatorid === 'COUNT') {
 						//					console.log(221,col.expression.columnid == '*');
@@ -716,5 +623,6 @@ if(false) {
 		//		s += 'group.count++;';
 		s += '}';
 	});
+	console.log(s);
 	return new Function('p,params,alasql', 'var y;' + s);
 };
