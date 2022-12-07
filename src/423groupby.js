@@ -623,6 +623,5 @@ if(false) {
 		//		s += 'group.count++;';
 		s += '}';
 	});
-	console.log(s);
 	return new Function('p,params,alasql', 'var y;' + s);
 };
