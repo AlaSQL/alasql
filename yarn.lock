@@ -2178,10 +2178,10 @@ lilconfig@2.0.6:
   resolved "https://registry.yarnpkg.com/lilconfig/-/lilconfig-2.0.6.tgz#32a384558bd58af3d4c6e077dd1ad1d397bc69d4"
   integrity sha512-9JROoBW7pobfsx+Sq2JsASvCo6Pfo6WWoUW79HuB1BCoBXD4PLWJPqDF6fNj67pqBYTbAHkE57M1kS/+L1neOg==
 
-lint-staged@13.0.4:
-  version "13.0.4"
-  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-13.0.4.tgz#c4b4391280c35165b805ad43304ba01f733067a0"
-  integrity sha512-HxlHCXoYRsq9QCby5wFozmZW00hMs/9e3l+/dz6Qr8Kle4UH0kJTdABAbqhzG+3pcG6QjL9kz7NgGBfph+a5dw==
+lint-staged@13.1.0:
+  version "13.1.0"
+  resolved "https://registry.yarnpkg.com/lint-staged/-/lint-staged-13.1.0.tgz#d4c61aec939e789e489fa51987ec5207b50fd37e"
+  integrity sha512-pn/sR8IrcF/T0vpWLilih8jmVouMlxqXxKuAojmbiGX5n/gDnz+abdPptlj0vYnbfE0SQNl3CY/HwtM0+yfOVQ==
   dependencies:
     cli-truncate "^3.1.0"
     colorette "^2.0.19"

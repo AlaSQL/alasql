@@ -150,10 +150,10 @@ if(false) {
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
 							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols); 
-							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp1} : null,`
+							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp1} : null,`;
 						}
-						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? ${colexp} : null,`
+						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? ${colexp} : null,`;
 					} else if (
 						col.aggregatorid === 'FIRST' ||
 						col.aggregatorid === 'LAST'
@@ -165,77 +165,20 @@ if(false) {
 						if ('funcid' in col.expression) {
 							let colexpression = col.expression.args[0];
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
-							return (
-								"'" +
-								colas +
-								"': (typeof " +
-								colexp1 +
-								" == 'number' ? " +
-								colexp1 +
-								': typeof ' +
-								colexp1 +
-								" == 'object' ? typeof Number(" +
-								colexp1 +
-								") == 'number' && " +
-								colexp1 +
-								'!== null?  ' +
-								colexp1 +
-								' : null : null),'
-							);
+							return `'${colas}': (typeof ${colexp1} == 'number' ? ${colexp1} : typeof ${colexp1} == 'object' ? 
+							typeof Number(${colexp1}) == 'number' && ${colexp1}!== null? ${colexp1} : null : null),`;
 						}
-						return (
-							"'" +
-							colas +
-							"': (typeof " +
-							colexp +
-							" == 'number' ? " +
-							colexp +
-							': typeof ' +
-							colexp +
-							" == 'object' ? typeof Number(" +
-							colexp +
-							") == 'number' && " +
-							colexp +
-							'!== null?  ' +
-							colexp +
-							' : null : null),'
-						);
+						return `'${colas}': (typeof ${colexp} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ? 
+							typeof Number(${colexp}) == 'number' && ${colexp}!== null? ${colexp} : null : null),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexpression = col.expression.args[0];
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
-							//`'${colas}':(typeof ${colexp1} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ? typeof Number(${colexp}) == 'number' ? ${colexp} : null : null)`
-							return (
-								"'" +
-								colas +
-								"': (typeof " +
-								colexp1 +
-								" == 'number' ? " +
-								colexp1 +
-								': typeof ' +
-								colexp1 +
-								" == 'object' ? typeof Number(" +
-								colexp1 +
-								") == 'number' ?  " +
-								colexp1 +
-								' : null : null),'
-							);
+							return `'${colas}' : (typeof ${colexp1} == 'number' ? ${colexp1} : typeof ${colexp1} == 'object' ? 
+							typeof Number(${colexp1}) == 'number' ? ${colexp1} : null : null),`;
 						}
-						return (
-							"'" +
-							colas +
-							"': (typeof " +
-							colexp +
-							" == 'number' ? " +
-							colexp +
-							': typeof ' +
-							colexp +
-							" == 'object' ? typeof Number(" +
-							colexp +
-							") == 'number' ?  " +
-							colexp +
-							' : null : null),'
-						);
+						return `'${colas}' : (typeof ${colexp} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ? 
+							typeof Number(${colexp}) == 'number' ? ${colexp} : null : null),`;
 					} else if (col.aggregatorid === 'ARRAY') {
 						return "'" + colas + "':[" + colexp + '],';
 					} else if (col.aggregatorid === 'COUNT') {
@@ -386,15 +329,15 @@ if(false) {
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
 							return (
 								pre +
-							`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null} 
+								`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null} 
 							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'object' && typeof ${colexp1}!== 'number'){g['${colas}'] = null}
 							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
 							else if(typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'){g['${colas}'] = g['${colas}']}
 							else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp1} == null || (typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'))){g['${colas}'] = null}
 							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} ==null){g['${colas}'] = g['${colas}']}
 							else if(typeof g['${colas}'] == null && typeof ${colexp1} =='number'){g['${colas}'] = ${colexp1}}
-							else{g['${colas}'] += ${colexp1}||0}`	 +
-							post
+							else{g['${colas}'] += ${colexp1}||0}` +
+								post
 							);
 						}
 						return (
@@ -406,8 +349,8 @@ if(false) {
 							 else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp} == null || (typeof ${colexp}!== 'number' && typeof ${colexp}!== 'object'))){g['${colas}'] = null}
 							 else if(typeof g['${colas}'] == 'number' && typeof ${colexp} ==null){g['${colas}'] = g['${colas}']}
 							 else if(typeof g['${colas}'] == null && typeof ${colexp} =='number'){g['${colas}'] = ${colexp}}
-							 else{g['${colas}'] += ${colexp}||0}`
-							+post
+							 else{g['${colas}'] += ${colexp}||0}` +
+							post
 						);
 					} else if (col.aggregatorid === 'COUNT') {
 						//					console.log(221,col.expression.columnid == '*');
@@ -434,89 +377,23 @@ if(false) {
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
 							return (
 								pre +
-								"if((g['" +
-								colas +
-								"'] == null && " +
-								colexp1 +
-								'!== null) ? y =  ' +
-								colexp1 +
-								" : (g['" +
-								colas +
-								"'] !== null && " +
-								colexp1 +
-								" == null) ? y = g['" +
-								colas +
-								"'] : ((y=" +
-								colexp1 +
-								") < g['" +
-								colas +
-								"'])){ if((typeof y == 'number')) {g['" +
-								colas +
-								"'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" +
-								colas +
-								"'] = y;}else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" +
-								colas +
-								"'] = Number(y);}}else if(g['" +
-								colas +
-								"']!== null && typeof g['" +
-								colas +
-								"'] == 'object' && y instanceof Date){g['" +
-								colas +
-								"'] = g['" +
-								colas +
-								"']}else if(g['" +
-								colas +
-								"']!== null && typeof g['" +
-								colas +
-								"'] == 'object'){g['" +
-								colas +
-								"'] = Number(g['" +
-								colas +
-								"'])}" +
+								`if((g['${colas}'] == null && ${colexp1}!== null) ? y = ${colexp1} : (g['${colas}']!== null && 
+							${colexp1} == null) ? y = g['${colas}']:((y=${colexp1}) < g['${colas}'])){ if(typeof y == 'number')
+							{g['${colas}'] = y;}else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
+							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']} 
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object'){g['${colas}'] = Number(g['${colas}'])}` +
 								post
 							);
 						}
 						return (
 							pre +
-							"if((g['" +
-							colas +
-							"'] == null && " +
-							colexp +
-							'!== null) ? y =  ' +
-							colexp +
-							" : (g['" +
-							colas +
-							"'] !== null && " +
-							colexp +
-							" == null) ? y = g['" +
-							colas +
-							"'] : ((y=" +
-							colexp +
-							") < g['" +
-							colas +
-							"'])){ if((typeof y == 'number')) {g['" +
-							colas +
-							"'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" +
-							colas +
-							"'] = y;}else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" +
-							colas +
-							"'] = Number(y);}}else if(g['" +
-							colas +
-							"']!== null && typeof g['" +
-							colas +
-							"'] == 'object' && y instanceof Date){g['" +
-							colas +
-							"'] = g['" +
-							colas +
-							"']}else if(g['" +
-							colas +
-							"']!== null && typeof g['" +
-							colas +
-							"'] == 'object'){g['" +
-							colas +
-							"'] = Number(g['" +
-							colas +
-							"'])}" +
+							`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : (g['${colas}']!== null && 
+							${colexp} == null) ? y = g['${colas}']:((y=${colexp}) < g['${colas}'])){ if(typeof y == 'number')
+							{g['${colas}'] = y;}else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
+							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']} 
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object'){g['${colas}'] = Number(g['${colas}'])}` +
 							post
 						);
 					} else if (col.aggregatorid === 'MAX') {
@@ -525,33 +402,17 @@ if(false) {
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
 							return (
 								pre +
-								'if ((y=' +
-								colexp1 +
-								") > g['" +
-								colas +
-								"']){ if((typeof y == 'number')) {g['" +
-								colas +
-								"'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" +
-								colas +
-								"'] = y;} else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" +
-								colas +
-								"'] = Number(y);}}" +
+								`if((y=${colexp1}) > g['${colas}']){if(typeof y == 'number'){g['${colas}'] = y;} 
+							else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
+							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}` +
 								post
 							);
 						}
 						return (
 							pre +
-							'if ((y=' +
-							colexp +
-							") > g['" +
-							colas +
-							"']){ if((typeof y == 'number')) {g['" +
-							colas +
-							"'] = y;} else if(typeof y == 'object' && y instanceof Date){g['" +
-							colas +
-							"'] = y;} else if(typeof y == 'object' && typeof Number(y) == 'number'){g['" +
-							colas +
-							"'] = Number(y);}}" +
+							`if((y=${colexp}) > g['${colas}']){if(typeof y == 'number'){g['${colas}'] = y;} 
+							else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
+							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}` +
 							post
 						);
 					} else if (col.aggregatorid === 'FIRST') {
@@ -623,5 +484,7 @@ if(false) {
 		//		s += 'group.count++;';
 		s += '}';
 	});
+
+	//		console.log('groupfn',s);
 	return new Function('p,params,alasql', 'var y;' + s);
 };

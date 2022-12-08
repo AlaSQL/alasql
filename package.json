@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "2.2.0",
+	"version": "2.2.1",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -72,7 +72,7 @@
 		"gulp-shell": "0.8.0",
 		"gulp-uglify": "3.0.2",
 		"husky": "6.0.0",
-		"lint-staged": "13.0.4",
+		"lint-staged": "13.1.0",
 		"mocha": "10.1.0",
 		"mocha.parallel": "0.15.6",
 		"open": "8.4.0",
