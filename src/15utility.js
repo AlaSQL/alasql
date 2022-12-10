@@ -17,13 +17,13 @@ var utils = (alasql.utils = {});
   @function
   @param {string} s JavaScript string to be modified
   @return {string} Covered expression
- 
+
   @example
- 
+
   123         => 123
   undefined   => undefined
   NaN         => undefined
- 
+
   */
 function n2u(s) {
 	return '(y=' + s + ',y===y?y:undefined)';
@@ -33,13 +33,13 @@ function n2u(s) {
   Return undefined if s undefined
   @param {string} s JavaScript string to be modified
   @return {string} Covered expression
- 
+
   @example
- 
+
   123,a       => a
   undefined,a => undefined
   NaN,a       => undefined
- 
+
   */
 function und(s, r) {
 	return '(y=' + s + ',typeof y=="undefined"?undefined:' + r + ')';
@@ -67,9 +67,9 @@ function returnUndefined() {}
   @param {string} s Source string
   @return {string} Escaped string
   @example
- 
+
   Pit\er's => Pit\\er\'s
- 
+
   */
 // based on joliss/js-string-escape
 var escapeq = (utils.escapeq = function (s) {
@@ -100,11 +100,11 @@ var escapeq = (utils.escapeq = function (s) {
   Double quotes for SQL statements
   @param {string} s Source string
   @return {string} Escaped string
- 
+
   @example
- 
+
   Piter's => Piter''s
- 
+
   */
 var escapeqq = (utils.undoubleq = function (s) {
 	return s.replace(/(\')/g, "''");
@@ -115,9 +115,9 @@ var escapeqq = (utils.undoubleq = function (s) {
   @param {string} s Source string
   @return {string} Replaced string
   @example
- 
+
   Piter''s => Piter's
- 
+
   */
 var doubleq = (utils.doubleq = function (s) {
 	return s.replace(/(\'\')/g, "\\'");
@@ -127,9 +127,9 @@ var doubleq = (utils.doubleq = function (s) {
   Replace sigle quote to escaped single quote
   @param {string} s Source string
   @return {string} Replaced string
- 
+
   @todo Chack this functions
- 
+
   */
 var doubleqq = (utils.doubleqq = function (s) {
 	return s.replace(/\'/g, "'");
@@ -233,7 +233,7 @@ utils.isRequireJS = (function () {
 /**
   Find out if code is running with Meteor in the enviroment
   @return {boolean} True if code is running with Meteor in the enviroment
- 
+
   @todo Find out if this is the best way to do this
   */
 utils.isMeteor = (function () {
@@ -259,7 +259,7 @@ utils.isMeteorServer = (function () {
 /**
   Find out code is running in a cordovar enviroment
   @return {boolean} True if code is running in a web worker enviroment
- 
+
   @todo Find out if this is the best way to do this
   */
 utils.isCordova = (function () {
@@ -294,7 +294,7 @@ utils.isArray = function (obj) {
   @param {function} success Success function
   @param {function} error Error function
   @return {string} Read data
- 
+
   @todo Define Event type
   @todo Smaller if-else structures.
   */
@@ -380,13 +380,13 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 		/** @todo Check eliminated code below */
 
 		/*/*
- 
+
 		 var paths = path.split('/');
 		 var filename = paths[paths.length-1];
 		 var dirpath = path.substr(0,path.length-filename.length);
   //       console.log('CORDOVA',filename,dirpath);
   //return success('[{"a":"'+filename+'"}]');
- 
+
 		 window.resolveLocalFileSystemURL(dirpath, function(dir) {
 			 dir.getFile(filename, null, function(file) {
 				 file.file(function(file) {
@@ -465,7 +465,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
   @param {function} success Success function
   @param {function} error Error function
   @return 1 for Async, data - for sync version
- 
+
   @todo merge functionality from loadFile and LoadBinaryFile
   */
 
@@ -733,20 +733,20 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 			 var dirpath = path.substr(0,path.length-filename.length);
 	  //       console.log('CORDOVA',filename,dirpath);
 	  //return success('[{"a":"'+filename+'"}]');
- 
+
 			 window.resolveLocalFileSystemURL(dirpath, function(dir) {
  //            console.log('saveFile 2');
- 
+
 				 dir.getFile(filename, {create:true}, function(file) {
  //            console.log('saveFile 3');
- 
+
  //                    file.file(function(file) {
  //            console.log('saveFile 4');
- 
+
 						 file.createWriter(function(fileWriter) {
- 
+
  //        fileWriter.seek(fileWriter.length);
- 
+
 							 var blob = new Blob([data], {type:'text/plain'});
 							 fileWriter.write(blob);
 							 fileWriter.onwriteend = function(){
@@ -816,7 +816,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 /**
   @function Is this IE9
   @return {boolean} True for IE9 and false for other browsers
- 
+
   For IE9 compatibility issues
   */
 function isIE() {
@@ -998,12 +998,12 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 		 if (x === y){
 			 return true;
 		 }
- 
+
 		 var p;
 		 for (p in y) {
 			 if (typeof (x[p]) === 'undefined') { return false; }
 		 }
- 
+
 		 for (p in y) {
 			 if (y[p]) {
 				 switch (typeof (y[p])) {
@@ -1026,11 +1026,11 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 				 }
 			 }
 		 }
- 
+
 		 for (p in x) {
 			 if (typeof (y[p]) === 'undefined') { return false; }
 		 }
- 
+
 		 return true;
 	 }
 	 return x === y;
