@@ -430,7 +430,6 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 					}
 				};
 				xhr.open('GET', path, asy); // Async
-				xhr.responseType = 'text';
 				xhr.send();
 			}
 		} else if (path instanceof Event) {
