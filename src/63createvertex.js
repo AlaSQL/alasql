@@ -7,7 +7,7 @@
 */
 
 yy.CreateVertex = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CreateVertex.prototype.toString = function () {
 	var s = 'CREATE VERTEX ';
@@ -145,7 +145,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 */
 
 yy.CreateEdge = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CreateEdge.prototype.toString = function () {
 	//	console.log('here!');
@@ -244,7 +244,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 };
 
 yy.CreateGraph = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CreateGraph.prototype.toString = function () {
 	var s = 'CREATE GRAPH' + ' ';
@@ -472,7 +472,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	} else if(this.select) {
 
 	} else {
-	
+
 	}
 	*/
 

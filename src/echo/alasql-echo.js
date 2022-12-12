@@ -3,7 +3,7 @@
 var yy = alasql.yy;
 
 yy.Echo = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Echo.prototype.toString = function () {
 	var s = 'TEST ' + this.expr.toString();
