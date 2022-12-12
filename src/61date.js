@@ -166,7 +166,8 @@ alasql.stdfn.DATE_SUB = alasql.stdfn.SUBDATE = function (d, interval) {
 	return new Date(nd);
 };
 
-var dateRegexp = /^(?<year>\d{4})[-\.](?<month>\d{1,2})[-\.](?<day>\d{1,2})( (?<hours>\d{2}):(?<minutes>\d{2})(:(?<seconds>\d{2})(\.(?<milliseconds>)\d{3})?)?)?/;
+var dateRegexp =
+	/^(?<year>\d{4})[-\.](?<month>\d{1,2})[-\.](?<day>\d{1,2})( (?<hours>\d{2}):(?<minutes>\d{2})(:(?<seconds>\d{2})(\.(?<milliseconds>)\d{3})?)?)?/;
 function newDate(d) {
 	let date = new Date(d);
 
@@ -174,7 +175,7 @@ function newDate(d) {
 		if (typeof d === 'string') {
 			const match = d.match(dateRegexp);
 			if (match) {
-				const { year, month, day, hours, minutes, seconds, milliseconds } = match.groups;
+				const {year, month, day, hours, minutes, seconds, milliseconds} = match.groups;
 				const dateArrguments = [year, month - 1, day];
 				if (hours) {
 					dateArrguments.push(hours, minutes, seconds || 0, milliseconds || 0);

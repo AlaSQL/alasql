@@ -16,7 +16,7 @@
 \$\$(.+?)\$\$				            return 'DOLLARSTRING'
 */
 
-\`\`([^\`])+\`\`						return 'JAVASCRIPT'
+\`\`([^\`])+\`\`						return alasql.options.disablejsfunc && 'STRING' || 'JAVASCRIPT'
 \[\?\]									return 'BRAQUESTION'
 '@['									return 'ATLBRA'
 'ARRAY['								return 'ARRAYLBRA'

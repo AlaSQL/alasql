@@ -2404,7 +2404,7 @@ options: {"case-insensitive":true},
 performAction: function anonymous(yy,yy_,$avoiding_name_collisions,YY_START) {
 var YYSTATE=YY_START;
 switch($avoiding_name_collisions) {
-case 0:return 270
+case 0:return alasql.options.disablejsfunc && 'STRING' || 'JAVASCRIPT'
 break;
 case 1:return 305
 break;
