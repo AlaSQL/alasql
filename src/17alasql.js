@@ -59,6 +59,7 @@ alasql.options.valueof = false; // Use valueof in orderfn
 alasql.options.dropifnotexists = false; // DROP database in any case
 alasql.options.datetimeformat = 'sql'; // How to handle DATE and DATETIME types
 // Another value is 'javascript'
+alasql.options.disablejsfunc = false; // Disabling javascript functions to avoid xss attacks
 alasql.options.casesensitive = true; // Table and column names are case sensitive and converted to lower-case
 alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
 alasql.options.logprompt = true; // Print SQL at log
