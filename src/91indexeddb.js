@@ -62,50 +62,6 @@ IDB.showDatabases = function (like, cb) {
 };
 
 IDB.createDatabase = function (ixdbid, args, ifnotexists, dbid, cb) {
-	// console.log(arguments);
-	var indexedDB = utils.global.indexedDB;
-	if (ifnotexists) {
-		var request2 = indexedDB.open(ixdbid, 1);
-		request2.onsuccess = function (event) {
-			event.target.result.close();
-			if (cb) cb(1);
-		};
-	} else {
-		var request1 = indexedDB.open(ixdbid, 1);
-		request1.onupgradeneeded = function (e) {
-			// console.log('abort');
-			e.target.transaction.abort();
-		};
-		request1.onsuccess = function (e) {
-			// console.log('success');
-			if (ifnotexists) {
-				if (cb) cb(0);
-			} else {
-				throw new Error(
-					'IndexedDB: Cannot create new database "' + ixdbid + '" because it already exists'
-				);
-			}
-		};
-	}
-
-	/*/*	var request1 = IDB.getDatabaseNames();
-	request1.onsuccess = function(event) {
-		var dblist = event.target.result;
-		if(dblist.contains(ixdbid)){
-			if(ifnotexists) {
-				cb(0);
-				return;
-			} else {
-				throw new Error('IndexedDB: Cannot create new database "'+ixdbid+'" because it already exists');
-			}
-		};
-
-	};
-	 }
-*/
-};
-
-IDB.createDatabase = function (ixdbid, args, ifnotexists, dbid, cb) {
 	var indexedDB = utils.global.indexedDB;
 	if (IDB.getDatabaseNamesNotSupported) {
 		// Hack for Firefox
