@@ -6,12 +6,6 @@
 //
 */
 
-Database.prototype.transaction = function (cb) {
-	var tx = new alasql.Transaction(this.databaseid);
-	var res = cb(tx);
-	return res;
-};
-
 // Transaction class (for WebSQL compatibility)
 
 /** 
