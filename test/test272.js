@@ -6,12 +6,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 272 REMOVE columns', function () {
-	// missing in lodash 4
-	var pluck = function (arr, key) {
-		return arr.map(function (e) {
-			return e[key];
-		});
-	};
+	const pluck = (arr, key) => arr.map(e => e[key]);
 
 	before(function () {
 		alasql('CREATE DATABASE test272; USE test272');

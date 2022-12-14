@@ -6,12 +6,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 273 Source columns detextion', function () {
-	// missing in lodash 4
-	var pluck = function (arr, key) {
-		return arr.map(function (e) {
-			return e[key];
-		});
-	};
+	const pluck = (arr, key) => arr.map(e => e[key])
 
 	before(function () {
 		alasql('CREATE DATABASE test273; USE test273');
@@ -31,7 +26,7 @@ describe('Test 273 Source columns detextion', function () {
 	it('2. Empty test on table with columns', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT * FROM one');
-		var colres = pluck(res.columns, 'columnid');
+		var colres = res.columns.map((col) => col.columnid);
 		assert.deepEqual(colres, ['a', 'b']);
 		alasql.options.modifier = undefined;
 		done();
