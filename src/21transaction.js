@@ -6,15 +6,9 @@
 //
 */
 
-Database.prototype.transaction = function (cb) {
-	var tx = new alasql.Transaction(this.databaseid);
-	var res = cb(tx);
-	return res;
-};
-
 // Transaction class (for WebSQL compatibility)
 
-/** 
+/**
  Transaction class
  @class Transaction
  */
@@ -65,7 +59,7 @@ Transaction.prototype.rollback = function () {
  Execute SQL statement
  @param {string} sql SQL statement
  @param {object} params Parameters
- @param {function} cb Callback function 
+ @param {function} cb Callback function
  @return result
  */
 Transaction.prototype.exec = function (sql, params, cb) {
