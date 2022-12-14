@@ -7,7 +7,7 @@
 */
 
 yy.FuncValue = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 
 var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;

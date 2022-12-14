@@ -7,7 +7,7 @@
 */
 
 yy.Convert = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Convert.prototype.toString = function () {
 	var s = 'CONVERT(';

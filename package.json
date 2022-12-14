@@ -48,7 +48,6 @@
 	"dependencies": {
 		"dom-storage": "2.1.0",
 		"es6-promise": "4.2.8",
-		"lodash": "4.17.21",
 		"node-fetch": "2",
 		"xlsx": "0.18",
 		"yargs": "16"
@@ -60,7 +59,6 @@
 		"git-branch-is": "4.0.0",
 		"gulp": "4.0.2",
 		"gulp-concat": "2.6.1",
-		"gulp-dereserve": "0.2.1",
 		"gulp-exec": "5.0.0",
 		"gulp-jison": "1.2.0",
 		"gulp-rename": "2.0.0",
@@ -82,11 +80,10 @@
 		"axios": "^1.0.0",
 		"marked": "^4.0.10",
 		"underscore": "^1.12.1",
-		"glob-parent": "^6.0.0",
-		"lodash.template": "^4.5.0"
+		"glob-parent": "^6.0.0"
 	},
 	"engines": {
-		"node": "*"
+		"node": ">=14"
 	},
 	"repository": {
 		"type": "git",

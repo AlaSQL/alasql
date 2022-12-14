@@ -7,7 +7,7 @@
 */
 
 yy.CreateIndex = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CreateIndex.prototype.toString = function () {
 	var s = 'CREATE';
@@ -70,7 +70,7 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.Reindex = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Reindex.prototype.toString = function () {
 	var s = 'REINDEX ' + this.indexid;

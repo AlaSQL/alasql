@@ -6,13 +6,15 @@
 //
 */
 
+var assign = Object.assign;
+
 /**
 		Expression statement ( = 2*2; )
 		@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 
 /**
@@ -55,7 +57,7 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 */
 
 yy.Expression = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 
 /**
@@ -127,7 +129,7 @@ yy.Expression.prototype.compile = function (context, tableid, defcols) {
 	@class
 */
 yy.JavaScript = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.JavaScript.prototype.toString = function () {
 	var s = '``' + this.value + '``';
@@ -155,7 +157,7 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 */
 
 yy.Literal = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Literal.prototype.toString = function () {
 	var s = this.value;
@@ -172,7 +174,7 @@ yy.Literal.prototype.toString = function () {
 */
 
 yy.Join = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Join.prototype.toString = function () {
 	var s = ' ';
@@ -189,7 +191,7 @@ yy.Join.prototype.toString = function () {
 */
 
 yy.Table = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Table.prototype.toString = function () {
 	var s = this.tableid;
@@ -206,7 +208,7 @@ yy.Table.prototype.toString = function () {
 */
 
 yy.View = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.View.prototype.toString = function () {
 	var s = this.viewid;
@@ -222,7 +224,7 @@ yy.View.prototype.toString = function () {
 	@class
 */
 yy.Op = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Op.prototype.toString = function () {
 	if (this.op === 'IN' || this.op === 'NOT IN') {
@@ -421,9 +423,9 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 					||
 					(
 						${leftOperand}  < 0
-						&& 
-						true == ${rightOperand} 
-					) 
+						&&
+						true == ${rightOperand}
+					)
 				)`;
 		}
 	}
@@ -609,7 +611,7 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 };
 
 yy.VarValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.VarValue.prototype.toString = function () {
 	return '@' + this.variable;
@@ -624,7 +626,7 @@ yy.VarValue.prototype.toJS = function () {
 };
 
 yy.NumValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.NumValue.prototype.toString = function () {
 	return this.value.toString();
@@ -639,7 +641,7 @@ yy.NumValue.prototype.toJS = function () {
 };
 
 yy.StringValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.StringValue.prototype.toString = function () {
 	return "'" + this.value.toString() + "'";
@@ -654,7 +656,7 @@ yy.StringValue.prototype.toJS = function () {
 };
 
 yy.DomainValueValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.DomainValueValue.prototype.toString = function () {
 	return 'VALUE';
@@ -671,7 +673,7 @@ yy.DomainValueValue.prototype.toJS = function (context, tableid, defcols) {
 };
 
 yy.ArrayValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.ArrayValue.prototype.toString = function () {
 	return 'ARRAY[]';
@@ -694,7 +696,7 @@ yy.ArrayValue.prototype.toJS = function (context, tableid, defcols) {
 };
 
 yy.LogicValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.LogicValue.prototype.toString = function () {
 	return this.value ? 'TRUE' : 'FALSE';
@@ -709,7 +711,7 @@ yy.LogicValue.prototype.toJS = function () {
 };
 
 yy.NullValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.NullValue.prototype.toString = function () {
 	return 'NULL';
@@ -720,7 +722,7 @@ yy.NullValue.prototype.toJS = function () {
 };
 
 yy.ParamValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.ParamValue.prototype.toString = function () {
 	return '$' + this.param;
@@ -734,7 +736,7 @@ yy.ParamValue.prototype.toJS = function () {
 };
 
 yy.UniOp = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.UniOp.prototype.toString = function () {
 	var s;
@@ -824,7 +826,7 @@ yy.UniOp.prototype.toJS = function (context, tableid, defcols) {
 };
 
 /*/*
-// yy.Star = function (params) { return yy.extend(this, params); }
+// yy.Star = function (params) { return assign(this, params); }
 // yy.Star.prototype.toString = function() {
 // 	var s = this.fieldid;
 // 	if(this.tableid) {
@@ -838,7 +840,7 @@ yy.UniOp.prototype.toJS = function (context, tableid, defcols) {
 // }
 */
 yy.Column = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Column.prototype.toString = function () {
 	var s;
@@ -919,7 +921,7 @@ yy.Column.prototype.toJS = function (context, tableid, defcols) {
 };
 
 yy.AggrValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.AggrValue.prototype.toString = function () {
 	var s = '';
@@ -994,13 +996,13 @@ yy.AggrValue.prototype.toJS = function () {
 };
 
 yy.OrderExpression = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 
 yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString;
 
 yy.GroupExpression = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.GroupExpression.prototype.toString = function () {
 	return this.type + '(' + this.group.toString() + ')';

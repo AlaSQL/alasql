@@ -7,7 +7,7 @@
 */
 
 yy.Delete = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Delete.prototype.toString = function () {
 	var s = 'DELETE FROM ' + this.table.toString();
