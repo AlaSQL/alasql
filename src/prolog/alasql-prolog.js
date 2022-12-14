@@ -3,7 +3,7 @@
 var yy = alasql.yy;
 
 yy.Term = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Term.prototype.toString = function () {
 	var s = this.termid;
@@ -19,7 +19,7 @@ yy.Term.prototype.toString = function () {
 };
 
 yy.AddRule = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.AddRule.prototype.toString = function () {
 	var s = '';

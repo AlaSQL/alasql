@@ -9,28 +9,27 @@
     <script src="/lib/jquery/jquery.min.js"></script>
 
     <script src="browser.js"></script>
-   
+
   </head>
   <body>
 
     <div id="mocha">
 
         <div id="sum">
-            
-            
+
+
         </div>
-                
+
 
     </div>
-    
+
     <script src="../dist/alasql.js"></script>
-    <script src="../lib/lodash/lodash.min.js"></script>
     <script src="../lib/xlsx/xlsx.core.min.js"></script>
     <script src="../lib/assert/assert.js"></script>
     <script src="../lib/mocha/mocha.js"></script>
     <script src="../lib/zt/zt.js"></script>
 
-    
+
     <script>mocha.setup('bdd')</script>
 
 
@@ -47,7 +46,7 @@
 
 setInterval(function(){
                         $('#sum').html(
-                                                               
+
                                         '<div class="suite" style="position:fixed;top:0;background-color:#eeeeee;z-index:10;padding:10px;"><h1>### '+browserName + " " + majorVersion+' </h1><ul>'+
                                         '<li class="test "><h2>- `alasql@'+alasql.version+'`</h2></li>'+
                                         '<li class="test "><h2>- Failures: '+$('#mocha-stats .failures em').text()+'</h2></li>'+

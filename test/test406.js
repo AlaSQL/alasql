@@ -95,11 +95,12 @@ describe('Test 406. Complex SEARCH', function () {
 			2: 20,
 		};
 
-		var res = alasql('SEARCH OF(@a) \
+		var res = alasql(
+			'SEARCH OF(@a) \
         RETURN(@a AS [key],_ AS [value]) \
-        FROM ?', [
-			data1,
-		]);
+        FROM ?',
+			[data1]
+		);
 		assert.deepEqual(res, [
 			{key: '1', value: 10},
 			{key: '2', value: 20},

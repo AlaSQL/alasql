@@ -9,7 +9,7 @@
 /* globals: alasql, yy */
 
 /**
-	Print statement 
+	Print statement
 	@class
 	@param {object} params Initial setup properties
 */
@@ -17,11 +17,11 @@
 /* global alasql, yy */
 
 yy.Print = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 
-/** 
-	Generate SQL string 
+/**
+	Generate SQL string
 	@this Print statement object
 */
 yy.Print.prototype.toString = function () {
@@ -34,7 +34,7 @@ yy.Print.prototype.toString = function () {
  	Print result of select statement or expression
  	@param {string} databaseid Database identificator
  	@param {object} params Query parameters
- 	@param {statement-callback} cb Callback function 
+ 	@param {statement-callback} cb Callback function
 	@this Print statement object
 */
 yy.Print.prototype.execute = function (databaseid, params, cb) {

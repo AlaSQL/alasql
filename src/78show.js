@@ -7,7 +7,7 @@
 */
 
 yy.ShowDatabases = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.ShowDatabases.prototype.toString = function () {
 	var s = 'SHOW DATABASES';
@@ -35,7 +35,7 @@ yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.ShowTables = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.ShowTables.prototype.toString = function () {
 	var s = 'SHOW TABLES';
@@ -62,7 +62,7 @@ yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.ShowColumns = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.ShowColumns.prototype.toString = function () {
 	var s = 'SHOW COLUMNS';
@@ -88,7 +88,7 @@ yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.ShowIndex = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.ShowIndex.prototype.toString = function () {
 	var s = 'SHOW INDEX';
@@ -111,7 +111,7 @@ yy.ShowIndex.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.ShowCreateTable = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.ShowCreateTable.prototype.toString = function () {
 	var s = 'SHOW CREATE TABLE ' + this.table.tableid;

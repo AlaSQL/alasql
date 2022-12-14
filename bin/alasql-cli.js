@@ -44,6 +44,14 @@ let yargs = require('yargs')
 	.nargs('f', 1)
 	.normalize('f')
 
+	.boolean('ast')
+	.describe('ast', 'Print AST instead of result')
+	.normalize('ast')
+
+	/*.boolean('comp')
+	.describe('comp', 'Print compiled function instead of result')
+	.normalize('comp')*/
+
 	.help('h')
 	.alias('h', 'help')
 
@@ -114,6 +122,26 @@ function execute(sql, params) {
 			}
 		}
 	}
+
+	if (argv.ast) {
+		try {
+			console.log(formatOutput(alasql.parse(sql, params)));
+			process.exit(0);
+		} catch (e) {
+			console.error(e);
+			process.exit(1);
+		}
+	}
+
+	/*if (argv.comp) {
+		try {
+			console.log(alasql.compile(sql, params));
+			process.exit(0);
+		} catch (e) {
+			console.error(e);
+			process.exit(1);
+		}
+	}*/
 
 	alasql
 		.promise(sql, params)

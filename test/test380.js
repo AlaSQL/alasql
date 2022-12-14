@@ -60,8 +60,10 @@ describe('Test 380 - PIVOT', function () {
 	});
 
 	it('2. Simple pivot without IN', function (done) {
-		var res = alasql('select * from DailyIncome  \
-		pivot (AVG(IncomeAmount) for IncomeDay)');
+		var res = alasql(
+			'select * from DailyIncome  \
+		pivot (AVG(IncomeAmount) for IncomeDay)'
+		);
 
 		assert.deepEqual(res, [
 			{

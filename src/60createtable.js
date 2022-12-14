@@ -9,7 +9,7 @@
 /* global alasql, yy, hash */
 
 yy.ColumnDef = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.ColumnDef.prototype.toString = function () {
 	var s = this.columnid;
@@ -37,7 +37,7 @@ yy.ColumnDef.prototype.toString = function () {
 };
 
 yy.CreateTable = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CreateTable.prototype.toString = function () {
 	var s = 'CREATE';

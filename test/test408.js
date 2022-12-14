@@ -3,7 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-process.env.TZ = 'UTC';
+if (globalThis.process) {
+	globalThis.process.env.TZ = 'UTC';
+}
 
 /*
  This sample beased on this article:
@@ -29,8 +31,10 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
       VALUES('2007-05-06 12:10:09','2007-05-07 12:10:09');
   */
 		});
-		var res = alasql('SELECT DATEDIFF(day,startDate,endDate) AS Duration \
-      FROM Duration');
+		var res = alasql(
+			'SELECT DATEDIFF(day,startDate,endDate) AS Duration \
+      FROM Duration'
+		);
 		assert.deepEqual(res, [{Duration: 1}]);
 
 		done();
@@ -40,7 +44,7 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 		alasql(function () {
 			/*
       DECLARE @startdate datetime = '2007-05-05 12:10:09.3312722';
-      DECLARE @enddate datetime = '2007-05-04 12:10:09.3312722';   
+      DECLARE @enddate datetime = '2007-05-04 12:10:09.3312722';
     */
 		});
 		var res = alasql('VALUE OF SELECT DATEDIFF(day, @startdate, @enddate)');

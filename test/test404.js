@@ -37,10 +37,12 @@ describe('Test 404 OUTER JOIN', function () {
 		alasql('create table colors (id int, name text)');
 		alasql('create table fruits (id int, name text)');
 		alasql('create table mascots (id int, name text)');
-		alasql("insert into colors(id, name) values \
+		alasql(
+			"insert into colors(id, name) values \
 (1, 'red'), \
 (2, 'blue'), \
-(3, 'orange')");
+(3, 'orange')"
+		);
 		alasql(
 			"insert into fruits(id, name) values \
 (1, 'apple'), \

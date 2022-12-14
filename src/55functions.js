@@ -7,7 +7,7 @@
 */
 
 yy.FuncValue = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 
 var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
@@ -298,42 +298,39 @@ alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
 	return s;
 };
 
-alasql.aggr.MEDIAN = function (v, s, stage) {
+alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	if (stage === 2) {
 		if (v !== null) {
 			s.push(v);
 		}
 		return s;
-	} else if (stage === 1) {
+	}
+
+	if (stage === 1) {
 		if (v === null) {
 			return [];
 		}
 		return [v];
+	}
+
+	if (!s.length) {
+		return null;
+	}
+
+	var r = s.sort((a, b) => {
+		if (a > b) return 1;
+		if (a < b) return -1;
+		return 0;
+	});
+
+	var middle = (r.length + 1) / 2;
+	var middleFloor = middle | 0;
+	var el = r[middleFloor - 1];
+
+	if (middle === middleFloor || (typeof el !== 'number' && !(el instanceof Number))) {
+		return el;
 	} else {
-		if (!s.length) {
-			return s;
-		}
-
-		var r = s.sort(function (a, b) {
-			if (a === b) {
-				return 0;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return -1;
-		});
-		var p = (r.length + 1) / 2;
-		if (Number.isInteger(p)) {
-			return r[p - 1];
-		}
-
-		var value = r[Math.floor(p - 1)];
-		if (typeof value !== 'number' && !(value instanceof Number)) {
-			return value;
-		}
-
-		return (value + r[Math.ceil(p - 1)]) / 2;
+		return (el + r[middleFloor]) / 2;
 	}
 };
 

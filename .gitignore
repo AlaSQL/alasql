@@ -18,3 +18,4 @@ dist/
 /.idea/modules.xml
 /.idea/runConfigurations.xml
 /.idea/vcs.xml
+pnpm-lock.yaml

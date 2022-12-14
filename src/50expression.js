@@ -6,13 +6,15 @@
 //
 */
 
+var assign = Object.assign;
+
 /**
-  	Expression statement ( = 2*2; )
-  	@class
+		Expression statement ( = 2*2; )
+		@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 
 /**
@@ -33,8 +35,7 @@ yy.ExpressionStatement.prototype.toString = function () {
 yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 	if (this.expression) {
 		//		console.log(this.expression.toJS('','', null));
-		//		console.log(this.expression.toJS('','', null));
-		//        console.log(this.expression.toJS('({})','', null));
+		//      console.log(this.expression.toJS('({})','', null));
 
 		alasql.precompile(this, databaseid, params); // Precompile queries
 		var exprfn = new Function(
@@ -56,7 +57,7 @@ yy.ExpressionStatement.prototype.execute = function (databaseid, params, cb) {
 */
 
 yy.Expression = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 
 /**
@@ -128,15 +129,14 @@ yy.Expression.prototype.compile = function (context, tableid, defcols) {
 	@class
 */
 yy.JavaScript = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.JavaScript.prototype.toString = function () {
 	var s = '``' + this.value + '``';
 	return s;
 };
 
-yy.JavaScript.prototype.toJS = function (/* context, tableid, defcols*/) {
-	//	console.log('Expression',this);
+yy.JavaScript.prototype.toJS = function () {
 	return '(' + this.value + ')';
 };
 yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
@@ -157,7 +157,7 @@ yy.JavaScript.prototype.execute = function (databaseid, params, cb) {
 */
 
 yy.Literal = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Literal.prototype.toString = function () {
 	var s = this.value;
@@ -174,7 +174,7 @@ yy.Literal.prototype.toString = function () {
 */
 
 yy.Join = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Join.prototype.toString = function () {
 	var s = ' ';
@@ -185,17 +185,13 @@ yy.Join.prototype.toString = function () {
 	return s;
 };
 
-//  yy.Join.prototype.toJS = function(context, tableid) {
-//  	return 'JOIN'+this.table.toString();
-// }
-
 /**
 	Table class
 	@class
 */
 
 yy.Table = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Table.prototype.toString = function () {
 	var s = this.tableid;
@@ -212,7 +208,7 @@ yy.Table.prototype.toString = function () {
 */
 
 yy.View = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.View.prototype.toString = function () {
 	var s = this.viewid;
@@ -228,7 +224,7 @@ yy.View.prototype.toString = function () {
 	@class
 */
 yy.Op = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Op.prototype.toString = function () {
 	if (this.op === 'IN' || this.op === 'NOT IN') {
@@ -267,6 +263,7 @@ yy.Op.prototype.toString = function () {
 
 		return s;
 	}
+
 	return (
 		this.left.toString() +
 		' ' +
@@ -278,7 +275,6 @@ yy.Op.prototype.toString = function () {
 };
 
 yy.Op.prototype.findAggregator = function (query) {
-	//	console.log(this.toString());
 	if (this.left && this.left.findAggregator) {
 		this.left.findAggregator(query);
 	}
@@ -410,17 +406,28 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	}
 
 	if (this.op === 'IS') {
-		s =
-			'' +
-			'(' +
-			'(' +
-			leftJS() +
-			'==null)' + // Cant be ===
-			' === ' +
-			'(' +
-			rightJS() +
-			'==null)' + // Cant be ===
-			')';
+		const leftOperand = leftJS();
+		const rightOperand = rightJS();
+		if (
+			this.right instanceof yy.NullValue ||
+			(this.right.op === 'NOT' && this.right.right instanceof yy.NullValue)
+		) {
+			s = `(
+					(${leftOperand}==null)   // Cant be ===
+					===
+					(${rightOperand}==null)  // Cant be ===
+				)`;
+		} else {
+			s = `(
+					(${leftOperand} == ${rightOperand})
+					||
+					(
+						${leftOperand}  < 0
+						&&
+						true == ${rightOperand}
+					)
+				)`;
+		}
 	}
 
 	if (this.op === '==') {
@@ -483,17 +490,6 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 			')' +
 			')' +
 			')';
-
-		/*/*
-		if(this.right instanceof yy.Op && this.right.op == 'AND') {
-
-			return ref('(('+this.right.left)+'<='+leftJS()+')&&'+
-			ref('('+leftJS()+'<='+this.right.right)+'))';
-
-		} else {
-			throw new Error('Wrong BETWEEN operator without AND part');
-		}
-*/
 	}
 
 	if (this.op === 'IN') {
@@ -529,13 +525,10 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	if (this.op === 'NOT IN') {
 		if (this.right instanceof yy.Select) {
 			s = '(';
-			//this.query.queriesdata['+this.queriesidx+']
-			//			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,p))';
 			s += 'alasql.utils.flatArray(this.queriesfn[' + this.queriesidx + '](params,null,p))';
 			s += '.indexOf(';
 			s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 		} else if (Array.isArray(this.right)) {
-			//			if(this.right.length == 0) return 'true';
 			s = '([' + this.right.map(ref).join(',') + '].indexOf(';
 			s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 		} else {
@@ -549,7 +542,6 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	if (this.allsome === 'ALL') {
 		var s;
 		if (this.right instanceof yy.Select) {
-			//			var s = 'this.query.queriesdata['+this.queriesidx+']';
 			s = 'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
 
 			s += '.every(function(b){return (';
@@ -568,7 +560,6 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	if (this.allsome === 'SOME' || this.allsome === 'ANY') {
 		var s;
 		if (this.right instanceof yy.Select) {
-			//			var s = 'this.query.queriesdata['+this.queriesidx+']';
 			s = 'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
 			s += '.some(function(b){return (';
 			s += leftJS() + ')' + op + 'b})';
@@ -607,12 +598,9 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 	// 	// 		+ ')';
 	// }
 
-	// Change names
-	//	console.log(this);
 	var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 	var declareRefs = 'y=[(' + refs.join('), (') + ')]';
-
 	if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
 		return '(' + declareRefs + ', ' + expr + ')';
 	}
@@ -623,7 +611,7 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 };
 
 yy.VarValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.VarValue.prototype.toString = function () {
 	return '@' + this.variable;
@@ -638,7 +626,7 @@ yy.VarValue.prototype.toJS = function () {
 };
 
 yy.NumValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.NumValue.prototype.toString = function () {
 	return this.value.toString();
@@ -653,7 +641,7 @@ yy.NumValue.prototype.toJS = function () {
 };
 
 yy.StringValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.StringValue.prototype.toString = function () {
 	return "'" + this.value.toString() + "'";
@@ -664,13 +652,11 @@ yy.StringValue.prototype.toType = function () {
 };
 
 yy.StringValue.prototype.toJS = function () {
-	//	console.log("'"+doubleqq(this.value)+"'");
-	//	return "'"+doubleqq(this.value)+"'";
 	return "'" + escapeq(this.value) + "'";
 };
 
 yy.DomainValueValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.DomainValueValue.prototype.toString = function () {
 	return 'VALUE';
@@ -687,7 +673,7 @@ yy.DomainValueValue.prototype.toJS = function (context, tableid, defcols) {
 };
 
 yy.ArrayValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.ArrayValue.prototype.toString = function () {
 	return 'ARRAY[]';
@@ -698,8 +684,6 @@ yy.ArrayValue.prototype.toType = function () {
 };
 
 yy.ArrayValue.prototype.toJS = function (context, tableid, defcols) {
-	//	console.log("'"+doubleqq(this.value)+"'");
-	//	return "'"+doubleqq(this.value)+"'";
 	return (
 		'[(' +
 		this.value
@@ -712,7 +696,7 @@ yy.ArrayValue.prototype.toJS = function (context, tableid, defcols) {
 };
 
 yy.LogicValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.LogicValue.prototype.toString = function () {
 	return this.value ? 'TRUE' : 'FALSE';
@@ -727,7 +711,7 @@ yy.LogicValue.prototype.toJS = function () {
 };
 
 yy.NullValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.NullValue.prototype.toString = function () {
 	return 'NULL';
@@ -738,7 +722,7 @@ yy.NullValue.prototype.toJS = function () {
 };
 
 yy.ParamValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.ParamValue.prototype.toString = function () {
 	return '$' + this.param;
@@ -752,7 +736,7 @@ yy.ParamValue.prototype.toJS = function () {
 };
 
 yy.UniOp = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.UniOp.prototype.toString = function () {
 	var s;
@@ -842,7 +826,7 @@ yy.UniOp.prototype.toJS = function (context, tableid, defcols) {
 };
 
 /*/*
-// yy.Star = function (params) { return yy.extend(this, params); }
+// yy.Star = function (params) { return assign(this, params); }
 // yy.Star.prototype.toString = function() {
 // 	var s = this.fieldid;
 // 	if(this.tableid) {
@@ -856,12 +840,11 @@ yy.UniOp.prototype.toJS = function (context, tableid, defcols) {
 // }
 */
 yy.Column = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.Column.prototype.toString = function () {
 	var s;
 	if (this.columnid == +this.columnid) {
-		// jshint ignore:line
 		s = '[' + this.columnid + ']';
 	} else {
 		s = this.columnid;
@@ -880,25 +863,6 @@ yy.Column.prototype.toString = function () {
 };
 
 yy.Column.prototype.toJS = function (context, tableid, defcols) {
-	/*/*
-//	var s = this.value;
-// 	var s = this.columnid;
-// 	if(this.tableid) {
-// 		s = this.tableid+'.'+s;
-// //		if(this.databaseid) {
-// //			s = this.databaseid+'.'+s;
-// //		}
-// 	} else {
-// 		s = tableid+'.'+s;
-// 	}
-*/
-	//console.log('yy.Column',this, tableid);
-	//	console.log(392,this.columnid);
-
-	//console.log(506,this);
-
-	//console.log(523, this, tableid);
-
 	var s = '';
 	if (!this.tableid && tableid === '' && !defcols) {
 		if (this.columnid !== '_') {
@@ -912,17 +876,10 @@ yy.Column.prototype.toJS = function (context, tableid, defcols) {
 		}
 	} else {
 		if (context === 'g') {
-			// if(this.columnid == '_') {
-			// } else {
 			s = "g['" + this.nick + "']";
-			// }
 		} else if (this.tableid) {
 			if (this.columnid !== '_') {
-				// if() {
-				// s = context+'[\''+tableid + '\'][\''+this.tableid+'\'][\''+this.columnid+'\']';
-				// } else {
 				s = context + "['" + this.tableid + "']['" + this.columnid + "']";
-				// }
 			} else {
 				if (context === 'g') {
 					s = "g['_']";
@@ -945,23 +902,13 @@ yy.Column.prototype.toJS = function (context, tableid, defcols) {
 				//			console.log(836,tbid,s);
 			} else {
 				if (this.columnid !== '_') {
-					// if(defcols['.'][this.tableid]) {
-					// 	console.log(847,tableid);
-					// 	console.log(context+'[\''+tableid + '\'][\''+this.tableid + '\']','[\''+this.columnid+'\']');
-					// 	s = context+'[\''+tableid + '\'][\''+this.tableid + '\'][\''+this.columnid+'\']';
-					// } else {
 					s = context + "['" + (this.tableid || tableid) + "']['" + this.columnid + "']";
-					// }
 				} else {
 					s = context + "['" + (this.tableid || tableid) + "']";
 				}
 			}
 		} else if (tableid === -1) {
-			//			if(this.columnid != '') {
 			s = context + "['" + this.columnid + "']";
-			//			} else {
-			//				s = context;
-			//			}
 		} else {
 			if (this.columnid !== '_') {
 				s = context + "['" + (this.tableid || tableid) + "']['" + this.columnid + "']";
@@ -970,14 +917,11 @@ yy.Column.prototype.toJS = function (context, tableid, defcols) {
 			}
 		}
 	}
-	//	console.log(context,s);
-	//	console.trace(new Error());
-	//console.log(874,s);
 	return s;
 };
 
 yy.AggrValue = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.AggrValue.prototype.toString = function () {
 	var s = '';
@@ -1004,38 +948,8 @@ yy.AggrValue.prototype.toString = function () {
 };
 
 yy.AggrValue.prototype.findAggregator = function (query) {
-	//	console.log('aggregator found',this.toString());
-
-	//	var colas = this.as || this.toString();
-
 	var colas = escapeq(this.toString()) + ':' + query.selectGroup.length;
-	//	console.log('findAgg',this);
-
-	/*/*	var found = false;
-	for(var i=0;i<query.columns.length;i++) {
-		// THis part should be intellectual
-		if(query.columns[i].as == colas) {
-			found = true;
-			break;
-		}
-	}
-*/
-
-	//		if(!query.selectColumns[colas]) {
-	//		}
-
 	var found = false;
-
-	/*/*
-	for(var i=0;i<query.selectGroup.length;i++){
-		if(query.selectGroup[i].nick==colas) {
-			colas = colas+':'+i;
-			found = false;
-			break;
-		};
-	};
-*/
-	//	console.log("query.selectGroup",query.selectGroup,found);
 	if (!found) {
 		if (!this.nick) {
 			this.nick = colas;
@@ -1052,9 +966,6 @@ yy.AggrValue.prototype.findAggregator = function (query) {
 		}
 		query.selectGroup.push(this);
 	}
-	//	console.log(query.selectGroup);
-
-	//		this.reduced = true;
 	return;
 };
 
@@ -1073,20 +984,10 @@ yy.AggrValue.prototype.toType = function () {
 		return this.expression.toType();
 	}
 
-	// todo: implement default;
+	return this.expression.toType();
 };
 
-yy.AggrValue.prototype.toJS = function (/*context, tableid, defcols*/) {
-	/*/*
-//	var s = 'alasql.functions.'+this.funcid+'(';
-//	if(this.expression) s += this.expression.toJS(context, tableid);
-//	s += ')';
-//	if(this.alias) s += ' AS '+this.alias;
-//	return s;
-//	var s = '';
-//if(this.as) console.log(499,this.as);
-//	var colas = this.as;
-*/
+yy.AggrValue.prototype.toJS = function () {
 	var colas = this.nick;
 	if (colas === undefined) {
 		colas = this.toString();
@@ -1095,36 +996,14 @@ yy.AggrValue.prototype.toJS = function (/*context, tableid, defcols*/) {
 };
 
 yy.OrderExpression = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
-yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString;
-/*/* //Duplicated code
 
-function() {
-	var s = this.expression.toString();
-	if(this.order) s += ' '+this.order.toString();
-	if(this.nocase) s += ' '+'COLLATE'+' '+'NOCASE';
-	return s;
-}*/
+yy.OrderExpression.prototype.toString = yy.Expression.prototype.toString;
 
 yy.GroupExpression = function (params) {
-	return yy.extend(this, params);
+	return assign(this, params);
 };
 yy.GroupExpression.prototype.toString = function () {
 	return this.type + '(' + this.group.toString() + ')';
 };
-
-/*/* //Duplicated code
-yy.ColumnDef = function (params) { return yy.extend(this, params); }
-yy.ColumnDef.prototype.toString = function() {
-	var s =  this.columnid;
-	if(this.dbtypeid) s += ' '+this.dbtypeid;
-	if(this.dbsize) {
-		s += '('+this.dbsize;
-		if(this.dbprecision) s += ','+this.dbprecision;
-		s += ')';
-	};
-	if(this.primarykey) s += ' PRIMARY KEY';
-	if(this.notnull) s += ' NOT NULL';
-	return s;
-}*/

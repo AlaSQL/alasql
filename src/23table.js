@@ -45,7 +45,7 @@ var Table = (alasql.Table = function (params) {
 	this.insteadofupdate = {};
 
 	// Done
-	extend(this, params);
+	Object.assign(this, params);
 });
 
 /*/*

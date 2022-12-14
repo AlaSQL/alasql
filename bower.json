@@ -37,8 +37,7 @@
 		"gulp-changed": "1.2.1",
 		"gulp-concat-sourcemap": "1.3.1",
 		"gulp-shell": "0.4.1",
-		"jison": "0.4.15",
-		"lodash": "3.7.0"
+		"jison": "0.4.15"
 	},
 	"main": ["./dist/alasql.min.js"],
 	"ignore": [

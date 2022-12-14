@@ -7,7 +7,7 @@
 */
 
 yy.SetVariable = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.SetVariable.prototype.toString = function () {
 	var s = 'SET ';
