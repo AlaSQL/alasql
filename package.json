@@ -58,7 +58,6 @@
 		"git-branch-is": "4.0.0",
 		"gulp": "4.0.2",
 		"gulp-concat": "2.6.1",
-		"gulp-dereserve": "0.2.1",
 		"gulp-exec": "5.0.0",
 		"gulp-jison": "1.2.0",
 		"gulp-rename": "2.0.0",
@@ -83,7 +82,7 @@
 		"glob-parent": "^6.0.0"
 	},
 	"engines": {
-		"node": "*"
+		"node": ">=14"
 	},
 	"repository": {
 		"type": "git",
