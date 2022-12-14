@@ -9,7 +9,7 @@
 /* global yy alasql */
 
 yy.Update = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Update.prototype.toString = function () {
 	var s = 'UPDATE ' + this.table.toString();
@@ -19,7 +19,7 @@ yy.Update.prototype.toString = function () {
 };
 
 yy.SetColumn = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.SetColumn.prototype.toString = function () {
 	return this.column.toString() + '=' + this.expression.toString();
