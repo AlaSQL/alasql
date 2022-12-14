@@ -14,7 +14,7 @@ class Transaction {
 	/** @type {string | undefined} */
 	bank;
 
-	constructor (databaseid) {
+	constructor(databaseid) {
 		this.databaseid = databaseid;
 		this.dbversion = alasql.databases[databaseid].dbversion;
 		// this.bank = structuredClone(alasql.databases[databaseid]);
@@ -23,14 +23,14 @@ class Transaction {
 	}
 
 	/** Commit transaction */
-	commit () {
+	commit() {
 		this.committed = true;
 		alasql.databases[this.databaseid].dbversion = Date.now();
 		delete this.bank;
 	}
 
 	/** Rollback transaction */
-	rollback () {
+	rollback() {
 		if (!this.committed) {
 			alasql.databases[this.databaseid] = JSON.parse(this.bank);
 			// alasql.databases[this.databaseid].tables = this.bank;
@@ -48,7 +48,7 @@ class Transaction {
 	 * @param {function} cb Callback function
 	 * @return result
 	 */
-	exec (sql, params, cb) {
+	exec(sql, params, cb) {
 		return alasql.dexec(this.databaseid, sql, params, cb);
 	}
 
