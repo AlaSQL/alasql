@@ -7,7 +7,7 @@
 */
 
 yy.ExistsValue = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.ExistsValue.prototype.toString = function () {
 	return 'EXISTS(' + this.value.toString() + ')';

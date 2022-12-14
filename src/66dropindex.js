@@ -7,7 +7,7 @@
 */
 
 yy.DropIndex = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.DropIndex.prototype.toString = function () {
 	return 'DROP INDEX' + this.indexid;

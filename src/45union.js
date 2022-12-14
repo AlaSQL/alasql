@@ -9,7 +9,7 @@
 // SELECT UNION statement
 
 yy.Union = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Union.prototype.toString = function () {
 	return 'UNION';

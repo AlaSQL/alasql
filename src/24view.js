@@ -14,7 +14,7 @@ var View = (alasql.View = function (params) {
 	// Data array
 	this.query = [];
 
-	extend(this, params);
+	Object.assign(this, params);
 });
 
 /*/*

@@ -8,7 +8,7 @@
 
 /* global yy alasql*/
 yy.Insert = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Insert.prototype.toString = function () {
 	var s = 'INSERT ';

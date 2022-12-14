@@ -7,7 +7,7 @@
 */
 
 yy.Declare = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Declare.prototype.toString = function () {
 	var s = 'DECLARE ';

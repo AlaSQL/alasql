@@ -8,7 +8,7 @@
 
 // Statements container
 yy.Statements = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 
 yy.Statements.prototype.toString = function () {

@@ -7,7 +7,7 @@
 */
 
 yy.Source = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Source.prototype.toString = function () {
 	var s = 'SOURCE';
