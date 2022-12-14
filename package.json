@@ -50,7 +50,7 @@
 		"es6-promise": "4.2.8",
 		"node-fetch": "2",
 		"xlsx": "0.18",
-		"yargs": "16"
+		"yargs": "17"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
