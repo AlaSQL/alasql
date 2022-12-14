@@ -6,12 +6,14 @@
 //
 */
 
-// Transaction class (for WebSQL compatibility)
 class Transaction {
 	transactionid = Date.now();
+
 	committed = false;
-	/** @type {string|undefined} */
-	bank
+
+	/** @type {string | undefined} */
+	bank;
+
 	constructor (databaseid) {
 		this.databaseid = databaseid;
 		this.dbversion = alasql.databases[databaseid].dbversion;
@@ -47,7 +49,6 @@ class Transaction {
 	 * @return result
 	 */
 	exec (sql, params, cb) {
-		//	console.log(this.databaseid);
 		return alasql.dexec(this.databaseid, sql, params, cb);
 	}
 
