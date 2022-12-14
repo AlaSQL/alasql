@@ -62,4 +62,26 @@ describe('Test 32', function () {
 		assert.deepEqual(1234, db.exec(sql));
 		done();
 	});
+
+	it('3. LIKE on text with line breaks', function (done) {
+		db.exec('CREATE TABLE test32_3 (a STRING, b INT, t DATETIME)');
+		db.exec("INSERT INTO test32_3 (a, b) VALUES ('\nabc', 1)");
+		db.exec("INSERT INTO test32_3 (a, b) VALUES ('a\nbcd', 2)");
+		db.exec("INSERT INTO test32_3 (a, b) VALUES ('ab\ncd', 3)");
+		db.exec("INSERT INTO test32_3 (a, b) VALUES ('a\nbc\nde', 4)");
+
+		var sql = "SELECT COLUMN b FROM test32_3 WHERE a LIKE '%bc%'";
+		assert.deepEqual([1, 2, 4], db.exec(sql));
+
+		var sql = "SELECT COLUMN b FROM test32_3 WHERE a LIKE 'bc%'";
+		assert.deepEqual([], db.exec(sql));
+
+		var sql = "SELECT COLUMN b FROM test32_3 WHERE a LIKE '%bc'";
+		assert.deepEqual([1], db.exec(sql));
+
+		var sql = "SELECT COLUMN b FROM test32_3 WHERE a NOT LIKE '%bc%'";
+		assert.deepEqual([3], db.exec(sql));
+
+		done();
+	});
 });

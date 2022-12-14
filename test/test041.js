@@ -38,5 +38,27 @@ describe('Test 41', function () {
 			assert.deepEqual(res, [3000, 3000, 2000, 3000, 3000]);
 			done();
 		});
+
+		it('3. CASE LIKE on text with line breaks', function (done) {
+			db.exec('CREATE TABLE test41_3 (a STRING, b INT, t DATETIME)');
+			db.exec("INSERT INTO test41_3 (a, b) VALUES ('\nabc', 1)");
+			db.exec("INSERT INTO test41_3 (a, b) VALUES ('a\nbcd', 2)");
+			db.exec("INSERT INTO test41_3 (a, b) VALUES ('ab\ncd', 3)");
+			db.exec("INSERT INTO test41_3 (a, b) VALUES ('a\nbc\nde', 4)");
+
+			var sql = "SELECT COLUMN CASE WHEN a LIKE '%bc%' THEN 1 ELSE 0 END FROM test41_3";
+			assert.deepEqual([1, 1, 0, 1], db.exec(sql));
+
+			var sql = "SELECT COLUMN CASE WHEN a LIKE 'bc%' THEN 1 ELSE 0 END FROM test41_3";
+			assert.deepEqual([0, 0, 0, 0], db.exec(sql));
+
+			var sql = "SELECT COLUMN CASE WHEN a LIKE '%bc' THEN 1 ELSE 0 END FROM test41_3";
+			assert.deepEqual([1, 0, 0, 0], db.exec(sql));
+
+			var sql = "SELECT COLUMN CASE WHEN a NOT LIKE '%bc%' THEN 1 ELSE 0 END FROM test41_3";
+			assert.deepEqual([0, 0, 1, 0], db.exec(sql));
+
+			done();
+		});
 	});
 });
