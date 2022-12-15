@@ -27,8 +27,7 @@ alasql.parser.parseError = function (str, hash) {
 		// My own parser here
  	}
  */
-alasql.parse = function (sql) {
-	const command = Array.isArray(sql) ? sql[0] : sql;
+alasql.parse = function (command) {
 	return alasqlparser.parse(alasql.utils.uncomment(command));
 };
 
