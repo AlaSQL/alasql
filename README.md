@@ -243,7 +243,7 @@ alasql.promise([
 
 ### Read SQLite database files
 
-AlaSQL can read (but not write) SQLite data files using [SQL.js](https://github.com/kripken/sql.js) library:
+AlaSQL can read (but not write) SQLite data files using [SQL.js](https://github.com/sql-js/sql.js) library:
 
 ```html
 <script src="alasql.js"></script>
@@ -438,7 +438,7 @@ module.exports = {
 ##### module.noParse
 
 As of AlaSQL 0.3.5, you can simply tell Webpack not to parse AlaSQL, which avoids all the dynamic `require` warnings and avoids using `eval`/clashing with CSP with script-loader.
-[Read the Webpack docs about noParse](https://webpack.github.io/docs/configuration.html#module-noparse)
+[Read the Webpack docs about noParse](https://webpack.js.org/configuration/module/#modulenoparse)
 
 ```js
 ...
