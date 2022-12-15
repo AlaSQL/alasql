@@ -17,7 +17,6 @@ const normalizeBacktickQuery = (args) => {
 		.replace(/[\r\n]/g, '')
 		.replace(/\s+/g, ' ') // Remove extras
 		.trim(); // Remove extras
-	console.log(stringFormatted);
 	return stringFormatted;
 };
 
@@ -79,8 +78,7 @@ const normalizeBacktickQuery = (args) => {
 var alasql = function(...args) {
 	var [sqlQuery, params, cb, scope] = args;
 	var sql = isBacktickQuery(sqlQuery) ? normalizeBacktickQuery(args) : sqlQuery;
-	if(isBacktickQuery(sqlQuery))
-		console.log(sql, args);
+	
 	params = params||[];
 
 	if(typeof importScripts !== 'function' && alasql.webworker) {
