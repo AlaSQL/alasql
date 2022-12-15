@@ -1,11 +1,6 @@
 # Changelog
 
-
-# 1.7.1 (2021-03-06)
-
-- Bump: Use semver properly so problem fixes can be roled out as fast as possilbe. 
-
-
+Please see https://github.com/AlaSQL/alasql/releases for more info...
 
 ## 0.7.1 (2021-03-05)
 

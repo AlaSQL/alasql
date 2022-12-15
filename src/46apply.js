@@ -7,7 +7,7 @@
 */
 
 yy.Apply = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 
 yy.Apply.prototype.toString = function () {

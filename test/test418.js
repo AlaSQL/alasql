@@ -21,16 +21,20 @@ describe('Test ' + test + ' Load data from internet', function () {
 		done();
 	});
 
-	function testRequest(expected, url, headers, done) {
+	async function testRequest(expected, url, headers, done) {
 		var type = url.split('.').pop().toUpperCase();
-		alasql(
-			'VALUE OF SELECT COUNT(*) FROM ' + type + '("' + url + '",{headers:' + headers + '})',
-			[],
-			function (res) {
+		await alasql
+			.promise(
+				'VALUE OF SELECT COUNT(*) FROM ' + type + '("' + url + '",{headers:' + headers + '})'
+			)
+			.then((res) => {
 				assert.equal(res, expected);
 				done();
-			}
-		);
+			})
+			.catch((e) => {
+				console.error(e);
+				throw e;
+			});
 	}
 
 	describe('.xlsx from URL', function () {
@@ -65,7 +69,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var url = 'raw.githubusercontent.com/agershun/alasql/develop/test/test157.json';
 
 		it('Load http', function (done) {
-			this.timeout(10000);
+			this.timeout(2000);
 			testRequest(2, 'http://' + url, 'false', done);
 		});
 

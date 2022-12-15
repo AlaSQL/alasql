@@ -9,7 +9,7 @@
 /* global alasql, yy */
 
 yy.Merge = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Merge.prototype.toString = function () {
 	var s = 'MERGE ';

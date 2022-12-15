@@ -90,8 +90,10 @@ describe('Test 325 IDENTITY', function () {
 	});
 
 	it.skip('8. INSERT INTO with IDENTITY', function (done) {
-		var res = alasql('INSERT INTO dbo.Messages (msg, status) \
-      VALUES("I hate you!","new")');
+		var res = alasql(
+			'INSERT INTO dbo.Messages (msg, status) \
+      VALUES("I hate you!","new")'
+		);
 		assert(res == 1);
 		done();
 	});
@@ -123,8 +125,10 @@ describe('Test 325 IDENTITY', function () {
 	});
 
 	it.skip('12. DEFAULT()', function (done) {
-		var res = alasql('INSERT INTO dbo.Messages (msg) \
-        VALUES("It lucky rainbow!")');
+		var res = alasql(
+			'INSERT INTO dbo.Messages (msg) \
+        VALUES("It lucky rainbow!")'
+		);
 		assert(res == 1);
 		done();
 	});
