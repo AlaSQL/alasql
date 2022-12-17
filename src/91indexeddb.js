@@ -46,7 +46,7 @@ IDB.showDatabases = function (like, cb) {
 		return;
 	}
 
-	indexedDB.databases().then(dblist => {
+	indexedDB.databases().then((dblist) => {
 		const res = [];
 		const relike = like && new RegExp(like.value.replace(/\%/g, '.*'), 'g');
 
@@ -61,67 +61,55 @@ IDB.showDatabases = function (like, cb) {
 };
 
 IDB.createDatabase = function (ixdbid, args, ifnotexists, dbid, cb) {
-	var indexedDB = utils.global.indexedDB;
-	if (IDB.getDatabaseNamesNotSupported) {
-		// Hack for Firefox
-		if (ifnotexists) {
-			//			console.log('ifnotexists');
-			var dbExists = true;
-			var request2 = indexedDB.open(ixdbid);
-			//			console.log(1);
-			request2.onupgradeneeded = function (e) {
-				//				console.log('abort');
-				dbExists = false;
-				//			    e.target.transaction.abort();
-				//			    cb(0);
-			};
-			request2.onsuccess = function (event) {
-				//				console.log('success');
-				//console.log(event.target.result);
-				event.target.result.close();
-				if (dbExists) {
-					if (cb) cb(0);
-				} else {
-					if (cb) cb(1);
-				}
-			};
-		} else {
-			//			console.log('without');
-			var request1 = indexedDB.open(ixdbid);
-			request1.onupgradeneeded = function (e) {
-				e.target.transaction.abort();
-			};
-			request1.onabort = function (event) {
-				if (cb) cb(1);
-			};
-			request1.onsuccess = function (event) {
-				event.target.result.close();
-				throw new Error(
-					'IndexedDB: Cannot create new database "' + ixdbid + '" because it already exists'
-				);
-				//				cb(0);
-			};
-		}
-	} else {
-		var request1 = IDB.getDatabaseNames();
-		request1.onsuccess = function (event) {
-			var dblist = event.target.result;
-			if (dblist.contains(ixdbid)) {
+	const {indexedDB} = globalThis;
+	if (indexedDB.databases) {
+		indexedDB.databases().then((dbs) => {
+			const exists = dbs.some((db) => db.name === ixdbid);
+
+			if (exists) {
 				if (ifnotexists) {
-					if (cb) cb(0);
-					return;
+					cb && cb(0);
 				} else {
-					throw new Error(
-						'IndexedDB: Cannot create new database "' + ixdbid + '" because it already exists'
+					const err = new Error(
+						`IndexedDB: Cannot create new database "${ixdbid}" because it already exists`
 					);
+					if (cb) cb(null, err);
 				}
+				return;
 			}
 
-			var request2 = indexedDB.open(ixdbid, 1);
-			request2.onsuccess = function (event) {
-				event.target.result.close();
-				if (cb) cb(1);
+			const request = indexedDB.open(ixdbid, 1);
+			request.onsuccess = () => {
+				request.result.close();
+				cb(1);
 			};
+		});
+		return;
+	}
+
+	// Hack for Firefox
+	const request = indexedDB.open(ixdbid);
+
+	if (ifnotexists) {
+		let dbExists = 1;
+		request.onupgradeneeded = () => {
+			dbExists = 0;
+		};
+		request.onsuccess = () => {
+			request.result.close();
+			if (cb) cb(dbExists);
+		};
+	} else {
+		request.onupgradeneeded = (e) => {
+			e.target.transaction.abort();
+			if (cb) cb(1);
+		};
+		request.onsuccess = () => {
+			request.result.close();
+			const err = new Error(
+				`IndexedDB: Cannot create new database "${ixdbid}" because it already exists`
+			);
+			cb(null, err);
 		};
 	}
 };
@@ -143,7 +131,6 @@ IDB.dropDatabase = function (ixdbid, ifexists, cb) {
 		}
 		var request2 = indexedDB.deleteDatabase(ixdbid);
 		request2.onsuccess = function (event) {
-			//			console.log('dropped');
 			if (cb) cb(1);
 		};
 	};
