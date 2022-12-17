@@ -23,7 +23,9 @@ if (typeof exports != 'object') {
 
 			assert.deepEqual(res, [1, 1, 1, 1, 1]);
 
-			const res2 = await sql("insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')")
+			const res2 = await sql(
+				"insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')"
+			);
 			assert(res2 === 5);
 
 			const res3 = await sql("select column * from cities where city like 'M%' order by city");

@@ -17,7 +17,7 @@ if (typeof exports != 'object') {
 			assert(res2 === 1);
 
 			const res3 = await sql('SHOW IndexedDB DATABASES');
-			const found = res3.some(d => d.databaseid === 'ag154');
+			const found = res3.some((d) => d.databaseid === 'ag154');
 			assert(found);
 
 			const res4 = await sql('ATTACH IndexedDB DATABASE ag154');
@@ -26,7 +26,7 @@ if (typeof exports != 'object') {
 			const res5 = await sql('CREATE TABLE ag154.one');
 			assert(res5 === 1);
 
-			const res6 = await sql('SHOW TABLES FROM ag154')
+			const res6 = await sql('SHOW TABLES FROM ag154');
 			assert(res6.length === 1);
 			assert(res6[0].tableid === 'one');
 
