@@ -75,7 +75,7 @@
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/@types/http-cache-semantics/-/http-cache-semantics-4.0.1.tgz#0ea7b61496902b95890dc4c3a116b60cb8dae812"
 
-"@types/node@*", "@types/node@^14.14.41":
+"@types/node@*":
   version "14.18.30"
   resolved "https://registry.npmjs.org/@types/node/-/node-14.18.30.tgz"
 
@@ -1527,11 +1527,12 @@ gulp-rename@2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/gulp-rename/-/gulp-rename-2.0.0.tgz"
 
-gulp-replace@1.1.3:
-  version "1.1.3"
-  resolved "https://registry.npmjs.org/gulp-replace/-/gulp-replace-1.1.3.tgz"
+gulp-replace@1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/gulp-replace/-/gulp-replace-1.1.4.tgz#06a0e9ee36f30e343c1e0a2dd760ec32c8a3d3b2"
+  integrity sha512-SVSF7ikuWKhpAW4l4wapAqPPSToJoiNKsbDoUnRrSgwZHH7lH8pbPeQj1aOVYQrbZKhfSVBxVW+Py7vtulRktw==
   dependencies:
-    "@types/node" "^14.14.41"
+    "@types/node" "*"
     "@types/vinyl" "^2.0.4"
     istextorbinary "^3.0.0"
     replacestream "^4.0.3"
