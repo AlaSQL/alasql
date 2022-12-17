@@ -41,24 +41,23 @@ if (utils.hasIndexedDB) {
 // work only in chrome
 //
 IDB.showDatabases = function (like, cb) {
-	// console.log('showDatabases',arguments);
-	var request = IDB.getDatabaseNames();
-	request.onsuccess = function (event) {
-		var dblist = event.target.result;
-		if (IDB.getDatabaseNamesNotSupported) {
-			throw new Error('SHOW DATABASE is not supported in this browser');
-		}
-		var res = [];
-		if (like) {
-			var relike = new RegExp(like.value.replace(/\%/g, '.*'), 'g');
-		}
+	if (!indexedDB.databases) {
+		cb(null, new Error('SHOW DATABASE is not supported in this browser'));
+		return;
+	}
+
+	indexedDB.databases().then(dblist => {
+		const res = [];
+		const relike = like && new RegExp(like.value.replace(/\%/g, '.*'), 'g');
+
 		for (var i = 0; i < dblist.length; i++) {
-			if (!like || dblist[i].match(relike)) {
-				res.push({databaseid: dblist[i]});
+			if (!like || dblist[i].name.match(relike)) {
+				res.push({databaseid: dblist[i].name});
 			}
 		}
+
 		cb(res);
-	};
+	});
 };
 
 IDB.createDatabase = function (ixdbid, args, ifnotexists, dbid, cb) {
