@@ -413,7 +413,7 @@ IDB.deleteFromTable = function (databaseid, tableid, wherefn, params, cb) {
 			//				console.log(222,event);
 			//				console.log(333,cursor);
 			if (cursor) {
-				if (!wherefn || wherefn(cursor.value, params)) {
+				if (!wherefn || wherefn(cursor.value, params, alasql)) {
 					//				console.log(cursor);
 					cursor.delete();
 					num++;
