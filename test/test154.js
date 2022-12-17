@@ -16,9 +16,11 @@ if (typeof exports != 'object') {
 			const res2 = await sql('CREATE IndexedDB DATABASE ag154');
 			assert(res2 === 1);
 
-			const res3 = await sql('SHOW IndexedDB DATABASES');
-			const found = res3.some((d) => d.databaseid === 'ag154');
-			assert(found);
+			if (globalThis.indexedDB.databases) {
+				const res3 = await sql('SHOW IndexedDB DATABASES');
+				const found = res3.some((d) => d.databaseid === 'ag154');
+				assert(found);
+			}
 
 			const res4 = await sql('ATTACH IndexedDB DATABASE ag154');
 			assert(res4 === 1);
