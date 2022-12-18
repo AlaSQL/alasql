@@ -1,9 +1,8 @@
 ﻿if (typeof describe !== 'function') {
 	var http = require('http'),
-		url = require('url'),
 		path = require('path'),
 		fs = require('fs'),
-		exec = require('child_process').exec,
+		{exec} = require('child_process'),
 		port = process.argv[2] || 8888;
 
 	// Making HTML for the test
@@ -14,7 +13,7 @@
 	var testFilesHtml = '';
 
 	for (var i in testFiles) {
-		testFilesHtml += '<script src="' + testFiles[i] + '"></script>\n';
+		testFilesHtml += `<script src="${testFiles[i]}"></script>\n`;
 	}
 
 	var html = template.replace('@INSERT_TESTFILES', testFilesHtml);
@@ -22,15 +21,19 @@
 	// Server from https://gist.github.com/ryanflorence/701407
 	http
 		.createServer(function (request, response) {
-			var uri = url.parse(request.url).pathname,
-				filename = path.join(__dirname, uri);
+			let pathname = new URL(`http://localhost/` + request.url).pathname;
+
+			// normalize leading slash
+			pathname = '/' + pathname.replace(/^\/+/, '');
+
+			var filename = path.join(__dirname, pathname);
 
 			// all subfolder paths starts from ../ folder
-			if (2 < uri.split('/').length) {
-				filename = path.join(__dirname + '/../', uri);
+			if (2 < pathname.split('/').length) {
+				filename = path.join(__dirname + '/../', pathname);
 			}
 
-			if ('/' === uri) {
+			if ('/' === pathname) {
 				response.writeHead(200, {'Content-Type': 'text/html'});
 				response.write(html);
 				response.end();
