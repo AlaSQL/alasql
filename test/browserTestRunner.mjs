@@ -3,8 +3,6 @@ import { exec } from 'node:child_process';
 import fs from 'node:fs';
 import http from 'node:http';
 import path from 'node:path';
-import m from 'node:module';
-m.runMain()
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
