@@ -53,31 +53,6 @@ async function _databaseExists(name) {
 	});
 }
 
-if (utils.hasIndexedDB) {
-	// For Chrome it work normally, for Firefox - simple shim
-	if (typeof utils.global.indexedDB.webkitGetDatabaseNames == 'function') {
-		IDB.getDatabaseNames = utils.global.indexedDB.webkitGetDatabaseNames.bind(
-			utils.global.indexedDB
-		);
-	} else {
-		IDB.getDatabaseNames = function () {
-			var request = {};
-			var result = {
-				contains: function (name) {
-					return true; // Always return true
-				},
-				notsupported: true,
-			};
-			setTimeout(function () {
-				var event = {target: {result: result}};
-				request.onsuccess(event);
-			}, 0);
-			return request;
-		};
-		IDB.getDatabaseNamesNotSupported = true;
-	}
-}
-
 //
 // SHOW DATABASES
 // work only in chrome
