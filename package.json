@@ -83,7 +83,7 @@
 		"glob-parent": "^6.0.0"
 	},
 	"engines": {
-		"node": ">=14"
+		"node": "*"
 	},
 	"repository": {
 		"type": "git",
