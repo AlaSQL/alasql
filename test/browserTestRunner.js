@@ -6,13 +6,14 @@
 	const {exec} = require('child_process');
 
 	const port = argv[2] || 8888;
-	/** @type {Object<string, string>} */
+
 	const types = {
 		'js': 'text/javascript',
 		'html': 'text/html',
 		'css': 'text/css',
 		'json': 'application/json',
 	}
+
 	// Making HTML for the test
 	const template = fs.readFileSync(__dirname + '/browserTestRunner.tmlp.html', 'utf8');
 
