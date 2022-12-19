@@ -6,7 +6,13 @@
 	const {exec} = require('child_process');
 
 	const port = argv[2] || 8888;
-
+	/** @type {Object<string, string>} */
+	const types = {
+		'js': 'text/javascript',
+		'html': 'text/html',
+		'css': 'text/css',
+		'json': 'application/json',
+	}
 	// Making HTML for the test
 	const template = fs.readFileSync(__dirname + '/browserTestRunner.tmlp.html', 'utf8');
 
@@ -67,7 +73,12 @@
 			return;
 		}
 
-		response.writeHead(200);
+		const type = types[path.extname(filename).slice(1)];
+
+		response.writeHead(200, 'OK', {
+			'content-type': type || 'application/octet-stream'
+		});
+
 		fs.createReadStream(filename).pipe(response);
 	})
 	.listen(port);
