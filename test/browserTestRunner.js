@@ -1,84 +1,21 @@
 ﻿if (typeof describe !== 'function') {
-	var http = require('http'),
-		url = require('url'),
-		path = require('path'),
-		fs = require('fs'),
-		exec = require('child_process').exec,
-		port = process.argv[2] || 8888;
+	const http = require('http');
+	const path = require('path');
+	const {argv} = require('process');
+	const fs = require('fs');
+	const {exec} = require('child_process');
+
+	const port = argv[2] || 8888;
 
 	// Making HTML for the test
-	var template = fs.readFileSync(__dirname + '/browserTestRunner.tmlp.html', 'utf8');
-
-	var testFiles = walkFiles(__dirname, /test\d{3}\.js$/, null, true, true);
-
-	var testFilesHtml = '';
-
-	for (var i in testFiles) {
-		testFilesHtml += '<script src="' + testFiles[i] + '"></script>\n';
-	}
-
-	var html = template.replace('@INSERT_TESTFILES', testFilesHtml);
-
-	// Server from https://gist.github.com/ryanflorence/701407
-	http
-		.createServer(function (request, response) {
-			var uri = url.parse(request.url).pathname,
-				filename = path.join(__dirname, uri);
-
-			// all subfolder paths starts from ../ folder
-			if (2 < uri.split('/').length) {
-				filename = path.join(__dirname + '/../', uri);
-			}
-
-			if ('/' === uri) {
-				response.writeHead(200, {'Content-Type': 'text/html'});
-				response.write(html);
-				response.end();
-				return;
-			}
-
-			fs.exists(filename, function (exists) {
-				if (!exists || fs.statSync(filename).isDirectory()) {
-					response.writeHead(404, {'Content-Type': 'text/plain'});
-					response.write('404 Not Found\n');
-					response.end();
-					return;
-				}
-
-				fs.readFile(filename, 'binary', function (err, file) {
-					if (err) {
-						response.writeHead(500, {'Content-Type': 'text/plain'});
-						response.write(err + '\n');
-						response.end();
-						return;
-					}
-
-					response.writeHead(200);
-					response.write(file, 'binary');
-					response.end();
-				});
-			});
-		})
-		.listen(parseInt(port, 10));
-
-	console.log(
-		'Ready to test AlaSQL in the browser at\n  => http://localhost:' +
-			port +
-			'/\nCTRL + C to shutdown'
-	);
-
-	if ('win32' == process.platform) {
-		exec('start ' + 'http://localhost:' + port);
-	} else {
-		exec('open ' + 'http://localhost:' + port);
-	}
+	const template = fs.readFileSync(__dirname + '/browserTestRunner.tmlp.html', 'utf8');
 
 	function walkFiles(dir, reFilterYes, reFilterNo, oneFolderOnly, onlyFileName) {
 		reFilterYes = reFilterYes || false;
 		reFilterNo = reFilterNo || false;
 
-		var results = [];
-		var list = fs.readdirSync(dir);
+		let results = [];
+		let list = fs.readdirSync(dir);
 		list.forEach(function (fileName) {
 			var file = dir + '/' + fileName;
 			if (reFilterNo && reFilterNo.test(file)) return;
@@ -92,4 +29,52 @@
 		});
 		return results;
 	}
+
+	const testFiles = walkFiles(__dirname, /test\d{3}\.js$/, null, true, true);
+
+	const testFilesHtml = testFiles
+		.map(file => `<script src="${file}"></script>`).join('\n');
+
+	var html = template.replace('@INSERT_TESTFILES', testFilesHtml);
+
+	// Server from https://gist.github.com/ryanflorence/701407
+	http.createServer((request, response) => {
+		let pathname = new URL(`http://localhost/` + request.url).pathname;
+
+		// normalize leading slash
+		pathname = '/' + pathname.replace(/^\/+/, '');
+
+		var filename = path.join(__dirname, pathname);
+
+		// all subfolder paths starts from ../ folder
+		if (2 < pathname.split('/').length) {
+			filename = path.join(__dirname + '/../', pathname);
+		}
+
+		if ('/' === pathname) {
+			response.writeHead(200, {'Content-Type': 'text/html'});
+			response.write(html);
+			response.end();
+			return;
+		}
+
+		const exists = fs.existsSync(filename);
+
+		if (!exists || fs.statSync(filename).isDirectory()) {
+			response.writeHead(404, {'Content-Type': 'text/plain'});
+			response.write('404 Not Found\n');
+			response.end();
+			return;
+		}
+
+		response.writeHead(200);
+		fs.createReadStream(filename).pipe(response);
+	})
+	.listen(port);
+
+	console.log(`Ready to test AlaSQL in the browser at\n  => http://localhost:${port}`);
+	console.log('CTRL + C to shutdown');
+
+	exec(`${process.platform === 'win32' ? 'start' : 'open'} http://localhost:${port}`);
+
 }
