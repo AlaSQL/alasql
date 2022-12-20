@@ -3,9 +3,10 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '434'; // insert test file number
 
-describe('Test ' + test + ' - joins SELECT', function () {
+describe('Test 434 - joins SELECT', function () {
+	const test = '434'; // insert test file Number
+
 	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);

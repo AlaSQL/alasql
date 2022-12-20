@@ -3,10 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '617'; // insert test file number
-
 describe(
-	'Test ' + test + ' - Where LTRIM will remove leading whitespace characters in an expression.',
+	'Test 617 - Where LTRIM will remove leading whitespace characters in an expression.',
 	function () {
 		it('A) Will remove leading whitespace only', function () {
 			var sql = "select LTRIM('      Hello World !') AS Result";

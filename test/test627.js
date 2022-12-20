@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('../dist/alasql');
 }
 
-var test = '627'; // insert test file number
+describe('Test 627 - cast float for SUM, AVG when pivot', function () {
+	const test = '627'; // insert test file number
 
-describe('Test ' + test + ' - cast float for SUM, AVG when pivot', function () {
 	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);

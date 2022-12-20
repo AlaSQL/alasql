@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('../dist/alasql');
 }
 
-var test = '814'; // insert test file number
+describe('Test 814 - XXS or RCE from BRALITERAL', function () {
+	var test = '814'; // insert test file number
 
-describe('Test ' + test + ' - XXS or RCE from BRALITERAL', function () {
 	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);

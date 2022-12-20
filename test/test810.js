@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '810'; // insert test file number
-
-describe('Test ' + test + ' - yy.Op for BETWEEN returning correct toString() result', function () {
+describe('Test 810 - yy.Op for BETWEEN returning correct toString() result', function () {
 	it('yy.Op.toString() returns correct value when op === BETWEEN', function () {
 		var expectedResult = 'id BETWEEN 1 AND 3';
 

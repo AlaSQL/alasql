@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '609'; // insert test file number
-
-describe('Test ' + test + ' - Insert into table ', function () {
+describe('Test 609 - Insert into table ', function () {
 	it('values', function () {
 		alasql.parse('insert into abc values (1,2,3)');
 	});

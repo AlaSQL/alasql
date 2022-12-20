@@ -3,13 +3,11 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-/*
-  Test for issue #379
-*/
+// Test for issue #379
 
-var test = 421;
+describe('Test 421 Test for JOINSTAR', function () {
+	var test = 421;
 
-describe('Test ' + test + ' Test for JOINSTAR', function () {
 	before(function () {
 		alasql('CREATE DATABASE test' + test + ';USE test' + test);
 	});
