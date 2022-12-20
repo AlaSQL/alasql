@@ -15,7 +15,7 @@ if (typeof exports != 'object') {
 				var res = alasql('SELECT VALUE 200');
 				assert(res == 200);
 				alasql.worker();
-				//            console.log(alasql.webworker)
+				// console.log(alasql.webworker)
 				alasql('SELECT VALUE 300', [], function (res) {
 					assert(res == 300);
 					alasql.worker(false);
