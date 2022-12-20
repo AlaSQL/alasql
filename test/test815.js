@@ -6,7 +6,8 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 833 date parsing options', function () {
+;(alasql.utils.isNode ? describe : describe.skip)
+('Test 815 date parsing options', function () {
 	var now = new Date();
 	var unixepoch = new Date(0);
 
@@ -16,6 +17,7 @@ describe('Test 833 date parsing options', function () {
 	this.afterAll(() => {
 		unlink('test/test815.xlsx', () => {});
 	});
+
 	it('1. stores date and retrieves date correctly', function (done) {
 		alasql('CREATE TABLE dates (date datetime)');
 		alasql('INSERT INTO dates (?)', [now]);

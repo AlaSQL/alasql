@@ -1,11 +1,13 @@
 if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
+} else {
+	__dirname = '.';
 }
 
-var test = 626;
+describe('Test 626 join on CSV file', function () {
+	var test = 626;
 
-describe('Test ' + test + ' join on CSV file', function () {
 	before(function () {
 		alasql('CREATE DATABASE test' + test + ';USE test' + test);
 	});

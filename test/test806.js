@@ -3,10 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '806'; // insert test file number
-
 describe(
-	'Test ' + test + ' - INSERT statement to string has parenthesis around values.',
+	'Test 806 - INSERT statement to string has parenthesis around values.',
 	function () {
 		it("Insert's toString() returns values within parenthesis", function () {
 			var expectedToStringValue1 = "INSERT INTO test VALUES (555,'String',NULL,2.4)";
