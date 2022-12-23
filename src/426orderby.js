@@ -35,6 +35,9 @@ yy.Select.prototype.compileOrder = function (query, params) {
 			// console.log(ord.expression instanceof yy.Column);
 
 			if (ord.expression instanceof yy.NumValue) {
+				if ( ord.expression.value > self.columns.length ) {
+					throw new Error(`The "order by" number is wrong. Selected only ${ self.columns.length } columns, so can't order by the ${ ord.expression.value } cloumn.`);
+				}
 				var v = self.columns[ord.expression.value - 1];
 			} else {
 				var v = ord.expression;
