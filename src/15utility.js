@@ -977,7 +977,7 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 		return +obj;
 	}
 
-	var temp = obj.constructor(); // changed
+	var temp = new obj.constructor(); // changed
 
 	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) {
