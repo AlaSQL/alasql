@@ -3,8 +3,6 @@ name: CI-test
 on:
   push:
     branches: '*'
-  pull_request:
-    branches: '*'
 
 jobs:
   build:
@@ -13,17 +11,18 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14.x, 16.x, 18.x]
+        node-version: [0.10.x, 0.12.x, 4.x, 5.x, 6.x, 7.x, 8.x, 9.x, 10.x, 11.x, 12.x, 13.x]
 
     steps:
     - uses: actions/checkout@v3
-    - name: Test with Node.js ${{ matrix.node-version }}
+    - name: Run prod version with Node v${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
     - run: npx yarn install --frozen-lockfile
-    - run: npx prettier src/*.js --list-different || (echo 'Please correct file formatting using `yarn format` and try again.' && exit 1) 
-    - run: npx yarn test
+    - run: yarn install alasql
+    - run: rm -fr dist && cp node_modules/alaswl/dist dist
+    - run: npx mocha@2  ./test --reporter dot
  
 
   
