@@ -1,4 +1,4 @@
-name: Old Node versions
+name: Run on legacy Node
  
 on:
   push:
@@ -23,7 +23,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: rm package.json
     - run: npm install alasql mocha@2
-    - run: rm -fr dist && cp node_modules/alaswl/dist dist
+    - run: rm -fr dist && cp node_modules/alasql/dist dist
     - run: ./node_modules/.bin/mocha ./test --reporter dot
  
 
