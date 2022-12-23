@@ -23,7 +23,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm install alasql mocha@2 
     - run: rm -fr dist && cp -r node_modules/alasql/dist dist
-    - run: echo '{"env": {"targets": {"node": "0.10"}}' > .swcrc
+    - run: echo '{"env":{"targets":{"node":"0.10"}}' > .swcrc
     - run: npm install -g @swc/cli
     - run: swc test/ -d test_es3
     - run: ./node_modules/.bin/mocha ./test_es3 --reporter dot
