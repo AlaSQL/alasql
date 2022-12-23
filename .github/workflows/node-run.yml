@@ -21,7 +21,6 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npx yarn install --frozen-lockfile
     - run: yarn install alasql
     - run: rm -fr dist && cp node_modules/alaswl/dist dist
     - run: npx mocha@2  ./test --reporter dot
