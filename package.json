@@ -81,7 +81,7 @@
 		"marked": "^4.0.10",
 		"underscore": "^1.12.1",
 		"glob-parent": "^6.0.0",
-		"decode-uri-component": "^0.2.1"
+		"decode-uri-component": "^0.4.0"
 	},
 	"engines": {
 		"node": "*"
