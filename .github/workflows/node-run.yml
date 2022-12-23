@@ -21,7 +21,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install alasql, mocha@2
+    - run: rm package.json
+    - run: npm install alasql mocha@2
     - run: rm -fr dist && cp node_modules/alaswl/dist dist
     - run: ./node_modules/.bin/mocha ./test --reporter dot
  
