@@ -3,7 +3,6 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-
 describe('373. Use functions in group by', function () {
 	var data = [
 		{

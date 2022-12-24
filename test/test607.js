@@ -3,7 +3,6 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-
 describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 	const test = '607'; // insert test file number
 

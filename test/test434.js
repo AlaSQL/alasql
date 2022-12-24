@@ -3,7 +3,6 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-
 describe('Test 434 - joins SELECT', function () {
 	const test = '434'; // insert test file Number
 

@@ -3,7 +3,6 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-
 describe('Test 000 - multiple statements', function () {
 	const test = '000'; // insert test file number
 

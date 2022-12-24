@@ -6,8 +6,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-;(alasql.utils.isNode ? describe : describe.skip)
-('Test 815 date parsing options', function () {
+(alasql.utils.isNode ? describe : describe.skip)('Test 815 date parsing options', function () {
 	var now = new Date();
 	var unixepoch = new Date(0);
 

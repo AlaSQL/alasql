@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 	var fs = require('fs');
 }
 
-;(alasql.utils.isNode ? describe : describe.skip)('Test 612 - INTO CSV', () => {
+(alasql.utils.isNode ? describe : describe.skip)('Test 612 - INTO CSV', () => {
 	const test = '612'; // insert test file number
 	const sql = alasql.promise;
 
