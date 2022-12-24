@@ -7,10 +7,35 @@ on:
     branches: '*'
 
 jobs:
-  build:
+  building:
 
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Bulid and run with Node v${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npx yarn install --frozen-lockfile
+    - run: npx yarn test
+    - run: echo '{"env":{"targets":{"node":"0.10"}}' > .swcrc
+    - run: npm install -g @swc/cli @swc/core
+    - run: swc test/ -d test_es3
+    - uses: actions/upload-artifact@master
+      with:
+        name: dist
+        path: dist/
+    - uses: actions/upload-artifact@master
+      with:
+        name: test_es3
+        path: test_es3/
+  testing:
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [0.10.x, 0.12.x, 4.x, 5.x, 6.x, 7.x, 8.x, 9.x, 10.x, 11.x, 12.x, 13.x, 15.x, 17.x, 19.x]
@@ -21,12 +46,16 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
+    - uses: actions/download-artifact@master
+      with:
+        name: dist
+        path: dist/
+    - uses: actions/download-artifact@master
+      with:
+        name: test_es3
+        path: test_es3/
     - run: sed -i 's/"alasql"/"alasql_"/g' package.json
-    - run: npm i --save -dev alasql mocha@2 
-    - run: rm -fr dist && cp -r node_modules/alasql/dist dist
-    - run: echo '{"env":{"targets":{"node":"0.10"}}' > .swcrc
-    - run: npm install -g @swc/cli @swc/core
-    - run: swc test/ -d test_es3
+    - run: npm i --save -dev mocha@2 
     - run: ./node_modules/.bin/mocha ./test_es3 --reporter dot
  
 
