@@ -18,6 +18,7 @@ jobs:
     - run: npx yarn install --frozen-lockfile
     - run: npx yarn test
     - run: npm install --save-dev @babel/cli @babel/core @babel/preset-env
+    - run: cp test test_es5 # copy all extra files
     - run: npx babel test --out-dir test_es5 --presets=@babel/preset-env
     - uses: actions/upload-artifact@master
       with:
