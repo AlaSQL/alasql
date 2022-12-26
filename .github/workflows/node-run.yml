@@ -24,10 +24,11 @@ jobs:
       with:
         name: dist
         path: dist/
+    - run: zip test_es5.zip test_es5
     - uses: actions/upload-artifact@master
       with:
         name: test_es5
-        path: test_es5/
+        path: test_es5.zip
 
   Test:
     needs: Build
@@ -50,7 +51,8 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: test_es5
-        path: test_es5/
+        path: test_es5.zip
+    - run: unzip test_es5.zip -d test_es5
     - run: sed -i 's/"alasql"/"alasql_"/g' package.json
     - run: npm i --save -dev mocha
     - run: ./node_modules/.bin/mocha ./test --reporter dot
