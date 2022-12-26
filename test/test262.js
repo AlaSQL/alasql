@@ -12,7 +12,6 @@ if (typeof exports == 'object') {
 
 			assert(typeof global.key === 'undefined'); // undefined
 
-	
 			alasql('SELECT * FROM ?', [mytable]);
 			assert(typeof global.key === 'undefined'); // undefined
 

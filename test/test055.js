@@ -11,7 +11,7 @@ describe('Test 55 - Error in WHERE and preIndex with ParamValue', function () {
 		}
 
 		alasql('SELECT * FROM ? WHERE b=500', [q]);
-		
+
 		done();
 	});
 });
