@@ -17,9 +17,9 @@ jobs:
         node-version: "latest"
     - run: npx yarn install --frozen-lockfile
     - run: npx yarn test
-    - run: npm install buble
+    - run: npm install babel
     - run: cp -r test test_es5 # copy all extra files
-    - run: for file in test/*.js; do npx buble "$file" -o "test_es5/$(basename "$file")"; done
+    - run: for file in test/*.js; do npx babel "$file" -o "test_es5/$(basename "$file")" --presets=@babel/preset-env,@babel/preset-es2015; done
     - uses: actions/upload-artifact@master
       with:
         name: dist
