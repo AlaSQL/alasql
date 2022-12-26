@@ -51,7 +51,7 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: test_es3
-        path: test_es3/
+        path: test/
     - run: sed -i 's/"alasql"/"alasql_"/g' package.json
     - run: npm i --save -dev mocha@2 
     - run: ./node_modules/.bin/mocha ./test --reporter dot
