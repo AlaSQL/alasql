@@ -38,7 +38,8 @@ jobs:
       with:
         name: dist
         path: dist/
-    - run: npx yarn install --frozen-lockfile
+    - run: yarn install --frozen-lockfile
+    - run: yarn build
     - run: yarn test-only
  
 
