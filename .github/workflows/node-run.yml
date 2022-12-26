@@ -24,11 +24,11 @@ jobs:
       with:
         name: dist
         path: dist/
-    - run: zip test_es5.zip test_es5
+    - run: tar -cvf test_es5.tar test_es5
     - uses: actions/upload-artifact@master
       with:
         name: test_es5
-        path: test_es5.zip
+        path: test_es5.tar
 
   Test:
     needs: Build
@@ -52,9 +52,9 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: test_es5
-        path: ./
+        path: test_es5.tar
     - run: ls
-    - run: unzip test_es5.zip 
+    - run: tar -xvf test_es5.tar
     - run: ls
     - run: ls test_es5
     - run: sed -i 's/"alasql"/"alasql_"/g' package.json
