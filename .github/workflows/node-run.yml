@@ -17,9 +17,9 @@ jobs:
         node-version: "latest"
     - run: npx yarn install --frozen-lockfile
     - run: npx yarn test
-    - run: npm install traceur
+    - run: npm install buble
     - run: cp -r test test_es5 # copy all extra files
-    - run: for file in test/*.js; do npx traceur "$file" --out "test_es5/$(basename "$file")" --experimental --target ES5; done
+    - run: for file in test/*.js; do npx buble "$file" -o "test_es5/$(basename "$file")"; done
     - uses: actions/upload-artifact@master
       with:
         name: dist
