@@ -52,7 +52,7 @@ jobs:
     - uses: actions/download-artifact@master
       with:
         name: test_es5
-        path: test_es5.tar
+        path: ./
     - run: ls
     - run: tar -xvf test_es5.tar
     - run: ls
