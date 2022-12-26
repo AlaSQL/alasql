@@ -17,17 +17,16 @@ jobs:
         node-version: "latest"
     - run: npx yarn install --frozen-lockfile
     - run: npx yarn test
-    - run: yarn add @swc/cli @swc/core
-    - run: echo '{"env":{"targets":{"node":"0.12"}}}' >> .swcrc
-    - run: npx swc test/ -d test_es3
+    - run: npm install --save-dev @babel/cli @babel/core @babel/preset-env
+    - run: babel test --out-dir test_es5 --presets=@babel/preset-env
     - uses: actions/upload-artifact@master
       with:
         name: dist
         path: dist/
     - uses: actions/upload-artifact@master
       with:
-        name: test_es3
-        path: test_es3/
+        name: test_es5
+        path: test_es5/
 
   Test:
     needs: Build
@@ -49,12 +48,12 @@ jobs:
         path: dist/
     - uses: actions/download-artifact@master
       with:
-        name: test_es3
-        path: test_es3/
+        name: test_es5
+        path: test_es5/
     - run: sed -i 's/"alasql"/"alasql_"/g' package.json
     - run: npm i --save -dev mocha
     - run: ./node_modules/.bin/mocha ./test --reporter dot
-    - run: ./node_modules/.bin/mocha ./test_es3 --reporter dot
+    - run: ./node_modules/.bin/mocha ./test_es5 --reporter dot
  
  
 
