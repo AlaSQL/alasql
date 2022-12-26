@@ -1,4 +1,4 @@
-name: Run on legacy Node
+name: Test legacy Node
  
 on:
   push:
@@ -35,6 +35,7 @@ jobs:
         name: test_es3
         path: test_es3/
   testing:
+    needs: building
     runs-on: ubuntu-latest
     strategy:
       matrix:
