@@ -55,6 +55,8 @@ jobs:
         path: ./
     - run: ls
     - run: unzip test_es5.zip 
+    - run: ls
+    - run: ls test_es5
     - run: sed -i 's/"alasql"/"alasql_"/g' package.json
     - run: npm i --save -dev mocha
     - run: ./node_modules/.bin/mocha ./test --reporter dot
