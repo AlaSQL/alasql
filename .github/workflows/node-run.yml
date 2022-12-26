@@ -15,8 +15,8 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: "latest"
-   # - run: npx yarn install --frozen-lockfile
-   # - run: npx yarn test
+    - run: npx yarn install --frozen-lockfile
+    - run: npx yarn test
     - run: yarn add --dev @babel/core @babel/cli @babel/preset-env
     - run: cp -r test test_es5 # copy all extra files
     - run: npx babel test -d test_es5 --presets=@babel/preset-env
