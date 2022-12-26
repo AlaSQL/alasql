@@ -1,15 +1,12 @@
-<script src="../jquery/jquery.min.js"></script>
 <script src="36xml.js"></script>
-<script>
-var a;
-	$.ajax("Workbook1.xml",{dataType:"text"}).done(function(data){
-		var x = xmlparse(data).root;
-		console.log(x.name);
-	});
+<script type="module">
+	const res = await fetch('Workbook1.xml');
+	const xmlStr = await res.text();
+	const x = xmlparse(xmlStr).root;
+	console.log(x.name);
 
-	$.get("Workbook1.xml").done(function(data){
-		console.log(data.children[0].localName);
-		console.log(data);
-		a = data;
-	});
+	const parser = new DOMParser();
+	const doc = parser.parseFromString(xmlStr, 'application/xml');
+	console.log(doc.children[0].localName);
+	console.log(doc);
 </script>
