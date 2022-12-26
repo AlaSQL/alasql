@@ -53,7 +53,9 @@ jobs:
         path: test_es3/
     - run: sed -i 's/"alasql"/"alasql_"/g' package.json
     - run: npm i --save -dev mocha
+    - run: ./node_modules/.bin/mocha ./test --reporter dot
     - run: ./node_modules/.bin/mocha ./test_es3 --reporter dot
+ 
  
 
   
