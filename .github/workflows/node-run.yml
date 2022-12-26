@@ -19,7 +19,7 @@ jobs:
     - run: npx yarn test
     - run: npm install google-closure-compiler
     - run: cp -r test test_es5 # copy all extra files
-    - run: for file in test/*.js; do npx google-closure-compiler --js "$file" --js_output_file "test_es5/$(basename "$file")" --language_in ECMASCRIPT_2015 --language_out ECMASCRIPT5; done
+    - run: for file in test/*.js; do npx google-closure-compiler --js "$file" --js_output_file "test_es5/$(basename "$file")" --language_in ECMASCRIPT_2015 --language_out ECMASCRIPT5 --warning_level QUIET; done
     - uses: actions/upload-artifact@master
       with:
         name: dist
