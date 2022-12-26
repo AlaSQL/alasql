@@ -17,9 +17,9 @@ jobs:
         node-version: "latest"
     - run: npx yarn install --frozen-lockfile
     - run: npx yarn test
-    - run: npm install --save-dev @babel/cli @babel/core @babel/preset-env
+    - run: npm install google-closure-compiler
     - run: cp -r test test_es5 # copy all extra files
-    - run: npx babel test --out-dir test_es5 --presets=@babel/preset-env
+    - run: for file in test/*.js; do npx google-closure-compiler --js "$file" --js_output_folder test_es5; done
     - uses: actions/upload-artifact@master
       with:
         name: dist
