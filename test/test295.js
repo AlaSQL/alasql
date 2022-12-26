@@ -208,7 +208,7 @@ INSERT INTO products VALUES (2001, 'PEC', 'Pencil 3B', 500, 0.52),
 SELECT * FROM products;
 
 
-`;
+`);
 		done();
 	});
 
