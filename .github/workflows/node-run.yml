@@ -19,7 +19,7 @@ jobs:
     - run: npx yarn test
     - run: yarn add --dev @babel/core @babel/cli @babel/preset-env
     - run: cp -r test test_es5 # copy all extra files
-    - run: for file in test/*.js; do npx babel "$file" -o "test_es5/$(basename "$file")" --presets=@babel/preset-env; done
+    - run: npx babel test -d test_es5 --presets=@babel/preset-env
     - uses: actions/upload-artifact@master
       with:
         name: dist
