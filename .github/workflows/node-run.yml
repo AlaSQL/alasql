@@ -7,25 +7,19 @@ on:
     branches: '*'
 
 jobs:
-  building:
-
+  Build:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [18.x]
-
     steps:
     - uses: actions/checkout@v3
-    - name: Bulid and run with Node v${{ matrix.node-version }}
+    - name: Bulid from src
       uses: actions/setup-node@v3
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: "latest"
     - run: npx yarn install --frozen-lockfile
     - run: npx yarn test
+    - run: yarn add @swc/cli @swc/core
     - run: echo '{"env":{"targets":{"node":"0.10"}}' > .swcrc
-    - run: npm install -g @swc/cli @swc/core
-    - run: swc test/ -d test_es3
+    - run: npx swc test/ -d test_es3
     - uses: actions/upload-artifact@master
       with:
         name: dist
@@ -34,12 +28,13 @@ jobs:
       with:
         name: test_es3
         path: test_es3/
-  testing:
-    needs: building
+
+  Test:
+    needs: Build
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [0.10.x, 0.12.x, 4.x, 5.x, 6.x, 7.x, 8.x, 9.x, 10.x, 11.x, 12.x, 13.x, 15.x, 17.x, 19.x]
+        node-version: [0.10.x, 0.12.x, 4.x, 5.x, 6.x, 7.x, 8.x, 9.x, 10.x, 11.x, 12.x, 13.x, 14.x, 15.x, 16.x, 17.x, 18.x, 19.x, latest]
 
     steps:
     - uses: actions/checkout@v3
