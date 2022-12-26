@@ -25,7 +25,6 @@ describe('Test 236 MERGE', function () {
             INSERT [Source](EmployeeID, EmployeeName) Values(103, 'Bob');
             INSERT [Source](EmployeeID, EmployeeName) Values(104, 'Steve');
 			`;
-		
 
 		alasql(sql);
 		var res = alasql('SELECT * FROM [Target]');
@@ -36,7 +35,7 @@ describe('Test 236 MERGE', function () {
 		]);
 		//        console.log(res);
 
-		 res = alasql('SELECT * FROM [Source]');
+		res = alasql('SELECT * FROM [Source]');
 		assert.deepEqual(res, [
 			{EmployeeID: 103, EmployeeName: 'Bob'},
 			{EmployeeID: 104, EmployeeName: 'Steve'},
