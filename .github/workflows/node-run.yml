@@ -17,9 +17,9 @@ jobs:
         node-version: "latest"
     - run: npx yarn install --frozen-lockfile
     - run: npx yarn test
-    - run: yarn add --dev @babel/core @babel/cli @babel/preset-env @babel/preset-es2015
+    - run: yarn add --dev @babel/core @babel/cli @babel/preset-env
     - run: cp -r test test_es5 # copy all extra files
-    - run: for file in test/*.js; do npx babel "$file" -o "test_es5/$(basename "$file")" --presets=@babel/preset-env,@babel/preset-es2015; done
+    - run: for file in test/*.js; do npx babel "$file" -o "test_es5/$(basename "$file")" --presets=@babel/preset-env; done
     - uses: actions/upload-artifact@master
       with:
         name: dist
