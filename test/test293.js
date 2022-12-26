@@ -318,7 +318,7 @@ describe('Test 293 SLT#1', function () {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
-			rhash = md5(rs);
+			let rhash = md5(rs);
 			assert.deepEqual(rhash, '808146289313018fce25f1a280bd8c30');
 			done();
 		});
