@@ -16,28 +16,18 @@ jobs:
       with:
         node-version: "latest"
     - run: npx yarn install --frozen-lockfile
-    - run: npx yarn test
-    - run: yarn add --dev @babel/core @babel/cli @babel/preset-env
-    - run: cp -r test test_es5 # copy all extra files
-    - run: npx babel test -d test_es5 --presets=@babel/preset-env
-    - run: npx babel --out-file dist/alasql.fs.js dist/alasql.fs.js --presets=@babel/preset-env
     - uses: actions/upload-artifact@master
       with:
         name: dist
         path: dist/
-    - run: tar -cvf test_es5.tar test_es5
-    - uses: actions/upload-artifact@master
-      with:
-        name: test_es5
-        path: test_es5.tar
-
+    
   Test:
     needs: Build
     continue-on-error: true
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [0.10.x, 0.12.x, 4.x, 5.x, 6.x, 7.x, 8.x, 9.x, 10.x, 11.x, 12.x, 13.x, 14.x, 15.x, 16.x, 17.x, 18.x, 19.x, latest]
+        node-version: [15.x, 16.x, 17.x, 18.x, 19.x, latest]
     steps:
     - uses: actions/checkout@v3
     - name: Run prod version with Node v${{ matrix.node-version }}
@@ -48,15 +38,8 @@ jobs:
       with:
         name: dist
         path: dist/
-    - uses: actions/download-artifact@master
-      with:
-        name: test_es5
-        path: ./
-    - run: tar -xvf test_es5.tar
-    - run: sed -i 's/"alasql"/"alasql_"/g' package.json
-    - run: npm i --save -dev mocha@2
-    - run: ./node_modules/.bin/mocha ./test_es5 --reporter dot
- 
+    - run: npx yarn install --frozen-lockfile
+    - run: yarn test-only
  
 
   
