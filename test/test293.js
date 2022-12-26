@@ -265,7 +265,7 @@ describe('Test 293 SLT#1', function () {
 			})
 			.join('');
 		//    console.log('char2',rs.length);
-		rhash = md5(rs);
+		let rhash = md5(rs);
 		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
@@ -344,7 +344,7 @@ SELECT a+b*2+c*3+d*4+e*5,
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
-			rhash = md5(rs);
+			let rhash = md5(rs);
 			assert.deepEqual(rhash, 'f588aa173060543daffc54d07638516f');
 			done();
 		});
