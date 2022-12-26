@@ -19,6 +19,7 @@ jobs:
     - run: npx yarn test
     - run: yarn add @swc/cli @swc/core
     - run: echo '{"env":{"targets":{"node":"0.10"}}' > .swcrc
+    - run: cat .swcrc
     - run: npx swc test/ -d test_es3
     - uses: actions/upload-artifact@master
       with:
