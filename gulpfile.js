@@ -246,7 +246,7 @@ gulp.task('copy-console-org', function () {
 
 // Echo plugin
 gulp.task('typescript', function () {
-	return gulp.src(['partners/typescript/alasql.d.ts']).pipe(gulp.dest('./dist'));
+	return gulp.src(['types/alasql.d.ts']).pipe(gulp.dest('./dist'));
 });
 
 // Echo plugin
@@ -316,7 +316,7 @@ gulp.task(
 			gulp.run('jison-compile');
 		});
 
-		gulp.watch('partners/typescript/alasql.d.ts', function () {
+		gulp.watch('types/alasql.d.ts', function () {
 			gulp.run('typescript');
 		});
 		gulp.watch('./src/echo/*.js', function () {

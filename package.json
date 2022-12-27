@@ -11,7 +11,7 @@
 	"directories": {
 		"test": "test"
 	},
-	"typings": "dist/alasql.d.ts",
+	"typings": "types/alasql.d.ts",
 	"scripts": {
 		"test": "gulp && yarn test-only",
 		"test-ci": "(yarn test-format || 1) && yarn test && yarn install-g && alasql 'select 1 as Succes'",
