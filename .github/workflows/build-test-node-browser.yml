@@ -60,6 +60,6 @@ jobs:
         name: dist
         path: dist/
     - run: echo '::warning ::Not able to automate browser tests yet'
-    - run: # yarn test-browser-ci
+    - run: '# yarn test-browser-ci'
 
  
