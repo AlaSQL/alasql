@@ -59,7 +59,6 @@ jobs:
       with:
         name: dist
         path: dist/
-    - run 
     - warning 'Not able to automate tests via browser yet'
     - run: # yarn test-browser-ci
  
