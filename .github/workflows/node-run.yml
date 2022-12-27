@@ -16,7 +16,7 @@ jobs:
       with:
         node-version: "latest"
     - run: yarn install --frozen-lockfile
-    - run: yarn build
+    - run: npx gulp
     - uses: actions/upload-artifact@master
       with:
         name: dist
