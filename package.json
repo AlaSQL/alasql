@@ -55,7 +55,12 @@
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.1.1",
-		"eslint": "^8.29.0",
+		"eslint": "^8.30.0",
+		"eslint-config-standard": "^17.0.0",
+		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-promise": "^6.1.1",
+		"eslint-plugin-standard": "^5.0.0",
 		"git-branch-is": "4.0.0",
 		"gulp": "4.0.2",
 		"gulp-concat": "2.6.1",

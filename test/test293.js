@@ -188,8 +188,7 @@ describe('Test 293 SLT#1', function () {
 	});
 
 	it('2. CREATE TABLES', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(103,102,100,101,104);
     INSERT INTO t1(a,c,d,e,b) VALUES(107,106,108,109,105);
@@ -222,8 +221,7 @@ describe('Test 293 SLT#1', function () {
     INSERT INTO t1(e,c,b,a,d) VALUES(242,244,240,243,241);
     INSERT INTO t1(e,d,c,b,a) VALUES(246,248,247,249,245);
 
-  */
-		});
+	`);
 		done();
 	});
 
@@ -233,8 +231,8 @@ describe('Test 293 SLT#1', function () {
 		alasql.options.modifier = undefined;
 
 		var res = alasql(
-			'SELECT CASE WHEN c>(SELECT avg(c) FROM t1) \
-      THEN a*2 ELSE b*10 END FROM t1 ORDER BY 1'
+			`SELECT CASE WHEN c>(SELECT avg(c) FROM t1) 
+      THEN a*2 ELSE b*10 END FROM t1 ORDER BY 1`
 		);
 		//console.log(res);
 		assert.deepEqual(res.length, 30);
@@ -246,7 +244,7 @@ describe('Test 293 SLT#1', function () {
 			.join('');
 		// var rs = res.data.map(function(d){return d[res.columns[0].columnid]+'\n'}).join('');
 		//    console.log('char1',rs.length);
-		rhash = md5(rs);
+		let rhash = md5(rs);
 		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
@@ -255,8 +253,8 @@ describe('Test 293 SLT#1', function () {
 		alasql.options.modifier = 'RECORDSET';
 
 		var res = alasql(
-			'SELECT CASE WHEN c>(SELECT avg(c) FROM t1) \
-      THEN a*2 ELSE b*10 END FROM t1 ORDER BY 1'
+			`SELECT CASE WHEN c>(SELECT avg(c) FROM t1) 
+      THEN a*2 ELSE b*10 END FROM t1 ORDER BY 1`
 		);
 		//console.log(res);
 		q2 = res.data;
@@ -267,7 +265,7 @@ describe('Test 293 SLT#1', function () {
 			})
 			.join('');
 		//    console.log('char2',rs.length);
-		rhash = md5(rs);
+		let rhash = md5(rs);
 		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
@@ -308,29 +306,26 @@ describe('Test 293 SLT#1', function () {
 	if (false) {
 		it('4. SELECT 2', function (done) {
 			//    alasql.options.modifier = 'RECORDSET';
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
       SELECT a+b*2+c*3+d*4+e*5,
              (a+b+c+d+e)/5
         FROM t1
        ORDER BY 1,2
-    */
-			});
+	   `);
 			assert.deepEqual(res.length, 60); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
-			rhash = md5(rs);
+			let rhash = md5(rs);
 			assert.deepEqual(rhash, '808146289313018fce25f1a280bd8c30');
 			done();
 		});
 
 		it('5. SELECT 3', function (done) {
 			//    alasql.options.modifier = 'RECORDSET';
-			var res = alasql(function () {
-				/*
+			var res = alasql(`
 SELECT a+b*2+c*3+d*4+e*5,
        CASE WHEN a<b-3 THEN 111 WHEN a<=b THEN 222
         WHEN a<b+3 THEN 333 ELSE 444 END,
@@ -342,15 +337,14 @@ SELECT a+b*2+c*3+d*4+e*5,
    AND d>e
    AND EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b)
  ORDER BY 4,2,1,3,5
-    */
-			});
+ `);
 			assert.deepEqual(res.length, 80); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
-			rhash = md5(rs);
+			let rhash = md5(rs);
 			assert.deepEqual(rhash, 'f588aa173060543daffc54d07638516f');
 			done();
 		});

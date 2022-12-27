@@ -1,0 +1,65 @@
+name: "Build and test node & browser"
+ 
+on:
+  push:
+    branches: '*'
+  pull_request:
+    branches: '*'
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Bulid from src
+      uses: actions/setup-node@v3
+      with:
+        node-version: "latest"
+    - run: yarn install --frozen-lockfile
+    - run: npx gulp
+    - uses: actions/upload-artifact@master
+      with:
+        name: dist
+        path: dist/
+    - run: tar -cvf node_modules.tar node_modules
+    - uses: actions/upload-artifact@master
+      with:
+        name: node_modules
+        path: node_modules.tar
+    
+  Test-node:
+    needs: Build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [15.x, 16.x, 17.x, 18.x, 19.x, latest]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run prod version with Node v${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+    - uses: actions/download-artifact@master
+      with:
+        name: dist
+        path: dist/
+    - uses: actions/download-artifact@master
+      with:
+        name: node_modules
+        path: ./
+    - run: tar -xvf node_modules.tar
+    - run: yarn test-only
+ 
+  Test-browser:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@master
+      with:
+        name: dist
+        path: dist/
+    - run: echo '::warning ::Not able to automate browser tests yet'
+    - run: '# yarn test-browser-ci'
+
+ 
