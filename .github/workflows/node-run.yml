@@ -27,9 +27,8 @@ jobs:
         name: node_modules
         path: node_modules.tar
     
-  Test:
+  Test-node:
     needs: Build
-    continue-on-error: true
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -50,4 +49,17 @@ jobs:
         path: ./
     - run: tar -xvf node_modules.tar
     - run: yarn test-only
+ 
+  Test-browser:
+    needs: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/download-artifact@master
+      with:
+        name: dist
+        path: dist/
+    - run 
+    - warning 'Not able to automate tests via browser yet'
+    - run: # yarn test-browser-ci
  
