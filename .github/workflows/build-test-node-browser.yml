@@ -1,4 +1,4 @@
-name: Build and test node & browser
+name: "Build and test node & browser"
  
 on:
   push:
