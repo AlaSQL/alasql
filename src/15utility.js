@@ -781,47 +781,20 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 			//                });
 			//            });
 		} else {
-			if (isIE() === 9) {
-				// Solution was taken from
-				// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
-				//				var URI = 'data:text/plain;charset=utf-8,';
-
-				// Prepare data
-				var ndata = data.replace(/\r\n/g, '&#A;&#D;');
-				ndata = ndata.replace(/\n/g, '&#D;');
-				ndata = ndata.replace(/\t/g, '&#9;');
-				var testlink = utils.global.open('about:blank', '_blank');
-				testlink.document.write(ndata); //fileData has contents for the file
-				testlink.document.close();
-				testlink.document.execCommand('SaveAs', false, path);
-				testlink.close();
-			} else {
-				var opt = {
-					disableAutoBom: false,
-				};
-				alasql.utils.extend(opt, opts);
-				var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
-				saveAs(blob, path, opt.disableAutoBom);
-				if (cb) {
-					res = cb(res);
-				}
+			var opt = {
+				disableAutoBom: false,
+			};
+			alasql.utils.extend(opt, opts);
+			var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
+			saveAs(blob, path, opt.disableAutoBom);
+			if (cb) {
+				res = cb(res);
 			}
 		}
 	}
 
 	return res;
 });
-
-/**
-  @function Is this IE9
-  @return {boolean} True for IE9 and false for other browsers
-
-  For IE9 compatibility issues
-  */
-function isIE() {
-	var myNav = navigator.userAgent.toLowerCase();
-	return myNav.indexOf('msie') !== -1 ? parseInt(myNav.split('msie')[1]) : false;
-}
 
 //  For LOAD
 //  var saveBinaryFile = utils.saveFile = function(path, data, cb) {
