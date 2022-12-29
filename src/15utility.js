@@ -319,19 +319,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		} else {
 			if (/^[a-z]+:\/\//i.test(path)) {
-				var fetch = require('node-fetch');
-				fetch(path)
-					.then((response) => response.arrayBuffer())
-					.then((buf) => {
-						var a = new Uint8Array(buf);
-						var b = [...a].map((e) => String.fromCharCode(e)).join('');
-						success(cutbom(b));
-					})
-					.catch((e) => {
-						if (error) return error(e);
-						console.error(e);
-						throw e;
-					});
+				fetchData(path, (x) => success(cutbom(x)), error, asy);
 			} else {
 				//If async callthen call async
 				if (asy) {
@@ -416,21 +404,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 					 Simply read file from HTTP request, like:
 					 SELECT * FROM TXT('http://alasql.org/README.md');
 				 */
-				var xhr = new XMLHttpRequest();
-				xhr.onreadystatechange = function () {
-					if (xhr.readyState === 4) {
-						if (xhr.status === 200) {
-							if (success) {
-								success(cutbom(xhr.responseText));
-							}
-						} else if (error) {
-							return error(xhr);
-						}
-						// Todo: else...?
-					}
-				};
-				xhr.open('GET', path, asy); // Async
-				xhr.send();
+				fetchData(path, (x) => success(cutbom(x)), error, asy);
 			}
 		} else if (path instanceof Event) {
 			/*
@@ -457,6 +431,33 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 	}
 });
 
+let _fetch = typeof fetch !== 'undefined' ? fetch : null;
+//*not-for-browser/*
+_fetch = typeof fetch !== 'undefined' ? fetch : require('cross-fetch');
+//*/
+
+async function fetchData(path, success, error, async) {
+	if (async) {
+		return getData(path, success, error);
+	}
+	return await getData(path, success, error);
+}
+
+function getData(path, success, error) {
+	return _fetch(path)
+		.then((response) => response.arrayBuffer())
+		.then((buf) => {
+			var a = new Uint8Array(buf);
+			var b = [...a].map((e) => String.fromCharCode(e)).join('');
+			success(b);
+		})
+		.catch((e) => {
+			if (error) return error(e);
+			console.error(e);
+			throw e;
+		});
+}
+
 /**
   @function Load binary file from anywhere
   @param {string} path File path
@@ -482,19 +483,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 		fs = require('fs');
 
 		if (/^[a-z]+:\/\//i.test(path)) {
-			var fetch = require('node-fetch');
-			fetch(path)
-				.then((response) => response.arrayBuffer())
-				.then((buf) => {
-					var a = new Uint8Array(buf);
-					var b = [...a].map((e) => String.fromCharCode(e)).join('');
-					success(b);
-				})
-				.catch((e) => {
-					if (error) return error(e);
-					console.error(e);
-					throw e;
-				});
+			fetchData(path, success, error, runAsync);
 		} else {
 			if (runAsync) {
 				fs.readFile(path, function (err, data) {
