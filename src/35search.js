@@ -351,7 +351,7 @@ alasql.srch.TO = function(val,args) {
 				} else {
 					return processSelector(selectors, sidx + 1, val);
 				}
-			} else if (sel.selid === 'SUM') {
+			} else if (sel.selid === 'SUM' || sel.selid === 'TOTAL') {
 				var nest = processSelector(sel.args, 0, value);
 				if (nest.length > 0) {
 					var val = nest.reduce(function (sum, current) {

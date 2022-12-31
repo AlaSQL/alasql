@@ -78,7 +78,7 @@ yy.Select.prototype.compilePivot = function (query) {
 					newcols.push(d[columnid]);
 				}
 
-				if (aggr == 'SUM' || aggr == 'AVG') {
+				if (aggr == 'SUM' || aggr == 'AVG' || aggr == 'TOTAL') {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
 					g[d[columnid]] += +d[exprcolid];
 				} else if (aggr == 'COUNT') {

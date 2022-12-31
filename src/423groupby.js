@@ -154,6 +154,17 @@ if(false) {
 							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp1} : null,`;
 						}
 						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? ${colexp} : null,`;
+					} if (col.aggregatorid === 'TOTAL') {
+						if ('funcid' in col.expression) {
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							return `'${colas}':(${colexp1}) || typeof ${colexp1} == 'number' ? 
+							${colexp1} : ${colexp1} == 'string' && typeof Number(${colexp1}) == 'number' ? Number(${colexp1}) : 
+							typeof ${colexp1} == 'boolean' ?  Number(${colexp1}) : 0,`;
+						}
+						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? 
+							${colexp} : ${colexp} == 'string' && typeof Number(${colexp}) == 'number' ? Number(${colexp}) : 
+							typeof ${colexp} === 'boolean' ?  Number(${colexp}) : 0,`;
 					} else if (
 						col.aggregatorid === 'FIRST' ||
 						col.aggregatorid === 'LAST'
@@ -329,12 +340,12 @@ if(false) {
 							let colexp1 = colexpression.toJS('p', tableid, defcols);
 							return (
 								pre +
-								`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null} 
+								`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null}
 							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'object' && typeof ${colexp1}!== 'number'){g['${colas}'] = null}
 							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
 							else if(typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'){g['${colas}'] = g['${colas}']}
 							else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp1} == null || (typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'))){g['${colas}'] = null}
-							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} ==null){g['${colas}'] = g['${colas}']}
+							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} == null){g['${colas}'] = g['${colas}']}
 							else if(typeof g['${colas}'] == null && typeof ${colexp1} =='number'){g['${colas}'] = ${colexp1}}
 							else{g['${colas}'] += ${colexp1}||0}` +
 								post
@@ -352,7 +363,30 @@ if(false) {
 							 else{g['${colas}'] += ${colexp}||0}` +
 							post
 						);
-					} else if (col.aggregatorid === 'COUNT') {
+					} else if (col.aggregatorid === 'TOTAL') {
+						if ('funcid' in col.expression) {
+							let colexpression = col.expression.args[0];
+							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							return (
+								pre + 
+								`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' && 
+						typeof ${colexp1} == 'string' && !isNaN(${colexp1}) && typeof Number(${colexp1}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp1})}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'string'){g['${colas}'] = 0}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
+						else if(typeof ${colexp1} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
+						else{g['${colas}'] += ${colexp1}||0}`  
+								+ post
+							);
+						}
+						return pre + 
+						`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' && 
+						typeof ${colexp} == 'string' && !isNaN(${colexp}) && typeof Number(${colexp}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp})}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'string'){g['${colas}'] = 0}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
+						else if(typeof ${colexp} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
+						else{g['${colas}'] += ${colexp}||0}` 
+						+ post
+					}else if (col.aggregatorid === 'COUNT') {
 						//					console.log(221,col.expression.columnid == '*');
 						if (col.expression.columnid === '*') {
 							return pre + "g['" + colas + "']++;" + post;
@@ -482,6 +516,7 @@ if(false) {
 
 		//		s += '	group.amt += rec.emplid;';
 		//		s += 'group.count++;';
+		//console.log(JSON.stringify(s));
 		s += '}';
 	});
 
