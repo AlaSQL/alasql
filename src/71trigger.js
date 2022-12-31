@@ -6,7 +6,7 @@
 */
 
 yy.CreateTrigger = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CreateTrigger.prototype.toString = function () {
 	var s = 'CREATE TRIGGER ' + this.trigger + ' ';
@@ -59,7 +59,7 @@ yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.DropTrigger = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.DropTrigger.prototype.toString = function () {
 	var s = 'DROP TRIGGER ' + this.trigger;

@@ -1,7 +1,7 @@
 if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
-	var zt = require('../lib/zt/zt.js');
+	var zt = require('./lib/zt/zt.js');
 }
 
 var NUMTESTS = 10000;

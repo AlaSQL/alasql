@@ -79,7 +79,7 @@ if(false) {
 			var coljs = col2.split('\t')[1];
 			// Check, if aggregator exists but GROUP BY is not exists
 			if (columnid === '') {
-				return '1'; // Create fictive groupping column for fictive GROUP BY
+				return '1'; // Create fictive grouping column for fictive GROUP BY
 			}
 			//			else return "r['"+columnid+"']";
 			query.ingroup.push(columnid);

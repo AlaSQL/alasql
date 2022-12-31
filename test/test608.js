@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '608'; // insert test file number
-
-describe('Test ' + test + ' - Select.toString() ', function () {
+describe('Test 608 - Select.toString() ', function () {
 	// From http://jsfiddle.net/ndxbxrme/eyLy4zy9/3/
 
 	var tests = [

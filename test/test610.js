@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '610'; // insert test file number
-
-describe('Test ' + test + ' - SQL added user defined function', function () {
+describe('Test 610 - SQL added user defined function', function () {
 	it('A) Sync', function () {
 		var res = alasql(
 			'CREATE FUNCTION abc AS ``function(x) { return x*x; }``;select VALUE abc(2); CREATE FUNCTION abc AS ``function(x) { return x*x*x; }``;select value abc(2);'

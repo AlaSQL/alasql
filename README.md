@@ -1,4 +1,4 @@
-- _AlaSQL is an unfunded open source project installed 100k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Acreated-desc). We appreciate any and all contributions we can get._
+- _AlaSQL is an unfunded open source project installed 100k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Aupdated-desc). We appreciate any and all contributions we can get._
 
 - _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
 
@@ -8,14 +8,14 @@
 [![CI-test](https://github.com/alasql/alasql/workflows/CI-test/badge.svg)](https://github.com/alasql/alasql/actions)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=alasql)
 [![OPEN open source software](https://img.shields.io/badge/Open--OSS-%E2%9C%94-brightgreen.svg)](http://open-oss.com)
-[![Release](https://img.shields.io/github/release/alasql/alasql.svg?label=Current%20release&a)](https://www.npmjs.com/package/alasql)
+[![Release](https://img.shields.io/github/release/alasql/alasql.svg?label=npm&a)](https://www.npmjs.com/package/alasql)
 [![Stars](https://img.shields.io/github/stars/alasql/alasql.svg?label=Github%20%E2%98%85&a)](https://github.com/alasql/alasql)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alasql/alasql.svg)](http://isitmaintained.com/project/\n/alasql "Average time to resolve an issue")
 [![Coverage]( https://img.shields.io/codecov/c/github/alasql/alasql/develop.svg)](https://rawgit.com/alasql/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
 [![](https://data.jsdelivr.com/v1/package/npm/alasql/badge?style=rounded)](https://www.jsdelivr.com/package/npm/alasql)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat)](https://github.com/prettier/prettier)
-[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Falasql%2Falasql.svg?type=small)](https://app.fossa.io/projects/git%2Bgithub.com%2Falasql%2Falasql?ref=badge_small)
+
 
 
 
@@ -243,7 +243,7 @@ alasql.promise([
 
 ### Read SQLite database files
 
-AlaSQL can read (but not write) SQLite data files using [SQL.js](https://github.com/kripken/sql.js) library:
+AlaSQL can read (but not write) SQLite data files using [SQL.js](https://github.com/sql-js/sql.js) library:
 
 ```html
 <script src="alasql.js"></script>
@@ -438,7 +438,7 @@ module.exports = {
 ##### module.noParse
 
 As of AlaSQL 0.3.5, you can simply tell Webpack not to parse AlaSQL, which avoids all the dynamic `require` warnings and avoids using `eval`/clashing with CSP with script-loader.
-[Read the Webpack docs about noParse](https://webpack.github.io/docs/configuration.html#module-noparse)
+[Read the Webpack docs about noParse](https://webpack.js.org/configuration/module/#modulenoparse)
 
 ```js
 ...

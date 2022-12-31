@@ -3,13 +3,11 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-/*
-  Test for issue #917
-*/
+// Test for issue #917
 
-var test = 619;
+describe('Test 619 calling aggregate functions on empty sets', function () {
+	var test = 619;
 
-describe('Test ' + test + ' calling aggregate functions on empty sets', function () {
 	before(function () {
 		alasql('CREATE DATABASE test' + test + ';USE test' + test);
 	});

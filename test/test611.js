@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '611'; // insert test file number
-
-describe('Test ' + test + ' - SQL added user defined aggregation', function () {
+describe('Test 611 - SQL added user defined aggregation', function () {
 	/*
 	// How to implement the SUM plus number of rows aggregator
 	alasql.aggr.sumPlusRows = function(value, accumulator, stage) {
@@ -24,7 +22,7 @@ describe('Test ' + test + ' - SQL added user defined aggregation', function () {
 	    } else if(stage == 3) {
 
 	        // Post production - please nota that value Will be undefined
-	        return accumulator;  
+	        return accumulator;
 	    }
 	}
 	*/
@@ -49,7 +47,7 @@ describe('Test ' + test + ' - SQL added user defined aggregation', function () {
 	    } else if(stage == 3) {
 
 	        // Post production - please nota that value Will be undefined
-	        return accumulator;  
+	        return accumulator;
 	    }
 	}
 	*/

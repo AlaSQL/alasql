@@ -13,7 +13,7 @@
 /* global yy */
 
 yy.Select = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Select.prototype.toString = function () {
 	var s;

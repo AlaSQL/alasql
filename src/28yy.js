@@ -6,26 +6,26 @@
 //
 */
 
-var yy = (alasqlparser.yy = alasql.yy = {});
-
-// Utility
-yy.extend = extend;
-// Option for case sensitive
-yy.casesensitive = alasql.options.casesensitive;
-
 // Base class for all yy classes
-var Base = (yy.Base = function (params) {
-	return yy.extend(this, params);
-});
+class Base {
+	constructor(params) {
+		Object.assign(this, params);
+	}
+	toString() {}
+	toType() {}
+	toJS() {}
+	exec() {}
+	compile() {}
+}
 
-Base.prototype.toString = function () {};
-Base.prototype.toType = function () {};
-Base.prototype.toJS = function () {};
+var yy = {
+	// Utility
+	/** @deprecated use `Object.assign` instead */
+	extend: Object.assign,
 
-//  var BaseClause = yy,BaseClause = function (params) { return yy.extend(this, params); };
-Base.prototype.compile = returnUndefined;
-Base.prototype.exec = function () {};
+	// Option for case sensitive
+	casesensitive: alasql.options.casesensitive,
+	Base,
+};
 
-//  var BaseStatement = yy,BaseStatement = function (params) { return yy.extend(this, params); };
-Base.prototype.compile = returnUndefined;
-Base.prototype.exec = function () {};
+alasqlparser.yy = alasql.yy = yy;

@@ -127,11 +127,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('10. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH repeat(/,0,0) FROM @[@[1,2],3]
-    */
-		});
+	  `);
 		//    console.log(res);
 		assert.deepEqual(res, [[[1, 2], 3]]);
 		done();
@@ -151,11 +149,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('12. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
-      SEARCH repeat(/,2,2) FROM @[@[1,2],3]
-    */
-		});
+		var res = alasql(`SEARCH repeat(/,2,2) FROM @[@[1,2],3]`);
 		//    console.log(res);
 		assert.deepEqual(res, [1, 2]);
 		done();
@@ -163,11 +157,9 @@ describe('Test 337 SEARCH 8 queens', function () {
 
 	it.skip('13. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SEARCH repeat(/,3,3) FROM @[@[1,2],3]
-    */
-		});
+	  `);
 		//    console.log(res);
 		assert.deepEqual(res, []);
 		done();

@@ -9,7 +9,7 @@
 // Main Database class
 
 /**
-    @class Database 
+    @class Database
  */
 
 var Database = (alasql.Database = function (databaseid) {
@@ -86,6 +86,12 @@ Database.prototype.autoval = function (tablename, colname, getNext) {
 	return alasql.autoval(tablename, colname, getNext, this.databaseid);
 };
 
+Database.prototype.transaction = function (cb) {
+	var tx = new alasql.Transaction(this.databaseid);
+	var res = cb(tx);
+	return res;
+};
+
 /*/*
 // 	// Compile
 // 	var statement = this.compile(sql);
@@ -155,7 +161,7 @@ Database.prototype.compile = function(sql, kind) {
 
 // 		statement = this.sqlcache[hh]= ast.compile(self);
 
-// 		// Memory leak prevention 
+// 		// Memory leak prevention
 // 		this.sqlcachesize++;
 // 		if(this.sqlcachesize > alasql.MAXSQLCACHESIZE) {
 // 			this.resetSqlCache();

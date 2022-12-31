@@ -7,7 +7,7 @@
 */
 
 yy.While = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.While.prototype.toString = function () {
 	var s = 'WHILE ';
@@ -49,7 +49,7 @@ yy.While.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.Break = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Break.prototype.toString = function () {
 	var s = 'BREAK';
@@ -63,7 +63,7 @@ yy.Break.prototype.execute = function (databaseid, params, cb, scope) {
 };
 
 yy.Continue = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Continue.prototype.toString = function () {
 	var s = 'CONTINUE';
@@ -77,7 +77,7 @@ yy.Continue.prototype.execute = function (databaseid, params, cb, scope) {
 };
 
 yy.BeginEnd = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.BeginEnd.prototype.toString = function () {
 	var s = 'BEGIN ' + this.statements.toString() + ' END';

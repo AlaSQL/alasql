@@ -13,7 +13,6 @@ var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
 var shell = require('gulp-exec');
 var rename = require('gulp-rename');
-var dereserve = require('gulp-dereserve');
 var argv = require('yargs').argv || {};
 var replace = require('gulp-replace');
 var execSync = require('child_process').execSync;
@@ -162,7 +161,6 @@ gulp.task('js-merge', function () {
 		.pipe(replace(/PACKAGE_VERSION_NUMBER/g, version)) // Please set version in package.json file
 		.pipe(gulp.dest('./dist'))
 
-		.pipe(dereserve()) // Support IE8
 		.pipe(replace(/\/\/\*not-for-browser\/\*/g, '/*not-for-browser/*')) // Remove things not for browser build
 		.pipe(replace(/\/\*only-for-browser\/\*/g, '//*only-for-browser/*')) // Reveal things only for browser build
 		.pipe(
@@ -214,7 +212,7 @@ gulp.task('uglify', function () {
       'uglifyjs dist/alasql.js -o dist/alasql.min.js',
       'uglifyjs dist/alasql-worker.js -o dist/alasql-worker.min.js',
       //'cd test && (mocha . --reporter dot || if [ $? -ne 0 ] ; then say -v karen Tests failed ; else tput bel; fi)',
-      
+
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql.min.js',
 //      'java -jar utils/compiler.jar -O "SIMPLE_OPTIMIZATIONS" dist/alasql-worker.js --language_in=ECMASCRIPT5 --js_output_file dist/alasql-worker.min.js'
     ]));
@@ -248,7 +246,7 @@ gulp.task('copy-console-org', function () {
 
 // Echo plugin
 gulp.task('typescript', function () {
-	return gulp.src(['partners/typescript/alasql.d.ts']).pipe(gulp.dest('./dist'));
+	return gulp.src(['types/alasql.d.ts']).pipe(gulp.dest('./dist'));
 });
 
 // Echo plugin
@@ -318,7 +316,7 @@ gulp.task(
 			gulp.run('jison-compile');
 		});
 
-		gulp.watch('partners/typescript/alasql.d.ts', function () {
+		gulp.watch('types/alasql.d.ts', function () {
 			gulp.run('typescript');
 		});
 		gulp.watch('./src/echo/*.js', function () {

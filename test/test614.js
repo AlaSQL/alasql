@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '614'; // insert test file number
+describe('Test 614 - Read data from columns irrespective of case in query', function () {
+	const test = '614'; // insert test file number
 
-describe('Test ' + test + ' - Read data from columns irrespective of case in query', function () {
 	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);

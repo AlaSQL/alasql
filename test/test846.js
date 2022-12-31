@@ -175,7 +175,6 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		res = alasql(`select avg(v) as v from ?`, [data]);
 		assert.deepEqual(res, [{v: 0}]);
 	});
-
 	it('TOTAL dealing with non-numeric values', function () {
 		var data = [
 			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2), g: '+44', h: 'XYZ1',},

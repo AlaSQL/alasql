@@ -31,7 +31,7 @@
 /**
 	AlaSQL - Main Alasql class
  	@function
- 	@param {string|function|object} sql - SQL-statement or data object for fuent interface
+ 	@param {string|function|object} sql - SQL-statement or data object for fluent interface
  	@param {object} params - SQL parameters
  	@param {function} cb - callback function
  	@param {object} scope - Scope for nested queries
@@ -120,6 +120,6 @@ alasql.debug = undefined; // Initial debug variable
 
 
 /*only-for-browser/*
-var require = function(){return null}; // as alasqlparser.js is generated, we can not "remove" referenses to 
+var require = function(){return null}; // as alasqlparser.js is generated, we can not "remove" references to 
 var __dirname = '';
 //*/
