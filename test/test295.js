@@ -17,9 +17,7 @@ describe('Test 295 TestDatabase', function () {
 	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
 	it.skip('2. CREATE TABLES', function (done) {
-		alasql(function () {
-			/*
-
+		alasql(`
 SHOW DATABASES;
 
 CREATE DATABASE southwind;
@@ -123,15 +121,15 @@ SELECT * FROM products ORDER BY price LIMIT 2;
 SELECT * FROM products ORDER BY price LIMIT 2, 1;
 
 SELECT productID AS ID, productCode AS Code,
-              name AS Description, price AS `Unit Price`  -- Define aliases to be used as display names
+              name AS Description, price AS "Unit Price"  -- Define aliases to be used as display names
        FROM products
        ORDER BY ID;  -- Use alias ID as reference
 
-SELECT CONCAT(productCode, ' - ', name) AS `Product Description`, price FROM products;
+SELECT CONCAT(productCode, ' - ', name) AS "Product Description", price FROM products;
 
 SELECT price FROM products;
 
-SELECT DISTINCT price AS `Distinct Price` FROM products;
+SELECT DISTINCT price AS "Distinct Price" FROM products;
 
 SELECT DISTINCT price, name FROM products;
 
@@ -139,7 +137,7 @@ SELECT * FROM products ORDER BY productCode, productID;
 
 SELECT * FROM products GROUP BY productCode;
 
-SELECT COUNT(*) AS `Count` FROM products;
+SELECT COUNT(*) AS Count FROM products;
 
 SELECT productCode, COUNT(*) FROM products GROUP BY productCode;
 
@@ -151,21 +149,21 @@ SELECT productCode, COUNT(*) AS count
        SELECT MAX(price), MIN(price), AVG(price), STD(price), SUM(quantity)
        FROM products;
 
-SELECT productCode, MAX(price) AS `Highest Price`, MIN(price) AS `Lowest Price`
+SELECT productCode, MAX(price) AS "Highest Price", MIN(price) AS "Lowest Price"
        FROM products
        GROUP BY productCode;
 
        SELECT productCode, MAX(price), MIN(price),
-              CAST(AVG(price) AS DECIMAL(7,2)) AS `Average`,
-              CAST(STD(price) AS DECIMAL(7,2)) AS `Std Dev`,
+              CAST(AVG(price) AS DECIMAL(7,2)) AS Average,
+              CAST(STD(price) AS DECIMAL(7,2)) AS "Std Dev",
               SUM(quantity)
        FROM products
        GROUP BY productCode;
 
 SELECT
-          productCode AS `Product Code`,
-          COUNT(*) AS `Count`,
-          CAST(AVG(price) AS DECIMAL(7,2)) AS `Average`
+          productCode AS "Product Code",
+          COUNT(*) AS Count,
+          CAST(AVG(price) AS DECIMAL(7,2)) AS Average
        FROM products 
        GROUP BY productCode
        HAVING Count >=3;
@@ -174,7 +172,7 @@ SELECT
           productCode, 
           MAX(price), 
           MIN(price), 
-          CAST(AVG(price) AS DECIMAL(7,2)) AS `Average`,
+          CAST(AVG(price) AS DECIMAL(7,2)) AS Average,
           SUM(quantity)
        FROM products
        GROUP BY productCode
@@ -210,8 +208,7 @@ INSERT INTO products VALUES (2001, 'PEC', 'Pencil 3B', 500, 0.52),
 SELECT * FROM products;
 
 
-  */
-		});
+`);
 		done();
 	});
 
@@ -221,8 +218,7 @@ SELECT * FROM products;
 	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
 	it.skip('3. CREATE TABLES', function (done) {
-		alasql(function () {
-			/*
+		alasql(`
 
 USE southwind;
 
@@ -268,12 +264,12 @@ SELECT products.name, price, suppliers.name
        WHERE products.supplierID = suppliers.supplierID
           AND price < 0.6;
 
-SELECT products.name AS `Product Name`, price, suppliers.name AS `Supplier Name` 
+SELECT products.name AS 'Product Name', price, suppliers.name AS 'Supplier Name' 
        FROM products 
           JOIN suppliers ON products.supplierID = suppliers.supplierID
        WHERE price < 0.6;
 
-SELECT p.name AS `Product Name`, p.price, s.name AS `Supplier Name` 
+SELECT p.name AS 'Product Name', p.price, s.name AS 'Supplier Name' 
        FROM products AS p 
           JOIN suppliers AS s ON p.supplierID = s.supplierID
        WHERE p.price < 0.6;
@@ -305,19 +301,19 @@ ALTER TABLE products DROP supplierID;
 
 DESC products;
 
-SELECT products.name AS `Product Name`, price, suppliers.name AS `Supplier Name`
+SELECT products.name AS 'Product Name', price, suppliers.name AS 'Supplier Name'
        FROM products_suppliers 
           JOIN products  ON products_suppliers.productID = products.productID
           JOIN suppliers ON products_suppliers.supplierID = suppliers.supplierID
        WHERE price < 0.6;
 
-SELECT p.name AS `Product Name`, s.name AS `Supplier Name`
+SELECT p.name AS 'Product Name', s.name AS 'Supplier Name'
        FROM products_suppliers AS ps 
           JOIN products AS p ON ps.productID = p.productID
           JOIN suppliers AS s ON ps.supplierID = s.supplierID
        WHERE p.name = 'Pencil 3B';
 
-SELECT p.name AS `Product Name`, s.name AS `Supplier Name`
+SELECT p.name AS 'Product Name', s.name AS 'Supplier Name'
        FROM products AS p, products_suppliers AS ps, suppliers AS s
        WHERE p.productID = ps.productID
           AND ps.supplierID = s.supplierID
@@ -336,12 +332,7 @@ DESCRIBE product_details;
 
 SHOW CREATE TABLE product_details \G
 
-                                                                            
-
-
-
-  */
-		});
+`);
 		done();
 	});
 

@@ -120,11 +120,11 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		assert.deepEqual(res, [{a: null, b: 10, c: null, c2: 1, d: 5, e: null, f: 13}]);
 
 		var data = [[{a: null}]];
-		res = alasql(`SELECT SUM(a) AS a FROM ?`,data);
+		res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
 		assert.deepEqual(res, [{a: null}]);
 
 		var data = [[{a: 2}]];
-		res = alasql(`SELECT SUM(a) AS a FROM ?`,data);
+		res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
 		assert.deepEqual(res, [{a: 2}]);
 	});
 

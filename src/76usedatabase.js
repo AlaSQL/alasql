@@ -11,7 +11,7 @@
 
 // CREATE DATABASE databaseid
 yy.CreateDatabase = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CreateDatabase.prototype.toString = function () {
 	var s = 'CREATE';
@@ -64,7 +64,7 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 
 // CREATE DATABASE databaseid
 yy.AttachDatabase = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.AttachDatabase.prototype.toString = function (args) {
 	var s = 'ATTACH';
@@ -102,7 +102,7 @@ yy.AttachDatabase.prototype.execute = function (databaseid, params, cb) {
 
 // CREATE DATABASE databaseid
 yy.DetachDatabase = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.DetachDatabase.prototype.toString = function () {
 	var s = 'DETACH';
@@ -163,7 +163,7 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 // USE DATABSE databaseid
 // USE databaseid
 yy.UseDatabase = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.UseDatabase.prototype.toString = function () {
 	return 'USE' + ' ' + 'DATABASE' + ' ' + this.databaseid;
@@ -182,7 +182,7 @@ yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
 
 // DROP DATABASE databaseid
 yy.DropDatabase = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.DropDatabase.prototype.toString = function () {
 	var s = 'DROP';

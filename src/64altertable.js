@@ -9,7 +9,7 @@
 
 // ALTER TABLE table1 RENAME TO table2
 yy.AlterTable = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.AlterTable.prototype.toString = function () {
 	var s = 'ALTER TABLE ' + this.table.toString();

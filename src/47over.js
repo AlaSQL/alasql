@@ -7,7 +7,7 @@
 */
 
 yy.Over = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Over.prototype.toString = function () {
 	var s = 'OVER (';

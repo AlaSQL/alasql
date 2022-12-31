@@ -9,7 +9,7 @@
 /* global alasql, yy */
 
 yy.Require = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Require.prototype.toString = function () {
 	var s = 'REQUIRE';

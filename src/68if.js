@@ -7,7 +7,7 @@
 */
 
 yy.If = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.If.prototype.toString = function () {
 	var s = 'IF' + ' ';

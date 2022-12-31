@@ -9,7 +9,7 @@
 */
 
 yy.Help = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.Help.prototype.toString = function () {
 	var s = 'HELP';
