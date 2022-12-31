@@ -125,7 +125,6 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 	//console.log(42,87,this.columns);
 
 	this.columns.forEach(function (col) {
-		//console.log(col);
 		if (col instanceof yy.Column) {
 			if (col.columnid === '*') {
 				if (col.func) {
@@ -291,7 +290,8 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				col.aggregatorid === 'LAST' ||
 				col.aggregatorid === 'AVG' ||
 				col.aggregatorid === 'ARRAY' ||
-				col.aggregatorid === 'REDUCE'
+				col.aggregatorid === 'REDUCE' ||
+				col.aggregatorid === 'TOTAL'
 			) {
 				ss.push(
 					"'" +
@@ -366,7 +366,6 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 			query.removeKeys.push(key);
 		});
 	}
-
 	return new Function('p,params,alasql', 'var y;' + s + 'return r');
 };
 
