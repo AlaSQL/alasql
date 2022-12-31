@@ -142,6 +142,10 @@ if(false) {
 				// 	if(col instanceof yy.Column) colas = col.columnid;
 				// 	else colas = col.toString();
 				// };
+				let colExpIfFunIdExists = (expression) => {
+					let colexpression = expression.args[0];
+					return colexpression.toJS('p', tableid, defcols);
+				};
 				if (col instanceof yy.AggrValue) {
 					if (col.distinct) {
 						aft +=
@@ -149,15 +153,13 @@ if(false) {
 					}
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp1} : null,`;
 						}
 						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? ${colexp} : null,`;
-					} if (col.aggregatorid === 'TOTAL') {
+					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return `'${colas}':(${colexp1}) || typeof ${colexp1} == 'number' ? 
 							${colexp1} : ${colexp1} == 'string' && typeof Number(${colexp1}) == 'number' ? Number(${colexp1}) : 
 							typeof ${colexp1} == 'boolean' ?  Number(${colexp1}) : 0,`;
@@ -174,8 +176,7 @@ if(false) {
 						return "'" + colas + "':" + colexp + ','; //f.field.arguments[0].toJS();
 					} else if (col.aggregatorid === 'MIN') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return `'${colas}': (typeof ${colexp1} == 'number' ? ${colexp1} : typeof ${colexp1} == 'object' ? 
 							typeof Number(${colexp1}) == 'number' && ${colexp1}!== null? ${colexp1} : null : null),`;
 						}
@@ -183,8 +184,7 @@ if(false) {
 							typeof Number(${colexp}) == 'number' && ${colexp}!== null? ${colexp} : null : null),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return `'${colas}' : (typeof ${colexp1} == 'number' ? ${colexp1} : typeof ${colexp1} == 'object' ? 
 							typeof Number(${colexp1}) == 'number' ? ${colexp1} : null : null),`;
 						}
@@ -319,7 +319,10 @@ if(false) {
 			// }
 */
 				var colexp = col.expression.toJS('p', tableid, defcols);
-
+				let colExpIfFunIdExists = (expression) => {
+					let colexpression = expression.args[0];
+					return colexpression.toJS('p', tableid, defcols);
+				};
 				if (col instanceof yy.AggrValue) {
 					var pre = '',
 						post = '';
@@ -336,8 +339,7 @@ if(false) {
 					}
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre +
 								`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null}
@@ -345,7 +347,7 @@ if(false) {
 							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
 							else if(typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'){g['${colas}'] = g['${colas}']}
 							else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp1} == null || (typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'))){g['${colas}'] = null}
-							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} == null){g['${colas}'] = g['${colas}']}
+							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} ==null){g['${colas}'] = g['${colas}']}
 							else if(typeof g['${colas}'] == null && typeof ${colexp1} =='number'){g['${colas}'] = ${colexp1}}
 							else{g['${colas}'] += ${colexp1}||0}` +
 								post
@@ -365,8 +367,7 @@ if(false) {
 						);
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre + 
 								`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' && 
@@ -407,8 +408,7 @@ if(false) {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 					} else if (col.aggregatorid === 'MIN') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre +
 								`if((g['${colas}'] == null && ${colexp1}!== null) ? y = ${colexp1} : (g['${colas}']!== null && 
@@ -432,8 +432,7 @@ if(false) {
 						);
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
-							let colexpression = col.expression.args[0];
-							let colexp1 = colexpression.toJS('p', tableid, defcols);
+							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre +
 								`if((y=${colexp1}) > g['${colas}']){if(typeof y == 'number'){g['${colas}'] = y;} 
