@@ -10,7 +10,7 @@
 alasql.parser = alasqlparser;
 
 /*/* This is not working :-/ */
-alasqlparser.parseError = function (str, hash) {
+alasql.parser.parseError = function (str, hash) {
 	throw new Error('Have you used a reserved keyword without `escaping` it?\n' + str);
 };
 
