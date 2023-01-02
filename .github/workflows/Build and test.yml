@@ -27,7 +27,7 @@ jobs:
         name: node_modules
         path: node_modules.tar
     
-  Testing-node:
+  test_node:
     needs: Build
     runs-on: ubuntu-latest
     strategy:
@@ -50,7 +50,7 @@ jobs:
     - run: tar -xvf node_modules.tar
     - run: yarn test-only
  
-  Testing-browser:
+  test_browser:
     needs: Build
     runs-on: ubuntu-latest
     steps:

@@ -110,7 +110,8 @@ var alasql = function(sql, params, cb, scope) {
 	Current version of alasql 
  	@constant {string} 
 */
-alasql.version = 'PACKAGE_VERSION_NUMBER';
+alasql.version = 'PACKAGE_VERSION';
+alasql.build = 'BUILD_VERSION';
 
 /**
 	Debug flag
