@@ -39,26 +39,26 @@ describe('Test 229 Calculating simple running totals', function () {
 		var res = alasql(
 			'SELECT a.id, a.[value], (SELECT SUM(b.[value]) \
                              FROM RunTotalTestData b \
-                             WHERE b.id <= a.id) AS total \
+                             WHERE b.id <= a.id) AS c \
                       FROM   RunTotalTestData a \
                       ORDER BY a.id;'
 		);
 		//      console.log(res);
 		assert.deepEqual(res, [
-			{id: 1, value: 1, total: 1},
-			{id: 2, value: 2, total: 3},
-			{id: 3, value: 4, total: 7},
-			{id: 4, value: 7, total: 14},
-			{id: 5, value: 9, total: 23},
-			{id: 6, value: 12, total: 35},
-			{id: 7, value: 13, total: 48},
-			{id: 8, value: 16, total: 64},
-			{id: 9, value: 22, total: 86},
-			{id: 10, value: 42, total: 128},
-			{id: 11, value: 57, total: 185},
-			{id: 12, value: 58, total: 243},
-			{id: 13, value: 59, total: 302},
-			{id: 14, value: 60, total: 362},
+			{id: 1, value: 1, c: 1},
+			{id: 2, value: 2, c: 3},
+			{id: 3, value: 4, c: 7},
+			{id: 4, value: 7, c: 14},
+			{id: 5, value: 9, c: 23},
+			{id: 6, value: 12, c: 35},
+			{id: 7, value: 13, c: 48},
+			{id: 8, value: 16, c: 64},
+			{id: 9, value: 22, c: 86},
+			{id: 10, value: 42, c: 128},
+			{id: 11, value: 57, c: 185},
+			{id: 12, value: 58, c: 243},
+			{id: 13, value: 59, c: 302},
+			{id: 14, value: 60, c: 362},
 		]);
 		//};
 
@@ -67,7 +67,7 @@ describe('Test 229 Calculating simple running totals', function () {
 
 	it('3. Select accumulated sum', function (done) {
 		var res = alasql(
-			'SELECT a.id, a.[value], SUM(b.[value]) AS total \
+			'SELECT a.id, a.[value], SUM(b.[value]) AS c \
                     FROM    RunTotalTestData a, \
                             RunTotalTestData b \
                     WHERE b.id <= a.id \
@@ -75,20 +75,20 @@ describe('Test 229 Calculating simple running totals', function () {
                     ORDER BY a.id'
 		);
 		assert.deepEqual(res, [
-			{id: 1, value: 1, total: 1},
-			{id: 2, value: 2, total: 3},
-			{id: 3, value: 4, total: 7},
-			{id: 4, value: 7, total: 14},
-			{id: 5, value: 9, total: 23},
-			{id: 6, value: 12, total: 35},
-			{id: 7, value: 13, total: 48},
-			{id: 8, value: 16, total: 64},
-			{id: 9, value: 22, total: 86},
-			{id: 10, value: 42, total: 128},
-			{id: 11, value: 57, total: 185},
-			{id: 12, value: 58, total: 243},
-			{id: 13, value: 59, total: 302},
-			{id: 14, value: 60, total: 362},
+			{id: 1, value: 1, c: 1},
+			{id: 2, value: 2, c: 3},
+			{id: 3, value: 4, c: 7},
+			{id: 4, value: 7, c: 14},
+			{id: 5, value: 9, c: 23},
+			{id: 6, value: 12, c: 35},
+			{id: 7, value: 13, c: 48},
+			{id: 8, value: 16, c: 64},
+			{id: 9, value: 22, c: 86},
+			{id: 10, value: 42, c: 128},
+			{id: 11, value: 57, c: 185},
+			{id: 12, value: 58, c: 243},
+			{id: 13, value: 59, c: 302},
+			{id: 14, value: 60, c: 362},
 		]);
 
 		done();
@@ -147,26 +147,26 @@ ORDER BY a.id;'
 			'SELECT a.[value]%2 as even, a.id, a.[value], (SELECT SUM(b.[value])  \
                                FROM RunTotalTestData b \
                                WHERE b.id <= a.id \
-                               AND b.[value]%2 = a.[value]%2) as total \
+                               AND b.[value]%2 = a.[value]%2) as c \
 FROM   RunTotalTestData a \
 ORDER BY [value]%2, a.id;'
 		);
 
 		assert.deepEqual(res, [
-			{even: 0, id: 2, value: 2, total: 2},
-			{even: 0, id: 3, value: 4, total: 6},
-			{even: 0, id: 6, value: 12, total: 18},
-			{even: 0, id: 8, value: 16, total: 34},
-			{even: 0, id: 9, value: 22, total: 56},
-			{even: 0, id: 10, value: 42, total: 98},
-			{even: 0, id: 12, value: 58, total: 156},
-			{even: 0, id: 14, value: 60, total: 216},
-			{even: 1, id: 1, value: 1, total: 1},
-			{even: 1, id: 4, value: 7, total: 8},
-			{even: 1, id: 5, value: 9, total: 17},
-			{even: 1, id: 7, value: 13, total: 30},
-			{even: 1, id: 11, value: 57, total: 87},
-			{even: 1, id: 13, value: 59, total: 146},
+			{even: 0, id: 2, value: 2, c: 2},
+			{even: 0, id: 3, value: 4, c: 6},
+			{even: 0, id: 6, value: 12, c: 18},
+			{even: 0, id: 8, value: 16, c: 34},
+			{even: 0, id: 9, value: 22, c: 56},
+			{even: 0, id: 10, value: 42, c: 98},
+			{even: 0, id: 12, value: 58, c: 156},
+			{even: 0, id: 14, value: 60, c: 216},
+			{even: 1, id: 1, value: 1, c: 1},
+			{even: 1, id: 4, value: 7, c: 8},
+			{even: 1, id: 5, value: 9, c: 17},
+			{even: 1, id: 7, value: 13, c: 30},
+			{even: 1, id: 11, value: 57, c: 87},
+			{even: 1, id: 13, value: 59, c: 146},
 		]);
 
 		done();
@@ -178,7 +178,7 @@ ORDER BY [value]%2, a.id;'
 		};
 
 		var res = alasql(
-			'SELECT [value]%2 AS even, id, [value], SUM(b.[value]) AS total \
+			'SELECT [value]%2 AS even, id, [value], SUM(b.[value]) AS c \
                     FROM   RunTotalTestData a, \
                             RunTotalTestData b \
                     WHERE a.[value]%2 = b.[value]%2 \
@@ -188,20 +188,20 @@ ORDER BY [value]%2, a.id;'
 		);
 
 		assert.deepEqual(res, [
-			{even: 0, id: 2, value: 2, total: 2},
-			{even: 0, id: 3, value: 4, total: 6},
-			{even: 0, id: 6, value: 12, total: 18},
-			{even: 0, id: 8, value: 16, total: 34},
-			{even: 0, id: 9, value: 22, total: 56},
-			{even: 0, id: 10, value: 42, total: 98},
-			{even: 0, id: 12, value: 58, total: 156},
-			{even: 0, id: 14, value: 60, total: 216},
-			{even: 1, id: 1, value: 1, total: 1},
-			{even: 1, id: 4, value: 7, total: 8},
-			{even: 1, id: 5, value: 9, total: 17},
-			{even: 1, id: 7, value: 13, total: 30},
-			{even: 1, id: 11, value: 57, total: 87},
-			{even: 1, id: 13, value: 59, total: 146},
+			{even: 0, id: 2, value: 2, c: 2},
+			{even: 0, id: 3, value: 4, c: 6},
+			{even: 0, id: 6, value: 12, c: 18},
+			{even: 0, id: 8, value: 16, c: 34},
+			{even: 0, id: 9, value: 22, c: 56},
+			{even: 0, id: 10, value: 42, c: 98},
+			{even: 0, id: 12, value: 58, c: 156},
+			{even: 0, id: 14, value: 60, c: 216},
+			{even: 1, id: 1, value: 1, c: 1},
+			{even: 1, id: 4, value: 7, c: 8},
+			{even: 1, id: 5, value: 9, c: 17},
+			{even: 1, id: 7, value: 13, c: 30},
+			{even: 1, id: 11, value: 57, c: 87},
+			{even: 1, id: 13, value: 59, c: 146},
 		]);
 
 		done();
