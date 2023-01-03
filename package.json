@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "2.5.0",
+	"version": "2.5.1",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -56,10 +56,10 @@
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.1.1",
-		"eslint-plugin-n": "^15.6.0",
 		"eslint": "^8.30.0",
 		"eslint-config-standard": "^17.0.0",
 		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-n": "^15.6.0",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^6.1.1",
 		"eslint-plugin-standard": "^5.0.0",
