@@ -90,7 +90,7 @@
 		"decode-uri-component": "^0.2.1"
 	},
 	"engines": {
-		"node": "*"
+		"node": ">=15"
 	},
 	"repository": {
 		"type": "git",
