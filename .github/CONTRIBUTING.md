@@ -4,7 +4,7 @@
 Got questions? [Tag a Stack Overflow question](http://stackoverflow.com/questions/ask?tags=AlaSQL) with `alasql`.
 
 
-Inputs to improvement? [Open an issue](https://github.com/agershun/alasql/issues/new). 
+Inputs to improvement? [Open an issue](https://github.com/alasql/alasql/issues/new). 
 
 
 **All contributions are much welcome and greatly appreciated(!)** 
@@ -25,5 +25,5 @@ Inputs to improvement? [Open an issue](https://github.com/agershun/alasql/issues
 
 Please note that 
 - `npm test` will compile from `src/` and overwrite `dist/` before running all tests
-- If you would like to change the alasql.org website please make a PR to https://github.com/agershun/alasql-org
+- If you would like to change the alasql.org website please make a PR to https://github.com/alasql/alasql-org
 - To help debug a problem you can see some advice on https://github.com/AlaSQL/alasql/issues/1415#issuecomment-1293335079

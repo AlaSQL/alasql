@@ -94,15 +94,15 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "http://github.com/agershun/alasql.git"
+		"url": "http://github.com/alasql/alasql.git"
 	},
 	"bugs": {
-		"url": "https://github.com/agershun/alasql/issues"
+		"url": "https://github.com/alasql/alasql/issues"
 	},
 	"bin": {
 		"alasql": "./bin/alasql-cli.js"
 	},
-	"homepage": "https://github.com/agershun/alasql",
+	"homepage": "https://github.com/alasql/alasql",
 	"keywords": [
 		"SQL",
 		"javascript",

@@ -20,6 +20,6 @@ For you to submit a pull request:
 
 Please note that 
 - `npm test` will compile from `src/` and overwrite `dist/` before running all tests
-- If you would like to change the alasql.org website please make a PR to https://github.com/agershun/alasql-org
+- If you would like to change the alasql.org website please make a PR to https://github.com/alasql/alasql-org
 - To help debug a problem you can see some advice on https://github.com/AlaSQL/alasql/issues/1415#issuecomment-1293335079
  

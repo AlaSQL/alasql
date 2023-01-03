@@ -4,7 +4,7 @@
 
 /**
 	@fileoverview AlaSQL JavaScript SQL library
-	@see http://github.com/agershun/alasql
+	@see http://github.com/alasql/alasql
 */
 
 /**

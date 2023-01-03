@@ -1,4 +1,4 @@
-// Project: https://github.com/agershun/alasql
+// Project: https://github.com/alasql/alasql
 
 import * as xlsx from 'xlsx';
 
@@ -56,14 +56,14 @@ declare namespace alaSQLSpace {
 		catch<U>(onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
 	}
 
-	// see https://github.com/agershun/alasql/wiki/User%20Defined%20Functions
+	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
 	interface userDefinedFunction {
 		(...x: any[]): any;
 	}
 	interface userDefinedFunctionLookUp {
 		[x: string]: userDefinedFunction;
 	}
-	// see https://github.com/agershun/alasql/wiki/User%20Defined%20Functions
+	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
 	interface userAggregator {
 		(value: any, accumulator: any, stage: number): any;
 	}
