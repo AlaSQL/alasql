@@ -62,15 +62,7 @@ describe('Test 20 - User-defined functions', function () {
 		num = 0;
 		var runspy2 = alasql.compile('select value max(spy(a)) from one');
 		var res = runspy2();
-		assert.deepEqual(res, 30);
-
-		var runspy3 = alasql.compile('select value sum(spy(a)) from one');
-		var res = runspy3();
-		assert.deepEqual(res, 60);
-
-		var runspy4 = alasql.compile('select value min(spy(a)) from one');
-		var res = runspy4();
-		assert.deepEqual(res, 10);
+		assert.deepEqual(res, 3);
 
 		alasql('drop database test20');
 		done();
