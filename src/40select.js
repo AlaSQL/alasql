@@ -12,7 +12,7 @@
 
 /* global yy */
 
-yy.Select = class {
+yy.Select = class Select {
 	constructor(params) {
 		Object.assign(this, params);
 	}
