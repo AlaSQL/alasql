@@ -9,7 +9,6 @@
     "browser"       : true,   // Standard browser globals e.g. `window`, `document`.
     "node"          : true,
     "wsh"           : true,   // Windows Scripting Host.
-    "jquery"        : true,
     "mocha"         : true,
     "worker"        : true,
 
