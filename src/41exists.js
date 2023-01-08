@@ -6,22 +6,24 @@
 //
 */
 
-yy.ExistsValue = function (params) {
-	return Object.assign(this, params);
-};
-yy.ExistsValue.prototype.toString = function () {
-	return 'EXISTS(' + this.value.toString() + ')';
-};
+yy.ExistsValue = class ExistsValue {
+	constructor (params) {
+		Object.assign(this, params);
+	}
 
-yy.ExistsValue.prototype.toType = function () {
-	return 'boolean';
-};
+	toString () {
+		return 'EXISTS(' + this.value.toString() + ')';
+	}
 
-yy.ExistsValue.prototype.toJS = function (context, tableid, defcols) {
-	//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
+	toType () {
+		return 'boolean';
+	}
 
-	return 'this.existsfn[' + this.existsidx + '](params,null,' + context + ').data.length';
-};
+	toJS (context, tableid, defcols) {
+		//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
+		return 'this.existsfn[' + this.existsidx + '](params,null,' + context + ').data.length';
+	}
+}
 
 //
 // Prepare subqueries and exists
