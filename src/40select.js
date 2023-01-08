@@ -13,11 +13,11 @@
 /* global yy */
 
 yy.Select = class {
-	constructor (params) {
+	constructor(params) {
 		Object.assign(this, params);
 	}
 
-	toString () {
+	toString() {
 		var s;
 		s = '';
 		if (this.explain) {
@@ -138,13 +138,14 @@ yy.Select = class {
 	/**
 	 Select statement in expression
 	 */
-	toJS (context) {
+	toJS(context) {
 		//	console.log('Expression',this);
 		//	if(this.expression.reduced) return 'true';
 		//	return this.expression.toJS(context, tableid, defcols);
 		// console.log('Select.toJS', 81, this.queriesidx);
 		//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
-		var s = 'alasql.utils.flatArray(this.queriesfn[' +
+		var s =
+			'alasql.utils.flatArray(this.queriesfn[' +
 			(this.queriesidx - 1) +
 			'](this.params,null,' +
 			context +
@@ -155,7 +156,7 @@ yy.Select = class {
 	}
 
 	// Compile SELECT statement
-	compile (databaseid, params) {
+	compile(databaseid, params) {
 		var db = alasql.databases[databaseid];
 		// Create variable for query
 		var query = new Query();
@@ -235,10 +236,8 @@ yy.Select = class {
 		query.distinct = this.distinct;
 
 		// 9. Compile PIVOT clause
-		if (this.pivot)
-			query.pivotfn = this.compilePivot(query);
-		if (this.unpivot)
-			query.pivotfn = this.compileUnpivot(query);
+		if (this.pivot) query.pivotfn = this.compilePivot(query);
+		if (this.unpivot) query.pivotfn = this.compileUnpivot(query);
 
 		// 10. Compile TOP/LIMIT/OFFSET/FETCH clause
 		if (this.top) {
@@ -290,8 +289,10 @@ yy.Select = class {
 				//
 				// Save into the table in database
 				//
-				if (alasql.options.autocommit &&
-					alasql.databases[this.into.databaseid || databaseid].engineid) {
+				if (
+					alasql.options.autocommit &&
+					alasql.databases[this.into.databaseid || databaseid].engineid
+				) {
 					// For external database when AUTOCOMMIT is ONs
 					query.intoallfns =
 						'return alasql.engines["' +
@@ -396,14 +397,13 @@ yy.Select = class {
 		return statement;
 	}
 
-	execute (databaseid, params, cb) {
+	execute(databaseid, params, cb) {
 		return this.compile(databaseid)(params, cb);
 		//	throw new Error('Insert statement is should be compiled')
 	}
 
-	compileWhereExists (query) {
-		if (!this.exists)
-			return;
+	compileWhereExists(query) {
+		if (!this.exists) return;
 		query.existsfn = this.exists.map(function (ex) {
 			var nq = ex.compile(query.database.databaseid);
 			//		console.log(nq);
@@ -413,9 +413,8 @@ yy.Select = class {
 		});
 	}
 
-	compileQueries (query) {
-		if (!this.queries)
-			return;
+	compileQueries(query) {
+		if (!this.queries) return;
 		query.queriesfn = this.queries.map(function (q) {
 			var nq = q.compile(query.database.databaseid);
 			//		console.log(nq);
@@ -429,7 +428,7 @@ yy.Select = class {
 	// exec(databaseid) {
 	// 	throw new Error('Select statement should be precompiled');
 	// }
-}
+};
 
 /**
  Modify res according modifier

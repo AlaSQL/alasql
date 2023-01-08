@@ -7,23 +7,23 @@
 */
 
 yy.ExistsValue = class ExistsValue {
-	constructor (params) {
+	constructor(params) {
 		Object.assign(this, params);
 	}
 
-	toString () {
+	toString() {
 		return 'EXISTS(' + this.value.toString() + ')';
 	}
 
-	toType () {
+	toType() {
 		return 'boolean';
 	}
 
-	toJS (context, tableid, defcols) {
+	toJS(context, tableid, defcols) {
 		//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
 		return 'this.existsfn[' + this.existsidx + '](params,null,' + context + ').data.length';
 	}
-}
+};
 
 //
 // Prepare subqueries and exists
