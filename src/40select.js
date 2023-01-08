@@ -539,3 +539,27 @@ yy.Select.prototype.execute = function (databaseid, params, cb) {
 	return this.compile(databaseid)(params, cb);
 	//	throw new Error('Insert statement is should be compiled')
 };
+
+
+yy.Select.prototype.compileWhereExists = function (query) {
+	if (!this.exists) return;
+	query.existsfn = this.exists.map(function (ex) {
+		var nq = ex.compile(query.database.databaseid);
+		//		console.log(nq);
+		//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
+		nq.query.modifier = 'RECORDSET';
+		return nq;
+	});
+};
+
+yy.Select.prototype.compileQueries = function (query) {
+	if (!this.queries) return;
+	query.queriesfn = this.queries.map(function (q) {
+		var nq = q.compile(query.database.databaseid);
+		//		console.log(nq);
+		//	if(!nq.query) nq.query = {};
+		nq.query.modifier = 'RECORDSET';
+		//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
+		return nq;
+	});
+};
