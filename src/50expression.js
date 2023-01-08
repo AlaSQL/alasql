@@ -1005,8 +1005,9 @@
 
 		toType() {
 			if (
-				['SUM', 'COUNT', 'AVG', 'MIN', 'MAX', 'AGGR', 'VAR', 'STDDEV', 'TOTAL'].indexOf(this.aggregatorid) >
-				-1
+				['SUM', 'COUNT', 'AVG', 'MIN', 'MAX', 'AGGR', 'VAR', 'STDDEV', 'TOTAL'].indexOf(
+					this.aggregatorid
+				) > -1
 			) {
 				return 'number';
 			}
