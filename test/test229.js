@@ -65,6 +65,18 @@ describe('Test 229 Calculating simple running totals', function () {
 		done();
 	});
 
+	it('2.1. Select Sum with a function as an argument', function (done) {
+		var res = alasql('SELECT SUM(IF(TRUE, a.[value], 0)) AS result FROM RunTotalTestData a');
+
+		assert.deepEqual(res, [{ result: 362 }]);
+
+		res = alasql('SELECT SUM(a.[value] + ";") AS result FROM RunTotalTestData a');
+
+		assert.deepEqual(res, [{ result: "1;2;4;7;9;12;13;16;22;42;57;58;59;60;" }]);
+
+		done();
+	});
+
 	it('3. Select accumulated sum', function (done) {
 		var res = alasql(
 			'SELECT a.id, a.[value], SUM(b.[value]) AS total \
