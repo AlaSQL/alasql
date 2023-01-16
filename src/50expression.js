@@ -396,21 +396,9 @@
 					this.right instanceof yy.NullValue ||
 					(this.right.op === 'NOT' && this.right.right instanceof yy.NullValue)
 				) {
-					s = `(
-					(${leftOperand}==null)   // Cant be ===
-					===
-					(${rightOperand}==null)  // Cant be ===
-				)`;
+					s = `((${leftOperand} == null) === (${rightOperand} == null))`; // == null cant be ===
 				} else {
-					s = `(
-					(${leftOperand} == ${rightOperand})
-					||
-					(
-						${leftOperand}  < 0
-						&&
-						true == ${rightOperand}
-					)
-				)`;
+					s = `((${leftOperand} == ${rightOperand}) || (${leftOperand}  < 0 && true == ${rightOperand}))`;
 				}
 			}
 
