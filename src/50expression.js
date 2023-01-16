@@ -412,21 +412,9 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 			this.right instanceof yy.NullValue ||
 			(this.right.op === 'NOT' && this.right.right instanceof yy.NullValue)
 		) {
-			s = `(
-					(${leftOperand}==null)   // Cant be ===
-					===
-					(${rightOperand}==null)  // Cant be ===
-				)`;
+			s = s = `((${leftOperand}==null) === (${rightOperand}==null))`; // Cant be ===
 		} else {
-			s = `(
-					(${leftOperand} == ${rightOperand})
-					||
-					(
-						${leftOperand}  < 0
-						&&
-						true == ${rightOperand}
-					)
-				)`;
+			s = `((${leftOperand} == ${rightOperand}) || (${leftOperand} < 0 && true == ${rightOperand}))`;
 		}
 	}
 
