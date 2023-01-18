@@ -635,7 +635,7 @@ We appreciate any and all contributions we can get. If you feel like contributin
 
 Many thanks to:
 
-* Zach Carter for [Jison parser-generator](http://zaach.github.io/jison/)
+* Zach Carter for [Jison parser-generator](https://github.com/zaach/jison)
 * Andrew Kent for [JS SQL Parser](https://github.com/forward/sql-parser)
 * Eli Grey for [FileSaver.js](https://github.com/eligrey/FileSaver.js)
 * [SheetJS](https://sheetjs.com) for [JS XLSX Library](https://github.com/SheetJS/js-xlsx)
