@@ -147,32 +147,4 @@ Database.prototype.compile = function(sql, kind) {
 
 */
 
-/*/*
-// 	var self = this;
-// 	var hh = hash(sql);
 
-// 	// Check cache with hash of SQL statement
-// 	var statement = this.sqlcache[hh];
-// 	if(!statement) {
-
-// 		// If not fount, then compile it
-// 		var ast = alasql.parse(sql);
-// 		// Save to cache
-
-// 		statement = this.sqlcache[hh]= ast.compile(self);
-
-// 		// Memory leak prevention
-// 		this.sqlcachesize++;
-// 		if(this.sqlcachesize > alasql.MAXSQLCACHESIZE) {
-// 			this.resetSqlCache();
-// 		}
-// 	};
-// 	return statement;
-// }
-
-// SQL.js compatibility method
-//Database.prototype.prepare = Database.prototype.compile;
-
-
-// Added for compatibility with WebSQL
-*/

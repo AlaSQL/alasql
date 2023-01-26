@@ -142,7 +142,6 @@ gulp.task('js-merge', function () {
 			'./src/87source.js',
 			'./src/88require.js',
 			'./src/89assert.js',
-			'./src/90websql.js',
 			'./src/91indexeddb.js',
 			'./src/92localstorage.js',
 			'./src/93sqljs.js',

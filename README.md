@@ -2,7 +2,7 @@
 
 - _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
 
-- _Wondering if you should upgrade to v2? You probably should, but check the two breaking changes [here](https://github.com/AlaSQL/alasql/releases/tag/v2.0.1)_
+- _Wondering if you should upgrade to v3? You probably should, unless you are using WebSQL. Check the the breaking changes [here](https://github.com/AlaSQL/alasql/releases/tag/v3.0.0)_
 
 
 [![CI-test](https://github.com/alasql/alasql/workflows/CI-test/badge.svg)](https://github.com/alasql/alasql/actions)
@@ -113,14 +113,14 @@ yarn add alasql                # yarn
 
 npm install alasql             # npm
 
-npm install -g alasql          # global installation for command line tools
+npm install -g alasql          # global install of command line tool
 ```
 
-For the browser: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql)
+For the browsers: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql)
 
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/alasql@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/alasql@3"></script>
 ```
 
 
@@ -645,7 +645,6 @@ and other people for useful tools, which make our work much easier.
 ### Related projects that have inspired us
 
 * [AlaX](http://github.com/alasql/alax) - Export to Excel with colors and formats
-* [WebSQLShim](http://github.com/alasql/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
 * [AlaMDX](http://github.com/alasql/alamdx) - JavaScript MDX OLAP library (work in progress)
 * [Other similar projects](http://github.com/alasql/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
 
