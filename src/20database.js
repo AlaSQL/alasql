@@ -146,5 +146,3 @@ Database.prototype.compile = function(sql, kind) {
 };
 
 */
-
-
