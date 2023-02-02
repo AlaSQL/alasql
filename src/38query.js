@@ -252,7 +252,7 @@ function queryfn3(query) {
 					for (var j = 0; j < jlen; j++) {
 						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 					}
-				}			
+				}
 				ud.push(r);
 			}
 		}
