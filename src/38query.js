@@ -242,9 +242,16 @@ function queryfn3(query) {
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
 				r = {};
-				jlen = Math.min(query.columns.length, nd.columns.length);
-				for (var j = 0; j < jlen; j++) {
-					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				if (query.columns.length) {
+					jlen = Math.min(query.columns.length, nd.columns.length);
+					for (var j = 0; j < jlen; j++) {
+						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
+				} else {
+					jlen = nd.columns.length;
+					for (var j = 0; j < jlen; j++) {
+						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
 				}
 				ud.push(r);
 			}
