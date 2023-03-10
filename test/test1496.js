@@ -24,7 +24,7 @@ var data = [
 
 describe('Order by Date tests', function () {
 	it('Should correctly order by date in an anonymous query', function () {
-		var res = alasql.exec('SELECT i, date FROM ? ORDER BY date, i ASC', [data]);
+		var res = alasql.exec('SELECT i FROM ? ORDER BY date, i ASC', [data]);
 		assert.deepEqual(
 			Object.values(res).map((r) => r.i),
 			nums
