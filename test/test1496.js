@@ -35,7 +35,7 @@ describe('Order by Date tests', function () {
 		var db = new alasql.Database('MyDB');
 		db.exec('CREATE TABLE mytable (i NUMBER, date DATE)');
 		db.tables.mytable.data = data;
-		var res = db.exec('SELECT i, date FROM mytable ORDER BY date, i ASC');
+		var res = db.exec('SELECT i FROM mytable ORDER BY date, i ASC');
 		assert.deepEqual(
 			Object.values(res).map((r) => r.i),
 			nums
