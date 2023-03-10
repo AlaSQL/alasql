@@ -22,7 +22,7 @@ var data = [
 	},
 ];
 
-describe('Order by Date tests', function () {
+describe('Test 1496 - Order by Date tests', function () {
 	it('Should correctly order by date in an anonymous query', function () {
 		var res = alasql.exec('SELECT i FROM ? ORDER BY date, i ASC', [data]);
 		assert.deepEqual(
