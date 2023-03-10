@@ -58,7 +58,7 @@ alasql.options = {
 	errorlog: false,
 
 	/** Use valueof in orderfn */
-	valueof: false,
+	valueof: true,
 
 	/** DROP database in any case */
 	dropifnotexists: false,

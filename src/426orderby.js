@@ -56,6 +56,7 @@ yy.Select.prototype.compileOrder = function (query, params) {
 				if (query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
 					if (
+						alasql.options.valueof ||
 						dbtypeid == 'DATE' ||
 						dbtypeid == 'DATETIME' ||
 						dbtypeid == 'DATETIME2' ||
@@ -64,16 +65,14 @@ yy.Select.prototype.compileOrder = function (query, params) {
 					)
 						dg = '.valueOf()';
 					// TODO Add other types mapping
-				} else {
-					if (alasql.options.valueof) dg = '.valueOf()'; // TODO Check
 				}
-				//				dg = '.valueOf()';
 			}
 			if (ord.expression instanceof yy.ParamValue) {
 				var columnid = params[ord.expression.param];
 				if (query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
 					if (
+						alasql.options.valueof ||
 						dbtypeid == 'DATE' ||
 						dbtypeid == 'DATETIME' ||
 						dbtypeid == 'DATETIME2' ||
@@ -82,10 +81,7 @@ yy.Select.prototype.compileOrder = function (query, params) {
 					)
 						dg = '.valueOf()';
 					// TODO Add other types mapping
-				} else {
-					if (alasql.options.valueof) dg = '.valueOf()'; // TODO Check
 				}
-				//				dg = '.valueOf()';
 			}
 			// COLLATE NOCASE
 			if (ord.nocase) dg += '.toUpperCase()';
