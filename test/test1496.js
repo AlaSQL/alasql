@@ -1,7 +1,7 @@
 var alasql = require('..');
 var assert = require('assert');
 
-const nums = [29, 30.1, 30.2, 30.3];
+var nums = [29, 30.1, 30.2, 30.3];
 
 var data = [
 	{
