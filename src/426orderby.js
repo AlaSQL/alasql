@@ -53,7 +53,9 @@ yy.Select.prototype.compileOrder = function (query, params) {
 			//if(alasql.options.valueof)
 			if (ord.expression instanceof yy.Column) {
 				var columnid = ord.expression.columnid;
-				if (query.xcolumns[columnid]) {
+				if (alasql.options.valueof) {
+					dg = '.valueOf()';
+				} else if (query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
 					if (
 						dbtypeid == 'DATE' ||
@@ -64,14 +66,13 @@ yy.Select.prototype.compileOrder = function (query, params) {
 					)
 						dg = '.valueOf()';
 					// TODO Add other types mapping
-				} else {
-					if (alasql.options.valueof) dg = '.valueOf()'; // TODO Check
 				}
-				//				dg = '.valueOf()';
 			}
 			if (ord.expression instanceof yy.ParamValue) {
 				var columnid = params[ord.expression.param];
-				if (query.xcolumns[columnid]) {
+				if (alasql.options.valueof) {
+					dg = '.valueOf()';
+				} else if (query.xcolumns[columnid]) {
 					var dbtypeid = query.xcolumns[columnid].dbtypeid;
 					if (
 						dbtypeid == 'DATE' ||
@@ -82,10 +83,7 @@ yy.Select.prototype.compileOrder = function (query, params) {
 					)
 						dg = '.valueOf()';
 					// TODO Add other types mapping
-				} else {
-					if (alasql.options.valueof) dg = '.valueOf()'; // TODO Check
 				}
-				//				dg = '.valueOf()';
 			}
 			// COLLATE NOCASE
 			if (ord.nocase) dg += '.toUpperCase()';
