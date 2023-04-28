@@ -548,7 +548,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 				var data = e.target.result;
 				success(data);
 			};
-			reader.onerror = error();
+			reader.onerror = error;
 			reader.readAsArrayBuffer(files[0]);
 		} else if (path instanceof Blob) {
 			success(path);
