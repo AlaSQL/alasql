@@ -20,7 +20,7 @@ For you to submit a pull request:
 - Click "Create Pull-request" when looking at your forked repo on Github
 
 Please note that 
-- `npm test` will compile from `src/` and overwrite `dist/` before running all tests
+- `yarn test` will compile from `src/` and overwrite `dist/` before running tests
 - If you would like to change the alasql.org website please make a PR to https://github.com/alasql/alasql-org
 - To help debug a problem you can see some advice on https://github.com/AlaSQL/alasql/issues/1415#issuecomment-1293335079
  
