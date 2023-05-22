@@ -29,7 +29,7 @@
 
 AlaSQL - _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - is an open source SQL database for JavaScript with a strong focus on query speed and data source flexibility for both relational data and schemaless data.  It works in the web browser, Node.js, and mobile apps.
 
-This library is designed for:
+This library is perfect for:
 
 * Fast in-memory SQL data processing for BI and ERP applications on fat clients
 * Easy ETL and options for persistence by data import / manipulation / export of several formats
@@ -101,7 +101,7 @@ console.log(res); // [{a:2,b:6},{a:1,b:5},{a:3,b:4}]
 ```
 
 
-__If you are familiar with SQL it should come as no surprise that proper use of indexes on your tables is essential to get good performance.__
+__If you are familiar with SQL, it should be no surprise that proper use of indexes on your tables is essential for good performance.__
 
 
 
