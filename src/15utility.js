@@ -1279,7 +1279,7 @@ utils.findAlaSQLPath = function () {
 };
 
 var getXLSX = function () {
-	var XLSX = alasql.private.externalXlsxLib || utils.global.XLSX || null
+	var XLSX = alasql.private.externalXlsxLib || utils.global.XLSX || null;
 
 	if (XLSX) {
 		return XLSX;
