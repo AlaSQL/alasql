@@ -50,16 +50,15 @@
 		"dom-storage": "2.1.0",
 		"es6-promise": "4.2.8",
 		"node-fetch": "3",
-		"xlsx": "0.18",
 		"yargs": "16"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.1.1",
 		"eslint": "^8.30.0",
-		"eslint-config-standard": "^17.0.0",
+		"eslint-config-standard": "17.1.0",
 		"eslint-plugin-import": "^2.26.0",
-		"eslint-plugin-n": "^16.0.0",
+		"eslint-plugin-n": "16.0.0",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^6.1.1",
 		"eslint-plugin-standard": "^5.0.0",

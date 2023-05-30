@@ -1287,7 +1287,7 @@ var getXLSX = function () {
 
 	if (utils.isNode || utils.isBrowserify || utils.isMeteorServer) {
 		//*not-for-browser/*
-		XLSX = require('xlsx') || null;
+		XLSX = require('../modules/xlsx/xlsx') || null;
 		//*/
 	} else {
 		XLSX = utils.global.XLSX || null;
