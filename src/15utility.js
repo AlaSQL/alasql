@@ -1279,7 +1279,7 @@ utils.findAlaSQLPath = function () {
 };
 
 var getXLSX = function () {
-	var XLSX = alasql.private.externalXlsxLib;
+	var XLSX = alasql.private.externalXlsxLib || utils.global.XLSX || null;
 
 	if (XLSX) {
 		return XLSX;
@@ -1287,13 +1287,12 @@ var getXLSX = function () {
 
 	if (utils.isNode || utils.isBrowserify || utils.isMeteorServer) {
 		//*not-for-browser/*
-		XLSX = require('xlsx') || null;
+		XLSX = require('../modules/xlsx/xlsx') || null;
+		alasql.private.externalXlsxLib = XLSX;
 		//*/
-	} else {
-		XLSX = utils.global.XLSX || null;
 	}
 
-	if (null === XLSX) {
+	if (!XLSX) {
 		throw new Error('Please include the xlsx.js library');
 	}
 
