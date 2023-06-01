@@ -6,7 +6,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 273 Source columns detextion', function () {
-	const pluck = (arr, key) => arr.map(e => e[key])
+	const pluck = (arr, key) => arr.map((e) => e[key]);
 
 	before(function () {
 		alasql('CREATE DATABASE test273; USE test273');

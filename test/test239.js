@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-if (typeof exports == 'object') {
+if (typeof exports === 'object') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage('./test239.json', {strict: false, ws: ''});
 }
@@ -66,15 +66,13 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 		});
 
 		it('3.Complex test', function (done) {
-			alasql(function () {
-				/*
+			alasql(`
     DROP LOCALSTORAGE DATABASE IF EXISTS test001;
     CREATE LOCALSTORAGE DATABASE test001;
     ATTACH LOCALSTORAGE DATABASE test001;
     USE test001;
     CREATE TABLE one(a int, b string);
-    */
-			});
+    `);
 
 			var tm = Date.now();
 			for (var i = 0; i < 10000; i++) {

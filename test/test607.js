@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '607'; // insert test file number
+describe('Test 607 - TRUNCATE on table in Local Storage', function () {
+	const test = '607'; // insert test file number
 
-describe('Test ' + test + ' - TRUNCATE on table in Local Storage', function () {
 	before(function () {
 		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS test' + test);
 		alasql('CREATE LOCALSTORAGE DATABASE test' + test);

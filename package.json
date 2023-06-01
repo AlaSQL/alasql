@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "2.2.2",
+	"version": "4.0.2",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -11,7 +11,7 @@
 	"directories": {
 		"test": "test"
 	},
-	"typings": "dist/alasql.d.ts",
+	"typings": "types/alasql.d.ts",
 	"scripts": {
 		"test": "gulp && yarn test-only",
 		"test-ci": "(yarn test-format || 1) && yarn test && yarn install-g && alasql 'select 1 as Succes'",
@@ -46,57 +46,64 @@
 		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
+		"cross-fetch": "^3.1.5",
 		"dom-storage": "2.1.0",
 		"es6-promise": "4.2.8",
-		"node-fetch": "2",
-		"xlsx": "0.18",
+	  	"node-fetch": "3",
 		"yargs": "16",
 		"yarn": "^1.22.19"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.1.1",
+		"eslint": "^8.30.0",
+		"eslint-config-standard": "17.1.0",
+		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-n": "16.0.0",
+		"eslint-plugin-node": "^11.1.0",
+		"eslint-plugin-promise": "^6.1.1",
+		"eslint-plugin-standard": "^5.0.0",
 		"git-branch-is": "4.0.0",
 		"gulp": "4.0.2",
 		"gulp-concat": "2.6.1",
-		"gulp-dereserve": "0.2.1",
 		"gulp-exec": "5.0.0",
 		"gulp-jison": "1.2.0",
 		"gulp-rename": "2.0.0",
-		"gulp-replace": "1.1.3",
+		"gulp-replace": "1.1.4",
 		"gulp-shell": "0.8.0",
 		"gulp-uglify": "3.0.2",
-		"husky": "6.0.0",
-		"lint-staged": "13.1.0",
+		"husky": "8.0.3",
+		"lint-staged": "13.2.2",
 		"mocha": "10.2.0",
 		"mocha.parallel": "0.15.6",
-		"open": "8.4.0",
-		"prettier": "2.8.1",
-		"strftime": "0.10.1",
+		"open": "9.1.0",
+		"prettier": "2.8.8",
+		"strftime": "0.10.2",
 		"tabletop": "1.6.3",
 		"uglify-js": "3.17.4"
 	},
 	"resolutions": {
-		"got": "^12.0.0",
+		"got": "^13.0.0",
 		"axios": "^1.0.0",
-		"marked": "^4.0.10",
+		"json5": "^2.2.2",
 		"underscore": "^1.12.1",
-		"glob-parent": "^6.0.0"
+		"glob-parent": "^6.0.0",
+		"decode-uri-component": "^0.2.1"
 	},
 	"engines": {
-		"node": "*"
+		"node": ">=15"
 	},
 	"repository": {
 		"type": "git",
-		"url": "http://github.com/agershun/alasql.git"
+		"url": "http://github.com/alasql/alasql.git"
 	},
 	"bugs": {
-		"url": "https://github.com/agershun/alasql/issues"
+		"url": "https://github.com/alasql/alasql/issues"
 	},
 	"bin": {
 		"alasql": "./bin/alasql-cli.js"
 	},
-	"homepage": "https://github.com/agershun/alasql",
+	"homepage": "https://github.com/alasql/alasql",
 	"keywords": [
 		"SQL",
 		"javascript",

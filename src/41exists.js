@@ -6,44 +6,23 @@
 //
 */
 
-yy.ExistsValue = function (params) {
-	return Object.assign(this, params);
-};
-yy.ExistsValue.prototype.toString = function () {
-	return 'EXISTS(' + this.value.toString() + ')';
-};
+yy.ExistsValue = class ExistsValue {
+	constructor(params) {
+		Object.assign(this, params);
+	}
 
-yy.ExistsValue.prototype.toType = function () {
-	return 'boolean';
-};
+	toString() {
+		return 'EXISTS(' + this.value.toString() + ')';
+	}
 
-yy.ExistsValue.prototype.toJS = function (context, tableid, defcols) {
-	//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
+	toType() {
+		return 'boolean';
+	}
 
-	return 'this.existsfn[' + this.existsidx + '](params,null,' + context + ').data.length';
-};
-
-yy.Select.prototype.compileWhereExists = function (query) {
-	if (!this.exists) return;
-	query.existsfn = this.exists.map(function (ex) {
-		var nq = ex.compile(query.database.databaseid);
-		//		console.log(nq);
-		//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
-		nq.query.modifier = 'RECORDSET';
-		return nq;
-	});
-};
-
-yy.Select.prototype.compileQueries = function (query) {
-	if (!this.queries) return;
-	query.queriesfn = this.queries.map(function (q) {
-		var nq = q.compile(query.database.databaseid);
-		//		console.log(nq);
-		//	if(!nq.query) nq.query = {};
-		nq.query.modifier = 'RECORDSET';
-		//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
-		return nq;
-	});
+	toJS(context, tableid, defcols) {
+		//	return 'ww=this.existsfn['+this.existsidx+'](params,null,p),console.log(ww),ww.length';
+		return 'this.existsfn[' + this.existsidx + '](params,null,' + context + ').data.length';
+	}
 };
 
 //

@@ -25,12 +25,12 @@ describe('Test 386 - Nested Search (issue #495)', function () {
 						{
 							id: 13,
 							quantity: 60,
-							started: 2009 - 01 - 01,
+							started: '2009 - 01 - 01',
 						},
 						{
 							id: 77,
 							quantity: 45,
-							started: 2009 - 02 - 01,
+							started: '2009 - 02 - 01',
 						},
 					],
 				},
@@ -54,12 +54,12 @@ describe('Test 386 - Nested Search (issue #495)', function () {
 						{
 							id: 131,
 							quantity: 601,
-							started: 2009 - 01 - 01,
+							started: '2009 - 01 - 01',
 						},
 						{
 							id: 771,
 							quantity: 451,
-							started: 2009 - 02 - 01,
+							started: '2009 - 02 - 01',
 						},
 					],
 				},

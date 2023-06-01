@@ -16,7 +16,7 @@ function doJoin(query, scope, h) {
 
 			//			var res = query.selectfn(scope, query.params, alasql);
 			//			console.log("last",res);
-			// If there is a GROUP BY then pipe to groupping function
+			// If there is a GROUP BY then pipe to grouping function
 			if (query.groupfn) {
 				query.groupfn(scope, query.params, alasql);
 			} else {

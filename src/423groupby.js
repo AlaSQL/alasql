@@ -79,7 +79,7 @@ if(false) {
 			var coljs = col2.split('\t')[1];
 			// Check, if aggregator exists but GROUP BY is not exists
 			if (columnid === '') {
-				return '1'; // Create fictive groupping column for fictive GROUP BY
+				return '1'; // Create fictive grouping column for fictive GROUP BY
 			}
 			//			else return "r['"+columnid+"']";
 			query.ingroup.push(columnid);
@@ -142,6 +142,10 @@ if(false) {
 				// 	if(col instanceof yy.Column) colas = col.columnid;
 				// 	else colas = col.toString();
 				// };
+				let colExpIfFunIdExists = (expression) => {
+					let colexpression = expression.args[0];
+					return colexpression.toJS('p', tableid, defcols);
+				};
 				if (col instanceof yy.AggrValue) {
 					if (col.distinct) {
 						aft +=
@@ -149,6 +153,16 @@ if(false) {
 					}
 					if (col.aggregatorid === 'SUM') {
 						return "'" + colas + "':(" + colexp + ')||0,';
+					} else if (col.aggregatorid === 'TOTAL') {
+						if ('funcid' in col.expression) {
+							let colexp1 = colExpIfFunIdExists(col.expression);
+							return `'${colas}':(${colexp1}) || typeof ${colexp1} == 'number' ?
+							${colexp1} : ${colexp1} == 'string' && typeof Number(${colexp1}) == 'number' ? Number(${colexp1}) :
+							typeof ${colexp1} == 'boolean' ?  Number(${colexp1}) : 0,`;
+						}
+						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ?
+							${colexp} : ${colexp} == 'string' && typeof Number(${colexp}) == 'number' ? Number(${colexp}) :
+							typeof ${colexp} === 'boolean' ?  Number(${colexp}) : 0,`;
 					} else if (
 						col.aggregatorid === 'MIN' ||
 						col.aggregatorid === 'MAX' ||
@@ -287,7 +301,10 @@ if(false) {
 			// }
 */
 				var colexp = col.expression.toJS('p', tableid, defcols);
-
+				let colExpIfFunIdExists = (expression) => {
+					let colexpression = expression.args[0];
+					return colexpression.toJS('p', tableid, defcols);
+				};
 				if (col instanceof yy.AggrValue) {
 					var pre = '',
 						post = '';
@@ -304,6 +321,30 @@ if(false) {
 					}
 					if (col.aggregatorid === 'SUM') {
 						return pre + "g['" + colas + "']+=(" + colexp + '||0);' + post; //f.field.arguments[0].toJS();
+					} else if (col.aggregatorid === 'TOTAL') {
+						if ('funcid' in col.expression) {
+							let colexp1 = colExpIfFunIdExists(col.expression);
+							return (
+								pre +
+								`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
+						typeof ${colexp1} == 'string' && !isNaN(${colexp1}) && typeof Number(${colexp1}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp1})}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'string'){g['${colas}'] = 0}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
+						else if(typeof ${colexp1} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
+						else{g['${colas}'] += ${colexp1}||0}` +
+								post
+							);
+						}
+						return (
+							pre +
+							`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
+						typeof ${colexp} == 'string' && !isNaN(${colexp}) && typeof Number(${colexp}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp})}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'string'){g['${colas}'] = 0}
+						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
+						else if(typeof ${colexp} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
+						else{g['${colas}'] += ${colexp}||0}` +
+							post
+						);
 					} else if (col.aggregatorid === 'COUNT') {
 						//					console.log(221,col.expression.columnid == '*');
 						if (col.expression.columnid === '*') {
