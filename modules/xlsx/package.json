@@ -92,7 +92,7 @@
 		"codepage": "~1.15.0",
 		"commander": "~10.0.0",
 		"crc-32": "~1.2.2",
-		"dtslint": "^0.9.0",
+		"dtslint": "^4.0.0",
 		"eslint": "7.32.0",
 		"eslint-plugin-html": "^6.1.2",
 		"eslint-plugin-json": "^2.1.2",
