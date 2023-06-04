@@ -93,7 +93,7 @@
 		"commander": "~10.0.0",
 		"crc-32": "~1.2.2",
 		"dtslint": "^4.0.0",
-		"eslint": "7.32.0",
+		"eslint": "8.42.0",
 		"eslint-plugin-html": "^6.1.2",
 		"eslint-plugin-json": "^2.1.2",
 		"exit-on-epipe": "~1.0.1",
