@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 57 - Params and Subqueries in JOIN', function () {
-	if (false) {
+	/*if (false) {
 		var data1 = [{a: 1}, {a: 2}];
 		var data2 = [
 			{a: 1, b: 1},
@@ -41,5 +41,5 @@ describe('Test 57 - Params and Subqueries in JOIN', function () {
 			/// console.log(res);
 			done();
 		});
-	}
+	}*/
 });

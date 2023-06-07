@@ -9,7 +9,7 @@
 // Main Database class
 
 /**
-    @class Database 
+    @class Database
  */
 
 var Database = (alasql.Database = function (databaseid) {
@@ -86,6 +86,12 @@ Database.prototype.autoval = function (tablename, colname, getNext) {
 	return alasql.autoval(tablename, colname, getNext, this.databaseid);
 };
 
+Database.prototype.transaction = function (cb) {
+	var tx = new alasql.Transaction(this.databaseid);
+	var res = cb(tx);
+	return res;
+};
+
 /*/*
 // 	// Compile
 // 	var statement = this.compile(sql);
@@ -139,34 +145,4 @@ Database.prototype.compile = function(sql, kind) {
 	return alasql.compile(sql, kind, databaseid);
 };
 
-*/
-
-/*/*
-// 	var self = this;
-// 	var hh = hash(sql);
-
-// 	// Check cache with hash of SQL statement
-// 	var statement = this.sqlcache[hh];
-// 	if(!statement) {
-
-// 		// If not fount, then compile it
-// 		var ast = alasql.parse(sql);
-// 		// Save to cache
-
-// 		statement = this.sqlcache[hh]= ast.compile(self);
-
-// 		// Memory leak prevention 
-// 		this.sqlcachesize++;
-// 		if(this.sqlcachesize > alasql.MAXSQLCACHESIZE) {
-// 			this.resetSqlCache();
-// 		}
-// 	};
-// 	return statement;
-// }
-
-// SQL.js compatibility method
-//Database.prototype.prepare = Database.prototype.compile;
-
-
-// Added for compatibility with WebSQL
 */

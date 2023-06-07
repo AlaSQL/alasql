@@ -10,9 +10,9 @@ yy.FuncValue = function (params) {
 	return Object.assign(this, params);
 };
 
-var re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
+let re_invalidFnNameChars = /[^0-9A-Z_$]+/i;
 yy.FuncValue.prototype.toString = function () {
-	var s = '';
+	let s = '';
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
 	else if (alasql.aggr[this.funcid]) s += this.funcid;
@@ -34,10 +34,10 @@ yy.FuncValue.prototype.toString = function () {
 };
 
 yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
-	var res = 1;
+	let res = 1;
 	alasql.precompile(this, databaseid, params); // Precompile queries
 	//	console.log(34,this.toJS('','',null));
-	var expr = new Function('params,alasql', 'var y;return ' + this.toJS('', '', null));
+	let expr = new Function('params,alasql', 'var y;return ' + this.toJS('', '', null));
 	expr(params, alasql);
 	if (cb) res = cb(res);
 	return res;
@@ -155,7 +155,7 @@ stdlib.EXP = function (a) {
 };
 
 stdlib.IIF = function (a, b, c) {
-	if (arguments.length == 3) {
+	if (arguments.length === 3) {
 		return '((' + a + ')?(' + b + '):(' + c + '))';
 	} else {
 		throw new Error('Number of arguments of IFF is not equals to 3');

@@ -4,19 +4,19 @@
     <title>Mocha</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../lib/mocha/mocha.css" />
+    <link rel="stylesheet" href="test/lib/mocha/mocha.css" />
   </head>
   <body>
     <div id="mocha"></div>
-    <script src="../lib/assert/assert.js"></script>
-    <script src="../lib/mocha/mocha.js"></script>
-    <script src="../lib/zt/zt.js"></script>
+    <script src="./lib/assert/assert.js"></script>
+    <script src="./lib/mocha/mocha.js"></script>
+    <script src="./lib/zt/zt.js"></script>
 
     
     <script>mocha.setup('bdd')</script>
 
-    <script src="../lib/xlsx/xlsx.core.min.js"></script>
-    <script src="../alasql-worker.js"></script>
+    <script src="./lib/xlsx/xlsx.core.min.js"></script>
+    <script src="../dist/alasql-worker.js"></script>
     <script>
         alasql.worker = new Worker('../alasql.min.js');
     </script>

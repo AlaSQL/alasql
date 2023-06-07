@@ -11,6 +11,7 @@ test/test251.xlsx
 yarn-error.log
 package-lock.json
 dist/
+/dist/
 /.idea/.gitignore
 /.idea/alasql.iml
 /.idea/inspectionProfiles/Project_Default.xml

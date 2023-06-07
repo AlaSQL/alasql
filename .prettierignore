@@ -9,3 +9,5 @@ src/99worker-start.js
 src/alasqlparser.js
 
 src/97saveas.js
+
+modules/

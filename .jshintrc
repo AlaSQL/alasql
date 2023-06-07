@@ -9,9 +9,7 @@
     "browser"       : true,   // Standard browser globals e.g. `window`, `document`.
     "node"          : true,
     "wsh"           : true,   // Windows Scripting Host.
-    "jquery"        : true,
     "mocha"         : true,
-    "node"          : true,
     "worker"        : true,
 
     "predef"        : [  // Custom globals.
@@ -68,7 +66,6 @@
     "curly"         : true,   // Require {} for every new block or scope.
     "eqeqeq"        : true,   // Require triple equals i.e. `===`.
     "eqnull"        : false,  // Tolerate use of `== null`.
-    "evil"          : true,  // Tolerate use of `eval`.
     "expr"          : false,  // Tolerate `ExpressionStatement` as Programs.
     "forin"         : false,  // Tolerate `for in` loops without `hasOwnPrototype`.
     "immed"         : true,   // Require immediate invocations to be wrapped in parens e.g. `( function(){}() );`

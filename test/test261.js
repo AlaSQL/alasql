@@ -38,9 +38,8 @@ describe('Test 261 SqlLogic Parser Test #4', function () {
 	});
 
 	it('6. SELECT', function (done) {
-		var res = alasql(function () {
-			/*
-      SELECT a+b*2+c*3+d*4+e*5,
+		var res = alasql(`
+		      SELECT a+b*2+c*3+d*4+e*5,
              CASE WHEN a<b-3 THEN 111 WHEN a<=b THEN 222
               WHEN a<b+3 THEN 333 ELSE 444 END,
              abs(b-c),
@@ -50,21 +49,18 @@ describe('Test 261 SqlLogic Parser Test #4', function () {
        WHERE (e>c OR e<d)
          AND d>e
          AND EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b)
-  */
-		});
+  `);
 		//    console.log(res);
 		done();
 	});
 
 	it('7. SELECT', function (done) {
-		var res = alasql(function () {
-			/*
+		var res = alasql(`
       SELECT CASE WHEN c>(SELECT avg(c) FROM t1) THEN a*2 ELSE b*10 END
         FROM t1
        WHERE e+d BETWEEN a+b-10 AND c+130
          AND c>d
-  */
-		});
+		 `);
 		//    console.log(res);
 
 		done();

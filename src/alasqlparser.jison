@@ -237,6 +237,7 @@ SETS                                        	return 'SET'
 'STRATEGY'										return 'STRATEGY'
 'STORE'                                        	return 'STORE'
 'SUM'											return 'SUM'
+'TOTAL'											return 'TOTAL'
 'TABLE'											return 'TABLE'
 'TABLES'										return 'TABLE'
 'TARGET'										return 'TARGET'
@@ -318,7 +319,6 @@ SETS                                        	return 'SET'
 '~'												return 'TILDA'
 
 [0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
-
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
@@ -1355,6 +1355,7 @@ OverOrderByClause
 	;
 Aggregator
 	: SUM { $$ = "SUM"; }
+	| TOTAL { $$ = "TOTAL"; }
 	| COUNT { $$ = "COUNT"; }
 	| MIN { $$ = "MIN"; }
 	| MAX { $$ = "MAX"; }

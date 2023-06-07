@@ -6,35 +6,24 @@
 //
 */
 
-// Statements container
-yy.Statements = function (params) {
-	return Object.assign(this, params);
-};
+yy.Statements = class Statements {
+	constructor(params) {
+		Object.assign(this, params);
+	}
 
-yy.Statements.prototype.toString = function () {
-	return this.statements
-		.map(function (st) {
-			return st.toString();
-		})
-		.join('; ');
-};
+	toString() {
+		return this.statements.map((st) => st.toString()).join('; ');
+	}
 
-// Compile array of statements into single statement
-yy.Statements.prototype.compile = function (db) {
-	var statements = this.statements.map(function (st) {
-		return st.compile(db);
-	});
-	if (statements.length === 1) {
-		return statements[0];
-	} else {
-		return function (params, cb) {
-			var res = statements.map(function (st) {
-				return st(params);
-			});
-			if (cb) {
-				cb(res);
-			}
-			return res;
-		};
+	// Compile array of statements into single statement
+	compile(db) {
+		const statements = this.statements.map((st) => st.compile(db));
+		return statements.length === 1
+			? statements[0]
+			: (params, cb) => {
+					const res = statements.map((st) => st(params));
+					if (cb) cb(res);
+					return res;
+			  };
 	}
 };
