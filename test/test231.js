@@ -331,8 +331,10 @@ describe('Test 231 NIST SQL Example', function () {
 		var res = alasql('BEGIN WORK');
 		assert.deepEqual(res, 1);
 
-		var res = alasql('UPDATE STATS SET RAIN_I = 4.50 \
-            WHERE ID = 44');
+		var res = alasql(
+			'UPDATE STATS SET RAIN_I = 4.50 \
+            WHERE ID = 44'
+		);
 		assert.deepEqual(res, 2);
 
 		var res2 = alasql('SELECT * FROM STATS');

@@ -53,62 +53,82 @@ alasql.databasenum = 0;
 /**
  	Alasql options object
  */
-alasql.options = {};
-alasql.options.errorlog = false; // Log or throw error
-alasql.options.valueof = false; // Use valueof in orderfn
-alasql.options.dropifnotexists = false; // DROP database in any case
-alasql.options.datetimeformat = 'sql'; // How to handle DATE and DATETIME types
-// Another value is 'javascript'
-alasql.options.casesensitive = true; // Table and column names are case sensitive and converted to lower-case
-alasql.options.logtarget = 'output'; // target for log. Values: 'console', 'output', 'id' of html tag
-alasql.options.logprompt = true; // Print SQL at log
+alasql.options = {
+	/** Log or throw error */
+	errorlog: false,
 
-alasql.options.progress = false; // Callback for async queries progress
-alasql.options.nowdateseparator = '-'; // Separator for Now() function
+  /** Separator for Now() function */
+  nowdateseparator: '-',
 
-// Default modifier
-// values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
-alasql.options.modifier = undefined;
-// How many rows to lookup to define columns
-alasql.options.columnlookup = 10;
-// Create vertex if not found
-alasql.options.autovertex = true;
+	/** Use valueof in orderfn */
+	valueof: true,
 
-// Use dbo as current database (for partial T-SQL comaptibility)
-alasql.options.usedbo = true;
+	/** DROP database in any case */
+	dropifnotexists: false,
 
-// AUTOCOMMIT ON | OFF
-alasql.options.autocommit = true;
+	/** How to handle DATE and DATETIME types */
+	datetimeformat: 'sql',
 
-// Use cache
-alasql.options.cache = true;
+	/** Table and column names are case sensitive and converted to lower-case */
+	casesensitive: true,
 
-// Compatibility flags
-alasql.options.tsql = true;
+	/** target for log. Values: 'console', 'output', 'id' of html tag */
+	logtarget: 'output',
 
-alasql.options.mysql = true;
+	/** Print SQL at log */
+	logprompt: true,
 
-alasql.options.postgres = true;
+	/** Callback for async queries progress */
+	progress: false,
 
-alasql.options.oracle = true;
+	/**
+	 * Default modifier
+	 * values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
+	 * @type {'RECORDSET'|'VALUE'|'ROW'|'COLUMN'|'MATRIX'|'TEXTSTRING'|'INDEX'|undefined}
+	 */
+	modifier: undefined,
 
-alasql.options.sqlite = true;
+	/** How many rows to lookup to define columns */
+	columnlookup: 10,
 
-alasql.options.orientdb = true;
+	/** Create vertex if not found */
+	autovertex: true,
 
-// for SET NOCOUNT OFF
-alasql.options.nocount = false;
+	/** Use dbo as current database (for partial T-SQL comaptibility) */
+	usedbo: true,
 
-// Check for NaN and convert it to undefined
-alasql.options.nan = false;
+	/** AUTOCOMMIT ON | OFF */
+	autocommit: true,
 
-alasql.options.excel = {cellDates: true};
+	/** Use cache */
+	cache: true,
 
-alasql.options.joinstar = 'overwrite'; // Option for SELECT * FROM a,b
+	/** Compatibility flags */
+	tsql: true,
 
-alasql.options.loopbreak = 100000;
+	mysql: true,
 
-alasql.options;
+	postgres: true,
+
+	oracle: true,
+
+	sqlite: true,
+
+	orientdb: true,
+
+	/** for SET NOCOUNT OFF */
+	nocount: false,
+
+	/** Check for NaN and convert it to undefined */
+	nan: false,
+
+	excel: {cellDates: true},
+
+	/** Option for SELECT * FROM a,b */
+	joinstar: 'overwrite',
+
+	loopbreak: 100000,
+};
 
 //alasql.options.worker = false;
 
@@ -268,7 +288,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 			var res = (alasql.res = statement(params, cb, scope));
 			return res;
 		} else {
-			//			console.log(ast.statements[0]);
+			// console.log(ast.statements[0]);
 			alasql.precompile(ast.statements[0], alasql.useid, params);
 			var res = (alasql.res = ast.statements[0].execute(databaseid, params, cb, scope));
 			return res;

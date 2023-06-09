@@ -7,7 +7,7 @@
 */
 
 yy.CaseValue = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.CaseValue.prototype.toString = function () {
 	var s = 'CASE ';

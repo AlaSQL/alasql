@@ -7,7 +7,7 @@
 */
 
 yy.WithSelect = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.WithSelect.prototype.toString = function () {
 	var s = 'WITH ';
@@ -62,7 +62,7 @@ yy.CreateView.prototype.execute = function (databaseid) {
 	return 1;
 };
 
-yy.DropView = function (params) { return yy.extend(this, params); }
+yy.DropView = function (params) { return Object.assign(this, params); }
 yy.DropView.prototype.toString = function() {
 	var s = 'DROP'+' '+'VIEW';
 	s += ' '+this.view.toString();

@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '816'; // insert test file number
-
-describe('Test ' + test + ' - ast.toString() causes repeated aliases', function () {
+describe('Test 816 - ast.toString() causes repeated aliases', function () {
 	it('Should parse query to AST, then stringify back to the same query', function () {
 		var query = 'SELECT genre, title AS t, LENGTH(title) AS length FROM tbl AS t1';
 		var ast = alasql.parse(query);

@@ -7,7 +7,7 @@
 */
 
 yy.DropTable = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.DropTable.prototype.toString = function () {
 	var s = 'DROP' + ' ';
@@ -80,7 +80,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 };
 
 yy.TruncateTable = function (params) {
-	return yy.extend(this, params);
+	return Object.assign(this, params);
 };
 yy.TruncateTable.prototype.toString = function () {
 	var s = 'TRUNCATE TABLE';

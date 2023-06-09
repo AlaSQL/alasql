@@ -7,51 +7,40 @@ if (typeof exports === 'object') {
 
 if (typeof exports != 'object') {
 	describe('Test 154 - IndexedDB test', function () {
-		it('1. Create Database and Table', function (done) {
-			alasql('DROP IndexedDB DATABASE IF EXISTS ag154', [], function (res1) {
-				assert(res1 == 1 || res1 == 0);
-				alasql('CREATE IndexedDB DATABASE ag154', [], function (res2) {
-					assert(res2 == 1);
-					alasql('SHOW IndexedDB DATABASES', [], function (res3) {
-						var found = false;
-						res3.forEach(function (d) {
-							found = found || d.databaseid == 'ag154';
-						});
-						assert(found);
-						alasql('ATTACH IndexedDB DATABASE ag154', [], function (res4) {
-							assert(res4 == 1);
-							alasql('CREATE TABLE ag154.one', [], function (res5) {
-								assert(res5 == 1);
-								alasql('SHOW TABLES FROM ag154', [], function (res6) {
-									assert(res6.length == 1);
-									assert(res6[0].tableid == 'one');
-									// console.log(997,res);
+		it('1. Create Database and Table', async () => {
+			const sql = alasql.promise;
 
-									alasql('DROP TABLE ag154.one', [], function (res7) {
-										// console.log(998,res);
-										assert(res7 == 1);
-										alasql('SHOW TABLES FROM ag154', [], function (res8) {
-											// console.log(999,res);
-											assert(res8.length == 0);
-											// console.log(alasql.databases.ag154);
-											alasql(
-												'DETACH DATABASE ag154;DROP IndexedDB DATABASE ag154',
-												[],
-												function (res9) {
-													assert(res9[0] == 1);
-													assert(res9[1] == 1);
-													//											console.log(res);
-													done();
-												}
-											);
-										});
-									});
-								});
-							});
-						});
-					});
-				});
-			});
+			const res1 = await sql('DROP IndexedDB DATABASE IF EXISTS ag154');
+			assert(res1 === 1 || res1 === 0);
+
+			const res2 = await sql('CREATE IndexedDB DATABASE ag154');
+			assert(res2 === 1);
+
+			if (globalThis.indexedDB.databases) {
+				const res3 = await sql('SHOW IndexedDB DATABASES');
+				const found = res3.some((d) => d.databaseid === 'ag154');
+				assert(found);
+			}
+
+			const res4 = await sql('ATTACH IndexedDB DATABASE ag154');
+			assert(res4 === 1);
+
+			const res5 = await sql('CREATE TABLE ag154.one');
+			assert(res5 === 1);
+
+			const res6 = await sql('SHOW TABLES FROM ag154');
+			assert(res6.length === 1);
+			assert(res6[0].tableid === 'one');
+
+			const res7 = await sql('DROP TABLE ag154.one');
+			assert(res7 === 1);
+
+			const res8 = await sql('SHOW TABLES FROM ag154');
+			assert(res8.length === 0);
+
+			const res9 = await sql('DETACH DATABASE ag154;DROP IndexedDB DATABASE ag154');
+			assert(res9[0] === 1);
+			assert(res9[1] === 1);
 		});
 	});
 }

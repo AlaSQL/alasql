@@ -82,11 +82,11 @@ describe('Test 269 options', function () {
 	it.skip('6a. MATRIX', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		//    alasql.options.modifier = 'RECORDSET';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b \
-      ORDER BY a', [
-			data1,
-			data2,
-		]);
+		var res = alasql(
+			'SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b \
+      ORDER BY a',
+			[data1, data2]
+		);
 		console.log(res);
 		// Wrong with reduced rows
 		assert.deepEqual(res, [

@@ -16,9 +16,7 @@ describe('Test 294 TestDatabase', function () {
 	// http://www.databasejournal.com/scripts/practice-sql.html
 
 	it('2. Create tables and insert some values', function (done) {
-		alasql(function () {
-			/*
-
+		alasql(`
       create table zipcodes (
         zip integer(5) primary key,
         city  varchar(30),
@@ -112,8 +110,7 @@ describe('Test 294 TestDatabase', function () {
       insert into odetails values (1022, 10701,2); insert into odetails values (1023, 10800,4); 
       insert into odetails values (1023, 10900,1); insert into odetails values (1024, 10900,7);
 
-    */
-		});
+	  `);
 		done();
 	});
 	it('3. Check quantities', function (done) {

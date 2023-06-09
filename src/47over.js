@@ -6,18 +6,21 @@
 //
 */
 
-yy.Over = function (params) {
-	return yy.extend(this, params);
-};
-yy.Over.prototype.toString = function () {
-	var s = 'OVER (';
-	if (this.partition) {
-		s += 'PARTITION BY ' + this.partition.toString();
-		if (this.order) s += ' ';
+yy.Over = class Over {
+	constructor(params) {
+		Object.assign(this, params);
 	}
-	if (this.order) {
-		s += 'ORDER BY ' + this.order.toString();
+
+	toString() {
+		var s = 'OVER (';
+		if (this.partition) {
+			s += 'PARTITION BY ' + this.partition.toString();
+			if (this.order) s += ' ';
+		}
+		if (this.order) {
+			s += 'ORDER BY ' + this.order.toString();
+		}
+		s += ')';
+		return s;
 	}
-	s += ')';
-	return s;
 };

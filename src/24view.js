@@ -7,15 +7,19 @@
 */
 
 // Table class
-var View = (alasql.View = function (params) {
-	// Columns
-	this.columns = [];
-	this.xcolumns = {};
-	// Data array
-	this.query = [];
+class View {
+	constructor(params) {
+		// Columns
+		this.columns = [];
+		this.xcolumns = {};
+		// Data array
+		this.query = [];
 
-	extend(this, params);
-});
+		Object.assign(this, params);
+	}
+}
+
+alasql.View = View;
 
 /*/*
 // View = function(){

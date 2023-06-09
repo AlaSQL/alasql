@@ -4,67 +4,26 @@
     <title>Mocha</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../lib/mocha/mocha.css" />
-
-    <script src="/lib/jquery/jquery.min.js"></script>
-
-    <script src="browser.js"></script>
-   
+    <link rel="stylesheet" href="test/lib/mocha/mocha.css" />
   </head>
   <body>
 
     <div id="mocha">
-
-        <div id="sum">
-            
-            
-        </div>
-                
-
+      <div id="sum"></div>
     </div>
-    
-    <script src="../dist/alasql.js"></script>
-    <script src="../lib/lodash/lodash.min.js"></script>
-    <script src="../lib/xlsx/xlsx.core.min.js"></script>
-    <script src="../lib/assert/assert.js"></script>
-    <script src="../lib/mocha/mocha.js"></script>
-    <script src="../lib/zt/zt.js"></script>
 
-    
+    <script src="dist/alasql.js"></script>
+    <script src="test/lib/xlsx/xlsx.core.min.js"></script>
+    <script src="test/lib/assert/assert.js"></script>
+    <script src="test/lib/mocha/mocha.js"></script>
+    <script src="test/lib/zt/zt.js"></script>
     <script>mocha.setup('bdd')</script>
 
-
-@INSERT_TESTFILES
-
-
+    @INSERT_TESTFILES
 
     <script>
-        if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
-        else { mocha.run(); }
+      mocha.run();
     </script>
-
-<script>
-
-setInterval(function(){
-                        $('#sum').html(
-                                                               
-                                        '<div class="suite" style="position:fixed;top:0;background-color:#eeeeee;z-index:10;padding:10px;"><h1>### '+browserName + " " + majorVersion+' </h1><ul>'+
-                                        '<li class="test "><h2>- `alasql@'+alasql.version+'`</h2></li>'+
-                                        '<li class="test "><h2>- Failures: '+$('#mocha-stats .failures em').text()+'</h2></li>'+
-                                        '<li class="test "><h2>- Passes '+$('#mocha-stats .passes em').text()+'</h2></li>'+
-                                        '</ul></div><br><br>```<!--Showing only errors:--><br>'
-                                        );
-                        // Show only errors
-                        $('li.suite:not(:has(li.test.fail))').hide();
-                        $('#mocha-stats .passes').hide();
-                        $('#mocha-stats .failures').hide();
-
-                    },3000);
-
-
-</script>
-
-
 
   </body>
 </html>

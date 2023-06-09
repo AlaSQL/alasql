@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '615'; // insert test file number
-
-describe('Test ' + test + ' - Read empty and non-empty excel files', function () {
+describe('Test 615 - Read empty and non-empty excel files', function () {
 	it('A) Load empty excel file', function (done) {
 		alasql('SELECT * FROM XLSX("' + __dirname + '/test615.xlsx")', [], function (res) {
 			assert.equal(res.length, 0);

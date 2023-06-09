@@ -3,9 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '000'; // insert test file number
+describe('Test 000 - multiple statements', function () {
+	const test = '000'; // insert test file number
 
-describe('Test ' + test + ' - multiple statements', function () {
 	before(function () {
 		alasql('create database test' + test);
 		alasql('use test' + test);

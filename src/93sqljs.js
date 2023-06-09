@@ -1,6 +1,6 @@
 //
-// 91websql.js
-// WebSQL database support
+// 93sqlite.js
+// SQLite database support
 // (c) 2014, Andrey Gershun
 //
 
