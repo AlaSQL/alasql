@@ -1,11 +1,8 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "4.0.5",
-	"author": "Andrey Gershun <agershun@gmail.com>",
-	"contributors": [
-		"Mathias Wulff <m@rawu.dk>"
-	],
+	"version": "5.0.0-beta",
+	"author": "Andrey Gershun <agershun@gmail.com>, Mathias Wulff <m@rawu.dk>",
 	"main": "dist/alasql.fs.js",
 	"browser": "dist/alasql.min.js",
 	"directories": {
@@ -25,11 +22,11 @@
 		"release": "yarn version",
 		"jison": "npx jison-gho ./src/alasqlparser.jison -o ./src/alasqlparser.js",
 		"fmt": "yarn pretty-commit --write",
-		"format": "yarn pretty-since-dev --write",
+		"format": "yarn pretty-since-main --write",
 		"format-all": "yarn pretty-all --write",
-		"test-format": "yarn pretty-since-dev --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
+		"test-format": "yarn pretty-since-main --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
 		"lint": "eslint .",
-		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
+		"pretty-since-main": "{ git diff --name-only --diff-filter=d origin/main ; git diff --name-only --diff-filter=d --staged origin/main ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"push": "git push --force-with-lease && git push --no-verify --tags #",
