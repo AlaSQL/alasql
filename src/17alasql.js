@@ -59,9 +59,6 @@ alasql.options = {
 
 	/** Use valueof in orderfn */
 	valueof: true,
-	progress: false, // Callback for async queries progress
-    nowdateseparator: '-', // Date separator for Now() function
-	nowdatetimeseparator: ' ', //'T'; // date-time Separator for Now() function
 
 	/** DROP database in any case */
 	dropifnotexists: false,
