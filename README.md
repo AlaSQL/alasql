@@ -151,7 +151,7 @@ Please check out the [limitations of the library](https://github.com/alasql/alas
 
 ## Performance
 
-AlaSQL is designed for speed and includes some of the classic SQL engine optimizations:
+AlaSQL is designed for speed and includes some of the classic SQL engine optimizations: 
 
 * Queries are cached as compiled functions
 * Joined tables are pre-indexed
