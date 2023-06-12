@@ -28,7 +28,7 @@ if (typeof exports != 'object') {
 				.then(function (res) {
 					return alasql.promise([
 						"INSERT INTO mytable1 (myid,myname) VALUES ( '1', 'Mr. One' )",
-						"INSERT INTO mytable2 (myid,myname) VALUES ( '2', 'Mr. Two' )", // Fails if using second CREATE method above
+						"INSERT INTO mytable2 (myid,myname) VALUES ( '2', 'Mr. Two' )",
 					]);
 				})
 				.then(function (res) {
