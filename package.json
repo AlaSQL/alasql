@@ -19,6 +19,7 @@
     "test-cover": "istanbul cover  -x 'test/lib/zt.js' --dir test/coverage _mocha",
     "prebuild": "rm -fr build # && npm run format",
     "build": "tsc src/main -t ES6 --outDir build/ES6 --allowJs && rollup -c",
+    "build-fast": "node esbuild.mjs",
     "Q_postbuild": "echo \"require('./build/alasql.es5.js')\" | node",
     "Q_postbuild_": "java -jar /Users/mrw/Downloads/compiler-latest/closure-compiler-v20180610.jar --compilation_level SIMPLE --js dist/alasql.js > dist/alasql.min3.js",
     "Qpostbuild": "uglifyjs -c -- build/alasql.es5.js > build/alasql.min.js",
