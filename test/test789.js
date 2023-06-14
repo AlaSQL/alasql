@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '789'; // insert test file number
-
-describe('Test ' + test + ' - convert decimal', function () {
+describe('Test 789 - convert decimal', function () {
 	it('1. DECIMAL', function (done) {
 		alasql('SELECT VALUE CONVERT(DECIMAL(10,2),"123.456")', [], function (res) {
 			assert(res === 123.46);

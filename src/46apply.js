@@ -6,14 +6,16 @@
 //
 */
 
-yy.Apply = function (params) {
-	return Object.assign(this, params);
-};
+yy.Apply = class Apply {
+	constructor(params) {
+		Object.assign(this, params);
+	}
 
-yy.Apply.prototype.toString = function () {
-	var s = this.applymode + ' APPLY (' + this.select.toString() + ')';
+	toString() {
+		var s = this.applymode + ' APPLY (' + this.select.toString() + ')';
 
-	if (this.as) s += ' AS ' + this.as;
+		if (this.as) s += ' AS ' + this.as;
 
-	return s;
+		return s;
+	}
 };

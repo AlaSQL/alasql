@@ -1,9 +1,6 @@
-- _AlaSQL is an unfunded open source project installed 100k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Aupdated-desc). We appreciate any and all contributions we can get._
+- _AlaSQL is an unfunded open source project installed 150k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Aupdated-desc). We appreciate any and all contributions we can get._
 
 - _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
-
-- _Wondering if you should upgrade to v2? You probably should, but check the two breaking changes [here](https://github.com/AlaSQL/alasql/releases/tag/v2.0.1)_
-
 
 [![CI-test](https://github.com/alasql/alasql/workflows/CI-test/badge.svg)](https://github.com/alasql/alasql/actions)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=alasql)
@@ -29,7 +26,7 @@
 
 AlaSQL - _( [à la](http://en.wiktionary.org/wiki/%C3%A0_la) [SQL](http://en.wikipedia.org/wiki/SQL) ) [ælæ ɛskju:ɛl]_ - is an open source SQL database for JavaScript with a strong focus on query speed and data source flexibility for both relational data and schemaless data.  It works in the web browser, Node.js, and mobile apps.
 
-This library is designed for:
+This library is perfect for:
 
 * Fast in-memory SQL data processing for BI and ERP applications on fat clients
 * Easy ETL and options for persistence by data import / manipulation / export of several formats
@@ -101,7 +98,7 @@ console.log(res); // [{a:2,b:6},{a:1,b:5},{a:3,b:4}]
 ```
 
 
-__If you are familiar with SQL it should come as no surprise that proper use of indexes on your tables is essential to get good performance.__
+__If you are familiar with SQL, it should be no surprise that proper use of indexes on your tables is essential for good performance.__
 
 
 
@@ -113,14 +110,14 @@ yarn add alasql                # yarn
 
 npm install alasql             # npm
 
-npm install -g alasql          # global installation for command line tools
+npm install -g alasql          # global install of command line tool
 ```
 
-For the browser: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql)
+For the browsers: include [alasql.min.js](https://cdn.jsdelivr.net/npm/alasql)
 
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/alasql@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/alasql@4"></script>
 ```
 
 
@@ -243,7 +240,7 @@ alasql.promise([
 
 ### Read SQLite database files
 
-AlaSQL can read (but not write) SQLite data files using [SQL.js](https://github.com/kripken/sql.js) library:
+AlaSQL can read (but not write) SQLite data files using [SQL.js](https://github.com/sql-js/sql.js) library:
 
 ```html
 <script src="alasql.js"></script>
@@ -438,7 +435,7 @@ module.exports = {
 ##### module.noParse
 
 As of AlaSQL 0.3.5, you can simply tell Webpack not to parse AlaSQL, which avoids all the dynamic `require` warnings and avoids using `eval`/clashing with CSP with script-loader.
-[Read the Webpack docs about noParse](https://webpack.github.io/docs/configuration.html#module-noparse)
+[Read the Webpack docs about noParse](https://webpack.js.org/configuration/module/#modulenoparse)
 
 ```js
 ...
@@ -635,7 +632,7 @@ We appreciate any and all contributions we can get. If you feel like contributin
 
 Many thanks to:
 
-* Zach Carter for [Jison parser-generator](http://zaach.github.io/jison/)
+* Zach Carter for [Jison parser-generator](https://github.com/zaach/jison)
 * Andrew Kent for [JS SQL Parser](https://github.com/forward/sql-parser)
 * Eli Grey for [FileSaver.js](https://github.com/eligrey/FileSaver.js)
 * [SheetJS](https://sheetjs.com) for [JS XLSX Library](https://github.com/SheetJS/js-xlsx)
@@ -645,7 +642,6 @@ and other people for useful tools, which make our work much easier.
 ### Related projects that have inspired us
 
 * [AlaX](http://github.com/alasql/alax) - Export to Excel with colors and formats
-* [WebSQLShim](http://github.com/alasql/WebSQLShim) - WebSQL shim over IndexedDB (work in progress)
 * [AlaMDX](http://github.com/alasql/alamdx) - JavaScript MDX OLAP library (work in progress)
 * [Other similar projects](http://github.com/alasql/alasql/wiki/Similar-Projects.md) - list of databases on JavaScript
 
@@ -653,4 +649,4 @@ and other people for useful tools, which make our work much easier.
 
 ----
 <a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003946/d6e5c076-f156-11e5-8238-e62d2a8d20dc.png" align="right" alt="AlaSQL logo"/></a>
-© 2014-2022, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
+© 2014-2023, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)

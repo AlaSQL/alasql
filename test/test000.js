@@ -3,10 +3,11 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-const testID = '000'; // Seek to use a github issue number
+// Please consider using the github issue number as test ID
+describe(`Test 000 - multiple statements`, function () {
+  const testID = '000';	
 
-describe('Issue #' + testID + ' - multiple statements', function () {
-	before(function () {
+  before(function () {
 		alasql('create database test' + testID);
 		alasql('use test' + testID);
 	});

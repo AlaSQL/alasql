@@ -10,5 +10,5 @@ test/test251.xlsx
 *.log
 yarn-error.log
 package-lock.json
-dist/
+/dist/
 pnpm-lock.yaml

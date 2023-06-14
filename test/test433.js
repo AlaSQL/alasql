@@ -3,9 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '433'; // insert test file number
-
-describe('Test ' + test + ' - read csv from variable', function () {
+describe('Test 433 - read csv from variable', function () {
 	it('works from csv variable', function () {
 		var res = alasql('SELECT * FROM CSV(?, {"headers": true, "fromString": true})', [
 			'A,B,C\n10,20,30\n20,30,40',

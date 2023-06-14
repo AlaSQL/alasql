@@ -175,4 +175,53 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		res = alasql(`select avg(v) as v from ?`, [data]);
 		assert.deepEqual(res, [{v: 0}]);
 	});
+	it('TOTAL dealing with non-numeric values', function () {
+		var data = [
+			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2), g: '+44', h: 'XYZ1'},
+			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: new Number(11), g: '-45', h: 1},
+		];
+		res = alasql(
+			`SELECT 
+				TOTAL(a) AS a, 
+				total(b) as b, 
+				Total(c) as c, 
+				toTal(c2) as c2, 
+				totAl(d) as d,
+				totaL(e) as e,	
+				TOTAL(f) as f,
+				TOTAL(g) as g,
+				TOTAL(h) as h		
+			FROM ?`,
+			[data]
+		);
+		assert.deepEqual(res, [{a: 0, b: 10, c: 1, c2: 1, d: 5, e: 0, f: 13, g: -1, h: 1}]);
+	});
+
+	it('TOTAL of nothing is zero', function () {
+		data = [{ProductId: 10, price: 50}];
+		res = alasql(`SELECT TOTAL(price) AS p FROM ? WHERE ProductId = 5`, [data]);
+		assert.deepEqual(res, [{p: 0}]);
+	});
+
+	it('TOTAL of two rows based on select', function () {
+		data = [
+			{ProductId: 100, price: 500},
+			{ProductId: 100, price: 600},
+			{ProductId: 123, price: 123},
+		];
+		res = alasql(`SELECT TOTAL(price) AS p FROM ? WHERE ProductId = 100`, [data]);
+		assert.deepEqual(res, [{p: 1100}]);
+	});
+
+	it('TOTAL of single row', function () {
+		var data = [[{a: 2}]];
+		res = alasql(`SELECT TOTAL(a) AS a FROM ?`, data);
+		assert.deepEqual(res, [{a: 2}]);
+	});
+
+	it('TOTAL of zero is zero', function () {
+		var data = [{v: 0}];
+		res = alasql(`select TOTAL(v) as v from ?`, [data]);
+		assert.deepEqual(res, [{v: 0}]);
+	});
 });

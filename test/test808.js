@@ -7,49 +7,40 @@ if (typeof exports === 'object') {
 
 var dbFile = __dirname + '/test_db_fs.json';
 
-describe('Test 808 - Filestorage: Basic Operations and Drop Database', function () {
-	before(function (done) {
-		alasql('SET AUTOCOMMIT ON');
-		done();
-	});
-	after(function (done) {
-		done();
-	});
+(alasql.utils.isNode ? describe : describe.skip)(
+	'Test 808 - Filestorage: Basic Operations and Drop Database',
+	() => {
+		const sql = alasql.promise;
 
-	it('A. Create a Filestorage DB', function (done) {
-		alasql('CREATE FILESTORAGE DATABASE testDBFS("' + dbFile + '")', [], function () {
-			alasql('ATTACH FILESTORAGE DATABASE testDBFS("' + dbFile + '")', [], function () {
-				alasql('USE testDBFS', [], function () {
-					done();
-				});
-			});
+		before(async () => {
+			alasql('SET AUTOCOMMIT ON');
 		});
-	});
 
-	it('B. Basic Operations on a Filestorage DB table ', function (done) {
-		alasql('CREATE TABLE one (a VARCHAR, b INT)', [], function () {
-			alasql('INSERT INTO one VALUES ("A", 1), ("B", 2)', [], function () {
-				alasql('INSERT INTO one VALUES ("C", 3)', [], function () {
-					alasql('SELECT * FROM one', [], function (sres) {
-						var res = sres;
-						var actual = [
-							{a: 'A', b: 1},
-							{a: 'B', b: 2},
-							{a: 'C', b: 3},
-						];
-						assert.deepEqual(res, actual);
-						done();
-					});
-				});
-			});
-		});
-	});
+		// after(async () => {});
 
-	it('C. Detach and Drop a Filestorage DB', function (done) {
-		alasql('DETACH DATABASE testDBFS', [], function () {
-			alasql('DROP FILESTORAGE DATABASE testDBFS', [], function () {
-				done();
-			});
+		it('A. Create a Filestorage DB', async () => {
+			await sql('CREATE FILESTORAGE DATABASE testDBFS("' + dbFile + '")');
+			await sql('ATTACH FILESTORAGE DATABASE testDBFS("' + dbFile + '")');
+			await sql('USE testDBFS');
 		});
-	});
-});
+
+		it('B. Basic Operations on a Filestorage DB table ', async () => {
+			await sql('CREATE TABLE one (a VARCHAR, b INT)');
+			await sql("INSERT INTO one VALUES ('A', 1), ('B', 2)");
+			await sql("INSERT INTO one VALUES ('C', 3)");
+			const res = await sql('SELECT * FROM one');
+			const actual = [
+				{a: 'A', b: 1},
+				{a: 'B', b: 2},
+				{a: 'C', b: 3},
+			];
+
+			assert.deepEqual(res, actual);
+		});
+
+		it('C. Detach and Drop a Filestorage DB', async () => {
+			await sql('DETACH DATABASE testDBFS');
+			await sql('DROP FILESTORAGE DATABASE testDBFS');
+		});
+	}
+);

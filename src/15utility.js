@@ -319,19 +319,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		} else {
 			if (/^[a-z]+:\/\//i.test(path)) {
-				var fetch = require('node-fetch');
-				fetch(path)
-					.then((response) => response.arrayBuffer())
-					.then((buf) => {
-						var a = new Uint8Array(buf);
-						var b = [...a].map((e) => String.fromCharCode(e)).join('');
-						success(cutbom(b));
-					})
-					.catch((e) => {
-						if (error) return error(e);
-						console.error(e);
-						throw e;
-					});
+				fetchData(path, (x) => success(cutbom(x)), error, asy);
 			} else {
 				//If async callthen call async
 				if (asy) {
@@ -416,21 +404,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 					 Simply read file from HTTP request, like:
 					 SELECT * FROM TXT('http://alasql.org/README.md');
 				 */
-				var xhr = new XMLHttpRequest();
-				xhr.onreadystatechange = function () {
-					if (xhr.readyState === 4) {
-						if (xhr.status === 200) {
-							if (success) {
-								success(cutbom(xhr.responseText));
-							}
-						} else if (error) {
-							return error(xhr);
-						}
-						// Todo: else...?
-					}
-				};
-				xhr.open('GET', path, asy); // Async
-				xhr.send();
+				fetchData(path, (x) => success(cutbom(x)), error, asy);
 			}
 		} else if (path instanceof Event) {
 			/*
@@ -457,6 +431,33 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 	}
 });
 
+let _fetch = typeof fetch !== 'undefined' ? fetch : null;
+//*not-for-browser/*
+_fetch = typeof fetch !== 'undefined' ? fetch : require('cross-fetch');
+//*/
+
+async function fetchData(path, success, error, async) {
+	if (async) {
+		return getData(path, success, error);
+	}
+	return await getData(path, success, error);
+}
+
+function getData(path, success, error) {
+	return _fetch(path)
+		.then((response) => response.arrayBuffer())
+		.then((buf) => {
+			var a = new Uint8Array(buf);
+			var b = [...a].map((e) => String.fromCharCode(e)).join('');
+			success(b);
+		})
+		.catch((e) => {
+			if (error) return error(e);
+			console.error(e);
+			throw e;
+		});
+}
+
 /**
   @function Load binary file from anywhere
   @param {string} path File path
@@ -482,19 +483,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 		fs = require('fs');
 
 		if (/^[a-z]+:\/\//i.test(path)) {
-			var fetch = require('node-fetch');
-			fetch(path)
-				.then((response) => response.arrayBuffer())
-				.then((buf) => {
-					var a = new Uint8Array(buf);
-					var b = [...a].map((e) => String.fromCharCode(e)).join('');
-					success(b);
-				})
-				.catch((e) => {
-					if (error) return error(e);
-					console.error(e);
-					throw e;
-				});
+			fetchData(path, success, error, runAsync);
 		} else {
 			if (runAsync) {
 				fs.readFile(path, function (err, data) {
@@ -559,7 +548,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 				var data = e.target.result;
 				success(data);
 			};
-			reader.onerror = error();
+			reader.onerror = error;
 			reader.readAsArrayBuffer(files[0]);
 		} else if (path instanceof Blob) {
 			success(path);
@@ -781,47 +770,20 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 			//                });
 			//            });
 		} else {
-			if (isIE() === 9) {
-				// Solution was taken from
-				// http://megatuto.com/formation-JAVASCRIPT.php?JAVASCRIPT_Example=Javascript+Save+CSV+file+in+IE+8/IE+9+without+using+window.open()+Categorie+javascript+internet-explorer-8&category=&article=7993
-				//				var URI = 'data:text/plain;charset=utf-8,';
-
-				// Prepare data
-				var ndata = data.replace(/\r\n/g, '&#A;&#D;');
-				ndata = ndata.replace(/\n/g, '&#D;');
-				ndata = ndata.replace(/\t/g, '&#9;');
-				var testlink = utils.global.open('about:blank', '_blank');
-				testlink.document.write(ndata); //fileData has contents for the file
-				testlink.document.close();
-				testlink.document.execCommand('SaveAs', false, path);
-				testlink.close();
-			} else {
-				var opt = {
-					disableAutoBom: false,
-				};
-				alasql.utils.extend(opt, opts);
-				var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
-				saveAs(blob, path, opt.disableAutoBom);
-				if (cb) {
-					res = cb(res);
-				}
+			var opt = {
+				disableAutoBom: false,
+			};
+			alasql.utils.extend(opt, opts);
+			var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
+			saveAs(blob, path, opt.disableAutoBom);
+			if (cb) {
+				res = cb(res);
 			}
 		}
 	}
 
 	return res;
 });
-
-/**
-  @function Is this IE9
-  @return {boolean} True for IE9 and false for other browsers
-
-  For IE9 compatibility issues
-  */
-function isIE() {
-	var myNav = navigator.userAgent.toLowerCase();
-	return myNav.indexOf('msie') !== -1 ? parseInt(myNav.split('msie')[1]) : false;
-}
 
 //  For LOAD
 //  var saveBinaryFile = utils.saveFile = function(path, data, cb) {
@@ -977,7 +939,7 @@ var cloneDeep = (utils.cloneDeep = function cloneDeep(obj) {
 		return +obj;
 	}
 
-	var temp = obj.constructor(); // changed
+	var temp = new obj.constructor(); // changed
 
 	for (var key in obj) {
 		if (obj.hasOwnProperty(key)) {
@@ -1317,7 +1279,7 @@ utils.findAlaSQLPath = function () {
 };
 
 var getXLSX = function () {
-	var XLSX = alasql.private.externalXlsxLib;
+	var XLSX = alasql.private.externalXlsxLib || utils.global.XLSX || null;
 
 	if (XLSX) {
 		return XLSX;
@@ -1325,13 +1287,12 @@ var getXLSX = function () {
 
 	if (utils.isNode || utils.isBrowserify || utils.isMeteorServer) {
 		//*not-for-browser/*
-		XLSX = require('xlsx') || null;
+		XLSX = require('../modules/xlsx/xlsx') || null;
+		alasql.private.externalXlsxLib = XLSX;
 		//*/
-	} else {
-		XLSX = utils.global.XLSX || null;
 	}
 
-	if (null === XLSX) {
+	if (!XLSX) {
 		throw new Error('Please include the xlsx.js library');
 	}
 

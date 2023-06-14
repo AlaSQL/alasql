@@ -1,6 +1,6 @@
 console.log('SPEED TESTS FROM http://www.sqlite.org/speed.html');
 
-var zt = require('../../lib/zt/zt.js');
+var zt = require('.././lib/zt/zt.js');
 var alasql = require('../../alasql');
 
 var db = new alasql.Database();

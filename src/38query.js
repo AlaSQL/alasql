@@ -139,7 +139,7 @@ function queryfn3(query) {
 
 	//console.log(85,query.data[0]);
 
-	// If groupping, then filter groups with HAVING function
+	// If grouping, then filter groups with HAVING function
 	//			console.log(query.havingfns);
 	if (query.groupfn) {
 		query.data = [];
@@ -148,7 +148,11 @@ function queryfn3(query) {
 			if (query.selectGroup.length > 0) {
 				//				console.log(query.selectGroup);
 				query.selectGroup.forEach(function (sg) {
-					if (sg.aggregatorid == 'COUNT' || sg.aggregatorid == 'SUM') {
+					if (
+						sg.aggregatorid == 'COUNT' ||
+						sg.aggregatorid == 'SUM' ||
+						sg.aggregatorid == 'TOTAL'
+					) {
 						g[sg.nick] = 0;
 					} else {
 						g[sg.nick] = undefined;
@@ -238,9 +242,16 @@ function queryfn3(query) {
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
 				r = {};
-				jlen = Math.min(query.columns.length, nd.columns.length);
-				for (var j = 0; j < jlen; j++) {
-					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				if (query.columns.length) {
+					jlen = Math.min(query.columns.length, nd.columns.length);
+					for (var j = 0; j < jlen; j++) {
+						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
+				} else {
+					jlen = nd.columns.length;
+					for (var j = 0; j < jlen; j++) {
+						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
 				}
 				ud.push(r);
 			}
