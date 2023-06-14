@@ -1,7 +1,6 @@
 // Project: https://github.com/alasql/alasql
 
-declare module "alasql" {
-
+declare module 'alasql' {
 	import * as xlsx from 'xlsx';
 
 	interface AlaSQLCallback {
@@ -87,4 +86,3 @@ declare module "alasql" {
 	const alasql: AlaSQL;
 	export = alasql;
 }
-
