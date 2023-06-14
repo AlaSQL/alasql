@@ -37,7 +37,7 @@ describe('Issue #' + testID + ' - multiple statements', function () {
 		let sql = 'create table three (a int);';
 		sql += 'insert into three values (1),(2),(3),(4),(5);';
 		sql += 'select * from three;';
-		alasql.promise(sql).then( function (res) {
+		alasql.promise(sql).then(function (res) {
 			assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 			done();
 		});
