@@ -3,20 +3,20 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '000'; // insert test file number
+const testID = '000'; // Seek to use a github issue number
 
-describe('Test ' + test + ' - multiple statements', function () {
+describe('Issue #' + testID + ' - multiple statements', function () {
 	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+		alasql('create database test' + testID);
+		alasql('use test' + testID);
 	});
 
 	after(function () {
-		alasql('drop database test' + test);
+		alasql('drop database test' + testID);
 	});
 
 	it('A) From single lines', function () {
-		var res = [];
+		const res = [];
 		res.push(alasql('create table one (a int)'));
 		res.push(alasql('insert into one values (1),(2),(3),(4),(5)'));
 		res.push(alasql('select * from one'));
@@ -25,19 +25,19 @@ describe('Test ' + test + ' - multiple statements', function () {
 
 	it('B) Multiple statements in one string', function () {
 		//
-		var sql = 'create table two (a int);';
+		let sql = 'create table two (a int);';
 		sql += 'insert into two values (1),(2),(3),(4),(5);';
 		sql += 'select * from two;';
-		var res = alasql(sql);
+		let res = alasql(sql);
 		assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 	});
 
 	it('C) Multiple statements in one string with callback', function (done) {
 		// Please note that first parameter (here `done`) must be called if defined - and is needed when testing async code
-		var sql = 'create table three (a int);';
+		let sql = 'create table three (a int);';
 		sql += 'insert into three values (1),(2),(3),(4),(5);';
 		sql += 'select * from three;';
-		alasql(sql, function (res) {
+		alasql.promise(sql).then( function (res) {
 			assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 			done();
 		});

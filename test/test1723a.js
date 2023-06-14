@@ -3,13 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('../dist/alasql');
 }
 
-/*
-  Test for PR #1512
-*/
 
-var test = '1512'; // insert test file number
-
-describe('Test ' + test + ' -  tagFunction for template strings', function () {
+describe('Issue #1723 - tagFunction for template strings', function () {
 	it('Will mark free fields as parameters', function (done) {
 		assert.deepEqual(tagBraid`SELECT 123 as abc`, ['SELECT 123 as abc']);
 		assert.deepEqual(tagBraid`SELECT ${123} as abc`, ['SELECT ? as abc', [123]]);

@@ -1,5 +1,5 @@
 if (typeof exports === 'object') {
-	var alasql = require('..');
+	var alasql = require('../dist/alasql');
 }
 
 const table = {
@@ -11,7 +11,7 @@ const table = {
 	],
 };
 
-describe('Test 847 - Testing backtick call function', function () {
+describe('Issue #1723 - Testing backtick call function', function () {
 	it('1. Create table', function () {
 		alasql`DROP TABLE IF EXISTS test`;
 		alasql`CREATE TABLE test (a int, b int)`;
@@ -49,7 +49,7 @@ describe('Test 847 - Testing backtick call function', function () {
 			)
 			.join('');
 
-		console.log(valuesToInsert);
+		//console.log(valuesToInsert);
 
 		alasql(`
 			INSERT INTO ${table.name}
