@@ -36,8 +36,9 @@ yy.Declare.prototype.toString = function () {
 
 yy.Declare.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
-	if (this.declares && this.declares.length > 0) {
-		this.declares.map(function (declare) {
+	var that = this; // without this assigned to a variable, inside the forEach, the reference to `this` is lost. It is needed for the Function statement for binding
+	if (that.declares && that.declares.length > 0) {
+		that.declares.forEach(function (declare) {
 			var dbtypeid = declare.dbtypeid;
 			if (!alasql.fn[dbtypeid]) {
 				dbtypeid = dbtypeid.toUpperCase();
@@ -54,7 +55,7 @@ yy.Declare.prototype.execute = function (databaseid, params, cb) {
 				alasql.vars[declare.variable] = new Function(
 					'params,alasql',
 					'return ' + declare.expression.toJS('({})', '', null)
-				)(params, alasql);
+				).bind(that)(params, alasql);
 				if (alasql.declares[declare.variable]) {
 					alasql.vars[declare.variable] = alasql.stdfn.CONVERT(
 						alasql.vars[declare.variable],
