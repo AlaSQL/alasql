@@ -8,7 +8,7 @@ if (typeof exports === 'object') {
 		var filecontents;
 		describe('with headers', () => {
 			beforeEach(() => {
-				filecontents = fs.readFileSync(path.resolve('test/test1400.csv'), 'utf8');
+				filecontents = fs.readFileSync(path.resolve('test/test1400a.csv'), 'utf8');
 			});
 	
 			it('should be able to load up raw values if option is passed', function () {
@@ -75,7 +75,7 @@ if (typeof exports === 'object') {
 		describe('without headers', () => {
 			var filecontents;
 			beforeEach(() => {
-				filecontents = fs.readFileSync(path.resolve('test/test1400_1.csv'), 'utf8');
+				filecontents = fs.readFileSync(path.resolve('test/test1400b.csv'), 'utf8');
 			});
 	
 			it('should be able to load up raw values without header', function () {
