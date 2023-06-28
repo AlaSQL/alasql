@@ -468,6 +468,11 @@ function modify(query, res) {
 		} else {
 			// Cannot recognize columns
 			columns = [];
+			if (query && query.sources) {
+				query.sources.forEach((source) => {
+					columns = columns.concat(source.columns)
+				})
+			}
 		}
 	}
 
