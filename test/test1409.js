@@ -5,12 +5,12 @@ if (typeof exports === 'object') {
 
 // only run in browser
 if (typeof exports != 'object') {
-	describe('Test 1409 - triggers should run on indexdb', function () {
+	describe('Test 1409 - post insert triggers should run on indexdb', function () {
 		before(
 			() => alasql.promise('DROP IndexedDB DATABASE IF EXISTS test_db;') // delete indexeddb
 		);
 
-		it('A) From single lines', function (done) {
+		it('post insert trigger after adding some data', function (done) {
 			var count = 0;
 			alasql.fn.onInsert = function (r) {
 				count++;
