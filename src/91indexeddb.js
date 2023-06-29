@@ -284,6 +284,8 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const request = indexedDB.open(ixdbid);
+	var db = alasql.databases[databaseid];
+	var table = db.tables[tableid];
 
 	request.onupgradeneeded = (evt) => {
 		evt.target.transaction.abort();
@@ -302,6 +304,16 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 		}
 		tx.oncomplete = function () {
 			ixdb.close();
+			for (var tr in table.afterinsert) {
+				if (table.afterinsert[tr]) {
+					var trigger = table.afterinsert[tr];
+					if (trigger.funcid) {
+						alasql.fn[trigger.funcid](value);
+					} else if (trigger.statement) {
+						trigger.statement.execute(databaseid);
+					}
+				}
+			}
 			if (cb) cb(ilen);
 		};
 	};
