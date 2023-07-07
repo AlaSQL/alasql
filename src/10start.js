@@ -2,6 +2,24 @@
 
 "use strict";
 
+const isBacktickQuery = (arg) => Array.isArray(arg.raw);
+
+const formatQueryParams = (params) => (queryStr, index) => {
+	const param = params[index + 1];
+	return queryStr + (typeof param === 'undefined' ? '' : param);
+};
+
+const normalizeBacktickQuery = (args) => {
+	const stringFormatted = args[0]
+		.map(formatQueryParams(args))
+		.join('')
+		// Remove breakline in case of characters in same line | optional
+		.replace(/[\r\n]/g, '')
+		.replace(/\s+/g, ' ') // Remove extras
+		.trim(); // Remove extras
+	return stringFormatted;
+};
+
 /**
 	@fileoverview AlaSQL JavaScript SQL library
 	@see http://github.com/alasql/alasql
@@ -57,7 +75,9 @@
     alasql().From(data).Where(function(x){return x.a == 10}).exec();
  */
 
-var alasql = function(sql, params, cb, scope) {
+var alasql = function(...args) {
+	var [sqlQuery, params, cb, scope] = args;
+	var sql = isBacktickQuery(sqlQuery) ? normalizeBacktickQuery(args) : sqlQuery;
 	
 	params = params||[];
 
