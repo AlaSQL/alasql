@@ -10,7 +10,7 @@ if (typeof exports === 'object') {
 			beforeEach(() => {
 				filecontents = fs.readFileSync(path.resolve('test/test1400a.csv'), 'utf8');
 			});
-	
+
 			it('should be able to load up raw values if option is passed', function () {
 				const res = alasql('SELECT * FROM CSV(?, {headers:true, raw:true})', [filecontents]);
 				assert.deepEqual(res, [
@@ -40,7 +40,7 @@ if (typeof exports === 'object') {
 					},
 				]);
 			});
-	
+
 			it('should be able to load up values and numerical values would be parsed', function () {
 				const res2 = alasql('SELECT * FROM CSV(?, {headers:true})', [filecontents]);
 				assert.deepEqual(res2, [
@@ -71,13 +71,13 @@ if (typeof exports === 'object') {
 				]);
 			});
 		});
-	
+
 		describe('without headers', () => {
 			var filecontents;
 			beforeEach(() => {
 				filecontents = fs.readFileSync(path.resolve('test/test1400b.csv'), 'utf8');
 			});
-	
+
 			it('should be able to load up raw values without header', function () {
 				const res = alasql('SELECT * FROM CSV(?, {headers:false, raw:true})', [filecontents]);
 				assert.deepEqual(res, [
@@ -107,10 +107,10 @@ if (typeof exports === 'object') {
 					},
 				]);
 			});
-	
+
 			it('should be able to load up values without header and numerical values will be parsed', function () {
 				const res2 = alasql('SELECT * FROM CSV(?, {headers:false})', [filecontents]);
-	
+
 				assert.deepEqual(res2, [
 					{
 						0: 'Method 3',
@@ -140,5 +140,4 @@ if (typeof exports === 'object') {
 			});
 		});
 	});
-	
 }

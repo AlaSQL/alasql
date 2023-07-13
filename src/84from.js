@@ -181,7 +181,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 		separator: ',',
 		quote: '"',
 		headers: true,
-		raw: false
+		raw: false,
 	};
 	alasql.utils.extend(opt, opts);
 	var res;
@@ -264,7 +264,12 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 						hs.forEach(function (h, idx) {
 							r[h] = a[idx];
 							// Please avoid === here
-							if (!opt.raw && typeof r[h] !== 'undefined' && r[h].length !== 0 && r[h].trim() == +r[h]) {
+							if (
+								!opt.raw &&
+								typeof r[h] !== 'undefined' &&
+								r[h].length !== 0 &&
+								r[h].trim() == +r[h]
+							) {
 								// jshint ignore:line
 								r[h] = +r[h];
 							}
@@ -275,7 +280,12 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 					var r = {};
 					hs.forEach(function (h, idx) {
 						r[h] = a[idx];
-						if (!opt.raw && typeof r[h] !== 'undefined' && r[h].length !== 0 && r[h].trim() == +r[h]) {
+						if (
+							!opt.raw &&
+							typeof r[h] !== 'undefined' &&
+							r[h].length !== 0 &&
+							r[h].trim() == +r[h]
+						) {
 							// jshint ignore:line
 							r[h] = +r[h];
 						}
@@ -288,7 +298,12 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 				// different bug here, if headers are not defined, the numerical values will not be parsed
 				a.forEach(function (v, idx) {
 					r[idx] = a[idx];
-					if (!opt.raw && typeof r[idx] !== 'undefined' && r[idx].length !== 0 && r[idx].trim() == +r[idx]) {
+					if (
+						!opt.raw &&
+						typeof r[idx] !== 'undefined' &&
+						r[idx].length !== 0 &&
+						r[idx].trim() == +r[idx]
+					) {
 						// jshint ignore:line
 						r[idx] = +r[idx];
 					}
@@ -298,7 +313,6 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 		}
 
 		res = rows;
-
 
 		if (opt.headers) {
 			if (query && query.sources && query.sources[idx]) {

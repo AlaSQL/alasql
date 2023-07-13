@@ -18,12 +18,10 @@ if (typeof exports != 'object') {
 						'USE alatest'
 				)
 				.then(function (res) {
-					return alasql.promise(
-						[
-							'CREATE TABLE IF NOT EXISTS mytable1 ( myid STRING, myname STRING )',
-							'CREATE TABLE IF NOT EXISTS mytable2 ( myid STRING, myname STRING )',
-						]
-					);
+					return alasql.promise([
+						'CREATE TABLE IF NOT EXISTS mytable1 ( myid STRING, myname STRING )',
+						'CREATE TABLE IF NOT EXISTS mytable2 ( myid STRING, myname STRING )',
+					]);
 				})
 				.then(function (res) {
 					return alasql.promise([
@@ -32,10 +30,7 @@ if (typeof exports != 'object') {
 					]);
 				})
 				.then(function (res) {
-					return alasql.promise([
-						'SELECT * from mytable1',
-						'SELECT * from mytable2'
-					]);
+					return alasql.promise(['SELECT * from mytable1', 'SELECT * from mytable2']);
 				})
 				.then(function ([data1, data2]) {
 					assert.deepEqual(data1, [{myid: '1', myname: 'Mr. One'}]);
@@ -45,4 +40,3 @@ if (typeof exports != 'object') {
 		});
 	});
 }
-

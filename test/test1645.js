@@ -13,6 +13,6 @@ describe('Test 1645', function () {
 
 		alasql(sql);
 		var x = alasql.vars.X;
-		assert.equal(x,3517424);
+		assert.equal(x, 3517424);
 	});
 });

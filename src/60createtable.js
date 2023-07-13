@@ -209,7 +209,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					//						console.log(fktable.uniqs[fktable.pk.hh][addr]);
 					if (!fktable.uniqs[fktable.pk.hh][addr]) {
 						throw new Error(
-						
 							'Foreign key violation' //changed error message
 						);
 					}
