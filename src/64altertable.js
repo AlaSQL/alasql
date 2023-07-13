@@ -27,14 +27,10 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		var res = 1;
 		if (db.tables[newtableid]) {
 			throw new Error(
-				"Can not rename a table '" +
-					oldtableid +
-					"' to '" +
-					newtableid +
-					"', because the table with this name already exists"
+				`Can not rename a table "${oldtableid}" to "${newtableid}" because the table with this name already exists`
 			);
 		} else if (newtableid === oldtableid) {
-			throw new Error("Can not rename a table '" + oldtableid + "' to itself");
+			throw new Error(`Can not rename a table "${oldtableid}" to itself`);
 		} else {
 			db.tables[newtableid] = db.tables[oldtableid];
 			delete db.tables[oldtableid];
@@ -50,11 +46,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		var columnid = this.addcolumn.columnid;
 		if (table.xcolumns[columnid]) {
 			throw new Error(
-				'Cannot add column "' +
-					columnid +
-					'", because it already exists in the table "' +
-					tableid +
-					'"'
+				`Cannot add column "${columnid}" because it already exists in table "${tableid}"`
 			);
 		}
 
@@ -88,11 +80,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 		if (!table.xcolumns[columnid]) {
 			throw new Error(
-				'Cannot modify column "' +
-					columnid +
-					'", because it was not found in the table "' +
-					tableid +
-					'"'
+				`Cannot modify column "${columnid}" because it was not found in table "${tableid}"`
 			);
 		}
 
@@ -158,11 +146,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 		if (!found) {
 			throw new Error(
-				'Cannot drop column "' +
-					columnid +
-					'", because it was not found in the table "' +
-					tableid +
-					'"'
+				`Cannot drop column "${columnid}" because it was not found in the table ${tableid}"`
 			);
 		}
 

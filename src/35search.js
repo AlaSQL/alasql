@@ -78,10 +78,6 @@ yy.Search = class Search {
 				nest, // temp value used many places
 				r, // temp value used many places
 				sel = selectors[sidx];
-			//		console.log(sel);
-			//		if(!alasql.srch[sel.srchid]) {
-			//			throw new Error('Selector "'+sel.srchid+'" not found');
-			//		};
 
 			var INFINITE_LOOP_BREAK = alasql.options.loopbreak || 100000;
 
@@ -1059,13 +1055,12 @@ alasql.srch = {
 		//	console.log(arguments);
 		var s = args
 			.map(function (st) {
-				//console.log(898,st);
 				if (st.method === '@') {
-					return "alasql.vars['" + st.variable + "']=" + st.expression.toJS('x', '');
+					return `alasql.vars[${JSON.stringify(st.variable)}]=` + st.expression.toJS('x', '');
 				} else if (st.method === '$') {
-					return "params['" + st.variable + "']=" + st.expression.toJS('x', '');
+					return `params[${JSON.stringify(st.variable)}]=` + st.expression.toJS('x', '');
 				} else {
-					return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
+					return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 				}
 			})
 			.join(';');
@@ -1147,18 +1142,18 @@ var compileSearchOrder = function (order) {
 					s += 'if(a' + dg + (ord.direction === 'ASC' ? '>' : '<') + 'b' + dg + ')return 1;';
 					s += 'if(a' + dg + '==b' + dg + '){';
 				} else {
-					s +=
-						"if((a['" +
-						columnid +
-						"']||'')" +
-						dg +
-						(ord.direction === 'ASC' ? '>' : '<') +
-						"(b['" +
-						columnid +
-						"']||'')" +
-						dg +
-						')return 1;';
-					s += "if((a['" + columnid + "']||'')" + dg + "==(b['" + columnid + "']||'')" + dg + '){';
+					s += `if (
+							(a[${JSON.stringify(columnid)}]||'')${dg}
+							${ord.direction === 'ASC' ? '>' : '<'}
+							(b[${JSON.stringify(columnid)}]||'')${dg} 
+						) return 1;
+						
+						if(
+							(a[${JSON.stringify(columnid)}]||'')${dg}
+							==
+							(b[${JSON.stringify(columnid)}]||'')${dg}
+						){
+						`;
 				}
 			} else {
 				dg = '.valueOf()';

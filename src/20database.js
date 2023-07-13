@@ -25,7 +25,7 @@ var Database = (alasql.Database = function (databaseid) {
 			alasql.databases[databaseid] = self;
 			//			}
 			if (!self) {
-				throw new Error('Database "' + databaseid + '" not found');
+				throw new Error(`Database ${databaseid} not found`);
 			}
 		} else {
 			// Create new database (or get alasql?)

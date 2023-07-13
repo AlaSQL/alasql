@@ -168,22 +168,15 @@ function queryfn3(query) {
 		if (query.aggrKeys.length > 0) {
 			var gfns = '';
 			query.aggrKeys.forEach(function (col) {
-				gfns +=
-					"g['" +
-					col.nick +
-					"']=alasql.aggr['" +
-					col.funcid +
-					"'](undefined,g['" +
-					col.nick +
-					"'],3);";
+				gfns += `g[${JSON.stringify(col.nick)}] = alasql.aggr[${JSON.stringify(
+					col.funcid
+				)}](undefined,g[${JSON.stringify(col.nick)}],3);`;
+
 				//				gfns += 'return g[\''+col.nick+'\];';
 			});
 			// console.log(175, gfns);
 			var gfn = new Function('g,params,alasql', 'var y;' + gfns);
 		}
-
-		//					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={}),1),'
-		//					+'\'__REDUCE__'+colas+'\':acc,';
 
 		// *******
 		// 	console.log('EMPTY',query.groups);

@@ -46,7 +46,7 @@
 		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
-		"cross-fetch": "^4.0.0",
+		"cross-fetch": "4.0.0",
 		"dom-storage": "2.1.0",
 		"es6-promise": "4.2.8",
 		"node-fetch": "3",

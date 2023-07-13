@@ -75,7 +75,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 					} else {
 						s += 'ss:';
 					}
-					s += attr + '="' + st[key][attr] + '"';
+					s += attr + '=' + JSON.stringify(st[key][attr]);
 				}
 				s += '/>';
 			}
@@ -85,8 +85,8 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 			if (styles[hh]) {
 			} else {
 				styles[hh] = {styleid: stylesn};
-				s2 += '<Style ss:ID="s' + stylesn + '">';
-				s2 += s;
+				s2 += `<Style ss:ID=${JSON.stringify('s' + stylesn)}>`;
+				s2 += s.replace(/<\s*\/\s*Style /gi, '<');
 				s2 += '</Style>';
 				stylesn++;
 			}
@@ -152,9 +152,9 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 
 			// Header
 			s3 +=
-				'<Worksheet ss:Name="' +
-				sheetid +
-				'"> \
+				'<Worksheet ss:Name=' +
+				JSON.stringify(sheetid) +
+				'> \
 	  			<Table ss:ExpandedColumnCount="' +
 				columns.length +
 				'" ss:ExpandedRowCount="' +
@@ -163,12 +163,12 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	   			x:FullRows="1" ss:DefaultColumnWidth="65" ss:DefaultRowHeight="15">';
 
 			columns.forEach(function (column, columnidx) {
-				s3 +=
-					'<Column ss:Index="' +
-					(columnidx + 1) +
-					'" ss:AutoFitWidth="0" ss:Width="' +
-					column.width +
-					'"/>';
+				s3 += `
+					<Column 
+						ss:Index="${columnidx + 1}" 
+						ss:AutoFitWidth="0" 
+						ss:Width=${JSON.stringify('' + column.width)}
+					/>`;
 			});
 
 			// Headers
@@ -188,7 +188,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 						} else {
 							extend(st, column.style);
 						}
-						s3 += 'ss:StyleID="' + hstyle(st) + '"';
+						s3 += 'ss:StyleID=' + JSON.stringify(hstyle(st));
 					}
 
 					s3 += '><Data ss:Type="String">';
@@ -232,7 +232,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 							} else {
 								extend(st, srow.style);
 							}
-							s3 += 'ss:StyleID="' + hstyle(st) + '"';
+							s3 += 'ss:StyleID=' + JSON.stringify(hstyle(st));
 						}
 					}
 
@@ -298,11 +298,6 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 						typestyle = typestyle || 'mso-number-format:"\\@";'; // Default type style
 
 						s3 += '<Cell ';
-						/*/*
-if(false) {
-						s += "<td style='" + typestyle+"' " ;	
-}			    		
-*/
 						// Row style fromdefault sheet
 						var st = {};
 						if (typeof cell.style != 'undefined') {
@@ -311,12 +306,12 @@ if(false) {
 							} else {
 								extend(st, cell.style);
 							}
-							s3 += 'ss:StyleID="' + hstyle(st) + '"';
+							s3 += 'ss:StyleID=' + JSON.stringify(hstyle(st));
 						}
 
 						s3 += '>';
 
-						s3 += '<Data ss:Type="' + Type + '">';
+						s3 += '<Data ss:Type=' + JSON.stringify(Type) + '>';
 
 						// TODO Replace with extend...
 						var format = cell.format;
