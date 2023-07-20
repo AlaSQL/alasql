@@ -294,34 +294,34 @@ yy.Select = class Select {
 					alasql.databases[this.into.databaseid || databaseid].engineid
 				) {
 					// For external database when AUTOCOMMIT is ONs
-					query.intoallfns =
-						'return alasql.engines["' +
-						alasql.databases[this.into.databaseid || databaseid].engineid +
-						'"]' +
-						'.intoTable("' +
-						(this.into.databaseid || databaseid) +
-						'","' +
-						this.into.tableid +
-						'",this.data, columns, cb);';
+					query.intoallfns = `return alasql
+								.engines[${JSON.stringify(alasql.databases[this.into.databaseid || databaseid].engineid)}]
+								.intoTable(
+									${JSON.stringify(this.into.databaseid || databaseid)},
+									${JSON.stringify(this.into.tableid)},
+									this.data, 
+									columns, 
+									cb
+								);`;
 				} else {
 					// Into AlaSQL tables
-					query.intofns =
-						"alasql.databases['" +
-						(this.into.databaseid || databaseid) +
-						"'].tables" +
-						"['" +
-						this.into.tableid +
-						"'].data.push(r);";
+					query.intofns = `alasql
+							.databases[${JSON.stringify(this.into.databaseid || databaseid)}]
+							.tables[${JSON.stringify(this.into.tableid)}]
+							.data.push(r);
+						`;
 				}
 			} else if (this.into instanceof yy.VarValue) {
 				//
 				// Save into local variable
 				// SELECT * INTO @VAR1 FROM ?
 				//
-				query.intoallfns =
-					'alasql.vars["' +
-					this.into.variable +
-					'"]=this.data;res=this.data.length;if(cb)res=cb(res);return res;';
+				query.intoallfns = `
+					alasql.vars[${JSON.stringify(this.into.variable)}]=this.data;
+					res=this.data.length;
+					if(cb) res = cb(res);
+					return res;
+				`;
 			} else if (this.into instanceof yy.FuncValue) {
 				//
 				// If this is INTO() function, then call it
@@ -345,7 +345,7 @@ yy.Select = class Select {
 				// Save data into parameters array
 				// like alasql('SELECT * INTO ? FROM ?',[outdata,srcdata]);
 				//
-				query.intofns = "params['" + this.into.param + "'].push(r)";
+				query.intofns = `params[${JSON.stringify(this.into.param)}].push(r)`;
 			}
 
 			if (query.intofns) {

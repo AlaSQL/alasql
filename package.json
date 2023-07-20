@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "4.0.2",
+	"version": "4.1.3",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -46,7 +46,7 @@
 		"postversion": "npm publish && git push && git push --tags && echo \"Successfully released version $npm_package_version\""
 	},
 	"dependencies": {
-		"cross-fetch": "^3.1.5",
+		"cross-fetch": "4.0.0",
 		"dom-storage": "2.1.0",
 		"es6-promise": "4.2.8",
 	  	"node-fetch": "3",
@@ -59,7 +59,7 @@
 		"eslint": "^8.30.0",
 		"eslint-config-standard": "17.1.0",
 		"eslint-plugin-import": "^2.26.0",
-		"eslint-plugin-n": "16.0.0",
+		"eslint-plugin-n": "16.0.1",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^6.1.1",
 		"eslint-plugin-standard": "^5.0.0",
@@ -73,11 +73,11 @@
 		"gulp-shell": "0.8.0",
 		"gulp-uglify": "3.0.2",
 		"husky": "8.0.3",
-		"lint-staged": "13.2.2",
+		"lint-staged": "13.2.3",
 		"mocha": "10.2.0",
 		"mocha.parallel": "0.15.6",
 		"open": "9.1.0",
-		"prettier": "2.8.8",
+		"prettier": "3.0.0",
 		"strftime": "0.10.2",
 		"tabletop": "1.6.3",
 		"uglify-js": "3.17.4"
@@ -88,7 +88,8 @@
 		"json5": "^2.2.2",
 		"underscore": "^1.12.1",
 		"glob-parent": "^6.0.0",
-		"decode-uri-component": "^0.2.1"
+		"decode-uri-component": "^0.2.1",
+		"semver": "^7.5.2"
 	},
 	"engines": {
 		"node": ">=15"

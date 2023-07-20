@@ -21,6 +21,17 @@ var promiseExec = function (sql, params, counterStep, counterTotal) {
 	});
 };
 
+const sequentialPromiseResolver = (promiseData, Promise) => {
+	var startingPoint = Promise.resolve([]);
+	promiseData.forEach((p) => {
+		startingPoint = startingPoint.then((previousResult) =>
+			promiseExec(p.sql, p.params, p.i, p.length).then((result) => [...previousResult, result])
+		);
+	});
+
+	return startingPoint;
+};
+
 var promiseAll = function (sqlParamsArray) {
 	if (sqlParamsArray.length < 1) {
 		return;
@@ -44,10 +55,19 @@ var promiseAll = function (sqlParamsArray) {
 		sql = active[0];
 		params = active[1] || undefined;
 
-		execArray.push(promiseExec(sql, params, i, sqlParamsArray.length));
+		execArray.push({
+			sql,
+			params,
+			i,
+			length: sqlParamsArray.length,
+		});
 	}
 
-	return utils.global.Promise.all(execArray);
+	// in case of indexdb the version does not update
+	// if create table queries are run in parallel
+	// this causes certain DML queries to not execute
+	// running them sequentially fixes this issue
+	return sequentialPromiseResolver(execArray, utils.global.Promise);
 };
 
 alasql.promise = function (sql, params) {

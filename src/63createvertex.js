@@ -78,7 +78,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
 			.map(function (st) {
-				return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
+				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 			})
 			.join(';');
 		var setfn = new Function('x,params,alasql', s);
@@ -186,7 +186,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
 			.map(function (st) {
-				return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
+				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 			})
 			.join(';');
 		var setfn = new Function('x,params,alasql', 'var y;' + s);
@@ -458,7 +458,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
 			.map(function (st) {
-				return "x['" + st.column.columnid + "']=" + st.expression.toJS('x', '');
+				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 			})
 			.join(';');
 		var setfn = new Function('x,params,alasql', 'var y;' + s);

@@ -64,216 +64,139 @@ yy.Convert.prototype.toJS = function (context, tableid, defcols) {
 	throw new Error('There is not such type conversion for ' + this.toString());
 };
 
+function structuredDate(unFormattedDate) {
+	var month = unFormattedDate.getMonth() + 1;
+	var year = unFormattedDate.getYear();
+	var fullYear = unFormattedDate.getFullYear();
+	var date = unFormattedDate.getDate();
+	var day = unFormattedDate.toString().substr(4, 3);
+	var formattedDate = ('0' + date).substr(-2);
+	var formattedMonth = ('0' + month).substr(-2);
+	var formattedYear = ('0' + year).substr(-2);
+	var formattedHour = ('0' + unFormattedDate.getHours()).substr(-2);
+	var formattedMinutes = ('0' + unFormattedDate.getMinutes()).substr(-2);
+	var formattedSeconds = ('0' + unFormattedDate.getSeconds()).substr(-2);
+	var formattedMilliseconds = ('00' + unFormattedDate.getMilliseconds()).substr(-3);
+	return {
+		month: month,
+		year: year,
+		fullYear: fullYear,
+		date: date,
+		day: day,
+		formattedDate: formattedDate,
+		formattedMonth: formattedMonth,
+		formattedYear: formattedYear,
+		formattedHour: formattedHour,
+		formattedMinutes: formattedMinutes,
+		formattedSeconds: formattedSeconds,
+		formattedMilliseconds: formattedMilliseconds,
+	};
+}
+
 /**
  Convert one type to another
  */
 alasql.stdfn.CONVERT = function (value, args) {
 	var val = value;
-	//	console.log(args);
-	if (args.style) {
-		// TODO 9,109, 20,120,21,121,126,130,131 conversions
-		var t;
+	var udbtypeid = args.dbtypeid.toUpperCase();
+
+	var t;
+	var s;
+	if (
+		args.style ||
+		args.dbtypeid == 'Date' ||
+		['DATE', 'DATETIME', 'DATETIME2'].indexOf(udbtypeid) > -1
+	) {
 		if (/\d{8}/.test(val)) {
 			t = new Date(+val.substr(0, 4), +val.substr(4, 2) - 1, +val.substr(6, 2));
 		} else {
 			t = newDate(val);
 		}
+		s = structuredDate(t);
+	}
+
+	if (args.style) {
+		// TODO 9,109, 20,120,21,121,126,130,131 conversions
 		switch (args.style) {
 			case 1: // mm/dd/yy
-				val =
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'/' +
-					('0' + t.getDate()).substr(-2) +
-					'/' +
-					('0' + t.getYear()).substr(-2);
+				val = s.formattedMonth + '/' + s.formattedDate + '/' + s.formattedYear;
 				break;
 			case 2: // yy.mm.dd
-				val =
-					('0' + t.getYear()).substr(-2) +
-					'.' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'.' +
-					('0' + t.getDate()).substr(-2);
+				val = s.formattedYear + '.' + s.formattedMonth + '.' + s.formattedDate;
 				break;
 			case 3: // dd/mm/yy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					'/' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'/' +
-					('0' + t.getYear()).substr(-2);
+				val = s.formattedDate + '/' + s.formattedMonth + '/' + s.formattedYear;
 				break;
 			case 4: // dd.mm.yy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					'.' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'.' +
-					('0' + t.getYear()).substr(-2);
+				val = s.formattedDate + '.' + s.formattedMonth + '.' + s.formattedYear;
 				break;
 			case 5: // dd-mm-yy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					'-' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'-' +
-					('0' + t.getYear()).substr(-2);
+				val = s.formattedDate + '-' + s.formattedMonth + '-' + s.formattedYear;
 				break;
 			case 6: // dd mon yy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					' ' +
-					t.toString().substr(4, 3).toLowerCase() +
-					' ' +
-					('0' + t.getYear()).substr(-2);
+				val = s.formattedDate + ' ' + s.day.toLowerCase() + ' ' + s.formattedYear;
 				break;
 			case 7: // Mon dd,yy
-				val =
-					t.toString().substr(4, 3) +
-					' ' +
-					('0' + t.getDate()).substr(-2) +
-					',' +
-					('0' + t.getYear()).substr(-2);
+				val = s.day + ' ' + s.formattedDate + ',' + s.formattedYear;
 				break;
 			case 8: // hh:mm:ss
 			case 108: // hh:mm:ss
-				val =
-					('0' + t.getHours()).substr(-2) +
-					':' +
-					('0' + t.getMinutes()).substr(-2) +
-					':' +
-					('0' + t.getSeconds()).substr(-2);
+				val = s.formattedHour + ':' + s.formattedMinutes + ':' + s.formattedSeconds;
 				break;
 			case 10: // mm-dd-yy
-				val =
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'-' +
-					('0' + t.getDate()).substr(-2) +
-					'-' +
-					('0' + t.getYear()).substr(-2);
+				val = s.formattedMonth + '-' + s.formattedDate + '-' + s.formattedYear;
 				break;
 			case 11: // yy/mm/dd
-				val =
-					('0' + t.getYear()).substr(-2) +
-					'/' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'/' +
-					('0' + t.getDate()).substr(-2);
+				val = s.formattedYear + '/' + s.formattedMonth + '/' + s.formattedDate;
 				break;
 			case 12: // yymmdd
-				val =
-					('0' + t.getYear()).substr(-2) +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					('0' + t.getDate()).substr(-2);
+				val = s.formattedYear + s.formattedMonth + s.formattedDate;
 				break;
 			case 101: // mm/dd/yyyy
-				val =
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'/' +
-					('0' + t.getDate()).substr(-2) +
-					'/' +
-					t.getFullYear();
+				val = s.formattedMonth + '/' + s.formattedDate + '/' + s.fullYear;
 				break;
 			case 102: // yyyy.mm.dd
-				val =
-					t.getFullYear() +
-					'.' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'.' +
-					('0' + t.getDate()).substr(-2);
+				val = s.fullYear + '.' + s.formattedMonth + '.' + s.formattedDate;
 				break;
 			case 103: // dd/mm/yyyy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					'/' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'/' +
-					t.getFullYear();
+				val = s.formattedDate + '/' + s.formattedMonth + '/' + s.fullYear;
 				break;
 			case 104: // dd.mm.yyyy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					'.' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'.' +
-					t.getFullYear();
+				val = s.formattedDate + '.' + s.formattedMonth + '.' + s.fullYear;
 				break;
 			case 105: // dd-mm-yyyy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					'-' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'-' +
-					t.getFullYear();
+				val = s.formattedDate + '-' + s.formattedMonth + '-' + s.fullYear;
 				break;
 			case 106: // dd mon yyyy
-				val =
-					('0' + t.getDate()).substr(-2) +
-					' ' +
-					t.toString().substr(4, 3).toLowerCase() +
-					' ' +
-					t.getFullYear();
+				val = s.formattedDate + ' ' + s.day.toLowerCase() + ' ' + s.fullYear;
 				break;
 			case 107: // Mon dd,yyyy
-				val =
-					t.toString().substr(4, 3) + ' ' + ('0' + t.getDate()).substr(-2) + ',' + t.getFullYear();
+				val = s.day + ' ' + s.formattedDate + ',' + s.fullYear;
 				break;
 			case 110: // mm-dd-yyyy
-				val =
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'-' +
-					('0' + t.getDate()).substr(-2) +
-					'-' +
-					t.getFullYear();
+				val = s.formattedMonth + '-' + s.formattedDate + '-' + s.fullYear;
 				break;
 			case 111: // yyyy/mm/dd
-				val =
-					t.getFullYear() +
-					'/' +
-					('0' + (t.getMonth() + 1)).substr(-2) +
-					'/' +
-					('0' + t.getDate()).substr(-2);
+				val = s.fullYear + '/' + s.formattedMonth + '/' + s.formattedDate;
 				break;
 
 			case 112: // yyyymmdd
-				val =
-					t.getFullYear() + ('0' + (t.getMonth() + 1)).substr(-2) + ('0' + t.getDate()).substr(-2);
+				val = s.fullYear + s.formattedMonth + s.formattedDate;
 				break;
 			default:
 				throw new Error('The CONVERT style ' + args.style + ' is not realized yet.');
 		}
 	}
 
-	var udbtypeid = args.dbtypeid.toUpperCase();
-
 	if (args.dbtypeid == 'Date') {
-		return newDate(val);
+		return t;
 	} else if (udbtypeid == 'DATE') {
-		var d = newDate(val);
-		var s =
-			d.getFullYear() +
-			'.' +
-			('0' + (d.getMonth() + 1)).substr(-2) +
-			'.' +
-			('0' + d.getDate()).substr(-2);
-		return s;
+		return s.formattedYear + '.' + s.formattedMonth + '.' + s.formattedDate;
 	} else if (udbtypeid == 'DATETIME' || udbtypeid == 'DATETIME2') {
-		var d = newDate(val);
-		var s =
-			d.getFullYear() +
-			'.' +
-			('0' + (d.getMonth() + 1)).substr(-2) +
-			'.' +
-			('0' + d.getDate()).substr(-2);
-		s +=
-			' ' +
-			('0' + d.getHours()).substr(-2) +
-			':' +
-			('0' + d.getMinutes()).substr(-2) +
-			':' +
-			('0' + d.getSeconds()).substr(-2);
-		s += '.' + ('00' + d.getMilliseconds()).substr(-3);
-		return s;
+		var f = s.fullYear + '.' + s.formattedMonth + '.' + s.formattedDate;
+		f += ' ' + s.formattedHour + ':' + s.formattedMinutes + ':' + s.formattedSeconds;
+		f += '.' + s.formattedMilliseconds;
+		return f;
 	} else if (['MONEY'].indexOf(udbtypeid) > -1) {
 		var m = +val;
 		return (m | 0) + ((m * 100) % 100) / 100;

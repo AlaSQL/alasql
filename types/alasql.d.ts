@@ -1,8 +1,8 @@
 // Project: https://github.com/alasql/alasql
 
-import * as xlsx from 'xlsx';
+declare module 'alasql' {
+	import * as xlsx from 'xlsx';
 
-declare namespace alaSQLSpace {
 	interface AlaSQLCallback {
 		(data?: any, err?: Error): void;
 	}
@@ -83,7 +83,6 @@ declare namespace alaSQLSpace {
 		yy: {};
 		setXLSX(xlsxlib: typeof xlsx): void;
 	}
+	const alasql: AlaSQL;
+	export = alasql;
 }
-
-declare let alasql: alaSQLSpace.AlaSQL;
-export default alasql;

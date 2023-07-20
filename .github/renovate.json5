@@ -12,5 +12,7 @@
   "automerge": true,
   "automergeStrategy": "squash",
   "dependencyDashboard": true, 
-  "schedule": ["every weekend"]
+  "schedule": ["every weekend"],
+  "ignorePaths": ["modules/**"]
+
 }

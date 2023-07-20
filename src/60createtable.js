@@ -160,14 +160,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}
 
 			if (col.default) {
-				ss.push("'" + col.columnid + "':" + col.default.toJS('r', ''));
+				ss.push(JSON.stringify('' + col.columnid) + ':' + col.default.toJS('r', ''));
 			}
 
 			// Check for primary key
 			if (col.primarykey) {
 				var pk = (table.pk = {});
 				pk.columns = [col.columnid];
-				pk.onrightfns = "r['" + col.columnid + "']";
+				pk.onrightfns = `r[${JSON.stringify(col.columnid)}]`;
 				pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
 				pk.hh = hash(pk.onrightfns);
 				table.uniqs[pk.hh] = {};
@@ -179,7 +179,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uk = table.uk || [];
 				table.uk.push(uk);
 				uk.columns = [col.columnid];
-				uk.onrightfns = "r['" + col.columnid + "']";
+				uk.onrightfns = `r[${JSON.stringify(col.columnid)}]`;
 				uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
@@ -209,10 +209,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					//						console.log(fktable.uniqs[fktable.pk.hh][addr]);
 					if (!fktable.uniqs[fktable.pk.hh][addr]) {
 						throw new Error(
-							// 							'Foreign key "' +
-							// 								r[col.columnid] +
-							// 								'" is not found in table ' +
-							// 								fktable.tableid
 							'Foreign key violation' //changed error message
 						);
 					}
@@ -231,7 +227,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			}
 
 			if (col.onupdate) {
-				uss.push("r['" + col.columnid + "']=" + col.onupdate.toJS('r', ''));
+				uss.push(`r[${JSON.stringify(col.columnid)}]=` + col.onupdate.toJS('r', ''));
 			}
 
 			table.columns.push(newcol);
@@ -254,7 +250,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.columns = con.columns;
 			pk.onrightfns = pk.columns
 				.map(function (columnid) {
-					return "r['" + columnid + "']";
+					return `r[${JSON.stringify(columnid)}]`;
 				})
 				.join("+'`'+");
 			pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
@@ -271,7 +267,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			uk.columns = con.columns;
 			uk.onrightfns = uk.columns
 				.map(function (columnid) {
-					return "r['" + columnid + "']";
+					return `r[${JSON.stringify(columnid)}]`;
 				})
 				.join("+'`'+");
 			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
