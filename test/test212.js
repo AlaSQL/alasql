@@ -170,4 +170,11 @@ describe('Test 212: CONVERT dates with style', function () {
 		assert(res[1] == '01-08-2015');
 		done();
 	});
+
+	it('10. CONVERT NUMBER TO DATE', function (done) {
+		alasql('SELECT 1690280610096::Date->getDay() AS ts', [], function (res) {
+			assert.equal(res[0].ts, 2);
+			done();
+		});
+	});
 });
