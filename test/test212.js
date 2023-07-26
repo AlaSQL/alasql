@@ -170,4 +170,12 @@ describe('Test 212: CONVERT dates with style', function () {
 		assert(res[1] == '01-08-2015');
 		done();
 	});
+
+	it('10. CONVERT NUMBER TO DATE', function (done) {
+		const timestamp = 1690280610096;
+		alasql(`SELECT ${timestamp}::Date->getTime() AS ts`, [], function (res) {
+			assert.equal(res[0].ts, timestamp);
+			done();
+		});
+	});
 });

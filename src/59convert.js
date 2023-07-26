@@ -107,7 +107,7 @@ alasql.stdfn.CONVERT = function (value, args) {
 		args.dbtypeid == 'Date' ||
 		['DATE', 'DATETIME', 'DATETIME2'].indexOf(udbtypeid) > -1
 	) {
-		if (/\d{8}/.test(val)) {
+		if (typeof val === "string" && /\d{8}/.test(val)) {
 			t = new Date(+val.substr(0, 4), +val.substr(4, 2) - 1, +val.substr(6, 2));
 		} else {
 			t = newDate(val);
