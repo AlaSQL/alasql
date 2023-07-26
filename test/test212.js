@@ -172,8 +172,9 @@ describe('Test 212: CONVERT dates with style', function () {
 	});
 
 	it('10. CONVERT NUMBER TO DATE', function (done) {
-		alasql('SELECT 1690280610096::Date->getDay() AS ts', [], function (res) {
-			assert.equal(res[0].ts, 2);
+		const timestamp = 1690280610096;
+		alasql(`SELECT ${timestamp}::Date->getTime() AS ts`, [], function (res) {
+			assert.equal(res[0].ts, timestamp);
 			done();
 		});
 	});
