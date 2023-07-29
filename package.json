@@ -84,7 +84,7 @@
 	"resolutions": {
 		"got": "13.0.0",
 		"axios": "1.0.0",
-		"json5": "2.2.2",
+		"json5": "2.2.3",
 		"underscore": "1.12.1",
 		"glob-parent": "6.0.0",
 		"decode-uri-component": "0.2.1",
