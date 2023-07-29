@@ -10,7 +10,7 @@
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/alasql/alasql.svg)](http://isitmaintained.com/project/\n/alasql "Average time to resolve an issue")
 [![Coverage]( https://img.shields.io/codecov/c/github/alasql/alasql/develop.svg)](https://rawgit.com/alasql/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/AlaSQL/alasql/badge)](https://securityscorecards.dev/viewer/?uri=github.com/AlaSQL/alasql)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
+[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
 [![](https://data.jsdelivr.com/v1/package/npm/alasql/badge?style=rounded)](https://www.jsdelivr.com/package/npm/alasql)
 
 
