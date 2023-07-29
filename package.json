@@ -55,13 +55,13 @@
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.1.1",
-		"eslint": "^8.30.0",
+		"eslint": "8.30.0",
 		"eslint-config-standard": "17.1.0",
-		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-import": "2.26.0",
 		"eslint-plugin-n": "16.0.1",
-		"eslint-plugin-node": "^11.1.0",
-		"eslint-plugin-promise": "^6.1.1",
-		"eslint-plugin-standard": "^5.0.0",
+		"eslint-plugin-node": "11.1.0",
+		"eslint-plugin-promise": "6.1.1",
+		"eslint-plugin-standard": "5.0.0",
 		"git-branch-is": "4.0.0",
 		"gulp": "4.0.2",
 		"gulp-concat": "2.6.1",
@@ -82,13 +82,13 @@
 		"uglify-js": "3.17.4"
 	},
 	"resolutions": {
-		"got": "^13.0.0",
-		"axios": "^1.0.0",
-		"json5": "^2.2.2",
-		"underscore": "^1.12.1",
-		"glob-parent": "^6.0.0",
-		"decode-uri-component": "^0.2.1",
-		"semver": "^7.5.2"
+		"got": "13.0.0",
+		"axios": "1.0.0",
+		"json5": "2.2.2",
+		"underscore": "1.12.1",
+		"glob-parent": "6.0.0",
+		"decode-uri-component": "0.2.1",
+		"semver": "7.5.2"
 	},
 	"engines": {
 		"node": ">=15"
