@@ -85,7 +85,7 @@
 		"got": "13.0.0",
 		"axios": "1.0.0",
 		"json5": "2.2.3",
-		"underscore": "1.12.1",
+		"underscore": "1.13.6",
 		"glob-parent": "6.0.1",
 		"decode-uri-component": "0.2.1",
 		"semver": "7.5.2"
