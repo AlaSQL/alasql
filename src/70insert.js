@@ -33,12 +33,7 @@ yy.Insert.prototype.toJS = function (context, tableid, defcols) {
 	//  console.log('Select.toJS', 81, this.queriesidx);
 	//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 
-	var s =
-		'this.queriesfn[' +
-		(this.queriesidx - 1) +
-		'](this.params,null,' +
-		context +
-		')';
+	var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
 	//	s = '(console.log(this.queriesfn[0]),'+s+')';
 	//	console.log(this,s);
 
@@ -101,9 +96,8 @@ yy.Insert.prototype.compile = function (databaseid) {
 					var q = "'" + col.columnid + "':";
 					if (table.xcolumns && table.xcolumns[col.columnid]) {
 						if (
-							['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(
-								table.xcolumns[col.columnid].dbtypeid
-							) >= 0
+							['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(table.xcolumns[col.columnid].dbtypeid) >=
+							0
 						) {
 							//q += ''
 							q += '(x=' + values[idx].toJS() + ',x==undefined?undefined:+x)';
@@ -124,18 +118,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 				//	console.log('table1', db, self);
 				//console.log(111, table.columns);
 				//console.log(74,table);
-				if (
-					Array.isArray(values) &&
-					table.columns &&
-					table.columns.length > 0
-				) {
+				if (Array.isArray(values) && table.columns && table.columns.length > 0) {
 					table.columns.forEach(function (col, idx) {
 						var q = "'" + col.columnid + "':";
 						//						var val = values[idx].toJS();
 
-						if (
-							['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(col.dbtypeid) >= 0
-						) {
+						if (['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(col.dbtypeid) >= 0) {
 							q += '+' + values[idx].toJS();
 						} else if (alasql.fn[col.dbtypeid]) {
 							q += '(new ' + col.dbtypeid + '(';
@@ -202,12 +190,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			//			s += 'db.tables[\''+tableid+'\'].insert(r);';
 			if (db.tables[tableid].insert) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
-				s +=
-					"db.tables['" +
-					tableid +
-					"'].insert(a," +
-					(self.orreplace ? 'true' : 'false') +
-					');';
+				s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
 			} else {
 				s += 'aa.push(a);';
 			}
@@ -242,9 +225,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		}
 
 		//console.log(186,s3+s);
-		var insertfn = new Function('db, params, alasql', 'var y;' + s3 + s).bind(
-			this
-		);
+		var insertfn = new Function('db, params, alasql', 'var y;' + s3 + s).bind(this);
 
 		// INSERT INTO table SELECT
 	} else if (this.select) {
@@ -256,20 +237,13 @@ yy.Insert.prototype.compile = function (databaseid) {
 		if (db.engineid && alasql.engines[db.engineid].intoTable) {
 			var statement = function (params, cb) {
 				var aa = selectfn(params);
-				var res = alasql.engines[db.engineid].intoTable(
-					db.databaseid,
-					tableid,
-					aa.data,
-					null,
-					cb
-				);
+				var res = alasql.engines[db.engineid].intoTable(db.databaseid, tableid, aa.data, null, cb);
 				return res;
 			};
 			return statement;
 		} else {
 			//			console.log(224,table.defaultfns);
-			var defaultfns =
-				'return alasql.utils.extend(r,{' + table.defaultfns + '})';
+			var defaultfns = 'return alasql.utils.extend(r,{' + table.defaultfns + '})';
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
 			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
@@ -288,12 +262,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			};
 		}
 	} else if (this.default) {
-		var insertfns =
-			"db.tables['" +
-			tableid +
-			"'].data.push({" +
-			table.defaultfns +
-			'});return 1;';
+		var insertfns = "db.tables['" + tableid + "'].data.push({" + table.defaultfns + '});return 1;';
 		var insertfn = new Function('db,params,alasql', insertfns);
 	} else {
 		throw new Error('Wrong INSERT parameters');
@@ -302,24 +271,11 @@ yy.Insert.prototype.compile = function (databaseid) {
 	//    console.log(1,s);
 	//    	console.log(s33);
 
-	if (
-		db.engineid &&
-		alasql.engines[db.engineid].intoTable &&
-		alasql.options.autocommit
-	) {
+	if (db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
 		var statement = function (params, cb) {
-			var aa = new Function('db,params', 'var y;' + s33 + 'return aa;')(
-				db,
-				params
-			);
+			var aa = new Function('db,params', 'var y;' + s33 + 'return aa;')(db, params);
 			//			console.log(s33);
-			var res = alasql.engines[db.engineid].intoTable(
-				db.databaseid,
-				tableid,
-				aa,
-				null,
-				cb
-			);
+			var res = alasql.engines[db.engineid].intoTable(db.databaseid, tableid, aa, null, cb);
 			//			if(cb) cb(res);
 			return res;
 		};

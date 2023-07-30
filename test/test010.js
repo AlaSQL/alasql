@@ -19,8 +19,7 @@ describe('Test 10', function () {
 		alasql.exec('INSERT INTO test2 VALUES (2,2,200)');
 
 		var res = alasql.exec(
-			'SELECT test1.a AS a1, test2.a AS a2 ' +
-				' FROM test1 JOIN test2 ON test1.a=test2.a-1'
+			'SELECT test1.a AS a1, test2.a AS a2 ' + ' FROM test1 JOIN test2 ON test1.a=test2.a-1'
 		);
 		assert.deepEqual(
 			[
@@ -31,8 +30,7 @@ describe('Test 10', function () {
 		);
 
 		var res = alasql.exec(
-			'SELECT test1.a AS a1, test2.a AS a2 ' +
-				' FROM test1 JOIN test2 ON test2.a=test1.a+1'
+			'SELECT test1.a AS a1, test2.a AS a2 ' + ' FROM test1 JOIN test2 ON test2.a=test1.a+1'
 		);
 		assert.deepEqual(
 			[
@@ -43,8 +41,7 @@ describe('Test 10', function () {
 		);
 
 		var res = alasql.exec(
-			'SELECT test1.a AS a1, test2.a AS a2 ' +
-				' FROM test1 JOIN test2 ON test2.a-test1.a=1'
+			'SELECT test1.a AS a1, test2.a AS a2 ' + ' FROM test1 JOIN test2 ON test2.a-test1.a=1'
 		);
 		assert.deepEqual(
 			[
@@ -55,8 +52,7 @@ describe('Test 10', function () {
 		);
 
 		var res = alasql.exec(
-			'SELECT test1.a AS a1, test2.a AS a2 ' +
-				' FROM test1 JOIN test2 ON 1=test2.a-test1.a'
+			'SELECT test1.a AS a1, test2.a AS a2 ' + ' FROM test1 JOIN test2 ON 1=test2.a-test1.a'
 		);
 		assert.deepEqual(
 			[
@@ -78,9 +74,7 @@ describe('Test 10', function () {
 			res
 		);
 
-		var res = alasql.exec(
-			'SELECT test1.b, test2.d FROM test1 JOIN test2 USING a,c'
-		);
+		var res = alasql.exec('SELECT test1.b, test2.d FROM test1 JOIN test2 USING a,c');
 		assert.deepEqual(
 			[
 				{b: 10, d: 100},

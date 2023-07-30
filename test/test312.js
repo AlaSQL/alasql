@@ -210,20 +210,17 @@ Now, I want to retrieve all the elements which are at a higher level and all the
 					{
 						Id: 'menuCompilingFromSource',
 						Title: 'Compiling From Source',
-						Resource:
-							'/Documentation/Data/Getting-Started/compiling-from-source.html',
+						Resource: '/Documentation/Data/Getting-Started/compiling-from-source.html',
 					},
 					{
 						Id: 'menuDownloadReleasePackage',
 						Title: 'Download Release Package',
-						Resource:
-							'/Documentation/Data/Getting-Started/downloading-release-package.html',
+						Resource: '/Documentation/Data/Getting-Started/downloading-release-package.html',
 					},
 					{
 						Id: 'menuBuildingYourFirstApplication',
 						Title: 'Building your first application',
-						Resource:
-							'/Documentation/Data/Getting-Started/building-your-first-application.html',
+						Resource: '/Documentation/Data/Getting-Started/building-your-first-application.html',
 					},
 				],
 			},

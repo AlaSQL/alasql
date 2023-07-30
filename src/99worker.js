@@ -21,9 +21,7 @@ if (typeof Worker !== 'undefined') {
 				if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
 					path = sc[i].src.substr(0, sc[i].src.length - 16) + 'alasql.js';
 					break;
-				} else if (
-					sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js'
-				) {
+				} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
 					path = sc[i].src.substr(0, sc[i].src.length - 20) + 'alasql.min.js';
 					break;
 				} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {

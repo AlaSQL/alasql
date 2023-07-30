@@ -24,9 +24,7 @@ describe('Test 368 OFFSET ... LIMIT', function () {
 		var res = alasql('SELECT * FROM ? OFFSET 3 FETCH 2', [data]);
 		assert.deepEqual(res, [{a: 4}, {a: 5}]);
 
-		var res = alasql('SELECT * FROM ? OFFSET 3 ROWS FETCH NEXT 2 ROWS ONLY', [
-			data,
-		]);
+		var res = alasql('SELECT * FROM ? OFFSET 3 ROWS FETCH NEXT 2 ROWS ONLY', [data]);
 		assert.deepEqual(res, [{a: 4}, {a: 5}]);
 		done();
 	});

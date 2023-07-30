@@ -67,9 +67,7 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		alasql('create database test149a');
 		alasql('CREATE TABLE test149a.one (a int, b string)');
 		//console.log(56);
-		alasql(
-			'insert into test149a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")'
-		);
+		alasql('insert into test149a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 		//console.log(57);
 		alasql('select * into test149.one from test149a.one');
 		var table = JSON.parse(localStorage.getItem('ls149.one'));

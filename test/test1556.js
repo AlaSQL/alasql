@@ -36,10 +36,7 @@ if (typeof exports != 'object') {
 
 			const data = await sql('SELECT * from [mytable1]');
 			console.log('FInal data res ', data);
-			assert.deepEqual(data, [
-				{1: ['random_value']},
-				{shell_id_key: 'random_value2'},
-			]);
+			assert.deepEqual(data, [{1: ['random_value']}, {shell_id_key: 'random_value2'}]);
 		});
 	});
 }

@@ -95,18 +95,7 @@ describe('Test ' + test + ' Aggregators', function () {
 	});
 
 	it('4. Quatiles', function () {
-		var data = [
-			{a: 2},
-			{a: 3},
-			{a: 4},
-			{a: 5},
-			{a: 6},
-			{a: 7},
-			{a: 8},
-			{a: 8},
-			{a: 10},
-			{a: 10},
-		];
+		var data = [{a: 2}, {a: 3}, {a: 4}, {a: 5}, {a: 6}, {a: 7}, {a: 8}, {a: 8}, {a: 10}, {a: 10}];
 		var res = alasql('SELECT QUART(a), QUART2(a), QUART3(a) FROM ?', [data]);
 		assert.deepEqual(res, [{'QUART(a)': 4, 'QUART2(a)': 7, 'QUART3(a)': 10}]);
 	});

@@ -14,9 +14,7 @@ describe('Test PromiseExec', function () {
 
 	it('A) csvload with no csv data, expect rejected promise', function () {
 		res = alasql
-			.promise('SELECT * FROM CSV(?, {headers:true, separator:","})', [
-				TEST_NO_DATA,
-			])
+			.promise('SELECT * FROM CSV(?, {headers:true, separator:","})', [TEST_NO_DATA])
 			.then(function () {
 				//no-op, expect exception
 			})
@@ -27,9 +25,7 @@ describe('Test PromiseExec', function () {
 	});
 	it('B) csvload with valid data, expect array length 1', function () {
 		res = alasql
-			.promise('SELECT * FROM CSV(?, {headers:true, separator:","})', [
-				TEST_VALID_DATA,
-			])
+			.promise('SELECT * FROM CSV(?, {headers:true, separator:","})', [TEST_VALID_DATA])
 			.then(function (res) {
 				assert.ok(res.length === 1, 'Expected array of size 1 returned');
 			})
@@ -39,10 +35,7 @@ describe('Test PromiseExec', function () {
 	});
 	it('C) csvload with bad file path, expect exception', function () {
 		res = alasql
-			.promise(
-				'SELECT * FROM CSV(?, {headers:true, separator:","})',
-				BAD_FILE_PATH
-			)
+			.promise('SELECT * FROM CSV(?, {headers:true, separator:","})', BAD_FILE_PATH)
 			.then(function () {
 				//no-op, expect exception
 			})

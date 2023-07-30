@@ -13,8 +13,7 @@ yy.SetVariable.prototype.toString = function () {
 	var s = 'SET ';
 	if (typeof this.value != 'undefined')
 		s += this.variable.toUpperCase() + ' ' + (this.value ? 'ON' : 'OFF');
-	if (this.expression)
-		s += this.method + this.variable + ' = ' + this.expression.toString();
+	if (this.expression) s += this.method + this.variable + ' = ' + this.expression.toString();
 	return s;
 };
 
@@ -78,11 +77,7 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 				})
 				.join();
 			// console.log(65764765, fs);
-			new Function('value,params,alasql', 'var y;' + fs + '=value')(
-				res,
-				params,
-				alasql
-			);
+			new Function('value,params,alasql', 'var y;' + fs + '=value')(res, params, alasql);
 		} else {
 			if (this.method == '@') {
 				alasql.vars[this.variable] = res;

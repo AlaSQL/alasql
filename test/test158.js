@@ -28,22 +28,16 @@ if (typeof exports != 'object') {
 			);
 			assert(res2 === 5);
 
-			const res3 = await sql(
-				"select column * from cities where city like 'M%' order by city"
-			);
+			const res3 = await sql("select column * from cities where city like 'M%' order by city");
 			assert.deepEqual(res3, ['Minsk', 'Moscow']);
 
-			const res4 = await sql(
-				'delete from cities where city in ("Riga","Tallinn","Moscow")'
-			);
+			const res4 = await sql('delete from cities where city in ("Riga","Tallinn","Moscow")');
 			assert(res4 === 3);
 
 			const res5 = await sql('select column * from cities order by city');
 			assert.deepEqual(res5, ['Minsk', 'Paris']);
 
-			const res6 = await sql(
-				"update cities set city = 'Vilnius' where city = 'Minsk'"
-			);
+			const res6 = await sql("update cities set city = 'Vilnius' where city = 'Minsk'");
 			assert(res6 === 1);
 
 			const res7 = await sql('select column * from cities order by city');

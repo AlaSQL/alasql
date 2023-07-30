@@ -25,10 +25,7 @@ const sequentialPromiseResolver = (promiseData, Promise) => {
 	var startingPoint = Promise.resolve([]);
 	promiseData.forEach(p => {
 		startingPoint = startingPoint.then(previousResult =>
-			promiseExec(p.sql, p.params, p.i, p.length).then(result => [
-				...previousResult,
-				result,
-			])
+			promiseExec(p.sql, p.params, p.i, p.length).then(result => [...previousResult, result])
 		);
 	});
 

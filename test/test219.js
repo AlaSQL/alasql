@@ -22,9 +22,7 @@ describe('Test 219 CREATE VIEW', function () {
 		done();
 	});
 	it('3. RUN FROM JOIN VIEW', function (done) {
-		var res = alasql(
-			'SELECT one.a as a1, myview.a as a2 FROM one JOIN myview ON one.a = myview.a'
-		);
+		var res = alasql('SELECT one.a as a1, myview.a as a2 FROM one JOIN myview ON one.a = myview.a');
 		//    	console.log(res);
 		assert.deepEqual(res, [
 			{a1: 1, a2: 1},

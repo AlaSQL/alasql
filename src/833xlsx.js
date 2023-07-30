@@ -127,8 +127,7 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 		//		console.log(col0,row0);
 		var i = row0 + 1;
 
-		wb.Sheets[opt.sheetid]['!ref'] =
-			'A1:' + alasql.utils.xlsnc(colmax) + rowmax;
+		wb.Sheets[opt.sheetid]['!ref'] = 'A1:' + alasql.utils.xlsnc(colmax) + rowmax;
 		//		var i = 1;
 
 		if (opt.headers) {
@@ -187,10 +186,7 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 					return buf;
 				};
 
-				saveAs(
-					new Blob([s2ab(wbout)], {type: 'application/octet-stream'}),
-					filename
-				);
+				saveAs(new Blob([s2ab(wbout)], {type: 'application/octet-stream'}), filename);
 			}
 		}
 		/*/*

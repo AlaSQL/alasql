@@ -17,10 +17,7 @@ describe('Test 046', function () {
 		];
 
 		it('FROM array of objects', function (done) {
-			var res = alasql('SELECT COLUMN * FROM ? AS t WHERE t.yearid>?', [
-				years,
-				2014,
-			]);
+			var res = alasql('SELECT COLUMN * FROM ? AS t WHERE t.yearid>?', [years, 2014]);
 			assert.deepEqual([2015, 2016, 2017], res);
 			done();
 		});
@@ -40,10 +37,7 @@ describe('Test 046', function () {
 		});
 
 		it('queryArrayOfArrays()', function (done) {
-			var res = alasql(
-				'SELECT MATRIX [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016',
-				[data]
-			);
+			var res = alasql('SELECT MATRIX [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [data]);
 			assert.deepEqual(
 				[
 					[4, 6],

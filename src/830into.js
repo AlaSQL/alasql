@@ -180,13 +180,7 @@ alasql.into.TXT = function (filename, opts, data, columns, cb) {
 	return res;
 };
 
-alasql.into.TAB = alasql.into.TSV = function (
-	filename,
-	opts,
-	data,
-	columns,
-	cb
-) {
+alasql.into.TAB = alasql.into.TSV = function (filename, opts, data, columns, cb) {
 	var opt = {};
 	alasql.utils.extend(opt, opts);
 	opt.separator = '\t';
@@ -238,10 +232,7 @@ alasql.into.CSV = function (filename, opts, data, columns, cb) {
 					var s = d[col.columnid];
 					// escape the character wherever it appears in the field
 					if (opt.quote !== '') {
-						s = (s + '').replace(
-							new RegExp('\\' + opt.quote, 'g'),
-							opt.quote + opt.quote
-						);
+						s = (s + '').replace(new RegExp('\\' + opt.quote, 'g'), opt.quote + opt.quote);
 					}
 					//			if((s+"").indexOf(opt.separator) > -1 || (s+"").indexOf(opt.quote) > -1) s = opt.quote + s + opt.quote;
 

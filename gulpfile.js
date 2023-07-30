@@ -20,11 +20,7 @@ var execSync = require('child_process').execSync;
 var packageData = require('./package.json'); // JSON.parse(fs.readFileSync('package.json', 'utf8'));
 var packageVersion = packageData.version;
 var branch = execSync(
-	'git --work-tree="' +
-		__dirname +
-		'" --git-dir="' +
-		__dirname +
-		'/.git" branch',
+	'git --work-tree="' + __dirname + '" --git-dir="' + __dirname + '/.git" branch',
 	{encoding: 'utf8'}
 )
 	.match(/^\*\s+(.*)/m)[1]
@@ -230,13 +226,7 @@ gulp.task('plugin-prolog', function () {
 	return gulp.src(['./src/prolog/alasql-prolog.js']).pipe(gulp.dest('./dist'));
 });
 
-var toRun = [
-	'js-merge',
-	'js-merge-worker',
-	'plugin-prolog',
-	'plugin-plugins',
-	'typescript',
-];
+var toRun = ['js-merge', 'js-merge-worker', 'plugin-prolog', 'plugin-plugins', 'typescript'];
 
 if (argv.jison) {
 	toRun = ['jison-compile'];
@@ -300,18 +290,15 @@ gulp.task(
 
 gulp.task(
 	'fast',
-	gulp.series(
-		'js-merge' /*, 'jison-compile', 'jison-lex-compile' */,
-		function (done) {
-			gulp.watch('./src/alasqlparser.jison', function () {
-				gulp.run('jison-compile');
-			});
-			gulp.watch('./src/*.js', function () {
-				gulp.run('js-merge');
-			});
-			done();
-		}
-	)
+	gulp.series('js-merge' /*, 'jison-compile', 'jison-lex-compile' */, function (done) {
+		gulp.watch('./src/alasqlparser.jison', function () {
+			gulp.run('jison-compile');
+		});
+		gulp.watch('./src/*.js', function () {
+			gulp.run('js-merge');
+		});
+		done();
+	})
 );
 
 gulp.task('doc', function () {

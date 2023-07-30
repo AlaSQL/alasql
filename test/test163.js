@@ -29,9 +29,7 @@ if (false) {
 
 			it('3. Select from stream', function (done) {
 				// TODO - finish the test
-				alasql(
-					'select [0] into stream txt() from stream txt() where [0] like "M%" '
-				);
+				alasql('select [0] into stream txt() from stream txt() where [0] like "M%" ');
 				done();
 			});
 		}

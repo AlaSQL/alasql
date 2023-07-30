@@ -24,9 +24,7 @@ describe('Test 389 Autoincrement for localStorage', function () {
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS test');
 		alasql('ATTACH localStorage DATABASE test');
-		alasql(
-			'CREATE TABLE IF NOT EXISTS test.one (a INT AUTO_INCREMENT, b STRING)'
-		);
+		alasql('CREATE TABLE IF NOT EXISTS test.one (a INT AUTO_INCREMENT, b STRING)');
 		done();
 	});
 

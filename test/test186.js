@@ -42,11 +42,7 @@ if (false) {
 			var res3 = alasql(data1).Select('b').GroupBy('b').exec();
 			//      console.log(5,res3);
 
-			var res3 = alasql(data1)
-				.Select('a', 'b')
-				.GroupBy('b', 'a')
-				.OrderBy('b', 'a')
-				.exec();
+			var res3 = alasql(data1).Select('a', 'b').GroupBy('b', 'a').OrderBy('b', 'a').exec();
 			//      console.log(5,res3);
 
 			//      alasql().Select(function(x){return x.Max("index")},'id').GroupBy("id").exec();
@@ -106,18 +102,14 @@ if (false) {
 		var tm2 = Date.now();
 		for (var i = 0; i < 200; i++) {
 			alasql.databases.alasql.resetSqlCache();
-			var res2 = alasql('SELECT TOP 2 FirstName AS name FROM ? ORDER BY name', [
-				myList,
-			]);
+			var res2 = alasql('SELECT TOP 2 FirstName AS name FROM ? ORDER BY name', [myList]);
 		}
 		tm2 = Date.now() - tm2;
 
 		var tm3 = Date.now();
 		for (var i = 0; i < 200; i++) {
 			//        alasql.databases.alasql.resetSqlCache();
-			var res2 = alasql('SELECT TOP 2 FirstName AS name FROM ? ORDER BY name', [
-				myList,
-			]);
+			var res2 = alasql('SELECT TOP 2 FirstName AS name FROM ? ORDER BY name', [myList]);
 		}
 		tm3 = Date.now() - tm3;
 		/// console.log(tm0, tm1,tm2, tm3);

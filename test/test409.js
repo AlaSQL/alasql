@@ -48,9 +48,7 @@ describe('Test 409 Backup and restore database', function () {
 	});
 
 	it.skip('2. CREATE DATABASE', function (done) {
-		alasql(
-			'CREATE TABLE one (a INT UNIQUE); INSERT INTO one VALUES (1),(2),(3)'
-		);
+		alasql('CREATE TABLE one (a INT UNIQUE); INSERT INTO one VALUES (1),(2),(3)');
 		var obj1 = alasql.storeDatabase();
 		alasql('DROP DATABASE test409');
 		var obj2 = JSON.parse(JSON.stringify(obj1));

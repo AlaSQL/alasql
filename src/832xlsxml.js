@@ -107,8 +107,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 		var sheetidx = 0;
 		for (var sheetid in sheets) {
 			var sheet = sheets[sheetid];
-			var idx =
-				typeof sheet.dataidx != 'undefined' ? sheet.dataidx : sheetidx++;
+			var idx = typeof sheet.dataidx != 'undefined' ? sheet.dataidx : sheetidx++;
 			var data = values(sheetsdata[idx]);
 			// If columns defined in sheet, then take them
 			var columns = undefined;
@@ -147,10 +146,8 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 				}
 				if (typeof column.width == 'number') column.width = column.width;
 				if (typeof column.columnid == 'undefined') column.columnid = columnidx;
-				if (typeof column.title == 'undefined')
-					column.title = '' + column.columnid.trim();
-				if (sheet.headers && Array.isArray(sheet.headers))
-					column.title = sheet.headers[columnidx];
+				if (typeof column.title == 'undefined') column.title = '' + column.columnid.trim();
+				if (sheet.headers && Array.isArray(sheet.headers)) column.title = sheet.headers[columnidx];
 			});
 
 			// Header
@@ -161,8 +158,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	  			<Table ss:ExpandedColumnCount="' +
 				columns.length +
 				'" ss:ExpandedRowCount="' +
-				((sheet.headers ? 1 : 0) +
-					Math.min(data.length, sheet.limit || data.length)) +
+				((sheet.headers ? 1 : 0) + Math.min(data.length, sheet.limit || data.length)) +
 				'" x:FullColumns="1" \
 	   			x:FullRows="1" ss:DefaultColumnWidth="65" ss:DefaultRowHeight="15">';
 
@@ -252,40 +248,20 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 							extend(cell, sheet.column.cell);
 						}
 						extend(cell, column.cell);
-						if (
-							sheet.cells &&
-							sheet.cells[rowidx] &&
-							sheet.cells[rowidx][columnidx]
-						) {
+						if (sheet.cells && sheet.cells[rowidx] && sheet.cells[rowidx][columnidx]) {
 							extend(cell, sheet.cells[rowidx][columnidx]);
 						}
 
 						// Create value
 						var value = row[column.columnid];
 						if (typeof cell.value == 'function') {
-							value = cell.value(
-								value,
-								sheet,
-								row,
-								column,
-								cell,
-								rowidx,
-								columnidx
-							);
+							value = cell.value(value, sheet, row, column, cell, rowidx, columnidx);
 						}
 
 						// Define cell type
 						var typeid = cell.typeid;
 						if (typeof typeid == 'function') {
-							typeid = typeid(
-								value,
-								sheet,
-								row,
-								column,
-								cell,
-								rowidx,
-								columnidx
-							);
+							typeid = typeid(value, sheet, row, column, cell, rowidx, columnidx);
 						}
 
 						if (typeof typeid == 'undefined') {
@@ -306,19 +282,14 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 						var typestyle = '';
 
 						if (typeid == 'money') {
-							typestyle =
-								'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
+							typestyle = 'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
 						} else if (typeid == 'number') {
 							typestyle = ' ';
 						} else if (typeid == 'date') {
 							typestyle = 'mso-number-format:"Short Date";';
 						} else {
 							// For other types is saved
-							if (
-								opts.types &&
-								opts.types[typeid] &&
-								opts.types[typeid].typestyle
-							) {
+							if (opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
 								typestyle = opts.types[typeid].typestyle;
 							}
 						}
@@ -331,10 +302,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 						var st = {};
 						if (typeof cell.style != 'undefined') {
 							if (typeof cell.style == 'function') {
-								extend(
-									st,
-									cell.style(value, sheet, row, column, rowidx, columnidx)
-								);
+								extend(st, cell.style(value, sheet, row, column, rowidx, columnidx));
 							} else {
 								extend(st, cell.style);
 							}
@@ -355,9 +323,7 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 							} else if (typeof format == 'string') {
 								s3 += value; // TODO - add string format
 							} else {
-								throw new Error(
-									'Unknown format type. Should be function or string'
-								);
+								throw new Error('Unknown format type. Should be function or string');
 							}
 						} else {
 							if (typeid == 'number' || typeid == 'date') {

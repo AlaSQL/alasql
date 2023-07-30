@@ -19,10 +19,10 @@ describe('Test 180 - Array as a source', function () {
 	});
 
 	it('2. JOIN', function (done) {
-		var res = alasql(
-			'SELECT COLUMN * FROM [?] AS a OUTER JOIN [?] AS b ON a.[0] = b.[0]',
-			[array, array2]
-		);
+		var res = alasql('SELECT COLUMN * FROM [?] AS a OUTER JOIN [?] AS b ON a.[0] = b.[0]', [
+			array,
+			array2,
+		]);
 		//      console.log(res);
 		//      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
 		done();

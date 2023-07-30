@@ -33,8 +33,7 @@ if (typeof exports === 'object') {
 	});
 
 	it("With quote = '', single multiword string value", async () => {
-		const q =
-			"SELECT 'swing out' AS `colname` INTO CSV('test612-1', {quote:''})";
+		const q = "SELECT 'swing out' AS `colname` INTO CSV('test612-1', {quote:''})";
 		await sql(q);
 		const filecontents = fs.readFileSync('test612-1.csv', 'utf8');
 		// must include the BOM at the beginning
@@ -50,8 +49,7 @@ if (typeof exports === 'object') {
 	});
 
 	it("With quote = '\\?', single multiword string value", async () => {
-		const q =
-			"SELECT 'swing out' AS `colname` INTO CSV('test612-3', {quote:'?'})";
+		const q = "SELECT 'swing out' AS `colname` INTO CSV('test612-3', {quote:'?'})";
 		await sql(q);
 		const filecontents = fs.readFileSync('test612-3.csv', 'utf8');
 		// must include the BOM at the beginning
@@ -59,8 +57,7 @@ if (typeof exports === 'object') {
 	});
 
 	it("With quote = '\\?', single multiword string containing ?", async () => {
-		const q =
-			"SELECT 'swing?out' AS `colname` INTO CSV('test612-4', {quote:'?'})";
+		const q = "SELECT 'swing?out' AS `colname` INTO CSV('test612-4', {quote:'?'})";
 		await sql(q);
 		const filecontents = fs.readFileSync('test612-4.csv', 'utf8');
 		// must include the BOM at the beginning

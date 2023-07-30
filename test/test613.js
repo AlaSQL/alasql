@@ -6,9 +6,7 @@ if (typeof exports === 'object') {
 var test = '613';
 
 describe(
-	'Test ' +
-		test +
-		' - SHOW COLUMNS and SHOW INDEX operations call the callback when provided',
+	'Test ' + test + ' - SHOW COLUMNS and SHOW INDEX operations call the callback when provided',
 	function () {
 		it('1. Prepare databases', function (done) {
 			alasql('CREATE DATABASE test613; USE test613');

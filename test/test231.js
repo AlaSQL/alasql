@@ -357,9 +357,7 @@ describe('Test 231 NIST SQL Example', function () {
 			/// console.log(res3);
 			assert.deepEqual(res1, res3);
 		}
-		var res = alasql(
-			'UPDATE STATS SET RAIN_I = 4.50 WHERE ID = 44 AND MONTH = 7'
-		);
+		var res = alasql('UPDATE STATS SET RAIN_I = 4.50 WHERE ID = 44 AND MONTH = 7');
 		assert.deepEqual(res, 1);
 		//        console.log(res4);
 		var res = alasql('COMMIT WORK');
@@ -412,9 +410,7 @@ describe('Test 231 NIST SQL Example', function () {
 			var res = alasql('INSERT INTO STATS VALUES (33,8,27.4,.19)');
 		}, Error);
 		assert.throws(function () {
-			var res = alasql(
-				'UPDATE STATS SET TEMP_F = -100 WHERE ID = 44 AND MONTH = 1'
-			);
+			var res = alasql('UPDATE STATS SET TEMP_F = -100 WHERE ID = 44 AND MONTH = 1');
 		}, Error);
 		assert.throws(function () {
 			var res = alasql('INSERT INTO STATS VALUES (44,8,27.4,-.03)');

@@ -19,9 +19,7 @@ describe('Test 394 T-SQL Triggers', function () {
 	it('2. Create tables', function (done) {
 		alasql('CREATE TABLE main (a INT)');
 		alasql('CREATE TABLE log (a INT, d DATETIME DEFAULT GETTIME())');
-		alasql(
-			'CREATE TRIGGER t_main ON main INSERT AS INSERT INTO log SELECT a FROM inserted'
-		);
+		alasql('CREATE TRIGGER t_main ON main INSERT AS INSERT INTO log SELECT a FROM inserted');
 
 		done();
 	});

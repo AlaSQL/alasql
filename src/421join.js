@@ -68,44 +68,34 @@ yy.Select.prototype.compileJoins = function (query) {
 			//			console.log(source.databaseid, source.tableid);
 			if (!alasql.databases[source.databaseid].tables[source.tableid]) {
 				throw new Error(
-					"Table '" +
-						source.tableid +
-						"' is not exists in database '" +
-						source.databaseid +
-						"'"
+					"Table '" + source.tableid + "' is not exists in database '" + source.databaseid + "'"
 				);
 			}
 
-			source.columns =
-				alasql.databases[source.databaseid].tables[source.tableid].columns;
+			source.columns = alasql.databases[source.databaseid].tables[source.tableid].columns;
 
 			// source.data = query.database.tables[source.tableid].data;
-			if (
-				alasql.options.autocommit &&
-				alasql.databases[source.databaseid].engineid
-			) {
+			if (alasql.options.autocommit && alasql.databases[source.databaseid].engineid) {
 				//				console.log(997,alasql.databases[source.databaseid].engineid);
 				source.datafn = function (query, params, cb, idx, alasql) {
 					//					console.log(777,arguments);
-					return alasql.engines[
-						alasql.databases[source.databaseid].engineid
-					].fromTable(source.databaseid, source.tableid, cb, idx, query);
+					return alasql.engines[alasql.databases[source.databaseid].engineid].fromTable(
+						source.databaseid,
+						source.tableid,
+						cb,
+						idx,
+						query
+					);
 				};
-			} else if (
-				alasql.databases[source.databaseid].tables[source.tableid].view
-			) {
+			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
 				source.datafn = function (query, params, cb, idx, alasql) {
-					var res =
-						alasql.databases[source.databaseid].tables[source.tableid].select(
-							params
-						);
+					var res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
 					if (cb) res = cb(res, idx, query);
 					return res;
 				};
 			} else {
 				source.datafn = function (query, params, cb, idx, alasql) {
-					var res =
-						alasql.databases[source.databaseid].tables[source.tableid].data;
+					var res = alasql.databases[source.databaseid].tables[source.tableid].data;
 					if (cb) res = cb(res, idx, query);
 					return res;
 				};
@@ -204,10 +194,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)res=cb(res, idx, query);return res");
 */
 
-			var s =
-				'var res=alasql.from[' +
-				JSON.stringify(jn.func.funcid.toUpperCase()) +
-				'](';
+			var s = 'var res=alasql.from[' + JSON.stringify(jn.func.funcid.toUpperCase()) + '](';
 			/*/*
 		// if(tq.args && tq.args.length>0) {
 		// 	s += tq.args.map(function(arg){
@@ -263,10 +250,8 @@ yy.Select.prototype.compileJoins = function (query) {
 				//				source.joinmode == "INNER";
 				if (query.sources.length > 0) {
 					var prevSource = query.sources[query.sources.length - 1];
-					var prevTable =
-						alasql.databases[prevSource.databaseid].tables[prevSource.tableid];
-					var table =
-						alasql.databases[source.databaseid].tables[source.tableid];
+					var prevTable = alasql.databases[prevSource.databaseid].tables[prevSource.tableid];
+					var table = alasql.databases[source.databaseid].tables[source.tableid];
 
 					if (prevTable && table) {
 						var c1 = prevTable.columns.map(function (col) {
@@ -295,37 +280,19 @@ yy.Select.prototype.compileJoins = function (query) {
 			source.onleftfns = jn.using
 				.map(function (col) {
 					//				console.log(141,colid);
-					return (
-						"p['" +
-						(prevSource.alias || prevSource.tableid) +
-						"']['" +
-						col.columnid +
-						"']"
-					);
+					return "p['" + (prevSource.alias || prevSource.tableid) + "']['" + col.columnid + "']";
 				})
 				.join('+"`"+');
 
 			// console.log(32343, source.onleftfns);
-			source.onleftfn = new Function(
-				'p,params,alasql',
-				'var y;return ' + source.onleftfns
-			);
+			source.onleftfn = new Function('p,params,alasql', 'var y;return ' + source.onleftfns);
 
 			source.onrightfns = jn.using
 				.map(function (col) {
-					return (
-						"p['" +
-						(source.alias || source.tableid) +
-						"']['" +
-						col.columnid +
-						"']"
-					);
+					return "p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']";
 				})
 				.join('+"`"+');
-			source.onrightfn = new Function(
-				'p,params,alasql',
-				'var y;return ' + source.onrightfns
-			);
+			source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
 			source.optimization = 'ix';
 			//			console.log(151,source.onleftfns, source.onrightfns);
 			//			console.log(source);
@@ -348,10 +315,7 @@ yy.Select.prototype.compileJoins = function (query) {
 				var ls = jn.on.left.toJS('p', query.defaultTableid, query.defcols);
 				var rs = jn.on.right.toJS('p', query.defaultTableid, query.defcols);
 
-				if (
-					ls.indexOf("p['" + alias + "']") > -1 &&
-					!(rs.indexOf("p['" + alias + "']") > -1)
-				) {
+				if (ls.indexOf("p['" + alias + "']") > -1 && !(rs.indexOf("p['" + alias + "']") > -1)) {
 					if (
 						(ls.match(/p\['.*?'\]/g) || []).every(function (s) {
 							return s === "p['" + alias + "']";
@@ -380,10 +344,7 @@ yy.Select.prototype.compileJoins = function (query) {
 
 				//				console.log(alias, 1,lefts, rights, middlef);
 
-				if (
-					rs.indexOf("p['" + alias + "']") > -1 &&
-					!(ls.indexOf("p['" + alias + "']") > -1)
-				) {
+				if (rs.indexOf("p['" + alias + "']") > -1 && !(ls.indexOf("p['" + alias + "']") > -1)) {
 					if (
 						(rs.match(/p\['.*?'\]/g) || []).every(function (s) {
 							return s === "p['" + alias + "']";
@@ -427,18 +388,9 @@ yy.Select.prototype.compileJoins = function (query) {
 				source.onmiddlefns = middles || 'true';
 				//			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
 
-				source.onleftfn = new Function(
-					'p,params,alasql',
-					'var y;return ' + source.onleftfns
-				);
-				source.onrightfn = new Function(
-					'p,params,alasql',
-					'var y;return ' + source.onrightfns
-				);
-				source.onmiddlefn = new Function(
-					'p,params,alasql',
-					'var y;return ' + source.onmiddlefns
-				);
+				source.onleftfn = new Function('p,params,alasql', 'var y;return ' + source.onleftfns);
+				source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
+				source.onmiddlefn = new Function('p,params,alasql', 'var y;return ' + source.onmiddlefns);
 
 				//			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
 				//				console.log('join on and ',jn);
@@ -447,11 +399,7 @@ yy.Select.prototype.compileJoins = function (query) {
 				source.optimization = 'no';
 				//				source.onleftfn = returnTrue;
 				//				source.onleftfns = "true";
-				source.onmiddlefns = jn.on.toJS(
-					'p',
-					query.defaultTableid,
-					query.defcols
-				);
+				source.onmiddlefns = jn.on.toJS('p', query.defaultTableid, query.defcols);
 				source.onmiddlefn = new Function(
 					'p,params,alasql',
 					'var y;return ' + jn.on.toJS('p', query.defaultTableid, query.defcols)

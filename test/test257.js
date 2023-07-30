@@ -19,10 +19,10 @@ if (typeof exports != 'undefined') {
 				headers: true,
 			};
 
-			var res = alasql(
-				'SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?',
-				[opts, data]
-			);
+			var res = alasql('SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?', [
+				opts,
+				data,
+			]);
 			assert(res == 1);
 
 			// Change sheet
@@ -31,10 +31,10 @@ if (typeof exports != 'undefined') {
 				headers: true,
 			};
 
-			var res = alasql(
-				'SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?',
-				[opts, data]
-			);
+			var res = alasql('SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?', [
+				opts,
+				data,
+			]);
 			assert(res == 1);
 
 			// List of sheets
@@ -47,10 +47,10 @@ if (typeof exports != 'undefined') {
 				],
 			};
 
-			var res = alasql(
-				'SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?',
-				[opts, data]
-			);
+			var res = alasql('SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?', [
+				opts,
+				data,
+			]);
 			assert(res == 1);
 
 			// Background color
@@ -58,10 +58,10 @@ if (typeof exports != 'undefined') {
 				style: 'background:#00ff00',
 			};
 
-			var res = alasql(
-				'SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?',
-				[opts, data]
-			);
+			var res = alasql('SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?', [
+				opts,
+				data,
+			]);
 			assert(res == 1);
 
 			// Background color
@@ -96,10 +96,10 @@ if (typeof exports != 'undefined') {
 				],
 			};
 
-			var res = alasql(
-				'SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?',
-				[opts, data]
-			);
+			var res = alasql('SELECT * INTO XLS("' + __dirname + '/restest257a.xls",?) FROM ?', [
+				opts,
+				data,
+			]);
 			assert(res == 1);
 			done();
 		});
@@ -209,10 +209,10 @@ if (typeof exports != 'undefined') {
 				},
 			};
 
-			var res = alasql(
-				'SELECT * INTO XLS("' + __dirname + '/restest257b.xls",?) FROM ?',
-				[opts, items]
-			);
+			var res = alasql('SELECT * INTO XLS("' + __dirname + '/restest257b.xls",?) FROM ?', [
+				opts,
+				items,
+			]);
 			assert(res == 1);
 			done();
 		});

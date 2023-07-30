@@ -39,9 +39,7 @@ FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
 				if (cb) res = cb(res);
 				return res;
 			} else {
-				throw new Error(
-					'Cannot create new database file, because it already exists'
-				);
+				throw new Error('Cannot create new database file, because it already exists');
 			}
 		} else {
 			var data = {tables: {}};
@@ -98,9 +96,7 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 	//	console.log(arguments);
 	var res = 1;
 	if (alasql.databases[dbid]) {
-		throw new Error(
-			'Unable to attach database as "' + dbid + '" because it already exists'
-		);
+		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
 	}
 	var db = new alasql.Database(dbid || fsdbid);
 	db.engineid = 'FILESTORAGE';
@@ -154,9 +150,7 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	var res = 1;
 
 	if (tb && !ifnotexists) {
-		throw new Error(
-			'Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"'
-		);
+		throw new Error('Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"');
 	}
 	var table = alasql.databases[databaseid].tables[tableid];
 	db.data.tables[tableid] = {columns: table.columns};
@@ -194,9 +188,7 @@ FS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	var db = alasql.databases[databaseid];
 	if (!ifexists && !db.tables[tableid]) {
 		throw new Error(
-			'Cannot drop table "' +
-				tableid +
-				'" in fileStorage, because it does not exist'
+			'Cannot drop table "' + tableid + '" in fileStorage, because it does not exist'
 		);
 	}
 	delete db.tables[tableid];

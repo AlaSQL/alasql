@@ -25,13 +25,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 		var type = url.split('.').pop().toUpperCase();
 		await alasql
 			.promise(
-				'VALUE OF SELECT COUNT(*) FROM ' +
-					type +
-					'("' +
-					url +
-					'",{headers:' +
-					headers +
-					'})'
+				'VALUE OF SELECT COUNT(*) FROM ' + type + '("' + url + '",{headers:' + headers + '})'
 			)
 			.then(res => {
 				assert.equal(res, expected);
@@ -44,8 +38,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 	}
 
 	describe('.xlsx from URL', function () {
-		var url =
-			'raw.githubusercontent.com/agershun/alasql/develop/test/test411.xlsx';
+		var url = 'raw.githubusercontent.com/agershun/alasql/develop/test/test411.xlsx';
 
 		it('Load http', function (done) {
 			this.timeout(10000);
@@ -59,8 +52,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 	});
 
 	describe('.xls from URL', function () {
-		var url =
-			'raw.githubusercontent.com/agershun/alasql/develop/test/test168.xls';
+		var url = 'raw.githubusercontent.com/agershun/alasql/develop/test/test168.xls';
 
 		it('Load http', function (done) {
 			this.timeout(10000);
@@ -74,8 +66,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 	});
 
 	describe('.json from URL', function () {
-		var url =
-			'raw.githubusercontent.com/agershun/alasql/develop/test/test157.json';
+		var url = 'raw.githubusercontent.com/agershun/alasql/develop/test/test157.json';
 
 		it('Load http', function (done) {
 			this.timeout(2000);
@@ -89,8 +80,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 	});
 
 	xdescribe('.tab from URL', function () {
-		var url =
-			'raw.githubusercontent.com/agershun/alasql/develop/test/test157.tab';
+		var url = 'raw.githubusercontent.com/agershun/alasql/develop/test/test157.tab';
 
 		it('Load http', function (done) {
 			this.timeout(10000);
@@ -104,8 +94,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 	});
 
 	describe('.txt from URL', function () {
-		var url =
-			'raw.githubusercontent.com/agershun/alasql/develop/test/test157.txt';
+		var url = 'raw.githubusercontent.com/agershun/alasql/develop/test/test157.txt';
 
 		it('Load http', function (done) {
 			this.timeout(10000);
@@ -119,8 +108,7 @@ describe('Test ' + test + ' Load data from internet', function () {
 	});
 
 	describe('.csv from URL', function () {
-		var url =
-			'raw.githubusercontent.com/agershun/alasql/develop/test/test157a.csv';
+		var url = 'raw.githubusercontent.com/agershun/alasql/develop/test/test157a.csv';
 
 		it('Load http', function (done) {
 			this.timeout(10000);

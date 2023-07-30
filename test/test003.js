@@ -7,10 +7,8 @@ if (typeof exports === 'object') {
 var NUMTESTS = 10000;
 
 describe('Test 03 - ' + NUMTESTS + 'times', function () {
-	var sql1 =
-		'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
-	var sql2 =
-		"INSERT INTO schools (schoolid, schoolname) VALUES (999,'Northern Pacific School')";
+	var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
+	var sql2 = "INSERT INTO schools (schoolid, schoolname) VALUES (999,'Northern Pacific School')";
 	var sql3 = "INSERT INTO schools VALUES (998,'Western Pacific School')";
 
 	zt('Start', NUMTESTS, function () {});

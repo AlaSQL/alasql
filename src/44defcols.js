@@ -18,8 +18,7 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 				//				console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
 				//console.log(alasql.databases[fr.databaseid || databaseid].tables, fr.tableid);
 				//console.log(alasql.databases);
-				var table =
-					alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
+				var table = alasql.databases[fr.databaseid || databaseid].tables[fr.tableid];
 				//console.log(table);
 
 				if (undefined === table) {
@@ -59,10 +58,7 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 				var alias = jn.table.tableid;
 				if (jn.as) alias = jn.as;
 				var alias = jn.as || jn.table.tableid;
-				var table =
-					alasql.databases[jn.table.databaseid || databaseid].tables[
-						jn.table.tableid
-					];
+				var table = alasql.databases[jn.table.databaseid || databaseid].tables[jn.table.tableid];
 				//				console.log(jn.table.tableid, jn.table.databaseid);
 				if (table.columns) {
 					table.columns.forEach(function (col) {

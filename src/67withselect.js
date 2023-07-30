@@ -38,8 +38,7 @@ yy.WithSelect.prototype.execute = function (databaseid, params, cb) {
 		// Clear temporary tables
 		//		setTimeout(function(){
 		self.withs.forEach(function (w, idx) {
-			if (savedTables[idx])
-				alasql.databases[databaseid].tables[w.name] = savedTables[idx];
+			if (savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx];
 			else delete alasql.databases[databaseid].tables[w.name];
 		});
 		//		},0);

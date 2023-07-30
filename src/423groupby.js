@@ -126,12 +126,7 @@ if(false) {
 			aft2 = '';
 
 		if (typeof query.groupStar !== 'undefined') {
-			aft2 +=
-				"for(var f in p['" +
-				query.groupStar +
-				"']) {g[f]=p['" +
-				query.groupStar +
-				"'][f];};";
+			aft2 += "for(var f in p['" + query.groupStar + "']) {g[f]=p['" + query.groupStar + "'][f];};";
 		}
 
 		/*
@@ -154,13 +149,7 @@ if(false) {
 				if (col instanceof yy.AggrValue) {
 					if (col.distinct) {
 						aft +=
-							",g['$$_VALUES_" +
-							colas +
-							"']={},g['$$_VALUES_" +
-							colas +
-							"'][" +
-							colexp +
-							']=true';
+							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
@@ -253,15 +242,7 @@ if(false) {
 
 						//					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={}),1),'
 						//					+'\'__REDUCE__'+colas+'\':acc,';
-						return (
-							"'" +
-							colas +
-							"':alasql.aggr['" +
-							col.funcid +
-							"'](" +
-							colexp +
-							',undefined,1),'
-						);
+						return "'" + colas + "':alasql.aggr['" + col.funcid + "'](" + colexp + ',undefined,1),';
 					}
 					return '';
 				}
@@ -497,16 +478,7 @@ if(false) {
 						//					 }
 						//			else if(col.aggregatorid == 'AVG') { srg.push(colas+':0'); }
 					} else if (col.aggregatorid === 'AGGR') {
-						return (
-							'' +
-							pre +
-							"g['" +
-							colas +
-							"']=" +
-							col.expression.toJS('g', -1) +
-							';' +
-							post
-						);
+						return '' + pre + "g['" + colas + "']=" + col.expression.toJS('g', -1) + ';' + post;
 					} else if (col.aggregatorid === 'REDUCE') {
 						return (
 							'' +

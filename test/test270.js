@@ -185,10 +185,7 @@ describe('Test 270 RECORDSET tests', function () {
 	});
 
 	it.skip('16. JOIN params', function (done) {
-		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepEqual(colres, ['a', 'b', 'c']);
 		done();
@@ -204,10 +201,7 @@ describe('Test 270 RECORDSET tests', function () {
 	});
 
 	it.skip('18. JOIN params', function (done) {
-		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepEqual(colres, ['a', 'b', 'c']);
 		done();

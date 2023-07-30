@@ -23,14 +23,10 @@ describe('Test 927 group by empty results bug', function () {
 			{a: undefined, 'COUNT(*)': 1},
 		]);
 
-		var res = alasql('SELECT c, COUNT(*) FROM ? WHERE a IS NULL GROUP BY c', [
-			data,
-		]);
+		var res = alasql('SELECT c, COUNT(*) FROM ? WHERE a IS NULL GROUP BY c', [data]);
 		assert.deepEqual(res, [{c: undefined, 'COUNT(*)': 1}]);
 
-		var res = alasql('SELECT a, COUNT(*) FROM ? WHERE a = b GROUP BY a', [
-			data,
-		]);
+		var res = alasql('SELECT a, COUNT(*) FROM ? WHERE a = b GROUP BY a', [data]);
 		assert.deepEqual(res, []);
 
 		done();

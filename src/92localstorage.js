@@ -100,9 +100,7 @@ LS.createDatabase = function (lsdbid, args, ifnotexists, databaseid, cb) {
 		if (!ls) ls = {databases: {}}; // Empty record
 		if (ls.databases && ls.databases[lsdbid]) {
 			throw new Error(
-				'localStorage: Cannot create new database "' +
-					lsdbid +
-					'" because it already exists'
+				'localStorage: Cannot create new database "' + lsdbid + '" because it already exists'
 			);
 		}
 		ls.databases[lsdbid] = true;
@@ -136,9 +134,7 @@ LS.dropDatabase = function (lsdbid, ifexists, cb) {
 
 		if (ls.databases && !ls.databases[lsdbid]) {
 			throw new Error(
-				'localStorage: Cannot drop database "' +
-					lsdbid +
-					'" because there is no such database'
+				'localStorage: Cannot drop database "' + lsdbid + '" because there is no such database'
 			);
 		}
 		delete ls.databases[lsdbid];
@@ -168,11 +164,7 @@ LS.dropDatabase = function (lsdbid, ifexists, cb) {
 LS.attachDatabase = function (lsdbid, databaseid, args, params, cb) {
 	var res = 1;
 	if (alasql.databases[databaseid]) {
-		throw new Error(
-			'Unable to attach database as "' +
-				databaseid +
-				'" because it already exists'
-		);
+		throw new Error('Unable to attach database as "' + databaseid + '" because it already exists');
 	}
 	if (!databaseid) databaseid = lsdbid;
 	var db = new alasql.Database(databaseid);
@@ -233,11 +225,7 @@ LS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	// Check if such record exists
 	if (tb && !ifnotexists) {
 		throw new Error(
-			'Table "' +
-				tableid +
-				'" alsready exists in localStorage database "' +
-				lsdbid +
-				'"'
+			'Table "' + tableid + '" alsready exists in localStorage database "' + lsdbid + '"'
 		);
 	}
 	var lsdb = LS.get(lsdbid);
@@ -273,9 +261,7 @@ LS.truncateTable = function (databaseid, tableid, ifexists, cb) {
 
 	if (!ifexists && !lsdb.tables[tableid]) {
 		throw new Error(
-			'Cannot truncate table "' +
-				tableid +
-				'" in localStorage, because it does not exist'
+			'Cannot truncate table "' + tableid + '" in localStorage, because it does not exist'
 		);
 	}
 
@@ -315,9 +301,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	}
 	if (!ifexists && !lsdb.tables[tableid]) {
 		throw new Error(
-			'Cannot drop table "' +
-				tableid +
-				'" in localStorage, because it does not exist'
+			'Cannot drop table "' + tableid + '" in localStorage, because it does not exist'
 		);
 	}
 	delete lsdb.tables[tableid];

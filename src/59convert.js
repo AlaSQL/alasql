@@ -76,9 +76,7 @@ function structuredDate(unFormattedDate) {
 	var formattedHour = ('0' + unFormattedDate.getHours()).substr(-2);
 	var formattedMinutes = ('0' + unFormattedDate.getMinutes()).substr(-2);
 	var formattedSeconds = ('0' + unFormattedDate.getSeconds()).substr(-2);
-	var formattedMilliseconds = ('00' + unFormattedDate.getMilliseconds()).substr(
-		-3
-	);
+	var formattedMilliseconds = ('00' + unFormattedDate.getMilliseconds()).substr(-3);
 	return {
 		month: month,
 		year: year,
@@ -136,16 +134,14 @@ alasql.stdfn.CONVERT = function (value, args) {
 				val = s.formattedDate + '-' + s.formattedMonth + '-' + s.formattedYear;
 				break;
 			case 6: // dd mon yy
-				val =
-					s.formattedDate + ' ' + s.day.toLowerCase() + ' ' + s.formattedYear;
+				val = s.formattedDate + ' ' + s.day.toLowerCase() + ' ' + s.formattedYear;
 				break;
 			case 7: // Mon dd,yy
 				val = s.day + ' ' + s.formattedDate + ',' + s.formattedYear;
 				break;
 			case 8: // hh:mm:ss
 			case 108: // hh:mm:ss
-				val =
-					s.formattedHour + ':' + s.formattedMinutes + ':' + s.formattedSeconds;
+				val = s.formattedHour + ':' + s.formattedMinutes + ':' + s.formattedSeconds;
 				break;
 			case 10: // mm-dd-yy
 				val = s.formattedMonth + '-' + s.formattedDate + '-' + s.formattedYear;
@@ -188,9 +184,7 @@ alasql.stdfn.CONVERT = function (value, args) {
 				val = s.fullYear + s.formattedMonth + s.formattedDate;
 				break;
 			default:
-				throw new Error(
-					'The CONVERT style ' + args.style + ' is not realized yet.'
-				);
+				throw new Error('The CONVERT style ' + args.style + ' is not realized yet.');
 		}
 	}
 
@@ -200,13 +194,7 @@ alasql.stdfn.CONVERT = function (value, args) {
 		return s.formattedYear + '.' + s.formattedMonth + '.' + s.formattedDate;
 	} else if (udbtypeid == 'DATETIME' || udbtypeid == 'DATETIME2') {
 		var f = s.fullYear + '.' + s.formattedMonth + '.' + s.formattedDate;
-		f +=
-			' ' +
-			s.formattedHour +
-			':' +
-			s.formattedMinutes +
-			':' +
-			s.formattedSeconds;
+		f += ' ' + s.formattedHour + ':' + s.formattedMinutes + ':' + s.formattedSeconds;
 		f += '.' + s.formattedMilliseconds;
 		return f;
 	} else if (['MONEY'].indexOf(udbtypeid) > -1) {
@@ -215,38 +203,26 @@ alasql.stdfn.CONVERT = function (value, args) {
 	} else if (['BOOLEAN'].indexOf(udbtypeid) > -1) {
 		return !!val;
 	} else if (
-		[
-			'INT',
-			'INTEGER',
-			'SMALLINT',
-			'BIGINT',
-			'SERIAL',
-			'SMALLSERIAL',
-			'BIGSERIAL',
-		].indexOf(args.dbtypeid.toUpperCase()) > -1
+		['INT', 'INTEGER', 'SMALLINT', 'BIGINT', 'SERIAL', 'SMALLSERIAL', 'BIGSERIAL'].indexOf(
+			args.dbtypeid.toUpperCase()
+		) > -1
 	) {
 		return val | 0;
 	} else if (
-		['STRING', 'VARCHAR', 'NVARCHAR', 'CHARACTER VARIABLE'].indexOf(
-			args.dbtypeid.toUpperCase()
-		) > -1
+		['STRING', 'VARCHAR', 'NVARCHAR', 'CHARACTER VARIABLE'].indexOf(args.dbtypeid.toUpperCase()) >
+		-1
 	) {
 		if (args.dbsize) return ('' + val).substr(0, args.dbsize);
 		else return '' + val;
 	} else if (['CHAR', 'CHARACTER', 'NCHAR'].indexOf(udbtypeid) > -1) {
 		return (val + new Array(args.dbsize + 1).join(' ')).substr(0, args.dbsize);
 		//else return ""+val.substr(0,1);
-	} else if (
-		['NUMBER', 'FLOAT', 'DECIMAL', 'NUMERIC'].indexOf(udbtypeid) > -1
-	) {
+	} else if (['NUMBER', 'FLOAT', 'DECIMAL', 'NUMERIC'].indexOf(udbtypeid) > -1) {
 		var m = +val;
 		//toPrecision sets the number of numbers total in the result
 		m = args.dbsize !== undefined ? parseFloat(m.toPrecision(args.dbsize)) : m;
 		//toFixed sets the number of numbers to the right of the decimal
-		m =
-			args.dbprecision !== undefined
-				? parseFloat(m.toFixed(args.dbprecision))
-				: m;
+		m = args.dbprecision !== undefined ? parseFloat(m.toFixed(args.dbprecision)) : m;
 		return m;
 	} else if (['JSON'].indexOf(udbtypeid) > -1) {
 		if (typeof val == 'object') return val;

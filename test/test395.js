@@ -32,12 +32,10 @@ describe('Test 395 SQLLOGICTEST SELECT 1', function () {
 	});
 
 	it('4. Test like in command-line', function (done) {
-		alasql
-			.promise('COLUMN OF SELECT 1 FROM @[1,2] WHERE 1 IN (SELECT 1)')
-			.then(function (res) {
-				assert.deepEqual(res, [1, 1]);
-				done();
-			});
+		alasql.promise('COLUMN OF SELECT 1 FROM @[1,2] WHERE 1 IN (SELECT 1)').then(function (res) {
+			assert.deepEqual(res, [1, 1]);
+			done();
+		});
 	});
 
 	it('5. More tests', function (done) {

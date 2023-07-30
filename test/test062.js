@@ -14,9 +14,7 @@ describe('Test 62 - ALTER TABLE', function () {
 
 	it('ADD COLUMN', function (done) {
 		alasql('alter table test add column name string');
-		alasql(
-			'insert into test (b,name) values (40,"Kosovo"),(50,"Belgrad"),(60,"Prague")'
-		);
+		alasql('insert into test (b,name) values (40,"Kosovo"),(50,"Belgrad"),(60,"Prague")');
 		var res = alasql('select * from test');
 		done();
 	});

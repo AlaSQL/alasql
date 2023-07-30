@@ -71,9 +71,7 @@ if (typeof exports != 'object') {
 				alasql.from.LOCALSTORAGE = function () {
 					return lsfn;
 				};
-				var res = alasql(
-					'SELECT COLUMN [1] FROM localStorage() WHERE [0] LIKE "one"'
-				);
+				var res = alasql('SELECT COLUMN [1] FROM localStorage() WHERE [0] LIKE "one"');
 				assert.deepEqual(res, [
 					[
 						{a: 1, b: 2},
@@ -82,9 +80,7 @@ if (typeof exports != 'object') {
 					],
 				]);
 
-				var res = alasql('SELECT COLUMN [1] FROM ? WHERE [0] LIKE "one"', [
-					lsfn,
-				]);
+				var res = alasql('SELECT COLUMN [1] FROM ? WHERE [0] LIKE "one"', [lsfn]);
 				assert.deepEqual(res, [
 					[
 						{a: 1, b: 2},
@@ -124,9 +120,7 @@ if (typeof exports != 'object') {
 				alasql('CREATE TABLE one');
 
 				alasql('BEGIN TRANSACTION');
-				alasql(
-					'INSERT INTO one VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40'
-				);
+				alasql('INSERT INTO one VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40');
 				alasql('SELECT * FROM one WHERE a = 1');
 
 				alasql('DELETE FROM one WHERE a = 2');
@@ -142,9 +136,7 @@ if (typeof exports != 'object') {
 				alasql('SHOW TABLES');
 
 				alasql('CREATE TABLE two (a INT PRIMARY KEY, b Object)');
-				alasql(
-					'INSERT INTO two VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40'
-				);
+				alasql('INSERT INTO two VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40');
 				alasql('SELECT * FROM two WHERE a = 1');
 				alasql('DROP TABLE two');
 

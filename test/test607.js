@@ -12,9 +12,7 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 		alasql('ATTACH LOCALSTORAGE DATABASE test' + test);
 		alasql('USE test' + test);
 		alasql('CREATE TABLE one (id INT IDENTITY(3,5), name VARCHAR)');
-		alasql(
-			"INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')"
-		);
+		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
 	});
 
 	after(function () {
@@ -71,9 +69,7 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 	it('D) Check TRUNCATE works in a COMMIT', function () {
 		//populate the table
 		alasql('TRUNCATE TABLE one');
-		alasql(
-			"INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')"
-		);
+		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
 
 		alasql('BEGIN TRANSACTION');
 		alasql('TRUNCATE TABLE one');

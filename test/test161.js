@@ -34,16 +34,12 @@ if (false) {
 				{name: 'Sherlok Holmes', age: 44},
 			];
 
-			alasql(
-				"select * into xlsx('test160res.xlsx') from ?",
-				[people],
-				function (res) {
-					// TODO - what to do in browser? try to save?
-					// How to protect node.js (where to save these files?)
-					assert(res, 2);
-					done();
-				}
-			);
+			alasql("select * into xlsx('test160res.xlsx') from ?", [people], function (res) {
+				// TODO - what to do in browser? try to save?
+				// How to protect node.js (where to save these files?)
+				assert(res, 2);
+				done();
+			});
 		});
 	});
 }

@@ -50,15 +50,7 @@ function compileSelectStar(query, aliases, joinstar) {
 			columns.forEach(function (tcol) {
 				if (joinstar && alasql.options.joinstar == 'underscore') {
 					ss.push(
-						"'" +
-							alias +
-							'_' +
-							tcol.columnid +
-							"':p['" +
-							alias +
-							"']['" +
-							tcol.columnid +
-							"']"
+						"'" + alias + '_' + tcol.columnid + "':p['" + alias + "']['" + tcol.columnid + "']"
 					);
 				} else if (joinstar && alasql.options.joinstar == 'json') {
 					//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
@@ -84,13 +76,8 @@ function compileSelectStar(query, aliases, joinstar) {
 						};
 					} else {
 						var newValue =
-							value +
-							' !== undefined ? ' +
-							value +
-							' : ' +
-							columnIds[tcol.columnid].value;
-						ss[columnIds[tcol.columnid].id] =
-							columnIds[tcol.columnid].key + newValue;
+							value + ' !== undefined ? ' + value + ' : ' + columnIds[tcol.columnid].value;
+						ss[columnIds[tcol.columnid].id] = columnIds[tcol.columnid].key + newValue;
 						columnIds[tcol.columnid].value = newValue;
 					}
 				}
@@ -142,11 +129,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 			if (col.columnid === '*') {
 				if (col.func) {
 					sp +=
-						"r=params['" +
-						col.param +
-						"'](p['" +
-						query.sources[0].alias +
-						"'],p,params,alasql);";
+						"r=params['" + col.param + "'](p['" + query.sources[0].alias + "'],p,params,alasql);";
 				} else if (col.tableid) {
 					//Copy all
 					var ret = compileSelectStar(query, [col.tableid], false);
@@ -171,19 +154,11 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				// If field, otherwise - expression
 				var tbid = col.tableid;
 				//				console.log(query.sources);
-				var dbid =
-					col.databaseid ||
-					query.sources[0].databaseid ||
-					query.database.databaseid;
+				var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
 				if (!tbid) tbid = query.defcols[col.columnid];
 				if (!tbid) tbid = query.defaultTableid;
 				if (col.columnid !== '_') {
-					if (
-						false &&
-						tbid &&
-						!query.defcols['.'][col.tableid] &&
-						!query.defcols[col.columnid]
-					) {
+					if (false && tbid && !query.defcols['.'][col.tableid] && !query.defcols[col.columnid]) {
 						ss.push(
 							"'" +
 								escapeq(col.as || col.columnid) +
@@ -238,9 +213,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 						}
 					}
 				} else {
-					ss.push(
-						"'" + escapeq(col.as || col.columnid) + "':p['" + tbid + "']"
-					);
+					ss.push("'" + escapeq(col.as || col.columnid) + "':p['" + tbid + "']");
 				}
 				query.selectColumns[escapeq(col.as || col.columnid)] = true;
 
@@ -249,10 +222,8 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 						//						console.log(query.database,tbid,query.aliases[tbid].tableid);
 						throw new Error("Table '" + tbid + "' does not exist in database");
 					}
-					var columns =
-						alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
-					var xcolumns =
-						alasql.databases[dbid].tables[query.aliases[tbid].tableid].xcolumns;
+					var columns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].columns;
+					var xcolumns = alasql.databases[dbid].tables[query.aliases[tbid].tableid].xcolumns;
 					//console.log(xcolumns, col,123);
 					//					console.log(0);
 					if (xcolumns && columns.length > 0) {
@@ -362,9 +333,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 			);
 			//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
-			query.selectColumns[
-				escapeq(col.as || col.columnid || col.toString())
-			] = true;
+			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
 
 			var coldef = {
 				columnid: col.as || col.columnid || col.toString(),
@@ -389,18 +358,10 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 			var key = '$$$' + idx;
 			if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
-			} else if (
-				v instanceof yy.ParamValue &&
-				query.xcolumns[params[v.param]]
-			) {
+			} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
 				s += "r['" + key + "']=r['" + params[v.param] + "'];";
 			} else {
-				s +=
-					"r['" +
-					key +
-					"']=" +
-					v.toJS('p', query.defaultTableid, query.defcols) +
-					';';
+				s += "r['" + key + "']=" + v.toJS('p', query.defaultTableid, query.defcols) + ';';
 			}
 			query.removeKeys.push(key);
 		});
@@ -440,8 +401,7 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 
 			if (
 				col.funcid &&
-				(col.funcid.toUpperCase() === 'ROWNUM' ||
-					col.funcid.toUpperCase() === 'ROW_NUMBER')
+				(col.funcid.toUpperCase() === 'ROWNUM' || col.funcid.toUpperCase() === 'ROW_NUMBER')
 			) {
 				query.rownums.push(col.as);
 			}

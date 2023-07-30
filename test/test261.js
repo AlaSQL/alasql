@@ -12,9 +12,7 @@ describe('Test 261 SqlLogic Parser Test #4', function () {
 	});
 
 	it('2. CREATE TABLE', function (done) {
-		var res = alasql(
-			'CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER)'
-		);
+		var res = alasql('CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER)');
 		assert(res == 1);
 		done();
 	});

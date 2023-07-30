@@ -106,14 +106,10 @@ describe('Test 305 CREATE GRAPH', function () {
 	});
 
 	it('18. Create graph from file ', function (done) {
-		var res = alasql(
-			'SEARCH FROM XML("' + __dirname + '/test305a.gexf")',
-			[],
-			function (data) {
-				//      console.log(res);
-				done();
-			}
-		);
+		var res = alasql('SEARCH FROM XML("' + __dirname + '/test305a.gexf")', [], function (data) {
+			//      console.log(res);
+			done();
+		});
 		//    var res = alasql('CREATE GRAPH FROM GEXF("test305a.gexf")');
 	});
 

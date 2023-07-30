@@ -35,8 +35,7 @@ describe('Test 617 - Where LTRIM will remove leading whitespace characters in an
 	});
 	it('F) Will remove only leading whitespace in expression and NOT the tabs', function () {
 		// char(9) = tabs;
-		var sql =
-			"select LTRIM('  ' + char(9) + char(9) + 'Hello World !') AS Result";
+		var sql = "select LTRIM('  ' + char(9) + char(9) + 'Hello World !') AS Result";
 		var res = alasql(sql);
 		assert.equal(res[0]['Result'], '\t\t' + 'Hello World !');
 	});
@@ -48,8 +47,7 @@ describe('Test 617 - Where LTRIM will remove leading whitespace characters in an
 	});
 	it('H) Will remove only leading whitespace in expression and NOT the newlines', function () {
 		// char(10) = newline;
-		var sql =
-			"select LTRIM('  ' + char(10) + char(10) + 'Hello World !') AS Result";
+		var sql = "select LTRIM('  ' + char(10) + char(10) + 'Hello World !') AS Result";
 		var res = alasql(sql);
 		assert.equal(res[0]['Result'], '\n\n' + 'Hello World !');
 	});

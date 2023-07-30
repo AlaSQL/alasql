@@ -14,9 +14,7 @@ describe('Test 21', function () {
 		db.exec('INSERT INTO test VALUES (5,2)');
 		db.exec('INSERT INTO test VALUES (6,2)');
 
-		var res = db.exec(
-			'SELECT b, SUM(a), COUNT(a), FIRST(a), LAST(a) FROM test GROUP BY b'
-		);
+		var res = db.exec('SELECT b, SUM(a), COUNT(a), FIRST(a), LAST(a) FROM test GROUP BY b');
 		assert.deepEqual(
 			[
 				{

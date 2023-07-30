@@ -77,9 +77,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 				');'
 		);
 		alasql('insert into COMPANY(id, name) values ("achme", "Acme Corp");');
-		alasql(
-			'insert into SITE(companyId, id, name) values ("achme", "area51", "Area 51");'
-		);
+		alasql('insert into SITE(companyId, id, name) values ("achme", "area51", "Area 51");');
 		alasql(
 			'insert into COLLABORATOR(companyId, siteId, id, name) values ("achme", "area51", "700", "dnoB semaJ");'
 		);
@@ -124,9 +122,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 				');'
 		);
 		alasql('insert into COMPANY(id, name) values ("achme", "Acme Corp");');
-		alasql(
-			'insert into SITE(companyId, id, name) values ("achme", "area51", "Area 51");'
-		);
+		alasql('insert into SITE(companyId, id, name) values ("achme", "area51", "Area 51");');
 		assert.throws(function () {
 			alasql(
 				'insert into COLLABORATOR(companyId, siteId, id, name) values ("achme", NULL, "700", "dnoB semaJ");'
@@ -169,9 +165,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 				');'
 		);
 		alasql('insert into COMPANY(id, name) values ("achme", "Acme Corp");');
-		alasql(
-			'insert into SITE(companyId, id, name) values ("achme", "area51", "Area 51");'
-		);
+		alasql('insert into SITE(companyId, id, name) values ("achme", "area51", "Area 51");');
 		alasql(
 			'insert into COLLABORATOR(companyId, siteId, id, name) values (NULL, NULL, "700", "dnoB semaJ");'
 		);

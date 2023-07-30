@@ -54,9 +54,7 @@ describe('Test 16', function () {
 			},
 		];
 
-		alasql(
-			'create table courses (courseid int, coursename string, schoolid int)'
-		);
+		alasql('create table courses (courseid int, coursename string, schoolid int)');
 		alasql.databases.test16a.tables.courses.data = [
 			{courseid: 1, coursename: 'first', schoolid: 1},
 			{courseid: 2, coursename: 'second', schoolid: 1},
@@ -64,9 +62,7 @@ describe('Test 16', function () {
 			{courseid: 4, coursename: 'fourth', schoolid: 2},
 			{courseid: 5, coursename: 'fifth', schoolid: 2},
 		];
-		alasql(
-			'create table schools (schoolid int, schoolname string, regionid int)'
-		);
+		alasql('create table schools (schoolid int, schoolname string, regionid int)');
 
 		alasql.databases.test16a.tables.schools.data = [
 			{schoolid: 1, schoolname: 'Northern School', regionid: 'north'},

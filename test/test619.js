@@ -17,9 +17,7 @@ describe('Test 619 calling aggregate functions on empty sets', function () {
 	});
 
 	it('1. Should always return undefined', function () {
-		res = alasql('SELECT STDDEV(col) AS Result FROM ? WHERE 1=0', [
-			[{col: 1}, {col: 2}],
-		]);
+		res = alasql('SELECT STDDEV(col) AS Result FROM ? WHERE 1=0', [[{col: 1}, {col: 2}]]);
 		assert.equal(res[0]['Result'], undefined);
 	});
 });

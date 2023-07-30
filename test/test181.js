@@ -14,9 +14,7 @@ describe('Test 181 - ARRAY aggregator', function () {
 			{food: 'potato', type: 'vegetable'},
 			{food: 'banana', type: 'fruit'},
 		];
-		var res = alasql('SELECT ARRAY(food) AS foods FROM ? GROUP BY type', [
-			food,
-		]);
+		var res = alasql('SELECT ARRAY(food) AS foods FROM ? GROUP BY type', [food]);
 		//      console.log(res);
 		assert.deepEqual(res, [{foods: ['apple', 'banana']}, {foods: ['potato']}]);
 		done();

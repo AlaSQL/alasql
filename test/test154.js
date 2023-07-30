@@ -38,9 +38,7 @@ if (typeof exports != 'object') {
 			const res8 = await sql('SHOW TABLES FROM ag154');
 			assert(res8.length === 0);
 
-			const res9 = await sql(
-				'DETACH DATABASE ag154;DROP IndexedDB DATABASE ag154'
-			);
+			const res9 = await sql('DETACH DATABASE ag154;DROP IndexedDB DATABASE ag154');
 			assert(res9[0] === 1);
 			assert(res9[1] === 1);
 		});

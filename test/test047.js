@@ -18,13 +18,9 @@ describe('Test 47', function () {
 		});
 
 		it('Subsubqueries without alias', function (done) {
-			var res = alasql(
-				'SELECT VALUE SUM(a) FROM (SELECT * FROM one WHERE a < 3)'
-			);
+			var res = alasql('SELECT VALUE SUM(a) FROM (SELECT * FROM one WHERE a < 3)');
 			assert.equal(3, res);
-			var res = alasql(
-				'SELECT VALUE COUNT(*) FROM (SELECT * FROM one WHERE a < 3)'
-			);
+			var res = alasql('SELECT VALUE COUNT(*) FROM (SELECT * FROM one WHERE a < 3)');
 			assert.equal(2, res);
 
 			alasql('drop database test47');

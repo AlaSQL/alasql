@@ -26,39 +26,25 @@ describe('Test 302 CREATE CLASS ', function () {
 		germany = alasql('INSERT INTO Country VALUES {name:"Germany"}');
 
 		alasql('CREATE CLASS City');
-		rome = alasql(
-			'INSERT INTO City VALUES {name:"Rome",country:' + italy + '}'
-		);
-		milano = alasql(
-			'INSERT INTO City VALUES {name:"Milano",country:' + italy + '}'
-		);
-		berlin = alasql(
-			'INSERT INTO City VALUES {name:"Berlin",country:' + germany + '}'
-		);
+		rome = alasql('INSERT INTO City VALUES {name:"Rome",country:' + italy + '}');
+		milano = alasql('INSERT INTO City VALUES {name:"Milano",country:' + italy + '}');
+		berlin = alasql('INSERT INTO City VALUES {name:"Berlin",country:' + germany + '}');
 
 		assert(alasql.databases.test302.tables.Person.isclass);
 		done();
 	});
 
 	it.skip('4. INSERT INTO CLASS', function (done) {
-		romeo = alasql(
-			'INSERT INTO Person VALUES {name:"Romeo",age:32, city:' + rome + '}'
-		);
-		paola = alasql(
-			'INSERT INTO Person VALUES {name:"Paola",age:25, city:' + milano + '}'
-		);
-		peter = alasql(
-			'INSERT INTO Person VALUES {name:"Peter",age:18, city:' + berlin + '}'
-		);
+		romeo = alasql('INSERT INTO Person VALUES {name:"Romeo",age:32, city:' + rome + '}');
+		paola = alasql('INSERT INTO Person VALUES {name:"Paola",age:25, city:' + milano + '}');
+		peter = alasql('INSERT INTO Person VALUES {name:"Peter",age:18, city:' + berlin + '}');
 		//    assert(alasql.databases.test302.tables.Person.isclass);
 		done();
 	});
 
 	it.skip('5. SET variable = (INSERT)', function (done) {
 		alasql('SET @egypt = (INSERT INTO Country VALUES {name:"Egypt"})');
-		alasql(
-			'SET @cairo = (INSERT INTO City VALUES {name:"Cairo", country:(@egypt)})'
-		);
+		alasql('SET @cairo = (INSERT INTO City VALUES {name:"Cairo", country:(@egypt)})');
 		alasql('INSERT INTO Person VALUES {name:"Ali",city:(@cairo)}');
 		done();
 	});
@@ -97,9 +83,7 @@ describe('Test 302 CREATE CLASS ', function () {
 	});
 
 	it.skip('10. SEARCH TO', function (done) {
-		var res = alasql(
-			'search / city to @c ! ex({city:name,num:len(@c)}) FROM Person'
-		);
+		var res = alasql('search / city to @c ! ex({city:name,num:len(@c)}) FROM Person');
 		assert.deepEqual(res, [
 			{city: 'Rome', num: 1},
 			{city: 'Milano', num: 2},

@@ -16,9 +16,7 @@ describe('Test 355 PIVOT', function () {
 
 	/* Source: http://blog.sqlauthority.com/2008/06/07/sql-server-pivot-and-unpivot-table-examples/ */
 	it.skip('2. Prepare Data', function (done) {
-		alasql(
-			'CREATE TABLE Product(Cust VARCHAR(25), Product VARCHAR(20), QTY INT)'
-		);
+		alasql('CREATE TABLE Product(Cust VARCHAR(25), Product VARCHAR(20), QTY INT)');
 
 		alasql(function () {
 			/*

@@ -19,9 +19,7 @@ describe('Test 144 - Use three databases simultaniosly', function () {
 		alasql('INSERT INTO test144db2.two VALUES (1,10), (2,20), (3,30)');
 		alasql('INSERT INTO test144db3.three VALUES (1,100), (2,200)');
 
-		alasql(
-			'SELECT * INTO test144db1.one FROM test144db2.two JOIN test144db3.three USING a'
-		);
+		alasql('SELECT * INTO test144db1.one FROM test144db2.two JOIN test144db3.three USING a');
 		alasql('SELECT * FROM test144db1.one');
 
 		alasql('DELETE FROM test144db2.two WHERE a = 1');

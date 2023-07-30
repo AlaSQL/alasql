@@ -35,14 +35,10 @@ describe('Test 156 - match()', function () {
 			);
 			assert(res == 'London');
 
-			alasql(
-				'SELECT VALUE REGEXP_INSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")'
-			);
+			alasql('SELECT VALUE REGEXP_INSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")');
 			assert(res == 2);
 
-			alasql(
-				'SELECT VALUE REGEXP_SUBSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")'
-			);
+			alasql('SELECT VALUE REGEXP_SUBSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")');
 			assert(res == 'osco');
 
 			done();

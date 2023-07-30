@@ -16,9 +16,7 @@ describe('Test 321 CREATE GRAPH', function () {
 			function (data) {
 				gdata = data;
 				// Select unique
-				vv = alasql('SEARCH DISTINCT(UNION ALL(/[source],/[target])) FROM ?', [
-					gdata,
-				]);
+				vv = alasql('SEARCH DISTINCT(UNION ALL(/[source],/[target])) FROM ?', [gdata]);
 				done();
 			}
 		);
@@ -43,15 +41,7 @@ describe('Test 321 CREATE GRAPH', function () {
 		var res = alasql(
 			'CREATE GRAPH ' +
 				gdata.map(function (e) {
-					return (
-						'"' +
-						e.source +
-						'" > {[value]:' +
-						e.value +
-						'} > "' +
-						e.target +
-						'"'
-					);
+					return '"' + e.source + '" > {[value]:' + e.value + '} > "' + e.target + '"';
 				})
 		);
 		done();
@@ -79,15 +69,7 @@ describe('Test 321 CREATE GRAPH', function () {
 		var res = alasql(
 			'CREATE GRAPH ' +
 				gdata.map(function (e) {
-					return (
-						'"' +
-						e.source +
-						'" > {[value]:' +
-						e.value +
-						'} > "' +
-						e.target +
-						'"'
-					);
+					return '"' + e.source + '" > {[value]:' + e.value + '} > "' + e.target + '"';
 				})
 		);
 		done();

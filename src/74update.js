@@ -47,18 +47,16 @@ yy.Update.prototype.compile = function (databaseid) {
 		}
 
 		// console.log(73625, this.where.toJS('r', ''));
-		var wherefn = new Function(
-			'r,params,alasql',
-			'var y;return ' + this.where.toJS('r', '')
-		).bind(this);
+		var wherefn = new Function('r,params,alasql', 'var y;return ' + this.where.toJS('r', '')).bind(
+			this
+		);
 	}
 
 	// Construct update function
 	var s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
 	s += ';';
 	this.columns.forEach(function (col) {
-		s +=
-			"r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
+		s += "r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
 	});
 	// console.log(423623, s);
 	var assignfn = new Function('r,params,alasql', 'var y;' + s);

@@ -121,9 +121,7 @@ describe('Test 139 JSON', function () {
 		assert.deepEqual(res, [{a: [2014, 2015, 2015]}, {a: [2014, 2015, 2016]}]);
 
 		alasql('CREATE TABLE five (a JSON)');
-		alasql(
-			'INSERT INTO five VALUES (1), ("two"), (@{b:"three"}), (@["F","O","U","R"])'
-		);
+		alasql('INSERT INTO five VALUES (1), ("two"), (@{b:"three"}), (@["F","O","U","R"])');
 
 		var res = alasql('SELECT * FROM five');
 		assert.deepEqual(alasql.tables.five.data, [
@@ -132,12 +130,7 @@ describe('Test 139 JSON', function () {
 			{a: {b: 'three'}},
 			{a: ['F', 'O', 'U', 'R']},
 		]);
-		assert.deepEqual(res, [
-			{a: 1},
-			{a: 'two'},
-			{a: {b: 'three'}},
-			{a: ['F', 'O', 'U', 'R']},
-		]);
+		assert.deepEqual(res, [{a: 1}, {a: 'two'}, {a: {b: 'three'}}, {a: ['F', 'O', 'U', 'R']}]);
 
 		var res = alasql('SELECT * FROM five WHERE a = "two"');
 		assert.deepEqual(res, [{a: 'two'}]);

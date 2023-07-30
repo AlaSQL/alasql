@@ -17,15 +17,8 @@ describe('Test 132 Alasql + NoSQL', function () {
 	it('2. INSERT', function (done) {
 		alasql('INSERT INTO one VALUES (1,"One"), (2,"Two")');
 		//		alasql('INSERT INTO one VALUES @{a:3,b:"Three"}, @{a:4,b:"Four"}, (5,"Five")');
-		alasql(
-			'INSERT INTO one VALUES {a:3,b:"Three"}, {a:4,b:"Four"}, (5,"Five")'
-		);
-		alasql('INSERT INTO one VALUES ?,?,(?,?)', [
-			{a: 6, b: 'Six'},
-			{a: 7, b: 'Seven'},
-			8,
-			'Eight',
-		]);
+		alasql('INSERT INTO one VALUES {a:3,b:"Three"}, {a:4,b:"Four"}, (5,"Five")');
+		alasql('INSERT INTO one VALUES ?,?,(?,?)', [{a: 6, b: 'Six'}, {a: 7, b: 'Seven'}, 8, 'Eight']);
 		alasql.tables.one.insert({a: 9, b: 'Nine'});
 		alasql.tables.two.insert({a: 1, b: [2, {c: 3}, 4]});
 		alasql.tables.two.insert({a: 1, b: [2, {c: 5}, 4]});

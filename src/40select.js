@@ -121,28 +121,16 @@ yy.Select = class Select {
 			s += ' OFFSET ' + this.offset.value;
 		}
 		if (this.union) {
-			s +=
-				' UNION ' +
-				(this.corresponding ? 'CORRESPONDING ' : '') +
-				this.union.toString();
+			s += ' UNION ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.union.toString();
 		}
 		if (this.unionall) {
-			s +=
-				' UNION ALL ' +
-				(this.corresponding ? 'CORRESPONDING ' : '') +
-				this.unionall.toString();
+			s += ' UNION ALL ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.unionall.toString();
 		}
 		if (this.except) {
-			s +=
-				' EXCEPT ' +
-				(this.corresponding ? 'CORRESPONDING ' : '') +
-				this.except.toString();
+			s += ' EXCEPT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.except.toString();
 		}
 		if (this.intersect) {
-			s +=
-				' INTERSECT ' +
-				(this.corresponding ? 'CORRESPONDING ' : '') +
-				this.intersect.toString();
+			s += ' INTERSECT ' + (this.corresponding ? 'CORRESPONDING ' : '') + this.intersect.toString();
 		}
 		return s;
 	}
@@ -307,9 +295,7 @@ yy.Select = class Select {
 				) {
 					// For external database when AUTOCOMMIT is ONs
 					query.intoallfns = `return alasql
-								.engines[${JSON.stringify(
-									alasql.databases[this.into.databaseid || databaseid].engineid
-								)}]
+								.engines[${JSON.stringify(alasql.databases[this.into.databaseid || databaseid].engineid)}]
 								.intoTable(
 									${JSON.stringify(this.into.databaseid || databaseid)},
 									${JSON.stringify(this.into.tableid)},
@@ -341,10 +327,7 @@ yy.Select = class Select {
 				// If this is INTO() function, then call it
 				// with one or two parameters
 				//
-				var qs =
-					'return alasql.into[' +
-					JSON.stringify(this.into.funcid.toUpperCase()) +
-					'](';
+				var qs = 'return alasql.into[' + JSON.stringify(this.into.funcid.toUpperCase()) + '](';
 				if (this.into.args && this.into.args.length > 0) {
 					qs += this.into.args[0].toJS() + ',';
 					if (this.into.args.length > 1) {
@@ -368,17 +351,11 @@ yy.Select = class Select {
 			if (query.intofns) {
 				// Create intofn function
 				// console.log(234234, query.intofns);
-				query.intofn = new Function(
-					'r,i,params,alasql',
-					'var y;' + query.intofns
-				);
+				query.intofn = new Function('r,i,params,alasql', 'var y;' + query.intofns);
 			} else if (query.intoallfns) {
 				// Create intoallfn function
 				// console.log(23423234, query.intoallfns);
-				query.intoallfn = new Function(
-					'columns,cb,params,alasql',
-					'var y;' + query.intoallfns
-				);
+				query.intoallfn = new Function('columns,cb,params,alasql', 'var y;' + query.intoallfns);
 			}
 		}
 		//console.log(query);
@@ -479,11 +456,7 @@ function modify(query, res) {
 		// Try to create columns
 		if (res.length > 0) {
 			var allcol = {};
-			for (
-				var i = Math.min(res.length, alasql.options.columnlookup || 10) - 1;
-				0 <= i;
-				i--
-			) {
+			for (var i = Math.min(res.length, alasql.options.columnlookup || 10) - 1; 0 <= i; i--) {
 				for (var key in res[i]) {
 					allcol[key] = true;
 				}

@@ -42,11 +42,7 @@ yy.Print.prototype.execute = function (databaseid, params, cb) {
 	var self = this;
 	var res = 1;
 	//console.log(this);
-	alasql.precompile(
-		this,
-		databaseid,
-		params
-	); /** @todo Change from alasql to this */
+	alasql.precompile(this, databaseid, params); /** @todo Change from alasql to this */
 
 	if (this.exprs && this.exprs.length > 0) {
 		var rs = this.exprs.map(function (expr) {

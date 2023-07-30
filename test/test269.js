@@ -32,10 +32,7 @@ describe('Test 269 options', function () {
 
 	it.skip('2. by default', function (done) {
 		alasql.options.modifier = undefined;
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, [
 			{a: 1, b: 10, c: 100},
 			{a: 2, b: 20, c: 200},
@@ -48,10 +45,7 @@ describe('Test 269 options', function () {
 
 	it.skip('3. VALUE', function (done) {
 		alasql.options.modifier = 'VALUE';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, 1);
 
 		done();
@@ -59,10 +53,7 @@ describe('Test 269 options', function () {
 
 	it.skip('4. ROW', function (done) {
 		alasql.options.modifier = 'ROW';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, [1, 10, 100]);
 
 		done();
@@ -70,10 +61,7 @@ describe('Test 269 options', function () {
 
 	it.skip('5. COLUMN', function (done) {
 		alasql.options.modifier = 'COLUMN';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, [1, 2, 3, undefined]);
 
 		done();
@@ -81,10 +69,7 @@ describe('Test 269 options', function () {
 
 	it.skip('6. MATRIX', function (done) {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		//console.log(res);
 		// Wrong with reduced rows
 		assert.deepEqual(res, [
@@ -119,10 +104,7 @@ describe('Test 269 options', function () {
 
 	it.skip('7. RECORDSET', function (done) {
 		alasql.options.modifier = 'RECORDSET';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		//console.log(res);
 		// Wrong with reduced rows
 		assert.deepEqual(res, {
@@ -139,10 +121,7 @@ describe('Test 269 options', function () {
 
 	it.skip('8. INDEX', function (done) {
 		alasql.options.modifier = 'INDEX';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, {1: 10, 2: 20, 3: 30, undefined: 40});
 
 		done();
@@ -150,10 +129,7 @@ describe('Test 269 options', function () {
 
 	it.skip('9. TEXTSTRING', function (done) {
 		alasql.options.modifier = 'TEXTSTRING';
-		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [
-			data1,
-			data2,
-		]);
+		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, '1\n2\n3\n');
 
 		done();

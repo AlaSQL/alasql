@@ -55,13 +55,7 @@ alasql.from.HTML = function (selector, opts, cb, idx, query) {
 		headers = [];
 		var ths = sel.querySelector('thead tr').children;
 		for (var i = 0; i < ths.length; i++) {
-			if (
-				!(
-					ths.item(i).style &&
-					ths.item(i).style.display === 'none' &&
-					opt.skipdisplaynone
-				)
-			) {
+			if (!(ths.item(i).style && ths.item(i).style.display === 'none' && opt.skipdisplaynone)) {
 				headers.push(ths.item(i).textContent);
 			} else {
 				headers.push(undefined);
@@ -76,13 +70,7 @@ alasql.from.HTML = function (selector, opts, cb, idx, query) {
 		var tds = trs.item(j).children;
 		var r = {};
 		for (i = 0; i < tds.length; i++) {
-			if (
-				!(
-					tds.item(i).style &&
-					tds.item(i).style.display === 'none' &&
-					opt.skipdisplaynone
-				)
-			) {
+			if (!(tds.item(i).style && tds.item(i).style.display === 'none' && opt.skipdisplaynone)) {
 				if (headers) {
 					r[headers[i]] = tds.item(i).textContent;
 				} else {
@@ -399,10 +387,7 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			l = 0,
 			w = 10240;
 		for (; l < data.byteLength / w; ++l)
-			o += String.fromCharCode.apply(
-				null,
-				new Uint8Array(data.slice(l * w, l * w + w))
-			);
+			o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
 		o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
 		return o;
 	}
@@ -471,9 +456,7 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 					var col = alasql.utils.xlsnc(j);
 					if (opt.headers) {
 						if (workbook.Sheets[sheetid][col + '' + row0]) {
-							hh[col] = getHeaderText(
-								workbook.Sheets[sheetid][col + '' + row0].v
-							);
+							hh[col] = getHeaderText(workbook.Sheets[sheetid][col + '' + row0].v);
 						} else {
 							hh[col] = getHeaderText(col);
 						}
@@ -499,11 +482,7 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			}
 
 			// Remove last empty line (issue #548)
-			if (
-				res.length > 0 &&
-				res[res.length - 1] &&
-				Object.keys(res[res.length - 1]).length == 0
-			) {
+			if (res.length > 0 && res[res.length - 1] && Object.keys(res[res.length - 1]).length == 0) {
 				res.pop();
 			}
 

@@ -10,9 +10,7 @@ describe('Test 372', function () {
 		db.exec('create table otherNames (name string)');
 
 		assert.equal(
-			db.exec(
-				'select * from otherNames join someNames on someNames.name = otherNames.name'
-			).length,
+			db.exec('select * from otherNames join someNames on someNames.name = otherNames.name').length,
 			0
 		);
 
@@ -20,9 +18,7 @@ describe('Test 372', function () {
 		db.exec('insert into otherNames values ("Lars"), ("Erik")');
 
 		assert.equal(
-			db.exec(
-				'select * from otherNames join someNames on someNames.name = otherNames.name'
-			).length,
+			db.exec('select * from otherNames join someNames on someNames.name = otherNames.name').length,
 			2
 		);
 	});

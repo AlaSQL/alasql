@@ -18,10 +18,7 @@ describe('Test 233 COALESCE() test', function () {
 		alasql('source "' + __dirname + '/test233.sql"', [], function (res) {
 			assert.deepEqual(
 				alasql.utils.flatArray(res.pop()),
-				[
-					10000, 20000, 20800, 30000, 40000, 41600, 45000, 50000, 56000, 62400,
-					83200, 120000,
-				]
+				[10000, 20000, 20800, 30000, 40000, 41600, 45000, 50000, 56000, 62400, 83200, 120000]
 			);
 			done();
 		});

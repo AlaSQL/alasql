@@ -63,8 +63,7 @@ function queryfn(query, oldscope, cb, A, B) {
 		if (typeof rs !== 'undefined') {
 			// TODO - this is a hack: check if result is array - check all cases and
 			// make it more logical
-			if ((query.intofn || query.intoallfn) && Array.isArray(rs))
-				rs = rs.length;
+			if ((query.intofn || query.intoallfn) && Array.isArray(rs)) rs = rs.length;
 			result = rs;
 		}
 		//
@@ -93,11 +92,7 @@ function queryfn2(data, idx, query) {
 			source.dontcache = source.getfn.dontcache;
 
 			//			var prevsource = query.sources[h-1];
-			if (
-				source.joinmode == 'OUTER' ||
-				source.joinmode == 'RIGHT' ||
-				source.joinmode == 'ANTI'
-			) {
+			if (source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
 				source.dontcache = false;
 			}
 			source.data = {};
@@ -213,22 +208,16 @@ function queryfn3(query) {
 		// TODO Simplify this part of program
 		var ud, nd;
 		if (query.corresponding) {
-			if (!query.unionallfn.query.modifier)
-				query.unionallfn.query.modifier = undefined;
+			if (!query.unionallfn.query.modifier) query.unionallfn.query.modifier = undefined;
 			ud = query.unionallfn(query.params);
 		} else {
-			if (!query.unionallfn.query.modifier)
-				query.unionallfn.query.modifier = 'RECORDSET';
+			if (!query.unionallfn.query.modifier) query.unionallfn.query.modifier = 'RECORDSET';
 			nd = query.unionallfn(query.params);
 			ud = [];
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
 				var r = {};
-				for (
-					var j = Math.min(query.columns.length, nd.columns.length) - 1;
-					0 <= j;
-					j--
-				) {
+				for (var j = Math.min(query.columns.length, nd.columns.length) - 1; 0 <= j; j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -240,8 +229,7 @@ function queryfn3(query) {
 			if (!query.unionfn.query.modifier) query.unionfn.query.modifier = 'ARRAY';
 			ud = query.unionfn(query.params);
 		} else {
-			if (!query.unionfn.query.modifier)
-				query.unionfn.query.modifier = 'RECORDSET';
+			if (!query.unionfn.query.modifier) query.unionfn.query.modifier = 'RECORDSET';
 			nd = query.unionfn(query.params);
 			ud = [];
 			ilen = nd.data.length;
@@ -265,21 +253,15 @@ function queryfn3(query) {
 		query.data = arrayUnionDeep(query.data, ud);
 	} else if (query.exceptfn) {
 		if (query.corresponding) {
-			if (!query.exceptfn.query.modifier)
-				query.exceptfn.query.modifier = 'ARRAY';
+			if (!query.exceptfn.query.modifier) query.exceptfn.query.modifier = 'ARRAY';
 			var ud = query.exceptfn(query.params);
 		} else {
-			if (!query.exceptfn.query.modifier)
-				query.exceptfn.query.modifier = 'RECORDSET';
+			if (!query.exceptfn.query.modifier) query.exceptfn.query.modifier = 'RECORDSET';
 			var nd = query.exceptfn(query.params);
 			var ud = [];
 			for (var i = 0, ilen = nd.data.length; i < ilen; i++) {
 				var r = {};
-				for (
-					var j = Math.min(query.columns.length, nd.columns.length) - 1;
-					0 <= j;
-					j--
-				) {
+				for (var j = Math.min(query.columns.length, nd.columns.length) - 1; 0 <= j; j--) {
 					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
 				}
 				ud.push(r);
@@ -289,12 +271,10 @@ function queryfn3(query) {
 		query.data = arrayExceptDeep(query.data, ud);
 	} else if (query.intersectfn) {
 		if (query.corresponding) {
-			if (!query.intersectfn.query.modifier)
-				query.intersectfn.query.modifier = undefined;
+			if (!query.intersectfn.query.modifier) query.intersectfn.query.modifier = undefined;
 			ud = query.intersectfn(query.params);
 		} else {
-			if (!query.intersectfn.query.modifier)
-				query.intersectfn.query.modifier = 'RECORDSET';
+			if (!query.intersectfn.query.modifier) query.intersectfn.query.modifier = 'RECORDSET';
 			nd = query.intersectfn(query.params);
 			ud = [];
 			ilen = nd.data.length;
@@ -363,10 +343,7 @@ function queryfn3(query) {
 		}
 	}
 
-	if (
-		typeof query.removeLikeKeys != 'undefined' &&
-		query.removeLikeKeys.length > 0
-	) {
+	if (typeof query.removeLikeKeys != 'undefined' && query.removeLikeKeys.length > 0) {
 		var removeLikeKeys = query.removeLikeKeys;
 
 		// Remove unused columns
@@ -411,12 +388,7 @@ function queryfn3(query) {
 	if (query.intoallfn) {
 		//		console.log(161);
 		//		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql);
-		var res = query.intoallfn(
-			query.columns,
-			query.cb,
-			query.params,
-			query.alasql
-		);
+		var res = query.intoallfn(query.columns, query.cb, query.params, query.alasql);
 		//		console.log(1163,res);
 		//		if(query.cb) res = query.cb(res,query.A, query.B);
 		//		console.log(1165,res);
@@ -490,17 +462,9 @@ var preIndex = function (query) {
 		// If there is indexation rule
 		//console.log('preIndex', source);
 		//console.log(source);
-		if (
-			k > 0 &&
-			source.optimization == 'ix' &&
-			source.onleftfn &&
-			source.onrightfn
-		) {
+		if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
-			if (
-				source.databaseid &&
-				alasql.databases[source.databaseid].tables[source.tableid]
-			) {
+			if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 				if (!alasql.databases[source.databaseid].tables[source.tableid].indices)
 					query.database.tables[source.tableid].indices = {};
 				// Check if index already exists
@@ -508,10 +472,7 @@ var preIndex = function (query) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
 					];
-				if (
-					!alasql.databases[source.databaseid].tables[source.tableid].dirty &&
-					ixx
-				) {
+				if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					source.ix = ixx;
 				}
 			}
@@ -550,10 +511,7 @@ var preIndex = function (query) {
 					i++;
 				}
 
-				if (
-					source.databaseid &&
-					alasql.databases[source.databaseid].tables[source.tableid]
-				) {
+				if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 					// Save index to original table
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
@@ -571,10 +529,7 @@ var preIndex = function (query) {
 						hash(source.wxleftfns + '`')
 					];
 			}
-			if (
-				!alasql.databases[source.databaseid].tables[source.tableid].dirty &&
-				ixx
-			) {
+			if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 				// Use old index if exists
 				source.ix = ixx;
 				// Reduce data (apply filter)
@@ -662,10 +617,7 @@ var preIndex = function (query) {
 			}
 		}
 		// Change this to another place (this is a wrong)
-		if (
-			source.databaseid &&
-			alasql.databases[source.databaseid].tables[source.tableid]
-		) {
+		if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 			//query.database.tables[source.tableid].dirty = false;
 		} else {
 			// this is a subquery?

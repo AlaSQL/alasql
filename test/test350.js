@@ -18,9 +18,7 @@ describe('Test 350 SERIAL data type', function () {
 	});
 
 	it('3. INSERT', function (done) {
-		var res = alasql(
-			'INSERT INTO one (name) VALUES ("One"), ("Two"), ("Three")'
-		);
+		var res = alasql('INSERT INTO one (name) VALUES ("One"), ("Two"), ("Three")');
 		assert.deepEqual(res, 3);
 		done();
 	});

@@ -37,10 +37,9 @@ describe('Test 183 - [] column', function () {
 				[arr]
 			);
 
-			var max2 = alasql(
-				'SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GROUP BY _)',
-				[arr]
-			);
+			var max2 = alasql('SELECT VALUE MAX(cnt) FROM (SELECT COUNT(*) AS cnt FROM ? GROUP BY _)', [
+				arr,
+			]);
 			/// console.log(max,max1,max2);
 			//      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
 			done();

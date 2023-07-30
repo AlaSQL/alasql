@@ -18,9 +18,7 @@ describe('Test 400 Trigger with INSERTED', function () {
 	it('2. Create table and trigger', function (done) {
 		alasql('CREATE TABLE one (a INT)');
 		alasql('CREATE TABLE log (a INT, d DATETIME DEFAULT GETDATE())');
-		alasql(
-			'CREATE TRIGGER tone INSERT ON one BEGIN INSERT INTO log SELECT * FROM INSERTED; END'
-		);
+		alasql('CREATE TRIGGER tone INSERT ON one BEGIN INSERT INTO log SELECT * FROM INSERTED; END');
 		done();
 	});
 

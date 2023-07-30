@@ -20,10 +20,7 @@ yy.While.prototype.execute = function (databaseid, params, cb) {
 	var self = this;
 	var res = [];
 	//	console.log(this.expression.toJS());
-	var fn = new Function(
-		'params,alasql,p',
-		'var y;return ' + this.expression.toJS()
-	);
+	var fn = new Function('params,alasql,p', 'var y;return ' + this.expression.toJS());
 	//	console.log('cb',!!cb);
 	if (cb) {
 		var first = false;

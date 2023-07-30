@@ -19,9 +19,7 @@ describe('Test 178 - function in GROUP BY', function () {
 
 	it('1. Default select from GROUP BY clause', function (done) {
 		//		var res = alasql('SELECT COUNT(*) AS cnt FROM ? GROUP BY MID(city,1,1), city',[city]);
-		var res = alasql('SELECT continent, COUNT(*) FROM ? GROUP BY continent', [
-			city,
-		]);
+		var res = alasql('SELECT continent, COUNT(*) FROM ? GROUP BY continent', [city]);
 		assert.deepEqual(res, [
 			{continent: 'Europe', 'COUNT(*)': 4},
 			{continent: 'Asia', 'COUNT(*)': 2},

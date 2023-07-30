@@ -18,10 +18,7 @@ describe('Test 324 Roads samples', function () {
 			{id: 1, name: 'Tomas'},
 			{id: 2, name: 'Lisa'},
 		]);
-		assert.deepEqual(
-			alasql('SELECT VALUE OBJECT_ID("dbo.Employees")'),
-			'test324a.Employees'
-		);
+		assert.deepEqual(alasql('SELECT VALUE OBJECT_ID("dbo.Employees")'), 'test324a.Employees');
 		var res = alasql(
 			'IF OBJECT_ID("dbo.Employees") IS NOT NULL\
       DROP TABLE dbo.Employees;'

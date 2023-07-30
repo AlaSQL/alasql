@@ -132,9 +132,7 @@ describe('Test 113 - SELECT ', function () {
 
 	it('Select on one inner-join/1', function (done) {
 		var res = alasql.exec(
-			'SELECT students.schoolid ' +
-				' FROM students ' +
-				' JOIN courses USING courseid'
+			'SELECT students.schoolid ' + ' FROM students ' + ' JOIN courses USING courseid'
 		);
 		assert.equal(4, res.length);
 		done();
@@ -142,9 +140,7 @@ describe('Test 113 - SELECT ', function () {
 
 	it('Select on one inner-join/2', function (done) {
 		var res = alasql(
-			'SELECT students.schoolid ' +
-				' FROM students ' +
-				' INNER JOIN courses USING courseid'
+			'SELECT students.schoolid ' + ' FROM students ' + ' INNER JOIN courses USING courseid'
 		);
 
 		assert.equal(4, res.length);
@@ -153,9 +149,7 @@ describe('Test 113 - SELECT ', function () {
 
 	it('Select on one left-join', function (done) {
 		var res = alasql(
-			'SELECT students.schoolid ' +
-				' FROM students ' +
-				' LEFT JOIN courses USING courseid'
+			'SELECT students.schoolid ' + ' FROM students ' + ' LEFT JOIN courses USING courseid'
 		);
 
 		assert.equal(5, res.length);
@@ -164,9 +158,7 @@ describe('Test 113 - SELECT ', function () {
 
 	it('Select on one right-join', function (done) {
 		var res = alasql(
-			'SELECT students.schoolid ' +
-				' FROM students ' +
-				' RIGHT JOIN courses USING courseid'
+			'SELECT students.schoolid ' + ' FROM students ' + ' RIGHT JOIN courses USING courseid'
 		);
 
 		assert.equal(6, res.length);

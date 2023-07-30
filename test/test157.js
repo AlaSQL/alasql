@@ -8,22 +8,16 @@ if (typeof exports === 'object') {
 //if(typeof exports != 'object') {
 describe('Test 157 - json()', function () {
 	it('1. Load text data from file async', function (done) {
-		alasql(
-			'select * from json("' + __dirname + '/test157.json")',
-			[],
-			function (res) {
-				//			console.log(13,res);
-				assert.deepEqual(res, [{a: 1}, {a: 2}]);
-				done();
-			}
-		);
+		alasql('select * from json("' + __dirname + '/test157.json")', [], function (res) {
+			//			console.log(13,res);
+			assert.deepEqual(res, [{a: 1}, {a: 2}]);
+			done();
+		});
 	});
 
 	it('2. Load text file', function (done) {
 		alasql(
-			'select column * from txt("' +
-				__dirname +
-				'/test157.txt") where [0] like "M%" order by [0]',
+			'select column * from txt("' + __dirname + '/test157.txt") where [0] like "M%" order by [0]',
 			[],
 			function (res) {
 				//			console.log(res);

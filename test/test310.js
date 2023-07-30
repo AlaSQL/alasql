@@ -27,19 +27,9 @@ describe('Test 310 Create graph', function () {
 		var res = alasql('CREATE GRAPH #Victor "Victor Branson"');
 		var res = alasql('CREATE GRAPH #[John Smith] {age:23, country:"Canada"}');
 		var res = alasql('CREATE GRAPH #[John Smith] > "loves" > #Mary');
-		var res = alasql(
-			'CREATE GRAPH #Anton > "loves" {power:"too much"} > #Julia'
-		);
+		var res = alasql('CREATE GRAPH #Anton > "loves" {power:"too much"} > #Julia');
 		var res = alasql('SEARCH / VERTEX [$id]');
-		assert.deepEqual(res, [
-			'Andrey',
-			'John',
-			'Mary',
-			'Anton',
-			'Julia',
-			'Victor',
-			'John Smith',
-		]);
+		assert.deepEqual(res, ['Andrey', 'John', 'Mary', 'Anton', 'Julia', 'Victor', 'John Smith']);
 		done();
 	});
 

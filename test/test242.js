@@ -22,9 +22,7 @@ describe('Test 242 Multi-columns Excel file', function () {
 
 	it('2. Read multi-column file', function (done) {
 		alasql(
-			'select * from xlsx("' +
-				dirname +
-				'test242.xlsx", {headers:true,sheetid:"Sheet2"})',
+			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true,sheetid:"Sheet2"})',
 			[],
 			function (data) {
 				//      console.log(data[3]);

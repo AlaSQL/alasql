@@ -14,9 +14,7 @@ if (typeof exports == 'object') {
 				{a: 3, b: "Val's Deser"},
 			];
 			alasql(
-				'SELECT * INTO SQL("' +
-					__dirname +
-					'/test189.sql",{tableid:"one"}) FROM ?',
+				'SELECT * INTO SQL("' + __dirname + '/test189.sql",{tableid:"one"}) FROM ?',
 				[data],
 				function () {
 					alasql(

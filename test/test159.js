@@ -33,19 +33,13 @@ describe('Test 159 - test DOM-storage', function () {
 		res = alasql('create table cities (city string)');
 		assert(res == 1);
 
-		res = alasql(
-			"insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')"
-		);
+		res = alasql("insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')");
 		assert(res == 5);
 
-		res = alasql(
-			"select column * from cities where city like 'M%' order by city"
-		);
+		res = alasql("select column * from cities where city like 'M%' order by city");
 		assert.deepEqual(res, ['Minsk', 'Moscow']);
 
-		res = alasql(
-			'delete from cities where city in ("Riga","Tallinn","Moscow")'
-		);
+		res = alasql('delete from cities where city in ("Riga","Tallinn","Moscow")');
 		assert(res == 3);
 
 		res = alasql('select column * from cities order by city');
@@ -99,81 +93,57 @@ describe('Test 159 - test DOM-storage', function () {
 	});
 
 	it('3. Multiple call-backs', function (done) {
-		var res = alasql(
-			'drop localstorage database if exists test159',
-			[],
-			function (res) {
-				alasql(
-					'create localstorage database if not exists test159;',
-					[],
-					function (res) {
-						alasql('attach localstorage database test159', [], function (res) {
-							alasql('use test159', [], function (res) {
-								alasql('drop table if exists cities', [], function (res) {
-									alasql(
-										'create table cities (city string);',
-										[],
-										function (res) {
-											alasql(
-												"insert into cities values ('Moscow'),('Paris'),('Minsk'),\
+		var res = alasql('drop localstorage database if exists test159', [], function (res) {
+			alasql('create localstorage database if not exists test159;', [], function (res) {
+				alasql('attach localstorage database test159', [], function (res) {
+					alasql('use test159', [], function (res) {
+						alasql('drop table if exists cities', [], function (res) {
+							alasql('create table cities (city string);', [], function (res) {
+								alasql(
+									"insert into cities values ('Moscow'),('Paris'),('Minsk'),\
 									('Riga'),('Tallinn')",
-												[],
-												function (res) {
-													alasql(
-														"delete from cities where city in ('Riga','Tallinn','Moscow')",
-														[],
-														function (res) {
+									[],
+									function (res) {
+										alasql(
+											"delete from cities where city in ('Riga','Tallinn','Moscow')",
+											[],
+											function (res) {
+												alasql(
+													"update cities set city = 'Vilnius' where city = 'Minsk'",
+													[],
+													function (res) {
+														alasql("insert into cities values ('Berlin')", [], function (res) {
 															alasql(
-																"update cities set city = 'Vilnius' where city = 'Minsk'",
+																'select column * from cities order by city',
 																[],
 																function (res) {
-																	alasql(
-																		"insert into cities values ('Berlin')",
-																		[],
-																		function (res) {
-																			alasql(
-																				'select column * from cities order by city',
-																				[],
-																				function (res) {
-																					assert.deepEqual(res, [
-																						'Berlin',
-																						'Paris',
-																						'Vilnius',
-																					]);
-																					alasql(
-																						'detach database test159',
-																						[],
-																						function (res) {
-																							assert(res == 1);
-																							alasql(
-																								'drop localstorage database test159',
-																								[],
-																								function (res) {
-																									assert(res == 1);
-																									done();
-																								}
-																							);
-																						}
-																					);
-																				}
-																			);
-																		}
-																	);
+																	assert.deepEqual(res, ['Berlin', 'Paris', 'Vilnius']);
+																	alasql('detach database test159', [], function (res) {
+																		assert(res == 1);
+																		alasql(
+																			'drop localstorage database test159',
+																			[],
+																			function (res) {
+																				assert(res == 1);
+																				done();
+																			}
+																		);
+																	});
 																}
 															);
-														}
-													);
-												}
-											);
-										}
-									);
-								});
+														});
+													}
+												);
+											}
+										);
+									}
+								);
 							});
 						});
-					}
-				);
-			}
-		);
+					});
+				});
+			});
+		});
 	});
 
 	/*

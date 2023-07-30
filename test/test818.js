@@ -56,16 +56,13 @@ describe('Test 818 IS condition check on premitives', function () {
 
 	// except 0 every other number should be treated as TRUE
 	it('should return true false false', done => {
-		assert.deepEqual(
-			alasql('SELECT 0 IS NOT TRUE, -1 IS NOT TRUE, 1 IS NOT TRUE'),
-			[
-				{
-					'0 IS NOT(TRUE)': true,
-					'-1 IS NOT(TRUE)': false,
-					'1 IS NOT(TRUE)': false,
-				},
-			]
-		);
+		assert.deepEqual(alasql('SELECT 0 IS NOT TRUE, -1 IS NOT TRUE, 1 IS NOT TRUE'), [
+			{
+				'0 IS NOT(TRUE)': true,
+				'-1 IS NOT(TRUE)': false,
+				'1 IS NOT(TRUE)': false,
+			},
+		]);
 		done();
 	});
 });
