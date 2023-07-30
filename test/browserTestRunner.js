@@ -39,7 +39,7 @@
 
 	const testFiles = walkFiles(__dirname, /test\d+\.js$/, null, true, true);
 
-	const testFilesHtml = testFiles.map((file) => `<script src="${file}"></script>`).join('\n');
+	const testFilesHtml = testFiles.map(file => `<script src="${file}"></script>`).join('\n');
 
 	var html = template.replace('@INSERT_TESTFILES', testFilesHtml);
 

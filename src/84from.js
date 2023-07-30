@@ -407,9 +407,17 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			//	function processData(data) {
 			if (data instanceof ArrayBuffer) {
 				var arr = fixdata(data);
-				var workbook = X.read(btoa(arr), {type: 'base64', ...alasql.options.excel, ...opts});
+				var workbook = X.read(btoa(arr), {
+					type: 'base64',
+					...alasql.options.excel,
+					...opts,
+				});
 			} else {
-				var workbook = X.read(data, {type: 'binary', ...alasql.options.excel, ...opts});
+				var workbook = X.read(data, {
+					type: 'binary',
+					...alasql.options.excel,
+					...opts,
+				});
 			}
 			//		console.log(workbook);
 			var sheetid;

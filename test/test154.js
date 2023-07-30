@@ -18,7 +18,7 @@ if (typeof exports != 'object') {
 
 			if (globalThis.indexedDB.databases) {
 				const res3 = await sql('SHOW IndexedDB DATABASES');
-				const found = res3.some((d) => d.databaseid === 'ag154');
+				const found = res3.some(d => d.databaseid === 'ag154');
 				assert(found);
 			}
 

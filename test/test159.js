@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test159.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test159.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe('Test 159 - test DOM-storage', function () {

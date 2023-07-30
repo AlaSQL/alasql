@@ -11,7 +11,7 @@ describe('Test 271 RECORDSET and Excel tests', function () {
 			'SELECT RECORDSET * FROM XLSX("' + __dirname + '/test168.xlsx",{headers:true})',
 			[],
 			function (res) {
-				var colres = res.columns.map((col) => col.columnid);
+				var colres = res.columns.map(col => col.columnid);
 				assert.deepEqual(colres, ['City', 'Population']);
 				done();
 			}

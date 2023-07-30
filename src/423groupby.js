@@ -142,7 +142,7 @@ if(false) {
 				// 	if(col instanceof yy.Column) colas = col.columnid;
 				// 	else colas = col.toString();
 				// };
-				let colExpIfFunIdExists = (expression) => {
+				let colExpIfFunIdExists = expression => {
 					let colexpression = expression.args[0];
 					return colexpression.toJS('p', tableid, defcols);
 				};
@@ -319,7 +319,7 @@ if(false) {
 			// }
 */
 				var colexp = col.expression.toJS('p', tableid, defcols);
-				let colExpIfFunIdExists = (expression) => {
+				let colExpIfFunIdExists = expression => {
 					let colexpression = expression.args[0];
 					return colexpression.toJS('p', tableid, defcols);
 				};
