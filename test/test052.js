@@ -43,15 +43,18 @@ describe('Test 52 - UPPER CASE and LOWER CASE', function () {
 
 	it('Upper and lower case in SELECT with JOIN', function (done) {
 		var res1 = db1.exec(
-			'select value sum(cities.population) from categories ' + ' join cities using city'
+			'select value sum(cities.population) from categories ' +
+				' join cities using city'
 		);
 
 		var res2 = db1.exec(
-			'SELECT VALUE SUM(cities.population) FROM categories  ' + ' JOIN cities Using city'
+			'SELECT VALUE SUM(cities.population) FROM categories  ' +
+				' JOIN cities Using city'
 		);
 
 		var res3 = db1.exec(
-			'Select Value Sum(cities.population) From categories ' + ' Join cities Using city'
+			'Select Value Sum(cities.population) From categories ' +
+				' Join cities Using city'
 		);
 
 		var res4 = db1.exec(

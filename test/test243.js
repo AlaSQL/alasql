@@ -26,7 +26,10 @@ describe('Test 243 AVG bug', function () {
 			},
 		];
 
-		var res = alasql('SELECT person, avg(sold) FROM ? WHERE 1 GROUP BY person', [arr]);
+		var res = alasql(
+			'SELECT person, avg(sold) FROM ? WHERE 1 GROUP BY person',
+			[arr]
+		);
 
 		//    console.log(res);
 		assert(res, [
@@ -57,7 +60,10 @@ describe('Test 243 AVG bug', function () {
 			},
 		];
 
-		var res = alasql('SELECT person, avg(sold) FROM ? WHERE 1 GROUP BY person', [arr]);
+		var res = alasql(
+			'SELECT person, avg(sold) FROM ? WHERE 1 GROUP BY person',
+			[arr]
+		);
 
 		//    console.log(res);
 		assert(res, [

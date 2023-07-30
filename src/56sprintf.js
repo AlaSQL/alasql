@@ -80,7 +80,8 @@ stdfn.SPRINTF = function () {
 	});
 };
 
-stdfn.SPRINTF.re = /%%|%(?:(\d+)[\$#])?([+-])?('.|0| )?(\d*)(?:\.(\d+))?([bcdfosuxXhH])/g;
+stdfn.SPRINTF.re =
+	/%%|%(?:(\d+)[\$#])?([+-])?('.|0| )?(\d*)(?:\.(\d+))?([bcdfosuxXhH])/g;
 
 stdfn.SPRINTF.b = function (ins, x) {
 	return Number(ins).bin(x[2] + x[4], x[3]);

@@ -12,7 +12,9 @@ describe('Test 363 -> with undefined', function () {
 	});
 
 	it('2. TEST', function (done) {
-		var res = alasql('VALUE OF SELECT a->name FROM ?', [[{a: {name: 'hello'}}]]);
+		var res = alasql('VALUE OF SELECT a->name FROM ?', [
+			[{a: {name: 'hello'}}],
+		]);
 		assert.deepEqual(res, 'hello');
 		var res = alasql('VALUE OF SELECT a->name FROM ?', [{}]);
 		assert.deepEqual(res, undefined);

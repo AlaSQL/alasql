@@ -88,7 +88,10 @@
 			return util.isObject(d) && util.objectToString(d) === '[object Date]';
 		},
 		isError: function (e) {
-			return isObject(e) && (objectToString(e) === '[object Error]' || e instanceof Error);
+			return (
+				isObject(e) &&
+				(objectToString(e) === '[object Error]' || e instanceof Error)
+			);
 		},
 		isFunction: function (arg) {
 			return typeof arg === 'function';
@@ -413,7 +416,10 @@
 		}
 
 		if (
-			(shouldThrow && actual && expected && !expectedException(actual, expected)) ||
+			(shouldThrow &&
+				actual &&
+				expected &&
+				!expectedException(actual, expected)) ||
 			(!shouldThrow && actual)
 		) {
 			throw actual;

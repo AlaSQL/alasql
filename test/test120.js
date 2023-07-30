@@ -13,7 +13,11 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 
 		alasql('create table [A.table] ([Primary column] int primary key)');
 		assert(!!alasql.databases['My database'].tables['A.table']);
-		assert(!!alasql.databases['My database'].tables['A.table'].xcolumns['Primary column']);
+		assert(
+			!!alasql.databases['My database'].tables['A.table'].xcolumns[
+				'Primary column'
+			]
+		);
 
 		alasql('insert into [A.table] values (1), (2), (3)');
 		var res = alasql('select sum([Primary column]) AS [AS] from [A.table]');
@@ -23,7 +27,9 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		var res = alasql('select * from [A.table] order by [Primary column]');
 		assert.deepEqual(res, [{'Primary column': 1}, {'Primary column': 3}]);
 
-		alasql('update [A.table] set [Primary column] = 30 where [Primary column] = 3');
+		alasql(
+			'update [A.table] set [Primary column] = 30 where [Primary column] = 3'
+		);
 		var res = alasql('select * from [A.table] order by [Primary column]');
 		assert.deepEqual(res, [{'Primary column': 1}, {'Primary column': 30}]);
 
@@ -77,7 +83,9 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		alasql('create table [table] ([int] int, [create] int)');
 		alasql('insert into [table] values (1,10), (2,20), (3,30)');
 
-		var res = alasql('select sum([int]) as [Sum], sum([create]) as [AS] from [table]');
+		var res = alasql(
+			'select sum([int]) as [Sum], sum([create]) as [AS] from [table]'
+		);
 		assert.deepEqual(res, [{Sum: 6, AS: 60}]);
 		done();
 	});

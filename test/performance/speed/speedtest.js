@@ -11,7 +11,13 @@ zt('TEST1 - 1000 INSERTs', 1, function () {
 	// TODO: VARCHAR(100) syntax
 	db.exec('CREATE TABLE t1(a INTEGER, b INTEGER, c STRING)');
 	for (var i = 0; i < 1000; i++) {
-		db.exec('INSERT INTO t1 VALUES (' + i + ', ' + ((i * i * i) % 100000) + ",'bla-blah-blah')");
+		db.exec(
+			'INSERT INTO t1 VALUES (' +
+				i +
+				', ' +
+				((i * i * i) % 100000) +
+				",'bla-blah-blah')"
+		);
 	}
 });
 
@@ -22,7 +28,13 @@ zt('TEST2 - 25000 INSERTs in a transaction', function () {
 	db.transaction(function () {
 		db.exec('CREATE TABLE t2 (a INTEGER, b INTEGER, c STRING)');
 		for (var i = 0; i < 25000; i++) {
-			db.exec('INSERT INTO t2 VALUES (' + i + ', ' + ((i * i * i) % 100000) + ",'bla-blah-blah')");
+			db.exec(
+				'INSERT INTO t2 VALUES (' +
+					i +
+					', ' +
+					((i * i * i) % 100000) +
+					",'bla-blah-blah')"
+			);
 		}
 	});
 });
@@ -32,7 +44,13 @@ zt('TEST3 - 25000 INSERTs into an indexed table', function () {
 	// TODO: Indexies
 	db.exec('CREATE TABLE t3 (a INTEGER, b INTEGER, c STRING)');
 	for (var i = 0; i < 25000; i++) {
-		db.exec('INSERT INTO t3 VALUES (' + i + ', ' + ((i * i * i) % 100000) + ",'bla-blah-blah')");
+		db.exec(
+			'INSERT INTO t3 VALUES (' +
+				i +
+				', ' +
+				((i * i * i) % 100000) +
+				",'bla-blah-blah')"
+		);
 	}
 });
 
@@ -41,7 +59,12 @@ zt('TEST4 - 100 SELECTs without an index', function () {
 	// TODO AVG
 	db.transaction(function () {
 		for (var i = 0; i < 100; i++) {
-			db.exec('SELECT COUNT(*), SUM(b) FROM t2 WHERE b>=' + i * 100 + ' AND b<' + (i * 100 + 1000));
+			db.exec(
+				'SELECT COUNT(*), SUM(b) FROM t2 WHERE b>=' +
+					i * 100 +
+					' AND b<' +
+					(i * 100 + 1000)
+			);
 		}
 	});
 });
@@ -54,7 +77,9 @@ zt('TEST8 - 100 UPDATEs without an index', function () {
 	// TODO AVG
 	db.transaction(function () {
 		for (var i = 0; i < 100; i++) {
-			db.exec('UPDATE t1 SET b=b*2 WHERE b>=' + i * 10 + ' AND b<' + (i * 10 + 10));
+			db.exec(
+				'UPDATE t1 SET b=b*2 WHERE b>=' + i * 10 + ' AND b<' + (i * 10 + 10)
+			);
 		}
 	});
 });

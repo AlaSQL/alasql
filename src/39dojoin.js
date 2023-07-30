@@ -100,7 +100,11 @@ function doJoin(query, scope, h) {
 			var ilen = data.length;
 			var dataw;
 			//			console.log(h,opt,source.data,i,source.dontcache);
-			while ((dataw = data[i]) || (!opt && source.getfn && (dataw = source.getfn(i))) || i < ilen) {
+			while (
+				(dataw = data[i]) ||
+				(!opt && source.getfn && (dataw = source.getfn(i))) ||
+				i < ilen
+			) {
 				if (!opt && source.getfn && !source.dontcache) data[i] = dataw;
 				//console.log(h, i, dataw);
 				scope[tableid] = dataw;
@@ -110,8 +114,10 @@ function doJoin(query, scope, h) {
 				if (!usingPassed) {
 					var left = source.onleftfn(scope, query.params, alasql);
 					var right = source.onrightfn(scope, query.params, alasql);
-					if (left instanceof String || left instanceof Number) left = left.valueOf();
-					if (right instanceof String || right instanceof Number) right = left.valueOf();
+					if (left instanceof String || left instanceof Number)
+						left = left.valueOf();
+					if (right instanceof String || right instanceof Number)
+						right = left.valueOf();
 					usingPassed = left == right;
 				}
 
@@ -141,7 +147,9 @@ function doJoin(query, scope, h) {
 
 			// Additional join for LEFT JOINS
 			if (
-				(source.joinmode == 'LEFT' || source.joinmode == 'OUTER' || source.joinmode == 'SEMI') &&
+				(source.joinmode == 'LEFT' ||
+					source.joinmode == 'OUTER' ||
+					source.joinmode == 'SEMI') &&
 				!pass
 			) {
 				// Clear the scope after the loop

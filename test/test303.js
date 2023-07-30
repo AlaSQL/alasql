@@ -69,10 +69,14 @@ describe('Test 303 SEARCH over JSON', function () {
 		var res = alasql('SEARCH KEYS() FROM {a:1,b:2}');
 		assert.deepEqual(res, ['a', 'b']);
 
-		var res = alasql('SEARCH / name FROM {john:{name:"John"},mary:{name:"Mary"}}');
+		var res = alasql(
+			'SEARCH / name FROM {john:{name:"John"},mary:{name:"Mary"}}'
+		);
 		assert.deepEqual(res, ['John', 'Mary']);
 
-		var res = alasql('SEARCH / name FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+		var res = alasql(
+			'SEARCH / name FROM @[{name:"John",age:25},{name:"Mary",age:18}]'
+		);
 		assert.deepEqual(res, ['John', 'Mary']);
 
 		done();
@@ -93,7 +97,9 @@ describe('Test 303 SEARCH over JSON', function () {
 	});
 
 	it('5. Transform expression', function (done) {
-		var res = alasql('SEARCH / EX(age*2) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
+		var res = alasql(
+			'SEARCH / EX(age*2) FROM @[{name:"John",age:25},{name:"Mary",age:18}]'
+		);
 		assert.deepEqual(res, [50, 36]);
 
 		// Self variable

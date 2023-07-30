@@ -84,7 +84,11 @@ describe('Test 198 - MS SQL compatibility', function () {
 			GROUP BY C.customerid'
 		);
 		//        assert(res.length == 6);
-		assert.deepEqual(res, [{customerid: 'FISSA'}, {customerid: 'FRNDO'}, {customerid: 'KRLOS'}]);
+		assert.deepEqual(res, [
+			{customerid: 'FISSA'},
+			{customerid: 'FRNDO'},
+			{customerid: 'KRLOS'},
+		]);
 		done();
 	});
 

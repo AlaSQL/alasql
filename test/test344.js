@@ -107,7 +107,9 @@ describe('Test 344 Multisheet export', function () {
 				{sheetid: 'Two', header: false},
 			];
 			var res = alasql(
-				'SELECT a AS alpha, b as beta INTO XLSX("' + __dirname + '/restest344d.xlsx",?) FROM ?',
+				'SELECT a AS alpha, b as beta INTO XLSX("' +
+					__dirname +
+					'/restest344d.xlsx",?) FROM ?',
 				[opts, [data1, data2]],
 				function () {
 					done();

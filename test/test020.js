@@ -27,7 +27,9 @@ describe('Test 20 - User-defined functions', function () {
 			return x * x * x;
 		};
 
-		var res = db.exec('SELECT a, double(a) AS b, cubic(a) AS c FROM test1 WHERE a = 2');
+		var res = db.exec(
+			'SELECT a, double(a) AS b, cubic(a) AS c FROM test1 WHERE a = 2'
+		);
 		assert.deepEqual([{a: 2, b: 4, c: 8}], res);
 		done();
 	});

@@ -23,14 +23,20 @@ let yargs = require('yargs')
 	.example('')
 	.example("$0 'value of select 2+?' 40", 'Outputs 42')
 	.example('')
-	.example("$0 'select count(*) from txt()' < city.txt", 'Count lines in city.txt')
+	.example(
+		"$0 'select count(*) from txt()' < city.txt",
+		'Count lines in city.txt'
+	)
 	.example('')
 	.example(
 		'$0 \'select * into xlsx("city.xlsx") from txt("city.txt")\'',
 		'Convert from txt to xlsx'
 	)
 	.example('')
-	.example('$0 --file file.sql France 1960', 'Run SQL from file with 2 parameters')
+	.example(
+		'$0 --file file.sql France 1960',
+		'Run SQL from file with 2 parameters'
+	)
 
 	.version('v', 'Echo AlaSQL version', alasql.version)
 	.alias('v', 'version')
@@ -152,7 +158,9 @@ function execute(sql, params) {
 			process.exit(0);
 		})
 		.catch(function (err) {
-			let errorJsonObj = JSON.parse(JSON.stringify(err, Object.getOwnPropertyNames(err)));
+			let errorJsonObj = JSON.parse(
+				JSON.stringify(err, Object.getOwnPropertyNames(err))
+			);
 			console.error(
 				formatOutput({
 					error: errorJsonObj,

@@ -7,14 +7,18 @@ if (typeof exports === 'object') {
 
 describe('Test 206 IF and BEGIN END', function () {
 	it('1. IF BEGIN END', function (done) {
-		var res = alasql('IF TRUE BEGIN SELECT VALUE 1; SELECT VALUE 2 END; SELECT VALUE 3');
+		var res = alasql(
+			'IF TRUE BEGIN SELECT VALUE 1; SELECT VALUE 2 END; SELECT VALUE 3'
+		);
 		//        console.log(res);
 		assert.deepEqual(res, [[1, 2], 3]);
 		done();
 	});
 
 	it('2. IF FALSE BEGIN END', function (done) {
-		var res = alasql('IF FALSE BEGIN SELECT VALUE 1; SELECT VALUE 2 END; SELECT VALUE 3');
+		var res = alasql(
+			'IF FALSE BEGIN SELECT VALUE 1; SELECT VALUE 2 END; SELECT VALUE 3'
+		);
 		//        console.log(res);
 		assert.deepEqual(res, [undefined, 3]);
 		done();

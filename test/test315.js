@@ -108,7 +108,16 @@ describe('Test 315c Brackets for SEARCH', function () {
 	});
 	it('3. Simple Brackets', function (done) {
 		var res = alasql('SEARCH / + FROM ?', [data]);
-		assert.deepEqual(res, [{a: 1}, {b: {a: 2}, c: 2}, {c: 3}, 1, {a: 2}, 2, 3, 2]);
+		assert.deepEqual(res, [
+			{a: 1},
+			{b: {a: 2}, c: 2},
+			{c: 3},
+			1,
+			{a: 2},
+			2,
+			3,
+			2,
+		]);
 		done();
 	});
 

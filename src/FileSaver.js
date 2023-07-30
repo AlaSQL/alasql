@@ -20,7 +20,8 @@ var saveAs =
 		// IE <10 is explicitly unsupported
 		if (
 			typeof view === 'undefined' ||
-			(typeof navigator !== 'undefined' && /MSIE [1-9]\./.test(navigator.userAgent))
+			(typeof navigator !== 'undefined' &&
+				/MSIE [1-9]\./.test(navigator.userAgent))
 		) {
 			return;
 		}
@@ -79,7 +80,9 @@ var saveAs =
 						blob.type
 					)
 				) {
-					return new Blob([String.fromCharCode(0xfeff), blob], {type: blob.type});
+					return new Blob([String.fromCharCode(0xfeff), blob], {
+						type: blob.type,
+					});
 				}
 				return blob;
 			},
@@ -93,7 +96,10 @@ var saveAs =
 					force = type === force_saveable_type,
 					object_url,
 					dispatch_all = function () {
-						dispatch(filesaver, 'writestart progress write writeend'.split(' '));
+						dispatch(
+							filesaver,
+							'writestart progress write writeend'.split(' ')
+						);
 					},
 					// on any filesys errors revert to saving with object URLs
 					fs_error = function () {
@@ -103,7 +109,10 @@ var saveAs =
 							reader.onloadend = function () {
 								var url = is_chrome_ios
 									? reader.result
-									: reader.result.replace(/^data:[^;]*;/, 'data:attachment/file;');
+									: reader.result.replace(
+											/^data:[^;]*;/,
+											'data:attachment/file;'
+									  );
 								var popup = view.open(url, '_blank');
 								if (!popup) view.location.href = url;
 								url = undefined; // release reference before dispatching
@@ -150,7 +159,11 @@ var saveAs =
 			},
 			FS_proto = FileSaver.prototype,
 			saveAs = function (blob, name, no_auto_bom) {
-				return new FileSaver(blob, name || blob.name || 'download', no_auto_bom);
+				return new FileSaver(
+					blob,
+					name || blob.name || 'download',
+					no_auto_bom
+				);
 			};
 		// IE 10+ (native saveAs)
 		if (typeof navigator !== 'undefined' && navigator.msSaveOrOpenBlob) {
@@ -190,7 +203,11 @@ var saveAs =
 
 if (typeof module !== 'undefined' && module.exports) {
 	module.exports.saveAs = saveAs;
-} else if (typeof define !== 'undefined' && define !== null && define.amd !== null) {
+} else if (
+	typeof define !== 'undefined' &&
+	define !== null &&
+	define.amd !== null
+) {
 	define('FileSaver.js', function () {
 		return saveAs;
 	});

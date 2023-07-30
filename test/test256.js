@@ -35,7 +35,10 @@ describe('Test 256 INTO() in result and into params array', function () {
 			{a: 2, b: 2},
 		];
 		var res = alasql('SELECT * INTO SQL({tableid:"one"}) FROM ?', [data]);
-		assert(res == 'INSERT INTO one(a,b) VALUES (1,2);\nINSERT INTO one(a,b) VALUES (2,2);\n');
+		assert(
+			res ==
+				'INSERT INTO one(a,b) VALUES (1,2);\nINSERT INTO one(a,b) VALUES (2,2);\n'
+		);
 		done();
 	});
 
@@ -44,7 +47,10 @@ describe('Test 256 INTO() in result and into params array', function () {
 			{a: 1, b: 2},
 			{a: 2, b: 2},
 		];
-		var res = alasql('SELECT * INTO CSV({headers:true, utf8Bom:false}) FROM ?', [data]);
+		var res = alasql(
+			'SELECT * INTO CSV({headers:true, utf8Bom:false}) FROM ?',
+			[data]
+		);
 		assert.equal(res, '"a";"b"\r\n1;2\r\n2;2\r\n');
 		done();
 	});

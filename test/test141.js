@@ -56,7 +56,10 @@ describe('Test 141 text as source', function () {
 	it('3. INNER JOIN on stream', function (done) {
 		//		myfn3.dontcache = true;
 
-		var res = alasql('select a, b, t.c from ? inner join ? t using a', [myfn, myfn3]);
+		var res = alasql('select a, b, t.c from ? inner join ? t using a', [
+			myfn,
+			myfn3,
+		]);
 		assert.deepEqual(res, [
 			{a: 0, b: 0, c: 0},
 			{a: 1, b: 1, c: 2},
@@ -68,7 +71,10 @@ describe('Test 141 text as source', function () {
 	});
 
 	it('3. INNER JOIN on stream', function (done) {
-		var res = alasql('select a, b, t.c from ? right join ? t using a', [myfn, myfn3]);
+		var res = alasql('select a, b, t.c from ? right join ? t using a', [
+			myfn,
+			myfn3,
+		]);
 		assert.deepEqual(res, [
 			{a: 0, b: 0, c: 0},
 			{a: 1, b: 1, c: 2},

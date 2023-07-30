@@ -11,7 +11,10 @@ describe('Test 292 Nested searches', function () {
 		done();
 	});
 
-	var data = [{a: {b: [{c: 1}, {c: 2}, {c: 3}]}}, {a: {b: [{c: 4}, {c: 5}, {c: 6}]}}];
+	var data = [
+		{a: {b: [{c: 1}, {c: 2}, {c: 3}]}},
+		{a: {b: [{c: 4}, {c: 5}, {c: 6}]}},
+	];
 
 	it.skip('2. Search inside select', function (done) {
 		var res = alasql('SELECT (SEARCH b SUM(/c) FROM _) FROM ?', [data]);

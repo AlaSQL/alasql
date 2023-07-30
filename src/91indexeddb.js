@@ -24,7 +24,7 @@ async function _databaseExists(name) {
 
 	if (indexedDB.databases) {
 		const dbs = await indexedDB.databases();
-		const db = dbs.find((db) => db.name === name);
+		const db = dbs.find(db => db.name === name);
 		// @ts-ignore
 		return db || 0;
 	}
@@ -38,7 +38,7 @@ async function _databaseExists(name) {
 			resolve({name, version: req.result.version});
 		};
 
-		req.onupgradeneeded = (evt) => {
+		req.onupgradeneeded = evt => {
 			evt.target.transaction.abort();
 			resolve(0);
 		};
@@ -63,7 +63,7 @@ IDB.showDatabases = function (like, cb) {
 		return;
 	}
 
-	indexedDB.databases().then((dblist) => {
+	indexedDB.databases().then(dblist => {
 		const res = [];
 		const relike = like && new RegExp(like.value.replace(/\%/g, '.*'), 'g');
 
@@ -78,7 +78,7 @@ IDB.showDatabases = function (like, cb) {
 };
 
 IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
-	const found = await _databaseExists(ixdbid).catch((err) => {
+	const found = await _databaseExists(ixdbid).catch(err => {
 		if (cb) cb(null, err);
 		throw err;
 	});
@@ -102,7 +102,7 @@ IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 };
 
 IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
-	const found = await _databaseExists(ixdbid).catch((err) => {
+	const found = await _databaseExists(ixdbid).catch(err => {
 		if (cb) cb(null, err);
 		throw err;
 	});
@@ -119,14 +119,16 @@ IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 			cb &&
 				cb(
 					null,
-					new Error(`IndexedDB: Cannot drop new database "${ixdbid}" because it does not exist'`)
+					new Error(
+						`IndexedDB: Cannot drop new database "${ixdbid}" because it does not exist'`
+					)
 				);
 		}
 	}
 };
 
 IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
-	const found = await _databaseExists(ixdbid).catch((err) => {
+	const found = await _databaseExists(ixdbid).catch(err => {
 		if (cb) cb(null, err);
 		throw err;
 	});
@@ -171,14 +173,16 @@ IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 
 IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
-	const found = await _databaseExists(ixdbid).catch((err) => {
+	const found = await _databaseExists(ixdbid).catch(err => {
 		if (cb) cb(null, err);
 		throw err;
 	});
 
 	if (!found) {
 		const err = new Error(
-			'IndexedDB: Cannot create table in database "' + ixdbid + '" because it does not exist'
+			'IndexedDB: Cannot create table in database "' +
+				ixdbid +
+				'" because it does not exist'
 		);
 		if (cb) cb(null, err);
 		throw err;
@@ -192,27 +196,31 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 		request.result.close();
 		if (cb) cb(1);
 	};
-	request.onerror = (evt) => {
+	request.onerror = evt => {
 		cb(null, evt);
 	};
 	request.onblocked = function (event) {
 		cb(
 			null,
-			new Error(`Cannot create table "${tableid}" because database "${databaseid}"  is blocked`)
+			new Error(
+				`Cannot create table "${tableid}" because database "${databaseid}"  is blocked`
+			)
 		);
 	};
 };
 
 IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
-	const found = await _databaseExists(ixdbid).catch((err) => {
+	const found = await _databaseExists(ixdbid).catch(err => {
 		if (cb) cb(null, err);
 		throw err;
 	});
 
 	if (!found) {
 		const err = new Error(
-			'IndexedDB: Cannot drop table in database "' + ixdbid + '" because it does not exist'
+			'IndexedDB: Cannot drop table in database "' +
+				ixdbid +
+				'" because it does not exist'
 		);
 		if (cb) cb(null, err);
 		throw err;
@@ -228,7 +236,9 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 			delete alasql.databases[databaseid].tables[tableid];
 		} else {
 			if (!ifexists) {
-				err = new Error(`IndexedDB: Cannot drop table "${tableid}" because it does not exist`);
+				err = new Error(
+					`IndexedDB: Cannot drop table "${tableid}" because it does not exist`
+				);
 				evt.target.transaction.abort();
 			}
 		}
@@ -243,7 +253,9 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 	request.onblocked = function (event) {
 		cb(
 			null,
-			new Error(`Cannot drop table "${tableid}" because database "${databaseid}" is blocked`)
+			new Error(
+				`Cannot drop table "${tableid}" because database "${databaseid}" is blocked`
+			)
 		);
 	};
 };
@@ -287,7 +299,7 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 	var db = alasql.databases[databaseid];
 	var table = db.tables[tableid];
 
-	request.onupgradeneeded = (evt) => {
+	request.onupgradeneeded = evt => {
 		evt.target.transaction.abort();
 		const err = new Error(
 			`Cannot insert into table "${tableid}" because database "${databaseid}" does not exist`
@@ -323,7 +335,7 @@ IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const request = indexedDB.open(ixdbid);
 
-	request.onupgradeneeded = (evt) => {
+	request.onupgradeneeded = evt => {
 		evt.target.transaction.abort();
 		const err = new Error(
 			`Cannot select from table "${tableid}" because database "${databaseid}" does not exist`
@@ -340,7 +352,10 @@ IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
 			const cursor = cur.result;
 			if (cursor) {
 				// if keyPath(columns) is not present then we take the key and value as object.
-				const cursorValue = typeof cursor === Object ? cursor.value : { [cursor.key]: cursor.value };
+				const cursorValue =
+					typeof cursor === Object
+						? cursor.value
+						: {[cursor.key]: cursor.value};
 				res.push(cursorValue);
 				cursor.continue();
 			} else {
@@ -357,7 +372,10 @@ IDB.deleteFromTable = function (databaseid, tableid, wherefn, params, cb) {
 
 	request.onsuccess = () => {
 		const ixdb = request.result;
-		const cur = ixdb.transaction([tableid], 'readwrite').objectStore(tableid).openCursor();
+		const cur = ixdb
+			.transaction([tableid], 'readwrite')
+			.objectStore(tableid)
+			.openCursor();
 
 		let num = 0;
 		cur.onsuccess = () => {
@@ -376,12 +394,22 @@ IDB.deleteFromTable = function (databaseid, tableid, wherefn, params, cb) {
 	};
 };
 
-IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) {
+IDB.updateTable = function (
+	databaseid,
+	tableid,
+	assignfn,
+	wherefn,
+	params,
+	cb
+) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const request = indexedDB.open(ixdbid);
 	request.onsuccess = function () {
 		const ixdb = request.result;
-		const cur = ixdb.transaction([tableid], 'readwrite').objectStore(tableid).openCursor();
+		const cur = ixdb
+			.transaction([tableid], 'readwrite')
+			.objectStore(tableid)
+			.openCursor();
 
 		let num = 0;
 		cur.onsuccess = () => {

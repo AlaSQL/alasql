@@ -26,7 +26,8 @@ describe('Test 19', function () {
 
 	it('2. EXISTS', function (done) {
 		var res = db.exec(
-			'SELECT COLUMN a FROM test1 WHERE EXISTS ' + '(SELECT * FROM test2 WHERE test1.a = test2.b)'
+			'SELECT COLUMN a FROM test1 WHERE EXISTS ' +
+				'(SELECT * FROM test2 WHERE test1.a = test2.b)'
 		);
 		assert.deepEqual(res, [1, 2, 3, 4]);
 		done();

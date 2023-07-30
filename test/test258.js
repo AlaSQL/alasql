@@ -24,7 +24,9 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
 	});
 
 	it('4. Create temporary view', function (done) {
-		var res = alasql('CREATE TEMPORARY VIEW view2 AS SELECT x FROM t1 WHERE x>0');
+		var res = alasql(
+			'CREATE TEMPORARY VIEW view2 AS SELECT x FROM t1 WHERE x>0'
+		);
 		assert(res == 1);
 		done();
 	});
@@ -146,7 +148,9 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
 
 	it('9. FROM CROSS JOIN ', function (done) {
 		alasql('CREATE TABLE tab1; CREATE TABLE tab2');
-		alasql('SELECT - 92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 ) ');
+		alasql(
+			'SELECT - 92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 ) '
+		);
 		alasql('DROP TABLE tab1; DROP TABLE tab2; ');
 		done();
 	});

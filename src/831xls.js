@@ -129,8 +129,10 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 			}
 			if (typeof column.width == 'number') column.width = column.width + 'px';
 			if (typeof column.columnid == 'undefined') column.columnid = columnidx;
-			if (typeof column.title == 'undefined') column.title = '' + column.columnid.trim();
-			if (sheet.headers && Array.isArray(sheet.headers)) column.title = sheet.headers[columnidx];
+			if (typeof column.title == 'undefined')
+				column.title = '' + column.columnid.trim();
+			if (sheet.headers && Array.isArray(sheet.headers))
+				column.title = sheet.headers[columnidx];
 		});
 
 		// Set columns widths
@@ -219,14 +221,26 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 						extend(cell, sheet.column.cell);
 					}
 					extend(cell, column.cell);
-					if (sheet.cells && sheet.cells[rowidx] && sheet.cells[rowidx][columnidx]) {
+					if (
+						sheet.cells &&
+						sheet.cells[rowidx] &&
+						sheet.cells[rowidx][columnidx]
+					) {
 						extend(cell, sheet.cells[rowidx][columnidx]);
 					}
 
 					// Create value
 					var value = row[column.columnid];
 					if (typeof cell.value == 'function') {
-						value = cell.value(value, sheet, row, column, cell, rowidx, columnidx);
+						value = cell.value(
+							value,
+							sheet,
+							row,
+							column,
+							cell,
+							rowidx,
+							columnidx
+						);
 					}
 
 					// Define cell type
@@ -247,14 +261,19 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 					var typestyle = '';
 
 					if (typeid == 'money') {
-						typestyle = 'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
+						typestyle =
+							'mso-number-format:"\\#\\,\\#\\#0\\\\ _р_\\.";white-space:normal;';
 					} else if (typeid == 'number') {
 						typestyle = ' ';
 					} else if (typeid == 'date') {
 						typestyle = 'mso-number-format:"Short Date";';
 					} else {
 						// FOr other types is saved
-						if (opts.types && opts.types[typeid] && opts.types[typeid].typestyle) {
+						if (
+							opts.types &&
+							opts.types[typeid] &&
+							opts.types[typeid].typestyle
+						) {
 							typestyle = opts.types[typeid].typestyle;
 						}
 					}
@@ -284,7 +303,9 @@ alasql.into.XLS = function (filename, opts, data, columns, cb) {
 						} else if (typeof format == 'string') {
 							s += value; // TODO - add string format
 						} else {
-							throw new Error('Unknown format type. Should be function or string');
+							throw new Error(
+								'Unknown format type. Should be function or string'
+							);
 						}
 					} else {
 						if (typeid == 'number' || typeid == 'date') {

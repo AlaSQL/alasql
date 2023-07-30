@@ -30,7 +30,9 @@ describe('Test ' + test + ' Merge', function () {
 			},
 			{
 				inspecteur: 'Piet',
-				keuring: [{keuring: 'Keuring 02', inspecteur: 'Piet', date: '2016-01-20'}],
+				keuring: [
+					{keuring: 'Keuring 02', inspecteur: 'Piet', date: '2016-01-20'},
+				],
 			},
 		];
 		var res2 = [

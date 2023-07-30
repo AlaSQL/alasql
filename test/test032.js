@@ -27,17 +27,25 @@ describe('Test 32', function () {
 		assert.deepEqual([1, 2], db.exec(sql));
 
 		var likeAliases = ['like', 'ilike', '~~', '~~*'],
-			notLikeAliases = ['not like', 'not      like', 'not     ilike', '!~~', '!~~*'];
+			notLikeAliases = [
+				'not like',
+				'not      like',
+				'not     ilike',
+				'!~~',
+				'!~~*',
+			];
 
 		// caseinsensetive
 		for (var i in likeAliases) {
-			var sql = 'SELECT COLUMN b FROM test WHERE a ' + likeAliases[i] + " '%BC%'";
+			var sql =
+				'SELECT COLUMN b FROM test WHERE a ' + likeAliases[i] + " '%BC%'";
 			assert.deepEqual([3, 4, 5], db.exec(sql));
 		}
 
 		// caseinsensetive
 		for (var i in notLikeAliases) {
-			var sql = 'SELECT COLUMN b FROM test WHERE a ' + notLikeAliases[i] + " '%BC%'";
+			var sql =
+				'SELECT COLUMN b FROM test WHERE a ' + notLikeAliases[i] + " '%BC%'";
 			assert.deepEqual([1, 2], db.exec(sql));
 		}
 

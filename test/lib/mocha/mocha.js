@@ -18,7 +18,9 @@
 		var orig = path,
 			reg = path + '.js',
 			index = path + '/index.js';
-		return (require.modules[reg] && reg) || (require.modules[index] && index) || orig;
+		return (
+			(require.modules[reg] && reg) || (require.modules[index] && index) || orig
+		);
 	};
 
 	require.register = function (path, fn) {
@@ -145,9 +147,17 @@
 							// Select the diagonal that we want to branch from. We select the prior
 							// path whose position in the new string is the farthest from the origin
 							// and does not pass the bounds of the diff graph
-							if (!canAdd || (canRemove && addPath.newPos < removePath.newPos)) {
+							if (
+								!canAdd ||
+								(canRemove && addPath.newPos < removePath.newPos)
+							) {
 								basePath = clonePath(removePath);
-								this.pushComponent(basePath.components, oldString[oldPos], undefined, true);
+								this.pushComponent(
+									basePath.components,
+									oldString[oldPos],
+									undefined,
+									true
+								);
 							} else {
 								basePath = clonePath(addPath);
 								basePath.newPos++;
@@ -159,7 +169,12 @@
 								);
 							}
 
-							var oldPos = this.extractCommon(basePath, newString, oldString, diagonalPath);
+							var oldPos = this.extractCommon(
+								basePath,
+								newString,
+								oldString,
+								diagonalPath
+							);
 
 							if (basePath.newPos + 1 >= newLen && oldPos + 1 >= oldLen) {
 								return basePath.components;
@@ -197,7 +212,12 @@
 						newPos++;
 						oldPos++;
 
-						this.pushComponent(basePath.components, newString[newPos], undefined, undefined);
+						this.pushComponent(
+							basePath.components,
+							newString[newPos],
+							undefined,
+							undefined
+						);
 					}
 					basePath.newPos = newPos;
 					return oldPos;
@@ -205,7 +225,11 @@
 
 				equals: function (left, right) {
 					var reWhitespace = /\S/;
-					if (this.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right)) {
+					if (
+						this.ignoreWhitespace &&
+						!reWhitespace.test(left) &&
+						!reWhitespace.test(right)
+					) {
 						return true;
 					} else {
 						return left === right;
@@ -261,9 +285,19 @@
 					var ret = [];
 
 					ret.push('Index: ' + fileName);
-					ret.push('===================================================================');
-					ret.push('--- ' + fileName + (typeof oldHeader === 'undefined' ? '' : '\t' + oldHeader));
-					ret.push('+++ ' + fileName + (typeof newHeader === 'undefined' ? '' : '\t' + newHeader));
+					ret.push(
+						'==================================================================='
+					);
+					ret.push(
+						'--- ' +
+							fileName +
+							(typeof oldHeader === 'undefined' ? '' : '\t' + oldHeader)
+					);
+					ret.push(
+						'+++ ' +
+							fileName +
+							(typeof newHeader === 'undefined' ? '' : '\t' + newHeader)
+					);
 
 					var diff = LineDiff.diff(oldStr, newStr);
 					if (!diff[diff.length - 1].value) {
@@ -281,7 +315,8 @@
 							isLast = i === diff.length - 2,
 							isLastOfType =
 								i === diff.length - 3 &&
-								(current.added !== last.added || current.removed !== last.removed);
+								(current.added !== last.added ||
+									current.removed !== last.removed);
 
 						// Figure out if this is the last line for the given file and missing NL
 						if (!/\n$/.test(current.value) && (isLast || isLastOfType)) {
@@ -296,7 +331,8 @@
 						newLine = 1;
 					for (var i = 0; i < diff.length; i++) {
 						var current = diff[i],
-							lines = current.lines || current.value.replace(/\n$/, '').split('\n');
+							lines =
+								current.lines || current.value.replace(/\n$/, '').split('\n');
 						current.lines = lines;
 
 						if (current.added || current.removed) {
@@ -345,7 +381,10 @@
 											' @@'
 									);
 									ret.push.apply(ret, curRange);
-									ret.push.apply(ret, contextLines(lines.slice(0, contextSize)));
+									ret.push.apply(
+										ret,
+										contextLines(lines.slice(0, contextSize))
+									);
 									if (lines.length <= 4) {
 										eofNL(ret, i, current);
 									}
@@ -403,7 +442,10 @@
 								return false;
 							}
 						}
-						Array.prototype.splice.apply(str, [d.start - 1, +d.oldlength].concat(d.newlines));
+						Array.prototype.splice.apply(
+							str,
+							[d.start - 1, +d.oldlength].concat(d.newlines)
+						);
 					}
 
 					if (remEOFNL) {
@@ -443,7 +485,10 @@
 						change;
 					for (var i = 0; i < changes.length; i++) {
 						change = changes[i];
-						ret.push([change.added ? 1 : change.removed ? -1 : 0, change.value]);
+						ret.push([
+							change.added ? 1 : change.removed ? -1 : 0,
+							change.value,
+						]);
 					}
 					return ret;
 				},
@@ -536,7 +581,10 @@
 					var pos = -1;
 
 					for (var i = 0, l = list.length; i < l; i++) {
-						if (list[i] === fn || (list[i].listener && list[i].listener === fn)) {
+						if (
+							list[i] === fn ||
+							(list[i].listener && list[i].listener === fn)
+						) {
 							pos = i;
 							break;
 						}
@@ -1064,69 +1112,72 @@
 		};
 	}); // module: interfaces/bdd.js
 
-	require.register('interfaces/exports.js', function (module, exports, require) {
-		/**
-		 * Module dependencies.
-		 */
+	require.register(
+		'interfaces/exports.js',
+		function (module, exports, require) {
+			/**
+			 * Module dependencies.
+			 */
 
-		var Suite = require('../suite'),
-			Test = require('../test');
+			var Suite = require('../suite'),
+				Test = require('../test');
 
-		/**
-		 * TDD-style interface:
-		 *
-		 *     exports.Array = {
-		 *       '#indexOf()': {
-		 *         'should return -1 when the value is not present': function(){
-		 *
-		 *         },
-		 *
-		 *         'should return the correct index when the value is present': function(){
-		 *
-		 *         }
-		 *       }
-		 *     };
-		 *
-		 */
+			/**
+			 * TDD-style interface:
+			 *
+			 *     exports.Array = {
+			 *       '#indexOf()': {
+			 *         'should return -1 when the value is not present': function(){
+			 *
+			 *         },
+			 *
+			 *         'should return the correct index when the value is present': function(){
+			 *
+			 *         }
+			 *       }
+			 *     };
+			 *
+			 */
 
-		module.exports = function (suite) {
-			var suites = [suite];
+			module.exports = function (suite) {
+				var suites = [suite];
 
-			suite.on('require', visit);
+				suite.on('require', visit);
 
-			function visit(obj, file) {
-				var suite;
-				for (var key in obj) {
-					if ('function' == typeof obj[key]) {
-						var fn = obj[key];
-						switch (key) {
-							case 'before':
-								suites[0].beforeAll(fn);
-								break;
-							case 'after':
-								suites[0].afterAll(fn);
-								break;
-							case 'beforeEach':
-								suites[0].beforeEach(fn);
-								break;
-							case 'afterEach':
-								suites[0].afterEach(fn);
-								break;
-							default:
-								var test = new Test(key, fn);
-								test.file = file;
-								suites[0].addTest(test);
+				function visit(obj, file) {
+					var suite;
+					for (var key in obj) {
+						if ('function' == typeof obj[key]) {
+							var fn = obj[key];
+							switch (key) {
+								case 'before':
+									suites[0].beforeAll(fn);
+									break;
+								case 'after':
+									suites[0].afterAll(fn);
+									break;
+								case 'beforeEach':
+									suites[0].beforeEach(fn);
+									break;
+								case 'afterEach':
+									suites[0].afterEach(fn);
+									break;
+								default:
+									var test = new Test(key, fn);
+									test.file = file;
+									suites[0].addTest(test);
+							}
+						} else {
+							var suite = Suite.create(suites[0], key);
+							suites.unshift(suite);
+							visit(obj[key]);
+							suites.shift();
 						}
-					} else {
-						var suite = Suite.create(suites[0], key);
-						suites.unshift(suite);
-						visit(obj[key]);
-						suites.shift();
 					}
 				}
-			}
-		};
-	}); // module: interfaces/exports.js
+			};
+		}
+	); // module: interfaces/exports.js
 
 	require.register('interfaces/index.js', function (module, exports, require) {
 		exports.bdd = require('./bdd');
@@ -1486,7 +1537,8 @@
 			this.reporter(options.reporter);
 			if (null != options.timeout) this.timeout(options.timeout);
 			this.useColors(options.useColors);
-			if (options.enableTimeouts !== null) this.enableTimeouts(options.enableTimeouts);
+			if (options.enableTimeouts !== null)
+				this.enableTimeouts(options.enableTimeouts);
 			if (options.slow) this.slow(options.slow);
 
 			this.suite.on('pre-require', function (context) {
@@ -1633,7 +1685,8 @@
 		 */
 
 		Mocha.prototype.grep = function (re) {
-			this.options.grep = 'string' == typeof re ? new RegExp(utils.escapeRegexp(re)) : re;
+			this.options.grep =
+				'string' == typeof re ? new RegExp(utils.escapeRegexp(re)) : re;
 			return this;
 		};
 
@@ -1708,7 +1761,8 @@
 		 */
 
 		Mocha.prototype.useColors = function (colors) {
-			this.options.useColors = arguments.length && colors != undefined ? colors : true;
+			this.options.useColors =
+				arguments.length && colors != undefined ? colors : true;
 			return this;
 		};
 
@@ -1761,7 +1815,9 @@
 		 */
 
 		Mocha.prototype.enableTimeouts = function (enabled) {
-			this.suite.enableTimeouts(arguments.length && enabled !== undefined ? enabled : true);
+			this.suite.enableTimeouts(
+				arguments.length && enabled !== undefined ? enabled : true
+			);
 			return this;
 		};
 
@@ -1842,9 +1898,10 @@
 		 */
 
 		function parse(str) {
-			var match = /^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(
-				str
-			);
+			var match =
+				/^((?:\d+)?\.?\d+) *(ms|seconds?|s|minutes?|m|hours?|h|days?|d|years?|y)?$/i.exec(
+					str
+				);
 			if (!match) return;
 			var n = parseFloat(match[1]);
 			var type = (match[2] || 'ms').toLowerCase();
@@ -2108,7 +2165,9 @@
 
 				// actual / expected diff
 				if ('string' == typeof actual && 'string' == typeof expected) {
-					fmt = color('error title', '  %s) %s:\n%s') + color('error stack', '\n%s\n');
+					fmt =
+						color('error title', '  %s) %s:\n%s') +
+						color('error stack', '\n%s\n');
 					var match = message.match(/^([^:]+): expected/);
 					msg = '\n      ' + color('error message', match ? match[1] : msg);
 
@@ -2140,7 +2199,13 @@
 
 		function Base(runner) {
 			var self = this,
-				stats = (this.stats = {suites: 0, tests: 0, passes: 0, pending: 0, failures: 0}),
+				stats = (this.stats = {
+					suites: 0,
+					tests: 0,
+					passes: 0,
+					pending: 0,
+					failures: 0,
+				}),
 				failures = (this.failures = []);
 
 			if (!runner) return;
@@ -2167,7 +2232,11 @@
 
 				var medium = test.slow() / 2;
 				test.speed =
-					test.duration > test.slow() ? 'slow' : test.duration > medium ? 'medium' : 'fast';
+					test.duration > test.slow()
+						? 'slow'
+						: test.duration > medium
+						? 'medium'
+						: 'fast';
 
 				stats.passes++;
 			});
@@ -2204,7 +2273,10 @@
 			console.log();
 
 			// passes
-			fmt = color('bright pass', ' ') + color('green', ' %d passing') + color('light', ' (%s)');
+			fmt =
+				color('bright pass', ' ') +
+				color('green', ' %d passing') +
+				color('light', ' (%s)');
 
 			console.log(fmt, stats.passes || 0, ms(stats.duration));
 
@@ -2342,7 +2414,10 @@
 		 * @api private
 		 */
 		function escapeInvisibles(line) {
-			return line.replace(/\t/g, '<tab>').replace(/\r/g, '<CR>').replace(/\n/g, '<LF>\n');
+			return line
+				.replace(/\t/g, '<tab>')
+				.replace(/\r/g, '<CR>')
+				.replace(/\n/g, '<LF>\n');
 		}
 
 		/**
@@ -2436,10 +2511,22 @@
 			});
 
 			runner.on('fail', function (test, err) {
-				console.log('%s  <dt class="error">%s</dt>', indent(), utils.escape(test.title));
+				console.log(
+					'%s  <dt class="error">%s</dt>',
+					indent(),
+					utils.escape(test.title)
+				);
 				var code = utils.escape(utils.clean(test.fn.toString()));
-				console.log('%s  <dd class="error"><pre><code>%s</code></pre></dd>', indent(), code);
-				console.log('%s  <dd class="error">%s</dd>', indent(), utils.escape(err));
+				console.log(
+					'%s  <dd class="error"><pre><code>%s</code></pre></dd>',
+					indent(),
+					code
+				);
+				console.log(
+					'%s  <dd class="error">%s</dd>',
+					indent(),
+					utils.escape(err)
+				);
 			});
 		}
 	}); // module: reporters/doc.js
@@ -2512,60 +2599,63 @@
 		Dot.prototype.constructor = Dot;
 	}); // module: reporters/dot.js
 
-	require.register('reporters/html-cov.js', function (module, exports, require) {
-		/**
-		 * Module dependencies.
-		 */
+	require.register(
+		'reporters/html-cov.js',
+		function (module, exports, require) {
+			/**
+			 * Module dependencies.
+			 */
 
-		var JSONCov = require('./json-cov'),
-			fs = require('browser/fs');
+			var JSONCov = require('./json-cov'),
+				fs = require('browser/fs');
 
-		/**
-		 * Expose `HTMLCov`.
-		 */
+			/**
+			 * Expose `HTMLCov`.
+			 */
 
-		exports = module.exports = HTMLCov;
+			exports = module.exports = HTMLCov;
 
-		/**
-		 * Initialize a new `JsCoverage` reporter.
-		 *
-		 * @param {Runner} runner
-		 * @api public
-		 */
+			/**
+			 * Initialize a new `JsCoverage` reporter.
+			 *
+			 * @param {Runner} runner
+			 * @api public
+			 */
 
-		function HTMLCov(runner) {
-			var jade = require('jade'),
-				file = __dirname + '/templates/coverage.jade',
-				str = fs.readFileSync(file, 'utf8'),
-				fn = jade.compile(str, {filename: file}),
-				self = this;
+			function HTMLCov(runner) {
+				var jade = require('jade'),
+					file = __dirname + '/templates/coverage.jade',
+					str = fs.readFileSync(file, 'utf8'),
+					fn = jade.compile(str, {filename: file}),
+					self = this;
 
-			JSONCov.call(this, runner, false);
+				JSONCov.call(this, runner, false);
 
-			runner.on('end', function () {
-				process.stdout.write(
-					fn({
-						cov: self.cov,
-						coverageClass: coverageClass,
-					})
-				);
-			});
+				runner.on('end', function () {
+					process.stdout.write(
+						fn({
+							cov: self.cov,
+							coverageClass: coverageClass,
+						})
+					);
+				});
+			}
+
+			/**
+			 * Return coverage class for `n`.
+			 *
+			 * @return {String}
+			 * @api private
+			 */
+
+			function coverageClass(n) {
+				if (n >= 75) return 'high';
+				if (n >= 50) return 'medium';
+				if (n >= 25) return 'low';
+				return 'terrible';
+			}
 		}
-
-		/**
-		 * Return coverage class for `n`.
-		 *
-		 * @return {String}
-		 * @api private
-		 */
-
-		function coverageClass(n) {
-			if (n >= 75) return 'high';
-			if (n >= 50) return 'medium';
-			if (n >= 25) return 'low';
-			return 'terrible';
-		}
-	}); // module: reporters/html-cov.js
+	); // module: reporters/html-cov.js
 
 	require.register('reporters/html.js', function (module, exports, require) {
 		/**
@@ -2714,7 +2804,10 @@
 						url
 					);
 				} else if (test.pending) {
-					var el = fragment('<li class="test pass pending"><h2>%e</h2></li>', test.title);
+					var el = fragment(
+						'<li class="test pass pending"><h2>%e</h2></li>',
+						test.title
+					);
 				} else {
 					var el = fragment(
 						'<li class="test fail"><h2>%e <a href="?grep=%e" class="replay">‣</a></h2></li>',
@@ -2733,7 +2826,11 @@
 					if ('[object Error]' == str) str = test.err.message;
 
 					// Safari doesn't give you a stack. Let's at least provide a source line.
-					if (!test.err.stack && test.err.sourceURL && test.err.line !== undefined) {
+					if (
+						!test.err.stack &&
+						test.err.sourceURL &&
+						test.err.line !== undefined
+					) {
 						str += '\n(' + test.err.sourceURL + ':' + test.err.line + ')';
 					}
 
@@ -2749,7 +2846,10 @@
 						pre.style.display = 'none' == pre.style.display ? 'block' : 'none';
 					});
 
-					var pre = fragment('<pre><code>%e</code></pre>', utils.clean(test.fn.toString()));
+					var pre = fragment(
+						'<pre><code>%e</code></pre>',
+						utils.clean(test.fn.toString())
+					);
 					el.appendChild(pre);
 					pre.style.display = 'none';
 				}
@@ -2784,7 +2884,9 @@
 		 */
 
 		function error(msg) {
-			document.body.appendChild(fragment('<div id="mocha-error">%s</div>', msg));
+			document.body.appendChild(
+				fragment('<div id="mocha-error">%s</div>', msg)
+			);
 		}
 
 		/**
@@ -2877,221 +2979,227 @@
 		exports.JSONStream = require('./json-stream');
 	}); // module: reporters/index.js
 
-	require.register('reporters/json-cov.js', function (module, exports, require) {
-		/**
-		 * Module dependencies.
-		 */
+	require.register(
+		'reporters/json-cov.js',
+		function (module, exports, require) {
+			/**
+			 * Module dependencies.
+			 */
 
-		var Base = require('./base');
+			var Base = require('./base');
 
-		/**
-		 * Expose `JSONCov`.
-		 */
+			/**
+			 * Expose `JSONCov`.
+			 */
 
-		exports = module.exports = JSONCov;
+			exports = module.exports = JSONCov;
 
-		/**
-		 * Initialize a new `JsCoverage` reporter.
-		 *
-		 * @param {Runner} runner
-		 * @param {Boolean} output
-		 * @api public
-		 */
+			/**
+			 * Initialize a new `JsCoverage` reporter.
+			 *
+			 * @param {Runner} runner
+			 * @param {Boolean} output
+			 * @api public
+			 */
 
-		function JSONCov(runner, output) {
-			var self = this,
-				output = 1 == arguments.length ? true : output;
+			function JSONCov(runner, output) {
+				var self = this,
+					output = 1 == arguments.length ? true : output;
 
-			Base.call(this, runner);
+				Base.call(this, runner);
 
-			var tests = [],
-				failures = [],
-				passes = [];
+				var tests = [],
+					failures = [],
+					passes = [];
 
-			runner.on('test end', function (test) {
-				tests.push(test);
-			});
+				runner.on('test end', function (test) {
+					tests.push(test);
+				});
 
-			runner.on('pass', function (test) {
-				passes.push(test);
-			});
+				runner.on('pass', function (test) {
+					passes.push(test);
+				});
 
-			runner.on('fail', function (test) {
-				failures.push(test);
-			});
+				runner.on('fail', function (test) {
+					failures.push(test);
+				});
 
-			runner.on('end', function () {
-				var cov = global._$jscoverage || {};
-				var result = (self.cov = map(cov));
-				result.stats = self.stats;
-				result.tests = tests.map(clean);
-				result.failures = failures.map(clean);
-				result.passes = passes.map(clean);
-				if (!output) return;
-				process.stdout.write(JSON.stringify(result, null, 2));
-			});
-		}
-
-		/**
-		 * Map jscoverage data to a JSON structure
-		 * suitable for reporting.
-		 *
-		 * @param {Object} cov
-		 * @return {Object}
-		 * @api private
-		 */
-
-		function map(cov) {
-			var ret = {
-				instrumentation: 'node-jscoverage',
-				sloc: 0,
-				hits: 0,
-				misses: 0,
-				coverage: 0,
-				files: [],
-			};
-
-			for (var filename in cov) {
-				var data = coverage(filename, cov[filename]);
-				ret.files.push(data);
-				ret.hits += data.hits;
-				ret.misses += data.misses;
-				ret.sloc += data.sloc;
+				runner.on('end', function () {
+					var cov = global._$jscoverage || {};
+					var result = (self.cov = map(cov));
+					result.stats = self.stats;
+					result.tests = tests.map(clean);
+					result.failures = failures.map(clean);
+					result.passes = passes.map(clean);
+					if (!output) return;
+					process.stdout.write(JSON.stringify(result, null, 2));
+				});
 			}
 
-			ret.files.sort(function (a, b) {
-				return a.filename.localeCompare(b.filename);
-			});
+			/**
+			 * Map jscoverage data to a JSON structure
+			 * suitable for reporting.
+			 *
+			 * @param {Object} cov
+			 * @return {Object}
+			 * @api private
+			 */
 
-			if (ret.sloc > 0) {
-				ret.coverage = (ret.hits / ret.sloc) * 100;
-			}
+			function map(cov) {
+				var ret = {
+					instrumentation: 'node-jscoverage',
+					sloc: 0,
+					hits: 0,
+					misses: 0,
+					coverage: 0,
+					files: [],
+				};
 
-			return ret;
-		}
-
-		/**
-		 * Map jscoverage data for a single source file
-		 * to a JSON structure suitable for reporting.
-		 *
-		 * @param {String} filename name of the source file
-		 * @param {Object} data jscoverage coverage data
-		 * @return {Object}
-		 * @api private
-		 */
-
-		function coverage(filename, data) {
-			var ret = {
-				filename: filename,
-				coverage: 0,
-				hits: 0,
-				misses: 0,
-				sloc: 0,
-				source: {},
-			};
-
-			data.source.forEach(function (line, num) {
-				num++;
-
-				if (data[num] === 0) {
-					ret.misses++;
-					ret.sloc++;
-				} else if (data[num] !== undefined) {
-					ret.hits++;
-					ret.sloc++;
+				for (var filename in cov) {
+					var data = coverage(filename, cov[filename]);
+					ret.files.push(data);
+					ret.hits += data.hits;
+					ret.misses += data.misses;
+					ret.sloc += data.sloc;
 				}
 
-				ret.source[num] = {
-					source: line,
-					coverage: data[num] === undefined ? '' : data[num],
+				ret.files.sort(function (a, b) {
+					return a.filename.localeCompare(b.filename);
+				});
+
+				if (ret.sloc > 0) {
+					ret.coverage = (ret.hits / ret.sloc) * 100;
+				}
+
+				return ret;
+			}
+
+			/**
+			 * Map jscoverage data for a single source file
+			 * to a JSON structure suitable for reporting.
+			 *
+			 * @param {String} filename name of the source file
+			 * @param {Object} data jscoverage coverage data
+			 * @return {Object}
+			 * @api private
+			 */
+
+			function coverage(filename, data) {
+				var ret = {
+					filename: filename,
+					coverage: 0,
+					hits: 0,
+					misses: 0,
+					sloc: 0,
+					source: {},
 				};
-			});
 
-			ret.coverage = (ret.hits / ret.sloc) * 100;
+				data.source.forEach(function (line, num) {
+					num++;
 
-			return ret;
+					if (data[num] === 0) {
+						ret.misses++;
+						ret.sloc++;
+					} else if (data[num] !== undefined) {
+						ret.hits++;
+						ret.sloc++;
+					}
+
+					ret.source[num] = {
+						source: line,
+						coverage: data[num] === undefined ? '' : data[num],
+					};
+				});
+
+				ret.coverage = (ret.hits / ret.sloc) * 100;
+
+				return ret;
+			}
+
+			/**
+			 * Return a plain-object representation of `test`
+			 * free of cyclic properties etc.
+			 *
+			 * @param {Object} test
+			 * @return {Object}
+			 * @api private
+			 */
+
+			function clean(test) {
+				return {
+					title: test.title,
+					fullTitle: test.fullTitle(),
+					duration: test.duration,
+				};
+			}
 		}
+	); // module: reporters/json-cov.js
 
-		/**
-		 * Return a plain-object representation of `test`
-		 * free of cyclic properties etc.
-		 *
-		 * @param {Object} test
-		 * @return {Object}
-		 * @api private
-		 */
+	require.register(
+		'reporters/json-stream.js',
+		function (module, exports, require) {
+			/**
+			 * Module dependencies.
+			 */
 
-		function clean(test) {
-			return {
-				title: test.title,
-				fullTitle: test.fullTitle(),
-				duration: test.duration,
-			};
+			var Base = require('./base'),
+				color = Base.color;
+
+			/**
+			 * Expose `List`.
+			 */
+
+			exports = module.exports = List;
+
+			/**
+			 * Initialize a new `List` test reporter.
+			 *
+			 * @param {Runner} runner
+			 * @api public
+			 */
+
+			function List(runner) {
+				Base.call(this, runner);
+
+				var self = this,
+					stats = this.stats,
+					total = runner.total;
+
+				runner.on('start', function () {
+					console.log(JSON.stringify(['start', {total: total}]));
+				});
+
+				runner.on('pass', function (test) {
+					console.log(JSON.stringify(['pass', clean(test)]));
+				});
+
+				runner.on('fail', function (test, err) {
+					console.log(JSON.stringify(['fail', clean(test)]));
+				});
+
+				runner.on('end', function () {
+					process.stdout.write(JSON.stringify(['end', self.stats]));
+				});
+			}
+
+			/**
+			 * Return a plain-object representation of `test`
+			 * free of cyclic properties etc.
+			 *
+			 * @param {Object} test
+			 * @return {Object}
+			 * @api private
+			 */
+
+			function clean(test) {
+				return {
+					title: test.title,
+					fullTitle: test.fullTitle(),
+					duration: test.duration,
+				};
+			}
 		}
-	}); // module: reporters/json-cov.js
-
-	require.register('reporters/json-stream.js', function (module, exports, require) {
-		/**
-		 * Module dependencies.
-		 */
-
-		var Base = require('./base'),
-			color = Base.color;
-
-		/**
-		 * Expose `List`.
-		 */
-
-		exports = module.exports = List;
-
-		/**
-		 * Initialize a new `List` test reporter.
-		 *
-		 * @param {Runner} runner
-		 * @api public
-		 */
-
-		function List(runner) {
-			Base.call(this, runner);
-
-			var self = this,
-				stats = this.stats,
-				total = runner.total;
-
-			runner.on('start', function () {
-				console.log(JSON.stringify(['start', {total: total}]));
-			});
-
-			runner.on('pass', function (test) {
-				console.log(JSON.stringify(['pass', clean(test)]));
-			});
-
-			runner.on('fail', function (test, err) {
-				console.log(JSON.stringify(['fail', clean(test)]));
-			});
-
-			runner.on('end', function () {
-				process.stdout.write(JSON.stringify(['end', self.stats]));
-			});
-		}
-
-		/**
-		 * Return a plain-object representation of `test`
-		 * free of cyclic properties etc.
-		 *
-		 * @param {Object} test
-		 * @return {Object}
-		 * @api private
-		 */
-
-		function clean(test) {
-			return {
-				title: test.title,
-				fullTitle: test.fullTitle(),
-				duration: test.duration,
-			};
-		}
-	}); // module: reporters/json-stream.js
+	); // module: reporters/json-stream.js
 
 	require.register('reporters/json.js', function (module, exports, require) {
 		/**
@@ -3342,99 +3450,108 @@
 		List.prototype.constructor = List;
 	}); // module: reporters/list.js
 
-	require.register('reporters/markdown.js', function (module, exports, require) {
-		/**
-		 * Module dependencies.
-		 */
+	require.register(
+		'reporters/markdown.js',
+		function (module, exports, require) {
+			/**
+			 * Module dependencies.
+			 */
 
-		var Base = require('./base'),
-			utils = require('../utils');
+			var Base = require('./base'),
+				utils = require('../utils');
 
-		/**
-		 * Expose `Markdown`.
-		 */
+			/**
+			 * Expose `Markdown`.
+			 */
 
-		exports = module.exports = Markdown;
+			exports = module.exports = Markdown;
 
-		/**
-		 * Initialize a new `Markdown` reporter.
-		 *
-		 * @param {Runner} runner
-		 * @api public
-		 */
+			/**
+			 * Initialize a new `Markdown` reporter.
+			 *
+			 * @param {Runner} runner
+			 * @api public
+			 */
 
-		function Markdown(runner) {
-			Base.call(this, runner);
+			function Markdown(runner) {
+				Base.call(this, runner);
 
-			var self = this,
-				stats = this.stats,
-				level = 0,
-				buf = '';
+				var self = this,
+					stats = this.stats,
+					level = 0,
+					buf = '';
 
-			function title(str) {
-				return Array(level).join('#') + ' ' + str;
-			}
-
-			function indent() {
-				return Array(level).join('  ');
-			}
-
-			function mapTOC(suite, obj) {
-				var ret = obj;
-				obj = obj[suite.title] = obj[suite.title] || {suite: suite};
-				suite.suites.forEach(function (suite) {
-					mapTOC(suite, obj);
-				});
-				return ret;
-			}
-
-			function stringifyTOC(obj, level) {
-				++level;
-				var buf = '';
-				var link;
-				for (var key in obj) {
-					if ('suite' == key) continue;
-					if (key) link = ' - [' + key + '](#' + utils.slug(obj[key].suite.fullTitle()) + ')\n';
-					if (key) buf += Array(level).join('  ') + link;
-					buf += stringifyTOC(obj[key], level);
+				function title(str) {
+					return Array(level).join('#') + ' ' + str;
 				}
-				--level;
-				return buf;
+
+				function indent() {
+					return Array(level).join('  ');
+				}
+
+				function mapTOC(suite, obj) {
+					var ret = obj;
+					obj = obj[suite.title] = obj[suite.title] || {suite: suite};
+					suite.suites.forEach(function (suite) {
+						mapTOC(suite, obj);
+					});
+					return ret;
+				}
+
+				function stringifyTOC(obj, level) {
+					++level;
+					var buf = '';
+					var link;
+					for (var key in obj) {
+						if ('suite' == key) continue;
+						if (key)
+							link =
+								' - [' +
+								key +
+								'](#' +
+								utils.slug(obj[key].suite.fullTitle()) +
+								')\n';
+						if (key) buf += Array(level).join('  ') + link;
+						buf += stringifyTOC(obj[key], level);
+					}
+					--level;
+					return buf;
+				}
+
+				function generateTOC(suite) {
+					var obj = mapTOC(suite, {});
+					return stringifyTOC(obj, 0);
+				}
+
+				generateTOC(runner.suite);
+
+				runner.on('suite', function (suite) {
+					++level;
+					var slug = utils.slug(suite.fullTitle());
+					buf += '<a name="' + slug + '"></a>' + '\n';
+					buf += title(suite.title) + '\n';
+				});
+
+				runner.on('suite end', function (suite) {
+					--level;
+				});
+
+				runner.on('pass', function (test) {
+					var code = utils.clean(test.fn.toString());
+					buf += test.title + '.\n';
+					buf += '\n```js\n';
+					buf += code + '\n';
+					buf += '```\n\n';
+				});
+
+				runner.on('end', function () {
+					process.stdout.write('# TOC\n');
+					process.stdout.write(generateTOC(runner.suite));
+					process.stdout.write(buf);
+				});
 			}
-
-			function generateTOC(suite) {
-				var obj = mapTOC(suite, {});
-				return stringifyTOC(obj, 0);
-			}
-
-			generateTOC(runner.suite);
-
-			runner.on('suite', function (suite) {
-				++level;
-				var slug = utils.slug(suite.fullTitle());
-				buf += '<a name="' + slug + '"></a>' + '\n';
-				buf += title(suite.title) + '\n';
-			});
-
-			runner.on('suite end', function (suite) {
-				--level;
-			});
-
-			runner.on('pass', function (test) {
-				var code = utils.clean(test.fn.toString());
-				buf += test.title + '.\n';
-				buf += '\n```js\n';
-				buf += code + '\n';
-				buf += '```\n\n';
-			});
-
-			runner.on('end', function () {
-				process.stdout.write('# TOC\n');
-				process.stdout.write(generateTOC(runner.suite));
-				process.stdout.write(buf);
-			});
 		}
-	}); // module: reporters/markdown.js
+	); // module: reporters/markdown.js
 
 	require.register('reporters/min.js', function (module, exports, require) {
 		/**
@@ -3722,7 +3839,8 @@
 		 */
 
 		NyanCat.prototype.rainbowify = function (str) {
-			var color = this.rainbowColors[this.colorIndex % this.rainbowColors.length];
+			var color =
+				this.rainbowColors[this.colorIndex % this.rainbowColors.length];
 			this.colorIndex += 1;
 			return '\u001b[38;5;' + color + 'm' + str + '\u001b[0m';
 		};
@@ -3745,103 +3863,108 @@
 		NyanCat.prototype.constructor = NyanCat;
 	}); // module: reporters/nyan.js
 
-	require.register('reporters/progress.js', function (module, exports, require) {
-		/**
-		 * Module dependencies.
-		 */
+	require.register(
+		'reporters/progress.js',
+		function (module, exports, require) {
+			/**
+			 * Module dependencies.
+			 */
 
-		var Base = require('./base'),
-			cursor = Base.cursor,
-			color = Base.color;
+			var Base = require('./base'),
+				cursor = Base.cursor,
+				color = Base.color;
 
-		/**
-		 * Expose `Progress`.
-		 */
+			/**
+			 * Expose `Progress`.
+			 */
 
-		exports = module.exports = Progress;
+			exports = module.exports = Progress;
 
-		/**
-		 * General progress bar color.
-		 */
+			/**
+			 * General progress bar color.
+			 */
 
-		Base.colors.progress = 90;
+			Base.colors.progress = 90;
 
-		/**
-		 * Initialize a new `Progress` bar test reporter.
-		 *
-		 * @param {Runner} runner
-		 * @param {Object} options
-		 * @api public
-		 */
+			/**
+			 * Initialize a new `Progress` bar test reporter.
+			 *
+			 * @param {Runner} runner
+			 * @param {Object} options
+			 * @api public
+			 */
 
-		function Progress(runner, options) {
-			Base.call(this, runner);
+			function Progress(runner, options) {
+				Base.call(this, runner);
 
-			var self = this,
-				options = options || {},
-				stats = this.stats,
-				width = (Base.window.width * 0.5) | 0,
-				total = runner.total,
-				complete = 0,
-				max = Math.max,
-				lastN = -1;
+				var self = this,
+					options = options || {},
+					stats = this.stats,
+					width = (Base.window.width * 0.5) | 0,
+					total = runner.total,
+					complete = 0,
+					max = Math.max,
+					lastN = -1;
 
-			// default chars
-			options.open = options.open || '[';
-			options.complete = options.complete || '▬';
-			options.incomplete = options.incomplete || Base.symbols.dot;
-			options.close = options.close || ']';
-			options.verbose = false;
+				// default chars
+				options.open = options.open || '[';
+				options.complete = options.complete || '▬';
+				options.incomplete = options.incomplete || Base.symbols.dot;
+				options.close = options.close || ']';
+				options.verbose = false;
 
-			// tests started
-			runner.on('start', function () {
-				console.log();
-				cursor.hide();
-			});
+				// tests started
+				runner.on('start', function () {
+					console.log();
+					cursor.hide();
+				});
 
-			// tests complete
-			runner.on('test end', function () {
-				complete++;
-				var incomplete = total - complete,
-					percent = complete / total,
-					n = (width * percent) | 0,
-					i = width - n;
+				// tests complete
+				runner.on('test end', function () {
+					complete++;
+					var incomplete = total - complete,
+						percent = complete / total,
+						n = (width * percent) | 0,
+						i = width - n;
 
-				if (lastN === n && !options.verbose) {
-					// Don't re-render the line if it hasn't changed
-					return;
-				}
-				lastN = n;
+					if (lastN === n && !options.verbose) {
+						// Don't re-render the line if it hasn't changed
+						return;
+					}
+					lastN = n;
 
-				cursor.CR();
-				process.stdout.write('\u001b[J');
-				process.stdout.write(color('progress', '  ' + options.open));
-				process.stdout.write(Array(n).join(options.complete));
-				process.stdout.write(Array(i).join(options.incomplete));
-				process.stdout.write(color('progress', options.close));
-				if (options.verbose) {
-					process.stdout.write(color('progress', ' ' + complete + ' of ' + total));
-				}
-			});
+					cursor.CR();
+					process.stdout.write('\u001b[J');
+					process.stdout.write(color('progress', '  ' + options.open));
+					process.stdout.write(Array(n).join(options.complete));
+					process.stdout.write(Array(i).join(options.incomplete));
+					process.stdout.write(color('progress', options.close));
+					if (options.verbose) {
+						process.stdout.write(
+							color('progress', ' ' + complete + ' of ' + total)
+						);
+					}
+				});
 
-			// tests are complete, output some stats
-			// and the failures if any
-			runner.on('end', function () {
-				cursor.show();
-				console.log();
-				self.epilogue();
-			});
+				// tests are complete, output some stats
+				// and the failures if any
+				runner.on('end', function () {
+					cursor.show();
+					console.log();
+					self.epilogue();
+				});
+			}
+
+			/**
+			 * Inherit from `Base.prototype`.
+			 */
+
+			function F() {}
+			F.prototype = Base.prototype;
+			Progress.prototype = new F();
+			Progress.prototype.constructor = Progress;
 		}
-
-		/**
-		 * Inherit from `Base.prototype`.
-		 */
-
-		function F() {}
-		F.prototype = Base.prototype;
-		Progress.prototype = new F();
-		Progress.prototype.constructor = Progress;
-	}); // module: reporters/progress.js
+	); // module: reporters/progress.js
 
 	require.register('reporters/spec.js', function (module, exports, require) {
 		/**
@@ -3898,7 +4021,10 @@
 
 			runner.on('pass', function (test) {
 				if ('fast' == test.speed) {
-					var fmt = indent() + color('checkmark', '  ' + Base.symbols.ok) + color('pass', ' %s ');
+					var fmt =
+						indent() +
+						color('checkmark', '  ' + Base.symbols.ok) +
+						color('pass', ' %s ');
 					cursor.CR();
 					console.log(fmt, test.title);
 				} else {
@@ -4104,7 +4230,12 @@
 						'testcase',
 						attrs,
 						false,
-						tag('failure', {}, false, cdata(escape(err.message) + '\n' + err.stack))
+						tag(
+							'failure',
+							{},
+							false,
+							cdata(escape(err.message) + '\n' + err.stack)
+						)
 					)
 				);
 			} else if (test.pending) {
@@ -4364,10 +4495,15 @@
 
 				try {
 					this.fn.call(ctx, function (err) {
-						if (err instanceof Error || toString.call(err) === '[object Error]') return done(err);
+						if (err instanceof Error || toString.call(err) === '[object Error]')
+							return done(err);
 						if (null != err) {
 							if (Object.prototype.toString.call(err) === '[object Object]') {
-								return done(new Error('done() invoked with non-Error: ' + JSON.stringify(err)));
+								return done(
+									new Error(
+										'done() invoked with non-Error: ' + JSON.stringify(err)
+									)
+								);
 							} else {
 								return done(new Error('done() invoked with non-Error: ' + err));
 							}
@@ -4381,7 +4517,9 @@
 			}
 
 			if (this.asyncOnly) {
-				return done(new Error('--async-only option in use without declaring `done()`'));
+				return done(
+					new Error('--async-only option in use without declaring `done()`')
+				);
 			}
 
 			// sync or promise-returning
@@ -4404,7 +4542,9 @@
 							done();
 						},
 						function (reason) {
-							done(reason || new Error('Promise rejected with no or falsy reason'));
+							done(
+								reason || new Error('Promise rejected with no or falsy reason')
+							);
 						}
 					);
 				} else {
@@ -4598,7 +4738,10 @@
 			this._globals = this._globals.concat(leaks);
 
 			if (leaks.length > 1) {
-				this.fail(test, new Error('global leaks detected: ' + leaks.join(', ') + ''));
+				this.fail(
+					test,
+					new Error('global leaks detected: ' + leaks.join(', ') + '')
+				);
 			} else if (leaks.length) {
 				this.fail(test, new Error('global leak detected: ' + leaks[0]));
 			}
@@ -4617,7 +4760,9 @@
 			test.state = 'failed';
 
 			if ('string' == typeof err) {
-				err = new Error('the string "' + err + '" was thrown, throw an Error :)');
+				err = new Error(
+					'the string "' + err + '" was thrown, throw an Error :)'
+				);
 			}
 
 			this.emit('fail', test, err);
@@ -4958,7 +5103,9 @@
 				debug('uncaught exception %s', err.message);
 			} else {
 				debug('uncaught undefined exception');
-				err = new Error('Catched undefined error, did you throw without specifying what?');
+				err = new Error(
+					'Catched undefined error, did you throw without specifying what?'
+				);
 			}
 
 			var runnable = this.currentRunnable;
@@ -5535,7 +5682,8 @@
 
 		exports.map = function (arr, fn, scope) {
 			var result = [];
-			for (var i = 0, l = arr.length; i < l; i++) result.push(fn.call(scope, arr[i], i));
+			for (var i = 0, l = arr.length; i < l; i++)
+				result.push(fn.call(scope, arr[i], i));
 			return result;
 		};
 
@@ -5699,7 +5847,10 @@
 
 			var spaces = str.match(/^\n?( *)/)[1].length,
 				tabs = str.match(/^\n?(\t*)/)[1].length,
-				re = new RegExp('^\n?' + (tabs ? '\t' : ' ') + '{' + (tabs ? tabs : spaces) + '}', 'gm');
+				re = new RegExp(
+					'^\n?' + (tabs ? '\t' : ' ') + '{' + (tabs ? tabs : spaces) + '}',
+					'gm'
+				);
 
 			str = str.replace(re, '');
 
@@ -5803,7 +5954,10 @@
 
 		exports.stringify = function (obj) {
 			if (obj instanceof RegExp) return obj.toString();
-			return JSON.stringify(exports.canonicalize(obj), null, 2).replace(/,(\n|$)/g, '$1');
+			return JSON.stringify(exports.canonicalize(obj), null, 2).replace(
+				/,(\n|$)/g,
+				'$1'
+			);
 		};
 
 		/**
@@ -5922,7 +6076,10 @@
 
 	function timeslice() {
 		var immediateStart = new Date().getTime();
-		while (immediateQueue.length && new Date().getTime() - immediateStart < 100) {
+		while (
+			immediateQueue.length &&
+			new Date().getTime() - immediateStart < 100
+		) {
 			immediateQueue.shift()();
 		}
 		if (immediateQueue.length) {

@@ -27,7 +27,9 @@ yy.Search = class Search {
 	}
 
 	toJS(context) {
-		const s = `this.queriesfn[${this.queriesidx - 1}](this.params,null,${context})`;
+		const s = `this.queriesfn[${
+			this.queriesidx - 1
+		}](this.params,null,${context})`;
 		return s;
 	}
 
@@ -274,7 +276,9 @@ yy.Search = class Search {
 							if (lvar) {
 								alasql.vars[lvar] = 0;
 							}
-							retval = retval.concat(processSelector(selectors, sidx + 1, value));
+							retval = retval.concat(
+								processSelector(selectors, sidx + 1, value)
+							);
 						}
 					}
 
@@ -315,7 +319,9 @@ yy.Search = class Search {
 										//return nests;
 									} else {
 										nest1.forEach(function (n) {
-											retval = retval.concat(processSelector(selectors, sidx + 1, n));
+											retval = retval.concat(
+												processSelector(selectors, sidx + 1, n)
+											);
 										});
 									}
 								}
@@ -323,7 +329,9 @@ yy.Search = class Search {
 							// Security brake
 							i++;
 							if (i > INFINITE_LOOP_BREAK) {
-								throw new Error('Infinite loop brake. Number of iterations = ' + i);
+								throw new Error(
+									'Infinite loop brake. Number of iterations = ' + i
+								);
 							}
 						}
 					}
@@ -519,7 +527,9 @@ yy.Search = class Search {
 						// Security brake
 						i++;
 						if (i > INFINITE_LOOP_BREAK) {
-							throw new Error('Infinite loop brake. Number of iterations = ' + i);
+							throw new Error(
+								'Infinite loop brake. Number of iterations = ' + i
+							);
 						}
 					}
 					return retval;
@@ -554,7 +564,9 @@ yy.Search = class Search {
 						// Security brake
 						i++;
 						if (i > INFINITE_LOOP_BREAK) {
-							throw new Error('Infinite loop brake. Number of iterations = ' + i);
+							throw new Error(
+								'Infinite loop brake. Number of iterations = ' + i
+							);
 						}
 					}
 
@@ -594,7 +606,12 @@ yy.Search = class Search {
 					throw new Error('Wrong selector ' + sel.selid);
 				}
 			} else if (sel.srchid) {
-				var r = alasql.srch[sel.srchid.toUpperCase()](value, sel.args, stope, params);
+				var r = alasql.srch[sel.srchid.toUpperCase()](
+					value,
+					sel.args,
+					stope,
+					params
+				);
 				//			console.log(sel.srchid,r);
 			} else {
 				throw new Error('Selector not found');
@@ -652,7 +669,10 @@ yy.Search = class Search {
 			var dbid = this.from.databaseid || databaseid;
 			fromdata = alasql.databases[dbid].tables[this.from.columnid].data;
 			//selectors.unshift({srchid:'CHILD'});
-		} else if (this.from instanceof yy.FuncValue && alasql.from[this.from.funcid.toUpperCase()]) {
+		} else if (
+			this.from instanceof yy.FuncValue &&
+			alasql.from[this.from.funcid.toUpperCase()]
+		) {
 			var args = this.from.args.map(function (arg) {
 				var as = arg.toJS();
 				//			console.log(as);
@@ -665,7 +685,10 @@ yy.Search = class Search {
 		} else if (typeof this.from === 'undefined') {
 			fromdata = alasql.databases[databaseid].objects;
 		} else {
-			var fromfn = new Function('params,alasql', 'var y;return ' + this.from.toJS());
+			var fromfn = new Function(
+				'params,alasql',
+				'var y;return ' + this.from.toJS()
+			);
 			fromdata = fromfn(params, alasql);
 			// Check for Mogo Collections
 			if (
@@ -706,16 +729,16 @@ yy.Search = class Search {
 		if (this.into) {
 			var a1, a2;
 			if (typeof this.into.args[0] !== 'undefined') {
-				a1 = new Function('params,alasql', 'var y;return ' + this.into.args[0].toJS())(
-					params,
-					alasql
-				);
+				a1 = new Function(
+					'params,alasql',
+					'var y;return ' + this.into.args[0].toJS()
+				)(params, alasql);
 			}
 			if (typeof this.into.args[1] !== 'undefined') {
-				a2 = new Function('params,alasql', 'var y;return ' + this.into.args[1].toJS())(
-					params,
-					alasql
-				);
+				a2 = new Function(
+					'params,alasql',
+					'var y;return ' + this.into.args[1].toJS()
+				)(params, alasql);
 			}
 			res = alasql.into[this.into.funcid.toUpperCase()](a1, a2, res, [], cb);
 		} else {
@@ -735,7 +758,9 @@ alasql.srch = {
 	PROP(val, args, stope) {
 		//		console.log('PROP',args[0],val);
 		if (stope.mode === 'XML') {
-			const values = val.children.filter((v) => v.name.toUpperCase() === args[0].toUpperCase());
+			const values = val.children.filter(
+				v => v.name.toUpperCase() === args[0].toUpperCase()
+			);
 
 			return {
 				status: values.length ? 1 : -1,
@@ -788,7 +813,10 @@ alasql.srch = {
 				.match(
 					new RegExp(
 						'^' +
-							exprfn(val, alasql, params).toUpperCase().replace(/%/g, '.*').replace(/\?|_/g, '.') +
+							exprfn(val, alasql, params)
+								.toUpperCase()
+								.replace(/%/g, '.*')
+								.replace(/\?|_/g, '.') +
 							'$'
 					),
 					'g'
@@ -1056,11 +1084,20 @@ alasql.srch = {
 		var s = args
 			.map(function (st) {
 				if (st.method === '@') {
-					return `alasql.vars[${JSON.stringify(st.variable)}]=` + st.expression.toJS('x', '');
+					return (
+						`alasql.vars[${JSON.stringify(st.variable)}]=` +
+						st.expression.toJS('x', '')
+					);
 				} else if (st.method === '$') {
-					return `params[${JSON.stringify(st.variable)}]=` + st.expression.toJS('x', '');
+					return (
+						`params[${JSON.stringify(st.variable)}]=` +
+						st.expression.toJS('x', '')
+					);
 				} else {
-					return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
+					return (
+						`x[${JSON.stringify(st.column.columnid)}]=` +
+						st.expression.toJS('x', '')
+					);
 				}
 			})
 			.join(';');
@@ -1073,7 +1110,7 @@ alasql.srch = {
 
 	ROW(val, args, stope, params) {
 		var s = 'var y;return [';
-		s += args.map((arg) => arg.toJS('x', '')).join(',');
+		s += args.map(arg => arg.toJS('x', '')).join(',');
 		s += ']';
 		var setfn = new Function('x,params,alasql', s);
 		var rv = setfn(val, params, alasql);
@@ -1139,7 +1176,13 @@ var compileSearchOrder = function (order) {
 				}
 
 				if (columnid === '_') {
-					s += 'if(a' + dg + (ord.direction === 'ASC' ? '>' : '<') + 'b' + dg + ')return 1;';
+					s +=
+						'if(a' +
+						dg +
+						(ord.direction === 'ASC' ? '>' : '<') +
+						'b' +
+						dg +
+						')return 1;';
 					s += 'if(a' + dg + '==b' + dg + '){';
 				} else {
 					s += `if (

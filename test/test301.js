@@ -49,7 +49,9 @@ describe('Test 301 Vertices and Edges', function () {
 	it.skip('6. Create vertices', function (done) {
 		alasql('SET @steven = (CREATE VERTEX "Steven")');
 		alasql('CREATE EDGE "loves" FROM @v1 TO @steven');
-		var res = alasql('SEARCH / VERTEX AS @p > "loves" > AS @s @[(@p->name),(@s->name)]');
+		var res = alasql(
+			'SEARCH / VERTEX AS @p > "loves" > AS @s @[(@p->name),(@s->name)]'
+		);
 		assert.deepEqual(res, [
 			['Olga', 'Peter'],
 			['Olga', 'Steven'],
@@ -109,8 +111,12 @@ describe('Test 301 Vertices and Edges', function () {
 			var res = alasql('SET @e12!name = "Lisa"');
 			var res = alasql('SET @e12!age = 43');
 
-			alasql('SET @john = (CREATE VERTEX Person SET name = "John",age=23,sex="M")');
-			alasql('SET @peter = (CREATE VERTEX Person SET name = "Peter",age=18,sex="M")');
+			alasql(
+				'SET @john = (CREATE VERTEX Person SET name = "John",age=23,sex="M")'
+			);
+			alasql(
+				'SET @peter = (CREATE VERTEX Person SET name = "Peter",age=18,sex="M")'
+			);
 			alasql(
 				'SET @mike = (CREATE VERTEX Person CONTENT {name:"Mike",age:45,sex:"M"},{name:"Paola",age:21,sex:"F"})'
 			);
@@ -121,7 +127,9 @@ describe('Test 301 Vertices and Edges', function () {
 				],
 			]);
 			alasql('SET @mary = @girls->0; SET @helen = @girls->1');
-			alasql('SET @paola = (CREATE VERTEX Person SET name = "Paola",age:19,sex="M")');
+			alasql(
+				'SET @paola = (CREATE VERTEX Person SET name = "Paola",age:19,sex="M")'
+			);
 			done();
 		});
 
@@ -129,8 +137,12 @@ describe('Test 301 Vertices and Edges', function () {
 			alasql('CREATE EDGE FROM @john TO @mary SET relation="likes"');
 			alasql('CREATE EDGE FROM @peter TO @mary SET relation="loves"');
 			alasql('CREATE EDGE FROM @mike TO @mary CONTENT {relation:"hates"}');
-			alasql('CREATE EDGE FROM @mike TO @paola CONTENT ?', [{relation: 'loves'}]);
-			alasql('CREATE EDGE FROM (SELECT * FROM Person WHERE sex="M") TO @helen SET relation:"love"');
+			alasql('CREATE EDGE FROM @mike TO @paola CONTENT ?', [
+				{relation: 'loves'},
+			]);
+			alasql(
+				'CREATE EDGE FROM (SELECT * FROM Person WHERE sex="M") TO @helen SET relation:"love"'
+			);
 			alasql(
 				'CREATE EDGE FROM @john TO (SELECT * FROM Person WHERE sex="M" AND [$id] <> @john) SET relation:"is friend of"'
 			);

@@ -5,9 +5,10 @@ if (typeof exports === 'object') {
 
 describe('Test 433 - read csv from variable', function () {
 	it('works from csv variable', function () {
-		var res = alasql('SELECT * FROM CSV(?, {"headers": true, "fromString": true})', [
-			'A,B,C\n10,20,30\n20,30,40',
-		]);
+		var res = alasql(
+			'SELECT * FROM CSV(?, {"headers": true, "fromString": true})',
+			['A,B,C\n10,20,30\n20,30,40']
+		);
 
 		assert.deepEqual(res, [
 			{A: 10, B: 20, C: 30},

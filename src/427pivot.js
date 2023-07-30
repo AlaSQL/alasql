@@ -85,13 +85,16 @@ yy.Select.prototype.compilePivot = function (query) {
 					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = 0;
 					g[d[columnid]]++;
 				} else if (aggr == 'MIN') {
-					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
+					if (typeof g[d[columnid]] == 'undefined')
+						g[d[columnid]] = d[exprcolid];
 					if (d[exprcolid] < g[d[columnid]]) g[d[columnid]] = d[exprcolid];
 				} else if (aggr == 'MAX') {
-					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
+					if (typeof g[d[columnid]] == 'undefined')
+						g[d[columnid]] = d[exprcolid];
 					if (d[exprcolid] > g[d[columnid]]) g[d[columnid]] = d[exprcolid];
 				} else if (aggr == 'FIRST') {
-					if (typeof g[d[columnid]] == 'undefined') g[d[columnid]] = d[exprcolid];
+					if (typeof g[d[columnid]] == 'undefined')
+						g[d[columnid]] = d[exprcolid];
 				} else if (aggr == 'LAST') {
 					g[d[columnid]] = d[exprcolid];
 				} else if (alasql.aggr[aggr]) {
@@ -228,7 +231,11 @@ yy.Select.prototype.compileUnpivot = function (query) {
 				return col.columnid;
 			})
 			.filter(function (colid) {
-				return inlist.indexOf(colid) == -1 && colid != forcolumnid && colid != tocolumnid;
+				return (
+					inlist.indexOf(colid) == -1 &&
+					colid != forcolumnid &&
+					colid != tocolumnid
+				);
 			});
 
 		query.data.forEach(function (d) {

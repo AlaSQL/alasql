@@ -41,7 +41,9 @@ describe('Test 138 NoSQL', function () {
 		assert.deepEqual(res[0].q, [1, 2]);
 
 		var ar = [{a: [[1, 2], 2]}, {a: [3, 4]}];
-		var res = alasql('SELECT VALUE cloneDeep(a->0) FROM ? WHERE a->1 = 2', [ar]);
+		var res = alasql('SELECT VALUE cloneDeep(a->0) FROM ? WHERE a->1 = 2', [
+			ar,
+		]);
 		assert.deepEqual(res, [1, 2]);
 		ar[0].a[0] = 7;
 		assert.deepEqual(res, [1, 2]);
@@ -64,7 +66,9 @@ describe('Test 138 NoSQL', function () {
 		it('3. GROUP functions', function (done) {
 			alasql('CREATE TABLE two (a INT, b INT)');
 			alasql('INSERT INTO two VALUES (1,1), (1,2), (1,3), (2,1), (2,2)');
-			alasql('SELECT a, SUM(b) AS b1, COUNT(*) AS c1, GROUP(b1/c1) AS avg FROM two GROUP BY a');
+			alasql(
+				'SELECT a, SUM(b) AS b1, COUNT(*) AS c1, GROUP(b1/c1) AS avg FROM two GROUP BY a'
+			);
 			assert.deepEqual(res, [
 				{a: 1, b1: 6, c1: 3, avg: 2},
 				{a: 2, b1: 3, c1: 2, avg: 1.5},
@@ -76,7 +80,9 @@ describe('Test 138 NoSQL', function () {
 			var res = alasql('SELECT SUM(b) AS bb FROM two GROUP BY TOTAL()');
 			assert.deepEqual(res, [{bb: 9}]);
 
-			var res = alasql('SELECT a,SUM(b) AS bb,b FROM two GROUP BY TOTAL(a,DETAIL) ORDER BY a,bb,b');
+			var res = alasql(
+				'SELECT a,SUM(b) AS bb,b FROM two GROUP BY TOTAL(a,DETAIL) ORDER BY a,bb,b'
+			);
 			assert.deepEqual(res, [
 				{a: undefined, bb: 9},
 				{a: 1, bb: 6, b: undefined},

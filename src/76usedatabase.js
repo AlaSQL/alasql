@@ -38,7 +38,10 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (this.args && this.args.length > 0) {
 		args = this.args.map(function (arg) {
 			// console.log(346235, arg.toJS());
-			return new Function('params,alasql', 'var y;return ' + arg.toJS())(params, alasql);
+			return new Function('params,alasql', 'var y;return ' + arg.toJS())(
+				params,
+				alasql
+			);
 		});
 	}
 	if (this.engineid) {
@@ -112,7 +115,11 @@ yy.DetachDatabase.prototype.toString = function () {
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (!alasql.databases[this.databaseid].engineid) {
-		throw new Error('Cannot detach database "' + this.engineid + '", because it was not attached.');
+		throw new Error(
+			'Cannot detach database "' +
+				this.engineid +
+				'", because it was not attached.'
+		);
 	}
 	var res;
 
@@ -137,7 +144,9 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 		// For this reason, to delete the associated JSON file,
 		// keeping the name of the file alone as a property inside the db object
 		// until it gets DROPped subsequently (only for FileStorage DBs)
-		var isFS = alasql.databases[dbid].engineid && alasql.databases[dbid].engineid == 'FILESTORAGE',
+		var isFS =
+				alasql.databases[dbid].engineid &&
+				alasql.databases[dbid].engineid == 'FILESTORAGE',
 			filename = alasql.databases[dbid].filename || '';
 
 		delete alasql.databases[dbid];
@@ -193,7 +202,11 @@ yy.DropDatabase.prototype.toString = function () {
 //yy.DropDatabase.prototype.compile = returnUndefined;
 yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (this.engineid) {
-		return alasql.engines[this.engineid].dropDatabase(this.databaseid, this.ifexists, cb);
+		return alasql.engines[this.engineid].dropDatabase(
+			this.databaseid,
+			this.ifexists,
+			cb
+		);
 	}
 	var res;
 
@@ -210,7 +223,11 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 		}
 	} else {
 		if (alasql.databases[dbid].engineid) {
-			throw new Error("Cannot drop database '" + dbid + "', because it is attached. Detach it.");
+			throw new Error(
+				"Cannot drop database '" +
+					dbid +
+					"', because it is attached. Detach it."
+			);
 		}
 
 		delete alasql.databases[dbid];

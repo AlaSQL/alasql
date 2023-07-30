@@ -2,7 +2,10 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test381.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test381.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 /*
@@ -23,13 +26,33 @@ describe('Test 381 - PIVOT', function () {
 			{security: 'Preferred Stock', name: 'Robert', value: 5, date: '2014-1-3'},
 			{security: 'Preferred Stock', name: 'Robert', value: 5, date: '2014-1-5'},
 			{security: 'Common Stock', name: 'Bert', value: 20, date: '2014-1-6'},
-			{security: 'Preferred Stock', name: 'Elizabeth', value: 10, date: '2014-1-6'},
+			{
+				security: 'Preferred Stock',
+				name: 'Elizabeth',
+				value: 10,
+				date: '2014-1-6',
+			},
 			{security: 'Common Stock', name: 'Robert', value: 20, date: '2014-1-9'},
 			{security: 'Preferred Stock', name: 'Bert', value: 20, date: '2014-1-11'},
-			{security: 'Preferred Stock', name: 'Robert', value: 5, date: '2014-1-12'},
-			{security: 'Preferred Stock', name: 'Robert', value: 15, date: '2014-1-12'},
+			{
+				security: 'Preferred Stock',
+				name: 'Robert',
+				value: 5,
+				date: '2014-1-12',
+			},
+			{
+				security: 'Preferred Stock',
+				name: 'Robert',
+				value: 15,
+				date: '2014-1-12',
+			},
 			{security: 'Options', name: 'Bert', value: 10, date: '2014-1-13'},
-			{security: 'Preferred Stock', name: 'Robert', value: 5, date: '2014-1-14'},
+			{
+				security: 'Preferred Stock',
+				name: 'Robert',
+				value: 5,
+				date: '2014-1-14',
+			},
 			{security: 'Options', name: 'Robert', value: 15, date: '2014-1-17'},
 		];
 

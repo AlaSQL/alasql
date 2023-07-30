@@ -27,7 +27,9 @@ yy.WithSelect.prototype.execute = function (databaseid, params, cb) {
 	var savedTables = [];
 	self.withs.forEach(function (w) {
 		savedTables.push(alasql.databases[databaseid].tables[w.name]);
-		var tb = (alasql.databases[databaseid].tables[w.name] = new Table({tableid: w.name}));
+		var tb = (alasql.databases[databaseid].tables[w.name] = new Table({
+			tableid: w.name,
+		}));
 		tb.data = w.select.execute(databaseid, params);
 	});
 
@@ -36,7 +38,8 @@ yy.WithSelect.prototype.execute = function (databaseid, params, cb) {
 		// Clear temporary tables
 		//		setTimeout(function(){
 		self.withs.forEach(function (w, idx) {
-			if (savedTables[idx]) alasql.databases[databaseid].tables[w.name] = savedTables[idx];
+			if (savedTables[idx])
+				alasql.databases[databaseid].tables[w.name] = savedTables[idx];
 			else delete alasql.databases[databaseid].tables[w.name];
 		});
 		//		},0);

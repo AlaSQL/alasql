@@ -32,7 +32,14 @@ describe('Test 317 GRAPH', function () {
 
 	it.skip('4. Simple graph', function (done) {
 		var res = alasql('SEARCH / VERTEX AS @p OR(<,>) @p name');
-		assert.deepEqual(res, ['Pablo', 'Maxim', 'Alex', 'Kate', 'Julia', 'Paloma']);
+		assert.deepEqual(res, [
+			'Pablo',
+			'Maxim',
+			'Alex',
+			'Kate',
+			'Julia',
+			'Paloma',
+		]);
 		done();
 	});
 
@@ -49,7 +56,9 @@ describe('Test 317 GRAPH', function () {
 	});
 
 	it.skip('7. Simple graph', function (done) {
-		var res = alasql('SEARCH DISTINCT(/ VERTEX AS @p < OR("loves","hates") @p name)');
+		var res = alasql(
+			'SEARCH DISTINCT(/ VERTEX AS @p < OR("loves","hates") @p name)'
+		);
 		assert.deepEqual(res, ['Kate', 'Julia', 'Paloma']);
 
 		var res = alasql('SEARCH / VERTEX AS @p IF(< OR("loves","hates") <) name');

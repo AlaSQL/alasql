@@ -108,7 +108,10 @@
 			if (this.reduced) {
 				return returnTrue();
 			}
-			return new Function('p', 'var y;return ' + this.toJS(context, tableid, defcols));
+			return new Function(
+				'p',
+				'var y;return ' + this.toJS(context, tableid, defcols)
+			);
 		}
 	}
 
@@ -204,7 +207,14 @@
 
 		toString() {
 			if (this.op === 'IN' || this.op === 'NOT IN') {
-				return this.left.toString() + ' ' + this.op + ' (' + this.right.toString() + ')';
+				return (
+					this.left.toString() +
+					' ' +
+					this.op +
+					' (' +
+					this.right.toString() +
+					')'
+				);
 			}
 			if (this.allsome) {
 				return (
@@ -276,10 +286,16 @@
 			}
 
 			if (this.op === '+') {
-				if (this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string') {
+				if (
+					this.left.toType(tableid) === 'string' ||
+					this.right.toType(tableid) === 'string'
+				) {
 					return 'string';
 				}
-				if (this.left.toType(tableid) === 'number' || this.right.toType(tableid) === 'number') {
+				if (
+					this.left.toType(tableid) === 'number' ||
+					this.right.toType(tableid) === 'number'
+				) {
 					return 'number';
 				}
 			}
@@ -376,7 +392,14 @@
 					if (!(!this.right.args || 0 === this.right.args.length)) {
 						var ss = this.right.args.map(ref);
 					}
-					s = '' + ljs + '[' + JSON.stringify(this.right.funcid) + '](' + ss.join(',') + ')';
+					s =
+						'' +
+						ljs +
+						'[' +
+						JSON.stringify(this.right.funcid) +
+						'](' +
+						ss.join(',') +
+						')';
 				} else {
 					s = '' + ljs + '[' + rightJS() + ']';
 				}
@@ -384,7 +407,13 @@
 
 			if (this.op === '!') {
 				if (typeof this.right === 'string') {
-					s = '' + 'alasql.databases[alasql.useid].objects[' + leftJS() + ']["' + this.right + '"]';
+					s =
+						'' +
+						'alasql.databases[alasql.useid].objects[' +
+						leftJS() +
+						']["' +
+						this.right +
+						'"]';
 				}
 				// TODO - add other cases
 			}
@@ -424,7 +453,8 @@
 			}
 
 			if (this.op === '!==') {
-				s = '' + '(!alasql.utils.deepEqual(' + leftJS() + ',' + rightJS() + '))';
+				s =
+					'' + '(!alasql.utils.deepEqual(' + leftJS() + ',' + rightJS() + '))';
 			}
 			if (this.op === '||') {
 				s = '' + "(''+(" + leftJS() + "||'')+(" + rightJS() + '||""))';
@@ -502,7 +532,10 @@
 			if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
 					s = '(';
-					s += 'alasql.utils.flatArray(this.queriesfn[' + this.queriesidx + '](params,null,p))';
+					s +=
+						'alasql.utils.flatArray(this.queriesfn[' +
+						this.queriesidx +
+						'](params,null,p))';
 					s += '.indexOf(';
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 				} else if (Array.isArray(this.right)) {
@@ -520,7 +553,9 @@
 				var s;
 				if (this.right instanceof yy.Select) {
 					s =
-						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
+						'alasql.utils.flatArray(this.query.queriesfn[' +
+						this.queriesidx +
+						'](params,null,p))';
 
 					s += '.every(function(b){return (';
 					s += leftJS() + ')' + op + 'b})';
@@ -541,7 +576,9 @@
 				var s;
 				if (this.right instanceof yy.Select) {
 					s =
-						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
+						'alasql.utils.flatArray(this.query.queriesfn[' +
+						this.queriesidx +
+						'](params,null,p))';
 					s += '.some(function(b){return (';
 					s += leftJS() + ')' + op + 'b})';
 				} else if (Array.isArray(this.right)) {
@@ -583,12 +620,23 @@
 			var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 			var declareRefs = 'y=[(' + refs.join('), (') + ')]';
-			if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
+			if (
+				op === '&&' ||
+				op === '||' ||
+				op === 'IS' ||
+				op === 'IS NULL' ||
+				op === 'IS NOT NULL'
+			) {
 				return '(' + declareRefs + ', ' + expr + ')';
 			}
 
 			return (
-				'(' + declareRefs + ', ' + 'y.some(function(e){return e == null}) ? void 0 : ' + expr + ')'
+				'(' +
+				declareRefs +
+				', ' +
+				'y.some(function(e){return e == null}) ? void 0 : ' +
+				expr +
+				')'
 			);
 		}
 	}
@@ -818,7 +866,11 @@
 
 			if (this.op === '#') {
 				if (this.right instanceof Column) {
-					return "(alasql.databases[alasql.useid].objects['" + this.right.columnid + "'])";
+					return (
+						"(alasql.databases[alasql.useid].objects['" +
+						this.right.columnid +
+						"'])"
+					);
 				} else {
 					return (
 						'(alasql.databases[alasql.useid].objects[' +
@@ -910,7 +962,9 @@
 					var tbid = defcols[this.columnid];
 					if (tbid === '-') {
 						throw new Error(
-							'Cannot resolve column "' + this.columnid + '" because it exists in two source tables'
+							'Cannot resolve column "' +
+								this.columnid +
+								'" because it exists in two source tables'
 						);
 					} else if (tbid) {
 						if (this.columnid !== '_') {
@@ -921,7 +975,13 @@
 						//			console.log(836,tbid,s);
 					} else {
 						if (this.columnid !== '_') {
-							s = context + "['" + (this.tableid || tableid) + "']['" + this.columnid + "']";
+							s =
+								context +
+								"['" +
+								(this.tableid || tableid) +
+								"']['" +
+								this.columnid +
+								"']";
 						} else {
 							s = context + "['" + (this.tableid || tableid) + "']";
 						}
@@ -930,7 +990,13 @@
 					s = context + "['" + this.columnid + "']";
 				} else {
 					if (this.columnid !== '_') {
-						s = context + "['" + (this.tableid || tableid) + "']['" + this.columnid + "']";
+						s =
+							context +
+							"['" +
+							(this.tableid || tableid) +
+							"']['" +
+							this.columnid +
+							"']";
 					} else {
 						s = context + "['" + (this.tableid || tableid) + "']";
 					}
@@ -993,9 +1059,17 @@
 
 		toType() {
 			if (
-				['SUM', 'COUNT', 'AVG', 'MIN', 'MAX', 'AGGR', 'VAR', 'STDDEV', 'TOTAL'].indexOf(
-					this.aggregatorid
-				) > -1
+				[
+					'SUM',
+					'COUNT',
+					'AVG',
+					'MIN',
+					'MAX',
+					'AGGR',
+					'VAR',
+					'STDDEV',
+					'TOTAL',
+				].indexOf(this.aggregatorid) > -1
 			) {
 				return 'number';
 			}

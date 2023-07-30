@@ -9,7 +9,10 @@ if (typeof exports === 'object') {
 
 if (false) {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test159.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test159.json', {
+		strict: false,
+		ws: '',
+	});
 
 	describe('Test 160 - load text file, csv, tab, and other functions', function () {
 		it('1. Text file', function (done) {

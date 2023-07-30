@@ -9,7 +9,9 @@ describe('Test 140 JavaScript Functions', function () {
 	it('1. Simple Date functions', function (done) {
 		alasql('CREATE DATABASE test140; use test140');
 
-		var res = alasql('SELECT * FROM ?', [[{d: new Date(2014, 0, 1)}, {d: new Date(2015, 11, 31)}]]);
+		var res = alasql('SELECT * FROM ?', [
+			[{d: new Date(2014, 0, 1)}, {d: new Date(2015, 11, 31)}],
+		]);
 		assert(res.length == 2);
 		assert(res[0].d.getFullYear); // be aware This can cause same year for both data here depending on locale settings
 
@@ -68,10 +70,14 @@ describe('Test 140 JavaScript Functions', function () {
 		var res = alasql('SELECT COLUMN d->getFullYear() FROM one');
 		assert.deepEqual(res, [2014, 2015]);
 
-		var res = alasql('SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,1)');
+		var res = alasql(
+			'SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,1)'
+		);
 		assert.deepEqual(res, []);
 
-		var res = alasql('SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,2)');
+		var res = alasql(
+			'SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,2)'
+		);
 		assert.deepEqual(res, [2015]);
 		done();
 	});
@@ -114,7 +120,10 @@ describe('Test 140 JavaScript Functions', function () {
 		assert.deepEqual(res, [6, 6]);
 
 		var res = alasql('SELECT COLUMN DAY(d) FROM four');
-		assert.deepEqual(res, [new Date('2014-06-02').getDate(), new Date('2014-06-03').getDate()]);
+		assert.deepEqual(res, [
+			new Date('2014-06-02').getDate(),
+			new Date('2014-06-03').getDate(),
+		]);
 
 		//		console.log(res);
 		var res = alasql('SELECT COLUMN d FROM four');

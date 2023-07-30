@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test152.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test152.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', function () {
@@ -17,7 +20,9 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS ls152');
 		alasql('ATTACH localStorage DATABASE ls152');
 		alasql('CREATE TABLE IF NOT EXISTS ls152.one (a int, b string)');
-		alasql('INSERT INTO ls152.one VALUES (1,"Rome"),(2,"London"),(3,"Berlin"),(4,"Paris")');
+		alasql(
+			'INSERT INTO ls152.one VALUES (1,"Rome"),(2,"London"),(3,"Berlin"),(4,"Paris")'
+		);
 		//		console.log(alasql.databases.ls152.tables.one.data);
 		//		assert(!alasql.databases.ls152.tables.one.data);
 
@@ -66,8 +71,12 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 	});
 
 	it('5. INSERT with AUTOINCREMENT', function (done) {
-		alasql('CREATE TABLE IF NOT EXISTS ls152.three (a int AUTO_INCREMENT, b string)');
-		alasql('INSERT INTO ls152.three (b) VALUES ("Rome"),("London"),("Berlin"),("Paris")');
+		alasql(
+			'CREATE TABLE IF NOT EXISTS ls152.three (a int AUTO_INCREMENT, b string)'
+		);
+		alasql(
+			'INSERT INTO ls152.three (b) VALUES ("Rome"),("London"),("Berlin"),("Paris")'
+		);
 
 		var res = alasql('SELECT * FROM ls152.three');
 		assert.deepEqual(res, [

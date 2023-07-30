@@ -26,12 +26,16 @@ describe('Test 614 - Read data from columns irrespective of case in query', func
 		});
 
 		it('A) Mixed case header with Camel case select', function (done) {
-			alasql('SELECT Account FROM XLSX("' + __dirname + '/test614.xlsx")', [], function (res) {
-				// using lower case value of header text irrespective of the original case in file
-				// because when casesensitive option is set to false alasql converts all header texts to lowercase
-				assert.equal(res[0]['Account'.toLowerCase()], 12);
-				done();
-			});
+			alasql(
+				'SELECT Account FROM XLSX("' + __dirname + '/test614.xlsx")',
+				[],
+				function (res) {
+					// using lower case value of header text irrespective of the original case in file
+					// because when casesensitive option is set to false alasql converts all header texts to lowercase
+					assert.equal(res[0]['Account'.toLowerCase()], 12);
+					done();
+				}
+			);
 		});
 
 		it('B) UPPER case header and Lower case header with Camel case select', function (done) {
@@ -50,7 +54,9 @@ describe('Test 614 - Read data from columns irrespective of case in query', func
 	describe('2) casesensitive option has default value which is true, data will not be present', function () {
 		it('A) Mixed case header, Upper case header and Lower case header with Camel case select', function (done) {
 			alasql(
-				'SELECT Account, Amount, Comments FROM XLSX("' + __dirname + '/test614.xlsx")',
+				'SELECT Account, Amount, Comments FROM XLSX("' +
+					__dirname +
+					'/test614.xlsx")',
 				[],
 				function (res) {
 					// console.log(res[0]);

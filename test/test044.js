@@ -23,7 +23,9 @@ describe('Test 44', function () {
 			data.push({orderid: 7, orderdate: new Date(2014, 7, 6)});
 			data.push({orderid: 8, orderdate: new Date(2013, 10, 12)});
 
-			var res = alasql('SELECT COLUMN orderdate FROM orders ORDER BY orderdate');
+			var res = alasql(
+				'SELECT COLUMN orderdate FROM orders ORDER BY orderdate'
+			);
 
 			var ok =
 				res[0] <= res[1] &&
@@ -39,7 +41,9 @@ describe('Test 44', function () {
 			// });
 
 			// it('Order by dates DESC', function(done){
-			var res = alasql('SELECT COLUMN orderdate FROM orders ORDER BY orderdate DESC');
+			var res = alasql(
+				'SELECT COLUMN orderdate FROM orders ORDER BY orderdate DESC'
+			);
 
 			var ok =
 				res[0] >= res[1] &&

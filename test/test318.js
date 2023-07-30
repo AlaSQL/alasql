@@ -32,7 +32,9 @@ describe('Test 318 PATH in GRAPH', function () {
 	});
 
 	it('4. Simple graph', function (done) {
-		var res = alasql('SEARCH PATH(#Josephine) EDGE set(color="red") FROM #Napoleon');
+		var res = alasql(
+			'SEARCH PATH(#Josephine) EDGE set(color="red") FROM #Napoleon'
+		);
 		assert.deepEqual(res, [alasql.databases[alasql.useid].objects[5]]);
 		done();
 	});
@@ -44,18 +46,31 @@ describe('Test 318 PATH in GRAPH', function () {
 	});
 
 	it('6. Simple graph', function (done) {
-		var res = alasql('SEARCH DISTINCT(PATH(#Julia) EDGE name) ORDER BY() FROM #Napoleon');
+		var res = alasql(
+			'SEARCH DISTINCT(PATH(#Julia) EDGE name) ORDER BY() FROM #Napoleon'
+		);
 		assert.deepEqual(res, ['knows', 'loves']);
-		var res = alasql('SEARCH DISTINCT(PATH(#Julia) EDGE name) ORDER BY(ASC) FROM #Napoleon');
+		var res = alasql(
+			'SEARCH DISTINCT(PATH(#Julia) EDGE name) ORDER BY(ASC) FROM #Napoleon'
+		);
 		assert.deepEqual(res, ['knows', 'loves']);
-		var res = alasql('SEARCH DISTINCT(PATH(#Julia) EDGE name) ORDER BY(DESC) FROM #Napoleon');
+		var res = alasql(
+			'SEARCH DISTINCT(PATH(#Julia) EDGE name) ORDER BY(DESC) FROM #Napoleon'
+		);
 		assert.deepEqual(res, ['loves', 'knows']);
 		done();
 	});
 
 	it('7. Simple graph', function (done) {
 		var res = alasql('SEARCH PATH(age) name FROM #Napoleon ');
-		assert.deepEqual(res, ['loves', 'Josephine', 'knows', 'Pablo', 'loves', 'Julia']);
+		assert.deepEqual(res, [
+			'loves',
+			'Josephine',
+			'knows',
+			'Pablo',
+			'loves',
+			'Julia',
+		]);
 
 		done();
 	});

@@ -35,7 +35,9 @@ describe('Test 213 CONVERT data types', function () {
 	});
 
 	it('5. VARCHAR', function (done) {
-		var res = alasql('SELECT VALUE CONVERT(VARCHAR(5),"abcdefghijklmnopqrstuvwxyz")');
+		var res = alasql(
+			'SELECT VALUE CONVERT(VARCHAR(5),"abcdefghijklmnopqrstuvwxyz")'
+		);
 		assert(res === 'abcde');
 		var res = alasql('SELECT VALUE CONVERT(VARCHAR(5),"abc")');
 		assert(res === 'abc');

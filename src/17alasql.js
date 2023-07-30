@@ -11,7 +11,9 @@ alasql.parser = alasqlparser;
 
 /*/* This is not working :-/ */
 alasql.parser.parseError = function (str, hash) {
-	throw new Error('Have you used a reserved keyword without `escaping` it?\n' + str);
+	throw new Error(
+		'Have you used a reserved keyword without `escaping` it?\n' + str
+	);
 };
 
 /**
@@ -191,7 +193,9 @@ alasql.use = function (databaseid) {
 };
 
 alasql.autoval = function (tablename, colname, getNext, databaseid) {
-	var db = databaseid ? alasql.databases[databaseid] : alasql.databases[alasql.useid];
+	var db = databaseid
+		? alasql.databases[databaseid]
+		: alasql.databases[alasql.useid];
 
 	if (!db.tables[tablename]) {
 		throw new Error('Tablename not found: ' + tablename);
@@ -287,7 +291,12 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		} else {
 			// console.log(ast.statements[0]);
 			alasql.precompile(ast.statements[0], alasql.useid, params);
-			var res = (alasql.res = ast.statements[0].execute(databaseid, params, cb, scope));
+			var res = (alasql.res = ast.statements[0].execute(
+				databaseid,
+				params,
+				cb,
+				scope
+			));
 			return res;
 		}
 	} else {
@@ -318,7 +327,9 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 				res.push((alasql.res = statement(params, null, scope)));
 			} else {
 				alasql.precompile(ast.statements[i], alasql.useid, params);
-				res.push((alasql.res = ast.statements[i].execute(alasql.useid, params)));
+				res.push(
+					(alasql.res = ast.statements[i].execute(alasql.useid, params))
+				);
 			}
 		}
 	}
@@ -466,7 +477,9 @@ alasql.compile = function (sql, databaseid) {
 		}
 */
 	} else {
-		throw new Error('Cannot compile, because number of statements in SQL is not equal to 1');
+		throw new Error(
+			'Cannot compile, because number of statements in SQL is not equal to 1'
+		);
 	}
 };
 

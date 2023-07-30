@@ -22,7 +22,9 @@ describe('Test 254 UNION of two tables with different columns', function () {
 	});
 
 	it('2. UNION ALL CORRESPONDING', function (done) {
-		var res = alasql('SELECT a, b FROM t1 UNION ALL CORRESPONDING SELECT b, a FROM t1');
+		var res = alasql(
+			'SELECT a, b FROM t1 UNION ALL CORRESPONDING SELECT b, a FROM t1'
+		);
 		assert.deepEqual(res, [
 			{a: 1, b: 1},
 			{a: 1, b: 2},
@@ -48,7 +50,9 @@ describe('Test 254 UNION of two tables with different columns', function () {
 	});
 
 	it('4. UNION CORRESPONDING', function (done) {
-		var res = alasql('SELECT a, b FROM t1 UNION CORRESPONDING SELECT b, a FROM t1');
+		var res = alasql(
+			'SELECT a, b FROM t1 UNION CORRESPONDING SELECT b, a FROM t1'
+		);
 		assert.deepEqual(res, [
 			{a: 1, b: 1},
 			{a: 1, b: 2},
@@ -70,7 +74,9 @@ describe('Test 254 UNION of two tables with different columns', function () {
 	});
 
 	it('6. INTERSECT CORRESPONDING', function (done) {
-		var res = alasql('SELECT a, b FROM t1 INTERSECT CORRESPONDING SELECT b, a FROM t1');
+		var res = alasql(
+			'SELECT a, b FROM t1 INTERSECT CORRESPONDING SELECT b, a FROM t1'
+		);
 		//    console.log(res);
 		assert.deepEqual(res, [
 			{a: 1, b: 1},
@@ -88,7 +94,9 @@ describe('Test 254 UNION of two tables with different columns', function () {
 	});
 
 	it('8. EXCEPT CORRESPONDING', function (done) {
-		var res = alasql('SELECT a, b FROM t1 EXCEPT CORRESPONDING SELECT b, a FROM t1');
+		var res = alasql(
+			'SELECT a, b FROM t1 EXCEPT CORRESPONDING SELECT b, a FROM t1'
+		);
 		//    console.log(res);
 		assert.deepEqual(res, []);
 		done();

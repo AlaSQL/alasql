@@ -8,10 +8,14 @@ if (typeof exports === 'object') {
 if (false) {
 	describe('Test 136 get JSON property', function () {
 		it('1. Get element of object and Array', function (done) {
-			var res = alasql('SELECT * FROM JSON([{a:1,b:[3,4]},{e:1}]) WHERE b->[1] = 4');
+			var res = alasql(
+				'SELECT * FROM JSON([{a:1,b:[3,4]},{e:1}]) WHERE b->[1] = 4'
+			);
 			assert.deepEqual(res, [{a: 1, b: [3, 4]}]);
 
-			var res = alasql('SELECT * FROM JSON([{a:1,b:[3,4]},{e:1}]) WHERE b == JSON([3,4])');
+			var res = alasql(
+				'SELECT * FROM JSON([{a:1,b:[3,4]},{e:1}]) WHERE b == JSON([3,4])'
+			);
 			assert.deepEqual(res, [{a: 1, b: [3, 4]}]);
 
 			var res = alasql('SELECT * FROM JSON([{a:1,b:[3,4]},{e:1}]) WHERE e = 1');

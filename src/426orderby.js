@@ -13,7 +13,11 @@ yy.Select.prototype.compileOrder = function (query, params) {
 			var func = this.order[0].expression;
 			//			console.log(994, func);
 			var nullsOrder =
-				this.order[0].nullsOrder == 'FIRST' ? -1 : this.order[0].nullsOrder == 'LAST' ? +1 : 0;
+				this.order[0].nullsOrder == 'FIRST'
+					? -1
+					: this.order[0].nullsOrder == 'LAST'
+					? +1
+					: 0;
 			return function (a, b) {
 				var ra = func(a),
 					rb = func(b);
@@ -90,9 +94,19 @@ yy.Select.prototype.compileOrder = function (query, params) {
 
 			if (ord.nullsOrder) {
 				if (ord.nullsOrder == 'FIRST') {
-					s += "if((a['" + key + "'] != null) && (b['" + key + "'] == null)) return 1;";
+					s +=
+						"if((a['" +
+						key +
+						"'] != null) && (b['" +
+						key +
+						"'] == null)) return 1;";
 				} else if (ord.nullsOrder == 'LAST') {
-					s += "if((a['" + key + "'] == null) && (b['" + key + "'] != null)) return 1;";
+					s +=
+						"if((a['" +
+						key +
+						"'] == null) && (b['" +
+						key +
+						"'] != null)) return 1;";
 				}
 				s += "if((a['" + key + "'] == null) == (b['" + key + "'] == null)) {";
 				sk += '}';
@@ -109,7 +123,16 @@ yy.Select.prototype.compileOrder = function (query, params) {
 				"']||'')" +
 				dg +
 				')return 1;';
-			s += "if((a['" + key + "']||'')" + dg + "==(b['" + key + "']||'')" + dg + '){';
+			s +=
+				"if((a['" +
+				key +
+				"']||'')" +
+				dg +
+				"==(b['" +
+				key +
+				"']||'')" +
+				dg +
+				'){';
 			//console.log(37,s);
 
 			/*

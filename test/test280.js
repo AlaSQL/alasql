@@ -18,7 +18,9 @@ if (typeof exports == 'object') {
 
 		it('1. Save XLS', function (done) {
 			alasql(
-				'SELECT * INTO XLS("' + __dirname + '/restest280a.xls",{headers:true}) FROM ?',
+				'SELECT * INTO XLS("' +
+					__dirname +
+					'/restest280a.xls",{headers:true}) FROM ?',
 				[data],
 				function () {
 					done();
@@ -58,13 +60,21 @@ if (typeof exports == 'object') {
 				'SELECT * INTO XLSXML(?,{headers:true, sheets:{Sheet1:{},Sheet2:{}}}) FROM ?',
 				[outfile, [data, data2]],
 				function () {
-					alasql('SEARCH XML Worksheet %[ss:Name] FROM XML(?)', [outfile], function (res) {
-						assert.deepEqual(res, ['Sheet1', 'Sheet2']);
-						alasql('SEARCH XML / * Data$ FROM XML(?)', [outfile], function (res) {
-							assert.equal(res.length, 12);
-							done();
-						});
-					});
+					alasql(
+						'SEARCH XML Worksheet %[ss:Name] FROM XML(?)',
+						[outfile],
+						function (res) {
+							assert.deepEqual(res, ['Sheet1', 'Sheet2']);
+							alasql(
+								'SEARCH XML / * Data$ FROM XML(?)',
+								[outfile],
+								function (res) {
+									assert.equal(res.length, 12);
+									done();
+								}
+							);
+						}
+					);
 				}
 			);
 		});

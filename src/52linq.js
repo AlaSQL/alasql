@@ -121,7 +121,9 @@ yy.Select.prototype.OrderBy = function () {
 			if (typeof arg == 'function') {
 				expr = arg;
 			}
-			self.order.push(new yy.OrderExpression({expression: expr, direction: 'ASC'}));
+			self.order.push(
+				new yy.OrderExpression({expression: expr, direction: 'ASC'})
+			);
 		});
 	}
 	return self;

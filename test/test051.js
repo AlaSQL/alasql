@@ -82,7 +82,9 @@ describe('Test 51 - Foreign Keys)', function () {
 					'CREATE TABLE persons (name STRING, country STRING, city STRING,' +
 						' FOREIGN KEY (country, city) REFERENCES cities(country, city))'
 				);
-				alasql('CREATE TABLE cities (country STRING, city STRING, PRIMARY KEY(country, city))');
+				alasql(
+					'CREATE TABLE cities (country STRING, city STRING, PRIMARY KEY(country, city))'
+				);
 				alasql('INSERT INTO cities VALUES ("France","Paris")');
 				alasql('INSERT INTO cities VALUES ("Italy","Rome")');
 				alasql('INSERT INTO persons VALUES ("Peter", "Italy","Rome")');
@@ -131,7 +133,9 @@ describe('Test 51 - Foreign Keys)', function () {
 					'CREATE TABLE persons (name STRING, country STRING, city STRING,' +
 						' FOREIGN KEY (country, city) REFERENCES cities(country, city))'
 				);
-				alasql('CREATE TABLE cities (country STRING, city STRING, PRIMARY KEY(country, city))');
+				alasql(
+					'CREATE TABLE cities (country STRING, city STRING, PRIMARY KEY(country, city))'
+				);
 				alasql('INSERT INTO cities VALUES ("France","Paris")');
 				alasql('INSERT INTO cities VALUES ("Italy","Rome")');
 				alasql('INSERT INTO persons VALUES ("Peter", "Italy","Rome")');

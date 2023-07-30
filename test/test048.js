@@ -19,13 +19,17 @@ describe('Test 48 - Check parser for primary and foreign keys', function () {
 
 		it('3: PRIMARY KEY', function (done) {
 			alasql('DROP TABLE IF EXISTS one');
-			alasql('CREATE TABLE one (a INT, b INT, CONSTRAINT keya PRIMARY KEY (a))');
+			alasql(
+				'CREATE TABLE one (a INT, b INT, CONSTRAINT keya PRIMARY KEY (a))'
+			);
 			done();
 		});
 
 		it('4: PRIMARY KEY', function (done) {
 			alasql('DROP TABLE IF EXISTS one');
-			alasql('CREATE TABLE one (a INT, b INT, CONSTRAINT keyab PRIMARY KEY (a,b))');
+			alasql(
+				'CREATE TABLE one (a INT, b INT, CONSTRAINT keyab PRIMARY KEY (a,b))'
+			);
 			done();
 		});
 	});

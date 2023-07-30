@@ -40,7 +40,9 @@ describe('Test 53 - Automatic types parsing', function () {
 		});
 
 		it('Logic operations', function (done) {
-			var ast = alasql.parse('SELECT TRUE, TRUE AND TRUE, TRUE OR TRUE, NOT TRUE');
+			var ast = alasql.parse(
+				'SELECT TRUE, TRUE AND TRUE, TRUE OR TRUE, NOT TRUE'
+			);
 			var cols = ast.statements[0].columns;
 			assert.equal(cols[0].toType(), 'boolean');
 			assert.equal(cols[1].toType(), 'boolean');
@@ -89,7 +91,9 @@ describe('Test 53 - Automatic types parsing', function () {
 		});
 
 		it('Logic operations on IN', function (done) {
-			var ast = alasql.parse('SELECT a IN (SELECT b FROM c), a NOT IN (SELECT b FROM c)');
+			var ast = alasql.parse(
+				'SELECT a IN (SELECT b FROM c), a NOT IN (SELECT b FROM c)'
+			);
 			var cols = ast.statements[0].columns;
 			assert.equal(cols[0].toType(), 'boolean');
 			assert.equal(cols[1].toType(), 'boolean');
@@ -97,7 +101,9 @@ describe('Test 53 - Automatic types parsing', function () {
 		});
 
 		it('Logic operations on ALL and SOME', function (done) {
-			var ast = alasql.parse('SELECT a > ALL(SELECT b FROM c), a < SOME (SELECT b FROM c)');
+			var ast = alasql.parse(
+				'SELECT a > ALL(SELECT b FROM c), a < SOME (SELECT b FROM c)'
+			);
 			var cols = ast.statements[0].columns;
 			assert.equal(cols[0].toType(), 'boolean');
 			assert.equal(cols[1].toType(), 'boolean');
@@ -105,7 +111,9 @@ describe('Test 53 - Automatic types parsing', function () {
 		});
 
 		it('Logic operations on EXISTS', function (done) {
-			var ast = alasql.parse('SELECT EXISTS (SELECT b FROM c), NOT EXISTS (SELECT b FROM c)');
+			var ast = alasql.parse(
+				'SELECT EXISTS (SELECT b FROM c), NOT EXISTS (SELECT b FROM c)'
+			);
 			var cols = ast.statements[0].columns;
 			assert.equal(cols[0].toType(), 'boolean');
 			assert.equal(cols[1].toType(), 'boolean');
@@ -121,7 +129,9 @@ describe('Test 53 - Automatic types parsing', function () {
 		});
 
 		it('Aggregators FIRST, LAST, MIN, MAX on numbers', function (done) {
-			var ast = alasql.parse('SELECT FIRST(10), LAST(20), MIN(10), MAX(40) FROM d');
+			var ast = alasql.parse(
+				'SELECT FIRST(10), LAST(20), MIN(10), MAX(40) FROM d'
+			);
 			var cols = ast.statements[0].columns;
 			assert.equal(cols[0].toType(), 'number');
 			assert.equal(cols[1].toType(), 'number');
@@ -150,7 +160,9 @@ describe('Test 53 - Automatic types parsing', function () {
 			});
 
 			it('Columns from tables', function (done) {
-				var ast = alasql.parse('SELECT FIRST(a), FIRST(1), FIRT("Peter"), FIRST(TRUE) FROM test');
+				var ast = alasql.parse(
+					'SELECT FIRST(a), FIRST(1), FIRT("Peter"), FIRST(TRUE) FROM test'
+				);
 				var cols = ast.statements[0].columns;
 				assert.deepEqual(cols[0].toType(), {tableid: 'test', columnid: 'a'});
 				assert.equal(cols[1].toType(), 'number');

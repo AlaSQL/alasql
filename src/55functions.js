@@ -16,7 +16,10 @@ yy.FuncValue.prototype.toString = function () {
 
 	if (alasql.fn[this.funcid]) s += this.funcid;
 	else if (alasql.aggr[this.funcid]) s += this.funcid;
-	else if (alasql.stdlib[this.funcid.toUpperCase()] || alasql.stdfn[this.funcid.toUpperCase()])
+	else if (
+		alasql.stdlib[this.funcid.toUpperCase()] ||
+		alasql.stdfn[this.funcid.toUpperCase()]
+	)
 		s += this.funcid.toUpperCase().replace(re_invalidFnNameChars, '');
 
 	if (this.funcid !== 'CURRENT_TIMESTAMP') {
@@ -37,7 +40,10 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	let res = 1;
 	alasql.precompile(this, databaseid, params); // Precompile queries
 	//	console.log(34,this.toJS('','',null));
-	let expr = new Function('params,alasql', 'var y;return ' + this.toJS('', '', null));
+	let expr = new Function(
+		'params,alasql',
+		'var y;return ' + this.toJS('', '', null)
+	);
 	expr(params, alasql);
 	if (cb) res = cb(res);
 	return res;
@@ -162,7 +168,17 @@ stdlib.IIF = function (a, b, c) {
 	}
 };
 stdlib.IFNULL = function (a, b) {
-	return '((typeof ' + a + ' ==="undefined" || null ===  ' + a + ')?' + b + ':' + a + ')';
+	return (
+		'((typeof ' +
+		a +
+		' ==="undefined" || null ===  ' +
+		a +
+		')?' +
+		b +
+		':' +
+		a +
+		')'
+	);
 };
 stdlib.INSTR = function (s, p) {
 	return '((' + s + ').indexOf(' + p + ')+1)';
@@ -213,7 +229,8 @@ stdlib.SUBSTRING =
 	stdlib.MID =
 		function (a, b, c) {
 			if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
-			else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
+			else if (arguments.length == 3)
+				return und(a, 'y.substr(' + b + '-1,' + c + ')');
 		};
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
@@ -239,7 +256,15 @@ stdlib.RANDOM = function (r) {
 };
 stdlib.ROUND = function (s, d) {
 	if (arguments.length == 2) {
-		return 'Math.round((' + s + ')*Math.pow(10,(' + d + ')))/Math.pow(10,(' + d + '))';
+		return (
+			'Math.round((' +
+			s +
+			')*Math.pow(10,(' +
+			d +
+			')))/Math.pow(10,(' +
+			d +
+			'))'
+		);
 	} else {
 		return 'Math.round(' + s + ')';
 	}
@@ -273,7 +298,7 @@ stdlib.UPPER = stdlib.UCASE = function (s) {
 // Concatination of strings
 stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
-	args = args.filter((x) => !(x === null || typeof x === 'undefined'));
+	args = args.filter(x => !(x === null || typeof x === 'undefined'));
 	return args.slice(1, args.length).join(args[0] || '');
 };
 
@@ -327,7 +352,10 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	var middleFloor = middle | 0;
 	var el = r[middleFloor - 1];
 
-	if (middle === middleFloor || (typeof el !== 'number' && !(el instanceof Number))) {
+	if (
+		middle === middleFloor ||
+		(typeof el !== 'number' && !(el instanceof Number))
+	) {
 		return el;
 	} else {
 		return (el + r[middleFloor]) / 2;

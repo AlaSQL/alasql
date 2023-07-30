@@ -120,14 +120,17 @@ if (typeof exports === 'object') {
 		function a(n) {
 			var t,
 				r = '';
-			for (t = 0; t < 32 * n.length; t += 8) r += String.fromCharCode((n[t >> 5] >>> t % 32) & 255);
+			for (t = 0; t < 32 * n.length; t += 8)
+				r += String.fromCharCode((n[t >> 5] >>> t % 32) & 255);
 			return r;
 		}
 		function h(n) {
 			var t,
 				r = [];
-			for (r[(n.length >> 2) - 1] = void 0, t = 0; t < r.length; t += 1) r[t] = 0;
-			for (t = 0; t < 8 * n.length; t += 8) r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << t % 32;
+			for (r[(n.length >> 2) - 1] = void 0, t = 0; t < r.length; t += 1)
+				r[t] = 0;
+			for (t = 0; t < 8 * n.length; t += 8)
+				r[t >> 5] |= (255 & n.charCodeAt(t / 8)) << t % 32;
 			return r;
 		}
 		function d(n) {
@@ -139,9 +142,17 @@ if (typeof exports === 'object') {
 				o = h(n),
 				u = [],
 				c = [];
-			for (u[15] = c[15] = void 0, o.length > 16 && (o = i(o, 8 * n.length)), r = 0; 16 > r; r += 1)
+			for (
+				u[15] = c[15] = void 0,
+					o.length > 16 && (o = i(o, 8 * n.length)),
+					r = 0;
+				16 > r;
+				r += 1
+			)
 				(u[r] = 909522486 ^ o[r]), (c[r] = 1549556828 ^ o[r]);
-			return (e = i(u.concat(h(t)), 512 + 8 * t.length)), a(i(c.concat(e), 640));
+			return (
+				(e = i(u.concat(h(t)), 512 + 8 * t.length)), a(i(c.concat(e), 640))
+			);
 		}
 		function g(n) {
 			var t,
@@ -149,7 +160,8 @@ if (typeof exports === 'object') {
 				e = '0123456789abcdef',
 				o = '';
 			for (r = 0; r < n.length; r += 1)
-				(t = n.charCodeAt(r)), (o += e.charAt((t >>> 4) & 15) + e.charAt(15 & t));
+				(t = n.charCodeAt(r)),
+					(o += e.charAt((t >>> 4) & 15) + e.charAt(15 & t));
 			return o;
 		}
 		function v(n) {

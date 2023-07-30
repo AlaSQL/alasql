@@ -25,7 +25,8 @@ yy.CaseValue.prototype.toString = function () {
 
 yy.CaseValue.prototype.findAggregator = function (query) {
 	//	console.log(this.toString());
-	if (this.expression && this.expression.findAggregator) this.expression.findAggregator(query);
+	if (this.expression && this.expression.findAggregator)
+		this.expression.findAggregator(query);
 	if (this.whens && this.whens.length > 0) {
 		this.whens.forEach(function (w) {
 			if (w.when.findAggregator) w.when.findAggregator(query);
@@ -51,7 +52,8 @@ yy.CaseValue.prototype.toJS = function (context, tableid, defcols) {
 				);
 			})
 			.join(' else ');
-		if (this.elses) s += ' else {r=' + this.elses.toJS(context, tableid, defcols) + '}';
+		if (this.elses)
+			s += ' else {r=' + this.elses.toJS(context, tableid, defcols) + '}';
 	} else {
 		s += (this.whens || [])
 			.map(function (w) {
@@ -64,7 +66,8 @@ yy.CaseValue.prototype.toJS = function (context, tableid, defcols) {
 				);
 			})
 			.join(' else ');
-		if (this.elses) s += ' else {r=' + this.elses.toJS(context, tableid, defcols) + '}';
+		if (this.elses)
+			s += ' else {r=' + this.elses.toJS(context, tableid, defcols) + '}';
 	}
 	// TODO remove bind from CASE
 	s += ';return r;}).bind(this))(' + context + ',params,alasql)';

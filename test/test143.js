@@ -54,45 +54,54 @@ function test143(dontcache) {
 	//		myfn3.dontcache = true;
 	var tm = Date.now();
 	//if(true) {
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q INNER join ? t using a', [
-		myfn,
-		myfn2,
-	]);
+	var res = alasql(
+		'select q.a, q.b, t.a as ta, t.c from ? q INNER join ? t using a',
+		[myfn, myfn2]
+	);
 	nc3 += res.length;
 
 	//console.table(res);
 	//		console.log('INNER',res.length);
 	//if(false) {
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q SEMI join ? t using a', [myfn, myfn2]);
+	var res = alasql(
+		'select q.a, q.b, t.a as ta, t.c from ? q SEMI join ? t using a',
+		[myfn, myfn2]
+	);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('SEMI', res.length);
 	//}
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q ANTI join ? t using a', [myfn, myfn2]);
+	var res = alasql(
+		'select q.a, q.b, t.a as ta, t.c from ? q ANTI join ? t using a',
+		[myfn, myfn2]
+	);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('ANTI', res.length);
 
 	//if(true) {
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q LEFT join ? t using a', [myfn, myfn2]);
+	var res = alasql(
+		'select q.a, q.b, t.a as ta, t.c from ? q LEFT join ? t using a',
+		[myfn, myfn2]
+	);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('LEFT',res.length);
 	//		assert(res.length == 13013);
 
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q RIGHT join ? t using a', [
-		myfn,
-		myfn2,
-	]);
+	var res = alasql(
+		'select q.a, q.b, t.a as ta, t.c from ? q RIGHT join ? t using a',
+		[myfn, myfn2]
+	);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('RIGHT',res.length);
 	//assert(res.length == 13039);
 
-	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q OUTER join ? t using a', [
-		myfn,
-		myfn2,
-	]);
+	var res = alasql(
+		'select q.a, q.b, t.a as ta, t.c from ? q OUTER join ? t using a',
+		[myfn, myfn2]
+	);
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('OUTER',res.length);

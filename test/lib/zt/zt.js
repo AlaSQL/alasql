@@ -41,7 +41,9 @@
 		console.log(head);
 		//	console.log(head.map(function(){return '=';}).join());
 		zt.res.forEach(function (r) {
-			console.log((r.name + space).substr(0, max) + '  ' + ('       ' + r.time).substr(-8));
+			console.log(
+				(r.name + space).substr(0, max) + '  ' + ('       ' + r.time).substr(-8)
+			);
 		});
 		zt.res = [];
 	};

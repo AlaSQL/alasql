@@ -18,7 +18,7 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		alasql('drop database test' + test);
 	});
 
-	const genPayload = (command) => `
+	const genPayload = command => `
 	console.log(${JSON.stringify(command)})
 	`;
 
@@ -26,7 +26,11 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 
 	it('A) Update SET', function () {
 		assert.throws(() =>
-			alasql(`UPDATE i_am_a_table SET [0'+${genPayload('>&2 echo UPDATE pwned $(whoami)')}+']=42;`)
+			alasql(
+				`UPDATE i_am_a_table SET [0'+${genPayload(
+					'>&2 echo UPDATE pwned $(whoami)'
+				)}+']=42;`
+			)
 		);
 	});
 
@@ -52,7 +56,11 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 
 	it('D) Function name', function () {
 		assert.throws(() =>
-			alasql(`SELECT [whatever||${genPayload('>&2 echo calling function pwned')}||]('whatever');`)
+			alasql(
+				`SELECT [whatever||${genPayload(
+					'>&2 echo calling function pwned'
+				)}||]('whatever');`
+			)
 		);
 	});
 

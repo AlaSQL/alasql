@@ -26,7 +26,23 @@ Expand the function with an ESCAPE parameter
 */
 
 describe('Test 369 LIKE', function () {
-	var specials = ['/', '.', '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '\\', '^', '%'];
+	var specials = [
+		'/',
+		'.',
+		'*',
+		'+',
+		'?',
+		'|',
+		'(',
+		')',
+		'[',
+		']',
+		'{',
+		'}',
+		'\\',
+		'^',
+		'%',
+	];
 	/*
   alasql.utils.like = function (pattern,value,escape) {
     // Verify escape character

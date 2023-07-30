@@ -15,9 +15,18 @@
 	};
 
 	// Making HTML for the test
-	const template = fs.readFileSync(__dirname + '/browserTestRunner.tmlp.html', 'utf8');
+	const template = fs.readFileSync(
+		__dirname + '/browserTestRunner.tmlp.html',
+		'utf8'
+	);
 
-	function walkFiles(dir, reFilterYes, reFilterNo, oneFolderOnly, onlyFileName) {
+	function walkFiles(
+		dir,
+		reFilterYes,
+		reFilterNo,
+		oneFolderOnly,
+		onlyFileName
+	) {
 		reFilterYes = reFilterYes || false;
 		reFilterNo = reFilterNo || false;
 
@@ -39,7 +48,9 @@
 
 	const testFiles = walkFiles(__dirname, /test\d+\.js$/, null, true, true);
 
-	const testFilesHtml = testFiles.map((file) => `<script src="${file}"></script>`).join('\n');
+	const testFilesHtml = testFiles
+		.map(file => `<script src="${file}"></script>`)
+		.join('\n');
 
 	var html = template.replace('@INSERT_TESTFILES', testFilesHtml);
 
@@ -84,8 +95,14 @@
 		})
 		.listen(port);
 
-	console.log(`Ready to test AlaSQL in the browser at\n  => http://localhost:${port}`);
+	console.log(
+		`Ready to test AlaSQL in the browser at\n  => http://localhost:${port}`
+	);
 	console.log('CTRL + C to shutdown');
 
-	exec(`${process.platform === 'win32' ? 'start' : 'open'} http://localhost:${port}`);
+	exec(
+		`${
+			process.platform === 'win32' ? 'start' : 'open'
+		} http://localhost:${port}`
+	);
 }

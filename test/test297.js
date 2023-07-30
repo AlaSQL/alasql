@@ -21,7 +21,9 @@ describe('Test 297 INSERT,DELETE,UDPATE with subqueries', function () {
 	});
 
 	it.skip('3. UPDATE', function (done) {
-		var res = alasql('UPDATE one SET b = 100 WHERE a = (SELECT MAX(a) FROM one)');
+		var res = alasql(
+			'UPDATE one SET b = 100 WHERE a = (SELECT MAX(a) FROM one)'
+		);
 		assert.deepEqual(res, 1);
 		var res = alasql('SELECT * FROM one');
 		assert.deepEqual(res, [

@@ -121,7 +121,9 @@ describe('Test 326 FOREIGN KEYS', function () {
 	});
 
 	it.skip('8. SELECT', function (done) {
-		var res = alasql("SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
+		var res = alasql(
+			"SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'"
+		);
 		assert(res == 99999);
 		done();
 	});

@@ -12,7 +12,10 @@ describe('Test 196 - COUNT(a) vs COUNT(*)', function () {
 
 	it('1. COUNT(*) vs COUNT(a)', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: undefined}];
-		var res = alasql('SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a', [data]);
+		var res = alasql(
+			'SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a',
+			[data]
+		);
 		assert.deepEqual(res, [
 			{a: 1, b: 3, c: 3},
 			{a: 2, b: 2, c: 2},

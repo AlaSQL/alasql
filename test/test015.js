@@ -18,7 +18,8 @@ describe('Test 15', function () {
 		db.exec('INSERT INTO test VALUES (1,1,1, 800)');
 
 		var res = db.exec(
-			'SELECT a,b,c, SUM(d) AS d FROM test ' + ' GROUP BY GROUPING SETS(a,b),c ORDER BY a,b,c'
+			'SELECT a,b,c, SUM(d) AS d FROM test ' +
+				' GROUP BY GROUPING SETS(a,b),c ORDER BY a,b,c'
 		);
 
 		var tobe = [

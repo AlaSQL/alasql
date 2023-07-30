@@ -42,7 +42,9 @@ describe('Test 142 INSTREAM', function () {
 
 		//		alasql.stdlib.SQRT = function(s) {return 'Math.sqrt('+s+')'};
 		var tm = Date.now();
-		var res = alasql('SELECT VALUE COUNT(*) FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
+		var res = alasql('SELECT VALUE COUNT(*) FROM ? WHERE SQRT(x*x+y*y)<1', [
+			rndfn,
+		]);
 		//		console.log(Date.now() - tm);
 		var pi = (res / n) * 4;
 		//		console.log(res,pi);

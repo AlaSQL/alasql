@@ -226,7 +226,9 @@ utils.isBrowserify = (function () {
   */
 utils.isRequireJS = (function () {
 	return (
-		utils.isBrowser && typeof require === 'function' && typeof require.specified === 'function'
+		utils.isBrowser &&
+		typeof require === 'function' &&
+		typeof require.specified === 'function'
 	);
 })();
 
@@ -319,7 +321,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		} else {
 			if (/^[a-z]+:\/\//i.test(path)) {
-				fetchData(path, (x) => success(cutbom(x)), error, asy);
+				fetchData(path, x => success(cutbom(x)), error, asy);
 			} else {
 				//If async callthen call async
 				if (asy) {
@@ -353,17 +355,21 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 		//*/
 	} else if (utils.isCordova) {
 		/* If Cordova */
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
-				fileEntry.file(function (file) {
-					var fileReader = new FileReader();
-					fileReader.onloadend = function (e) {
-						success(cutbom(this.result));
-					};
-					fileReader.readAsText(file);
+		utils.global.requestFileSystem(
+			LocalFileSystem.PERSISTENT,
+			0,
+			function (fileSystem) {
+				fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
+					fileEntry.file(function (file) {
+						var fileReader = new FileReader();
+						fileReader.onloadend = function (e) {
+							success(cutbom(this.result));
+						};
+						fileReader.readAsText(file);
+					});
 				});
-			});
-		});
+			}
+		);
 
 		/** @todo Check eliminated code below */
 
@@ -404,7 +410,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 					 Simply read file from HTTP request, like:
 					 SELECT * FROM TXT('http://alasql.org/README.md');
 				 */
-				fetchData(path, (x) => success(cutbom(x)), error, asy);
+				fetchData(path, x => success(cutbom(x)), error, asy);
 			}
 		} else if (path instanceof Event) {
 			/*
@@ -445,13 +451,13 @@ async function fetchData(path, success, error, async) {
 
 function getData(path, success, error) {
 	return _fetch(path)
-		.then((response) => response.arrayBuffer())
-		.then((buf) => {
+		.then(response => response.arrayBuffer())
+		.then(buf => {
 			var a = new Uint8Array(buf);
-			var b = [...a].map((e) => String.fromCharCode(e)).join('');
+			var b = [...a].map(e => String.fromCharCode(e)).join('');
 			success(b);
 		})
-		.catch((e) => {
+		.catch(e => {
 			if (error) return error(e);
 			console.error(e);
 			throw e;
@@ -473,7 +479,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 	path,
 	runAsync,
 	success,
-	error = (x) => {
+	error = x => {
 		throw x;
 	}
 ) {
@@ -562,19 +568,23 @@ var removeFile = (utils.removeFile = function (path, cb) {
 		var fs = require('fs');
 		fs.remove(path, cb);
 	} else if (utils.isCordova) {
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-			fileSystem.root.getFile(
-				path,
-				{create: false},
-				function (fileEntry) {
-					fileEntry.remove(cb);
-					cb && cb(); // jshint ignore:line
-				},
-				function () {
-					cb && cb(); // jshint ignore:line
-				}
-			);
-		});
+		utils.global.requestFileSystem(
+			LocalFileSystem.PERSISTENT,
+			0,
+			function (fileSystem) {
+				fileSystem.root.getFile(
+					path,
+					{create: false},
+					function (fileEntry) {
+						fileEntry.remove(cb);
+						cb && cb(); // jshint ignore:line
+					},
+					function () {
+						cb && cb(); // jshint ignore:line
+					}
+				);
+			}
+		);
 	} else if (utils.isReactNative) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
@@ -630,18 +640,22 @@ var fileExists = (utils.fileExists = function (path, cb) {
 		var fs = require('fs');
 		fs.exists(path, cb);
 	} else if (utils.isCordova) {
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-			fileSystem.root.getFile(
-				path,
-				{create: false},
-				function (fileEntry) {
-					cb(true);
-				},
-				function () {
-					cb(false);
-				}
-			);
-		});
+		utils.global.requestFileSystem(
+			LocalFileSystem.PERSISTENT,
+			0,
+			function (fileSystem) {
+				fileSystem.root.getFile(
+					path,
+					{create: false},
+					function (fileEntry) {
+						cb(true);
+					},
+					function () {
+						cb(false);
+					}
+				);
+			}
+		);
 	} else if (utils.isReactNative) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
@@ -697,19 +711,23 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 					console.error(err.message);
 				});
 		} else if (utils.isCordova) {
-			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-				//                alasql.utils.removeFile(path,function(){
-				fileSystem.root.getFile(path, {create: true}, function (fileEntry) {
-					fileEntry.createWriter(function (fileWriter) {
-						fileWriter.onwriteend = function () {
-							if (cb) {
-								res = cb(res);
-							}
-						};
-						fileWriter.write(data);
+			utils.global.requestFileSystem(
+				LocalFileSystem.PERSISTENT,
+				0,
+				function (fileSystem) {
+					//                alasql.utils.removeFile(path,function(){
+					fileSystem.root.getFile(path, {create: true}, function (fileEntry) {
+						fileEntry.createWriter(function (fileWriter) {
+							fileWriter.onwriteend = function () {
+								if (cb) {
+									res = cb(res);
+								}
+							};
+							fileWriter.write(data);
+						});
 					});
-				});
-			});
+				}
+			);
 			//*/
 
 			/*/*
@@ -809,7 +827,8 @@ var hash = (utils.hash = function (str) {
 		i = str.length;
 	while (i) {
 		hash ^= str.charCodeAt(--i);
-		hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+		hash +=
+			(hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
 	}
 	return hash;
 });
@@ -1006,7 +1025,12 @@ var deepEqual = (utils.deepEqual = function (x, y) {
 		return true;
 	}
 
-	if (typeof x === 'object' && null !== x && typeof y === 'object' && null !== y) {
+	if (
+		typeof x === 'object' &&
+		null !== x &&
+		typeof y === 'object' &&
+		null !== y
+	) {
 		if (Object.keys(x).length !== Object.keys(y).length) {
 			return false;
 		}
@@ -1070,7 +1094,8 @@ var extend = (utils.extend = function extend(a, b) {
  * Extracts the primitive data
  */
 var getValueOf = (utils.getValueOf = function (val) {
-	return typeof val === 'object' && (val instanceof String || val instanceof Number)
+	return typeof val === 'object' &&
+		(val instanceof String || val instanceof Number)
 		? val.valueOf()
 		: val;
 });
@@ -1211,7 +1236,9 @@ var like = (utils.like = function (pattern, value, escape) {
 	s += '$';
 	//    if(value == undefined) return false;
 	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1;
+	return (
+		('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1
+	);
 });
 
 utils.glob = function (value, pattern) {
@@ -1241,7 +1268,9 @@ utils.glob = function (value, pattern) {
 	}
 
 	s += '$';
-	return ('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1;
+	return (
+		('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1
+	);
 };
 
 /**
@@ -1266,7 +1295,9 @@ utils.findAlaSQLPath = function () {
 		for (var i = 0; i < sc.length; i++) {
 			if (sc[i].src.substr(-16).toLowerCase() === 'alasql-worker.js') {
 				return sc[i].src.substr(0, sc[i].src.length - 16);
-			} else if (sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js') {
+			} else if (
+				sc[i].src.substr(-20).toLowerCase() === 'alasql-worker.min.js'
+			) {
 				return sc[i].src.substr(0, sc[i].src.length - 20);
 			} else if (sc[i].src.substr(-9).toLowerCase() === 'alasql.js') {
 				return sc[i].src.substr(0, sc[i].src.length - 9);

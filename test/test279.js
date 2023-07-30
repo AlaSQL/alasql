@@ -16,9 +16,12 @@ if (typeof exports == 'object') {
 			];
 			//    alasql('SELECT * INTO TSV("aaa.txt",{headers:true}) FROM ?',[data]);
 			//    alasql('SELECT * INTO XLS("aaa.xls",{headers:true}) FROM ?',[data]);
-			alasql('SELECT * INTO XLSXML("' + __dirname + '/restest279.xls",{headers:true}) FROM ?', [
-				data,
-			]);
+			alasql(
+				'SELECT * INTO XLSXML("' +
+					__dirname +
+					'/restest279.xls",{headers:true}) FROM ?',
+				[data]
+			);
 			done();
 		});
 	});

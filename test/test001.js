@@ -148,7 +148,9 @@ function doTests() {
 	});
 	it('Select 1.3: LEFT JOIN', function (done) {
 		var res = alasql(
-			'SELECT COLUMN students.schoolid ' + ' FROM students ' + ' LEFT JOIN courses USING courseid'
+			'SELECT COLUMN students.schoolid ' +
+				' FROM students ' +
+				' LEFT JOIN courses USING courseid'
 		);
 		assert.deepEqual([1, 1, 1, 2, 1], res);
 		done();

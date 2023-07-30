@@ -17,10 +17,15 @@ SQLITE.dropDatabase = function (databaseid) {
 SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 	var res = 1;
 	if (alasql.databases[dbid]) {
-		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
+		throw new Error(
+			'Unable to attach database as "' + dbid + '" because it already exists'
+		);
 	}
 
-	if ((args[0] && args[0] instanceof yy.StringValue) || args[0] instanceof yy.ParamValue) {
+	if (
+		(args[0] && args[0] instanceof yy.StringValue) ||
+		args[0] instanceof yy.ParamValue
+	) {
 		if (args[0] instanceof yy.StringValue) {
 			var value = args[0].value;
 		} else if (args[0] instanceof yy.ParamValue) {
@@ -35,7 +40,9 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 				db.sqldbid = sqldbid;
 				var sqldb = (db.sqldb = new SQL.Database(data));
 				db.tables = [];
-				var tables = sqldb.exec("SELECT * FROM sqlite_master WHERE type='table'")[0].values;
+				var tables = sqldb.exec(
+					"SELECT * FROM sqlite_master WHERE type='table'"
+				)[0].values;
 
 				tables.forEach(function (tbl) {
 					db.tables[tbl[1]] = {};
@@ -54,7 +61,9 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 				cb(1);
 			},
 			function (err) {
-				throw new Error('Cannot open SQLite database file "' + args[0].value + '"');
+				throw new Error(
+					'Cannot open SQLite database file "' + args[0].value + '"'
+				);
 			}
 		);
 		return res;
@@ -66,7 +75,9 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 };
 
 SQLITE.fromTable = function (databaseid, tableid, cb, idx, query) {
-	var data = alasql.databases[databaseid].sqldb.exec('SELECT * FROM ' + tableid);
+	var data = alasql.databases[databaseid].sqldb.exec(
+		'SELECT * FROM ' + tableid
+	);
 	var columns = (query.sources[idx].columns = []);
 	if (data[0].columns.length > 0) {
 		data[0].columns.forEach(function (columnid) {

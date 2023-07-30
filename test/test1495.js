@@ -12,19 +12,25 @@ describe('mysql TIMESTAMPDIFF', function () {
 	});
 
 	it('should return the difference in months between 2 dates when called with month as a unit', function () {
-		res = alasql("SELECT TIMESTAMPDIFF(MONTH, '2018-04-01', '2018-05-01') as result");
+		res = alasql(
+			"SELECT TIMESTAMPDIFF(MONTH, '2018-04-01', '2018-05-01') as result"
+		);
 
 		assert(res[0].result, 1);
 	});
 
 	it('should return the difference in days between 2 dates when called with day as a unit', function () {
-		res = alasql("SELECT TIMESTAMPDIFF(DAY, '2018-04-01', '2018-05-01') as result");
+		res = alasql(
+			"SELECT TIMESTAMPDIFF(DAY, '2018-04-01', '2018-05-01') as result"
+		);
 
 		assert(res[0].result, 30);
 	});
 
 	it('should return the difference in years between 2 dates when called with year as a unit', function () {
-		res = alasql("SELECT TIMESTAMPDIFF(YEAR, '2018-04-01', '2018-05-01') as result");
+		res = alasql(
+			"SELECT TIMESTAMPDIFF(YEAR, '2018-04-01', '2018-05-01') as result"
+		);
 
 		assert(res[0].result, 0);
 	});

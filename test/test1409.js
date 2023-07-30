@@ -40,7 +40,9 @@ if (typeof exports != 'object') {
 					return alasql.promise('INSERT INTO asset7 SELECT * FROM ?', [data]);
 				})
 				.then(function () {
-					return alasql.promise('CREATE TRIGGER mytrigger after INSERT ON asset7 onInsert');
+					return alasql.promise(
+						'CREATE TRIGGER mytrigger after INSERT ON asset7 onInsert'
+					);
 				})
 				.then(function () {
 					var data2 = [{id: 'abc4', name: 'test17', amount: 17}];

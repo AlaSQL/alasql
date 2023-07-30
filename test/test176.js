@@ -33,7 +33,9 @@ describe('Test 176 - CSV and TSV', function () {
 
 	it('3. TAB+predfined headers', function (done) {
 		alasql(
-			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:@["country","city"]})',
+			'SELECT * FROM TAB("' +
+				__dirname +
+				'/test176a.tab",{headers:@["country","city"]})',
 			[],
 			function (res) {
 				//			console.log(res);
@@ -45,7 +47,9 @@ describe('Test 176 - CSV and TSV', function () {
 
 	it('4. CSV on TAB', function (done) {
 		alasql(
-			'SELECT * FROM CSV("' + __dirname + '/test176a.tab",{separator:"\t",headers:true})',
+			'SELECT * FROM CSV("' +
+				__dirname +
+				'/test176a.tab",{separator:"\t",headers:true})',
 			[],
 			function (res) {
 				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
@@ -56,7 +60,9 @@ describe('Test 176 - CSV and TSV', function () {
 
 	it('5. CSV with single quote', function (done) {
 		alasql(
-			'SELECT * FROM CSV("' + __dirname + '/test176b.csv",{separator:";",headers:true})',
+			'SELECT * FROM CSV("' +
+				__dirname +
+				'/test176b.csv",{separator:";",headers:true})',
 			[],
 			function (res) {
 				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
@@ -93,7 +99,9 @@ describe('Test 176 - CSV and TSV', function () {
 
 	it('8. CSV with commas and strings', function (done) {
 		var res = alasql(
-			'SELECT * FROM CSV("' + __dirname + '/test176c.csv",{headers:true, quote:"\'"})'
+			'SELECT * FROM CSV("' +
+				__dirname +
+				'/test176c.csv",{headers:true, quote:"\'"})'
 		);
 		//   console.log(res);
 		//assert.deepEqual(res[1],{ 'Country':'Kazakhstan', 'City':'Almaty' });

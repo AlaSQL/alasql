@@ -6,7 +6,9 @@ if (typeof exports === 'object') {
 var test = '618'; // insert test file number
 
 describe(
-	'Test ' + test + ' - Where RTRIM will remove leading whitespace characters in an expression.',
+	'Test ' +
+		test +
+		' - Where RTRIM will remove leading whitespace characters in an expression.',
 	function () {
 		it('A) Will remove trailing whitespace only', function () {
 			var sql = "select RTRIM('Hello World !      ') AS Result";
@@ -39,7 +41,8 @@ describe(
 		});
 		it('F) Will remove only trailing whitespace in expression and NOT the tabs', function () {
 			// char(9) = tabs;
-			var sql = "select RTRIM('Hello World !' + char(9) + char(9) + '  ') AS Result";
+			var sql =
+				"select RTRIM('Hello World !' + char(9) + char(9) + '  ') AS Result";
 			var res = alasql(sql);
 			assert.equal(res[0]['Result'], 'Hello World !' + '\t\t');
 		});
@@ -51,7 +54,8 @@ describe(
 		});
 		it('H) Will remove only trailing whitespace in expression and NOT the newlines', function () {
 			// char(9) = tabs;
-			var sql = "select RTRIM('Hello World !' + char(10) + char(10) + '  ') AS Result";
+			var sql =
+				"select RTRIM('Hello World !' + char(10) + char(10) + '  ') AS Result";
 			var res = alasql(sql);
 			assert.equal(res[0]['Result'], 'Hello World !' + '\n\n');
 		});

@@ -103,10 +103,18 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 
 		var col;
 		if (!table.xcolumns[columnid]) {
-			throw new Error('Column "' + columnid + '" is not found in the table "' + tableid + '"');
+			throw new Error(
+				'Column "' + columnid + '" is not found in the table "' + tableid + '"'
+			);
 		}
 		if (table.xcolumns[tocolumnid]) {
-			throw new Error('Column "' + tocolumnid + '" already exists in the table "' + tableid + '"');
+			throw new Error(
+				'Column "' +
+					tocolumnid +
+					'" already exists in the table "' +
+					tableid +
+					'"'
+			);
 		}
 
 		if (columnid != tocolumnid) {

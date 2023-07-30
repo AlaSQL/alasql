@@ -152,10 +152,14 @@ if (typeof exports != 'object') {
 				);
 			});
 			it('6. VALUE', function (done) {
-				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (res) {
-					assert.equal(25, res);
-					done();
-				});
+				alasql(
+					'SELECT VALUE COUNT(*) FROM courses, students',
+					[],
+					function (res) {
+						assert.equal(25, res);
+						done();
+					}
+				);
 			});
 		});
 		describe('Database without columns', function () {
@@ -223,19 +227,27 @@ if (typeof exports != 'object') {
 				);
 			});
 			it('6. VALUE', function (done) {
-				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (res) {
-					assert.equal(25, res);
-					done();
-				});
+				alasql(
+					'SELECT VALUE COUNT(*) FROM courses, students',
+					[],
+					function (res) {
+						assert.equal(25, res);
+						done();
+					}
+				);
 			});
 		});
 		describe('Drop databases', function () {
 			it('Select 99: queryValue', function (done) {
-				alasql('DROP DATABASE test211a; DROP DATABASE test211b', [], function () {
-					alasql.worker(false);
-					assert(!alasql.webworker);
-					done();
-				});
+				alasql(
+					'DROP DATABASE test211a; DROP DATABASE test211b',
+					[],
+					function () {
+						alasql.worker(false);
+						assert(!alasql.webworker);
+						done();
+					}
+				);
 			});
 		});
 	});

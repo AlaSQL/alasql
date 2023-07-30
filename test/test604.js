@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage(__dirname + '/test604.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage(__dirname + '/test604.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', function () {
@@ -24,7 +27,9 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 			.then(function (res) {
 				assert(!localStorage['db604ls']);
 				assert(!localStorage['db604ls.one']);
-				return alasql.promise('CREATE localStorage DATABASE IF NOT EXISTS db604ls');
+				return alasql.promise(
+					'CREATE localStorage DATABASE IF NOT EXISTS db604ls'
+				);
 			})
 			.then(function (res) {
 				assert(localStorage['db604ls']);
@@ -66,7 +71,9 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 
 	it('* Insert values into table', function (done) {
 		alasql
-			.promise('insert into db604.t1 VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")')
+			.promise(
+				'insert into db604.t1 VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")'
+			)
 			.then(function (rows) {
 				assert.deepEqual(alasql.databases.db604.tables.t1.data, [
 					{a: 1, b: 'Moscow'},

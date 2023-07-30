@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test149.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test149.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
@@ -64,7 +67,9 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		alasql('create database test149a');
 		alasql('CREATE TABLE test149a.one (a int, b string)');
 		//console.log(56);
-		alasql('insert into test149a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
+		alasql(
+			'insert into test149a.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")'
+		);
 		//console.log(57);
 		alasql('select * into test149.one from test149a.one');
 		var table = JSON.parse(localStorage.getItem('ls149.one'));

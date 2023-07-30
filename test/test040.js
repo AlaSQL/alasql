@@ -8,7 +8,9 @@ describe('Test 40', function () {
 	it('Prepare database', function (done) {
 		db = new alasql.Database('db');
 		db.exec('CREATE TABLE one (a INT, b FLOAT)');
-		db.exec('INSERT INTO one VALUES (-1,-10.1),(-2,-20.2345678),(3,30.12), (-4,40.00)');
+		db.exec(
+			'INSERT INTO one VALUES (-1,-10.1),(-2,-20.2345678),(3,30.12), (-4,40.00)'
+		);
 		done();
 	});
 

@@ -12,9 +12,11 @@ var alasql = require('../../alasql.js'),
 // not really using right now, if we need to time each op independently i might use this outside timing logic
 function genRandomVal() {
 	var text = '';
-	var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var possible =
+		'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-	for (var i = 0; i < 20; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
+	for (var i = 0; i < 20; i++)
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
 
 	return text;
 }
@@ -26,8 +28,12 @@ function initializeDB() {
 
 	// nedb uses async callbacks so we will not time each operation but
 	// use globals to count when the last async op has finished
-	adb.exec('CREATE TABLE test (customId INT, val STRING, val2 STRING, val3 STRING)');
-	var alainsert = adb.compile('INSERT INTO test VALUES (:customId,:val, :val2, :val3)');
+	adb.exec(
+		'CREATE TABLE test (customId INT, val STRING, val2 STRING, val3 STRING)'
+	);
+	var alainsert = adb.compile(
+		'INSERT INTO test VALUES (:customId,:val, :val2, :val3)'
+	);
 
 	for (var idx = 0; idx < arraySize; idx++) {
 		var v1 = '12345'; //genRandomVal();
@@ -98,9 +104,19 @@ function testperfFind() {
 			) {
 				endTime = process.hrtime(startTime);
 				var totalMS = endTime[0] * 1e3 + endTime[1] / 1e6;
-				var rate = ((isIndexed ? totalIterations * 200 : totalIterations) * 1000) / totalMS;
+				var rate =
+					((isIndexed ? totalIterations * 200 : totalIterations) * 1000) /
+					totalMS;
 				rate = rate.toFixed(2);
-				console.log('find (indexed : ' + isIndexed + ') : ' + totalMS + 'ms (' + rate + ') ops/s');
+				console.log(
+					'find (indexed : ' +
+						isIndexed +
+						') : ' +
+						totalMS +
+						'ms (' +
+						rate +
+						') ops/s'
+				);
 
 				if (!isIndexed) {
 					isIndexed = true;

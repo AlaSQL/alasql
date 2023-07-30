@@ -30,7 +30,12 @@ yy.CreateVertex.prototype.toString = function () {
 
 yy.CreateVertex.prototype.toJS = function (context) {
 	//		console.log('yy.CreateVertex.toJS');
-	var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
+	var s =
+		'this.queriesfn[' +
+		(this.queriesidx - 1) +
+		'](this.params,null,' +
+		context +
+		')';
 	// var s = '';
 	return s;
 };
@@ -78,7 +83,10 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
 			.map(function (st) {
-				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
+				return (
+					`x[${JSON.stringify(st.column.columnid)}]=` +
+					st.expression.toJS('x', '')
+				);
 			})
 			.join(';');
 		var setfn = new Function('x,params,alasql', s);
@@ -160,7 +168,12 @@ yy.CreateEdge.prototype.toString = function () {
 };
 
 yy.CreateEdge.prototype.toJS = function (context) {
-	var s = 'this.queriesfn[' + (this.queriesidx - 1) + '](this.params,null,' + context + ')';
+	var s =
+		'this.queriesfn[' +
+		(this.queriesidx - 1) +
+		'](this.params,null,' +
+		context +
+		')';
 	return s;
 };
 
@@ -174,7 +187,10 @@ yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql', 'var y;return ' + this.from.toJS());
+	var fromfn = new Function(
+		'params,alasql',
+		'var y;return ' + this.from.toJS()
+	);
 	var tofn = new Function('params,alasql', 'var y;return ' + this.to.toJS());
 
 	// CREATE VERTEX "Name"
@@ -186,7 +202,10 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
 			.map(function (st) {
-				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
+				return (
+					`x[${JSON.stringify(st.column.columnid)}]=` +
+					st.expression.toJS('x', '')
+				);
 			})
 			.join(';');
 		var setfn = new Function('x,params,alasql', 'var y;' + s);
@@ -297,7 +316,13 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 			}
 			e.$node = 'EDGE';
 			if (typeof g.json !== 'undefined') {
-				extend(e, new Function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
+				extend(
+					e,
+					new Function('params,alasql', 'var y;return ' + g.json.toJS())(
+						params,
+						alasql
+					)
+				);
 			}
 
 			var v1;
@@ -317,7 +342,8 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 				if (
 					typeof v1 === 'undefined' &&
 					alasql.options.autovertex &&
-					(typeof g.source.prop !== 'undefined' || typeof g.source.name !== 'undefined')
+					(typeof g.source.prop !== 'undefined' ||
+						typeof g.source.name !== 'undefined')
 				) {
 					v1 = findVertex(g.source.prop || g.source.name);
 					if (typeof v1 === 'undefined') {
@@ -343,7 +369,8 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 				if (
 					typeof v2 === 'undefined' &&
 					alasql.options.autovertex &&
-					(typeof g.target.prop !== 'undefined' || typeof g.target.name !== 'undefined')
+					(typeof g.target.prop !== 'undefined' ||
+						typeof g.target.name !== 'undefined')
 				) {
 					v2 = findVertex(g.target.prop || g.target.name);
 					if (typeof v2 === 'undefined') {
@@ -368,7 +395,9 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 
 			db.objects[e.$id] = e;
 			if (typeof e.$class !== 'undefined') {
-				if (typeof alasql.databases[databaseid].tables[e.$class] === 'undefined') {
+				if (
+					typeof alasql.databases[databaseid].tables[e.$class] === 'undefined'
+				) {
 					throw new Error('No such class. Pleace use CREATE CLASS');
 				} else {
 					// TODO - add insert()
@@ -427,11 +456,19 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 		}
 		v.$node = 'VERTEX';
 		if (typeof g.json !== 'undefined') {
-			extend(v, new Function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
+			extend(
+				v,
+				new Function('params,alasql', 'var y;return ' + g.json.toJS())(
+					params,
+					alasql
+				)
+			);
 		}
 		db.objects[v.$id] = v;
 		if (typeof v.$class !== 'undefined') {
-			if (typeof alasql.databases[databaseid].tables[v.$class] === 'undefined') {
+			if (
+				typeof alasql.databases[databaseid].tables[v.$class] === 'undefined'
+			) {
 				throw new Error('No such class. Pleace use CREATE CLASS');
 			} else {
 				// TODO - add insert()
@@ -446,7 +483,10 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new Function('params,alasql', 'var y;return ' + this.from.toJS());
+	var fromfn = new Function(
+		'params,alasql',
+		'var y;return ' + this.from.toJS()
+	);
 	var tofn = new Function('params,alasql', 'var y;return ' + this.to.toJS());
 
 	// CREATE VERTEX "Name"
@@ -458,7 +498,10 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	if (this.sets && this.sets.length > 0) {
 		var s = this.sets
 			.map(function (st) {
-				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
+				return (
+					`x[${JSON.stringify(st.column.columnid)}]=` +
+					st.expression.toJS('x', '')
+				);
 			})
 			.join(';');
 		var setfn = new Function('x,params,alasql', 'var y;' + s);

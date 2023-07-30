@@ -30,8 +30,20 @@ describe('Test 243 AVG bug', function () {
 	});
 
 	it('2. Does not count null when using GROUP BY', function (done) {
-		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: undefined}, {a: null}];
-		var res = alasql('SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a', [data]);
+		var data = [
+			{a: 1},
+			{a: 1},
+			{a: 2},
+			{a: 3},
+			{a: 1},
+			{a: 2},
+			{a: undefined},
+			{a: null},
+		];
+		var res = alasql(
+			'SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a',
+			[data]
+		);
 		assert.deepEqual(res, [
 			{a: 1, b: 3, c: 3},
 			{a: 2, b: 2, c: 2},

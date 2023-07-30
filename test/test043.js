@@ -46,7 +46,9 @@ describe('Test 43', function () {
 	});
 
 	it('Order by dates DESC', function (done) {
-		var res = db.exec('SELECT COLUMN orderdate FROM orders ORDER BY orderdate DESC');
+		var res = db.exec(
+			'SELECT COLUMN orderdate FROM orders ORDER BY orderdate DESC'
+		);
 
 		var ok =
 			res[0] >= res[1] &&

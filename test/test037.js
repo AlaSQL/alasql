@@ -14,7 +14,9 @@ describe('Test 37', function () {
 			alasql('INSERT INTO one VALUES (1,10),(2,20),(3,30), (4,40)');
 
 			alasql('CREATE TABLE two (e INT, f INT)');
-			alasql('INSERT INTO two VALUES (1,100),(2,200),(3,300), (1000,1000), (2000,2000)');
+			alasql(
+				'INSERT INTO two VALUES (1,100),(2,200),(3,300), (1000,1000), (2000,2000)'
+			);
 			done();
 		});
 		it('CROSS JOIN', function (done) {
