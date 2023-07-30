@@ -20,14 +20,12 @@ describe('Test 1547 - Empty recordset', function () {
 		alasql('insert into one values (1),(2),(3),(4),(5)');
 		let res = alasql('recordset of select * from one where a = 999');
 		assert.deepEqual(res, {
-			Recordset: {
-				columns: [
-					{
-						columnid: 'a',
-					},
-				],
-				data: [],
-			},
+			columns: [
+				{
+					columnid: 'a',
+				},
+			],
+			data: [],
 		});
 	});
 });
