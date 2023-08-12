@@ -71,6 +71,14 @@ declare module 'alasql' {
 		[x: string]: userAggregator;
 	}
 
+	interface userFromFunction {
+		(dataReference: any, options: any, callback: any, index: any, query: any): any;
+	}
+	
+	interface userFromFunctionLookUp {
+		[x: string]: userFromFunction;
+	}
+
 	interface AlaSQL {
 		options: AlaSQLOptions;
 		error: Error;
@@ -78,6 +86,7 @@ declare module 'alasql' {
 		parse(sql: any): AlaSQLAST;
 		promise(sql: any, params?: any): Thenable<any>;
 		fn: userDefinedFunctionLookUp;
+		from: userFromFunctionLookUp;
 		aggr: userAggregatorLookUp;
 		autoval(tablename: string, colname: string, getNext?: boolean): number;
 		yy: {};
