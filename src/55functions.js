@@ -472,7 +472,10 @@ Object.keys(alasql._aggrOriginal).forEach(function (k) {
 
 // String functions
 stdfn.REPLACE = function (target, pattern, replacement) {
-	return (target || '').split(pattern).join(replacement);
+    if (typeof target !== 'string') {
+        throw new TypeError('Target must be a string');
+    }
+    return target.split(pattern).join(replacement);
 };
 
 // This array is required for fast GUID generation
