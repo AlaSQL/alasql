@@ -7,5 +7,5 @@ Question about how to ...
 Something is not working as expected:
 - Describe the problem  
 - Provide code that replicates the problem 
-- We suggest to spawn a jsfiddle from http://jsfiddle.net/98qL7m0c/
+- We suggest to spawn a jsfiddle from https://jsfiddle.net/f0Lxc758/
 
