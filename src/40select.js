@@ -470,7 +470,7 @@ function modify(query, res) {
 			columns = [];
 			if (query && query.sources) {
 				query.sources.forEach((source) => {
-					columns = columns.concat(source.columns)
+					columns = columns.concat((({columnid}) => ({columnid}))(source.columns))
 				})
 			}
 		}
