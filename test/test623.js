@@ -30,4 +30,17 @@ describe('Test ' + test + ' - group concat', function () {
 		assert.equal(res[0].b, 'x,z');
 		assert.equal(res[1].b, 'y');
 	});
+
+	it('C) distinct string values', function () {
+		data = [
+			{a: 1, b: 'x'},
+			{a: 2, b: 'y'},
+			{a: 1, b: 'z'},
+			{a: 1, b: 'x'},
+			{a: 2, b: 'y'},
+		];
+		res = alasql('SELECT a, GROUP_CONCAT(distinct b) AS b FROM ? GROUP BY a', [data]);
+		assert.equal(res[0].b, 'x,z');
+		assert.equal(res[1].b, 'y');
+	});
 });
