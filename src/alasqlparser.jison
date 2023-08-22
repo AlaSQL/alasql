@@ -354,7 +354,7 @@ Literal
 			else $$ = $1.toLowerCase();
 		}
 	| BRALITERAL
-		{ $$ = doubleq($1.substr(1,$1.length-2)); }
+		{ $$ = {val:doubleq($1.substr(1,$1.length-2)), wrap:$1.substr(0,1)}; }
 	| error NonReserved
 		{ $$ = $2.toLowerCase() }
 	;
