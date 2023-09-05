@@ -154,18 +154,18 @@ if(false) {
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp1} : null,`;
+							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp} : null,`;
 						}
 						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? ${colexp} : null,`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(${colexp1}) || typeof ${colexp1} == 'number' ? 
-							${colexp1} : ${colexp1} == 'string' && typeof Number(${colexp1}) == 'number' ? Number(${colexp1}) : 
+							return `'${colas}':(${colexp1}) || typeof ${colexp1} == 'number' ?
+							${colexp1} : ${colexp1} == 'string' && typeof Number(${colexp1}) == 'number' ? Number(${colexp1}) :
 							typeof ${colexp1} == 'boolean' ?  Number(${colexp1}) : 0,`;
 						}
-						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? 
-							${colexp} : ${colexp} == 'string' && typeof Number(${colexp}) == 'number' ? Number(${colexp}) : 
+						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ?
+							${colexp} : ${colexp} == 'string' && typeof Number(${colexp}) == 'number' ? Number(${colexp}) :
 							typeof ${colexp} === 'boolean' ?  Number(${colexp}) : 0,`;
 					} else if (
 						col.aggregatorid === 'FIRST' ||
@@ -177,18 +177,19 @@ if(false) {
 					} else if (col.aggregatorid === 'MIN') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}': (typeof ${colexp1} == 'number' ? ${colexp1} : typeof ${colexp1} == 'object' ? 
-							typeof Number(${colexp1}) == 'number' && ${colexp1}!== null? ${colexp1} : null : null),`;
+
+							return(`'${colas}': (typeof ${colexp1} == 'number' ? ${colexp} : typeof ${colexp1} == 'object' ?
+							typeof Number(${colexp1}) == 'number' && ${colexp1}!== null? ${colexp} : null : null),`);
 						}
-						return `'${colas}': (typeof ${colexp} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ? 
+						return `'${colas}': (typeof ${colexp} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' && ${colexp}!== null? ${colexp} : null : null),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}' : (typeof ${colexp1} == 'number' ? ${colexp1} : typeof ${colexp1} == 'object' ? 
-							typeof Number(${colexp1}) == 'number' ? ${colexp1} : null : null),`;
+							return `'${colas}' : (typeof ${colexp1} == 'number' ? ${colexp} : typeof ${colexp1} == 'object' ?
+							typeof Number(${colexp1}) == 'number' ? ${colexp} : null : null),`;
 						}
-						return `'${colas}' : (typeof ${colexp} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ? 
+						return `'${colas}' : (typeof ${colexp} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' ? ${colexp} : null : null),`;
 					} else if (col.aggregatorid === 'ARRAY') {
 						return "'" + colas + "':[" + colexp + '],';
@@ -344,18 +345,18 @@ if(false) {
 								pre +
 								`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null}
 							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'object' && typeof ${colexp1}!== 'number'){g['${colas}'] = null}
-							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
+							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp}}
 							else if(typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'){g['${colas}'] = g['${colas}']}
 							else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp1} == null || (typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'))){g['${colas}'] = null}
 							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} ==null){g['${colas}'] = g['${colas}']}
-							else if(typeof g['${colas}'] == null && typeof ${colexp1} =='number'){g['${colas}'] = ${colexp1}}
-							else{g['${colas}'] += ${colexp1}||0}` +
+							else if(typeof g['${colas}'] == null && typeof ${colexp1} =='number'){g['${colas}'] = ${colexp}}
+							else{g['${colas}'] += ${colexp}||0}` +
 								post
 							);
 						}
 						return (
 							pre +
-							`if(g['${colas}'] == null && ${colexp} == null){g['${colas}'] = null} 
+							`if(g['${colas}'] == null && ${colexp} == null){g['${colas}'] = null}
 							 else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number'&& typeof ${colexp}!== 'object' && typeof ${colexp}!== 'number'){g['${colas}'] = null}
 							 else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
 							 else if(typeof g['${colas}']!== 'number' && typeof ${colexp}!== 'number' && typeof ${colexp}!== 'object'){g['${colas}'] = g['${colas}']}
@@ -370,7 +371,7 @@ if(false) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre +
-								`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' && 
+								`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
 						typeof ${colexp1} == 'string' && !isNaN(${colexp1}) && typeof Number(${colexp1}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp1})}
 						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'string'){g['${colas}'] = 0}
 						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
@@ -381,7 +382,7 @@ if(false) {
 						}
 						return (
 							pre +
-							`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' && 
+							`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
 						typeof ${colexp} == 'string' && !isNaN(${colexp}) && typeof Number(${colexp}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp})}
 						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'string'){g['${colas}'] = 0}
 						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
@@ -411,43 +412,51 @@ if(false) {
 					} else if (col.aggregatorid === 'MIN') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return (
+							//console.log(pre + 'if ((y=' + colexp + ") < g['" + colas + "']) g['" + colas + "'])
+							return(
 								pre +
-								`if((g['${colas}'] == null && ${colexp1}!== null) ? y = ${colexp1} : (g['${colas}']!== null && 
-							${colexp1} == null) ? y = g['${colas}']:((y=${colexp1}) < g['${colas}'])){ if(typeof y == 'number')
+								`if((g['${colas}'] == null && ${colexp1}!== null) ? y = ${colexp} : (g['${colas}']!== null &&
+							${colexp1} == null) ? y = g['${colas}']:((y=${colexp}) < g['${colas}'])){ if(typeof y == 'number')
 							{g['${colas}'] = y;}else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
 							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}
-							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']} 
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']}
 							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object'){g['${colas}'] = Number(g['${colas}'])}` +
 								post
 							);
 						}
 						return (
 							pre +
-							`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : (g['${colas}']!== null && 
+							`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : (g['${colas}']!== null &&
 							${colexp} == null) ? y = g['${colas}']:((y=${colexp}) < g['${colas}'])){ if(typeof y == 'number')
 							{g['${colas}'] = y;}else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
 							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}
-							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']} 
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']}
 							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object'){g['${colas}'] = Number(g['${colas}'])}` +
 							post
 						);
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return (
+							//console.log(pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'])
+							return(
 								pre +
-								`if((y=${colexp1}) > g['${colas}']){if(typeof y == 'number'){g['${colas}'] = y;} 
-							else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
-							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}` +
+								`if((g['${colas}'] == null && ${colexp1}!== null) ? y = ${colexp} : (g['${colas}']!== null &&
+							${colexp1} == null) ? y = g['${colas}']:((y=${colexp}) > g['${colas}'])){ if(typeof y == 'number')
+							{g['${colas}'] = y;}else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
+							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']}
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object'){g['${colas}'] = Number(g['${colas}'])}` +
 								post
 							);
 						}
 						return (
 							pre +
-							`if((y=${colexp}) > g['${colas}']){if(typeof y == 'number'){g['${colas}'] = y;} 
-							else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
-							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}` +
+							`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : (g['${colas}']!== null &&
+							${colexp} == null) ? y = g['${colas}']:((y=${colexp}) > g['${colas}'])){ if(typeof y == 'number')
+							{g['${colas}'] = y;}else if(typeof y == 'object' && y instanceof Date){g['${colas}'] = y;}
+							else if(typeof y == 'object' && typeof Number(y) == 'number'){g['${colas}'] = Number(y);}}
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date){g['${colas}'] = g['${colas}']}
+							else if(g['${colas}']!== null && typeof g['${colas}'] == 'object'){g['${colas}'] = Number(g['${colas}'])}` +
 							post
 						);
 					} else if (col.aggregatorid === 'FIRST') {
