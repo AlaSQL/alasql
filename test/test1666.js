@@ -71,7 +71,7 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 					MIN(CEIL(a))  AS e,
 					MAX(CEIL(a))  AS f,
 					SUM(ROUND(a)) AS g,
-					SUM(CEIL(a)) AS h
+					SUM(CEIL(a))  AS h
 			 FROM ?`,
 			[data]
 		);
@@ -87,7 +87,27 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 				"h": 51
 			}
 		]);
+	});
 
-
+	it('MAX/MIN for Dates', function () {
+		var data = [
+			{a: new Date(2023, 6, 6, 0, 0, 0)},
+			{a: new Date(2023, 6, 15, 0, 0, 0)},
+			{a: undefined},
+			{a: new Date(2023, 7, 7, 0, 0, 0)},
+		];
+		res = alasql(
+			`SELECT
+					MIN(a)        AS c,
+					MAX(a)        AS d
+				 FROM ?`,
+			[data]
+		);
+		assert.deepEqual(res, [
+			{
+				c:new Date(2023, 6, 6, 0, 0, 0),
+				d:new Date(2023, 7, 7, 0, 0, 0)
+			}
+		]);
 	});
 });
