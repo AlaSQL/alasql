@@ -97,6 +97,6 @@ declare module 'alasql' {
 	}
 
 	const alasql: AlaSQL;
-	
+
 	export = alasql;
 }
