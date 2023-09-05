@@ -93,7 +93,7 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 		var data = [
 			{a: new Date(2023, 6, 6, 0, 0, 0)},
 			{a: new Date(2023, 6, 15, 0, 0, 0)},
-			{a: undefined},
+			{a: null},{a: undefined},
 			{a: new Date(2023, 7, 7, 0, 0, 0)},
 		];
 		res = alasql(
