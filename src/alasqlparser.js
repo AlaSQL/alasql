@@ -809,7 +809,7 @@ case 349:
 					this.$ = new yy.FuncValue({funcid: funcid, args: exprlist});
 			} else if(alasql.aggr[$$[$0-4]]) {
 		    	this.$ = new yy.AggrValue({aggregatorid: 'REDUCE',
-                      funcid: funcid, expression: exprlist.pop(),distinct:($$[$0-2]?.toUpperCase()=='DISTINCT') });
+                      funcid: funcid, expression: exprlist.pop(),distinct:($$[$0-2]=='DISTINCT') });
 		    } else {
 			    this.$ = new yy.FuncValue({funcid: funcid, args: exprlist});
 			};
