@@ -3016,7 +3016,7 @@ InsertDeleteUpdate
 
 DropTrigger
 	: DROP TRIGGER Literal
-		{ $$ = new yy.DropTrigger({trigger:$3}); }
+		{ $$ = new yy.DropTrigger({trigger:$3});}
 	;
 
 Reindex
