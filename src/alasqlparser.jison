@@ -1376,7 +1376,7 @@ FuncValue
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist});
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
-                      funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT') });
+                      funcid: funcid, expression: exprlist.pop(),distinct:($3?.toUpperCase()=='DISTINCT') });
 		    } else {
 			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist});
 			};
@@ -3016,7 +3016,7 @@ InsertDeleteUpdate
 
 DropTrigger
 	: DROP TRIGGER Literal
-		{ $$ = new yy.DropTrigger({trigger:$3}); }
+		{ $$ = new yy.DropTrigger({trigger:$3});}
 	;
 
 Reindex
