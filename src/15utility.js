@@ -1197,7 +1197,7 @@ var like = (utils.like = function (pattern, value, escape) {
 		} else if (c === '[' || c === ']') {
 			s += c;
 		} else if (c === '%') {
-			s += '.*';
+			s += '[\\s\\S]*';
 		} else if (c === '_') {
 			s += '.';
 		} else if ('/.*+?|(){}'.indexOf(c) > -1) {
@@ -1211,7 +1211,7 @@ var like = (utils.like = function (pattern, value, escape) {
 	s += '$';
 	//    if(value == undefined) return false;
 	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase())) > -1;
+	return ('' + (value || '')).search(RegExp(s, 'i')) > -1;
 });
 
 utils.glob = function (value, pattern) {
