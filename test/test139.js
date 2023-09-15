@@ -94,10 +94,8 @@ describe('Test 139 JSON', function () {
 
 		// Make Dirty
 		alasql.tables.one.data[2].b = 777;
-		assert(res1, [{b: undefined}, {b: 2}, {b: 777}]);
-		assert(res2, [{b: undefined}, {b: 2}, {b: 99}]);
-
-		//		console.log(res1);
+		res1 = alasql('SELECT b FROM one');
+		assert.deepEqual(res1, [{b: undefined}, {b: 2}, {b: 777}]);
 
 		done();
 	});

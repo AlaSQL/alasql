@@ -102,7 +102,7 @@ describe('Test 150 - localStorage Engine', function () {
 		alasql('USE test150');
 		var res = alasql('COMMIT TRANSACTION');
 		//		console.log(res);
-		assert(res, 1);
+		assert.equal(res, 1);
 
 		var res = alasql('SELECT * FROM test150.one');
 		assert(res.length == 6);

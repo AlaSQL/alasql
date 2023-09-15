@@ -20,7 +20,7 @@ if (typeof exports === 'object' && false) {
 			assert.deepEqual(res, [{city: 'Oslo'}]);
 
 			var res = alasql('select * into #sweden_capital from #city where city like "Os%"');
-			assert(res, 1);
+			assert.equal(res, 1);
 			assert.deepEqual(alasql.templ.sweden_capital, [{city: 'Oslo'}]);
 
 			// TODO - finish the test
