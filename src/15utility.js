@@ -1211,7 +1211,7 @@ var like = (utils.like = function (pattern, value, escape) {
 	s += '$';
 	//    if(value == undefined) return false;
 	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value || '')).search(RegExp(s, 'i')) > -1;
+	return ('' + (value ?? '')).search(RegExp(s, 'i')) > -1;
 });
 
 utils.glob = function (value, pattern) {

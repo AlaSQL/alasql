@@ -36,4 +36,18 @@ describe('Test'  + test + 'Newline characters in like', function () {
 		assert.deepEqual(res, [{b: 'second\n\ritem'}, {b: 'THIRD'}, {b: '\n\rFifth'}, {b: 'Six\nth'}]);
 		done();
 	});
+
+	it('3. LIKE', function (done) {
+		var data = [
+			{a: 'one', b: 0},
+			{a: 'three', b: 'three'},
+			{a: 'two', b: '0ne'},
+		];
+
+		var res = alasql('SELECT b FROM ? WHERE b LIKE "0%"', [data]);
+
+		//console.log(res);
+		assert.deepEqual(res, [{b: 0}, {b: '0ne'}]);
+		done();
+	});
 });
