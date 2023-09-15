@@ -6,7 +6,7 @@ if (typeof exports === 'object') {
 }
 
 var test = '1666';
-describe('Test'  + test + 'Newline characters in like', function () {
+describe('Test' + test + 'Newline characters in like', function () {
 	it('1. LIKE', function (done) {
 		var data = [
 			{a: 'one', b: 'first'},
