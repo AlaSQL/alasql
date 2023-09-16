@@ -130,14 +130,19 @@ yy.Select.prototype.compileJoins = function (query) {
 			//			if(jn instanceof yy.Apply) {
 			source.datafn = function (query, params, cb, idx, alasql) {
 				//					return cb(null,idx,alasql);
-				return source.subquery(query.params, null, cb, idx).data;
+				source.data = source.subquery(query.params, null, cb, idx).data
+				// var res = alasql.prepareFromData(params[idx]);
+				var res = source.data;
+				// Propogate subquery result
+				if (cb) res = cb(res, idx, query);
+				return res
 			};
 			// } else {
 			// 	source.datafn = function(query, params, cb, idx, alasql) {
 			// 		return source.subquery(query.params, null, cb, idx);
 			// 	}
 			// }
-			query.aliases[source.alias] = {type: 'subquery'};
+			query.aliases[source.alias] = { type: 'subquery' };
 		} else if (jn.param) {
 			source = {
 				alias: jn.as,
@@ -156,7 +161,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			ps += ');if(cb)res=cb(res, idx, query);return res';
 
 			source.datafn = new Function('query,params,cb,idx, alasql', ps);
-			query.aliases[source.alias] = {type: 'paramvalue'};
+			query.aliases[source.alias] = { type: 'paramvalue' };
 		} else if (jn.variable) {
 			source = {
 				alias: jn.as,
@@ -175,7 +180,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			ps += ');if(cb)res=cb(res, idx, query);return res';
 
 			source.datafn = new Function('query,params,cb,idx, alasql', ps);
-			query.aliases[source.alias] = {type: 'varvalue'};
+			query.aliases[source.alias] = { type: 'varvalue' };
 		} else if (jn.func) {
 			source = {
 				alias: jn.as,
@@ -227,7 +232,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			// console.log(234243, s);
 			source.datafn = new Function('query, params, cb, idx, alasql', s);
 
-			query.aliases[source.alias] = {type: 'funcvalue'};
+			query.aliases[source.alias] = { type: 'funcvalue' };
 		}
 		/*/*
 	} else if(tq instanceof yy.Select) {
@@ -261,13 +266,13 @@ yy.Select.prototype.compileJoins = function (query) {
 							return col.columnid;
 						});
 						jn.using = arrayIntersect(c1, c2).map(function (colid) {
-							return {columnid: colid};
+							return { columnid: colid };
 						});
 						//						console.log(jn.using);
 					} else {
 						throw new Error(
 							'In this version of Alasql NATURAL JOIN ' +
-								'works for tables with predefined columns only'
+							'works for tables with predefined columns only'
 						);
 					}
 				}
