@@ -58,7 +58,7 @@ describe('Test 159 - test DOM-storage', function () {
 		assert.deepEqual(res, ['Berlin', 'Paris', 'Vilnius']);
 
 		res = alasql(
-			`detach database test159; 
+			`detach database test159;
 			 drop localstorage database test159`
 		);
 		assert.deepEqual(res, [1, 1]);
@@ -157,7 +157,7 @@ describe('Test 159 - test DOM-storage', function () {
 			create table cities (city string)",[], function(res) {
 				assert.deepEqual(res, [1,1,1,1,1]);
 				alasql("insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')",[],function(res){
-					assert(res,5);
+					assert.equal(res,5);
 					alasql("select column * from cities where city like 'M%' order by city", [], function(res){
 						assert.deepEqual(res,['Minsk','Moscow']);
 						done();

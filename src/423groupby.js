@@ -152,8 +152,8 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
-							return(`'${colas}': (typeof ${colexp1} == 'number' ? ${colexp} : typeof ${colexp1} == 'object' ?
-							typeof Number(${colexp1}) == 'number' && ${colexp1}!== null? ${colexp} : null : null),`);
+							return `'${colas}': (typeof ${colexp1} == 'number' ? ${colexp} : typeof ${colexp1} == 'object' ?
+							typeof Number(${colexp1}) == 'number' && ${colexp1}!== null? ${colexp} : null : null),`;
 						}
 						return `'${colas}': (typeof ${colexp} == 'number' ? ${colexp} : typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' && ${colexp}!== null? ${colexp} : null : null),`;
@@ -375,7 +375,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 							//console.log(pre + 'if ((y=' + colexp + ") < g['" + colas + "']) g['" + colas + "'])
-							return(
+							return (
 								pre +
 								`if((g['${colas}'] == null && ${colexp1}!== null) ? y = ${colexp} : (g['${colas}']!== null &&
 							${colexp1} == null) ? y = g['${colas}']:((y=${colexp}) < g['${colas}'])){ if(typeof y == 'number')
@@ -400,7 +400,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 							//console.log(pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'])
-							return(
+							return (
 								pre +
 								`if((g['${colas}'] == null && ${colexp1}!== null) ? y = ${colexp} : (g['${colas}']!== null &&
 							${colexp1} == null) ? y = g['${colas}']:((y=${colexp}) > g['${colas}'])){ if(typeof y == 'number')

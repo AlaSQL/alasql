@@ -35,7 +35,7 @@ describe('Test 212: CONVERT dates with style', function () {
             ',
 			[],
 			function (res) {
-				assert(res, [
+				assert.deepEqual(res, [
 					1,
 					[
 						'01/08/15',
@@ -45,7 +45,7 @@ describe('Test 212: CONVERT dates with style', function () {
 						'08-01-15',
 						'08 jan 15',
 						'Jan 08,15',
-						'12:35:56',
+						'12:34:56',
 						'01-08-15',
 						'15/01/08',
 						'150108',
@@ -56,7 +56,7 @@ describe('Test 212: CONVERT dates with style', function () {
 						'08-01-2015',
 						'08 jan 2015',
 						'Jan 08,2015',
-						'12:35:56',
+						'12:34:56',
 						'01-08-2015',
 						'2015/01/08',
 						'20150108',
