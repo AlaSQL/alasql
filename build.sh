@@ -19,11 +19,7 @@ x() {
 	if command -v "$cmd" > /dev/null 2>&1; then
 		"$cmd" "$@"  # Run the command with all remaining arguments
 	else
-		if command -v "bun" > /dev/null 2>&1; then
-			bun "$cmd" "$@"  # Use bun to run the command with all remaining arguments
-		else
-			npx "$cmd" "$@"  # Use npx to run the command with all remaining arguments
-		fi
+		npx "$cmd" "$@"  # Use npx to run the command with all remaining arguments
 	fi
 }
 
