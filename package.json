@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "4.1.9",
+	"version": "4.1.10",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -16,7 +16,7 @@
 		"test": "sh build.sh && yarn test-only",
 		"test-ci": "(yarn test-format || 1) && yarn test && yarn install-g && alasql 'select 1 as Succes'",
 		"test-only": "mocha ./test --reporter dot # npx bun node_modules/.bin/mocha ./test --reporter dot",
-		"#test-only": "(command -v bunfdg && bun node_modules/.bin/mocha ./test --reporter dot) || npx bun node_modules/.bin/mocha ./test --reporter dot",
+		"#test-only": "(command -v bun && bun node_modules/.bin/mocha ./test --reporter dot) || npx bun node_modules/.bin/mocha ./test --reporter dot",
 		"test-browser": "node test/browserTestRunner.js 7387",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",
 		"build": "yarn format && yarn build-only",
