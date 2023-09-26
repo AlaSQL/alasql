@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test150.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test150.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe('Test 150 - localStorage Engine', function () {
@@ -99,7 +102,7 @@ describe('Test 150 - localStorage Engine', function () {
 		alasql('USE test150');
 		var res = alasql('COMMIT TRANSACTION');
 		//		console.log(res);
-		assert(res, 1);
+		assert.equal(res, 1);
 
 		var res = alasql('SELECT * FROM test150.one');
 		assert(res.length == 6);

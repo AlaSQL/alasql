@@ -18,7 +18,7 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		alasql('drop database test' + test);
 	});
 
-	const genPayload = (command) => `
+	const genPayload = command => `
 	console.log(${JSON.stringify(command)})
 	`;
 

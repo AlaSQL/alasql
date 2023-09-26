@@ -40,32 +40,6 @@ yy.Select.prototype.compileGroup = function (query) {
 	query.allgroups = allgroups;
 
 	query.ingroup = [];
-	//console.log(42,294, this.group);
-	//console.log(allgroups);
-	//		console.log(42,364,query.selectColumns)
-
-	/*/*
-if(false) {
-	allgroups.forEach(function(col2){
-//		console.log(42,365,colid, query.selectColumns[colid])
-		if(query.selectColumns[colid]) {
-//			console.log(colid,'ok');
-		} else {
-//			if(colid.indexOf())
-//			console.log(colid,'bad');
-			var tmpid = 'default';
-			if(query.sources.length > 0) tmpid = query.sources[0].alias;
-//			console.log(new yy.Column({columnid:colid}).toJS('p',query.sources[0].alias));
-//			query.selectfns += 'r[\''+colid+'\']=p[\''+tmpid+'\'][\''+colid+'\'];';
-//console.log(374, colid);
-			if(Object.keys(query.selectColumns).length != 0) query.removeKeys.push(colid);
-			query.selectfns += 'r[\''+escapeq(colid)+'\']='+(new yy.Column({columnid:colid}).toJS('p',tmpid))+';';
-		}
-	});
-};
-*/
-	// Create negative array
-
 	var s = '';
 	//	s+= query.selectfns;
 	allgroup.forEach(function (agroup) {
@@ -142,7 +116,7 @@ if(false) {
 				// 	if(col instanceof yy.Column) colas = col.columnid;
 				// 	else colas = col.toString();
 				// };
-				let colExpIfFunIdExists = (expression) => {
+				let colExpIfFunIdExists = expression => {
 					let colexpression = expression.args[0];
 					return colexpression.toJS('p', tableid, defcols);
 				};
@@ -152,7 +126,11 @@ if(false) {
 							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
-						return "'" + colas + "':(" + colexp + ')||0,';
+						if ('funcid' in col.expression) {
+							let colexp1 = colExpIfFunIdExists(col.expression);
+							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp} : 0,`;
+						}
+						return `'${colas}':(${colexp})||0,`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
@@ -278,18 +256,6 @@ if(false) {
 
 		//	console.log(s, this.columns);
 
-		/*
-	// var neggroup = arrayDiff(allgroups,agroup);
-
-	// console.log(agroup,neggroup);
-
-	// s += neggroup.map(function(columnid){
-	// 	return "g['"+columnid+"']=null;";
-	// }).join('');
-*/
-		// console.log(s);
-
-		//console.log(query.selectfn);
 		//		s += self.columns.map(function(col){
 		s += query.selectGroup
 			.map(function (col) {
@@ -301,7 +267,7 @@ if(false) {
 			// }
 */
 				var colexp = col.expression.toJS('p', tableid, defcols);
-				let colExpIfFunIdExists = (expression) => {
+				let colExpIfFunIdExists = expression => {
 					let colexpression = expression.args[0];
 					return colexpression.toJS('p', tableid, defcols);
 				};
@@ -320,7 +286,7 @@ if(false) {
 						var post = "g['$$_VALUES_" + colas + "'][" + colexp + ']=true;}';
 					}
 					if (col.aggregatorid === 'SUM') {
-						return pre + "g['" + colas + "']+=(" + colexp + '||0);' + post; //f.field.arguments[0].toJS();
+						return pre + "g['" + colas + "']+=(" + colexp + '||0);' + post;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);

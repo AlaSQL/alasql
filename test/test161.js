@@ -37,7 +37,7 @@ if (false) {
 			alasql("select * into xlsx('test160res.xlsx') from ?", [people], function (res) {
 				// TODO - what to do in browser? try to save?
 				// How to protect node.js (where to save these files?)
-				assert(res, 2);
+				assert.equal(res, 2);
 				done();
 			});
 		});

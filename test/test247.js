@@ -8,9 +8,9 @@ if (typeof exports === 'object') {
 describe('Test 247 UNARY PLUS', function () {
 	it('1. Simple tests', function (done) {
 		var res = alasql('SELECT VALUE + -1');
-		assert(res, -1);
+		assert.equal(res, -1);
 		var res = alasql('SELECT VALUE 70 * +1');
-		assert(res, 70);
+		assert.equal(res, 70);
 
 		var data = [
 			{col0: 10, col1: 1, col2: 100},
@@ -32,7 +32,7 @@ describe('Test 247 UNARY PLUS', function () {
 		assert.deepEqual(res, [5, 10]);
 
 		var res = alasql('SELECT VALUE + 36 * + ( + 16 )');
-		assert(res, 36 * 16);
+		assert.equal(res, 36 * 16);
 
 		done();
 	});

@@ -735,7 +735,7 @@ alasql.srch = {
 	PROP(val, args, stope) {
 		//		console.log('PROP',args[0],val);
 		if (stope.mode === 'XML') {
-			const values = val.children.filter((v) => v.name.toUpperCase() === args[0].toUpperCase());
+			const values = val.children.filter(v => v.name.toUpperCase() === args[0].toUpperCase());
 
 			return {
 				status: values.length ? 1 : -1,
@@ -1073,7 +1073,7 @@ alasql.srch = {
 
 	ROW(val, args, stope, params) {
 		var s = 'var y;return [';
-		s += args.map((arg) => arg.toJS('x', '')).join(',');
+		s += args.map(arg => arg.toJS('x', '')).join(',');
 		s += ']';
 		var setfn = new Function('x,params,alasql', s);
 		var rv = setfn(val, params, alasql);

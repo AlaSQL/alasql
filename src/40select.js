@@ -299,8 +299,8 @@ yy.Select = class Select {
 								.intoTable(
 									${JSON.stringify(this.into.databaseid || databaseid)},
 									${JSON.stringify(this.into.tableid)},
-									this.data, 
-									columns, 
+									this.data,
+									columns,
 									cb
 								);`;
 				} else {
@@ -367,7 +367,7 @@ yy.Select = class Select {
 			// the (data, err) standard is maintained here.
 			var res1 = queryfn(query, oldscope, function (res, err) {
 				if (err) {
-					return cb(err, null);
+					return cb(null, err);
 				}
 				if (query.rownums.length > 0) {
 					for (var i = 0, ilen = res.length; i < ilen; i++) {

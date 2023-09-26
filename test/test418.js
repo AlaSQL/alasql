@@ -27,11 +27,11 @@ describe('Test ' + test + ' Load data from internet', function () {
 			.promise(
 				'VALUE OF SELECT COUNT(*) FROM ' + type + '("' + url + '",{headers:' + headers + '})'
 			)
-			.then((res) => {
+			.then(res => {
 				assert.equal(res, expected);
 				done();
 			})
-			.catch((e) => {
+			.catch(e => {
 				console.error(e);
 				throw e;
 			});

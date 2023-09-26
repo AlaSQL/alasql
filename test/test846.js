@@ -11,8 +11,16 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 
 	it('MAX dealing with non-numeric values', function () {
 		var data = [
-			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: number2},
-			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: number11},
+			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
+			{
+				a: null,
+				b: 1,
+				c: false,
+				c2: false,
+				d: 5,
+				e: 'XYZ2',
+				f: new Number(11),
+			},
 		];
 		res = alasql(
 			`SELECT
@@ -28,7 +36,15 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		);
 		assert.deepEqual(res, [{a: null, b: 9, c: true, c2: 1, d: 5, e: 'XYZ2', f: number11}]);
 		var data = [
-			{a: null, b: 9, c: new Date('12.12.2022'), c2: 1, d: null, e: 'XYZ1', f: number2},
+			{
+				a: null,
+				b: 9,
+				c: new Date('12.12.2022'),
+				c2: 1,
+				d: null,
+				e: 'XYZ1',
+				f: new Number(2),
+			},
 			{
 				a: new Date('12.12.2022'),
 				b: 1,
@@ -52,14 +68,30 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			[data]
 		);
 		assert.deepEqual(res, [
-			{a: new Date('12.12.2022'), b: 9, c: new Date('01.01.2023'), c2: 1, d: 5, e: 'XYZ2', f: number11},
+			{
+				a: new Date('12.12.2022'),
+				b: 9,
+				c: new Date('01.01.2023'),
+				c2: 1,
+				d: 5,
+				e: null,
+				f: 11,
+			},
 		]);
 	});
 
 	it('MIN dealing with non-numeric values', function () {
 		var data = [
-			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: number2},
-			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: number11},
+			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
+			{
+				a: null,
+				b: 1,
+				c: false,
+				c2: false,
+				d: 5,
+				e: 'XYZ2',
+				f: new Number(11),
+			},
 		];
 		res = alasql(
 			`SELECT
@@ -75,7 +107,15 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		);
 		assert.deepEqual(res, [{a: null, b: 1, c: false, c2: false, d: null, e: 'XYZ1', f: number2}]);
 		var data = [
-			{a: null, b: 9, c: true, c2: new Date('12.12.2022'), d: null, e: 'XYZ1', f: number2},
+			{
+				a: null,
+				b: 9,
+				c: true,
+				c2: new Date('12.12.2022'),
+				d: null,
+				e: 'XYZ1',
+				f: new Number(2),
+			},
 			{
 				a: new Date('12.12.2022'),
 				b: 1,
@@ -99,14 +139,30 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			[data]
 		);
 		assert.deepEqual(res, [
-			{a: null, b: 1, c: false, c2: new Date('11.12.2022'), d: null, e: 'XYZ1', f: number2},
+			{
+				a: new Date('12.12.2022'),
+				b: 1,
+				c: null,
+				c2: new Date('11.12.2022'),
+				d: 5,
+				e: null,
+				f: 2,
+			},
 		]);
 	});
 
 	it('SUM dealing with non-numeric values', function () {
 		var data = [
-			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: number2},
-			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: number11},
+			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
+			{
+				a: null,
+				b: 1,
+				c: false,
+				c2: false,
+				d: 5,
+				e: 'XYZ2',
+				f: new Number(11),
+			},
 		];
 		res = alasql(
 			`SELECT
@@ -180,8 +236,28 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 	});
 	it('TOTAL dealing with non-numeric values', function () {
 		var data = [
-			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: number2, g: '+44', h: 'XYZ1'},
-			{a: null, b: 1, c: false, c2: false, d: 5, e: 'XYZ2', f: number11, g: '-45', h: 1},
+			{
+				a: null,
+				b: 9,
+				c: true,
+				c2: 1,
+				d: null,
+				e: 'XYZ1',
+				f: new Number(2),
+				g: '+44',
+				h: 'XYZ1',
+			},
+			{
+				a: null,
+				b: 1,
+				c: false,
+				c2: false,
+				d: 5,
+				e: 'XYZ2',
+				f: new Number(11),
+				g: '-45',
+				h: 1,
+			},
 		];
 		res = alasql(
 			`SELECT

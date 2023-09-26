@@ -78,18 +78,18 @@ function structuredDate(unFormattedDate) {
 	var formattedSeconds = ('0' + unFormattedDate.getSeconds()).substr(-2);
 	var formattedMilliseconds = ('00' + unFormattedDate.getMilliseconds()).substr(-3);
 	return {
-		month: month,
-		year: year,
-		fullYear: fullYear,
-		date: date,
-		day: day,
-		formattedDate: formattedDate,
-		formattedMonth: formattedMonth,
-		formattedYear: formattedYear,
-		formattedHour: formattedHour,
-		formattedMinutes: formattedMinutes,
-		formattedSeconds: formattedSeconds,
-		formattedMilliseconds: formattedMilliseconds,
+		month,
+		year,
+		fullYear,
+		date,
+		day,
+		formattedDate,
+		formattedMonth,
+		formattedYear,
+		formattedHour,
+		formattedMinutes,
+		formattedSeconds,
+		formattedMilliseconds,
 	};
 }
 
@@ -98,7 +98,7 @@ function structuredDate(unFormattedDate) {
  */
 alasql.stdfn.CONVERT = function (value, args) {
 	var val = value;
-	var udbtypeid = args.dbtypeid.toUpperCase();
+	var udbtypeid = args.dbtypeid?.toUpperCase();
 
 	var t;
 	var s;

@@ -47,7 +47,7 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 			if (!db.tables[tableid]) {
 				if (!alasql.options.dropifnotexists) {
 					throw new Error(
-						`Can not drop table ${JSON.strnigify(
+						`Can not drop table ${JSON.stringify(
 							table.tableid
 						)} because it does not exist in the database.`
 					);

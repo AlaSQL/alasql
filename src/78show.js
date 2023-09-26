@@ -77,7 +77,11 @@ yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
 
 	if (table && table.columns) {
 		var res = table.columns.map(function (col) {
-			return {columnid: col.columnid, dbtypeid: col.dbtypeid, dbsize: col.dbsize};
+			return {
+				columnid: col.columnid,
+				dbtypeid: col.dbtypeid,
+				dbsize: col.dbsize,
+			};
 		});
 		if (cb) cb(res);
 		return res;

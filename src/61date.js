@@ -20,7 +20,7 @@ stdfn.ASCII = function (a) {
 	return a.charCodeAt(0);
 };
 
-/** 
+/**
  Return first non-null argument
  See https://msdn.microsoft.com/en-us/library/ms190349.aspx
 */
@@ -127,7 +127,7 @@ var PERIODS = {
 
 alasql.stdfn.DATEDIFF = function (period, d1, d2) {
 	var interval = newDate(d2).getTime() - newDate(d1).getTime();
-	return interval / PERIODS[period.toLowerCase()];
+	return (interval / PERIODS[period.toLowerCase()]) | 0;
 };
 
 alasql.stdfn.DATEADD = function (period, interval, d) {
