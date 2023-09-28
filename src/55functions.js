@@ -142,7 +142,7 @@ var stdfn = (alasql.stdfn = {});
 
 const mathFnWrapper = (expression, ...a) => {
 	const argumentsExpression = a.map((s, i) => `(y${i}=${s})==null`).join("||");
-	return `(${argumentsExpression}?null:${expression})`;
+	return `(${argumentsExpression}?null:isNaN(y=${expression})?null:y)`;
 }
 
 stdlib.ABS = function (a) {
