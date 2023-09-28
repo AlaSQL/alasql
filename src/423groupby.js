@@ -126,11 +126,7 @@ yy.Select.prototype.compileGroup = function (query) {
 							",g['$$_VALUES_" + colas + "']={},g['$$_VALUES_" + colas + "'][" + colexp + ']=true';
 					}
 					if (col.aggregatorid === 'SUM') {
-						if ('funcid' in col.expression) {
-							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp} : 0,`;
-						}
-						return `'${colas}':(${colexp})||0,`;
+						return `'${colas}':(${colexp}),`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
@@ -286,7 +282,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						var post = "g['$$_VALUES_" + colas + "'][" + colexp + ']=true;}';
 					}
 					if (col.aggregatorid === 'SUM') {
-						return pre + "g['" + colas + "']+=(" + colexp + '||0);' + post;
+						return `${pre}if((y=${colexp})!=null)g['${colas}']+=y;${post}`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
@@ -332,11 +328,11 @@ yy.Select.prototype.compileGroup = function (query) {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 					} else if (col.aggregatorid === 'MIN') {
 						return (
-							pre + 'if ((y=' + colexp + ") < g['" + colas + "']) g['" + colas + "'] = y;" + post
+							`${pre}if ((y=${colexp}) < g['${colas}'] && y!=null || g['${colas}']===null){ g['${colas}'] = y;}${post}`
 						);
 					} else if (col.aggregatorid === 'MAX') {
 						return (
-							pre + 'if ((y=' + colexp + ") > g['" + colas + "']) g['" + colas + "'] = y;" + post
+							`${pre}if ((y=${colexp}) > g['${colas}'] && y!=null || g['${colas}']===null) g['${colas}'] = y;${post}`
 						);
 					} else if (col.aggregatorid === 'FIRST') {
 						return '';

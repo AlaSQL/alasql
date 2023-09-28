@@ -42,7 +42,7 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 			{
 				a: null,
 				b: 10,
-				c: null,
+				c: 1,
 				c2: 1,
 				d: 5,
 				e: null,
@@ -93,6 +93,9 @@ describe('Test ' + test + ' - inner functions for SUM, MIN and MAX', function ()
 				h: 51,
 			},
 		]);
+
+		res = alasql(`SELECT MAX(ROUND(a)) AS a, SUM(COALESCE(a, 2)) AS b, MIN(COALESCE(a, -5)) AS c FROM ?`, [[{a: -1.2}, {a: null}]]);
+		assert.deepEqual(res, [{a: -1, b: 0.8, c: -5}]);
 	});
 
 	it('MAX/MIN for Dates', function () {
