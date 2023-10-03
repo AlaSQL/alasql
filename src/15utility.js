@@ -319,7 +319,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		} else {
 			if (/^[a-z]+:\/\//i.test(path)) {
-				fetchData(path, (x) => success(cutbom(x)), error, asy);
+				fetchData(path, x => success(cutbom(x)), error, asy);
 			} else {
 				//If async callthen call async
 				if (asy) {
@@ -404,7 +404,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 					 Simply read file from HTTP request, like:
 					 SELECT * FROM TXT('http://alasql.org/README.md');
 				 */
-				fetchData(path, (x) => success(cutbom(x)), error, asy);
+				fetchData(path, x => success(cutbom(x)), error, asy);
 			}
 		} else if (path instanceof Event) {
 			/*
@@ -445,13 +445,13 @@ async function fetchData(path, success, error, async) {
 
 function getData(path, success, error) {
 	return _fetch(path)
-		.then((response) => response.arrayBuffer())
-		.then((buf) => {
+		.then(response => response.arrayBuffer())
+		.then(buf => {
 			var a = new Uint8Array(buf);
-			var b = [...a].map((e) => String.fromCharCode(e)).join('');
+			var b = [...a].map(e => String.fromCharCode(e)).join('');
 			success(b);
 		})
-		.catch((e) => {
+		.catch(e => {
 			if (error) return error(e);
 			console.error(e);
 			throw e;
@@ -473,7 +473,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 	path,
 	runAsync,
 	success,
-	error = (x) => {
+	error = x => {
 		throw x;
 	}
 ) {
@@ -1197,7 +1197,7 @@ var like = (utils.like = function (pattern, value, escape) {
 		} else if (c === '[' || c === ']') {
 			s += c;
 		} else if (c === '%') {
-			s += '.*';
+			s += '[\\s\\S]*';
 		} else if (c === '_') {
 			s += '.';
 		} else if ('/.*+?|(){}'.indexOf(c) > -1) {
@@ -1211,7 +1211,7 @@ var like = (utils.like = function (pattern, value, escape) {
 	s += '$';
 	//    if(value == undefined) return false;
 	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value || '')).toUpperCase().search(RegExp(s.toUpperCase(), 's')) > -1;
+	return ('' + (value ?? '')).search(RegExp(s, 'i')) > -1;
 });
 
 utils.glob = function (value, pattern) {

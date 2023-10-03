@@ -60,15 +60,26 @@ declare module 'alasql' {
 	interface userDefinedFunction {
 		(...x: any[]): any;
 	}
+
 	interface userDefinedFunctionLookUp {
 		[x: string]: userDefinedFunction;
 	}
+
 	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
 	interface userAggregator {
 		(value: any, accumulator: any, stage: number): any;
 	}
+
 	interface userAggregatorLookUp {
 		[x: string]: userAggregator;
+	}
+
+	interface userFromFunction {
+		(dataReference: any, options: any, callback: any, index: any, query: any): any;
+	}
+
+	interface userFromFunctionLookUp {
+		[x: string]: userFromFunction;
 	}
 
 	interface AlaSQL {
@@ -78,11 +89,14 @@ declare module 'alasql' {
 		parse(sql: any): AlaSQLAST;
 		promise(sql: any, params?: any): Thenable<any>;
 		fn: userDefinedFunctionLookUp;
+		from: userFromFunctionLookUp;
 		aggr: userAggregatorLookUp;
 		autoval(tablename: string, colname: string, getNext?: boolean): number;
 		yy: {};
 		setXLSX(xlsxlib: typeof xlsx): void;
 	}
+
 	const alasql: AlaSQL;
+
 	export = alasql;
 }

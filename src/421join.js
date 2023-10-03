@@ -130,7 +130,12 @@ yy.Select.prototype.compileJoins = function (query) {
 			//			if(jn instanceof yy.Apply) {
 			source.datafn = function (query, params, cb, idx, alasql) {
 				//					return cb(null,idx,alasql);
-				return source.subquery(query.params, null, cb, idx).data;
+				source.data = source.subquery(query.params, null, cb, idx).data;
+				// var res = alasql.prepareFromData(params[idx]);
+				var res = source.data;
+				// Propogate subquery result
+				if (cb) res = cb(res, idx, query);
+				return res;
 			};
 			// } else {
 			// 	source.datafn = function(query, params, cb, idx, alasql) {

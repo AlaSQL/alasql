@@ -140,8 +140,13 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 var stdlib = (alasql.stdlib = {});
 var stdfn = (alasql.stdfn = {});
 
+const mathFnWrapper = (expression, ...a) => {
+	const argumentsExpression = a.map((s, i) => `(y${i}=${s})==null`).join("||");
+	return `(${argumentsExpression}?null:isNaN(y=${expression})?null:y)`;
+}
+
 stdlib.ABS = function (a) {
-	return 'Math.abs(' + a + ')';
+	return mathFnWrapper("Math.abs(y0)", a);
 };
 stdlib.CLONEDEEP = function (a) {
 	return 'alasql.utils.cloneDeep(' + a + ')';
@@ -151,7 +156,7 @@ stdfn.CONCAT = function () {
 	return Array.prototype.slice.call(arguments).join('');
 };
 stdlib.EXP = function (a) {
-	return 'Math.pow(Math.E,' + a + ')';
+	return mathFnWrapper("Math.pow(Math.E,y0)", a);
 };
 
 stdlib.IIF = function (a, b, c) {
@@ -227,7 +232,7 @@ stdlib.ISNULL = stdlib.NULLIF = function (a, b) {
 };
 
 stdlib.POWER = function (a, b) {
-	return 'Math.pow(' + a + ',' + b + ')';
+	return mathFnWrapper(`Math.pow(y0,y1)`, a, b);
 };
 
 stdlib.RANDOM = function (r) {
@@ -238,17 +243,17 @@ stdlib.RANDOM = function (r) {
 	}
 };
 stdlib.ROUND = function (s, d) {
-	if (arguments.length == 2) {
-		return 'Math.round((' + s + ')*Math.pow(10,(' + d + ')))/Math.pow(10,(' + d + '))';
+	if (arguments.length === 2) {
+		return mathFnWrapper(`Math.round((y0)*Math.pow(10,(y1)))/Math.pow(10,(y1))`, s, d);
 	} else {
-		return 'Math.round(' + s + ')';
+		return mathFnWrapper('Math.round(y0)', s);
 	}
 };
 stdlib.CEIL = stdlib.CEILING = function (s) {
-	return 'Math.ceil(' + s + ')';
+	return mathFnWrapper('Math.ceil(y0)', s);
 };
 stdlib.FLOOR = function (s) {
-	return 'Math.floor(' + s + ')';
+	return mathFnWrapper('Math.floor(y0)', s);
 };
 
 stdlib.ROWNUM = function () {
@@ -259,7 +264,7 @@ stdlib.ROW_NUMBER = function () {
 };
 
 stdlib.SQRT = function (s) {
-	return 'Math.sqrt(' + s + ')';
+	return mathFnWrapper('Math.sqrt(y0)', s);
 };
 
 stdlib.TRIM = function (s) {
@@ -273,7 +278,7 @@ stdlib.UPPER = stdlib.UCASE = function (s) {
 // Concatination of strings
 stdfn.CONCAT_WS = function () {
 	var args = Array.prototype.slice.call(arguments);
-	args = args.filter((x) => !(x === null || typeof x === 'undefined'));
+	args = args.filter(x => !(x === null || typeof x === 'undefined'));
 	return args.slice(1, args.length).join(args[0] || '');
 };
 

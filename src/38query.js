@@ -53,7 +53,7 @@ function queryfn(query, oldscope, cb, A, B) {
 
 	// First - refresh data sources
 
-	var result;
+	let result;
 	query.sources.forEach(function (source, idx) {
 		//		source.data = query.database.tables[source.tableid].data;
 		//		console.log(666,idx);
@@ -74,7 +74,14 @@ function queryfn(query, oldscope, cb, A, B) {
 		//
 		source.queriesdata = query.queriesdata;
 	});
-	if (query.sources.length == 0 || 0 === slen) result = queryfn3(query);
+	if (query.sources.length == 0 || 0 === slen) {
+		try {
+			result = queryfn3(query);
+		} catch (e) {
+			if (cb) return cb(null, e);
+			else throw e;
+		}
+	}
 	//	console.log(82,aaa,slen,query.sourceslen, query.sources.length);
 	return result;
 }
@@ -193,6 +200,12 @@ function queryfn3(query) {
 			if (!query.havingfn || query.havingfn(g, query.params, alasql)) {
 				//				console.log(g);
 				var d = query.selectgfn(g, query.params, alasql);
+
+				for (const key in query.groupColumns) {
+					if (query.groupColumns[key] !== key
+						&& d[query.groupColumns[key]])
+						delete d[query.groupColumns[key]]
+				}
 				query.data.push(d);
 			}
 		}
@@ -470,7 +483,7 @@ var preIndex = function (query) {
 				// Check if index already exists
 				var ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
-						hash(source.onrightfns + '`' + source.srcwherefns)
+					hash(source.onrightfns + '`' + source.srcwherefns)
 					];
 				if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					source.ix = ixx;
@@ -526,7 +539,7 @@ var preIndex = function (query) {
 				// Check if index exists
 				ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
-						hash(source.wxleftfns + '`')
+					hash(source.wxleftfns + '`')
 					];
 			}
 			if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {

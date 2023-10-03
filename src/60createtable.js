@@ -320,7 +320,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			};
 		}
 		if (checkfn) {
-			table.checks.push({fn: checkfn, id: con.constraintid, fk: con.type === 'FOREIGN KEY'});
+			table.checks.push({
+				fn: checkfn,
+				id: con.constraintid,
+				fk: con.type === 'FOREIGN KEY',
+			});
 		}
 	});
 

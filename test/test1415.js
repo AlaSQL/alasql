@@ -10,7 +10,10 @@ describe('Test 1415 - UNION Expression with empty query columns bug', function (
 		var data1 = [{a: 'abc'}, {a: 'xyz'}];
 		var data2 = [{a: '123'}, {a: '987'}];
 
-		var res = alasql('SELECT * FROM :a UNION SELECT * FROM :b', {a: data1, b: data2});
+		var res = alasql('SELECT * FROM :a UNION SELECT * FROM :b', {
+			a: data1,
+			b: data2,
+		});
 		assert.deepEqual(res, [{a: '123'}, {a: '987'}, {a: 'abc'}, {a: 'xyz'}]);
 
 		var res = alasql(

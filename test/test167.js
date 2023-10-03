@@ -2,7 +2,10 @@ if (typeof exports === 'object') {
 	var assert = require('assert');
 	var alasql = require('..');
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test162.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage('./test162.json', {
+		strict: false,
+		ws: '',
+	});
 } else {
 	__dirname = '.';
 }
@@ -17,7 +20,7 @@ if (typeof exports === 'object' && false) {
 			assert.deepEqual(res, [{city: 'Oslo'}]);
 
 			var res = alasql('select * into #sweden_capital from #city where city like "Os%"');
-			assert(res, 1);
+			assert.equal(res, 1);
 			assert.deepEqual(alasql.templ.sweden_capital, [{city: 'Oslo'}]);
 
 			// TODO - finish the test

@@ -105,7 +105,7 @@ describe('Test 243 AVG bug', function () {
 
 		var res = alasql('SELECT person, avg(sold) FROM ? GROUP BY person', [arr]);
 
-		assert(res, [
+		assert.deepEqual(res, [
 			{person: 1, 'AVG(sold)': 12.5},
 			{person: 2, 'AVG(sold)': 10},
 			{person: 3, 'AVG(sold)': 40},

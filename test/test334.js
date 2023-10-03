@@ -53,7 +53,13 @@ describe('Test 334 WITH CTE', function () {
 		assert.deepEqual(res, [
 			{tax: '0%', name: 'Apples', price: 10, quantity: 10, 'Total price': 100},
 			{tax: '3%', name: 'Melons', price: 15, quantity: 20, 'Total price': 300},
-			{tax: '0%', name: 'Cucumbers', price: 40, quantity: 50, 'Total price': 2000},
+			{
+				tax: '0%',
+				name: 'Cucumbers',
+				price: 40,
+				quantity: 50,
+				'Total price': 2000,
+			},
 		]);
 
 		done();

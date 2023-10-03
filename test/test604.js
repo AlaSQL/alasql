@@ -7,7 +7,10 @@ if (typeof exports === 'object') {
 
 if (typeof exports == 'object') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage(__dirname + '/test604.json', {strict: false, ws: ''});
+	global.localStorage = new DOMStorage(__dirname + '/test604.json', {
+		strict: false,
+		ws: '',
+	});
 }
 
 describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', function () {

@@ -9,7 +9,7 @@ describe('Test 204 PRINT', function () {
 	it.skip('1. PRINT()', function (done) {
 		// var oldconsolelog = console.log;
 		// console.log = function(){
-		// 	assert(arguments[0] == '[1,4,9,16]');
+		// 	assert.equal(arguments[0] == '[1,4,9,16]');
 		// 	console.log = oldconsolelog;
 		// 	done();
 		// };
