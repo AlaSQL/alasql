@@ -398,15 +398,6 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 					self.group[groupIdx].nick = colas;
 				}
 			}
-
-			if (
-				col.funcid &&
-				(col.funcid.toUpperCase() === 'ROWNUM' || col.funcid.toUpperCase() === 'ROW_NUMBER')
-			) {
-				query.rownums.push(col.as);
-			}
-			//				console.log("colas:",colas);
-			// }
 		} else {
 			query.groupStar = col.tableid || 'default';
 		}
