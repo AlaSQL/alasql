@@ -53,9 +53,26 @@ describe('Test 288 ROWNUM()', function () {
 		done();
 	});
 
+	it('5. Where', function (done) {
+		var data = [{a: 1}, {a: 2}, {a: 3}];
+
+		var res = alasql('SELECT a FROM ? WHERE ROWNUM() > 1', [data]);
+		assert.deepEqual(res, [
+			{a: 2},
+			{a: 3},
+		]);
+
+		var res = alasql('SELECT a FROM ? WHERE ROWNUM() % 2 = 1', [data]);
+		assert.deepEqual(res, [
+			{a: 1},
+			{a: 3},
+		]);
+		done();
+	});
+
 	// TODO: Add other operators
 
-	it('5. DROP DATABASE', function (done) {
+	it('6. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test288');
 		done();
 	});
