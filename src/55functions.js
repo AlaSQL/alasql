@@ -257,11 +257,10 @@ stdlib.FLOOR = function (s) {
 };
 
 stdlib.ROWNUM = function () {
-	return '1';
+	const varName = "rowNum" + Math.floor(Math.random() * 1000);
+	return `(${varName}=(typeof ${varName} === "undefined" ? 0 : ${varName}) + 1)`;
 };
-stdlib.ROW_NUMBER = function () {
-	return '1';
-};
+stdlib.ROW_NUMBER = stdlib.ROWNUM;
 
 stdlib.SQRT = function (s) {
 	return mathFnWrapper('Math.sqrt(y0)', s);
