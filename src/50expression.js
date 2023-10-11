@@ -607,7 +607,7 @@
 		}
 
 		toJS() {
-			return "alasql.vars['" + this.variable + "']";
+			return "alasql.vars['" + escapeq(this.variable) + "']";
 		}
 	}
 
@@ -1014,7 +1014,7 @@
 		toJS() {
 			var colas = this.nick;
 			if (colas === undefined) {
-				colas = this.toString();
+				colas = escapeq(this.toString());
 			}
 			return "g['" + colas + "']";
 		}
