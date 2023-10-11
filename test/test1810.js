@@ -13,7 +13,7 @@ describe('Test 1810 - XSS', function () {
 
     it('Rownum', function () {
 			const res = alasql(`SELECT * FROM (SELECT ROWNUM(": alert(2)}////") FROM ?)`, [data]);
-			assert.deepEqual(res, []);
+			assert.deepEqual(res, [{"ROWNUM(': alert(2)}////')": 1}]);
     });
 
     it('SUM', function () {
