@@ -368,7 +368,7 @@
 				var ljs = '(' + leftJS() + '||{})';
 
 				if (typeof this.right === 'string') {
-					s = ljs + '["' + this.right + '"]';
+					s = ljs + '["' + escapeq(this.right) + '"]';
 				} else if (typeof this.right === 'number') {
 					s = ljs + '[' + this.right + ']';
 				} else if (this.right instanceof yy.FuncValue) {

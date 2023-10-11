@@ -18,6 +18,6 @@ describe('Test 1810 - XSS', function () {
 
     it('SUM', function () {
 			const res = alasql(`SELECT 'a'->[SUM("+alert(3)+")] AS 'A' FROM ?`, [data]);
-			assert.deepEqual(res, []);
+			assert.deepEqual(res, [{"'A'": undefined}]);
     });
 });
