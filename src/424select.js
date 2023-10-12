@@ -326,16 +326,16 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 			//				ss.push((col.as || col.columnid)+':'+col.toJS("p.",query.defaultTableid))
 			//			}
 		} else {
-			//			console.log(203,col.as,col.columnid,col.toString());
+			const colas = escapeq(col.as || col.columnid || col.toString());
 			ss.push(
 				"'" +
-					escapeq(col.as || col.columnid || col.toString()) +
+					colas +
 					"':" +
 					n2u(col.toJS('p', query.defaultTableid, query.defcols))
 			);
 			//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
-			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
+			query.selectColumns[colas] = true;
 
 			var coldef = {
 				columnid: col.as || col.columnid || col.toString(),
@@ -460,7 +460,7 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 			}
 */
 			//			if(col.as) {
-			s += "r['" + colas + "']=";
+			s += "r['" + escapeq(colas) + "']=";
 			//			// } else {
 			//			// 	s += 'r[\''+escapeq()+'\']=';
 			//			// };
