@@ -70,6 +70,19 @@ describe('Test 288 ROWNUM()', function () {
 		done();
 	});
 
+	it('6. UNION', function (done) {
+		const data = [{a: 1}, {a: 2}, {a: 3}];
+		const data2 = [{a: 4}, {a: 5}, {a: 6}];
+
+		let res = alasql('SELECT ROWNUM() as n, * FROM ? UNION ALL CORRESPONDING SELECT ROWNUM() as n, * FROM ?', [data, data2]);
+		assert.deepEqual(res, [
+			{a: 1, n: 1}, {a: 2, n: 2}, {a: 3, n: 3},
+			{a: 4, n: 4}, {a: 5, n: 5}, {a: 6, n: 6}
+		]);
+
+		done();
+	});
+
 	// TODO: Add other operators
 
 	it('6. DROP DATABASE', function (done) {
