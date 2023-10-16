@@ -405,5 +405,5 @@ yy.Select.prototype.compileGroup = function (query) {
 	});
 
 	//		console.log('groupfn',s);
-	return new Function('p,params,alasql', 'var y;' + s);
+	return new sandboxed_function('p,params,alasql', 'var y;' + s);
 };

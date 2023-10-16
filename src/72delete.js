@@ -46,7 +46,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 		//	 } catch(err){console.log(444,err)};
 		//		var query = {};
 		//console.log(this.where.toJS('r',''));
-		var wherefn = new Function(
+		var wherefn = new sandboxed_function(
 			'r,params,alasql',
 			'var y;return (' + this.where.toJS('r', '') + ')'
 		).bind(this);

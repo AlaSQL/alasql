@@ -155,7 +155,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (col.check) {
 				table.checks.push({
 					id: col.check.constrantid,
-					fn: new Function('r', 'var y;return ' + col.check.expression.toJS('r', '')),
+					fn: new sandboxed_function('r', 'var y;return ' + col.check.expression.toJS('r', '')),
 				});
 			}
 
@@ -168,7 +168,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				var pk = (table.pk = {});
 				pk.columns = [col.columnid];
 				pk.onrightfns = `r[${JSON.stringify(col.columnid)}]`;
-				pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
+				pk.onrightfn = new sandboxed_function('r', 'var y;return ' + pk.onrightfns);
 				pk.hh = hash(pk.onrightfns);
 				table.uniqs[pk.hh] = {};
 			}
@@ -180,7 +180,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uk.push(uk);
 				uk.columns = [col.columnid];
 				uk.onrightfns = `r[${JSON.stringify(col.columnid)}]`;
-				uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
+				uk.onrightfn = new sandboxed_function('r', 'var y;return ' + uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
 			}
@@ -220,7 +220,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				table.uk.push(uk);
 				uk.columns = [col.columnid];
 				uk.onrightfns = 'r[\''+col.columnid+'\']';
-				uk.onrightfn = new Function("r",'return '+uk.onrightfns);
+				uk.onrightfn = new sandboxed_function("r",'return '+uk.onrightfns);
 				uk.hh = hash(uk.onrightfns);
 				table.uniqs[uk.hh] = {};
 */
@@ -253,12 +253,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return `r[${JSON.stringify(columnid)}]`;
 				})
 				.join("+'`'+");
-			pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
+			pk.onrightfn = new sandboxed_function('r', 'var y;return ' + pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};
 		} else if (con.type === 'CHECK') {
 			//			console.log(con.expression.toJS('r',''));
-			checkfn = new Function('r', 'var y;return ' + con.expression.toJS('r', ''));
+			checkfn = new sandboxed_function('r', 'var y;return ' + con.expression.toJS('r', ''));
 		} else if (con.type === 'UNIQUE') {
 			//			console.log(con);
 			var uk = {};
@@ -270,7 +270,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					return `r[${JSON.stringify(columnid)}]`;
 				})
 				.join("+'`'+");
-			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
+			uk.onrightfn = new sandboxed_function('r', 'var y;return ' + uk.onrightfns);
 			uk.hh = hash(uk.onrightfns);
 			table.uniqs[uk.hh] = {};
 		} else if (con.type === 'FOREIGN KEY') {

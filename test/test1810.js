@@ -80,6 +80,4 @@ describe('Test 1810 - XSS', function () {
 			}
 		]);
 	});
-
-
 });

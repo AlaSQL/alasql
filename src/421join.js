@@ -160,7 +160,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			if (jn.array) ps += ',true';
 			ps += ');if(cb)res=cb(res, idx, query);return res';
 
-			source.datafn = new Function('query,params,cb,idx, alasql', ps);
+			source.datafn = new sandboxed_function('query,params,cb,idx, alasql', ps);
 			query.aliases[source.alias] = {type: 'paramvalue'};
 		} else if (jn.variable) {
 			source = {
@@ -179,7 +179,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			if (jn.array) ps += ',true';
 			ps += ');if(cb)res=cb(res, idx, query);return res';
 
-			source.datafn = new Function('query,params,cb,idx, alasql', ps);
+			source.datafn = new sandboxed_function('query,params,cb,idx, alasql', ps);
 			query.aliases[source.alias] = {type: 'varvalue'};
 		} else if (jn.func) {
 			source = {
@@ -195,7 +195,7 @@ yy.Select.prototype.compileJoins = function (query) {
 
 			/*/*
 		var jnparam = jn.param.param;
-		source.datafn = new Function('query,params,cb,idx',
+		source.datafn = new sandboxed_function('query,params,cb,idx',
 			"var res=alasql.prepareFromData(params['"+jnparam+"']);if(cb)res=cb(res, idx, query);return res");
 */
 
@@ -230,7 +230,7 @@ yy.Select.prototype.compileJoins = function (query) {
 			s += 'cb,idx,query';
 			s += ');/*if(cb)res=cb(res,idx,query);*/return res';
 			// console.log(234243, s);
-			source.datafn = new Function('query, params, cb, idx, alasql', s);
+			source.datafn = new sandboxed_function('query, params, cb, idx, alasql', s);
 
 			query.aliases[source.alias] = {type: 'funcvalue'};
 		}
@@ -290,14 +290,14 @@ yy.Select.prototype.compileJoins = function (query) {
 				.join('+"`"+');
 
 			// console.log(32343, source.onleftfns);
-			source.onleftfn = new Function('p,params,alasql', 'var y;return ' + source.onleftfns);
+			source.onleftfn = new sandboxed_function('p,params,alasql', 'var y;return ' + source.onleftfns);
 
 			source.onrightfns = jn.using
 				.map(function (col) {
 					return "p['" + (source.alias || source.tableid) + "']['" + col.columnid + "']";
 				})
 				.join('+"`"+');
-			source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
+			source.onrightfn = new sandboxed_function('p,params,alasql', 'var y;return ' + source.onrightfns);
 			source.optimization = 'ix';
 			//			console.log(151,source.onleftfns, source.onrightfns);
 			//			console.log(source);
@@ -308,9 +308,9 @@ yy.Select.prototype.compileJoins = function (query) {
 				source.optimization = 'ix';
 				/*/*
 		// 	source.onleftfns = jn.on.left.toJS('p',query.defaultTableid);
-		// 	source.onleftfn = new Function('p', 'return '+source.onleftfns);
+		// 	source.onleftfn = new sandboxed_function('p', 'return '+source.onleftfns);
 		// 	source.onrightfns = jn.on.right.toJS('p',query.defaultTableid);
-		// 	source.onrightfn = new Function('p', 'return '+source.onrightfns);
+		// 	source.onrightfn = new sandboxed_function('p', 'return '+source.onrightfns);
 */
 				var lefts = '';
 				var rights = '';
@@ -393,9 +393,9 @@ yy.Select.prototype.compileJoins = function (query) {
 				source.onmiddlefns = middles || 'true';
 				//			console.log(source.onleftfns, '-',source.onrightfns, '-',source.onmiddlefns);
 
-				source.onleftfn = new Function('p,params,alasql', 'var y;return ' + source.onleftfns);
-				source.onrightfn = new Function('p,params,alasql', 'var y;return ' + source.onrightfns);
-				source.onmiddlefn = new Function('p,params,alasql', 'var y;return ' + source.onmiddlefns);
+				source.onleftfn = new sandboxed_function('p,params,alasql', 'var y;return ' + source.onleftfns);
+				source.onrightfn = new sandboxed_function('p,params,alasql', 'var y;return ' + source.onrightfns);
+				source.onmiddlefn = new sandboxed_function('p,params,alasql', 'var y;return ' + source.onmiddlefns);
 
 				//			} else if(jn.on instanceof yy.Op && jn.on.op == 'AND') {
 				//				console.log('join on and ',jn);
@@ -405,7 +405,7 @@ yy.Select.prototype.compileJoins = function (query) {
 				//				source.onleftfn = returnTrue;
 				//				source.onleftfns = "true";
 				source.onmiddlefns = jn.on.toJS('p', query.defaultTableid, query.defcols);
-				source.onmiddlefn = new Function(
+				source.onmiddlefn = new sandboxed_function(
 					'p,params,alasql',
 					'var y;return ' + jn.on.toJS('p', query.defaultTableid, query.defcols)
 				);

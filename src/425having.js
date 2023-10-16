@@ -5,7 +5,7 @@ yy.Select.prototype.compileHaving = function (query) {
 		var s = this.having.toJS('g', -1);
 		query.havingfns = s;
 		//		console.log(s);
-		return new Function('g,params,alasql', 'var y;return ' + s);
+		return new sandboxed_function('g,params,alasql', 'var y;return ' + s);
 	}
 
 	return function () {
