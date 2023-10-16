@@ -167,24 +167,24 @@ yy.Select.prototype.compileFrom = function (query) {
 			//				console.log(tq);
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
-			source.datafn = new sandboxed_function('query,params,cb,idx,alasql', ps);
+			source.datafn = new sandboxedFunction('query,params,cb,idx,alasql', ps);
 		} else if (tq.inserted) {
 			ps = 'var res = alasql.prepareFromData(alasql.inserted';
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
-			source.datafn = new sandboxed_function('query,params,cb,idx,alasql', ps);
+			source.datafn = new sandboxedFunction('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.Json) {
 			ps = 'var res = alasql.prepareFromData(' + tq.toJS();
 			//				console.log(tq);
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
-			source.datafn = new sandboxed_function('query,params,cb,idx,alasql', ps);
+			source.datafn = new sandboxedFunction('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.VarValue) {
 			ps = "var res = alasql.prepareFromData(alasql.vars['" + tq.variable + "']";
 			//				console.log(tq);
 			if (tq.array) ps += ',true';
 			ps += ');if(cb)res=cb(res,idx,query);return res';
-			source.datafn = new sandboxed_function('query,params,cb,idx,alasql', ps);
+			source.datafn = new sandboxedFunction('query,params,cb,idx,alasql', ps);
 		} else if (tq instanceof yy.FuncValue) {
 			ps = 'var res=alasql.from[' + JSON.stringify(tq.funcid.toUpperCase()) + '](';
 			/*/*
@@ -216,7 +216,7 @@ yy.Select.prototype.compileFrom = function (query) {
 			ps += 'cb,idx,query';
 			ps += ');/*if(cb)res=cb(res,idx,query);*/return res';
 			//	console.log(s);
-			source.datafn = new sandboxed_function('query, params, cb, idx, alasql', ps);
+			source.datafn = new sandboxedFunction('query, params, cb, idx, alasql', ps);
 		} else if (tq instanceof yy.FromData) {
 			source.datafn = function (query, params, cb, idx, alasql) {
 				var res = tq.data;

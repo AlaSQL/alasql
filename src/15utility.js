@@ -1299,26 +1299,27 @@ var getXLSX = function () {
 	return XLSX;
 };
 
-// const whitelist = ['Math', 'Number', 'String', 'Date', 'Object', 'Boolean', 'Array', 'isNaN'];
-// const blacklist = Object.getOwnPropertyNames(utils.global).filter(function(x){
-// 	return whitelist.indexOf(x) === -1 && !/^[^a-zA-Z]|\W/.test(x);
-// });
-const blacklist = ['document'];
-const listlen = blacklist.length;
-const blanklist = (new Array(listlen+1)).fill(undefined);
-function sandboxed_function() {
+const whitelist = ['Math', 'Number', 'String', 'Date', 'Object', 'Boolean', 'Array', 'isNaN', 'setTimeout'];
+const blacklist = Object.getOwnPropertyNames(utils.global).filter(function(x){
+	return whitelist.indexOf(x) === -1 && !(/^[^a-zA-Z]|\W/).test(x);
+});
+const blacklistLength = blacklist.length;
+const blankList = (new Array(blacklistLength)).fill(undefined);
+function sandboxedFunction() {
 	"use-strict";
 
 	blacklist.push.apply(blacklist, arguments);
-	blacklist[blacklist.length-1] =
-		'"use-strict";' + arguments[arguments.length-1];
-	const newFunc = Function.apply(
-		Function,
-		["this", ...blacklist]
-	);
+	blacklist[blacklist.length-1] =	'"use-strict";' + arguments[arguments.length-1];
+	const newFunc = Function.apply(Function, blacklist);
 
-	blacklist.length = listlen;
-	return newFunc.bind.apply(newFunc, [this, ...blanklist]);
+	blacklist.length = blacklistLength;
+	return function () {
+		let _this = this;
+		if (_this === utils.global) {
+			_this = undefined;
+		}
+		return newFunc.bind.apply(newFunc, [_this, ...blankList])(...arguments);
+	};
 }
 
 // set AlaSQl path

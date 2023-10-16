@@ -35,7 +35,7 @@
 				//		console.log(this.expression.toJS('','', null));
 				//      console.log(this.expression.toJS('({})','', null));
 				alasql.precompile(this, databaseid, params); // Precompile queries
-				var exprfn = new sandboxed_function(
+				var exprfn = new sandboxedFunction(
 					'params,alasql,p',
 					'var y;return ' + this.expression.toJS('({})', '', null)
 				).bind(this);
@@ -108,7 +108,7 @@
 			if (this.reduced) {
 				return returnTrue();
 			}
-			return new sandboxed_function('p', 'var y;return ' + this.toJS(context, tableid, defcols));
+			return new sandboxedFunction('p', 'var y;return ' + this.toJS(context, tableid, defcols));
 		}
 	}
 
@@ -128,7 +128,7 @@
 
 		execute(databaseid, params, cb) {
 			var res = 1;
-			var expr = new sandboxed_function('params,alasql,p', this.value);
+			var expr = new sandboxedFunction('params,alasql,p', this.value);
 			expr(params, alasql);
 			if (cb) {
 				res = cb(res);

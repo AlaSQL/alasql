@@ -13,7 +13,7 @@ yy.Echo.prototype.toString = function () {
 yy.Echo.prototype.execute = function (databaseid, params, cb) {
 	//	var self = this;
 	// console.log(76336,this.expr.toJS());
-	var fn = new sandboxed_function('params, alasql', 'return ' + this.expr.toJS());
+	var fn = new sandboxedFunction('params, alasql', 'return ' + this.expr.toJS());
 	var res = fn(params, alasql);
 	if (cb) res = cb(res);
 	return res;

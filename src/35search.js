@@ -656,7 +656,7 @@ yy.Search = class Search {
 			var args = this.from.args.map(function (arg) {
 				var as = arg.toJS();
 				//			console.log(as);
-				var fn = new sandboxed_function('params,alasql', 'var y;return ' + as).bind(this);
+				var fn = new sandboxedFunction('params,alasql', 'var y;return ' + as).bind(this);
 				return fn(params, alasql);
 			});
 			//		console.log(args);
@@ -665,7 +665,7 @@ yy.Search = class Search {
 		} else if (typeof this.from === 'undefined') {
 			fromdata = alasql.databases[databaseid].objects;
 		} else {
-			var fromfn = new sandboxed_function('params,alasql', 'var y;return ' + this.from.toJS());
+			var fromfn = new sandboxedFunction('params,alasql', 'var y;return ' + this.from.toJS());
 			fromdata = fromfn(params, alasql);
 			// Check for Mogo Collections
 			if (
@@ -706,13 +706,13 @@ yy.Search = class Search {
 		if (this.into) {
 			var a1, a2;
 			if (typeof this.into.args[0] !== 'undefined') {
-				a1 = new sandboxed_function('params,alasql', 'var y;return ' + this.into.args[0].toJS())(
+				a1 = new sandboxedFunction('params,alasql', 'var y;return ' + this.into.args[0].toJS())(
 					params,
 					alasql
 				);
 			}
 			if (typeof this.into.args[1] !== 'undefined') {
-				a2 = new sandboxed_function('params,alasql', 'var y;return ' + this.into.args[1].toJS())(
+				a2 = new sandboxedFunction('params,alasql', 'var y;return ' + this.into.args[1].toJS())(
 					params,
 					alasql
 				);
@@ -770,7 +770,7 @@ alasql.srch = {
 
 	EQ(val, args, stope, params) {
 		var exprs = args[0].toJS('x', '');
-		var exprfn = new sandboxed_function('x,alasql,params', 'return ' + exprs);
+		var exprfn = new sandboxedFunction('x,alasql,params', 'return ' + exprs);
 		if (val === exprfn(val, alasql, params)) {
 			return {status: 1, values: [val]};
 		} else {
@@ -781,7 +781,7 @@ alasql.srch = {
 	// Test expression
 	LIKE(val, args, stope, params) {
 		var exprs = args[0].toJS('x', '');
-		var exprfn = new sandboxed_function('x,alasql,params', 'return ' + exprs);
+		var exprfn = new sandboxedFunction('x,alasql,params', 'return ' + exprs);
 		if (
 			val
 				.toUpperCase()
@@ -884,7 +884,7 @@ alasql.srch = {
 	// Test expression
 	WHERE(val, args, stope, params) {
 		var exprs = args[0].toJS('x', '');
-		var exprfn = new sandboxed_function('x,alasql,params', 'return ' + exprs);
+		var exprfn = new sandboxedFunction('x,alasql,params', 'return ' + exprs);
 		if (exprfn(val, alasql, params)) {
 			return {status: 1, values: [val]};
 		} else {
@@ -941,7 +941,7 @@ alasql.srch = {
 	// Transform expression
 	EX(val, args, stope, params) {
 		var exprs = args[0].toJS('x', '');
-		var exprfn = new sandboxed_function('x,alasql,params', 'return ' + exprs);
+		var exprfn = new sandboxedFunction('x,alasql,params', 'return ' + exprs);
 		return {status: 1, values: [exprfn(val, alasql, params)]};
 	},
 
@@ -951,7 +951,7 @@ alasql.srch = {
 		if (args && args.length > 0) {
 			args.forEach(function (arg) {
 				var exprs = arg.toJS('x', '');
-				var exprfn = new sandboxed_function('x,alasql,params', 'return ' + exprs);
+				var exprfn = new sandboxedFunction('x,alasql,params', 'return ' + exprs);
 				if (typeof arg.as === 'undefined') {
 					arg.as = arg.toString();
 				}
@@ -1064,7 +1064,7 @@ alasql.srch = {
 				}
 			})
 			.join(';');
-		var setfn = new sandboxed_function('x,params,alasql', s);
+		var setfn = new sandboxedFunction('x,params,alasql', s);
 
 		setfn(val, params, alasql);
 
@@ -1075,7 +1075,7 @@ alasql.srch = {
 		var s = 'var y;return [';
 		s += args.map(arg => arg.toJS('x', '')).join(',');
 		s += ']';
-		var setfn = new sandboxed_function('x,params,alasql', s);
+		var setfn = new sandboxedFunction('x,params,alasql', s);
 		var rv = setfn(val, params, alasql);
 
 		return {status: 1, values: [rv]};
@@ -1192,6 +1192,6 @@ var compileSearchOrder = function (order) {
 		s += 'return 0;';
 		s += sk + 'return -1';
 		//console.log(s);
-		return new sandboxed_function('a,b', s);
+		return new sandboxedFunction('a,b', s);
 	}
 };

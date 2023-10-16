@@ -74,8 +74,6 @@ describe('Test 286 CREATE UNIQUE INDEX', function () {
 	});
 
 	it('2. Fill tables with data', () => {
-		this.timeout(100000);
-
 		var K = 10; // Number of runs
 		var P = 20; // Number of records coefficient
 
@@ -95,7 +93,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function () {
 			if (M[1] * M[2] > M[3] * M[4] == R[0] > R[1]) L++;
 		}
 		// console.log(L/K); // Probablity
-	});
+	}).timeout(100000);
 
 	it('3. DROP DATABASE', () => {
 		alasql('DROP DATABASE test286');

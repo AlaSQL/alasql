@@ -47,7 +47,7 @@ yy.Print.prototype.execute = function (databaseid, params, cb) {
 	if (this.exprs && this.exprs.length > 0) {
 		var rs = this.exprs.map(function (expr) {
 			// console.log(48748747654, 'var y;return ' + expr.toJS('({})', '', null));
-			var exprfn = new sandboxed_function(
+			var exprfn = new sandboxedFunction(
 				'params,alasql,p',
 				'var y;return ' + expr.toJS('({})', '', null)
 			).bind(self);

@@ -32,7 +32,7 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 		})
 		.join("+'`'+");
 
-	var rightfn = new sandboxed_function('r,params,alasql', 'return ' + rightfns);
+	var rightfn = new sandboxedFunction('r,params,alasql', 'return ' + rightfns);
 
 	if (this.unique) {
 		table.uniqdefs[indexid] = {

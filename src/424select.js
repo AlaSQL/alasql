@@ -368,7 +368,7 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 			query.removeKeys.push(key);
 		});
 	}
-	return new sandboxed_function('p,params,alasql', 'var y;' + s + 'return r');
+	return new sandboxedFunction('p,params,alasql', 'var y;' + s + 'return r');
 };
 
 yy.Select.prototype.compileSelectGroup0 = function (query) {
@@ -501,7 +501,7 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 			}
 		}
 	});
-	// return new sandboxed_function('g,params,alasql',s+'return r');
+	// return new sandboxedFunction('g,params,alasql',s+'return r');
 	return s;
 };
 
@@ -530,7 +530,7 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 	}
 	//console.log(425,s);
 	//	console.log('selectg:',s);
-	return new sandboxed_function('g,params,alasql', 'var y;' + s + 'return r');
+	return new sandboxedFunction('g,params,alasql', 'var y;' + s + 'return r');
 };
 
 // SELECY * REMOVE [COLUMNS] col-list, LIKE ''

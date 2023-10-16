@@ -72,7 +72,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 	// CREATE VERTEX "Name"
 	if (typeof this.name !== 'undefined') {
 		var s = 'x.name=' + this.name.toJS();
-		var namefn = new sandboxed_function('x', s);
+		var namefn = new sandboxedFunction('x', s);
 	}
 
 	if (this.sets && this.sets.length > 0) {
@@ -81,7 +81,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 			})
 			.join(';');
-		var setfn = new sandboxed_function('x,params,alasql', s);
+		var setfn = new sandboxedFunction('x,params,alasql', s);
 	}
 
 	// Todo: check for content, select and default
@@ -174,13 +174,13 @@ yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
 */
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new sandboxed_function('params,alasql', 'var y;return ' + this.from.toJS());
-	var tofn = new sandboxed_function('params,alasql', 'var y;return ' + this.to.toJS());
+	var fromfn = new sandboxedFunction('params,alasql', 'var y;return ' + this.from.toJS());
+	var tofn = new sandboxedFunction('params,alasql', 'var y;return ' + this.to.toJS());
 
 	// CREATE VERTEX "Name"
 	if (typeof this.name !== 'undefined') {
 		var s = 'x.name=' + this.name.toJS();
-		var namefn = new sandboxed_function('x', s);
+		var namefn = new sandboxedFunction('x', s);
 	}
 
 	if (this.sets && this.sets.length > 0) {
@@ -189,7 +189,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 			})
 			.join(';');
-		var setfn = new sandboxed_function('x,params,alasql', 'var y;' + s);
+		var setfn = new sandboxedFunction('x,params,alasql', 'var y;' + s);
 	}
 
 	/*
@@ -297,7 +297,7 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 			}
 			e.$node = 'EDGE';
 			if (typeof g.json !== 'undefined') {
-				extend(e, new sandboxed_function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
+				extend(e, new sandboxedFunction('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
 			}
 
 			var v1;
@@ -427,7 +427,7 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 		}
 		v.$node = 'VERTEX';
 		if (typeof g.json !== 'undefined') {
-			extend(v, new sandboxed_function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
+			extend(v, new sandboxedFunction('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
 		}
 		db.objects[v.$id] = v;
 		if (typeof v.$class !== 'undefined') {
@@ -446,13 +446,13 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
 	var dbid = databaseid;
-	var fromfn = new sandboxed_function('params,alasql', 'var y;return ' + this.from.toJS());
-	var tofn = new sandboxed_function('params,alasql', 'var y;return ' + this.to.toJS());
+	var fromfn = new sandboxedFunction('params,alasql', 'var y;return ' + this.from.toJS());
+	var tofn = new sandboxedFunction('params,alasql', 'var y;return ' + this.to.toJS());
 
 	// CREATE VERTEX "Name"
 	if (typeof this.name !== 'undefined') {
 		var s = 'x.name=' + this.name.toJS();
-		var namefn = new sandboxed_function('x', s);
+		var namefn = new sandboxedFunction('x', s);
 	}
 
 	if (this.sets && this.sets.length > 0) {
@@ -461,7 +461,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
 			})
 			.join(';');
-		var setfn = new sandboxed_function('x,params,alasql', 'var y;' + s);
+		var setfn = new sandboxedFunction('x,params,alasql', 'var y;' + s);
 	}
 
 	// Todo: handle content, select and default
