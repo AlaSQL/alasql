@@ -189,6 +189,7 @@ yy.Select = class Select {
 		}
 
 		// todo?: 3. Compile SELECT clause
+		query.rownums = [];
 
 		this.compileSelectGroup0(query);
 
@@ -366,6 +367,13 @@ yy.Select = class Select {
 			var res1 = queryfn(query, oldscope, function (res, err) {
 				if (err) {
 					return cb(null, err);
+				}
+				if (query.rownums.length > 0) {
+					for (var i = 0, ilen = res.length; i < ilen; i++) {
+						for (var j = 0, jlen = query.rownums.length; j < jlen; j++) {
+							res[i][query.rownums[j]] = i + 1;
+						}
+					}
 				}
 
 				var res2 = modify(query, res);
