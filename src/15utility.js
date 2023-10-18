@@ -1304,15 +1304,17 @@ const blacklist = Object.getOwnPropertyNames(globalObject).filter(function(x){
 	return whitelist.indexOf(x) === -1 && !(/^[^a-zA-Z]|\W/).test(x);
 });
 const blankList = new Array(blacklist.length).fill(undefined);
-function sandboxedFunction() {
-	const newFunc = Function(...blacklist, ...arguments);
+function sandboxedFunction(...args) {
+	const lastArgIndex = args.length - 1;
+	args[lastArgIndex] = `function strictMode() {'use strict';var y,y0,y1,v;${args[lastArgIndex]}};return strictMode.call(this);`;
+	const newFunc = new Function(...blacklist, ...args);
 
-	return function () {
+	return function (...args) {
 		let boundThis = this;
 		if (boundThis === globalObject) {
 			boundThis = {};
 		}
-		return newFunc.bind(boundThis, ...blankList)(...arguments);
+		return newFunc.bind(boundThis, ...blankList)(...args);
 	};
 }
 

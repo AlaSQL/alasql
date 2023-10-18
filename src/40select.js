@@ -190,6 +190,7 @@ yy.Select = class Select {
 
 		// todo?: 3. Compile SELECT clause
 		query.rownums = [];
+		query.rowNum = {};
 
 		this.compileSelectGroup0(query);
 

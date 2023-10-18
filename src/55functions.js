@@ -143,7 +143,7 @@ var stdfn = (alasql.stdfn = {});
 const mathFnWrapper = (expression, ...a) => {
 	const argumentsExpression = a.map((s, i) => `(y${i}=${s})==null`).join("||");
 	return `(${argumentsExpression}?null:isNaN(y=${expression})?null:y)`;
-}
+};
 
 stdlib.ABS = function (a) {
 	return mathFnWrapper("Math.abs(y0)", a);
@@ -257,7 +257,7 @@ stdlib.FLOOR = function (s) {
 };
 
 stdlib.ROWNUM = function () {
-	const varName = "rowNum" + Math.floor(Math.random() * 1000);
+	const varName = "this.rowNum[" + Math.floor(Math.random() * 1000) + "]";
 	return `(${varName}=(typeof ${varName} === "undefined" ? 0 : ${varName}) + 1)`;
 };
 stdlib.ROW_NUMBER = stdlib.ROWNUM;

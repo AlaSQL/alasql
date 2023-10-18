@@ -182,14 +182,14 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			// If this is a class
 			if (db.tables[tableid].isclass) {
-				s += "var db=alasql.databases['" + databaseid + "'];";
+				s += "db=alasql.databases['" + databaseid + "'];";
 				s += 'a.$class="' + tableid + '";';
 				s += 'a.$id=db.counter++;';
 				s += 'db.objects[a.$id]=a;';
 			}
 			//			s += 'db.tables[\''+tableid+'\'].insert(r);';
 			if (db.tables[tableid].insert) {
-				s += "var db=alasql.databases['" + databaseid + "'];";
+				s += "db=alasql.databases['" + databaseid + "'];";
 				s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
 			} else {
 				s += 'aa.push(a);';
