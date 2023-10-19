@@ -38,7 +38,7 @@ yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (this.args && this.args.length > 0) {
 		args = this.args.map(function (arg) {
 			// console.log(346235, arg.toJS());
-			return new Function('params,alasql', 'var y;return ' + arg.toJS())(params, alasql);
+			return new sandboxedFunction('params,alasql', 'var y;return ' + arg.toJS())(params, alasql);
 		});
 	}
 	if (this.engineid) {

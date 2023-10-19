@@ -183,7 +183,7 @@ yy.Select.prototype.compilePivot = function (query) {
 // console.log(this.pivot.expr.toJS());
 // 	console.log(this.pivot);
 // 	console.log(s);
-// 	var gfn = new Function('g,r,params,alasql','var y;'+s);
+// 	var gfn = new sandboxedFunction('g,r,params,alasql','var y;'+s);
 
 // 	return function(data){
 // 		var g = {}, gr = [];

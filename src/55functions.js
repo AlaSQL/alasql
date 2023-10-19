@@ -37,7 +37,7 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	let res = 1;
 	alasql.precompile(this, databaseid, params); // Precompile queries
 	//	console.log(34,this.toJS('','',null));
-	let expr = new Function('params,alasql', 'var y;return ' + this.toJS('', '', null));
+	let expr = new sandboxedFunction('params,alasql', 'var y;return ' + this.toJS('', '', null));
 	expr(params, alasql);
 	if (cb) res = cb(res);
 	return res;
@@ -47,14 +47,14 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 //yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 //	if(this.reduced) return returnTrue();
-//	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
+//	return new sandboxedFunction('p','var y;return '+this.toJS(context, tableid, defcols));
 //};
 
 
 // yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 // //	console.log('Expression',this);
 // 	if(this.reduced) return returnTrue();
-// 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
+// 	return new sandboxedFunction('p','var y;return '+this.toJS(context, tableid, defcols));
 // };
 
 */
@@ -143,7 +143,7 @@ var stdfn = (alasql.stdfn = {});
 const mathFnWrapper = (expression, ...a) => {
 	const argumentsExpression = a.map((s, i) => `(y${i}=${s})==null`).join("||");
 	return `(${argumentsExpression}?null:isNaN(y=${expression})?null:y)`;
-}
+};
 
 stdlib.ABS = function (a) {
 	return mathFnWrapper("Math.abs(y0)", a);
@@ -257,7 +257,7 @@ stdlib.FLOOR = function (s) {
 };
 
 stdlib.ROWNUM = function () {
-	const varName = "rowNum" + Math.floor(Math.random() * 1000);
+	const varName = "this.rowNum[" + Math.floor(Math.random() * 1000) + "]";
 	return `(${varName}=(typeof ${varName} === "undefined" ? 0 : ${varName}) + 1)`;
 };
 stdlib.ROW_NUMBER = stdlib.ROWNUM;

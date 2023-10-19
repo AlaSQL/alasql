@@ -161,6 +161,6 @@ if(false) {
 		s += sk + 'return -1';
 		query.orderfns = s;
 		//console.log('ORDERBY',s);
-		return new Function('a,b', 'var y;' + s);
+		return new sandboxedFunction('a,b', 'var y;' + s);
 	}
 };

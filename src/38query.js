@@ -182,7 +182,7 @@ function queryfn3(query) {
 				//				gfns += 'return g[\''+col.nick+'\];';
 			});
 			// console.log(175, gfns);
-			var gfn = new Function('g,params,alasql', 'var y;' + gfns);
+			var gfn = new sandboxedFunction('g,params,alasql', 'var y;' + gfns);
 		}
 
 		// *******

@@ -153,7 +153,7 @@ var cutbom = function (s) {
   Inspired by System.global
   @return {object} The global scope
   */
-utils.global = (function () {
+const globalObject = (function () {
 	if (typeof self !== 'undefined') {
 		return self;
 	}
@@ -181,7 +181,7 @@ var isNativeFunction = (utils.isNativeFunction = function (fn) {
   */
 utils.isWebWorker = (function () {
 	try {
-		var importScripts = utils.global.importScripts;
+		var importScripts = globalObject.importScripts;
 		return utils.isNativeFunction(importScripts);
 	} catch (e) {
 		return false;
@@ -194,7 +194,7 @@ utils.isWebWorker = (function () {
   */
 utils.isNode = (function () {
 	try {
-		return utils.isNativeFunction(utils.global.process.reallyExit);
+		return utils.isNativeFunction(globalObject.process.reallyExit);
 	} catch (e) {
 		return false;
 	}
@@ -206,7 +206,7 @@ utils.isNode = (function () {
   */
 utils.isBrowser = (function () {
 	try {
-		return utils.isNativeFunction(utils.global.location.reload);
+		return utils.isNativeFunction(globalObject.location.reload);
 	} catch (e) {
 		return false;
 	}
@@ -281,7 +281,7 @@ utils.isReactNative = (function () {
 })();
 
 utils.hasIndexedDB = (function () {
-	return !!utils.global.indexedDB;
+	return !!globalObject.indexedDB;
 })();
 
 utils.isArray = function (obj) {
@@ -353,7 +353,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 		//*/
 	} else if (utils.isCordova) {
 		/* If Cordova */
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+		globalObject.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
 				fileEntry.file(function (file) {
 					var fileReader = new FileReader();
@@ -562,7 +562,7 @@ var removeFile = (utils.removeFile = function (path, cb) {
 		var fs = require('fs');
 		fs.remove(path, cb);
 	} else if (utils.isCordova) {
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+		globalObject.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
 				{create: false},
@@ -630,7 +630,7 @@ var fileExists = (utils.fileExists = function (path, cb) {
 		var fs = require('fs');
 		fs.exists(path, cb);
 	} else if (utils.isCordova) {
-		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+		globalObject.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
 				{create: false},
@@ -697,7 +697,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 					console.error(err.message);
 				});
 		} else if (utils.isCordova) {
-			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
+			globalObject.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 				//                alasql.utils.removeFile(path,function(){
 				fileSystem.root.getFile(path, {create: true}, function (fileEntry) {
 					fileEntry.createWriter(function (fileWriter) {
@@ -1279,7 +1279,7 @@ utils.findAlaSQLPath = function () {
 };
 
 var getXLSX = function () {
-	var XLSX = alasql.private.externalXlsxLib || utils.global.XLSX || null;
+	var XLSX = alasql.private.externalXlsxLib || globalObject.XLSX || null;
 
 	if (XLSX) {
 		return XLSX;
@@ -1298,6 +1298,25 @@ var getXLSX = function () {
 
 	return XLSX;
 };
+
+const whitelist = ['Math', 'Number', 'String', 'Date', 'Object', 'Boolean', 'Array', 'isNaN', 'setTimeout'];
+const blacklist = Object.getOwnPropertyNames(globalObject).filter(function(x){
+	return whitelist.indexOf(x) === -1 && !(/^[^a-zA-Z]|\W/).test(x);
+});
+const blankList = new Array(blacklist.length).fill(undefined);
+function sandboxedFunction(...args) {
+	const lastArgIndex = args.length - 1;
+	args[lastArgIndex] = `function strictMode() {'use strict';var y,y0,y1,v;${args[lastArgIndex]}};return strictMode.call(this);`;
+	const newFunc = new Function(...blacklist, ...args);
+
+	return function (...args) {
+		let boundThis = this;
+		if (boundThis === globalObject) {
+			boundThis = {};
+		}
+		return newFunc.bind(boundThis, ...blankList)(...args);
+	};
+}
 
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();

@@ -2,12 +2,12 @@
 // Promises for AlaSQL
 //
 
-if (!utils.global.Promise) {
-	utils.global.Promise = Promise;
+if (!globalObject.Promise) {
+	globalObject.Promise = Promise;
 }
 
 var promiseExec = function (sql, params, counterStep, counterTotal) {
-	return new utils.global.Promise(function (resolve, reject) {
+	return new globalObject.Promise(function (resolve, reject) {
 		alasql(sql, params, function (data, err) {
 			if (err) {
 				reject(err);
@@ -67,7 +67,7 @@ var promiseAll = function (sqlParamsArray) {
 	// if create table queries are run in parallel
 	// this causes certain DML queries to not execute
 	// running them sequentially fixes this issue
-	return sequentialPromiseResolver(execArray, utils.global.Promise);
+	return sequentialPromiseResolver(execArray, globalObject.Promise);
 };
 
 alasql.promise = function (sql, params) {

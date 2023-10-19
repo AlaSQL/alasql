@@ -24,11 +24,11 @@ yy.If.prototype.execute = function (databaseid, params, cb) {
 	//	console.log(this);
 	//	console.log(this.expression.toJS('{}','',null));
 	//	console.log();
-	var fn = new Function(
+	var fn = new sandboxedFunction(
 		'params,alasql,p',
 		'var y;return ' + this.expression.toJS('({})', '', null)
 	).bind(this);
-	//	 var fn = new Function('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJS('({})','',null)).bind(this);
+	//	 var fn = new sandboxedFunction('params,alasql,p','console.log(this.thenstat);return '+this.expression.toJS('({})','',null)).bind(this);
 	if (fn(params, alasql)) res = this.thenstat.execute(databaseid, params, cb);
 	else {
 		if (this.elsestat) res = this.elsestat.execute(databaseid, params, cb);
