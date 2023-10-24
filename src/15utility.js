@@ -1300,8 +1300,57 @@ var getXLSX = function () {
 };
 
 const whitelist = ['Math', 'Number', 'String', 'Date', 'Object', 'Boolean', 'Array', 'isNaN', 'setTimeout'];
+const keyWords = [
+	"do",
+	"if",
+	"in",
+	"for",
+	"let",
+	"new",
+	"try",
+	"var",
+	"case",
+	"else",
+	"enum",
+	"false",
+	"null",
+	"this",
+	"true",
+	"void",
+	"with",
+	"break",
+	"catch",
+	"class",
+	"const",
+	"super",
+	"throw",
+	"while",
+	"yield",
+	"delete",
+	"export",
+	"import",
+	"public",
+	"return",
+	"static",
+	"switch",
+	"typeof",
+	"default",
+	"extends",
+	"finally",
+	"package",
+	"private",
+	"continue",
+	"debugger",
+	"function",
+	"arguments",
+	"interface",
+	"protected",
+	"implements",
+	"instanceof"
+];
+
 const blacklist = Object.getOwnPropertyNames(globalObject).filter(function(x){
-	return whitelist.indexOf(x) === -1 && !(/^\d|[-+/*%=:;, ]/).test(x);
+	return !whitelist.includes(x) && !keyWords.includes(x) && !(/^\d|[-+/*%=:;, ]/).test(x);
 });
 const blankList = new Array(blacklist.length).fill(undefined);
 function sandboxedFunction(...args) {
