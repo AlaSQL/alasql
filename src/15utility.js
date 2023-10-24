@@ -1301,7 +1301,7 @@ var getXLSX = function () {
 
 const whitelist = ['Math', 'Number', 'String', 'Date', 'Object', 'Boolean', 'Array', 'isNaN', 'setTimeout'];
 const blacklist = Object.getOwnPropertyNames(globalObject).filter(function(x){
-	return whitelist.indexOf(x) === -1 && !(/^[^a-zA-Z]|\W/).test(x);
+	return whitelist.indexOf(x) === -1 && !(/^\d|[-+/*%=:;, ]/).test(x);
 });
 const blankList = new Array(blacklist.length).fill(undefined);
 function sandboxedFunction(...args) {
