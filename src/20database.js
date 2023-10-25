@@ -68,6 +68,7 @@ Database.prototype.resetSqlCache = function () {
 	this.sqlCache = {}; // Cache for compiled SQL statements
 	this.sqlCacheSize = 0;
 	this.astCache = {}; // Cache for AST objects
+	this.setCache = {}; // Cache for WHERE (NOT) IN statements
 };
 
 // Main SQL function

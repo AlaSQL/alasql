@@ -490,6 +490,7 @@
 					const allValues = this.right.map((value) => value.value);
 					const allValuesStr = allValues.join(",");
 					if (!alasql.sets[allValuesStr]) {
+						// leverage JS Set, which is faster for lookups than arrays
 						alasql.sets[allValuesStr] = new Set(allValues);
 					}
 					s = 'alasql.sets["' + allValuesStr + '"].has(' + leftJS() + ')';
@@ -516,7 +517,7 @@
 					s += 'alasql.utils.flatArray(this.queriesfn[' + this.queriesidx + '](params,null,p))';
 					s += '.indexOf(';
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
-				} else if (Array.isArray(this.right) && this.right.every((value) => value.value)) {
+				} else if (Array.isArray(this.right)) {
 					// Added patch to have a better performance for when you have a lot of entries in a NOT IN statement
 					if (!alasql.sets) {
 						alasql.sets = {};
@@ -524,12 +525,10 @@
 					const allValues = this.right.map((value) => value.value);
 					const allValuesStr = allValues.join(",");
 					if (!alasql.sets[allValuesStr]) {
+						// leverage JS Set, which is faster for lookups than arrays
 						alasql.sets[allValuesStr] = new Set(allValues);
 					}
 					s = '!alasql.sets["' + allValuesStr + '"].has(' + leftJS() + ')';
-				} else if (Array.isArray(this.right)) {
-					s = '([' + this.right.map(ref).join(',') + '].indexOf(';
-					s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 				} else {
 					s = '(' + rightJS() + '.indexOf(';
 					s += leftJS() + ')==-1)';
