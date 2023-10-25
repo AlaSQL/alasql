@@ -246,10 +246,9 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	//	if(db.databaseid != databaseid) console.trace('got!');
 	//	console.log(3,db.databaseid,databaseid);
 
-	var hh;
+	var hh = hash(sql);
 	// Create hash
 	if (alasql.options.cache) {
-		hh = hash(sql);
 		var statement = db.sqlCache[hh];
 		// If database structure was not changed since last time return cache
 		if (statement && db.dbversion === statement.dbversion) {
@@ -258,7 +257,12 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	}
 
 	// Create AST
-	var ast = alasql.parse(sql);
+	var ast = db.astCache[hh];
+	if (!ast) {
+		ast = alasql.parse(sql);
+		// add to AST cache
+		db.astCache[hh]= ast;
+	} 
 	if (!ast.statements) {
 		return;
 	}
