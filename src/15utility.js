@@ -1212,10 +1212,9 @@ var like = (utils.like = function (pattern, value, escape) {
 		s += '$';
 		//    if(value == undefined) return false;
 		//console.log(s,value,(value||'').search(RegExp(s))>-1);
-		patternCache[pattern] = RegExp(s.toUpperCase())
+		patternCache[pattern] = RegExp(s, 'i');
 	}
-	return ('' + (value || '')).toUpperCase().search(patternCache[pattern]) > -1;
-
+	return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
 });
 
 utils.glob = function (value, pattern) {
