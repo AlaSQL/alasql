@@ -482,7 +482,7 @@
 						'))';
 					s += '.indexOf(';
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))>-1)';
-				} else if (Array.isArray(this.right) && this.right.every((value) => value.value)) {
+				} else if (Array.isArray(this.right)) {
 					// Added patch to have a better performance for when you have a lot of entries in an IN statement
 					if (!alasql.sets) {
 						alasql.sets = {};
@@ -494,15 +494,6 @@
 						alasql.sets[allValuesStr] = new Set(allValues);
 					}
 					s = 'alasql.sets["' + allValuesStr + '"].has(' + leftJS() + ')';
-				} else if (Array.isArray(this.right)) {
-					//			if(this.right.length == 0) return 'false';
-					s =
-						'([' +
-						this.right.map(ref).join(',') +
-						'].indexOf(alasql.utils.getValueOf(' +
-						leftJS() +
-						'))>-1)';
-					//console.log(s);
 				} else {
 					s = '(' + rightJS() + '.indexOf(' + leftJS() + ')>-1)';
 					//console.log('expression',350,s);
