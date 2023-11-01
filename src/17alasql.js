@@ -125,6 +125,9 @@ alasql.options = {
 	joinstar: 'overwrite',
 
 	loopbreak: 100000,
+
+	/** Whether GETDATE() and NOW() return dates as string. If false, then a Date object is returned */
+	dateAsString: true,
 };
 
 //alasql.options.worker = false;
