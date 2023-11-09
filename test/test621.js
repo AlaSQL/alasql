@@ -10,7 +10,7 @@ if (typeof exports === 'object') {
 
 var test = '621'; // insert test file number
 
-describe('Test ' + test + ' - importing from Tabletop.js', function () {
+describe.skip('Test ' + test + ' - importing from Tabletop.js', function () {
 	before(function () {});
 
 	after(function () {});

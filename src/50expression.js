@@ -7,8 +7,8 @@
 */
 
 /**
-  	Expression statement ( = 2*2; )
-  	@class
+		Expression statement ( = 2*2; )
+		@class
 	@param {object} params Initial parameters
 */
 yy.ExpressionStatement = function (params) {
@@ -389,7 +389,7 @@ yy.Op.prototype.toJS = function (context, tableid, defcols) {
 		var ljs = '(' + leftJS() + '||{})';
 
 		if (typeof this.right === 'string') {
-			s = ljs + '["' + this.right + '"]';
+			s = ljs + '["' + escapeq(this.right) + '"]';
 		} else if (typeof this.right === 'number') {
 			s = ljs + '[' + this.right + ']';
 		} else if (this.right instanceof yy.FuncValue) {
@@ -630,7 +630,7 @@ yy.VarValue.prototype.toType = function () {
 };
 
 yy.VarValue.prototype.toJS = function () {
-	return "alasql.vars['" + this.variable + "']";
+	return "alasql.vars['" + escapeq(this.variable) + "']";
 };
 
 yy.NumValue = function (params) {
@@ -1089,7 +1089,7 @@ yy.AggrValue.prototype.toJS = function (/*context, tableid, defcols*/) {
 */
 	var colas = this.nick;
 	if (colas === undefined) {
-		colas = this.toString();
+		colas = escapeq(this.toString());
 	}
 	return "g['" + colas + "']";
 };
