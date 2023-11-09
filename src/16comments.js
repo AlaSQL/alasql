@@ -45,7 +45,7 @@ alasql.utils.uncomment = function (str) {
 			// 	characterClass = false;
 			// } else if (str[i] === '/' && unescaped && !characterClass) {
 			// 	regularExpression = false;
-			// }
+			// } //
 */
 		} else if (blockComment) {
 			// Is the block comment closing?
