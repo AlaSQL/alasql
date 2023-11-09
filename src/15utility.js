@@ -1,9 +1,9 @@
 /*jshint unused:false*/
 /*
-    Utilities for Alasql.js
+	Utilities for Alasql.js
 
-    @todo Review the list of utilities
-    @todo Find more effective utilities
+	@todo Review the list of utilities
+	@todo Find more effective utilities
 */
 
 /**
@@ -59,7 +59,7 @@ function returnTrue() {
   @function
   @return {undefined} Always undefined
   */
-function returnUndefined() {}
+function returnUndefined() { }
 
 /**
   Escape string
@@ -354,7 +354,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 	} else if (utils.isCordova) {
 		/* If Cordova */
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
+			fileSystem.root.getFile(path, { create: false }, function (fileEntry) {
 				fileEntry.file(function (file) {
 					var fileReader = new FileReader();
 					fileReader.onloadend = function (e) {
@@ -565,7 +565,7 @@ var removeFile = (utils.removeFile = function (path, cb) {
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
-				{create: false},
+				{ create: false },
 				function (fileEntry) {
 					fileEntry.remove(cb);
 					cb && cb(); // jshint ignore:line
@@ -633,7 +633,7 @@ var fileExists = (utils.fileExists = function (path, cb) {
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
-				{create: false},
+				{ create: false },
 				function (fileEntry) {
 					cb(true);
 				},
@@ -699,7 +699,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 		} else if (utils.isCordova) {
 			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 				//                alasql.utils.removeFile(path,function(){
-				fileSystem.root.getFile(path, {create: true}, function (fileEntry) {
+				fileSystem.root.getFile(path, { create: true }, function (fileEntry) {
 					fileEntry.createWriter(function (fileWriter) {
 						fileWriter.onwriteend = function () {
 							if (cb) {
@@ -774,7 +774,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 				disableAutoBom: false,
 			};
 			alasql.utils.extend(opt, opts);
-			var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
+			var blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
 			saveAs(blob, path, opt.disableAutoBom);
 			if (cb) {
 				res = cb(res);
@@ -1175,43 +1175,46 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
   @parameter {string} escape Escape character (optional)
   @return {boolean} If value LIKE pattern ESCAPE escape
   */
-
+var patternCache = {};
 var like = (utils.like = function (pattern, value, escape) {
-	// Verify escape character
-	if (!escape) escape = '';
+	if (!patternCache[pattern]) {
+		// Verify escape character
+		if (!escape) escape = '';
 
-	var i = 0;
-	var s = '^';
+		var i = 0;
+		var s = '^';
 
-	while (i < pattern.length) {
-		var c = pattern[i],
-			c1 = '';
-		if (i < pattern.length - 1) c1 = pattern[i + 1];
+		while (i < pattern.length) {
+			var c = pattern[i],
+				c1 = '';
+			if (i < pattern.length - 1) c1 = pattern[i + 1];
 
-		if (c === escape) {
-			s += '\\' + c1;
+			if (c === escape) {
+				s += '\\' + c1;
+				i++;
+			} else if (c === '[' && c1 === '^') {
+				s += '[^';
+				i++;
+			} else if (c === '[' || c === ']') {
+				s += c;
+			} else if (c === '%') {
+				s += '[\\s\\S]*';
+			} else if (c === '_') {
+				s += '.';
+			} else if ('/.*+?|(){}'.indexOf(c) > -1) {
+				s += '\\' + c;
+			} else {
+				s += c;
+			}
 			i++;
-		} else if (c === '[' && c1 === '^') {
-			s += '[^';
-			i++;
-		} else if (c === '[' || c === ']') {
-			s += c;
-		} else if (c === '%') {
-			s += '[\\s\\S]*';
-		} else if (c === '_') {
-			s += '.';
-		} else if ('/.*+?|(){}'.indexOf(c) > -1) {
-			s += '\\' + c;
-		} else {
-			s += c;
 		}
-		i++;
-	}
 
-	s += '$';
-	//    if(value == undefined) return false;
-	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value ?? '')).search(RegExp(s, 'i')) > -1;
+		s += '$';
+		//    if(value == undefined) return false;
+		//console.log(s,value,(value||'').search(RegExp(s))>-1);
+		patternCache[pattern] = RegExp(s, 'i');
+	}
+	return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
 });
 
 utils.glob = function (value, pattern) {

@@ -15,32 +15,32 @@ alasql.parser.parseError = function (str, hash) {
 };
 
 /**
- 	Jison parser
- 	@param {string} sql SQL statement
- 	@return {object} AST (Abstract Syntax Tree)
+	  Jison parser
+	  @param {string} sql SQL statement
+	  @return {object} AST (Abstract Syntax Tree)
 
- 	@todo Create class AST
- 	@todo Add other parsers
+	  @todo Create class AST
+	  @todo Add other parsers
 
- 	@example
- 	alasql.parse = function(sql) {
+	  @example
+	  alasql.parse = function(sql) {
 		// My own parser here
- 	}
+	  }
  */
 alasql.parse = function (sql) {
 	return alasqlparser.parse(alasql.utils.uncomment(sql));
 };
 
 /**
- 	List of engines of external databases
- 	@type {object}
- 	@todo Create collection type
+	  List of engines of external databases
+	  @type {object}
+	  @todo Create collection type
  */
 alasql.engines = {};
 
 /**
- 	List of databases
- 	@type {object}
+	  List of databases
+	  @type {object}
  */
 alasql.databases = {};
 
@@ -51,7 +51,7 @@ alasql.databases = {};
 alasql.databasenum = 0;
 
 /**
- 	Alasql options object
+	  Alasql options object
  */
 alasql.options = {
 	/** Log or throw error */
@@ -119,12 +119,15 @@ alasql.options = {
 	/** Check for NaN and convert it to undefined */
 	nan: false,
 
-	excel: {cellDates: true},
+	excel: { cellDates: true },
 
 	/** Option for SELECT * FROM a,b */
 	joinstar: 'overwrite',
 
 	loopbreak: 100000,
+
+	/** Whether GETDATE() and NOW() return dates as string. If false, then a Date object is returned */
+	dateAsString: true,
 };
 
 //alasql.options.worker = false;
@@ -207,7 +210,7 @@ alasql.autoval = function (tablename, colname, getNext, databaseid) {
 
 	return (
 		db.tables[tablename].identities[colname].value -
-			db.tables[tablename].identities[colname].step || null
+		db.tables[tablename].identities[colname].step || null
 	);
 };
 
@@ -246,10 +249,10 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	//	if(db.databaseid != databaseid) console.trace('got!');
 	//	console.log(3,db.databaseid,databaseid);
 
-	var hh;
+	var hh = hash(sql);
+
 	// Create hash
 	if (alasql.options.cache) {
-		hh = hash(sql);
 		var statement = db.sqlCache[hh];
 		// If database structure was not changed since last time return cache
 		if (statement && db.dbversion === statement.dbversion) {
@@ -257,8 +260,17 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		}
 	}
 
-	// Create AST
-	var ast = alasql.parse(sql);
+	var ast = db.astCache[hh];
+	if (alasql.options.cache && !ast) {
+		// Create AST cache
+		ast = alasql.parse(sql);
+		if (ast) {
+			// add to AST cache
+			db.astCache[hh] = ast;
+		}
+	} else {
+		ast = alasql.parse(sql);
+	}
 	if (!ast.statements) {
 		return;
 	}

@@ -101,12 +101,48 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('5. Where In', function (done) {
-		var t1 = [{ID: new String('s1')}, {ID: new String('s2')}, {ID: new String('s3')}];
+	it('5a. Where In', function (done) {
+		var t1 = [{ID: new String("s1")}, {ID: new String("s2")}, {ID: new String("s3")}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")', [t1]);
 
 		assert.equal(res.length, 2);
+		assert.equal(res[0].ID, "s1");
+		assert.equal(res[1].ID, "s3");
+
+		done();
+	});
+
+	it('5b. Where In (literals)', function (done) {
+		var t1 = [{ID: "s1"}, {ID: "s2"}, {ID: "s3"}];
+
+		var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")', [t1]);
+
+		assert.equal(res.length, 2);
+		assert.equal(res[0].ID, "s1");
+		assert.equal(res[1].ID, "s3");
+
+		done();
+	});
+
+	it('5c. Where NOT In', function (done) {
+		var t1 = [{ID: new String("s1")}, {ID: new String("s2")}, {ID: new String("s3")}];
+
+		var res = alasql('SELECT * FROM ? WHERE ID NOT IN("s1", "s3")', [t1]);
+
+		assert.equal(res.length, 1);
+		assert.equal(res[0].ID, "s2");
+
+		done();
+	});
+
+	it('5d. Where NOT In (literals)', function (done) {
+		var t1 = [{ID: "s1"}, {ID: "s2"}, {ID: "s3"}];
+
+		var res = alasql('SELECT * FROM ? WHERE ID NOT IN("s1", "s3")', [t1]);
+
+		assert.equal(res.length, 1);
+		assert.equal(res[0].ID, "s2");
 
 		done();
 	});
