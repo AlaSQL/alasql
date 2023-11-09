@@ -97,10 +97,13 @@ var res = alasql("SELECT * FROM example1 ORDER BY b DESC");
 console.log(res); // [{a:2,b:6},{a:1,b:5},{a:3,b:4}]
 ```
 
-
 __If you are familiar with SQL, it should be no surprise that proper use of indexes on your tables is essential for good performance.__
 
+#### Options
 
+AlaSQL has several [configuration options](https://github.com/AlaSQL/alasql/wiki/AlaSQL-Options) which change the behavior. It can be set via SQL statements or via the options object before using `alasql`. 
+
+If you're using `NOW()` in queries often, setting `alasql.options.dateAsString` to `false` speeds things up. It will just return a JS Date object instead of a string representation of a date. 
 
 ## Installation
 
