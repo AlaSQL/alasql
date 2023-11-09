@@ -103,7 +103,7 @@ __If you are familiar with SQL, it should be no surprise that proper use of inde
 
 AlaSQL has several [configuration options](https://github.com/AlaSQL/alasql/wiki/AlaSQL-Options) which change the behavior. It can be set via SQL statements or via the options object before using `alasql`. 
 
-If you're using `NOW()` in queries often, setting `alasql.options.dateAsString` to `false` speeds things up. It will just return a JS Date object instead of a string representation of a date. 
+If you're using `NOW()` in queries often, setting `alasql.options.dateAsString` to `false` speed things up. It will just return a JS Date object instead of a string representation of a date. 
 
 ## Installation
 
