@@ -493,7 +493,7 @@
 						// leverage JS Set, which is faster for lookups than arrays
 						alasql.sets[allValuesStr] = new Set(allValues);
 					}
-					s = 'alasql.sets["' + allValuesStr + '"].has(' + leftJS() + ')';
+					s = 'alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
 				} else {
 					s = '(' + rightJS() + '.indexOf(' + leftJS() + ')>-1)';
 					//console.log('expression',350,s);
@@ -519,7 +519,7 @@
 						// leverage JS Set, which is faster for lookups than arrays
 						alasql.sets[allValuesStr] = new Set(allValues);
 					}
-					s = '!alasql.sets["' + allValuesStr + '"].has(' + leftJS() + ')';
+					s = '!alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
 				} else {
 					s = '(' + rightJS() + '.indexOf(';
 					s += leftJS() + ')==-1)';
