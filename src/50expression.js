@@ -368,7 +368,7 @@
 				var ljs = '(' + leftJS() + '||{})';
 
 				if (typeof this.right === 'string') {
-					s = ljs + '["' + this.right + '"]';
+					s = ljs + '["' + escapeq(this.right) + '"]';
 				} else if (typeof this.right === 'number') {
 					s = ljs + '[' + this.right + ']';
 				} else if (this.right instanceof yy.FuncValue) {
@@ -607,7 +607,7 @@
 		}
 
 		toJS() {
-			return "alasql.vars['" + this.variable + "']";
+			return "alasql.vars['" + escapeq(this.variable) + "']";
 		}
 	}
 
@@ -1014,7 +1014,7 @@
 		toJS() {
 			var colas = this.nick;
 			if (colas === undefined) {
-				colas = this.toString();
+				colas = escapeq(this.toString());
 			}
 			return "g['" + colas + "']";
 		}
