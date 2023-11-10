@@ -202,9 +202,8 @@ function queryfn3(query) {
 				var d = query.selectgfn(g, query.params, alasql);
 
 				for (const key in query.groupColumns) {
-					if (query.groupColumns[key] !== key
-						&& d[query.groupColumns[key]])
-						delete d[query.groupColumns[key]]
+					if (query.groupColumns[key] !== key && d[query.groupColumns[key]])
+						delete d[query.groupColumns[key]];
 				}
 				query.data.push(d);
 			}
@@ -483,7 +482,7 @@ var preIndex = function (query) {
 				// Check if index already exists
 				var ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
-					hash(source.onrightfns + '`' + source.srcwherefns)
+						hash(source.onrightfns + '`' + source.srcwherefns)
 					];
 				if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					source.ix = ixx;
@@ -539,7 +538,7 @@ var preIndex = function (query) {
 				// Check if index exists
 				ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
-					hash(source.wxleftfns + '`')
+						hash(source.wxleftfns + '`')
 					];
 			}
 			if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
