@@ -54,7 +54,7 @@
 		"cmdmix": "2.1.1",
 		"dom-storage": "2.1.0",
 		"esbuild": "^0.19.3",
-		"eslint": "8.50.0",
+		"eslint": "8.53.0",
 		"eslint-config-standard": "17.1.0",
 		"eslint-plugin-import": "2.29.0",
 		"eslint-plugin-n": "16.1.0",
