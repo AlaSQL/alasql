@@ -483,17 +483,12 @@
 					s += '.indexOf(';
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))>-1)';
 				} else if (Array.isArray(this.right)) {
-					// Added patch to have a better performance for when you have a lot of entries in an IN statement
-					if (!alasql.sets) {
-						alasql.sets = {};
-					}
-					const allValues = this.right.map((value) => value.value);
-					const allValuesStr = allValues.join(",");
-					if (!alasql.sets[allValuesStr]) {
-						// leverage JS Set, which is faster for lookups than arrays
-						alasql.sets[allValuesStr] = new Set(allValues);
-					}
-					s = 'alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
+					// leverage JS Set, which is faster for lookups than arrays
+					s = '(new Set([' +
+						this.right.map(ref).join(',') +
+						']).has(alasql.utils.getValueOf(' +
+						leftJS() +
+						')))';
 				} else {
 					s = '(' + rightJS() + '.indexOf(' + leftJS() + ')>-1)';
 					//console.log('expression',350,s);
@@ -509,17 +504,12 @@
 					s += '.indexOf(';
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 				} else if (Array.isArray(this.right)) {
-					// Added patch to have a better performance for when you have a lot of entries in a NOT IN statement
-					if (!alasql.sets) {
-						alasql.sets = {};
-					}
-					const allValues = this.right.map((value) => value.value);
-					const allValuesStr = allValues.join(",");
-					if (!alasql.sets[allValuesStr]) {
-						// leverage JS Set, which is faster for lookups than arrays
-						alasql.sets[allValuesStr] = new Set(allValues);
-					}
-					s = '!alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
+					// leverage JS Set, which is faster for lookups than arrays
+					s = '(!(new Set([' +
+						this.right.map(ref).join(',') +
+						']).has(alasql.utils.getValueOf(' +
+						leftJS() +
+						'))))';
 				} else {
 					s = '(' + rightJS() + '.indexOf(';
 					s += leftJS() + ')==-1)';
