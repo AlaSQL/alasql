@@ -119,7 +119,7 @@ alasql.options = {
 	/** Check for NaN and convert it to undefined */
 	nan: false,
 
-	excel: { cellDates: true },
+	excel: {cellDates: true},
 
 	/** Option for SELECT * FROM a,b */
 	joinstar: 'overwrite',
@@ -210,7 +210,7 @@ alasql.autoval = function (tablename, colname, getNext, databaseid) {
 
 	return (
 		db.tables[tablename].identities[colname].value -
-		db.tables[tablename].identities[colname].step || null
+			db.tables[tablename].identities[colname].step || null
 	);
 };
 

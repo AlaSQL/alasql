@@ -22,19 +22,13 @@ describe('Test 1829 - WHERE (NOT) IN Regression when using refs', function () {
 		const rowId1 = 'id#1';
 		const rowId2 = 'id#2';
 
-		alasql('insert into test1829(id, text) values (?, ?)', [
-			rowId1,
-			'first text',
-		]);
-		alasql('insert into test1829(id, text) values (?, ?)', [
-			rowId2,
-			'second text',
-		]);
+		alasql('insert into test1829(id, text) values (?, ?)', [rowId1, 'first text']);
+		alasql('insert into test1829(id, text) values (?, ?)', [rowId2, 'second text']);
 
-		const selectedByIdRows = alasql(`select entity.id, entity.text from test1829 as entity where entity.id IN (?,?)`, [
-			rowId1,
-			rowId2
-		]);
+		const selectedByIdRows = alasql(
+			`select entity.id, entity.text from test1829 as entity where entity.id IN (?,?)`,
+			[rowId1, rowId2]
+		);
 		assert.equal(selectedByIdRows.length, 2);
 		assert.equal(selectedByIdRows[0].id, rowId1);
 		assert.equal(selectedByIdRows[1].id, rowId2);
@@ -46,21 +40,15 @@ describe('Test 1829 - WHERE (NOT) IN Regression when using refs', function () {
 		const rowId1 = 'id#1';
 		const rowId2 = 'id#2';
 
-		alasql('insert into test1829(id, text) values (?, ?)', [
-			rowId1,
-			'first text',
-		]);
-		alasql('insert into test1829(id, text) values (?, ?)', [
-			rowId2,
-			'second text',
-		]);
+		alasql('insert into test1829(id, text) values (?, ?)', [rowId1, 'first text']);
+		alasql('insert into test1829(id, text) values (?, ?)', [rowId2, 'second text']);
 
-		const selectedByIdRows = alasql(`select entity.id, entity.text from test1829 as entity where entity.id NOT IN (?)`, [
-			rowId1
-		]);
+		const selectedByIdRows = alasql(
+			`select entity.id, entity.text from test1829 as entity where entity.id NOT IN (?)`,
+			[rowId1]
+		);
 		assert.equal(selectedByIdRows.length, 1);
 		assert.equal(selectedByIdRows[0].id, rowId2);
 		done();
 	});
-
 });

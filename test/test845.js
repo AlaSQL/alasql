@@ -10,7 +10,6 @@ if (typeof exports === 'object') {
 var test = '845'; // insert test file number
 
 describe('Test ' + test + ' - use NOW() function', function () {
-
 	it('1a. NOW() as String', function () {
 		var res = alasql('SELECT NOW() AS now');
 		//2022-02-25 19:21:27.839
@@ -29,5 +28,4 @@ describe('Test ' + test + ' - use NOW() function', function () {
 		//02/25/22
 		assert(/\d{2}\/\d{2}\/\d{2}/.test(res[0].conv));
 	});
-
 });

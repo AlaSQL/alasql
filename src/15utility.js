@@ -59,7 +59,7 @@ function returnTrue() {
   @function
   @return {undefined} Always undefined
   */
-function returnUndefined() { }
+function returnUndefined() {}
 
 /**
   Escape string
@@ -354,7 +354,7 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 	} else if (utils.isCordova) {
 		/* If Cordova */
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-			fileSystem.root.getFile(path, { create: false }, function (fileEntry) {
+			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
 				fileEntry.file(function (file) {
 					var fileReader = new FileReader();
 					fileReader.onloadend = function (e) {
@@ -565,7 +565,7 @@ var removeFile = (utils.removeFile = function (path, cb) {
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
-				{ create: false },
+				{create: false},
 				function (fileEntry) {
 					fileEntry.remove(cb);
 					cb && cb(); // jshint ignore:line
@@ -633,7 +633,7 @@ var fileExists = (utils.fileExists = function (path, cb) {
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
-				{ create: false },
+				{create: false},
 				function (fileEntry) {
 					cb(true);
 				},
@@ -699,7 +699,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 		} else if (utils.isCordova) {
 			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 				//                alasql.utils.removeFile(path,function(){
-				fileSystem.root.getFile(path, { create: true }, function (fileEntry) {
+				fileSystem.root.getFile(path, {create: true}, function (fileEntry) {
 					fileEntry.createWriter(function (fileWriter) {
 						fileWriter.onwriteend = function () {
 							if (cb) {
@@ -774,7 +774,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 				disableAutoBom: false,
 			};
 			alasql.utils.extend(opt, opts);
-			var blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
+			var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
 			saveAs(blob, path, opt.disableAutoBom);
 			if (cb) {
 				res = cb(res);

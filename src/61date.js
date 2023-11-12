@@ -43,7 +43,8 @@ stdfn.OBJECT_ID = function (objid) {
 };
 
 stdfn.DATE = function (d) {
-	if (!isNaN(d) && d.length === 8) return new Date(+d.substr(0, 4), +d.substr(4, 2) - 1, +d.substr(6, 2));
+	if (!isNaN(d) && d.length === 8)
+		return new Date(+d.substr(0, 4), +d.substr(4, 2) - 1, +d.substr(6, 2));
 	return newDate(d);
 };
 

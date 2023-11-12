@@ -484,7 +484,8 @@
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))>-1)';
 				} else if (Array.isArray(this.right)) {
 					// leverage JS Set, which is faster for lookups than arrays
-					s = '(new Set([' +
+					s =
+						'(new Set([' +
 						this.right.map(ref).join(',') +
 						']).has(alasql.utils.getValueOf(' +
 						leftJS() +
@@ -505,7 +506,8 @@
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 				} else if (Array.isArray(this.right)) {
 					// leverage JS Set, which is faster for lookups than arrays
-					s = '(!(new Set([' +
+					s =
+						'(!(new Set([' +
 						this.right.map(ref).join(',') +
 						']).has(alasql.utils.getValueOf(' +
 						leftJS() +
@@ -752,7 +754,7 @@
 
 		toString() {
 			var s;
-			const { op, right } = this;
+			const {op, right} = this;
 			const res = right.toString();
 
 			if (op === '~') {
