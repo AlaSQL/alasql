@@ -7,7 +7,7 @@ if (typeof exports === 'object') {
 
 describe('Test 1820 - SELECT query (a AS b, b AS c)', function () {
 
-	it('1. Where IN with refs', function (done) {
+	it('1. Select query where alias of one column is also a column name in the result set', function (done) {
 		let item1 = { a: 1, b: "hello" };
 		let item2 = { a: 2, b: "" };
 
