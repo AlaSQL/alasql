@@ -483,13 +483,28 @@
 					s += '.indexOf(';
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))>-1)';
 				} else if (Array.isArray(this.right)) {
-					// leverage JS Set, which is faster for lookups than arrays
-					s =
-						'(new Set([' +
-						this.right.map(ref).join(',') +
-						']).has(alasql.utils.getValueOf(' +
-						leftJS() +
-						')))';
+					if (!alasql.options.cache || this.right.filter((value) => value instanceof yy.ParamValue).length > 0) {
+						// When not using cache, or when the array contains parameters, we need to re-create the Set
+						// leverage JS Set, which is faster for lookups than arrays
+						s =
+							'(new Set([' +
+							this.right.map(ref).join(',') +
+							']).has(alasql.utils.getValueOf(' +
+							leftJS() +
+							')))';
+					} else {
+						// Use a cache to not re-create the Set on every identitical query 
+						if (!alasql.sets) {
+							alasql.sets = {};
+						}
+						const allValues = this.right.map((value) => value.value);
+						const allValuesStr = allValues.join(",");
+						if (!alasql.sets[allValuesStr]) {
+							// leverage JS Set, which is faster for lookups than arrays
+							alasql.sets[allValuesStr] = new Set(allValues);
+						}
+						s = 'alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
+					}
 				} else {
 					s = '(' + rightJS() + '.indexOf(' + leftJS() + ')>-1)';
 					//console.log('expression',350,s);
@@ -505,13 +520,28 @@
 					s += '.indexOf(';
 					s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
 				} else if (Array.isArray(this.right)) {
-					// leverage JS Set, which is faster for lookups than arrays
-					s =
-						'(!(new Set([' +
-						this.right.map(ref).join(',') +
-						']).has(alasql.utils.getValueOf(' +
-						leftJS() +
-						'))))';
+					if (!alasql.options.cache || this.right.filter((value) => value instanceof yy.ParamValue).length > 0) {
+						// When not using cache, or when the array contains parameters, we need to re-create the Set
+						// leverage JS Set, which is faster for lookups than arrays
+						s =
+							'(!(new Set([' +
+							this.right.map(ref).join(',') +
+							']).has(alasql.utils.getValueOf(' +
+							leftJS() +
+							'))))';
+					} else {
+						// Use a cache to not re-create the Set on every identitical query 
+						if (!alasql.sets) {
+							alasql.sets = {};
+						}
+						const allValues = this.right.map((value) => value.value);
+						const allValuesStr = allValues.join(",");
+						if (!alasql.sets[allValuesStr]) {
+							// leverage JS Set, which is faster for lookups than arrays
+							alasql.sets[allValuesStr] = new Set(allValues);
+						}
+						s = '!alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
+					}
 				} else {
 					s = '(' + rightJS() + '.indexOf(';
 					s += leftJS() + ')==-1)';
@@ -754,7 +784,7 @@
 
 		toString() {
 			var s;
-			const {op, right} = this;
+			const { op, right } = this;
 			const res = right.toString();
 
 			if (op === '~') {
