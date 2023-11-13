@@ -63,7 +63,7 @@
 		"git-branch-is": "4.0.0",
 		"husky": "8.0.3",
 		"jison-gho": "^0.6.1-216",
-		"lint-staged": "15.0.2",
+		"lint-staged": "15.1.0",
 		"mocha": "10.2.0",
 		"mocha.parallel": "0.15.6",
 		"open": "9.1.0",
