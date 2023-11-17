@@ -47,7 +47,7 @@ yy.Update.prototype.compile = function (databaseid) {
 		}
 
 		// console.log(73625, this.where.toJS('r', ''));
-		var wherefn = new sandboxedFunction('r,params,alasql', 'var y;return ' + this.where.toJS('r', '')).bind(
+		var wherefn = new Function('r,params,alasql', 'var y;return ' + this.where.toJS('r', '')).bind(
 			this
 		);
 	}
@@ -59,7 +59,7 @@ yy.Update.prototype.compile = function (databaseid) {
 		s += "r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
 	});
 	// console.log(423623, s);
-	var assignfn = new sandboxedFunction('r,params,alasql', 'var y;' + s);
+	var assignfn = new Function('r,params,alasql', 'var y;' + s);
 
 	var statement = function (params, cb) {
 		var db = alasql.databases[databaseid];

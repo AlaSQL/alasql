@@ -225,7 +225,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		}
 
 		//console.log(186,s3+s);
-		var insertfn = new sandboxedFunction('db, params, alasql', 'var y;' + s3 + s).bind(this);
+		var insertfn = new Function('db, params, alasql', 'var y;' + s3 + s).bind(this);
 
 		// INSERT INTO table SELECT
 	} else if (this.select) {
@@ -244,7 +244,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		} else {
 			//			console.log(224,table.defaultfns);
 			var defaultfns = 'return alasql.utils.extend(r,{' + table.defaultfns + '})';
-			var defaultfn = new sandboxedFunction('r,db,params,alasql', defaultfns);
+			var defaultfn = new Function('r,db,params,alasql', defaultfns);
 			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
 				if (db.tables[tableid].insert) {
@@ -263,7 +263,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 		}
 	} else if (this.default) {
 		var insertfns = "db.tables['" + tableid + "'].data.push({" + table.defaultfns + '});return 1;';
-		var insertfn = new sandboxedFunction('db,params,alasql', insertfns);
+		var insertfn = new Function('db,params,alasql', insertfns);
 	} else {
 		throw new Error('Wrong INSERT parameters');
 	}
@@ -273,7 +273,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	if (db.engineid && alasql.engines[db.engineid].intoTable && alasql.options.autocommit) {
 		var statement = function (params, cb) {
-			var aa = new sandboxedFunction('db,params', 'var y;' + s33 + 'return aa;')(db, params);
+			var aa = new Function('db,params', 'var y;' + s33 + 'return aa;')(db, params);
 			//			console.log(s33);
 			var res = alasql.engines[db.engineid].intoTable(db.databaseid, tableid, aa, null, cb);
 			//			if(cb) cb(res);

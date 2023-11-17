@@ -37,7 +37,7 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	let res = 1;
 	alasql.precompile(this, databaseid, params); // Precompile queries
 	//	console.log(34,this.toJS('','',null));
-	let expr = new sandboxedFunction('params,alasql', 'var y;return ' + this.toJS('', '', null));
+	let expr = new Function('params,alasql', 'var y;return ' + this.toJS('', '', null));
 	expr(params, alasql);
 	if (cb) res = cb(res);
 	return res;
@@ -47,14 +47,14 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 //yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 //	console.log('Expression',this);
 //	if(this.reduced) return returnTrue();
-//	return new sandboxedFunction('p','var y;return '+this.toJS(context, tableid, defcols));
+//	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 //};
 
 
 // yy.FuncValue.prototype.compile = function(context, tableid, defcols){
 // //	console.log('Expression',this);
 // 	if(this.reduced) return returnTrue();
-// 	return new sandboxedFunction('p','var y;return '+this.toJS(context, tableid, defcols));
+// 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
 // };
 
 */

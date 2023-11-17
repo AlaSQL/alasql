@@ -48,7 +48,7 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 		}
 
 		// console.log(547654756, this.expression.toJS('', '', null));
-		var res = new sandboxedFunction(
+		var res = new Function(
 			'params,alasql',
 			'return ' + this.expression.toJS('({})', '', null)
 		).bind(this)(params, alasql);
@@ -77,7 +77,7 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 				})
 				.join();
 			// console.log(65764765, fs);
-			new sandboxedFunction('value,params,alasql', 'var y;' + fs + '=value')(res, params, alasql);
+			new Function('value,params,alasql', 'var y;' + fs + '=value')(res, params, alasql);
 		} else {
 			if (this.method == '@') {
 				alasql.vars[this.variable] = res;

@@ -351,11 +351,11 @@ yy.Select = class Select {
 			if (query.intofns) {
 				// Create intofn function
 				// console.log(234234, query.intofns);
-				query.intofn = new sandboxedFunction('r,i,params,alasql', 'var y;' + query.intofns);
+				query.intofn = new Function('r,i,params,alasql', 'var y;' + query.intofns);
 			} else if (query.intoallfns) {
 				// Create intoallfn function
 				// console.log(23423234, query.intoallfns);
-				query.intoallfn = new sandboxedFunction('columns,cb,params,alasql', 'var y;' + query.intoallfns);
+				query.intoallfn = new Function('columns,cb,params,alasql', 'var y;' + query.intoallfns);
 			}
 		}
 		//console.log(query);

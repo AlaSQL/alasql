@@ -48,7 +48,7 @@ yy.Require.prototype.execute = function (databaseid, params, cb) {
 				if (res < self.paths.length) return;
 
 				// console.log(76466, ss);
-				new sandboxedFunction('params,alasql,sandboxedFunction', ss)(params, alasql, sandboxedFunction);
+				new Function('params,alasql,Function', ss)(params, alasql, Function);
 				if (cb) res = cb(res);
 			});
 		});
@@ -62,7 +62,7 @@ yy.Require.prototype.execute = function (databaseid, params, cb) {
 					ss += data;
 					if (res < self.plugins.length) return;
 					// console.log(346346, ss);
-					new sandboxedFunction('params,alasql,sandboxedFunction', ss)(params, alasql, sandboxedFunction);
+					new Function('params,alasql,Function', ss)(params, alasql, Function);
 					alasql.plugins[plugin] = true; // Plugin is loaded
 					if (cb) res = cb(res);
 				});
