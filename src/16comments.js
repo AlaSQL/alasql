@@ -62,7 +62,7 @@ alasql.utils.uncomment = function (str) {
 			}
 		} else if (lineComment) {
 			// One-line comments end with the line-break
-			if (str[i + 1] === '\n' || str[i + 1] === '\r') {
+			if (str[i + 1] === '\n' || str[i + 1] === '\r' || str.length - 2 === i) {
 				lineComment = false;
 			}
 			str[i] = '';
