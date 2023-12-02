@@ -200,6 +200,13 @@ function queryfn3(query) {
 			if (!query.havingfn || query.havingfn(g, query.params, alasql)) {
 				//				console.log(g);
 				var d = query.selectgfn(g, query.params, alasql);
+
+				for (const key in query.groupColumns) {
+					// ony remove columns where the alias is also not a column in the result
+					if (query.groupColumns[key] !== key && d[query.groupColumns[key]] && !query.groupColumns[query.groupColumns[key]]){
+						delete d[query.groupColumns[key]];
+					}
+				}
 				query.data.push(d);
 			}
 		}

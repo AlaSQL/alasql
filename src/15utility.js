@@ -1,9 +1,9 @@
 /*jshint unused:false*/
 /*
-    Utilities for Alasql.js
+	Utilities for Alasql.js
 
-    @todo Review the list of utilities
-    @todo Find more effective utilities
+	@todo Review the list of utilities
+	@todo Find more effective utilities
 */
 
 /**
@@ -1175,43 +1175,46 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
   @parameter {string} escape Escape character (optional)
   @return {boolean} If value LIKE pattern ESCAPE escape
   */
-
+var patternCache = {};
 var like = (utils.like = function (pattern, value, escape) {
-	// Verify escape character
-	if (!escape) escape = '';
+	if (!patternCache[pattern]) {
+		// Verify escape character
+		if (!escape) escape = '';
 
-	var i = 0;
-	var s = '^';
+		var i = 0;
+		var s = '^';
 
-	while (i < pattern.length) {
-		var c = pattern[i],
-			c1 = '';
-		if (i < pattern.length - 1) c1 = pattern[i + 1];
+		while (i < pattern.length) {
+			var c = pattern[i],
+				c1 = '';
+			if (i < pattern.length - 1) c1 = pattern[i + 1];
 
-		if (c === escape) {
-			s += '\\' + c1;
+			if (c === escape) {
+				s += '\\' + c1;
+				i++;
+			} else if (c === '[' && c1 === '^') {
+				s += '[^';
+				i++;
+			} else if (c === '[' || c === ']') {
+				s += c;
+			} else if (c === '%') {
+				s += '[\\s\\S]*';
+			} else if (c === '_') {
+				s += '.';
+			} else if ('/.*+?|(){}'.indexOf(c) > -1) {
+				s += '\\' + c;
+			} else {
+				s += c;
+			}
 			i++;
-		} else if (c === '[' && c1 === '^') {
-			s += '[^';
-			i++;
-		} else if (c === '[' || c === ']') {
-			s += c;
-		} else if (c === '%') {
-			s += '[\\s\\S]*';
-		} else if (c === '_') {
-			s += '.';
-		} else if ('/.*+?|(){}'.indexOf(c) > -1) {
-			s += '\\' + c;
-		} else {
-			s += c;
 		}
-		i++;
-	}
 
-	s += '$';
-	//    if(value == undefined) return false;
-	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value ?? '')).search(RegExp(s, 'i')) > -1;
+		s += '$';
+		//    if(value == undefined) return false;
+		//console.log(s,value,(value||'').search(RegExp(s))>-1);
+		patternCache[pattern] = RegExp(s, 'i');
+	}
+	return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
 });
 
 utils.glob = function (value, pattern) {
