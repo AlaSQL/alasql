@@ -5,7 +5,7 @@
  	@return {string}
  	Based om the https://github.com/lehni/uncomment.js/blob/master/uncomment.js
  	I just replaced JavaScript's '//' to SQL's '--' and remove other stuff
- 
+
  	@todo Fixed [aaa/*bbb] for column names
  	@todo Bug if -- comments in the last line
 	@todo Check if it possible to model it with Jison parser
@@ -45,7 +45,7 @@ alasql.utils.uncomment = function (str) {
 			// 	characterClass = false;
 			// } else if (str[i] === '/' && unescaped && !characterClass) {
 			// 	regularExpression = false;
-			// } 
+			// } //
 */
 		} else if (blockComment) {
 			// Is the block comment closing?
@@ -62,7 +62,7 @@ alasql.utils.uncomment = function (str) {
 			}
 		} else if (lineComment) {
 			// One-line comments end with the line-break
-			if (str[i + 1] === '\n' || str[i + 1] === '\r') {
+			if (str[i + 1] === '\n' || str[i + 1] === '\r' || str.length - 2 === i) {
 				lineComment = false;
 			}
 			str[i] = '';
@@ -73,9 +73,9 @@ alasql.utils.uncomment = function (str) {
 			} else if (str[i] === '[' && str[i - 1] !== '@') {
 				quote = true;
 				quoteSign = ']';
-				// } else if (str[i] === '-' &&  str[i + 1] === '-') {
-				// 	str[i] = '';
-				// 	lineComment = true;
+			} else if (str[i] === '-' && str[i + 1] === '-') {
+				str[i] = '';
+				lineComment = true;
 			} else if (str[i] === '/' && str[i + 1] === '*') {
 				// Do not filter out conditional comments /*@ ... */
 				// and comments marked as protected /*! ... */
