@@ -19,7 +19,7 @@ yy.Source.prototype.toString = function () {
 yy.Source.prototype.execute = function (databaseid, params, cb) {
 	//	console.log(this.url);
 	var res;
-	loadFile(
+	alasql.utils.loadFile(
 		this.url,
 		!!cb,
 		function (data) {
