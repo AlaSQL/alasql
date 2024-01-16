@@ -83,60 +83,60 @@ declare module 'alasql' {
 	}
 
 	/**
-	* AlaSQL database object. This is a lightweight implimentation
-	*
-	* @interface database
-	*/
+	 * AlaSQL database object. This is a lightweight implimentation
+	 *
+	 * @interface database
+	 */
 	interface database {
 		/**
-		* The database ID.
-		*
-		* @type {string}
-		* @memberof database
-		*/
+		 * The database ID.
+		 *
+		 * @type {string}
+		 * @memberof database
+		 */
 		databaseid: string;
-		
+
 		/**
-		* The collection of tables in the database.
-		*
-		* @type {tableLookUp}
-		* @memberof database
-		*/		
-		tables:  tableLookUp;
+		 * The collection of tables in the database.
+		 *
+		 * @type {tableLookUp}
+		 * @memberof database
+		 */
+		tables: tableLookUp;
 	}
-	
+
 	/**
-	* AlaSQL table object. This is a lightweight implimentation
-	*
-	* @interface table
-	*/
+	 * AlaSQL table object. This is a lightweight implimentation
+	 *
+	 * @interface table
+	 */
 	interface table {
 		/**
-		* The array of data stored in the table which can be queried
-		*
-		* @type {any[]}
-		* @memberof table
-		*/
+		 * The array of data stored in the table which can be queried
+		 *
+		 * @type {any[]}
+		 * @memberof table
+		 */
 		data: any[];
 	}
 
 	/**
-	* AlaSQL database dictionary
-	*
-	* @interface databaseLookUp
-	*/	
+	 * AlaSQL database dictionary
+	 *
+	 * @interface databaseLookUp
+	 */
 	interface databaseLookUp {
 		[databaseName: string]: database;
 	}
 
 	/**
-	* AlaSQL table dictionary
-	*
-	* @interface tableLookUp
-	*/
-	interface tableLookUp {	
+	 * AlaSQL table dictionary
+	 *
+	 * @interface tableLookUp
+	 */
+	interface tableLookUp {
 		[tableName: string]: table;
-	}	
+	}
 
 	interface AlaSQL {
 		options: AlaSQLOptions;
@@ -152,41 +152,41 @@ declare module 'alasql' {
 		setXLSX(xlsxlib: typeof xlsx): void;
 
 		/**
-		* Array of databases in the AlaSQL object.
-		*
-		* @type {databaseLookUp}
-		* @memberof AlaSQL
-		*/		
+		 * Array of databases in the AlaSQL object.
+		 *
+		 * @type {databaseLookUp}
+		 * @memberof AlaSQL
+		 */
 		databases: databaseLookUp;
 
 		/**
-		* Equivalent to alasql('USE '+databaseid). This will change the current
-		* database to the one specified. This will update the useid property and
-		* the tables property.
-		*
-		* @param {string} databaseid
-		* @memberof AlaSQL
-		*/
-		use (databaseid: string): void; 
-		
+		 * Equivalent to alasql('USE '+databaseid). This will change the current
+		 * database to the one specified. This will update the useid property and
+		 * the tables property.
+		 *
+		 * @param {string} databaseid
+		 * @memberof AlaSQL
+		 */
+		use(databaseid: string): void;
+
 		/**
-		* The current database ID. If no database is selected, this is the
-		* default database ID (called alasql).
-		*
-		* @type {string}
-		* @memberof AlaSQL
-		*/		
+		 * The current database ID. If no database is selected, this is the
+		 * default database ID (called alasql).
+		 *
+		 * @type {string}
+		 * @memberof AlaSQL
+		 */
 		useid: string;
-		
+
 		/**
-		* Array of the tables in the default database (called alasql). If
-		* the database is changes via a USE statement or the use method, this
-		* becomes the tables in the new database.
-		*
-		* @type {tableLookUp}
-		* @memberof AlaSQL
-		*/		
-		tables: tableLookUp; 
+		 * Array of the tables in the default database (called alasql). If
+		 * the database is changes via a USE statement or the use method, this
+		 * becomes the tables in the new database.
+		 *
+		 * @type {tableLookUp}
+		 * @memberof AlaSQL
+		 */
+		tables: tableLookUp;
 	}
 
 	const alasql: AlaSQL;

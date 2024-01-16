@@ -118,7 +118,7 @@
 					var keys = [];
 					for (var key in obj) keys.push(key);
 					return keys;
-			  };
+				};
 	// 1. The assert module provides functions that throw
 	// AssertionError's when particular conditions are not met. The
 	// assert module must conform to the following interface.

@@ -188,49 +188,58 @@ alasql.stdfn.CONVERT = function (value, args) {
 		}
 	}
 
-	if (args.dbtypeid == 'Date') {
-		return t;
-	} else if (udbtypeid == 'DATE') {
-		return s.formattedYear + '.' + s.formattedMonth + '.' + s.formattedDate;
-	} else if (udbtypeid == 'DATETIME' || udbtypeid == 'DATETIME2') {
-		var f = s.fullYear + '.' + s.formattedMonth + '.' + s.formattedDate;
-		f += ' ' + s.formattedHour + ':' + s.formattedMinutes + ':' + s.formattedSeconds;
-		f += '.' + s.formattedMilliseconds;
-		return f;
-	} else if (['MONEY'].indexOf(udbtypeid) > -1) {
-		var m = +val;
-		return (m | 0) + ((m * 100) % 100) / 100;
-	} else if (['BOOLEAN'].indexOf(udbtypeid) > -1) {
-		return !!val;
-	} else if (
-		['INT', 'INTEGER', 'SMALLINT', 'BIGINT', 'SERIAL', 'SMALLSERIAL', 'BIGSERIAL'].indexOf(
-			args.dbtypeid.toUpperCase()
-		) > -1
-	) {
-		return val | 0;
-	} else if (
-		['STRING', 'VARCHAR', 'NVARCHAR', 'CHARACTER VARIABLE'].indexOf(args.dbtypeid.toUpperCase()) >
-		-1
-	) {
-		if (args.dbsize) return ('' + val).substr(0, args.dbsize);
-		else return '' + val;
-	} else if (['CHAR', 'CHARACTER', 'NCHAR'].indexOf(udbtypeid) > -1) {
-		return (val + new Array(args.dbsize + 1).join(' ')).substr(0, args.dbsize);
-		//else return ""+val.substr(0,1);
-	} else if (['NUMBER', 'FLOAT', 'DECIMAL', 'NUMERIC'].indexOf(udbtypeid) > -1) {
-		var m = +val;
-		//toPrecision sets the number of numbers total in the result
-		m = args.dbsize !== undefined ? parseFloat(m.toPrecision(args.dbsize)) : m;
-		//toFixed sets the number of numbers to the right of the decimal
-		m = args.dbprecision !== undefined ? parseFloat(m.toFixed(args.dbprecision)) : m;
-		return m;
-	} else if (['JSON'].indexOf(udbtypeid) > -1) {
-		if (typeof val == 'object') return val;
-		try {
-			return JSON.parse(val);
-		} catch (err) {
-			throw new Error('Cannot convert string to JSON');
-		}
+	switch (udbtypeid) {
+		case 'DATE':
+			return `${s.formattedYear}.${s.formattedMonth}.${s.formattedDate}`;
+		case 'DATETIME':
+		case 'DATETIME2':
+			return `${s.fullYear}.${s.formattedMonth}.${s.formattedDate} ${s.formattedHour}:${s.formattedMinutes}:${s.formattedSeconds}.${s.formattedMilliseconds}`;
+		case 'MONEY':
+			var m = +val;
+			return (m | 0) + ((m * 100) % 100) / 100;
+		case 'BOOLEAN':
+			return !!val;
+		case 'INT':
+		case 'INTEGER':
+		case 'SMALLINT':
+		case 'BIGINT':
+		case 'SERIAL':
+		case 'SMALLSERIAL':
+		case 'BIGSERIAL':
+			return val | 0;
+		case 'STRING':
+		case 'VARCHAR':
+		case 'NVARCHAR':
+		case 'CHARACTER VARIABLE':
+			return args.dbsize ? String(val).substr(0, args.dbsize) : String(val);
+		case 'CHAR':
+		case 'CHARACTER':
+		case 'NCHAR':
+			return (val + ' '.repeat(args.dbsize)).substr(0, args.dbsize);
+		case 'NUMBER':
+		case 'FLOAT':
+		case 'DECIMAL':
+		case 'NUMERIC':
+			var m = +val;
+			if (args.dbsize !== undefined) {
+				m = parseFloat(m.toPrecision(args.dbsize));
+			}
+			if (args.dbprecision !== undefined) {
+				m = parseFloat(m.toFixed(args.dbprecision));
+			}
+			return m;
+		case 'JSON':
+			if (typeof val === 'object') {
+				return val;
+			}
+			try {
+				return JSON.parse(val);
+			} catch (err) {
+				throw new Error('Cannot convert string to JSON');
+			}
+		case 'Date':
+			return val;
+		default:
+			return val;
 	}
-	return val;
 };

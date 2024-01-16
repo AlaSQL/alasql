@@ -1,11 +1,3 @@
-/*
-//
-// Expressions for Alasql.js
-// Date: 03.11.2014
-// (c) 2014, Andrey Gershun
-//
-*/
-
 {
 	const assign = Object.assign;
 
@@ -197,64 +189,44 @@
 		}
 	}
 
+	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^']);
+	const toTypeStringOps = new Set(['||']);
+	const toTypeBoolOps = new Set([
+		'AND', 'OR', 'NOT', '=', '==', '===', '!=', '!==', '!===',
+		'>', '>=', '<', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE',
+		'REGEXP', 'GLOB', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL'
+	]);
 	class Op {
 		constructor(params) {
 			assign(this, params);
 		}
 
 		toString() {
+			const leftStr = this.left.toString();
+			let s;
+
 			if (this.op === 'IN' || this.op === 'NOT IN') {
-				return this.left.toString() + ' ' + this.op + ' (' + this.right.toString() + ')';
+				return `${leftStr} ${this.op} (${this.right.toString()})`;
 			}
+
 			if (this.allsome) {
-				return (
-					this.left.toString() +
-					' ' +
-					this.op +
-					' ' +
-					this.allsome +
-					' (' +
-					this.right.toString() +
-					')'
-				);
+				return `${leftStr} ${this.op} ${this.allsome} (${this.right.toString()})`;
 			}
+
 			if (this.op === '->' || this.op === '!') {
-				var s = this.left.toString() + this.op;
-				//		console.log(this.right);
-				if (typeof this.right !== 'string' && typeof this.right !== 'number') {
-					s += '(';
-				}
-
-				s += this.right.toString();
-
-				if (typeof this.right !== 'string' && typeof this.right !== 'number') {
-					s += ')';
-				}
-
-				return s;
+				s = `${leftStr}${this.op}`;
+				if (typeof this.right !== 'string' && typeof this.right !== 'number')
+					return s + `(${this.right.toString()})`;
+				return s + this.right.toString();
 			}
+
 			if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
-				var s =
-					this.left.toString() +
-					' ' +
-					this.op +
-					' ' +
-					this.right1.toString() +
-					' AND ' +
-					this.right2.toString();
-
-				return s;
+				return `${leftStr} ${this.op} ${this.right1.toString()} AND ${this.right2.toString()}`;
 			}
 
-			return (
-				this.left.toString() +
-				' ' +
-				this.op +
-				' ' +
-				(this.allsome ? this.allsome + ' ' : '') +
-				this.right.toString()
-			);
+			return `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
 		}
+
 
 		findAggregator(query) {
 			if (this.left && this.left.findAggregator) {
@@ -267,68 +239,37 @@
 		}
 
 		toType(tableid) {
-			if (['-', '*', '/', '%', '^'].indexOf(this.op) > -1) {
+			if (toTypeNumberOps.has(this.op))
 				return 'number';
-			}
 
-			if (['||'].indexOf(this.op) > -1) {
+
+			if (toTypeStringOps.has(this.op))
 				return 'string';
-			}
+
 
 			if (this.op === '+') {
-				if (this.left.toType(tableid) === 'string' || this.right.toType(tableid) === 'string') {
+				const leftType = this.left.toType(tableid);
+				const rightType = this.right.toType(tableid);
+
+				if (leftType === 'string' || rightType === 'string') {
 					return 'string';
 				}
-				if (this.left.toType(tableid) === 'number' || this.right.toType(tableid) === 'number') {
+				if (leftType === 'number' || rightType === 'number') {
 					return 'number';
 				}
 			}
 
-			if (
-				[
-					'AND',
-					'OR',
-					'NOT',
-					'=',
-					'==',
-					'===',
-					'!=',
-					'!==',
-					'!===',
-					'>',
-					'>=',
-					'<',
-					'<=',
-					'IN',
-					'NOT IN',
-					'LIKE',
-					'NOT LIKE',
-					'REGEXP',
-					'GLOB',
-				].indexOf(this.op) > -1
-			) {
+			if (toTypeBoolOps.has(this.op) || this.allsome)
 				return 'boolean';
-			}
 
-			if (
-				this.op === 'BETWEEN' ||
-				this.op === 'NOT BETWEEN' ||
-				this.op === 'IS NULL' ||
-				this.op === 'IS NOT NULL'
-			) {
-				return 'boolean';
-			}
 
-			if (this.allsome) {
-				return 'boolean';
-			}
+			if (!this.op)
+				return this.left.toType(tableid);
 
-			if (!this.op) {
-				return this.left.toType();
-			}
 
 			return 'unknown';
 		}
+
 
 		toJS(context, tableid, defcols) {
 			//	console.log(this);
@@ -615,13 +556,7 @@
 				op = '&&';
 			}
 
-			// if(this.op === '^') {
-			// 	// return 	'Math.pow('
-			// 	// 		+ leftJS()
-			// 	// 		+ ','
-			// 	// 		+ rightJS()
-			// 	// 		+ ')';
-			// }
+
 			var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 			var declareRefs = 'y=[(' + refs.join('), (') + ')]';
@@ -785,6 +720,13 @@
 		}
 	}
 
+	const toJsOpMapping = {
+		'~': '~',
+		'-': '-',
+		'+': '+',
+		'NOT': '!',
+	};
+
 	class UniOp {
 		constructor(params) {
 			assign(this, params);
@@ -814,77 +756,39 @@
 		}
 
 		toType() {
-			if (this.op === '-') {
-				return 'number';
+			switch (this.op) {
+				case '-':
+				case '+':
+					return 'number';
+				case 'NOT':
+					return 'boolean';
+				default:
+					return 'string';
 			}
-
-			if (this.op === '+') {
-				return 'number';
-			}
-
-			if (this.op === 'NOT') {
-				return 'boolean';
-			}
-
-			// Todo: implement default case
 		}
+
+
 
 		toJS(context, tableid, defcols) {
-			if (this.op === '~') {
-				return '(~(' + this.right.toJS(context, tableid, defcols) + '))';
+			if (this.right instanceof Column && this.op === '#') {
+				return `(alasql.databases[alasql.useid].objects['${this.right.columnid}'])`;
 			}
 
-			if (this.op === '-') {
-				return '(-(' + this.right.toJS(context, tableid, defcols) + '))';
+			const rightJS = this.right.toJS(context, tableid, defcols);
+
+			if (toJsOpMapping.hasOwnProperty(this.op)) {
+				return `(${toJsOpMapping[this.op]}(${rightJS}))`;
 			}
 
-			if (this.op === '+') {
-				return '(' + this.right.toJS(context, tableid, defcols) + ')';
-			}
-
-			if (this.op === 'NOT') {
-				return '!(' + this.right.toJS(context, tableid, defcols) + ')';
-			}
-
-			if (this.op === '#') {
-				if (this.right instanceof Column) {
-					return "(alasql.databases[alasql.useid].objects['" + this.right.columnid + "'])";
-				} else {
-					return (
-						'(alasql.databases[alasql.useid].objects[' +
-						this.right.toJS(context, tableid, defcols) +
-						'])'
-					);
-				}
-			}
-
-			// Please avoid === here
 			if (this.op == null) {
-				// jshint ignore:line
-				return '(' + this.right.toJS(context, tableid, defcols) + ')';
+				return `(${rightJS})`;
 			}
 
-			// Todo: implement default case.
+			throw new Error(`Unsupported operator: ${this.op}`);
 		}
+
 	}
 
-	/*/*
-// yy.Star = class {
-// 	constructor (params) { return assign(this, params); }
-// 	toString () {
-// 		var s = this.fieldid;
-// 		if (this.tableid) {
-// 			s = this.tableid + '.' + s;
-// 			if (this.databaseid) {
-// 				s = this.databaseid + '.' + s;
-// 			}
-// 		}
-// 		if (this.alias)
-// 			s += ' AS ' + this.alias;
-// 		return s;
-// 	}
-// }
-*/
 
 	class Column {
 		constructor(params) {
@@ -892,82 +796,55 @@
 		}
 
 		toString() {
-			var s;
+			let s = this.columnid;
+
 			if (this.columnid == +this.columnid) {
 				s = '[' + this.columnid + ']';
-			} else {
-				s = this.columnid;
 			}
+
 			if (this.tableid) {
-				if (+this.columnid === this.columnid) {
-					s = this.tableid + s;
-				} else {
-					s = this.tableid + '.' + s;
-				}
+				s = this.tableid + (this.columnid === +this.columnid ? '' : '.') + s;
+
 				if (this.databaseid) {
 					s = this.databaseid + '.' + s;
 				}
 			}
+
 			return s;
 		}
 
+
 		toJS(context, tableid, defcols) {
-			var s = '';
 			if (!this.tableid && tableid === '' && !defcols) {
-				if (this.columnid !== '_') {
-					s = context + "['" + this.columnid + "']";
+				return this.columnid !== '_' ? `${context}['${this.columnid}']` : (context === 'g' ? "g['_']" : context);
+			}
+
+			if (context === 'g') {
+				return `g['${this.nick}']`;
+			}
+
+			if (this.tableid) {
+				return this.columnid !== '_' ? `${context}['${this.tableid}']['${this.columnid}']` : (context === 'g' ? "g['_']" : `${context}['${this.tableid}']`);
+			}
+
+			if (defcols) {
+				const tbid = defcols[this.columnid];
+				if (tbid === '-') {
+					throw new Error(`Cannot resolve column "${this.columnid}" because it exists in two source tables`);
+				} else if (tbid) {
+					return this.columnid !== '_' ? `${context}['${tbid}']['${this.columnid}']` : `${context}['${tbid}']`;
 				} else {
-					if (context === 'g') {
-						s = "g['_']";
-					} else {
-						s = context;
-					}
-				}
-			} else {
-				if (context === 'g') {
-					s = "g['" + this.nick + "']";
-				} else if (this.tableid) {
-					if (this.columnid !== '_') {
-						s = context + "['" + this.tableid + "']['" + this.columnid + "']";
-					} else {
-						if (context === 'g') {
-							s = "g['_']";
-						} else {
-							s = context + "['" + this.tableid + "']";
-						}
-					}
-				} else if (defcols) {
-					var tbid = defcols[this.columnid];
-					if (tbid === '-') {
-						throw new Error(
-							'Cannot resolve column "' + this.columnid + '" because it exists in two source tables'
-						);
-					} else if (tbid) {
-						if (this.columnid !== '_') {
-							s = context + "['" + tbid + "']['" + this.columnid + "']";
-						} else {
-							s = context + "['" + tbid + "']";
-						}
-						//			console.log(836,tbid,s);
-					} else {
-						if (this.columnid !== '_') {
-							s = context + "['" + (this.tableid || tableid) + "']['" + this.columnid + "']";
-						} else {
-							s = context + "['" + (this.tableid || tableid) + "']";
-						}
-					}
-				} else if (tableid === -1) {
-					s = context + "['" + this.columnid + "']";
-				} else {
-					if (this.columnid !== '_') {
-						s = context + "['" + (this.tableid || tableid) + "']['" + this.columnid + "']";
-					} else {
-						s = context + "['" + (this.tableid || tableid) + "']";
-					}
+					return this.columnid !== '_' ? `${context}['${this.tableid || tableid}']['${this.columnid}']` : `${context}['${this.tableid || tableid}']`;
 				}
 			}
-			return s;
+
+			if (tableid === -1) {
+				return `${context}['${this.columnid}']`;
+			}
+
+			return this.columnid !== '_' ? `${context}['${this.tableid || tableid}']['${this.columnid}']` : `${context}['${this.tableid || tableid}']`;
 		}
+
 	}
 
 	class AggrValue {
@@ -976,66 +853,37 @@
 		}
 
 		toString() {
-			var s = '';
-			if (this.aggregatorid === 'REDUCE') {
-				s += this.funcid.replace(re_invalidFnNameChars, '') + '(';
-			} else {
-				s += this.aggregatorid + '(';
-			}
+			const funcName = this.aggregatorid === 'REDUCE' ? this.funcid.replace(re_invalidFnNameChars, '') : this.aggregatorid;
+			const distinctPart = this.distinct ? 'DISTINCT ' : '';
+			const expressionPart = this.expression ? this.expression.toString() : '';
+			const overPart = this.over ? ` ${this.over.toString()}` : '';
 
-			if (this.distinct) {
-				s += 'DISTINCT ';
-			}
-
-			if (this.expression) {
-				s += this.expression.toString();
-			}
-
-			s += ')';
-
-			if (this.over) {
-				s += ' ' + this.over.toString();
-			}
-			return s;
+			return `${funcName}(${distinctPart}${expressionPart})${overPart}`;
 		}
+
 
 		findAggregator(query) {
-			var colas = escapeq(this.toString()) + ':' + query.selectGroup.length;
-			var found = false;
-			if (!found) {
-				if (!this.nick) {
-					this.nick = colas;
-					var found = false;
-					for (var i = 0; i < query.removeKeys.length; i++) {
-						if (query.removeKeys[i] === colas) {
-							found = true;
-							break;
-						}
-					}
-					if (!found) {
-						query.removeKeys.push(colas);
-					}
+			const colas = escapeq(this.toString()) + ':' + query.selectGroup.length;
+
+			if (!this.nick) {
+				this.nick = colas;
+
+				if (!query.removeKeys.includes(colas)) {
+					query.removeKeys.push(colas);
 				}
-				query.selectGroup.push(this);
 			}
-			return;
+
+			query.selectGroup.push(this);
 		}
 
+
 		toType() {
-			if (
-				['SUM', 'COUNT', 'AVG', 'MIN', 'MAX', 'AGGR', 'VAR', 'STDDEV', 'TOTAL'].indexOf(
-					this.aggregatorid
-				) > -1
-			) {
+			if (['SUM', 'COUNT', 'AVG', 'MIN', 'MAX', 'AGGR', 'VAR', 'STDDEV', 'TOTAL'].includes(this.aggregatorid)) {
 				return 'number';
 			}
 
-			if (['ARRAY'].indexOf(this.aggregatorid) > -1) {
+			if (this.aggregatorid === 'ARRAY') {
 				return 'array';
-			}
-
-			if (['FIRST', 'LAST'].indexOf(this.aggregatorid) > -1) {
-				return this.expression.toType();
 			}
 
 			return this.expression.toType();
