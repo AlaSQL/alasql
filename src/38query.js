@@ -203,7 +203,11 @@ function queryfn3(query) {
 
 				for (const key in query.groupColumns) {
 					// ony remove columns where the alias is also not a column in the result
-					if (query.groupColumns[key] !== key && d[query.groupColumns[key]] && !query.groupColumns[query.groupColumns[key]]){
+					if (
+						query.groupColumns[key] !== key &&
+						d[query.groupColumns[key]] &&
+						!query.groupColumns[query.groupColumns[key]]
+					) {
 						delete d[query.groupColumns[key]];
 					}
 				}
