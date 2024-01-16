@@ -192,9 +192,29 @@
 	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^']);
 	const toTypeStringOps = new Set(['||']);
 	const toTypeBoolOps = new Set([
-		'AND', 'OR', 'NOT', '=', '==', '===', '!=', '!==', '!===',
-		'>', '>=', '<', '<=', 'IN', 'NOT IN', 'LIKE', 'NOT LIKE',
-		'REGEXP', 'GLOB', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL'
+		'AND',
+		'OR',
+		'NOT',
+		'=',
+		'==',
+		'===',
+		'!=',
+		'!==',
+		'!===',
+		'>',
+		'>=',
+		'<',
+		'<=',
+		'IN',
+		'NOT IN',
+		'LIKE',
+		'NOT LIKE',
+		'REGEXP',
+		'GLOB',
+		'BETWEEN',
+		'NOT BETWEEN',
+		'IS NULL',
+		'IS NOT NULL',
 	]);
 	class Op {
 		constructor(params) {
@@ -227,7 +247,6 @@
 			return `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
 		}
 
-
 		findAggregator(query) {
 			if (this.left && this.left.findAggregator) {
 				this.left.findAggregator(query);
@@ -239,13 +258,9 @@
 		}
 
 		toType(tableid) {
-			if (toTypeNumberOps.has(this.op))
-				return 'number';
+			if (toTypeNumberOps.has(this.op)) return 'number';
 
-
-			if (toTypeStringOps.has(this.op))
-				return 'string';
-
+			if (toTypeStringOps.has(this.op)) return 'string';
 
 			if (this.op === '+') {
 				const leftType = this.left.toType(tableid);
@@ -259,17 +274,12 @@
 				}
 			}
 
-			if (toTypeBoolOps.has(this.op) || this.allsome)
-				return 'boolean';
+			if (toTypeBoolOps.has(this.op) || this.allsome) return 'boolean';
 
-
-			if (!this.op)
-				return this.left.toType(tableid);
-
+			if (!this.op) return this.left.toType(tableid);
 
 			return 'unknown';
 		}
-
 
 		toJS(context, tableid, defcols) {
 			//	console.log(this);
@@ -556,7 +566,6 @@
 				op = '&&';
 			}
 
-
 			var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 			var declareRefs = 'y=[(' + refs.join('), (') + ')]';
@@ -724,7 +733,7 @@
 		'~': '~',
 		'-': '-',
 		'+': '+',
-		'NOT': '!',
+		NOT: '!',
 	};
 
 	class UniOp {
@@ -733,7 +742,7 @@
 		}
 
 		toString() {
-			const { op, right } = this;
+			const {op, right} = this;
 			const res = right.toString();
 
 			switch (op) {
@@ -767,8 +776,6 @@
 			}
 		}
 
-
-
 		toJS(context, tableid, defcols) {
 			if (this.right instanceof Column && this.op === '#') {
 				return `(alasql.databases[alasql.useid].objects['${this.right.columnid}'])`;
@@ -786,9 +793,7 @@
 
 			throw new Error(`Unsupported operator: ${this.op}`);
 		}
-
 	}
-
 
 	class Column {
 		constructor(params) {
@@ -813,10 +818,13 @@
 			return s;
 		}
 
-
 		toJS(context, tableid, defcols) {
 			if (!this.tableid && tableid === '' && !defcols) {
-				return this.columnid !== '_' ? `${context}['${this.columnid}']` : (context === 'g' ? "g['_']" : context);
+				return this.columnid !== '_'
+					? `${context}['${this.columnid}']`
+					: context === 'g'
+						? "g['_']"
+						: context;
 			}
 
 			if (context === 'g') {
@@ -824,17 +832,27 @@
 			}
 
 			if (this.tableid) {
-				return this.columnid !== '_' ? `${context}['${this.tableid}']['${this.columnid}']` : (context === 'g' ? "g['_']" : `${context}['${this.tableid}']`);
+				return this.columnid !== '_'
+					? `${context}['${this.tableid}']['${this.columnid}']`
+					: context === 'g'
+						? "g['_']"
+						: `${context}['${this.tableid}']`;
 			}
 
 			if (defcols) {
 				const tbid = defcols[this.columnid];
 				if (tbid === '-') {
-					throw new Error(`Cannot resolve column "${this.columnid}" because it exists in two source tables`);
+					throw new Error(
+						`Cannot resolve column "${this.columnid}" because it exists in two source tables`
+					);
 				} else if (tbid) {
-					return this.columnid !== '_' ? `${context}['${tbid}']['${this.columnid}']` : `${context}['${tbid}']`;
+					return this.columnid !== '_'
+						? `${context}['${tbid}']['${this.columnid}']`
+						: `${context}['${tbid}']`;
 				} else {
-					return this.columnid !== '_' ? `${context}['${this.tableid || tableid}']['${this.columnid}']` : `${context}['${this.tableid || tableid}']`;
+					return this.columnid !== '_'
+						? `${context}['${this.tableid || tableid}']['${this.columnid}']`
+						: `${context}['${this.tableid || tableid}']`;
 				}
 			}
 
@@ -842,9 +860,10 @@
 				return `${context}['${this.columnid}']`;
 			}
 
-			return this.columnid !== '_' ? `${context}['${this.tableid || tableid}']['${this.columnid}']` : `${context}['${this.tableid || tableid}']`;
+			return this.columnid !== '_'
+				? `${context}['${this.tableid || tableid}']['${this.columnid}']`
+				: `${context}['${this.tableid || tableid}']`;
 		}
-
 	}
 
 	class AggrValue {
@@ -853,14 +872,16 @@
 		}
 
 		toString() {
-			const funcName = this.aggregatorid === 'REDUCE' ? this.funcid.replace(re_invalidFnNameChars, '') : this.aggregatorid;
+			const funcName =
+				this.aggregatorid === 'REDUCE'
+					? this.funcid.replace(re_invalidFnNameChars, '')
+					: this.aggregatorid;
 			const distinctPart = this.distinct ? 'DISTINCT ' : '';
 			const expressionPart = this.expression ? this.expression.toString() : '';
 			const overPart = this.over ? ` ${this.over.toString()}` : '';
 
 			return `${funcName}(${distinctPart}${expressionPart})${overPart}`;
 		}
-
 
 		findAggregator(query) {
 			const colas = escapeq(this.toString()) + ':' + query.selectGroup.length;
@@ -876,9 +897,12 @@
 			query.selectGroup.push(this);
 		}
 
-
 		toType() {
-			if (['SUM', 'COUNT', 'AVG', 'MIN', 'MAX', 'AGGR', 'VAR', 'STDDEV', 'TOTAL'].includes(this.aggregatorid)) {
+			if (
+				['SUM', 'COUNT', 'AVG', 'MIN', 'MAX', 'AGGR', 'VAR', 'STDDEV', 'TOTAL'].includes(
+					this.aggregatorid
+				)
+			) {
 				return 'number';
 			}
 
