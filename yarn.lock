@@ -2193,10 +2193,10 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
-open@10.0.2:
-  version "10.0.2"
-  resolved "https://registry.yarnpkg.com/open/-/open-10.0.2.tgz#93b099c6194552b47afac969c9b83f874aee1ab8"
-  integrity sha512-GnYLdE+E3K8NeSE23N0g67/9q9AXRph5oTUbz6IbIgElPigEnQ2aHuqRge3y0JUr67qoc84xME5kF03fDc3fcA==
+open@10.0.3:
+  version "10.0.3"
+  resolved "https://registry.yarnpkg.com/open/-/open-10.0.3.tgz#f60d8db49fa126c50aec751957fb5d7de3308d4f"
+  integrity sha512-dtbI5oW7987hwC9qjJTyABldTaa19SuyJse1QboWv3b0qCcrrLNVDqBx1XgELAjh9QTVQaP/C5b1nhQebd1H2A==
   dependencies:
     default-browser "^5.2.1"
     define-lazy-prop "^3.0.0"
