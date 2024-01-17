@@ -82,7 +82,8 @@
 		"underscore": "1",
 		"glob-parent": "6",
 		"decode-uri-component": "0.2",
-		"semver": "7"
+		"semver": "7",
+		"@gerhobbelt/json5": "1.0.1-32"
 	},
 	"engines": {
 		"node": ">=15"
