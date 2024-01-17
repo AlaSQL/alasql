@@ -177,10 +177,10 @@
   resolved "https://registry.yarnpkg.com/@gerhobbelt/esprima/-/esprima-4.0.1-15.tgz#2d6f0d3d9ad7bf0d5d514eda849528ad790d6769"
   integrity sha512-0VITWyCsgbRlNv0WjWfEszAHcgJL/iAQKSNfzU/uoJ6S7W/mgM8q4iWmzv7BDl4nmRpcYoSqW2B/BwXJNFzNMg==
 
-"@gerhobbelt/json5@0.5.1-21", "@gerhobbelt/json5@1.0.1-32":
-  version "1.0.1-32"
-  resolved "https://registry.yarnpkg.com/@gerhobbelt/json5/-/json5-1.0.1-32.tgz#9be0d88d58616e8b47591e6475a4bbed3b5cb81c"
-  integrity sha512-kGu7GbXbe8m/hxRYRaIWoMV1UiVV6He31PX0S5BW98zqn8TrriGNM+Q6ikF+ofL8Hs90zEYsGCLHXH2gnSIEBg==
+"@gerhobbelt/json5@0.5.1-21", "@gerhobbelt/json5@2.1.0-48":
+  version "2.1.0-48"
+  resolved "https://registry.yarnpkg.com/@gerhobbelt/json5/-/json5-2.1.0-48.tgz#8ef0f8b95d1310a968922f9c9dccc0dd4359b147"
+  integrity sha512-Um0hfIcEuvxvNWkYUW5L3Sh1hDgxFBwXj2VWdVS5oCcIQlVlC9tzGKbyYMTHAA8XNvF3jAMJqkpKBp4o7kBFuQ==
   dependencies:
     minimist "1.2.0"
 
