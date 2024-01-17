@@ -1,1 +1,0 @@
-# T-SQL syntax + SQL Server connector

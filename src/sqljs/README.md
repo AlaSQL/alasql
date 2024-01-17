@@ -1,1 +1,0 @@
-# SQL.js connector

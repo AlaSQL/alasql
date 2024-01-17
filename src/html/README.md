@@ -1,1 +1,0 @@
-# HTML import-export + connector functions

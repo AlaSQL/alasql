@@ -1,1 +1,0 @@
-# LocalStorage and SessionStorage database backend

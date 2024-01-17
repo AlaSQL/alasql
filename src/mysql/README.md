@@ -1,1 +1,0 @@
-# MySQL syntax and pass-thru driver

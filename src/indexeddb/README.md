@@ -1,1 +1,0 @@
-# AlaSQL IndexedDB backend

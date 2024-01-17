@@ -1,3 +1,0 @@
-# Debugging functions
-
-ASSERT

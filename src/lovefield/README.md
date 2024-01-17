@@ -1,1 +1,0 @@
-# AlaSQL Lovefield SQL interface

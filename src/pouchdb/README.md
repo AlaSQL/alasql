@@ -1,1 +1,0 @@
-Support PouchDB backend
