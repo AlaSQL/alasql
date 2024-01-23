@@ -77,6 +77,26 @@ describe('Test 229 Calculating simple running totals', function () {
 		done();
 	});
 
+	it('2.1. Select Sum with a null first value', function (done) {
+		var data = [{a: null}, {b: 10}, {a: 1}, {a: 33}];
+		let res = alasql(`SELECT SUM(a/2) AS a FROM ?`, [data]);
+
+		const expectedResult = 17;
+		const assertResult = (expected = expectedResult) => assert.equal(res[0].a, expected);
+
+		assertResult();
+
+		res = alasql(`SELECT SUM(a)/2 AS a FROM ?`, [data]);
+
+		assertResult();
+
+		res = alasql(`SELECT SUM(a + ";") AS a FROM ?`, [data]);
+
+		assertResult("1;33;");
+
+		done();
+	});
+
 	it('3. Select accumulated sum', function (done) {
 		var res = alasql(
 			'SELECT a.id, a.[value], SUM(b.[value]) AS c \

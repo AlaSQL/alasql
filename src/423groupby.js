@@ -282,7 +282,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						var post = "g['$$_VALUES_" + colas + "'][" + colexp + ']=true;}';
 					}
 					if (col.aggregatorid === 'SUM') {
-						return `${pre}if((y=${colexp})!=null)g['${colas}']+=y;${post}`;
+						return `${pre}if((y=${colexp})!=null){const v=g['${colas}'];g['${colas}']=(v==null)?y:v+y;}${post}`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
