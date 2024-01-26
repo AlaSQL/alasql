@@ -138,6 +138,22 @@ declare module 'alasql' {
 		[tableName: string]: table;
 	}
 
+	interface Database {
+		databaseid: string;
+		dbversion: number;
+		tables: {[key: string]: any};
+		views: {[key: string]: any};
+		triggers: {[key: string]: any};
+		indices: {[key: string]: any};
+		objects: {[key: string]: any};
+		counter: number;
+		sqlCache: {[key: string]: any};
+		sqlCacheSize: number;
+		astCache: {[key: string]: any};
+		resetSqlCache: () => void;
+		exec: (sql: string, params?: object, cb?: Function) => any;
+		autoval: (tablename: string, colname: string, getNext: boolean) => any;
+	}
 	interface AlaSQL {
 		options: AlaSQLOptions;
 		error: Error;
@@ -150,6 +166,7 @@ declare module 'alasql' {
 		autoval(tablename: string, colname: string, getNext?: boolean): number;
 		yy: {};
 		setXLSX(xlsxlib: typeof xlsx): void;
+		Database: Database;
 
 		/**
 		 * Array of databases in the AlaSQL object.
