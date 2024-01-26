@@ -14,7 +14,7 @@ jobs:
       - name: Bulid from src
         uses: actions/setup-node@v4
         with:
-          node-version: 'latest'
+          node-version: '20.x'
       - run: yarn install --frozen-lockfile
       - run: yarn build-only
       - uses: actions/upload-artifact@master
