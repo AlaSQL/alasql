@@ -1,7 +1,7 @@
 {
 	"name": "alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
-	"version": "4.2.5",
+	"version": "4.2.6",
 	"author": "Andrey Gershun <agershun@gmail.com>",
 	"contributors": [
 		"Mathias Wulff <m@rawu.dk>"
@@ -53,7 +53,7 @@
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.1.1",
 		"dom-storage": "2.1.0",
-		"esbuild": "^0.19.3",
+		"esbuild": "0.19.12",
 		"eslint": "8.56.0",
 		"eslint-config-standard": "17.1.0",
 		"eslint-plugin-import": "2.29.1",
@@ -67,7 +67,7 @@
 		"mocha": "10.2.0",
 		"mocha.parallel": "0.15.6",
 		"open": "10.0.3",
-		"prettier": "^3.0.3",
+		"prettier": "3.2.4",
 		"react-native-fetch-blob": "^0.10.8",
 		"react-native-fs": "^2.20.0",
 		"rexreplace": "7.1.3",
