@@ -119,7 +119,7 @@ alasql.options = {
 	/** Check for NaN and convert it to undefined */
 	nan: false,
 
-	excel: { cellDates: true },
+	excel: {cellDates: true},
 
 	/** Option for SELECT * FROM a,b */
 	joinstar: 'overwrite',
@@ -211,7 +211,7 @@ alasql.autoval = function (tablename, colname, getNext, databaseid) {
 
 	return (
 		db.tables[tablename].identities[colname].value -
-		db.tables[tablename].identities[colname].step || null
+			db.tables[tablename].identities[colname].step || null
 	);
 };
 
@@ -315,9 +315,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	}
 
 	return alasql.drun(databaseid, ast, params, cb, scope);
-
-}
-
+};
 
 /**
   Run multiple statements and return array of results sync
@@ -400,8 +398,6 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 		if (alasql.options.progress !== false) {
 			alasql.options.progress(noqueries, idx++);
 		}
-
-
 	}
 
 	adrunone(); /** @todo Check, why data is empty here */
@@ -436,5 +432,4 @@ alasql.compile = function (sql, databaseid) {
 	};
 
 	return statement;
-
 };

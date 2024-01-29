@@ -71,13 +71,11 @@ alasql.utils.uncomment = function (str) {
 				//					if (!preserveComment)
 				str[i] = '';
 				blockComment = true;
-
 			}
 		}
 	}
 	// Remove padding again.
 	str = str.join('').slice(2, -2);
-
 
 	return str;
 };
