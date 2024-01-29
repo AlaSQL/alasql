@@ -358,7 +358,6 @@ yy.Select = class Select {
 				query.intoallfn = new Function('columns,cb,params,alasql', 'var y;' + query.intoallfns);
 			}
 		}
-		//console.log(query);
 		// Now, compile all togeather into one function with query object in scope
 		var statement = function (params, cb, oldscope) {
 			query.params = params;
@@ -463,7 +462,7 @@ function modify(query, res) {
 			}
 
 			columns = Object.keys(allcol).map(function (columnid) {
-				return {columnid: columnid};
+				return { columnid: columnid };
 			});
 		} else {
 			// Cannot recognize columns
@@ -541,7 +540,7 @@ function modify(query, res) {
 		res = ar;
 		//		res = arrayOfArrays(res);
 	} else if (modifier === 'RECORDSET') {
-		res = new alasql.Recordset({columns: columns, data: res});
+		res = new alasql.Recordset({ columns: columns, data: res });
 		//		res = arrayOfArrays(res);
 	} else if (modifier === 'TEXTSTRING') {
 		var key;
