@@ -287,6 +287,7 @@ utils.hasIndexedDB = (function () {
 utils.isArray = function (obj) {
 	return '[object Array]' === Object.prototype.toString.call(obj);
 };
+
 /**
   Load text file from anywhere
   @param {string|object} path File path or HTML event
@@ -298,7 +299,9 @@ utils.isArray = function (obj) {
   @todo Define Event type
   @todo Smaller if-else structures.
   */
-var loadFile = (utils.loadFile = function (path, asy, success, error) {
+
+const protocolRegex = /^[a-z]+:\/\//i;
+let loadFile = (utils.loadFile = function (path, asy, success, error) {
 	var data, fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
@@ -317,30 +320,41 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			process.stdin.on('end', function () {
 				success(cutbom(buff));
 			});
-		} else {
-			if (/^[a-z]+:\/\//i.test(path)) {
-				fetchData(path, x => success(cutbom(x)), error, asy);
-			} else {
-				//If async callthen call async
-				if (asy) {
-					fs.readFile(path, function (err, data) {
-						if (err) {
-							return error(err, null);
-						}
-						success(cutbom(data.toString()));
-					});
-				} else {
-					// Call sync version
-					try {
-						data = fs.readFileSync(path);
-					} catch (e) {
-						return error(err, null);
-					}
-					success(cutbom(data.toString()));
-				}
-			}
+			return;
 		}
-	} else if (utils.isReactNative) {
+
+		if (protocolRegex.test(path)) {
+			fetchData(path, x => success(cutbom(x)), error, asy);
+			return
+		}
+
+		//If async callthen call async
+		if (asy) {
+			fs.readFile(path, function (err, data) {
+				if (err) {
+					return error(err, null);
+				}
+				success(cutbom(data.toString()));
+			});
+			return;
+		}
+
+		// Call sync version
+		try {
+			data = fs.readFileSync(path);
+		} catch (e) {
+			error(err, null);
+			return
+		}
+
+		success(cutbom(data.toString()));
+		return
+
+
+
+	}
+
+	if (utils.isReactNative) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.readFile(path, 'utf8')
@@ -351,10 +365,14 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 				return error(err, null);
 			});
 		//*/
-	} else if (utils.isCordova) {
+		return;
+
+	}
+
+	if (utils.isCordova) {
 		/* If Cordova */
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
-			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
+			fileSystem.root.getFile(path, { create: false }, function (fileEntry) {
 				fileEntry.file(function (file) {
 					var fileReader = new FileReader();
 					fileReader.onloadend = function (e) {
@@ -365,71 +383,56 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		});
 
-		/** @todo Check eliminated code below */
-
-		/*/*
-
-		 var paths = path.split('/');
-		 var filename = paths[paths.length-1];
-		 var dirpath = path.substr(0,path.length-filename.length);
-  //       console.log('CORDOVA',filename,dirpath);
-  //return success('[{"a":"'+filename+'"}]');
-
-		 window.resolveLocalFileSystemURL(dirpath, function(dir) {
-			 dir.getFile(filename, null, function(file) {
-				 file.file(function(file) {
-					 var reader = new FileReader();
-  //                   console.log('READ FILE 2');
-					 reader.onloadend = function(e) {
- //                    console.log('READ FILE 3',this.result);
-						 success(this.result);
-					 };
-					 reader.readAsText(file);
-				 });
-			 });
-		 });
- */
-	} else {
-		/* For string */
-		if (typeof path === 'string') {
-			// For browser read from tag
-			/*
-				 SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
-			 */
-			if (path.substr(0, 1) === '#' && typeof document !== 'undefined') {
-				data = document.querySelector(path).textContent;
-				success(data);
-			} else {
-				/*
-					 Simply read file from HTTP request, like:
-					 SELECT * FROM TXT('http://alasql.org/README.md');
-				 */
-				fetchData(path, x => success(cutbom(x)), error, asy);
-			}
-		} else if (path instanceof Event) {
-			/*
-				 For browser read from files input element
-				 <input type="files" onchange="readFile(event)">
-				 <script>
-					 function readFile(event) {
-						 alasql('SELECT * FROM TXT(?)',[event])
-					 }
-				 </script>
-			 */
-			/** @type {array} List of files from <input> element */
-			var files = path.target.files;
-			/** type {object} */
-			var reader = new FileReader();
-			/** type {string} */
-			var name = files[0].name;
-			reader.onload = function (e) {
-				var data = e.target.result;
-				success(cutbom(data));
-			};
-			reader.readAsText(files[0]);
-		}
+		return;
 	}
+
+
+	/* For string */
+	if (typeof path === 'string') {
+		// For browser read from tag
+		/*
+			 SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
+		 */
+		if (path.substr(0, 1) === '#' && typeof document !== 'undefined') {
+			data = document.querySelector(path).textContent;
+			success(data);
+			return;
+		}
+
+		/*
+			 Simply read file from HTTP request, like:
+			 SELECT * FROM TXT('http://alasql.org/README.md');
+		 */
+		fetchData(path, x => success(cutbom(x)), error, asy);
+		return;
+	}
+
+	if (path instanceof Event) {
+		/*
+			 For browser read from files input element
+			 <input type="files" onchange="readFile(event)">
+			 <script>
+				 function readFile(event) {
+					 alasql('SELECT * FROM TXT(?)',[event])
+				 }
+			 </script>
+		 */
+		/** @type {array} List of files from <input> element */
+		var files = path.target.files;
+		/** type {object} */
+		var reader = new FileReader();
+		/** type {string} */
+		var name = files[0].name;
+		reader.onload = function (e) {
+			var data = e.target.result;
+			success(cutbom(data));
+		};
+		reader.readAsText(files[0]);
+	}
+	fetchData(path, x => success(cutbom(x)), error, asy);
+
 });
+
 
 let _fetch = typeof fetch !== 'undefined' ? fetch : null;
 //*not-for-browser/*
@@ -565,7 +568,7 @@ var removeFile = (utils.removeFile = function (path, cb) {
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
-				{create: false},
+				{ create: false },
 				function (fileEntry) {
 					fileEntry.remove(cb);
 					cb && cb(); // jshint ignore:line
@@ -633,7 +636,7 @@ var fileExists = (utils.fileExists = function (path, cb) {
 		utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(
 				path,
-				{create: false},
+				{ create: false },
 				function (fileEntry) {
 					cb(true);
 				},
@@ -699,7 +702,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 		} else if (utils.isCordova) {
 			utils.global.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 				//                alasql.utils.removeFile(path,function(){
-				fileSystem.root.getFile(path, {create: true}, function (fileEntry) {
+				fileSystem.root.getFile(path, { create: true }, function (fileEntry) {
 					fileEntry.createWriter(function (fileWriter) {
 						fileWriter.onwriteend = function () {
 							if (cb) {
@@ -774,7 +777,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 				disableAutoBom: false,
 			};
 			alasql.utils.extend(opt, opts);
-			var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
+			var blob = new Blob([data], { type: 'text/plain;charset=utf-8' });
 			saveAs(blob, path, opt.disableAutoBom);
 			if (cb) {
 				res = cb(res);
