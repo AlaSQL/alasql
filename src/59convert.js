@@ -23,46 +23,14 @@ yy.Convert.prototype.toString = function () {
 	return s;
 };
 yy.Convert.prototype.toJS = function (context, tableid, defcols) {
-	//	if(this.style) {
-	return (
-		'alasql.stdfn.CONVERT(' +
-		this.expression.toJS(context, tableid, defcols) +
-		',{dbtypeid:"' +
-		this.dbtypeid +
-		'",dbsize:' +
-		this.dbsize +
-		',dbprecision:' +
-		this.dbprecision +
-		',style:' +
-		this.style +
-		'})'
-	);
-	//	}
-	/*/*
-	if(this.dbtypeid == 'INT') {
-		return '(('+this.expression.toJS(context, tableid, defcols)+')|0)';
-	} if(this.dbtypeid == 'STRING') {
-		return '(""+'+this.expression.toJS(context, tableid, defcols)+')';
-	} if(this.dbtypeid == 'NUMBER') {
-		return '(+('+this.expression.toJS(context, tableid, defcols)+'))';
-	} if(this.dbtypeid == 'DATE') {
-		if(alasql.options.datetimeformat == 'javascript') {
-			return '(new Date('+this.expression.toJS(context, tableid, defcols)+'))';
-		} else if(alasql.options.datetimeformat == 'sql') {
-			return this.expression.toJS(context, tableid, defcols);
-		}
-	} if(this.dbtypeid == 'DATETIME') {
-		if(alasql.options.datetimeformat == 'javascript') {
-			return '(new Date('+this.expression.toJS(context, tableid, defcols)+'))';
-		} else if(alasql.options.datetimeformat == 'sql') {
-			return this.expression.toJS(context, tableid, defcols);
-		}
-	} else {
-
-	};
-*/
-	throw new Error('There is not such type conversion for ' + this.toString());
+	return `alasql.stdfn.CONVERT(${this.expression.toJS(context, tableid, defcols)}, {
+        dbtypeid: "${this.dbtypeid}",
+        dbsize: ${this.dbsize},
+        dbprecision: ${this.dbprecision},
+        style: ${this.style}
+    })`;
 };
+
 
 function structuredDate(unFormattedDate) {
 	var month = unFormattedDate.getMonth() + 1;

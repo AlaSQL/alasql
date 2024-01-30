@@ -16,48 +16,33 @@ yy.Json.prototype.toString = function () {
 	return s;
 };
 
-var JSONtoString = (alasql.utils.JSONtoString = function (obj) {
-	var s = '';
-	if (typeof obj == 'string') s = '"' + obj + '"';
-	else if (typeof obj == 'number') s = obj;
-	else if (typeof obj == 'boolean') s = obj;
-	else if (typeof obj == 'object') {
-		if (Array.isArray(obj)) {
-			s +=
-				'[' +
-				obj
-					.map(function (b) {
-						return JSONtoString(b);
-					})
-					.join(',') +
-				']';
-		} else if (!obj.toJS || obj instanceof yy.Json) {
-			// to prevent recursion
-			s = '{';
-			var ss = [];
-			for (var k in obj) {
-				var s1 = '';
-				if (typeof k == 'string') s1 += '"' + k + '"';
-				else if (typeof k == 'number') s1 += k;
-				else if (typeof k == 'boolean') s1 += k;
-				else {
-					throw new Error('THis is not ES6... no expressions on left side yet');
-				}
-				s1 += ':' + JSONtoString(obj[k]);
-				ss.push(s1);
-			}
-			s += ss.join(',') + '}';
-		} else if (obj.toString) {
-			s = obj.toString();
-		} else {
-			throw new Error('1Can not show JSON object ' + JSON.stringify(obj));
-		}
-	} else {
-		throw new Error('2Can not show JSON object ' + JSON.stringify(obj));
+const JSONtoString = (alasql.utils.JSONtoString = function (obj) {
+	if (typeof obj === 'string') return `"${obj}"`;
+	if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+
+	if (Array.isArray(obj)) {
+		return `[${obj.map(b => JSONtoString(b)).join(',')}]`;
 	}
 
-	return s;
+	if (typeof obj === 'object') {
+		if (!obj.toJS || obj instanceof yy.Json) {
+			const ss = [];
+			for (const k in obj) {
+				const keyStr = typeof k === 'string' ? `"${k}"` : String(k);
+				const valueStr = JSONtoString(obj[k]);
+				ss.push(`${keyStr}:${valueStr}`);
+			}
+			return `{${ss.join(',')}}`;
+		} else if (obj.toString) {
+			return obj.toString();
+		} else {
+			throw new Error(`1: Cannot show JSON object ${JSON.stringify(obj)}`);
+		}
+	} else {
+		throw new Error(`2: Cannot show JSON object ${JSON.stringify(obj)}`);
+	}
 });
+
 
 function JSONtoJS(obj, context, tableid, defcols) {
 	var s = '';
