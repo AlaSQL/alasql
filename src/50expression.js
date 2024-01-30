@@ -24,8 +24,6 @@
 		*/
 		execute(databaseid, params, cb) {
 			if (this.expression) {
-				//		console.log(this.expression.toJS('','', null));
-				//      console.log(this.expression.toJS('({})','', null));
 				alasql.precompile(this, databaseid, params); // Precompile queries
 				var exprfn = new Function(
 					'params,alasql,p',
@@ -282,20 +280,15 @@
 		}
 
 		toJS(context, tableid, defcols) {
-			//	console.log(this);
 			var s;
-			var refs = [];
-			var op = this.op;
-			var _this = this;
-			//var leftJS = function(){return _this.left.toJS(context,tableid, defcols)};
-			//var rightJS = function(){return _this.right.toJS(context,tableid, defcols)};
-			var accessedLeft = false,
-				accessedRight = false;
-			var ref = function (expr) {
+			let refs = [];
+			let op = this.op;
+			let _this = this;
+			let ref = function (expr) {
 				if (expr.toJS) {
 					expr = expr.toJS(context, tableid, defcols);
 				}
-				var i = refs.push(expr) - 1;
+				let i = refs.push(expr) - 1;
 				return 'y[' + i + ']';
 			};
 			var leftJS = function () {
@@ -311,202 +304,94 @@
 				op = '!=';
 			} else if (this.op === 'OR') {
 				op = '||';
-			}
-
-			// Arrow operator
-			if (this.op === '->') {
+			} else if (this.op === '->') {
 				// Expression to prevent error if object is empty (#344)
-				var ljs = '(' + leftJS() + '||{})';
+				const ljs = `(${leftJS()} || {})`;
 
 				if (typeof this.right === 'string') {
-					s = ljs + '["' + escapeq(this.right) + '"]';
+					s = `${ljs}["${escapeq(this.right)}"]`;
 				} else if (typeof this.right === 'number') {
-					s = ljs + '[' + this.right + ']';
+					s = `${ljs}[${this.right}]`;
 				} else if (this.right instanceof yy.FuncValue) {
-					var ss = [];
-					if (!(!this.right.args || 0 === this.right.args.length)) {
-						var ss = this.right.args.map(ref);
+					let ss = [];
+					if (this.right.args && this.right.args.length > 0) {
+						ss = this.right.args.map(ref);
 					}
-					s = '' + ljs + '[' + JSON.stringify(this.right.funcid) + '](' + ss.join(',') + ')';
+					s = `${ljs}[${JSON.stringify(this.right.funcid)}](${ss.join(',')})`;
 				} else {
-					s = '' + ljs + '[' + rightJS() + ']';
+					s = `${ljs}[${rightJS()}]`;
 				}
-			}
-
-			if (this.op === '!') {
+			} else if (this.op === '!') {
 				if (typeof this.right === 'string') {
-					s = '' + 'alasql.databases[alasql.useid].objects[' + leftJS() + ']["' + this.right + '"]';
+					s = `alasql.databases[alasql.useid].objects[${leftJS()}]["${this.right}"]`;
 				}
 				// TODO - add other cases
-			}
-
-			if (this.op === 'IS') {
+			} else if (this.op === 'IS') {
 				const leftOperand = leftJS();
 				const rightOperand = rightJS();
 				if (
 					this.right instanceof yy.NullValue ||
 					(this.right.op === 'NOT' && this.right.right instanceof yy.NullValue)
 				) {
-					s = `((${leftOperand} == null) === (${rightOperand} == null))`; // == null cant be ===
+					s = `((${leftOperand} == null) === (${rightOperand} == null))`; // == null can't be ===
 				} else {
-					s = `((${leftOperand} == ${rightOperand}) || (${leftOperand}  < 0 && true == ${rightOperand}))`;
+					s = `((${leftOperand} == ${rightOperand}) || (${leftOperand} < 0 && true == ${rightOperand}))`;
 				}
-			}
-
-			if (this.op === '==') {
-				s = '' + 'alasql.utils.deepEqual(' + leftJS() + ',' + rightJS() + ')';
-			}
-
-			if (this.op === '===' || this.op === '!===') {
-				s =
-					'' +
-					'(' +
-					(this.op === '!===' ? '!' : '') +
-					'(' +
-					'(' +
-					leftJS() +
-					').valueOf()' +
-					'===' +
-					'(' +
-					rightJS() +
-					').valueOf()' +
-					')' +
-					')';
-			}
-
-			if (this.op === '!==') {
-				s = '' + '(!alasql.utils.deepEqual(' + leftJS() + ',' + rightJS() + '))';
-			}
-			if (this.op === '||') {
-				s = '' + "(''+(" + leftJS() + "||'')+(" + rightJS() + '||""))';
-			}
-			if (this.op === 'LIKE' || this.op === 'NOT LIKE') {
-				var s =
-					'(' +
-					(this.op === 'NOT LIKE' ? '!' : '') +
-					'alasql.utils.like(' +
-					rightJS() +
-					',' +
-					leftJS();
-				if (this.escape) {
-					s += ',' + ref(this.escape);
-				}
-				s += '))';
-			}
-			if (this.op === 'REGEXP') {
-				s = 'alasql.stdfn.REGEXP_LIKE(' + leftJS() + ',' + rightJS() + ')';
-			}
-			if (this.op === 'GLOB') {
-				s = 'alasql.utils.glob(' + leftJS() + ',' + rightJS() + ')';
-			}
-
-			if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
-				var left = leftJS();
-				s =
-					'' +
-					'(' +
-					(this.op === 'NOT BETWEEN' ? '!' : '') +
-					'(' +
-					'(' +
-					ref(this.right1) +
-					'<=' +
-					left +
-					') && (' +
-					left +
-					'<=' +
-					ref(this.right2) +
-					')' +
-					')' +
-					')';
-			}
-
-			if (this.op === 'IN') {
+			} else if (this.op === '==') {
+				s = `alasql.utils.deepEqual(${leftJS()}, ${rightJS()})`;
+			} else if (this.op === '===' || this.op === '!===') {
+				s = `(${this.op === '!===' ? '!' : ''}((${leftJS()}).valueOf() === (${rightJS()}).valueOf()))`;
+			} else if (this.op === '!==') {
+				s = `(!alasql.utils.deepEqual(${leftJS()}, ${rightJS()}))`;
+			} else if (this.op === '||') {
+				s = `(''+(${leftJS()} || '') + (${rightJS()} || ''))`;
+			} else if (this.op === 'LIKE' || this.op === 'NOT LIKE') {
+				s = `(${this.op === 'NOT LIKE' ? '!' : ''}alasql.utils.like(${rightJS()}, ${leftJS()}${this.escape ? `, ${ref(this.escape)}` : ''}))`;
+			} else if (this.op === 'REGEXP') {
+				s = `alasql.stdfn.REGEXP_LIKE(${leftJS()}, ${rightJS()})`;
+			} else if (this.op === 'GLOB') {
+				s = `alasql.utils.glob(${leftJS()}, ${rightJS()})`;
+			} else if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
+				const left = leftJS();
+				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(this.right1)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
+			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
-					s = '(';
-					//			s += 'this.query.queriesdata['+this.queriesidx+']';
-					//			s += 'alasql.utils.flatArray(this.query.queriesfn['+(this.queriesidx)+'](params,null,context))';
-					s +=
-						'alasql.utils.flatArray(this.queriesfn[' +
-						this.queriesidx +
-						'](params,null,' +
-						context +
-						'))';
-					s += '.indexOf(';
-					s += 'alasql.utils.getValueOf(' + leftJS() + '))>-1)';
+					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
 				} else if (Array.isArray(this.right)) {
-					if (
-						!alasql.options.cache ||
-						this.right.filter(value => value instanceof yy.ParamValue).length > 0
-					) {
-						// When not using cache, or when the array contains parameters, we need to re-create the Set
-						// leverage JS Set, which is faster for lookups than arrays
-						s =
-							'(new Set([' +
-							this.right.map(ref).join(',') +
-							']).has(alasql.utils.getValueOf(' +
-							leftJS() +
-							')))';
+					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+						// Leverage JS Set for faster lookups than arrays
+						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
-						// Use a cache to not re-create the Set on every identitical query
-						if (!alasql.sets) {
-							alasql.sets = {};
-						}
+						// Use a cache to avoid re-creating the Set on every identical query
+						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
 						const allValuesStr = allValues.join(',');
-						if (!alasql.sets[allValuesStr]) {
-							// leverage JS Set, which is faster for lookups than arrays
-							alasql.sets[allValuesStr] = new Set(allValues);
-						}
-						s =
-							'alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
+						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
+						s = `alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
-					s = '(' + rightJS() + '.indexOf(' + leftJS() + ')>-1)';
-					//console.log('expression',350,s);
-					//		} else {
-					//			throw new Error('Wrong IN operator without SELECT part');
+					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
 				}
-			}
 
-			if (this.op === 'NOT IN') {
+			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
-					s = '(';
-					s += 'alasql.utils.flatArray(this.queriesfn[' + this.queriesidx + '](params,null,p))';
-					s += '.indexOf(';
-					s += 'alasql.utils.getValueOf(' + leftJS() + '))<0)';
+					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
 				} else if (Array.isArray(this.right)) {
-					if (
-						!alasql.options.cache ||
-						this.right.filter(value => value instanceof yy.ParamValue).length > 0
-					) {
-						// When not using cache, or when the array contains parameters, we need to re-create the Set
-						// leverage JS Set, which is faster for lookups than arrays
-						s =
-							'(!(new Set([' +
-							this.right.map(ref).join(',') +
-							']).has(alasql.utils.getValueOf(' +
-							leftJS() +
-							'))))';
+					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+						// Leverage JS Set for faster lookups than arrays
+						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
-						// Use a cache to not re-create the Set on every identitical query
-						if (!alasql.sets) {
-							alasql.sets = {};
-						}
+						// Use a cache to avoid re-creating the Set on every identical query
+						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
 						const allValuesStr = allValues.join(',');
-						if (!alasql.sets[allValuesStr]) {
-							// leverage JS Set, which is faster for lookups than arrays
-							alasql.sets[allValuesStr] = new Set(allValues);
-						}
-						s =
-							'!alasql.sets["' + allValuesStr + '"].has(alasql.utils.getValueOf(' + leftJS() + '))';
+						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
+						s = `!alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
 					}
 				} else {
-					s = '(' + rightJS() + '.indexOf(';
-					s += leftJS() + ')==-1)';
-
-					//			throw new Error('Wrong NOT IN operator without SELECT part');
+					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
 				}
+
 			}
 
 			if (this.allsome === 'ALL') {
@@ -573,9 +458,8 @@
 				return '(' + declareRefs + ', ' + expr + ')';
 			}
 
-			return (
-				'(' + declareRefs + ', ' + 'y.some(function(e){return e == null}) ? void 0 : ' + expr + ')'
-			);
+			return `(${declareRefs}, y.some(e => e == null) ? void 0 : ${expr})`;
+
 		}
 	}
 
@@ -647,8 +531,6 @@
 		}
 
 		toJS(context, tableid, defcols) {
-			//	console.log("'"+doubleqq(this.value)+"'");
-			//	return "'"+doubleqq(this.value)+"'";
 			return context;
 		}
 	}
@@ -742,7 +624,7 @@
 		}
 
 		toString() {
-			const {op, right} = this;
+			const { op, right } = this;
 			const res = right.toString();
 
 			switch (op) {
