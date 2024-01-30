@@ -36,38 +36,32 @@ yy.CaseValue.prototype.findAggregator = function (query) {
 };
 
 yy.CaseValue.prototype.toJS = function (context, tableid, defcols) {
-	var s = '((function(' + context + ',params,alasql){var y,r;';
+	let s = `(((${context}, params, alasql) => {
+        let y, r;`;
+
 	if (this.expression) {
-		//			this.expression.toJS(context, tableid)
-		s += 'v=' + this.expression.toJS(context, tableid, defcols) + ';';
-		s += (this.whens || [])
-			.map(function (w) {
-				return (
-					' if(v==' +
-					w.when.toJS(context, tableid, defcols) +
-					') {r=' +
-					w.then.toJS(context, tableid, defcols) +
-					'}'
-				);
-			})
-			.join(' else ');
-		if (this.elses) s += ' else {r=' + this.elses.toJS(context, tableid, defcols) + '}';
+		// If there's an expression, evaluate it and store in `v`, then compare in `when` clauses
+		s += `let v = ${this.expression.toJS(context, tableid, defcols)};`;
+		this.whens.forEach((w, index) => {
+			const condition = `v === ${w.when.toJS(context, tableid, defcols)}`;
+			const assignment = `r = ${w.then.toJS(context, tableid, defcols)}`;
+			s += `${index === 0 ? 'if' : ' else if'} (${condition}) { ${assignment}; }`;
+		});
 	} else {
-		s += (this.whens || [])
-			.map(function (w) {
-				return (
-					' if(' +
-					w.when.toJS(context, tableid, defcols) +
-					') {r=' +
-					w.then.toJS(context, tableid, defcols) +
-					'}'
-				);
-			})
-			.join(' else ');
-		if (this.elses) s += ' else {r=' + this.elses.toJS(context, tableid, defcols) + '}';
+		// Directly evaluate `when` conditions without an initial expression
+		this.whens.forEach((w, index) => {
+			const condition = w.when.toJS(context, tableid, defcols);
+			const assignment = `r = ${w.then.toJS(context, tableid, defcols)}`;
+			s += `${index === 0 ? 'if' : ' else if'} (${condition}) { ${assignment}; }`;
+		});
 	}
-	// TODO remove bind from CASE
-	s += ';return r;}).bind(this))(' + context + ',params,alasql)';
+
+	// Handle the `else` case
+	if (this.elses) {
+		s += ` else { r = ${this.elses.toJS(context, tableid, defcols)}; }`;
+	}
+
+	s += '; return r; }))(' + context + ', params, alasql)';
 
 	return s;
 };

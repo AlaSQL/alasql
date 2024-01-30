@@ -179,10 +179,10 @@ stdlib.MIN = stdlib.LEAST = function () {
 stdlib.SUBSTRING =
 	stdlib.SUBSTR =
 	stdlib.MID =
-	function (a, b, c) {
-		if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
-		else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
-	};
+		function (a, b, c) {
+			if (arguments.length == 2) return und(a, 'y.substr(' + b + '-1)');
+			else if (arguments.length == 3) return und(a, 'y.substr(' + b + '-1,' + c + ')');
+		};
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
 	//	console.log(a,b,c);
@@ -337,7 +337,6 @@ alasql.aggr.QUART = function (v, s, stage, nth) {
 	}
 
 	return r[Math.floor(p)]; //Math.ceil -1 or Math.floor
-
 };
 
 alasql.aggr.QUART2 = function (v, s, stage) {
@@ -353,7 +352,7 @@ alasql.aggr.QUART3 = function (v, s, stage) {
 alasql.aggr.VAR = function (v, s, stage) {
 	if (stage === 1) {
 		// Initialise sum, sum of squares, and count
-		return v === null ? { sum: 0, sumSq: 0, count: 0 } : { sum: v, sumSq: v * v, count: 1 };
+		return v === null ? {sum: 0, sumSq: 0, count: 0} : {sum: v, sumSq: v * v, count: 1};
 	} else if (stage === 2) {
 		// Update sum, sum of squares, and count
 		if (v !== null) {
@@ -366,7 +365,7 @@ alasql.aggr.VAR = function (v, s, stage) {
 		// Calculate variance using the formula: variance = (sumSq - (sum^2 / count)) / (count - 1)
 		// This avoids the need to store and iterate over all values
 		if (s.count > 1) {
-			return (s.sumSq - (s.sum * s.sum / s.count)) / (s.count - 1);
+			return (s.sumSq - (s.sum * s.sum) / s.count) / (s.count - 1);
 		} else {
 			// Handling for cases with less than 2 values (variance is undefined or zero)
 			return 0;
@@ -374,7 +373,6 @@ alasql.aggr.VAR = function (v, s, stage) {
 	}
 };
 
-
 alasql.aggr.STDEV = function (v, s, stage) {
 	if (stage === 1 || stage === 2) {
 		return alasql.aggr.VAR(v, s, stage);
@@ -390,13 +388,11 @@ alasql.aggr.STDEV = function (v, s, stage) {
 		return Math.sqrt(alasql.aggr.VAR(v, s, stage));
 	}
 };
-
-
 
 alasql.aggr.VARP = function (value, accumulator, stage) {
 	if (stage === 1) {
 		// Initialise accumulator with count, sum, and sum of squares
-		return { count: 1, sum: value, sumSq: value * value };
+		return {count: 1, sum: value, sumSq: value * value};
 	} else if (stage === 2) {
 		// Update accumulator
 		accumulator.count++;
@@ -407,7 +403,7 @@ alasql.aggr.VARP = function (value, accumulator, stage) {
 		// Final stage: Calculate variance
 		if (accumulator.count > 0) {
 			const mean = accumulator.sum / accumulator.count;
-			const variance = (accumulator.sumSq / accumulator.count) - (mean * mean);
+			const variance = accumulator.sumSq / accumulator.count - mean * mean;
 			return variance;
 		} else {
 			return 0; // Return 0 variance if no values were aggregated
@@ -415,17 +411,16 @@ alasql.aggr.VARP = function (value, accumulator, stage) {
 	}
 };
 
-
 alasql.aggr.STD =
 	alasql.aggr.STDDEV =
 	alasql.aggr.STDEVP =
-	function (v, s, stage) {
-		if (stage == 1 || stage == 2) {
-			return alasql.aggr.VARP(v, s, stage);
-		} else {
-			return Math.sqrt(alasql.aggr.VARP(v, s, stage));
-		}
-	};
+		function (v, s, stage) {
+			if (stage == 1 || stage == 2) {
+				return alasql.aggr.VARP(v, s, stage);
+			} else {
+				return Math.sqrt(alasql.aggr.VARP(v, s, stage));
+			}
+		};
 
 alasql._aggrOriginal = alasql.aggr;
 alasql.aggr = {};
@@ -450,31 +445,31 @@ for (var i = 0; i < 256; i++) {
 stdfn.NEWID =
 	stdfn.UUID =
 	stdfn.GEN_RANDOM_UUID =
-	function () {
-		var d0 = (Math.random() * 0xffffffff) | 0;
-		var d1 = (Math.random() * 0xffffffff) | 0;
-		var d2 = (Math.random() * 0xffffffff) | 0;
-		var d3 = (Math.random() * 0xffffffff) | 0;
-		return (
-			lut[d0 & 0xff] +
-			lut[(d0 >> 8) & 0xff] +
-			lut[(d0 >> 16) & 0xff] +
-			lut[(d0 >> 24) & 0xff] +
-			'-' +
-			lut[d1 & 0xff] +
-			lut[(d1 >> 8) & 0xff] +
-			'-' +
-			lut[((d1 >> 16) & 0x0f) | 0x40] +
-			lut[(d1 >> 24) & 0xff] +
-			'-' +
-			lut[(d2 & 0x3f) | 0x80] +
-			lut[(d2 >> 8) & 0xff] +
-			'-' +
-			lut[(d2 >> 16) & 0xff] +
-			lut[(d2 >> 24) & 0xff] +
-			lut[d3 & 0xff] +
-			lut[(d3 >> 8) & 0xff] +
-			lut[(d3 >> 16) & 0xff] +
-			lut[(d3 >> 24) & 0xff]
-		);
-	};
+		function () {
+			var d0 = (Math.random() * 0xffffffff) | 0;
+			var d1 = (Math.random() * 0xffffffff) | 0;
+			var d2 = (Math.random() * 0xffffffff) | 0;
+			var d3 = (Math.random() * 0xffffffff) | 0;
+			return (
+				lut[d0 & 0xff] +
+				lut[(d0 >> 8) & 0xff] +
+				lut[(d0 >> 16) & 0xff] +
+				lut[(d0 >> 24) & 0xff] +
+				'-' +
+				lut[d1 & 0xff] +
+				lut[(d1 >> 8) & 0xff] +
+				'-' +
+				lut[((d1 >> 16) & 0x0f) | 0x40] +
+				lut[(d1 >> 24) & 0xff] +
+				'-' +
+				lut[(d2 & 0x3f) | 0x80] +
+				lut[(d2 >> 8) & 0xff] +
+				'-' +
+				lut[(d2 >> 16) & 0xff] +
+				lut[(d2 >> 24) & 0xff] +
+				lut[d3 & 0xff] +
+				lut[(d3 >> 8) & 0xff] +
+				lut[(d3 >> 16) & 0xff] +
+				lut[(d3 >> 24) & 0xff]
+			);
+		};

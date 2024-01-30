@@ -372,7 +372,6 @@
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
 				}
-
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
 					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
@@ -391,7 +390,6 @@
 				} else {
 					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
 				}
-
 			}
 
 			if (this.allsome === 'ALL') {
@@ -459,7 +457,6 @@
 			}
 
 			return `(${declareRefs}, y.some(e => e == null) ? void 0 : ${expr})`;
-
 		}
 	}
 
@@ -624,7 +621,7 @@
 		}
 
 		toString() {
-			const { op, right } = this;
+			const {op, right} = this;
 			const res = right.toString();
 
 			switch (op) {
