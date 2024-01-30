@@ -13,7 +13,7 @@ FS.get = function(key) {
 	if(typeof s == "undefined") return;
 	var v = undefined;
 	try {
-		v = JSON.parse(s); 
+		v = JSON.parse(s);
 	} catch(err) {
 		throw new Error('Cannot parse JSON '+s);
 	}
@@ -22,7 +22,7 @@ FS.get = function(key) {
 
 LS.set = function(key, value){
 	if(typeof value == 'undefined') localStorage.removeItem(key);
-	else localStorage.setItem(key,JSON.stringify(value)); 
+	else localStorage.setItem(key,JSON.stringify(value));
 }
 */
 
@@ -137,7 +137,7 @@ FS.showDatabases = function(like, cb) {
 			res = res.filter(function(d){
 				return d.databaseid.match(relike);
 			});
-		}		
+		}
 	};
 	if(cb) cb(res);
 	return res;

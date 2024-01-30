@@ -43,7 +43,6 @@ const JSONtoString = (alasql.utils.JSONtoString = function (obj) {
 	}
 });
 
-
 function JSONtoJS(obj, context, tableid, defcols) {
 	var s = '';
 	if (typeof obj == 'string') s = '"' + obj + '"';

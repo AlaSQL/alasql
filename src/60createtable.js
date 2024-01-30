@@ -59,7 +59,6 @@ yy.CreateTable.prototype.toString = function () {
 	return s;
 };
 
-
 // CREATE TABLE
 //yy.CreateTable.prototype.compile = returnUndefined;
 yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
@@ -82,10 +81,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	if (db.tables[tableid]) {
 		throw new Error(
 			"Can not create table '" +
-			tableid +
-			"', because it already exists in the database '" +
-			db.databaseid +
-			"'"
+				tableid +
+				"', because it already exists in the database '" +
+				db.databaseid +
+				"'"
 		);
 	}
 
@@ -106,7 +105,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 			// Process SERIAL data type like Postgress
 			if (['SERIAL', 'SMALLSERIAL', 'BIGSERIAL'].indexOf(dbtypeid) > -1) {
-				col.identity = { value: 1, step: 1 };
+				col.identity = {value: 1, step: 1};
 			}
 
 			var newcol = {
@@ -181,8 +180,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					}
 					return true;
 				};
-				table.checks.push({ fn: fkfn });
-
+				table.checks.push({fn: fkfn});
 			}
 
 			if (col.onupdate) {
