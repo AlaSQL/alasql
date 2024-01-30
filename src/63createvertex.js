@@ -36,33 +36,7 @@ yy.CreateVertex.prototype.toJS = function (context) {
 };
 
 // CREATE TABLE
-/*/*
-yy.CreateVertex.prototype.execute = function (databaseid,params,cb) {
-	var res = 0;
-	if(this.sets) {
-		// var obj = {};
-		// if(this.sets.length > 0) {
-		// 	this.sets.forEach(function(st){
-		// 		console.log(st);
-		// 	});
-		// }
 
-	} else if(this.content) {
-
-	} else if(this.select) {
-
-	} else {
-		// CREATE VERTEX without parameters
-		var db = alasql.databases[databaseid];
-		var vertex = {$id: db.counter++, $node:'vertex'};
-		db.objects[vertex.$id] = vertex;
-		res = vertex;
-	}
-
-	if(cb) res = cb(res);
-	return res;
-};
-*/
 yy.CreateVertex.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 
@@ -85,14 +59,6 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 	}
 
 	// Todo: check for content, select and default
-	/*/*
-	else if(this.content) {
-
-	} else if(this.select) {
-
-	} else {
-	}
-	*/
 
 	var statement = function (params, cb) {
 		var res;
@@ -123,27 +89,6 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 	return statement;
 };
 
-/*/*
-	console.log('yy.CreateVertex.compile');
-
-	if(this.sets) {
-		var s = 'var a={};';
-		if(this.sets.length > 0) {
-			this.sets.forEach(function(st){
-				console.log(st);
-			});
-		}
-
-	} else if(this.content) {
-
-	} else if(this.select) {
-
-	}
-
-};
-
-*/
-
 yy.CreateEdge = function (params) {
 	return Object.assign(this, params);
 };
@@ -165,13 +110,7 @@ yy.CreateEdge.prototype.toJS = function (context) {
 };
 
 // CREATE TABLE
-/*/*
-yy.CreateEdge.prototype.execute = function (databaseid,params,cb) {
-	var res = 1;
-	if(cb) res = cb(res);
-	return res;
-};
-*/
+
 yy.CreateEdge.prototype.compile = function (databaseid) {
 	var dbid = databaseid;
 	var fromfn = new Function('params,alasql', 'var y;return ' + this.from.toJS());
@@ -192,53 +131,34 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 		var setfn = new Function('x,params,alasql', 'var y;' + s);
 	}
 
-	/*
-	todo: handle content, select and default
-	else if(this.content) {
+	const statement = (params, cb) => {
+		let res = 0;
+		let db = alasql.databases[dbid];
+		let edge = {$id: db.counter++, $node: 'EDGE'};
+		let v1 = fromfn(params, alasql);
+		let v2 = tofn(params, alasql);
 
-	} else if(this.select) {
-
-	} else {
-	}
-	*/
-
-	var statement = function (params, cb) {
-		var res = 0;
-		// CREATE VERTEX without parameters
-		var db = alasql.databases[dbid];
-		var edge = {$id: db.counter++, $node: 'EDGE'};
-		var v1 = fromfn(params, alasql);
-		var v2 = tofn(params, alasql);
 		// Set link
 		edge.$in = [v1.$id];
 		edge.$out = [v2.$id];
-		// Set sides
-		if (v1.$out === undefined) {
-			v1.$out = [];
-		}
+
+		// Initialize and set sides
+		v1.$out = v1.$out || [];
 		v1.$out.push(edge.$id);
 
-		if (typeof v2.$in === undefined) {
-			v2.$in = [];
-		}
+		v2.$in = v2.$in || [];
 		v2.$in.push(edge.$id);
 
 		// Save in objects
 		db.objects[edge.$id] = edge;
 		res = edge;
-		if (namefn) {
-			namefn(edge);
-		}
 
-		if (setfn) {
-			setfn(edge, params, alasql);
-		}
+		// Optional functions
+		namefn?.(edge);
+		setfn?.(edge, params, alasql);
 
-		if (cb) {
-			res = cb(res);
-		}
-
-		return res;
+		// Callback
+		return cb ? cb(res) : res;
 	};
 	return statement;
 };
@@ -254,11 +174,6 @@ yy.CreateGraph.prototype.toString = function () {
 	return s;
 };
 
-//  yy.CreateEdge.prototype.toJS = function(context, tableid, defcols) {
-// 	var s = 'this.queriesfn['+(this.queriesidx-1)+'](this.params,null,'+context+')';
-// 	return s;
-//  };
-
 yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 	var res = [];
 	if (this.from) {
@@ -268,123 +183,77 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	//	stop;
-	this.graph.forEach(function (g) {
-		if (g.source) {
-			// GREATE EDGE
-			var e = {};
-			if (typeof g.as !== 'undefined') {
-				alasql.vars[g.as] = e;
-			}
+	this.graph.forEach(g => {
+		if (!g.source) {
+			createVertex(g);
+		} else {
+			// CREATE EDGE
+			let e = {};
+			if (g.as !== undefined) alasql.vars[g.as] = e;
+			if (g.prop !== undefined) e.name = g.prop;
+			if (g.sharp !== undefined) e.$id = g.sharp;
+			if (g.name !== undefined) e.name = g.name;
+			if (g.class !== undefined) e.$class = g.class;
 
-			if (typeof g.prop !== 'undefined') {
-				//				e[g.prop] = e;
-				//				v.$id = g.prop; // We do not create $id for edge automatically
-				e.name = g.prop;
-			}
-			if (typeof g.sharp !== 'undefined') {
-				e.$id = g.sharp;
-			}
-			if (typeof g.name !== 'undefined') {
-				e.name = g.name;
-			}
-			if (typeof g.class !== 'undefined') {
-				e.$class = g.class;
-			}
-
-			var db = alasql.databases[databaseid];
-			if (typeof e.$id === 'undefined') {
-				e.$id = db.counter++;
-			}
+			let db = alasql.databases[databaseid];
+			e.$id = e.$id !== undefined ? e.$id : db.counter++;
 			e.$node = 'EDGE';
-			if (typeof g.json !== 'undefined') {
-				extend(e, new Function('params,alasql', 'var y;return ' + g.json.toJS())(params, alasql));
+
+			if (g.json !== undefined) {
+				Object.assign(e, new Function('params, alasql', `return ${g.json.toJS()}`)(params, alasql));
 			}
 
-			var v1;
-			if (g.source.vars) {
-				var vo = alasql.vars[g.source.vars];
-				if (typeof vo === 'object') {
-					v1 = vo;
+			const resolveVertex = (sourceOrTarget, isSource) => {
+				let vertex, vo;
+				if (sourceOrTarget.vars) {
+					vo = alasql.vars[sourceOrTarget.vars];
+					vertex = typeof vo === 'object' ? vo : db.objects[vo];
 				} else {
-					v1 = db.objects[vo];
-				}
-			} else {
-				var av1 = g.source.sharp;
-				if (typeof av1 === 'undefined') {
-					av1 = g.source.prop;
-				}
-				v1 = alasql.databases[databaseid].objects[av1];
-				if (
-					typeof v1 === 'undefined' &&
-					alasql.options.autovertex &&
-					(typeof g.source.prop !== 'undefined' || typeof g.source.name !== 'undefined')
-				) {
-					v1 = findVertex(g.source.prop || g.source.name);
-					if (typeof v1 === 'undefined') {
-						v1 = createVertex(g.source);
+					let av = sourceOrTarget.sharp || sourceOrTarget.prop;
+					vertex = db.objects[av];
+					if (
+						vertex === undefined &&
+						alasql.options.autovertex &&
+						(sourceOrTarget.prop || sourceOrTarget.name)
+					) {
+						vertex =
+							findVertex(sourceOrTarget.prop || sourceOrTarget.name) ||
+							createVertex(sourceOrTarget);
 					}
 				}
-			}
+				if (isSource && vertex && typeof vertex.$out === 'undefined') vertex.$out = [];
+				if (!isSource && vertex && typeof vertex.$in === 'undefined') vertex.$in = [];
+				return vertex;
+			};
 
-			var v2;
-			if (g.source.vars) {
-				var vo = alasql.vars[g.target.vars];
-				if (typeof vo === 'object') {
-					v2 = vo;
-				} else {
-					v2 = db.objects[vo];
-				}
-			} else {
-				var av2 = g.target.sharp;
-				if (typeof av2 === 'undefined') {
-					av2 = g.target.prop;
-				}
-				v2 = alasql.databases[databaseid].objects[av2];
-				if (
-					typeof v2 === 'undefined' &&
-					alasql.options.autovertex &&
-					(typeof g.target.prop !== 'undefined' || typeof g.target.name !== 'undefined')
-				) {
-					v2 = findVertex(g.target.prop || g.target.name);
-					if (typeof v2 === 'undefined') {
-						v2 = createVertex(g.target);
-					}
-				}
-			}
+			let v1 = resolveVertex(g.source, true);
+			let v2 = resolveVertex(g.target, false);
 
-			//console.log(v1,v2);
-			// Set link
+			// Set link and sides
 			e.$in = [v1.$id];
 			e.$out = [v2.$id];
-			// Set sides
-			if (typeof v1.$out === 'undefined') {
-				v1.$out = [];
-			}
 			v1.$out.push(e.$id);
-			if (typeof v2.$in === 'undefined') {
-				v2.$in = [];
-			}
 			v2.$in.push(e.$id);
 
 			db.objects[e.$id] = e;
-			if (typeof e.$class !== 'undefined') {
-				if (typeof alasql.databases[databaseid].tables[e.$class] === 'undefined') {
-					throw new Error('No such class. Pleace use CREATE CLASS');
+
+			if (e.$class !== undefined) {
+				let classTable = alasql.databases[databaseid].tables[e.$class];
+				if (classTable === undefined) {
+					throw new Error('No such class. Please use CREATE CLASS');
 				} else {
-					// TODO - add insert()
-					alasql.databases[databaseid].tables[e.$class].data.push(e);
+					classTable.data.push(e);
 				}
 			}
 
 			res.push(e.$id);
-		} else {
-			createVertex(g);
 		}
 	});
 
 	if (cb) {
 		res = cb(res);
 	}
+
 	return res;
 
 	// Find vertex by name
@@ -443,62 +312,50 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 		return v;
 	}
 };
-
 yy.CreateGraph.prototype.compile1 = function (databaseid) {
-	var dbid = databaseid;
-	var fromfn = new Function('params,alasql', 'var y;return ' + this.from.toJS());
-	var tofn = new Function('params,alasql', 'var y;return ' + this.to.toJS());
+	const dbid = databaseid;
+	const fromfn = new Function('params, alasql', `return ${this.from.toJS()}`);
+	const tofn = new Function('params, alasql', `return ${this.to.toJS()}`);
+
+	let namefn, setfn;
 
 	// CREATE VERTEX "Name"
-	if (typeof this.name !== 'undefined') {
-		var s = 'x.name=' + this.name.toJS();
-		var namefn = new Function('x', s);
+	if (this.name !== undefined) {
+		const s = `x.name = ${this.name.toJS()}`;
+		namefn = new Function('x', s);
 	}
 
 	if (this.sets && this.sets.length > 0) {
-		var s = this.sets
-			.map(function (st) {
-				return `x[${JSON.stringify(st.column.columnid)}]=` + st.expression.toJS('x', '');
-			})
+		const s = this.sets
+			.map(st => `x[${JSON.stringify(st.column.columnid)}] = ${st.expression.toJS('x', '')}`)
 			.join(';');
-		var setfn = new Function('x,params,alasql', 'var y;' + s);
+		setfn = new Function('x, params, alasql', `var y; ${s}`);
 	}
 
 	// Todo: handle content, select and default
 
-	/*/*
-	else if(this.content) {
+	const statement = (params, cb) => {
+		let res = 0;
+		const db = alasql.databases[dbid];
+		const edge = {$id: db.counter++, $node: 'EDGE'};
+		const v1 = fromfn(params, alasql);
+		const v2 = tofn(params, alasql);
 
-	} else if(this.select) {
-
-	} else {
-
-	}
-	*/
-
-	var statement = function (params, cb) {
-		var res = 0;
-		// CREATE VERTEX without parameters
-		var db = alasql.databases[dbid];
-		var edge = {$id: db.counter++, $node: 'EDGE'};
-		var v1 = fromfn(params, alasql);
-		var v2 = tofn(params, alasql);
 		// Set link
 		edge.$in = [v1.$id];
 		edge.$out = [v2.$id];
+
 		// Set sides
-		if (typeof v1.$out === 'undefined') {
-			v1.$out = [];
-		}
+		v1.$out = v1.$out || [];
 		v1.$out.push(edge.$id);
 
-		if (typeof v2.$in === 'undefined') {
-			v2.$in = [];
-		}
+		v2.$in = v2.$in || [];
 		v2.$in.push(edge.$id);
+
 		// Save in objects
 		db.objects[edge.$id] = edge;
 		res = edge;
+
 		if (namefn) {
 			namefn(edge);
 		}

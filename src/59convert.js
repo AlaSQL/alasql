@@ -31,7 +31,6 @@ yy.Convert.prototype.toJS = function (context, tableid, defcols) {
     })`;
 };
 
-
 function structuredDate(unFormattedDate) {
 	var month = unFormattedDate.getMonth() + 1;
 	var year = unFormattedDate.getYear();
