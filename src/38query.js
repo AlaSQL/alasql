@@ -1,6 +1,5 @@
 // Main query procedure
 function queryfn(query, oldscope, cb, A, B) {
-
 	query.sourceslen = query.sources.length;
 	let slen = query.sourceslen;
 	query.query = query; // TODO Remove to prevent memory leaks
@@ -43,7 +42,6 @@ function queryfn(query, oldscope, cb, A, B) {
 		//		console.log(9,query.queriesdata.length);
 		//		console.log(query.queriesdata[0]);
 	}
-
 
 	query.scope = oldscope ? cloneDeep(oldscope) : {};
 
@@ -159,8 +157,9 @@ function queryfn3(query) {
 			var gfns = '';
 			query.aggrKeys.forEach(function (col) {
 				gfns += `
-				g[${JSON.stringify(col.nick)}] = alasql.aggr[${JSON.stringify(col.funcid)
-					}](undefined,g[${JSON.stringify(col.nick)}],3); `;
+				g[${JSON.stringify(col.nick)}] = alasql.aggr[${JSON.stringify(
+					col.funcid
+				)}](undefined,g[${JSON.stringify(col.nick)}],3); `;
 			});
 			var gfn = new Function('g,params,alasql', 'var y;' + gfns);
 		}
@@ -294,7 +293,6 @@ function queryfn3(query) {
 	// Reduce to limit and offset
 	doLimit(query);
 
-
 	// TODO: Check what artefacts rest from Angular.js
 	if (typeof angular != 'undefined') {
 		query.removeKeys.push('$$hashKey');
@@ -375,7 +373,6 @@ function queryfn3(query) {
 	res = query.data;
 	if (query.cb) res = query.cb(query.data, query.A, query.B);
 	return res;
-
 }
 
 // Limiting
@@ -436,7 +433,7 @@ var preIndex = function (query) {
 				// Check if index already exists
 				let ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
-					hash(source.onrightfns + '`' + source.srcwherefns)
+						hash(source.onrightfns + '`' + source.srcwherefns)
 					];
 				if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {
 					source.ix = ixx;
@@ -489,7 +486,7 @@ var preIndex = function (query) {
 				// Check if index exists
 				ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
-					hash(source.wxleftfns + '`')
+						hash(source.wxleftfns + '`')
 					];
 			}
 			if (!alasql.databases[source.databaseid].tables[source.tableid].dirty && ixx) {

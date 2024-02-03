@@ -462,7 +462,7 @@ function modify(query, res) {
 			}
 
 			columns = Object.keys(allcol).map(function (columnid) {
-				return { columnid: columnid };
+				return {columnid: columnid};
 			});
 		} else {
 			// Cannot recognize columns
@@ -540,7 +540,7 @@ function modify(query, res) {
 		res = ar;
 		//		res = arrayOfArrays(res);
 	} else if (modifier === 'RECORDSET') {
-		res = new alasql.Recordset({ columns: columns, data: res });
+		res = new alasql.Recordset({columns: columns, data: res});
 		//		res = arrayOfArrays(res);
 	} else if (modifier === 'TEXTSTRING') {
 		var key;

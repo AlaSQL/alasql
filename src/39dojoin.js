@@ -8,7 +8,6 @@ function doJoin(query, scope, h) {
 		// Todo: check if this runs once too many
 		// Then apply where and select
 		if (query.wherefn(scope, query.params, alasql)) {
-
 			// If there is a GROUP BY then pipe to grouping function
 			if (query.groupfn) {
 				query.groupfn(scope, query.params, alasql);
@@ -35,13 +34,11 @@ function doJoin(query, scope, h) {
 			},
 			scope
 		);
-
 	} else {
 		// STEP 1
 
 		let source = query.sources[h];
 		let nextsource = query.sources[h + 1];
-
 
 		let tableid = source.alias || source.tableid;
 		let pass = false; // For LEFT JOIN
@@ -58,7 +55,6 @@ function doJoin(query, scope, h) {
 			) {
 				data = source.ix[source.onleftfn(scope, query.params, alasql)] || [];
 				opt = true;
-
 			}
 		}
 
@@ -112,8 +108,6 @@ function doJoin(query, scope, h) {
 			doJoin(query, scope, h + 1);
 		}
 
-
-
 		// STEP 2
 
 		if (h == 0) {
@@ -159,8 +153,6 @@ function doJoin(query, scope, h) {
 		}
 
 		scope[tableid] = undefined;
-
-
 	}
 }
 
