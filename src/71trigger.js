@@ -18,45 +18,36 @@ yy.CreateTrigger.prototype.toString = function () {
 	return s;
 };
 
+const RE_trigger = /^(before|after|insteadof)(insert|delete|update)$/;
 yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
-	var res = 1; // No tables removed
-	var triggerid = this.trigger;
+	let res = 1; // No tables removed
+	const triggerid = this.trigger;
 	databaseid = this.table.databaseid || databaseid;
-	var db = alasql.databases[databaseid];
-	var tableid = this.table.tableid;
+	const db = alasql.databases[databaseid];
+	const { tableid } = this.table;
 
-	var trigger = {
+	const trigger = {
 		action: this.action,
 		when: this.when,
 		statement: this.statement,
 		funcid: this.funcid,
-		tableid: this.table.tableid,
+		tableid,
 	};
 
 	db.triggers[triggerid] = trigger;
-	if (trigger.action == 'INSERT' && trigger.when == 'BEFORE') {
-		db.tables[tableid].beforeinsert[triggerid] = trigger;
-	} else if (trigger.action == 'INSERT' && trigger.when == 'AFTER') {
-		db.tables[tableid].afterinsert[triggerid] = trigger;
-	} else if (trigger.action == 'INSERT' && trigger.when == 'INSTEADOF') {
-		db.tables[tableid].insteadofinsert[triggerid] = trigger;
-	} else if (trigger.action == 'DELETE' && trigger.when == 'BEFORE') {
-		db.tables[tableid].beforedelete[triggerid] = trigger;
-	} else if (trigger.action == 'DELETE' && trigger.when == 'AFTER') {
-		db.tables[tableid].afterdelete[triggerid] = trigger;
-	} else if (trigger.action == 'DELETE' && trigger.when == 'INSTEADOF') {
-		db.tables[tableid].insteadofdelete[triggerid] = trigger;
-	} else if (trigger.action == 'UPDATE' && trigger.when == 'BEFORE') {
-		db.tables[tableid].beforeupdate[triggerid] = trigger;
-	} else if (trigger.action == 'UPDATE' && trigger.when == 'AFTER') {
-		db.tables[tableid].afterupdate[triggerid] = trigger;
-	} else if (trigger.action == 'UPDATE' && trigger.when == 'INSTEADOF') {
-		db.tables[tableid].insteadofupdate[triggerid] = trigger;
+	const actionKey = (`${this.when}${this.action}`).toLowerCase();
+
+	if (actionKey.match(RE_trigger)) {
+		// Ensure the existence of db.tables[tableid] and db.tables[tableid][actionKey]
+		db.tables[tableid] = db.tables[tableid] || {};
+		db.tables[tableid][actionKey] = db.tables[tableid][actionKey] || {};
+		db.tables[tableid][actionKey][triggerid] = trigger;
 	}
 
 	if (cb) res = cb(res);
 	return res;
 };
+
 
 yy.DropTrigger = function (params) {
 	return Object.assign(this, params);
