@@ -18,7 +18,8 @@ yy.CreateTrigger.prototype.toString = function () {
 	return s;
 };
 
-const RE_trigger = /^(before|after|insteadof)(insert|delete|update)$/;
+const validTriggers = ['beforeinsert', 'afterinsert', 'insteadofinsert', 'beforedelete', 'afterdelete', 'insteadofdelete', 'beforeupdate', 'afterupdate', 'insteadofupdate'];
+
 yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 	let res = 1; // No tables removed
 	const triggerid = this.trigger;
@@ -37,7 +38,7 @@ yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 	db.triggers[triggerid] = trigger;
 	const actionKey = (`${this.when}${this.action}`).toLowerCase();
 
-	if (actionKey.match(RE_trigger)) {
+	if (validTriggers.includes(actionKey)) {
 		// Ensure the existence of db.tables[tableid] and db.tables[tableid][actionKey]
 		db.tables[tableid] = db.tables[tableid] || {};
 		db.tables[tableid][actionKey] = db.tables[tableid][actionKey] || {};
@@ -67,28 +68,26 @@ yy.DropTrigger.prototype.toString = function () {
 	DROP TRIGGER one;
 */
 yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
-	var res = 0; // No tables removed
-	var db = alasql.databases[databaseid];
-	var triggerid = this.trigger;
+	let res = 0; // No tables removed
+	const db = alasql.databases[databaseid];
+	const triggerid = this.trigger;
 
-	// get the trigger
-	var trigger = db.triggers[triggerid];
+	// Get the trigger
+	const trigger = db.triggers[triggerid];
 
-	//  if the trigger exists
+	// If the trigger exists
 	if (trigger) {
-		var tableid = db.triggers[triggerid].tableid;
+		const { tableid } = trigger;
 
 		if (tableid) {
 			res = 1;
-			delete db.tables[tableid].beforeinsert[triggerid];
-			delete db.tables[tableid].afterinsert[triggerid];
-			delete db.tables[tableid].insteadofinsert[triggerid];
-			delete db.tables[tableid].beforedelete[triggerid];
-			delete db.tables[tableid].afterdelete[triggerid];
-			delete db.tables[tableid].insteadofdelete[triggerid];
-			delete db.tables[tableid].beforeupdate[triggerid];
-			delete db.tables[tableid].afterupdate[triggerid];
-			delete db.tables[tableid].insteadofupdate[triggerid];
+
+			// Delete the trigger from all trigger points
+			validTriggers.forEach(point => {
+				delete db.tables[tableid][point][triggerid];
+			});
+
+			// Finally, delete the trigger itself
 			delete db.triggers[triggerid];
 		} else {
 			throw new Error('Trigger Table not found');
@@ -96,6 +95,7 @@ yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		throw new Error('Trigger not found');
 	}
+
 	if (cb) res = cb(res);
 	return res;
 };
