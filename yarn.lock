@@ -1381,10 +1381,10 @@ gopd@^1.0.1:
   dependencies:
     get-intrinsic "^1.1.3"
 
-got@14.0.0:
-  version "14.0.0"
-  resolved "https://registry.yarnpkg.com/got/-/got-14.0.0.tgz#c95023942e4149cea46701adc7ed591eb9104d37"
-  integrity sha512-X01vTgaX9SwaMq5DfImvS+3GMQFFs5HtrrlS9CuzUSzkxAf/tWGEyynuI+Qy7BjciMczZGjyVSmawYbP4eYhYA==
+got@14.2.0:
+  version "14.2.0"
+  resolved "https://registry.yarnpkg.com/got/-/got-14.2.0.tgz#59b453e379e81a6e9e6aa3b39ab3cbde47b1b150"
+  integrity sha512-dBq2KkHcQl3AwPoIWsLsQScCPpUgRulz1qZVthjPYKYOPmYfBnekR3vxecjZbm91Vc3JUGnV9mqFX7B+Fe2quw==
   dependencies:
     "@sindresorhus/is" "^6.1.0"
     "@szmarczak/http-timer" "^5.0.1"
