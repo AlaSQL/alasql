@@ -41,7 +41,6 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 					db.tables[tbl[1]] = {};
 					var columns = (db.tables[tbl[1]].columns = []);
 					var ast = alasql.parse(tbl[4]);
-					//		   		console.log(ast);
 					var coldefs = ast.statements[0].columns;
 					if (coldefs && coldefs.length > 0) {
 						coldefs.forEach(function (cd) {
@@ -49,7 +48,6 @@ SQLITE.attachDatabase = function (sqldbid, dbid, args, params, cb) {
 						});
 					}
 				});
-				//		   	console.log(35,db.tables);
 
 				cb(1);
 			},
