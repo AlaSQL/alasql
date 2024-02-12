@@ -104,11 +104,10 @@ function decartes(gv, query) {
 				res = res.map(function (r) {
 					return r.concat(
 						escapeq(gv[t].toString()) +
-							'\t' +
-							gv[t].toJS('p', query.sources[0].alias, query.defcols)
+						'\t' +
+						gv[t].toJS('p', query.sources[0].alias, query.defcols)
 					);
 				});
-				// to be defined
 			} else if (gv[t] instanceof yy.GroupExpression) {
 				if (gv[t].type == 'ROLLUP') res = cartes(res, rollup(gv[t].group, query));
 				else if (gv[t].type == 'CUBE') res = cartes(res, cube(gv[t].group, query));
@@ -117,12 +116,13 @@ function decartes(gv, query) {
 			} else if (gv[t] === '') {
 				res = [['1\t1']];
 			} else {
-				return res.map(function (r) {
+
+				res = res.map(function (r) {
 					query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
 					return r.concat(
 						escapeq(gv[t].toString()) +
-							'\t' +
-							gv[t].toJS('p', query.sources[0].alias, query.defcols)
+						'\t' +
+						gv[t].toJS('p', query.sources[0].alias, query.defcols)
 					);
 				});
 			}
