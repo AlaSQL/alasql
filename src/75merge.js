@@ -42,7 +42,6 @@ yy.Merge.prototype.toString = function () {
 	return s;
 };
 
-
 yy.Merge.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 

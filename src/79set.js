@@ -18,75 +18,65 @@ yy.SetVariable.prototype.toString = function () {
 };
 
 yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
-	//	console.log(this);
-	if (typeof this.value != 'undefined') {
-		var val = this.value;
-		if (val == 'ON') val = true;
-		else if (val == 'OFF') val = false;
-		//		if(this.method == '@') {
+	if (typeof this.value !== 'undefined') {
+		let val = this.value;
+		if (val === 'ON') val = true;
+		else if (val === 'OFF') val = false;
 		alasql.options[this.variable] = val;
-		//		} else {
-		//			params[this.variable] = val;
-		//		}
 	} else if (this.expression) {
 		if (this.exists) {
-			this.existsfn = this.exists.map(function (ex) {
-				var nq = ex.compile(databaseid);
+			this.existsfn = this.exists.map(ex => {
+				let nq = ex.compile(databaseid);
 				if (nq.query && !nq.query.modifier) nq.query.modifier = 'RECORDSET';
 				return nq;
-				//				return ex.compile(databaseid);
-				// TODO Include modifier
 			});
 		}
 		if (this.queries) {
-			this.queriesfn = this.queries.map(function (q) {
-				var nq = q.compile(databaseid);
+			this.queriesfn = this.queries.map(q => {
+				let nq = q.compile(databaseid);
 				if (nq.query && !nq.query.modifier) nq.query.modifier = 'RECORDSET';
 				return nq;
-				// TODO Include modifier
 			});
 		}
 
-		// console.log(547654756, this.expression.toJS('', '', null));
-		var res = new Function(
-			'params,alasql',
+		let res = new Function(
+			'params, alasql',
 			'return ' + this.expression.toJS('({})', '', null)
 		).bind(this)(params, alasql);
+
 		if (alasql.declares[this.variable]) {
 			res = alasql.stdfn.CONVERT(res, alasql.declares[this.variable]);
 		}
+
 		if (this.props && this.props.length > 0) {
-			if (this.method == '@') {
-				var fs = "alasql.vars['" + this.variable + "']";
+			let fs;
+			if (this.method === '@') {
+				fs = `alasql.vars['${this.variable}']`;
 			} else {
-				var fs = "params['" + this.variable + "']";
+				fs = `params['${this.variable}']`;
 			}
-			fs += this.props
-				.map(function (prop) {
-					if (typeof prop == 'string') {
-						return "['" + prop + "']";
-					} else if (typeof prop == 'number') {
-						return '[' + prop + ']';
-					} else {
-						// console.log('prop:',prop, prop.toJS());
-						return '[' + prop.toJS() + ']';
-						//				} else {
-						//					console.log(prop, typeof );
-						//					throw new Error('Wrong SET property');
-					}
-				})
-				.join();
-			// console.log(65764765, fs);
-			new Function('value,params,alasql', 'var y;' + fs + '=value')(res, params, alasql);
+			this.props.forEach(prop => {
+				if (typeof prop === 'string') {
+					fs += `['${prop}']`;
+				} else if (typeof prop === 'number') {
+					fs += `[${prop}]`;
+				} else {
+					// Assuming prop.toJS() is a method that converts prop to a JavaScript expression.
+					fs += `[${prop.toJS()}]`;
+				}
+			});
+
+			new Function('value, params, alasql', `${fs} = value`)(res, params, alasql);
 		} else {
-			if (this.method == '@') {
+			if (this.method === '@') {
 				alasql.vars[this.variable] = res;
 			} else {
 				params[this.variable] = res;
 			}
 		}
 	}
-	var res = 1;
-	if (cb) res = cb(res);
-	return res;
+
+	let result = 1;
+	if (cb) result = cb(result);
+	return result;
 };

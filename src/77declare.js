@@ -10,24 +10,22 @@ yy.Declare = function (params) {
 	return Object.assign(this, params);
 };
 yy.Declare.prototype.toString = function () {
-	var s = 'DECLARE ';
+	let s = 'DECLARE ';
 	if (this.declares && this.declares.length > 0) {
-		s = this.declares
-			.map(function (declare) {
-				var s = '';
-				s += '@' + declare.variable + ' ';
-				s += declare.dbtypeid;
-				if (this.dbsize) {
-					s += '(' + this.dbsize;
-					if (this.dbprecision) {
-						s += ',' + this.dbprecision;
+		s += this.declares
+			.map(declare => {
+				let declareStr = `@${declare.variable} ${declare.dbtypeid}`;
+				if (declare.dbsize) {
+					declareStr += `(${declare.dbsize}`;
+					if (declare.dbprecision) {
+						declareStr += `,${declare.dbprecision}`;
 					}
-					s += ')';
+					declareStr += ')';
 				}
 				if (declare.expression) {
-					s += ' = ' + declare.expression.toString();
+					declareStr += ` = ${declare.expression.toString()}`;
 				}
-				return s;
+				return declareStr;
 			})
 			.join(',');
 	}
