@@ -168,7 +168,6 @@ yy.Select = class Select {
 		query.explain = this.explain; // Explain
 		query.explaination = [];
 		query.explid = 1;
-		//console.log(this.modifier);
 		query.modifier = this.modifier;
 
 		query.database = db;
@@ -255,40 +254,22 @@ yy.Select = class Select {
 		query.corresponding = this.corresponding; // If CORRESPONDING flag exists
 		if (this.union) {
 			query.unionfn = this.union.compile(databaseid);
-			if (this.union.order) {
-				query.orderfn = this.union.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
-			}
+			query.orderfn = this.union.order ? this.union.compileOrder(query, params) : null;
 		} else if (this.unionall) {
 			query.unionallfn = this.unionall.compile(databaseid);
-			if (this.unionall.order) {
-				query.orderfn = this.unionall.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
-			}
+			query.orderfn = this.unionall.order ? this.unionall.compileOrder(query, params) : null;
 		} else if (this.except) {
 			query.exceptfn = this.except.compile(databaseid);
-			if (this.except.order) {
-				query.orderfn = this.except.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
-			}
+			query.orderfn = this.except.order ? this.except.compileOrder(query, params) : null;
 		} else if (this.intersect) {
 			query.intersectfn = this.intersect.compile(databaseid);
-			if (this.intersect.order) {
-				query.intersectfn = this.intersect.compileOrder(query, params);
-			} else {
-				query.orderfn = null;
-			}
+			query.orderfn = this.intersect.order ? this.intersect.compileOrder(query, params) : null;
 		}
 
 		// SELECT INTO
 		if (this.into) {
 			if (this.into instanceof yy.Table) {
-				//
 				// Save into the table in database
-				//
 				if (
 					alasql.options.autocommit &&
 					alasql.databases[this.into.databaseid || databaseid].engineid
@@ -339,7 +320,6 @@ yy.Select = class Select {
 					qs += 'undefined, undefined,';
 				}
 				query.intoallfns = qs + 'this.data,columns,cb)';
-				//console.log('999');
 			} else if (this.into instanceof yy.ParamValue) {
 				//
 				// Save data into parameters array
@@ -350,11 +330,9 @@ yy.Select = class Select {
 
 			if (query.intofns) {
 				// Create intofn function
-				// console.log(234234, query.intofns);
 				query.intofn = new Function('r,i,params,alasql', 'var y;' + query.intofns);
 			} else if (query.intoallfns) {
 				// Create intoallfn function
-				// console.log(23423234, query.intoallfns);
 				query.intoallfn = new Function('columns,cb,params,alasql', 'var y;' + query.intoallfns);
 			}
 		}
@@ -381,17 +359,11 @@ yy.Select = class Select {
 				if (cb) {
 					cb(res2);
 				}
-				//console.log(8888,res2);
 				return res2;
 			});
-			//console.log(9999,res1);
-			//		if(typeof res1 != 'undefined') res1 =  modify(query,res1);
 			return res1;
 		};
 
-		//	statement.dbversion = ;
-		//	console.log(statement.query);
-		//console.log(202,statement);
 		statement.query = query;
 		return statement;
 	}
@@ -405,8 +377,6 @@ yy.Select = class Select {
 		if (!this.exists) return;
 		query.existsfn = this.exists.map(function (ex) {
 			var nq = ex.compile(query.database.databaseid);
-			//		console.log(nq);
-			//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 			nq.query.modifier = 'RECORDSET';
 			return nq;
 		});
@@ -416,17 +386,10 @@ yy.Select = class Select {
 		if (!this.queries) return;
 		query.queriesfn = this.queries.map(function (q) {
 			var nq = q.compile(query.database.databaseid);
-			//		console.log(nq);
-			//	if(!nq.query) nq.query = {};
 			nq.query.modifier = 'RECORDSET';
-			//		 if(!nq.query.modifier) nq.query.modifier = 'RECORDSET';
 			return nq;
 		});
 	}
-
-	// exec(databaseid) {
-	// 	throw new Error('Select statement should be precompiled');
-	// }
 };
 
 /**
@@ -437,7 +400,6 @@ yy.Select = class Select {
  */
 function modify(query, res) {
 	// jshint ignore:line
-	//	console.log(arguments);
 
 	/* If source is a primitive value then return it */
 	if (
@@ -470,91 +432,52 @@ function modify(query, res) {
 		}
 	}
 
-	//	console.log(columns);
+	switch (modifier) {
+		case 'VALUE':
+			if (res.length === 0) return undefined;
+			const keyValue = columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			return res[0][keyValue];
 
-	if (modifier === 'VALUE') {
-		//		console.log(222,res);
-		if (res.length > 0) {
-			var key;
-			if (columns && columns.length > 0) {
-				key = columns[0].columnid;
-			} else {
-				key = Object.keys(res[0])[0];
-			}
-			res = res[0][key];
-		} else {
-			res = undefined;
-		}
-	} else if (modifier === 'ROW') {
-		if (res.length > 0) {
-			var key;
-			var a = [];
-			for (var key in res[0]) {
-				a.push(res[0][key]);
-			}
-			res = a;
-		} else {
-			res = undefined;
-		}
-	} else if (modifier === 'COLUMN') {
-		var ar = [];
-		if (res.length > 0) {
-			var key;
+		case 'ROW':
+			if (res.length === 0) return undefined;
+			return Object.values(res[0]);
+
+		case 'COLUMN':
+			if (res.length === 0) return [];
+
+			let key;
 			if (columns && columns.length > 0) {
 				key = columns[0].columnid;
 			} else {
 				key = Object.keys(res[0])[0];
 			}
 
+			let ar = [];
 			for (var i = 0, ilen = res.length; i < ilen; i++) {
 				ar.push(res[i][key]);
 			}
-		}
-		res = ar;
-	} else if (modifier === 'MATRIX') {
-		// Returns square matrix of rows
-		var ar = [];
-		for (var i = 0; i < res.length; i++) {
-			var a = [];
-			var r = res[i];
-			for (var j = 0; j < columns.length; j++) {
-				a.push(r[columns[j].columnid]);
-			}
-			ar.push(a);
-		}
-		res = ar;
-	} else if (modifier === 'INDEX') {
-		var ar = {};
-		var key, val;
-		if (columns && columns.length > 0) {
-			key = columns[0].columnid;
-			val = columns[1].columnid;
-		} else {
-			var okeys = Object.keys(res[0]);
-			key = okeys[0];
-			val = okeys[1];
-		}
-		for (var i = 0, ilen = res.length; i < ilen; i++) {
-			ar[res[i][key]] = res[i][val];
-		}
-		res = ar;
-		//		res = arrayOfArrays(res);
-	} else if (modifier === 'RECORDSET') {
-		res = new alasql.Recordset({columns: columns, data: res});
-		//		res = arrayOfArrays(res);
-	} else if (modifier === 'TEXTSTRING') {
-		var key;
-		if (columns && columns.length > 0) {
-			key = columns[0].columnid;
-		} else {
-			key = Object.keys(res[0])[0];
-		}
 
-		for (var i = 0, ilen = res.length; i < ilen; i++) {
-			res[i] = res[i][key];
-		}
-		res = res.join('\n');
-		//		res = arrayOfArrays(res);
+			return ar;
+
+		case 'MATRIX':
+			if (res.length === 0) return undefined;
+			return res.map(row => columns.map(col => row[col.columnid]));
+
+		case 'INDEX':
+			if (res.length === 0) return undefined;
+			const keyIndex = columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			const valIndex = columns && columns.length > 1 ? columns[1].columnid : Object.keys(res[0])[1];
+			return res.reduce((acc, row) => ({...acc, [row[keyIndex]]: row[valIndex]}), {});
+
+		case 'RECORDSET':
+			// Assuming alasql.Recordset is available in the scope
+			return new alasql.Recordset({columns: columns, data: res});
+
+		case 'TEXTSTRING':
+			if (res.length === 0) return undefined;
+			const keyTextString =
+				columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			return res.map(row => row[keyTextString]).join('\n');
 	}
 	return res;
 }

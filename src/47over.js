@@ -12,13 +12,13 @@ yy.Over = class Over {
 	}
 
 	toString() {
-		var s = 'OVER (';
+		let s = 'OVER (';
 		if (this.partition) {
-			s += 'PARTITION BY ' + this.partition.toString();
+			s += `PARTITION BY ${this.partition.toString()}`;
 			if (this.order) s += ' ';
 		}
 		if (this.order) {
-			s += 'ORDER BY ' + this.order.toString();
+			s += `ORDER BY ${this.order.toString()}`;
 		}
 		s += ')';
 		return s;
