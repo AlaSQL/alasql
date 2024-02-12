@@ -15,32 +15,10 @@ function queryfn(query, oldscope, cb, A, B) {
 
 		query.queriesdata = [];
 
-		//		console.log(8);
 		query.queriesfn.forEach(function (q, idx) {
-			//			if(query.explain) ms = Date.now();
-			//console.log(18,idx);
-			//			var res = flatArray(q(query.params,null,queryfn2,(-idx-1),query));
-
-			//			var res = flatArray(queryfn(q.query,null,queryfn2,(-idx-1),query));
-			//			console.log(A,B);
-			// console.log(q);
 			q.query.params = query.params;
-			//			query.queriesdata[idx] =
-
-			//	if(false) {
-			//			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);
-			//	} else {
 			queryfn2([], -idx - 1, query);
-			//	}
-
-			//			console.log(27,q);
-
-			//			query.explaination.push({explid: query.explid++, description:'Query '+idx,ms:Date.now()-ms});
-			//			query.queriesdata[idx] = res;
-			//			return res;
 		});
-		//		console.log(9,query.queriesdata.length);
-		//		console.log(query.queriesdata[0]);
 	}
 
 	query.scope = oldscope ? cloneDeep(oldscope) : {};
@@ -49,11 +27,8 @@ function queryfn(query, oldscope, cb, A, B) {
 
 	let result;
 	query.sources.forEach(function (source, idx) {
-		//		source.data = query.database.tables[source.tableid].data;
-		//		console.log(666,idx);
 		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx, alasql);
-		//		console.log(333,rs);
 		if (typeof rs !== 'undefined') {
 			// TODO - this is a hack: check if result is array - check all cases and make it more logical
 			if ((query.intofn || query.intoallfn) && Array.isArray(rs)) {
@@ -81,31 +56,20 @@ function queryfn(query, oldscope, cb, A, B) {
 	//	console.log(82,aaa,slen,query.sourceslen, query.sources.length);
 	return result;
 }
-
 function queryfn2(data, idx, query) {
-	//console.log(56,arguments);
-	//		console.log(78,data, idx,query);
-	//console.trace();
-
 	if (idx >= 0) {
-		var source = query.sources[idx];
+		let source = query.sources[idx];
 		source.data = data;
-		if (typeof source.data == 'function') {
+		if (typeof source.data === 'function') {
 			source.getfn = source.data;
 			source.dontcache = source.getfn.dontcache;
-
-			//			var prevsource = query.sources[h-1];
-			if (source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
+			if (['OUTER', 'RIGHT', 'ANTI'].includes(source.joinmode)) {
 				source.dontcache = false;
 			}
 			source.data = {};
 		}
 	} else {
-		// subqueries
-		//		console.log("queriesdata",data, flatArray(data));
 		query.queriesdata[-idx - 1] = flatArray(data);
-		//		console.log(98,query.queriesdata);
-		//		console.log(79,query.queriesdata);
 	}
 
 	query.sourceslen--;

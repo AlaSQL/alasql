@@ -88,12 +88,10 @@ var cartes = function (a1, a2) {
  Prepare groups function
  */
 function decartes(gv, query) {
-	//	console.log(gv);
 	if (Array.isArray(gv)) {
-		var res = [[]];
+		let res = [[]];
 		for (var t = 0; t < gv.length; t++) {
 			if (gv[t] instanceof yy.Column) {
-				//	console.log('+++',gv[t].columnid,gv[t]);
 				gv[t].nick = gv[t].nick ? escapeq(gv[t].nick) : escapeq(gv[t].columnid);
 				query.groupColumns[gv[t].nick] = gv[t].nick;
 				res = res.map(function (r) {
@@ -101,7 +99,6 @@ function decartes(gv, query) {
 						gv[t].nick + '\t' + gv[t].toJS('p', query.sources[0].alias, query.defcols)
 					);
 				});
-				//		 		res = res.map(function(r){return r.concat(gv[t].columnid)});
 			} else if (gv[t] instanceof yy.FuncValue) {
 				query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
 				res = res.map(function (r) {
@@ -118,14 +115,9 @@ function decartes(gv, query) {
 				else if (gv[t].type == 'GROUPING SETS') res = cartes(res, groupingsets(gv[t].group, query));
 				else throw new Error('Unknown grouping function');
 			} else if (gv[t] === '') {
-				//				console.log('+++');
 				res = [['1\t1']];
 			} else {
-				//				if(gv[t])
-				//				console.log('>'+gv[t]+'<',gv[t]=='',typeof gv[t]);
-				//				console.log(gv[t].toString());
-				//console.log('+++');
-				res = res.map(function (r) {
+				return res.map(function (r) {
 					query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
 					return r.concat(
 						escapeq(gv[t].toString()) +
@@ -133,46 +125,21 @@ function decartes(gv, query) {
 							gv[t].toJS('p', query.sources[0].alias, query.defcols)
 					);
 				});
-				//				res = res.concat(gv[t]);
 			}
-			/*/*
-			// switch(gv[t].t) {
-			// 	case 'plain':
-			// 		res = res.map(function(r){return r.concat(gv[t].p)});
-
-			// 	break;
-			// 	case 'rollup': res = cartes(res,rollup(gv[t].p)); break;
-			// 	case 'cube': res = cartes(res,cube(gv[t].p)); break;
-			// 	case 'groupingsets': res = cartes(res,groupingsets(gv[t].p)); break;
-			// 	default: res = res.concat(gv[t]);
-			// }
-*/
 		}
 		return res;
-	} else if (gv instanceof yy.FuncValue) {
-		//		console.log(gv);
+	}
+
+	if (gv instanceof yy.FuncValue) {
 		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
 		return [gv.toString() + '\t' + gv.toJS('p', query.sources[0].alias, query.defcols)];
-	} else if (gv instanceof yy.Column) {
+	}
+
+	if (gv instanceof yy.Column) {
 		gv.nick = escapeq(gv.columnid);
 		query.groupColumns[gv.nick] = gv.nick;
 		return [gv.nick + '\t' + gv.toJS('p', query.sources[0].alias, query.defcols)]; // Is this ever happened?
-		// } else if(gv instanceof yy.Expression) {
-		// 	return [gv.columnid]; // Is this ever happened?
-	} else {
-		query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
-		return [escapeq(gv.toString()) + '\t' + gv.toJS('p', query.sources[0].alias, query.defcols)];
-		//			throw new Error('Single argument in the group without array');
 	}
-
-	/*/*
-		// switch(gv.t) {
-		// 	case 'plain': return gv.p; break;
-		// 	case 'rollup': return rollup(gv.p); break;
-		// 	case 'cube': return cube(gv.p); break;
-		// 	case 'groupingsets':  return groupingsets(gv.p); break;
-		// 	default: return [gv];//return decartes(gv.p);
-		// }
-		// return gv;
-*/
+	query.groupColumns[escapeq(gv.toString())] = escapeq(gv.toString());
+	return [escapeq(gv.toString()) + '\t' + gv.toJS('p', query.sources[0].alias, query.defcols)];
 }

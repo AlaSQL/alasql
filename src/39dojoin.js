@@ -160,11 +160,11 @@ function swapSources(query, h) {
 	var source = query.sources[h];
 	var nextsource = query.sources[h + 1];
 
-	var onleftfn = source.onleftfn;
-	var onleftfns = source.onleftfns;
-	var onrightfn = source.onrightfn;
-	var onrightfns = source.onrightfns;
-	var optimization = source.optimization;
+	let onleftfn = source.onleftfn;
+	let onleftfns = source.onleftfns;
+	let onrightfn = source.onrightfn;
+	let onrightfns = source.onrightfns;
+	let optimization = source.optimization;
 
 	source.onleftfn = nextsource.onrightfn;
 	source.onleftfns = nextsource.onrightfns;
