@@ -14,24 +14,19 @@ yy.CreateDatabase = function (params) {
 	return Object.assign(this, params);
 };
 yy.CreateDatabase.prototype.toString = function () {
-	var s = 'CREATE';
-	if (this.engineid) s += ' ' + this.engineid;
-	s += ' DATABASE';
-	if (this.ifnotexists) s += ' IF NOT EXISTS';
-	s += ' ' + this.databaseid;
+	let s = 'CREATE '; // Ensure there's a space after CREATE
+	if (this.engineid) s += `${this.engineid} `;
+	s += 'DATABASE ';
+	if (this.ifnotexists) s += 'IF NOT EXISTS ';
+	s += `${this.databaseid} `;
+
 	if (this.args && this.args.length > 0) {
-		s +=
-			'(' +
-			this.args
-				.map(function (arg) {
-					return arg.toString();
-				})
-				.join(', ') +
-			')';
+		s += `(${this.args.map(arg => arg.toString()).join(', ')}) `;
 	}
-	if (this.as) s += ' AS ' + this.as;
+	if (this.as) s += `AS ${this.as}`;
 	return s;
 };
+
 //yy.CreateDatabase.prototype.compile = returnUndefined;
 yy.CreateDatabase.prototype.execute = function (databaseid, params, cb) {
 	var args;
