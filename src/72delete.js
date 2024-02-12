@@ -16,16 +16,12 @@ yy.Delete.prototype.toString = function () {
 };
 
 yy.Delete.prototype.compile = function (databaseid) {
-	//  console.log(11,this);
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
 	var db = alasql.databases[databaseid];
 
 	if (this.where) {
-		//		console.log(27, this);
-		//		this.query = {};
-
 		if (this.exists) {
 			this.existsfn = this.exists.map(function (ex) {
 				var nq = ex.compile(databaseid);
@@ -33,6 +29,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				return nq;
 			});
 		}
+
 		if (this.queries) {
 			this.queriesfn = this.queries.map(function (q) {
 				var nq = q.compile(databaseid);
@@ -41,16 +38,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 			});
 		}
 
-		//		try {
-		//		console.log(this, 22, this.where.toJS('r',''));
-		//	 } catch(err){console.log(444,err)};
-		//		var query = {};
-		//console.log(this.where.toJS('r',''));
 		var wherefn = new Function(
 			'r,params,alasql',
 			'var y;return (' + this.where.toJS('r', '') + ')'
 		).bind(this);
-		//		console.log(wherefn);
+
 		statement = function (params, cb) {
 			if (db.engineid && alasql.engines[db.engineid].deleteFromTable) {
 				return alasql.engines[db.engineid].deleteFromTable(
@@ -71,7 +63,6 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 
 			var table = db.tables[tableid];
-			//			table.dirty = true;
 			var orignum = table.data.length;
 
 			var newtable = [];
@@ -83,9 +74,10 @@ yy.Delete.prototype.compile = function (databaseid) {
 					} else {
 						// Simply do not push
 					}
-				} else newtable.push(table.data[i]);
+				} else {
+					newtable.push(table.data[i]);
+				}
 			}
-			//			table.data = table.data.filter(function(r){return !;});
 			table.data = newtable;
 
 			// Trigger prevent functionality
@@ -109,16 +101,10 @@ yy.Delete.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
-			//			console.log('deletefn',table.data.length);
-			if (cb) cb(res);
+			if (cb) res = cb(res);
+
 			return res;
 		};
-		//  .bind(query);
-
-		// 		if(!this.queries) return;
-		// 			query.queriesfn = this.queries.map(function(q) {
-		// 			return q.compile(alasql.useid);
-		// 		});
 	} else {
 		statement = function (params, cb) {
 			if (alasql.options.autocommit && db.engineid) {
@@ -128,7 +114,6 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
-			//table.deleteall();
 			// Delete all records from the array
 			db.tables[tableid].data.length = 0;
 
