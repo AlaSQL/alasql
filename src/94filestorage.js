@@ -20,7 +20,7 @@ FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
 				throw new Error('Cannot create new database file, because it already exists');
 			}
 		} else {
-			var data = { tables: {} };
+			var data = {tables: {}};
 			alasql.utils.saveFile(filename, JSON.stringify(data), function (data) {
 				if (cb) res = cb(res);
 			});
@@ -107,7 +107,7 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 		throw new Error('Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"');
 	}
 	var table = alasql.databases[databaseid].tables[tableid];
-	db.data.tables[tableid] = { columns: table.columns };
+	db.data.tables[tableid] = {columns: table.columns};
 	db.data[tableid] = [];
 
 	FS.updateFile(databaseid);
@@ -183,10 +183,10 @@ FS.saveTableData = function (databaseid, tableid) {
 
 FS.commit = function (databaseid, cb) {
 	var db = alasql.databases[databaseid];
-	var fsdb = { tables: {} };
+	var fsdb = {tables: {}};
 	if (db.tables) {
 		for (var tbid in db.tables) {
-			db.data.tables[tbid] = { columns: db.tables[tbid].columns };
+			db.data.tables[tbid] = {columns: db.tables[tbid].columns};
 			db.data[tbid] = db.tables[tbid].data;
 		}
 	}
@@ -210,7 +210,7 @@ FS.rollback = function (databaseid, cb) {
 					db.data = data;
 					db.tables = {};
 					for (var tbid in db.data.tables) {
-						var tb = new alasql.Table({ columns: db.data.tables[tbid].columns });
+						var tb = new alasql.Table({columns: db.data.tables[tbid].columns});
 						extend(tb, db.data.tables[tbid]);
 						db.tables[tbid] = tb;
 						if (!alasql.options.autocommit) {
