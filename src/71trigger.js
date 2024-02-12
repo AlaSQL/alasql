@@ -18,14 +18,24 @@ yy.CreateTrigger.prototype.toString = function () {
 	return s;
 };
 
-const validTriggers = ['beforeinsert', 'afterinsert', 'insteadofinsert', 'beforedelete', 'afterdelete', 'insteadofdelete', 'beforeupdate', 'afterupdate', 'insteadofupdate'];
+const validTriggers = [
+	'beforeinsert',
+	'afterinsert',
+	'insteadofinsert',
+	'beforedelete',
+	'afterdelete',
+	'insteadofdelete',
+	'beforeupdate',
+	'afterupdate',
+	'insteadofupdate',
+];
 
 yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 	let res = 1; // No tables removed
 	const triggerid = this.trigger;
 	databaseid = this.table.databaseid || databaseid;
 	const db = alasql.databases[databaseid];
-	const { tableid } = this.table;
+	const {tableid} = this.table;
 
 	const trigger = {
 		action: this.action,
@@ -36,7 +46,7 @@ yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 	};
 
 	db.triggers[triggerid] = trigger;
-	const actionKey = (`${this.when}${this.action}`).toLowerCase();
+	const actionKey = `${this.when}${this.action}`.toLowerCase();
 
 	if (validTriggers.includes(actionKey)) {
 		// Ensure the existence of db.tables[tableid] and db.tables[tableid][actionKey]
@@ -48,7 +58,6 @@ yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
-
 
 yy.DropTrigger = function (params) {
 	return Object.assign(this, params);
@@ -77,7 +86,7 @@ yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
 
 	// If the trigger exists
 	if (trigger) {
-		const { tableid } = trigger;
+		const {tableid} = trigger;
 
 		if (tableid) {
 			res = 1;
