@@ -429,6 +429,12 @@ function modify(query, res) {
 		} else {
 			// Cannot recognize columns
 			columns = [];
+			if (query && query.sources) {
+				query.sources.forEach((source) => {
+					if(source?.columns?.columnid != null)
+						columns = columns.concat({columnid:source?.columns?.columnid});
+				})
+			}
 		}
 	}
 
