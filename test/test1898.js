@@ -3,11 +3,9 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-var test = '1898'; // insert test file number
-
-describe('Test ' + test + ' - group concat', function () {
-	var data;
-	var res;
+describe('Test 1898 - group concat', function () {
+	let data;
+	let res;
 
 	it('A) int concat', function () {
 		data = [
