@@ -1758,10 +1758,10 @@ case 759:
  this.$ = new yy.AddRule({right:$$[$0]}); 
 break;
 case 762:
- this.$ = new yy.Term({termid:$$[$0]}); 
+ this.$ = {termid: $$[$0]}; 
 break;
 case 763:
- this.$ = new yy.Term({termid:$$[$0-3],args:$$[$0-1]}); 
+ this.$ = {termid:$$[$0-3], args:$$[$0-1]}; 
 break;
 case 766:
 
