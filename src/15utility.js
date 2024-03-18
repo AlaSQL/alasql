@@ -194,7 +194,10 @@ utils.isWebWorker = (function () {
   */
 utils.isNode = (function () {
 	try {
-		return utils.isNativeFunction(utils.global.process.reallyExit);
+		if (typeof process === 'undefined' || !process.versions || !process.versions.node) {
+			return false;
+		}
+		return true;
 	} catch (e) {
 		return false;
 	}
