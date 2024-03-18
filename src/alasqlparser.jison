@@ -2960,12 +2960,11 @@ TermsList
 	;
 
 Term
-	: Literal
-		{ $$ = new yy.Term({termid:$1}); }
-	| Literal LPAR TermsList RPAR
-		{ $$ = new yy.Term({termid:$1,args:$3}); }
-	;
-
+    : Literal
+        { $$ = {termid: $1}; }
+    | Literal LPAR TermsList RPAR
+        { $$ = {termid:$1, args:$3}; }
+    ;
 Query
 	: QUESTIONDASH FuncValue
 	;
