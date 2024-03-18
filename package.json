@@ -84,7 +84,7 @@
 		"decode-uri-component": "0.2",
 		"semver": "7",
 		"@gerhobbelt/json5": "2.1.0-48",
-		"minimist": "1.2.6"
+		"minimist": "1.2.8"
 	},
 	"engines": {
 		"node": ">=15"
