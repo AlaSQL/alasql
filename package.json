@@ -61,7 +61,7 @@
 		"eslint-plugin-node": "11.1.0",
 		"eslint-plugin-promise": "6.1.1",
 		"git-branch-is": "4.0.0",
-		"husky": "8.0.3",
+		"husky": "9.0.11",
 		"jison-gho": "^0.6.1-216",
 		"lint-staged": "15.2.2",
 		"mocha": "10.3.0",
