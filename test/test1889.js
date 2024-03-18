@@ -30,7 +30,10 @@ describe.skip('Test 1889 - Ensure utils.isNode handles node and non-Node environ
 		const reloadedAlasql = require('..');
 
 		const isNodeAfterModification = reloadedAlasql.utils.isNode;
-		assert.strictEqual(isNodeAfterModification, false, 'utils.isNode should return false when not in nodejs environment');
+		assert.strictEqual(
+			isNodeAfterModification,
+			false,
+			'utils.isNode should return false when not in nodejs environment'
+		);
 	});
-
 });

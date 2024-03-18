@@ -18,19 +18,22 @@ describe('Test 1885 - consistent error messages for missing tables', function ()
 
 	it('SELECT returns standard error message', function () {
 		assert.throws(() => alasql('select * from invalidTable'), {
-			message: 'Table does not exist: invalidTable'
+			message: 'Table does not exist: invalidTable',
 		});
 	});
 
-	it('JOIN ON returns standard error message', function () {		
-		assert.throws(() => alasql('select * from validTable JOIN invalidTable ON validTable.a = invalidTable.b'), {
-			message: 'Table does not exist: invalidTable'
-		});
+	it('JOIN ON returns standard error message', function () {
+		assert.throws(
+			() => alasql('select * from validTable JOIN invalidTable ON validTable.a = invalidTable.b'),
+			{
+				message: 'Table does not exist: invalidTable',
+			}
+		);
 	});
 
-	it('JOIN USING returns standard error message', function () {		
+	it('JOIN USING returns standard error message', function () {
 		assert.throws(() => alasql('select * from validTable JOIN invalidTable USING a'), {
-			message: 'Table does not exist: invalidTable'
+			message: 'Table does not exist: invalidTable',
 		});
 	});
 });
