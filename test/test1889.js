@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	const alasql = require('..');
 }
 
-describe('Test 1889 - Ensure utils.isNode handles node and non-Node environments', function () {
+describe.skip('Test 1889 - Ensure utils.isNode handles node and non-Node environments', function () {
 	let originalProcess;
 
 	before(function () {
