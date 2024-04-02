@@ -1,5 +1,5 @@
 {
-	"name": "alasql",
+	"name": "@tablefilter/alasql",
 	"description": "Use SQL to select and filter javascript data - including relational joins and search in nested objects (JSON). Export to and import from Excel and CSV",
 	"version": "4.1.10",
 	"author": "Andrey Gershun <agershun@gmail.com>",
@@ -88,10 +88,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "http://github.com/alasql/alasql.git"
-	},
-	"bugs": {
-		"url": "https://github.com/alasql/alasql/issues"
+		"url": "http://github.com/akhaneev/alasql.git"
 	},
 	"bin": {
 		"alasql": "./bin/alasql-cli.js"
