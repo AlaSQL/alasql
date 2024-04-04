@@ -26,7 +26,6 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
           scope: '@tablefilter'
-      - run: npm ci
       - run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
