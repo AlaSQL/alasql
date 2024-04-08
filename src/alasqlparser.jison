@@ -794,13 +794,18 @@ SelectModifier
 		{ $$ = {modifier:'RECORDSET'}}
 	;
 
+NumOrVarValue
+    : NumValue
+    | VarValue
+    ;
+
 TopClause
-	: TOP NumValue PERCENT?
-		{ $$ = {top: $2, percent:(typeof $3 != 'undefined'?true:undefined)}; }
-	| TOP LPAR NumValue RPAR
-		{ $$ = {top: $3}; }
-	| { $$ = undefined; }
-	;
+    : TOP NumOrVarValue PERCENT?
+        { $$ = {top: $2, percent:(typeof $3 != 'undefined'?true:undefined)}; }
+    | TOP LPAR NumOrVarValue RPAR
+        { $$ = {top: $3}; }
+    | { $$ = undefined; }
+    ;
 
 IntoClause
 	: {$$ = undefined; }

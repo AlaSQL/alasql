@@ -241,7 +241,10 @@ yy.Select = class Select {
 
 		// 10. Compile TOP/LIMIT/OFFSET/FETCH clause
 		if (this.top) {
-			query.limit = this.top.value;
+			const { value, variable } = this.top;
+			const varValue = variable && alasql.vars[variable];
+
+			query.limit = (typeof varValue === "number") ? varValue : value;
 		} else if (this.limit) {
 			query.limit = this.limit.value;
 			if (this.offset) {

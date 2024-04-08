@@ -38,4 +38,11 @@ describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', function () {
 		assert.deepEqual(res, [199, 198, 197, 196, 195, 194, 193, 192, 191, 190]);
 		done();
 	});
+
+	it('3. From ? with SET @limit', function (done) {
+		const data = [...Array(200).keys()];
+		const res = alasql('SET @limit = 5; SELECT COLUMN TOP @limit _ FROM ? ORDER BY _ DESC', [data]);
+		assert.deepEqual(res[1], [199, 198, 197, 196, 195]);
+		done();
+	});
 });
