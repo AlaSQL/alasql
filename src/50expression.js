@@ -516,6 +516,7 @@
 				}
 			}
 
+			const getValueOfLeftJS = () => `alasql.utils.getValueOf(${leftJS()})`;
 			if (this.allsome === 'ALL') {
 				var s;
 				if (this.right instanceof yy.Select) {
@@ -523,7 +524,7 @@
 						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
 
 					s += '.every(function(b){return (';
-					s += leftJS() + ')' + op + 'b})';
+					s += getValueOfLeftJS() + ')' + op + 'b})';
 				} else if (Array.isArray(this.right)) {
 					s =
 						'' +
@@ -531,7 +532,7 @@
 							? ref(this.right[0])
 							: '[' + this.right.map(ref).join(',') + ']');
 					s += '.every(function(b){return (';
-					s += leftJS() + ')' + op + 'b})';
+					s += getValueOfLeftJS() + ')' + op + 'b})';
 				} else {
 					throw new Error('NOT IN operator without SELECT');
 				}
@@ -543,7 +544,7 @@
 					s =
 						'alasql.utils.flatArray(this.query.queriesfn[' + this.queriesidx + '](params,null,p))';
 					s += '.some(function(b){return (';
-					s += leftJS() + ')' + op + 'b})';
+					s += getValueOfLeftJS() + ')' + op + 'b})';
 				} else if (Array.isArray(this.right)) {
 					s =
 						'' +
@@ -551,7 +552,7 @@
 							? ref(this.right[0])
 							: '[' + this.right.map(ref).join(',') + ']');
 					s += '.some(function(b){return (';
-					s += leftJS() + ')' + op + 'b})';
+					s += getValueOfLeftJS() + ')' + op + 'b})';
 				} else {
 					throw new Error('SOME/ANY operator without SELECT');
 				}
