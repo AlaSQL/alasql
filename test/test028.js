@@ -41,4 +41,28 @@ describe('Test 28', function () {
 		assert.deepEqual([3, 4], res);
 		done();
 	});
+
+	it('= ANY of Numbers', function (done) {
+		var db = new alasql.Database('db');
+		db.exec('CREATE TABLE test1 (a Number, b Number)');
+		db.exec('INSERT INTO test1 VALUES (new Number(1),new Number(1))');
+		db.exec('INSERT INTO test1 VALUES (new Number(2),new Number(2))');
+		db.exec('INSERT INTO test1 VALUES (new Number(3),new Number(3))');
+		db.exec('INSERT INTO test1 VALUES (new Number(4),new Number(4))');
+		db.exec('INSERT INTO test1 VALUES (new Number(5),new Number(5))');
+		db.exec('INSERT INTO test1 VALUES (new Number(6),new Number(6))');
+
+		db.exec('CREATE TABLE test2 (a Number, b Number)');
+		db.exec('INSERT INTO test2 VALUES (new Number(1),new Number(10))');
+		db.exec('INSERT INTO test2 VALUES (new Number(2),new Number(20))');
+		db.exec('INSERT INTO test2 VALUES (new Number(3),new Number(30))');
+		db.exec('INSERT INTO test2 VALUES (new Number(4),new Number(30))');
+
+		var sql = 'SELECT * FROM test1 WHERE a = ANY (SELECT a FROM test2)';
+		var res = db.exec(sql);
+
+		assert.deepEqual(4, res.length);
+
+		done();
+	});
 });
