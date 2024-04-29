@@ -340,7 +340,7 @@ IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
 			const cursor = cur.result;
 			if (cursor) {
 				// if keyPath(columns) is not present then we take the key and value as object.
-				const cursorValue = typeof cursor === Object ? cursor.value : {[cursor.key]: cursor.value};
+				const cursorValue = typeof cursor === "object" ? cursor.value : {[cursor.key]: cursor.value};
 				res.push(cursorValue);
 				cursor.continue();
 			} else {
