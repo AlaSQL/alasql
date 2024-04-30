@@ -179,27 +179,52 @@ yy.Select.prototype.compileGroup = function (query) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre +
-								`if(g['${colas}'] == null && ${colexp1} == null){g['${colas}'] = null}
-							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'object' && typeof ${colexp1}!== 'number'){ g['${colas}'] = null }
-							else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp1} == 'number'){ g['${colas}'] = ${colexp} }
-							else if(typeof g['${colas}']!== 'number' && typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'){ g['${colas}'] = g['${colas}'] }
-							else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp1} == null || (typeof ${colexp1}!== 'number' && typeof ${colexp1}!== 'object'))){ g['${colas}'] = null }
-							else if(typeof g['${colas}'] == 'number' && typeof ${colexp1} ==null){ g['${colas}'] = g['${colas}'] }
-							else if(typeof g['${colas}'] == null && typeof ${colexp1} =='number'){ g['${colas}'] = ${colexp} }
-							else{g['${colas}'] += ${colexp}||0}` +
+								`
+								{
+									const __g_colas = g['${colas}'];
+									const __typeof_colexp1 = typeof ${colexp1};
+
+									if (__g_colas == null && ${colexp1} == null) {
+										g['${colas}'] = null;
+									} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp1 !== 'object' && __typeof_colexp1 !== 'number') ||
+											   (__g_colas == null || (typeof __g_colas !== 'number' && typeof __g_colas !== 'object')) && (${colexp1} == null || (__typeof_colexp1 !== 'number' && __typeof_colexp1 !== 'object'))) {
+										g['${colas}'] = null;
+									} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp1 == 'number') ||
+											   (__g_colas == null && __typeof_colexp1 == 'number')) {
+										g['${colas}'] = ${colexp};
+									} else if (typeof __g_colas == 'number' && ${colexp1} == null) {
+										g['${colas}'] = __g_colas;
+									} else {
+										g['${colas}'] += ${colexp} || 0;
+									}
+								}
+								` +
 								post
 							);
 						}
 						return (
 							pre +
-							`if(g['${colas}'] == null && ${colexp} == null){g['${colas}'] = null}
-							 else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number'&& typeof ${colexp}!== 'object' && typeof ${colexp}!== 'number'){g['${colas}'] = null}
-							 else if(typeof g['${colas}']!== 'object' && typeof g['${colas}']!== 'number' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
-							 else if(typeof g['${colas}']!== 'number' && typeof ${colexp}!== 'number' && typeof ${colexp}!== 'object'){g['${colas}'] = g['${colas}']}
-							 else if((g['${colas}'] == null || (typeof g['${colas}']!== 'number' && typeof g['${colas}']!== 'object')) && (${colexp} == null || (typeof ${colexp}!== 'number' && typeof ${colexp}!== 'object'))){g['${colas}'] = null}
-							 else if(typeof g['${colas}'] == 'number' && typeof ${colexp} ==null){g['${colas}'] = g['${colas}']}
-							 else if(typeof g['${colas}'] == null && typeof ${colexp} =='number'){g['${colas}'] = ${colexp}}
-							 else{g['${colas}'] += ${colexp}||0}` +
+							`
+							{
+								const __g_colas = g['${colas}'];
+								const __typeof_colexp = typeof ${colexp};
+
+								if (__g_colas == null && ${colexp} == null) {
+									g['${colas}'] = null;
+								} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp !== 'object' && __typeof_colexp !== 'number') ||
+										   (__g_colas == null || (typeof __g_colas !== 'number' && typeof __g_colas !== 'object')) && (${colexp} == null || (__typeof_colexp !== 'number' && __typeof_colexp !== 'object'))) {
+									g['${colas}'] = null;
+								} else if (typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp == 'number') {
+									g['${colas}'] = ${colexp};
+								} else if (typeof __g_colas == 'number' && ${colexp} == null) {
+									g['${colas}'] = __g_colas;
+								} else if (__g_colas == null && __typeof_colexp == 'number') {
+									g['${colas}'] = ${colexp};
+								} else {
+									g['${colas}'] += ${colexp} || 0;
+								}
+							}
+							` +
 							post
 						);
 					} else if (col.aggregatorid === 'TOTAL') {
@@ -207,23 +232,51 @@ yy.Select.prototype.compileGroup = function (query) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre +
-								`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
-						typeof ${colexp1} == 'string' && !isNaN(${colexp1}) && typeof Number(${colexp1}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp1})}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'string'){g['${colas}'] = 0}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
-						else if(typeof ${colexp1} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
-						else{g['${colas}'] += ${colexp1}||0}` +
+								`{
+									const __g_colas = g['${colas}'];
+									const __colexp1 = ${colexp1};
+									const __typeof_g_colas = typeof __g_colas;
+									const __typeof_colexp1 = typeof __colexp1;
+
+									if (__typeof_g_colas == 'string' && !isNaN(__g_colas) && typeof Number(__g_colas) == 'number' &&
+										__typeof_colexp1 == 'string' && !isNaN(__colexp1) && typeof Number(__colexp1) == 'number') {
+										g['${colas}'] = Number(__g_colas) + Number(__colexp1);
+									} else if (__typeof_g_colas == 'string' && __typeof_colexp1 == 'string') {
+										g['${colas}'] = 0;
+									} else if (__typeof_g_colas == 'string' && __typeof_colexp1 == 'number') {
+										g['${colas}'] = __colexp1;
+									} else if (__typeof_colexp1 == 'string' && __typeof_g_colas == 'number') {
+										g['${colas}'] = __g_colas;
+									} else {
+										g['${colas}'] += __colexp1 || 0;
+									}
+								}` +
 								post
 							);
 						}
 						return (
 							pre +
-							`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
-						typeof ${colexp} == 'string' && !isNaN(${colexp}) && typeof Number(${colexp}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp})}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'string'){g['${colas}'] = 0}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
-						else if(typeof ${colexp} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
-						else{g['${colas}'] += ${colexp}||0}` +
+							`{
+								const __g_colas = g['${colas}'];
+								const __colexp = ${colexp};
+								const __typeof_g_colas = typeof __g_colas;
+								const __typeof_colexp = typeof __colexp;
+
+								if (__typeof_g_colas === 'string' && !isNaN(__g_colas) && typeof Number(__g_colas) === 'number' &&
+									__typeof_colexp === 'string' && !isNaN(__colexp) && typeof Number(__colexp) === 'number') {
+									g['${colas}'] = Number(__g_colas) + Number(__colexp);
+								} else if (__typeof_g_colas === 'string' && __typeof_colexp === 'string') {
+									g['${colas}'] = 0;
+								} else if (__typeof_g_colas === 'string' && __typeof_colexp === 'number') {
+									g['${colas}'] = __colexp;
+								} else if (__typeof_colexp === 'string' && __typeof_g_colas === 'number') {
+									g['${colas}'] = __g_colas;
+								} else {
+									g['${colas}'] += __colexp || 0;
+								}
+							}
+
+							` +
 							post
 						);
 					} else if (col.aggregatorid === 'COUNT') {
