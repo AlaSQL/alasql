@@ -135,6 +135,25 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 	return res;
 };
 
+alasql.from.JSONL = function (filename, opts, cb, idx, query) {
+	var res;
+	filename = alasql.utils.autoExtFilename(filename, 'jsonl', opts);
+	alasql.utils.loadFile(filename, !!cb, function (data) {
+		res = data.split(/\r?\n/);
+		// Remove last line if empty
+		if (res[res.length - 1] === '') {
+			res.pop();
+		}
+		for (var i = 0, ilen = res.length; i < ilen; i++) {
+			res[i] = JSON.parse(res[i]);
+		}
+		if (cb) {
+			res = cb(res, idx, query);
+		}
+	});
+	return res;
+};
+
 alasql.from.TXT = function (filename, opts, cb, idx, query) {
 	var res;
 	filename = alasql.utils.autoExtFilename(filename, 'txt', opts);
