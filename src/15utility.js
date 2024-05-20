@@ -614,7 +614,7 @@ utils.autoExtFilename = function (filename, ext, config) {
 	config = config || {};
 	if (
 		typeof filename !== 'string' ||
-		filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) ||
+		filename.match(/^[A-z]+:\/\/|\n|\..{2,6}$/) ||
 		config.autoExt === 0 ||
 		config.autoExt === false
 	) {
