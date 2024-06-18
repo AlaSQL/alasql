@@ -73,6 +73,16 @@ stdfn.NOW = function () {
 stdfn.GETDATE = stdfn.NOW;
 stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
 
+/**
+ * Returns the current date, without time component.
+ * @returns date object without time component
+ */
+alasql.stdfn.CURDATE = function () {
+    var date = new Date();
+    date.setHours(0, 0, 0, 0);
+    return date;
+};
+
 // 	stdfn.GETDATE = function(){
 // 		var d = new Date();
 // 		var s = d.getFullYear()+"."+("0"+(d.getMonth()+1)).substr(-2)+"."+("0"+d.getDate()).substr(-2);
