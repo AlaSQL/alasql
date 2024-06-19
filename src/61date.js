@@ -80,6 +80,15 @@ stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
 alasql.stdfn.CURDATE = function () {
     var date = new Date();
     date.setHours(0, 0, 0, 0);
+	if (alasql.options.dateAsString) {
+		var s =
+			date.getFullYear() +
+			'-' +
+			('0' + (date.getMonth() + 1)).substr(-2) +
+			'-' +
+			('0' + date.getDate()).substr(-2);
+		return s;
+	}
     return date;
 };
 
