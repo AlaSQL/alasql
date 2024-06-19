@@ -77,7 +77,7 @@ stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
  * Returns the current date, without time component.
  * @returns date object without time component
  */
-alasql.stdfn.CURDATE = function () {
+alasql.stdfn.CURDATE = alasql.stdfn.CURRENT_DATE = function () {
     var date = new Date();
     date.setHours(0, 0, 0, 0);
 	if (alasql.options.dateAsString) {
