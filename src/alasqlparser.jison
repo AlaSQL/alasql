@@ -105,7 +105,7 @@ COLUMNS 										return 'COLUMN'
 'CUBE'											return 'CUBE'
 "CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
 "CURRENT_DATE"									return 'CURRENT_DATE'
-"CURDATE"										return 'CURDATE'
+"CURDATE"										return 'CURRENT_DATE'
 "CURSOR"										return 'CURSOR'
 DATABASE(S)?									return 'DATABASE'
 'DATEADD'                                       return 'DATEADD'
@@ -1263,8 +1263,6 @@ Expression
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
 	| CURRENT_DATE
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_DATE'});}
-	| CURDATE
-		{ $$ = new yy.FuncValue({funcid:'CURDATE'});}
 /*	| USER
 		{ $$ = new yy.FuncValue({funcid:'USER'});}
 */	;
@@ -1321,8 +1319,6 @@ PrimitiveValue
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }
 	| CURRENT_DATE
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_DATE'}); }
-	| CURDATE
-		{ $$ = new yy.FuncValue({funcid:'CURDATE'}); }
 /*	| USER
 		{ $$ = new yy.FuncValue({funcid:'USER'}); }
 */	;
@@ -1397,8 +1393,6 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	| REPLACE LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
-	| CURDATE LPAR RPAR
-		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| CURRENT_DATE LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
