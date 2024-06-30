@@ -78,8 +78,8 @@ stdfn.CURRENT_TIMESTAMP = stdfn.NOW;
  * @returns date object without time component
  */
 stdfn.CURDATE = stdfn.CURRENT_DATE = function () {
-    var date = new Date();
-    date.setHours(0, 0, 0, 0);
+	var date = new Date();
+	date.setHours(0, 0, 0, 0);
 	if (alasql.options.dateAsString) {
 		var s =
 			date.getFullYear() +
@@ -89,7 +89,7 @@ stdfn.CURDATE = stdfn.CURRENT_DATE = function () {
 			('0' + date.getDate()).substr(-2);
 		return s;
 	}
-    return date;
+	return date;
 };
 
 // 	stdfn.GETDATE = function(){
