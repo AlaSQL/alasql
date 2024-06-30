@@ -629,6 +629,15 @@ AlaSQL is an [OPEN Open Source Project](http://openopensource.org/). This means 
 
 We appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/alasql/alasql/blob/develop/CONTRIBUTING.md)
 
+## Rebuilding the parser 
+
+To rebuild the parser, follow these steps:
+
+* Make changes to alasqlparser.jison
+* `npm install -g jison`
+* `npm run jison`
+* `npm test` to validate the changes made
+* Commit changes to alasqlparser.jison and alasqlparser.js
 
 ## Credits
 
