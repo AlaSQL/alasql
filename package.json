@@ -59,7 +59,7 @@
 		"eslint-plugin-import": "2.29.1",
 		"eslint-plugin-n": "16.6.2",
 		"eslint-plugin-node": "11.1.0",
-		"eslint-plugin-promise": "6.1.1",
+		"eslint-plugin-promise": "6.4.0",
 		"git-branch-is": "4.0.0",
 		"husky": "8.0.3",
 		"jison-gho": "^0.6.1-216",
