@@ -12,14 +12,14 @@ describe(`Test 1919 Load data from JSONL file`, function () {
 			a: 'foo',
 			b: 5,
 			c: true,
-			d: null
+			d: null,
 		},
 		{
 			a: 'bar',
 			b: 8,
 			c: false,
-			d: null
-		}
+			d: null,
+		},
 	];
 	it('1. Load JSONL', function (done) {
 		alasql('SELECT * FROM JSONL("' + __dirname + '/test1919")', [], function (res) {
