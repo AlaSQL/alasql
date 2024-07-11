@@ -1,4 +1,4 @@
-	/*jshint unused:false*/
+/*jshint unused:false*/
 /*
 	Utilities for Alasql.js
 
