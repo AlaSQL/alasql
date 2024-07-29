@@ -52,7 +52,7 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 				c2: false,
 				d: 5,
 				e: 'XYZ2',
-				f:number11,
+				f: number11,
 			},
 		];
 		res = alasql(
@@ -189,8 +189,8 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
 		assert.deepEqual(res, [{a: 2}]);
 
-		res = alasql(`SELECT SUM(a) AS a FROM ?`, [[{a: "X"}, {a: null}, {b: "X"}, {a: "Y"}]]);
-		assert.deepEqual(res, [{a: "XY"}]);
+		res = alasql(`SELECT SUM(a) AS a FROM ?`, [[{a: 'X'}, {a: null}, {b: 'X'}, {a: 'Y'}]]);
+		assert.deepEqual(res, [{a: 'XY'}]);
 	});
 
 	it('SUM zero is zero', function () {

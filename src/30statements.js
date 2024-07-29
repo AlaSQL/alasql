@@ -24,6 +24,6 @@ yy.Statements = class Statements {
 					const res = statements.map(st => st(params));
 					if (cb) cb(res);
 					return res;
-			  };
+				};
 	}
 };

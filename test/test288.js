@@ -57,16 +57,10 @@ describe('Test 288 ROWNUM()', function () {
 		const data = [{a: 1}, {a: 2}, {a: 3}];
 
 		let res = alasql('SELECT a FROM ? WHERE ROWNUM() > 1', [data]);
-		assert.deepEqual(res, [
-			{a: 2},
-			{a: 3},
-		]);
+		assert.deepEqual(res, [{a: 2}, {a: 3}]);
 
 		res = alasql('SELECT a FROM ? WHERE ROWNUM() % 2 = 1', [data]);
-		assert.deepEqual(res, [
-			{a: 1},
-			{a: 3},
-		]);
+		assert.deepEqual(res, [{a: 1}, {a: 3}]);
 		done();
 	});
 
@@ -74,10 +68,17 @@ describe('Test 288 ROWNUM()', function () {
 		const data = [{a: 1}, {a: 2}, {a: 3}];
 		const data2 = [{a: 4}, {a: 5}, {a: 6}];
 
-		let res = alasql('SELECT ROWNUM() as n, * FROM ? UNION ALL CORRESPONDING SELECT ROWNUM() as n, * FROM ?', [data, data2]);
+		let res = alasql(
+			'SELECT ROWNUM() as n, * FROM ? UNION ALL CORRESPONDING SELECT ROWNUM() as n, * FROM ?',
+			[data, data2]
+		);
 		assert.deepEqual(res, [
-			{a: 1, n: 1}, {a: 2, n: 2}, {a: 3, n: 3},
-			{a: 4, n: 4}, {a: 5, n: 5}, {a: 6, n: 6}
+			{a: 1, n: 1},
+			{a: 2, n: 2},
+			{a: 3, n: 3},
+			{a: 4, n: 4},
+			{a: 5, n: 5},
+			{a: 6, n: 6},
 		]);
 
 		done();

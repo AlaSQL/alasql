@@ -43,22 +43,6 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	return res;
 };
 
-/*/*
-//yy.FuncValue.prototype.compile = function(context, tableid, defcols){
-//	console.log('Expression',this);
-//	if(this.reduced) return returnTrue();
-//	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
-//};
-
-
-// yy.FuncValue.prototype.compile = function(context, tableid, defcols){
-// //	console.log('Expression',this);
-// 	if(this.reduced) return returnTrue();
-// 	return new Function('p','var y;return '+this.toJS(context, tableid, defcols));
-// };
-
-*/
-
 yy.FuncValue.prototype.findAggregator = function (query) {
 	if (this.args && this.args.length > 0) {
 		this.args.forEach(function (arg) {
@@ -85,7 +69,6 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 	} else if (!alasql.fn[funcid] && alasql.stdfn[funcid.toUpperCase()]) {
 		if (this.newid) s += 'new ';
 		s += 'alasql.stdfn[' + JSON.stringify(this.funcid.toUpperCase()) + '](';
-		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
 				.map(function (arg) {
@@ -100,7 +83,6 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		//		var s = '';
 		if (this.newid) s += 'new ';
 		s += 'alasql.fn[' + JSON.stringify(this.funcid) + '](';
-		//		if(this.args) s += this.args.toJS(context, tableid);
 		if (this.args && this.args.length > 0) {
 			s += this.args
 				.map(function (arg) {
@@ -110,23 +92,9 @@ yy.FuncValue.prototype.toJS = function (context, tableid, defcols) {
 		}
 		s += ')';
 	}
-	//console.log('userfn:',s,this);
 	return s;
 };
-
-/*/*
-// // Functions compiler
-// nodes.FunctionValue.prototype.toJS = function (context, tableid) {
-// 	var s = '';
-// 	s += fns[this.name.toUpperCase()].apply(null,this.arguments.map(function(arg){
-// 		if(arg) return arg.toJS(context, tableid);
-// 		else return '';
-// 	}));
-// 	return s;
-// };
-*/
-
-/*/*
+/*
 //
 // SQL FUNCTIONS COMPILERS
 // Based on SQLite functions
@@ -141,12 +109,12 @@ var stdlib = (alasql.stdlib = {});
 var stdfn = (alasql.stdfn = {});
 
 const mathFnWrapper = (expression, ...a) => {
-	const argumentsExpression = a.map((s, i) => `(y${i}=${s})==null`).join("||");
+	const argumentsExpression = a.map((s, i) => `(y${i}=${s})==null`).join('||');
 	return `(${argumentsExpression}?null:isNaN(y=${expression})?null:y)`;
 };
 
 stdlib.ABS = function (a) {
-	return mathFnWrapper("Math.abs(y0)", a);
+	return mathFnWrapper('Math.abs(y0)', a);
 };
 stdlib.CLONEDEEP = function (a) {
 	return 'alasql.utils.cloneDeep(' + a + ')';
@@ -156,21 +124,21 @@ stdfn.CONCAT = function () {
 	return Array.prototype.slice.call(arguments).join('');
 };
 stdlib.EXP = function (a) {
-	return mathFnWrapper("Math.pow(Math.E,y0)", a);
+	return mathFnWrapper('Math.pow(Math.E,y0)', a);
 };
 
 stdlib.IIF = function (a, b, c) {
 	if (arguments.length === 3) {
-		return '((' + a + ')?(' + b + '):(' + c + '))';
+		return `((${a}) ? (${b}) : (${c}))`;
 	} else {
 		throw new Error('Number of arguments of IFF is not equals to 3');
 	}
 };
 stdlib.IFNULL = function (a, b) {
-	return '((typeof ' + a + ' ==="undefined" || null ===  ' + a + ')?' + b + ':' + a + ')';
+	return `((typeof ${a} === "undefined" || ${a} === null) ? ${b} : ${a})`;
 };
 stdlib.INSTR = function (s, p) {
-	return '((' + s + ').indexOf(' + p + ')+1)';
+	return `((${s}).indexOf(${p}) + 1)`;
 };
 
 //stdlib.LEN = stdlib.LENGTH = function(s) {return '('+s+'+"").length';};
@@ -257,7 +225,7 @@ stdlib.FLOOR = function (s) {
 };
 
 stdlib.ROWNUM = function () {
-	const varName = "this.rowNum[" + Math.floor(Math.random() * 1000) + "]";
+	const varName = 'this.rowNum[' + Math.floor(Math.random() * 1000) + ']';
 	return `(${varName}=(typeof ${varName} === "undefined" ? 0 : ${varName}) + 1)`;
 };
 stdlib.ROW_NUMBER = stdlib.ROWNUM;
@@ -292,7 +260,7 @@ stdfn.CONCAT_WS = function () {
 // TRIM
 
 // Aggregator for joining strings
-alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
+alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
 	if (stage === 1) {
 		return '' + v;
 	} else if (stage === 2) {
@@ -321,15 +289,15 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 		return null;
 	}
 
-	var r = s.sort((a, b) => {
+	let r = s.sort((a, b) => {
 		if (a > b) return 1;
 		if (a < b) return -1;
 		return 0;
 	});
 
-	var middle = (r.length + 1) / 2;
-	var middleFloor = middle | 0;
-	var el = r[middleFloor - 1];
+	let middle = (r.length + 1) / 2;
+	let middleFloor = middle | 0;
+	let el = r[middleFloor - 1];
 
 	if (middle === middleFloor || (typeof el !== 'number' && !(el instanceof Number))) {
 		return el;
@@ -345,32 +313,34 @@ alasql.aggr.QUART = function (v, s, stage, nth) {
 			s.push(v);
 		}
 		return s;
-	} else if (stage === 1) {
+	}
+
+	if (stage === 1) {
 		if (v === null) {
 			return [];
 		}
 		return [v];
-	} else {
-		if (!s.length) {
-			return s;
-		}
-
-		nth = !nth ? 1 : nth;
-		var r = s.sort(function (a, b) {
-			if (a === b) {
-				return 0;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return -1;
-		});
-		var p = (nth * (r.length + 1)) / 4;
-		if (Number.isInteger(p)) {
-			return r[p - 1]; //Integer value
-		}
-		return r[Math.floor(p)]; //Math.ceil -1 or Math.floor
 	}
+	if (!s.length) {
+		return s;
+	}
+
+	nth = !nth ? 1 : nth;
+	var r = s.sort(function (a, b) {
+		if (a === b) return 0;
+
+		if (a > b) return 1;
+
+		return -1;
+	});
+
+	let p = (nth * (r.length + 1)) / 4;
+
+	if (Number.isInteger(p)) {
+		return r[p - 1]; //Integer value
+	}
+
+	return r[Math.floor(p)]; //Math.ceil -1 or Math.floor
 };
 
 alasql.aggr.QUART2 = function (v, s, stage) {
@@ -385,26 +355,25 @@ alasql.aggr.QUART3 = function (v, s, stage) {
 // Standard deviation
 alasql.aggr.VAR = function (v, s, stage) {
 	if (stage === 1) {
-		if (v === null) {
-			return {arr: [], sum: 0};
-		}
-		return {arr: [v], sum: v};
+		// Initialise sum, sum of squares, and count
+		return v === null ? {sum: 0, sumSq: 0, count: 0} : {sum: v, sumSq: v * v, count: 1};
 	} else if (stage === 2) {
-		if (v === null) {
-			return s;
+		// Update sum, sum of squares, and count
+		if (v !== null) {
+			s.sum += v;
+			s.sumSq += v * v;
+			s.count++;
 		}
-		s.arr.push(v);
-		s.sum += v;
 		return s;
 	} else {
-		var N = s.arr.length;
-		var avg = s.sum / N;
-		var std = 0;
-		for (var i = 0; i < N; i++) {
-			std += (s.arr[i] - avg) * (s.arr[i] - avg);
+		// Calculate variance using the formula: variance = (sumSq - (sum^2 / count)) / (count - 1)
+		// This avoids the need to store and iterate over all values
+		if (s.count > 1) {
+			return (s.sumSq - (s.sum * s.sum) / s.count) / (s.count - 1);
+		} else {
+			// Handling for cases with less than 2 values (variance is undefined or zero)
+			return 0;
 		}
-		std = std / (N - 1);
-		return std;
 	}
 };
 
@@ -416,41 +385,33 @@ alasql.aggr.STDEV = function (v, s, stage) {
 	}
 };
 
-// Standard deviation
-// alasql.aggr.VARP = function(v,s,acc){
-// 	if(typeof acc.arr == 'undefined') {
-// 		acc.arr = [v];
-// 		acc.sum = v;
-// 	} else {
-// 		acc.arr.push(v);
-// 		acc.sum += v;
-// 	}
-// 	var N = acc.arr.length;
-// 	var avg = acc.sum / N;
-// 	var std = 0;
-// 	for(var i=0;i<N;i++) {
-// 		std += (acc.arr[i]-avg)*(acc.arr[i]-avg);
-// 	}
-// 	std = std/N;
-// 	return std;
-// };
-
-alasql.aggr.VARP = function (v, s, stage) {
-	if (stage == 1) {
-		return {arr: [v], sum: v};
-	} else if (stage == 2) {
-		s.arr.push(v);
-		s.sum += v;
-		return s;
+alasql.aggr.STDEV = function (v, s, stage) {
+	if (stage === 1 || stage === 2) {
+		return alasql.aggr.VAR(v, s, stage);
 	} else {
-		var N = s.arr.length;
-		var avg = s.sum / N;
-		var std = 0;
-		for (var i = 0; i < N; i++) {
-			std += (s.arr[i] - avg) * (s.arr[i] - avg);
+		return Math.sqrt(alasql.aggr.VAR(v, s, stage));
+	}
+};
+
+alasql.aggr.VARP = function (value, accumulator, stage) {
+	if (stage === 1) {
+		// Initialise accumulator with count, sum, and sum of squares
+		return {count: 1, sum: value, sumSq: value * value};
+	} else if (stage === 2) {
+		// Update accumulator
+		accumulator.count++;
+		accumulator.sum += value;
+		accumulator.sumSq += value * value;
+		return accumulator;
+	} else {
+		// Final stage: Calculate variance
+		if (accumulator.count > 0) {
+			const mean = accumulator.sum / accumulator.count;
+			const variance = accumulator.sumSq / accumulator.count - mean * mean;
+			return variance;
+		} else {
+			return 0; // Return 0 variance if no values were aggregated
 		}
-		std = std / N;
-		return std;
 	}
 };
 

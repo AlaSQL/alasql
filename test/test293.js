@@ -173,10 +173,10 @@ if (typeof exports === 'object') {
 		'function' == typeof define && define.amd
 			? define(function () {
 					return A;
-			  })
+				})
 			: 'object' == typeof module && module.exports
-			? (module.exports = A)
-			: (n.md5 = A);
+				? (module.exports = A)
+				: (n.md5 = A);
 	})(this);
 }
 

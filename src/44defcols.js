@@ -55,11 +55,21 @@ yy.Select.prototype.compileDefCols = function (query, databaseid) {
 
 			//			console.log(jn);
 			if (jn.table) {
-				var alias = jn.table.tableid;
-				if (jn.as) alias = jn.as;
 				var alias = jn.as || jn.table.tableid;
-				var table = alasql.databases[jn.table.databaseid || databaseid].tables[jn.table.tableid];
+				var databaseId = jn.table.databaseid || databaseid;
+				var database = alasql.databases[databaseId];
+
+				if (database === undefined) {
+					throw new Error('Database does not exist: ' + databaseId);
+				}
+
+				var table = database.tables[jn.table.tableid];
 				//				console.log(jn.table.tableid, jn.table.databaseid);
+
+				if (table === undefined) {
+					throw new Error('Table does not exist: ' + jn.table.tableid);
+				}
+
 				if (table.columns) {
 					table.columns.forEach(function (col) {
 						if (defcols[col.columnid]) {

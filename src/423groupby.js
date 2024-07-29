@@ -18,19 +18,10 @@ yy.Select.prototype.compileGroup = function (query) {
 		var tableid = '';
 	}
 	var defcols = query.defcols;
-	//	console.log(16,tableid, defcols);
-
-	//	console.log(query.sources[0].alias,query.defcols);
 	var allgroup = [[]];
 	if (this.group) {
 		allgroup = decartes(this.group, query);
 	}
-	//	console.log(23,allgroup);
-
-	//	console.log(allgroup);
-	// Prepare groups
-	//var allgroup = [['a'], ['a','b'], ['a', 'b', 'c']];
-
 	// Union all arrays to get a maximum
 	var allgroups = [];
 	allgroup.forEach(function (a) {
@@ -41,12 +32,10 @@ yy.Select.prototype.compileGroup = function (query) {
 
 	query.ingroup = [];
 	var s = '';
-	//	s+= query.selectfns;
 	allgroup.forEach(function (agroup) {
 		// Start of group function
 		s += 'var g=this.xgroups[';
 
-		//	var gcols = this.group.map(function(col){return col.columnid}); // Group fields with r
 		// Array with group columns from record
 		var rg = agroup.map(function (col2) {
 			var columnid = col2.split('\t')[0];
@@ -55,9 +44,7 @@ yy.Select.prototype.compileGroup = function (query) {
 			if (columnid === '') {
 				return '1'; // Create fictive grouping column for fictive GROUP BY
 			}
-			//			else return "r['"+columnid+"']";
 			query.ingroup.push(columnid);
-			//			console.log(429,87,query.ingroup);
 			return coljs;
 		});
 
@@ -65,13 +52,10 @@ yy.Select.prototype.compileGroup = function (query) {
 			rg = ["''"];
 		}
 
-		//	console.log('rg',rg);
-
 		s += rg.join('+"`"+');
 		s += '];if(!g) {this.groups.push((g=this.xgroups[';
 		s += rg.join('+"`"+');
 		s += '] = {';
-		//		s += ']=r';
 		s += agroup
 			.map(function (col2) {
 				var columnid = col2.split('\t')[0];
@@ -83,19 +67,14 @@ yy.Select.prototype.compileGroup = function (query) {
 				return "'" + columnid + "':" + coljs + ',';
 			})
 			.join('');
-		//console.log(agroup);
 		var neggroup = arrayDiff(allgroups, agroup);
-
-		//		console.log(neggroup);
 
 		s += neggroup
 			.map(function (col2) {
 				var columnid = col2.split('\t')[0];
-				//	var coljs = col2.split('\t')[1]
 				return "'" + columnid + "':null,";
 			})
 			.join('');
-		//console.log(neggroup);
 		var aft = '',
 			aft2 = '';
 
@@ -103,19 +82,10 @@ yy.Select.prototype.compileGroup = function (query) {
 			aft2 += "for(var f in p['" + query.groupStar + "']) {g[f]=p['" + query.groupStar + "'][f];};";
 		}
 
-		/*
-		 */
-		//		s += self.columns.map(function(col){
-		//console.log('query.selectGroup',query.selectGroup);
 		s += query.selectGroup
 			.map(function (col) {
-				//console.log(idx, col.toString(), col.as);
 				var colexp = col.expression.toJS('p', tableid, defcols);
 				var colas = col.nick;
-				// if(typeof colas == 'undefined') {
-				// 	if(col instanceof yy.Column) colas = col.columnid;
-				// 	else colas = col.toString();
-				// };
 				let colExpIfFunIdExists = expression => {
 					let colexpression = expression.args[0];
 					return colexpression.toJS('p', tableid, defcols);
@@ -142,63 +112,27 @@ yy.Select.prototype.compileGroup = function (query) {
 						col.aggregatorid === 'MAX' ||
 						col.aggregatorid === 'FIRST' ||
 						col.aggregatorid === 'LAST'
-						//					|| col.aggregatorid == 'AVG'
-						//							) { return "'"+col.as+'\':r[\''+col.as+'\'],'; }//f.field.arguments[0].toJS();
 					) {
 						return "'" + colas + "':" + colexp + ','; //f.field.arguments[0].toJS();
 					} else if (col.aggregatorid === 'ARRAY') {
-						return "'" + colas + "':[" + colexp + '],';
+						return `'${colas}':[${colexp}],`;
 					} else if (col.aggregatorid === 'COUNT') {
 						if (col.expression.columnid === '*') {
-							return "'" + colas + "':1,";
+							return `'${colas}':1,`;
 						} else {
-							//						return "'"+colas+'\':(typeof '+colexp+' != "undefined")?1:0,';
-							//					} else {
-							return (
-								"'" +
-								colas +
-								"':(typeof " +
-								colexp +
-								' == "undefined" || ' +
-								colexp +
-								' === null) ? 0 : 1,'
-							);
+							return `'${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
 						}
-
-						//				else if(col.aggregatorid == 'MIN') { return "'"+col.as+'\':r[\''+col.as+'\'],'; }
-						//				else if(col.aggregatorid == 'MAX') { return "'"+col.as+'\':r[\''+col.as+'\'],'; }
 					} else if (col.aggregatorid === 'AVG') {
-						query.removeKeys.push('_SUM_' + colas);
-						query.removeKeys.push('_COUNT_' + colas);
+						query.removeKeys.push(`_SUM_${colas}`);
+						query.removeKeys.push(`_COUNT_${colas}`);
 
-						return (
-							'' +
-							"'" +
-							colas +
-							"':" +
-							colexp +
-							",'_SUM_" +
-							colas +
-							"':(" +
-							colexp +
-							")||0,'_COUNT_" +
-							colas +
-							"':(typeof " +
-							colexp +
-							' == "undefined" || ' +
-							colexp +
-							' === null) ? 0 : 1,'
-						);
+						return `'${colas}':${colexp},'_SUM_${colas}':(${colexp})||0,'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
 					} else if (col.aggregatorid === 'AGGR') {
-						aft += ",g['" + colas + "']=" + col.expression.toJS('g', -1);
+						aft += `,g['${colas}']=${col.expression.toJS('g', -1)}`;
 						return '';
 					} else if (col.aggregatorid === 'REDUCE') {
-						//					query.removeKeys.push('_REDUCE_'+colas);
 						query.aggrKeys.push(col);
-
-						//					return "'"+colas+'\':alasql.aggr[\''+col.funcid+'\']('+colexp+',undefined,(acc={}),1),'
-						//					+'\'__REDUCE__'+colas+'\':acc,';
-						return "'" + colas + "':alasql.aggr['" + col.funcid + "'](" + colexp + ',undefined,1),';
+						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1),`;
 					}
 					return '';
 				}
@@ -207,61 +141,10 @@ yy.Select.prototype.compileGroup = function (query) {
 			})
 			.join('');
 
-		/*/*
-		// columnid:r.columnid
-	//	var srg = [];//rg.map(function(fn){ return (fn+':'+fn); });
-
-	//	var srg = this.group.map(function(col){
-	//		if(col == '') return '';
-	//		else return col.columnid+':'+col.toJS('r','');
-	//	});
-
-	// Initializw aggregators
-
-	/*
-		this.columns.forEach(function(col){
-	//		console.log(f);
-	//			if(f.constructor.name == 'LiteralValue') return '';
-
-
-			if (col instanceof yy.AggrValue) {
-				if (col.aggregatorid == 'SUM') { srg.push("'"+col.as+'\':0'); }//f.field.arguments[0].toJS();
-				else if(col.aggregatorid == 'COUNT') {srg.push( "'"+col.as+'\':0'); }
-				else if(col.aggregatorid == 'MIN') { srg.push( "'"+col.as+'\':Infinity'); }
-				else if(col.aggregatorid == 'MAX') { srg.push( "'"+col.as+'\':-Infinity'); }
-	//			else if(col.aggregatorid == 'AVG') { srg.push(col.as+':0'); }
-	//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS();
-			};
-
-		});
-
-
-
-	/***************** /
-
-	//	s += srg.join(',');
-
-		// var ss = [];
-		// gff.forEach(function(fn){
-		// 	ss.push(fn+':rec.'+fn);
-		// });
-		// s += ss.join(',');
-	//	s += '});};';
-*/
 		s += '}' + aft + ',g));' + aft2 + '} else {';
-
-		//	console.log(s, this.columns);
-
-		//		s += self.columns.map(function(col){
 		s += query.selectGroup
 			.map(function (col) {
 				var colas = col.nick;
-				/*/*
-			// if(typeof colas == 'undefined') {
-			// 	if(col instanceof yy.Column) colas = col.columnid;
-			// 	else colas = col.toString();
-			// }
-*/
 				var colexp = col.expression.toJS('p', tableid, defcols);
 				let colExpIfFunIdExists = expression => {
 					let colexpression = expression.args[0];
@@ -271,16 +154,10 @@ yy.Select.prototype.compileGroup = function (query) {
 					var pre = '',
 						post = '';
 					if (col.distinct) {
-						var pre =
-							'if(typeof ' +
-							colexp +
-							'!="undefined" && (!g[\'$$_VALUES_' +
-							colas +
-							"'][" +
-							colexp +
-							'])) {';
-						var post = "g['$$_VALUES_" + colas + "'][" + colexp + ']=true;}';
+						pre = `if(typeof ${colexp}!="undefined" && (!g['$$_VALUES_${colas}'][${colexp}])) {`;
+						post = `g['$$_VALUES_${colas}'][${colexp}]=true;}`;
 					}
+
 					if (col.aggregatorid === 'SUM') {
 						return `${pre}if((y=${colexp})!=null){const v=g['${colas}'];g['${colas}']=(v==null)?y:v+y;}${post}`;
 					} else if (col.aggregatorid === 'TOTAL') {
@@ -288,96 +165,87 @@ yy.Select.prototype.compileGroup = function (query) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 							return (
 								pre +
-								`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
-						typeof ${colexp1} == 'string' && !isNaN(${colexp1}) && typeof Number(${colexp1}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp1})}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'string'){g['${colas}'] = 0}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp1} == 'number'){g['${colas}'] = ${colexp1}}
-						else if(typeof ${colexp1} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
-						else{g['${colas}'] += ${colexp1}||0}` +
+								`{
+									const __g_colas = g['${colas}'];
+									const __colexp1 = ${colexp1};
+									const __typeof_g_colas = typeof __g_colas;
+									const __typeof_colexp1 = typeof __colexp1;
+
+									if (__typeof_g_colas == 'string' && !isNaN(__g_colas) && typeof Number(__g_colas) == 'number' &&
+										__typeof_colexp1 == 'string' && !isNaN(__colexp1) && typeof Number(__colexp1) == 'number') {
+										g['${colas}'] = Number(__g_colas) + Number(__colexp1);
+									} else if (__typeof_g_colas == 'string' && __typeof_colexp1 == 'string') {
+										g['${colas}'] = 0;
+									} else if (__typeof_g_colas == 'string' && __typeof_colexp1 == 'number') {
+										g['${colas}'] = __colexp1;
+									} else if (__typeof_colexp1 == 'string' && __typeof_g_colas == 'number') {
+										g['${colas}'] = __g_colas;
+									} else {
+										g['${colas}'] += __colexp1 || 0;
+									}
+								}` +
 								post
 							);
 						}
 						return (
 							pre +
-							`if(typeof g['${colas}'] == 'string' && !isNaN(g['${colas}']) && typeof Number(g['${colas}']) == 'number' &&
-						typeof ${colexp} == 'string' && !isNaN(${colexp}) && typeof Number(${colexp}) == 'number'){g['${colas}'] = Number(g['${colas}']) + Number(${colexp})}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'string'){g['${colas}'] = 0}
-						else if(typeof g['${colas}'] == 'string' && typeof ${colexp} == 'number'){g['${colas}'] = ${colexp}}
-						else if(typeof ${colexp} == 'string' && typeof g['${colas}'] == 'number'){g['${colas}'] = g['${colas}']}
-						else{g['${colas}'] += ${colexp}||0}` +
+							`{
+								const __g_colas = g['${colas}'];
+								const __colexp = ${colexp};
+								const __typeof_g_colas = typeof __g_colas;
+								const __typeof_colexp = typeof __colexp;
+
+								if (__typeof_g_colas === 'string' && !isNaN(__g_colas) && typeof Number(__g_colas) === 'number' &&
+									__typeof_colexp === 'string' && !isNaN(__colexp) && typeof Number(__colexp) === 'number') {
+									g['${colas}'] = Number(__g_colas) + Number(__colexp);
+								} else if (__typeof_g_colas === 'string' && __typeof_colexp === 'string') {
+									g['${colas}'] = 0;
+								} else if (__typeof_g_colas === 'string' && __typeof_colexp === 'number') {
+									g['${colas}'] = __colexp;
+								} else if (__typeof_colexp === 'string' && __typeof_g_colas === 'number') {
+									g['${colas}'] = __g_colas;
+								} else {
+									g['${colas}'] += __colexp || 0;
+								}
+							}
+
+							` +
 							post
 						);
 					} else if (col.aggregatorid === 'COUNT') {
-						//					console.log(221,col.expression.columnid == '*');
 						if (col.expression.columnid === '*') {
-							return pre + "g['" + colas + "']++;" + post;
+							return `${pre}
+								g['${colas}']++;
+								${post}`;
 						} else {
-							return (
-								pre +
-								'if(typeof ' +
-								colexp +
-								'!="undefined" && ' +
-								colexp +
-								" !== null) g['" +
-								colas +
-								"']++;" +
-								post
-							);
+							return `${pre}
+							if(typeof ${colexp}!="undefined" && ${colexp} !== null) g['${colas}']++;
+							${post}`;
 						}
 					} else if (col.aggregatorid === 'ARRAY') {
 						return pre + "g['" + colas + "'].push(" + colexp + ');' + post;
 					} else if (col.aggregatorid === 'MIN') {
-						return (
-							`${pre}if ((y=${colexp}) < g['${colas}'] && y!=null || g['${colas}']===null){ g['${colas}'] = y;}${post}`
-						);
+						return `${pre}if ((y=${colexp}) < g['${colas}'] && y!=null || g['${colas}']===null){ g['${colas}'] = y;}${post}`;
 					} else if (col.aggregatorid === 'MAX') {
-						return (
-							`${pre}if ((y=${colexp}) > g['${colas}'] && y!=null || g['${colas}']===null) g['${colas}'] = y;${post}`
-						);
+						return `${pre}if ((y=${colexp}) > g['${colas}'] && y!=null || g['${colas}']===null) g['${colas}'] = y;${post}`;
 					} else if (col.aggregatorid === 'FIRST') {
 						return '';
 					} else if (col.aggregatorid === 'LAST') {
-						return pre + "g['" + colas + "']=" + colexp + ';' + post;
+						return `${pre}g['${colas}']=${colexp};${post}`;
 					} else if (col.aggregatorid === 'AVG') {
-						return (
-							'' +
-							pre +
-							"g['_SUM_" +
-							colas +
-							"']+=(y=" +
-							colexp +
-							')||0;' +
-							"g['_COUNT_" +
-							colas +
-							'\']+=(typeof y == "undefined" || y === null) ? 0 : 1;' +
-							"g['" +
-							colas +
-							"']=g['_SUM_" +
-							colas +
-							"']/g['_COUNT_" +
-							colas +
-							"'];" +
-							post
-						);
-						//					 }
-						//			else if(col.aggregatorid == 'AVG') { srg.push(colas+':0'); }
+						return `${pre}
+							g['_SUM_${colas}'] += (y=${colexp})||0;
+							g['_COUNT_${colas}'] += (typeof y == "undefined" || y === null) ? 0 : 1;
+							g['${colas}']=g['_SUM_${colas}'] / g['_COUNT_${colas}'];
+							${post}`;
 					} else if (col.aggregatorid === 'AGGR') {
-						return '' + pre + "g['" + colas + "']=" + col.expression.toJS('g', -1) + ';' + post;
+						return `${pre}
+							g['${colas}']=${col.expression.toJS('g', -1)};
+							${post}`;
 					} else if (col.aggregatorid === 'REDUCE') {
-						return (
-							'' +
-							pre +
-							"g['" +
-							colas +
-							"']=alasql.aggr." +
-							col.funcid +
-							'(' +
-							colexp +
-							",g['" +
-							colas +
-							"'],2);" +
-							post
-						);
+						return `${pre}
+							g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2);
+							${post}`;
 					}
 
 					return '';
@@ -387,23 +255,7 @@ yy.Select.prototype.compileGroup = function (query) {
 			})
 			.join('');
 
-		//		s += selectFields.map(function(f){
-		//			console.log(f);
-		//			if(f.constructor.name == 'LiteralValue') return '';
-		//			if (f.field instanceof SQLParser.nodes.FunctionValue
-		//				&& (f.field.name.toUpperCase() == 'SUM' || f.field.name.toUpperCase() == 'COUNT')) {
-		//				return 'group.'+f.name.value+'=+(+group.'+f.name.value+'||0)+'+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS();
-		//				return 'group.'+f.name.value+'+='+f.field.arguments[0].toJS('rec','')+';'; //f.field.arguments[0].toJS();
-		//				return 'group.'+f.name.value+'+=rec.'+f.name.value+';'; //f.field.arguments[0].toJS();
-		//			};
-		//			return '';
-		//		}).join('');
-
-		//		s += '	group.amt += rec.emplid;';
-		//		s += 'group.count++;';
 		s += '}';
 	});
-
-	//		console.log('groupfn',s);
 	return new Function('p,params,alasql', 'var y;' + s);
 };

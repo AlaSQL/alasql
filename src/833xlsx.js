@@ -90,10 +90,14 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 		var dataLength = Object.keys(data).length;
 
 		// Generate columns if they are not defined
-		if ((!columns || columns.length == 0) && dataLength > 0) {
-			columns = Object.keys(data[0]).map(function (columnid) {
-				return {columnid: columnid};
-			});
+		if (!columns || columns.length == 0) {
+			if (dataLength > 0) {
+				columns = Object.keys(data[0]).map(function (columnid) {
+					return {columnid: columnid};
+				});
+			} else {
+				columns = [];
+			}
 		}
 
 		var cells = {};

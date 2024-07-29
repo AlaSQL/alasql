@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 221 Multi-line comments', function () {
+describe('Test 1796 Multi-line comments', function () {
 	it('1. /* */ and -- style comments', function (done) {
 		var res = alasql.utils.uncomment('one /* two \n three */ four \n five -- six\nseven');
 		//        console.log(res);
