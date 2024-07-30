@@ -25,7 +25,11 @@ const rollup = (a, query) => {
 				aaa = `${a[i].nick}\t${a[i].toJS('p', query.sources[0].alias, query.defcols)}`;
 			} else {
 				query.groupColumns[escapeq(a[i].toString())] = escapeq(a[i].toString());
-				aaa = `${escapeq(a[i].toString())}\t${a[i].toJS('p', query.sources[0].alias, query.defcols)}`;
+				aaa = `${escapeq(a[i].toString())}\t${a[i].toJS(
+					'p',
+					query.sources[0].alias,
+					query.defcols
+				)}`;
 			}
 
 			if (mask & (1 << i)) ss.push(aaa);
@@ -94,7 +98,11 @@ const cartes = (a1, a2) => {
 				query.groupColumns[escapeq(gv[t].toString())] = escapeq(gv[t].toString());
 				res = res.map(r =>
 					r.concat(
-						`${escapeq(gv[t].toString())}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`
+						`${escapeq(gv[t].toString())}\t${gv[t].toJS(
+							'p',
+							query.sources[0].alias,
+							query.defcols
+						)}`
 					)
 				);
 			} else if (gv[t] instanceof yy.GroupExpression) {
@@ -107,7 +115,11 @@ const cartes = (a1, a2) => {
 			} else {
 				res = res.map(r =>
 					r.concat(
-						`${escapeq(gv[t].toString())}\t${gv[t].toJS('p', query.sources[0].alias, query.defcols)}`
+						`${escapeq(gv[t].toString())}\t${gv[t].toJS(
+							'p',
+							query.sources[0].alias,
+							query.defcols
+						)}`
 					)
 				);
 			}

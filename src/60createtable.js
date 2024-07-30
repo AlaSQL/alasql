@@ -40,7 +40,9 @@ yy.CreateTable = function (params) {
 	return Object.assign(this, params);
 };
 yy.CreateTable.prototype.toString = function () {
-	let s = `CREATE${this.temporary ? ' TEMPORARY' : ''}${this.view ? ' VIEW' : ` ${this.class ? 'CLASS' : 'TABLE'}`}${this.ifnotexists ? ' IF NOT EXISTS' : ''} ${this.table.toString()}`;
+	let s = `CREATE${this.temporary ? ' TEMPORARY' : ''}${
+		this.view ? ' VIEW' : ` ${this.class ? 'CLASS' : 'TABLE'}`
+	}${this.ifnotexists ? ' IF NOT EXISTS' : ''} ${this.table.toString()}`;
 
 	if (this.viewcolumns) {
 		s += `(${this.viewcolumns.map(vcol => vcol.toString()).join(',')})`;

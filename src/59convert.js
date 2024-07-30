@@ -155,6 +155,10 @@ alasql.stdfn.CONVERT = function (value, args) {
 		}
 	}
 
+	if (args.dbtypeid == 'Date') {
+		return t;
+	}
+
 	switch (udbtypeid) {
 		case 'DATE':
 			return `${s.formattedYear}.${s.formattedMonth}.${s.formattedDate}`;
@@ -204,8 +208,6 @@ alasql.stdfn.CONVERT = function (value, args) {
 			} catch (err) {
 				throw new Error('Cannot convert string to JSON');
 			}
-		case 'Date':
-			return val;
 		default:
 			return val;
 	}

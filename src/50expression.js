@@ -242,7 +242,9 @@
 				return `${leftStr} ${this.op} ${this.right1.toString()} AND ${this.right2.toString()}`;
 			}
 
-			return `${leftStr} ${this.op} ${this.allsome ? this.allsome + ' ' : ''}${this.right.toString()}`;
+			return `${leftStr} ${this.op} ${
+				this.allsome ? this.allsome + ' ' : ''
+			}${this.right.toString()}`;
 		}
 
 		findAggregator(query) {
@@ -340,27 +342,37 @@
 			} else if (this.op === '==') {
 				s = `alasql.utils.deepEqual(${leftJS()}, ${rightJS()})`;
 			} else if (this.op === '===' || this.op === '!===') {
-				s = `(${this.op === '!===' ? '!' : ''}((${leftJS()}).valueOf() === (${rightJS()}).valueOf()))`;
+				s = `(${
+					this.op === '!===' ? '!' : ''
+				}((${leftJS()}).valueOf() === (${rightJS()}).valueOf()))`;
 			} else if (this.op === '!==') {
 				s = `(!alasql.utils.deepEqual(${leftJS()}, ${rightJS()}))`;
 			} else if (this.op === '||') {
 				s = `(''+(${leftJS()} || '') + (${rightJS()} || ''))`;
 			} else if (this.op === 'LIKE' || this.op === 'NOT LIKE') {
-				s = `(${this.op === 'NOT LIKE' ? '!' : ''}alasql.utils.like(${rightJS()}, ${leftJS()}${this.escape ? `, ${ref(this.escape)}` : ''}))`;
+				s = `(${this.op === 'NOT LIKE' ? '!' : ''}alasql.utils.like(${rightJS()}, ${leftJS()}${
+					this.escape ? `, ${ref(this.escape)}` : ''
+				}))`;
 			} else if (this.op === 'REGEXP') {
 				s = `alasql.stdfn.REGEXP_LIKE(${leftJS()}, ${rightJS()})`;
 			} else if (this.op === 'GLOB') {
 				s = `alasql.utils.glob(${leftJS()}, ${rightJS()})`;
 			} else if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
 				const left = leftJS();
-				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(this.right1)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
+				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(
+					this.right1
+				)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
 			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
+					s = `alasql.utils.flatArray(this.queriesfn[${
+						this.queriesidx
+					}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
-						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
+						s = `(new Set([${this.right
+							.map(ref)
+							.join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
@@ -374,11 +386,15 @@
 				}
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
+					s = `alasql.utils.flatArray(this.queriesfn[${
+						this.queriesidx
+					}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
-						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
+						s = `(!(new Set([${this.right
+							.map(ref)
+							.join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
@@ -703,8 +719,8 @@
 				return this.columnid !== '_'
 					? `${context}['${this.columnid}']`
 					: context === 'g'
-						? "g['_']"
-						: context;
+					? "g['_']"
+					: context;
 			}
 
 			if (context === 'g') {
@@ -715,8 +731,8 @@
 				return this.columnid !== '_'
 					? `${context}['${this.tableid}']['${this.columnid}']`
 					: context === 'g'
-						? "g['_']"
-						: `${context}['${this.tableid}']`;
+					? "g['_']"
+					: `${context}['${this.tableid}']`;
 			}
 
 			if (defcols) {
