@@ -145,9 +145,8 @@ case 72:
 		    yy.extend(this.$,$$[$0-5]); yy.extend(this.$,$$[$0-4]);yy.extend(this.$,$$[$0-3]);
 		    yy.extend(this.$,$$[$0-2]); yy.extend(this.$,$$[$0-1]); yy.extend(this.$,$$[$0]);
 		    this.$ = $$[$0-9];
-/*		    if(yy.exists) this.$.exists = yy.exists;
-		    delete yy.exists;
-		    if(yy.queries) this.$.queries = yy.queries;
+		    if(yy.exists) this.$.exists = yy.exists.slice();
+/*		    if(yy.queries) this.$.queries = yy.queries;
 			delete yy.queries;
 */		
 break;
