@@ -520,9 +520,8 @@ Select
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
 		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10);
 		    $$ = $1;
-/*		    if(yy.exists) $$.exists = yy.exists;
-		    delete yy.exists;
-		    if(yy.queries) $$.queries = yy.queries;
+		    if(yy.exists) $$.exists = yy.exists.slice();
+/*		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
 	| SEARCH SearchSelector* IntoClause SearchFrom?
