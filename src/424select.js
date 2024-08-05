@@ -327,12 +327,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 			//			}
 		} else {
 			const colas = escapeq(col.as || col.columnid || col.toString());
-			ss.push(
-				"'" +
-					colas +
-					"':" +
-					n2u(col.toJS('p', query.defaultTableid, query.defcols))
-			);
+			ss.push("'" + colas + "':" + n2u(col.toJS('p', query.defaultTableid, query.defcols)));
 			//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
 			//if(col instanceof yy.Expression) {
 			query.selectColumns[colas] = true;

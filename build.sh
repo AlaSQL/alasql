@@ -27,7 +27,6 @@ branch=$(git rev-parse --abbrev-ref HEAD |  rexreplace '[^0-9a-z-]' '.' |  rexre
 commit=$(git rev-parse --short HEAD)
 
 
-
 echo '\nPrepare types'
 cp 'types/alasql.d.ts' dist/
 
@@ -36,19 +35,14 @@ echo '\nPrepare echo plugin'
 cp 'src/echo/alasql-echo.js' dist/
 
 
-
 echo '\nPrepare prolog'
 cp 'src/prolog/alasql-prolog.js' dist/
 
 
-
-
-
-
 echo '\nBuild alasql.js files'
-outfile_fs="dist/alasql.fs.js"
 outfile="dist/alasql.js"
 outfile_min="dist/alasql.min.js"
+outfile_fs="dist/alasql.fs.js"
 
 echo '# Concat all parts'
 cat \

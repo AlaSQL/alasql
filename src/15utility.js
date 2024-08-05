@@ -1,9 +1,9 @@
 /*jshint unused:false*/
 /*
-    Utilities for Alasql.js
+	Utilities for Alasql.js
 
-    @todo Review the list of utilities
-    @todo Find more effective utilities
+	@todo Review the list of utilities
+	@todo Find more effective utilities
 */
 
 /**
@@ -194,7 +194,10 @@ utils.isWebWorker = (function () {
   */
 utils.isNode = (function () {
 	try {
-		return utils.isNativeFunction(globalObject.process.reallyExit);
+		if (typeof process === 'undefined' || !process.versions || !process.versions.node) {
+			return false;
+		}
+		return true;
 	} catch (e) {
 		return false;
 	}
@@ -291,6 +294,7 @@ utils.hasIndexedDB = (function () {
 utils.isArray = function (obj) {
 	return '[object Array]' === Object.prototype.toString.call(obj);
 };
+
 /**
   Load text file from anywhere
   @param {string|object} path File path or HTML event
@@ -302,7 +306,9 @@ utils.isArray = function (obj) {
   @todo Define Event type
   @todo Smaller if-else structures.
   */
-var loadFile = (utils.loadFile = function (path, asy, success, error) {
+
+const protocolRegex = /^[a-z]+:\/\//i;
+let loadFile = (utils.loadFile = function (path, asy, success, error) {
 	var data, fs;
 	if (utils.isNode || utils.isMeteorServer) {
 		//*not-for-browser/*
@@ -321,30 +327,38 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			process.stdin.on('end', function () {
 				success(cutbom(buff));
 			});
-		} else {
-			if (/^[a-z]+:\/\//i.test(path)) {
-				fetchData(path, x => success(cutbom(x)), error, asy);
-			} else {
-				//If async callthen call async
-				if (asy) {
-					fs.readFile(path, function (err, data) {
-						if (err) {
-							return error(err, null);
-						}
-						success(cutbom(data.toString()));
-					});
-				} else {
-					// Call sync version
-					try {
-						data = fs.readFileSync(path);
-					} catch (e) {
-						return error(err, null);
-					}
-					success(cutbom(data.toString()));
-				}
-			}
+			return;
 		}
-	} else if (utils.isReactNative) {
+
+		if (protocolRegex.test(path)) {
+			fetchData(path, x => success(cutbom(x)), error, asy);
+			return;
+		}
+
+		//If async callthen call async
+		if (asy) {
+			fs.readFile(path, function (err, data) {
+				if (err) {
+					return error(err, null);
+				}
+				success(cutbom(data.toString()));
+			});
+			return;
+		}
+
+		// Call sync version
+		try {
+			data = fs.readFileSync(path);
+		} catch (e) {
+			error(err, null);
+			return;
+		}
+
+		success(cutbom(data.toString()));
+		return;
+	}
+
+	if (utils.isReactNative) {
 		// If ReactNative
 		var RNFS = require('react-native-fs');
 		RNFS.readFile(path, 'utf8')
@@ -355,7 +369,10 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 				return error(err, null);
 			});
 		//*/
-	} else if (utils.isCordova) {
+		return;
+	}
+
+	if (utils.isCordova) {
 		/* If Cordova */
 		globalObject.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fileSystem) {
 			fileSystem.root.getFile(path, {create: false}, function (fileEntry) {
@@ -369,70 +386,52 @@ var loadFile = (utils.loadFile = function (path, asy, success, error) {
 			});
 		});
 
-		/** @todo Check eliminated code below */
-
-		/*/*
-
-		 var paths = path.split('/');
-		 var filename = paths[paths.length-1];
-		 var dirpath = path.substr(0,path.length-filename.length);
-  //       console.log('CORDOVA',filename,dirpath);
-  //return success('[{"a":"'+filename+'"}]');
-
-		 window.resolveLocalFileSystemURL(dirpath, function(dir) {
-			 dir.getFile(filename, null, function(file) {
-				 file.file(function(file) {
-					 var reader = new FileReader();
-  //                   console.log('READ FILE 2');
-					 reader.onloadend = function(e) {
- //                    console.log('READ FILE 3',this.result);
-						 success(this.result);
-					 };
-					 reader.readAsText(file);
-				 });
-			 });
-		 });
- */
-	} else {
-		/* For string */
-		if (typeof path === 'string') {
-			// For browser read from tag
-			/*
-				 SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
-			 */
-			if (path.substr(0, 1) === '#' && typeof document !== 'undefined') {
-				data = document.querySelector(path).textContent;
-				success(data);
-			} else {
-				/*
-					 Simply read file from HTTP request, like:
-					 SELECT * FROM TXT('http://alasql.org/README.md');
-				 */
-				fetchData(path, x => success(cutbom(x)), error, asy);
-			}
-		} else if (path instanceof Event) {
-			/*
-				 For browser read from files input element
-				 <input type="files" onchange="readFile(event)">
-				 <script>
-					 function readFile(event) {
-						 alasql('SELECT * FROM TXT(?)',[event])
-					 }
-				 </script>
-			 */
-			/** @type {array} List of files from <input> element */
-			var files = path.target.files;
-			/** type {object} */
-			var reader = new FileReader();
-			/** type {string} */
-			var name = files[0].name;
-			reader.onload = function (e) {
-				var data = e.target.result;
-				success(cutbom(data));
-			};
-			reader.readAsText(files[0]);
-		}
+		return;
 	}
+
+	/* For string */
+	if (typeof path === 'string') {
+		// For browser read from tag
+		/*
+			 SELECT * FROM TXT('#one') -- read data from HTML element with id="one"
+		 */
+		if (path.substr(0, 1) === '#' && typeof document !== 'undefined') {
+			data = document.querySelector(path).textContent;
+			success(data);
+			return;
+		}
+
+		/*
+			 Simply read file from HTTP request, like:
+			 SELECT * FROM TXT('http://alasql.org/README.md');
+		 */
+		fetchData(path, x => success(cutbom(x)), error, asy);
+		return;
+	}
+
+	if (path instanceof Event) {
+		/*
+			 For browser read from files input element
+			 <input type="files" onchange="readFile(event)">
+			 <script>
+				 function readFile(event) {
+					 alasql('SELECT * FROM TXT(?)',[event])
+				 }
+			 </script>
+		 */
+		/** @type {array} List of files from <input> element */
+		var files = path.target.files;
+		/** type {object} */
+		var reader = new FileReader();
+		/** type {string} */
+		var name = files[0].name;
+		reader.onload = function (e) {
+			var data = e.target.result;
+			success(cutbom(data));
+		};
+		reader.readAsText(files[0]);
+	}
+	fetchData(path, x => success(cutbom(x)), error, asy);
 });
 
 let _fetch = typeof fetch !== 'undefined' ? fetch : null;
@@ -619,7 +618,7 @@ utils.autoExtFilename = function (filename, ext, config) {
 	config = config || {};
 	if (
 		typeof filename !== 'string' ||
-		filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) ||
+		filename.match(/^[A-Z]+:\/\/|\n|\..{2,6}$/i) ||
 		config.autoExt === 0 ||
 		config.autoExt === false
 	) {
@@ -1179,43 +1178,46 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
   @parameter {string} escape Escape character (optional)
   @return {boolean} If value LIKE pattern ESCAPE escape
   */
-
+var patternCache = {};
 var like = (utils.like = function (pattern, value, escape) {
-	// Verify escape character
-	if (!escape) escape = '';
+	if (!patternCache[pattern]) {
+		// Verify escape character
+		if (!escape) escape = '';
 
-	var i = 0;
-	var s = '^';
+		var i = 0;
+		var s = '^';
 
-	while (i < pattern.length) {
-		var c = pattern[i],
-			c1 = '';
-		if (i < pattern.length - 1) c1 = pattern[i + 1];
+		while (i < pattern.length) {
+			var c = pattern[i],
+				c1 = '';
+			if (i < pattern.length - 1) c1 = pattern[i + 1];
 
-		if (c === escape) {
-			s += '\\' + c1;
+			if (c === escape) {
+				s += '\\' + c1;
+				i++;
+			} else if (c === '[' && c1 === '^') {
+				s += '[^';
+				i++;
+			} else if (c === '[' || c === ']') {
+				s += c;
+			} else if (c === '%') {
+				s += '[\\s\\S]*';
+			} else if (c === '_') {
+				s += '.';
+			} else if ('/.*+?|(){}'.indexOf(c) > -1) {
+				s += '\\' + c;
+			} else {
+				s += c;
+			}
 			i++;
-		} else if (c === '[' && c1 === '^') {
-			s += '[^';
-			i++;
-		} else if (c === '[' || c === ']') {
-			s += c;
-		} else if (c === '%') {
-			s += '[\\s\\S]*';
-		} else if (c === '_') {
-			s += '.';
-		} else if ('/.*+?|(){}'.indexOf(c) > -1) {
-			s += '\\' + c;
-		} else {
-			s += c;
 		}
-		i++;
-	}
 
-	s += '$';
-	//    if(value == undefined) return false;
-	//console.log(s,value,(value||'').search(RegExp(s))>-1);
-	return ('' + (value ?? '')).search(RegExp(s, 'i')) > -1;
+		s += '$';
+		//    if(value == undefined) return false;
+		//console.log(s,value,(value||'').search(RegExp(s))>-1);
+		patternCache[pattern] = RegExp(s, 'i');
+	}
+	return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
 });
 
 utils.glob = function (value, pattern) {
