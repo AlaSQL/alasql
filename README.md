@@ -1,4 +1,4 @@
-- _AlaSQL is an unfunded open source project installed 140k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Aupdated-desc). We appreciate any and all contributions we can get._
+- _AlaSQL is an unfunded open source project installed 200k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Aupdated-desc). We appreciate any and all contributions we can get._
 
 - _Have a question? [Ask the AlaSQL bot](https://chat.openai.com/g/g-XcBL24WTe-alasql-bot) or post on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL)._
 
@@ -629,6 +629,15 @@ AlaSQL is an [OPEN Open Source Project](http://openopensource.org/). This means 
 
 We appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/alasql/alasql/blob/develop/CONTRIBUTING.md)
 
+## Rebuilding the parser 
+
+To rebuild the parser, follow these steps:
+
+* Make changes to alasqlparser.jison
+* `npm install -g jison`
+* `npm run jison`
+* `npm test` to validate the changes made
+* Commit changes to alasqlparser.jison and alasqlparser.js
 
 ## Credits
 

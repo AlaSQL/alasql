@@ -256,7 +256,7 @@ stdfn.CONCAT_WS = function () {
 // TRIM
 
 // Aggregator for joining strings
-alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
+alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
 	if (stage === 1) {
 		return '' + v;
 	} else if (stage === 2) {

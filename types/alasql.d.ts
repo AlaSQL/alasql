@@ -139,6 +139,7 @@ declare module 'alasql' {
 	}
 
 	interface Database {
+		new (databaseid?: string): Database;
 		databaseid: string;
 		dbversion: number;
 		tables: {[key: string]: any};
@@ -166,7 +167,9 @@ declare module 'alasql' {
 		autoval(tablename: string, colname: string, getNext?: boolean): number;
 		yy: {};
 		setXLSX(xlsxlib: typeof xlsx): void;
-		Database: Database;
+		Database: {
+			new (databaseid?: string): Database;
+		};
 
 		/**
 		 * Array of databases in the AlaSQL object.

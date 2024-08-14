@@ -1,8 +1,9 @@
 /*
 //
-// EXISTS and other subqueries functions  functions for Alasql.js
+// EXISTS and other subqueries functions for AlaSQL.js
 // Date: 03.11.2014
 // (c) 2014, Andrey Gershun
+// Modified by: Midwayne
 //
 */
 
@@ -20,12 +21,13 @@ yy.ExistsValue = class ExistsValue {
 	}
 
 	toJS(context, tableid, defcols) {
-		return `this.existsfn[${this.existsidx}](params, null, ${context}).data.length`;
+		// Updated to return a boolean value correctly
+		return `!!this.existsfn[${this.existsidx}](params, null, ${context}).data.length`;
 	}
 };
 
 //
-// Prepare subqueries and exists
+// Prepare subqueries and EXISTS
 //
 alasql.precompile = function (statement, databaseid, params) {
 	if (!statement) return;

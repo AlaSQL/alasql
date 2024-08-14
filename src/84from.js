@@ -131,9 +131,46 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 		if (cb) {
 			res = cb(res, idx, query);
 		}
-	});
+	}),
+		err => {
+			throw new Error(err);
+		};
 	return res;
 };
+
+const jsonl = ext => {
+	return function (filename, opts, cb, idx, query) {
+		let out = [];
+		filename = alasql.utils.autoExtFilename(filename, ext, opts);
+		alasql.utils.loadFile(
+			filename,
+			!!cb,
+			function (data) {
+				data.split(/\r?\n/).forEach((line, ix) => {
+					const trimmed = line.trim();
+					if (trimmed !== '') {
+						// skip empty lines, we do not use filter on an input, as we want to preserve line numbers
+						try {
+							out.push(JSON.parse(trimmed));
+						} catch (e) {
+							throw new Error(`Could not parse JSON at line ${ix}: ${e.toString()}`);
+						}
+					}
+				});
+				if (cb) {
+					res = cb(out, idx, query);
+				}
+			},
+			err => {
+				throw new Error(err);
+			}
+		);
+		return out;
+	};
+};
+
+alasql.from.JSONL = jsonl('jsonl');
+alasql.from.NDJSON = jsonl('ndjson');
 
 alasql.from.TXT = function (filename, opts, cb, idx, query) {
 	var res;

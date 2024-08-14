@@ -194,7 +194,10 @@ utils.isWebWorker = (function () {
   */
 utils.isNode = (function () {
 	try {
-		return utils.isNativeFunction(utils.global.process.reallyExit);
+		if (typeof process === 'undefined' || !process.versions || !process.versions.node) {
+			return false;
+		}
+		return true;
 	} catch (e) {
 		return false;
 	}
@@ -611,7 +614,7 @@ utils.autoExtFilename = function (filename, ext, config) {
 	config = config || {};
 	if (
 		typeof filename !== 'string' ||
-		filename.match(/^[A-z]+:\/\/|\n|\..{2,4}$/) ||
+		filename.match(/^[A-Z]+:\/\/|\n|\..{2,6}$/i) ||
 		config.autoExt === 0 ||
 		config.autoExt === false
 	) {
