@@ -75,7 +75,7 @@
 		"uglify-js": "3.19.1"
 	},
 	"resolutions": {
-		"got": "14.4.1",
+		"got": "14.4.2",
 		"axios": "1",
 		"json5": "2",
 		"underscore": "1",
