@@ -28,7 +28,6 @@
 		"format": "yarn pretty-since-dev --write",
 		"format-all": "yarn pretty-all --write",
 		"test-format": "yarn pretty-since-dev --list-different || echo 'Please correct file formatting using `yarn format` and try again.'",
-		"lint": "eslint .",
 		"pretty-since-dev": "{ git diff --name-only --diff-filter=d origin/develop ; git diff --name-only --diff-filter=d --staged origin/develop ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-commit": "{ git diff --name-only  --diff-filter=d ; git diff --name-only  --diff-filter=d --staged ; } | sort | uniq | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
 		"pretty-all": "git ls-tree --full-tree --name-only -r HEAD | grep -vE '^dist/|^test/coverage|^lib/|.min.js$' | grep -E '\\.(scss|css|js|ts|vue|json)$' | xargs npx prettier",
@@ -51,18 +50,12 @@
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
-		"cmdmix": "2.1.1",
+		"cmdmix": "2.2.2",
 		"dom-storage": "2.1.0",
 		"esbuild": "0.23.1",
-		"eslint": "9.6.0",
-		"eslint-config-standard": "17.1.0",
-		"eslint-plugin-import": "2.29.1",
-		"eslint-plugin-n": "17.9.0",
-		"eslint-plugin-promise": "6.4.0",
 		"git-branch-is": "4.0.0",
 		"husky": "8.0.3",
 		"jison": "^0.4.18",
-		"lint-staged": "15.2.7",
 		"mocha": "10.7.3",
 		"mocha.parallel": "0.15.6",
 		"open": "10.1.0",
@@ -72,18 +65,16 @@
 		"rexreplace": "7.1.10",
 		"strftime": "0.10.3",
 		"tabletop": "1.6.3",
-		"uglify-js": "3.19.1"
+		"uglify-js": "3.19.3"
 	},
-	"resolutions": {
+	"X-resolutions": {
 		"got": "14.4.2",
 		"axios": "1",
 		"json5": "2",
 		"underscore": "1",
 		"glob-parent": "6",
 		"decode-uri-component": "0.2",
-		"semver": "7",
-		"@gerhobbelt/json5": "2.1.0-48",
-		"minimist": "1.2.8"
+		"semver": "7"
 	},
 	"engines": {
 		"node": ">=15"
