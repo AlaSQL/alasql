@@ -288,15 +288,15 @@ ansi-escapes@^6.2.0:
   resolved "https://registry.npmjs.org/ansi-escapes/-/ansi-escapes-6.2.1.tgz"
   integrity sha512-4nJ3yixlEthEJ9Rk4vPcdBRkZvQZlYyu8j4/Mqz5sgIkddmEnH2Yj2ZrnP9S3tQOvSNRUIgVNF/1yPpRAGNRig==
 
-ansi-regex@6.0.1, ansi-regex@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.0.1.tgz"
-  integrity sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==
-
 ansi-regex@^5.0.1:
   version "5.0.1"
   resolved "https://registry.npmjs.org/ansi-regex/-/ansi-regex-5.0.1.tgz"
   integrity sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==
+
+ansi-regex@^6.0.1:
+  version "6.0.1"
+  resolved "https://registry.npmjs.org/ansi-regex/-/ansi-regex-6.0.1.tgz"
+  integrity sha512-n5M855fKb2SsfMIiFFoVrABHJC8QtHwVx+mHWP3QcEqBHYienj5dHSgjbxtC0WEZXYt4wcD6zrQElDPhFuZgfA==
 
 ansi-styles@^4.0.0, ansi-styles@^4.1.0:
   version "4.3.0"
@@ -2241,14 +2241,13 @@ reusify@^1.0.4:
   resolved "https://registry.npmjs.org/reusify/-/reusify-1.0.4.tgz"
   integrity sha512-U9nH88a3fc/ekCF1l0/UP1IosiuIjyTh7hBvXVMHYgVcfGvt897Xguj2UOLDeI5BG2m7/uwyaLVT6fbtCwTyzw==
 
-rexreplace@7.1.3:
-  version "7.1.3"
-  resolved "https://registry.npmjs.org/rexreplace/-/rexreplace-7.1.3.tgz"
-  integrity sha512-SGAWituQuExeD03gljqPsJwrjXjWNVuMZDHPNzABFm+P/M8fgGDSrWiPRfrWT0ymn2ooYlccPZha5psOpKSHHw==
+rexreplace@7.1.10:
+  version "7.1.10"
+  resolved "https://registry.yarnpkg.com/rexreplace/-/rexreplace-7.1.10.tgz#5e7e674be3bba61c10b50417d43de7e983e4bb2b"
+  integrity sha512-aAvBVYhMCTcX6zv2M2lPA+2asdPv9tyvmNN1UstT17Xp0boocn4UTcRESHmBvY69e8qExD5ONwONVuWCray9tg==
   dependencies:
-    ansi-regex "6.0.1"
     globs "0.1.4"
-    yargs "16.2.0"
+    yargs "16"
 
 rfdc@^1.4.1:
   version "1.4.1"
@@ -2697,7 +2696,7 @@ yargs-unparser@^2.0.0:
     flat "^5.0.2"
     is-plain-obj "^2.1.0"
 
-yargs@16, yargs@16.2.0, yargs@^16.2.0:
+yargs@16, yargs@^16.2.0:
   version "16.2.0"
   resolved "https://registry.npmjs.org/yargs/-/yargs-16.2.0.tgz"
   integrity sha512-D1mvvtDG0L5ft/jGWkLpG1+m0eQxOfaBvTNELraWj22wSVUMWxZUvYgJYcKh6jGGIkJFhH4IZPQhR4TKpc8mBw==
