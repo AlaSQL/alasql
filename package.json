@@ -53,7 +53,7 @@
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.1.1",
 		"dom-storage": "2.1.0",
-		"esbuild": "0.23.0",
+		"esbuild": "0.23.1",
 		"eslint": "9.6.0",
 		"eslint-config-standard": "17.1.0",
 		"eslint-plugin-import": "2.29.1",
