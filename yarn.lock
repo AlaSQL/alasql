@@ -1898,10 +1898,10 @@ mocha.parallel@0.15.6:
     bluebird "^2.9.34"
     semaphore "^1.0.5"
 
-mocha@10.6.0:
-  version "10.6.0"
-  resolved "https://registry.yarnpkg.com/mocha/-/mocha-10.6.0.tgz#465fc66c52613088e10018989a3b98d5e11954b9"
-  integrity sha512-hxjt4+EEB0SA0ZDygSS015t65lJw/I2yRCS3Ae+SJ5FrbzrXgfYwJr96f0OvIXdj7h4lv/vLCrH3rkiuizFSvw==
+mocha@10.7.3:
+  version "10.7.3"
+  resolved "https://registry.yarnpkg.com/mocha/-/mocha-10.7.3.tgz#ae32003cabbd52b59aece17846056a68eb4b0752"
+  integrity sha512-uQWxAu44wwiACGqjbPYmjo7Lg8sFrS3dQe7PP2FQI+woptP4vZXSMcfMyFL/e1yFEeEpV4RtyTpZROOKmxis+A==
   dependencies:
     ansi-colors "^4.1.3"
     browser-stdout "^1.3.1"
