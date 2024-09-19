@@ -43,7 +43,7 @@ yy.CaseValue.prototype.toJS = function (context, tableid, defcols) {
 		// If there's an expression, evaluate it and store in `v`, then compare in `when` clauses
 		s += `let v = ${this.expression.toJS(context, tableid, defcols)};`;
 		this.whens.forEach((w, index) => {
-			const condition = `v === ${w.when.toJS(context, tableid, defcols)}`;
+			const condition = `v == ${w.when.toJS(context, tableid, defcols)}`;
 			const assignment = `r = ${w.then.toJS(context, tableid, defcols)}`;
 			s += `${index === 0 ? 'if' : ' else if'} (${condition}) { ${assignment}; }`;
 		});
