@@ -15,6 +15,11 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build-only
+      - name: Upload dist
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist
 
   publish-npm:
     needs: build
@@ -26,6 +31,10 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
           scope: '@tablefilter'
+      - name: Download dist
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
       - run: npm install
       - run: npm publish --access public
         env:
