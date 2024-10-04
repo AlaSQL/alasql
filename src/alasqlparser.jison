@@ -104,6 +104,8 @@ COLUMNS 										return 'COLUMN'
 "CROSS"											return 'CROSS'
 'CUBE'											return 'CUBE'
 "CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
+"GETDATE"										return 'CURRENT_TIMESTAMP'
+"NOW"											return 'CURRENT_TIMESTAMP'
 "CURRENT_DATE"									return 'CURRENT_DATE'
 "CURDATE"										return 'CURRENT_DATE'
 "CURSOR"										return 'CURSOR'
@@ -1393,6 +1395,8 @@ FuncValue
 	| REPLACE LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
 	| CURRENT_DATE LPAR RPAR
+		{ $$ = new yy.FuncValue({ funcid: $1 }) }
+	| CURRENT_TIMESTAMP LPAR RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }

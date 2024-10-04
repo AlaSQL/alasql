@@ -11,16 +11,16 @@ var test = '845'; // insert test file number
 
 describe('Test ' + test + ' - use NOW() function', function () {
 	it('1a. NOW() as String', function () {
-		var res = alasql('SELECT NOW() AS now');
+		var res = alasql('SELECT NOW() AS now_alias');
 		//2022-02-25 19:21:27.839
-		assert(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}/.test(res[0].now));
+		assert(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}.\d{3}/.test(res[0].now_alias));
 	});
 
 	it('1b. NOW() as Date', function () {
 		alasql.options.dateAsString = false;
-		var res = alasql('SELECT NOW() AS now');
+		var res = alasql('SELECT NOW() AS now_alias');
 		//2022-02-25 19:21:27.839
-		assert(res[0].now instanceof Date);
+		assert(res[0].now_alias instanceof Date);
 	});
 
 	it('2. CONVERT with NOW() as an argument', function () {
