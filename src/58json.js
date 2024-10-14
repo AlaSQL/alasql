@@ -19,6 +19,7 @@ yy.Json.prototype.toString = function () {
 const JSONtoString = (alasql.utils.JSONtoString = function (obj) {
 	if (typeof obj === 'string') return `"${obj}"`;
 	if (typeof obj === 'number' || typeof obj === 'boolean') return String(obj);
+	if (typeof obj === 'bigint') return `${obj.toString()}n`;
 
 	if (Array.isArray(obj)) {
 		return `[${obj.map(b => JSONtoString(b)).join(',')}]`;
@@ -48,6 +49,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 	if (typeof obj == 'string') s = '"' + obj + '"';
 	else if (typeof obj == 'number') s = '(' + obj + ')';
 	else if (typeof obj == 'boolean') s = obj;
+	else if (typeof obj === 'bigint') s = obj.toString() + 'n';
 	else if (typeof obj === 'object') {
 		if (Array.isArray(obj)) {
 			s += `[${obj.map(b => JSONtoJS(b, context, tableid, defcols)).join(',')}]`;
