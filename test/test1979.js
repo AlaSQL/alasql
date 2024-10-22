@@ -79,18 +79,21 @@ describe('Test ' + test + ' - date function aliases in the parser', function () 
 			alasql('SELECT DAYOFWEEK(NOW()) AS DAYOFWEEK');
 		});
 		assert.throws(function() {
+			alasql('SELECT DAYOFMONTH(NOW()) AS DAYOFMONTH');
+		});
+		assert.throws(function() {
 			alasql('SELECT MONTH(NOW()) AS MONTH');
 		});
 		assert.throws(function() {
 			alasql('SELECT YEAR(NOW()) AS YEAR');
 		});
-
 		// As literal is fine
 		alasql("SELECT SECOND(NOW()) AS 'SECOND'");
 		alasql("SELECT HOUR(NOW()) AS 'HOUR'");
 		alasql("SELECT MINUTE(NOW()) AS 'MINUTE'");
 		alasql("SELECT DAY(NOW()) AS 'DAY'");
 		alasql("SELECT DAYOFWEEK(NOW()) AS 'DAYOFWEEK'");
+		alasql("SELECT DAYOFMONTH(NOW()) AS 'DAYOFMONTH'");
 		alasql("SELECT MONTH(NOW()) AS 'MONTH'");
 		alasql("SELECT YEAR(NOW()) AS 'YEAR'");
 	});
@@ -120,5 +123,13 @@ describe('Test ' + test + ' - date function aliases in the parser', function () 
 		// Verify it subtracted 10 days from 20081012
 		assert.equal(2, alasql('SELECT DATE_SUB(DATE("20081012"), INTERVAL 10 DAY) AS a')[0].a.getDate());
 		assert.equal(2, alasql('SELECT SUBDATE(DATE("20081012"), INTERVAL 10 DAY) AS a')[0].a.getDate());
+
+		// Assert DAYOFYEAR
+		assert.equal(107, alasql('SELECT SUBDATE(DATE("20080101"), INTERVAL 10 DAYOFYEAR) AS a')[0].a.getYear());
+
+		// Assert that nonexistinginterval throws
+		assert.throws(function() {
+			alasql('SELECT ADDDATE(DATE("20081012"), INTERVAL 10 nonexistinginterval) AS a');
+		});
 	});
 });
