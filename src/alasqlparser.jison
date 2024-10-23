@@ -1451,26 +1451,14 @@ FuncValue
 	| DATE_SUB LPAR Expression COMMA INTERVAL Expression IntervalLiteral RPAR
 		/* e.g. DATE_SUB(NOW(), INTERVAL 10 day) */
 		{ $$ = new yy.FuncValue({ funcid: 'DATE_SUB', args:[$3, new yy.FuncValue({ funcid: 'INTERVAL', args:[$6,new yy.StringValue({value:($7).toLowerCase()})]}) ]}) }
-	| DAY LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DAY', args: [$3] }) }
-	| DAYOFWEEK LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'DAYOFWEEK', args: [$3] }) }
-	| HOUR LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'HOUR', args: [$3] }) }
-	| MINUTE LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'MINUTE', args: [$3] }) }
-	| MONTH LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'MONTH', args: [$3] }) }
-	| SECOND LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'SECOND', args: [$3] }) }
+	| (YEAR|MONTH|DAY|DAYOFWEEK|HOUR|MINUTE|SECOND) LPAR Expression RPAR
+		{ $$ = new yy.FuncValue({ funcid: $1, args: [$3] }) }
 	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args: [new yy.StringValue({value:$3}),$5,$7]}) }
 	| TIMESTAMPDIFF LPAR IntervalLiteral COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args: [new yy.StringValue({value:$3}),$5,$7]}) }
 	| INTERVAL Expression IntervalLiteral
 		{ $$ = new yy.FuncValue({ funcid: 'INTERVAL', args: [$2,new yy.StringValue({value:($3).toLowerCase()})]}); }
-	| YEAR LPAR Expression RPAR
-		{ $$ = new yy.FuncValue({ funcid: 'YEAR', args: [$3] }) }
 	;
 
 ExprList
