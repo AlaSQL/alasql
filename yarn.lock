@@ -876,10 +876,10 @@ require-directory@^2.1.1:
   resolved "https://registry.yarnpkg.com/require-directory/-/require-directory-2.1.1.tgz#8c64ad5fd30dab1c976e2344ffe7f792a6a6df42"
   integrity sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==
 
-rexreplace@7.1.10:
-  version "7.1.10"
-  resolved "https://registry.yarnpkg.com/rexreplace/-/rexreplace-7.1.10.tgz#5e7e674be3bba61c10b50417d43de7e983e4bb2b"
-  integrity sha512-aAvBVYhMCTcX6zv2M2lPA+2asdPv9tyvmNN1UstT17Xp0boocn4UTcRESHmBvY69e8qExD5ONwONVuWCray9tg==
+rexreplace@7.1.11:
+  version "7.1.11"
+  resolved "https://registry.yarnpkg.com/rexreplace/-/rexreplace-7.1.11.tgz#f15cfc7f57fd0e1a4f448abebea7a1cacb15b977"
+  integrity sha512-2qngC/aQdomqnM/EgGYZ7saib2eumvRaVPf/i8pXU8/Mz5QDPITaCaGDCinWqzm+6NzQJkOx/kceQ6kzgaDmyw==
   dependencies:
     globs "0.1.4"
     yargs "16"
