@@ -52,7 +52,7 @@
 		"blueimp-md5": "2.19.0",
 		"cmdmix": "2.2.2",
 		"dom-storage": "2.1.0",
-		"esbuild": "0.23.1",
+		"esbuild": "0.24.0",
 		"git-branch-is": "4.0.0",
 		"husky": "8.0.3",
 		"jison": "^0.4.18",
