@@ -113,7 +113,7 @@ COLUMNS 										return 'COLUMN'
 DATABASE(S)?									return 'DATABASE'
 'DAY'											return 'DAY'
 'DAYOFMONTH'									return 'DAY'
-'DAYOFYEAR'										return 'DAY'
+'DAYOFYEAR'										return 'DAYOFYEAR'
 'DATEADD'                                       return 'DATEADD'
 'DATEDIFF'                                      return 'DATEDIFF'
 'DAYOFWEEK'										return 'DAYOFWEEK'
@@ -1451,7 +1451,7 @@ FuncValue
 	| DATE_SUB LPAR Expression COMMA INTERVAL Expression IntervalLiteral RPAR
 		/* e.g. DATE_SUB(NOW(), INTERVAL 10 day) */
 		{ $$ = new yy.FuncValue({ funcid: 'DATE_SUB', args:[$3, new yy.FuncValue({ funcid: 'INTERVAL', args:[$6,new yy.StringValue({value:($7).toLowerCase()})]}) ]}) }
-	| (YEAR|MONTH|DAY|DAYOFWEEK|HOUR|MINUTE|SECOND) LPAR Expression RPAR
+	| (YEAR|MONTH|DAY|DAYOFMONTH|DAYOFWEEK|WEEKDAY|HOUR|MINUTE|SECOND) LPAR Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: $1, args: [$3] }) }
 	| TIMESTAMPDIFF LPAR Expression COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'TIMESTAMPDIFF', args: [new yy.StringValue({value:$3}),$5,$7]}) }
