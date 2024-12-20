@@ -283,7 +283,7 @@ SETS                                        	return 'SET'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
 'WEEK'											return 'WEEK'
-'WEEKDAY'										return 'DAYOFWEEK'
+'WEEKDAY'										return 'WEEKDAY'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 'YEAR'											return 'YEAR'
 (\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
@@ -608,7 +608,7 @@ IntervalLiteral
 	| MINUTE
 	| HOUR
 	| DAY
-	| DAYOFWEEK
+	| WEEKDAY
 	| DAYOFYEAR
 	| WEEK
 	| MONTH
