@@ -3,8 +3,9 @@
 declare module 'alasql' {
 	import * as xlsx from 'xlsx';
 
-	interface AlaSQLCallback {
-		(data?: any, err?: Error): void;
+	// Callback with error-first convention and optional data
+	interface AlaSQLCallback<T = unknown> {
+		(err: Error | null, data?: T): void;
 	}
 
 	interface AlaSQLOptions {
@@ -15,7 +16,7 @@ declare module 'alasql' {
 		casesensitive: boolean; // table and column names are case sensitive and converted to lower-case
 		logtarget: string; // target for log. Values: 'console', 'output', 'id' of html tag
 		logprompt: boolean; // print SQL at log
-		modifier: any; // values: RECORDSET, VALUE, ROW, COLUMN, MATRIX, TEXTSTRING, INDEX
+		modifier?: 'RECORDSET' | 'VALUE' | 'ROW' | 'COLUMN' | 'MATRIX' | 'TEXTSTRING' | 'INDEX';
 		columnlookup: number; // how many rows to lookup to define columns
 		autovertex: boolean; // create vertex if not found
 		usedbo: boolean; // use dbo as current database (for partial T-SQL comaptibility)
@@ -30,12 +31,12 @@ declare module 'alasql' {
 		oracle: boolean;
 		sqlite: boolean;
 		orientdb: boolean;
-		excel: any;
+		excel?: xlsx.WorkBook; // now typed
 	}
 
 	// compiled Statement
 	interface AlaSQLStatement {
-		(params?: any, cb?: AlaSQLCallback, scope?: any): any;
+		<T = unknown>(params?: Record<string, unknown>, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 	}
 
 	// abstract Syntax Tree
@@ -43,22 +44,9 @@ declare module 'alasql' {
 		compile(databaseid: string): AlaSQLStatement;
 	}
 
-	// https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/es6-promise/es6-promise.d.ts
-	interface Thenable<T> {
-		then<U>(
-			onFulfilled?: (value: T) => U | Thenable<U>,
-			onRejected?: (error: any) => U | Thenable<U>
-		): Thenable<U>;
-		then<U>(
-			onFulfilled?: (value: T) => U | Thenable<U>,
-			onRejected?: (error: any) => void
-		): Thenable<U>;
-		catch<U>(onRejected?: (error: any) => U | Thenable<U>): Thenable<U>;
-	}
-
 	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
 	interface userDefinedFunction {
-		(...x: any[]): any;
+		(...x: unknown[]): unknown;
 	}
 
 	interface userDefinedFunctionLookUp {
@@ -67,7 +55,7 @@ declare module 'alasql' {
 
 	// see https://github.com/alasql/alasql/wiki/User%20Defined%20Functions
 	interface userAggregator {
-		(value: any, accumulator: any, stage: number): any;
+		(value: unknown, accumulator: unknown, stage: number): unknown;
 	}
 
 	interface userAggregatorLookUp {
@@ -75,7 +63,13 @@ declare module 'alasql' {
 	}
 
 	interface userFromFunction {
-		(dataReference: any, options: any, callback: any, index: any, query: any): any;
+		(
+			dataReference: unknown,
+			options: unknown,
+			callback: (res: unknown) => void,
+			index: unknown,
+			query: unknown
+		): void;
 	}
 
 	interface userFromFunctionLookUp {
@@ -117,7 +111,7 @@ declare module 'alasql' {
 		 * @type {any[]}
 		 * @memberof table
 		 */
-		data: any[];
+		data: unknown[];
 	}
 
 	/**
@@ -142,25 +136,31 @@ declare module 'alasql' {
 		new (databaseid?: string): Database;
 		databaseid: string;
 		dbversion: number;
-		tables: {[key: string]: any};
-		views: {[key: string]: any};
-		triggers: {[key: string]: any};
-		indices: {[key: string]: any};
-		objects: {[key: string]: any};
+		tables: {[key: string]: unknown};
+		views: {[key: string]: unknown};
+		triggers: {[key: string]: unknown};
+		indices: {[key: string]: unknown};
+		objects: {[key: string]: unknown};
 		counter: number;
-		sqlCache: {[key: string]: any};
+		sqlCache: {[key: string]: unknown};
 		sqlCacheSize: number;
-		astCache: {[key: string]: any};
-		resetSqlCache: () => void;
-		exec: (sql: string, params?: object, cb?: Function) => any;
-		autoval: (tablename: string, colname: string, getNext: boolean) => any;
+		astCache: {[key: string]: unknown};
+		resetSqlCache(): void;
+		exec<T = unknown>(sql: string, params?: Record<string, unknown>, cb?: AlaSQLCallback<T>): T;
+		autoval(tablename: string, colname: string, getNext: boolean): unknown;
 	}
+
 	interface AlaSQL {
 		options: AlaSQLOptions;
 		error: Error;
-		(sql: any, params?: any, cb?: AlaSQLCallback, scope?: any): any;
-		parse(sql: any): AlaSQLAST;
-		promise(sql: any, params?: any): Thenable<any>;
+		<T = unknown>(
+			sql: string,
+			params?: Record<string, unknown>,
+			cb?: AlaSQLCallback<T>,
+			scope?: unknown
+		): T;
+		parse(sql: string): AlaSQLAST;
+		promise<T = unknown>(sql: string, params?: Record<string, unknown>): Promise<T>;
 		fn: userDefinedFunctionLookUp;
 		from: userFromFunctionLookUp;
 		aggr: userAggregatorLookUp;
@@ -200,7 +200,7 @@ declare module 'alasql' {
 
 		/**
 		 * Array of the tables in the default database (called alasql). If
-		 * the database is changes via a USE statement or the use method, this
+		 * the database is changed via a USE statement or the use method, this
 		 * becomes the tables in the new database.
 		 *
 		 * @type {tableLookUp}

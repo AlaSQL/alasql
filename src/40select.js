@@ -344,7 +344,10 @@ yy.Select = class Select {
 			// the (data, err) standard is maintained here.
 			var res1 = queryfn(query, oldscope, function (res, err) {
 				if (err) {
-					return cb(null, err);
+					if (cb) {
+						return cb(null, err);
+					}
+					throw err;
 				}
 				if (query.rownums.length > 0) {
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
