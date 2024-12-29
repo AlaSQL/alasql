@@ -56,7 +56,7 @@
 		"git-branch-is": "4.0.0",
 		"husky": "8.0.3",
 		"jison": "^0.4.18",
-		"mocha": "10.7.3",
+		"mocha": "10.8.2",
 		"mocha.parallel": "0.15.6",
 		"open": "10.1.0",
 		"prettier": "3.4.2",
