@@ -124,15 +124,14 @@ var doubleq = (utils.doubleq = function (s) {
 });
 
 /**
-  Replace sigle quote to escaped single quote
+  Replace single quote with escaped single quote
   @param {string} s Source string
   @return {string} Replaced string
 
-  @todo Chack this functions
-
-  */
+  @todo Check this function
+*/
 var doubleqq = (utils.doubleqq = function (s) {
-	return s.replace(/\'/g, "'");
+	return s.replace(/'/g, "\\'");
 });
 
 /**
