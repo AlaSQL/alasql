@@ -24,7 +24,7 @@ jobs:
       - name: Build from src
         uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         with:
-          node-version: '20.x'
+          node-version: '22.x'
 
       - run: yarn install --frozen-lockfile
       - run: yarn build-only
@@ -48,7 +48,7 @@ jobs:
     runs-on: blacksmith-4vcpu-ubuntu-2204
     strategy:
       matrix:
-        node-version: [15.x, 16.x, 17.x, 18.x, 19.x, latest]
+        node-version: [16.x, 18.x, 20.x, 22.x, 23.x, latest]
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
