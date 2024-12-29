@@ -54,7 +54,7 @@
 		"dom-storage": "2.1.0",
 		"esbuild": "0.24.2",
 		"git-branch-is": "4.0.0",
-		"husky": "8.0.3",
+		"husky": "9.1.7",
 		"jison": "^0.4.18",
 		"mocha": "11.0.1",
 		"mocha.parallel": "0.15.6",
