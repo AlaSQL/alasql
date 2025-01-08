@@ -245,6 +245,23 @@ alasql.exec = function (sql, params, cb, scope) {
 };
 
 /**
+ * Clears any unneeded properties from a given AST statement closure used for caching
+ * @param {Object} statement the statement to cleanup
+ */
+function cleanupCache(statement) {
+	if (!statement) {
+		return;
+	}
+	if (!alasql.options.cache) {
+		return;
+	}
+	// cleanup the table data to prevent storing this information in the SQL cache
+	if (statement && statement.query && statement.query.data) {
+		statement.query.data = [];
+	}
+}
+
+/**
  Run SQL statement on specific database
  */
 alasql.dexec = function (databaseid, sql, params, cb, scope) {
@@ -259,7 +276,9 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 		let statement = db.sqlCache[hh];
 		// If database structure was not changed since last time return cache
 		if (statement && db.dbversion === statement.dbversion) {
-			return statement(params, cb);
+			var res = statement(params, cb);
+			cleanupCache(statement);
+			return res;
 		}
 	}
 
@@ -302,6 +321,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 				db.sqlCache[hh] = statement;
 			}
 			var res = (alasql.res = statement(params, cb, scope));
+			cleanupCache(statement);
 			return res;
 		}
 		alasql.precompile(ast.statements[0], alasql.useid, params);
