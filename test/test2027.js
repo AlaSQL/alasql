@@ -17,14 +17,19 @@ describe('Test 2007 - SQL cache', function () {
 	it('A) Execute query and assert cache for `data` afterwards', () => {
 		alasql('CREATE TABLE osoby (id INT, meno STRING)');
 		alasql('INSERT INTO osoby VALUES (1, "John"), (2, "Jane"), (3, "Jake")');
-		alasql('SELECT * FROM osoby');
+		var res = alasql('SELECT * FROM osoby');
 
 		assert.deepEqual(alasql.databases["test"].sqlCache["-169125189"].query.data, []);
+		assert.equal(res.length, 3);
+
+		// Insert more rows
+		alasql('INSERT INTO osoby VALUES (4, "Jack"), (5, "Paul")');
 
 		// Execute same query from cache again, the cache is hit now
-		alasql('SELECT * FROM osoby');
+		var res2 = alasql('SELECT * FROM osoby');
 
 		// Cache should still be empty for "data"
 		assert.deepEqual(alasql.databases["test"].sqlCache["-169125189"].query.data, []);
+		assert.equal(res2.length, 5);
 	});
 });
