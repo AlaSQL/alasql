@@ -22,6 +22,12 @@ describe('Test 2007 - SQL cache', function () {
 		assert.deepEqual(alasql.databases["test"].sqlCache["-169125189"].query.data, []);
 		assert.equal(res.length, 3);
 
+		// Delete all rows
+		alasql('DELETE FROM osoby');
+
+		// Assert that the cache is still empty for "data"
+		assert.deepEqual(alasql.databases["test"].sqlCache["-169125189"].query.data, []);
+
 		// Insert more rows
 		alasql('INSERT INTO osoby VALUES (4, "Jack"), (5, "Paul")');
 
@@ -30,6 +36,6 @@ describe('Test 2007 - SQL cache', function () {
 
 		// Cache should still be empty for "data"
 		assert.deepEqual(alasql.databases["test"].sqlCache["-169125189"].query.data, []);
-		assert.equal(res2.length, 5);
+		assert.equal(res2.length, 2);
 	});
 });
