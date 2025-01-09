@@ -26,6 +26,7 @@ describe('Test 2007 - SQL cache', function () {
 		alasql('DELETE FROM osoby');
 
 		// Assert that the cache is still empty for "data"
+		// Without the fix, the cache would still contain the data from the previous query even though all rows were deleted
 		assert.deepEqual(alasql.databases["test"].sqlCache["-169125189"].query.data, []);
 
 		// Insert more rows
