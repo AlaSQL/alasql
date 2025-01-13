@@ -62,12 +62,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - uses: actions/download-artifact@533298bc57c27f112a2c04a74a04a4d43e2866fd # master
+      - uses: actions/download-artifact@7fba95161a0924506ed1ae69cdbae8371ee00b3f # master
         with:
           name: dist
           path: dist/
 
-      - uses: actions/download-artifact@533298bc57c27f112a2c04a74a04a4d43e2866fd # master
+      - uses: actions/download-artifact@7fba95161a0924506ed1ae69cdbae8371ee00b3f # master
         with:
           name: node_modules
           path: ./
@@ -88,7 +88,7 @@ jobs:
 
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: actions/download-artifact@533298bc57c27f112a2c04a74a04a4d43e2866fd # master
+      - uses: actions/download-artifact@7fba95161a0924506ed1ae69cdbae8371ee00b3f # master
         with:
           name: dist
           path: dist/
