@@ -1,4 +1,4 @@
-name: 'CICD pipeline'
+name: 'CI build & test'
 
 on:
   push:
@@ -6,58 +6,92 @@ on:
   pull_request:
     branches: '*'
 
+permissions: read-all
+
 jobs:
   Build:
-    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
-      - uses: actions/checkout@v4
-      - name: Bulid from src
-        uses: actions/setup-node@v4
+      - name: Harden Runner
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
         with:
-          node-version: '20.x'
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Build from src
+        uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
+        with:
+          node-version: '22.x'
+
       - run: yarn install --frozen-lockfile
       - run: yarn build-only
-      - uses: actions/upload-artifact@master
+
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: dist
           path: dist/
+
       - run: tar -cvf node_modules.tar node_modules
-      - uses: actions/upload-artifact@master
+
+      - uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
         with:
           name: node_modules
           path: node_modules.tar
 
   test_node:
+    permissions:
+      contents: read
     needs: Build
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2204
     strategy:
       matrix:
-        node-version: [15.x, 16.x, 17.x, 18.x, 19.x, latest]
+        node-version: [16.x, 18.x, 20.x, 22.x, 23.x, latest]
     steps:
-      - uses: actions/checkout@v4
+      - name: Harden Runner
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
       - name: Run prod version with Node v${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         with:
           node-version: ${{ matrix.node-version }}
-      - uses: actions/download-artifact@master
+
+      - uses: actions/download-artifact@7fba95161a0924506ed1ae69cdbae8371ee00b3f # master
         with:
           name: dist
           path: dist/
-      - uses: actions/download-artifact@master
+
+      - uses: actions/download-artifact@7fba95161a0924506ed1ae69cdbae8371ee00b3f # master
         with:
           name: node_modules
           path: ./
+
       - run: tar -xvf node_modules.tar
       - run: yarn test-only
 
   test_browser:
+    permissions:
+      contents: read
     needs: Build
-    runs-on: ubuntu-latest
+    runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@master
+      - name: Harden Runner
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - uses: actions/download-artifact@7fba95161a0924506ed1ae69cdbae8371ee00b3f # master
         with:
           name: dist
           path: dist/
+
       - run: echo '::warning ::Not able to automate browser tests yet'
       - run: '# yarn test-browser-ci'

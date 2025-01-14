@@ -134,7 +134,7 @@ SELECT FLOOR(@val)     -- 0
 		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
 		tests
-			.replace('\r', '')
+			.replace(/\r/g, '')
 			.trim()
 			.split('\n')
 			.forEach(function (test) {

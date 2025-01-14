@@ -1064,6 +1064,8 @@ OnClause
 		{ $$ = {on: $2}; }
 	| USING ColumnsList
 		{ $$ = {using: $2}; }
+	| USING LPAR ColumnsList RPAR
+		{ $$ = {using: $3}; }
 	|
 		{ $$ = undefined; }
 	;
@@ -2741,6 +2743,8 @@ MergeInto
 MergeUsing
 	: USING FromTable
 		{ $$ = {using: $2}; }
+	| USING LPAR FromTable RPAR
+		{ $$ = {using: $3}; }
 	;
 
 MergeOn
