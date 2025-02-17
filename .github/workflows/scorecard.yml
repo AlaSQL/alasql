@@ -27,7 +27,7 @@ jobs:
           persist-credentials: false
 
       - name: OSSF Scorecard action
-        uses: ossf/scorecard-action@e48dbb732fab761267783321dfa71e2a5c6e263d
+        uses: ossf/scorecard-action@ae7548a0ff1b94dda3a89eeda8f59c031874f035
         with:
           # OUTPUT: Path to file to store results
           results_file: results.sarif
