@@ -1,4 +1,6 @@
 {
+	const UNSAFE_FUNCTION_PROPS = ["constructor", "call", "apply", "bind", "prototype"];
+
 	const assign = Object.assign;
 
 	class ExpressionStatement {
@@ -310,11 +312,20 @@
 				// Expression to prevent error if object is empty (#344)
 				const ljs = `(${leftJS()} || {})`;
 
+				const unsafe = UNSAFE_FUNCTION_PROPS.includes(this.right.funcid ?? this.right);
+
 				if (typeof this.right === 'string') {
 					s = `${ljs}["${escapeq(this.right)}"]`;
+					if (unsafe) {
+						s = `(function(propValue) { return typeof propValue === 'function' ? null : propValue; })(${s})`;
+					}
 				} else if (typeof this.right === 'number') {
 					s = `${ljs}[${this.right}]`;
 				} else if (this.right instanceof yy.FuncValue) {
+					if (unsafe) {
+						throw new Error(`Access to dangerous property "${this.right.funcid}" is forbidden`);
+					}
+
 					let ss = [];
 					if (this.right.args && this.right.args.length > 0) {
 						ss = this.right.args.map(ref);

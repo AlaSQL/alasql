@@ -107,4 +107,19 @@ describe('Test 1810 - XSS', function () {
 			},
 		]);
 	});
+
+	it('should return null when accessing the "constructor"', function () {
+		const queries = ['SELECT ""->[constructor] AS a', 'SELECT ""->constructor AS a'];
+		queries.forEach(q => {
+			const res = alasql(q);
+			assert.equal(res[0].a, null, `Expected query "${q}" to yield null for "constructor" access`);
+		});
+	});
+
+	it('should throw error when invoking dangerous "call"', function () {
+		const run = () => alasql(
+			'SELECT ""->constructor->constructor->`call`("","console.log(`xss`)")->`call`();'
+		);
+    assert.throws(run, Error, 'Access to dangerous property "call" is forbidden');
+	});
 });
