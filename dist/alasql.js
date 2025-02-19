@@ -47,7 +47,7 @@ SOFTWARE.
 
 (function (root, factory) {
     root.alasql = factory();
-}(this, function () {
+}(globalThis, function () {
 
 /**
 	AlaSQL - Main Alasql class

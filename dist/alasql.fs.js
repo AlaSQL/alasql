@@ -46,15 +46,8 @@ SOFTWARE.
 */
 
 (function (root, factory) {
-    if (typeof define === 'function' && define.amd) {
-        define([], factory);
-    } else if (typeof exports === 'object') {
-    	/** alasql main function */
-        module.exports = factory();
-    } else {
-        root.alasql = factory();
-    }
-}(this, function () {
+    root.alasql = factory();
+}(globalThis, function () {
 
 /**
 	AlaSQL - Main Alasql class
