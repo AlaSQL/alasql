@@ -53,6 +53,7 @@
 		"cmdmix": "2.2.2",
 		"dom-storage": "2.1.0",
 		"esbuild": "0.24.2",
+		"fake-indexeddb": "^6.0.0",
 		"git-branch-is": "4.0.0",
 		"husky": "9.1.7",
 		"jison": "^0.4.18",

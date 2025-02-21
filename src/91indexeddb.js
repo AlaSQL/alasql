@@ -281,29 +281,89 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 // };
 */
 
+
+IDB.begin = async function(databaseid) {
+	    const db = alasql.databases[databaseid];
+	    if(!db.idbdb) {
+	        db.idbdb = await new Promise((resolve) => {
+	            const req = indexedDB.open(db.ixdbid);
+	            req.onsuccess = () => resolve(req.result);
+	        });
+	    }
+	    db.transaction = db.idbdb.transaction(
+	        Array.from(db.idbdb.objectStoreNames),
+	        'readwrite'
+	    );
+	    return Promise.resolve();
+	};
+	
+	IDB.commit = async function(databaseid) {
+	    const db = alasql.databases[databaseid];
+	    return new Promise((resolve, reject) => {
+	        if(!db.transaction) return resolve();
+	        db.transaction.oncomplete = () => {
+	            db.transaction = null;
+	            resolve();
+	        };
+	        db.transaction.onerror = (e) => {
+	            db.transaction = null;
+	            reject(e);
+	        };
+	        db.transaction.commit();
+	    });
+	};
+	
+	IDB.rollback = async function(databaseid) {
+	    const db = alasql.databases[databaseid];
+	    if(!db.transaction) return Promise.resolve();
+	    db.transaction.abort();
+	    db.transaction = null;
+	    return Promise.resolve();
+	};
+
+
 IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
-	const request = indexedDB.open(ixdbid);
+	// const request = indexedDB.open(ixdbid);
 	var db = alasql.databases[databaseid];
 	var table = db.tables[tableid];
 
-	request.onupgradeneeded = evt => {
-		evt.target.transaction.abort();
-		const err = new Error(
-			`Cannot insert into table "${tableid}" because database "${databaseid}" does not exist`
-		);
-		if (cb) cb(null, err);
-	};
+	// request.onupgradeneeded = evt => {
+	// 	evt.target.transaction.abort();
+	// 	const err = new Error(
+	// 		`Cannot insert into table "${tableid}" because database "${databaseid}" does not exist`
+	// 	);
+	// 	if (cb) cb(null, err);
+	// };
 
-	request.onsuccess = () => {
-		var ixdb = request.result;
-		var tx = ixdb.transaction([tableid], 'readwrite');
-		var tb = tx.objectStore(tableid);
+	const runOperation = () => {
+		const tb = db.transaction 
+		    ? db.transaction.objectStore(tableid) 
+		    : db.idbdb.transaction([tableid], 'readwrite').objectStore(tableid);
+
+
+	// request.onsuccess = () => {
+	// 	var ixdb = request.result;
+	// 	var tx = ixdb.transaction([tableid], 'readwrite');
+	// 	var tb = tx.objectStore(tableid);
 		for (var i = 0, ilen = value.length; i < ilen; i++) {
 			tb.add(value[i]);
 		}
-		tx.oncomplete = function () {
-			ixdb.close();
+		// tx.oncomplete = function () {
+		// 	ixdb.close();
+
+			if(!db.transaction) {
+			    tb.transaction.oncomplete = () => {
+				    triggerCallbacks();
+				    if (cb) cb(ilen);
+				};
+			} else {
+				triggerCallbacks();
+				if (cb) cb(ilen);
+			}
+				
+			function triggerCallbacks() {
+
 			for (var tr in table.afterinsert) {
 				if (table.afterinsert[tr]) {
 					var trigger = table.afterinsert[tr];
@@ -314,91 +374,141 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 					}
 				}
 			}
-			if (cb) cb(ilen);
-		};
-	};
+		// 	if (cb) cb(ilen);
+		// };
+	}
 };
 
-IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
-	const ixdbid = alasql.databases[databaseid].ixdbid;
-	const request = indexedDB.open(ixdbid);
 
-	request.onupgradeneeded = evt => {
-		evt.target.transaction.abort();
-		const err = new Error(
-			`Cannot select from table "${tableid}" because database "${databaseid}" does not exist`
-		);
-		if (cb) cb(null, err);
-	};
+    if(db.idbdb) {
+	        runOperation();
+	    } else {
+	        const req = indexedDB.open(ixdbid);
+	        req.onsuccess = () => {
+	            db.idbdb = req.result;
+	            runOperation();
+	        };
+	    }
+	}
 
-	request.onsuccess = () => {
-		const res = [];
-		const ixdb = request.result;
-		const cur = ixdb.transaction([tableid]).objectStore(tableid).openCursor();
 
-		cur.onsuccess = () => {
-			const cursor = cur.result;
-			if (cursor) {
-				// if keyPath(columns) is not present then we take the key and value as object.
-				const cursorValue =
-					typeof cursor === 'object' ? cursor.value : {[cursor.key]: cursor.value};
-				res.push(cursorValue);
-				cursor.continue();
-			} else {
-				ixdb.close();
-				if (cb) cb(res, idx, query);
-			}
+
+	IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
+		const ixdbid = alasql.databases[databaseid].ixdbid;
+		const db = alasql.databases[databaseid];
+	
+		const runOperation = () => {
+			
 		};
+	
+		if(db.idbdb) {
+			runOperation();
+		} else {
+			const req = indexedDB.open(ixdbid);
+			
+			
+			req.onupgradeneeded = evt => {
+				evt.target.transaction.abort();
+				const err = new Error(
+					`Cannot select from table "${tableid}" because database "${databaseid}" does not exist`
+				);
+				if (cb) cb(null, err);
+			};
+	
+			req.onsuccess = () => {
+				db.idbdb = req.result;
+				runOperation();
+			};
+			
+			req.onerror = () => {
+				if (cb) cb(null, req.error);
+			};
+		}
 	};
-};
 
-IDB.deleteFromTable = function (databaseid, tableid, wherefn, params, cb) {
-	const ixdbid = alasql.databases[databaseid].ixdbid;
-	const request = indexedDB.open(ixdbid);
-
-	request.onsuccess = () => {
-		const ixdb = request.result;
-		const cur = ixdb.transaction([tableid], 'readwrite').objectStore(tableid).openCursor();
-
-		let num = 0;
-		cur.onsuccess = () => {
-			var cursor = cur.result;
-			if (cursor) {
-				if (!wherefn || wherefn(cursor.value, params, alasql)) {
-					cursor.delete();
-					num++;
+	IDB.deleteFromTable = function (databaseid, tableid, wherefn, params, cb) {
+		const ixdbid = alasql.databases[databaseid].ixdbid;
+	//    const request = indexedDB.open(ixdbid);
+	   const db = alasql.databases[databaseid];
+	
+	   const runOperation = () => {
+	    //    const ixdb = request.result;
+	    //    const cur = ixdb.transaction([tableid], 'readwrite').objectStore(tableid).openCursor();
+	       const store = db.transaction
+	           ? db.transaction.objectStore(tableid)
+	           : db.idbdb.transaction([tableid], 'readwrite').objectStore(tableid);
+	       
+	       const cur = store.openCursor();
+	
+			let num = 0;
+			cur.onsuccess = () => {
+				var cursor = cur.result;
+				if (cursor) {
+					if (!wherefn || wherefn(cursor.value, params, alasql)) {
+						cursor.delete();
+						num++;
+					}
+					cursor.continue();
+				} else {
+	               ixdb.close();
+					if (cb) cb(num);
 				}
-				cursor.continue();
-			} else {
-				ixdb.close();
-				if (cb) cb(num);
-			}
-		};
+			};
+	   };
+	
+	   if(db.idbdb) {
+	       runOperation();
+	   } else {
+	       const req = indexedDB.open(ixdbid);
+	       req.onsuccess = () => {
+	           db.idbdb = req.result;
+	           runOperation();
+	       };
+	  }
 	};
-};
 
-IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) {
-	const ixdbid = alasql.databases[databaseid].ixdbid;
-	const request = indexedDB.open(ixdbid);
-	request.onsuccess = function () {
-		const ixdb = request.result;
-		const cur = ixdb.transaction([tableid], 'readwrite').objectStore(tableid).openCursor();
-
-		let num = 0;
-		cur.onsuccess = () => {
-			var cursor = cur.result;
-			if (cursor) {
-				if (!wherefn || wherefn(cursor.value, params)) {
-					var r = cursor.value;
-					assignfn(r, params);
-					cursor.update(r);
-					num++;
+	IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) {
+		const ixdbid = alasql.databases[databaseid].ixdbid;
+	   const request = indexedDB.open(ixdbid);
+	   const db = alasql.databases[databaseid];
+	
+	   request.onsuccess = function () {
+	       const ixdb = request.result;
+	       const cur = ixdb.transaction([tableid], 'readwrite').objectStore(tableid).openCursor();
+	   const runOperation = () => {
+	       const store = db.transaction
+	           ? db.transaction.objectStore(tableid)
+	           : db.idbdb.transaction([tableid], 'readwrite').objectStore(tableid);
+	       
+	       const cur = store.openCursor();
+	
+			let num = 0;
+			cur.onsuccess = () => {
+				var cursor = cur.result;
+				if (cursor) {
+					if (!wherefn || wherefn(cursor.value, params)) {
+						var r = cursor.value;
+						assignfn(r, params);
+						cursor.update(r);
+						num++;
+					}
+					cursor.continue();
+				} else {
+	               ixdb.close();
+					if (cb) cb(num);
 				}
-				cursor.continue();
-			} else {
-				ixdb.close();
-				if (cb) cb(num);
-			}
-		};
+			};
+	   };
+	   
+	
+	   if(db.idbdb) {
+	       runOperation();
+	   } else {
+	       const req = indexedDB.open(ixdbid);
+	       req.onsuccess = () => {
+	           db.idbdb = req.result;
+	           runOperation();
+	       };
+	   }
 	};
-};
+}
