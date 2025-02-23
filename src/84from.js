@@ -395,7 +395,7 @@ if(false) {
 		parseText(contents);
 	} else {
 		contents = alasql.utils.autoExtFilename(contents, 'csv', opts);
-		alasql.utils.loadFile(contents, !!cb, parseText, query.cb);
+		alasql.utils.loadFile(contents, !!cb, parseText, e => query.cb(null, e));
 	}
 	return res;
 };
@@ -522,6 +522,10 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			}
 		},
 		function (err) {
+			if(query && query.cb) {
+				query.cb(null, err);
+				return;
+			}
 			throw err;
 		}
 	);

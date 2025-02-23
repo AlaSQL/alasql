@@ -153,14 +153,9 @@ declare module 'alasql' {
 	interface AlaSQL {
 		options: AlaSQLOptions;
 		error: Error;
-		<T = unknown>(
-			sql: string,
-			params?: Record<string, unknown>,
-			cb?: AlaSQLCallback<T>,
-			scope?: unknown
-		): T;
+		<T = unknown>(sql: string, params?: any, cb?: AlaSQLCallback<T>, scope?: unknown): T;
 		parse(sql: string): AlaSQLAST;
-		promise<T = unknown>(sql: string, params?: Record<string, unknown>): Promise<T>;
+		promise<T = unknown>(sql: string, params?: any): Promise<T>;
 		fn: userDefinedFunctionLookUp;
 		from: userFromFunctionLookUp;
 		aggr: userAggregatorLookUp;
