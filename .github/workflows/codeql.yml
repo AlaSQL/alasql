@@ -36,14 +36,14 @@ jobs:
         uses: actions/checkout@cbb722410c2e876e24abbe8de2cc27693e501dcb
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@db7177a1c66bea89f5e7ce32d0ea48bea4a0d460
+        uses: github/codeql-action/init@83923549f688e42b34d0b90ee94725f7c30532fc
         with:
           languages: ${{ matrix.language }}
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@db7177a1c66bea89f5e7ce32d0ea48bea4a0d460
+        uses: github/codeql-action/autobuild@83923549f688e42b34d0b90ee94725f7c30532fc
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@db7177a1c66bea89f5e7ce32d0ea48bea4a0d460
+        uses: github/codeql-action/analyze@83923549f688e42b34d0b90ee94725f7c30532fc
         with:
           category: '/language:${{ matrix.language }}'
