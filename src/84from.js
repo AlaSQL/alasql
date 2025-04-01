@@ -133,7 +133,12 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 		}
 	}),
 		err => {
-			throw new Error(err);
+			const error = err instanceof Error ? err : new Error(err);
+			if(query && query.cb) {
+				query.cb(null, error);
+				return;
+			}
+			throw error;
 		};
 	return res;
 };
@@ -158,11 +163,16 @@ const jsonl = ext => {
 					}
 				});
 				if (cb) {
-					res = cb(out, idx, query);
+					out = cb(out, idx, query);
 				}
 			},
 			err => {
-				throw new Error(err);
+				const error = err instanceof Error ? err : new Error(err);
+				if(query && query.cb) {
+					query.cb(null, error);
+					return;
+				}
+				throw error;
 			}
 		);
 		return out;
