@@ -158,6 +158,9 @@ alasql.stdfn.DATEADD = function (period, interval, d) {
 	var period = period.toLowerCase();
 
 	switch (period) {
+		case 'day':
+			nd.setDate(nd.getDate() + interval);
+			break;
 		case 'year':
 			nd.setFullYear(nd.getFullYear() + interval);
 			break;
