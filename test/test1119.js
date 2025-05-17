@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..'); // You might need to adjust the path depending on where you save the test file
 }
 
-describe.skip('Test 1119 - Trigger callback parameter', function () {
+describe('Test 1119 - Trigger callback parameter', function () {
 	const test = '1119'; // Test file number
 
 	before(function () {
