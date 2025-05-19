@@ -626,7 +626,7 @@ Thanks to all the people who already contributed!
 * [Andrey Gershun](https://github.com/alasql)
 * [Mathias Rangel Wulff](https://twitter.com/rangelwulff)
 
-AlaSQL is an [OPEN Open Source Project](http://openopensource.org/). This means that:
+AlaSQL is an [OPEN Open Source Project](https://openopensource.github.io). This means that:
 
 > Individuals making significant and valuable contributions are given commit-access to the project to contribute as they see fit. This project is more like an open wiki than a standard guarded open source project.
 
