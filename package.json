@@ -46,7 +46,7 @@
 	},
 	"dependencies": {
 		"cross-fetch": "4.1.0",
-		"yargs": "16"
+		"yargs": "18"
 	},
 	"devDependencies": {
 		"blueimp-md5": "2.19.0",
