@@ -1293,10 +1293,10 @@ responselike@^3.0.0:
   dependencies:
     lowercase-keys "^3.0.0"
 
-rexreplace@7.1.12:
-  version "7.1.12"
-  resolved "https://registry.yarnpkg.com/rexreplace/-/rexreplace-7.1.12.tgz#210182147f2ae3c3214cae6f93df4ca50b4706aa"
-  integrity sha512-gBlwNiKrFtHDBAXK6Lqi07BlnQGh3t42DyqZslOAYm7KBorZDSoQe/SjgVfaHf0KYZKpfwY+es27XJcUz1ckgA==
+rexreplace@7.1.13:
+  version "7.1.13"
+  resolved "https://registry.yarnpkg.com/rexreplace/-/rexreplace-7.1.13.tgz#f9cf1cfbcd6e622fe84b0af4f10fa433c22789e7"
+  integrity sha512-UVdKFM4267di4rwFuDBGPlS+OAQ3NE/8SS6sdUQs++7dPpwgYAAO0a1OG85IQoge2IJUaDsvSiNnQkRwrzGH0Q==
   dependencies:
     globs "0.1.4"
     yargs "16"
