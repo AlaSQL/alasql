@@ -64,10 +64,10 @@ describe('Test 231 NIST SQL Example', function () {
 		var res = alasql(
 			'CREATE TABLE STATS  \
                     (ID INTEGER REFERENCES STATION(ID), \
-                    MONTH INTEGER CHECK (MONTH BETWEEN 1 AND 12), \
+                    `MONTH` INTEGER CHECK (`MONTH` BETWEEN 1 AND 12), \
                     TEMP_F REAL CHECK (TEMP_F BETWEEN -80 AND 150), \
                     RAIN_I REAL CHECK (VALUE->RAIN_I BETWEEN 0 AND 100), \
-                    PRIMARY KEY (ID, MONTH));'
+                    PRIMARY KEY (ID, `MONTH`));'
 		);
 		assert.deepEqual(res, 1);
 
@@ -166,9 +166,9 @@ describe('Test 231 NIST SQL Example', function () {
 		]);
 
 		var res = alasql(
-			'SELECT MONTH, ID, RAIN_I, TEMP_F \
+			'SELECT `MONTH`, ID, RAIN_I, TEMP_F \
             FROM STATS  \
-            ORDER BY MONTH, RAIN_I DESC;'
+            ORDER BY `MONTH`, RAIN_I DESC;'
 		);
 
 		assert.deepEqual(res, [
@@ -183,7 +183,7 @@ describe('Test 231 NIST SQL Example', function () {
 		var res = alasql(
 			'SELECT LAT_N, CITY, TEMP_F \
             FROM STATS, STATION \
-            WHERE MONTH = 7 \
+            WHERE `MONTH` = 7 \
             AND STATS.ID = STATION.ID \
             ORDER BY TEMP_F;'
 		);
@@ -239,9 +239,9 @@ describe('Test 231 NIST SQL Example', function () {
 
 	it('5. View', function (done) {
 		var res = alasql(
-			'CREATE VIEW METRIC_STATS (ID, MONTH, TEMP_C, RAIN_C) AS \
+			'CREATE VIEW METRIC_STATS (ID, `MONTH`, TEMP_C, RAIN_C) AS \
         SELECT ID, \
-        MONTH, \
+        `MONTH`, \
         (TEMP_F - 32) * 5 /9, \
         RAIN_I * 0.3937 \
         FROM STATS;'
@@ -271,7 +271,7 @@ describe('Test 231 NIST SQL Example', function () {
 
 		var res = alasql(
 			'SELECT * FROM METRIC_STATS \
-            WHERE TEMP_C < 0 AND MONTH = 1  \
+            WHERE TEMP_C < 0 AND `MONTH` = 1  \
             ORDER BY RAIN_C;'
 		);
 
@@ -296,7 +296,7 @@ describe('Test 231 NIST SQL Example', function () {
 		var res = alasql(
 			'UPDATE STATS SET TEMP_F = 74.9 \
             WHERE ID = 44 \
-            AND MONTH = 7;'
+            AND `MONTH` = 7;'
 		);
 
 		assert.deepEqual(res, 1);
@@ -357,7 +357,7 @@ describe('Test 231 NIST SQL Example', function () {
 			/// console.log(res3);
 			assert.deepEqual(res1, res3);
 		}
-		var res = alasql('UPDATE STATS SET RAIN_I = 4.50 WHERE ID = 44 AND MONTH = 7');
+		var res = alasql('UPDATE STATS SET RAIN_I = 4.50 WHERE ID = 44 AND `MONTH` = 7');
 		assert.deepEqual(res, 1);
 		//        console.log(res4);
 		var res = alasql('COMMIT WORK');
@@ -374,7 +374,7 @@ describe('Test 231 NIST SQL Example', function () {
 	it('10. Delete', function (done) {
 		var res = alasql(
 			'DELETE FROM STATS \
-            WHERE MONTH = 7 \
+            WHERE `MONTH` = 7 \
             OR ID IN (SELECT ID FROM STATION \
             WHERE LONG_W < 90)'
 		);
