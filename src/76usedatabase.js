@@ -162,12 +162,14 @@ yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
 	if (!alasql.databases[dbid]) {
 		throw new Error("Database '" + dbid + "' does not exist");
 	}
-	
+
 	// Check if this is an IndexedDB database and warn about potential issues
 	if (alasql.databases[dbid].engineid === 'INDEXEDDB') {
-		console.warn('Warning: USE statement with IndexedDB may cause hanging issues. Consider using fully qualified table names instead.');
+		console.warn(
+			'Warning: USE statement with IndexedDB may cause hanging issues. Consider using fully qualified table names instead.'
+		);
 	}
-	
+
 	alasql.use(dbid);
 	var res = 1;
 	if (cb) cb(res);

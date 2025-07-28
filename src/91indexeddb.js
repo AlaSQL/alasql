@@ -283,12 +283,12 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 
 IDB.begin = async function (databaseid) {
 	const db = alasql.databases[databaseid];
-	
+
 	// Add a timeout wrapper to prevent hanging
 	const timeoutPromise = new Promise((_, reject) => {
 		setTimeout(() => reject(new Error('IndexedDB transaction timeout')), 3000);
 	});
-	
+
 	const beginPromise = (async () => {
 		if (!db.idbdb) {
 			db.idbdb = await new Promise((resolve, reject) => {
@@ -299,14 +299,14 @@ IDB.begin = async function (databaseid) {
 				setTimeout(() => reject(new Error('IndexedDB open timeout')), 5000);
 			});
 		}
-		
+
 		// If there's already a transaction, we should handle it properly
 		if (db.transaction) {
 			// For now, we'll just create a new transaction
 			// In a more sophisticated implementation, we might want to support nested transactions
 			console.warn('Transaction already exists, creating new transaction');
 		}
-		
+
 		// Create transaction with all object stores
 		const objectStoreNames = Array.from(db.idbdb.objectStoreNames);
 		if (objectStoreNames.length === 0) {
@@ -317,16 +317,16 @@ IDB.begin = async function (databaseid) {
 			db.transaction = null;
 			return Promise.resolve();
 		}
-		
+
 		db.transaction = db.idbdb.transaction(objectStoreNames, 'readwrite');
-		
+
 		// Initialize transaction tracking for rollback support
 		db.transactionChanges = {
 			inserts: [],
 			updates: [],
-			deletes: []
+			deletes: [],
 		};
-		
+
 		// Set up transaction event handlers with timeout
 		const transactionTimeout = setTimeout(() => {
 			if (db.transaction) {
@@ -334,13 +334,13 @@ IDB.begin = async function (databaseid) {
 				db.transaction.abort();
 			}
 		}, 10000); // 10 second timeout
-		
+
 		// Set up transaction event handlers
 		db.transaction.oncomplete = () => {
 			clearTimeout(transactionTimeout);
 			// Transaction completed successfully
 		};
-		db.transaction.onerror = (event) => {
+		db.transaction.onerror = event => {
 			clearTimeout(transactionTimeout);
 			console.error('IndexedDB transaction error:', event.target.error);
 		};
@@ -348,10 +348,10 @@ IDB.begin = async function (databaseid) {
 			clearTimeout(transactionTimeout);
 			// Transaction was aborted
 		};
-		
+
 		return Promise.resolve();
 	})();
-	
+
 	// Race between the actual operation and the timeout
 	return Promise.race([beginPromise, timeoutPromise]);
 };
@@ -363,22 +363,22 @@ IDB.commit = async function (databaseid) {
 			console.warn('No transaction to commit');
 			return resolve();
 		}
-		
+
 		// Set up one-time event handlers for this commit
 		const onComplete = () => {
 			db.transaction = null;
 			db.transactionChanges = null;
 			resolve();
 		};
-		const onError = (e) => {
+		const onError = e => {
 			db.transaction = null;
 			db.transactionChanges = null;
 			reject(e);
 		};
-		
-		db.transaction.addEventListener('complete', onComplete, { once: true });
-		db.transaction.addEventListener('error', onError, { once: true });
-		
+
+		db.transaction.addEventListener('complete', onComplete, {once: true});
+		db.transaction.addEventListener('error', onError, {once: true});
+
 		// Note: IndexedDB transactions are automatically committed when they complete
 		// We don't need to call commit() explicitly
 		// The transaction will complete when all operations are done
@@ -392,22 +392,22 @@ IDB.rollback = async function (databaseid) {
 			console.warn('No transaction to rollback');
 			return resolve();
 		}
-		
+
 		// Set up one-time event handlers for this rollback
 		const onAbort = () => {
 			db.transaction = null;
 			db.transactionChanges = null;
 			resolve();
 		};
-		const onError = (e) => {
+		const onError = e => {
 			db.transaction = null;
 			db.transactionChanges = null;
 			reject(e);
 		};
-		
-		db.transaction.addEventListener('abort', onAbort, { once: true });
-		db.transaction.addEventListener('error', onError, { once: true });
-		
+
+		db.transaction.addEventListener('abort', onAbort, {once: true});
+		db.transaction.addEventListener('error', onError, {once: true});
+
 		// Abort the transaction
 		db.transaction.abort();
 	});
@@ -430,7 +430,7 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 	const runOperation = () => {
 		let tb;
 		let tx = null;
-		
+
 		if (
 			db.transaction &&
 			db.transaction.objectStoreNames &&
@@ -445,12 +445,12 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 
 		for (var i = 0, ilen = value.length; i < ilen; i++) {
 			tb.add(value[i]);
-			
+
 			// Track the insert for potential rollback
 			if (db.transaction && db.transactionChanges) {
 				db.transactionChanges.inserts.push({
 					tableid: tableid,
-					value: value[i]
+					value: value[i],
 				});
 			}
 		}
@@ -461,7 +461,7 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 				triggerCallbacks();
 				if (cb) cb(ilen);
 			};
-			tx.onerror = (event) => {
+			tx.onerror = event => {
 				if (cb) cb(null, event.target.error);
 			};
 		} else {
@@ -502,7 +502,7 @@ IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
 	const runOperation = () => {
 		const res = [];
 		let store;
-		
+
 		// If we're in a transaction, use it for reads too
 		if (
 			db.transaction &&
