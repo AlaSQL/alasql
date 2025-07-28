@@ -15,7 +15,7 @@ yy.BeginTransaction.prototype.toString = function () {
 yy.BeginTransaction.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	if (alasql.databases[databaseid].engineid) {
-		return alasql.engines[alasql.databases[alasql.useid].engineid].begin(databaseid, cb);
+		return alasql.engines[alasql.databases[databaseid].engineid].begin(databaseid, cb);
 	} else {
 		// alasql commit!!!
 	}
@@ -33,7 +33,7 @@ yy.CommitTransaction.prototype.toString = function () {
 yy.CommitTransaction.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 	if (alasql.databases[databaseid].engineid) {
-		return alasql.engines[alasql.databases[alasql.useid].engineid].commit(databaseid, cb);
+		return alasql.engines[alasql.databases[databaseid].engineid].commit(databaseid, cb);
 	} else {
 		// alasql commit!!!
 	}
