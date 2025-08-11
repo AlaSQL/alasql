@@ -87,16 +87,24 @@ yy.BeginEnd.prototype.toString = function () {
 yy.BeginEnd.prototype.execute = function (databaseid, params, cb, scope) {
 	var self = this;
 	var res = [];
+	var isSynchronous = !cb;
 
-	var idx = 0;
-	runone();
-	function runone() {
-		self.statements[idx].execute(databaseid, params, function (data) {
-			res.push(data);
-			idx++;
-			if (idx < self.statements.length) return runone();
-			if (cb) res = cb(res);
-		});
+	if (isSynchronous) {
+		for (var i = 0; i < self.statements.length; i++) {
+			res.push(self.statements[i].execute(databaseid, params));
+		}
+	} else {
+		var idx = 0;
+		runone();
+		function runone() {
+			self.statements[idx].execute(databaseid, params, function (data) {
+				res.push(data);
+				idx++;
+				if (idx < self.statements.length) return runone();
+				cb(res);
+			});
+		}
 	}
+
 	return res;
 };
