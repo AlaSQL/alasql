@@ -10,7 +10,7 @@ describe('Test 157 - json()', function () {
 	it('1. Load text data from file async', function (done) {
 		alasql('select * from json("' + __dirname + '/test157.json")', [], function (res) {
 			//			console.log(13,res);
-			assert.deepEqual(res, [{a: 1}, {a: 2}]);
+			assert.deepEqual(res, [{a: 1}, {a: 2}, {c: '😂'}]);
 			done();
 		});
 	});
