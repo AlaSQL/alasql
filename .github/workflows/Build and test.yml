@@ -73,7 +73,7 @@ jobs:
           path: ./
 
       - run: tar -xvf node_modules.tar
-      - run: yarn test-only
+      - run: yarn test-ci
 
   test_browser:
     permissions:
