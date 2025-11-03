@@ -32,7 +32,7 @@ if (typeof exports === 'object') {
 			return e(r ^ (t | ~o), n, t, u, c, f);
 		}
 		function i(n, r) {
-			(n[r >> 5] |= 128 << r % 32), (n[(((r + 64) >>> 9) << 4) + 14] = r);
+			((n[r >> 5] |= 128 << r % 32), (n[(((r + 64) >>> 9) << 4) + 14] = r));
 			var e,
 				i,
 				a,
@@ -43,7 +43,7 @@ if (typeof exports === 'object') {
 				v = -1732584194,
 				m = 271733878;
 			for (e = 0; e < n.length; e += 16)
-				(i = l),
+				((i = l),
 					(a = g),
 					(h = v),
 					(d = m),
@@ -114,7 +114,7 @@ if (typeof exports === 'object') {
 					(l = t(l, i)),
 					(g = t(g, a)),
 					(v = t(v, h)),
-					(m = t(m, d));
+					(m = t(m, d)));
 			return [l, g, v, m];
 		}
 		function a(n) {
@@ -140,8 +140,8 @@ if (typeof exports === 'object') {
 				u = [],
 				c = [];
 			for (u[15] = c[15] = void 0, o.length > 16 && (o = i(o, 8 * n.length)), r = 0; 16 > r; r += 1)
-				(u[r] = 909522486 ^ o[r]), (c[r] = 1549556828 ^ o[r]);
-			return (e = i(u.concat(h(t)), 512 + 8 * t.length)), a(i(c.concat(e), 640));
+				((u[r] = 909522486 ^ o[r]), (c[r] = 1549556828 ^ o[r]));
+			return ((e = i(u.concat(h(t)), 512 + 8 * t.length)), a(i(c.concat(e), 640)));
 		}
 		function g(n) {
 			var t,
@@ -149,7 +149,7 @@ if (typeof exports === 'object') {
 				e = '0123456789abcdef',
 				o = '';
 			for (r = 0; r < n.length; r += 1)
-				(t = n.charCodeAt(r)), (o += e.charAt((t >>> 4) & 15) + e.charAt(15 & t));
+				((t = n.charCodeAt(r)), (o += e.charAt((t >>> 4) & 15) + e.charAt(15 & t)));
 			return o;
 		}
 		function v(n) {
