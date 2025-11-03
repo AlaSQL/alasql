@@ -443,6 +443,19 @@ async function fetchData(path, success, error, async) {
 
 function getData(path, success, error) {
 	return _fetch(path)
+		.then(response => response.text())
+		.then(txt => {
+			success(txt);
+		})
+		.catch(e => {
+			if (error) return error(e);
+			console.error(e);
+			throw e;
+		});
+}
+
+function getBinaryData(path, success, error) {
+	return _fetch(path)
 		.then(response => response.arrayBuffer())
 		.then(buf => {
 			var a = new Uint8Array(buf);
@@ -481,7 +494,7 @@ var loadBinaryFile = (utils.loadBinaryFile = function (
 		fs = require('fs');
 
 		if (/^[a-z]+:\/\//i.test(path)) {
-			fetchData(path, success, error, runAsync);
+			return getBinaryData(path, success, error);
 		} else {
 			if (runAsync) {
 				fs.readFile(path, function (err, data) {
