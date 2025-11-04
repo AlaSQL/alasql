@@ -12,10 +12,13 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		alasql('CREATE table i_am_a_table;');
 		//alasql(`INSERT INTO i_am_a_table VALUES (1337);`);
 		//alasql('INSERT INTO i_am_a_table VALUES (1337);')
+		// Reset errorlog to ensure security tests throw exceptions
+		alasql.options.errorlog = false;
 	});
 
 	after(function () {
 		alasql('drop database test' + test);
+		alasql.options.errorlog = false;
 	});
 
 	const genPayload = command => `
