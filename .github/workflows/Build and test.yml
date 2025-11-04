@@ -1,4 +1,4 @@
-name: 'Verify, build & test'
+name: 'CI build & test'
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
 permissions: read-all
 
 jobs:
-  job-verify-formatting:
+  'Verify Formatting':
     permissions:
       contents: read
     runs-on: blacksmith-4vcpu-ubuntu-2204
@@ -26,14 +26,22 @@ jobs:
         with:
           node-version: '24.x'
 
+      - name: Cache Yarn dependencies
+        uses: actions/cache@13aacd865c20de90e7f32385cc9f60de075b8dc3 # v4.0.0
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
       - name: Verify formatting
-        run: yarn test-format-only
+        run: yarn test-format-all
 
-  job-build:
-    needs: [job-verify-formatting]
+  'Build':
+    needs: ['Verify Formatting']
     permissions:
       contents: write
     runs-on: blacksmith-4vcpu-ubuntu-2204
@@ -49,6 +57,14 @@ jobs:
         uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         with:
           node-version: '24.x'
+
+      - name: Cache Yarn dependencies
+        uses: actions/cache@13aacd865c20de90e7f32385cc9f60de075b8dc3 # v4.0.0
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
@@ -69,14 +85,14 @@ jobs:
           name: node_modules
           path: node_modules.tar
 
-  job-test-node:
+  'Test Node':
     permissions:
       contents: read
-    needs: [job-verify-formatting, job-build]
+    needs: ['Verify Formatting', 'Build']
     runs-on: blacksmith-4vcpu-ubuntu-2204
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x, 22.x, 23.x, 24.x, latest]
+        node-version: [16.x, 18.x, 20.x, 22.x, 24.x] # Dropped '23.x' (EOL) and 'latest' for stability
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -106,10 +122,10 @@ jobs:
       - name: Run Node tests
         run: yarn test-ci
 
-  job-test-browser:
+  'Test Browser':
     permissions:
       contents: read
-    needs: [job-verify-formatting, job-build]
+    needs: ['Verify Formatting', 'Build']
     runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
       - name: Harden Runner
