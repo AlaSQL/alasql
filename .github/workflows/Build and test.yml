@@ -30,7 +30,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Verify formatting
-        run: yarn test-format-all
+        run: yarn test-format
 
   build:
     needs: [verifyFormatting]
