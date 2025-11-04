@@ -118,15 +118,14 @@ yy.Select.prototype.compileGroup = function (query) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
 							return `'${colas}': (typeof ${colexp1} == 'number' || typeof ${colexp1} == 'bigint' ? ${colexp} : typeof ${colexp1} == 'object' ?
-							typeof Number(${colexp1}) == 'number' && ${colexp1}!== null? ${colexp} : null : null),`;
+							typeof Number(${colexp1}) == 'number' ? ${colexp} : null : null),`;
 						}
 						return `'${colas}': (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint' ? ${colexp} : typeof ${colexp} == 'object' ?
-							typeof Number(${colexp}) == 'number' && ${colexp}!== null? ${colexp} : null : null),`;
+							typeof Number(${colexp}) == 'number' ? ${colexp} : null : null),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}' : (typeof ${colexp1} == 'number' || typeof ${colexp1} == 'bigint' ? ${colexp} : typeof ${colexp1} == 'object' ?
-							typeof Number(${colexp1}) == 'number' ? ${colexp} : null : null),`;
+							return `'${colas}': (function() { var t = ${colexp}; return typeof t == 'number' || typeof t == 'bigint' || (typeof t == 'object' && (typeof Number(t) == 'number' || t instanceof Date)) ? t : null; })(),`;
 						}
 						return `'${colas}' : (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint' ? ${colexp} : typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' ? ${colexp} : null : null),`;
@@ -369,19 +368,19 @@ yy.Select.prototype.compileGroup = function (query) {
 						}
 						return (
 							pre +
-							`if((g['${colas}'] == null && ${colexp}!== null) ? y = ${colexp} : 
-								(g['${colas}']!== null && ${colexp} == null) ? y = g['${colas}'] : 
-								((y=${colexp}) > g['${colas}'])) { 
-								if(typeof y == 'number' || typeof y == 'bigint') {
-									g['${colas}'] = y;
-								} else if(typeof y == 'object' && y instanceof Date) {
-									g['${colas}'] = y;
-								} else if(typeof y == 'object' && typeof Number(y) == 'number') {
-									g['${colas}'] = Number(y);
+							`if ((g['${colas}'] == null && ${colexp} !== null) ? y = ${colexp} : 
+								(g['${colas}'] !== null && ${colexp} == null) ? y = g['${colas}'] : 
+								((y = ${colexp}) > g['${colas}'])) {
+								if (typeof y == 'number' || typeof y == 'bigint') {
+								  g['${colas}'] = y;
+								} else if (typeof y == 'object' && y instanceof Date) {
+								  g['${colas}'] = y;
+								} else if (typeof y == 'object' && typeof Number(y) == 'number') {
+								  g['${colas}'] = Number(y);
 								}
-							} else if(g['${colas}']!== null && typeof g['${colas}'] == 'object' && y instanceof Date) {
+							} else if (g['${colas}'] !== null && typeof g['${colas}'] == 'object' && y instanceof Date) {
 								g['${colas}'] = g['${colas}'];
-							} else if(g['${colas}']!== null && typeof g['${colas}'] == 'object') {
+							} else if (g['${colas}'] !== null && typeof g['${colas}'] == 'object') {
 								g['${colas}'] = Number(g['${colas}']);
 							}` +
 							post
