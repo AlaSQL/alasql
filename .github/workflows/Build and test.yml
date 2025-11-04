@@ -1,4 +1,4 @@
-name: 'CI build & test'
+name: 'Verify, build & test'
 
 on:
   push:
@@ -9,7 +9,31 @@ on:
 permissions: read-all
 
 jobs:
-  Build:
+  job-verify-formatting:
+    permissions:
+      contents: read
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+
+      - name: Setup Node
+        uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
+        with:
+          node-version: '24.x'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Verify formatting
+        run: yarn test-format-only
+
+  job-build:
+    needs: [job-verify-formatting]
     permissions:
       contents: write
     runs-on: blacksmith-4vcpu-ubuntu-2204
@@ -21,34 +45,38 @@ jobs:
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Build from src
+      - name: Setup Node
         uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         with:
-          node-version: '22.x'
+          node-version: '24.x'
 
-      - run: yarn install --frozen-lockfile
-      - run: yarn build-only
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build project
+        run: yarn build-only
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: dist
           path: dist/
 
-      - run: tar -cvf node_modules.tar node_modules
+      - name: Package node_modules
+        run: tar --exclude='.cache' -cvf node_modules.tar node_modules
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: node_modules
           path: node_modules.tar
 
-  test_node:
+  job-test-node:
     permissions:
       contents: read
-    needs: Build
+    needs: [job-verify-formatting, job-build]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x, 22.x, 23.x, latest]
+        node-version: [16.x, 18.x, 20.x, 22.x, 23.x, 24.x, latest]
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
@@ -57,7 +85,7 @@ jobs:
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Run prod version with Node v${{ matrix.node-version }}
+      - name: Setup Node
         uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
         with:
           node-version: ${{ matrix.node-version }}
@@ -72,13 +100,16 @@ jobs:
           name: node_modules
           path: ./
 
-      - run: tar -xvf node_modules.tar
-      - run: yarn test-ci
+      - name: Unpack node_modules
+        run: tar -xvf node_modules.tar
 
-  test_browser:
+      - name: Run Node tests
+        run: yarn test-ci
+
+  job-test-browser:
     permissions:
       contents: read
-    needs: Build
+    needs: [job-verify-formatting, job-build]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
       - name: Harden Runner
@@ -93,5 +124,8 @@ jobs:
           name: dist
           path: dist/
 
-      - run: echo '::warning ::Not able to automate browser tests yet'
-      - run: '# yarn test-browser-ci'
+      - name: Placeholder for browser tests
+        run: echo '::warning ::Not able to automate browser tests yet'
+
+      - name: Run browser tests (disabled)
+        run: '# yarn test-browser-ci'
