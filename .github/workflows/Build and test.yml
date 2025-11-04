@@ -9,7 +9,7 @@ on:
 permissions: read-all
 
 jobs:
-  'Verify Formatting':
+  verifyFormatting:
     permissions:
       contents: read
     runs-on: blacksmith-4vcpu-ubuntu-2204
@@ -40,8 +40,8 @@ jobs:
       - name: Verify formatting
         run: yarn test-format-all
 
-  'Build':
-    needs: ['Verify Formatting']
+  build:
+    needs: [verifyFormatting]
     permissions:
       contents: write
     runs-on: blacksmith-4vcpu-ubuntu-2204
@@ -85,10 +85,10 @@ jobs:
           name: node_modules
           path: node_modules.tar
 
-  'Test Node':
+  testNode:
     permissions:
       contents: read
-    needs: ['Verify Formatting', 'Build']
+    needs: [verifyFormatting, build]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     strategy:
       matrix:
@@ -122,10 +122,10 @@ jobs:
       - name: Run Node tests
         run: yarn test-ci
 
-  'Test Browser':
+  testBrowser:
     permissions:
       contents: read
-    needs: ['Verify Formatting', 'Build']
+    needs: [verifyFormatting, build]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
       - name: Harden Runner
