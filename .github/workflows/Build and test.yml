@@ -10,6 +10,7 @@ permissions: read-all
 
 jobs:
   verify-formatting:
+    name: Verify code formatting
     permissions:
       contents: read
     runs-on: blacksmith-4vcpu-ubuntu-2204
@@ -33,6 +34,7 @@ jobs:
         run: yarn test-format-all
 
   build:
+    name: Build from source files
     needs: [verify-formatting]
     permissions:
       contents: write
@@ -70,6 +72,7 @@ jobs:
           path: node_modules.tar
 
   test-suite-node:
+    name: Test suite for Node
     permissions:
       contents: read
     needs: [verify-formatting, build]
@@ -107,6 +110,7 @@ jobs:
         run: yarn test-only
 
   test-suite-browser:
+    name: Test suite for Browser
     permissions:
       contents: read
     needs: [verify-formatting, build]
@@ -131,7 +135,7 @@ jobs:
         run: '# yarn test-browser-ci'
 
   verify-parser:
-    name: Verify grammar is aligned with generated parser
+    name: Verify grammar vs generated parser
     needs: [verify-formatting]
     permissions:
       contents: read
