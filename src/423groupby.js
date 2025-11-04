@@ -98,9 +98,9 @@ yy.Select.prototype.compileGroup = function (query) {
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(__alasql_tmp = ${colexp}, (__alasql_tmp instanceof Date) ? null : ((__alasql_tmp || typeof __alasql_tmp == 'number') ? __alasql_tmp : null)),`;
+							return `'${colas}':(__alasql_tmp = ${colexp}, (__alasql_tmp instanceof Date) ? undefined : ((__alasql_tmp || typeof __alasql_tmp == 'number') ? __alasql_tmp : undefined)),`;
 						}
-						return `'${colas}':(__alasql_tmp = ${colexp}, (__alasql_tmp instanceof Date) ? null : ((__alasql_tmp || typeof __alasql_tmp == 'number') ? __alasql_tmp : null)),`;
+						return `'${colas}':(__alasql_tmp = ${colexp}, (__alasql_tmp instanceof Date) ? undefined : ((__alasql_tmp || typeof __alasql_tmp == 'number') ? __alasql_tmp : undefined)),`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
@@ -117,16 +117,16 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : null),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
 						}
-						return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : null),`;
+						return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : null),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
 						}
 						return `'${colas}' : (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint' ? ${colexp} : typeof ${colexp} == 'object' ?
-							typeof Number(${colexp}) == 'number' ? ${colexp} : null : null),`;
+							typeof Number(${colexp}) == 'number' ? ${colexp} : undefined : undefined),`;
 					} else if (col.aggregatorid === 'ARRAY') {
 						return `'${colas}':[${colexp}],`;
 					} else if (col.aggregatorid === 'COUNT') {
@@ -139,7 +139,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						query.removeKeys.push(`_SUM_${colas}`);
 						query.removeKeys.push(`_COUNT_${colas}`);
 
-						return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? null : t; })(),'_SUM_${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? null : (t || 0); })(),'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
+						return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : t; })(),'_SUM_${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? undefined : (t || 0); })(),'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
 					} else if (col.aggregatorid === 'AGGR') {
 						aft += `,g['${colas}']=${col.expression.toJS('g', -1)}`;
 						return '';
@@ -183,20 +183,20 @@ yy.Select.prototype.compileGroup = function (query) {
 									const __colexp1 = ${colexp1};
 
 									if (__g_colas == null && ${colexp1} == null) {
-										g['${colas}'] = null;
+										g['${colas}'] = undefined;
 									} else if (typeof __g_colas === 'bigint' || typeof __colexp1 === 'bigint') {
             					    	g['${colas}'] = BigInt(__g_colas) + BigInt(__colexp);
             						} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp1 !== 'object' && __typeof_colexp1 !== 'number') ||
 										   (__g_colas == null || (typeof __g_colas !== 'number' && typeof __g_colas !== 'object')) && (${colexp1} == null || (__typeof_colexp1 !== 'number' && __typeof_colexp1 !== 'object'))) {
-										g['${colas}'] = null;
+										g['${colas}'] = undefined;
 									} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp1 == 'number') ||
 											   (__g_colas == null && __typeof_colexp1 == 'number')) {
 										g['${colas}'] = ${colexp};
 									} else if (typeof __g_colas == 'number' && ${colexp1} == null) {
 										g['${colas}'] = __g_colas;
 									} else if (__g_colas instanceof Date || __colexp1 instanceof Date) {
-										// Date objects cause string concatenation with +=, return null instead
-										g['${colas}'] = null;
+										// Date objects cause string concatenation with +=, return undefined instead
+										g['${colas}'] = undefined;
 									} else {
 										g['${colas}'] += ${colexp} || 0;
 									}
@@ -214,26 +214,26 @@ yy.Select.prototype.compileGroup = function (query) {
 								const __colexp = ${colexp};
 
 								if (__g_colas == null && ${colexp} == null) {
-									g['${colas}'] = null;
+									g['${colas}'] = undefined;
 								} else if (typeof __g_colas === 'bigint' || typeof __colexp === 'bigint') {
             					    g['${colas}'] = BigInt(__g_colas) + BigInt(__colexp);
             					} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp !== 'object' && __typeof_colexp !== 'number') ||
 										   (__g_colas == null || (typeof __g_colas !== 'number' && typeof __g_colas !== 'object')) && (${colexp} == null || (__typeof_colexp !== 'number' && __typeof_colexp !== 'object'))) {
-									g['${colas}'] = null;
-								} else if (typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp == 'number') {
-									g['${colas}'] = ${colexp};
-								} else if (typeof __g_colas == 'number' && ${colexp} == null) {
-									g['${colas}'] = __g_colas;
-								} else if (__g_colas == null && __typeof_colexp == 'number') {
-									g['${colas}'] = ${colexp};
-								} else if (__g_colas instanceof Date || __colexp instanceof Date) {
-									// Date objects cause string concatenation with +=, return null instead
-									g['${colas}'] = null;
-								} else {
-									g['${colas}'] += ${colexp} || 0;
-								}
+								g['${colas}'] = undefined;
+							} else if (typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp == 'number') {
+								g['${colas}'] = ${colexp};
+							} else if (typeof __g_colas == 'number' && ${colexp} == null) {
+								g['${colas}'] = __g_colas;
+							} else if (__g_colas == null && __typeof_colexp == 'number') {
+								g['${colas}'] = ${colexp};
+							} else if (__g_colas instanceof Date || __colexp instanceof Date) {
+								// Date objects cause string concatenation with +=, return undefined instead
+								g['${colas}'] = undefined;
+							} else {
+								g['${colas}'] += ${colexp} || 0;
 							}
-							` +
+						}
+						` +
 							post
 						);
 					} else if (col.aggregatorid === 'TOTAL') {
@@ -398,9 +398,9 @@ yy.Select.prototype.compileGroup = function (query) {
 							y= (${colexp});
 							g['_COUNT_${colas}'] += (typeof y == "undefined" || y === null) ? 0 : 1;
 							if (y instanceof Date || (g['_SUM_${colas}'] && g['_SUM_${colas}'] instanceof Date)) {
-								// AVG on Date objects doesn't make semantic sense - return null
-								g['_SUM_${colas}'] = null;
-								g['${colas}'] = null;
+							// AVG on Date objects doesn't make semantic sense - return undefined
+							g['_SUM_${colas}'] = undefined;
+							g['${colas}'] = undefined;
 							} else if (typeof g['_SUM_${colas}'] === 'bigint' || typeof y === 'bigint') {
 								g['_SUM_${colas}'] = BigInt(g['_SUM_${colas}']);
 								g['_SUM_${colas}'] += BigInt(y || 0);

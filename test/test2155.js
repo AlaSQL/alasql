@@ -1,8 +1,12 @@
-describe.skip('Test 2155 - ROUND should return null for null input', function () {
-	it('ROUND(null) should return null, not undefined or 0', function (done) {
+var alasql = require('../dist/alasql.js');
+alasql.options.errorlog = true;
+var assert = require('assert');
+
+describe('Test 2155 - ROUND should return undefined for null input', function () {
+	it('ROUND(null) should return undefined per AlaSQL NULL definition', function (done) {
 		var res = alasql('SELECT ROUND(null) as r FROM ?', [[{id: 1}]]);
 
-		assert.strictEqual(res[0].r, null, 'ROUND(null) should return null');
+		assert.strictEqual(res[0].r, undefined, 'ROUND(null) should return undefined');
 		done();
 	});
 
@@ -13,17 +17,17 @@ describe.skip('Test 2155 - ROUND should return null for null input', function ()
 		done();
 	});
 
-	it('ROUND("abc") should return null', function (done) {
+	it('ROUND("abc") should return undefined', function (done) {
 		var res = alasql('SELECT ROUND(?) as r', ['abc']);
 
-		assert.strictEqual(res[0].r, null, 'ROUND("abc") should return null for non-numeric');
+		assert.strictEqual(res[0].r, undefined, 'ROUND("abc") should return undefined for non-numeric');
 		done();
 	});
 
-	it('ROUND("") should return null', function (done) {
+	it('ROUND("") should return undefined', function (done) {
 		var res = alasql('SELECT ROUND(?) as r', ['']);
 
-		assert.strictEqual(res[0].r, null, 'ROUND("") should return null for empty string');
+		assert.strictEqual(res[0].r, undefined, 'ROUND("") should return undefined for empty string');
 		done();
 	});
 
@@ -34,17 +38,21 @@ describe.skip('Test 2155 - ROUND should return null for null input', function ()
 		done();
 	});
 
-	it('ROUND("null") should return null', function (done) {
+	it('ROUND("null") should return undefined', function (done) {
 		var res = alasql('SELECT ROUND(?) as r', ['null']);
 
-		assert.strictEqual(res[0].r, null, 'ROUND("null") should return null for string "null"');
+		assert.strictEqual(
+			res[0].r,
+			undefined,
+			'ROUND("null") should return undefined for string "null"'
+		);
 		done();
 	});
 
-	it('ROUND("  ") should return null', function (done) {
+	it('ROUND("  ") should return undefined', function (done) {
 		var res = alasql('SELECT ROUND(?) as r', ['  ']);
 
-		assert.strictEqual(res[0].r, null, 'ROUND("  ") should return null for whitespace');
+		assert.strictEqual(res[0].r, undefined, 'ROUND("  ") should return undefined for whitespace');
 		done();
 	});
 
@@ -69,12 +77,12 @@ describe.skip('Test 2155 - ROUND should return null for null input', function ()
 		done();
 	});
 
-	it('SUM(ROUND(null)) should return null when all values are null', function (done) {
+	it('SUM(ROUND(null)) should return undefined when all values are null', function (done) {
 		var data = [{a: null}, {a: null}];
 
 		var res = alasql('SELECT SUM(ROUND(a)) as sum_a FROM ?', [data]);
 
-		assert.strictEqual(res[0].sum_a, null, 'SUM of all ROUND(null) should be null');
+		assert.strictEqual(res[0].sum_a, undefined, 'SUM of all ROUND(null) should be undefined');
 		done();
 	});
 
@@ -87,19 +95,19 @@ describe.skip('Test 2155 - ROUND should return null for null input', function ()
 		done();
 	});
 
-	it('ROUND(string) should return null', function (done) {
+	it('ROUND(string) should return undefined', function (done) {
 		var res = alasql('SELECT ROUND(?) as r', ['XYZ']);
 
-		assert.strictEqual(res[0].r, null, 'ROUND of non-numeric string should return null');
+		assert.strictEqual(res[0].r, undefined, 'ROUND of non-numeric string should return undefined');
 		done();
 	});
 
-	it('SUM(ROUND(string)) should return null when all values are strings', function (done) {
+	it('SUM(ROUND(string)) should return undefined when all values are strings', function (done) {
 		var data = [{e: 'XYZ1'}, {e: 'XYZ2'}];
 
 		var res = alasql('SELECT SUM(ROUND(e)) as sum_e FROM ?', [data]);
 
-		assert.strictEqual(res[0].sum_e, null, 'SUM of all ROUND(string) should be null');
+		assert.strictEqual(res[0].sum_e, undefined, 'SUM of all ROUND(string) should be undefined');
 		done();
 	});
 });
