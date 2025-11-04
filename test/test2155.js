@@ -1,4 +1,8 @@
-describe.skip('Test 2155 - ROUND should return null for null input', function () {
+var alasql = require('../dist/alasql.js');
+alasql.options.errorlog = true;
+var assert = require('assert');
+
+describe('Test 2155 - ROUND should return null for null input', function () {
 	it('ROUND(null) should return null, not undefined or 0', function (done) {
 		var res = alasql('SELECT ROUND(null) as r FROM ?', [[{id: 1}]]);
 
