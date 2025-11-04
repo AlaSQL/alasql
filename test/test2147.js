@@ -93,28 +93,28 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 		done();
 	});
 
-	it('SUM on DATETIME - returns null for semantic correctness', function (done) {
-		// SUM on Date objects doesn't make semantic sense, so it returns null
+	it('SUM on DATETIME - returns undefined for semantic correctness', function (done) {
+		// SUM on Date objects doesn't make semantic sense, so it returns undefined
 		var res = alasql('SELECT id, SUM(DATETIME(date)) as sumTimestamps FROM ? GROUP BY id;', [data]);
 
 		var expected = [
-			{id: 1, sumTimestamps: null},
-			{id: 2, sumTimestamps: null},
-			{id: 3, sumTimestamps: null},
+			{id: 1, sumTimestamps: undefined},
+			{id: 2, sumTimestamps: undefined},
+			{id: 3, sumTimestamps: undefined},
 		];
 
 		assert.deepEqual(res, expected);
 		done();
 	});
 
-	it('AVG on DATETIME - returns null for semantic correctness', function (done) {
-		// AVG on Date objects doesn't make semantic sense, so it returns null
+	it('AVG on DATETIME - returns undefined for semantic correctness', function (done) {
+		// AVG on Date objects doesn't make semantic sense, so it returns undefined
 		var res = alasql('SELECT id, AVG(DATETIME(date)) as avgTimestamp FROM ? GROUP BY id;', [data]);
 
 		var expected = [
-			{id: 1, avgTimestamp: null},
-			{id: 2, avgTimestamp: null},
-			{id: 3, avgTimestamp: null},
+			{id: 1, avgTimestamp: undefined},
+			{id: 2, avgTimestamp: undefined},
+			{id: 3, avgTimestamp: undefined},
 		];
 
 		assert.deepEqual(res, expected);

@@ -210,7 +210,7 @@ stdlib.ROUND = function (s, d) {
 		return (
 			'(__alasql_tmp = (' +
 			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? null : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? null : Math.round(__alasql_tmp*Math.pow(10,(' +
+			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp*Math.pow(10,(' +
 			d +
 			')))/Math.pow(10,(' +
 			d +
@@ -220,7 +220,7 @@ stdlib.ROUND = function (s, d) {
 		return (
 			'(__alasql_tmp = (' +
 			s +
-			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? null : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? null : Math.round(__alasql_tmp)))'
+			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? undefined : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? undefined : Math.round(__alasql_tmp)))'
 		);
 	}
 };
