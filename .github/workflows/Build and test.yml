@@ -75,7 +75,7 @@ jobs:
     name: Test suite for Node
     permissions:
       contents: read
-    needs: [build]
+    needs: [build, verify-formatting]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     strategy:
       matrix:
@@ -113,7 +113,7 @@ jobs:
     name: Test suite for Browser
     permissions:
       contents: read
-    needs: [build]
+    needs: [build, verify-formatting]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
       - name: Harden Runner
