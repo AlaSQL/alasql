@@ -207,9 +207,21 @@ stdlib.RANDOM = function (r) {
 };
 stdlib.ROUND = function (s, d) {
 	if (arguments.length == 2) {
-		return 'Math.round((' + s + ')*Math.pow(10,(' + d + ')))/Math.pow(10,(' + d + '))';
+		return (
+			'(__alasql_tmp = (' +
+			s +
+			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? null : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? null : Math.round(__alasql_tmp*Math.pow(10,(' +
+			d +
+			')))/Math.pow(10,(' +
+			d +
+			'))))'
+		);
 	} else {
-		return 'Math.round(' + s + ')';
+		return (
+			'(__alasql_tmp = (' +
+			s +
+			'), (__alasql_tmp == null || (typeof __alasql_tmp === "string" && __alasql_tmp.trim() === "")) ? null : ((__alasql_tmp = Number(__alasql_tmp)), isNaN(__alasql_tmp) ? null : Math.round(__alasql_tmp)))'
+		);
 	}
 };
 stdlib.CEIL = stdlib.CEILING = function (s) {
