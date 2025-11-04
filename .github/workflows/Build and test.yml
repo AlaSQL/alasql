@@ -130,37 +130,37 @@ jobs:
       - name: Run browser tests (disabled)
         run: '# yarn test-browser-ci'
 
-verify-parser:
-  name: Verify grammar is aligned with generated parser
-  needs: [verify-formatting]
-  permissions:
-    contents: read
-  runs-on: blacksmith-4vcpu-ubuntu-2204
-  steps:
-    - name: Harden Runner
-      uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
-      with:
-        egress-policy: audit
+  verify-parser:
+    name: Verify grammar is aligned with generated parser
+    needs: [verify-formatting]
+    permissions:
+      contents: read
+    runs-on: blacksmith-4vcpu-ubuntu-2204
+    steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@f4a75cfd619ee5ce8d5b864b0d183aff3c69b55a # v2.13.1
+        with:
+          egress-policy: audit
 
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      with:
-        fetch-depth: 0
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          fetch-depth: 0
 
-    - name: Get changed files
-      id: detect-changes
-      uses: tj-actions/changed-files@f22c246f494f83652d3a35ba3ca3b1a82e88a071 # v45.0.0
-      with:
-        files: src/alasqlparser.jison
+      - name: Get changed files
+        id: detect-changes
+        uses: tj-actions/changed-files@f22c246f494f83652d3a35ba3ca3b1a82e88a071 # v45.0.0
+        with:
+          files: src/alasqlparser.jison
 
-    - name: Build from src
-      # This step only runs if the jison file changed
-      if: steps.detect-changes.outputs.any_changed == 'true'
-      run: |
-        yarn install --frozen-lockfile
-        yarn jison
-        yarn test
+      - name: Build from src
+        # This step only runs if the jison file changed
+        if: steps.detect-changes.outputs.any_changed == 'true'
+        run: |
+          yarn install --frozen-lockfile
+          yarn jison
+          yarn test
 
-    - name: Check generated parser for changes
-      if: steps.detect-changes.outputs.any_changed == 'true'
-      run: |
-        git diff --exit-code -- src/alasqlparser.js || (echo "Please run 'yarn jison && yarn test' and commit again." && exit 1)
+      - name: Check generated parser for changes
+        if: steps.detect-changes.outputs.any_changed == 'true'
+        run: |
+          git diff --exit-code -- src/alasqlparser.js || (echo "Please run 'yarn jison && yarn test' and commit again." && exit 1)
