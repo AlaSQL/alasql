@@ -103,8 +103,8 @@ jobs:
       - name: Unpack node_modules
         run: tar -xvf node_modules.tar
 
-      - name: Run Node tests
-        run: yarn test-ci
+      - name: Run test suite
+        run: yarn test-only
 
   test-suite-browser:
     permissions:
