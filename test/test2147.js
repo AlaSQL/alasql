@@ -34,33 +34,24 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 		done();
 	});
 
-	it.skip('MIN on DATETIME - CURRENTLY BROKEN (Bug in 423groupby.js lines 116-124)', function (done) {
-		// BUG: MIN doesn't properly handle Date objects in initialization
-		// Unlike MAX (line 128), MIN (lines 116-124) doesn't check for 'instanceof Date'
-		// This causes incorrect MIN values and null results
+	it('MIN on DATETIME', function (done) {
 		var res = alasql(
 			'SELECT id, MIN(DATETIME(date)) as minDate, COUNT(*) as cnt FROM ? GROUP BY id;',
 			[data]
 		);
 
-		// What SHOULD happen (currently fails):
 		var expected = [
 			{id: 1, minDate: new Date('2025-01-01T01:00:00.000Z'), cnt: 3},
 			{id: 2, minDate: new Date('2025-02-01T01:00:00.000Z'), cnt: 2},
 			{id: 3, minDate: new Date('2025-03-01T01:00:00.000Z'), cnt: 1},
 		];
 
-		// What actually happens: wrong dates and nulls
-		// id:1 returns 2025-01-02 instead of 2025-01-01
-		// id:2 returns 2025-02-02 instead of 2025-02-01
-		// id:3 returns null instead of 2025-03-01
-
 		assert.deepEqual(res, expected);
 		done();
 	});
 
-	it.skip('MIN and MAX together on DATETIME - MIN is BROKEN', function (done) {
-		// MAX works correctly, but MIN has the same bug as above
+	it('MIN and MAX together on DATETIME', function (done) {
+		// Both MIN and MAX now work correctly with Date objects
 		var res = alasql(
 			'SELECT id, MIN(DATETIME(date)) as minDate, MAX(DATETIME(date)) as maxDate FROM ? GROUP BY id;',
 			[data]
@@ -102,47 +93,31 @@ describe('Test 2147 - Aggregate functions on DATETIME', function () {
 		done();
 	});
 
-	it.skip('SUM on DATETIME - BROKEN: concatenates strings instead of summing', function (done) {
-		// BUG: SUM on Date objects uses += operator which causes string concatenation
-		// See 423groupby.js lines 176-234 - needs to handle Date.valueOf() or getTime()
+	it('SUM on DATETIME - returns null for semantic correctness', function (done) {
+		// SUM on Date objects doesn't make semantic sense, so it returns null
 		var res = alasql('SELECT id, SUM(DATETIME(date)) as sumTimestamps FROM ? GROUP BY id;', [data]);
 
-		// What SHOULD happen: sum of timestamp numbers
-		// e.g., res[0].sumTimestamps should be a number (sum of milliseconds since epoch)
+		var expected = [
+			{id: 1, sumTimestamps: null},
+			{id: 2, sumTimestamps: null},
+			{id: 3, sumTimestamps: null},
+		];
 
-		// What ACTUALLY happens: string concatenation
-		// id:1 returns null
-		// id:2 returns concatenated date strings like "Sat Feb 01 2025...Sun Feb 02 2025..."
-		// id:3 returns a date string
-
-		// Natural behavior: dates don't make semantic sense to sum
-		// Best would be to return null or throw an error
-		// Alternative: could sum the underlying timestamps (milliseconds)
-
-		console.log('SUM result:', res);
-		// Test currently fails - documenting the bug
+		assert.deepEqual(res, expected);
 		done();
 	});
 
-	it.skip('AVG on DATETIME - BROKEN: returns undefined or dates, not averaged timestamp', function (done) {
-		// BUG: AVG on Date objects doesn't work properly
-		// See 423groupby.js lines 392-404 - uses += on _SUM which fails for Date objects
+	it('AVG on DATETIME - returns null for semantic correctness', function (done) {
+		// AVG on Date objects doesn't make semantic sense, so it returns null
 		var res = alasql('SELECT id, AVG(DATETIME(date)) as avgTimestamp FROM ? GROUP BY id;', [data]);
 
-		// What SHOULD happen: If AVG is to work on dates at all, it should:
-		// - Average the underlying timestamps (milliseconds since epoch)
-		// - Return a number (not a Date object)
+		var expected = [
+			{id: 1, avgTimestamp: null},
+			{id: 2, avgTimestamp: null},
+			{id: 3, avgTimestamp: null},
+		];
 
-		// What ACTUALLY happens:
-		// - Returns undefined for most groups
-		// - Sometimes returns a date string
-
-		// Natural behavior question: Does AVG on dates make semantic sense?
-		// Answer: Not really - you can't meaningfully "average" dates
-		// Better to return null or error for Date objects
-
-		console.log('AVG result:', res);
-		// Test currently fails - documenting the bug
+		assert.deepEqual(res, expected);
 		done();
 	});
 });

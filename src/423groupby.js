@@ -98,9 +98,9 @@ yy.Select.prototype.compileGroup = function (query) {
 					if (col.aggregatorid === 'SUM') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}':(${colexp1})|| typeof ${colexp1} == 'number' ? ${colexp} : null,`;
+							return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? null : ((t || typeof t == 'number') ? t : null); })(),`;
 						}
-						return `'${colas}':(${colexp})|| typeof ${colexp} == 'number' ? ${colexp} : null,`;
+						return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? null : ((t || typeof t == 'number') ? t : null); })(),`;
 					} else if (col.aggregatorid === 'TOTAL') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
@@ -117,11 +117,9 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
-							return `'${colas}': (typeof ${colexp1} == 'number' || typeof ${colexp1} == 'bigint' ? ${colexp} : typeof ${colexp1} == 'object' ?
-							typeof Number(${colexp1}) == 'number' ? ${colexp} : null : null),`;
+							return `'${colas}': (function() { var t = ${colexp}; return typeof t == 'number' || typeof t == 'bigint' || (typeof t == 'object' && (typeof Number(t) == 'number' || t instanceof Date)) ? t : null; })(),`;
 						}
-						return `'${colas}': (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint' ? ${colexp} : typeof ${colexp} == 'object' ?
-							typeof Number(${colexp}) == 'number' ? ${colexp} : null : null),`;
+						return `'${colas}': (function() { var t = ${colexp}; return typeof t == 'number' || typeof t == 'bigint' || (typeof t == 'object' && (typeof Number(t) == 'number' || t instanceof Date)) ? t : null; })(),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
@@ -141,7 +139,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						query.removeKeys.push(`_SUM_${colas}`);
 						query.removeKeys.push(`_COUNT_${colas}`);
 
-						return `'${colas}':${colexp},'_SUM_${colas}':(${colexp})||0,'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
+						return `'${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? null : t; })(),'_SUM_${colas}':(function() { var t = ${colexp}; return (t instanceof Date) ? null : (t || 0); })(),'_COUNT_${colas}':(typeof ${colexp} == "undefined" || ${colexp} === null) ? 0 : 1,`;
 					} else if (col.aggregatorid === 'AGGR') {
 						aft += `,g['${colas}']=${col.expression.toJS('g', -1)}`;
 						return '';
@@ -189,13 +187,16 @@ yy.Select.prototype.compileGroup = function (query) {
 									} else if (typeof __g_colas === 'bigint' || typeof __colexp1 === 'bigint') {
             					    	g['${colas}'] = BigInt(__g_colas) + BigInt(__colexp);
             						} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp1 !== 'object' && __typeof_colexp1 !== 'number') ||
-											   (__g_colas == null || (typeof __g_colas !== 'number' && typeof __g_colas !== 'object')) && (${colexp1} == null || (__typeof_colexp1 !== 'number' && __typeof_colexp1 !== 'object'))) {
+										   (__g_colas == null || (typeof __g_colas !== 'number' && typeof __g_colas !== 'object')) && (${colexp1} == null || (__typeof_colexp1 !== 'number' && __typeof_colexp1 !== 'object'))) {
 										g['${colas}'] = null;
 									} else if ((typeof __g_colas !== 'object' && typeof __g_colas !== 'number' && __typeof_colexp1 == 'number') ||
 											   (__g_colas == null && __typeof_colexp1 == 'number')) {
 										g['${colas}'] = ${colexp};
 									} else if (typeof __g_colas == 'number' && ${colexp1} == null) {
 										g['${colas}'] = __g_colas;
+									} else if (__g_colas instanceof Date || __colexp1 instanceof Date) {
+										// Date objects cause string concatenation with +=, return null instead
+										g['${colas}'] = null;
 									} else {
 										g['${colas}'] += ${colexp} || 0;
 									}
@@ -225,6 +226,9 @@ yy.Select.prototype.compileGroup = function (query) {
 									g['${colas}'] = __g_colas;
 								} else if (__g_colas == null && __typeof_colexp == 'number') {
 									g['${colas}'] = ${colexp};
+								} else if (__g_colas instanceof Date || __colexp instanceof Date) {
+									// Date objects cause string concatenation with +=, return null instead
+									g['${colas}'] = null;
 								} else {
 									g['${colas}'] += ${colexp} || 0;
 								}
@@ -393,7 +397,11 @@ yy.Select.prototype.compileGroup = function (query) {
 						return `${pre}
 							y= (${colexp});
 							g['_COUNT_${colas}'] += (typeof y == "undefined" || y === null) ? 0 : 1;
-							if (typeof g['_SUM_${colas}'] === 'bigint' || typeof y === 'bigint') {
+							if (y instanceof Date || (g['_SUM_${colas}'] && g['_SUM_${colas}'] instanceof Date)) {
+								// AVG on Date objects doesn't make semantic sense - return null
+								g['_SUM_${colas}'] = null;
+								g['${colas}'] = null;
+							} else if (typeof g['_SUM_${colas}'] === 'bigint' || typeof y === 'bigint') {
 								g['_SUM_${colas}'] = BigInt(g['_SUM_${colas}']);
 								g['_SUM_${colas}'] += BigInt(y || 0);
     							g['${colas}'] = BigInt(g['_SUM_${colas}']) / BigInt(g['_COUNT_${colas}']); 
