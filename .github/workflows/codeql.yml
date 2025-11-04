@@ -1,9 +1,7 @@
-name: 'CodeQL'
+name: 'Code quality'
 
 on:
   push:
-    branches: ['develop']
-  pull_request:
     branches: ['develop']
   schedule:
     - cron: '32 13 * * 0'

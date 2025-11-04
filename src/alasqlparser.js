@@ -90,7 +90,7 @@ case 1:
 		
 break;
 case 2:
- this.$ = doubleq($$[$0].substr(1,$$[$0].length-2)); 
+ this.$ = doubleq($$[$0].substr(1,$$[$0].length-2));
 break;
 case 3:
  this.$ = $$[$0].toLowerCase() 

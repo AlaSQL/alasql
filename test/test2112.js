@@ -20,9 +20,13 @@ describe('Test 2112 - load binary file', function () {
 	});
 
 	it('C) Loads HTTPS binary file (async)', function (done) {
-		alasql.utils.loadBinaryFile('https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg', true, function (data) {
-			assert.equal(data.slice(0, 3), 'ÿØÿ');
-			done();
-		});
+		alasql.utils.loadBinaryFile(
+			'https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg',
+			true,
+			function (data) {
+				assert.equal(data.slice(0, 3), 'ÿØÿ');
+				done();
+			}
+		);
 	});
 });

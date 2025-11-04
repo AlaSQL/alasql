@@ -8,7 +8,7 @@ if (typeof exports === 'object') {
 	Test for issue #379
 */
 
-let baseUrl = "github.com/AlaSQL/alasql/raw/refs/heads/develop"
+let baseUrl = 'github.com/AlaSQL/alasql/raw/refs/heads/develop';
 
 var test = 418;
 
