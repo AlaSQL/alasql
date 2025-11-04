@@ -35,7 +35,7 @@ jobs:
 
   build:
     name: Build from source files
-    needs: [verify-formatting]
+    needs: []
     permissions:
       contents: write
     runs-on: blacksmith-4vcpu-ubuntu-2204
@@ -75,7 +75,7 @@ jobs:
     name: Test suite for Node
     permissions:
       contents: read
-    needs: [verify-parser, build]
+    needs: [build]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     strategy:
       matrix:
@@ -113,7 +113,7 @@ jobs:
     name: Test suite for Browser
     permissions:
       contents: read
-    needs: [verify-parser, build]
+    needs: [build]
     runs-on: blacksmith-4vcpu-ubuntu-2204
     steps:
       - name: Harden Runner
@@ -136,7 +136,7 @@ jobs:
 
   verify-parser:
     name: Verify grammar vs generated parser
-    needs: [verify-formatting]
+    needs: []
     permissions:
       contents: read
     runs-on: blacksmith-4vcpu-ubuntu-2204
