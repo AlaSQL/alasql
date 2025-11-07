@@ -10,7 +10,6 @@
 let alasql = require('../dist/alasql.fs.js');
 let path = require('path');
 let fs = require('fs');
-let stdin = process.openStdin();
 let yargs = require('yargs')
 	.strict()
 	.usage(
@@ -60,10 +59,6 @@ let yargs = require('yargs')
 let argv = yargs.argv;
 let sql = '';
 let params = [];
-let pipedData = '';
-stdin.on('data', function (chunk) {
-	pipedData += chunk;
-});
 
 if (argv.v) {
 	console.log(alasql.version);
@@ -87,15 +82,8 @@ if (argv.f) {
 	sql = argv._.shift() || '';
 
 	// if data is not piped
-	if (Boolean(process.stdin.isTTY)) {
-		execute(sql, argv._);
-	}
+	execute(sql, argv._);
 }
-
-// if data is piped
-stdin.on('end', function () {
-	execute(pipedData, argv._);
-});
 
 /**
  * Execute SQL query
