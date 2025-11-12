@@ -15,7 +15,7 @@
 	"scripts": {
 		"test": "sh build.sh && yarn test-only",
 		"test-ci": "(yarn test-format-all || 1) && yarn test-only && yarn install-g && alasql 'select 1 as Succes'",
-		"test-only": "node node_modules/mocha/bin/mocha.js ./test --reporter dot",
+		"test-only": "node node_modules/mocha/bin/mocha.js ./test --reporter dot --bail",
 		"#test-only": "(command -v bun && bun node_modules/.bin/mocha ./test --reporter dot) || npx bun node_modules/.bin/mocha ./test --reporter dot",
 		"test-browser": "node test/browserTestRunner.js 7387",
 		"test-cover": "# istanbul cover  -x 'lib/zt/zt.js' --dir test/coverage _mocha",

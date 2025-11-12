@@ -5,10 +5,12 @@ if (typeof exports === 'object') {
 	var path = require('path');
 }
 
-describe('Test CLI - Command Line Interface', function () {
+describe('Test CLI - Command Line Interface - Issue #2149 (Pipe handling with txt())', function () {
 	console.log(__dirname);
 	const cliPath = path.join(__dirname, '..', 'bin', 'alasql-cli.js');
 	const testSqlFile = path.join(__dirname, 'temp-test.sql');
+	const testWithTxtFile = path.join(__dirname, 'test2149-with-txt.sql');
+	const testWithoutTxtFile = path.join(__dirname, 'test2149-without-txt.sql');
 
 	before(function () {
 		// Create a temporary SQL file for testing
@@ -62,7 +64,7 @@ describe('Test CLI - Command Line Interface', function () {
 		}
 	});
 
-	it('8. Should handle piped input data', function () {
+	it('8. Should handle piped input data with txt() function - Issue #2149', function () {
 		const result = execSync(
 			`echo "hello" | node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()"`
 		).toString();
@@ -76,7 +78,19 @@ describe('Test CLI - Command Line Interface', function () {
 		);
 	});
 
-	it('9. Should handle redirected file input', function () {
+	it('9. Should handle piped input data without txt() function - backward compatibility', function () {
+		const result = execSync(`echo "SELECT 1 as Success" | node "${cliPath}"`).toString();
+		assert.deepEqual(
+			[
+				{
+					Success: 1,
+				},
+			],
+			JSON.parse(result)
+		);
+	});
+
+	it('10. Should handle redirected file input with txt() function', function () {
 		const result = execSync(
 			`node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < ${testSqlFile}`
 		).toString();
@@ -90,7 +104,61 @@ describe('Test CLI - Command Line Interface', function () {
 		);
 	});
 
-	it('10. Should handle empty SQL error', function () {
+	it('11. Should handle file with txt() function and piped data - Issue #2149', function () {
+		const result = execSync(
+			`echo "hello world" | node "${cliPath}" -f "${testWithTxtFile}"`
+		).toString();
+		assert.deepEqual(
+			[
+				{
+					Success: true,
+				},
+			],
+			JSON.parse(result)
+		);
+	});
+
+	it('12. Should handle file without txt() function normally', function () {
+		const result = execSync(`node "${cliPath}" -f "${testWithoutTxtFile}"`).toString();
+		assert.deepEqual(
+			[
+				{
+					Success: 1,
+				},
+			],
+			JSON.parse(result)
+		);
+	});
+
+	it('13. Should handle piped input to file without txt() function - should be ignored', function () {
+		const result = execSync(
+			`echo "this should be ignored" | node "${cliPath}" -f "${testWithoutTxtFile}"`
+		).toString();
+		assert.deepEqual(
+			[
+				{
+					Success: 1,
+				},
+			],
+			JSON.parse(result)
+		);
+	});
+
+	it('14. Should handle complex SQL with txt() and piped data', function () {
+		const result = execSync(
+			`echo -e "line1\nline2\nline3" | node "${cliPath}" "SELECT COUNT(*) as LineCount FROM txt()"`
+		).toString();
+		assert.deepEqual(
+			[
+				{
+					LineCount: 3,
+				},
+			],
+			JSON.parse(result)
+		);
+	});
+
+	it('15. Should handle empty SQL error', function () {
 		try {
 			execSync(`node "${cliPath}" ""`, {stdio: 'pipe'});
 			assert.fail('Should have thrown an error');
