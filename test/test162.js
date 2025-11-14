@@ -1,20 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test162.json', {
-		strict: false,
-		ws: '',
-	});
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
 
 describe('Test 162 - PRIMARY & FOREIGN KEYS in memory, localStorage & IndexedDB', function () {
-	it('1. ...', function (done) {
+	test('1. ...', function (done) {
 		// TODO - finish the test
 		done();
 	});
 });
-
-//}

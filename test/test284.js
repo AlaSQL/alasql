@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 284 PRIMARY KEY with AUTOINCREMENT', function () {
-	it('1. CREATE TABLE and INSERT', function (done) {
+	test('1. CREATE TABLE and INSERT', function (done) {
 		var res = alasql(`
       CREATE DATABASE test284;
       USE DATABASE test284;

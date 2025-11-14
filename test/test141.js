@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 141 text as source', function () {
 	var myfn = function (i) {
@@ -24,12 +25,12 @@ describe('Test 141 text as source', function () {
 	};
 	//	myfn3.dontcache = true;
 
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('CREATE DATABASE test141; use test141');
 		done();
 	});
 
-	it('2. On string', function (done) {
+	test('2. On string', function (done) {
 		var txt = 'one\ntwo\nthree\nfour\nfive\nsix\r\nseven\neight\r\nnine\nten';
 		var days = alasql('select column _ from ? where len(_) <= 3', [txt]);
 		assert.deepEqual(days, ['one', 'two', 'six', 'ten']);
@@ -43,7 +44,7 @@ describe('Test 141 text as source', function () {
 		]);
 		done();
 	});
-	it('2. SELECT on function', function (done) {
+	test('2. SELECT on function', function (done) {
 		var res = alasql('select * from ?', [myfn2]);
 		assert.deepEqual(res, [
 			{a: 0, b: 0},
@@ -53,7 +54,7 @@ describe('Test 141 text as source', function () {
 		]);
 		done();
 	});
-	it('3. INNER JOIN on stream', function (done) {
+	test('3. INNER JOIN on stream', function (done) {
 		//		myfn3.dontcache = true;
 
 		var res = alasql('select a, b, t.c from ? inner join ? t using a', [myfn, myfn3]);
@@ -67,7 +68,7 @@ describe('Test 141 text as source', function () {
 		done();
 	});
 
-	it('3. INNER JOIN on stream', function (done) {
+	test('3. INNER JOIN on stream', function (done) {
 		var res = alasql('select a, b, t.c from ? right join ? t using a', [myfn, myfn3]);
 		assert.deepEqual(res, [
 			{a: 0, b: 0, c: 0},
@@ -79,7 +80,7 @@ describe('Test 141 text as source', function () {
 		done();
 	});
 
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		alasql('DROP DATABASE test141');
 		done();
 	});

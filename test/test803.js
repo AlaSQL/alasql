@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 803 - JOIN GROUP BY with columns in same index position within nested arrays params', function () {
 	var testData = [
@@ -18,7 +18,7 @@ describe('Test 803 - JOIN GROUP BY with columns in same index position within ne
 		],
 	];
 
-	it('A) Multiple table SELECT w/ Group By returns all data', function (done) {
+	test('A) Multiple table SELECT w/ Group By returns all data', function (done) {
 		var sql =
 			'SELECT `b`.[0] AS `comp_id`, `b`.[1] AS `companyname`, `a`.[2] AS `emp_name`, `b`.[2] AS `num_emp`, SUM(`a`.[4]) AS `num_of_roles` FROM ? AS `a` INNER JOIN ? AS `b` ON `a`.[1] = `b`.[0] GROUP BY `b`.[0], `b`.[1], `a`.[2], `b`.[2]';
 		var expectedResult = [
@@ -58,7 +58,7 @@ describe('Test 803 - JOIN GROUP BY with columns in same index position within ne
 		});
 	});
 
-	it('B) Another multiple table SELECT w/ Group By returns all data', function (done) {
+	test('B) Another multiple table SELECT w/ Group By returns all data', function (done) {
 		var sql =
 			'SELECT `a`.[2] AS `emp_name`, `b`.[2] AS `num_emp`, SUM(`a`.[4]) AS `num_of_roles` FROM ? AS `a` INNER JOIN ? AS `b` ON `a`.[1] = `b`.[0] GROUP BY `a`.[2], `b`.[2]';
 		var expectedResult = [
@@ -73,7 +73,7 @@ describe('Test 803 - JOIN GROUP BY with columns in same index position within ne
 		});
 	});
 
-	it('C) Single table SELECT w/ Group By returns all data', function (done) {
+	test('C) Single table SELECT w/ Group By returns all data', function (done) {
 		var sql =
 			'SELECT `a`.[2] AS `emp_name`, `b`.[2] AS `num_emp`, SUM(`a`.[4]) AS `num_of_roles` FROM ? AS `a` INNER JOIN ? AS `b` ON `a`.[1] = `b`.[0] GROUP BY `a`.[2], `b`.[2]';
 		var expectedResult = [

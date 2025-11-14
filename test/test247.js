@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 247 UNARY PLUS', function () {
-	it('1. Simple tests', function (done) {
+	test('1. Simple tests', function (done) {
 		var res = alasql('SELECT VALUE + -1');
 		assert.equal(res, -1);
 		var res = alasql('SELECT VALUE 70 * +1');

@@ -1,14 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports === 'object' && false) {
+//if(typeof window === 'object' && false) {
 
 describe('Test 170 - INTO result variable', function () {
-	it('1. Write TXT file into stdout', function (done) {
+	test('1. Write TXT file into stdout', function (done) {
 		var data = [
 			{city: 'Rome', population: 3400000},
 			{city: 'Astana', population: 800000},
@@ -19,7 +20,7 @@ describe('Test 170 - INTO result variable', function () {
 		});
 	});
 
-	it('2. Write CSV file into stdout', function (done) {
+	test('2. Write CSV file into stdout', function (done) {
 		var data = [
 			{city: 'Rome', population: 3400000},
 			{city: 'Astana', population: 800000},

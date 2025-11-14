@@ -1,18 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 344 Multisheet export', function () {
-	if (typeof exports === 'object') {
-		it('1. CREATE DATABASE', function (done) {
+	if (typeof window === 'object') {
+		test('1. CREATE DATABASE', function (done) {
 			alasql('CREATE DATABASE test344;USE test344');
 			done();
 		});
 
-		it('2. SELECT FROM', function (done) {
+		test('2. SELECT FROM', function (done) {
 			var data1 = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
@@ -25,7 +26,7 @@ describe('Test 344 Multisheet export', function () {
 			done();
 		});
 
-		it('2. XLSX multisheet export', function (done) {
+		test('2. XLSX multisheet export', function (done) {
 			var data1 = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
@@ -49,7 +50,7 @@ describe('Test 344 Multisheet export', function () {
 			);
 		});
 
-		it('3. XLSX multisheet export', function (done) {
+		test('3. XLSX multisheet export', function (done) {
 			var data1 = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
@@ -71,7 +72,7 @@ describe('Test 344 Multisheet export', function () {
 			);
 		});
 
-		it('3b. XLSX multisheet export using SELECT *', function (done) {
+		test('3b. XLSX multisheet export using SELECT *', function (done) {
 			var data1 = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
@@ -93,7 +94,7 @@ describe('Test 344 Multisheet export', function () {
 			);
 		});
 
-		it('3c. XLSX multisheet export with custom columns', function (done) {
+		test('3c. XLSX multisheet export with custom columns', function (done) {
 			var data1 = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
@@ -116,14 +117,14 @@ describe('Test 344 Multisheet export', function () {
 		});
 
 		/*
-  it('3. XLSXML multisheet export',function(done){
+  test('3. XLSXML multisheet export',function(done){
     var res = alasql('=2*2');
     assert.deepEqual(res,1);
     done();
   });
 */
 
-		it('99. DROP DATABASE', function (done) {
+		test('99. DROP DATABASE', function (done) {
 			alasql.options.modifier = undefined;
 			alasql('DROP DATABASE test344');
 			done();

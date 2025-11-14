@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 608 - Select.toString() ', function () {
 	// From http://jsfiddle.net/ndxbxrme/eyLy4zy9/3/
@@ -25,11 +25,11 @@ describe('Test 608 - Select.toString() ', function () {
 		},
 	];
 
-	var runTest = function (test) {
-		it(test.description, function () {
-			var ast = alasql.parse(test.sql);
+	var runTest = function (testCase) {
+		test(testCase.description, function () {
+			var ast = alasql.parse(testCase.sql);
 			var astSql = ast.statements[0].toString();
-			assert.equal(astSql, test.sql);
+			assert.equal(astSql, testCase.sql);
 		});
 	};
 

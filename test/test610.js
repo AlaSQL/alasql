@@ -1,17 +1,17 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 610 - SQL added user defined function', function () {
-	it('A) Sync', function () {
+	test('A) Sync', function () {
 		var res = alasql(
 			'CREATE FUNCTION abc AS ``function(x) { return x*x; }``;select VALUE abc(2); CREATE FUNCTION abc AS ``function(x) { return x*x*x; }``;select value abc(2);'
 		);
 		assert.deepEqual(res, [1, 4, 1, 8]);
 	});
 
-	it('B) Async', function (done) {
+	test('B) Async', function (done) {
 		//
 		alasql([
 			'CREATE FUNCTION abc AS ``function(x) { return x*x; }``',

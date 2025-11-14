@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 300 SEARCH', function () {
 	var catalog = {
@@ -18,7 +19,7 @@ describe('Test 300 SEARCH', function () {
 		},
 	};
 
-	it('1. Search fruits', function (done) {
+	test('1. Search fruits', function (done) {
 		var res = alasql('SEARCH Europe FROM ?', [catalog]);
 		assert.deepEqual(res, [
 			{
@@ -28,7 +29,7 @@ describe('Test 300 SEARCH', function () {
 		done();
 	});
 
-	it('2. Search fruits 2', function (done) {
+	test('2. Search fruits 2', function (done) {
 		var res = alasql('SEARCH /fruits/ FROM ?', [catalog]);
 		assert.deepEqual(res, [{fruit: 'Apple'}, {fruit: 'Peach'}]);
 
@@ -38,7 +39,7 @@ describe('Test 300 SEARCH', function () {
 		done();
 	});
 
-	it('3. Search fruits', function (done) {
+	test('3. Search fruits', function (done) {
 		var res = alasql('SEARCH /fruits/WHERE(fruit="Apple") FROM ?', [catalog]);
 		assert.deepEqual(res, [{fruit: 'Apple'}]);
 
@@ -47,7 +48,7 @@ describe('Test 300 SEARCH', function () {
 		done();
 	});
 	if (false) {
-		it('4. Search fruits', function (done) {
+		test('4. Search fruits', function (done) {
 			var res = alasql('SEARCH /// WHERE(fruit="Apple") FROM ?', [catalog]);
 			assert.deepEqual(res, [{fruit: 'Apple'}]);
 			done();

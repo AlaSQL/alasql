@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 var db;
 
 describe('Test 19', function () {
-	it('1. Create tables', function (done) {
+	test('1. Create tables', function (done) {
 		db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int)');
 		db.exec('INSERT INTO test1 VALUES (1)');
@@ -24,7 +24,7 @@ describe('Test 19', function () {
 		done();
 	});
 
-	it('2. EXISTS', function (done) {
+	test('2. EXISTS', function (done) {
 		var res = db.exec(
 			'SELECT COLUMN a FROM test1 WHERE EXISTS ' + '(SELECT * FROM test2 WHERE test1.a = test2.b)'
 		);
@@ -32,7 +32,7 @@ describe('Test 19', function () {
 		done();
 	});
 
-	it('3. NOT EXISTS', function (done) {
+	test('3. NOT EXISTS', function (done) {
 		var res = db.exec(
 			'SELECT COLUMN a FROM test1 WHERE NOT EXISTS ' +
 				'(SELECT * FROM test2 WHERE test1.a = test2.a)'

@@ -1,13 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports === 'object') {
+if (typeof window === 'object') {
 	describe('Test 225 File Storage', function () {
-		it('1. CREATE FILE DATABASE', function (done) {
+		test('1. CREATE FILE DATABASE', function (done) {
 			alasql('DROP FILE DATABASE IF EXISTS "' + __dirname + '/test225.json"', [], function (res) {
 				//			console.log(res);
 				alasql('CREATE FILE DATABASE "' + __dirname + '/test225.json"', [], function (res) {

@@ -1,12 +1,8 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test380.json', {
-		strict: false,
-		ws: '',
-	});
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
 
 /*
  This sample beased on this article:
@@ -16,15 +12,13 @@ if (typeof exports === 'object') {
 */
 
 describe('Test 380 - PIVOT', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test380;USE test380');
 		done();
 	});
 
-	it('1. Create table', function (done) {
-		alasql(function () {
-			/*
-
+	test('1. Create table', function (done) {
+		alasql(`
 			create table DailyIncome(VendorId nvarchar(10), IncomeDay nvarchar(10), IncomeAmount int);
 
 			insert into DailyIncome values ('SPIKE', 'FRI', 100);
@@ -55,14 +49,12 @@ describe('Test 380 - PIVOT', function () {
 			insert into DailyIncome values ('FREDS', 'SAT', 500);
 			insert into DailyIncome values ('FREDS', 'THU', 800);
 			insert into DailyIncome values ('JOHNS', 'TUE', 600);
-
-		*/
-		});
+		`);
 
 		done();
 	});
 
-	it('2. Simple pivot without IN', function (done) {
+	test('2. Simple pivot without IN', function (done) {
 		var res = alasql(
 			'select * from DailyIncome  \
 		pivot (AVG(IncomeAmount) for IncomeDay)'
@@ -103,7 +95,7 @@ describe('Test 380 - PIVOT', function () {
 		done();
 	});
 
-	it('3. Simple pivot with IN', function (done) {
+	test('3. Simple pivot with IN', function (done) {
 		var res = alasql(
 			'RECORDSET OF SELECT * FROM DailyIncome  \
 		PIVOT (AVG(IncomeAmount) FOR IncomeDay IN ([MON],[TUE]))'
@@ -146,15 +138,12 @@ describe('Test 380 - PIVOT', function () {
 		done();
 	});
 
-	it('4. PIVOT and WHERE', function (done) {
-		var res = alasql(function () {
-			/*
+	test('4. PIVOT and WHERE', function (done) {
+		var res = alasql(`
 		select * from DailyIncome
 		pivot (max (IncomeAmount) for IncomeDay in ([MON],[TUE],[WED],[THU],[FRI],[SAT],[SUN])) as MaxIncomePerDay
 		where VendorId in ('SPIKE')
-
-		*/
-		});
+		`);
 
 		assert.deepEqual(res, [
 			{
@@ -172,7 +161,7 @@ describe('Test 380 - PIVOT', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test380');
 		done();

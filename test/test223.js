@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 223 ROLLUP() in GROUP BY', function () {
 	var testData = [
@@ -13,7 +14,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 		{Phase: 'Phase 2', Step: 'Step 2', Task: 'Task 2', Val: 40},
 	];
 
-	it('1. ROLLUP', function (done) {
+	test('1. ROLLUP', function (done) {
 		var res = alasql(
 			'SELECT Phase, Step, SUM(Val) AS Val FROM ? \
 			GROUP BY ROLLUP(Phase,Step)',
@@ -31,7 +32,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 		done();
 	});
 
-	it('2. CUBE', function (done) {
+	test('2. CUBE', function (done) {
 		var res = alasql(
 			'SELECT Phase, Step, SUM(Val) AS Val FROM ? \
 			GROUP BY CUBE(Phase,Step)',
@@ -53,7 +54,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 		done();
 	});
 
-	it('3. GROUPING SETS', function (done) {
+	test('3. GROUPING SETS', function (done) {
 		var res = alasql(
 			'SELECT Phase, Step, SUM(Val) AS Val FROM ? \
 			GROUP BY GROUPING SETS(Phase,Step)',

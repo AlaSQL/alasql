@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('373. Use functions in group by', function () {
 	var data = [
@@ -60,7 +60,7 @@ describe('373. Use functions in group by', function () {
 			mes: 'September',
 		},
 	];
-	it('1. Use functions from GROUP BY without alias ', function (done) {
+	test('1. Use functions from GROUP BY without alias ', function (done) {
 		var res = alasql(
 			'SELECT MONTH(fecha_Venta), \
             SUM(Sales) Sales FROM ? GROUP BY MONTH(fecha_Venta)',
@@ -75,7 +75,7 @@ describe('373. Use functions in group by', function () {
 		done();
 	});
 
-	it('2. Use functions with alias from GROUP BY', function (done) {
+	test('2. Use functions with alias from GROUP BY', function (done) {
 		var res = alasql(
 			'SELECT MONTH(fecha_Venta) AS mes, \
             SUM(Sales) Sales FROM ? GROUP BY MONTH(fecha_Venta)',

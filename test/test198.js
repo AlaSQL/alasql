@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 198 - MS SQL compatibility', function () {
-	it('1. Create tables', function (done) {
+	test('1. Create tables', function (done) {
 		alasql('CREATE DATABASE test198; USE test198');
 		alasql('SOURCE "' + __dirname + '/test198-1.sql"');
 		var res = alasql('SELECT * FROM Customers');
@@ -29,7 +30,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('2. Select', function (done) {
+	test('2. Select', function (done) {
 		var res = alasql('SOURCE "' + __dirname + '/test198-2.sql"');
 		assert.deepEqual(res, [
 			{customerid: 'FISSA', numorders: 0},
@@ -38,14 +39,14 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('3. CROSS JOIN', function (done) {
+	test('3. CROSS JOIN', function (done) {
 		var res = alasql('SELECT * FROM Customers AS C JOIN Orders AS O');
 		assert(res.length == 28);
 		//        console.log(res);
 		done();
 	});
 
-	it('4. ON', function (done) {
+	test('4. ON', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	JOIN Orders AS O ON C.customerid = O.customerid'
@@ -55,7 +56,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('5. LEFT OUTER JOIN ', function (done) {
+	test('5. LEFT OUTER JOIN ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid'
@@ -65,7 +66,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('6. LEFT OUTER JOIN ', function (done) {
+	test('6. LEFT OUTER JOIN ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid \
@@ -76,7 +77,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('7. GROUP BY ', function (done) {
+	test('7. GROUP BY ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid \
@@ -88,7 +89,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('8. HAVING ', function (done) {
+	test('8. HAVING ', function (done) {
 		var res = alasql(
 			'SELECT * FROM Customers AS C \
         	LEFT OUTER JOIN Orders AS O ON C.customerid = O.customerid \
@@ -100,7 +101,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('9. SELECT ', function (done) {
+	test('9. SELECT ', function (done) {
 		var res = alasql(
 			'SELECT C.customerid, COUNT(O.orderid) AS numorders \
         	FROM Customers AS C \
@@ -116,7 +117,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('10. ORDER BY ', function (done) {
+	test('10. ORDER BY ', function (done) {
 		var res = alasql(
 			'SELECT orderid, customerid FROM Orders \
           ORDER BY customerid, orderid;'
@@ -134,7 +135,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('11. SELECT ', function (done) {
+	test('11. SELECT ', function (done) {
 		var res = alasql(
 			'SELECT C.customerid, COUNT(O.orderid) AS numorders \
         	FROM Customers AS C \
@@ -151,7 +152,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('12. TOP ', function (done) {
+	test('12. TOP ', function (done) {
 		var res = alasql(
 			'SELECT TOP 50 PERCENT orderid, customerid \
           FROM Orders ORDER BY customerid, orderid;'
@@ -166,7 +167,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 	});
 
 	if (false) {
-		it('13. CROSS APPLY ', function (done) {
+		test('13. CROSS APPLY ', function (done) {
 			var res = alasql(
 				'SELECT C.customerid, city, orderid \
 			FROM Customers AS C \
@@ -179,7 +180,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 			done();
 		});
 
-		it('14. OUTER APPLY ', function (done) {
+		test('14. OUTER APPLY ', function (done) {
 			var res = alasql(
 				'SELECT C.customerid, city, orderid \
 			FROM Customers AS C \
@@ -192,7 +193,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 			done();
 		});
 
-		it('15. OVER PARTITION in SELECT', function (done) {
+		test('15. OVER PARTITION in SELECT', function (done) {
 			var res = alasql(
 				'SELECT orderid, customerid, \
   			COUNT(*) OVER(PARTITION BY customerid) AS num_orders \
@@ -203,7 +204,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 			done();
 		});
 
-		it('16. OVER PARTITION in WHERE', function (done) {
+		test('16. OVER PARTITION in WHERE', function (done) {
 			var res = alasql(
 				'SELECT orderid, customerid \
 			FROM Orders \
@@ -214,7 +215,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 			done();
 		});
 	}
-	it('17. UNION ALL ', function (done) {
+	test('17. UNION ALL ', function (done) {
 		var res = alasql(
 			"SELECT 'O' AS letter, customerid, orderid \
         		FROM Orders \
@@ -239,7 +240,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('18. Complex Statement', function (done) {
+	test('18. Complex Statement', function (done) {
 		var res = alasql(
 			"SELECT C.customerid, city,/*COUNT(orderid),*/ \
            CASE \
@@ -282,7 +283,7 @@ describe('Test 198 - MS SQL compatibility', function () {
 		done();
 	});
 
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		alasql('DROP DATABASE test198');
 		done();
 	});

@@ -1,14 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('../dist/alasql');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 814 - XXS or RCE from BRALITERAL', function () {
-	var test = '814'; // insert test file number
+	var testId = '814'; // insert test file number
 
-	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+	beforeAll(function () {
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 		alasql('CREATE table i_am_a_table;');
 		//alasql(`INSERT INTO i_am_a_table VALUES (1337);`);
 		//alasql('INSERT INTO i_am_a_table VALUES (1337);')
@@ -16,8 +16,8 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		alasql.options.errorlog = false;
 	});
 
-	after(function () {
-		alasql('drop database test' + test);
+	afterAll(function () {
+		alasql('drop database test' + testId);
 		alasql.options.errorlog = false;
 	});
 
@@ -27,13 +27,13 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 
 	//
 
-	it('A) Update SET', function () {
+	test('A) Update SET', function () {
 		assert.throws(() =>
 			alasql(`UPDATE i_am_a_table SET [0'+${genPayload('>&2 echo UPDATE pwned $(whoami)')}+']=42;`)
 		);
 	});
 
-	it('B) Compare fields', function () {
+	test('B) Compare fields', function () {
 		assert.throws(() =>
 			alasql(
 				`SELECT * from i_am_a_table where whatever=['+${genPayload(
@@ -43,7 +43,7 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		);
 	});
 
-	it('C) Select field', function () {
+	test('C) Select field', function () {
 		assert.throws(() =>
 			alasql(
 				`SELECT \`'+${genPayload(
@@ -53,14 +53,14 @@ describe('Test 814 - XXS or RCE from BRALITERAL', function () {
 		);
 	});
 
-	it('D) Function name', function () {
+	test('D) Function name', function () {
 		assert.throws(() =>
 			alasql(`SELECT [whatever||${genPayload('>&2 echo calling function pwned')}||]('whatever');`)
 		);
 	});
 
 	/*
-	it('C) Multiple statements in one string with callback', function (done) {
+	test('C) Multiple statements in one string with callback', function (done) {
 		// Please note that first parameter (here `done`) must be called if defined - and is needed when testing async code
 		var sql = 'create table three (a int);';
 		sql += 'insert into three values (1),(2),(3),(4),(5);';

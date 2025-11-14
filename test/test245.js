@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 245 Square brackets and JavaScript', function () {
-	it('1. Square brackets', function (done) {
+	test('1. Square brackets', function (done) {
 		var data = [{'[one]': 1}, {'[one]': 2}];
 
 		var res = alasql('SELECT COLUMN `[one]` FROM ?', [data]);
@@ -16,7 +17,7 @@ describe('Test 245 Square brackets and JavaScript', function () {
 		done();
 	});
 
-	it('2. JavaScript', function (done) {
+	test('2. JavaScript', function (done) {
 		var data = [
 			{a: 'Warsaw'},
 			{a: 'Berlin'},

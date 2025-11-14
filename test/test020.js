@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 20 - User-defined functions', function () {
-	it('User-defined functions', function (done) {
+	test('User-defined functions', function (done) {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int)');
 		db.exec('INSERT INTO test1 VALUES (1)');
@@ -32,7 +32,7 @@ describe('Test 20 - User-defined functions', function () {
 		done();
 	});
 
-	it('2 - User-defined functions + compilation', function (done) {
+	test('2 - User-defined functions + compilation', function (done) {
 		alasql.fn.cubic3 = function (x) {
 			return x * x * x;
 		};
@@ -44,7 +44,7 @@ describe('Test 20 - User-defined functions', function () {
 		done();
 	});
 
-	it("3 - Database's user-defined functions + compilation", function (done) {
+	test("3 - Database's user-defined functions + compilation", function (done) {
 		alasql('create database test20;use test20');
 		alasql('create table one (a int)');
 		alasql('insert into one values (10), (20), (30)');
@@ -78,7 +78,7 @@ describe('Test 20 - User-defined functions', function () {
 		done();
 	});
 
-	it("4 - Database's specific user-defined functions", function (done) {
+	test("4 - Database's specific user-defined functions", function (done) {
 		alasql('create database test20a;use test20a');
 		alasql('create table one (a int)');
 		alasql('insert into one values (10), (20), (30)');

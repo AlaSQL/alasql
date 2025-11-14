@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	// Test only for browsers
 
 	describe('Test 280 XLS.XML tests', function () {
@@ -16,7 +17,7 @@ if (typeof exports == 'object') {
 			{city: 'New York', population: 20000000},
 		];
 
-		it('1. Save XLS', function (done) {
+		test('1. Save XLS', function (done) {
 			alasql(
 				'SELECT * INTO XLS("' + __dirname + '/restest280a.xls",{headers:true}) FROM ?',
 				[data],
@@ -26,7 +27,7 @@ if (typeof exports == 'object') {
 			);
 		});
 
-		it('2. Save XLSXML', function (done) {
+		test('2. Save XLSXML', function (done) {
 			var opts = {
 				headers: true,
 				column: {style: {Font: {Bold: '1'}}},
@@ -48,7 +49,7 @@ if (typeof exports == 'object') {
 			);
 		});
 
-		it('3. Save complex XLSXML', function (done) {
+		test('3. Save complex XLSXML', function (done) {
 			var outfile = __dirname + '/restest280c.xls';
 			var data2 = [
 				{pet: 'dog', legs: 4},
@@ -69,7 +70,7 @@ if (typeof exports == 'object') {
 			);
 		});
 
-		it('4. Save XLSXML with headers array', function (done) {
+		test('4. Save XLSXML with headers array', function (done) {
 			var outfile = __dirname + '/restest280d.xls';
 			alasql(
 				'SELECT * INTO XLSXML(?,{headers: ?}) FROM ?',

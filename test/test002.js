@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 02', function () {
-	it('Create table', function (done) {
+	test('Create table', function (done) {
 		alasql('create database test02; use test02;');
 		alasql('DROP TABLE IF EXISTS schools');
 		alasql('CREATE TABLE schools (schoolid INT, schoolname STRING)');

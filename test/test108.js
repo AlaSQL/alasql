@@ -3,13 +3,13 @@
 // Test for select
 //
 
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Create database', function () {
-	it('Create new database', function (done) {
+	test('Create new database', function (done) {
 		var db = new alasql.Database();
 		assert.deepEqual(db.tables, {});
 		done();

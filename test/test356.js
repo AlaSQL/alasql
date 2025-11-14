@@ -1,18 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 356 PIVOT', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test356;USE test356');
 		done();
 	});
 
 	/* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
-	it.skip('2. Prepare Data', function (done) {
+	test.skip('2. Prepare Data', function (done) {
 		alasql(function () {
 			/*
       create table test
@@ -42,7 +43,7 @@ describe('Test 356 PIVOT', function () {
 	});
 
 	if (false) {
-		it.skip('3. Select Query', function (done) {
+		test.skip('3. Select Query', function (done) {
 			var cols = alasql('COLUMN OF SELECT DISTINCT subject from test');
 
 			alasql(function () {
@@ -64,7 +65,7 @@ describe('Test 356 PIVOT', function () {
 		});
 	}
 
-	it.skip('3. Select Query', function (done) {
+	test.skip('3. Select Query', function (done) {
 		alasql(function () {
 			/*
       SELECT Score FROM Scores
@@ -75,7 +76,7 @@ describe('Test 356 PIVOT', function () {
 		done();
 	});
 
-	it.skip('4. Select Query', function (done) {
+	test.skip('4. Select Query', function (done) {
 		alasql(function () {
 			/*
       SELECT Name FROM Scores
@@ -86,7 +87,7 @@ describe('Test 356 PIVOT', function () {
 		done();
 	});
 
-	it.skip('5. Select Query', function (done) {
+	test.skip('5. Select Query', function (done) {
 		alasql(function () {
 			/*
       SELECT Class FROM Scores
@@ -97,7 +98,7 @@ describe('Test 356 PIVOT', function () {
 		done();
 	});
 
-	it.skip('6. Select Query', function (done) {
+	test.skip('6. Select Query', function (done) {
 		alasql(function () {
 			/*
       SELECT Score FROM Scores
@@ -108,7 +109,7 @@ describe('Test 356 PIVOT', function () {
 		done();
 	});
 
-	it.skip('7. Select Query', function (done) {
+	test.skip('7. Select Query', function (done) {
 		alasql(function () {
 			/*
       SELECT Class FROM Scores
@@ -119,7 +120,7 @@ describe('Test 356 PIVOT', function () {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test355');
 		done();

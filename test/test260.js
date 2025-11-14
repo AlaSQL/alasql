@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 260 SqlLogic Parser Test #3', function () {
-	it.skip('1. Sqllogic', function (done) {
+	test.skip('1. Sqllogic', function (done) {
 		alasql('CREATE DATABASE test260; USE test260');
 		done();
 	});
 
-	it.skip('3. SELECT ALL', function (done) {
+	test.skip('3. SELECT ALL', function (done) {
 		done();
 	});
 	/*
@@ -50,7 +51,7 @@ SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) FROM t1 WHERE (a>b-2 AND a<
 
 */
 
-	it.skip('99. Drop Database', function (done) {
+	test.skip('99. Drop Database', function (done) {
 		alasql('DROP DATABASE test260');
 		done();
 	});

@@ -1,21 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	//	var DOMStorage = require("dom-storage");
-	//	global.localStorage = new DOMStorage("./test390.json", { strict: false, ws: '' });
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
  This sample beased on SQLLOGICTEST
 */
 
 describe('Test 396 SQLLOGICTEST ', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test396;USE test396');
 		done();
 	});
 
-	it('2. Prepare', function (done) {
+	test('2. Prepare', function (done) {
 		alasql('CREATE TABLE t1( x INTEGER NOT NULL PRIMARY KEY, y VARCHAR(16) )');
 		alasql("INSERT INTO t1 VALUES(1, 'true')");
 		alasql("INSERT INTO t1 VALUES(0, 'false')");
@@ -43,14 +41,14 @@ describe('Test 396 SQLLOGICTEST ', function () {
 		done();
 	});
 
-	it('3. Error statement', function (done) {
+	test('3. Error statement', function (done) {
 		alasql("REPLACE INTO t1 VALUES(4, 'replace (new)')");
 		var res = alasql('SELECT x, y FROM t1 WHERE x=4');
 		assert.deepEqual(res, [4, 'replace (new)']);
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test396');
 		done();

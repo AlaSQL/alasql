@@ -1,21 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 1109 - Export empty tables to excel sheets', function () {
-	const test = '1109';
+	const testId = '1109';
 
-	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+	beforeAll(function () {
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 	});
 
-	after(function () {
-		alasql('drop database test' + test);
+	afterAll(function () {
+		alasql('drop database test' + testId);
 	});
 
-	it('A) Export empty tables to excel sheets', function () {
+	test('A) Export empty tables to excel sheets', function () {
 		var res = [];
 		var opts = [{sheetid: 'a'}, {sheetid: 'b'}];
 		res.push(

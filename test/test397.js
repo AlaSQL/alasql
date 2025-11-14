@@ -1,21 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	//	var DOMStorage = require("dom-storage");
-	//	global.localStorage = new DOMStorage("./test390.json", { strict: false, ws: '' });
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
  This sample beased on SQLLOGICTEST
 */
 
 describe('Test 397 << and >> ', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test397;USE test397');
 		done();
 	});
 
-	it('2. << and >> and other operations...', function (done) {
+	test('2. << and >> and other operations...', function (done) {
 		var res = alasql('= 1 << 2');
 		assert.equal(res, 4);
 
@@ -31,7 +29,7 @@ describe('Test 397 << and >> ', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test397');
 		done();
 	});

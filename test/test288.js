@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 288 ROWNUM()', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test288;USE test288');
 		done();
 	});
 
-	it('2. SET', function (done) {
+	test('2. SET', function (done) {
 		var data = [{a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT a, ROWNUM() AS b FROM ?', [data]);
 		assert.deepEqual(res, [
@@ -22,7 +23,7 @@ describe('Test 288 ROWNUM()', function () {
 		done();
 	});
 
-	it('3. Subquery', function (done) {
+	test('3. Subquery', function (done) {
 		alasql('CREATE TABLE one (a INT PRIMARY KEY)');
 		for (var i = 1; i < 1000; i++) {
 			alasql('INSERT INTO one VALUES (?)', [i]);
@@ -44,7 +45,7 @@ describe('Test 288 ROWNUM()', function () {
 
 	// TODO: Add other operators
 
-	it('3. DROP DATABASE', function (done) {
+	test('3. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test288');
 		done();
 	});

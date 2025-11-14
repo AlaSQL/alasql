@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 351 CALL PROCEDURE', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test351;USE test351');
 		done();
 	});
 
-	it('2. CREATE TABLE', function (done) {
+	test('2. CREATE TABLE', function (done) {
 		alasql.fn.myfn = function (a, b) {
 			//      console.log(a,b);
 			assert.deepEqual([a, b], [1, 2]);
@@ -21,7 +22,7 @@ describe('Test 351 CALL PROCEDURE', function () {
 		//    assert.deepEqual(res,1);
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test351');
 		done();

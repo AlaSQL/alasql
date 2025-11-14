@@ -1,35 +1,35 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 607 - TRUNCATE on table in Local Storage', function () {
-	const test = '607'; // insert test file number
+	const testId = '607'; // insert test file number
 
-	before(function () {
-		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS test' + test);
-		alasql('CREATE LOCALSTORAGE DATABASE test' + test);
-		alasql('ATTACH LOCALSTORAGE DATABASE test' + test);
-		alasql('USE test' + test);
+	beforeAll(function () {
+		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS test' + testId);
+		alasql('CREATE LOCALSTORAGE DATABASE test' + testId);
+		alasql('ATTACH LOCALSTORAGE DATABASE test' + testId);
+		alasql('USE test' + testId);
 		alasql('CREATE TABLE one (id INT IDENTITY(3,5), name VARCHAR)');
 		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
 	});
 
-	after(function () {
-		alasql('DROP LOCALSTORAGE DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP LOCALSTORAGE DATABASE test' + testId);
 	});
 
-	it('A) Attempt TRUNCATE on table', function () {
+	test('A) Attempt TRUNCATE on table', function () {
 		var res = alasql('TRUNCATE TABLE one');
 		assert.equal(res, 1);
 	});
 
-	it('B) Make sure table is empty', function () {
+	test('B) Make sure table is empty', function () {
 		var res = alasql('SELECT id, name FROM one');
 		assert.equal(res.length, 0);
 	});
 
-	// 	it('C) Insert values and check that identity is reset', function(){
+	// 	test('C) Insert values and check that identity is reset', function(){
 	//BUG At this point the table is empty, resulting from the last TRUNCATE.
 	//Using alasql.autoval('one', 'id') expecting no last identity, since
 	//table is empty. But method returns -2
@@ -49,7 +49,7 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 	//   assert.equal(lastId, 23);
 	//  });
 
-	// 	it('D) Check TRUNCATE rolls back in an ABORT', function(){
+	// 	test('D) Check TRUNCATE rolls back in an ABORT', function(){
 	//BUG Test fails. Truncate is not rolled back when transaction
 	//is aborted.
 	//BUG Statement cannot just be'BEGIN', as per documentation.
@@ -66,7 +66,7 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 	// 	assert.equal(rows.length, 0);
 	// });
 
-	it('D) Check TRUNCATE works in a COMMIT', function () {
+	test('D) Check TRUNCATE works in a COMMIT', function () {
 		//populate the table
 		alasql('TRUNCATE TABLE one');
 		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");

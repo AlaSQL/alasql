@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 //
 
@@ -11,12 +12,12 @@ if (typeof exports === 'object') {
 //
 
 describe('Test 337 SEARCH 8 queens', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test337;USE test337');
 		done();
 	});
 
-	it.skip('2. SEARCH RANGE', function (done) {
+	test.skip('2. SEARCH RANGE', function (done) {
 		var res = alasql(function () {
 			/*
       SEARCH FROM RANGE(1,8)
@@ -28,7 +29,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('3. SEARCH ^ ', function (done) {
+	test.skip('3. SEARCH ^ ', function (done) {
 		var res = alasql(function () {
 			/*
       SEARCH / FROM RANGE(1,8)
@@ -40,7 +41,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('4. SEARCH / ', function (done) {
+	test.skip('4. SEARCH / ', function (done) {
 		var res = alasql(function () {
 			/*
       SEARCH / FROM RANGE(1,8)
@@ -52,7 +53,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('5. SEARCH WHERE ', function (done) {
+	test.skip('5. SEARCH WHERE ', function (done) {
 		var res = alasql(function () {
 			/*
       SEARCH / WHERE(_ <= 2) ^ / WHERE(_ >= 7) FROM RANGE(1,8)
@@ -62,7 +63,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('6. SEARCH AS and RETURN ', function (done) {
+	test.skip('6. SEARCH AS and RETURN ', function (done) {
 		var res = alasql(function () {
 			/*
       SEARCH / WHERE(_ <= 2) AS @a ^ / WHERE(_ >= 7) AS @b RETURNS(@a AS a,@b AS b) FROM RANGE(1,8)
@@ -77,7 +78,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('7. SEARCH ROW', function (done) {
+	test.skip('7. SEARCH ROW', function (done) {
 		var res = alasql(function () {
 			/*
       SEARCH / WHERE(_ <= 2) AS @a ^ / WHERE(_ >= 7) AS @b ROW(@a,@b) FROM RANGE(1,8)
@@ -92,7 +93,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('8. SEARCH TO', function (done) {
+	test.skip('8. SEARCH TO', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(function () {
 			/*
@@ -113,7 +114,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('9. SEARCH SET variable', function (done) {
+	test.skip('9. SEARCH SET variable', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(function () {
 			/*
@@ -125,7 +126,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('10. SEARCH REPEAT', function (done) {
+	test.skip('10. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(`
       SEARCH repeat(/,0,0) FROM @[@[1,2],3]
@@ -135,7 +136,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('11. SEARCH REPEAT', function (done) {
+	test.skip('11. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(function () {
 			/*
@@ -147,7 +148,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('12. SEARCH REPEAT', function (done) {
+	test.skip('12. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(`SEARCH repeat(/,2,2) FROM @[@[1,2],3]`);
 		//    console.log(res);
@@ -155,7 +156,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('13. SEARCH REPEAT', function (done) {
+	test.skip('13. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(`
       SEARCH repeat(/,3,3) FROM @[@[1,2],3]
@@ -165,7 +166,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('14. SEARCH REPEAT', function (done) {
+	test.skip('14. SEARCH REPEAT', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(function () {
 			/*
@@ -177,7 +178,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('15. SEARCH REPEAT with index', function (done) {
+	test.skip('15. SEARCH REPEAT with index', function (done) {
 		alasql.vars.b = [];
 		var res = alasql(function () {
 			/*
@@ -189,7 +190,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('16. SEARCH REPEAT with index', function (done) {
+	test.skip('16. SEARCH REPEAT with index', function (done) {
 		alasql.vars.b = [];
 		alasql.vars.a = [1, 2];
 		var res = alasql(function () {
@@ -202,7 +203,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 
-	it.skip('19. SEARCH 8 queens', function (done) {
+	test.skip('19. SEARCH 8 queens', function (done) {
 		alasql.srch.LOG = function (val, args, stope, params) {
 			var exprs = args[0].toJS('x', '');
 			var exprfn = new Function('x,alasql,params', 'return ' + exprs);
@@ -238,7 +239,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 	});
 
 	if (false) {
-		it.skip('17. SEARCH REPEAT with index', function (done) {
+		test.skip('17. SEARCH REPEAT with index', function (done) {
 			alasql.vars.b = [];
 			var res = alasql(function () {
 				/*
@@ -257,7 +258,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 			done();
 		});
 
-		it.skip('90. SEARCH 8 queens', function (done) {
+		test.skip('90. SEARCH 8 queens', function (done) {
 			var res = alasql(function () {
 				/*
     
@@ -277,7 +278,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 			done();
 		});
 
-		it.skip('99. DROP DATABASE', function (done) {
+		test.skip('99. DROP DATABASE', function (done) {
 			alasql('DROP DATABASE test337');
 			done();
 		});

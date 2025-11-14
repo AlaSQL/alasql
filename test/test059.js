@@ -1,28 +1,28 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 59 - Other operators', function () {
-	it('CREATE DATABASE', function (done) {
+	test('CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE mybase');
 		assert(alasql.databases.mybase instanceof alasql.Database);
 		done();
 	});
 
-	it('USE DATABASE', function (done) {
+	test('USE DATABASE', function (done) {
 		alasql('USE DATABASE mybase');
 		assert.equal(alasql.useid, 'mybase');
 		done();
 	});
 
-	it('DROP current DATABASE', function (done) {
+	test('DROP current DATABASE', function (done) {
 		alasql('DROP DATABASE mybase');
 		assert(!alasql.databases.mybase);
 		assert(alasql.useid == 'alasql');
 		done();
 	});
-	it('DROP non-current DATABASE', function (done) {
+	test('DROP non-current DATABASE', function (done) {
 		alasql('CREATE DATABASE mybase');
 		alasql('USE DATABASE mybase');
 		assert(alasql.useid == 'mybase');
@@ -33,7 +33,7 @@ describe('Test 59 - Other operators', function () {
 		done();
 	});
 
-	it('CREATE DATABASE if exists', function (done) {
+	test('CREATE DATABASE if exists', function (done) {
 		alasql('CREATE DATABASE mybase');
 		assert.throws(function () {
 			alasql('CREATE DATABASE mybase');
@@ -41,7 +41,7 @@ describe('Test 59 - Other operators', function () {
 		done();
 	});
 
-	it('DROP DATABASE if not exists', function (done) {
+	test('DROP DATABASE if not exists', function (done) {
 		alasql('DROP DATABASE mybase');
 		assert.throws(function () {
 			alasql('DROP DATABASE mybase');

@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage(__dirname + '/restest267.json', {
 		strict: false,
@@ -14,7 +15,7 @@ if (typeof exports == 'object') {
 }
 
 describe('Test 268 INNER JOIN stress test', function () {
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('CREATE DATABASE test268; USE test268');
 		done();
 	});
@@ -28,7 +29,7 @@ describe('Test 268 INNER JOIN stress test', function () {
 		{b: 20, c: 200},
 	];
 
-	it('2. INNER JOIN on Array', function (done) {
+	test('2. INNER JOIN on Array', function (done) {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 USING b', [data1, data2]);
 		assert.deepEqual(res, [
 			{a: 1, b: 10, c: 100},
@@ -37,7 +38,7 @@ describe('Test 268 INNER JOIN stress test', function () {
 		done();
 	});
 
-	it('3. INNER JOIN on Tables', function (done) {
+	test('3. INNER JOIN on Tables', function (done) {
 		alasql('CREATE TABLE table1(a INT, b INT);');
 		alasql('SELECT * INTO table1 FROM ?', [data1]);
 		alasql('CREATE TABLE table2(b INT, c INT);');
@@ -74,8 +75,7 @@ describe('Test 268 INNER JOIN stress test', function () {
   */
 	//console.log(t2);
 
-	it('4. INNER JOIN on Big Array', function (done) {
-		this.timeout(10000);
+	test('4. INNER JOIN on Big Array', function (done) {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('INNER =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 LEFT JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
@@ -90,7 +90,7 @@ describe('Test 268 INNER JOIN stress test', function () {
 		done();
 	});
 
-	it('99. Drop phase', function (done) {
+	test('99. Drop phase', function (done) {
 		alasql('DROP DATABASE test268');
 		done();
 	});

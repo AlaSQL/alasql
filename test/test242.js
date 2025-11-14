@@ -1,16 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var path = require('path');
-	var dirname = path.normalize(__dirname) + '/';
-} else {
-	var dirname = './';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 242 Multi-columns Excel file', function () {
-	it('1. Read multi-column file', function (done) {
+	test('1. Read multi-column file', function (done) {
 		alasql(
-			'select * from xlsx("' + dirname + 'test242.xlsx",{headers:false})',
+			'select * from xlsx("' + __dirname + '/test242.xlsx",{headers:false})',
 			[],
 			function (data) {
 				//      console.log(data[0]);
@@ -20,9 +19,9 @@ describe('Test 242 Multi-columns Excel file', function () {
 		);
 	});
 
-	it('2. Read multi-column file', function (done) {
+	test('2. Read multi-column file', function (done) {
 		alasql(
-			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true,sheetid:"Sheet2"})',
+			'select * from xlsx("' + __dirname + '/test242.xlsx", {headers:true,sheetid:"Sheet2"})',
 			[],
 			function (data) {
 				//      console.log(data[3]);

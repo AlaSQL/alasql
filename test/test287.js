@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 287 SET NOCOUNT OFF/ON', function () {
-	it('1. CREATE TABLE and FIRST INSERT', function (done) {
+	test('1. CREATE TABLE and FIRST INSERT', function (done) {
 		alasql('CREATE DATABASE test287;USE test287');
 		done();
 	});
 
-	it('2. SET', function (done) {
+	test('2. SET', function (done) {
 		assert(!alasql.options.nocount);
 		var res = alasql('SET NOCOUNT ON');
 		assert(alasql.options.nocount);
@@ -20,7 +21,7 @@ describe('Test 287 SET NOCOUNT OFF/ON', function () {
 		done();
 	});
 
-	it('3. CREATE TABLE', function (done) {
+	test('3. CREATE TABLE', function (done) {
 		alasql('SET NOCOUNT OFF');
 		var res = alasql('CREATE TABLE one');
 		assert(res == 1);
@@ -30,7 +31,7 @@ describe('Test 287 SET NOCOUNT OFF/ON', function () {
 		done();
 	});
 
-	it('4. INSERT', function (done) {
+	test('4. INSERT', function (done) {
 		alasql('SET NOCOUNT OFF');
 		var res = alasql('INSERT INTO one VALUES {a:1},{a:2}');
 		assert(res == 2);
@@ -41,7 +42,7 @@ describe('Test 287 SET NOCOUNT OFF/ON', function () {
 	});
 	// TODO: Add other operators
 
-	it('3. DROP DATABASE', function (done) {
+	test('3. DROP DATABASE', function (done) {
 		alasql.options.nocount = false;
 
 		var res = alasql('DROP DATABASE test287');

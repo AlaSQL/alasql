@@ -1,11 +1,11 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 47', function () {
 	describe('No error on subquery without alias', function () {
-		it('Query without alias', function (done) {
+		test('Query without alias', function (done) {
 			alasql('create database test47');
 			alasql('use test47');
 			alasql('DROP TABLE IF EXISTS one');
@@ -17,7 +17,7 @@ describe('Test 47', function () {
 			done();
 		});
 
-		it('Subsubqueries without alias', function (done) {
+		test('Subsubqueries without alias', function (done) {
 			var res = alasql('SELECT VALUE SUM(a) FROM (SELECT * FROM one WHERE a < 3)');
 			assert.equal(3, res);
 			var res = alasql('SELECT VALUE COUNT(*) FROM (SELECT * FROM one WHERE a < 3)');

@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 303 SEARCH over JSON', function () {
-	it('0. Create database ', function (done) {
+	test('0. Create database ', function (done) {
 		var res = alasql('CREATE DATABASE test303;USE test303');
 		done();
 	});
 
-	it('1. Simple Search Primitives', function (done) {
+	test('1. Simple Search Primitives', function (done) {
 		var res = alasql('SEARCH FROM TRUE');
 		assert.deepEqual(res, true);
 		var res = alasql('SEARCH FROM 1');
@@ -25,7 +26,7 @@ describe('Test 303 SEARCH over JSON', function () {
 		done();
 	});
 
-	it('2. PROP() Selector', function (done) {
+	test('2. PROP() Selector', function (done) {
 		var res = alasql('SEARCH name FROM {name:"John"}');
 		assert.deepEqual(res, ['John']);
 
@@ -40,7 +41,7 @@ describe('Test 303 SEARCH over JSON', function () {
 		done();
 	});
 
-	it('3. Basic Selector', function (done) {
+	test('3. Basic Selector', function (done) {
 		alasql.srch.DOUBLE = function (val, args) {
 			return {status: 1, values: [val * 2]};
 		};
@@ -56,7 +57,7 @@ describe('Test 303 SEARCH over JSON', function () {
 		done();
 	});
 
-	it('4. CHILD() and KEYS() selectors', function (done) {
+	test('4. CHILD() and KEYS() selectors', function (done) {
 		var res = alasql('SEARCH CHILD() FROM @[10,20,30]');
 		assert.deepEqual(res, [10, 20, 30]);
 
@@ -78,7 +79,7 @@ describe('Test 303 SEARCH over JSON', function () {
 		done();
 	});
 
-	it('4. Test expression', function (done) {
+	test('4. Test expression', function (done) {
 		var res = alasql(
 			'SEARCH / where(name = "John") age FROM @[{name:"John",age:25},{name:"Mary",age:18}]'
 		);
@@ -92,7 +93,7 @@ describe('Test 303 SEARCH over JSON', function () {
 		done();
 	});
 
-	it('5. Transform expression', function (done) {
+	test('5. Transform expression', function (done) {
 		var res = alasql('SEARCH / EX(age*2) FROM @[{name:"John",age:25},{name:"Mary",age:18}]');
 		assert.deepEqual(res, [50, 36]);
 
@@ -105,7 +106,7 @@ describe('Test 303 SEARCH over JSON', function () {
 		done();
 	});
 
-	it('6. AS function ', function (done) {
+	test('6. AS function ', function (done) {
 		var res = alasql(
 			'SEARCH / AS @p EX(age+LEN(@p->name)) \
          FROM @[{name:"John",age:25},{name:"Mary",age:18}]'
@@ -115,7 +116,7 @@ describe('Test 303 SEARCH over JSON', function () {
 		done();
 	});
 
-	it('99. Create database ', function (done) {
+	test('99. Create database ', function (done) {
 		var res = alasql('DROP DATABASE test303');
 		done();
 	});

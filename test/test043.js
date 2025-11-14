@@ -1,14 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 43', function () {
 	//	describe('Dates', function(){
 
 	var db = new alasql.Database('test43');
 
-	it('Create database', function (done) {
+	test('Create database', function (done) {
 		// alasql('create database test43');
 		// alasql('use test43');
 
@@ -29,7 +29,7 @@ describe('Test 43', function () {
 		done();
 	});
 
-	it('Order by dates ASC', function (done) {
+	test('Order by dates ASC', function (done) {
 		var res = db.exec('SELECT COLUMN orderdate FROM orders ORDER BY orderdate');
 
 		var ok =
@@ -45,7 +45,7 @@ describe('Test 43', function () {
 		done();
 	});
 
-	it('Order by dates DESC', function (done) {
+	test('Order by dates DESC', function (done) {
 		var res = db.exec('SELECT COLUMN orderdate FROM orders ORDER BY orderdate DESC');
 
 		var ok =
@@ -61,7 +61,7 @@ describe('Test 43', function () {
 		done();
 	});
 
-	it('Dates parsing in INSERT', function (done) {
+	test('Dates parsing in INSERT', function (done) {
 		db.exec("INSERT INTO orders VALUES (10,'2015-10-20')");
 
 		var res = db.exec('SELECT VALUE orderdate FROM orders WHERE orderid = 10');
@@ -70,7 +70,7 @@ describe('Test 43', function () {
 	});
 
 	/*
-		it('Dates parsing in SELECT', function(done){
+		test('Dates parsing in SELECT', function(done){
 			db.exec("SELECT orders VALUES (10,'2015-10-20')");
 
 			var res = db.queryValue('SELECT orderdate FROM orders WHERE orderid = 10');

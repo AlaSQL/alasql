@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 291 - Promises:', function () {
-	it('.promise', function (done) {
+	test('.promise', function (done) {
 		alasql
 			.promise('SELECT VALUE 1')
 			.then(function (res) {
@@ -18,8 +19,8 @@ describe('Test 291 - Promises:', function () {
 			});
 	});
 
-	it('.promise all', function (done) {
-		this.timeout(2000); // dont get why this is timing out...
+	test('.promise all', function (done) {
+		// this.timeout(2000); // dont get why this is timing out...
 
 		alasql
 			.promise(['SELECT VALUE 1'])
@@ -33,8 +34,8 @@ describe('Test 291 - Promises:', function () {
 			});
 	});
 
-	it('.promise .catch exception', function (done) {
-		this.timeout(2000); // dont get why this is timing out...
+	test('.promise .catch exception', function (done) {
+		// this.timeout(2000); // dont get why this is timing out...
 
 		alasql.promise('SELECT * FROM tableThatDoesNotExists').catch(function (err) {
 			assert(err instanceof Error);
@@ -42,8 +43,8 @@ describe('Test 291 - Promises:', function () {
 		});
 	});
 
-	it('.promise all .catch exception', function (done) {
-		this.timeout(5000); // dont get why this is timing out...
+	test('.promise all .catch exception', function (done) {
+		// this.timeout(5000); // dont get why this is timing out...
 
 		alasql.promise(['SELECT * FROM tableThatDoesNotExists']).catch(function (err) {
 			assert(err instanceof Error);
@@ -51,7 +52,7 @@ describe('Test 291 - Promises:', function () {
 		});
 	});
 
-	it('.promise all multi + params', function (done) {
+	test('.promise all multi + params', function (done) {
 		alasql
 			.promise(['value of SELECT 1', ['value of select ?', 2]])
 			.then(function (res) {
@@ -63,7 +64,7 @@ describe('Test 291 - Promises:', function () {
 			});
 	});
 
-	it('.promise all, lazy notation', function (done) {
+	test('.promise all, lazy notation', function (done) {
 		alasql(['value of SELECT 1 --so lazy', ['value of select ?', 2]])
 			.then(function (res) {
 				assert.deepEqual(res, [1, 2]);

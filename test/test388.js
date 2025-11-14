@@ -1,12 +1,8 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test381.json', {
-		strict: false,
-		ws: '',
-	});
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
 
 /*
  This sample beased on this article:
@@ -15,7 +11,7 @@ if (typeof exports === 'object') {
 */
 
 describe('Test 388 UNION ALL bug issue #485', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test388;USE test388');
 		done();
 	});
@@ -32,7 +28,7 @@ describe('Test 388 UNION ALL bug issue #485', function () {
 		{ID: 103, Name: 'Alesya', Month: 'Mar', Savings: 300000},
 	];
 
-	it('2. Prepare tables', function (done) {
+	test('2. Prepare tables', function (done) {
 		alasql(
 			'CREATE TABLE t1 (' + 'ID INT,' + 'Name STRING,' + 'Month STRING,' + 'Savings MONEY' + ')'
 		);
@@ -46,13 +42,13 @@ describe('Test 388 UNION ALL bug issue #485', function () {
 		done();
 	});
 
-	it('3. SELECTs', function (done) {
+	test('3. SELECTs', function (done) {
 		var res = alasql('SELECT * FROM t1 UNION SELECT * FROM t2');
 		//console.log(res);
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test388');
 		done();
 	});

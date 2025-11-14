@@ -1,24 +1,24 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 427;
+var testId = 427;
 
-describe('Test ' + test + ' REPLACE test', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testId + ' REPLACE test', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. Simple Replace', function (done) {
+	test('1. Simple Replace', function (done) {
 		alasql('CREATE TABLE one (a STRING)');
 		alasql('INSERT INTO one VALUES (".a."),("_._")');
 		var res = alasql('COLUMN OF SELECT REPLACE(a,".","_") FROM one');

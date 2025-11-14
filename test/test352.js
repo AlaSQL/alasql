@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 352 TEST EQUALITY', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test352;USE test352');
 		done();
 	});
 
-	it('2. TEST =', function (done) {
+	test('2. TEST =', function (done) {
 		var res = alasql('= 1=1');
 		assert.deepEqual(res, true);
 		var res = alasql('= 1=NULL');
@@ -23,7 +24,7 @@ describe('Test 352 TEST EQUALITY', function () {
 		done();
 	});
 
-	it('3. TEST ==', function (done) {
+	test('3. TEST ==', function (done) {
 		var res = alasql('= 1==1');
 		assert.deepEqual(res, true);
 		var res = alasql('= 1==NULL');
@@ -35,7 +36,7 @@ describe('Test 352 TEST EQUALITY', function () {
 		done();
 	});
 
-	it('4. TEST == deepEqual', function (done) {
+	test('4. TEST == deepEqual', function (done) {
 		var res = alasql('= {a:1}=={a:1}');
 		assert.deepEqual(res, true);
 		var res = alasql('= {a:1}=={a:2}');
@@ -43,7 +44,7 @@ describe('Test 352 TEST EQUALITY', function () {
 		done();
 	});
 
-	it('3. TEST IS', function (done) {
+	test('3. TEST IS', function (done) {
 		var res = alasql('= 1 IS NULL');
 		assert.deepEqual(res, false);
 		var res = alasql('= NULL IS NULL');
@@ -51,7 +52,7 @@ describe('Test 352 TEST EQUALITY', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test352');
 		done();

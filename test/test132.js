@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 132 Alasql + NoSQL', function () {
-	it('1. Prepare database', function (done) {
+	test('1. Prepare database', function (done) {
 		alasql('CREATE DATABASE test132; USE test132');
 		alasql('CREATE TABLE one (a INT, b STRING)');
 		alasql('CREATE TABLE two');
@@ -14,7 +15,7 @@ describe('Test 132 Alasql + NoSQL', function () {
 		done();
 	});
 
-	it('2. INSERT', function (done) {
+	test('2. INSERT', function (done) {
 		alasql('INSERT INTO one VALUES (1,"One"), (2,"Two")');
 		//		alasql('INSERT INTO one VALUES @{a:3,b:"Three"}, @{a:4,b:"Four"}, (5,"Five")');
 		alasql('INSERT INTO one VALUES {a:3,b:"Three"}, {a:4,b:"Four"}, (5,"Five")');
@@ -26,7 +27,7 @@ describe('Test 132 Alasql + NoSQL', function () {
 		done();
 	});
 
-	it('3. SELECT', function (done) {
+	test('3. SELECT', function (done) {
 		var res = alasql('SELECT * FROM one');
 		assert.deepEqual(res, [
 			{a: 1, b: 'One'},
@@ -58,27 +59,27 @@ describe('Test 132 Alasql + NoSQL', function () {
 		done();
 	});
 
-	it('4. DEEP SELECT...', function (done) {
+	test('4. DEEP SELECT...', function (done) {
 		//		var res2 = alasql('SELECT * FROM two WHERE ...');
 
 		done();
 	});
 
-	it('5. UPDATE', function (done) {
+	test('5. UPDATE', function (done) {
 		//		alasql('UPDATE one SET {a:2} WHERE {a:3}');
 		alasql('UPDATE one SET a=2 WHERE a=3');
 		//		alasql.tables.one.update({a:2}, {a:3});
 		done();
 	});
 
-	it('6. UPDATE', function (done) {
+	test('6. UPDATE', function (done) {
 		//		alasql('DELETE FROM one WHERE @{a:2}');
 		alasql('DELETE FROM one WHERE a=2');
 		//		alasql.tables.one.remove({a:2})
 		done();
 	});
 
-	it('99. UPDATE', function (done) {
+	test('99. UPDATE', function (done) {
 		alasql('DROP DATABASE test132');
 		done();
 	});

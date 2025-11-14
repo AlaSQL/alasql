@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 146 - Async Tests', function () {
 	var myfnsync = function (n) {
@@ -20,7 +21,7 @@ describe('Test 146 - Async Tests', function () {
 		}, 10);
 	};
 
-	it('1. Nested SQL', function (done) {
+	test('1. Nested SQL', function (done) {
 		alasql('CREATE DATABASE test146', [], function () {
 			assert(!!alasql.databases.test146);
 			alasql('USE test146', [], function () {
@@ -41,7 +42,7 @@ describe('Test 146 - Async Tests', function () {
 		});
 	});
 
-	it('99. Detach database', function (done) {
+	test('99. Detach database', function (done) {
 		// Do we really need this?
 		done();
 	});

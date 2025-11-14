@@ -1,15 +1,16 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
 describe('Test 237 Test with local variables', function () {
-	it('1. Prepare database and tables', function (done) {
+	test('1. Prepare database and tables', function (done) {
 		alasql('CREATE DATABASE test237; USE test237;');
 
 		var res = alasql(`
@@ -55,7 +56,7 @@ DROP TABLE TestTable;
 		done();
 	});
 
-	it('99. DROP', function (done) {
+	test('99. DROP', function (done) {
 		alasql('DROP DATABASE test237');
 		done();
 	});

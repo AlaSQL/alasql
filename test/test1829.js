@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll, beforeEach, afterEach} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 1829 - WHERE (NOT) IN Regression when using refs', function () {
 	beforeEach(function () {
@@ -18,7 +19,7 @@ describe('Test 1829 - WHERE (NOT) IN Regression when using refs', function () {
 		alasql('DROP TABLE test1829');
 	});
 
-	it('1. Where IN with refs', function (done) {
+	test('1. Where IN with refs', function (done) {
 		const rowId1 = 'id#1';
 		const rowId2 = 'id#2';
 
@@ -36,7 +37,7 @@ describe('Test 1829 - WHERE (NOT) IN Regression when using refs', function () {
 		done();
 	});
 
-	it('2. Where NOT IN with refs', function (done) {
+	test('2. Where NOT IN with refs', function (done) {
 		const rowId1 = 'id#1';
 		const rowId2 = 'id#2';
 

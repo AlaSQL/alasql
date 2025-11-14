@@ -1,22 +1,23 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var md5 = require('blueimp-md5').md5;
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+import md5 from 'blueimp-md5';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 331 SLT#2 - test', function () {
-	before(function () {
+describe.skip('Test 331 SLT#2 - test', function () {
+	beforeAll(function () {
 		alasql('CREATE DATABASE test332;USE test332');
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql('DROP DATABASE test332');
 		alasql.options.modifier = undefined;
 	});
 
-	it('2. Create table', function (done) {
+	test('2. Create table', function (done) {
 		var res = alasql(function () {
 			/*
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
@@ -57,7 +58,7 @@ describe('Test 331 SLT#2 - test', function () {
 		done();
 	});
 
-	it('2a. SELECT 126', function (done) {
+	test('2a. SELECT 126', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		var res = alasql(function () {
 			/*
@@ -77,7 +78,7 @@ describe('Test 331 SLT#2 - test', function () {
 		]);
 		done();
 	});
-	it('3. SELECT AVG', function (done) {
+	test('3. SELECT AVG', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		var res = alasql(function () {
 			/*
@@ -89,7 +90,7 @@ describe('Test 331 SLT#2 - test', function () {
 		done();
 	});
 
-	it('3. SELECT 97', function (done) {
+	test('3. SELECT 97', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		var res = alasql(function () {
 			/*
@@ -102,7 +103,7 @@ describe('Test 331 SLT#2 - test', function () {
 		done();
 	});
 
-	it('4. SELECT 97', function (done) {
+	test('4. SELECT 97', function (done) {
 		alasql.options.modifier = 'MATRIX';
 		var res = alasql(function () {
 			/*

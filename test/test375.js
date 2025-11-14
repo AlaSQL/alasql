@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('375. Problem with UPDATE (https://github.com/alasql/alasql/issues/479)', function () {
-	it('1. ', function (done) {
+	test('1. ', function (done) {
 		alasql(
 			'CREATE TABLE RpdAssignments (' +
 				'Id INT PRIMARY KEY AUTOINCREMENT NOT NULL,' +

@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 625', function () {
-	it('1. Get sheet by position 0', function (done) {
+	test('1. Get sheet by position 0', function (done) {
 		alasql
 			.promise(`select * from xlsx("${__dirname}/test625.xlsx",{sheetid:0})`)
 			.then(function (data) {
@@ -12,7 +12,7 @@ describe('Test 625', function () {
 				done();
 			});
 	});
-	it('2. Get sheet by position 3', function (done) {
+	test('2. Get sheet by position 3', function (done) {
 		alasql
 			.promise(`select * from xlsx("${__dirname}/test625.xlsx",{sheetid:3})`)
 			.then(function (data) {

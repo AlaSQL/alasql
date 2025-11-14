@@ -1,9 +1,9 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
-if (typeof exports != 'object') {
+if (typeof window !== 'undefined') {
 	var studentsData = [
 		{
 			studentid: 58,
@@ -64,7 +64,7 @@ if (typeof exports != 'object') {
 
 	describe('Test211: webworker test', function () {
 		describe('Init test', function () {
-			it('1. Run worker', function (done) {
+			test('1. Run worker', function (done) {
 				alasql.worker();
 				assert(!!alasql.webworker);
 				done();
@@ -72,7 +72,7 @@ if (typeof exports != 'object') {
 		});
 
 		describe('Database with columns', function () {
-			it('2. Create database A and tables with columns ', function (done) {
+			test('2. Create database A and tables with columns ', function (done) {
 				alasql(
 					'CREATE DATABASE test211a;\
 			USE test211a;\
@@ -108,7 +108,7 @@ if (typeof exports != 'object') {
 				);
 			});
 
-			it('3. COUNT', function (done) {
+			test('3. COUNT', function (done) {
 				alasql(
 					'SELECT courseid, COUNT(*) AS cnt ' +
 						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
@@ -125,7 +125,7 @@ if (typeof exports != 'object') {
 					}
 				);
 			});
-			it('4. LEFT JOIN ON ', function (done) {
+			test('4. LEFT JOIN ON ', function (done) {
 				alasql(
 					'SELECT * ' +
 						' FROM students ' +
@@ -139,7 +139,7 @@ if (typeof exports != 'object') {
 					}
 				);
 			});
-			it('5. LEFT JOIN', function (done) {
+			test('5. LEFT JOIN', function (done) {
 				alasql(
 					'SELECT COLUMN students.schoolid ' +
 						' FROM students ' +
@@ -151,7 +151,7 @@ if (typeof exports != 'object') {
 					}
 				);
 			});
-			it('6. VALUE', function (done) {
+			test('6. VALUE', function (done) {
 				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (res) {
 					assert.equal(25, res);
 					done();
@@ -159,7 +159,7 @@ if (typeof exports != 'object') {
 			});
 		});
 		describe('Database without columns', function () {
-			it('7. Create database B and tables without columns', function (done) {
+			test('7. Create database B and tables without columns', function (done) {
 				alasql(
 					'CREATE DATABASE test211b;\
 			USE test211b;\
@@ -179,7 +179,7 @@ if (typeof exports != 'object') {
 					}
 				);
 			});
-			it('3. COUNT', function (done) {
+			test('3. COUNT', function (done) {
 				alasql(
 					'SELECT courseid, COUNT(*) AS cnt ' +
 						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
@@ -196,7 +196,7 @@ if (typeof exports != 'object') {
 					}
 				);
 			});
-			it('4. LEFT JOIN ON ', function (done) {
+			test('4. LEFT JOIN ON ', function (done) {
 				alasql(
 					'SELECT * ' +
 						' FROM students ' +
@@ -210,7 +210,7 @@ if (typeof exports != 'object') {
 					}
 				);
 			});
-			it('5. LEFT JOIN', function (done) {
+			test('5. LEFT JOIN', function (done) {
 				alasql(
 					'SELECT COLUMN students.schoolid ' +
 						' FROM students ' +
@@ -222,7 +222,7 @@ if (typeof exports != 'object') {
 					}
 				);
 			});
-			it('6. VALUE', function (done) {
+			test('6. VALUE', function (done) {
 				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (res) {
 					assert.equal(25, res);
 					done();
@@ -230,7 +230,7 @@ if (typeof exports != 'object') {
 			});
 		});
 		describe('Drop databases', function () {
-			it('Select 99: queryValue', function (done) {
+			test('Select 99: queryValue', function (done) {
 				alasql('DROP DATABASE test211a; DROP DATABASE test211b', [], function () {
 					alasql.worker(false);
 					assert(!alasql.webworker);
@@ -317,7 +317,7 @@ function prepareData (defined) {
 
 	
 	function doTests() {
-		it('Select 1.1: COUNT', function(done){
+		test('Select 1.1: COUNT', function(done){
 		 	alasql('SELECT courseid, COUNT(*) AS cnt '+
 		 		' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',[],function(res){
 		 		assert.deepEqual([ 
@@ -329,7 +329,7 @@ function prepareData (defined) {
 		 		done();
 		 	});
 		});
-		it('Select 1.2: LEFT JOIN ON ', function(done){
+		test('Select 1.2: LEFT JOIN ON ', function(done){
 			var res = alasql('SELECT * '+
 				' FROM students '+
 				' LEFT JOIN courses ON students.courseid = courses.courseid AND students.schoolid = courses.schoolid'+
@@ -338,7 +338,7 @@ function prepareData (defined) {
 			assert.equal(res[4].studentname,'Astrid Carlson');
 			done();
 		});
-		it('Select 1.3: LEFT JOIN', function(done){
+		test('Select 1.3: LEFT JOIN', function(done){
 			var res = alasql('SELECT COLUMN students.schoolid '+
 				' FROM students '+
 				' LEFT JOIN courses USING courseid'
@@ -346,7 +346,7 @@ function prepareData (defined) {
 			assert.deepEqual([1,1,1,2,1], res);
 			done();
 		});
-		it('Select 1.4: queryValue', function(done){
+		test('Select 1.4: queryValue', function(done){
 			var res = alasql('SELECT VALUE COUNT(*) FROM courses, students');
 			assert.equal(25,res);
 			done();

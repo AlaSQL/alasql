@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 144 - Use three databases simultaniosly', function () {
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('CREATE DATABASE test144db1');
 		alasql('CREATE DATABASE test144db2');
 		alasql('CREATE DATABASE test144db3');
@@ -31,7 +32,7 @@ describe('Test 144 - Use three databases simultaniosly', function () {
 		done();
 	});
 
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		alasql('DROP DATABASE test144db1');
 		alasql('DROP DATABASE test144db2');
 		alasql('DROP DATABASE test144db3');

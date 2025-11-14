@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 243 AVG bug', function () {
-	it('1. AVG bug: 3 groups with one and multiple item', function (done) {
+	test('1. AVG bug: 3 groups with one and multiple item', function (done) {
 		var arr = [
 			{
 				person: 1,
@@ -37,7 +38,7 @@ describe('Test 243 AVG bug', function () {
 		done();
 	});
 
-	it('2. AVG 2 by 2 groups', function (done) {
+	test('2. AVG 2 by 2 groups', function (done) {
 		var arr = [
 			{
 				person: 1,

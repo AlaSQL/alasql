@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage('./test152.json', {
 		strict: false,
@@ -14,7 +15,7 @@ if (typeof exports == 'object') {
 }
 
 describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', function () {
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('SET AUTOCOMMIT ON');
 		alasql('DROP localStorage DATABASE IF EXISTS ls152');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS ls152');
@@ -34,7 +35,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
-	it('2. Create second table (INSERT SELECT)', function (done) {
+	test('2. Create second table (INSERT SELECT)', function (done) {
 		alasql('CREATE TABLE IF NOT EXISTS ls152.two (a int, b string)');
 		//		var res = alasql('SELECT * FROM ls152.one');
 		//		console.log(res);
@@ -49,14 +50,14 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
-	it('3. DELETE FROM', function (done) {
+	test('3. DELETE FROM', function (done) {
 		alasql('DELETE FROM ls152.two WHERE a=3');
 		var res = alasql('SELECT * FROM ls152.two');
 		assert.deepEqual(res, [{a: 2, b: 'London'}]);
 		done();
 	});
 
-	it('4. UPDATE', function (done) {
+	test('4. UPDATE', function (done) {
 		alasql('UPDATE ls152.one SET b="Prague" WHERE a IN (2,3)');
 		var res = alasql('SELECT * FROM ls152.one');
 		assert.deepEqual(res, [
@@ -68,7 +69,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
-	it('5. INSERT with AUTOINCREMENT', function (done) {
+	test('5. INSERT with AUTOINCREMENT', function (done) {
 		alasql('CREATE TABLE IF NOT EXISTS ls152.three (a int AUTO_INCREMENT, b string)');
 		alasql('INSERT INTO ls152.three (b) VALUES ("Rome"),("London"),("Berlin"),("Paris")');
 
@@ -82,7 +83,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
-	it('99. Detach database', function (done) {
+	test('99. Detach database', function (done) {
 		alasql('DETACH DATABASE ls152');
 		alasql('DROP localStorage DATABASE ls152');
 		done();

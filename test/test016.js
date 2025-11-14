@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 16', function () {
-	it('Grouping', function (done) {
+	test('Grouping', function (done) {
 		alasql('create database test16a');
 		alasql('use test16a');
 		alasql(
@@ -79,7 +79,7 @@ describe('Test 16', function () {
 				' GROUP BY students.schoolid, students.courseid, studentname ' +
 				' ORDER BY studentname DESC'
 		);
-		//if(typeof exports === 'object') console.log(res);
+		//if(typeof window === 'object') console.log(res);
 		//else console.table(res);
 		//console.table(res);
 		assert.equal(5, res.length);

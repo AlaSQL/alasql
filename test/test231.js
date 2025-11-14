@@ -1,18 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
 describe('Test 231 NIST SQL Example', function () {
-	it('1. Prepare database', function (done) {
+	test('1. Prepare database', function (done) {
 		alasql('CREATE DATABASE test231; USE test231;');
 		done();
 	});
 
-	it('2. Create STATION table', function (done) {
+	test('2. Create STATION table', function (done) {
 		var res = alasql(
 			'CREATE TABLE STATION \
                 (ID INTEGER PRIMARY KEY, \
@@ -60,7 +61,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('3. Create STATS table', function (done) {
+	test('3. Create STATS table', function (done) {
 		var res = alasql(
 			'CREATE TABLE STATS  \
                     (ID INTEGER REFERENCES STATION(ID), \
@@ -96,7 +97,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('3. Selects', function (done) {
+	test('3. Selects', function (done) {
 		var res = alasql(
 			'SELECT * FROM STATION, STATS \
                             WHERE STATION.ID = STATS.ID'
@@ -237,7 +238,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('5. View', function (done) {
+	test('5. View', function (done) {
 		var res = alasql(
 			'CREATE VIEW METRIC_STATS (ID, MONTH, TEMP_C, RAIN_C) AS \
         SELECT ID, \
@@ -288,7 +289,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('8. UPDATE', function (done) {
+	test('8. UPDATE', function (done) {
 		var res = alasql('UPDATE STATS SET RAIN_I = RAIN_I + 0.01');
 
 		assert.deepEqual(res, 6);
@@ -315,7 +316,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('9. Commits', function (done) {
+	test('9. Commits', function (done) {
 		//alasql('COMMIT WORK');
 
 		var res1 = alasql('SELECT * FROM STATS');
@@ -371,7 +372,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('10. Delete', function (done) {
+	test('10. Delete', function (done) {
 		var res = alasql(
 			'DELETE FROM STATS \
             WHERE MONTH = 7 \
@@ -405,7 +406,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('11. Insert with constraints', function (done) {
+	test('11. Insert with constraints', function (done) {
 		assert.throws(function () {
 			var res = alasql('INSERT INTO STATS VALUES (33,8,27.4,.19)');
 		}, Error);
@@ -431,7 +432,7 @@ describe('Test 231 NIST SQL Example', function () {
 		done();
 	});
 
-	it('99. DROP', function (done) {
+	test('99. DROP', function (done) {
 		alasql('DROP DATABASE test231');
 		done();
 	});

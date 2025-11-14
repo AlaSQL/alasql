@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
-var test = '616'; // insert test file number
+var testId = '616'; // insert test file number
 
-describe('Test ' + test + ' - Foreign keys on created database', function () {
-	it("Check foreign key on a created database doesn't fail", function (done) {
+describe('Test ' + testId + ' - Foreign keys on created database', function () {
+	test("Check foreign key on a created database doesn't fail", function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE Parent( ParentId integer, CONSTRAINT PK_Parent PRIMARY KEY(ParentId) )');

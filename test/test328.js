@@ -1,17 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 328 COMMA SELECTOR', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test328; USE test328');
 		done();
 	});
 
-	it('2. SEARCH COMMA - select all pairs', function (done) {
+	test('2. SEARCH COMMA - select all pairs', function (done) {
 		var data = [{a: 1}, {a: 2}, {a: 3}];
 		//    var res = alasql('SEARCH / a where(_1<=2) as @a, / a where(_<>@a) as @b return @a,@b',[data]);
 		var res = alasql('SEARCH /a as @a ^ /a AS @b WHERE(@a!=@b) RETURNS(@a,@b) FROM ?', [data]);
@@ -27,7 +29,7 @@ describe('Test 328 COMMA SELECTOR', function () {
 		done();
 	});
 
-	it('2. SEARCH COMMA - select all pairs', function (done) {
+	test('2. SEARCH COMMA - select all pairs', function (done) {
 		var data = [{a: 1}, {a: 2}, {a: 3}];
 		//    var res = alasql('SEARCH / a where(_1<=2) as @a, / a where(_<>@a) as @b return @a,@b',[data]);
 		var res = alasql('SEARCH /a as @a ^ /a AS @b WHERE(@a!=@b) @[(@a),(@b)] FROM ?', [data]);
@@ -43,7 +45,7 @@ describe('Test 328 COMMA SELECTOR', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test328');
 		done();
 	});

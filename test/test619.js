@@ -1,23 +1,23 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 // Test for issue #917
 
 describe('Test 619 calling aggregate functions on empty sets', function () {
-	var test = 619;
+	var testId = 619;
 
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. Should always return undefined', function () {
-		res = alasql('SELECT STDDEV(col) AS Result FROM ? WHERE 1=0', [[{col: 1}, {col: 2}]]);
+	test('1. Should always return undefined', function () {
+		var res = alasql('SELECT STDDEV(col) AS Result FROM ? WHERE 1=0', [[{col: 1}, {col: 2}]]);
 		assert.equal(res[0]['Result'], undefined);
 	});
 });

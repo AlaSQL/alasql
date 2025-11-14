@@ -1,15 +1,16 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 
 describe('Test 183 - [] column', function () {
 	if (false) {
-		it('1. ARRAY()', function (done) {
+		test('1. ARRAY()', function (done) {
 			var arr = [];
 			var day, month, year;
 			for (var i = 0; i < 10000; i++) {
@@ -45,7 +46,7 @@ describe('Test 183 - [] column', function () {
 			done();
 		});
 	}
-	it('1. ARRAY()', function (done) {
+	test('1. ARRAY()', function (done) {
 		/*    
         var res = alasql('SELECT [0],FIRST(_) FROM ? GROUP BY [0]',[[[1,10],[2,20],[3,30]]]);
 /// console.log(res);

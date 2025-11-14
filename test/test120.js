@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 120 - Tables and column names with dots, commas, spaces, square brackets, and backquotes', function () {
-	it('1. Create database Spaces and dots inside names', function (done) {
+	test('1. Create database Spaces and dots inside names', function (done) {
 		alasql('create database [My database]');
 		assert(!!alasql.databases['My database']);
 
@@ -30,7 +30,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		done();
 	});
 
-	it('2. Quotes', function (done) {
+	test('2. Quotes', function (done) {
 		//		var res = alasql('select sum([Primary column]) AS [quoted] from [A.table]');
 		//		assert.deepEqual(res, [{"'quoted'":31}]);
 
@@ -42,7 +42,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 
 		done();
 	});
-	it('3. Non-reserved keywords', function (done) {
+	test('3. Non-reserved keywords', function (done) {
 		//		var res = alasql('select sum([Primary column]) AS [quoted] from [A.table]');
 		//		assert.deepEqual(res, [{"'quoted'":31}]);
 
@@ -55,7 +55,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		done();
 	});
 
-	it('Mix with letter sizes', function (done) {
+	test('Mix with letter sizes', function (done) {
 		alasql('create table [Big] ([Col] int, [col] int)');
 		alasql('insert into [Big] values (1,10), (2,20), (3,30)');
 
@@ -73,7 +73,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		done();
 	});
 
-	it('Mix with keywords', function (done) {
+	test('Mix with keywords', function (done) {
 		alasql('create table [table] ([int] int, [create] int)');
 		alasql('insert into [table] values (1,10), (2,20), (3,30)');
 
@@ -82,7 +82,7 @@ describe('Test 120 - Tables and column names with dots, commas, spaces, square b
 		done();
 	});
 
-	it('Clear database', function (done) {
+	test('Clear database', function (done) {
 		alasql('drop database [My database]');
 		done();
 	});

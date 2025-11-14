@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 
 describe('Test 179 - function in GROUP BY', function () {
 	var authors = [
@@ -22,7 +23,7 @@ describe('Test 179 - function in GROUP BY', function () {
 		{author_id: 3, title: 'String Theory for Dummies'},
 	];
 
-	it('1. SELECT', function (done) {
+	test('1. SELECT', function (done) {
 		//        var res = alasql('SELECT authors.*, books.author_id, books.title FROM ? authors LEFT JOIN ? books \
 		//        ON authors.id = books.author_id',[authors, books]);
 
@@ -44,7 +45,7 @@ describe('Test 179 - function in GROUP BY', function () {
 		done();
 	});
 
-	it('2. SELECT with JOIN', function (done) {
+	test('2. SELECT with JOIN', function (done) {
 		var res = alasql(
 			'SELECT authors.*, books.author_id, books.title FROM ? authors LEFT JOIN ? books \
         ON authors.id = books.author_id',

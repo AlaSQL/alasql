@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 85 - Mongo-like queries', function () {
-	//	it.skip('localStorage', function(done){
+	//	test.skip('localStorage', function(done){
 	//		done();
 	//	});
 });

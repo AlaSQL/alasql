@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('../dist/alasql');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 819 GROUP BY with CASE', function () {
-	it('1. Use GROUP BY with CASE with IS NULL', function (done) {
+	test('1. Use GROUP BY with CASE with IS NULL', function (done) {
 		var data = [
 			{id: 'id1', alternativeId: undefined},
 			{id: 'id2', alternativeId: undefined},

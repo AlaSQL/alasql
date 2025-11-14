@@ -1,20 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
 describe('Test 234 Complex test', function () {
-	it('1. Prepare database', function (done) {
+	test('1. Prepare database', function (done) {
 		alasql('CREATE DATABASE test234; USE test234;');
 		done();
 	});
 
-	it('2. Throw error', function (done) {
+	test('2. Throw error', function (done) {
 		alasql('source "' + __dirname + '/test234.sql"', [], function (res) {
 			//          console.log(res);
 			assert.deepEqual(res.pop(), [
@@ -25,7 +26,7 @@ describe('Test 234 Complex test', function () {
 		});
 	});
 
-	it('99. DROP', function (done) {
+	test('99. DROP', function (done) {
 		alasql('DROP DATABASE test234');
 		done();
 	});
