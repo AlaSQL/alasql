@@ -3,13 +3,13 @@
 // Test for select
 //
 
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 110: LEFT JOIN', function () {
-	it('Left join of two tables', function (done) {
+	test('Left join of two tables', function (done) {
 		alasql.exec('DROP TABLE IF EXISTS test');
 		alasql.exec('CREATE TABLE test (a int, b int)');
 		alasql.exec('INSERT INTO test VALUES (1,1)');
@@ -35,7 +35,7 @@ describe('Test 110: LEFT JOIN', function () {
 });
 
 describe('INNER JOIN', function () {
-	it('Inner join of three tables', function (done) {
+	test('Inner join of three tables', function (done) {
 		alasql.exec('DROP TABLE IF EXISTS test');
 
 		alasql.exec('CREATE TABLE test (a int, b int)');
@@ -64,7 +64,7 @@ describe('INNER JOIN', function () {
 		done();
 	});
 
-	it('Inner join and aggregate of three tables', function (done) {
+	test('Inner join and aggregate of three tables', function (done) {
 		alasql.exec('DROP TABLE IF EXISTS test');
 		alasql.exec('CREATE TABLE test (a int, b int)');
 		alasql.exec('INSERT INTO test VALUES (1,1)');

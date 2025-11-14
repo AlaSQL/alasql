@@ -1,13 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 describe('Test 157 - json()', function () {
-	it('1. Load text data from file async', function (done) {
+	test('1. Load text data from file async', function (done) {
 		alasql('select * from json("' + __dirname + '/test157.json")', [], function (res) {
 			//			console.log(13,res);
 			assert.deepEqual(res, [{a: 1}, {a: 2}, {c: '😂'}]);
@@ -15,7 +16,7 @@ describe('Test 157 - json()', function () {
 		});
 	});
 
-	it('2. Load text file', function (done) {
+	test('2. Load text file', function (done) {
 		alasql(
 			'select column * from txt("' + __dirname + '/test157.txt") where [0] like "M%" order by [0]',
 			[],
@@ -27,7 +28,7 @@ describe('Test 157 - json()', function () {
 		);
 	});
 
-	it('3. Load tab-separated file', function (done) {
+	test('3. Load tab-separated file', function (done) {
 		alasql(
 			'select column * from tab("' +
 				__dirname +
@@ -40,7 +41,7 @@ describe('Test 157 - json()', function () {
 		);
 	});
 
-	it('4. Load tab-separated file', function (done) {
+	test('4. Load tab-separated file', function (done) {
 		alasql(
 			'select column city from tab("' +
 				__dirname +
@@ -53,7 +54,7 @@ describe('Test 157 - json()', function () {
 		);
 	});
 
-	it('5. Load CSV-file', function (done) {
+	test('5. Load CSV-file', function (done) {
 		alasql(
 			'select column * from csv("' +
 				__dirname +
@@ -66,7 +67,7 @@ describe('Test 157 - json()', function () {
 		);
 	});
 
-	it('6. Load CSV-file with headers', function (done) {
+	test('6. Load CSV-file with headers', function (done) {
 		alasql(
 			'select column city from csv("' +
 				__dirname +

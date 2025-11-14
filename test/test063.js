@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 63 - PIVOT', function () {
-	it('Create new table', function (done) {
+	test('Create new table', function (done) {
 		alasql('create database test63');
 		alasql('use database test63');
 		alasql('drop table if exists sales');
@@ -16,7 +16,7 @@ describe('Test 63 - PIVOT', function () {
 		done();
 	});
 
-	it('PIVOT - not yet created', function (done) {
+	test('PIVOT - not yet created', function (done) {
 		var res = alasql('select * from sales');
 
 		//		alasql('drop database test63');

@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('004 Callbacks', function () {
-	it('Callback', function (done) {
+	test('Callback', function (done) {
 		alasql('CREATE DATABASE test04;use test04');
 		//		alasql.exec('DROP TABLE IF EXISTS schools');
 
@@ -26,7 +26,7 @@ describe('004 Callbacks', function () {
 		//		console.log(888,res);
 	});
 
-	it('Works without params set', function (done) {
+	test('Works without params set', function (done) {
 		alasql('VALUE OF SELECT 1', function (data) {
 			assert.equal(1, data);
 			done();

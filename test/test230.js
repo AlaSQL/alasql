@@ -1,18 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
 describe('Test 230 Fix GROUP BY expressions', function () {
-	it('046-1 FROM array of arrays', function (done) {
+	test('046-1 FROM array of arrays', function (done) {
 		alasql('CREATE DATABASE test230; USE test230;');
 		done();
 	});
 
-	it('217. TRUNCATE TABLE', function (done) {
+	test('217. TRUNCATE TABLE', function (done) {
 		alasql(
 			'CREATE TABLE one(a INT);\
             INSERT INTO one VALUES (1),(2),(3); \
@@ -25,7 +26,7 @@ describe('Test 230 Fix GROUP BY expressions', function () {
 		done();
 	});
 
-	it('046-1 FROM array of arrays', function (done) {
+	test('046-1 FROM array of arrays', function (done) {
 		var data = [
 			[2014, 1, 1],
 			[2015, 2, 1],
@@ -50,7 +51,7 @@ describe('Test 230 Fix GROUP BY expressions', function () {
 		done();
 	});
 
-	it('99. DROP', function (done) {
+	test('99. DROP', function (done) {
 		alasql('DROP DATABASE test230');
 		done();
 	});

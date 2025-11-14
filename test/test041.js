@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 41', function () {
 	describe('CASE WHEN THEN ELSE END', function () {
 		var db;
-		it('1. CASE Expression WHEN THEN END', function (done) {
+		test('1. CASE Expression WHEN THEN END', function (done) {
 			db = new alasql.Database('db');
 
 			db.exec('CREATE TABLE one (a INT, d INT)');
@@ -19,7 +19,7 @@ describe('Test 41', function () {
 			done();
 		});
 
-		it('2. CASE and default table (test for defcols)', function (done) {
+		test('2. CASE and default table (test for defcols)', function (done) {
 			db.exec('CREATE TABLE two (a INT, e INT)');
 			db.exec('INSERT INTO two VALUES (1,10),(2,20),(3,30),(4,40),(5,50)');
 			assert.throws(function () {

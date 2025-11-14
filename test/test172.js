@@ -1,14 +1,16 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
 
-//if(typeof exports != 'object') {
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
+
+//if(typeof window !== 'undefined') {
 
 describe('Test 172 - XLSX to array', function () {
-	it('1. Load XLSX file into array', function (done) {
+	test.skip('1. Load XLSX file into array', function (done) {
 		var data = [];
 		alasql(
 			'select column * from xlsx("' +

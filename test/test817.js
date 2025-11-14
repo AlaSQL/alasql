@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('../dist/alasql');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 817 IFNULL bug', function () {
-	it('1. Does return 0', function (done) {
+	test('1. Does return 0', function (done) {
 		var data = [
 			{
 				a: 0,
@@ -19,7 +19,7 @@ describe('Test 817 IFNULL bug', function () {
 		done();
 	});
 
-	it('1. Does return false', function (done) {
+	test('1. Does return false', function (done) {
 		var data = [
 			{
 				a: false,
@@ -34,7 +34,7 @@ describe('Test 817 IFNULL bug', function () {
 		done();
 	});
 
-	it('1. Does return 100', function (done) {
+	test('1. Does return 100', function (done) {
 		var data = [
 			{
 				a: null,

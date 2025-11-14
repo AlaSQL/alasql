@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
-	it('1. different SUM()s', function (done) {
+	test('1. different SUM()s', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}];
 		//        var res = alasql('SELECT ROW SUM(a), SUM(a) FROM ?',[data]);
 		var res = alasql('SELECT ROW SUM(a), SUM(a) FROM ?', [data]);
@@ -15,7 +16,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
 		done();
 	});
 
-	it('1a. different COUNT()s', function (done) {
+	test('1a. different COUNT()s', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT ROW COUNT(a), COUNT(DISTINCT a) FROM ?', [data]);
 		//        console.log(res);
@@ -23,7 +24,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
 		done();
 	});
 
-	it('2. SUM() vs SUM(DISTINCT a)', function (done) {
+	test('2. SUM() vs SUM(DISTINCT a)', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT ROW SUM(a), SUM(DISTINCT a) FROM ?', [data]);
 		//        console.log(res);
@@ -32,7 +33,7 @@ describe('Test 201 SUM(DISTINCT), VAR(), STDDEV()', function () {
 	});
 
 	if (false) {
-		it('3. VAR() and STDDEV(a)', function (done) {
+		test('3. VAR() and STDDEV(a)', function (done) {
 			var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}];
 			var res = alasql('SELECT ROW VAR(a), STDEV(a) FROM ?', [data]);
 			/// console.log(res);

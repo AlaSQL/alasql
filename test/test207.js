@@ -1,19 +1,20 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 207 WHILE', function () {
-	it('1. FALSE WHILE', function (done) {
+	test('1. FALSE WHILE', function (done) {
 		var res = alasql('WHILE FALSE SELECT VALUE 1; SELECT VALUE 2');
 		//        console.log(res);
 		assert.deepEqual(res, [[], 2]);
 		done();
 	});
 
-	it('2. ONE WHILE ASYNC', function (done) {
+	test('2. ONE WHILE ASYNC', function (done) {
 		alasql(
 			' \
             SET @cnt = 0; \
@@ -29,7 +30,7 @@ describe('Test 207 WHILE', function () {
 		);
 	});
 
-	it('3. ONE WHILE SYNC', function (done) {
+	test('3. ONE WHILE SYNC', function (done) {
 		var res = alasql(
 			' \
             SET @cnt = 0; \

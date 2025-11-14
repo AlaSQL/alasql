@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 1820 - SELECT query (a AS b, b AS c)', function () {
-	it('1. Select query where alias of one column is also a column name in the result set', function (done) {
+	test('1. Select query where alias of one column is also a column name in the result set', function (done) {
 		let item1 = {a: 1, b: 'hello'};
 		let item2 = {a: 2, b: ''};
 

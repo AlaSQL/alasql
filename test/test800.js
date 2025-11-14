@@ -1,21 +1,22 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 800 - OUTER JOIN missing ids', function () {
-	before(function () {
+	beforeAll(function () {
 		alasql('CREATE DATABASE test800;USE test800');
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test800');
 	});
 
-	it('1. ARRAY()', function (done) {
+	test('1. ARRAY()', function (done) {
 		var t1 = [
 			{id: '1', a: 'one'},
 			{id: '2', a: 'two'},

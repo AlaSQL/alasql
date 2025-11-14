@@ -1,30 +1,29 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 416;
+var testId = 416;
 
-describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testId + ' Loosing expression with GROUP BY', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. Test', function (done) {
-		// prettier-ignore
-		var res = alasql(function(){/*
-	create table data( id INTEGER PRIMARY KEY, grp INTEGER);
-	insert into data select range._ as id , range._ % 3 as grp  from RANGE(0,9)as range;
-	matrix of select id, id +1 from data group by id;
-  */});
+	test('1. Test', function (done) {
+		var res = alasql(`
+create table data( id INTEGER PRIMARY KEY, grp INTEGER);
+insert into data select range._ as id , range._ % 3 as grp  from RANGE(0,9)as range;
+matrix of select id, id +1 from data group by id;
+`);
 
 		assert.deepEqual(res[2], [
 			[0, 1],
@@ -42,7 +41,7 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
 		done();
 	});
 
-	it.skip('2. Test', function (done) {
+	test.skip('2. Test', function (done) {
 		var res = alasql(
 			'matrix of select a.id, a.id +1, CAST(a.id AS INTEGER) +1 from data as a, data as b where a.id < b.id and a.grp = b.grp group by a.id'
 		);
@@ -64,15 +63,13 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
 		done();
 	});
 
-	it('3. Test Modified', function (done) {
-		var res = alasql(function () {
-			/*
+	test('3. Test Modified', function (done) {
+		var res = alasql(`
   drop table if exists data;
-	create table data( id INTEGER PRIMARY KEY, grp INTEGER);
-	insert into data select range._ as id , range._ % 3 as grp  from RANGE(0,9)as range;
-	matrix of select id, (id +1), CAST(id AS INTEGER) +1 from data as a, data as b where a.id < b.id and a.grp = b.grp group by a.id order by a.id
-  */
-		});
+create table data( id INTEGER PRIMARY KEY, grp INTEGER);
+insert into data select range._ as id , range._ % 3 as grp  from RANGE(0,9)as range;
+matrix of select id, (id +1), CAST(id AS INTEGER) +1 from data as a, data as b where a.id < b.id and a.grp = b.grp group by a.id order by a.id
+  `);
 
 		assert.deepEqual(
 			res[3],

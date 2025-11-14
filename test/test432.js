@@ -1,9 +1,9 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 describe('Test 432 Test FIRST(*)', function () {
-	it('1. FIRST(*)', function (done) {
+	test('1. FIRST(*)', function (done) {
 		var data = [
 			{a: 1, b: 10, c: 1},
 			{a: 1, b: 20, c: 2},

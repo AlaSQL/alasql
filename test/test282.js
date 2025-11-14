@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 282 ADD COLUMN in LOCALSTORAGE', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test281;USE test281');
 		done();
 	});
 
-	it.skip('2. UNIQUE constraint', function (done) {
+	test.skip('2. UNIQUE constraint', function (done) {
 		localStorage.clear();
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS register');
 		alasql('ATTACH localStorage DATABASE register AS myregister');
@@ -30,7 +31,7 @@ describe('Test 282 ADD COLUMN in LOCALSTORAGE', function () {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test281');
 		done();
 	});

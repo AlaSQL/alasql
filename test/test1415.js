@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 1415 - UNION Expression with empty query columns bug', function () {
-	it('1. should not insert empty objects in results when using UNION Expression', function (done) {
+	test('1. should not insert empty objects in results when using UNION Expression', function (done) {
 		var data1 = [{a: 'abc'}, {a: 'xyz'}];
 		var data2 = [{a: '123'}, {a: '987'}];
 

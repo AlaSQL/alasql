@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 274 Count and other bugs', function () {
-	it('2. Select count', function (done) {
+	test('2. Select count', function (done) {
 		var res = alasql('SELECT _ AS a FROM RANGE(1,10)');
 		/// console.log(res);
 

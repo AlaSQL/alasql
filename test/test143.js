@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 143 streamfn', function () {
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('CREATE DATABASE test143; use test143');
 		done();
 	});
 
-	it('3. INNER JOIN on stream', function (done) {
+	test('3. INNER JOIN on stream', function (done) {
 		test143(true);
 		alasql.databases[alasql.useid].dbversion++;
 		test143(false);
@@ -24,7 +25,7 @@ describe('Test 143 streamfn', function () {
 		done();
 	});
 
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		alasql('DROP DATABASE test143');
 		done();
 	});

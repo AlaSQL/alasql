@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 function prepareData(defined) {
 	//	alasql('create database test01');
@@ -117,7 +117,7 @@ function prepareData(defined) {
 }
 
 function doTests() {
-	it('Select 1.1: COUNT', function (done) {
+	test('Select 1.1: COUNT', function (done) {
 		var res = alasql(
 			'SELECT courses.courseid, COUNT(*) AS cnt ' +
 				' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid'
@@ -134,7 +134,7 @@ function doTests() {
 		);
 		done();
 	});
-	it('Select 1.2: LEFT JOIN ON ', function (done) {
+	test('Select 1.2: LEFT JOIN ON ', function (done) {
 		var res = alasql(
 			'SELECT * ' +
 				' FROM students ' +
@@ -146,14 +146,14 @@ function doTests() {
 		assert.equal(res[4].studentname, 'Astrid Carlson');
 		done();
 	});
-	it('Select 1.3: LEFT JOIN', function (done) {
+	test('Select 1.3: LEFT JOIN', function (done) {
 		var res = alasql(
 			'SELECT COLUMN students.schoolid ' + ' FROM students ' + ' LEFT JOIN courses USING courseid'
 		);
 		assert.deepEqual([1, 1, 1, 2, 1], res);
 		done();
 	});
-	it('Select 1.4: queryValue', function (done) {
+	test('Select 1.4: queryValue', function (done) {
 		var res = alasql('SELECT VALUE COUNT(*) FROM courses, students');
 		assert.equal(25, res);
 		done();

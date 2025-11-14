@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 104 - RANDOM() and RECURSIVE', function () {
 	/*
@@ -25,7 +25,7 @@ where
 order by random()
 limit 5;
 */
-	//	it('localStorage', function(done){
+	//	test('localStorage', function(done){
 	//		done();
 	//	});
 	/*

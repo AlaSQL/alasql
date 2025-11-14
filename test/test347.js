@@ -1,19 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 347 Efficient Joined Queries Issue #245', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test347;USE test347');
 		done();
 	});
 
-	it('2. TEST', function (done) {
-		var res = alasql(function () {
-			/*
+	test('2. TEST', function (done) {
+		var res = alasql(`
       CREATE TABLE students (
         id serial NOT NULL,
         name character varying(50) NOT NULL,
@@ -54,16 +54,14 @@ describe('Test 347 Efficient Joined Queries Issue #245', function () {
         (3 , 2 , 1 , 70),
         (4 , 2 , 2 , 82),
         (5 , 3 , 1 , 15),
-        (8 , 5 , 1 , 10);
-      */
-		});
+        (8 , 5 , 1 , 10)
+    `);
 		done();
 	});
 
-	it('3. TEST', function (done) {
+	test('3. TEST', function (done) {
 		var res = alasql(
-			function () {
-				/*
+			`
       SELECT
         students.name AS student_name,
         students.id AS student_id,
@@ -77,17 +75,15 @@ describe('Test 347 Efficient Joined Queries Issue #245', function () {
       INNER JOIN students ON
         (students.id = scores.student_id)
       WHERE
-        assignments.class_id = $0;
-
-    */
-			},
+        assignments.class_id = ?
+    `,
 			[2]
 		);
 		/// console.log(res);
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test347');
 		done();

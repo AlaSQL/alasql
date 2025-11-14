@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 927 group by empty results bug', function () {
-	it('1. Does not return any results if input is empty when using GROUP BY', function (done) {
+	test('1. Does not return any results if input is empty when using GROUP BY', function (done) {
 		var data = [
 			{a: 1, b: 2, c: undefined},
 			{a: 2, b: 3, c: undefined},

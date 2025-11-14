@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
-var test = '802'; // insert test file number
+var testId = '802'; // insert test file number
 
-describe('Test ' + test + ' - ORDER BY does not support parameter #1100', function () {
-	it('1. Prepare database', function (done) {
+describe('Test ' + testId + ' - ORDER BY does not support parameter #1100', function () {
+	test('1. Prepare database', function (done) {
 		alasql('CREATE TABLE example1 (a INT, b INT)');
 		alasql.tables.example1.data = [
 			{a: 2, b: 6},
@@ -16,7 +16,7 @@ describe('Test ' + test + ' - ORDER BY does not support parameter #1100', functi
 		done();
 	});
 
-	it('2. Async ORDERBY operation works without argument', function (done) {
+	test('2. Async ORDERBY operation works without argument', function (done) {
 		//
 		alasql.promise('SELECT * FROM example1 ORDER BY b').then(function (res) {
 			assert.deepEqual(res, [
@@ -37,7 +37,7 @@ describe('Test ' + test + ' - ORDER BY does not support parameter #1100', functi
 		});
 	});
 
-	it('3. Async ORDERBY operation works with arguments passed', function (done) {
+	test('3. Async ORDERBY operation works with arguments passed', function (done) {
 		//
 		alasql.promise('SELECT * FROM example1 ORDER BY ?', ['b']).then(function (res) {
 			assert.deepEqual(res, [

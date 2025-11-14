@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 39', function () {
 	describe('Negative numbers', function () {
 		var db;
-		it('Prepare database', function (done) {
+		test('Prepare database', function (done) {
 			db = new alasql.Database('db');
 
 			db.exec('CREATE TABLE one (a INT, b INT)');
@@ -14,7 +14,7 @@ describe('Test 39', function () {
 			done();
 		});
 
-		it('Negative numbers', function (done) {
+		test('Negative numbers', function (done) {
 			var res = db.exec('SELECT a,b,-1*a AS c FROM one  WHERE b < -15 ORDER BY a');
 			assert.deepEqual(res, [{a: -2, b: -20, c: 2}]);
 			done();

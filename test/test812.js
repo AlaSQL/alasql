@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 243 AVG bug', function () {
-	it('1. Does not count null when using GROUP BY', function (done) {
+	test('1. Does not count null when using GROUP BY', function (done) {
 		var data = [
 			{a: 1, b: 2, c: null},
 			{a: 1, b: null, c: null},
@@ -29,7 +30,7 @@ describe('Test 243 AVG bug', function () {
 		done();
 	});
 
-	it('2. Does not count null when using GROUP BY', function (done) {
+	test('2. Does not count null when using GROUP BY', function (done) {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}, {a: undefined}, {a: null}];
 		var res = alasql('SELECT a, COUNT(*) as b, COUNT(a) as c FROM ? GROUP BY a', [data]);
 		assert.deepEqual(res, [
@@ -42,7 +43,7 @@ describe('Test 243 AVG bug', function () {
 		done();
 	});
 
-	it('3. Does not count null in AVG', function (done) {
+	test('3. Does not count null in AVG', function (done) {
 		var arr = [
 			{
 				person: 1,
@@ -71,7 +72,7 @@ describe('Test 243 AVG bug', function () {
 		done();
 	});
 
-	it('4. Does not count null when using AVG and GROUP BY', function (done) {
+	test('4. Does not count null when using AVG and GROUP BY', function (done) {
 		var arr = [
 			{
 				person: 1,

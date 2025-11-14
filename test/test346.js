@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 //
 
@@ -11,12 +12,12 @@ if (typeof exports === 'object') {
 //
 
 describe('Test 337 SEARCH 8 queens', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test337;USE test337');
 		done();
 	});
 
-	it.skip('2. SEARCH 8 queens', function (done) {
+	test.skip('2. SEARCH 8 queens', function (done) {
 		var res = alasql(function () {
 			/*
 
@@ -72,7 +73,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		done();
 	});
 	if (false) {
-		it.skip('2. SEARCH 8 queens', function (done) {
+		test.skip('2. SEARCH 8 queens', function (done) {
 			var res = alasql(function () {
 				/*
     
@@ -96,7 +97,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 			done();
 		});
 
-		it.skip('99. DROP DATABASE', function (done) {
+		test.skip('99. DROP DATABASE', function (done) {
 			alasql('DROP DATABASE test337');
 			done();
 		});

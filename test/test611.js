@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 611 - SQL added user defined aggregation', function () {
 	/*
@@ -55,7 +55,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 	var sumMinusRows =
 		'function(a,b,c){if(1==c){var d=a-1;return d}return 2==c?b=b+a-1:3==c?b:void 0};';
 
-	it.skip('A) Sync AGGREGATOR', function () {
+	test.skip('A) Sync AGGREGATOR', function () {
 		var res = alasql(
 			'CREATE AGGREGATOR abc_A AS ``' +
 				sumPlusRows +
@@ -66,7 +66,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 		assert.deepEqual(res, [1, 112, 1, 108]);
 	});
 
-	it('B) Async AGGREGATE', function (done) {
+	test('B) Async AGGREGATE', function (done) {
 		//
 		alasql([
 			'CREATE AGGREGATOR abc_B AS ``' + sumPlusRows + '``',
@@ -79,7 +79,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 		});
 	});
 
-	it.skip('C) Sync AGGREGATE', function () {
+	test.skip('C) Sync AGGREGATE', function () {
 		var res = alasql(
 			'CREATE AGGREGATE abc_C AS ``' +
 				sumPlusRows +
@@ -91,7 +91,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 		assert.deepEqual(res, [1, 112, 1, 108]);
 	});
 
-	it('D) Async AGGREGATE', function (done) {
+	test('D) Async AGGREGATE', function (done) {
 		//
 		alasql([
 			'CREATE AGGREGATE abc_D AS ``' + sumPlusRows + '``',

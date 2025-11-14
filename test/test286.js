@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 286 CREATE UNIQUE INDEX', function () {
-	function test(M) {
+	function runTest(M) {
 		alasql('DELETE FROM one;');
 		alasql('DELETE FROM two;');
 		alasql('DELETE FROM three;');
@@ -65,7 +66,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function () {
 		return [tm1, tm2];
 	}
 
-	it('1. CREATE TABLE and FIRST INSERT', () => {
+	test('1. CREATE TABLE and FIRST INSERT', () => {
 		alasql('CREATE DATABASE test286;USE test286');
 		alasql('CREATE TABLE one (a int, b int)');
 		alasql('CREATE TABLE two (b int, c int)');
@@ -73,9 +74,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function () {
 		alasql('CREATE TABLE four (e int, e int)');
 	});
 
-	it('2. Fill tables with data', () => {
-		this.timeout(100000);
-
+	test('2. Fill tables with data', () => {
 		var K = 10; // Number of runs
 		var P = 20; // Number of records coefficient
 
@@ -88,7 +87,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function () {
 				(Math.random() * P + 1) | 0,
 				(Math.random() * P + 1) | 0,
 			];
-			var R = test(M);
+			var R = runTest(M);
 			// console.log(M,R, (M[1]*M[2]>M[3]*M[4])==(R[0]>R[1]));
 
 			// Hypothesis
@@ -97,7 +96,7 @@ describe('Test 286 CREATE UNIQUE INDEX', function () {
 		// console.log(L/K); // Probablity
 	});
 
-	it('3. DROP DATABASE', () => {
+	test('3. DROP DATABASE', () => {
 		alasql('DROP DATABASE test286');
 	});
 });

@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 203 REQUIRE ASYNC', function () {
-	it('1. REQUIRE() ASYN', function (done) {
+	test('1. REQUIRE() ASYN', function (done) {
 		var data = [1, 2, 3, 4];
 		alasql(
 			'REQUIRE "' + __dirname + '/test203myfn.js1","' + __dirname + '/test203myfn2.js1"',
@@ -20,7 +21,7 @@ describe('Test 203 REQUIRE ASYNC', function () {
 		);
 		//        console.log(alasql.fn);
 	});
-	it('2. REQUIRE SYNC', function (done) {
+	test('2. REQUIRE SYNC', function (done) {
 		var data = [1, 2, 3, 4];
 		alasql.fn = {};
 		//console.log(alasql.fn);

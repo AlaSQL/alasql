@@ -1,24 +1,24 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 420;
+var testNum = 420;
 
-describe('Test ' + test + ' Load data from XLSX without extra line', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testNum + ' Load data from XLSX without extra line', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testNum + ';USE test' + testNum);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testNum);
 	});
 
-	it('1. Load XLSX', function (done) {
+	test('1. Load XLSX', function (done) {
 		alasql(
 			'VALUE OF SELECT COUNT(*) FROM XLSX("' + __dirname + '/test420.xlsx")',
 			[],

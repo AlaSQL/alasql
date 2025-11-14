@@ -1,12 +1,8 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test381.json', {
-		strict: false,
-		ws: '',
-	});
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
 
 /*
  This sample beased on this article:
@@ -16,12 +12,12 @@ if (typeof exports === 'object') {
 */
 
 describe('Test 382 - Error in UPDATE', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test382;USE test382');
 		done();
 	});
 
-	it('1. Create table', function (done) {
+	test('1. Create table', function (done) {
 		var sqldb = new alasql.Database('db');
 		sqldb.exec(
 			'CREATE TABLE Locations (' +
@@ -75,7 +71,7 @@ describe('Test 382 - Error in UPDATE', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test382');
 		done();

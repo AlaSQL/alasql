@@ -3,13 +3,13 @@
 // Test for select
 //
 
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 130 - UPDATE', function () {
-	it('UPDATE without conditions', function (done) {
+	test('UPDATE without conditions', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
@@ -25,7 +25,7 @@ describe('Test 130 - UPDATE', function () {
 		done();
 	});
 
-	it('UPDATE WHERE with conditions', function (done) {
+	test('UPDATE WHERE with conditions', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');

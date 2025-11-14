@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 228 SELECT inside expressions', function () {
-	it('1. UPDATE WITH SELECT', function (done) {
+	test('1. UPDATE WITH SELECT', function (done) {
 		alasql('CREATE DATABASE test228; USE test228;');
 		alasql('CREATE TABLE one(a INT, b INT)');
 		alasql('INSERT INTO one VALUES (1,10),(2,20),(3,30),(4,40)');

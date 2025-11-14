@@ -1,27 +1,27 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var {unlink} = require('fs');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+import {unlink} from 'fs';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 (alasql.utils.isNode ? describe : describe.skip)('Test 815 date parsing options', function () {
 	var now = new Date();
 	var unixepoch = new Date(0);
 
-	this.beforeAll(() => {
+	beforeAll(() => {
 		unlink('test/test815.xlsx', () => {});
-	});
-	this.afterAll(() => {
-		unlink('test/test815.xlsx', () => {});
-	});
-
-	it('1. stores date and retrieves date correctly', function (done) {
 		alasql('CREATE TABLE dates (date datetime)');
 		alasql('INSERT INTO dates (?)', [now]);
 		alasql('INSERT INTO dates (?)', [unixepoch]);
+	});
+	afterAll(() => {
+		unlink('test/test815.xlsx', () => {});
+	});
 
+	test('1. stores date and retrieves date correctly', function (done) {
 		var res = alasql('SELECT * FROM dates');
 
 		assert.deepEqual(res[0].date, now);
@@ -29,7 +29,7 @@ if (typeof exports === 'object') {
 
 		done();
 	});
-	it('2. XLSX parses date as number', function () {
+	test('2. XLSX parses date as number', function () {
 		return alasql.promise('SELECT * INTO XLSX("test/test815.xlsx") FROM dates').then(function () {
 			return alasql
 				.promise('SELECT * FROM xlsx("test/test815.xlsx", {cellDates: false})')
@@ -39,7 +39,7 @@ if (typeof exports === 'object') {
 				});
 		});
 	});
-	it('3. XLSX parses date as date', function () {
+	test('3. XLSX parses date as date', function () {
 		return alasql.promise('SELECT * INTO XLSX("test/test815.xlsx") FROM dates').then(function () {
 			return alasql.promise('SELECT * FROM xlsx("test/test815.xlsx")').then(function (res) {
 				assert.equal(res[0].date instanceof Date, true);

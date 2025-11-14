@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 289 SEARCH INSTANCEOF', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test289;USE test289');
 		done();
 	});
 
-	it('2. SEARCH', function (done) {
+	test('2. SEARCH', function (done) {
 		var ast = alasql.parse('SELECT SUM(x)+20 FROM one GROUP BY x');
 
 		// { statements: [ { columns: [
@@ -28,7 +29,7 @@ describe('Test 289 SEARCH INSTANCEOF', function () {
 
 	// TODO: Add other operators
 
-	it('3. DROP DATABASE', function (done) {
+	test('3. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test289');
 		done();
 	});

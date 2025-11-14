@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 801 - OUTER JOIN of 4 tables', function () {
-	it('1. ARRAY()', function (done) {
+	test('1. ARRAY()', function (done) {
 		var t1 = [
 			{id: '1', a: 'one'},
 			{id: '2', a: 'two'},

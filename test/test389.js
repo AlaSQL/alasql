@@ -1,8 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage(__dirname + './restest389.json', {
+// @ts-ignore
+import {describe, test} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
+
+if (typeof global === 'object') {
+	global.localStorage = new DOMStorage(__dirname + '/restest389.json', {
 		strict: false,
 		ws: '',
 	});
@@ -15,12 +22,12 @@ if (typeof exports === 'object') {
 */
 
 describe('Test 389 Autoincrement for localStorage', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test389;USE test389');
 		done();
 	});
 
-	it('2. Prepare tables', function (done) {
+	test('2. Prepare tables', function (done) {
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS test');
 		alasql('ATTACH localStorage DATABASE test');
@@ -28,7 +35,7 @@ describe('Test 389 Autoincrement for localStorage', function () {
 		done();
 	});
 
-	it('3. SELECTs', function () {
+	test('3. SELECTs', function () {
 		alasql('USE test');
 		alasql('INSERT INTO test.one (b) VALUES ("one"), ("two")');
 		alasql('INSERT INTO test.one (b) VALUES ("three"), ("four")');
@@ -39,7 +46,7 @@ describe('Test 389 Autoincrement for localStorage', function () {
 		alasql('TRUNCATE TABLE test.one; COMMIT TRANSACTION');
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test389');
 		done();
 	});

@@ -1,8 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	//var describe = require('mocha.parallel');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll, xdescribe} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
 	Test for issue #379
@@ -10,16 +9,16 @@ if (typeof exports === 'object') {
 
 let baseUrl = 'github.com/AlaSQL/alasql/raw/refs/heads/develop';
 
-var test = 418;
+var testId = 418;
 
-describe('Test ' + test + ' Load data from internet', function () {
-	before(function (done) {
-		alasql('CREATE DATABASE test' + test + '; USE test' + test);
+describe('Test ' + testId + ' Load data from internet', function () {
+	beforeAll(function (done) {
+		alasql('CREATE DATABASE test' + testId + '; USE test' + testId);
 		done();
 	});
 
-	after(function (done) {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function (done) {
+		alasql('DROP DATABASE test' + testId);
 		done();
 	});
 
@@ -42,13 +41,11 @@ describe('Test ' + test + ' Load data from internet', function () {
 	describe('.xlsx from URL', function () {
 		var url = baseUrl + '/test/test411.xlsx';
 
-		it('Load http', function (done) {
-			this.timeout(10000);
+		test('Load http', function (done) {
 			testRequest(4, 'http://' + url, 'true', done);
 		});
 
-		it('Load https', function (done) {
-			this.timeout(10000);
+		test('Load https', function (done) {
 			testRequest(4, 'https://' + url, 'true', done);
 		});
 	});
@@ -56,13 +53,11 @@ describe('Test ' + test + ' Load data from internet', function () {
 	describe('.xls from URL', function () {
 		var url = baseUrl + '/test/test168.xls';
 
-		it('Load http', function (done) {
-			this.timeout(10000);
+		test('Load http', function (done) {
 			testRequest(5, 'http://' + url, 'true', done);
 		});
 
-		it('Load https', function (done) {
-			this.timeout(10000);
+		test('Load https', function (done) {
 			testRequest(5, 'https://' + url, 'true', done);
 		});
 	});
@@ -70,13 +65,11 @@ describe('Test ' + test + ' Load data from internet', function () {
 	describe('.json from URL', function () {
 		var url = baseUrl + '/test/test157.json';
 
-		it('Load http', function (done) {
-			this.timeout(2000);
+		test('Load http', function (done) {
 			testRequest(3, 'http://' + url, 'false', done);
 		});
 
-		it('Load https', function (done) {
-			this.timeout(10000);
+		test('Load https', function (done) {
 			testRequest(3, 'https://' + url, 'false', done);
 		});
 	});
@@ -84,13 +77,11 @@ describe('Test ' + test + ' Load data from internet', function () {
 	xdescribe('.tab from URL', function () {
 		var url = baseUrl + '/test/test157.tab';
 
-		it('Load http', function (done) {
-			this.timeout(10000);
+		test('Load http', function (done) {
 			testRequest(5, 'http://' + url, 'false', done);
 		});
 
-		it('Load https', function (done) {
-			this.timeout(10000);
+		test('Load https', function (done) {
 			testRequest(5, 'https://' + url, 'false', done);
 		});
 	});
@@ -98,13 +89,11 @@ describe('Test ' + test + ' Load data from internet', function () {
 	describe('.txt from URL', function () {
 		var url = baseUrl + '/test/test157.txt';
 
-		it('Load http', function (done) {
-			this.timeout(10000);
+		test('Load http', function (done) {
 			testRequest(8, 'http://' + url, 'false', done);
 		});
 
-		it('Load https', function (done) {
-			this.timeout(10000);
+		test('Load https', function (done) {
 			testRequest(8, 'https://' + url, 'false', done);
 		});
 	});
@@ -112,13 +101,11 @@ describe('Test ' + test + ' Load data from internet', function () {
 	describe('.csv from URL', function () {
 		var url = baseUrl + '/test/test157a.csv';
 
-		it('Load http', function (done) {
-			this.timeout(10000);
+		test('Load http', function (done) {
 			testRequest(5, 'http://' + url, 'false', done);
 		});
 
-		it('Load https', function (done) {
-			this.timeout(10000);
+		test('Load https', function (done) {
 			testRequest(5, 'https://' + url, 'false', done);
 		});
 	});

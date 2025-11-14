@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage('./test151.json', {
 		strict: false,
@@ -14,7 +15,7 @@ if (typeof exports == 'object') {
 }
 
 describe('Test 151 - localStorage Engine', function () {
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('DROP localStorage DATABASE IF EXISTS ls151');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS ls151');
@@ -36,7 +37,7 @@ describe('Test 151 - localStorage Engine', function () {
 		done();
 	});
 
-	it('2.Insert values into localStorage database', function (done) {
+	test('2.Insert values into localStorage database', function (done) {
 		alasql('USE ls151');
 		alasql('BEGIN TRANSACTION');
 		var res = alasql('SELECT * FROM ls151.one');
@@ -57,7 +58,7 @@ describe('Test 151 - localStorage Engine', function () {
 		done();
 	});
 
-	it('3.Insert values into localStorage database', function (done) {
+	test('3.Insert values into localStorage database', function (done) {
 		alasql('ROLLBACK TRANSACTION');
 		//		console.log(alasql.databases.ls151.tables.one);
 
@@ -69,7 +70,7 @@ describe('Test 151 - localStorage Engine', function () {
 		done();
 	});
 
-	it('99. Detach database', function (done) {
+	test('99. Detach database', function (done) {
 		alasql('DETACH DATABASE ls151');
 		alasql('DROP localStorage DATABASE ls151');
 		done();

@@ -3,13 +3,13 @@
 // Test for select
 //
 
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 113 - SELECT ', function () {
-	it('prepare database', function (done) {
+	test('prepare database', function (done) {
 		alasql('create database test113');
 		alasql('use database test113');
 		//	alasql('show database');
@@ -86,7 +86,7 @@ describe('Test 113 - SELECT ', function () {
 	});
 
 	//	console.log(Object.keys(alasql.currentDatabase.sqlcache).length);
-	it('Select COUNT(*) on cross-join', function (done) {
+	test('Select COUNT(*) on cross-join', function (done) {
 		assert.equal(25, alasql('select value count(*) from courses, students'));
 		done();
 	});
@@ -96,7 +96,7 @@ describe('Test 113 - SELECT ', function () {
 
 	//	console.log(Object.keys(alasql.currentDatabase.sqlcache).length);
 
-	it('Select COUNT(*) on right-join', function (done) {
+	test('Select COUNT(*) on right-join', function (done) {
 		var res = alasql.exec(
 			'SELECT courses.courseid, COUNT(students.studentid) AS cnt \
 			FROM students \
@@ -115,7 +115,7 @@ describe('Test 113 - SELECT ', function () {
 		done();
 	});
 
-	it('Select on two left-join', function (done) {
+	test('Select on two left-join', function (done) {
 		var res = alasql.exec(
 			'SELECT * ' +
 				' FROM students ' +
@@ -130,7 +130,7 @@ describe('Test 113 - SELECT ', function () {
 		done();
 	});
 
-	it('Select on one inner-join/1', function (done) {
+	test('Select on one inner-join/1', function (done) {
 		var res = alasql.exec(
 			'SELECT students.schoolid ' + ' FROM students ' + ' JOIN courses USING courseid'
 		);
@@ -138,7 +138,7 @@ describe('Test 113 - SELECT ', function () {
 		done();
 	});
 
-	it('Select on one inner-join/2', function (done) {
+	test('Select on one inner-join/2', function (done) {
 		var res = alasql(
 			'SELECT students.schoolid ' + ' FROM students ' + ' INNER JOIN courses USING courseid'
 		);
@@ -147,7 +147,7 @@ describe('Test 113 - SELECT ', function () {
 		done();
 	});
 
-	it('Select on one left-join', function (done) {
+	test('Select on one left-join', function (done) {
 		var res = alasql(
 			'SELECT students.schoolid ' + ' FROM students ' + ' LEFT JOIN courses USING courseid'
 		);
@@ -156,7 +156,7 @@ describe('Test 113 - SELECT ', function () {
 		done();
 	});
 
-	it('Select on one right-join', function (done) {
+	test('Select on one right-join', function (done) {
 		var res = alasql(
 			'SELECT students.schoolid ' + ' FROM students ' + ' RIGHT JOIN courses USING courseid'
 		);

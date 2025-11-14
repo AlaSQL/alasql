@@ -1,26 +1,27 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 227 Float numbers and COALESCE', function () {
-	it('1. 1.234', function (done) {
+	test('1. 1.234', function (done) {
 		var res = alasql('SELECT ROW 1.23, 2.345, 4.56');
 		//      console.log(res);
 		assert.deepEqual(res, [1.23, 2.345, 4.56]);
 		done();
 	});
 
-	it('2. 1.234e10', function (done) {
+	test('2. 1.234e10', function (done) {
 		var res = alasql('SELECT VALUE 1.234e10');
 		//    	console.log(res);
 		assert.deepEqual(res, 1.234e10);
 		done();
 	});
 
-	it('3. COALESCE', function (done) {
+	test('3. COALESCE', function (done) {
 		var cars = [
 			{color: 'blue'},
 			{model: 'Mazda', city: 'Paris'},

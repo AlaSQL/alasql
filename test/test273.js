@@ -1,29 +1,30 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 273 Source columns detextion', function () {
 	const pluck = (arr, key) => arr.map(e => e[key]);
 
-	before(function () {
+	beforeAll(function () {
 		alasql('CREATE DATABASE test273; USE test273');
 	});
 
-	after(function () {
+	afterAll(function () {
 		delete alasql.options.modifier;
 		alasql('DROP DATABASE test273');
 	});
 
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('CREATE TABLE one(a INT, b INT)');
 		alasql('CREATE TABLE two(b INT, c INT)');
 		done();
 	});
 
-	it('2. Empty test on table with columns', function (done) {
+	test('2. Empty test on table with columns', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT * FROM one');
 		var colres = res.columns.map(col => col.columnid);
@@ -32,7 +33,7 @@ describe('Test 273 Source columns detextion', function () {
 		done();
 	});
 
-	it('3. Star and other column', function (done) {
+	test('3. Star and other column', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 		var res = alasql('SELECT *,a FROM one');
 		var colres = pluck(res.columns, 'columnid');
@@ -45,14 +46,14 @@ describe('Test 273 Source columns detextion', function () {
 		done();
 	});
 
-	it('4. Subquery', function (done) {
+	test('4. Subquery', function (done) {
 		var res = alasql('SELECT RECORDSET * FROM (SELECT * FROM one)');
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepEqual(colres, ['a', 'b']);
 		done();
 	});
 
-	it('5. JOIN subquery', function (done) {
+	test('5. JOIN subquery', function (done) {
 		var res = alasql(
 			'SELECT RECORDSET t.*,s.* FROM (SELECT * FROM one) t \
       JOIN one s USING a'

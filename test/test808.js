@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 var dbFile = __dirname + '/test_db_fs.json';
 
@@ -12,19 +13,19 @@ var dbFile = __dirname + '/test_db_fs.json';
 	() => {
 		const sql = alasql.promise;
 
-		before(async () => {
+		beforeAll(async () => {
 			alasql('SET AUTOCOMMIT ON');
 		});
 
-		// after(async () => {});
+		// afterAll(async () => {});
 
-		it('A. Create a Filestorage DB', async () => {
+		test('A. Create a Filestorage DB', async () => {
 			await sql('CREATE FILESTORAGE DATABASE testDBFS("' + dbFile + '")');
 			await sql('ATTACH FILESTORAGE DATABASE testDBFS("' + dbFile + '")');
 			await sql('USE testDBFS');
 		});
 
-		it('B. Basic Operations on a Filestorage DB table ', async () => {
+		test('B. Basic Operations on a Filestorage DB table ', async () => {
 			await sql('CREATE TABLE one (a VARCHAR, b INT)');
 			await sql("INSERT INTO one VALUES ('A', 1), ('B', 2)");
 			await sql("INSERT INTO one VALUES ('C', 3)");
@@ -38,7 +39,7 @@ var dbFile = __dirname + '/test_db_fs.json';
 			assert.deepEqual(res, actual);
 		});
 
-		it('C. Detach and Drop a Filestorage DB', async () => {
+		test('C. Detach and Drop a Filestorage DB', async () => {
 			await sql('DETACH DATABASE testDBFS');
 			await sql('DROP FILESTORAGE DATABASE testDBFS');
 		});

@@ -1,20 +1,20 @@
 const alasql = require('../dist/alasql.js');
 
-if (typeof exports === 'object') {
-	var assert = require('assert');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
 
 describe('Test 2007 - SQL cache', function () {
-	before(function () {
+	beforeAll(function () {
 		alasql('create database test');
 		alasql('use test');
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql('drop database test');
 	});
 
-	it('A) Execute query and assert cache for `data` afterwards', () => {
+	test('A) Execute query and assert cache for `data` afterwards', () => {
 		alasql('CREATE TABLE osoby (id INT, meno STRING)');
 		alasql('INSERT INTO osoby VALUES (1, "John"), (2, "Jane"), (3, "Jake")');
 		var res = alasql('SELECT * FROM osoby');

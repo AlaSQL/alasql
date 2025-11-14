@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 324 Roads samples', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test324a; USE test324a');
 		done();
 	});
 
-	it.skip('2. OBJECT_ID()', function (done) {
+	test.skip('2. OBJECT_ID()', function (done) {
 		alasql('CREATE TABLE dbo.Employees(id INT, name STRING)');
 		alasql('INSERT INTO dbo.Employees VALUES (1,"Tomas"),(2,"Lisa")');
 		assert.deepEqual(alasql('SELECT * FROM dbo.Employees'), [
@@ -28,17 +29,17 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('3. DROP DATABASE', function (done) {
+	test.skip('3. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test324a');
 		done();
 	});
 
-	it.skip('2. CREATE DATABASE', function (done) {
+	test.skip('2. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test324b; USE test324b');
 		done();
 	});
 
-	it.skip('3. CREATE TABLE with constraints', function (done) {
+	test.skip('3. CREATE TABLE with constraints', function (done) {
 		var res = alasql(function () {
 			/*
       CREATE TABLE dbo.Employees
@@ -56,7 +57,7 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('4. INSERT INTO table with constraints', function (done) {
+	test.skip('4. INSERT INTO table with constraints', function (done) {
 		var res = alasql(function () {
 			/*
 	  INSERT INTO dbo.Employees(empid, mgrid, empname, salary) VALUES
@@ -72,7 +73,7 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('5. INSERT INTO table with same primary key', function (done) {
+	test.skip('5. INSERT INTO table with same primary key', function (done) {
 		assert.throws(function () {
 			var res = alasql(function () {
 				/*
@@ -85,7 +86,7 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('6. INSERT INTO wrong NULL in NOT NULL column', function (done) {
+	test.skip('6. INSERT INTO wrong NULL in NOT NULL column', function (done) {
 		assert.throws(function () {
 			var res = alasql(function () {
 				/*
@@ -97,27 +98,27 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('7. UPDATE wrong NULL in NOT NULL column', function (done) {
+	test.skip('7. UPDATE wrong NULL in NOT NULL column', function (done) {
 		assert.throws(function () {
 			var res = alasql('UPDATE dbo.Employees SET empid = NULL WHERE empid = 1');
 		}, Error);
 		done();
 	});
 
-	it.skip('8. UPDATE wrong NULL in NOT NULL column', function (done) {
+	test.skip('8. UPDATE wrong NULL in NOT NULL column', function (done) {
 		var res = alasql('UPDATE dbo.Employees SET mgrid = NULL WHERE empid = 2');
 		assert(res == 1);
 		done();
 	});
 
-	it.skip('9. UPDATE wrong NULL in NOT NULL column', function (done) {
+	test.skip('9. UPDATE wrong NULL in NOT NULL column', function (done) {
 		assert.throws(function () {
 			var res = alasql('UPDATE dbo.Employees SET mgrid = 3 WHERE empid = 2');
 		}, Error);
 		done();
 	});
 
-	it.skip('10. INSERT INTO table with constraints violation', function (done) {
+	test.skip('10. INSERT INTO table with constraints violation', function (done) {
 		//    console.log(alasql.databases.dbo.tables.Employees);
 		assert.throws(function () {
 			var res = alasql(
@@ -129,7 +130,7 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('11. INSERT INTO table with constraints violation', function (done) {
+	test.skip('11. INSERT INTO table with constraints violation', function (done) {
 		//    console.log(alasql.databases.dbo.tables.Employees);
 		var res = alasql(
 			"INSERT INTO dbo.Employees(empid, mgrid, empname, salary) \
@@ -140,13 +141,13 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('12. UPDATE wrong NULL in NOT NULL column', function (done) {
+	test.skip('12. UPDATE wrong NULL in NOT NULL column', function (done) {
 		var res = alasql('UPDATE dbo.Employees SET mgrid = 3 WHERE empid = 2');
 		assert(res == 1);
 		done();
 	});
 
-	it.skip('13. UPDATE table with constraints violation', function (done) {
+	test.skip('13. UPDATE table with constraints violation', function (done) {
 		//    console.log(alasql.databases.dbo.tables.Employees);
 		assert.throws(function () {
 			var res = alasql('UPDATE dbo.Employees SET mgrid = 1 WHERE empid = 1');
@@ -155,18 +156,18 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('14. CURRENT_TIMESTAMP', function (done) {
+	test.skip('14. CURRENT_TIMESTAMP', function (done) {
 		var res = alasql('SELECT VALUE CURRENT_TIMESTAMP');
 		assert(res.length == '2015.05.11 07:58:20.078'.length);
 		assert(res.substr(0, 2) == '20');
 		done();
 	});
-	it.skip('19. DROP DATABASE', function (done) {
+	test.skip('19. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test324b');
 		done();
 	});
 
-	it.skip('20. Full example', function (done) {
+	test.skip('20. Full example', function (done) {
 		alasql('SOURCE "test324.sql"');
 		// Check NO COUNT
 		alasql.options.nocount = false;

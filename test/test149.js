@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage('./test149.json', {
 		strict: false,
@@ -14,7 +15,7 @@ if (typeof exports == 'object') {
 }
 
 describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		//		console.log(alasql.options.autocommit);
 		//		alasql('SET AUTOCOMMIT OFF');
 		//		console.log(alasql.options.autocommit);
@@ -30,7 +31,7 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		done();
 	});
 
-	it('2. Show databases', function (done) {
+	test('2. Show databases', function (done) {
 		var res = alasql('SHOW LOCALSTORAGE DATABASES');
 		var found = false;
 		res.forEach(function (d) {
@@ -40,14 +41,14 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		done();
 	});
 
-	it('3. Attach localStorage database', function (done) {
+	test('3. Attach localStorage database', function (done) {
 		alasql('ATTACH LOCALSTORAGE DATABASE ls149 AS test149');
 		assert(alasql.databases.test149);
 		assert(alasql.databases.test149.engineid == 'LOCALSTORAGE');
 		done();
 	});
 
-	it('4. Create localStorage databases', function (done) {
+	test('4. Create localStorage databases', function (done) {
 		//		debugger;
 		alasql('CREATE TABLE IF NOT EXISTS test149.one (a int, b string)');
 		//		assert(!alasql.databases.test149.tables.one);
@@ -63,7 +64,7 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		done();
 	});
 
-	it('5.Insert values into localStorage database', function (done) {
+	test('5.Insert values into localStorage database', function (done) {
 		alasql('create database test149a');
 		alasql('CREATE TABLE test149a.one (a int, b string)');
 		//console.log(56);
@@ -87,14 +88,14 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		done();
 	});
 
-	// it("6.Select from localStorage table", function(done) {
+	// test("6.Select from localStorage table", function(done) {
 	// 	var res = alasql('SELECT * FROM test149.one');
 	// 	assert(res.length == 3);
 	// 	done();
 	// });
 	//if(false) {
 
-	it('7.Select into localStorage table', function (done) {
+	test('7.Select into localStorage table', function (done) {
 		var res = alasql('select * from test149.one');
 		assert(res.length == 3);
 		var res = alasql('SELECT a*2 as a, b FROM test149.one');
@@ -104,13 +105,13 @@ describe('Test 149 - localStorage Engine with AUTOCOMMIT ON', function () {
 		done();
 	});
 	//}
-	it('8.Drop localStorage table', function (done) {
+	test('8.Drop localStorage table', function (done) {
 		alasql('DROP TABLE test149.one');
 		assert(!localStorage['ls149.one']);
 		done();
 	});
 
-	it('99. Detach database', function (done) {
+	test('99. Detach database', function (done) {
 		alasql('DROP DATABASE test149a');
 		assert(!alasql.databases.test149a);
 		alasql('DETACH DATABASE test149');

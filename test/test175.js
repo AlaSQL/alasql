@@ -1,14 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 
 describe('Test 175 - JOIN USING TEST', function () {
-	it('1. JOIN ON', function (done) {
+	test('1. JOIN ON', function (done) {
 		var data = {
 			COLORS: [
 				[1, 'red'],
@@ -35,7 +36,7 @@ describe('Test 175 - JOIN USING TEST', function () {
 		done();
 	});
 
-	it('2. JOIN USING', function (done) {
+	test('2. JOIN USING', function (done) {
 		var data = {
 			COLORS: [
 				[1, 'red'],

@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 311 Special SEARCHors', function () {
-	it.skip('0. Create database ', function (done) {
+	test.skip('0. Create database ', function (done) {
 		alasql('CREATE DATABASE test311;USE test311');
 		done();
 	});
 
-	it.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', function (done) {
+	test.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', function (done) {
 		//    var res = alasql.parse('CREATE GRAPH #Andrey');
 		var data = [
 			{a: 1, b: 10},
@@ -58,7 +59,7 @@ describe('Test 311 Special SEARCHors', function () {
 		done();
 	});
 
-	it.skip('99. Drop database ', function (done) {
+	test.skip('99. Drop database ', function (done) {
 		alasql('DROP DATABASE test311');
 		done();
 	});

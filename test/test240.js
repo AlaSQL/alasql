@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+import DOMStorage from 'dom-storage';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
-	var DOMStorage = require('dom-storage');
+if (typeof global === 'object') {
 	global.localStorage = new DOMStorage('./test239.json', {
 		strict: false,
 		ws: '',
@@ -14,7 +15,7 @@ if (typeof exports == 'object') {
 }
 
 describe('Test 240 DELETE TEST', function () {
-	it('1. Create dtabase', function (done) {
+	test('1. Create dtabase', function (done) {
 		alasql(`
     SET AUTOCOMMIT OFF;
     DROP localStorage DATABASE IF EXISTS ls240;
@@ -54,7 +55,7 @@ describe('Test 240 DELETE TEST', function () {
 		done();
 	});
 
-	it('8.Drop localStorage table', function (done) {
+	test('8.Drop localStorage table', function (done) {
 		alasql('DETACH DATABASE test240');
 		alasql('DROP LOCALSTORAGE DATABASE ls240');
 		done();

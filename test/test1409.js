@@ -1,16 +1,16 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 // only run in browser
-if (typeof exports != 'object') {
+if (typeof window !== 'undefined')
 	describe('Test 1409 - post insert triggers should run on indexdb', function () {
-		before(
+		beforeAll(
 			() => alasql.promise('DROP IndexedDB DATABASE IF EXISTS test_db;') // delete indexeddb
 		);
 
-		it('post insert trigger after adding some data', function (done) {
+		test('post insert trigger after adding some data', function (done) {
 			var count = 0;
 			alasql.fn.onInsert = function (r) {
 				count++;
@@ -52,4 +52,3 @@ if (typeof exports != 'object') {
 				});
 		});
 	});
-}

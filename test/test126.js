@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 126 ALTER TABLE RENAME COLUMN', function () {
-	it('1. Rename column', function (done) {
+	test('1. Rename column', function (done) {
 		alasql('create database test126');
 		alasql('use test126');
 		alasql('create table one (a int, b int, c string)');
@@ -21,7 +21,7 @@ describe('Test 126 ALTER TABLE RENAME COLUMN', function () {
 		done();
 	});
 
-	it('2. Rename table', function (done) {
+	test('2. Rename table', function (done) {
 		alasql('rename table one to two');
 		assert(!alasql.tables.one);
 		assert(!!alasql.tables.two);
@@ -34,7 +34,7 @@ describe('Test 126 ALTER TABLE RENAME COLUMN', function () {
 		done();
 	});
 
-	it('3. Drop column', function (done) {
+	test('3. Drop column', function (done) {
 		alasql('alter table two drop column a');
 		assert(!alasql.tables.two.xcolumns.a);
 

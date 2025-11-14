@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test381.json', {
-		strict: false,
-		ws: '',
-	});
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
+
+global.localStorage = new DOMStorage('./test381.json', {
+	strict: false,
+	ws: '',
+});
 
 /*
  This sample beased on this article:
@@ -75,27 +76,27 @@ describe('Test 386 - Nested Search (issue #495)', function () {
 		},
 	];
 
-	before(function () {
+	beforeAll(function () {
 		alasql('CREATE DATABASE test386;USE test386');
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql('DROP DATABASE test386');
 	});
 
-	it('1. Change property', function (done) {
+	test('1. Change property', function (done) {
 		alasql('SEARCH /medications/prescriptions/WHERE(id=77) SET(quantity=30) FROM ?', [data]);
 		assert.equal(data[0].medications[0].prescriptions[1].quantity, 30);
 		done();
 	});
 
-	it('2. Change property in all levels', function (done) {
+	test('2. Change property in all levels', function (done) {
 		alasql('SEARCH /+ WHERE(id=77) SET(quantity=31) FROM ?', [data]);
 		assert.equal(data[0].medications[0].prescriptions[1].quantity, 31);
 		done();
 	});
 
-	it('3. Change property in all levels', function (done) {
+	test('3. Change property in all levels', function (done) {
 		alasql('SEARCH / * WHERE(id=77) SET(quantity=32) FROM ?', [data]);
 		assert.equal(data[0].medications[0].prescriptions[1].quantity, 32);
 		done();

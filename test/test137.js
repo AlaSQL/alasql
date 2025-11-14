@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 137 get JSON property', function () {
-	it('1. Get JSON object', function (done) {
+	test('1. Get JSON object', function (done) {
 		var res = alasql('SELECT VALUE @{a:1, b:2}');
 		assert.deepEqual(res, {a: 1, b: 2});
 
@@ -42,7 +43,7 @@ describe('Test 137 get JSON property', function () {
 		done();
 	});
 
-	it('2. Get JSON property operator', function (done) {
+	test('2. Get JSON property operator', function (done) {
 		var res = alasql('SELECT VALUE {a:1, b:2}->a');
 		assert.deepEqual(res, 1);
 
@@ -64,7 +65,7 @@ describe('Test 137 get JSON property', function () {
 		done();
 	});
 
-	it('3. Get JSON param values', function (done) {
+	test('3. Get JSON param values', function (done) {
 		//		var res = alasql('SELECT VALUE @{a:?, b:?}->a',[1,2]);
 		var res = alasql('SELECT VALUE {a:?, b:?}->a', [1, 2]);
 		//		console.log(71);
@@ -74,7 +75,7 @@ describe('Test 137 get JSON property', function () {
 		done();
 	});
 
-	it('4. Get JSON param values in sub-arrays', function (done) {
+	test('4. Get JSON param values in sub-arrays', function (done) {
 		var res = alasql('SELECT VALUE @{a:1, b1:@[3,{c:?,d:4},?,6]}', [100, 200]);
 		assert.deepEqual(res, {a: 1, b1: [3, {c: 100, d: 4}, 200, 6]});
 

@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 810 - yy.Op for BETWEEN returning correct toString() result', function () {
-	it('yy.Op.toString() returns correct value when op === BETWEEN', function () {
+	test('yy.Op.toString() returns correct value when op === BETWEEN', function () {
 		var expectedResult = 'id BETWEEN 1 AND 3';
 
 		var betweenOp = new alasql.yy.Op({
@@ -19,7 +19,7 @@ describe('Test 810 - yy.Op for BETWEEN returning correct toString() result', fun
 		assert.equal(result, expectedResult);
 	});
 
-	it('yy.Op.toString() returns correct value when op === NOT BETWEEN', function () {
+	test('yy.Op.toString() returns correct value when op === NOT BETWEEN', function () {
 		var expectedResult = 'id NOT BETWEEN 1 AND 3';
 
 		var betweenOp = new alasql.yy.Op({

@@ -1,21 +1,22 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // Data for test
 var data = [{a: 1}, {a: 2}];
 
 describe('Test 355 PIVOT', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test355;USE test355');
 		done();
 	});
 
 	/* Source: http://blog.sqlauthority.com/2008/06/07/sql-server-pivot-and-unpivot-table-examples/ */
-	it.skip('2. Prepare Data', function (done) {
+	test.skip('2. Prepare Data', function (done) {
 		alasql('CREATE TABLE Product(Cust VARCHAR(25), Product VARCHAR(20), QTY INT)');
 
 		alasql(function () {
@@ -40,7 +41,7 @@ describe('Test 355 PIVOT', function () {
 		done();
 	});
 
-	it.skip('3. Select Query', function (done) {
+	test.skip('3. Select Query', function (done) {
 		alasql(function () {
 			/*
     SELECT *
@@ -51,7 +52,7 @@ describe('Test 355 PIVOT', function () {
 		done();
 	});
 
-	it.skip('4. Pivot Table ordered by PRODUCT', function (done) {
+	test.skip('4. Pivot Table ordered by PRODUCT', function (done) {
 		alasql(function () {
 			/*
     SELECT PRODUCT, FRED, KATE
@@ -66,7 +67,7 @@ describe('Test 355 PIVOT', function () {
 		done();
 	});
 
-	it.skip('5. Pivot Table ordered by CUST', function (done) {
+	test.skip('5. Pivot Table ordered by CUST', function (done) {
 		alasql(function () {
 			/*
     SELECT CUST, VEG, SODA, MILK, BEER, CHIPS
@@ -81,7 +82,7 @@ describe('Test 355 PIVOT', function () {
 		done();
 	});
 
-	it.skip('6. UnPivot Query', function (done) {
+	test.skip('6. UnPivot Query', function (done) {
 		alasql(function () {
 			/*
     SELECT CUST, PRODUCT, QTY
@@ -102,7 +103,7 @@ describe('Test 355 PIVOT', function () {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test355');
 		done();

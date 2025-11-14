@@ -1,14 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 
 describe('Test 184 - SELECT INDEX', function () {
-	it('0.test _', function (done) {
+	test('0.test _', function (done) {
 		var data = [1, 2, 3, 4, 1, 2, 2, 3];
 		var res = alasql('SELECT _, ARRAY(_) FROM ? GROUP BY _', [data]);
 		// console.log(res);
@@ -21,7 +22,7 @@ describe('Test 184 - SELECT INDEX', function () {
 		done();
 	});
 
-	// it('0.test _',function(done){
+	// test('0.test _',function(done){
 	//   var data = [1,2,3,4,1,2,2,3];
 	//   var res = alasql('SELECT one._, ARRAY(_) FROM ? one GROUP BY one._',[data]);
 	//   console.log(res);
@@ -29,7 +30,7 @@ describe('Test 184 - SELECT INDEX', function () {
 	//   done();
 	// });
 
-	it('1. SELECT INDEX', function (done) {
+	test('1. SELECT INDEX', function (done) {
 		var data = [1, 2, 3, 4, 1, 2, 2, 3];
 		var res = alasql('SELECT INDEX _,ARRAY(_) FROM ? GROUP BY _', [data]);
 		//      console.log(res);

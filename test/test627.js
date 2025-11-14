@@ -1,21 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('../dist/alasql');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 627 - cast float for SUM, AVG when pivot', function () {
-	const test = '627'; // insert test file number
+	const testId = '627'; // insert test file number
 
-	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+	beforeAll(function () {
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 	});
 
-	after(function () {
-		alasql('drop database test' + test);
+	afterAll(function () {
+		alasql('drop database test' + testId);
 	});
 
-	it('Verify results', function () {
+	test('Verify results', function () {
 		var res = [];
 
 		res = alasql(

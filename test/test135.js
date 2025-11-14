@@ -1,14 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (false) {
 	describe('Test 135 a la NoSQL', function () {
 		var test135;
-		it('1. Insert NoSQL', function (done) {
+		test('1. Insert NoSQL', function (done) {
 			var test135 = alasql.create('test135');
 			var one = test135.create('one');
 			one.insert({a: 1, b: 2}, function (res) {
@@ -20,7 +21,7 @@ if (false) {
 			});
 		});
 
-		it('99. Clear database', function (done) {
+		test('99. Clear database', function (done) {
 			test135.drop();
 			done();
 		});

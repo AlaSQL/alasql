@@ -1,13 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	describe('Test 263 MIN and MAX: aggregators and functions', function () {
-		it('1. Test', function (done) {
+		test('1. Test', function (done) {
 			var data = [
 				{a: 1, b: 3},
 				{a: 2, b: 1},
@@ -19,7 +20,7 @@ if (typeof exports == 'object') {
 			done();
 		});
 
-		it('2. Test MIN MAX', function (done) {
+		test('2. Test MIN MAX', function (done) {
 			var a = [
 				{a: 1, b: 5},
 				{a: 2, b: 0},
@@ -34,7 +35,7 @@ if (typeof exports == 'object') {
 			//		console.log(res);
 			done();
 		});
-		it('3. MIN in GROUP BY function', function (done) {
+		test('3. MIN in GROUP BY function', function (done) {
 			var a = [
 				{a: 1, b: 5},
 				{a: 2, b: 0},

@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage(__dirname + '/test604.json', {
 		strict: false,
@@ -14,12 +15,11 @@ if (typeof exports == 'object') {
 }
 
 describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', function () {
-	after(function () {
+	afterAll(function () {
 		localStorage.clear();
 	});
 
-	it('* Create database', function (done) {
-		this.timeout(5000);
+	test('* Create database', function (done) {
 		alasql('SET AUTOCOMMIT OFF');
 		assert(!alasql.options.autocommit);
 		alasql
@@ -40,7 +40,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 			});
 	});
 
-	it('* Show databases', function (done) {
+	test('* Show databases', function (done) {
 		var res = alasql('SHOW localStorage DATABASES', function (res) {
 			var found = false;
 			res.forEach(function (d) {
@@ -51,7 +51,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 		});
 	});
 
-	it('* Attach localStorage database', function (done) {
+	test('* Attach localStorage database', function (done) {
 		alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604', function () {
 			assert(alasql.databases.db604);
 			assert(alasql.databases.db604.engineid == 'LOCALSTORAGE');
@@ -59,7 +59,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 		});
 	});
 
-	it('* Create table', function (done) {
+	test('* Create table', function (done) {
 		alasql('CREATE TABLE db604.t1 (a int, b string)', function (res) {
 			assert(localStorage['db604ls.t1']);
 			assert(JSON.parse(localStorage['db604ls']).tables.t1);
@@ -67,7 +67,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 		});
 	});
 
-	it('* Insert values into table', function (done) {
+	test('* Insert values into table', function (done) {
 		alasql
 			.promise('insert into db604.t1 VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")')
 			.then(function (rows) {
@@ -80,12 +80,12 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 			});
 	});
 
-	it('* Select from table', function () {
+	test('* Select from table', function () {
 		var res = alasql('SELECT * FROM db604.t1');
 		assert(res.length == 3);
 	});
 
-	it('* Create view', function (done) {
+	test('* Create view', function (done) {
 		alasql('CREATE VIEW db604.v1 AS SELECT a,b FROM db604.t1', function (res) {
 			assert(localStorage['db604ls.v1']);
 			assert(JSON.parse(localStorage['db604ls']).tables.v1);
@@ -93,50 +93,50 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 		});
 	});
 
-	it('* Select from view', function () {
+	test('* Select from view', function () {
 		var res = alasql('SELECT * FROM db604.v1');
 		assert(res.length == 3);
 	});
 
-	it.skip('* Detach database', function () {
+	test.skip('* Detach database', function () {
 		alasql('DETACH DATABASE db604');
 		assert(!alasql.databases.db604);
 	});
 
-	it.skip('* Reattach database', function () {
+	test.skip('* Reattach database', function () {
 		alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604');
 		assert(alasql.databases.db604);
 		assert(alasql.databases.db604.engineid == 'LOCALSTORAGE');
 	});
 
-	it.skip('* Reselect from table', function () {
+	test.skip('* Reselect from table', function () {
 		var res = alasql('SELECT * FROM db604.t1');
 		assert(res.length == 3);
 	});
 
-	it.skip('* Reselect from view', function (done) {
+	test.skip('* Reselect from view', function (done) {
 		alasql.promise('SELECT * FROM db604.v1').then(function (res) {
 			assert(res.length == 3);
 			done();
 		});
 	});
 
-	it('* Drop table', function () {
+	test('* Drop table', function () {
 		var res = alasql('DROP TABLE db604.t1');
 		assert(!localStorage['db604.t1']);
 	});
 
-	it('* Drop view', function () {
+	test('* Drop view', function () {
 		var res = alasql('DROP VIEW db604.v1');
 		assert(!localStorage['db604.v1']);
 	});
 
-	it('* Detachch database', function () {
+	test('* Detachch database', function () {
 		alasql('DETACH DATABASE db604');
 		assert(!alasql.databases.db604);
 	});
 
-	it('* Drop database', function () {
+	test('* Drop database', function () {
 		alasql('DROP LOCALSTORAGE DATABASE db604ls');
 		assert(!localStorage['db605ls']);
 	});

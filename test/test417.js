@@ -1,24 +1,24 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 417;
+var testId = 417;
 
-describe('Test ' + test + ' Add JSON data directly to the table', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testId + ' Add JSON data directly to the table', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. Create table', function (done) {
+	test('1. Create table', function (done) {
 		alasql('CREATE TABLE one (a INT PRIMARY KEY, b INT)');
 		alasql.tables.one.data = [
 			{a: 1, b: 10},
@@ -28,14 +28,14 @@ describe('Test ' + test + ' Add JSON data directly to the table', function () {
 		done();
 	});
 
-	it.skip('2. Test inserr', function (done) {
+	test.skip('2. Test inserr', function (done) {
 		assert.throws(Error, function () {
 			alasql('INSERT INTO one VALUES (3,30)');
 		});
 		done();
 	});
 
-	// it('3. Test wrong insert',function(done){
+	// test('3. Test wrong insert',function(done){
 	//   alasql('INSERT INTO one VALUES (1,40)');
 	//   var res = alasql('select * from one');
 	//   console.log(res);

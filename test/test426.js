@@ -1,42 +1,42 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 426;
+var testId = 426;
 
-describe('Test ' + test + ' Binary operators', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testId + ' Binary operators', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. ^', function (done) {
+	test('1. ^', function (done) {
 		var res = alasql('= 60^13');
 		assert.deepEqual(res, 49);
 		done();
 	});
 
-	it('2. ~', function (done) {
+	test('2. ~', function (done) {
 		var res = alasql('= ~60');
 		assert(res == -61);
 		done();
 	});
 
-	it('3. POWER', function (done) {
+	test('3. POWER', function (done) {
 		var res = alasql('= POWER(2,3)');
 		assert(res == 8);
 		done();
 	});
 
-	it('4. EXP', function (done) {
+	test('4. EXP', function (done) {
 		var res = alasql('= EXP(1)');
 		assert(res == 2.718281828459045);
 		done();

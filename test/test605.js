@@ -1,21 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
-var test = 605;
+var testId = 605;
 
-describe('Test ' + test + ' - get autoval', function () {
-	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+describe('Test ' + testId + ' - get autoval', function () {
+	beforeAll(function () {
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 	});
 
-	after(function () {
-		alasql('drop database test' + test);
+	afterAll(function () {
+		alasql('drop database test' + testId);
 	});
 
-	it('A) get autoval from default alasql object', function () {
+	test('A) get autoval from default alasql object', function () {
 		alasql('CREATE TABLE session (id INT AUTOINCREMENT, sessid STRING)');
 		alasql('INSERT INTO session (sessid) VALUES ("TEST")');
 
@@ -27,7 +27,7 @@ describe('Test ' + test + ' - get autoval', function () {
 		assert.equal(alasql.autoval('session', 'id', true), 4);
 	});
 
-	it('B) get autoval from new database', function () {
+	test('B) get autoval from new database', function () {
 		//
 		var mydb = new alasql.Database('My Database');
 		mydb.exec('CREATE TABLE session (id INT AUTOINCREMENT, sessid STRING)');

@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 319 PATH in GRAPH', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test319; USE test319');
 		done();
 	});
 
-	it('2. Simple graph', function (done) {
+	test('2. Simple graph', function (done) {
 		alasql('CREATE CLASS Person');
 		var res = alasql('CREATE GRAPH :Person {age:35} AS @p1');
 		//    console.log(1,res);
@@ -33,7 +34,7 @@ describe('Test 319 PATH in GRAPH', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test319');
 		done();
 	});

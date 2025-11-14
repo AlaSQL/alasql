@@ -1,13 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	// Assume running in browser with alasql loaded globally
-	var assert = chai.assert;
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 490 - PIVOT with SELECT *', function () {
-	const test = '490';
+	const testId = '490';
 
 	// Define the test data once
 	const data = [
@@ -41,16 +38,16 @@ describe('Test 490 - PIVOT with SELECT *', function () {
 		{VendorId: 'JOHNS', IncomeDay: 'TUE', IncomeAmount: 600},
 	];
 
-	before(function () {
-		alasql('CREATE DATABASE test' + test);
-		alasql('USE test' + test);
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId);
+		alasql('USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('A) PIVOT with SELECT * and AVG aggregation', function () {
+	test('A) PIVOT with SELECT * and AVG aggregation', function () {
 		var res = alasql('SELECT * FROM ? PIVOT (AVG(IncomeAmount) FOR IncomeDay)', [data]);
 
 		var expectedResult = [
@@ -66,7 +63,7 @@ describe('Test 490 - PIVOT with SELECT *', function () {
 		);
 	});
 
-	it('B) PIVOT with SELECT * and SUM aggregation', function () {
+	test('B) PIVOT with SELECT * and SUM aggregation', function () {
 		var res = alasql('SELECT * FROM ? PIVOT (SUM(IncomeAmount) FOR IncomeDay)', [data]);
 
 		var expectedResult = [

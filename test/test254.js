@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 254 UNION of two tables with different columns', function () {
-	it('1. Create database', function (done) {
+	test('1. Create database', function (done) {
 		alasql('CREATE DATABASE test254;USE test254');
 		alasql(
 			'CREATE TABLE t1(a int,b int);  \
@@ -21,7 +22,7 @@ describe('Test 254 UNION of two tables with different columns', function () {
 		done();
 	});
 
-	it('2. UNION ALL CORRESPONDING', function (done) {
+	test('2. UNION ALL CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 UNION ALL CORRESPONDING SELECT b, a FROM t1');
 		assert.deepEqual(res, [
 			{a: 1, b: 1},
@@ -34,7 +35,7 @@ describe('Test 254 UNION of two tables with different columns', function () {
 		done();
 	});
 
-	it('3. UNION ALL not CORRESPONDING', function (done) {
+	test('3. UNION ALL not CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 UNION ALL SELECT b, a FROM t1');
 		assert.deepEqual(res, [
 			{a: 1, b: 1},
@@ -47,7 +48,7 @@ describe('Test 254 UNION of two tables with different columns', function () {
 		done();
 	});
 
-	it('4. UNION CORRESPONDING', function (done) {
+	test('4. UNION CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 UNION CORRESPONDING SELECT b, a FROM t1');
 		assert.deepEqual(res, [
 			{a: 1, b: 1},
@@ -57,7 +58,7 @@ describe('Test 254 UNION of two tables with different columns', function () {
 		done();
 	});
 
-	it('5. UNION non CORRESPONDING', function (done) {
+	test('5. UNION non CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 UNION SELECT b, a FROM t1');
 		assert.deepEqual(res, [
 			{a: 1, b: 1},
@@ -69,7 +70,7 @@ describe('Test 254 UNION of two tables with different columns', function () {
 		done();
 	});
 
-	it('6. INTERSECT CORRESPONDING', function (done) {
+	test('6. INTERSECT CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 INTERSECT CORRESPONDING SELECT b, a FROM t1');
 		//    console.log(res);
 		assert.deepEqual(res, [
@@ -80,21 +81,21 @@ describe('Test 254 UNION of two tables with different columns', function () {
 		done();
 	});
 
-	it('7. INTERSECT non CORRESPONDING', function (done) {
+	test('7. INTERSECT non CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 INTERSECT SELECT b, a FROM t1');
 		//    console.log(res);
 		assert.deepEqual(res, [{a: 1, b: 1}]);
 		done();
 	});
 
-	it('8. EXCEPT CORRESPONDING', function (done) {
+	test('8. EXCEPT CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 EXCEPT CORRESPONDING SELECT b, a FROM t1');
 		//    console.log(res);
 		assert.deepEqual(res, []);
 		done();
 	});
 
-	it('9. EXCEPT non CORRESPONDING', function (done) {
+	test('9. EXCEPT non CORRESPONDING', function (done) {
 		var res = alasql('SELECT a, b FROM t1 EXCEPT SELECT b, a FROM t1');
 		//    console.log(res);
 		assert.deepEqual(res, [
@@ -104,7 +105,7 @@ describe('Test 254 UNION of two tables with different columns', function () {
 		done();
 	});
 
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		alasql('DROP DATABASE test254');
 		done();
 	});

@@ -1,21 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..'); // You might need to adjust the path depending on where you save the test file
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe.skip('Test 1119 - Trigger callback parameter', function () {
-	const test = '1119'; // Test file number
+	const testId = '1119'; // Test file number
 
-	before(function () {
-		alasql('CREATE DATABASE test' + test);
-		alasql('USE test' + test);
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId);
+		alasql('USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('A) BEFORE INSERT trigger callback should receive the inserted row', function () {
+	test('A) BEFORE INSERT trigger callback should receive the inserted row', function () {
 		let triggerReceivedCorrectData = false; // Flag to check if trigger got the right data
 		let receivedValue = undefined;
 
@@ -46,7 +46,7 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		delete alasql.fn.onchangeInsert;
 	});
 
-	it('B) AFTER INSERT trigger callback should receive the inserted row', function () {
+	test('B) AFTER INSERT trigger callback should receive the inserted row', function () {
 		let triggerReceivedCorrectData = false;
 		let receivedValue = undefined;
 
@@ -70,7 +70,7 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		delete alasql.fn.onchangeAfterInsert;
 	});
 
-	it('C) BEFORE UPDATE trigger callback should receive old and new row data', function () {
+	test('C) BEFORE UPDATE trigger callback should receive old and new row data', function () {
 		let triggerReceivedCorrectData = false;
 		let receivedOldValue = undefined;
 		let receivedNewValue = undefined;
@@ -99,7 +99,7 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		delete alasql.fn.onchangeUpdate;
 	});
 
-	it('D) BEFORE DELETE trigger callback should receive the row being deleted', function () {
+	test('D) BEFORE DELETE trigger callback should receive the row being deleted', function () {
 		let triggerReceivedCorrectData = false;
 		let receivedValue = undefined;
 
@@ -124,7 +124,7 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		delete alasql.fn.onchangeDelete;
 	});
 
-	it('E) INSTEAD OF INSERT trigger callback should receive the row', function () {
+	test('E) INSTEAD OF INSERT trigger callback should receive the row', function () {
 		let triggerReceivedCorrectData = false;
 		let receivedValue = undefined;
 

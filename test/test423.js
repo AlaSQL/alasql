@@ -1,24 +1,24 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 423;
+var testNum = 423;
 
-describe('Test ' + test + ' Merge', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testNum + ' Merge', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testNum + ';USE test' + testNum);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testNum);
 	});
 
-	it('2. Join tables', function (done) {
+	test('2. Join tables', function (done) {
 		var res1 = [
 			{
 				inspecteur: 'Jan',

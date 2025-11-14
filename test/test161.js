@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports !== 'object') {
+if (typeof window !== 'undefined') {
 } else {
 	// how to attach these files in browser?
 	var XLS = null;
@@ -14,7 +15,7 @@ if (typeof exports !== 'object') {
 
 if (false) {
 	describe('Test 161 - load and process Excel file', function () {
-		it('1. Load Excel file', function (done) {
+		test('1. Load Excel file', function (done) {
 			alasql(
 				"select country, population from xlsx('test161.xlsx',{sheet:'Sheet1',range:'A1:D5',headers:true}) where city like 'M%'",
 				[],
@@ -28,7 +29,7 @@ if (false) {
 			);
 		});
 
-		it('2. Create Excel file from SELECT query', function (done) {
+		test('2. Create Excel file from SELECT query', function (done) {
 			var people = [
 				{name: 'Joan Watson', age: 42},
 				{name: 'Sherlok Holmes', age: 44},

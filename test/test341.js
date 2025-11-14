@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 341 Intellectual DOT operator', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test341;USE test341');
 		done();
 	});
 
-	it.skip('2. Create tables', function (done) {
+	test.skip('2. Create tables', function (done) {
 		var res = alasql(function () {
 			/*
 
@@ -29,38 +30,38 @@ describe('Test 341 Intellectual DOT operator', function () {
 		done();
 	});
 
-	it.skip('3. SQL Standard way', function (done) {
+	test.skip('3. SQL Standard way', function (done) {
 		var res = alasql('SELECT COLUMN persons.name FROM persons');
 		assert.deepEqual(res, ['Andrey', 'Valery', 'Michael']);
 		done();
 	});
 
-	it.skip('4. JavaScript way', function (done) {
+	test.skip('4. JavaScript way', function (done) {
 		var res = alasql('SET @a = "who".length');
 		assert.deepEqual(res, [6, 6, 7]);
 		done();
 	});
 
-	it.skip('5. JavaScript way', function (done) {
+	test.skip('5. JavaScript way', function (done) {
 		var res = alasql('SELECT COLUMN name.length FROM persons');
 		assert.deepEqual(res, [6, 6, 7]);
 		done();
 	});
 
-	it.skip('5. FOREIGN KEY way', function (done) {
+	test.skip('5. FOREIGN KEY way', function (done) {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
 		assert.deepEqual(res.sort(), [100, 1, 200]);
 		done();
 	});
 
-	it.skip('6. Object reference', function (done) {
+	test.skip('6. Object reference', function (done) {
 		/** @todo Create this test */
 		//    var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0',[100]);
 		//    assert.deepEqual(res.sort(),[100,1,200]);
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test341');
 		done();

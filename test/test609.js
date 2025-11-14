@@ -1,18 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 609 - Insert into table ', function () {
-	it('values', function () {
+	test('values', function () {
 		alasql.parse('insert into abc values (1,2,3)');
 	});
 
-	it('value', function () {
+	test('value', function () {
 		alasql.parse('insert into abc value (1,2,3)');
 	});
 
-	it('(skip values)', function () {
+	test('(skip values)', function () {
 		alasql.parse('insert into abc (1,2,3)');
 	});
 });

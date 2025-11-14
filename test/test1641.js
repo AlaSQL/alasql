@@ -1,16 +1,16 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 // only run in browser
-if (typeof exports != 'object') {
+if (typeof window !== 'undefined')
 	describe('Test 1641 - indexdb should be able to run multiple statement queries', function () {
-		before(() => {
+		beforeAll(() => {
 			// delete indexeddb
 			return alasql.promise('DROP IndexedDB DATABASE IF EXISTS alatest;');
 		});
-		it('A) From single lines', function (done) {
+		test('A) From single lines', function (done) {
 			return alasql
 				.promise(
 					'CREATE INDEXEDDB DATABASE IF NOT EXISTS alatest;' +
@@ -39,4 +39,3 @@ if (typeof exports != 'object') {
 				});
 		});
 	});
-}

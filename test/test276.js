@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 276 INFORMATION_SCHEMA', function () {
-	it('1. Prepare databases', function (done) {
+	test('1. Prepare databases', function (done) {
 		alasql('CREATE DATABASE test276; USE test276');
 		alasql('CREATE TABLE one (a INT, b NVARCHAR(10))');
 		alasql('INSERT INTO one VALUES (1,"One"), (2,"Two"), (3,"Three"), (4,"Four")');
@@ -18,7 +19,7 @@ describe('Test 276 INFORMATION_SCHEMA', function () {
 		done();
 	});
 
-	it('2. INFORMATION_SCHEMA', function (done) {
+	test('2. INFORMATION_SCHEMA', function (done) {
 		assert(alasql.databases.test276.tables.view_one);
 		alasql.options.modifier = 'RECORDSET';
 		alasql(
@@ -30,7 +31,7 @@ describe('Test 276 INFORMATION_SCHEMA', function () {
 		done();
 	});
 
-	it('99. Drop databases', function (done) {
+	test('99. Drop databases', function (done) {
 		alasql.options.modifier = undefined;
 
 		alasql('DROP DATABASE test276');

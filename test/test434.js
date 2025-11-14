@@ -1,14 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 434 - joins SELECT', function () {
-	const test = '434'; // insert test file Number
+	const testId = '434'; // insert test file Number
 
-	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+	beforeAll(function () {
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 
 		alasql('CREATE TABLE aaa(firstValue, secondValue)');
 		alasql('INSERT INTO aaa VALUES(1, 2)');
@@ -16,11 +16,11 @@ describe('Test 434 - joins SELECT', function () {
 		alasql('INSERT INTO bbb VALUES(1, 2)');
 	});
 
-	after(function () {
-		alasql('drop database test' + test);
+	afterAll(function () {
+		alasql('drop database test' + testId);
 	});
 
-	it('does not throw error on join SELECT', function () {
+	test('does not throw error on join SELECT', function () {
 		var res = alasql(
 			'SELECT * FROM aaa JOIN (SELECT leftSide FROM bbb) AS bLeft ON (aaa.firstValue = bLeft.leftSide)'
 		);
