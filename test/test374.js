@@ -1,20 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var argv = require('yargs').argv || {};
-}
+// @ts-ignore
+import assert from 'assert';
+import alasql from '..';
 
-describe('374. CEILING, FLOOR, ROUND tests:', function () {
-	if (typeof exports === 'object') {
-		// to output all including skipped tests please run: mocha ./test/test374.js --forceall
-
-		var runAll;
-		if (argv.forceall) {
-			runAll = it;
-		}
-
-		var tests = function () {
-			/*
+describe('374. CEILING, FLOOR, ROUND tests:', () => {
+	const tests = function () {
+		/*
 SELECT(CEIL(17.36)) -- 18
 SELECT CEIL(-17.36) --  -17
 SELECT CEILING(12.9273) -- 13
@@ -129,40 +119,39 @@ SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
 
 */
-		}.toString();
+	}.toString();
 
-		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
+	const testLines = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
-		tests
-			.replace(/\r/g, '')
-			.trim()
-			.split('\n')
-			.forEach(function (test) {
-				test = test.trim();
-				if (test.indexOf('--') > -1) {
-					var runFn = it;
+	testLines
+		.replace(/\r/g, '')
+		.trim()
+		.split('\n')
+		.forEach(testLine => {
+			testLine = testLine.trim();
+			if (testLine.indexOf('--') > -1) {
+				var runFn = test;
 
-					if (test.indexOf('--') === 0) {
-						// skip test starting line with '--'
-						test = test.substr(2).trim();
-						runFn = runAll || it.skip;
-					}
-
-					var tt = test.split('--');
-					var sql = tt[0].trim();
-					var etalon = '' + tt[1].split(' - ')[0].trim();
-					var res = '' + alasql('VALUE OF ' + sql);
-					//console.log(tt,sql,etalon);
-
-					runFn(test, function (done) {
-						assert.equal(etalon, res);
-						done();
-					});
-				} else {
-					if (test.trim().length > 0) {
-						alasql(test);
-					}
+				if (testLine.indexOf('--') === 0) {
+					// skip test starting line with '--'
+					testLine = testLine.substr(2).trim();
+					runFn = test.skip;
 				}
-			});
-	}
+
+				var tt = testLine.split('--');
+				var sql = tt[0].trim();
+				var etalon = '' + tt[1].split(' - ')[0].trim();
+				var res = '' + alasql('VALUE OF ' + sql);
+				//console.log(tt,sql,etalon);
+
+				runFn(testLine, function (done) {
+					assert.equal(etalon, res);
+					done();
+				});
+			} else {
+				if (testLine.trim().length > 0) {
+					alasql(testLine);
+				}
+			}
+		});
 });

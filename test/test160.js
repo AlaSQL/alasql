@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports == 'object') {
+//if(typeof window !== 'undefined') {
 
 if (false) {
 	var DOMStorage = require('dom-storage');
@@ -15,7 +16,7 @@ if (false) {
 	});
 
 	describe('Test 160 - load text file, csv, tab, and other functions', function () {
-		it('1. Text file', function (done) {
+		test('1. Text file', function (done) {
 			alasql(
 				"select column * from txt('test160.txt') where [0] like 'M%' order by [0]",
 				[],
@@ -26,7 +27,7 @@ if (false) {
 			);
 		});
 
-		it('2. TAB file without headers', function (done) {
+		test('2. TAB file without headers', function (done) {
 			alasql(
 				"select column [1] from tab('test160.tab') where [0] like 'M%' order by [1]",
 				[],
@@ -37,7 +38,7 @@ if (false) {
 			);
 		});
 
-		it('3. TAB file with headers', function (done) {
+		test('3. TAB file with headers', function (done) {
 			alasql(
 				"select column population from tab('test160h.tab',{headers:true}) where city like 'M%' order by population",
 				[],
@@ -48,7 +49,7 @@ if (false) {
 			);
 		});
 
-		it('4. CSV file without headers', function (done) {
+		test('4. CSV file without headers', function (done) {
 			alasql(
 				"select column [1] from csv('test160.csv') where [0] like 'M%' order by [1]",
 				[],
@@ -59,7 +60,7 @@ if (false) {
 			);
 		});
 
-		it('5. CSV file with headers', function (done) {
+		test('5. CSV file with headers', function (done) {
 			alasql(
 				"select column population from csv('test160h.csv',{headers:true}) where city like 'M%' order by population",
 				[],
@@ -70,7 +71,7 @@ if (false) {
 			);
 		});
 
-		it('6. CSV file with headers with semicolon', function (done) {
+		test('6. CSV file with headers with semicolon', function (done) {
 			alasql(
 				"select column population from csv('test160hs.csv',{headers:true, separator:';'}) where city like 'M%' order by population",
 				[],
@@ -81,7 +82,7 @@ if (false) {
 			);
 		});
 
-		it('4. CSV file without extension', function (done) {
+		test('4. CSV file without extension', function (done) {
 			alasql(
 				"select column [1] from csv('test160') where [0] like 'M%' order by [1]",
 				[],

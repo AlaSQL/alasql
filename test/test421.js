@@ -1,36 +1,36 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 // Test for issue #379
 
 describe('Test 421 Test for JOINSTAR', function () {
-	var test = 421;
+	var testId = 421;
 
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql.options.joinstar = 'overwrite';
-		alasql('DROP DATABASE test' + test);
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. Create tables', function (done) {
+	test('1. Create tables', function (done) {
 		alasql('CREATE TABLE one (a INT); INSERT INTO one VALUES (1),(2)');
 		alasql('CREATE TABLE two (a INT); INSERT INTO two VALUES (10),(20)');
 		done();
 	});
 
-	it('2. OVERWRITE JOINSTAR', function (done) {
+	test('2. OVERWRITE JOINSTAR', function (done) {
 		alasql.options.joinstar = 'overwrite';
 		var res = alasql('SELECT * FROM one,two');
 		assert.deepEqual(res, [{a: 10}, {a: 20}, {a: 10}, {a: 20}]);
 		done();
 	});
 
-	it('3. JSON JOINSTAR', function (done) {
+	test('3. JSON JOINSTAR', function (done) {
 		alasql.options.joinstar = 'json';
 		alasql.databases.test421.dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one,two');
@@ -44,7 +44,7 @@ describe('Test 421 Test for JOINSTAR', function () {
 		done();
 	});
 
-	it('4. UNDESCORE JOINSTAR', function (done) {
+	test('4. UNDESCORE JOINSTAR', function (done) {
 		alasql.options.joinstar = 'underscore';
 		alasql.databases.test421.dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one,two');

@@ -1,14 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 
 describe('Test 176 - CSV and TSV', function () {
-	it('1. TAB', function (done) {
+	test('1. TAB', function (done) {
 		alasql(
 			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:false})',
 			[],
@@ -19,7 +20,7 @@ describe('Test 176 - CSV and TSV', function () {
 		);
 	});
 
-	it('2. TAB+headers', function (done) {
+	test('2. TAB+headers', function (done) {
 		alasql(
 			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:true})',
 			[],
@@ -31,7 +32,7 @@ describe('Test 176 - CSV and TSV', function () {
 		);
 	});
 
-	it('3. TAB+predfined headers', function (done) {
+	test('3. TAB+predfined headers', function (done) {
 		alasql(
 			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:@["country","city"]})',
 			[],
@@ -43,7 +44,7 @@ describe('Test 176 - CSV and TSV', function () {
 		);
 	});
 
-	it('4. CSV on TAB', function (done) {
+	test('4. CSV on TAB', function (done) {
 		alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test176a.tab",{separator:"\t",headers:true})',
 			[],
@@ -54,7 +55,7 @@ describe('Test 176 - CSV and TSV', function () {
 		);
 	});
 
-	it('5. CSV with single quote', function (done) {
+	test('5. CSV with single quote', function (done) {
 		alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test176b.csv",{separator:";",headers:true})',
 			[],
@@ -65,7 +66,7 @@ describe('Test 176 - CSV and TSV', function () {
 		);
 	});
 
-	it('6. CSV with single quote', function (done) {
+	test('6. CSV with single quote', function (done) {
 		alasql(
 			'SELECT * FROM CSV("' +
 				__dirname +
@@ -78,7 +79,7 @@ describe('Test 176 - CSV and TSV', function () {
 		);
 	});
 
-	it('7. Sync CSV', function (done) {
+	test('7. Sync CSV', function (done) {
 		var res = alasql(
 			'SELECT * FROM CSV("' +
 				__dirname +
@@ -91,7 +92,7 @@ describe('Test 176 - CSV and TSV', function () {
 		);
 	});
 
-	it('8. CSV with commas and strings', function (done) {
+	test('8. CSV with commas and strings', function (done) {
 		var res = alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test176c.csv",{headers:true, quote:"\'"})'
 		);
@@ -100,7 +101,7 @@ describe('Test 176 - CSV and TSV', function () {
 		done();
 	});
 
-	it('9. CSV with commas and strings and e-mails', function (done) {
+	test('9. CSV with commas and strings and e-mails', function (done) {
 		alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test176d.csv",{headers:true})',
 			[],

@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 58 - Indices', function () {
-	/*	it('SELECT - CREATE INDEX "', function(done){
+	/*	test('SELECT - CREATE INDEX "', function(done){
 		var test1 = [{a:1},{a:2},{a:3},{a:4}];
 		alasql("DROP TABLE IF EXISTS test1");
 		alasql("CREATE TABLE test1 (a INT)");
@@ -13,7 +13,7 @@ describe('Test 58 - Indices', function () {
 		done();
 	});
 
-	it('SELECT - CREATE INDEX "', function(done){
+	test('SELECT - CREATE INDEX "', function(done){
 		var test2 = [{a:1,b:1},{a:2,b:1},{a:3,b:3},{a:4,b:4}];
 		alasql("DROP TABLE IF EXISTS test2");
 		alasql("CREATE TABLE test2 (a INT, b INT)");
@@ -25,7 +25,7 @@ describe('Test 58 - Indices', function () {
 		alasql("INSERT INTO test2 VALUES (1,1), (2,2), (3,3)");
 		done();
 	});
-	it('SELECT - DROP INDEX "', function(done){
+	test('SELECT - DROP INDEX "', function(done){
 		alasql("DROP INDEX test1a")
 		alasql("DROP INDEX test1ab")
 		done();

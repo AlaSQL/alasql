@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 /*
 Inputs for emprovements:
@@ -26,14 +27,14 @@ Expand the function with an ESCAPE parameter
 */
 
 describe('Test 370 REGEXP_LIKE', function () {
-	it('1. Test REGEXP_LIKE', function (done) {
+	test('1. Test REGEXP_LIKE', function (done) {
 		assert(alasql('= REGEXP_LIKE("abcdef","a.*")'));
 		assert(!alasql('= REGEXP_LIKE("abcdef","^d")'));
 		assert(alasql('= REGEXP_LIKE("abcdef","^a.*d")'));
 		done();
 	});
 
-	it('2. Test REGEXP', function (done) {
+	test('2. Test REGEXP', function (done) {
 		//console.log(alasql('= "abcdef" REGEXP "a.*"'));
 		assert(alasql('= "abcdef" REGEXP "a.*"'));
 		assert(alasql('= "abcdef" REGEXP "[aq]"'));

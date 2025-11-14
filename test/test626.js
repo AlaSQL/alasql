@@ -1,22 +1,23 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 626 join on CSV file', function () {
-	var test = 626;
+	var testId = 626;
 
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. can select with a join on a CSV file', function (done) {
+	test('1. can select with a join on a CSV file', function (done) {
 		alasql(
 			'SELECT EN.n, EN.en, FR.fr from ? EN LEFT JOIN CSV("' +
 				__dirname +

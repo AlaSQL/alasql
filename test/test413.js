@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
@@ -59,12 +59,12 @@ var data = [
 ];
 
 describe('Test 413 CONCAT_WS (issue #429)', function () {
-	it('2. CREATE DATABASE', function (done) {
+	test('2. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test413;USE test413');
 		done();
 	});
 
-	it('3. Test CONCAT_WS', function (done) {
+	test('3. Test CONCAT_WS', function (done) {
 		var res = alasql(
 			' SELECT CONCAT_WS(" ", NULL, "prepended string", `Ticket-Kategorie`,`Ticket-Typ`, NULL) as series_name FROM ?',
 			[data]
@@ -84,7 +84,7 @@ describe('Test 413 CONCAT_WS (issue #429)', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test413');
 		done();
 	});

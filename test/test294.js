@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 294 TestDatabase', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test294;USE test294');
 		//    alasql.options.casesensitive = false;
 		done();
@@ -15,7 +16,7 @@ describe('Test 294 TestDatabase', function () {
 	// Taken from here
 	// http://www.databasejournal.com/scripts/practice-sql.html
 
-	it('2. Create tables and insert some values', function (done) {
+	test('2. Create tables and insert some values', function (done) {
 		alasql(`
       create table zipcodes (
         zip integer(5) primary key,
@@ -113,13 +114,13 @@ describe('Test 294 TestDatabase', function () {
 	  `);
 		done();
 	});
-	it('3. Check quantities', function (done) {
+	test('3. Check quantities', function (done) {
 		var res = alasql('SELECT VALUE COUNT(*) FROM odetails');
 		assert.deepEqual(res, 10);
 		done();
 	});
 
-	it('4. DROP DATABASE', function (done) {
+	test('4. DROP DATABASE', function (done) {
 		//    alasql.options.casesensitive = true;
 		alasql('DROP DATABASE test294');
 		done();

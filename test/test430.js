@@ -1,32 +1,32 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 // Test for issue #566
-var test = 430;
+var testNum = 430;
 
-describe.skip('Test ' + test + ' UNIQUE keyword in localStorage', function () {
-	before(function () {
+describe.skip('Test ' + testNum + ' UNIQUE keyword in localStorage', function () {
+	beforeAll(function () {
 		alasql(
 			'CREATE localStorage DATABASE test' +
-				test +
+				testNum +
 				'g1; ATTACH localStorage DATABASE test' +
-				test +
+				testNum +
 				'g1 as test' +
-				test +
+				testNum +
 				'g1'
 		);
-		alasql('CREATE DATABASE test' + test + 'g2');
+		alasql('CREATE DATABASE test' + testNum + 'g2');
 	});
 
-	after(function () {
-		alasql('DETACH DATABASE test' + test + 'g1');
-		alasql('DROP DATABASE test' + test + 'g2');
+	afterAll(function () {
+		alasql('DETACH DATABASE test' + testNum + 'g1');
+		alasql('DROP DATABASE test' + testNum + 'g2');
 	});
 
-	it.skip('1. Tests unique keys in localstorage', function (done) {
-		alasql('USE test' + test + 'g1');
+	test.skip('1. Tests unique keys in localstorage', function (done) {
+		alasql('USE test' + testNum + 'g1');
 		alasql('CREATE TABLE Test (a STRING, UNIQUE(a))');
 		alasql('INSERT INTO Test VALUES (?)', {a: 1});
 		assert.throws(function () {
@@ -35,8 +35,8 @@ describe.skip('Test ' + test + ' UNIQUE keyword in localStorage', function () {
 		done();
 	});
 
-	it('2. Tests unique keys outside of localstorage', function (done) {
-		alasql('USE test' + test + 'g2');
+	test('2. Tests unique keys outside of localstorage', function (done) {
+		alasql('USE test' + testNum + 'g2');
 		alasql('CREATE TABLE Test (a STRING, UNIQUE(a))');
 		alasql('INSERT INTO Test VALUES (?)', {a: 1});
 		assert.throws(function () {

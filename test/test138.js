@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 138 NoSQL', function () {
-	it('1. deepCopy', function (done) {
+	test('1. deepCopy', function (done) {
 		alasql('CREATE DATABASE test138; use test138');
 
 		//		var res = alasql('SELECT COLUMN deepCopy(a) FROM @[{a:[1,2]}, {a:[3,4]}]');
@@ -49,7 +50,7 @@ describe('Test 138 NoSQL', function () {
 		done();
 	});
 
-	it('2. Get JSON property operator', function (done) {
+	test('2. Get JSON property operator', function (done) {
 		alasql('CREATE TABLE one');
 
 		alasql('INSERT INTO one VALUES @{a:2}, @(?)', [{a: 4}]);
@@ -61,7 +62,7 @@ describe('Test 138 NoSQL', function () {
 	});
 
 	if (false) {
-		it('3. GROUP functions', function (done) {
+		test('3. GROUP functions', function (done) {
 			alasql('CREATE TABLE two (a INT, b INT)');
 			alasql('INSERT INTO two VALUES (1,1), (1,2), (1,3), (2,1), (2,2)');
 			alasql('SELECT a, SUM(b) AS b1, COUNT(*) AS c1, GROUP(b1/c1) AS avg FROM two GROUP BY a');
@@ -105,7 +106,7 @@ describe('Test 138 NoSQL', function () {
 			done();
 		});
 
-		it('4. Dimension', function (done) {
+		test('4. Dimension', function (done) {
 			alasql('CREATE TABLE expense (deptid string, amt MONEY)');
 			alasql('CREATE TABLE dept (deptid string, parentid string, level int)');
 			alasql('PREPARE DIM dept');
@@ -117,7 +118,7 @@ describe('Test 138 NoSQL', function () {
 		});
 	}
 
-	it('4. CREATE TABLE for JSON objects', function (done) {
+	test('4. CREATE TABLE for JSON objects', function (done) {
 		alasql('CREATE TABLE three (a JSON); INSERT INTO three VALUES (@{v:10})');
 		var res = alasql('SELECT VALUE a FROM three');
 		assert.deepEqual(res, {v: 10});
@@ -129,7 +130,7 @@ describe('Test 138 NoSQL', function () {
 		done();
 	});
 
-	it('5. Get JSON param values in sub-arrays', function (done) {
+	test('5. Get JSON param values in sub-arrays', function (done) {
 		alasql('DROP DATABASE test138');
 		done();
 	});

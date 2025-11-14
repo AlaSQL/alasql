@@ -1,21 +1,22 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 811 - String / Number objects', function () {
-	before(function () {
+	beforeAll(function () {
 		alasql('CREATE DATABASE test811;USE test811');
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test811');
 	});
 
-	it('1. MEDIAN()', function (done) {
+	test('1. MEDIAN()', function (done) {
 		var t1 = [
 			{value: new Number(5)},
 			{value: new Number(6)},
@@ -31,7 +32,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('2. DISTINCT()', function (done) {
+	test('2. DISTINCT()', function (done) {
 		var t1 = [
 			{name: new String('A')},
 			{name: new String('B')},
@@ -45,7 +46,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('3. Inner Select', function (done) {
+	test('3. Inner Select', function (done) {
 		var t1 = [{Email: new String('A')}, {Email: new String('B')}];
 		var t2 = [
 			{Email: new String('A'), Study: new String('s1')},
@@ -80,7 +81,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('4. Join Using', function (done) {
+	test('4. Join Using', function (done) {
 		var t1 = [
 			{Email: 'A', ID: new String('s1')},
 			{Email: 'B', ID: new String('s2')},
@@ -101,7 +102,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('5a. Where In', function (done) {
+	test('5a. Where In', function (done) {
 		var t1 = [{ID: new String('s1')}, {ID: new String('s2')}, {ID: new String('s3')}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")', [t1]);
@@ -113,7 +114,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('5b. Where In (literals)', function (done) {
+	test('5b. Where In (literals)', function (done) {
 		var t1 = [{ID: 's1'}, {ID: 's2'}, {ID: 's3'}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")', [t1]);
@@ -125,7 +126,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('5c. Where NOT In', function (done) {
+	test('5c. Where NOT In', function (done) {
 		var t1 = [{ID: new String('s1')}, {ID: new String('s2')}, {ID: new String('s3')}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID NOT IN("s1", "s3")', [t1]);
@@ -136,7 +137,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('5d. Where NOT In (literals)', function (done) {
+	test('5d. Where NOT In (literals)', function (done) {
 		var t1 = [{ID: 's1'}, {ID: 's2'}, {ID: 's3'}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID NOT IN("s1", "s3")', [t1]);
@@ -147,7 +148,7 @@ describe('Test 811 - String / Number objects', function () {
 		done();
 	});
 
-	it('6. ORDER BY two columns', function (done) {
+	test('6. ORDER BY two columns', function (done) {
 		var t4 = [
 			{Email: new String('A'), ID: new String('s1')},
 			{Email: new String('B'), ID: new String('s2')},

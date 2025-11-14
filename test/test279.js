@@ -1,15 +1,16 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	// Test only for browsers
 
 	describe('Test 279 IE9 tests', function () {
-		it('1. Detect if it is IE9', function (done) {
+		test('1. Detect if it is IE9', function (done) {
 			var data = [
 				{city: 'London', population: 5000000},
 				{city: 'Moscow', population: 12000000},

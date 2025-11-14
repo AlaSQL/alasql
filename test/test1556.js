@@ -1,18 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 // only run in browser
-if (typeof exports != 'object') {
+if (typeof window !== 'undefined') {
 	describe('Test 1556 - indexeddb should return rowKey-value when no keyPath(columns) is present', () => {
 		const sql = alasql.promise;
-		before(() => {
+		beforeAll(() => {
 			// delete indexeddb
 			return sql('DROP IndexedDB DATABASE IF EXISTS alaindexed;');
 		});
 
-		it('should respond rowkey-value as the response', async () => {
+		test('should respond rowkey-value as the response', async () => {
 			await sql(
 				'CREATE INDEXEDDB DATABASE IF NOT EXISTS alaindexed;' +
 					'ATTACH INDEXEDDB DATABASE alaindexed;' +

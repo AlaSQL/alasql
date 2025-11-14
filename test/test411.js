@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #502
@@ -231,12 +231,12 @@ var data = [
 ];
 
 describe('Test 411 Export to Excel', function () {
-	it('2. CREATE DATABASE', function (done) {
+	test('2. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test411;USE test411');
 		done();
 	});
 
-	it('2. ANALYZE object', function (done) {
+	test('2. ANALYZE object', function (done) {
 		var res = alasql(
 			'SEARCH / AS @a \
         UNION ALL( \
@@ -268,7 +268,7 @@ describe('Test 411 Export to Excel', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test411');
 		done();
 	});

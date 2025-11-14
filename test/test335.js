@@ -1,22 +1,23 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 //
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
 describe('Test 335 WITH RECURSIVE CTE', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test335;USE test335');
 
 		done();
 	});
 
-	it.skip('2. Create table', function (done) {
+	test.skip('2. Create table', function (done) {
 		var res = alasql(function () {
 			/*
       -- Create an Employee table.
@@ -47,7 +48,7 @@ describe('Test 335 WITH RECURSIVE CTE', function () {
 		done();
 	});
 
-	it.skip('3. WITH SELECT', function (done) {
+	test.skip('3. WITH SELECT', function (done) {
 		var res = alasql(function () {
 			/*
 
@@ -74,7 +75,7 @@ ORDER BY ManagerID;
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test335');
 		done();
 	});

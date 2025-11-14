@@ -1,9 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	//	var DOMStorage = require("dom-storage");
-	//	global.localStorage = new DOMStorage("./test390.json", { strict: false, ws: '' });
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
  This sample beased on this article:
@@ -11,19 +9,19 @@ if (typeof exports === 'object') {
 */
 
 describe('Test 393 Triggers', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test393;USE test393');
 		done();
 	});
 
-	it('2. BEFORE INSERT', function (done) {
-		var test = 0;
+	test('2. BEFORE INSERT', function (done) {
+		var testCount = 0;
 		alasql.fn.onchange1 = function () {
-			test++;
+			testCount++;
 		};
 		alasql.fn.onchange2 = function (r) {
 			assert(r.a == 123);
-			test++;
+			testCount++;
 		};
 		alasql('CREATE TABLE one (a INT)');
 
@@ -33,12 +31,12 @@ describe('Test 393 Triggers', function () {
 		alasql('INSERT INTO one VALUES (123)'); // This will fire onchange()
 
 		//    setTimeout(function(){
-		assert(test == 2);
+		assert(testCount == 2);
 		done();
 		//    },10);
 	});
 
-	it('3. Prevent BEFORE INSERT', function (done) {
+	test('3. Prevent BEFORE INSERT', function (done) {
 		alasql.fn.onchange3 = function (r) {
 			if (r.a == 276) return false;
 		};
@@ -51,7 +49,7 @@ describe('Test 393 Triggers', function () {
 		done();
 	});
 
-	it('4. Prevent AFTER INSERT', function (done) {
+	test('4. Prevent AFTER INSERT', function (done) {
 		alasql.fn.onchange4 = function (r) {
 			assert(r.a == 983);
 			assert(alasql.databases.test393.tables.two.data.length == 2);
@@ -62,11 +60,11 @@ describe('Test 393 Triggers', function () {
 		done();
 	});
 
-	it('5. INSTEAD OF INSERT', function (done) {
-		var test = 0;
+	test('5. INSTEAD OF INSERT', function (done) {
+		var testCount = 0;
 		alasql.fn.onchange5 = function (r) {
 			assert(r.a == 222);
-			test++;
+			testCount++;
 		};
 		alasql('CREATE TABLE three (a INT)');
 		alasql('CREATE TRIGGER tr5 INSTEAD OF INSERT ON three onchange5');
@@ -74,24 +72,24 @@ describe('Test 393 Triggers', function () {
 
 		var res = alasql('COLUMN OF SELECT * FROM three');
 		assert.deepEqual(res, []);
-		assert(test == 1);
+		assert(testCount == 1);
 		done();
 	});
 
-	it('6. BEFORE AND AFTER DELETE', function (done) {
-		var test = 0;
+	test('6. BEFORE AND AFTER DELETE', function (done) {
+		var testCount = 0;
 		alasql.fn.onchange61 = function (r) {
-			test++;
+			testCount++;
 			var res = alasql('COLUMN OF SELECT * FROM four');
 			assert.deepEqual(res, [1, 2, 3, 4, 5]);
 		};
 		alasql.fn.onchange62 = function () {
-			test++;
+			testCount++;
 			var res = alasql('COLUMN OF SELECT * FROM four');
 			assert.deepEqual(res, [2, 3, 4, 5]);
 		};
 		alasql.fn.onchange63 = function () {
-			test++;
+			testCount++;
 			var res = alasql('COLUMN OF SELECT * FROM four');
 			assert.deepEqual(res, [2, 3, 4, 5]);
 		};
@@ -102,21 +100,21 @@ describe('Test 393 Triggers', function () {
 		alasql('INSERT INTO four VALUES (1),(2),(3),(4),(5)');
 		alasql('DELETE FROM four WHERE a = 1');
 
-		assert(test == 3);
+		assert(testCount == 3);
 		done();
 	});
 
-	it('7. BEFORE AND AFTER UPDATE', function (done) {
-		var test = 0;
+	test('7. BEFORE AND AFTER UPDATE', function (done) {
+		var testCount = 0;
 		alasql.fn.onchange7 = function (p, r) {
 			assert(p.a == 2);
 			assert(r.a == 7);
-			test++;
+			testCount++;
 		};
 		alasql.fn.onchange7after = function (p, r) {
 			assert(p.a == 2);
 			assert(r.a == 7);
-			test++;
+			testCount++;
 		};
 		alasql('CREATE TRIGGER tr7 BEFORE UPDATE ON four onchange7');
 		alasql('CREATE TRIGGER tr7after BEFORE UPDATE ON four onchange7after');
@@ -124,16 +122,16 @@ describe('Test 393 Triggers', function () {
 
 		var res = alasql('COLUMN OF SELECT * FROM four');
 		assert.deepEqual(res, [7, 3, 4, 5]);
-		assert(test == 2);
+		assert(testCount == 2);
 		done();
 	});
 
-	it('8. INSTEAD OF UPDATE', function (done) {
-		var test = 0;
+	test('8. INSTEAD OF UPDATE', function (done) {
+		var testCount = 0;
 		alasql.fn.onchange8 = function (p, r) {
 			assert(p.a == 2);
 			assert(r.a == 7);
-			test++;
+			testCount++;
 		};
 		alasql('CREATE TABLE five (a INT)');
 		alasql('CREATE TRIGGER tr8 INSTEAD OF UPDATE ON five onchange8');
@@ -142,11 +140,11 @@ describe('Test 393 Triggers', function () {
 
 		var res = alasql('COLUMN OF SELECT * FROM five');
 		assert.deepEqual(res, [1, 2, 3, 4, 5]);
-		assert(test == 1);
+		assert(testCount == 1);
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test393');
 		done();
 	});

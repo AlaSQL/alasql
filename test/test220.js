@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 220 WITH clause', function () {
-	it('1. One WITH', function (done) {
+	test('1. One WITH', function (done) {
 		var sql =
 			'WITH one AS (SELECT * FROM ?), \
     		two AS (SELECT * FROM ?) \

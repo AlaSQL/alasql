@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 51 - Foreign Keys)', function () {
 	if (false) {
 		describe('FOREIGN KEYS with one component and PRIMARY KEY', function () {
-			it('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+			test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -24,14 +24,14 @@ describe('Test 51 - Foreign Keys)', function () {
 				done();
 			});
 
-			it('Insert wrong data without references', function (done) {
+			test('Insert wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('INSERT INTO persons VALUES ("Angela", "Berlin")');
 				});
 				done();
 			});
 
-			it('UPDATE wrong data without references', function (done) {
+			test('UPDATE wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
 				});
@@ -40,7 +40,7 @@ describe('Test 51 - Foreign Keys)', function () {
 		});
 
 		describe('FOREIGN KEYS with one component without PRIMARY KEY', function () {
-			it('The same, but without PRIMARY KEY', function (done) {
+			test('The same, but without PRIMARY KEY', function (done) {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -59,14 +59,14 @@ describe('Test 51 - Foreign Keys)', function () {
 				done();
 			});
 
-			it('Insert wrong data without references', function (done) {
+			test('Insert wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('INSERT INTO persons VALUES ("Angela", "Berlin")');
 				});
 				done();
 			});
 
-			it('UPDATE wrong data without references', function (done) {
+			test('UPDATE wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
 				});
@@ -75,7 +75,7 @@ describe('Test 51 - Foreign Keys)', function () {
 		});
 
 		describe('FOREIGN KEYS with two components and PRIMARY KEY', function () {
-			it('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+			test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -94,7 +94,7 @@ describe('Test 51 - Foreign Keys)', function () {
 				done();
 			});
 
-			it('Insert wrong data without references', function (done) {
+			test('Insert wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('INSERT INTO persons VALUES ("Angela", "Germany","Berlin")');
 				});
@@ -111,7 +111,7 @@ describe('Test 51 - Foreign Keys)', function () {
 				done();
 			});
 
-			it('UPDATE wrong data without references', function (done) {
+			test('UPDATE wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
 				});
@@ -124,7 +124,7 @@ describe('Test 51 - Foreign Keys)', function () {
 		});
 
 		describe('FOREIGN KEYS with two components and without PRIMARY KEY', function () {
-			it('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+			test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -143,7 +143,7 @@ describe('Test 51 - Foreign Keys)', function () {
 				done();
 			});
 
-			it('Insert wrong data without references', function (done) {
+			test('Insert wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('INSERT INTO persons VALUES ("Angela", "Germany","Berlin")');
 				});
@@ -160,7 +160,7 @@ describe('Test 51 - Foreign Keys)', function () {
 				done();
 			});
 
-			it('UPDATE wrong data without references', function (done) {
+			test('UPDATE wrong data without references', function (done) {
 				assert.throws(function () {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
 				});

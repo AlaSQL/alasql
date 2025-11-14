@@ -1,15 +1,16 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
 describe('Test 236 MERGE', function () {
-	it('1. Prepare database and tables', function (done) {
+	test('1. Prepare database and tables', function (done) {
 		alasql('CREATE DATABASE test236; USE test236;');
 
 		var sql = `
@@ -45,7 +46,7 @@ describe('Test 236 MERGE', function () {
 		done();
 	});
 
-	it('2. Merge', function (done) {
+	test('2. Merge', function (done) {
 		var sql = function () {
 			/*
 
@@ -69,7 +70,7 @@ describe('Test 236 MERGE', function () {
 		done();
 	});
 
-	it('99. DROP', function (done) {
+	test('99. DROP', function (done) {
 		alasql('DROP DATABASE test236');
 		done();
 	});

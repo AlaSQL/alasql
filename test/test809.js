@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 var dbFile = __dirname + '/test_db_fs.json';
 
@@ -94,7 +95,7 @@ var testDataDescFirstAscLast = [
 ];
 
 describe('Test 809 - ORDER BY', function () {
-	it('without NULLS clause', function (done) {
+	test('without NULLS clause', function (done) {
 		var res;
 		res = alasql('SELECT a, b FROM ? ORDER BY a ASC, b ASC', [testData]);
 		assert.deepEqual(res, testDataAscAsc);
@@ -102,7 +103,7 @@ describe('Test 809 - ORDER BY', function () {
 		assert.deepEqual(res, testDataDescDesc);
 		done();
 	});
-	it('with NULLS CLAUSE', function (done) {
+	test('with NULLS CLAUSE', function (done) {
 		var res;
 		res = alasql('SELECT a, b FROM ? ORDER BY a ASC NULLS FIRST, b ASC NULLS FIRST', [testData]);
 		assert.deepEqual(res, testDataAscFirstAscFirst);

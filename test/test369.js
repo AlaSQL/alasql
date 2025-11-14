@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 /*
 Inputs for emprovements:
@@ -74,7 +75,7 @@ describe('Test 369 LIKE', function () {
 		{a: 'ab56ef'},
 	];
 
-	it('1. Test %', function (done) {
+	test('1. Test %', function (done) {
 		var res = alasql('SELECT * FROM ? WHERE a LIKE "abcdef"', [data]);
 		assert.deepEqual(res, [{a: 'abcdef'}]);
 
@@ -86,7 +87,7 @@ describe('Test 369 LIKE', function () {
 		done();
 	});
 
-	it('2. Test alasql.utils.like function', function (done) {
+	test('2. Test alasql.utils.like function', function (done) {
 		assert(alasql.utils.like('%abc%', 'abcd'));
 		assert(!alasql.utils.like('%abc%', 'ab'));
 		assert(alasql.utils.like('%[ab][bc]%', 'abcdef'));

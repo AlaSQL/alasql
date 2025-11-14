@@ -3,13 +3,13 @@
 // Test for select
 //
 
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 129 - * /STAR / MULTIPLICATION', function () {
-	it('UPDATE WHERE with multiplication in assignment and conditions', function (done) {
+	test('UPDATE WHERE with multiplication in assignment and conditions', function (done) {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');

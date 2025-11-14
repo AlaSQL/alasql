@@ -1,14 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 
 describe('Test 156 - match()', function () {
-	it('1. Multiple lines async', function (done) {
+	test('1. Multiple lines async', function (done) {
 		alasql(
 			'CREATE DATABASE test156; USE test156;' +
 				'CREATE TABLE one (a string);' +
@@ -26,7 +27,7 @@ describe('Test 156 - match()', function () {
 
 	//https://docs.oracle.com/cd/B19306_01/appdev.102/b14251/adfns_regexp.htm
 	if (false) {
-		it('2. RegExp like Oracle functions', function (done) {
+		test('2. RegExp like Oracle functions', function (done) {
 			alasql('SELECT * FROM one WHERE REGEXP_LIKE(a,"Mos")');
 			assert.deepEqual(res, [{a: 'Moscow'}]);
 
@@ -44,7 +45,7 @@ describe('Test 156 - match()', function () {
 			done();
 		});
 
-		it('3. Criterias for WHERE like MongoDB', function (done) {
+		test('3. Criterias for WHERE like MongoDB', function (done) {
 			alasql('SELECT * FROM one WHERE CRITERIA(@{a:"Moscow"})');
 			assert.deepEqual(res, [{a: 'Moscow'}]);
 
@@ -59,7 +60,7 @@ describe('Test 156 - match()', function () {
 		});
 	}
 
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		alasql('drop database test156');
 		done();
 	});

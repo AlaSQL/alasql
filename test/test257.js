@@ -1,15 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports != 'undefined') {
+if (typeof window === 'undefined') {
 	describe('Test 257 INTO XLS()', function () {
-		it('1. INTO XLS()', function (done) {
-			this.timeout(9000);
-
+		test('1. INTO XLS()', function (done) {
 			var data = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
@@ -104,7 +103,7 @@ if (typeof exports != 'undefined') {
 			done();
 		});
 
-		it('2. jsFiddle example', function (done) {
+		test('2. jsFiddle example', function (done) {
 			var items = [
 				{
 					name: 'John Smith',
@@ -218,7 +217,7 @@ if (typeof exports != 'undefined') {
 		});
 
 		if (false) {
-			it('3. Areas example', function (done) {
+			test('3. Areas example', function (done) {
 				var data = [
 					{imemid: 123, itemname: 'Samsung TV', price: 123.0, qty: 2},
 					{imemid: 567, itemname: 'LG TV', price: 233.0, qty: 4},

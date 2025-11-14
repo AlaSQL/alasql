@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 17', function () {
-	it('UNION ', function (done) {
+	test('UNION ', function (done) {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test (a int)');
 		db.exec('INSERT INTO test VALUES (1)');
@@ -21,7 +21,7 @@ describe('Test 17', function () {
 		done();
 	});
 
-	it('UNION ALL', function (done) {
+	test('UNION ALL', function (done) {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test (a int)');
 		db.exec('INSERT INTO test VALUES (1)');

@@ -1,10 +1,10 @@
-﻿if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+﻿// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('CREATE TABLE', function () {
-	it('Create table with same name twice', function (done) {
+	test('Create table with same name twice', function (done) {
 		var db = new alasql.Database();
 		db.exec('CREATE TABLE test (a int, b int)');
 		assert.throws(function () {
@@ -15,7 +15,7 @@ describe('CREATE TABLE', function () {
 });
 
 describe('CREATE TABLE IF EXISTS', function () {
-	it('Try to create table if it already exists', function (done) {
+	test('Try to create table if it already exists', function (done) {
 		var db = new alasql.Database();
 		db.exec('CREATE TABLE test (a int, b int)');
 		db.exec('CREATE TABLE IF NOT EXISTS test (c int)');
@@ -23,7 +23,7 @@ describe('CREATE TABLE IF EXISTS', function () {
 		done();
 	});
 
-	it('Create table if it does not exist', function (done) {
+	test('Create table if it does not exist', function (done) {
 		var db = new alasql.Database();
 		db.exec('CREATE TABLE IF NOT EXISTS test (a int, c int)');
 		assert.equal(true, !!db.tables.test);

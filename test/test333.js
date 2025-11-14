@@ -1,42 +1,35 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var md5 = require('blueimp-md5').md5;
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 // By Ben Nadel on June 14, 2006
 //Why NULL Values Should Not Be Used in a Database Unless Required
 //http://www.bennadel.com/blog/85-why-null-values-should-not-be-used-in-a-database-unless-required.htm
 //
 describe('Test 333 Check for NULLs', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test333;USE test333');
 
 		done();
 	});
 
-	it('2. Create table', function (done) {
-		var res = alasql(function () {
-			/*
+	test('2. Create table', function (done) {
+		var res = alasql(`
       CREATE TABLE test (name STRING);
-      INSERT INTO test VALUES ("Ben"),("Jim"),("Simon"),(NULL),(NULL),("Ye"),(""),(""),("Dave"),("");
-    */
-		});
+      INSERT INTO test VALUES ("Ben"),("Jim"),("Simon"),(NULL),(NULL),("Ye"),(""),(""),("Dave"),("")
+    `);
 		assert.deepEqual(res.length, 2);
 		done();
 	});
 
-	it('3. SELECT for NULLs', function (done) {
+	test('3. SELECT for NULLs', function (done) {
 		alasql.options.modifier = 'RECORDSET';
 
 		var res = alasql('SELECT COUNT(*) FROM test WHERE LEN(test.name) = 0');
 		/// console.log(res);
 
-		var res = alasql(function () {
-			/*
-
+		var res = alasql(`
       SELECT
           (
               SELECT
@@ -72,9 +65,7 @@ describe('Test 333 Check for NULLs', function () {
               OR
                   t.name NOT LIKE '_%'
           ) AS combo_count
-
-    */
-		});
+    `);
 		/// console.log(res);
 		//    assert.deepEqual(res,[ [ 131, 1, 133 ], [ 182, 1, 183 ] ]);
 
@@ -87,7 +78,7 @@ describe('Test 333 Check for NULLs', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test333');
 		alasql.options.modifier = undefined;
 		done();

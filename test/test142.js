@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 142 INSTREAM', function () {
-	it('1. Source as a string', function (done) {
+	test('1. Source as a string', function (done) {
 		alasql('CREATE DATABASE test142; use test142');
 		done();
 	});
 
-	it('2. Simple Date functions', function (done) {
+	test('2. Simple Date functions', function (done) {
 		var srcfn = function (i) {
 			if (i > 2) return;
 			return {i: i, i2: i * 2};
@@ -29,7 +30,7 @@ describe('Test 142 INSTREAM', function () {
 
 		done();
 	});
-	it('3. Calculate PI with streaming function', function (done) {
+	test('3. Calculate PI with streaming function', function (done) {
 		var n = 10000;
 
 		var rndfn = function (i) {
@@ -51,7 +52,7 @@ describe('Test 142 INSTREAM', function () {
 		done();
 	});
 	/*
-	it("4. Calculate PI", function(done){
+	test("4. Calculate PI", function(done){
 
 
 
@@ -103,14 +104,14 @@ if(false) {
 		done();
 	});
 /*
-	it("3. AGGR functions", function(done){
+	test("3. AGGR functions", function(done){
 		var res = alasql('SELECT SUM(x) AS x, SUM(y) AS y, AGGR(x/y) AS z FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
 /// console.log(res);
 		assert( 0.5 < res[0].z && res[0].z < 2 );
 		done();
 	});
 
-	it("4. Output stream", function(done){
+	test("4. Output stream", function(done){
 		rndfn.length = 3;
 		var outfn = function(data) {
 /// console.log(data);
@@ -120,7 +121,7 @@ if(false) {
 		done();
 	});
 
-	it("4. Output stream with groups", function(done){
+	test("4. Output stream with groups", function(done){
 		var res = alasql('SELECT COUNT(*) AS n, SUM(x) AS x, SUM(y) AS y INTO ? AS z FROM ? WHERE SQRT(x*x+y*y)<1', [outfn,rndfn]);
 /// console.log(res);
 		done();
@@ -128,7 +129,7 @@ if(false) {
 
 
 */
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		alasql('DROP DATABASE test142');
 		done();
 	});

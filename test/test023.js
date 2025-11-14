@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 23', function () {
-	it('BETWEEN and NOT BETWEEN', function (done) {
+	test('BETWEEN and NOT BETWEEN', function (done) {
 		var db = new alasql.Database('db');
 		//		alasql.use('db');
 		db.exec('CREATE TABLE test (a int, b int)');

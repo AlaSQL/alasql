@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 57 - Params and Subqueries in JOIN', function () {
 	/*if (false) {
@@ -15,7 +15,7 @@ describe('Test 57 - Params and Subqueries in JOIN', function () {
 			{b: 2, c: 200},
 		];
 
-		it('SELECT - JOIN ParamValue queries "', function (done) {
+		test('SELECT - JOIN ParamValue queries "', function (done) {
 			var res = alasql('SELECT * FROM ? data1 JOIN ? data2 USING a JOIN ? data3 USING b', [
 				data1,
 				data2,
@@ -25,7 +25,7 @@ describe('Test 57 - Params and Subqueries in JOIN', function () {
 			done();
 		});
 
-		it('SELECT - JOIN SubQueries "', function (done) {
+		test('SELECT - JOIN SubQueries "', function (done) {
 			var res = alasql('SELECT * FROM ? data1 JOIN (SELECT 1 AS a, 100 AS b) data2 USING a', [
 				data1,
 			]);
@@ -33,7 +33,7 @@ describe('Test 57 - Params and Subqueries in JOIN', function () {
 			done();
 		});
 
-		it('SELECT - JOIN ParamValue queries "', function (done) {
+		test('SELECT - JOIN ParamValue queries "', function (done) {
 			var res = alasql(
 				'SELECT * FROM ? data1 JOIN (SELECT * FROM ?) data2 USING a JOIN (SELECT * FROM ?) data3 USING b',
 				[data1, data2, data3]

@@ -1,11 +1,11 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 45', function () {
 	describe('table AS alias', function () {
-		it('CASE Expression WHEN THEN END', function (done) {
+		test('CASE Expression WHEN THEN END', function (done) {
 			alasql('create database test45');
 			alasql('use test45');
 			alasql('CREATE TABLE one (a INT)');

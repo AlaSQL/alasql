@@ -1,14 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-//if(typeof exports != 'object') {
+//if(typeof window !== 'undefined') {
 
 describe('Test 185 - IN Expression', function () {
-	it('1. IN Field', function (done) {
+	test('1. IN Field', function (done) {
 		var data = [
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
@@ -33,7 +34,7 @@ describe('Test 185 - IN Expression', function () {
 		//      assert.deepEqual(res,{"1":[1,1],"2":[2,2,2],"3":[3,3],"4":[4]});
 		done();
 	});
-	it('1. REDUCE Aggregator: Summa', function (done) {
+	test('1. REDUCE Aggregator: Summa', function (done) {
 		var data = [
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
@@ -52,7 +53,7 @@ describe('Test 185 - IN Expression', function () {
 
 		done();
 	});
-	it('2. REDUCE Aggregator: Concat', function (done) {
+	test('2. REDUCE Aggregator: Concat', function (done) {
 		alasql.aggr.Concat = function (v, s, stage) {
 			if (stage == 1) {
 				return v;

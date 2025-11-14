@@ -1,24 +1,24 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 415;
+var testNum = 415;
 
-describe('Test ' + test + ' Aggregators', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testNum + ' Aggregators', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testNum + ';USE test' + testNum);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testNum);
 	});
 
-	it('1. Test', function (done) {
+	test('1. Test', function (done) {
 		var data = [];
 		for (var i = 1; i < 10000; i++) {
 			data.push({a: i});
@@ -33,13 +33,13 @@ describe('Test ' + test + ' Aggregators', function () {
 		done();
 	});
 
-	it('2. Test', function () {
+	test('2. Test', function () {
 		var data = [{a: 1}, {a: 2}, {a: 3}];
 		var res = alasql('SELECT MEDIAN(a), STDEV(a), SQRT(VAR(a)) FROM ?', [data]);
 		assert.deepEqual(res, [{'MEDIAN(a)': 2, 'STDEV(a)': 1, 'SQRT(VAR(a))': 1}]);
 	});
 
-	it('3. Test', function (done) {
+	test('3. Test', function (done) {
 		var resultSet = [
 			{_date: new Date('01.01.2016'), selectedChem: 1},
 			{_date: new Date('01.01.2015'), selectedChem: 2},
@@ -68,7 +68,7 @@ describe('Test ' + test + ' Aggregators', function () {
 		done();
 	});
 
-	it('4. Test', function () {
+	test('4. Test', function () {
 		var resultSet = [
 			{_date: new Date('01.01.2016'), selectedChem: 1},
 			{_date: new Date('01.01.2015'), selectedChem: 2},
@@ -94,13 +94,13 @@ describe('Test ' + test + ' Aggregators', function () {
 		]);
 	});
 
-	it('4. Quatiles', function () {
+	test('4. Quatiles', function () {
 		var data = [{a: 2}, {a: 3}, {a: 4}, {a: 5}, {a: 6}, {a: 7}, {a: 8}, {a: 8}, {a: 10}, {a: 10}];
 		var res = alasql('SELECT QUART(a), QUART2(a), QUART3(a) FROM ?', [data]);
 		assert.deepEqual(res, [{'QUART(a)': 4, 'QUART2(a)': 7, 'QUART3(a)': 10}]);
 	});
 
-	it('5. GREATEST/LEAST', function () {
+	test('5. GREATEST/LEAST', function () {
 		var res = alasql(
 			'SELECT LEAST(3, 12, 34, 8, 25) AS numL, GREATEST(3, 12, 34, 8, 25) AS numG, LEAST("w3", "mmco", "a") AS strL, GREATEST("w3", "mmco", "a") AS strG'
 		);

@@ -1,18 +1,19 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (false) {
 	describe('Test 131 CAST and CONVERT', function () {
-		it('1. CAST', function (done) {
+		test('1. CAST', function (done) {
 			alasql('source "' + __dirname + '/test131.sql"');
 			done();
 		});
 
-		it('2. CAST dates', function (done) {
+		test('2. CAST dates', function (done) {
 			alasql.options.datetimeformat = 'javascript';
 			var res = alasql.value('select cast("1998-01-01" as date)');
 			assert.equal(typeof res, 'object');

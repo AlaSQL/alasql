@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
-	it('1. CROSS APPLY', function (done) {
+	test('1. CROSS APPLY', function (done) {
 		var one = [{a: 1}, {a: 2}, {a: 3}];
 		var two = [
 			{a: 1, b: 10},
@@ -27,7 +28,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
 		done();
 	});
 
-	it('2. CROSS APPLY', function (done) {
+	test('2. CROSS APPLY', function (done) {
 		var one = [{a: 1}, {a: 2}, {a: 3}];
 		var two = [
 			{a: 1, b: 10},
@@ -50,7 +51,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
 		done();
 	});
 
-	it('3. CROSS APPLY', function (done) {
+	test('3. CROSS APPLY', function (done) {
 		var one = [{a: 1}, {a: 2}, {a: 3}, {a: 4}];
 		var two = [
 			{a: 1, b: 10},
@@ -75,7 +76,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
 		done();
 	});
 
-	it('4. OUTER APPLY', function (done) {
+	test('4. OUTER APPLY', function (done) {
 		var one = [{a: 1}, {a: 2}, {a: 3}, {a: 4}];
 		var two = [
 			{a: 1, b: 10},
@@ -100,7 +101,7 @@ describe('Test 226 CROSS APPLY and OUTER APPLY', function () {
 		done();
 	});
 
-	it('5. CROSS APPLY', function (done) {
+	test('5. CROSS APPLY', function (done) {
 		var res = alasql(
 			'SELECT one._ AS a,two._ AS b FROM RANGE(1,5) AS one \
     		OUTER APPLY (SELECT COLUMN ARRAY(_) FROM RANGE(1,one._) half GROUP BY half._ % 2) two'

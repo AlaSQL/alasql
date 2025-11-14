@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 322 UNION TEST', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	test.skip('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test322; USE test322');
 		done();
 	});
 
-	it.skip('2. UNION ALL', function (done) {
+	test.skip('2. UNION ALL', function (done) {
 		alasql.options.modifier = undefined;
 
 		var data = [{a: 1}, {a: 2}, {a: 2}, {b: 2}];
@@ -42,7 +43,7 @@ describe('Test 322 UNION TEST', function () {
 		done();
 	});
 
-	it.skip('3. SEARCH UNION', function (done) {
+	test.skip('3. SEARCH UNION', function (done) {
 		var data = [{a: 1}, {a: 2}, {a: 2}, {b: 2}];
 
 		var res = alasql('SEARCH UNION(/a,/b) FROM ?', [data]);
@@ -50,7 +51,7 @@ describe('Test 322 UNION TEST', function () {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test322');
 		done();
 	});

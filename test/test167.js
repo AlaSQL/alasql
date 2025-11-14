@@ -1,18 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test162.json', {
-		strict: false,
-		ws: '',
-	});
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
 
-if (typeof exports === 'object' && false) {
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
+
+global.localStorage = new DOMStorage('./test167.json', {
+	strict: false,
+	ws: '',
+});
+
+if (typeof window === 'object' && false) {
 	describe('Test 167 - database in database', function () {
-		it('1. Temporary tables', function (done) {
+		test('1. Temporary tables', function (done) {
 			var res = alasql('insert into #city values {city:"Oslo"}, {city:"Helsinki"}');
 			assert.deepEqual(alasql.temp.city, [{city: 'Oslo'}, {city: 'Helsinki'}]);
 

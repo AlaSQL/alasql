@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage(__dirname + '/restest278.json', {
 		strict: false,
@@ -14,7 +15,7 @@ if (typeof exports == 'object') {
 }
 
 describe('Test 278 Errors catching', function () {
-	it('1. Prepare databases', function (done) {
+	test('1. Prepare databases', function (done) {
 		alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS Atlas');
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('ATTACH LOCALSTORAGE DATABASE Atlas AS MyAtlas');
@@ -23,14 +24,14 @@ describe('Test 278 Errors catching', function () {
 		done();
 	});
 
-	it('2. Select from wrong database without errolog', function (done) {
+	test('2. Select from wrong database without errolog', function (done) {
 		assert.throws(function () {
 			alasql('SELECT * FROM addresses');
 		}, Error);
 		done();
 	});
 
-	it('2. Select from wrong database with errolog', function (done) {
+	test('2. Select from wrong database with errolog', function (done) {
 		alasql.options.errorlog = true;
 		alasql('SELECT * FROM addresses', [], function (res, err) {
 			/// console.log(err);
@@ -38,7 +39,7 @@ describe('Test 278 Errors catching', function () {
 		});
 	});
 
-	it('99. Drop databases', function (done) {
+	test('99. Drop databases', function (done) {
 		alasql.options.errorlog = false;
 		alasql('DETACH DATABASE MyAtlas');
 		done();

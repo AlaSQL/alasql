@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 42', function () {
 	describe('MID function', function () {
 		var db;
-		it('MID Function', function (done) {
+		test('MID Function', function (done) {
 			db = new alasql.Database('db');
 
 			db.exec('CREATE TABLE one (a STRING, b FLOAT)');
@@ -16,7 +16,7 @@ describe('Test 42', function () {
 			done();
 		});
 
-		it('ROUND Function', function (done) {
+		test('ROUND Function', function (done) {
 			var res = db.exec('SELECT COLUMN ROUND(b) AS b FROM one');
 			assert.deepEqual([1, 3, 3], res);
 

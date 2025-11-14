@@ -1,18 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 36', function () {
 	var db;
 
-	it('1. Create Database', function (done) {
+	test('1. Create Database', function (done) {
 		alasql.options.modifier = undefined;
 		db = new alasql.Database('db');
 		done();
 	});
 
-	it('2. INSERT INTO FROM 1', function (done) {
+	test('2. INSERT INTO FROM 1', function (done) {
 		db.exec('CREATE TABLE test1 (a STRING)');
 
 		var sql = "INSERT INTO test1 (a) VALUES ('Alpha'), ('Beta'), ('Gamma'), ('Delta'), ('Epsilon')";
@@ -23,7 +23,7 @@ describe('Test 36', function () {
 
 		done();
 	});
-	it('3. INSERT INTO FROM 2', function (done) {
+	test('3. INSERT INTO FROM 2', function (done) {
 		db.exec('CREATE TABLE test2 (a STRING)');
 
 		var sql = "INSERT INTO test2 SELECT * FROM test1 WHERE a LIKE '%mm%'";
@@ -34,7 +34,7 @@ describe('Test 36', function () {
 
 		done();
 	});
-	it('4. INSERT INTO FROM 3', function (done) {
+	test('4. INSERT INTO FROM 3', function (done) {
 		db.exec('CREATE TABLE test3 (a STRING)');
 
 		var sql = "INSERT INTO test3 SELECT * FROM test1 WHERE a NOT LIKE '%e%'";
@@ -45,7 +45,7 @@ describe('Test 36', function () {
 
 		done();
 	});
-	it('99. Drop database', function (done) {
+	test('99. Drop database', function (done) {
 		done();
 	});
 });

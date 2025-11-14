@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 1263 - Nested SELECT', function () {
 	var t1 = [
@@ -17,7 +17,7 @@ describe('Test 1263 - Nested SELECT', function () {
 		{id: '6', b: 'F'},
 	];
 
-	it('1. JOIN', function (done) {
+	test('1. JOIN', function (done) {
 		var expected = [
 			{id: '1', a: 'one', b: 'A'},
 			{id: '2', a: 'two', b: 'B'},

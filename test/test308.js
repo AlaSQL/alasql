@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 308 sub SEARCH', function () {
-	it.skip('1. Create database ', function (done) {
+	test.skip('1. Create database ', function (done) {
 		alasql('CREATE DATABASE test308;USE test308');
 		done();
 	});
 
-	it.skip('2. SET selector', function (done) {
+	test.skip('2. SET selector', function (done) {
 		var data = [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
@@ -21,7 +22,7 @@ describe('Test 308 sub SEARCH', function () {
 		done();
 	});
 
-	it.skip('3. SUM and other aggregators', function (done) {
+	test.skip('3. SUM and other aggregators', function (done) {
 		var data = [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
@@ -48,21 +49,21 @@ describe('Test 308 sub SEARCH', function () {
 		done();
 	});
 
-	it.skip('4. SUM with nested selector', function (done) {
+	test.skip('4. SUM with nested selector', function (done) {
 		var data = [{a: 1, b: {c: 100}}, {a: 2}, {a: 2, b: {c: 300}}];
 		var res = alasql('SEARCH SUM(/b c) FROM ?', [data]);
 		assert.deepEqual(res, [400]);
 		done();
 	});
 
-	it.skip('5. Complex SUM with tree selector', function (done) {
+	test.skip('5. Complex SUM with tree selector', function (done) {
 		var data = [{a: 1, b: {c: 100}}, {c: 200}, {a: 2, b: {d: [{c: 300}]}}];
 		var res = alasql('SEARCH SUM((/)*c) FROM ?', [data]);
 		assert.deepEqual(res, [600]);
 		done();
 	});
 
-	it.skip('6. SUM over graph', function (done) {
+	test.skip('6. SUM over graph', function (done) {
 		alasql('SET @olga = (CREATE VERTEX "Olga" SET age=19)');
 		alasql('SET @helen = (CREATE VERTEX "Helen" SET age=42)');
 		alasql('SET @pablo = (CREATE VERTEX "Pablo" SET age=35)');
@@ -74,25 +75,25 @@ describe('Test 308 sub SEARCH', function () {
 		alasql('CREATE EDGE FROM @andrey TO @sofia');
 		done();
 	});
-	it.skip('7. SUM over graph', function (done) {
+	test.skip('7. SUM over graph', function (done) {
 		var res = alasql('SEARCH SUM(/ "Olga" (>>)+ age)');
 		//    console.log(res);
 		assert.deepEqual(res, [58]);
 		done();
 	});
-	it.skip('8. SUM over graph', function (done) {
+	test.skip('8. SUM over graph', function (done) {
 		var res = alasql('SEARCH / "Olga" SUM((>>)+ age)');
 		//    console.log(res);
 		assert.deepEqual(res, [58]);
 		done();
 	});
-	it.skip('9. SUM over graph', function (done) {
+	test.skip('9. SUM over graph', function (done) {
 		var res = alasql('SEARCH COUNT(/ "Olga" (>>)+ age)');
 		//    console.log(res);
 		assert.deepEqual(res, [2]);
 		done();
 	});
-	it.skip('10. SUM over graph', function (done) {
+	test.skip('10. SUM over graph', function (done) {
 		var res = alasql(
 			'SEARCH / AS @person \
       SUM((>>)+ age) AS @age \
@@ -105,7 +106,7 @@ describe('Test 308 sub SEARCH', function () {
 		]);
 		done();
 	});
-	it.skip('11. SUM over graph', function (done) {
+	test.skip('11. SUM over graph', function (done) {
 		var res = alasql(
 			'SEARCH / AS @person \
       COUNT((>>)+ age) AS @n \
@@ -120,7 +121,7 @@ describe('Test 308 sub SEARCH', function () {
 		done();
 	});
 
-	it.skip('99. Drop database ', function (done) {
+	test.skip('99. Drop database ', function (done) {
 		alasql('DROP DATABASE test308');
 		done();
 	});

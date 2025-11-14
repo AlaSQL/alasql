@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('377. Quotes and ASCII', function () {
-	it('1. ', function (done) {
+	test('1. ', function (done) {
 		var res = alasql('SELECT ASCII("")');
 		//console.log('The test is not completed',res);
 

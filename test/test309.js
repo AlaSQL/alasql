@@ -1,17 +1,18 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 309 # operator and graphs', function () {
-	it('0. Create database ', function (done) {
+	test('0. Create database ', function (done) {
 		alasql('CREATE DATABASE test309;USE test309');
 		done();
 	});
 
-	it('1. SET selector', function (done) {
+	test('1. SET selector', function (done) {
 		alasql('CREATE VERTEX #Andrey SET age = 44');
 		alasql('CREATE VERTEX #Olga SET age = 35');
 		alasql('CREATE VERTEX #Maria SET age = 28');
@@ -28,7 +29,7 @@ describe('Test 309 # operator and graphs', function () {
 		done();
 	});
 
-	it('99. Drop database ', function (done) {
+	test('99. Drop database ', function (done) {
 		alasql('DROP DATABASE test309');
 		done();
 	});

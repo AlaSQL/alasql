@@ -1,7 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var DOMStorage = require('dom-storage');
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
+
+if (typeof global !== 'undefined') {
 	global.localStorage = new DOMStorage('./test381.json', {
 		strict: false,
 		ws: '',
@@ -16,12 +19,12 @@ if (typeof exports === 'object') {
 */
 
 describe('Test 381 - PIVOT', function () {
-	it('1. CREATE DATABASE', function (done) {
+	test('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test381;USE test381');
 		done();
 	});
 
-	it('1. Create table', function (done) {
+	test('1. Create table', function (done) {
 		var data = [
 			{security: 'Preferred Stock', name: 'Robert', value: 5, date: '2014-1-3'},
 			{security: 'Preferred Stock', name: 'Robert', value: 5, date: '2014-1-5'},
@@ -82,7 +85,7 @@ describe('Test 381 - PIVOT', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test381');
 		done();

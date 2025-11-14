@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 125 - remove comments', function () {
-	it('1. usual -- comments', function (done) {
+	test('1. usual -- comments', function (done) {
 		alasql('create database test125 -- this is a sample of comments');
 		alasql('use test125');
 		alasql('create table one (a int, /* int eeee, */ b int, c string)');
@@ -26,7 +26,7 @@ describe('Test 125 - remove comments', function () {
 		]);
 		done();
 	});
-	it('2. Escape sequences', function (done) {
+	test('2. Escape sequences', function (done) {
 		var res = alasql("select 'Cote'");
 		assert.deepEqual(res, [{"'Cote'": 'Cote'}]);
 		var res = alasql("select 'Cote d\\'Ivoir'");

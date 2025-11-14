@@ -1,7 +1,7 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
  This sample beased on this article:
@@ -42,12 +42,12 @@ describe('Test 409 Backup and restore database', function () {
 
 	alasql.restoreDatabase = function (obj, databaseid) {};
 
-	it('2. CREATE DATABASE', function (done) {
+	test('2. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test409;USE test409');
 		done();
 	});
 
-	it.skip('2. CREATE DATABASE', function (done) {
+	test.skip('2. CREATE DATABASE', function (done) {
 		alasql('CREATE TABLE one (a INT UNIQUE); INSERT INTO one VALUES (1),(2),(3)');
 		var obj1 = alasql.storeDatabase();
 		alasql('DROP DATABASE test409');
@@ -65,7 +65,7 @@ describe('Test 409 Backup and restore database', function () {
 		done();
 	});
 
-	it('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test409');
 		done();

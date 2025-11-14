@@ -1,11 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports == 'object') {
+if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage('./test159.json', {
 		strict: false,
@@ -14,7 +15,7 @@ if (typeof exports == 'object') {
 }
 
 describe('Test 159 - test DOM-storage', function () {
-	it('1. Test ', function (done) {
+	test('1. Test ', function (done) {
 		var res = alasql('drop localstorage database if exists test159');
 		assert(res == 0 || res == 1);
 
@@ -66,7 +67,7 @@ describe('Test 159 - test DOM-storage', function () {
 		done();
 	});
 
-	it('2. Multiple statements ', function (done) {
+	test('2. Multiple statements ', function (done) {
 		var res = alasql(
 			"drop localstorage database if exists test159;\
 			create localstorage database if not exists test159;\
@@ -92,7 +93,7 @@ describe('Test 159 - test DOM-storage', function () {
 		done();
 	});
 
-	it('3. Multiple call-backs', function (done) {
+	test('3. Multiple call-backs', function (done) {
 		var res = alasql('drop localstorage database if exists test159', [], function (res) {
 			alasql('create localstorage database if not exists test159;', [], function (res) {
 				alasql('attach localstorage database test159', [], function (res) {
@@ -149,7 +150,7 @@ describe('Test 159 - test DOM-storage', function () {
 	/*
 
 //if(false) {
-	it("1. Test ", function(done){
+	test("1. Test ", function(done){
 		alasql("create localstorage database if not exists test159; \
 			attach localstorage database test159; \
 			use test159; \
@@ -168,7 +169,7 @@ describe('Test 159 - test DOM-storage', function () {
 
 	});
 
-	it("2. UPDATE and DELETE", function(done){
+	test("2. UPDATE and DELETE", function(done){
 
 		alasql("update cities set city = 'Vilnius' where city = 'Minsk'", [], function(res){
 			assert(res == 1);
@@ -183,7 +184,7 @@ describe('Test 159 - test DOM-storage', function () {
 
 	});
 
-	it("99. Drop database", function(done){
+	test("99. Drop database", function(done){
 		alasql('detach database test159;\
 				drop localstorage database test159');
 		done();

@@ -1,9 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 312 JSON traverse', function () {
 	/*
@@ -45,7 +46,7 @@ var test = {
 
 */
 
-	it('1. How to search deep nested JSON?', function (done) {
+	test('1. How to search deep nested JSON?', function (done) {
 		var data = {
 			menuInputRequestId: 1,
 			catalog: [
@@ -122,7 +123,7 @@ var test = {
 		done();
 	});
 
-	it('2. How do I traverse a complex JSON doc with javascript and extract named values', function (done) {
+	test('2. How do I traverse a complex JSON doc with javascript and extract named values', function (done) {
 		/*
   Source: http://stackoverflow.com/questions/29966520/how-do-i-traverse-a-complex-json-doc-with-javascript-and-extract-named-values
 
@@ -157,7 +158,7 @@ I need some javascript to traverse reasonably complex json with nested objects a
 		done();
 	});
 
-	it('3. Find all parents elements in a Json file', function (done) {
+	test('3. Find all parents elements in a Json file', function (done) {
 		/*
 http://stackoverflow.com/questions/29937203/find-all-parents-elements-in-a-json-file-using-jquery/29937369#29937369
 
@@ -270,7 +271,7 @@ var testObject = {
 This object is passed into a master function that builds a angularjs resource object using the passed in object.
 */
 
-	it('4. Recursive find and replace in multidimensional javascript object', function (done) {
+	test('4. Recursive find and replace in multidimensional javascript object', function (done) {
 		var data = {
 			name: '/pricing-setups/{folderId}',
 			method: 'POST',
@@ -306,7 +307,7 @@ This object is passed into a master function that builds a angularjs resource ob
 		done();
 	});
 
-	it('5. Recursive find and replace in multidimensional javascript object', function (done) {
+	test('5. Recursive find and replace in multidimensional javascript object', function (done) {
 		/*
 
 http://stackoverflow.com/questions/23024589/javascript-nested-object-to-multidimensional-array-recursive-function?rq=1

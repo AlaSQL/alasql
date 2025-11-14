@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 1936 - Check CURDATE', function () {
-	it('CURDATE in SELECT - as Date', function () {
+	test('CURDATE in SELECT - as Date', function () {
 		alasql.options.dateAsString = false;
 		let result = alasql(
 			'SELECT CURDATE AS date1, CURRENT_DATE AS date2, CURDATE(), CURRENT_DATE()'
@@ -31,7 +31,7 @@ describe('Test 1936 - Check CURDATE', function () {
 		assert.ok(result[0]['CURRENT_DATE()'].getSeconds() === 0);
 	});
 
-	it('CURDATE in SELECT - as String', function () {
+	test('CURDATE in SELECT - as String', function () {
 		alasql.options.dateAsString = true;
 		let result = alasql(
 			'SELECT CURDATE AS date1, CURRENT_DATE AS date2, CURDATE(), CURRENT_DATE()'

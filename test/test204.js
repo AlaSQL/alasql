@@ -1,12 +1,13 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 204 PRINT', function () {
-	it.skip('1. PRINT()', function (done) {
+	test.skip('1. PRINT()', function (done) {
 		// var oldconsolelog = console.log;
 		// console.log = function(){
 		// 	assert.equal(arguments[0] == '[1,4,9,16]');

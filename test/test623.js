@@ -1,15 +1,15 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
-var test = '623'; // insert test file number
+var testId = '623'; // insert test file number
 
-describe('Test ' + test + ' - group concat', function () {
+describe('Test ' + testId + ' - group concat', function () {
 	var data;
 	var res;
 
-	it('A) int concat', function () {
+	test('A) int concat', function () {
 		data = [
 			{a: 1, b: 10},
 			{a: 2, b: 20},
@@ -20,7 +20,7 @@ describe('Test ' + test + ' - group concat', function () {
 		assert.equal(res[1].b, '20');
 	});
 
-	it('B) string values', function () {
+	test('B) string values', function () {
 		data = [
 			{a: 1, b: 'x'},
 			{a: 2, b: 'y'},

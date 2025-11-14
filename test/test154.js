@@ -1,13 +1,14 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof exports != 'object') {
+if (typeof window !== 'undefined') {
 	describe('Test 154 - IndexedDB test', function () {
-		it('1. Create Database and Table', async () => {
+		test('1. Create Database and Table', async () => {
 			const sql = alasql.promise;
 
 			const res1 = await sql('DROP IndexedDB DATABASE IF EXISTS ag154');

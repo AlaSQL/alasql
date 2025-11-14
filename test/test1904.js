@@ -1,10 +1,10 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
-	before(function () {
+	beforeAll(function () {
 		alasql('create database test1937');
 		alasql('use test1937');
 		alasql('DROP TABLE IF EXISTS one');
@@ -12,11 +12,11 @@ describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
 		alasql('INSERT INTO one VALUES (1),(2),(3),(4),(5)');
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql('drop database test1937');
 	});
 
-	it('Nested EXISTS in subquery', function (done) {
+	test('Nested EXISTS in subquery', function (done) {
 		const res = alasql(
 			'SELECT EXISTS(SELECT a FROM one WHERE 0) AS main_exists, * FROM (SELECT EXISTS(SELECT a FROM one) AS sub_exists, a FROM one)'
 		);
@@ -33,7 +33,7 @@ describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
 		done();
 	});
 
-	it('EXISTS in SET statement', function (done) {
+	test('EXISTS in SET statement', function (done) {
 		const res = alasql(
 			`SET @existsLessThan3 = (SELECT EXISTS(SELECT a FROM one WHERE a < 3));
 			SET @existsGreaterThan10 = (SELECT EXISTS(SELECT a FROM one WHERE a > 10));

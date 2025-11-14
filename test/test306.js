@@ -1,20 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-} else {
-	__dirname = '.';
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 describe('Test 306 XML reader', function () {
-	before(function () {
+	beforeAll(function () {
 		alasql('CREATE DATABASE test306;USE test306');
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql('DROP DATABASE test306');
 	});
 
-	it('1. Read XML file / SEARCH like JSON', function (done) {
+	test('1. Read XML file / SEARCH like JSON', function (done) {
 		alasql(
 			'SEARCH children/"Worksheet" attributes [ss:Name] FROM XML("' + __dirname + '/test306.xml")',
 			[],
@@ -25,7 +26,7 @@ describe('Test 306 XML reader', function () {
 		);
 	});
 
-	it('1a. Read XML file / SEARCH XML', function (done) {
+	test('1a. Read XML file / SEARCH XML', function (done) {
 		//    alasql('SEARCH xml /Worksheet%[ss:Name] FROM XML("test306.xml")',[],function(res){
 		alasql(
 			'SEARCH XML Worksheet %[ss:Name] FROM XML("' + __dirname + '/test306.xml")',
@@ -38,7 +39,7 @@ describe('Test 306 XML reader', function () {
 		);
 	});
 
-	it('2. Read XML file / SEARCH XML', function (done) {
+	test('2. Read XML file / SEARCH XML', function (done) {
 		//    alasql('SEARCH xml /Worksheet%[ss:Name] FROM XML("test306.xml")',[],function(res){
 		alasql(
 			'SEARCH XML Worksheet %[ss:Name] FROM XML("' + __dirname + '/test306.xml")',
@@ -51,7 +52,7 @@ describe('Test 306 XML reader', function () {
 		);
 	});
 
-	it('3. Read XML file / SEARCH XML', function (done) {
+	test('3. Read XML file / SEARCH XML', function (done) {
 		alasql('SEARCH XML / * Data$ FROM XML("' + __dirname + '/test306.xml")', [], function (res) {
 			//       console.log(res);
 			assert.deepEqual(res, ['aaaa', '2', '3', '5', '6', '7']);
@@ -59,7 +60,7 @@ describe('Test 306 XML reader', function () {
 		});
 	});
 
-	it('4. Read XML file / SEARCH XML', function (done) {
+	test('4. Read XML file / SEARCH XML', function (done) {
 		alasql(
 			'SEARCH XML / *Data$ WHERE(_>3) FROM XML("' + __dirname + '/test306.xml")',
 			[],
@@ -70,7 +71,7 @@ describe('Test 306 XML reader', function () {
 		);
 	});
 
-	it('5. Read XML file / SEARCH XML', function (done) {
+	test('5. Read XML file / SEARCH XML', function (done) {
 		alasql('SEARCH xml %xmlns FROM XML("' + __dirname + '/test306.xml")', [], function (res) {
 			//      console.log(res);
 			assert.deepEqual(res, ['urn:schemas-microsoft-com:office:spreadsheet']);
@@ -78,7 +79,7 @@ describe('Test 306 XML reader', function () {
 		});
 	});
 
-	it('6a. Read GEFX file / SEARCH XML', function (done) {
+	test('6a. Read GEFX file / SEARCH XML', function (done) {
 		//     alasql('SEARCH XML /graph/nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
 		alasql(
 			'SEARCH XML [graph] nodes node %/ {[$id]:id,name:label,[$node]:"VERTEX"} FROM XML("' +
@@ -96,7 +97,7 @@ describe('Test 306 XML reader', function () {
 		);
 	});
 
-	it('6b. Read GEFX file / SEARCH XML', function (done) {
+	test('6b. Read GEFX file / SEARCH XML', function (done) {
 		//     alasql('SEARCH XML /graph/nodes/% {[$id]:id,name:label} FROM XML("test306a.xml")',[],function(res){
 		alasql(
 			'SEARCH XML [graph] nodes/%/ {[$id]:id,name:label} FROM XML("' +
@@ -112,7 +113,7 @@ describe('Test 306 XML reader', function () {
 			}
 		);
 	});
-	it('7. Edges ', function (done) {
+	test('7. Edges ', function (done) {
 		//     alasql('SEARCH XML /graph/edges/% FROM XML("test306a.xml")',[],function(res){
 		alasql(
 			'SEARCH XML [graph] edges/%/ FROM XML("' + __dirname + '/test306a.xml")',
@@ -125,7 +126,7 @@ describe('Test 306 XML reader', function () {
 		);
 	});
 
-	it('7. SEARCH INTO ', function (done) {
+	test('7. SEARCH INTO ', function (done) {
 		alasql(
 			'SEARCH XML [graph] edges/%/ INTO CSV({headers:true, utf8Bom:false}) FROM XML("' +
 				__dirname +

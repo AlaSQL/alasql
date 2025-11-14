@@ -1,24 +1,24 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
 /*
   Test for issue #379
 */
 
-var test = 425;
+var testId = 425;
 
-describe('Test ' + test + ' Arrow and DOT', function () {
-	before(function () {
-		alasql('CREATE DATABASE test' + test + ';USE test' + test);
+describe('Test ' + testId + ' Arrow and DOT', function () {
+	beforeAll(function () {
+		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	after(function () {
-		alasql('DROP DATABASE test' + test);
+	afterAll(function () {
+		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. DOT outside SELECT', function (done) {
+	test('1. DOT outside SELECT', function (done) {
 		var files = ['home_01.ai', 'home_02.ai', 'home_03.ai', 'imprint_01.ai', 'imprint_02.ai'];
 
 		var res = alasql('COLUMN OF SELECT ARRAY(_) FROM ? GROUP BY _->split("_")->0', [files]);

@@ -1,12 +1,12 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import assert from 'assert';
+import alasql from '..';
 
-var test = '807'; // insert test file number
+var test_number = '807'; // insert test file number
 
-describe('Test ' + test + ' - Composite foreign keys.', function () {
-	it('Create tables with foreign keys', function (done) {
+describe('Test ' + test_number + ' - Composite foreign keys.', function () {
+	test('Create tables with foreign keys', function (done) {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -43,7 +43,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 		done();
 	});
 
-	it('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+	test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -88,7 +88,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 		done();
 	});
 
-	it('CREATE TABLE with FOREIGN KEYS and INSERT (with partial null foreign key)', function (done) {
+	test('CREATE TABLE with FOREIGN KEYS and INSERT (with partial null foreign key)', function (done) {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -131,7 +131,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 		done();
 	});
 
-	it('CREATE TABLE with FOREIGN KEYS and INSERT (with full null foreign key)', function (done) {
+	test('CREATE TABLE with FOREIGN KEYS and INSERT (with full null foreign key)', function (done) {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -175,7 +175,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 		done();
 	});
 
-	it('Insert wrong data without references', function (done) {
+	test('Insert wrong data without references', function (done) {
 		assert.throws(function () {
 			alasql(
 				'insert into COLLABORATOR(companyId, siteId, id, name) values ("badData", "badData", "badData", "badData");'
