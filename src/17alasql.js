@@ -453,3 +453,33 @@ alasql.compile = function (sql, databaseid) {
 
 	return statement;
 };
+
+/**
+ Compile SQL statement to JavaScript source code string
+ @param {string} sql SQL statement
+ @param {string} databaseid Database identifier
+ @return {string} Generated JavaScript source code
+*/
+alasql.compileToJS = function (sql, databaseid) {
+	// Use existing compile method to get the function
+	const compiledFn = alasql.compile(sql, databaseid);
+
+	// Extract the actual generated JavaScript code from the query object
+	if (compiledFn.query) {
+		// For grouped queries (like MIN, MAX, SUM), return the group function source
+		if (compiledFn.query.groupfn) {
+			return compiledFn.query.groupfn.toString();
+		}
+		// For regular queries, return the select function source
+		if (compiledFn.query.selectfn) {
+			return compiledFn.query.selectfn.toString();
+		}
+		// For grouped queries with selectgfn, return that
+		if (compiledFn.query.selectgfn) {
+			return compiledFn.query.selectgfn.toString();
+		}
+	}
+
+	// Fallback to the wrapper function
+	return compiledFn.toString();
+};
