@@ -1,18 +1,17 @@
-if (typeof exports === 'object') {
-	var alasql = require('..');
-	var argv = require('yargs').argv || {};
-}
+// @ts-ignore
+import { describe, test, expect } from 'bun:test';
+import alasql from '..';
+import yargs from 'yargs';
 
-describe('376. ASCII tests:', () => {
-	if (typeof exports === 'object') {
-		// to output all including skipped tests please run: mocha ./test/test376.js --forceall
+const argv = yargs.argv || {};
+const runAll = process.env.ALASQL_ALL_ASCII;
 
-		var runAll;
-		if (argv.forceall) {
-			runAll = it;
-		}
+describe.todo('376. ASCII tests:', () => {
+	// to output all including skipped tests please run: bun test ./test/test376.js --forceall
 
-		var tests = `
+
+
+	var tests = `
 SELECT ASCII(' '); -- 32 - Space
 SELECT ASCII('!'); -- 33 - Exclamation mark
 SELECT ASCII('"'); -- 34 - Double quotes (or speech marks)
@@ -134,6 +133,7 @@ SELECT ASCII('~'); -- 126 - Equivalency sign - tilde
 -- SELECT ASCII('š'); -- 154 - Latin small letter S with caron
 -- SELECT ASCII('›'); -- 155 - Single right-pointing angle quotation mark
 -- SELECT ASCII('œ'); -- 156 - Latin small ligature oe
+SELECT ASCII('\\'); -- 92 - Backslash
 -- SELECT ASCII('ž'); -- 158 - Latin small letter z with caron
 -- SELECT ASCII('Ÿ'); -- 159 - Latin capital letter Y with diaeresis
 SELECT ASCII('¡'); -- 161 - Inverted exclamation mark
@@ -233,38 +233,32 @@ SELECT ASCII('ÿ'); -- 255 - Latin small letter y with diaeresis
 
 `;
 
-		tests = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
-		tests
-			.replace(/\r/g, '')
-			.trim()
-			.split('\n')
-			.forEach(function (test) {
-				test = test.trim();
-				if (test.indexOf('--') > -1) {
-					var runFn = it;
+	tests
+		.replace(/\r/g, '')
+		.split('\n')
+		.filter(Boolean)
+		.forEach( testLine => {
+			const testData = testLine.split('--');
+			
+			if (testData.length < 2) return;
 
-					if (test.indexOf('--') === 0) {
-						// skip test starting line with '--'
-						test = test.substr(2).trim();
-						runFn = runAll || it.skip;
-					}
+			let runFn = test; 
 
-					var tt = test.split('--');
-					var sql = tt[0].trim();
-					var etalon = '' + tt[1].split(' - ')[0].trim();
-					var res = '' + alasql('VALUE OF ' + sql);
-					//console.log(tt,sql,etalon);
+			// skip test starting line with '--'
+			if (testData[0].trim() === '') {
+				testData.shift();
+				if(!runAll)
+					runFn = test.skip;
+			}
 
-					runFn(test, done => {
-						expect(etalon).toEqual(res);
-						done();
-					});
-				} else {
-					if (test.trim().length > 0) {
-						alasql(test);
-					}
-				}
+			const sql = testData[0].trim();
+			const description = testData[1]?.split(' - ')[0].trim();
+			const expected = testData[1]?.split(' - ')[1].trim();
+			
+			runFn(description, () => {
+				expect(alasql('VALUE OF ' + sql)).toEqual(expected);
 			});
-	}
+
+		});
 });

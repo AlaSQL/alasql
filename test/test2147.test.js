@@ -1,7 +1,10 @@
-var alasql = require('../dist/alasql.js');
-alasql.options.errorlog = true;
+// @ts-ignore
+import {describe, test, expect, beforeAll} from 'bun:test';
+import alasql from '..';
+
 describe('Test 2147 - Aggregate functions on DATETIME', () => {
 	beforeAll(() => {
+		alasql.options.errorlog = true;
 		alasql.fn.DATETIME = function (date) {
 			return new Date(date);
 		};

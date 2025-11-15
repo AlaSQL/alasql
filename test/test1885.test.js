@@ -6,6 +6,7 @@ describe('Test 1885 - consistent error messages for missing tables', () => {
 	const testNum = '1885'; // insert test file number
 
 	beforeAll(() => {
+		alasql.options.errorlog = false; // Ensure errors are thrown, not just logged
 		alasql('create database test' + testNum);
 		alasql('use test' + testNum);
 		alasql('CREATE TABLE validTable (a INT, b INT, PRIMARY KEY (a,b))');

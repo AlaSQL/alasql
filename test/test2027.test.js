@@ -1,15 +1,14 @@
-const alasql = require('../dist/alasql.js');
-
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
 describe('Test 2007 - SQL cache', () => {
 	beforeAll(() => {
-		alasql('create database test');
-		alasql('use test');
+		alasql('create database test2007');
+		alasql('use test2007');
 	});
 
 	afterAll(() => {
-		alasql('drop database test');
+		alasql('drop database test2007');
 	});
 
 	test('A) Execute query and assert cache for `data` afterwards', () => {
@@ -17,7 +16,7 @@ describe('Test 2007 - SQL cache', () => {
 		alasql('INSERT INTO osoby VALUES (1, "John"), (2, "Jane"), (3, "Jake")');
 		var res = alasql('SELECT * FROM osoby');
 
-		expect(alasql.databases['test'].sqlCache['-169125189'].query.data).toEqual([]);
+		expect(alasql.databases['test2007'].sqlCache['-169125189'].query.data).toEqual([]);
 		expect(res.length).toEqual(3);
 
 		// Delete all rows
@@ -25,7 +24,7 @@ describe('Test 2007 - SQL cache', () => {
 
 		// Assert that the cache is still empty for "data"
 		// Without the fix, the cache would still contain the data from the previous query even though all rows were deleted
-		expect(alasql.databases['test'].sqlCache['-169125189'].query.data).toEqual([]);
+		expect(alasql.databases['test2007'].sqlCache['-169125189'].query.data).toEqual([]);
 
 		// Insert more rows
 		alasql('INSERT INTO osoby VALUES (4, "Jack"), (5, "Paul")');
@@ -34,7 +33,7 @@ describe('Test 2007 - SQL cache', () => {
 		var res2 = alasql('SELECT * FROM osoby');
 
 		// Cache should still be empty for "data"
-		expect(alasql.databases['test'].sqlCache['-169125189'].query.data).toEqual([]);
+		expect(alasql.databases['test2007'].sqlCache['-169125189'].query.data).toEqual([]);
 		expect(res2.length).toEqual(2);
 	});
 });
