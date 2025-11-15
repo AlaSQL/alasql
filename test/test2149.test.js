@@ -7,12 +7,10 @@ import {dirname} from 'path';
 
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test CLI - Command Line Interface)', () => {
+describe.concurrent('Test CLI A', () => {
 	//console.log(__dirname);
 	const cliPath = path.join(__dirname, '..', 'bin', 'alasql-cli.js');
 	const testSqlFile = path.join(__dirname, 'temp-test.sql');
-	const testWithTxtFile = path.join(__dirname, 'test2149-with-txt.sql');
-	const testWithoutTxtFile = path.join(__dirname, 'test2149-without-txt.sql');
 
 	beforeAll(() => {
 		// Create a temporary SQL file for testing
@@ -74,6 +72,26 @@ describe('Test CLI - Command Line Interface)', () => {
 				Success: true,
 			},
 		]);
+	});
+});
+
+describe.concurrent('Test CLI B', () => {
+	//console.log(__dirname);
+	const cliPath = path.join(__dirname, '..', 'bin', 'alasql-cli.js');
+	const testSqlFile = path.join(__dirname, 'temp-test.sql');
+	const testWithTxtFile = path.join(__dirname, 'test2149-with-txt.sql');
+	const testWithoutTxtFile = path.join(__dirname, 'test2149-without-txt.sql');
+
+	beforeAll(() => {
+		// Create a temporary SQL file for testing
+		fs.writeFileSync(testSqlFile, 'SELECT VALUE 42');
+	});
+
+	afterAll(() => {
+		// Clean up temporary files
+		if (fs.existsSync(testSqlFile)) {
+			fs.unlinkSync(testSqlFile);
+		}
 	});
 
 	test('9. Should handle piped input data without txt() function - backward compatibility', async () => {

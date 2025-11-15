@@ -6,7 +6,7 @@ import alasql from '..';
  This sample beased on this article:
 
 */
-describe('Test 390 Export nested array to XLSX', () => {
+describe.concurrent('Test 390 Export nested array to XLSX', () => {
 	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test390;USE test390');
 		done();

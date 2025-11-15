@@ -1,5 +1,0 @@
-{
-  "alasql": "{\"databases\":{\"Atlas\":true,\"ls150\":true}}",
-  "Atlas": "{\"databaseid\":\"Atlas\",\"tables\":{\"transactions\":true}}",
-  "Atlas.transactions": "{\"columns\":[{\"columnid\":\"transid\",\"dbtypeid\":\"\"},{\"columnid\":\"payee\",\"dbtypeid\":\"\"},{\"columnid\":\"amount\",\"dbtypeid\":\"\"}],\"data\":[],\"identities\":{}}"
-}
