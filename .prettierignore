@@ -11,3 +11,5 @@ src/alasqlparser.js
 src/97saveas.js
 
 modules/
+
+test/test238.json

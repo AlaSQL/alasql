@@ -14,9 +14,8 @@
 
 alasql.from.METEOR = function (filename, opts, cb, idx, query) {
 	var res = filename.find(opts).fetch();
-	if (cb) {
-		res = cb(res, idx, query);
-	}
+	if (cb) res = cb(res, idx, query);
+
 	return res;
 };
 
@@ -30,9 +29,7 @@ alasql.from.TABLETOP = function (key, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	opt.callback = function (data) {
 		res = data;
-		if (cb) {
-			res = cb(res, idx, query);
-		}
+		if (cb) res = cb(res, idx, query);
 	};
 
 	Tabletop.init(opt);
@@ -112,11 +109,8 @@ alasql.from.FILE = function (filename, opts, cb, idx, query) {
 	}
 
 	var parts = fname.split('.');
-	//	console.log("parts",parts,parts[parts.length-1]);
 	var ext = parts[parts.length - 1].toUpperCase();
-	//	console.log("ext",ext);
 	if (alasql.from[ext]) {
-		//		console.log(ext);
 		return alasql.from[ext](filename, opts, cb, idx, query);
 	} else {
 		throw new Error('Cannot recognize file type for loading');
@@ -130,16 +124,63 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 	//console.log('cb',cb);
 	//console.log('JSON');
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
-	alasql.utils.loadFile(filename, !!cb, function (data) {
+	(alasql.utils.loadFile(filename, !!cb, function (data) {
 		//		console.log('DATA:'+data);
 		//		res = [{a:1}];
 		res = JSON.parse(data);
 		if (cb) {
 			res = cb(res, idx, query);
 		}
-	});
+	}),
+		err => {
+			const error = err instanceof Error ? err : new Error(err);
+			if (query && query.cb) {
+				query.cb(null, error);
+				return;
+			}
+			throw error;
+		});
 	return res;
 };
+
+const jsonl = ext => {
+	return function (filename, opts, cb, idx, query) {
+		let out = [];
+		filename = alasql.utils.autoExtFilename(filename, ext, opts);
+		alasql.utils.loadFile(
+			filename,
+			!!cb,
+			function (data) {
+				data.split(/\r?\n/).forEach((line, ix) => {
+					const trimmed = line.trim();
+					if (trimmed !== '') {
+						// skip empty lines, we do not use filter on an input, as we want to preserve line numbers
+						try {
+							out.push(JSON.parse(trimmed));
+						} catch (e) {
+							throw new Error(`Could not parse JSON at line ${ix}: ${e.toString()}`);
+						}
+					}
+				});
+				if (cb) {
+					out = cb(out, idx, query);
+				}
+			},
+			err => {
+				const error = err instanceof Error ? err : new Error(err);
+				if (query && query.cb) {
+					query.cb(null, error);
+					return;
+				}
+				throw error;
+			}
+		);
+		return out;
+	};
+};
+
+alasql.from.JSONL = jsonl('jsonl');
+alasql.from.NDJSON = jsonl('ndjson');
 
 alasql.from.TXT = function (filename, opts, cb, idx, query) {
 	var res;
@@ -203,7 +244,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 				return EOF;
 			}
 			if (eol) {
-				return (eol = false), EOL;
+				return ((eol = false), EOL);
 			}
 			var j = I;
 			if (text.charCodeAt(j) === quoteCode) {
@@ -325,34 +366,34 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 
 		/*/*
 if(false) {
-    res = data.split(/\r?\n/);
-    if(opt.headers) {
-      if(query && query.sources && query.sources[idx]) {
-        var hh = [];
-        if(typeof opt.headers == 'boolean') {
-          hh = res.shift().split(opt.separator);
-        } else if(Array.isArray(opt.headers)) {
-          hh = opt.headers;
-        }
-        var columns = query.sources[idx].columns = [];
-        hh.forEach(function(h){
-          columns.push({columnid:h});
-        });
-        for(var i=0, ilen=res.length; i<ilen;i++) {
-          var a = res[i].split(opt.separator);
-          var b = {};
-          hh.forEach(function(h,j){
-            b[h] = a[j];
-          });
-          res[i] = b;
-        }
+	res = data.split(/\r?\n/);
+	if(opt.headers) {
+	  if(query && query.sources && query.sources[idx]) {
+		var hh = [];
+		if(typeof opt.headers == 'boolean') {
+		  hh = res.shift().split(opt.separator);
+		} else if(Array.isArray(opt.headers)) {
+		  hh = opt.headers;
+		}
+		var columns = query.sources[idx].columns = [];
+		hh.forEach(function(h){
+		  columns.push({columnid:h});
+		});
+		for(var i=0, ilen=res.length; i<ilen;i++) {
+		  var a = res[i].split(opt.separator);
+		  var b = {};
+		  hh.forEach(function(h,j){
+			b[h] = a[j];
+		  });
+		  res[i] = b;
+		}
 //				console.log(res[0]);
-      }
-    } else {
-      for(var i=0, ilen=res.length; i<ilen;i++) {
-        res[i] = res[i].split(opt.separator);
-      }
-    }
+	  }
+	} else {
+	  for(var i=0, ilen=res.length; i<ilen;i++) {
+		res[i] = res[i].split(opt.separator);
+	  }
+	}
 
 };
 */
@@ -364,7 +405,7 @@ if(false) {
 		parseText(contents);
 	} else {
 		contents = alasql.utils.autoExtFilename(contents, 'csv', opts);
-		alasql.utils.loadFile(contents, !!cb, parseText, query.cb);
+		alasql.utils.loadFile(contents, !!cb, parseText, e => query.cb(null, e));
 	}
 	return res;
 };
@@ -491,6 +532,10 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			}
 		},
 		function (err) {
+			if (query && query.cb) {
+				query.cb(null, err);
+				return;
+			}
 			throw err;
 		}
 	);

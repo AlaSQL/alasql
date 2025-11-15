@@ -1,10 +1,7 @@
 // Main query procedure
 function queryfn(query, oldscope, cb, A, B) {
-	var aaa = query.sources.length;
-
-	var ms;
 	query.sourceslen = query.sources.length;
-	var slen = query.sourceslen;
+	let slen = query.sourceslen;
 	query.query = query; // TODO Remove to prevent memory leaks
 	query.A = A;
 	query.B = B;
@@ -18,91 +15,61 @@ function queryfn(query, oldscope, cb, A, B) {
 
 		query.queriesdata = [];
 
-		//		console.log(8);
 		query.queriesfn.forEach(function (q, idx) {
-			//			if(query.explain) ms = Date.now();
-			//console.log(18,idx);
-			//			var res = flatArray(q(query.params,null,queryfn2,(-idx-1),query));
-
-			//			var res = flatArray(queryfn(q.query,null,queryfn2,(-idx-1),query));
-			//			console.log(A,B);
-			// console.log(q);
 			q.query.params = query.params;
-			//			query.queriesdata[idx] =
-
-			//	if(false) {
-			//			queryfn(q.query,query.oldscope,queryfn2,(-idx-1),query);
-			//	} else {
 			queryfn2([], -idx - 1, query);
-			//	}
-
-			//			console.log(27,q);
-
-			//			query.explaination.push({explid: query.explid++, description:'Query '+idx,ms:Date.now()-ms});
-			//			query.queriesdata[idx] = res;
-			//			return res;
 		});
-		//		console.log(9,query.queriesdata.length);
-		//		console.log(query.queriesdata[0]);
 	}
 
-	var scope;
-	if (!oldscope) scope = {};
-	else scope = cloneDeep(oldscope);
-	query.scope = scope;
+	query.scope = oldscope ? cloneDeep(oldscope) : {};
 
 	// First - refresh data sources
 
-	var result;
+	let result;
 	query.sources.forEach(function (source, idx) {
-		//		source.data = query.database.tables[source.tableid].data;
-		//		console.log(666,idx);
 		source.query = query;
 		var rs = source.datafn(query, query.params, queryfn2, idx, alasql);
-		//		console.log(333,rs);
 		if (typeof rs !== 'undefined') {
-			// TODO - this is a hack: check if result is array - check all cases and
-			// make it more logical
-			if ((query.intofn || query.intoallfn) && Array.isArray(rs)) rs = rs.length;
+			// TODO - this is a hack: check if result is array - check all cases and make it more logical
+			if ((query.intofn || query.intoallfn) && Array.isArray(rs)) {
+				rs = rs.length;
+			}
 			result = rs;
 		}
 		//
 		// Ugly hack to use in query.wherefn and source.srcwherefns functions
 		// constructions like this.queriesdata['test'].
-		// I can elimite it with source.srcwherefn.bind(this)()
+		// We can elimite it with source.srcwherefn.bind(this)()
 		// but it may be slow.
 		//
 		source.queriesdata = query.queriesdata;
 	});
-	if (query.sources.length == 0 || 0 === slen) result = queryfn3(query);
+
+	if (query.sources.length == 0 || 0 === slen) {
+		try {
+			result = queryfn3(query);
+		} catch (e) {
+			if (cb) return cb(null, e);
+			else throw e;
+		}
+	}
 	//	console.log(82,aaa,slen,query.sourceslen, query.sources.length);
 	return result;
 }
-
 function queryfn2(data, idx, query) {
-	//console.log(56,arguments);
-	//		console.log(78,data, idx,query);
-	//console.trace();
-
 	if (idx >= 0) {
-		var source = query.sources[idx];
+		let source = query.sources[idx];
 		source.data = data;
-		if (typeof source.data == 'function') {
+		if (typeof source.data === 'function') {
 			source.getfn = source.data;
 			source.dontcache = source.getfn.dontcache;
-
-			//			var prevsource = query.sources[h-1];
-			if (source.joinmode == 'OUTER' || source.joinmode == 'RIGHT' || source.joinmode == 'ANTI') {
+			if (['OUTER', 'RIGHT', 'ANTI'].includes(source.joinmode)) {
 				source.dontcache = false;
 			}
 			source.data = {};
 		}
 	} else {
-		// subqueries
-		//		console.log("queriesdata",data, flatArray(data));
 		query.queriesdata[-idx - 1] = flatArray(data);
-		//		console.log(98,query.queriesdata);
-		//		console.log(79,query.queriesdata);
 	}
 
 	query.sourceslen--;
@@ -116,13 +83,7 @@ function queryfn3(query) {
 		jlen;
 
 	// Preindexation of data sources
-	//	if(!oldscope) {
 	preIndex(query);
-	//	}
-
-	// query.sources.forEach(function(source) {
-	// 		console.log(source.data);
-	// });
 
 	// Prepare variables
 	query.data = [];
@@ -133,20 +94,14 @@ function queryfn3(query) {
 	var h = 0;
 
 	// Start walking over data
-	//console.log(142,'1111');
 	doJoin(query, scope, h);
-	//console.log(144,'2222',query.modifier);
-
-	//console.log(85,query.data[0]);
 
 	// If grouping, then filter groups with HAVING function
-	//			console.log(query.havingfns);
 	if (query.groupfn) {
 		query.data = [];
 		if (query.groups.length === 0 && query.allgroups.length === 0) {
 			var g = {};
 			if (query.selectGroup.length > 0) {
-				//				console.log(query.selectGroup);
 				query.selectGroup.forEach(function (sg) {
 					if (
 						sg.aggregatorid == 'COUNT' ||
@@ -160,45 +115,40 @@ function queryfn3(query) {
 				});
 			}
 			query.groups = [g];
-			//			console.log();
 		}
-
-		// ******
 
 		if (query.aggrKeys.length > 0) {
 			var gfns = '';
 			query.aggrKeys.forEach(function (col) {
-				gfns += `g[${JSON.stringify(col.nick)}] = alasql.aggr[${JSON.stringify(
+				gfns += `
+				g[${JSON.stringify(col.nick)}] = alasql.aggr[${JSON.stringify(
 					col.funcid
-				)}](undefined,g[${JSON.stringify(col.nick)}],3);`;
-
-				//				gfns += 'return g[\''+col.nick+'\];';
+				)}](undefined,g[${JSON.stringify(col.nick)}],3); `;
 			});
-			// console.log(175, gfns);
 			var gfn = new Function('g,params,alasql', 'var y;' + gfns);
 		}
 
-		// *******
-		// 	console.log('EMPTY',query.groups);
-		// 	debugger;
-		// if(false && (query.groups.length == 1) && (Object.keys(query.groups[0]).length == 0)) {
-		// 	console.log('EMPTY',query.groups);
-		// } else {
 		for (var i = 0, ilen = query.groups.length; i < ilen; i++) {
 			var g = query.groups[i];
 
 			if (gfn) gfn(g, query.params, alasql);
 
-			//			console.log(query.groups[i]);
 			if (!query.havingfn || query.havingfn(g, query.params, alasql)) {
-				//				console.log(g);
 				var d = query.selectgfn(g, query.params, alasql);
+
+				for (const key in query.groupColumns) {
+					// ony remove columns where the alias is also not a column in the result
+					if (
+						query.groupColumns[key] !== key &&
+						d[query.groupColumns[key]] &&
+						!query.groupColumns[query.groupColumns[key]]
+					) {
+						delete d[query.groupColumns[key]];
+					}
+				}
 				query.data.push(d);
 			}
 		}
-		// }
-
-		//			query.groups = query.groups.filter();
 	}
 	// Remove distinct values
 	doDistinct(query);
@@ -217,8 +167,16 @@ function queryfn3(query) {
 			ilen = nd.data.length;
 			for (var i = 0; i < ilen; i++) {
 				var r = {};
-				for (var j = Math.min(query.columns.length, nd.columns.length) - 1; 0 <= j; j--) {
-					r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+				if (query.columns.length) {
+					jlen = Math.min(query.columns.length, nd.columns.length);
+					for (var j = 0; j < jlen; j++) {
+						r[query.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
+				} else {
+					jlen = nd.columns.length;
+					for (var j = 0; j < jlen; j++) {
+						r[nd.columns[j].columnid] = nd.data[i][nd.columns[j].columnid];
+					}
 				}
 				ud.push(r);
 			}
@@ -307,11 +265,6 @@ function queryfn3(query) {
 	// Reduce to limit and offset
 	doLimit(query);
 
-	// Remove Angular.js artifacts and other unnecessary columns
-	// Issue #25
-
-	//	console.log('removeKeys:',query.removeKeys);
-
 	// TODO: Check what artefacts rest from Angular.js
 	if (typeof angular != 'undefined') {
 		query.removeKeys.push('$$hashKey');
@@ -353,7 +306,6 @@ function queryfn3(query) {
 			for (var k in r) {
 				for (j = 0; j < query.removeLikeKeys.length; j++) {
 					if (alasql.utils.like(query.removeLikeKeys[j], k)) {
-						//					if(k.match(query.removeLikeKeys[j])) {
 						delete r[k];
 					}
 				}
@@ -364,7 +316,6 @@ function queryfn3(query) {
 			query.columns = query.columns.filter(function (column) {
 				var found = false;
 				removeLikeKeys.forEach(function (key) {
-					//					if(column.columnid.match(key)) found = true;
 					if (alasql.utils.like(key, column.columnid)) {
 						found = true;
 					}
@@ -375,39 +326,25 @@ function queryfn3(query) {
 	}
 
 	if (query.pivotfn) query.pivotfn();
-	if (query.unpivotfn) query.unpivotfn();
-	//	console.log(query.intoallfns);
-	/*/*
-	// if(query.explain) {
-	// 	if(query.cb) query.cb(query.explaination,query.A, query.B);
-	// 	return query.explaination;
-	// } else
-*/
 
-	//console.log(190,query.intofns);
+	if (query.unpivotfn) query.unpivotfn();
+
 	if (query.intoallfn) {
-		//		console.log(161);
-		//		var res = query.intoallfn(query.columns,query.cb,query.A, query.B, alasql);
 		var res = query.intoallfn(query.columns, query.cb, query.params, query.alasql);
-		//		console.log(1163,res);
-		//		if(query.cb) res = query.cb(res,query.A, query.B);
-		//		console.log(1165,res);
-		//		debugger;
 		return res;
-	} else if (query.intofn) {
+	}
+
+	if (query.intofn) {
 		ilen = query.data.length;
 		for (i = 0; i < ilen; i++) {
 			query.intofn(query.data[i], i, query.params, query.alasql);
 		}
-		//		console.log(query.intofn);
 		if (query.cb) query.cb(query.data.length, query.A, query.B);
 		return query.data.length;
-	} else {
-		//		console.log(111,query.cb,query.data);
-		res = query.data;
-		if (query.cb) res = query.cb(query.data, query.A, query.B);
-		return res;
 	}
+	res = query.data;
+	if (query.cb) res = query.cb(query.data, query.A, query.B);
+	return res;
 }
 
 // Limiting
@@ -460,15 +397,13 @@ var preIndex = function (query) {
 		var source = query.sources[k];
 		delete source.ix;
 		// If there is indexation rule
-		//console.log('preIndex', source);
-		//console.log(source);
 		if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
 			if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
 				if (!alasql.databases[source.databaseid].tables[source.tableid].indices)
 					query.database.tables[source.tableid].indices = {};
 				// Check if index already exists
-				var ixx =
+				let ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
 					];
@@ -480,10 +415,10 @@ var preIndex = function (query) {
 			if (!source.ix) {
 				source.ix = {};
 				// Walking over source data
-				var scope = {};
-				var i = 0;
-				var ilen = source.data.length;
-				var dataw;
+				let scope = {};
+				let i = 0;
+				let ilen = source.data.length;
+				let dataw;
 				//				while(source.getfn i<ilen) {
 
 				while (
@@ -492,9 +427,7 @@ var preIndex = function (query) {
 					i < ilen
 				) {
 					if (source.getfn && !source.dontcache) source.data[i] = dataw;
-					//					scope[tableid] = dataw;
 
-					//				for(var i=0, ilen=source.data.length; i<ilen; i++) {
 					// Prepare scope for indexation
 					scope[source.alias || source.tableid] = dataw;
 
@@ -518,7 +451,6 @@ var preIndex = function (query) {
 					] = source.ix;
 				}
 			}
-			//console.log(38,274,source.ix);
 
 			// Optimization for WHERE column = expression
 		} else if (source.wxleftfn) {
@@ -562,7 +494,6 @@ var preIndex = function (query) {
 					group.push(source.data[i]);
 					i++;
 				}
-				//					query.database.tables[source.tableid].indices[hash(source.wxleftfns+'`'+source.onwherefns)] = source.ix;
 				if (!alasql.databases[source.databaseid].engineid) {
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.wxleftfns + '`')
@@ -581,7 +512,6 @@ var preIndex = function (query) {
 					source.data = [];
 				}
 			}
-			//			}
 			// If there is no any optimization than apply srcwhere filter
 		} else if (source.srcwherefns && !source.dontcache) {
 			if (source.data) {
@@ -590,16 +520,13 @@ var preIndex = function (query) {
 
 				source.data = source.data.filter(function (r) {
 					scope[source.alias] = r;
-					//					console.log(288,source);
 					return source.srcwherefn(scope, query.params, alasql);
 				});
 
 				scope = {};
 				i = 0;
 				ilen = source.data.length;
-				//var dataw;
-				var res = [];
-				//				while(source.getfn i<ilen) {
+				let res = [];
 
 				while (
 					(dataw = source.data[i]) ||
@@ -618,7 +545,6 @@ var preIndex = function (query) {
 		}
 		// Change this to another place (this is a wrong)
 		if (source.databaseid && alasql.databases[source.databaseid].tables[source.tableid]) {
-			//query.database.tables[source.tableid].dirty = false;
 		} else {
 			// this is a subquery?
 		}

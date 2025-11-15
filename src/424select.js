@@ -48,9 +48,10 @@ function compileSelectStar(query, aliases, joinstar) {
 
 		if (columns && columns.length > 0) {
 			columns.forEach(function (tcol) {
+				const escapedColumnId = escapeq(tcol.columnid);
 				if (joinstar && alasql.options.joinstar == 'underscore') {
 					ss.push(
-						"'" + alias + '_' + tcol.columnid + "':p['" + alias + "']['" + tcol.columnid + "']"
+						"'" + alias + '_' + escapedColumnId + "':p['" + alias + "']['" + escapedColumnId + "']"
 					);
 				} else if (joinstar && alasql.options.joinstar == 'json') {
 					//				ss.push('\''+alias+'_'+tcol.columnid+'\':p[\''+alias+'\'][\''+tcol.columnid+'\']');
@@ -58,16 +59,16 @@ function compileSelectStar(query, aliases, joinstar) {
 						"r['" +
 						alias +
 						"']['" +
-						tcol.columnid +
+						escapedColumnId +
 						"']=p['" +
 						alias +
 						"']['" +
-						tcol.columnid +
+						escapedColumnId +
 						"'];";
 				} else {
-					var value = "p['" + alias + "']['" + tcol.columnid + "']";
+					var value = "p['" + alias + "']['" + escapedColumnId + "']";
 					if (!columnIds[tcol.columnid]) {
-						var key = "'" + tcol.columnid + "':";
+						var key = "'" + escapedColumnId + "':";
 						ss.push(key + value);
 						columnIds[tcol.columnid] = {
 							id: ss.length - 1,
@@ -82,7 +83,7 @@ function compileSelectStar(query, aliases, joinstar) {
 					}
 				}
 
-				query.selectColumns[escapeq(tcol.columnid)] = true;
+				query.selectColumns[escapedColumnId] = true;
 
 				//			console.log('ok',tcol);
 

@@ -37,15 +37,3 @@ class Recordset {
 
 alasql.Recordset = Recordset;
 alasql.Query = Query;
-
-/*/*
-// View = function(){
-// 	this.data = [];
-// 	this.columns = [];
-// 	this.ixcolumns = {};
-// 	this.ixdefs = {};
-// 	this.indices = {};
-// };
-
-// alasql.View = View;
-*/

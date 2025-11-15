@@ -104,6 +104,8 @@ COLUMNS 										return 'COLUMN'
 "CROSS"											return 'CROSS'
 'CUBE'											return 'CUBE'
 "CURRENT_TIMESTAMP"								return 'CURRENT_TIMESTAMP'
+"CURRENT_DATE"									return 'CURRENT_DATE'
+"CURDATE"										return 'CURRENT_DATE'
 "CURSOR"										return 'CURSOR'
 DATABASE(S)?									return 'DATABASE'
 'DATEADD'                                       return 'DATEADD'
@@ -166,14 +168,9 @@ DATABASE(S)?									return 'DATABASE'
 'LIMIT'											return 'LIMIT'
 'MATCHED'										return 'MATCHED'
 'MATRIX'										return 'MATRIX'
-
-/*"MAX"											return 'MAX'*/
-/*"MIN"											return 'MIN'*/
-
-'MAX'(\s+)?/'('									return 'MAX'
-'MAX'(\s+)?/(','|')')							return 'MAXNUM'
-'MIN'(\s+)?/'('									return 'MIN'
-
+'MAX'\s*/'('									return 'MAX'
+'MAX'\s*/(','|')')								return 'MAXNUM'
+'MIN'\s*/'('									return 'MIN'
 "MERGE"											return 'MERGE'
 "MINUS"											return 'EXCEPT'
 "MODIFY"										return 'MODIFY'
@@ -269,10 +266,7 @@ SETS                                        	return 'SET'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
-
-(\d*[.])?\d+[eE]\d+								return 'NUMBER'
-(\d*[.])?\d+									return 'NUMBER'
-
+(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
 '->'											return 'ARROW'
 '#'												return 'SHARP'
 '+'												return 'PLUS'
@@ -354,7 +348,7 @@ Literal
 			else $$ = $1.toLowerCase();
 		}
 	| BRALITERAL
-		{ $$ = doubleq($1.substr(1,$1.length-2)); }
+		{ $$ = doubleq($1.substr(1,$1.length-2));}
 	| error NonReserved
 		{ $$ = $2.toLowerCase() }
 	;
@@ -518,9 +512,8 @@ Select
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
 		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10);
 		    $$ = $1;
-/*		    if(yy.exists) $$.exists = yy.exists;
-		    delete yy.exists;
-		    if(yy.queries) $$.queries = yy.queries;
+		    if(yy.exists) $$.exists = yy.exists.slice();
+/*		    if(yy.queries) $$.queries = yy.queries;
 			delete yy.queries;
 */		}
 	| SEARCH SearchSelector* IntoClause SearchFrom?
@@ -1036,6 +1029,8 @@ OnClause
 		{ $$ = {on: $2}; }
 	| USING ColumnsList
 		{ $$ = {using: $2}; }
+	| USING LPAR ColumnsList RPAR
+		{ $$ = {using: $3}; }
 	|
 		{ $$ = undefined; }
 	;
@@ -1259,6 +1254,8 @@ Expression
 		{$$ = $1}
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'});}
+	| CURRENT_DATE
+		{ $$ = new yy.FuncValue({funcid:'CURRENT_DATE'});}
 /*	| USER
 		{ $$ = new yy.FuncValue({funcid:'USER'});}
 */	;
@@ -1313,6 +1310,8 @@ PrimitiveValue
 		{ $$ = $1; }
 	| CURRENT_TIMESTAMP
 		{ $$ = new yy.FuncValue({funcid:'CURRENT_TIMESTAMP'}); }
+	| CURRENT_DATE
+		{ $$ = new yy.FuncValue({funcid:'CURRENT_DATE'}); }
 /*	| USER
 		{ $$ = new yy.FuncValue({funcid:'USER'}); }
 */	;
@@ -1387,6 +1386,8 @@ FuncValue
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	| REPLACE LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'REPLACE', args:$3 }) }
+	| CURRENT_DATE LPAR RPAR
+		{ $$ = new yy.FuncValue({ funcid: $1 }) }
 	| DATEADD LPAR Literal COMMA Expression COMMA Expression RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'DATEADD', args:[new yy.StringValue({value:$3}),$5,$7]}) }
 	| DATEADD LPAR STRING COMMA Expression COMMA Expression RPAR
@@ -2689,6 +2690,8 @@ MergeInto
 MergeUsing
 	: USING FromTable
 		{ $$ = {using: $2}; }
+	| USING LPAR FromTable RPAR
+		{ $$ = {using: $3}; }
 	;
 
 MergeOn
@@ -2960,19 +2963,17 @@ TermsList
 	;
 
 Term
-	: Literal
-		{ $$ = new yy.Term({termid:$1}); }
-	| Literal LPAR TermsList RPAR
-		{ $$ = new yy.Term({termid:$1,args:$3}); }
-	;
-
+    : Literal
+        { $$ = {termid: $1}; }
+    | Literal LPAR TermsList RPAR
+        { $$ = {termid:$1, args:$3}; }
+    ;
 Query
 	: QUESTIONDASH FuncValue
 	;
 
 Call
 	: CALL FuncValue
-		//{ $$ = $2; }
 		{ $$ = new yy.ExpressionStatement({expression:$2}); }
 	;
 

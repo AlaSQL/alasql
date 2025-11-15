@@ -1,18 +1,17 @@
-- _AlaSQL is an unfunded open source project installed 150k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Aupdated-desc). We appreciate any and all contributions we can get._
+- _AlaSQL is an unfunded open source project installed 650k+ times each month. [Please donate your time](https://github.com/AlaSQL/alasql/issues?q=is%3Aopen+label%3A%22Help+wanted%22+sort%3Aupdated-desc). We appreciate any and all contributions we can get._
 
-- _Have a question? Ask on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL) using the "alasql" tag._
+- _Have a question? [Ask The AlaSQL Bot](https://chatgpt.com/g/g-XcBL24WTe-alasql-bot) or post on [Stack Overflow](http://stackoverflow.com/questions/ask?tags=AlaSQL)._
 
-[![CI-test](https://github.com/alasql/alasql/workflows/CI-test/badge.svg)](https://github.com/alasql/alasql/actions)
+[![CI-test](https://github.com/alasql/alasql/workflows/CI%20build%20&%20test/badge.svg)](https://github.com/alasql/alasql/actions)
 [![NPM downloads](http://img.shields.io/npm/dm/alasql.svg?style=flat&label=npm%20downloads)](https://npm-stat.com/charts.html?package=alasql)
 [![OPEN open source software](https://img.shields.io/badge/Open--OSS-%E2%9C%94-brightgreen.svg)](http://open-oss.com)
 [![Release](https://img.shields.io/github/release/alasql/alasql.svg?label=npm&a)](https://www.npmjs.com/package/alasql)
-[![Stars](https://img.shields.io/github/stars/alasql/alasql.svg?label=Github%20%E2%98%85&a)](https://github.com/alasql/alasql)
 [![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/AlaSQL/alasql.svg)](http://isitmaintained.com/project/AlaSQL/alasql "Average time to resolve an issue")
 [![Coverage]( https://img.shields.io/codecov/c/github/alasql/alasql/develop.svg)](https://rawgit.com/alasql/alasql/develop/test/coverage/lcov-report/dist/alasql.fs.js.html)
 [![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/AlaSQL/alasql/badge)](https://securityscorecards.dev/viewer/?uri=github.com/AlaSQL/alasql)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/328/badge)](https://bestpractices.coreinfrastructure.org/projects/328)
 [![](https://data.jsdelivr.com/v1/package/npm/alasql/badge?style=rounded)](https://www.jsdelivr.com/package/npm/alasql)
-
+[![Stars](https://img.shields.io/github/stars/alasql/alasql.svg?label=Github%20%E2%98%85&a)](https://github.com/alasql/alasql)
 
 
 
@@ -97,10 +96,13 @@ var res = alasql("SELECT * FROM example1 ORDER BY b DESC");
 console.log(res); // [{a:2,b:6},{a:1,b:5},{a:3,b:4}]
 ```
 
-
 __If you are familiar with SQL, it should be no surprise that proper use of indexes on your tables is essential for good performance.__
 
+#### Options
 
+AlaSQL has several [configuration options](https://github.com/AlaSQL/alasql/wiki/AlaSQL-Options) which change the behavior. It can be set via SQL statements or via the options object before using `alasql`. 
+
+If you're using `NOW()` in queries often, setting `alasql.options.dateAsString` to `false` speed things up. It will just return a JS Date object instead of a string representation of a date. 
 
 ## Installation
 
@@ -598,6 +600,15 @@ AlaSQL uses `SQLLOGICTEST` to test its compatibility with SQL-99. The tests incl
 
 The testruns can be found in the [testlog](TESTLOG.md).
 
+## Rebuilding the parser 
+
+To rebuild the parser, follow these steps:
+
+* Make changes to alasqlparser.jison
+* `npm install -g jison`
+* `npm run jison`
+* `npm test` to validate the changes made
+* Commit changes to alasqlparser.jison and alasqlparser.js
 
 
 ## Contributing
@@ -610,22 +621,61 @@ Thanks to all the people who already contributed!
   <img src="https://contributors-img.web.app/image?repo=alasql/alasql" />
 </a>
 
+**Main contributors**
+
+* [Andrey Gershun](https://github.com/alasql)
+* [Mathias Rangel Wulff](https://twitter.com/rangelwulff)
+
+AlaSQL is an [OPEN Open Source Project](https://openopensource.github.io/). This means that:
+
+> Individuals making significant and valuable contributions are given commit-access to the project to contribute as they see fit. This project is more like an open wiki than a standard guarded open source project.
+
+We appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/alasql/alasql/blob/develop/CONTRIBUTING.md)
+
+
+
+## Sponsors
+
+We extend our heartfelt thanks to each and every sponsor for generously supporting the AlaSQL open-source project by providing infrastructure at no cost. Their contributions enhance the development experience, and we highly recommend exploring their offerings.
+
+
+### Faster GitHub Actions with Blacksmith
+
+[Blacksmith](https://www.blacksmith.sh/?source=alasql) significantly improves the speed of our GitHub Actions workflows by offering more powerful machines and enhanced caching mechanisms. Transitining was a one-line change and it has reduced our automated test times from 70-90 seconds to 15-17 seconds.
+
+<a href="https://www.blacksmith.sh/?source=alasql">
+    <img src="https://github.com/user-attachments/assets/a85a8a5f-65fd-48e1-aaad-b3f247248928" alt="Blacksmith Logo" width="300">
+</a>
+
+----
+
+### Browser Testing on Physical Devices with BrowserStack
+
+[BrowserStack](https://www.browserstack.com/?source=alasql) enables us to run automated tests in real browsers on physical devices to help us identify cross-browser issues early.
+
+<a href="https://www.browserstack.com/?source=alasql">
+    <img src="https://github.com/user-attachments/assets/9f74c25b-7dde-4a62-944e-8f23fc399ba9" alt="BrowserStack Logo" width="300">
+</a>
+
+----
+
+### Development Practice Tracking with OpenSSF
+
+The [Open Source Security Foundation (OpenSSF)](https://openssf.org) provides automated tools to evaluate and monitor the development practices in our repository, ensuring we maintain high standards of security and reliability.
+
+<div style="background-color: #321e6b; padding: 10px;">
+    <a href="https://openssf.org">
+        <img src="https://github.com/user-attachments/assets/30a5e4ef-62b2-431d-905e-19ce5f9b6048" alt="OpenSSF Logo" width="300">
+    </a>
+</div>
+
+
 
 ## License
 
 MIT - see [MIT licence information](LICENSE)
 
 
-## Main contributors
-
-* [Andrey Gershun](https://github.com/alasql)
-* [Mathias Rangel Wulff](https://twitter.com/rangelwulff)
-
-AlaSQL is an [OPEN Open Source Project](http://openopensource.org/). This means that:
-
-> Individuals making significant and valuable contributions are given commit-access to the project to contribute as they see fit. This project is more like an open wiki than a standard guarded open source project.
-
-We appreciate any and all contributions we can get. If you feel like contributing, have a look at [CONTRIBUTING.md](https://github.com/alasql/alasql/blob/develop/CONTRIBUTING.md)
 
 
 ## Credits
@@ -649,4 +699,6 @@ and other people for useful tools, which make our work much easier.
 
 ----
 <a href="http://alasql.org"><img src="https://cloud.githubusercontent.com/assets/1063454/14003946/d6e5c076-f156-11e5-8238-e62d2a8d20dc.png" align="right" alt="AlaSQL logo"/></a>
-© 2014-2023, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
+© 2014-2024, Andrey Gershun (agershun@gmail.com) & Mathias Rangel Wulff (m@rawu.dk)
+
+See [this article](https://console.substack.com/p/console-187) for a bit of information about the motivation and background. 

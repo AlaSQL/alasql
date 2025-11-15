@@ -7,32 +7,10 @@
 
 var FS = (alasql.engines.FILESTORAGE = alasql.engines.FILE = function () {});
 
-/*/*
-FS.get = function(key) {
-	var s = localStorage.getItem(key);
-	if(typeof s == "undefined") return;
-	var v = undefined;
-	try {
-		v = JSON.parse(s); 
-	} catch(err) {
-		throw new Error('Cannot parse JSON '+s);
-	}
-	return v;
-};
-
-LS.set = function(key, value){
-	if(typeof value == 'undefined') localStorage.removeItem(key);
-	else localStorage.setItem(key,JSON.stringify(value)); 
-}
-*/
-
 FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
-	//	console.log(arguments);
 	var res = 1;
 	var filename = args[0].value;
-	//	console.log('filename',filename);
 	alasql.utils.fileExists(filename, function (fex) {
-		// console.log('fex:',arguments);
 		if (fex) {
 			if (ifnotexists) {
 				res = 0;
@@ -93,14 +71,12 @@ FS.dropDatabase = function (fsdbid, ifexists, cb) {
 };
 
 FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
-	//	console.log(arguments);
 	var res = 1;
 	if (alasql.databases[dbid]) {
 		throw new Error('Unable to attach database as "' + dbid + '" because it already exists');
 	}
 	var db = new alasql.Database(dbid || fsdbid);
 	db.engineid = 'FILESTORAGE';
-	//	db.fsdbid = fsdbid;
 	db.filename = args[0].value;
 	loadFile(db.filename, !!cb, function (s) {
 		try {
@@ -122,28 +98,6 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 	return res;
 };
 
-/*/*
-FS.showDatabases = function(like, cb) {
-	var res = [];
-	var ls = LS.get('alasql');
-	if(like) {
-		var relike = new RegExp(like.value.replace(/\%/g,'.*'),'g');
-	}
-	if(ls && ls.databases) {
-		for(var dbid in ls.databases) {
-			res.push({databaseid: dbid});
-		};
-		if(like && res && res.length > 0) {
-			res = res.filter(function(d){
-				return d.databaseid.match(relike);
-			});
-		}		
-	};
-	if(cb) cb(res);
-	return res;
-};
-*/
-
 FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	var db = alasql.databases[databaseid];
 	var tb = db.data[tableid];
@@ -163,7 +117,6 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 };
 
 FS.updateFile = function (databaseid) {
-	//	console.log('update start');
 	var db = alasql.databases[databaseid];
 	if (db.issaving) {
 		db.postsave = true;
@@ -173,7 +126,6 @@ FS.updateFile = function (databaseid) {
 	db.postsave = false;
 	alasql.utils.saveFile(db.filename, JSON.stringify(db.data), function () {
 		db.issaving = false;
-		//		console.log('update finish');
 
 		if (db.postsave) {
 			setTimeout(function () {
@@ -200,7 +152,6 @@ FS.dropTable = function (databaseid, tableid, ifexists, cb) {
 };
 
 FS.fromTable = function (databaseid, tableid, cb, idx, query) {
-	//	console.log(998, databaseid, tableid, cb);
 	var db = alasql.databases[databaseid];
 	var res = db.data[tableid];
 	if (cb) res = cb(res, idx, query);
@@ -231,7 +182,6 @@ FS.saveTableData = function (databaseid, tableid) {
 };
 
 FS.commit = function (databaseid, cb) {
-	//	console.log('COMMIT');
 	var db = alasql.databases[databaseid];
 	var fsdb = {tables: {}};
 	if (db.tables) {
@@ -250,9 +200,6 @@ FS.rollback = function (databaseid, cb) {
 	var res = 1;
 	var db = alasql.databases[databaseid];
 	db.dbversion++;
-	//	console.log(db.dbversion)
-	//	var lsdbid = alasql.databases[databaseid].lsdbid;
-	//	lsdb = LS.get(lsdbid);
 	wait();
 	function wait() {
 		setTimeout(function () {
@@ -270,9 +217,6 @@ FS.rollback = function (databaseid, cb) {
 							db.tables[tbid].data = db.data[tbid];
 						}
 						db.tables[tbid].indexColumns();
-
-						// index columns
-						// convert types
 					}
 
 					delete alasql.databases[databaseid];
@@ -287,23 +231,4 @@ FS.rollback = function (databaseid, cb) {
 			}
 		}, 100);
 	}
-
-	//	 if(!alasql.options.autocommit) {
-	/*/*		if(lsdb.tables){
-			for(var tbid in lsdb.tables) {
-				var tb = new alasql.Table({columns: db.tables[tbid].columns});
-				extend(tb,lsdb.tables[tbid]);
-				lsdb.tables[tbid] = tb;
-				if(!alasql.options.autocommit) {
-					lsdb.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
-				}
-				lsdb.tables[tbid].indexColumns();
-
-				// index columns
-				// convert types
-			}
-		}
-//	}
-*/
-	//console.log(999, alasql.databases[databaseid]);
 };

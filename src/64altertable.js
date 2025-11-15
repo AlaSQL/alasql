@@ -12,13 +12,13 @@ yy.AlterTable = function (params) {
 	return Object.assign(this, params);
 };
 yy.AlterTable.prototype.toString = function () {
-	var s = 'ALTER TABLE ' + this.table.toString();
+	let s = 'ALTER TABLE ' + this.table.toString();
 	if (this.renameto) s += ' RENAME TO ' + this.renameto;
 	return s;
 };
 
 yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[databaseid];
+	let db = alasql.databases[databaseid];
 	db.dbversion = Date.now();
 
 	if (this.renameto) {
@@ -38,7 +38,9 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		}
 		if (cb) cb(res);
 		return res;
-	} else if (this.addcolumn) {
+	}
+
+	if (this.addcolumn) {
 		db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
 		var tableid = this.table.tableid;
@@ -64,15 +66,15 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		table.columns.push(col);
 		table.xcolumns[columnid] = col;
 
-		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
-			//				console.log(table.data[i][columnid]);
+		for (let i = 0, ilen = table.data.length; i < ilen; i++) {
 			table.data[i][columnid] = defaultfn();
 		}
 
-		// TODO
 		return cb ? cb(1) : 1;
-	} else if (this.modifycolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
+	}
+
+	if (this.modifycolumn) {
+		let db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
@@ -90,10 +92,11 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		col.dbprecision = this.dbprecision;
 		col.dbenum = this.dbenum;
 
-		// TODO
 		return cb ? cb(1) : 1;
-	} else if (this.renamecolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
+	}
+
+	if (this.renamecolumn) {
+		let db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
 
 		var tableid = this.table.tableid;
@@ -120,16 +123,16 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			delete table.xcolumns[columnid];
 
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
-				//				console.log(table.data[i][columnid]);
 				table.data[i][tocolumnid] = table.data[i][columnid];
 				delete table.data[i][columnid];
 			}
 			return table.data.length;
-		} else {
-			return cb ? cb(0) : 0;
 		}
-	} else if (this.dropcolumn) {
-		var db = alasql.databases[this.table.databaseid || databaseid];
+		return cb ? cb(0) : 0;
+	}
+
+	if (this.dropcolumn) {
+		let db = alasql.databases[this.table.databaseid || databaseid];
 		db.dbversion++;
 		var tableid = this.table.tableid;
 		var table = db.tables[tableid];
@@ -155,8 +158,9 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		for (i = 0, ilen = table.data.length; i < ilen; i++) {
 			delete table.data[i][columnid];
 		}
+
 		return cb ? cb(table.data.length) : table.data.length;
-	} else {
-		throw Error('Unknown ALTER TABLE method');
 	}
+
+	throw Error('Unknown ALTER TABLE method');
 };

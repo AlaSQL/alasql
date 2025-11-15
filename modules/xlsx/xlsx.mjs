@@ -21647,7 +21647,7 @@ function html_to_sheet(str/*:string*/, _opts)/*:Workbook*/ {
 	var opts = _opts || {};
 	var dense = (opts.dense != null) ? opts.dense : DENSE;
 	var ws/*:Worksheet*/ = ({}/*:any*/); if(dense) ws["!data"] = [];
-	str = str.replace(/<!--.*?-->/g, "");
+	str = str.replace(/<!--[\s\S]*?-->/g, "");
 	var mtch/*:any*/ = str.match(/<table/i);
 	if(!mtch) throw new Error("Invalid HTML: could not find <table>");
 	var mtch2/*:any*/ = str.match(/<\/table/i);

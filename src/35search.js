@@ -363,16 +363,6 @@ yy.Search = class Search {
 						alasql.vars[sel.args[0]] = oldv;
 						return r1;
 					}
-					/*/*
-
-	jimmy.TO = function(val,args) {
-		// console.log(args[0]);
-
-		alasql.vars[args[0]].push(val);
-		return {status: 1, values: [val]};
-	};
-
-	*/
 				} else if (sel.selid === 'ARRAY') {
 					var nest = processSelector(sel.args, 0, value);
 					if (nest.length > 0) {
@@ -675,10 +665,6 @@ yy.Search = class Search {
 			) {
 				fromdata = fromdata.find().fetch();
 			}
-			//console.log(selectors,fromdata);
-			//		if(typeof fromdata == 'object' && Array.isArray(fromdata)) {
-			//			selectors.unshift({srchid:'CHILD'});
-			//		}
 		}
 
 		// If source data is array than first step is to run over array
@@ -1145,9 +1131,9 @@ var compileSearchOrder = function (order) {
 					s += `if (
 							(a[${JSON.stringify(columnid)}]||'')${dg}
 							${ord.direction === 'ASC' ? '>' : '<'}
-							(b[${JSON.stringify(columnid)}]||'')${dg} 
+							(b[${JSON.stringify(columnid)}]||'')${dg}
 						) return 1;
-						
+
 						if(
 							(a[${JSON.stringify(columnid)}]||'')${dg}
 							==
@@ -1161,26 +1147,17 @@ var compileSearchOrder = function (order) {
 				if (ord.nocase) {
 					dg += '.toUpperCase()';
 				}
-				s +=
-					'if((' +
-					ord.toJS('a', '') +
-					"||'')" +
-					dg +
-					(ord.direction === 'ASC' ? '>(' : '<(') +
-					ord.toJS('b', '') +
-					"||'')" +
-					dg +
-					')return 1;';
-				s +=
-					'if((' +
-					ord.toJS('a', '') +
-					"||'')" +
-					dg +
-					'==(' +
-					ord.toJS('b', '') +
-					"||'')" +
-					dg +
-					'){';
+				s += `
+					if (
+						(${ord.toJS('a', '')} || '')${dg}
+						${ord.direction === 'ASC' ? '>' : '<'}
+						(${ord.toJS('b', '')} || '')${dg}
+					) return 1;
+
+					if (
+						(${ord.toJS('a', '')} || '')${dg} ==
+						(${ord.toJS('b', '')} || '')${dg}
+					) {`;
 			}
 
 			// TODO Add date comparision

@@ -6,17 +6,17 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 221 Multi-line comments', function () {
-	it('1. /* */', function (done) {
+	it('1. /* */ and -- style comments', function (done) {
 		var res = alasql.utils.uncomment('one /* two \n three */ four \n five -- six\nseven');
 		//        console.log(res);
-		assert(res, 'one  four \n five \nseven');
+		assert.equal(res, 'one  four \n five \nseven');
 		done();
 	});
 
 	it('2. /* */', function (done) {
-		var res = alasql('SELECT /* xxx */ VALUE /* blahblah \n tuturututu */ 1');
+		var res = alasql.utils.uncomment('SELECT /* xxx */ VALUE /* blahblah \n tuturututu */ 1');
 		// console.log(res);
-		assert(res, 1);
+		assert.equal(res, 'SELECT  VALUE  1');
 		done();
 	});
 });
