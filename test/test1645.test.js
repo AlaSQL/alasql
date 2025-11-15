@@ -3,6 +3,15 @@ import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
 import alasql from '..';
 
 describe('Test 1645', () => {
+	beforeAll(() => {
+		alasql('create database test1645');
+		alasql('use test1645');
+	});
+
+	afterAll(() => {
+		alasql('drop database test1645');
+	});
+
 	test('variable assigned from query should work properly', () => {
 		var sql = `
 			CREATE TABLE cities (city string, population number);

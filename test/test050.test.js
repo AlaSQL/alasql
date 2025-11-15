@@ -3,6 +3,10 @@ import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
 import alasql from '..';
 
 describe('Test 50 - Insert with primary key with two columns', () => {
+	beforeAll(() => {
+		alasql.options.errorlog = false; // Ensure errors are thrown
+	});
+
 	describe('INSERT WITH PRIMARY KEY', () => {
 		test('1: INSERT ONE COLUMN PRIMARY KEY', done => {
 			alasql('DROP TABLE IF EXISTS one');
@@ -17,7 +21,7 @@ describe('Test 50 - Insert with primary key with two columns', () => {
 			done();
 		});
 
-		test('2: INSERT ONE MORE RECORD WITH EXISTING KEY', done => {
+		test('2: INSERT ONE MORE RECORD WITH EXISTING KEY', () => {
 			expect(() => {
 				alasql('INSERT INTO one VALUES (1,2)');
 			}).toThrow(Error);
@@ -25,16 +29,14 @@ describe('Test 50 - Insert with primary key with two columns', () => {
 
 			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			expect(5).toEqual(res);
-			done();
 		});
 
-		test('3: DELETE A RECORD AND REMOVE FROM INDEX', done => {
+		test('3: DELETE A RECORD AND REMOVE FROM INDEX', () => {
 			alasql('DELETE FROM one WHERE a = 1');
 			alasql('INSERT INTO one VALUES (1,1)');
 
 			var res = alasql('SELECT VALUE COUNT(*) FROM one');
 			expect(3).toEqual(res);
-			done();
 		});
 
 		test('4.1: UPDATE A RECORD AND TRY TO INSERT INTO NEW VALUE', done => {

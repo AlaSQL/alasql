@@ -1,4 +1,6 @@
-var alasql = require('..');
+// @ts-ignore
+import {describe, test, expect} from 'bun:test';
+import alasql from '..';
 var nums = [29, 30.1, 30.2, 30.3];
 
 var data = [

@@ -1,15 +1,17 @@
-const alasql = require('../dist/alasql.js');
-
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-describe.skip('Test 2000', () => {
+import alasql from '..';
+
+const testId = '2000';
+
+describe.skip('Test ' + testId, () => {
 	beforeAll(() => {
-		alasql('create database test');
-		alasql('use test');
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 	});
 
 	afterAll(() => {
-		alasql('drop database test');
+		alasql('drop database test' + testId);
 	});
 
 	test('A) Select from memory', () => {

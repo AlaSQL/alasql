@@ -1,7 +1,6 @@
-// Clears previous changes to alasql in tests;
-delete require.cache[require.resolve('..')];
-
-var alasql = require('..');
+// @ts-ignore
+import {describe, test, expect, beforeEach} from 'bun:test';
+import alasql from '..';
 
 describe('mysql TIMESTAMPDIFF', () => {
 	var res;

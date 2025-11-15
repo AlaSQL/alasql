@@ -1,4 +1,7 @@
-var alasql = require('../dist/alasql.js');
+// @ts-ignore
+import {describe, test, expect} from 'bun:test';
+import alasql from '..';
+
 alasql.options.errorlog = true;
 describe('Test 2155 - ROUND should return undefined for null input', () => {
 	test('ROUND(null) should return undefined per AlaSQL NULL definition', done => {
