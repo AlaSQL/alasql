@@ -10,7 +10,6 @@
 let alasql = require('../dist/alasql.fs.js');
 let path = require('path');
 let fs = require('fs');
-let stdin = process.openStdin();
 let yargs = require('yargs')
 	.strict()
 	.usage(
@@ -58,44 +57,73 @@ let yargs = require('yargs')
 	.epilog('\nMore information about the library: www.alasql.org');
 
 let argv = yargs.argv;
-let sql = '';
-let params = [];
-let pipedData = '';
-stdin.on('data', function (chunk) {
-	pipedData += chunk;
-});
+
+// Regex patterns for detecting functions
+const re = {
+	txt: /txt\s*\(\s*\)/i,
+};
+
+// Helper function to check if SQL contains txt() and stdin is piped
+function isPipeData(sql) {
+	return sql && !process.stdin.isTTY && re.txt.test(sql);
+}
+
+// Helper function to setup stdin handling
+function pipeIsSQL() {
+	const stdin = process.openStdin();
+	let pipedData = '';
+	stdin.on('data', function (chunk) {
+		pipedData += chunk;
+	});
+	stdin.on('end', function () {
+		execute(pipedData, argv._);
+	});
+	return stdin;
+}
+
+// Helper function to load and validate SQL file
+function loadSqlFile(filePath) {
+	if (!fs.existsSync(filePath)) {
+		console.error('Error: file not found');
+		process.exit(1);
+	}
+	if (isDirectory(filePath)) {
+		console.error('Error: file expected but directory found');
+		process.exit(1);
+	}
+	return fs.readFileSync(filePath, 'utf8').toString();
+}
+
+// Main execution logic
+function main() {
+	let sql = '';
+	let pipeIsData = false;
+
+	if (argv.f) {
+		sql = loadSqlFile(argv.f);
+		pipeIsData = isPipeData(sql);
+	} else {
+		sql = argv._.shift() || '';
+		pipeIsData = isPipeData(sql);
+	}
+
+	// Setup stdin handling only if not using txt() pipe
+	if (!pipeIsData) {
+		pipeIsSQL();
+	}
+
+	// Execute immediately if we have SQL or are using txt() pipe
+	if (sql || pipeIsData) {
+		execute(sql, argv._);
+	}
+}
 
 if (argv.v) {
 	console.log(alasql.version);
 	process.exit(0);
 }
 
-if (argv.f) {
-	if (!fs.existsSync(argv.f)) {
-		console.error('Error: file not found');
-		process.exit(1);
-	}
-
-	if (isDirectory(argv.f)) {
-		console.error('Error: file expected but directory found');
-		process.exit(1);
-	}
-
-	sql = fs.readFileSync(argv.f, 'utf8').toString();
-	execute(sql, argv._);
-} else {
-	sql = argv._.shift() || '';
-
-	// if data is not piped
-	if (Boolean(process.stdin.isTTY)) {
-		execute(sql, argv._);
-	}
-}
-
-// if data is piped
-stdin.on('end', function () {
-	execute(pipedData, argv._);
-});
+main();
 
 /**
  * Execute SQL query

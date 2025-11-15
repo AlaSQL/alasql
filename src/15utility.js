@@ -310,7 +310,7 @@ let loadFile = (utils.loadFile = function (path, asy, success, error) {
 		fs = require('fs');
 
 		// If path is empty, than read data from stdin (for Node)
-		if (typeof path === 'undefined') {
+		if ([null, undefined].includes(path)) {
 			var buff = '';
 			process.stdin.setEncoding('utf8');
 			process.stdin.on('readable', function () {
