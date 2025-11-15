@@ -120,4 +120,3 @@ if(typeof Promise !== "undefined"){
 	};
 
 }
-

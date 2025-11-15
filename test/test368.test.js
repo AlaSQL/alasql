@@ -8,11 +8,11 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 describe('Test 368 OFFSET ... LIMIT', () => {
 	var data = [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}, {a: 6}];
 
-	test('LIMIT', done => {
+	test('LIMIT', () => {
 		var res = alasql('SELECT * FROM ? LIMIT 3', [data]);
 		expect(res).toEqual([{a: 1}, {a: 2}, {a: 3}]);
-		done();
 	});
+
 
 	test('OFFSET LIMIT', done => {
 		var res = alasql('SELECT * FROM ? LIMIT 2 OFFSET 3', [data]);
