@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 046', function () {
-	describe('FROM as parameter', function () {
+describe('Test 046', () => {
+	describe('FROM as parameter', () => {
 		var years = [
 			{yearid: 2010},
 			{yearid: 2011},
@@ -16,9 +15,9 @@ describe('Test 046', function () {
 			{yearid: 2017},
 		];
 
-		test('FROM array of objects', function (done) {
+		test('FROM array of objects', done => {
 			var res = alasql('SELECT COLUMN * FROM ? AS t WHERE t.yearid>?', [years, 2014]);
-			assert.deepEqual([2015, 2016, 2017], res);
+			expect(res).toEqual([2015, 2016, 2017]);
 			done();
 		});
 
@@ -30,26 +29,23 @@ describe('Test 046', function () {
 			[2018, 5, 3],
 			[2019, 6, 3],
 		];
-		test('FROM array of arrays', function (done) {
+		test('FROM array of arrays', done => {
 			var res = alasql('SELECT VALUE SUM([1]) FROM ? d WHERE [0]>2016', [data]);
-			assert.equal(15, res);
+			expect(15).toEqual(res);
 			done();
 		});
 
-		test('queryArrayOfArrays()', function (done) {
+		test('queryArrayOfArrays()', done => {
 			var res = alasql('SELECT MATRIX [1] AS 0,[1]+[2] AS [1] FROM ? d WHERE [0]>2016', [data]);
-			assert.deepEqual(
-				[
-					[4, 6],
-					[5, 8],
-					[6, 9],
-				],
-				res
-			);
+			expect(res).toEqual([
+				[4, 6],
+				[5, 8],
+				[6, 9],
+			]);
 			done();
 		});
 
-		test('queryArrayOfArrays and filter()', function (done) {
+		test('queryArrayOfArrays and filter()', done => {
 			var res1 = alasql('SELECT * FROM ? d WHERE [0]>2016', [data]);
 			var res2 = data
 				.filter(function (a) {
@@ -62,11 +58,11 @@ describe('Test 046', function () {
 					}
 					return res;
 				});
-			assert.deepEqual(res1, res2);
+			expect(res1).toEqual(res2);
 			done();
 		});
 
-		test('FROM array of arrays', function (done) {
+		test('FROM array of arrays', done => {
 			var res = alasql(
 				'SELECT MATRIX [2] AS 0, SUM([1]) AS 1 \
 				FROM ? d \
@@ -74,7 +70,7 @@ describe('Test 046', function () {
 				GROUP BY [2] ',
 				[data]
 			);
-			assert.deepEqual(res, [
+			expect(res).toEqual([
 				[2, 4],
 				[3, 11],
 			]);

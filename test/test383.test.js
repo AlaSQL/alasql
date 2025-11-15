@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
@@ -16,17 +15,17 @@ global.localStorage = new DOMStorage('./test381.json', {
 
 */
 
-describe('Test 383 - MySQL compatibility issue #452', function () {
-	beforeAll(function () {
+describe('Test 383 - MySQL compatibility issue #452', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test383;USE test383');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test383');
 	});
 
-	test('2. Create table issue', function (done) {
+	test('2. Create table issue', done => {
 		alasql(`
     CREATE TABLE \`org1\` (
       \`id\` CHAR(36) NOT NULL,
@@ -43,7 +42,7 @@ describe('Test 383 - MySQL compatibility issue #452', function () {
 		done();
 	});
 
-	test('3. UNIQUE KEY issue', function (done) {
+	test('3. UNIQUE KEY issue', done => {
 		alasql(`
     CREATE TABLE \`org2\` (
       \`id\` CHAR(36) NOT NULL,
@@ -59,7 +58,7 @@ describe('Test 383 - MySQL compatibility issue #452', function () {
 		done();
 	});
 
-	test('4. COLLATE issue', function (done) {
+	test('4. COLLATE issue', done => {
 		alasql(`
     CREATE TABLE \`org3\` (
       \`id\` CHAR(36) NOT NULL,
@@ -73,7 +72,7 @@ describe('Test 383 - MySQL compatibility issue #452', function () {
 		done();
 	});
 
-	test('5. All issues', function (done) {
+	test('5. All issues', done => {
 		alasql(`
     CREATE TABLE \`org4\` (
       \`id\` CHAR(36) NOT NULL,
@@ -91,15 +90,15 @@ describe('Test 383 - MySQL compatibility issue #452', function () {
 		done();
 	});
 
-	test('6. ON UPDATE', function (done) {
+	test('6. ON UPDATE', done => {
 		alasql('INSERT INTO org4 (id,name) VALUES (1,"Peter")');
 		var res = alasql('SELECT * FROM org4');
-		assert(res[0].lastUpdateTime === 0);
+		expect(res[0].lastUpdateTime === 0).toBe(true);
 
 		alasql('UPDATE org4 SET name="George"');
 
 		var res = alasql('SELECT * FROM org4');
-		assert(res[0].lastUpdateTime >= res[0].createTime);
+		expect(res[0].lastUpdateTime >= res[0].createTime).toBe(true);
 		done();
 	});
 });

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 if (globalThis.process) {
@@ -14,13 +13,13 @@ if (globalThis.process) {
 
 */
 
-describe('Test 408 - DATEADD() and DATEDIFF()', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 408 - DATEADD() and DATEDIFF()', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test408;USE test408');
 		done();
 	});
 
-	test('2. DATEDIFF()', function (done) {
+	test('2. DATEDIFF()', done => {
 		alasql(`
     CREATE TABLE Duration (
       startDate datetime
@@ -33,23 +32,23 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			'SELECT DATEDIFF(day,startDate,endDate) AS Duration \
       FROM Duration'
 		);
-		assert.deepEqual(res, [{Duration: 1}]);
+		expect(res).toEqual([{Duration: 1}]);
 
 		done();
 	});
 
-	test('3. DATEDIFF()', function (done) {
+	test('3. DATEDIFF()', done => {
 		alasql(`
       DECLARE @startdate datetime = '2007-05-05 12:10:09.3312722';
       DECLARE @enddate datetime = '2007-05-04 12:10:09.3312722';
     `);
 		var res = alasql('VALUE OF SELECT DATEDIFF(day, @startdate, @enddate)');
-		assert.deepEqual(res, -1);
+		expect(res).toEqual(-1);
 
 		done();
 	});
 
-	test('4. DATEADD()', function (done) {
+	test('4. DATEADD()', done => {
 		alasql("DECLARE @datetime2 datetime2 = '2020-01-01 13:10:10.1111111 UTC'");
 
 		var res = alasql(`MATRIX OF
@@ -89,12 +88,12 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			['millisecond', '2020-01-01T13:10:10.112Z'],
 		];
 
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 
 		done();
 	});
 
-	test('5. DATEADD() dot format', function (done) {
+	test('5. DATEADD() dot format', done => {
 		alasql("DECLARE @datetime2 datetime2 = '2020.01.01 13:10:10.1111111 UTC'");
 
 		var res = alasql(`MATRIX OF
@@ -134,21 +133,21 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			['millisecond', '2020-01-01T13:10:10.112Z'],
 		];
 
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 
 		done();
 	});
 
-	test('6. DATE_ADD() MySQL-style', function (done) {
+	test('6. DATE_ADD() MySQL-style', done => {
 		var res1 = alasql("= DATE_SUB('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
 		var res2 = alasql("= DATE_ADD('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
-		assert(res1.getDate() == 9);
-		assert(res2.getDate() == 17);
-		//    assert.deepEqual(res,[ { Duration: 1 } ]);
+		expect(res1.getDate() == 9).toBe(true);
+		expect(res2.getDate() == 17).toBe(true);
+		//    expect(res).toEqual([ { Duration: 1 } ]);
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test408');
 		done();

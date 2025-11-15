@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var testId = '846';
 
-describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', function () {
-	test('MAX dealing with non-numeric values', function () {
+describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', () => {
+	test('MAX dealing with non-numeric values', () => {
 		var data = [
 			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
 			{
@@ -31,7 +30,7 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: null, b: 9, c: undefined, c2: 1, d: 5, e: undefined, f: 11}]);
+		expect(res).toEqual([{a: null, b: 9, c: undefined, c2: 1, d: 5, e: undefined, f: 11}]);
 		var data = [
 			{
 				a: null,
@@ -64,7 +63,7 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				a: new Date('12.12.2022'),
 				b: 9,
@@ -77,7 +76,7 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 		]);
 	});
 
-	test('MIN dealing with non-numeric values', function () {
+	test('MIN dealing with non-numeric values', () => {
 		var data = [
 			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
 			{
@@ -102,7 +101,7 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: null, b: 1, c: undefined, c2: 1, d: 5, e: undefined, f: 2}]);
+		expect(res).toEqual([{a: null, b: 1, c: undefined, c2: 1, d: 5, e: undefined, f: 2}]);
 		var data = [
 			{
 				a: null,
@@ -135,7 +134,7 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 		FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				a: new Date('12.12.2022'),
 				b: 1,
@@ -148,7 +147,7 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 		]);
 	});
 
-	test('SUM dealing with non-numeric values', function () {
+	test('SUM dealing with non-numeric values', () => {
 		var data = [
 			{a: null, b: 9, c: true, c2: 1, d: null, e: 'XYZ1', f: new Number(2)},
 			{
@@ -173,65 +172,65 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: undefined, b: 10, c: undefined, c2: 1, d: 5, e: undefined, f: 13}]);
+		expect(res).toEqual([{a: undefined, b: 10, c: undefined, c2: 1, d: 5, e: undefined, f: 13}]);
 
 		var data = [[{a: null}]];
 		var res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
-		assert.deepEqual(res, [{a: undefined}]);
+		expect(res).toEqual([{a: undefined}]);
 
 		var data = [[{a: 2}]];
 		var res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
-		assert.deepEqual(res, [{a: 2}]);
+		expect(res).toEqual([{a: 2}]);
 	});
 
-	test('SUM zero is zero', function () {
+	test('SUM zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select sum(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 
-	test('MIN zero is zero', function () {
+	test('MIN zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select min(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 
-	test('MAX zero is zero', function () {
+	test('MAX zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select max(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 
-	test('AVG zero is zero', function () {
+	test('AVG zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select avg(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 
-	test('SUM zero is zero', function () {
+	test('SUM zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select sum(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 
-	test('MIN zero is zero', function () {
+	test('MIN zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select min(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 
-	test('MAX zero is zero', function () {
+	test('MAX zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select max(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 
-	test('AVG zero is zero', function () {
+	test('AVG zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select avg(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
-	test('TOTAL dealing with non-numeric values', function () {
+	test('TOTAL dealing with non-numeric values', () => {
 		var data = [
 			{
 				a: null,
@@ -270,34 +269,34 @@ describe('Test ' + testId + ' - non-numeric values for SUM, MIN and MAX', functi
 			FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [{a: 0, b: 10, c: 1, c2: 1, d: 5, e: 0, f: 13, g: -1, h: 1}]);
+		expect(res).toEqual([{a: 0, b: 10, c: 1, c2: 1, d: 5, e: 0, f: 13, g: -1, h: 1}]);
 	});
 
-	test('TOTAL of nothing is zero', function () {
+	test('TOTAL of nothing is zero', () => {
 		var data = [{ProductId: 10, price: 50}];
 		var res = alasql(`SELECT TOTAL(price) AS p FROM ? WHERE ProductId = 5`, [data]);
-		assert.deepEqual(res, [{p: 0}]);
+		expect(res).toEqual([{p: 0}]);
 	});
 
-	test('TOTAL of two rows based on select', function () {
+	test('TOTAL of two rows based on select', () => {
 		var data = [
 			{ProductId: 100, price: 500},
 			{ProductId: 100, price: 600},
 			{ProductId: 123, price: 123},
 		];
 		var res = alasql(`SELECT TOTAL(price) AS p FROM ? WHERE ProductId = 100`, [data]);
-		assert.deepEqual(res, [{p: 1100}]);
+		expect(res).toEqual([{p: 1100}]);
 	});
 
-	test('TOTAL of single row', function () {
+	test('TOTAL of single row', () => {
 		var data = [[{a: 2}]];
 		var res = alasql(`SELECT TOTAL(a) AS a FROM ?`, data);
-		assert.deepEqual(res, [{a: 2}]);
+		expect(res).toEqual([{a: 2}]);
 	});
 
-	test('TOTAL of zero is zero', function () {
+	test('TOTAL of zero is zero', () => {
 		var data = [{v: 0}];
 		var res = alasql(`select TOTAL(v) as v from ?`, [data]);
-		assert.deepEqual(res, [{v: 0}]);
+		expect(res).toEqual([{v: 0}]);
 	});
 });

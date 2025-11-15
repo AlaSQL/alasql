@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 //	var DOMStorage = require("dom-storage");
 //	global.localStorage = new DOMStorage("./test390.json", { strict: false, ws: '' });
@@ -10,8 +9,8 @@ import alasql from '..';
 */
 
 if (typeof window !== 'object') {
-	describe.skip('Test 405. IndexDB problem (issue #512)', function () {
-		test('1. Parse SQL', function (done) {
+	describe.skip('Test 405. IndexDB problem (issue #512)', () => {
+		test('1. Parse SQL', done => {
 			//      alasql('CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;')
 			alasql(
 				'CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;\
@@ -21,7 +20,7 @@ if (typeof window !== 'object') {
         CREATE TABLE cities;\
       ',
 				[],
-				function () {
+				() => {
 					done();
 				}
 			);

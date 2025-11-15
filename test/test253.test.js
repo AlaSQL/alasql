@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 253 Internal (SELECT) with GROUP BY', function () {
-	test('1. Test', function (done) {
+describe('Test 253 Internal (SELECT) with GROUP BY', () => {
+	test('1. Test', done => {
 		var data = [
 			{a: 3.5, b: {c: 'label1'}},
 			{a: 0.5, b: {c: 'label1'}},
@@ -20,7 +19,7 @@ describe('Test 253 Internal (SELECT) with GROUP BY', function () {
 			[data, data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				'b->c': 'label1',
 				'SUM(a) / SELECT SUM(a) FROM $0 AS default': 0.4,

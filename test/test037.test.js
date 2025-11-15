@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 37', function () {
-	describe('JOINS', function () {
+describe('Test 37', () => {
+	describe('JOINS', () => {
 		alasql('create database test37; use test37');
 		//		var db = alasql.Database("db");
 
-		test('Prepare database', function (done) {
+		test('Prepare database', done => {
 			alasql('drop table if exists one;drop table if exists two;');
 			alasql('CREATE TABLE one (a INT, b INT)');
 			alasql('INSERT INTO one VALUES (1,10),(2,20),(3,30), (4,40)');
@@ -17,45 +16,45 @@ describe('Test 37', function () {
 			alasql('INSERT INTO two VALUES (1,100),(2,200),(3,300), (1000,1000), (2000,2000)');
 			done();
 		});
-		test('CROSS JOIN', function (done) {
+		test('CROSS JOIN', done => {
 			var res = alasql('SELECT * FROM one, two');
-			assert.equal(res.length, 20);
+			expect(res.length).toEqual(20);
 			done();
 		});
 
-		test('INNER JOIN', function (done) {
+		test('INNER JOIN', done => {
 			var res = alasql('SELECT * FROM one INNER JOIN two ON one.a = two.e');
-			assert.equal(res.length, 3);
+			expect(res.length).toEqual(3);
 			done();
 		});
 
-		test('LEFT JOIN', function (done) {
+		test('LEFT JOIN', done => {
 			var res = alasql('SELECT * FROM one LEFT JOIN two ON one.a = two.e');
-			assert.equal(res.length, 4);
+			expect(res.length).toEqual(4);
 			done();
 		});
 
-		test('SEMI JOIN', function (done) {
+		test('SEMI JOIN', done => {
 			var res = alasql('SELECT * FROM one SEMI JOIN two ON one.a = two.e');
-			assert.equal(res.length, 1);
+			expect(res.length).toEqual(1);
 			done();
 		});
 
-		test('RIGHT JOIN', function (done) {
+		test('RIGHT JOIN', done => {
 			var res = alasql('SELECT * FROM one RIGHT JOIN two ON one.a = two.e');
-			assert.equal(res.length, 5);
+			expect(res.length).toEqual(5);
 			done();
 		});
 
-		test('OUTER JOIN', function (done) {
+		test('OUTER JOIN', done => {
 			var res = alasql('SELECT * FROM one OUTER JOIN two ON one.a = two.e');
-			assert.equal(res.length, 6);
+			expect(res.length).toEqual(6);
 			done();
 		});
 
-		test('ANTI JOIN', function (done) {
+		test('ANTI JOIN', done => {
 			var res = alasql('SELECT * FROM one ANTI JOIN two ON one.a = two.e');
-			assert.equal(res.length, 2);
+			expect(res.length).toEqual(2);
 			done();
 		});
 

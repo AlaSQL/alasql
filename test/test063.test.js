@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 63 - PIVOT', function () {
-	test('Create new table', function (done) {
+describe('Test 63 - PIVOT', () => {
+	test('Create new table', done => {
 		alasql('create database test63');
 		alasql('use database test63');
 		alasql('drop table if exists sales');
@@ -12,11 +11,11 @@ describe('Test 63 - PIVOT', function () {
 		alasql('insert into sales values ("Minsk","Pen",100)');
 		alasql('insert into sales values ("Minsk","Pencil",100)');
 		alasql('insert into sales values ("Bratislava","Pen",50)');
-		assert.equal(250, alasql('select value sum(qty) from sales'));
+		expect(250).toEqual(alasql('select value sum(qty) from sales'));
 		done();
 	});
 
-	test('PIVOT - not yet created', function (done) {
+	test('PIVOT - not yet created', done => {
 		var res = alasql('select * from sales');
 
 		//		alasql('drop database test63');

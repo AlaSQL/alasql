@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var testId = '1666';
 
-describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', function () {
-	test('SUM with Round function', function () {
+describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', () => {
+	test('SUM with Round function', () => {
 		var data = [
 			{
 				a: null,
@@ -38,7 +37,7 @@ describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', func
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				a: null,
 				b: 10,
@@ -56,7 +55,7 @@ describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', func
 					  FROM ?`,
 			data
 		);
-		assert.deepEqual(res, [{a: null}]);
+		expect(res).toEqual([{a: null}]);
 
 		var data = [[{a: 2}]];
 		res = alasql(
@@ -64,10 +63,10 @@ describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', func
 					  FROM ?`,
 			data
 		);
-		assert.deepEqual(res, [{a: 2}]);
+		expect(res).toEqual([{a: 2}]);
 	});
 
-	test('MAX/MIN/SUM with Round or Ceil function', function () {
+	test('MAX/MIN/SUM with Round or Ceil function', () => {
 		var data = [{a: 10.25}, {a: null}, {b: 10}, {a: 5.25}, {a: 33.45}];
 		res = alasql(
 			`SELECT MIN(ROUND(a)) AS a,
@@ -81,7 +80,7 @@ describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', func
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				a: 5,
 				b: 33,
@@ -95,7 +94,7 @@ describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', func
 		]);
 	});
 
-	test('MAX/MIN for Dates', function () {
+	test('MAX/MIN for Dates', () => {
 		var data = [
 			{a: new Date(2023, 6, 6, 0, 0, 0)},
 			{a: new Date(2023, 6, 15, 0, 0, 0)},
@@ -110,7 +109,7 @@ describe.skip('Test ' + testId + ' - inner functions for SUM, MIN and MAX', func
 				 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				c: new Date(2023, 6, 6, 0, 0, 0),
 				d: new Date(2023, 7, 7, 0, 0, 0),

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -11,14 +10,14 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
 
-describe('Test 337 SEARCH 8 queens', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 337 SEARCH 8 queens', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test337;USE test337');
 		done();
 	});
 
-	test.skip('2. SEARCH 8 queens', function (done) {
-		var res = alasql(function () {
+	test.skip('2. SEARCH 8 queens', done => {
+		var res = alasql(() => {
 			/*
 
     select 'a' || a A, 'b' || b B, 'c' || c C, 'd' || d D, 'e' || e E, 'f' || f F, 'g' || g G, 'h' || h H
@@ -69,12 +68,12 @@ describe('Test 337 SEARCH 8 queens', function () {
 		});
 
 		console.log(res);
-		assert.deepEqual(res, 1);
+		expect(res).toEqual(1);
 		done();
 	});
 	if (false) {
-		test.skip('2. SEARCH 8 queens', function (done) {
-			var res = alasql(function () {
+		test.skip('2. SEARCH 8 queens', done => {
+			var res = alasql(() => {
 				/*
     
     search times(
@@ -93,11 +92,11 @@ describe('Test 337 SEARCH 8 queens', function () {
 
     */
 			});
-			assert.deepEqual(res, 1);
+			expect(res).toEqual(1);
 			done();
 		});
 
-		test.skip('99. DROP DATABASE', function (done) {
+		test.skip('99. DROP DATABASE', done => {
 			alasql('DROP DATABASE test337');
 			done();
 		});

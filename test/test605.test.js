@@ -1,38 +1,37 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var testId = 605;
 
-describe('Test ' + testId + ' - get autoval', function () {
-	beforeAll(function () {
+describe('Test ' + testId + ' - get autoval', () => {
+	beforeAll(() => {
 		alasql('create database test' + testId);
 		alasql('use test' + testId);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test' + testId);
 	});
 
-	test('A) get autoval from default alasql object', function () {
+	test('A) get autoval from default alasql object', () => {
 		alasql('CREATE TABLE session (id INT AUTOINCREMENT, sessid STRING)');
 		alasql('INSERT INTO session (sessid) VALUES ("TEST")');
 
-		assert.equal(alasql.autoval('session', 'id'), 1);
-		assert.equal(alasql.autoval('session', 'id', true), 2);
+		expect(alasql.autoval('session', 'id')).toEqual(1);
+		expect(alasql.autoval('session', 'id', true)).toEqual(2);
 
 		alasql('INSERT INTO session (sessid) VALUES ("TEST"), ("TEST")');
-		assert.equal(alasql.autoval('session', 'id'), 3);
-		assert.equal(alasql.autoval('session', 'id', true), 4);
+		expect(alasql.autoval('session', 'id')).toEqual(3);
+		expect(alasql.autoval('session', 'id', true)).toEqual(4);
 	});
 
-	test('B) get autoval from new database', function () {
+	test('B) get autoval from new database', () => {
 		//
 		var mydb = new alasql.Database('My Database');
 		mydb.exec('CREATE TABLE session (id INT AUTOINCREMENT, sessid STRING)');
 		mydb.exec('INSERT INTO session (sessid) VALUES ("TEST"), ("TEST")');
-		assert.equal(mydb.autoval('session', 'id'), 2);
-		assert.equal(mydb.autoval('session', 'id', true), 3);
+		expect(mydb.autoval('session', 'id')).toEqual(2);
+		expect(mydb.autoval('session', 'id', true)).toEqual(3);
 	});
 });

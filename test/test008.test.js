@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 08', function () {
-	test('UPDATE WHERE with conditions test ', function (done) {
+describe('Test 08', () => {
+	test('UPDATE WHERE with conditions test ', () => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
@@ -17,10 +16,9 @@ describe('Test 08', function () {
 		db.exec('UPDATE test SET a=a*100, b=-b WHERE b<=3*10 AND a<>2');
 
 		var res = db.exec('SELECT VALUE SUM(a) FROM test');
-		assert.equal(411, res);
+		expect(411).toEqual(res);
 
 		var res = db.exec('SELECT VALUE MIN(b) FROM test');
-		assert.equal(-30, res);
-		done();
+		expect(-30).toEqual(res);
 	});
 });

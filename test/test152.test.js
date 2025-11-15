@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -14,8 +13,8 @@ if (typeof window !== 'undefined') {
 	});
 }
 
-describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', function () {
-	test('1. Create database', function (done) {
+describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', () => {
+	test('1. Create database', done => {
 		alasql('SET AUTOCOMMIT ON');
 		alasql('DROP localStorage DATABASE IF EXISTS ls152');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS ls152');
@@ -23,10 +22,10 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		alasql('CREATE TABLE IF NOT EXISTS ls152.one (a int, b string)');
 		alasql('INSERT INTO ls152.one VALUES (1,"Rome"),(2,"London"),(3,"Berlin"),(4,"Paris")');
 		//		console.log(alasql.databases.ls152.tables.one.data);
-		//		assert(!alasql.databases.ls152.tables.one.data);
+		//		expect(!alasql.databases.ls152.tables.one.data).toBe(true);
 
 		var res = alasql('SELECT * FROM ls152.one');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 'Rome'},
 			{a: 2, b: 'London'},
 			{a: 3, b: 'Berlin'},
@@ -35,7 +34,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
-	test('2. Create second table (INSERT SELECT)', function (done) {
+	test('2. Create second table (INSERT SELECT)', done => {
 		alasql('CREATE TABLE IF NOT EXISTS ls152.two (a int, b string)');
 		//		var res = alasql('SELECT * FROM ls152.one');
 		//		console.log(res);
@@ -43,24 +42,24 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		//debugger;
 		alasql('INSERT INTO ls152.two SELECT * FROM ls152.one WHERE a IN (2,3)');
 		var res = alasql('SELECT * FROM ls152.two');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 2, b: 'London'},
 			{a: 3, b: 'Berlin'},
 		]);
 		done();
 	});
 
-	test('3. DELETE FROM', function (done) {
+	test('3. DELETE FROM', done => {
 		alasql('DELETE FROM ls152.two WHERE a=3');
 		var res = alasql('SELECT * FROM ls152.two');
-		assert.deepEqual(res, [{a: 2, b: 'London'}]);
+		expect(res).toEqual([{a: 2, b: 'London'}]);
 		done();
 	});
 
-	test('4. UPDATE', function (done) {
+	test('4. UPDATE', done => {
 		alasql('UPDATE ls152.one SET b="Prague" WHERE a IN (2,3)');
 		var res = alasql('SELECT * FROM ls152.one');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 'Rome'},
 			{a: 2, b: 'Prague'},
 			{a: 3, b: 'Prague'},
@@ -69,12 +68,12 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
-	test('5. INSERT with AUTOINCREMENT', function (done) {
+	test('5. INSERT with AUTOINCREMENT', done => {
 		alasql('CREATE TABLE IF NOT EXISTS ls152.three (a int AUTO_INCREMENT, b string)');
 		alasql('INSERT INTO ls152.three (b) VALUES ("Rome"),("London"),("Berlin"),("Paris")');
 
 		var res = alasql('SELECT * FROM ls152.three');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 'Rome'},
 			{a: 2, b: 'London'},
 			{a: 3, b: 'Berlin'},
@@ -83,7 +82,7 @@ describe('Test 152 - INSERT/DELETE/UPDATE for localStorage with AUTOCOMMIT', fun
 		done();
 	});
 
-	test('99. Detach database', function (done) {
+	test('99. Detach database', done => {
 		alasql('DETACH DATABASE ls152');
 		alasql('DROP localStorage DATABASE ls152');
 		done();

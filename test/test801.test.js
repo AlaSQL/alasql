@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 801 - OUTER JOIN of 4 tables', function () {
-	test('1. ARRAY()', function (done) {
+describe('Test 801 - OUTER JOIN of 4 tables', () => {
+	test('1. ARRAY()', done => {
 		var t1 = [
 			{id: '1', a: 'one'},
 			{id: '2', a: 'two'},
@@ -53,7 +52,7 @@ describe('Test 801 - OUTER JOIN of 4 tables', function () {
 			{id: '9', d: 'i'},
 		];
 
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 		done();
 	});
 });

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -230,13 +229,13 @@ var data = [
 	},
 ];
 
-describe('Test 411 Export to Excel', function () {
-	test('2. CREATE DATABASE', function (done) {
+describe('Test 411 Export to Excel', () => {
+	test('2. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test411;USE test411');
 		done();
 	});
 
-	test('2. ANALYZE object', function (done) {
+	test('2. ANALYZE object', done => {
 		var res = alasql(
 			'SEARCH / AS @a \
         UNION ALL( \
@@ -264,11 +263,11 @@ describe('Test 411 Export to Excel', function () {
 			[data]
 		);
 		//console.log(res);
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test411');
 		done();
 	});

@@ -1,18 +1,17 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 311 Special SEARCHors', function () {
-	test.skip('0. Create database ', function (done) {
+describe('Test 311 Special SEARCHors', () => {
+	test.skip('0. Create database ', done => {
 		alasql('CREATE DATABASE test311;USE test311');
 		done();
 	});
 
-	test.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', function (done) {
+	test.skip('1. SEARCH DISTINCT, UNION ALL, and other selectors', done => {
 		//    var res = alasql.parse('CREATE GRAPH #Andrey');
 		var data = [
 			{a: 1, b: 10},
@@ -23,15 +22,15 @@ describe('Test 311 Special SEARCHors', function () {
 			{a: 5, b: 50},
 		];
 		var res = alasql('SEARCH DISTINCT(/b) FROM ?', [data]);
-		assert.deepEqual(res, [10, 20, 30, 40, 50]);
+		expect(res).toEqual([10, 20, 30, 40, 50]);
 		var res = alasql('SEARCH UNION ALL(/a,/b) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 5, 10, 20, 30, 40, 50, 50]);
+		expect(res).toEqual([1, 2, 3, 4, 5, 5, 10, 20, 30, 40, 50, 50]);
 		// Ala UNION
 		var res = alasql('SEARCH DISTINCT(UNION ALL(/a,/b)) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
+		expect(res).toEqual([1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
 
 		var res = alasql('SEARCH UNION(/a,/b) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
+		expect(res).toEqual([1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
 
 		//
 		/*
@@ -59,7 +58,7 @@ describe('Test 311 Special SEARCHors', function () {
 		done();
 	});
 
-	test.skip('99. Drop database ', function (done) {
+	test.skip('99. Drop database ', done => {
 		alasql('DROP DATABASE test311');
 		done();
 	});

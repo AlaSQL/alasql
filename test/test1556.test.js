@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 // only run in browser
@@ -36,7 +35,7 @@ if (typeof window !== 'undefined') {
 
 			const data = await sql('SELECT * from [mytable1]');
 			console.log('FInal data res ', data);
-			assert.deepEqual(data, [{1: ['random_value']}, {shell_id_key: 'random_value2'}]);
+			expect(data).toEqual([{1: ['random_value']}, {shell_id_key: 'random_value2'}]);
 		});
 	});
 }

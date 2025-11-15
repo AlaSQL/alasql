@@ -2,15 +2,13 @@ const alasql = require('../dist/alasql.js');
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
-
-describe('Test 2007 - SQL cache', function () {
-	beforeAll(function () {
+describe('Test 2007 - SQL cache', () => {
+	beforeAll(() => {
 		alasql('create database test');
 		alasql('use test');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test');
 	});
 
@@ -19,15 +17,15 @@ describe('Test 2007 - SQL cache', function () {
 		alasql('INSERT INTO osoby VALUES (1, "John"), (2, "Jane"), (3, "Jake")');
 		var res = alasql('SELECT * FROM osoby');
 
-		assert.deepEqual(alasql.databases['test'].sqlCache['-169125189'].query.data, []);
-		assert.equal(res.length, 3);
+		expect(alasql.databases['test'].sqlCache['-169125189'].query.data).toEqual([]);
+		expect(res.length).toEqual(3);
 
 		// Delete all rows
 		alasql('DELETE FROM osoby');
 
 		// Assert that the cache is still empty for "data"
 		// Without the fix, the cache would still contain the data from the previous query even though all rows were deleted
-		assert.deepEqual(alasql.databases['test'].sqlCache['-169125189'].query.data, []);
+		expect(alasql.databases['test'].sqlCache['-169125189'].query.data).toEqual([]);
 
 		// Insert more rows
 		alasql('INSERT INTO osoby VALUES (4, "Jack"), (5, "Paul")');
@@ -36,7 +34,7 @@ describe('Test 2007 - SQL cache', function () {
 		var res2 = alasql('SELECT * FROM osoby');
 
 		// Cache should still be empty for "data"
-		assert.deepEqual(alasql.databases['test'].sqlCache['-169125189'].query.data, []);
-		assert.equal(res2.length, 2);
+		expect(alasql.databases['test'].sqlCache['-169125189'].query.data).toEqual([]);
+		expect(res2.length).toEqual(2);
 	});
 });

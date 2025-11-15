@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -14,8 +13,8 @@ if (typeof window !== 'undefined') {
 	});
 }
 
-describe('Test 278 Errors catching', function () {
-	test('1. Prepare databases', function (done) {
+describe('Test 278 Errors catching', () => {
+	test('1. Prepare databases', done => {
 		alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS Atlas');
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('ATTACH LOCALSTORAGE DATABASE Atlas AS MyAtlas');
@@ -24,14 +23,14 @@ describe('Test 278 Errors catching', function () {
 		done();
 	});
 
-	test('2. Select from wrong database without errolog', function (done) {
-		assert.throws(function () {
+	test('2. Select from wrong database without errolog', done => {
+		expect(() => {
 			alasql('SELECT * FROM addresses');
-		}, Error);
+		}).toThrow(Error);
 		done();
 	});
 
-	test('2. Select from wrong database with errolog', function (done) {
+	test('2. Select from wrong database with errolog', done => {
 		alasql.options.errorlog = true;
 		alasql('SELECT * FROM addresses', [], function (res, err) {
 			/// console.log(err);
@@ -39,7 +38,7 @@ describe('Test 278 Errors catching', function () {
 		});
 	});
 
-	test('99. Drop databases', function (done) {
+	test('99. Drop databases', done => {
 		alasql.options.errorlog = false;
 		alasql('DETACH DATABASE MyAtlas');
 		done();

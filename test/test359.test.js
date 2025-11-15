@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -9,14 +8,14 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 // Data for test
 var data = [{a: 1}, {a: 2}];
 
-describe('Test 359 UNPIVOT', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 359 UNPIVOT', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test359;USE test359');
 		done();
 	});
 
 	/* Source: https://msdn.microsoft.com/en-us/library/ms177410(SQL.105).aspx */
-	test('2. Prepare Data', function (done) {
+	test('2. Prepare Data', done => {
 		alasql(
 			'CREATE TABLE pvt (VendorID int, Emp1 int, Emp2 int,\
     Emp3 int, Emp4 int, Emp5 int);'
@@ -33,7 +32,7 @@ describe('Test 359 UNPIVOT', function () {
 		done();
 	});
 
-	test('3. Unpivot Query', function (done) {
+	test('3. Unpivot Query', done => {
 		// var res = alasql(function(){
 		//   SELECT VendorID, Employee, Orders
 		//   FROM
@@ -54,42 +53,38 @@ describe('Test 359 UNPIVOT', function () {
     )AS unpvt;
   `);
 
-		assert.deepEqual(
-			res,
-
-			[
-				{VendorID: 1, Employee: 'Emp1', Orders: 4},
-				{VendorID: 1, Employee: 'Emp2', Orders: 3},
-				{VendorID: 1, Employee: 'Emp3', Orders: 5},
-				{VendorID: 1, Employee: 'Emp4', Orders: 4},
-				{VendorID: 1, Employee: 'Emp5', Orders: 4},
-				{VendorID: 2, Employee: 'Emp1', Orders: 4},
-				{VendorID: 2, Employee: 'Emp2', Orders: 1},
-				{VendorID: 2, Employee: 'Emp3', Orders: 5},
-				{VendorID: 2, Employee: 'Emp4', Orders: 5},
-				{VendorID: 2, Employee: 'Emp5', Orders: 5},
-				{VendorID: 3, Employee: 'Emp1', Orders: 4},
-				{VendorID: 3, Employee: 'Emp2', Orders: 3},
-				{VendorID: 3, Employee: 'Emp3', Orders: 5},
-				{VendorID: 3, Employee: 'Emp4', Orders: 4},
-				{VendorID: 3, Employee: 'Emp5', Orders: 4},
-				{VendorID: 4, Employee: 'Emp1', Orders: 4},
-				{VendorID: 4, Employee: 'Emp2', Orders: 2},
-				{VendorID: 4, Employee: 'Emp3', Orders: 5},
-				{VendorID: 4, Employee: 'Emp4', Orders: 5},
-				{VendorID: 4, Employee: 'Emp5', Orders: 4},
-				{VendorID: 5, Employee: 'Emp1', Orders: 5},
-				{VendorID: 5, Employee: 'Emp2', Orders: 1},
-				{VendorID: 5, Employee: 'Emp3', Orders: 5},
-				{VendorID: 5, Employee: 'Emp4', Orders: 5},
-				{VendorID: 5, Employee: 'Emp5', Orders: 5},
-			]
-		);
+		expect(res).toEqual([
+			{VendorID: 1, Employee: 'Emp1', Orders: 4},
+			{VendorID: 1, Employee: 'Emp2', Orders: 3},
+			{VendorID: 1, Employee: 'Emp3', Orders: 5},
+			{VendorID: 1, Employee: 'Emp4', Orders: 4},
+			{VendorID: 1, Employee: 'Emp5', Orders: 4},
+			{VendorID: 2, Employee: 'Emp1', Orders: 4},
+			{VendorID: 2, Employee: 'Emp2', Orders: 1},
+			{VendorID: 2, Employee: 'Emp3', Orders: 5},
+			{VendorID: 2, Employee: 'Emp4', Orders: 5},
+			{VendorID: 2, Employee: 'Emp5', Orders: 5},
+			{VendorID: 3, Employee: 'Emp1', Orders: 4},
+			{VendorID: 3, Employee: 'Emp2', Orders: 3},
+			{VendorID: 3, Employee: 'Emp3', Orders: 5},
+			{VendorID: 3, Employee: 'Emp4', Orders: 4},
+			{VendorID: 3, Employee: 'Emp5', Orders: 4},
+			{VendorID: 4, Employee: 'Emp1', Orders: 4},
+			{VendorID: 4, Employee: 'Emp2', Orders: 2},
+			{VendorID: 4, Employee: 'Emp3', Orders: 5},
+			{VendorID: 4, Employee: 'Emp4', Orders: 5},
+			{VendorID: 4, Employee: 'Emp5', Orders: 4},
+			{VendorID: 5, Employee: 'Emp1', Orders: 5},
+			{VendorID: 5, Employee: 'Emp2', Orders: 1},
+			{VendorID: 5, Employee: 'Emp3', Orders: 5},
+			{VendorID: 5, Employee: 'Emp4', Orders: 5},
+			{VendorID: 5, Employee: 'Emp5', Orders: 5},
+		]);
 
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test359');
 		done();

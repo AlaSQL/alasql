@@ -2,15 +2,13 @@ const alasql = require('../dist/alasql.js');
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
-
-describe.skip('Test 2000', function () {
-	beforeAll(function () {
+describe.skip('Test 2000', () => {
+	beforeAll(() => {
 		alasql('create database test');
 		alasql('use test');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test');
 	});
 
@@ -19,7 +17,7 @@ describe.skip('Test 2000', function () {
 		alasql('INSERT INTO osoby VALUES (1, "John"), (2, "Jane"), (3, "Jake")');
 		const result = alasql('SELECT * FROM osoby');
 
-		assert.deepEqual(result, [
+		expect(result).toEqual([
 			{id: 1, meno: 'John'},
 			{id: 2, meno: 'Jane'},
 			{id: 3, meno: 'Jake'},
@@ -31,7 +29,7 @@ describe.skip('Test 2000', function () {
 		alasql('INSERT INTO produkty VALUES (1, 100), (2, 150), (3, 200)');
 		const result = alasql('SELECT MAX(cena) AS maxCena FROM produkty');
 
-		assert.strictEqual(result[0].maxCena, 200);
+		expect(result[0].maxCena).toBe(200);
 	});
 
 	test('C) Min from memory', () => {
@@ -39,7 +37,7 @@ describe.skip('Test 2000', function () {
 		alasql('INSERT INTO produkty3 VALUES (1, 100), (2, 150), (3, 200)');
 		const result = alasql('SELECT MIN(cena) AS minCena FROM produkty3');
 
-		assert.strictEqual(result[0].minCena, 100);
+		expect(result[0].minCena).toBe(100);
 	});
 
 	test('Total from memory', () => {
@@ -48,7 +46,7 @@ describe.skip('Test 2000', function () {
 
 		const result = alasql('SELECT TOTAL(cena) AS totalCena FROM produkty4');
 
-		assert.strictEqual(result[0].totalCena, 450);
+		expect(result[0].totalCena).toBe(450);
 	});
 
 	test('E) Avg from memory', () => {
@@ -56,10 +54,10 @@ describe.skip('Test 2000', function () {
 		alasql('INSERT INTO produkty2 VALUES (1, 100), (2, 150), (3, 200)');
 		const result = alasql('SELECT AVG(cena) AS avgCena FROM produkty2');
 
-		assert.strictEqual(result[0].avgCena, 150);
+		expect(result[0].avgCena).toBe(150);
 	});
 
-	test('F) SUM with Round function from memory', function () {
+	test('F) SUM with Round function from memory', () => {
 		var data = [
 			{
 				a: null,
@@ -91,7 +89,7 @@ describe.skip('Test 2000', function () {
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				a: null,
 				b: 10,
@@ -104,7 +102,7 @@ describe.skip('Test 2000', function () {
 		]);
 	});
 
-	test('G) MAX/MIN/SUM with Round or Ceil function from memory', function () {
+	test('G) MAX/MIN/SUM with Round or Ceil function from memory', () => {
 		var data = [{a: 10.25}, {a: null}, {b: 10}, {a: 5.25}, {a: 33.45}];
 		var res = alasql(
 			`SELECT MIN(ROUND(a)) AS a,
@@ -118,7 +116,7 @@ describe.skip('Test 2000', function () {
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				a: 5,
 				b: 33,
@@ -132,7 +130,7 @@ describe.skip('Test 2000', function () {
 		]);
 	});
 
-	test('H) MAX/MIN for Dates from memory', function () {
+	test('H) MAX/MIN for Dates from memory', () => {
 		var data = [
 			{a: new Date(2023, 6, 6, 0, 0, 0)},
 			{a: new Date(2023, 6, 15, 0, 0, 0)},
@@ -147,7 +145,7 @@ describe.skip('Test 2000', function () {
 				 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				c: new Date(2023, 6, 6, 0, 0, 0),
 				d: new Date(2023, 7, 7, 0, 0, 0),

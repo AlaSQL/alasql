@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 1645', function () {
+describe('Test 1645', () => {
 	test('Captures error when callback for user function error', done => {
 		try {
 			alasql('SELECT medain(8) ', (data, err) => {

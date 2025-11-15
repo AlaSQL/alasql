@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 295 TestDatabase', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 295 TestDatabase', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test295;USE test295');
 
 		done();
@@ -13,7 +12,7 @@ describe('Test 295 TestDatabase', function () {
 	// Taken from here
 	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
-	test.skip('2. CREATE TABLES', function (done) {
+	test.skip('2. CREATE TABLES', done => {
 		alasql(`
 SHOW DATABASES;
 
@@ -214,7 +213,7 @@ SELECT * FROM products;
 	// Taken from here
 	// https://www3.ntu.edu.sg/home/ehchua/programming/sql/MySQL_Beginner.html
 
-	test.skip('3. CREATE TABLES', function (done) {
+	test.skip('3. CREATE TABLES', done => {
 		alasql(`
 
 USE southwind;
@@ -333,7 +332,7 @@ SHOW CREATE TABLE product_details \G
 		done();
 	});
 
-	test.skip('4. DROP DATABASE', function (done) {
+	test.skip('4. DROP DATABASE', done => {
 		alasql('DROP DATABASE test295');
 		done();
 	});

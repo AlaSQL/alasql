@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,8 +7,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 174 - HAVING Clause', function () {
-	test('1. FROM without select', function (done) {
+describe('Test 174 - HAVING Clause', () => {
+	test('1. FROM without select', done => {
 		var groups = [
 			{id: 4, name: 'abcd', id_group: '1'},
 			{id: 5, name: 'efgh', id_group: '1'},
@@ -30,7 +29,7 @@ describe('Test 174 - HAVING Clause', function () {
 		// var res = alasql('select id_group from ? where id in (4,7)\
 		// group by id_group having count(id) = 2',[groups]);
 		//		console.log(res);
-		assert.deepEqual(res, [{id_group: '2', cnt: 2}]);
+		expect(res).toEqual([{id_group: '2', cnt: 2}]);
 		done();
 	});
 });

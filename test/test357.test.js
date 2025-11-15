@@ -1,20 +1,19 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 357 Test', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 357 Test', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test357;USE test357');
 		done();
 	});
 
 	/* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
-	test.skip('2. Prepare Data', function (done) {
-		alasql(function () {
+	test.skip('2. Prepare Data', done => {
+		alasql(() => {
 			/*
 
       CREATE TABLE users( id int, name char(16) ) ; 
@@ -33,8 +32,8 @@ describe('Test 357 Test', function () {
 		done();
 	});
 
-	test.skip('3. Select Query', function (done) {
-		alasql(function () {
+	test.skip('3. Select Query', done => {
+		alasql(() => {
 			/*
     SELECT a.user_id, b.user_id, GROUP_CONCAT(a.hobby_id) AS 'Pairwise shared hobbies' 
     FROM users_hobbies a 
@@ -46,7 +45,7 @@ describe('Test 357 Test', function () {
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test357');
 		done();

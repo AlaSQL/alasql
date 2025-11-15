@@ -1,19 +1,18 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 327 FOREIGN KEYS', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 327 FOREIGN KEYS', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test327; USE test327');
 		done();
 	});
 
-	test.skip('2. CREATE TABLES Parts', function (done) {
-		alasql(function () {
+	test.skip('2. CREATE TABLES Parts', done => {
+		alasql(() => {
 			/*
       CREATE TABLE dbo.Parts
       (
@@ -25,8 +24,8 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('3. INSERT VALUES INTO Parts', function (done) {
-		alasql(function () {
+	test.skip('3. INSERT VALUES INTO Parts', done => {
+		alasql(() => {
 			/*
       INSERT INTO dbo.Parts(partid, partname) VALUES
         ( 1, 'Black Tea'      ),
@@ -51,9 +50,9 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('4. CREATE TABLE BOM', function (done) {
+	test.skip('4. CREATE TABLE BOM', done => {
 		if (false) {
-			alasql(function () {
+			alasql(() => {
 				/*
       CREATE TABLE dbo.BOM
       (
@@ -67,7 +66,7 @@ describe('Test 327 FOREIGN KEYS', function () {
     */
 			});
 		}
-		alasql(function () {
+		alasql(() => {
 			/*
       CREATE TABLE dbo.BOM
       (
@@ -86,8 +85,8 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('5. INSERT VALUES INTO BOM', function (done) {
-		alasql(function () {
+	test.skip('5. INSERT VALUES INTO BOM', done => {
+		alasql(() => {
 			/*
       INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES
         ( 1, NULL, 'EA',   1.00),
@@ -122,9 +121,9 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('6. SELECT values from BOM', function (done) {
+	test.skip('6. SELECT values from BOM', done => {
 		var res = alasql('SELECT * FROM BOM WHERE assemblyid = 1');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{partid: 6, assemblyid: 1, unit: 'EA', qty: 1},
 			{partid: 7, assemblyid: 1, unit: 'EA', qty: 1},
 			{partid: 10, assemblyid: 1, unit: 'EA', qty: 1},
@@ -134,32 +133,32 @@ describe('Test 327 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('7. INSERT duplicated key', function (done) {
-		assert.throws(function () {
+	test.skip('7. INSERT duplicated key', done => {
+		expect(() => {
 			alasql(
 				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
           ( 1, NULL, 'EA',   1.00)"
 			);
-		}, Error);
+		}).toThrow(Error);
 		done();
 	});
 
-	test.skip('8. INSERT with wrong FOREIGN KEY', function (done) {
-		assert.throws(function () {
+	test.skip('8. INSERT with wrong FOREIGN KEY', done => {
+		expect(() => {
 			alasql(
 				"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
           ( 1, 99, 'EA',   1.00)"
 			);
-		}, Error);
+		}).toThrow(Error);
 		done();
 	});
 
-	test.skip('8. INSERT with right FOREIGN KEY', function (done) {
+	test.skip('8. INSERT with right FOREIGN KEY', done => {
 		var res = alasql(
 			"INSERT INTO dbo.BOM(partid, assemblyid, unit, qty) VALUES \
           ( 1, 2, 'EA',   1.00)"
 		);
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		done();
 	});
 
@@ -167,7 +166,7 @@ describe('Test 327 FOREIGN KEYS', function () {
       
   test.skip('8. SELECT',function(done){
     var res = alasql("SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
-    assert(res == 99999);
+    expect(res == 99999).toBe(true);
     done();
   });
 
@@ -175,12 +174,12 @@ describe('Test 327 FOREIGN KEYS', function () {
     var res = alasql.parse("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
 //    console.log(res.statements[0].columns[0].toJS('a','b'));
     var res = alasql("SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
-    assert(res == 99999);
+    expect(res == 99999).toBe(true);
     done();
   });
 
 */
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test327');
 		done();
 	});

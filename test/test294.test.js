@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 294 TestDatabase', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 294 TestDatabase', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test294;USE test294');
 		//    alasql.options.casesensitive = false;
 		done();
@@ -16,7 +15,7 @@ describe('Test 294 TestDatabase', function () {
 	// Taken from here
 	// http://www.databasejournal.com/scripts/practice-sql.html
 
-	test('2. Create tables and insert some values', function (done) {
+	test('2. Create tables and insert some values', done => {
 		alasql(`
       create table zipcodes (
         zip integer(5) primary key,
@@ -114,13 +113,13 @@ describe('Test 294 TestDatabase', function () {
 	  `);
 		done();
 	});
-	test('3. Check quantities', function (done) {
+	test('3. Check quantities', done => {
 		var res = alasql('SELECT VALUE COUNT(*) FROM odetails');
-		assert.deepEqual(res, 10);
+		expect(res).toEqual(10);
 		done();
 	});
 
-	test('4. DROP DATABASE', function (done) {
+	test('4. DROP DATABASE', done => {
 		//    alasql.options.casesensitive = true;
 		alasql('DROP DATABASE test294');
 		done();

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -26,20 +25,20 @@ Expand the function with an ESCAPE parameter
 
 */
 
-describe('Test 370 REGEXP_LIKE', function () {
-	test('1. Test REGEXP_LIKE', function (done) {
-		assert(alasql('= REGEXP_LIKE("abcdef","a.*")'));
-		assert(!alasql('= REGEXP_LIKE("abcdef","^d")'));
-		assert(alasql('= REGEXP_LIKE("abcdef","^a.*d")'));
+describe('Test 370 REGEXP_LIKE', () => {
+	test('1. Test REGEXP_LIKE', done => {
+		expect(alasql('= REGEXP_LIKE("abcdef","a.*")')).toBe(true);
+		expect(!alasql('= REGEXP_LIKE("abcdef","^d")')).toBe(true);
+		expect(alasql('= REGEXP_LIKE("abcdef","^a.*d")')).toBe(true);
 		done();
 	});
 
-	test('2. Test REGEXP', function (done) {
+	test('2. Test REGEXP', done => {
 		//console.log(alasql('= "abcdef" REGEXP "a.*"'));
-		assert(alasql('= "abcdef" REGEXP "a.*"'));
-		assert(alasql('= "abcdef" REGEXP "[aq]"'));
-		assert(alasql('= "abcdef" REGEXP "[^qw]"'));
-		assert(!alasql('= "abcdef" REGEXP "[qw]"'));
+		expect(alasql('= "abcdef" REGEXP "a.*"')).toBe(true);
+		expect(alasql('= "abcdef" REGEXP "[aq]"')).toBe(true);
+		expect(alasql('= "abcdef" REGEXP "[^qw]"')).toBe(true);
+		expect(!alasql('= "abcdef" REGEXP "[qw]"')).toBe(true);
 		done();
 	});
 });

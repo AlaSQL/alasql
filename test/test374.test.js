@@ -1,10 +1,8 @@
 // @ts-ignore
-import assert from 'assert';
 import alasql from '..';
 
 describe('374. CEILING, FLOOR, ROUND tests:', () => {
-	const tests = function () {
-		/*
+	const tests = `
 SELECT(CEIL(17.36)) -- 18
 SELECT CEIL(-17.36) --  -17
 SELECT CEILING(12.9273) -- 13
@@ -89,7 +87,7 @@ SELECT CEILING(@val)   -- 12
 SELECT FLOOR(@val)     -- 11 
 
 DECLARE @val numeric(10,10)
-SET @val = .5432167890	
+SET @val = .5432167890
 --SELECT ROUND(@val, 1)  -- 0.5000000000 
 --SELECT ROUND(@val, 2)  -- 0.5400000000
 --SELECT ROUND(@val, 3)  -- 0.5430000000
@@ -117,10 +115,7 @@ SELECT ROUND(@val, 9)  -- 0.123456789
 SELECT ROUND(@val, 10) -- 0.1234567891
 SELECT CEILING(@val)   -- 1
 SELECT FLOOR(@val)     -- 0
-
-*/
-	}.toString();
-
+`;
 	const testLines = (/\/\*([\S\s]+)\*\//m.exec(tests) || ['', ''])[1];
 
 	testLines
@@ -144,8 +139,8 @@ SELECT FLOOR(@val)     -- 0
 				var res = '' + alasql('VALUE OF ' + sql);
 				//console.log(tt,sql,etalon);
 
-				runFn(testLine, function (done) {
-					assert.equal(etalon, res);
+				runFn(testLine, done => {
+					expect(etalon).toEqual(res);
 					done();
 				});
 			} else {

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,8 +7,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 if (false) {
-	describe('Test 186 - Linq Syntax', function () {
-		test('1. empty alasql()', function (done) {
+	describe('Test 186 - Linq Syntax', () => {
+		test('1. empty alasql()', done => {
 			var data1 = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},

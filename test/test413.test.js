@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -58,19 +57,19 @@ var data = [
 	},
 ];
 
-describe('Test 413 CONCAT_WS (issue #429)', function () {
-	test('2. CREATE DATABASE', function (done) {
+describe('Test 413 CONCAT_WS (issue #429)', () => {
+	test('2. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test413;USE test413');
 		done();
 	});
 
-	test('3. Test CONCAT_WS', function (done) {
+	test('3. Test CONCAT_WS', done => {
 		var res = alasql(
 			' SELECT CONCAT_WS(" ", NULL, "prepended string", `Ticket-Kategorie`,`Ticket-Typ`, NULL) as series_name FROM ?',
 			[data]
 		);
 		//	console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{series_name: 'prepended string category2 type1'},
 			{series_name: 'prepended string category1 type4'},
 			{series_name: 'prepended string category1 type2'},
@@ -84,7 +83,7 @@ describe('Test 413 CONCAT_WS (issue #429)', function () {
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test413');
 		done();
 	});

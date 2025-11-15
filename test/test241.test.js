@@ -1,15 +1,14 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 241 :: type casting operator and Ranges', function () {
-	test(':: operator', function (done) {
+describe('Test 241 :: type casting operator and Ranges', () => {
+	test(':: operator', done => {
 		var res = alasql('select value 10::string');
-		assert(res === '10');
+		expect(res === '10').toBe(true);
 		done();
 	});
 

@@ -1,37 +1,36 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 48 - Check parser for primary and foreign keys', function () {
-	describe('PRIMARY KEY', function () {
-		test('1: COLUMN PRIMARY KEY', function (done) {
+describe('Test 48 - Check parser for primary and foreign keys', () => {
+	describe('PRIMARY KEY', () => {
+		test('1: COLUMN PRIMARY KEY', done => {
 			alasql('DROP TABLE IF EXISTS one');
 			alasql('CREATE TABLE one (a INT PRIMARY KEY, b INT)');
 			done();
 		});
 
-		test('2: COLUMN PRIMARY KEY (MySQL style)', function (done) {
+		test('2: COLUMN PRIMARY KEY (MySQL style)', done => {
 			alasql('DROP TABLE IF EXISTS one');
 			alasql('CREATE TABLE one (a INT, b INT, PRIMARY KEY (a))');
 			done();
 		});
 
-		test('3: PRIMARY KEY', function (done) {
+		test('3: PRIMARY KEY', done => {
 			alasql('DROP TABLE IF EXISTS one');
 			alasql('CREATE TABLE one (a INT, b INT, CONSTRAINT keya PRIMARY KEY (a))');
 			done();
 		});
 
-		test('4: PRIMARY KEY', function (done) {
+		test('4: PRIMARY KEY', done => {
 			alasql('DROP TABLE IF EXISTS one');
 			alasql('CREATE TABLE one (a INT, b INT, CONSTRAINT keyab PRIMARY KEY (a,b))');
 			done();
 		});
 	});
 
-	describe('FOREIGN KEY', function () {
-		test('1: FOREIGN KEY', function (done) {
+	describe('FOREIGN KEY', () => {
+		test('1: FOREIGN KEY', done => {
 			alasql('DROP TABLE IF EXISTS cities');
 			alasql('DROP TABLE IF EXISTS countries');
 			alasql('CREATE TABLE countries (country STRING  PRIMARY KEY, b STRING)');
@@ -42,7 +41,7 @@ describe('Test 48 - Check parser for primary and foreign keys', function () {
 			done();
 		});
 
-		test('2: FOREIGN KEY (MySQL style)', function (done) {
+		test('2: FOREIGN KEY (MySQL style)', done => {
 			alasql('DROP TABLE IF EXISTS cities');
 			alasql('DROP TABLE IF EXISTS countries');
 			alasql(
@@ -53,7 +52,7 @@ describe('Test 48 - Check parser for primary and foreign keys', function () {
 			done();
 		});
 
-		test('3: FOREIGN KEY (MySQL style)', function (done) {
+		test('3: FOREIGN KEY (MySQL style)', done => {
 			alasql('DROP TABLE IF EXISTS cities');
 			alasql('DROP TABLE IF EXISTS countries');
 			alasql(

@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var test_number = '807'; // insert test file number
 
-describe('Test ' + test_number + ' - Composite foreign keys.', function () {
-	test('Create tables with foreign keys', function (done) {
+describe('Test ' + test_number + ' - Composite foreign keys.', () => {
+	test('Create tables with foreign keys', done => {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -43,7 +42,7 @@ describe('Test ' + test_number + ' - Composite foreign keys.', function () {
 		done();
 	});
 
-	test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+	test('CREATE TABLE with FOREIGN KEYS and INSERT', done => {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -82,13 +81,13 @@ describe('Test ' + test_number + ' - Composite foreign keys.', function () {
 			'insert into COLLABORATOR(companyId, siteId, id, name) values ("achme", "area51", "700", "dnoB semaJ");'
 		);
 		var res = alasql('SELECT COUNT (*) FROM COLLABORATOR');
-		assert.deepEqual(res, [{'COUNT(*)': 1}]);
+		expect(res).toEqual([{'COUNT(*)': 1}]);
 		var res = alasql('SELECT COUNT (*) FROM SITE');
-		assert.deepEqual(res, [{'COUNT(*)': 1}]);
+		expect(res).toEqual([{'COUNT(*)': 1}]);
 		done();
 	});
 
-	test('CREATE TABLE with FOREIGN KEYS and INSERT (with partial null foreign key)', function (done) {
+	test('CREATE TABLE with FOREIGN KEYS and INSERT (with partial null foreign key)', done => {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -123,15 +122,15 @@ describe('Test ' + test_number + ' - Composite foreign keys.', function () {
 		);
 		alasql('insert into COMPANY(id, name) values ("achme", "Acme Corp");');
 		alasql('insert into SITE(companyId, id, name) values ("achme", "area51", "Area 51");');
-		assert.throws(function () {
+		expect(() => {
 			alasql(
 				'insert into COLLABORATOR(companyId, siteId, id, name) values ("achme", NULL, "700", "dnoB semaJ");'
 			);
-		});
+		}).toThrow();
 		done();
 	});
 
-	test('CREATE TABLE with FOREIGN KEYS and INSERT (with full null foreign key)', function (done) {
+	test('CREATE TABLE with FOREIGN KEYS and INSERT (with full null foreign key)', done => {
 		alasql('DROP TABLE IF EXISTS COMPANY');
 		alasql('DROP TABLE IF EXISTS SITE');
 		alasql('DROP TABLE IF EXISTS COLLABORATOR');
@@ -171,16 +170,16 @@ describe('Test ' + test_number + ' - Composite foreign keys.', function () {
 		);
 
 		var res = alasql('SELECT COUNT (*) FROM COLLABORATOR');
-		assert.deepEqual(res, [{'COUNT(*)': 1}]);
+		expect(res).toEqual([{'COUNT(*)': 1}]);
 		done();
 	});
 
-	test('Insert wrong data without references', function (done) {
-		assert.throws(function () {
+	test('Insert wrong data without references', done => {
+		expect(() => {
 			alasql(
 				'insert into COLLABORATOR(companyId, siteId, id, name) values ("badData", "badData", "badData", "badData");'
 			);
-		});
+		}).toThrow();
 		done();
 	});
 });

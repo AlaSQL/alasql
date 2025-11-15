@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -9,16 +8,16 @@ import alasql from '..';
 
 var testId = 417;
 
-describe('Test ' + testId + ' Add JSON data directly to the table', function () {
-	beforeAll(function () {
+describe('Test ' + testId + ' Add JSON data directly to the table', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test' + testId);
 	});
 
-	test('1. Create table', function (done) {
+	test('1. Create table', done => {
 		alasql('CREATE TABLE one (a INT PRIMARY KEY, b INT)');
 		alasql.tables.one.data = [
 			{a: 1, b: 10},
@@ -28,10 +27,10 @@ describe('Test ' + testId + ' Add JSON data directly to the table', function () 
 		done();
 	});
 
-	test.skip('2. Test inserr', function (done) {
-		assert.throws(Error, function () {
+	test.skip('2. Test inserr', done => {
+		expect(() => {
 			alasql('INSERT INTO one VALUES (3,30)');
-		});
+		}).toThrow(Error);
 		done();
 	});
 

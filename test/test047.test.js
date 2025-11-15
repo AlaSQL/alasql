@@ -1,11 +1,10 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 47', function () {
-	describe('No error on subquery without alias', function () {
-		test('Query without alias', function (done) {
+describe('Test 47', () => {
+	describe('No error on subquery without alias', () => {
+		test('Query without alias', done => {
 			alasql('create database test47');
 			alasql('use test47');
 			alasql('DROP TABLE IF EXISTS one');
@@ -13,15 +12,15 @@ describe('Test 47', function () {
 			alasql('INSERT INTO one VALUES (1),(2),(3),(4),(5)');
 
 			var res = alasql('SELECT COLUMN * FROM (SELECT * FROM one WHERE a < 3)');
-			assert.deepEqual([1, 2], res);
+			expect(res).toEqual([1, 2]);
 			done();
 		});
 
-		test('Subsubqueries without alias', function (done) {
+		test('Subsubqueries without alias', done => {
 			var res = alasql('SELECT VALUE SUM(a) FROM (SELECT * FROM one WHERE a < 3)');
-			assert.equal(3, res);
+			expect(3).toEqual(res);
 			var res = alasql('SELECT VALUE COUNT(*) FROM (SELECT * FROM one WHERE a < 3)');
-			assert.equal(2, res);
+			expect(2).toEqual(res);
 
 			alasql('drop database test47');
 			done();

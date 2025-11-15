@@ -1,26 +1,26 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
 
-describe.skip('Test 1889 - Ensure utils.isNode handles node and non-Node environments', function () {
+describe.skip('Test 1889 - Ensure utils.isNode handles node and non-Node environments', () => {
 	let originalProcess;
 
-	beforeAll(function () {
+	beforeAll(() => {
 		// Store the original process object
 		originalProcess = global.process;
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		// Restore the original process object after all tests
 		global.process = originalProcess;
 	});
 
-	test('Positive: Detect Node environment', function () {
+	test('Positive: Detect Node environment', () => {
 		// No modification needed here, running in actual Node.js environment
 		const isNode = alasql.utils.isNode;
-		assert.strictEqual(isNode, true, 'utils.isNode should return true in a Node.js environment');
+		expect(isNode).toBe(true, 'utils.isNode should return true in a Node.js environment');
 	});
 
-	test('Negative: Should not detect as Node environment', function () {
+	test('Negative: Should not detect as Node environment', () => {
 		// Temporarily override the global process object
 		global.process = null;
 
@@ -28,8 +28,7 @@ describe.skip('Test 1889 - Ensure utils.isNode handles node and non-Node environ
 		const reloadedAlasql = require('..');
 
 		const isNodeAfterModification = reloadedAlasql.utils.isNode;
-		assert.strictEqual(
-			isNodeAfterModification,
+		expect(isNodeAfterModification).toBe(
 			false,
 			'utils.isNode should return false when not in nodejs environment'
 		);

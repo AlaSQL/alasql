@@ -1,11 +1,10 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
-describe.skip('Test 429', function () {
-	test('Localstorage DELETE with WHERE clause', function (done) {
+describe.skip('Test 429', () => {
+	test('Localstorage DELETE with WHERE clause', done => {
 		alasql('SET AUTOCOMMIT ON');
 		alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ls429');
 		alasql('ATTACH LOCALSTORAGE DATABASE ls429');
@@ -18,7 +17,7 @@ describe.skip('Test 429', function () {
 		alasql("INSERT INTO ls429.one VALUES ('b')");
 		alasql("DELETE FROM ls429.one WHERE str = 'a'");
 		var res = alasql('SELECT * FROM ls429.one');
-		assert.deepEqual(res, [{str: 'b'}]);
+		expect(res).toEqual([{str: 'b'}]);
 		done();
 	});
 });

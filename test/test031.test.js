@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 31', function () {
-	test('ALTER TABLE RENAME', function (done) {
+describe('Test 31', () => {
+	test('ALTER TABLE RENAME', () => {
 		var db = new alasql.Database('db');
 		db.exec('DROP TABLE IF EXISTS test1');
 		db.exec('DROP TABLE IF EXISTS test2');
@@ -17,13 +16,12 @@ describe('Test 31', function () {
 		db.exec('INSERT INTO test1 VALUES (6,6)');
 
 		var sql = 'SELECT a FROM test1';
-		assert.equal(6, db.exec(sql).length);
+		expect(db.exec(sql).length).toEqual(6);
 
 		var sql = 'ALTER TABLE test1 RENAME TO test2';
 		db.exec(sql);
 
 		var sql = 'SELECT a FROM test2 ';
-		assert.equal(6, db.exec(sql).length);
-		done();
+		expect(db.exec(sql).length).toEqual(6);
 	});
 });

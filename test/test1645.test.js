@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 1645', function () {
+describe('Test 1645', () => {
 	test('variable assigned from query should work properly', () => {
 		var sql = `
 			CREATE TABLE cities (city string, population number);
@@ -13,6 +12,6 @@ describe('Test 1645', function () {
 
 		alasql(sql);
 		var x = alasql.vars.X;
-		assert.equal(x, 3517424);
+		expect(x).toEqual(3517424);
 	});
 });

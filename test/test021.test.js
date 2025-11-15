@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 21', function () {
-	test('Aggregators', function (done) {
+describe('Test 21', () => {
+	test('Aggregators', () => {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test (a int, b int)');
 		db.exec('INSERT INTO test VALUES (1,1)');
@@ -15,25 +14,21 @@ describe('Test 21', function () {
 		db.exec('INSERT INTO test VALUES (6,2)');
 
 		var res = db.exec('SELECT b, SUM(a), COUNT(a), FIRST(a), LAST(a) FROM test GROUP BY b');
-		assert.deepEqual(
-			[
-				{
-					b: 1,
-					'SUM(a)': 6,
-					'COUNT(a)': 3,
-					'FIRST(a)': 1,
-					'LAST(a)': 3,
-				},
-				{
-					b: 2,
-					'SUM(a)': 15,
-					'COUNT(a)': 3,
-					'FIRST(a)': 4,
-					'LAST(a)': 6,
-				},
-			],
-			res
-		);
-		done();
+		expect(res).toEqual([
+			{
+				b: 1,
+				'SUM(a)': 6,
+				'COUNT(a)': 3,
+				'FIRST(a)': 1,
+				'LAST(a)': 3,
+			},
+			{
+				b: 2,
+				'SUM(a)': 15,
+				'COUNT(a)': 3,
+				'FIRST(a)': 4,
+				'LAST(a)': 6,
+			},
+		]);
 	});
 });

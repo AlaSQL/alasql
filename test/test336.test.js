@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -10,15 +9,15 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
-describe('Test 336 SLT test #4', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 336 SLT test #4', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test336;USE test336');
 
 		done();
 	});
 
-	test.skip('2. Create table', function (done) {
-		var res = alasql(function () {
+	test.skip('2. Create table', done => {
+		var res = alasql(() => {
 			/*
     CREATE TABLE t1(
       a1 INTEGER,
@@ -30,12 +29,12 @@ describe('Test 336 SLT test #4', function () {
     )
    */
 		});
-		assert.deepEqual(res, 1);
+		expect(res).toEqual(1);
 		done();
 	});
 
-	test.skip('3. INSERT some data', function (done) {
-		var res = alasql(function () {
+	test.skip('3. INSERT some data', done => {
+		var res = alasql(() => {
 			/*
       INSERT INTO t1 VALUES(382,414,67,992,483,'table tn1 row 1');
 --      INSERT INTO t1 VALUES(231,468,97,414,795,'table tn1 row 2');
@@ -44,13 +43,13 @@ describe('Test 336 SLT test #4', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [1, 1, 1, 1]);
+		expect(res).toEqual([1, 1, 1, 1]);
 
 		done();
 	});
 
-	test.skip('3. CREATE INDEX', function (done) {
-		var res = alasql(function () {
+	test.skip('3. CREATE INDEX', done => {
+		var res = alasql(() => {
 			/*
       CREATE INDEX t1i0 ON t1(a1,b1,c1,d1,e1,x1);
       CREATE INDEX t1i1 ON t1(b1,c1,d1,e1,x1);
@@ -60,12 +59,12 @@ describe('Test 336 SLT test #4', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [1, 1, 1, 1, 1]);
+		expect(res).toEqual([1, 1, 1, 1, 1]);
 
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test336');
 		done();
 	});

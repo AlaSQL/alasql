@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 15', function () {
-	test('GROUPING SETS', function (done) {
+describe('Test 15', () => {
+	test('GROUPING SETS', () => {
 		var db = alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT, d INT)');
@@ -34,7 +33,6 @@ describe('Test 15', function () {
 				check = check && res[i][p] == tobe[i][p];
 			}
 		}
-		assert.equal(true, check);
-		done();
+		expect(true).toEqual(check);
 	});
 });

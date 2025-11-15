@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -9,8 +8,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
-describe('Test 237 Test with local variables', function () {
-	test('1. Prepare database and tables', function (done) {
+describe('Test 237 Test with local variables', () => {
+	test('1. Prepare database and tables', done => {
 		alasql('CREATE DATABASE test237; USE test237;');
 
 		var res = alasql(`
@@ -46,9 +45,9 @@ FROM TestTable;
 DROP TABLE TestTable;
 `);
 
-		assert(res[4].length == 26);
-		assert.deepEqual(res[4][0], {cola: 0, colb: 'a'});
-		// assert.deepEqual(res,[ { EmployeeID: 100, EmployeeName: 'Mary' },
+		expect(res[4].length == 26).toBe(true);
+		expect(res[4][0]).toEqual({cola: 0, colb: 'a'});
+		// expect(res).toEqual([ { EmployeeID: 100, EmployeeName: 'Mary' },
 		//     { EmployeeID: 101, EmployeeName: 'Sara' },
 		//     { EmployeeID: 102, EmployeeName: 'Stefano' } ]);
 		//        console.log(res);
@@ -56,7 +55,7 @@ DROP TABLE TestTable;
 		done();
 	});
 
-	test('99. DROP', function (done) {
+	test('99. DROP', done => {
 		alasql('DROP DATABASE test237');
 		done();
 	});

@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 var testId = '1666';
-describe('Test' + testId + 'Newline characters in like', function () {
-	test('1. LIKE', function (done) {
+describe('Test' + testId + 'Newline characters in like', () => {
+	test('1. LIKE', done => {
 		var data = [
 			{a: 'one', b: 'first'},
 			{a: 'two', b: 'second\n\ritem'},
@@ -18,11 +17,11 @@ describe('Test' + testId + 'Newline characters in like', function () {
 		var res = alasql('SELECT b FROM ? WHERE b LIKE "t%"', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [{b: 'THI\n\rRD'}]);
+		expect(res).toEqual([{b: 'THI\n\rRD'}]);
 		done();
 	});
 
-	test('2. LIKE', function (done) {
+	test('2. LIKE', done => {
 		var data = [
 			{a: 'one', b: 'Nine'},
 			{a: 'two', b: 'second\n\ritem'},
@@ -34,11 +33,11 @@ describe('Test' + testId + 'Newline characters in like', function () {
 		var res = alasql('SELECT b FROM ? WHERE b LIKE "%T%"', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [{b: 'second\n\ritem'}, {b: 'THIRD'}, {b: '\n\rFifth'}, {b: 'Six\nth'}]);
+		expect(res).toEqual([{b: 'second\n\ritem'}, {b: 'THIRD'}, {b: '\n\rFifth'}, {b: 'Six\nth'}]);
 		done();
 	});
 
-	test('3. LIKE', function (done) {
+	test('3. LIKE', done => {
 		var data = [
 			{a: 'one', b: 0},
 			{a: 'three', b: 'three'},
@@ -48,7 +47,7 @@ describe('Test' + testId + 'Newline characters in like', function () {
 		var res = alasql('SELECT b FROM ? WHERE b LIKE "0%"', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [{b: 0}, {b: '0ne'}]);
+		expect(res).toEqual([{b: 0}, {b: '0ne'}]);
 		done();
 	});
 });

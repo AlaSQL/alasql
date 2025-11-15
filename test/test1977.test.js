@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe.skip('Test 1977 - BigInt support', function () {
-	test('A) Should sum, find max, min, average of BigInt values, and calculate TOTAL', function () {
+describe.skip('Test 1977 - BigInt support', () => {
+	test('A) Should sum, find max, min, average of BigInt values, and calculate TOTAL', () => {
 		var data = [{a: 9045645645644442n}, {a: 9147483647334432n}, {a: 20n}, {a: 45875651254783254n}];
 
 		var res = alasql(
@@ -17,7 +16,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				sum_a: 64068780547762148n,
 				max_a: 45875651254783254n,
@@ -28,7 +27,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 		]);
 	});
 
-	test('B) Aggregate functions with mixed Number and BigInt types', function () {
+	test('B) Aggregate functions with mixed Number and BigInt types', () => {
 		var data = [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 9147483647334432n}];
 
 		var res = alasql(
@@ -41,7 +40,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				sum_a: 9147483647334442n,
 				max_a: 9147483647334432n,
@@ -52,7 +51,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 		]);
 	});
 
-	test('C) Aggregate functions with negative BigInt values', function () {
+	test('C) Aggregate functions with negative BigInt values', () => {
 		var data = [{a: -9045645645644442n}, {a: -9147483647334432n}];
 
 		var res = alasql(
@@ -65,7 +64,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				sum_a: -18193129292978874n,
 				max_a: -9045645645644442n,
@@ -76,7 +75,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 		]);
 	});
 
-	test('D) Aggregate functions with large BigInt values', function () {
+	test('D) Aggregate functions with large BigInt values', () => {
 		var data = [
 			{a: BigInt('123456789012345678901234567890')},
 			{a: BigInt('987654321098765432109876543210')},
@@ -92,7 +91,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				sum_a: BigInt('1111111110111111111011111111100'),
 				max_a: BigInt('987654321098765432109876543210'),
@@ -103,7 +102,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 		]);
 	});
 
-	test('E) Aggregate functions with zero sum (positive and negative BigInt)', function () {
+	test('E) Aggregate functions with zero sum (positive and negative BigInt)', () => {
 		var data = [{a: 12345678901234567890n}, {a: -12345678901234567890n}];
 
 		var res = alasql(
@@ -116,7 +115,7 @@ describe.skip('Test 1977 - BigInt support', function () {
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				sum_a: 0n,
 				max_a: 12345678901234567890n,

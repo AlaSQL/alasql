@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 251 Overwrite XLSX file', function () {
-	test('1. Overwrite', function (done) {
+describe('Test 251 Overwrite XLSX file', () => {
+	test('1. Overwrite', done => {
 		alasql('SELECT * INTO XLSX("' + __dirname + '/test251.xlsx", {headers:true}) from ?', [
 			{a: 1, b: 2},
 		]);
@@ -24,7 +23,7 @@ describe('Test 251 Overwrite XLSX file', function () {
           sheetid:"test2", range:"B3"})',
 			[],
 			function (res) {
-				assert(res == 1);
+				expect(res == 1).toBe(true);
 				done();
 			}
 		);

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,8 +7,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 156 - match()', function () {
-	test('1. Multiple lines async', function (done) {
+describe('Test 156 - match()', () => {
+	test('1. Multiple lines async', done => {
 		alasql(
 			'CREATE DATABASE test156; USE test156;' +
 				'CREATE TABLE one (a string);' +
@@ -19,7 +18,7 @@ describe('Test 156 - match()', function () {
 			['Moscow'],
 			function (res) {
 				//		 	console.log(res[4]);
-				assert.deepEqual(res[4], [{a: 'Moscow'}]);
+				expect(res[4]).toEqual([{a: 'Moscow'}]);
 				done();
 			}
 		);
@@ -27,40 +26,40 @@ describe('Test 156 - match()', function () {
 
 	//https://docs.oracle.com/cd/B19306_01/appdev.102/b14251/adfns_regexp.htm
 	if (false) {
-		test('2. RegExp like Oracle functions', function (done) {
+		test('2. RegExp like Oracle functions', done => {
 			alasql('SELECT * FROM one WHERE REGEXP_LIKE(a,"Mos")');
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			expect(res).toEqual([{a: 'Moscow'}]);
 
 			alasql(
 				'SELECT VALUE REGEXP_REPLACE(a,"Moscow","London") FROM one WHERE REGEXP_LIKE(a,"Mos.*")'
 			);
-			assert(res == 'London');
+			expect(res == 'London').toBe(true);
 
 			alasql('SELECT VALUE REGEXP_INSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")');
-			assert(res == 2);
+			expect(res == 2).toBe(true);
 
 			alasql('SELECT VALUE REGEXP_SUBSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")');
-			assert(res == 'osco');
+			expect(res == 'osco').toBe(true);
 
 			done();
 		});
 
-		test('3. Criterias for WHERE like MongoDB', function (done) {
+		test('3. Criterias for WHERE like MongoDB', done => {
 			alasql('SELECT * FROM one WHERE CRITERIA(@{a:"Moscow"})');
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			expect(res).toEqual([{a: 'Moscow'}]);
 
 			alasql('SELECT * FROM one WHERE CRITERIA(@{a:?})', ['Moscow']);
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			expect(res).toEqual([{a: 'Moscow'}]);
 
 			// Do we really need this?
 			alasql('SELECT * FROM one WHERE CRITERIA(?)', [{a: 'Moscow'}]);
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			expect(res).toEqual([{a: 'Moscow'}]);
 
 			done();
 		});
 	}
 
-	test('99. Drop database', function (done) {
+	test('99. Drop database', done => {
 		alasql('drop database test156');
 		done();
 	});

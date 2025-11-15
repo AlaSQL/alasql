@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 83 - MDX SELECT', function () {
+describe('Test 83 - MDX SELECT', () => {
 	//	test.skip('localStorage', function(done){
 	//		done();
 	//	});

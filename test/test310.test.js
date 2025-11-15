@@ -1,26 +1,25 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 310 Create graph', function () {
-	test('1. Create database ', function (done) {
+describe('Test 310 Create graph', () => {
+	test('1. Create database ', done => {
 		alasql('CREATE DATABASE test310;USE test310');
 		done();
 	});
 
-	test('2. LIKE selector', function (done) {
+	test('2. LIKE selector', done => {
 		var data = [{name: 'Moscow'}, {name: 'St.Petersburg'}, {name: 'Prague'}];
 		//    var res = alasql.parse('CREATE GRAPH #Andrey');
 		var res = alasql('SEARCH / name LIKE "P%" FROM ?', [data]);
-		assert.deepEqual(res, ['Prague']);
+		expect(res).toEqual(['Prague']);
 		done();
 	});
 
-	test('3. CREATE GRAPH', function (done) {
+	test('3. CREATE GRAPH', done => {
 		//    var res = alasql.parse('CREATE GRAPH #Andrey');
 		var res = alasql('CREATE GRAPH #Andrey');
 		var res = alasql('CREATE GRAPH #John,#Mary');
@@ -30,13 +29,13 @@ describe('Test 310 Create graph', function () {
 		var res = alasql('CREATE GRAPH #[John Smith] > "loves" > #Mary');
 		var res = alasql('CREATE GRAPH #Anton > "loves" {power:"too much"} > #Julia');
 		var res = alasql('SEARCH / VERTEX [$id]');
-		assert.deepEqual(res, ['Andrey', 'John', 'Mary', 'Anton', 'Julia', 'Victor', 'John Smith']);
+		expect(res).toEqual(['Andrey', 'John', 'Mary', 'Anton', 'Julia', 'Victor', 'John Smith']);
 		done();
 	});
 
-	test('2. RETURNS', function (done) {
+	test('2. RETURNS', done => {
 		var res = alasql('SEARCH RETURNS(country,age AS Age) FROM #[John Smith] ');
-		assert.deepEqual(res, [{country: 'Canada', Age: 23}]);
+		expect(res).toEqual([{country: 'Canada', Age: 23}]);
 		done();
 	});
 
@@ -84,11 +83,11 @@ describe('Test 310 Create graph', function () {
 	// test('7. ORDER BY',function(done){
 	//   var data = [{a:1},{a:2},{a:0}];
 	//   var res = alasql('SEARCH a FROM ? ORDER BY _ DESC',[data]);
-	//   assert.deepEqual(res,[2,1,0]);
+	//   expect(res).toEqual([2,1,0]);
 	//   done();
 	// });
 
-	test('99. Drop database ', function (done) {
+	test('99. Drop database ', done => {
 		alasql('DROP DATABASE test310');
 		done();
 	});

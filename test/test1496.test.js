@@ -1,6 +1,4 @@
 var alasql = require('..');
-var assert = require('assert');
-
 var nums = [29, 30.1, 30.2, 30.3];
 
 var data = [
@@ -22,23 +20,17 @@ var data = [
 	},
 ];
 
-describe('Test 1496 - Order by Date tests', function () {
-	test('Should correctly order by date in an anonymous query', function () {
+describe('Test 1496 - Order by Date tests', () => {
+	test('Should correctly order by date in an anonymous query', () => {
 		var res = alasql.exec('SELECT i FROM ? ORDER BY date, i ASC', [data]);
-		assert.deepEqual(
-			Object.values(res).map(r => r.i),
-			nums
-		);
+		expect(Object.values(res).map(r => r.i)).toEqual(nums);
 	});
 
-	test('Should correctly order by date in a table query', function () {
+	test('Should correctly order by date in a table query', () => {
 		var db = new alasql.Database('MyDB');
 		db.exec('CREATE TABLE mytable (i NUMBER, date DATE)');
 		db.tables.mytable.data = data;
 		var res = db.exec('SELECT i FROM mytable ORDER BY date, i ASC');
-		assert.deepEqual(
-			Object.values(res).map(r => r.i),
-			nums
-		);
+		expect(Object.values(res).map(r => r.i)).toEqual(nums);
 	});
 });

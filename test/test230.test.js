@@ -1,19 +1,18 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
-describe('Test 230 Fix GROUP BY expressions', function () {
-	test('046-1 FROM array of arrays', function (done) {
+describe('Test 230 Fix GROUP BY expressions', () => {
+	test('046-1 FROM array of arrays', done => {
 		alasql('CREATE DATABASE test230; USE test230;');
 		done();
 	});
 
-	test('217. TRUNCATE TABLE', function (done) {
+	test('217. TRUNCATE TABLE', done => {
 		alasql(
 			'CREATE TABLE one(a INT);\
             INSERT INTO one VALUES (1),(2),(3); \
@@ -22,11 +21,11 @@ describe('Test 230 Fix GROUP BY expressions', function () {
 		var res = alasql('SELECT VALUE COUNT(*) FROM one');
 		//        console.log(res);
 		//        var res = alasql('SELECT VALUE COUNT(*) FROM one');
-		assert(res == 0);
+		expect(res == 0).toBe(true);
 		done();
 	});
 
-	test('046-1 FROM array of arrays', function (done) {
+	test('046-1 FROM array of arrays', done => {
 		var data = [
 			[2014, 1, 1],
 			[2015, 2, 1],
@@ -43,7 +42,7 @@ describe('Test 230 Fix GROUP BY expressions', function () {
             GROUP BY [2] ',
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			[2, 4],
 			[3, 11],
 		]);
@@ -51,7 +50,7 @@ describe('Test 230 Fix GROUP BY expressions', function () {
 		done();
 	});
 
-	test('99. DROP', function (done) {
+	test('99. DROP', done => {
 		alasql('DROP DATABASE test230');
 		done();
 	});

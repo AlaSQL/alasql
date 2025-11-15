@@ -1,18 +1,17 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 260 SqlLogic Parser Test #3', function () {
-	test.skip('1. Sqllogic', function (done) {
+describe('Test 260 SqlLogic Parser Test #3', () => {
+	test.skip('1. Sqllogic', done => {
 		alasql('CREATE DATABASE test260; USE test260');
 		done();
 	});
 
-	test.skip('3. SELECT ALL', function (done) {
+	test.skip('3. SELECT ALL', done => {
 		done();
 	});
 	/*
@@ -51,7 +50,7 @@ SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) FROM t1 WHERE (a>b-2 AND a<
 
 */
 
-	test.skip('99. Drop Database', function (done) {
+	test.skip('99. Drop Database', done => {
 		alasql('DROP DATABASE test260');
 		done();
 	});

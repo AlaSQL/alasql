@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,10 +7,10 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 195 - HAVING with aggregator', function () {
+describe('Test 195 - HAVING with aggregator', () => {
 	//    console.log(alasql.parse('SELECT a FROM ? GROUP BY a % 2').toString());
 
-	test('1. HAVING with aggregator', function (done) {
+	test('1. HAVING with aggregator', done => {
 		var data = [{a: 1}, {a: 1}, {a: 2}, {a: 3}, {a: 1}, {a: 2}];
 		var res = alasql('SELECT a FROM ? GROUP BY a HAVING COUNT(*)>1', [data]);
 		//        console.log('Result:',res);

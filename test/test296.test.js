@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 296 TestDatabase', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 296 TestDatabase', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test296;USE test296');
 
 		done();
@@ -13,7 +12,7 @@ describe('Test 296 TestDatabase', function () {
 	// Taken from here
 	// http://www.codeproject.com/Tips/326527/Create-a-Sample-SQL-Database-in-Less-Than-Minute
 
-	test.skip('2. CREATE TABLES', function (done) {
+	test.skip('2. CREATE TABLES', done => {
 		alasql(`
 -- Fabrics V1.2 
 -- Creating a SQL database from scratch
@@ -365,17 +364,17 @@ EXECUTE usp_Fabrics
 		done();
 	});
 
-	test.skip('4. DROP DATABASE', function (done) {
+	test.skip('4. DROP DATABASE', done => {
 		alasql('EXECUTE usp_Fabrics');
 		done();
 	});
 
-	test.skip('4. DROP DATABASE', function (done) {
+	test.skip('4. DROP DATABASE', done => {
 		alasql('EXECUTE usp_Fabrics @CreateClients= 1000000,  @CreateOrders= 0');
 		done();
 	});
 
-	test.skip('4. DROP DATABASE', function (done) {
+	test.skip('4. DROP DATABASE', done => {
 		alasql(`
 
 SELECT TOP 10 FirstName, LastName, _
@@ -392,7 +391,7 @@ FROM OrderLine WHERE OrderId = O.OrderId)>1
 		done();
 	});
 
-	test.skip('4. DROP DATABASE', function (done) {
+	test.skip('4. DROP DATABASE', done => {
 		alasql.options.nocount = false;
 		alasql('DROP DATABASE test295');
 		done();

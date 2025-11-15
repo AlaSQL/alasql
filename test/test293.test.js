@@ -1,17 +1,16 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import md5 from 'blueimp-md5';
 
-describe('Test 293 SLT#1', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 293 SLT#1', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test293;USE test293');
 
 		done();
 	});
 
-	test('2. CREATE TABLES', function (done) {
+	test('2. CREATE TABLES', done => {
 		alasql(`
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(103,102,100,101,104);
@@ -51,7 +50,7 @@ describe('Test 293 SLT#1', function () {
 
 	var q1, q2;
 
-	test('3. SELECT 1 - no modifier', function (done) {
+	test('3. SELECT 1 - no modifier', done => {
 		alasql.options.modifier = undefined;
 
 		var res = alasql(
@@ -59,7 +58,7 @@ describe('Test 293 SLT#1', function () {
       THEN a*2 ELSE b*10 END FROM t1 ORDER BY 1`
 		);
 		//console.log(res);
-		assert.deepEqual(res.length, 30);
+		expect(res.length).toEqual(30);
 		q1 = res;
 		var rs = res
 			.map(function (d) {
@@ -69,11 +68,11 @@ describe('Test 293 SLT#1', function () {
 		// var rs = res.data.map(function(d){return d[res.columns[0].columnid]+'\n'}).join('');
 		//    console.log('char1',rs.length);
 		let rhash = md5(rs);
-		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
+		expect(rhash).toEqual('3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
 
-	test('4. SELECT 1 - RECORDSET', function (done) {
+	test('4. SELECT 1 - RECORDSET', done => {
 		alasql.options.modifier = 'RECORDSET';
 
 		var res = alasql(
@@ -82,7 +81,7 @@ describe('Test 293 SLT#1', function () {
 		);
 		//console.log(res);
 		q2 = res.data;
-		assert.deepEqual(res.data.length, 30);
+		expect(res.data.length).toEqual(30);
 		var rs = res.data
 			.map(function (d) {
 				return d[res.columns[0].columnid] + '\n';
@@ -90,18 +89,18 @@ describe('Test 293 SLT#1', function () {
 			.join('');
 		//    console.log('char2',rs.length);
 		let rhash = md5(rs);
-		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
+		expect(rhash).toEqual('3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
 
-	test('5. SELECT 1', function (done) {
+	test('5. SELECT 1', done => {
 		alasql.options.modifier = undefined;
 		var res = alasql('SELECT 1');
-		assert.deepEqual(res, [{1: 1}]);
+		expect(res).toEqual([{1: 1}]);
 		//    console.log(res);
 
 		var res = alasql('SELECT avg(c) FROM t1');
-		assert.deepEqual(res, [{'AVG(c)': 174.36666666666667}]);
+		expect(res).toEqual([{'AVG(c)': 174.36666666666667}]);
 		//    console.log(res);
 		//console.log('***')
 		if (false) {
@@ -118,7 +117,7 @@ describe('Test 293 SLT#1', function () {
 	});
 
 	if (false) {
-		test('4. SELECT 1', function (done) {
+		test('4. SELECT 1', done => {
 			q1 = alasql.utils.flatArray(q1);
 			q2 = alasql.utils.flatArray(q2);
 			q1.forEach(function (q, idx) {
@@ -128,7 +127,7 @@ describe('Test 293 SLT#1', function () {
 		});
 	}
 	if (false) {
-		test('4. SELECT 2', function (done) {
+		test('4. SELECT 2', done => {
 			//    alasql.options.modifier = 'RECORDSET';
 			var res = alasql(`
       SELECT a+b*2+c*3+d*4+e*5,
@@ -136,18 +135,18 @@ describe('Test 293 SLT#1', function () {
         FROM t1
        ORDER BY 1,2
 	   `);
-			assert.deepEqual(res.length, 60); // Why 60?
+			expect(res.length).toEqual(60); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
 			let rhash = md5(rs);
-			assert.deepEqual(rhash, '808146289313018fce25f1a280bd8c30');
+			expect(rhash).toEqual('808146289313018fce25f1a280bd8c30');
 			done();
 		});
 
-		test('5. SELECT 3', function (done) {
+		test('5. SELECT 3', done => {
 			//    alasql.options.modifier = 'RECORDSET';
 			var res = alasql(`
 SELECT a+b*2+c*3+d*4+e*5,
@@ -162,19 +161,19 @@ SELECT a+b*2+c*3+d*4+e*5,
    AND EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b)
  ORDER BY 4,2,1,3,5
  `);
-			assert.deepEqual(res.length, 80); // Why 60?
+			expect(res.length).toEqual(80); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
 			let rhash = md5(rs);
-			assert.deepEqual(rhash, 'f588aa173060543daffc54d07638516f');
+			expect(rhash).toEqual('f588aa173060543daffc54d07638516f');
 			done();
 		});
 	}
 
-	test('4. DROP DATABASE', function (done) {
+	test('4. DROP DATABASE', done => {
 		alasql('DROP DATABASE test293');
 		alasql.options.modifier = undefined;
 		done();

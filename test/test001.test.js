@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 function prepareData(defined) {
@@ -117,24 +116,20 @@ function prepareData(defined) {
 }
 
 function doTests() {
-	test('Select 1.1: COUNT', function (done) {
+	test('Select 1.1: COUNT', () => {
 		var res = alasql(
 			'SELECT courses.courseid, COUNT(*) AS cnt ' +
 				' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid'
 		);
-		assert.deepEqual(
-			[
-				{courseid: 1, cnt: 1},
-				{courseid: 2, cnt: 2},
-				{courseid: 3, cnt: 1},
-				{courseid: 4, cnt: 1},
-				{courseid: 5, cnt: 1},
-			],
-			res
-		);
-		done();
+		expect(res).toEqual([
+			{courseid: 1, cnt: 1},
+			{courseid: 2, cnt: 2},
+			{courseid: 3, cnt: 1},
+			{courseid: 4, cnt: 1},
+			{courseid: 5, cnt: 1},
+		]);
 	});
-	test('Select 1.2: LEFT JOIN ON ', function (done) {
+	test('Select 1.2: LEFT JOIN ON ', () => {
 		var res = alasql(
 			'SELECT * ' +
 				' FROM students ' +
@@ -143,31 +138,28 @@ function doTests() {
 				' GROUP BY students.schoolid, students.courseid, students.studentname'
 		);
 		//			console.log(res);
-		assert.equal(res[4].studentname, 'Astrid Carlson');
-		done();
+		expect(res[4].studentname).toEqual('Astrid Carlson');
 	});
-	test('Select 1.3: LEFT JOIN', function (done) {
+	test('Select 1.3: LEFT JOIN', () => {
 		var res = alasql(
 			'SELECT COLUMN students.schoolid ' + ' FROM students ' + ' LEFT JOIN courses USING courseid'
 		);
-		assert.deepEqual([1, 1, 1, 2, 1], res);
-		done();
+		expect(res).toEqual([1, 1, 1, 2, 1]);
 	});
-	test('Select 1.4: queryValue', function (done) {
+	test('Select 1.4: queryValue', () => {
 		var res = alasql('SELECT VALUE COUNT(*) FROM courses, students');
-		assert.equal(25, res);
-		done();
+		expect(res).toEqual(25);
 	});
 	//		alasql('drop database test01');
 }
 
-describe('Test 001', function () {
-	describe('Columns provided', function () {
+describe('Test 001', () => {
+	describe('Columns provided', () => {
 		prepareData(true);
 		doTests();
 	});
 
-	describe('Columns are not provided', function () {
+	describe('Columns are not provided', () => {
 		prepareData(false);
 		doTests();
 	});

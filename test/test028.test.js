@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 28', function () {
-	test('>= ANY', function (done) {
+describe('Test 28', () => {
+	test('>= ANY', () => {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
@@ -28,17 +27,16 @@ describe('Test 28', function () {
 
 		var sql = 'SELECT COLUMN a FROM test1 WHERE a > ALL (SELECT a FROM test2)';
 		var res = db.exec(sql);
-		assert.deepEqual([5, 6], res);
+		expect(res).toEqual([5, 6]);
 
 		var sql = 'SELECT COLUMN a FROM test2 WHERE a = ANY (array[1,2])';
 		var res = db.exec(sql);
 
-		assert.deepEqual([1, 2], res);
+		expect(res).toEqual([1, 2]);
 
 		var sql = 'SELECT COLUMN a FROM test2 WHERE a >= ANY (SELECT a FROM test3)';
 		var res = db.exec(sql);
 
-		assert.deepEqual([3, 4], res);
-		done();
+		expect(res).toEqual([3, 4]);
 	});
 });

@@ -1,11 +1,10 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll, beforeEach} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import fs from 'fs';
 import path from 'path';
 
-describe('Test 1400 - CSV', function () {
+describe('Test 1400 - CSV', () => {
 	var filecontents;
 
 	beforeEach(() => {
@@ -13,9 +12,9 @@ describe('Test 1400 - CSV', function () {
 	});
 
 	describe('with headers', () => {
-		test('should be able to load up raw values if option is passed', function () {
+		test('should be able to load up raw values if option is passed', () => {
 			const res = alasql('SELECT * FROM CSV(?, {headers:true, raw:true})', [filecontents]);
-			assert.deepEqual(res, [
+			expect(res).toEqual([
 				{
 					'Payment Method': 'Method 3',
 					'Account Number': '07312512451',
@@ -43,9 +42,9 @@ describe('Test 1400 - CSV', function () {
 			]);
 		});
 
-		test('should be able to load up values and numerical values would be parsed', function () {
+		test('should be able to load up values and numerical values would be parsed', () => {
 			const res2 = alasql('SELECT * FROM CSV(?, {headers:true})', [filecontents]);
-			assert.deepEqual(res2, [
+			expect(res2).toEqual([
 				{
 					'Payment Method': 'Method 3',
 					'Account Number': 7312512451,
@@ -80,9 +79,9 @@ describe('Test 1400 - CSV', function () {
 			filecontents = fs.readFileSync(path.resolve('test/test1400b.csv'), 'utf8');
 		});
 
-		test('should be able to load up raw values without header', function () {
+		test('should be able to load up raw values without header', () => {
 			const res = alasql('SELECT * FROM CSV(?, {headers:false, raw:true})', [filecontents]);
-			assert.deepEqual(res, [
+			expect(res).toEqual([
 				{
 					0: 'Method 3',
 					1: '07312512451',
@@ -110,10 +109,10 @@ describe('Test 1400 - CSV', function () {
 			]);
 		});
 
-		test('should be able to load up values without header and numerical values will be parsed', function () {
+		test('should be able to load up values without header and numerical values will be parsed', () => {
 			const res2 = alasql('SELECT * FROM CSV(?, {headers:false})', [filecontents]);
 
-			assert.deepEqual(res2, [
+			expect(res2).toEqual([
 				{
 					0: 'Method 3',
 					1: 7312512451,

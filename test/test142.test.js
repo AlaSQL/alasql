@@ -1,18 +1,17 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 142 INSTREAM', function () {
-	test('1. Source as a string', function (done) {
+describe('Test 142 INSTREAM', () => {
+	test('1. Source as a string', done => {
 		alasql('CREATE DATABASE test142; use test142');
 		done();
 	});
 
-	test('2. Simple Date functions', function (done) {
+	test('2. Simple Date functions', done => {
 		var srcfn = function (i) {
 			if (i > 2) return;
 			return {i: i, i2: i * 2};
@@ -22,7 +21,7 @@ describe('Test 142 INSTREAM', function () {
 
 		var res = alasql('SELECT * FROM ?', [srcfn]);
 		//		console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{i: 0, i2: 0},
 			{i: 1, i2: 2},
 			{i: 2, i2: 4},
@@ -30,7 +29,7 @@ describe('Test 142 INSTREAM', function () {
 
 		done();
 	});
-	test('3. Calculate PI with streaming function', function (done) {
+	test('3. Calculate PI with streaming function', done => {
 		var n = 10000;
 
 		var rndfn = function (i) {
@@ -47,7 +46,7 @@ describe('Test 142 INSTREAM', function () {
 		//		console.log(Date.now() - tm);
 		var pi = (res / n) * 4;
 		//		console.log(res,pi);
-		assert(2 < pi && pi < 4);
+		expect(2 < pi && pi < 4).toBe(true);
 
 		done();
 	});
@@ -107,7 +106,7 @@ if(false) {
 	test("3. AGGR functions", function(done){
 		var res = alasql('SELECT SUM(x) AS x, SUM(y) AS y, AGGR(x/y) AS z FROM ? WHERE SQRT(x*x+y*y)<1', [rndfn]);
 /// console.log(res);
-		assert( 0.5 < res[0].z && res[0].z < 2 );
+		expect( 0.5 < res[0].z && res[0].z < 2 ).toBe(true);
 		done();
 	});
 
@@ -129,7 +128,7 @@ if(false) {
 
 
 */
-	test('99. Drop database', function (done) {
+	test('99. Drop database', done => {
 		alasql('DROP DATABASE test142');
 		done();
 	});

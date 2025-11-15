@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,8 +7,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 181 - ARRAY aggregator', function () {
-	test('1. ARRAY()', function (done) {
+describe('Test 181 - ARRAY aggregator', () => {
+	test('1. ARRAY()', done => {
 		var food = [
 			{food: 'apple', type: 'fruit'},
 			{food: 'potato', type: 'vegetable'},
@@ -17,7 +16,7 @@ describe('Test 181 - ARRAY aggregator', function () {
 		];
 		var res = alasql('SELECT ARRAY(food) AS foods FROM ? GROUP BY type', [food]);
 		//      console.log(res);
-		assert.deepEqual(res, [{foods: ['apple', 'banana']}, {foods: ['potato']}]);
+		expect(res).toEqual([{foods: ['apple', 'banana']}, {foods: ['potato']}]);
 		done();
 	});
 });

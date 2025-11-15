@@ -1,21 +1,20 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var testId = 606;
 
-describe('Test ' + testId + ' - get autoval', function () {
-	beforeAll(function () {
+describe('Test ' + testId + ' - get autoval', () => {
+	beforeAll(() => {
 		alasql('create database test' + testId);
 		alasql('use test' + testId);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test' + testId);
 	});
 
-	test('A) complex SEARCH query', function () {
+	test('A) complex SEARCH query', () => {
 		const data = {
 			kind: 'PodList',
 			apiVersion: 'v1',
@@ -88,6 +87,6 @@ describe('Test ' + testId + ' - get autoval', function () {
 	        ) FROM ?',
 			[data]
 		);
-		assert.deepEqual(res, [{name: 'chosen-pod', namespace: 'namespace3'}]);
+		expect(res).toEqual([{name: 'chosen-pod', namespace: 'namespace3'}]);
 	});
 });

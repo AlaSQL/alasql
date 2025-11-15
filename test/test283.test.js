@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 283 Test for simple example with foreign key', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 283 Test for simple example with foreign key', () => {
+	test('1. CREATE DATABASE', done => {
 		var res = alasql(`
       CREATE DATABASE Fruits;
       USE DATABASE Fruits;

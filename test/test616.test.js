@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var testId = '616'; // insert test file number
 
-describe('Test ' + testId + ' - Foreign keys on created database', function () {
-	test("Check foreign key on a created database doesn't fail", function (done) {
+describe('Test ' + testId + ' - Foreign keys on created database', () => {
+	test("Check foreign key on a created database doesn't fail", done => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE Parent( ParentId integer, CONSTRAINT PK_Parent PRIMARY KEY(ParentId) )');
@@ -14,9 +13,9 @@ describe('Test ' + testId + ' - Foreign keys on created database', function () {
 			'CREATE TABLE Child( ChildId integer, CONSTRAINT FK_Child_Parent FOREIGN KEY (ChildId) REFERENCES Parent(ParentId) )'
 		);
 		db.exec('INSERT INTO Parent(ParentId) VALUES(1)');
-		assert.doesNotThrow(function () {
+		expect(() => {
 			db.exec('INSERT INTO Child(ChildId) VALUES(1)');
-		});
+		}).not.toThrow();
 		done();
 	});
 });

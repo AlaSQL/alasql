@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,10 +7,10 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 197 - Expression in expression', function () {
+describe('Test 197 - Expression in expression', () => {
 	//    console.log(alasql.parse('SELECT a FROM ? GROUP BY a % 2').toString());
 
-	test('1. MAX', function (done) {
+	test('1. MAX', done => {
 		// var ast = alasql.parse('SELECT (SELECT MAX(a) FROM ?) FROM RANGE(1,2)');
 		// console.log(ast.toString());
 		// console.log(ast);

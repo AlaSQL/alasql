@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 26', function () {
-	test('Modulo operator', function (done) {
+describe('Test 26', () => {
+	test('Modulo operator', () => {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
@@ -20,7 +19,6 @@ describe('Test 26', function () {
 		db.exec('INSERT INTO test2 VALUES (3,30)');
 
 		var res = db.exec('SELECT VALUE SUM(a%3) FROM test1');
-		assert.equal(6, res);
-		done();
+		expect(res).toEqual(6);
 	});
 });

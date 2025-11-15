@@ -1,19 +1,18 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 341 Intellectual DOT operator', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 341 Intellectual DOT operator', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test341;USE test341');
 		done();
 	});
 
-	test.skip('2. Create tables', function (done) {
-		var res = alasql(function () {
+	test.skip('2. Create tables', done => {
+		var res = alasql(() => {
 			/*
 
       CREATE TABLE cities (city STRING PRIMARY KEY, population INT);
@@ -26,42 +25,42 @@ describe('Test 341 Intellectual DOT operator', function () {
       INSERT INTO persons VALUES (1,"Andrey","Krasnodar"), (2,"Valery","Prague"), (3,"Michael","New York");
   */
 		});
-		assert.deepEqual(res, [1, 3, 1, 3]);
+		expect(res).toEqual([1, 3, 1, 3]);
 		done();
 	});
 
-	test.skip('3. SQL Standard way', function (done) {
+	test.skip('3. SQL Standard way', done => {
 		var res = alasql('SELECT COLUMN persons.name FROM persons');
-		assert.deepEqual(res, ['Andrey', 'Valery', 'Michael']);
+		expect(res).toEqual(['Andrey', 'Valery', 'Michael']);
 		done();
 	});
 
-	test.skip('4. JavaScript way', function (done) {
+	test.skip('4. JavaScript way', done => {
 		var res = alasql('SET @a = "who".length');
-		assert.deepEqual(res, [6, 6, 7]);
+		expect(res).toEqual([6, 6, 7]);
 		done();
 	});
 
-	test.skip('5. JavaScript way', function (done) {
+	test.skip('5. JavaScript way', done => {
 		var res = alasql('SELECT COLUMN name.length FROM persons');
-		assert.deepEqual(res, [6, 6, 7]);
+		expect(res).toEqual([6, 6, 7]);
 		done();
 	});
 
-	test.skip('5. FOREIGN KEY way', function (done) {
+	test.skip('5. FOREIGN KEY way', done => {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
-		assert.deepEqual(res.sort(), [100, 1, 200]);
+		expect(res.sort()).toEqual([100, 1, 200]);
 		done();
 	});
 
-	test.skip('6. Object reference', function (done) {
+	test.skip('6. Object reference', done => {
 		/** @todo Create this test */
 		//    var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0',[100]);
-		//    assert.deepEqual(res.sort(),[100,1,200]);
+		//    expect(res.sort()).toEqual([100,1,200]);
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test341');
 		done();

@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 39', function () {
-	describe('Negative numbers', function () {
+describe('Test 39', () => {
+	describe('Negative numbers', () => {
 		var db;
-		test('Prepare database', function (done) {
+		test('Prepare database', done => {
 			db = new alasql.Database('db');
 
 			db.exec('CREATE TABLE one (a INT, b INT)');
@@ -14,9 +13,9 @@ describe('Test 39', function () {
 			done();
 		});
 
-		test('Negative numbers', function (done) {
+		test('Negative numbers', done => {
 			var res = db.exec('SELECT a,b,-1*a AS c FROM one  WHERE b < -15 ORDER BY a');
-			assert.deepEqual(res, [{a: -2, b: -20, c: 2}]);
+			expect(res).toEqual([{a: -2, b: -20, c: 2}]);
 			done();
 		});
 	});

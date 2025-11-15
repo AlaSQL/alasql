@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,8 +7,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 182 - ARRAY aggregator', function () {
-	test('1. ARRAY()', function (done) {
+describe('Test 182 - ARRAY aggregator', () => {
+	test('1. ARRAY()', done => {
 		var data = [
 			{
 				userId: 1,
@@ -56,9 +55,9 @@ describe('Test 182 - ARRAY aggregator', function () {
 			[data]
 		);
 
-		assert(res.length == 2);
+		expect(res.length == 2).toBe(true);
 		//     console.log(res);
-		//      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
+		//      expect(res).toEqual([1,2,3,4,5,6,7,8,9,10]);
 		done();
 	});
 });

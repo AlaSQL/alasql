@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
@@ -15,7 +14,7 @@ global.localStorage = new DOMStorage('./test381.json', {
   https://jira.mongodb.org/browse/SERVER-831
 */
 
-describe('Test 386 - Nested Search (issue #495)', function () {
+describe('Test 386 - Nested Search (issue #495)', () => {
 	var data = [
 		{
 			_id: 1,
@@ -76,29 +75,29 @@ describe('Test 386 - Nested Search (issue #495)', function () {
 		},
 	];
 
-	beforeAll(function () {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test386;USE test386');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test386');
 	});
 
-	test('1. Change property', function (done) {
+	test('1. Change property', done => {
 		alasql('SEARCH /medications/prescriptions/WHERE(id=77) SET(quantity=30) FROM ?', [data]);
-		assert.equal(data[0].medications[0].prescriptions[1].quantity, 30);
+		expect(data[0].medications[0].prescriptions[1].quantity).toEqual(30);
 		done();
 	});
 
-	test('2. Change property in all levels', function (done) {
+	test('2. Change property in all levels', done => {
 		alasql('SEARCH /+ WHERE(id=77) SET(quantity=31) FROM ?', [data]);
-		assert.equal(data[0].medications[0].prescriptions[1].quantity, 31);
+		expect(data[0].medications[0].prescriptions[1].quantity).toEqual(31);
 		done();
 	});
 
-	test('3. Change property in all levels', function (done) {
+	test('3. Change property in all levels', done => {
 		alasql('SEARCH / * WHERE(id=77) SET(quantity=32) FROM ?', [data]);
-		assert.equal(data[0].medications[0].prescriptions[1].quantity, 32);
+		expect(data[0].medications[0].prescriptions[1].quantity).toEqual(32);
 		done();
 	});
 });

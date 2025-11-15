@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -14,13 +13,13 @@ if (typeof window !== 'undefined') {
 }
 
 if (false) {
-	describe('Test 161 - load and process Excel file', function () {
-		test('1. Load Excel file', function (done) {
+	describe('Test 161 - load and process Excel file', () => {
+		test('1. Load Excel file', done => {
 			alasql(
 				"select country, population from xlsx('test161.xlsx',{sheet:'Sheet1',range:'A1:D5',headers:true}) where city like 'M%'",
 				[],
 				function (res) {
-					assert.deepEqual(res, [
+					expect(res).toEqual([
 						{country: 'USA', population: 12000000},
 						{country: 'Spain', population: 2500000},
 					]);
@@ -29,7 +28,7 @@ if (false) {
 			);
 		});
 
-		test('2. Create Excel file from SELECT query', function (done) {
+		test('2. Create Excel file from SELECT query', done => {
 			var people = [
 				{name: 'Joan Watson', age: 42},
 				{name: 'Sherlok Holmes', age: 44},
@@ -38,7 +37,7 @@ if (false) {
 			alasql("select * into xlsx('test160res.xlsx') from ?", [people], function (res) {
 				// TODO - what to do in browser? try to save?
 				// How to protect node.js (where to save these files?)
-				assert.equal(res, 2);
+				expect(res).toEqual(2);
 				done();
 			});
 		});

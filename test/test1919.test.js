@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
 	Test for issue #1919
 */
-describe(`Test 1919 Load data from JSONL file`, function () {
+describe(`Test 1919 Load data from JSONL file`, () => {
 	const expectedResult = [
 		{
 			a: 'foo',
@@ -21,30 +20,30 @@ describe(`Test 1919 Load data from JSONL file`, function () {
 			d: null,
 		},
 	];
-	test('1. Load JSONL', function (done) {
+	test('1. Load JSONL', done => {
 		alasql('SELECT * FROM JSONL("' + __dirname + '/test1919")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			expect(res).toEqual(expectedResult);
 			done();
 		});
 	});
 
-	test('2. Load NDJSON', function (done) {
+	test('2. Load NDJSON', done => {
 		alasql('SELECT * FROM NDJSON("' + __dirname + '/test1919")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			expect(res).toEqual(expectedResult);
 			done();
 		});
 	});
 
-	test('3. Load NDJSON - will accept file with different  extension', function (done) {
+	test('3. Load NDJSON - will accept file with different  extension', done => {
 		alasql('SELECT * FROM NDJSON("' + __dirname + '/test1919.jsonl")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			expect(res).toEqual(expectedResult);
 			done();
 		});
 	});
 
-	test('4. Load JSONL - will accept file with different extension', function (done) {
+	test('4. Load JSONL - will accept file with different extension', done => {
 		alasql('SELECT * FROM JSONL("' + __dirname + '/test1919.ndjson")', [], function (res) {
-			assert.deepEqual(res, expectedResult);
+			expect(res).toEqual(expectedResult);
 			done();
 		});
 	});

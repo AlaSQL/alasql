@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 285 CREATE UNIQUE INDEX', function () {
-	test('1. CREATE TABLE and FIRST INSERT', function (done) {
+describe('Test 285 CREATE UNIQUE INDEX', () => {
+	test('1. CREATE TABLE and FIRST INSERT', done => {
 		var res = alasql(`
       CREATE DATABASE test285;
       USE DATABASE test285;
@@ -23,12 +22,12 @@ describe('Test 285 CREATE UNIQUE INDEX', function () {
       INSERT INTO One VALUES(1,2);
 	  `);
 		/// console.log(res);
-		//    assert.deepEqual(res,[1,1,1,1,1,1]);
+		//    expect(res).toEqual([1,1,1,1,1,1]);
 
 		done();
 	});
 
-	test('1. DROP DATABASE', function (done) {
+	test('1. DROP DATABASE', done => {
 		var res = alasql('DROP DATABASE test285');
 		done();
 	});

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -9,16 +8,16 @@ import alasql from '..';
 
 var testNum = 423;
 
-describe('Test ' + testNum + ' Merge', function () {
-	beforeAll(function () {
+describe('Test ' + testNum + ' Merge', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test' + testNum + ';USE test' + testNum);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test' + testNum);
 	});
 
-	test('2. Join tables', function (done) {
+	test('2. Join tables', done => {
 		var res1 = [
 			{
 				inspecteur: 'Jan',

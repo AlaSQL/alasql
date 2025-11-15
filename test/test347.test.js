@@ -1,18 +1,17 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 347 Efficient Joined Queries Issue #245', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 347 Efficient Joined Queries Issue #245', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test347;USE test347');
 		done();
 	});
 
-	test('2. TEST', function (done) {
+	test('2. TEST', done => {
 		var res = alasql(`
       CREATE TABLE students (
         id serial NOT NULL,
@@ -59,7 +58,7 @@ describe('Test 347 Efficient Joined Queries Issue #245', function () {
 		done();
 	});
 
-	test('3. TEST', function (done) {
+	test('3. TEST', done => {
 		var res = alasql(
 			`
       SELECT
@@ -83,7 +82,7 @@ describe('Test 347 Efficient Joined Queries Issue #245', function () {
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test347');
 		done();

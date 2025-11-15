@@ -1,21 +1,20 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe.skip('Test 1119 - Trigger callback parameter', function () {
+describe.skip('Test 1119 - Trigger callback parameter', () => {
 	const testId = '1119'; // Test file number
 
-	beforeAll(function () {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test' + testId);
 		alasql('USE test' + testId);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test' + testId);
 	});
 
-	test('A) BEFORE INSERT trigger callback should receive the inserted row', function () {
+	test('A) BEFORE INSERT trigger callback should receive the inserted row', () => {
 		let triggerReceivedCorrectData = false; // Flag to check if trigger got the right data
 		let receivedValue = undefined;
 
@@ -36,17 +35,17 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		alasql('INSERT INTO one VALUES (123)');
 
 		// Assert that the flag was set, meaning the trigger function received the correct data
-		assert(
+		expect(
 			triggerReceivedCorrectData,
 			'BEFORE INSERT trigger function did not receive the expected data. Received: ' +
-				JSON.stringify(receivedValue)
+				JSON.stringify(receivedValue).toBe(true)
 		);
 
 		// Clean up the function to avoid side effects in other tests
 		delete alasql.fn.onchangeInsert;
 	});
 
-	test('B) AFTER INSERT trigger callback should receive the inserted row', function () {
+	test('B) AFTER INSERT trigger callback should receive the inserted row', () => {
 		let triggerReceivedCorrectData = false;
 		let receivedValue = undefined;
 
@@ -61,16 +60,16 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		alasql('CREATE TRIGGER three AFTER INSERT ON two CALL onchangeAfterInsert()');
 		alasql('INSERT INTO two VALUES (456)');
 
-		assert(
+		expect(
 			triggerReceivedCorrectData,
 			'AFTER INSERT trigger function did not receive the expected data. Received: ' +
-				JSON.stringify(receivedValue)
+				JSON.stringify(receivedValue).toBe(true)
 		);
 
 		delete alasql.fn.onchangeAfterInsert;
 	});
 
-	test('C) BEFORE UPDATE trigger callback should receive old and new row data', function () {
+	test('C) BEFORE UPDATE trigger callback should receive old and new row data', () => {
 		let triggerReceivedCorrectData = false;
 		let receivedOldValue = undefined;
 		let receivedNewValue = undefined;
@@ -88,10 +87,10 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		alasql('CREATE TRIGGER four BEFORE UPDATE ON three CALL onchangeUpdate()');
 		alasql('UPDATE three SET a = 999 WHERE a = 789');
 
-		assert(
+		expect(
 			triggerReceivedCorrectData,
 			'BEFORE UPDATE trigger function did not receive the expected data. Received old: ' +
-				JSON.stringify(receivedOldValue) +
+				JSON.stringify(receivedOldValue).toBe(true) +
 				', new: ' +
 				JSON.stringify(receivedNewValue)
 		);
@@ -99,7 +98,7 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		delete alasql.fn.onchangeUpdate;
 	});
 
-	test('D) BEFORE DELETE trigger callback should receive the row being deleted', function () {
+	test('D) BEFORE DELETE trigger callback should receive the row being deleted', () => {
 		let triggerReceivedCorrectData = false;
 		let receivedValue = undefined;
 
@@ -115,16 +114,16 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		alasql('CREATE TRIGGER five BEFORE DELETE ON four CALL onchangeDelete()');
 		alasql('DELETE FROM four WHERE a = 111');
 
-		assert(
+		expect(
 			triggerReceivedCorrectData,
 			'BEFORE DELETE trigger function did not receive the expected data. Received: ' +
-				JSON.stringify(receivedValue)
+				JSON.stringify(receivedValue).toBe(true)
 		);
 
 		delete alasql.fn.onchangeDelete;
 	});
 
-	test('E) INSTEAD OF INSERT trigger callback should receive the row', function () {
+	test('E) INSTEAD OF INSERT trigger callback should receive the row', () => {
 		let triggerReceivedCorrectData = false;
 		let receivedValue = undefined;
 
@@ -141,15 +140,15 @@ describe.skip('Test 1119 - Trigger callback parameter', function () {
 		alasql('INSERT INTO five VALUES (222)'); // This should fire the trigger but not insert data by default
 
 		// Check that the trigger function received the data
-		assert(
+		expect(
 			triggerReceivedCorrectData,
 			'INSTEAD OF INSERT trigger function did not receive the expected data. Received: ' +
-				JSON.stringify(receivedValue)
+				JSON.stringify(receivedValue).toBe(true)
 		);
 
 		// Verify that the data was NOT actually inserted because it was an INSTEAD OF trigger
 		const res = alasql('SELECT * FROM five');
-		assert.deepEqual(res, [], 'Data should not have been inserted with INSTEAD OF trigger');
+		expect(res).toEqual([], 'Data should not have been inserted with INSTEAD OF trigger');
 
 		delete alasql.fn.onchangeInsteadInsert;
 	});

@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('004 Callbacks', function () {
-	test('Callback', function (done) {
+describe('004 Callbacks', () => {
+	test('Callback', done => {
 		alasql('CREATE DATABASE test04;use test04');
 		//		alasql.exec('DROP TABLE IF EXISTS schools');
 
@@ -19,16 +18,16 @@ describe('004 Callbacks', function () {
 
 		var res = alasql(sql3, [], function (data) {
 			//			console.log(999,data);
-			assert.equal(1, data.length);
-			assert.deepEqual(data, [{schoolid: 1, schoolname: 'Northern Pacific School'}]);
+			expect(1).toEqual(data.length);
+			expect(data).toEqual([{schoolid: 1, schoolname: 'Northern Pacific School'}]);
 			done();
 		});
 		//		console.log(888,res);
 	});
 
-	test('Works without params set', function (done) {
+	test('Works without params set', done => {
 		alasql('VALUE OF SELECT 1', function (data) {
-			assert.equal(1, data);
+			expect(1).toEqual(data);
 			done();
 		});
 	});

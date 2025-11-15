@@ -5,11 +5,10 @@
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 129 - * /STAR / MULTIPLICATION', function () {
-	test('UPDATE WHERE with multiplication in assignment and conditions', function (done) {
+describe('Test 129 - * /STAR / MULTIPLICATION', () => {
+	test('UPDATE WHERE with multiplication in assignment and conditions', done => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
@@ -26,12 +25,12 @@ describe('Test 129 - * /STAR / MULTIPLICATION', function () {
 		// console.log(res);
 		// console.log(db.tables.test.recs);
 
-		assert.equal(3, res);
-		assert.equal(10000, db.tables.test.data[0].a);
-		assert.equal(20000, db.tables.test.data[1].a);
-		assert.equal(30000, db.tables.test.data[2].a);
-		assert.equal(4, db.tables.test.data[3].a);
-		assert.equal(5, db.tables.test.data[4].a);
+		expect(3).toEqual(res);
+		expect(10000).toEqual(db.tables.test.data[0].a);
+		expect(20000).toEqual(db.tables.test.data[1].a);
+		expect(30000).toEqual(db.tables.test.data[2].a);
+		expect(4).toEqual(db.tables.test.data[3].a);
+		expect(5).toEqual(db.tables.test.data[4].a);
 
 		done();
 	});

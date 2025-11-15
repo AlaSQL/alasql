@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 38', function () {
-	describe('LEFT AND RIGHT JOINS', function () {
+describe('Test 38', () => {
+	describe('LEFT AND RIGHT JOINS', () => {
 		var db;
-		test('Prepare database', function (done) {
+		test('Prepare database', done => {
 			db = new alasql.Database('db');
 
 			db.exec('CREATE TABLE one (a INT, b INT)');
@@ -20,25 +19,25 @@ describe('Test 38', function () {
 			done();
 		});
 
-		test('1x LEFT JOIN', function (done) {
+		test('1x LEFT JOIN', done => {
 			var res = db.exec('SELECT * FROM one LEFT JOIN two ON one.a = two.e');
-			assert.equal(res.length, 4);
+			expect(res.length).toEqual(4);
 			done();
 		});
 
-		test('1x RIGHT JOIN', function (done) {
+		test('1x RIGHT JOIN', done => {
 			var res = db.exec('SELECT * FROM two RIGHT JOIN one ON one.a = two.e');
-			assert.equal(res.length, 4);
+			expect(res.length).toEqual(4);
 			done();
 		});
 
-		test('2x LEFT JOIN', function (done) {
+		test('2x LEFT JOIN', done => {
 			var res = db.exec(
 				'SELECT * FROM one ' +
 					' LEFT JOIN two ON one.a = two.e' +
 					' LEFT JOIN three ON two.f = three.g'
 			);
-			assert.equal(res.length, 4);
+			expect(res.length).toEqual(4);
 			done();
 		});
 		/*
@@ -47,7 +46,7 @@ describe('Test 38', function () {
 				" RIGHT JOIN two ON two.f = three.g"+
 				" RIGHT JOIN one ON one.a = two.e" );
 /// console.table(res);
-			assert.equal(res.length,4);
+			expect(res.length).toEqual(4);
 			done();
 		});
 */
@@ -57,25 +56,25 @@ describe('Test 38', function () {
 				" OUTER JOIN two ON one.a = two.e "+
 				" OUTER JOIN three ON two.f = three.g " );
 /// console.table(res);
-			assert.equal(res.length,2);
+			expect(res.length).toEqual(2);
 			done();
 		});
 */
-		test('2x INNER JOIN', function (done) {
+		test('2x INNER JOIN', done => {
 			var res = db.exec(
 				'SELECT * FROM one ' + ' JOIN two ON one.a = two.e' + ' JOIN three ON two.f = three.g'
 			);
-			assert.equal(res.length, 1);
+			expect(res.length).toEqual(1);
 			done();
 		});
 
-		test('2x INNER JOIN', function (done) {
+		test('2x INNER JOIN', done => {
 			var res = db.exec(
 				'SELECT * FROM three ' +
 					' INNER JOIN two ON three.g = two.f' +
 					' INNER JOIN one ON two.e = one.a'
 			);
-			assert.equal(res.length, 1);
+			expect(res.length).toEqual(1);
 			done();
 		});
 	});

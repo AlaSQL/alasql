@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -8,13 +7,13 @@ import alasql from '..';
 
 */
 
-describe('Test 394 T-SQL Triggers', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 394 T-SQL Triggers', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test394;USE test394');
 		done();
 	});
 
-	test('2. Create tables', function (done) {
+	test('2. Create tables', done => {
 		alasql('CREATE TABLE main (a INT)');
 		alasql('CREATE TABLE log (a INT, d DATETIME DEFAULT GETTIME())');
 		alasql('CREATE TRIGGER t_main ON main INSERT AS INSERT INTO log SELECT a FROM inserted');
@@ -22,7 +21,7 @@ describe('Test 394 T-SQL Triggers', function () {
 		done();
 	});
 
-	test('3. Fire trigger', function (done) {
+	test('3. Fire trigger', done => {
 		alasql('INSERT INTO main VALUES (1)');
 
 		var res = alasql('SELECT * FROM log');
@@ -30,7 +29,7 @@ describe('Test 394 T-SQL Triggers', function () {
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test394');
 		done();
 	});

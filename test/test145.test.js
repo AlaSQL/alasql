@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 145 - localStorage', function () {
-	test('1. window object', function (done) {
+describe('Test 145 - localStorage', () => {
+	test('1. window object', done => {
 		// For browser only // For node - another
 		if (typeof window === 'undefined') {
 			var res = alasql('SELECT [0], [1] FROM ?', [process.argv]);
@@ -26,8 +25,8 @@ describe('Test 145 - localStorage', function () {
 	});
 
 	if (typeof localStorage !== 'undefined') {
-		describe('localStorage tests', function () {
-			test('2. Simple localStorage interface: localStorage as a function', function (done) {
+		describe('localStorage tests', () => {
+			test('2. Simple localStorage interface: localStorage as a function', done => {
 				localStorage['one'] = JSON.stringify([
 					{a: 1, b: 2},
 					{a: 2, b: 4},
@@ -42,7 +41,7 @@ describe('Test 145 - localStorage', function () {
 				};
 
 				var res = alasql('SELECT * FROM ?', [JSON.parse(localStorage['one'])]);
-				assert.deepEqual(res, [
+				expect(res).toEqual([
 					{a: 1, b: 2},
 					{a: 2, b: 4},
 					{a: 3, b: 6},
@@ -50,7 +49,7 @@ describe('Test 145 - localStorage', function () {
 				var res = alasql('SELECT a FROM ? WHERE a = localStorage("two")', [
 					JSON.parse(localStorage['one']),
 				]);
-				assert.deepEqual(res, [{a: 1}]);
+				expect(res).toEqual([{a: 1}]);
 				localStorage['three'] = JSON.stringify(res);
 
 				delete alasql.fn.localStorage;
@@ -58,7 +57,7 @@ describe('Test 145 - localStorage', function () {
 				done();
 			});
 
-			test('3. localStorage as a table name with key, value', function (done) {
+			test('3. localStorage as a table name with key, value', done => {
 				if (false) {
 					var lsfn = function (i) {
 						if (i >= localStorage.length) return;
@@ -70,11 +69,11 @@ describe('Test 145 - localStorage', function () {
 						return [k, v];
 					};
 
-					alasql.from.LOCALSTORAGE = function () {
+					alasql.from.LOCALSTORAGE = () => {
 						return lsfn;
 					};
 					var res = alasql('SELECT COLUMN [1] FROM localStorage() WHERE [0] LIKE "one"');
-					assert.deepEqual(res, [
+					expect(res).toEqual([
 						[
 							{a: 1, b: 2},
 							{a: 2, b: 4},
@@ -83,7 +82,7 @@ describe('Test 145 - localStorage', function () {
 					]);
 
 					var res = alasql('SELECT COLUMN [1] FROM ? WHERE [0] LIKE "one"', [lsfn]);
-					assert.deepEqual(res, [
+					expect(res).toEqual([
 						[
 							{a: 1, b: 2},
 							{a: 2, b: 4},
@@ -111,7 +110,7 @@ describe('Test 145 - localStorage', function () {
 				done();
 			});
 			if (false) {
-				test('3. localStorage AS a database', function (done) {
+				test('3. localStorage AS a database', done => {
 					// SELECT * FROM localStorage("and")
 
 					alasql('ATTACH DATABASE localStorage'); // Do we really need this?
@@ -147,7 +146,7 @@ describe('Test 145 - localStorage', function () {
 					done();
 				});
 
-				test('99. Detach database', function (done) {
+				test('99. Detach database', done => {
 					alasql('DETACH DATABASE localStorage'); // Do we really need this?
 					done();
 				});

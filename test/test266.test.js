@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,8 +7,8 @@ import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (typeof global === 'object') {
-	describe('Test 266 Custom MEDIAN Aggregator', function () {
-		test('1. MEDIAN', function (done) {
+	describe('Test 266 Custom MEDIAN Aggregator', () => {
+		test('1. MEDIAN', done => {
 			var data = [
 				{a: 1, b: 1},
 				{a: 1, b: 3},
@@ -80,7 +79,7 @@ if (typeof global === 'object') {
 				[data]
 			);
 
-			assert.deepEqual(res, [
+			expect(res).toEqual([
 				{
 					a: 1,
 					'MYMEDIAN(b)': 2,

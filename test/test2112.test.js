@@ -1,30 +1,29 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 2112 - load binary file', function () {
+describe('Test 2112 - load binary file', () => {
 	const testNum = '2112'; // insert test file number
 
-	test('A) Loads binary file (sync)', function () {
+	test('A) Loads binary file (sync)', () => {
 		alasql.utils.loadBinaryFile('./test/test' + testNum + '.dat', false, function (data) {
-			assert.equal(data, 'ï¿½');
+			expect(data).toEqual('ï¿½');
 		});
 	});
 
-	test('B) Loads binary file (async)', function (done) {
+	test('B) Loads binary file (async)', done => {
 		alasql.utils.loadBinaryFile('./test/test' + testNum + '.dat', true, function (data) {
-			assert.equal(data, 'ï¿½');
+			expect(data).toEqual('ï¿½');
 			done();
 		});
 	});
 
-	test('C) Loads HTTPS binary file (async)', function (done) {
+	test('C) Loads HTTPS binary file (async)', done => {
 		alasql.utils.loadBinaryFile(
 			'https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg',
 			true,
 			function (data) {
-				assert.equal(data.slice(0, 3), 'ÿØÿ');
+				expect(data.slice(0, 3)).toEqual('ÿØÿ');
 				done();
 			}
 		);

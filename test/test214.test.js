@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 214 Multiple same aggregators', function () {
-	test('1. Prepare database', function (done) {
+describe('Test 214 Multiple same aggregators', () => {
+	test('1. Prepare database', done => {
 		var res = alasql(
 			'create database test214;use test214;\
             create table one (a int, b int);\
@@ -15,31 +14,31 @@ describe('Test 214 Multiple same aggregators', function () {
             select row count(a),count(b) from one;\
             select row sum(a),sum(b) from one;'
 		);
-		assert.deepEqual(res.pop(), [10, 210]);
-		assert.deepEqual(res.pop(), [6, 6]);
+		expect(res.pop()).toEqual([10, 210]);
+		expect(res.pop()).toEqual([6, 6]);
 		done();
 	});
 
-	test('2. Test same aggregators', function (done) {
+	test('2. Test same aggregators', done => {
 		var res = alasql(
 			'select row count(a),count(a) from one;\
             select row sum(a),sum(a) from one;'
 		);
 		//        console.log(res);
-		assert.deepEqual(res.pop(), [10, 10]);
-		assert.deepEqual(res.pop(), [6, 6]);
+		expect(res.pop()).toEqual([10, 10]);
+		expect(res.pop()).toEqual([6, 6]);
 		done();
 	});
 
-	test('3. Test same aggregators', function (done) {
+	test('3. Test same aggregators', done => {
 		var res = alasql('select row count(a)+1,count(a) from one');
-		assert.deepEqual(res, [7, 6]);
+		expect(res).toEqual([7, 6]);
 		done();
 	});
 
-	test('4. Test same aggregators', function (done) {
+	test('4. Test same aggregators', done => {
 		var res = alasql('select row count(a),count(a)+1 from one');
-		assert.deepEqual(res, [6, 7]);
+		expect(res).toEqual([6, 7]);
 		done();
 	});
 });

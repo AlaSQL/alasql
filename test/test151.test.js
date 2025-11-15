@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -14,8 +13,8 @@ if (typeof window !== 'undefined') {
 	});
 }
 
-describe('Test 151 - localStorage Engine', function () {
-	test('1. Create database', function (done) {
+describe('Test 151 - localStorage Engine', () => {
+	test('1. Create database', done => {
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('DROP localStorage DATABASE IF EXISTS ls151');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS ls151');
@@ -29,7 +28,7 @@ describe('Test 151 - localStorage Engine', function () {
 			],
 		]);
 		var res = alasql('SELECT * FROM ls151.one');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 'Moscow'},
 			{a: 2, b: 'Kyiv'},
 			{a: 3, b: 'Minsk'},
@@ -37,11 +36,11 @@ describe('Test 151 - localStorage Engine', function () {
 		done();
 	});
 
-	test('2.Insert values into localStorage database', function (done) {
+	test('2.Insert values into localStorage database', done => {
 		alasql('USE ls151');
 		alasql('BEGIN TRANSACTION');
 		var res = alasql('SELECT * FROM ls151.one');
-		assert(res.length == 3);
+		expect(res.length == 3).toBe(true);
 
 		alasql('SELECT * INTO ls151.one FROM ?', [
 			[
@@ -51,26 +50,26 @@ describe('Test 151 - localStorage Engine', function () {
 			],
 		]);
 		var res = alasql('SELECT * FROM ls151.one');
-		assert(res.length == 6);
+		expect(res.length == 6).toBe(true);
 
 		//		console.log(alasql.databases.ls151.tables.one);
 		//		console.log(localStorage['ls151.one']);
 		done();
 	});
 
-	test('3.Insert values into localStorage database', function (done) {
+	test('3.Insert values into localStorage database', done => {
 		alasql('ROLLBACK TRANSACTION');
 		//		console.log(alasql.databases.ls151.tables.one);
 
 		var res = alasql('SELECT * FROM one');
 		//		console.log(res);
 
-		//		assert(res.length == 3);
+		//		expect(res.length == 3).toBe(true);
 
 		done();
 	});
 
-	test('99. Detach database', function (done) {
+	test('99. Detach database', done => {
 		alasql('DETACH DATABASE ls151');
 		alasql('DROP localStorage DATABASE ls151');
 		done();

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -14,9 +13,9 @@ if (typeof window === 'object') {
 	});
 }
 
-describe('Test 239 AUTOCOMMIT OFF test', function () {
+describe('Test 239 AUTOCOMMIT OFF test', () => {
 	if (false) {
-		test('1. Create database', function (done) {
+		test('1. Create database', done => {
 			alasql('SET AUTOCOMMIT OFF');
 			//    console.log(1);
 			alasql('DROP LOCALSTORAGE DATABASE IF EXISTS ls239');
@@ -32,7 +31,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			alasql('insert into one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 			//    console.log(6);
 			var res = alasql('select * from one');
-			assert.deepEqual(res, [
+			expect(res).toEqual([
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},
@@ -43,7 +42,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			//    var res = alasql('BEGIN TRANSACTION');
 			alasql('insert into one VALUES (4,"Sochi"), (5, "Vancouver")');
 			var res = alasql('select * from one');
-			assert.deepEqual(res, [
+			expect(res).toEqual([
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},
@@ -59,7 +58,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			var res = alasql('select * from one');
 			//    console.log(9);
 			//      console.log(res);
-			assert.deepEqual(res, [
+			expect(res).toEqual([
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},
@@ -69,7 +68,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			done();
 		});
 
-		test('3.Complex test', function (done) {
+		test('3.Complex test', done => {
 			alasql(`
     DROP LOCALSTORAGE DATABASE IF EXISTS test001;
     CREATE LOCALSTORAGE DATABASE test001;
@@ -86,7 +85,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			//alasql('COMMIT TRANSACTION');
 
 			var res = alasql('SELECT VALUE COUNT(*) FROM one ');
-			assert(res == 10000);
+			expect(res == 10000).toBe(true);
 			var res = alasql('COMMIT TRANSACTION');
 
 			//    console.log(res,Date.now()-tm);
@@ -94,7 +93,7 @@ describe('Test 239 AUTOCOMMIT OFF test', function () {
 			done();
 		});
 
-		test('8.Drop localStorage table', function (done) {
+		test('8.Drop localStorage table', done => {
 			alasql('DETACH DATABASE test239');
 			alasql('DROP LOCALSTORAGE DATABASE ls239');
 			done();

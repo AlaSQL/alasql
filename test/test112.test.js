@@ -5,11 +5,10 @@
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('SELECT #01', function () {
-	test('Select *', function (done) {
+describe('SELECT #01', () => {
+	test('Select *', done => {
 		var db = new alasql.Database();
 		db.tables.one = {};
 		db.tables.one.data = [
@@ -17,7 +16,7 @@ describe('SELECT #01', function () {
 			{two: 4, three: 5},
 		];
 		var res = db.exec('SELECT * FROM one');
-		assert.deepEqual(db.tables.one.data, res);
+		expect(db.tables.one.data).toEqual(res);
 		done();
 	});
 });

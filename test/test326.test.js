@@ -1,19 +1,18 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 326 FOREIGN KEYS', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 326 FOREIGN KEYS', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test326; USE test326');
 		done();
 	});
 
-	test.skip('2. CREATE TABLES City', function (done) {
-		alasql(function () {
+	test.skip('2. CREATE TABLES City', done => {
+		alasql(() => {
 			/*
       CREATE TABLE dbo.Cities
       (
@@ -27,8 +26,8 @@ describe('Test 326 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('3. INSERT VALUES INTO City', function (done) {
-		alasql(function () {
+	test.skip('3. INSERT VALUES INTO City', done => {
+		alasql(() => {
 			/*
       INSERT INTO dbo.Cities(cityid, city, region, country) VALUES
         ('ATL', 'Atlanta', 'GA', 'USA'),
@@ -49,8 +48,8 @@ describe('Test 326 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('4. CREATE TABLE Roads', function (done) {
-		alasql(function () {
+	test.skip('4. CREATE TABLE Roads', done => {
+		alasql(() => {
 			/*
       CREATE TABLE dbo.Roads
       (
@@ -66,8 +65,8 @@ describe('Test 326 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('5. INSERT VALUES INTO Roads', function (done) {
-		alasql(function () {
+	test.skip('5. INSERT VALUES INTO Roads', done => {
+		alasql(() => {
 			/*
       INSERT INTO dbo.Roads(city1, city2, distance) VALUES
         ('ANC', 'FAI',  359),
@@ -97,18 +96,18 @@ describe('Test 326 FOREIGN KEYS', function () {
 		done();
 	});
 
-	test.skip('6. INSERT wrong FOREIGN KEY', function (done) {
-		assert.throws(function () {
+	test.skip('6. INSERT wrong FOREIGN KEY', done => {
+		expect(() => {
 			alasql(
 				"INSERT INTO dbo.Roads(city1, city2, distance) VALUES \
           ('SFO', 'SVO', 99999)"
 			); // SVO - Sheremetievo - Airport
 			// There is no such airport in the list
-		});
+		}).toThrow();
 		done();
 	});
 
-	test.skip('7. INSERT right FOREIGN KEY', function (done) {
+	test.skip('7. INSERT right FOREIGN KEY', done => {
 		alasql(
 			"INSERT INTO dbo.Cities(cityid, city, region, country) VALUES \
         ('SVO', 'Sheremetievo', 'Moscow', 'Russia')"
@@ -117,18 +116,18 @@ describe('Test 326 FOREIGN KEYS', function () {
 			"INSERT INTO dbo.Roads(city1, city2, distance) VALUES \
           ('SFO', 'SVO', 99999)"
 		); // SVO - Sheremetievo - Airport
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		done();
 	});
 
-	test.skip('8. SELECT', function (done) {
+	test.skip('8. SELECT', done => {
 		var res = alasql("SELECT VALUE distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'");
-		assert(res == 99999);
+		expect(res == 99999).toBe(true);
 		done();
 	});
 
 	if (false) {
-		test.skip('9. FOREIGN KEY DOT operator', function (done) {
+		test.skip('9. FOREIGN KEY DOT operator', done => {
 			var res = alasql.parse(
 				"SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'"
 			);
@@ -136,12 +135,12 @@ describe('Test 326 FOREIGN KEYS', function () {
 			var res = alasql(
 				"SELECT city1.name, city2, distance FROM dbo.Roads WHERE city1 = 'SFO' AND city2 = 'SVO'"
 			);
-			assert(res == 99999);
+			expect(res == 99999).toBe(true);
 			done();
 		});
 	}
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test326');
 		done();
 	});

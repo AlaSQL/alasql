@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 09', function () {
-	test('Test LEFT JOIN', function (done) {
+describe('Test 09', () => {
+	test('Test LEFT JOIN', () => {
 		alasql.exec('DROP TABLE IF EXISTS test');
 		alasql.exec('CREATE TABLE test (a int, b int)');
 		alasql.exec('INSERT INTO test VALUES (1,1)');
@@ -21,9 +20,8 @@ describe('Test 09', function () {
 			'SELECT SUM(b) AS sb,a,c FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,test.a'
 		);
 
-		assert.equal(5, res[0].c);
-		assert.equal(6, res[1].c);
-		assert.equal(undefined, res[2].c);
-		done();
+		expect(5).toEqual(res[0].c);
+		expect(6).toEqual(res[1].c);
+		expect(undefined).toEqual(res[2].c);
 	});
 });

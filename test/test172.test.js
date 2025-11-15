@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -9,8 +8,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 172 - XLSX to array', function () {
-	test.skip('1. Load XLSX file into array', function (done) {
+describe('Test 172 - XLSX to array', () => {
+	test.skip('1. Load XLSX file into array', done => {
 		var data = [];
 		alasql(
 			'select column * from xlsx("' +
@@ -19,7 +18,7 @@ describe('Test 172 - XLSX to array', function () {
 			[],
 			function (res) {
 				//			console.log(res);
-				assert.deepEqual(res, ['Kyoto', 'Mexico', 'Minsk', 'Moscow', 'Tokyo']);
+				expect(res).toEqual(['Kyoto', 'Mexico', 'Minsk', 'Moscow', 'Tokyo']);
 				done();
 			}
 		);

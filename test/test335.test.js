@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -10,15 +9,15 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
-describe('Test 335 WITH RECURSIVE CTE', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 335 WITH RECURSIVE CTE', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test335;USE test335');
 
 		done();
 	});
 
-	test.skip('2. Create table', function (done) {
-		var res = alasql(function () {
+	test.skip('2. Create table', done => {
+		var res = alasql(() => {
 			/*
       -- Create an Employee table.
       CREATE TABLE dbo.MyEmployees
@@ -44,12 +43,12 @@ describe('Test 335 WITH RECURSIVE CTE', function () {
       ,(23,  N'Mary', N'Gibson', N'Marketing Specialist', 4, 16);
     */
 		});
-		assert.deepEqual(res, [1, 1]);
+		expect(res).toEqual([1, 1]);
 		done();
 	});
 
-	test.skip('3. WITH SELECT', function (done) {
-		var res = alasql(function () {
+	test.skip('3. WITH SELECT', done => {
+		var res = alasql(() => {
 			/*
 
 WITH DirectReports(ManagerID, EmployeeID, Title, EmployeeLevel) AS 
@@ -70,12 +69,12 @@ ORDER BY ManagerID;
     */
 		});
 		console.log(res);
-		assert.deepEqual(res, []);
+		expect(res).toEqual([]);
 
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test335');
 		done();
 	});

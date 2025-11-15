@@ -1,31 +1,30 @@
 // Clears previous changes to alasql in tests;
 delete require.cache[require.resolve('..')];
 
-var assert = require('assert');
 var alasql = require('..');
 
-describe('mysql TIMESTAMPDIFF', function () {
+describe('mysql TIMESTAMPDIFF', () => {
 	var res;
 
-	beforeEach(function () {
+	beforeEach(() => {
 		alasql.options.mysql = true;
 	});
 
-	test('should return the difference in months between 2 dates when called with month as a unit', function () {
+	test('should return the difference in months between 2 dates when called with month as a unit', () => {
 		res = alasql("SELECT TIMESTAMPDIFF(MONTH, '2018-04-01', '2018-05-01') as result");
 
-		assert.equal(res[0].result, 1);
+		expect(res[0].result).toEqual(1);
 	});
 
-	test('should return the difference in days between 2 dates when called with day as a unit', function () {
+	test('should return the difference in days between 2 dates when called with day as a unit', () => {
 		res = alasql("SELECT TIMESTAMPDIFF(DAY, '2018-04-01', '2018-05-01') as result");
 
-		assert.equal(res[0].result, 30);
+		expect(res[0].result).toEqual(30);
 	});
 
-	test('should return the difference in years between 2 dates when called with year as a unit', function () {
+	test('should return the difference in years between 2 dates when called with year as a unit', () => {
 		res = alasql("SELECT TIMESTAMPDIFF(YEAR, '2018-04-01', '2018-05-01') as result");
 
-		assert.equal(res[0].result, 0);
+		expect(res[0].result).toEqual(0);
 	});
 });

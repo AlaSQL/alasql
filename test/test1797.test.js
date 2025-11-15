@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var testId = '1797';
 
-describe('Test ' + testId + ' - select * with alias colname', function () {
-	test('Join with simple subquery', function () {
+describe('Test ' + testId + ' - select * with alias colname', () => {
+	test('Join with simple subquery', () => {
 		var expected = [
 			{a: 1, b: 1, c: 1, d: 3},
 			{a: 2, b: 1, c: 1, d: 1},
@@ -18,10 +17,10 @@ describe('Test ' + testId + ' - select * with alias colname', function () {
 			{a: 2, b: 1, c: 1},
 		];
 		var res = alasql(`SELECT *, COUNT(a) as d FROM ? GROUP BY a`, [data]);
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 	});
 
-	test('Join with simple subquery', function () {
+	test('Join with simple subquery', () => {
 		var expected = [
 			{a: 1, b: 1, c: 1, d: 5},
 			{a: 2, b: 1, c: 1, d: 2},
@@ -36,6 +35,6 @@ describe('Test ' + testId + ' - select * with alias colname', function () {
 			{a: 2, b: 1, c: 2},
 		];
 		var res = alasql(`SELECT *, COUNT(a) as d FROM ? GROUP BY a`, [data]);
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 	});
 });

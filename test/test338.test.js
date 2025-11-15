@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -11,14 +10,14 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 //https://technet.microsoft.com/en-us/library/ms191523(v=sql.105).aspx
 //
 
-describe('Test 338 EXTRACT', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 338 EXTRACT', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test338;USE test338');
 		done();
 	});
 
-	test.skip('2. SAMPLE', function (done) {
-		var res = alasql(function () {
+	test.skip('2. SAMPLE', done => {
+		var res = alasql(() => {
 			/*
 
 create table a (col int);
@@ -37,8 +36,8 @@ select * from b;
 		done();
 	});
 
-	test.skip('2. EXCEPT', function (done) {
-		var res = alasql(function () {
+	test.skip('2. EXCEPT', done => {
+		var res = alasql(() => {
 			/*
 
 -- This gives error
@@ -50,12 +49,12 @@ select top 3 b.col from b order by b.col desc;
 		});
 
 		console.log(res);
-		//    assert.deepEqual(res,1);
+		//    expect(res).toEqual(1);
 		done();
 	});
 
-	test.skip('3. EXCEPT', function (done) {
-		var res = alasql(function () {
+	test.skip('3. EXCEPT', done => {
+		var res = alasql(() => {
 			/*
     
 ;with cte_for_b
@@ -69,12 +68,12 @@ select col from cte_for_b;
 		});
 
 		console.log(res);
-		//    assert.deepEqual(res,1);
+		//    expect(res).toEqual(1);
 		done();
 	});
 
-	test.skip('3. DROP TABLES', function (done) {
-		var res = alasql(function () {
+	test.skip('3. DROP TABLES', done => {
+		var res = alasql(() => {
 			/*
 
 drop table a;
@@ -84,11 +83,11 @@ drop table b;
     */
 		});
 		//  console.log(res);
-		assert.deepEqual(res, [1, 1]);
+		expect(res).toEqual([1, 1]);
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test338');
 		done();
 	});
