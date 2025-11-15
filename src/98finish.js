@@ -1,4 +1,4 @@
-/* eslint-disable */ 
+/* eslint-disable */
 
 /*
 //
@@ -10,25 +10,22 @@
 
 // This is a final part of Alasql
 
-
 /*only-for-browser/*
 if(utils.isCordova || utils.isMeteorServer || utils.isNode ){
   console.log('It looks like you are using the browser version of AlaSQL. Please use the alasql.fs.js file instead.')
 }
 //*/
 
-
 // FileSaveAs
 alasql.utils.saveAs = saveAs;
 
-};
+}
 
 // Create default database
-new Database("alasql");
+new Database('alasql');
 
 // Set default database
-alasql.use("alasql");
+alasql.use('alasql');
 
 return alasql;
-}));
-
+}))

@@ -1,26 +1,12 @@
+#!/bin/sh
+
 rm -fr dist/
 mkdir dist/
 
-if ! command -v "rexreplace" > /dev/null 2>&1; then
-	echo "\nSpeed up the process by having rexreplace installed globally"
-	echo "> npm install -g rexreplace"
-fi
-
-if ! command -v "esbuild" > /dev/null 2>&1; then
-	echo "\nSpeed up the process by having esbuild installed globally"
-	echo "> npm install -g esbuild"
-fi
-
-
-# Run comands via x to avoid npx overhead if the command is installed globally (3.27x slower)
 x() {
 	local cmd="$1"
 	shift
-	if command -v "$cmd" > /dev/null 2>&1; then
-		"$cmd" "$@"  # Run the command with all remaining arguments
-	else
-		npx "$cmd" "$@"  # Use npx to run the command with all remaining arguments
-	fi
+	bun --bun run "./node_modules/.bin/$cmd" "$@"  
 }
 
 branch=$(git rev-parse --abbrev-ref HEAD |  rexreplace '[^0-9a-z-]' '.' |  rexreplace '^[^0-9a-z]+|[^0-9a-z]+$' '')
@@ -162,7 +148,7 @@ x rexreplace '/*only-for-browser/*' '//*only-for-browser/*'	-L -q $outfile
 echo '# Support "use strict in jison output" ' # https://github.com/zaach/jison/pull/373
 x rexreplace 'function locateNearestErrorRecoveryRule(state) {' 'var locateNearestErrorRecoveryRule = function (state) {'	-L -q $outfile
 
-x esbuild --minify --outfile="$outfile_min" "$outfile" --allow-overwrite
+bunx esbuild --minify --outfile="$outfile_min" "$outfile" --allow-overwrite
 
 #first_line=$(head -n 1 $outfile)
 #x rexreplace '^' "c = 'first_line'; c.match(/^\/\//) ? c : ''" -j -M $outfile_min
@@ -200,7 +186,7 @@ echo '# Inject build version'
 x rexreplace 'BUILD_VERSION' "['$branch','$commit'].filter(Boolean).join('-')" -j -q $outfile
 
 echo '# Prepare min version'
-x esbuild --minify --outfile="$outfile_min" "$outfile" --allow-overwrite
+bunx esbuild --minify --outfile="$outfile_min" "$outfile" --allow-overwrite
 
 #first_line=$(head -n 1 $outfile)
 #x rexreplace '^' "c = 'first_line'; c.match(/^\/\//) ? c : ''" -j -M $outfile_min

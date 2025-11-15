@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-"use strict";
+'use strict';
 
 /**
 	@fileoverview AlaSQL JavaScript SQL library
@@ -118,7 +118,6 @@
 		@type {boolean}
 	*/
 	alasql.debug = undefined; // Initial debug variable
-
 
 /*only-for-browser/*
 var require = function(){return null}; // as alasqlparser.js is generated, we can not "remove" references to

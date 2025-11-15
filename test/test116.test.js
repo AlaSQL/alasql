@@ -33,6 +33,7 @@ describe('Test 116', () => {
 		alasql('create table one (a int)');
 		var ins = alasql.compile('insert into one values (10)');
 		ins();
+
 		expect(alasql.tables.one.data.length == 1).toBe(true);
 		var sel = alasql.compile('select value sum(a) from one where a = ?');
 		var res = sel([10]);
