@@ -3,7 +3,6 @@
 	const path = require('path');
 	const {argv} = require('process');
 	const fs = require('fs');
-	const {exec} = require('child_process');
 
 	const port = argv[2] || 8888;
 
@@ -87,5 +86,5 @@
 	console.log(`Ready to test AlaSQL in the browser at\n  => http://localhost:${port}`);
 	console.log('CTRL + C to shutdown');
 
-	exec(`${process.platform === 'win32' ? 'start' : 'open'} http://localhost:${port}`);
+	Bun.$`${process.platform === 'win32' ? 'start' : 'open'} http://localhost:${port}`.quiet();
 }
