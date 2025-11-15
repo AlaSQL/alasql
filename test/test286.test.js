@@ -19,10 +19,10 @@ describe('Test 286 CREATE UNIQUE INDEX', () => {
 	test('2. INSERT unique values - should succeed', () => {
 		var res = alasql('INSERT INTO users VALUES (1, "user1@test.com", "User One")');
 		expect(res).toBe(1);
-		
+
 		res = alasql('INSERT INTO users VALUES (2, "user2@test.com", "User Two")');
 		expect(res).toBe(1);
-		
+
 		res = alasql('INSERT INTO users VALUES (3, "user3@test.com", "User Three")');
 		expect(res).toBe(1);
 	});
@@ -44,12 +44,12 @@ describe('Test 286 CREATE UNIQUE INDEX', () => {
 		// Test basic SELECT operations work with indexed data
 		var res = alasql('SELECT * FROM users WHERE email = "user1@test.com"');
 		expect(res.length).toBe(2); // Both records with same email
-		
+
 		res = alasql('SELECT * FROM users ORDER BY id');
 		expect(res.length).toBe(4);
-		expect(res[0]).toEqual({id: 1, email: "user1@test.com", name: "User One"});
-		expect(res[1]).toEqual({id: 2, email: "user2@test.com", name: "User Two"});
-		expect(res[2]).toEqual({id: 3, email: "user3@test.com", name: "User Three"});
-		expect(res[3]).toEqual({id: 4, email: "user1@test.com", name: "User Four"});
+		expect(res[0]).toEqual({id: 1, email: 'user1@test.com', name: 'User One'});
+		expect(res[1]).toEqual({id: 2, email: 'user2@test.com', name: 'User Two'});
+		expect(res[2]).toEqual({id: 3, email: 'user3@test.com', name: 'User Three'});
+		expect(res[3]).toEqual({id: 4, email: 'user1@test.com', name: 'User Four'});
 	});
 });

@@ -34,7 +34,7 @@ describe('Test CLI - Command Line Interface)', () => {
 	test('2. Should handle parameters', async () => {
 		const result = (await Bun.$`bun "${cliPath}" "SELECT VALUE ?" 100`.text()).trim();
 		expect(result).toBe('100');
-	}); 
+	});
 
 	test('3. Should execute SQL from file', async () => {
 		const result = (await Bun.$`bun "${cliPath}" -f "${testSqlFile}"`.text()).trim();
@@ -67,7 +67,8 @@ describe('Test CLI - Command Line Interface)', () => {
 	});
 
 	test('8. Should handle piped input data with txt() function - Issue #2149', async () => {
-		const result = await Bun.$`echo "hello" | bun "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()"`.text();
+		const result =
+			await Bun.$`echo "hello" | bun "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: true,
@@ -85,7 +86,8 @@ describe('Test CLI - Command Line Interface)', () => {
 	});
 
 	test('10. Should handle redirected file input with txt() function', async () => {
-		const result = await Bun.$`bun "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < ${testSqlFile}`.text();
+		const result =
+			await Bun.$`bun "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < ${testSqlFile}`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: true,
@@ -94,7 +96,8 @@ describe('Test CLI - Command Line Interface)', () => {
 	});
 
 	test('11. Should handle file with txt() function and piped data - Issue #2149', async () => {
-		const result = await Bun.$`echo "hello world" | bun "${cliPath}" -f "${testWithTxtFile}"`.text();
+		const result =
+			await Bun.$`echo "hello world" | bun "${cliPath}" -f "${testWithTxtFile}"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: true,
@@ -112,7 +115,8 @@ describe('Test CLI - Command Line Interface)', () => {
 	});
 
 	test('13. Should handle piped input to file without txt() function - should be ignored', async () => {
-		const result = await Bun.$`echo "this should be ignored" | bun "${cliPath}" -f "${testWithoutTxtFile}"`.text();
+		const result =
+			await Bun.$`echo "this should be ignored" | bun "${cliPath}" -f "${testWithoutTxtFile}"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: 1,
@@ -121,7 +125,8 @@ describe('Test CLI - Command Line Interface)', () => {
 	});
 
 	test('14. Should handle complex SQL with txt() and piped data', async () => {
-		const result = await Bun.$`printf "line1\nline2\nline3" | bun "${cliPath}" "SELECT COUNT(*) as LineCount FROM txt()"`.text();
+		const result =
+			await Bun.$`printf "line1\nline2\nline3" | bun "${cliPath}" "SELECT COUNT(*) as LineCount FROM txt()"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				LineCount: 3,
