@@ -13,10 +13,9 @@ if (typeof window !== 'undefined') {
 	});
 }
 
-describe('Test 268 INNER JOIN stress test', () => {
-	test('1. Create database', done => {
+describe.concurrent('Test 268 INNER JOIN stress test', () => {
+	test('1. Create database', () => {
 		alasql('CREATE DATABASE test268; USE test268');
-		done();
 	});
 
 	var data1 = [
@@ -28,16 +27,15 @@ describe('Test 268 INNER JOIN stress test', () => {
 		{b: 20, c: 200},
 	];
 
-	test('2. INNER JOIN on Array', done => {
+	test('2. INNER JOIN on Array', () => {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 USING b', [data1, data2]);
 		expect(res).toEqual([
 			{a: 1, b: 10, c: 100},
 			{a: 2, b: 20, c: 200},
 		]);
-		done();
 	});
 
-	test('3. INNER JOIN on Tables', done => {
+	test('3. INNER JOIN on Tables', () => {
 		alasql('CREATE TABLE table1(a INT, b INT);');
 		alasql('SELECT * INTO table1 FROM ?', [data1]);
 		alasql('CREATE TABLE table2(b INT, c INT);');
@@ -50,7 +48,6 @@ describe('Test 268 INNER JOIN stress test', () => {
 			{a: 1, b: 10, c: 100},
 			{a: 2, b: 20, c: 200},
 		]);
-		done();
 	});
 
 	var t1 = [];
@@ -74,7 +71,7 @@ describe('Test 268 INNER JOIN stress test', () => {
   */
 	//console.log(t2);
 
-	test('4. INNER JOIN on Big Array', done => {
+	test('4. INNER JOIN on Big Array', () => {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('INNER =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 LEFT JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
@@ -85,11 +82,9 @@ describe('Test 268 INNER JOIN stress test', () => {
 		/// console.log('OUTER =',res.length);
 		// expect(res.).toEqual(//   [ { a: 1, b: 10, c: 100 }, { a: 2, b: 20, c: 200 } ]
 		// );
-		done();
 	});
 
-	test('99. Drop phase', done => {
+	test('99. Drop phase', () => {
 		alasql('DROP DATABASE test268');
-		done();
 	});
 });

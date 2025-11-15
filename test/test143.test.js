@@ -5,7 +5,7 @@ import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 143 streamfn', () => {
+describe.concurrent('Test 143 streamfn', () => {
 	test('1. Create database', done => {
 		alasql('CREATE DATABASE test143; use test143');
 		done();

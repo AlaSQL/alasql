@@ -3,7 +3,7 @@ import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
 import alasql from '..';
 
 if (!process.env.ALASQL_SKIP_EXTERNAL_TEST)
-	describe('Test 2112 - load binary file', () => {
+	describe.concurrent('Test 2112 - load binary file', () => {
 		const testNum = '2112'; // insert test file number
 
 		test('A) Loads binary file (sync)', () => {
