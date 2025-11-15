@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import {execSync, spawn} from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import {fileURLToPath} from 'url';
@@ -27,50 +26,48 @@ describe('Test CLI - Command Line Interface)', () => {
 		}
 	});
 
-	test('1. Should execute simple SQL statement', () => {
-		const result = execSync(`node "${cliPath}" "SELECT VALUE 42"`).toString().trim();
+	test('1. Should execute simple SQL statement', async () => {
+		const result = (await Bun.$`bun "${cliPath}" "SELECT VALUE 42"`.text()).trim();
 		expect(result).toBe('42');
 	});
 
-	test('2. Should handle parameters', () => {
-		const result = execSync(`node "${cliPath}" "SELECT VALUE ?" 100`).toString().trim();
+	test('2. Should handle parameters', async () => {
+		const result = (await Bun.$`bun "${cliPath}" "SELECT VALUE ?" 100`.text()).trim();
 		expect(result).toBe('100');
-	});
+	}); 
 
-	test('3. Should execute SQL from file', () => {
-		const result = execSync(`node "${cliPath}" -f "${testSqlFile}"`).toString().trim();
+	test('3. Should execute SQL from file', async () => {
+		const result = (await Bun.$`bun "${cliPath}" -f "${testSqlFile}"`.text()).trim();
 		expect(result).toBe('42');
 	});
 
-	test('4. Should output minified JSON with -m flag', () => {
-		const result = execSync(`node "${cliPath}" -m "SELECT {a:1,b:2} as obj"`).toString().trim();
+	test('4. Should output minified JSON with -m flag', async () => {
+		const result = (await Bun.$`bun "${cliPath}" -m "SELECT {a:1,b:2} as obj"`.text()).trim();
 		expect(result).toBe('[{"obj":{"a":1,"b":2}}]');
 	});
 
-	test('5. Should show version with -v flag', () => {
-		const result = execSync(`node "${cliPath}" -v`).toString().trim();
+	test('5. Should show version with -v flag', async () => {
+		const result = (await Bun.$`bun "${cliPath}" -v`.text()).trim();
 		expect(result).toMatch(/^\d+\.\d+\.\d+/);
 	});
 
-	test('6. Should output AST with --ast flag', () => {
-		const result = execSync(`node "${cliPath}" --ast "SELECT 1"`).toString().trim();
+	test('6. Should output AST with --ast flag', async () => {
+		const result = (await Bun.$`bun "${cliPath}" --ast "SELECT 1"`.text()).trim();
 		const ast = JSON.parse(result);
 		expect(ast.statements[0].columns[0].value).toBe(1);
 	});
 
-	test('7. Should handle file not found error', () => {
+	test('7. Should handle file not found error', async () => {
 		try {
-			execSync(`node "${cliPath}" -f "nonexistent.sql"`, {stdio: 'pipe'});
+			await Bun.$`bun "${cliPath}" -f "nonexistent.sql"`.quiet();
 			throw new Error('Should have thrown an error');
 		} catch (error) {
-			expect(error.stderr.toString()).toMatch(/Error: file not found/);
+			expect(error.stderr?.toString() || error.message).toMatch(/Error: file not found/);
 		}
 	});
 
-	test('8. Should handle piped input data with txt() function - Issue #2149', () => {
-		const result = execSync(
-			`echo "hello" | node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()"`
-		).toString();
+	test('8. Should handle piped input data with txt() function - Issue #2149', async () => {
+		const result = await Bun.$`echo "hello" | bun "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: true,
@@ -78,8 +75,8 @@ describe('Test CLI - Command Line Interface)', () => {
 		]);
 	});
 
-	test('9. Should handle piped input data without txt() function - backward compatibility', () => {
-		const result = execSync(`echo "SELECT 1 as Success" | node "${cliPath}"`).toString();
+	test('9. Should handle piped input data without txt() function - backward compatibility', async () => {
+		const result = await Bun.$`echo "SELECT 1 as Success" | bun "${cliPath}"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: 1,
@@ -87,10 +84,8 @@ describe('Test CLI - Command Line Interface)', () => {
 		]);
 	});
 
-	test('10. Should handle redirected file input with txt() function', () => {
-		const result = execSync(
-			`node "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < ${testSqlFile}`
-		).toString();
+	test('10. Should handle redirected file input with txt() function', async () => {
+		const result = await Bun.$`bun "${cliPath}" "SELECT COUNT(*) > 0 as Success FROM txt()" < ${testSqlFile}`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: true,
@@ -98,10 +93,8 @@ describe('Test CLI - Command Line Interface)', () => {
 		]);
 	});
 
-	test('11. Should handle file with txt() function and piped data - Issue #2149', () => {
-		const result = execSync(
-			`echo "hello world" | node "${cliPath}" -f "${testWithTxtFile}"`
-		).toString();
+	test('11. Should handle file with txt() function and piped data - Issue #2149', async () => {
+		const result = await Bun.$`echo "hello world" | bun "${cliPath}" -f "${testWithTxtFile}"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: true,
@@ -109,8 +102,8 @@ describe('Test CLI - Command Line Interface)', () => {
 		]);
 	});
 
-	test('12. Should handle file without txt() function normally', () => {
-		const result = execSync(`node "${cliPath}" -f "${testWithoutTxtFile}"`).toString();
+	test('12. Should handle file without txt() function normally', async () => {
+		const result = await Bun.$`bun "${cliPath}" -f "${testWithoutTxtFile}"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: 1,
@@ -118,10 +111,8 @@ describe('Test CLI - Command Line Interface)', () => {
 		]);
 	});
 
-	test('13. Should handle piped input to file without txt() function - should be ignored', () => {
-		const result = execSync(
-			`echo "this should be ignored" | node "${cliPath}" -f "${testWithoutTxtFile}"`
-		).toString();
+	test('13. Should handle piped input to file without txt() function - should be ignored', async () => {
+		const result = await Bun.$`echo "this should be ignored" | bun "${cliPath}" -f "${testWithoutTxtFile}"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				Success: 1,
@@ -129,10 +120,8 @@ describe('Test CLI - Command Line Interface)', () => {
 		]);
 	});
 
-	test('14. Should handle complex SQL with txt() and piped data', () => {
-		const result = execSync(
-			`echo -e "line1\nline2\nline3" | node "${cliPath}" "SELECT COUNT(*) as LineCount FROM txt()"`
-		).toString();
+	test('14. Should handle complex SQL with txt() and piped data', async () => {
+		const result = await Bun.$`printf "line1\nline2\nline3" | bun "${cliPath}" "SELECT COUNT(*) as LineCount FROM txt()"`.text();
 		expect(JSON.parse(result)).toEqual([
 			{
 				LineCount: 3,
@@ -140,12 +129,12 @@ describe('Test CLI - Command Line Interface)', () => {
 		]);
 	});
 
-	test('15. Should handle empty SQL error', () => {
+	test('15. Should handle empty SQL error', async () => {
 		try {
-			execSync(`node "${cliPath}" ""`, {stdio: 'pipe'});
+			const result = await Bun.$`echo "" | bun "${cliPath}"`.text();
 			throw new Error('Should have thrown an error');
 		} catch (error) {
-			expect(error.stderr.toString()).toMatch(/No SQL to process/);
+			expect(error.stderr?.toString() || error.message).toMatch(/No SQL to process/);
 		}
 	});
 });

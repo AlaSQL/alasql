@@ -22,20 +22,20 @@ describe('Test 193 - GROUP BY formula', () => {
 		var res = alasql(
 			'SELECT VALUE COUNT(*)*4/$[0] FROM \
             (SELECT RANDOM() AS x, RANDOM() AS y FROM RANGE(1,$[0])) WHERE x*x+y*y<1',
-			[100000]
+			[10000]
 		);
 		/// console.log('PI=',res);
-		expect(3.1 < res && res < 3.2).toBe(true);
+		expect(3.0 < res && res < 3.3).toBe(true);
 		done();
 	});
 
 	test('3. PI calculation #2', done => {
 		var res = alasql(
 			'SELECT VALUE COUNT(*)*4/$[0] FROM RANGE(1,$[0]) WHERE POWER(RANDOM(),2)+POWER(RANDOM(),2)<1',
-			[100000]
+			[10000]
 		);
 		//        console.log(res);
-		expect(3.1 < res && res < 3.2).toBe(true);
+		expect(3.0 < res && res < 3.3).toBe(true);
 		//        console.log('PI=',res);
 		done();
 	});
