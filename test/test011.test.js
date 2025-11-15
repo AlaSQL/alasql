@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 11', function () {
-	test('Test compile with parameters', function (done) {
+describe('Test 11', () => {
+	test('Test compile with parameters', () => {
 		alasql.exec('DROP TABLE IF EXISTS test');
 
 		alasql.exec('CREATE TABLE test (a int, b int)');
@@ -21,13 +20,11 @@ describe('Test 11', function () {
 		alasql.exec('UPDATE test SET b = 6 WHERE b = ?', [5]);
 
 		var res = alasql.exec('SELECT * FROM test WHERE b > 5');
-		assert.deepEqual([{a: 5, b: 6}], res);
+		expect(res).toEqual([{a: 5, b: 6}]);
 
 		alasql.exec('DELETE FROM test WHERE a > :val', {val: 1});
 
 		var res = alasql.exec('SELECT * FROM test');
-		assert.deepEqual([{a: 1, b: 1}], res);
-
-		done();
+		expect(res).toEqual([{a: 1, b: 1}]);
 	});
 });

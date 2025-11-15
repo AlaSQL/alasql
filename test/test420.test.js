@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -9,24 +8,23 @@ import alasql from '..';
 
 var testNum = 420;
 
-describe('Test ' + testNum + ' Load data from XLSX without extra line', function () {
-	beforeAll(function () {
+describe('Test ' + testNum + ' Load data from XLSX without extra line', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test' + testNum + ';USE test' + testNum);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test' + testNum);
 	});
 
-	test('1. Load XLSX', function (done) {
+	test('1. Load XLSX', done => {
 		alasql(
 			'VALUE OF SELECT COUNT(*) FROM XLSX("' + __dirname + '/test420.xlsx")',
 			[],
 			function (res) {
-				assert(res == 4);
+				expect(res == 4).toBe(true);
 				//      console.log(res);
-				//       assert.deepEqual(res,
-				// 0
+				//       expect(res).toEqual(// 0
 				//       );
 				done();
 			}

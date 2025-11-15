@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
@@ -16,13 +15,13 @@ global.localStorage = new DOMStorage('./test384.json', {
 
 */
 
-describe('Test 384 - NOT NULL error when copying from another table issue #471', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 384 - NOT NULL error when copying from another table issue #471', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test384;USE test384');
 		done();
 	});
 
-	test('3. Create table issue - many statements', function (done) {
+	test('3. Create table issue - many statements', done => {
 		alasql.options.modifier = 'MATRIX';
 		alasql('CREATE TABLE tab3 (pk INTEGER NOT NULL)');
 		alasql('CREATE TABLE tab4 (pk INTEGER NOT NULL)');
@@ -30,15 +29,15 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 		alasql('INSERT INTO tab4 SELECT * FROM tab3');
 
 		var res = alasql('SELECT * FROM tab3');
-		assert.deepEqual(res, [[3]]);
+		expect(res).toEqual([[3]]);
 
 		done();
 	});
 
 	if (false) {
-		test('2. Create table issue - one statement', function (done) {
+		test('2. Create table issue - one statement', done => {
 			alasql.options.modifier = 'MATRIX';
-			alasql(function () {
+			alasql(() => {
 				/*
       CREATE TABLE tab0 (pk INTEGER NOT NULL);
       CREATE TABLE tab1 (pk INTEGER NOT NULL);
@@ -48,13 +47,13 @@ describe('Test 384 - NOT NULL error when copying from another table issue #471',
 			});
 
 			var res = alasql('SELECT * FROM tab3');
-			assert.deepEqual(res, [[3]]);
+			expect(res).toEqual([[3]]);
 
 			done();
 		});
 	}
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test384');
 		done();

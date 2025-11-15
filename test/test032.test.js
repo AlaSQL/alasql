@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 32', function () {
+describe('Test 32', () => {
 	var db = new alasql.Database('db');
 
-	test('LIKE, NOT LIKE and aliases', function (done) {
+	test('LIKE, NOT LIKE and aliases', () => {
 		db.exec('CREATE TABLE test (a STRING, b INT, t DATETIME)');
 		db.exec("INSERT INTO test (a) VALUES ('a')");
 		db.exec("INSERT INTO test (a) VALUES ('ab')");
@@ -15,16 +14,16 @@ describe('Test 32', function () {
 		db.exec("INSERT INTO test (a) VALUES ('abcde')");
 
 		var sql = 'UPDATE test SET b = LEN(a), t = NOW()';
-		assert.equal(5, db.exec(sql));
+		expect(db.exec(sql)).toEqual(5);
 
 		var sql = "SELECT COLUMN b FROM test WHERE a LIKE '%bc%'";
-		assert.deepEqual([3, 4, 5], db.exec(sql));
+		expect(db.exec(sql)).toEqual([3, 4, 5]);
 
 		var sql = "SELECT COLUMN b FROM test WHERE a NOT LIKE '%bc%'";
-		assert.deepEqual([1, 2], db.exec(sql));
+		expect(db.exec(sql)).toEqual([1, 2]);
 
 		var sql = "SELECT COLUMN b FROM test WHERE a NOT     LIKE '%bc%'";
-		assert.deepEqual([1, 2], db.exec(sql));
+		expect(db.exec(sql)).toEqual([1, 2]);
 
 		var likeAliases = ['like', 'ilike', '~~', '~~*'],
 			notLikeAliases = ['not like', 'not      like', 'not     ilike', '!~~', '!~~*'];
@@ -32,19 +31,17 @@ describe('Test 32', function () {
 		// caseinsensetive
 		for (var i in likeAliases) {
 			var sql = 'SELECT COLUMN b FROM test WHERE a ' + likeAliases[i] + " '%BC%'";
-			assert.deepEqual([3, 4, 5], db.exec(sql));
+			expect(db.exec(sql)).toEqual([3, 4, 5]);
 		}
 
 		// caseinsensetive
 		for (var i in notLikeAliases) {
 			var sql = 'SELECT COLUMN b FROM test WHERE a ' + notLikeAliases[i] + " '%BC%'";
-			assert.deepEqual([1, 2], db.exec(sql));
+			expect(db.exec(sql)).toEqual([1, 2]);
 		}
-
-		done();
 	});
 
-	test('2. Can do LIKE on numbers', function (done) {
+	test('2. Can do LIKE on numbers', () => {
 		db.exec('CREATE TABLE test32 (a int)');
 		db.exec('INSERT INTO test32 (a) VALUES (4)');
 		db.exec('INSERT INTO test32 (a) VALUES (44)');
@@ -53,13 +50,12 @@ describe('Test 32', function () {
 		db.exec('INSERT INTO test32 (a) VALUES (1234)');
 
 		var sql = "value of SELECT COUNT(a) FROM test32 WHERE a LIKE '4%'";
-		assert.deepEqual(4, db.exec(sql));
+		expect(db.exec(sql)).toEqual(4);
 
 		var sql = "value of SELECT a FROM test32 WHERE a LIKE '_4_'";
-		// assert.deepEqual(444,db.exec(sql));
+		// expect(444).toEqual(db.exec(sql));
 
 		var sql = "value of SELECT a FROM test32 WHERE a LIKE '%2_4'";
-		assert.deepEqual(1234, db.exec(sql));
-		done();
+		expect(db.exec(sql)).toEqual(1234);
 	});
 });

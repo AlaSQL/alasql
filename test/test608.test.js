@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 608 - Select.toString() ', function () {
+describe('Test 608 - Select.toString() ', () => {
 	// From http://jsfiddle.net/ndxbxrme/eyLy4zy9/3/
 
 	var tests = [
@@ -26,10 +25,10 @@ describe('Test 608 - Select.toString() ', function () {
 	];
 
 	var runTest = function (testCase) {
-		test(testCase.description, function () {
+		test(testCase.description, () => {
 			var ast = alasql.parse(testCase.sql);
 			var astSql = ast.statements[0].toString();
-			assert.equal(astSql, testCase.sql);
+			expect(astSql).toEqual(testCase.sql);
 		});
 	};
 

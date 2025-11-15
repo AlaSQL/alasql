@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 250 Index problem', function () {
-	test('1. INSERT SELECT problem', function (done) {
+describe('Test 250 Index problem', () => {
+	test('1. INSERT SELECT problem', done => {
 		alasql(`
       CREATE TABLE tab0(pk INTEGER NOT NULL PRIMARY KEY, col0 INTEGER, col1 FLOAT, col2 TEXT, col3 INTEGER, col4 FLOAT, col5 TEXT);
       INSERT INTO tab0 VALUES(0,6,4.67,'wdbsg',4,2.89,'altmp');
@@ -20,7 +19,7 @@ describe('Test 250 Index problem', function () {
 
 		var res = alasql('SELECT * from tab1');
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				pk: 1,
 				col0: 5,
@@ -32,7 +31,7 @@ describe('Test 250 Index problem', function () {
 			},
 		]);
 
-		//  	assert(res == false);
+		//  	expect(res == false).toBe(true);
 
 		done();
 	});

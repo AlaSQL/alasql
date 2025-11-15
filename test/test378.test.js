@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('378. Primary key with DELETE ALL', function () {
-	test('1. ', function (done) {
+describe('378. Primary key with DELETE ALL', () => {
+	test('1. ', done => {
 		function range(i) {
 			return i ? range(i - 1).concat({id: i}) : [];
 		}
@@ -13,14 +12,14 @@ describe('378. Primary key with DELETE ALL', function () {
 		db.exec('CREATE TABLE test (id INT NOT NULL PRIMARY KEY)');
 		db.exec('INSERT INTO test SELECT * FROM ?', [data]);
 		//console.log(db.exec("SELECT * FROM test"));
-		assert(db.exec('SELECT * FROM test').length == 100);
+		expect(db.exec('SELECT * FROM test').length == 100).toBe(true);
 
 		db.exec('DELETE FROM test');
 		db.exec('INSERT INTO test SELECT * FROM ?', [data]);
-		assert(db.exec('SELECT * FROM test').length == 100);
+		expect(db.exec('SELECT * FROM test').length == 100).toBe(true);
 		//      console.log(db.exec("select * from test"))
 
-		//        assert(success);
+		//        expect(success).toBe(true);
 		done();
 	});
 });

@@ -1,17 +1,16 @@
 // @ts-ignore
-import {describe, test} from 'bun:test';
-import assert from 'assert';
+import {describe, expect, test} from 'bun:test';
 import alasql from '..';
 import md5 from 'blueimp-md5';
 
-describe('Test 331 SLT#1 - test', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 331 SLT#1 - test', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test331;USE test331');
 
 		done();
 	});
 
-	test('2. CREATE TABLES', function (done) {
+	test('2. CREATE TABLES', done => {
 		alasql(`
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(103,102,100,101,104);
@@ -48,7 +47,7 @@ describe('Test 331 SLT#1 - test', function () {
 		done();
 	});
 
-	test('2. SELECT 673', function (done) {
+	test('2. SELECT 673', done => {
 		alasql.options.modifier = 'MATRIX';
 		var res = alasql(`
     SELECT a,
@@ -61,14 +60,14 @@ describe('Test 331 SLT#1 - test', function () {
      ORDER BY 1,2,3
   `);
 		//    console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			[131, 1, 133],
 			[182, 1, 183],
 		]);
 		done();
 	});
 
-	test('3. SELECT 1095', function (done) {
+	test('3. SELECT 1095', done => {
 		/*
     alasql.options.modifier = 'MATRIX';
     var res = alasql.parse(' \
@@ -95,7 +94,7 @@ describe('Test 331 SLT#1 - test', function () {
          AND (a>b-2 AND a<b+2)
        ORDER BY 1,2
   `);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			[-1, 222],
 			[-1, 222],
 			[1, 333],
@@ -103,7 +102,7 @@ describe('Test 331 SLT#1 - test', function () {
 		done();
 	});
 
-	test('3. SELECT 959', function (done) {
+	test('3. SELECT 959', done => {
 		var res = alasql.parse(
 			' \
 SELECT a+b*2, \
@@ -139,12 +138,12 @@ SELECT a+b*2,
  ORDER BY 1,2,4,5,3
    `);
 
-		assert.deepEqual(res, [[317, 108, 107, -1, 333]]);
+		expect(res).toEqual([[317, 108, 107, -1, 333]]);
 
 		done();
 	});
 
-	test('4. DROP DATABASE', function (done) {
+	test('4. DROP DATABASE', done => {
 		alasql('DROP DATABASE test331');
 		alasql.options.modifier = undefined;
 		done();

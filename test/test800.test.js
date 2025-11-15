@@ -1,22 +1,21 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 800 - OUTER JOIN missing ids', function () {
-	beforeAll(function () {
+describe('Test 800 - OUTER JOIN missing ids', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test800;USE test800');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test800');
 	});
 
-	test('1. ARRAY()', function (done) {
+	test('1. ARRAY()', done => {
 		var t1 = [
 			{id: '1', a: 'one'},
 			{id: '2', a: 'two'},
@@ -43,7 +42,7 @@ describe('Test 800 - OUTER JOIN missing ids', function () {
 			{id: '3', a: undefined, b: 'C'},
 		];
 
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 		done();
 	});
 });

@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -10,7 +9,7 @@ import alasql from '..';
 
 */
 
-describe('Test 409 Backup and restore database', function () {
+describe('Test 409 Backup and restore database', () => {
 	alasql.storeDatabase = function (databaseid) {
 		databaseid = databaseid || alasql.useid;
 		var db = alasql.databases[databaseid];
@@ -42,12 +41,12 @@ describe('Test 409 Backup and restore database', function () {
 
 	alasql.restoreDatabase = function (obj, databaseid) {};
 
-	test('2. CREATE DATABASE', function (done) {
+	test('2. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test409;USE test409');
 		done();
 	});
 
-	test.skip('2. CREATE DATABASE', function (done) {
+	test.skip('2. CREATE DATABASE', done => {
 		alasql('CREATE TABLE one (a INT UNIQUE); INSERT INTO one VALUES (1),(2),(3)');
 		var obj1 = alasql.storeDatabase();
 		alasql('DROP DATABASE test409');
@@ -56,16 +55,16 @@ describe('Test 409 Backup and restore database', function () {
 		alasql('USE test409');
 		alasql('INSERT INTO one VALUES (4)');
 		var res = alasql('SELECT * FROM one');
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
+		expect(res).toEqual([{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
 
-		assert.throws(new Error(), function () {
+		expect(new Error().toThrow(), () => {
 			alasql('INSERT INTO one VALUES (1)');
 		});
 
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test409');
 		done();

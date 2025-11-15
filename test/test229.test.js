@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 // See http://www.codeproject.com/Articles/300785/Calculating-simple-running-totals-in-SQL-Server
-describe('Test 229 Calculating simple running totals', function () {
-	test('1. Init database', function (done) {
+describe('Test 229 Calculating simple running totals', () => {
+	test('1. Init database', done => {
 		alasql('CREATE DATABASE test229; USE test229;');
 
 		alasql(
@@ -36,7 +35,7 @@ describe('Test 229 Calculating simple running totals', function () {
 		done();
 	});
 
-	test('2. Select accumulated sum', function (done) {
+	test('2. Select accumulated sum', done => {
 		var res = alasql(
 			'SELECT a.id, a.[value], (SELECT SUM(b.[value]) \
                              FROM RunTotalTestData b \
@@ -45,7 +44,7 @@ describe('Test 229 Calculating simple running totals', function () {
                       ORDER BY a.id;'
 		);
 		//      console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{id: 1, value: 1, c: 1},
 			{id: 2, value: 2, c: 3},
 			{id: 3, value: 4, c: 7},
@@ -66,7 +65,7 @@ describe('Test 229 Calculating simple running totals', function () {
 		done();
 	});
 
-	test('3. Select accumulated sum', function (done) {
+	test('3. Select accumulated sum', done => {
 		var res = alasql(
 			'SELECT a.id, a.[value], SUM(b.[value]) AS c \
                     FROM    RunTotalTestData a, \
@@ -75,7 +74,7 @@ describe('Test 229 Calculating simple running totals', function () {
                     GROUP BY a.id, a.[value] \
                     ORDER BY a.id'
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{id: 1, value: 1, c: 1},
 			{id: 2, value: 2, c: 3},
 			{id: 3, value: 4, c: 7},
@@ -95,7 +94,7 @@ describe('Test 229 Calculating simple running totals', function () {
 		done();
 	});
 
-	test('4. Select accumulated sum', function (done) {
+	test('4. Select accumulated sum', done => {
 		var res = alasql(
 			'SELECT a.id, a.[value], (SELECT SUM(b.[value]) \
                        FROM RunTotalTestData b \
@@ -106,7 +105,7 @@ describe('Test 229 Calculating simple running totals', function () {
     ORDER BY a.id;'
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{id: 1, value: 1, runningtotal: 1},
 			{id: 4, value: 7, runningtotal: 8},
 			{id: 5, value: 9, runningtotal: 17},
@@ -118,7 +117,7 @@ describe('Test 229 Calculating simple running totals', function () {
 		done();
 	});
 
-	test('5. Select accumulated sum', function (done) {
+	test('5. Select accumulated sum', done => {
 		var res = alasql(
 			'SELECT a.id, a.[value], SUM(b.[value]) AS runningtotal\
         FROM   RunTotalTestData a, \
@@ -131,7 +130,7 @@ ORDER BY a.id;'
 		);
 		//console.log(res);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{id: 1, value: 1, runningtotal: 1},
 			{id: 4, value: 7, runningtotal: 8},
 			{id: 5, value: 9, runningtotal: 17},
@@ -143,7 +142,7 @@ ORDER BY a.id;'
 		done();
 	});
 
-	test('6. Select accumulated sum', function (done) {
+	test('6. Select accumulated sum', done => {
 		var res = alasql(
 			'SELECT a.[value]%2 as even, a.id, a.[value], (SELECT SUM(b.[value])  \
                                FROM RunTotalTestData b \
@@ -153,7 +152,7 @@ FROM   RunTotalTestData a \
 ORDER BY [value]%2, a.id;'
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{even: 0, id: 2, value: 2, c: 2},
 			{even: 0, id: 3, value: 4, c: 6},
 			{even: 0, id: 6, value: 12, c: 18},
@@ -173,7 +172,7 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	test('7. Select accumulated sum', function (done) {
+	test('7. Select accumulated sum', done => {
 		alasql.fn.mod = function (a, b) {
 			return a % 2 == b % 2;
 		};
@@ -188,7 +187,7 @@ ORDER BY [value]%2, a.id;'
                     ORDER BY [value]%2, id;'
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{even: 0, id: 2, value: 2, c: 2},
 			{even: 0, id: 3, value: 4, c: 6},
 			{even: 0, id: 6, value: 12, c: 18},
@@ -210,7 +209,7 @@ ORDER BY [value]%2, a.id;'
 	//}
 
 	// SQL NOT REALIZED YET
-	test('8. Over 1', function (done) {
+	test('8. Over 1', done => {
 		var ast = alasql.parse(
 			'SELECT a.id, a.[value], SUM(a.[value]) OVER (ORDER BY a.id) \
           FROM   RunTotalTestData a \
@@ -220,7 +219,7 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	test('8. Over 2', function (done) {
+	test('8. Over 2', done => {
 		var ast = alasql.parse(
 			'SELECT a.id, a.[value], SUM(a.[value]) OVER (ORDER BY a.id) \
             FROM   RunTotalTestData a \
@@ -231,7 +230,7 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	test('9. Over 3', function (done) {
+	test('9. Over 3', done => {
 		var ast = alasql.parse(
 			'SELECT a.value%2, a.id, a.[value], SUM(a.[value]) OVER (PARTITION BY a.[value]%2 ORDER BY a.id) \
             FROM   RunTotalTestData a \
@@ -241,7 +240,7 @@ ORDER BY [value]%2, a.id;'
 		done();
 	});
 
-	test('99. Drop database', function (done) {
+	test('99. Drop database', done => {
 		alasql('DROP DATABASE test229');
 		done();
 	});

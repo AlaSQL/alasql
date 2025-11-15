@@ -1,58 +1,57 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 352 TEST EQUALITY', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 352 TEST EQUALITY', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test352;USE test352');
 		done();
 	});
 
-	test('2. TEST =', function (done) {
+	test('2. TEST =', done => {
 		var res = alasql('= 1=1');
-		assert.deepEqual(res, true);
+		expect(res).toEqual(true);
 		var res = alasql('= 1=NULL');
-		assert.deepEqual(res, undefined);
+		expect(res).toEqual(undefined);
 		var res = alasql('= NULL=NULL');
-		assert.deepEqual(res, undefined);
+		expect(res).toEqual(undefined);
 		var res = alasql('= 0=NULL');
-		assert.deepEqual(res, undefined);
+		expect(res).toEqual(undefined);
 		done();
 	});
 
-	test('3. TEST ==', function (done) {
+	test('3. TEST ==', done => {
 		var res = alasql('= 1==1');
-		assert.deepEqual(res, true);
+		expect(res).toEqual(true);
 		var res = alasql('= 1==NULL');
-		assert.deepEqual(res, undefined);
+		expect(res).toEqual(undefined);
 		var res = alasql('= NULL==NULL');
-		assert.deepEqual(res, undefined);
+		expect(res).toEqual(undefined);
 		var res = alasql('= 0==NULL');
-		assert.deepEqual(res, undefined);
+		expect(res).toEqual(undefined);
 		done();
 	});
 
-	test('4. TEST == deepEqual', function (done) {
+	test('4. TEST == deepEqual', done => {
 		var res = alasql('= {a:1}=={a:1}');
-		assert.deepEqual(res, true);
+		expect(res).toEqual(true);
 		var res = alasql('= {a:1}=={a:2}');
-		assert.deepEqual(res, false);
+		expect(res).toEqual(false);
 		done();
 	});
 
-	test('3. TEST IS', function (done) {
+	test('3. TEST IS', done => {
 		var res = alasql('= 1 IS NULL');
-		assert.deepEqual(res, false);
+		expect(res).toEqual(false);
 		var res = alasql('= NULL IS NULL');
-		assert.deepEqual(res, true);
+		expect(res).toEqual(true);
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test352');
 		done();

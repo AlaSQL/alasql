@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 243 AVG bug', function () {
-	test('1. AVG bug: 3 groups with one and multiple item', function (done) {
+describe('Test 243 AVG bug', () => {
+	test('1. AVG bug: 3 groups with one and multiple item', done => {
 		var arr = [
 			{
 				person: 1,
@@ -30,7 +29,7 @@ describe('Test 243 AVG bug', function () {
 		var res = alasql('SELECT person, avg(sold) FROM ? WHERE 1 GROUP BY person', [arr]);
 
 		//    console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{person: 1, 'AVG(sold)': 12.5},
 			{person: 2, 'AVG(sold)': 10},
 			{person: 3, 'AVG(sold)': 40},
@@ -38,7 +37,7 @@ describe('Test 243 AVG bug', function () {
 		done();
 	});
 
-	test('2. AVG 2 by 2 groups', function (done) {
+	test('2. AVG 2 by 2 groups', done => {
 		var arr = [
 			{
 				person: 1,
@@ -61,7 +60,7 @@ describe('Test 243 AVG bug', function () {
 		var res = alasql('SELECT person, avg(sold) FROM ? WHERE 1 GROUP BY person', [arr]);
 
 		//    console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{person: 1, 'AVG(sold)': 12.5},
 			{person: 2, 'AVG(sold)': 25},
 		]);

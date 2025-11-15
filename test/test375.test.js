@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('375. Problem with UPDATE (https://github.com/alasql/alasql/issues/479)', function () {
-	test('1. ', function (done) {
+describe('375. Problem with UPDATE (https://github.com/alasql/alasql/issues/479)', () => {
+	test('1. ', done => {
 		alasql(
 			'CREATE TABLE RpdAssignments (' +
 				'Id INT PRIMARY KEY AUTOINCREMENT NOT NULL,' +
@@ -23,7 +22,7 @@ describe('375. Problem with UPDATE (https://github.com/alasql/alasql/issues/479)
 		alasql('UPDATE RpdAssignments SET Name="id2" WHERE Id=1');
 
 		var res = alasql('SELECT * FROM RpdAssignments');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				Id: 1,
 				Name: 'id2',

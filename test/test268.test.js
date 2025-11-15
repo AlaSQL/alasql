@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -14,8 +13,8 @@ if (typeof window !== 'undefined') {
 	});
 }
 
-describe('Test 268 INNER JOIN stress test', function () {
-	test('1. Create database', function (done) {
+describe('Test 268 INNER JOIN stress test', () => {
+	test('1. Create database', done => {
 		alasql('CREATE DATABASE test268; USE test268');
 		done();
 	});
@@ -29,16 +28,16 @@ describe('Test 268 INNER JOIN stress test', function () {
 		{b: 20, c: 200},
 	];
 
-	test('2. INNER JOIN on Array', function (done) {
+	test('2. INNER JOIN on Array', done => {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 USING b', [data1, data2]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 10, c: 100},
 			{a: 2, b: 20, c: 200},
 		]);
 		done();
 	});
 
-	test('3. INNER JOIN on Tables', function (done) {
+	test('3. INNER JOIN on Tables', done => {
 		alasql('CREATE TABLE table1(a INT, b INT);');
 		alasql('SELECT * INTO table1 FROM ?', [data1]);
 		alasql('CREATE TABLE table2(b INT, c INT);');
@@ -47,7 +46,7 @@ describe('Test 268 INNER JOIN stress test', function () {
 			data1,
 			data2,
 		]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 10, c: 100},
 			{a: 2, b: 20, c: 200},
 		]);
@@ -75,7 +74,7 @@ describe('Test 268 INNER JOIN stress test', function () {
   */
 	//console.log(t2);
 
-	test('4. INNER JOIN on Big Array', function (done) {
+	test('4. INNER JOIN on Big Array', done => {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('INNER =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 LEFT JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
@@ -84,13 +83,12 @@ describe('Test 268 INNER JOIN stress test', function () {
 		/// console.log('RIGHT =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('OUTER =',res.length);
-		// assert.deepEqual(res.,
-		//   [ { a: 1, b: 10, c: 100 }, { a: 2, b: 20, c: 200 } ]
+		// expect(res.).toEqual(//   [ { a: 1, b: 10, c: 100 }, { a: 2, b: 20, c: 200 } ]
 		// );
 		done();
 	});
 
-	test('99. Drop phase', function (done) {
+	test('99. Drop phase', done => {
 		alasql('DROP DATABASE test268');
 		done();
 	});

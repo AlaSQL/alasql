@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 360 AGGR function', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 360 AGGR function', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test360;USE test360');
 		done();
 	});
@@ -565,10 +564,9 @@ describe('Test 360 AGGR function', function () {
 		},
 	];
 
-	test.skip('2. Prepare Data', function (done) {
-		var res = alasql(
-			function () {
-				/*
+	test.skip('2. Prepare Data', done => {
+		var res = alasql(() => {
+			/*
 
 SELECT
     report_date, srv_class_name,
@@ -583,19 +581,16 @@ SELECT
 FROM ?
 
   */
-			},
-			[data]
-		);
+		}, [data]);
 
 		// console.log(res);
 
 		done();
 	});
 
-	test.skip('2. Prepare Data', function (done) {
-		var res = alasql(
-			function () {
-				/*
+	test.skip('2. Prepare Data', done => {
+		var res = alasql(() => {
+			/*
 
     SELECT
         SUM(CAST(mails_200er AS float)) AS [Anzahl 200er],
@@ -605,16 +600,14 @@ FROM ?
     GROUP BY report_date
 
   */
-			},
-			[data]
-		);
+		}, [data]);
 
 		// console.log(res);
 
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test360');
 		done();

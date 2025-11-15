@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 607 - TRUNCATE on table in Local Storage', function () {
+describe('Test 607 - TRUNCATE on table in Local Storage', () => {
 	const testId = '607'; // insert test file number
 
-	beforeAll(function () {
+	beforeAll(() => {
 		alasql('DROP LOCALSTORAGE DATABASE IF EXISTS test' + testId);
 		alasql('CREATE LOCALSTORAGE DATABASE test' + testId);
 		alasql('ATTACH LOCALSTORAGE DATABASE test' + testId);
@@ -15,18 +14,18 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP LOCALSTORAGE DATABASE test' + testId);
 	});
 
-	test('A) Attempt TRUNCATE on table', function () {
+	test('A) Attempt TRUNCATE on table', () => {
 		var res = alasql('TRUNCATE TABLE one');
-		assert.equal(res, 1);
+		expect(res).toEqual(1);
 	});
 
-	test('B) Make sure table is empty', function () {
+	test('B) Make sure table is empty', () => {
 		var res = alasql('SELECT id, name FROM one');
-		assert.equal(res.length, 0);
+		expect(res.length).toEqual(0);
 	});
 
 	// 	test('C) Insert values and check that identity is reset', function(){
@@ -46,7 +45,7 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 	//Using alasql.autoval('one', 'id', true) to get the next value returns 3,
 	//but should have been 28 (the next value after 23)
 
-	//   assert.equal(lastId, 23);
+	//   expect(lastId).toEqual(23);
 	//  });
 
 	// 	test('D) Check TRUNCATE rolls back in an ABORT', function(){
@@ -63,10 +62,10 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 	// 	alasql('TRUNCATE TABLE one');
 	// 	alasql('COMMIT TRANSACTION');
 	// 	var rows = alasql('SELECT id FROM one');
-	// 	assert.equal(rows.length, 0);
+	// 	expect(rows.length).toEqual(0);
 	// });
 
-	test('D) Check TRUNCATE works in a COMMIT', function () {
+	test('D) Check TRUNCATE works in a COMMIT', () => {
 		//populate the table
 		alasql('TRUNCATE TABLE one');
 		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
@@ -75,6 +74,6 @@ describe('Test 607 - TRUNCATE on table in Local Storage', function () {
 		alasql('TRUNCATE TABLE one');
 		alasql('COMMIT TRANSACTION');
 		var rows = alasql('SELECT id FROM one');
-		assert.equal(rows.length, 0);
+		expect(rows.length).toEqual(0);
 	});
 });

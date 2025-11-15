@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -9,14 +8,14 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 // Data for test
 var data = [{a: 1}, {a: 2}];
 
-describe('Test 354 PIVOT', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 354 PIVOT', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test354;USE test354');
 		done();
 	});
 
 	/* Source: http://blogs.msdn.com/b/spike/archive/2009/03/03/pivot-tables-in-sql-server-a-simple-sample.aspx */
-	test('2. Prepare Data', function (done) {
+	test('2. Prepare Data', done => {
 		alasql(
 			'create table DailyIncome(VendorId nvarchar(10), IncomeDay nvarchar(10), IncomeAmount int)'
 		);
@@ -55,7 +54,7 @@ describe('Test 354 PIVOT', function () {
 		done();
 	});
 
-	test('3. Pivot Query', function (done) {
+	test('3. Pivot Query', done => {
 		alasql(`
     select * from DailyIncome
     pivot (avg (IncomeAmount) for IncomeDay)
@@ -64,7 +63,7 @@ describe('Test 354 PIVOT', function () {
 		done();
 	});
 
-	test('4. Pivot Query with specific days', function (done) {
+	test('4. Pivot Query with specific days', done => {
 		alasql(`
     select * from DailyIncome
     pivot (avg (IncomeAmount) for IncomeDay 
@@ -74,7 +73,7 @@ describe('Test 354 PIVOT', function () {
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test354');
 		done();

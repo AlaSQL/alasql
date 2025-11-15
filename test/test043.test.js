@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 43', function () {
+describe('Test 43', () => {
 	//	describe('Dates', function(){
 
 	var db = new alasql.Database('test43');
 
-	test('Create database', function (done) {
+	test('Create database', done => {
 		// alasql('create database test43');
 		// alasql('use test43');
 
@@ -29,7 +28,7 @@ describe('Test 43', function () {
 		done();
 	});
 
-	test('Order by dates ASC', function (done) {
+	test('Order by dates ASC', done => {
 		var res = db.exec('SELECT COLUMN orderdate FROM orders ORDER BY orderdate');
 
 		var ok =
@@ -41,11 +40,11 @@ describe('Test 43', function () {
 			res[5] <= res[6] &&
 			res[6] <= res[7];
 
-		assert.equal(true, ok);
+		expect(true).toEqual(ok);
 		done();
 	});
 
-	test('Order by dates DESC', function (done) {
+	test('Order by dates DESC', done => {
 		var res = db.exec('SELECT COLUMN orderdate FROM orders ORDER BY orderdate DESC');
 
 		var ok =
@@ -57,15 +56,15 @@ describe('Test 43', function () {
 			res[5] >= res[6] &&
 			res[6] >= res[7];
 
-		assert.equal(true, ok);
+		expect(true).toEqual(ok);
 		done();
 	});
 
-	test('Dates parsing in INSERT', function (done) {
+	test('Dates parsing in INSERT', done => {
 		db.exec("INSERT INTO orders VALUES (10,'2015-10-20')");
 
 		var res = db.exec('SELECT VALUE orderdate FROM orders WHERE orderid = 10');
-		assert.equal(res.valueOf(), new Date('2015-10-20').valueOf());
+		expect(res.valueOf()).toEqual(new Date('2015-10-20').valueOf());
 		done();
 	});
 
@@ -74,7 +73,7 @@ describe('Test 43', function () {
 			db.exec("SELECT orders VALUES (10,'2015-10-20')");
 
 			var res = db.queryValue('SELECT orderdate FROM orders WHERE orderid = 10');
-			assert.equal(res.valueOf(), new Date("2015-10-20").valueOf());
+			expect(res.valueOf()).toEqual(new Date("2015-10-20").valueOf());
 			done();
 		});
 */

@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 16', function () {
-	test('Grouping', function (done) {
+describe('Test 16', () => {
+	test('Grouping', () => {
 		alasql('create database test16a');
 		alasql('use test16a');
 		alasql(
@@ -82,14 +81,13 @@ describe('Test 16', function () {
 		//if(typeof window === 'object') console.log(res);
 		//else console.table(res);
 		//console.table(res);
-		assert.equal(5, res.length);
-		assert.equal(1, res[0].courseid);
-		assert.equal(2, res[1].courseid);
-		assert.equal(2, res[2].courseid);
-		assert.equal(7, res[3].courseid);
-		assert.equal(4, res[4].courseid);
+		expect(res.length).toEqual(5);
+		expect(res[0].courseid).toEqual(1);
+		expect(res[1].courseid).toEqual(2);
+		expect(res[2].courseid).toEqual(2);
+		expect(res[3].courseid).toEqual(7);
+		expect(res[4].courseid).toEqual(4);
 
 		alasql('drop database test16a');
-		done();
 	});
 });

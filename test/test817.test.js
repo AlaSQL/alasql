@@ -1,17 +1,16 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 817 IFNULL bug', function () {
-	test('1. Does return 0', function (done) {
+describe('Test 817 IFNULL bug', () => {
+	test('1. Does return 0', done => {
 		var data = [
 			{
 				a: 0,
 			},
 		];
 		var res = alasql('SELECT IFNULL(a, 100) as result FROM ?', [data]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				result: 0,
 			},
@@ -19,14 +18,14 @@ describe('Test 817 IFNULL bug', function () {
 		done();
 	});
 
-	test('1. Does return false', function (done) {
+	test('1. Does return false', done => {
 		var data = [
 			{
 				a: false,
 			},
 		];
 		var res = alasql('SELECT IFNULL(a, true) as result FROM ?', [data]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				result: false,
 			},
@@ -34,14 +33,14 @@ describe('Test 817 IFNULL bug', function () {
 		done();
 	});
 
-	test('1. Does return 100', function (done) {
+	test('1. Does return 100', done => {
 		var data = [
 			{
 				a: null,
 			},
 		];
 		var res = alasql('SELECT IFNULL(a, 100) as result FROM ?', [data]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				result: 100,
 			},

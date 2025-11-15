@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 104 - RANDOM() and RECURSIVE', function () {
+describe('Test 104 - RANDOM() and RECURSIVE', () => {
 	/*
 
 DROP TABLE IF EXISTS ttbl;

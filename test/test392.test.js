@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -8,13 +7,13 @@ import alasql from '..';
 
 */
 
-describe('Test 392 Observable (issue #499)', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 392 Observable (issue #499)', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test392;USE test392');
 		done();
 	});
 
-	test.skip('2. Prepare test data', function (done) {
+	test.skip('2. Prepare test data', done => {
 		//    var testId = 0;
 
 		alasql('CREATE TABLE one (a INT, b STRING)');
@@ -32,7 +31,7 @@ describe('Test 392 Observable (issue #499)', function () {
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test392');
 		done();
 	});

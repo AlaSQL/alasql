@@ -1,20 +1,19 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 304 SEARCH over JSON', function () {
-	test.skip('0. Create database ', function (done) {
+describe('Test 304 SEARCH over JSON', () => {
+	test.skip('0. Create database ', done => {
 		var res = alasql('CREATE DATABASE test304;USE test304');
 		done();
 	});
 
-	test.skip('1. INSTANCEOF selector', function (done) {
-		var People = (alasql.fn.People = function () {});
-		var City = (alasql.fn.City = function () {});
+	test.skip('1. INSTANCEOF selector', done => {
+		var People = (alasql.fn.People = () => {});
+		var City = (alasql.fn.City = () => {});
 
 		var p1 = new People();
 		p1.name = 'John';
@@ -28,58 +27,58 @@ describe('Test 304 SEARCH over JSON', function () {
 		var data = [p1, c1, p2, c2];
 
 		var res = alasql('SEARCH / INSTANCEOF(City) name FROM ?', [data]);
-		assert.deepEqual(res, ['Milano', 'Odessa']);
+		expect(res).toEqual(['Milano', 'Odessa']);
 		done();
 	});
 
-	test.skip('2. CLASS() selector', function (done) {
+	test.skip('2. CLASS() selector', done => {
 		alasql('CREATE CLASS Person');
 		alasql('CREATE CLASS City');
 		alasql('INSERT INTO Person VALUES {name:"John"},{name:"Mary"}');
 		alasql('INSERT INTO City VALUES {name:"Madrid"},{name:"Kyoto"}');
 		var res = alasql('SEARCH / CLASS(City) name');
-		assert.deepEqual(res, ['Madrid', 'Kyoto']);
+		expect(res).toEqual(['Madrid', 'Kyoto']);
 		done();
 	});
 
-	test.skip('3. PLUS selector', function (done) {
+	test.skip('3. PLUS selector', done => {
 		var data = {a: {a: {a: {a: {b: 10}}}}};
 		var res = alasql('SEARCH a b FROM ?', [data]);
-		assert.deepEqual(res, []);
+		expect(res).toEqual([]);
 
 		var res = alasql('SEARCH (a)+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		expect(res).toEqual([10]);
 
 		var res = alasql('SEARCH (a a)+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		expect(res).toEqual([10]);
 
 		var res = alasql('SEARCH (a a a)+ b FROM ?', [data]);
-		assert.deepEqual(res, []);
+		expect(res).toEqual([]);
 
 		var res = alasql('SEARCH (/)+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		expect(res).toEqual([10]);
 
 		var res = alasql('SEARCH /+b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		expect(res).toEqual([10]);
 
 		done();
 	});
 
-	test.skip('4. STAR and QUESTION selector', function (done) {
+	test.skip('4. STAR and QUESTION selector', done => {
 		var data = {a: {a: {a: {a: {b: 10}}}}, b: 20};
 		var res = alasql('SEARCH a* b FROM ?', [data]);
-		assert.deepEqual(res, [20, 10]);
+		expect(res).toEqual([20, 10]);
 
 		var res = alasql('SEARCH a+ b FROM ?', [data]);
-		assert.deepEqual(res, [10]);
+		expect(res).toEqual([10]);
 
 		var res = alasql('SEARCH a? b FROM ?', [data]);
-		assert.deepEqual(res, [20]);
+		expect(res).toEqual([20]);
 
 		done();
 	});
 
-	test.skip('5. STAR and QUESTION selectors in GRAPHS', function (done) {
+	test.skip('5. STAR and QUESTION selectors in GRAPHS', done => {
 		alasql('SET @olga = (CREATE VERTEX "Olga")');
 		alasql('SET @helen = (CREATE VERTEX "Helen")');
 		alasql('SET @pablo = (CREATE VERTEX "Pablo")');
@@ -91,31 +90,31 @@ describe('Test 304 SEARCH over JSON', function () {
 		alasql('CREATE EDGE FROM @andrey TO @sofia');
 
 		var res = alasql('SEARCH / AS @p (>>)+ "Sofia" @(@p) name');
-		assert.deepEqual(res, ['Olga', 'Helen', 'Pablo', 'Andrey']);
+		expect(res).toEqual(['Olga', 'Helen', 'Pablo', 'Andrey']);
 		var res = alasql('SEARCH / AS @p (>>)* "Sofia" @(@p) name');
-		assert.deepEqual(res, ['Olga', 'Helen', 'Pablo', 'Andrey', 'Sofia']);
+		expect(res).toEqual(['Olga', 'Helen', 'Pablo', 'Andrey', 'Sofia']);
 
 		var res = alasql('SEARCH / "Olga" >> name');
-		assert.deepEqual(res, ['Pablo']);
+		expect(res).toEqual(['Pablo']);
 		var res = alasql('SEARCH / "Olga" (>>)? name');
-		assert.deepEqual(res, ['Olga', 'Pablo']);
+		expect(res).toEqual(['Olga', 'Pablo']);
 
 		done();
 	});
 
-	test.skip('6. STAR and QUESTION selectors in GRAPHS', function (done) {
+	test.skip('6. STAR and QUESTION selectors in GRAPHS', done => {
 		var res = alasql('SEARCH / "Olga" (>>)+ name');
-		assert.deepEqual(res, ['Pablo', 'Sofia']);
+		expect(res).toEqual(['Pablo', 'Sofia']);
 		var res = alasql('SEARCH / "Olga" (>>)* name');
-		assert.deepEqual(res, ['Olga', 'Pablo', 'Sofia']);
+		expect(res).toEqual(['Olga', 'Pablo', 'Sofia']);
 
 		var res = alasql('SEARCH / IF(>> >> "Sofia") name');
-		assert.deepEqual(res, ['Olga', 'Helen']);
+		expect(res).toEqual(['Olga', 'Helen']);
 
 		done();
 	});
 
-	test.skip('99. Create database ', function (done) {
+	test.skip('99. Create database ', done => {
 		var res = alasql('DROP DATABASE test304');
 		done();
 	});

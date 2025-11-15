@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -9,36 +8,36 @@ import alasql from '..';
 
 var testId = 426;
 
-describe('Test ' + testId + ' Binary operators', function () {
-	beforeAll(function () {
+describe('Test ' + testId + ' Binary operators', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test' + testId);
 	});
 
-	test('1. ^', function (done) {
+	test('1. ^', done => {
 		var res = alasql('= 60^13');
-		assert.deepEqual(res, 49);
+		expect(res).toEqual(49);
 		done();
 	});
 
-	test('2. ~', function (done) {
+	test('2. ~', done => {
 		var res = alasql('= ~60');
-		assert(res == -61);
+		expect(res == -61).toBe(true);
 		done();
 	});
 
-	test('3. POWER', function (done) {
+	test('3. POWER', done => {
 		var res = alasql('= POWER(2,3)');
-		assert(res == 8);
+		expect(res == 8).toBe(true);
 		done();
 	});
 
-	test('4. EXP', function (done) {
+	test('4. EXP', done => {
 		var res = alasql('= EXP(1)');
-		assert(res == 2.718281828459045);
+		expect(res == 2.718281828459045).toBe(true);
 		done();
 	});
 });

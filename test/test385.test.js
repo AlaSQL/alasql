@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
@@ -16,13 +15,13 @@ global.localStorage = new DOMStorage('./test381.json', {
 
 */
 
-describe('Test 385 - Nested Search (issue #495)', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 385 - Nested Search (issue #495)', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test385;USE test385');
 		done();
 	});
 
-	test('2. Create table issue - one statement', function (done) {
+	test('2. Create table issue - one statement', done => {
 		// Source data
 
 		var data1 = [
@@ -84,11 +83,11 @@ describe('Test 385 - Nested Search (issue #495)', function () {
 			'2',
 		]);
 
-		assert.deepEqual(data1, data2);
+		expect(data1).toEqual(data2);
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test385');
 		done();
 	});

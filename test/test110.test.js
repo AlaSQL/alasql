@@ -5,11 +5,10 @@
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 110: LEFT JOIN', function () {
-	test('Left join of two tables', function (done) {
+describe('Test 110: LEFT JOIN', () => {
+	test('Left join of two tables', done => {
 		alasql.exec('DROP TABLE IF EXISTS test');
 		alasql.exec('CREATE TABLE test (a int, b int)');
 		alasql.exec('INSERT INTO test VALUES (1,1)');
@@ -27,15 +26,15 @@ describe('Test 110: LEFT JOIN', function () {
 		 FROM test LEFT JOIN test1 ON test.a = test1.a GROUP BY c,test.a'
 		);
 
-		assert.equal(8, res[0].sb);
-		assert.equal(2, res[1].sb);
-		assert.equal(3, res[2].sb);
+		expect(8).toEqual(res[0].sb);
+		expect(2).toEqual(res[1].sb);
+		expect(3).toEqual(res[2].sb);
 		done();
 	});
 });
 
-describe('INNER JOIN', function () {
-	test('Inner join of three tables', function (done) {
+describe('INNER JOIN', () => {
+	test('Inner join of three tables', done => {
 		alasql.exec('DROP TABLE IF EXISTS test');
 
 		alasql.exec('CREATE TABLE test (a int, b int)');
@@ -60,11 +59,11 @@ describe('INNER JOIN', function () {
 				' JOIN test2 ON test1.c = test2.c '
 		);
 
-		assert.equal(3, res.length);
+		expect(3).toEqual(res.length);
 		done();
 	});
 
-	test('Inner join and aggregate of three tables', function (done) {
+	test('Inner join and aggregate of three tables', done => {
 		alasql.exec('DROP TABLE IF EXISTS test');
 		alasql.exec('CREATE TABLE test (a int, b int)');
 		alasql.exec('INSERT INTO test VALUES (1,1)');
@@ -90,8 +89,8 @@ describe('INNER JOIN', function () {
 				' GROUP BY d'
 		);
 
-		assert.equal(17, res[0].sumb);
-		assert.equal(2, res.length);
+		expect(17).toEqual(res[0].sumb);
+		expect(2).toEqual(res.length);
 		done();
 	});
 });

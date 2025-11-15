@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -14,64 +13,64 @@ if (typeof window !== 'undefined') {
 	});
 }
 
-describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', function () {
-	afterAll(function () {
+describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', () => {
+	afterAll(() => {
 		localStorage.clear();
 	});
 
-	test('* Create database', function (done) {
+	test('* Create database', done => {
 		alasql('SET AUTOCOMMIT OFF');
-		assert(!alasql.options.autocommit);
+		expect(!alasql.options.autocommit).toBe(true);
 		alasql
 			.promise('DROP localStorage DATABASE IF EXISTS db604ls')
 			.then(function (res) {
-				assert(!localStorage['db604ls']);
-				assert(!localStorage['db604ls.one']);
+				expect(!localStorage['db604ls']).toBe(true);
+				expect(!localStorage['db604ls.one']).toBe(true);
 				return alasql.promise('CREATE localStorage DATABASE IF NOT EXISTS db604ls');
 			})
 			.then(function (res) {
-				assert(localStorage['db604ls']);
+				expect(localStorage['db604ls']).toBe(true);
 				done();
 			})
 			.catch(function (err) {
-				setTimeout(function () {
+				setTimeout(() => {
 					throw err;
 				});
 			});
 	});
 
-	test('* Show databases', function (done) {
+	test('* Show databases', done => {
 		var res = alasql('SHOW localStorage DATABASES', function (res) {
 			var found = false;
 			res.forEach(function (d) {
 				found = found || d.databaseid == 'db604ls';
 			});
-			assert(found);
+			expect(found).toBe(true);
 			done();
 		});
 	});
 
-	test('* Attach localStorage database', function (done) {
-		alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604', function () {
-			assert(alasql.databases.db604);
-			assert(alasql.databases.db604.engineid == 'LOCALSTORAGE');
+	test('* Attach localStorage database', done => {
+		alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604', () => {
+			expect(alasql.databases.db604).toBe(true);
+			expect(alasql.databases.db604.engineid == 'LOCALSTORAGE').toBe(true);
 			done();
 		});
 	});
 
-	test('* Create table', function (done) {
+	test('* Create table', done => {
 		alasql('CREATE TABLE db604.t1 (a int, b string)', function (res) {
-			assert(localStorage['db604ls.t1']);
-			assert(JSON.parse(localStorage['db604ls']).tables.t1);
+			expect(localStorage['db604ls.t1']).toBe(true);
+			expect(JSON.parse(localStorage['db604ls'].tables.t1));
 			done();
 		});
 	});
 
-	test('* Insert values into table', function (done) {
+	test('* Insert values into table', done => {
 		alasql
 			.promise('insert into db604.t1 VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")')
 			.then(function (rows) {
-				assert.deepEqual(alasql.databases.db604.tables.t1.data, [
+				expect(alasql.databases.db604.tables.t1.data).toEqual([
 					{a: 1, b: 'Moscow'},
 					{a: 2, b: 'Kyiv'},
 					{a: 3, b: 'Minsk'},
@@ -80,64 +79,64 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 			});
 	});
 
-	test('* Select from table', function () {
+	test('* Select from table', () => {
 		var res = alasql('SELECT * FROM db604.t1');
-		assert(res.length == 3);
+		expect(res.length == 3).toBe(true);
 	});
 
-	test('* Create view', function (done) {
+	test('* Create view', done => {
 		alasql('CREATE VIEW db604.v1 AS SELECT a,b FROM db604.t1', function (res) {
-			assert(localStorage['db604ls.v1']);
-			assert(JSON.parse(localStorage['db604ls']).tables.v1);
+			expect(localStorage['db604ls.v1']).toBe(true);
+			expect(JSON.parse(localStorage['db604ls'].tables.v1));
 			done();
 		});
 	});
 
-	test('* Select from view', function () {
+	test('* Select from view', () => {
 		var res = alasql('SELECT * FROM db604.v1');
-		assert(res.length == 3);
+		expect(res.length == 3).toBe(true);
 	});
 
-	test.skip('* Detach database', function () {
+	test.skip('* Detach database', () => {
 		alasql('DETACH DATABASE db604');
-		assert(!alasql.databases.db604);
+		expect(!alasql.databases.db604).toBe(true);
 	});
 
-	test.skip('* Reattach database', function () {
+	test.skip('* Reattach database', () => {
 		alasql('ATTACH LOCALSTORAGE DATABASE db604ls AS db604');
-		assert(alasql.databases.db604);
-		assert(alasql.databases.db604.engineid == 'LOCALSTORAGE');
+		expect(alasql.databases.db604).toBe(true);
+		expect(alasql.databases.db604.engineid == 'LOCALSTORAGE').toBe(true);
 	});
 
-	test.skip('* Reselect from table', function () {
+	test.skip('* Reselect from table', () => {
 		var res = alasql('SELECT * FROM db604.t1');
-		assert(res.length == 3);
+		expect(res.length == 3).toBe(true);
 	});
 
-	test.skip('* Reselect from view', function (done) {
+	test.skip('* Reselect from view', done => {
 		alasql.promise('SELECT * FROM db604.v1').then(function (res) {
-			assert(res.length == 3);
+			expect(res.length == 3).toBe(true);
 			done();
 		});
 	});
 
-	test('* Drop table', function () {
+	test('* Drop table', () => {
 		var res = alasql('DROP TABLE db604.t1');
-		assert(!localStorage['db604.t1']);
+		expect(!localStorage['db604.t1']).toBe(true);
 	});
 
-	test('* Drop view', function () {
+	test('* Drop view', () => {
 		var res = alasql('DROP VIEW db604.v1');
-		assert(!localStorage['db604.v1']);
+		expect(!localStorage['db604.v1']).toBe(true);
 	});
 
-	test('* Detachch database', function () {
+	test('* Detachch database', () => {
 		alasql('DETACH DATABASE db604');
-		assert(!alasql.databases.db604);
+		expect(!alasql.databases.db604).toBe(true);
 	});
 
-	test('* Drop database', function () {
+	test('* Drop database', () => {
 		alasql('DROP LOCALSTORAGE DATABASE db604ls');
-		assert(!localStorage['db605ls']);
+		expect(!localStorage['db605ls']).toBe(true);
 	});
 });

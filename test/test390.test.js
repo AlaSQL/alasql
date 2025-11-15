@@ -1,19 +1,18 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
  This sample beased on this article:
 
 */
-describe('Test 390 Export nested array to XLSX', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 390 Export nested array to XLSX', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test390;USE test390');
 		done();
 	});
 
-	test('2. Prepare tables', function (done) {
+	test('2. Prepare tables', done => {
 		var data = [
 			{
 				a: 'test',
@@ -40,11 +39,11 @@ describe('Test 390 Export nested array to XLSX', function () {
 			'SEARCH / AS @p b / CLONEDEEP() SET(a=@p->a) INTO XLSX("test390.xlsx",{headers:true}) FROM ?',
 			[data]
 		);
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test390');
 		done();
 	});

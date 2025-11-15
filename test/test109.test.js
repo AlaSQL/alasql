@@ -5,11 +5,10 @@
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 109 - DELETE', function () {
-	test('DELETE without conditions', function (done) {
+describe('Test 109 - DELETE', () => {
+	test('DELETE without conditions', done => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
@@ -20,11 +19,11 @@ describe('Test 109 - DELETE', function () {
 
 		var res = db.exec('DELETE FROM test');
 
-		assert.deepEqual([], db.tables.test.data);
+		expect([]).toEqual(db.tables.test.data);
 		done();
 	});
 
-	test('DELETE with conditions', function (done) {
+	test('DELETE with conditions', done => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
@@ -42,8 +41,8 @@ describe('Test 109 - DELETE', function () {
 		var res = db.exec('DELETE FROM test WHERE b>=30');
 
 		//		console.log(res,1);
-		assert.equal(4, res);
-		assert.equal(2, db.tables.test.data.length);
+		expect(4).toEqual(res);
+		expect(2).toEqual(db.tables.test.data.length);
 
 		done();
 	});

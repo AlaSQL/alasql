@@ -1,16 +1,15 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 // only run in browser
 if (typeof window !== 'undefined')
-	describe('Test 1409 - post insert triggers should run on indexdb', function () {
+	describe('Test 1409 - post insert triggers should run on indexdb', () => {
 		beforeAll(
 			() => alasql.promise('DROP IndexedDB DATABASE IF EXISTS test_db;') // delete indexeddb
 		);
 
-		test('post insert trigger after adding some data', function (done) {
+		test('post insert trigger after adding some data', done => {
 			var count = 0;
 			alasql.fn.onInsert = function (r) {
 				count++;
@@ -23,15 +22,15 @@ if (typeof window !== 'undefined')
 						'ATTACH INDEXEDDB DATABASE test_db; ' +
 						'USE test_db;'
 				)
-				.then(function () {
+				.then(() => {
 					return alasql.promise('DROP TABLE IF EXISTS asset7');
 				})
-				.then(function () {
+				.then(() => {
 					return alasql.promise(
 						'CREATE TABLE asset7([id] varchar(36) NOT NULL,  [name] varchar(45) NOT NULL, PRIMARY KEY ([id]) );'
 					);
 				})
-				.then(function () {
+				.then(() => {
 					var data = [
 						{id: 'abc1', name: 'test1', amount: 7},
 						{id: 'abc2', name: 'test2', amount: 8},
@@ -39,15 +38,15 @@ if (typeof window !== 'undefined')
 					];
 					return alasql.promise('INSERT INTO asset7 SELECT * FROM ?', [data]);
 				})
-				.then(function () {
+				.then(() => {
 					return alasql.promise('CREATE TRIGGER mytrigger after INSERT ON asset7 onInsert');
 				})
-				.then(function () {
+				.then(() => {
 					var data2 = [{id: 'abc4', name: 'test17', amount: 17}];
 					return alasql.promise(`INSERT INTO asset7 SELECT * FROM ?`, [data2]);
 				})
-				.then(function () {
-					assert.equal(count, 1);
+				.then(() => {
+					expect(count).toEqual(1);
 					done();
 				});
 		});

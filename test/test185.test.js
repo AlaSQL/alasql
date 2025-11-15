@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,33 +7,33 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 185 - IN Expression', function () {
-	test('1. IN Field', function (done) {
+describe('Test 185 - IN Expression', () => {
+	test('1. IN Field', done => {
 		var data = [
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
 		];
 		var res = alasql('SELECT * FROM ? WHERE 1 IN a', [data]);
-		assert.deepEqual(res, [{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1}]);
+		expect(res).toEqual([{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1}]);
 		//      console.log(res);
 		var res = alasql('SELECT * FROM ? WHERE b IN a', [data]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
 		]);
 		//      console.log(res);
 		var res = alasql('SELECT * FROM ? WHERE b IN @(a)', [data]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
 		]);
 		//      console.log(res);
 		//      console.log(alasql.parse('SELECT * FROM ? WHERE 1 IN a').statements[0].where.expression.right);
 
-		//      assert.deepEqual(res,{"1":[1,1],"2":[2,2,2],"3":[3,3],"4":[4]});
+		//      expect(res).toEqual({"1":[1,1],"2":[2,2,2],"3":[3,3],"4":[4]});
 		done();
 	});
-	test('1. REDUCE Aggregator: Summa', function (done) {
+	test('1. REDUCE Aggregator: Summa', done => {
 		var data = [
 			{a: [1, 2, 3, 4, 1, 2, 2, 3], b: 1},
 			{a: [10], b: 10},
@@ -49,11 +48,11 @@ describe('Test 185 - IN Expression', function () {
 			}
 		};
 		var res = alasql('VALUE OF SELECT Summa(b) FROM ?', [data]);
-		assert(res == 11);
+		expect(res == 11).toBe(true);
 
 		done();
 	});
-	test('2. REDUCE Aggregator: Concat', function (done) {
+	test('2. REDUCE Aggregator: Concat', done => {
 		alasql.aggr.Concat = function (v, s, stage) {
 			if (stage == 1) {
 				return v;
@@ -70,7 +69,7 @@ describe('Test 185 - IN Expression', function () {
 		];
 		var res = alasql('SELECT a,Concat(b),COUNT(*) FROM ? GROUP BY a', [a1]);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, 'Concat(b)': [1, 2, 3, 1, 2, 3, 4], 'COUNT(*)': 2},
 			{a: 2, 'Concat(b)': [4, 5], 'COUNT(*)': 1},
 		]);

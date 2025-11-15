@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 434 - joins SELECT', function () {
+describe('Test 434 - joins SELECT', () => {
 	const testId = '434'; // insert test file Number
 
-	beforeAll(function () {
+	beforeAll(() => {
 		alasql('create database test' + testId);
 		alasql('use test' + testId);
 
@@ -16,18 +15,18 @@ describe('Test 434 - joins SELECT', function () {
 		alasql('INSERT INTO bbb VALUES(1, 2)');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test' + testId);
 	});
 
-	test('does not throw error on join SELECT', function () {
+	test('does not throw error on join SELECT', () => {
 		var res = alasql(
 			'SELECT * FROM aaa JOIN (SELECT leftSide FROM bbb) AS bLeft ON (aaa.firstValue = bLeft.leftSide)'
 		);
 
-		assert.equal(res.length, 1);
+		expect(res.length).toEqual(1);
 
 		// TODO: The test currently does not pass. Now, the wrong value is returned.
-		//assert.deepEqual(res, [{firstValue : 1, secondValue : 2, rightSide : 2}]);
+		//expect(res, [{firstValue : 1, secondValue : 2, rightSide : 2}]);
 	});
 });

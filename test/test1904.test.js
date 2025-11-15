@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
-	beforeAll(function () {
+describe('Test 1937: EXISTS in SQL Queries and SET Statements', () => {
+	beforeAll(() => {
 		alasql('create database test1937');
 		alasql('use test1937');
 		alasql('DROP TABLE IF EXISTS one');
@@ -12,15 +11,15 @@ describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
 		alasql('INSERT INTO one VALUES (1),(2),(3),(4),(5)');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test1937');
 	});
 
-	test('Nested EXISTS in subquery', function (done) {
+	test('Nested EXISTS in subquery', done => {
 		const res = alasql(
 			'SELECT EXISTS(SELECT a FROM one WHERE 0) AS main_exists, * FROM (SELECT EXISTS(SELECT a FROM one) AS sub_exists, a FROM one)'
 		);
-		assert.deepEqual(
+		expect(
 			[
 				{main_exists: false, a: 1, sub_exists: true},
 				{main_exists: false, a: 2, sub_exists: true},
@@ -33,13 +32,13 @@ describe('Test 1937: EXISTS in SQL Queries and SET Statements', function () {
 		done();
 	});
 
-	test('EXISTS in SET statement', function (done) {
+	test('EXISTS in SET statement', done => {
 		const res = alasql(
 			`SET @existsLessThan3 = (SELECT EXISTS(SELECT a FROM one WHERE a < 3));
 			SET @existsGreaterThan10 = (SELECT EXISTS(SELECT a FROM one WHERE a > 10));
 			SELECT @existsLessThan3, @existsGreaterThan10;`
 		);
-		assert.deepEqual([{'@existsLessThan3': true, '@existsGreaterThan10': false}], res[2]);
+		expect([{'@existsLessThan3': true, '@existsGreaterThan10': false}], res[2]);
 		done();
 	});
 });

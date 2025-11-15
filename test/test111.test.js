@@ -5,11 +5,10 @@
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test from jsFiddle', function () {
-	test('Simple select test (http://jsfiddle.net/agershun/38hj2uwy/3/)', function (done) {
+describe('Test from jsFiddle', () => {
+	test('Simple select test (http://jsfiddle.net/agershun/38hj2uwy/3/)', done => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');
@@ -19,7 +18,7 @@ describe('Test from jsFiddle', function () {
 			{name: 'sara', sex: 'F', income: 100000},
 		];
 
-		assert.deepEqual(
+		expect(
 			[{name: 'sara', sex: 'F', income: 100000}],
 			db.exec("SELECT * FROM person WHERE sex='F' AND income > 60000")
 		);

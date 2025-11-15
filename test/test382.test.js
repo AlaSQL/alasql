@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
@@ -11,13 +10,13 @@ import DOMStorage from 'dom-storage';
 
 */
 
-describe('Test 382 - Error in UPDATE', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 382 - Error in UPDATE', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test382;USE test382');
 		done();
 	});
 
-	test('1. Create table', function (done) {
+	test('1. Create table', done => {
 		var sqldb = new alasql.Database('db');
 		sqldb.exec(
 			'CREATE TABLE Locations (' +
@@ -71,7 +70,7 @@ describe('Test 382 - Error in UPDATE', function () {
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test382');
 		done();

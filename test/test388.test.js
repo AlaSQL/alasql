@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
@@ -10,8 +9,8 @@ import DOMStorage from 'dom-storage';
   https://jira.mongodb.org/browse/SERVER-831
 */
 
-describe('Test 388 UNION ALL bug issue #485', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 388 UNION ALL bug issue #485', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test388;USE test388');
 		done();
 	});
@@ -28,7 +27,7 @@ describe('Test 388 UNION ALL bug issue #485', function () {
 		{ID: 103, Name: 'Alesya', Month: 'Mar', Savings: 300000},
 	];
 
-	test('2. Prepare tables', function (done) {
+	test('2. Prepare tables', done => {
 		alasql(
 			'CREATE TABLE t1 (' + 'ID INT,' + 'Name STRING,' + 'Month STRING,' + 'Savings MONEY' + ')'
 		);
@@ -42,13 +41,13 @@ describe('Test 388 UNION ALL bug issue #485', function () {
 		done();
 	});
 
-	test('3. SELECTs', function (done) {
+	test('3. SELECTs', done => {
 		var res = alasql('SELECT * FROM t1 UNION SELECT * FROM t2');
 		//console.log(res);
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test388');
 		done();
 	});

@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 25', function () {
-	test('JOIN USING', function (done) {
+describe('Test 25', () => {
+	test('JOIN USING', () => {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
@@ -27,13 +26,9 @@ describe('Test 25', function () {
 
 		var res = db.exec(sql);
 
-		assert.deepEqual(
-			[
-				{a: 3, b: 30},
-				{a: 4, b: 40},
-			],
-			res
-		);
-		done();
+		expect(res).toEqual([
+			{a: 3, b: 30},
+			{a: 4, b: 40},
+		]);
 	});
 });

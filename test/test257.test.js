@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (typeof window === 'undefined') {
-	describe('Test 257 INTO XLS()', function () {
-		test('1. INTO XLS()', function (done) {
+	describe('Test 257 INTO XLS()', () => {
+		test('1. INTO XLS()', done => {
 			var data = [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
@@ -22,7 +21,7 @@ if (typeof window === 'undefined') {
 				opts,
 				data,
 			]);
-			assert(res == 1);
+			expect(res == 1).toBe(true);
 
 			// Change sheet
 			var opts = {
@@ -34,7 +33,7 @@ if (typeof window === 'undefined') {
 				opts,
 				data,
 			]);
-			assert(res == 1);
+			expect(res == 1).toBe(true);
 
 			// List of sheets
 			var opts = {
@@ -50,7 +49,7 @@ if (typeof window === 'undefined') {
 				opts,
 				data,
 			]);
-			assert(res == 1);
+			expect(res == 1).toBe(true);
 
 			// Background color
 			var opts = {
@@ -61,7 +60,7 @@ if (typeof window === 'undefined') {
 				opts,
 				data,
 			]);
-			assert(res == 1);
+			expect(res == 1).toBe(true);
 
 			// Background color
 			var opts = {
@@ -99,11 +98,11 @@ if (typeof window === 'undefined') {
 				opts,
 				data,
 			]);
-			assert(res == 1);
+			expect(res == 1).toBe(true);
 			done();
 		});
 
-		test('2. jsFiddle example', function (done) {
+		test('2. jsFiddle example', done => {
 			var items = [
 				{
 					name: 'John Smith',
@@ -212,12 +211,12 @@ if (typeof window === 'undefined') {
 				opts,
 				items,
 			]);
-			assert(res == 1);
+			expect(res == 1).toBe(true);
 			done();
 		});
 
 		if (false) {
-			test('3. Areas example', function (done) {
+			test('3. Areas example', done => {
 				var data = [
 					{imemid: 123, itemname: 'Samsung TV', price: 123.0, qty: 2},
 					{imemid: 567, itemname: 'LG TV', price: 233.0, qty: 4},
@@ -230,7 +229,7 @@ if (typeof window === 'undefined') {
 						{x: 2, y: 5, h: 10, headers: true, data: true, totals: 'top'},
 					],
 				};
-				assert(false);
+				expect(false).toBe(true);
 				done();
 			});
 		}

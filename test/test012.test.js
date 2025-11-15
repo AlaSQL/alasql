@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 12', function () {
-	test('store and restore - test not ready yet! ', function (done) {
+describe('Test 12', () => {
+	test('store and restore - test not ready yet! ', () => {
 		if (false) {
 			var db = alasql.restore('mydb');
 			//	console.log(!!db);
@@ -19,6 +18,5 @@ describe('Test 12', function () {
 			//			console.log(db.queryValue('SELECT COUNT(*) FROM students'));
 			alasql.store('mydb');
 		}
-		done();
 	});
 });

@@ -1,21 +1,20 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 627 - cast float for SUM, AVG when pivot', function () {
+describe('Test 627 - cast float for SUM, AVG when pivot', () => {
 	const testId = '627'; // insert test file number
 
-	beforeAll(function () {
+	beforeAll(() => {
 		alasql('create database test' + testId);
 		alasql('use test' + testId);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test' + testId);
 	});
 
-	test('Verify results', function () {
+	test('Verify results', () => {
 		var res = [];
 
 		res = alasql(
@@ -23,7 +22,7 @@ describe('Test 627 - cast float for SUM, AVG when pivot', function () {
 			[data()]
 		);
 		//console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{
 				productLine: 'Trains',
 				Series1February: 5151,

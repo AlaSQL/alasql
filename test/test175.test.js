@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -8,8 +7,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //if(typeof window !== 'undefined') {
 
-describe('Test 175 - JOIN USING TEST', function () {
-	test('1. JOIN ON', function (done) {
+describe('Test 175 - JOIN USING TEST', () => {
+	test('1. JOIN ON', done => {
 		var data = {
 			COLORS: [
 				[1, 'red'],
@@ -28,7 +27,7 @@ describe('Test 175 - JOIN USING TEST', function () {
 			FROM ? AS COLORS JOIN ? AS FRUITS ON COLORS.[0] = FRUITS.[0]',
 			[data.COLORS, data.FRUITS]
 		);
-		assert.deepEqual(data.NEW_FRUITS, [
+		expect(data.NEW_FRUITS).toEqual([
 			[1, 'red', 'apple'],
 			[2, 'yellow', 'banana'],
 			[3, 'orange', 'orange'],
@@ -36,7 +35,7 @@ describe('Test 175 - JOIN USING TEST', function () {
 		done();
 	});
 
-	test('2. JOIN USING', function (done) {
+	test('2. JOIN USING', done => {
 		var data = {
 			COLORS: [
 				[1, 'red'],
@@ -56,7 +55,7 @@ describe('Test 175 - JOIN USING TEST', function () {
 			[data.COLORS, data.FRUITS]
 		);
 		//		console.log(data.NEW_FRUITS);
-		assert.deepEqual(data.NEW_FRUITS, [
+		expect(data.NEW_FRUITS).toEqual([
 			[1, 'red', 'apple'],
 			[2, 'yellow', 'banana'],
 			[3, 'orange', 'orange'],

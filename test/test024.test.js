@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 24', function () {
-	test('IN (select) and NOT IN (select)', function (done) {
+describe('Test 24', () => {
+	test('IN (select) and NOT IN (select)', () => {
 		var db = new alasql.Database('test24');
 		db.exec('CREATE TABLE test1 (a int, b int)');
 		db.exec('INSERT INTO test1 VALUES (1,1)');
@@ -19,16 +18,7 @@ describe('Test 24', function () {
 		db.exec('INSERT INTO test2 VALUES (3,3)');
 
 		var res = db.exec('SELECT * FROM test1 WHERE a IN (SELECT a FROM test2)');
-		assert(res.length == 2);
+		expect(res.length).toEqual(2);
 		//		console.log(res);
-		done();
-		return;
-		var res = db.exec('SELECT COLUMN a FROM test1 WHERE a IN (SELECT a FROM test2)');
-		assert.deepEqual([2, 3], res);
-		var res = db.queryArray('SELECT a FROM test1 WHERE a NOT IN (SELECT a FROM test2)');
-		assert.deepEqual([1, 4, 5, 6], res);
-
-		alasql('drop database test24');
-		done();
 	});
 });

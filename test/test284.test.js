@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 284 PRIMARY KEY with AUTOINCREMENT', function () {
-	test('1. CREATE TABLE and INSERT', function (done) {
+describe('Test 284 PRIMARY KEY with AUTOINCREMENT', () => {
+	test('1. CREATE TABLE and INSERT', done => {
 		var res = alasql(`
       CREATE DATABASE test284;
       USE DATABASE test284;
@@ -24,7 +23,7 @@ describe('Test 284 PRIMARY KEY with AUTOINCREMENT', function () {
       DROP DATABASE test284;
 	  `);
 
-		assert.deepEqual(res, [1, 1, 1, 1, 1, 1]);
+		expect(res).toEqual([1, 1, 1, 1, 1, 1]);
 
 		done();
 	});

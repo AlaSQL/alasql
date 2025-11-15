@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 05 - DELETE', function () {
-	test('DELETE WHERE ', function (done) {
+describe('Test 05 - DELETE', () => {
+	test('DELETE WHERE ', () => {
 		alasql('create database test05;use test05');
 		alasql('DROP TABLE IF EXISTS schools');
 		var sql1 = 'CREATE TABLE IF NOT EXISTS schools (schoolid INT, schoolname STRING)';
@@ -22,9 +21,8 @@ describe('Test 05 - DELETE', function () {
 		alasql(sql5);
 		alasql(sql6);
 		var res = alasql(sql7);
-		assert.equal(4, res[0].schoolid);
-		assert.equal(2, res[1].schoolid);
+		expect(4).toEqual(res[0].schoolid);
+		expect(2).toEqual(res[1].schoolid);
 		alasql('drop database test05');
-		done();
 	});
 });

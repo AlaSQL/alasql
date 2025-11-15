@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 810 - yy.Op for BETWEEN returning correct toString() result', function () {
-	test('yy.Op.toString() returns correct value when op === BETWEEN', function () {
+describe('Test 810 - yy.Op for BETWEEN returning correct toString() result', () => {
+	test('yy.Op.toString() returns correct value when op === BETWEEN', () => {
 		var expectedResult = 'id BETWEEN 1 AND 3';
 
 		var betweenOp = new alasql.yy.Op({
@@ -16,10 +15,10 @@ describe('Test 810 - yy.Op for BETWEEN returning correct toString() result', fun
 
 		var result = betweenOp.toString();
 
-		assert.equal(result, expectedResult);
+		expect(result).toEqual(expectedResult);
 	});
 
-	test('yy.Op.toString() returns correct value when op === NOT BETWEEN', function () {
+	test('yy.Op.toString() returns correct value when op === NOT BETWEEN', () => {
 		var expectedResult = 'id NOT BETWEEN 1 AND 3';
 
 		var betweenOp = new alasql.yy.Op({
@@ -31,6 +30,6 @@ describe('Test 810 - yy.Op for BETWEEN returning correct toString() result', fun
 
 		var result = betweenOp.toString();
 
-		assert.equal(result, expectedResult);
+		expect(result).toEqual(expectedResult);
 	});
 });

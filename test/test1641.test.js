@@ -1,16 +1,15 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 // only run in browser
 if (typeof window !== 'undefined')
-	describe('Test 1641 - indexdb should be able to run multiple statement queries', function () {
+	describe('Test 1641 - indexdb should be able to run multiple statement queries', () => {
 		beforeAll(() => {
 			// delete indexeddb
 			return alasql.promise('DROP IndexedDB DATABASE IF EXISTS alatest;');
 		});
-		test('A) From single lines', function (done) {
+		test('A) From single lines', done => {
 			return alasql
 				.promise(
 					'CREATE INDEXEDDB DATABASE IF NOT EXISTS alatest;' +
@@ -33,8 +32,8 @@ if (typeof window !== 'undefined')
 					return alasql.promise(['SELECT * from mytable1', 'SELECT * from mytable2']);
 				})
 				.then(function ([data1, data2]) {
-					assert.deepEqual(data1, [{myid: '1', myname: 'Mr. One'}]);
-					assert.deepEqual(data2, [{myid: '2', myname: 'Mr. Two'}]);
+					expect(data1).toEqual([{myid: '1', myname: 'Mr. One'}]);
+					expect(data2).toEqual([{myid: '2', myname: 'Mr. Two'}]);
 					done();
 				});
 		});

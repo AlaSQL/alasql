@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -9,8 +8,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 // Test is based on
 // https://msdn.microsoft.com/en-us/library/ms190349.aspx
 //
-describe('Test 236 MERGE', function () {
-	test('1. Prepare database and tables', function (done) {
+describe('Test 236 MERGE', () => {
+	test('1. Prepare database and tables', done => {
 		alasql('CREATE DATABASE test236; USE test236;');
 
 		var sql = `
@@ -29,7 +28,7 @@ describe('Test 236 MERGE', function () {
 
 		alasql(sql);
 		var res = alasql('SELECT * FROM [Target]');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{EmployeeID: 100, EmployeeName: 'Mary'},
 			{EmployeeID: 101, EmployeeName: 'Sara'},
 			{EmployeeID: 102, EmployeeName: 'Stefano'},
@@ -37,7 +36,7 @@ describe('Test 236 MERGE', function () {
 		//        console.log(res);
 
 		res = alasql('SELECT * FROM [Source]');
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{EmployeeID: 103, EmployeeName: 'Bob'},
 			{EmployeeID: 104, EmployeeName: 'Steve'},
 		]);
@@ -46,9 +45,8 @@ describe('Test 236 MERGE', function () {
 		done();
 	});
 
-	test('2. Merge', function (done) {
-		var sql = function () {
-			/*
+	test('2. Merge', done => {
+		var sql = `
 
         MERGE [Target] AS T
         USING [Source] AS S
@@ -60,17 +58,14 @@ describe('Test 236 MERGE', function () {
         WHEN NOT MATCHED BY SOURCE AND T.EmployeeName LIKE 'S%'
             THEN DELETE
 
-    */
-		}
-			.toString()
-			.slice(14, -3);
-		/// console.log(alasql.parse(sql).toString());
+   `;
+		// console.log(alasql.parse(sql).toString());
 
 		//        console.log(res);
 		done();
 	});
 
-	test('99. DROP', function (done) {
+	test('99. DROP', done => {
 		alasql('DROP DATABASE test236');
 		done();
 	});

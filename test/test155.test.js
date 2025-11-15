@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (typeof window !== 'undefined')
-	describe('Test 155 - InsexedDB INSERT', function () {
-		test('1. Multiple lines async', function (done) {
+	describe('Test 155 - InsexedDB INSERT', () => {
+		test('1. Multiple lines async', done => {
 			alasql(
 				'DROP IndexedDB DATABASE IF EXISTS ag155;' +
 					'CREATE IndexedDB DATABASE ag155;' +
@@ -22,7 +21,7 @@ if (typeof window !== 'undefined')
 				function (res) {
 					//				console.trace();
 					//			console.log(res);
-					assert.deepEqual(res, [1, 1, 1, 1, 1, 2, [{a: 1}, {a: 2}]]);
+					expect(res).toEqual([1, 1, 1, 1, 1, 2, [{a: 1}, {a: 2}]]);
 					done();
 				}
 			);

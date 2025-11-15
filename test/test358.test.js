@@ -1,18 +1,17 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 358 DROP TABLE for nultiple tables', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 358 DROP TABLE for nultiple tables', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test358;USE test358');
 		done();
 	});
 
-	test('2. Prepare Data', function (done) {
+	test('2. Prepare Data', done => {
 		alasql(`
       CREATE TABLE users( id int, name char(16) ) ; 
       INSERT INTO users VALUES (1,'John'),(2,'Lewis'),(3,'Muhammad'); 
@@ -28,30 +27,30 @@ describe('Test 358 DROP TABLE for nultiple tables', function () {
 		done();
 	});
 
-	test('3. DROP TABLE', function (done) {
+	test('3. DROP TABLE', done => {
 		var res = alasql(`
     DROP TABLE users, hobbies;
   `);
 
-		assert.deepEqual(res, 2);
-		assert.deepEqual(alasql.databases.test358.tables.users, undefined);
-		assert.deepEqual(alasql.databases.test358.tables.hobbies, undefined);
+		expect(res).toEqual(2);
+		expect(alasql.databases.test358.tables.users).toEqual(undefined);
+		expect(alasql.databases.test358.tables.hobbies).toEqual(undefined);
 
 		done();
 	});
 
-	test('4. DROP TABLE IF EXISTS', function (done) {
+	test('4. DROP TABLE IF EXISTS', done => {
 		var res = alasql(`
       DROP TABLE IF EXISTS users, hobbies, users_hobbies;
   `);
 
-		assert.deepEqual(res, 1);
-		assert.deepEqual(alasql.databases.test358.tables, {});
+		expect(res).toEqual(1);
+		expect(alasql.databases.test358.tables).toEqual({});
 
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test358');
 		done();

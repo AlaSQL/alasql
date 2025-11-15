@@ -1,24 +1,23 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (typeof window !== 'undefined') {
-	describe('Test 208 WebWorker', function () {
-		test('1. WebWorker', function (done) {
+	describe('Test 208 WebWorker', () => {
+		test('1. WebWorker', done => {
 			alasql.worker();
 			alasql('SELECT VALUE 100', [], function (res) {
-				assert(res == 100);
+				expect(res == 100).toBe(true);
 				alasql.worker(false);
 				var res = alasql('SELECT VALUE 200');
-				assert(res == 200);
+				expect(res == 200).toBe(true);
 				alasql.worker();
 				// console.log(alasql.webworker)
 				alasql('SELECT VALUE 300', [], function (res) {
-					assert(res == 300);
+					expect(res == 300).toBe(true);
 					alasql.worker(false);
 					done();
 				});

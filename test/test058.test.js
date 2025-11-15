@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 58 - Indices', function () {
+describe('Test 58 - Indices', () => {
 	/*	test('SELECT - CREATE INDEX "', function(done){
 		var test1 = [{a:1},{a:2},{a:3},{a:4}];
 		alasql("DROP TABLE IF EXISTS test1");

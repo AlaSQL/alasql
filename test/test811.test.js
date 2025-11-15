@@ -1,22 +1,21 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 811 - String / Number objects', function () {
-	beforeAll(function () {
+describe('Test 811 - String / Number objects', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test811;USE test811');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test811');
 	});
 
-	test('1. MEDIAN()', function (done) {
+	test('1. MEDIAN()', done => {
 		var t1 = [
 			{value: new Number(5)},
 			{value: new Number(6)},
@@ -28,11 +27,11 @@ describe('Test 811 - String / Number objects', function () {
 
 		var expected = [{median: 5.5}];
 
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 		done();
 	});
 
-	test('2. DISTINCT()', function (done) {
+	test('2. DISTINCT()', done => {
 		var t1 = [
 			{name: new String('A')},
 			{name: new String('B')},
@@ -42,11 +41,11 @@ describe('Test 811 - String / Number objects', function () {
 
 		var res = alasql('SELECT ARRAY(DISTINCT(SELECT `name` FROM ?)) AS `array` FROM ?', [t1, t1]);
 
-		assert.equal(res[0].array, 'A');
+		expect(res[0].array).toEqual(['A']);
 		done();
 	});
 
-	test('3. Inner Select', function (done) {
+	test('3. Inner Select', done => {
 		var t1 = [{Email: new String('A')}, {Email: new String('B')}];
 		var t2 = [
 			{Email: new String('A'), Study: new String('s1')},
@@ -71,17 +70,17 @@ describe('Test 811 - String / Number objects', function () {
 				'FROM T1 LEFT JOIN T2 ON T1.`Email` === T2.`Email`'
 		);
 
-		assert.equal(res.length, 3);
-		assert.equal(res[0].Study, 's1');
-		assert.equal(res[1].Study, 's2');
-		assert.equal(res[2].Study, 's3');
-		assert.equal(res[0].Focus, 'n1');
-		assert.equal(res[1].Focus, 'n1');
-		assert.equal(res[2].Focus, 'n1');
+		expect(res.length).toEqual(3);
+		expect(res[0].Study).toEqual(new String('s1'));
+		expect(res[1].Study).toEqual(new String('s2'));
+		expect(res[2].Study).toEqual(new String('s3'));
+		expect(res[0].Focus).toEqual('n1');
+		expect(res[1].Focus).toEqual('n1');
+		expect(res[2].Focus).toEqual('n1');
 		done();
 	});
 
-	test('4. Join Using', function (done) {
+	test('4. Join Using', done => {
 		var t1 = [
 			{Email: 'A', ID: new String('s1')},
 			{Email: 'B', ID: new String('s2')},
@@ -95,60 +94,60 @@ describe('Test 811 - String / Number objects', function () {
 
 		var res = alasql('SELECT * FROM ? JOIN ? AS T2 USING ID', [t1, t2]);
 
-		assert.equal(res.length, 3);
-		assert.equal(res[0].Email, 'A');
-		assert.equal(res[0].Name, 'n1');
+		expect(res.length).toEqual(3);
+		expect(res[0].Email).toEqual('A');
+		expect(res[0].Name).toEqual('n1');
 
 		done();
 	});
 
-	test('5a. Where In', function (done) {
+	test('5a. Where In', done => {
 		var t1 = [{ID: new String('s1')}, {ID: new String('s2')}, {ID: new String('s3')}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")', [t1]);
 
-		assert.equal(res.length, 2);
-		assert.equal(res[0].ID, 's1');
-		assert.equal(res[1].ID, 's3');
+		expect(res.length).toEqual(2);
+		expect(res[0].ID).toEqual(new String('s1'));
+		expect(res[1].ID).toEqual(new String('s3'));
 
 		done();
 	});
 
-	test('5b. Where In (literals)', function (done) {
+	test('5b. Where In (literals)', done => {
 		var t1 = [{ID: 's1'}, {ID: 's2'}, {ID: 's3'}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID IN("s1", "s3")', [t1]);
 
-		assert.equal(res.length, 2);
-		assert.equal(res[0].ID, 's1');
-		assert.equal(res[1].ID, 's3');
+		expect(res.length).toEqual(2);
+		expect(res[0].ID).toEqual('s1');
+		expect(res[1].ID).toEqual('s3');
 
 		done();
 	});
 
-	test('5c. Where NOT In', function (done) {
+	test('5c. Where NOT In', done => {
 		var t1 = [{ID: new String('s1')}, {ID: new String('s2')}, {ID: new String('s3')}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID NOT IN("s1", "s3")', [t1]);
 
-		assert.equal(res.length, 1);
-		assert.equal(res[0].ID, 's2');
+		expect(res.length).toEqual(1);
+		expect(res[0].ID).toEqual(new String('s2'));
 
 		done();
 	});
 
-	test('5d. Where NOT In (literals)', function (done) {
+	test('5d. Where NOT In (literals)', done => {
 		var t1 = [{ID: 's1'}, {ID: 's2'}, {ID: 's3'}];
 
 		var res = alasql('SELECT * FROM ? WHERE ID NOT IN("s1", "s3")', [t1]);
 
-		assert.equal(res.length, 1);
-		assert.equal(res[0].ID, 's2');
+		expect(res.length).toEqual(1);
+		expect(res[0].ID).toEqual('s2');
 
 		done();
 	});
 
-	test('6. ORDER BY two columns', function (done) {
+	test('6. ORDER BY two columns', done => {
 		var t4 = [
 			{Email: new String('A'), ID: new String('s1')},
 			{Email: new String('B'), ID: new String('s2')},
@@ -160,8 +159,8 @@ describe('Test 811 - String / Number objects', function () {
 
 		var res = alasql('SELECT * FROM T4 ORDER BY Email ASC, ID ASC', [t4]);
 
-		assert.equal(res[0].Email.valueOf(), 'A');
-		assert.equal(res[0].ID.valueOf(), 's1');
+		expect(res[0].Email.valueOf()).toEqual('A');
+		expect(res[0].ID.valueOf()).toEqual('s1');
 
 		done();
 	});

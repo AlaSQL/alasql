@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 51 - Foreign Keys)', function () {
+describe('Test 51 - Foreign Keys)', () => {
 	if (false) {
-		describe('FOREIGN KEYS with one component and PRIMARY KEY', function () {
-			test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+		describe('FOREIGN KEYS with one component and PRIMARY KEY', () => {
+			test('CREATE TABLE with FOREIGN KEYS and INSERT', done => {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -18,29 +17,29 @@ describe('Test 51 - Foreign Keys)', function () {
 				alasql('INSERT INTO persons VALUES ("Peter", "Rome")');
 				alasql('INSERT INTO persons VALUES ("Telma", "Paris")');
 				var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 				var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 				done();
 			});
 
-			test('Insert wrong data without references', function (done) {
-				assert.throws(function () {
+			test('Insert wrong data without references', done => {
+				expect(() => {
 					alasql('INSERT INTO persons VALUES ("Angela", "Berlin")');
-				});
+				}).toThrow();
 				done();
 			});
 
-			test('UPDATE wrong data without references', function (done) {
-				assert.throws(function () {
+			test('UPDATE wrong data without references', done => {
+				expect(() => {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
-				});
+				}).toThrow();
 				done();
 			});
 		});
 
-		describe('FOREIGN KEYS with one component without PRIMARY KEY', function () {
-			test('The same, but without PRIMARY KEY', function (done) {
+		describe('FOREIGN KEYS with one component without PRIMARY KEY', () => {
+			test('The same, but without PRIMARY KEY', done => {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -52,30 +51,30 @@ describe('Test 51 - Foreign Keys)', function () {
 				alasql('INSERT INTO persons VALUES ("Peter", "Rome")');
 				alasql('INSERT INTO persons VALUES ("Telma", "Paris")');
 				var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 				var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 
 				done();
 			});
 
-			test('Insert wrong data without references', function (done) {
-				assert.throws(function () {
+			test('Insert wrong data without references', done => {
+				expect(() => {
 					alasql('INSERT INTO persons VALUES ("Angela", "Berlin")');
-				});
+				}).toThrow();
 				done();
 			});
 
-			test('UPDATE wrong data without references', function (done) {
-				assert.throws(function () {
+			test('UPDATE wrong data without references', done => {
+				expect(() => {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
-				});
+				}).toThrow();
 				done();
 			});
 		});
 
-		describe('FOREIGN KEYS with two components and PRIMARY KEY', function () {
-			test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+		describe('FOREIGN KEYS with two components and PRIMARY KEY', () => {
+			test('CREATE TABLE with FOREIGN KEYS and INSERT', done => {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -88,43 +87,43 @@ describe('Test 51 - Foreign Keys)', function () {
 				alasql('INSERT INTO persons VALUES ("Peter", "Italy","Rome")');
 				alasql('INSERT INTO persons VALUES ("Telma", "France","Paris")');
 				var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 				var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 				done();
 			});
 
-			test('Insert wrong data without references', function (done) {
-				assert.throws(function () {
+			test('Insert wrong data without references', done => {
+				expect(() => {
 					alasql('INSERT INTO persons VALUES ("Angela", "Germany","Berlin")');
-				});
+				}).toThrow();
 
-				assert.throws(function () {
+				expect(() => {
 					alasql('INSERT INTO persons VALUES ("Angela", "Italy","Berlin")');
-				});
+				}).toThrow();
 
 				alasql('INSERT INTO persons VALUES ("Angela", "Italy","Rome")');
 
 				var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
-				assert.equals(res, 3);
+				expect(res).toEqual(3);
 
 				done();
 			});
 
-			test('UPDATE wrong data without references', function (done) {
-				assert.throws(function () {
+			test('UPDATE wrong data without references', done => {
+				expect(() => {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
-				});
+				}).toThrow();
 
-				assert.throws(function () {
+				expect(() => {
 					alasql('UPDATE persons SET country = "Poland" WHERE name = "Peter"');
-				});
+				}).toThrow();
 				done();
 			});
 		});
 
-		describe('FOREIGN KEYS with two components and without PRIMARY KEY', function () {
-			test('CREATE TABLE with FOREIGN KEYS and INSERT', function (done) {
+		describe('FOREIGN KEYS with two components and without PRIMARY KEY', () => {
+			test('CREATE TABLE with FOREIGN KEYS and INSERT', done => {
 				alasql('DROP TABLE IF EXISTS persons');
 				alasql('DROP TABLE IF EXISTS citiess');
 				alasql(
@@ -137,37 +136,37 @@ describe('Test 51 - Foreign Keys)', function () {
 				alasql('INSERT INTO persons VALUES ("Peter", "Italy","Rome")');
 				alasql('INSERT INTO persons VALUES ("Telma", "France","Paris")');
 				var res = alasql.queryValue('SELECT COUNT (*) FROM cities');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 				var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
-				assert.equals(res, 2);
+				expect(res).toEqual(2);
 				done();
 			});
 
-			test('Insert wrong data without references', function (done) {
-				assert.throws(function () {
+			test('Insert wrong data without references', done => {
+				expect(() => {
 					alasql('INSERT INTO persons VALUES ("Angela", "Germany","Berlin")');
-				});
+				}).toThrow();
 
-				assert.throws(function () {
+				expect(() => {
 					alasql('INSERT INTO persons VALUES ("Angela", "Italy","Berlin")');
-				});
+				}).toThrow();
 
 				alasql('INSERT INTO persons VALUES ("Angela", "Italy","Rome")');
 
 				var res = alasql.queryValue('SELECT COUNT (*) FROM persons');
-				assert.equals(res, 3);
+				expect(res).toEqual(3);
 
 				done();
 			});
 
-			test('UPDATE wrong data without references', function (done) {
-				assert.throws(function () {
+			test('UPDATE wrong data without references', done => {
+				expect(() => {
 					alasql('UPDATE persons SET city = "Warsaw" WHERE name = "Peter"');
-				});
+				}).toThrow();
 
-				assert.throws(function () {
+				expect(() => {
 					alasql('UPDATE persons SET country = "Poland" WHERE name = "Peter"');
-				});
+				}).toThrow();
 				done();
 			});
 		});

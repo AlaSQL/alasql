@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 144 - Use three databases simultaniosly', function () {
-	test('1. Create database', function (done) {
+describe('Test 144 - Use three databases simultaniosly', () => {
+	test('1. Create database', done => {
 		alasql('CREATE DATABASE test144db1');
 		alasql('CREATE DATABASE test144db2');
 		alasql('CREATE DATABASE test144db3');
@@ -32,7 +31,7 @@ describe('Test 144 - Use three databases simultaniosly', function () {
 		done();
 	});
 
-	test('99. Drop database', function (done) {
+	test('99. Drop database', done => {
 		alasql('DROP DATABASE test144db1');
 		alasql('DROP DATABASE test144db2');
 		alasql('DROP DATABASE test144db3');

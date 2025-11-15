@@ -1,18 +1,17 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 143 streamfn', function () {
-	test('1. Create database', function (done) {
+describe('Test 143 streamfn', () => {
+	test('1. Create database', done => {
 		alasql('CREATE DATABASE test143; use test143');
 		done();
 	});
 
-	test('3. INNER JOIN on stream', function (done) {
+	test('3. INNER JOIN on stream', done => {
 		test143(true);
 		alasql.databases[alasql.useid].dbversion++;
 		test143(false);
@@ -25,7 +24,7 @@ describe('Test 143 streamfn', function () {
 		done();
 	});
 
-	test('99. Drop database', function (done) {
+	test('99. Drop database', done => {
 		alasql('DROP DATABASE test143');
 		done();
 	});
@@ -79,7 +78,7 @@ function test143(dontcache) {
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('LEFT',res.length);
-	//		assert(res.length == 13013);
+	//		expect(res.length == 13013).toBe(true);
 
 	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q RIGHT join ? t using a', [
 		myfn,
@@ -88,7 +87,7 @@ function test143(dontcache) {
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('RIGHT',res.length);
-	//assert(res.length == 13039);
+	//expect(res.length == 13039).toBe(true);
 
 	var res = alasql('select q.a, q.b, t.a as ta, t.c from ? q OUTER join ? t using a', [
 		myfn,
@@ -97,7 +96,7 @@ function test143(dontcache) {
 	nc3 += res.length;
 	//console.table(res);
 	//console.log('OUTER',res.length);
-	//		assert(res.length == 13039);
+	//		expect(res.length == 13039).toBe(true);
 	//}
 	//}
 	// var res = alasql('select q.a, q.b, t.c from ? q OUTER join ? t using a '+

@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
  This sample beased on SQLLOGICTEST
 */
 
-describe('Test 404 OUTER JOIN', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 404 OUTER JOIN', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test404;USE test404');
 		done();
 	});
@@ -31,7 +30,7 @@ describe('Test 404 OUTER JOIN', function () {
 		],
 	};
 
-	test('2. Create tables and insert data', function (done) {
+	test('2. Create tables and insert data', done => {
 		alasql('create table colors (id int, name text)');
 		alasql('create table fruits (id int, name text)');
 		alasql('create table mascots (id int, name text)');
@@ -58,12 +57,12 @@ describe('Test 404 OUTER JOIN', function () {
 		done();
 	});
 
-	test('3. Test FULL OUTER JOIN with 2 tables', function (done) {
+	test('3. Test FULL OUTER JOIN with 2 tables', done => {
 		var res = alasql(
 			'select t0.name t0n ,t1.name t1n from colors t0 full outer join fruits t1 on t1.name = t0.name'
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{t0n: 'red', t1n: undefined},
 			{t0n: 'blue', t1n: undefined},
 			{t0n: 'orange', t1n: 'orange'},
@@ -74,12 +73,12 @@ describe('Test 404 OUTER JOIN', function () {
 		done();
 	});
 
-	test('4. Test FULL OUTER JOIN with 3 tables using cte workaround', function (done) {
+	test('4. Test FULL OUTER JOIN with 3 tables using cte workaround', done => {
 		var res = alasql(
 			'with t1 as (select COALESCE(t0.name, t1.name) AS name, t0.name as t0n, t0.id as t0id, t1.name as t1n, t1.id as t1id FROM colors t0 full outer join fruits t1 on t1.name = t0.name) select t0n, t1n, t2.name as t2n from t1 full outer join mascots t2 on t2.name = t1.name'
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{t0n: 'red', t1n: undefined, t2n: undefined},
 			{t0n: 'blue', t1n: undefined, t2n: undefined},
 			{t0n: 'orange', t1n: 'orange', t2n: 'orange'},
@@ -92,12 +91,12 @@ describe('Test 404 OUTER JOIN', function () {
 		done();
 	});
 
-	test.skip('5. Test FULL OUTER JOIN with 3 tables without workaround', function (done) {
+	test.skip('5. Test FULL OUTER JOIN with 3 tables without workaround', done => {
 		var res = alasql(
 			'select t0.name t0n ,t1.name t1n, t2.name t2n from colors t0 full outer join fruits t1 on t1.name = t0.name full outer join mascots t2 on t2.name = t0.name or t2.name = t1.name'
 		);
 		//console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{t0n: 'red', t1n: undefined, t2n: undefined},
 			{t0n: 'blue', t1n: undefined, t2n: undefined},
 			{t0n: 'orange', t1n: 'orange', t2n: 'orange'},
@@ -110,7 +109,7 @@ describe('Test 404 OUTER JOIN', function () {
 		done();
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test404');
 		done();
 	});

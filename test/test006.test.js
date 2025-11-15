@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 06', function () {
-	test('Fiddle test ', function (done) {
+describe('Test 06', () => {
+	test('Fiddle test ', () => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE person (name STRING, sex STRING, income INT)');
@@ -16,7 +15,6 @@ describe('Test 06', function () {
 
 		var res = db.exec("SELECT * FROM person WHERE sex='F' AND income > 60000");
 
-		assert.deepEqual([{name: 'sara', sex: 'F', income: 100000}], res);
-		done();
+		expect(res).toEqual([{name: 'sara', sex: 'F', income: 100000}]);
 	});
 });

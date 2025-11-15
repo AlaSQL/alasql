@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 220 WITH clause', function () {
-	test('1. One WITH', function (done) {
+describe('Test 220 WITH clause', () => {
+	test('1. One WITH', done => {
 		var sql =
 			'WITH one AS (SELECT * FROM ?), \
     		two AS (SELECT * FROM ?) \
@@ -22,7 +21,7 @@ describe('Test 220 WITH clause', function () {
 			]
 		);
 		//        console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 10},
 			{a: 1, b: 20},
 			{a: 2, b: 10},

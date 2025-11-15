@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
  This sample beased on SQLLOGICTEST
 */
 
-describe('Test 406. Complex SEARCH', function () {
+describe('Test 406. Complex SEARCH', () => {
 	var data = {
 		10: {},
 		12: {
@@ -40,7 +39,7 @@ describe('Test 406. Complex SEARCH', function () {
 		},
 	};
 
-	test('1. Parse complex JSON', function (done) {
+	test('1. Parse complex JSON', done => {
 		//      alasql('CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;')
 		if (typeof window !== 'undefined') {
 			var res = alasql(
@@ -52,7 +51,7 @@ describe('Test 406. Complex SEARCH', function () {
 					'/restest406.xlsx",{headers:true}) FROM $0',
 				[data]
 			);
-			assert(res == 1);
+			expect(res == 1).toBe(true);
 		}
 		var res = alasql(
 			'SEARCH KEYS() AS @a EX($0->(_)) AS @b \
@@ -61,7 +60,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM $0',
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: '12', c: '20', value: 1, id: 1},
 			{a: '12', c: '100', value: 12, id: 1},
 			{a: '14', c: '100', value: 14, id: 2},
@@ -76,7 +75,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM $0',
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: '12', c: '20', value: 1, id: 1},
 			{a: '12', c: '100', value: 12, id: 1},
 			{a: '14', c: '100', value: 14, id: 2},
@@ -87,7 +86,7 @@ describe('Test 406. Complex SEARCH', function () {
 		done();
 	});
 
-	test('2. With OF()', function (done) {
+	test('2. With OF()', done => {
 		var data1 = {
 			1: 10,
 			2: 20,
@@ -99,7 +98,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM ?',
 			[data1]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{key: '1', value: 10},
 			{key: '2', value: 20},
 		]);
@@ -111,7 +110,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM ?',
 			[data]
 		);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: '12', c: '20', value: 1, id: 1},
 			{a: '12', c: '100', value: 12, id: 1},
 			{a: '14', c: '100', value: 14, id: 2},

@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 20 - User-defined functions', function () {
-	test('User-defined functions', function (done) {
+describe('Test 20 - User-defined functions', () => {
+	test('User-defined functions', () => {
 		var db = new alasql.Database('db');
 		db.exec('CREATE TABLE test1 (a int)');
 		db.exec('INSERT INTO test1 VALUES (1)');
@@ -28,11 +27,10 @@ describe('Test 20 - User-defined functions', function () {
 		};
 
 		var res = db.exec('SELECT a, double(a) AS b, cubic(a) AS c FROM test1 WHERE a = 2');
-		assert.deepEqual([{a: 2, b: 4, c: 8}], res);
-		done();
+		expect(res).toEqual([{a: 2, b: 4, c: 8}]);
 	});
 
-	test('2 - User-defined functions + compilation', function (done) {
+	test('2 - User-defined functions + compilation', () => {
 		alasql.fn.cubic3 = function (x) {
 			return x * x * x;
 		};
@@ -40,11 +38,10 @@ describe('Test 20 - User-defined functions', function () {
 		//		console.log(36,cub());
 		//		console.log(37,cub([1]));
 		//		console.log(38,cub([2]));
-		assert(8 == cub([2]));
-		done();
+		expect(cub([2])).toEqual(8);
 	});
 
-	test("3 - Database's user-defined functions + compilation", function (done) {
+	test("3 - Database's user-defined functions + compilation", () => {
 		alasql('create database test20;use test20');
 		alasql('create table one (a int)');
 		alasql('insert into one values (10), (20), (30)');
@@ -57,28 +54,27 @@ describe('Test 20 - User-defined functions', function () {
 		};
 		var runspy = alasql.compile('select column spy(a) from one');
 		var res = runspy();
-		assert.deepEqual(res, [1, 2, 3]);
+		expect(res).toEqual([1, 2, 3]);
 
 		num = 0;
 		var runspy2 = alasql.compile('select value max(spy(a)) from one');
 		var res = runspy2();
-		assert.deepEqual(res, 3);
+		expect(res).toEqual(3);
 
 		num = 0;
 		var runspy3 = alasql.compile('select value sum(spy(a)) from one');
 		var res = runspy3();
-		assert.deepEqual(res, 6);
+		expect(res).toEqual(6);
 
 		num = 0;
 		var runspy4 = alasql.compile('select value min(spy(a)) from one');
 		var res = runspy4();
-		assert.deepEqual(res, 1);
+		expect(res).toEqual(1);
 
 		alasql('drop database test20');
-		done();
 	});
 
-	test("4 - Database's specific user-defined functions", function (done) {
+	test("4 - Database's specific user-defined functions", () => {
 		alasql('create database test20a;use test20a');
 		alasql('create table one (a int)');
 		alasql('insert into one values (10), (20), (30)');
@@ -88,7 +84,7 @@ describe('Test 20 - User-defined functions', function () {
 		};
 
 		var res = alasql('select COLUMN myfun(a) from one');
-		assert.deepEqual(res, [11, 21, 31]);
+		expect(res).toEqual([11, 21, 31]);
 
 		alasql('create database test20b;use test20b');
 		alasql('create table one (a int)');
@@ -99,14 +95,13 @@ describe('Test 20 - User-defined functions', function () {
 		};
 
 		var res = alasql('select column myfun(a) from one');
-		assert.deepEqual(res, [12, 22, 32]);
+		expect(res).toEqual([12, 22, 32]);
 
 		// alasql('use test20a');
 		// var res = alasql.array('select myfun(a) from one');
-		// assert.deepEqual(res,[11,21,31]);
+		// expect(res).toEqual([11,21,31]);
 
 		alasql('drop database test20a');
 		alasql('drop database test20b');
-		done();
 	});
 });

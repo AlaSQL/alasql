@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 var testNum = '1789';
 
-describe('Test ' + testNum + ' - joins with subquery', function () {
-	test('Join with simple subquery', function () {
+describe('Test ' + testNum + ' - joins with subquery', () => {
+	test('Join with simple subquery', () => {
 		var expected = [
 			{a: 'data1_1', b: 'data2_1'},
 			{a: 'data1_1', b: 'data2_2'},
@@ -28,10 +27,10 @@ describe('Test ' + testNum + ' - joins with subquery', function () {
 			[data1, data2]
 		);
 
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 	});
 
-	test('Join with aggregate in subquery', function () {
+	test('Join with aggregate in subquery', () => {
 		var expected = [
 			{outcome: 'pass', n: 2, p: 0.6666666666666666},
 			{outcome: 'fail', n: 1, p: 0.3333333333333333},
@@ -55,6 +54,6 @@ describe('Test ' + testNum + ' - joins with subquery', function () {
 			[data, data]
 		);
 
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 	});
 });

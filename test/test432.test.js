@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
-describe('Test 432 Test FIRST(*)', function () {
-	test('1. FIRST(*)', function (done) {
+describe('Test 432 Test FIRST(*)', () => {
+	test('1. FIRST(*)', done => {
 		var data = [
 			{a: 1, b: 10, c: 1},
 			{a: 1, b: 20, c: 2},
@@ -12,7 +11,7 @@ describe('Test 432 Test FIRST(*)', function () {
 			{a: 2, b: 30, c: 5},
 		];
 		var res = alasql('SELECT *, COUNT(b) FROM ? GROUP BY a,b', [data]);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, b: 10, 'COUNT(b)': 1, c: 1},
 			{a: 1, b: 20, 'COUNT(b)': 1, c: 2},
 			{a: 2, b: 20, 'COUNT(b)': 1, c: 3},
@@ -21,7 +20,7 @@ describe('Test 432 Test FIRST(*)', function () {
 
 		var res = alasql('SELECT *, COUNT(b) FROM ? GROUP BY a', [data]);
 		//    console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{a: 1, 'COUNT(b)': 2, b: 10, c: 1},
 			{a: 2, 'COUNT(b)': 3, b: 20, c: 3},
 		]);

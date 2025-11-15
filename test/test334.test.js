@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -10,26 +9,26 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 //http://stackoverflow.com/questions/18811265/sql-creating-temporary-variables
 //
-describe('Test 334 WITH CTE', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 334 WITH CTE', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test334;USE test334');
 
 		done();
 	});
 
-	test.skip('2. Create table', function (done) {
-		var res = alasql(function () {
+	test.skip('2. Create table', done => {
+		var res = alasql(() => {
 			/*
       CREATE TABLE grocery (name STRING, price MONEY, quantity INT);
       INSERT INTO test VALUES ("Apples",10,10),("Melons",15,20),("Cucumbers",40,50);
     */
 		});
-		assert.deepEqual(res, [1, 1]);
+		expect(res).toEqual([1, 1]);
 		done();
 	});
 
-	test.skip('3. WITH SELECT', function (done) {
-		var res = alasql(function () {
+	test.skip('3. WITH SELECT', done => {
+		var res = alasql(() => {
 			/*
 
  With Totals as
@@ -51,7 +50,7 @@ describe('Test 334 WITH CTE', function () {
     */
 		});
 		console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{tax: '0%', name: 'Apples', price: 10, quantity: 10, 'Total price': 100},
 			{tax: '3%', name: 'Melons', price: 15, quantity: 20, 'Total price': 300},
 			{
@@ -66,7 +65,7 @@ describe('Test 334 WITH CTE', function () {
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test334');
 		done();
 	});

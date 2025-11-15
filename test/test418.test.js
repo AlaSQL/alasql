@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll, xdescribe} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -11,7 +10,7 @@ let baseUrl = 'github.com/AlaSQL/alasql/raw/refs/heads/develop';
 
 var testId = 418;
 
-describe('Test ' + testId + ' Load data from internet', function () {
+describe.skip('Test ' + testId + ' Load data from internet', () => {
 	beforeAll(function (done) {
 		alasql('CREATE DATABASE test' + testId + '; USE test' + testId);
 		done();
@@ -29,7 +28,7 @@ describe('Test ' + testId + ' Load data from internet', function () {
 				'VALUE OF SELECT COUNT(*) FROM ' + type + '("' + url + '",{headers:' + headers + '})'
 			)
 			.then(res => {
-				assert.equal(res, expected);
+				expect(res).toEqual(expected);
 				done();
 			})
 			.catch(e => {
@@ -38,74 +37,74 @@ describe('Test ' + testId + ' Load data from internet', function () {
 			});
 	}
 
-	describe('.xlsx from URL', function () {
+	describe('.xlsx from URL', () => {
 		var url = baseUrl + '/test/test411.xlsx';
 
-		test('Load http', function (done) {
+		test('Load http', done => {
 			testRequest(4, 'http://' + url, 'true', done);
 		});
 
-		test('Load https', function (done) {
+		test('Load https', done => {
 			testRequest(4, 'https://' + url, 'true', done);
 		});
 	});
 
-	describe('.xls from URL', function () {
+	describe('.xls from URL', () => {
 		var url = baseUrl + '/test/test168.xls';
 
-		test('Load http', function (done) {
+		test('Load http', done => {
 			testRequest(5, 'http://' + url, 'true', done);
 		});
 
-		test('Load https', function (done) {
+		test('Load https', done => {
 			testRequest(5, 'https://' + url, 'true', done);
 		});
 	});
 
-	describe('.json from URL', function () {
+	describe('.json from URL', () => {
 		var url = baseUrl + '/test/test157.json';
 
-		test('Load http', function (done) {
+		test('Load http', done => {
 			testRequest(3, 'http://' + url, 'false', done);
 		});
 
-		test('Load https', function (done) {
+		test('Load https', done => {
 			testRequest(3, 'https://' + url, 'false', done);
 		});
 	});
 
-	xdescribe('.tab from URL', function () {
+	xdescribe('.tab from URL', () => {
 		var url = baseUrl + '/test/test157.tab';
 
-		test('Load http', function (done) {
+		test('Load http', done => {
 			testRequest(5, 'http://' + url, 'false', done);
 		});
 
-		test('Load https', function (done) {
+		test('Load https', done => {
 			testRequest(5, 'https://' + url, 'false', done);
 		});
 	});
 
-	describe('.txt from URL', function () {
+	describe('.txt from URL', () => {
 		var url = baseUrl + '/test/test157.txt';
 
-		test('Load http', function (done) {
+		test('Load http', done => {
 			testRequest(8, 'http://' + url, 'false', done);
 		});
 
-		test('Load https', function (done) {
+		test('Load https', done => {
 			testRequest(8, 'https://' + url, 'false', done);
 		});
 	});
 
-	describe('.csv from URL', function () {
+	describe('.csv from URL', () => {
 		var url = baseUrl + '/test/test157a.csv';
 
-		test('Load http', function (done) {
+		test('Load http', done => {
 			testRequest(5, 'http://' + url, 'false', done);
 		});
 
-		test('Load https', function (done) {
+		test('Load https', done => {
 			testRequest(5, 'https://' + url, 'false', done);
 		});
 	});

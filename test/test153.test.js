@@ -1,14 +1,13 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (typeof window !== 'undefined') {
-	describe('Test 153 - Async test1...', function () {
-		test('1. Create database', function (done) {
+	describe('Test 153 - Async test1...', () => {
+		test('1. Create database', done => {
 			alasql('CREATE DATABASE IF NOT EXISTS test153');
 			alasql('CREATE TABLE test153.one (a int)');
 			var getfn = function (i, cb) {
@@ -18,21 +17,21 @@ if (typeof window !== 'undefined') {
 				return res;
 			};
 			var res = alasql('SELECT * FROM ?', [getfn]);
-			assert(res.length == 4);
+			expect(res.length == 4).toBe(true);
 
 			var res = alasql('SELECT * FROM ?', [getfn], function (res) {
-				assert(res.length == 4);
+				expect(res.length == 4).toBe(true);
 				done();
 			});
 
 			// No params
 			var res = alasql('VALUE OF SELECT 123', function (res) {
-				assert.equal(123, res);
+				expect(123).toEqual(res);
 				done();
 			});
 		});
 
-		test('99. Detach database', function (done) {
+		test('99. Detach database', done => {
 			alasql('DROP DATABASE test153');
 			done();
 		});

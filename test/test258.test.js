@@ -1,43 +1,42 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 258 SqlLogic Parser Test #1', function () {
-	test('1. Sqllogic', function (done) {
+describe('Test 258 SqlLogic Parser Test #1', () => {
+	test('1. Sqllogic', done => {
 		alasql('CREATE DATABASE test258; USE test258');
 		done();
 	});
 
-	test('2. Create table', function (done) {
+	test('2. Create table', done => {
 		var res = alasql('CREATE TABLE t1( x INTEGER, y VARCHAR(8) )');
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		done();
 	});
 
-	test('3. Create index', function (done) {
+	test('3. Create index', done => {
 		var res = alasql('CREATE INDEX t1i1 ON t1(x)');
-		assert(res == 1); // Actaully we just skip it
+		expect(res == 1).toBe(true); // Actaully we just skip it
 		done();
 	});
 
-	test('4. Create temporary view', function (done) {
+	test('4. Create temporary view', done => {
 		var res = alasql('CREATE TEMPORARY VIEW view2 AS SELECT x FROM t1 WHERE x>0');
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		done();
 	});
 
-	test('5. Create temporary table', function (done) {
+	test('5. Create temporary table', done => {
 		var res = alasql('CREATE TEMPORARY TABLE one (x NUMBER, y STRING)');
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		alasql('DROP TABLE one');
 		done();
 	});
 
-	test('6. IF EXISTS', function (done) {
+	test('6. IF EXISTS', done => {
 		// Temporary create
 		// Should we create it?
 		//    alasql('CREATE DATABASE INFORMATION_SCHEMA');
@@ -53,7 +52,7 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
 		done();
 	});
 
-	test('7. Create and drop temporary view', function (done) {
+	test('7. Create and drop temporary view', done => {
 		// Create tables
 		alasql('CREATE TABLE tab0 (pk, col0, col1, col2, col3)');
 
@@ -63,18 +62,18 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
         WHERE ((col0 IS NULL) OR col3 > 5 OR col3 <= 50 OR col1 < 83.11))) \
         OR col0 > 75'
 		);
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 
 		var res = alasql('DROP VIEW view_1_tab0_157');
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 
 		var res = alasql('DROP TABLE tab0');
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 
 		done();
 	});
 
-	test('8. Huge view', function (done) {
+	test('8. Huge view', done => {
 		// Create a table
 		alasql('CREATE TABLE tab3 (pk, col0, col1, col2, col3, col4)');
 
@@ -139,26 +138,26 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
           AND col4 IN (11.6,7.61,98.26,24.65,81.81,48.50)) AND col1 <= 57.49) \
           OR (col3 > 27))))) AND col0 = 54 AND col0 < 39)'
 		);
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 
 		alasql('DROP TABLE tab3');
 		done();
 	});
 
-	test('9. FROM CROSS JOIN ', function (done) {
+	test('9. FROM CROSS JOIN ', done => {
 		alasql('CREATE TABLE tab1; CREATE TABLE tab2');
 		alasql('SELECT - 92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 ) ');
 		alasql('DROP TABLE tab1; DROP TABLE tab2; ');
 		done();
 	});
 
-	test('11a. SELECT AVG', function (done) {
+	test('11a. SELECT AVG', done => {
 		var res = alasql('SELECT VALUE AVG(10)');
-		assert(res == 10);
+		expect(res == 10).toBe(true);
 		done();
 	});
 
-	test('11. SELECT ALL', function (done) {
+	test('11. SELECT ALL', done => {
 		alasql(
 			'SELECT ALL CASE - 18 WHEN + 52 THEN - + 49 * 53 END \
         * - 5 * + AVG ( 12 ) + + + 95 + 34 * - 53'
@@ -166,7 +165,7 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
 		done();
 	});
 
-	test('12. SELECT ', function (done) {
+	test('12. SELECT ', done => {
 		alasql(
 			'SELECT - 3 * 19 * - CASE + 59 WHEN + 5 THEN NULL \
         ELSE - - CASE 41 WHEN 84 * NULLIF ( AVG ( + 76 ), - 4 ) \
@@ -175,7 +174,7 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
 		done();
 	});
 
-	test('15. SELECT ALL', function (done) {
+	test('15. SELECT ALL', done => {
 		//      alasql('CREATE TABLE t1');
 		alasql(
 			'SELECT CASE a+1 WHEN b THEN 111 WHEN c THEN 222 WHEN d \
@@ -185,7 +184,7 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
 		done();
 	});
 
-	test('16. SELECT ALL', function (done) {
+	test('16. SELECT ALL', done => {
 		//      alasql('CREATE TABLE t1');
 		alasql(
 			'SELECT (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b) \
@@ -195,22 +194,22 @@ describe('Test 258 SqlLogic Parser Test #1', function () {
 		done();
 	});
 
-	test('17. SELECT ALL', function (done) {
+	test('17. SELECT ALL', done => {
 		alasql('CREATE TABLE t8(e8,d8,c8,b8,a8)');
 		var res = alasql('CREATE INDEX t8all ON t8(e8, d8 ASC, c8, b8 ASC, a8)');
-		assert(res == 1);
+		expect(res == 1).toBe(true);
 		alasql('DROP TABLE t8');
 		done();
 	});
 
-	test('14. SELECT ALL', function (done) {
+	test('14. SELECT ALL', done => {
 		alasql('CREATE TABLE tab0;CREATE TABLE tab2');
 		alasql('SELECT * FROM tab0, tab2 AS cor0 CROSS JOIN tab0 AS cor1');
 		alasql('DROP TABLE tab0;DROP TABLE tab2');
 		done();
 	});
 
-	test('99. Drop Database', function (done) {
+	test('99. Drop Database', done => {
 		alasql('DROP DATABASE test258');
 		done();
 	});

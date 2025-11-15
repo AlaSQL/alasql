@@ -1,23 +1,22 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 245 Square brackets and JavaScript', function () {
-	test('1. Square brackets', function (done) {
+describe('Test 245 Square brackets and JavaScript', () => {
+	test('1. Square brackets', done => {
 		var data = [{'[one]': 1}, {'[one]': 2}];
 
 		var res = alasql('SELECT COLUMN `[one]` FROM ?', [data]);
 
 		//console.log(res);
-		assert.deepEqual(res, [1, 2]);
+		expect(res).toEqual([1, 2]);
 		done();
 	});
 
-	test('2. JavaScript', function (done) {
+	test('2. JavaScript', done => {
 		var data = [
 			{a: 'Warsaw'},
 			{a: 'Berlin'},
@@ -31,7 +30,7 @@ describe('Test 245 Square brackets and JavaScript', function () {
 		var res = alasql('SELECT VALUE ``1+1``', [data]);
 		//console.log(res);
 
-		assert.equal(res, 2);
+		expect(res).toEqual(2);
 		done();
 	});
 });

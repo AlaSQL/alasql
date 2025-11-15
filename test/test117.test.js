@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 117 - Table name resolution', function () {
-	beforeAll(function () {
+describe('Test 117 - Table name resolution', () => {
+	beforeAll(() => {
 		alasql('create database test117');
 		alasql('use test117');
 		alasql('create table one (a int, b int)');
@@ -13,31 +12,31 @@ describe('Test 117 - Table name resolution', function () {
 		alasql('insert into two values (10,1,1), (20,2,2), (30,3,3)');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('drop database test117');
 	});
 
-	test('1. One table', function (done) {
+	test('1. One table', done => {
 		var res = alasql('select value sum(c) from one join two using a');
-		assert(res == 6);
+		expect(res == 6).toBe(true);
 		done();
 	});
 
-	test.skip('2. One table', function (done) {
+	test.skip('2. One table', done => {
 		var res = alasql('select value sum(b) from one join two using a');
-		assert(res == 600);
+		expect(res == 600).toBe(true);
 		done();
 	});
 
-	test.skip('3. One table', function (done) {
+	test.skip('3. One table', done => {
 		var res = alasql('select value sum(one.b) from one join two using a');
-		assert(res == 600);
+		expect(res == 600).toBe(true);
 		done();
 	});
 
-	test.skip('4. One table', function (done) {
+	test.skip('4. One table', done => {
 		var res = alasql('select value sum(two.b) from one join two using a');
-		assert(res == 6);
+		expect(res == 6).toBe(true);
 		done();
 	});
 });

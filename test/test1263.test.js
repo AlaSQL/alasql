@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 1263 - Nested SELECT', function () {
+describe('Test 1263 - Nested SELECT', () => {
 	var t1 = [
 		{id: '1', a: 'one'},
 		{id: '2', a: 'two'},
@@ -17,7 +16,7 @@ describe('Test 1263 - Nested SELECT', function () {
 		{id: '6', b: 'F'},
 	];
 
-	test('1. JOIN', function (done) {
+	test('1. JOIN', done => {
 		var expected = [
 			{id: '1', a: 'one', b: 'A'},
 			{id: '2', a: 'two', b: 'B'},
@@ -28,13 +27,13 @@ describe('Test 1263 - Nested SELECT', function () {
 		];
 
 		var res = alasql('SELECT * FROM ? T1 OUTER JOIN ? T2 ON T1.id = T2.id', [t1, t2]);
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 
 		var res = alasql('SELECT * FROM ? T1 OUTER JOIN (SELECT * FROM ?) T2 ON T1.id = T2.id', [
 			t1,
 			t2,
 		]);
-		assert.deepEqual(res, expected);
+		expect(res).toEqual(expected);
 		done();
 	});
 });

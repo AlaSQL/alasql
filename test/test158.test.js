@@ -1,13 +1,12 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
 if (typeof window !== 'undefined') {
-	describe('Test 158 - INSERT/DELETE/UPDATE in IndexedDB', function () {
+	describe('Test 158 - INSERT/DELETE/UPDATE in IndexedDB', () => {
 		test('1. Create table and INSERT', async () => {
 			const sql = alasql.promise;
 
@@ -22,33 +21,33 @@ if (typeof window !== 'undefined') {
 			res[0] = 1;
 			res[3] = 1;
 
-			assert.deepEqual(res, [1, 1, 1, 1, 1]);
+			expect(res).toEqual([1, 1, 1, 1, 1]);
 
 			const res2 = await sql(
 				"insert into cities values ('Moscow'),('Paris'),('Minsk'),('Riga'),('Tallinn')"
 			);
-			assert(res2 === 5);
+			expect(res2 === 5).toBe(true);
 
 			const res3 = await sql("select column * from cities where city like 'M%' order by city");
-			assert.deepEqual(res3, ['Minsk', 'Moscow']);
+			expect(res3).toEqual(['Minsk', 'Moscow']);
 
 			const res4 = await sql('delete from cities where city in ("Riga","Tallinn","Moscow")');
-			assert(res4 === 3);
+			expect(res4 === 3).toBe(true);
 
 			const res5 = await sql('select column * from cities order by city');
-			assert.deepEqual(res5, ['Minsk', 'Paris']);
+			expect(res5).toEqual(['Minsk', 'Paris']);
 
 			const res6 = await sql("update cities set city = 'Vilnius' where city = 'Minsk'");
-			assert(res6 === 1);
+			expect(res6 === 1).toBe(true);
 
 			const res7 = await sql('select column * from cities order by city');
-			assert.deepEqual(res7, ['Paris', 'Vilnius']);
+			expect(res7).toEqual(['Paris', 'Vilnius']);
 
 			const res8 = await sql('detach database test158');
-			assert(res8 === 1);
+			expect(res8 === 1).toBe(true);
 
 			const res9 = await sql('drop indexeddb database test158');
-			assert(res9 === 1);
+			expect(res9 === 1).toBe(true);
 		});
 	});
 }

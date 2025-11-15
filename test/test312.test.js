@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 312 JSON traverse', function () {
+describe('Test 312 JSON traverse', () => {
 	/*
 
 ### How to search deep nested JSON?
@@ -46,7 +45,7 @@ var test = {
 
 */
 
-	test('1. How to search deep nested JSON?', function (done) {
+	test('1. How to search deep nested JSON?', done => {
 		var data = {
 			menuInputRequestId: 1,
 			catalog: [
@@ -119,11 +118,11 @@ var test = {
 		};
 
 		var res = alasql('SEARCH / * WHERE(uid=1) name FROM ?', [data]);
-		assert.deepEqual(res, ['Pizza']);
+		expect(res).toEqual(['Pizza']);
 		done();
 	});
 
-	test('2. How do I traverse a complex JSON doc with javascript and extract named values', function (done) {
+	test('2. How do I traverse a complex JSON doc with javascript and extract named values', done => {
 		/*
   Source: http://stackoverflow.com/questions/29966520/how-do-i-traverse-a-complex-json-doc-with-javascript-and-extract-named-values
 
@@ -154,11 +153,11 @@ I need some javascript to traverse reasonably complex json with nested objects a
 		};
 
 		var res = alasql('SEARCH /+ACCOUNT_NUMBER/ FROM ?', [data]);
-		assert.deepEqual(res, ['37846589', '37846540']);
+		expect(res).toEqual(['37846589', '37846540']);
 		done();
 	});
 
-	test('3. Find all parents elements in a Json file', function (done) {
+	test('3. Find all parents elements in a Json file', done => {
 		/*
 http://stackoverflow.com/questions/29937203/find-all-parents-elements-in-a-json-file-using-jquery/29937369#29937369
 
@@ -233,7 +232,7 @@ Now, I want to retrieve all the elements which are at a higher level and all the
 		// Fro test
 		var res = alasql('SEARCH /(Categories/)? Id FROM ?', [data]);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			'menuOfficeWebControlsForWebApplication',
 			'menuGettingStarted',
 			'menuCompilingFromSource',
@@ -271,7 +270,7 @@ var testObject = {
 This object is passed into a master function that builds a angularjs resource object using the passed in object.
 */
 
-	test('4. Recursive find and replace in multidimensional javascript object', function (done) {
+	test('4. Recursive find and replace in multidimensional javascript object', done => {
 		var data = {
 			name: '/pricing-setups/{folderId}',
 			method: 'POST',
@@ -299,7 +298,7 @@ This object is passed into a master function that builds a angularjs resource ob
 		//    KEYS();
 
 		// console.log(res);
-		//   assert.deepEqual(res,[ 'menuOfficeWebControlsForWebApplication',
+		//   expect(res).toEqual([ 'menuOfficeWebControlsForWebApplication',
 		// 'menuGettingStarted',
 		// 'menuCompilingFromSource',
 		// 'menuDownloadReleasePackage',
@@ -307,7 +306,7 @@ This object is passed into a master function that builds a angularjs resource ob
 		done();
 	});
 
-	test('5. Recursive find and replace in multidimensional javascript object', function (done) {
+	test('5. Recursive find and replace in multidimensional javascript object', done => {
 		/*
 
 http://stackoverflow.com/questions/23024589/javascript-nested-object-to-multidimensional-array-recursive-function?rq=1

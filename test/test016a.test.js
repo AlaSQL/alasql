@@ -1,11 +1,10 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 if (false) {
-	describe('Test 16b', function () {
-		test('Grouping', function (done) {
+	describe('Test 16b', () => {
+		test('Grouping', done => {
 			alasql('create database test16;use test16');
 
 			alasql.tables.students = new alasql.Table({
@@ -81,12 +80,12 @@ if (false) {
 					' ORDER BY studentname DESC'
 			);
 			/// console.log(res);
-			assert.equal(5, res.length);
-			assert.equal(1, res[0].courseid);
-			assert.equal(2, res[1].courseid);
-			assert.equal(2, res[2].courseid);
-			assert.equal(7, res[3].courseid);
-			assert.equal(4, res[4].courseid);
+			expect(5).toEqual(res.length);
+			expect(1).toEqual(res[0].courseid);
+			expect(2).toEqual(res[1].courseid);
+			expect(2).toEqual(res[2].courseid);
+			expect(7).toEqual(res[3].courseid);
+			expect(4).toEqual(res[4].courseid);
 
 			alasql('drop database test16');
 			done();

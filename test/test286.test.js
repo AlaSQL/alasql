@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 286 CREATE UNIQUE INDEX', function () {
+describe('Test 286 CREATE UNIQUE INDEX', () => {
 	function runTest(M) {
 		alasql('DELETE FROM one;');
 		alasql('DELETE FROM two;');

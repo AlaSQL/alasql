@@ -1,10 +1,9 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 124 - column AS alias syntax', function () {
-	test('1. Prepare database and select', function (done) {
+describe('Test 124 - column AS alias syntax', () => {
+	test('1. Prepare database and select', done => {
 		alasql('create database test124');
 		alasql('use test124');
 		alasql('create table one (a int, b int, c string)');
@@ -14,7 +13,7 @@ describe('Test 124 - column AS alias syntax', function () {
 
 		var res = alasql('select one.a q, two.b AS w from one join two using b');
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{q: 1, w: 1},
 			{q: 2, w: 2},
 			{q: 6, w: 6},

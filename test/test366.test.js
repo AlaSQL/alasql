@@ -1,12 +1,11 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 366 wildcards for LIKE', function () {
+describe('Test 366 wildcards for LIKE', () => {
 	var data = [
 		{x: 'ab'},
 		{x: '-ab'},
@@ -20,122 +19,122 @@ describe('Test 366 wildcards for LIKE', function () {
 
 	var sql = 'VALUE OF SELECT COUNT(*) FROM ? WHERE x LIKE ';
 
-	describe('with %', function () {
-		test('finds all', function (done) {
-			assert.equal(8, alasql(sql + "'%'", [data]));
+	describe('with %', () => {
+		test('finds all', done => {
+			expect(8).toEqual(alasql(sql + "'%'", [data]));
 			done();
 		});
 
-		test('finds none', function (done) {
-			assert.equal(0, alasql(sql + "'%q'", [data]));
+		test('finds none', done => {
+			expect(0).toEqual(alasql(sql + "'%q'", [data]));
 			done();
 		});
 
-		test('can escape wildcards', function (done) {
+		test('can escape wildcards', done => {
 			// AG: Changed to proper escape character
-			assert.equal(1, alasql(sql + "'_!%_' ESCAPE '!'", [data]));
-			//			    	assert.equal(1,alasql(sql+"'\\%'",[data]));
+			expect(1).toEqual(alasql(sql + "'_!%_' ESCAPE '!'", [data]));
+			//			    	expect(1).toEqual(alasql(sql+"'\\%'",[data]));
 			done();
 		});
 
-		test('Finds prepending', function (done) {
+		test('Finds prepending', done => {
 			//			  	console.log(alasql(sql+"'%a'",[data]));
-			assert.equal(0, alasql(sql + "'%a'", [data]));
-			assert.equal(6, alasql(sql + "'%b'", [data]));
+			expect(0).toEqual(alasql(sql + "'%a'", [data]));
+			expect(6).toEqual(alasql(sql + "'%b'", [data]));
 			done();
 		});
 
-		test('Finds center', function (done) {
+		test('Finds center', done => {
 			// Not supported yet
-			assert.equal(7, alasql(sql + "'%a%'", [data]));
-			assert.equal(7, alasql(sql + "'%b%'", [data]));
+			expect(7).toEqual(alasql(sql + "'%a%'", [data]));
+			expect(7).toEqual(alasql(sql + "'%b%'", [data]));
 			done();
 		});
 
-		test('Finds postpending', function (done) {
+		test('Finds postpending', done => {
 			// Not supported yet
-			assert.equal(6, alasql(sql + "'a%'", [data]));
-			assert.equal(0, alasql(sql + "'b%'", [data]));
+			expect(6).toEqual(alasql(sql + "'a%'", [data]));
+			expect(0).toEqual(alasql(sql + "'b%'", [data]));
 			done();
 		});
 	});
 
-	describe('with ?', function () {
-		test('find n long elements', function (done) {
+	describe('with ?', () => {
+		test('find n long elements', done => {
 			// I changed from ? to _
-			assert.equal(1, alasql(sql + "'__'", [data]));
+			expect(1).toEqual(alasql(sql + "'__'", [data]));
 			done();
 		});
 
-		test('finds none', function (done) {
+		test('finds none', done => {
 			// I changed from ? to _
-			assert.equal(0, alasql(sql + "'_q'", [data]));
+			expect(0).toEqual(alasql(sql + "'_q'", [data]));
 			done();
 		});
 
-		test('can escape wildcards', function (done) {
+		test('can escape wildcards', done => {
 			// Changed escape character from // to ! and ? to _
-			assert.equal(0, alasql(sql + "'!__' ESCAPE '!'", [data]));
-			//						assert.equal(1,alasql(sql+"'!_' ESCAPE '!'",[data]));
+			expect(0).toEqual(alasql(sql + "'!__' ESCAPE '!'", [data]));
+			//						expect(1).toEqual(alasql(sql+"'!_' ESCAPE '!'",[data]));
 			done();
 		});
 
-		test('Finds prepending', function (done) {
-			assert.equal(0, alasql(sql + "'_a'", [data]));
-			assert.equal(1, alasql(sql + "'_b'", [data]));
-			assert.equal(5, alasql(sql + "'__b'", [data]));
+		test('Finds prepending', done => {
+			expect(0).toEqual(alasql(sql + "'_a'", [data]));
+			expect(1).toEqual(alasql(sql + "'_b'", [data]));
+			expect(5).toEqual(alasql(sql + "'__b'", [data]));
 			done();
 		});
 
-		test('Finds center', function (done) {
+		test('Finds center', done => {
 			// Not supported yet
-			assert.equal(1, alasql(sql + "'_a_'", [data]));
-			assert.equal(1, alasql(sql + "'_b_'", [data]));
+			expect(1).toEqual(alasql(sql + "'_a_'", [data]));
+			expect(1).toEqual(alasql(sql + "'_b_'", [data]));
 			done();
 		});
 
-		test('Finds postpending', function (done) {
+		test('Finds postpending', done => {
 			// Not supported yet
-			assert.equal(1, alasql(sql + "'a_'", [data]));
-			assert.equal(0, alasql(sql + "'b_'", [data]));
+			expect(1).toEqual(alasql(sql + "'a_'", [data]));
+			expect(0).toEqual(alasql(sql + "'b_'", [data]));
 			done();
 		});
 	});
 
-	describe('with _', function () {
-		test('find n long elements', function (done) {
-			assert.equal(1, alasql(sql + "'__'", [data]));
+	describe('with _', () => {
+		test('find n long elements', done => {
+			expect(1).toEqual(alasql(sql + "'__'", [data]));
 			done();
 		});
 
-		test('finds none', function (done) {
-			assert.equal(0, alasql(sql + "'_q'", [data]));
+		test('finds none', done => {
+			expect(0).toEqual(alasql(sql + "'_q'", [data]));
 			done();
 		});
 
-		test('can escape wildcards', function (done) {
-			assert.equal(1, alasql(sql + "'_!__' ESCAPE '!'", [data]));
+		test('can escape wildcards', done => {
+			expect(1).toEqual(alasql(sql + "'_!__' ESCAPE '!'", [data]));
 			done();
 		});
 
-		test('Finds prepending', function (done) {
-			assert.equal(0, alasql(sql + "'_a'", [data]));
-			assert.equal(1, alasql(sql + "'_b'", [data]));
-			assert.equal(5, alasql(sql + "'__b'", [data]));
+		test('Finds prepending', done => {
+			expect(0).toEqual(alasql(sql + "'_a'", [data]));
+			expect(1).toEqual(alasql(sql + "'_b'", [data]));
+			expect(5).toEqual(alasql(sql + "'__b'", [data]));
 			done();
 		});
 
-		test('Finds center', function (done) {
+		test('Finds center', done => {
 			// Not supported yet
-			assert.equal(1, alasql(sql + "'_a_'", [data]));
-			assert.equal(1, alasql(sql + "'_b_'", [data]));
+			expect(1).toEqual(alasql(sql + "'_a_'", [data]));
+			expect(1).toEqual(alasql(sql + "'_b_'", [data]));
 			done();
 		});
 
-		test('Finds postpending', function (done) {
+		test('Finds postpending', done => {
 			// Not supported yet
-			assert.equal(1, alasql(sql + "'a_'", [data]));
-			assert.equal(0, alasql(sql + "'b_'", [data]));
+			expect(1).toEqual(alasql(sql + "'a_'", [data]));
+			expect(0).toEqual(alasql(sql + "'b_'", [data]));
 			done();
 		});
 	});

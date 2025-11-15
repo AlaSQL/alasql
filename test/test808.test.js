@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
@@ -36,7 +35,7 @@ var dbFile = __dirname + '/test_db_fs.json';
 				{a: 'C', b: 3},
 			];
 
-			assert.deepEqual(res, actual);
+			expect(res).toEqual(actual);
 		});
 
 		test('C. Detach and Drop a Filestorage DB', async () => {

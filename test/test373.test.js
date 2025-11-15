@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('373. Use functions in group by', function () {
+describe('373. Use functions in group by', () => {
 	var data = [
 		{
 			fecha_Venta: '2012-10-28',
@@ -60,14 +59,14 @@ describe('373. Use functions in group by', function () {
 			mes: 'September',
 		},
 	];
-	test('1. Use functions from GROUP BY without alias ', function (done) {
+	test('1. Use functions from GROUP BY without alias ', done => {
 		var res = alasql(
 			'SELECT MONTH(fecha_Venta), \
             SUM(Sales) Sales FROM ? GROUP BY MONTH(fecha_Venta)',
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{'MONTH(fecha_Venta)': 10, Sales: 12500},
 			{'MONTH(fecha_Venta)': 9, Sales: 25000},
 		]);
@@ -75,14 +74,14 @@ describe('373. Use functions in group by', function () {
 		done();
 	});
 
-	test('2. Use functions with alias from GROUP BY', function (done) {
+	test('2. Use functions with alias from GROUP BY', done => {
 		var res = alasql(
 			'SELECT MONTH(fecha_Venta) AS mes, \
             SUM(Sales) Sales FROM ? GROUP BY MONTH(fecha_Venta)',
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			{mes: 10, Sales: 12500},
 			{mes: 9, Sales: 25000},
 		]);

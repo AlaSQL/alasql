@@ -1,27 +1,26 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 227 Float numbers and COALESCE', function () {
-	test('1. 1.234', function (done) {
+describe('Test 227 Float numbers and COALESCE', () => {
+	test('1. 1.234', done => {
 		var res = alasql('SELECT ROW 1.23, 2.345, 4.56');
 		//      console.log(res);
-		assert.deepEqual(res, [1.23, 2.345, 4.56]);
+		expect(res).toEqual([1.23, 2.345, 4.56]);
 		done();
 	});
 
-	test('2. 1.234e10', function (done) {
+	test('2. 1.234e10', done => {
 		var res = alasql('SELECT VALUE 1.234e10');
 		//    	console.log(res);
-		assert.deepEqual(res, 1.234e10);
+		expect(res).toEqual(1.234e10);
 		done();
 	});
 
-	test('3. COALESCE', function (done) {
+	test('3. COALESCE', done => {
 		var cars = [
 			{color: 'blue'},
 			{model: 'Mazda', city: 'Paris'},
@@ -30,7 +29,7 @@ describe('Test 227 Float numbers and COALESCE', function () {
 		];
 		var res = alasql('SELECT COLUMN COALESCE(model,color,city) FROM ?', [cars]);
 		//      console.log(res);
-		assert.deepEqual(res, ['blue', 'Mazda', 'Rome', 'Citroen']);
+		expect(res).toEqual(['blue', 'Mazda', 'Rome', 'Citroen']);
 		done();
 	});
 });

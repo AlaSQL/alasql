@@ -1,19 +1,18 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe('Test 340 SET PARAMS', function () {
-	test.skip('1. CREATE DATABASE', function (done) {
+describe('Test 340 SET PARAMS', () => {
+	test.skip('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test340;USE test340');
 		done();
 	});
 
-	test.skip('2. SET PARAMS', function (done) {
-		var res = alasql(function () {
+	test.skip('2. SET PARAMS', done => {
+		var res = alasql(() => {
 			/*
 
     SET PARAMS = {
@@ -28,18 +27,18 @@ describe('Test 340 SET PARAMS', function () {
 		});
 
 		console.log(res);
-		assert.deepEqual(res, [1, 'bar']);
+		expect(res).toEqual([1, 'bar']);
 
 		done();
 	});
 
-	test.skip('3. Change params property', function (done) {
+	test.skip('3. Change params property', done => {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
-		assert.deepEqual(res.sort(), [100, 1, 200]);
+		expect(res.sort()).toEqual([100, 1, 200]);
 		done();
 	});
 
-	test.skip('99. DROP DATABASE', function (done) {
+	test.skip('99. DROP DATABASE', done => {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test340');
 		done();

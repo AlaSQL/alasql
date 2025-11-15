@@ -5,11 +5,10 @@
 
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 130 - UPDATE', function () {
-	test('UPDATE without conditions', function (done) {
+describe('Test 130 - UPDATE', () => {
+	test('UPDATE without conditions', done => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a int, b int)');
@@ -20,12 +19,12 @@ describe('Test 130 - UPDATE', function () {
 
 		var res = db.exec('UPDATE test SET a = (b+100)');
 
-		assert.equal(4, res);
-		assert.equal(101, db.tables.test.data[0].a);
+		expect(4).toEqual(res);
+		expect(101).toEqual(db.tables.test.data[0].a);
 		done();
 	});
 
-	test('UPDATE WHERE with conditions', function (done) {
+	test('UPDATE WHERE with conditions', done => {
 		var db = new alasql.Database();
 
 		db.exec('CREATE TABLE test (a INT, b INT, c INT)');
@@ -40,12 +39,12 @@ describe('Test 130 - UPDATE', function () {
 		// console.log(res);
 		// console.log(db.tables.test.recs);
 
-		assert.equal(3, res);
-		assert.equal(100, db.tables.test.data[0].a);
-		assert.equal(200, db.tables.test.data[1].a);
-		assert.equal(300, db.tables.test.data[2].a);
-		assert.equal(4, db.tables.test.data[3].a);
-		assert.equal(5, db.tables.test.data[4].a);
+		expect(3).toEqual(res);
+		expect(100).toEqual(db.tables.test.data[0].a);
+		expect(200).toEqual(db.tables.test.data[1].a);
+		expect(300).toEqual(db.tables.test.data[2].a);
+		expect(4).toEqual(db.tables.test.data[3].a);
+		expect(5).toEqual(db.tables.test.data[4].a);
 
 		done();
 	});

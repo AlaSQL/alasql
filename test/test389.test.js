@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, test} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 import {fileURLToPath} from 'url';
@@ -21,13 +20,13 @@ if (typeof global === 'object') {
   https://jira.mongodb.org/browse/SERVER-831
 */
 
-describe('Test 389 Autoincrement for localStorage', function () {
-	test('1. CREATE DATABASE', function (done) {
+describe('Test 389 Autoincrement for localStorage', () => {
+	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test389;USE test389');
 		done();
 	});
 
-	test('2. Prepare tables', function (done) {
+	test('2. Prepare tables', done => {
 		alasql('SET AUTOCOMMIT OFF');
 		alasql('CREATE localStorage DATABASE IF NOT EXISTS test');
 		alasql('ATTACH localStorage DATABASE test');
@@ -35,7 +34,7 @@ describe('Test 389 Autoincrement for localStorage', function () {
 		done();
 	});
 
-	test('3. SELECTs', function () {
+	test('3. SELECTs', () => {
 		alasql('USE test');
 		alasql('INSERT INTO test.one (b) VALUES ("one"), ("two")');
 		alasql('INSERT INTO test.one (b) VALUES ("three"), ("four")');
@@ -46,7 +45,7 @@ describe('Test 389 Autoincrement for localStorage', function () {
 		alasql('TRUNCATE TABLE test.one; COMMIT TRANSACTION');
 	});
 
-	test('99. DROP DATABASE', function (done) {
+	test('99. DROP DATABASE', done => {
 		alasql('DROP DATABASE test389');
 		done();
 	});

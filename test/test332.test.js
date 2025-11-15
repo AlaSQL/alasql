@@ -1,24 +1,23 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 import md5 from 'blueimp-md5';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-describe.skip('Test 331 SLT#2 - test', function () {
-	beforeAll(function () {
+describe.skip('Test 331 SLT#2 - test', () => {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test332;USE test332');
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test332');
 		alasql.options.modifier = undefined;
 	});
 
-	test('2. Create table', function (done) {
-		var res = alasql(function () {
+	test('2. Create table', done => {
+		var res = alasql(() => {
 			/*
     CREATE TABLE t1(a INTEGER, b INTEGER, c INTEGER, d INTEGER, e INTEGER);
     INSERT INTO t1(e,c,b,d,a) VALUES(NULL,102,NULL,101,104);
@@ -54,13 +53,13 @@ describe.skip('Test 331 SLT#2 - test', function () {
 
     */
 		});
-		assert.deepEqual(res.length, 31);
+		expect(res.length).toEqual(31);
 		done();
 	});
 
-	test('2a. SELECT 126', function (done) {
+	test('2a. SELECT 126', done => {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
+		var res = alasql(() => {
 			/*
       SELECT a,
              (SELECT count(*) FROM t1 AS x WHERE x.b<t1.b),
@@ -72,40 +71,40 @@ describe.skip('Test 331 SLT#2 - test', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [
+		expect(res).toEqual([
 			[undefined, 1, undefined, 114],
 			[undefined, 18, undefined, 207],
 		]);
 		done();
 	});
-	test('3. SELECT AVG', function (done) {
+	test('3. SELECT AVG', done => {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
+		var res = alasql(() => {
 			/*
       SELECT avg(c) FROM t1
   */
 		});
 		/// console.log(res);
-		//    assert.deepEqual(res.length,30);
+		//    expect(res.length).toEqual(30);
 		done();
 	});
 
-	test('3. SELECT 97', function (done) {
+	test('3. SELECT 97', done => {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
+		var res = alasql(() => {
 			/*
       SELECT CASE WHEN c>(SELECT avg(c) FROM t1) THEN a*2 ELSE b*10 END
       FROM t1
   */
 		});
 		//    console.log(res.length);
-		assert.deepEqual(res.length, 30);
+		expect(res.length).toEqual(30);
 		done();
 	});
 
-	test('4. SELECT 97', function (done) {
+	test('4. SELECT 97', done => {
 		alasql.options.modifier = 'MATRIX';
-		var res = alasql(function () {
+		var res = alasql(() => {
 			/*
       SELECT b-c,
              c
@@ -113,7 +112,7 @@ describe.skip('Test 331 SLT#2 - test', function () {
        WHERE (e>a AND e<b)  */
 		});
 		/// console.log(res.sort());
-		//    assert.deepEqual(res.length,30);
+		//    expect(res.length).toEqual(30);
 		done();
 	});
 });

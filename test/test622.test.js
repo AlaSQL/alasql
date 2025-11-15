@@ -1,6 +1,5 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
 /*
@@ -9,10 +8,10 @@ import alasql from '..';
 
 var testId = 622;
 
-describe('Test ' + testId + ' Converting syntax tree to SQL with multple joins', function () {
-	test('1. Same SQL when parsed', function () {
+describe('Test ' + testId + ' Converting syntax tree to SQL with multple joins', () => {
+	test('1. Same SQL when parsed', () => {
 		var sql =
 			'SELECT * FROM cities AS c INNER JOIN state AS s ON c.state_id = s.id INNER JOIN country AS c2 ON s.country_id = c2.id';
-		assert.equal(sql, alasql.parse(sql).toString());
+		expect(sql).toEqual(alasql.parse(sql).toString());
 	});
 });

@@ -1,9 +1,8 @@
 // @ts-ignore
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
-import assert from 'assert';
 import alasql from '..';
 
-describe('Test 490 - PIVOT with SELECT *', function () {
+describe('Test 490 - PIVOT with SELECT *', () => {
 	const testId = '490';
 
 	// Define the test data once
@@ -38,16 +37,16 @@ describe('Test 490 - PIVOT with SELECT *', function () {
 		{VendorId: 'JOHNS', IncomeDay: 'TUE', IncomeAmount: 600},
 	];
 
-	beforeAll(function () {
+	beforeAll(() => {
 		alasql('CREATE DATABASE test' + testId);
 		alasql('USE test' + testId);
 	});
 
-	afterAll(function () {
+	afterAll(() => {
 		alasql('DROP DATABASE test' + testId);
 	});
 
-	test('A) PIVOT with SELECT * and AVG aggregation', function () {
+	test('A) PIVOT with SELECT * and AVG aggregation', () => {
 		var res = alasql('SELECT * FROM ? PIVOT (AVG(IncomeAmount) FOR IncomeDay)', [data]);
 
 		var expectedResult = [
@@ -56,14 +55,13 @@ describe('Test 490 - PIVOT with SELECT *', function () {
 			{VendorId: 'JOHNS', WED: 900, MON: 300, FRI: 300, SUN: 600, THU: 800, SAT: 800, TUE: 600},
 		];
 
-		assert.deepEqual(
-			res,
+		expect(res).toEqual(
 			expectedResult,
 			'PIVOT with SELECT * and AVG should produce the correct aggregated table'
 		);
 	});
 
-	test('B) PIVOT with SELECT * and SUM aggregation', function () {
+	test('B) PIVOT with SELECT * and SUM aggregation', () => {
 		var res = alasql('SELECT * FROM ? PIVOT (SUM(IncomeAmount) FOR IncomeDay)', [data]);
 
 		var expectedResult = [
@@ -72,8 +70,7 @@ describe('Test 490 - PIVOT with SELECT *', function () {
 			{VendorId: 'JOHNS', WED: 900, MON: 300, FRI: 300, SUN: 600, THU: 800, SAT: 800, TUE: 600},
 		];
 
-		assert.deepEqual(
-			res,
+		expect(res).toEqual(
 			expectedResult,
 			'PIVOT with SELECT * and SUM should produce the correct aggregated table'
 		);
