@@ -13,7 +13,6 @@ describe('Test 368 OFFSET ... LIMIT', () => {
 		expect(res).toEqual([{a: 1}, {a: 2}, {a: 3}]);
 	});
 
-
 	test('OFFSET LIMIT', done => {
 		var res = alasql('SELECT * FROM ? LIMIT 2 OFFSET 3', [data]);
 		expect(res).toEqual([{a: 4}, {a: 5}]);

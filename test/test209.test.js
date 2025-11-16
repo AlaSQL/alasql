@@ -2,7 +2,6 @@
 import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
 import alasql from '..';
 
-
 describe.todo('Test 209 SELECT FROM @localvar', () => {
 	beforeAll(() => {
 		alasql('create database test209');

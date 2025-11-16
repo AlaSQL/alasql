@@ -19,7 +19,7 @@
 	},
 	"typings": "types/alasql.d.ts",
 	"scripts": {
-		"dev": "ALASQL_TEST_SKIP_HTTP=true cmdlook '{src,test}/*.js' bun tst",
+		"dev": "ALASQL_TEST_SKIP_EXTERNAL=true cmdlook '{src,test}/*.js' bun tst",
 		"tst": "bun --bun ./node_modules/.bin/biome format --write && CLAUDECODE=1 bun test --bail --reporter dot",
 		"test": "bun run build && bun run test-only",
 		"test-cover": "CLAUDECODE=1 bun test --coverage --bail ",

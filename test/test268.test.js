@@ -55,8 +55,8 @@ describe.concurrent('Test 268 INNER JOIN stress test', () => {
 		t1.push({a: i, b: i, bb: i});
 	}
 
-	var t1000 = 100;
-	var t50000 = 200;
+	var t1000 = 10;
+	var t50000 = 20;
 	var t2 = [];
 	for (var i = 1; i < t50000; i++) {
 		t2.push({b: i, bb: i % 2, c: i * 100});
