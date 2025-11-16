@@ -34,12 +34,24 @@
 	},
 	"files": {
 		"include": [
-			"src/**/*.{js,ts}",
-			"test/*.{js,ts}",
+			"src/**/*.js",
+			"src/**/*.ts",
+			"test/**/*.js",
+			"test/**/*.ts",
 			"package.json",
 			"tsconfig.json",
 			"biome.json"
 		],
-		"ignore": ["dist/", "node_modules", "test/coverage/", "modules/"]
+		"ignore": [
+			"dist/",
+			"node_modules",
+			"test/coverage/",
+			"test/lib/",
+			"modules/",
+			"*start.js",
+			"*finish.js",
+			"97saveas.js",
+			"alasqlparser.js"
+		]
 	}
 }

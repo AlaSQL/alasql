@@ -1,5 +1,5 @@
 // @ts-ignore
-import { describe, test, expect } from 'bun:test';
+import {describe, test, expect} from 'bun:test';
 import alasql from '..';
 import yargs from 'yargs';
 
@@ -8,8 +8,6 @@ const runAll = process.env.ALASQL_ALL_ASCII;
 
 describe.todo('376. ASCII tests:', () => {
 	// to output all including skipped tests please run: bun test ./test/test376.js --forceall
-
-
 
 	var tests = `
 SELECT ASCII(' '); -- 32 - Space
@@ -233,32 +231,29 @@ SELECT ASCII('ÿ'); -- 255 - Latin small letter y with diaeresis
 
 `;
 
-
 	tests
 		.replace(/\r/g, '')
 		.split('\n')
 		.filter(Boolean)
-		.forEach( testLine => {
+		.forEach(testLine => {
 			const testData = testLine.split('--');
-			
+
 			if (testData.length < 2) return;
 
-			let runFn = test; 
+			let runFn = test;
 
 			// skip test starting line with '--'
 			if (testData[0].trim() === '') {
 				testData.shift();
-				if(!runAll)
-					runFn = test.skip;
+				if (!runAll) runFn = test.skip;
 			}
 
 			const sql = testData[0].trim();
 			const description = testData[1]?.split(' - ')[0].trim();
 			const expected = testData[1]?.split(' - ')[1].trim();
-			
+
 			runFn(description, () => {
 				expect(alasql('VALUE OF ' + sql)).toEqual(expected);
 			});
-
 		});
 });
