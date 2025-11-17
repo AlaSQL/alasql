@@ -8,6 +8,14 @@
 	],
 	"main": "dist/alasql.fs.js",
 	"browser": "dist/alasql.min.js",
+	"exports": {
+		".": {
+			"node": "./dist/alasql.fs.js",
+			"browser": "./dist/alasql.min.js",
+			"default": "./dist/alasql.fs.js"
+		},
+		"./precompile": "./dist/precompile/index.js"
+	},
 	"directories": {
 		"test": "test"
 	},

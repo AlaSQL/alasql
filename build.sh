@@ -176,7 +176,7 @@ echo '\nBuild precompile files'
 mkdir -p dist/precompile
 
 echo '# Copy precompile module'
-x esbuild --outfile="dist/precompile/index.js" "src/precompile/index.js" 
+x esbuild --outfile="dist/precompile/index.js" "src/precompile/index.js" --format=cjs 
 
 
  

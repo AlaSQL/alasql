@@ -46740,7 +46740,7 @@ EOD`
 // ../../dist/alasql.fs.js
 var require_alasql_fs = __commonJS((exports, module) => {
 	var __dirname = '/Users/mwulff/git/alasql/dist';
-	//! AlaSQL v4.9.0 build: fix.2169-cfd214a3 | © 2014-2024 Andrey Gershun & Mathias Wulff | License: MIT
+	//! AlaSQL v4.9.0 build: fix.2169-cfd214a3 | © 2014-2025 Andrey Gershun & Mathias Wulff | License: MIT
 	(function (root, factory) {
 		if (typeof define === 'function' && define.amd) {
 			define([], factory);
