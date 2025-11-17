@@ -172,6 +172,15 @@ x esbuild --minify --outfile="$outfile_min" "$outfile" --allow-overwrite
 
 
 
+echo '\nBuild precompile files'
+mkdir -p dist/precompile
+
+echo '# Copy precompile module'
+x esbuild --outfile="dist/precompile/index.js" "src/precompile/index.js" 
+
+
+ 
+
 echo '\nBuild worker files'
 outfile="dist/alasql-worker.js"
 outfile_min="dist/alasql-worker.js"

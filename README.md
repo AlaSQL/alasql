@@ -515,6 +515,8 @@ Try AlaSQL JSON objects in Console [sample](http://alasql.org/console?drop table
 
 _Useful stuff, but there might be dragons_
 
+
+
 ### Graphs
 
 AlaSQL is a multi-paradigm database with support for graphs that can be searched or manipulated.
@@ -567,6 +569,8 @@ $ alaserver
 then open <http://127.0.0.1:1337/?SELECT%20VALUE%20(2*2)> in your browser
 
 Warning: Alaserver is not multi-threaded, not concurrent, and not secured.
+
+
 
 
 ## Tests
