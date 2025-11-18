@@ -4,7 +4,7 @@ import alasql from '..';
 import DOMStorage from 'dom-storage';
 
 if (typeof global !== 'undefined') {
-	global.localStorage = new DOMStorage('./test381.json', {
+	global.localStorage = new DOMStorage('./test/test381.json', {
 		strict: false,
 		ws: '',
 	});

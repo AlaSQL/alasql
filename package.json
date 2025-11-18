@@ -97,14 +97,6 @@
 	"homepage": "https://github.com/alasql/alasql",
 	"keywords": ["SQL", "javascript", "database", "Excel", "XLSX", "XLS", "CSV"],
 	"license": "MIT",
-	"prettier": {
-		"useTabs": true,
-		"printWidth": 100,
-		"singleQuote": true,
-		"arrowParens": "avoid",
-		"trailingComma": "es5",
-		"bracketSpacing": false
-	},
 	"husky": {
 		"hooks": {
 			"pre-push": "yarn test-format || (echo please format using 'yarn format' && exit 1)"

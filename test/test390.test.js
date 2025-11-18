@@ -36,7 +36,7 @@ describe.concurrent('Test 390 Export nested array to XLSX', () => {
 			},
 		];
 		var res = alasql(
-			'SEARCH / AS @p b / CLONEDEEP() SET(a=@p->a) INTO XLSX("test390.xlsx",{headers:true}) FROM ?',
+			'SEARCH / AS @p b / CLONEDEEP() SET(a=@p->a) INTO XLSX("./test/test390.xlsx",{headers:true}) FROM ?',
 			[data]
 		);
 		expect(res == 1).toBe(true);

@@ -7,7 +7,7 @@ import {dirname} from 'path';
 
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-global.localStorage = new DOMStorage('./test166.json', {
+global.localStorage = new DOMStorage('./test/test166.json', {
 	strict: false,
 	ws: '',
 });

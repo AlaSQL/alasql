@@ -3,7 +3,7 @@ import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
-global.localStorage = new DOMStorage('./test162.json', {
+global.localStorage = new DOMStorage('./test/test162.json', {
 	strict: false,
 	ws: '',
 });
