@@ -7,7 +7,7 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 if (typeof window !== 'undefined') {
 	var DOMStorage = require('dom-storage');
-	global.localStorage = new DOMStorage('./test152.json', {
+	global.localStorage = new DOMStorage('./test/test152.json', {
 		strict: false,
 		ws: '',
 	});
