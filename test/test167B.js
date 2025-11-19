@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function () {
-	it('1. Basic DISTINCT comparison', function (done) {
+	it('1. Basic DISTINCT comparison', () => {
 		var data = [{a: 1}, {a: 2}, {a: 1}];
 
 		var res1 = alasql('SELECT * FROM ?', [data]);
@@ -24,11 +24,9 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 		assert.equal(res2.length, 2, 'SELECT DISTINCT * should return 2 items');
 		assert.equal(res3.length, 2, 'SELECT COLUMN DISTINCT _ should return 2 items');
 		assert.equal(res4.length, 2, 'SEARCH DISTINCT(/) should return 2 items');
-
-		done();
 	});
 
-	it('2. DISTINCT with different middle value (issue b)', function (done) {
+	it('2. DISTINCT with different middle value (issue b)', () => {
 		var data = [{a: 1}, {b: 2}, {a: 1}];
 
 		var res3 = alasql('SELECT COLUMN DISTINCT _ FROM ?', [data]);
@@ -51,11 +49,9 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 
 		assert(hasA1, 'Result should contain {a:1}');
 		assert(hasB2, 'Result should contain {b:2}');
-
-		done();
 	});
 
-	it('3. SEARCH DISTINCT vs SELECT DISTINCT consistency', function (done) {
+	it('3. SEARCH DISTINCT vs SELECT DISTINCT consistency', () => {
 		var data = [{a: 1}, {b: 2}, {a: 1}];
 
 		var res2 = alasql('SELECT DISTINCT * FROM ?', [data]);
@@ -65,12 +61,14 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 		console.log('res4 (SEARCH DISTINCT(/)):', JSON.stringify(res4));
 
 		// Results should be the same
-		assert.deepEqual(res2, res4, 'SELECT DISTINCT * and SEARCH DISTINCT(/) should produce same results');
-
-		done();
+		assert.deepEqual(
+			res2,
+			res4,
+			'SELECT DISTINCT * and SEARCH DISTINCT(/) should produce same results'
+		);
 	});
 
-	it('4. SELECT COLUMN DISTINCT _ with arrays', function (done) {
+	it('4. SELECT COLUMN DISTINCT _ with arrays', () => {
 		var data = [1, 2, 1, 3, 2];
 
 		var res = alasql('SELECT COLUMN DISTINCT _ FROM ?', [data]);
@@ -81,7 +79,5 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 		assert(res.includes(1), 'Should include 1');
 		assert(res.includes(2), 'Should include 2');
 		assert(res.includes(3), 'Should include 3');
-
-		done();
 	});
 });
