@@ -266,6 +266,7 @@ SETS                                        	return 'SET'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
+
 (\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
 '->'											return 'ARROW'
 '#'												return 'SHARP'
@@ -291,7 +292,6 @@ SETS                                        	return 'SET'
 '!='											return 'NE'
 '('												return 'LPAR'
 ')'												return 'RPAR'
-'@'												return 'AT'
 '{'												return 'LCUR'
 '}'												return 'RCUR'
 
@@ -313,6 +313,7 @@ SETS                                        	return 'SET'
 '~'												return 'TILDA'
 
 [0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
+'@'												return 'AT'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
@@ -1180,6 +1181,8 @@ Column
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal DOT VALUE
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
+	| Literal DOT AT Literal
+		{ $$ = new yy.Column({columnid: '@'+$4, tableid: $1});}
 	| Literal
 		{ $$ = new yy.Column({columnid: $1});}
 	;
