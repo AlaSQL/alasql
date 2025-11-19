@@ -360,12 +360,7 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 			// Handle positional column reference (for SELECT * with ORDER BY numeric)
 			if (v._useColumnIndex !== undefined) {
 				// Use Object.keys to get column names and access by index
-				s +=
-					"var keys=Object.keys(r);r['" +
-					key +
-					"']=r[keys[" +
-					v.columnIndex +
-					']];';
+				s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
 			} else if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
 			} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
@@ -540,12 +535,7 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 			// Handle positional column reference (for SELECT * with ORDER BY numeric)
 			if (v._useColumnIndex !== undefined) {
 				// Use Object.keys to get column names and access by index
-				s +=
-					"var keys=Object.keys(r);r['" +
-					key +
-					"']=r[keys[" +
-					v.columnIndex +
-					']];';
+				s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
 			} else if (v instanceof yy.Column && query.groupColumns[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
 			} else {
