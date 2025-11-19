@@ -41,6 +41,12 @@ yy.Select.prototype.compileOrder = function (query, params) {
 					);
 				}
 				var v = self.columns[ord.expression.value - 1];
+				// Check if the column is a wildcard (SELECT *)
+				// In this case, we need to store the numeric position for runtime resolution
+				if (v instanceof yy.Column && v.columnid === '*') {
+					// Create a marker object that indicates positional ordering
+					v = {_useColumnIndex: true, columnIndex: ord.expression.value - 1};
+				}
 			} else {
 				var v = ord.expression;
 			}
