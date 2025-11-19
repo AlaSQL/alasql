@@ -6,28 +6,28 @@ if (typeof exports === 'object') {
 
 describe('Test 847 - Nested Subqueries', function () {
 	before(function () {
-		alasql('DROP TABLE IF EXISTS cities');
-		alasql('DROP TABLE IF EXISTS countries');
-		alasql('DROP TABLE IF EXISTS population');
+		alasql(`
+			DROP TABLE IF EXISTS cities;
+			DROP TABLE IF EXISTS countries;
+			DROP TABLE IF EXISTS population;
 
-		alasql('CREATE TABLE cities (city string, population number)');
-		alasql(
-			"INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579),('Easingwold',4627)"
-		);
+			CREATE TABLE cities (city string, population number);
+			INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579),('Easingwold',4627);
 
-		alasql('CREATE TABLE countries (name string, population number, city string)');
-		alasql(
-			"INSERT INTO countries VALUES ('Italy', 89764679009, 'Rome'), ('France', 165247191, 'Paris'), ('Germany', 346186257, 'Berlin')"
-		);
+			CREATE TABLE countries (name string, population number, city string);
+			INSERT INTO countries VALUES ('Italy', 89764679009, 'Rome'), ('France', 165247191, 'Paris'), ('Germany', 346186257, 'Berlin');
 
-		alasql('CREATE TABLE population (number int)');
-		alasql('INSERT INTO population VALUES (89764679009), (165247191)');
+			CREATE TABLE population (number int);
+			INSERT INTO population VALUES (89764679009), (165247191);
+		`);
 	});
 
 	after(function () {
-		alasql('DROP TABLE IF EXISTS cities');
-		alasql('DROP TABLE IF EXISTS countries');
-		alasql('DROP TABLE IF EXISTS population');
+		alasql(`
+			DROP TABLE IF EXISTS cities;
+			DROP TABLE IF EXISTS countries;
+			DROP TABLE IF EXISTS population;
+		`);
 	});
 
 	it('1. Nested subqueries in IN clause should work', function () {
@@ -47,9 +47,10 @@ describe('Test 847 - Nested Subqueries', function () {
 	});
 
 	it('3. Triple nested subqueries should work', function () {
-		// Create a test table for triple nesting
-		alasql('CREATE TABLE level3 (val int)');
-		alasql('INSERT INTO level3 VALUES (89764679009)');
+		alasql(`
+			CREATE TABLE level3 (val int);
+			INSERT INTO level3 VALUES (89764679009);
+		`);
 
 		var result = alasql(
 			'SELECT * FROM cities WHERE city IN (SELECT DISTINCT city FROM countries WHERE population IN (SELECT DISTINCT number from population WHERE number IN (SELECT val FROM level3)))'
