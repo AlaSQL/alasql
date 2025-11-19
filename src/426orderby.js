@@ -35,17 +35,26 @@ yy.Select.prototype.compileOrder = function (query, params) {
 			// console.log(ord.expression instanceof yy.Column);
 
 			if (ord.expression instanceof yy.NumValue) {
-				if (ord.expression.value > self.columns.length) {
-					throw new Error(
-						`You are trying to order by column number ${ord.expression.value} but you have only selected ${self.columns.length} columns.`
-					);
-				}
 				var v = self.columns[ord.expression.value - 1];
-				// Check if the column is a wildcard (SELECT *)
+				// Check if the column is a wildcard (SELECT *) or if v is undefined (out of bounds with wildcard)
 				// In this case, we need to store the numeric position for runtime resolution
-				if (v instanceof yy.Column && v.columnid === '*') {
+				if (
+					!v ||
+					(v instanceof yy.Column && v.columnid === '*') ||
+					(self.columns.length === 1 &&
+						self.columns[0] instanceof yy.Column &&
+						self.columns[0].columnid === '*')
+				) {
 					// Create a marker object that indicates positional ordering
+					// Skip validation as we don't know the column count at compile time with SELECT *
 					v = {_useColumnIndex: true, columnIndex: ord.expression.value - 1};
+				} else {
+					// Only validate when we have explicit columns
+					if (ord.expression.value > self.columns.length) {
+						throw new Error(
+							`You are trying to order by column number ${ord.expression.value} but you have only selected ${self.columns.length} columns.`
+						);
+					}
 				}
 			} else {
 				var v = ord.expression;
