@@ -250,7 +250,11 @@ function queryfn3(query) {
 	}
 
 	// Populate order keys for UNION/INTERSECT/EXCEPT before ordering
-	if (query.orderfn && query.orderColumns && (query.unionallfn || query.unionfn || query.exceptfn || query.intersectfn)) {
+	if (
+		query.orderfn &&
+		query.orderColumns &&
+		(query.unionallfn || query.unionfn || query.exceptfn || query.intersectfn)
+	) {
 		for (i = 0, ilen = query.data.length; i < ilen; i++) {
 			for (var idx = 0; idx < query.orderColumns.length; idx++) {
 				var v = query.orderColumns[idx];

@@ -355,7 +355,14 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 yy.Select.prototype.compileSelect2 = function (query, params) {
 	var s = query.selectfns;
 	// Only add order keys if there's no union operation (otherwise they'll be added later)
-	if (this.orderColumns && this.orderColumns.length > 0 && !this.union && !this.unionall && !this.except && !this.intersect) {
+	if (
+		this.orderColumns &&
+		this.orderColumns.length > 0 &&
+		!this.union &&
+		!this.unionall &&
+		!this.except &&
+		!this.intersect
+	) {
 		this.orderColumns.forEach(function (v, idx) {
 			var key = '$$$' + idx;
 			if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
@@ -525,7 +532,14 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 	});
 
 	// Only add order keys if there's no union operation (otherwise they'll be added later)
-	if (this.orderColumns && this.orderColumns.length > 0 && !this.union && !this.unionall && !this.except && !this.intersect) {
+	if (
+		this.orderColumns &&
+		this.orderColumns.length > 0 &&
+		!this.union &&
+		!this.unionall &&
+		!this.except &&
+		!this.intersect
+	) {
 		this.orderColumns.forEach(function (v, idx) {
 			//			console.log(411,v);
 			var key = '$$$' + idx;
