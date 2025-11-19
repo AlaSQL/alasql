@@ -137,4 +137,37 @@ describe('Test 7 - ORDER BY on multiple UNIONs', function () {
 		var expected = [{a: 20}, {a: 10}];
 		assert.deepEqual(res, expected, 'ORDER BY DESC on two UNION ALL');
 	});
+
+	it('N) UNION across 4 tables with ORDER BY', function () {
+		// Create 4 separate tables
+		alasql('CREATE TABLE table1 (id INT, name STRING)');
+		alasql('CREATE TABLE table2 (id INT, name STRING)');
+		alasql('CREATE TABLE table3 (id INT, name STRING)');
+		alasql('CREATE TABLE table4 (id INT, name STRING)');
+
+		// Insert data into each table
+		alasql('INSERT INTO table1 VALUES (1, "Alice")');
+		alasql('INSERT INTO table2 VALUES (2, "Bob")');
+		alasql('INSERT INTO table3 VALUES (3, "Charlie")');
+		alasql('INSERT INTO table4 VALUES (4, "David")');
+
+		// Union across all 4 tables with ORDER BY
+		var sql =
+			'SELECT id, name FROM table1 UNION ALL SELECT id, name FROM table2 UNION ALL SELECT id, name FROM table3 UNION ALL SELECT id, name FROM table4 ORDER BY id DESC';
+		var res = alasql(sql);
+
+		var expected = [
+			{id: 4, name: 'David'},
+			{id: 3, name: 'Charlie'},
+			{id: 2, name: 'Bob'},
+			{id: 1, name: 'Alice'},
+		];
+		assert.deepEqual(res, expected, 'ORDER BY DESC on UNION across 4 tables');
+
+		// Clean up tables
+		alasql('DROP TABLE table1');
+		alasql('DROP TABLE table2');
+		alasql('DROP TABLE table3');
+		alasql('DROP TABLE table4');
+	});
 });
