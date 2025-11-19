@@ -265,6 +265,10 @@ function queryfn3(query) {
 					// For expressions, we'd need to evaluate them, but for now just skip
 					r[key] = undefined;
 				}
+				// Add to removeKeys if not already there
+				if (i === 0 && query.removeKeys.indexOf(key) === -1) {
+					query.removeKeys.push(key);
+				}
 			}
 		}
 	}
