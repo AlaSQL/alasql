@@ -9,7 +9,7 @@ import alasql from '..';
 
 */
 
-describe.skip('Test 407 - TWO JOINS', () => {
+describe('Test 407 - TWO JOINS', () => {
 	test('0.1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test407');
 		alasql.options.modifier = 'MATRIX';
@@ -39,7 +39,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test('1.2. INNER AND LEFT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one INNER JOIN test407.two ON test407.one.id = test407.two.id LEFT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['AB', 'AB', undefined],
@@ -50,7 +50,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('1.3. INNER AND RIGHT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one INNER JOIN test407.two ON test407.one.id = test407.two.id RIGHT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			[undefined, undefined, 'C'],
@@ -63,7 +63,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('1.4. INNER AND OUTER', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one INNER JOIN test407.two ON test407.one.id = test407.two.id OUTER JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['AB', 'AB', undefined],
@@ -76,7 +76,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test('2.1. LEFT AND INNER', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one LEFT JOIN test407.two ON test407.one.id = test407.two.id INNER JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([['ABC', 'ABC', 'ABC']]);
 		done();
@@ -84,7 +84,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test('2.2. LEFT AND LEFT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one LEFT JOIN test407.two ON test407.one.id = test407.two.id LEFT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['A', undefined, undefined],
@@ -97,7 +97,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('2.3. LEFT AND RIGHT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one LEFT JOIN test407.two ON test407.one.id = test407.two.id RIGHT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		console.log(res);
 		expect(res).toEqual([
@@ -111,7 +111,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('2.4. LEFT AND OUTER', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one LEFT JOIN test407.two ON test407.one.id = test407.two.id OUTER JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		console.log(res);
 		expect(res).toEqual([
@@ -128,7 +128,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test('3.1. RIGHT AND INNER', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one RIGHT JOIN test407.two ON test407.one.id = test407.two.id INNER JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['ABC', 'ABC', 'ABC'],
@@ -139,7 +139,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test('3.2. RIGHT AND LEFT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one RIGHT JOIN test407.two ON test407.one.id = test407.two.id LEFT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['AB', 'AB', undefined],
@@ -152,7 +152,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('3.3. RIGHT AND RIGHT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one RIGHT JOIN test407.two ON test407.one.id = test407.two.id RIGHT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			[undefined, undefined, 'C'],
@@ -165,7 +165,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('3.4. RIGHT AND OUTER', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one RIGHT JOIN test407.two ON test407.one.id = test407.two.id OUTER JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		console.log(res);
 		expect(res).toEqual([
@@ -181,7 +181,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test('4.1. OUTER AND INNER', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one OUTER JOIN test407.two ON test407.one.id = test407.two.id INNER JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['ABC', 'ABC', 'ABC'],
@@ -192,7 +192,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test('4.2. OUTER AND LEFT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one OUTER JOIN test407.two ON test407.one.id = test407.two.id LEFT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['A', undefined, undefined],
@@ -207,7 +207,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('4.3. OUTER AND RIGHT', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one OUTER JOIN test407.two ON test407.one.id = test407.two.id RIGHT JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			[undefined, undefined, 'C'],
@@ -220,7 +220,7 @@ describe.skip('Test 407 - TWO JOINS', () => {
 
 	test.skip('4.4. OUTER AND OUTER', done => {
 		var res = alasql(
-			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
+			'SELECT test407.one.id AS a, test407.two.id AS b, test407.three.id AS c FROM test407.one OUTER JOIN test407.two ON test407.one.id = test407.two.id OUTER JOIN test407.three ON test407.two.id = test407.three.id'
 		);
 		expect(res).toEqual([
 			['A', undefined, undefined],

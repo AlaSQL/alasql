@@ -30,7 +30,7 @@
 		"build": "bun run format && ./build.sh",
 		"install-g": "bun run build && npm uninstall alasql -g && npm install -g ./",
 		"release": "yarn version",
-		"jison": "bun run jison-only && bun run test",
+		"jison": "bun run jison-only && bun run build",
 		"jison-only": "bun --bun ./node_modules/.bin/jison ./src/alasqlparser.jison -o ./src/alasqlparser.js",
 		"push": "git push --force-with-lease && git push --no-verify --tags #",
 		"repush": "yarn rebase && yarn push",
