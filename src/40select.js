@@ -469,6 +469,11 @@ function modify(query, res) {
 				ar.push(res[i][key]);
 			}
 
+			// Apply DISTINCT if specified
+			if (query.distinct) {
+				ar = alasql.utils.distinctArray(ar);
+			}
+
 			return ar;
 
 		case 'MATRIX':
