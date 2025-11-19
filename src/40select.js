@@ -390,6 +390,15 @@ yy.Select = class Select {
 		query.queriesfn = this.queries.map(function (q) {
 			var nq = q.compile(query.database.databaseid);
 			nq.query.modifier = 'RECORDSET';
+			// If the nested query has its own queries, ensure they're compiled too
+			// This handles nested subqueries properly
+			if (q.queries && q.queries.length > 0) {
+				nq.query.queriesfn = q.queries.map(function (qq) {
+					var nnq = qq.compile(query.database.databaseid);
+					nnq.query.modifier = 'RECORDSET';
+					return nnq;
+				});
+			}
 			return nq;
 		});
 	}
