@@ -219,8 +219,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.uk.push(uk);
 			uk.columns = con.columns;
 			uk.onrightfns = uk.columns
-				.map(function (columnid) {
-					return `r[${JSON.stringify(columnid)}]`;
+				.map(function (expr) {
+					return expr.expression.toJS('r', '');
 				})
 				.join("+'`'+");
 			uk.onrightfn = new Function('r', 'var y;return ' + uk.onrightfns);
