@@ -6,28 +6,28 @@ if (typeof exports === 'object') {
 // Test for JOINSTAR Feature Incompatibility with Qualified Table Names
 
 describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
-	var test = 2197;
+	var testId = 2197;
 
 	before(function () {
-		alasql('CREATE DATABASE test' + test);
+		alasql('CREATE DATABASE test' + testId);
 	});
 
 	after(function () {
 		alasql.options.joinstar = 'overwrite';
-		alasql('DROP DATABASE test' + test);
+		alasql('DROP DATABASE test' + testId);
 	});
 
 	it('1. Create tables', function (done) {
-		alasql('CREATE TABLE test' + test + '.one (a INT)');
-		alasql('INSERT INTO test' + test + '.one VALUES (1),(2)');
-		alasql('CREATE TABLE test' + test + '.two (a INT)');
-		alasql('INSERT INTO test' + test + '.two VALUES (10),(20)');
+		alasql('CREATE TABLE test' + testId + '.one (a INT)');
+		alasql('INSERT INTO test' + testId + '.one VALUES (1),(2)');
+		alasql('CREATE TABLE test' + testId + '.two (a INT)');
+		alasql('INSERT INTO test' + testId + '.two VALUES (10),(20)');
 		done();
 	});
 
 	it('2. OVERWRITE JOINSTAR with qualified names', function (done) {
 		alasql.options.joinstar = 'overwrite';
-		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
+		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
 		assert.deepEqual(res, [{a: 10}, {a: 20}, {a: 10}, {a: 20}]);
 		done();
 	});
@@ -35,7 +35,7 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 	it('3. JSON JOINSTAR with qualified names', function (done) {
 		alasql.options.joinstar = 'json';
 		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
-		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
+		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
 		// Expected: nested objects by table name
 		assert.deepEqual(res, [
 			{one: {a: 1}, two: {a: 10}},
@@ -49,7 +49,7 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 	it('4. UNDERSCORE JOINSTAR with qualified names', function (done) {
 		alasql.options.joinstar = 'underscore';
 		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
-		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
+		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
 		// Expected: columns prefixed with table names
 		assert.deepEqual(res, [
 			{one_a: 1, two_a: 10},
@@ -61,9 +61,9 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 	});
 
 	it('5. JSON JOINSTAR with USE database', function (done) {
-		alasql('USE test' + test);
+		alasql('USE test' + testId);
 		alasql.options.joinstar = 'json';
-		alasql.databases['test' + test].dbversion++; // Reset database cache
+		alasql.databases['test' + testId].dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one, two');
 		// Expected: nested objects by table name (should work)
 		assert.deepEqual(res, [
@@ -76,9 +76,9 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 	});
 
 	it('6. UNDERSCORE JOINSTAR with USE database', function (done) {
-		alasql('USE test' + test);
+		alasql('USE test' + testId);
 		alasql.options.joinstar = 'underscore';
-		alasql.databases['test' + test].dbversion++; // Reset database cache
+		alasql.databases['test' + testId].dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one, two');
 		// Expected: columns prefixed with table names (should work)
 		assert.deepEqual(res, [
