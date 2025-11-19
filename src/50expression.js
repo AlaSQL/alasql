@@ -249,6 +249,15 @@
 			if (this.left && this.left.findAggregator) {
 				this.left.findAggregator(query);
 			}
+			// Handle BETWEEN operators which have right1 and right2
+			if (this.op === 'BETWEEN' || this.op === 'NOT BETWEEN') {
+				if (this.right1 && this.right1.findAggregator) {
+					this.right1.findAggregator(query);
+				}
+				if (this.right2 && this.right2.findAggregator) {
+					this.right2.findAggregator(query);
+				}
+			}
 			// Do not go in > ALL
 			if (this.right && this.right.findAggregator && !this.allsome) {
 				this.right.findAggregator(query);
