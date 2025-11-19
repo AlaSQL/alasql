@@ -6,6 +6,10 @@ if (typeof exports === 'object') {
 
 describe('Test 847 - Nested Subqueries', function () {
 	before(function () {
+		alasql('DROP TABLE IF EXISTS cities');
+		alasql('DROP TABLE IF EXISTS countries');
+		alasql('DROP TABLE IF EXISTS population');
+		
 		alasql('CREATE TABLE cities (city string, population number)');
 		alasql(
 			"INSERT INTO cities VALUES ('Rome',2863223), ('Paris',2249975), ('Berlin',3517424), ('Madrid',3041579),('Easingwold',4627)"
