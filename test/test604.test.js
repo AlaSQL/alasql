@@ -5,7 +5,7 @@ import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
 
-if (typeof window !== 'undefined') {
+if (typeof window === 'undefined') {
 	var DOMStorage = require('dom-storage');
 	global.localStorage = new DOMStorage(__dirname + '/test604.json', {
 		strict: false,

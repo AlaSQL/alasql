@@ -3,10 +3,12 @@ import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
 import alasql from '..';
 import DOMStorage from 'dom-storage';
 
-global.localStorage = new DOMStorage('./test/test379.json', {
-	strict: false,
-	ws: '',
-});
+if (typeof window === 'undefined') {
+	global.localStorage = new DOMStorage('./test/test379.json', {
+		strict: false,
+		ws: '',
+	});
+}
 
 describe('Test 379', () => {
 	test('Recreate dropped table - localStorage engine', done => {
