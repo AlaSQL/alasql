@@ -57,4 +57,32 @@ describe('Test 421 Test for JOINSTAR', function () {
 		]);
 		done();
 	});
+
+	it('5. JSON JOINSTAR with qualified names', function (done) {
+		alasql.options.joinstar = 'json';
+		alasql.databases.test421.dbversion++; // Reset database cache
+		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
+		//console.log(res);
+		assert.deepEqual(res, [
+			{one: {a: 1}, two: {a: 10}},
+			{one: {a: 1}, two: {a: 20}},
+			{one: {a: 2}, two: {a: 10}},
+			{one: {a: 2}, two: {a: 20}},
+		]);
+		done();
+	});
+
+	it('6. UNDERSCORE JOINSTAR with qualified names', function (done) {
+		alasql.options.joinstar = 'underscore';
+		alasql.databases.test421.dbversion++; // Reset database cache
+		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
+		//console.log(res);
+		assert.deepEqual(res, [
+			{one_a: 1, two_a: 10},
+			{one_a: 1, two_a: 20},
+			{one_a: 2, two_a: 10},
+			{one_a: 2, two_a: 20},
+		]);
+		done();
+	});
 });
