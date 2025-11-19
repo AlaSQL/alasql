@@ -35,25 +35,34 @@ yy.Select.prototype.compileOrder = function (query, params) {
 			// console.log(ord.expression instanceof yy.Column);
 
 			if (ord.expression instanceof yy.NumValue) {
+				// Validate that column number is at least 1
+				if (ord.expression.value < 1) {
+					throw new Error(
+						`Invalid column number ${ord.expression.value}. Column numbers must be at least 1.`
+					);
+				}
+
 				var v = self.columns[ord.expression.value - 1];
-				// Check if the column is a wildcard (SELECT *) or if v is undefined (out of bounds with wildcard)
-				// In this case, we need to store the numeric position for runtime resolution
-				if (
-					!v ||
-					(v instanceof yy.Column && v.columnid === '*') ||
-					(self.columns.length === 1 &&
-						self.columns[0] instanceof yy.Column &&
-						self.columns[0].columnid === '*')
-				) {
-					// Create a marker object that indicates positional ordering
-					// Skip validation as we don't know the column count at compile time with SELECT *
+				// Check if we're dealing with SELECT * case
+				var hasWildcard =
+					self.columns.length === 1 &&
+					self.columns[0] instanceof yy.Column &&
+					self.columns[0].columnid === '*';
+
+				if (hasWildcard) {
+					// With SELECT *, use positional ordering (resolved at runtime)
+					// Skip validation as we don't know the column count at compile time
 					v = {_useColumnIndex: true, columnIndex: ord.expression.value - 1};
 				} else {
-					// Only validate when we have explicit columns
+					// With explicit columns, validate the column number
 					if (ord.expression.value > self.columns.length) {
 						throw new Error(
 							`You are trying to order by column number ${ord.expression.value} but you have only selected ${self.columns.length} columns.`
 						);
+					}
+					// Also check if the resolved column is a wildcard (shouldn't happen but be safe)
+					if (v instanceof yy.Column && v.columnid === '*') {
+						v = {_useColumnIndex: true, columnIndex: ord.expression.value - 1};
 					}
 				}
 			} else {
