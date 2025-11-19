@@ -113,33 +113,37 @@ describe('Test 145 - localStorage', () => {
 				test('3. localStorage AS a database', done => {
 					// SELECT * FROM localStorage("and")
 
-					alasql('ATTACH DATABASE localStorage'); // Do we really need this?
-					alasql('SELECT * INTO localStorage.two FROM localStorage.one');
+					alasql('CREATE DATABASE test145'); // Do we really need this?
+					alasql('SELECT * INTO test145.two FROM test145.one');
 
-					alasql('USE localStorage');
+					alasql('USE test145');
 					alasql('SHOW TABLES');
-					alasql('CREATE TABLE one');
+					alasql('CREATE TABLE test145.one');
 
 					alasql('BEGIN TRANSACTION');
-					alasql('INSERT INTO one VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40');
-					alasql('SELECT * FROM one WHERE a = 1');
+					alasql(
+						'INSERT INTO test145.one VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40'
+					);
+					alasql('SELECT * FROM test145.one WHERE a = 1');
 
-					alasql('DELETE FROM one WHERE a = 2');
-					alasql('SELECT * FROM one');
+					alasql('DELETE FROM test145.one WHERE a = 2');
+					alasql('SELECT * FROM test145.one');
 					// check localStorage
 
-					alasql('UPDATE one SET b = a*1000 WHERE a = 2');
-					alasql('SELECT * FROM one');
+					alasql('UPDATE test145.one SET b = a*1000 WHERE a = 2');
+					alasql('SELECT * FROM test145.one');
 					// check localStorage
 					alasql('COMMIT TRANSACTION');
 
-					alasql('DROP TABLE one');
+					alasql('DROP TABLE test145.one');
 					alasql('SHOW TABLES');
 
-					alasql('CREATE TABLE two (a INT PRIMARY KEY, b Object)');
-					alasql('INSERT INTO two VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40');
-					alasql('SELECT * FROM two WHERE a = 1');
-					alasql('DROP TABLE two');
+					alasql('CREATE TABLE test145.two (a INT PRIMARY KEY, b Object)');
+					alasql(
+						'INSERT INTO test145.two VALUES @{a:1,b:10}, @{a:2,b:20}, @{a:1,b:30}, @{a:3, b:40'
+					);
+					alasql('SELECT * FROM test145.two WHERE a = 1');
+					alasql('DROP TABLE test145.two');
 
 					//;String.fromCharCode(0)
 
@@ -147,7 +151,7 @@ describe('Test 145 - localStorage', () => {
 				});
 
 				test('99. Detach database', done => {
-					alasql('DETACH DATABASE localStorage'); // Do we really need this?
+					alasql('DROP DATABASE test145'); // Do we really need this?
 					done();
 				});
 			}

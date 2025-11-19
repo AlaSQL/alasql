@@ -98,11 +98,11 @@ describe('Test 212: CONVERT dates with style', () => {
 	test('5. CONVERT DATE TO STRING FROM TABLE', done => {
 		var res = alasql(
 			'CREATE DATABASE test212; USE test212;\
-            CREATE TABLE one (d DATE); \
-            INSERT INTO one VALUES ("01/08/2015 12:34:56.789");\
-            INSERT INTO one VALUES (DATE("01/08/2015 12:34:56.789"));\
-            INSERT INTO one VALUES (NEW Date("01/08/2015 12:34:56.789"));\
-            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM one'
+            CREATE TABLE test212.one (d DATE); \
+            INSERT INTO test212.one VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO test212.one VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO test212.one VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.one'
 		);
 		res = res.pop();
 		expect(res[0] == '01-08-2015').toBe(true);
@@ -113,11 +113,11 @@ describe('Test 212: CONVERT dates with style', () => {
 
 	test('6. CONVERT DATE TO STRING FROM TABLE', done => {
 		var res = alasql(
-			'CREATE TABLE two (d Date); \
-            INSERT INTO two VALUES ("01/08/2015 12:34:56.789");\
-            INSERT INTO two VALUES (DATE("01/08/2015 12:34:56.789"));\
-            INSERT INTO two VALUES (NEW Date("01/08/2015 12:34:56.789"));\
-            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM two'
+			'CREATE TABLE test212.two (d Date); \
+            INSERT INTO test212.two VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO test212.two VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO test212.two VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.two'
 		);
 		res = res.pop();
 		expect(res[0] == '01-08-2015').toBe(true);
@@ -128,11 +128,11 @@ describe('Test 212: CONVERT dates with style', () => {
 
 	test('7. CONVERT DATE TO STRING FROM TABLE', done => {
 		var res = alasql(
-			'CREATE TABLE three; \
-            INSERT INTO three (d) VALUES ("01/08/2015 12:34:56.789");\
-            INSERT INTO three (d) VALUES (DATE("01/08/2015 12:34:56.789"));\
-            INSERT INTO three (d) VALUES (NEW Date("01/08/2015 12:34:56.789"));\
-            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM three'
+			'CREATE TABLE test212.three; \
+            INSERT INTO test212.three (d) VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO test212.three (d) VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO test212.three (d) VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.three'
 		);
 		res = res.pop();
 		expect(res[0] == '01-08-2015').toBe(true);
@@ -143,11 +143,11 @@ describe('Test 212: CONVERT dates with style', () => {
 
 	test('8. CONVERT DATE TO STRING FROM TABLE without columns', done => {
 		var res = alasql(
-			'CREATE TABLE four; \
-            INSERT INTO four VALUES {d:"01/08/2015 12:34:56.789"};\
-            INSERT INTO four VALUES {d:DATE("01/08/2015 12:34:56.789")};\
-            INSERT INTO four VALUES {d:(NEW Date("01/08/2015 12:34:56.789"))};\
-            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM four'
+			'CREATE TABLE test212.four; \
+            INSERT INTO test212.four VALUES {d:"01/08/2015 12:34:56.789"};\
+            INSERT INTO test212.four VALUES {d:DATE("01/08/2015 12:34:56.789")};\
+            INSERT INTO test212.four VALUES {d:(NEW Date("01/08/2015 12:34:56.789"))};\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.four'
 		);
 		res = res.pop();
 		expect(res[0] == '01-08-2015').toBe(true);
@@ -159,10 +159,10 @@ describe('Test 212: CONVERT dates with style', () => {
 	test('9. CONVERT DATE TO STRING FROM TABLE without columns', done => {
 		var d = new Date('01/08/2015 12:34:56.789');
 		var res = alasql(
-			'CREATE TABLE five; \
-            INSERT INTO five VALUES @"01/08/2015 12:34:56.789";\
-            INSERT INTO five VALUES ?;\
-            SELECT COLUMN CONVERT(NVARCHAR(10),_,110) FROM five',
+			'CREATE TABLE test212.five; \
+            INSERT INTO test212.five VALUES @"01/08/2015 12:34:56.789";\
+            INSERT INTO test212.five VALUES ?;\
+            SELECT COLUMN CONVERT(NVARCHAR(10),_,110) FROM test212.five',
 			[d]
 		);
 		res = res.pop();

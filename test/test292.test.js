@@ -7,7 +7,7 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 describe('Test 292 Nested searches', () => {
 	test.skip('1. CREATE DATABASE', done => {
-		alasql('CREATE DATABASE test292;USE test292');
+		alasql('CREATE DATABASE test292');
 		done();
 	});
 

@@ -42,23 +42,23 @@ describe('Test 409 Backup and restore database', () => {
 	alasql.restoreDatabase = function (obj, databaseid) {};
 
 	test('2. CREATE DATABASE', done => {
-		alasql('CREATE DATABASE test409;USE test409');
+		alasql('CREATE DATABASE test409');
 		done();
 	});
 
 	test.skip('2. CREATE DATABASE', done => {
-		alasql('CREATE TABLE one (a INT UNIQUE); INSERT INTO one VALUES (1),(2),(3)');
+		alasql('CREATE TABLE test409.one (a INT UNIQUE); INSERT INTO test409.one VALUES (1),(2),(3)');
 		var obj1 = alasql.storeDatabase();
 		alasql('DROP DATABASE test409');
 		var obj2 = JSON.parse(JSON.stringify(obj1));
 		alasql.restoreDatabase(obj2);
 		alasql('USE test409');
 		alasql('INSERT INTO one VALUES (4)');
-		var res = alasql('SELECT * FROM one');
+		var res = alasql('SELECT * FROM test409.one');
 		expect(res).toEqual([{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
 
 		expect(new Error().toThrow(), () => {
-			alasql('INSERT INTO one VALUES (1)');
+			alasql('INSERT INTO test409.one VALUES (1)');
 		});
 
 		done();

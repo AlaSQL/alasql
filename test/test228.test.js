@@ -8,10 +8,10 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 describe('Test 228 SELECT inside expressions', () => {
 	test('1. UPDATE WITH SELECT', done => {
 		alasql('CREATE DATABASE test228; USE test228;');
-		alasql('CREATE TABLE one(a INT, b INT)');
-		alasql('INSERT INTO one VALUES (1,10),(2,20),(3,30),(4,40)');
+		alasql('CREATE TABLE test228.one(a INT, b INT)');
+		alasql('INSERT INTO test228.one VALUES (1,10),(2,20),(3,30),(4,40)');
 
-		var res = alasql('SELECT COLUMN a+(SELECT MAX(b) FROM one) FROM one');
+		var res = alasql('SELECT COLUMN a+(SELECT MAX(b) FROM test228.one) FROM test228.one');
 		expect(res).toEqual([41, 42, 43, 44]);
 		//      console.log(res);
 

@@ -8,26 +8,31 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 describe('Test 132 Alasql + NoSQL', () => {
 	test('1. Prepare database', done => {
 		alasql('CREATE DATABASE test132; USE test132');
-		alasql('CREATE TABLE one (a INT, b STRING)');
-		alasql('CREATE TABLE two');
+		alasql('CREATE TABLE test132.one (a INT, b STRING)');
+		alasql('CREATE TABLE test132.two');
 		// alasql('CREATE TABLE three ?',[{columnid:"a"},{columnid:"b"}]);
 		done();
 	});
 
 	test('2. INSERT', done => {
-		alasql('INSERT INTO one VALUES (1,"One"), (2,"Two")');
+		alasql('INSERT INTO test132.one VALUES (1,"One"), (2,"Two")');
 		//		alasql('INSERT INTO one VALUES @{a:3,b:"Three"}, @{a:4,b:"Four"}, (5,"Five")');
-		alasql('INSERT INTO one VALUES {a:3,b:"Three"}, {a:4,b:"Four"}, (5,"Five")');
-		alasql('INSERT INTO one VALUES ?,?,(?,?)', [{a: 6, b: 'Six'}, {a: 7, b: 'Seven'}, 8, 'Eight']);
-		alasql.tables.one.insert({a: 9, b: 'Nine'});
-		alasql.tables.two.insert({a: 1, b: [2, {c: 3}, 4]});
-		alasql.tables.two.insert({a: 1, b: [2, {c: 5}, 4]});
-		alasql.tables.two.insert({a: 1, b: [2, {c: 6}, 4]});
+		alasql('INSERT INTO test132.one VALUES {a:3,b:"Three"}, {a:4,b:"Four"}, (5,"Five")');
+		alasql('INSERT INTO test132.one VALUES ?,?,(?,?)', [
+			{a: 6, b: 'Six'},
+			{a: 7, b: 'Seven'},
+			8,
+			'Eight',
+		]);
+		alasql.databases.test132.tables.one.insert({a: 9, b: 'Nine'});
+		alasql.databases.test132.tables.two.insert({a: 1, b: [2, {c: 3}, 4]});
+		alasql.databases.test132.tables.two.insert({a: 1, b: [2, {c: 5}, 4]});
+		alasql.databases.test132.tables.two.insert({a: 1, b: [2, {c: 6}, 4]});
 		done();
 	});
 
 	test('3. SELECT', done => {
-		var res = alasql('SELECT * FROM one');
+		var res = alasql('SELECT * FROM test132.one');
 		expect(res).toEqual([
 			{a: 1, b: 'One'},
 			{a: 2, b: 'Two'},
@@ -40,7 +45,7 @@ describe('Test 132 Alasql + NoSQL', () => {
 			{a: 9, b: 'Nine'},
 		]);
 
-		var res = alasql('SELECT * FROM one WHERE b IN ("Two","Three")');
+		var res = alasql('SELECT * FROM test132.one WHERE b IN ("Two","Three")');
 		expect(res).toEqual([
 			{a: 2, b: 'Two'},
 			{a: 3, b: 'Three'},
@@ -50,7 +55,7 @@ describe('Test 132 Alasql + NoSQL', () => {
 		//		expect(res1).toEqual(res2);
 		//		expect(res1).toEqual(res3);
 
-		var res1 = alasql('SELECT (a = 2) AS alpha FROM one WHERE b IN (2,3)');
+		var res1 = alasql('SELECT (a = 2) AS alpha FROM test132.one WHERE b IN (2,3)');
 		/// console.log(res1);
 		//		var res2 = alasql('SELECT @{a:2} AS alpha FROM one WHERE @{b:[2,3]}');
 		//		expect(res1).toEqual(res2);
@@ -66,14 +71,14 @@ describe('Test 132 Alasql + NoSQL', () => {
 
 	test('5. UPDATE', done => {
 		//		alasql('UPDATE one SET {a:2} WHERE {a:3}');
-		alasql('UPDATE one SET a=2 WHERE a=3');
+		alasql('UPDATE test132.one SET a=2 WHERE a=3');
 		//		alasql.tables.one.update({a:2}, {a:3});
 		done();
 	});
 
 	test('6. UPDATE', done => {
 		//		alasql('DELETE FROM one WHERE @{a:2}');
-		alasql('DELETE FROM one WHERE a=2');
+		alasql('DELETE FROM test132.one WHERE a=2');
 		//		alasql.tables.one.remove({a:2})
 		done();
 	});

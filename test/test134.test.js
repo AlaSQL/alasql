@@ -9,11 +9,13 @@ describe('Test 134 SELECT FROM', () => {
 	if (false) {
 		test('1. Load data from CSV and TAB', done => {
 			alasql('CREATE DATABASE test134; USE test134');
-			alasql('CREATE TABLE one (a INT, b STRING)');
-			alasql('SELECT * INTO one FROM CSV("' + __dirname + '/test134.csv",true)');
-			alasql('SELECT [0] AS a, [1] AS b INTO one FROM TAB("' + __dirname + '/test134.tab")');
+			alasql('CREATE TABLE test134.one (a INT, b STRING)');
+			alasql('SELECT * INTO test134.one FROM CSV("' + __dirname + '/test134.csv",true)');
+			alasql(
+				'SELECT [0] AS a, [1] AS b INTO test134.one FROM TAB("' + __dirname + '/test134.tab")'
+			);
 
-			var res = alasql('SELECT VALUE COUNT(*) FROM one');
+			var res = alasql('SELECT VALUE COUNT(*) FROM test134.one');
 			expect(res == 10).toBe(true);
 
 			done();

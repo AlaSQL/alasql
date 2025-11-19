@@ -25,10 +25,10 @@ var dbFile = __dirname + '/test_db_fs.json';
 		});
 
 		test('B. Basic Operations on a Filestorage DB table ', async () => {
-			await sql('CREATE TABLE one (a VARCHAR, b INT)');
-			await sql("INSERT INTO one VALUES ('A', 1), ('B', 2)");
-			await sql("INSERT INTO one VALUES ('C', 3)");
-			const res = await sql('SELECT * FROM one');
+			await sql('CREATE TABLE testDBFS.one (a VARCHAR, b INT)');
+			await sql("INSERT INTO testDBFS.one VALUES ('A', 1), ('B', 2)");
+			await sql("INSERT INTO testDBFS.one VALUES ('C', 3)");
+			const res = await sql('SELECT * FROM testDBFS.one');
 			const actual = [
 				{a: 'A', b: 1},
 				{a: 'B', b: 2},

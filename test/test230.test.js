@@ -14,18 +14,18 @@ describe('Test 230 Fix GROUP BY expressions', () => {
 
 	test('217. TRUNCATE TABLE', done => {
 		alasql(
-			'CREATE TABLE one(a INT);\
-            INSERT INTO one VALUES (1),(2),(3); \
-            TRUNCATE TABLE one;'
+			'CREATE TABLE test230.one(a INT);\
+            INSERT INTO test230.one VALUES (1),(2),(3); \
+            TRUNCATE TABLE test230.one;'
 		);
-		var res = alasql('SELECT VALUE COUNT(*) FROM one');
+		var res = alasql('SELECT VALUE COUNT(*) FROM test230.one');
 		//        console.log(res);
 		//        var res = alasql('SELECT VALUE COUNT(*) FROM one');
 		expect(res == 0).toBe(true);
 		done();
 	});
 
-	test('046-1 FROM array of arrays', done => {
+	test('1 FROM array of arrays', done => {
 		var data = [
 			[2014, 1, 1],
 			[2015, 2, 1],

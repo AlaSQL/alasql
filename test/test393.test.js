@@ -9,7 +9,7 @@ import alasql from '..';
 
 describe('Test 393 Triggers', () => {
 	test('1. CREATE DATABASE', done => {
-		alasql('CREATE DATABASE test393;USE test393');
+		alasql('CREATE DATABASE test393');
 		done();
 	});
 
@@ -22,12 +22,12 @@ describe('Test 393 Triggers', () => {
 			expect(r.a == 123).toBe(true);
 			testCount++;
 		};
-		alasql('CREATE TABLE one (a INT)');
+		alasql('CREATE TABLE test393.one (a INT)');
 
-		alasql('CREATE TRIGGER tr1 BEFORE INSERT ON one CALL onchange1()');
-		alasql('CREATE TRIGGER tr2 BEFORE INSERT ON one onchange2');
+		alasql('CREATE TRIGGER tr1 BEFORE INSERT ON test393.one CALL onchange1()');
+		alasql('CREATE TRIGGER tr2 BEFORE INSERT ON test393.one onchange2');
 
-		alasql('INSERT INTO one VALUES (123)'); // This will fire onchange()
+		alasql('INSERT INTO test393.one VALUES (123)'); // This will fire onchange()
 
 		//    setTimeout(function(){
 		expect(testCount == 2).toBe(true);
@@ -39,11 +39,11 @@ describe('Test 393 Triggers', () => {
 		alasql.fn.onchange3 = function (r) {
 			if (r.a == 276) return false;
 		};
-		alasql('CREATE TABLE two (a INT)');
-		alasql('CREATE TRIGGER tr3 BEFORE INSERT ON two onchange3');
-		alasql('INSERT INTO two VALUES (276),(145)');
+		alasql('CREATE TABLE test393.two (a INT)');
+		alasql('CREATE TRIGGER tr3 BEFORE INSERT ON test393.two onchange3');
+		alasql('INSERT INTO test393.two VALUES (276),(145)');
 
-		var res = alasql('COLUMN OF SELECT * FROM two');
+		var res = alasql('COLUMN OF SELECT * FROM test393.two');
 		expect(res).toEqual([145]);
 		done();
 	});
@@ -54,8 +54,8 @@ describe('Test 393 Triggers', () => {
 			expect(alasql.databases.test393.tables.two.data.length == 2).toBe(true);
 		};
 		expect(alasql.databases.test393.tables.two.data.length == 1).toBe(true);
-		alasql('CREATE TRIGGER tr4 AFTER INSERT ON two onchange4');
-		alasql('INSERT INTO two VALUES (983)');
+		alasql('CREATE TRIGGER tr4 AFTER INSERT ON test393.two onchange4');
+		alasql('INSERT INTO test393.two VALUES (983)');
 		done();
 	});
 
@@ -65,11 +65,11 @@ describe('Test 393 Triggers', () => {
 			expect(r.a == 222).toBe(true);
 			testCount++;
 		};
-		alasql('CREATE TABLE three (a INT)');
-		alasql('CREATE TRIGGER tr5 INSTEAD OF INSERT ON three onchange5');
-		alasql('INSERT INTO three VALUES (222)');
+		alasql('CREATE TABLE test393.three (a INT)');
+		alasql('CREATE TRIGGER tr5 INSTEAD OF INSERT ON test393.three onchange5');
+		alasql('INSERT INTO test393.three VALUES (222)');
 
-		var res = alasql('COLUMN OF SELECT * FROM three');
+		var res = alasql('COLUMN OF SELECT * FROM test393.three');
 		expect(res).toEqual([]);
 		expect(testCount == 1).toBe(true);
 		done();
@@ -79,25 +79,25 @@ describe('Test 393 Triggers', () => {
 		var testCount = 0;
 		alasql.fn.onchange61 = function (r) {
 			testCount++;
-			var res = alasql('COLUMN OF SELECT * FROM four');
+			var res = alasql('COLUMN OF SELECT * FROM test393.four');
 			expect(res).toEqual([1, 2, 3, 4, 5]);
 		};
 		alasql.fn.onchange62 = () => {
 			testCount++;
-			var res = alasql('COLUMN OF SELECT * FROM four');
+			var res = alasql('COLUMN OF SELECT * FROM test393.four');
 			expect(res).toEqual([2, 3, 4, 5]);
 		};
 		alasql.fn.onchange63 = () => {
 			testCount++;
-			var res = alasql('COLUMN OF SELECT * FROM four');
+			var res = alasql('COLUMN OF SELECT * FROM test393.four');
 			expect(res).toEqual([2, 3, 4, 5]);
 		};
-		alasql('CREATE TABLE four (a INT)');
-		alasql('CREATE TRIGGER tr61 BEFORE DELETE ON four onchange61');
-		alasql('CREATE TRIGGER tr62 AFTER DELETE ON four CALL onchange62()');
-		alasql('CREATE TRIGGER tr63 AFTER DELETE ON four onchange63');
-		alasql('INSERT INTO four VALUES (1),(2),(3),(4),(5)');
-		alasql('DELETE FROM four WHERE a = 1');
+		alasql('CREATE TABLE test393.four (a INT)');
+		alasql('CREATE TRIGGER tr61 BEFORE DELETE ON test393.four onchange61');
+		alasql('CREATE TRIGGER tr62 AFTER DELETE ON test393.four CALL onchange62()');
+		alasql('CREATE TRIGGER tr63 AFTER DELETE ON test393.four onchange63');
+		alasql('INSERT INTO test393.four VALUES (1),(2),(3),(4),(5)');
+		alasql('DELETE FROM test393.four WHERE a = 1');
 
 		expect(testCount == 3).toBe(true);
 		done();
@@ -115,11 +115,11 @@ describe('Test 393 Triggers', () => {
 			expect(r.a == 7).toBe(true);
 			testCount++;
 		};
-		alasql('CREATE TRIGGER tr7 BEFORE UPDATE ON four onchange7');
-		alasql('CREATE TRIGGER tr7after BEFORE UPDATE ON four onchange7after');
-		alasql('UPDATE four SET a = 7 WHERE a = 2');
+		alasql('CREATE TRIGGER tr7 BEFORE UPDATE ON test393.four onchange7');
+		alasql('CREATE TRIGGER tr7after BEFORE UPDATE ON test393.four onchange7after');
+		alasql('UPDATE test393.four SET a = 7 WHERE a = 2');
 
-		var res = alasql('COLUMN OF SELECT * FROM four');
+		var res = alasql('COLUMN OF SELECT * FROM test393.four');
 		expect(res).toEqual([7, 3, 4, 5]);
 		expect(testCount == 2).toBe(true);
 		done();
@@ -132,12 +132,12 @@ describe('Test 393 Triggers', () => {
 			expect(r.a == 7).toBe(true);
 			testCount++;
 		};
-		alasql('CREATE TABLE five (a INT)');
-		alasql('CREATE TRIGGER tr8 INSTEAD OF UPDATE ON five onchange8');
-		alasql('INSERT INTO five VALUES (1),(2),(3),(4),(5)');
-		alasql('UPDATE five SET a = 7 WHERE a = 2');
+		alasql('CREATE TABLE test393.five (a INT)');
+		alasql('CREATE TRIGGER tr8 INSTEAD OF UPDATE ON test393.five onchange8');
+		alasql('INSERT INTO test393.five VALUES (1),(2),(3),(4),(5)');
+		alasql('UPDATE test393.five SET a = 7 WHERE a = 2');
 
-		var res = alasql('COLUMN OF SELECT * FROM five');
+		var res = alasql('COLUMN OF SELECT * FROM test393.five');
 		expect(res).toEqual([1, 2, 3, 4, 5]);
 		expect(testCount == 1).toBe(true);
 		done();

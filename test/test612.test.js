@@ -9,9 +9,8 @@ describe('Test 612 - INTO CSV', () => {
 
 	beforeAll(() => {
 		alasql('CREATE DATABASE test' + testNum);
-		alasql('USE test' + testNum);
-		alasql('CREATE TABLE one (a INT, b VARCHAR)');
-		alasql("INSERT INTO one VALUES (10, 'swoll')," + "(11, 'muscles')");
+		alasql('CREATE TABLE test612.one (a INT, b VARCHAR)');
+		alasql("INSERT INTO test612.one VALUES (10, 'swoll')," + "(11, 'muscles')");
 	});
 
 	afterAll(() => {
@@ -40,7 +39,7 @@ describe('Test 612 - INTO CSV', () => {
 	});
 
 	test("With quote = '', multiple rows", async () => {
-		const q = "SELECT a, b INTO CSV('test612-2', {quote:''}) FROM one";
+		const q = "SELECT a, b INTO CSV('test612-2', {quote:''}) FROM test612.one";
 		await sql(q);
 		const filecontents = fs.readFileSync('test612-2.csv', 'utf8');
 		// must include the BOM at the beginning

@@ -14,17 +14,17 @@ if (typeof window !== 'undefined') {
 				{a: 3, b: "Val's Deser"},
 			];
 			alasql(
-				'SELECT * INTO SQL("' + __dirname + '/test189.sql",{tableid:"one"}) FROM ?',
+				'SELECT * INTO SQL("' + __dirname + '/test189.sql",{tableid:"test189.one"}) FROM ?',
 				[data],
 				() => {
 					alasql(
 						'CREATE DATABASE test189;\
 	        	USE test189;\
-	        	CREATE TABLE one; \
+	        	CREATE TABLE test189.one; \
 	        	SOURCE "' +
 							__dirname +
 							'/test189.sql"; \
-	        	SELECT * FROM one',
+	        	SELECT * FROM test189.one',
 						[],
 						function (res) {
 							expect(res.pop()).toEqual(data);

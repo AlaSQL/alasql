@@ -8,28 +8,28 @@ import alasql from '..';
 
 describe('Test 403 REINDEX', () => {
 	test('1. CREATE DATABASE', done => {
-		alasql('CREATE DATABASE test403;USE test403');
+		alasql('CREATE DATABASE test403');
 		done();
 	});
 
 	test('2. Create table and index before insert', done => {
-		alasql('CREATE TABLE one (a INT)');
-		alasql('CREATE INDEX xone ON one (a)');
-		alasql('INSERT INTO one (a) VALUES (100), (200), (300)');
+		alasql('CREATE TABLE test403.one (a INT)');
+		alasql('USE test403; CREATE INDEX xone ON test403.one (a); USE alasql');
+		alasql('INSERT INTO test403.one (a) VALUES (100), (200), (300)');
 		done();
 	});
 
 	test('3. Create table and index after insert', done => {
-		alasql('CREATE TABLE two (a INT)');
-		alasql('INSERT INTO two (a) VALUES (100), (200), (300)');
-		alasql('CREATE INDEX xtwo ON two (a)');
+		alasql('CREATE TABLE test403.two (a INT)');
+		alasql('INSERT INTO test403.two (a) VALUES (100), (200), (300)');
+		alasql('USE test403; CREATE INDEX xtwo ON two (a); USE alasql');
 		done();
 	});
 
 	test('4. REINDEX', done => {
-		var res = alasql('REINDEX xone');
+		var res = alasql('REINDEX test403.xone');
 		expect(res == 1).toBe(true);
-		var res = alasql('REINDEX xtwo');
+		var res = alasql('REINDEX test403.xtwo');
 		expect(res == 1).toBe(true);
 		done();
 	});

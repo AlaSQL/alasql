@@ -25,12 +25,12 @@ describe('Test 239 AUTOCOMMIT OFF test', () => {
 			alasql('ATTACH LOCALSTORAGE DATABASE ls239 AS test239; USE test239');
 			//    console.log(4);
 
-			alasql('CREATE TABLE IF NOT EXISTS one (a int, b string)');
+			alasql('CREATE TABLE IF NOT EXISTS test239.one (a int, b string)');
 			//    console.log(5);
 
-			alasql('insert into one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
+			alasql('insert into test239.one VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")');
 			//    console.log(6);
-			var res = alasql('select * from one');
+			var res = alasql('select * from test239.one');
 			expect(res).toEqual([
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
@@ -40,8 +40,8 @@ describe('Test 239 AUTOCOMMIT OFF test', () => {
 			var res = alasql('COMMIT TRANSACTION');
 			//    console.log(7);
 			//    var res = alasql('BEGIN TRANSACTION');
-			alasql('insert into one VALUES (4,"Sochi"), (5, "Vancouver")');
-			var res = alasql('select * from one');
+			alasql('insert into test239.one VALUES (4,"Sochi"), (5, "Vancouver")');
+			var res = alasql('select * from test239.one');
 			expect(res).toEqual([
 				{a: 1, b: 'Moscow'},
 				{a: 2, b: 'Kyiv'},
@@ -55,7 +55,7 @@ describe('Test 239 AUTOCOMMIT OFF test', () => {
 			//    console.log(alasql.databases.test239.tables.one.data);
 			//    console.log(alasql.options);
 			//    alasql('insert into one VALUES (4,"Berlin")');
-			var res = alasql('select * from one');
+			var res = alasql('select * from test239.one');
 			//    console.log(9);
 			//      console.log(res);
 			expect(res).toEqual([
@@ -63,7 +63,7 @@ describe('Test 239 AUTOCOMMIT OFF test', () => {
 				{a: 2, b: 'Kyiv'},
 				{a: 3, b: 'Minsk'},
 			]);
-			alasql('DROP TABLE one');
+			alasql('DROP TABLE test239.one');
 			//    console.log(10);
 			done();
 		});
@@ -74,17 +74,17 @@ describe('Test 239 AUTOCOMMIT OFF test', () => {
     CREATE LOCALSTORAGE DATABASE test001;
     ATTACH LOCALSTORAGE DATABASE test001;
     USE test001;
-    CREATE TABLE one(a int, b string);
+    CREATE TABLE test001.one(a int, b string);
     `);
 
 			var tm = Date.now();
 			for (var i = 0; i < 10000; i++) {
-				alasql('INSERT INTO one VALUES (?,?)', [1, 'one']);
+				alasql('INSERT INTO test001.one VALUES (?,?)', [1, 'one']);
 			}
 			//    console.log(alasql.tables.one);
 			//alasql('COMMIT TRANSACTION');
 
-			var res = alasql('SELECT VALUE COUNT(*) FROM one ');
+			var res = alasql('SELECT VALUE COUNT(*) FROM test001.one ');
 			expect(res == 10000).toBe(true);
 			var res = alasql('COMMIT TRANSACTION');
 

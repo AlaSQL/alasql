@@ -7,7 +7,7 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 describe('Test 288 ROWNUM()', () => {
 	test('1. CREATE DATABASE', done => {
-		alasql('CREATE DATABASE test288;USE test288');
+		alasql('CREATE DATABASE test288');
 		done();
 	});
 
@@ -23,12 +23,12 @@ describe('Test 288 ROWNUM()', () => {
 	});
 
 	test('3. Subquery', done => {
-		alasql('CREATE TABLE one (a INT PRIMARY KEY)');
+		alasql('CREATE TABLE test288.one (a INT PRIMARY KEY)');
 		for (var i = 1; i < 1000; i++) {
-			alasql('INSERT INTO one VALUES (?)', [i]);
+			alasql('INSERT INTO test288.one VALUES (?)', [i]);
 		}
 		var res = alasql(
-			'SELECT * FROM (SELECT a, ROWNUM() AS r FROM one)\
+			'SELECT * FROM (SELECT a, ROWNUM() AS r FROM test288.one)\
       WHERE r BETWEEN 55 AND 60'
 		);
 		expect(res).toEqual([

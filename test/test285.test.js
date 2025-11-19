@@ -11,15 +11,15 @@ describe('Test 285 CREATE UNIQUE INDEX', () => {
       CREATE DATABASE test285;
       USE DATABASE test285;
 
-      CREATE TABLE One
+      CREATE TABLE test285.One
       (      a INT ,
              b INT
       );
 
-      CREATE UNIQUE INDEX ux_one ON One(a,b);
+      CREATE UNIQUE INDEX ux_one ON test285.One(a,b);
 
-      INSERT INTO One VALUES(1,1);
-      INSERT INTO One VALUES(1,2);
+      INSERT INTO test285.One VALUES(1,1);
+      INSERT INTO test285.One VALUES(1,2);
 	  `);
 		/// console.log(res);
 		//    expect(res).toEqual([1,1,1,1,1,1]);

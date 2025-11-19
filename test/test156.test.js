@@ -11,9 +11,9 @@ describe('Test 156 - match()', () => {
 	test('1. Multiple lines async', done => {
 		alasql(
 			'CREATE DATABASE test156; USE test156;' +
-				'CREATE TABLE one (a string);' +
-				'INSERT INTO one VALUES ("Moscow"), ("Frankfurt"), ("Paris");' +
-				'SELECT * FROM one WHERE a->match(?)' +
+				'CREATE TABLE test156.one (a string);' +
+				'INSERT INTO test156.one VALUES ("Moscow"), ("Frankfurt"), ("Paris");' +
+				'SELECT * FROM test156.one WHERE a->match(?)' +
 				'',
 			['Moscow'],
 			function (res) {
@@ -27,32 +27,32 @@ describe('Test 156 - match()', () => {
 	//https://docs.oracle.com/cd/B19306_01/appdev.102/b14251/adfns_regexp.htm
 	if (false) {
 		test('2. RegExp like Oracle functions', done => {
-			alasql('SELECT * FROM one WHERE REGEXP_LIKE(a,"Mos")');
+			alasql('SELECT * FROM test156.one WHERE REGEXP_LIKE(a,"Mos")');
 			expect(res).toEqual([{a: 'Moscow'}]);
 
 			alasql(
-				'SELECT VALUE REGEXP_REPLACE(a,"Moscow","London") FROM one WHERE REGEXP_LIKE(a,"Mos.*")'
+				'SELECT VALUE REGEXP_REPLACE(a,"Moscow","London") FROM test156.one WHERE REGEXP_LIKE(a,"Mos.*")'
 			);
 			expect(res == 'London').toBe(true);
 
-			alasql('SELECT VALUE REGEXP_INSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")');
+			alasql('SELECT VALUE REGEXP_INSTR(a,"osco") FROM test156.one WHERE REGEXP_LIKE(a,"Mos.*")');
 			expect(res == 2).toBe(true);
 
-			alasql('SELECT VALUE REGEXP_SUBSTR(a,"osco") FROM one WHERE REGEXP_LIKE(a,"Mos.*")');
+			alasql('SELECT VALUE REGEXP_SUBSTR(a,"osco") FROM test156.one WHERE REGEXP_LIKE(a,"Mos.*")');
 			expect(res == 'osco').toBe(true);
 
 			done();
 		});
 
 		test('3. Criterias for WHERE like MongoDB', done => {
-			alasql('SELECT * FROM one WHERE CRITERIA(@{a:"Moscow"})');
+			alasql('SELECT * FROM test156.one WHERE CRITERIA(@{a:"Moscow"})');
 			expect(res).toEqual([{a: 'Moscow'}]);
 
-			alasql('SELECT * FROM one WHERE CRITERIA(@{a:?})', ['Moscow']);
+			alasql('SELECT * FROM test156.one WHERE CRITERIA(@{a:?})', ['Moscow']);
 			expect(res).toEqual([{a: 'Moscow'}]);
 
 			// Do we really need this?
-			alasql('SELECT * FROM one WHERE CRITERIA(?)', [{a: 'Moscow'}]);
+			alasql('SELECT * FROM test156.one WHERE CRITERIA(?)', [{a: 'Moscow'}]);
 			expect(res).toEqual([{a: 'Moscow'}]);
 
 			done();

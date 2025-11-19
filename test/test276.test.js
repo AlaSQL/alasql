@@ -7,11 +7,11 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 describe('Test 276 INFORMATION_SCHEMA', () => {
 	test('1. Prepare databases', done => {
-		alasql('CREATE DATABASE test276; USE test276');
-		alasql('CREATE TABLE one (a INT, b NVARCHAR(10))');
-		alasql('INSERT INTO one VALUES (1,"One"), (2,"Two"), (3,"Three"), (4,"Four")');
+		alasql('CREATE DATABASE test276');
+		alasql('CREATE TABLE test276.one (a INT, b NVARCHAR(10))');
+		alasql('INSERT INTO test276.one VALUES (1,"One"), (2,"Two"), (3,"Three"), (4,"Four")');
 
-		alasql('CREATE VIEW view_one AS SELECT * FROM one WHERE a > 2');
+		alasql('CREATE VIEW test276.view_one AS SELECT * FROM test276.one WHERE a > 2');
 		var res = alasql('SELECT * FROM INFORMATION_SCHEMA.[VIEWS] WHERE TABLE_CATALOG = "test276"');
 		expect(res).toEqual([{TABLE_CATALOG: 'test276', TABLE_NAME: 'view_one'}]);
 		//    console.log(res);
@@ -23,7 +23,7 @@ describe('Test 276 INFORMATION_SCHEMA', () => {
 		alasql.options.modifier = 'RECORDSET';
 		alasql(
 			'  IF EXISTS (SELECT TABLE_NAME FROM INFORMATION_SCHEMA.VIEWS \
-               WHERE TABLE_NAME = "view_one") DROP VIEW view_one'
+               WHERE TABLE_NAME = "view_one") DROP VIEW test276.view_one'
 		);
 		//    console.log(Object.keys(alasql.databases.test276.tables).length);
 		expect(alasql.databases.test276.tables.view_one).toBeUndefined();

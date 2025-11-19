@@ -10,8 +10,8 @@ describe('Test 607 - TRUNCATE on table in Local Storage', () => {
 		alasql('CREATE LOCALSTORAGE DATABASE test' + testId);
 		alasql('ATTACH LOCALSTORAGE DATABASE test' + testId);
 		alasql('USE test' + testId);
-		alasql('CREATE TABLE one (id INT IDENTITY(3,5), name VARCHAR)');
-		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
+		alasql('CREATE TABLE test607.one (id INT IDENTITY(3,5), name VARCHAR)');
+		alasql("INSERT INTO test607.one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
 	});
 
 	afterAll(() => {
@@ -19,12 +19,12 @@ describe('Test 607 - TRUNCATE on table in Local Storage', () => {
 	});
 
 	test('A) Attempt TRUNCATE on table', () => {
-		var res = alasql('TRUNCATE TABLE one');
+		var res = alasql('TRUNCATE TABLE test607.one');
 		expect(res).toEqual(1);
 	});
 
 	test('B) Make sure table is empty', () => {
-		var res = alasql('SELECT id, name FROM one');
+		var res = alasql('SELECT id, name FROM test607.one');
 		expect(res.length).toEqual(0);
 	});
 
@@ -67,13 +67,13 @@ describe('Test 607 - TRUNCATE on table in Local Storage', () => {
 
 	test('D) Check TRUNCATE works in a COMMIT', () => {
 		//populate the table
-		alasql('TRUNCATE TABLE one');
-		alasql("INSERT INTO one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
+		alasql('TRUNCATE TABLE test607.one');
+		alasql("INSERT INTO test607.one (name) VALUES ('one'),('two'),('three'),('four'),('five')");
 
 		alasql('BEGIN TRANSACTION');
-		alasql('TRUNCATE TABLE one');
+		alasql('TRUNCATE TABLE test607.one');
 		alasql('COMMIT TRANSACTION');
-		var rows = alasql('SELECT id FROM one');
+		var rows = alasql('SELECT id FROM test607.one');
 		expect(rows.length).toEqual(0);
 	});
 });

@@ -22,8 +22,8 @@ describe('Test 217 Some T-SQL compatibility tests', () => {
 	test('3. TRUNCATE TABLE', done => {
 		var res = alasql(
 			'CREATE DATABASE test217;USE test217; \
-            CREATE TABLE one(a INT);INSERT INTO one VALUES (1),(2),(3); \
-            TRUNCATE TABLE one; SELECT VALUE COUNT(*) FROM one \
+            CREATE TABLE test217.one(a INT);INSERT INTO test217.one VALUES (1),(2),(3); \
+            TRUNCATE TABLE test217.one; SELECT VALUE COUNT(*) FROM test217.one \
             '
 		);
 		//        console.log(res);

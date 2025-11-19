@@ -7,7 +7,7 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 describe('Test 287 SET NOCOUNT OFF/ON', () => {
 	test('1. CREATE TABLE and FIRST INSERT', done => {
-		alasql('CREATE DATABASE test287;USE test287');
+		alasql('CREATE DATABASE test287');
 		done();
 	});
 
@@ -22,20 +22,20 @@ describe('Test 287 SET NOCOUNT OFF/ON', () => {
 
 	test('3. CREATE TABLE', done => {
 		alasql('SET NOCOUNT OFF');
-		var res = alasql('CREATE TABLE one');
+		var res = alasql('CREATE TABLE test287.one');
 		expect(res == 1).toBe(true);
 		alasql('SET NOCOUNT ON');
-		var res = alasql('CREATE TABLE two');
+		var res = alasql('CREATE TABLE test287.two');
 		expect(typeof res == 'undefined').toBe(true);
 		done();
 	});
 
 	test('4. INSERT', done => {
 		alasql('SET NOCOUNT OFF');
-		var res = alasql('INSERT INTO one VALUES {a:1},{a:2}');
+		var res = alasql('INSERT INTO test287.one VALUES {a:1},{a:2}');
 		expect(res == 2).toBe(true);
 		alasql('SET NOCOUNT ON');
-		var res = alasql('INSERT INTO two VALUES {b:10},{b:20}');
+		var res = alasql('INSERT INTO test287.two VALUES {b:10},{b:20}');
 		expect(typeof res == 'undefined').toBe(true);
 		done();
 	});

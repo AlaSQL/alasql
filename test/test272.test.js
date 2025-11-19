@@ -61,9 +61,9 @@ describe('Test 272 REMOVE columns', () => {
 	});
 
 	test('5. Remove columns from table', done => {
-		alasql('CREATE TABLE one (a INT, b STRING, c INT)');
-		alasql('INSERT INTO one VALUES (1,"One",10),(2,"Two",20),(3,"Three",30)');
-		var res = alasql('SELECT RECORDSET * REMOVE COLUMN b FROM one');
+		alasql('CREATE TABLE test272.one (a INT, b STRING, c INT)');
+		alasql('INSERT INTO test272.one VALUES (1,"One",10),(2,"Two",20),(3,"Three",30)');
+		var res = alasql('SELECT RECORDSET * REMOVE COLUMN b FROM test272.one');
 		var colres = pluck(res.columns, 'columnid');
 		expect(colres).toEqual(['a', 'c']);
 		done();

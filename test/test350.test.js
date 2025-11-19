@@ -7,24 +7,24 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 
 describe('Test 350 SERIAL data type', () => {
 	test('1. CREATE DATABASE', done => {
-		alasql('CREATE DATABASE test350;USE test350');
+		alasql('CREATE DATABASE test350');
 		done();
 	});
 
 	test('2. CREATE TABLE', done => {
-		var res = alasql('CREATE TABLE one (id SERIAL, name STRING)');
+		var res = alasql('CREATE TABLE test350.one (id SERIAL, name STRING)');
 		expect(res).toEqual(1);
 		done();
 	});
 
 	test('3. INSERT', done => {
-		var res = alasql('INSERT INTO one (name) VALUES ("One"), ("Two"), ("Three")');
+		var res = alasql('INSERT INTO test350.one (name) VALUES ("One"), ("Two"), ("Three")');
 		expect(res).toEqual(3);
 		done();
 	});
 
 	test('4. SELECT', done => {
-		var res = alasql('SELECT * FROM one');
+		var res = alasql('SELECT * FROM test350.one');
 		expect(res).toEqual([
 			{id: 1, name: 'One'},
 			{id: 2, name: 'Two'},

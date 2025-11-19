@@ -10,7 +10,7 @@ var testId = 427;
 
 describe('Test ' + testId + ' REPLACE test', () => {
 	beforeAll(() => {
-		alasql('CREATE DATABASE test' + testId + ';USE test' + testId);
+		alasql('CREATE DATABASE test' + testId);
 	});
 
 	afterAll(() => {
@@ -18,9 +18,9 @@ describe('Test ' + testId + ' REPLACE test', () => {
 	});
 
 	test('1. Simple Replace', done => {
-		alasql('CREATE TABLE one (a STRING)');
-		alasql('INSERT INTO one VALUES (".a."),("_._")');
-		var res = alasql('COLUMN OF SELECT REPLACE(a,".","_") FROM one');
+		alasql('CREATE TABLE test427.one (a STRING)');
+		alasql('INSERT INTO test427.one VALUES (".a."),("_._")');
+		var res = alasql('COLUMN OF SELECT REPLACE(a,".","_") FROM test427.one');
 		//expect(res).toEqual([ '_a_', '___' ]);
 		done();
 	});
