@@ -365,7 +365,11 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 	) {
 		this.orderColumns.forEach(function (v, idx) {
 			var key = '$$$' + idx;
-			if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
+			// Handle positional column reference (for SELECT * with ORDER BY numeric)
+			if (v._useColumnIndex !== undefined) {
+				// Use Object.keys to get column names and access by index
+				s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
+			} else if (v instanceof yy.Column && query.xcolumns[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
 			} else if (v instanceof yy.ParamValue && query.xcolumns[params[v.param]]) {
 				s += "r['" + key + "']=r['" + params[v.param] + "'];";
@@ -544,7 +548,11 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 			//			console.log(411,v);
 			var key = '$$$' + idx;
 			//			console.log(427,v,query.groupColumns,query.xgroupColumns);
-			if (v instanceof yy.Column && query.groupColumns[v.columnid]) {
+			// Handle positional column reference (for SELECT * with ORDER BY numeric)
+			if (v._useColumnIndex !== undefined) {
+				// Use Object.keys to get column names and access by index
+				s += "var keys=Object.keys(r);r['" + key + "']=r[keys[" + v.columnIndex + ']];';
+			} else if (v instanceof yy.Column && query.groupColumns[v.columnid]) {
 				s += "r['" + key + "']=r['" + v.columnid + "'];";
 			} else {
 				s += "r['" + key + "']=" + v.toJS('g', '') + ';';

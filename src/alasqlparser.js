@@ -1015,8 +1015,16 @@ break;
 case 422:
 
 			if(!yy.queries) yy.queries = [];
-			this.$ = new yy.Op({left:$$[$0-5], op:$$[$0-4] , allsome:$$[$0-3], right:$$[$0-1], queriesidx: yy.queries.length});
+			// Collect any nested queries that belong to this SELECT
+			var nestedQueries = yy.queries.slice();
+			yy.queries = [];
+			// Assign nested queries to the SELECT
+			if(nestedQueries.length > 0) {
+				$$[$0-1].queries = nestedQueries;
+			}
+			// Now add this SELECT to parent queries
 			yy.queries.push($$[$0-1]);
+			this.$ = new yy.Op({left:$$[$0-5], op:$$[$0-4] , allsome:$$[$0-3], right:$$[$0-1], queriesidx: yy.queries.length - 1});
 		
 break;
 case 423:
@@ -1079,15 +1087,31 @@ break;
 case 432:
 
 			if(!yy.queries) yy.queries = [];
-			this.$ = new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1], queriesidx: yy.queries.length});
+			// Collect any nested queries that belong to this SELECT
+			var nestedQueries = yy.queries.slice();
+			yy.queries = [];
+			// Assign nested queries to the SELECT
+			if(nestedQueries.length > 0) {
+				$$[$0-1].queries = nestedQueries;
+			}
+			// Now add this SELECT to parent queries
 			yy.queries.push($$[$0-1]);
+			this.$ = new yy.Op({left: $$[$0-4], op:'IN', right:$$[$0-1], queriesidx: yy.queries.length - 1});
 		
 break;
 case 433:
 
 			if(!yy.queries) yy.queries = [];
-			this.$ = new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1], queriesidx: yy.queries.length});
+			// Collect any nested queries that belong to this SELECT
+			var nestedQueries = yy.queries.slice();
+			yy.queries = [];
+			// Assign nested queries to the SELECT
+			if(nestedQueries.length > 0) {
+				$$[$0-1].queries = nestedQueries;
+			}
+			// Now add this SELECT to parent queries
 			yy.queries.push($$[$0-1]);
+			this.$ = new yy.Op({left: $$[$0-5], op:'NOT IN', right:$$[$0-1], queriesidx: yy.queries.length - 1});
 		
 break;
 case 434:
