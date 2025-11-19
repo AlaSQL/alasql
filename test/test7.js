@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe.skip('Test 7 - ORDER BY on multiple UNIONs', function () {
+describe('Test 7 - ORDER BY on multiple UNIONs', function () {
 	const test = '7'; // Issue number
 
 	before(function () {

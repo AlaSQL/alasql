@@ -223,6 +223,8 @@ yy.Select = class Select {
 		// 8. Compile ORDER BY clause
 		if (this.order) {
 			query.orderfn = this.compileOrder(query, params);
+			// Copy orderColumns to query for union handling
+			query.orderColumns = this.orderColumns;
 		}
 
 		if (this.group || query.selectGroup.length > 0) {
@@ -254,16 +256,28 @@ yy.Select = class Select {
 		query.corresponding = this.corresponding; // If CORRESPONDING flag exists
 		if (this.union) {
 			query.unionfn = this.union.compile(databaseid);
-			query.orderfn = this.union.order ? this.union.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the union clause
+			if (!query.orderfn && this.union.order) {
+				query.orderfn = this.union.compileOrder(query, params);
+			}
 		} else if (this.unionall) {
 			query.unionallfn = this.unionall.compile(databaseid);
-			query.orderfn = this.unionall.order ? this.unionall.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the unionall clause
+			if (!query.orderfn && this.unionall.order) {
+				query.orderfn = this.unionall.compileOrder(query, params);
+			}
 		} else if (this.except) {
 			query.exceptfn = this.except.compile(databaseid);
-			query.orderfn = this.except.order ? this.except.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the except clause
+			if (!query.orderfn && this.except.order) {
+				query.orderfn = this.except.compileOrder(query, params);
+			}
 		} else if (this.intersect) {
 			query.intersectfn = this.intersect.compile(databaseid);
-			query.orderfn = this.intersect.order ? this.intersect.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the intersect clause
+			if (!query.orderfn && this.intersect.order) {
+				query.orderfn = this.intersect.compileOrder(query, params);
+			}
 		}
 
 		// SELECT INTO
