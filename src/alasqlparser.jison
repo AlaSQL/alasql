@@ -1582,8 +1582,16 @@ Op
 	| Expression CondOp AllSome LPAR Select RPAR
 		{
 			if(!yy.queries) yy.queries = [];
-			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length});
+			// Collect any nested queries that belong to this SELECT
+			var nestedQueries = yy.queries.slice();
+			yy.queries = [];
+			// Assign nested queries to the SELECT
+			if(nestedQueries.length > 0) {
+				$5.queries = nestedQueries;
+			}
+			// Now add this SELECT to parent queries
 			yy.queries.push($5);
+			$$ = new yy.Op({left:$1, op:$2 , allsome:$3, right:$5, queriesidx: yy.queries.length - 1});
 		}
 
 	| Expression CondOp AllSome LPAR ExprList RPAR
@@ -1639,15 +1647,31 @@ Op
 	| Expression IN LPAR Select RPAR
 		{
 			if(!yy.queries) yy.queries = [];
-			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length});
+			// Collect any nested queries that belong to this SELECT
+			var nestedQueries = yy.queries.slice();
+			yy.queries = [];
+			// Assign nested queries to the SELECT
+			if(nestedQueries.length > 0) {
+				$4.queries = nestedQueries;
+			}
+			// Now add this SELECT to parent queries
 			yy.queries.push($4);
+			$$ = new yy.Op({left: $1, op:'IN', right:$4, queriesidx: yy.queries.length - 1});
 		}
 
 	| Expression NOT IN LPAR Select RPAR
 		{
 			if(!yy.queries) yy.queries = [];
-			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length});
+			// Collect any nested queries that belong to this SELECT
+			var nestedQueries = yy.queries.slice();
+			yy.queries = [];
+			// Assign nested queries to the SELECT
+			if(nestedQueries.length > 0) {
+				$5.queries = nestedQueries;
+			}
+			// Now add this SELECT to parent queries
 			yy.queries.push($5);
+			$$ = new yy.Op({left: $1, op:'NOT IN', right:$5, queriesidx: yy.queries.length - 1});
 		}
 
 	| Expression IN LPAR ExprList RPAR
