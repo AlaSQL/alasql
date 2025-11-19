@@ -376,7 +376,9 @@ function doDistinct(query) {
 		for (var i = 0, ilen = query.data.length; i < ilen; i++) {
 			var uix = keys
 				.map(function (k) {
-					return query.data[i][k];
+					var val = query.data[i][k];
+					// Properly serialize objects for comparison
+					return typeof val === 'object' ? JSON.stringify(val) : val;
 				})
 				.join('`');
 			uniq[uix] = query.data[i];
