@@ -34,9 +34,8 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 
 	it('3. JSON JOINSTAR with qualified names', function (done) {
 		alasql.options.joinstar = 'json';
-		alasql.databases['test' + test].dbversion++; // Reset database cache
+		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
 		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
-		console.log('JSON mode result:', JSON.stringify(res, null, 2));
 		// Expected: nested objects by table name
 		assert.deepEqual(res, [
 			{one: {a: 1}, two: {a: 10}},
@@ -49,9 +48,8 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 
 	it('4. UNDERSCORE JOINSTAR with qualified names', function (done) {
 		alasql.options.joinstar = 'underscore';
-		alasql.databases['test' + test].dbversion++; // Reset database cache
+		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
 		var res = alasql('SELECT * FROM test' + test + '.one, test' + test + '.two');
-		console.log('UNDERSCORE mode result:', JSON.stringify(res, null, 2));
 		// Expected: columns prefixed with table names
 		assert.deepEqual(res, [
 			{one_a: 1, two_a: 10},
@@ -67,7 +65,6 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 		alasql.options.joinstar = 'json';
 		alasql.databases['test' + test].dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one, two');
-		console.log('JSON mode with USE:', JSON.stringify(res, null, 2));
 		// Expected: nested objects by table name (should work)
 		assert.deepEqual(res, [
 			{one: {a: 1}, two: {a: 10}},
@@ -83,7 +80,6 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 		alasql.options.joinstar = 'underscore';
 		alasql.databases['test' + test].dbversion++; // Reset database cache
 		var res = alasql('SELECT * FROM one, two');
-		console.log('UNDERSCORE mode with USE:', JSON.stringify(res, null, 2));
 		// Expected: columns prefixed with table names (should work)
 		assert.deepEqual(res, [
 			{one_a: 1, two_a: 10},
