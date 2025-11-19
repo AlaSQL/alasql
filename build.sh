@@ -148,7 +148,7 @@ x rexreplace '/*only-for-browser/*' '//*only-for-browser/*'	-L -q $outfile
 echo '# Support "use strict in jison output" ' # https://github.com/zaach/jison/pull/373
 x rexreplace 'function locateNearestErrorRecoveryRule(state) {' 'var locateNearestErrorRecoveryRule = function (state) {'	-L -q $outfile
 
-bunx esbuild --minify --outfile="$outfile_min" "$outfile" --allow-overwrite
+bun build --minify --outfile="$outfile_min" "$outfile" --external '*'
 
 #first_line=$(head -n 1 $outfile)
 #x rexreplace '^' "c = 'first_line'; c.match(/^\/\//) ? c : ''" -j -M $outfile_min
@@ -162,7 +162,7 @@ echo '\nBuild precompile files'
 mkdir -p dist/precompile
 
 echo '# Copy precompile module'
-x esbuild --outfile="dist/precompile/index.js" "src/precompile/index.js" --format=cjs 
+bun build --outfile="dist/precompile/index.js" "src/precompile/index.js" --format=cjs --external '*' 
 
 
  
@@ -186,7 +186,7 @@ echo '# Inject build version'
 x rexreplace 'BUILD_VERSION' "['$branch','$commit'].filter(Boolean).join('-')" -j -q $outfile
 
 echo '# Prepare min version'
-bunx esbuild --minify --outfile="$outfile_min" "$outfile" --allow-overwrite
+bun build --minify --outfile="$outfile_min" "$outfile" --external '*'
 
 #first_line=$(head -n 1 $outfile)
 #x rexreplace '^' "c = 'first_line'; c.match(/^\/\//) ? c : ''" -j -M $outfile_min
