@@ -8,6 +8,8 @@ const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.m
 describe('Test 298 PLUG-IN TEST', () => {
 	test('1. CREATE DATABASE', done => {
 		alasql('CREATE DATABASE test298;USE test298');
+		delete alasql.yy.Echo;
+		delete alasql.plugins.ECHO;
 		done();
 	});
 

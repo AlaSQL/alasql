@@ -27,7 +27,7 @@
 		"format": "bun --bun ./node_modules/.bin/biome format --write",
 		"test-only": "bun test --bail",
 		"test-browser": "bun test/browserTestRunner.js 7387",
-		"build": "bun run format && sh build.sh",
+		"build": "bun run format && ./build.sh",
 		"install-g": "bun run build && npm uninstall alasql -g && npm install -g ./",
 		"release": "yarn version",
 		"jison": "bun run jison-only && bun run test",
