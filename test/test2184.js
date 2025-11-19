@@ -29,7 +29,14 @@ describe('Test 2184 CREATE INDEX with qualified table name', function () {
 		done();
 	});
 
-	it('4. REINDEX from test403 database', function (done) {
+	it('4. Create unique index with qualified name (before insert)', function (done) {
+		alasql('CREATE TABLE test403.three (a INT)');
+		alasql('CREATE UNIQUE INDEX xthree ON test403.three (a)');
+		alasql('INSERT INTO test403.three (a) VALUES (100), (200), (300)');
+		done();
+	});
+
+	it('5. REINDEX from test403 database', function (done) {
 		alasql('USE test403');
 		var res = alasql('REINDEX xone');
 		assert(res == 1);
