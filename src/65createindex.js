@@ -20,7 +20,7 @@ yy.CreateIndex.prototype.toString = function () {
 // CREATE TABLE
 yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 	//	var self = this;
-	var db = alasql.databases[databaseid];
+	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
 	var table = db.tables[tableid];
 	var indexid = this.indexid;

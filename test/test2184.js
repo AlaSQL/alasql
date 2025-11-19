@@ -29,7 +29,8 @@ describe('Test 2184 CREATE INDEX with qualified table name', function () {
 		done();
 	});
 
-	it('4. REINDEX from default database', function (done) {
+	it('4. REINDEX from test403 database', function (done) {
+		alasql('USE test403');
 		var res = alasql('REINDEX xone');
 		assert(res == 1);
 		var res = alasql('REINDEX xtwo');
