@@ -1,0 +1,90 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
+
+describe('Test 347 Efficient Joined Queries Issue #245', () => {
+	test('1. CREATE DATABASE', done => {
+		alasql('CREATE DATABASE test347;USE test347');
+		done();
+	});
+
+	test('2. TEST', done => {
+		var res = alasql(`
+      CREATE TABLE students (
+        id serial NOT NULL,
+        name character varying(50) NOT NULL,
+        CONSTRAINT students_pkey PRIMARY KEY (id)
+      );
+
+      INSERT INTO students VALUES
+        (1 , 'John Doe'),
+        (2 , 'Larry Loe');
+
+      CREATE TABLE assignments (
+        id serial NOT NULL,
+        class_id integer NOT NULL,
+        name character varying(50),
+        [value] integer NOT NULL,
+        CONSTRAINT assignments_pkey PRIMARY KEY (id)
+      );
+
+      INSERT INTO assignments VALUES
+        (1 , 1 , 'Homework'    , 10),
+        (2 , 1 , 'Test'        , 100),
+        (3 , 2 , 'Art Project' , 30),
+        (4 , 1 , 'HW 2'        , 10),
+        (5 , 1 , 'HW 3'        , 10);
+
+
+      CREATE TABLE scores (
+        id serial NOT NULL,
+        assignment_id integer NOT NULL,
+        student_id integer NOT NULL,
+        score integer NOT NULL,
+        CONSTRAINT scores_pkey PRIMARY KEY (id)
+      );
+
+      INSERT INTO scores VALUES
+        (1 , 1 , 1 , 10),
+        (2 , 1 , 2 , 8),
+        (3 , 2 , 1 , 70),
+        (4 , 2 , 2 , 82),
+        (5 , 3 , 1 , 15),
+        (8 , 5 , 1 , 10)
+    `);
+		done();
+	});
+
+	test('3. TEST', done => {
+		var res = alasql(
+			`
+      SELECT
+        students.name AS student_name,
+        students.id AS student_id,
+        assignments.name,
+        assignments.value,
+        scores.score
+      FROM
+        scores
+      INNER JOIN assignments ON
+        (assignments.id = scores.assignment_id)
+      INNER JOIN students ON
+        (students.id = scores.student_id)
+      WHERE
+        assignments.class_id = ?
+    `,
+			[2]
+		);
+		/// console.log(res);
+		done();
+	});
+
+	test('99. DROP DATABASE', done => {
+		alasql.options.modifier = undefined;
+		alasql('DROP DATABASE test347');
+		done();
+	});
+});

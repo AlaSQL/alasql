@@ -124,7 +124,7 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 	//console.log('cb',cb);
 	//console.log('JSON');
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
-	(alasql.utils.loadFile(filename, !!cb, function (data) {
+	alasql.utils.loadFile(filename, !!cb, function (data) {
 		//		console.log('DATA:'+data);
 		//		res = [{a:1}];
 		res = JSON.parse(data);
@@ -139,7 +139,7 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 				return;
 			}
 			throw error;
-		});
+		};
 	return res;
 };
 
@@ -244,7 +244,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 				return EOF;
 			}
 			if (eol) {
-				return ((eol = false), EOL);
+				return (eol = false), EOL;
 			}
 			var j = I;
 			if (text.charCodeAt(j) === quoteCode) {

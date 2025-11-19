@@ -1,0 +1,173 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
+
+describe('Test 212: CONVERT dates with style', () => {
+	test('1. CONVERT DATES', done => {
+		alasql(
+			'SET @d = DATE("01/08/2015 12:34:56.789"); \
+            SELECT ROW \
+                CONVERT(STRING,@d,1),\
+                CONVERT(STRING,@d,2),\
+                CONVERT(STRING,@d,3),\
+                CONVERT(STRING,@d,4),\
+                CONVERT(STRING,@d,5),\
+                CONVERT(STRING,@d,6),\
+                CONVERT(STRING,@d,7),\
+                CONVERT(STRING,@d,8),\
+                CONVERT(STRING,@d,10),\
+                CONVERT(STRING,@d,11),\
+                CONVERT(STRING,@d,12),\
+                CONVERT(STRING,@d,101),\
+                CONVERT(STRING,@d,102),\
+                CONVERT(STRING,@d,103),\
+                CONVERT(STRING,@d,104),\
+                CONVERT(STRING,@d,105),\
+                CONVERT(STRING,@d,106),\
+                CONVERT(STRING,@d,107),\
+                CONVERT(STRING,@d,108),\
+                CONVERT(STRING,@d,110),\
+                CONVERT(STRING,@d,111),\
+                CONVERT(STRING,@d,112)\
+            ',
+			[],
+			function (res) {
+				expect(res).toEqual([
+					1,
+					[
+						'01/08/15',
+						'15.01.08',
+						'08/01/15',
+						'08.01.15',
+						'08-01-15',
+						'08 jan 15',
+						'Jan 08,15',
+						'12:34:56',
+						'01-08-15',
+						'15/01/08',
+						'150108',
+						'01/08/2015',
+						'2015.01.08',
+						'08/01/2015',
+						'08.01.2015',
+						'08-01-2015',
+						'08 jan 2015',
+						'Jan 08,2015',
+						'12:34:56',
+						'01-08-2015',
+						'2015/01/08',
+						'20150108',
+					],
+				]);
+				done();
+			}
+		);
+	});
+
+	test('2. CONVERT DATE TO STRING', done => {
+		var res = alasql(
+			'SET @d = DATE("01/08/2015 12:34:56.789"); \
+            SELECT VALUE \
+                CONVERT(NVARCHAR(10),@d,110)'
+		);
+		//        console.log(res);
+		expect(res[1] == '01-08-2015').toBe(true);
+		done();
+	});
+
+	test('3. CONVERT JAVASCRIPT DATE TO STRING', done => {
+		var res = alasql(
+			'SET @d = NEW Date("01/08/2015 12:34:56.789"); \
+            SELECT VALUE \
+                CONVERT(NVARCHAR(10),@d,110)'
+		);
+		expect(res[1] == '01-08-2015').toBe(true);
+		done();
+	});
+
+	test('4. CONVERT JAVASCRIPT DATE TO STRING', done => {
+		var d = new Date('01/08/2015 12:34:56.789');
+		var res = alasql('SELECT VALUE CONVERT(NVARCHAR(10),?,110)', [d]);
+		expect(res == '01-08-2015').toBe(true);
+		done();
+	});
+
+	test('5. CONVERT DATE TO STRING FROM TABLE', done => {
+		var res = alasql(
+			'CREATE DATABASE test212; USE test212;\
+            CREATE TABLE test212.one (d DATE); \
+            INSERT INTO test212.one VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO test212.one VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO test212.one VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.one'
+		);
+		res = res.pop();
+		expect(res[0] == '01-08-2015').toBe(true);
+		expect(res[1] == '01-08-2015').toBe(true);
+		expect(res[2] == '01-08-2015').toBe(true);
+		done();
+	});
+
+	test('6. CONVERT DATE TO STRING FROM TABLE', done => {
+		var res = alasql(
+			'CREATE TABLE test212.two (d Date); \
+            INSERT INTO test212.two VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO test212.two VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO test212.two VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.two'
+		);
+		res = res.pop();
+		expect(res[0] == '01-08-2015').toBe(true);
+		expect(res[1] == '01-08-2015').toBe(true);
+		expect(res[2] == '01-08-2015').toBe(true);
+		done();
+	});
+
+	test('7. CONVERT DATE TO STRING FROM TABLE', done => {
+		var res = alasql(
+			'CREATE TABLE test212.three; \
+            INSERT INTO test212.three (d) VALUES ("01/08/2015 12:34:56.789");\
+            INSERT INTO test212.three (d) VALUES (DATE("01/08/2015 12:34:56.789"));\
+            INSERT INTO test212.three (d) VALUES (NEW Date("01/08/2015 12:34:56.789"));\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.three'
+		);
+		res = res.pop();
+		expect(res[0] == '01-08-2015').toBe(true);
+		expect(res[1] == '01-08-2015').toBe(true);
+		expect(res[2] == '01-08-2015').toBe(true);
+		done();
+	});
+
+	test('8. CONVERT DATE TO STRING FROM TABLE without columns', done => {
+		var res = alasql(
+			'CREATE TABLE test212.four; \
+            INSERT INTO test212.four VALUES {d:"01/08/2015 12:34:56.789"};\
+            INSERT INTO test212.four VALUES {d:DATE("01/08/2015 12:34:56.789")};\
+            INSERT INTO test212.four VALUES {d:(NEW Date("01/08/2015 12:34:56.789"))};\
+            SELECT COLUMN CONVERT(NVARCHAR(10),d,110) FROM test212.four'
+		);
+		res = res.pop();
+		expect(res[0] == '01-08-2015').toBe(true);
+		expect(res[1] == '01-08-2015').toBe(true);
+		expect(res[2] == '01-08-2015').toBe(true);
+		done();
+	});
+
+	test('9. CONVERT DATE TO STRING FROM TABLE without columns', done => {
+		var d = new Date('01/08/2015 12:34:56.789');
+		var res = alasql(
+			'CREATE TABLE test212.five; \
+            INSERT INTO test212.five VALUES @"01/08/2015 12:34:56.789";\
+            INSERT INTO test212.five VALUES ?;\
+            SELECT COLUMN CONVERT(NVARCHAR(10),_,110) FROM test212.five',
+			[d]
+		);
+		res = res.pop();
+		expect(res[0] == '01-08-2015').toBe(true);
+		expect(res[1] == '01-08-2015').toBe(true);
+		done();
+	});
+});

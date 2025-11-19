@@ -1,2 +1,2 @@
-**/*.min.js
+dist/**
 src/alasqlparser.js

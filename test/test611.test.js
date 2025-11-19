@@ -1,0 +1,105 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+
+describe('Test 611 - SQL added user defined aggregation', () => {
+	/*
+	// How to implement the SUM plus number of rows aggregator
+	alasql.aggr.sumPlusRows = function(value, accumulator, stage) {
+	    if(stage == 1) {
+
+	        // first call of aggregator - for first line
+	        var newAccumulator =  value+1;
+	        return newAccumulator;
+
+	    } else if(stage == 2) {
+
+	        // for every line in the group
+	        accumulator = accumulator + value + 1;
+	        return accumulator;
+
+	    } else if(stage == 3) {
+
+	        // Post production - please nota that value Will be undefined
+	        return accumulator;
+	    }
+	}
+	*/
+	var sumPlusRows =
+		'function(a,b,c){if(1==c){var d=a+1;return d}return 2==c?b=b+a+1:3==c?b:void 0};';
+
+	/*
+	// How to implement the SUM minus number of rows aggregator
+	alasql.aggr.sumMinusRows = function(value, accumulator, stage) {
+	    if(stage == 1) {
+
+	        // first call of aggregator - for first line
+	        var newAccumulator =  value-1;
+	        return newAccumulator;
+
+	    } else if(stage == 2) {
+
+	        // for every line in the group
+	        accumulator = accumulator + value - 1;
+	        return accumulator;
+
+	    } else if(stage == 3) {
+
+	        // Post production - please nota that value Will be undefined
+	        return accumulator;
+	    }
+	}
+	*/
+
+	var sumMinusRows =
+		'function(a,b,c){if(1==c){var d=a-1;return d}return 2==c?b=b+a-1:3==c?b:void 0};';
+
+	test.skip('A) Sync AGGREGATOR', () => {
+		var res = alasql(
+			'CREATE AGGREGATOR abc_A AS ``' +
+				sumPlusRows +
+				'``;select value abc_A(a) FROM @[{a:10},{a:100}]; CREATE AGGREGATOR abc_A AS ``' +
+				sumMinusRows +
+				'``;select value abc_A(a) FROM @[{a:10},{a:100}]'
+		);
+		expect(res).toEqual([1, 112, 1, 108]);
+	});
+
+	test('B) Async AGGREGATE', done => {
+		//
+		alasql([
+			'CREATE AGGREGATOR abc_B AS ``' + sumPlusRows + '``',
+			'SELECT VALUE abc_B(a) FROM @[{a:10},{a:100}]',
+			'CREATE AGGREGATOR abc_B AS ``' + sumMinusRows + '``',
+			'select VALUE abc_B(a) FROM @[{a:10},{a:100}]',
+		]).then(function (res) {
+			expect(res).toEqual([1, 112, 1, 108]);
+			done();
+		});
+	});
+
+	test.skip('C) Sync AGGREGATE', () => {
+		var res = alasql(
+			'CREATE AGGREGATE abc_C AS ``' +
+				sumPlusRows +
+				'``;select value abc_C(a) FROM @[{a:10},{a:100}]; CREATE AGGREGATE abc_C AS ``' +
+				sumMinusRows +
+				'``;select value abc_C(a) FROM @[{a:10},{a:100}]'
+		);
+		console.log(JSON.stringify(alasql.aggr, null, 4));
+		expect(res).toEqual([1, 112, 1, 108]);
+	});
+
+	test('D) Async AGGREGATE', done => {
+		//
+		alasql([
+			'CREATE AGGREGATE abc_D AS ``' + sumPlusRows + '``',
+			'SELECT VALUE abc_D(a) FROM @[{a:10},{a:100}]',
+			'CREATE AGGREGATE abc_D AS ``' + sumMinusRows + '``',
+			'select value abc_D(a) FROM @[{a:10},{a:100}]',
+		]).then(function (res) {
+			expect(res).toEqual([1, 112, 1, 108]);
+			done();
+		});
+	});
+});

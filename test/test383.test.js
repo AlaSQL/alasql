@@ -1,0 +1,104 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+import DOMStorage from 'dom-storage';
+
+global.localStorage = new DOMStorage('./test/test381.json', {
+	strict: false,
+	ws: '',
+});
+
+/*
+ This sample beased on this article:
+
+	http://stackoverflow.com/questions/30442969/group-by-in-angularjs
+
+*/
+
+describe('Test 383 - MySQL compatibility issue #452', () => {
+	beforeAll(() => {
+		alasql('CREATE DATABASE test383;USE test383');
+	});
+
+	afterAll(() => {
+		alasql.options.modifier = undefined;
+		alasql('DROP DATABASE test383');
+	});
+
+	test('2. Create table issue', done => {
+		alasql(`
+    CREATE TABLE \`org1\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      \`createTime\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      \`lastUpdateTime\` TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP,
+      \`deleteId\` CHAR(36) NOT NULL DEFAULT "",
+      PRIMARY KEY (\`id\`)
+     )
+    `);
+
+		done();
+	});
+
+	test('3. UNIQUE KEY issue', done => {
+		alasql(`
+    CREATE TABLE \`org2\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      \`deleteId\` CHAR(36) NOT NULL DEFAULT "",
+      PRIMARY KEY (\`id\`),
+      UNIQUE KEY \`org_u1\` (\`name\`, \`deleteId\`)
+     )
+    `);
+
+		done();
+	});
+
+	test('4. COLLATE issue', done => {
+		alasql(`
+    CREATE TABLE \`org3\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      PRIMARY KEY (\`id\`)
+     )  CHARSET=utf8 COLLATE=utf8_bin
+    `);
+
+		done();
+	});
+
+	test('5. All issues', done => {
+		alasql(`
+    CREATE TABLE \`org4\` (
+      \`id\` CHAR(36) NOT NULL,
+      \`name\` VARCHAR(100) NOT NULL,
+      \`createUser\` VARCHAR(100),
+      \`updateUser\` VARCHAR(100),
+      \`createTime\` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      \`lastUpdateTime\` TIMESTAMP NOT NULL DEFAULT 0 ON UPDATE CURRENT_TIMESTAMP,
+      \`deleteId\` CHAR(36) NOT NULL DEFAULT "",
+      PRIMARY KEY (\`id\`),
+      UNIQUE KEY \`org_u1\` (\`name\`, \`deleteId\`)
+     )  CHARSET=utf8 COLLATE=utf8_bin
+    `);
+
+		done();
+	});
+
+	test('6. ON UPDATE', done => {
+		alasql('INSERT INTO org4 (id,name) VALUES (1,"Peter")');
+		var res = alasql('SELECT * FROM org4');
+		expect(res[0].lastUpdateTime === 0).toBe(true);
+
+		alasql('UPDATE org4 SET name="George"');
+
+		var res = alasql('SELECT * FROM org4');
+		expect(res[0].lastUpdateTime >= res[0].createTime).toBe(true);
+		done();
+	});
+});

@@ -1,0 +1,9 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+
+describe('Test 67 - IndexedDB integration', () => {
+	//	test.skip('localStorage', function(done){
+	//		done();
+	//	});
+});

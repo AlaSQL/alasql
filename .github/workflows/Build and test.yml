@@ -22,16 +22,14 @@ jobs:
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Setup Node
-        uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        with:
-          node-version: '24.x'
+      - name: Setup Bun
+        uses: useblacksmith/setup-bun@main
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Verify formatting
-        run: yarn test-format-all
+        run: bun test-format
 
   build:
     name: Build from source files
@@ -47,16 +45,14 @@ jobs:
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Setup Node
-        uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        with:
-          node-version: '24.x'
+      - name: Setup Bun
+        uses: useblacksmith/setup-bun@main
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Build project
-        run: yarn build-only
+        run: bun run build
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
@@ -77,9 +73,6 @@ jobs:
       contents: read
     needs: [build, verify-formatting]
     runs-on: blacksmith-4vcpu-ubuntu-2204
-    strategy:
-      matrix:
-        node-version: [16.x, 18.x, 20.x, 22.x, 24.x] # Dropped '23.x' (EOL) and 'latest' for stability
     steps:
       - name: Harden Runner
         uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
@@ -88,10 +81,8 @@ jobs:
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
 
-      - name: Setup Node
-        uses: useblacksmith/setup-node@65c6ca86fdeb0ab3d85e78f57e4f6a7e4780b391 # v5.0.4
-        with:
-          node-version: ${{ matrix.node-version }}
+      - name: Setup Bun
+        uses: useblacksmith/setup-bun@main
 
       - uses: actions/download-artifact@f093f21ca4cfa7c75ccbbc2be54da76a0c7e1f05 # master
         with:
@@ -107,7 +98,7 @@ jobs:
         run: tar -xvf node_modules.tar
 
       - name: Run test suite
-        run: yarn test-only
+        run: bun test-only
 
   test-suite-browser:
     name: Test suite for Browser
@@ -132,7 +123,7 @@ jobs:
         run: echo '::warning ::Not able to automate browser tests yet'
 
       - name: Run browser tests (disabled)
-        run: '# yarn test-browser-ci'
+        run: '# yabunrn test-browser-ci'
 
   verify-parser:
     name: Verify grammar vs generated parser
@@ -145,6 +136,9 @@ jobs:
         uses: step-security/harden-runner@95d9a5deda9de15063e7595e9719c11c38c90ae2 # v2.13.2
         with:
           egress-policy: audit
+
+      - name: Setup Bun
+        uses: useblacksmith/setup-bun@main
 
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -160,9 +154,9 @@ jobs:
         # This step only runs if the jison file changed
         if: steps.detect-changes.outputs.any_changed == 'true'
         run: |
-          yarn install --frozen-lockfile
-          yarn jison
-          yarn test
+          bun install --frozen-lockfile
+          bun run jison
+          bun run test
 
       - name: Check generated parser for changes
         if: steps.detect-changes.outputs.any_changed == 'true'

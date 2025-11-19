@@ -1,0 +1,125 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+
+/*
+ This sample beased on SQLLOGICTEST
+*/
+
+describe('Test 406. Complex SEARCH', () => {
+	var data = {
+		10: {},
+		12: {
+			20: {
+				value: 1,
+				id: 1,
+			},
+			100: {
+				value: 12,
+				id: 1,
+			},
+		},
+		14: {
+			100: {
+				value: 14,
+				id: 2,
+			},
+		},
+		16: {},
+		18: {},
+		20: {
+			100: {
+				value: 23,
+				id: 1,
+			},
+			150: {
+				value: 56,
+				id: 3,
+			},
+		},
+	};
+
+	test('1. Parse complex JSON', done => {
+		//      alasql('CREATE INDEXEDDB DATABASE IF NOT EXISTS geo;')
+		if (typeof window !== 'undefined') {
+			var res = alasql(
+				'SEARCH KEYS() AS @a EX($0->(_)) AS @b \
+        KEYS() AS @c EX(@b->(_)) AS @e \
+        {a:(@a),c:(@c), [value]:(@e->[value]), id:(@e->id)} \
+        INTO XLSX("' +
+					__dirname +
+					'/restest406.xlsx",{headers:true}) FROM $0',
+				[data]
+			);
+			expect(res == 1).toBe(true);
+		}
+		var res = alasql(
+			'SEARCH KEYS() AS @a EX($0->(_)) AS @b \
+        KEYS() AS @c EX(@b->(_)) AS @e \
+        {a:(@a),c:(@c), [value]:(@e->[value]), id:(@e->id)} \
+        FROM $0',
+			[data]
+		);
+		expect(res).toEqual([
+			{a: '12', c: '20', value: 1, id: 1},
+			{a: '12', c: '100', value: 12, id: 1},
+			{a: '14', c: '100', value: 14, id: 2},
+			{a: '20', c: '100', value: 23, id: 1},
+			{a: '20', c: '150', value: 56, id: 3},
+		]);
+
+		var res = alasql(
+			'SEARCH KEYS() AS @a EX($0->(_)) AS @b \
+        KEYS() AS @c EX(@b->(_)) AS @e \
+        RETURN(@a AS a,@c AS c, @e->[value] AS [value], @e->id AS id) \
+        FROM $0',
+			[data]
+		);
+		expect(res).toEqual([
+			{a: '12', c: '20', value: 1, id: 1},
+			{a: '12', c: '100', value: 12, id: 1},
+			{a: '14', c: '100', value: 14, id: 2},
+			{a: '20', c: '100', value: 23, id: 1},
+			{a: '20', c: '150', value: 56, id: 3},
+		]);
+
+		done();
+	});
+
+	test('2. With OF()', done => {
+		var data1 = {
+			1: 10,
+			2: 20,
+		};
+
+		var res = alasql(
+			'SEARCH OF(@a) \
+        RETURN(@a AS [key],_ AS [value]) \
+        FROM ?',
+			[data1]
+		);
+		expect(res).toEqual([
+			{key: '1', value: 10},
+			{key: '2', value: 20},
+		]);
+		//      console.log(res);
+
+		var res = alasql(
+			'SEARCH OF(@a) OF(@c) \
+        RETURN(@a AS a,@c AS c, _->[value] AS [value], _->id AS id) \
+        FROM ?',
+			[data]
+		);
+		expect(res).toEqual([
+			{a: '12', c: '20', value: 1, id: 1},
+			{a: '12', c: '100', value: 12, id: 1},
+			{a: '14', c: '100', value: 14, id: 2},
+			{a: '20', c: '100', value: 23, id: 1},
+			{a: '20', c: '150', value: 56, id: 3},
+		]);
+
+		done();
+	});
+
+	// done();
+});

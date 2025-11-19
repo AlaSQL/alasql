@@ -317,6 +317,7 @@ SETS                                        	return 'SET'
 .												return 'INVALID'
 
 /lex
+%nonassoc LOW_PREC
 %left COMMA
 %left DOUBLECOLON
 %left OR
@@ -1176,7 +1177,7 @@ Star
 Column
 	: Literal DOT Literal DOT Literal
 		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}
-	| Literal DOT Literal
+	| Literal DOT Literal %prec LOW_PREC
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal DOT VALUE
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
@@ -3045,7 +3046,9 @@ DropTrigger
 	;
 
 Reindex
-	: REINDEX Literal
+	: REINDEX Literal DOT Literal
+		{ $$ = new yy.Reindex({databaseid: $2, indexid: $4});}
+	| REINDEX Literal
 		{ $$ = new yy.Reindex({indexid:$2});}
 	;
 

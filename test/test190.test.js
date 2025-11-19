@@ -1,0 +1,41 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
+
+//if(typeof window !== 'undefined') {
+
+describe('Test 190 - SELECT TOP 10 PERCENT FROM ?', () => {
+	test('1. From ?', done => {
+		var data = [];
+		for (var i = 0; i < 200; i++) {
+			data.push({a: i});
+		}
+		var res = alasql('SELECT TOP 5 PERCENT * FROM ? ORDER BY a DESC ', [data]);
+		expect(res).toEqual([
+			{a: 199},
+			{a: 198},
+			{a: 197},
+			{a: 196},
+			{a: 195},
+			{a: 194},
+			{a: 193},
+			{a: 192},
+			{a: 191},
+			{a: 190},
+		]);
+		done();
+	});
+
+	test('2. From ?', done => {
+		var data = [];
+		for (var i = 0; i < 200; i++) {
+			data.push(i);
+		}
+		var res = alasql('SELECT COLUMN TOP 5 PERCENT _ FROM ? ORDER BY _ DESC ', [data]);
+		expect(res).toEqual([199, 198, 197, 196, 195, 194, 193, 192, 191, 190]);
+		done();
+	});
+});

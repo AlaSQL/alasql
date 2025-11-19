@@ -1,0 +1,72 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+
+/*
+ This sample beased on this article:
+
+	http://stackoverflow.com/questions/30442969/group-by-in-angularjs
+
+*/
+
+describe('Test 409 Backup and restore database', () => {
+	alasql.storeDatabase = function (databaseid) {
+		databaseid = databaseid || alasql.useid;
+		var db = alasql.databases[databaseid];
+		var obj = {};
+		//Step 1 - basic fields
+		obj.databaseid = db.databaseid;
+		obj.dbversion = db.dbversion;
+		//Step 2 - tables
+		obj.tables = {};
+		for (var t in db.tables) {
+			var table = (obj.tables[t] = {});
+			// Step 2.1
+			table.data = alasql.utils.deepClone(db.tables[t].data);
+			console.log(24, table);
+			// Step 2.2
+			// or replace with JSON.parse(stringigy(db.tables[t].data));
+		}
+		// Step 3 - views
+		// Step 3.1 - columns
+		// Step 3.2 - query...
+
+		// Step 4 - triggers
+		// Step 5 - indices
+
+		// Step 6 - objects + counter
+
+		return obj;
+	};
+
+	alasql.restoreDatabase = function (obj, databaseid) {};
+
+	test('2. CREATE DATABASE', done => {
+		alasql('CREATE DATABASE test409');
+		done();
+	});
+
+	test.skip('2. CREATE DATABASE', done => {
+		alasql('CREATE TABLE test409.one (a INT UNIQUE); INSERT INTO test409.one VALUES (1),(2),(3)');
+		var obj1 = alasql.storeDatabase();
+		alasql('DROP DATABASE test409');
+		var obj2 = JSON.parse(JSON.stringify(obj1));
+		alasql.restoreDatabase(obj2);
+		alasql('USE test409');
+		alasql('INSERT INTO one VALUES (4)');
+		var res = alasql('SELECT * FROM test409.one');
+		expect(res).toEqual([{a: 1}, {a: 2}, {a: 3}, {a: 4}]);
+
+		expect(new Error().toThrow(), () => {
+			alasql('INSERT INTO test409.one VALUES (1)');
+		});
+
+		done();
+	});
+
+	test('99. DROP DATABASE', done => {
+		alasql.options.modifier = undefined;
+		alasql('DROP DATABASE test409');
+		done();
+	});
+});

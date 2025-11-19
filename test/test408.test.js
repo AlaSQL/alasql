@@ -1,0 +1,155 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+
+if (globalThis.process) {
+	globalThis.process.env.TZ = 'UTC';
+}
+
+/*
+ This sample beased on this article:
+
+	http://stackoverflow.com/questions/30442969/group-by-in-angularjs
+
+*/
+
+describe('Test 408 - DATEADD() and DATEDIFF()', () => {
+	test('1. CREATE DATABASE', done => {
+		alasql('CREATE DATABASE test408;USE test408');
+		done();
+	});
+
+	test('2. DATEDIFF()', done => {
+		alasql(`
+    CREATE TABLE Duration (
+      startDate datetime
+      ,endDate datetime
+    );
+    INSERT INTO Duration(startDate,endDate)
+      VALUES('2007-05-06 12:10:09','2007-05-07 12:10:09')
+  `);
+		var res = alasql(
+			'SELECT DATEDIFF(day,startDate,endDate) AS Duration \
+      FROM Duration'
+		);
+		expect(res).toEqual([{Duration: 1}]);
+
+		done();
+	});
+
+	test('3. DATEDIFF()', done => {
+		alasql(`
+      DECLARE @startdate datetime = '2007-05-05 12:10:09.3312722';
+      DECLARE @enddate datetime = '2007-05-04 12:10:09.3312722';
+    `);
+		var res = alasql('VALUE OF SELECT DATEDIFF(day, @startdate, @enddate)');
+		expect(res).toEqual(-1);
+
+		done();
+	});
+
+	test('4. DATEADD()', done => {
+		alasql("DECLARE @datetime2 datetime2 = '2020-01-01 13:10:10.1111111 UTC'");
+
+		var res = alasql(`MATRIX OF
+			SELECT 'year', DATEADD(year,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'quarter',DATEADD(quarter,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'month',DATEADD(month,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'dayofyear',DATEADD(dayofyear,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'day',DATEADD(day,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'week',DATEADD(week,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'weekday',DATEADD(weekday,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'hour',DATEADD(hour,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'minute',DATEADD(minute,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'second',DATEADD(second,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
+
+		var expected = [
+			['year', '2021-01-01T13:10:10.111Z'],
+			['quarter', '2020-04-01T13:10:10.111Z'],
+			['month', '2020-02-01T13:10:10.111Z'],
+			['dayofyear', '2020-01-02T13:10:10.111Z'],
+			['day', '2020-01-02T13:10:10.111Z'],
+			['week', '2020-01-08T13:10:10.111Z'],
+			['weekday', '2020-01-02T13:10:10.111Z'],
+			['hour', '2020-01-01T14:10:10.111Z'],
+			['minute', '2020-01-01T13:11:10.111Z'],
+			['second', '2020-01-01T13:10:11.111Z'],
+			['millisecond', '2020-01-01T13:10:10.112Z'],
+		];
+
+		expect(res).toEqual(expected);
+
+		done();
+	});
+
+	test('5. DATEADD() dot format', done => {
+		alasql("DECLARE @datetime2 datetime2 = '2020.01.01 13:10:10.1111111 UTC'");
+
+		var res = alasql(`MATRIX OF
+			SELECT 'year', DATEADD(year,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'quarter',DATEADD(quarter,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'month',DATEADD(month,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'dayofyear',DATEADD(dayofyear,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'day',DATEADD(day,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'week',DATEADD(week,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'weekday',DATEADD(weekday,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'hour',DATEADD(hour,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'minute',DATEADD(minute,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'second',DATEADD(second,1,@datetime2).toISOString()
+			UNION ALL
+			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
+
+		var expected = [
+			['year', '2021-01-01T13:10:10.111Z'],
+			['quarter', '2020-04-01T13:10:10.111Z'],
+			['month', '2020-02-01T13:10:10.111Z'],
+			['dayofyear', '2020-01-02T13:10:10.111Z'],
+			['day', '2020-01-02T13:10:10.111Z'],
+			['week', '2020-01-08T13:10:10.111Z'],
+			['weekday', '2020-01-02T13:10:10.111Z'],
+			['hour', '2020-01-01T14:10:10.111Z'],
+			['minute', '2020-01-01T13:11:10.111Z'],
+			['second', '2020-01-01T13:10:11.111Z'],
+			['millisecond', '2020-01-01T13:10:10.112Z'],
+		];
+
+		expect(res).toEqual(expected);
+
+		done();
+	});
+
+	test('6. DATE_ADD() MySQL-style', done => {
+		var res1 = alasql("= DATE_SUB('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
+		var res2 = alasql("= DATE_ADD('2014-02-13 08:44:21.000001', INTERVAL 4 DAY);");
+		expect(res1.getDate() == 9).toBe(true);
+		expect(res2.getDate() == 17).toBe(true);
+		//    expect(res).toEqual([ { Duration: 1 } ]);
+		done();
+	});
+
+	test('99. DROP DATABASE', done => {
+		alasql.options.modifier = undefined;
+		alasql('DROP DATABASE test408');
+		done();
+	});
+});

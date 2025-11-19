@@ -282,10 +282,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 	} else {
 		var statement = function (params, cb) {
 			//console.log(databaseid);
-			var db = alasql.databases[databaseid];
+			var db = alasql.databases[self.into.databaseid || databaseid];
 
 			if (alasql.options.autocommit && db.engineid) {
-				alasql.engines[db.engineid].loadTableData(databaseid, tableid);
+				alasql.engines[db.engineid].loadTableData(self.into.databaseid || databaseid, tableid);
 			}
 
 			var res = insertfn(db, params, alasql);

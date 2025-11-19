@@ -1,0 +1,62 @@
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+import {fileURLToPath} from 'url';
+import {dirname} from 'path';
+const __dirname = typeof window === 'undefined' ? dirname(fileURLToPath(import.meta.url)) : '.';
+
+// Test is based on
+// https://msdn.microsoft.com/en-us/library/ms190349.aspx
+//
+describe('Test 237 Test with local variables', () => {
+	test('1. Prepare database and tables', done => {
+		alasql('CREATE DATABASE test237; USE test237;');
+
+		var res = alasql(`
+
+-- Source: https://technet.microsoft.com/en-us/library/ms187953(v=sql.105).aspx
+
+CREATE TABLE TestTable (cola int, colb char(3));
+-- Declare the variable to be used.
+DECLARE @MyCounter int;
+-- Initialize the variable.
+SET @MyCounter = 0;
+
+-- Test the variable to see if the loop is finished.
+WHILE (@MyCounter < 26)
+BEGIN
+   -- Insert a row into the table.
+   INSERT INTO TestTable VALUES
+       -- Use the variable to provide the integer value
+       -- for cola. Also use it to generate a unique letter
+       -- for each row. Use the ASCII function to get the
+       -- integer value of 'a'. Add @MyCounter. Use CHAR to
+       -- convert the sum back to the character @MyCounter
+       -- characters after 'a'.
+       (@MyCounter,
+        CHAR( ( @MyCounter + ASCII('a') ) )
+       );
+   -- Increment the variable to count this iteration
+   -- of the loop.
+   SET @MyCounter = @MyCounter + 1;
+END;
+SELECT cola, colb
+FROM TestTable;
+DROP TABLE TestTable;
+`);
+
+		expect(res[4].length == 26).toBe(true);
+		expect(res[4][0]).toEqual({cola: 0, colb: 'a'});
+		// expect(res).toEqual([ { EmployeeID: 100, EmployeeName: 'Mary' },
+		//     { EmployeeID: 101, EmployeeName: 'Sara' },
+		//     { EmployeeID: 102, EmployeeName: 'Stefano' } ]);
+		//        console.log(res);
+
+		done();
+	});
+
+	test('99. DROP', done => {
+		alasql('DROP DATABASE test237');
+		done();
+	});
+});
