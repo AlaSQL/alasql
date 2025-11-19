@@ -43,16 +43,16 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 		uk.onrightfns = rightfns;
 		uk.onrightfn = rightfn;
 		uk.hh = hash(rightfns);
-		
+
 		// Store in uniqdefs for reference
 		table.uniqdefs[indexid] = {
 			rightfns: rightfns,
 			hh: uk.hh,
 		};
-		
+
 		// Initialize the unique index
 		table.uniqs[uk.hh] = {};
-		
+
 		// Populate existing data and check for duplicates
 		if (table.data.length > 0) {
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {

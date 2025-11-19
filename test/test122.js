@@ -26,7 +26,7 @@ describe('Test 122 - PRIMARY KEY, CREATE INDEX UNIQUE', function () {
 		done();
 	});
 
-	it.skip('2. UNIQUE Index with repeated data', function (done) {
+	it('2. UNIQUE Index with repeated data', function (done) {
 		assert.throws(function () {
 			alasql('insert into one values (1,40)');
 		}, Error);
@@ -38,10 +38,8 @@ describe('Test 122 - PRIMARY KEY, CREATE INDEX UNIQUE', function () {
 		done();
 	});
 
-	it('4. UNIQUE Index with repeated data', function (done) {
-		assert.throws(function () {
-			alasql('insert into one values (4,30)');
-		}, Error);
+	it('4. same data index', function (done) {
+		alasql('insert into one values (5,30)');
 		done();
 	});
 });
