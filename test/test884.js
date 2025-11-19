@@ -63,4 +63,21 @@ describe('Test 884: @ symbol in column name', () => {
 		assert.equal(x[0]['@version'], '1');
 		assert.equal(x[0]['@type'], 'test');
 	});
+
+	it('4. Should handle @ in middle or end of column name with backticks', () => {
+		var json = [
+			{
+				'col@middle': 'value1',
+				'end@': 'value2',
+				'@start@end': 'value3',
+			},
+		];
+
+		var sql = 'SELECT `col@middle`, `end@`, `@start@end` FROM ?';
+		var x = alasql(sql, [json]);
+		assert.equal(x.length, 1);
+		assert.equal(x[0]['col@middle'], 'value1');
+		assert.equal(x[0]['end@'], 'value2');
+		assert.equal(x[0]['@start@end'], 'value3');
+	});
 });
