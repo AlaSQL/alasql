@@ -19,7 +19,6 @@ yy.CreateIndex.prototype.toString = function () {
 
 // CREATE TABLE
 yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
-	//	var self = this;
 	var db = alasql.databases[this.table.databaseid || databaseid];
 	var tableid = this.table.tableid;
 	var table = db.tables[tableid];
@@ -77,13 +76,16 @@ yy.Reindex.prototype.toString = function () {
 	return s;
 };
 
-// CREATE TABLE
+// REINDEX
 yy.Reindex.prototype.execute = function (databaseid, params, cb) {
-	//	var self = this;
-	var db = alasql.databases[databaseid];
+	var db = alasql.databases[this.databaseid || databaseid];
 	var indexid = this.indexid;
-	//	console.log(db.indices);
 	var tableid = db.indices[indexid];
+
+	if (!tableid) {
+		throw new Error('Index "' + indexid + '" not found in db "' + db.databaseid + '"');
+	}
+
 	var table = db.tables[tableid];
 	table.indexColumns();
 	var res = 1;

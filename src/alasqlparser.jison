@@ -3045,7 +3045,9 @@ DropTrigger
 	;
 
 Reindex
-	: REINDEX Literal
+	: REINDEX Literal DOT Literal
+		{ $$ = new yy.Reindex({databaseid: $2, indexid: $4});}
+	| REINDEX Literal
 		{ $$ = new yy.Reindex({indexid:$2});}
 	;
 
