@@ -1,22 +1,21 @@
-if (typeof exports === 'object') {
-	var assert = require('assert');
-	var alasql = require('..');
-	var {compileToJS} = require('../dist/precompile');
-}
+// @ts-ignore
+import {describe, expect, test, beforeAll, afterAll} from 'bun:test';
+import alasql from '..';
+import {compileToJS} from '../dist/precompile';
 
 describe('Test 2169B - compileToJS function', function () {
 	const testId = '2169B';
 
-	before(function () {
+	beforeAll(function () {
 		alasql('create database test' + testId);
 		alasql('use test' + testId);
 	});
 
-	after(function () {
+	afterAll(function () {
 		alasql('drop database test' + testId);
 	});
 
-	it('A) compileToJS should generate working JavaScript code', function () {
+	test('A) compileToJS should generate working JavaScript code', function () {
 		// Test data
 		const data = [
 			{product: 'Ball', price: 3},
@@ -36,21 +35,17 @@ describe('Test 2169B - compileToJS function', function () {
 
 		const correctResult = alasql(sql, [data, 2]);
 
-		assert.deepEqual(
-			result,
-			correctResult,
-			'Compiled function should return same result as direct execution'
-		);
+		expect(result).toEqual(correctResult);
 
 		// Verify expected result
 		const expected = [
 			{product: 'Book', calculated_price: 500},
 			{product: 'Ball', calculated_price: 300},
 		];
-		assert.deepEqual(result, expected, 'Should return correct filtered and sorted results');
+		expect(result).toEqual(expected);
 	});
 
-	it('B) compileToJS should work with database tables', function () {
+	test('B) compileToJS should work with database tables', function () {
 		// Create test table
 		alasql('create table testproducts (product string, price number)');
 		alasql('insert into testproducts values ("Ball", 3), ("Pen", 1.5), ("Book", 5), ("Pencil", 2)');
@@ -65,20 +60,12 @@ describe('Test 2169B - compileToJS function', function () {
 
 		const correctResult = alasql(sql);
 
-		assert.deepEqual(
-			result,
-			correctResult,
-			'Compiled function should return same result as direct execution'
-		);
+		expect(result).toEqual(correctResult);
 
 		const expected = [
 			{product: 'Book', calculated_price: 500},
 			{product: 'Ball', calculated_price: 300},
 		];
-		assert.deepEqual(
-			result,
-			expected,
-			'Should return correct filtered and sorted results from database table'
-		);
+		expect(result).toEqual(expected);
 	});
 });
