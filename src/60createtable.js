@@ -448,6 +448,25 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					table.uniqs[uk.hh][ukaddr] = r;
 				});
 			}
+
+			// Update regular indices (non-unique)
+			if (table.inddefs) {
+				for (var indexid in table.inddefs) {
+					var indexdef = table.inddefs[indexid];
+					var hh = indexdef.hh;
+					if (table.indices[hh]) {
+						var addr = new Function('r,params,alasql', 'return ' + indexdef.rightfns)(
+							r,
+							params,
+							alasql
+						);
+						if (!table.indices[hh][addr]) {
+							table.indices[hh][addr] = [];
+						}
+						table.indices[hh][addr].push(r);
+					}
+				}
+			}
 		}
 
 		// Trigger prevent functionality
