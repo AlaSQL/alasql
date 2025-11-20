@@ -243,7 +243,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			return statement;
 		} else {
 			//			console.log(224,table.defaultfns);
-			var defaultfns = 'return alasql.utils.extend(r,{' + table.defaultfns + '})';
+			var defaultfns = 'return alasql.utils.extend({' + table.defaultfns + '},r)';
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
 			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
