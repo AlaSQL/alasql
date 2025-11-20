@@ -101,7 +101,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
-			if (cb) res = cb(null, res);
+			if (cb) cb(null, res);
 
 			return res;
 		};

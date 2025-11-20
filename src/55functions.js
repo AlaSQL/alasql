@@ -39,7 +39,7 @@ yy.FuncValue.prototype.execute = function (databaseid, params, cb) {
 	//	console.log(34,this.toJS('','',null));
 	let expr = new Function('params,alasql', 'var y;return ' + this.toJS('', '', null));
 	expr(params, alasql);
-	if (cb) res = cb(null, res);
+	if (cb) cb(null, res);
 	return res;
 };
 

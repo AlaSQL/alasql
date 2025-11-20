@@ -630,6 +630,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		res = 1;
 	}
 
-	if (cb) res = cb(null, res);
+	if (cb) cb(null, res);
 	return res;
 };

@@ -51,7 +51,6 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	}
 
 	/* Return result */
-	if (cb) res = cb(null, res);
 	return res;
 
 	/**
@@ -201,5 +200,6 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 		// });
 		// alasql.utils.saveFile(filename,s);
 */
+		if (cb) return cb(res);
 	}
 };

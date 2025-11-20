@@ -33,7 +33,7 @@ yy.If.prototype.execute = function (databaseid, params, cb) {
 	else {
 		if (this.elsestat) res = this.elsestat.execute(databaseid, params, cb);
 		else {
-			if (cb) res = cb(null, res);
+			if (cb) cb(null, res);
 		}
 	}
 	//	 else res = this.elsestat.execute(databaseid,params,cb,scope);

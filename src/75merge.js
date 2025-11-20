@@ -45,6 +45,6 @@ yy.Merge.prototype.toString = function () {
 yy.Merge.prototype.execute = function (databaseid, params, cb) {
 	var res = 1;
 
-	if (cb) res = cb(null, res);
+	if (cb) cb(null, res);
 	return res;
 };

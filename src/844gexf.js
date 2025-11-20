@@ -3,7 +3,7 @@ alasql.from.GEXF = function (filename, opts, cb, idx, query) {
 	alasql('SEARCH FROM XML(' + filename + ')', [], function (data) {
 		res = data;
 		// console.log(res);
-		if (cb) res = cb(null, res);
+		if (cb) cb(null, res);
 	});
 	return res;
 };

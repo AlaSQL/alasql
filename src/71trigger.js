@@ -55,7 +55,7 @@ yy.CreateTrigger.prototype.execute = function (databaseid, params, cb) {
 		db.tables[tableid][actionKey][triggerid] = trigger;
 	}
 
-	if (cb) res = cb(null, res);
+	if (cb) cb(null, res);
 	return res;
 };
 
@@ -105,6 +105,6 @@ yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
 		throw new Error('Trigger not found');
 	}
 
-	if (cb) res = cb(null, res);
+	if (cb) cb(null, res);
 	return res;
 };

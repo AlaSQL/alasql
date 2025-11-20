@@ -14,7 +14,7 @@ FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
 		if (fex) {
 			if (ifnotexists) {
 				res = 0;
-				if (cb) res = cb(null, res);
+				if (cb) cb(null, res);
 				return res;
 			} else {
 				throw new Error('Cannot create new database file, because it already exists');
@@ -22,7 +22,7 @@ FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
 		} else {
 			var data = {tables: {}};
 			alasql.utils.saveFile(filename, JSON.stringify(data), function (data) {
-				if (cb) res = cb(null, res);
+				if (cb) cb(null, res);
 			});
 		}
 	});
@@ -57,14 +57,14 @@ FS.dropDatabase = function (fsdbid, ifexists, cb) {
 			res = 1;
 			alasql.utils.deleteFile(filename, function () {
 				res = 1;
-				if (cb) res = cb(null, res);
+				if (cb) cb(null, res);
 			});
 		} else {
 			if (!ifexists) {
 				throw new Error('Cannot drop database file, because it does not exist');
 			}
 			res = 0;
-			if (cb) res = cb(null, res);
+			if (cb) cb(null, res);
 		}
 	});
 	return res;
@@ -93,7 +93,7 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 				}
 			}
 		}
-		if (cb) res = cb(null, res);
+		if (cb) cb(null, res);
 	});
 	return res;
 };
@@ -225,7 +225,7 @@ FS.rollback = function (databaseid, cb) {
 					alasql.databases[databaseid].engineid = 'FILESTORAGE';
 					alasql.databases[databaseid].filename = db.filename;
 
-					if (cb) res = cb(null, res);
+					if (cb) cb(null, res);
 					// Todo: check why no return
 				});
 			}

@@ -702,7 +702,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 			RNFS.writeFile(path, data)
 				.then(function (success) {
 					//, 'utf8'
-					if (cb) res = cb(null, res);
+					if (cb) cb(null, res);
 				})
 				.catch(function (err) {
 					console.error(err.message);
