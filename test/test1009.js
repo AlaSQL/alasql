@@ -16,14 +16,13 @@ describe('Test 1009 - Foreign key error message with table name', function () {
 	});
 
 	it('A) Single column foreign key - error message should include table and key', function () {
-		alasql('CREATE TABLE tableA (id INT PRIMARY KEY)');
-		alasql('CREATE TABLE tableB (id INT, a_id INT, FOREIGN KEY (a_id) REFERENCES tableA(id))');
-
-		alasql('INSERT INTO tableA VALUES (1)');
-		alasql('INSERT INTO tableA VALUES (2)');
-
-		// This should work - valid foreign key
-		alasql('INSERT INTO tableB VALUES (1, 1)');
+		alasql(
+			'CREATE TABLE tableA (id INT PRIMARY KEY);' +
+				'CREATE TABLE tableB (id INT, a_id INT, FOREIGN KEY (a_id) REFERENCES tableA(id));' +
+				'INSERT INTO tableA VALUES (1);' +
+				'INSERT INTO tableA VALUES (2);' +
+				'INSERT INTO tableB VALUES (1, 1);'
+		);
 
 		// This should fail with a proper error message showing the table name and key
 		try {
@@ -41,17 +40,15 @@ describe('Test 1009 - Foreign key error message with table name', function () {
 	});
 
 	it('B) Inline foreign key - error message should include table and key', function () {
-		alasql('DROP TABLE IF EXISTS tableC');
-		alasql('DROP TABLE IF EXISTS tableD');
-
-		alasql('CREATE TABLE tableC (id INT PRIMARY KEY)');
-		alasql('CREATE TABLE tableD (id INT, c_id INT FOREIGN KEY REFERENCES tableC(id))');
-
-		alasql('INSERT INTO tableC VALUES (10)');
-		alasql('INSERT INTO tableC VALUES (20)');
-
-		// This should work - valid foreign key
-		alasql('INSERT INTO tableD VALUES (1, 10)');
+		alasql(
+			'DROP TABLE IF EXISTS tableC;' +
+				'DROP TABLE IF EXISTS tableD;' +
+				'CREATE TABLE tableC (id INT PRIMARY KEY);' +
+				'CREATE TABLE tableD (id INT, c_id INT FOREIGN KEY REFERENCES tableC(id));' +
+				'INSERT INTO tableC VALUES (10);' +
+				'INSERT INTO tableC VALUES (20);' +
+				'INSERT INTO tableD VALUES (1, 10);'
+		);
 
 		// This should fail with a proper error message
 		try {
@@ -67,19 +64,15 @@ describe('Test 1009 - Foreign key error message with table name', function () {
 	});
 
 	it('C) Composite foreign key - error message should include table and keys', function () {
-		alasql('DROP TABLE IF EXISTS tableE');
-		alasql('DROP TABLE IF EXISTS tableF');
-
-		alasql('CREATE TABLE tableE (id1 INT, id2 INT, PRIMARY KEY (id1, id2))');
 		alasql(
-			'CREATE TABLE tableF (id INT, e_id1 INT, e_id2 INT, FOREIGN KEY (e_id1, e_id2) REFERENCES tableE(id1, id2))'
+			'DROP TABLE IF EXISTS tableE;' +
+				'DROP TABLE IF EXISTS tableF;' +
+				'CREATE TABLE tableE (id1 INT, id2 INT, PRIMARY KEY (id1, id2));' +
+				'CREATE TABLE tableF (id INT, e_id1 INT, e_id2 INT, FOREIGN KEY (e_id1, e_id2) REFERENCES tableE(id1, id2));' +
+				'INSERT INTO tableE VALUES (1, 1);' +
+				'INSERT INTO tableE VALUES (2, 2);' +
+				'INSERT INTO tableF VALUES (1, 1, 1);'
 		);
-
-		alasql('INSERT INTO tableE VALUES (1, 1)');
-		alasql('INSERT INTO tableE VALUES (2, 2)');
-
-		// This should work - valid foreign key
-		alasql('INSERT INTO tableF VALUES (1, 1, 1)');
 
 		// This should fail with a proper error message
 		try {
