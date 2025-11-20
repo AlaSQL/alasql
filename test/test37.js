@@ -9,7 +9,7 @@ describe('Test 37 - WHILE with BREAK and CONTINUE statements', function () {
 	 * - WHILE condition DO statement END WHILE
 	 * - LOOP can be terminated with BREAK/LEAVE
 	 * - CONTINUE/ITERATE skips to next iteration
-	 * 
+	 *
 	 * For compatibility with T-SQL syntax:
 	 * - WHILE condition BEGIN statements END
 	 * - BREAK exits the loop
@@ -22,18 +22,24 @@ describe('Test 37 - WHILE with BREAK and CONTINUE statements', function () {
 	});
 
 	it('2. WHILE with BREAK - exit loop early', function () {
-		var res = alasql('SET @a = 0; WHILE @a < 10 BEGIN SET @a = @a + 1; IF @a = 5 BREAK; END; SELECT @a as a');
+		var res = alasql(
+			'SET @a = 0; WHILE @a < 10 BEGIN SET @a = @a + 1; IF @a = 5 BREAK; END; SELECT @a as a'
+		);
 		assert.deepEqual(res[res.length - 1], [{a: 5}]);
 	});
 
 	it('3. WHILE with CONTINUE - skip iteration', function () {
-		var res = alasql('SET @mysum = 0; SET @i = 0; WHILE @i < 5 BEGIN SET @i = @i + 1; IF @i = 3 CONTINUE; SET @mysum = @mysum + @i; END; SELECT @mysum as mysum');
+		var res = alasql(
+			'SET @mysum = 0; SET @i = 0; WHILE @i < 5 BEGIN SET @i = @i + 1; IF @i = 3 CONTINUE; SET @mysum = @mysum + @i; END; SELECT @mysum as mysum'
+		);
 		// Should sum: 1 + 2 + 4 + 5 = 12 (skipping 3)
 		assert.deepEqual(res[res.length - 1], [{mysum: 12}]);
 	});
 
 	it('4. BREAK immediately (condition true, break on first iteration)', function () {
-		var res = alasql('SET @a = 1; WHILE @a < 10 BEGIN IF @a = 1 BREAK; SET @a = @a + 1; END; SELECT @a as a');
+		var res = alasql(
+			'SET @a = 1; WHILE @a < 10 BEGIN IF @a = 1 BREAK; SET @a = @a + 1; END; SELECT @a as a'
+		);
 		assert.deepEqual(res[res.length - 1], [{a: 1}]);
 	});
 

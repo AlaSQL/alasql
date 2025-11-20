@@ -1,6 +1,6 @@
 /*
 //
-// CREATE VIEW for Alasql.js
+// WHILE, BREAK, CONTINUE, and BEGIN...END for Alasql.js
 // Date: 03.11.2014
 // (c) 2014, Andrey Gershun
 //
