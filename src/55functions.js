@@ -30,6 +30,12 @@ yy.FuncValue.prototype.toString = function () {
 		}
 		s += ')';
 	}
+
+	// Add OVER clause if present
+	if (this.over) {
+		s += ' ' + this.over.toString();
+	}
+
 	return s;
 };
 

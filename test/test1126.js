@@ -3,13 +3,13 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 1126 GROUP_ROW_NUMBER()', function () {
+describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test1126;USE test1126');
 		done();
 	});
 
-	it('2. Basic GROUP_ROW_NUMBER() - per group row numbering with first column partitioning', function (done) {
+	it('2. Basic ROW_NUMBER() OVER (PARTITION BY) - SQL-99 syntax', function (done) {
 		var data = [
 			{category: 'A', amount: 10},
 			{category: 'A', amount: 20},
@@ -18,10 +18,8 @@ describe('Test 1126 GROUP_ROW_NUMBER()', function () {
 			{category: 'B', amount: 50},
 			{category: 'C', amount: 60},
 		];
-		// GROUP_ROW_NUMBER() numbers rows, restarting at 1 when the first selected column changes
-		// Data should be pre-sorted by the grouping column(s)
 		var res = alasql(
-			'SELECT category, amount, GROUP_ROW_NUMBER() AS rn FROM ? ORDER BY category, amount',
+			'SELECT category, amount, ROW_NUMBER() OVER (PARTITION BY category) AS rn FROM ? ORDER BY category, amount',
 			[data]
 		);
 		assert.deepEqual(res, [
@@ -35,12 +33,12 @@ describe('Test 1126 GROUP_ROW_NUMBER()', function () {
 		done();
 	});
 
-	it('3. Use GROUP_ROW_NUMBER() to get first N rows per group', function (done) {
+	it('3. Use ROW_NUMBER() with PARTITION BY to get first N rows per group', function (done) {
 		alasql('CREATE TABLE test_data (category STRING, amount INT)');
 		alasql('INSERT INTO test_data VALUES ("X", 1), ("X", 2), ("X", 3), ("Y", 10), ("Y", 20)');
 
 		var res = alasql(
-			'SELECT * FROM (SELECT category, amount, GROUP_ROW_NUMBER() AS rn FROM test_data ORDER BY category, amount) WHERE rn <= 2'
+			'SELECT * FROM (SELECT category, amount, ROW_NUMBER() OVER (PARTITION BY category) AS rn FROM test_data ORDER BY category, amount) WHERE rn <= 2'
 		);
 		assert.deepEqual(res, [
 			{category: 'X', amount: 1, rn: 1},
@@ -53,7 +51,7 @@ describe('Test 1126 GROUP_ROW_NUMBER()', function () {
 		done();
 	});
 
-	it('4. ROW_NUMBER() should still work for entire result set', function (done) {
+	it('4. ROW_NUMBER() without OVER should still work for entire result set', function (done) {
 		var data = [
 			{category: 'A', amount: 10},
 			{category: 'A', amount: 20},
@@ -68,7 +66,7 @@ describe('Test 1126 GROUP_ROW_NUMBER()', function () {
 		done();
 	});
 
-	it('5. GROUP_ROW_NUMBER() with multi-column grouping', function (done) {
+	it('5. Multi-column PARTITION BY', function (done) {
 		var data = [
 			{dept: 'IT', team: 'A', name: 'Alice'},
 			{dept: 'IT', team: 'A', name: 'Charlie'},
@@ -76,22 +74,43 @@ describe('Test 1126 GROUP_ROW_NUMBER()', function () {
 			{dept: 'Sales', team: 'A', name: 'Jane'},
 			{dept: 'Sales', team: 'A', name: 'John'},
 		];
-		// When there are multiple columns, GROUP_ROW_NUMBER() partitions by the first column
 		var res = alasql(
-			'SELECT dept, team, name, GROUP_ROW_NUMBER() AS rn FROM ? ORDER BY dept, team, name',
+			'SELECT dept, team, name, ROW_NUMBER() OVER (PARTITION BY dept, team) AS rn FROM ? ORDER BY dept, team, name',
 			[data]
 		);
 		assert.deepEqual(res, [
 			{dept: 'IT', team: 'A', name: 'Alice', rn: 1},
 			{dept: 'IT', team: 'A', name: 'Charlie', rn: 2},
-			{dept: 'IT', team: 'B', name: 'Dave', rn: 3},
+			{dept: 'IT', team: 'B', name: 'Dave', rn: 1},
 			{dept: 'Sales', team: 'A', name: 'Jane', rn: 1},
 			{dept: 'Sales', team: 'A', name: 'John', rn: 2},
 		]);
 		done();
 	});
 
-	it('6. DROP DATABASE', function (done) {
+	it('6. Get top 2 per group with complex ordering', function (done) {
+		var data = [
+			{dept: 'Sales', score: 100},
+			{dept: 'Sales', score: 95},
+			{dept: 'Sales', score: 90},
+			{dept: 'IT', score: 98},
+			{dept: 'IT', score: 92},
+			{dept: 'IT', score: 85},
+		];
+		var res = alasql(
+			'SELECT * FROM (SELECT dept, score, ROW_NUMBER() OVER (PARTITION BY dept) AS rn FROM ? ORDER BY dept, score DESC) WHERE rn <= 2',
+			[data]
+		);
+		assert.deepEqual(res, [
+			{dept: 'IT', score: 98, rn: 1},
+			{dept: 'IT', score: 92, rn: 2},
+			{dept: 'Sales', score: 100, rn: 1},
+			{dept: 'Sales', score: 95, rn: 2},
+		]);
+		done();
+	});
+
+	it('7. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test1126');
 		done();
 	});
