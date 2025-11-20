@@ -17,22 +17,20 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 		alasql('DROP DATABASE test' + testId);
 	});
 
-	it('1. Create tables', function (done) {
+	it('1. Create tables', () => {
 		alasql('CREATE TABLE test' + testId + '.one (a INT)');
 		alasql('INSERT INTO test' + testId + '.one VALUES (1),(2)');
 		alasql('CREATE TABLE test' + testId + '.two (a INT)');
 		alasql('INSERT INTO test' + testId + '.two VALUES (10),(20)');
-		done();
 	});
 
-	it('2. OVERWRITE JOINSTAR with qualified names', function (done) {
+	it('2. OVERWRITE JOINSTAR with qualified names', () => {
 		alasql.options.joinstar = 'overwrite';
 		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
 		assert.deepEqual(res, [{a: 10}, {a: 20}, {a: 10}, {a: 20}]);
-		done();
 	});
 
-	it('3. JSON JOINSTAR with qualified names', function (done) {
+	it('3. JSON JOINSTAR with qualified names', () => {
 		alasql.options.joinstar = 'json';
 		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
 		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
@@ -43,10 +41,9 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 			{one: {a: 2}, two: {a: 10}},
 			{one: {a: 2}, two: {a: 20}},
 		]);
-		done();
 	});
 
-	it('4. UNDERSCORE JOINSTAR with qualified names', function (done) {
+	it('4. UNDERSCORE JOINSTAR with qualified names', () => {
 		alasql.options.joinstar = 'underscore';
 		alasql.databases.alasql.dbversion++; // Reset database cache (for current database context)
 		var res = alasql('SELECT * FROM test' + testId + '.one, test' + testId + '.two');
@@ -57,10 +54,9 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 			{one_a: 2, two_a: 10},
 			{one_a: 2, two_a: 20},
 		]);
-		done();
 	});
 
-	it('5. JSON JOINSTAR with USE database', function (done) {
+	it('5. JSON JOINSTAR with USE database', () => {
 		alasql('USE test' + testId);
 		alasql.options.joinstar = 'json';
 		alasql.databases['test' + testId].dbversion++; // Reset database cache
@@ -72,10 +68,9 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 			{one: {a: 2}, two: {a: 10}},
 			{one: {a: 2}, two: {a: 20}},
 		]);
-		done();
 	});
 
-	it('6. UNDERSCORE JOINSTAR with USE database', function (done) {
+	it('6. UNDERSCORE JOINSTAR with USE database', () => {
 		alasql('USE test' + testId);
 		alasql.options.joinstar = 'underscore';
 		alasql.databases['test' + testId].dbversion++; // Reset database cache
@@ -87,6 +82,5 @@ describe('Test 2197 JOINSTAR with Qualified Table Names', function () {
 			{one_a: 2, two_a: 10},
 			{one_a: 2, two_a: 20},
 		]);
-		done();
 	});
 });
