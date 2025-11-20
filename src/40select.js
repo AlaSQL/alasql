@@ -372,6 +372,31 @@ yy.Select = class Select {
 					}
 				}
 
+				// Handle GROUP_ROW_NUMBER() - restart numbering when grouping column changes
+				if (query.grouprownums && query.grouprownums.length > 0) {
+					var columnKeys = Object.keys(res[0] || {});
+					var groupColumn = columnKeys[0]; // Use first column for grouping
+
+					for (var j = 0, jlen = query.grouprownums.length; j < jlen; j++) {
+						var prevValue = null;
+						var rowNum = 0;
+
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							var currentValue = res[i][groupColumn];
+
+							// Reset counter when group changes
+							if (i === 0 || currentValue !== prevValue) {
+								rowNum = 1;
+							} else {
+								rowNum++;
+							}
+
+							res[i][query.grouprownums[j].as] = rowNum;
+							prevValue = currentValue;
+						}
+					}
+				}
+
 				var res2 = modify(query, res);
 
 				if (cb) {
