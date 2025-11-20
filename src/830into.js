@@ -52,6 +52,10 @@ alasql.into.SQL = function (filename, opts, data, columns, cb) {
 						case 'NCHAR':
 							val = "'" + escapeqq(val) + "'";
 							break;
+						default:
+							if (typeof val == 'string') {
+								val = "'" + escapeqq(val) + "'";
+							}
 					}
 				} else {
 					if (typeof val == 'string') {
