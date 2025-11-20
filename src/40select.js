@@ -190,6 +190,7 @@ yy.Select = class Select {
 		// todo?: 3. Compile SELECT clause
 		// For ROWNUM()
 		query.rownums = [];
+		query.grouprownums = [];
 
 		this.compileSelectGroup0(query);
 
@@ -367,6 +368,46 @@ yy.Select = class Select {
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
 						for (var j = 0, jlen = query.rownums.length; j < jlen; j++) {
 							res[i][query.rownums[j]] = i + 1;
+						}
+					}
+				}
+
+				// Handle GROUP_ROW_NUMBER() and ROW_NUMBER() OVER (PARTITION BY ...) - restart numbering when grouping column(s) change
+				if (query.grouprownums && query.grouprownums.length > 0) {
+					for (var j = 0, jlen = query.grouprownums.length; j < jlen; j++) {
+						var config = query.grouprownums[j];
+						var partitionColumns;
+
+						// Determine which columns to partition by
+						if (config.partitionColumns && config.partitionColumns.length > 0) {
+							// Use explicit PARTITION BY columns
+							partitionColumns = config.partitionColumns;
+						} else {
+							// Fall back to first column for GROUP_ROW_NUMBER()
+							var columnKeys = Object.keys(res[0] || {});
+							partitionColumns = [columnKeys[0]];
+						}
+
+						var prevValues = null;
+						var rowNum = 0;
+
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							// Get current partition key (combination of all partition columns)
+							var currentValues = partitionColumns
+								.map(function (col) {
+									return res[i][col];
+								})
+								.join('|');
+
+							// Reset counter when partition changes
+							if (i === 0 || currentValues !== prevValues) {
+								rowNum = 1;
+							} else {
+								rowNum++;
+							}
+
+							res[i][config.as] = rowNum;
+							prevValues = currentValues;
 						}
 					}
 				}

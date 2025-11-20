@@ -36,25 +36,28 @@ alasql.into.SQL = function (filename, opts, data, columns, cb) {
 			})
 			.join(',');
 		s += ') VALUES (';
-		s += columns.map(function (col) {
-			var val = data[i][col.columnid];
-			if (col.typeid) {
-				if (
-					col.typeid === 'STRING' ||
-					col.typeid === 'VARCHAR' ||
-					col.typeid === 'NVARCHAR' ||
-					col.typeid === 'CHAR' ||
-					col.typeid === 'NCHAR'
-				) {
+		s += columns
+			.map(function (col) {
+				var val = data[i][col.columnid];
+				// Handle null and undefined values
+				if (val === null || val === undefined) {
+					return 'NULL';
+				}
+				// Check if value should be escaped as a string
+				var shouldEscape =
+					(col.typeid &&
+						(col.typeid === 'STRING' ||
+							col.typeid === 'VARCHAR' ||
+							col.typeid === 'NVARCHAR' ||
+							col.typeid === 'CHAR' ||
+							col.typeid === 'NCHAR')) ||
+					typeof val == 'string';
+				if (shouldEscape) {
 					val = "'" + escapeqq(val) + "'";
 				}
-			} else {
-				if (typeof val == 'string') {
-					val = "'" + escapeqq(val) + "'";
-				}
-			}
-			return val;
-		});
+				return val;
+			})
+			.join(',');
 		s += ');\n';
 	}
 	//	if(filename === '') {

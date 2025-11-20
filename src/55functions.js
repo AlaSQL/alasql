@@ -30,6 +30,12 @@ yy.FuncValue.prototype.toString = function () {
 		}
 		s += ')';
 	}
+
+	// Add OVER clause if present
+	if (this.over) {
+		s += ' ' + this.over.toString();
+	}
+
 	return s;
 };
 
@@ -247,6 +253,9 @@ stdlib.ROWNUM = function () {
 	return '1';
 };
 stdlib.ROW_NUMBER = function () {
+	return '1';
+};
+stdlib.GROUP_ROW_NUMBER = function () {
 	return '1';
 };
 
