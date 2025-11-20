@@ -1239,8 +1239,6 @@ Expression
 		{ $$ = $1; }
 	| CastClause
 		{ $$ = $1; }
-	| VALUE
-		{ $$ = new yy.DomainValueValue(); }
 	| Json
 		{ $$ = new yy.Json({value:$1}); }
 	| ArrayValue
