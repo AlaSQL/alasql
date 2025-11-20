@@ -26,8 +26,6 @@ describe('Test INSERT FROM parameter issue', function () {
 		// Verify data was inserted correctly
 		var result = inmemDB.exec('SELECT * FROM [BCPartners]');
 
-		console.log('Result:', JSON.stringify(result, null, 2));
-
 		var expected = [
 			{RecordNum: 1, TABLE_NAME: 'Table1', BC: 'BC1'},
 			{RecordNum: 2, TABLE_NAME: 'Table2', BC: 'BC2'},
@@ -57,8 +55,6 @@ describe('Test INSERT FROM parameter issue', function () {
 
 		// Verify data was inserted correctly
 		var result = alasql('SELECT * FROM BCPartners');
-
-		console.log('Default DB Result:', JSON.stringify(result, null, 2));
 
 		var expected = [
 			{RecordNum: 1, TABLE_NAME: 'Table1', BC: 'BC1'},
