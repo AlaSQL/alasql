@@ -125,13 +125,14 @@ describe('Test 2202 - VALUE(S) reserved keyword context', function () {
 
 	it('I) Should work with the original issue example: data->value in CREATE INDEX', function () {
 		// This is the exact scenario from issue 2202 that was failing
-		alasql('CREATE TABLE BOM5(id INT, data JSON)');
-		alasql('CREATE UNIQUE INDEX idx_id on BOM5(id)');
-		alasql('CREATE INDEX idx_data on BOM5(data->value)');
-
-		alasql('INSERT INTO BOM5 VALUES (1, @{value:100})');
-		alasql('INSERT INTO BOM5 VALUES (2, @{value:100})'); // Same data->value, different id - OK
-		alasql('INSERT INTO BOM5 VALUES (3, @{value:200})');
+		alasql(`
+			CREATE TABLE BOM5(id INT, data JSON);
+			CREATE UNIQUE INDEX idx_id on BOM5(id);
+			CREATE INDEX idx_data on BOM5(data->value);
+			INSERT INTO BOM5 VALUES (1, @{value:100});
+			INSERT INTO BOM5 VALUES (2, @{value:100});
+			INSERT INTO BOM5 VALUES (3, @{value:200});
+		`);
 
 		var res = alasql('SELECT * FROM BOM5 ORDER BY id');
 		assert.equal(res.length, 3);
