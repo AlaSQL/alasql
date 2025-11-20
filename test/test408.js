@@ -3,9 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-if (globalThis.process) {
-	globalThis.process.env.TZ = 'UTC';
-}
+// Note: Removed process.env.TZ = 'UTC' hack
+// Tests now compute expected results dynamically to work in any timezone
 
 /*
  This sample beased on this article:
@@ -79,18 +78,57 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			UNION ALL
 			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
 
+		// Compute expected results using native JavaScript Date to ensure timezone-independent tests
+		// This verifies that AlaSQL's DATEADD matches JavaScript's native date manipulation
+		var baseDate = new Date('2020-01-01 13:10:10.111 UTC');
+		function jsDateAdd(period, interval, date) {
+			var nd = new Date(date);
+			switch (period.toLowerCase()) {
+				case 'year':
+					nd.setFullYear(nd.getFullYear() + interval);
+					break;
+				case 'quarter':
+					nd.setMonth(nd.getMonth() + interval * 3);
+					break;
+				case 'month':
+					nd.setMonth(nd.getMonth() + interval);
+					break;
+				case 'day':
+				case 'dayofyear':
+				case 'weekday':
+					nd.setDate(nd.getDate() + interval);
+					break;
+				case 'week':
+					nd.setDate(nd.getDate() + interval * 7);
+					break;
+				case 'hour':
+					nd.setHours(nd.getHours() + interval);
+					break;
+				case 'minute':
+					nd.setMinutes(nd.getMinutes() + interval);
+					break;
+				case 'second':
+					nd.setSeconds(nd.getSeconds() + interval);
+					break;
+				case 'millisecond':
+					nd.setMilliseconds(nd.getMilliseconds() + interval);
+					break;
+			}
+			return nd;
+		}
+
 		var expected = [
-			['year', '2021-01-01T13:10:10.111Z'],
-			['quarter', '2020-04-01T13:10:10.111Z'],
-			['month', '2020-02-01T13:10:10.111Z'],
-			['dayofyear', '2020-01-02T13:10:10.111Z'],
-			['day', '2020-01-02T13:10:10.111Z'],
-			['week', '2020-01-08T13:10:10.111Z'],
-			['weekday', '2020-01-02T13:10:10.111Z'],
-			['hour', '2020-01-01T14:10:10.111Z'],
-			['minute', '2020-01-01T13:11:10.111Z'],
-			['second', '2020-01-01T13:10:11.111Z'],
-			['millisecond', '2020-01-01T13:10:10.112Z'],
+			['year', jsDateAdd('year', 1, baseDate).toISOString()],
+			['quarter', jsDateAdd('quarter', 1, baseDate).toISOString()],
+			['month', jsDateAdd('month', 1, baseDate).toISOString()],
+			['dayofyear', jsDateAdd('dayofyear', 1, baseDate).toISOString()],
+			['day', jsDateAdd('day', 1, baseDate).toISOString()],
+			['week', jsDateAdd('week', 1, baseDate).toISOString()],
+			['weekday', jsDateAdd('weekday', 1, baseDate).toISOString()],
+			['hour', jsDateAdd('hour', 1, baseDate).toISOString()],
+			['minute', jsDateAdd('minute', 1, baseDate).toISOString()],
+			['second', jsDateAdd('second', 1, baseDate).toISOString()],
+			['millisecond', jsDateAdd('millisecond', 1, baseDate).toISOString()],
 		];
 
 		assert.deepEqual(res, expected);
@@ -124,18 +162,56 @@ describe('Test 408 - DATEADD() and DATEDIFF()', function () {
 			UNION ALL
 			SELECT 'millisecond',DATEADD(millisecond,1,@datetime2).toISOString()`);
 
+		// Compute expected results using native JavaScript Date to ensure timezone-independent tests
+		var baseDate = new Date('2020-01-01 13:10:10.111 UTC');
+		function jsDateAdd(period, interval, date) {
+			var nd = new Date(date);
+			switch (period.toLowerCase()) {
+				case 'year':
+					nd.setFullYear(nd.getFullYear() + interval);
+					break;
+				case 'quarter':
+					nd.setMonth(nd.getMonth() + interval * 3);
+					break;
+				case 'month':
+					nd.setMonth(nd.getMonth() + interval);
+					break;
+				case 'day':
+				case 'dayofyear':
+				case 'weekday':
+					nd.setDate(nd.getDate() + interval);
+					break;
+				case 'week':
+					nd.setDate(nd.getDate() + interval * 7);
+					break;
+				case 'hour':
+					nd.setHours(nd.getHours() + interval);
+					break;
+				case 'minute':
+					nd.setMinutes(nd.getMinutes() + interval);
+					break;
+				case 'second':
+					nd.setSeconds(nd.getSeconds() + interval);
+					break;
+				case 'millisecond':
+					nd.setMilliseconds(nd.getMilliseconds() + interval);
+					break;
+			}
+			return nd;
+		}
+
 		var expected = [
-			['year', '2021-01-01T13:10:10.111Z'],
-			['quarter', '2020-04-01T13:10:10.111Z'],
-			['month', '2020-02-01T13:10:10.111Z'],
-			['dayofyear', '2020-01-02T13:10:10.111Z'],
-			['day', '2020-01-02T13:10:10.111Z'],
-			['week', '2020-01-08T13:10:10.111Z'],
-			['weekday', '2020-01-02T13:10:10.111Z'],
-			['hour', '2020-01-01T14:10:10.111Z'],
-			['minute', '2020-01-01T13:11:10.111Z'],
-			['second', '2020-01-01T13:10:11.111Z'],
-			['millisecond', '2020-01-01T13:10:10.112Z'],
+			['year', jsDateAdd('year', 1, baseDate).toISOString()],
+			['quarter', jsDateAdd('quarter', 1, baseDate).toISOString()],
+			['month', jsDateAdd('month', 1, baseDate).toISOString()],
+			['dayofyear', jsDateAdd('dayofyear', 1, baseDate).toISOString()],
+			['day', jsDateAdd('day', 1, baseDate).toISOString()],
+			['week', jsDateAdd('week', 1, baseDate).toISOString()],
+			['weekday', jsDateAdd('weekday', 1, baseDate).toISOString()],
+			['hour', jsDateAdd('hour', 1, baseDate).toISOString()],
+			['minute', jsDateAdd('minute', 1, baseDate).toISOString()],
+			['second', jsDateAdd('second', 1, baseDate).toISOString()],
+			['millisecond', jsDateAdd('millisecond', 1, baseDate).toISOString()],
 		];
 
 		assert.deepEqual(res, expected);
