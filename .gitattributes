@@ -13,3 +13,4 @@ yarn.lock binary
 #relative/path/*.txt text eol=lf
 
 
+src/alasqlparser.js merge=ours
