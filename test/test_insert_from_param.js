@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test INSERT FROM parameter issue', function () {
-	it('INSERT INTO table SELECT * FROM ? with data array', function (done) {
+	it('INSERT INTO table SELECT * FROM ? with data array', () => {
 		// Create a new database like in the issue
 		var inmemDB = new alasql.Database('test_insert_db');
 
@@ -37,10 +37,9 @@ describe('Test INSERT FROM parameter issue', function () {
 
 		// Clean up
 		alasql('DROP DATABASE test_insert_db');
-		done();
 	});
 
-	it('INSERT INTO table SELECT * FROM ? using default database', function (done) {
+	it('INSERT INTO table SELECT * FROM ? using default database', () => {
 		// Test with default database (alasql)
 		alasql('DROP TABLE IF EXISTS BCPartners');
 		alasql(
@@ -69,6 +68,5 @@ describe('Test INSERT FROM parameter issue', function () {
 
 		// Clean up
 		alasql('DROP TABLE BCPartners');
-		done();
 	});
 });
