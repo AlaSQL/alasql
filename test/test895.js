@@ -4,25 +4,25 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 895 - SERIAL type should not overwrite explicitly provided values', function () {
-	const test = '895';
+	const testId = '895';
 
 	before(() => {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 	});
 
 	after(() => {
-		alasql('drop database test' + test);
+		alasql('drop database test' + testId);
 	});
 
 	it('A) SERIAL column should auto-increment when not provided', () => {
 		alasql(`
-			CREATE TABLE test_serial (id serial, name varchar(50));
-			INSERT INTO test_serial (name) VALUES ("first");
-			INSERT INTO test_serial (name) VALUES ("second");
-			INSERT INTO test_serial (name) VALUES ("third");
+			CREATE TABLE users (id serial, name varchar(50));
+			INSERT INTO users (name) VALUES ("first");
+			INSERT INTO users (name) VALUES ("second");
+			INSERT INTO users (name) VALUES ("third");
 		`);
-		var res = alasql('SELECT * FROM test_serial ORDER BY id');
+		var res = alasql('SELECT * FROM users ORDER BY id');
 		assert.deepEqual(res, [
 			{id: 1, name: 'first'},
 			{id: 2, name: 'second'},
@@ -32,12 +32,12 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 
 	it('B) SERIAL column should accept explicitly provided value', () => {
 		alasql(`
-			CREATE TABLE test_serial2 (id serial, name varchar(50));
-			INSERT INTO test_serial2 (id, name) VALUES (10, "first");
-			INSERT INTO test_serial2 (id, name) VALUES (20, "second");
-			INSERT INTO test_serial2 (id, name) VALUES (30, "third");
+			CREATE TABLE products (id serial, name varchar(50));
+			INSERT INTO products (id, name) VALUES (10, "first");
+			INSERT INTO products (id, name) VALUES (20, "second");
+			INSERT INTO products (id, name) VALUES (30, "third");
 		`);
-		var res = alasql('SELECT * FROM test_serial2 ORDER BY id');
+		var res = alasql('SELECT * FROM products ORDER BY id');
 		assert.deepEqual(res, [
 			{id: 10, name: 'first'},
 			{id: 20, name: 'second'},
@@ -47,13 +47,13 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 
 	it('C) SERIAL column should accept explicitly provided value even if lower than counter', () => {
 		alasql(`
-			CREATE TABLE test_serial3 (id serial, name varchar(50));
-			INSERT INTO test_serial3 (name) VALUES ("auto1");
-			INSERT INTO test_serial3 (name) VALUES ("auto2");
-			INSERT INTO test_serial3 (name) VALUES ("auto3");
-			INSERT INTO test_serial3 (id, name) VALUES (100, "explicit");
+			CREATE TABLE orders (id serial, name varchar(50));
+			INSERT INTO orders (name) VALUES ("auto1");
+			INSERT INTO orders (name) VALUES ("auto2");
+			INSERT INTO orders (name) VALUES ("auto3");
+			INSERT INTO orders (id, name) VALUES (100, "explicit");
 		`);
-		var res = alasql('SELECT * FROM test_serial3 ORDER BY id');
+		var res = alasql('SELECT * FROM orders ORDER BY id');
 		assert.deepEqual(res, [
 			{id: 1, name: 'auto1'},
 			{id: 2, name: 'auto2'},
@@ -64,13 +64,13 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 
 	it('D) SERIAL with mixed auto and explicit values', () => {
 		alasql(`
-			CREATE TABLE test_serial4 (id serial, name varchar(50));
-			INSERT INTO test_serial4 (id, name) VALUES (5, "explicit5");
-			INSERT INTO test_serial4 (name) VALUES ("auto");
-			INSERT INTO test_serial4 (id, name) VALUES (10, "explicit10");
-			INSERT INTO test_serial4 (name) VALUES ("auto2");
+			CREATE TABLE customers (id serial, name varchar(50));
+			INSERT INTO customers (id, name) VALUES (5, "explicit5");
+			INSERT INTO customers (name) VALUES ("auto");
+			INSERT INTO customers (id, name) VALUES (10, "explicit10");
+			INSERT INTO customers (name) VALUES ("auto2");
 		`);
-		var res = alasql('SELECT * FROM test_serial4 ORDER BY id');
+		var res = alasql('SELECT * FROM customers ORDER BY id');
 		assert.deepEqual(res, [
 			{id: 5, name: 'explicit5'},
 			{id: 6, name: 'auto'},
@@ -81,10 +81,10 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 
 	it('E) Bulk insert with explicit SERIAL values', () => {
 		alasql(`
-			CREATE TABLE test_serial5 (id serial, name varchar(50));
-			INSERT INTO test_serial5 (id, name) VALUES (4, "item4"), (8, "item8"), (12, "item12");
+			CREATE TABLE items (id serial, name varchar(50));
+			INSERT INTO items (id, name) VALUES (4, "item4"), (8, "item8"), (12, "item12");
 		`);
-		var res = alasql('SELECT * FROM test_serial5 ORDER BY id');
+		var res = alasql('SELECT * FROM items ORDER BY id');
 		assert.deepEqual(res, [
 			{id: 4, name: 'item4'},
 			{id: 8, name: 'item8'},
@@ -94,10 +94,10 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 
 	it('F) Re-inserting data after truncate with explicit IDs', () => {
 		alasql(`
-			CREATE TABLE test_serial6 (id serial, name varchar(50));
-			INSERT INTO test_serial6 (name) VALUES ("first"), ("second"), ("third");
+			CREATE TABLE records (id serial, name varchar(50));
+			INSERT INTO records (name) VALUES ("first"), ("second"), ("third");
 		`);
-		var res1 = alasql('SELECT * FROM test_serial6 ORDER BY id');
+		var res1 = alasql('SELECT * FROM records ORDER BY id');
 		assert.deepEqual(res1, [
 			{id: 1, name: 'first'},
 			{id: 2, name: 'second'},
@@ -106,13 +106,13 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 
 		// Simulate the flush scenario from the issue
 		alasql(`
-			DELETE FROM test_serial6;
-			INSERT INTO test_serial6 (id, name) VALUES (4, "item4");
-			INSERT INTO test_serial6 (id, name) VALUES (7, "item7");
-			INSERT INTO test_serial6 (id, name) VALUES (9, "item9");
+			DELETE FROM records;
+			INSERT INTO records (id, name) VALUES (4, "item4");
+			INSERT INTO records (id, name) VALUES (7, "item7");
+			INSERT INTO records (id, name) VALUES (9, "item9");
 		`);
 
-		var res2 = alasql('SELECT * FROM test_serial6 ORDER BY id');
+		var res2 = alasql('SELECT * FROM records ORDER BY id');
 		assert.deepEqual(res2, [
 			{id: 4, name: 'item4'},
 			{id: 7, name: 'item7'},
