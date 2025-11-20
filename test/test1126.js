@@ -4,12 +4,15 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
-	it('1. CREATE DATABASE', function (done) {
+	before(function () {
 		alasql('CREATE DATABASE test1126;USE test1126');
-		done();
 	});
 
-	it('2. Basic ROW_NUMBER() OVER (PARTITION BY) - SQL-99 syntax', function (done) {
+	after(function () {
+		alasql('DROP DATABASE test1126');
+	});
+
+	it('1. Basic ROW_NUMBER() OVER (PARTITION BY) - SQL-99 syntax', function (done) {
 		var data = [
 			{category: 'A', amount: 10},
 			{category: 'A', amount: 20},
@@ -33,7 +36,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 		done();
 	});
 
-	it('3. Use ROW_NUMBER() with PARTITION BY to get first N rows per group', function (done) {
+	it('2. Use ROW_NUMBER() with PARTITION BY to get first N rows per group', function (done) {
 		alasql('CREATE TABLE test_data (category STRING, amount INT)');
 		alasql('INSERT INTO test_data VALUES ("X", 1), ("X", 2), ("X", 3), ("Y", 10), ("Y", 20)');
 
@@ -51,7 +54,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 		done();
 	});
 
-	it('4. ROW_NUMBER() without OVER should still work for entire result set', function (done) {
+	it('3. ROW_NUMBER() without OVER should still work for entire result set', function (done) {
 		var data = [
 			{category: 'A', amount: 10},
 			{category: 'A', amount: 20},
@@ -66,7 +69,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 		done();
 	});
 
-	it('5. Multi-column PARTITION BY', function (done) {
+	it('4. Multi-column PARTITION BY', function (done) {
 		var data = [
 			{dept: 'IT', team: 'A', name: 'Alice'},
 			{dept: 'IT', team: 'A', name: 'Charlie'},
@@ -88,7 +91,7 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 		done();
 	});
 
-	it('6. Get top 2 per group with complex ordering', function (done) {
+	it('5. Get top 2 per group with complex ordering', function (done) {
 		var data = [
 			{dept: 'Sales', score: 100},
 			{dept: 'Sales', score: 95},
@@ -107,11 +110,6 @@ describe('Test 1126 ROW_NUMBER() with PARTITION BY', function () {
 			{dept: 'Sales', score: 100, rn: 1},
 			{dept: 'Sales', score: 95, rn: 2},
 		]);
-		done();
-	});
-
-	it('7. DROP DATABASE', function (done) {
-		alasql('DROP DATABASE test1126');
 		done();
 	});
 });
