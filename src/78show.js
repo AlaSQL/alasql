@@ -72,7 +72,7 @@ yy.ShowColumns.prototype.toString = function () {
 };
 
 yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[this.databaseid || databaseid];
+	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
 
 	if (table && table.columns) {
@@ -101,7 +101,7 @@ yy.ShowIndex.prototype.toString = function () {
 	return s;
 };
 yy.ShowIndex.prototype.execute = function (databaseid, params, cb) {
-	var db = alasql.databases[this.databaseid || databaseid];
+	var db = alasql.databases[this.table.databaseid || this.databaseid || databaseid];
 	var table = db.tables[this.table.tableid];
 	var res = [];
 	if (table && table.indices) {

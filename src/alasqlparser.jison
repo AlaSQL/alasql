@@ -506,7 +506,7 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  OrderClause LimitClause UnionClause
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  UnionClause OrderClause LimitClause
 		{
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
@@ -521,6 +521,16 @@ Select
 		{
 			$$ = new yy.Search({selectors:$2, from:$4});
 			yy.extend($$,$3);
+		}
+	;
+
+SelectWithoutOrderOrLimit
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause UnionClause
+		{
+			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
+		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);yy.extend($$,$8);
+		    $$ = $1;
+		    if(yy.exists) $$.exists = yy.exists.slice();
 		}
 	;
 
@@ -1074,21 +1084,21 @@ HavingClause
 
 UnionClause
 	:   { $$ = undefined; }
-	| UNION Select
+	| UNION SelectWithoutOrderOrLimit
 		{ $$ = {union: $2} ; }
-	| UNION ALL Select
+	| UNION ALL SelectWithoutOrderOrLimit
 		{ $$ = {unionall: $3} ; }
-	| EXCEPT Select
+	| EXCEPT SelectWithoutOrderOrLimit
 		{ $$ = {except: $2} ; }
-	| INTERSECT Select
+	| INTERSECT SelectWithoutOrderOrLimit
 		{ $$ = {intersect: $2} ; }
-	| UNION CORRESPONDING Select
+	| UNION CORRESPONDING SelectWithoutOrderOrLimit
 		{ $$ = {union: $3, corresponding:true} ; }
-	| UNION ALL CORRESPONDING Select
+	| UNION ALL CORRESPONDING SelectWithoutOrderOrLimit
 		{ $$ = {unionall: $4, corresponding:true} ; }
-	| EXCEPT CORRESPONDING Select
+	| EXCEPT CORRESPONDING SelectWithoutOrderOrLimit
 		{ $$ = {except: $3, corresponding:true} ; }
-	| INTERSECT CORRESPONDING Select
+	| INTERSECT CORRESPONDING SelectWithoutOrderOrLimit
 		{ $$ = {intersect: $3, corresponding:true} ; }
 	;
 

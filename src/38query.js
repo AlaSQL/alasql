@@ -249,6 +249,34 @@ function queryfn3(query) {
 		query.data = arrayIntersectDeep(query.data, ud);
 	}
 
+	// Populate order keys for UNION/INTERSECT/EXCEPT before ordering
+	if (
+		query.orderfn &&
+		query.orderColumns &&
+		(query.unionallfn || query.unionfn || query.exceptfn || query.intersectfn)
+	) {
+		for (i = 0, ilen = query.data.length; i < ilen; i++) {
+			for (var idx = 0; idx < query.orderColumns.length; idx++) {
+				var v = query.orderColumns[idx];
+				var key = '$$$' + idx;
+				var r = query.data[i];
+				if (v instanceof yy.Column && r[v.columnid] !== undefined) {
+					r[key] = r[v.columnid];
+				} else if (v instanceof yy.Column) {
+					// Column not found in row, set to null or undefined
+					r[key] = undefined;
+				} else {
+					// For expressions, we'd need to evaluate them, but for now just skip
+					r[key] = undefined;
+				}
+				// Add to removeKeys if not already there
+				if (i === 0 && query.removeKeys.indexOf(key) === -1) {
+					query.removeKeys.push(key);
+				}
+			}
+		}
+	}
+
 	// Ordering
 	if (query.orderfn) {
 		if (query.explain) var ms = Date.now();
