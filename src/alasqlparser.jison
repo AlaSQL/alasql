@@ -2018,7 +2018,7 @@ OnUpdateClause
 	;
 
 UniqueKey
-	: UNIQUE KEY? Literal? LPAR ColumnsList RPAR
+	: UNIQUE KEY? Literal? LPAR OrderExpressionsList RPAR
 		{
 			$$ = {type: 'UNIQUE', columns: $5, clustered:($3+'').toUpperCase()};
 		}

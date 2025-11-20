@@ -35,17 +35,32 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 	var rightfn = new Function('r,params,alasql', 'return ' + rightfns);
 
 	if (this.unique) {
+		// Create a unique constraint similar to table.uk
+		var uniqueConstraint = {};
+		table.uk = table.uk || [];
+		table.uk.push(uniqueConstraint);
+		uniqueConstraint.columns = this.columns;
+		uniqueConstraint.onrightfns = rightfns;
+		uniqueConstraint.onrightfn = rightfn;
+		uniqueConstraint.hh = hash(rightfns);
+
+		// Store in uniqdefs for reference
 		table.uniqdefs[indexid] = {
 			rightfns: rightfns,
+			hh: uniqueConstraint.hh,
 		};
-		var ux = (table.uniqs[indexid] = {});
+
+		// Initialize the unique index
+		table.uniqs[uniqueConstraint.hh] = {};
+
+		// Populate existing data and check for duplicates
 		if (table.data.length > 0) {
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
-				var addr = rightfns(table.data[i]);
-				if (!ux[addr]) {
-					ux[addr] = {num: 0};
+				var addr = rightfn(table.data[i], params, alasql);
+				if (typeof table.uniqs[uniqueConstraint.hh][addr] !== 'undefined') {
+					throw new Error('Cannot create unique index with duplicate values');
 				}
-				ux[addr].num++;
+				table.uniqs[uniqueConstraint.hh][addr] = table.data[i];
 			}
 		}
 	} else {
