@@ -44,11 +44,7 @@ describe('Performance Test #1027 - Join performance with indices', function () {
 		// Insert departments
 		for (let i = 1; i <= numDepartments; i++) {
 			const companyId = ((i - 1) % numCompanies) + 1;
-			alasql('INSERT INTO departments VALUES (?, ?, ?)', [
-				i,
-				'Department ' + i,
-				companyId,
-			]);
+			alasql('INSERT INTO departments VALUES (?, ?, ?)', [i, 'Department ' + i, companyId]);
 		}
 
 		// Insert users
