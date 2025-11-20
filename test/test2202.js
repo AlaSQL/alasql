@@ -4,15 +4,15 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 2202 - VALUE(S) reserved keyword context', function () {
-	const test = '2202';
+	const testId = '2202';
 
 	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+		alasql('create database test' + testId);
+		alasql('use test' + testId);
 	});
 
 	after(function () {
-		alasql('drop database test' + test);
+		alasql('drop database test' + testId);
 	});
 
 	it('A) Should allow "value" as a JSON property in CREATE INDEX', function () {
