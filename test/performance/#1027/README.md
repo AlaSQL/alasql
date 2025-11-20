@@ -7,15 +7,15 @@ Users report performance issues when querying AlaSQL database with joins. Respon
 3. Running synchronous queries with 2 joins at runtime
 
 ## Root Cause
-The performance issue is caused by regular indices (created with `CREATE INDEX`) not being updated when records are inserted via:
+The performance issue was caused by regular indices (created with `CREATE INDEX`) not being updated when records are inserted via:
 1. `INSERT` statements using `table.insert()` function
 2. Direct data loading by pushing to `table.data` array
 
-In `src/60createtable.js`, the `table.insert()` function only updates:
+In `src/60createtable.js`, the `table.insert()` function only updated:
 - Primary key indices (`table.pk`)
 - Unique indices (`table.uk`)
 
-But it does NOT update regular indices stored in `table.indices[hh]`.
+But it did NOT update regular indices stored in `table.indices[hh]`.
 
 ## Performance Impact
 Without working indices:
@@ -27,19 +27,38 @@ With working indices:
 - Index lookups are O(1) on average
 - Query performance improves by orders of magnitude
 
+## Fix Implemented
+The fix updates regular indices during INSERT operations by iterating through all index definitions in `table.inddefs` and adding the inserted record to the appropriate index bucket.
+
 ## Test Files
-- `test-join-performance.js` - Demonstrates the performance issue with both INSERT statements and direct data loading
 
-## Running the Tests
+### Performance Tests (Plain JS)
+These scripts measure actual query performance without using mocha:
+
+- `perf-join-index.js` - Tests join performance with indices using INSERT statements
+- `perf-direct-load.js` - Tests the scenario of loading data directly via table.data.push()
+
+Run them with:
 ```bash
-# Run all tests
-yarn test
+node test/performance/#1027/perf-join-index.js
+node test/performance/#1027/perf-direct-load.js
+```
 
-# Run just this performance test
-node node_modules/mocha/bin/mocha.js test/performance/#1027/test-join-performance.js
+### Correctness Tests (Mocha)
+The main test file `test/test1027.js` uses mocha to verify:
+- Indices are created and populated correctly
+- Indices are updated during INSERT operations
+- Composite indices work correctly
+- JOIN queries use indices properly
+- Multiple indices on the same table work
+
+Run with the full test suite:
+```bash
+yarn test
 ```
 
 ## Expected Behavior
 After the fix:
 - Queries should complete in milliseconds, not seconds
-- Index optimization should work for both INSERT and direct data loading scenarios
+- Index optimization should work for INSERT statements
+- With direct data loading, indices are built on-the-fly during first query
