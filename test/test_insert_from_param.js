@@ -28,13 +28,12 @@ describe('Test INSERT FROM parameter issue', function () {
 
 		console.log('Result:', JSON.stringify(result, null, 2));
 
-		assert.equal(result.length, 3, 'Should have 3 records');
-		assert.equal(result[0].TABLE_NAME, 'Table1', 'First record TABLE_NAME should be Table1');
-		assert.equal(result[0].BC, 'BC1', 'First record BC should be BC1');
-		assert.equal(result[1].TABLE_NAME, 'Table2', 'Second record TABLE_NAME should be Table2');
-		assert.equal(result[1].BC, 'BC2', 'Second record BC should be BC2');
-		assert.equal(result[2].TABLE_NAME, 'Table3', 'Third record TABLE_NAME should be Table3');
-		assert.equal(result[2].BC, 'BC3', 'Third record BC should be BC3');
+		var expected = [
+			{RecordNum: 1, TABLE_NAME: 'Table1', BC: 'BC1'},
+			{RecordNum: 2, TABLE_NAME: 'Table2', BC: 'BC2'},
+			{RecordNum: 3, TABLE_NAME: 'Table3', BC: 'BC3'},
+		];
+		assert.deepEqual(result, expected);
 
 		// Clean up
 		alasql('DROP DATABASE test_insert_db');
@@ -62,11 +61,11 @@ describe('Test INSERT FROM parameter issue', function () {
 
 		console.log('Default DB Result:', JSON.stringify(result, null, 2));
 
-		assert.equal(result.length, 2, 'Should have 2 records');
-		assert.equal(result[0].TABLE_NAME, 'Table1', 'First record TABLE_NAME should be Table1');
-		assert.equal(result[0].BC, 'BC1', 'First record BC should be BC1');
-		assert.equal(result[1].TABLE_NAME, 'Table2', 'Second record TABLE_NAME should be Table2');
-		assert.equal(result[1].BC, 'BC2', 'Second record BC should be BC2');
+		var expected = [
+			{RecordNum: 1, TABLE_NAME: 'Table1', BC: 'BC1'},
+			{RecordNum: 2, TABLE_NAME: 'Table2', BC: 'BC2'},
+		];
+		assert.deepEqual(result, expected);
 
 		// Clean up
 		alasql('DROP TABLE BCPartners');
