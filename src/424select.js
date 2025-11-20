@@ -416,7 +416,22 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 				col.funcid &&
 				(col.funcid.toUpperCase() === 'ROWNUM' || col.funcid.toUpperCase() === 'ROW_NUMBER')
 			) {
-				query.rownums.push(col.as);
+				// Check if this has OVER clause with PARTITION BY
+				if (col.over && col.over.partition) {
+					// Window function with partition - track for post-processing
+					query.grouprownums.push({
+						as: col.as,
+						partitionColumns: col.over.partition.map(function (p) {
+							return p.columnid || p.toString();
+						}),
+					});
+				} else {
+					// Regular ROW_NUMBER without partition
+					query.rownums.push(col.as);
+				}
+			}
+			if (col.funcid && col.funcid.toUpperCase() === 'GROUP_ROW_NUMBER') {
+				query.grouprownums.push({as: col.as, columnIndex: 0}); // Track which column to use for grouping
 			}
 			//				console.log("colas:",colas);
 			// }

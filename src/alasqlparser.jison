@@ -1377,21 +1377,21 @@ Aggregator
 	;
 
 FuncValue
-	: Literal LPAR (DISTINCT|ALL)? ExprList RPAR
+	: Literal LPAR (DISTINCT|ALL)? ExprList RPAR OverClause
 		{
 			var funcid = $1;
 			var exprlist = $4;
 			if(exprlist.length > 1 && (funcid.toUpperCase() == 'MIN' || funcid.toUpperCase() == 'MAX')) {
-					$$ = new yy.FuncValue({funcid: funcid, args: exprlist});
+					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
-                      funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT') });
+                      funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT'), over: $6 });
 		    } else {
-			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist});
+			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			};
 		}
-	| Literal LPAR RPAR
-		{ $$ = new yy.FuncValue({ funcid: $1 }) }
+	| Literal LPAR RPAR OverClause
+		{ $$ = new yy.FuncValue({ funcid: $1, over: $4 }) }
 	| IF LPAR ExprList RPAR
 		{ $$ = new yy.FuncValue({ funcid: 'IIF', args:$3 }) }
 	| REPLACE LPAR ExprList RPAR
