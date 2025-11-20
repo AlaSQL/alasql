@@ -44,14 +44,14 @@ alasql.into.SQL = function (filename, opts, data, columns, cb) {
 					return 'NULL';
 				}
 				if (col.typeid) {
-					if (
-						col.typeid === 'STRING' ||
-						col.typeid === 'VARCHAR' ||
-						col.typeid === 'NVARCHAR' ||
-						col.typeid === 'CHAR' ||
-						col.typeid === 'NCHAR'
-					) {
-						val = "'" + escapeqq(val) + "'";
+					switch (col.typeid) {
+						case 'STRING':
+						case 'VARCHAR':
+						case 'NVARCHAR':
+						case 'CHAR':
+						case 'NCHAR':
+							val = "'" + escapeqq(val) + "'";
+							break;
 					}
 				} else {
 					if (typeof val == 'string') {
