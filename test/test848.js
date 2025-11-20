@@ -7,10 +7,10 @@ if (typeof exports === 'object') {
 	var dirname = './';
 }
 
-describe('Test multi-sheet XLSX import', function () {
+describe('Test 848 - Multi-sheet XLSX import', function () {
 	it('1. Import all sheets using sheetid: "*"', function (done) {
 		alasql(
-			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true, sheetid:"*"})',
+			'select * from xlsx("' + dirname + 'test848.xlsx", {headers:true, sheetid:"*"})',
 			[],
 			function (data) {
 				// Should return a flat array with _sheet property on each row
@@ -34,7 +34,7 @@ describe('Test multi-sheet XLSX import', function () {
 
 	it('2. Import multiple specific sheets using sheetid array', function (done) {
 		alasql(
-			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true, sheetid:?})',
+			'select * from xlsx("' + dirname + 'test848.xlsx", {headers:true, sheetid:?})',
 			[['Sheet1', 'Sheet2']],
 			function (data) {
 				// Should return a flat array with _sheet property
@@ -48,7 +48,7 @@ describe('Test multi-sheet XLSX import', function () {
 
 	it('3. Import specific sheets by index using sheetid array', function (done) {
 		alasql(
-			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true, sheetid:?})',
+			'select * from xlsx("' + dirname + 'test848.xlsx", {headers:true, sheetid:?})',
 			[[0, 1]],
 			function (data) {
 				// Should return a flat array with _sheet property
@@ -62,7 +62,7 @@ describe('Test multi-sheet XLSX import', function () {
 
 	it('4. Original single sheet behavior should still work', function (done) {
 		alasql(
-			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true})',
+			'select * from xlsx("' + dirname + 'test848.xlsx", {headers:true})',
 			[],
 			function (data) {
 				// Should return an array (original behavior)
@@ -77,7 +77,7 @@ describe('Test multi-sheet XLSX import', function () {
 
 	it('5. Original single sheet with explicit sheetid should still work', function (done) {
 		alasql(
-			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true, sheetid:"Sheet2"})',
+			'select * from xlsx("' + dirname + 'test848.xlsx", {headers:true, sheetid:"Sheet2"})',
 			[],
 			function (data) {
 				// Should return an array (original behavior)
@@ -95,7 +95,7 @@ describe('Test multi-sheet XLSX import', function () {
 		alasql(
 			'select * from xlsx("' +
 				dirname +
-				'test242.xlsx", {headers:true, sheetid:"*"}) WHERE _sheet = "Sheet2"',
+				'test848.xlsx", {headers:true, sheetid:"*"}) WHERE _sheet = "Sheet2"',
 			[],
 			function (data) {
 				// Should only return rows from Sheet2
@@ -114,7 +114,7 @@ describe('Test multi-sheet XLSX import', function () {
 	it('7. Count rows per sheet', function (done) {
 		// First get the data, then query it
 		alasql(
-			'SELECT * FROM xlsx("' + dirname + 'test242.xlsx", {headers:true, sheetid:"*"})',
+			'SELECT * FROM xlsx("' + dirname + 'test848.xlsx", {headers:true, sheetid:"*"})',
 			[],
 			function (allData) {
 				// Now count using a separate query
