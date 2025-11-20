@@ -533,8 +533,7 @@ function XLSXLSX(X, filename, opts, cb, idx, query) {
 			if (shouldProcessMultipleSheets) {
 				// Process multiple sheets and combine into a single array
 				res = [];
-				var sheetsToProcess =
-					opt.sheetid === '*' ? workbook.SheetNames : opt.sheetid;
+				var sheetsToProcess = opt.sheetid === '*' ? workbook.SheetNames : opt.sheetid;
 
 				for (var s = 0; s < sheetsToProcess.length; s++) {
 					var currentSheetId =

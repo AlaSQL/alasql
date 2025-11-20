@@ -101,9 +101,11 @@ describe('Test multi-sheet XLSX import', function () {
 				// Should only return rows from Sheet2
 				assert(Array.isArray(data));
 				assert(data.length === 4);
-				assert(data.every(function (row) {
-					return row._sheet === 'Sheet2';
-				}));
+				assert(
+					data.every(function (row) {
+						return row._sheet === 'Sheet2';
+					})
+				);
 				done();
 			}
 		);
