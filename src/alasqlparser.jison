@@ -1569,14 +1569,6 @@ Op
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$4}); }
 	| Expression ArrowDot FuncValue
 		{ $$ = new yy.Op({left:$1, op:'->' , right:$3}); }
-	| VALUE ArrowDot Literal
-		{ $$ = new yy.Op({left: new yy.DomainValueValue(), op:'->' , right:$3}); }
-	| VALUE ArrowDot NumValue
-		{ $$ = new yy.Op({left: new yy.DomainValueValue(), op:'->' , right:$3}); }
-	| VALUE ArrowDot LPAR Expression RPAR
-		{ $$ = new yy.Op({left: new yy.DomainValueValue(), op:'->' , right:$4}); }
-	| VALUE ArrowDot FuncValue
-		{ $$ = new yy.Op({left: new yy.DomainValueValue(), op:'->' , right:$3}); }
 
 	| Expression EXCLAMATION Literal
 		{ $$ = new yy.Op({left:$1, op:'!' , right:$3}); }
