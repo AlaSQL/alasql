@@ -61,15 +61,17 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 	it('D) SERIAL with mixed auto and explicit values', function () {
 		alasql('CREATE TABLE test_serial4 (id serial, name varchar(50))');
 		alasql('INSERT INTO test_serial4 (id, name) VALUES (5, "explicit5")');
-		alasql('INSERT INTO test_serial4 (name) VALUES ("auto")'); // Should be 1
+		// After explicit insert of 5, counter advances to 6
+		alasql('INSERT INTO test_serial4 (name) VALUES ("auto")'); // Should be 6
 		alasql('INSERT INTO test_serial4 (id, name) VALUES (10, "explicit10")');
-		alasql('INSERT INTO test_serial4 (name) VALUES ("auto2")'); // Should be 2
+		// After explicit insert of 10, counter advances to 11
+		alasql('INSERT INTO test_serial4 (name) VALUES ("auto2")'); // Should be 11
 		var res = alasql('SELECT * FROM test_serial4 ORDER BY id');
 		assert.deepEqual(res, [
-			{id: 1, name: 'auto'},
-			{id: 2, name: 'auto2'},
 			{id: 5, name: 'explicit5'},
+			{id: 6, name: 'auto'},
 			{id: 10, name: 'explicit10'},
+			{id: 11, name: 'auto2'},
 		]);
 	});
 
@@ -97,12 +99,12 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 
 		// Simulate the flush scenario from the issue
 		alasql('DELETE FROM test_serial6'); // Delete all
-		
+
 		// Re-insert with explicit IDs (simulating data from backend storage)
 		alasql('INSERT INTO test_serial6 (id, name) VALUES (4, "item4")');
 		alasql('INSERT INTO test_serial6 (id, name) VALUES (7, "item7")');
 		alasql('INSERT INTO test_serial6 (id, name) VALUES (9, "item9")');
-		
+
 		var res2 = alasql('SELECT * FROM test_serial6 ORDER BY id');
 		assert.deepEqual(res2, [
 			{id: 4, name: 'item4'},

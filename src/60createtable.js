@@ -353,7 +353,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		for (var columnid in table.identities) {
 			var ident = table.identities[columnid];
 			//			console.log(ident);
-			r[columnid] = ident.value;
+			// Only auto-assign identity value if not explicitly provided
+			if (typeof r[columnid] === 'undefined') {
+				r[columnid] = ident.value;
+			}
 			//			console.log(ident);
 		}
 		//console.log(270,r);
@@ -417,7 +420,13 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			for (var columnid in table.identities) {
 				var ident = table.identities[columnid];
 				//			console.log(ident);
-				ident.value += ident.step;
+				// Only increment if we used the auto-generated value
+				// If user provided explicit value >= current counter, update counter
+				if (typeof r[columnid] !== 'undefined' && r[columnid] >= ident.value) {
+					ident.value = r[columnid] + ident.step;
+				} else {
+					ident.value += ident.step;
+				}
 				//			console.log(ident);
 			}
 
