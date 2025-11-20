@@ -288,14 +288,14 @@ cacheable-lookup@^7.0.0:
   integrity sha512-+qJyx4xiKra8mZrcwhjMRMUhD5NR1R8esPkzIYxX96JiecFoxAXFuz/GpR3+ev4PE1WamHip78wV0vcmPQtp8w==
 
 cacheable-request@^13.0.12:
-  version "13.0.14"
-  resolved "https://registry.yarnpkg.com/cacheable-request/-/cacheable-request-13.0.14.tgz#eacde30e9a54d4468c113f448135e8811b0b35e0"
-  integrity sha512-2hjaCKFHLKCpzhNLjmOr5ODlbAypwpZqh3c2UusxzxKfQ899y0SvFHQJRYMYbefOYak3njSNBS5PmqCJjrmaBg==
+  version "13.0.15"
+  resolved "https://registry.yarnpkg.com/cacheable-request/-/cacheable-request-13.0.15.tgz#436c6a165bec922c7ad1ad9dba499bc1733931bd"
+  integrity sha512-NjiSrjv37X73FmGGU5ec/M83vWQ6q1Ae3BFe+ABfdeeMy4LOMKYTpfEjrBnLedu43clKZtsYbKrHTIQE7vKq+A==
   dependencies:
     "@types/http-cache-semantics" "^4.0.4"
     get-stream "^9.0.1"
     http-cache-semantics "^4.2.0"
-    keyv "^5.5.3"
+    keyv "^5.5.4"
     mimic-response "^4.0.0"
     normalize-url "^8.1.0"
     responselike "^4.0.2"
@@ -750,9 +750,9 @@ gopd@^1.2.0:
   integrity sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==
 
 got@14:
-  version "14.6.3"
-  resolved "https://registry.yarnpkg.com/got/-/got-14.6.3.tgz#f50d61c77268d394b59b8e93364de6425190e812"
-  integrity sha512-u1nNamHo7oAkyTkMD7g0F0pIvW6vNAF9CCmtkh8ZQrlToKJZ5wEPQHFqt6RzaZC0rJMzH+rnjIElyTsIkT0wQw==
+  version "14.6.4"
+  resolved "https://registry.yarnpkg.com/got/-/got-14.6.4.tgz#fe86680cc2d8e9df7162ebcd39c277c4ff6cf2cb"
+  integrity sha512-DjsLab39NUMf5iYlK9asVCkHMhaA2hEhrlmf+qXRhjEivuuBHWYbjmty9DA3OORUwZgENTB+6vSmY2ZW8gFHVw==
   dependencies:
     "@sindresorhus/is" "^7.0.1"
     byte-counter "^0.1.0"
@@ -949,7 +949,7 @@ jsonlint@1.6.0:
     JSV ">= 4.0.x"
     nomnom ">= 1.5.x"
 
-keyv@^5.5.3:
+keyv@^5.5.3, keyv@^5.5.4:
   version "5.5.4"
   resolved "https://registry.yarnpkg.com/keyv/-/keyv-5.5.4.tgz#0f26a32183a5058f93fc6e02ced6318f66e8a9ea"
   integrity sha512-eohl3hKTiVyD1ilYdw9T0OiB4hnjef89e3dMYKz+mVKDzj+5IteTseASUsOB+EU9Tf6VNTCjDePcP6wkDGmLKQ==
