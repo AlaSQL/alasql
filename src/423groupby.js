@@ -75,6 +75,10 @@ yy.Select.prototype.compileGroup = function (query) {
 				return "'" + columnid + "':null,";
 			})
 			.join('');
+		
+		// Initialize group row number counter
+		s += "'$$group_rownum':0,";
+		
 		var aft = '',
 			aft2 = '';
 
@@ -155,6 +159,8 @@ yy.Select.prototype.compileGroup = function (query) {
 			.join('');
 
 		s += '}' + aft + ',g));' + aft2 + '} else {';
+		// Increment group row number counter for existing groups
+		s += 'g["$$group_rownum"]++;';
 		s += query.selectGroup
 			.map(function (col) {
 				var colas = col.nick;

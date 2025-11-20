@@ -249,6 +249,9 @@ stdlib.ROWNUM = function () {
 stdlib.ROW_NUMBER = function () {
 	return '1';
 };
+stdlib.GROUP_ROW_NUMBER = function () {
+	return '1';
+};
 
 stdlib.SQRT = function (s) {
 	return 'Math.sqrt(' + s + ')';

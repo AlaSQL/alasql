@@ -418,6 +418,9 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			) {
 				query.rownums.push(col.as);
 			}
+			if (col.funcid && col.funcid.toUpperCase() === 'GROUP_ROW_NUMBER') {
+				query.grouprownums.push(col.as);
+			}
 			//				console.log("colas:",colas);
 			// }
 		} else {
@@ -534,6 +537,13 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 			s += "r['" + (col.as || col.nick) + "']=g['" + col.nick + "'];";
 		}
 	});
+
+	// Add GROUP_ROW_NUMBER values if needed
+	if (query.grouprownums && query.grouprownums.length > 0) {
+		for (var j = 0, jlen = query.grouprownums.length; j < jlen; j++) {
+			s += "r['" + query.grouprownums[j] + "']=g['$$group_rownum']+1;";
+		}
+	}
 
 	// Only add order keys if there's no union operation (otherwise they'll be added later)
 	if (
