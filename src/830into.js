@@ -43,21 +43,16 @@ alasql.into.SQL = function (filename, opts, data, columns, cb) {
 				if (val === null || val === undefined) {
 					return 'NULL';
 				}
-				if (col.typeid) {
-					switch (col.typeid) {
-						case 'STRING':
-						case 'VARCHAR':
-						case 'NVARCHAR':
-						case 'CHAR':
-						case 'NCHAR':
-							val = "'" + escapeqq(val) + "'";
-							break;
-						default:
-							if (typeof val == 'string') {
-								val = "'" + escapeqq(val) + "'";
-							}
-					}
-				} else if (typeof val == 'string') {
+				// Check if value should be escaped as a string
+				var shouldEscape =
+					(col.typeid &&
+						(col.typeid === 'STRING' ||
+							col.typeid === 'VARCHAR' ||
+							col.typeid === 'NVARCHAR' ||
+							col.typeid === 'CHAR' ||
+							col.typeid === 'NCHAR')) ||
+					typeof val == 'string';
+				if (shouldEscape) {
 					val = "'" + escapeqq(val) + "'";
 				}
 				return val;
