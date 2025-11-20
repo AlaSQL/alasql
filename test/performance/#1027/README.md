@@ -32,8 +32,29 @@ The fix updates regular indices during INSERT operations by iterating through al
 
 ## Test Files
 
-### Performance Tests (Plain JS)
-These scripts measure actual query performance without using mocha:
+### Performance Comparison Test (Recommended)
+**`perf-comparison.js`** - Unified test that compares both loading methods side-by-side:
+- Uses functions to run the same setup twice
+- Tests both INSERT statements and direct table.data.push()
+- Prints clear comparison showing indices are populated differently
+- Can run individual tests or both with command line flags
+
+Run it with:
+```bash
+# Compare both methods
+node test/performance/#1027/perf-comparison.js both
+# or just:
+node test/performance/#1027/perf-comparison.js
+
+# Test INSERT method only
+node test/performance/#1027/perf-comparison.js insert
+
+# Test direct loading only
+node test/performance/#1027/perf-comparison.js direct
+```
+
+### Individual Performance Tests
+These scripts test each method separately:
 
 - `perf-join-index.js` - Tests join performance with indices using INSERT statements
 - `perf-direct-load.js` - Tests the scenario of loading data directly via table.data.push()
@@ -59,6 +80,7 @@ yarn test
 
 ## Expected Behavior
 After the fix:
-- Queries should complete in milliseconds, not seconds
-- Index optimization should work for INSERT statements
-- With direct data loading, indices are built on-the-fly during first query
+- INSERT statements properly maintain indices during data loading
+- Queries complete in milliseconds with either loading method
+- Direct data loading builds indices on-the-fly during first query
+- Both methods produce identical results with similar query performance
