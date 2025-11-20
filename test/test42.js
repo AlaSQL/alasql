@@ -3,7 +3,7 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 042 - NULL values in INTO SQL()', function () {
+describe('Test 42 - NULL values in INTO SQL()', function () {
 	it('1. Should output NULL for null values', () => {
 		var data = [
 			{a: 1, b: 'test', c: null, d: 3},
