@@ -27,7 +27,7 @@ describe('Test 626 join on CSV file', function () {
 					{n: 2, en: 'two'},
 				],
 			],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res, [
 					{n: 1, en: 'one', fr: 'un'},
 					{n: 2, en: 'two', fr: 'deux'},

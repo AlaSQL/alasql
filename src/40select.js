@@ -314,7 +314,7 @@ yy.Select = class Select {
 				query.intoallfns = `
 					alasql.vars[${JSON.stringify(this.into.variable)}]=this.data;
 					res=this.data.length;
-					if(cb) res = cb(res);
+					if(cb) res = cb(null, res);
 					return res;
 				`;
 			} else if (this.into instanceof yy.FuncValue) {
@@ -353,13 +353,10 @@ yy.Select = class Select {
 		// Now, compile all togeather into one function with query object in scope
 		var statement = function (params, cb, oldscope) {
 			query.params = params;
-			// Note the callback function has the data and error reversed due to existing code in promiseExec which has the
-			// err and data swapped.  This trickles down into alasql.exec and further. Rather than risk breaking the whole thing,
-			// the (data, err) standard is maintained here.
 			var res1 = queryfn(query, oldscope, function (res, err) {
 				if (err) {
 					if (cb) {
-						return cb(null, err);
+						return cb(err, null);
 					}
 					throw err;
 				}
@@ -374,7 +371,7 @@ yy.Select = class Select {
 				var res2 = modify(query, res);
 
 				if (cb) {
-					cb(res2);
+					cb(null, res2);
 				}
 				return res2;
 			});

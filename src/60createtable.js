@@ -75,7 +75,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 	// IF NOT EXISTS
 	if (this.ifnotexists && db.tables[tableid]) {
-		return cb ? cb(0) : 0;
+		return cb ? cb(null, 0) : 0;
 	}
 
 	if (db.tables[tableid]) {
@@ -630,6 +630,6 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		res = 1;
 	}
 
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };

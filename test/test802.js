@@ -18,7 +18,7 @@ describe('Test ' + test + ' - ORDER BY does not support parameter #1100', functi
 
 	it('2. Async ORDERBY operation works without argument', function (done) {
 		//
-		alasql.promise('SELECT * FROM example1 ORDER BY b').then(function (res) {
+		alasql.promise('SELECT * FROM example1 ORDER BY b').then(function (err, res) {
 			assert.deepEqual(res, [
 				{
 					a: 3,
@@ -39,7 +39,7 @@ describe('Test ' + test + ' - ORDER BY does not support parameter #1100', functi
 
 	it('3. Async ORDERBY operation works with arguments passed', function (done) {
 		//
-		alasql.promise('SELECT * FROM example1 ORDER BY ?', ['b']).then(function (res) {
+		alasql.promise('SELECT * FROM example1 ORDER BY ?', ['b']).then(function (err, res) {
 			assert.deepEqual(res, [
 				{
 					a: 3,

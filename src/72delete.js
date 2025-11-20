@@ -101,7 +101,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
-			if (cb) res = cb(res);
+			if (cb) res = cb(null, res);
 
 			return res;
 		};
@@ -130,7 +130,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
-			if (cb) cb(orignum);
+			if (cb) cb(null, orignum);
 			return orignum;
 		};
 	}

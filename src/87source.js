@@ -23,7 +23,7 @@ yy.Source.prototype.execute = function (databaseid, params, cb) {
 		!!cb,
 		function (data) {
 			res = alasql(data);
-			if (cb) res = cb(res);
+			if (cb) res = cb(null, res);
 			return res;
 		},
 		function (err) {

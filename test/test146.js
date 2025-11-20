@@ -25,7 +25,7 @@ describe('Test 146 - Async Tests', function () {
 			assert(!!alasql.databases.test146);
 			alasql('USE test146', [], function () {
 				assert(alasql.useid == 'test146');
-				alasql('SELECT * FROM ?', [myfnsync], function (res) {
+				alasql('SELECT * FROM ?', [myfnsync], function (err, res) {
 					assert.deepEqual(res, [
 						{a: 0, b: 0},
 						{a: 1, b: 2},

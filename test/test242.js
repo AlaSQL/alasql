@@ -12,7 +12,7 @@ describe('Test 242 Multi-columns Excel file', function () {
 		alasql(
 			'select * from xlsx("' + dirname + 'test242.xlsx",{headers:false})',
 			[],
-			function (data) {
+			function (err, data) {
 				//      console.log(data[0]);
 				assert(data[0].CV == 100);
 				done();
@@ -24,7 +24,7 @@ describe('Test 242 Multi-columns Excel file', function () {
 		alasql(
 			'select * from xlsx("' + dirname + 'test242.xlsx", {headers:true,sheetid:"Sheet2"})',
 			[],
-			function (data) {
+			function (err, data) {
 				//      console.log(data[3]);
 				assert(data[3].five == 800);
 				done();

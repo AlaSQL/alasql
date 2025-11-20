@@ -26,7 +26,7 @@ describe('Test PromiseExec', function () {
 	it('B) csvload with valid data, expect array length 1', function () {
 		res = alasql
 			.promise('SELECT * FROM CSV(?, {headers:true, separator:","})', [TEST_VALID_DATA])
-			.then(function (res) {
+			.then(function (err, res) {
 				assert.ok(res.length === 1, 'Expected array of size 1 returned');
 			})
 			.catch(function (e) {
@@ -50,7 +50,7 @@ describe('Test PromiseExec', function () {
 		// a non null response.
 		res = alasql
 			.promise('SELECT * FROM CSV(?, {headers:true, separator:","})', BAD_URL)
-			.then(function (res) {
+			.then(function (err, res) {
 				assert.ok(res !== undefined, 'Expected resppnse');
 			})
 			.catch(function (e) {

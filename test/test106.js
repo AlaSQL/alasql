@@ -13,7 +13,7 @@ describe('Test 06 - Callback', function () {
 		alasql('create database test06; use test06');
 		alasql('CREATE TABLE test (a INT, b INT)');
 		alasql('INSERT INTO test VALUES (1,1)');
-		alasql('SELECT * FROM test', [], function (res) {
+		alasql('SELECT * FROM test', [], function (err, res) {
 			assert(res[0].a == 1);
 			alasql('drop database test06');
 			done();

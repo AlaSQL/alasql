@@ -31,7 +31,7 @@
 				).bind(this);
 				var res = exprfn(params, alasql);
 				if (cb) {
-					res = cb(res);
+					res = cb(null, res);
 				}
 				return res;
 			}
@@ -121,7 +121,7 @@
 			var expr = new Function('params,alasql,p', this.value);
 			expr(params, alasql);
 			if (cb) {
-				res = cb(res);
+				res = cb(null, res);
 			}
 			return res;
 		}

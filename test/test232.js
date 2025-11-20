@@ -20,13 +20,13 @@ describe('Test 232 Errors handling', function () {
 	it('2. Throw error', function () {
 		alasql('set errorlog off');
 		assert.throws(function () {
-			alasql('SELECT * FROM faultyName', [], function (data, err) {});
+			alasql('SELECT * FROM faultyName', [], function (err, data) {});
 		}, Error);
 	});
 
 	it('3. Log error async', function (done) {
 		alasql('set errorlog on');
-		alasql('SELECT * FROM faultyName', [], function (data, err) {
+		alasql('SELECT * FROM faultyName', [], function (err, data) {
 			assert(/^Table does not exist\:/.test(err.message));
 			done();
 		});

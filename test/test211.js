@@ -101,7 +101,7 @@ if (typeof exports != 'object') {
 			); \
 			SELECT * INTO schools FROM ?',
 					[studentsData, coursesData, schoolsData],
-					function (res) {
+					function (err, res) {
 						assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
 						done();
 					}
@@ -113,7 +113,7 @@ if (typeof exports != 'object') {
 					'SELECT courseid, COUNT(*) AS cnt ' +
 						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
 					[],
-					function (res) {
+					function (err, res) {
 						assert.deepEqual(res, [
 							{courseid: 1, cnt: 1},
 							{courseid: 2, cnt: 2},
@@ -133,7 +133,7 @@ if (typeof exports != 'object') {
 						' LEFT JOIN schools ON students.schoolid = schools.schoolid ' +
 						' GROUP BY students.schools, students.courseid, students.studentname',
 					[],
-					function (res) {
+					function (err, res) {
 						assert.equal(res[4].studentname, 'Astrid Carlson');
 						done();
 					}
@@ -145,14 +145,14 @@ if (typeof exports != 'object') {
 						' FROM students ' +
 						' LEFT JOIN courses USING courseid',
 					[],
-					function (res) {
+					function (err, res) {
 						assert.deepEqual([1, 1, 1, 2, 1], res);
 						done();
 					}
 				);
 			});
 			it('6. VALUE', function (done) {
-				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (res) {
+				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (err, res) {
 					assert.equal(25, res);
 					done();
 				});
@@ -173,7 +173,7 @@ if (typeof exports != 'object') {
 			CREATE TABLE schools; \
 			SELECT * INTO schools FROM ?',
 					[studentsData, coursesData, schoolsData],
-					function (res) {
+					function (err, res) {
 						assert.deepEqual(res, [1, 1, 1, 5, 1, 5, 1, 4]);
 						done();
 					}
@@ -184,7 +184,7 @@ if (typeof exports != 'object') {
 					'SELECT courseid, COUNT(*) AS cnt ' +
 						' FROM students RIGHT JOIN courses USING courseid GROUP BY courses.courseid ORDER BY courseid',
 					[],
-					function (res) {
+					function (err, res) {
 						assert.deepEqual(res, [
 							{courseid: 1, cnt: 1},
 							{courseid: 2, cnt: 2},
@@ -204,7 +204,7 @@ if (typeof exports != 'object') {
 						' LEFT JOIN schools ON students.schoolid = schools.schoolid ' +
 						' GROUP BY students.schools, students.courseid, students.studentname',
 					[],
-					function (res) {
+					function (err, res) {
 						assert.equal(res[4].studentname, 'Astrid Carlson');
 						done();
 					}
@@ -216,14 +216,14 @@ if (typeof exports != 'object') {
 						' FROM students ' +
 						' LEFT JOIN courses USING courseid',
 					[],
-					function (res) {
+					function (err, res) {
 						assert.deepEqual([1, 1, 1, 2, 1], res);
 						done();
 					}
 				);
 			});
 			it('6. VALUE', function (done) {
-				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (res) {
+				alasql('SELECT VALUE COUNT(*) FROM courses, students', [], function (err, res) {
 					assert.equal(25, res);
 					done();
 				});

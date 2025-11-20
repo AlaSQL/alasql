@@ -144,7 +144,7 @@ yy.DetachDatabase.prototype.execute = function (databaseid, params, cb) {
 		}
 		res = 1;
 	}
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };
 
@@ -164,7 +164,7 @@ yy.UseDatabase.prototype.execute = function (databaseid, params, cb) {
 	}
 	alasql.use(dbid);
 	var res = 1;
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };
 
@@ -207,6 +207,6 @@ yy.DropDatabase.prototype.execute = function (databaseid, params, cb) {
 		}
 		res = 1;
 	}
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };

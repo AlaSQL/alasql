@@ -34,7 +34,7 @@ describe('Test 212: CONVERT dates with style', function () {
                 CONVERT(STRING,@d,112)\
             ',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res, [
 					1,
 					[

@@ -22,7 +22,7 @@ yy.Statements = class Statements {
 			? statements[0]
 			: (params, cb) => {
 					const res = statements.map(st => st(params));
-					if (cb) cb(res);
+					if (cb) cb(null, res);
 					return res;
 				};
 	}

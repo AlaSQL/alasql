@@ -236,7 +236,7 @@ alasql.exec = function (sql, params, cb, scope) {
 		} catch (err) {
 			alasql.error = err;
 			if (cb) {
-				cb(null, alasql.error);
+				cb(alasql.error, null);
 			}
 		}
 	} else {
@@ -364,7 +364,7 @@ alasql.drun = function (databaseid, ast, params, cb, scope) {
 	}
 
 	if (cb) {
-		cb(res);
+		cb(null, res);
 	}
 
 	alasql.res = res;
@@ -389,7 +389,13 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 	}
 	var res = [];
 
-	function adrunone(data) {
+	function adrunone(err, data) {
+		if (err) {
+			if (cb) {
+				cb(err, null);
+			}
+			return;
+		}
 		if (data !== undefined) {
 			res.push(data);
 		}
@@ -399,7 +405,7 @@ alasql.adrun = function (databaseid, ast, params, cb, scope) {
 			if (useid !== databaseid) {
 				alasql.use(useid);
 			}
-			cb(res);
+			cb(null, res);
 			return;
 		}
 

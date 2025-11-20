@@ -24,12 +24,12 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 		assert(!alasql.options.autocommit);
 		alasql
 			.promise('DROP localStorage DATABASE IF EXISTS db604ls')
-			.then(function (res) {
+			.then(function (err, res) {
 				assert(!localStorage['db604ls']);
 				assert(!localStorage['db604ls.one']);
 				return alasql.promise('CREATE localStorage DATABASE IF NOT EXISTS db604ls');
 			})
-			.then(function (res) {
+			.then(function (err, res) {
 				assert(localStorage['db604ls']);
 				done();
 			})
@@ -41,7 +41,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 	});
 
 	it('* Show databases', function (done) {
-		var res = alasql('SHOW localStorage DATABASES', function (res) {
+		var res = alasql('SHOW localStorage DATABASES', function (err, res) {
 			var found = false;
 			res.forEach(function (d) {
 				found = found || d.databaseid == 'db604ls';
@@ -60,7 +60,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 	});
 
 	it('* Create table', function (done) {
-		alasql('CREATE TABLE db604.t1 (a int, b string)', function (res) {
+		alasql('CREATE TABLE db604.t1 (a int, b string)', function (err, res) {
 			assert(localStorage['db604ls.t1']);
 			assert(JSON.parse(localStorage['db604ls']).tables.t1);
 			done();
@@ -86,7 +86,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 	});
 
 	it('* Create view', function (done) {
-		alasql('CREATE VIEW db604.v1 AS SELECT a,b FROM db604.t1', function (res) {
+		alasql('CREATE VIEW db604.v1 AS SELECT a,b FROM db604.t1', function (err, res) {
 			assert(localStorage['db604ls.v1']);
 			assert(JSON.parse(localStorage['db604ls']).tables.v1);
 			done();
@@ -115,7 +115,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 	});
 
 	it.skip('* Reselect from view', function (done) {
-		alasql.promise('SELECT * FROM db604.v1').then(function (res) {
+		alasql.promise('SELECT * FROM db604.v1').then(function (err, res) {
 			assert(res.length == 3);
 			done();
 		});

@@ -21,7 +21,7 @@ describe('Test 207 WHILE', function () {
                 SET @cnt = @cnt+1; \
             ',
 			[],
-			function (res) {
+			function (err, res) {
 				//                console.log("ASYNC:",res);
 				assert.deepEqual(res, [1, [1, 1, 1]]);
 				done();

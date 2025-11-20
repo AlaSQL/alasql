@@ -18,7 +18,7 @@ describe('Test 306 XML reader', function () {
 		alasql(
 			'SEARCH children/"Worksheet" attributes [ss:Name] FROM XML("' + __dirname + '/test306.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res, ['Sheet1', 'demo']);
 				done();
 			}
@@ -30,7 +30,7 @@ describe('Test 306 XML reader', function () {
 		alasql(
 			'SEARCH XML Worksheet %[ss:Name] FROM XML("' + __dirname + '/test306.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				//      console.log(res);
 				assert.deepEqual(res, ['Sheet1', 'demo']);
 				done();
@@ -43,7 +43,7 @@ describe('Test 306 XML reader', function () {
 		alasql(
 			'SEARCH XML Worksheet %[ss:Name] FROM XML("' + __dirname + '/test306.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				//      console.log(res);
 				assert.deepEqual(res, ['Sheet1', 'demo']);
 				done();
@@ -52,7 +52,7 @@ describe('Test 306 XML reader', function () {
 	});
 
 	it('3. Read XML file / SEARCH XML', function (done) {
-		alasql('SEARCH XML / * Data$ FROM XML("' + __dirname + '/test306.xml")', [], function (res) {
+		alasql('SEARCH XML / * Data$ FROM XML("' + __dirname + '/test306.xml")', [], function (err, res) {
 			//       console.log(res);
 			assert.deepEqual(res, ['aaaa', '2', '3', '5', '6', '7']);
 			done();
@@ -63,7 +63,7 @@ describe('Test 306 XML reader', function () {
 		alasql(
 			'SEARCH XML / *Data$ WHERE(_>3) FROM XML("' + __dirname + '/test306.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res, ['5', '6', '7']);
 				done();
 			}
@@ -71,7 +71,7 @@ describe('Test 306 XML reader', function () {
 	});
 
 	it('5. Read XML file / SEARCH XML', function (done) {
-		alasql('SEARCH xml %xmlns FROM XML("' + __dirname + '/test306.xml")', [], function (res) {
+		alasql('SEARCH xml %xmlns FROM XML("' + __dirname + '/test306.xml")', [], function (err, res) {
 			//      console.log(res);
 			assert.deepEqual(res, ['urn:schemas-microsoft-com:office:spreadsheet']);
 			done();
@@ -85,7 +85,7 @@ describe('Test 306 XML reader', function () {
 				__dirname +
 				'/test306a.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				//      console.log(res);
 				assert.deepEqual(res, [
 					{$id: '0', name: 'Hello', $node: 'VERTEX'},
@@ -103,7 +103,7 @@ describe('Test 306 XML reader', function () {
 				__dirname +
 				'/test306a.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res, [
 					{$id: '0', name: 'Hello'},
 					{$id: '1', name: 'Word'},
@@ -117,7 +117,7 @@ describe('Test 306 XML reader', function () {
 		alasql(
 			'SEARCH XML [graph] edges/%/ FROM XML("' + __dirname + '/test306a.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				//        console.log(res);
 				assert.deepEqual(res, [{id: '0', source: '0', target: '1'}]);
 				done();
@@ -131,7 +131,7 @@ describe('Test 306 XML reader', function () {
 				__dirname +
 				'/test306a.xml")',
 			[],
-			function (res) {
+			function (err, res) {
 				//     alasql('SEARCH XML /graph/edges/% INTO CSV({headers:true}) FROM XML("test306a.xml")',[],function(res){
 				//        console.log('>>',res,'<<');
 				assert.deepEqual(res, '"id";"source";"target"\r\n0;0;1\r\n');

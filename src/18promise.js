@@ -8,7 +8,7 @@ if (!utils.global.Promise) {
 
 var promiseExec = function (sql, params, counterStep, counterTotal) {
 	return new utils.global.Promise(function (resolve, reject) {
-		alasql(sql, params, function (data, err) {
+		alasql(sql, params, function (err, data) {
 			if (err) {
 				reject(err);
 			} else {

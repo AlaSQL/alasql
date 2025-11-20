@@ -19,7 +19,7 @@ if (false) {
 			alasql(
 				"select column * from txt('test160.txt') where [0] like 'M%' order by [0]",
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res, ['Madrid', 'Minsk', 'Mogadisho']);
 					done();
 				}
@@ -30,7 +30,7 @@ if (false) {
 			alasql(
 				"select column [1] from tab('test160.tab') where [0] like 'M%' order by [1]",
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res, [10, 20, 30]);
 					done();
 				}
@@ -41,7 +41,7 @@ if (false) {
 			alasql(
 				"select column population from tab('test160h.tab',{headers:true}) where city like 'M%' order by population",
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res, [10, 20, 30]);
 					done();
 				}
@@ -52,7 +52,7 @@ if (false) {
 			alasql(
 				"select column [1] from csv('test160.csv') where [0] like 'M%' order by [1]",
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res, [10, 20, 30]);
 					done();
 				}
@@ -63,7 +63,7 @@ if (false) {
 			alasql(
 				"select column population from csv('test160h.csv',{headers:true}) where city like 'M%' order by population",
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res, [10, 20, 30]);
 					done();
 				}
@@ -74,7 +74,7 @@ if (false) {
 			alasql(
 				"select column population from csv('test160hs.csv',{headers:true, separator:';'}) where city like 'M%' order by population",
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res, [10, 20, 30]);
 					done();
 				}
@@ -85,7 +85,7 @@ if (false) {
 			alasql(
 				"select column [1] from csv('test160') where [0] like 'M%' order by [1]",
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res, [10, 20, 30]);
 					done();
 				}

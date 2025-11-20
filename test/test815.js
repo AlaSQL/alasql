@@ -33,7 +33,7 @@ if (typeof exports === 'object') {
 		return alasql.promise('SELECT * INTO XLSX("test/test815.xlsx") FROM dates').then(function () {
 			return alasql
 				.promise('SELECT * FROM xlsx("test/test815.xlsx", {cellDates: false})')
-				.then(function (res) {
+				.then(function (err, res) {
 					assert.equal(typeof res[0].date, 'number');
 					assert.equal(typeof res[1].date, 'number');
 				});
@@ -41,7 +41,7 @@ if (typeof exports === 'object') {
 	});
 	it('3. XLSX parses date as date', function () {
 		return alasql.promise('SELECT * INTO XLSX("test/test815.xlsx") FROM dates').then(function () {
-			return alasql.promise('SELECT * FROM xlsx("test/test815.xlsx")').then(function (res) {
+			return alasql.promise('SELECT * FROM xlsx("test/test815.xlsx")').then(function (err, res) {
 				assert.equal(res[0].date instanceof Date, true);
 				assert.equal(res[1].date instanceof Date, true);
 				// next assertion is like this since it is often off by 1 millisecond in CI.

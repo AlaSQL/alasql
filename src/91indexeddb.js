@@ -59,7 +59,7 @@ async function _databaseExists(name) {
 //
 IDB.showDatabases = function (like, cb) {
 	if (!indexedDB.databases) {
-		cb(null, new Error('SHOW DATABASE is not supported in this browser'));
+		cb(new Error('SHOW DATABASE is not supported in this browser'), null);
 		return;
 	}
 
@@ -73,53 +73,53 @@ IDB.showDatabases = function (like, cb) {
 			}
 		}
 
-		cb(res);
+		cb(null, res);
 	});
 };
 
 IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	});
 
 	if (found) {
 		if (ifnotexists) {
-			cb && cb(0);
+			cb && cb(null, 0);
 		} else {
 			const err = new Error(
 				`IndexedDB: Cannot create new database "${ixdbid}" because it already exists`
 			);
-			if (cb) cb(null, err);
+			if (cb) cb(err, null);
 		}
 	} else {
 		const request = indexedDB.open(ixdbid, 1);
 		request.onsuccess = () => {
 			request.result.close();
-			cb(1);
+			cb(null, 1);
 		};
 	}
 };
 
 IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	});
 
 	if (found) {
 		const request = indexedDB.deleteDatabase(ixdbid);
 		request.onsuccess = () => {
-			if (cb) cb(1);
+			if (cb) cb(null, 1);
 		};
 	} else {
 		if (ifexists) {
-			cb && cb(0);
+			cb && cb(null, 0);
 		} else {
 			cb &&
 				cb(
-					null,
-					new Error(`IndexedDB: Cannot drop new database "${ixdbid}" because it does not exist'`)
+					new Error(`IndexedDB: Cannot drop new database "${ixdbid}" because it does not exist'`),
+					null
 				);
 		}
 	}
@@ -127,7 +127,7 @@ IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 
 IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	});
 
@@ -135,7 +135,7 @@ IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 		const err = new Error(
 			`IndexedDB: Cannot attach database "${ixdbid}" because it does not exist`
 		);
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	}
 
@@ -166,13 +166,13 @@ IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 		}
 	*/
 
-	if (cb) cb(1);
+	if (cb) cb(null, 1);
 };
 
 IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	});
 
@@ -180,7 +180,7 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 		const err = new Error(
 			'IndexedDB: Cannot create table in database "' + ixdbid + '" because it does not exist'
 		);
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	}
 
@@ -190,15 +190,15 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 	};
 	request.onsuccess = function (event) {
 		request.result.close();
-		if (cb) cb(1);
+		if (cb) cb(null, 1);
 	};
 	request.onerror = evt => {
-		cb(null, evt);
+		cb(evt, null);
 	};
 	request.onblocked = function (event) {
 		cb(
-			null,
-			new Error(`Cannot create table "${tableid}" because database "${databaseid}"  is blocked`)
+			new Error(`Cannot create table "${tableid}" because database "${databaseid}"  is blocked`),
+			null
 		);
 	};
 };
@@ -206,7 +206,7 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	});
 
@@ -214,7 +214,7 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 		const err = new Error(
 			'IndexedDB: Cannot drop table in database "' + ixdbid + '" because it does not exist'
 		);
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 		throw err;
 	}
 
@@ -235,15 +235,15 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 	};
 	request.onsuccess = function (event) {
 		request.result.close();
-		if (cb) cb(1);
+		if (cb) cb(null, 1);
 	};
 	request.onerror = function (event) {
-		cb && cb(null, err || event);
+		cb && cb(err || event, null);
 	};
 	request.onblocked = function (event) {
 		cb(
-			null,
-			new Error(`Cannot drop table "${tableid}" because database "${databaseid}" is blocked`)
+			new Error(`Cannot drop table "${tableid}" because database "${databaseid}" is blocked`),
+			null
 		);
 	};
 };
@@ -292,7 +292,7 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 		const err = new Error(
 			`Cannot insert into table "${tableid}" because database "${databaseid}" does not exist`
 		);
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 	};
 
 	request.onsuccess = () => {
@@ -314,7 +314,7 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 					}
 				}
 			}
-			if (cb) cb(ilen);
+			if (cb) cb(null, ilen);
 		};
 	};
 };
@@ -328,7 +328,7 @@ IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
 		const err = new Error(
 			`Cannot select from table "${tableid}" because database "${databaseid}" does not exist`
 		);
-		if (cb) cb(null, err);
+		if (cb) cb(err, null);
 	};
 
 	request.onsuccess = () => {
@@ -371,7 +371,7 @@ IDB.deleteFromTable = function (databaseid, tableid, wherefn, params, cb) {
 				cursor.continue();
 			} else {
 				ixdb.close();
-				if (cb) cb(num);
+				if (cb) cb(null, num);
 			}
 		};
 	};
@@ -397,7 +397,7 @@ IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) 
 				cursor.continue();
 			} else {
 				ixdb.close();
-				if (cb) cb(num);
+				if (cb) cb(null, num);
 			}
 		};
 	};

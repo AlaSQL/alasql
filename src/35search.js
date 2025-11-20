@@ -38,9 +38,9 @@ yy.Search = class Search {
 			var res;
 			this.#doSearch(dbid, params, function (data) {
 				res = modify(statement.query, data);
-				if (cb) res = cb(res);
+				if (cb) res = cb(null, res);
 			});
-			// if(cb) res = cb(res);
+			// if(cb) res = cb(null, res);
 			return res;
 		};
 		statement.query = {};
@@ -709,7 +709,7 @@ yy.Search = class Search {
 				res = res[0];
 			}
 			if (cb) {
-				res = cb(res);
+				res = cb(null, res);
 			}
 		}
 		return res;

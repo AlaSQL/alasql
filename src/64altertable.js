@@ -36,7 +36,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			delete db.tables[oldtableid];
 			res = 1;
 		}
-		if (cb) cb(res);
+		if (cb) cb(null, res);
 		return res;
 	}
 
@@ -70,7 +70,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			table.data[i][columnid] = defaultfn();
 		}
 
-		return cb ? cb(1) : 1;
+		return cb ? cb(null, 1) : 1;
 	}
 
 	if (this.modifycolumn) {
@@ -92,7 +92,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 		col.dbprecision = this.dbprecision;
 		col.dbenum = this.dbenum;
 
-		return cb ? cb(1) : 1;
+		return cb ? cb(null, 1) : 1;
 	}
 
 	if (this.renamecolumn) {
@@ -128,7 +128,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			}
 			return table.data.length;
 		}
-		return cb ? cb(0) : 0;
+		return cb ? cb(null, 0) : 0;
 	}
 
 	if (this.dropcolumn) {
@@ -159,7 +159,7 @@ yy.AlterTable.prototype.execute = function (databaseid, params, cb) {
 			delete table.data[i][columnid];
 		}
 
-		return cb ? cb(table.data.length) : table.data.length;
+		return cb ? cb(null, table.data.length) : table.data.length;
 	}
 
 	throw Error('Unknown ALTER TABLE method');

@@ -33,7 +33,7 @@ describe('Test 382 - Error in UPDATE', function () {
 		);
 
 		// CREATE OBJ
-		var _createGpsEntry = function (data) {
+		var _createGpsEntry = function (err, data) {
 			var Entry = function (id, longitude, latitude) {
 				this.id = id;
 				this.longitude = longitude;

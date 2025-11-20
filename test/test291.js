@@ -9,7 +9,7 @@ describe('Test 291 - Promises:', function () {
 	it('.promise', function (done) {
 		alasql
 			.promise('SELECT VALUE 1')
-			.then(function (res) {
+			.then(function (err, res) {
 				assert.deepEqual(res, 1);
 				done();
 			})
@@ -23,7 +23,7 @@ describe('Test 291 - Promises:', function () {
 
 		alasql
 			.promise(['SELECT VALUE 1'])
-			.then(function (res) {
+			.then(function (err, res) {
 				assert.deepEqual(res, [1]);
 				done();
 			})
@@ -54,7 +54,7 @@ describe('Test 291 - Promises:', function () {
 	it('.promise all multi + params', function (done) {
 		alasql
 			.promise(['value of SELECT 1', ['value of select ?', 2]])
-			.then(function (res) {
+			.then(function (err, res) {
 				assert.deepEqual(res, [1, 2]);
 				done();
 			})
@@ -65,7 +65,7 @@ describe('Test 291 - Promises:', function () {
 
 	it('.promise all, lazy notation', function (done) {
 		alasql(['value of SELECT 1 --so lazy', ['value of select ?', 2]])
-			.then(function (res) {
+			.then(function (err, res) {
 				assert.deepEqual(res, [1, 2]);
 				done();
 			})

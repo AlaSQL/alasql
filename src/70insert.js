@@ -295,7 +295,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			}
 			//		var res = insertfn(db, params);
 			if (alasql.options.nocount) res = undefined;
-			if (cb) cb(res);
+			if (cb) cb(null, res);
 			return res;
 		};
 	}

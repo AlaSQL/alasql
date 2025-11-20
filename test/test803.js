@@ -52,7 +52,7 @@ describe('Test 803 - JOIN GROUP BY with columns in same index position within ne
 			},
 		];
 
-		alasql.promise(sql, testData).then(function (data) {
+		alasql.promise(sql, testData).then(function (err, data) {
 			assert.deepEqual(data, expectedResult);
 			done();
 		});
@@ -67,7 +67,7 @@ describe('Test 803 - JOIN GROUP BY with columns in same index position within ne
 			{emp_name: 'Kyle', num_emp: 50, num_of_roles: 2},
 			{emp_name: 'Kyle', num_emp: 100, num_of_roles: 15},
 		];
-		alasql.promise(sql, testData).then(function (data) {
+		alasql.promise(sql, testData).then(function (err, data) {
 			assert.deepEqual(data, expectedResult);
 			done();
 		});
@@ -82,7 +82,7 @@ describe('Test 803 - JOIN GROUP BY with columns in same index position within ne
 			{emp_name: 'Kyle', num_emp: 50, num_of_roles: 2},
 			{emp_name: 'Kyle', num_emp: 100, num_of_roles: 15},
 		];
-		alasql.promise(sql, testData).then(function (data) {
+		alasql.promise(sql, testData).then(function (err, data) {
 			assert.deepEqual(data, expectedResult);
 			done();
 		});

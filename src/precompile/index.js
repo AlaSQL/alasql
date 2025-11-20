@@ -99,7 +99,7 @@ export function compileToJS(sql, databaseid) {
 			result = result.slice(0, limit);
 		}
 		
-		if (cb) cb(result);
+		if (cb) cb(null, result);
 		return result;
 	})`;
 

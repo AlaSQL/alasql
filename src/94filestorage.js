@@ -14,7 +14,7 @@ FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
 		if (fex) {
 			if (ifnotexists) {
 				res = 0;
-				if (cb) res = cb(res);
+				if (cb) res = cb(null, res);
 				return res;
 			} else {
 				throw new Error('Cannot create new database file, because it already exists');
@@ -22,7 +22,7 @@ FS.createDatabase = function (fsdbid, args, ifnotexists, dbid, cb) {
 		} else {
 			var data = {tables: {}};
 			alasql.utils.saveFile(filename, JSON.stringify(data), function (data) {
-				if (cb) res = cb(res);
+				if (cb) res = cb(null, res);
 			});
 		}
 	});
@@ -57,14 +57,14 @@ FS.dropDatabase = function (fsdbid, ifexists, cb) {
 			res = 1;
 			alasql.utils.deleteFile(filename, function () {
 				res = 1;
-				if (cb) res = cb(res);
+				if (cb) res = cb(null, res);
 			});
 		} else {
 			if (!ifexists) {
 				throw new Error('Cannot drop database file, because it does not exist');
 			}
 			res = 0;
-			if (cb) res = cb(res);
+			if (cb) res = cb(null, res);
 		}
 	});
 	return res;
@@ -93,7 +93,7 @@ FS.attachDatabase = function (fsdbid, dbid, args, params, cb) {
 				}
 			}
 		}
-		if (cb) res = cb(res);
+		if (cb) res = cb(null, res);
 	});
 	return res;
 };
@@ -112,7 +112,7 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 
 	FS.updateFile(databaseid);
 
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };
 
@@ -147,7 +147,7 @@ FS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	delete db.data.tables[tableid];
 	delete db.data[tableid];
 	FS.updateFile(databaseid);
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };
 
@@ -165,7 +165,7 @@ FS.intoTable = function (databaseid, tableid, value, columns, cb) {
 	if (!tb) tb = [];
 	db.data[tableid] = tb.concat(value);
 	FS.updateFile(databaseid);
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };
 
@@ -191,7 +191,7 @@ FS.commit = function (databaseid, cb) {
 		}
 	}
 	FS.updateFile(databaseid);
-	return cb ? cb(1) : 1;
+	return cb ? cb(null, 1) : 1;
 };
 
 FS.begin = FS.commit;
@@ -225,7 +225,7 @@ FS.rollback = function (databaseid, cb) {
 					alasql.databases[databaseid].engineid = 'FILESTORAGE';
 					alasql.databases[databaseid].filename = db.filename;
 
-					if (cb) res = cb(res);
+					if (cb) res = cb(null, res);
 					// Todo: check why no return
 				});
 			}

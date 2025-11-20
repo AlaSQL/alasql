@@ -37,7 +37,7 @@ describe('Test 000 - multiple statements', function () {
 		var sql = 'create table three (a int);';
 		sql += 'insert into three values (1),(2),(3),(4),(5);';
 		sql += 'select * from three;';
-		alasql(sql, function (res) {
+		alasql(sql, function (err, res) {
 			assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 			done();
 		});

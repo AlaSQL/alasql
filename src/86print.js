@@ -62,6 +62,6 @@ yy.Print.prototype.execute = function (databaseid, params, cb) {
 		console.log();
 	}
 
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };

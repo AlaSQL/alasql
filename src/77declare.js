@@ -64,7 +64,7 @@ yy.Declare.prototype.execute = function (databaseid, params, cb) {
 		});
 	}
 	if (cb) {
-		res = cb(res);
+		res = cb(null, res);
 	}
 	return res;
 };

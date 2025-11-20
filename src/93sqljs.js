@@ -104,6 +104,6 @@ SQLITE.intoTable = function (databaseid, tableid, value, columns, cb) {
 		sqldb.exec(s);
 	}
 	var res = ilen;
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };

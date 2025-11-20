@@ -18,14 +18,14 @@ describe('Test 169 - select into TXT, CSV, XLSX', function () {
 
 	if (typeof exports === 'object') {
 		it('1. Write TXT file', function (done) {
-			alasql('select * into txt("' + dirname + '/restest169.txt") from one', [], function (res) {
+			alasql('select * into txt("' + dirname + '/restest169.txt") from one', [], function (err, res) {
 				assert(res == 1);
 				done();
 			});
 		});
 
 		it('2. Write TAB file', function (done) {
-			alasql('select * into tab("' + dirname + '/restest169a.tab") from one', [], function (res) {
+			alasql('select * into tab("' + dirname + '/restest169a.tab") from one', [], function (err, res) {
 				assert(res == 1);
 				done();
 			});
@@ -35,7 +35,7 @@ describe('Test 169 - select into TXT, CSV, XLSX', function () {
 			alasql(
 				'select * into tab("' + dirname + '/restest169b.tab",{headers:true}) from one',
 				[],
-				function (res) {
+				function (err, res) {
 					assert(res == 1);
 					done();
 				}
@@ -46,7 +46,7 @@ describe('Test 169 - select into TXT, CSV, XLSX', function () {
 			alasql(
 				'select * into csv("' + dirname + '/restest169a.csv",{headers:true}) from one',
 				[],
-				function (res) {
+				function (err, res) {
 					assert(res == 1);
 					done();
 				}
@@ -57,7 +57,7 @@ describe('Test 169 - select into TXT, CSV, XLSX', function () {
 			alasql(
 				'select * into xlsx("' + dirname + '/restest169a.xlsx",{headers:true}) from one',
 				[],
-				function (res) {
+				function (err, res) {
 					//			console.log(res);
 					assert(res == 1);
 					done();

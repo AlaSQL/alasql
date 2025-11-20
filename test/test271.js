@@ -10,7 +10,7 @@ describe('Test 271 RECORDSET and Excel tests', function () {
 		var res = alasql(
 			'SELECT RECORDSET * FROM XLSX("' + __dirname + '/test168.xlsx",{headers:true})',
 			[],
-			function (res) {
+			function (err, res) {
 				var colres = res.columns.map(col => col.columnid);
 				assert.deepEqual(colres, ['City', 'Population']);
 				done();

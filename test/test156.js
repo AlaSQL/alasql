@@ -16,7 +16,7 @@ describe('Test 156 - match()', function () {
 				'SELECT * FROM one WHERE a->match(?)' +
 				'',
 			['Moscow'],
-			function (res) {
+			function (err, res) {
 				//		 	console.log(res[4]);
 				assert.deepEqual(res[4], [{a: 'Moscow'}]);
 				done();

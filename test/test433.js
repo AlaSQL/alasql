@@ -17,7 +17,7 @@ describe('Test 433 - read csv from variable', function () {
 
 	it('works from csv variable - async', function (done) {
 		var sql = 'SELECT * FROM CSV(?, {"headers": false, "fromString": true})';
-		alasql(sql, ['a,b,c\nd,e,f\none,two,three\n'], function (res) {
+		alasql(sql, ['a,b,c\nd,e,f\none,two,three\n'], function (err, res) {
 			assert.deepEqual(res, [
 				{0: 'a', 1: 'b', 2: 'c'},
 				{0: 'd', 1: 'e', 2: 'f'},

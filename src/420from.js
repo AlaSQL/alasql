@@ -91,7 +91,10 @@ yy.Select.prototype.compileFrom = function (query) {
 
 			source.datafn = (query, params, cb, idx, alasql) => {
 				let res;
-				source.subquery(query.params, data => {
+				source.subquery(query.params, (err, data) => {
+					if (err) {
+						throw err;
+					}
 					res = data.data;
 					if (cb) res = cb(res, idx, query);
 				});
@@ -102,7 +105,10 @@ yy.Select.prototype.compileFrom = function (query) {
 			source.columns = [];
 			source.datafn = (query, params, cb, idx, alasql) => {
 				let res;
-				source.subsearch.execute(query.database.databaseid, query.params, data => {
+				source.subsearch.execute(query.database.databaseid, query.params, (err, data) => {
+					if (err) {
+						throw err;
+					}
 					res = data;
 					if (cb) res = cb(res, idx, query);
 				});

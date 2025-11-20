@@ -34,7 +34,7 @@ yy.While.prototype.execute = function (databaseid, params, cb) {
 				if (fn(params, alasql)) {
 					self.loopstat.execute(databaseid, params, loop);
 				} else {
-					res = cb(res);
+					res = cb(null, res);
 				}
 			}, 0);
 		};
@@ -58,7 +58,7 @@ yy.Break.prototype.toString = function () {
 
 yy.Break.prototype.execute = function (databaseid, params, cb, scope) {
 	var res = 1;
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -72,7 +72,7 @@ yy.Continue.prototype.toString = function () {
 
 yy.Continue.prototype.execute = function (databaseid, params, cb, scope) {
 	var res = 1;
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -95,7 +95,7 @@ yy.BeginEnd.prototype.execute = function (databaseid, params, cb, scope) {
 			res.push(data);
 			idx++;
 			if (idx < self.statements.length) return runone();
-			if (cb) res = cb(res);
+			if (cb) res = cb(null, res);
 		});
 	}
 	return res;

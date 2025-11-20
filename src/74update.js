@@ -103,7 +103,7 @@ yy.Update.prototype.compile = function (databaseid) {
 			alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 		}
 
-		if (cb) cb(numrows);
+		if (cb) cb(null, numrows);
 		return numrows;
 	};
 	return statement;

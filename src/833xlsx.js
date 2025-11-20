@@ -51,7 +51,7 @@ alasql.into.XLSX = function (filename, opts, data, columns, cb) {
 	}
 
 	/* Return result */
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 
 	/**

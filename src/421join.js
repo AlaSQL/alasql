@@ -114,7 +114,12 @@ yy.Select.prototype.compileJoins = function (query) {
 			source.columns = source.subquery.query.columns;
 
 			source.datafn = function (query, params, cb, idx, alasql) {
-				source.data = source.subquery(query.params, null, cb, idx).data;
+				let result = source.subquery(query.params, (err, data) => {
+					if (err) {
+						throw err;
+					}
+				});
+				source.data = result.data;
 				let res = source.data;
 				// Propogate subquery result
 				if (cb) res = cb(res, idx, query);

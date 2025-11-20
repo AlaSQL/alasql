@@ -14,7 +14,7 @@ describe('Test 238 Test from string and into string', function () {
 	if (typeof exports == 'object') {
 		it('1. JSON', function (done) {
 			alasql('SELECT 100 INTO "' + dirname + 'test238.json"', [], function () {
-				alasql('SELECT VALUE * FROM "' + dirname + 'test238.json"', [], function (res) {
+				alasql('SELECT VALUE * FROM "' + dirname + 'test238.json"', [], function (err, res) {
 					assert(res == 100);
 					done();
 				});
@@ -25,7 +25,7 @@ describe('Test 238 Test from string and into string', function () {
 				alasql(
 					'SELECT VALUE test.a FROM "' + dirname + 'test238a.csv" AS test',
 					[],
-					function (res) {
+					function (err, res) {
 						assert(res == 1);
 						done();
 					}
@@ -37,7 +37,7 @@ describe('Test 238 Test from string and into string', function () {
 				alasql(
 					'SELECT VALUE test.a FROM "' + dirname + 'test238b.xlsx" AS test',
 					[],
-					function (res) {
+					function (err, res) {
 						assert(res == 1);
 						done();
 					}

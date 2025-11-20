@@ -7,13 +7,13 @@ describe('Test 2112 - load binary file', function () {
 	const test = '2112'; // insert test file number
 
 	it('A) Loads binary file (sync)', function () {
-		alasql.utils.loadBinaryFile('./test/test' + test + '.dat', false, function (data) {
+		alasql.utils.loadBinaryFile('./test/test' + test + '.dat', false, function (err, data) {
 			assert.equal(data, 'ï¿½');
 		});
 	});
 
 	it('B) Loads binary file (async)', function (done) {
-		alasql.utils.loadBinaryFile('./test/test' + test + '.dat', true, function (data) {
+		alasql.utils.loadBinaryFile('./test/test' + test + '.dat', true, function (err, data) {
 			assert.equal(data, 'ï¿½');
 			done();
 		});
@@ -23,7 +23,7 @@ describe('Test 2112 - load binary file', function () {
 		alasql.utils.loadBinaryFile(
 			'https://upload.wikimedia.org/wikipedia/en/a/a9/Example.jpg',
 			true,
-			function (data) {
+			function (err, data) {
 				assert.equal(data.slice(0, 3), 'ÿØÿ');
 				done();
 			}

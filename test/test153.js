@@ -19,13 +19,13 @@ if (typeof exports != 'object') {
 			var res = alasql('SELECT * FROM ?', [getfn]);
 			assert(res.length == 4);
 
-			var res = alasql('SELECT * FROM ?', [getfn], function (res) {
+			var res = alasql('SELECT * FROM ?', [getfn], function (err, res) {
 				assert(res.length == 4);
 				done();
 			});
 
 			// No params
-			var res = alasql('VALUE OF SELECT 123', function (res) {
+			var res = alasql('VALUE OF SELECT 123', function (err, res) {
 				assert.equal(123, res);
 				done();
 			});

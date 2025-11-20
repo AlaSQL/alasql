@@ -18,7 +18,7 @@ if (typeof exports != 'object') {
 					'SELECT * FROM test155.one' +
 					'',
 				[[{a: 1}, {a: 2}]],
-				function (res) {
+				function (err, res) {
 					//				console.trace();
 					//			console.log(res);
 					assert.deepEqual(res, [1, 1, 1, 1, 1, 2, [{a: 1}, {a: 2}]]);

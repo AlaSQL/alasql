@@ -17,7 +17,7 @@ describe('004 Callbacks', function () {
 		//		var res = alasql(sql3);
 		//		console.log(res);
 
-		var res = alasql(sql3, [], function (data) {
+		var res = alasql(sql3, [], function (err, data) {
 			//			console.log(999,data);
 			assert.equal(1, data.length);
 			assert.deepEqual(data, [{schoolid: 1, schoolname: 'Northern Pacific School'}]);
@@ -27,7 +27,7 @@ describe('004 Callbacks', function () {
 	});
 
 	it('Works without params set', function (done) {
-		alasql('VALUE OF SELECT 1', function (data) {
+		alasql('VALUE OF SELECT 1', function (err, data) {
 			assert.equal(1, data);
 			done();
 		});

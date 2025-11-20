@@ -109,7 +109,7 @@ LS.createDatabase = function (lsdbid, args, ifnotexists, databaseid, cb) {
 	} else {
 		res = 0;
 	}
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -128,7 +128,7 @@ LS.dropDatabase = function (lsdbid, ifexists, cb) {
 			if (!ifexists) {
 				throw new Error('There is no any AlaSQL databases in localStorage');
 			} else {
-				return cb ? cb(0) : 0;
+				return cb ? cb(null, 0) : 0;
 			}
 		}
 
@@ -151,7 +151,7 @@ LS.dropDatabase = function (lsdbid, ifexists, cb) {
 	} else {
 		res = 0;
 	}
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -179,7 +179,7 @@ LS.attachDatabase = function (lsdbid, databaseid, args, params, cb) {
 			}
 		}
 	}
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -205,7 +205,7 @@ LS.showDatabases = function (like, cb) {
 			});
 		}
 	}
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -236,7 +236,7 @@ LS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 	LS.set(lsdbid, lsdb);
 	LS.storeTable(databaseid, tableid);
 
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -276,7 +276,7 @@ LS.truncateTable = function (databaseid, tableid, ifexists, cb) {
 	//store table
 	LS.storeTable(databaseid, tableid);
 
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -307,7 +307,7 @@ LS.dropTable = function (databaseid, tableid, ifexists, cb) {
 	LS.set(lsdbid, lsdb);
 	//	localStorage.removeItem(lsdbid+'.'+tableid);
 	LS.removeTable(databaseid, tableid);
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -352,7 +352,7 @@ LS.intoTable = function (databaseid, tableid, value, columns, cb) {
 	if (!tb.data) tb.data = [];
 	tb.data = tb.data.concat(value);
 	LS.storeTable(databaseid, tableid);
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	//console.log(167,res);
 	return res;
 };
@@ -397,7 +397,7 @@ LS.commit = function (databaseid, cb) {
 		}
 	}
 	LS.set(lsdbid, lsdb);
-	return cb ? cb(1) : 1;
+	return cb ? cb(null, 1) : 1;
 };
 
 /**

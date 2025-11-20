@@ -62,22 +62,22 @@ yy.DropTable.prototype.execute = function (databaseid, params, cb) {
 							delete db.tables[tableid];
 							res += res1;
 							count++;
-							if (count == tlen && cb) cb(res);
+							if (count == tlen && cb) cb(null, res);
 						}
 					);
 				} else {
 					delete db.tables[tableid];
 					res++;
 					count++;
-					if (count == tlen && cb) cb(res);
+					if (count == tlen && cb) cb(null, res);
 				}
 			}
 		} else {
 			count++;
-			if (count == tlen && cb) cb(res);
+			if (count == tlen && cb) cb(null, res);
 		}
 	});
-	// if(cb) res = cb(res);
+	// if(cb) res = cb(null, res);
 	return res;
 };
 
@@ -106,5 +106,5 @@ yy.TruncateTable.prototype.execute = function (databaseid, params, cb) {
 	} else {
 		throw new Error('Cannot truncate table becaues it does not exist');
 	}
-	return cb ? cb(0) : 0;
+	return cb ? cb(null, 0) : 0;
 };

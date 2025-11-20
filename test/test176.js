@@ -12,7 +12,7 @@ describe('Test 176 - CSV and TSV', function () {
 		alasql(
 			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:false})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res[0], {0: 'Country', 1: 'City'});
 				done();
 			}
@@ -23,7 +23,7 @@ describe('Test 176 - CSV and TSV', function () {
 		alasql(
 			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:true})',
 			[],
-			function (res) {
+			function (err, res) {
 				//			console.log(res);
 				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
 				done();
@@ -35,7 +35,7 @@ describe('Test 176 - CSV and TSV', function () {
 		alasql(
 			'SELECT * FROM TAB("' + __dirname + '/test176a.tab",{headers:@["country","city"]})',
 			[],
-			function (res) {
+			function (err, res) {
 				//			console.log(res);
 				assert.deepEqual(res[0], {country: 'Country', city: 'City'});
 				done();
@@ -47,7 +47,7 @@ describe('Test 176 - CSV and TSV', function () {
 		alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test176a.tab",{separator:"\t",headers:true})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
 				done();
 			}
@@ -58,7 +58,7 @@ describe('Test 176 - CSV and TSV', function () {
 		alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test176b.csv",{separator:";",headers:true})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res[0], {Country: 'Kazakhstan', City: 'Astana'});
 				done();
 			}
@@ -71,7 +71,7 @@ describe('Test 176 - CSV and TSV', function () {
 				__dirname +
 				'/test176b.csv",{separator:";",quote:"\\"",headers:true})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res[1], {Country: 'Kazakhstan', City: 'Almaty'});
 				done();
 			}
@@ -84,7 +84,7 @@ describe('Test 176 - CSV and TSV', function () {
 				__dirname +
 				'/test176b.csv",{separator:";",quote:"\\"",headers:true})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res[1], {Country: 'Kazakhstan', City: 'Almaty'});
 				done();
 			}
@@ -104,7 +104,7 @@ describe('Test 176 - CSV and TSV', function () {
 		alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test176d.csv",{headers:true})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert(res.length == 4);
 				//	    console.log(res);
 				done();

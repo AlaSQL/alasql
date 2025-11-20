@@ -13,7 +13,7 @@ describe('Test 321 CREATE GRAPH', function () {
 		alasql(
 			'SELECT * FROM CSV("' + __dirname + '/test321a.csv",{headers:true})',
 			[],
-			function (data) {
+			function (err, data) {
 				gdata = data;
 				// Select unique
 				vv = alasql('SEARCH DISTINCT(UNION ALL(/[source],/[target])) FROM ?', [gdata]);

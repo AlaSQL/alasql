@@ -46,6 +46,6 @@ yy.AddRule.prototype.execute = function (databaseid, params, cb) {
 			rule.$class = term.termid;
 		});
 	}
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };

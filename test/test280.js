@@ -58,9 +58,9 @@ if (typeof exports == 'object') {
 				'SELECT * INTO XLSXML(?,{headers:true, sheets:{Sheet1:{},Sheet2:{}}}) FROM ?',
 				[outfile, [data, data2]],
 				function () {
-					alasql('SEARCH XML Worksheet %[ss:Name] FROM XML(?)', [outfile], function (res) {
+					alasql('SEARCH XML Worksheet %[ss:Name] FROM XML(?)', [outfile], function (err, res) {
 						assert.deepEqual(res, ['Sheet1', 'Sheet2']);
-						alasql('SEARCH XML / * Data$ FROM XML(?)', [outfile], function (res) {
+						alasql('SEARCH XML / * Data$ FROM XML(?)', [outfile], function (err, res) {
 							assert.equal(res.length, 12);
 							done();
 						});
@@ -75,7 +75,7 @@ if (typeof exports == 'object') {
 				'SELECT * INTO XLSXML(?,{headers: ?}) FROM ?',
 				[outfile, ['City', 'Population'], data],
 				function () {
-					alasql('SEARCH XML / * Data$ FROM XML(?)', [outfile], function (res) {
+					alasql('SEARCH XML / * Data$ FROM XML(?)', [outfile], function (err, res) {
 						assert.equal(res.length, 10);
 						assert.deepEqual(res[0], 'City');
 						assert.deepEqual(res[1], 'Population');

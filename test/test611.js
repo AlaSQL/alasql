@@ -73,7 +73,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 			'SELECT VALUE abc_B(a) FROM @[{a:10},{a:100}]',
 			'CREATE AGGREGATOR abc_B AS ``' + sumMinusRows + '``',
 			'select VALUE abc_B(a) FROM @[{a:10},{a:100}]',
-		]).then(function (res) {
+		]).then(function (err, res) {
 			assert.deepEqual(res, [1, 112, 1, 108]);
 			done();
 		});
@@ -98,7 +98,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 			'SELECT VALUE abc_D(a) FROM @[{a:10},{a:100}]',
 			'CREATE AGGREGATE abc_D AS ``' + sumMinusRows + '``',
 			'select value abc_D(a) FROM @[{a:10},{a:100}]',
-		]).then(function (res) {
+		]).then(function (err, res) {
 			assert.deepEqual(res, [1, 112, 1, 108]);
 			done();
 		});

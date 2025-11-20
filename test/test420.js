@@ -22,7 +22,7 @@ describe('Test ' + test + ' Load data from XLSX without extra line', function ()
 		alasql(
 			'VALUE OF SELECT COUNT(*) FROM XLSX("' + __dirname + '/test420.xlsx")',
 			[],
-			function (res) {
+			function (err, res) {
 				assert(res == 4);
 				//      console.log(res);
 				//       assert.deepEqual(res,

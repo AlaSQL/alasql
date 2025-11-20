@@ -44,7 +44,7 @@ yy.Require.prototype.execute = function (databaseid, params, cb) {
 				ss += data;
 				if (res < self.paths.length) return;
 				new Function('params,alasql', ss)(params, alasql);
-				if (cb) res = cb(res);
+				if (cb) res = cb(null, res);
 			});
 		});
 	} else if (this.plugins && this.plugins.length > 0) {
@@ -58,12 +58,12 @@ yy.Require.prototype.execute = function (databaseid, params, cb) {
 					if (res < self.plugins.length) return;
 					new Function('params,alasql', ss)(params, alasql);
 					alasql.plugins[plugin] = true; // Plugin is loaded
-					if (cb) res = cb(res);
+					if (cb) res = cb(null, res);
 				});
 			}
 		});
 	} else {
-		if (cb) res = cb(res);
+		if (cb) res = cb(null, res);
 	}
 	return res;
 };

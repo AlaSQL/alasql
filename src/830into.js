@@ -64,7 +64,7 @@ alasql.into.SQL = function (filename, opts, data, columns, cb) {
 	filename = alasql.utils.autoExtFilename(filename, 'sql', opts);
 	res = alasql.utils.saveFile(filename, s);
 	if (cb) {
-		res = cb(res);
+		res = cb(null, res);
 	}
 	return res;
 };
@@ -120,7 +120,7 @@ alasql.into.HTML = function (selector, opts, data, columns, cb) {
 		sel.appendChild(tbe);
 	}
 	if (cb) {
-		res = cb(res);
+		res = cb(null, res);
 	}
 	return res;
 };
@@ -136,7 +136,7 @@ alasql.into.JSON = function (filename, opts, data, columns, cb) {
 	filename = alasql.utils.autoExtFilename(filename, 'json', opts);
 	res = alasql.utils.saveFile(filename, s);
 	if (cb) {
-		res = cb(res);
+		res = cb(null, res);
 	}
 	return res;
 };
@@ -175,7 +175,7 @@ alasql.into.TXT = function (filename, opts, data, columns, cb) {
 	filename = alasql.utils.autoExtFilename(filename, 'txt', opts);
 	res = alasql.utils.saveFile(filename, s);
 	if (cb) {
-		res = cb(res);
+		res = cb(null, res);
 	}
 	return res;
 };
@@ -250,7 +250,7 @@ alasql.into.CSV = function (filename, opts, data, columns, cb) {
 	filename = alasql.utils.autoExtFilename(filename, 'csv', opts);
 	res = alasql.utils.saveFile(filename, s, null, {disableAutoBom: true});
 	if (cb) {
-		res = cb(res);
+		res = cb(null, res);
 	}
 	return res;
 };

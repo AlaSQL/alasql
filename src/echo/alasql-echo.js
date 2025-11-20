@@ -15,6 +15,6 @@ yy.Echo.prototype.execute = function (databaseid, params, cb) {
 	// console.log(76336,this.expr.toJS());
 	var fn = new Function('params, alasql', 'return ' + this.expr.toJS());
 	var res = fn(params, alasql);
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };

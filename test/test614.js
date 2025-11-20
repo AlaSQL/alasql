@@ -26,7 +26,7 @@ describe('Test 614 - Read data from columns irrespective of case in query', func
 		});
 
 		it('A) Mixed case header with Camel case select', function (done) {
-			alasql('SELECT Account FROM XLSX("' + __dirname + '/test614.xlsx")', [], function (res) {
+			alasql('SELECT Account FROM XLSX("' + __dirname + '/test614.xlsx")', [], function (err, res) {
 				// using lower case value of header text irrespective of the original case in file
 				// because when casesensitive option is set to false alasql converts all header texts to lowercase
 				assert.equal(res[0]['Account'.toLowerCase()], 12);
@@ -38,7 +38,7 @@ describe('Test 614 - Read data from columns irrespective of case in query', func
 			alasql(
 				'SELECT Amount, Comments FROM XLSX("' + __dirname + '/test614.xlsx")',
 				[],
-				function (res) {
+				function (err, res) {
 					assert.equal(res[0]['Amount'.toLowerCase()], 500);
 					assert.equal(res[0]['Comments'.toLowerCase()], 'present');
 					done();
@@ -52,7 +52,7 @@ describe('Test 614 - Read data from columns irrespective of case in query', func
 			alasql(
 				'SELECT Account, Amount, Comments FROM XLSX("' + __dirname + '/test614.xlsx")',
 				[],
-				function (res) {
+				function (err, res) {
 					// console.log(res[0]);
 					assert.equal(res[0]['Account'], undefined);
 					assert.equal(res[0]['Amount'], undefined);

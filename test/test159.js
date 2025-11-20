@@ -93,37 +93,37 @@ describe('Test 159 - test DOM-storage', function () {
 	});
 
 	it('3. Multiple call-backs', function (done) {
-		var res = alasql('drop localstorage database if exists test159', [], function (res) {
-			alasql('create localstorage database if not exists test159;', [], function (res) {
-				alasql('attach localstorage database test159', [], function (res) {
-					alasql('use test159', [], function (res) {
-						alasql('drop table if exists cities', [], function (res) {
-							alasql('create table cities (city string);', [], function (res) {
+		var res = alasql('drop localstorage database if exists test159', [], function (err, res) {
+			alasql('create localstorage database if not exists test159;', [], function (err, res) {
+				alasql('attach localstorage database test159', [], function (err, res) {
+					alasql('use test159', [], function (err, res) {
+						alasql('drop table if exists cities', [], function (err, res) {
+							alasql('create table cities (city string);', [], function (err, res) {
 								alasql(
 									"insert into cities values ('Moscow'),('Paris'),('Minsk'),\
 									('Riga'),('Tallinn')",
 									[],
-									function (res) {
+									function (err, res) {
 										alasql(
 											"delete from cities where city in ('Riga','Tallinn','Moscow')",
 											[],
-											function (res) {
+											function (err, res) {
 												alasql(
 													"update cities set city = 'Vilnius' where city = 'Minsk'",
 													[],
-													function (res) {
-														alasql("insert into cities values ('Berlin')", [], function (res) {
+													function (err, res) {
+														alasql("insert into cities values ('Berlin')", [], function (err, res) {
 															alasql(
 																'select column * from cities order by city',
 																[],
-																function (res) {
+																function (err, res) {
 																	assert.deepEqual(res, ['Berlin', 'Paris', 'Vilnius']);
-																	alasql('detach database test159', [], function (res) {
+																	alasql('detach database test159', [], function (err, res) {
 																		assert(res == 1);
 																		alasql(
 																			'drop localstorage database test159',
 																			[],
-																			function (res) {
+																			function (err, res) {
 																				assert(res == 1);
 																				done();
 																			}

@@ -18,7 +18,7 @@ describe('Test 610 - SQL added user defined function', function () {
 			'SELECT VALUE abc(2)',
 			'CREATE FUNCTION abc AS ``function(x) { return x*x*x; }``',
 			'SELECT VALUE abc(2)',
-		]).then(function (res) {
+		]).then(function (err, res) {
 			assert.deepEqual(res, [1, 4, 1, 8]);
 			done();
 		});

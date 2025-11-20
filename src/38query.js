@@ -49,7 +49,7 @@ function queryfn(query, oldscope, cb, A, B) {
 		try {
 			result = queryfn3(query);
 		} catch (e) {
-			if (cb) return cb(null, e);
+			if (cb) return cb(e, null);
 			else throw e;
 		}
 	}

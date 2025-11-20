@@ -135,7 +135,7 @@ alasql.from.JSON = function (filename, opts, cb, idx, query) {
 		err => {
 			const error = err instanceof Error ? err : new Error(err);
 			if (query && query.cb) {
-				query.cb(null, error);
+				query.cb(error, null);
 				return;
 			}
 			throw error;
@@ -169,7 +169,7 @@ const jsonl = ext => {
 			err => {
 				const error = err instanceof Error ? err : new Error(err);
 				if (query && query.cb) {
-					query.cb(null, error);
+					query.cb(error, null);
 					return;
 				}
 				throw error;
@@ -405,7 +405,7 @@ if(false) {
 		parseText(contents);
 	} else {
 		contents = alasql.utils.autoExtFilename(contents, 'csv', opts);
-		alasql.utils.loadFile(contents, !!cb, parseText, e => query.cb(null, e));
+		alasql.utils.loadFile(contents, !!cb, parseText, e => query.cb(e, null));
 	}
 	return res;
 };

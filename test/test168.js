@@ -14,7 +14,7 @@ describe('Test 168a - read XLSX', function () {
 		var res = alasql(
 			'select * from xlsx("' + dirname + '/test168.xlsx",{headers:false})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert(res.length == 6);
 				//			console.log(res);
 				done();
@@ -29,7 +29,7 @@ describe('Test 168a - read XLSX', function () {
 				'/test168.xlsx",{headers:true})\
 				where Population > 10000000 order by City',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res, ['Mexico', 'Moscow']);
 				done();
 			}
@@ -43,7 +43,7 @@ describe('Test 168a - read XLSX', function () {
 				'/test168.xlsx",{headers:true, range:"A1:B3"})\
 				where Population > 10000000 order by City',
 			[],
-			function (res) {
+			function (err, res) {
 				//					console.log(res);
 				assert.deepEqual(res, ['Moscow']);
 				done();
@@ -58,7 +58,7 @@ describe('Test 168a - read XLSX', function () {
 				'/test168.xlsx",{headers:true, sheetid: "USA", range:"A1:B6"})\
 				where Population > 10000000 order by City',
 			[],
-			function (res) {
+			function (err, res) {
 				//					console.log(res);
 				assert.deepEqual(res, ['New York']);
 				done();
@@ -73,7 +73,7 @@ describe('Test 168b - read XLS', function () {
 		var res = alasql(
 			'select * from xls("' + dirname + '/test168.xls",{headers:false})',
 			[],
-			function (res) {
+			function (err, res) {
 				assert(res.length == 6);
 				//			console.log(res);
 				done();
@@ -88,7 +88,7 @@ describe('Test 168b - read XLS', function () {
 				'/test168.xls",{headers:true})\
 				where Population > 10000000 order by City',
 			[],
-			function (res) {
+			function (err, res) {
 				assert.deepEqual(res, ['Mexico', 'Moscow']);
 				done();
 			}
@@ -102,7 +102,7 @@ describe('Test 168b - read XLS', function () {
 				'/test168.xls",{headers:true, range:"A1:B3"})\
 				where Population > 10000000 order by City',
 			[],
-			function (res) {
+			function (err, res) {
 				//					console.log(res);
 				assert.deepEqual(res, ['Moscow']);
 				done();
@@ -117,7 +117,7 @@ describe('Test 168b - read XLS', function () {
 				'/test168.xls",{headers:true, sheetid: "USA", range:"A1:B6"})\
 				where Population > 10000000 order by City',
 			[],
-			function (res) {
+			function (err, res) {
 				//					console.log(res);
 				assert.deepEqual(res, ['New York']);
 				done();

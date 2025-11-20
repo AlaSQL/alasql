@@ -17,19 +17,19 @@ if (typeof exports != 'object') {
 						'ATTACH INDEXEDDB DATABASE alatest;' +
 						'USE alatest'
 				)
-				.then(function (res) {
+				.then(function (err, res) {
 					return alasql.promise([
 						'CREATE TABLE IF NOT EXISTS mytable1 ( myid STRING, myname STRING )',
 						'CREATE TABLE IF NOT EXISTS mytable2 ( myid STRING, myname STRING )',
 					]);
 				})
-				.then(function (res) {
+				.then(function (err, res) {
 					return alasql.promise([
 						"INSERT INTO mytable1 (myid,myname) VALUES ( '1', 'Mr. One' )",
 						"INSERT INTO mytable2 (myid,myname) VALUES ( '2', 'Mr. Two' )",
 					]);
 				})
-				.then(function (res) {
+				.then(function (err, res) {
 					return alasql.promise(['SELECT * from mytable1', 'SELECT * from mytable2']);
 				})
 				.then(function ([data1, data2]) {

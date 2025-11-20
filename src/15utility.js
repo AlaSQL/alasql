@@ -687,7 +687,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 		//
 		res = data;
 		if (cb) {
-			res = cb(res);
+			res = cb(null, res);
 		}
 	} else {
 		if (utils.isNode) {
@@ -695,14 +695,14 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 			var fs = require('fs');
 			data = fs.writeFileSync(path, data);
 			if (cb) {
-				res = cb(res);
+				res = cb(null, res);
 			}
 		} else if (utils.isReactNative) {
 			var RNFS = require('react-native-fs');
 			RNFS.writeFile(path, data)
 				.then(function (success) {
 					//, 'utf8'
-					if (cb) res = cb(res);
+					if (cb) res = cb(null, res);
 				})
 				.catch(function (err) {
 					console.error(err.message);
@@ -714,7 +714,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 					fileEntry.createWriter(function (fileWriter) {
 						fileWriter.onwriteend = function () {
 							if (cb) {
-								res = cb(res);
+								res = cb(null, res);
 							}
 						};
 						fileWriter.write(data);
@@ -788,7 +788,7 @@ var saveFile = (utils.saveFile = function (path, data, cb, opts) {
 			var blob = new Blob([data], {type: 'text/plain;charset=utf-8'});
 			saveAs(blob, path, opt.disableAutoBom);
 			if (cb) {
-				res = cb(res);
+				res = cb(null, res);
 			}
 		}
 	}

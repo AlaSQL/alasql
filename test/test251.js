@@ -22,7 +22,7 @@ describe('Test 251 Overwrite XLSX file', function () {
 					'", \
           sheetid:"test2", range:"B3"})',
 				[],
-				function (res) {
+				function (err, res) {
 					assert(res == 1);
 					done();
 				}

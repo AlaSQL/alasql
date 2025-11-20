@@ -80,7 +80,7 @@ yy.CreateIndex.prototype.execute = function (databaseid, params, cb) {
 		}
 	}
 	var res = 1;
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };
 
@@ -102,6 +102,6 @@ yy.Reindex.prototype.execute = function (databaseid, params, cb) {
 	var table = db.tables[tableid];
 	table.indexColumns();
 	var res = 1;
-	if (cb) res = cb(res);
+	if (cb) res = cb(null, res);
 	return res;
 };

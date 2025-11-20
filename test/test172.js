@@ -15,7 +15,7 @@ describe('Test 172 - XLSX to array', function () {
 				__dirname +
 				'/test168.xlsx", {headers:true, sheetid:"Sheet1", range:"A1:B6"}) order by City',
 			[],
-			function (res) {
+			function (err, res) {
 				//			console.log(res);
 				assert.deepEqual(res, ['Kyoto', 'Mexico', 'Minsk', 'Moscow', 'Tokyo']);
 				done();

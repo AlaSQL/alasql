@@ -77,6 +77,6 @@ yy.SetVariable.prototype.execute = function (databaseid, params, cb) {
 	}
 
 	let result = 1;
-	if (cb) result = cb(result);
+	if (cb) result = cb(null, result);
 	return result;
 };

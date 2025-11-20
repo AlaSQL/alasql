@@ -82,7 +82,7 @@ yy.CreateVertex.prototype.compile = function (databaseid) {
 		}
 
 		if (cb) {
-			res = cb(res);
+			res = cb(null, res);
 		}
 		return res;
 	};
@@ -158,7 +158,7 @@ yy.CreateEdge.prototype.compile = function (databaseid) {
 		setfn?.(edge, params, alasql);
 
 		// Callback
-		return cb ? cb(res) : res;
+		return cb ? cb(null, res) : res;
 	};
 	return statement;
 };
@@ -251,7 +251,7 @@ yy.CreateGraph.prototype.execute = function (databaseid, params, cb) {
 	});
 
 	if (cb) {
-		res = cb(res);
+		res = cb(null, res);
 	}
 
 	return res;
@@ -364,7 +364,7 @@ yy.CreateGraph.prototype.compile1 = function (databaseid) {
 		}
 
 		if (cb) {
-			res = cb(res);
+			res = cb(null, res);
 		}
 		return res;
 	};

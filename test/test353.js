@@ -65,7 +65,7 @@ describe('Test 353 Compiled Promised Statements', function () {
 
 	it('7. Compile Promise', function (done) {
 		var st = alasql.compile('SELECT * FROM ?');
-		st.promise([data]).then(function (res) {
+		st.promise([data]).then(function (err, res) {
 			assert.deepEqual(res, data);
 			done();
 		});
@@ -74,7 +74,7 @@ describe('Test 353 Compiled Promised Statements', function () {
 	it('5. Compile With Error', function (done) {
 		var st = alasql.compile('SELECT iamwrong() FROM ?');
 		st.promise([data])
-			.then(function (res) {
+			.then(function (err, res) {
 				// Should not be here
 			})
 			.catch(function (err) {

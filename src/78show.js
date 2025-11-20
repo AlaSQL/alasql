@@ -29,7 +29,7 @@ yy.ShowDatabases.prototype.execute = function (databaseid, params, cb) {
 				return alasql.utils.like(self.like.value, d.databaseid);
 			});
 		}
-		if (cb) cb(res);
+		if (cb) cb(null, res);
 		return res;
 	}
 };
@@ -57,7 +57,7 @@ yy.ShowTables.prototype.execute = function (databaseid, params, cb) {
 			return alasql.utils.like(self.like.value, d.tableid);
 		});
 	}
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };
 
@@ -83,7 +83,7 @@ yy.ShowColumns.prototype.execute = function (databaseid, params, cb) {
 				dbsize: col.dbsize,
 			};
 		});
-		if (cb) cb(res);
+		if (cb) cb(null, res);
 		return res;
 	} else {
 		if (cb) cb([]);
@@ -110,7 +110,7 @@ yy.ShowIndex.prototype.execute = function (databaseid, params, cb) {
 		}
 	}
 
-	if (cb) cb(res);
+	if (cb) cb(null, res);
 	return res;
 };
 
