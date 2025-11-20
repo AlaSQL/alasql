@@ -71,6 +71,18 @@ describe('Test 2202 - VALUE(S) reserved keyword context', function () {
 		assert.equal(res, 300);
 	});
 
+	it('E2) Should still work with SELECT VALUE (alternative notation)', function () {
+		alasql('CREATE TABLE test5b(amount INT)');
+		alasql('INSERT INTO test5b VALUES (100), (200), (300)');
+
+		// Test SELECT VALUE notation
+		var res = alasql('SELECT VALUE MAX(amount) FROM test5b');
+		assert.equal(res, 300);
+
+		// Test that it returns a single value, not an array
+		assert.equal(typeof res, 'number');
+	});
+
 	it('F) Should still work with VALUES in INSERT', function () {
 		alasql('CREATE TABLE test6(id INT, name VARCHAR(50))');
 		alasql('INSERT INTO test6 VALUES (1, "Alice"), (2, "Bob")');
