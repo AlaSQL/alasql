@@ -75,45 +75,17 @@ yy.Select.prototype.compileOrder = function (query, params) {
 
 			var key = '$$$' + idx;
 
-			// Date conversion
+			// Date conversion - get columnid based on expression type
 			var dg = '';
-			//if(alasql.options.valueof)
+			var columnid;
 			if (ord.expression instanceof yy.Column) {
-				var columnid = ord.expression.columnid;
-				if (alasql.options.valueof) {
-					dg = '.valueOf()';
-				} else if (query.xcolumns[columnid]) {
-					var dbtypeid = query.xcolumns[columnid].dbtypeid;
-					if (
-						dbtypeid == 'DATE' ||
-						dbtypeid == 'DATETIME' ||
-						dbtypeid == 'DATETIME2' ||
-						dbtypeid == 'STRING' ||
-						dbtypeid == 'NUMBER'
-					)
-						dg = '.valueOf()';
-					// TODO Add other types mapping
-				}
+				columnid = ord.expression.columnid;
+			} else if (ord.expression instanceof yy.ParamValue) {
+				columnid = params[ord.expression.param];
+			} else if (ord.expression instanceof yy.StringValue) {
+				columnid = ord.expression.value;
 			}
-			if (ord.expression instanceof yy.ParamValue) {
-				var columnid = params[ord.expression.param];
-				if (alasql.options.valueof) {
-					dg = '.valueOf()';
-				} else if (query.xcolumns[columnid]) {
-					var dbtypeid = query.xcolumns[columnid].dbtypeid;
-					if (
-						dbtypeid == 'DATE' ||
-						dbtypeid == 'DATETIME' ||
-						dbtypeid == 'DATETIME2' ||
-						dbtypeid == 'STRING' ||
-						dbtypeid == 'NUMBER'
-					)
-						dg = '.valueOf()';
-					// TODO Add other types mapping
-				}
-			}
-			if (ord.expression instanceof yy.StringValue) {
-				var columnid = ord.expression.value;
+			if (columnid) {
 				if (alasql.options.valueof) {
 					dg = '.valueOf()';
 				} else if (query.xcolumns[columnid]) {
