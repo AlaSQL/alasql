@@ -387,7 +387,7 @@
 				if (this.right instanceof yy.Select) {
 					// Cache subquery results as a Set for O(1) lookups instead of re-executing for each row
 					const cacheKey = `_notInCache${this.queriesidx}`;
-					s = `(!(this.${cacheKey} || (this.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					s = `(!(this.${cacheKey} || (this.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
