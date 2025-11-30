@@ -88,7 +88,7 @@
 		"semver": "7",
 		"follow-redirects": "1",
 		"js-yaml": "4",
-		"glob": "10.5"
+		"glob": "13.0"
 	},
 	"engines": {
 		"node": ">=15"
