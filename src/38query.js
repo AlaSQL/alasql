@@ -31,7 +31,7 @@ function queryfn(query, oldscope, cb, A, B) {
 		var rs = source.datafn(query, query.params, queryfn2, idx, alasql);
 		if (typeof rs !== 'undefined') {
 			// TODO - this is a hack: check if result is array - check all cases and make it more logical
-			if ((query.intofn || query.intoallfn) && Array.isArray(rs)) {
+			if ((query.intofn || query.intoallfn) && Array.isArray(rs) && !query.preserveArrayResult) {
 				rs = rs.length;
 			}
 			result = rs;
