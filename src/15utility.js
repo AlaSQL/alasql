@@ -25,7 +25,8 @@ var utils = (alasql.utils = {});
   NaN         => undefined
 
   */
-function nanToUndefined(s) { //rename for clarity.
+function nanToUndefined(s) {
+	//rename for clarity.
 	return '(y=' + s + ',y===y?y:undefined)';
 }
 
@@ -41,7 +42,8 @@ function nanToUndefined(s) { //rename for clarity.
   NaN,a       => undefined
 
   */
-function undefinedOrValue(s, r) { //rename for clarity
+function undefinedOrValue(s, r) {
+	//rename for clarity
 	return '(y=' + s + ',typeof y=="undefined"?undefined:' + r + ')';
 }
 
@@ -1193,55 +1195,54 @@ var domEmptyChildren = (utils.domEmptyChildren = function (container) {
 var patternCache = {};
 var like = (utils.like = function (pattern, value, escape = '') {
 	if (!patternCache[pattern]) {
+		var regexStr = '^'; // Start regex pattern to match from the beginning.
+		var i = 0; // Index for traversing the pattern string.
 
-    		var regexStr = '^'; // Start regex pattern to match from the beginning.
-    		var i = 0; // Index for traversing the pattern string.
+		while (i < pattern.length) {
+			var currentChar = pattern[i];
+			var nextChar = i < pattern.length - 1 ? pattern[i + 1] : '';
 
-   		while (i < pattern.length) {
-		      var currentChar = pattern[i];
-		      var nextChar = i < pattern.length - 1 ? pattern[i + 1] : '';
+			// Handle escape character.
+			if (currentChar === escape) {
+				regexStr += '\\' + nextChar;
+				i++; // Skip next character as it's escaped.
+			}
+			// Handle negation within character classes.
+			else if (currentChar === '[' && nextChar === '^') {
+				regexStr += '[^';
+				i++; // Include '^' as part of the set.
+			}
+			// Directly append square brackets.
+			else if (currentChar === '[' || currentChar === ']') {
+				regexStr += currentChar;
+			}
+			// Replace '%' with regex to match any character sequence.
+			else if (currentChar === '%') {
+				regexStr += '[\\s\\S]*';
+			}
+			// Replace '_' with regex to match any single character.
+			else if (currentChar === '_') {
+				regexStr += '.';
+			}
+			// Escape special regex characters.
+			else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
+				regexStr += '\\' + currentChar;
+			}
+			// Append literal characters.
+			else {
+				regexStr += currentChar;
+			}
+			i++;
+		}
 
-   		   // Handle escape character.
-   		   if (currentChar === escape) {
-  		      regexStr += '\\' + nextChar;
-  		      i++; // Skip next character as it's escaped.
- 		     }
-  		   // Handle negation within character classes.
-     		   else if (currentChar === '[' && nextChar === '^') {
-     		   regexStr += '[^';
-    		    i++; // Include '^' as part of the set.
-  		    }
- 		     // Directly append square brackets.
-  		    else if (currentChar === '[' || currentChar === ']') {
-  		      regexStr += currentChar;
- 		     }
-  		    // Replace '%' with regex to match any character sequence.
- 		     else if (currentChar === '%') {
-  		      regexStr += '[\\s\\S]*';
- 		     }
-		      // Replace '_' with regex to match any single character.
-		      else if (currentChar === '_') {
-		        regexStr += '.';
-		      }
- 		     // Escape special regex characters.
- 		     else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
- 		       regexStr += '\\' + currentChar;
-		      }
- 		     // Append literal characters.
-		      else {
-		        regexStr += currentChar;
-		      }
-		      i++;
-		    }
+		regexStr += '$'; // End regex pattern to match until the end.
+		// Compile and cache the regex pattern for future use.
+		patternCache[pattern] = RegExp(regexStr, 'i');
+	}
 
- 		   regexStr += '$'; // End regex pattern to match until the end.
-		    // Compile and cache the regex pattern for future use.
-		    patternCache[pattern] = RegExp(regexStr, 'i');
- 		 }
-
-		  // Convert value to string (handling null/undefined) and test against compiled pattern.
-		  return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
-		});
+	// Convert value to string (handling null/undefined) and test against compiled pattern.
+	return ('' + (value ?? '')).search(patternCache[pattern]) > -1;
+});
 
 /**
  * Tests if a given value matches a glob pattern.
@@ -1256,32 +1257,37 @@ utils.glob = function (value, pattern) {
 	var currentIndex = 0; // Index for traversing the pattern string.
 	var regexPattern = '^'; // Start regex pattern to match from the beginning.
 
-	 while (currentIndex < pattern.length) {
+	while (currentIndex < pattern.length) {
 		var currentChar = pattern[currentIndex];
 		var nextChar = currentIndex < pattern.length - 1 ? pattern[currentIndex + 1] : '';
-   		
+
 		// Handle character sets and negation within them.
 		if (currentChar === '[' && nextChar === '^') {
 			regexPattern += '[^';
 			currentIndex++; // Include '^' as part of the set.
-		} else if (currentChar === '[' || currentChar === ']') { // Directly append square brackets.
+		} else if (currentChar === '[' || currentChar === ']') {
+			// Directly append square brackets.
 			regexPattern += currentChar;
-		} else if (currentChar === '*') { // Replace '*' with regex to match any character sequence.
+		} else if (currentChar === '*') {
+			// Replace '*' with regex to match any character sequence.
 			regexPattern += '.*';
-		} else if (currentChar === '?') { // Replace '?' with regex to match any single character.
+		} else if (currentChar === '?') {
+			// Replace '?' with regex to match any single character.
 			regexPattern += '.';
-		}  else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {// Escape special regex characters.
+		} else if ('/.*+?|(){}'.indexOf(currentChar) > -1) {
+			// Escape special regex characters.
 			regexPattern += '\\' + currentChar;
-		} else { // Append literal characters.
+		} else {
+			// Append literal characters.
 			regexPattern += currentChar;
 		}
 		currentIndex++;
 	}
 
-	 regexPattern += '$'; // End regex pattern to match until the end.
+	regexPattern += '$'; // End regex pattern to match until the end.
 
 	// Convert value to uppercase, compile the regex pattern in uppercase to perform a case-insensitive match.
-	  return ('' + (value || '')).toUpperCase().search(RegExp(regexPattern.toUpperCase())) > -1;
+	return ('' + (value || '')).toUpperCase().search(RegExp(regexPattern.toUpperCase())) > -1;
 };
 
 /**
