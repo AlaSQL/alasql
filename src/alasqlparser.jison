@@ -159,10 +159,12 @@ DATABASE(S)?									return 'DATABASE'
 'INTERSECT'                                     return 'INTERSECT'
 'INTERVAL'                                      return 'INTERVAL'
 'INTO'                                         	return 'INTO'
+'ITERATE'										return 'ITERATE'
 'JOIN'                                         	return 'JOIN'
 'KEY'											return 'KEY'
 'LAST'											return 'LAST'
 'LET'											return 'LET'
+'LEAVE'											return 'LEAVE'
 'LEFT'											return 'LEFT'
 'LIKE'											return 'LIKE'
 'LIMIT'											return 'LIMIT'
@@ -2623,10 +2625,14 @@ While
 Continue
 	: CONTINUE
 		{ $$ = new yy.Continue(); }
+	| ITERATE
+		{ $$ = new yy.Continue(); }
 	;
 
 Break
 	: BREAK
+		{ $$ = new yy.Break(); }
+	| LEAVE
 		{ $$ = new yy.Break(); }
 	;
 
