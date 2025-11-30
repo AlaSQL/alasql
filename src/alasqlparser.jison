@@ -207,6 +207,7 @@ DATABASE(S)?									return 'DATABASE'
 'READ'		                                    return 'READ'
 'RECORDSET'                                     return 'RECORDSET'
 'REDUCE'                                        return 'REDUCE'
+'RECURSIVE'                                     return 'RECURSIVE'
 'REFERENCES'                                    return 'REFERENCES'
 'REGEXP'		                                return 'REGEXP'
 'REINDEX'		                                return 'REINDEX'
@@ -496,13 +497,19 @@ WithSelect
 WithTablesList
 	: WithTablesList COMMA WithTable
 		{ $1.push($3); $$=$1; }
+	| WithTablesList COMMA RECURSIVE WithTable
+		{ $4.recursive = true; $1.push($4); $$=$1; }
 	| WithTable
 		{ $$ = [$1]; }
+	| RECURSIVE WithTable
+		{ $2.recursive = true; $$ = [$2]; }
 	;
 
 WithTable
 	: Literal AS LPAR Select RPAR
 		{ $$ = {name:$1, select:$4}; }
+	| Literal LPAR ColumnsList RPAR AS LPAR Select RPAR
+		{ $$ = {name:$1, columns:$3, select:$7}; }
 	;
 
 /* SELECT */
