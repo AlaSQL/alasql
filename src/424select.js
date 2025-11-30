@@ -113,6 +113,34 @@ function compileSelectStar(query, aliases, joinstar) {
 	return {s: ss.join(','), sp: sp};
 }
 
+// Helper function to check if an expression is an arrow operation and extract its path
+// Returns null if not an arrow op, or an array of path parts if it is
+function getArrowPath(expr) {
+	if (!expr || expr.op !== '->') {
+		return null;
+	}
+	var path = [];
+	var current = expr;
+	while (current && current.op === '->') {
+		// The right side is the property name
+		if (typeof current.right === 'string') {
+			path.unshift(current.right);
+		} else if (typeof current.right === 'number') {
+			path.unshift(current.right);
+		} else {
+			// Complex expression on right side, can't extract path
+			return null;
+		}
+		current = current.left;
+	}
+	// The leftmost should be a column
+	if (current && current.columnid) {
+		path.unshift(current.columnid);
+		return path;
+	}
+	return null;
+}
+
 yy.Select.prototype.compileSelect1 = function (query, params) {
 	var self = this;
 	query.columns = [];
@@ -326,26 +354,63 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 			//			}
 		} else {
 			//			console.log(203,col.as,col.columnid,col.toString());
-			ss.push(
-				"'" +
-					escapeq(col.as || col.columnid || col.toString()) +
-					"':" +
-					n2u(col.toJS('p', query.defaultTableid, query.defcols))
-			);
-			//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
-			//if(col instanceof yy.Expression) {
-			query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
+			// Check if this is an arrow expression and we're outputting to OBJECT
+			var arrowPath = query.intoObject && !col.as ? getArrowPath(col) : null;
+			if (arrowPath && arrowPath.length > 1) {
+				// For arrow expressions in INTO OBJECT(), generate nested object assignment
+				// This will be added to sp (post-processing) instead of ss (inline object)
+				var valueJs = n2u(col.toJS('p', query.defaultTableid, query.defcols));
+				// Generate code to create nested structure
+				// e.g., for path ['details', 'stock']: r['details'] = r['details'] || {}; r['details']['stock'] = value;
+				for (var i = 0; i < arrowPath.length - 1; i++) {
+					var pathSoFar = arrowPath.slice(0, i + 1);
+					var accessor = pathSoFar
+						.map(function (p) {
+							return "['" + escapeq(p) + "']";
+						})
+						.join('');
+					sp += 'r' + accessor + ' = r' + accessor + ' || {};';
+				}
+				var fullAccessor = arrowPath
+					.map(function (p) {
+						return "['" + escapeq(p) + "']";
+					})
+					.join('');
+				sp += 'r' + fullAccessor + ' = ' + valueJs + ';';
 
-			var coldef = {
-				columnid: col.as || col.columnid || col.toString(),
-				//							dbtypeid:tcol.dbtypeid,
-				//							dbsize:tcol.dbsize,
-				//							dbpecision:tcol.dbprecision,
-				//							dbenum: tcol.dbenum,
-			};
-			//						console.log(2);
-			query.columns.push(coldef);
-			query.xcolumns[coldef.columnid] = coldef;
+				// Use the first part of the path as the column name for metadata
+				var colName = arrowPath[0];
+				query.selectColumns[escapeq(colName)] = true;
+				var coldef = {
+					columnid: colName,
+				};
+				// Only add if not already added
+				if (!query.xcolumns[coldef.columnid]) {
+					query.columns.push(coldef);
+					query.xcolumns[coldef.columnid] = coldef;
+				}
+			} else {
+				ss.push(
+					"'" +
+						escapeq(col.as || col.columnid || col.toString()) +
+						"':" +
+						n2u(col.toJS('p', query.defaultTableid, query.defcols))
+				);
+				//			ss.push('\''+escapeq(col.toString())+'\':'+col.toJS("p",query.defaultTableid));
+				//if(col instanceof yy.Expression) {
+				query.selectColumns[escapeq(col.as || col.columnid || col.toString())] = true;
+
+				var coldef = {
+					columnid: col.as || col.columnid || col.toString(),
+					//							dbtypeid:tcol.dbtypeid,
+					//							dbsize:tcol.dbsize,
+					//							dbpecision:tcol.dbprecision,
+					//							dbenum: tcol.dbenum,
+				};
+				//						console.log(2);
+				query.columns.push(coldef);
+				query.xcolumns[coldef.columnid] = coldef;
+			}
 		}
 	});
 	s += ss.join(',') + '};' + sp;

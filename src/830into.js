@@ -144,6 +144,30 @@ alasql.into.JSON = function (filename, opts, data, columns, cb) {
 	return res;
 };
 
+alasql.into.OBJECT = function (filename, opts, data, columns, cb) {
+	var res;
+	if (typeof filename === 'object') {
+		opts = filename;
+		filename = undefined;
+	}
+
+	// Data is already in nested object format from core compilation
+	// If filename is provided, save to file like JSON
+	if (filename) {
+		var s = JSON.stringify(data);
+		filename = alasql.utils.autoExtFilename(filename, 'json', opts);
+		res = alasql.utils.saveFile(filename, s);
+	} else {
+		// Return the data directly
+		res = data;
+	}
+
+	if (cb) {
+		res = cb(res);
+	}
+	return res;
+};
+
 alasql.into.TXT = function (filename, opts, data, columns, cb) {
 	// If columns is empty
 	if (columns.length === 0 && data.length > 0) {
