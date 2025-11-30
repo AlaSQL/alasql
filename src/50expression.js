@@ -366,8 +366,8 @@
 			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
 					// Cache subquery results as a Set for O(1) lookups instead of re-executing for each row
-					const cacheKey = `_inCache${this.queriesidx}`;
-					s = `((this.${cacheKey} || (this.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const cacheKey = `in${this.queriesidx}`;
+					s = `((this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
@@ -386,8 +386,8 @@
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
 					// Cache subquery results as a Set for O(1) lookups instead of re-executing for each row
-					const cacheKey = `_notInCache${this.queriesidx}`;
-					s = `(!(this.${cacheKey} || (this.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const cacheKey = `notIn${this.queriesidx}`;
+					s = `(!(this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
