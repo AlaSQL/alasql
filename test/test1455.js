@@ -3,49 +3,29 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 000 - multiple statements', function () {
-	const test = '000'; // insert test file number
-
-	before(function () {
-		alasql('create database test' + test);
-		alasql('use test' + test);
+describe('Test 1455 - REPLACE function', function () {
+	it('A) REPLACE with string target', function () {
+		var res = alasql("SELECT REPLACE('123', '2', '_')");
+		assert.deepEqual(res, [{["REPLACE('123','2','_')"]: '1_3'}]);
 	});
 
-	after(function () {
-		alasql('drop database test' + test);
+	it('B) REPLACE with numeric target (converted to string)', function () {
+		var res = alasql("SELECT REPLACE(123, '2', '_')");
+		assert.deepEqual(res, [{["REPLACE(123,'2','_')"]: '1_3'}]);
 	});
 
-	it('A) From single lines', function () {
-		var res = [];
-		res.push(alasql('create table one (a int)'));
-		res.push(alasql('insert into one values (1),(2),(3),(4),(5)'));
-		res.push(alasql('select * from one'));
-		assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
+	it('C) Both string and numeric in same query', function () {
+		var res = alasql("SELECT REPLACE('123', '2', '_'), REPLACE(123, '2', '_')");
+		assert.deepEqual(res, [
+			{
+				["REPLACE('123','2','_')"]: '1_3',
+				["REPLACE(123,'2','_')"]: '1_3',
+			},
+		]);
 	});
 
-	it('B) Multiple statements in one string', function () {
-		//
-		var sql = 'create table two (a int);';
-		sql += 'insert into two values (1),(2),(3),(4),(5);';
-		sql += 'select * from two;';
-		var res = alasql(sql);
-		assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
-	});
-
-	it('C) Multiple statements in one string with callback', function (done) {
-		// Please note that first parameter (here `done`) must be called if defined - and is needed when testing async code
-		var sql = 'create table three (a int);';
-		sql += 'insert into three values (1),(2),(3),(4),(5);';
-		sql += 'select * from three;';
-		alasql(sql, function (res) {
-			assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
-			done();
-		});
+	it('D) REPLACE with numeric search and replacement', function () {
+		var res = alasql('SELECT REPLACE(12321, 2, 9)');
+		assert.deepEqual(res, [{['REPLACE(12321,2,9)']: '19391'}]);
 	});
 });
-stdfn.REPLACE = function (target, pattern, replacement) {
-    if (typeof target !== 'string') {
-        throw new TypeError('Target must be a string');
-    }
-    return target.split(pattern).join(replacement);
-};
