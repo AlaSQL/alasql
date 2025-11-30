@@ -15,28 +15,148 @@ yy.Select.prototype.compileWhere = function (query) {
 };
 
 yy.Select.prototype.compileWhereJoins = function (query) {
-	return;
+	// Optimize implicit joins by extracting join conditions from WHERE clause
+	// and setting up indexed lookups on sources
+	if (!this.where) return;
 
-	// TODO Fix Where optimization
-	//console.log(query);
+	// Only optimize if we have multiple sources from FROM clause (implicit joins)
+	if (query.sources.length <= 1) return;
 
-	optimizeWhereJoin(query, this.where.expression);
+	// Check if any sources already have optimization (from explicit JOINs)
+	// If so, skip optimization to avoid conflicts
+	var hasExplicitJoins = query.sources.some(function (source, idx) {
+		return idx > 0 && source.onleftfn;
+	});
+	if (hasExplicitJoins) return;
 
-	//for sources compile wherefs
+	// Extract equality conditions from WHERE clause
+	var conditions = extractWhereConditions(this.where);
+
+	// Build a map of source aliases to their indices
+	var aliasToIdx = {};
+	query.sources.forEach(function (source, idx) {
+		aliasToIdx[source.alias] = idx;
+	});
+
+	// Process each condition to find join relationships
+	conditions.forEach(function (cond) {
+		if (cond.op !== '=') return;
+		if (cond.allsome) return;
+
+		var ls = cond.left.toJS('p', query.defaultTableid, query.defcols);
+		var rs = cond.right.toJS('p', query.defaultTableid, query.defcols);
+
+		// Find which sources are involved
+		var leftAliases = extractAliases(ls);
+		var rightAliases = extractAliases(rs);
+
+		// For a join condition, we need exactly one alias on each side
+		if (leftAliases.length === 1 && rightAliases.length === 1) {
+			var leftAlias = leftAliases[0];
+			var rightAlias = rightAliases[0];
+
+			// Make sure both aliases exist in our sources
+			if (
+				typeof aliasToIdx[leftAlias] === 'undefined' ||
+				typeof aliasToIdx[rightAlias] === 'undefined'
+			) {
+				return;
+			}
+
+			var leftIdx = aliasToIdx[leftAlias];
+			var rightIdx = aliasToIdx[rightAlias];
+
+			// The source that comes later in the FROM list should get the join optimization
+			// because doJoin processes sources in order
+			if (rightIdx > leftIdx) {
+				// rightAlias is the later source, set up its join optimization
+				var source = query.sources[rightIdx];
+				// Only set up optimization if not already done
+				if (!source.onleftfn) {
+					source.onleftfns = ls;
+					source.onrightfns = rs;
+					source.onleftfn = new Function('p,params,alasql', 'var y;return ' + ls);
+					source.onrightfn = new Function('p,params,alasql', 'var y;return ' + rs);
+					source.optimization = 'ix';
+				}
+			} else if (leftIdx > rightIdx) {
+				// leftAlias is the later source
+				var source = query.sources[leftIdx];
+				if (!source.onleftfn) {
+					source.onleftfns = rs;
+					source.onrightfns = ls;
+					source.onleftfn = new Function('p,params,alasql', 'var y;return ' + rs);
+					source.onrightfn = new Function('p,params,alasql', 'var y;return ' + ls);
+					source.optimization = 'ix';
+				}
+			}
+		} else if (leftAliases.length === 1 && rightAliases.length === 0) {
+			// Single-table condition (e.g., t1.a = 5)
+			var alias = leftAliases[0];
+			if (typeof aliasToIdx[alias] !== 'undefined') {
+				var source = query.sources[aliasToIdx[alias]];
+				source.srcwherefns = source.srcwherefns
+					? source.srcwherefns + '&&(' + ls + '==' + rs + ')'
+					: '(' + ls + '==' + rs + ')';
+			}
+		} else if (leftAliases.length === 0 && rightAliases.length === 1) {
+			// Single-table condition with alias on right
+			var alias = rightAliases[0];
+			if (typeof aliasToIdx[alias] !== 'undefined') {
+				var source = query.sources[aliasToIdx[alias]];
+				source.srcwherefns = source.srcwherefns
+					? source.srcwherefns + '&&(' + ls + '==' + rs + ')'
+					: '(' + ls + '==' + rs + ')';
+			}
+		}
+	});
+
+	// Compile the srcwherefn for sources that have single-table conditions
 	query.sources.forEach(function (source) {
 		if (source.srcwherefns) {
 			source.srcwherefn = new Function('p,params,alasql', 'var y;return ' + source.srcwherefns);
 		}
-		if (source.wxleftfns) {
-			source.wxleftfn = new Function('p,params,alasql', 'var y;return ' + source.wxleftfns);
-		}
-		if (source.wxrightfns) {
-			source.wxrightfn = new Function('p,params,alasql', 'var y;return ' + source.wxrightfns);
-		}
-		//		console.log(source.alias, source.wherefns)
-		//		console.log(source);
 	});
 };
+
+// Helper function to extract all equality conditions from a WHERE clause
+function extractWhereConditions(where) {
+	var conditions = [];
+
+	function traverse(node) {
+		if (!node) return;
+
+		// Handle Expression wrapper - get the inner expression
+		if (node.expression) {
+			traverse(node.expression);
+			return;
+		}
+
+		if (!(node instanceof yy.Op)) return;
+
+		if (node.op === 'AND') {
+			traverse(node.left);
+			traverse(node.right);
+		} else if (node.op === '=') {
+			conditions.push(node);
+		}
+	}
+
+	traverse(where);
+	return conditions;
+}
+
+// Helper function to extract table aliases from a JS expression
+function extractAliases(js) {
+	var matches = js.match(/p\['([^']+)'\]/g) || [];
+	var aliases = matches.map(function (m) {
+		return m.match(/p\['([^']+)'\]/)[1];
+	});
+	// Return unique aliases
+	return aliases.filter(function (v, i, a) {
+		return a.indexOf(v) === i;
+	});
+}
 
 function optimizeWhereJoin(query, ast) {
 	if (!ast) return false;
@@ -53,13 +173,7 @@ function optimizeWhereJoin(query, ast) {
 			if (s.indexOf("p['" + source.alias + "']") > -1) fsrc.push(source);
 		}
 	});
-	//console.log(fsrc.length);
-	//	if(fsrc.length < query.sources.length) return;
-	//	console.log(ast);
-	//	console.log(s);
-	//	console.log(fsrc.length);
 	if (fsrc.length == 0) {
-		//		console.log('no optimization, can remove this part of ast');
 		return;
 	} else if (fsrc.length == 1) {
 		if (
@@ -68,11 +182,9 @@ function optimizeWhereJoin(query, ast) {
 			})
 		) {
 			return;
-			// This is means, that we have column from parent query
-			// So we return without optimization
 		}
 
-		var src = fsrc[0]; // optmiization source
+		var src = fsrc[0];
 		src.srcwherefns = src.srcwherefns ? src.srcwherefns + '&&' + s : s;
 
 		if (ast instanceof yy.Op && ast.op == '=' && !ast.allsome) {
@@ -93,10 +205,10 @@ function optimizeWhereJoin(query, ast) {
 				}
 			}
 		}
-		ast.reduced = true; // To do not duplicate wherefn and srcwherefn
+		ast.reduced = true;
 		return;
 	} else {
-		if ((ast.op = 'AND')) {
+		if (ast.op == 'AND') {
 			optimizeWhereJoin(query, ast.left);
 			optimizeWhereJoin(query, ast.right);
 		}
