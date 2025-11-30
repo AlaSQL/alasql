@@ -268,7 +268,7 @@ SETS                                        	return 'SET'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 /* Issue #1173: Reject invalid identifiers like 6minAvgOpac (number followed by letters without space) */
 /* This rule must precede NUMBER to catch invalid patterns before they're tokenized as NUMBER + LITERAL */
-(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?[a-zA-Z_]+[a-zA-Z_0-9]*	return 'INVALID'
+\d+[a-zA-Z_][a-zA-Z_0-9]*						return 'INVALID'
 (\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
 '->'											return 'ARROW'
 '#'												return 'SHARP'
