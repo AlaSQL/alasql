@@ -186,16 +186,16 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 
 	// Get primary key information from the table definition
 	const table = alasql.databases[databaseid].tables[tableid];
-	const pk = table && table.pk;
+	const pkColumns = table && table.pk && table.pk.columns;
 
 	// Build object store options
 	let storeOptions;
-	if (pk && pk.columns && pk.columns.length === 1) {
+	if (pkColumns && pkColumns.length === 1) {
 		// Single-column primary key: use keyPath
-		storeOptions = {keyPath: pk.columns[0]};
-	} else if (pk && pk.columns && pk.columns.length > 1) {
+		storeOptions = {keyPath: pkColumns[0]};
+	} else if (pkColumns && pkColumns.length > 1) {
 		// Composite primary key: use array keyPath
-		storeOptions = {keyPath: pk.columns};
+		storeOptions = {keyPath: pkColumns};
 	} else {
 		// No primary key: use auto-increment
 		storeOptions = {autoIncrement: true};
@@ -316,11 +316,13 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 		var ixdb = request.result;
 		var tx = ixdb.transaction([tableid], 'readwrite');
 		var tb = tx.objectStore(tableid);
+		var errorHandled = false;
 		for (var i = 0, ilen = value.length; i < ilen; i++) {
 			var addRequest = tb.add(value[i]);
 			addRequest.onerror = function (evt) {
 				// Handle duplicate key errors
-				if (evt.target.error && evt.target.error.name === 'ConstraintError') {
+				if (!errorHandled && evt.target.error && evt.target.error.name === 'ConstraintError') {
+					errorHandled = true;
 					evt.preventDefault();
 					evt.stopPropagation();
 					tx.abort();
@@ -345,14 +347,6 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 				}
 			}
 			if (cb) cb(ilen);
-		};
-		tx.onerror = function (evt) {
-			ixdb.close();
-			// Only report error if not already handled by addRequest.onerror
-			if (evt.target.error && evt.target.error.name === 'ConstraintError') {
-				var err = new Error('Cannot insert record, because it already exists in primary key index');
-				if (cb) cb(null, err);
-			}
 		};
 	};
 };
