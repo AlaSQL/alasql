@@ -121,4 +121,51 @@ describe('Test 147 - WITH RECURSIVE CTE (Common Table Expression)', function () 
 		`);
 		assert.deepEqual(res, [{n: 10}, {n: 11}, {n: 12}, {n: 13}]);
 	});
+
+	it('7. ALASQL_DETAILS modifier returns data and columns', function () {
+		alasql('CREATE TABLE testdetails (id INT, name STRING)');
+		alasql("INSERT INTO testdetails VALUES (1, 'a'), (2, 'b')");
+
+		// Create a select statement and set the modifier programmatically
+		var yy = alasql.yy;
+		var parsed = alasql.parse('SELECT id, name FROM testdetails');
+		var selectStmt = parsed.statements[0];
+		selectStmt.modifier = 'ALASQL_DETAILS';
+		var result = selectStmt.execute('test147', {});
+
+		assert.ok(result.data, 'Result should have data property');
+		assert.ok(result.columns, 'Result should have columns property');
+		assert.equal(result.length, 2, 'Result should have length property');
+		assert.deepEqual(result.data, [
+			{id: 1, name: 'a'},
+			{id: 2, name: 'b'},
+		]);
+		assert.equal(result.columns[0].columnid, 'id');
+		assert.equal(result.columns[1].columnid, 'name');
+
+		alasql('DROP TABLE testdetails');
+	});
+
+	it('8. maxCteIterations option limits recursive CTE iterations', function () {
+		// Save original option
+		var originalMax = alasql.options.maxCteIterations;
+
+		// Set a low limit
+		alasql.options.maxCteIterations = 3;
+
+		var res = alasql(`
+			WITH RECURSIVE cnt AS (
+				SELECT 1 AS x
+				UNION ALL
+				SELECT x + 1 FROM cnt WHERE x < 100
+			)
+			SELECT x FROM cnt
+		`);
+
+		// Should only have 3 rows due to iteration limit (anchor + 2 recursive iterations)
+		assert.ok(res.length <= 4, 'Should be limited by maxCteIterations');
+
+		// Restore original option
+		alasql.options.maxCteIterations = originalMax;
+	});
 });

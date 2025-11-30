@@ -34,25 +34,9 @@ yy.WithSelect.prototype.toString = function () {
 	return s;
 };
 
-// Helper function to rename columns in result rows
-function renameColumns(data, columns) {
-	if (!columns || columns.length === 0) return data;
-	return data.map(function (row) {
-		var newRow = {};
-		var keys = Object.keys(row);
-		for (var i = 0; i < keys.length && i < columns.length; i++) {
-			newRow[columns[i].columnid] = row[keys[i]];
-		}
-		return newRow;
-	});
-}
-
-// Default maximum iterations for recursive CTEs to prevent infinite loops
-var MAX_RECURSIVE_ITERATIONS = 1000;
-
 // Execute a recursive CTE
-function executeRecursiveCTE(w, databaseid, params, maxIterations) {
-	maxIterations = maxIterations || MAX_RECURSIVE_ITERATIONS;
+function executeRecursiveCTE(w, databaseid, params) {
+	var maxIterations = alasql.options.maxCteIterations || 1000;
 	var db = alasql.databases[databaseid];
 	var tableName = w.name;
 
@@ -93,24 +77,23 @@ function executeRecursiveCTE(w, databaseid, params, maxIterations) {
 		});
 	}
 
-	// Execute anchor query using MATRIX format to preserve column order
+	// Execute anchor query using ALASQL_DETAILS format to get both data and column metadata in one call
 	var anchorSelectObj = new yy.Select(anchorSelect);
-	anchorSelectObj.modifier = 'MATRIX';
-	var anchorMatrix = anchorSelectObj.execute(databaseid, params);
+	anchorSelectObj.modifier = 'ALASQL_DETAILS';
+	var anchorDetails = anchorSelectObj.execute(databaseid, params);
 
-	// If we have explicit column names, use them; otherwise use the select column names
-	if (!columnNames && anchorMatrix.length > 0) {
-		// Get column names from the anchor select
-		var anchorSelectCopy = new yy.Select(anchorSelect);
-		anchorSelectCopy.modifier = 'RECORDSET';
-		var recordset = anchorSelectCopy.execute(databaseid, params);
-		columnNames = recordset.columns.map(function (c) {
-			return c.columnid;
-		});
+	// Get anchor column names from the query result
+	var anchorColumnNames = anchorDetails.columns.map(function (c) {
+		return c.columnid;
+	});
+
+	// If explicit column names provided, use them; otherwise use anchor column names
+	if (!columnNames) {
+		columnNames = anchorColumnNames;
 	}
 
-	// Convert matrix to array of objects with proper column names
-	var anchorData = matrixToObjects(anchorMatrix, columnNames);
+	// Map anchor data to target column names (handles both object format and column renaming)
+	var anchorData = mapColumnsToNames(anchorDetails.data, anchorColumnNames, columnNames);
 	tb.data = anchorData.slice();
 
 	// Iterate with the recursive part
@@ -128,18 +111,21 @@ function executeRecursiveCTE(w, databaseid, params, maxIterations) {
 		});
 		tb.data = newRows;
 
-		// Execute recursive part using MATRIX format
+		// Execute recursive part using ALASQL_DETAILS format
 		var recursiveSelectObj = new yy.Select(recursiveSelect);
-		recursiveSelectObj.modifier = 'MATRIX';
-		var recursiveMatrix = recursiveSelectObj.execute(databaseid, params);
+		recursiveSelectObj.modifier = 'ALASQL_DETAILS';
+		var recursiveDetails = recursiveSelectObj.execute(databaseid, params);
 
-		// Handle empty result (MATRIX modifier returns undefined for empty results)
-		if (!recursiveMatrix || recursiveMatrix.length === 0) {
+		// Handle empty result
+		if (!recursiveDetails.data || recursiveDetails.data.length === 0) {
 			break;
 		}
 
-		// Convert recursive result to objects with proper column names
-		var recursiveData = matrixToObjects(recursiveMatrix, columnNames);
+		// Get recursive column names and map to target column names by position
+		var recursiveColumnNames = recursiveDetails.columns.map(function (c) {
+			return c.columnid;
+		});
+		var recursiveData = mapColumnsToNames(recursiveDetails.data, recursiveColumnNames, columnNames);
 
 		// Add new rows to the result
 		newRows = recursiveData;
@@ -153,14 +139,14 @@ function executeRecursiveCTE(w, databaseid, params, maxIterations) {
 	return allData;
 }
 
-// Helper function to convert matrix to array of objects
-function matrixToObjects(matrix, columnNames) {
-	return matrix.map(function (row) {
-		var obj = {};
-		for (var i = 0; i < columnNames.length; i++) {
-			obj[columnNames[i]] = row[i];
+// Helper function to map data from source column names to target column names by position
+function mapColumnsToNames(data, sourceColumns, targetColumns) {
+	return data.map(function (row) {
+		var newRow = {};
+		for (var i = 0; i < targetColumns.length && i < sourceColumns.length; i++) {
+			newRow[targetColumns[i]] = row[sourceColumns[i]];
 		}
-		return obj;
+		return newRow;
 	});
 }
 
