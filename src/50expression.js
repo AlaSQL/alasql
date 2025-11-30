@@ -365,7 +365,9 @@
 				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(this.right1)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
 			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
+					// Cache subquery results as a Set for O(1) lookups instead of re-executing for each row
+					const cacheKey = `_inCache${this.queriesidx}`;
+					s = `((this.${cacheKey} || (this.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
@@ -383,7 +385,9 @@
 				}
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
+					// Cache subquery results as a Set for O(1) lookups instead of re-executing for each row
+					const cacheKey = `_notInCache${this.queriesidx}`;
+					s = `(!(this.${cacheKey} || (this.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
