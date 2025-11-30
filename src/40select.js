@@ -560,6 +560,15 @@ function modify(query, res) {
 			const keyTextString =
 				columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
 			return res.map(row => row[keyTextString]).join('\n');
+
+		case 'ALASQL_DETAILS':
+			// Returns both data and column metadata in a structured format
+			// Useful for internal operations that need both data and column info in one call
+			return {
+				data: res,
+				columns: columns,
+				length: res.length,
+			};
 	}
 	return res;
 }
