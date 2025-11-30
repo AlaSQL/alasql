@@ -159,6 +159,9 @@ function unflattenObject(obj) {
 					var part = parts[i];
 					if (current[part] === undefined) {
 						current[part] = {};
+					} else if (typeof current[part] !== 'object' || current[part] === null) {
+						// If existing value is not an object, wrap it
+						current[part] = {};
 					}
 					current = current[part];
 				}
