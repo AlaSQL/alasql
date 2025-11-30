@@ -48,11 +48,7 @@ describe('Test 2039 - Sorting does not occur for field names in quotation marks'
 	it('F) Order by bracket-quoted column name should work (existing behavior)', function () {
 		var data = [{'Primary column': 3}, {'Primary column': 1}, {'Primary column': 2}];
 		var res = alasql('select * from ? order by [Primary column]', [data]);
-		assert.deepEqual(res, [
-			{'Primary column': 1},
-			{'Primary column': 2},
-			{'Primary column': 3},
-		]);
+		assert.deepEqual(res, [{'Primary column': 1}, {'Primary column': 2}, {'Primary column': 3}]);
 	});
 
 	it('G) Order by quoted column name with spaces should sort correctly', function () {
