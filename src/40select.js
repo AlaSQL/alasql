@@ -139,11 +139,6 @@ yy.Select = class Select {
 	 Select statement in expression
 	 */
 	toJS(context) {
-		//	console.log('Expression',this);
-		//	if(this.expression.reduced) return 'true';
-		//	return this.expression.toJS(context, tableid, defcols);
-		// console.log('Select.toJS', 81, this.queriesidx);
-		//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 		var s =
 			'alasql.utils.flatArray(this.queriesfn[' +
 			(this.queriesidx - 1) +
