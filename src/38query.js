@@ -426,6 +426,8 @@ var preIndex = function (query) {
 	for (var k = 0, klen = query.sources.length; k < klen; k++) {
 		var source = query.sources[k];
 		delete source.ix;
+		// Declare variables at function scope for use across if/else branches
+		var scope, i, ilen, dataw, ixx, addr, group, res;
 		// If there is indexation rule
 		if (k > 0 && source.optimization == 'ix' && source.onleftfn && source.onrightfn) {
 			// If there is no table.indices - create it
@@ -433,7 +435,7 @@ var preIndex = function (query) {
 				if (!alasql.databases[source.databaseid].tables[source.tableid].indices)
 					query.database.tables[source.tableid].indices = {};
 				// Check if index already exists
-				let ixx =
+				ixx =
 					alasql.databases[source.databaseid].tables[source.tableid].indices[
 						hash(source.onrightfns + '`' + source.srcwherefns)
 					];
@@ -445,10 +447,9 @@ var preIndex = function (query) {
 			if (!source.ix) {
 				source.ix = {};
 				// Walking over source data
-				let scope = {};
-				let i = 0;
-				let ilen = source.data.length;
-				let dataw;
+				scope = {};
+				i = 0;
+				ilen = source.data.length;
 				//				while(source.getfn i<ilen) {
 
 				while (
@@ -545,7 +546,7 @@ var preIndex = function (query) {
 			// If there is no any optimization than apply srcwhere filter
 		} else if (source.srcwherefns && !source.dontcache) {
 			if (source.data) {
-				var scope = {};
+				scope = {};
 				// TODO!!!!! Data as Function
 
 				source.data = source.data.filter(function (r) {
@@ -556,7 +557,7 @@ var preIndex = function (query) {
 				scope = {};
 				i = 0;
 				ilen = source.data.length;
-				let res = [];
+				res = [];
 
 				while (
 					(dataw = source.data[i]) ||
