@@ -342,6 +342,7 @@ SETS                                        	return 'SET'
 %left DOT ARROW EXCLAMATION
 %left TILDA
 %left SHARP
+
 %left BARBAR
 
 %ebnf
