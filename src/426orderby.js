@@ -65,6 +65,9 @@ yy.Select.prototype.compileOrder = function (query, params) {
 						v = {_useColumnIndex: true, columnIndex: ord.expression.value - 1};
 					}
 				}
+			} else if (ord.expression instanceof yy.StringValue) {
+				// Treat quoted strings in ORDER BY as column references
+				var v = new yy.Column({columnid: ord.expression.value});
 			} else {
 				var v = ord.expression;
 			}
@@ -107,6 +110,22 @@ yy.Select.prototype.compileOrder = function (query, params) {
 					)
 						dg = '.valueOf()';
 					// TODO Add other types mapping
+				}
+			}
+			if (ord.expression instanceof yy.StringValue) {
+				var columnid = ord.expression.value;
+				if (alasql.options.valueof) {
+					dg = '.valueOf()';
+				} else if (query.xcolumns[columnid]) {
+					var dbtypeid = query.xcolumns[columnid].dbtypeid;
+					if (
+						dbtypeid == 'DATE' ||
+						dbtypeid == 'DATETIME' ||
+						dbtypeid == 'DATETIME2' ||
+						dbtypeid == 'STRING' ||
+						dbtypeid == 'NUMBER'
+					)
+						dg = '.valueOf()';
 				}
 			}
 			// COLLATE NOCASE
