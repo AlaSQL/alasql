@@ -192,6 +192,11 @@ yy.Select = class Select {
 		query.rownums = [];
 		query.grouprownums = [];
 
+		// Check if INTO OBJECT() is used - this affects how arrow expressions are compiled
+		if (this.into instanceof yy.FuncValue && this.into.funcid.toUpperCase() === 'OBJECT') {
+			query.intoObject = true;
+		}
+
 		this.compileSelectGroup0(query);
 
 		if (this.group || query.selectGroup.length > 0) {

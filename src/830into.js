@@ -144,36 +144,6 @@ alasql.into.JSON = function (filename, opts, data, columns, cb) {
 	return res;
 };
 
-// Helper function to convert arrow-notation keys to nested objects
-// e.g., {"details->stock": 20} becomes {"details": {"stock": 20}}
-function unflattenObject(obj) {
-	var result = {};
-	for (var key in obj) {
-		if (Object.prototype.hasOwnProperty.call(obj, key)) {
-			var value = obj[key];
-			// Check if the key contains arrow notation
-			if (key.indexOf('->') !== -1) {
-				var parts = key.split('->');
-				var current = result;
-				for (var i = 0; i < parts.length - 1; i++) {
-					var part = parts[i];
-					if (current[part] === undefined) {
-						current[part] = {};
-					} else if (typeof current[part] !== 'object' || current[part] === null) {
-						// If existing value is not an object, wrap it
-						current[part] = {};
-					}
-					current = current[part];
-				}
-				current[parts[parts.length - 1]] = value;
-			} else {
-				result[key] = value;
-			}
-		}
-	}
-	return result;
-}
-
 alasql.into.OBJECT = function (filename, opts, data, columns, cb) {
 	var res;
 	if (typeof filename === 'object') {
@@ -181,19 +151,15 @@ alasql.into.OBJECT = function (filename, opts, data, columns, cb) {
 		filename = undefined;
 	}
 
-	// Transform each row by unflattening arrow-notation keys
-	var transformedData = data.map(function (row) {
-		return unflattenObject(row);
-	});
-
+	// Data is already in nested object format from core compilation
 	// If filename is provided, save to file like JSON
 	if (filename) {
-		var s = JSON.stringify(transformedData);
+		var s = JSON.stringify(data);
 		filename = alasql.utils.autoExtFilename(filename, 'json', opts);
 		res = alasql.utils.saveFile(filename, s);
 	} else {
-		// Return the transformed data
-		res = transformedData;
+		// Return the data directly
+		res = data;
 	}
 
 	if (cb) {
