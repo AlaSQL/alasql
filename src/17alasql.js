@@ -126,6 +126,9 @@ alasql.options = {
 
 	loopbreak: 100000,
 
+	/** Maximum iterations for recursive CTEs to prevent infinite loops */
+	maxCteIterations: 1000,
+
 	/** Whether GETDATE() and NOW() return dates as string. If false, then a Date object is returned */
 	dateAsString: true,
 };
