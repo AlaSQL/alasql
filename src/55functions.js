@@ -30,6 +30,12 @@ yy.FuncValue.prototype.toString = function () {
 		}
 		s += ')';
 	}
+
+	// Add OVER clause if present
+	if (this.over) {
+		s += ' ' + this.over.toString();
+	}
+
 	return s;
 };
 
@@ -143,12 +149,6 @@ stdlib.LEN = stdlib.LENGTH = function (s) {
 };
 //stdlib.LENGTH = function(s) {return '('+s+').length'};
 
-// Returns the left part of a character string with the specified number of characters.
-// see https://docs.microsoft.com/en-us/sql/t-sql/functions/left-transact-sql
-stdlib.LEFT = function (s, l) {
-	return und(s, 'y.substr(0,' + l + ')');
-};
-
 stdlib.LOWER = stdlib.LCASE = function (s) {
 	return und(s, 'String(y).toLowerCase()');
 };
@@ -158,12 +158,6 @@ stdlib.LOWER = stdlib.LCASE = function (s) {
 // see https://docs.microsoft.com/en-us/sql/t-sql/functions/ltrim-transact-sql
 stdlib.LTRIM = function (s) {
 	return und(s, 'y.replace(/^[ ]+/,"")');
-};
-
-// Returns the right part of a character string with the specified number of characters.
-// see https://docs.microsoft.com/en-us/sql/t-sql/functions/right-transact-sql
-stdlib.RIGHT = function (s, l) {
-	return und(s, 'y.substr(y.length-(' + l + '))');
 };
 
 // Returns a character string after truncating all trailing spaces.
@@ -247,6 +241,9 @@ stdlib.ROWNUM = function () {
 	return '1';
 };
 stdlib.ROW_NUMBER = function () {
+	return '1';
+};
+stdlib.GROUP_ROW_NUMBER = function () {
 	return '1';
 };
 

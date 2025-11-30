@@ -190,6 +190,12 @@ yy.Select = class Select {
 		// todo?: 3. Compile SELECT clause
 		// For ROWNUM()
 		query.rownums = [];
+		query.grouprownums = [];
+
+		// Check if INTO OBJECT() is used - this affects how arrow expressions are compiled
+		if (this.into instanceof yy.FuncValue && this.into.funcid.toUpperCase() === 'OBJECT') {
+			query.intoObject = true;
+		}
 
 		this.compileSelectGroup0(query);
 
@@ -223,6 +229,8 @@ yy.Select = class Select {
 		// 8. Compile ORDER BY clause
 		if (this.order) {
 			query.orderfn = this.compileOrder(query, params);
+			// Copy orderColumns to query for union handling
+			query.orderColumns = this.orderColumns;
 		}
 
 		if (this.group || query.selectGroup.length > 0) {
@@ -254,16 +262,28 @@ yy.Select = class Select {
 		query.corresponding = this.corresponding; // If CORRESPONDING flag exists
 		if (this.union) {
 			query.unionfn = this.union.compile(databaseid);
-			query.orderfn = this.union.order ? this.union.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the union clause
+			if (!query.orderfn && this.union.order) {
+				query.orderfn = this.union.compileOrder(query, params);
+			}
 		} else if (this.unionall) {
 			query.unionallfn = this.unionall.compile(databaseid);
-			query.orderfn = this.unionall.order ? this.unionall.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the unionall clause
+			if (!query.orderfn && this.unionall.order) {
+				query.orderfn = this.unionall.compileOrder(query, params);
+			}
 		} else if (this.except) {
 			query.exceptfn = this.except.compile(databaseid);
-			query.orderfn = this.except.order ? this.except.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the except clause
+			if (!query.orderfn && this.except.order) {
+				query.orderfn = this.except.compileOrder(query, params);
+			}
 		} else if (this.intersect) {
 			query.intersectfn = this.intersect.compile(databaseid);
-			query.orderfn = this.intersect.order ? this.intersect.compileOrder(query, params) : null;
+			// ORDER BY is now at the top level, not in the intersect clause
+			if (!query.orderfn && this.intersect.order) {
+				query.orderfn = this.intersect.compileOrder(query, params);
+			}
 		}
 
 		// SELECT INTO
@@ -308,7 +328,8 @@ yy.Select = class Select {
 				// If this is INTO() function, then call it
 				// with one or two parameters
 				//
-				var qs = 'return alasql.into[' + JSON.stringify(this.into.funcid.toUpperCase()) + '](';
+				var funcid = this.into.funcid.toUpperCase();
+				var qs = 'return alasql.into[' + JSON.stringify(funcid) + '](';
 				if (this.into.args && this.into.args.length > 0) {
 					qs += this.into.args[0].toJS() + ',';
 					if (this.into.args.length > 1) {
@@ -320,6 +341,10 @@ yy.Select = class Select {
 					qs += 'undefined, undefined,';
 				}
 				query.intoallfns = qs + 'this.data,columns,cb)';
+				// Mark that OBJECT should preserve array results
+				if (funcid === 'OBJECT') {
+					query.preserveArrayResult = true;
+				}
 			} else if (this.into instanceof yy.ParamValue) {
 				//
 				// Save data into parameters array
@@ -353,6 +378,46 @@ yy.Select = class Select {
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
 						for (var j = 0, jlen = query.rownums.length; j < jlen; j++) {
 							res[i][query.rownums[j]] = i + 1;
+						}
+					}
+				}
+
+				// Handle GROUP_ROW_NUMBER() and ROW_NUMBER() OVER (PARTITION BY ...) - restart numbering when grouping column(s) change
+				if (query.grouprownums && query.grouprownums.length > 0) {
+					for (var j = 0, jlen = query.grouprownums.length; j < jlen; j++) {
+						var config = query.grouprownums[j];
+						var partitionColumns;
+
+						// Determine which columns to partition by
+						if (config.partitionColumns && config.partitionColumns.length > 0) {
+							// Use explicit PARTITION BY columns
+							partitionColumns = config.partitionColumns;
+						} else {
+							// Fall back to first column for GROUP_ROW_NUMBER()
+							var columnKeys = Object.keys(res[0] || {});
+							partitionColumns = [columnKeys[0]];
+						}
+
+						var prevValues = null;
+						var rowNum = 0;
+
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							// Get current partition key (combination of all partition columns)
+							var currentValues = partitionColumns
+								.map(function (col) {
+									return res[i][col];
+								})
+								.join('|');
+
+							// Reset counter when partition changes
+							if (i === 0 || currentValues !== prevValues) {
+								rowNum = 1;
+							} else {
+								rowNum++;
+							}
+
+							res[i][config.as] = rowNum;
+							prevValues = currentValues;
 						}
 					}
 				}
@@ -469,6 +534,11 @@ function modify(query, res) {
 				ar.push(res[i][key]);
 			}
 
+			// Apply DISTINCT if specified
+			if (query.distinct) {
+				ar = alasql.utils.distinctArray(ar);
+			}
+
 			return ar;
 
 		case 'MATRIX':
@@ -490,6 +560,15 @@ function modify(query, res) {
 			const keyTextString =
 				columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
 			return res.map(row => row[keyTextString]).join('\n');
+
+		case 'ALASQL_DETAILS':
+			// Returns both data and column metadata in a structured format
+			// Useful for internal operations that need both data and column info in one call
+			return {
+				data: res,
+				columns: columns,
+				length: res.length,
+			};
 	}
 	return res;
 }
