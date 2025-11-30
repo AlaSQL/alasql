@@ -5,15 +5,11 @@ if (typeof exports === 'object') {
 
 describe('Test 37 - WHILE with BREAK and CONTINUE statements', function () {
 	/**
-	 * SQL-99 standard defines:
-	 * - WHILE condition DO statement END WHILE
-	 * - LOOP can be terminated with BREAK/LEAVE
-	 * - CONTINUE/ITERATE skips to next iteration
+	 * Supports both T-SQL and SQL-99 syntax:
+	 * - T-SQL: BREAK exits the loop, CONTINUE skips to next iteration
+	 * - SQL-99: LEAVE exits the loop, ITERATE skips to next iteration
 	 *
-	 * For compatibility with T-SQL syntax:
-	 * - WHILE condition BEGIN statements END
-	 * - BREAK exits the loop
-	 * - CONTINUE skips to next iteration
+	 * WHILE condition BEGIN statements END syntax is used (T-SQL style).
 	 */
 
 	it('1. Simple WHILE loop without BREAK/CONTINUE', function () {
@@ -144,5 +140,38 @@ describe('Test 37 - WHILE with BREAK and CONTINUE statements', function () {
 			SELECT @a as a
 		`);
 		assert.deepEqual(res[res.length - 1], [{a: 3}]);
+	});
+
+	// SQL-99 compatibility tests using LEAVE and ITERATE keywords
+	it('11. SQL-99: LEAVE as alias for BREAK', function () {
+		var res = alasql(
+			'SET @a = 0; WHILE @a < 10 BEGIN SET @a = @a + 1; IF @a = 5 LEAVE; END; SELECT @a as a'
+		);
+		assert.deepEqual(res[res.length - 1], [{a: 5}]);
+	});
+
+	it('12. SQL-99: ITERATE as alias for CONTINUE', function () {
+		var res = alasql(
+			'SET @mysum = 0; SET @i = 0; WHILE @i < 5 BEGIN SET @i = @i + 1; IF @i = 3 ITERATE; SET @mysum = @mysum + @i; END; SELECT @mysum as mysum'
+		);
+		// Should sum: 1 + 2 + 4 + 5 = 12 (skipping 3)
+		assert.deepEqual(res[res.length - 1], [{mysum: 12}]);
+	});
+
+	it('13. SQL-99: LEAVE and ITERATE combined', function () {
+		var res = alasql(`
+			SET @a = 0;
+			SET @result = 0;
+			WHILE @a < 10
+			BEGIN
+				SET @a = @a + 1;
+				IF @a = 8 LEAVE;
+				IF @a % 2 = 0 ITERATE;
+				SET @result = @result + @a;
+			END;
+			SELECT @result as result
+		`);
+		// Adds odd numbers: 1 + 3 + 5 + 7 = 16
+		assert.deepEqual(res[res.length - 1], [{result: 16}]);
 	});
 });
