@@ -47,9 +47,12 @@ function renameColumns(data, columns) {
 	});
 }
 
+// Default maximum iterations for recursive CTEs to prevent infinite loops
+var MAX_RECURSIVE_ITERATIONS = 1000;
+
 // Execute a recursive CTE
 function executeRecursiveCTE(w, databaseid, params, maxIterations) {
-	maxIterations = maxIterations || 1000;
+	maxIterations = maxIterations || MAX_RECURSIVE_ITERATIONS;
 	var db = alasql.databases[databaseid];
 	var tableName = w.name;
 
@@ -137,10 +140,6 @@ function executeRecursiveCTE(w, databaseid, params, maxIterations) {
 
 		// Convert recursive result to objects with proper column names
 		var recursiveData = matrixToObjects(recursiveMatrix, columnNames);
-
-		if (recursiveData.length === 0) {
-			break;
-		}
 
 		// Add new rows to the result
 		newRows = recursiveData;
