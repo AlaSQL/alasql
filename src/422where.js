@@ -14,6 +14,22 @@ yy.Select.prototype.compileWhere = function (query) {
 		};
 };
 
+// Helper to set up join optimization on a source
+function setupJoinOptimization(source, leftExpr, rightExpr) {
+	if (source.onleftfn) return; // Already optimized
+	source.onleftfns = leftExpr;
+	source.onrightfns = rightExpr;
+	source.onleftfn = new Function('p,params,alasql', 'var y;return ' + leftExpr);
+	source.onrightfn = new Function('p,params,alasql', 'var y;return ' + rightExpr);
+	source.optimization = 'ix';
+}
+
+// Helper to add a single-table WHERE condition to a source
+function addSourceWhereCondition(source, leftExpr, rightExpr) {
+	var condition = '(' + leftExpr + '==' + rightExpr + ')';
+	source.srcwherefns = source.srcwherefns ? source.srcwherefns + '&&' + condition : condition;
+}
+
 yy.Select.prototype.compileWhereJoins = function (query) {
 	// Optimize implicit joins by extracting join conditions from WHERE clause
 	// and setting up indexed lookups on sources
@@ -43,12 +59,12 @@ yy.Select.prototype.compileWhereJoins = function (query) {
 		if (cond.op !== '=') return;
 		if (cond.allsome) return;
 
+		// Extract aliases directly from the AST nodes instead of parsing JS strings
+		var leftAliases = extractAliasesFromAst(cond.left);
+		var rightAliases = extractAliasesFromAst(cond.right);
+
 		var ls = cond.left.toJS('p', query.defaultTableid, query.defcols);
 		var rs = cond.right.toJS('p', query.defaultTableid, query.defcols);
-
-		// Find which sources are involved
-		var leftAliases = extractAliases(ls);
-		var rightAliases = extractAliases(rs);
 
 		// For a join condition, we need exactly one alias on each side
 		if (leftAliases.length === 1 && rightAliases.length === 1) {
@@ -56,10 +72,7 @@ yy.Select.prototype.compileWhereJoins = function (query) {
 			var rightAlias = rightAliases[0];
 
 			// Make sure both aliases exist in our sources
-			if (
-				typeof aliasToIdx[leftAlias] === 'undefined' ||
-				typeof aliasToIdx[rightAlias] === 'undefined'
-			) {
+			if (aliasToIdx[leftAlias] === undefined || aliasToIdx[rightAlias] === undefined) {
 				return;
 			}
 
@@ -69,44 +82,19 @@ yy.Select.prototype.compileWhereJoins = function (query) {
 			// The source that comes later in the FROM list should get the join optimization
 			// because doJoin processes sources in order
 			if (rightIdx > leftIdx) {
-				// rightAlias is the later source, set up its join optimization
-				var source = query.sources[rightIdx];
-				// Only set up optimization if not already done
-				if (!source.onleftfn) {
-					source.onleftfns = ls;
-					source.onrightfns = rs;
-					source.onleftfn = new Function('p,params,alasql', 'var y;return ' + ls);
-					source.onrightfn = new Function('p,params,alasql', 'var y;return ' + rs);
-					source.optimization = 'ix';
-				}
+				setupJoinOptimization(query.sources[rightIdx], ls, rs);
 			} else if (leftIdx > rightIdx) {
-				// leftAlias is the later source
-				var source = query.sources[leftIdx];
-				if (!source.onleftfn) {
-					source.onleftfns = rs;
-					source.onrightfns = ls;
-					source.onleftfn = new Function('p,params,alasql', 'var y;return ' + rs);
-					source.onrightfn = new Function('p,params,alasql', 'var y;return ' + ls);
-					source.optimization = 'ix';
-				}
+				setupJoinOptimization(query.sources[leftIdx], rs, ls);
 			}
 		} else if (leftAliases.length === 1 && rightAliases.length === 0) {
 			// Single-table condition (e.g., t1.a = 5)
-			var alias = leftAliases[0];
-			if (typeof aliasToIdx[alias] !== 'undefined') {
-				var source = query.sources[aliasToIdx[alias]];
-				source.srcwherefns = source.srcwherefns
-					? source.srcwherefns + '&&(' + ls + '==' + rs + ')'
-					: '(' + ls + '==' + rs + ')';
+			if (aliasToIdx[leftAliases[0]] !== undefined) {
+				addSourceWhereCondition(query.sources[aliasToIdx[leftAliases[0]]], ls, rs);
 			}
 		} else if (leftAliases.length === 0 && rightAliases.length === 1) {
-			// Single-table condition with alias on right
-			var alias = rightAliases[0];
-			if (typeof aliasToIdx[alias] !== 'undefined') {
-				var source = query.sources[aliasToIdx[alias]];
-				source.srcwherefns = source.srcwherefns
-					? source.srcwherefns + '&&(' + ls + '==' + rs + ')'
-					: '(' + ls + '==' + rs + ')';
+			// Single-table condition with alias on right (e.g., 5 = t1.a)
+			if (aliasToIdx[rightAliases[0]] !== undefined) {
+				addSourceWhereCondition(query.sources[aliasToIdx[rightAliases[0]]], ls, rs);
 			}
 		}
 	});
@@ -146,16 +134,30 @@ function extractWhereConditions(where) {
 	return conditions;
 }
 
-// Helper function to extract table aliases from a JS expression
-function extractAliases(js) {
-	var matches = js.match(/p\['([^']+)'\]/g) || [];
-	var aliases = matches.map(function (m) {
-		return m.match(/p\['([^']+)'\]/)[1];
-	});
-	// Return unique aliases
-	return aliases.filter(function (v, i, a) {
-		return a.indexOf(v) === i;
-	});
+// Helper function to extract table aliases from an AST node
+function extractAliasesFromAst(node) {
+	var aliases = [];
+
+	function traverse(n) {
+		if (!n) return;
+
+		// If it's a Column node, extract the tableid
+		if (n instanceof yy.Column) {
+			if (n.tableid && aliases.indexOf(n.tableid) === -1) {
+				aliases.push(n.tableid);
+			}
+			return;
+		}
+
+		// Recursively traverse child nodes for operators
+		if (n instanceof yy.Op) {
+			traverse(n.left);
+			traverse(n.right);
+		}
+	}
+
+	traverse(node);
+	return aliases;
 }
 
 function optimizeWhereJoin(query, ast) {
