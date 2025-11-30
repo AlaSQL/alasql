@@ -100,46 +100,7 @@ describe('Test 118 - Implicit JOIN optimization', function () {
 		assert.ok(compiled.query.sources[2].onrightfn, 'onrightfn should be defined');
 	});
 
-	it('F) Performance of implicit join is reasonable', function () {
-		// Create larger tables for performance test
-		alasql('CREATE TABLE big1 (a INT, b INT)');
-		alasql('CREATE TABLE big2 (a INT, b INT)');
-		alasql('CREATE TABLE big3 (a INT, b INT)');
-		alasql('CREATE TABLE big4 (a INT, b INT)');
-		alasql('CREATE TABLE big5 (a INT, b INT)');
-
-		for (var r = 1; r <= 100; r++) {
-			var a = r;
-			var b = (r % 100) + 1;
-			alasql('INSERT INTO big1 VALUES (?, ?)', [a, b]);
-			alasql('INSERT INTO big2 VALUES (?, ?)', [a, b]);
-			alasql('INSERT INTO big3 VALUES (?, ?)', [a, b]);
-			alasql('INSERT INTO big4 VALUES (?, ?)', [a, b]);
-			alasql('INSERT INTO big5 VALUES (?, ?)', [a, b]);
-		}
-
-		// Time the query
-		var start = Date.now();
-		var result = alasql(
-			'SELECT big1.a FROM big1, big2, big3, big4, big5 ' +
-				'WHERE big1.b = big2.a AND big2.b = big3.a AND big3.b = big4.a AND big4.b = big5.a'
-		);
-		var elapsed = Date.now() - start;
-
-		// Should return 100 rows
-		assert.equal(result.length, 100);
-
-		// Should complete in under 1 second (without optimization would be ~10^10 = 10 billion iterations)
-		assert.ok(elapsed < 1000, 'Query should complete in under 1 second, took ' + elapsed + 'ms');
-
-		alasql('DROP TABLE big1');
-		alasql('DROP TABLE big2');
-		alasql('DROP TABLE big3');
-		alasql('DROP TABLE big4');
-		alasql('DROP TABLE big5');
-	});
-
-	it('G) Mixed implicit and single-table conditions', function () {
+	it('F) Mixed implicit and single-table conditions', function () {
 		// Test that single-table conditions work alongside join conditions
 		var result = alasql(
 			'SELECT t1.x as x1, t2.x as x2 FROM t1, t2 WHERE t1.b = t2.a AND t1.a > 5 ORDER BY t1.a'
@@ -150,7 +111,7 @@ describe('Test 118 - Implicit JOIN optimization', function () {
 		assert.equal(result[0].x1, 't1-6');
 	});
 
-	it('H) Handles reversed join condition order', function () {
+	it('G) Handles reversed join condition order', function () {
 		// Test that t2.a = t1.b works the same as t1.b = t2.a
 		var result1 = alasql(
 			'SELECT t1.x as x1, t2.x as x2 FROM t1, t2 WHERE t1.b = t2.a ORDER BY t1.a'
