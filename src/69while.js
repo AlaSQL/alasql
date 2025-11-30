@@ -6,18 +6,18 @@
 //
 */
 
-// Control flow exception types
-yy.BreakException = function () {
-	this.message = 'BREAK';
-};
-yy.BreakException.prototype = Object.create(Error.prototype);
-yy.BreakException.prototype.constructor = yy.BreakException;
+// Control flow exception types for BREAK and CONTINUE statements
+function createControlFlowException(name) {
+	var Exception = function () {
+		this.message = name;
+	};
+	Exception.prototype = Object.create(Error.prototype);
+	Exception.prototype.constructor = Exception;
+	return Exception;
+}
 
-yy.ContinueException = function () {
-	this.message = 'CONTINUE';
-};
-yy.ContinueException.prototype = Object.create(Error.prototype);
-yy.ContinueException.prototype.constructor = yy.ContinueException;
+yy.BreakException = createControlFlowException('BREAK');
+yy.ContinueException = createControlFlowException('CONTINUE');
 
 yy.While = function (params) {
 	return Object.assign(this, params);
