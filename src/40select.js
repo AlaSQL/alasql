@@ -323,7 +323,8 @@ yy.Select = class Select {
 				// If this is INTO() function, then call it
 				// with one or two parameters
 				//
-				var qs = 'return alasql.into[' + JSON.stringify(this.into.funcid.toUpperCase()) + '](';
+				var funcid = this.into.funcid.toUpperCase();
+				var qs = 'return alasql.into[' + JSON.stringify(funcid) + '](';
 				if (this.into.args && this.into.args.length > 0) {
 					qs += this.into.args[0].toJS() + ',';
 					if (this.into.args.length > 1) {
@@ -335,6 +336,10 @@ yy.Select = class Select {
 					qs += 'undefined, undefined,';
 				}
 				query.intoallfns = qs + 'this.data,columns,cb)';
+				// Mark that OBJECT should preserve array results
+				if (funcid === 'OBJECT') {
+					query.preserveArrayResult = true;
+				}
 			} else if (this.into instanceof yy.ParamValue) {
 				//
 				// Save data into parameters array
