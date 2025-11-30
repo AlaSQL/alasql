@@ -35,4 +35,10 @@ describe('Test 1740 - Parse() then AST.toString() should restore square brackets
 		var result = ast.toString();
 		assert.strictEqual(result, 'SELECT [Column!@#] FROM tbl');
 	});
+
+	it('F) Column name with backticks should preserve backticks', function () {
+		var ast = alasql.parse('SELECT `Foo Bar` FROM tbl');
+		var result = ast.toString();
+		assert.strictEqual(result, 'SELECT `Foo Bar` FROM tbl');
+	});
 });

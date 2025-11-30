@@ -691,10 +691,15 @@
 		toString() {
 			let s;
 
-			// Handle columnid that is an object with val and wrap properties (e.g., from bracket notation)
-			if (typeof this.columnid === 'object' && this.columnid !== null && this.columnid.val !== undefined) {
+			// Check if columnid is an object with val and wrap properties (e.g., from bracket notation)
+			const isBracketedColumnId =
+				typeof this.columnid === 'object' &&
+				this.columnid !== null &&
+				this.columnid.val !== undefined;
+
+			if (isBracketedColumnId) {
 				const wrap = this.columnid.wrap;
-				const closeWrap = wrap === '[' ? ']' : wrap === '`' ? '`' : '';
+				const closeWrap = wrap === '[' ? ']' : '`';
 				s = wrap + this.columnid.val + closeWrap;
 			} else if (this.columnid == +this.columnid) {
 				s = '[' + this.columnid + ']';
@@ -704,7 +709,6 @@
 
 			if (this.tableid) {
 				const isNumericColumnId = this.columnid === +this.columnid;
-				const isBracketedColumnId = typeof this.columnid === 'object' && this.columnid !== null && this.columnid.val !== undefined;
 				s = this.tableid + (isNumericColumnId || isBracketedColumnId ? '' : '.') + s;
 
 				if (this.databaseid) {
