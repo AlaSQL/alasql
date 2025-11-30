@@ -266,6 +266,7 @@ SETS                                        	return 'SET'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
+(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?[a-zA-Z_]+[a-zA-Z_0-9]*	return 'INVALID'
 (\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
 '->'											return 'ARROW'
 '#'												return 'SHARP'
