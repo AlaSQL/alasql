@@ -688,18 +688,33 @@
 			assign(this, params);
 		}
 
-		toString() {
-			let s = this.columnid;
+		// Check if identifier needs to be wrapped in brackets
+		// (contains spaces, dots, or other special characters)
+		_needsBrackets(id) {
+			if (id == null) return false;
+			// Numeric indices need brackets
+			if (id == +id) return true;
+			// Check for special characters that require brackets (spaces, dots, hyphens, square brackets)
+			return /[\s.\-\][]/.test(id);
+		}
 
-			if (this.columnid == +this.columnid) {
-				s = '[' + this.columnid + ']';
+		_wrapId(id) {
+			if (this._needsBrackets(id)) {
+				return '[' + id + ']';
 			}
+			return id;
+		}
+
+		toString() {
+			let s = this._wrapId(this.columnid);
 
 			if (this.tableid) {
-				s = this.tableid + (this.columnid === +this.columnid ? '' : '.') + s;
+				// Omit dot separator when columnid is wrapped in brackets (e.g., table[1] not table.[1])
+				const separator = this._needsBrackets(this.columnid) ? '' : '.';
+				s = this._wrapId(this.tableid) + separator + s;
 
 				if (this.databaseid) {
-					s = this.databaseid + '.' + s;
+					s = this._wrapId(this.databaseid) + '.' + s;
 				}
 			}
 
