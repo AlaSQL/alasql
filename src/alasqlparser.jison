@@ -86,6 +86,7 @@ NOT\s+ILIKE										return 'NOT_LIKE'
 
 'CALL'											return 'CALL'
 'CASE'											return 'CASE'
+'CASCADE'										return 'CASCADE'
 'CAST'											return 'CAST'
 'CHECK'											return 'CHECK'
 'CLASS'											return 'CLASS'
@@ -218,6 +219,7 @@ DATABASE(S)?									return 'DATABASE'
 'RENAME'                                        return 'RENAME'
 'REPEAT'										return 'REPEAT'
 'REPLACE'										return 'REPLACE'
+'RESTRICT'										return 'RESTRICT'
 'REQUIRE'                                       return 'REQUIRE'
 'RESTORE'                                       return 'RESTORE'
 'RETURN'                                       	return 'RETURN'
@@ -2044,8 +2046,8 @@ PrimaryKey
 
 ForeignKey
 	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList?
-	     OnForeignKeyClause
-		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
+	     OnReferentialActions
+		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; yy.extend($$, $9); }
 	;
 
 ParColsList
@@ -2053,20 +2055,39 @@ ParColsList
 		{ $$ = $2; }
 	;
 
-OnForeignKeyClause
+OnReferentialActions
 	:
-		{ $$ = undefined; }
+		{$$ = {}; }
+	| OnDeleteClause
+		{$$ = {ondelete: $1}; }
+	| OnUpdateClause
+		{$$ = {onupdate: $1}; }
 	| OnDeleteClause OnUpdateClause
-		{ $$ = undefined; }
+		{$$ = {ondelete: $1, onupdate: $2}; }
+	| OnUpdateClause OnDeleteClause
+		{$$ = {ondelete: $2, onupdate: $1}; }
 	;
 
 OnDeleteClause
-	: ON DELETE NO ACTION
-		{$$ = undefined; }
+	: ON DELETE ReferentialAction
+		{$$ = $3; }
 	;
 OnUpdateClause
-	: ON UPDATE NO ACTION
-		{$$ = undefined; }
+	: ON UPDATE ReferentialAction
+		{$$ = $3; }
+	;
+
+ReferentialAction
+	: CASCADE
+		{$$ = 'CASCADE'; }
+	| SET NULL
+		{$$ = 'SET NULL'; }
+	| SET DEFAULT
+		{$$ = 'SET DEFAULT'; }
+	| RESTRICT
+		{$$ = 'RESTRICT'; }
+	| NO ACTION
+		{$$ = 'NO ACTION'; }
 	;
 
 UniqueKey
@@ -2181,10 +2202,10 @@ ParLiteral
 ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Table ParLiteral?
-		{$$ = {foreignkey:{table:$4, columnid: $5}};}
-	| REFERENCES Table ParLiteral?
-		{$$ = {foreignkey:{table:$2, columnid: $3}};}
+	| FOREIGN KEY REFERENCES Table ParLiteral? OnReferentialActions
+		{$$ = {foreignkey:{table:$4, columnid: $5}}; yy.extend($$.foreignkey, $6);}
+	| REFERENCES Table ParLiteral? OnReferentialActions
+		{$$ = {foreignkey:{table:$2, columnid: $3}}; yy.extend($$.foreignkey, $4);}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
 	| IDENTITY
