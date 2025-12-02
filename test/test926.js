@@ -51,7 +51,7 @@ describe('Test 926 - XLSXML XML character escaping', function () {
 								// If there's text content, it should not contain unescaped < > & unless they are entity references
 								if (innerText && innerText.length > 0) {
 									// Check for unescaped ampersands (not part of entity reference)
-									var hasUnescapedAmp = /&(?![a-zA-Z]+;|#\d+;)/.test(innerText);
+									var hasUnescapedAmp = /&(?!(amp|lt|gt|quot|apos|#\d+);)/.test(innerText);
 									if (hasUnescapedAmp) {
 										throw new Error('Found unescaped ampersand in: ' + innerText);
 									}
@@ -121,7 +121,7 @@ describe('Test 926 - XLSXML XML character escaping', function () {
 							if (dataContent && dataContent[1]) {
 								var text = dataContent[1];
 								// Check for unescaped & (not followed by valid entity)
-								if (/&(?![a-zA-Z]{2,6};|#\d{1,4};)/.test(text)) {
+								if (/&(?!(amp|lt|gt|quot|apos|#\d+);)/.test(text)) {
 									errors.push('Line ' + (i + 1) + ': unescaped & in: ' + text);
 								}
 								// Check for unescaped < or >
