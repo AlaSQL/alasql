@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 926 - GROUP BY with no matching rows', function () {
-	const test = '926';
+describe('Test 79-B - GROUP BY with no matching rows', function () {
+	const test = '79-B';
 
 	it('A) GROUP BY returns empty result when no rows meet condition', function () {
 		// Original issue: SELECT with GROUP BY should return [] when WHERE clause matches no rows
