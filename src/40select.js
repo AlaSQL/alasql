@@ -485,7 +485,7 @@ function modify(query, res) {
 
 	var modifier = query.modifier || alasql.options.modifier;
 	var columns = query.columns;
-	
+
 	// If dirtyColumns is true, we need to merge columns from data with existing columns
 	// This happens when SELECT * is used with dynamic data sources (like parameters)
 	if (query.dirtyColumns && res.length > 0) {
@@ -496,12 +496,12 @@ function modify(query, res) {
 				allcol[key] = true;
 			}
 		}
-		
+
 		// Create columns from data
 		var dataColumns = Object.keys(allcol).map(function (columnid) {
 			return {columnid: columnid};
 		});
-		
+
 		// If we don't have any columns yet, just use the data columns
 		if (!columns || columns.length === 0) {
 			columns = dataColumns;
@@ -509,12 +509,12 @@ function modify(query, res) {
 			// We have some columns (e.g., from explicit column expressions),
 			// merge them with data columns, avoiding duplicates
 			var existingColumnIds = {};
-			columns.forEach(function(col) {
+			columns.forEach(function (col) {
 				existingColumnIds[col.columnid] = true;
 			});
-			
+
 			// Add data columns that aren't already in the list
-			dataColumns.forEach(function(col) {
+			dataColumns.forEach(function (col) {
 				if (!existingColumnIds[col.columnid]) {
 					columns.push(col);
 				}
