@@ -468,7 +468,7 @@ case 175:
  
 			// Convert comma-separated tables after joins into CROSS JOINs
 			var joins = $$[$0-2];
-			$$[$0].forEach(function(t) {
+			$$[$0].forEach(t => {
 				var join = new yy.Join({joinmode:"CROSS"});
 				if(t.tableid) {
 					join.table = new yy.Table({databaseid:t.databaseid, tableid:t.tableid});

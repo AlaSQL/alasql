@@ -73,12 +73,14 @@ describe('Test 2201 - CROSS JOIN syntax improvements (sqllogictest3)', function 
 
 	it('G) Complex mixed join syntax', function () {
 		// Test complex case from sqllogictest
+		// Query has: tab1 AS cor0, tab1, tab0 AS cor1, tab0 AS cor2, tab0 AS cor3
+		// That's 5 table references (though only 2 distinct tables)
 		var res = alasql(
 			'SELECT DISTINCT * FROM tab1 AS cor0 CROSS JOIN tab1, tab0 AS cor1, tab0 AS cor2, tab0 cor3'
 		);
 		assert(Array.isArray(res));
-		// This is a cartesian product of 5 tables: tab1 x tab1 x tab0 x tab0 x tab0
-		// 2 x 2 x 2 x 2 x 2 = 32, but DISTINCT may reduce this
+		// Cartesian product: tab1(2 rows) x tab1(2 rows) x tab0(2 rows) x tab0(2 rows) x tab0(2 rows) = 32 rows
+		// But DISTINCT may reduce this depending on data
 		assert(res.length >= 1);
 	});
 

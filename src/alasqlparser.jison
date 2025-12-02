@@ -857,7 +857,7 @@ FromClause
 		{ 
 			// Convert comma-separated tables after joins into CROSS JOINs
 			var joins = $3;
-			$5.forEach(function(t) {
+			$5.forEach(t => {
 				var join = new yy.Join({joinmode:"CROSS"});
 				if(t.tableid) {
 					join.table = new yy.Table({databaseid:t.databaseid, tableid:t.tableid});
