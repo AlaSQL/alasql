@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 2987 - Subquery caching optimization', function () {
-	const test = '2987';
+describe('Test 2280 - Subquery caching optimization', function () {
+	const test = '2280';
 
 	before(function () {
 		alasql('create database test' + test);
