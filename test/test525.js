@@ -6,7 +6,7 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
-describe('Test 926 - XLSXML XML character escaping', function () {
+describe('Test 525 - XLSXML XML character escaping', function () {
 	if (typeof exports === 'object') {
 		it('A) Export data with special XML characters', function (done) {
 			var data = [
@@ -16,7 +16,7 @@ describe('Test 926 - XLSXML XML character escaping', function () {
 				{name: 'Normal text', value: 100},
 			];
 
-			var outfile = __dirname + '/restest926.xls';
+			var outfile = __dirname + '/restest525.xls';
 			alasql('SELECT * INTO XLSXML(?,{headers:true}) FROM ?', [outfile, data], function () {
 				// Read the file and check if it's valid XML
 				fs.readFile(outfile, 'utf8', function (err, content) {
@@ -73,7 +73,7 @@ describe('Test 926 - XLSXML XML character escaping', function () {
 				{name: 'Quotes "test"', value: "It's > 5"},
 			];
 
-			var outfile = __dirname + '/restest926b.xls';
+			var outfile = __dirname + '/restest525b.xls';
 			alasql('SELECT * INTO XLSXML(?,{headers:true}) FROM ?', [outfile, data], function () {
 				// Try to read it back using alasql's XML parser
 				alasql('SELECT * FROM XML(?)', [outfile], function (res) {
@@ -100,7 +100,7 @@ describe('Test 926 - XLSXML XML character escaping', function () {
 				},
 			];
 
-			var outfile = __dirname + '/restest926c.xls';
+			var outfile = __dirname + '/restest525c.xls';
 			alasql('SELECT * INTO XLSXML(?,{headers:true}) FROM ?', [outfile, data], function () {
 				fs.readFile(outfile, 'utf8', function (err, content) {
 					if (err) {
