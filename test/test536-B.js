@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 926 - GROUP BY on field of type INTEGER with table prefix', function () {
-	const test = '926';
+describe('Test 536 - GROUP BY on field of type INTEGER with table prefix', function () {
+	const test = '536B';
 
 	before(function () {
 		alasql('create database test' + test);
