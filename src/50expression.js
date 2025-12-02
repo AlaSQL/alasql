@@ -734,7 +734,11 @@
 			}
 
 			if (context === 'g') {
-				return `g['${this.nick}']`;
+				// When accessing grouped columns, use columnid (without table prefix) if nick is not set
+				// This handles cases like: SELECT a.id + 1 FROM ... GROUP BY a.id
+				// where the column in the expression doesn't have nick set, but the group stores it by columnid
+				const nickToUse = this.nick || this.columnid;
+				return `g['${nickToUse}']`;
 			}
 
 			if (this.tableid) {
