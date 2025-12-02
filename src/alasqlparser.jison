@@ -857,8 +857,7 @@ FromClause
 		{ 
 			// Convert comma-separated tables after joins into CROSS JOINs
 			var joins = $3;
-			for(var i=0; i<$5.length; i++) {
-				var t = $5[i];
+			$5.forEach(function(t) {
 				var join = new yy.Join({joinmode:"CROSS"});
 				if(t.tableid) {
 					join.table = new yy.Table({databaseid:t.databaseid, tableid:t.tableid});
@@ -877,7 +876,7 @@ FromClause
 				}
 				if(t.as) join.as = t.as;
 				joins.push(join);
-			}
+			});
 			$$ = { from: $2, joins: joins }; 
 		}
 /*	| FROM LPAR FromTable JoinTablesList RPAR

@@ -468,8 +468,7 @@ case 175:
  
 			// Convert comma-separated tables after joins into CROSS JOINs
 			var joins = $$[$0-2];
-			for(var i=0; i<$$[$0].length; i++) {
-				var t = $$[$0][i];
+			$$[$0].forEach(function(t) {
 				var join = new yy.Join({joinmode:"CROSS"});
 				if(t.tableid) {
 					join.table = new yy.Table({databaseid:t.databaseid, tableid:t.tableid});
@@ -488,7 +487,7 @@ case 175:
 				}
 				if(t.as) join.as = t.as;
 				joins.push(join);
-			}
+			});
 			this.$ = { from: $$[$0-3], joins: joins }; 
 		
 break;
