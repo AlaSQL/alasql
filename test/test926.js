@@ -53,9 +53,7 @@ describe('Test 926 - XLSXML XML character escaping', function () {
 									// Check for unescaped ampersands (not part of entity reference)
 									var hasUnescapedAmp = /&(?![a-zA-Z]+;|#\d+;)/.test(innerText);
 									if (hasUnescapedAmp) {
-										throw new Error(
-											'Found unescaped ampersand in: ' + innerText
-										);
+										throw new Error('Found unescaped ampersand in: ' + innerText);
 									}
 								}
 							});
