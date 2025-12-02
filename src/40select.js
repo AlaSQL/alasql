@@ -503,8 +503,9 @@ function modify(query, res) {
 			columns = [];
 			if (query && query.sources) {
 				query.sources.forEach(source => {
-					if (source && source.columns && Array.isArray(source.columns))
+					if (source && source.columns && Array.isArray(source.columns)) {
 						columns = columns.concat(source.columns);
+					}
 				});
 			}
 		}
