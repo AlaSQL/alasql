@@ -502,10 +502,10 @@ function modify(query, res) {
 			// Cannot recognize columns
 			columns = [];
 			if (query && query.sources) {
-				query.sources.forEach((source) => {
-					if(source?.columns?.columnid != null)
-						columns = columns.concat({columnid:source?.columns?.columnid});
-				})
+				query.sources.forEach(source => {
+					if (source && source.columns && Array.isArray(source.columns))
+						columns = columns.concat(source.columns);
+				});
 			}
 		}
 	}
