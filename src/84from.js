@@ -41,7 +41,7 @@ alasql.from.HTML = function (selector, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 
 	var sel = document.querySelector(selector);
-	if (!sel && sel.tagName !== 'TABLE') {
+	if (!sel || sel.tagName !== 'TABLE') {
 		throw new Error('Selected HTML element is not a TABLE');
 	}
 
