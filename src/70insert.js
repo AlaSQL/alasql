@@ -23,6 +23,18 @@ yy.Insert.prototype.toString = function () {
 		s += ' VALUES ' + values.join(',');
 	}
 	if (this.select) s += ' ' + this.select.toString();
+	if (this.output) {
+		s += ' OUTPUT ';
+		s += this.output.columns.map(col => col.toString()).join(', ');
+		if (this.output.intovar) {
+			s += ' INTO ' + this.output.method + this.output.intovar;
+		} else if (this.output.intotable) {
+			s += ' INTO ' + this.output.intotable.toString();
+			if (this.output.intocolumns) {
+				s += '(' + this.output.intocolumns.map(col => col.toString()).join(', ') + ')';
+			}
+		}
+	}
 	return s;
 };
 
@@ -214,7 +226,21 @@ yy.Insert.prototype.compile = function (databaseid) {
 				"'].data.concat(aa);";
 		}
 
-		if (db.tables[tableid].insert) {
+		// Handle OUTPUT clause
+		if (self.output) {
+			s += 'var output = [];';
+			s += 'for(var i=0;i<aa.length;i++){';
+			s += 'var inserted = aa[i];';
+			s += 'var outputRow = {};';
+			// Process each output column
+			self.output.columns.forEach(function(col) {
+				var coljs = col.toJS('inserted', '');
+				s += "outputRow['" + (col.as || col.toString()) + "']=" + coljs + ";";
+			});
+			s += 'output.push(outputRow);';
+			s += '}';
+			s += 'return output;';
+		} else if (db.tables[tableid].insert) {
 			if (db.tables[tableid].isclass) {
 				s += 'return a.$id;';
 			} else {
@@ -250,16 +276,35 @@ yy.Insert.prototype.compile = function (databaseid) {
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
 			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
+				var insertedRows = [];
 				if (db.tables[tableid].insert) {
 					// If insert() function exists (issue #92)
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
 						var r = cloneDeep(res[i]);
 						defaultfn(r, db, params, alasql);
 						db.tables[tableid].insert(r, self.orreplace);
+						insertedRows.push(r);
 					}
 				} else {
+					insertedRows = res;
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
 				}
+				
+				// Handle OUTPUT clause
+				if (self.output) {
+					var output = [];
+					for (var i = 0; i < insertedRows.length; i++) {
+						var inserted = insertedRows[i];
+						var outputRow = {};
+						self.output.columns.forEach(function(col) {
+							var colname = col.as || col.toString();
+							outputRow[colname] = col.toJS('inserted', '');
+						});
+						output.push(outputRow);
+					}
+					return output;
+				}
+				
 				if (alasql.options.nocount) return;
 				else return res.length;
 			};

@@ -15,6 +15,18 @@ yy.Update.prototype.toString = function () {
 	var s = 'UPDATE ' + this.table.toString();
 	if (this.columns) s += ' SET ' + this.columns.toString();
 	if (this.where) s += ' WHERE ' + this.where.toString();
+	if (this.output) {
+		s += ' OUTPUT ';
+		s += this.output.columns.map(col => col.toString()).join(', ');
+		if (this.output.intovar) {
+			s += ' INTO ' + this.output.method + this.output.intovar;
+		} else if (this.output.intotable) {
+			s += ' INTO ' + this.output.intotable.toString();
+			if (this.output.intocolumns) {
+				s += '(' + this.output.intocolumns.map(col => col.toString()).join(', ') + ')';
+			}
+		}
+	}
 	return s;
 };
 
@@ -88,13 +100,26 @@ yy.Update.prototype.compile = function (databaseid) {
 		}
 		//		table.dirty = true;
 		var numrows = 0;
+		var updatedRows = [];
 		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 			if (!wherefn || wherefn(table.data[i], params, alasql)) {
+				// Track row state for OUTPUT clause (DELETED.*)
+				var oldRow = self.output ? cloneDeep(table.data[i]) : null;
+				
 				if (table.update) {
 					table.update(assignfn, i, params);
 				} else {
 					assignfn(table.data[i], params, alasql);
 				}
+				
+				// Track updated row for OUTPUT clause (INSERTED.*)
+				if (self.output) {
+					updatedRows.push({
+						deleted: oldRow,
+						inserted: cloneDeep(table.data[i])
+					});
+				}
+				
 				numrows++;
 			}
 		}
@@ -103,8 +128,50 @@ yy.Update.prototype.compile = function (databaseid) {
 			alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 		}
 
-		if (cb) cb(numrows);
-		return numrows;
+		var res = numrows;
+		
+		// Handle OUTPUT clause
+		if (self.output) {
+			var output = [];
+			for (var i = 0; i < updatedRows.length; i++) {
+				var deleted = updatedRows[i].deleted;
+				var inserted = updatedRows[i].inserted;
+				var outputRow = {};
+				self.output.columns.forEach(function(col) {
+					var colname = col.as || col.toString();
+					var coljs = col.toJS('r', '');
+					// Check if this references DELETED or INSERTED
+					if (coljs.indexOf('deleted.') >= 0 || coljs.indexOf('DELETED.') >= 0) {
+						try {
+							var evalFn = new Function('deleted', 'return ' + coljs.replace(/deleted\./gi, 'deleted.'));
+							outputRow[colname] = evalFn(deleted);
+						} catch (e) {
+							outputRow[colname] = undefined;
+						}
+					} else if (coljs.indexOf('inserted.') >= 0 || coljs.indexOf('INSERTED.') >= 0) {
+						try {
+							var evalFn = new Function('inserted', 'return ' + coljs.replace(/inserted\./gi, 'inserted.'));
+							outputRow[colname] = evalFn(inserted);
+						} catch (e) {
+							outputRow[colname] = undefined;
+						}
+					} else {
+						// Default to inserted values
+						try {
+							var evalFn = new Function('inserted', 'return ' + coljs.replace(/r\./g, 'inserted.').replace(/r\[/g, 'inserted['));
+							outputRow[colname] = evalFn(inserted);
+						} catch (e) {
+							outputRow[colname] = undefined;
+						}
+					}
+				});
+				output.push(outputRow);
+			}
+			res = output;
+		}
+
+		if (cb) cb(res);
+		return res;
 	};
 	return statement;
 };
