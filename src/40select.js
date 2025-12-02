@@ -139,11 +139,6 @@ yy.Select = class Select {
 	 Select statement in expression
 	 */
 	toJS(context) {
-		//	console.log('Expression',this);
-		//	if(this.expression.reduced) return 'true';
-		//	return this.expression.toJS(context, tableid, defcols);
-		// console.log('Select.toJS', 81, this.queriesidx);
-		//	var s = 'this.queriesdata['+(this.queriesidx-1)+'][0]';
 		var s =
 			'alasql.utils.flatArray(this.queriesfn[' +
 			(this.queriesidx - 1) +
@@ -191,6 +186,11 @@ yy.Select = class Select {
 		// For ROWNUM()
 		query.rownums = [];
 		query.grouprownums = [];
+
+		// Check if INTO OBJECT() is used - this affects how arrow expressions are compiled
+		if (this.into instanceof yy.FuncValue && this.into.funcid.toUpperCase() === 'OBJECT') {
+			query.intoObject = true;
+		}
 
 		this.compileSelectGroup0(query);
 
@@ -323,7 +323,8 @@ yy.Select = class Select {
 				// If this is INTO() function, then call it
 				// with one or two parameters
 				//
-				var qs = 'return alasql.into[' + JSON.stringify(this.into.funcid.toUpperCase()) + '](';
+				var funcid = this.into.funcid.toUpperCase();
+				var qs = 'return alasql.into[' + JSON.stringify(funcid) + '](';
 				if (this.into.args && this.into.args.length > 0) {
 					qs += this.into.args[0].toJS() + ',';
 					if (this.into.args.length > 1) {
@@ -335,6 +336,10 @@ yy.Select = class Select {
 					qs += 'undefined, undefined,';
 				}
 				query.intoallfns = qs + 'this.data,columns,cb)';
+				// Mark that OBJECT should preserve array results
+				if (funcid === 'OBJECT') {
+					query.preserveArrayResult = true;
+				}
 			} else if (this.into instanceof yy.ParamValue) {
 				//
 				// Save data into parameters array
@@ -496,6 +501,13 @@ function modify(query, res) {
 		} else {
 			// Cannot recognize columns
 			columns = [];
+			if (query && query.sources) {
+				query.sources.forEach(source => {
+					if (source && source.columns && Array.isArray(source.columns)) {
+						columns = columns.concat(source.columns);
+					}
+				});
+			}
 		}
 	}
 
@@ -550,6 +562,15 @@ function modify(query, res) {
 			const keyTextString =
 				columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
 			return res.map(row => row[keyTextString]).join('\n');
+
+		case 'ALASQL_DETAILS':
+			// Returns both data and column metadata in a structured format
+			// Useful for internal operations that need both data and column info in one call
+			return {
+				data: res,
+				columns: columns,
+				length: res.length,
+			};
 	}
 	return res;
 }

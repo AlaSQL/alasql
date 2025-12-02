@@ -75,20 +75,27 @@
 		"react-native-fetch-blob": "^0.10.8",
 		"rexreplace": "7.1.14",
 		"strftime": "0.10.3",
-		"tabletop": "1.6.3",
+		"tabletop": "^1.6.2",
 		"uglify-js": "3.19.3"
 	},
 	"resolutions": {
 		"got": "14",
-		"axios": "1",
+		"axios": "^1.13.2",
 		"json5": "2",
 		"underscore": "1",
 		"glob-parent": "6",
 		"decode-uri-component": "0.4",
 		"semver": "7",
-		"follow-redirects": "1",
+		"follow-redirects": "^1.15.11",
 		"js-yaml": "4",
-		"glob": "10.5"
+		"glob": "^13.0.0",
+		"rimraf": "^6.1.2"
+	},
+	"overrides": {
+		"axios": "^1.13.2",
+		"follow-redirects": "^1.15.11",
+		"glob": "^13.0.0",
+		"rimraf": "^6.1.2"
 	},
 	"engines": {
 		"node": ">=15"

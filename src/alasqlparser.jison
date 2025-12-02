@@ -207,6 +207,7 @@ DATABASE(S)?									return 'DATABASE'
 'READ'		                                    return 'READ'
 'RECORDSET'                                     return 'RECORDSET'
 'REDUCE'                                        return 'REDUCE'
+'RECURSIVE'                                     return 'RECURSIVE'
 'REFERENCES'                                    return 'REFERENCES'
 'REGEXP'		                                return 'REGEXP'
 'REINDEX'		                                return 'REINDEX'
@@ -268,6 +269,10 @@ SETS                                        	return 'SET'
 'WHILE'                                         return 'WHILE'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
+
+/* Issue #1173: Reject invalid identifiers like 6minAvgOpac (number followed by letters without space) */
+/* This rule must precede NUMBER to catch invalid patterns before they're tokenized as NUMBER + LITERAL */
+\d+[a-zA-Z_][a-zA-Z_0-9]*						return 'INVALID'
 (\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
 '->'											return 'ARROW'
 '#'												return 'SHARP'
@@ -293,7 +298,6 @@ SETS                                        	return 'SET'
 '!='											return 'NE'
 '('												return 'LPAR'
 ')'												return 'RPAR'
-'@'												return 'AT'
 '{'												return 'LCUR'
 '}'												return 'RCUR'
 
@@ -315,6 +319,7 @@ SETS                                        	return 'SET'
 '~'												return 'TILDA'
 
 [0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
+'@'												return 'AT'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
 
@@ -337,6 +342,7 @@ SETS                                        	return 'SET'
 %left DOT ARROW EXCLAMATION
 %left TILDA
 %left SHARP
+
 %left BARBAR
 
 %ebnf
@@ -350,7 +356,7 @@ Literal
 			else $$ = $1.toLowerCase();
 		}
 	| BRALITERAL
-		{ $$ = doubleq($1.substr(1,$1.length-2));}
+		{ $$ = doubleq($1.substr(1,$1.length-2)); }
 	| error NonReserved
 		{ $$ = $2.toLowerCase() }
 	;
@@ -496,13 +502,19 @@ WithSelect
 WithTablesList
 	: WithTablesList COMMA WithTable
 		{ $1.push($3); $$=$1; }
+	| WithTablesList COMMA RECURSIVE WithTable
+		{ $4.recursive = true; $1.push($4); $$=$1; }
 	| WithTable
 		{ $$ = [$1]; }
+	| RECURSIVE WithTable
+		{ $2.recursive = true; $$ = [$2]; }
 	;
 
 WithTable
 	: Literal AS LPAR Select RPAR
 		{ $$ = {name:$1, select:$4}; }
+	| Literal LPAR ColumnsList RPAR AS LPAR Select RPAR
+		{ $$ = {name:$1, columns:$3, select:$7}; }
 	;
 
 /* SELECT */
@@ -1192,6 +1204,8 @@ Column
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal DOT VALUE
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
+	| Literal DOT AT Literal
+		{ $$ = new yy.Column({columnid: '@'+$4, tableid: $1});}
 	| Literal
 		{ $$ = new yy.Column({columnid: $1});}
 	;

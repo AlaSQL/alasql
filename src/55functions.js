@@ -454,7 +454,9 @@ Object.keys(alasql._aggrOriginal).forEach(function (k) {
 
 // String functions
 stdfn.REPLACE = function (target, pattern, replacement) {
-	return (target || '').split(pattern).join(replacement);
+	return String(target ?? '')
+		.split(String(pattern ?? ''))
+		.join(String(replacement ?? ''));
 };
 
 // This array is required for fast GUID generation
