@@ -189,6 +189,8 @@
 
 	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^']);
 	const toTypeStringOps = new Set(['||']);
+	// Regex to detect identifiers that need bracket wrapping (spaces, dots, hyphens, square brackets)
+	const re_needsBrackets = /[\s.\-\[\]]/;
 	const toTypeBoolOps = new Set([
 		'AND',
 		'OR',
@@ -688,18 +690,34 @@
 			assign(this, params);
 		}
 
-		toString() {
-			let s = this.columnid;
+		// Check if identifier needs to be wrapped in brackets
+		// (numeric values, or contains spaces, dots, or other special characters)
+		static needsBrackets(id) {
+			if (id == null) return false;
+			// Numeric indices need brackets
+			if (id == +id) return true;
+			// Check for special characters that require brackets
+			return re_needsBrackets.test(id);
+		}
 
-			if (this.columnid == +this.columnid) {
-				s = '[' + this.columnid + ']';
+		static wrapId(id) {
+			if (Column.needsBrackets(id)) {
+				return '[' + id + ']';
 			}
+			return id;
+		}
+
+		toString() {
+			const colNeedsBrackets = Column.needsBrackets(this.columnid);
+			let s = colNeedsBrackets ? '[' + this.columnid + ']' : this.columnid;
 
 			if (this.tableid) {
-				s = this.tableid + (this.columnid === +this.columnid ? '' : '.') + s;
+				// Omit dot separator when columnid is wrapped in brackets (e.g., table[1] not table.[1])
+				const separator = colNeedsBrackets ? '' : '.';
+				s = Column.wrapId(this.tableid) + separator + s;
 
 				if (this.databaseid) {
-					s = this.databaseid + '.' + s;
+					s = Column.wrapId(this.databaseid) + '.' + s;
 				}
 			}
 
