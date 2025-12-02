@@ -101,4 +101,29 @@ describe('Test 2280 - Subquery caching optimization', function () {
 		// Without caching (re-executing subquery per row), it would take 100+ ms
 		assert.ok(avgTime < 50, 'Query should complete quickly with caching (avg: ' + avgTime + 'ms)');
 	});
+
+	it('G) Correlated subqueries are detected and not cached', function () {
+		// Create test tables
+		alasql('CREATE TABLE outer_table (id INT, val INT)');
+		alasql('CREATE TABLE inner_table (outer_id INT, data INT)');
+
+		alasql('INSERT INTO outer_table VALUES (1, 100), (2, 200), (3, 300)');
+		alasql('INSERT INTO inner_table VALUES (1, 10), (2, 20), (3, 30)');
+
+		// This subquery references outer_table.val, making it correlated
+		const result = alasql(
+			'SELECT * FROM outer_table WHERE id IN (SELECT outer_id FROM inner_table WHERE outer_table.val > 150)'
+		);
+
+		// Should return rows with id 2 and 3 (val > 150)
+		assert.strictEqual(result.length, 2);
+		assert.ok(result.some(r => r.id === 2 && r.val === 200));
+		assert.ok(result.some(r => r.id === 3 && r.val === 300));
+
+		// Verify the query was marked as correlated
+		const compiled = alasql.compile(
+			'SELECT * FROM outer_table WHERE id IN (SELECT outer_id FROM inner_table WHERE outer_table.val > 150)'
+		);
+		assert.strictEqual(compiled.query.queriesfn[0].query.isCorrelated, true);
+	});
 });
