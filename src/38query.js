@@ -137,13 +137,25 @@ function queryfn3(query) {
 				var d = query.selectgfn(g, query.params, alasql);
 
 				for (const key in query.groupColumns) {
-					// ony remove columns where the alias is also not a column in the result
+					// only remove columns where the alias is also not a column in the result
+					// and no other alias in the result also points to the same nick
 					if (
 						query.groupColumns[key] !== key &&
 						d[query.groupColumns[key]] &&
 						!query.groupColumns[query.groupColumns[key]]
 					) {
-						delete d[query.groupColumns[key]];
+						// Check if any other key in the result also maps to this nick
+						var nick = query.groupColumns[key];
+						var otherAliasExists = false;
+						for (const otherKey in query.groupColumns) {
+							if (otherKey !== key && query.groupColumns[otherKey] === nick && d[otherKey]) {
+								otherAliasExists = true;
+								break;
+							}
+						}
+						if (!otherAliasExists) {
+							delete d[query.groupColumns[key]];
+						}
 					}
 				}
 				query.data.push(d);
