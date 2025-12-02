@@ -304,7 +304,7 @@ SETS                                        	return 'SET'
 
 ']'												return 'RBRA'
 
-
+':-'											return 'COLONDASH'
 '?-'											return 'QUESTIONDASH'
 '..'											return 'DOTDOT'
 '.'												return 'DOT'
@@ -2485,8 +2485,6 @@ JsonValue
 JsonPrimitiveValue
 	: NumValue
 		{ $$ = +$1.value; }
-	| MINUS NumValue
-		{ $$ = -$2.value; }
 	| StringValue
 		{ $$ = ""+$1.value; }
 	| LogicValue
@@ -2536,6 +2534,12 @@ JsonProperty
 		{ $$ = {}; $$[$1] = $3; }
 	| Literal COLON JsonValue
 		{ $$ = {}; $$[$1] = $3; }
+	| STRING COLONDASH NumValue
+		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = -$3.value; }
+	| NUMBER COLONDASH NumValue
+		{ $$ = {}; $$[$1] = -$3.value; }
+	| Literal COLONDASH NumValue
+		{ $$ = {}; $$[$1] = -$3.value; }
 /*	| STRING COLON ParamValue
 		{ $$ = {}; $$[$1.substr(1,$1.length-2)] = $3; }
 	| NUMBER COLON ParamValue
@@ -3031,10 +3035,10 @@ DeleteEdge
 	;
 
 AddRule
-	: Term COLON MINUS TermsList
-		{ $$ = new yy.AddRule({left:$1, right:$4}); }
-	| COLON MINUS TermsList
-		{ $$ = new yy.AddRule({right:$3}); }
+	: Term COLONDASH TermsList
+		{ $$ = new yy.AddRule({left:$1, right:$3}); }
+	| COLONDASH TermsList
+		{ $$ = new yy.AddRule({right:$2}); }
 	;
 
 TermsList
