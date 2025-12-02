@@ -853,6 +853,33 @@ FromClause
 		{ $$ = { from: [$2], joins: $3 }; }
 */	| FROM FromTablesList JoinTablesList
 		{ $$ = { from: $2, joins: $3 }; }
+	| FROM FromTablesList JoinTablesList COMMA FromTablesList
+		{ 
+			// Convert comma-separated tables after joins into CROSS JOINs
+			var joins = $3;
+			for(var i=0; i<$5.length; i++) {
+				var t = $5[i];
+				var join = new yy.Join({joinmode:"CROSS"});
+				if(t.tableid) {
+					join.table = new yy.Table({databaseid:t.databaseid, tableid:t.tableid});
+				} else if(t instanceof yy.Select) {
+					join.select = t;
+				} else if(t instanceof yy.Search) {
+					join.search = t;
+				} else if(t instanceof yy.ParamValue) {
+					join.param = t;
+				} else if(t instanceof yy.VarValue) {
+					join.variable = t.variable;
+				} else if(t instanceof yy.FuncValue) {
+					join.func = t;
+				} else if(t instanceof yy.Json) {
+					join.json = t;
+				}
+				if(t.as) join.as = t.as;
+				joins.push(join);
+			}
+			$$ = { from: $2, joins: joins }; 
+		}
 /*	| FROM LPAR FromTable JoinTablesList RPAR
 		{ $$ = { from: [$3], joins: $4 }; }
 */	| FROM LPAR FromTablesList JoinTablesList RPAR

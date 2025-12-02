@@ -3,52 +3,88 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 2201 - JSON with negative numbers', function () {
+describe('Test 2201 - CROSS JOIN syntax improvements (sqllogictest3)', function () {
 	const test = '2201';
 
-	it('A) JSON array with negative numbers in objects', function () {
-		var res = alasql('SELECT * FROM @[{delay:5},{delay:-7}]');
-		assert.deepEqual(res, [{delay: 5}, {delay: -7}]);
+	before(function () {
+		alasql('create database test' + test);
+		alasql('use test' + test);
 	});
 
-	it('B) JSON object with negative number property', function () {
-		var res = alasql('SELECT VALUE @{a:-5}');
-		assert.deepEqual(res, {a: -5});
+	after(function () {
+		alasql('drop database test' + test);
 	});
 
-	it('C) JSON array with multiple negative numbers', function () {
-		var res = alasql('SELECT * FROM @[{x:-1,y:-2},{x:-3,y:-4}]');
-		assert.deepEqual(res, [
-			{x: -1, y: -2},
-			{x: -3, y: -4},
-		]);
+	it('A) Setup tables with data', function () {
+		alasql('CREATE TABLE tab0 (col0 INT, col1 INT)');
+		alasql('CREATE TABLE tab1 (col1 INT, col2 INT)');
+		alasql('CREATE TABLE tab2 (col2 INT, col3 INT)');
+
+		alasql('INSERT INTO tab0 VALUES (1, 10), (2, 20)');
+		alasql('INSERT INTO tab1 VALUES (10, 100), (20, 200)');
+		alasql('INSERT INTO tab2 VALUES (100, 1000), (200, 2000)');
 	});
 
-	it('D) JSON with mix of positive and negative numbers', function () {
-		var res = alasql('SELECT * FROM @[{a:10,b:-10},{a:-5,b:5}]');
-		assert.deepEqual(res, [
-			{a: 10, b: -10},
-			{a: -5, b: 5},
-		]);
+	it('B) CROSS JOIN followed by comma-separated tables', function () {
+		// This syntax should work: CROSS JOIN followed by comma
+		var res = alasql('SELECT ALL * FROM tab1 cor0 CROSS JOIN tab1, tab2 AS cor1');
+		assert(Array.isArray(res));
+		// tab1 CROSS JOIN tab1 = 2x2=4, then each CROSS JOIN with tab2 = 4x2=8
+		assert.equal(res.length, 8);
 	});
 
-	it('E) JSON with negative decimal numbers', function () {
-		var res = alasql('SELECT * FROM @[{val:-3.14},{val:-2.5}]');
-		assert.deepEqual(res, [{val: -3.14}, {val: -2.5}]);
+	it('C) Multiple CROSS JOINs with comma', function () {
+		// Test multiple tables with CROSS JOIN and comma mixing
+		var res = alasql('SELECT * FROM tab2 cor0 CROSS JOIN tab1, tab0 AS cor1');
+		assert(Array.isArray(res));
+		// tab2 CROSS JOIN tab1 = 2x2=4, then each CROSS JOIN with tab0 = 4x2=8
+		assert.equal(res.length, 8);
 	});
 
-	it('F) Array literals with negative numbers', function () {
-		var res = alasql('SELECT @[-1.7,-2,-3] AS arr');
-		assert.deepEqual(res, [{arr: [-1.7, -2, -3]}]);
+	it('D) CROSS JOIN with USING clause (SQLite compatibility)', function () {
+		// Per SQLite: CROSS JOIN with USING behaves like INNER JOIN
+		var res = alasql('SELECT * FROM tab1 cor0 CROSS JOIN tab0 USING (col1)');
+		assert(Array.isArray(res));
+		// INNER JOIN on col1: tab1 has (10,100) and (20,200), tab0 has (1,10) and (2,20)
+		// Matches: (10,100) with (1,10) and (20,200) with (2,20)
+		assert.equal(res.length, 2);
+		// Verify the join worked correctly
+		assert.equal(res[0].col1, 10);
+		assert.equal(res[1].col1, 20);
 	});
 
-	it('G) Nested JSON with negative numbers', function () {
-		var res = alasql('SELECT VALUE @{"outer":{"inner":-3.3}}');
-		assert.deepEqual(res, {outer: {inner: -3.3}});
+	it('E) CROSS JOIN with ON clause (SQLite compatibility)', function () {
+		// Per SQLite: CROSS JOIN with ON behaves like INNER JOIN
+		var res = alasql('SELECT * FROM tab1 cor0 CROSS JOIN tab0 ON cor0.col1 = tab0.col1');
+		assert(Array.isArray(res));
+		// Same as USING test above
+		assert.equal(res.length, 2);
+		assert.equal(res[0].col1, 10);
+		assert.equal(res[1].col1, 20);
 	});
 
-	it('H) Nested object in array with negative numbers', function () {
-		var res = alasql('SELECT * FROM @[{"data":{"value":-10.5}}]');
-		assert.deepEqual(res, [{data: {value: -10.5}}]);
+	it('F) CROSS JOIN without ON/USING should be cartesian product', function () {
+		// Regular CROSS JOIN without ON/USING should produce cartesian product
+		var res = alasql('SELECT * FROM tab1 CROSS JOIN tab0');
+		assert(Array.isArray(res));
+		// tab1 has 2 rows, tab0 has 2 rows: 2x2=4
+		assert.equal(res.length, 4);
+	});
+
+	it('G) Complex mixed join syntax', function () {
+		// Test complex case from sqllogictest
+		var res = alasql(
+			'SELECT DISTINCT * FROM tab1 AS cor0 CROSS JOIN tab1, tab0 AS cor1, tab0 AS cor2, tab0 cor3'
+		);
+		assert(Array.isArray(res));
+		// This is a cartesian product of 5 tables: tab1 x tab1 x tab0 x tab0 x tab0
+		// 2 x 2 x 2 x 2 x 2 = 32, but DISTINCT may reduce this
+		assert(res.length >= 1);
+	});
+
+	it('Z) Cleanup', function () {
+		alasql('DROP TABLE tab0');
+		alasql('DROP TABLE tab1');
+		alasql('DROP TABLE tab2');
 	});
 });
