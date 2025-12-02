@@ -127,15 +127,25 @@ IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 
 IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (!found) {
 		const err = new Error(
 			`IndexedDB: Cannot attach database "${ixdbid}" because it does not exist`
 		);
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return;
+		}
 		throw err;
 	}
 
