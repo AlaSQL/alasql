@@ -1069,6 +1069,10 @@ GroupClause
 	: { $$ = undefined; }
 	| GROUP BY GroupExpressionsList HavingClause
 		{ $$ = {group:$3}; yy.extend($$,$4); }
+	| GROUP BY GroupExpressionsList WITH ROLLUP HavingClause
+		{ $$ = {group:[new yy.GroupExpression({type:'ROLLUP', group: $3})]}; yy.extend($$,$6); }
+	| GROUP BY GroupExpressionsList WITH CUBE HavingClause
+		{ $$ = {group:[new yy.GroupExpression({type:'CUBE', group: $3})]}; yy.extend($$,$6); }
 	;
 
 GroupExpressionsList
