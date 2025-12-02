@@ -502,9 +502,12 @@ function modify(query, res) {
 			return {columnid: columnid};
 		});
 		
-		// If we already have some columns (e.g., from explicit column expressions),
-		// merge them with data columns, avoiding duplicates
-		if (columns && columns.length > 0) {
+		// If we don't have any columns yet, just use the data columns
+		if (!columns || columns.length === 0) {
+			columns = dataColumns;
+		} else {
+			// We have some columns (e.g., from explicit column expressions),
+			// merge them with data columns, avoiding duplicates
 			var existingColumnIds = {};
 			columns.forEach(function(col) {
 				existingColumnIds[col.columnid] = true;
@@ -516,10 +519,8 @@ function modify(query, res) {
 					columns.push(col);
 				}
 			});
-		} else {
-			columns = dataColumns;
 		}
-	} else if (typeof columns === 'undefined' || columns.length == 0) {
+	} else if (typeof columns === 'undefined' || columns.length === 0) {
 		// Try to create columns
 		if (res.length > 0) {
 			var allcol = {};
