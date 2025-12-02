@@ -18,12 +18,18 @@ describe('Test 2201 - JSON with negative numbers', function () {
 
 	it('C) JSON array with multiple negative numbers', function () {
 		var res = alasql('SELECT * FROM @[{x:-1,y:-2},{x:-3,y:-4}]');
-		assert.deepEqual(res, [{x: -1, y: -2}, {x: -3, y: -4}]);
+		assert.deepEqual(res, [
+			{x: -1, y: -2},
+			{x: -3, y: -4},
+		]);
 	});
 
 	it('D) JSON with mix of positive and negative numbers', function () {
 		var res = alasql('SELECT * FROM @[{a:10,b:-10},{a:-5,b:5}]');
-		assert.deepEqual(res, [{a: 10, b: -10}, {a: -5, b: 5}]);
+		assert.deepEqual(res, [
+			{a: 10, b: -10},
+			{a: -5, b: 5},
+		]);
 	});
 
 	it('E) JSON with negative decimal numbers', function () {
