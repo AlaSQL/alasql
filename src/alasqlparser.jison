@@ -304,7 +304,7 @@ SETS                                        	return 'SET'
 
 ']'												return 'RBRA'
 
-':-'											return 'COLONDASH'
+
 '?-'											return 'QUESTIONDASH'
 '..'											return 'DOTDOT'
 '.'												return 'DOT'
@@ -2485,6 +2485,8 @@ JsonValue
 JsonPrimitiveValue
 	: NumValue
 		{ $$ = +$1.value; }
+	| MINUS NumValue
+		{ $$ = -$2.value; }
 	| StringValue
 		{ $$ = ""+$1.value; }
 	| LogicValue
@@ -3029,10 +3031,10 @@ DeleteEdge
 	;
 
 AddRule
-	: Term COLONDASH TermsList
-		{ $$ = new yy.AddRule({left:$1, right:$3}); }
-	| COLONDASH TermsList
-		{ $$ = new yy.AddRule({right:$2}); }
+	: Term COLON MINUS TermsList
+		{ $$ = new yy.AddRule({left:$1, right:$4}); }
+	| COLON MINUS TermsList
+		{ $$ = new yy.AddRule({right:$3}); }
 	;
 
 TermsList
