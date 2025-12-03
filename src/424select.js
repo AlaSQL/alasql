@@ -608,6 +608,16 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 yy.Select.prototype.compileSelectGroup2 = function (query) {
 	var self = this;
 	var s = query.selectgfns;
+	
+	// Create a lookup map for GROUP BY columns to optimize performance
+	var groupColMap = {};
+	if (self.group) {
+		self.group.forEach(function (gp) {
+			var key = (gp.tableid || '') + '\t' + gp.columnid;
+			groupColMap[key] = gp;
+		});
+	}
+	
 	self.columns.forEach(function (col) {
 		//			 console.log(col);
 		// Skip SELECT * columns as they are handled differently
@@ -618,9 +628,8 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 		// For columns with renamed nicks (e.g., 'x:1'), we need to check the original columnid
 		var groupCol = null;
 		if (col instanceof yy.Column && self.group) {
-			groupCol = self.group.find(function (gp) {
-				return gp.columnid === col.columnid && gp.tableid === col.tableid;
-			});
+			var key = (col.tableid || '') + '\t' + col.columnid;
+			groupCol = groupColMap[key];
 		}
 		var isInGroup = groupCol !== null || query.ingroup.indexOf(col.nick) > -1;
 		if (isInGroup) {
