@@ -610,25 +610,22 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 	var s = query.selectgfns;
 	self.columns.forEach(function (col) {
 		//			 console.log(col);
+		// Skip SELECT * columns as they are handled differently
+		if (col instanceof yy.Column && col.columnid === '*') {
+			return;
+		}
 		// Check if this column is part of GROUP BY
 		// For columns with renamed nicks (e.g., 'x:1'), we need to check the original columnid
-		var isInGroup = false;
+		var groupCol = null;
 		if (col instanceof yy.Column && self.group) {
-			isInGroup = self.group.some(function (gp) {
+			groupCol = self.group.find(function (gp) {
 				return gp.columnid === col.columnid && gp.tableid === col.tableid;
 			});
 		}
-		if (isInGroup || query.ingroup.indexOf(col.nick) > -1) {
-			// For columns in GROUP BY, we need to find the actual nick used in the group object
-			var groupNick = col.nick;
-			if (self.group && col instanceof yy.Column) {
-				var groupCol = self.group.find(function (gp) {
-					return gp.columnid === col.columnid && gp.tableid === col.tableid;
-				});
-				if (groupCol && groupCol.nick) {
-					groupNick = groupCol.nick;
-				}
-			}
+		var isInGroup = groupCol !== null || query.ingroup.indexOf(col.nick) > -1;
+		if (isInGroup) {
+			// For columns in GROUP BY, use the GROUP BY column's nick if available
+			var groupNick = (groupCol && groupCol.nick) || col.nick;
 			s += "r['" + (col.as || col.nick) + "']=g['" + groupNick + "'];";
 		}
 	});
