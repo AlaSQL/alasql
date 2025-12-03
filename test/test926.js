@@ -17,14 +17,17 @@ describe('Test 926 - REGEXP with MySQL word boundaries', function () {
 
 	it('A) Test REGEXP with [[:<:]] and [[:>:]] word boundaries', function () {
 		var sql =
-			"CREATE TABLE cities (city string, population number);" +
+			'CREATE TABLE cities (city string, population number);' +
 			"INSERT INTO cities VALUES ('Rome,madrid',2863223),('Paris',2249975),('Berlin,rid',3517424), ('Madrid',3041579);" +
 			"SELECT * FROM cities WHERE city REGEXP '[[:<:]]rid[[:>:]]';";
 
 		var res = alasql(sql);
-		assert.equal(res.length, 1, 'Should match exactly one city');
-		assert.equal(res[0].city, 'Berlin,rid', 'Should match Berlin,rid');
-		assert.equal(res[0].population, 3517424, 'Should have correct population');
+		// When multiple statements are executed, result is an array with each statement's result
+		// [1, 4, [{matching_rows}]] where 1 = CREATE result, 4 = INSERT count, last = SELECT result
+		var selectResult = res[2];
+		assert.equal(selectResult.length, 1, 'Should match exactly one city');
+		assert.equal(selectResult[0].city, 'Berlin,rid', 'Should match Berlin,rid');
+		assert.equal(selectResult[0].population, 3517424, 'Should have correct population');
 	});
 
 	it('B) Test that REGEXP does not match partial words', function () {
