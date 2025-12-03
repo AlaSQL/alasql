@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 2201 - INTERSECT/EXCEPT with ORDER BY', function () {
-	const test = '2201';
+describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
+	const test = '635B';
 
 	before(function () {
 		alasql('create database test' + test);
