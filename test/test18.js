@@ -131,24 +131,18 @@ describe('Test 18 - Binary operators (<<, >>, &, |, ^)', function () {
 	});
 
 	it('H) Binary operators in WHERE clause', function () {
-		alasql('CREATE TABLE flags (value INT)');
+		alasql('CREATE TABLE flags (num INT)');
 		alasql('INSERT INTO flags VALUES (1), (2), (3), (4), (5), (6), (7), (8)');
 
 		// Find values where bit 1 (2^0) is set
-		var res = alasql('SELECT value FROM flags WHERE (value & 1) = 1');
+		var res = alasql('SELECT num FROM flags WHERE (num & 1) = 1');
 		assert.equal(res.length, 4);
-		assert.deepEqual(
-			res.map(r => r.value).sort(),
-			[1, 3, 5, 7]
-		);
+		assert.deepEqual(res.map(r => r.num).sort(), [1, 3, 5, 7]);
 
 		// Find values where bit 2 (2^1) is set
-		res = alasql('SELECT value FROM flags WHERE (value & 2) = 2');
+		res = alasql('SELECT num FROM flags WHERE (num & 2) = 2');
 		assert.equal(res.length, 4);
-		assert.deepEqual(
-			res.map(r => r.value).sort(),
-			[2, 3, 6, 7]
-		);
+		assert.deepEqual(res.map(r => r.num).sort(), [2, 3, 6, 7]);
 
 		alasql('DROP TABLE flags');
 	});
