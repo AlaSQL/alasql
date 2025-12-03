@@ -187,4 +187,3 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		assert.deepEqual(result, expected);
 	});
 });
-});
