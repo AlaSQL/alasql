@@ -35,9 +35,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 
 	it('C) INTERSECT with SELECT * and ORDER BY', function () {
 		alasql('CREATE TABLE Persons (eventStart INT, eventEnd INT)');
-		alasql(
-			'INSERT INTO Persons VALUES (1000000, 1000100), (1000050, 1000150), (1000200, 1000300)'
-		);
+		alasql('INSERT INTO Persons VALUES (1000000, 1000100), (1000050, 1000150), (1000200, 1000300)');
 		var res = alasql(
 			'SELECT * FROM Persons INTERSECT SELECT * FROM Persons WHERE eventStart BETWEEN 1000000 AND 1000100 OR eventEnd BETWEEN 1000000 AND 1000100 ORDER BY eventStart'
 		);
@@ -50,9 +48,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 
 	it('D) EXCEPT with SELECT * and ORDER BY', function () {
 		alasql('CREATE TABLE Persons (eventStart INT, eventEnd INT)');
-		alasql(
-			'INSERT INTO Persons VALUES (1000000, 1000100), (1000050, 1000150), (1000200, 1000300)'
-		);
+		alasql('INSERT INTO Persons VALUES (1000000, 1000100), (1000050, 1000150), (1000200, 1000300)');
 		var res = alasql(
 			'SELECT * FROM Persons EXCEPT SELECT * FROM Persons WHERE eventStart > 1000100 ORDER BY eventStart'
 		);
@@ -67,9 +63,7 @@ describe('Test 635-B - INTERSECT/EXCEPT with ORDER BY', function () {
 		// This test validates the fix for issue #635 where ORDER BY with INTERSECT caused
 		// "Unable to get property 'modifier' of undefined" error
 		alasql('CREATE TABLE Persons (eventStart INT, eventEnd INT)');
-		alasql(
-			'INSERT INTO Persons VALUES (1000000, 1000100), (1000050, 1000150), (1000200, 1000300)'
-		);
+		alasql('INSERT INTO Persons VALUES (1000000, 1000100), (1000050, 1000150), (1000200, 1000300)');
 		// Testing the exact scenario from the issue: INTERSECT with WHERE and ORDER BY
 		var res = alasql(
 			'SELECT * FROM Persons INTERSECT SELECT * FROM Persons WHERE eventStart BETWEEN 1000000 AND 1000100 OR eventEnd BETWEEN 1000000 AND 1000100 ORDER BY eventStart'
