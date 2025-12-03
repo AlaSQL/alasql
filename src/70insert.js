@@ -68,6 +68,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var s = '';
 	var sw = '';
 	var s = "db.tables['" + tableid + "'].dirty=true;";
+	// aa = array to accumulate inserted rows (used for OUTPUT clause and concat to table.data)
 	var s3 = 'var a,aa=[],x;';
 
 	var s33;

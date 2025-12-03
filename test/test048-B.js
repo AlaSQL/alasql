@@ -38,14 +38,12 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		alasql('INSERT INTO orders VALUES (1, "Alice", 100), (2, "Bob", 200), (3, "Charlie", 150)');
 		var res = alasql('DELETE FROM orders WHERE amount > 120 OUTPUT DELETED.*');
 		assert.equal(res.length, 2);
-		assert.equal(res[0].customer, 'Bob');
-		assert.equal(res[0].amount, 200);
-		assert.equal(res[1].customer, 'Charlie');
-		assert.equal(res[1].amount, 150);
+		assert.deepEqual(res[0], {id: 2, customer: 'Bob', amount: 200});
+		assert.deepEqual(res[1], {id: 3, customer: 'Charlie', amount: 150});
 		// Verify remaining data
 		var remaining = alasql('SELECT * FROM orders');
 		assert.equal(remaining.length, 1);
-		assert.equal(remaining[0].customer, 'Alice');
+		assert.deepEqual(remaining[0], {id: 1, customer: 'Alice', amount: 100});
 	});
 
 	it('D) DELETE with OUTPUT clause - specific columns', function () {
@@ -63,10 +61,10 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 			'UPDATE employees SET salary = salary * 1.1 WHERE id = 1 OUTPUT INSERTED.id, INSERTED.name, INSERTED.salary'
 		);
 		assert.equal(res.length, 1);
+		// Use approximate equality for floating point
 		assert.equal(res[0].id, 1);
 		assert.equal(res[0].name, 'John');
-		// Use approximate equality for floating point
-		assert.ok(Math.abs(res[0].salary - 55000) < 0.01);
+		assert.ok(Math.abs(res[0].salary - 55000) < 0.01, 'Expected salary ~55000, got ' + res[0].salary);
 	});
 
 	it('F) UPDATE with OUTPUT clause - DELETED columns', function () {
@@ -74,7 +72,7 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		alasql('INSERT INTO stock VALUES (1, "AAPL", 150), (2, "GOOGL", 2800)');
 		var res = alasql('UPDATE stock SET price = 160 WHERE symbol = "AAPL" OUTPUT DELETED.price');
 		assert.equal(res.length, 1);
-		assert.equal(res[0].price, 150);
+		assert.deepEqual(res[0], {price: 150});
 	});
 
 	it('G) UPDATE with OUTPUT clause - both INSERTED and DELETED', function () {
