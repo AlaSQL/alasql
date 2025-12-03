@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 926 - REGEXP with MySQL word boundaries', function () {
-	const test = '926';
+describe('Test 1384 - REGEXP with MySQL word boundaries', function () {
+	const test = '1384';
 
 	before(function () {
 		alasql('create database test' + test);
