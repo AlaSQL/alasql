@@ -187,7 +187,7 @@
 		}
 	}
 
-	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^']);
+	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^', '<<', '>>', '&', '|']);
 	const toTypeStringOps = new Set(['||']);
 	// Regex to detect identifiers that need bracket wrapping (spaces, dots, hyphens, square brackets)
 	const re_needsBrackets = /[\s.\-\[\]]/;
