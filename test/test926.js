@@ -7,7 +7,10 @@ describe('Test 926 - GROUP BY with duplicate column names', function () {
 	const test = '926';
 
 	it('A) GROUP BY on same column twice with different aliases', function () {
-		var accounts = [{name: 'A', region_id: 1}, {name: 'B', region_id: 2}];
+		var accounts = [
+			{name: 'A', region_id: 1},
+			{name: 'B', region_id: 2},
+		];
 
 		var result = alasql(
 			'SELECT accounts.name AS `AccountName`, accounts.name AS `AccountName2`, COUNT(1) AS `Count` FROM ? accounts GROUP BY accounts.name',
@@ -16,24 +19,18 @@ describe('Test 926 - GROUP BY with duplicate column names', function () {
 
 		// Both AccountName and AccountName2 should be present in the result
 		assert(result.length === 2, 'Should have 2 rows');
-		assert(
-			result[0].hasOwnProperty('AccountName'),
-			'AccountName should exist in first row'
-		);
-		assert(
-			result[0].hasOwnProperty('AccountName2'),
-			'AccountName2 should exist in first row'
-		);
+		assert(result[0].hasOwnProperty('AccountName'), 'AccountName should exist in first row');
+		assert(result[0].hasOwnProperty('AccountName2'), 'AccountName2 should exist in first row');
 		assert(result[0].AccountName === 'A' || result[0].AccountName === 'B', 'AccountName value');
-		assert(
-			result[0].AccountName2 === 'A' || result[0].AccountName2 === 'B',
-			'AccountName2 value'
-		);
+		assert(result[0].AccountName2 === 'A' || result[0].AccountName2 === 'B', 'AccountName2 value');
 		assert(result[0].AccountName === result[0].AccountName2, 'Both should have same value');
 	});
 
 	it('B) GROUP BY with join on columns with same name', function () {
-		var accounts = [{name: 'A', region_id: 1}, {name: 'B', region_id: 2}];
+		var accounts = [
+			{name: 'A', region_id: 1},
+			{name: 'B', region_id: 2},
+		];
 
 		var regions = [
 			{id: 1, name: 'North'},
@@ -62,10 +59,7 @@ describe('Test 926 - GROUP BY with duplicate column names', function () {
 	it('C) GROUP BY on same column three times', function () {
 		var data = [{x: 1}, {x: 2}];
 
-		var result = alasql(
-			'SELECT x AS a, x AS b, x AS c, COUNT(1) AS cnt FROM ? GROUP BY x',
-			[data]
-		);
+		var result = alasql('SELECT x AS a, x AS b, x AS c, COUNT(1) AS cnt FROM ? GROUP BY x', [data]);
 
 		assert(result.length === 2, 'Should have 2 rows');
 		assert(result[0].hasOwnProperty('a'), 'a should exist');
