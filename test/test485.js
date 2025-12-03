@@ -37,9 +37,7 @@ describe('Test 485 - UNION (ALL) with HTML tables', function () {
 		// This verifies UNION ALL functionality with regular in-memory tables
 		// which is the same operation that would be performed on HTML tables
 
-		var res = alasql(
-			'SELECT 1 as ID, "John" as Name UNION ALL SELECT 2 as ID, "Jane" as Name'
-		);
+		var res = alasql('SELECT 1 as ID, "John" as Name UNION ALL SELECT 2 as ID, "Jane" as Name');
 
 		assert.equal(res.length, 2, 'UNION ALL should return 2 rows');
 		assert.deepEqual(
