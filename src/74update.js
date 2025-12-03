@@ -38,6 +38,7 @@ yy.SetColumn.prototype.toString = function () {
 };
 
 yy.Update.prototype.compile = function (databaseid) {
+	var self = this;
 	//	console.log(this);
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
@@ -138,30 +139,17 @@ yy.Update.prototype.compile = function (databaseid) {
 				var inserted = updatedRows[i].inserted;
 				var outputRow = {};
 				self.output.columns.forEach(function(col) {
-					var colname = col.as || col.toString();
-					var coljs = col.toJS('r', '');
-					// Check if this references DELETED or INSERTED
-					if (coljs.indexOf('deleted.') >= 0 || coljs.indexOf('DELETED.') >= 0) {
-						try {
-							var evalFn = new Function('deleted', 'return ' + coljs.replace(/deleted\./gi, 'deleted.'));
-							outputRow[colname] = evalFn(deleted);
-						} catch (e) {
-							outputRow[colname] = undefined;
-						}
-					} else if (coljs.indexOf('inserted.') >= 0 || coljs.indexOf('INSERTED.') >= 0) {
-						try {
-							var evalFn = new Function('inserted', 'return ' + coljs.replace(/inserted\./gi, 'inserted.'));
-							outputRow[colname] = evalFn(inserted);
-						} catch (e) {
-							outputRow[colname] = undefined;
-						}
+					if (col.columnid === '*') {
+						// For *, use INSERTED values
+						for(var key in inserted){ outputRow[key] = inserted[key]; }
 					} else {
-						// Default to inserted values
-						try {
-							var evalFn = new Function('inserted', 'return ' + coljs.replace(/r\./g, 'inserted.').replace(/r\[/g, 'inserted['));
-							outputRow[colname] = evalFn(inserted);
-						} catch (e) {
-							outputRow[colname] = undefined;
+						var colname = col.as || col.columnid;
+						// Check tableid to determine which version to use
+						if (col.tableid === 'DELETED') {
+							outputRow[colname] = deleted[col.columnid];
+						} else {
+							// Default to INSERTED
+							outputRow[colname] = inserted[col.columnid];
 						}
 					}
 				});

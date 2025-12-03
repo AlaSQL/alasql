@@ -203,6 +203,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 			if (db.tables[tableid].insert) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
 				s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
+				// Also push to aa for OUTPUT clause
+				if (self.output) {
+					s += 'aa.push(a);';
+				}
 			} else {
 				s += 'aa.push(a);';
 			}
@@ -230,12 +234,18 @@ yy.Insert.prototype.compile = function (databaseid) {
 		if (self.output) {
 			s += 'var output = [];';
 			s += 'for(var i=0;i<aa.length;i++){';
-			s += 'var inserted = aa[i];';
+			s += 'var r = aa[i];';
 			s += 'var outputRow = {};';
 			// Process each output column
 			self.output.columns.forEach(function(col) {
-				var coljs = col.toJS('inserted', '');
-				s += "outputRow['" + (col.as || col.toString()) + "']=" + coljs + ";";
+				if (col.columnid === '*') {
+					// For *, expand all properties
+					s += 'for(var key in r){ outputRow[key] = r[key]; }';
+				} else {
+					var colname = col.as || col.columnid;
+					// Direct property access for simple columns
+					s += "outputRow['" + colname + "']=r['" + col.columnid + "'];";
+				}
 			});
 			s += 'output.push(outputRow);';
 			s += '}';

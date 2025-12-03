@@ -28,6 +28,7 @@ yy.Delete.prototype.toString = function () {
 };
 
 yy.Delete.prototype.compile = function (databaseid) {
+	var self = this;
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
@@ -115,16 +116,16 @@ yy.Delete.prototype.compile = function (databaseid) {
 			if (self.output) {
 				var output = [];
 				for (var i = 0; i < deletedRows.length; i++) {
-					var deleted = deletedRows[i];
+					var r = deletedRows[i];
 					var outputRow = {};
 					self.output.columns.forEach(function(col) {
-						var colname = col.as || col.toString();
-						// Use a simple evaluation approach for deleted columns
-						try {
-							var evalFn = new Function('deleted', 'return ' + col.toJS('deleted', ''));
-							outputRow[colname] = evalFn(deleted);
-						} catch (e) {
-							outputRow[colname] = undefined;
+						if (col.columnid === '*') {
+							// For *, expand all properties
+							for(var key in r){ outputRow[key] = r[key]; }
+						} else {
+							var colname = col.as || col.columnid;
+							// Direct property access
+							outputRow[colname] = r[col.columnid];
 						}
 					});
 					output.push(outputRow);
@@ -182,15 +183,16 @@ yy.Delete.prototype.compile = function (databaseid) {
 			if (self.output) {
 				var output = [];
 				for (var i = 0; i < deletedRows.length; i++) {
-					var deleted = deletedRows[i];
+					var r = deletedRows[i];
 					var outputRow = {};
 					self.output.columns.forEach(function(col) {
-						var colname = col.as || col.toString();
-						try {
-							var evalFn = new Function('deleted', 'return ' + col.toJS('deleted', ''));
-							outputRow[colname] = evalFn(deleted);
-						} catch (e) {
-							outputRow[colname] = undefined;
+						if (col.columnid === '*') {
+							// For *, expand all properties
+							for(var key in r){ outputRow[key] = r[key]; }
+						} else {
+							var colname = col.as || col.columnid;
+							// Direct property access
+							outputRow[colname] = r[col.columnid];
 						}
 					});
 					output.push(outputRow);

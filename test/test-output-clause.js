@@ -65,7 +65,8 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		assert.equal(res.length, 1);
 		assert.equal(res[0].id, 1);
 		assert.equal(res[0].name, 'John');
-		assert.equal(res[0].salary, 55000);
+		// Use approximate equality for floating point
+		assert.ok(Math.abs(res[0].salary - 55000) < 0.01);
 	});
 
 	it('F) UPDATE with OUTPUT clause - DELETED columns', function () {
@@ -81,11 +82,12 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		alasql('INSERT INTO prices VALUES (1, "Widget", 10, 10)');
 		// Note: This test may need adjustment based on how we handle DELETED vs INSERTED
 		var res = alasql(
-			'UPDATE prices SET new_price = 15 WHERE id = 1 OUTPUT INSERTED.id, DELETED.new_price AS old, INSERTED.new_price AS new'
+			'UPDATE prices SET new_price = 15 WHERE id = 1 OUTPUT INSERTED.id, DELETED.new_price AS oldval, INSERTED.new_price AS newval'
 		);
 		assert.equal(res.length, 1);
 		assert.equal(res[0].id, 1);
-		// Old value should be 10, new value should be 15
+		assert.equal(res[0].oldval, 10);
+		assert.equal(res[0].newval, 15);
 	});
 
 	it('H) INSERT with OUTPUT clause - no rows', function () {

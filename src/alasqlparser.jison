@@ -194,6 +194,7 @@ DATABASE(S)?									return 'DATABASE'
 'OR'											return 'OR'
 'ORDER'	                                      	return 'ORDER'
 'OUTER'											return 'OUTER'
+'OUTPUT'										return 'OUTPUT'
 'OVER'											return 'OVER'
 'PATH'                                        	return 'PATH'
 'PARTITION'										return 'PARTITION'
@@ -1876,7 +1877,7 @@ Insert
         | INSERT Into Table DEFAULT Values
                 { $$ = new yy.Insert({into:$3, "default": true}) ; }
         | INSERT Into Table LPAR ColumnsList RPAR Values  ValuesListsList OutputClause
-                { $$ = new yy.Insert({into:$3, columns: $5, values: $8}); yy.extend($$,$10); }
+                { $$ = new yy.Insert({into:$3, columns: $5, values: $8}); yy.extend($$,$9); }
         | INSERT Into Table LPAR ColumnsList RPAR Values  ValuesListsList
                 { $$ = new yy.Insert({into:$3, columns: $5, values: $8}); }
         | INSERT Into Table LPAR ColumnsList RPAR ValuesListsList OutputClause
