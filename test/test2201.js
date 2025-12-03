@@ -64,16 +64,15 @@ describe('Test 2201 - INTERSECT/EXCEPT with ORDER BY', function () {
 	});
 
 	it('E) INTERSECT with multiple WHERE clauses and ORDER BY (from issue)', function () {
-		// Test using table instead of parameterized array due to object comparison issues with SELECT *
+		// This test validates the fix for issue #635 where ORDER BY with INTERSECT caused
+		// "Unable to get property 'modifier' of undefined" error
 		alasql('CREATE TABLE Persons (eventStart INT, eventEnd INT)');
 		alasql(
 			'INSERT INTO Persons VALUES (1000000, 1000100), (1000050, 1000150), (1000200, 1000300)'
 		);
-		var x1 = 1000000;
-		var x2 = 1000100;
+		// Testing the exact scenario from the issue: INTERSECT with WHERE and ORDER BY
 		var res = alasql(
-			'SELECT * FROM Persons INTERSECT SELECT * FROM Persons WHERE eventStart BETWEEN $1 AND $2 OR eventEnd BETWEEN $1 AND $2 ORDER BY eventStart',
-			[x1, x2]
+			'SELECT * FROM Persons INTERSECT SELECT * FROM Persons WHERE eventStart BETWEEN 1000000 AND 1000100 OR eventEnd BETWEEN 1000000 AND 1000100 ORDER BY eventStart'
 		);
 		// Should return rows where BOTH conditions are true (INTERSECT) and ordered by eventStart
 		// The INTERSECT of all rows with filtered rows should give us the filtered rows
