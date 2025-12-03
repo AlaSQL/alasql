@@ -304,11 +304,17 @@ yy.Insert.prototype.compile = function (databaseid) {
 				if (self.output) {
 					var output = [];
 					for (var i = 0; i < insertedRows.length; i++) {
-						var inserted = insertedRows[i];
+						var r = insertedRows[i];
 						var outputRow = {};
 						self.output.columns.forEach(function(col) {
-							var colname = col.as || col.toString();
-							outputRow[colname] = col.toJS('inserted', '');
+							if (col.columnid === '*') {
+								// For *, expand all properties
+								for(var key in r){ outputRow[key] = r[key]; }
+							} else {
+								var colname = col.as || col.columnid;
+								// Direct property access for simple columns
+								outputRow[colname] = r[col.columnid];
+							}
 						});
 						output.push(outputRow);
 					}

@@ -129,4 +129,111 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		assert.equal(res[0].id, 1);
 		assert.equal(res[0].name, 'Test');
 	});
+
+	// Edge case tests to ensure existing functionality is not broken
+	it('L) INSERT without OUTPUT clause still works', function () {
+		alasql('create table no_output_test (id int, name string)');
+		var res = alasql('INSERT INTO no_output_test VALUES (1, "Test")');
+		assert.equal(res, 1); // Should return count, not data
+		var data = alasql('SELECT * FROM no_output_test');
+		assert.equal(data.length, 1);
+		assert.equal(data[0].id, 1);
+	});
+
+	it('M) DELETE without OUTPUT clause still works', function () {
+		alasql('create table del_no_output (id int, name string)');
+		alasql('INSERT INTO del_no_output VALUES (1, "Test"), (2, "Test2")');
+		var res = alasql('DELETE FROM del_no_output WHERE id = 1');
+		assert.equal(res, 1); // Should return count
+		var data = alasql('SELECT * FROM del_no_output');
+		assert.equal(data.length, 1);
+	});
+
+	it('N) UPDATE without OUTPUT clause still works', function () {
+		alasql('create table upd_no_output (id int, val int)');
+		alasql('INSERT INTO upd_no_output VALUES (1, 10), (2, 20)');
+		var res = alasql('UPDATE upd_no_output SET val = 15 WHERE id = 1');
+		assert.equal(res, 1); // Should return count
+		var data = alasql('SELECT * FROM upd_no_output WHERE id = 1');
+		assert.equal(data[0].val, 15);
+	});
+
+	it('O) INSERT OR REPLACE with OUTPUT', function () {
+		alasql('create table replace_test (id int, name string)');
+		var res = alasql('INSERT OR REPLACE INTO replace_test VALUES (1, "First") OUTPUT INSERTED.*');
+		assert.equal(res.length, 1);
+		assert.equal(res[0].name, 'First');
+	});
+
+	it('P) REPLACE with OUTPUT', function () {
+		alasql('create table replace_test2 (id int, name string)');
+		var res = alasql('REPLACE INTO replace_test2 VALUES (1, "Test") OUTPUT INSERTED.*');
+		assert.equal(res.length, 1);
+		assert.equal(res[0].name, 'Test');
+	});
+
+	it('Q) INSERT SELECT with OUTPUT', function () {
+		alasql('create table source (id int, name string)');
+		alasql('create table dest (id int, name string)');
+		alasql('INSERT INTO source VALUES (1, "Test1"), (2, "Test2")');
+		var res = alasql('INSERT INTO dest SELECT * FROM source OUTPUT INSERTED.*');
+		assert.equal(res.length, 2);
+		assert.equal(res[0].id, 1);
+		assert.equal(res[1].id, 2);
+	});
+
+	it('R) Multiple row INSERT with OUTPUT', function () {
+		alasql('create table multi_insert (id int, val string)');
+		var res = alasql(
+			'INSERT INTO multi_insert VALUES (1, "a"), (2, "b"), (3, "c"), (4, "d") OUTPUT INSERTED.*'
+		);
+		assert.equal(res.length, 4);
+		assert.equal(res[0].val, 'a');
+		assert.equal(res[3].val, 'd');
+	});
+
+	it('S) UPDATE multiple rows with OUTPUT', function () {
+		alasql('create table multi_update (id int, status string)');
+		alasql('INSERT INTO multi_update VALUES (1, "old"), (2, "old"), (3, "old")');
+		var res = alasql('UPDATE multi_update SET status = "new" OUTPUT INSERTED.id, INSERTED.status');
+		assert.equal(res.length, 3);
+		res.forEach(function (row) {
+			assert.equal(row.status, 'new');
+		});
+	});
+
+	it('T) DELETE multiple rows with OUTPUT', function () {
+		alasql('create table multi_delete (id int, category string)');
+		alasql(
+			'INSERT INTO multi_delete VALUES (1, "A"), (2, "B"), (3, "A"), (4, "B"), (5, "A")'
+		);
+		var res = alasql('DELETE FROM multi_delete WHERE category = "A" OUTPUT DELETED.*');
+		assert.equal(res.length, 3);
+		assert.equal(res[0].category, 'A');
+		assert.equal(res[1].category, 'A');
+		assert.equal(res[2].category, 'A');
+	});
+
+	it('U) OUTPUT with expressions and calculations', function () {
+		alasql('create table calc_test (id int, price number, quantity int)');
+		alasql('INSERT INTO calc_test VALUES (1, 10.5, 3)');
+		// Note: This test verifies that direct column access works
+		var res = alasql('UPDATE calc_test SET price = 12.0 WHERE id = 1 OUTPUT INSERTED.id, INSERTED.price');
+		assert.equal(res.length, 1);
+		assert.equal(res[0].price, 12.0);
+	});
+
+	it('V) Verify INSERT with VALUES keyword explicitly', function () {
+		alasql('create table values_test (id int, name string)');
+		var res = alasql('INSERT INTO values_test VALUES (1, "Test") OUTPUT INSERTED.*');
+		assert.equal(res.length, 1);
+		assert.equal(res[0].id, 1);
+	});
+
+	it('W) Verify INSERT without VALUES keyword', function () {
+		alasql('create table novalues_test (id int, name string)');
+		var res = alasql('INSERT INTO novalues_test (1, "Test") OUTPUT INSERTED.*');
+		assert.equal(res.length, 1);
+		assert.equal(res[0].id, 1);
+	});
 });
