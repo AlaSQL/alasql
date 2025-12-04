@@ -31,10 +31,17 @@ describe('Test 1185 - Table names starting with numbers', function () {
 	});
 
 	it('C) Table name with schema prefix starting with number', function () {
-		// This is the specific case from the issue
-		alasql('CREATE TABLE `csv.50k` (id INT, name STRING)');
-		alasql('INSERT INTO `csv.50k` VALUES (3, "test3")');
+		// This is the specific case from the issue: csv.50k where csv is schema, 50k is table
+		// Create a separate database called 'csv'
+		alasql('CREATE DATABASE csv');
+		alasql('USE csv');
+		alasql('CREATE TABLE `50k` (id INT, name STRING)');
+		alasql('INSERT INTO `50k` VALUES (3, "test3")');
+		// Query with schema.table notation where table starts with number
 		var res = alasql('SELECT * FROM csv.50k');
 		assert.deepEqual(res, [{id: 3, name: 'test3'}]);
+		// Cleanup
+		alasql('USE test1185');
+		alasql('DROP DATABASE csv');
 	});
 });

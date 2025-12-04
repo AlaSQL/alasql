@@ -270,10 +270,9 @@ SETS                                        	return 'SET'
 'WITH'                                          return 'WITH'
 'WORK'                                          return 'TRANSACTION'  /* Is this keyword required? */
 
-/* Issue #1173: Reject invalid identifiers like 6minAvgOpac (number followed by letters without space) */
-/* This rule must precede NUMBER to catch invalid patterns before they're tokenized as NUMBER + LITERAL */
-\d+[a-zA-Z_][a-zA-Z_0-9]*						return 'INVALID'
-(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?				return 'NUMBER'
+/* LITERAL must come before NUMBER to match identifiers like 50k, 100x as single tokens */
+[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
+(\d+\.?\d*|\.\d+)([eE][+-]?\d+)?(?![a-zA-Z_0-9])				return 'NUMBER'
 '->'											return 'ARROW'
 '#'												return 'SHARP'
 '+'												return 'PLUS'
@@ -318,7 +317,6 @@ SETS                                        	return 'SET'
 
 '~'												return 'TILDA'
 
-[0-9]*[a-zA-Z_]+[a-zA-Z_0-9]* 					return 'LITERAL'
 '@'												return 'AT'
 <<EOF>>               							return 'EOF'
 .												return 'INVALID'
