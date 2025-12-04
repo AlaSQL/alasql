@@ -367,39 +367,126 @@
 				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(this.right1)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
 			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
+					// SQL semantics: x IN (subquery with NULL) should handle NULL properly
+					// If x is NULL, return false (UNKNOWN). If x matches a value, return true.
+					// If x doesn't match but NULL exists in subquery, return false (UNKNOWN).
+					const leftVal = leftJS();
+					s = `((v => {
+						const lv = alasql.utils.getValueOf(v);
+						if (lv == null) return false;
+						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
+						return arr.some(item => {
+							const iv = alasql.utils.getValueOf(item);
+							return iv != null && iv === lv;
+						});
+					})(${leftVal}))`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
-						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
+						const leftVal = leftJS();
+						const rightVals = `[${this.right.map(ref).join(',')}]`;
+						s = `((lv => {
+							const leftVal = alasql.utils.getValueOf(lv);
+							if (leftVal == null) return false;
+							const vals = ${rightVals};
+							return vals.some(v => {
+								const rv = alasql.utils.getValueOf(v);
+								return rv != null && rv === leftVal;
+							});
+						})(${leftVal}))`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
 						const allValuesStr = allValues.join(',');
 						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const leftVal = leftJS();
+						s = `((lv => {
+							const leftVal = alasql.utils.getValueOf(lv);
+							if (leftVal == null) return false;
+							return alasql.sets["${allValuesStr}"].has(leftVal);
+						})(${leftVal}))`;
 					}
 				} else {
-					s = `(${rightJS()}.indexOf(${leftJS()}) > -1)`;
+					const leftVal = leftJS();
+					s = `((lv => {
+						const leftVal = alasql.utils.getValueOf(lv);
+						if (leftVal == null) return false;
+						const arr = ${rightJS()};
+						return arr.some(item => {
+							const iv = alasql.utils.getValueOf(item);
+							return iv != null && iv === leftVal;
+						});
+					})(${leftVal}))`;
 				}
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
+					// SQL semantics: x NOT IN (subquery with NULL) should return false (UNKNOWN)
+					// If x is NULL, return false (UNKNOWN). If subquery contains NULL and x is not found, return false (UNKNOWN).
+					const leftVal = leftJS();
+					s = `((v => {
+						const lv = alasql.utils.getValueOf(v);
+						if (lv == null) return false;
+						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p));
+						const hasNull = arr.some(item => alasql.utils.getValueOf(item) == null);
+						const hasMatch = arr.some(item => {
+							const iv = alasql.utils.getValueOf(item);
+							return iv != null && iv === lv;
+						});
+						if (hasMatch) return false;
+						if (hasNull) return false;
+						return true;
+					})(${leftVal}))`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
-						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
+						const leftVal = leftJS();
+						const rightVals = `[${this.right.map(ref).join(',')}]`;
+						s = `((lv => {
+							const leftVal = alasql.utils.getValueOf(lv);
+							if (leftVal == null) return false;
+							const vals = ${rightVals};
+							const hasNull = vals.some(v => alasql.utils.getValueOf(v) == null);
+							const hasMatch = vals.some(v => {
+								const rv = alasql.utils.getValueOf(v);
+								return rv != null && rv === leftVal;
+							});
+							if (hasMatch) return false;
+							if (hasNull) return false;
+							return true;
+						})(${leftVal}))`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
 						const allValuesStr = allValues.join(',');
+						const hasNull = allValues.some(v => v == null);
 						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						s = `!alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))`;
+						const leftVal = leftJS();
+						s = `((lv => {
+							const leftVal = alasql.utils.getValueOf(lv);
+							if (leftVal == null) return false;
+							const hasMatch = alasql.sets["${allValuesStr}"].has(leftVal);
+							if (hasMatch) return false;
+							if (${hasNull}) return false;
+							return true;
+						})(${leftVal}))`;
 					}
 				} else {
-					s = `(${rightJS()}.indexOf(${leftJS()}) === -1)`;
+					const leftVal = leftJS();
+					s = `((lv => {
+						const leftVal = alasql.utils.getValueOf(lv);
+						if (leftVal == null) return false;
+						const arr = ${rightJS()};
+						const hasNull = arr.some(item => alasql.utils.getValueOf(item) == null);
+						const hasMatch = arr.some(item => {
+							const iv = alasql.utils.getValueOf(item);
+							return iv != null && iv === leftVal;
+						});
+						if (hasMatch) return false;
+						if (hasNull) return false;
+						return true;
+					})(${leftVal}))`;
 				}
 			}
 
