@@ -372,7 +372,9 @@
 				} else if (Array.isArray(this.right)) {
 					// Empty array: nothing is IN an empty set, always false
 					if (this.right.length === 0) {
-						leftJS(); // Call leftJS() to populate refs array even though we won't use it
+						// Must call leftJS() to populate the refs array for the declareRefs statement,
+						// even though the result is not used in the final expression
+						leftJS();
 						s = 'false';
 						skipNullCheck = true; // Result is deterministic even with null operands
 					} else if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
@@ -395,7 +397,9 @@
 				} else if (Array.isArray(this.right)) {
 					// Empty array: everything is NOT IN an empty set, always true
 					if (this.right.length === 0) {
-						leftJS(); // Call leftJS() to populate refs array even though we won't use it
+						// Must call leftJS() to populate the refs array for the declareRefs statement,
+						// even though the result is not used in the final expression
+						leftJS();
 						s = 'true';
 						skipNullCheck = true; // Result is deterministic even with null operands
 					} else if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
