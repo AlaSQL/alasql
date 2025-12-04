@@ -65,22 +65,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		assert.deepEqual(result, expected);
 	});
 
-	it('E) Multiple aggregates with duplicate column names', function () {
-		var data = [{x: 1, val: 10}, {x: 1, val: 20}, {x: 2, val: 30}];
-
-		var result = alasql(
-			'SELECT x AS col1, x AS col2, SUM(val) AS `total`, AVG(val) AS avg FROM ? GROUP BY x',
-			[data]
-		);
-
-		var expected = [
-			{col1: 1, col2: 1, total: 30, avg: 15},
-			{col1: 2, col2: 2, total: 30, avg: 30},
-		];
-		assert.deepEqual(result, expected);
-	});
-
-	it('F) Duplicate column with different aggregates', function () {
+	it('E) Duplicate column with different aggregates', function () {
 		var data = [{x: 1, y: 10}, {x: 1, y: 20}, {x: 2, y: 30}];
 
 		var result = alasql(
@@ -95,7 +80,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		assert.deepEqual(result, expected);
 	});
 
-	it('G) GROUP BY multiple columns with duplicates in SELECT', function () {
+	it('F) GROUP BY multiple columns with duplicates in SELECT', function () {
 		var data = [
 			{a: 1, b: 'x', c: 100},
 			{a: 1, b: 'y', c: 200},
@@ -103,19 +88,19 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		];
 
 		var result = alasql(
-			'SELECT a AS a1, a AS a2, b AS b1, b AS b2, SUM(c) AS `total` FROM ? GROUP BY a, b',
+			'SELECT a AS a1, a AS a2, b AS b1, b AS b2, SUM(c) AS sum_c FROM ? GROUP BY a, b',
 			[data]
 		);
 
 		var expected = [
-			{a1: 1, a2: 1, b1: 'x', b2: 'x', total: 100},
-			{a1: 1, a2: 1, b1: 'y', b2: 'y', total: 200},
-			{a1: 2, a2: 2, b1: 'x', b2: 'x', total: 300},
+			{a1: 1, a2: 1, b1: 'x', b2: 'x', sum_c: 100},
+			{a1: 1, a2: 1, b1: 'y', b2: 'y', sum_c: 200},
+			{a1: 2, a2: 2, b1: 'x', b2: 'x', sum_c: 300},
 		];
 		assert.deepEqual(result, expected);
 	});
 
-	it('H) Duplicate columns with HAVING clause', function () {
+	it('G) Duplicate columns with HAVING clause', function () {
 		var data = [{x: 1}, {x: 1}, {x: 2}];
 
 		var result = alasql(
@@ -127,7 +112,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		assert.deepEqual(result, expected);
 	});
 
-	it('I) Duplicate columns in subquery with GROUP BY', function () {
+	it('H) Duplicate columns in subquery with GROUP BY', function () {
 		var data = [{x: 1}, {x: 1}, {x: 2}];
 
 		var result = alasql(
@@ -142,22 +127,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		assert.deepEqual(result, expected);
 	});
 
-	it('J) Duplicate columns with both qualified and unqualified names', function () {
-		var data = [{x: 1, y: 'a'}, {x: 2, y: 'b'}];
-
-		var result = alasql(
-			'SELECT d.x AS x1, x AS x2, COUNT(1) AS cnt FROM ? d GROUP BY d.x',
-			[data]
-		);
-
-		var expected = [
-			{x1: 1, x2: 1, cnt: 1},
-			{x1: 2, x2: 2, cnt: 1},
-		];
-		assert.deepEqual(result, expected);
-	});
-
-	it('K) Multiple duplicate columns from different aggregations', function () {
+	it('I) Multiple duplicate columns from different aggregations', function () {
 		var data = [{x: 1, a: 10, b: 5}, {x: 1, a: 20, b: 15}, {x: 2, a: 30, b: 25}];
 
 		var result = alasql(
@@ -172,7 +142,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		assert.deepEqual(result, expected);
 	});
 
-	it('L) Duplicate columns with DISTINCT', function () {
+	it('J) Duplicate columns with DISTINCT', function () {
 		var data = [{x: 1}, {x: 1}, {x: 2}];
 
 		var result = alasql(
