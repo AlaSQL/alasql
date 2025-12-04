@@ -427,7 +427,7 @@
 					s = `((v => {
 						const lv = alasql.utils.getValueOf(v);
 						if (lv == null) return false;
-						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p));
+						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
 						const hasNull = arr.some(item => alasql.utils.getValueOf(item) == null);
 						const hasMatch = arr.some(item => {
 							const iv = alasql.utils.getValueOf(item);
