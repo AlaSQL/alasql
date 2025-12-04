@@ -8,6 +8,9 @@ function queryfn(query, oldscope, cb, A, B) {
 	query.cb = cb;
 	query.oldscope = oldscope;
 
+	// Clear subquery cache from previous execution (used by IN/NOT IN optimization)
+	query.subqueryCache = {};
+
 	// Run all subqueries before main statement
 	if (query.queriesfn) {
 		query.sourceslen += query.queriesfn.length;
