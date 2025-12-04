@@ -192,7 +192,11 @@ stdlib.SUBSTRING =
 
 stdfn.REGEXP_LIKE = function (a, b, c) {
 	//	console.log(a,b,c);
-	return (a || '').search(RegExp(b, c)) > -1;
+	// Convert MySQL word boundaries to JavaScript word boundaries
+	// [[:<:]] -> \b (start of word)
+	// [[:>:]] -> \b (end of word)
+	var pattern = b.replace(/\[\[:<:\]\]/g, '\\b').replace(/\[\[:>:\]\]/g, '\\b');
+	return (a || '').search(RegExp(pattern, c)) > -1;
 };
 
 // Here we uses undefined instead of null

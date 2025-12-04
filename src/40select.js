@@ -447,9 +447,49 @@ yy.Select = class Select {
 
 	compileQueries(query) {
 		if (!this.queries) return;
-		query.queriesfn = this.queries.map(function (q) {
+
+		// Helper function to detect if a subquery might be correlated
+		// A subquery is correlated if it references tables not in its own FROM clause
+		const isCorrelated = (subquery, outerQuery) => {
+			if (!subquery.from) return false;
+
+			// Get table names from subquery's FROM clause
+			const subqueryTables = new Set();
+			subquery.from.forEach(f => {
+				if (f.tableid) subqueryTables.add(f.tableid);
+				if (f.as) subqueryTables.add(f.as);
+			});
+
+			// Check if WHERE clause references tables not in subquery's FROM
+			const referencesExternal = node => {
+				if (!node) return false;
+
+				// Check Column nodes for tableid using instanceof
+				if (node instanceof yy.Column) {
+					if (node.tableid && !subqueryTables.has(node.tableid)) {
+						return true;
+					}
+				}
+
+				// Recursively check own properties only (not inherited)
+				for (let key of Object.keys(node)) {
+					if (node[key] && typeof node[key] === 'object') {
+						if (referencesExternal(node[key])) return true;
+					}
+				}
+				return false;
+			};
+
+			return referencesExternal(subquery.where) || referencesExternal(subquery.columns);
+		};
+
+		query.queriesfn = this.queries.map(function (q, idx) {
 			var nq = q.compile(query.database.databaseid);
 			nq.query.modifier = 'RECORDSET';
+
+			// Mark as correlated if it references external tables
+			nq.query.isCorrelated = isCorrelated(q, query);
+
 			// If the nested query has its own queries, ensure they're compiled too
 			// This handles nested subqueries properly
 			if (q.queries && q.queries.length > 0) {

@@ -608,10 +608,34 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 yy.Select.prototype.compileSelectGroup2 = function (query) {
 	var self = this;
 	var s = query.selectgfns;
+
+	// Create a lookup map for GROUP BY columns to optimize performance
+	var groupColMap = {};
+	if (self.group) {
+		self.group.forEach(function (gp) {
+			var key = (gp.tableid || '') + '\t' + gp.columnid;
+			groupColMap[key] = gp;
+		});
+	}
+
 	self.columns.forEach(function (col) {
 		//			 console.log(col);
-		if (query.ingroup.indexOf(col.nick) > -1) {
-			s += "r['" + (col.as || col.nick) + "']=g['" + col.nick + "'];";
+		// Skip SELECT * columns as they are handled differently
+		if (col instanceof yy.Column && col.columnid === '*') {
+			return;
+		}
+		// Check if this column is part of GROUP BY
+		// For columns with renamed nicks (e.g., 'x:1'), we need to check the original columnid
+		var groupCol = null;
+		if (col instanceof yy.Column && self.group) {
+			var key = (col.tableid || '') + '\t' + col.columnid;
+			groupCol = groupColMap[key];
+		}
+		var isInGroup = groupCol !== null || query.ingroup.indexOf(col.nick) > -1;
+		if (isInGroup) {
+			// For columns in GROUP BY, use the GROUP BY column's nick if available
+			var groupNick = (groupCol && groupCol.nick) || col.nick;
+			s += "r['" + (col.as || col.nick) + "']=g['" + groupNick + "'];";
 		}
 	});
 
