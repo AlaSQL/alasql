@@ -294,6 +294,7 @@
 			var s;
 			let refs = [];
 			let op = this.op;
+			let skipNullCheck = false; // Flag to skip null checking for deterministic empty set operations
 			let _this = this;
 			let ref = function (expr) {
 				if (expr.toJS) {
@@ -369,7 +370,12 @@
 				if (this.right instanceof yy.Select) {
 					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
 				} else if (Array.isArray(this.right)) {
-					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					// Empty array: nothing is IN an empty set, always false
+					if (this.right.length === 0) {
+						leftJS(); // Call leftJS() to populate refs array even though we won't use it
+						s = 'false';
+						skipNullCheck = true; // Result is deterministic even with null operands
+					} else if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
@@ -387,7 +393,12 @@
 				if (this.right instanceof yy.Select) {
 					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
 				} else if (Array.isArray(this.right)) {
-					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					// Empty array: everything is NOT IN an empty set, always true
+					if (this.right.length === 0) {
+						leftJS(); // Call leftJS() to populate refs array even though we won't use it
+						s = 'true';
+						skipNullCheck = true; // Result is deterministic even with null operands
+					} else if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
@@ -463,7 +474,7 @@
 			var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 			var declareRefs = 'y=[(' + refs.join('), (') + ')]';
-			if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
+			if (skipNullCheck || op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
 				return '(' + declareRefs + ', ' + expr + ')';
 			}
 
