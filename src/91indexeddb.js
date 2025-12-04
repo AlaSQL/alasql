@@ -79,9 +79,16 @@ IDB.showDatabases = function (like, cb) {
 
 IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (found) {
 		if (ifnotexists) {
@@ -90,7 +97,11 @@ IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 			const err = new Error(
 				`IndexedDB: Cannot create new database "${ixdbid}" because it already exists`
 			);
-			if (cb) cb(null, err);
+			if (cb) {
+				cb(null, err);
+				return;
+			}
+			throw err;
 		}
 	} else {
 		const request = indexedDB.open(ixdbid, 1);
@@ -103,9 +114,16 @@ IDB.createDatabase = async function (ixdbid, args, ifnotexists, dbid, cb) {
 
 IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (found) {
 		const request = indexedDB.deleteDatabase(ixdbid);
@@ -116,26 +134,39 @@ IDB.dropDatabase = async function (ixdbid, ifexists, cb) {
 		if (ifexists) {
 			cb && cb(0);
 		} else {
-			cb &&
+			if (cb) {
 				cb(
 					null,
-					new Error(`IndexedDB: Cannot drop new database "${ixdbid}" because it does not exist'`)
+					new Error(`IndexedDB: Cannot drop database "${ixdbid}" because it does not exist`)
 				);
+				return;
+			}
+			throw new Error(`IndexedDB: Cannot drop database "${ixdbid}" because it does not exist`);
 		}
 	}
 };
 
 IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (!found) {
 		const err = new Error(
 			`IndexedDB: Cannot attach database "${ixdbid}" because it does not exist`
 		);
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return;
+		}
 		throw err;
 	}
 
@@ -172,15 +203,25 @@ IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (!found) {
 		const err = new Error(
 			'IndexedDB: Cannot create table in database "' + ixdbid + '" because it does not exist'
 		);
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return;
+		}
 		throw err;
 	}
 
@@ -206,15 +247,25 @@ IDB.createTable = async function (databaseid, tableid, ifnotexists, cb) {
 IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 	const ixdbid = alasql.databases[databaseid].ixdbid;
 	const found = await _databaseExists(ixdbid).catch(err => {
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return null;
+		}
 		throw err;
 	});
+
+	if (found === null) {
+		return; // Error already handled via callback
+	}
 
 	if (!found) {
 		const err = new Error(
 			'IndexedDB: Cannot drop table in database "' + ixdbid + '" because it does not exist'
 		);
-		if (cb) cb(null, err);
+		if (cb) {
+			cb(null, err);
+			return;
+		}
 		throw err;
 	}
 
