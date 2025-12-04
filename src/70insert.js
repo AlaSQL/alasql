@@ -238,7 +238,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			s += 'var r = aa[i];';
 			s += 'var outputRow = {};';
 			// Process each output column
-			self.output.columns.forEach(function(col) {
+			self.output.columns.forEach(function (col) {
 				if (col.columnid === '*') {
 					// For *, expand all properties
 					s += 'for(var key in r){ outputRow[key] = r[key]; }';
@@ -300,17 +300,19 @@ yy.Insert.prototype.compile = function (databaseid) {
 					insertedRows = res;
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
 				}
-				
+
 				// Handle OUTPUT clause
 				if (self.output) {
 					var output = [];
 					for (var i = 0; i < insertedRows.length; i++) {
 						var r = insertedRows[i];
 						var outputRow = {};
-						self.output.columns.forEach(function(col) {
+						self.output.columns.forEach(function (col) {
 							if (col.columnid === '*') {
 								// For *, expand all properties
-								for(var key in r){ outputRow[key] = r[key]; }
+								for (var key in r) {
+									outputRow[key] = r[key];
+								}
 							} else {
 								var colname = col.as || col.columnid;
 								// Direct property access for simple columns
@@ -321,7 +323,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 					}
 					return output;
 				}
-				
+
 				if (alasql.options.nocount) return;
 				else return res.length;
 			};

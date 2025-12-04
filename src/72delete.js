@@ -111,17 +111,19 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 
 			var res = orignum - table.data.length;
-			
+
 			// Handle OUTPUT clause
 			if (self.output) {
 				var output = [];
 				for (var i = 0; i < deletedRows.length; i++) {
 					var r = deletedRows[i];
 					var outputRow = {};
-					self.output.columns.forEach(function(col) {
+					self.output.columns.forEach(function (col) {
 						if (col.columnid === '*') {
 							// For *, expand all properties
-							for(var key in r){ outputRow[key] = r[key]; }
+							for (var key in r) {
+								outputRow[key] = r[key];
+							}
 						} else {
 							var colname = col.as || col.columnid;
 							// Direct property access
@@ -132,7 +134,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 				}
 				res = output;
 			}
-			
+
 			if (
 				alasql.options.autocommit &&
 				db.engineid &&
@@ -154,13 +156,15 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
-			
+
 			// Track deleted rows for OUTPUT clause
 			var deletedRows = [];
 			if (self.output) {
-				deletedRows = table.data.map(function(row) { return cloneDeep(row); });
+				deletedRows = table.data.map(function (row) {
+					return cloneDeep(row);
+				});
 			}
-			
+
 			// Delete all records from the array
 			db.tables[tableid].data.length = 0;
 
@@ -178,17 +182,19 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 
 			var res = orignum;
-			
+
 			// Handle OUTPUT clause
 			if (self.output) {
 				var output = [];
 				for (var i = 0; i < deletedRows.length; i++) {
 					var r = deletedRows[i];
 					var outputRow = {};
-					self.output.columns.forEach(function(col) {
+					self.output.columns.forEach(function (col) {
 						if (col.columnid === '*') {
 							// For *, expand all properties
-							for(var key in r){ outputRow[key] = r[key]; }
+							for (var key in r) {
+								outputRow[key] = r[key];
+							}
 						} else {
 							var colname = col.as || col.columnid;
 							// Direct property access

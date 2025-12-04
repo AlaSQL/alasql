@@ -106,21 +106,21 @@ yy.Update.prototype.compile = function (databaseid) {
 			if (!wherefn || wherefn(table.data[i], params, alasql)) {
 				// Track row state for OUTPUT clause (DELETED.*)
 				var oldRow = self.output ? cloneDeep(table.data[i]) : null;
-				
+
 				if (table.update) {
 					table.update(assignfn, i, params);
 				} else {
 					assignfn(table.data[i], params, alasql);
 				}
-				
+
 				// Track updated row for OUTPUT clause (INSERTED.*)
 				if (self.output) {
 					updatedRows.push({
 						deleted: oldRow,
-						inserted: cloneDeep(table.data[i])
+						inserted: cloneDeep(table.data[i]),
 					});
 				}
-				
+
 				numrows++;
 			}
 		}
@@ -130,7 +130,7 @@ yy.Update.prototype.compile = function (databaseid) {
 		}
 
 		var res = numrows;
-		
+
 		// Handle OUTPUT clause
 		if (self.output) {
 			var output = [];
@@ -138,10 +138,12 @@ yy.Update.prototype.compile = function (databaseid) {
 				var deleted = updatedRows[i].deleted;
 				var inserted = updatedRows[i].inserted;
 				var outputRow = {};
-				self.output.columns.forEach(function(col) {
+				self.output.columns.forEach(function (col) {
 					if (col.columnid === '*') {
 						// For *, use INSERTED values
-						for(var key in inserted){ outputRow[key] = inserted[key]; }
+						for (var key in inserted) {
+							outputRow[key] = inserted[key];
+						}
 					} else {
 						var colname = col.as || col.columnid;
 						// Check tableid to determine which version to use

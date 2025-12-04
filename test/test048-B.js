@@ -49,7 +49,9 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 	it('D) DELETE with OUTPUT clause - specific columns', function () {
 		alasql('create table inventory (id int, item string, quantity int)');
 		alasql('INSERT INTO inventory VALUES (1, "Apple", 10), (2, "Banana", 5), (3, "Orange", 8)');
-		var res = alasql('DELETE FROM inventory WHERE quantity < 7 OUTPUT DELETED.item, DELETED.quantity');
+		var res = alasql(
+			'DELETE FROM inventory WHERE quantity < 7 OUTPUT DELETED.item, DELETED.quantity'
+		);
 		assert.equal(res.length, 1);
 		assert.deepEqual(res[0], {item: 'Banana', quantity: 5});
 	});
@@ -64,7 +66,10 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		// Use approximate equality for floating point
 		assert.equal(res[0].id, 1);
 		assert.equal(res[0].name, 'John');
-		assert.ok(Math.abs(res[0].salary - 55000) < 0.01, 'Expected salary ~55000, got ' + res[0].salary);
+		assert.ok(
+			Math.abs(res[0].salary - 55000) < 0.01,
+			'Expected salary ~55000, got ' + res[0].salary
+		);
 	});
 
 	it('F) UPDATE with OUTPUT clause - DELETED columns', function () {
@@ -202,9 +207,7 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 
 	it('T) DELETE multiple rows with OUTPUT', function () {
 		alasql('create table multi_delete (id int, category string)');
-		alasql(
-			'INSERT INTO multi_delete VALUES (1, "A"), (2, "B"), (3, "A"), (4, "B"), (5, "A")'
-		);
+		alasql('INSERT INTO multi_delete VALUES (1, "A"), (2, "B"), (3, "A"), (4, "B"), (5, "A")');
 		var res = alasql('DELETE FROM multi_delete WHERE category = "A" OUTPUT DELETED.*');
 		assert.equal(res.length, 3);
 		assert.equal(res[0].category, 'A');
@@ -216,7 +219,9 @@ describe('Test OUTPUT clause for INSERT/DELETE/UPDATE/MERGE', function () {
 		alasql('create table calc_test (id int, price number, quantity int)');
 		alasql('INSERT INTO calc_test VALUES (1, 10.5, 3)');
 		// Note: This test verifies that direct column access works
-		var res = alasql('UPDATE calc_test SET price = 12.0 WHERE id = 1 OUTPUT INSERTED.id, INSERTED.price');
+		var res = alasql(
+			'UPDATE calc_test SET price = 12.0 WHERE id = 1 OUTPUT INSERTED.id, INSERTED.price'
+		);
 		assert.equal(res.length, 1);
 		assert.equal(res[0].price, 12.0);
 	});
