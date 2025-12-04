@@ -85,7 +85,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify both referential actions work with data operations
+		alasql('INSERT INTO test_parent2 VALUES (1)');
+		alasql('INSERT INTO test_child2 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child2');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('4: Should parse REFERENCES with SET NULL', function () {
@@ -100,7 +105,11 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify SET NULL action syntax works with data
+		alasql('INSERT INTO test_parent3 VALUES (1)');
+		alasql('INSERT INTO test_child3 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child3 WHERE parent_id = 1');
+		assert.equal(result.length, 1);
 	});
 
 	it('5: Should parse REFERENCES with SET DEFAULT', function () {
@@ -115,7 +124,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify SET DEFAULT action syntax works with data
+		alasql('INSERT INTO test_parent4 VALUES (1)');
+		alasql('INSERT INTO test_child4 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child4 WHERE id = 10');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('6: Should parse REFERENCES with NO ACTION', function () {
@@ -130,7 +144,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify NO ACTION syntax works with data operations
+		alasql('INSERT INTO test_parent5 VALUES (1)');
+		alasql('INSERT INTO test_child5 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child5');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('7: Should parse REFERENCES with RESTRICT', function () {
@@ -145,7 +164,11 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify RESTRICT syntax works with data operations
+		alasql('INSERT INTO test_parent6 VALUES (1)');
+		alasql('INSERT INTO test_child6 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child6 WHERE parent_id = 1');
+		assert.equal(result.length, 1);
 	});
 
 	it('8: Should parse FOREIGN KEY with ON DELETE CASCADE', function () {
@@ -181,7 +204,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify ON UPDATE NO ACTION syntax works with data operations
+		alasql('INSERT INTO test_parent8 VALUES (1)');
+		alasql('INSERT INTO test_child8 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child8');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('10: Should parse FOREIGN KEY with ON UPDATE CASCADE', function () {
@@ -197,7 +225,11 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify table-level FOREIGN KEY with ON UPDATE CASCADE works
+		alasql('INSERT INTO test_parent9 VALUES (1)');
+		alasql('INSERT INTO test_child9 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child9 WHERE parent_id = 1');
+		assert.equal(result.length, 1);
 	});
 
 	it('11: Should parse FOREIGN KEY with both ON DELETE and ON UPDATE', function () {
@@ -213,7 +245,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify both actions in table-level FOREIGN KEY work
+		alasql('INSERT INTO test_parent10 VALUES (1)');
+		alasql('INSERT INTO test_child10 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child10');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('12: Should parse FOREIGN KEY with ON UPDATE before ON DELETE', function () {
@@ -229,7 +266,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify reverse order of actions works
+		alasql('INSERT INTO test_parent11 VALUES (1)');
+		alasql('INSERT INTO test_child11 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child11 WHERE id = 10');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('13: Should parse REFERENCES with ON UPDATE before ON DELETE', function () {
@@ -244,7 +286,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify reverse order in column-level REFERENCES works
+		alasql('INSERT INTO test_parent12 VALUES (1)');
+		alasql('INSERT INTO test_child12 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child12');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('14: Should parse FOREIGN KEY with CONSTRAINT and ON DELETE CASCADE', function () {
@@ -260,7 +307,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify CONSTRAINT with CASCADE works
+		alasql('INSERT INTO test_parent13 VALUES (1)');
+		alasql('INSERT INTO test_child13 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child13');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('15: Should parse multiple FOREIGN KEYs with different actions', function () {
@@ -280,7 +332,14 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify multiple foreign keys with different actions work
+		alasql('INSERT INTO test_parent14a VALUES (1)');
+		alasql('INSERT INTO test_parent14b VALUES (2)');
+		alasql('INSERT INTO test_child14 VALUES (10, 1, 2)');
+		var result = alasql('SELECT * FROM test_child14');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_a_id, 1);
+		assert.equal(result[0].parent_b_id, 2);
 	});
 
 	it('16: Should parse REFERENCES without ON DELETE/UPDATE (backward compatibility)', function () {
@@ -295,7 +354,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify backward compatibility - REFERENCES without actions still works
+		alasql('INSERT INTO test_parent15 VALUES (1)');
+		alasql('INSERT INTO test_child15 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child15');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('17: Should parse FOREIGN KEY without ON DELETE/UPDATE (backward compatibility)', function () {
@@ -311,7 +375,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify backward compatibility - FOREIGN KEY without actions still works
+		alasql('INSERT INTO test_parent16 VALUES (1)');
+		alasql('INSERT INTO test_child16 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child16');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('18: Should parse FOREIGN KEY with NO ACTION for both DELETE and UPDATE', function () {
@@ -327,7 +396,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify both NO ACTION clauses work together
+		alasql('INSERT INTO test_parent17 VALUES (1)');
+		alasql('INSERT INTO test_child17 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child17');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('19: Should parse REFERENCES with all referential actions', function () {
@@ -357,7 +431,17 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 			'CREATE TABLE test_child18e (id INT PRIMARY KEY, parent_id INT REFERENCES test_parent18(id) ON DELETE NO ACTION)'
 		);
 
-		assert(true);
+		// Verify all five action types work with data
+		alasql('INSERT INTO test_parent18 VALUES (1)');
+		alasql('INSERT INTO test_child18a VALUES (1, 1)');
+		alasql('INSERT INTO test_child18b VALUES (2, 1)');
+		alasql('INSERT INTO test_child18c VALUES (3, 1)');
+		alasql('INSERT INTO test_child18d VALUES (4, 1)');
+		alasql('INSERT INTO test_child18e VALUES (5, 1)');
+		
+		var results = alasql('SELECT * FROM test_child18a');
+		assert.equal(results.length, 1);
+		assert.equal(results[0].parent_id, 1);
 	});
 
 	it('20: Should parse FOREIGN KEY with composite key and ON DELETE CASCADE', function () {
@@ -374,6 +458,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify composite key with CASCADE works
+		alasql('INSERT INTO test_parent19 VALUES (1, 2)');
+		alasql('INSERT INTO test_child19 VALUES (10, 1, 2)');
+		var result = alasql('SELECT * FROM test_child19');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id1, 1);
+		assert.equal(result[0].parent_id2, 2);
 	});
 });
