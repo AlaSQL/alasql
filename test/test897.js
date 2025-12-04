@@ -3,6 +3,11 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+// NOTE: This test suite verifies that the parser correctly handles ON DELETE and ON UPDATE
+// referential actions in FOREIGN KEY constraints. AlaSQL currently parses but does not
+// enforce CASCADE behavior (i.e., deleting parent rows will not automatically delete
+// child rows). These tests ensure syntax compatibility with SQL-99 standard.
+
 describe('Test 897 - CASCADE not supported (sqlite)', function () {
 	const test = '897';
 
@@ -32,7 +37,20 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify table was created successfully
+		var tables = alasql('SHOW TABLES');
+		assert(
+			tables.some(function (t) {
+				return t.tableid === 'TEMP_COMMODITY_UUIDS';
+			})
+		);
+
+		// Verify we can insert data
+		alasql('INSERT INTO COMMODITY VALUES (1)');
+		alasql("INSERT INTO TEMP_COMMODITY_UUIDS VALUES (1, 'uuid-1', 'backend-1')");
+		var result = alasql('SELECT * FROM TEMP_COMMODITY_UUIDS');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].ID, 1);
 	});
 
 	it('2: Should parse REFERENCES with ON UPDATE CASCADE', function () {
@@ -47,7 +65,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify tables were created and can hold data
+		alasql('INSERT INTO test_parent VALUES (1)');
+		alasql('INSERT INTO test_child VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('3: Should parse REFERENCES with both ON DELETE and ON UPDATE', function () {
@@ -138,7 +161,12 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 				')'
 		);
 
-		assert(true);
+		// Verify table-level FOREIGN KEY syntax works with data
+		alasql('INSERT INTO test_parent7 VALUES (1)');
+		alasql('INSERT INTO test_child7 VALUES (10, 1)');
+		var result = alasql('SELECT * FROM test_child7');
+		assert.equal(result.length, 1);
+		assert.equal(result[0].parent_id, 1);
 	});
 
 	it('9: Should parse REFERENCES with ON UPDATE NO ACTION', function () {
