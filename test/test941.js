@@ -5,7 +5,10 @@ if (typeof exports === 'object') {
 
 describe('Test 941 - GROUP BY with duplicate column names', function () {
 	it('A) GROUP BY on same column twice with different aliases', function () {
-		var accounts = [{name: 'A', region_id: 1}, {name: 'B', region_id: 2}];
+		var accounts = [
+			{name: 'A', region_id: 1},
+			{name: 'B', region_id: 2},
+		];
 
 		var result = alasql(
 			'SELECT accounts.name AS `AccountName`, accounts.name AS `AccountName2`, COUNT(1) AS `Count` FROM ? accounts GROUP BY accounts.name',
@@ -20,7 +23,10 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 	});
 
 	it('B) GROUP BY with join on columns with same name', function () {
-		var accounts = [{name: 'A', region_id: 1}, {name: 'B', region_id: 2}];
+		var accounts = [
+			{name: 'A', region_id: 1},
+			{name: 'B', region_id: 2},
+		];
 
 		var regions = [
 			{id: 1, name: 'North'},
@@ -42,9 +48,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 	it('C) GROUP BY on same column three times', function () {
 		var data = [{x: 1}, {x: 2}];
 
-		var result = alasql('SELECT x AS a, x AS b, x AS c, COUNT(1) AS cnt FROM ? GROUP BY x', [
-			data,
-		]);
+		var result = alasql('SELECT x AS a, x AS b, x AS c, COUNT(1) AS cnt FROM ? GROUP BY x', [data]);
 
 		var expected = [
 			{a: 1, b: 1, c: 1, cnt: 1},
@@ -54,7 +58,11 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 	});
 
 	it('D) SELECT * with GROUP BY and duplicate column in SELECT', function () {
-		var data = [{x: 1, y: 'a'}, {x: 1, y: 'b'}, {x: 2, y: 'c'}];
+		var data = [
+			{x: 1, y: 'a'},
+			{x: 1, y: 'b'},
+			{x: 2, y: 'c'},
+		];
 
 		var result = alasql('SELECT *, x AS x_copy, COUNT(1) AS cnt FROM ? GROUP BY x', [data]);
 
@@ -66,7 +74,11 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 	});
 
 	it('E) Duplicate column with different aggregates', function () {
-		var data = [{x: 1, y: 10}, {x: 1, y: 20}, {x: 2, y: 30}];
+		var data = [
+			{x: 1, y: 10},
+			{x: 1, y: 20},
+			{x: 2, y: 30},
+		];
 
 		var result = alasql(
 			'SELECT x AS grp1, x AS grp2, MAX(y) AS max_y, MIN(y) AS min_y FROM ? GROUP BY x',
@@ -128,7 +140,11 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 	});
 
 	it('I) Multiple duplicate columns from different aggregations', function () {
-		var data = [{x: 1, a: 10, b: 5}, {x: 1, a: 20, b: 15}, {x: 2, a: 30, b: 25}];
+		var data = [
+			{x: 1, a: 10, b: 5},
+			{x: 1, a: 20, b: 15},
+			{x: 2, a: 30, b: 25},
+		];
 
 		var result = alasql(
 			'SELECT x AS id1, x AS id2, SUM(a) AS sum_a, SUM(b) AS sum_b, AVG(a) AS avg_a FROM ? GROUP BY x',
@@ -145,10 +161,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 	it('J) Duplicate columns with DISTINCT', function () {
 		var data = [{x: 1}, {x: 1}, {x: 2}];
 
-		var result = alasql(
-			'SELECT DISTINCT x AS col1, x AS col2 FROM ? ORDER BY x',
-			[data]
-		);
+		var result = alasql('SELECT DISTINCT x AS col1, x AS col2 FROM ? ORDER BY x', [data]);
 
 		var expected = [
 			{col1: 1, col2: 1},

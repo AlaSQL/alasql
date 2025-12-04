@@ -608,7 +608,7 @@ yy.Select.prototype.compileSelectGroup1 = function (query) {
 yy.Select.prototype.compileSelectGroup2 = function (query) {
 	var self = this;
 	var s = query.selectgfns;
-	
+
 	// Create a lookup map for GROUP BY columns to optimize performance
 	var groupColMap = {};
 	if (self.group) {
@@ -617,7 +617,7 @@ yy.Select.prototype.compileSelectGroup2 = function (query) {
 			groupColMap[key] = gp;
 		});
 	}
-	
+
 	self.columns.forEach(function (col) {
 		//			 console.log(col);
 		// Skip SELECT * columns as they are handled differently
