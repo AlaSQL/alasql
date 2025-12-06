@@ -447,9 +447,49 @@ yy.Select = class Select {
 
 	compileQueries(query) {
 		if (!this.queries) return;
-		query.queriesfn = this.queries.map(function (q) {
+
+		// Helper function to detect if a subquery might be correlated
+		// A subquery is correlated if it references tables not in its own FROM clause
+		const isCorrelated = (subquery, outerQuery) => {
+			if (!subquery.from) return false;
+
+			// Get table names from subquery's FROM clause
+			const subqueryTables = new Set();
+			subquery.from.forEach(f => {
+				if (f.tableid) subqueryTables.add(f.tableid);
+				if (f.as) subqueryTables.add(f.as);
+			});
+
+			// Check if WHERE clause references tables not in subquery's FROM
+			const referencesExternal = node => {
+				if (!node) return false;
+
+				// Check Column nodes for tableid using instanceof
+				if (node instanceof yy.Column) {
+					if (node.tableid && !subqueryTables.has(node.tableid)) {
+						return true;
+					}
+				}
+
+				// Recursively check own properties only (not inherited)
+				for (let key of Object.keys(node)) {
+					if (node[key] && typeof node[key] === 'object') {
+						if (referencesExternal(node[key])) return true;
+					}
+				}
+				return false;
+			};
+
+			return referencesExternal(subquery.where) || referencesExternal(subquery.columns);
+		};
+
+		query.queriesfn = this.queries.map(function (q, idx) {
 			var nq = q.compile(query.database.databaseid);
 			nq.query.modifier = 'RECORDSET';
+
+			// Mark as correlated if it references external tables
+			nq.query.isCorrelated = isCorrelated(q, query);
+
 			// If the nested query has its own queries, ensure they're compiled too
 			// This handles nested subqueries properly
 			if (q.queries && q.queries.length > 0) {
@@ -485,7 +525,42 @@ function modify(query, res) {
 
 	var modifier = query.modifier || alasql.options.modifier;
 	var columns = query.columns;
-	if (typeof columns === 'undefined' || columns.length == 0) {
+
+	// If dirtyColumns is true, we need to merge columns from data with existing columns
+	// This happens when SELECT * is used with dynamic data sources (like parameters)
+	if (query.dirtyColumns && res.length > 0) {
+		var allcol = {};
+		// First, scan the data to find all column names
+		for (var i = Math.min(res.length, alasql.options.columnlookup || 10) - 1; 0 <= i; i--) {
+			for (var key in res[i]) {
+				allcol[key] = true;
+			}
+		}
+
+		// Create columns from data
+		var dataColumns = Object.keys(allcol).map(function (columnid) {
+			return {columnid: columnid};
+		});
+
+		// If we don't have any columns yet, just use the data columns
+		if (!columns || columns.length === 0) {
+			columns = dataColumns;
+		} else {
+			// We have some columns (e.g., from explicit column expressions),
+			// merge them with data columns, avoiding duplicates
+			var existingColumnIds = {};
+			columns.forEach(function (col) {
+				existingColumnIds[col.columnid] = true;
+			});
+
+			// Add data columns that aren't already in the list
+			dataColumns.forEach(function (col) {
+				if (!existingColumnIds[col.columnid]) {
+					columns.push(col);
+				}
+			});
+		}
+	} else if (typeof columns === 'undefined' || columns.length === 0) {
 		// Try to create columns
 		if (res.length > 0) {
 			var allcol = {};
