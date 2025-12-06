@@ -272,7 +272,7 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	//	if(db.databaseid != databaseid) console.trace('got!');
 	//	console.log(3,db.databaseid,databaseid);
 
-	var hh = hash(sql);
+	var hh = hash(sql + '|joinstar:' + alasql.options.joinstar);
 
 	// Create hash
 	if (alasql.options.cache) {
