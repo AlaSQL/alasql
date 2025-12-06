@@ -383,7 +383,10 @@
 						leftJS();
 						s = 'false';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					} else if (
+						!alasql.options.cache ||
+						this.right.some(value => value instanceof yy.ParamValue)
+					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
@@ -414,7 +417,10 @@
 						leftJS();
 						s = 'true';
 						skipNullCheck = true; // Result is deterministic even with null operands
-					} else if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					} else if (
+						!alasql.options.cache ||
+						this.right.some(value => value instanceof yy.ParamValue)
+					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
@@ -490,7 +496,14 @@
 			var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 			var declareRefs = 'y=[(' + refs.join('), (') + ')]';
-			if (skipNullCheck || op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
+			if (
+				skipNullCheck ||
+				op === '&&' ||
+				op === '||' ||
+				op === 'IS' ||
+				op === 'IS NULL' ||
+				op === 'IS NOT NULL'
+			) {
 				return '(' + declareRefs + ', ' + expr + ')';
 			}
 
