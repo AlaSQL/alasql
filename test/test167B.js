@@ -12,11 +12,6 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 		var res3 = alasql('SELECT COLUMN DISTINCT _ FROM ?', [data]);
 		var res4 = alasql('SEARCH DISTINCT(/) FROM ?', [data]);
 
-		console.log('res1 (SELECT *):', JSON.stringify(res1));
-		console.log('res2 (SELECT DISTINCT *):', JSON.stringify(res2));
-		console.log('res3 (SELECT COLUMN DISTINCT _):', JSON.stringify(res3));
-		console.log('res4 (SEARCH DISTINCT(/)):', JSON.stringify(res4));
-
 		// res1 should have all 3 items
 		assert.equal(res1.length, 3);
 
@@ -31,9 +26,6 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 
 		var res3 = alasql('SELECT COLUMN DISTINCT _ FROM ?', [data]);
 		var res4 = alasql('SEARCH DISTINCT(/) FROM ?', [data]);
-
-		console.log('res3 (SELECT COLUMN DISTINCT _) with mixed data:', JSON.stringify(res3));
-		console.log('res4 (SEARCH DISTINCT(/)) with mixed data:', JSON.stringify(res4));
 
 		// Should return 2 distinct objects: {a:1} and {b:2}
 		assert.equal(res3.length, 2, 'SELECT COLUMN DISTINCT _ should return 2 items');
@@ -57,9 +49,6 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 		var res2 = alasql('SELECT DISTINCT * FROM ?', [data]);
 		var res4 = alasql('SEARCH DISTINCT(/) FROM ?', [data]);
 
-		console.log('res2 (SELECT DISTINCT *):', JSON.stringify(res2));
-		console.log('res4 (SEARCH DISTINCT(/)):', JSON.stringify(res4));
-
 		// Results should be the same
 		assert.deepEqual(
 			res2,
@@ -72,7 +61,6 @@ describe('Test 167B - SEARCH DISTINCT and SELECT DISTINCT functions', function (
 		var data = [1, 2, 1, 3, 2];
 
 		var res = alasql('SELECT COLUMN DISTINCT _ FROM ?', [data]);
-		console.log('SELECT COLUMN DISTINCT _ from array:', JSON.stringify(res));
 
 		// Should return distinct values: [1, 2, 3]
 		assert.equal(res.length, 3, 'Should return 3 distinct values');
