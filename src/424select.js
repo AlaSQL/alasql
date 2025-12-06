@@ -104,13 +104,13 @@ function compileSelectStar(query, aliases, joinstar) {
 			// if column not exist, then copy all
 			if (joinstar && alasql.options.joinstar == 'json') {
 				// For json mode, create nested object with alias as key
-				sp += "r['" + alias + "']=p['" + alias + "'];";
+				sp += "r['" + escapeq(alias) + "']=p['" + escapeq(alias) + "'];";
 			} else if (joinstar && alasql.options.joinstar == 'underscore') {
 				// For underscore mode, prefix each key with alias_
-				sp += 'var w=p["' + alias + '"];for(var k in w){r["' + alias + '_"+k]=w[k]};';
+				sp += 'var w=p["' + escapeq(alias) + '"];for(var k in w){r["' + escapeq(alias) + '_"+k]=w[k]};';
 			} else {
 				// Default overwrite mode
-				sp += 'var w=p["' + alias + '"];for(var k in w){r[k]=w[k]};';
+				sp += 'var w=p["' + escapeq(alias) + '"];for(var k in w){r[k]=w[k]};';
 			}
 			//console.log(777, sp);
 			query.dirtyColumns = true;
