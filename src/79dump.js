@@ -41,7 +41,7 @@ yy.DumpDatabase.prototype.execute = function (databaseid, params, cb) {
 
 		if (table.columns && table.columns.length > 0) {
 			table.columns.forEach(function (col) {
-				var a = col.columnid + ' ' + col.dbtypeid;
+				var a = col.columnid + ' ' + (col.dbtypeid || col.typeid || 'STRING');
 				if (col.dbsize) a += '(' + col.dbsize + ')';
 				if (col.primarykey) a += ' PRIMARY KEY';
 				// TODO: Add more column properties like NOT NULL, DEFAULT, etc.
