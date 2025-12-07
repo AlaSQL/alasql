@@ -24,35 +24,35 @@ describe('Test 110-B - DUMP DATABASE functionality', function () {
 	it('B) DUMP database with single table and no data', function () {
 		alasql('CREATE TABLE one (a INT, b STRING)');
 		var sql = alasql('DUMP');
-		assert(sql.includes('CREATE TABLE one'));
-		assert(sql.includes('a INT'));
-		assert(sql.includes('b STRING'));
+		assert.strictEqual(sql, 'CREATE TABLE one (a INT, b STRING);\n\n');
 	});
 
 	it('C) DUMP database with single table and data', function () {
 		alasql('INSERT INTO one VALUES (1, "test")');
 		alasql('INSERT INTO one VALUES (2, "hello")');
 		var sql = alasql('DUMP');
-		assert(sql.includes('CREATE TABLE one'));
-		assert(sql.includes('INSERT INTO one'));
-		assert(sql.includes("'test'"));
-		assert(sql.includes("'hello'"));
+		assert.strictEqual(
+			sql,
+			"CREATE TABLE one (a INT, b STRING);\nINSERT INTO one(a,b) VALUES (1,'test');\nINSERT INTO one(a,b) VALUES (2,'hello');\n\n"
+		);
 	});
 
 	it('D) DUMP database with multiple tables', function () {
 		alasql('CREATE TABLE two (x INT, y INT, z STRING)');
 		alasql('INSERT INTO two VALUES (10, 20, "data")');
 		var sql = alasql('DUMP');
-		assert(sql.includes('CREATE TABLE one'));
-		assert(sql.includes('CREATE TABLE two'));
-		assert(sql.includes('INSERT INTO one'));
-		assert(sql.includes('INSERT INTO two'));
+		assert.strictEqual(
+			sql,
+			"CREATE TABLE one (a INT, b STRING);\nINSERT INTO one(a,b) VALUES (1,'test');\nINSERT INTO one(a,b) VALUES (2,'hello');\n\nCREATE TABLE two (x INT, y INT, z STRING);\nINSERT INTO two(x,y,z) VALUES (10,20,'data');\n\n"
+		);
 	});
 
 	it('E) DUMP DATABASE with specific database name', function () {
 		var sql = alasql('DUMP DATABASE test' + test);
-		assert(sql.includes('CREATE TABLE one'));
-		assert(sql.includes('CREATE TABLE two'));
+		assert.strictEqual(
+			sql,
+			"CREATE TABLE one (a INT, b STRING);\nINSERT INTO one(a,b) VALUES (1,'test');\nINSERT INTO one(a,b) VALUES (2,'hello');\n\nCREATE TABLE two (x INT, y INT, z STRING);\nINSERT INTO two(x,y,z) VALUES (10,20,'data');\n\n"
+		);
 	});
 
 	it('F) Re-create database from dump', function () {
@@ -94,15 +94,19 @@ describe('Test 110-B - DUMP DATABASE functionality', function () {
 		alasql('INSERT INTO three VALUES (1, NULL)');
 		alasql('INSERT INTO three VALUES (NULL, "text")');
 		var sql = alasql('DUMP');
-		assert(sql.includes('NULL'));
+		assert.strictEqual(
+			sql,
+			"CREATE TABLE one (a INT, b STRING);\nINSERT INTO one(a,b) VALUES (1,'test');\nINSERT INTO one(a,b) VALUES (2,'hello');\n\nCREATE TABLE two (x INT, y INT, z STRING);\nINSERT INTO two(x,y,z) VALUES (10,20,'data');\n\nCREATE TABLE three (a INT, b STRING);\nINSERT INTO three(a,b) VALUES (1,NULL);\nINSERT INTO three(a,b) VALUES (NULL,'text');\n\n"
+		);
 	});
 
 	it('H) DUMP handles quotes in strings', function () {
 		alasql('CREATE TABLE four (name STRING)');
 		alasql('INSERT INTO four VALUES ("Val\'s Diner")');
 		var sql = alasql('DUMP');
-		assert(sql.includes('CREATE TABLE four'));
-		// Should have escaped quotes
-		assert(sql.includes('INSERT INTO four'));
+		assert.strictEqual(
+			sql,
+			"CREATE TABLE one (a INT, b STRING);\nINSERT INTO one(a,b) VALUES (1,'test');\nINSERT INTO one(a,b) VALUES (2,'hello');\n\nCREATE TABLE two (x INT, y INT, z STRING);\nINSERT INTO two(x,y,z) VALUES (10,20,'data');\n\nCREATE TABLE three (a INT, b STRING);\nINSERT INTO three(a,b) VALUES (1,NULL);\nINSERT INTO three(a,b) VALUES (NULL,'text');\n\nCREATE TABLE four (name STRING);\nINSERT INTO four(name) VALUES ('Val''s Diner');\n\n"
+		);
 	});
 });

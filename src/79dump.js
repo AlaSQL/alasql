@@ -1,11 +1,3 @@
-/*
-//
-// DUMP for Alasql.js
-// Date: 07.12.2024
-// (c) 2024, Andrey Gershun
-//
-*/
-
 // DUMP DATABASE databaseid
 // or DUMP (for current database)
 
@@ -75,8 +67,8 @@ yy.DumpDatabase.prototype.execute = function (databaseid, params, cb) {
 				sql += columns
 					.map(function (col) {
 						var val = table.data[i][col.columnid];
-						// Handle null and undefined values
-						if (val === null || val === undefined) {
+						// Handle null, undefined, and NaN values
+						if (val === null || val === undefined || (typeof val === 'number' && isNaN(val))) {
 							return 'NULL';
 						}
 						// Check if value should be escaped as a string
