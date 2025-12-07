@@ -1807,7 +1807,15 @@ AllSome
 /* UPDATE */
 
 Update
-	: UPDATE Table SET SetColumnsList WHERE Expression OutputClause
+	: UPDATE Table SET SetColumnsList FROM FromTablesList JoinTablesList WHERE Expression OutputClause
+		{ $$ = new yy.Update({table:$2, columns:$4, from:$6, joins:$7, where:$9}); yy.extend($$,$10); }
+	| UPDATE Table SET SetColumnsList FROM FromTablesList JoinTablesList OutputClause
+		{ $$ = new yy.Update({table:$2, columns:$4, from:$6, joins:$7}); yy.extend($$,$8); }
+	| UPDATE Table SET SetColumnsList FROM FromTablesList WHERE Expression OutputClause
+		{ $$ = new yy.Update({table:$2, columns:$4, from:$6, where:$8}); yy.extend($$,$9); }
+	| UPDATE Table SET SetColumnsList FROM FromTablesList OutputClause
+		{ $$ = new yy.Update({table:$2, columns:$4, from:$6}); yy.extend($$,$7); }
+	| UPDATE Table SET SetColumnsList WHERE Expression OutputClause
 		{ $$ = new yy.Update({table:$2, columns:$4, where:$6}); yy.extend($$,$7); }
 	| UPDATE Table SET SetColumnsList OutputClause
 		{ $$ = new yy.Update({table:$2, columns:$4}); yy.extend($$,$5); }
