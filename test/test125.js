@@ -35,7 +35,7 @@ describe('Test 125 - remove comments', function () {
 		assert.deepEqual(res, [{"'Cote d'Ivoir'": "Cote d'Ivoir"}]);
 		var res = alasql('select "Cote d\\"Ivoir"');
 		assert.deepEqual(res, [{"'Cote d\"Ivoir'": 'Cote d"Ivoir'}]);
-		// Test escape sequences with aliases to make expectations clearer
+		// Escape sequences now work as of issue #134
 		var res = alasql('select "\\r" as col');
 		assert.deepEqual(res, [{col: '\r'}]);
 		var res = alasql('select "\\n" as col');

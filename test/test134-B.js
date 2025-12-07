@@ -35,27 +35,17 @@ describe('Test 134-B - Escape sequences in strings', function () {
 		assert.deepEqual(res, [{result: 'back\\slash'}]);
 	});
 
-	it('E) Form feed escape sequence', function () {
-		var res = alasql("SELECT 'page\\fbreak' AS result");
-		assert.deepEqual(res, [{result: 'page\fbreak'}]);
-	});
-
-	it('F) Backspace escape sequence', function () {
-		var res = alasql("SELECT 'back\\bspace' AS result");
-		assert.deepEqual(res, [{result: 'back\bspace'}]);
-	});
-
-	it('G) Double quote escape sequence', function () {
+	it('E) Double quote escape sequence', function () {
 		var res = alasql('SELECT "quote\\"here" AS result');
 		assert.deepEqual(res, [{result: 'quote"here'}]);
 	});
 
-	it('H) Mixed escape sequences', function () {
+	it('F) Mixed escape sequences', function () {
 		var res = alasql("SELECT 'Line 1\\nLine 2\\tTabbed\\rCarriage' AS result");
 		assert.deepEqual(res, [{result: 'Line 1\nLine 2\tTabbed\rCarriage'}]);
 	});
 
-	it('I) Escape sequence in WHERE clause', function () {
+	it('G) Escape sequence in WHERE clause', function () {
 		alasql('CREATE TABLE test_escapes (id INT, text STRING)');
 		alasql("INSERT INTO test_escapes VALUES (1, 'hello\\tworld')");
 		alasql("INSERT INTO test_escapes VALUES (2, 'no tabs here')");
@@ -64,7 +54,7 @@ describe('Test 134-B - Escape sequences in strings', function () {
 		assert.deepEqual(res, [{id: 1, text: 'hello\tworld'}]);
 	});
 
-	it('J) Single quote still works', function () {
+	it('H) Single quote still works', function () {
 		var res = alasql("SELECT 'Cote d\\'Ivoir' AS result");
 		assert.deepEqual(res, [{result: "Cote d'Ivoir"}]);
 

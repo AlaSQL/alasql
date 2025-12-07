@@ -1462,18 +1462,15 @@ StringValue
 	: STRING
 		{ 
 			var str = $1.substr(1,$1.length-2).replace(/(\'\')/g,"'");
-			str = str.replace(/\\(.)/g, function(match, char) {
+			// Process escape sequences: \n \t \r \\ \' \"
+			str = str.replace(/\\(n|t|r|\\|'|")/g, function(match, char) {
 				switch(char) {
 					case 'n': return '\n';
 					case 't': return '\t';
 					case 'r': return '\r';
-					case 'b': return '\b';
-					case 'f': return '\f';
-					case 'v': return '\v';
 					case '\\': return '\\';
 					case "'": return "'";
 					case '"': return '"';
-					default: return char;
 				}
 			});
 			$$ = new yy.StringValue({value: str}); 
@@ -1481,18 +1478,15 @@ StringValue
 	| NSTRING
 		{ 
 			var str = $1.substr(2,$1.length-3).replace(/(\'\')/g,"'");
-			str = str.replace(/\\(.)/g, function(match, char) {
+			// Process escape sequences: \n \t \r \\ \' \"
+			str = str.replace(/\\(n|t|r|\\|'|")/g, function(match, char) {
 				switch(char) {
 					case 'n': return '\n';
 					case 't': return '\t';
 					case 'r': return '\r';
-					case 'b': return '\b';
-					case 'f': return '\f';
-					case 'v': return '\v';
 					case '\\': return '\\';
 					case "'": return "'";
 					case '"': return '"';
-					default: return char;
 				}
 			});
 			$$ = new yy.StringValue({value: str}); 
