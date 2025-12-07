@@ -46,7 +46,7 @@ const JSONtoString = (alasql.utils.JSONtoString = function (obj) {
 
 function JSONtoJS(obj, context, tableid, defcols) {
 	var s = '';
-	if (typeof obj == 'string') s = '"' + obj + '"';
+	if (typeof obj == 'string') s = '"' + escapeq(obj) + '"';
 	else if (typeof obj == 'number') s = '(' + obj + ')';
 	else if (typeof obj == 'boolean') s = obj;
 	else if (typeof obj === 'bigint') s = obj.toString() + 'n';
@@ -56,7 +56,7 @@ function JSONtoJS(obj, context, tableid, defcols) {
 		} else if (!obj.toJS || obj instanceof yy.Json) {
 			let ss = [];
 			for (const k in obj) {
-				let keyStr = typeof k === 'string' ? `"${k}"` : k.toString();
+				let keyStr = typeof k === 'string' ? `"${escapeq(k)}"` : k.toString();
 				let valueStr = JSONtoJS(obj[k], context, tableid, defcols);
 				ss.push(`${keyStr}:${valueStr}`);
 			}

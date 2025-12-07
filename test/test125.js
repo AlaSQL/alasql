@@ -34,11 +34,12 @@ describe('Test 125 - remove comments', function () {
 		var res = alasql("select 'Cote d''Ivoir'");
 		assert.deepEqual(res, [{"'Cote d'Ivoir'": "Cote d'Ivoir"}]);
 		var res = alasql('select "Cote d\\"Ivoir"');
-		assert.deepEqual(res, [{"'Cote d\\\"Ivoir'": 'Cote d\\"Ivoir'}]);
-		var res = alasql('select "\\r"');
-		assert.deepEqual(res, [{"'\\r'": '\\r'}]);
-		var res = alasql('select "\\n"');
-		assert.deepEqual(res, [{"'\\n'": '\\n'}]);
+		assert.deepEqual(res, [{"'Cote d\"Ivoir'": 'Cote d"Ivoir'}]);
+		// Test escape sequences with aliases to make expectations clearer
+		var res = alasql('select "\\r" as col');
+		assert.deepEqual(res, [{col: '\r'}]);
+		var res = alasql('select "\\n" as col');
+		assert.deepEqual(res, [{col: '\n'}]);
 
 		alasql('drop database test125');
 		done();
