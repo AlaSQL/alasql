@@ -240,6 +240,6 @@ stdfn.RANGE_IS_SUPERSET = function (range1, range2) {
 
 // Check if ranges are disjoint
 stdfn.RANGE_IS_DISJOINT = function (range1, range2) {
-	if (!range1 || !range2) return true;
+	if (!range1 || !range2) return false;
 	return range1.isDisjointFrom(range2);
 };
