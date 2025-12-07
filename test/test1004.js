@@ -140,7 +140,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 
 	it('10. JSON JOINSTAR with special characters in column names', () => {
 		var data = [{'col-name': 'A', 'col.name': 'B'}];
-		var data2 = [{'col_name': 'C'}];
+		var data2 = [{col_name: 'C'}];
 		alasql.options.joinstar = 'json';
 		var res = alasql('SELECT * FROM ? as t1 JOIN ? as t2', [data, data2]);
 		assert.deepEqual(res, [{t1: {'col-name': 'A', 'col.name': 'B'}, t2: {col_name: 'C'}}]);

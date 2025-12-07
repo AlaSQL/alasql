@@ -111,7 +111,8 @@ function compileSelectStar(query, aliases, joinstar) {
 				sp += "r['" + escapeq(alias) + "']=p['" + escapeq(alias) + "'];";
 			} else if (joinstar && alasql.options.joinstar == 'underscore') {
 				// For underscore mode, prefix each key with alias_
-				sp += 'var w=p["' + escapeq(alias) + '"];for(var k in w){r["' + escapeq(alias) + '_"+k]=w[k]};';
+				sp +=
+					'var w=p["' + escapeq(alias) + '"];for(var k in w){r["' + escapeq(alias) + '_"+k]=w[k]};';
 			} else {
 				// Default overwrite mode
 				sp += 'var w=p["' + escapeq(alias) + '"];for(var k in w){r[k]=w[k]};';
