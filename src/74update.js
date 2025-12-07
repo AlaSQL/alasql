@@ -278,9 +278,7 @@ yy.Update.prototype.compile = function (databaseid) {
 					if (
 						depth > 0 &&
 						!pass &&
-						(source.joinmode === 'LEFT' ||
-							source.joinmode === 'OUTER' ||
-							source.joinmode === 'SEMI')
+						(source.joinmode === 'LEFT' || source.joinmode === 'OUTER')
 					) {
 						var newP = Object.assign({}, p);
 						newP[source.alias] = {};
