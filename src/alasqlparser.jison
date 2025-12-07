@@ -148,6 +148,7 @@ DATABASE(S)?									return 'DATABASE'
 /*'HELP'											return 'HELP'*/
 'IF'											return 'IF'
 'IDENTITY'										return 'IDENTITY'
+'IGNORE'										return 'IGNORE'
 'IS'											return 'IS'
 'IN'											return 'IN'
 'INDEX'											return 'INDEX'
@@ -1844,6 +1845,18 @@ Insert
                 { $$ = new yy.Insert({into:$3, values: $5}); yy.extend($$,$6); }
         | INSERT Into Table ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, values: $4}); yy.extend($$,$5); }
+        | INSERT IGNORE Into Table Values  ValuesListsList OutputClause
+                { $$ = new yy.Insert({into:$4, values: $6, ignore:true}); yy.extend($$,$7); }
+        | INSERT IGNORE Into Table ValuesListsList OutputClause
+                { $$ = new yy.Insert({into:$4, values: $5, ignore:true}); yy.extend($$,$6); }
+        | INSERT IGNORE Into Table LPAR ColumnsList RPAR Values  ValuesListsList OutputClause
+                { $$ = new yy.Insert({into:$4, columns: $6, values: $9, ignore:true}); yy.extend($$,$10); }
+        | INSERT IGNORE Into Table LPAR ColumnsList RPAR ValuesListsList OutputClause
+                { $$ = new yy.Insert({into:$4, columns: $6, values: $8, ignore:true}); yy.extend($$,$9); }
+        | INSERT IGNORE Into Table Select OutputClause
+                { $$ = new yy.Insert({into:$4, select: $5, ignore:true}); yy.extend($$,$6); }
+        | INSERT IGNORE Into Table LPAR ColumnsList RPAR Select OutputClause
+                { $$ = new yy.Insert({into:$4, columns: $6, select: $8, ignore:true}); yy.extend($$,$9); }
         | INSERT OR REPLACE Into Table Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); yy.extend($$,$8); }
         | INSERT OR REPLACE Into Table ValuesListsList OutputClause

@@ -306,7 +306,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		);
 	}
 
-	table.insert = function (r, orreplace) {
+	table.insert = function (r, orreplace, ignore) {
 		var oldinserted = alasql.inserted;
 		alasql.inserted = [r];
 
@@ -386,21 +386,34 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				//console.log(pk,addr,pk.onrightfn({ono:1}));
 				//console.log(r, pk.onrightfn(r), pk.onrightfns);
 				if (orreplace) toreplace = table.uniqs[pk.hh][addr];
+				else if (ignore) {
+					alasql.inserted = oldinserted;
+					return false; // Silently skip insertion and indicate it was skipped
+				}
 				else
 					throw new Error('Cannot insert record, because it already exists in primary key index');
 			}
 			//			table.uniqs[pk.hh][addr]=r;
 		}
 
+		var skipInsert = false;
 		if (table.uk && table.uk.length) {
 			table.uk.forEach(function (uk) {
 				var ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][ukaddr] !== 'undefined') {
 					if (orreplace) toreplace = table.uniqs[uk.hh][ukaddr];
+					else if (ignore) {
+						skipInsert = true; // Mark for skipping
+					}
 					else throw new Error('Cannot insert record, because it already exists in unique index');
 				}
 				//				table.uniqs[uk.hh][ukaddr]=r;
 			});
+		}
+
+		if (skipInsert) {
+			alasql.inserted = oldinserted;
+			return false;
 		}
 
 		if (toreplace) {

@@ -14,6 +14,7 @@ yy.Insert.prototype.toString = function () {
 	var s = 'INSERT ';
 	if (this.orreplace) s += 'OR REPLACE ';
 	if (this.replaceonly) s = 'REPLACE ';
+	if (this.ignore) s += 'IGNORE ';
 	s += 'INTO ' + this.into.toString();
 	if (this.columns) s += '(' + this.columns.toString() + ')';
 	if (this.values) {
@@ -207,10 +208,20 @@ yy.Insert.prototype.compile = function (databaseid) {
 			//			s += 'db.tables[\''+tableid+'\'].insert(r);';
 			if (db.tables[tableid].insert) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
-				s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
+				s += "var inserted=db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ',' + (self.ignore ? 'true' : 'false') + ');';
+				// Track successful inserts (insert returns undefined when ignored)
+				if (self.ignore) {
+					s += 'if(inserted!==false){';
+				}
 				// Also push to aa for OUTPUT clause
 				if (self.output) {
 					s += 'aa.push(a);';
+				} else if (self.ignore) {
+					// For ignore mode without output, track successful insertions
+					s += 'aa.push(a);';
+				}
+				if (self.ignore) {
+					s += '}';
 				}
 			} else {
 				s += 'aa.push(a);';
@@ -259,10 +270,20 @@ yy.Insert.prototype.compile = function (databaseid) {
 			if (db.tables[tableid].isclass) {
 				s += 'return a.$id;';
 			} else {
-				s += 'return ' + self.values.length;
+				// For IGNORE mode, return count of actually inserted rows
+				if (self.ignore) {
+					s += 'return aa.length;';
+				} else {
+					s += 'return ' + self.values.length;
+				}
 			}
 		} else {
-			s += 'return ' + self.values.length;
+			// For IGNORE mode, return count of actually inserted rows
+			if (self.ignore) {
+				s += 'return aa.length;';
+			} else {
+				s += 'return ' + self.values.length;
+			}
 		}
 
 		//console.log(186,s3+s);
@@ -297,7 +318,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
 						var r = cloneDeep(res[i]);
 						defaultfn(r, db, params, alasql);
-						db.tables[tableid].insert(r, self.orreplace);
+						db.tables[tableid].insert(r, self.orreplace, self.ignore);
 						insertedRows.push(r);
 					}
 				} else {
