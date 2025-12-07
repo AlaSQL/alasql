@@ -103,6 +103,7 @@ cat \
 	src/76usedatabase.js	\
 	src/77declare.js		\
 	src/78show.js			\
+	src/79dump.js			\
 	src/79set.js			\
 	src/80console.js		\
 	src/81commit.js			\

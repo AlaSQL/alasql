@@ -120,6 +120,7 @@ DATABASE(S)?									return 'DATABASE'
 'DISTINCT'                                      return 'DISTINCT'
 /* DOUBLE\s+PRECISION								return 'LITERAL' */
 'DROP'											return 'DROP'
+'DUMP'											return 'DUMP'
 'ECHO'											return 'ECHO'
 'EDGE'											return 'EDGE'
 'END'											return 'END'
@@ -420,6 +421,7 @@ Statement
 	| DropIndex
 	| DropTable
 	| DropView
+	| DumpDatabase
 	| If
 	| Insert
 	| Merge
@@ -2277,6 +2279,13 @@ UseDatabase
 		{ $$ = new yy.UseDatabase({databaseid: $3 });}
 	| USE Literal
 		{ $$ = new yy.UseDatabase({databaseid: $2 });}
+	;
+
+DumpDatabase
+	: DUMP DATABASE Literal
+		{ $$ = new yy.DumpDatabase({databaseid: $3 });}
+	| DUMP
+		{ $$ = new yy.DumpDatabase();}
 	;
 
 DropDatabase
