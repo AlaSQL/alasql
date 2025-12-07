@@ -936,10 +936,10 @@ break;
 case 381:
  this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
 case 379:
- this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'").replace(/(\\\\)/g,"\\")}); 
+ this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,"\\")}); 
 break;
 case 380:
- this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'").replace(/(\\\\)/g,"\\")}); 
+ this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,"\\")}); 
 break;
 case 382:
  this.$ = new yy.NullValue({value:undefined}); 
@@ -2235,6 +2235,11 @@ _handle_error:
     return true;
 }};
 
+
+// Pre-compiled regex patterns for string escape sequences (performance optimization)
+var reEscapedQuote = /(\\')/g;
+var reDoubleQuote = /('')/g;
+var reEscapedBackslash = /(\\\\)/g;
 
 // from https://www.postgresql.org/docs/current/static/sql-keywords-appendix.html
 // JSON.stringify([].slice.call(document.querySelectorAll('tr')).filter(x => x.children.length == 5 && x.children[2].innerText == 'reserved').map(x => x.children[0].innerText))
