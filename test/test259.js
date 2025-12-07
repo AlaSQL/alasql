@@ -6,8 +6,16 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 259 SqlLogic Parser Test #2', function () {
+	before(function () {
+		alasql('CREATE DATABASE test259');
+		alasql('USE test259');
+	});
+
+	after(function () {
+		alasql('DROP DATABASE test259');
+	});
+
 	it.skip('1. Sqllogic', function (done) {
-		alasql('CREATE DATABASE test259; USE test259');
 		done();
 	});
 
@@ -35,7 +43,6 @@ describe('Test 259 SqlLogic Parser Test #2', function () {
 	});
 
 	it.skip('99. Drop Database', function (done) {
-		alasql('DROP DATABASE test259');
 		done();
 	});
 });
