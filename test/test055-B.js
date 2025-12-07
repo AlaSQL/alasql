@@ -99,6 +99,8 @@ describe('Test 055-B - PostgreSQL Range Types', function () {
 	});
 
 	it('N) Use range in table and query', function () {
+		// Note: AlaSQL is schemaless, so 'range' here is just a label
+		// The actual Range object is stored as-is
 		alasql('CREATE TABLE events (id int, period range)');
 		alasql('INSERT INTO events VALUES (1, int4range(10, 20))');
 		alasql('INSERT INTO events VALUES (2, int4range(15, 25))');

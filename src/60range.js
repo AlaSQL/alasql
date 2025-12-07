@@ -31,15 +31,14 @@ alasql.Range.prototype.contains = function (value) {
 
 alasql.Range.prototype.overlaps = function (other) {
 	if (this.isEmpty() || other.isEmpty()) return false;
-	// Ranges overlap if one contains the start or end of the other
-	return (
-		this.contains(other.lower) ||
-		this.contains(other.upper) ||
-		other.contains(this.lower) ||
-		other.contains(this.upper) ||
-		(this.lower <= other.lower && this.upper >= other.upper) ||
-		(other.lower <= this.lower && other.upper >= this.upper)
-	);
+	// Ranges overlap if they are not disjoint
+	// They are disjoint if one ends before the other starts
+	if (this.upper < other.lower) return false;
+	if (other.upper < this.lower) return false;
+	// Handle boundary cases where bounds are equal but exclusive
+	if (this.upper === other.lower && (!this.upperInc || !other.lowerInc)) return false;
+	if (other.upper === this.lower && (!other.upperInc || !this.lowerInc)) return false;
+	return true;
 };
 
 alasql.Range.prototype.union = function (other) {
