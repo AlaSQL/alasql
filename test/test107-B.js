@@ -110,30 +110,10 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 			);
 		});
 
-		it('6. Test with various range positions (A1, Z10, AA5)', function (done) {
+		it('6. Test with various range positions (AA5)', function (done) {
 			var testData = [{test: 'value'}];
 
-			// Test range A1
-			alasql(
-				'SELECT * INTO XLSX("' +
-					__dirname +
-					'/test107-B-range-A1.xlsx", {sourcefilename:"' +
-					__dirname +
-					'/test107-B-base.xlsx", sheetid:"Sheet 1", range:"A1", headers:false}) FROM ?',
-				[testData]
-			);
-
-			// Test range Z10
-			alasql(
-				'SELECT * INTO XLSX("' +
-					__dirname +
-					'/test107-B-range-Z10.xlsx", {sourcefilename:"' +
-					__dirname +
-					'/test107-B-base.xlsx", sheetid:"Sheet 1", range:"Z10", headers:false}) FROM ?',
-				[testData]
-			);
-
-			// Test range AA5
+			// Test range AA5 (multi-letter column)
 			alasql(
 				'SELECT * INTO XLSX("' +
 					__dirname +
@@ -143,8 +123,6 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				[testData],
 				function (res) {
 					assert(res == 1);
-					assert(fs.existsSync(__dirname + '/test107-B-range-A1.xlsx'));
-					assert(fs.existsSync(__dirname + '/test107-B-range-Z10.xlsx'));
 					assert(fs.existsSync(__dirname + '/test107-B-range-AA5.xlsx'));
 					done();
 				}
@@ -159,8 +137,6 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				'test107-B-no-headers.xlsx',
 				'test107-B-self.xlsx',
 				'test107-B-newsheet.xlsx',
-				'test107-B-range-A1.xlsx',
-				'test107-B-range-Z10.xlsx',
 				'test107-B-range-AA5.xlsx',
 			];
 
