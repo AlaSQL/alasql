@@ -18,4 +18,25 @@ describe('Test 489 - ASCII with backslash character', function () {
 		var res = alasql("VALUE OF SELECT '\\\\'");
 		assert.equal(res, '\\');
 	});
+
+	it('D) Escaped backslash followed by escaped quote (edge case)', function () {
+		// In SQL: '\\''  means backslash followed by quote
+		// \\ = one backslash, '' = one quote (SQL quote doubling)
+		var res = alasql("VALUE OF SELECT '\\\\'''");
+		assert.equal(res.length, 2);
+		assert.equal(res.charCodeAt(0), 92); // backslash
+		assert.equal(res.charCodeAt(1), 39); // quote
+		assert.equal(res, "\\'");
+	});
+
+	it('E) Multiple backslashes followed by quote', function () {
+		// In SQL: '\\\\''  means two backslashes followed by quote
+		// \\\\ = two backslashes, '' = one quote
+		var res = alasql("VALUE OF SELECT '\\\\\\\\'''");
+		assert.equal(res.length, 3);
+		assert.equal(res.charCodeAt(0), 92); // backslash
+		assert.equal(res.charCodeAt(1), 92); // backslash
+		assert.equal(res.charCodeAt(2), 39); // quote
+		assert.equal(res, "\\\\'");
+	});
 });
