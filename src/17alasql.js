@@ -272,6 +272,8 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	//	if(db.databaseid != databaseid) console.trace('got!');
 	//	console.log(3,db.databaseid,databaseid);
 
+	// Include joinstar option in cache key because it affects how SELECT * compiles
+	// Without this, changing joinstar would use stale cached queries compiled with old option
 	var hh = hash(sql + '|joinstar:' + alasql.options.joinstar);
 
 	// Create hash

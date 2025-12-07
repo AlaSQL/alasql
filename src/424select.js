@@ -101,7 +101,11 @@ function compileSelectStar(query, aliases, joinstar) {
 		} else {
 			//					console.log(60,alias,columns);
 
-			// if column not exist, then copy all
+			// If columns are not known (e.g., with inline data using ? placeholders),
+			// copy all properties dynamically respecting the joinstar option:
+			// - 'json': Nested objects by alias (e.g., {a: {col: val}, b: {col: val}})
+			// - 'underscore': Prefix columns with alias (e.g., {a_col: val, b_col: val})
+			// - 'overwrite': Later columns overwrite earlier ones (default)
 			if (joinstar && alasql.options.joinstar == 'json') {
 				// For json mode, create nested object with alias as key
 				sp += "r['" + escapeq(alias) + "']=p['" + escapeq(alias) + "'];";
