@@ -528,11 +528,7 @@ stdfn.FORMAT = function (value, decimals, locale) {
 		return null;
 	}
 
-	// Round to specified decimal places
-	var factor = Math.pow(10, decimals);
-	num = Math.round(num * factor) / factor;
-
-	// Split into integer and decimal parts
+	// Split into integer and decimal parts using toFixed for proper rounding
 	var negative = num < 0;
 	var parts = Math.abs(num).toFixed(decimals).split('.');
 	var integerPart = parts[0];

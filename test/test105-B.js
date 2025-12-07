@@ -4,7 +4,7 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 105-B - FORMAT function', function () {
-	const test = '105B';
+	var test = '105B';
 
 	before(function () {
 		alasql('create database test' + test);
