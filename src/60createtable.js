@@ -312,6 +312,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		var table = this;
 
+		// orreplace and ignore are mutually exclusive - orreplace takes precedence
+		if (orreplace && ignore) {
+			ignore = false;
+		}
+
 		var toreplace = false; // For INSERT OR REPLACE
 
 		/*

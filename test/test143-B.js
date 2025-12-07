@@ -30,8 +30,7 @@ describe('Test 143-B - INSERT IGNORE', function () {
 		// Verify only one record exists
 		var data = alasql('SELECT * FROM Amazon');
 		assert.equal(data.length, 1);
-		assert.equal(data[0].Date, '12/12/14');
-		assert.equal(data[0].Ct, 0);
+		assert.deepEqual(data[0], {Date: '12/12/14', Ct: 0});
 		
 		// Clean up
 		alasql('DROP TABLE Amazon');
