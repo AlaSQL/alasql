@@ -396,24 +396,22 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			//			table.uniqs[pk.hh][addr]=r;
 		}
 
-		var skipInsert = false;
 		if (table.uk && table.uk.length) {
-			table.uk.forEach(function (uk) {
+			for (var i = 0; i < table.uk.length; i++) {
+				var uk = table.uk[i];
 				var ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][ukaddr] !== 'undefined') {
-					if (orreplace) toreplace = table.uniqs[uk.hh][ukaddr];
-					else if (ignore) {
-						skipInsert = true; // Mark for skipping
+					if (orreplace) {
+						toreplace = table.uniqs[uk.hh][ukaddr];
+					} else if (ignore) {
+						alasql.inserted = oldinserted;
+						return false; // Silently skip insertion and indicate it was skipped
+					} else {
+						throw new Error('Cannot insert record, because it already exists in unique index');
 					}
-					else throw new Error('Cannot insert record, because it already exists in unique index');
 				}
 				//				table.uniqs[uk.hh][ukaddr]=r;
-			});
-		}
-
-		if (skipInsert) {
-			alasql.inserted = oldinserted;
-			return false;
+			}
 		}
 
 		if (toreplace) {
