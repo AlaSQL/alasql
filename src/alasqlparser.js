@@ -935,6 +935,11 @@ case 380:
 break;
 case 381:
  this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
+case 379:
+ this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'").replace(/(\\\\)/g,"\\")}); 
+break;
+case 380:
+ this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'").replace(/(\\\\)/g,"\\")}); 
 break;
 case 382:
  this.$ = new yy.NullValue({value:undefined}); 
