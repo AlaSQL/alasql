@@ -23,6 +23,10 @@ yy.Insert.prototype.toString = function () {
 		s += ' VALUES ' + values.join(',');
 	}
 	if (this.select) s += ' ' + this.select.toString();
+	if (this.setcolumns) {
+		s += ' SET ';
+		s += this.setcolumns.map(col => col.toString()).join(', ');
+	}
 	if (this.output) {
 		s += ' OUTPUT ';
 		s += this.output.columns.map(col => col.toString()).join(', ');
@@ -331,6 +335,75 @@ yy.Insert.prototype.compile = function (databaseid) {
 	} else if (this.default) {
 		var insertfns = "db.tables['" + tableid + "'].data.push({" + table.defaultfns + '});return 1;';
 		var insertfn = new Function('db,params,alasql', insertfns);
+	} else if (this.setcolumns) {
+		// INSERT INTO table SET column = value
+		var ss = [];
+
+		this.setcolumns.forEach(function (setcol) {
+			var columnid = setcol.column.columnid;
+			var q = "'" + columnid + "':";
+
+			if (table.xcolumns && table.xcolumns[columnid]) {
+				if (['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(table.xcolumns[columnid].dbtypeid) >= 0) {
+					q += '(x=' + setcol.expression.toJS() + ',x==undefined?undefined:+x)';
+				} else if (alasql.fn[table.xcolumns[columnid].dbtypeid]) {
+					q += '(new ' + table.xcolumns[columnid].dbtypeid + '(';
+					q += setcol.expression.toJS();
+					q += '))';
+				} else {
+					q += setcol.expression.toJS();
+				}
+			} else {
+				q += setcol.expression.toJS();
+			}
+			ss.push(q);
+		});
+
+		if (db.tables[tableid].defaultfns) {
+			ss.unshift(db.tables[tableid].defaultfns);
+		}
+
+		s = s3 + s;
+		s += 'a={' + ss.join(',') + '};';
+
+		if (db.tables[tableid].isclass) {
+			s += "var db=alasql.databases['" + databaseid + "'];";
+			s += 'a.$class="' + tableid + '";';
+			s += 'a.$id=db.counter++;';
+			s += 'db.objects[a.$id]=a;';
+		}
+
+		if (db.tables[tableid].insert) {
+			s += "var db=alasql.databases['" + databaseid + "'];";
+			s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
+			if (self.output) {
+				s += 'aa.push(a);';
+			}
+		} else {
+			s += 'aa.push(a);';
+			s += "alasql.databases['" + databaseid + "'].tables['" + tableid + "'].data.push(a);";
+		}
+
+		// Handle OUTPUT clause
+		if (self.output) {
+			s += 'var r = a;';
+			s += 'var outputRow = {};';
+			self.output.columns.forEach(function (col) {
+				if (col.columnid === '*') {
+					s += 'for(var key in r){ outputRow[key] = r[key]; }';
+				} else {
+					var colname = col.as || col.columnid;
+					s += "outputRow['" + colname + "']=r['" + col.columnid + "'];";
+				}
+			});
+			s += 'return [outputRow];';
+		} else if (db.tables[tableid].isclass) {
+			s += 'return a.$id;';
+		} else {
+			s += 'return 1;';
+		}
+
+		var insertfn = new Function('db, params, alasql', 'var y;' + s).bind(this);
 	} else {
 		throw new Error('Wrong INSERT parameters');
 	}

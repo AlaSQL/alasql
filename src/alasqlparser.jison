@@ -1864,6 +1864,8 @@ Insert
                 { $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); yy.extend($$,$7); }
         | INSERT Into Table LPAR ColumnsList RPAR Select OutputClause
                 { $$ = new yy.Insert({into:$3, columns: $5, select: $7}); yy.extend($$,$9); }
+        | INSERT Into Table SET SetColumnsList OutputClause
+                { $$ = new yy.Insert({into:$3, setcolumns: $5}); yy.extend($$,$6); }
         ;
 
 Values
