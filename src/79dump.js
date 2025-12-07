@@ -68,7 +68,11 @@ yy.DumpDatabase.prototype.execute = function (databaseid, params, cb) {
 					.map(function (col) {
 						var val = table.data[i][col.columnid];
 						// Handle null, undefined, and NaN values
-						if (val === null || val === undefined || (typeof val === 'number' && isNaN(val))) {
+						if (
+							val === null ||
+							val === undefined ||
+							(typeof val === 'number' && Number.isNaN(val))
+						) {
 							return 'NULL';
 						}
 						// Check if value should be escaped as a string
