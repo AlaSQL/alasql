@@ -371,7 +371,13 @@
 					// If x is NULL, return false (UNKNOWN). If x matches a value, return true.
 					// If x doesn't match but NULL exists in subquery, return false (UNKNOWN).
 					const leftVal = leftJS();
-					s = `((v => {
+					// Check if this is a correlated subquery (references outer tables)
+					// If correlated, we cannot cache the results as they depend on the current row
+					const cacheKey = `in${this.queriesidx}`;
+					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
+					
+					// SQL-compliant uncached lookup
+					const uncachedLookup = `((v => {
 						const lv = alasql.utils.getValueOf(v);
 						if (lv == null) return false;
 						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
@@ -380,12 +386,20 @@
 							return iv != null && iv === lv;
 						});
 					})(${leftVal}))`;
-					// Check if this is a correlated subquery (references outer tables)
-					// If correlated, we cannot cache the results as they depend on the current row
-					const cacheKey = `in${this.queriesidx}`;
-					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-					const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
-					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1)`;
+					
+					// SQL-compliant cached lookup
+					const cachedLookup = `((v => {
+						const lv = alasql.utils.getValueOf(v);
+						if (lv == null) return false;
+						this.subqueryCache = this.subqueryCache || {};
+						if (!this.subqueryCache.${cacheKey}) {
+							const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
+							const nonNullSet = new Set(arr.filter(item => alasql.utils.getValueOf(item) != null).map(item => alasql.utils.getValueOf(item)));
+							this.subqueryCache.${cacheKey} = nonNullSet;
+						}
+						return this.subqueryCache.${cacheKey}.has(lv);
+					})(${leftVal}))`;
+					
 					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
@@ -431,7 +445,13 @@
 					// SQL semantics: x NOT IN (subquery with NULL) should return false (UNKNOWN)
 					// If x is NULL, return false (UNKNOWN). If subquery contains NULL and x is not found, return false (UNKNOWN).
 					const leftVal = leftJS();
-					s = `((v => {
+					// Check if this is a correlated subquery (references outer tables)
+					// If correlated, we cannot cache the results as they depend on the current row
+					const cacheKey = `notIn${this.queriesidx}`;
+					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
+					
+					// SQL-compliant uncached lookup
+					const uncachedLookup = `((v => {
 						const lv = alasql.utils.getValueOf(v);
 						if (lv == null) return false;
 						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
@@ -444,12 +464,24 @@
 						if (hasNull) return false;
 						return true;
 					})(${leftVal}))`;
-					// Check if this is a correlated subquery (references outer tables)
-					// If correlated, we cannot cache the results as they depend on the current row
-					const cacheKey = `notIn${this.queriesidx}`;
-					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-					const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
-					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
+					
+					// SQL-compliant cached lookup
+					const cachedLookup = `((v => {
+						const lv = alasql.utils.getValueOf(v);
+						if (lv == null) return false;
+						this.subqueryCache = this.subqueryCache || {};
+						if (!this.subqueryCache.${cacheKey}) {
+							const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
+							const hasNull = arr.some(item => alasql.utils.getValueOf(item) == null);
+							const nonNullSet = new Set(arr.filter(item => alasql.utils.getValueOf(item) != null).map(item => alasql.utils.getValueOf(item)));
+							this.subqueryCache.${cacheKey} = { hasNull, set: nonNullSet };
+						}
+						const cache = this.subqueryCache.${cacheKey};
+						if (cache.set.has(lv)) return false;
+						if (cache.hasNull) return false;
+						return true;
+					})(${leftVal}))`;
+					
 					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
