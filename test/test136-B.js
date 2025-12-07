@@ -57,4 +57,13 @@ describe('Test 136-B - INSERT INTO table SET column = value', function () {
 			{id: 3, itemValue: 'third'},
 		]);
 	});
+
+	it('E) INSERT SET with DEFAULT values', function () {
+		alasql('CREATE TABLE withDefaults (id INT, status STRING DEFAULT "active", quantity INT DEFAULT 0)');
+		alasql('INSERT INTO withDefaults SET id = 1, status = "inactive"');
+
+		var data = alasql('SELECT * FROM withDefaults');
+		// Explicit SET values should override defaults
+		assert.deepEqual(data, [{id: 1, status: 'inactive', quantity: 0}]);
+	});
 });
