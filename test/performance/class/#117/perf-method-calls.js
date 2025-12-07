@@ -190,17 +190,11 @@ console.log('-------------------------------------------');
 
 const ownMethodResults = [];
 
-ownMethodResults.push(
-	benchmark('Current Pattern', () => currentObj.getGrade(), iterations)
-);
+ownMethodResults.push(benchmark('Current Pattern', () => currentObj.getGrade(), iterations));
 
-ownMethodResults.push(
-	benchmark('Proposed Pattern', () => proposedObj.getGrade(), iterations)
-);
+ownMethodResults.push(benchmark('Proposed Pattern', () => proposedObj.getGrade(), iterations));
 
-ownMethodResults.push(
-	benchmark('ES6 Classes', () => es6Obj.getGrade(), iterations)
-);
+ownMethodResults.push(benchmark('ES6 Classes', () => es6Obj.getGrade(), iterations));
 
 for (const result of ownMethodResults) {
 	console.log(
@@ -216,17 +210,11 @@ console.log('---------------------------------------------');
 
 const parentMethodResults = [];
 
-parentMethodResults.push(
-	benchmark('Current Pattern', () => currentObj.getAge(), iterations)
-);
+parentMethodResults.push(benchmark('Current Pattern', () => currentObj.getAge(), iterations));
 
-parentMethodResults.push(
-	benchmark('Proposed Pattern', () => proposedObj.getAge(), iterations)
-);
+parentMethodResults.push(benchmark('Proposed Pattern', () => proposedObj.getAge(), iterations));
 
-parentMethodResults.push(
-	benchmark('ES6 Classes', () => es6Obj.getAge(), iterations)
-);
+parentMethodResults.push(benchmark('ES6 Classes', () => es6Obj.getAge(), iterations));
 
 for (const result of parentMethodResults) {
 	console.log(
@@ -242,17 +230,13 @@ console.log('---------------------------------------------------');
 
 const grandParentMethodResults = [];
 
-grandParentMethodResults.push(
-	benchmark('Current Pattern', () => currentObj.getName(), iterations)
-);
+grandParentMethodResults.push(benchmark('Current Pattern', () => currentObj.getName(), iterations));
 
 grandParentMethodResults.push(
 	benchmark('Proposed Pattern', () => proposedObj.getName(), iterations)
 );
 
-grandParentMethodResults.push(
-	benchmark('ES6 Classes', () => es6Obj.getName(), iterations)
-);
+grandParentMethodResults.push(benchmark('ES6 Classes', () => es6Obj.getName(), iterations));
 
 for (const result of grandParentMethodResults) {
 	console.log(
@@ -268,17 +252,11 @@ console.log('-----------------------------------------');
 
 const chainResults = [];
 
-chainResults.push(
-	benchmark('Current Pattern', () => currentObj.getFullInfo(), iterations)
-);
+chainResults.push(benchmark('Current Pattern', () => currentObj.getFullInfo(), iterations));
 
-chainResults.push(
-	benchmark('Proposed Pattern', () => proposedObj.getFullInfo(), iterations)
-);
+chainResults.push(benchmark('Proposed Pattern', () => proposedObj.getFullInfo(), iterations));
 
-chainResults.push(
-	benchmark('ES6 Classes', () => es6Obj.getFullInfo(), iterations)
-);
+chainResults.push(benchmark('ES6 Classes', () => es6Obj.getFullInfo(), iterations));
 
 for (const result of chainResults) {
 	console.log(
@@ -294,17 +272,11 @@ console.log('--------------------------------------------');
 
 const propertyResults = [];
 
-propertyResults.push(
-	benchmark('Current Pattern', () => currentObj.name, iterations)
-);
+propertyResults.push(benchmark('Current Pattern', () => currentObj.name, iterations));
 
-propertyResults.push(
-	benchmark('Proposed Pattern', () => proposedObj.name, iterations)
-);
+propertyResults.push(benchmark('Proposed Pattern', () => proposedObj.name, iterations));
 
-propertyResults.push(
-	benchmark('ES6 Classes', () => es6Obj.name, iterations)
-);
+propertyResults.push(benchmark('ES6 Classes', () => es6Obj.name, iterations));
 
 for (const result of propertyResults) {
 	console.log(
@@ -387,9 +359,7 @@ if (Math.abs(proposedDiff) < 2) {
 	);
 }
 
-console.log(
-	'\nNote: The super() method in the proposed pattern is used during construction,'
-);
+console.log('\nNote: The super() method in the proposed pattern is used during construction,');
 console.log('not during method calls, so it should not impact runtime method performance.');
 
 console.log('\n=== Test Complete ===');

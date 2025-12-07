@@ -149,28 +149,14 @@ const results = [];
 
 // Test with same parameters
 results.push(
-	measureCreation(
-		'Current Pattern',
-		() => new Current_Class(1, 2, 3, 4, 5),
-		iterations
-	)
+	measureCreation('Current Pattern', () => new Current_Class(1, 2, 3, 4, 5), iterations)
 );
 
 results.push(
-	measureCreation(
-		'Proposed Pattern',
-		() => new Proposed_Class(1, 2, 3, 4, 5),
-		iterations
-	)
+	measureCreation('Proposed Pattern', () => new Proposed_Class(1, 2, 3, 4, 5), iterations)
 );
 
-results.push(
-	measureCreation(
-		'ES6 Classes',
-		() => new ES6_Class(1, 2, 3, 4, 5),
-		iterations
-	)
-);
+results.push(measureCreation('ES6 Classes', () => new ES6_Class(1, 2, 3, 4, 5), iterations));
 
 results.push(
 	measureCreation(
@@ -264,11 +250,7 @@ complexResults.push(
 );
 
 complexResults.push(
-	measureCreation(
-		'ES6 Classes',
-		() => new ES6_Complex(1, 2, 3, 4, 5, 6, 7, 8, 9, 10),
-		iterations
-	)
+	measureCreation('ES6 Classes', () => new ES6_Complex(1, 2, 3, 4, 5, 6, 7, 8, 9, 10), iterations)
 );
 
 for (const result of complexResults) {
@@ -368,7 +350,9 @@ if (Math.abs(proposedDiff) < 3) {
 } else if (proposedDiff > 0) {
 	console.log(`✓ Proposed pattern is ${proposedDiff.toFixed(2)}% faster at object creation.`);
 } else {
-	console.log(`⚠ Proposed pattern is ${Math.abs(proposedDiff).toFixed(2)}% slower at object creation.`);
+	console.log(
+		`⚠ Proposed pattern is ${Math.abs(proposedDiff).toFixed(2)}% slower at object creation.`
+	);
 }
 
 console.log('\n=== Test Complete ===');

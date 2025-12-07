@@ -177,27 +177,43 @@ console.log('Test 1: Object Creation Performance');
 console.log('----------------------------------------');
 
 results.push(
-	benchmark('Current Pattern - Creation', () => {
-		const obj = new CurrentPattern_Child('test', 42);
-	}, iterations)
+	benchmark(
+		'Current Pattern - Creation',
+		() => {
+			const obj = new CurrentPattern_Child('test', 42);
+		},
+		iterations
+	)
 );
 
 results.push(
-	benchmark('Proposed Pattern - Creation', () => {
-		const obj = new ProposedPattern_Child('test', 42);
-	}, iterations)
+	benchmark(
+		'Proposed Pattern - Creation',
+		() => {
+			const obj = new ProposedPattern_Child('test', 42);
+		},
+		iterations
+	)
 );
 
 results.push(
-	benchmark('ES6 Classes - Creation', () => {
-		const obj = new ES6Pattern_Child('test', 42);
-	}, iterations)
+	benchmark(
+		'ES6 Classes - Creation',
+		() => {
+			const obj = new ES6Pattern_Child('test', 42);
+		},
+		iterations
+	)
 );
 
 results.push(
-	benchmark('Simple Pattern - Creation', () => {
-		const obj = new SimplePattern_Child('test', 42);
-	}, iterations)
+	benchmark(
+		'Simple Pattern - Creation',
+		() => {
+			const obj = new SimplePattern_Child('test', 42);
+		},
+		iterations
+	)
 );
 
 for (const result of results) {
@@ -220,27 +236,43 @@ const simpleObj = new SimplePattern_Child('test', 42);
 const methodResults = [];
 
 methodResults.push(
-	benchmark('Current Pattern - Method Call', () => {
-		currentObj.getInfo();
-	}, iterations)
+	benchmark(
+		'Current Pattern - Method Call',
+		() => {
+			currentObj.getInfo();
+		},
+		iterations
+	)
 );
 
 methodResults.push(
-	benchmark('Proposed Pattern - Method Call', () => {
-		proposedObj.getInfo();
-	}, iterations)
+	benchmark(
+		'Proposed Pattern - Method Call',
+		() => {
+			proposedObj.getInfo();
+		},
+		iterations
+	)
 );
 
 methodResults.push(
-	benchmark('ES6 Classes - Method Call', () => {
-		es6Obj.getInfo();
-	}, iterations)
+	benchmark(
+		'ES6 Classes - Method Call',
+		() => {
+			es6Obj.getInfo();
+		},
+		iterations
+	)
 );
 
 methodResults.push(
-	benchmark('Simple Pattern - Method Call', () => {
-		simpleObj.getInfo();
-	}, iterations)
+	benchmark(
+		'Simple Pattern - Method Call',
+		() => {
+			simpleObj.getInfo();
+		},
+		iterations
+	)
 );
 
 for (const result of methodResults) {
@@ -258,27 +290,43 @@ console.log('----------------------------------------');
 const lookupResults = [];
 
 lookupResults.push(
-	benchmark('Current Pattern - Parent Method', () => {
-		currentObj.getName();
-	}, iterations)
+	benchmark(
+		'Current Pattern - Parent Method',
+		() => {
+			currentObj.getName();
+		},
+		iterations
+	)
 );
 
 lookupResults.push(
-	benchmark('Proposed Pattern - Parent Method', () => {
-		proposedObj.getName();
-	}, iterations)
+	benchmark(
+		'Proposed Pattern - Parent Method',
+		() => {
+			proposedObj.getName();
+		},
+		iterations
+	)
 );
 
 lookupResults.push(
-	benchmark('ES6 Classes - Parent Method', () => {
-		es6Obj.getName();
-	}, iterations)
+	benchmark(
+		'ES6 Classes - Parent Method',
+		() => {
+			es6Obj.getName();
+		},
+		iterations
+	)
 );
 
 lookupResults.push(
-	benchmark('Simple Pattern - Parent Method', () => {
-		simpleObj.getName();
-	}, iterations)
+	benchmark(
+		'Simple Pattern - Parent Method',
+		() => {
+			simpleObj.getName();
+		},
+		iterations
+	)
 );
 
 for (const result of lookupResults) {
