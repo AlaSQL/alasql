@@ -6,6 +6,26 @@
 //
 */
 
+// Helper functions for comparing values (including dates)
+var compareValues = function (a, b) {
+	// Handle Date objects explicitly
+	if (a instanceof Date && b instanceof Date) {
+		return a.getTime() - b.getTime();
+	}
+	// For numbers and other comparable types
+	if (a < b) return -1;
+	if (a > b) return 1;
+	return 0;
+};
+
+var minValue = function (a, b) {
+	return compareValues(a, b) <= 0 ? a : b;
+};
+
+var maxValue = function (a, b) {
+	return compareValues(a, b) >= 0 ? a : b;
+};
+
 // Range class to represent a range of values
 alasql.Range = function (lower, upper, lowerInc, upperInc) {
 	this.lower = lower;
@@ -17,15 +37,18 @@ alasql.Range = function (lower, upper, lowerInc, upperInc) {
 
 alasql.Range.prototype.isEmpty = function () {
 	if (this.lower === undefined || this.upper === undefined) return true;
-	if (this.lower > this.upper) return true;
-	if (this.lower === this.upper && (!this.lowerInc || !this.upperInc)) return true;
+	var cmp = compareValues(this.lower, this.upper);
+	if (cmp > 0) return true;
+	if (cmp === 0 && (!this.lowerInc || !this.upperInc)) return true;
 	return false;
 };
 
 alasql.Range.prototype.contains = function (value) {
 	if (this.isEmpty()) return false;
-	var lowerOk = this.lowerInc ? this.lower <= value : this.lower < value;
-	var upperOk = this.upperInc ? value <= this.upper : value < this.upper;
+	var lowerCmp = compareValues(this.lower, value);
+	var upperCmp = compareValues(value, this.upper);
+	var lowerOk = this.lowerInc ? lowerCmp <= 0 : lowerCmp < 0;
+	var upperOk = this.upperInc ? upperCmp <= 0 : upperCmp < 0;
 	return lowerOk && upperOk;
 };
 
@@ -33,11 +56,13 @@ alasql.Range.prototype.overlaps = function (other) {
 	if (this.isEmpty() || other.isEmpty()) return false;
 	// Ranges overlap if they are not disjoint
 	// They are disjoint if one ends before the other starts
-	if (this.upper < other.lower) return false;
-	if (other.upper < this.lower) return false;
+	var cmp1 = compareValues(this.upper, other.lower);
+	var cmp2 = compareValues(other.upper, this.lower);
+	if (cmp1 < 0) return false;
+	if (cmp2 < 0) return false;
 	// Handle boundary cases where bounds are equal but exclusive
-	if (this.upper === other.lower && (!this.upperInc || !other.lowerInc)) return false;
-	if (other.upper === this.lower && (!other.upperInc || !this.lowerInc)) return false;
+	if (cmp1 === 0 && (!this.upperInc || !other.lowerInc)) return false;
+	if (cmp2 === 0 && (!other.upperInc || !this.lowerInc)) return false;
 	return true;
 };
 
@@ -45,20 +70,15 @@ alasql.Range.prototype.union = function (other) {
 	if (this.isEmpty()) return other;
 	if (other.isEmpty()) return this;
 
-	var lower = Math.min(this.lower, other.lower);
-	var upper = Math.max(this.upper, other.upper);
+	var lower = minValue(this.lower, other.lower);
+	var upper = maxValue(this.upper, other.upper);
+	var lowerCmp = compareValues(this.lower, other.lower);
+	var upperCmp = compareValues(this.upper, other.upper);
+
 	var lowerInc =
-		this.lower < other.lower
-			? this.lowerInc
-			: this.lower > other.lower
-				? other.lowerInc
-				: this.lowerInc || other.lowerInc;
+		lowerCmp < 0 ? this.lowerInc : lowerCmp > 0 ? other.lowerInc : this.lowerInc || other.lowerInc;
 	var upperInc =
-		this.upper > other.upper
-			? this.upperInc
-			: this.upper < other.upper
-				? other.upperInc
-				: this.upperInc || other.upperInc;
+		upperCmp > 0 ? this.upperInc : upperCmp < 0 ? other.upperInc : this.upperInc || other.upperInc;
 
 	return new alasql.Range(lower, upper, lowerInc, upperInc);
 };
@@ -67,20 +87,15 @@ alasql.Range.prototype.intersection = function (other) {
 	if (this.isEmpty() || other.isEmpty()) return null;
 	if (!this.overlaps(other)) return null;
 
-	var lower = Math.max(this.lower, other.lower);
-	var upper = Math.min(this.upper, other.upper);
+	var lower = maxValue(this.lower, other.lower);
+	var upper = minValue(this.upper, other.upper);
+	var lowerCmp = compareValues(this.lower, other.lower);
+	var upperCmp = compareValues(this.upper, other.upper);
+
 	var lowerInc =
-		this.lower > other.lower
-			? this.lowerInc
-			: this.lower < other.lower
-				? other.lowerInc
-				: this.lowerInc && other.lowerInc;
+		lowerCmp > 0 ? this.lowerInc : lowerCmp < 0 ? other.lowerInc : this.lowerInc && other.lowerInc;
 	var upperInc =
-		this.upper < other.upper
-			? this.upperInc
-			: this.upper > other.upper
-				? other.upperInc
-				: this.upperInc && other.upperInc;
+		upperCmp < 0 ? this.upperInc : upperCmp > 0 ? other.upperInc : this.upperInc && other.upperInc;
 
 	var result = new alasql.Range(lower, upper, lowerInc, upperInc);
 	return result.isEmpty() ? null : result;
@@ -92,22 +107,25 @@ alasql.Range.prototype.difference = function (other) {
 	if (!this.overlaps(other)) return this;
 
 	// If other completely contains this, return null
-	if (other.lower <= this.lower && other.upper >= this.upper) {
-		var thisLowerIn =
-			other.lower === this.lower ? other.lowerInc && this.lowerInc : other.lower < this.lower;
-		var thisUpperIn =
-			other.upper === this.upper ? other.upperInc && this.upperInc : other.upper > this.upper;
+	var lowerCmp1 = compareValues(other.lower, this.lower);
+	var upperCmp1 = compareValues(other.upper, this.upper);
+
+	if (lowerCmp1 <= 0 && upperCmp1 >= 0) {
+		var thisLowerIn = lowerCmp1 === 0 ? other.lowerInc && this.lowerInc : lowerCmp1 < 0;
+		var thisUpperIn = upperCmp1 === 0 ? other.upperInc && this.upperInc : upperCmp1 > 0;
 		if (thisLowerIn && thisUpperIn) return null;
 	}
 
 	// Return the portion before other starts
-	if (this.lower < other.lower) {
+	var lowerCmp2 = compareValues(this.lower, other.lower);
+	if (lowerCmp2 < 0) {
 		var upperInc = !other.lowerInc;
 		return new alasql.Range(this.lower, other.lower, this.lowerInc, upperInc);
 	}
 
 	// Return the portion after other ends
-	if (this.upper > other.upper) {
+	var upperCmp2 = compareValues(this.upper, other.upper);
+	if (upperCmp2 > 0) {
 		var lowerInc = !other.upperInc;
 		return new alasql.Range(other.upper, this.upper, lowerInc, this.upperInc);
 	}
@@ -119,10 +137,11 @@ alasql.Range.prototype.isSubsetOf = function (other) {
 	if (this.isEmpty()) return true;
 	if (other.isEmpty()) return false;
 
-	var lowerOk =
-		this.lower > other.lower || (this.lower === other.lower && (!this.lowerInc || other.lowerInc));
-	var upperOk =
-		this.upper < other.upper || (this.upper === other.upper && (!this.upperInc || other.upperInc));
+	var lowerCmp = compareValues(this.lower, other.lower);
+	var upperCmp = compareValues(this.upper, other.upper);
+
+	var lowerOk = lowerCmp > 0 || (lowerCmp === 0 && (!this.lowerInc || other.lowerInc));
+	var upperOk = upperCmp < 0 || (upperCmp === 0 && (!this.upperInc || other.upperInc));
 
 	return lowerOk && upperOk;
 };
