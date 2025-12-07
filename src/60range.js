@@ -7,23 +7,19 @@
 */
 
 // Helper functions for comparing values (including dates)
+// JavaScript's comparison operators work with valueOf() for both Date and Number types
 var compareValues = function (a, b) {
-	// Handle Date objects explicitly
-	if (a instanceof Date && b instanceof Date) {
-		return a.getTime() - b.getTime();
-	}
-	// For numbers and other comparable types
 	if (a < b) return -1;
 	if (a > b) return 1;
 	return 0;
 };
 
 var minValue = function (a, b) {
-	return compareValues(a, b) <= 0 ? a : b;
+	return a <= b ? a : b;
 };
 
 var maxValue = function (a, b) {
-	return compareValues(a, b) >= 0 ? a : b;
+	return a >= b ? a : b;
 };
 
 // Range class to represent a range of values

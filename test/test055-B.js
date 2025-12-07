@@ -17,16 +17,12 @@ describe('Test 055-B - PostgreSQL Range Types', function () {
 
 	it('A) Create integer ranges', function () {
 		var r1 = alasql('SELECT int4range(10, 20) as r')[0].r;
-		assert(r1);
-		assert.equal(r1.lower, 10);
-		assert.equal(r1.upper, 20);
+		assert.deepEqual(r1, {lower: 10, upper: 20, lowerInc: true, upperInc: false});
 	});
 
 	it('B) Create numeric ranges', function () {
 		var r1 = alasql('SELECT numrange(11.1, 22.2) as r')[0].r;
-		assert(r1);
-		assert.equal(r1.lower, 11.1);
-		assert.equal(r1.upper, 22.2);
+		assert.deepEqual(r1, {lower: 11.1, upper: 22.2, lowerInc: true, upperInc: false});
 	});
 
 	it('C) Create date ranges', function () {
@@ -73,16 +69,12 @@ describe('Test 055-B - PostgreSQL Range Types', function () {
 
 	it('J) Test range_union', function () {
 		var r = alasql('SELECT range_union(int4range(10, 20), int4range(15, 25)) as r')[0].r;
-		assert(r);
-		assert.equal(r.lower, 10);
-		assert.equal(r.upper, 25);
+		assert.deepEqual(r, {lower: 10, upper: 25, lowerInc: true, upperInc: false});
 	});
 
 	it('K) Test range_intersection', function () {
 		var r = alasql('SELECT range_intersection(int4range(10, 20), int4range(15, 25)) as r')[0].r;
-		assert(r);
-		assert.equal(r.lower, 15);
-		assert.equal(r.upper, 20);
+		assert.deepEqual(r, {lower: 15, upper: 20, lowerInc: true, upperInc: false});
 	});
 
 	it('L) Test range_intersection - no overlap returns null', function () {
@@ -92,10 +84,8 @@ describe('Test 055-B - PostgreSQL Range Types', function () {
 
 	it('M) Test range_difference', function () {
 		var r = alasql('SELECT range_difference(int4range(10, 30), int4range(20, 40)) as r')[0].r;
-		assert(r);
 		// Difference should give [10, 20)
-		assert.equal(r.lower, 10);
-		assert.equal(r.upper, 20);
+		assert.deepEqual(r, {lower: 10, upper: 20, lowerInc: true, upperInc: false});
 	});
 
 	it('N) Use range in table and query', function () {
@@ -154,9 +144,7 @@ describe('Test 055-B - PostgreSQL Range Types', function () {
 
 	it('T) Test int8range (bigint range)', function () {
 		var r = alasql('SELECT int8range(1000000, 2000000) as r')[0].r;
-		assert(r);
-		assert.equal(r.lower, 1000000);
-		assert.equal(r.upper, 2000000);
+		assert.deepEqual(r, {lower: 1000000, upper: 2000000, lowerInc: true, upperInc: false});
 	});
 
 	it('U) Test tsrange (timestamp range)', function () {
