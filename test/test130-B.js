@@ -33,7 +33,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col1: 10, col2: 100, col3: 1000},
 			{col1: 10, col2: 200, col3: 2000},
 			{col1: 20, col2: 100, col3: 1000},
-			{col1: 20, col2: 200, col3: 2000}
+			{col1: 20, col2: 200, col3: 2000},
 		];
 		assert.deepEqual(res, expected);
 	});
@@ -50,7 +50,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col2: 100, col3: 2000, col1: 10, col0: 1},
 			{col2: 100, col3: 2000, col1: 20, col0: 2},
 			{col2: 200, col3: 2000, col1: 10, col0: 1},
-			{col2: 200, col3: 2000, col1: 20, col0: 2}
+			{col2: 200, col3: 2000, col1: 20, col0: 2},
 		];
 		assert.deepEqual(res, expected);
 	});
@@ -62,7 +62,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 		// Matches: (10,100) with (1,10) and (20,200) with (2,20)
 		var expected = [
 			{col1: 10, col2: 100, col0: 1},
-			{col1: 20, col2: 200, col0: 2}
+			{col1: 20, col2: 200, col0: 2},
 		];
 		assert.deepEqual(res, expected);
 	});
@@ -72,7 +72,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 		var res = alasql('SELECT * FROM tab1 cor0 CROSS JOIN tab0 ON cor0.col1 = tab0.col1');
 		var expected = [
 			{col1: 10, col2: 100, col0: 1},
-			{col1: 20, col2: 200, col0: 2}
+			{col1: 20, col2: 200, col0: 2},
 		];
 		assert.deepEqual(res, expected);
 	});
@@ -85,7 +85,7 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			{col1: 10, col2: 100, col0: 1},
 			{col1: 20, col2: 100, col0: 2},
 			{col1: 10, col2: 200, col0: 1},
-			{col1: 20, col2: 200, col0: 2}
+			{col1: 20, col2: 200, col0: 2},
 		];
 		assert.deepEqual(res, expected);
 	});

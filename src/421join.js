@@ -19,7 +19,7 @@ yy.Select.prototype.compileJoins = function (query) {
 		// Per SQLite behavior: CROSS JOIN with ON/USING behaves like INNER JOIN
 		if (jn.joinmode === 'CROSS') {
 			// Always convert CROSS JOIN to INNER JOIN
-			// When CROSS JOIN has no ON/USING clauses, INNER JOIN without conditions 
+			// When CROSS JOIN has no ON/USING clauses, INNER JOIN without conditions
 			// produces a cartesian product (same as CROSS JOIN)
 			// When CROSS JOIN has ON/USING clauses, it behaves like INNER JOIN (SQLite-compatible)
 			jn.joinmode = 'INNER';
