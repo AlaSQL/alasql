@@ -12,4 +12,6 @@ yarn.lock binary
 # paths that don't start with / are relative to the .gitattributes folder
 #relative/path/*.txt text eol=lf
 
+src/alasqlparser.js merge=union
+
 
