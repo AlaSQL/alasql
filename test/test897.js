@@ -438,7 +438,7 @@ describe('Test 897 - CASCADE not supported (sqlite)', function () {
 		alasql('INSERT INTO test_child18c VALUES (3, 1)');
 		alasql('INSERT INTO test_child18d VALUES (4, 1)');
 		alasql('INSERT INTO test_child18e VALUES (5, 1)');
-		
+
 		var results = alasql('SELECT * FROM test_child18a');
 		assert.equal(results.length, 1);
 		assert.equal(results[0].parent_id, 1);
