@@ -336,74 +336,29 @@ yy.Insert.prototype.compile = function (databaseid) {
 		var insertfns = "db.tables['" + tableid + "'].data.push({" + table.defaultfns + '});return 1;';
 		var insertfn = new Function('db,params,alasql', insertfns);
 	} else if (this.setcolumns) {
-		// INSERT INTO table SET column = value
-		var ss = [];
-
+		// INSERT INTO table SET column = value - convert to VALUES equivalent
+		// Build column list and value expression list from SET columns
+		var columns = [];
+		var valueExprs = [];
 		this.setcolumns.forEach(function (setcol) {
-			var columnid = setcol.column.columnid;
-			var q = "'" + columnid + "':";
-
-			if (table.xcolumns && table.xcolumns[columnid]) {
-				if (['INT', 'FLOAT', 'NUMBER', 'MONEY'].indexOf(table.xcolumns[columnid].dbtypeid) >= 0) {
-					q += '(x=' + setcol.expression.toJS() + ',x==undefined?undefined:+x)';
-				} else if (alasql.fn[table.xcolumns[columnid].dbtypeid]) {
-					q += '(new ' + table.xcolumns[columnid].dbtypeid + '(';
-					q += setcol.expression.toJS();
-					q += '))';
-				} else {
-					q += setcol.expression.toJS();
-				}
-			} else {
-				q += setcol.expression.toJS();
-			}
-			ss.push(q);
+			columns.push(setcol.column);
+			valueExprs.push(setcol.expression);
 		});
 
-		if (db.tables[tableid].defaultfns) {
-			ss.unshift(db.tables[tableid].defaultfns);
-		}
+		// Temporarily transform to use VALUES path
+		var originalColumns = this.columns;
+		var originalValues = this.values;
+		this.columns = columns;
+		this.values = [valueExprs];
 
-		s = s3 + s;
-		s += 'a={' + ss.join(',') + '};';
+		// Reuse VALUES compilation logic by recursively calling compile
+		var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
 
-		if (db.tables[tableid].isclass) {
-			s += "var db=alasql.databases['" + databaseid + "'];";
-			s += 'a.$class="' + tableid + '";';
-			s += 'a.$id=db.counter++;';
-			s += 'db.objects[a.$id]=a;';
-		}
+		// Restore original state
+		this.columns = originalColumns;
+		this.values = originalValues;
 
-		if (db.tables[tableid].insert) {
-			s += "var db=alasql.databases['" + databaseid + "'];";
-			s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
-			if (self.output) {
-				s += 'aa.push(a);';
-			}
-		} else {
-			s += 'aa.push(a);';
-			s += "alasql.databases['" + databaseid + "'].tables['" + tableid + "'].data.push(a);";
-		}
-
-		// Handle OUTPUT clause
-		if (self.output) {
-			s += 'var r = a;';
-			s += 'var outputRow = {};';
-			self.output.columns.forEach(function (col) {
-				if (col.columnid === '*') {
-					s += 'for(var key in r){ outputRow[key] = r[key]; }';
-				} else {
-					var colname = col.as || col.columnid;
-					s += "outputRow['" + colname + "']=r['" + col.columnid + "'];";
-				}
-			});
-			s += 'return [outputRow];';
-		} else if (db.tables[tableid].isclass) {
-			s += 'return a.$id;';
-		} else {
-			s += 'return 1;';
-		}
-
-		var insertfn = new Function('db, params, alasql', 'var y;' + s).bind(this);
+		return compiledFn;
 	} else {
 		throw new Error('Wrong INSERT parameters');
 	}
