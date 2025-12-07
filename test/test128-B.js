@@ -18,8 +18,8 @@ describe('Test 128-B CROSS JOIN with parentheses (sqllogictest)', function () {
 	it('A) Setup test tables', function () {
 		alasql('CREATE TABLE tab1 (id INT, val VARCHAR(10))');
 		alasql('CREATE TABLE tab2 (id INT, name VARCHAR(10))');
-		alasql('INSERT INTO tab1 VALUES (1, "A"), (2, "B")');
-		alasql('INSERT INTO tab2 VALUES (3, "X"), (4, "Y")');
+		alasql("INSERT INTO tab1 VALUES (1, 'A'), (2, 'B')");
+		alasql("INSERT INTO tab2 VALUES (3, 'X'), (4, 'Y')");
 	});
 
 	it('B) CROSS JOIN without parentheses (baseline)', function () {
