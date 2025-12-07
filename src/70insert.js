@@ -351,14 +351,15 @@ yy.Insert.prototype.compile = function (databaseid) {
 		this.columns = columns;
 		this.values = [valueExprs];
 
-		// Reuse VALUES compilation logic by recursively calling compile
-		var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
-
-		// Restore original state
-		this.columns = originalColumns;
-		this.values = originalValues;
-
-		return compiledFn;
+		try {
+			// Reuse VALUES compilation logic by recursively calling compile
+			var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
+			return compiledFn;
+		} finally {
+			// Always restore original state
+			this.columns = originalColumns;
+			this.values = originalValues;
+		}
 	} else {
 		throw new Error('Wrong INSERT parameters');
 	}
