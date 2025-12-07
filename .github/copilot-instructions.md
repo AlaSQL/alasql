@@ -4,21 +4,20 @@
 
 AlaSQL is an open source SQL database for JavaScript with a focus on query speed and data source flexibility for both relational data and schemaless data. It works in web browsers, Node.js, and mobile apps.
 
-## Project Structure
+## When Implementing Features
 
-- `src/` - Source files numbered sequentially (e.g., `05copyright.js`, `10start.js`, etc.)
-- `dist/` - Built distribution files (generated, not committed)
-- `test/` - Test files following `test###.js` naming pattern where ### is typically the issue number or test###-B if the testfilenumber is already taken. 
-- `types/` - TypeScript type definitions
-- `docs/` - Documentation
-- `examples/` - Example usage code
-
-
+1. **Understand the issue thoroughly** - Read related test cases and existing code
+2. **Write a test first** - Create `test/test###.js` for the issue where `###` is the id of the issue we are actually fixing. 
+3. **Verify test fails** - Run `yarn test` to confirm the test catches the issue
+4. **Implement the fix** - Modify appropriate file(s) in `src/`
+5. **Format code** - Run `yarn format` before committing
+6. **Verify test passes** - Run `yarn test` again
 
 
-
-### Creating Tests
-2. Name new test files as `test/test###.js` where `###` is the GitHub issue number if applicable
+## How to to test files
+1. Make a test file
+  - Name new test files as `test/test###.js` where `###` is the GitHub issue number of the issue we are actually fixing.
+    - If the file already exists we name the file test/test###-B.js
 1. Copy the structure in `test/test000.js` as a template
 3. Tests should be self-contained and clear about what they're testing
 4. Use the Mocha test framework with standard assertions
@@ -48,17 +47,6 @@ yarn build
 - `src/alasqlparser.js` - Generated from Jison grammar (modify the `.jison` file instead)
 - `.min.js` files - Generated during build
 
-### Node.js Version
-- Requires Node.js >= 20 for building
-
-## When Implementing Features
-
-1. **Understand the issue thoroughly** - Read related test cases and existing code
-2. **Write a test first** - Create `test/test###.js` for the issue
-3. **Verify test fails** - Run `yarn test` to confirm the test catches the issue
-4. **Implement the fix** - Modify appropriate file(s) in `src/`
-5. **Format code** - Run `yarn format` before committing
-6. **Verify test passes** - Run `yarn test` again
 
 now commit the code.
 
@@ -69,6 +57,4 @@ now commit the code.
 ## Resources
 
 - [AlaSQL Documentation](https://github.com/alasql/alasql/wiki)
-- [Contributing Guide](CONTRIBUTING.md)
-- [Stack Overflow Tag](http://stackoverflow.com/questions/ask?tags=AlaSQL)
 - [Issue Tracker](https://github.com/AlaSQL/alasql/issues)

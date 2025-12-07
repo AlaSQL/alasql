@@ -30,6 +30,17 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 	return res;
 
 	function toXML() {
+		// Helper function to escape XML special characters
+		function escapeXML(str) {
+			if (str === null || str === undefined) return '';
+			return String(str)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&apos;');
+		}
+
 		var s1 =
 			'<?xml version="1.0"?> \
 		<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" \
@@ -196,9 +207,9 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 					// Column title
 					if (typeof column.title != 'undefined') {
 						if (typeof column.title == 'function') {
-							s3 += column.title(sheet, column, columnidx);
+							s3 += escapeXML(column.title(sheet, column, columnidx));
 						} else {
-							s3 += column.title;
+							s3 += escapeXML(column.title);
 						}
 					}
 					s3 += '</Data></Cell>';
@@ -319,19 +330,19 @@ alasql.into.XLSXML = function (filename, opts, data, columns, cb) {
 							s3 += '';
 						} else if (typeof format != 'undefined') {
 							if (typeof format == 'function') {
-								s3 += format(value);
+								s3 += escapeXML(format(value));
 							} else if (typeof format == 'string') {
-								s3 += value; // TODO - add string format
+								s3 += escapeXML(value); // TODO - add string format
 							} else {
 								throw new Error('Unknown format type. Should be function or string');
 							}
 						} else {
 							if (typeid == 'number' || typeid == 'date') {
-								s3 += value.toString();
+								s3 += escapeXML(value.toString());
 							} else if (typeid == 'money') {
-								s3 += (+value).toFixed(2);
+								s3 += escapeXML((+value).toFixed(2));
 							} else {
-								s3 += value;
+								s3 += escapeXML(value);
 							}
 						}
 

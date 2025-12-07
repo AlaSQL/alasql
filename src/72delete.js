@@ -12,10 +12,23 @@ yy.Delete = function (params) {
 yy.Delete.prototype.toString = function () {
 	var s = 'DELETE FROM ' + this.table.toString();
 	if (this.where) s += ' WHERE ' + this.where.toString();
+	if (this.output) {
+		s += ' OUTPUT ';
+		s += this.output.columns.map(col => col.toString()).join(', ');
+		if (this.output.intovar) {
+			s += ' INTO ' + this.output.method + this.output.intovar;
+		} else if (this.output.intotable) {
+			s += ' INTO ' + this.output.intotable.toString();
+			if (this.output.intocolumns) {
+				s += '(' + this.output.intocolumns.map(col => col.toString()).join(', ') + ')';
+			}
+		}
+	}
 	return s;
 };
 
 yy.Delete.prototype.compile = function (databaseid) {
+	var self = this;
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
@@ -66,8 +79,13 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var orignum = table.data.length;
 
 			var newtable = [];
+			var deletedRows = [];
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 				if (wherefn(table.data[i], params, alasql)) {
+					// Track deleted row for OUTPUT clause
+					if (self.output) {
+						deletedRows.push(cloneDeep(table.data[i]));
+					}
 					// Check for transaction - if it is not possible then return all back
 					if (table.delete) {
 						table.delete(i, params, alasql);
@@ -93,6 +111,30 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 
 			var res = orignum - table.data.length;
+
+			// Handle OUTPUT clause
+			if (self.output) {
+				var output = [];
+				for (var i = 0; i < deletedRows.length; i++) {
+					var r = deletedRows[i];
+					var outputRow = {};
+					self.output.columns.forEach(function (col) {
+						if (col.columnid === '*') {
+							// For *, expand all properties
+							for (var key in r) {
+								outputRow[key] = r[key];
+							}
+						} else {
+							var colname = col.as || col.columnid;
+							// Direct property access
+							outputRow[colname] = r[col.columnid];
+						}
+					});
+					output.push(outputRow);
+				}
+				res = output;
+			}
+
 			if (
 				alasql.options.autocommit &&
 				db.engineid &&
@@ -114,6 +156,15 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var table = db.tables[tableid];
 			table.dirty = true;
 			var orignum = db.tables[tableid].data.length;
+
+			// Track deleted rows for OUTPUT clause
+			var deletedRows = [];
+			if (self.output) {
+				deletedRows = table.data.map(function (row) {
+					return cloneDeep(row);
+				});
+			}
+
 			// Delete all records from the array
 			db.tables[tableid].data.length = 0;
 
@@ -130,8 +181,33 @@ yy.Delete.prototype.compile = function (databaseid) {
 				alasql.engines[db.engineid].saveTableData(databaseid, tableid);
 			}
 
-			if (cb) cb(orignum);
-			return orignum;
+			var res = orignum;
+
+			// Handle OUTPUT clause
+			if (self.output) {
+				var output = [];
+				for (var i = 0; i < deletedRows.length; i++) {
+					var r = deletedRows[i];
+					var outputRow = {};
+					self.output.columns.forEach(function (col) {
+						if (col.columnid === '*') {
+							// For *, expand all properties
+							for (var key in r) {
+								outputRow[key] = r[key];
+							}
+						} else {
+							var colname = col.as || col.columnid;
+							// Direct property access
+							outputRow[colname] = r[col.columnid];
+						}
+					});
+					output.push(outputRow);
+				}
+				res = output;
+			}
+
+			if (cb) cb(res);
+			return res;
 		};
 	}
 

@@ -23,6 +23,18 @@ yy.Insert.prototype.toString = function () {
 		s += ' VALUES ' + values.join(',');
 	}
 	if (this.select) s += ' ' + this.select.toString();
+	if (this.output) {
+		s += ' OUTPUT ';
+		s += this.output.columns.map(col => col.toString()).join(', ');
+		if (this.output.intovar) {
+			s += ' INTO ' + this.output.method + this.output.intovar;
+		} else if (this.output.intotable) {
+			s += ' INTO ' + this.output.intotable.toString();
+			if (this.output.intocolumns) {
+				s += '(' + this.output.intocolumns.map(col => col.toString()).join(', ') + ')';
+			}
+		}
+	}
 	return s;
 };
 
@@ -56,6 +68,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var s = '';
 	var sw = '';
 	var s = "db.tables['" + tableid + "'].dirty=true;";
+	// aa = array to accumulate inserted rows (used for OUTPUT clause and concat to table.data)
 	var s3 = 'var a,aa=[],x;';
 
 	var s33;
@@ -191,6 +204,10 @@ yy.Insert.prototype.compile = function (databaseid) {
 			if (db.tables[tableid].insert) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
 				s += "db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ');';
+				// Also push to aa for OUTPUT clause
+				if (self.output) {
+					s += 'aa.push(a);';
+				}
 			} else {
 				s += 'aa.push(a);';
 			}
@@ -214,7 +231,27 @@ yy.Insert.prototype.compile = function (databaseid) {
 				"'].data.concat(aa);";
 		}
 
-		if (db.tables[tableid].insert) {
+		// Handle OUTPUT clause
+		if (self.output) {
+			s += 'var output = [];';
+			s += 'for(var i=0;i<aa.length;i++){';
+			s += 'var r = aa[i];';
+			s += 'var outputRow = {};';
+			// Process each output column
+			self.output.columns.forEach(function (col) {
+				if (col.columnid === '*') {
+					// For *, expand all properties
+					s += 'for(var key in r){ outputRow[key] = r[key]; }';
+				} else {
+					var colname = col.as || col.columnid;
+					// Direct property access for simple columns
+					s += "outputRow['" + colname + "']=r['" + col.columnid + "'];";
+				}
+			});
+			s += 'output.push(outputRow);';
+			s += '}';
+			s += 'return output;';
+		} else if (db.tables[tableid].insert) {
 			if (db.tables[tableid].isclass) {
 				s += 'return a.$id;';
 			} else {
@@ -250,16 +287,43 @@ yy.Insert.prototype.compile = function (databaseid) {
 			var defaultfn = new Function('r,db,params,alasql', defaultfns);
 			var insertfn = function (db, params, alasql) {
 				var res = selectfn(params).data;
+				var insertedRows = [];
 				if (db.tables[tableid].insert) {
 					// If insert() function exists (issue #92)
 					for (var i = 0, ilen = res.length; i < ilen; i++) {
 						var r = cloneDeep(res[i]);
 						defaultfn(r, db, params, alasql);
 						db.tables[tableid].insert(r, self.orreplace);
+						insertedRows.push(r);
 					}
 				} else {
+					insertedRows = res;
 					db.tables[tableid].data = db.tables[tableid].data.concat(res);
 				}
+
+				// Handle OUTPUT clause
+				if (self.output) {
+					var output = [];
+					for (var i = 0; i < insertedRows.length; i++) {
+						var r = insertedRows[i];
+						var outputRow = {};
+						self.output.columns.forEach(function (col) {
+							if (col.columnid === '*') {
+								// For *, expand all properties
+								for (var key in r) {
+									outputRow[key] = r[key];
+								}
+							} else {
+								var colname = col.as || col.columnid;
+								// Direct property access for simple columns
+								outputRow[colname] = r[col.columnid];
+							}
+						});
+						output.push(outputRow);
+					}
+					return output;
+				}
+
 				if (alasql.options.nocount) return;
 				else return res.length;
 			};

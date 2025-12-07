@@ -187,7 +187,7 @@
 		}
 	}
 
-	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^']);
+	const toTypeNumberOps = new Set(['-', '*', '/', '%', '^', '<<', '>>', '&', '|']);
 	const toTypeStringOps = new Set(['||']);
 	// Regex to detect identifiers that need bracket wrapping (spaces, dots, hyphens, square brackets)
 	const re_needsBrackets = /[\s.\-\[\]]/;
@@ -294,6 +294,7 @@
 			var s;
 			let refs = [];
 			let op = this.op;
+			let skipNullCheck = false; // Flag to skip null checking for deterministic empty set operations
 			let _this = this;
 			let ref = function (expr) {
 				if (expr.toJS) {
@@ -367,9 +368,25 @@
 				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(this.right1)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
 			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1`;
+					// Check if this is a correlated subquery (references outer tables)
+					// If correlated, we cannot cache the results as they depend on the current row
+					const cacheKey = `in${this.queriesidx}`;
+					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
+					const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) > -1)`;
+					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
-					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					// Empty array: nothing is IN an empty set, always false
+					if (this.right.length === 0) {
+						// Must call leftJS() to populate the refs array for the declareRefs statement,
+						// even though the result is not used in the final expression
+						leftJS();
+						s = 'false';
+						skipNullCheck = true; // Result is deterministic even with null operands
+					} else if (
+						!alasql.options.cache ||
+						this.right.some(value => value instanceof yy.ParamValue)
+					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()})))`;
 					} else {
@@ -385,9 +402,25 @@
 				}
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
-					s = `alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, p)).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0`;
+					// Check if this is a correlated subquery (references outer tables)
+					// If correlated, we cannot cache the results as they depend on the current row
+					const cacheKey = `notIn${this.queriesidx}`;
+					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
+					const cachedLookup = `(!(this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = new Set(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).map(alasql.utils.getValueOf)))).has(alasql.utils.getValueOf(${leftJS()})))`;
+					const uncachedLookup = `(alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).indexOf(alasql.utils.getValueOf(${leftJS()})) < 0)`;
+					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
-					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
+					// Empty array: everything is NOT IN an empty set, always true
+					if (this.right.length === 0) {
+						// Must call leftJS() to populate the refs array for the declareRefs statement,
+						// even though the result is not used in the final expression
+						leftJS();
+						s = 'true';
+						skipNullCheck = true; // Result is deterministic even with null operands
+					} else if (
+						!alasql.options.cache ||
+						this.right.some(value => value instanceof yy.ParamValue)
+					) {
 						// Leverage JS Set for faster lookups than arrays
 						s = `(!(new Set([${this.right.map(ref).join(',')}]).has(alasql.utils.getValueOf(${leftJS()}))))`;
 					} else {
@@ -463,7 +496,14 @@
 			var expr = s || '(' + leftJS() + op + rightJS() + ')';
 
 			var declareRefs = 'y=[(' + refs.join('), (') + ')]';
-			if (op === '&&' || op === '||' || op === 'IS' || op === 'IS NULL' || op === 'IS NOT NULL') {
+			if (
+				skipNullCheck ||
+				op === '&&' ||
+				op === '||' ||
+				op === 'IS' ||
+				op === 'IS NULL' ||
+				op === 'IS NOT NULL'
+			) {
 				return '(' + declareRefs + ', ' + expr + ')';
 			}
 
@@ -734,7 +774,11 @@
 			}
 
 			if (context === 'g') {
-				return `g['${this.nick}']`;
+				// When accessing grouped columns, use columnid (without table prefix) if nick is not set
+				// This handles cases like: SELECT a.id + 1 FROM ... GROUP BY a.id
+				// where the column in the expression doesn't have nick set, but the group stores it by columnid
+				const nickToUse = this.nick || this.columnid;
+				return `g['${nickToUse}']`;
 			}
 
 			if (this.tableid) {
