@@ -17,9 +17,16 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 			alasql('SELECT * INTO XLSX("' + __dirname + '/test107-B-base.xlsx", {headers:true}) FROM ?', [
 				data,
 			]);
-			// Verify file was created
+			// Verify file was created and read back content
 			assert(fs.existsSync(__dirname + '/test107-B-base.xlsx'));
-			done();
+			alasql(
+				'SELECT * FROM XLSX("' + __dirname + '/test107-B-base.xlsx", {headers:true})',
+				[],
+				function (res) {
+					assert.deepEqual(res, data);
+					done();
+				}
+			);
 		});
 
 		it('2. Update existing file at specific range with sourcefilename', function (done) {
@@ -39,7 +46,37 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 					assert(res == 1);
 					// Verify updated file was created
 					assert(fs.existsSync(__dirname + '/test107-B-updated.xlsx'));
-					done();
+					// Read back and verify content - check that original data is preserved at A1:C3
+					alasql(
+						'SELECT * FROM XLSX("' +
+							__dirname +
+							'/test107-B-updated.xlsx", {headers:true, sheetid:"Sheet 1", range:"A1:C4"})',
+						[],
+						function (original) {
+							// Original data should still be there
+							assert.equal(original.length, 3);
+							assert.equal(original[0].a, 1);
+							assert.equal(original[0].b, 2);
+							assert.equal(original[0].c, 3);
+							// Read the new data at E5:G6
+							alasql(
+								'SELECT * FROM XLSX("' +
+									__dirname +
+									'/test107-B-updated.xlsx", {headers:true, sheetid:"Sheet 1", range:"E5:G7"})',
+								[],
+								function (updated) {
+									assert.equal(updated.length, 2);
+									assert.equal(updated[0].x, 100);
+									assert.equal(updated[0].y, 200);
+									assert.equal(updated[0].z, 300);
+									assert.equal(updated[1].x, 400);
+									assert.equal(updated[1].y, 500);
+									assert.equal(updated[1].z, 600);
+									done();
+								}
+							);
+						}
+					);
 				}
 			);
 		});
@@ -60,7 +97,23 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				function (res) {
 					assert(res == 1);
 					assert(fs.existsSync(__dirname + '/test107-B-no-headers.xlsx'));
-					done();
+					// Read back the data at B3:D4 (no headers, so will be read as columns B, C, D)
+					alasql(
+						'SELECT * FROM XLSX("' +
+							__dirname +
+							'/test107-B-no-headers.xlsx", {headers:false, sheetid:"Sheet 1", range:"B3:D4"})',
+						[],
+						function (result) {
+							assert.equal(result.length, 2);
+							assert.equal(result[0].B, 10);
+							assert.equal(result[0].C, 30);
+							assert.equal(result[0].D, 45);
+							assert.equal(result[1].B, 11);
+							assert.equal(result[1].C, 45);
+							assert.equal(result[1].D, 20);
+							done();
+						}
+					);
 				}
 			);
 		});
@@ -84,7 +137,29 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				function (res) {
 					assert(res == 1);
 					assert(fs.existsSync(__dirname + '/test107-B-self.xlsx'));
-					done();
+					// Read back and verify both original and new data exist
+					alasql(
+						'SELECT * FROM XLSX("' + __dirname + '/test107-B-self.xlsx", {headers:true})',
+						[],
+						function (original) {
+							// Original data should be at A1:B1
+							assert.equal(original[0].name, 'John');
+							assert.equal(original[0].age, 25);
+							// Read the new data at D10:E10
+							alasql(
+								'SELECT * FROM XLSX("' +
+									__dirname +
+									'/test107-B-self.xlsx", {headers:true, sheetid:"Sheet 1", range:"D10:E11"})',
+								[],
+								function (updated) {
+									assert.equal(updated.length, 1);
+									assert.equal(updated[0].value, 999);
+									assert.equal(updated[0].status, 'updated');
+									done();
+								}
+							);
+						}
+					);
 				}
 			);
 		});
@@ -105,7 +180,28 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				function (res) {
 					assert(res == 1);
 					assert(fs.existsSync(__dirname + '/test107-B-newsheet.xlsx'));
-					done();
+					// Verify the new sheet has the correct data
+					alasql(
+						'SELECT * FROM XLSX("' +
+							__dirname +
+							'/test107-B-newsheet.xlsx", {headers:true, sheetid:"NewSheet"})',
+						[],
+						function (result) {
+							assert.deepEqual(result, newSheetData);
+							// Also verify original sheet still exists
+							alasql(
+								'SELECT * FROM XLSX("' +
+									__dirname +
+									'/test107-B-newsheet.xlsx", {headers:true, sheetid:"Sheet 1"})',
+								[],
+								function (original) {
+									assert.equal(original.length, 3);
+									assert.equal(original[0].a, 1);
+									done();
+								}
+							);
+						}
+					);
 				}
 			);
 		});
@@ -124,7 +220,18 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				function (res) {
 					assert(res == 1);
 					assert(fs.existsSync(__dirname + '/test107-B-range-AA5.xlsx'));
-					done();
+					// Read back the data at AA5 (column 27)
+					alasql(
+						'SELECT * FROM XLSX("' +
+							__dirname +
+							'/test107-B-range-AA5.xlsx", {headers:false, sheetid:"Sheet 1", range:"AA5:AA5"})',
+						[],
+						function (result) {
+							assert.equal(result.length, 1);
+							assert.equal(result[0].AA, 'value');
+							done();
+						}
+					);
 				}
 			);
 		});
