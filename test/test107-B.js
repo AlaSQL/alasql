@@ -54,10 +54,12 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 						[],
 						function (original) {
 							// Original data should still be there
-							assert.equal(original.length, 3);
-							assert.equal(original[0].a, 1);
-							assert.equal(original[0].b, 2);
-							assert.equal(original[0].c, 3);
+							var expectedOriginal = [
+								{a: 1, b: 2, c: 3},
+								{a: 4, b: 5, c: 6},
+								{a: 7, b: 8, c: 9},
+							];
+							assert.deepEqual(original, expectedOriginal);
 							// Read the new data at E5:G6
 							alasql(
 								'SELECT * FROM XLSX("' +
@@ -65,13 +67,11 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 									'/test107-B-updated.xlsx", {headers:true, sheetid:"Sheet 1", range:"E5:G7"})',
 								[],
 								function (updated) {
-									assert.equal(updated.length, 2);
-									assert.equal(updated[0].x, 100);
-									assert.equal(updated[0].y, 200);
-									assert.equal(updated[0].z, 300);
-									assert.equal(updated[1].x, 400);
-									assert.equal(updated[1].y, 500);
-									assert.equal(updated[1].z, 600);
+									var expectedUpdated = [
+										{x: 100, y: 200, z: 300},
+										{x: 400, y: 500, z: 600},
+									];
+									assert.deepEqual(updated, expectedUpdated);
 									done();
 								}
 							);
@@ -104,13 +104,11 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 							'/test107-B-no-headers.xlsx", {headers:false, sheetid:"Sheet 1", range:"B3:D4"})',
 						[],
 						function (result) {
-							assert.equal(result.length, 2);
-							assert.equal(result[0].B, 10);
-							assert.equal(result[0].C, 30);
-							assert.equal(result[0].D, 45);
-							assert.equal(result[1].B, 11);
-							assert.equal(result[1].C, 45);
-							assert.equal(result[1].D, 20);
+							var expectedResult = [
+								{B: 10, C: 30, D: 45},
+								{B: 11, C: 45, D: 20},
+							];
+							assert.deepEqual(result, expectedResult);
 							done();
 						}
 					);
@@ -139,12 +137,14 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 					assert(fs.existsSync(__dirname + '/test107-B-self.xlsx'));
 					// Read back and verify both original and new data exist
 					alasql(
-						'SELECT * FROM XLSX("' + __dirname + '/test107-B-self.xlsx", {headers:true})',
+						'SELECT * FROM XLSX("' +
+							__dirname +
+							'/test107-B-self.xlsx", {headers:true, sheetid:"Sheet 1", range:"A1:B2"})',
 						[],
 						function (original) {
 							// Original data should be at A1:B1
-							assert.equal(original[0].name, 'John');
-							assert.equal(original[0].age, 25);
+							var expectedOriginal = [{name: 'John', age: 25}];
+							assert.deepEqual(original, expectedOriginal);
 							// Read the new data at D10:E10
 							alasql(
 								'SELECT * FROM XLSX("' +
@@ -152,9 +152,8 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 									'/test107-B-self.xlsx", {headers:true, sheetid:"Sheet 1", range:"D10:E11"})',
 								[],
 								function (updated) {
-									assert.equal(updated.length, 1);
-									assert.equal(updated[0].value, 999);
-									assert.equal(updated[0].status, 'updated');
+									var expectedUpdated = [{value: 999, status: 'updated'}];
+									assert.deepEqual(updated, expectedUpdated);
 									done();
 								}
 							);
@@ -227,13 +226,91 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 							'/test107-B-range-AA5.xlsx", {headers:false, sheetid:"Sheet 1", range:"AA5:AA5"})',
 						[],
 						function (result) {
-							assert.equal(result.length, 1);
-							assert.equal(result[0].AA, 'value');
+							var expectedResult = [{AA: 'value'}];
+							assert.deepEqual(result, expectedResult);
 							done();
 						}
 					);
 				}
 			);
+		});
+
+		it('7. Test async/promise flow for sourcefilename and range', async function () {
+			// Create test data
+			var testData = [
+				{name: 'Alice', score: 95},
+				{name: 'Bob', score: 87},
+			];
+
+			// Write initial file using promise
+			await alasql.promise(
+				'SELECT * INTO XLSX("' + __dirname + '/test107-B-async.xlsx", {headers:true}) FROM ?',
+				[testData]
+			);
+
+			// Update file at specific range using promise
+			var updateData = [{extra: 'data', value: 123}];
+			await alasql.promise(
+				'SELECT * INTO XLSX("' +
+					__dirname +
+					'/test107-B-async.xlsx", {sourcefilename:"' +
+					__dirname +
+					'/test107-B-async.xlsx", sheetid:"Sheet 1", range:"D5", headers:true}) FROM ?',
+				[updateData]
+			);
+
+			// Read back and verify using promise
+			var original = await alasql.promise(
+				'SELECT * FROM XLSX("' +
+					__dirname +
+					'/test107-B-async.xlsx", {headers:true, sheetid:"Sheet 1", range:"A1:B3"})'
+			);
+			assert.deepEqual(original, testData);
+
+			// Read the updated data
+			var updated = await alasql.promise(
+				'SELECT * FROM XLSX("' +
+					__dirname +
+					'/test107-B-async.xlsx", {headers:true, sheetid:"Sheet 1", range:"D5:E6"})'
+			);
+			assert.deepEqual(updated, updateData);
+		});
+
+		it('8. Test promise-based flow with new sheet creation', async function () {
+			var sheet1Data = [{id: 1, value: 'first'}];
+			var sheet2Data = [{id: 2, value: 'second'}];
+
+			// Create initial file
+			await alasql.promise(
+				'SELECT * INTO XLSX("' + __dirname + '/test107-B-promise.xlsx", {headers:true}) FROM ?',
+				[sheet1Data]
+			);
+
+			// Add new sheet using sourcefilename
+			await alasql.promise(
+				'SELECT * INTO XLSX("' +
+					__dirname +
+					'/test107-B-promise.xlsx", {sourcefilename:"' +
+					__dirname +
+					'/test107-B-promise.xlsx", sheetid:"Sheet2", range:"A1", headers:true}) FROM ?',
+				[sheet2Data]
+			);
+
+			// Verify Sheet 1
+			var result1 = await alasql.promise(
+				'SELECT * FROM XLSX("' +
+					__dirname +
+					'/test107-B-promise.xlsx", {headers:true, sheetid:"Sheet 1"})'
+			);
+			assert.deepEqual(result1, sheet1Data);
+
+			// Verify Sheet 2
+			var result2 = await alasql.promise(
+				'SELECT * FROM XLSX("' +
+					__dirname +
+					'/test107-B-promise.xlsx", {headers:true, sheetid:"Sheet2"})'
+			);
+			assert.deepEqual(result2, sheet2Data);
 		});
 
 		// Cleanup test files after all tests
@@ -245,6 +322,8 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				'test107-B-self.xlsx',
 				'test107-B-newsheet.xlsx',
 				'test107-B-range-AA5.xlsx',
+				'test107-B-async.xlsx',
+				'test107-B-promise.xlsx',
 			];
 
 			testFiles.forEach(function (file) {
