@@ -29,9 +29,7 @@ describe('Test 128-B CROSS JOIN with parentheses (sqllogictest)', function () {
 	});
 
 	it('C) CROSS JOIN with parentheses around FROM clause', function () {
-		var res = alasql(
-			'SELECT -92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 )'
-		);
+		var res = alasql('SELECT -92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 )');
 		assert.equal(res.length, 4);
 		assert.equal(res[0].col1, -92);
 	});
