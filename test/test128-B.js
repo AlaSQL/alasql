@@ -36,7 +36,6 @@ describe('Test 128-B CROSS JOIN with parentheses (sqllogictest)', function () {
 		var res = alasql(
 			'SELECT cor0.id as id1, cor1.id as id2 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 )'
 		);
-		assert.equal(res.length, 4);
 		assert.deepEqual(res, [
 			{id1: 1, id2: 3},
 			{id1: 1, id2: 4},
