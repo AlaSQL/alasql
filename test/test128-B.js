@@ -24,14 +24,12 @@ describe('Test 128-B CROSS JOIN with parentheses (sqllogictest)', function () {
 
 	it('B) CROSS JOIN without parentheses (baseline)', function () {
 		var res = alasql('SELECT -92 AS col1 FROM tab1 AS cor0 CROSS JOIN tab2 AS cor1');
-		assert.equal(res.length, 4);
-		assert.equal(res[0].col1, -92);
+		assert.deepEqual(res, [{col1: -92}, {col1: -92}, {col1: -92}, {col1: -92}]);
 	});
 
 	it('C) CROSS JOIN with parentheses around FROM clause', function () {
 		var res = alasql('SELECT -92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 )');
-		assert.equal(res.length, 4);
-		assert.equal(res[0].col1, -92);
+		assert.deepEqual(res, [{col1: -92}, {col1: -92}, {col1: -92}, {col1: -92}]);
 	});
 
 	it('D) Verify CROSS JOIN produces correct results', function () {
@@ -51,8 +49,7 @@ describe('Test 128-B CROSS JOIN with parentheses (sqllogictest)', function () {
 		var res = alasql(
 			'SELECT cor0.id FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 ) WHERE cor0.id = 1'
 		);
-		assert.equal(res.length, 2);
-		assert.equal(res[0].id, 1);
+		assert.deepEqual(res, [{id: 1}, {id: 1}]);
 	});
 
 	it('F) CROSS JOIN with ORDER BY', function () {
@@ -73,7 +70,16 @@ describe('Test 128-B CROSS JOIN with parentheses (sqllogictest)', function () {
 		var res = alasql(
 			'SELECT -92 AS col1 FROM ( tab1 AS cor0 CROSS JOIN tab2 AS cor1 CROSS JOIN tab3 AS cor2 )'
 		);
-		assert.equal(res.length, 8); // 2 * 2 * 2
+		assert.deepEqual(res, [
+			{col1: -92},
+			{col1: -92},
+			{col1: -92},
+			{col1: -92},
+			{col1: -92},
+			{col1: -92},
+			{col1: -92},
+			{col1: -92},
+		]);
 		alasql('DROP TABLE tab3');
 	});
 

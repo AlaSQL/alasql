@@ -15,6 +15,10 @@ describe('Test 000 - multiple statements', function () {
 		alasql('drop database test' + test);
 	});
 
+	// NOTE: Tests should use assert.deepEqual to verify the complete expected output
+	// against the actual result object. This ensures comprehensive validation and
+	// makes test failures more informative by showing the full diff.
+
 	it('A) From single lines', function () {
 		var res = [];
 		res.push(alasql('create table one (a int)'));
