@@ -1489,9 +1489,9 @@ LogicValue
 
 StringValue
 	: STRING
-		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,"\\")}); }
+		{ $$ = new yy.StringValue({value: $1.substr(1,$1.length-2).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,String.fromCharCode(92))}); }
 	| NSTRING
-		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,"\\")}); }
+		{ $$ = new yy.StringValue({value: $1.substr(2,$1.length-3).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,String.fromCharCode(92))}); }
 	;
 
 NullValue
