@@ -15,13 +15,13 @@ yy.Select.prototype.compileJoins = function (query) {
 
 	this.joins.forEach(jn => {
 		let tq, ps, source;
-		// Test CROSS-JOIN
-		// Per SQLite behavior: CROSS JOIN with ON/USING behaves like INNER JOIN
+		// Handle CROSS JOIN (SQLite-compatible behavior)
+		// SQLite allows CROSS JOIN with ON/USING clauses, treating them as INNER JOIN
 		if (jn.joinmode === 'CROSS') {
-			// Always convert CROSS JOIN to INNER JOIN
-			// When CROSS JOIN has no ON/USING clauses, INNER JOIN without conditions
-			// produces a cartesian product (same as CROSS JOIN)
-			// When CROSS JOIN has ON/USING clauses, it behaves like INNER JOIN (SQLite-compatible)
+			// Convert all CROSS JOINs to INNER JOIN for consistent processing
+			// Result behavior:
+			// - Without ON/USING: Produces cartesian product (standard CROSS JOIN)
+			// - With ON/USING: Filters results like INNER JOIN (SQLite extension)
 			jn.joinmode = 'INNER';
 		}
 
