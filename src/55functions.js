@@ -503,49 +503,14 @@ stdfn.NEWID =
 
 /**
  * FORMAT(value, decimals[, locale])
- *
- * Formats a number with thousands separators and specified decimal places.
- * This combines features from MySQL FORMAT() and T-SQL FORMAT() functions.
- *
- * MySQL-style: FORMAT(number, decimals) - formats with comma thousands separators
- *
- * @param {number|string} value - The number to format (can be string that converts to number)
- * @param {number} decimals - Number of decimal places
- * @param {string} locale - Optional locale (reserved for future use)
- * @returns {string|null} Formatted number string or null if value is null
+ * MySQL-style: formats number with comma thousands separators and decimal places
  */
 stdfn.FORMAT = function (value, decimals, locale) {
-	// Handle null values
-	if (value === null || value === undefined) {
-		return null;
-	}
-
-	// Convert to number
+	if (value == null) return null;
 	var num = Number(value);
-
-	// Handle NaN
-	if (isNaN(num)) {
-		return null;
-	}
-
-	// Split into integer and decimal parts using toFixed for proper rounding
-	var negative = num < 0;
-	var parts = Math.abs(num).toFixed(decimals).split('.');
-	var integerPart = parts[0];
-	var decimalPart = parts[1];
-
-	// Add thousands separators
+	if (isNaN(num)) return null;
+	var [integerPart, decimalPart] = Math.abs(num).toFixed(decimals).split('.');
 	var formatted = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-	// Add decimal part if needed
-	if (decimals > 0) {
-		formatted += '.' + decimalPart;
-	}
-
-	// Add negative sign if needed
-	if (negative) {
-		formatted = '-' + formatted;
-	}
-
-	return formatted;
+	if (decimals > 0) formatted += '.' + decimalPart;
+	return (num < 0 ? '-' : '') + formatted;
 };
