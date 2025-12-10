@@ -29,8 +29,7 @@ describe('Test 143-B - INSERT IGNORE', function () {
 		
 		// Verify only one record exists
 		var data = alasql('SELECT * FROM Amazon');
-		assert.equal(data.length, 1);
-		assert.deepEqual(data[0], {Date: '12/12/14', Ct: 0});
+		assert.deepEqual(data, [{Date: '12/12/14', Ct: 0}]);
 		
 		// Clean up
 		alasql('DROP TABLE Amazon');
@@ -49,9 +48,10 @@ describe('Test 143-B - INSERT IGNORE', function () {
 		
 		// Verify two records exist
 		var data = alasql('SELECT * FROM Amazon ORDER BY [Date]');
-		assert.equal(data.length, 2);
-		assert.deepEqual(data[0], {Date: '12/12/14', Ct: 0});
-		assert.deepEqual(data[1], {Date: '12/13/14', Ct: 1});
+		assert.deepEqual(data, [
+			{Date: '12/12/14', Ct: 0},
+			{Date: '12/13/14', Ct: 1}
+		]);
 		
 		// Clean up
 		alasql('DROP TABLE Amazon');
@@ -69,11 +69,12 @@ describe('Test 143-B - INSERT IGNORE', function () {
 		var res = alasql("INSERT IGNORE INTO Amazon VALUES ('12/12/14', 5), ('12/13/14', 10)");
 		assert.equal(res, 1); // Only 1 new row inserted
 		
-		// Verify correct records exist
+		// Verify correct records exist - original value unchanged
 		var data = alasql('SELECT * FROM Amazon ORDER BY [Date]');
-		assert.equal(data.length, 2);
-		assert.deepEqual(data[0], {Date: '12/12/14', Ct: 0}); // Original value unchanged
-		assert.deepEqual(data[1], {Date: '12/13/14', Ct: 10});
+		assert.deepEqual(data, [
+			{Date: '12/12/14', Ct: 0},
+			{Date: '12/13/14', Ct: 10}
+		]);
 		
 		// Clean up
 		alasql('DROP TABLE Amazon');
@@ -92,8 +93,7 @@ describe('Test 143-B - INSERT IGNORE', function () {
 		
 		// Verify original value unchanged
 		var data = alasql('SELECT * FROM Amazon');
-		assert.equal(data.length, 1);
-		assert.deepEqual(data[0], {Date: '12/12/14', Ct: 0});
+		assert.deepEqual(data, [{Date: '12/12/14', Ct: 0}]);
 		
 		// Clean up
 		alasql('DROP TABLE Amazon');
