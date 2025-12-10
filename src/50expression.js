@@ -367,172 +367,52 @@
 				s = `(${this.op === 'NOT BETWEEN' ? '!' : ''}((${ref(this.right1)} <= ${left}) && (${left} <= ${ref(this.right2)})))`;
 			} else if (this.op === 'IN') {
 				if (this.right instanceof yy.Select) {
-					// SQL semantics: x IN (subquery with NULL) should handle NULL properly
-					// If x is NULL, return false (UNKNOWN). If x matches a value, return true.
-					// If x doesn't match but NULL exists in subquery, return false (UNKNOWN).
-					const leftVal = leftJS();
 					// Check if this is a correlated subquery (references outer tables)
 					// If correlated, we cannot cache the results as they depend on the current row
 					const cacheKey = `in${this.queriesidx}`;
 					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-					
-					// SQL-compliant uncached lookup
-					const uncachedLookup = `((v => {
-						const lv = alasql.utils.getValueOf(v);
-						if (lv == null) return false;
-						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
-						return arr.some(item => {
-							const iv = alasql.utils.getValueOf(item);
-							return iv != null && iv === lv;
-						});
-					})(${leftVal}))`;
-					
-					// SQL-compliant cached lookup
-					const cachedLookup = `((v => {
-						const lv = alasql.utils.getValueOf(v);
-						if (lv == null) return false;
-						this.subqueryCache = this.subqueryCache || {};
-						if (!this.subqueryCache.${cacheKey}) {
-							const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
-							const nonNullSet = new Set(arr.filter(item => alasql.utils.getValueOf(item) != null).map(item => alasql.utils.getValueOf(item)));
-							this.subqueryCache.${cacheKey} = nonNullSet;
-						}
-						return this.subqueryCache.${cacheKey}.has(lv);
-					})(${leftVal}))`;
-					
+					const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})).filter(function(v){return alasql.utils.getValueOf(v)!=null}).map(alasql.utils.getValueOf))).indexOf(alasql.utils.getValueOf(${leftJS()}))>-1&&alasql.utils.getValueOf(${leftJS()})!=null)`;
+					const uncachedLookup = `alasql.utils.sqlInCheck(${leftJS()},alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})))`;
 					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
-						const leftVal = leftJS();
-						const rightVals = `[${this.right.map(ref).join(',')}]`;
-						s = `((lv => {
-							const leftVal = alasql.utils.getValueOf(lv);
-							if (leftVal == null) return false;
-							const vals = ${rightVals};
-							return vals.some(v => {
-								const rv = alasql.utils.getValueOf(v);
-								return rv != null && rv === leftVal;
-							});
-						})(${leftVal}))`;
+						s = `alasql.utils.sqlInCheck(${leftJS()},[${this.right.map(ref).join(',')}])`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
 						const allValuesStr = allValues.join(',');
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						const leftVal = leftJS();
-						s = `((lv => {
-							const leftVal = alasql.utils.getValueOf(lv);
-							if (leftVal == null) return false;
-							return alasql.sets["${allValuesStr}"].has(leftVal);
-						})(${leftVal}))`;
+						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues.filter(v => v != null));
+						s = `(alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))&&alasql.utils.getValueOf(${leftJS()})!=null)`;
 					}
 				} else {
-					const leftVal = leftJS();
-					s = `((lv => {
-						const leftVal = alasql.utils.getValueOf(lv);
-						if (leftVal == null) return false;
-						const arr = ${rightJS()};
-						return arr.some(item => {
-							const iv = alasql.utils.getValueOf(item);
-							return iv != null && iv === leftVal;
-						});
-					})(${leftVal}))`;
+					s = `alasql.utils.sqlInCheck(${leftJS()},${rightJS()})`;
 				}
 			} else if (this.op === 'NOT IN') {
 				if (this.right instanceof yy.Select) {
-					// SQL semantics: x NOT IN (subquery with NULL) should return false (UNKNOWN)
-					// If x is NULL, return false (UNKNOWN). If subquery contains NULL and x is not found, return false (UNKNOWN).
-					const leftVal = leftJS();
 					// Check if this is a correlated subquery (references outer tables)
 					// If correlated, we cannot cache the results as they depend on the current row
 					const cacheKey = `notIn${this.queriesidx}`;
 					const checkCorrelated = `(this.queriesfn[${this.queriesidx}].query && this.queriesfn[${this.queriesidx}].query.isCorrelated)`;
-					
-					// SQL-compliant uncached lookup
-					const uncachedLookup = `((v => {
-						const lv = alasql.utils.getValueOf(v);
-						if (lv == null) return false;
-						const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
-						const hasNull = arr.some(item => alasql.utils.getValueOf(item) == null);
-						const hasMatch = arr.some(item => {
-							const iv = alasql.utils.getValueOf(item);
-							return iv != null && iv === lv;
-						});
-						if (hasMatch) return false;
-						if (hasNull) return false;
-						return true;
-					})(${leftVal}))`;
-					
-					// SQL-compliant cached lookup
-					const cachedLookup = `((v => {
-						const lv = alasql.utils.getValueOf(v);
-						if (lv == null) return false;
-						this.subqueryCache = this.subqueryCache || {};
-						if (!this.subqueryCache.${cacheKey}) {
-							const arr = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}));
-							const hasNull = arr.some(item => alasql.utils.getValueOf(item) == null);
-							const nonNullSet = new Set(arr.filter(item => alasql.utils.getValueOf(item) != null).map(item => alasql.utils.getValueOf(item)));
-							this.subqueryCache.${cacheKey} = { hasNull, set: nonNullSet };
-						}
-						const cache = this.subqueryCache.${cacheKey};
-						if (cache.set.has(lv)) return false;
-						if (cache.hasNull) return false;
-						return true;
-					})(${leftVal}))`;
-					
+					const cachedLookup = `((this.subqueryCache = this.subqueryCache || {}, this.subqueryCache.${cacheKey} || (this.subqueryCache.${cacheKey} = alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context}))),alasql.utils.sqlNotInCheck(${leftJS()},this.subqueryCache.${cacheKey})))`;
+					const uncachedLookup = `alasql.utils.sqlNotInCheck(${leftJS()},alasql.utils.flatArray(this.queriesfn[${this.queriesidx}](params, null, ${context})))`;
 					s = `(${checkCorrelated} ? ${uncachedLookup} : ${cachedLookup})`;
 				} else if (Array.isArray(this.right)) {
 					if (!alasql.options.cache || this.right.some(value => value instanceof yy.ParamValue)) {
 						// Leverage JS Set for faster lookups than arrays
-						const leftVal = leftJS();
-						const rightVals = `[${this.right.map(ref).join(',')}]`;
-						s = `((lv => {
-							const leftVal = alasql.utils.getValueOf(lv);
-							if (leftVal == null) return false;
-							const vals = ${rightVals};
-							const hasNull = vals.some(v => alasql.utils.getValueOf(v) == null);
-							const hasMatch = vals.some(v => {
-								const rv = alasql.utils.getValueOf(v);
-								return rv != null && rv === leftVal;
-							});
-							if (hasMatch) return false;
-							if (hasNull) return false;
-							return true;
-						})(${leftVal}))`;
+						s = `alasql.utils.sqlNotInCheck(${leftJS()},[${this.right.map(ref).join(',')}])`;
 					} else {
 						// Use a cache to avoid re-creating the Set on every identical query
 						alasql.sets = alasql.sets || {};
 						const allValues = this.right.map(value => value.value);
 						const allValuesStr = allValues.join(',');
 						const hasNull = allValues.some(v => v == null);
-						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues);
-						const leftVal = leftJS();
-						s = `((lv => {
-							const leftVal = alasql.utils.getValueOf(lv);
-							if (leftVal == null) return false;
-							const hasMatch = alasql.sets["${allValuesStr}"].has(leftVal);
-							if (hasMatch) return false;
-							if (${hasNull}) return false;
-							return true;
-						})(${leftVal}))`;
+						alasql.sets[allValuesStr] = alasql.sets[allValuesStr] || new Set(allValues.filter(v => v != null));
+						s = `(${hasNull}?false:(alasql.utils.getValueOf(${leftJS()})!=null&&!alasql.sets["${allValuesStr}"].has(alasql.utils.getValueOf(${leftJS()}))))`;
 					}
 				} else {
-					const leftVal = leftJS();
-					s = `((lv => {
-						const leftVal = alasql.utils.getValueOf(lv);
-						if (leftVal == null) return false;
-						const arr = ${rightJS()};
-						const hasNull = arr.some(item => alasql.utils.getValueOf(item) == null);
-						const hasMatch = arr.some(item => {
-							const iv = alasql.utils.getValueOf(item);
-							return iv != null && iv === leftVal;
-						});
-						if (hasMatch) return false;
-						if (hasNull) return false;
-						return true;
-					})(${leftVal}))`;
+					s = `alasql.utils.sqlNotInCheck(${leftJS()},${rightJS()})`;
 				}
 			}
 

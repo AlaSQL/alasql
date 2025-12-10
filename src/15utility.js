@@ -66,6 +66,43 @@ function returnTrue() {
 function returnUndefined() {}
 
 /**
+  SQL-compliant IN check that handles NULL values according to SQL three-valued logic
+  @param {*} leftValue - The value to check
+  @param {Array} arr - The array to check against
+  @return {boolean} True if leftValue is in arr (excluding NULLs), false otherwise
+  */
+utils.sqlInCheck = function (leftValue, arr) {
+	var lv = utils.getValueOf(leftValue);
+	if (lv == null) return false;
+	for (var i = 0; i < arr.length; i++) {
+		var iv = utils.getValueOf(arr[i]);
+		if (iv != null && iv === lv) return true;
+	}
+	return false;
+};
+
+/**
+  SQL-compliant NOT IN check that handles NULL values according to SQL three-valued logic
+  @param {*} leftValue - The value to check
+  @param {Array} arr - The array to check against
+  @return {boolean} False if leftValue is NULL, or if arr contains NULL and no match found, true otherwise
+  */
+utils.sqlNotInCheck = function (leftValue, arr) {
+	var lv = utils.getValueOf(leftValue);
+	if (lv == null) return false;
+	var hasNull = false;
+	for (var i = 0; i < arr.length; i++) {
+		var iv = utils.getValueOf(arr[i]);
+		if (iv == null) {
+			hasNull = true;
+		} else if (iv === lv) {
+			return false;
+		}
+	}
+	return !hasNull;
+};
+
+/**
   Escape string
   @function
   @param {string} s Source string
