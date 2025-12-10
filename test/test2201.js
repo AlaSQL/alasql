@@ -37,6 +37,18 @@ describe('Test 2201 - JSON with negative numbers', function () {
 		assert.deepEqual(res, [{val: -3.14}, {val: -2.5}]);
 	});
 
-	// Note: Arrays of primitive negative numbers (@[-1,-2,-3]) are not tested here
-	// as this is a general limitation of AlaSQL's handling of primitive arrays in FROM clauses
+	it('F) Array literals with negative numbers', function () {
+		var res = alasql('SELECT @[-1.7,-2,-3] AS arr');
+		assert.deepEqual(res, [{arr: [-1.7, -2, -3]}]);
+	});
+
+	it('G) Nested JSON with negative numbers', function () {
+		var res = alasql('SELECT VALUE @{"outer":{"inner":-3.3}}');
+		assert.deepEqual(res, {outer: {inner: -3.3}});
+	});
+
+	it('H) Nested object in array with negative numbers', function () {
+		var res = alasql('SELECT * FROM @[{"data":{"value":-10.5}}]');
+		assert.deepEqual(res, [{data: {value: -10.5}}]);
+	});
 });

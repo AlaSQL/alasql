@@ -2485,6 +2485,8 @@ JsonValue
 JsonPrimitiveValue
 	: NumValue
 		{ $$ = +$1.value; }
+	| MINUS NumValue
+		{ $$ = -$2.value; }
 	| StringValue
 		{ $$ = ""+$1.value; }
 	| LogicValue
