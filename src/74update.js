@@ -267,6 +267,10 @@ yy.Update.prototype.compile = function (databaseid) {
 									// Set foreign key columns to NULL
 									childRowsToProcess.forEach(function(idx) {
 										fk.columns.forEach(function(col) {
+											var colDef = childTable.xcolumns[col];
+											if (colDef && colDef.notnull) {
+												throw new Error('Cannot SET NULL on NOT NULL column "' + col + '" in table "' + childTableId + '"');
+											}
 											childTable.data[idx][col] = null;
 										});
 									});
@@ -278,6 +282,8 @@ yy.Update.prototype.compile = function (databaseid) {
 											var colDef = childTable.xcolumns[col];
 											if (colDef && colDef.default !== undefined) {
 												childTable.data[idx][col] = colDef.default;
+											} else if (colDef && colDef.notnull) {
+												throw new Error('Cannot SET DEFAULT to NULL on NOT NULL column "' + col + '" in table "' + childTableId + '" without a DEFAULT value');
 											} else {
 												childTable.data[idx][col] = null;
 											}

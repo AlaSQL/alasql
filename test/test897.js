@@ -300,4 +300,35 @@ describe('Test ' + test + ' - Foreign Key CASCADE behavior', function () {
 		alasql('DROP TABLE child');
 		alasql('DROP TABLE parent');
 	});
+
+	it('L) Recursive CASCADE - grandchild rows should be deleted', function () {
+		alasql('CREATE TABLE grandparent (id INT PRIMARY KEY)');
+		alasql(
+			'CREATE TABLE parent (id INT PRIMARY KEY, gp_id INT, FOREIGN KEY (gp_id) REFERENCES grandparent(id) ON DELETE CASCADE)'
+		);
+		alasql(
+			'CREATE TABLE child (id INT PRIMARY KEY, p_id INT, FOREIGN KEY (p_id) REFERENCES parent(id) ON DELETE CASCADE)'
+		);
+
+		alasql('INSERT INTO grandparent VALUES (1), (2)');
+		alasql('INSERT INTO parent VALUES (10, 1), (11, 1), (20, 2)');
+		alasql('INSERT INTO child VALUES (100, 10), (101, 10), (110, 11), (200, 20)');
+
+		// Delete grandparent - should cascade to parent and child
+		alasql('DELETE FROM grandparent WHERE id = 1');
+
+		// Verify parent rows are deleted
+		var parentRows = alasql('SELECT * FROM parent ORDER BY id');
+		assert.equal(parentRows.length, 1);
+		assert.equal(parentRows[0].id, 20);
+
+		// Verify child rows are also deleted (recursive cascade)
+		var childRows = alasql('SELECT * FROM child ORDER BY id');
+		assert.equal(childRows.length, 1);
+		assert.equal(childRows[0].id, 200);
+
+		alasql('DROP TABLE child');
+		alasql('DROP TABLE parent');
+		alasql('DROP TABLE grandparent');
+	});
 });
