@@ -98,9 +98,13 @@ describe('Test 130-B - CROSS JOIN syntax improvements (issue #130)', function ()
 			'SELECT DISTINCT * FROM tab1 AS cor0 CROSS JOIN tab1, tab0 AS cor1, tab0 AS cor2, tab0 cor3'
 		);
 		// Cartesian product before DISTINCT: 2 x 2 x 2 x 2 x 2 = 32 rows
-		// DISTINCT reduces based on unique combinations
-		assert(Array.isArray(res));
-		assert(res.length >= 1);
-		assert(res.length <= 32);
+		// DISTINCT reduces to 4 unique combinations based on actual data
+		var expected = [
+			{col1: 10, col2: 100, col0: 1},
+			{col1: 20, col2: 100, col0: 2},
+			{col1: 10, col2: 200, col0: 1},
+			{col1: 20, col2: 200, col0: 2},
+		];
+		assert.deepEqual(res, expected);
 	});
 });
