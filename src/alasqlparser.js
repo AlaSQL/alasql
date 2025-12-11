@@ -904,10 +904,38 @@ case 378:
  this.$ = new yy.LogicValue({value:false}); 
 break;
 case 379:
- this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
+ 
+			var str = $$[$0].substr(1,$$[$0].length-2).replace(/(\'\')/g,"'");
+			// Process escape sequences: \n \t \r \\ \' \"
+			str = str.replace(/\\(n|t|r|\\|'|")/g, function(match, char) {
+				switch(char) {
+					case 'n': return '\n';
+					case 't': return '\t';
+					case 'r': return '\r';
+					case '\\': return '\\';
+					case "'": return "'";
+					case '"': return '"';
+				}
+			});
+			this.$ = new yy.StringValue({value: str}); 
+		
 break;
 case 380:
- this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
+ 
+			var str = $$[$0].substr(2,$$[$0].length-3).replace(/(\'\')/g,"'");
+			// Process escape sequences: \n \t \r \\ \' \"
+			str = str.replace(/\\(n|t|r|\\|'|")/g, function(match, char) {
+				switch(char) {
+					case 'n': return '\n';
+					case 't': return '\t';
+					case 'r': return '\r';
+					case '\\': return '\\';
+					case "'": return "'";
+					case '"': return '"';
+				}
+			});
+			this.$ = new yy.StringValue({value: str}); 
+		
 break;
 case 381:
  this.$ = new yy.NullValue({value:undefined}); 
