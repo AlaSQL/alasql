@@ -80,22 +80,108 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 			var newtable = [];
 			var deletedRows = [];
+			var rowsToDelete = []; // Track rows to delete for CASCADE processing
+			
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 				if (wherefn(table.data[i], params, alasql)) {
+					rowsToDelete.push(table.data[i]);
 					// Track deleted row for OUTPUT clause
 					if (self.output) {
 						deletedRows.push(cloneDeep(table.data[i]));
-					}
-					// Check for transaction - if it is not possible then return all back
-					if (table.delete) {
-						table.delete(i, params, alasql);
-					} else {
-						// Simply do not push
 					}
 				} else {
 					newtable.push(table.data[i]);
 				}
 			}
+			
+			// Process CASCADE operations before actually deleting
+			// Track tables being processed to prevent infinite loops
+			var processedTables = {};
+			var processingKey = databaseid + '.' + tableid;
+			processedTables[processingKey] = true;
+			
+			rowsToDelete.forEach(function(row) {
+				// Check all child tables that reference this table
+				for (var childTableId in db.tables) {
+					var childTable = db.tables[childTableId];
+					if (!childTable.foreignKeys) continue;
+					
+					childTable.foreignKeys.forEach(function(fk) {
+						// Check if this foreign key references the table we're deleting from
+						if (fk.fktable === tableid && fk.fkdatabase === databaseid) {
+							var childProcessingKey = databaseid + '.' + childTableId;
+							
+							// Build the parent key values
+							var parentKeyValues = fk.fkcolumns.map(function(col) {
+								return row[col];
+							});
+							
+							// Find matching child rows
+							var childRowsToProcess = [];
+							for (var j = 0; j < childTable.data.length; j++) {
+								var childRow = childTable.data[j];
+								var matches = true;
+								for (var k = 0; k < fk.columns.length; k++) {
+									if (childRow[fk.columns[k]] !== parentKeyValues[k]) {
+										matches = false;
+										break;
+									}
+								}
+								if (matches) {
+									childRowsToProcess.push(j);
+								}
+							}
+							
+							// Apply the appropriate action based on ondelete
+							if (childRowsToProcess.length > 0) {
+								if (fk.ondelete === 'RESTRICT' || fk.ondelete === 'NO ACTION') {
+									throw new Error('Cannot delete row from table "' + tableid + '" because it has dependent rows in table "' + childTableId + '"');
+								} else if (fk.ondelete === 'CASCADE') {
+									// Delete child rows (in reverse order to maintain indices)
+									for (var j = childRowsToProcess.length - 1; j >= 0; j--) {
+										var idx = childRowsToProcess[j];
+										if (childTable.delete) {
+											childTable.delete(idx, params, alasql);
+										}
+										childTable.data.splice(idx, 1);
+									}
+								} else if (fk.ondelete === 'SET NULL') {
+									// Set foreign key columns to NULL
+									childRowsToProcess.forEach(function(idx) {
+										fk.columns.forEach(function(col) {
+											childTable.data[idx][col] = null;
+										});
+									});
+								} else if (fk.ondelete === 'SET DEFAULT') {
+									// Set foreign key columns to their default values
+									childRowsToProcess.forEach(function(idx) {
+										fk.columns.forEach(function(col) {
+											// Find the column definition to get default value
+											var colDef = childTable.xcolumns[col];
+											if (colDef && colDef.default !== undefined) {
+												childTable.data[idx][col] = colDef.default;
+											} else {
+												childTable.data[idx][col] = null;
+											}
+										});
+									});
+								}
+							}
+						}
+					});
+				}
+			});
+			
+			// Now actually delete the rows
+			rowsToDelete.forEach(function(row) {
+				var idx = table.data.indexOf(row);
+				if (idx !== -1) {
+					if (table.delete) {
+						table.delete(idx, params, alasql);
+					}
+				}
+			});
+			
 			table.data = newtable;
 
 			// Trigger prevent functionality
@@ -164,6 +250,79 @@ yy.Delete.prototype.compile = function (databaseid) {
 					return cloneDeep(row);
 				});
 			}
+			
+			// Process CASCADE operations for all rows before deleting
+			var rowsToDelete = table.data.slice(); // Copy all rows
+			
+			rowsToDelete.forEach(function(row) {
+				// Check all child tables that reference this table
+				for (var childTableId in db.tables) {
+					var childTable = db.tables[childTableId];
+					if (!childTable.foreignKeys) continue;
+					
+					childTable.foreignKeys.forEach(function(fk) {
+						// Check if this foreign key references the table we're deleting from
+						if (fk.fktable === tableid && fk.fkdatabase === databaseid) {
+							// Build the parent key values
+							var parentKeyValues = fk.fkcolumns.map(function(col) {
+								return row[col];
+							});
+							
+							// Find matching child rows
+							var childRowsToProcess = [];
+							for (var j = 0; j < childTable.data.length; j++) {
+								var childRow = childTable.data[j];
+								var matches = true;
+								for (var k = 0; k < fk.columns.length; k++) {
+									if (childRow[fk.columns[k]] !== parentKeyValues[k]) {
+										matches = false;
+										break;
+									}
+								}
+								if (matches) {
+									childRowsToProcess.push(j);
+								}
+							}
+							
+							// Apply the appropriate action based on ondelete
+							if (childRowsToProcess.length > 0) {
+								if (fk.ondelete === 'RESTRICT' || fk.ondelete === 'NO ACTION') {
+									throw new Error('Cannot delete all rows from table "' + tableid + '" because it has dependent rows in table "' + childTableId + '"');
+								} else if (fk.ondelete === 'CASCADE') {
+									// Delete child rows (in reverse order to maintain indices)
+									for (var j = childRowsToProcess.length - 1; j >= 0; j--) {
+										var idx = childRowsToProcess[j];
+										if (childTable.delete) {
+											childTable.delete(idx, params, alasql);
+										}
+										childTable.data.splice(idx, 1);
+									}
+								} else if (fk.ondelete === 'SET NULL') {
+									// Set foreign key columns to NULL
+									childRowsToProcess.forEach(function(idx) {
+										fk.columns.forEach(function(col) {
+											childTable.data[idx][col] = null;
+										});
+									});
+								} else if (fk.ondelete === 'SET DEFAULT') {
+									// Set foreign key columns to their default values
+									childRowsToProcess.forEach(function(idx) {
+										fk.columns.forEach(function(col) {
+											// Find the column definition to get default value
+											var colDef = childTable.xcolumns[col];
+											if (colDef && colDef.default !== undefined) {
+												childTable.data[idx][col] = colDef.default;
+											} else {
+												childTable.data[idx][col] = null;
+											}
+										});
+									});
+								}
+							}
+						}
+					});
+				}
+			});
 
 			// Delete all records from the array
 			db.tables[tableid].data.length = 0;

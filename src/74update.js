@@ -102,15 +102,108 @@ yy.Update.prototype.compile = function (databaseid) {
 		//		table.dirty = true;
 		var numrows = 0;
 		var updatedRows = [];
+		var pkUpdates = []; // Track primary key updates for CASCADE processing
+		
+		// Determine which columns are being updated
+		var updatedColumns = [];
+		self.columns.forEach(function(col) {
+			updatedColumns.push(col.column.columnid);
+		});
+		
+		// Check if any primary key columns are being updated
+		var pkColumnsUpdated = false;
+		if (table.pk && table.pk.columns) {
+			for (var i = 0; i < table.pk.columns.length; i++) {
+				if (updatedColumns.indexOf(table.pk.columns[i]) !== -1) {
+					pkColumnsUpdated = true;
+					break;
+				}
+			}
+		}
+		
+		// If PK is being updated, collect old values first and check for RESTRICT
+		if (pkColumnsUpdated) {
+			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
+				if (!wherefn || wherefn(table.data[i], params, alasql)) {
+					var oldPkValues = {};
+					table.pk.columns.forEach(function(col) {
+						oldPkValues[col] = table.data[i][col];
+					});
+					
+					// Check for RESTRICT constraints BEFORE updating
+					for (var childTableId in db.tables) {
+						var childTable = db.tables[childTableId];
+						if (!childTable.foreignKeys) continue;
+						
+						childTable.foreignKeys.forEach(function(fk) {
+							if (fk.fktable === tableid && fk.fkdatabase === databaseid) {
+								if (fk.onupdate === 'RESTRICT' || fk.onupdate === 'NO ACTION') {
+									// Check if any child rows reference this parent row
+									for (var j = 0; j < childTable.data.length; j++) {
+										var childRow = childTable.data[j];
+										var matches = true;
+										for (var k = 0; k < fk.columns.length; k++) {
+											var fkCol = fk.columns[k];
+											var parentCol = fk.fkcolumns[k];
+											if (childRow[fkCol] !== oldPkValues[parentCol]) {
+												matches = false;
+												break;
+											}
+										}
+										if (matches) {
+											throw new Error('Cannot update primary key in table "' + tableid + '" because it has dependent rows in table "' + childTableId + '"');
+										}
+									}
+								}
+							}
+						});
+					}
+				}
+			}
+		}
+		
 		for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 			if (!wherefn || wherefn(table.data[i], params, alasql)) {
 				// Track row state for OUTPUT clause (DELETED.*)
 				var oldRow = self.output ? cloneDeep(table.data[i]) : null;
+				
+				// Store old primary key values if PK is being updated
+				var oldPkValues = null;
+				if (pkColumnsUpdated && table.pk) {
+					oldPkValues = {};
+					table.pk.columns.forEach(function(col) {
+						oldPkValues[col] = table.data[i][col];
+					});
+				}
 
 				if (table.update) {
 					table.update(assignfn, i, params);
 				} else {
 					assignfn(table.data[i], params, alasql);
+				}
+				
+				// Track PK update for CASCADE processing
+				if (pkColumnsUpdated && table.pk) {
+					var newPkValues = {};
+					table.pk.columns.forEach(function(col) {
+						newPkValues[col] = table.data[i][col];
+					});
+					
+					// Check if PK actually changed
+					var pkChanged = false;
+					for (var col in oldPkValues) {
+						if (oldPkValues[col] !== newPkValues[col]) {
+							pkChanged = true;
+							break;
+						}
+					}
+					
+					if (pkChanged) {
+						pkUpdates.push({
+							oldValues: oldPkValues,
+							newValues: newPkValues
+						});
+					}
 				}
 
 				// Track updated row for OUTPUT clause (INSERTED.*)
@@ -123,6 +216,79 @@ yy.Update.prototype.compile = function (databaseid) {
 
 				numrows++;
 			}
+		}
+		
+		// Process CASCADE operations for primary key updates
+		if (pkUpdates.length > 0) {
+			pkUpdates.forEach(function(update) {
+				// Check all child tables that reference this table
+				for (var childTableId in db.tables) {
+					var childTable = db.tables[childTableId];
+					if (!childTable.foreignKeys) continue;
+					
+					childTable.foreignKeys.forEach(function(fk) {
+						// Check if this foreign key references the table we're updating
+						if (fk.fktable === tableid && fk.fkdatabase === databaseid) {
+							// Skip RESTRICT and NO ACTION - already checked above
+							if (fk.onupdate === 'RESTRICT' || fk.onupdate === 'NO ACTION') {
+								return;
+							}
+							
+							// Find matching child rows based on old PK values
+							var childRowsToProcess = [];
+							for (var j = 0; j < childTable.data.length; j++) {
+								var childRow = childTable.data[j];
+								var matches = true;
+								for (var k = 0; k < fk.columns.length; k++) {
+									var fkCol = fk.columns[k];
+									var parentCol = fk.fkcolumns[k];
+									if (childRow[fkCol] !== update.oldValues[parentCol]) {
+										matches = false;
+										break;
+									}
+								}
+								if (matches) {
+									childRowsToProcess.push(j);
+								}
+							}
+							
+							// Apply the appropriate action based on onupdate
+							if (childRowsToProcess.length > 0) {
+								if (fk.onupdate === 'CASCADE') {
+									// Update child foreign key columns to new values
+									childRowsToProcess.forEach(function(idx) {
+										for (var k = 0; k < fk.columns.length; k++) {
+											var fkCol = fk.columns[k];
+											var parentCol = fk.fkcolumns[k];
+											childTable.data[idx][fkCol] = update.newValues[parentCol];
+										}
+									});
+								} else if (fk.onupdate === 'SET NULL') {
+									// Set foreign key columns to NULL
+									childRowsToProcess.forEach(function(idx) {
+										fk.columns.forEach(function(col) {
+											childTable.data[idx][col] = null;
+										});
+									});
+								} else if (fk.onupdate === 'SET DEFAULT') {
+									// Set foreign key columns to their default values
+									childRowsToProcess.forEach(function(idx) {
+										fk.columns.forEach(function(col) {
+											// Find the column definition to get default value
+											var colDef = childTable.xcolumns[col];
+											if (colDef && colDef.default !== undefined) {
+												childTable.data[idx][col] = colDef.default;
+											} else {
+												childTable.data[idx][col] = null;
+											}
+										});
+									});
+								}
+							}
+						}
+					});
+				}
+			});
 		}
 
 		if (alasql.options.autocommit && db.engineid) {

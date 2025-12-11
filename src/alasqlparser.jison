@@ -2030,7 +2030,7 @@ PrimaryKey
 ForeignKey
 	: FOREIGN KEY LPAR ColsList RPAR REFERENCES Table ParColsList?
 	     OnForeignKeyClause
-		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8}; }
+		{ $$ = {type: 'FOREIGN KEY', columns: $4, fktable: $7, fkcolumns: $8, ondelete: $9 && $9.ondelete, onupdate: $9 && $9.onupdate}; }
 	;
 
 ParColsList
@@ -2042,16 +2042,40 @@ OnForeignKeyClause
 	:
 		{ $$ = undefined; }
 	| OnDeleteClause OnUpdateClause
-		{ $$ = undefined; }
+		{ $$ = {ondelete: $1, onupdate: $2}; }
+	| OnDeleteClause
+		{ $$ = {ondelete: $1}; }
+	| OnUpdateClause
+		{ $$ = {onupdate: $1}; }
 	;
 
 OnDeleteClause
 	: ON DELETE NO ACTION
-		{$$ = undefined; }
+		{$$ = 'NO ACTION'; }
+	| ON DELETE Literal
+		{
+			if ($3.toUpperCase() === 'CASCADE') $$ = 'CASCADE';
+			else if ($3.toUpperCase() === 'RESTRICT') $$ = 'RESTRICT';
+			else throw new Error('Invalid ON DELETE action: ' + $3);
+		}
+	| ON DELETE SET NULL
+		{$$ = 'SET NULL'; }
+	| ON DELETE SET DEFAULT
+		{$$ = 'SET DEFAULT'; }
 	;
 OnUpdateClause
 	: ON UPDATE NO ACTION
-		{$$ = undefined; }
+		{$$ = 'NO ACTION'; }
+	| ON UPDATE Literal
+		{
+			if ($3.toUpperCase() === 'CASCADE') $$ = 'CASCADE';
+			else if ($3.toUpperCase() === 'RESTRICT') $$ = 'RESTRICT';
+			else throw new Error('Invalid ON UPDATE action: ' + $3);
+		}
+	| ON UPDATE SET NULL
+		{$$ = 'SET NULL'; }
+	| ON UPDATE SET DEFAULT
+		{$$ = 'SET DEFAULT'; }
 	;
 
 UniqueKey
@@ -2166,10 +2190,10 @@ ParLiteral
 ColumnConstraint
 	: PRIMARY KEY
 		{$$ = {primarykey:true};}
-	| FOREIGN KEY REFERENCES Table ParLiteral?
-		{$$ = {foreignkey:{table:$4, columnid: $5}};}
-	| REFERENCES Table ParLiteral?
-		{$$ = {foreignkey:{table:$2, columnid: $3}};}
+	| FOREIGN KEY REFERENCES Table ParLiteral? OnForeignKeyClause
+		{$$ = {foreignkey:{table:$4, columnid: $5, ondelete: $6 && $6.ondelete, onupdate: $6 && $6.onupdate}};}
+	| REFERENCES Table ParLiteral? OnForeignKeyClause
+		{$$ = {foreignkey:{table:$2, columnid: $3, ondelete: $4 && $4.ondelete, onupdate: $4 && $4.onupdate}};}
 	| IDENTITY LPAR NumValue COMMA NumValue RPAR
 		{ $$ = {identity: {value:$3,step:$5}} }
 	| IDENTITY

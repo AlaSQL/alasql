@@ -28,6 +28,9 @@ var Table = (alasql.Table = function (params) {
 	this.checks = [];
 	this.checkfns = []; // For restore... to be done...
 
+	// Step 5.5: Foreign keys
+	this.foreignKeys = []; // Stores foreign key relationships for CASCADE operations
+
 	// Step 6: INSERT/DELETE/UPDATE
 
 	// Step 7: Triggers...

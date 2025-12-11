@@ -166,6 +166,17 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
 					}
 				}
+				
+				// Store foreign key metadata for CASCADE operations
+				table.foreignKeys.push({
+					columns: [col.columnid],
+					fktable: fk.tableid,
+					fkdatabase: fk.databaseid || databaseid,
+					fkcolumns: [fk.columnid],
+					ondelete: col.foreignkey.ondelete || 'NO ACTION',
+					onupdate: col.foreignkey.onupdate || 'NO ACTION'
+				});
+				
 				var fkfn = function (r) {
 					var rr = {};
 					if (typeof r[col.columnid] === 'undefined') {
@@ -242,6 +253,16 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (fk.fkcolumns.length > fk.columns.length) {
 				throw new Error('Invalid foreign key on table ' + table.tableid);
 			}
+			
+			// Store foreign key metadata for CASCADE operations
+			table.foreignKeys.push({
+				columns: con.columns,
+				fktable: fk.tableid,
+				fkdatabase: fk.databaseid || databaseid,
+				fkcolumns: fk.fkcolumns,
+				ondelete: con.ondelete || 'NO ACTION',
+				onupdate: con.onupdate || 'NO ACTION'
+			});
 
 			checkfn = function (r) {
 				var rr = {};
