@@ -39,4 +39,76 @@ describe('Test 489 - ASCII with backslash character', function () {
 		assert.equal(res.charCodeAt(2), 39); // quote
 		assert.equal(res, "\\\\'");
 	});
+
+	it('F) Comprehensive quote and backslash escaping tests', function () {
+		// Building from fundamentals to complex combinations
+		// Testing single quotes, double quotes, and backslashes
+
+		// Basic single quote in double quotes
+		assert.equal(alasql("VALUE OF SELECT \"'\""), "'");
+		
+		// SQL quote doubling - '' becomes '
+		assert.equal(alasql("VALUE OF SELECT ''''"), "'");
+		
+		// Double quote inside single quotes
+		assert.equal(alasql("VALUE OF SELECT '\"\"'"), '""');
+		
+		// Backslash escaping - \\ becomes \
+		assert.equal(alasql("VALUE OF SELECT '\\\\'"), "\\");
+		
+		// Two backslashes - \\\\ becomes \\
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\'"), "\\\\");
+		
+		// Three backslashes - \\\\\\ becomes \\\
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\\\\\'"), "\\\\\\");
+		
+		// Four backslashes - \\\\\\\\ becomes \\\\
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\\\\\\\\\'"), "\\\\\\\\");
+		
+		// Five backslashes - \\\\\\\\\\ becomes \\\\\
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\\\\\\\\\\\\\'"), "\\\\\\\\\\");
+		
+		// Backslash followed by doubled quote - \\'' becomes \'
+		assert.equal(alasql("VALUE OF SELECT '\\\\'''"), "\\'");
+		
+		// Two backslashes followed by doubled quote - \\\\'' becomes \\'
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\'''"), "\\\\'");
+		
+		// Three backslashes followed by doubled quote - \\\\\\'' becomes \\\'
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\\\\\'''"), "\\\\\\'");
+		
+		// Four backslashes followed by doubled quote - \\\\\\\\'' becomes \\\\'
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\\\\\\\\\'''"), "\\\\\\\\'");
+		
+		// Five backslashes followed by doubled quote - \\\\\\\\\\'' becomes \\\\\'
+		assert.equal(alasql("VALUE OF SELECT '\\\\\\\\\\\\\\\\\\\\'''"), "\\\\\\\\\\'");
+		
+		// Doubled quote with text - ''a'' becomes 'a'
+		assert.equal(alasql("VALUE OF SELECT '''a'''"), "'a'");
+		
+		// Text with doubled quote in middle - a''b becomes a'b
+		assert.equal(alasql("VALUE OF SELECT 'a''b'"), "a'b");
+		
+		// Backslash before doubled quote in text - a\\'' becomes a\'
+		assert.equal(alasql("VALUE OF SELECT 'a\\\\'''"), "a\\'");
+		
+		// Multiple doubled quotes - '''' becomes '
+		assert.equal(alasql("VALUE OF SELECT ''''"), "'");
+		
+		// Two sets of doubled quotes - '''''' becomes ''
+		assert.equal(alasql("VALUE OF SELECT ''''''"), "''");
+		
+		// Three sets of doubled quotes - '''''''' becomes '''
+		assert.equal(alasql("VALUE OF SELECT ''''''''"), "'''");
+		
+		// Double quotes with backslash inside
+		assert.equal(alasql("VALUE OF SELECT \"\\\\\""), "\\");
+		
+		// Complex: backslash, quote, backslash, quote in one string - \\''\\'
+		assert.equal(alasql("VALUE OF SELECT '\\\\''\\\\'''"), "\\'\\'");
+		
+		// Very complex: multiple backslashes and quotes
+		var result = alasql("VALUE OF SELECT '\\\\\\\\''\\\\'''");
+		assert.equal(result, "\\\\'\\'");
+	});
 });
