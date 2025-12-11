@@ -260,8 +260,8 @@ yy.Delete.prototype.compile = function (databaseid) {
 				});
 			}
 			
-			// Process CASCADE operations for all rows before deleting
-			var rowsToDelete = table.data.slice(); // Copy all rows
+			// Copy all rows to delete
+			var rowsToDelete = table.data.slice();
 			
 			// Process CASCADE operations for all rows before deleting
 			rowsToDelete.forEach(function(row) {
