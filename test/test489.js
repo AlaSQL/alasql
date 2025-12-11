@@ -111,4 +111,85 @@ describe('Test 489 - ASCII with backslash character', function () {
 		var result = alasql("VALUE OF SELECT '\\\\\\\\''\\\\'''");
 		assert.equal(result, "\\\\'\\'");
 	});
+
+	it('G) Double quote escaping tests', function () {
+		// Note: In SQL, double quotes are typically for identifiers, not string literals
+		// AlaSQL allows both single and double quotes for strings, but only single quote
+		// doubling works as an escape sequence. Double quotes inside double-quoted strings
+		// are treated as literal characters, not escape sequences.
+		
+		// Double-quoted string with literal double quotes (no escaping)
+		assert.equal(alasql('VALUE OF SELECT """"'), '""');
+		
+		// Double-quoted string (alternative syntax, no escaping needed)
+		assert.equal(alasql("VALUE OF SELECT \"\"\"\""), '""');
+		
+		// Double quote inside single quotes (no escaping, just literal characters)
+		assert.equal(alasql("VALUE OF SELECT '\"\"'"), '""');
+		
+		// Single double quote in double-quoted string
+		assert.equal(alasql('VALUE OF SELECT "x"'), 'x');
+		
+		// Multiple double quotes are literal in double-quoted strings
+		assert.equal(alasql('VALUE OF SELECT "a""b"'), 'a""b');
+	});
+
+	it('H) Parameterized queries with escaped data', function () {
+		// Test how the parser handles escaped characters when data is passed in
+		
+		// Single quote in parameter
+		var res1 = alasql("VALUE OF SELECT ?", ["'"]);
+		assert.equal(res1, "'");
+		
+		// Double single quotes in parameter
+		var res2 = alasql("VALUE OF SELECT ?", ["''"]);
+		assert.equal(res2, "''");
+		
+		// Backslash in parameter
+		var res3 = alasql("VALUE OF SELECT ?", ["\\"]);
+		assert.equal(res3, "\\");
+		
+		// Multiple backslashes in parameter
+		var res4 = alasql("VALUE OF SELECT ?", ["\\\\"]);
+		assert.equal(res4, "\\\\");
+		
+		// Backslash followed by quote in parameter
+		var res5 = alasql("VALUE OF SELECT ?", ["\\'"]);
+		assert.equal(res5, "\\'");
+		
+		// Double quote in parameter
+		var res6 = alasql("VALUE OF SELECT ?", ['"']);
+		assert.equal(res6, '"');
+		
+		// Double quotes in parameter
+		var res7 = alasql("VALUE OF SELECT ?", ['""']);
+		assert.equal(res7, '""');
+		
+		// Complex: backslash, quote, backslash in parameter
+		var res8 = alasql("VALUE OF SELECT ?", ["\\'\\"]);
+		assert.equal(res8, "\\'\\");
+		
+		// Test round-trip: insert and select with escaped characters
+		alasql("CREATE TABLE test_escape (val STRING)");
+		
+		// Insert single quote
+		alasql("INSERT INTO test_escape VALUES (?)", ["'"]);
+		var result1 = alasql("SELECT val FROM test_escape");
+		assert.equal(result1[0].val, "'");
+		
+		// Clear and insert backslash
+		alasql("DELETE FROM test_escape");
+		alasql("INSERT INTO test_escape VALUES (?)", ["\\"]);
+		var result2 = alasql("SELECT val FROM test_escape");
+		assert.equal(result2[0].val, "\\");
+		
+		// Clear and insert backslash + quote
+		alasql("DELETE FROM test_escape");
+		alasql("INSERT INTO test_escape VALUES (?)", ["\\'"]);
+		var result3 = alasql("SELECT val FROM test_escape");
+		assert.equal(result3[0].val, "\\'");
+		
+		// Clean up
+		alasql("DROP TABLE test_escape");
+	});
 });
