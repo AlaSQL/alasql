@@ -394,8 +394,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				else if (ignore) {
 					alasql.inserted = oldinserted;
 					return false; // Silently skip insertion and indicate it was skipped
-				}
-				else
+				} else
 					throw new Error('Cannot insert record, because it already exists in primary key index');
 			}
 			//			table.uniqs[pk.hh][addr]=r;

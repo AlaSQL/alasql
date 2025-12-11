@@ -208,7 +208,14 @@ yy.Insert.prototype.compile = function (databaseid) {
 			//			s += 'db.tables[\''+tableid+'\'].insert(r);';
 			if (db.tables[tableid].insert) {
 				s += "var db=alasql.databases['" + databaseid + "'];";
-				s += "var inserted=db.tables['" + tableid + "'].insert(a," + (self.orreplace ? 'true' : 'false') + ',' + (self.ignore ? 'true' : 'false') + ');';
+				s +=
+					"var inserted=db.tables['" +
+					tableid +
+					"'].insert(a," +
+					(self.orreplace ? 'true' : 'false') +
+					',' +
+					(self.ignore ? 'true' : 'false') +
+					');';
 				// Track successful inserts (insert returns false when ignored)
 				if (self.ignore) {
 					s += 'if(inserted!==false){';
