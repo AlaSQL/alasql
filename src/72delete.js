@@ -42,7 +42,7 @@ function applyCascadeDeletes(db, databaseid, tableid, row, params, alasql) {
 					return row[col];
 				});
 				
-				// Find matching child rows
+				// Find matching child rows - store row references, not indices
 				var childRowsToProcess = [];
 				for (var j = 0; j < childTable.data.length; j++) {
 					var childRow = childTable.data[j];
@@ -54,7 +54,7 @@ function applyCascadeDeletes(db, databaseid, tableid, row, params, alasql) {
 						}
 					}
 					if (matches) {
-						childRowsToProcess.push({index: j, row: childRow});
+						childRowsToProcess.push(childRow);
 					}
 				}
 				
@@ -64,41 +64,43 @@ function applyCascadeDeletes(db, databaseid, tableid, row, params, alasql) {
 						throw new Error('Cannot delete row from table "' + tableid + '" because it has dependent rows in table "' + childTableId + '"');
 					} else if (fk.ondelete === 'CASCADE') {
 						// First, recursively cascade delete for each child row
-						childRowsToProcess.forEach(function(item) {
-							applyCascadeDeletes(db, databaseid, childTableId, item.row, params, alasql);
+						childRowsToProcess.forEach(function(childRow) {
+							applyCascadeDeletes(db, databaseid, childTableId, childRow, params, alasql);
 						});
 						
-						// Then delete child rows (in reverse order to maintain indices)
-						for (var j = childRowsToProcess.length - 1; j >= 0; j--) {
-							var idx = childRowsToProcess[j].index;
-							if (childTable.delete) {
-								childTable.delete(idx, params, alasql);
+						// Then delete child rows - find current index for each row
+						childRowsToProcess.forEach(function(childRow) {
+							var idx = childTable.data.indexOf(childRow);
+							if (idx !== -1) {
+								if (childTable.delete) {
+									childTable.delete(idx, params, alasql);
+								}
+								childTable.data.splice(idx, 1);
 							}
-							childTable.data.splice(idx, 1);
-						}
+						});
 					} else if (fk.ondelete === 'SET NULL') {
 						// Set foreign key columns to NULL
-						childRowsToProcess.forEach(function(item) {
+						childRowsToProcess.forEach(function(childRow) {
 							fk.columns.forEach(function(col) {
 								var colDef = childTable.xcolumns[col];
 								if (colDef && colDef.notnull) {
 									throw new Error('Cannot SET NULL on NOT NULL column "' + col + '" in table "' + childTableId + '"');
 								}
-								childTable.data[item.index][col] = null;
+								childRow[col] = null;
 							});
 						});
 					} else if (fk.ondelete === 'SET DEFAULT') {
 						// Set foreign key columns to their default values
-						childRowsToProcess.forEach(function(item) {
+						childRowsToProcess.forEach(function(childRow) {
 							fk.columns.forEach(function(col) {
 								// Find the column definition to get default value
 								var colDef = childTable.xcolumns[col];
 								if (colDef && colDef.default !== undefined) {
-									childTable.data[item.index][col] = colDef.default;
+									childRow[col] = colDef.default;
 								} else if (colDef && colDef.notnull) {
 									throw new Error('Cannot SET DEFAULT to NULL on NOT NULL column "' + col + '" in table "' + childTableId + '" without a DEFAULT value');
 								} else {
-									childTable.data[item.index][col] = null;
+									childRow[col] = null;
 								}
 							});
 						});
@@ -181,13 +183,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 				applyCascadeDeletes(db, databaseid, tableid, row, params, alasql);
 			});
 			
-			// Now actually delete the rows
+			// Call table.delete for each row to update indices before setting newtable
 			rowsToDelete.forEach(function(row) {
 				var idx = table.data.indexOf(row);
-				if (idx !== -1) {
-					if (table.delete) {
-						table.delete(idx, params, alasql);
-					}
+				if (idx !== -1 && table.delete) {
+					table.delete(idx, params, alasql);
 				}
 			});
 			
