@@ -5,6 +5,22 @@ if (typeof exports === 'object') {
 	__dirname = '.';
 }
 
+/*
+ * Test for UNNEST function to flatten nested arrays in objects
+ * 
+ * This addresses the issue of "broadcasting" nested objects without SEARCH.
+ * Using CROSS APPLY with UNNEST allows flattening of nested array properties.
+ * 
+ * Example from the issue:
+ * Input: [{ name: "a", entries: [{ id: 1, value: 2 }, { id: 3, value: 4 }] }]
+ * Output: [{ name: "a", id: 1, value: 2 }, { name: "a", id: 3, value: 4 }]
+ * 
+ * Usage:
+ * SELECT parent.field, child.field 
+ * FROM table AS parent
+ * CROSS APPLY (SELECT * FROM UNNEST(parent.array_field)) AS child
+ */
+
 describe('Test 532 - UNNEST function for flattening nested objects', function () {
 	it('1. Basic UNNEST function with simple array', function (done) {
 		var data = [1, 2, 3, 4, 5];
@@ -208,6 +224,51 @@ describe('Test 532 - UNNEST function for flattening nested objects', function ()
 			{name: 'a', id: 3, val: 4},
 			{name: 'b', id: 5, val: 6},
 		]);
+		done();
+	});
+
+	it('8. Example from issue - exact scenario', function (done) {
+		// Create database and table as in the issue
+		alasql('CREATE DATABASE IF NOT EXISTS A');
+		alasql('USE A');
+		alasql('CREATE TABLE IF NOT EXISTS B (name STRING, entries)');
+
+		var data = [
+			{
+				name: 'a',
+				entries: [
+					{id: 1, value: 2},
+					{id: 3, value: 4},
+				],
+			},
+			{
+				name: 'b',
+				entries: [
+					{id: 5, value: 6},
+					{id: 7, value: 8},
+					{id: 9, value: 10},
+				],
+			},
+		];
+
+		alasql('INSERT INTO B SELECT * FROM ?', [data]);
+
+		// Use the flattening query as suggested in the issue comments
+		var res = alasql(
+			'SELECT b.name, e.id, e.value \
+			FROM A.B AS b \
+			CROSS APPLY (SELECT * FROM UNNEST(b.entries)) AS e'
+		);
+
+		assert.deepEqual(res, [
+			{name: 'a', id: 1, value: 2},
+			{name: 'a', id: 3, value: 4},
+			{name: 'b', id: 5, value: 6},
+			{name: 'b', id: 7, value: 8},
+			{name: 'b', id: 9, value: 10},
+		]);
+
+		alasql('DROP DATABASE A');
 		done();
 	});
 });
