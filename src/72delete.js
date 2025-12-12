@@ -183,13 +183,15 @@ yy.Delete.prototype.compile = function (databaseid) {
 				applyCascadeDeletes(db, databaseid, tableid, row, params, alasql);
 			});
 			
-			// Call table.delete for each row to update indices before setting newtable
-			rowsToDelete.forEach(function(row) {
-				var idx = table.data.indexOf(row);
-				if (idx !== -1 && table.delete) {
-					table.delete(idx, params, alasql);
-				}
-			});
+			// Call table.delete for each row to update indices (only if indices exist)
+			if (table.pk || (table.uk && table.uk.length)) {
+				rowsToDelete.forEach(function(row) {
+					var idx = table.data.indexOf(row);
+					if (idx !== -1 && table.delete) {
+						table.delete(idx, params, alasql);
+					}
+				});
+			}
 			
 			table.data = newtable;
 
