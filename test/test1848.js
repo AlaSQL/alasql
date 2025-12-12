@@ -3,6 +3,14 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
+if (typeof exports == 'object') {
+	var DOMStorage = require('dom-storage');
+	global.localStorage = new DOMStorage('./test1848.json', {
+		strict: false,
+		ws: '',
+	});
+}
+
 describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function () {
 	const test = '1848';
 
@@ -12,30 +20,21 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 
 		before(function () {
 			// Ensure clean state
-			if (typeof localStorage !== 'undefined') {
-				localStorage.clear();
-			}
+			localStorage.clear();
 		});
 
 		after(function () {
 			// Cleanup
 			try {
-				alasql('DROP DATABASE ' + lsdbid);
+				alasql('DETACH DATABASE ' + lsdbid);
+				alasql('DROP LOCALSTORAGE DATABASE ' + lsdbid);
 			} catch (e) {
 				// Database might not exist
 			}
-			if (typeof localStorage !== 'undefined') {
-				localStorage.clear();
-			}
+			localStorage.clear();
 		});
 
 		it('A) Should apply DEFAULT values on INSERT in LOCALSTORAGE', function (done) {
-			// Skip if localStorage is not available (Node.js environment)
-			if (typeof localStorage === 'undefined') {
-				this.skip();
-				return;
-			}
-
 			alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ' + lsdbid);
 			alasql('ATTACH LOCALSTORAGE DATABASE ' + lsdbid);
 			alasql('USE ' + lsdbid);
@@ -74,17 +73,12 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 			assert.equal(pigsResult[0].ready, false, 'ready should default to false');
 			assert.equal(pigsResult[0].dream, 'fly');
 
-			alasql('DROP DATABASE ' + lsdbid);
+			alasql('DETACH DATABASE ' + lsdbid);
+			alasql('DROP LOCALSTORAGE DATABASE ' + lsdbid);
 			done();
 		});
 
 		it('B) Should apply CURRENT_TIMESTAMP DEFAULT in LOCALSTORAGE', function (done) {
-			// Skip if localStorage is not available (Node.js environment)
-			if (typeof localStorage === 'undefined') {
-				this.skip();
-				return;
-			}
-
 			alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ' + lsdbid);
 			alasql('ATTACH LOCALSTORAGE DATABASE ' + lsdbid);
 			alasql('USE ' + lsdbid);
@@ -114,7 +108,8 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 				'timestamp should be within the expected range'
 			);
 
-			alasql('DROP DATABASE ' + lsdbid);
+			alasql('DETACH DATABASE ' + lsdbid);
+			alasql('DROP LOCALSTORAGE DATABASE ' + lsdbid);
 			done();
 		});
 	});
