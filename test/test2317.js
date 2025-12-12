@@ -17,14 +17,8 @@ describe('Test 2317 - TypeScript type resolution via exports map', function () {
 		assert.ok(packageJson.exports, 'package.json should have exports field');
 
 		// Verify main export has types field
-		assert.ok(
-			packageJson.exports['.'],
-			'package.json exports should have "." entry'
-		);
-		assert.ok(
-			packageJson.exports['.'].types,
-			'package.json exports["."] should have types field'
-		);
+		assert.ok(packageJson.exports['.'], 'package.json exports should have "." entry');
+		assert.ok(packageJson.exports['.'].types, 'package.json exports["."] should have types field');
 
 		// Verify types field points to correct file
 		assert.strictEqual(
