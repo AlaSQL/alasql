@@ -931,14 +931,9 @@ case 379:
  this.$ = new yy.LogicValue({value:false}); 
 break;
 case 380:
- this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
-break;
-case 381:
- this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(/(\\\')/g,"'").replace(/(\'\')/g,"'")}); 
-case 379:
  this.$ = new yy.StringValue({value: $$[$0].substr(1,$$[$0].length-2).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,String.fromCharCode(92))}); 
 break;
-case 380:
+case 381:
  this.$ = new yy.StringValue({value: $$[$0].substr(2,$$[$0].length-3).replace(reEscapedQuote,"'").replace(reDoubleQuote,"'").replace(reEscapedBackslash,String.fromCharCode(92))}); 
 break;
 case 382:
