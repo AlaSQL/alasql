@@ -244,15 +244,43 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 								"']).length;i++)" +
 								' for(var k=0;k<cols.length;k++){if (!r.hasOwnProperty(i)) r[i]={}; r[i][colas[k]]=w[i][cols[k]];}';
 						} else {
-							ss.push(
-								"'" +
-									escapeq(col.as || col.columnid) +
-									"':p['" +
-									tbid +
-									"']['" +
-									col.columnid +
-									"']"
-							);
+							// Check if we have a JOIN and the column table cannot be determined at compile time
+							// This happens with inline data (FROM ? ... JOIN ?) where columns aren't known
+							var needsRuntimeResolution = !col.tableid && query.sources.length > 1 && 
+								(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
+							
+							if (needsRuntimeResolution) {
+								// Generate code to search all tables at runtime for the column
+								// Similar to what's done in compileSelectStar for duplicate columns
+								var aliases = Object.keys(query.aliases);
+								var checks = [];
+								for (var i = 0; i < aliases.length; i++) {
+									var checkExpr = "p['" + aliases[i] + "']['" + escapeq(col.columnid) + "']";
+									if (i === 0) {
+										checks.push(checkExpr);
+									} else {
+										checks.push(checks[i-1] + " !== undefined ? " + checks[i-1] + " : " + checkExpr);
+									}
+								}
+								
+								ss.push(
+									"'" +
+										escapeq(col.as || col.columnid) +
+										"':(" +
+										checks[checks.length - 1] +
+										")"
+								);
+							} else {
+								ss.push(
+									"'" +
+										escapeq(col.as || col.columnid) +
+										"':p['" +
+										tbid +
+										"']['" +
+										col.columnid +
+										"']"
+								);
+							}
 						}
 					}
 				} else {
