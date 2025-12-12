@@ -107,7 +107,11 @@ FS.createTable = function (databaseid, tableid, ifnotexists, cb) {
 		throw new Error('Table "' + tableid + '" alsready exists in the database "' + fsdbid + '"');
 	}
 	var table = alasql.databases[databaseid].tables[tableid];
-	db.data.tables[tableid] = {columns: table.columns};
+	db.data.tables[tableid] = {
+		columns: table.columns,
+		defaultfns: table.defaultfns,
+		onupdatefns: table.onupdatefns,
+	};
 	db.data[tableid] = [];
 
 	FS.updateFile(databaseid);
@@ -186,7 +190,11 @@ FS.commit = function (databaseid, cb) {
 	var fsdb = {tables: {}};
 	if (db.tables) {
 		for (var tbid in db.tables) {
-			db.data.tables[tbid] = {columns: db.tables[tbid].columns};
+			db.data.tables[tbid] = {
+				columns: db.tables[tbid].columns,
+				defaultfns: db.tables[tbid].defaultfns,
+				onupdatefns: db.tables[tbid].onupdatefns,
+			};
 			db.data[tbid] = db.tables[tbid].data;
 		}
 	}

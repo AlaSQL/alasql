@@ -195,6 +195,7 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 					assert.equal(pigsResult[0].ready, false, 'ready should default to false');
 					assert.equal(pigsResult[0].dream, 'fly');
 
+					alasql('DETACH DATABASE ' + fsdbid);
 					alasql('DROP DATABASE ' + fsdbid);
 					done();
 				});
@@ -234,6 +235,7 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 						'timestamp should be within the expected range'
 					);
 
+					alasql('DETACH DATABASE ' + fsdbid);
 					alasql('DROP DATABASE ' + fsdbid);
 					done();
 				});
