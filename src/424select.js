@@ -246,6 +246,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 						} else {
 							// Check if we have a JOIN and the column table cannot be determined at compile time
 							// This happens with inline data (FROM ? ... JOIN ?) where columns aren't known
+							// The '-' value in defcols indicates an ambiguous column (exists in multiple tables)
 							var needsRuntimeResolution = !col.tableid && query.sources.length > 1 && 
 								(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
 							
@@ -255,11 +256,12 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 								var aliases = Object.keys(query.aliases);
 								var checks = [];
 								for (var i = 0; i < aliases.length; i++) {
-									var checkExpr = "p['" + aliases[i] + "']['" + escapeq(col.columnid) + "']";
+									var checkExpr = "p['" + aliases[i] + "']['" + col.columnid + "']";
 									if (i === 0) {
 										checks.push(checkExpr);
 									} else {
-										checks.push(checks[i-1] + " !== undefined ? " + checks[i-1] + " : " + checkExpr);
+										var prevCheck = checks[i-1];
+										checks.push(prevCheck + " !== undefined ? " + prevCheck + " : " + checkExpr);
 									}
 								}
 								
