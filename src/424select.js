@@ -244,34 +244,18 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 								"']).length;i++)" +
 								' for(var k=0;k<cols.length;k++){if (!r.hasOwnProperty(i)) r[i]={}; r[i][colas[k]]=w[i][cols[k]];}';
 						} else {
-							// Check if we have a JOIN and the column table cannot be determined at compile time
-							// This happens with inline data (FROM ? ... JOIN ?) where columns aren't known
-							// The '-' value in defcols indicates an ambiguous column (exists in multiple tables)
+							// For JOINs with inline data where column table is unknown, search all tables
 							var needsRuntimeResolution = !col.tableid && query.sources.length > 1 && 
 								(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
 							
 							if (needsRuntimeResolution) {
-								// Generate code to search all tables at runtime for the column
-								// Similar to what's done in compileSelectStar for duplicate columns
+								// Try each table until column is found
 								var aliases = Object.keys(query.aliases);
-								var checks = [];
-								for (var i = 0; i < aliases.length; i++) {
-									var checkExpr = "p['" + aliases[i] + "']['" + col.columnid + "']";
-									if (i === 0) {
-										checks.push(checkExpr);
-									} else {
-										var prevCheck = checks[i-1];
-										checks.push(prevCheck + " !== undefined ? " + prevCheck + " : " + checkExpr);
-									}
-								}
+								var searchExpr = aliases.map(function(alias) {
+									return "p['" + alias + "']['" + col.columnid + "']";
+								}).join(' ?? ');
 								
-								ss.push(
-									"'" +
-										escapeq(col.as || col.columnid) +
-										"':(" +
-										checks[checks.length - 1] +
-										")"
-								);
+								ss.push("'" + escapeq(col.as || col.columnid) + "':(" + searchExpr + ")");
 							} else {
 								ss.push(
 									"'" +
