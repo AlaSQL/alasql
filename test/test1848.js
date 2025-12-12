@@ -62,16 +62,12 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 			var pigsResult = alasql('SELECT * FROM pigs');
 
 			// Check that defaults were applied
-			assert.equal(banksResult.length, 1);
-			assert.equal(banksResult[0].name, 'Bank1');
-			assert.equal(banksResult[0].is_open, true, 'is_open should default to true');
-			assert.equal(banksResult[0].key, 'abc123');
-
-			assert.equal(pigsResult.length, 1);
-			assert.equal(pigsResult[0].id, 'pig1');
-			assert.equal(pigsResult[0].bank, null, 'bank should default to null');
-			assert.equal(pigsResult[0].ready, false, 'ready should default to false');
-			assert.equal(pigsResult[0].dream, 'fly');
+			assert.deepEqual(banksResult, [
+				{name: 'Bank1', is_open: true, key: 'abc123'},
+			]);
+			assert.deepEqual(pigsResult, [
+				{id: 'pig1', bank: null, ready: false, dream: 'fly', notes: undefined, kind: undefined},
+			]);
 
 			alasql('DETACH DATABASE ' + lsdbid);
 			alasql('DROP LOCALSTORAGE DATABASE ' + lsdbid);
@@ -179,16 +175,12 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 					var pigsResult = alasql('SELECT * FROM pigs');
 
 					// Check that defaults were applied
-					assert.equal(banksResult.length, 1);
-					assert.equal(banksResult[0].name, 'Bank1');
-					assert.equal(banksResult[0].is_open, true, 'is_open should default to true');
-					assert.equal(banksResult[0].key, 'abc123');
-
-					assert.equal(pigsResult.length, 1);
-					assert.equal(pigsResult[0].id, 'pig1');
-					assert.equal(pigsResult[0].bank, null, 'bank should default to null');
-					assert.equal(pigsResult[0].ready, false, 'ready should default to false');
-					assert.equal(pigsResult[0].dream, 'fly');
+					assert.deepEqual(banksResult, [
+						{name: 'Bank1', is_open: true, key: 'abc123'},
+					]);
+					assert.deepEqual(pigsResult, [
+						{id: 'pig1', bank: null, ready: false, dream: 'fly', notes: undefined, kind: undefined},
+					]);
 
 					alasql('DETACH DATABASE ' + fsdbid);
 					alasql('DROP DATABASE ' + fsdbid);
