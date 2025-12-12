@@ -10,6 +10,7 @@
 	"browser": "dist/alasql.min.js",
 	"exports": {
 		".": {
+			"types": "./types/alasql.d.ts",
 			"node": "./dist/alasql.fs.js",
 			"browser": "./dist/alasql.min.js",
 			"default": "./dist/alasql.fs.js"
