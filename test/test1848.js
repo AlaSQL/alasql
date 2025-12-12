@@ -1,0 +1,243 @@
+if (typeof exports === 'object') {
+	var assert = require('assert');
+	var alasql = require('..');
+}
+
+describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function () {
+	const test = '1848';
+
+	// Test for LOCALSTORAGE
+	describe('LOCALSTORAGE', function () {
+		var lsdbid = 'test' + test + 'ls';
+
+		before(function () {
+			// Ensure clean state
+			if (typeof localStorage !== 'undefined') {
+				localStorage.clear();
+			}
+		});
+
+		after(function () {
+			// Cleanup
+			try {
+				alasql('DROP DATABASE ' + lsdbid);
+			} catch (e) {
+				// Database might not exist
+			}
+			if (typeof localStorage !== 'undefined') {
+				localStorage.clear();
+			}
+		});
+
+		it('A) Should apply DEFAULT values on INSERT in LOCALSTORAGE', function (done) {
+			// Skip if localStorage is not available (Node.js environment)
+			if (typeof localStorage === 'undefined') {
+				this.skip();
+				return;
+			}
+
+			alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ' + lsdbid);
+			alasql('ATTACH LOCALSTORAGE DATABASE ' + lsdbid);
+			alasql('USE ' + lsdbid);
+
+			alasql(`CREATE TABLE banks (
+				name STRING PRIMARY KEY,
+				is_open BOOLEAN DEFAULT true,
+				[key] STRING
+			)`);
+
+			alasql(`CREATE TABLE pigs (
+				id STRING PRIMARY KEY,
+				bank STRING DEFAULT null,
+				ready BOOLEAN DEFAULT false,
+				dream STRING,
+				notes STRING,
+				kind STRING
+			)`);
+
+			// Insert without specifying all columns
+			alasql("INSERT INTO banks (name, [key]) VALUES ('Bank1', 'abc123')");
+			alasql("INSERT INTO pigs (id, dream) VALUES ('pig1', 'fly')");
+
+			var banksResult = alasql('SELECT * FROM banks');
+			var pigsResult = alasql('SELECT * FROM pigs');
+
+			// Check that defaults were applied
+			assert.equal(banksResult.length, 1);
+			assert.equal(banksResult[0].name, 'Bank1');
+			assert.equal(banksResult[0].is_open, true, 'is_open should default to true');
+			assert.equal(banksResult[0].key, 'abc123');
+
+			assert.equal(pigsResult.length, 1);
+			assert.equal(pigsResult[0].id, 'pig1');
+			assert.equal(pigsResult[0].bank, null, 'bank should default to null');
+			assert.equal(pigsResult[0].ready, false, 'ready should default to false');
+			assert.equal(pigsResult[0].dream, 'fly');
+
+			alasql('DROP DATABASE ' + lsdbid);
+			done();
+		});
+
+		it('B) Should apply CURRENT_TIMESTAMP DEFAULT in LOCALSTORAGE', function (done) {
+			// Skip if localStorage is not available (Node.js environment)
+			if (typeof localStorage === 'undefined') {
+				this.skip();
+				return;
+			}
+
+			alasql('CREATE LOCALSTORAGE DATABASE IF NOT EXISTS ' + lsdbid);
+			alasql('ATTACH LOCALSTORAGE DATABASE ' + lsdbid);
+			alasql('USE ' + lsdbid);
+
+			alasql(`CREATE TABLE events (
+				id STRING PRIMARY KEY,
+				timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+			)`);
+
+			// Insert without specifying timestamp
+			var beforeInsert = new Date();
+			alasql("INSERT INTO events (id) VALUES ('event1')");
+			var afterInsert = new Date();
+
+			var result = alasql('SELECT * FROM events');
+
+			assert.equal(result.length, 1);
+			assert.equal(result[0].id, 'event1');
+			assert.ok(
+				result[0].timestamp !== undefined,
+				'timestamp should be set with DEFAULT CURRENT_TIMESTAMP'
+			);
+			// Check that timestamp is a Date or string that can be converted to Date
+			var timestamp = new Date(result[0].timestamp);
+			assert.ok(
+				timestamp >= beforeInsert && timestamp <= afterInsert,
+				'timestamp should be within the expected range'
+			);
+
+			alasql('DROP DATABASE ' + lsdbid);
+			done();
+		});
+	});
+
+	// Test for FILESTORAGE
+	describe('FILESTORAGE', function () {
+		var fsdbid = 'test' + test + 'fs';
+		var filename = 'test' + test + '.db';
+
+		beforeEach(function () {
+			// Clean up file before each test
+			try {
+				var fs = require('fs');
+				if (fs.existsSync(filename)) {
+					fs.unlinkSync(filename);
+				}
+			} catch (e) {
+				// File might not exist
+			}
+		});
+
+		afterEach(function () {
+			// Cleanup after each test
+			try {
+				alasql('DROP DATABASE ' + fsdbid);
+			} catch (e) {
+				// Database might not exist
+			}
+			try {
+				var fs = require('fs');
+				if (fs.existsSync(filename)) {
+					fs.unlinkSync(filename);
+				}
+			} catch (e) {
+				// File might not exist
+			}
+		});
+
+		it('C) Should apply DEFAULT values on INSERT in FILESTORAGE', function (done) {
+			// Use synchronous mode for simplicity in testing
+			alasql.options.autocommit = true;
+
+			alasql('CREATE FILESTORAGE DATABASE ' + fsdbid + '("' + filename + '")', function () {
+				alasql('ATTACH FILESTORAGE DATABASE ' + fsdbid + '("' + filename + '")', function () {
+					alasql('USE ' + fsdbid);
+
+					alasql(`CREATE TABLE banks (
+						name STRING PRIMARY KEY,
+						is_open BOOLEAN DEFAULT true,
+						[key] STRING
+					)`);
+
+					alasql(`CREATE TABLE pigs (
+						id STRING PRIMARY KEY,
+						bank STRING DEFAULT null,
+						ready BOOLEAN DEFAULT false,
+						dream STRING,
+						notes STRING,
+						kind STRING
+					)`);
+
+					// Insert without specifying all columns
+					alasql("INSERT INTO banks (name, [key]) VALUES ('Bank1', 'abc123')");
+					alasql("INSERT INTO pigs (id, dream) VALUES ('pig1', 'fly')");
+
+					var banksResult = alasql('SELECT * FROM banks');
+					var pigsResult = alasql('SELECT * FROM pigs');
+
+					// Check that defaults were applied
+					assert.equal(banksResult.length, 1);
+					assert.equal(banksResult[0].name, 'Bank1');
+					assert.equal(banksResult[0].is_open, true, 'is_open should default to true');
+					assert.equal(banksResult[0].key, 'abc123');
+
+					assert.equal(pigsResult.length, 1);
+					assert.equal(pigsResult[0].id, 'pig1');
+					assert.equal(pigsResult[0].bank, null, 'bank should default to null');
+					assert.equal(pigsResult[0].ready, false, 'ready should default to false');
+					assert.equal(pigsResult[0].dream, 'fly');
+
+					alasql('DROP DATABASE ' + fsdbid);
+					done();
+				});
+			});
+		});
+
+		it('D) Should apply CURRENT_TIMESTAMP DEFAULT in FILESTORAGE', function (done) {
+			// Use synchronous mode for simplicity in testing
+			alasql.options.autocommit = true;
+
+			alasql('CREATE FILESTORAGE DATABASE ' + fsdbid + '("' + filename + '")', function () {
+				alasql('ATTACH FILESTORAGE DATABASE ' + fsdbid + '("' + filename + '")', function () {
+					alasql('USE ' + fsdbid);
+
+					alasql(`CREATE TABLE events (
+						id STRING PRIMARY KEY,
+						timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+					)`);
+
+					// Insert without specifying timestamp
+					var beforeInsert = new Date();
+					alasql("INSERT INTO events (id) VALUES ('event1')");
+					var afterInsert = new Date();
+
+					var result = alasql('SELECT * FROM events');
+
+					assert.equal(result.length, 1);
+					assert.equal(result[0].id, 'event1');
+					assert.ok(
+						result[0].timestamp !== undefined,
+						'timestamp should be set with DEFAULT CURRENT_TIMESTAMP'
+					);
+					// Check that timestamp is a Date or string that can be converted to Date
+					var timestamp = new Date(result[0].timestamp);
+					assert.ok(
+						timestamp >= beforeInsert && timestamp <= afterInsert,
+						'timestamp should be within the expected range'
+					);
+
+					alasql('DROP DATABASE ' + fsdbid);
+					done();
+				});
+			});
+		});
+	});
+});
