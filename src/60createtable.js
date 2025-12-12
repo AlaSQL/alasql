@@ -574,7 +574,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk = this.pk;
 			pk.pkaddr = pk.onrightfn(r, params);
 			if (typeof this.uniqs[pk.hh][pk.pkaddr] === 'undefined') {
-				// If index is not populated (e.g., data was directly assigned), rebuild it
+				// If index is not populated (e.g., data was directly assigned), rebuild it.
+				// This allows UPDATE to work when data bypasses normal INSERT validation.
+				// Note: If data contains duplicate PKs, last occurrence wins (matches direct assignment semantics).
+				// This rebuild happens at most once per table since the index will be populated afterward.
 				this.uniqs[pk.hh] = {};
 				for (var j = 0; j < this.data.length; j++) {
 					var addr = pk.onrightfn(this.data[j]);
@@ -588,7 +591,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			table.uk.forEach(function (uk) {
 				uk.ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][uk.ukaddr] === 'undefined') {
-					// If index is not populated (e.g., data was directly assigned), rebuild it
+					// If index is not populated (e.g., data was directly assigned), rebuild it.
+					// This allows UPDATE to work when data bypasses normal INSERT validation.
+					// Note: If data contains duplicate unique keys, last occurrence wins (matches direct assignment semantics).
+					// This rebuild happens at most once per table since the index will be populated afterward.
 					table.uniqs[uk.hh] = {};
 					for (var j = 0; j < table.data.length; j++) {
 						var addr = uk.onrightfn(table.data[j]);
