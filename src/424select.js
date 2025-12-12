@@ -245,17 +245,21 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 								' for(var k=0;k<cols.length;k++){if (!r.hasOwnProperty(i)) r[i]={}; r[i][colas[k]]=w[i][cols[k]];}';
 						} else {
 							// For JOINs with inline data where column table is unknown, search all tables
-							var needsRuntimeResolution = !col.tableid && query.sources.length > 1 && 
+							var needsRuntimeResolution =
+								!col.tableid &&
+								query.sources.length > 1 &&
 								(!query.defcols[col.columnid] || query.defcols[col.columnid] === '-');
-							
+
 							if (needsRuntimeResolution) {
 								// Try each table until column is found
 								var aliases = Object.keys(query.aliases);
-								var searchExpr = aliases.map(function(alias) {
-									return "p['" + alias + "']['" + col.columnid + "']";
-								}).join(' ?? ');
-								
-								ss.push("'" + escapeq(col.as || col.columnid) + "':(" + searchExpr + ")");
+								var searchExpr = aliases
+									.map(function (alias) {
+										return "p['" + alias + "']['" + col.columnid + "']";
+									})
+									.join(' ?? ');
+
+								ss.push("'" + escapeq(col.as || col.columnid) + "':(" + searchExpr + ')');
 							} else {
 								ss.push(
 									"'" +
