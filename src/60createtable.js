@@ -574,14 +574,28 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk = this.pk;
 			pk.pkaddr = pk.onrightfn(r, params);
 			if (typeof this.uniqs[pk.hh][pk.pkaddr] === 'undefined') {
-				throw new Error('Something wrong with index on table');
+				// If index is not populated (e.g., data was directly assigned), rebuild it
+				this.uniqs[pk.hh] = {};
+				for (var j = 0; j < this.data.length; j++) {
+					var addr = pk.onrightfn(this.data[j]);
+					this.uniqs[pk.hh][addr] = this.data[j];
+				}
+				// Recalculate pkaddr after rebuilding
+				pk.pkaddr = pk.onrightfn(r, params);
 			}
 		}
 		if (table.uk && table.uk.length) {
 			table.uk.forEach(function (uk) {
 				uk.ukaddr = uk.onrightfn(r);
 				if (typeof table.uniqs[uk.hh][uk.ukaddr] === 'undefined') {
-					throw new Error('Something wrong with unique index on table');
+					// If index is not populated (e.g., data was directly assigned), rebuild it
+					table.uniqs[uk.hh] = {};
+					for (var j = 0; j < table.data.length; j++) {
+						var addr = uk.onrightfn(table.data[j]);
+						table.uniqs[uk.hh][addr] = table.data[j];
+					}
+					// Recalculate ukaddr after rebuilding
+					uk.ukaddr = uk.onrightfn(r);
 				}
 			});
 		}
