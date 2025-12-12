@@ -97,6 +97,17 @@ alasql.from.RANGE = function (start, finish, cb, idx, query) {
 	return res;
 };
 
+alasql.from.UNNEST = function (arr, opts, cb, idx, query) {
+	var res = arr;
+	if (!Array.isArray(res)) {
+		res = [];
+	}
+	if (cb) {
+		res = cb(res, idx, query);
+	}
+	return res;
+};
+
 // Read data from any file
 alasql.from.FILE = function (filename, opts, cb, idx, query) {
 	var fname;
