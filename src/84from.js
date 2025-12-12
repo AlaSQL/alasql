@@ -97,6 +97,24 @@ alasql.from.RANGE = function (start, finish, cb, idx, query) {
 	return res;
 };
 
+/**
+ * UNNEST function - converts an array into a table for use in FROM clauses
+ *
+ * This function enables flattening of nested arrays when used with CROSS APPLY or OUTER APPLY.
+ *
+ * @param {Array} arr - The array to unnest
+ * @param {Object} opts - Options (reserved for future use)
+ * @param {Function} cb - Callback function
+ * @param {number} idx - Index
+ * @param {Object} query - Query object
+ * @returns {Array} The input array, or empty array if input is not an array
+ *
+ * @example
+ * // Flatten nested arrays
+ * SELECT b.name, e.id, e.value
+ * FROM data AS b
+ * CROSS APPLY (SELECT * FROM UNNEST(b.entries)) AS e
+ */
 alasql.from.UNNEST = function (arr, opts, cb, idx, query) {
 	var res = arr;
 	if (!Array.isArray(res)) {

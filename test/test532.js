@@ -7,16 +7,16 @@ if (typeof exports === 'object') {
 
 /*
  * Test for UNNEST function to flatten nested arrays in objects
- * 
+ *
  * This addresses the issue of "broadcasting" nested objects without SEARCH.
  * Using CROSS APPLY with UNNEST allows flattening of nested array properties.
- * 
+ *
  * Example from the issue:
  * Input: [{ name: "a", entries: [{ id: 1, value: 2 }, { id: 3, value: 4 }] }]
  * Output: [{ name: "a", id: 1, value: 2 }, { name: "a", id: 3, value: 4 }]
- * 
+ *
  * Usage:
- * SELECT parent.field, child.field 
+ * SELECT parent.field, child.field
  * FROM table AS parent
  * CROSS APPLY (SELECT * FROM UNNEST(parent.array_field)) AS child
  */
@@ -24,6 +24,8 @@ if (typeof exports === 'object') {
 describe('Test 532 - UNNEST function for flattening nested objects', function () {
 	it('1. Basic UNNEST function with simple array', function (done) {
 		var data = [1, 2, 3, 4, 5];
+		// Note: SELECT COLUMN _ is used for primitive values to return the array itself
+		// rather than wrapping each value in an object
 		var res = alasql('SELECT COLUMN _ FROM UNNEST(?)', [data]);
 		assert.deepEqual(res, [1, 2, 3, 4, 5]);
 		done();
