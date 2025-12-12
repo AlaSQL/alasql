@@ -21,7 +21,7 @@ if (typeof exports === 'object') {
  * CROSS APPLY (SELECT * FROM UNNEST(parent.array_field)) AS child
  */
 
-describe('Test 532 - UNNEST function for flattening nested objects', function () {
+describe('Test 2141 - UNNEST function for flattening nested objects', function () {
 	it('1. Basic UNNEST function with simple array', function (done) {
 		var data = [1, 2, 3, 4, 5];
 		// Note: SELECT COLUMN _ is used for primitive values to return the array itself
@@ -157,8 +157,8 @@ describe('Test 532 - UNNEST function for flattening nested objects', function ()
 	});
 
 	it('6. Flattening from database.table format', function (done) {
-		alasql('CREATE DATABASE IF NOT EXISTS testdb532');
-		alasql('USE testdb532');
+		alasql('CREATE DATABASE IF NOT EXISTS testdb2141');
+		alasql('USE testdb2141');
 		alasql('CREATE TABLE IF NOT EXISTS testtable (name STRING, entries)');
 
 		var data = [
@@ -183,7 +183,7 @@ describe('Test 532 - UNNEST function for flattening nested objects', function ()
 
 		var res = alasql(
 			'SELECT b.name, e.id, e.value \
-			FROM testdb532.testtable AS b \
+			FROM testdb2141.testtable AS b \
 			CROSS APPLY (SELECT * FROM UNNEST(b.entries)) AS e'
 		);
 
@@ -195,7 +195,7 @@ describe('Test 532 - UNNEST function for flattening nested objects', function ()
 			{name: 'b', id: 9, value: 10},
 		]);
 
-		alasql('DROP DATABASE testdb532');
+		alasql('DROP DATABASE testdb2141');
 		done();
 	});
 
