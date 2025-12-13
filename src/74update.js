@@ -41,11 +41,48 @@ yy.Update.prototype.compile = function (databaseid) {
 	var self = this;
 	//	console.log(this);
 
-	// Check if updating a ParamValue (anonymous data table)
-	var isParamValue = this.table instanceof yy.ParamValue;
-	var paramIndex = isParamValue ? this.table.param : null;
+	// Handle ParamValue (anonymous data table) with temporary table approach
+	if (this.table instanceof yy.ParamValue) {
+		var paramIndex = this.table.param;
+		return function (params, cb) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				throw new Error('UPDATE requires an array for parameter ' + paramIndex);
+			}
 
-	var databaseid = this.table.databaseid || databaseid;
+			// Create temporary table with unique name
+			var tempTableName =
+				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+			var db = alasql.databases[databaseid];
+
+			// Create temp table and assign the data array directly (by reference)
+			db.tables[tempTableName] = new alasql.Table({tableid: tempTableName});
+			db.tables[tempTableName].data = data;
+
+			try {
+				// Create a modified UPDATE statement for the temp table
+				var tempUpdate = new yy.Update({
+					table: new yy.Table({tableid: tempTableName}),
+					columns: self.columns,
+					where: self.where,
+					output: self.output,
+				});
+				tempUpdate.exists = self.exists;
+				tempUpdate.queries = self.queries;
+
+				// Compile and execute the temp statement
+				var tempStatement = tempUpdate.compile(databaseid);
+				var res = tempStatement(params, cb);
+
+				return res;
+			} finally {
+				// Clean up temp table
+				delete db.tables[tempTableName];
+			}
+		};
+	}
+
+	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 
 	if (this.where) {
@@ -71,11 +108,8 @@ yy.Update.prototype.compile = function (databaseid) {
 	}
 
 	// Construct update function
-	var s = '';
-	if (!isParamValue) {
-		s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
-		s += ';';
-	}
+	var s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
+	s += ';';
 	this.columns.forEach(function (col) {
 		s += "r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
 	});
@@ -83,70 +117,6 @@ yy.Update.prototype.compile = function (databaseid) {
 	var assignfn = new Function('r,params,alasql', 'var y;' + s);
 
 	var statement = function (params, cb) {
-		// Handle ParamValue (anonymous data table)
-		if (isParamValue) {
-			var data = params[paramIndex];
-			if (!Array.isArray(data)) {
-				throw new Error('UPDATE requires an array for parameter ' + paramIndex);
-			}
-
-			var numrows = 0;
-			var updatedRows = [];
-			for (var i = 0, ilen = data.length; i < ilen; i++) {
-				if (!wherefn || wherefn(data[i], params, alasql)) {
-					// Track row state for OUTPUT clause (DELETED.*)
-					var oldRow = self.output ? cloneDeep(data[i]) : null;
-
-					assignfn(data[i], params, alasql);
-
-					// Track updated row for OUTPUT clause (INSERTED.*)
-					if (self.output) {
-						updatedRows.push({
-							deleted: oldRow,
-							inserted: cloneDeep(data[i]),
-						});
-					}
-
-					numrows++;
-				}
-			}
-
-			var res = numrows;
-
-			// Handle OUTPUT clause
-			if (self.output) {
-				var output = [];
-				for (var i = 0; i < updatedRows.length; i++) {
-					var deleted = updatedRows[i].deleted;
-					var inserted = updatedRows[i].inserted;
-					var outputRow = {};
-					self.output.columns.forEach(function (col) {
-						if (col.columnid === '*') {
-							// For *, use INSERTED values
-							for (var key in inserted) {
-								outputRow[key] = inserted[key];
-							}
-						} else {
-							var colname = col.as || col.columnid;
-							// Check tableid to determine which version to use
-							if (col.tableid === 'DELETED') {
-								outputRow[colname] = deleted[col.columnid];
-							} else {
-								// Default to INSERTED
-								outputRow[colname] = inserted[col.columnid];
-							}
-						}
-					});
-					output.push(outputRow);
-				}
-				res = output;
-			}
-
-			if (cb) cb(res);
-			return res;
-		}
-
-		// Handle normal table
 		var db = alasql.databases[databaseid];
 
 		//		console.log(db.engineid);

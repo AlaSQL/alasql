@@ -30,14 +30,57 @@ yy.Delete.prototype.toString = function () {
 yy.Delete.prototype.compile = function (databaseid) {
 	var self = this;
 
-	// Check if deleting from a ParamValue (anonymous data table)
-	var isParamValue = this.table instanceof yy.ParamValue;
-	var paramIndex = isParamValue ? this.table.param : null;
+	// Handle ParamValue (anonymous data table) with temporary table approach
+	if (this.table instanceof yy.ParamValue) {
+		var paramIndex = this.table.param;
+		return function (params, cb) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				throw new Error('DELETE requires an array for parameter ' + paramIndex);
+			}
 
-	var databaseid = this.table.databaseid || databaseid;
+			// Create temporary table with unique name
+			var tempTableName =
+				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+			var db = alasql.databases[databaseid];
+
+			// Create temp table and assign the data array directly (by reference)
+			db.tables[tempTableName] = new alasql.Table({tableid: tempTableName});
+			db.tables[tempTableName].data = data;
+
+			try {
+				// Create a modified DELETE statement for the temp table
+				var tempDelete = new yy.Delete({
+					table: new yy.Table({tableid: tempTableName}),
+					where: self.where,
+					output: self.output,
+				});
+				tempDelete.exists = self.exists;
+				tempDelete.queries = self.queries;
+
+				// Compile and execute the temp statement
+				var tempStatement = tempDelete.compile(databaseid);
+				var res = tempStatement(params, cb);
+
+				// Sync changes back to original array (in-place modification)
+				var newData = db.tables[tempTableName].data;
+				data.length = 0;
+				for (var i = 0; i < newData.length; i++) {
+					data.push(newData[i]);
+				}
+
+				return res;
+			} finally {
+				// Clean up temp table
+				delete db.tables[tempTableName];
+			}
+		};
+	}
+
+	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
-	var db = isParamValue ? null : alasql.databases[databaseid];
+	var db = alasql.databases[databaseid];
 
 	if (this.where) {
 		if (this.exists) {
@@ -62,64 +105,6 @@ yy.Delete.prototype.compile = function (databaseid) {
 		).bind(this);
 
 		statement = function (params, cb) {
-			// Handle ParamValue (anonymous data table)
-			if (isParamValue) {
-				var data = params[paramIndex];
-				if (!Array.isArray(data)) {
-					throw new Error('DELETE requires an array for parameter ' + paramIndex);
-				}
-
-				var orignum = data.length;
-				var newtable = [];
-				var deletedRows = [];
-
-				for (var i = 0, ilen = data.length; i < ilen; i++) {
-					if (wherefn(data[i], params, alasql)) {
-						// Track deleted row for OUTPUT clause
-						if (self.output) {
-							deletedRows.push(cloneDeep(data[i]));
-						}
-					} else {
-						newtable.push(data[i]);
-					}
-				}
-
-				// Replace array contents (preserve reference)
-				data.length = 0;
-				for (var i = 0; i < newtable.length; i++) {
-					data.push(newtable[i]);
-				}
-
-				var res = orignum - data.length;
-
-				// Handle OUTPUT clause
-				if (self.output) {
-					var output = [];
-					for (var i = 0; i < deletedRows.length; i++) {
-						var r = deletedRows[i];
-						var outputRow = {};
-						self.output.columns.forEach(function (col) {
-							if (col.columnid === '*') {
-								// For *, expand all properties
-								for (var key in r) {
-									outputRow[key] = r[key];
-								}
-							} else {
-								var colname = col.as || col.columnid;
-								// Direct property access
-								outputRow[colname] = r[col.columnid];
-							}
-						});
-						output.push(outputRow);
-					}
-					res = output;
-				}
-
-				if (cb) res = cb(res);
-				return res;
-			}
-
-			// Handle normal table
 			if (db.engineid && alasql.engines[db.engineid].deleteFromTable) {
 				return alasql.engines[db.engineid].deleteFromTable(
 					databaseid,
@@ -212,56 +197,6 @@ yy.Delete.prototype.compile = function (databaseid) {
 		};
 	} else {
 		statement = function (params, cb) {
-			// Handle ParamValue (anonymous data table)
-			if (isParamValue) {
-				var data = params[paramIndex];
-				if (!Array.isArray(data)) {
-					throw new Error('DELETE requires an array for parameter ' + paramIndex);
-				}
-
-				var orignum = data.length;
-
-				// Track deleted rows for OUTPUT clause
-				var deletedRows = [];
-				if (self.output) {
-					deletedRows = data.map(function (row) {
-						return cloneDeep(row);
-					});
-				}
-
-				// Delete all records from the array
-				data.length = 0;
-
-				var res = orignum;
-
-				// Handle OUTPUT clause
-				if (self.output) {
-					var output = [];
-					for (var i = 0; i < deletedRows.length; i++) {
-						var r = deletedRows[i];
-						var outputRow = {};
-						self.output.columns.forEach(function (col) {
-							if (col.columnid === '*') {
-								// For *, expand all properties
-								for (var key in r) {
-									outputRow[key] = r[key];
-								}
-							} else {
-								var colname = col.as || col.columnid;
-								// Direct property access
-								outputRow[colname] = r[col.columnid];
-							}
-						});
-						output.push(outputRow);
-					}
-					res = output;
-				}
-
-				if (cb) cb(res);
-				return res;
-			}
-
-			// Handle normal table
 			if (alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].loadTableData(databaseid, tableid);
 			}

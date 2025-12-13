@@ -60,173 +60,60 @@ yy.Insert.prototype.toJS = function (context, tableid, defcols) {
 yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
 
-	// Check if inserting into a ParamValue (anonymous data table)
-	var isParamValue = this.into instanceof yy.ParamValue;
-	var paramIndex = isParamValue ? this.into.param : null;
-
-	// Handle ParamValue INSERT - simpler logic without table metadata
-	if (isParamValue) {
-		// INSERT INTO ? VALUES
-		if (this.values) {
-			if (this.exists) {
-				this.existsfn = this.exists.map(function (ex) {
-					var nq = ex.compile(databaseid);
-					nq.query.modifier = 'RECORDSET';
-					return nq;
-				});
-			}
-			if (this.queries) {
-				this.queriesfn = this.queries.map(function (q) {
-					var nq = q.compile(databaseid);
-					nq.query.modifier = 'RECORDSET';
-					return nq;
-				});
+	// Handle ParamValue (anonymous data table) with temporary table approach
+	if (self.into instanceof yy.ParamValue) {
+		var paramIndex = self.into.param;
+		return function (params, cb) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				throw new Error('INSERT requires an array for parameter ' + paramIndex);
 			}
 
-			var statement = function (params, cb) {
-				var data = params[paramIndex];
-				if (!Array.isArray(data)) {
-					throw new Error('INSERT requires an array for parameter ' + paramIndex);
-				}
+			// Create temporary table with unique name
+			var tempTableName =
+				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+			var db = alasql.databases[databaseid];
 
-				var insertedRows = [];
-				self.values.forEach(function (values) {
-					var row;
-					if (self.columns) {
-						// Build object from column names and values
-						row = {};
-						self.columns.forEach(function (col, idx) {
-							var val = values[idx].toJS('params', databaseid);
-							row[col.columnid] = new Function('params', 'return ' + val)(params);
-						});
-					} else {
-						// Direct array value or object
-						if (Array.isArray(values)) {
-							row = values.map(function (v) {
-								var val = v.toJS('params', databaseid);
-								return new Function('params', 'return ' + val)(params);
-							});
-						} else {
-							var val = JSONtoJS(values);
-							row = new Function('params', 'return ' + val)(params);
-						}
-					}
-					data.push(row);
-					insertedRows.push(row);
-				});
-
-				var res = insertedRows.length;
-
-				// Handle OUTPUT clause
-				if (self.output) {
-					var output = [];
-					for (var i = 0; i < insertedRows.length; i++) {
-						var r = insertedRows[i];
-						var outputRow = {};
-						self.output.columns.forEach(function (col) {
-							if (col.columnid === '*') {
-								for (var key in r) {
-									outputRow[key] = r[key];
-								}
-							} else {
-								var colname = col.as || col.columnid;
-								outputRow[colname] = r[col.columnid];
-							}
-						});
-						output.push(outputRow);
-					}
-					res = output;
-				}
-
-				if (cb) cb(res);
-				return res;
-			};
-			return statement;
-		}
-		// INSERT INTO ? SELECT
-		else if (this.select) {
-			this.select.modifier = 'RECORDSET';
-			if (this.queries) {
-				this.select.queries = this.queries;
-			}
-			var selectfn = this.select.compile(databaseid);
-
-			var statement = function (params, cb) {
-				var data = params[paramIndex];
-				if (!Array.isArray(data)) {
-					throw new Error('INSERT requires an array for parameter ' + paramIndex);
-				}
-
-				var res = selectfn(params).data;
-				var insertedRows = res;
-
-				// Push all rows to the target array
-				for (var i = 0; i < res.length; i++) {
-					data.push(res[i]);
-				}
-
-				// Handle OUTPUT clause
-				if (self.output) {
-					var output = [];
-					for (var i = 0; i < insertedRows.length; i++) {
-						var r = insertedRows[i];
-						var outputRow = {};
-						self.output.columns.forEach(function (col) {
-							if (col.columnid === '*') {
-								for (var key in r) {
-									outputRow[key] = r[key];
-								}
-							} else {
-								var colname = col.as || col.columnid;
-								outputRow[colname] = r[col.columnid];
-							}
-						});
-						output.push(outputRow);
-					}
-					if (cb) cb(output);
-					return output;
-				}
-
-				if (cb) cb(res.length);
-				return res.length;
-			};
-			return statement;
-		}
-		// INSERT INTO ? SET column = value
-		else if (this.setcolumns) {
-			var columns = [];
-			var valueExprs = [];
-			this.setcolumns.forEach(function (setcol) {
-				columns.push(setcol.column);
-				valueExprs.push(setcol.expression);
-			});
-
-			// Transform to VALUES and recurse once
-			// Save and clear the ParamValue temporarily
-			var originalInto = this.into;
-			var originalColumns = this.columns;
-			var originalValues = this.values;
-			var originalSetcolumns = this.setcolumns;
-
-			this.columns = columns;
-			this.values = [valueExprs];
-			this.setcolumns = null;
+			// Create temp table and assign the data array directly (by reference)
+			db.tables[tempTableName] = new alasql.Table({tableid: tempTableName});
+			db.tables[tempTableName].data = data;
 
 			try {
-				var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
-				return compiledFn;
+				// Create a modified INSERT statement for the temp table
+				var tempInsert = new yy.Insert({
+					into: new yy.Table({tableid: tempTableName}),
+					columns: self.columns,
+					values: self.values,
+					select: self.select,
+					setcolumns: self.setcolumns,
+					default: self.default,
+					output: self.output,
+					ignore: self.ignore,
+					orreplace: self.orreplace,
+					replaceonly: self.replaceonly,
+				});
+				tempInsert.exists = self.exists;
+				tempInsert.queries = self.queries;
+
+				// Compile and execute the temp statement
+				var tempStatement = tempInsert.compile(databaseid);
+				var res = tempStatement(params, cb);
+
+				// Sync changes back to original array (in-place modification)
+				var newData = db.tables[tempTableName].data;
+				data.length = 0;
+				for (var i = 0; i < newData.length; i++) {
+					data.push(newData[i]);
+				}
+
+				return res;
 			} finally {
-				this.into = originalInto;
-				this.columns = originalColumns;
-				this.values = originalValues;
-				this.setcolumns = originalSetcolumns;
+				// Clean up temp table
+				delete db.tables[tempTableName];
 			}
-		} else {
-			throw new Error('Wrong INSERT parameters for ParamValue');
-		}
+		};
 	}
 
-	// Original table-based INSERT logic continues below
 	databaseid = self.into.databaseid || databaseid;
 	var db = alasql.databases[databaseid];
 	//	console.log(self);
