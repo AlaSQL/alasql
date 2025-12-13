@@ -1,6 +1,10 @@
 # Pending Tests Analysis
 
-**Total Pending Tests:** 387
+**Total Pending Tests Reported by Mocha:** 401
+
+**Unique Test Definitions Analyzed:** 387
+
+> **Note:** The difference between these numbers (14 tests) is due to `describe.skip()` blocks that contain multiple `it()` tests. When a describe block is skipped, all tests within it are counted as pending by Mocha, but our analysis counts the describe block once.
 
 ## Executive Summary
 
