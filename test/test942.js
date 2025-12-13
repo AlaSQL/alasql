@@ -24,10 +24,10 @@ describe('Test 942 - Anonymous data tables', function () {
 		];
 
 		var res = alasql("UPDATE ? SET status = 'on' WHERE type = 4", [mydata]);
-		
+
 		// UPDATE should return the number of rows updated
 		assert.equal(res, 2);
-		
+
 		// Check that the original data was modified
 		assert.equal(mydata[1].status, 'on');
 		assert.equal(mydata[3].status, 'on');
@@ -42,7 +42,7 @@ describe('Test 942 - Anonymous data tables', function () {
 		];
 
 		var res = alasql('UPDATE ? SET age = age + 1', [mydata]);
-		
+
 		assert.equal(res, 2);
 		assert.equal(mydata[0].age, 26);
 		assert.equal(mydata[1].age, 31);
@@ -57,10 +57,10 @@ describe('Test 942 - Anonymous data tables', function () {
 		];
 
 		var res = alasql('DELETE FROM ? WHERE active = false', [mydata]);
-		
+
 		// DELETE should return the number of rows deleted
 		assert.equal(res, 2);
-		
+
 		// Check that rows were removed from the array
 		assert.equal(mydata.length, 2);
 		assert.equal(mydata[0].id, 1);
@@ -68,28 +68,22 @@ describe('Test 942 - Anonymous data tables', function () {
 	});
 
 	it('D) DELETE from anonymous data table without WHERE clause', function () {
-		var mydata = [
-			{name: 'test1'},
-			{name: 'test2'},
-			{name: 'test3'},
-		];
+		var mydata = [{name: 'test1'}, {name: 'test2'}, {name: 'test3'}];
 
 		var res = alasql('DELETE FROM ?', [mydata]);
-		
+
 		assert.equal(res, 3);
 		assert.equal(mydata.length, 0);
 	});
 
 	it('E) INSERT into anonymous data table from VALUES', function () {
-		var mydata = [
-			{id: 1, name: 'Alice'},
-		];
+		var mydata = [{id: 1, name: 'Alice'}];
 
 		var res = alasql('INSERT INTO ? VALUES (2, "Bob")', [mydata]);
-		
+
 		// INSERT should return the number of rows inserted
 		assert.equal(res, 1);
-		
+
 		// Check that the row was added
 		assert.equal(mydata.length, 2);
 		assert.deepEqual(mydata[1], [2, 'Bob']);
@@ -103,7 +97,7 @@ describe('Test 942 - Anonymous data tables', function () {
 		];
 
 		var res = alasql('INSERT INTO ? SELECT * FROM ?', [mydata, sourcedata]);
-		
+
 		assert.equal(res, 2);
 		assert.equal(mydata.length, 2);
 		assert.deepEqual(mydata[0], {id: 1, name: 'Alice'});
@@ -117,7 +111,7 @@ describe('Test 942 - Anonymous data tables', function () {
 		];
 
 		var res = alasql('UPDATE ? SET price = price - discount WHERE price > 150', [mydata]);
-		
+
 		assert.equal(res, 1);
 		assert.equal(mydata[0].price, 100);
 		assert.equal(mydata[1].price, 180);

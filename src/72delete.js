@@ -29,11 +29,11 @@ yy.Delete.prototype.toString = function () {
 
 yy.Delete.prototype.compile = function (databaseid) {
 	var self = this;
-	
+
 	// Check if deleting from a ParamValue (anonymous data table)
 	var isParamValue = this.table instanceof yy.ParamValue;
 	var paramIndex = isParamValue ? this.table.param : null;
-	
+
 	var databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
@@ -68,11 +68,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 				if (!Array.isArray(data)) {
 					throw new Error('DELETE requires an array for parameter ' + paramIndex);
 				}
-				
+
 				var orignum = data.length;
 				var newtable = [];
 				var deletedRows = [];
-				
+
 				for (var i = 0, ilen = data.length; i < ilen; i++) {
 					if (wherefn(data[i], params, alasql)) {
 						// Track deleted row for OUTPUT clause
@@ -83,15 +83,15 @@ yy.Delete.prototype.compile = function (databaseid) {
 						newtable.push(data[i]);
 					}
 				}
-				
+
 				// Replace array contents (preserve reference)
 				data.length = 0;
 				for (var i = 0; i < newtable.length; i++) {
 					data.push(newtable[i]);
 				}
-				
+
 				var res = orignum - data.length;
-				
+
 				// Handle OUTPUT clause
 				if (self.output) {
 					var output = [];
@@ -114,11 +114,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 					}
 					res = output;
 				}
-				
+
 				if (cb) res = cb(res);
 				return res;
 			}
-			
+
 			// Handle normal table
 			if (db.engineid && alasql.engines[db.engineid].deleteFromTable) {
 				return alasql.engines[db.engineid].deleteFromTable(
@@ -218,9 +218,9 @@ yy.Delete.prototype.compile = function (databaseid) {
 				if (!Array.isArray(data)) {
 					throw new Error('DELETE requires an array for parameter ' + paramIndex);
 				}
-				
+
 				var orignum = data.length;
-				
+
 				// Track deleted rows for OUTPUT clause
 				var deletedRows = [];
 				if (self.output) {
@@ -228,12 +228,12 @@ yy.Delete.prototype.compile = function (databaseid) {
 						return cloneDeep(row);
 					});
 				}
-				
+
 				// Delete all records from the array
 				data.length = 0;
-				
+
 				var res = orignum;
-				
+
 				// Handle OUTPUT clause
 				if (self.output) {
 					var output = [];
@@ -256,11 +256,11 @@ yy.Delete.prototype.compile = function (databaseid) {
 					}
 					res = output;
 				}
-				
+
 				if (cb) cb(res);
 				return res;
 			}
-			
+
 			// Handle normal table
 			if (alasql.options.autocommit && db.engineid) {
 				alasql.engines[db.engineid].loadTableData(databaseid, tableid);

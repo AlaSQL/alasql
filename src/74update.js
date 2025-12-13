@@ -40,11 +40,11 @@ yy.SetColumn.prototype.toString = function () {
 yy.Update.prototype.compile = function (databaseid) {
 	var self = this;
 	//	console.log(this);
-	
+
 	// Check if updating a ParamValue (anonymous data table)
 	var isParamValue = this.table instanceof yy.ParamValue;
 	var paramIndex = isParamValue ? this.table.param : null;
-	
+
 	var databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 
@@ -89,16 +89,16 @@ yy.Update.prototype.compile = function (databaseid) {
 			if (!Array.isArray(data)) {
 				throw new Error('UPDATE requires an array for parameter ' + paramIndex);
 			}
-			
+
 			var numrows = 0;
 			var updatedRows = [];
 			for (var i = 0, ilen = data.length; i < ilen; i++) {
 				if (!wherefn || wherefn(data[i], params, alasql)) {
 					// Track row state for OUTPUT clause (DELETED.*)
 					var oldRow = self.output ? cloneDeep(data[i]) : null;
-					
+
 					assignfn(data[i], params, alasql);
-					
+
 					// Track updated row for OUTPUT clause (INSERTED.*)
 					if (self.output) {
 						updatedRows.push({
@@ -106,13 +106,13 @@ yy.Update.prototype.compile = function (databaseid) {
 							inserted: cloneDeep(data[i]),
 						});
 					}
-					
+
 					numrows++;
 				}
 			}
-			
+
 			var res = numrows;
-			
+
 			// Handle OUTPUT clause
 			if (self.output) {
 				var output = [];
@@ -141,11 +141,11 @@ yy.Update.prototype.compile = function (databaseid) {
 				}
 				res = output;
 			}
-			
+
 			if (cb) cb(res);
 			return res;
 		}
-		
+
 		// Handle normal table
 		var db = alasql.databases[databaseid];
 

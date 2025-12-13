@@ -59,11 +59,11 @@ yy.Insert.prototype.toJS = function (context, tableid, defcols) {
 
 yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
-	
+
 	// Check if inserting into a ParamValue (anonymous data table)
 	var isParamValue = this.into instanceof yy.ParamValue;
 	var paramIndex = isParamValue ? this.into.param : null;
-	
+
 	// Handle ParamValue INSERT - simpler logic without table metadata
 	if (isParamValue) {
 		// INSERT INTO ? VALUES
@@ -82,13 +82,13 @@ yy.Insert.prototype.compile = function (databaseid) {
 					return nq;
 				});
 			}
-			
+
 			var statement = function (params, cb) {
 				var data = params[paramIndex];
 				if (!Array.isArray(data)) {
 					throw new Error('INSERT requires an array for parameter ' + paramIndex);
 				}
-				
+
 				var insertedRows = [];
 				self.values.forEach(function (values) {
 					var row;
@@ -114,9 +114,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 					data.push(row);
 					insertedRows.push(row);
 				});
-				
+
 				var res = insertedRows.length;
-				
+
 				// Handle OUTPUT clause
 				if (self.output) {
 					var output = [];
@@ -137,7 +137,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 					}
 					res = output;
 				}
-				
+
 				if (cb) cb(res);
 				return res;
 			};
@@ -150,21 +150,21 @@ yy.Insert.prototype.compile = function (databaseid) {
 				this.select.queries = this.queries;
 			}
 			var selectfn = this.select.compile(databaseid);
-			
+
 			var statement = function (params, cb) {
 				var data = params[paramIndex];
 				if (!Array.isArray(data)) {
 					throw new Error('INSERT requires an array for parameter ' + paramIndex);
 				}
-				
+
 				var res = selectfn(params).data;
 				var insertedRows = res;
-				
+
 				// Push all rows to the target array
 				for (var i = 0; i < res.length; i++) {
 					data.push(res[i]);
 				}
-				
+
 				// Handle OUTPUT clause
 				if (self.output) {
 					var output = [];
@@ -185,7 +185,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 					}
 					return output;
 				}
-				
+
 				if (cb) cb(res.length);
 				return res.length;
 			};
@@ -199,12 +199,12 @@ yy.Insert.prototype.compile = function (databaseid) {
 				columns.push(setcol.column);
 				valueExprs.push(setcol.expression);
 			});
-			
+
 			var originalColumns = this.columns;
 			var originalValues = this.values;
 			this.columns = columns;
 			this.values = [valueExprs];
-			
+
 			try {
 				var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
 				return compiledFn;
@@ -216,7 +216,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 			throw new Error('Wrong INSERT parameters for ParamValue');
 		}
 	}
-	
+
 	// Original table-based INSERT logic continues below
 	databaseid = self.into.databaseid || databaseid;
 	var db = alasql.databases[databaseid];
