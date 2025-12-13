@@ -6,12 +6,12 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 341 Intellectual DOT operator', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test341;USE test341');
 		done();
 	});
 
-	it.skip('2. Create tables', function (done) {
+	it('2. Create tables', function (done) {
 		var res = alasql(function () {
 			/*
 
@@ -29,7 +29,7 @@ describe('Test 341 Intellectual DOT operator', function () {
 		done();
 	});
 
-	it.skip('3. SQL Standard way', function (done) {
+	it('3. SQL Standard way', function (done) {
 		var res = alasql('SELECT COLUMN persons.name FROM persons');
 		assert.deepEqual(res, ['Andrey', 'Valery', 'Michael']);
 		done();
@@ -60,7 +60,7 @@ describe('Test 341 Intellectual DOT operator', function () {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test341');
 		done();
