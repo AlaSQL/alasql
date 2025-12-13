@@ -17,6 +17,7 @@ describe('Test 547 - JOIN with duplicate column names', function () {
 		var data = [{dep: 'A', qt: 10, price: 5, extra: 1}];
 		var data2 = [{dep: 'B', qt: 2, price: 5}];
 
+		// JOIN without ON clause produces cartesian product (1 row × 1 row = 1 row)
 		var res = alasql('SELECT * FROM ? as a JOIN ? as b', [data, data2]);
 
 		// With overwrite mode, duplicate columns (dep, qt, price) should be overwritten by b's values
@@ -30,6 +31,7 @@ describe('Test 547 - JOIN with duplicate column names', function () {
 		var data = [{dep: 'A', qt: 10, price: 5, extra: 1}];
 		var data2 = [{dep: 'B', qt: 2, price: 5}];
 
+		// JOIN without ON clause produces cartesian product (1 row × 1 row = 1 row)
 		var res = alasql('SELECT * FROM ? as a JOIN ? as b', [data, data2]);
 
 		// With json mode, each table's data should be nested under its alias
@@ -47,6 +49,7 @@ describe('Test 547 - JOIN with duplicate column names', function () {
 		var data = [{dep: 'A', qt: 10, price: 5, extra: 1}];
 		var data2 = [{dep: 'B', qt: 2, price: 5}];
 
+		// JOIN without ON clause produces cartesian product (1 row × 1 row = 1 row)
 		var res = alasql('SELECT * FROM ? as a JOIN ? as b', [data, data2]);
 
 		// With underscore mode, columns should be prefixed with their table alias
@@ -115,6 +118,7 @@ describe('Test 547 - JOIN with duplicate column names', function () {
 		var data = [{id: 1, name: 'Alice', age: 30}];
 		var data2 = [{id: 2, name: 'Bob', salary: 50000}];
 
+		// JOIN without ON clause produces cartesian product (1 row × 1 row = 1 row)
 		var res = alasql('SELECT * FROM ? as employees JOIN ? as contractors', [data, data2]);
 
 		// Both tables have 'id' and 'name', but different other columns
@@ -132,6 +136,7 @@ describe('Test 547 - JOIN with duplicate column names', function () {
 		var data = [{id: 1, name: 'Alice', age: 30}];
 		var data2 = [{id: 2, name: 'Bob', salary: 50000}];
 
+		// JOIN without ON clause produces cartesian product (1 row × 1 row = 1 row)
 		var res = alasql('SELECT * FROM ? as employees JOIN ? as contractors', [data, data2]);
 
 		// All columns prefixed with table alias
