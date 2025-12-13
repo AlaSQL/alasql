@@ -52,7 +52,7 @@ yy.Update.prototype.compile = function (databaseid) {
 
 			// Create temporary table with unique name
 			var tempTableName =
-				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
 			var db = alasql.databases[databaseid];
 
 			// Create temp table and assign the data array directly (by reference)
