@@ -8,6 +8,46 @@
 
 /* global yy alasql */
 
+// Helper to wrap a statement for ParamValue execution
+function wrapParamValueStatement(
+	originalStatement,
+	paramIndex,
+	tableid,
+	databaseid,
+	needsSync,
+	restoreRef,
+	refKey,
+	self
+) {
+	return function (params, cb) {
+		var data = params[paramIndex];
+		if (!Array.isArray(data)) {
+			throw new Error('Operation requires an array for parameter ' + paramIndex);
+		}
+
+		var db = alasql.databases[databaseid];
+		db.tables[tableid].data = data;
+
+		try {
+			var res = originalStatement(params, cb);
+
+			// Sync changes back for operations that replace the array
+			if (needsSync) {
+				var newData = db.tables[tableid].data;
+				data.length = 0;
+				for (var i = 0; i < newData.length; i++) {
+					data.push(newData[i]);
+				}
+			}
+
+			return res;
+		} finally {
+			delete db.tables[tableid];
+			if (restoreRef) self[refKey] = restoreRef;
+		}
+	};
+}
+
 yy.Update = function (params) {
 	return Object.assign(this, params);
 };
@@ -186,28 +226,16 @@ yy.Update.prototype.compile = function (databaseid) {
 
 	// If this was a ParamValue, wrap the statement to handle temp table setup/cleanup
 	if (isParamValue) {
-		var originalStatement = statement;
-		statement = function (params, cb) {
-			var data = params[paramIndex];
-			if (!Array.isArray(data)) {
-				throw new Error('UPDATE requires an array for parameter ' + paramIndex);
-			}
-
-			var db = alasql.databases[databaseid];
-			// Assign the parameter array to the temp table's data
-			db.tables[tableid].data = data;
-
-			try {
-				var res = originalStatement(params, cb);
-				// No need to sync back for UPDATE - modifications are in-place
-				return res;
-			} finally {
-				// Clean up temp table
-				delete db.tables[tableid];
-				// Restore original table reference
-				self.table = originalTable;
-			}
-		};
+		statement = wrapParamValueStatement(
+			statement,
+			paramIndex,
+			tableid,
+			databaseid,
+			false, // needsSync - UPDATE modifies in-place
+			originalTable,
+			'table',
+			self
+		);
 	}
 
 	return statement;

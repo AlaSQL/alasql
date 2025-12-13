@@ -7,6 +7,47 @@
 */
 
 /* global yy alasql*/
+
+// Helper to wrap a statement for ParamValue execution
+function wrapParamValueStatement(
+	originalStatement,
+	paramIndex,
+	tableid,
+	databaseid,
+	needsSync,
+	restoreRef,
+	refKey,
+	self
+) {
+	return function (params, cb) {
+		var data = params[paramIndex];
+		if (!Array.isArray(data)) {
+			throw new Error('Operation requires an array for parameter ' + paramIndex);
+		}
+
+		var db = alasql.databases[databaseid];
+		db.tables[tableid].data = data;
+
+		try {
+			var res = originalStatement(params, cb);
+
+			// Sync changes back for operations that replace the array
+			if (needsSync) {
+				var newData = db.tables[tableid].data;
+				data.length = 0;
+				for (var i = 0; i < newData.length; i++) {
+					data.push(newData[i]);
+				}
+			}
+
+			return res;
+		} finally {
+			delete db.tables[tableid];
+			if (restoreRef) self[refKey] = restoreRef;
+		}
+	};
+}
+
 yy.Insert = function (params) {
 	return Object.assign(this, params);
 };
@@ -446,35 +487,16 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	// If this was a ParamValue, wrap the statement to handle temp table setup/cleanup
 	if (isParamValue) {
-		var originalStatement = statement;
-		statement = function (params, cb) {
-			var data = params[paramIndex];
-			if (!Array.isArray(data)) {
-				throw new Error('INSERT requires an array for parameter ' + paramIndex);
-			}
-
-			var db = alasql.databases[databaseid];
-			// Assign the parameter array to the temp table's data
-			db.tables[tableid].data = data;
-
-			try {
-				var res = originalStatement(params, cb);
-
-				// Sync changes back to original array (in-place modification)
-				var newData = db.tables[tableid].data;
-				data.length = 0;
-				for (var i = 0; i < newData.length; i++) {
-					data.push(newData[i]);
-				}
-
-				return res;
-			} finally {
-				// Clean up temp table
-				delete db.tables[tableid];
-				// Restore original into reference
-				self.into = originalInto;
-			}
-		};
+		statement = wrapParamValueStatement(
+			statement,
+			paramIndex,
+			tableid,
+			databaseid,
+			true, // needsSync - INSERT adds rows
+			originalInto,
+			'into',
+			self
+		);
 	}
 
 	return statement;

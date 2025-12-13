@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 942 - Anonymous data tables', function () {
-	const test = '942';
+describe('Test 2348 - Anonymous data tables', function () {
+	const test = '2348';
 
 	before(function () {
 		alasql('create database test' + test);
