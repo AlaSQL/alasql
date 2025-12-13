@@ -183,6 +183,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 						});
 						output.push(outputRow);
 					}
+					if (cb) cb(output);
 					return output;
 				}
 
@@ -200,17 +201,25 @@ yy.Insert.prototype.compile = function (databaseid) {
 				valueExprs.push(setcol.expression);
 			});
 
+			// Transform to VALUES and recurse once
+			// Save and clear the ParamValue temporarily
+			var originalInto = this.into;
 			var originalColumns = this.columns;
 			var originalValues = this.values;
+			var originalSetcolumns = this.setcolumns;
+
 			this.columns = columns;
 			this.values = [valueExprs];
+			this.setcolumns = null;
 
 			try {
 				var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
 				return compiledFn;
 			} finally {
+				this.into = originalInto;
 				this.columns = originalColumns;
 				this.values = originalValues;
+				this.setcolumns = originalSetcolumns;
 			}
 		} else {
 			throw new Error('Wrong INSERT parameters for ParamValue');
