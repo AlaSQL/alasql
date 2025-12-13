@@ -6,13 +6,13 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 356 PIVOT', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test356;USE test356');
 		done();
 	});
 
 	/* Source: http://sqlfiddle.com/#!3/6f4a1/3 */
-	it.skip('2. Prepare Data', function (done) {
+	it('2. Prepare Data', function (done) {
 		alasql(function () {
 			/*
       create table test
@@ -41,87 +41,31 @@ describe('Test 356 PIVOT', function () {
 		done();
 	});
 
-	if (false) {
-		it.skip('3. Select Query', function (done) {
-			var cols = alasql('COLUMN OF SELECT DISTINCT subject from test');
-
-			alasql(function () {
-				/*
-      SELECT username,' + @cols + ' from 
-         (
-            select username, subject, score
-            from test
-         ) x
-         pivot 
-         (
-            avg(score)
-            for subject in(' + @cols + ')
-         ) p '  
-*/
-			});
-
-			done();
-		});
-	}
-
-	it.skip('3. Select Query', function (done) {
-		alasql(function () {
+	it('3. Simple PIVOT by subject', function (done) {
+		var res = alasql(function () {
 			/*
-      SELECT Score FROM Scores
-      GROUP BY Name
-      PIVOT BY Class
+      SELECT * FROM test
+      PIVOT (AVG(score) FOR subject IN (Chinese, Math, English, Biology))
     */
 		});
+
+		// Should have one row per username
+		assert.equal(res.length, 2);
+		// Check that pivot worked
+		assert.equal(res[0].Chinese, 80);
+		assert.equal(res[0].Math, 90);
 		done();
 	});
 
-	it.skip('4. Select Query', function (done) {
-		alasql(function () {
-			/*
-      SELECT Name FROM Scores
-      GROUP BY Score
-      PIVOT BY Class
-    */
-		});
+	it.skip('4. PIVOT BY syntax - not yet implemented', function (done) {
+		// PIVOT BY is a different syntax not currently supported
+		// This test is kept for reference but skipped
 		done();
 	});
 
-	it.skip('5. Select Query', function (done) {
-		alasql(function () {
-			/*
-      SELECT Class FROM Scores
-      GROUP BY Name
-      PIVOT BY Score
-    */
-		});
-		done();
-	});
-
-	it.skip('6. Select Query', function (done) {
-		alasql(function () {
-			/*
-      SELECT Score FROM Scores
-      GROUP BY Class
-      PIVOT BY Name
-    */
-		});
-		done();
-	});
-
-	it.skip('7. Select Query', function (done) {
-		alasql(function () {
-			/*
-      SELECT Class FROM Scores
-      GROUP BY Score
-      PIVOT BY Name
-    */
-		});
-		done();
-	});
-
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
-		alasql('DROP DATABASE test355');
+		alasql('DROP DATABASE test356');
 		done();
 	});
 });
