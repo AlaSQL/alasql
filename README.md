@@ -609,6 +609,16 @@ AlaSQL uses `SQLLOGICTEST` to test its compatibility with SQL-99. The tests incl
 
 The testruns can be found in the [testlog](TESTLOG.md).
 
+#### Pending Tests Analysis
+
+The test suite currently has **401 pending tests** that have been analyzed and prioritized based on SQL-99 compliance impact. See:
+
+- **[PENDING_TESTS_ANALYSIS.md](./PENDING_TESTS_ANALYSIS.md)** - Comprehensive analysis with priority levels
+- **[PENDING_TESTS_README.md](./PENDING_TESTS_README.md)** - Guide for enabling pending tests
+- **[pending_tests_analysis.csv](./pending_tests_analysis.csv)** - Machine-readable tracking format
+
+Tests are prioritized from CRITICAL (SQL-99 compliance) to LOW (vendor-specific extensions). Contributors should focus on Priority 1-2 tests (79 tests) for maximum standards compliance impact.
+
 ## Rebuilding the parser
 
 To rebuild the parser, follow these steps:
