@@ -160,16 +160,14 @@ node scripts/analyze_pending_tests.js
 
 Last updated: 2025-12-13
 
-| Priority | Impact | Test Count | Percentage |
-|----------|--------|------------|------------|
-| 1 | CRITICAL | 6 | 1.6% |
-| 2 | HIGH | 73 | 18.9% |
-| 3 | MEDIUM | 78 | 20.2% |
-| 4 | MEDIUM | 7 | 1.8% |
-| 5 | LOW | 132 | 34.1% |
-| 6 | LOW | 14 | 3.6% |
-| 7 | LOW | 77 | 19.9% |
-| **Total** | | **387** | **100%** |
+For detailed statistics by priority, see the "Summary by Priority" table in [PENDING_TESTS_ANALYSIS.md](./PENDING_TESTS_ANALYSIS.md).
+
+Quick summary:
+- **Priority 1 (CRITICAL):** 6 tests (1.6%)
+- **Priority 2 (HIGH):** 73 tests (18.9%)
+- **Priority 3-4 (MEDIUM):** 85 tests (22.0%)
+- **Priority 5-7 (LOW):** 223 tests (57.6%)
+- **Total:** 387 unique test definitions (401 pending tests reported by Mocha)
 
 ## Questions?
 
