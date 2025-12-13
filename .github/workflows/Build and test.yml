@@ -58,7 +58,7 @@ jobs:
       - name: Build project
         run: yarn build-only
 
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: dist
           path: dist/
@@ -66,7 +66,7 @@ jobs:
       - name: Package node_modules
         run: tar --exclude='.cache' -cvf node_modules.tar node_modules
 
-      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0
+      - uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: node_modules
           path: node_modules.tar
