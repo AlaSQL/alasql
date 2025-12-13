@@ -61,63 +61,28 @@ yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
 
 	// Handle ParamValue (anonymous data table) with temporary table approach
-	if (self.into instanceof yy.ParamValue) {
-		var paramIndex = self.into.param;
-		return function (params, cb) {
-			var data = params[paramIndex];
-			if (!Array.isArray(data)) {
-				throw new Error('INSERT requires an array for parameter ' + paramIndex);
-			}
+	var isParamValue = self.into instanceof yy.ParamValue;
+	var paramIndex = isParamValue ? self.into.param : null;
+	var originalInto = self.into;
 
-			// Create temporary table with unique name
-			var tempTableName =
-				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-			var db = alasql.databases[databaseid];
-
-			// Create temp table and assign the data array directly (by reference)
-			db.tables[tempTableName] = new alasql.Table({tableid: tempTableName});
-			db.tables[tempTableName].data = data;
-
-			try {
-				// Create a modified INSERT statement for the temp table
-				var tempInsert = new yy.Insert({
-					into: new yy.Table({tableid: tempTableName}),
-					columns: self.columns,
-					values: self.values,
-					select: self.select,
-					setcolumns: self.setcolumns,
-					default: self.default,
-					output: self.output,
-					ignore: self.ignore,
-					orreplace: self.orreplace,
-					replaceonly: self.replaceonly,
-				});
-				tempInsert.exists = self.exists;
-				tempInsert.queries = self.queries;
-
-				// Compile and execute the temp statement
-				var tempStatement = tempInsert.compile(databaseid);
-				var res = tempStatement(params, cb);
-
-				// Sync changes back to original array (in-place modification)
-				var newData = db.tables[tempTableName].data;
-				data.length = 0;
-				for (var i = 0; i < newData.length; i++) {
-					data.push(newData[i]);
-				}
-
-				return res;
-			} finally {
-				// Clean up temp table
-				delete db.tables[tempTableName];
-			}
-		};
+	// If ParamValue, temporarily replace with a temp table reference
+	if (isParamValue) {
+		var tempTableName =
+			'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+		self.into = new yy.Table({tableid: tempTableName});
 	}
 
 	databaseid = self.into.databaseid || databaseid;
 	var db = alasql.databases[databaseid];
 	//	console.log(self);
 	var tableid = self.into.tableid;
+
+	// For ParamValue, we need to create the temp table before compilation
+	if (isParamValue) {
+		db.tables[tableid] = new alasql.Table({tableid: tableid});
+		db.tables[tableid].data = [];
+	}
+
 	var table = db.tables[tableid];
 
 	if (!table) {
@@ -476,6 +441,39 @@ yy.Insert.prototype.compile = function (databaseid) {
 			if (alasql.options.nocount) res = undefined;
 			if (cb) cb(res);
 			return res;
+		};
+	}
+
+	// If this was a ParamValue, wrap the statement to handle temp table setup/cleanup
+	if (isParamValue) {
+		var originalStatement = statement;
+		statement = function (params, cb) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				throw new Error('INSERT requires an array for parameter ' + paramIndex);
+			}
+
+			var db = alasql.databases[databaseid];
+			// Assign the parameter array to the temp table's data
+			db.tables[tableid].data = data;
+
+			try {
+				var res = originalStatement(params, cb);
+
+				// Sync changes back to original array (in-place modification)
+				var newData = db.tables[tableid].data;
+				data.length = 0;
+				for (var i = 0; i < newData.length; i++) {
+					data.push(newData[i]);
+				}
+
+				return res;
+			} finally {
+				// Clean up temp table
+				delete db.tables[tableid];
+				// Restore original into reference
+				self.into = originalInto;
+			}
 		};
 	}
 

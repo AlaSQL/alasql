@@ -31,56 +31,27 @@ yy.Delete.prototype.compile = function (databaseid) {
 	var self = this;
 
 	// Handle ParamValue (anonymous data table) with temporary table approach
-	if (this.table instanceof yy.ParamValue) {
-		var paramIndex = this.table.param;
-		return function (params, cb) {
-			var data = params[paramIndex];
-			if (!Array.isArray(data)) {
-				throw new Error('DELETE requires an array for parameter ' + paramIndex);
-			}
+	var isParamValue = this.table instanceof yy.ParamValue;
+	var paramIndex = isParamValue ? this.table.param : null;
+	var originalTable = this.table;
 
-			// Create temporary table with unique name
-			var tempTableName =
-				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-			var db = alasql.databases[databaseid];
-
-			// Create temp table and assign the data array directly (by reference)
-			db.tables[tempTableName] = new alasql.Table({tableid: tempTableName});
-			db.tables[tempTableName].data = data;
-
-			try {
-				// Create a modified DELETE statement for the temp table
-				var tempDelete = new yy.Delete({
-					table: new yy.Table({tableid: tempTableName}),
-					where: self.where,
-					output: self.output,
-				});
-				tempDelete.exists = self.exists;
-				tempDelete.queries = self.queries;
-
-				// Compile and execute the temp statement
-				var tempStatement = tempDelete.compile(databaseid);
-				var res = tempStatement(params, cb);
-
-				// Sync changes back to original array (in-place modification)
-				var newData = db.tables[tempTableName].data;
-				data.length = 0;
-				for (var i = 0; i < newData.length; i++) {
-					data.push(newData[i]);
-				}
-
-				return res;
-			} finally {
-				// Clean up temp table
-				delete db.tables[tempTableName];
-			}
-		};
+	// If ParamValue, temporarily replace with a temp table reference
+	if (isParamValue) {
+		var tempTableName =
+			'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+		this.table = new yy.Table({tableid: tempTableName});
 	}
 
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
 	var db = alasql.databases[databaseid];
+
+	// For ParamValue, we need to create the temp table before compilation
+	if (isParamValue) {
+		db.tables[tableid] = new alasql.Table({tableid: tableid});
+		db.tables[tableid].data = [];
+	}
 
 	if (this.where) {
 		if (this.exists) {
@@ -256,6 +227,39 @@ yy.Delete.prototype.compile = function (databaseid) {
 
 			if (cb) cb(res);
 			return res;
+		};
+	}
+
+	// If this was a ParamValue, wrap the statement to handle temp table setup/cleanup
+	if (isParamValue) {
+		var originalStatement = statement;
+		statement = function (params, cb) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				throw new Error('DELETE requires an array for parameter ' + paramIndex);
+			}
+
+			var db = alasql.databases[databaseid];
+			// Assign the parameter array to the temp table's data
+			db.tables[tableid].data = data;
+
+			try {
+				var res = originalStatement(params, cb);
+
+				// Sync changes back to original array (in-place modification)
+				var newData = db.tables[tableid].data;
+				data.length = 0;
+				for (var i = 0; i < newData.length; i++) {
+					data.push(newData[i]);
+				}
+
+				return res;
+			} finally {
+				// Clean up temp table
+				delete db.tables[tableid];
+				// Restore original table reference
+				self.table = originalTable;
+			}
 		};
 	}
 

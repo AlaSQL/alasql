@@ -42,48 +42,26 @@ yy.Update.prototype.compile = function (databaseid) {
 	//	console.log(this);
 
 	// Handle ParamValue (anonymous data table) with temporary table approach
-	if (this.table instanceof yy.ParamValue) {
-		var paramIndex = this.table.param;
-		return function (params, cb) {
-			var data = params[paramIndex];
-			if (!Array.isArray(data)) {
-				throw new Error('UPDATE requires an array for parameter ' + paramIndex);
-			}
+	var isParamValue = this.table instanceof yy.ParamValue;
+	var paramIndex = isParamValue ? this.table.param : null;
+	var originalTable = this.table;
 
-			// Create temporary table with unique name
-			var tempTableName =
-				'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-			var db = alasql.databases[databaseid];
-
-			// Create temp table and assign the data array directly (by reference)
-			db.tables[tempTableName] = new alasql.Table({tableid: tempTableName});
-			db.tables[tempTableName].data = data;
-
-			try {
-				// Create a modified UPDATE statement for the temp table
-				var tempUpdate = new yy.Update({
-					table: new yy.Table({tableid: tempTableName}),
-					columns: self.columns,
-					where: self.where,
-					output: self.output,
-				});
-				tempUpdate.exists = self.exists;
-				tempUpdate.queries = self.queries;
-
-				// Compile and execute the temp statement
-				var tempStatement = tempUpdate.compile(databaseid);
-				var res = tempStatement(params, cb);
-
-				return res;
-			} finally {
-				// Clean up temp table
-				delete db.tables[tempTableName];
-			}
-		};
+	// If ParamValue, temporarily replace with a temp table reference
+	if (isParamValue) {
+		var tempTableName =
+			'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
+		this.table = new yy.Table({tableid: tempTableName});
 	}
 
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
+
+	// For ParamValue, we need to create the temp table before compilation
+	if (isParamValue) {
+		var db = alasql.databases[databaseid];
+		db.tables[tableid] = new alasql.Table({tableid: tableid});
+		db.tables[tableid].data = [];
+	}
 
 	if (this.where) {
 		if (this.exists) {
@@ -205,6 +183,33 @@ yy.Update.prototype.compile = function (databaseid) {
 		if (cb) cb(res);
 		return res;
 	};
+
+	// If this was a ParamValue, wrap the statement to handle temp table setup/cleanup
+	if (isParamValue) {
+		var originalStatement = statement;
+		statement = function (params, cb) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				throw new Error('UPDATE requires an array for parameter ' + paramIndex);
+			}
+
+			var db = alasql.databases[databaseid];
+			// Assign the parameter array to the temp table's data
+			db.tables[tableid].data = data;
+
+			try {
+				var res = originalStatement(params, cb);
+				// No need to sync back for UPDATE - modifications are in-place
+				return res;
+			} finally {
+				// Clean up temp table
+				delete db.tables[tableid];
+				// Restore original table reference
+				self.table = originalTable;
+			}
+		};
+	}
+
 	return statement;
 };
 
