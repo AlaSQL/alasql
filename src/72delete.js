@@ -40,6 +40,8 @@ function wrapParamValueStatement(
 
 			return res;
 		} catch (err) {
+			// Call callback with error if provided
+			if (cb) cb(err);
 			// Re-throw after cleanup
 			throw err;
 		} finally {

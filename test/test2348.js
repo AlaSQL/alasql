@@ -28,11 +28,13 @@ describe('Test 2348 - Anonymous data tables', function () {
 		// UPDATE should return the number of rows updated
 		assert.equal(res, 2);
 
-		// Check that the original data was modified
-		assert.equal(mydata[1].status, 'on');
-		assert.equal(mydata[3].status, 'on');
-		assert.equal(mydata[0].status, 'off');
-		assert.equal(mydata[2].status, 'off');
+		// Check that the complete data matches expected output
+		assert.deepEqual(mydata, [
+			{type: 1, status: 'off'},
+			{type: 4, status: 'on'},
+			{type: 2, status: 'off'},
+			{type: 4, status: 'on'},
+		]);
 	});
 
 	it('B) UPDATE anonymous data table without WHERE clause', function () {
@@ -44,8 +46,10 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('UPDATE ? SET age = age + 1', [mydata]);
 
 		assert.equal(res, 2);
-		assert.equal(mydata[0].age, 26);
-		assert.equal(mydata[1].age, 31);
+		assert.deepEqual(mydata, [
+			{name: 'Alice', age: 26},
+			{name: 'Bob', age: 31},
+		]);
 	});
 
 	it('C) DELETE from anonymous data table with WHERE clause', function () {
@@ -61,10 +65,11 @@ describe('Test 2348 - Anonymous data tables', function () {
 		// DELETE should return the number of rows deleted
 		assert.equal(res, 2);
 
-		// Check that rows were removed from the array
-		assert.equal(mydata.length, 2);
-		assert.equal(mydata[0].id, 1);
-		assert.equal(mydata[1].id, 3);
+		// Check that the complete data matches expected output
+		assert.deepEqual(mydata, [
+			{id: 1, active: true},
+			{id: 3, active: true},
+		]);
 	});
 
 	it('D) DELETE from anonymous data table without WHERE clause', function () {
@@ -73,7 +78,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('DELETE FROM ?', [mydata]);
 
 		assert.equal(res, 3);
-		assert.equal(mydata.length, 0);
+		assert.deepEqual(mydata, []);
 	});
 
 	it('E) INSERT into anonymous data table from VALUES', function () {
@@ -84,9 +89,8 @@ describe('Test 2348 - Anonymous data tables', function () {
 		// INSERT should return the number of rows inserted
 		assert.equal(res, 1);
 
-		// Check that the row was added
-		assert.equal(mydata.length, 2);
-		assert.deepEqual(mydata[1], [2, 'Bob']);
+		// Check that the complete data matches expected output
+		assert.deepEqual(mydata, [{id: 1, name: 'Alice'}, [2, 'Bob']]);
 	});
 
 	it('F) INSERT into anonymous data table from SELECT', function () {
@@ -99,9 +103,10 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('INSERT INTO ? SELECT * FROM ?', [mydata, sourcedata]);
 
 		assert.equal(res, 2);
-		assert.equal(mydata.length, 2);
-		assert.deepEqual(mydata[0], {id: 1, name: 'Alice'});
-		assert.deepEqual(mydata[1], {id: 2, name: 'Bob'});
+		assert.deepEqual(mydata, [
+			{id: 1, name: 'Alice'},
+			{id: 2, name: 'Bob'},
+		]);
 	});
 
 	it('G) Complex UPDATE with expression', function () {
@@ -113,7 +118,9 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('UPDATE ? SET price = price - discount WHERE price > 150', [mydata]);
 
 		assert.equal(res, 1);
-		assert.equal(mydata[0].price, 100);
-		assert.equal(mydata[1].price, 180);
+		assert.deepEqual(mydata, [
+			{price: 100, discount: 10},
+			{price: 180, discount: 20},
+		]);
 	});
 });
