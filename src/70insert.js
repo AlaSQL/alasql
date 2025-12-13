@@ -42,9 +42,10 @@ function wrapParamValueStatement(
 
 			return res;
 		} catch (err) {
-			// Call callback with error if provided
-			if (cb) cb(err);
-			// Re-throw after cleanup
+			// Call callback with error if provided (AlaSQL convention: data, err)
+			if (cb) {
+				return cb(null, err);
+			}
 			throw err;
 		} finally {
 			delete db.tables[tableid];
