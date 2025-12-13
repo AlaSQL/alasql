@@ -67,7 +67,6 @@ ORDER BY ManagerID;
 
     */
 		});
-		console.log(res);
 		// Verify all 9 employees are in the result
 		assert.equal(res.length, 9);
 		// Verify CEO is at level 0

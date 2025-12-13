@@ -103,7 +103,6 @@ describe('Test 355 PIVOT', function () {
   */
 		});
 
-		console.log('UNPIVOT result:', res);
 		// Should have 10 rows (2 custs * 5 products)
 		assert.equal(res.length, 10);
 		// Check that all rows have Cust, Product, and QTY
