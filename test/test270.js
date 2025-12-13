@@ -20,7 +20,7 @@ describe('Test 270 RECORDSET tests', function () {
 		{b: 40, c: 400},
 	];
 
-	it.skip('1. Create database', function (done) {
+	it('1. Create database', function (done) {
 		alasql('CREATE DATABASE test270; USE test270');
 		alasql('CREATE TABLE one(a INT, b INT)');
 		alasql('CREATE TABLE two(b INT, c INT)');
@@ -184,14 +184,14 @@ describe('Test 270 RECORDSET tests', function () {
 		done();
 	});
 
-	it.skip('16. JOIN params', function (done) {
+	it('16. JOIN params', function (done) {
 		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepEqual(colres, ['a', 'b', 'c']);
 		done();
 	});
 
-	it.skip('17. JOIN tables', function (done) {
+	it('17. JOIN tables', function (done) {
 		alasql('SELECT * INTO one FROM ?', [data1]);
 		alasql('SELECT * INTO two FROM ?', [data2]);
 		var res = alasql('SELECT one.*,two.* FROM one JOIN two USING b');
@@ -200,7 +200,7 @@ describe('Test 270 RECORDSET tests', function () {
 		done();
 	});
 
-	it.skip('18. JOIN params', function (done) {
+	it('18. JOIN params', function (done) {
 		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 		var colres = pluck(res.columns, 'columnid');
 		assert.deepEqual(colres, ['a', 'b', 'c']);
@@ -286,7 +286,7 @@ describe('Test 270 RECORDSET tests', function () {
     done();
   });
 */
-	it.skip('99. Drop phase', function (done) {
+	it('99. Drop phase', function (done) {
 		delete alasql.options.modifier;
 		alasql('DROP DATABASE test270');
 		done();

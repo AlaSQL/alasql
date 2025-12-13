@@ -18,7 +18,7 @@ describe('Test 290 FROM Json', function () {
 		done();
 	});
 
-	it.skip('3. JOINed source', function (done) {
+	it('3. JOINed source', function (done) {
 		var res = alasql(
 			'SELECT * FROM @[{a:1,b:10},{a:2,b:20}] \
       JOIN @[{b:10,c:100},{b:20,c:200},{b:30,c:300},] ON b'

@@ -19,7 +19,7 @@ describe('Test 259 SqlLogic Parser Test #2', function () {
 		done();
 	});
 
-	it.skip('2. FROM JOIN / CROSS JOIN syntax ', function (done) {
+	it('2. FROM JOIN / CROSS JOIN syntax ', function (done) {
 		alasql('CREATE TABLE tab0; CREATE TABLE tab2');
 
 		alasql(
