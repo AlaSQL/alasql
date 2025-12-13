@@ -9,13 +9,13 @@ if (typeof exports === 'object') {
 var data = [{a: 1}, {a: 2}];
 
 describe('Test 355 PIVOT', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test355;USE test355');
 		done();
 	});
 
 	/* Source: http://blog.sqlauthority.com/2008/06/07/sql-server-pivot-and-unpivot-table-examples/ */
-	it.skip('2. Prepare Data', function (done) {
+	it('2. Prepare Data', function (done) {
 		alasql('CREATE TABLE Product(Cust VARCHAR(25), Product VARCHAR(20), QTY INT)');
 
 		alasql(function () {
@@ -40,69 +40,83 @@ describe('Test 355 PIVOT', function () {
 		done();
 	});
 
-	it.skip('3. Select Query', function (done) {
-		alasql(function () {
+	it('3. Select Query', function (done) {
+		var res = alasql(function () {
 			/*
     SELECT *
     FROM Product  
   */
 		});
 
+		assert.equal(res.length, 7);
 		done();
 	});
 
-	it.skip('4. Pivot Table ordered by PRODUCT', function (done) {
-		alasql(function () {
+	it('4. Pivot Table ordered by PRODUCT', function (done) {
+		var res = alasql(function () {
 			/*
-    SELECT PRODUCT, FRED, KATE
-    FROM (
-    SELECT CUST, PRODUCT, QTY
-    FROM Product) up
-    PIVOT (SUM(QTY) FOR CUST IN (FRED, KATE)) AS pvt
-    ORDER BY PRODUCT
+    SELECT * FROM Product
+    PIVOT (SUM(QTY) FOR Cust IN (FRED, KATE))
+    ORDER BY Product
  */
 		});
 
+		assert.deepEqual(res, [
+			{Product: 'BEER', FRED: 24, KATE: 12},
+			{Product: 'MILK', FRED: 3, KATE: 1},
+			{Product: 'SODA', KATE: 6},
+			{Product: 'VEG', KATE: 5},
+		]);
+
 		done();
 	});
 
-	it.skip('5. Pivot Table ordered by CUST', function (done) {
-		alasql(function () {
+	it('5. Pivot Table ordered by CUST', function (done) {
+		var res = alasql(function () {
 			/*
-    SELECT CUST, VEG, SODA, MILK, BEER, CHIPS
-    FROM (
-    SELECT CUST, PRODUCT, QTY
-    FROM Product) up
-    PIVOT (SUM(QTY) FOR PRODUCT IN (VEG, SODA, MILK, BEER, CHIPS)) AS pvt
-    ORDER BY CUST
+    SELECT * FROM Product
+    PIVOT (SUM(QTY) FOR Product IN (VEG, SODA, MILK, BEER, CHIPS))
+    ORDER BY Cust
  */
 		});
 
+		assert.deepEqual(res, [
+			{Cust: 'FRED', MILK: 3, BEER: 24},
+			{Cust: 'KATE', VEG: 5, SODA: 6, MILK: 1, BEER: 12},
+		]);
+
 		done();
 	});
 
-	it.skip('6. UnPivot Query', function (done) {
-		alasql(function () {
+	it('6. UnPivot Query', function (done) {
+		// First create a pivoted table
+		alasql('CREATE TABLE pivoted (Cust STRING, VEG INT, SODA INT, MILK INT, BEER INT, CHIPS INT)');
+		alasql(
+			'INSERT INTO pivoted SELECT * FROM Product PIVOT (SUM(QTY) FOR Product IN (VEG, SODA, MILK, BEER, CHIPS))'
+		);
+
+		var res = alasql(function () {
 			/*
-    SELECT CUST, PRODUCT, QTY
-    FROM
-    (
-    SELECT CUST, VEG, SODA, MILK, BEER, CHIPS
-    FROM (
-    SELECT CUST, PRODUCT, QTY
-    FROM Product) up
-    PIVOT
-    ( SUM(QTY) FOR PRODUCT IN (VEG, SODA, MILK, BEER, CHIPS)) AS pvt) p
-    UNPIVOT
-    (QTY FOR PRODUCT IN (VEG, SODA, MILK, BEER, CHIPS)
-    ) AS Unpvt    
+    SELECT *
+    FROM pivoted
+    UNPIVOT (QTY FOR Product IN (VEG, SODA, MILK, BEER, CHIPS))
   */
 		});
 
+		console.log('UNPIVOT result:', res);
+		// Should have 10 rows (2 custs * 5 products)
+		assert.equal(res.length, 10);
+		// Check that all rows have Cust, Product, and QTY
+		res.forEach(function (row) {
+			assert(row.Cust);
+			assert(row.Product);
+			assert(row.hasOwnProperty('QTY'));
+		});
+
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql.options.modifier = undefined;
 		alasql('DROP DATABASE test355');
 		done();
