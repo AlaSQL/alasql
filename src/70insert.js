@@ -41,6 +41,9 @@ function wrapParamValueStatement(
 			}
 
 			return res;
+		} catch (err) {
+			// Re-throw after cleanup
+			throw err;
 		} finally {
 			delete db.tables[tableid];
 			if (restoreRef) self[refKey] = restoreRef;
