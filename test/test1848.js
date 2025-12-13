@@ -62,9 +62,7 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 			var pigsResult = alasql('SELECT * FROM pigs');
 
 			// Check that defaults were applied
-			assert.deepEqual(banksResult, [
-				{name: 'Bank1', is_open: true, key: 'abc123'},
-			]);
+			assert.deepEqual(banksResult, [{name: 'Bank1', is_open: true, key: 'abc123'}]);
 			assert.deepEqual(pigsResult, [
 				{id: 'pig1', bank: null, ready: false, dream: 'fly', notes: undefined, kind: undefined},
 			]);
@@ -175,9 +173,7 @@ describe('Test 1848 - Default values in FILESTORAGE and LOCALSTORAGE', function 
 					var pigsResult = alasql('SELECT * FROM pigs');
 
 					// Check that defaults were applied
-					assert.deepEqual(banksResult, [
-						{name: 'Bank1', is_open: true, key: 'abc123'},
-					]);
+					assert.deepEqual(banksResult, [{name: 'Bank1', is_open: true, key: 'abc123'}]);
 					assert.deepEqual(pigsResult, [
 						{id: 'pig1', bank: null, ready: false, dream: 'fly', notes: undefined, kind: undefined},
 					]);
