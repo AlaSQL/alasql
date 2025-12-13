@@ -6,8 +6,6 @@ if (typeof exports === 'object') {
 // Test for issue #547 - JOIN should return fields from both tables
 
 describe('Test 547 - JOIN with duplicate column names', function () {
-	var test = 547;
-
 	after(function () {
 		// Restore default joinstar option
 		alasql.options.joinstar = 'overwrite';
