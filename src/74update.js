@@ -40,7 +40,12 @@ yy.SetColumn.prototype.toString = function () {
 yy.Update.prototype.compile = function (databaseid) {
 	var self = this;
 	//	console.log(this);
-	databaseid = this.table.databaseid || databaseid;
+	
+	// Check if updating a ParamValue (anonymous data table)
+	var isParamValue = this.table instanceof yy.ParamValue;
+	var paramIndex = isParamValue ? this.table.param : null;
+	
+	var databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 
 	if (this.where) {
@@ -66,8 +71,11 @@ yy.Update.prototype.compile = function (databaseid) {
 	}
 
 	// Construct update function
-	var s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
-	s += ';';
+	var s = '';
+	if (!isParamValue) {
+		s = alasql.databases[databaseid].tables[tableid].onupdatefns || '';
+		s += ';';
+	}
 	this.columns.forEach(function (col) {
 		s += "r['" + col.column.columnid + "']=" + col.expression.toJS('r', '') + ';';
 	});
@@ -75,6 +83,70 @@ yy.Update.prototype.compile = function (databaseid) {
 	var assignfn = new Function('r,params,alasql', 'var y;' + s);
 
 	var statement = function (params, cb) {
+		// Handle ParamValue (anonymous data table)
+		if (isParamValue) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				throw new Error('UPDATE requires an array for parameter ' + paramIndex);
+			}
+			
+			var numrows = 0;
+			var updatedRows = [];
+			for (var i = 0, ilen = data.length; i < ilen; i++) {
+				if (!wherefn || wherefn(data[i], params, alasql)) {
+					// Track row state for OUTPUT clause (DELETED.*)
+					var oldRow = self.output ? cloneDeep(data[i]) : null;
+					
+					assignfn(data[i], params, alasql);
+					
+					// Track updated row for OUTPUT clause (INSERTED.*)
+					if (self.output) {
+						updatedRows.push({
+							deleted: oldRow,
+							inserted: cloneDeep(data[i]),
+						});
+					}
+					
+					numrows++;
+				}
+			}
+			
+			var res = numrows;
+			
+			// Handle OUTPUT clause
+			if (self.output) {
+				var output = [];
+				for (var i = 0; i < updatedRows.length; i++) {
+					var deleted = updatedRows[i].deleted;
+					var inserted = updatedRows[i].inserted;
+					var outputRow = {};
+					self.output.columns.forEach(function (col) {
+						if (col.columnid === '*') {
+							// For *, use INSERTED values
+							for (var key in inserted) {
+								outputRow[key] = inserted[key];
+							}
+						} else {
+							var colname = col.as || col.columnid;
+							// Check tableid to determine which version to use
+							if (col.tableid === 'DELETED') {
+								outputRow[colname] = deleted[col.columnid];
+							} else {
+								// Default to INSERTED
+								outputRow[colname] = inserted[col.columnid];
+							}
+						}
+					});
+					output.push(outputRow);
+				}
+				res = output;
+			}
+			
+			if (cb) cb(res);
+			return res;
+		}
+		
+		// Handle normal table
 		var db = alasql.databases[databaseid];
 
 		//		console.log(db.engineid);

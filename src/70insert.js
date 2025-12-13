@@ -59,6 +59,165 @@ yy.Insert.prototype.toJS = function (context, tableid, defcols) {
 
 yy.Insert.prototype.compile = function (databaseid) {
 	var self = this;
+	
+	// Check if inserting into a ParamValue (anonymous data table)
+	var isParamValue = this.into instanceof yy.ParamValue;
+	var paramIndex = isParamValue ? this.into.param : null;
+	
+	// Handle ParamValue INSERT - simpler logic without table metadata
+	if (isParamValue) {
+		// INSERT INTO ? VALUES
+		if (this.values) {
+			if (this.exists) {
+				this.existsfn = this.exists.map(function (ex) {
+					var nq = ex.compile(databaseid);
+					nq.query.modifier = 'RECORDSET';
+					return nq;
+				});
+			}
+			if (this.queries) {
+				this.queriesfn = this.queries.map(function (q) {
+					var nq = q.compile(databaseid);
+					nq.query.modifier = 'RECORDSET';
+					return nq;
+				});
+			}
+			
+			var statement = function (params, cb) {
+				var data = params[paramIndex];
+				if (!Array.isArray(data)) {
+					throw new Error('INSERT requires an array for parameter ' + paramIndex);
+				}
+				
+				var insertedRows = [];
+				self.values.forEach(function (values) {
+					var row;
+					if (self.columns) {
+						// Build object from column names and values
+						row = {};
+						self.columns.forEach(function (col, idx) {
+							var val = values[idx].toJS('params', databaseid);
+							row[col.columnid] = new Function('params', 'return ' + val)(params);
+						});
+					} else {
+						// Direct array value or object
+						if (Array.isArray(values)) {
+							row = values.map(function (v) {
+								var val = v.toJS('params', databaseid);
+								return new Function('params', 'return ' + val)(params);
+							});
+						} else {
+							var val = JSONtoJS(values);
+							row = new Function('params', 'return ' + val)(params);
+						}
+					}
+					data.push(row);
+					insertedRows.push(row);
+				});
+				
+				var res = insertedRows.length;
+				
+				// Handle OUTPUT clause
+				if (self.output) {
+					var output = [];
+					for (var i = 0; i < insertedRows.length; i++) {
+						var r = insertedRows[i];
+						var outputRow = {};
+						self.output.columns.forEach(function (col) {
+							if (col.columnid === '*') {
+								for (var key in r) {
+									outputRow[key] = r[key];
+								}
+							} else {
+								var colname = col.as || col.columnid;
+								outputRow[colname] = r[col.columnid];
+							}
+						});
+						output.push(outputRow);
+					}
+					res = output;
+				}
+				
+				if (cb) cb(res);
+				return res;
+			};
+			return statement;
+		}
+		// INSERT INTO ? SELECT
+		else if (this.select) {
+			this.select.modifier = 'RECORDSET';
+			if (this.queries) {
+				this.select.queries = this.queries;
+			}
+			var selectfn = this.select.compile(databaseid);
+			
+			var statement = function (params, cb) {
+				var data = params[paramIndex];
+				if (!Array.isArray(data)) {
+					throw new Error('INSERT requires an array for parameter ' + paramIndex);
+				}
+				
+				var res = selectfn(params).data;
+				var insertedRows = res;
+				
+				// Push all rows to the target array
+				for (var i = 0; i < res.length; i++) {
+					data.push(res[i]);
+				}
+				
+				// Handle OUTPUT clause
+				if (self.output) {
+					var output = [];
+					for (var i = 0; i < insertedRows.length; i++) {
+						var r = insertedRows[i];
+						var outputRow = {};
+						self.output.columns.forEach(function (col) {
+							if (col.columnid === '*') {
+								for (var key in r) {
+									outputRow[key] = r[key];
+								}
+							} else {
+								var colname = col.as || col.columnid;
+								outputRow[colname] = r[col.columnid];
+							}
+						});
+						output.push(outputRow);
+					}
+					return output;
+				}
+				
+				if (cb) cb(res.length);
+				return res.length;
+			};
+			return statement;
+		}
+		// INSERT INTO ? SET column = value
+		else if (this.setcolumns) {
+			var columns = [];
+			var valueExprs = [];
+			this.setcolumns.forEach(function (setcol) {
+				columns.push(setcol.column);
+				valueExprs.push(setcol.expression);
+			});
+			
+			var originalColumns = this.columns;
+			var originalValues = this.values;
+			this.columns = columns;
+			this.values = [valueExprs];
+			
+			try {
+				var compiledFn = yy.Insert.prototype.compile.call(this, databaseid);
+				return compiledFn;
+			} finally {
+				this.columns = originalColumns;
+				this.values = originalValues;
+			}
+		} else {
+			throw new Error('Wrong INSERT parameters for ParamValue');
+		}
+	}
+	
+	// Original table-based INSERT logic continues below
 	databaseid = self.into.databaseid || databaseid;
 	var db = alasql.databases[databaseid];
 	//	console.log(self);

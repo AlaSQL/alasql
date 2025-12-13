@@ -996,6 +996,13 @@ Table
 		{ $$ = new yy.Table({tableid: $1});}
 	;
 
+TargetTable
+	: Table
+		{ $$ = $1; }
+	| ParamValue
+		{ $$ = $1; }
+	;
+
 JoinTablesList
 	: JoinTablesList JoinTable
 		{ $$ = $1; $1.push($2); }
@@ -1836,9 +1843,9 @@ AllSome
 /* UPDATE */
 
 Update
-	: UPDATE Table SET SetColumnsList WHERE Expression OutputClause
+	: UPDATE TargetTable SET SetColumnsList WHERE Expression OutputClause
 		{ $$ = new yy.Update({table:$2, columns:$4, where:$6}); yy.extend($$,$7); }
-	| UPDATE Table SET SetColumnsList OutputClause
+	| UPDATE TargetTable SET SetColumnsList OutputClause
 		{ $$ = new yy.Update({table:$2, columns:$4}); yy.extend($$,$5); }
 	;
 
@@ -1860,52 +1867,52 @@ SetColumn
 /* DELETE */
 
 Delete
-	: DELETE FROM Table WHERE Expression OutputClause
+	: DELETE FROM TargetTable WHERE Expression OutputClause
 		{ $$ = new yy.Delete({table:$3, where:$5}); yy.extend($$,$6);}
-	| DELETE FROM Table OutputClause
+	| DELETE FROM TargetTable OutputClause
 		{ $$ = new yy.Delete({table:$3}); yy.extend($$,$4);}
 	;
 
 /* INSERT */
 
 Insert
-        : INSERT Into Table Values  ValuesListsList OutputClause
+        : INSERT Into TargetTable Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, values: $5}); yy.extend($$,$6); }
-        | INSERT Into Table ValuesListsList OutputClause
+        | INSERT Into TargetTable ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, values: $4}); yy.extend($$,$5); }
-        | INSERT IGNORE Into Table Values  ValuesListsList OutputClause
+        | INSERT IGNORE Into TargetTable Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$4, values: $6, ignore:true}); yy.extend($$,$7); }
-        | INSERT IGNORE Into Table ValuesListsList OutputClause
+        | INSERT IGNORE Into TargetTable ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$4, values: $5, ignore:true}); yy.extend($$,$6); }
-        | INSERT IGNORE Into Table LPAR ColumnsList RPAR Values  ValuesListsList OutputClause
+        | INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$4, columns: $6, values: $9, ignore:true}); yy.extend($$,$10); }
-        | INSERT IGNORE Into Table LPAR ColumnsList RPAR ValuesListsList OutputClause
+        | INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$4, columns: $6, values: $8, ignore:true}); yy.extend($$,$9); }
-        | INSERT IGNORE Into Table Select OutputClause
+        | INSERT IGNORE Into TargetTable Select OutputClause
                 { $$ = new yy.Insert({into:$4, select: $5, ignore:true}); yy.extend($$,$6); }
-        | INSERT IGNORE Into Table LPAR ColumnsList RPAR Select OutputClause
+        | INSERT IGNORE Into TargetTable LPAR ColumnsList RPAR Select OutputClause
                 { $$ = new yy.Insert({into:$4, columns: $6, select: $8, ignore:true}); yy.extend($$,$9); }
-        | INSERT OR REPLACE Into Table Values  ValuesListsList OutputClause
+        | INSERT OR REPLACE Into TargetTable Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$5, values: $7, orreplace:true}); yy.extend($$,$8); }
-        | INSERT OR REPLACE Into Table ValuesListsList OutputClause
+        | INSERT OR REPLACE Into TargetTable ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$5, values: $6, orreplace:true}); yy.extend($$,$7); }
-        | REPLACE Into Table Values  ValuesListsList OutputClause
+        | REPLACE Into TargetTable Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, values: $5, orreplace:true}); yy.extend($$,$6); }
-        | REPLACE Into Table ValuesListsList OutputClause
+        | REPLACE Into TargetTable ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, values: $4, orreplace:true}); yy.extend($$,$5); }
-        | INSERT Into Table DEFAULT Values OutputClause
+        | INSERT Into TargetTable DEFAULT Values OutputClause
                 { $$ = new yy.Insert({into:$3, "default": true}); yy.extend($$,$6); }
-        | INSERT Into Table LPAR ColumnsList RPAR Values  ValuesListsList OutputClause
+        | INSERT Into TargetTable LPAR ColumnsList RPAR Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, columns: $5, values: $8}); yy.extend($$,$9); }
-        | INSERT Into Table LPAR ColumnsList RPAR ValuesListsList OutputClause
+        | INSERT Into TargetTable LPAR ColumnsList RPAR ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, columns: $5, values: $7}); yy.extend($$,$9); }
-        | INSERT Into Table Select OutputClause
+        | INSERT Into TargetTable Select OutputClause
                 { $$ = new yy.Insert({into:$3, select: $4}); yy.extend($$,$5); }
-        | INSERT OR REPLACE Into Table Select OutputClause
+        | INSERT OR REPLACE Into TargetTable Select OutputClause
                 { $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); yy.extend($$,$7); }
-        | INSERT Into Table LPAR ColumnsList RPAR Select OutputClause
+        | INSERT Into TargetTable LPAR ColumnsList RPAR Select OutputClause
                 { $$ = new yy.Insert({into:$3, columns: $5, select: $7}); yy.extend($$,$9); }
-        | INSERT Into Table SET SetColumnsList OutputClause
+        | INSERT Into TargetTable SET SetColumnsList OutputClause
                 { $$ = new yy.Insert({into:$3, setcolumns: $5}); yy.extend($$,$6); }
         ;
 
