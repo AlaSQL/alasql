@@ -6,52 +6,6 @@
 //
 */
 
-// Helper to wrap a statement for ParamValue execution
-function wrapParamValueStatement(
-	originalStatement,
-	paramIndex,
-	tableid,
-	databaseid,
-	needsSync,
-	restoreRef,
-	refKey,
-	self
-) {
-	return function (params, cb) {
-		var data = params[paramIndex];
-		if (!Array.isArray(data)) {
-			throw new Error('Operation requires an array for parameter ' + paramIndex);
-		}
-
-		var db = alasql.databases[databaseid];
-		db.tables[tableid].data = data;
-
-		try {
-			var res = originalStatement(params, cb);
-
-			// Sync changes back for operations that replace the array
-			if (needsSync) {
-				var newData = db.tables[tableid].data;
-				data.length = 0;
-				for (var i = 0; i < newData.length; i++) {
-					data.push(newData[i]);
-				}
-			}
-
-			return res;
-		} catch (err) {
-			// Call callback with error if provided (AlaSQL convention: data, err)
-			if (cb) {
-				return cb(null, err);
-			}
-			throw err;
-		} finally {
-			delete db.tables[tableid];
-			if (restoreRef) self[refKey] = restoreRef;
-		}
-	};
-}
-
 yy.Delete = function (params) {
 	return Object.assign(this, params);
 };
@@ -76,28 +30,50 @@ yy.Delete.prototype.toString = function () {
 yy.Delete.prototype.compile = function (databaseid) {
 	var self = this;
 
-	// Handle ParamValue (anonymous data table) with temporary table approach
-	var isParamValue = this.table instanceof yy.ParamValue;
-	var paramIndex = isParamValue ? this.table.param : null;
-	var originalTable = this.table;
+	// Handle ParamValue (anonymous data table) - wrap execution
+	if (this.table instanceof yy.ParamValue) {
+		var paramIndex = this.table.param;
+		return function (params, cb) {
+			var data = params[paramIndex];
+			if (!Array.isArray(data)) {
+				var err = new Error('DELETE requires an array for parameter ' + paramIndex);
+				if (cb) return cb(null, err);
+				throw err;
+			}
 
-	// If ParamValue, temporarily replace with a temp table reference
-	if (isParamValue) {
-		var tempTableName =
-			'__alasql_tmp_' + Date.now() + '_' + Math.random().toString(36).substring(2, 11);
-		this.table = new yy.Table({tableid: tempTableName});
+			// Create temp table, execute, sync, cleanup
+			var tmpid = '__p' + paramIndex + '_' + Date.now();
+			var db = alasql.databases[databaseid || 'alasql'];
+			db.tables[tmpid] = new alasql.Table({tableid: tmpid});
+			db.tables[tmpid].data = data;
+
+			try {
+				var origTable = self.table;
+				self.table = new yy.Table({tableid: tmpid, databaseid: db.databaseid});
+				var stmt = self.compile(databaseid);
+				self.table = origTable;
+
+				var res = stmt(params, cb);
+
+				// Sync back changes
+				var newData = db.tables[tmpid].data;
+				data.length = 0;
+				Array.prototype.push.apply(data, newData);
+
+				return res;
+			} catch (err) {
+				if (cb) return cb(null, err);
+				throw err;
+			} finally {
+				delete db.tables[tmpid];
+			}
+		};
 	}
 
 	databaseid = this.table.databaseid || databaseid;
 	var tableid = this.table.tableid;
 	var statement;
 	var db = alasql.databases[databaseid];
-
-	// For ParamValue, we need to create the temp table before compilation
-	if (isParamValue) {
-		db.tables[tableid] = new alasql.Table({tableid: tableid});
-		db.tables[tableid].data = [];
-	}
 
 	if (this.where) {
 		if (this.exists) {
@@ -274,20 +250,6 @@ yy.Delete.prototype.compile = function (databaseid) {
 			if (cb) cb(res);
 			return res;
 		};
-	}
-
-	// If this was a ParamValue, wrap the statement to handle temp table setup/cleanup
-	if (isParamValue) {
-		statement = wrapParamValueStatement(
-			statement,
-			paramIndex,
-			tableid,
-			databaseid,
-			true, // needsSync - DELETE removes rows
-			originalTable,
-			'table',
-			self
-		);
 	}
 
 	return statement;
