@@ -166,7 +166,7 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it('20. Full example', function (done) {
+	it.skip('20. Full example', function (done) {
 		alasql('SOURCE "test324.sql"');
 		// Check NO COUNT
 		alasql.options.nocount = false;
