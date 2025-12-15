@@ -75,6 +75,17 @@ function compileSelectStar(query, aliases, joinstar) {
 							value: value,
 							key: key,
 						};
+						
+						// Only add to query.columns for new columns (not duplicates)
+						var coldef = {
+							columnid: tcol.columnid,
+							dbtypeid: tcol.dbtypeid,
+							dbsize: tcol.dbsize,
+							dbprecision: tcol.dbprecision,
+							dbenum: tcol.dbenum,
+						};
+						query.columns.push(coldef);
+						query.xcolumns[coldef.columnid] = coldef;
 					} else {
 						var newValue =
 							value + ' !== undefined ? ' + value + ' : ' + columnIds[tcol.columnid].value;
@@ -84,18 +95,6 @@ function compileSelectStar(query, aliases, joinstar) {
 				}
 
 				query.selectColumns[escapedColumnId] = true;
-
-				//			console.log('ok',tcol);
-
-				var coldef = {
-					columnid: tcol.columnid,
-					dbtypeid: tcol.dbtypeid,
-					dbsize: tcol.dbsize,
-					dbprecision: tcol.dbprecision,
-					dbenum: tcol.dbenum,
-				};
-				query.columns.push(coldef);
-				query.xcolumns[coldef.columnid] = coldef;
 			});
 			//console.log(999,columns);
 		} else {

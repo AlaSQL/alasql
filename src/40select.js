@@ -530,16 +530,37 @@ function modify(query, res) {
 	// This happens when SELECT * is used with dynamic data sources (like parameters)
 	if (query.dirtyColumns && res.length > 0) {
 		var allcol = {};
-		// First, scan the data to find all column names
-		for (var i = Math.min(res.length, alasql.options.columnlookup || 10) - 1; 0 <= i; i--) {
+		var maxKeys = [];
+		var maxKeyCount = 0;
+		
+		// Scan the data to find all column names and track the row with most keys
+		// This helps handle sparse data from OUTER JOINs where some rows may be missing columns
+		for (var i = 0; i < Math.min(res.length, alasql.options.columnlookup || 10); i++) {
+			var rowKeys = Object.keys(res[i]);
+			if (rowKeys.length > maxKeyCount) {
+				maxKeyCount = rowKeys.length;
+				maxKeys = rowKeys;
+			}
 			for (var key in res[i]) {
 				allcol[key] = true;
 			}
 		}
-
-		// Create columns from data
-		var dataColumns = Object.keys(allcol).map(function (columnid) {
-			return {columnid: columnid};
+		
+		// Use the order from the row with most keys, then add any missing keys
+		var dataColumns = [];
+		var addedKeys = {};
+		
+		// First, add keys from the row with most keys (in their natural order)
+		maxKeys.forEach(function(key) {
+			dataColumns.push({columnid: key});
+			addedKeys[key] = true;
+		});
+		
+		// Then add any remaining keys that weren't in that row
+		Object.keys(allcol).forEach(function(key) {
+			if (!addedKeys[key]) {
+				dataColumns.push({columnid: key});
+			}
 		});
 
 		// If we don't have any columns yet, just use the data columns
@@ -589,7 +610,8 @@ function modify(query, res) {
 	switch (modifier) {
 		case 'VALUE':
 			if (res.length === 0) return undefined;
-			const keyValue = columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			// Use the first key from the actual data object to ensure correct order
+			const keyValue = Object.keys(res[0])[0];
 			return res[0][keyValue];
 
 		case 'ROW':
@@ -599,12 +621,8 @@ function modify(query, res) {
 		case 'COLUMN':
 			if (res.length === 0) return [];
 
-			let key;
-			if (columns && columns.length > 0) {
-				key = columns[0].columnid;
-			} else {
-				key = Object.keys(res[0])[0];
-			}
+			// Use the first key from the actual data object to ensure correct order
+			const key = Object.keys(res[0])[0];
 
 			let ar = [];
 			for (var i = 0, ilen = res.length; i < ilen; i++) {
@@ -620,12 +638,28 @@ function modify(query, res) {
 
 		case 'MATRIX':
 			if (res.length === 0) return undefined;
-			return res.map(row => columns.map(col => row[col.columnid]));
+			// Use columns array if available and non-empty, otherwise collect from data
+			let matrixKeys;
+			if (columns && columns.length > 0) {
+				matrixKeys = columns.map(col => col.columnid);
+			} else {
+				// Collect all unique keys from all rows to handle sparse data
+				const allKeys = {};
+				res.forEach(row => {
+					Object.keys(row).forEach(k => {
+						allKeys[k] = true;
+					});
+				});
+				matrixKeys = Object.keys(allKeys);
+			}
+			return res.map(row => matrixKeys.map(k => row[k]));
 
 		case 'INDEX':
 			if (res.length === 0) return undefined;
-			const keyIndex = columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
-			const valIndex = columns && columns.length > 1 ? columns[1].columnid : Object.keys(res[0])[1];
+			// Use the keys from the actual data object to ensure correct order
+			const dataKeys = Object.keys(res[0]);
+			const keyIndex = dataKeys[0];
+			const valIndex = dataKeys[1];
 			return res.reduce((acc, row) => ({...acc, [row[keyIndex]]: row[valIndex]}), {});
 
 		case 'RECORDSET':
@@ -634,8 +668,8 @@ function modify(query, res) {
 
 		case 'TEXTSTRING':
 			if (res.length === 0) return undefined;
-			const keyTextString =
-				columns && columns.length > 0 ? columns[0].columnid : Object.keys(res[0])[0];
+			// Use the first key from the actual data object to ensure correct order
+			const keyTextString = Object.keys(res[0])[0];
 			return res.map(row => row[keyTextString]).join('\n');
 
 		case 'ALASQL_DETAILS':
