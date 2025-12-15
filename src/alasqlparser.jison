@@ -1220,9 +1220,9 @@ ResultColumn
 	| Expression NUMBER
 		{ $1.as = $2; $$ = $1;}
 	| Expression AS StringValue
-		{ $1.as = $3; $$ = $1;}
+		{ $1.as = $3.value; $$ = $1;}
 	| Expression StringValue
-		{ $1.as = $2; $$ = $1;}
+		{ $1.as = $2.value; $$ = $1;}
 	| Expression
 		{ $$ = $1; }
 	;

@@ -721,11 +721,17 @@ break;
 case 285: case 539: case 571: case 690: case 700: case 726: case 728: case 732:
  $$[$0-2].push($$[$0]); this.$ = $$[$0-2]; 
 break;
-case 287: case 289: case 291:
+case 287: case 289:
  $$[$0-2].as = $$[$0]; this.$ = $$[$0-2];
 break;
-case 288: case 290: case 292:
+case 288: case 290:
  $$[$0-1].as = $$[$0]; this.$ = $$[$0-1];
+break;
+case 291:
+ $$[$0-2].as = $$[$0].value; this.$ = $$[$0-2];
+break;
+case 292:
+ $$[$0-1].as = $$[$0].value; this.$ = $$[$0-1];
 break;
 case 294:
  this.$ = new yy.Column({columid: $$[$0], tableid: $$[$0-2], databaseid:$$[$0-4]}); 
