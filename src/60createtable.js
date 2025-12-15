@@ -335,7 +335,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					if (alasql.fn[trigger.funcid](r) === false) prevent = prevent || true;
 				} else if (trigger.statement) {
-					if (trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						if (alasql.fn[trigger.statement.expression.funcid](r) === false) prevent = prevent || true;
+					} else if (trigger.statement.execute(databaseid) === false) {
+						prevent = prevent || true;
+					}
 				}
 			}
 		}
@@ -350,7 +355,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					alasql.fn[trigger.funcid](r);
 				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						alasql.fn[trigger.statement.expression.funcid](r);
+					} else {
+						trigger.statement.execute(databaseid);
+					}
 				}
 			}
 		}
@@ -491,7 +501,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					alasql.fn[trigger.funcid](r);
 				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						alasql.fn[trigger.statement.expression.funcid](r);
+					} else {
+						trigger.statement.execute(databaseid);
+					}
 				}
 			}
 		}
@@ -510,7 +525,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					if (alasql.fn[trigger.funcid](r) === false) prevent = prevent || true;
 				} else if (trigger.statement) {
-					if (trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						if (alasql.fn[trigger.statement.expression.funcid](r) === false) prevent = prevent || true;
+					} else if (trigger.statement.execute(databaseid) === false) {
+						prevent = prevent || true;
+					}
 				}
 			}
 		}
@@ -525,7 +545,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					alasql.fn[trigger.funcid](r);
 				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						alasql.fn[trigger.statement.expression.funcid](r);
+					} else {
+						trigger.statement.execute(databaseid);
+					}
 				}
 			}
 		}
@@ -616,7 +641,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					if (alasql.fn[trigger.funcid](this.data[i], r) === false) prevent = prevent || true;
 				} else if (trigger.statement) {
-					if (trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						if (alasql.fn[trigger.statement.expression.funcid](this.data[i], r) === false) prevent = prevent || true;
+					} else if (trigger.statement.execute(databaseid) === false) {
+						prevent = prevent || true;
+					}
 				}
 			}
 		}
@@ -631,7 +661,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					alasql.fn[trigger.funcid](this.data[i], r);
 				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						alasql.fn[trigger.statement.expression.funcid](this.data[i], r);
+					} else {
+						trigger.statement.execute(databaseid);
+					}
 				}
 			}
 		}
@@ -688,7 +723,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				if (trigger.funcid) {
 					alasql.fn[trigger.funcid](this.data[i], r);
 				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
+					// Check if statement is CALL with a function
+					if (trigger.statement.expression && trigger.statement.expression.funcid) {
+						alasql.fn[trigger.statement.expression.funcid](this.data[i], r);
+					} else {
+						trigger.statement.execute(databaseid);
+					}
 				}
 			}
 		}

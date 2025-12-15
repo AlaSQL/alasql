@@ -88,8 +88,8 @@ yy.Delete.prototype.compile = function (databaseid) {
 			var deletedRows = [];
 			for (var i = 0, ilen = table.data.length; i < ilen; i++) {
 				if (wherefn(table.data[i], params, alasql)) {
-					// Track deleted row for OUTPUT clause
-					if (self.output) {
+					// Track deleted row for OUTPUT clause and AFTER DELETE trigger
+					if (self.output || table.afterdelete) {
 						deletedRows.push(cloneDeep(table.data[i]));
 					}
 					// Check for transaction - if it is not possible then return all back
@@ -104,14 +104,23 @@ yy.Delete.prototype.compile = function (databaseid) {
 			}
 			table.data = newtable;
 
-			// Trigger prevent functionality
-			for (var tr in table.afterdelete) {
-				var trigger = table.afterdelete[tr];
-				if (trigger) {
-					if (trigger.funcid) {
-						alasql.fn[trigger.funcid]();
-					} else if (trigger.statement) {
-						trigger.statement.execute(databaseid);
+			// AFTER DELETE triggers - call for each deleted row
+			if (table.afterdelete) {
+				for (var i = 0; i < deletedRows.length; i++) {
+					for (var tr in table.afterdelete) {
+						var trigger = table.afterdelete[tr];
+						if (trigger) {
+							if (trigger.funcid) {
+								alasql.fn[trigger.funcid](deletedRows[i]);
+							} else if (trigger.statement) {
+								// Check if statement is CALL with a function
+								if (trigger.statement.expression && trigger.statement.expression.funcid) {
+									alasql.fn[trigger.statement.expression.funcid](deletedRows[i]);
+								} else {
+									trigger.statement.execute(databaseid);
+								}
+							}
+						}
 					}
 				}
 			}
