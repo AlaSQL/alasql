@@ -344,8 +344,15 @@ yy.Select = class Select {
 				//
 				// Save data into parameters array
 				// like alasql('SELECT * INTO ? FROM ?',[outdata,srcdata]);
+				// or SELECT * INTO $variable FROM ?
 				//
-				query.intofns = `params[${JSON.stringify(this.into.param)}].push(r)`;
+				query.intoallfns = `
+					if(!params[${JSON.stringify(this.into.param)}]) params[${JSON.stringify(this.into.param)}]=[];
+					params[${JSON.stringify(this.into.param)}]=this.data;
+					res=this.data.length;
+					if(cb) res = cb(res);
+					return res;
+				`;
 			}
 
 			if (query.intofns) {
