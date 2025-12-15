@@ -198,6 +198,16 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				var tbid = col.tableid;
 				//				console.log(query.sources);
 				var dbid = col.databaseid || query.sources[0].databaseid || query.database.databaseid;
+
+				// Check if tableid is actually a column name (property access pattern like name.length)
+				// This handles cases where the parser sees "columnname.property" and interprets it as "table.column"
+				var isPropertyAccess = false;
+				if (tbid && query.defcols && query.defcols[tbid] && query.defcols[tbid] !== '-') {
+					// tbid is actually a column name, so this is property access
+					isPropertyAccess = true;
+					var actualTableid = query.defcols[tbid];
+				}
+
 				if (!tbid) tbid = query.defcols[col.columnid];
 				if (!tbid) tbid = query.defaultTableid;
 				if (col.columnid !== '_') {
@@ -260,6 +270,20 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 									.join(' ?? ');
 
 								ss.push("'" + escapeq(col.as || col.columnid) + "':(" + searchExpr + ')');
+							} else if (isPropertyAccess) {
+								// Property access pattern: columnname.property (e.g., name.length)
+								// Generate code to access the property on the column value
+								ss.push(
+									"'" +
+										escapeq(col.as || col.columnid) +
+										"':((p['" +
+										actualTableid +
+										"']['" +
+										col.tableid +
+										"'] || {}) ['" +
+										col.columnid +
+										"'])"
+								);
 							} else {
 								ss.push(
 									"'" +

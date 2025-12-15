@@ -35,13 +35,14 @@ describe('Test 341 Intellectual DOT operator', function () {
 		done();
 	});
 
-	it.skip('4. JavaScript way', function (done) {
+	it('4. JavaScript way', function (done) {
 		var res = alasql('SET @a = "who".length');
-		assert.deepEqual(res, [6, 6, 7]);
+		assert.deepEqual(res, 1);
+		assert.deepEqual(alasql.vars.a, 3);
 		done();
 	});
 
-	it.skip('5. JavaScript way', function (done) {
+	it('5. JavaScript way', function (done) {
 		var res = alasql('SELECT COLUMN name.length FROM persons');
 		assert.deepEqual(res, [6, 6, 7]);
 		done();
