@@ -11,12 +11,12 @@ if (typeof exports === 'object') {
 //
 
 describe('Test 338 EXTRACT', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test338;USE test338');
 		done();
 	});
 
-	it.skip('2. SAMPLE', function (done) {
+	it('2. SAMPLE', function (done) {
 		var res = alasql(function () {
 			/*
 
@@ -36,7 +36,7 @@ select * from b;
 		done();
 	});
 
-	it.skip('2. EXCEPT', function (done) {
+	it('2. EXCEPT', function (done) {
 		var res = alasql(function () {
 			/*
 
@@ -53,7 +53,7 @@ select top 3 b.col from b order by b.col desc;
 		done();
 	});
 
-	it.skip('3. EXCEPT', function (done) {
+	it('3. EXCEPT', function (done) {
 		var res = alasql(function () {
 			/*
     
@@ -72,7 +72,7 @@ select col from cte_for_b;
 		done();
 	});
 
-	it.skip('3. DROP TABLES', function (done) {
+	it('3. DROP TABLES', function (done) {
 		var res = alasql(function () {
 			/*
 
@@ -87,7 +87,7 @@ drop table b;
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test338');
 		done();
 	});

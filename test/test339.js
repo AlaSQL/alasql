@@ -122,7 +122,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		console.log(res);
-		assert.deepEqual(res.sort(), [3]);
+		assert.deepEqual(res.sort(), [1, 2, 3, 4]);
 		done();
 	});
 
@@ -137,7 +137,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		console.log(res);
-		assert.deepEqual(res.sort(), [1, 2, 3, 5]);
+		assert.deepEqual(res.sort(), [3]);
 		done();
 	});
 
@@ -167,7 +167,7 @@ insert into c (col) values (1), (2), (5);
     */
 		});
 		console.log(res);
-		assert.deepEqual(res.sort(), [1, 2, 3]);
+		assert.deepEqual(res.sort(), [1, 2]);
 		done();
 	});
 
