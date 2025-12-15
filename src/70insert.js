@@ -62,42 +62,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 	// Handle ParamValue (anonymous data table) - wrap execution
 	if (self.into instanceof yy.ParamValue) {
-		var paramIndex = self.into.param;
-		return function (params, cb) {
-			var data = params[paramIndex];
-			if (!Array.isArray(data)) {
-				var err = new Error('INSERT requires an array for parameter ' + paramIndex);
-				if (cb) return cb(null, err);
-				throw err;
-			}
-
-			// Create temp table, execute, sync, cleanup
-			var tmpid = '__p' + paramIndex + '_' + Date.now();
-			var db = alasql.databases[databaseid || 'alasql'];
-			db.tables[tmpid] = new alasql.Table({tableid: tmpid});
-			db.tables[tmpid].data = data;
-
-			try {
-				var origInto = self.into;
-				self.into = new yy.Table({tableid: tmpid, databaseid: db.databaseid});
-				var stmt = self.compile(databaseid);
-				self.into = origInto;
-
-				var res = stmt(params, cb);
-
-				// Sync back changes
-				var newData = db.tables[tmpid].data;
-				data.length = 0;
-				Array.prototype.push.apply(data, newData);
-
-				return res;
-			} catch (err) {
-				if (cb) return cb(null, err);
-				throw err;
-			} finally {
-				delete db.tables[tmpid];
-			}
-		};
+		return yy.compileParamValue(self.into.param, 'INSERT', true, databaseid, self, 'into');
 	}
 
 	databaseid = self.into.databaseid || databaseid;
