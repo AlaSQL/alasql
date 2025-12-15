@@ -110,16 +110,7 @@ yy.Delete.prototype.compile = function (databaseid) {
 					for (var tr in table.afterdelete) {
 						var trigger = table.afterdelete[tr];
 						if (trigger) {
-							if (trigger.funcid) {
-								alasql.fn[trigger.funcid](deletedRows[i]);
-							} else if (trigger.statement) {
-								// Check if statement is CALL with a function
-								if (trigger.statement.expression && trigger.statement.expression.funcid) {
-									alasql.fn[trigger.statement.expression.funcid](deletedRows[i]);
-								} else {
-									trigger.statement.execute(databaseid);
-								}
-							}
+							alasql.executeTrigger(trigger, databaseid, deletedRows[i]);
 						}
 					}
 				}
