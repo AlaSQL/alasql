@@ -280,7 +280,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 										actualTableid +
 										"']['" +
 										col.tableid +
-										"'] || {}) ['" +
+										"'] || {})['" +
 										col.columnid +
 										"'])"
 								);
