@@ -125,7 +125,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (col.check) {
 				table.checks.push({
 					id: col.check.constrantid,
-					fn: new Function('r', 'var y;return ' + col.check.expression.toJS('r', '')),
+					fn: new Function('r,params,alasql', 'var y;return ' + col.check.expression.toJS('r', '')),
 				});
 			}
 
@@ -168,19 +168,23 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				}
 				var fkfn = function (r) {
 					var rr = {};
-					if (typeof r[col.columnid] === 'undefined') {
+					// Allow NULL values in foreign keys (check for undefined, null, and NaN)
+					var val = r[col.columnid];
+					if (
+						typeof val === 'undefined' ||
+						val === null ||
+						(typeof val === 'number' && isNaN(val))
+					) {
 						return true;
 					}
-					rr[fk.columnid] = r[col.columnid];
+					rr[fk.columnid] = val;
 					var addr = fktable.pk.onrightfn(rr);
 					if (!fktable.uniqs[fktable.pk.hh][addr]) {
-						throw new Error(
-							'Foreign key "' + r[col.columnid] + '" not found in table "' + fk.tableid + '"'
-						);
+						throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
 					}
 					return true;
 				};
-				table.checks.push({fn: fkfn});
+				table.checks.push({fn: fkfn, fk: true});
 			}
 
 			if (col.onupdate) {
@@ -212,7 +216,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};
 		} else if (con.type === 'CHECK') {
-			checkfn = new Function('r', 'var y;return ' + con.expression.toJS('r', ''));
+			checkfn = new Function('r,params,alasql', 'var y;return ' + con.expression.toJS('r', ''));
 		} else if (con.type === 'UNIQUE') {
 			var uk = {};
 			table.uk = table.uk || [];
@@ -371,7 +375,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		if (table.checks && table.checks.length > 0) {
 			table.checks.forEach(function (check) {
-				if (!check.fn(r)) {
+				// In SQL, CHECK constraints treat NULL (undefined) as passing
+				// Only fail if the check explicitly returns false
+				if (check.fn(r, {}, alasql) === false) {
 					//					if(orreplace) toreplace=true; else
 					throw new Error('Violation of CHECK constraint ' + (check.id || ''));
 				}
@@ -640,7 +646,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		// PART 2 - POST CHECK
 		if (table.checks && table.checks.length > 0) {
 			table.checks.forEach(function (check) {
-				if (!check.fn(r)) {
+				// In SQL, CHECK constraints treat NULL (undefined) as passing
+				// Only fail if the check explicitly returns false
+				if (check.fn(r, params, alasql) === false) {
 					throw new Error('Violation of CHECK constraint ' + (check.id || ''));
 				}
 			});

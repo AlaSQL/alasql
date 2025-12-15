@@ -507,7 +507,7 @@
 				return '(' + declareRefs + ', ' + expr + ')';
 			}
 
-			return `(${declareRefs}, y.some(e => e == null) ? void 0 : ${expr})`;
+			return `(${declareRefs}, y.some(e => e == null || (typeof e === 'number' && isNaN(e))) ? void 0 : ${expr})`;
 		}
 	}
 
