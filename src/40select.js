@@ -346,13 +346,20 @@ yy.Select = class Select {
 				// like alasql('SELECT * INTO ? FROM ?',[outdata,srcdata]);
 				// or SELECT * INTO $variable FROM ?
 				//
-				query.intoallfns = `
-					if(!params[${JSON.stringify(this.into.param)}]) params[${JSON.stringify(this.into.param)}]=[];
-					params[${JSON.stringify(this.into.param)}]=this.data;
-					res=this.data.length;
-					if(cb) res = cb(res);
-					return res;
-				`;
+				// Distinguish between ? (numeric param - push to array) and $variable (string param - replace array)
+				if (typeof this.into.param === 'string') {
+					// $variable syntax - replace the array
+					query.intoallfns = `
+						if(!params[${JSON.stringify(this.into.param)}]) params[${JSON.stringify(this.into.param)}]=[];
+						params[${JSON.stringify(this.into.param)}]=this.data;
+						res=this.data.length;
+						if(cb) res = cb(res);
+						return res;
+					`;
+				} else {
+					// ? syntax - push to existing array
+					query.intofns = `params[${JSON.stringify(this.into.param)}].push(r)`;
+				}
 			}
 
 			if (query.intofns) {
