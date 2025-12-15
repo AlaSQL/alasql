@@ -105,6 +105,8 @@ yy.Delete.prototype.compile = function (databaseid) {
 			table.data = newtable;
 
 			// AFTER DELETE triggers - call for each deleted row
+			// Note: Triggers are called once per row per trigger (row-level triggers)
+			// For N deleted rows and M triggers, this results in N×M trigger calls
 			if (table.afterdelete) {
 				for (var i = 0; i < deletedRows.length; i++) {
 					for (var tr in table.afterdelete) {
