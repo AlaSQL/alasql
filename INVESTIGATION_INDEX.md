@@ -35,6 +35,11 @@
    - Examples and workarounds
    - Best for: Understanding database differences
 
+5. **[WILDCARDS_INVESTIGATION.md](./WILDCARDS_INVESTIGATION.md)**
+   - Verification that `%` and `_` wildcards work correctly
+   - Test results and examples
+   - Best for: Understanding wildcard behavior
+
 ---
 
 ## Key Findings at a Glance
@@ -48,6 +53,13 @@ LIKE 'aPp%'    ✓
 ```
 
 **Implementation:** `RegExp(pattern, 'i')` in `src/15utility.js:1242`
+
+### ✅ Confirmed: Wildcards Work Correctly
+Both SQL LIKE wildcards are implemented and working:
+- `%` - Matches zero or more characters (line 1222-1223)
+- `_` - Matches exactly one character (line 1226-1227)
+
+See **[WILDCARDS_INVESTIGATION.md](./WILDCARDS_INVESTIGATION.md)** for detailed verification.
 
 ### ⚠️ Database Behavior Varies
 
