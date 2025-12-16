@@ -1245,6 +1245,8 @@ Star
 Column
 	: Literal DOT Literal DOT Literal
 		{ $$ = new yy.Column({columnid: $5, tableid: $3, databaseid:$1});}
+	// INSERTED/DELETED DOT Literal must come before Literal DOT Literal
+	// to match OUTPUT clause pseudo-tables (INSERTED.*, DELETED.*)
 	| INSERTED DOT Literal
 		{ $$ = new yy.Column({columnid: $3, tableid: 'INSERTED'});}
 	| DELETED DOT Literal
@@ -1255,6 +1257,8 @@ Column
 		{ $$ = new yy.Column({columnid: $3, tableid: $1});}
 	| Literal DOT AT Literal
 		{ $$ = new yy.Column({columnid: '@'+$4, tableid: $1});}
+	// Standalone INSERTED/DELETED are treated as regular identifiers (lowercase)
+	// when not followed by DOT, allowing use as column/table names
 	| INSERTED
 		{ $$ = new yy.Column({columnid: 'inserted'});}
 	| DELETED
