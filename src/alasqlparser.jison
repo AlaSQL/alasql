@@ -2133,7 +2133,7 @@ UniqueKey
 	;
 
 IndexKey
-	: INDEX Literal LPAR ColumnsList RPAR
+	: INDEX Literal LPAR ColsList RPAR
 		{ $$ = {type: 'INDEX', indexid: $2, columns: $4}; }
 	;
 ColsList
