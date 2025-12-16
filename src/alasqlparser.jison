@@ -359,6 +359,8 @@ Literal
 		}
 	| BRALITERAL
 		{ $$ = doubleq($1.substr(1,$1.length-2)); }
+	| KEY
+		{ $$ = $1.toLowerCase(); }
 	| error NonReserved
 		{ $$ = $2.toLowerCase() }
 	;
@@ -2132,7 +2134,7 @@ UniqueKey
 
 IndexKey
 	: INDEX Literal LPAR ColumnsList RPAR
-	| KEY Literal LPAR ColumnsList RPAR
+		{ $$ = {type: 'INDEX', indexid: $2, columns: $4}; }
 	;
 ColsList
 	: Literal
