@@ -1258,7 +1258,8 @@ Column
 	| Literal DOT AT Literal
 		{ $$ = new yy.Column({columnid: '@'+$4, tableid: $1});}
 	// Standalone INSERTED/DELETED are treated as regular identifiers (lowercase)
-	// when not followed by DOT, allowing use as column/table names
+	// when not followed by DOT, allowing use as column/table names.
+	// Lowercase matches SQL case-insensitive identifier behavior.
 	| INSERTED
 		{ $$ = new yy.Column({columnid: 'inserted'});}
 	| DELETED
