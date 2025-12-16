@@ -53,6 +53,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 	});
 
 	it('D) KEY as table name with quoted identifier', function () {
+		// Clean up the unquoted 'key' table from test B (both resolve to same table)
 		alasql('DROP TABLE IF EXISTS [key]');
 		var res = alasql('CREATE TABLE [key] (id INT, name VARCHAR(50))');
 		assert.equal(res, 1);
