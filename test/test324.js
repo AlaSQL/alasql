@@ -172,8 +172,10 @@ describe('Test 324 Roads samples', function () {
 		done();
 	});
 
-	it.skip('20. Full example', function (done) {
-		alasql('SOURCE "test324.sql"');
+	it('20. Full example', function (done) {
+		// Create tempdb database for the SQL file
+		alasql('CREATE DATABASE IF NOT EXISTS tempdb');
+		alasql('SOURCE "test/test324.sql"');
 		// Check NO COUNT
 		alasql.options.nocount = false;
 		done();
