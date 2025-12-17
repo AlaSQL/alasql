@@ -23,9 +23,9 @@ describe('Test 325 IDENTITY', function () {
       status VARCHAR(20)  NOT NULL DEFAULT('new') 
         CHECK(status IN('new', 'open')),
       CONSTRAINT PK_Messages 
-        PRIMARY KEY(msgid),
+        PRIMARY KEY NONCLUSTERED(msgid),
       CONSTRAINT UNQ_Messages_status_msgid 
-        UNIQUE(status, msg),
+        UNIQUE CLUSTERED(status, msg),
       CONSTRAINT CHK_Messages_status
         CHECK (status IN('new', 'open', 'done'))
     );
