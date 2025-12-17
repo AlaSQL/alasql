@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 0000 - PATH keyword limitations', function () {
-	const test = '0000'; // insert test file number
+describe('Test 2222 - PATH keyword limitations', function () {
+	const test = '2222'; // insert test file number
 
 	before(function () {
 		alasql('create database test' + test);
