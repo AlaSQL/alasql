@@ -118,7 +118,7 @@ yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
  */
 alasql.executeTrigger = function (trigger, databaseid, ...args) {
 	if (!trigger) return;
-	
+
 	if (trigger.funcid) {
 		// Direct function ID (older syntax: CREATE TRIGGER ... tablename funcname)
 		return alasql.fn[trigger.funcid](...args);
