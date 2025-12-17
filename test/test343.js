@@ -45,11 +45,11 @@ describe('Test 343 Use params for $variables', function () {
 		done();
 	});
 
-	it.skip('6. SEARCH AS $var', function (done) {
+	it('6. SEARCH INTO $var', function (done) {
 		var params = {};
 		params.data = [{v: 1}, {v: 2}, {v: 3}];
-		var res = alasql('SEARCH /v AS $vres FROM $data', params);
-		assert.deepEqual(params.vres, 3);
+		var res = alasql('SEARCH /v INTO $vres FROM $data', params);
+		assert.deepEqual(params.vres, [1, 2, 3]);
 		done();
 	});
 
