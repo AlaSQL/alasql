@@ -197,4 +197,152 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		assert.equal(table2.xcolumns.Column1.foreignkey.tableid, 'Table1');
 		assert.equal(table2.xcolumns.Column1.foreignkey.columnid, 'Column1');
 	});
+
+	it('G) Primary key should prevent duplicate insertions', function () {
+		alasql('DROP TABLE IF EXISTS PKTest');
+		alasql(`CREATE TABLE PKTest (
+			Id INT,
+			Name VARCHAR(50),
+			CONSTRAINT PK_PKTest PRIMARY KEY (Id)
+		)`);
+
+		// First insert should succeed
+		var res1 = alasql('INSERT INTO PKTest VALUES (1, "First")');
+		assert.equal(res1, 1, 'First insert should succeed');
+
+		// Second insert with same primary key should fail
+		assert.throws(function () {
+			alasql('INSERT INTO PKTest VALUES (1, "Duplicate")');
+		}, Error, 'Duplicate primary key should throw error');
+
+		// Insert with different primary key should succeed
+		var res2 = alasql('INSERT INTO PKTest VALUES (2, "Second")');
+		assert.equal(res2, 1, 'Insert with different primary key should succeed');
+	});
+
+	it('H) Foreign key should prevent insertion of non-existent references', function () {
+		alasql('DROP TABLE IF EXISTS FKChild');
+		alasql('DROP TABLE IF EXISTS FKParent');
+
+		alasql(`CREATE TABLE FKParent (
+			ParentId INT PRIMARY KEY,
+			ParentName VARCHAR(50)
+		)`);
+
+		alasql(`CREATE TABLE FKChild (
+			ChildId INT PRIMARY KEY,
+			ParentId INT,
+			ChildName VARCHAR(50),
+			CONSTRAINT FK_Child_Parent FOREIGN KEY (ParentId) REFERENCES FKParent(ParentId)
+		)`);
+
+		// Insert valid parent record
+		alasql('INSERT INTO FKParent VALUES (1, "Parent1")');
+		alasql('INSERT INTO FKParent VALUES (2, "Parent2")');
+
+		// Insert child with valid foreign key should succeed
+		var res1 = alasql('INSERT INTO FKChild VALUES (1, 1, "Child1")');
+		assert.equal(res1, 1, 'Insert with valid foreign key should succeed');
+
+		// Insert child with invalid foreign key should fail
+		assert.throws(function () {
+			alasql('INSERT INTO FKChild VALUES (2, 99, "Child2")');
+		}, Error, 'Insert with invalid foreign key should throw error');
+
+		// Verify the foreignkey property is set correctly
+		var db = alasql.databases['test' + test];
+		var childTable = db.tables.FKChild;
+		assert(childTable.xcolumns.ParentId.foreignkey, 'ParentId should have foreignkey property');
+		assert.equal(childTable.xcolumns.ParentId.foreignkey.tableid, 'FKParent');
+		assert.equal(childTable.xcolumns.ParentId.foreignkey.columnid, 'ParentId');
+	});
+
+	it('I) Foreign key with NULL values should be allowed', function () {
+		alasql('DROP TABLE IF EXISTS FKNullChild');
+		alasql('DROP TABLE IF EXISTS FKNullParent');
+
+		alasql(`CREATE TABLE FKNullParent (
+			Id INT PRIMARY KEY
+		)`);
+
+		alasql(`CREATE TABLE FKNullChild (
+			ChildId INT PRIMARY KEY,
+			ParentId INT,
+			CONSTRAINT FK_Null_Test FOREIGN KEY (ParentId) REFERENCES FKNullParent(Id)
+		)`);
+
+		alasql('INSERT INTO FKNullParent VALUES (1)');
+
+		// Insert with NULL foreign key should succeed (NULL is allowed)
+		var res = alasql('INSERT INTO FKNullChild VALUES (1, NULL)');
+		assert.equal(res, 1, 'Insert with NULL foreign key should succeed');
+
+		// Insert with valid foreign key should succeed
+		var res2 = alasql('INSERT INTO FKNullChild VALUES (2, 1)');
+		assert.equal(res2, 1, 'Insert with valid foreign key should succeed');
+	});
+
+	it('J) Composite primary key should enforce uniqueness on combination', function () {
+		alasql('DROP TABLE IF EXISTS CompositePK');
+		alasql(`CREATE TABLE CompositePK (
+			Key1 INT,
+			Key2 INT,
+			Data VARCHAR(50),
+			CONSTRAINT PK_Composite PRIMARY KEY (Key1, Key2)
+		)`);
+
+		// First insert should succeed
+		var res1 = alasql('INSERT INTO CompositePK VALUES (1, 1, "First")');
+		assert.equal(res1, 1, 'First insert should succeed');
+
+		// Insert with same combination should fail
+		assert.throws(function () {
+			alasql('INSERT INTO CompositePK VALUES (1, 1, "Duplicate")');
+		}, Error, 'Duplicate composite key should throw error');
+
+		// Insert with different Key1 but same Key2 should succeed
+		var res2 = alasql('INSERT INTO CompositePK VALUES (2, 1, "Different Key1")');
+		assert.equal(res2, 1, 'Different Key1 with same Key2 should succeed');
+
+		// Insert with same Key1 but different Key2 should succeed
+		var res3 = alasql('INSERT INTO CompositePK VALUES (1, 2, "Different Key2")');
+		assert.equal(res3, 1, 'Same Key1 with different Key2 should succeed');
+
+		// Verify both columns are marked as primary keys
+		var db = alasql.databases['test' + test];
+		var table = db.tables.CompositePK;
+		assert(table.xcolumns.Key1.primarykey, 'Key1 should have primarykey property');
+		assert(table.xcolumns.Key2.primarykey, 'Key2 should have primarykey property');
+	});
+
+	it('K) Inline foreign key should enforce referential integrity', function () {
+		alasql('DROP TABLE IF EXISTS InlineChild');
+		alasql('DROP TABLE IF EXISTS InlineParent');
+
+		alasql(`CREATE TABLE InlineParent (
+			Id INT PRIMARY KEY
+		)`);
+
+		alasql(`CREATE TABLE InlineChild (
+			ChildId INT PRIMARY KEY,
+			ParentId INT FOREIGN KEY REFERENCES InlineParent(Id)
+		)`);
+
+		// Insert parent record
+		alasql('INSERT INTO InlineParent VALUES (10)');
+
+		// Insert with valid foreign key should succeed
+		var res1 = alasql('INSERT INTO InlineChild VALUES (1, 10)');
+		assert.equal(res1, 1, 'Insert with valid inline foreign key should succeed');
+
+		// Insert with invalid foreign key should fail
+		assert.throws(function () {
+			alasql('INSERT INTO InlineChild VALUES (2, 99)');
+		}, Error, 'Insert with invalid inline foreign key should throw error');
+
+		// Verify foreignkey property is set
+		var db = alasql.databases['test' + test];
+		var table = db.tables.InlineChild;
+		assert(table.xcolumns.ParentId.foreignkey, 'ParentId should have foreignkey property');
+	});
 });
