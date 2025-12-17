@@ -48,6 +48,12 @@ describe('Test 341 Intellectual DOT operator', function () {
 		done();
 	});
 
+	it('6. JavaScript way with table.column.length', function (done) {
+		var res = alasql('SELECT COLUMN persons.name.length FROM persons');
+		assert.deepEqual(res, [6, 6, 7]);
+		done();
+	});
+
 	it.skip('5. FOREIGN KEY way', function (done) {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
 		assert.deepEqual(res.sort(), [100, 1, 200]);
