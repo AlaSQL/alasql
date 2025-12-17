@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test Foreign Key and Primary Key Column Detection', function () {
-	const test = 'fk_column_detection';
+describe('Test 1643 - Foreign Key and Primary Key Column Detection', function () {
+	const test = '1643';
 
 	before(function () {
 		alasql('create database test' + test);
