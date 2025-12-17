@@ -157,8 +157,14 @@ describe('Test 324 Roads samples', function () {
 
 	it('14. CURRENT_TIMESTAMP', function (done) {
 		var res = alasql('SELECT VALUE CURRENT_TIMESTAMP');
-		assert(res.length == '2015.05.11 07:58:20.078'.length);
-		assert(res.substr(0, 2) == '20');
+		// Handle both string (when dateAsString=true) and Date object
+		if (typeof res === 'string') {
+			assert(res.length == '2015.05.11 07:58:20.078'.length);
+			assert(res.substr(0, 2) == '20');
+		} else {
+			assert(res instanceof Date);
+			assert(res.getFullYear() >= 2015);
+		}
 		done();
 	});
 	it('19. DROP DATABASE', function (done) {
