@@ -166,6 +166,11 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
 					}
 				}
+				// Store foreignkey property in column for later access
+				newcol.foreignkey = {
+					tableid: fk.tableid,
+					columnid: fk.columnid,
+				};
 				var fkfn = function (r) {
 					var rr = {};
 					// Allow NULL values in foreign keys (check for undefined, null, and NaN)
@@ -215,6 +220,12 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};
+			// Mark columns with primarykey property
+			pk.columns.forEach(function (columnid) {
+				if (table.xcolumns[columnid]) {
+					table.xcolumns[columnid].primarykey = true;
+				}
+			});
 		} else if (con.type === 'CHECK') {
 			checkfn = new Function('r,params,alasql', 'var y;return ' + con.expression.toJS('r', ''));
 		} else if (con.type === 'UNIQUE') {
@@ -246,6 +257,17 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (fk.fkcolumns.length > fk.columns.length) {
 				throw new Error('Invalid foreign key on table ' + table.tableid);
 			}
+
+			// Mark columns with foreignkey property
+			fk.columns.forEach(function (columnid, i) {
+				if (table.xcolumns[columnid]) {
+					table.xcolumns[columnid].foreignkey = {
+						tableid: fk.tableid,
+						columnid: fk.fkcolumns[i],
+						constraintid: con.constraintid,
+					};
+				}
+			});
 
 			checkfn = function (r) {
 				var rr = {};
