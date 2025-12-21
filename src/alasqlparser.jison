@@ -4,6 +4,15 @@
 // SQL Parser for AlaSQL
 // (c) 2014-2015, Andrey Gershun
 //
+// This grammar has 93 known shift-reduce conflicts that are intentional and
+// resolved correctly by JISON's default behavior (shift). These conflicts arise from:
+// - LIKE/NOT_LIKE with optional ESCAPE clause
+// - Expression vs Column ambiguity in various contexts
+// - EQ token used for both comparison and assignment
+// - Function calls and column references (LPAR after Literal)
+// - DOT operator in qualified names
+//
+// The %expect 93 directive ensures that new conflicts will cause warnings.
 //
 */
 
@@ -329,9 +338,7 @@ SETS                                        	return 'SET'
 %left COMMA
 %left DOUBLECOLON
 %left OR
-/* %left AND */
 %left AND BETWEEN NOT_BETWEEN
-/*%left AND*/
 %left IN
 %left NOT
 %left GT GE LT LE EQ NE EQEQ NEEQEQ EQEQEQ NEEQEQEQ
@@ -344,11 +351,11 @@ SETS                                        	return 'SET'
 %left DOT ARROW EXCLAMATION
 %left TILDA
 %left SHARP
-
 %left BARBAR
 
 %ebnf
 %start main
+%expect 93
 %%
 
 Literal
