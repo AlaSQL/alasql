@@ -180,6 +180,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 						val === null ||
 						(typeof val === 'number' && isNaN(val))
 					) {
+					if (r[col.columnid] == null) {
 						return true;
 					}
 					rr[fk.columnid] = val;
@@ -274,8 +275,10 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
-					if (r[fk.columns[i]] != null) {
-						rr[colFk] = r[fk.columns[i]];
+					var val = r[fk.columns[i]];
+					// Only include non-null, non-undefined, non-NaN values
+					if (val != null && !(typeof val === 'number' && isNaN(val))) {
+						rr[colFk] = val;
 					}
 				});
 
