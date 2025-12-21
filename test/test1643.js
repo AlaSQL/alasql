@@ -67,7 +67,11 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		var fk = table2.xcolumns.Column1.foreignkey;
 		assert.equal(fk.tableid, 'Table1', 'Foreign key should reference Table1');
 		assert.equal(fk.columnid, 'Column1', 'Foreign key should reference Column1');
-		assert.equal(fk.constraintid, 'FK_Table2_Column1', 'Foreign key should have correct constraint name');
+		assert.equal(
+			fk.constraintid,
+			'FK_Table2_Column1',
+			'Foreign key should have correct constraint name'
+		);
 	});
 
 	it('C) Multiple foreign keys on different columns should all be marked', function () {
@@ -138,7 +142,10 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		var table = db.tables.TableInline;
 
 		// Inline foreign key should set the foreignkey property
-		assert(table.xcolumns.RefId.foreignkey, 'RefId should have foreignkey property from inline definition');
+		assert(
+			table.xcolumns.RefId.foreignkey,
+			'RefId should have foreignkey property from inline definition'
+		);
 	});
 
 	it('F) Issue example - should detect foreign key in Table2.Column1', function () {
@@ -174,26 +181,14 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		var table2 = db.tables.Table2;
 
 		// Table1.Column1 should be marked as primary key
-		assert(
-			table1.xcolumns.Column1.primarykey,
-			'Table1.Column1 should have primarykey property'
-		);
+		assert(table1.xcolumns.Column1.primarykey, 'Table1.Column1 should have primarykey property');
 
 		// Table2 columns should be marked as primary key
-		assert(
-			table2.xcolumns.Column1.primarykey,
-			'Table2.Column1 should have primarykey property'
-		);
-		assert(
-			table2.xcolumns.Column2.primarykey,
-			'Table2.Column2 should have primarykey property'
-		);
+		assert(table2.xcolumns.Column1.primarykey, 'Table2.Column1 should have primarykey property');
+		assert(table2.xcolumns.Column2.primarykey, 'Table2.Column2 should have primarykey property');
 
 		// Table2.Column1 should be marked as foreign key
-		assert(
-			table2.xcolumns.Column1.foreignkey,
-			'Table2.Column1 should have foreignkey property'
-		);
+		assert(table2.xcolumns.Column1.foreignkey, 'Table2.Column1 should have foreignkey property');
 		assert.equal(table2.xcolumns.Column1.foreignkey.tableid, 'Table1');
 		assert.equal(table2.xcolumns.Column1.foreignkey.columnid, 'Column1');
 	});
@@ -211,9 +206,13 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		assert.equal(res1, 1, 'First insert should succeed');
 
 		// Second insert with same primary key should fail
-		assert.throws(function () {
-			alasql('INSERT INTO PKTest VALUES (1, "Duplicate")');
-		}, Error, 'Duplicate primary key should throw error');
+		assert.throws(
+			function () {
+				alasql('INSERT INTO PKTest VALUES (1, "Duplicate")');
+			},
+			Error,
+			'Duplicate primary key should throw error'
+		);
 
 		// Insert with different primary key should succeed
 		var res2 = alasql('INSERT INTO PKTest VALUES (2, "Second")');
@@ -245,9 +244,13 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		assert.equal(res1, 1, 'Insert with valid foreign key should succeed');
 
 		// Insert child with invalid foreign key should fail
-		assert.throws(function () {
-			alasql('INSERT INTO FKChild VALUES (2, 99, "Child2")');
-		}, Error, 'Insert with invalid foreign key should throw error');
+		assert.throws(
+			function () {
+				alasql('INSERT INTO FKChild VALUES (2, 99, "Child2")');
+			},
+			Error,
+			'Insert with invalid foreign key should throw error'
+		);
 
 		// Verify the foreignkey property is set correctly
 		var db = alasql.databases['test' + test];
@@ -296,9 +299,13 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		assert.equal(res1, 1, 'First insert should succeed');
 
 		// Insert with same combination should fail
-		assert.throws(function () {
-			alasql('INSERT INTO CompositePK VALUES (1, 1, "Duplicate")');
-		}, Error, 'Duplicate composite key should throw error');
+		assert.throws(
+			function () {
+				alasql('INSERT INTO CompositePK VALUES (1, 1, "Duplicate")');
+			},
+			Error,
+			'Duplicate composite key should throw error'
+		);
 
 		// Insert with different Key1 but same Key2 should succeed
 		var res2 = alasql('INSERT INTO CompositePK VALUES (2, 1, "Different Key1")');
@@ -336,9 +343,13 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		assert.equal(res1, 1, 'Insert with valid inline foreign key should succeed');
 
 		// Insert with invalid foreign key should fail
-		assert.throws(function () {
-			alasql('INSERT INTO InlineChild VALUES (2, 99)');
-		}, Error, 'Insert with invalid inline foreign key should throw error');
+		assert.throws(
+			function () {
+				alasql('INSERT INTO InlineChild VALUES (2, 99)');
+			},
+			Error,
+			'Insert with invalid inline foreign key should throw error'
+		);
 
 		// Verify foreignkey property is set
 		var db = alasql.databases['test' + test];

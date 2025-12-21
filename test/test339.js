@@ -121,7 +121,7 @@ insert into c (col) values (1), (2), (5);
       select col from c;
     */
 		});
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res.sort(), [1, 2, 3, 4]);
 		done();
 	});
@@ -136,7 +136,7 @@ insert into c (col) values (1), (2), (5);
       select col from c;
     */
 		});
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res.sort(), [3]);
 		done();
 	});
@@ -151,7 +151,7 @@ insert into c (col) values (1), (2), (5);
       select col from c;
     */
 		});
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res.sort(), [1, 2, 3]);
 		done();
 	});
@@ -166,7 +166,7 @@ insert into c (col) values (1), (2), (5);
       select col from c;
     */
 		});
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res.sort(), [1, 2]);
 		done();
 	});

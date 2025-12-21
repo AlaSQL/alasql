@@ -90,7 +90,7 @@ describe('Test 269 options', function () {
       ORDER BY a',
 			[data1, data2]
 		);
-		console.log(res);
+		// console.log(res);
 		// Wrong with reduced rows
 		assert.deepEqual(res, [
 			[undefined, 40, 400],

@@ -102,7 +102,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id RIGHT JOIN three ON two.id = three.id'
 		);
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res, [
 			[undefined, undefined, 'C'],
 			[undefined, undefined, 'BC'],
@@ -116,7 +116,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
 		);
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res, [
 			['A', undefined, undefined],
 			['AB', 'AB', undefined],
@@ -170,7 +170,7 @@ describe('Test 407 - TWO JOINS', function () {
 		var res = alasql(
 			'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id OUTER JOIN three ON two.id = three.id'
 		);
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res, [
 			[undefined, 'B', undefined],
 			['AB', 'AB', undefined],
