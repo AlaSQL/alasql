@@ -204,10 +204,9 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				var isPropertyAccess = false;
 				if (
 					tbid &&
-					query.defcols &&
-					query.defcols[tbid] &&
+					query.defcols?.[tbid] &&
 					query.defcols[tbid] !== '-' &&
-					!query.defcols['.'][tbid]
+					!query.defcols?.['.']?.[tbid]
 				) {
 					// tbid is actually a column name (not a table name), so this is property access
 					isPropertyAccess = true;

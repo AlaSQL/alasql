@@ -36,9 +36,17 @@ describe('Test 341 Intellectual DOT operator', function () {
 	});
 
 	it('4. JavaScript way', function (done) {
+		// Test SET statement with JavaScript property access
+		// SET returns the number of rows affected (1 for variable assignment)
 		var res = alasql('SET @a = "who".length');
 		assert.deepEqual(res, 1);
+		
+		// Verify the variable @a was set to the correct value (length of "who" = 3)
 		assert.deepEqual(alasql.vars.a, 3);
+		
+		// Verify we can use the variable in subsequent queries
+		var res2 = alasql('SELECT @a AS result');
+		assert.deepEqual(res2, [{result: 3}]);
 		done();
 	});
 

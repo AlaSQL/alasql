@@ -785,11 +785,9 @@
 				// Check if tableid is actually a column name (property access pattern like name.length)
 				// This handles cases where the parser sees "columnname.property" and interprets it as "table.column"
 				if (
-					defcols &&
-					defcols[this.tableid] &&
+					defcols?.[this.tableid] &&
 					defcols[this.tableid] !== '-' &&
-					defcols['.'] &&
-					!defcols['.'][this.tableid]
+					!defcols?.['.']?.[this.tableid]
 				) {
 					// tableid is actually a column name (not a table name), so this is property access
 					// Generate code to access the property on the column value
