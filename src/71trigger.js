@@ -108,3 +108,27 @@ yy.DropTrigger.prototype.execute = function (databaseid, params, cb) {
 	if (cb) res = cb(res);
 	return res;
 };
+
+/**
+ * Helper function to execute a trigger with proper parameter passing
+ * @param {object} trigger - The trigger object
+ * @param {string} databaseid - Database ID for statement execution
+ * @param {...any} args - Arguments to pass to the trigger function
+ * @return {*} Result from trigger execution (typically boolean or undefined)
+ */
+alasql.executeTrigger = function (trigger, databaseid, ...args) {
+	if (!trigger) return;
+
+	if (trigger.funcid) {
+		// Direct function ID (older syntax: CREATE TRIGGER ... tablename funcname)
+		return alasql.fn[trigger.funcid](...args);
+	} else if (trigger.statement) {
+		// CALL syntax: CREATE TRIGGER ... CALL funcname()
+		if (trigger.statement.expression && trigger.statement.expression.funcid) {
+			return alasql.fn[trigger.statement.expression.funcid](...args);
+		} else {
+			// Fallback: execute statement without parameters (for non-CALL statements)
+			return trigger.statement.execute(databaseid);
+		}
+	}
+};

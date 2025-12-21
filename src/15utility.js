@@ -349,7 +349,7 @@ let loadFile = (utils.loadFile = function (path, asy, success, error) {
 		try {
 			data = fs.readFileSync(path);
 		} catch (e) {
-			error(err, null);
+			error(e, null);
 			return;
 		}
 
