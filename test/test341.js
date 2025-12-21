@@ -47,9 +47,9 @@ describe('Test 341 Intellectual DOT operator', function () {
 		done();
 	});
 
-	it.skip('5. FOREIGN KEY way', function (done) {
+	it('5. FOREIGN KEY way', function (done) {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
-		assert.deepEqual(res.sort(), [100, 1, 200]);
+		assert.deepEqual(res, [100, 1, 200]);
 		done();
 	});
 

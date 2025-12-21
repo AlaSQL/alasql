@@ -38,7 +38,7 @@ function runTest(testName, sql, params = [testData]) {
 	}
 }
 
-describe.skip('Test 2169: Comprehensive verification of compileToJS functionality', function () {
+describe('Test 2169: Comprehensive verification of compileToJS functionality', function () {
 	it('1. Basic SELECT', function () {
 		runTest('Basic SELECT', 'SELECT name, age FROM ?');
 	});

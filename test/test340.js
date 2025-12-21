@@ -26,7 +26,7 @@ describe('Test 340 SET PARAMS', function () {
 */
 		});
 
-		console.log(res);
+		// console.log(res);
 		assert.deepEqual(res, [1, 'bar']);
 
 		done();

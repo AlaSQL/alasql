@@ -14,7 +14,7 @@ if (typeof exports != 'object') {
 			var count = 0;
 			alasql.fn.onInsert = function (r) {
 				count++;
-				console.log('this never happens!');
+				// console.log('this never happens!');
 			};
 
 			return alasql

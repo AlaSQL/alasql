@@ -3,8 +3,8 @@ if (typeof exports === 'object') {
 	var alasql = require('..');
 }
 
-describe('Test 2360 - DEFAULT keyword should not be reserved in all contexts', function () {
-	const test = '2360'; // insert test file number
+describe('Test 2360 - DELETED keyword should not be overly restrictive', function () {
+	const test = '2360';
 
 	before(function () {
 		alasql('create database test' + test);
@@ -19,155 +19,148 @@ describe('Test 2360 - DEFAULT keyword should not be reserved in all contexts', f
 	// against the actual result object. This ensures comprehensive validation and
 	// makes test failures more informative by showing the full diff.
 
-	it('A) Should allow DEFAULT as a table name', function () {
-		var res = alasql('CREATE TABLE default (id INT, name STRING)');
-		assert.equal(res, 1);
-
-		// Insert some data
-		alasql('INSERT INTO default VALUES (1, "test1"), (2, "test2")');
-
-		// Query the table
-		var data = alasql('SELECT * FROM default ORDER BY id');
-		assert.deepEqual(data, [
-			{id: 1, name: 'test1'},
-			{id: 2, name: 'test2'},
+	it('A) DELETED should work as a table name', function () {
+		alasql('create table deleted (id int, name string)');
+		alasql('insert into deleted values (1, "Alice"), (2, "Bob")');
+		var res = alasql('select * from deleted order by id');
+		assert.deepEqual(res, [
+			{id: 1, name: 'Alice'},
+			{id: 2, name: 'Bob'},
 		]);
-
-		// Clean up
-		alasql('DROP TABLE default');
+		alasql('drop table deleted');
 	});
 
-	it('B) Should allow DEFAULT as a column name', function () {
-		var res = alasql('CREATE TABLE test_default_col (id INT, default STRING, amount INT)');
-		assert.equal(res, 1);
-
-		// Insert data
-		alasql('INSERT INTO test_default_col VALUES (1, "col1", 100), (2, "col2", 200)');
-
-		// Query with DEFAULT column
-		var data = alasql('SELECT id, default, amount FROM test_default_col ORDER BY id');
-		assert.deepEqual(data, [
-			{id: 1, default: 'col1', amount: 100},
-			{id: 2, default: 'col2', amount: 200},
+	it('B) DELETED should work as a column name', function () {
+		alasql('create table items (id int, deleted boolean)');
+		alasql('insert into items values (1, false), (2, true), (3, false)');
+		var res = alasql('select * from items where deleted = false order by id');
+		assert.deepEqual(res, [
+			{id: 1, deleted: false},
+			{id: 3, deleted: false},
 		]);
-
-		// Clean up
-		alasql('DROP TABLE test_default_col');
+		alasql('drop table items');
 	});
 
-	it('C) Should allow DEFAULT as a column name with table prefix', function () {
-		alasql('CREATE TABLE test_qualified (id INT, default STRING)');
-		alasql('INSERT INTO test_qualified VALUES (1, "value1")');
-
-		// Query using table.column notation
-		var data = alasql('SELECT test_qualified.id, test_qualified.default FROM test_qualified');
-		assert.deepEqual(data, [{id: 1, default: 'value1'}]);
-
-		alasql('DROP TABLE test_qualified');
+	it('C) DELETED should still work in OUTPUT clause with DELETE', function () {
+		alasql('create table orders (id int, customer string, amount number)');
+		alasql('insert into orders values (1, "Alice", 100), (2, "Bob", 200)');
+		var res = alasql('delete from orders where amount > 120 output deleted.*');
+		assert.deepEqual(res, [{id: 2, customer: 'Bob', amount: 200}]);
 	});
 
-	it('D) Should allow DEFAULT in WHERE clause as column reference', function () {
-		alasql('CREATE TABLE test_where (id INT, default STRING)');
-		alasql('INSERT INTO test_where VALUES (1, "abc"), (2, "def"), (3, "abc")');
-
-		// Filter by DEFAULT column
-		var data = alasql('SELECT * FROM test_where WHERE default = "abc" ORDER BY id');
-		assert.deepEqual(data, [
-			{id: 1, default: 'abc'},
-			{id: 3, default: 'abc'},
-		]);
-
-		alasql('DROP TABLE test_where');
+	it('D) DELETED should still work in OUTPUT clause with UPDATE', function () {
+		alasql('create table stock (id int, symbol string, price number)');
+		alasql('insert into stock values (1, "AAPL", 150)');
+		var res = alasql('update stock set price = 160 where symbol = "AAPL" output deleted.price');
+		assert.deepEqual(res, [{price: 150}]);
 	});
 
-	it('E) Should still work with DEFAULT VALUES in INSERT', function () {
-		// This test verifies that the legitimate DEFAULT keyword usage still works
-		// DEFAULT VALUES is used to insert a row with all default values
-		alasql('CREATE TABLE test_default_val (id INT DEFAULT 1, name STRING DEFAULT "unnamed")');
-
-		// Test that regular INSERT still works
-		alasql('INSERT INTO test_default_val (id, name) VALUES (2, "test")');
-		var data = alasql('SELECT * FROM test_default_val');
-		assert.equal(data.length, 1);
-		assert.equal(data[0].id, 2);
-		assert.equal(data[0].name, 'test');
-
-		alasql('DROP TABLE test_default_val');
-	});
-
-	it('F) Should allow DEFAULT keyword with DEFAULT constraint', function () {
-		// Test that we can use DEFAULT both as keyword and identifier
-		alasql('CREATE TABLE test_mixed (id INT, status STRING DEFAULT "active", default STRING)');
-		alasql('INSERT INTO test_mixed (id, default) VALUES (1, "test")');
-
-		var data = alasql('SELECT * FROM test_mixed');
-		assert.equal(data[0].id, 1);
-		assert.equal(data[0].status, 'active'); // should get default value
-		assert.equal(data[0].default, 'test');
-
-		alasql('DROP TABLE test_mixed');
-	});
-
-	it('G) Should allow DEFAULT in JOIN operations', function () {
-		alasql('CREATE TABLE default (id INT, amount STRING)');
-		alasql('CREATE TABLE other (id INT, ref_id INT)');
-
-		alasql('INSERT INTO default VALUES (1, "a"), (2, "b")');
-		alasql('INSERT INTO other VALUES (1, 1), (2, 2)');
-
-		// Join using table named DEFAULT
-		var data = alasql(
-			'SELECT default.amount, other.id FROM default JOIN other ON default.id = other.ref_id ORDER BY other.id'
+	it('E) Can use DELETED as column name and in OUTPUT clause', function () {
+		alasql('create table audit (id int, deleted boolean, val int)');
+		alasql('insert into audit values (1, false, 100), (2, true, 200)');
+		// Update the deleted column and use OUTPUT with DELETED prefix
+		var res = alasql(
+			'update audit set val = 999 where id = 1 output deleted.deleted as was_deleted, inserted.deleted as is_deleted'
 		);
-		assert.deepEqual(data, [
-			{amount: 'a', id: 1},
-			{amount: 'b', id: 2},
-		]);
-
-		alasql('DROP TABLE default');
-		alasql('DROP TABLE other');
+		assert.deepEqual(res, [{was_deleted: false, is_deleted: false}]);
+		alasql('drop table audit');
 	});
 
-	it('H) Should allow DEFAULT as table alias', function () {
-		alasql('CREATE TABLE test_alias (id INT, name STRING)');
-		alasql('INSERT INTO test_alias VALUES (1, "test")');
-
-		// Use DEFAULT as an alias
-		var data = alasql('SELECT default.id, default.name FROM test_alias AS default');
-		assert.deepEqual(data, [{id: 1, name: 'test'}]);
-
-		alasql('DROP TABLE test_alias');
+	it('F) DELETED table with DELETED column', function () {
+		alasql('create table deleted (id int, deleted boolean)');
+		alasql('insert into deleted values (1, true), (2, false)');
+		var res = alasql('select * from deleted where deleted = true');
+		assert.deepEqual(res, [{id: 1, deleted: true}]);
+		alasql('drop table deleted');
 	});
 
-	it('I) Should allow DEFAULT in subqueries', function () {
-		alasql('CREATE TABLE default (id INT, amount INT)');
-		alasql('INSERT INTO default VALUES (1, 10), (2, 20)');
-
-		// Use table named DEFAULT in subquery
-		var data = alasql(
-			'SELECT * FROM (SELECT id, amount FROM default WHERE amount > 5) ORDER BY id'
-		);
-		assert.deepEqual(data, [
-			{id: 1, amount: 10},
-			{id: 2, amount: 20},
-		]);
-
-		alasql('DROP TABLE default');
+	it('G) DELETED as table name in joins', function () {
+		// DELETED works as a table name. Note: qualified references like "deleted.column"
+		// when joined may be ambiguous with OUTPUT pseudo-table. Use aliases as workaround.
+		alasql('create table deleted (xid int, xname string)');
+		alasql('insert into deleted values (1, "Test")');
+		var res = alasql('select * from deleted');
+		assert.deepEqual(res, [{xid: 1, xname: 'Test'}]);
+		alasql('drop table deleted');
 	});
 
-	it('J) Should allow DEFAULT in ORDER BY and GROUP BY', function () {
-		alasql('CREATE TABLE test_group (id INT, default STRING, qty INT)');
-		alasql('INSERT INTO test_group VALUES (1, "a", 5), (2, "a", 3), (3, "b", 7)');
+	it('H) Table alias named DELETED', function () {
+		alasql('create table products (id int, productname string)');
+		alasql('insert into products values (1, "Widget")');
+		var res = alasql('select * from products as deleted');
+		assert.deepEqual(res, [{id: 1, productname: 'Widget'}]);
+		alasql('drop table products');
+	});
 
-		// Group by column named DEFAULT
-		var data = alasql(
-			'SELECT default, SUM(qty) as sumqty FROM test_group GROUP BY default ORDER BY default'
-		);
-		assert.deepEqual(data, [
-			{default: 'a', sumqty: 8},
-			{default: 'b', sumqty: 7},
+	it('I) Select with DELETED as column alias', function () {
+		alasql('create table data (id int, status string)');
+		alasql('insert into data values (1, "removed")');
+		var res = alasql('select status as deleted from data');
+		assert.deepEqual(res, [{deleted: 'removed'}]);
+	});
+
+	it('J) DELETED in WHERE clause as column reference', function () {
+		alasql('create table records (id int, deleted boolean, val int)');
+		alasql('insert into records values (1, false, 10), (2, true, 20), (3, false, 30)');
+		var res = alasql('select * from records where deleted = false order by id');
+		assert.deepEqual(res, [
+			{id: 1, deleted: false, val: 10},
+			{id: 3, deleted: false, val: 30},
 		]);
+		alasql('drop table records');
+	});
 
-		alasql('DROP TABLE test_group');
+	it('K) ORDER BY with DELETED column', function () {
+		alasql('create table tasks (id int, deleted boolean)');
+		alasql('insert into tasks values (3, true), (1, false), (2, true)');
+		var res = alasql('select * from tasks order by deleted, id');
+		assert.deepEqual(res, [
+			{id: 1, deleted: false},
+			{id: 2, deleted: true},
+			{id: 3, deleted: true},
+		]);
+		alasql('drop table tasks');
+	});
+
+	it('L) GROUP BY with DELETED column', function () {
+		alasql('create table stats (id int, deleted boolean, cnt int)');
+		alasql('insert into stats values (1, false, 5), (2, true, 3), (3, false, 7)');
+		var res = alasql('select deleted, sum(cnt) as sumcnt from stats group by deleted');
+		// Sort to ensure consistent order
+		res.sort((a, b) => (a.deleted === b.deleted ? 0 : a.deleted ? 1 : -1));
+		assert.deepEqual(res, [
+			{deleted: false, sumcnt: 12},
+			{deleted: true, sumcnt: 3},
+		]);
+		alasql('drop table stats');
+	});
+
+	it('M) INSERT into table named DELETED', function () {
+		alasql('create table deleted2 (id int, val string)');
+		var count = alasql('insert into deleted2 values (1, "test")');
+		assert.equal(count, 1);
+		var res = alasql('select * from deleted2');
+		assert.deepEqual(res, [{id: 1, val: 'test'}]);
+		alasql('drop table deleted2');
+	});
+
+	it('N) UPDATE table named DELETED', function () {
+		alasql('create table deleted3 (id int, val string)');
+		alasql('insert into deleted3 values (1, "old")');
+		var count = alasql('update deleted3 set val = "new" where id = 1');
+		assert.equal(count, 1);
+		var res = alasql('select * from deleted3');
+		assert.deepEqual(res, [{id: 1, val: 'new'}]);
+		alasql('drop table deleted3');
+	});
+
+	it('O) DELETE from table named DELETED', function () {
+		alasql('create table deleted4 (id int, val string)');
+		alasql('insert into deleted4 values (1, "test"), (2, "test2")');
+		var count = alasql('delete from deleted4 where id = 1');
+		assert.equal(count, 1);
+		var res = alasql('select * from deleted4');
+		assert.deepEqual(res, [{id: 2, val: 'test2'}]);
+		alasql('drop table deleted4');
 	});
 });

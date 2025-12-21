@@ -6,12 +6,12 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 322 UNION TEST', function () {
-	it.skip('1. CREATE DATABASE', function (done) {
+	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test322; USE test322');
 		done();
 	});
 
-	it.skip('2. UNION ALL', function (done) {
+	it('2. UNION ALL', function (done) {
 		alasql.options.modifier = undefined;
 
 		var data = [{a: 1}, {a: 2}, {a: 2}, {b: 2}];
@@ -42,7 +42,7 @@ describe('Test 322 UNION TEST', function () {
 		done();
 	});
 
-	it.skip('3. SEARCH UNION', function (done) {
+	it('3. SEARCH UNION', function (done) {
 		var data = [{a: 1}, {a: 2}, {a: 2}, {b: 2}];
 
 		var res = alasql('SEARCH UNION(/a,/b) FROM ?', [data]);
@@ -50,7 +50,7 @@ describe('Test 322 UNION TEST', function () {
 		done();
 	});
 
-	it.skip('99. DROP DATABASE', function (done) {
+	it('99. DROP DATABASE', function (done) {
 		alasql('DROP DATABASE test322');
 		done();
 	});

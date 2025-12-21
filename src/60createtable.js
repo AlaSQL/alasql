@@ -125,7 +125,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			if (col.check) {
 				table.checks.push({
 					id: col.check.constrantid,
-					fn: new Function('r', 'var y;return ' + col.check.expression.toJS('r', '')),
+					fn: new Function('r,params,alasql', 'var y;return ' + col.check.expression.toJS('r', '')),
 				});
 			}
 
@@ -166,21 +166,25 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 						throw new Error('FOREIGN KEY allowed only to tables with PRIMARY KEYs');
 					}
 				}
+				// Store foreignkey property in column for later access
+				newcol.foreignkey = {
+					tableid: fk.tableid,
+					columnid: fk.columnid,
+				};
 				var fkfn = function (r) {
 					var rr = {};
-					if (typeof r[col.columnid] === 'undefined') {
-						return true;
-					}
-					rr[fk.columnid] = r[col.columnid];
-					var addr = fktable.pk.onrightfn(rr);
-					if (!fktable.uniqs[fktable.pk.hh][addr]) {
-						throw new Error(
-							'Foreign key "' + r[col.columnid] + '" not found in table "' + fk.tableid + '"'
-						);
+					var val = r[col.columnid];
+					// Only check foreign key if value is not null, undefined, or NaN
+					if (val != null && !(typeof val === 'number' && isNaN(val))) {
+						rr[fk.columnid] = val;
+						var addr = fktable.pk.onrightfn(rr);
+						if (!fktable.uniqs[fktable.pk.hh][addr]) {
+							throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
+						}
 					}
 					return true;
 				};
-				table.checks.push({fn: fkfn});
+				table.checks.push({fn: fkfn, fk: true});
 			}
 
 			if (col.onupdate) {
@@ -211,8 +215,14 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			pk.onrightfn = new Function('r', 'var y;return ' + pk.onrightfns);
 			pk.hh = hash(pk.onrightfns);
 			table.uniqs[pk.hh] = {};
+			// Mark columns with primarykey property
+			pk.columns.forEach(function (columnid) {
+				if (table.xcolumns[columnid]) {
+					table.xcolumns[columnid].primarykey = true;
+				}
+			});
 		} else if (con.type === 'CHECK') {
-			checkfn = new Function('r', 'var y;return ' + con.expression.toJS('r', ''));
+			checkfn = new Function('r,params,alasql', 'var y;return ' + con.expression.toJS('r', ''));
 		} else if (con.type === 'UNIQUE') {
 			var uk = {};
 			table.uk = table.uk || [];
@@ -243,13 +253,26 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				throw new Error('Invalid foreign key on table ' + table.tableid);
 			}
 
+			// Mark columns with foreignkey property
+			fk.columns.forEach(function (columnid, i) {
+				if (table.xcolumns[columnid]) {
+					table.xcolumns[columnid].foreignkey = {
+						tableid: fk.tableid,
+						columnid: fk.fkcolumns[i],
+						constraintid: con.constraintid,
+					};
+				}
+			});
+
 			checkfn = function (r) {
 				var rr = {};
 
 				//Composite foreign keys
 				fk.fkcolumns.forEach(function (colFk, i) {
-					if (r[fk.columns[i]] != null) {
-						rr[colFk] = r[fk.columns[i]];
+					var val = r[fk.columns[i]];
+					// Only include non-null, non-undefined, non-NaN values
+					if (val != null && !(typeof val === 'number' && isNaN(val))) {
+						rr[colFk] = val;
 					}
 				});
 
@@ -332,10 +355,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		for (var tr in table.beforeinsert) {
 			var trigger = table.beforeinsert[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					if (alasql.fn[trigger.funcid](r) === false) prevent = prevent || true;
-				} else if (trigger.statement) {
-					if (trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+				if (alasql.executeTrigger(trigger, databaseid, r) === false) {
+					prevent = prevent || true;
 				}
 			}
 		}
@@ -347,11 +368,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			escape = true;
 			trigger = table.insteadofinsert[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					alasql.fn[trigger.funcid](r);
-				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
-				}
+				alasql.executeTrigger(trigger, databaseid, r);
 			}
 		}
 		if (escape) return;
@@ -371,7 +388,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 
 		if (table.checks && table.checks.length > 0) {
 			table.checks.forEach(function (check) {
-				if (!check.fn(r)) {
+				// In SQL, CHECK constraints treat NULL (undefined) as passing
+				// Only fail if the check explicitly returns false
+				if (check.fn(r, {}, alasql) === false) {
 					//					if(orreplace) toreplace=true; else
 					throw new Error('Violation of CHECK constraint ' + (check.id || ''));
 				}
@@ -488,11 +507,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		for (var tr in table.afterinsert) {
 			var trigger = table.afterinsert[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					alasql.fn[trigger.funcid](r);
-				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
-				}
+				alasql.executeTrigger(trigger, databaseid, r);
 			}
 		}
 		alasql.inserted = oldinserted;
@@ -507,10 +522,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		for (var tr in table.beforedelete) {
 			var trigger = table.beforedelete[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					if (alasql.fn[trigger.funcid](r) === false) prevent = prevent || true;
-				} else if (trigger.statement) {
-					if (trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+				if (alasql.executeTrigger(trigger, databaseid, r) === false) {
+					prevent = prevent || true;
 				}
 			}
 		}
@@ -522,11 +535,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			escape = true;
 			var trigger = table.insteadofdelete[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					alasql.fn[trigger.funcid](r);
-				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
-				}
+				alasql.executeTrigger(trigger, databaseid, r);
 			}
 		}
 		if (escape) return;
@@ -613,10 +622,8 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		for (var tr in table.beforeupdate) {
 			var trigger = table.beforeupdate[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					if (alasql.fn[trigger.funcid](this.data[i], r) === false) prevent = prevent || true;
-				} else if (trigger.statement) {
-					if (trigger.statement.execute(databaseid) === false) prevent = prevent || true;
+				if (alasql.executeTrigger(trigger, databaseid, this.data[i], r) === false) {
+					prevent = prevent || true;
 				}
 			}
 		}
@@ -628,11 +635,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 			escape = true;
 			var trigger = table.insteadofupdate[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					alasql.fn[trigger.funcid](this.data[i], r);
-				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
-				}
+				alasql.executeTrigger(trigger, databaseid, this.data[i], r);
 			}
 		}
 		if (escape) return;
@@ -640,7 +643,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		// PART 2 - POST CHECK
 		if (table.checks && table.checks.length > 0) {
 			table.checks.forEach(function (check) {
-				if (!check.fn(r)) {
+				// In SQL, CHECK constraints treat NULL (undefined) as passing
+				// Only fail if the check explicitly returns false
+				if (check.fn(r, params, alasql) === false) {
 					throw new Error('Violation of CHECK constraint ' + (check.id || ''));
 				}
 			});
@@ -685,11 +690,7 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 		for (var tr in table.afterupdate) {
 			var trigger = table.afterupdate[tr];
 			if (trigger) {
-				if (trigger.funcid) {
-					alasql.fn[trigger.funcid](this.data[i], r);
-				} else if (trigger.statement) {
-					trigger.statement.execute(databaseid);
-				}
+				alasql.executeTrigger(trigger, databaseid, this.data[i], r);
 			}
 		}
 	};
