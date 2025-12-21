@@ -75,7 +75,7 @@ function compileSelectStar(query, aliases, joinstar) {
 							value: value,
 							key: key,
 						};
-						
+
 						// Only add to query.columns for new columns (not duplicates)
 						var coldef = {
 							columnid: tcol.columnid,

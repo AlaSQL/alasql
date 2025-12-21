@@ -534,7 +534,7 @@ function modify(query, res) {
 		var maxKeys = Object.keys(res[0]);
 		var maxKeyCount = maxKeys.length;
 		var allcol = {};
-		
+
 		for (var i = 0; i < Math.min(res.length, alasql.options.columnlookup || 10); i++) {
 			var rowKeys = Object.keys(res[i]);
 			if (rowKeys.length > maxKeyCount) {
@@ -548,12 +548,14 @@ function modify(query, res) {
 
 		// Start with keys from the row with most columns (preserves natural order)
 		// Then add any additional keys that might be in other rows
-		var dataColumns = maxKeys.map(function(columnid) {
+		var dataColumns = maxKeys.map(function (columnid) {
 			return {columnid: columnid};
 		});
 		var addedKeys = {};
-		maxKeys.forEach(function(k) { addedKeys[k] = true; });
-		Object.keys(allcol).forEach(function(key) {
+		maxKeys.forEach(function (k) {
+			addedKeys[k] = true;
+		});
+		Object.keys(allcol).forEach(function (key) {
 			if (!addedKeys[key]) {
 				dataColumns.push({columnid: key});
 			}
