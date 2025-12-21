@@ -173,29 +173,13 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 				};
 				var fkfn = function (r) {
 					var rr = {};
-					// Allow NULL values in foreign keys (check for undefined, null, and NaN)
-					var val = r[col.columnid];
-					if (
-						typeof val === 'undefined' ||
-						val === null ||
-						(typeof val === 'number' && isNaN(val))
-					) {
-					if (r[col.columnid] == null) {
-						return true;
-					}
-					rr[fk.columnid] = val;
-					var addr = fktable.pk.onrightfn(rr);
-					if (!fktable.uniqs[fktable.pk.hh][addr]) {
-						throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
 					var val = r[col.columnid];
 					// Only check foreign key if value is not null, undefined, or NaN
 					if (val != null && !(typeof val === 'number' && isNaN(val))) {
 						rr[fk.columnid] = val;
 						var addr = fktable.pk.onrightfn(rr);
 						if (!fktable.uniqs[fktable.pk.hh][addr]) {
-							throw new Error(
-								'Foreign key "' + val + '" not found in table "' + fk.tableid + '"'
-							);
+							throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
 						}
 					}
 					return true;
