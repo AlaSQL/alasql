@@ -345,4 +345,28 @@ describe('Test 1643 - Foreign Key and Primary Key Column Detection', function ()
 		var table = db.tables.InlineChild;
 		assert(table.xcolumns.ParentId.foreignkey, 'ParentId should have foreignkey property');
 	});
+
+	it('L) Inline foreign key should allow NULL values', function () {
+		alasql('DROP TABLE IF EXISTS InlineNullChild');
+		alasql('DROP TABLE IF EXISTS InlineNullParent');
+
+		alasql(`CREATE TABLE InlineNullParent (
+			Id INT PRIMARY KEY
+		)`);
+
+		alasql(`CREATE TABLE InlineNullChild (
+			ChildId INT PRIMARY KEY,
+			ParentId INT FOREIGN KEY REFERENCES InlineNullParent(Id)
+		)`);
+
+		alasql('INSERT INTO InlineNullParent VALUES (1)');
+
+		// Insert with NULL foreign key should succeed (NULL is allowed)
+		var res = alasql('INSERT INTO InlineNullChild VALUES (1, NULL)');
+		assert.equal(res, 1, 'Insert with NULL inline foreign key should succeed');
+
+		// Insert with valid foreign key should succeed
+		var res2 = alasql('INSERT INTO InlineNullChild VALUES (2, 1)');
+		assert.equal(res2, 1, 'Insert with valid inline foreign key should succeed');
+	});
 });

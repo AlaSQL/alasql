@@ -187,6 +187,16 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 					var addr = fktable.pk.onrightfn(rr);
 					if (!fktable.uniqs[fktable.pk.hh][addr]) {
 						throw new Error('Foreign key "' + val + '" not found in table "' + fk.tableid + '"');
+					var val = r[col.columnid];
+					// Only check foreign key if value is not null, undefined, or NaN
+					if (val != null && !(typeof val === 'number' && isNaN(val))) {
+						rr[fk.columnid] = val;
+						var addr = fktable.pk.onrightfn(rr);
+						if (!fktable.uniqs[fktable.pk.hh][addr]) {
+							throw new Error(
+								'Foreign key "' + val + '" not found in table "' + fk.tableid + '"'
+							);
+						}
 					}
 					return true;
 				};
