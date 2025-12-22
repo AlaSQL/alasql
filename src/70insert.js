@@ -119,7 +119,9 @@ yy.Insert.prototype.compile = function (databaseid) {
 			if (self.columns) {
 				// Validate that we have the right number of values for the columns
 				if (values.length !== self.columns.length) {
-					throw new Error(createValueCountMismatchError(values.length, self.columns.length, 'columns'));
+					throw new Error(
+						createValueCountMismatchError(values.length, self.columns.length, 'columns')
+					);
 				}
 				self.columns.forEach(function (col, idx) {
 					//console.log(db.tables, tableid, table);
