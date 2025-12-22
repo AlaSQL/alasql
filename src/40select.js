@@ -534,8 +534,9 @@ function modify(query, res) {
 		var maxKeys = Object.keys(res[0]);
 		var maxKeyCount = maxKeys.length;
 		var allcol = {};
+		var maxRows = Math.min(res.length, alasql.options.columnlookup || 10);
 
-		for (var i = 0; i < Math.min(res.length, alasql.options.columnlookup || 10); i++) {
+		for (var i = 0; i < maxRows; i++) {
 			var rowKeys = Object.keys(res[i]);
 			if (rowKeys.length > maxKeyCount) {
 				maxKeyCount = rowKeys.length;
@@ -546,20 +547,22 @@ function modify(query, res) {
 			}
 		}
 
-		// Start with keys from the row with most columns (preserves natural order)
-		// Then add any additional keys that might be in other rows
-		var dataColumns = maxKeys.map(function (columnid) {
-			return {columnid: columnid};
-		});
+		// Build columns array: start with maxKeys, then add any missing keys from allcol
+		var dataColumns = [];
 		var addedKeys = {};
-		maxKeys.forEach(function (k) {
-			addedKeys[k] = true;
-		});
-		Object.keys(allcol).forEach(function (key) {
+
+		// Add keys from the row with most columns first (preserves natural order)
+		for (var j = 0; j < maxKeys.length; j++) {
+			dataColumns.push({columnid: maxKeys[j]});
+			addedKeys[maxKeys[j]] = true;
+		}
+
+		// Add any remaining keys not in maxKeys
+		for (var key in allcol) {
 			if (!addedKeys[key]) {
 				dataColumns.push({columnid: key});
 			}
-		});
+		}
 
 		// If we don't have any columns yet, just use the data columns
 		if (!columns || columns.length === 0) {
