@@ -293,7 +293,7 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
 		if (v === null || v === undefined) {
 			return s;
 		}
-		// If accumulator is null/empty, start with current value
+		// If accumulator is null/undefined, start with current value
 		if (s === null || s === undefined) {
 			return '' + v;
 		}
