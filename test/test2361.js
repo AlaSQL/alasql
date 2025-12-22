@@ -17,14 +17,7 @@ describe('Test 2361 - GROUP BY with CASE expression alias', function () {
 
 	it('A) GROUP BY with CASE WHEN aliased expression', function () {
 		// Create test data with ages
-		var data = [
-			{age: 25},
-			{age: 26},
-			{age: 35},
-			{age: 36},
-			{age: 45},
-			{age: 55},
-		];
+		var data = [{age: 25}, {age: 26}, {age: 35}, {age: 36}, {age: 45}, {age: 55}];
 
 		var result = alasql(
 			`SELECT 
@@ -69,22 +62,13 @@ describe('Test 2361 - GROUP BY with CASE expression alias', function () {
 		);
 
 		// Should return three unique groups, not just '30+'
-		var expected = [
-			{age_group: '10-19'},
-			{age_group: '20-29'},
-			{age_group: '30+'},
-		];
+		var expected = [{age_group: '10-19'}, {age_group: '20-29'}, {age_group: '30+'}];
 
 		assert.deepEqual(result.sort(), expected.sort());
 	});
 
 	it('C) GROUP BY with function expression alias', function () {
-		var data = [
-			{name: 'Alice'},
-			{name: 'alice'},
-			{name: 'Bob'},
-			{name: 'bob'},
-		];
+		var data = [{name: 'Alice'}, {name: 'alice'}, {name: 'Bob'}, {name: 'bob'}];
 
 		var result = alasql(
 			`SELECT 
