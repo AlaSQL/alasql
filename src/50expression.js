@@ -834,45 +834,21 @@
 		}
 
 		findAggregator(query) {
-			const baseNick = escapeq(this.toString());
+			// Check if an identical aggregate already exists in selectGroup
+			let existingAggr = query.selectGroup.find(agg => agg.toString() === this.toString());
 			
-			// Check if an aggregate with the same expression already exists in selectGroup
-			let existingAggrWithSameExpr = null;
-			for (let i = 0; i < query.selectGroup.length; i++) {
-				if (query.selectGroup[i].toString() === this.toString()) {
-					existingAggrWithSameExpr = query.selectGroup[i];
-					break;
-				}
-			}
-			
-			if (existingAggrWithSameExpr) {
-				// Reuse the accumulator nick from the existing aggregate with same expression
-				// The existing aggregate has already been processed and has aggrNick set
-				this.aggrNick = existingAggrWithSameExpr.aggrNick;
-				// Keep our own nick for output (if already assigned in compileSelectGroup0)
-				// Don't add to selectGroup again to avoid double accumulation
+			if (existingAggr) {
+				// Reuse the existing aggregate's nick to share the same accumulator
+				this.aggrNick = existingAggr.nick;
 			} else {
-				// No existing aggregate with same expression
+				// New aggregate - assign nick and add to selectGroup
 				if (!this.nick) {
-					// No nick assigned yet, assign a new nick
-					// Check if this nick collides with any existing nick
-					let colas = baseNick;
-					let existingNicks = query.selectGroup.map(function(agg) { return agg.nick; });
-					
-					// If there's a collision, append the selectGroup index
-					if (existingNicks.indexOf(colas) > -1) {
-						colas = baseNick + ':' + query.selectGroup.length;
-					}
-					
-					this.nick = colas;
-
-					if (!query.removeKeys.includes(colas)) {
-						query.removeKeys.push(colas);
+					this.nick = escapeq(this.toString()) + ':' + query.selectGroup.length;
+					if (!query.removeKeys.includes(this.nick)) {
+						query.removeKeys.push(this.nick);
 					}
 				}
-				// This aggregate will be the accumulator, store its nick
 				this.aggrNick = this.nick;
-				// Add to selectGroup only if it's a new aggregate
 				query.selectGroup.push(this);
 			}
 		}
