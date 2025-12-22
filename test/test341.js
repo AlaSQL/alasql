@@ -62,6 +62,30 @@ describe('Test 341 Intellectual DOT operator', function () {
 		done();
 	});
 
+	it('7. Edge case: table and column with same name', function (done) {
+		// Create a table named "item" with a column named "item"
+		alasql('CREATE TABLE item (id INT, item STRING)');
+		alasql('INSERT INTO item VALUES (1, "Alpha"), (2, "Beta")');
+		
+		// Test 1: table.column access (item.item should get the column value)
+		var res1 = alasql('SELECT item.item FROM item');
+		assert.deepEqual(res1, [{item: 'Alpha'}, {item: 'Beta'}]);
+		
+		// Test 2: table.column.property access (item.item.length should get the length)
+		var res2 = alasql('SELECT COLUMN item.item.length FROM item');
+		assert.deepEqual(res2, [5, 4]);
+		
+		// Test 3: When only one column exists with unique name, property access works
+		alasql('CREATE TABLE products (title STRING)');
+		alasql('INSERT INTO products VALUES ("Product"), ("Item")');
+		var res3 = alasql('SELECT COLUMN title.length FROM products');
+		assert.deepEqual(res3, [7, 4]);
+		
+		alasql('DROP TABLE item');
+		alasql('DROP TABLE products');
+		done();
+	});
+
 	it('5. FOREIGN KEY way', function (done) {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
 		assert.deepEqual(res, [100, 1, 200]);
