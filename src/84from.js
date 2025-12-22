@@ -336,6 +336,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 							// Please avoid === here
 							if (
 								!opt.raw &&
+								alasql.options.csvStringToNumber &&
 								typeof r[h] !== 'undefined' &&
 								r[h].length !== 0 &&
 								r[h].trim() == +r[h]
@@ -352,6 +353,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 						r[h] = a[idx];
 						if (
 							!opt.raw &&
+							alasql.options.csvStringToNumber &&
 							typeof r[h] !== 'undefined' &&
 							r[h].length !== 0 &&
 							r[h].trim() == +r[h]
@@ -370,6 +372,7 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 					r[idx] = a[idx];
 					if (
 						!opt.raw &&
+						alasql.options.csvStringToNumber &&
 						typeof r[idx] !== 'undefined' &&
 						r[idx].length !== 0 &&
 						r[idx].trim() == +r[idx]
