@@ -834,17 +834,43 @@
 		}
 
 		findAggregator(query) {
-			const colas = escapeq(this.toString()) + ':' + query.selectGroup.length;
-
-			if (!this.nick) {
-				this.nick = colas;
-
-				if (!query.removeKeys.includes(colas)) {
-					query.removeKeys.push(colas);
+			const baseNick = escapeq(this.toString());
+			
+			// Check if an aggregate with the same expression already exists in selectGroup
+			let existingAggrWithSameExpr = null;
+			for (let i = 0; i < query.selectGroup.length; i++) {
+				if (query.selectGroup[i].toString() === this.toString()) {
+					existingAggrWithSameExpr = query.selectGroup[i];
+					break;
 				}
 			}
+			
+			if (existingAggrWithSameExpr) {
+				// Reuse the nick from the existing aggregate with same expression
+				// and don't add this to selectGroup again
+				this.nick = existingAggrWithSameExpr.nick;
+			} else {
+				// No existing aggregate with same expression
+				if (!this.nick) {
+					// No nick assigned yet, assign a new nick
+					// Check if this nick collides with any existing nick
+					let colas = baseNick;
+					let existingNicks = query.selectGroup.map(function(agg) { return agg.nick; });
+					
+					// If there's a collision, append the selectGroup index
+					if (existingNicks.indexOf(colas) > -1) {
+						colas = baseNick + ':' + query.selectGroup.length;
+					}
+					
+					this.nick = colas;
 
-			query.selectGroup.push(this);
+					if (!query.removeKeys.includes(colas)) {
+						query.removeKeys.push(colas);
+					}
+				}
+				// Add to selectGroup only if it's a new aggregate
+				query.selectGroup.push(this);
+			}
 		}
 
 		toType() {
