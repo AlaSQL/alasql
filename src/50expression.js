@@ -893,7 +893,8 @@
 		}
 
 		toJS() {
-			var colas = this.nick;
+			// Use aggrNick (shared accumulator) if available, otherwise use nick
+			var colas = this.aggrNick || this.nick;
 			if (colas === undefined) {
 				colas = escapeq(this.toString());
 			}
