@@ -532,7 +532,15 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause OrderClause LimitClause UnionClause
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause UnionClause OrderClause LimitClause
+		{
+			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
+		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
+		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10);
+		    $$ = $1;
+		    if(yy.exists) $$.exists = yy.exists.slice();
+		}
+	| SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause OrderClause LimitClause UnionClauseWithOrder
 		{
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
