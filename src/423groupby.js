@@ -165,6 +165,11 @@ yy.Select.prototype.compileGroup = function (query) {
 						query.aggrKeys.push(col);
 						const extraParams = getGroupConcatParams(col);
 						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1${extraParams}),`;
+					} else if (col.aggregatorid === 'CORR') {
+						// CORR requires two expressions
+						query.aggrKeys.push(col);
+						let colexp2 = col.expression2.toJS('p', tableid, defcols);
+						return `'${colas}':alasql.aggr.CORR(${colexp},${colexp2},undefined,1),`;
 					}
 					return '';
 				}
@@ -437,6 +442,12 @@ yy.Select.prototype.compileGroup = function (query) {
 						const extraParams = getGroupConcatParams(col);
 						return `${pre}
 							g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2${extraParams});
+							${post}`;
+					} else if (col.aggregatorid === 'CORR') {
+						// CORR stage 2: accumulate with two expressions
+						let colexp2 = col.expression2.toJS('p', tableid, defcols);
+						return `${pre}
+							g['${colas}'] = alasql.aggr.CORR(${colexp},${colexp2},g['${colas}'],2);
 							${post}`;
 					}
 

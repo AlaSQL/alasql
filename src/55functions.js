@@ -509,6 +509,82 @@ alasql.aggr.STD =
 			}
 		};
 
+// Pearson correlation coefficient for two variables
+alasql.aggr.CORR = function (valueX, valueY, accumulator, stage) {
+	if (stage === 1) {
+		// Initialize the accumulator object
+		// Skip if either value is null or not a number
+		if (
+			valueX == null ||
+			valueY == null ||
+			typeof valueX !== 'number' ||
+			typeof valueY !== 'number'
+		) {
+			return {
+				sumX: 0,
+				sumY: 0,
+				sumXY: 0,
+				sumX2: 0,
+				sumY2: 0,
+				count: 0,
+			};
+		}
+		return {
+			sumX: valueX,
+			sumY: valueY,
+			sumXY: valueX * valueY,
+			sumX2: valueX * valueX,
+			sumY2: valueY * valueY,
+			count: 1,
+		};
+	} else if (stage === 2) {
+		// Update accumulator with new values
+		// Skip if either value is null or not a number
+		if (
+			valueX != null &&
+			valueY != null &&
+			typeof valueX === 'number' &&
+			typeof valueY === 'number'
+		) {
+			accumulator.sumX += valueX;
+			accumulator.sumY += valueY;
+			accumulator.sumXY += valueX * valueY;
+			accumulator.sumX2 += valueX * valueX;
+			accumulator.sumY2 += valueY * valueY;
+			accumulator.count++;
+		}
+		return accumulator;
+	} else if (stage === 3) {
+		// Calculate the Pearson correlation coefficient
+		const count = accumulator.count;
+
+		// Need at least 2 data points for correlation
+		if (count < 2) {
+			return null;
+		}
+
+		const sumX = accumulator.sumX;
+		const sumY = accumulator.sumY;
+		const sumXY = accumulator.sumXY;
+		const sumX2 = accumulator.sumX2;
+		const sumY2 = accumulator.sumY2;
+
+		const numerator = count * sumXY - sumX * sumY;
+		const denominatorX = Math.sqrt(count * sumX2 - sumX * sumX);
+		const denominatorY = Math.sqrt(count * sumY2 - sumY * sumY);
+		const denominator = denominatorX * denominatorY;
+
+		// Check if the denominator is zero (no variance in one or both variables)
+		if (denominator === 0) {
+			return null;
+		}
+
+		const result = numerator / denominator;
+		return result;
+	}
+	return accumulator;
+};
+
 alasql._aggrOriginal = alasql.aggr;
 alasql.aggr = {};
 Object.keys(alasql._aggrOriginal).forEach(function (k) {

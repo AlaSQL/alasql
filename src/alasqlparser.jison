@@ -100,6 +100,7 @@ COLUMNS 										return 'COLUMN'
 "CONTINUE"										return 'CONTINUE'
 "CONVERT"										return 'CONVERT'
 "CORRESPONDING"									return 'CORRESPONDING'
+"CORR"											return 'CORR'
 "COUNT"											return 'COUNT'
 'CREATE'										return 'CREATE'
 "CROSS"											return 'CROSS'
@@ -1401,6 +1402,9 @@ AggrValue
 		{
 		  if($3.length > 1 && ($1.toUpperCase() == 'MAX' || $1.toUpperCase() == 'MIN')) {
 		  	$$ = new yy.FuncValue({funcid:$1,args:$3});
+		  } else if($3.length === 2 && $1.toUpperCase() == 'CORR') {
+			// CORR takes exactly two arguments
+			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3[0], expression2: $3[1], over:$5});
 		  } else {
 			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3.pop(), over:$5});
 		  }
@@ -1462,6 +1466,7 @@ Aggregator
 	| AGGR { $$ = "AGGR"; }
 	| ARRAY { $$ = "ARRAY"; }
 	| GROUP_CONCAT { $$ = "GROUP_CONCAT"; }
+	| CORR { $$ = "CORR"; }
 /*	| REDUCE { $$ = "REDUCE"; } */
 	;
 
