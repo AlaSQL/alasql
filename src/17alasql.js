@@ -129,6 +129,9 @@ alasql.options = {
 	/** Maximum iterations for recursive CTEs to prevent infinite loops */
 	maxCteIterations: 1000,
 
+	/** Enable JavaScript property access via dot notation (e.g., column.length) */
+	angularBrackets: false,
+
 	/** Whether GETDATE() and NOW() return dates as string. If false, then a Date object is returned */
 	dateAsString: true,
 };
@@ -272,9 +275,11 @@ alasql.dexec = function (databaseid, sql, params, cb, scope) {
 	//	if(db.databaseid != databaseid) console.trace('got!');
 	//	console.log(3,db.databaseid,databaseid);
 
-	// Include joinstar option in cache key because it affects how SELECT * compiles
-	// Without this, changing joinstar would use stale cached queries compiled with old option
-	var hh = hash(sql + '|joinstar:' + alasql.options.joinstar);
+	// Include joinstar and angularBrackets options in cache key because they affect how queries compile
+	// Without this, changing these options would use stale cached queries compiled with old options
+	var hh = hash(
+		sql + '|joinstar:' + alasql.options.joinstar + '|angularBrackets:' + alasql.options.angularBrackets
+	);
 
 	// Create hash
 	if (alasql.options.cache) {

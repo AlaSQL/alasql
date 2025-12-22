@@ -6,6 +6,15 @@ if (typeof exports === 'object') {
 }
 
 describe('Test 341 Intellectual DOT operator', function () {
+	// Enable JavaScript property access via dot notation for these tests
+	before(function () {
+		alasql.options.angularBrackets = true;
+	});
+
+	after(function () {
+		alasql.options.angularBrackets = false;
+	});
+
 	it('1. CREATE DATABASE', function (done) {
 		alasql('CREATE DATABASE test341;USE test341');
 		done();

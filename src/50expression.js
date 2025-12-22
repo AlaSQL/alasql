@@ -784,13 +784,15 @@
 			if (this.tableid) {
 				// Check if tableid is actually a column name (property access pattern like name.length)
 				// This handles cases where the parser sees "columnname.property" and interprets it as "table.column"
-				const tableidValue = defcols?.[this.tableid];
-				if (tableidValue && tableidValue !== '-' && !defcols?.['.']?.[this.tableid]) {
-					// tableid is actually a column name (not a table name), so this is property access
-					// Generate code to access the property on the column value
-					const actualTable = tableidValue;
-					if (this.columnid !== '_') {
-						return `((${context}['${actualTable}']['${this.tableid}'] || {})['${this.columnid}'])`;
+				if (alasql.options.angularBrackets) {
+					const tableidValue = defcols?.[this.tableid];
+					if (tableidValue && tableidValue !== '-' && !defcols?.['.']?.[this.tableid]) {
+						// tableid is actually a column name (not a table name), so this is property access
+						// Generate code to access the property on the column value
+						const actualTable = tableidValue;
+						if (this.columnid !== '_') {
+							return `((${context}['${actualTable}']['${this.tableid}'] || {})['${this.columnid}'])`;
+						}
 					}
 				}
 				// Otherwise, tableid is a table name (normal table.column access)

@@ -203,7 +203,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				// This handles cases where the parser sees "columnname.property" and interprets it as "table.column"
 				var isPropertyAccess = false;
 				var actualTableid;
-				if (tbid) {
+				if (alasql.options.angularBrackets && tbid) {
 					const tbidValue = query.defcols?.[tbid];
 					if (tbidValue && tbidValue !== '-' && !query.defcols?.['.']?.[tbid]) {
 						// tbid is actually a column name (not a table name), so this is property access
