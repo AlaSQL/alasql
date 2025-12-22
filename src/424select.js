@@ -473,7 +473,7 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 
 yy.Select.prototype.compileSelectGroup0 = function (query) {
 	var self = this;
-	
+
 	// Build a lookup map for GROUP BY columns that reference aliases (optimization to avoid O(n*m) complexity)
 	var groupByAliasMap = {};
 	if (self.group) {
@@ -483,7 +483,7 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			}
 		});
 	}
-	
+
 	self.columns.forEach(function (col, idx) {
 		if (!(col instanceof yy.Column && col.columnid === '*')) {
 			var colas;
@@ -511,7 +511,7 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 				if (groupIdx > -1) {
 					self.group[groupIdx].nick = colas;
 				}
-				
+
 				// Also match GROUP BY columns that reference SELECT column aliases
 				// This handles cases like: SELECT CASE ... END AS age_group ... GROUP BY age_group
 				if (col.as && groupByAliasMap.hasOwnProperty(col.as)) {
