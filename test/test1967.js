@@ -17,7 +17,9 @@ describe('Test - Scalar Subquery Support', function () {
 
 	it('A) Scalar subquery in SELECT clause - basic', function () {
 		alasql('CREATE TABLE products (id INT, name STRING, price INT)');
-		alasql('INSERT INTO products VALUES (1, "Widget", 10), (2, "Gadget", 20), (3, "Doohickey", 30)');
+		alasql(
+			'INSERT INTO products VALUES (1, "Widget", 10), (2, "Gadget", 20), (3, "Doohickey", 30)'
+		);
 
 		var res = alasql(
 			'SELECT id, name, price, (SELECT MAX(price) FROM products) as max_price FROM products'
@@ -60,9 +62,7 @@ describe('Test - Scalar Subquery Support', function () {
 			'INSERT INTO customers VALUES (1, "Alice", 50000), (2, "Bob", 60000), (3, "Charlie", 70000)'
 		);
 		alasql('CREATE TABLE orders (customer_id INT, amount INT)');
-		alasql(
-			'INSERT INTO orders VALUES (1, 100), (1, 200), (2, 150), (2, 250), (3, 300), (3, 400)'
-		);
+		alasql('INSERT INTO orders VALUES (1, 100), (1, 200), (2, 150), (2, 250), (3, 300), (3, 400)');
 
 		var res = alasql(
 			'SELECT c.id, c.name, (SELECT SUM(amount) FROM orders o WHERE o.customer_id = c.id) as total_orders FROM customers c'
