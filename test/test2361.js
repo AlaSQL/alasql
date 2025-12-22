@@ -104,5 +104,65 @@ if (typeof exports != 'object') {
 					done(error);
 				});
 		});
+
+		it('6. Transaction with autocommit OFF - COMMIT should persist data', function (done) {
+			alasql('SET AUTOCOMMIT OFF');
+			alasql
+				.promise('USE ' + SCHEMA_NAME)
+				.then(() => alasql.promise('BEGIN TRANSACTION'))
+				.then(() => alasql.promise('INSERT INTO ' + TABLE_NAME + " VALUES ('test3'), ('test4')"))
+				.then(() => alasql.promise('COMMIT TRANSACTION'))
+				.then(() => alasql.promise('SELECT * FROM ' + TABLE_NAME))
+				.then(res => {
+					// Should have at least the new rows
+					assert(res.length >= 2, 'Should have at least 2 rows after commit');
+					alasql('SET AUTOCOMMIT ON');
+					done();
+				})
+				.catch(error => {
+					alasql('SET AUTOCOMMIT ON');
+					done(error);
+				});
+		});
+
+		it('7. Transaction with autocommit OFF - ROLLBACK should discard changes', function (done) {
+			alasql('SET AUTOCOMMIT OFF');
+			alasql
+				.promise('USE ' + SCHEMA_NAME)
+				.then(() => alasql.promise('SELECT * FROM ' + TABLE_NAME))
+				.then(initialRes => {
+					const initialCount = initialRes.length;
+					return alasql
+						.promise('BEGIN TRANSACTION')
+						.then(() =>
+							alasql.promise('INSERT INTO ' + TABLE_NAME + " VALUES ('test5'), ('test6')")
+						)
+						.then(() => alasql.promise('SELECT * FROM ' + TABLE_NAME))
+						.then(midRes => {
+							// Should see the new rows before rollback
+							assert.equal(
+								midRes.length,
+								initialCount + 2,
+								'Should have 2 more rows before rollback'
+							);
+							return alasql.promise('ROLLBACK TRANSACTION');
+						})
+						.then(() => alasql.promise('SELECT * FROM ' + TABLE_NAME))
+						.then(finalRes => {
+							// After rollback, should have original count
+							assert.equal(
+								finalRes.length,
+								initialCount,
+								'Should have original count after rollback'
+							);
+							alasql('SET AUTOCOMMIT ON');
+							done();
+						});
+				})
+				.catch(error => {
+					alasql('SET AUTOCOMMIT ON');
+					done(error);
+				});
+		});
 	});
 }

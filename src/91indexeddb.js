@@ -187,15 +187,14 @@ IDB.attachDatabase = async function (ixdbid, dbid, args, params, cb) {
 		db.tables[stores[i]] = {};
 	}
 
-	/*/*
-		if (!alasql.options.autocommit) {
-			if (db.tables) {
-				for(var tbid in db.tables) {
-					db.tables[tbid].data = LS.get(db.lsdbid+'.'+tbid);
-				}
+	// IF AUTOCOMMIT IS OFF then copy data to memory
+	if (!alasql.options.autocommit) {
+		if (db.tables) {
+			for (var tbid in db.tables) {
+				IDB.restoreTable(dbid || ixdbid, tbid);
 			}
 		}
-	*/
+	}
 
 	if (cb) cb(1);
 };
@@ -333,10 +332,58 @@ IDB.dropTable = async function (databaseid, tableid, ifexists, cb) {
 */
 
 IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
-	const ixdbid = alasql.databases[databaseid].ixdbid;
-	const request = indexedDB.open(ixdbid);
 	var db = alasql.databases[databaseid];
 	var table = db.tables[tableid];
+
+	// In autocommit mode, work with in-memory data
+	if (!alasql.options.autocommit) {
+		// Ensure table data is loaded
+		if (!table.data) {
+			IDB.restoreTable(databaseid, tableid, () => {
+				// After loading, add values
+				if (!table.data) table.data = [];
+				table.data = table.data.concat(value);
+
+				// Execute triggers
+				for (var tr in table.afterinsert) {
+					if (table.afterinsert[tr]) {
+						var trigger = table.afterinsert[tr];
+						if (trigger.funcid) {
+							alasql.fn[trigger.funcid](value);
+						} else if (trigger.statement) {
+							trigger.statement.execute(databaseid);
+						}
+					}
+				}
+
+				if (cb) cb(value.length);
+			});
+			return;
+		}
+
+		// Table already loaded, just add to memory
+		if (!table.data) table.data = [];
+		table.data = table.data.concat(value);
+
+		// Execute triggers
+		for (var tr in table.afterinsert) {
+			if (table.afterinsert[tr]) {
+				var trigger = table.afterinsert[tr];
+				if (trigger.funcid) {
+					alasql.fn[trigger.funcid](value);
+				} else if (trigger.statement) {
+					trigger.statement.execute(databaseid);
+				}
+			}
+		}
+
+		if (cb) cb(value.length);
+		return;
+	}
+
+	// In autocommit mode, write directly to IndexedDB
+	const ixdbid = db.ixdbid;
+	const request = indexedDB.open(ixdbid);
 
 	request.onupgradeneeded = evt => {
 		evt.target.transaction.abort();
@@ -371,7 +418,27 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 };
 
 IDB.fromTable = function (databaseid, tableid, cb, idx, query) {
-	const ixdbid = alasql.databases[databaseid].ixdbid;
+	var db = alasql.databases[databaseid];
+	var table = db.tables[tableid];
+
+	// In transaction mode (autocommit OFF), read from memory
+	if (!alasql.options.autocommit) {
+		// Ensure table data is loaded
+		if (!table.data) {
+			IDB.restoreTable(databaseid, tableid, () => {
+				const res = table.data || [];
+				if (cb) cb(res, idx, query);
+			});
+			return;
+		}
+
+		const res = table.data || [];
+		if (cb) cb(res, idx, query);
+		return;
+	}
+
+	// In autocommit mode, read directly from IndexedDB
+	const ixdbid = db.ixdbid;
 	const request = indexedDB.open(ixdbid);
 
 	request.onupgradeneeded = evt => {
@@ -455,33 +522,235 @@ IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) 
 };
 
 /**
+ * Store table structure and data into IndexedDB
+ * @param databaseid {string} AlaSQL database id
+ * @param tableid {string} Table name
+ * @param cb {function} Optional callback
+ */
+IDB.storeTable = function (databaseid, tableid, cb) {
+	const db = alasql.databases[databaseid];
+	const table = db.tables[tableid];
+	const ixdbid = db.ixdbid;
+
+	if (!table || !table.data) {
+		if (cb) cb(0);
+		return;
+	}
+
+	const request = indexedDB.open(ixdbid);
+
+	request.onerror = () => {
+		if (cb) cb(null, new Error('Failed to open IndexedDB'));
+	};
+
+	request.onsuccess = () => {
+		const ixdb = request.result;
+
+		// Clear existing data first
+		const clearTx = ixdb.transaction([tableid], 'readwrite');
+		const clearStore = clearTx.objectStore(tableid);
+		const clearReq = clearStore.clear();
+
+		clearReq.onsuccess = () => {
+			// Now add all data
+			const tx = ixdb.transaction([tableid], 'readwrite');
+			const tb = tx.objectStore(tableid);
+
+			for (let i = 0; i < table.data.length; i++) {
+				tb.add(table.data[i]);
+			}
+
+			tx.oncomplete = () => {
+				ixdb.close();
+				if (cb) cb(table.data.length);
+			};
+
+			tx.onerror = () => {
+				ixdb.close();
+				if (cb) cb(null, new Error('Failed to store table data'));
+			};
+		};
+
+		clearReq.onerror = () => {
+			ixdb.close();
+			if (cb) cb(null, new Error('Failed to clear table'));
+		};
+	};
+};
+
+/**
+ * Restore table structure and data from IndexedDB to memory
+ * @param databaseid {string} AlaSQL database id
+ * @param tableid {string} Table name
+ * @param cb {function} Optional callback
+ */
+IDB.restoreTable = function (databaseid, tableid, cb) {
+	const db = alasql.databases[databaseid];
+	const ixdbid = db.ixdbid;
+
+	// Initialize table if it doesn't exist
+	if (!db.tables[tableid]) {
+		db.tables[tableid] = new alasql.Table();
+	}
+
+	const table = db.tables[tableid];
+
+	const request = indexedDB.open(ixdbid);
+
+	request.onerror = () => {
+		if (cb) cb(null, new Error('Failed to open IndexedDB'));
+	};
+
+	request.onsuccess = () => {
+		const ixdb = request.result;
+		const tx = ixdb.transaction([tableid]);
+		const store = tx.objectStore(tableid);
+		const getAllReq = store.getAll();
+
+		getAllReq.onsuccess = () => {
+			table.data = getAllReq.result || [];
+			ixdb.close();
+			if (cb) cb(table.data.length);
+		};
+
+		getAllReq.onerror = () => {
+			ixdb.close();
+			if (cb) cb(null, new Error('Failed to restore table data'));
+		};
+	};
+
+	return table;
+};
+
+/**
  * Begin transaction for IndexedDB
- * Note: IndexedDB handles transactions internally, so this is a no-op
- * that just acknowledges the transaction start
+ * Implements transaction state management similar to LOCALSTORAGE
  */
 IDB.begin = function (databaseid, cb) {
-	// IndexedDB manages transactions internally at the operation level
-	// This method is here for compatibility with the transaction API
-	return cb ? cb(1) : 1;
+	const db = alasql.databases[databaseid];
+
+	// Store snapshot of current state for rollback
+	if (!db.engineid || db.engineid !== 'INDEXEDDB') {
+		return cb ? cb(1) : 1;
+	}
+
+	// In autocommit mode, begin just commits current state
+	if (alasql.options.autocommit) {
+		return IDB.commit(databaseid, cb);
+	}
+
+	// In transaction mode, ensure data is loaded in memory
+	const tablesToLoad = [];
+	for (const tbid in db.tables) {
+		if (db.tables[tbid] && !db.tables[tbid].data) {
+			tablesToLoad.push(tbid);
+		}
+	}
+
+	if (tablesToLoad.length === 0) {
+		return cb ? cb(1) : 1;
+	}
+
+	// Load all tables that aren't already in memory
+	let loaded = 0;
+	const checkComplete = () => {
+		loaded++;
+		if (loaded === tablesToLoad.length) {
+			if (cb) cb(1);
+		}
+	};
+
+	tablesToLoad.forEach(tbid => {
+		IDB.restoreTable(databaseid, tbid, checkComplete);
+	});
+
+	if (tablesToLoad.length === 0) {
+		return cb ? cb(1) : 1;
+	}
 };
 
 /**
  * Commit transaction for IndexedDB
- * Note: IndexedDB handles commits internally, so this is a no-op
+ * Persists in-memory data to IndexedDB
  */
 IDB.commit = function (databaseid, cb) {
-	// IndexedDB automatically commits transactions when operations complete
-	// This method is here for compatibility with the transaction API
-	return cb ? cb(1) : 1;
+	const db = alasql.databases[databaseid];
+
+	if (!db.engineid || db.engineid !== 'INDEXEDDB') {
+		return cb ? cb(1) : 1;
+	}
+
+	const tablesToStore = [];
+	for (const tbid in db.tables) {
+		if (db.tables[tbid] && db.tables[tbid].data) {
+			tablesToStore.push(tbid);
+		}
+	}
+
+	if (tablesToStore.length === 0) {
+		return cb ? cb(1) : 1;
+	}
+
+	let stored = 0;
+	let hasError = false;
+
+	const checkComplete = (res, err) => {
+		if (err && !hasError) {
+			hasError = true;
+			if (cb) cb(null, err);
+			return;
+		}
+
+		stored++;
+		if (stored === tablesToStore.length && !hasError) {
+			if (cb) cb(1);
+		}
+	};
+
+	tablesToStore.forEach(tbid => {
+		IDB.storeTable(databaseid, tbid, checkComplete);
+	});
 };
 
 /**
  * Rollback transaction for IndexedDB
- * Note: IndexedDB handles rollbacks internally, so this is a no-op
+ * Restores data from IndexedDB, discarding in-memory changes
  */
 IDB.rollback = function (databaseid, cb) {
-	// IndexedDB automatically rolls back transactions on errors
-	// Manual rollback is not supported in the same way as other engines
-	// This method is here for compatibility with the transaction API
-	return cb ? cb(1) : 1;
+	const db = alasql.databases[databaseid];
+
+	if (!db.engineid || db.engineid !== 'INDEXEDDB') {
+		return cb ? cb(1) : 1;
+	}
+
+	const tablesToRestore = [];
+	for (const tbid in db.tables) {
+		if (db.tables[tbid]) {
+			tablesToRestore.push(tbid);
+		}
+	}
+
+	if (tablesToRestore.length === 0) {
+		return cb ? cb(1) : 1;
+	}
+
+	let restored = 0;
+	let hasError = false;
+
+	const checkComplete = (res, err) => {
+		if (err && !hasError) {
+			hasError = true;
+			if (cb) cb(null, err);
+			return;
+		}
+
+		restored++;
+		if (restored === tablesToRestore.length && !hasError) {
+			if (cb) cb(1);
+		}
+	};
+
+	tablesToRestore.forEach(tbid => {
+		IDB.restoreTable(databaseid, tbid, checkComplete);
+	});
 };
