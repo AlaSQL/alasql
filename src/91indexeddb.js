@@ -453,3 +453,35 @@ IDB.updateTable = function (databaseid, tableid, assignfn, wherefn, params, cb) 
 		};
 	};
 };
+
+/**
+ * Begin transaction for IndexedDB
+ * Note: IndexedDB handles transactions internally, so this is a no-op
+ * that just acknowledges the transaction start
+ */
+IDB.begin = function (databaseid, cb) {
+	// IndexedDB manages transactions internally at the operation level
+	// This method is here for compatibility with the transaction API
+	return cb ? cb(1) : 1;
+};
+
+/**
+ * Commit transaction for IndexedDB
+ * Note: IndexedDB handles commits internally, so this is a no-op
+ */
+IDB.commit = function (databaseid, cb) {
+	// IndexedDB automatically commits transactions when operations complete
+	// This method is here for compatibility with the transaction API
+	return cb ? cb(1) : 1;
+};
+
+/**
+ * Rollback transaction for IndexedDB
+ * Note: IndexedDB handles rollbacks internally, so this is a no-op
+ */
+IDB.rollback = function (databaseid, cb) {
+	// IndexedDB automatically rolls back transactions on errors
+	// Manual rollback is not supported in the same way as other engines
+	// This method is here for compatibility with the transaction API
+	return cb ? cb(1) : 1;
+};
