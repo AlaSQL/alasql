@@ -100,9 +100,14 @@ describe('Test - Scalar Subquery Support', function () {
 	});
 
 	it('H) Multiple scalar subqueries in SELECT clause', function () {
-		var res = alasql(
-			'SELECT c.id, c.name, (SELECT SUM(amount) FROM orders o WHERE o.customer_id = c.id) as sum_amt, (SELECT AVG(amount) FROM orders o WHERE o.customer_id = c.id) as avg_amt, (SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) as cnt FROM customers c WHERE c.id = 1'
-		);
+		var res = alasql(`
+			SELECT c.id, c.name, 
+				(SELECT SUM(amount) FROM orders o WHERE o.customer_id = c.id) as sum_amt, 
+				(SELECT AVG(amount) FROM orders o WHERE o.customer_id = c.id) as avg_amt, 
+				(SELECT COUNT(*) FROM orders o WHERE o.customer_id = c.id) as cnt 
+			FROM customers c 
+			WHERE c.id = 1
+		`);
 
 		assert.deepEqual(res, [{id: 1, name: 'Alice', sum_amt: 300, avg_amt: 150, cnt: 2}]);
 	});
@@ -131,7 +136,8 @@ describe('Test - Scalar Subquery Support', function () {
 			'SELECT c.id, c.name, (SELECT SUM(amount) FROM orders o WHERE o.customer_id = 999) as no_orders FROM customers c WHERE c.id = 1'
 		);
 
-		// Note: SUM returns 0 when no rows match (SQL standard behavior)
+		// Note: In AlaSQL, SUM returns 0 when no rows match.
+		// This differs from standard SQL where SUM typically returns NULL for empty result sets.
 		assert.deepEqual(res, [{id: 1, name: 'Alice', no_orders: 0}]);
 	});
 
