@@ -516,12 +516,9 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 						return gp instanceof yy.Column && gp.columnid === col.as && !gp.tableid;
 					});
 					if (aliasGroupIdx > -1) {
-						// Replace the GROUP BY column reference with a copy of the SELECT expression
-						// We need to use a copy to avoid sharing state between SELECT and GROUP BY
-						var groupExpr = Object.assign(
-							Object.create(Object.getPrototypeOf(col)),
-							col
-						);
+						// Replace the GROUP BY column reference with a deep copy of the SELECT expression
+						// We use deep cloning to ensure nested objects (like CASE whens/elses) are copied
+						var groupExpr = cloneDeep(col);
 						// Clear SELECT-specific properties that shouldn't be in GROUP BY
 						delete groupExpr.as;
 						groupExpr.nick = colas;
