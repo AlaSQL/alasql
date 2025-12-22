@@ -1347,5 +1347,88 @@ var getXLSX = function () {
 	return XLSX;
 };
 
+/**
+ * Convert a value to the appropriate type based on column definition
+ * @param {*} value - The value to convert
+ * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
+ * @param {object} options - Conversion options
+ * @return {*} The converted value
+ */
+utils.convertValueToType = function (value, dbtypeid, options) {
+	options = options || {};
+	
+	// If value is null or undefined, return as is
+	if (value === null || value === undefined) {
+		return value;
+	}
+	
+	// If no type specified, try to auto-convert if it looks like a number
+	if (!dbtypeid) {
+		// Auto-convert only if csvStringToNumber is enabled (backward compatibility)
+		if (alasql.options.csvStringToNumber && typeof value === 'string' && value.length > 0) {
+			var trimmed = value.trim();
+			if (trimmed == +trimmed) {
+				return +trimmed;
+			}
+		}
+		return value;
+	}
+	
+	// Normalize type identifier
+	dbtypeid = dbtypeid.toUpperCase();
+	
+	// Convert based on type
+	switch (dbtypeid) {
+		case 'STRING':
+		case 'VARCHAR':
+		case 'NVARCHAR':
+		case 'CHAR':
+		case 'NCHAR':
+		case 'TEXT':
+			// Always return as string
+			return String(value);
+			
+		case 'INT':
+		case 'INTEGER':
+		case 'SMALLINT':
+		case 'BIGINT':
+		case 'TINYINT':
+			// Convert to integer
+			return parseInt(value, 10);
+			
+		case 'FLOAT':
+		case 'DOUBLE':
+		case 'REAL':
+		case 'NUMBER':
+		case 'NUMERIC':
+		case 'DECIMAL':
+		case 'MONEY':
+			// Convert to float
+			return parseFloat(value);
+			
+		case 'BOOLEAN':
+		case 'BOOL':
+			// Convert to boolean
+			if (typeof value === 'string') {
+				var lower = value.toLowerCase();
+				return lower === 'true' || lower === '1' || lower === 'yes';
+			}
+			return Boolean(value);
+			
+		case 'DATE':
+		case 'DATETIME':
+		case 'TIMESTAMP':
+			// Convert to Date
+			if (value instanceof Date) {
+				return value;
+			}
+			return new Date(value);
+			
+		default:
+			// Unknown type, return as is
+			return value;
+	}
+};
+
 // set AlaSQl path
 alasql.path = alasql.utils.findAlaSQLPath();
