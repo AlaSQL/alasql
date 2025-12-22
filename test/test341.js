@@ -40,10 +40,10 @@ describe('Test 341 Intellectual DOT operator', function () {
 		// SET returns the number of rows affected (1 for variable assignment)
 		var res = alasql('SET @a = "who".length');
 		assert.deepEqual(res, 1);
-		
+
 		// Verify the variable @a was set to the correct value (length of "who" = 3)
 		assert.deepEqual(alasql.vars.a, 3);
-		
+
 		// Verify we can use the variable in subsequent queries
 		var res2 = alasql('SELECT @a AS result');
 		assert.deepEqual(res2, [{result: 3}]);
@@ -66,21 +66,21 @@ describe('Test 341 Intellectual DOT operator', function () {
 		// Create a table named "item" with a column named "item"
 		alasql('CREATE TABLE item (id INT, item STRING)');
 		alasql('INSERT INTO item VALUES (1, "Alpha"), (2, "Beta")');
-		
+
 		// Test 1: table.column access (item.item should get the column value)
 		var res1 = alasql('SELECT item.item FROM item');
 		assert.deepEqual(res1, [{item: 'Alpha'}, {item: 'Beta'}]);
-		
+
 		// Test 2: table.column.property access (item.item.length should get the length)
 		var res2 = alasql('SELECT COLUMN item.item.length FROM item');
 		assert.deepEqual(res2, [5, 4]);
-		
+
 		// Test 3: When only one column exists with unique name, property access works
 		alasql('CREATE TABLE products (title STRING)');
 		alasql('INSERT INTO products VALUES ("Product"), ("Item")');
 		var res3 = alasql('SELECT COLUMN title.length FROM products');
 		assert.deepEqual(res3, [7, 4]);
-		
+
 		alasql('DROP TABLE item');
 		alasql('DROP TABLE products');
 		done();
