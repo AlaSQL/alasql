@@ -112,11 +112,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 				// Validate that we have the right number of values for the columns
 				if (values.length !== self.columns.length) {
 					throw new Error(
-						'The number of values (' +
-							values.length +
-							') does not match the number of columns (' +
-							self.columns.length +
-							'). ' +
+						`The number of values (${values.length}) does not match the number of columns (${self.columns.length}). ` +
 							'If using a subquery, use INSERT INTO ... SELECT instead of INSERT INTO ... VALUES (SELECT ...)'
 					);
 				}
@@ -157,11 +153,7 @@ yy.Insert.prototype.compile = function (databaseid) {
 					// Validate that we have the right number of values for the table columns
 					if (values.length !== table.columns.length) {
 						throw new Error(
-							'The number of values (' +
-								values.length +
-								') does not match the number of table columns (' +
-								table.columns.length +
-								'). ' +
+							`The number of values (${values.length}) does not match the number of table columns (${table.columns.length}). ` +
 								'If using a subquery, use INSERT INTO ... SELECT instead of INSERT INTO ... VALUES (SELECT ...)'
 						);
 					}
