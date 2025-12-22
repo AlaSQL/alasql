@@ -501,11 +501,32 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			col.nick = colas;
 
 			if (self.group) {
+				// Match GROUP BY columns to SELECT columns by columnid and tableid (for real columns)
 				var groupIdx = self.group.findIndex(function (gp) {
 					return gp.columnid === col.columnid && gp.tableid === col.tableid;
 				});
 				if (groupIdx > -1) {
 					self.group[groupIdx].nick = colas;
+				}
+				
+				// Also match GROUP BY columns that reference SELECT column aliases
+				// This handles cases like: SELECT CASE ... END AS age_group ... GROUP BY age_group
+				if (col.as) {
+					var aliasGroupIdx = self.group.findIndex(function (gp) {
+						return gp instanceof yy.Column && gp.columnid === col.as && !gp.tableid;
+					});
+					if (aliasGroupIdx > -1) {
+						// Replace the GROUP BY column reference with a copy of the SELECT expression
+						// We need to use a copy to avoid sharing state between SELECT and GROUP BY
+						var groupExpr = Object.assign(
+							Object.create(Object.getPrototypeOf(col)),
+							col
+						);
+						// Clear SELECT-specific properties that shouldn't be in GROUP BY
+						delete groupExpr.as;
+						groupExpr.nick = colas;
+						self.group[aliasGroupIdx] = groupExpr;
+					}
 				}
 			}
 
