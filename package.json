@@ -80,6 +80,7 @@
 		"uglify-js": "3.19.3"
 	},
 	"resolutions": {
+		"cross-spawn": "^7.0.6",
 		"got": "14",
 		"axios": "^1.13.2",
 		"json5": "2",
@@ -93,6 +94,7 @@
 		"rimraf": "^6.1.2"
 	},
 	"overrides": {
+		"cross-spawn": "^7.0.6",
 		"axios": "^1.13.2",
 		"follow-redirects": "^1.15.11",
 		"glob": "^13.0.0",
