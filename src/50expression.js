@@ -847,8 +847,9 @@
 			
 			if (existingAggrWithSameExpr) {
 				// Reuse the accumulator nick from the existing aggregate with same expression
-				// but keep our own nick for output (if already assigned in compileSelectGroup0)
-				this.aggrNick = existingAggrWithSameExpr.aggrNick || existingAggrWithSameExpr.nick;
+				// The existing aggregate has already been processed and has aggrNick set
+				this.aggrNick = existingAggrWithSameExpr.aggrNick;
+				// Keep our own nick for output (if already assigned in compileSelectGroup0)
 				// Don't add to selectGroup again to avoid double accumulation
 			} else {
 				// No existing aggregate with same expression
@@ -893,7 +894,7 @@
 		}
 
 		toJS() {
-			// Use aggrNick (shared accumulator) if available, otherwise use nick
+			// Use aggrNick for duplicate aggregates to share the same accumulator, otherwise use the unique nick
 			var colas = this.aggrNick || this.nick;
 			if (colas === undefined) {
 				colas = escapeq(this.toString());
