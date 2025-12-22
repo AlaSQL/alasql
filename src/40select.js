@@ -533,7 +533,7 @@ function modify(query, res) {
 		// For sparse data (OUTER JOINs), find the row with the most keys
 		var maxKeys = Object.keys(res[0]);
 		var maxKeyCount = maxKeys.length;
-		var allcol = {};
+		var allcolSet = {};
 		var maxRows = Math.min(res.length, alasql.options.columnlookup || 10);
 
 		for (var i = 0; i < maxRows; i++) {
@@ -542,23 +542,24 @@ function modify(query, res) {
 				maxKeyCount = rowKeys.length;
 				maxKeys = rowKeys;
 			}
-			for (var key in res[i]) {
-				allcol[key] = true;
+			// Collect all keys from this row (reuse rowKeys we already have)
+			for (var j = 0; j < rowKeys.length; j++) {
+				allcolSet[rowKeys[j]] = true;
 			}
 		}
 
-		// Build columns array: start with maxKeys, then add any missing keys from allcol
+		// Build columns array: start with maxKeys, then add any missing keys
 		var dataColumns = [];
 		var addedKeys = {};
 
 		// Add keys from the row with most columns first (preserves natural order)
-		for (var j = 0; j < maxKeys.length; j++) {
-			dataColumns.push({columnid: maxKeys[j]});
-			addedKeys[maxKeys[j]] = true;
+		for (var k = 0; k < maxKeys.length; k++) {
+			dataColumns.push({columnid: maxKeys[k]});
+			addedKeys[maxKeys[k]] = true;
 		}
 
 		// Add any remaining keys not in maxKeys
-		for (var key in allcol) {
+		for (var key in allcolSet) {
 			if (!addedKeys[key]) {
 				dataColumns.push({columnid: key});
 			}
