@@ -8,7 +8,7 @@
 */
 
 %lex
-%options case-insensitive
+%options case-insensitive easy_keyword_rules
 
 %%
 
@@ -1916,13 +1916,13 @@ Insert
         | INSERT Into TargetTable LPAR ColumnsList RPAR Values  ValuesListsList OutputClause
                 { $$ = new yy.Insert({into:$3, columns: $5, values: $8}); yy.extend($$,$9); }
         | INSERT Into TargetTable LPAR ColumnsList RPAR ValuesListsList OutputClause
-                { $$ = new yy.Insert({into:$3, columns: $5, values: $7}); yy.extend($$,$9); }
+                { $$ = new yy.Insert({into:$3, columns: $5, values: $7}); yy.extend($$,$8); }
         | INSERT Into TargetTable Select OutputClause
                 { $$ = new yy.Insert({into:$3, select: $4}); yy.extend($$,$5); }
         | INSERT OR REPLACE Into TargetTable Select OutputClause
                 { $$ = new yy.Insert({into:$5, select: $6, orreplace:true}); yy.extend($$,$7); }
         | INSERT Into TargetTable LPAR ColumnsList RPAR Select OutputClause
-                { $$ = new yy.Insert({into:$3, columns: $5, select: $7}); yy.extend($$,$9); }
+                { $$ = new yy.Insert({into:$3, columns: $5, select: $7}); yy.extend($$,$8); }
         | INSERT Into TargetTable SET SetColumnsList OutputClause
                 { $$ = new yy.Insert({into:$3, setcolumns: $5}); yy.extend($$,$6); }
         ;
