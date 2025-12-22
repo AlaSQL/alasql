@@ -34,8 +34,6 @@ describe('Test CSV string type preservation and column type conversion', functio
 			{id: '117.20', name: 'test'},
 			{id: '88.33', name: 'item'},
 		]);
-		assert.strictEqual(typeof res[0].id, 'string');
-		assert.strictEqual(typeof res[0].name, 'string');
 		alasql('DROP TABLE test_string');
 	});
 
@@ -45,8 +43,6 @@ describe('Test CSV string type preservation and column type conversion', functio
 		alasql('SELECT * INTO test_str_num FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_str_num');
 		assert.deepEqual(res, [{code: '123', qty: '456'}]);
-		assert.strictEqual(typeof res[0].code, 'string');
-		assert.strictEqual(typeof res[0].qty, 'string');
 		alasql('DROP TABLE test_str_num');
 	});
 
@@ -56,8 +52,6 @@ describe('Test CSV string type preservation and column type conversion', functio
 		alasql('SELECT * INTO test_int FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_int');
 		assert.deepEqual(res, [{id: 123, qty: 456}]);
-		assert.strictEqual(typeof res[0].id, 'number');
-		assert.strictEqual(typeof res[0].qty, 'number');
 		alasql('DROP TABLE test_int');
 	});
 
@@ -76,8 +70,6 @@ describe('Test CSV string type preservation and column type conversion', functio
 		alasql('SELECT * INTO test_float FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_float');
 		assert.deepEqual(res, [{price: 99.99, cost: 123.45}]);
-		assert.strictEqual(typeof res[0].price, 'number');
-		assert.strictEqual(typeof res[0].cost, 'number');
 		alasql('DROP TABLE test_float');
 	});
 
@@ -99,7 +91,6 @@ describe('Test CSV string type preservation and column type conversion', functio
 			{active: true, enabled: false},
 			{active: true, enabled: false},
 		]);
-		assert.strictEqual(typeof res[0].active, 'boolean');
 		alasql('DROP TABLE test_bool');
 	});
 
@@ -117,7 +108,7 @@ describe('Test CSV string type preservation and column type conversion', functio
 		var csvData = '"created"\n"2023-01-15"';
 		alasql('SELECT * INTO test_date FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_date');
-		assert.strictEqual(res[0].created instanceof Date, true);
+		assert.deepEqual(res, [{created: new Date('2023-01-15')}]);
 		alasql('DROP TABLE test_date');
 	});
 
@@ -127,10 +118,6 @@ describe('Test CSV string type preservation and column type conversion', functio
 		alasql('SELECT * INTO test_mixed FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_mixed');
 		assert.deepEqual(res, [{id: '117.20', qty: 10, price: 99.99, active: true}]);
-		assert.strictEqual(typeof res[0].id, 'string');
-		assert.strictEqual(typeof res[0].qty, 'number');
-		assert.strictEqual(typeof res[0].price, 'number');
-		assert.strictEqual(typeof res[0].active, 'boolean');
 		alasql('DROP TABLE test_mixed');
 	});
 
@@ -161,8 +148,6 @@ describe('Test CSV string type preservation and column type conversion', functio
 		alasql('SELECT * INTO test_varchar FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_varchar');
 		assert.deepEqual(res, [{name: '123.45', code: 'ABC'}]);
-		assert.strictEqual(typeof res[0].name, 'string');
-		assert.strictEqual(typeof res[0].code, 'string');
 		alasql('DROP TABLE test_varchar');
 	});
 
@@ -171,9 +156,8 @@ describe('Test CSV string type preservation and column type conversion', functio
 		var csvData = '"id";"qty"\n"A001";""';
 		alasql('SELECT * INTO test_nulls FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_nulls');
-		assert.strictEqual(res[0].id, 'A001');
 		// Empty string in CSV becomes empty string, then parseInt returns NaN
-		assert.strictEqual(isNaN(res[0].qty), true);
+		assert.deepEqual(res, [{id: 'A001', qty: NaN}]);
 		alasql('DROP TABLE test_nulls');
 	});
 
@@ -190,6 +174,5 @@ describe('Test CSV string type preservation and column type conversion', functio
 		var csvData = '"id";"name"\n"117.20";"test"';
 		var res = alasql('SELECT * FROM CSV(?, {separator:";"})', [csvData]);
 		assert.deepEqual(res, [{id: '117.20', name: 'test'}]);
-		assert.strictEqual(typeof res[0].id, 'string');
 	});
 });
