@@ -846,9 +846,10 @@
 			}
 			
 			if (existingAggrWithSameExpr) {
-				// Reuse the nick from the existing aggregate with same expression
-				// and don't add this to selectGroup again
-				this.nick = existingAggrWithSameExpr.nick;
+				// Reuse the accumulator nick from the existing aggregate with same expression
+				// but keep our own nick for output (if already assigned in compileSelectGroup0)
+				this.aggrNick = existingAggrWithSameExpr.aggrNick || existingAggrWithSameExpr.nick;
+				// Don't add to selectGroup again to avoid double accumulation
 			} else {
 				// No existing aggregate with same expression
 				if (!this.nick) {
@@ -868,6 +869,8 @@
 						query.removeKeys.push(colas);
 					}
 				}
+				// This aggregate will be the accumulator, store its nick
+				this.aggrNick = this.nick;
 				// Add to selectGroup only if it's a new aggregate
 				query.selectGroup.push(this);
 			}
