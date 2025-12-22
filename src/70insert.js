@@ -109,6 +109,17 @@ yy.Insert.prototype.compile = function (databaseid) {
 
 			//			s += '';
 			if (self.columns) {
+				// Validate that we have the right number of values for the columns
+				if (values.length !== self.columns.length) {
+					throw new Error(
+						'The number of values (' +
+							values.length +
+							') does not match the number of columns (' +
+							self.columns.length +
+							'). ' +
+							'If using a subquery, use INSERT INTO ... SELECT instead of INSERT INTO ... VALUES (SELECT ...)'
+					);
+				}
 				self.columns.forEach(function (col, idx) {
 					//console.log(db.tables, tableid, table);
 					//			ss.push(col.columnid +':'+ self.values[idx].value.toString());
@@ -143,6 +154,17 @@ yy.Insert.prototype.compile = function (databaseid) {
 				//console.log(111, table.columns);
 				//console.log(74,table);
 				if (Array.isArray(values) && table.columns && table.columns.length > 0) {
+					// Validate that we have the right number of values for the table columns
+					if (values.length !== table.columns.length) {
+						throw new Error(
+							'The number of values (' +
+								values.length +
+								') does not match the number of table columns (' +
+								table.columns.length +
+								'). ' +
+								'If using a subquery, use INSERT INTO ... SELECT instead of INSERT INTO ... VALUES (SELECT ...)'
+						);
+					}
 					table.columns.forEach(function (col, idx) {
 						var q = "'" + col.columnid + "':";
 						//						var val = values[idx].toJS();
