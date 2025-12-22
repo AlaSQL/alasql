@@ -133,4 +133,26 @@ describe('Test CSV string type preservation', function () {
 		// Restore default
 		alasql.options.csvStringToNumber = true;
 	});
+
+	it('H) Numbers imported into STRING field are stored as strings', function () {
+		// Reset to default behavior (conversion enabled)
+		alasql.options.csvStringToNumber = true;
+
+		// Create table with STRING column
+		alasql('CREATE TABLE test_string_field (id STRING, amount INT)');
+
+		var csvData = '"id";"amount"\n"117.20";"500"\n"88.33";"600"';
+
+		alasql('SELECT * INTO test_string_field FROM CSV(?, {separator:";"})', [csvData]);
+		var res = alasql('SELECT * FROM test_string_field');
+
+		// Even with csvStringToNumber = true, STRING columns should store values as strings
+		assert.deepEqual(res, [
+			{id: '117.20', amount: 500},
+			{id: '88.33', amount: 600},
+		]);
+
+		// Cleanup
+		alasql('DROP TABLE test_string_field');
+	});
 });
