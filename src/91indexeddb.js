@@ -335,7 +335,7 @@ IDB.intoTable = function (databaseid, tableid, value, columns, cb) {
 	var db = alasql.databases[databaseid];
 	var table = db.tables[tableid];
 
-	// In autocommit mode, work with in-memory data
+	// In transaction mode (autocommit OFF), work with in-memory data
 	if (!alasql.options.autocommit) {
 		// Ensure table data is loaded
 		if (!table.data) {
@@ -663,10 +663,6 @@ IDB.begin = function (databaseid, cb) {
 	tablesToLoad.forEach(tbid => {
 		IDB.restoreTable(databaseid, tbid, checkComplete);
 	});
-
-	if (tablesToLoad.length === 0) {
-		return cb ? cb(1) : 1;
-	}
 };
 
 /**
