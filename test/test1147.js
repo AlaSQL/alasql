@@ -22,7 +22,6 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 		var res = alasql('SELECT sum(population) as val1, sum(population) as val2 FROM test');
 
 		assert.deepEqual(res, [{val1: 600, val2: 600}]);
-		assert.strictEqual(res[0].val1, res[0].val2, 'val1 and val2 should be equal');
 
 		alasql('DROP TABLE test');
 	});
@@ -37,9 +36,7 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 			'SELECT sum(population) as val3, sum(population) as val4, rownum() as rownum FROM test'
 		);
 
-		assert.strictEqual(res[0].val3, res[0].val4, 'val3 and val4 should be equal');
-		assert.strictEqual(res[0].val3, 11672201, 'val3 should be 11672201');
-		assert.strictEqual(res[0].val4, 11672201, 'val4 should be 11672201');
+		assert.deepEqual(res, [{val3: 11672201, val4: 11672201, rownum: 1}]);
 
 		alasql('DROP TABLE test');
 	});
@@ -61,8 +58,52 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 
 		var res = alasql(sql);
 
-		assert.strictEqual(res[0].val3, res[0].val4, 'val3 and val4 should be equal');
-		assert.strictEqual(res[0].val3, 11672201, 'val3 should be the sum of all populations');
+		assert.deepEqual(res, [
+			{
+				val1: 25,
+				val2: 0.000008567364458511296,
+				val3: 11672201,
+				val4: 11672201,
+				rownum: 1,
+			},
+		]);
+
+		alasql('DROP TABLE test');
+	});
+
+	it('D) Mixed aggregates with some duplicates', function () {
+		alasql('CREATE TABLE test (a int, b int, c int)');
+		alasql('INSERT INTO test VALUES (1,10,100),(2,20,200),(3,30,300)');
+
+		var res = alasql(
+			'SELECT sum(a) as sum1, sum(a) as sum2, sum(b) as sum3, count(a) as cnt1, count(b) as cnt2, avg(a) as avg1 FROM test'
+		);
+
+		assert.deepEqual(res, [{sum1: 6, sum2: 6, sum3: 60, cnt1: 3, cnt2: 3, avg1: 2}]);
+
+		alasql('DROP TABLE test');
+	});
+
+	it('E) Multiple duplicate aggregates with different functions', function () {
+		alasql('CREATE TABLE test (x int, y int)');
+		alasql('INSERT INTO test VALUES (5,10),(15,20),(25,30)');
+
+		var res = alasql(
+			'SELECT sum(x) as s1, sum(x) as s2, sum(y) as s3, sum(y) as s4, min(x) as min1, min(x) as min2, max(y) as max1, max(y) as max2 FROM test'
+		);
+
+		assert.deepEqual(res, [{s1: 45, s2: 45, s3: 60, s4: 60, min1: 5, min2: 5, max1: 30, max2: 30}]);
+
+		alasql('DROP TABLE test');
+	});
+
+	it('F) Duplicate aggregates in SELECT ROW modifier', function () {
+		alasql('CREATE TABLE test (val int)');
+		alasql('INSERT INTO test VALUES (1),(2),(3),(4),(5)');
+
+		var res = alasql('SELECT ROW sum(val), sum(val), count(val), count(val) FROM test');
+
+		assert.deepEqual(res, [15, 15, 5, 5]);
 
 		alasql('DROP TABLE test');
 	});
