@@ -32,6 +32,12 @@ yy.ExistsValue = class ExistsValue {
 alasql.precompile = function (statement, databaseid, params) {
 	if (!statement) return;
 	statement.params = params;
+	// For CREATE VIEW statements, move queries to the select object
+	// so they can be compiled later when the view is first used
+	if (statement.view && statement.select && statement.queries) {
+		statement.select.queries = statement.queries;
+		return;
+	}
 	if (statement.queries) {
 		statement.queriesfn = statement.queries.map(function (q) {
 			var nq = q.compile(databaseid || statement.database.databaseid);

@@ -317,7 +317,9 @@ yy.CreateTable.prototype.execute = function (databaseid, params, cb) {
 	//Used in 420from queryfn when table.view = true!
 	if (this.view && this.select) {
 		table.view = true;
-		table.select = this.select.compile(this.table.databaseid || databaseid);
+		// Store the uncompiled select statement and databaseid for lazy compilation
+		table.viewSelect = this.select;
+		table.viewDatabaseid = this.table.databaseid || databaseid;
 	}
 
 	if (db.engineid) {

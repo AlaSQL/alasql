@@ -71,7 +71,12 @@ yy.Select.prototype.compileFrom = function (query) {
 				};
 			} else if (alasql.databases[source.databaseid].tables[source.tableid].view) {
 				source.datafn = (query, params, cb, idx, alasql) => {
-					let res = alasql.databases[source.databaseid].tables[source.tableid].select(params);
+					let table = alasql.databases[source.databaseid].tables[source.tableid];
+					// Lazily compile the view's select on first use
+					if (!table.select && table.viewSelect) {
+						table.select = table.viewSelect.compile(table.viewDatabaseid);
+					}
+					let res = table.select(params);
 					if (cb) res = cb(res, idx, query);
 					return res;
 				};
