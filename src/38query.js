@@ -177,6 +177,45 @@ function queryfn3(query) {
 	// Remove distinct values
 	doDistinct(query);
 
+	// If we have UNION/UNION ALL/EXCEPT/INTERSECT with ORDER BY/LIMIT before it,
+	// apply ORDER BY and LIMIT to the first SELECT before combining
+	if ((query.unionallfn || query.unionfn || query.exceptfn || query.intersectfn) && 
+	    (query.orderfn || query.limit)) {
+		// Apply ordering to first SELECT's data
+		if (query.orderfn) {
+			// Populate order keys before sorting (needed for UNION queries)
+			if (query.orderColumns) {
+				for (var i = 0, ilen = query.data.length; i < ilen; i++) {
+					for (var idx = 0; idx < query.orderColumns.length; idx++) {
+						var v = query.orderColumns[idx];
+						var key = '$$$' + idx;
+						var r = query.data[i];
+						if (v instanceof yy.Column && r[v.columnid] !== undefined) {
+							r[key] = r[v.columnid];
+						} else if (v instanceof yy.Column) {
+							r[key] = undefined;
+						} else {
+							r[key] = undefined;
+						}
+						if (i === 0 && query.removeKeys.indexOf(key) === -1) {
+							query.removeKeys.push(key);
+						}
+					}
+				}
+			}
+			query.data = query.data.sort(query.orderfn);
+			// Clear orderfn so it doesn't get applied again after UNION
+			query.orderfn = null;
+		}
+		// Apply limit to first SELECT's data
+		if (query.limit) {
+			doLimit(query);
+			// Clear limit so it doesn't get applied again after UNION
+			query.limit = null;
+			query.offset = null;
+		}
+	}
+
 	// UNION / UNION ALL
 	if (query.unionallfn) {
 		// TODO Simplify this part of program
