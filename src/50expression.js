@@ -836,7 +836,7 @@
 		findAggregator(query) {
 			// Check if an identical aggregate already exists in selectGroup
 			let existingAggr = query.selectGroup.find(agg => agg.toString() === this.toString());
-			
+
 			if (existingAggr) {
 				// Reuse the existing aggregate's nick to share the same accumulator
 				this.aggrNick = existingAggr.nick;
