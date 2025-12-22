@@ -215,7 +215,12 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				if (!tbid) tbid = query.defcols?.[col.columnid];
 				if (!tbid) tbid = query.defaultTableid;
 				if (col.columnid !== '_') {
-					if (false && tbid && !query.defcols?.['.']?.[col.tableid] && !query.defcols?.[col.columnid]) {
+					if (
+						false &&
+						tbid &&
+						!query.defcols?.['.']?.[col.tableid] &&
+						!query.defcols?.[col.columnid]
+					) {
 						ss.push(
 							"'" +
 								escapeq(col.as || col.columnid) +
