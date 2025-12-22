@@ -483,6 +483,14 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			}
 		});
 	}
+	
+	// Build a set of actual column names in SELECT to distinguish from pure aliases
+	var selectColumnNames = {};
+	self.columns.forEach(function (col) {
+		if (col instanceof yy.Column && col.columnid) {
+			selectColumnNames[col.columnid] = true;
+		}
+	});
 
 	self.columns.forEach(function (col, idx) {
 		if (!(col instanceof yy.Column && col.columnid === '*')) {
@@ -514,7 +522,11 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 
 				// Also match GROUP BY columns that reference SELECT column aliases
 				// This handles cases like: SELECT CASE ... END AS age_group ... GROUP BY age_group
-				if (col.as && groupByAliasMap.hasOwnProperty(col.as)) {
+				// Only apply if:
+				// 1. The SELECT column has an alias
+				// 2. That alias matches a GROUP BY column name
+				// 3. The alias is NOT an actual column name (pure alias, not renaming)
+				if (col.as && groupByAliasMap.hasOwnProperty(col.as) && !selectColumnNames[col.as]) {
 					var aliasGroupIdx = groupByAliasMap[col.as];
 					// Replace the GROUP BY column reference with a deep copy of the SELECT expression
 					// We use deep cloning to ensure nested objects (like CASE whens/elses) are copied
