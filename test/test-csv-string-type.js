@@ -26,15 +26,10 @@ describe('Test CSV string type preservation', function () {
 		var res = alasql('SELECT * FROM CSV(?, {separator:";", headers:false})', [csvData]);
 
 		// With csvStringToNumber = true, values should be converted to numbers
-		assert.strictEqual(typeof res[0][0], 'number');
-		assert.strictEqual(res[0][0], 117.2); // Note: trailing zero is lost
-		assert.strictEqual(typeof res[0][1], 'string');
-		assert.strictEqual(res[0][1], 'some name');
-
-		assert.strictEqual(typeof res[1][0], 'number');
-		assert.strictEqual(res[1][0], 88.33);
-		assert.strictEqual(typeof res[1][1], 'string');
-		assert.strictEqual(res[1][1], 'other name');
+		assert.deepEqual(res, [
+			{0: 117.2, 1: 'some name'},
+			{0: 88.33, 1: 'other name'},
+		]);
 	});
 
 	it('B) Disable conversion - preserves string types', function () {
@@ -47,15 +42,10 @@ describe('Test CSV string type preservation', function () {
 		var res = alasql('SELECT * FROM CSV(?, {separator:";", headers:false})', [csvData]);
 
 		// With csvStringToNumber = false, values should remain as strings
-		assert.strictEqual(typeof res[0][0], 'string');
-		assert.strictEqual(res[0][0], '117.20'); // Trailing zero preserved!
-		assert.strictEqual(typeof res[0][1], 'string');
-		assert.strictEqual(res[0][1], 'some name');
-
-		assert.strictEqual(typeof res[1][0], 'string');
-		assert.strictEqual(res[1][0], '88.33');
-		assert.strictEqual(typeof res[1][1], 'string');
-		assert.strictEqual(res[1][1], 'other name');
+		assert.deepEqual(res, [
+			{0: '117.20', 1: 'some name'},
+			{0: '88.33', 1: 'other name'},
+		]);
 
 		// Restore default
 		alasql.options.csvStringToNumber = true;
@@ -68,13 +58,10 @@ describe('Test CSV string type preservation', function () {
 
 		var res = alasql('SELECT * FROM CSV(?, {separator:";"})', [csvData]);
 
-		assert.strictEqual(typeof res[0].id, 'number');
-		assert.strictEqual(res[0].id, 117.2);
-		assert.strictEqual(res[0].name, 'some name');
-
-		assert.strictEqual(typeof res[1].id, 'number');
-		assert.strictEqual(res[1].id, 88.33);
-		assert.strictEqual(res[1].name, 'other name');
+		assert.deepEqual(res, [
+			{id: 117.2, name: 'some name'},
+			{id: 88.33, name: 'other name'},
+		]);
 	});
 
 	it('D) With headers - disabled conversion preserves strings', function () {
@@ -84,13 +71,10 @@ describe('Test CSV string type preservation', function () {
 
 		var res = alasql('SELECT * FROM CSV(?, {separator:";"})', [csvData]);
 
-		assert.strictEqual(typeof res[0].id, 'string');
-		assert.strictEqual(res[0].id, '117.20'); // Trailing zero preserved!
-		assert.strictEqual(res[0].name, 'some name');
-
-		assert.strictEqual(typeof res[1].id, 'string');
-		assert.strictEqual(res[1].id, '88.33');
-		assert.strictEqual(res[1].name, 'other name');
+		assert.deepEqual(res, [
+			{id: '117.20', name: 'some name'},
+			{id: '88.33', name: 'other name'},
+		]);
 
 		// Restore default
 		alasql.options.csvStringToNumber = true;
@@ -107,13 +91,10 @@ describe('Test CSV string type preservation', function () {
 		var res = alasql('SELECT * FROM test_csv');
 
 		// Should preserve string types
-		assert.strictEqual(typeof res[0].id, 'string');
-		assert.strictEqual(res[0].id, '117.20');
-		assert.strictEqual(res[0].name, 'some name');
-
-		assert.strictEqual(typeof res[1].id, 'string');
-		assert.strictEqual(res[1].id, '88.33');
-		assert.strictEqual(res[1].name, 'other name');
+		assert.deepEqual(res, [
+			{id: '117.20', name: 'some name'},
+			{id: '88.33', name: 'other name'},
+		]);
 
 		// Cleanup
 		alasql('DROP TABLE test_csv');
@@ -128,13 +109,15 @@ describe('Test CSV string type preservation', function () {
 
 		var csvData = '"117.20";"some name"\n"88.33";"other name"';
 
-		var res = alasql('SELECT * FROM CSV(?, {separator:";", headers:false, raw:true})', [csvData]);
+		var res = alasql('SELECT * FROM CSV(?, {separator:";", headers:false, raw:true})', [
+			csvData,
+		]);
 
 		// With raw = true, values should remain as strings regardless of csvStringToNumber
-		assert.strictEqual(typeof res[0][0], 'string');
-		assert.strictEqual(res[0][0], '117.20');
-		assert.strictEqual(typeof res[0][1], 'string');
-		assert.strictEqual(res[0][1], 'some name');
+		assert.deepEqual(res, [
+			{0: '117.20', 1: 'some name'},
+			{0: '88.33', 1: 'other name'},
+		]);
 	});
 
 	it('G) Tab-separated values (TSV) also respects the option', function () {
@@ -145,8 +128,7 @@ describe('Test CSV string type preservation', function () {
 		var res = alasql('SELECT * FROM TSV(?, {headers:false})', [tsvData]);
 
 		// Should preserve string types
-		assert.strictEqual(typeof res[0][0], 'string');
-		assert.strictEqual(res[0][0], '117.20');
+		assert.deepEqual(res, [{0: '117.20', 1: 'some name'}, {0: '88.33', 1: 'other name'}]);
 
 		// Restore default
 		alasql.options.csvStringToNumber = true;
