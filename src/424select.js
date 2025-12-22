@@ -481,6 +481,17 @@ yy.Select.prototype.compileSelect2 = function (query, params) {
 
 yy.Select.prototype.compileSelectGroup0 = function (query) {
 	var self = this;
+	
+	// Build a lookup map for GROUP BY columns that reference aliases (optimization to avoid O(n*m) complexity)
+	var groupByAliasMap = {};
+	if (self.group) {
+		self.group.forEach(function (gp, idx) {
+			if (gp instanceof yy.Column && gp.columnid && !gp.tableid) {
+				groupByAliasMap[gp.columnid] = idx;
+			}
+		});
+	}
+	
 	self.columns.forEach(function (col, idx) {
 		if (!(col instanceof yy.Column && col.columnid === '*')) {
 			var colas;
@@ -511,19 +522,15 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 				
 				// Also match GROUP BY columns that reference SELECT column aliases
 				// This handles cases like: SELECT CASE ... END AS age_group ... GROUP BY age_group
-				if (col.as) {
-					var aliasGroupIdx = self.group.findIndex(function (gp) {
-						return gp instanceof yy.Column && gp.columnid === col.as && !gp.tableid;
-					});
-					if (aliasGroupIdx > -1) {
-						// Replace the GROUP BY column reference with a deep copy of the SELECT expression
-						// We use deep cloning to ensure nested objects (like CASE whens/elses) are copied
-						var groupExpr = cloneDeep(col);
-						// Clear SELECT-specific properties that shouldn't be in GROUP BY
-						delete groupExpr.as;
-						groupExpr.nick = colas;
-						self.group[aliasGroupIdx] = groupExpr;
-					}
+				if (col.as && groupByAliasMap.hasOwnProperty(col.as)) {
+					var aliasGroupIdx = groupByAliasMap[col.as];
+					// Replace the GROUP BY column reference with a deep copy of the SELECT expression
+					// We use deep cloning to ensure nested objects (like CASE whens/elses) are copied
+					var groupExpr = cloneDeep(col);
+					// Clear SELECT-specific properties that shouldn't be in GROUP BY
+					delete groupExpr.as;
+					groupExpr.nick = colas;
+					self.group[aliasGroupIdx] = groupExpr;
 				}
 			}
 
