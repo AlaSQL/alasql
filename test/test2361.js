@@ -7,6 +7,7 @@ if (typeof exports === 'object') {
 if (typeof exports != 'object') {
 	describe('Test 2361 - IndexedDB transactions support', function () {
 		const SCHEMA_NAME = 'test2361db';
+		const TABLE_NAME = 'test_table';
 
 		before(function () {
 			// Clean up any existing database
@@ -27,7 +28,7 @@ if (typeof exports != 'object') {
 
 			alasql
 				.promise(queriesAttach)
-				.then(() => alasql.promise('CREATE TABLE test_table'))
+				.then(() => alasql.promise('CREATE TABLE ' + TABLE_NAME + ' (name STRING)'))
 				.then(() => alasql.promise('BEGIN TRANSACTION'))
 				.then(res => {
 					assert.equal(res, 1);
@@ -67,7 +68,7 @@ if (typeof exports != 'object') {
 		});
 
 		it('4. Full transaction workflow with INSERT', function (done) {
-			const query = "INSERT INTO test_table VALUES ('test1'), ('test2')";
+			const query = 'INSERT INTO ' + TABLE_NAME + " VALUES ('test1'), ('test2')";
 
 			alasql
 				.promise('USE ' + SCHEMA_NAME)
@@ -86,7 +87,7 @@ if (typeof exports != 'object') {
 		it('5. Transaction workflow as described in issue', function (done) {
 			const queriesAttach = ['ATTACH INDEXEDDB DATABASE ' + SCHEMA_NAME, 'USE ' + SCHEMA_NAME];
 
-			const query = 'SELECT * FROM test_table';
+			const query = 'SELECT * FROM ' + TABLE_NAME;
 
 			alasql
 				.promise(queriesAttach)
