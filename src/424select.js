@@ -202,15 +202,14 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				// Check if tableid is actually a column name (property access pattern like name.length)
 				// This handles cases where the parser sees "columnname.property" and interprets it as "table.column"
 				var isPropertyAccess = false;
-				if (
-					tbid &&
-					query.defcols?.[tbid] &&
-					query.defcols[tbid] !== '-' &&
-					!query.defcols?.['.']?.[tbid]
-				) {
-					// tbid is actually a column name (not a table name), so this is property access
-					isPropertyAccess = true;
-					var actualTableid = query.defcols[tbid];
+				var actualTableid;
+				if (tbid) {
+					const tbidValue = query.defcols?.[tbid];
+					if (tbidValue && tbidValue !== '-' && !query.defcols?.['.']?.[tbid]) {
+						// tbid is actually a column name (not a table name), so this is property access
+						isPropertyAccess = true;
+						actualTableid = tbidValue;
+					}
 				}
 
 				if (!tbid) tbid = query.defcols[col.columnid];
