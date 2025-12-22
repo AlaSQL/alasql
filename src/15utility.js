@@ -1352,7 +1352,7 @@ var getXLSX = function () {
  */
 var reTypeConverter = {
 	str: /string|char$|text/i,
-	int: /^int|int$|^smallint$|^bigint$|^tinyint$/i,
+	int: /int$/i,
 	num: /float|double|real|^num|decimal|money/i,
 	bool: /^bool/i,
 	date: /^date|^time/i,
@@ -1373,9 +1373,8 @@ utils.convertValueToType = function (value, dbtypeid) {
 	// If no type specified, try to auto-convert if it looks like a number
 	if (!dbtypeid) {
 		if (alasql.options.csvStringToNumber && typeof value === 'string' && value.length > 0) {
-			var trimmed = value.trim();
-			if (trimmed == +trimmed) {
-				return +trimmed;
+			if (value == +value) {
+				return +value;
 			}
 		}
 		return value;
@@ -1393,8 +1392,7 @@ utils.convertValueToType = function (value, dbtypeid) {
 	}
 	if (reTypeConverter.bool.test(dbtypeid)) {
 		if (typeof value === 'string') {
-			var lower = value.toLowerCase();
-			return lower === 'true' || lower === '1' || lower === 'yes';
+			return /^(true|1|yes)$/i.test(value);
 		}
 		return Boolean(value);
 	}
