@@ -163,6 +163,7 @@ yy.Select.prototype.compileGroup = function (query) {
 						return '';
 					} else if (col.aggregatorid === 'REDUCE') {
 						query.aggrKeys.push(col);
+<<<<<<< HEAD
 						const extraParams = getGroupConcatParams(col);
 						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1${extraParams}),`;
 					} else if (col.aggregatorid === 'CORR') {
@@ -170,6 +171,17 @@ yy.Select.prototype.compileGroup = function (query) {
 						query.aggrKeys.push(col);
 						let colexp2 = col.expression2.toJS('p', tableid, defcols);
 						return `'${colas}':alasql.aggr.CORR(${colexp},${colexp2},undefined,1),`;
+=======
+						// Support multiple arguments for user-defined aggregates
+						if (col.args && col.args.length > 1) {
+							// Multiple arguments - pass all of them
+							let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
+							return `'${colas}':alasql.aggr['${col.funcid}'](${argExpressions},undefined,1),`;
+						} else {
+							// Single argument - backward compatibility
+							return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1),`;
+						}
+>>>>>>> 2e20581e (Enable generic multi-column user-defined aggregate functions)
 					}
 					return '';
 				}
@@ -439,6 +451,7 @@ yy.Select.prototype.compileGroup = function (query) {
 							g['${colas}']=${col.expression.toJS('g', -1)};
 							${post}`;
 					} else if (col.aggregatorid === 'REDUCE') {
+<<<<<<< HEAD
 						const extraParams = getGroupConcatParams(col);
 						return `${pre}
 							g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2${extraParams});
@@ -449,6 +462,21 @@ yy.Select.prototype.compileGroup = function (query) {
 						return `${pre}
 							g['${colas}'] = alasql.aggr.CORR(${colexp},${colexp2},g['${colas}'],2);
 							${post}`;
+=======
+						// Support multiple arguments for user-defined aggregates
+						if (col.args && col.args.length > 1) {
+							// Multiple arguments - pass all of them
+							let argExpressions = col.args.map(arg => arg.toJS('p', tableid, defcols)).join(',');
+							return `${pre}
+								g['${colas}'] = alasql.aggr.${col.funcid}(${argExpressions},g['${colas}'],2);
+								${post}`;
+						} else {
+							// Single argument - backward compatibility
+							return `${pre}
+								g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2);
+								${post}`;
+						}
+>>>>>>> 2e20581e (Enable generic multi-column user-defined aggregate functions)
 					}
 
 					return '';

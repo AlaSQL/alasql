@@ -123,10 +123,19 @@ function queryfn3(query) {
 		if (query.aggrKeys.length > 0) {
 			var gfns = '';
 			query.aggrKeys.forEach(function (col) {
+				// For multi-column aggregates, pass undefined for each column parameter
+				var undefinedArgs = '';
+				if (col.args && col.args.length > 1) {
+					// Multi-column: pass undefined for each argument, then accumulator, then stage
+					undefinedArgs = Array(col.args.length).fill('undefined').join(',') + ',';
+				} else {
+					// Single column: pass undefined, accumulator, stage
+					undefinedArgs = 'undefined,';
+				}
 				gfns += `
 				g[${JSON.stringify(col.nick)}] = alasql.aggr[${JSON.stringify(
 					col.funcid
-				)}](undefined,g[${JSON.stringify(col.nick)}],3); `;
+				)}](${undefinedArgs}g[${JSON.stringify(col.nick)}],3); `;
 			});
 			var gfn = new Function('g,params,alasql', 'var y;' + gfns);
 		}

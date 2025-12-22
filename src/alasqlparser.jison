@@ -100,7 +100,6 @@ COLUMNS 										return 'COLUMN'
 "CONTINUE"										return 'CONTINUE'
 "CONVERT"										return 'CONVERT'
 "CORRESPONDING"									return 'CORRESPONDING'
-"CORR"											return 'CORR'
 "COUNT"											return 'COUNT'
 'CREATE'										return 'CREATE'
 "CROSS"											return 'CROSS'
@@ -1402,9 +1401,6 @@ AggrValue
 		{
 		  if($3.length > 1 && ($1.toUpperCase() == 'MAX' || $1.toUpperCase() == 'MIN')) {
 		  	$$ = new yy.FuncValue({funcid:$1,args:$3});
-		  } else if($3.length === 2 && $1.toUpperCase() == 'CORR') {
-			// CORR takes exactly two arguments
-			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3[0], expression2: $3[1], over:$5});
 		  } else {
 			$$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $3.pop(), over:$5});
 		  }
@@ -1479,7 +1475,7 @@ FuncValue
 					$$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			} else if(alasql.aggr[$1]) {
 		    	$$ = new yy.AggrValue({aggregatorid: 'REDUCE',
-                      funcid: funcid, expression: exprlist.pop(),distinct:($3=='DISTINCT'), over: $6 });
+                      funcid: funcid, expression: exprlist[0], args: exprlist, distinct:($3=='DISTINCT'), over: $6 });
 		    } else {
 			    $$ = new yy.FuncValue({funcid: funcid, args: exprlist, over: $6});
 			};
