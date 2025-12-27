@@ -361,6 +361,8 @@ Literal
 		{ $$ = doubleq($1.substr(1,$1.length-2)); }
 	| KEY
 		{ $$ = $1.toLowerCase(); }
+	| OPEN
+		{ $$ = $1.toLowerCase(); }
 	| error NonReserved
 		{ $$ = $2.toLowerCase() }
 	;
@@ -3333,6 +3335,7 @@ NonReserved
 	|OBJECT
 	|OCTETS
 	|OFF
+	|OPEN
 	|OPTION
 	|OPTIONS
 	|ORDER
@@ -3609,6 +3612,7 @@ var nonReserved = ["A"
 	,"OBJECT"
 	,"OCTETS"
 	,"OFF"
+	,"OPEN"
 	,"OPTION"
 	,"OPTIONS"
 	,"ORDER"
