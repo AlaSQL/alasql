@@ -528,12 +528,11 @@ WithTable
 /* SELECT */
 
 Select
-	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause OrderClause LimitClause UnionClause OrderClause LimitClause
+	: SelectClause RemoveClause? IntoClause FromClause PivotClause? WhereClause GroupClause  UnionClause OrderClause LimitClause
 		{
 			yy.extend($$,$1); yy.extend($$,$2); yy.extend($$,$3); yy.extend($$,$4);
 		    yy.extend($$,$5); yy.extend($$,$6);yy.extend($$,$7);
 		    yy.extend($$,$8); yy.extend($$,$9); yy.extend($$,$10);
-		    yy.extend($$,$11); yy.extend($$,$12);
 		    $$ = $1;
 		    if(yy.exists) $$.exists = yy.exists.slice();
 /*		    if(yy.queries) $$.queries = yy.queries;
