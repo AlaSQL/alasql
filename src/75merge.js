@@ -44,24 +44,17 @@ yy.Merge.prototype.toString = function () {
 
 yy.Merge.prototype.compile = function (databaseid) {
 	var self = this;
-	
-	// Get database and table IDs
 	databaseid = self.into.databaseid || databaseid;
 	var db = alasql.databases[databaseid];
 	var targettableid = self.into.tableid;
 	var sourcetableid = self.using.tableid;
-	
 	var targetTable = db.tables[targettableid];
 	var sourceTable = db.tables[sourcetableid];
 	
-	if (!targetTable) {
-		throw new Error("Target table '" + targettableid + "' not found");
-	}
-	if (!sourceTable) {
-		throw new Error("Source table '" + sourcetableid + "' not found");
-	}
+	if (!targetTable) throw new Error("Target table '" + targettableid + "' not found");
+	if (!sourceTable) throw new Error("Source table '" + sourcetableid + "' not found");
 	
-	// Compile the ON condition
+	// Compile exists/queries if present
 	if (self.exists) {
 		self.existsfn = self.exists.map(function (ex) {
 			var nq = ex.compile(databaseid);
@@ -77,21 +70,22 @@ yy.Merge.prototype.compile = function (databaseid) {
 		});
 	}
 	
-	// Create aliases mapping for ON condition evaluation
-	// The ON condition needs to compare target and source rows
 	var targetAlias = self.into.as || targettableid;
 	var sourceAlias = self.using.as || sourcetableid;
 	
-	// Build the ON condition function that takes both target and source rows
-	// We create a combined record with aliases as property objects
-	var onConditionJS = self.on.toJS('rec', '');
-	var onConditionFnStr = 'var rec = {' +
-		'"' + targetAlias + '": targetRow, ' +
-		'"' + sourceAlias + '": sourceRow' +
-		'}; return ' + onConditionJS + ';';
-	var onConditionFn = new Function('targetRow', 'sourceRow', 'params', 'alasql', 'var y;' + onConditionFnStr).bind(self);
+	// Helper to build context record
+	var buildContext = function (includeTarget, includeSource) {
+		var parts = [];
+		if (includeTarget) parts.push('"' + targetAlias + '": targetRow');
+		if (includeSource) parts.push('"' + sourceAlias + '": sourceRow');
+		return 'var rec = {' + parts.join(', ') + '};';
+	};
 	
-	// Compile each match clause
+	// Compile ON condition
+	var onConditionFn = new Function('targetRow', 'sourceRow', 'params', 'alasql', 
+		'var y;' + buildContext(true, true) + ' return ' + self.on.toJS('rec', '') + ';').bind(self);
+	
+	// Compile match clauses
 	var compiledMatches = self.matches.map(function (match) {
 		var result = {
 			matched: match.matched,
@@ -100,62 +94,57 @@ yy.Merge.prototype.compile = function (databaseid) {
 			action: match.action
 		};
 		
-		// Compile condition expression if present
+		// Compile condition expression
 		if (match.expr) {
-			var exprJS = match.expr.toJS('rec', '');
-			var exprFnStr = 'var rec = {';
-			if (match.matched) {
-				// For MATCHED: have both target and source
-				exprFnStr += '"' + targetAlias + '": targetRow, "' + sourceAlias + '": sourceRow';
-			} else if (match.bytarget) {
-				// For NOT MATCHED BY TARGET: only source
-				exprFnStr += '"' + sourceAlias + '": sourceRow';
-			} else if (match.bysource) {
-				// For NOT MATCHED BY SOURCE: only target
-				exprFnStr += '"' + targetAlias + '": targetRow';
-			}
-			exprFnStr += '}; return ' + exprJS + ';';
-			result.exprFn = new Function('targetRow', 'sourceRow', 'params', 'alasql', 'var y;' + exprFnStr).bind(self);
+			var ctx = buildContext(match.matched || match.bysource, match.matched || match.bytarget);
+			result.exprFn = new Function('targetRow', 'sourceRow', 'params', 'alasql', 
+				'var y;' + ctx + ' return ' + match.expr.toJS('rec', '') + ';').bind(self);
 		}
 		
-		// Compile action (UPDATE, INSERT, or DELETE)
+		// Compile actions
 		if (match.action.update) {
-			// Compile UPDATE SET clauses
-			var updateJS = 'var rec = {' +
-				'"' + targetAlias + '": targetRow, ' +
-				'"' + sourceAlias + '": sourceRow' +
-				'}; ';
+			var updateJS = buildContext(true, true);
 			match.action.update.forEach(function (setCol) {
-				var exprJS = setCol.expression.toJS('rec', '');
-				updateJS += 'targetRow["' + setCol.column.columnid + '"] = ' + exprJS + '; ';
+				updateJS += 'targetRow["' + setCol.column.columnid + '"] = ' + setCol.expression.toJS('rec', '') + '; ';
 			});
 			result.updateFn = new Function('targetRow', 'sourceRow', 'params', 'alasql', 'var y;' + updateJS).bind(self);
 		} else if (match.action.insert) {
-			// Compile INSERT clause
 			var insertJS = 'var newRow = {}; ';
 			if (match.action.columns && match.action.values && match.action.values[0]) {
-				// INSERT with explicit columns
-				var values = match.action.values[0];
-				insertJS += 'var rec = {"' + sourceAlias + '": sourceRow}; ';
+				insertJS += buildContext(false, true);
 				match.action.columns.forEach(function (col, idx) {
-					if (values[idx]) {
-						var valueJS = values[idx].toJS('rec', '');
-						insertJS += 'newRow["' + col.columnid + '"] = ' + valueJS + '; ';
+					if (match.action.values[0][idx]) {
+						insertJS += 'newRow["' + col.columnid + '"] = ' + match.action.values[0][idx].toJS('rec', '') + '; ';
 					}
 				});
 			} else if (match.action.defaultvalues) {
-				// INSERT DEFAULT VALUES
 				insertJS += 'newRow = ' + (targetTable.defaultfns ? '{' + targetTable.defaultfns + '}' : '{}') + '; ';
 			}
 			result.insertFn = new Function('sourceRow', 'params', 'alasql', 'var y;' + insertJS + 'return newRow;').bind(self);
 		}
-		// DELETE doesn't need compilation, just a flag
 		
 		return result;
 	});
 	
-	// Main execution statement
-	var statement = function (params, cb) {
+	// Helper to execute first matching clause
+	var executeMatch = function (matches, targetRow, sourceRow, params) {
+		for (var m = 0; m < matches.length; m++) {
+			var match = matches[m];
+			if (match.exprFn && !match.exprFn(targetRow, sourceRow, params, alasql)) continue;
+			
+			if (match.action.update) {
+				match.updateFn(targetRow, sourceRow, params, alasql);
+				return {type: 'update'};
+			} else if (match.action.delete) {
+				return {type: 'delete'};
+			} else if (match.action.insert) {
+				return {type: 'insert', row: match.insertFn(sourceRow, params, alasql)};
+			}
+		}
+		return null;
+	};
+	
+	return function (params, cb) {
 		var db = alasql.databases[databaseid];
 		
 		if (alasql.options.autocommit && db.engineid) {
@@ -165,110 +154,60 @@ yy.Merge.prototype.compile = function (databaseid) {
 		
 		var targetTable = db.tables[targettableid];
 		var sourceTable = db.tables[sourcetableid];
-		
 		targetTable.dirty = true;
 		
-		var insertedCount = 0;
-		var updatedCount = 0;
-		var deletedCount = 0;
+		var counts = {insert: 0, update: 0, delete: 0};
 		
-		// Process WHEN MATCHED and WHEN NOT MATCHED BY SOURCE
+		// Process target rows (MATCHED and NOT MATCHED BY SOURCE)
 		for (var i = 0; i < targetTable.data.length; i++) {
 			var targetRow = targetTable.data[i];
-			var matched = false;
-			var sourceRow = null;
+			var sourceRow = sourceTable.data.find(function (s) {
+				return onConditionFn(targetRow, s, params, alasql);
+			});
 			
-			// Find matching source row
-			for (var j = 0; j < sourceTable.data.length; j++) {
-				if (onConditionFn(targetRow, sourceTable.data[j], params, alasql)) {
-					matched = true;
-					sourceRow = sourceTable.data[j];
-					break;
-				}
-			}
+			var matchType = sourceRow ? 'matched' : 'bysource';
+			var matches = compiledMatches.filter(function (m) {
+				return sourceRow ? (m.matched && !m.bysource) : (!m.matched && m.bysource);
+			});
 			
-			if (matched) {
-				// Process WHEN MATCHED clauses
-				for (var m = 0; m < compiledMatches.length; m++) {
-					var match = compiledMatches[m];
-					if (match.matched && !match.bysource) {
-						// Check additional condition if present
-						if (!match.exprFn || match.exprFn(targetRow, sourceRow, params, alasql)) {
-							if (match.action.update) {
-								match.updateFn(targetRow, sourceRow, params, alasql);
-								updatedCount++;
-							} else if (match.action.delete) {
-								targetTable.data.splice(i, 1);
-								i--; // Adjust index after deletion
-								deletedCount++;
-							}
-							break; // Only first matching clause executes
-						}
-					}
-				}
-			} else {
-				// Process WHEN NOT MATCHED BY SOURCE clauses
-				for (var m = 0; m < compiledMatches.length; m++) {
-					var match = compiledMatches[m];
-					if (!match.matched && match.bysource) {
-						// Check additional condition if present
-						if (!match.exprFn || match.exprFn(targetRow, null, params, alasql)) {
-							if (match.action.delete) {
-								targetTable.data.splice(i, 1);
-								i--; // Adjust index after deletion
-								deletedCount++;
-							}
-							// Note: UPDATE BY SOURCE is not semantically valid since there's no source row to update from
-							// The grammar allows it with an AND condition, but it would require the UPDATE to not reference source columns
-							break; // Only first matching clause executes
-						}
-					}
+			var result = executeMatch(matches, targetRow, sourceRow, params);
+			if (result) {
+				if (result.type === 'delete') {
+					targetTable.data.splice(i--, 1);
+					counts.delete++;
+				} else if (result.type === 'update') {
+					counts.update++;
 				}
 			}
 		}
 		
-		// Process WHEN NOT MATCHED (BY TARGET) clauses
-		// These are source rows that didn't match any target row
+		// Process source rows (NOT MATCHED BY TARGET)
 		for (var j = 0; j < sourceTable.data.length; j++) {
 			var sourceRow = sourceTable.data[j];
-			var matched = false;
+			var hasMatch = targetTable.data.some(function (t) {
+				return onConditionFn(t, sourceRow, params, alasql);
+			});
 			
-			// Check if this source row matched any target row
-			for (var i = 0; i < targetTable.data.length; i++) {
-				if (onConditionFn(targetTable.data[i], sourceRow, params, alasql)) {
-					matched = true;
-					break;
-				}
-			}
-			
-			if (!matched) {
-				// Process WHEN NOT MATCHED clauses
-				for (var m = 0; m < compiledMatches.length; m++) {
-					var match = compiledMatches[m];
-					if (!match.matched && match.bytarget) {
-						// Check additional condition if present
-						if (!match.exprFn || match.exprFn(null, sourceRow, params, alasql)) {
-							if (match.action.insert) {
-								var newRow = match.insertFn(sourceRow, params, alasql);
-								
-								// Apply default values if needed
-								if (targetTable.defaultfns) {
-									var defaultfn = new Function('r,db,params,alasql', 
-										'var defaults={' + targetTable.defaultfns + '};' +
-										'for(var key in defaults){if(!(key in r)){r[key]=defaults[key]}}return r');
-									defaultfn(newRow, db, params, alasql);
-								}
-								
-								if (targetTable.insert) {
-									targetTable.insert(newRow, false, false);
-								} else {
-									targetTable.data.push(newRow);
-								}
-								insertedCount++;
-							}
-							break; // Only first matching clause executes
-						}
+			if (!hasMatch) {
+				var matches = compiledMatches.filter(function (m) {
+					return !m.matched && m.bytarget;
+				});
+				
+				var result = executeMatch(matches, null, sourceRow, params);
+				if (result && result.type === 'insert') {
+					var newRow = result.row;
+					if (targetTable.defaultfns) {
+						var defaults = new Function('r,db,params,alasql', 
+							'var defaults={' + targetTable.defaultfns + '};' +
+							'for(var key in defaults){if(!(key in r)){r[key]=defaults[key]}}return r');
+						defaults(newRow, db, params, alasql);
 					}
+					if (targetTable.insert) {
+						targetTable.insert(newRow, false, false);
+					} else {
+						targetTable.data.push(newRow);
+					}
+					counts.insert++;
 				}
 			}
 		}
@@ -277,14 +216,10 @@ yy.Merge.prototype.compile = function (databaseid) {
 			alasql.engines[db.engineid].saveTableData(databaseid, targettableid);
 		}
 		
-		// Return total number of rows affected
-		var res = insertedCount + updatedCount + deletedCount;
-		
+		var res = counts.insert + counts.update + counts.delete;
 		if (cb) cb(res);
 		return res;
 	};
-	
-	return statement;
 };
 
 yy.Merge.prototype.execute = function (databaseid, params, cb) {
