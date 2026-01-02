@@ -233,6 +233,7 @@ SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 
 'SEMI'                                        	return 'SEMI'
+'SEPARATOR'                                     return 'SEPARATOR'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
@@ -1406,6 +1407,22 @@ AggrValue
 	| Aggregator LPAR ALL Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4,
 		 over:$6}); }
+	| Literal LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{
+		  if($1.toUpperCase() === 'GROUP_CONCAT') {
+		  	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: $1, expression: $3, order: $4, separator: $5});
+		  } else {
+		  	throw new Error('Syntax error: ORDER BY and SEPARATOR are only supported in GROUP_CONCAT');
+		  }
+		}
+	| Literal LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{
+		  if($1.toUpperCase() === 'GROUP_CONCAT') {
+		  	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: $1, expression: $4, distinct: true, order: $5, separator: $6});
+		  } else {
+		  	throw new Error('Syntax error: ORDER BY and SEPARATOR are only supported in GROUP_CONCAT');
+		  }
+		}
 	;
 
 OverClause
@@ -1422,6 +1439,21 @@ OverOrderByClause
 	: ORDER BY OrderExpressionsList
 		{ $$ = {order:$3}; }
 	;
+
+GroupConcatOrderClause
+	:
+		{ $$ = undefined; }
+	| ORDER BY OrderExpressionsList
+		{ $$ = $3; }
+	;
+
+GroupConcatSeparatorClause
+	:
+		{ $$ = undefined; }
+	| SEPARATOR STRING
+		{ $$ = $2.substring(1, $2.length-1); }
+	;
+
 Aggregator
 	: SUM { $$ = "SUM"; }
 	| TOTAL { $$ = "TOTAL"; }

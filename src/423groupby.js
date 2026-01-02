@@ -145,7 +145,19 @@ yy.Select.prototype.compileGroup = function (query) {
 						return '';
 					} else if (col.aggregatorid === 'REDUCE') {
 						query.aggrKeys.push(col);
-						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1),`;
+						// For GROUP_CONCAT, pass separator and order parameters
+						if (col.funcid && col.funcid.toUpperCase() === 'GROUP_CONCAT') {
+							let separatorParam =
+								col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
+							// Extract direction from order expressions (we only support simple ORDER BY for now)
+							let orderDirection = 'undefined';
+							if (col.order && col.order.length > 0 && col.order[0].direction) {
+								orderDirection = JSON.stringify(col.order[0].direction);
+							}
+							return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1,${separatorParam},${orderDirection}),`;
+						} else {
+							return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1),`;
+						}
 					}
 					return '';
 				}
@@ -415,9 +427,23 @@ yy.Select.prototype.compileGroup = function (query) {
 							g['${colas}']=${col.expression.toJS('g', -1)};
 							${post}`;
 					} else if (col.aggregatorid === 'REDUCE') {
-						return `${pre}
-							g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2);
-							${post}`;
+						// For GROUP_CONCAT, pass separator and order parameters
+						if (col.funcid && col.funcid.toUpperCase() === 'GROUP_CONCAT') {
+							let separatorParam =
+								col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
+							// Extract direction from order expressions (we only support simple ORDER BY for now)
+							let orderDirection = 'undefined';
+							if (col.order && col.order.length > 0 && col.order[0].direction) {
+								orderDirection = JSON.stringify(col.order[0].direction);
+							}
+							return `${pre}
+								g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2,${separatorParam},${orderDirection});
+								${post}`;
+						} else {
+							return `${pre}
+								g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2);
+								${post}`;
+						}
 					}
 
 					return '';
