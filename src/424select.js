@@ -10,6 +10,9 @@
 // 	return sources;
 // };
 
+// Regular expression to match aggregate functions that require expression compilation
+var re_aggrWithExpression = /^(SUM|MAX|MIN|FIRST|LAST|AVG|ARRAY|REDUCE|TOTAL)$/;
+
 function compileSelectStar(query, aliases, joinstar) {
 	var sp = '',
 		ss = [],
@@ -355,17 +358,7 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				// Regular aggregate - trigger GROUP BY
 				if (!self.group) self.group = [''];
 
-				if (
-					col.aggregatorid === 'SUM' ||
-					col.aggregatorid === 'MAX' ||
-					col.aggregatorid === 'MIN' ||
-					col.aggregatorid === 'FIRST' ||
-					col.aggregatorid === 'LAST' ||
-					col.aggregatorid === 'AVG' ||
-					col.aggregatorid === 'ARRAY' ||
-					col.aggregatorid === 'REDUCE' ||
-					col.aggregatorid === 'TOTAL'
-				) {
+				if (re_aggrWithExpression.test(col.aggregatorid)) {
 					ss.push(
 						"'" +
 							escapeq(col.as) +
