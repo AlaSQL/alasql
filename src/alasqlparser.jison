@@ -234,7 +234,6 @@ SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 
 'SEMI'                                        	return 'SEMI'
-'SEPARATOR'                                     return 'SEPARATOR'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
@@ -1439,8 +1438,11 @@ GroupConcatOrderClause
 GroupConcatSeparatorClause
 	:
 		{ $$ = undefined; }
-	| SEPARATOR STRING
+	| Literal STRING
 		{ 
+			if($1.toLowerCase() !== 'separator') {
+				throw new Error('Expected SEPARATOR keyword');
+			}
 			var str = $2.substring(1, $2.length-1);
 			// Process common escape sequences
 			str = str.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\r/g, '\r').replace(/\\\\/g, '\\');
