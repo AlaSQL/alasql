@@ -144,6 +144,7 @@ DATABASE(S)?									return 'DATABASE'
 'GO'                                      		return 'GO'
 'GRAPH'                                      	return 'GRAPH'
 'GROUP'                                      	return 'GROUP'
+'GROUP_CONCAT'                                  return 'GROUP_CONCAT'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 /*'HELP'											return 'HELP'*/
@@ -1407,22 +1408,10 @@ AggrValue
 	| Aggregator LPAR ALL Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4,
 		 over:$6}); }
-	| Literal LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
-		{
-		  if($1.toUpperCase() === 'GROUP_CONCAT') {
-		  	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: $1, expression: $3, order: $4, separator: $5});
-		  } else {
-		  	throw new Error('Syntax error: ORDER BY and SEPARATOR are only supported in GROUP_CONCAT');
-		  }
-		}
-	| Literal LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
-		{
-		  if($1.toUpperCase() === 'GROUP_CONCAT') {
-		  	$$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: $1, expression: $4, distinct: true, order: $5, separator: $6});
-		  } else {
-		  	throw new Error('Syntax error: ORDER BY and SEPARATOR are only supported in GROUP_CONCAT');
-		  }
-		}
+	| GROUP_CONCAT LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, order: $4, separator: $5}); }
+	| GROUP_CONCAT LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $4, distinct: true, order: $5, separator: $6}); }
 	;
 
 OverClause
@@ -1451,7 +1440,12 @@ GroupConcatSeparatorClause
 	:
 		{ $$ = undefined; }
 	| SEPARATOR STRING
-		{ $$ = $2.substring(1, $2.length-1); }
+		{ 
+			var str = $2.substring(1, $2.length-1);
+			// Process common escape sequences
+			str = str.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\r/g, '\r').replace(/\\\\/g, '\\');
+			$$ = str;
+		}
 	;
 
 Aggregator
@@ -1465,6 +1459,7 @@ Aggregator
 	| LAST { $$ = "LAST"; }
 	| AGGR { $$ = "AGGR"; }
 	| ARRAY { $$ = "ARRAY"; }
+	| GROUP_CONCAT { $$ = "GROUP_CONCAT"; }
 /*	| REDUCE { $$ = "REDUCE"; } */
 	;
 
