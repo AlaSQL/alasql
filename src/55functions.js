@@ -252,21 +252,7 @@ stdlib.GROUP_ROW_NUMBER = function () {
 };
 
 // Window offset functions - return null during compilation, actual values computed after query execution
-stdlib.LEAD = function (expr, offset, defaultValue) {
-	return 'null';
-};
-
-stdlib.LAG = function (expr, offset, defaultValue) {
-	return 'null';
-};
-
-stdlib.FIRST_VALUE = function (expr) {
-	return 'null';
-};
-
-stdlib.LAST_VALUE = function (expr) {
-	return 'null';
-};
+stdlib.LAST_VALUE = stdlib.FIRST_VALUE = stdlib.LEAD = stdlib.LAG = e => 'null';
 
 stdlib.SQRT = function (s) {
 	return 'Math.sqrt(' + s + ')';
