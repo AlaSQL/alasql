@@ -441,13 +441,10 @@ yy.Select = class Select {
 
 						// Parse offset and default value arguments (handles negative literals like -1)
 						var getArg = function (a) {
-							return !a
-								? undefined
-								: a.value !== undefined
-									? a.value
-									: a.op === '-' && a.right && a.right.value !== undefined
-										? -a.right.value
-										: undefined;
+							if (!a) return undefined;
+							if (a.value !== undefined) return a.value;
+							if (a.op === '-' && a.right && a.right.value !== undefined) return -a.right.value;
+							return undefined;
 						};
 						var offset = getArg(wf.args[1]);
 						if (offset === undefined) offset = 1;
