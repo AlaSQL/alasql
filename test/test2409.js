@@ -213,9 +213,11 @@ describe('Test 2362 - Window Offset Functions (LEAD, LAG, FIRST_VALUE, LAST_VALU
 	});
 
 	describe('Period-over-Period calculations', function () {
-		it('11. Calculate month-over-month change using LAG() with subquery', function (done) {
-			// Direct expressions like "sales - LAG(sales)" don't work because LAG is computed after expression evaluation
-			// Workaround: Use subquery to compute LAG first, then calculate difference
+		it('11. Calculate month-over-month change using LAG() - subquery approach', function (done) {
+			// NOTE: Direct expressions like "sales - LAG(sales) OVER (...)" in the same SELECT don't currently work
+			// This is because window functions are computed after the SELECT clause is evaluated
+			// SQL-99 compliant approach: Use subquery to compute LAG first, then reference it in outer query
+			// TODO: Implement proper evaluation order for expressions containing window functions
 			var data = [
 				{month: 1, sales: 100},
 				{month: 2, sales: 150},
@@ -255,6 +257,28 @@ describe('Test 2362 - Window Offset Functions (LEAD, LAG, FIRST_VALUE, LAST_VALU
 				{id: 1, amount: 10, next_val: 20, prev_val: null, first_val: 10, last_val: 30},
 				{id: 2, amount: 20, next_val: 30, prev_val: 10, first_val: 10, last_val: 30},
 				{id: 3, amount: 30, next_val: null, prev_val: 20, first_val: 10, last_val: 30},
+			]);
+			done();
+		});
+
+		// Known limitation: Direct expressions with window functions
+		it.skip('13. Direct expression with window function (not yet supported)', function (done) {
+			// TODO: This requires implementing proper evaluation order
+			// Window functions need to be computed before expressions containing them are evaluated
+			// Currently, expressions are all evaluated during SELECT compilation
+			var data = [
+				{month: 1, sales: 100},
+				{month: 2, sales: 150},
+				{month: 3, sales: 120},
+			];
+			var res = alasql(
+				'SELECT month, sales, sales - LAG(sales) OVER (ORDER BY month) AS mom_change FROM ?',
+				[data]
+			);
+			assert.deepEqual(res, [
+				{month: 1, sales: 100}, // mom_change would be null if supported
+				{month: 2, sales: 150, mom_change: 50},
+				{month: 3, sales: 120, mom_change: -30},
 			]);
 			done();
 		});
