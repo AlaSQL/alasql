@@ -168,13 +168,9 @@ yy.Merge.prototype.compile = function (databaseid) {
 		
 		targetTable.dirty = true;
 		
-		var matchedCount = 0;
 		var insertedCount = 0;
 		var updatedCount = 0;
 		var deletedCount = 0;
-		
-		// Track which target rows matched
-		var matchedTargetIndices = [];
 		
 		// Process WHEN MATCHED and WHEN NOT MATCHED BY SOURCE
 		for (var i = 0; i < targetTable.data.length; i++) {
@@ -187,7 +183,6 @@ yy.Merge.prototype.compile = function (databaseid) {
 				if (onConditionFn(targetRow, sourceTable.data[j], params, alasql)) {
 					matched = true;
 					sourceRow = sourceTable.data[j];
-					matchedTargetIndices.push(i);
 					break;
 				}
 			}
@@ -222,10 +217,9 @@ yy.Merge.prototype.compile = function (databaseid) {
 								targetTable.data.splice(i, 1);
 								i--; // Adjust index after deletion
 								deletedCount++;
-							} else if (match.action.update) {
-								match.updateFn(targetRow, null, params, alasql);
-								updatedCount++;
 							}
+							// Note: UPDATE BY SOURCE is not semantically valid since there's no source row to update from
+							// The grammar allows it with an AND condition, but it would require the UPDATE to not reference source columns
 							break; // Only first matching clause executes
 						}
 					}
