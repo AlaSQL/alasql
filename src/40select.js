@@ -440,90 +440,63 @@ yy.Select = class Select {
 
 						// Group rows by partition
 						for (var i = 0, ilen = res.length; i < ilen; i++) {
-							var partitionKey;
-							if (config.partitionColumns && config.partitionColumns.length > 0) {
-								// Create partition key from partition columns
-								partitionKey = config.partitionColumns
-									.map(function (col) {
-										return res[i][col];
-									})
-									.join('|');
-							} else {
-								// No partition - all rows in one partition
-								partitionKey = '__all__';
-							}
+							var partitionKey =
+								config.partitionColumns && config.partitionColumns.length > 0
+									? config.partitionColumns
+											.map(function (col) {
+												return res[i][col];
+											})
+											.join('|')
+									: '__all__';
 
-							if (!partitions[partitionKey]) {
-								partitions[partitionKey] = [];
-							}
+							if (!partitions[partitionKey]) partitions[partitionKey] = [];
 							partitions[partitionKey].push(i);
 						}
 
-						// Calculate aggregate for each partition
+						// Calculate and assign aggregate for each partition
 						for (var partitionKey in partitions) {
 							var rowIndices = partitions[partitionKey];
-							var aggregateValue;
+							var values = [];
+							var colId = config.expression && config.expression.columnid;
 
-							if (config.aggregatorid === 'COUNT') {
-								if (config.expression && config.expression.columnid !== '*') {
-									// COUNT(column) - count non-null values
-									aggregateValue = 0;
-									for (var k = 0; k < rowIndices.length; k++) {
-										var idx = rowIndices[k];
-										var val = res[idx][config.expression.columnid];
-										if (val != null) {
-											aggregateValue++;
-										}
-									}
-								} else {
-									// COUNT(*) - count all rows
-									aggregateValue = rowIndices.length;
-								}
-							} else if (config.aggregatorid === 'SUM') {
-								aggregateValue = 0;
+							// Collect values from partition rows
+							if (config.aggregatorid !== 'COUNT' || (colId && colId !== '*')) {
 								for (var k = 0; k < rowIndices.length; k++) {
-									var idx = rowIndices[k];
-									var val = res[idx][config.expression.columnid];
-									if (val != null) {
-										aggregateValue += val;
-									}
+									var val = res[rowIndices[k]][colId];
+									if (val != null) values.push(val);
 								}
-							} else if (config.aggregatorid === 'AVG') {
-								var sum = 0;
-								var count = 0;
-								for (var k = 0; k < rowIndices.length; k++) {
-									var idx = rowIndices[k];
-									var val = res[idx][config.expression.columnid];
-									if (val != null) {
-										sum += val;
-										count++;
-									}
-								}
-								aggregateValue = count > 0 ? sum / count : null;
-							} else if (config.aggregatorid === 'MAX') {
-								aggregateValue = null;
-								for (var k = 0; k < rowIndices.length; k++) {
-									var idx = rowIndices[k];
-									var val = res[idx][config.expression.columnid];
-									if (val != null && (aggregateValue === null || val > aggregateValue)) {
-										aggregateValue = val;
-									}
-								}
-							} else if (config.aggregatorid === 'MIN') {
-								aggregateValue = null;
-								for (var k = 0; k < rowIndices.length; k++) {
-									var idx = rowIndices[k];
-									var val = res[idx][config.expression.columnid];
-									if (val != null && (aggregateValue === null || val < aggregateValue)) {
-										aggregateValue = val;
-									}
-								}
+							}
+
+							// Calculate aggregate
+							var aggregateValue;
+							switch (config.aggregatorid) {
+								case 'COUNT':
+									aggregateValue = colId && colId !== '*' ? values.length : rowIndices.length;
+									break;
+								case 'SUM':
+									aggregateValue = values.reduce(function (sum, v) {
+										return sum + v;
+									}, 0);
+									break;
+								case 'AVG':
+									aggregateValue =
+										values.length > 0
+											? values.reduce(function (sum, v) {
+													return sum + v;
+												}, 0) / values.length
+											: null;
+									break;
+								case 'MAX':
+									aggregateValue = values.length > 0 ? Math.max.apply(null, values) : null;
+									break;
+								case 'MIN':
+									aggregateValue = values.length > 0 ? Math.min.apply(null, values) : null;
+									break;
 							}
 
 							// Assign aggregate value to all rows in partition
 							for (var k = 0; k < rowIndices.length; k++) {
-								var idx = rowIndices[k];
-								res[idx][config.as] = aggregateValue;
+								res[rowIndices[k]][config.as] = aggregateValue;
 							}
 						}
 					}

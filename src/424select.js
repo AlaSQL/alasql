@@ -335,15 +335,13 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 				}
 			}
 		} else if (col instanceof yy.AggrValue) {
+			// Set alias if not provided
+			if (!col.as) col.as = escapeq(col.toString());
+
 			// Check if this aggregate has an OVER clause (window function)
 			if (col.over) {
-				// This is a window aggregate function - handle separately
-				if (!col.as) {
-					col.as = escapeq(col.toString());
-				}
-
 				// Track window aggregate for post-processing
-				var windowConfig = {
+				query.windowaggrs.push({
 					as: col.as,
 					aggregatorid: col.aggregatorid,
 					expression: col.expression,
@@ -352,24 +350,10 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 								return p.columnid || p.toString();
 							})
 						: [],
-				};
-				query.windowaggrs.push(windowConfig);
-
-				// Add column definition (but don't trigger GROUP BY)
-				var coldef = {
-					columnid: col.as || col.columnid || col.toString(),
-				};
-				query.columns.push(coldef);
-				query.xcolumns[coldef.columnid] = coldef;
+				});
 			} else {
-				// Regular aggregate without OVER - triggers GROUP BY
-				if (!self.group) {
-					//				self.group=[new yy.Column({columnid:'q',as:'q'	})];
-					self.group = [''];
-				}
-				if (!col.as) {
-					col.as = escapeq(col.toString());
-				}
+				// Regular aggregate - trigger GROUP BY
+				if (!self.group) self.group = [''];
 
 				if (
 					col.aggregatorid === 'SUM' ||
@@ -390,29 +374,15 @@ yy.Select.prototype.compileSelect1 = function (query, params) {
 					);
 				} else if (col.aggregatorid === 'COUNT') {
 					ss.push("'" + escapeq(col.as) + "':1");
-					// Nothing
 				}
-				// todo: confirm that no default action must be implemented
-
-				//			query.selectColumns[col.aggregatorid+'('+escapeq(col.expression.toString())+')'] = thtd;
-
-				var coldef = {
-					columnid: col.as || col.columnid || col.toString(),
-					//							dbtypeid:tcol.dbtypeid,
-					//							dbsize:tcol.dbsize,
-					//							dbpecision:tcol.dbprecision,
-					//							dbenum: tcol.dbenum,
-				};
-				//						console.log(2);
-				query.columns.push(coldef);
-				query.xcolumns[coldef.columnid] = coldef;
-
-				//			else if (col.aggregatorid == 'MAX') {
-				//				ss.push((col.as || col.columnid)+':'+col.toJS("p.",query.defaultTableid))
-				//			} else if (col.aggregatorid == 'MIN') {
-				//				ss.push((col.as || col.columnid)+':'+col.toJS("p.",query.defaultTableid))
-				//			}
 			}
+
+			// Add column definition for both window and regular aggregates
+			var coldef = {
+				columnid: col.as || col.columnid || col.toString(),
+			};
+			query.columns.push(coldef);
+			query.xcolumns[coldef.columnid] = coldef;
 		} else {
 			//			console.log(203,col.as,col.columnid,col.toString());
 			// Check if this is an arrow expression and we're outputting to OBJECT
