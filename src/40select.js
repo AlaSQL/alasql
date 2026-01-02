@@ -463,22 +463,9 @@ yy.Select = class Select {
 									? partCols
 											.map(function (c) {
 												return res[i][c];
-				// Handle window aggregate functions - COUNT/MAX/MIN/SUM/AVG with OVER (PARTITION BY ...)
-				if (query.windowaggrs && query.windowaggrs.length > 0) {
-					for (var j = 0, jlen = query.windowaggrs.length; j < jlen; j++) {
-						var config = query.windowaggrs[j];
-						var partitions = {};
-
-						// Group rows by partition
-						for (var i = 0, ilen = res.length; i < ilen; i++) {
-							var partitionKey =
-								config.partitionColumns && config.partitionColumns.length > 0
-									? config.partitionColumns
-											.map(function (col) {
-												return res[i][col];
 											})
 											.join('|')
-									: '__all__';
+									: null;
 
 							// When partition ends, compute window function for all rows in partition
 							if (i === res.length || (prevPart !== null && currPart !== prevPart)) {
@@ -500,6 +487,27 @@ yy.Select = class Select {
 								partStart = i;
 							}
 							prevPart = currPart;
+						}
+					}
+				}
+
+				// Handle window aggregate functions - COUNT/MAX/MIN/SUM/AVG with OVER (PARTITION BY ...)
+				if (query.windowaggrs && query.windowaggrs.length > 0) {
+					for (var j = 0, jlen = query.windowaggrs.length; j < jlen; j++) {
+						var config = query.windowaggrs[j];
+						var partitions = {};
+
+						// Group rows by partition
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							var partitionKey =
+								config.partitionColumns && config.partitionColumns.length > 0
+									? config.partitionColumns
+											.map(function (col) {
+												return res[i][col];
+											})
+											.join('|')
+									: '__all__';
+
 							if (!partitions[partitionKey]) partitions[partitionKey] = [];
 							partitions[partitionKey].push(i);
 						}
