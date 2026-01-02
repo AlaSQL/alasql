@@ -75,12 +75,12 @@ describe('Test 2413 - GROUP_CONCAT with DISTINCT, ORDER BY and SEPARATOR', funct
 			{region: 'EU', country: 'Germany'},
 		];
 		res = alasql(
-			"SELECT region, GROUP_CONCAT(country ORDER BY country ASC SEPARATOR ';') as countries FROM ? GROUP BY region ORDER BY region",
+			"SELECT region, GROUP_CONCAT(country ORDER BY country ASC SEPARATOR '\\n') as countries FROM ? GROUP BY region ORDER BY region",
 			[data]
 		);
 		assert.deepEqual(res, [
-			{region: 'EU', countries: 'France;Germany'},
-			{region: 'NA', countries: 'Canada;Mexico;USA'},
+			{region: 'EU', countries: 'France\nGermany'},
+			{region: 'NA', countries: 'Canada\nMexico\nUSA'},
 		]);
 	});
 });
