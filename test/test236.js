@@ -61,11 +61,29 @@ describe('Test 236 MERGE', function () {
 
     */
 		}
-			.toString()
-			.slice(14, -3);
-		/// console.log(alasql.parse(sql).toString());
+			.toString();
+		
+		// Extract SQL from comment
+		var start = sql.indexOf('/*') + 2;
+		var end = sql.lastIndexOf('*/');
+		sql = sql.substring(start, end).trim();
+		
+		// Execute the MERGE
+		var res = alasql(sql);
+		
+		// Verify result count (3 rows affected: 1 insert + 2 deletes)
+		assert.equal(res, 3);
+		
+		// Verify final table state
+		var target = alasql('SELECT * FROM [Target] ORDER BY EmployeeID');
+		assert.deepEqual(target, [
+			{EmployeeID: 100, EmployeeName: 'Mary'},     // Unchanged (not in source, not matching S%)
+			// 101 'Sara' deleted (not in source, matches S%)
+			// 102 'Stefano' deleted (not in source, matches S%)
+			// 103 'Bob' not inserted (in source but doesn't match S%)
+			{EmployeeID: 104, EmployeeName: 'Steve'},    // Inserted (not in target, matches S%)
+		]);
 
-		//        console.log(res);
 		done();
 	});
 
