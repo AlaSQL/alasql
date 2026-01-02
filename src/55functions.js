@@ -329,8 +329,8 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 
 		let values = s.values;
 
-		// Sort if orderDirection is provided
-		if (s.orderDirection && s.orderDirection !== 'undefined') {
+		// Sort if orderDirection is provided (check for actual undefined, not the string 'undefined')
+		if (s.orderDirection && s.orderDirection !== undefined) {
 			let ascending = s.orderDirection === 'ASC';
 			values = values.slice().sort((a, b) => {
 				if (a === b) return 0;
@@ -339,6 +339,7 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 				if (typeof a === 'string' && typeof b === 'string') {
 					return ascending ? a.localeCompare(b) : b.localeCompare(a);
 				}
+				// For numbers and other types - add parentheses for clarity
 				return ascending ? (a < b ? -1 : 1) : b < a ? -1 : 1;
 			});
 		}

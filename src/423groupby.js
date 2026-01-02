@@ -149,7 +149,10 @@ yy.Select.prototype.compileGroup = function (query) {
 						if (col.funcid && col.funcid.toUpperCase() === 'GROUP_CONCAT') {
 							let separatorParam =
 								col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
-							// Extract direction from order expressions (we only support simple ORDER BY for now)
+							// Extract direction from order expressions
+							// Note: We only use the first ORDER BY expression's direction.
+							// MySQL's GROUP_CONCAT only supports ordering by the aggregated column itself,
+							// not complex expressions, so this is sufficient.
 							let orderDirection = 'undefined';
 							if (col.order && col.order.length > 0 && col.order[0].direction) {
 								orderDirection = JSON.stringify(col.order[0].direction);
@@ -431,7 +434,8 @@ yy.Select.prototype.compileGroup = function (query) {
 						if (col.funcid && col.funcid.toUpperCase() === 'GROUP_CONCAT') {
 							let separatorParam =
 								col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
-							// Extract direction from order expressions (we only support simple ORDER BY for now)
+							// Extract direction from order expressions
+							// Note: We only use the first ORDER BY expression's direction.
 							let orderDirection = 'undefined';
 							if (col.order && col.order.length > 0 && col.order[0].direction) {
 								orderDirection = JSON.stringify(col.order[0].direction);
