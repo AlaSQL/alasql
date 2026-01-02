@@ -431,131 +431,65 @@ yy.Select = class Select {
 					}
 				}
 
-				// Handle window offset functions: LEAD, LAG, FIRST_VALUE, LAST_VALUE
+				// Window offset functions: LEAD/LAG/FIRST_VALUE/LAST_VALUE
+				// Scans results linearly to compute values based on relative row positions
 				if (query.windowFuncs && query.windowFuncs.length > 0) {
-					for (var j = 0, jlen = query.windowFuncs.length; j < jlen; j++) {
+					for (var j = 0; j < query.windowFuncs.length; j++) {
 						var wf = query.windowFuncs[j];
-						var partitionColumns = wf.partitionColumns || [];
+						var partCols = wf.partitionColumns || [];
+						var exprCol = wf.args[0] && wf.args[0].columnid;
 
-						// Group rows by partition
-						var partitions = {};
-						var partitionOrder = [];
+						// Parse offset and default value arguments (handles negative literals like -1)
+						var getArg = function (a) {
+							return !a
+								? undefined
+								: a.value !== undefined
+									? a.value
+									: a.op === '-' && a.right && a.right.value !== undefined
+										? -a.right.value
+										: undefined;
+						};
+						var offset = getArg(wf.args[1]);
+						if (offset === undefined) offset = 1;
+						var defVal = getArg(wf.args[2]);
+						if (defVal === undefined) defVal = null;
 
-						for (var i = 0, ilen = res.length; i < ilen; i++) {
-							// Get partition key
-							var partitionKey =
-								partitionColumns.length > 0
-									? partitionColumns
-											.map(function (col) {
-												return res[i][col];
+						// Track partition boundaries as we scan
+						var prevPart = null;
+						var partStart = 0;
+
+						// Scan rows, processing each partition when boundaries change
+						for (var i = 0; i <= res.length; i++) {
+							var currPart =
+								i < res.length && partCols.length > 0
+									? partCols
+											.map(function (c) {
+												return res[i][c];
 											})
 											.join('|')
-									: '__all__'; // Single partition for entire result set
+									: '__all__';
 
-							if (!partitions[partitionKey]) {
-								partitions[partitionKey] = [];
-								partitionOrder.push(partitionKey);
+							// When partition ends, compute window function for all rows in partition
+							if (i === res.length || (prevPart !== null && currPart !== prevPart)) {
+								for (var k = partStart; k < i; k++) {
+									var targetIdx;
+									if (wf.funcid === 'LEAD') {
+										targetIdx = k + offset;
+										res[k][wf.as] = targetIdx < i && exprCol ? res[targetIdx][exprCol] : defVal;
+									} else if (wf.funcid === 'LAG') {
+										targetIdx = k - offset;
+										res[k][wf.as] =
+											targetIdx >= partStart && exprCol ? res[targetIdx][exprCol] : defVal;
+									} else if (wf.funcid === 'FIRST_VALUE') {
+										res[k][wf.as] = exprCol ? res[partStart][exprCol] : null;
+									} else if (wf.funcid === 'LAST_VALUE') {
+										res[k][wf.as] = exprCol ? res[i - 1][exprCol] : null;
+									}
+								}
+								partStart = i;
 							}
-							partitions[partitionKey].push(i);
+							prevPart = currPart;
 						}
-
-						// Process each partition
-						partitionOrder.forEach(function (partitionKey) {
-							var indices = partitions[partitionKey];
-							var partitionSize = indices.length;
-
-							// Get the expression to evaluate (first argument)
-							var exprArg = wf.args[0];
-							var exprColumn = null;
-							if (exprArg && exprArg.columnid) {
-								exprColumn = exprArg.columnid;
-							}
-
-							// Helper function to evaluate argument value
-							var evalArgValue = function (arg) {
-								if (!arg) return undefined;
-								if (arg.value !== undefined) return arg.value;
-								// Handle unary operators like -1
-								if (arg.op === '-' && arg.right && arg.right.value !== undefined) {
-									return -arg.right.value;
-								}
-								if (arg.op === '+' && arg.right && arg.right.value !== undefined) {
-									return arg.right.value;
-								}
-								return undefined;
-							};
-
-							// Apply window function based on type
-							if (wf.funcid === 'LEAD') {
-								var offset = 1;
-								var defaultValue = null;
-
-								// Parse offset if provided (second argument)
-								var offsetVal = evalArgValue(wf.args[1]);
-								if (offsetVal !== undefined) {
-									offset = offsetVal;
-								}
-
-								// Parse default value if provided (third argument)
-								var defaultVal = evalArgValue(wf.args[2]);
-								if (defaultVal !== undefined) {
-									defaultValue = defaultVal;
-								}
-
-								for (var k = 0; k < partitionSize; k++) {
-									var currentIdx = indices[k];
-									var leadIdx = k + offset;
-
-									if (leadIdx < partitionSize && exprColumn) {
-										res[currentIdx][wf.as] = res[indices[leadIdx]][exprColumn];
-									} else {
-										res[currentIdx][wf.as] = defaultValue;
-									}
-								}
-							} else if (wf.funcid === 'LAG') {
-								var offset = 1;
-								var defaultValue = null;
-
-								// Parse offset if provided (second argument)
-								var offsetVal = evalArgValue(wf.args[1]);
-								if (offsetVal !== undefined) {
-									offset = offsetVal;
-								}
-
-								// Parse default value if provided (third argument)
-								var defaultVal = evalArgValue(wf.args[2]);
-								if (defaultVal !== undefined) {
-									defaultValue = defaultVal;
-								}
-
-								for (var k = 0; k < partitionSize; k++) {
-									var currentIdx = indices[k];
-									var lagIdx = k - offset;
-
-									if (lagIdx >= 0 && exprColumn) {
-										res[currentIdx][wf.as] = res[indices[lagIdx]][exprColumn];
-									} else {
-										res[currentIdx][wf.as] = defaultValue;
-									}
-								}
-							} else if (wf.funcid === 'FIRST_VALUE') {
-								// Get first value in partition
-								var firstIdx = indices[0];
-								var firstValue = exprColumn ? res[firstIdx][exprColumn] : null;
-
-								for (var k = 0; k < partitionSize; k++) {
-									res[indices[k]][wf.as] = firstValue;
-								}
-							} else if (wf.funcid === 'LAST_VALUE') {
-								// Get last value in partition
-								var lastIdx = indices[partitionSize - 1];
-								var lastValue = exprColumn ? res[lastIdx][exprColumn] : null;
-
-								for (var k = 0; k < partitionSize; k++) {
-									res[indices[k]][wf.as] = lastValue;
-								}
-							}
-						});
 					}
 				}
 

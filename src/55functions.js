@@ -251,24 +251,20 @@ stdlib.GROUP_ROW_NUMBER = function () {
 	return '1';
 };
 
-// Window offset functions - these return placeholders that are replaced during post-processing
+// Window offset functions - return null during compilation, actual values computed after query execution
 stdlib.LEAD = function (expr, offset, defaultValue) {
-	// Return null as placeholder - actual value computed in post-processing
 	return 'null';
 };
 
 stdlib.LAG = function (expr, offset, defaultValue) {
-	// Return null as placeholder - actual value computed in post-processing
 	return 'null';
 };
 
 stdlib.FIRST_VALUE = function (expr) {
-	// Return null as placeholder - actual value computed in post-processing
 	return 'null';
 };
 
 stdlib.LAST_VALUE = function (expr) {
-	// Return null as placeholder - actual value computed in post-processing
 	return 'null';
 };
 
