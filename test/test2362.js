@@ -200,9 +200,7 @@ describe('Test 2362 - UNION with ORDER BY in first SELECT', function () {
 		];
 
 		var res = alasql(
-			`SELECT a FROM ? WHERE a = 1 ORDER BY a 
-			UNION SELECT a FROM ? WHERE a = 2 
-			UNION SELECT a FROM ? WHERE a = 3 ORDER BY a DESC`,
+			`SELECT a FROM ? WHERE a = 1 ORDER BY a UNION SELECT a FROM ? WHERE a = 2 UNION SELECT a FROM ? WHERE a = 3 ORDER BY a DESC`,
 			[data, data, data]
 		);
 
