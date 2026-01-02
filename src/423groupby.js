@@ -7,6 +7,24 @@
 */
 
 /**
+ * Helper to get GROUP_CONCAT parameters for compilation
+ * @param {Object} col - Column with aggregatorid and funcid
+ * @returns {string} - Comma-separated parameter string for aggregator call
+ */
+function getGroupConcatParams(col) {
+	if (!col.funcid || col.funcid.toUpperCase() !== 'GROUP_CONCAT') {
+		return '';
+	}
+	const separator = col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
+	// Extract direction from order expressions (MySQL GROUP_CONCAT orders by the value itself)
+	const orderDir =
+		col.order && col.order.length > 0 && col.order[0].direction
+			? JSON.stringify(col.order[0].direction)
+			: 'undefined';
+	return `,${separator},${orderDir}`;
+}
+
+/**
  Compile group of statements
  */
 yy.Select.prototype.compileGroup = function (query) {
@@ -145,22 +163,8 @@ yy.Select.prototype.compileGroup = function (query) {
 						return '';
 					} else if (col.aggregatorid === 'REDUCE') {
 						query.aggrKeys.push(col);
-						// For GROUP_CONCAT, pass separator and order parameters
-						if (col.funcid && col.funcid.toUpperCase() === 'GROUP_CONCAT') {
-							let separatorParam =
-								col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
-							// Extract direction from order expressions
-							// Note: We only use the first ORDER BY expression's direction.
-							// MySQL's GROUP_CONCAT only supports ordering by the aggregated column itself,
-							// not complex expressions, so this is sufficient.
-							let orderDirection = 'undefined';
-							if (col.order && col.order.length > 0 && col.order[0].direction) {
-								orderDirection = JSON.stringify(col.order[0].direction);
-							}
-							return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1,${separatorParam},${orderDirection}),`;
-						} else {
-							return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1),`;
-						}
+						const extraParams = getGroupConcatParams(col);
+						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1${extraParams}),`;
 					}
 					return '';
 				}
