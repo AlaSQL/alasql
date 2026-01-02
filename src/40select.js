@@ -186,6 +186,7 @@ yy.Select = class Select {
 		// For ROWNUM()
 		query.rownums = [];
 		query.grouprownums = [];
+		query.windowaggrs = []; // For window aggregate functions (COUNT/MAX/MIN/SUM/AVG with OVER)
 
 		// Check if INTO OBJECT() is used - this affects how arrow expressions are compiled
 		if (this.into instanceof yy.FuncValue && this.into.funcid.toUpperCase() === 'OBJECT') {
@@ -427,6 +428,103 @@ yy.Select = class Select {
 
 							res[i][config.as] = rowNum;
 							prevValues = currentValues;
+						}
+					}
+				}
+
+				// Handle window aggregate functions - COUNT/MAX/MIN/SUM/AVG with OVER (PARTITION BY ...)
+				if (query.windowaggrs && query.windowaggrs.length > 0) {
+					for (var j = 0, jlen = query.windowaggrs.length; j < jlen; j++) {
+						var config = query.windowaggrs[j];
+						var partitions = {};
+
+						// Group rows by partition
+						for (var i = 0, ilen = res.length; i < ilen; i++) {
+							var partitionKey;
+							if (config.partitionColumns && config.partitionColumns.length > 0) {
+								// Create partition key from partition columns
+								partitionKey = config.partitionColumns
+									.map(function (col) {
+										return res[i][col];
+									})
+									.join('|');
+							} else {
+								// No partition - all rows in one partition
+								partitionKey = '__all__';
+							}
+
+							if (!partitions[partitionKey]) {
+								partitions[partitionKey] = [];
+							}
+							partitions[partitionKey].push(i);
+						}
+
+						// Calculate aggregate for each partition
+						for (var partitionKey in partitions) {
+							var rowIndices = partitions[partitionKey];
+							var aggregateValue;
+
+							if (config.aggregatorid === 'COUNT') {
+								if (config.expression && config.expression.columnid !== '*') {
+									// COUNT(column) - count non-null values
+									aggregateValue = 0;
+									for (var k = 0; k < rowIndices.length; k++) {
+										var idx = rowIndices[k];
+										var val = res[idx][config.expression.columnid];
+										if (val != null) {
+											aggregateValue++;
+										}
+									}
+								} else {
+									// COUNT(*) - count all rows
+									aggregateValue = rowIndices.length;
+								}
+							} else if (config.aggregatorid === 'SUM') {
+								aggregateValue = 0;
+								for (var k = 0; k < rowIndices.length; k++) {
+									var idx = rowIndices[k];
+									var val = res[idx][config.expression.columnid];
+									if (val != null) {
+										aggregateValue += val;
+									}
+								}
+							} else if (config.aggregatorid === 'AVG') {
+								var sum = 0;
+								var count = 0;
+								for (var k = 0; k < rowIndices.length; k++) {
+									var idx = rowIndices[k];
+									var val = res[idx][config.expression.columnid];
+									if (val != null) {
+										sum += val;
+										count++;
+									}
+								}
+								aggregateValue = count > 0 ? sum / count : null;
+							} else if (config.aggregatorid === 'MAX') {
+								aggregateValue = null;
+								for (var k = 0; k < rowIndices.length; k++) {
+									var idx = rowIndices[k];
+									var val = res[idx][config.expression.columnid];
+									if (val != null && (aggregateValue === null || val > aggregateValue)) {
+										aggregateValue = val;
+									}
+								}
+							} else if (config.aggregatorid === 'MIN') {
+								aggregateValue = null;
+								for (var k = 0; k < rowIndices.length; k++) {
+									var idx = rowIndices[k];
+									var val = res[idx][config.expression.columnid];
+									if (val != null && (aggregateValue === null || val < aggregateValue)) {
+										aggregateValue = val;
+									}
+								}
+							}
+
+							// Assign aggregate value to all rows in partition
+							for (var k = 0; k < rowIndices.length; k++) {
+								var idx = rowIndices[k];
+								res[idx][config.as] = aggregateValue;
+							}
 						}
 					}
 				}

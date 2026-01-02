@@ -834,6 +834,12 @@
 		}
 
 		findAggregator(query) {
+			// Skip adding window aggregates (aggregates with OVER clause) to selectGroup
+			// They will be handled separately as window functions
+			if (this.over) {
+				return;
+			}
+
 			// Check if an identical aggregate already exists in selectGroup
 			let existingAggr = query.selectGroup.find(agg => agg.toString() === this.toString());
 
