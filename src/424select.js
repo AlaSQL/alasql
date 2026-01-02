@@ -530,6 +530,49 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 			if (col.funcid && col.funcid.toUpperCase() === 'GROUP_ROW_NUMBER') {
 				query.grouprownums.push({as: col.as, columnIndex: 0}); // Track which column to use for grouping
 			}
+
+			// Handle window offset functions: LEAD, LAG, FIRST_VALUE, LAST_VALUE
+			if (col.funcid) {
+				var funcUpper = col.funcid.toUpperCase();
+				if (
+					funcUpper === 'LEAD' ||
+					funcUpper === 'LAG' ||
+					funcUpper === 'FIRST_VALUE' ||
+					funcUpper === 'LAST_VALUE'
+				) {
+					if (col.over) {
+						// Track window offset function for post-processing
+						var windowFunc = {
+							as: col.as,
+							funcid: funcUpper,
+							args: col.args || [],
+						};
+
+						// Parse partition columns if present
+						if (col.over.partition) {
+							windowFunc.partitionColumns = col.over.partition.map(function (p) {
+								return p.columnid || p.toString();
+							});
+						}
+
+						// Parse order by if present
+						if (col.over.order) {
+							windowFunc.orderColumns = col.over.order.map(function (o) {
+								return {
+									columnid: o.expression && o.expression.columnid,
+									direction: o.direction || 'ASC',
+								};
+							});
+						}
+
+						// Initialize window functions array if not exists
+						if (!query.windowFuncs) {
+							query.windowFuncs = [];
+						}
+						query.windowFuncs.push(windowFunc);
+					}
+				}
+			}
 			//				console.log("colas:",colas);
 			// }
 		} else {
