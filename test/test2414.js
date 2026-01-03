@@ -36,9 +36,13 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[foreignCompetitors, foreignCompetitors]
 		);
 
-		// The result should have the grouped countries plus the total row
-		// Since it's UNION (not UNION ALL), duplicates are removed
-		assert(res.length >= 3); // At least 3 countries + total
+		// UNION removes duplicates, result is unordered unless specified
+		assert.deepEqual(res, [
+			{country: 'France', competitors: 1},
+			{country: 'Total: ', competitors: 5},
+			{country: 'UK', competitors: 2},
+			{country: 'USA', competitors: 2},
+		]);
 	});
 
 	it('B) Simplified case - parenthesized ORDER BY before UNION', function () {
@@ -53,8 +57,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			data,
 		]);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 3}]);
 	});
 
 	it('C) Parenthesized ORDER BY DESC before UNION', function () {
@@ -69,8 +72,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 3}, {a: 2}, {a: 1}]);
 	});
 
 	it('D) Parenthesized LIMIT before UNION', function () {
@@ -83,8 +85,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 
 		var res = alasql(`(SELECT a FROM ? LIMIT 2) UNION SELECT a FROM ? WHERE a > 2`, [data, data]);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 3}, {a: 4}]);
 	});
 
 	it('E) Parenthesized ORDER BY and LIMIT before UNION', function () {
@@ -100,8 +101,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 4}, {a: 3}]);
 	});
 
 	it('F) Parenthesized ORDER BY before UNION with ORDER BY at end', function () {
@@ -116,12 +116,8 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error, and final ORDER BY should take precedence
-		assert(res.length > 0);
-		// Result should be ordered descending (by final ORDER BY)
-		if (res.length >= 2) {
-			assert(res[0].a >= res[res.length - 1].a);
-		}
+		// Final ORDER BY should take precedence, result ordered descending
+		assert.deepEqual(res, [{a: 3}, {a: 2}, {a: 1}]);
 	});
 
 	it('G) Both SELECTs parenthesized with ORDER BY + LIMIT', function () {
@@ -137,8 +133,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 1}, {a: 2}]);
 	});
 
 	it('H) UNION ALL with parenthesized ORDER BY', function () {
@@ -153,9 +148,8 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
 		// UNION ALL keeps duplicates
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 2}, {a: 3}]);
 	});
 
 	it('I) EXCEPT with parenthesized ORDER BY', function () {
@@ -170,8 +164,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length >= 0);
+		assert.deepEqual(res, [{a: 1}, {a: 3}]);
 	});
 
 	it('J) INTERSECT with parenthesized ORDER BY', function () {
@@ -186,8 +179,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 1}, {a: 2}]);
 	});
 
 	it('K) Multiple UNIONs with parenthesized ORDER BY', function () {
@@ -203,8 +195,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 3}, {a: 2}, {a: 1}]);
 	});
 
 	it('L) Parenthesized ORDER BY with multiple columns before UNION', function () {
@@ -219,8 +210,11 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [
+			{a: 1, b: 'x'},
+			{a: 2, b: 'y'},
+			{a: 3, b: 'z'},
+		]);
 	});
 
 	it('M) Parenthesized ORDER BY with expression before UNION', function () {
@@ -235,8 +229,11 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [
+			{a: 3, b: 'z'},
+			{a: 1, b: 'x'},
+			{a: 2, b: 'y'},
+		]);
 	});
 
 	it('N) Parenthesized LIMIT with OFFSET before UNION', function () {
@@ -253,8 +250,7 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 2}, {a: 3}]);
 	});
 
 	it('O) UNION without parentheses and ORDER BY at end (standard behavior)', function () {
@@ -270,11 +266,8 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data]
 		);
 
-		// Should not throw a parse error, final ORDER BY applies to entire result
-		assert(res.length > 0);
-		if (res.length >= 2) {
-			assert(res[0].a >= res[res.length - 1].a);
-		}
+		// Final ORDER BY applies to entire result, ordered descending
+		assert.deepEqual(res, [{a: 3}, {a: 2}, {a: 1}]);
 	});
 
 	it('P) Complex nested parenthesized UNIONs with ORDER BY', function () {
@@ -290,7 +283,6 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 			[data, data, data]
 		);
 
-		// Should not throw a parse error
-		assert(res.length > 0);
+		assert.deepEqual(res, [{a: 4}, {a: 3}, {a: 1}]);
 	});
 });
