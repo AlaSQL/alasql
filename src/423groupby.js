@@ -135,15 +135,15 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 						}
-						return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+						return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 						}
-						return `'${colas}' : (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint' ? ${colexp} : typeof ${colexp} == 'object' ?
+						return `'${colas}' : (${colexp} !== null && (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint') ? ${colexp} : ${colexp} !== null && typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' ? ${colexp} : undefined : undefined),`;
 					} else if (col.aggregatorid === 'ARRAY') {
 						return `'${colas}':[${colexp}],`;

@@ -320,7 +320,7 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 	} else {
 		// Stage 3 (or final): sort if needed and join
 		if (s === null || s === undefined) {
-			return null;
+			return undefined;
 		}
 		// Handle both old string format and new object format
 		if (typeof s === 'string') {
@@ -328,6 +328,11 @@ alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
 		}
 
 		let values = s.values;
+
+		// If no values were collected (all nulls), return undefined
+		if (values.length === 0) {
+			return undefined;
+		}
 
 		// Sort if orderDirection is provided (check for actual undefined, not the string 'undefined')
 		if (s.orderDirection && s.orderDirection !== undefined) {
@@ -364,7 +369,7 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	}
 
 	if (!s.length) {
-		return null;
+		return undefined;
 	}
 
 	let r = s.sort((a, b) => {
