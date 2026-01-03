@@ -46,7 +46,8 @@ describe('Test 236 MERGE', function () {
 	});
 
 	it('2. Merge', function (done) {
-		var sql = function () {
+		// SQL is embedded in a multiline comment within a function
+		var sqlFunc = function () {
 			/*
 
         MERGE [Target] AS T
@@ -60,13 +61,11 @@ describe('Test 236 MERGE', function () {
             THEN DELETE
 
     */
-		}
-			.toString();
+		};
 		
-		// Extract SQL from comment
-		var start = sql.indexOf('/*') + 2;
-		var end = sql.lastIndexOf('*/');
-		sql = sql.substring(start, end).trim();
+		// Extract SQL from the function's comment block
+		var funcStr = sqlFunc.toString();
+		var sql = funcStr.substring(funcStr.indexOf('/*') + 2, funcStr.lastIndexOf('*/')).trim();
 		
 		// Execute the MERGE
 		var res = alasql(sql);
