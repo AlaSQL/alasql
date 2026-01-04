@@ -478,7 +478,7 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 	// Only build these if GROUP BY exists, as they're only used for alias resolution
 	var groupByAliasMap = null;
 	var selectColumnNames = null;
-	
+
 	if (self.group) {
 		// Build map of GROUP BY columns that reference aliases (for O(1) lookup)
 		groupByAliasMap = {};
@@ -487,7 +487,7 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 				groupByAliasMap[gp.columnid] = idx;
 			}
 		});
-		
+
 		// Build set of actual column names in SELECT to distinguish pure aliases from column renames
 		// This prevents incorrect replacement of "GROUP BY b" when "SELECT a AS b, b AS c" exists
 		selectColumnNames = {};
@@ -532,7 +532,12 @@ yy.Select.prototype.compileSelectGroup0 = function (query) {
 				// 1. The SELECT column has an alias
 				// 2. That alias matches a GROUP BY column name
 				// 3. The alias is NOT an actual column name (pure alias, not renaming)
-				if (col.as && groupByAliasMap && groupByAliasMap.hasOwnProperty(col.as) && !selectColumnNames[col.as]) {
+				if (
+					col.as &&
+					groupByAliasMap &&
+					groupByAliasMap.hasOwnProperty(col.as) &&
+					!selectColumnNames[col.as]
+				) {
 					var aliasGroupIdx = groupByAliasMap[col.as];
 					// Replace the GROUP BY column reference with a deep copy of the SELECT expression
 					// We use deep cloning to ensure nested objects (like CASE whens/elses) are copied
