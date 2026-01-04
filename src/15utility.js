@@ -1385,10 +1385,12 @@ utils.typeConverter = function (value, dbtypeid) {
 		return String(value);
 	}
 	if (reTypeConverter.int.test(dbtypeid)) {
-		return parseInt(value, 10);
+		var intVal = parseInt(value, 10);
+		return isNaN(intVal) ? value : intVal;
 	}
 	if (reTypeConverter.num.test(dbtypeid)) {
-		return parseFloat(value);
+		var numVal = parseFloat(value);
+		return isNaN(numVal) ? value : numVal;
 	}
 	if (reTypeConverter.bool.test(dbtypeid)) {
 		if (typeof value === 'string') {

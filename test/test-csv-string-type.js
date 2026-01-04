@@ -156,8 +156,8 @@ describe('Test CSV string type preservation and column type conversion', functio
 		var csvData = '"id";"qty"\n"A001";""';
 		alasql('SELECT * INTO test_nulls FROM CSV(?, {separator:";"})', [csvData]);
 		var res = alasql('SELECT * FROM test_nulls');
-		// Empty string in CSV becomes empty string, then parseInt returns NaN
-		assert.deepEqual(res, [{id: 'A001', qty: NaN}]);
+		// Empty string in CSV becomes empty string, parseInt returns NaN so original value is returned
+		assert.deepEqual(res, [{id: 'A001', qty: ''}]);
 		alasql('DROP TABLE test_nulls');
 	});
 
@@ -174,5 +174,49 @@ describe('Test CSV string type preservation and column type conversion', functio
 		var csvData = '"id";"name"\n"117.20";"test"';
 		var res = alasql('SELECT * FROM CSV(?, {separator:";"})', [csvData]);
 		assert.deepEqual(res, [{id: '117.20', name: 'test'}]);
+	});
+
+	it('R) Unquoted CSV data - preserves strings when column is STRING', function () {
+		alasql('CREATE TABLE test_unquoted (id STRING, amount INT)');
+		var csvData = 'id;amount\n117.20;500\n88.33;600';
+		alasql('SELECT * INTO test_unquoted FROM CSV(?, {separator:";"})', [csvData]);
+		var res = alasql('SELECT * FROM test_unquoted');
+		assert.deepEqual(res, [
+			{id: '117.20', amount: 500},
+			{id: '88.33', amount: 600},
+		]);
+		alasql('DROP TABLE test_unquoted');
+	});
+
+	it('S) Unquoted CSV data - converts to numbers when column is INT', function () {
+		alasql('CREATE TABLE test_unquoted_int (qty INT, price INT)');
+		var csvData = 'qty;price\n123;456\n789;012';
+		alasql('SELECT * INTO test_unquoted_int FROM CSV(?, {separator:";"})', [csvData]);
+		var res = alasql('SELECT * FROM test_unquoted_int');
+		assert.deepEqual(res, [
+			{qty: 123, price: 456},
+			{qty: 789, price: 12},
+		]);
+		alasql('DROP TABLE test_unquoted_int');
+	});
+
+	it('T) Unquoted CSV data without column definitions - auto-converts with csvStringToNumber=true', function () {
+		alasql.options.csvStringToNumber = true;
+		alasql('CREATE TABLE test_unquoted_nodef');
+		var csvData = 'id;amount\n117.20;500';
+		alasql('SELECT * INTO test_unquoted_nodef FROM CSV(?, {separator:";"})', [csvData]);
+		var res = alasql('SELECT * FROM test_unquoted_nodef');
+		assert.deepEqual(res, [{id: 117.2, amount: 500}]);
+		alasql('DROP TABLE test_unquoted_nodef');
+	});
+
+	it('U) Unquoted CSV data with invalid numbers returns original value', function () {
+		alasql('CREATE TABLE test_invalid (id STRING, code INT, amount FLOAT)');
+		var csvData = 'id;code;amount\nABC;xyz;notanumber';
+		alasql('SELECT * INTO test_invalid FROM CSV(?, {separator:";"})', [csvData]);
+		var res = alasql('SELECT * FROM test_invalid');
+		// Invalid conversions return original string value
+		assert.deepEqual(res, [{id: 'ABC', code: 'xyz', amount: 'notanumber'}]);
+		alasql('DROP TABLE test_invalid');
 	});
 });
