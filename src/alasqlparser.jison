@@ -144,6 +144,7 @@ DATABASE(S)?									return 'DATABASE'
 'GO'                                      		return 'GO'
 'GRAPH'                                      	return 'GRAPH'
 'GROUP'                                      	return 'GROUP'
+'GROUP_CONCAT'                                  return 'GROUP_CONCAT'
 'GROUPING'                                     	return 'GROUPING'
 'HAVING'                                        return 'HAVING'
 /*'HELP'											return 'HELP'*/
@@ -233,6 +234,7 @@ SCHEMA(S)?                                      return 'DATABASE'
 'SEARCH'                                        return 'SEARCH'
 
 'SEMI'                                        	return 'SEMI'
+'SEPARATOR'                                     return 'SEPARATOR'
 SET 	                                       	return 'SET'
 SETS                                        	return 'SET'
 'SHOW'                                        	return 'SHOW'
@@ -364,6 +366,8 @@ Literal
 	| OPEN
 		{ $$ = $1.toLowerCase(); }
 	| CLOSE
+		{ $$ = $1.toLowerCase(); }
+	| SEPARATOR
 		{ $$ = $1.toLowerCase(); }
 	| error NonReserved
 		{ $$ = $2.toLowerCase() }
@@ -1406,6 +1410,10 @@ AggrValue
 	| Aggregator LPAR ALL Expression RPAR OverClause
 		{ $$ = new yy.AggrValue({aggregatorid: $1.toUpperCase(), expression: $4,
 		 over:$6}); }
+	| GROUP_CONCAT LPAR Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $3, order: $4, separator: $5}); }
+	| GROUP_CONCAT LPAR DISTINCT Expression GroupConcatOrderClause GroupConcatSeparatorClause RPAR
+		{ $$ = new yy.AggrValue({aggregatorid: 'REDUCE', funcid: 'GROUP_CONCAT', expression: $4, distinct: true, order: $5, separator: $6}); }
 	;
 
 OverClause
@@ -1422,6 +1430,26 @@ OverOrderByClause
 	: ORDER BY OrderExpressionsList
 		{ $$ = {order:$3}; }
 	;
+
+GroupConcatOrderClause
+	:
+		{ $$ = undefined; }
+	| ORDER BY OrderExpressionsList
+		{ $$ = $3; }
+	;
+
+GroupConcatSeparatorClause
+	:
+		{ $$ = undefined; }
+	| SEPARATOR STRING
+		{ 
+			var str = $2.substring(1, $2.length-1);
+			// Process common escape sequences
+			str = str.replace(/\\n/g, '\n').replace(/\\t/g, '\t').replace(/\\r/g, '\r').replace(/\\\\/g, '\\');
+			$$ = str;
+		}
+	;
+
 Aggregator
 	: SUM { $$ = "SUM"; }
 	| TOTAL { $$ = "TOTAL"; }
@@ -1433,6 +1461,7 @@ Aggregator
 	| LAST { $$ = "LAST"; }
 	| AGGR { $$ = "AGGR"; }
 	| ARRAY { $$ = "ARRAY"; }
+	| GROUP_CONCAT { $$ = "GROUP_CONCAT"; }
 /*	| REDUCE { $$ = "REDUCE"; } */
 	;
 
@@ -3380,6 +3409,7 @@ NonReserved
 	|SECURITY
 	|SELECTIVE
 	|SELF
+	|SEPARATOR
 	|SEQUENCE
 	|SERIALIZABLE
 	|SERVER
@@ -3658,6 +3688,7 @@ var nonReserved = ["A"
 	,"SECURITY"
 	,"SELECTIVE"
 	,"SELF"
+	,"SEPARATOR"
 	,"SEQUENCE"
 	,"SERIALIZABLE"
 	,"SERVER"

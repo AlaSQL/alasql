@@ -256,6 +256,16 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 	alasql.utils.extend(opt, opts);
 	var res;
 	var hs = [];
+	// Determine once whether to auto-convert: not raw mode and not SELECT INTO
+	const shouldAutoConvert = !opt.raw && !query?.intofns;
+
+	function potentialAutoConvert(val) {
+		if (shouldAutoConvert && val !== undefined && val.length !== 0 && val == +val) {
+			return +val;
+		}
+		return val;
+	}
+
 	function parseText(text) {
 		var delimiterCode = opt.separator.charCodeAt(0);
 		var quoteCode = opt.quote.charCodeAt(0);
@@ -332,25 +342,22 @@ alasql.from.CSV = function (contents, opts, cb, idx, query) {
 						hs = opt.headers;
 						var r = {};
 						hs.forEach(function (h, idx) {
-							r[h] = a[idx];
-							// Keep as string - type conversion happens at INSERT time based on column definitions
+							r[h] = potentialAutoConvert(a[idx]);
 						});
 						rows.push(r);
 					}
 				} else {
 					var r = {};
 					hs.forEach(function (h, idx) {
-						r[h] = a[idx];
-						// Keep as string - type conversion happens at INSERT time based on column definitions
+						r[h] = potentialAutoConvert(a[idx]);
 					});
 					rows.push(r);
 				}
 				n++;
 			} else {
 				var r = {};
-				// Keep as string - type conversion happens at INSERT time based on column definitions
 				a.forEach(function (v, idx) {
-					r[idx] = a[idx];
+					r[idx] = potentialAutoConvert(a[idx]);
 				});
 				rows.push(r);
 			}

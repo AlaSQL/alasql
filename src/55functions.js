@@ -281,26 +281,76 @@ stdfn.CONCAT_WS = function () {
 // TRIM
 
 // Aggregator for joining strings
-alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (v, s, stage) {
+// Can be called with options: alasql.aggr.GROUP_CONCAT(v, s, stage, separator, orderDirection)
+alasql.aggr.group_concat = alasql.aggr.GROUP_CONCAT = function (
+	v,
+	s,
+	stage,
+	separator,
+	orderDirection
+) {
+	// Default separator is comma
+	if (separator === undefined) {
+		separator = ',';
+	}
+
 	if (stage === 1) {
-		// Initialize: skip null values
+		// Initialize: create array to collect values
+		// Store as object with values array and metadata
 		if (v === null || v === undefined) {
-			return null;
+			return {values: [], separator: separator, orderDirection: orderDirection};
 		}
-		return '' + v;
+		return {values: [v], separator: separator, orderDirection: orderDirection};
 	} else if (stage === 2) {
-		// Accumulate: skip null values
+		// Accumulate: add to values array, skip null values
 		if (v === null || v === undefined) {
 			return s;
 		}
-		// If accumulator is null/undefined, start with current value
+		// If accumulator is null/undefined, initialize it
 		if (s === null || s === undefined) {
-			return '' + v;
+			return {values: [v], separator: separator, orderDirection: orderDirection};
 		}
-		s += ',' + v;
+		// Handle both old string format (for backwards compatibility) and new object format
+		if (typeof s === 'string') {
+			// Old format - convert to new format
+			s = {values: s.split(','), separator: ',', orderDirection: undefined};
+		}
+		s.values.push(v);
 		return s;
+	} else {
+		// Stage 3 (or final): sort if needed and join
+		if (s === null || s === undefined) {
+			return undefined;
+		}
+		// Handle both old string format and new object format
+		if (typeof s === 'string') {
+			return s; // Already formatted
+		}
+
+		let values = s.values;
+
+		// If no values were collected (all nulls), return undefined
+		if (values.length === 0) {
+			return undefined;
+		}
+
+		// Sort if orderDirection is provided (check for actual undefined, not the string 'undefined')
+		if (s.orderDirection && s.orderDirection !== undefined) {
+			let ascending = s.orderDirection === 'ASC';
+			values = values.slice().sort((a, b) => {
+				if (a === b) return 0;
+				if (a === null || a === undefined) return 1;
+				if (b === null || b === undefined) return -1;
+				if (typeof a === 'string' && typeof b === 'string') {
+					return ascending ? a.localeCompare(b) : b.localeCompare(a);
+				}
+				// For numbers and other types - add parentheses for clarity
+				return ascending ? (a < b ? -1 : 1) : b < a ? -1 : 1;
+			});
+		}
+
+		return values.join(s.separator);
 	}
-	return s;
 };
 
 alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
@@ -319,7 +369,7 @@ alasql.aggr.median = alasql.aggr.MEDIAN = function (v, s, stage) {
 	}
 
 	if (!s.length) {
-		return null;
+		return undefined;
 	}
 
 	let r = s.sort((a, b) => {

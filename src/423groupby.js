@@ -7,6 +7,24 @@
 */
 
 /**
+ * Helper to get GROUP_CONCAT parameters for compilation
+ * @param {Object} col - Column with aggregatorid and funcid
+ * @returns {string} - Comma-separated parameter string for aggregator call
+ */
+function getGroupConcatParams(col) {
+	if (!col.funcid || col.funcid.toUpperCase() !== 'GROUP_CONCAT') {
+		return '';
+	}
+	const separator = col.separator !== undefined ? JSON.stringify(col.separator) : 'undefined';
+	// Extract direction from order expressions (MySQL GROUP_CONCAT orders by the value itself)
+	const orderDir =
+		col.order && col.order.length > 0 && col.order[0].direction
+			? JSON.stringify(col.order[0].direction)
+			: 'undefined';
+	return `,${separator},${orderDir}`;
+}
+
+/**
  Compile group of statements
  */
 yy.Select.prototype.compileGroup = function (query) {
@@ -117,15 +135,15 @@ yy.Select.prototype.compileGroup = function (query) {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
 
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 						}
-						return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+						return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 					} else if (col.aggregatorid === 'MAX') {
 						if ('funcid' in col.expression) {
 							let colexp1 = colExpIfFunIdExists(col.expression);
-							return `'${colas}': (__alasql_tmp = ${colexp}, typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date)) ? __alasql_tmp : undefined),`;
+							return `'${colas}': (__alasql_tmp = ${colexp}, __alasql_tmp !== null && (typeof __alasql_tmp == 'number' || typeof __alasql_tmp == 'bigint' || (typeof __alasql_tmp == 'object' && (typeof Number(__alasql_tmp) == 'number' || __alasql_tmp instanceof Date))) ? __alasql_tmp : undefined),`;
 						}
-						return `'${colas}' : (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint' ? ${colexp} : typeof ${colexp} == 'object' ?
+						return `'${colas}' : (${colexp} !== null && (typeof ${colexp} == 'number' || typeof ${colexp} == 'bigint') ? ${colexp} : ${colexp} !== null && typeof ${colexp} == 'object' ?
 							typeof Number(${colexp}) == 'number' ? ${colexp} : undefined : undefined),`;
 					} else if (col.aggregatorid === 'ARRAY') {
 						return `'${colas}':[${colexp}],`;
@@ -145,7 +163,8 @@ yy.Select.prototype.compileGroup = function (query) {
 						return '';
 					} else if (col.aggregatorid === 'REDUCE') {
 						query.aggrKeys.push(col);
-						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1),`;
+						const extraParams = getGroupConcatParams(col);
+						return `'${colas}':alasql.aggr['${col.funcid}'](${colexp},undefined,1${extraParams}),`;
 					}
 					return '';
 				}
@@ -415,8 +434,9 @@ yy.Select.prototype.compileGroup = function (query) {
 							g['${colas}']=${col.expression.toJS('g', -1)};
 							${post}`;
 					} else if (col.aggregatorid === 'REDUCE') {
+						const extraParams = getGroupConcatParams(col);
 						return `${pre}
-							g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2);
+							g['${colas}'] = alasql.aggr.${col.funcid}(${colexp},g['${colas}'],2${extraParams});
 							${post}`;
 					}
 
