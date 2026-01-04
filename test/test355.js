@@ -61,7 +61,7 @@ describe('Test 355 PIVOT', function () {
  */
 		});
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Product: 'BEER', FRED: 24, KATE: 12},
 			{Product: 'MILK', FRED: 3, KATE: 1},
 			{Product: 'SODA', KATE: 6},
@@ -80,7 +80,7 @@ describe('Test 355 PIVOT', function () {
  */
 		});
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Cust: 'FRED', MILK: 3, BEER: 24},
 			{Cust: 'KATE', VEG: 5, SODA: 6, MILK: 1, BEER: 12},
 		]);

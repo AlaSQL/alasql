@@ -24,7 +24,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		alasql.options.joinstar = 'underscore';
 		var res = alasql('SELECT * FROM ? as a JOIN ? as b', [data, data2]);
 		// Expected: columns prefixed with table aliases
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a_dep: 'A', a_qt: 10, a_price: 5, a_extra: 1, b_dep: 'B', b_qt: 2, b_price: 5},
 		]);
 	});
@@ -35,7 +35,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		alasql.options.joinstar = 'json';
 		var res = alasql('SELECT * FROM ? as a JOIN ? as b', [data, data2]);
 		// Expected: nested objects by table alias
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				a: {dep: 'A', qt: 10, price: 5, extra: 1},
 				b: {dep: 'B', qt: 2, price: 5},
@@ -49,7 +49,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		alasql.options.joinstar = 'overwrite';
 		var res = alasql('SELECT * FROM ? as a JOIN ? as b', [data, data2]);
 		// Expected: later columns overwrite earlier ones
-		assert.deepEqual(res, [{dep: 'B', qt: 2, price: 5, extra: 1}]);
+		assert.deepStrictEqual(res, [{dep: 'B', qt: 2, price: 5, extra: 1}]);
 	});
 
 	it('4. UNDERSCORE JOINSTAR with multiple rows', () => {
@@ -64,7 +64,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		alasql.options.joinstar = 'underscore';
 		var res = alasql('SELECT * FROM ? as users JOIN ? as depts', [data, data2]);
 		// Cartesian product with underscore prefixes
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{users_id: 1, users_name: 'Alice', depts_id: 10, depts_dept: 'Sales'},
 			{users_id: 1, users_name: 'Alice', depts_id: 20, depts_dept: 'IT'},
 			{users_id: 2, users_name: 'Bob', depts_id: 10, depts_dept: 'Sales'},
@@ -84,7 +84,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		alasql.options.joinstar = 'json';
 		var res = alasql('SELECT * FROM ? as users JOIN ? as depts', [data, data2]);
 		// Cartesian product with nested objects
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{users: {id: 1, name: 'Alice'}, depts: {id: 10, dept: 'Sales'}},
 			{users: {id: 1, name: 'Alice'}, depts: {id: 20, dept: 'IT'}},
 			{users: {id: 2, name: 'Bob'}, depts: {id: 10, dept: 'Sales'}},
@@ -98,7 +98,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		var data3 = [{num: 100}];
 		alasql.options.joinstar = 'underscore';
 		var res = alasql('SELECT * FROM ? as t1 JOIN ? as t2 JOIN ? as t3', [data1, data2, data3]);
-		assert.deepEqual(res, [{t1_id: 1, t2_val: 'A', t3_num: 100}]);
+		assert.deepStrictEqual(res, [{t1_id: 1, t2_val: 'A', t3_num: 100}]);
 	});
 
 	it('7. JSON JOINSTAR with three-way join', () => {
@@ -107,7 +107,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		var data3 = [{num: 100}];
 		alasql.options.joinstar = 'json';
 		var res = alasql('SELECT * FROM ? as t1 JOIN ? as t2 JOIN ? as t3', [data1, data2, data3]);
-		assert.deepEqual(res, [{t1: {id: 1}, t2: {val: 'A'}, t3: {num: 100}}]);
+		assert.deepStrictEqual(res, [{t1: {id: 1}, t2: {val: 'A'}, t3: {num: 100}}]);
 	});
 
 	it('8. Cache invalidation when switching joinstar modes', () => {
@@ -117,17 +117,17 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		// First query with underscore mode
 		alasql.options.joinstar = 'underscore';
 		var res1 = alasql('SELECT * FROM ? as x JOIN ? as y', [data, data2]);
-		assert.deepEqual(res1, [{x_a: 1, y_b: 2}]);
+		assert.deepStrictEqual(res1, [{x_a: 1, y_b: 2}]);
 
 		// Same query with json mode should not use cached version
 		alasql.options.joinstar = 'json';
 		var res2 = alasql('SELECT * FROM ? as x JOIN ? as y', [data, data2]);
-		assert.deepEqual(res2, [{x: {a: 1}, y: {b: 2}}]);
+		assert.deepStrictEqual(res2, [{x: {a: 1}, y: {b: 2}}]);
 
 		// Same query with overwrite mode
 		alasql.options.joinstar = 'overwrite';
 		var res3 = alasql('SELECT * FROM ? as x JOIN ? as y', [data, data2]);
-		assert.deepEqual(res3, [{a: 1, b: 2}]);
+		assert.deepStrictEqual(res3, [{a: 1, b: 2}]);
 	});
 
 	it('9. UNDERSCORE JOINSTAR with empty result', () => {
@@ -135,7 +135,7 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		var data2 = [];
 		alasql.options.joinstar = 'underscore';
 		var res = alasql('SELECT * FROM ? as a JOIN ? as b', [data, data2]);
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 	});
 
 	it('10. JSON JOINSTAR with special characters in column names', () => {
@@ -143,6 +143,6 @@ describe('Test 1004 - JOINSTAR with inline data (FROM ?)', function () {
 		var data2 = [{col_name: 'C'}];
 		alasql.options.joinstar = 'json';
 		var res = alasql('SELECT * FROM ? as t1 JOIN ? as t2', [data, data2]);
-		assert.deepEqual(res, [{t1: {'col-name': 'A', 'col.name': 'B'}, t2: {col_name: 'C'}}]);
+		assert.deepStrictEqual(res, [{t1: {'col-name': 'A', 'col.name': 'B'}, t2: {col_name: 'C'}}]);
 	});
 });

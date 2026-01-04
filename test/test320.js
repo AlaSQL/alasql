@@ -15,17 +15,17 @@ describe('Test 320 DISTINCT', function () {
 		var data = [{a: 1}, {a: 2}, {a: 2}, {a: 1}];
 
 		var res = alasql('SEARCH FROM ?', [data]);
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 2}, {a: 1}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {a: 2}, {a: 1}]);
 		var res = alasql('SEARCH / FROM ?', [data]);
-		assert.deepEqual(res, [{a: 1}, {a: 2}, {a: 2}, {a: 1}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}, {a: 2}, {a: 1}]);
 		var res = alasql('SEARCH / a FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 2, 1]);
+		assert.deepStrictEqual(res, [1, 2, 2, 1]);
 		var res = alasql('SEARCH DISTINCT(/) FROM ?', [data]);
-		assert.deepEqual(res, [{a: 1}, {a: 2}]);
+		assert.deepStrictEqual(res, [{a: 1}, {a: 2}]);
 		var res = alasql('SEARCH DISTINCT(/a) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2]);
+		assert.deepStrictEqual(res, [1, 2]);
 		var res = alasql('SEARCH / PROP(a) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 2, 1]);
+		assert.deepStrictEqual(res, [1, 2, 2, 1]);
 
 		//   console.log(res);
 

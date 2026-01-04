@@ -30,7 +30,7 @@ describe('Test 168a - read XLSX', function () {
 				where Population > 10000000 order by City',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Mexico', 'Moscow']);
+				assert.deepStrictEqual(res, ['Mexico', 'Moscow']);
 				done();
 			}
 		);
@@ -45,7 +45,7 @@ describe('Test 168a - read XLSX', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['Moscow']);
+				assert.deepStrictEqual(res, ['Moscow']);
 				done();
 			}
 		);
@@ -60,7 +60,7 @@ describe('Test 168a - read XLSX', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['New York']);
+				assert.deepStrictEqual(res, ['New York']);
 				done();
 			}
 		);
@@ -89,7 +89,7 @@ describe('Test 168b - read XLS', function () {
 				where Population > 10000000 order by City',
 			[],
 			function (res) {
-				assert.deepEqual(res, ['Mexico', 'Moscow']);
+				assert.deepStrictEqual(res, ['Mexico', 'Moscow']);
 				done();
 			}
 		);
@@ -104,7 +104,7 @@ describe('Test 168b - read XLS', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['Moscow']);
+				assert.deepStrictEqual(res, ['Moscow']);
 				done();
 			}
 		);
@@ -119,7 +119,7 @@ describe('Test 168b - read XLS', function () {
 			[],
 			function (res) {
 				//					console.log(res);
-				assert.deepEqual(res, ['New York']);
+				assert.deepStrictEqual(res, ['New York']);
 				done();
 			}
 		);

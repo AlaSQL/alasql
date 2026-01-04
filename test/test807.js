@@ -82,9 +82,9 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 			'insert into COLLABORATOR(companyId, siteId, id, name) values ("achme", "area51", "700", "dnoB semaJ");'
 		);
 		var res = alasql('SELECT COUNT (*) FROM COLLABORATOR');
-		assert.deepEqual(res, [{'COUNT(*)': 1}]);
+		assert.deepStrictEqual(res, [{'COUNT(*)': 1}]);
 		var res = alasql('SELECT COUNT (*) FROM SITE');
-		assert.deepEqual(res, [{'COUNT(*)': 1}]);
+		assert.deepStrictEqual(res, [{'COUNT(*)': 1}]);
 		done();
 	});
 
@@ -171,7 +171,7 @@ describe('Test ' + test + ' - Composite foreign keys.', function () {
 		);
 
 		var res = alasql('SELECT COUNT (*) FROM COLLABORATOR');
-		assert.deepEqual(res, [{'COUNT(*)': 1}]);
+		assert.deepStrictEqual(res, [{'COUNT(*)': 1}]);
 		done();
 	});
 

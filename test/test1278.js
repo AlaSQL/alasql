@@ -32,7 +32,7 @@ describe('Test 1278 - Output JSON object as nested objects with INTO OBJECT', fu
 		// This demonstrates the current (flattened) behavior
 		var res = alasql('SELECT name, details->stock FROM ? WHERE details->stock > 11', [data]);
 		// Currently returns: [{"name":"item2","details->stock":20},{"name":"item3","details->stock":30}]
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'item2', 'details->stock': 20},
 			{name: 'item3', 'details->stock': 30},
 		]);
@@ -43,7 +43,7 @@ describe('Test 1278 - Output JSON object as nested objects with INTO OBJECT', fu
 			data,
 		]);
 		// Expected: [{"name":"item2","details":{"stock":20}},{"name":"item3","details":{"stock":30}}]
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'item2', details: {stock: 20}},
 			{name: 'item3', details: {stock: 30}},
 		]);
@@ -76,7 +76,7 @@ describe('Test 1278 - Output JSON object as nested objects with INTO OBJECT', fu
 		var res = alasql('SELECT id, config->settings->enabled, config->name INTO OBJECT() FROM ?', [
 			nestedData,
 		]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, config: {settings: {enabled: true}, name: 'test'}},
 			{id: 2, config: {settings: {enabled: false}, name: 'prod'}},
 		]);
@@ -88,7 +88,7 @@ describe('Test 1278 - Output JSON object as nested objects with INTO OBJECT', fu
 			[data]
 		);
 		// When using AS, it should use the alias as the column name
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 'item2', stockLevel: 20},
 			{name: 'item3', stockLevel: 30},
 		]);
@@ -96,6 +96,6 @@ describe('Test 1278 - Output JSON object as nested objects with INTO OBJECT', fu
 
 	it('5. INTO OBJECT() with no arrow notation behaves like regular output', function () {
 		var res = alasql('SELECT name INTO OBJECT() FROM ? WHERE details->stock > 11', [data]);
-		assert.deepEqual(res, [{name: 'item2'}, {name: 'item3'}]);
+		assert.deepStrictEqual(res, [{name: 'item2'}, {name: 'item3'}]);
 	});
 });

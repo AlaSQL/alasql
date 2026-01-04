@@ -23,7 +23,7 @@ describe('Test 284 PRIMARY KEY with AUTOINCREMENT', function () {
       DROP DATABASE test284;
 	  `);
 
-		assert.deepEqual(res, [1, 1, 1, 1, 1, 1]);
+		assert.deepStrictEqual(res, [1, 1, 1, 1, 1, 1]);
 
 		done();
 	});

@@ -53,7 +53,7 @@ describe('Test 331 SLT#2 - test', function () {
 
     */
 		});
-		assert.deepEqual(res.length, 31);
+		assert.deepStrictEqual(res.length, 31);
 		done();
 	});
 
@@ -71,7 +71,7 @@ describe('Test 331 SLT#2 - test', function () {
     */
 		});
 		//    console.log(res);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[undefined, 1, undefined, 114],
 			[undefined, 18, undefined, 207],
 		]);
@@ -85,7 +85,7 @@ describe('Test 331 SLT#2 - test', function () {
   */
 		});
 		/// console.log(res);
-		//    assert.deepEqual(res.length,30);
+		//    assert.deepStrictEqual(res.length,30);
 		done();
 	});
 
@@ -98,7 +98,7 @@ describe('Test 331 SLT#2 - test', function () {
   */
 		});
 		//    console.log(res.length);
-		assert.deepEqual(res.length, 30);
+		assert.deepStrictEqual(res.length, 30);
 		done();
 	});
 
@@ -112,7 +112,7 @@ describe('Test 331 SLT#2 - test', function () {
        WHERE (e>a AND e<b)  */
 		});
 		/// console.log(res.sort());
-		//    assert.deepEqual(res.length,30);
+		//    assert.deepStrictEqual(res.length,30);
 		done();
 	});
 });

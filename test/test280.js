@@ -59,7 +59,7 @@ if (typeof exports == 'object') {
 				[outfile, [data, data2]],
 				function () {
 					alasql('SEARCH XML Worksheet %[ss:Name] FROM XML(?)', [outfile], function (res) {
-						assert.deepEqual(res, ['Sheet1', 'Sheet2']);
+						assert.deepStrictEqual(res, ['Sheet1', 'Sheet2']);
 						alasql('SEARCH XML / * Data$ FROM XML(?)', [outfile], function (res) {
 							assert.equal(res.length, 12);
 							done();
@@ -77,8 +77,8 @@ if (typeof exports == 'object') {
 				function () {
 					alasql('SEARCH XML / * Data$ FROM XML(?)', [outfile], function (res) {
 						assert.equal(res.length, 10);
-						assert.deepEqual(res[0], 'City');
-						assert.deepEqual(res[1], 'Population');
+						assert.deepStrictEqual(res[0], 'City');
+						assert.deepStrictEqual(res[1], 'Population');
 						done();
 					});
 				}

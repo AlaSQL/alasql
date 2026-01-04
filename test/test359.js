@@ -57,7 +57,7 @@ describe('Test 359 UNPIVOT', function () {
   */
 		});
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res,
 
 			[

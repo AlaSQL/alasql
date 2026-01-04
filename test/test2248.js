@@ -27,7 +27,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_close_col');
-		assert.deepEqual(selectRes, [{id: 1, close: 'myclose', data: 'myvalue'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, close: 'myclose', data: 'myvalue'}]);
 	});
 
 	it('B) CLOSE as table name', function () {
@@ -38,7 +38,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM close');
-		assert.deepEqual(selectRes, [{id: 1, name: 'test'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, name: 'test'}]);
 	});
 
 	it('C) CLOSE as column name with quoted identifier', function () {
@@ -49,7 +49,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_quoted');
-		assert.deepEqual(selectRes, [{close: 123, data: 'data'}]);
+		assert.deepStrictEqual(selectRes, [{close: 123, data: 'data'}]);
 	});
 
 	it('D) CLOSE as table name with quoted identifier', function () {
@@ -62,7 +62,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM [close]');
-		assert.deepEqual(selectRes, [{id: 2, name: 'test2'}]);
+		assert.deepStrictEqual(selectRes, [{id: 2, name: 'test2'}]);
 	});
 
 	it('E) SELECT with CLOSE column in WHERE clause', function () {
@@ -70,7 +70,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		alasql("INSERT INTO items VALUES (1, 'close1', 'value1'), (2, 'close2', 'value2')");
 
 		var res = alasql("SELECT * FROM items WHERE close = 'close1'");
-		assert.deepEqual(res, [{id: 1, close: 'close1', data: 'value1'}]);
+		assert.deepStrictEqual(res, [{id: 1, close: 'close1', data: 'value1'}]);
 	});
 
 	it('F) CLOSE CURSOR syntax still works', function () {
@@ -83,7 +83,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		alasql("INSERT INTO cursor_test VALUES (1, 'test1'), (2, 'test2')");
 
 		var res = alasql('SELECT * FROM cursor_test WHERE id = 1');
-		assert.deepEqual(res, [{id: 1, name: 'test1'}]);
+		assert.deepStrictEqual(res, [{id: 1, name: 'test1'}]);
 	});
 
 	it('G) Join tables with CLOSE column', function () {
@@ -93,7 +93,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		alasql("INSERT INTO t2 VALUES (1, 'a'), (3, 'c')");
 
 		var res = alasql('SELECT t1.id, t1.close FROM t1 JOIN t2 ON t1.close = t2.close');
-		assert.deepEqual(res, [{id: 1, close: 'a'}]);
+		assert.deepStrictEqual(res, [{id: 1, close: 'a'}]);
 	});
 
 	it('H) CLOSE as alias', function () {
@@ -101,7 +101,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		alasql("INSERT INTO test_alias VALUES (1, 'test')");
 
 		var res = alasql('SELECT myclose AS close FROM test_alias');
-		assert.deepEqual(res, [{close: 'test'}]);
+		assert.deepStrictEqual(res, [{close: 'test'}]);
 	});
 
 	it('I) GROUP BY with CLOSE column', function () {
@@ -111,7 +111,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		var res = alasql(
 			'SELECT close, SUM(amount) as sum_amount FROM test_group GROUP BY close ORDER BY close'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{close: 'a', sum_amount: 4},
 			{close: 'b', sum_amount: 2},
 		]);
@@ -122,7 +122,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		alasql("INSERT INTO test_order VALUES (2, 'b'), (1, 'a'), (3, 'c')");
 
 		var res = alasql('SELECT * FROM test_order ORDER BY close');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, close: 'a'},
 			{id: 2, close: 'b'},
 			{id: 3, close: 'c'},
@@ -137,7 +137,7 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		assert.equal(updateRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_update');
-		assert.deepEqual(selectRes, [{id: 1, close: 'new', data: 'value'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, close: 'new', data: 'value'}]);
 	});
 
 	it('L) DELETE with CLOSE column in WHERE clause', function () {
@@ -148,6 +148,6 @@ describe('Test 2248 - CLOSE keyword should be usable as identifier', function ()
 		assert.equal(deleteRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_delete');
-		assert.deepEqual(selectRes, [{id: 2, close: 'keep'}]);
+		assert.deepStrictEqual(selectRes, [{id: 2, close: 'keep'}]);
 	});
 });

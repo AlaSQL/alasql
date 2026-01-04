@@ -22,7 +22,7 @@ describe('Test 285 CREATE UNIQUE INDEX', function () {
       INSERT INTO One VALUES(1,2);
 	  `);
 		/// console.log(res);
-		//    assert.deepEqual(res,[1,1,1,1,1,1]);
+		//    assert.deepStrictEqual(res,[1,1,1,1,1,1]);
 
 		done();
 	});

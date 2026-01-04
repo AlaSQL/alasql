@@ -22,15 +22,15 @@ describe('Test 311 Special SEARCHors', function () {
 			{a: 5, b: 50},
 		];
 		var res = alasql('SEARCH DISTINCT(/b) FROM ?', [data]);
-		assert.deepEqual(res, [10, 20, 30, 40, 50]);
+		assert.deepStrictEqual(res, [10, 20, 30, 40, 50]);
 		var res = alasql('SEARCH UNION ALL(/a,/b) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 5, 10, 20, 30, 40, 50, 50]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 5, 10, 20, 30, 40, 50, 50]);
 		// Ala UNION
 		var res = alasql('SEARCH DISTINCT(UNION ALL(/a,/b)) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
 
 		var res = alasql('SEARCH UNION(/a,/b) FROM ?', [data]);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 10, 20, 30, 40, 50]);
 
 		//
 		/*

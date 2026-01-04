@@ -28,7 +28,7 @@ describe('Test 20 - User-defined functions', function () {
 		};
 
 		var res = db.exec('SELECT a, double(a) AS b, cubic(a) AS c FROM test1 WHERE a = 2');
-		assert.deepEqual([{a: 2, b: 4, c: 8}], res);
+		assert.deepStrictEqual([{a: 2, b: 4, c: 8}], res);
 		done();
 	});
 
@@ -57,22 +57,22 @@ describe('Test 20 - User-defined functions', function () {
 		};
 		var runspy = alasql.compile('select column spy(a) from one');
 		var res = runspy();
-		assert.deepEqual(res, [1, 2, 3]);
+		assert.deepStrictEqual(res, [1, 2, 3]);
 
 		num = 0;
 		var runspy2 = alasql.compile('select value max(spy(a)) from one');
 		var res = runspy2();
-		assert.deepEqual(res, 3);
+		assert.deepStrictEqual(res, 3);
 
 		num = 0;
 		var runspy3 = alasql.compile('select value sum(spy(a)) from one');
 		var res = runspy3();
-		assert.deepEqual(res, 6);
+		assert.deepStrictEqual(res, 6);
 
 		num = 0;
 		var runspy4 = alasql.compile('select value min(spy(a)) from one');
 		var res = runspy4();
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 
 		alasql('drop database test20');
 		done();
@@ -88,7 +88,7 @@ describe('Test 20 - User-defined functions', function () {
 		};
 
 		var res = alasql('select COLUMN myfun(a) from one');
-		assert.deepEqual(res, [11, 21, 31]);
+		assert.deepStrictEqual(res, [11, 21, 31]);
 
 		alasql('create database test20b;use test20b');
 		alasql('create table one (a int)');
@@ -99,11 +99,11 @@ describe('Test 20 - User-defined functions', function () {
 		};
 
 		var res = alasql('select column myfun(a) from one');
-		assert.deepEqual(res, [12, 22, 32]);
+		assert.deepStrictEqual(res, [12, 22, 32]);
 
 		// alasql('use test20a');
 		// var res = alasql.array('select myfun(a) from one');
-		// assert.deepEqual(res,[11,21,31]);
+		// assert.deepStrictEqual(res,[11,21,31]);
 
 		alasql('drop database test20a');
 		alasql('drop database test20b');

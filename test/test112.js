@@ -17,7 +17,7 @@ describe('SELECT #01', function () {
 			{two: 4, three: 5},
 		];
 		var res = db.exec('SELECT * FROM one');
-		assert.deepEqual(db.tables.one.data, res);
+		assert.deepStrictEqual(db.tables.one.data, res);
 		done();
 	});
 });

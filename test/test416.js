@@ -26,7 +26,7 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
 	matrix of select id, id +1 from data group by id;
   */});
 
-		assert.deepEqual(res[2], [
+		assert.deepStrictEqual(res[2], [
 			[0, 1],
 			[1, 2],
 			[2, 3],
@@ -47,7 +47,7 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
 			'matrix of select a.id, a.id +1, CAST(a.id AS INTEGER) +1 from data as a, data as b where a.id < b.id and a.grp = b.grp group by a.id'
 		);
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res[3],
 
 			[
@@ -74,7 +74,7 @@ describe('Test ' + test + ' Loosing expression with GROUP BY', function () {
   */
 		});
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res[3],
 
 			[

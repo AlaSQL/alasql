@@ -23,7 +23,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table deleted (id int, name string)');
 		alasql('insert into deleted values (1, "Alice"), (2, "Bob")');
 		var res = alasql('select * from deleted order by id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: 'Alice'},
 			{id: 2, name: 'Bob'},
 		]);
@@ -34,7 +34,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table items (id int, deleted boolean)');
 		alasql('insert into items values (1, false), (2, true), (3, false)');
 		var res = alasql('select * from items where deleted = false order by id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, deleted: false},
 			{id: 3, deleted: false},
 		]);
@@ -45,14 +45,14 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table orders (id int, customer string, amount number)');
 		alasql('insert into orders values (1, "Alice", 100), (2, "Bob", 200)');
 		var res = alasql('delete from orders where amount > 120 output deleted.*');
-		assert.deepEqual(res, [{id: 2, customer: 'Bob', amount: 200}]);
+		assert.deepStrictEqual(res, [{id: 2, customer: 'Bob', amount: 200}]);
 	});
 
 	it('D) DELETED should still work in OUTPUT clause with UPDATE', function () {
 		alasql('create table stock (id int, symbol string, price number)');
 		alasql('insert into stock values (1, "AAPL", 150)');
 		var res = alasql('update stock set price = 160 where symbol = "AAPL" output deleted.price');
-		assert.deepEqual(res, [{price: 150}]);
+		assert.deepStrictEqual(res, [{price: 150}]);
 	});
 
 	it('E) Can use DELETED as column name and in OUTPUT clause', function () {
@@ -62,7 +62,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		var res = alasql(
 			'update audit set val = 999 where id = 1 output deleted.deleted as was_deleted, inserted.deleted as is_deleted'
 		);
-		assert.deepEqual(res, [{was_deleted: false, is_deleted: false}]);
+		assert.deepStrictEqual(res, [{was_deleted: false, is_deleted: false}]);
 		alasql('drop table audit');
 	});
 
@@ -70,7 +70,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table deleted (id int, deleted boolean)');
 		alasql('insert into deleted values (1, true), (2, false)');
 		var res = alasql('select * from deleted where deleted = true');
-		assert.deepEqual(res, [{id: 1, deleted: true}]);
+		assert.deepStrictEqual(res, [{id: 1, deleted: true}]);
 		alasql('drop table deleted');
 	});
 
@@ -80,7 +80,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table deleted (xid int, xname string)');
 		alasql('insert into deleted values (1, "Test")');
 		var res = alasql('select * from deleted');
-		assert.deepEqual(res, [{xid: 1, xname: 'Test'}]);
+		assert.deepStrictEqual(res, [{xid: 1, xname: 'Test'}]);
 		alasql('drop table deleted');
 	});
 
@@ -88,7 +88,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table products (id int, productname string)');
 		alasql('insert into products values (1, "Widget")');
 		var res = alasql('select * from products as deleted');
-		assert.deepEqual(res, [{id: 1, productname: 'Widget'}]);
+		assert.deepStrictEqual(res, [{id: 1, productname: 'Widget'}]);
 		alasql('drop table products');
 	});
 
@@ -96,14 +96,14 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table data (id int, status string)');
 		alasql('insert into data values (1, "removed")');
 		var res = alasql('select status as deleted from data');
-		assert.deepEqual(res, [{deleted: 'removed'}]);
+		assert.deepStrictEqual(res, [{deleted: 'removed'}]);
 	});
 
 	it('J) DELETED in WHERE clause as column reference', function () {
 		alasql('create table records (id int, deleted boolean, val int)');
 		alasql('insert into records values (1, false, 10), (2, true, 20), (3, false, 30)');
 		var res = alasql('select * from records where deleted = false order by id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, deleted: false, val: 10},
 			{id: 3, deleted: false, val: 30},
 		]);
@@ -114,7 +114,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		alasql('create table tasks (id int, deleted boolean)');
 		alasql('insert into tasks values (3, true), (1, false), (2, true)');
 		var res = alasql('select * from tasks order by deleted, id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, deleted: false},
 			{id: 2, deleted: true},
 			{id: 3, deleted: true},
@@ -128,7 +128,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		var res = alasql('select deleted, sum(cnt) as sumcnt from stats group by deleted');
 		// Sort to ensure consistent order
 		res.sort((a, b) => (a.deleted === b.deleted ? 0 : a.deleted ? 1 : -1));
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{deleted: false, sumcnt: 12},
 			{deleted: true, sumcnt: 3},
 		]);
@@ -140,7 +140,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		var count = alasql('insert into deleted2 values (1, "test")');
 		assert.equal(count, 1);
 		var res = alasql('select * from deleted2');
-		assert.deepEqual(res, [{id: 1, val: 'test'}]);
+		assert.deepStrictEqual(res, [{id: 1, val: 'test'}]);
 		alasql('drop table deleted2');
 	});
 
@@ -150,7 +150,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		var count = alasql('update deleted3 set val = "new" where id = 1');
 		assert.equal(count, 1);
 		var res = alasql('select * from deleted3');
-		assert.deepEqual(res, [{id: 1, val: 'new'}]);
+		assert.deepStrictEqual(res, [{id: 1, val: 'new'}]);
 		alasql('drop table deleted3');
 	});
 
@@ -160,7 +160,7 @@ describe('Test 2360 - DELETED keyword should not be overly restrictive', functio
 		var count = alasql('delete from deleted4 where id = 1');
 		assert.equal(count, 1);
 		var res = alasql('select * from deleted4');
-		assert.deepEqual(res, [{id: 2, val: 'test2'}]);
+		assert.deepStrictEqual(res, [{id: 2, val: 'test2'}]);
 		alasql('drop table deleted4');
 	});
 });

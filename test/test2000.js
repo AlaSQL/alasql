@@ -19,7 +19,7 @@ describe('Test 2000', function () {
 		alasql('INSERT INTO osoby VALUES (1, "John"), (2, "Jane"), (3, "Jake")');
 		const result = alasql('SELECT * FROM osoby');
 
-		assert.deepEqual(result, [
+		assert.deepStrictEqual(result, [
 			{id: 1, meno: 'John'},
 			{id: 2, meno: 'Jane'},
 			{id: 3, meno: 'Jake'},
@@ -91,14 +91,14 @@ describe('Test 2000', function () {
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
-				a: null,
+				a: undefined,
 				b: 10,
-				c: null,
+				c: undefined,
 				c2: 1,
 				d: 5,
-				e: null,
+				e: undefined,
 				f: 13,
 			},
 		]);
@@ -118,7 +118,7 @@ describe('Test 2000', function () {
 			 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				a: 5,
 				b: 33,
@@ -147,7 +147,7 @@ describe('Test 2000', function () {
 				 FROM ?`,
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				c: new Date(2023, 6, 6, 0, 0, 0),
 				d: new Date(2023, 7, 7, 0, 0, 0),

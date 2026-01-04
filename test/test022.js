@@ -16,10 +16,10 @@ describe('Test 22', function () {
 
 		var res = db.exec('SELECT COLUMN a FROM test WHERE a<5 INTERSECT SELECT a FROM test WHERE a>2');
 
-		assert.deepEqual([3, 4], res);
+		assert.deepStrictEqual([3, 4], res);
 
 		var res = db.exec('SELECT COLUMN a FROM test WHERE a<5 EXCEPT SELECT a FROM test WHERE a>2');
-		assert.deepEqual([1, 2], res);
+		assert.deepStrictEqual([1, 2], res);
 
 		done();
 	});

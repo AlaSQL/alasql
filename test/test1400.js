@@ -13,7 +13,7 @@ if (typeof exports === 'object') {
 
 			it('should be able to load up raw values if option is passed', function () {
 				const res = alasql('SELECT * FROM CSV(?, {headers:true, raw:true})', [filecontents]);
-				assert.deepEqual(res, [
+				assert.deepStrictEqual(res, [
 					{
 						'Payment Method': 'Method 3',
 						'Account Number': '07312512451',
@@ -43,7 +43,7 @@ if (typeof exports === 'object') {
 
 			it('should be able to load up values and numerical values would be parsed', function () {
 				const res2 = alasql('SELECT * FROM CSV(?, {headers:true})', [filecontents]);
-				assert.deepEqual(res2, [
+				assert.deepStrictEqual(res2, [
 					{
 						'Payment Method': 'Method 3',
 						'Account Number': 7312512451,
@@ -80,7 +80,7 @@ if (typeof exports === 'object') {
 
 			it('should be able to load up raw values without header', function () {
 				const res = alasql('SELECT * FROM CSV(?, {headers:false, raw:true})', [filecontents]);
-				assert.deepEqual(res, [
+				assert.deepStrictEqual(res, [
 					{
 						0: 'Method 3',
 						1: '07312512451',
@@ -111,7 +111,7 @@ if (typeof exports === 'object') {
 			it('should be able to load up values without header and numerical values will be parsed', function () {
 				const res2 = alasql('SELECT * FROM CSV(?, {headers:false})', [filecontents]);
 
-				assert.deepEqual(res2, [
+				assert.deepStrictEqual(res2, [
 					{
 						0: 'Method 3',
 						1: 7312512451,

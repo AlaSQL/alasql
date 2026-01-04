@@ -14,7 +14,7 @@ describe('Test 180 - Array as a source', function () {
 	it('1. SELECT', function (done) {
 		var res = alasql('SELECT COLUMN * FROM [?] ORDER BY [0]', [array]);
 		//      console.log(res);
-		assert.deepEqual(res, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 		done();
 	});
 
@@ -24,7 +24,7 @@ describe('Test 180 - Array as a source', function () {
 			array2,
 		]);
 		//      console.log(res);
-		//      assert.deepEqual(res,[1,2,3,4,5,6,7,8,9,10]);
+		//      assert.deepStrictEqual(res,[1,2,3,4,5,6,7,8,9,10]);
 		done();
 	});
 });

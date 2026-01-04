@@ -19,7 +19,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 			GROUP BY ROLLUP(Phase,Step)',
 			[testData]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: 'Phase 1', Step: 'Step 1', Val: 5},
@@ -39,7 +39,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 		);
 		//		console.log(res);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: null, Step: null, Val: 90},
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: null, Step: 'Step 1', Val: 30},
@@ -61,7 +61,7 @@ describe('Test 223 ROLLUP() in GROUP BY', function () {
 		);
 		//		console.log(res);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{Phase: 'Phase 1', Step: null, Val: 25},
 			{Phase: null, Step: 'Step 1', Val: 30},
 			{Phase: null, Step: 'Step 2', Val: 60},

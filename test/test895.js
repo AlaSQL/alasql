@@ -23,7 +23,7 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 			INSERT INTO users (name) VALUES ("third");
 		`);
 		var res = alasql('SELECT * FROM users ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: 'first'},
 			{id: 2, name: 'second'},
 			{id: 3, name: 'third'},
@@ -38,7 +38,7 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 			INSERT INTO products (id, name) VALUES (30, "third");
 		`);
 		var res = alasql('SELECT * FROM products ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 10, name: 'first'},
 			{id: 20, name: 'second'},
 			{id: 30, name: 'third'},
@@ -54,7 +54,7 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 			INSERT INTO orders (id, name) VALUES (100, "explicit");
 		`);
 		var res = alasql('SELECT * FROM orders ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, name: 'auto1'},
 			{id: 2, name: 'auto2'},
 			{id: 3, name: 'auto3'},
@@ -71,7 +71,7 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 			INSERT INTO customers (name) VALUES ("auto2");
 		`);
 		var res = alasql('SELECT * FROM customers ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 5, name: 'explicit5'},
 			{id: 6, name: 'auto'},
 			{id: 10, name: 'explicit10'},
@@ -85,7 +85,7 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 			INSERT INTO items (id, name) VALUES (4, "item4"), (8, "item8"), (12, "item12");
 		`);
 		var res = alasql('SELECT * FROM items ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 4, name: 'item4'},
 			{id: 8, name: 'item8'},
 			{id: 12, name: 'item12'},
@@ -98,7 +98,7 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 			INSERT INTO records (name) VALUES ("first"), ("second"), ("third");
 		`);
 		var res1 = alasql('SELECT * FROM records ORDER BY id');
-		assert.deepEqual(res1, [
+		assert.deepStrictEqual(res1, [
 			{id: 1, name: 'first'},
 			{id: 2, name: 'second'},
 			{id: 3, name: 'third'},
@@ -113,7 +113,7 @@ describe('Test 895 - SERIAL type should not overwrite explicitly provided values
 		`);
 
 		var res2 = alasql('SELECT * FROM records ORDER BY id');
-		assert.deepEqual(res2, [
+		assert.deepStrictEqual(res2, [
 			{id: 4, name: 'item4'},
 			{id: 7, name: 'item7'},
 			{id: 9, name: 'item9'},

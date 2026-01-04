@@ -19,12 +19,12 @@ describe('Test 391 MIN() and MAX() undefined value (issue #474)', function () {
 	it('2. Prepare test data', function (done) {
 		var data = [{a: 1}, {a: -1}, {a: 3}, {a: -3}, {a: 5}, {a: -7.8}];
 		var res = alasql('ROW OF SELECT MIN(a), MAX(a) FROM ?', [data]);
-		assert.deepEqual(res, [-7.8, 5]);
+		assert.deepStrictEqual(res, [-7.8, 5]);
 
 		var res = alasql(
 			'ROW OF SELECT MIN(a), MAX(a) FROM @[{a:1}, {a:(-1)}, {a:3}, {a:(-3)}, {a:5}, {a:(-7.8)}]'
 		);
-		assert.deepEqual(res, [-7.8, 5]);
+		assert.deepStrictEqual(res, [-7.8, 5]);
 
 		done();
 	});

@@ -13,7 +13,7 @@ describe('Test 276 INFORMATION_SCHEMA', function () {
 
 		alasql('CREATE VIEW view_one AS SELECT * FROM one WHERE a > 2');
 		var res = alasql('SELECT * FROM INFORMATION_SCHEMA.[VIEWS] WHERE TABLE_CATALOG = "test276"');
-		assert.deepEqual(res, [{TABLE_CATALOG: 'test276', TABLE_NAME: 'view_one'}]);
+		assert.deepStrictEqual(res, [{TABLE_CATALOG: 'test276', TABLE_NAME: 'view_one'}]);
 		//    console.log(res);
 		done();
 	});

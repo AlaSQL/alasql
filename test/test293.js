@@ -236,7 +236,7 @@ describe('Test 293 SLT#1', function () {
       THEN a*2 ELSE b*10 END FROM t1 ORDER BY 1`
 		);
 		//console.log(res);
-		assert.deepEqual(res.length, 30);
+		assert.deepStrictEqual(res.length, 30);
 		q1 = res;
 		var rs = res
 			.map(function (d) {
@@ -246,7 +246,7 @@ describe('Test 293 SLT#1', function () {
 		// var rs = res.data.map(function(d){return d[res.columns[0].columnid]+'\n'}).join('');
 		//    console.log('char1',rs.length);
 		let rhash = md5(rs);
-		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
+		assert.deepStrictEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
 
@@ -259,7 +259,7 @@ describe('Test 293 SLT#1', function () {
 		);
 		//console.log(res);
 		q2 = res.data;
-		assert.deepEqual(res.data.length, 30);
+		assert.deepStrictEqual(res.data.length, 30);
 		var rs = res.data
 			.map(function (d) {
 				return d[res.columns[0].columnid] + '\n';
@@ -267,18 +267,18 @@ describe('Test 293 SLT#1', function () {
 			.join('');
 		//    console.log('char2',rs.length);
 		let rhash = md5(rs);
-		assert.deepEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
+		assert.deepStrictEqual(rhash, '3c13dee48d9356ae19af2515e05e6b54');
 		done();
 	});
 
 	it('5. SELECT 1', function (done) {
 		alasql.options.modifier = undefined;
 		var res = alasql('SELECT 1');
-		assert.deepEqual(res, [{1: 1}]);
+		assert.deepStrictEqual(res, [{1: 1}]);
 		//    console.log(res);
 
 		var res = alasql('SELECT avg(c) FROM t1');
-		assert.deepEqual(res, [{'AVG(c)': 174.36666666666667}]);
+		assert.deepStrictEqual(res, [{'AVG(c)': 174.36666666666667}]);
 		//    console.log(res);
 		//console.log('***')
 		if (false) {
@@ -313,14 +313,14 @@ describe('Test 293 SLT#1', function () {
         FROM t1
        ORDER BY 1,2
 	   `);
-			assert.deepEqual(res.length, 60); // Why 60?
+			assert.deepStrictEqual(res.length, 60); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
 			let rhash = md5(rs);
-			assert.deepEqual(rhash, '808146289313018fce25f1a280bd8c30');
+			assert.deepStrictEqual(rhash, '808146289313018fce25f1a280bd8c30');
 			done();
 		});
 
@@ -339,14 +339,14 @@ SELECT a+b*2+c*3+d*4+e*5,
    AND EXISTS(SELECT 1 FROM t1 AS x WHERE x.b<t1.b)
  ORDER BY 4,2,1,3,5
  `);
-			assert.deepEqual(res.length, 80); // Why 60?
+			assert.deepStrictEqual(res.length, 80); // Why 60?
 			var rs = res
 				.map(function (d) {
 					return d[Object.keys(d)[0]] + '\n';
 				})
 				.join('');
 			let rhash = md5(rs);
-			assert.deepEqual(rhash, 'f588aa173060543daffc54d07638516f');
+			assert.deepStrictEqual(rhash, 'f588aa173060543daffc54d07638516f');
 			done();
 		});
 	}

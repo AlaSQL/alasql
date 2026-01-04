@@ -14,8 +14,8 @@ describe('Test 41', function () {
 
 			//			var ast = alasql.parse("SELECT (CASE a WHEN 2 THEN 20 ELSE 30 END) AS b FROM one");
 			var res = db.exec('SELECT CASE a WHEN 2 THEN 20 ELSE 30 END AS b FROM one');
-			assert.deepEqual(30, res[0].b);
-			assert.deepEqual(20, res[1].b);
+			assert.deepStrictEqual(30, res[0].b);
+			assert.deepStrictEqual(20, res[1].b);
 			done();
 		});
 
@@ -31,11 +31,11 @@ describe('Test 41', function () {
 			var res = alasql.utils.flatArray(
 				db.exec('SELECT CASE d WHEN 20 THEN 2000 ELSE 3000 END AS b FROM one JOIN two USING a')
 			);
-			assert.deepEqual(res, [3000, 2000, 3000, 3000, 3000]);
+			assert.deepStrictEqual(res, [3000, 2000, 3000, 3000, 3000]);
 			var res = alasql.utils.flatArray(
 				db.exec('SELECT CASE e WHEN 30 THEN 2000 ELSE 3000 END AS b FROM one JOIN two USING a')
 			);
-			assert.deepEqual(res, [3000, 3000, 2000, 3000, 3000]);
+			assert.deepStrictEqual(res, [3000, 3000, 2000, 3000, 3000]);
 			done();
 		});
 	});

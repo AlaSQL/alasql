@@ -68,7 +68,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 		});
 
 		console.log(res);
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		done();
 	});
 	if (false) {
@@ -92,7 +92,7 @@ describe('Test 337 SEARCH 8 queens', function () {
 
     */
 			});
-			assert.deepEqual(res, 1);
+			assert.deepStrictEqual(res, 1);
 			done();
 		});
 

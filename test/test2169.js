@@ -29,7 +29,11 @@ function runTest(testName, sql, params = [testData]) {
 		const compiledResult = compiledFn(params);
 
 		// Compare results using assert
-		assert.deepEqual(compiledResult, originalResult, `compileToJS result mismatch for ${testName}`);
+		assert.deepStrictEqual(
+			compiledResult,
+			originalResult,
+			`compileToJS result mismatch for ${testName}`
+		);
 
 		return true;
 	} catch (error) {

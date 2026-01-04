@@ -25,38 +25,38 @@ describe('Test 341 Intellectual DOT operator', function () {
       INSERT INTO persons VALUES (1,"Andrey","Krasnodar"), (2,"Valery","Prague"), (3,"Michael","New York");
   */
 		});
-		assert.deepEqual(res, [1, 3, 1, 3]);
+		assert.deepStrictEqual(res, [1, 3, 1, 3]);
 		done();
 	});
 
 	it('3. SQL Standard way', function (done) {
 		var res = alasql('SELECT COLUMN persons.name FROM persons');
-		assert.deepEqual(res, ['Andrey', 'Valery', 'Michael']);
+		assert.deepStrictEqual(res, ['Andrey', 'Valery', 'Michael']);
 		done();
 	});
 
 	it.skip('4. JavaScript way', function (done) {
 		var res = alasql('SET @a = "who".length');
-		assert.deepEqual(res, [6, 6, 7]);
+		assert.deepStrictEqual(res, [6, 6, 7]);
 		done();
 	});
 
 	it.skip('5. JavaScript way', function (done) {
 		var res = alasql('SELECT COLUMN name.length FROM persons');
-		assert.deepEqual(res, [6, 6, 7]);
+		assert.deepStrictEqual(res, [6, 6, 7]);
 		done();
 	});
 
 	it('5. FOREIGN KEY way', function (done) {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
-		assert.deepEqual(res, [100, 1, 200]);
+		assert.deepStrictEqual(res, [100, 1, 200]);
 		done();
 	});
 
 	it.skip('6. Object reference', function (done) {
 		/** @todo Create this test */
 		//    var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0',[100]);
-		//    assert.deepEqual(res.sort(),[100,1,200]);
+		//    assert.deepStrictEqual(res.sort(),[100,1,200]);
 		done();
 	});
 

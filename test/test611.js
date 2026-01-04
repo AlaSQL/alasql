@@ -63,7 +63,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 				sumMinusRows +
 				'``;select value abc_A(a) FROM @[{a:10},{a:100}]'
 		);
-		assert.deepEqual(res, [1, 112, 1, 108]);
+		assert.deepStrictEqual(res, [1, 112, 1, 108]);
 	});
 
 	it('B) Async AGGREGATE', function (done) {
@@ -74,7 +74,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 			'CREATE AGGREGATOR abc_B AS ``' + sumMinusRows + '``',
 			'select VALUE abc_B(a) FROM @[{a:10},{a:100}]',
 		]).then(function (res) {
-			assert.deepEqual(res, [1, 112, 1, 108]);
+			assert.deepStrictEqual(res, [1, 112, 1, 108]);
 			done();
 		});
 	});
@@ -88,7 +88,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 				'``;select value abc_C(a) FROM @[{a:10},{a:100}]'
 		);
 		console.log(JSON.stringify(alasql.aggr, null, 4));
-		assert.deepEqual(res, [1, 112, 1, 108]);
+		assert.deepStrictEqual(res, [1, 112, 1, 108]);
 	});
 
 	it('D) Async AGGREGATE', function (done) {
@@ -99,7 +99,7 @@ describe('Test 611 - SQL added user defined aggregation', function () {
 			'CREATE AGGREGATE abc_D AS ``' + sumMinusRows + '``',
 			'select value abc_D(a) FROM @[{a:10},{a:100}]',
 		]).then(function (res) {
-			assert.deepEqual(res, [1, 112, 1, 108]);
+			assert.deepStrictEqual(res, [1, 112, 1, 108]);
 			done();
 		});
 	});

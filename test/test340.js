@@ -27,14 +27,14 @@ describe('Test 340 SET PARAMS', function () {
 		});
 
 		// console.log(res);
-		assert.deepEqual(res, [1, 'bar']);
+		assert.deepStrictEqual(res, [1, 'bar']);
 
 		done();
 	});
 
 	it.skip('3. Change params property', function (done) {
 		var res = alasql('SELECT VALUE $0;  SET $0 = 200; SELECT VALUE $0', [100]);
-		assert.deepEqual(res.sort(), [100, 1, 200]);
+		assert.deepStrictEqual(res.sort(), [100, 1, 200]);
 		done();
 	});
 

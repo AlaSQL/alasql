@@ -107,7 +107,7 @@ describe('Test 325 IDENTITY', function () {
 
 	it('10. INSERT INTO with IDENTITY', function (done) {
 		var res = alasql('SELECT COLUMN msgid FROM dbo.Messages');
-		assert.deepEqual(res, [1, 2, 3]);
+		assert.deepStrictEqual(res, [1, 2, 3]);
 		//    console.log(res);
 		done();
 	});
@@ -133,10 +133,10 @@ describe('Test 325 IDENTITY', function () {
 
 	it('13. SELECT with REMOVE COLUMNS', function (done) {
 		var res = alasql('SELECT COLUMN msgid FROM dbo.Messages');
-		assert.deepEqual(res, [1, 2, 3, 4]);
+		assert.deepStrictEqual(res, [1, 2, 3, 4]);
 		var res = alasql('SELECT * REMOVE COLUMN msgts FROM dbo.Messages WHERE msgid = 4');
 		//    console.log(res);
-		assert.deepEqual(res, [{msgid: 4, msg: 'It lucky rainbow!', status: 'new'}]);
+		assert.deepStrictEqual(res, [{msgid: 4, msg: 'It lucky rainbow!', status: 'new'}]);
 		done();
 	});
 

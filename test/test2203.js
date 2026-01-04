@@ -27,7 +27,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_key_col');
-		assert.deepEqual(selectRes, [{id: 1, key: 'mykey', data: 'myvalue'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, key: 'mykey', data: 'myvalue'}]);
 	});
 
 	it('B) KEY as table name', function () {
@@ -38,7 +38,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM key');
-		assert.deepEqual(selectRes, [{id: 1, name: 'test'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, name: 'test'}]);
 	});
 
 	it('C) KEY as column name with quoted identifier', function () {
@@ -49,7 +49,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_quoted');
-		assert.deepEqual(selectRes, [{key: 123, data: 'data'}]);
+		assert.deepStrictEqual(selectRes, [{key: 123, data: 'data'}]);
 	});
 
 	it('D) KEY as table name with quoted identifier', function () {
@@ -62,7 +62,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM [key]');
-		assert.deepEqual(selectRes, [{id: 2, name: 'test2'}]);
+		assert.deepStrictEqual(selectRes, [{id: 2, name: 'test2'}]);
 	});
 
 	it('E) SELECT with KEY column in WHERE clause', function () {
@@ -70,7 +70,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		alasql("INSERT INTO items VALUES (1, 'key1', 'value1'), (2, 'key2', 'value2')");
 
 		var res = alasql("SELECT * FROM items WHERE key = 'key1'");
-		assert.deepEqual(res, [{id: 1, key: 'key1', data: 'value1'}]);
+		assert.deepStrictEqual(res, [{id: 1, key: 'key1', data: 'value1'}]);
 	});
 
 	it('F) PRIMARY KEY syntax still works', function () {
@@ -109,7 +109,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		alasql("INSERT INTO t2 VALUES (1, 'a'), (3, 'c')");
 
 		var res = alasql('SELECT t1.id, t1.key FROM t1 JOIN t2 ON t1.key = t2.key');
-		assert.deepEqual(res, [{id: 1, key: 'a'}]);
+		assert.deepStrictEqual(res, [{id: 1, key: 'a'}]);
 	});
 
 	it('K) KEY as alias', function () {
@@ -117,7 +117,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		alasql("INSERT INTO test_alias VALUES (1, 'test')");
 
 		var res = alasql('SELECT mykey AS key FROM test_alias');
-		assert.deepEqual(res, [{key: 'test'}]);
+		assert.deepStrictEqual(res, [{key: 'test'}]);
 	});
 
 	it('L) GROUP BY with KEY column', function () {
@@ -127,7 +127,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		var res = alasql(
 			'SELECT key, SUM(amount) as sum_amount FROM test_group GROUP BY key ORDER BY key'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{key: 'a', sum_amount: 4},
 			{key: 'b', sum_amount: 2},
 		]);
@@ -138,7 +138,7 @@ describe('Test 2203 - KEY keyword should be usable as identifier', function () {
 		alasql("INSERT INTO test_order VALUES (2, 'b'), (1, 'a'), (3, 'c')");
 
 		var res = alasql('SELECT * FROM test_order ORDER BY key');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, key: 'a'},
 			{id: 2, key: 'b'},
 			{id: 3, key: 'c'},

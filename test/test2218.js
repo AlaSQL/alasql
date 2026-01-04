@@ -20,7 +20,7 @@ describe('Test 2218 - SOURCE keyword context', function () {
 		alasql('INSERT INTO source VALUES (1, "test1"), (2, "test2")');
 
 		var res = alasql('SELECT * FROM source ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, data: 'test1'},
 			{id: 2, data: 'test2'},
 		]);
@@ -31,7 +31,7 @@ describe('Test 2218 - SOURCE keyword context', function () {
 		alasql('INSERT INTO test_col VALUES (1, "data1"), (2, "data2")');
 
 		var res = alasql('SELECT id, source FROM test_col ORDER BY id');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, source: 'data1'},
 			{id: 2, source: 'data2'},
 		]);
@@ -46,7 +46,7 @@ describe('Test 2218 - SOURCE keyword context', function () {
 
 		var res = alasql('SELECT * FROM test_json ORDER BY data->source');
 		assert.equal(res.length, 2);
-		assert.deepEqual(res, [{data: {source: 100}}, {data: {source: 200}}]);
+		assert.deepStrictEqual(res, [{data: {source: 100}}, {data: {source: 200}}]);
 	});
 
 	it('D) Should parse MERGE BY SOURCE syntax without error', function () {
@@ -94,7 +94,7 @@ describe('Test 2218 - SOURCE keyword context', function () {
 		alasql('INSERT INTO test_alias VALUES (1, "test1")');
 
 		var res = alasql('SELECT source.id, source.data FROM test_alias AS source');
-		assert.deepEqual(res, [{id: 1, data: 'test1'}]);
+		assert.deepStrictEqual(res, [{id: 1, data: 'test1'}]);
 	});
 
 	it('G) Should work with "source" in WHERE clause', function () {
@@ -102,6 +102,6 @@ describe('Test 2218 - SOURCE keyword context', function () {
 		alasql('INSERT INTO test_where VALUES (1, "value1"), (2, "value2")');
 
 		var res = alasql('SELECT * FROM test_where WHERE source = "value1"');
-		assert.deepEqual(res, [{id: 1, source: 'value1'}]);
+		assert.deepStrictEqual(res, [{id: 1, source: 'value1'}]);
 	});
 });

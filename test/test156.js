@@ -18,7 +18,7 @@ describe('Test 156 - match()', function () {
 			['Moscow'],
 			function (res) {
 				//		 	console.log(res[4]);
-				assert.deepEqual(res[4], [{a: 'Moscow'}]);
+				assert.deepStrictEqual(res[4], [{a: 'Moscow'}]);
 				done();
 			}
 		);
@@ -28,7 +28,7 @@ describe('Test 156 - match()', function () {
 	if (false) {
 		it('2. RegExp like Oracle functions', function (done) {
 			alasql('SELECT * FROM one WHERE REGEXP_LIKE(a,"Mos")');
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			assert.deepStrictEqual(res, [{a: 'Moscow'}]);
 
 			alasql(
 				'SELECT VALUE REGEXP_REPLACE(a,"Moscow","London") FROM one WHERE REGEXP_LIKE(a,"Mos.*")'
@@ -46,14 +46,14 @@ describe('Test 156 - match()', function () {
 
 		it('3. Criterias for WHERE like MongoDB', function (done) {
 			alasql('SELECT * FROM one WHERE CRITERIA(@{a:"Moscow"})');
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			assert.deepStrictEqual(res, [{a: 'Moscow'}]);
 
 			alasql('SELECT * FROM one WHERE CRITERIA(@{a:?})', ['Moscow']);
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			assert.deepStrictEqual(res, [{a: 'Moscow'}]);
 
 			// Do we really need this?
 			alasql('SELECT * FROM one WHERE CRITERIA(?)', [{a: 'Moscow'}]);
-			assert.deepEqual(res, [{a: 'Moscow'}]);
+			assert.deepStrictEqual(res, [{a: 'Moscow'}]);
 
 			done();
 		});

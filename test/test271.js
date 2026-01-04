@@ -12,7 +12,7 @@ describe('Test 271 RECORDSET and Excel tests', function () {
 			[],
 			function (res) {
 				var colres = res.columns.map(col => col.columnid);
-				assert.deepEqual(colres, ['City', 'Population']);
+				assert.deepStrictEqual(colres, ['City', 'Population']);
 				done();
 			}
 		);

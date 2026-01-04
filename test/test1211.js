@@ -54,7 +54,7 @@ describe('Test 942 - INSERT VALUES with SELECT subquery', function () {
 		alasql('INSERT INTO t3 VALUES ((SELECT MAX(a) FROM t3)+1, (SELECT MAX(b) FROM t3)+1, 10)');
 		var res = alasql('SELECT * FROM t3 ORDER BY a');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 2, c: 3},
 			{a: 2, b: 3, c: 10},
 		]);
@@ -67,7 +67,7 @@ describe('Test 942 - INSERT VALUES with SELECT subquery', function () {
 		alasql('INSERT INTO t4 VALUES (1,2,3), (4,5,6)');
 		var res = alasql('SELECT * FROM t4 ORDER BY a');
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 2, c: 3},
 			{a: 4, b: 5, c: 6},
 		]);

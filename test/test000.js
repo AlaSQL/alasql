@@ -24,7 +24,7 @@ describe('Test 000 - multiple statements', function () {
 		res.push(alasql('create table one (a int)'));
 		res.push(alasql('insert into one values (1),(2),(3),(4),(5)'));
 		res.push(alasql('select * from one'));
-		assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
+		assert.deepStrictEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 	});
 
 	it('B) Multiple statements in one string', function () {
@@ -33,7 +33,7 @@ describe('Test 000 - multiple statements', function () {
 		sql += 'insert into two values (1),(2),(3),(4),(5);';
 		sql += 'select * from two;';
 		var res = alasql(sql);
-		assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
+		assert.deepStrictEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 	});
 
 	it('C) Multiple statements in one string with callback', function (done) {
@@ -42,7 +42,7 @@ describe('Test 000 - multiple statements', function () {
 		sql += 'insert into three values (1),(2),(3),(4),(5);';
 		sql += 'select * from three;';
 		alasql(sql, function (res) {
-			assert.deepEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
+			assert.deepStrictEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 			done();
 		});
 	});

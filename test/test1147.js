@@ -21,7 +21,7 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 
 		var res = alasql('SELECT sum(population) as val1, sum(population) as val2 FROM test');
 
-		assert.deepEqual(res, [{val1: 600, val2: 600}]);
+		assert.deepStrictEqual(res, [{val1: 600, val2: 600}]);
 
 		alasql('DROP TABLE test');
 	});
@@ -36,7 +36,7 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 			'SELECT sum(population) as val3, sum(population) as val4, rownum() as rownum FROM test'
 		);
 
-		assert.deepEqual(res, [{val3: 11672201, val4: 11672201, rownum: 1}]);
+		assert.deepStrictEqual(res, [{val3: 11672201, val4: 11672201, rownum: 1}]);
 
 		alasql('DROP TABLE test');
 	});
@@ -58,7 +58,7 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 
 		var res = alasql(sql);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				val1: 25,
 				val2: 0.000008567364458511296,
@@ -79,7 +79,7 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 			'SELECT sum(a) as sum1, sum(a) as sum2, sum(b) as sum3, count(a) as cnt1, count(b) as cnt2, avg(a) as avg1 FROM test'
 		);
 
-		assert.deepEqual(res, [{sum1: 6, sum2: 6, sum3: 60, cnt1: 3, cnt2: 3, avg1: 2}]);
+		assert.deepStrictEqual(res, [{sum1: 6, sum2: 6, sum3: 60, cnt1: 3, cnt2: 3, avg1: 2}]);
 
 		alasql('DROP TABLE test');
 	});
@@ -92,7 +92,9 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 			'SELECT sum(x) as s1, sum(x) as s2, sum(y) as s3, sum(y) as s4, min(x) as min1, min(x) as min2, max(y) as max1, max(y) as max2 FROM test'
 		);
 
-		assert.deepEqual(res, [{s1: 45, s2: 45, s3: 60, s4: 60, min1: 5, min2: 5, max1: 30, max2: 30}]);
+		assert.deepStrictEqual(res, [
+			{s1: 45, s2: 45, s3: 60, s4: 60, min1: 5, min2: 5, max1: 30, max2: 30},
+		]);
 
 		alasql('DROP TABLE test');
 	});
@@ -103,7 +105,7 @@ describe('Test 942 - Duplicate aggregate functions return different values', fun
 
 		var res = alasql('SELECT ROW sum(val), sum(val), count(val), count(val) FROM test');
 
-		assert.deepEqual(res, [15, 15, 5, 5]);
+		assert.deepStrictEqual(res, [15, 15, 5, 5]);
 
 		alasql('DROP TABLE test');
 	});

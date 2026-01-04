@@ -19,7 +19,7 @@ describe('Test 253 Internal (SELECT) with GROUP BY', function () {
 			[data, data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{
 				'b->c': 'label1',
 				'SUM(a) / SELECT SUM(a) FROM $0 AS default': 0.4,

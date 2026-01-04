@@ -19,7 +19,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{AccountName: 'A', AccountName2: 'A', Count: 1},
 			{AccountName: 'B', AccountName2: 'B', Count: 1},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('B) GROUP BY with join on columns with same name', function () {
@@ -42,7 +42,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{AccountName: 'A', RegionName: 'North', Count: 1},
 			{AccountName: 'B', RegionName: 'South', Count: 1},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('C) GROUP BY on same column three times', function () {
@@ -54,7 +54,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{a: 1, b: 1, c: 1, cnt: 1},
 			{a: 2, b: 2, c: 2, cnt: 1},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('D) SELECT * with GROUP BY and duplicate column in SELECT', function () {
@@ -70,7 +70,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{x: 1, y: 'a', x_copy: 1, cnt: 2},
 			{x: 2, y: 'c', x_copy: 2, cnt: 1},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('E) Duplicate column with different aggregates', function () {
@@ -89,7 +89,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{grp1: 1, grp2: 1, max_y: 20, min_y: 10},
 			{grp1: 2, grp2: 2, max_y: 30, min_y: 30},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('F) GROUP BY multiple columns with duplicates in SELECT', function () {
@@ -109,7 +109,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{a1: 1, a2: 1, b1: 'y', b2: 'y', sum_c: 200},
 			{a1: 2, a2: 2, b1: 'x', b2: 'x', sum_c: 300},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('G) Duplicate columns with HAVING clause', function () {
@@ -121,7 +121,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 		);
 
 		var expected = [{col1: 1, col2: 1, cnt: 2}];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('H) Duplicate columns in subquery with GROUP BY', function () {
@@ -136,7 +136,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{col1: 1, col2: 1, cnt: 2},
 			{col1: 2, col2: 2, cnt: 1},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('I) Multiple duplicate columns from different aggregations', function () {
@@ -155,7 +155,7 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{id1: 1, id2: 1, sum_a: 30, sum_b: 20, avg_a: 15},
 			{id1: 2, id2: 2, sum_a: 30, sum_b: 25, avg_a: 30},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 
 	it('J) Duplicate columns with DISTINCT', function () {
@@ -167,6 +167,6 @@ describe('Test 941 - GROUP BY with duplicate column names', function () {
 			{col1: 1, col2: 1},
 			{col1: 2, col2: 2},
 		];
-		assert.deepEqual(result, expected);
+		assert.deepStrictEqual(result, expected);
 	});
 });

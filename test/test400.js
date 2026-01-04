@@ -27,7 +27,7 @@ describe('Test 400 Trigger with INSERTED', function () {
 		alasql('INSERT INTO log (a) VALUES (200)');
 
 		var res = alasql('MATRIX OF SELECT a,YEAR(d) FROM log');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[100, new Date().getFullYear()],
 			[200, new Date().getFullYear()],
 		]);

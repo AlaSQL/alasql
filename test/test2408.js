@@ -17,7 +17,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', emp: 'Alice', dept_count: 2},
 			{dept: 'IT', emp: 'Bob', dept_count: 2},
 			{dept: 'Sales', emp: 'Jane', dept_count: 2},
@@ -38,7 +38,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', emp: 'Alice', salary: 1600, max_dept_salary: 1600},
 			{dept: 'IT', emp: 'Bob', salary: 1500, max_dept_salary: 1600},
 			{dept: 'Sales', emp: 'Jane', salary: 1200, max_dept_salary: 1200},
@@ -59,7 +59,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', emp: 'Alice', salary: 1600, min_dept_salary: 1500},
 			{dept: 'IT', emp: 'Bob', salary: 1500, min_dept_salary: 1500},
 			{dept: 'Sales', emp: 'Jane', salary: 1200, min_dept_salary: 1000},
@@ -80,7 +80,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', emp: 'Alice', salary: 1600, total_dept_salary: 3100},
 			{dept: 'IT', emp: 'Bob', salary: 1500, total_dept_salary: 3100},
 			{dept: 'Sales', emp: 'Jane', salary: 1200, total_dept_salary: 2200},
@@ -101,7 +101,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', emp: 'Alice', salary: 1600, avg_dept_salary: 1550},
 			{dept: 'IT', emp: 'Bob', salary: 1500, avg_dept_salary: 1550},
 			{dept: 'Sales', emp: 'Jane', salary: 1200, avg_dept_salary: 1100},
@@ -125,7 +125,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{category: 'A', amount: 10, cnt: 2, sum_amt: 30, avg_amt: 15},
 			{category: 'A', amount: 20, cnt: 2, sum_amt: 30, avg_amt: 15},
 			{category: 'B', amount: 30, cnt: 2, sum_amt: 70, avg_amt: 35},
@@ -146,7 +146,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{dept: 'IT', team: 'A', score: 100, max_score: 100},
 			{dept: 'IT', team: 'A', score: 95, max_score: 100},
 			{dept: 'IT', team: 'B', score: 90, max_score: 90},
@@ -166,7 +166,7 @@ describe('Test 2362 - Window Aggregate Functions (COUNT/MAX/MIN/SUM/AVG) with PA
 			[data]
 		);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{category: 'A', val: 10, cnt: 1},
 			{category: 'A', val: null, cnt: 1},
 			{category: 'B', val: 30, cnt: 1},

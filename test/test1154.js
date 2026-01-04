@@ -24,7 +24,7 @@ describe('Test 950 - CREATE VIEW with subquery', function () {
 
 	it('B) Test the query works without view', function () {
 		var result = alasql('select (select count(id) from sub_table) as amount from from_table');
-		assert.deepEqual(result, [{amount: 3}]);
+		assert.deepStrictEqual(result, [{amount: 3}]);
 	});
 
 	it('C) Create view with subquery', function () {
@@ -36,13 +36,13 @@ describe('Test 950 - CREATE VIEW with subquery', function () {
 
 	it('D) Query from view', function () {
 		var result = alasql('select * from new_view');
-		assert.deepEqual(result, [{amount: 3}]);
+		assert.deepStrictEqual(result, [{amount: 3}]);
 	});
 
 	it('E) View should reflect data changes', function () {
 		alasql('insert into sub_table values (4), (5)');
 		var result = alasql('select * from new_view');
-		assert.deepEqual(result, [{amount: 5}]);
+		assert.deepStrictEqual(result, [{amount: 5}]);
 	});
 
 	it('F) Drop view', function () {

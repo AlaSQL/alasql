@@ -29,7 +29,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		assert.equal(res, 2);
 
 		// Check that the complete data matches expected output
-		assert.deepEqual(mydata, [
+		assert.deepStrictEqual(mydata, [
 			{type: 1, status: 'off'},
 			{type: 4, status: 'on'},
 			{type: 2, status: 'off'},
@@ -46,7 +46,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('UPDATE ? SET age = age + 1', [mydata]);
 
 		assert.equal(res, 2);
-		assert.deepEqual(mydata, [
+		assert.deepStrictEqual(mydata, [
 			{name: 'Alice', age: 26},
 			{name: 'Bob', age: 31},
 		]);
@@ -66,7 +66,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		assert.equal(res, 2);
 
 		// Check that the complete data matches expected output
-		assert.deepEqual(mydata, [
+		assert.deepStrictEqual(mydata, [
 			{id: 1, active: true},
 			{id: 3, active: true},
 		]);
@@ -78,7 +78,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('DELETE FROM ?', [mydata]);
 
 		assert.equal(res, 3);
-		assert.deepEqual(mydata, []);
+		assert.deepStrictEqual(mydata, []);
 	});
 
 	it('E) INSERT into anonymous data table from VALUES', function () {
@@ -90,7 +90,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		assert.equal(res, 1);
 
 		// Check that the complete data matches expected output
-		assert.deepEqual(mydata, [{id: 1, name: 'Alice'}, [2, 'Bob']]);
+		assert.deepStrictEqual(mydata, [{id: 1, name: 'Alice'}, [2, 'Bob']]);
 	});
 
 	it('F) INSERT into anonymous data table from SELECT', function () {
@@ -103,7 +103,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('INSERT INTO ? SELECT * FROM ?', [mydata, sourcedata]);
 
 		assert.equal(res, 2);
-		assert.deepEqual(mydata, [
+		assert.deepStrictEqual(mydata, [
 			{id: 1, name: 'Alice'},
 			{id: 2, name: 'Bob'},
 		]);
@@ -118,7 +118,7 @@ describe('Test 2348 - Anonymous data tables', function () {
 		var res = alasql('UPDATE ? SET price = price - discount WHERE price > 150', [mydata]);
 
 		assert.equal(res, 1);
-		assert.deepEqual(mydata, [
+		assert.deepStrictEqual(mydata, [
 			{price: 100, discount: 10},
 			{price: 180, discount: 20},
 		]);

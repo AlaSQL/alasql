@@ -123,7 +123,7 @@ describe('Test 327 FOREIGN KEYS', function () {
 
 	it('6. SELECT values from BOM', function (done) {
 		var res = alasql('SELECT * FROM BOM WHERE assemblyid = 1');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{partid: 6, assemblyid: 1, unit: 'EA', qty: 1},
 			{partid: 7, assemblyid: 1, unit: 'EA', qty: 1},
 			{partid: 10, assemblyid: 1, unit: 'EA', qty: 1},

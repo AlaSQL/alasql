@@ -18,9 +18,9 @@ describe('Test 298 PLUG-IN TEST', function () {
 		}, Error);
 
 		var res = alasql('REQUIRE ECHO');
-		assert.deepEqual(res, 1);
+		assert.deepStrictEqual(res, 1);
 		var res = alasql('ECHO 10');
-		assert.deepEqual(res, 10);
+		assert.deepStrictEqual(res, 10);
 		//      console.log(2,res);
 		done();
 	});

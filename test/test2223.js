@@ -24,7 +24,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		alasql('INSERT INTO products VALUES (1, "Widget", 100), (2, "Gadget", 50), (3, "Tool", 75)');
 
 		var res = alasql('SELECT * FROM products ORDER BY price ASC');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 2, name: 'Gadget', price: 50},
 			{id: 3, name: 'Tool', price: 75},
 			{id: 1, name: 'Widget', price: 100},
@@ -38,7 +38,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		alasql('INSERT INTO orders VALUES (1, 100, 500), (2, 101, 750)');
 
 		var res = alasql('SELECT id, order, amount FROM orders');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, order: 100, amount: 500},
 			{id: 2, order: 101, amount: 750},
 		]);
@@ -51,7 +51,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		alasql('INSERT INTO order VALUES (1, 10), (2, 20)');
 
 		var res = alasql('SELECT * FROM order');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, price: 10},
 			{id: 2, price: 20},
 		]);
@@ -66,7 +66,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		);
 
 		var res = alasql('SELECT id, data->order as order_num FROM items');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, order_num: 100},
 			{id: 2, order_num: 101},
 		]);
@@ -79,7 +79,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		alasql('INSERT INTO shipments VALUES (1, 200, 3), (2, 201, 1), (3, 202, 2)');
 
 		var res = alasql('SELECT * FROM shipments ORDER BY priority ASC');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 2, order: 201, priority: 1},
 			{id: 3, order: 202, priority: 2},
 			{id: 1, order: 200, priority: 3},
@@ -93,7 +93,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		alasql('INSERT INTO order VALUES (1, 500, "new"), (2, 501, "processing"), (3, 502, "shipped")');
 
 		var res = alasql('SELECT * FROM order ORDER BY order DESC');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 3, order: 502, status: 'shipped'},
 			{id: 2, order: 501, status: 'processing'},
 			{id: 1, order: 500, status: 'new'},
@@ -108,7 +108,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		alasql('INSERT INTO transactions VALUES (1, 300, 150), (2, 301, 250)');
 
 		var res = alasql('SELECT * FROM transactions WHERE order = 300');
-		assert.deepEqual(res, [{id: 1, order: 300, amount: 150}]);
+		assert.deepStrictEqual(res, [{id: 1, order: 300, amount: 150}]);
 
 		alasql('DROP TABLE transactions');
 	});
@@ -122,7 +122,7 @@ describe('Test 2223 - ORDER as context-aware keyword', function () {
 		var res = alasql(
 			'SELECT category, SUM(amount) as amount FROM sales GROUP BY category ORDER BY amount DESC'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{category: 'A', amount: 300},
 			{category: 'B', amount: 200},
 		]);

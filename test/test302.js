@@ -54,22 +54,22 @@ describe('Test 302 CREATE CLASS ', function () {
 			'SELECT COLUMN DISTINCT city!country!name AS country\
            FROM Person ORDER BY country'
 		);
-		assert.deepEqual(res, ['Egypt', 'Germany', 'Italy']);
+		assert.deepStrictEqual(res, ['Egypt', 'Germany', 'Italy']);
 		done();
 	});
 
 	it.skip('7. SEARCH #', function (done) {
 		var res = alasql('SEARCH DISTINCT(/ city!country!name) FROM Person');
-		assert.deepEqual(res.sort(), ['Egypt', 'Germany', 'Italy']);
+		assert.deepStrictEqual(res.sort(), ['Egypt', 'Germany', 'Italy']);
 		done();
 	});
 
 	it.skip('8. SEARCH #', function (done) {
 		var res = alasql('SEARCH DISTINCT(/ :Person city!country!name)');
-		assert.deepEqual(res.sort(), ['Egypt', 'Germany', 'Italy']);
+		assert.deepStrictEqual(res.sort(), ['Egypt', 'Germany', 'Italy']);
 
 		var res = alasql('SEARCH ALL(/ :Person city!country!name) DISTINCT()');
-		assert.deepEqual(res.sort(), ['Egypt', 'Germany', 'Italy']);
+		assert.deepStrictEqual(res.sort(), ['Egypt', 'Germany', 'Italy']);
 
 		done();
 	});
@@ -78,13 +78,13 @@ describe('Test 302 CREATE CLASS ', function () {
 		var res = alasql(
 			'search / city as @c ! where(name like "M%") ex({city:name,country:(@c!country!name)}) FROM Person'
 		);
-		assert.deepEqual(res, [{city: 'Milano', country: 'Italy'}]);
+		assert.deepStrictEqual(res, [{city: 'Milano', country: 'Italy'}]);
 		done();
 	});
 
 	it.skip('10. SEARCH TO', function (done) {
 		var res = alasql('search / city to @c ! ex({city:name,num:len(@c)}) FROM Person');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{city: 'Rome', num: 1},
 			{city: 'Milano', num: 2},
 			{city: 'Berlin', num: 3},
@@ -95,7 +95,7 @@ describe('Test 302 CREATE CLASS ', function () {
 
 	it.skip('11. SEARCH EX JSON', function (done) {
 		var res = alasql('search / city to @c ! @[name,len(@c)] FROM Person');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			['Rome', 1],
 			['Milano', 2],
 			['Berlin', 3],

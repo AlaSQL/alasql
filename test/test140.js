@@ -16,12 +16,12 @@ describe('Test 140 JavaScript Functions', function () {
 		var res = alasql('SELECT COLUMN d->getFullYear() FROM ?', [
 			[{d: new Date(2014, 6, 1)}, {d: new Date(2015, 6, 31)}],
 		]);
-		assert.deepEqual(res, [2014, 2015]);
+		assert.deepStrictEqual(res, [2014, 2015]);
 
 		var res = alasql('SELECT d->getFullYear() AS d FROM ?', [
 			[{d: new Date(2014, 6, 1)}, {d: new Date(2015, 6, 31)}],
 		]);
-		assert.deepEqual(res, [{d: 2014}, {d: 2015}]);
+		assert.deepStrictEqual(res, [{d: 2014}, {d: 2015}]);
 
 		done();
 	});
@@ -33,7 +33,7 @@ describe('Test 140 JavaScript Functions', function () {
 				{d: 'ABCD', e: 2},
 			],
 		]);
-		assert.deepEqual(res, ['bcd', 'CD']);
+		assert.deepStrictEqual(res, ['bcd', 'CD']);
 
 		var res = alasql('SELECT COLUMN d->substr(e,e) FROM ?', [
 			[
@@ -41,7 +41,7 @@ describe('Test 140 JavaScript Functions', function () {
 				{d: 'ABCD', e: 2},
 			],
 		]);
-		assert.deepEqual(res, ['b', 'CD']);
+		assert.deepStrictEqual(res, ['b', 'CD']);
 
 		done();
 	});
@@ -66,13 +66,13 @@ describe('Test 140 JavaScript Functions', function () {
 		alasql('INSERT INTO one VALUES (new Date(2014,6,1)), (new Date(2015,6,2))');
 
 		var res = alasql('SELECT COLUMN d->getFullYear() FROM one');
-		assert.deepEqual(res, [2014, 2015]);
+		assert.deepStrictEqual(res, [2014, 2015]);
 
 		var res = alasql('SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,1)');
-		assert.deepEqual(res, []);
+		assert.deepStrictEqual(res, []);
 
 		var res = alasql('SELECT COLUMN d->getFullYear() FROM one WHERE d === new Date(2015,6,2)');
-		assert.deepEqual(res, [2015]);
+		assert.deepStrictEqual(res, [2015]);
 		done();
 	});
 
@@ -82,12 +82,12 @@ describe('Test 140 JavaScript Functions', function () {
 		alasql('INSERT INTO two VALUES ("2014-06-01"), ("2015-06-02")');
 
 		var res = alasql('SELECT COLUMN d FROM two');
-		assert.deepEqual(res, ['2014-06-01', '2015-06-02']);
-		//		assert.deepEqual(res,[2014,2015]);
+		assert.deepStrictEqual(res, ['2014-06-01', '2015-06-02']);
+		//		assert.deepStrictEqual(res,[2014,2015]);
 		//		console.log(res);
 
 		var res = alasql('SELECT COLUMN d FROM two');
-		assert.deepEqual(res, ['2014-06-01', '2015-06-02']);
+		assert.deepStrictEqual(res, ['2014-06-01', '2015-06-02']);
 		done();
 	});
 
@@ -97,7 +97,7 @@ describe('Test 140 JavaScript Functions', function () {
 		alasql('INSERT INTO three VALUES ("2014-06-01"), ("2015-06-02")');
 
 		var res = alasql('SELECT COLUMN d->getFullYear() FROM three');
-		assert.deepEqual(res, [2014, 2015]);
+		assert.deepStrictEqual(res, [2014, 2015]);
 		done();
 	});
 
@@ -108,17 +108,20 @@ describe('Test 140 JavaScript Functions', function () {
 		alasql('INSERT INTO four VALUES ("2014-06-02"), ("2015-06-03")');
 
 		var res = alasql('SELECT COLUMN YEAR(d) FROM four');
-		assert.deepEqual(res, [2014, 2015]);
+		assert.deepStrictEqual(res, [2014, 2015]);
 
 		var res = alasql('SELECT COLUMN MONTH(d) FROM four');
-		assert.deepEqual(res, [6, 6]);
+		assert.deepStrictEqual(res, [6, 6]);
 
 		var res = alasql('SELECT COLUMN DAY(d) FROM four');
-		assert.deepEqual(res, [new Date('2014-06-02').getDate(), new Date('2014-06-03').getDate()]);
+		assert.deepStrictEqual(res, [
+			new Date('2014-06-02').getDate(),
+			new Date('2014-06-03').getDate(),
+		]);
 
 		//		console.log(res);
 		var res = alasql('SELECT COLUMN d FROM four');
-		assert.deepEqual(res, ['2014-06-02', '2015-06-03']);
+		assert.deepStrictEqual(res, ['2014-06-02', '2015-06-03']);
 
 		done();
 	});

@@ -39,21 +39,21 @@ describe('Test 270 RECORDSET tests', function () {
 
 	it.skip('3. Empty test on param throws error', function (done) {
 		var res = alasql('SELECT * FROM ?', [emptydata]);
-		assert.deepEqual(res, {data: [], columns: []});
+		assert.deepStrictEqual(res, {data: [], columns: []});
 		done();
 	});
 
 	it.skip('4. Empty test on table with columns', function (done) {
 		var res = alasql('SELECT * FROM one');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
 	it.skip('5. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT * FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, []);
+		assert.deepStrictEqual(colres, []);
 		done();
 	});
 
@@ -61,133 +61,133 @@ describe('Test 270 RECORDSET tests', function () {
 		alasql('SELECT * INTO three FROM ?', [data1]);
 		var res = alasql('SELECT * FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
 	it.skip('7. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT a,b FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
 	it.skip('8. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT b,a FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['b', 'a']);
+		assert.deepStrictEqual(colres, ['b', 'a']);
 		done();
 	});
 
 	it.skip('9. Test on empty table without column definitions', function (done) {
 		var res = alasql('SELECT a,b,a*a AS a2 FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b', 'a2']);
+		assert.deepStrictEqual(colres, ['a', 'b', 'a2']);
 		done();
 	});
 
 	it.skip('9a. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT a,a*a AS a2,b FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'a2', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'a2', 'b']);
 		done();
 	});
 
 	it.skip('9b. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT a,* FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
 	it.skip('9c. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT *,a FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
 	it.skip('9c1. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT b,*,a FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['b', 'a']);
+		assert.deepStrictEqual(colres, ['b', 'a']);
 		done();
 	});
 
 	it.skip('9d. Test on table without column definitions', function (done) {
 		var res = alasql('SELECT a,*,a*a AS a2 FROM three');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'a', 'b', 'a2']);
+		assert.deepStrictEqual(colres, ['a', 'a', 'b', 'a2']);
 		done();
 	});
 
 	it.skip('10. Array on param with *', function (done) {
 		var res = alasql('SELECT * FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
 	it.skip('11. Array with column', function (done) {
 		var res = alasql('SELECT a,b FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'b']);
 		done();
 	});
 
 	it.skip('11a. Array with column', function (done) {
 		var res = alasql('SELECT b,a FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['b', 'a']);
+		assert.deepStrictEqual(colres, ['b', 'a']);
 		done();
 	});
 
 	it.skip('11b. Array with column', function (done) {
 		var res = alasql('SELECT *,b,a FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b', 'b', 'a']);
+		assert.deepStrictEqual(colres, ['a', 'b', 'b', 'a']);
 		done();
 	});
 
 	it.skip('12. Array with column', function (done) {
 		var res = alasql('SELECT a,a*a AS a2 FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'a2']);
+		assert.deepStrictEqual(colres, ['a', 'a2']);
 		done();
 	});
 
 	it.skip('12a. Array with column', function (done) {
 		var res = alasql('SELECT a,a*a AS a2,b FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'a2', 'b']);
+		assert.deepStrictEqual(colres, ['a', 'a2', 'b']);
 		done();
 	});
 
 	it.skip('13. Array with column from table', function (done) {
 		var res = alasql('SELECT a,a*a AS a2 FROM one');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'a2']);
+		assert.deepStrictEqual(colres, ['a', 'a2']);
 		done();
 	});
 
 	it.skip('14. Array with column in reversed order', function (done) {
 		var res = alasql('SELECT a*a AS a2,a FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a2', 'a']);
+		assert.deepStrictEqual(colres, ['a2', 'a']);
 		done();
 	});
 
 	it.skip('15. Array with column in reversed order', function (done) {
 		var res = alasql('SELECT a*a AS a2,a FROM ?', [data1]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a2', 'a']);
+		assert.deepStrictEqual(colres, ['a2', 'a']);
 		done();
 	});
 
 	it('16. JOIN params', function (done) {
 		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b', 'c']);
+		assert.deepStrictEqual(colres, ['a', 'b', 'c']);
 		done();
 	});
 
@@ -196,14 +196,14 @@ describe('Test 270 RECORDSET tests', function () {
 		alasql('SELECT * INTO two FROM ?', [data2]);
 		var res = alasql('SELECT one.*,two.* FROM one JOIN two USING b');
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b', 'b', 'c']);
+		assert.deepStrictEqual(colres, ['a', 'b', 'b', 'c']);
 		done();
 	});
 
 	it('18. JOIN params', function (done) {
 		var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 		var colres = pluck(res.columns, 'columnid');
-		assert.deepEqual(colres, ['a', 'b', 'c']);
+		assert.deepStrictEqual(colres, ['a', 'b', 'c']);
 		done();
 	});
 
@@ -211,7 +211,7 @@ describe('Test 270 RECORDSET tests', function () {
   it.skip('3. VALUE', function(done) {
     alasql.options.modifier = 'VALUE';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
-    assert.deepEqual(res,1);
+    assert.deepStrictEqual(res,1);
 
     done();
   });
@@ -219,7 +219,7 @@ describe('Test 270 RECORDSET tests', function () {
   it.skip('4. ROW', function(done) {
     alasql.options.modifier = 'ROW';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
-    assert.deepEqual(res,[1,10,100]);
+    assert.deepStrictEqual(res,[1,10,100]);
 
     done();
   });
@@ -227,7 +227,7 @@ describe('Test 270 RECORDSET tests', function () {
   it.skip('5. COLUMN', function(done) {
     alasql.options.modifier = 'COLUMN';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
-    assert.deepEqual(res,[1,2,3,undefined]);
+    assert.deepStrictEqual(res,[1,2,3,undefined]);
 
     done();
   });
@@ -238,7 +238,7 @@ describe('Test 270 RECORDSET tests', function () {
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
 //console.log(res);
     // Wrong with reduced rows
-    assert.deepEqual(res,[[1,10,100],[2,20,200],[3,30,undefined],[undefined,40,400]]);
+    assert.deepStrictEqual(res,[[1,10,100],[2,20,200],[3,30,undefined],[undefined,40,400]]);
 
     done();
   });
@@ -249,7 +249,7 @@ describe('Test 270 RECORDSET tests', function () {
       ORDER BY a',[data1,data2]);
 //console.log(res);
     // Wrong with reduced rows
-    assert.deepEqual(res,[[undefined,40,400],[1,10,100],[2,20,200],[3,30,undefined]]);
+    assert.deepStrictEqual(res,[[undefined,40,400],[1,10,100],[2,20,200],[3,30,undefined]]);
 
     done();
   });
@@ -260,7 +260,7 @@ describe('Test 270 RECORDSET tests', function () {
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
 //console.log(res);
     // Wrong with reduced rows
-    assert.deepEqual(res, {data:
+    assert.deepStrictEqual(res, {data:
      [ { a: 1, b: 10, c: 100 },
      { a: 2, b: 20, c: 200 },
      { a: 3, b: 30 },
@@ -273,7 +273,7 @@ describe('Test 270 RECORDSET tests', function () {
   it.skip('8. INDEX', function(done) {
     alasql.options.modifier = 'INDEX';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
-    assert.deepEqual(res,{ '1': 10, '2': 20, '3': 30, undefined: 40 });
+    assert.deepStrictEqual(res,{ '1': 10, '2': 20, '3': 30, undefined: 40 });
 
     done();
   });
@@ -281,7 +281,7 @@ describe('Test 270 RECORDSET tests', function () {
   it.skip('9. TEXTSTRING', function(done) {
     alasql.options.modifier = 'TEXTSTRING';
     var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 USING b',[data1,data2]);
-    assert.deepEqual(res,'1\n2\n3\n');
+    assert.deepStrictEqual(res,'1\n2\n3\n');
 
     done();
   });

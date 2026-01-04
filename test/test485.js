@@ -40,7 +40,7 @@ describe('Test 485 - UNION (ALL) with HTML tables', function () {
 		var res = alasql('SELECT 1 as ID, "John" as Name UNION ALL SELECT 2 as ID, "Jane" as Name');
 
 		assert.equal(res.length, 2, 'UNION ALL should return 2 rows');
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res,
 			[
 				{ID: 1, Name: 'John'},
@@ -56,7 +56,7 @@ describe('Test 485 - UNION (ALL) with HTML tables', function () {
 		);
 
 		assert.equal(res.length, 2, 'UNION should return 2 rows');
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res,
 			[
 				{ID: 1, Name: 'John'},
@@ -70,6 +70,6 @@ describe('Test 485 - UNION (ALL) with HTML tables', function () {
 		var res = alasql('SELECT 1 as ID UNION SELECT 1 as ID');
 
 		assert.equal(res.length, 1, 'UNION should remove duplicates');
-		assert.deepEqual(res, [{ID: 1}], 'Only one row should remain');
+		assert.deepStrictEqual(res, [{ID: 1}], 'Only one row should remain');
 	});
 });

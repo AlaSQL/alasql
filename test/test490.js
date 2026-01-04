@@ -59,7 +59,7 @@ describe('Test 490 - PIVOT with SELECT *', function () {
 			{VendorId: 'JOHNS', WED: 900, MON: 300, FRI: 300, SUN: 600, THU: 800, SAT: 800, TUE: 600},
 		];
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res,
 			expectedResult,
 			'PIVOT with SELECT * and AVG should produce the correct aggregated table'
@@ -75,7 +75,7 @@ describe('Test 490 - PIVOT with SELECT *', function () {
 			{VendorId: 'JOHNS', WED: 900, MON: 300, FRI: 300, SUN: 600, THU: 800, SAT: 800, TUE: 600},
 		];
 
-		assert.deepEqual(
+		assert.deepStrictEqual(
 			res,
 			expectedResult,
 			'PIVOT with SELECT * and SUM should produce the correct aggregated table'

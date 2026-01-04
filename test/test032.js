@@ -18,13 +18,13 @@ describe('Test 32', function () {
 		assert.equal(5, db.exec(sql));
 
 		var sql = "SELECT COLUMN b FROM test WHERE a LIKE '%bc%'";
-		assert.deepEqual([3, 4, 5], db.exec(sql));
+		assert.deepStrictEqual([3, 4, 5], db.exec(sql));
 
 		var sql = "SELECT COLUMN b FROM test WHERE a NOT LIKE '%bc%'";
-		assert.deepEqual([1, 2], db.exec(sql));
+		assert.deepStrictEqual([1, 2], db.exec(sql));
 
 		var sql = "SELECT COLUMN b FROM test WHERE a NOT     LIKE '%bc%'";
-		assert.deepEqual([1, 2], db.exec(sql));
+		assert.deepStrictEqual([1, 2], db.exec(sql));
 
 		var likeAliases = ['like', 'ilike', '~~', '~~*'],
 			notLikeAliases = ['not like', 'not      like', 'not     ilike', '!~~', '!~~*'];
@@ -32,13 +32,13 @@ describe('Test 32', function () {
 		// caseinsensetive
 		for (var i in likeAliases) {
 			var sql = 'SELECT COLUMN b FROM test WHERE a ' + likeAliases[i] + " '%BC%'";
-			assert.deepEqual([3, 4, 5], db.exec(sql));
+			assert.deepStrictEqual([3, 4, 5], db.exec(sql));
 		}
 
 		// caseinsensetive
 		for (var i in notLikeAliases) {
 			var sql = 'SELECT COLUMN b FROM test WHERE a ' + notLikeAliases[i] + " '%BC%'";
-			assert.deepEqual([1, 2], db.exec(sql));
+			assert.deepStrictEqual([1, 2], db.exec(sql));
 		}
 
 		done();
@@ -53,13 +53,13 @@ describe('Test 32', function () {
 		db.exec('INSERT INTO test32 (a) VALUES (1234)');
 
 		var sql = "value of SELECT COUNT(a) FROM test32 WHERE a LIKE '4%'";
-		assert.deepEqual(4, db.exec(sql));
+		assert.deepStrictEqual(4, db.exec(sql));
 
 		var sql = "value of SELECT a FROM test32 WHERE a LIKE '_4_'";
-		// assert.deepEqual(444,db.exec(sql));
+		// assert.deepStrictEqual(444,db.exec(sql));
 
 		var sql = "value of SELECT a FROM test32 WHERE a LIKE '%2_4'";
-		assert.deepEqual(1234, db.exec(sql));
+		assert.deepStrictEqual(1234, db.exec(sql));
 		done();
 	});
 });

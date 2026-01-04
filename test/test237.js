@@ -46,8 +46,8 @@ DROP TABLE TestTable;
 `);
 
 		assert(res[4].length == 26);
-		assert.deepEqual(res[4][0], {cola: 0, colb: 'a'});
-		// assert.deepEqual(res,[ { EmployeeID: 100, EmployeeName: 'Mary' },
+		assert.deepStrictEqual(res[4][0], {cola: 0, colb: 'a'});
+		// assert.deepStrictEqual(res,[ { EmployeeID: 100, EmployeeName: 'Mary' },
 		//     { EmployeeID: 101, EmployeeName: 'Sara' },
 		//     { EmployeeID: 102, EmployeeName: 'Stefano' } ]);
 		//        console.log(res);

@@ -18,7 +18,7 @@ describe('Test 344 Multisheet export', function () {
 				{a: 2, b: 20},
 			];
 			var res = alasql('SELECT FROM ?', [data1]);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{a: 1, b: 10},
 				{a: 2, b: 20},
 			]);
@@ -118,7 +118,7 @@ describe('Test 344 Multisheet export', function () {
 		/*
   it('3. XLSXML multisheet export',function(done){
     var res = alasql('=2*2');
-    assert.deepEqual(res,1);
+    assert.deepStrictEqual(res,1);
     done();
   });
 */

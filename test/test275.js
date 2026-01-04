@@ -21,16 +21,16 @@ describe('Test 275 INNER JOIN on empty tables', function () {
 
 	it('2. INNER JOIN', function (done) {
 		var res = alasql('SELECT one0.*, two0.* FROM one0 INNER JOIN two0 ON one0.b = two0.b');
-		assert.deepEqual(res.data, []);
+		assert.deepStrictEqual(res.data, []);
 
 		var res = alasql('SELECT one1.*, two0.* FROM one1 INNER JOIN two0 ON one1.b = two0.b');
-		assert.deepEqual(res.data, []);
+		assert.deepStrictEqual(res.data, []);
 
 		var res = alasql('SELECT one0.*, two1.* FROM one0 INNER JOIN two1 ON one0.b = two1.b');
-		assert.deepEqual(res.data, []);
+		assert.deepStrictEqual(res.data, []);
 
 		var res = alasql('SELECT one1.*, two1.* FROM one1 INNER JOIN two1 ON one1.b = two1.b');
-		assert.deepEqual(res.data, [
+		assert.deepStrictEqual(res.data, [
 			{a: 1, b: 'One', c: 10},
 			{a: 2, b: 'Two', c: 20},
 			{a: 3, b: 'Three', c: 30},

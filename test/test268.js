@@ -30,7 +30,7 @@ describe('Test 268 INNER JOIN stress test', function () {
 
 	it('2. INNER JOIN on Array', function (done) {
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 INNER JOIN ? t2 USING b', [data1, data2]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10, c: 100},
 			{a: 2, b: 20, c: 200},
 		]);
@@ -46,7 +46,7 @@ describe('Test 268 INNER JOIN stress test', function () {
 			data1,
 			data2,
 		]);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: 1, b: 10, c: 100},
 			{a: 2, b: 20, c: 200},
 		]);
@@ -84,7 +84,7 @@ describe('Test 268 INNER JOIN stress test', function () {
 		/// console.log('RIGHT =',res.length);
 		var res = alasql('SELECT t1.*,t2.* FROM ? t1 OUTER JOIN ? t2 ON t1.b = t2.b', [t1, t2]);
 		/// console.log('OUTER =',res.length);
-		// assert.deepEqual(res.,
+		// assert.deepStrictEqual(res.,
 		//   [ { a: 1, b: 10, c: 100 }, { a: 2, b: 20, c: 200 } ]
 		// );
 		done();

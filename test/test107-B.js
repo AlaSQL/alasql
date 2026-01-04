@@ -23,7 +23,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 				'SELECT * FROM XLSX("' + __dirname + '/test107-B-base.xlsx", {headers:true})',
 				[],
 				function (res) {
-					assert.deepEqual(res, data);
+					assert.deepStrictEqual(res, data);
 					done();
 				}
 			);
@@ -59,7 +59,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 								{a: 4, b: 5, c: 6},
 								{a: 7, b: 8, c: 9},
 							];
-							assert.deepEqual(original, expectedOriginal);
+							assert.deepStrictEqual(original, expectedOriginal);
 							// Read the new data at E5:G6
 							alasql(
 								'SELECT * FROM XLSX("' +
@@ -71,7 +71,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 										{x: 100, y: 200, z: 300},
 										{x: 400, y: 500, z: 600},
 									];
-									assert.deepEqual(updated, expectedUpdated);
+									assert.deepStrictEqual(updated, expectedUpdated);
 									done();
 								}
 							);
@@ -108,7 +108,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 								{B: 10, C: 30, D: 45},
 								{B: 11, C: 45, D: 20},
 							];
-							assert.deepEqual(result, expectedResult);
+							assert.deepStrictEqual(result, expectedResult);
 							done();
 						}
 					);
@@ -144,7 +144,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 						function (original) {
 							// Original data should be at A1:B1
 							var expectedOriginal = [{name: 'John', age: 25}];
-							assert.deepEqual(original, expectedOriginal);
+							assert.deepStrictEqual(original, expectedOriginal);
 							// Read the new data at D10:E10
 							alasql(
 								'SELECT * FROM XLSX("' +
@@ -153,7 +153,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 								[],
 								function (updated) {
 									var expectedUpdated = [{value: 999, status: 'updated'}];
-									assert.deepEqual(updated, expectedUpdated);
+									assert.deepStrictEqual(updated, expectedUpdated);
 									done();
 								}
 							);
@@ -186,7 +186,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 							'/test107-B-newsheet.xlsx", {headers:true, sheetid:"NewSheet"})',
 						[],
 						function (result) {
-							assert.deepEqual(result, newSheetData);
+							assert.deepStrictEqual(result, newSheetData);
 							// Also verify original sheet still exists
 							alasql(
 								'SELECT * FROM XLSX("' +
@@ -227,7 +227,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 						[],
 						function (result) {
 							var expectedResult = [{AA: 'value'}];
-							assert.deepEqual(result, expectedResult);
+							assert.deepStrictEqual(result, expectedResult);
 							done();
 						}
 					);
@@ -266,7 +266,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 					'/test107-B-async.xlsx", {headers:true, sheetid:"Sheet 1", range:"A1:B3"})',
 				[]
 			);
-			assert.deepEqual(original, testData);
+			assert.deepStrictEqual(original, testData);
 
 			// Read the updated data
 			var updated = await alasql.promise(
@@ -275,7 +275,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 					'/test107-B-async.xlsx", {headers:true, sheetid:"Sheet 1", range:"D5:E6"})',
 				[]
 			);
-			assert.deepEqual(updated, updateData);
+			assert.deepStrictEqual(updated, updateData);
 		});
 
 		it('8. Test promise-based flow with new sheet creation', async function () {
@@ -305,7 +305,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 					'/test107-B-promise.xlsx", {headers:true, sheetid:"Sheet 1"})',
 				[]
 			);
-			assert.deepEqual(result1, sheet1Data);
+			assert.deepStrictEqual(result1, sheet1Data);
 
 			// Verify Sheet 2
 			var result2 = await alasql.promise(
@@ -314,7 +314,7 @@ describe('Test 107-B - Update existing Excel spreadsheet with sourcefilename and
 					'/test107-B-promise.xlsx", {headers:true, sheetid:"Sheet2"})',
 				[]
 			);
-			assert.deepEqual(result2, sheet2Data);
+			assert.deepStrictEqual(result2, sheet2Data);
 		});
 
 		// Cleanup test files after all tests

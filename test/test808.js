@@ -35,7 +35,7 @@ var dbFile = __dirname + '/test_db_fs.json';
 				{a: 'C', b: 3},
 			];
 
-			assert.deepEqual(res, actual);
+			assert.deepStrictEqual(res, actual);
 		});
 
 		it('C. Detach and Drop a Filestorage DB', async () => {

@@ -32,7 +32,7 @@ describe('Test 2222 - PATH keyword limitations', function () {
 
 		it('C) SELECT FROM table named "path"', function () {
 			var res = alasql('SELECT * FROM path ORDER BY id');
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				{id: 1, data: 'test1'},
 				{id: 2, data: 'test2'},
 			]);
@@ -42,7 +42,7 @@ describe('Test 2222 - PATH keyword limitations', function () {
 			var res = alasql('UPDATE path SET data = "updated" WHERE id = 1');
 			assert.equal(res, 1);
 			var check = alasql('SELECT data FROM path WHERE id = 1');
-			assert.deepEqual(check, [{data: 'updated'}]);
+			assert.deepStrictEqual(check, [{data: 'updated'}]);
 		});
 
 		it('E) DELETE FROM table named "path"', function () {
@@ -71,17 +71,17 @@ describe('Test 2222 - PATH keyword limitations', function () {
 
 		it('C) SELECT "path" column', function () {
 			var res = alasql('SELECT path FROM files ORDER BY id');
-			assert.deepEqual(res, [{path: '/home/user'}, {path: '/tmp'}, {path: '/var/log'}]);
+			assert.deepStrictEqual(res, [{path: '/home/user'}, {path: '/tmp'}, {path: '/var/log'}]);
 		});
 
 		it('D) WHERE clause with "path" column', function () {
 			var res = alasql('SELECT * FROM files WHERE path = "/tmp"');
-			assert.deepEqual(res, [{id: 2, path: '/tmp', size: 200}]);
+			assert.deepStrictEqual(res, [{id: 2, path: '/tmp', size: 200}]);
 		});
 
 		it('E) ORDER BY "path" column', function () {
 			var res = alasql('SELECT path FROM files ORDER BY path');
-			assert.deepEqual(res, [{path: '/home/user'}, {path: '/tmp'}, {path: '/var/log'}]);
+			assert.deepStrictEqual(res, [{path: '/home/user'}, {path: '/tmp'}, {path: '/var/log'}]);
 		});
 
 		it('F) GROUP BY "path" column', function () {
@@ -100,13 +100,13 @@ describe('Test 2222 - PATH keyword limitations', function () {
 	describe('PATH as column alias', function () {
 		it('A) SELECT with "path" as alias', function () {
 			var res = alasql('SELECT 1 as path');
-			assert.deepEqual(res, [{path: 1}]);
+			assert.deepStrictEqual(res, [{path: 1}]);
 		});
 
 		it('B) SELECT with "path" alias from data', function () {
 			var data = [{location: '/home'}, {location: '/tmp'}];
 			var res = alasql('SELECT location as path FROM ?', [data]);
-			assert.deepEqual(res, [{path: '/home'}, {path: '/tmp'}]);
+			assert.deepStrictEqual(res, [{path: '/home'}, {path: '/tmp'}]);
 		});
 	});
 
@@ -117,7 +117,7 @@ describe('Test 2222 - PATH keyword limitations', function () {
 				{id: 2, path: '/b'},
 			];
 			var res = alasql('SELECT path FROM ?', [data]);
-			assert.deepEqual(res, [{path: '/a'}, {path: '/b'}]);
+			assert.deepStrictEqual(res, [{path: '/a'}, {path: '/b'}]);
 		});
 
 		it('B) WHERE clause with "path" column from parameters', function () {
@@ -126,13 +126,13 @@ describe('Test 2222 - PATH keyword limitations', function () {
 				{id: 2, path: '/b'},
 			];
 			var res = alasql('SELECT * FROM ? WHERE path = ?', [data, '/a']);
-			assert.deepEqual(res, [{id: 1, path: '/a'}]);
+			assert.deepStrictEqual(res, [{id: 1, path: '/a'}]);
 		});
 
 		it('C) ORDER BY "path" from parameters', function () {
 			var data = [{path: 'z'}, {path: 'a'}, {path: 'm'}];
 			var res = alasql('SELECT path FROM ? ORDER BY path', [data]);
-			assert.deepEqual(res, [{path: 'a'}, {path: 'm'}, {path: 'z'}]);
+			assert.deepStrictEqual(res, [{path: 'a'}, {path: 'm'}, {path: 'z'}]);
 		});
 	});
 
@@ -153,17 +153,17 @@ describe('Test 2222 - PATH keyword limitations', function () {
 			);
 
 			var res = alasql('SEARCH PATH(#Josephine) name FROM #Napoleon');
-			assert.deepEqual(res, ['loves', 'Josephine']);
+			assert.deepStrictEqual(res, ['loves', 'Josephine']);
 		});
 
 		it('B) PATH with EDGE selector', function () {
 			var res = alasql('SEARCH PATH(#Josephine) EDGE name FROM #Napoleon');
-			assert.deepEqual(res, ['loves']);
+			assert.deepStrictEqual(res, ['loves']);
 		});
 
 		it('C) PATH to find longer paths', function () {
 			var res = alasql('SEARCH PATH(#Pablo) name FROM #Napoleon');
-			assert.deepEqual(res, ['loves', 'Josephine', 'knows', 'Pablo']);
+			assert.deepStrictEqual(res, ['loves', 'Josephine', 'knows', 'Pablo']);
 		});
 
 		it('D) PATH within DISTINCT', function () {
@@ -191,7 +191,7 @@ describe('Test 2222 - PATH keyword limitations', function () {
 			var res = alasql(
 				'SELECT t1.path as path1, t2.path as path2 FROM t1 JOIN t2 ON t1.id = t2.id'
 			);
-			assert.deepEqual(res, [{path1: '/a', path2: '/b'}]);
+			assert.deepStrictEqual(res, [{path1: '/a', path2: '/b'}]);
 
 			alasql('DROP TABLE t1');
 			alasql('DROP TABLE t2');
@@ -203,7 +203,7 @@ describe('Test 2222 - PATH keyword limitations', function () {
 				{id: 2, path: '/y'},
 			];
 			var res = alasql('SELECT path FROM (SELECT path FROM ?) WHERE path = "/x"', [data]);
-			assert.deepEqual(res, [{path: '/x'}]);
+			assert.deepStrictEqual(res, [{path: '/x'}]);
 		});
 
 		it('D) PATH in UNION', function () {

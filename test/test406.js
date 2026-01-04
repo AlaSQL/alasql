@@ -63,7 +63,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM $0',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: '12', c: '20', value: 1, id: 1},
 			{a: '12', c: '100', value: 12, id: 1},
 			{a: '14', c: '100', value: 14, id: 2},
@@ -78,7 +78,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM $0',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: '12', c: '20', value: 1, id: 1},
 			{a: '12', c: '100', value: 12, id: 1},
 			{a: '14', c: '100', value: 14, id: 2},
@@ -101,7 +101,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM ?',
 			[data1]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{key: '1', value: 10},
 			{key: '2', value: 20},
 		]);
@@ -113,7 +113,7 @@ describe('Test 406. Complex SEARCH', function () {
         FROM ?',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{a: '12', c: '20', value: 1, id: 1},
 			{a: '12', c: '100', value: 12, id: 1},
 			{a: '14', c: '100', value: 14, id: 2},

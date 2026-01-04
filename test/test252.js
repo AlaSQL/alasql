@@ -14,7 +14,7 @@ describe('Test 252 CREATE TABLE without column types', function () {
 		var res = alasql('SELECT * FROM sqlite_sequence');
 		//    console.log(res);
 
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{name: 1, seq: 10},
 			{name: 'one', seq: 'ten'},
 		]);

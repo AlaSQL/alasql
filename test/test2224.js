@@ -27,7 +27,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_open_col');
-		assert.deepEqual(selectRes, [{id: 1, open: 'myopen', data: 'myvalue'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, open: 'myopen', data: 'myvalue'}]);
 	});
 
 	it('B) OPEN as table name', function () {
@@ -38,7 +38,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM open');
-		assert.deepEqual(selectRes, [{id: 1, name: 'test'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, name: 'test'}]);
 	});
 
 	it('C) OPEN as column name with quoted identifier', function () {
@@ -49,7 +49,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_quoted');
-		assert.deepEqual(selectRes, [{open: 123, data: 'data'}]);
+		assert.deepStrictEqual(selectRes, [{open: 123, data: 'data'}]);
 	});
 
 	it('D) OPEN as table name with quoted identifier', function () {
@@ -62,7 +62,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		assert.equal(insertRes, 1);
 
 		var selectRes = alasql('SELECT * FROM [open]');
-		assert.deepEqual(selectRes, [{id: 2, name: 'test2'}]);
+		assert.deepStrictEqual(selectRes, [{id: 2, name: 'test2'}]);
 	});
 
 	it('E) SELECT with OPEN column in WHERE clause', function () {
@@ -70,7 +70,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		alasql("INSERT INTO items VALUES (1, 'open1', 'value1'), (2, 'open2', 'value2')");
 
 		var res = alasql("SELECT * FROM items WHERE open = 'open1'");
-		assert.deepEqual(res, [{id: 1, open: 'open1', data: 'value1'}]);
+		assert.deepStrictEqual(res, [{id: 1, open: 'open1', data: 'value1'}]);
 	});
 
 	it('F) Join tables with OPEN column', function () {
@@ -80,7 +80,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		alasql("INSERT INTO t2 VALUES (1, 'a'), (3, 'c')");
 
 		var res = alasql('SELECT t1.id, t1.open FROM t1 JOIN t2 ON t1.open = t2.open');
-		assert.deepEqual(res, [{id: 1, open: 'a'}]);
+		assert.deepStrictEqual(res, [{id: 1, open: 'a'}]);
 	});
 
 	it('G) OPEN as alias', function () {
@@ -88,7 +88,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		alasql("INSERT INTO test_alias VALUES (1, 'test')");
 
 		var res = alasql('SELECT myopen AS open FROM test_alias');
-		assert.deepEqual(res, [{open: 'test'}]);
+		assert.deepStrictEqual(res, [{open: 'test'}]);
 	});
 
 	it('H) GROUP BY with OPEN column', function () {
@@ -98,7 +98,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		var res = alasql(
 			'SELECT open, SUM(amount) as sum_amount FROM test_group GROUP BY open ORDER BY open'
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{open: 'a', sum_amount: 4},
 			{open: 'b', sum_amount: 2},
 		]);
@@ -109,7 +109,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		alasql("INSERT INTO test_order VALUES (2, 'b'), (1, 'a'), (3, 'c')");
 
 		var res = alasql('SELECT * FROM test_order ORDER BY open');
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			{id: 1, open: 'a'},
 			{id: 2, open: 'b'},
 			{id: 3, open: 'c'},
@@ -139,7 +139,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		var res = alasql(
 			'SELECT * FROM test_sub WHERE open IN (SELECT open FROM test_sub WHERE id = 1)'
 		);
-		assert.deepEqual(res, [{id: 1, open: 'test1'}]);
+		assert.deepStrictEqual(res, [{id: 1, open: 'test1'}]);
 	});
 
 	it('L) UPDATE with OPEN column', function () {
@@ -150,7 +150,7 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		assert.equal(updateRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_update');
-		assert.deepEqual(selectRes, [{id: 1, open: 'new'}]);
+		assert.deepStrictEqual(selectRes, [{id: 1, open: 'new'}]);
 	});
 
 	it('M) DELETE with OPEN column', function () {
@@ -161,6 +161,6 @@ describe('Test 2224 - OPEN keyword should be usable as identifier', function () 
 		assert.equal(deleteRes, 1);
 
 		var selectRes = alasql('SELECT * FROM test_delete');
-		assert.deepEqual(selectRes, [{id: 2, open: 'test2'}]);
+		assert.deepStrictEqual(selectRes, [{id: 2, open: 'test2'}]);
 	});
 });

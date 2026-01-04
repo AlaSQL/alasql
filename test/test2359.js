@@ -84,7 +84,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 		it('1. JOIN params with USING clause', function (done) {
 			var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 			var colres = pluck(res.columns, 'columnid');
-			assert.deepEqual(colres, ['a', 'b', 'c']);
+			assert.deepStrictEqual(colres, ['a', 'b', 'c']);
 			assert.equal(res.data.length, 2); // Matches on b=10 and b=20
 			done();
 		});
@@ -94,7 +94,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			alasql('SELECT * INTO two FROM ?', [data2]);
 			var res = alasql('SELECT one.*,two.* FROM one JOIN two USING b');
 			var colres = pluck(res.columns, 'columnid');
-			assert.deepEqual(colres, ['a', 'b', 'b', 'c']);
+			assert.deepStrictEqual(colres, ['a', 'b', 'b', 'c']);
 			assert.equal(res.data.length, 2); // Matches on b=10 and b=20
 			done();
 		});
@@ -102,7 +102,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 		it('3. JOIN params with USING - verify result data', function (done) {
 			var res = alasql('SELECT one.*,two.* FROM ? one JOIN ? two USING b', [data1, data2]);
 			var colres = pluck(res.columns, 'columnid');
-			assert.deepEqual(colres, ['a', 'b', 'c']);
+			assert.deepStrictEqual(colres, ['a', 'b', 'c']);
 			// Verify the actual joined data
 			assert.equal(res.data[0].a, 1);
 			assert.equal(res.data[0].b, 10);
@@ -135,7 +135,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [['ABC', 'ABC', 'ABC']]);
+			assert.deepStrictEqual(res, [['ABC', 'ABC', 'ABC']]);
 			done();
 		});
 
@@ -143,7 +143,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one INNER JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				['AB', 'AB', undefined],
 				['ABC', 'ABC', 'ABC'],
 			]);
@@ -154,7 +154,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [['ABC', 'ABC', 'ABC']]);
+			assert.deepStrictEqual(res, [['ABC', 'ABC', 'ABC']]);
 			done();
 		});
 
@@ -162,7 +162,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one LEFT JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				['A', undefined, undefined],
 				['AB', 'AB', undefined],
 				['AC', undefined, undefined],
@@ -175,7 +175,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				['ABC', 'ABC', 'ABC'],
 				[undefined, 'BC', 'BC'],
 			]);
@@ -186,7 +186,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one RIGHT JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				['AB', 'AB', undefined],
 				['ABC', 'ABC', 'ABC'],
 				[undefined, 'B', undefined],
@@ -199,7 +199,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id INNER JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				['ABC', 'ABC', 'ABC'],
 				[undefined, 'BC', 'BC'],
 			]);
@@ -210,7 +210,7 @@ describe('Test 2359 - Advanced Joins (CROSS JOIN and OUTER JOIN)', function () {
 			var res = alasql(
 				'SELECT one.id AS a, two.id AS b, three.id AS c FROM one OUTER JOIN two ON one.id = two.id LEFT JOIN three ON two.id = three.id'
 			);
-			assert.deepEqual(res, [
+			assert.deepStrictEqual(res, [
 				['A', undefined, undefined],
 				['AB', 'AB', undefined],
 				['AC', undefined, undefined],

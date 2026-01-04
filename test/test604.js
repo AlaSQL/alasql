@@ -71,7 +71,7 @@ describe.skip('Test 604 - CREATE VIEW error with localStorage engine #604', func
 		alasql
 			.promise('insert into db604.t1 VALUES (1,"Moscow"), (2, "Kyiv"), (3,"Minsk")')
 			.then(function (rows) {
-				assert.deepEqual(alasql.databases.db604.tables.t1.data, [
+				assert.deepStrictEqual(alasql.databases.db604.tables.t1.data, [
 					{a: 1, b: 'Moscow'},
 					{a: 2, b: 'Kyiv'},
 					{a: 3, b: 'Minsk'},

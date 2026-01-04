@@ -42,7 +42,7 @@ describe('Test 230 Fix GROUP BY expressions', function () {
             GROUP BY [2] ',
 			[data]
 		);
-		assert.deepEqual(res, [
+		assert.deepStrictEqual(res, [
 			[2, 4],
 			[3, 11],
 		]);

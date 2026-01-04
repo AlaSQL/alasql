@@ -17,7 +17,7 @@ describe('Test 819 GROUP BY with CASE', function () {
 			'SELECT COUNT(*) FROM ? GROUP BY CASE WHEN id IS NULL THEN alternativeId ELSE id END',
 			[data]
 		);
-		assert.deepEqual(res, [{'COUNT(*)': 1}, {'COUNT(*)': 3}, {'COUNT(*)': 1}]);
+		assert.deepStrictEqual(res, [{'COUNT(*)': 1}, {'COUNT(*)': 3}, {'COUNT(*)': 1}]);
 		done();
 	});
 });

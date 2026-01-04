@@ -36,8 +36,8 @@ describe('Test 52 - UPPER CASE and LOWER CASE', function () {
 			'select column population from (SELECT category, ' +
 			'SUM(cities.population) as population from categories ' +
 			'join cities using city group by category) t order by population';
-		assert.deepEqual([12, 16, 19], db1.exec(sql1));
-		assert.deepEqual([12, 16, 19], db1.exec(sql2));
+		assert.deepStrictEqual([12, 16, 19], db1.exec(sql1));
+		assert.deepStrictEqual([12, 16, 19], db1.exec(sql2));
 		done();
 	});
 
