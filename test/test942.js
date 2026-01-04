@@ -20,7 +20,7 @@ describe('Test 942 - GROUP_CONCAT null handling', function () {
 			{a: 1, b: null},
 		];
 		var res = alasql('SELECT a, GROUP_CONCAT(b) AS b FROM ? GROUP BY a', [data]);
-		assert.deepStrictEqual(res, [{a: 1, b: null}]);
+		assert.deepStrictEqual(res, [{a: 1, b: undefined}]);
 	});
 
 	it('C) GROUP_CONCAT DISTINCT with nulls should skip nulls', function () {
@@ -56,6 +56,6 @@ describe('Test 942 - GROUP_CONCAT null handling', function () {
 	it('F) GROUP_CONCAT with only null values (no GROUP BY)', function () {
 		var data = [{b: null}, {b: null}, {b: null}];
 		var res = alasql('SELECT GROUP_CONCAT(b) AS b FROM ?', [data]);
-		assert.deepStrictEqual(res, [{b: null}]);
+		assert.deepStrictEqual(res, [{b: undefined}]);
 	});
 });

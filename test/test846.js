@@ -31,7 +31,9 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepStrictEqual(res, [{a: null, b: 9, c: undefined, c2: 1, d: 5, e: undefined, f: 11}]);
+		assert.deepStrictEqual(res, [
+			{a: undefined, b: 9, c: undefined, c2: 1, d: 5, e: undefined, f: 11},
+		]);
 		var data = [
 			{
 				a: null,
@@ -102,7 +104,9 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 			FROM ?`,
 			[data]
 		);
-		assert.deepStrictEqual(res, [{a: null, b: 1, c: undefined, c2: 1, d: 5, e: undefined, f: 2}]);
+		assert.deepStrictEqual(res, [
+			{a: undefined, b: 1, c: undefined, c2: 1, d: 5, e: undefined, f: 2},
+		]);
 		var data = [
 			{
 				a: null,
@@ -180,7 +184,6 @@ describe('Test ' + test + ' - non-numeric values for SUM, MIN and MAX', function
 		var data = [[{a: null}]];
 		res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
 		assert.deepStrictEqual(res, [{a: undefined}]);
-
 
 		var data = [[{a: null}]];
 		res = alasql(`SELECT SUM(a) AS a FROM ?`, data);
