@@ -1352,7 +1352,7 @@ var getXLSX = function () {
  */
 var reTypeConverter = {
 	str: /string|char$|text/i,
-	int: /int$/i,
+	int: /^int|int$/i,
 	num: /float|double|real|^num|decimal|money/i,
 	bool: /^bool/i,
 	date: /^date|^time/i,
@@ -1364,7 +1364,7 @@ var reTypeConverter = {
  * @param {string} dbtypeid - The database type (INT, FLOAT, STRING, etc.)
  * @return {*} The converted value
  */
-utils.convertValueToType = function (value, dbtypeid) {
+utils.typeConverter = function (value, dbtypeid) {
 	// If value is null or undefined, return as is
 	if (value === null || value === undefined) {
 		return value;

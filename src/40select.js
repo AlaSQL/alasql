@@ -309,7 +309,7 @@ yy.Select = class Select {
 						var converted = {};
 						for (var key in r) {
 							var colDef = table.xcolumns && table.xcolumns[key];
-							converted[key] = alasql.utils.convertValueToType(r[key], colDef ? colDef.dbtypeid : null);
+							converted[key] = alasql.utils.typeConverter(r[key], colDef ? colDef.dbtypeid : null);
 						}
 						table.data.push(converted);
 					`;
