@@ -634,31 +634,90 @@ case 249:
 			this.$ = {};
 			this.$[$$[$0-1].op] = $$[$0];
 			if($$[$0-1].corresponding) this.$.corresponding = true;
+			// Handle queries for the nested SELECT in UNION
+			// The UnionableSelect has collected its queries, restore saved queries for outer SELECT
+			if(yy.savedQueriesForUnion && yy.savedQueriesForUnion.length > 0) {
+				var savedQueries = yy.savedQueriesForUnion.pop();
+				// Current yy.queries belongs to nested SELECT, save it
+				if(yy.queries && yy.queries.length > 0) {
+					$$[$0].queries = yy.queries;
+				}
+				// Restore outer SELECT's queries
+				yy.queries = savedQueries;
+			}
 		
 break;
 case 250:
- this.$ = {op: 'union'}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'union'}; 
+		
 break;
 case 251:
- this.$ = {op: 'unionall'}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'unionall'}; 
+		
 break;
 case 252:
- this.$ = {op: 'except'}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'except'}; 
+		
 break;
 case 253:
- this.$ = {op: 'intersect'}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'intersect'}; 
+		
 break;
 case 254:
- this.$ = {op: 'union', corresponding: true}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'union', corresponding: true}; 
+		
 break;
 case 255:
- this.$ = {op: 'unionall', corresponding: true}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'unionall', corresponding: true}; 
+		
 break;
 case 256:
- this.$ = {op: 'except', corresponding: true}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'except', corresponding: true}; 
+		
 break;
 case 257:
- this.$ = {op: 'intersect', corresponding: true}; 
+ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			this.$ = {op: 'intersect', corresponding: true}; 
+		
 break;
 case 261:
  this.$ = {order:$$[$0]}

@@ -1123,26 +1123,85 @@ UnionClause
 			$$ = {};
 			$$[$1.op] = $2;
 			if($1.corresponding) $$.corresponding = true;
+			// Handle queries for the nested SELECT in UNION
+			// The UnionableSelect has collected its queries, restore saved queries for outer SELECT
+			if(yy.savedQueriesForUnion && yy.savedQueriesForUnion.length > 0) {
+				var savedQueries = yy.savedQueriesForUnion.pop();
+				// Current yy.queries belongs to nested SELECT, save it
+				if(yy.queries && yy.queries.length > 0) {
+					$2.queries = yy.queries;
+				}
+				// Restore outer SELECT's queries
+				yy.queries = savedQueries;
+			}
 		}
 	;
 
 UnionOp
 	: UNION
-		{ $$ = {op: 'union'}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'union'}; 
+		}
 	| UNION ALL
-		{ $$ = {op: 'unionall'}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'unionall'}; 
+		}
 	| EXCEPT
-		{ $$ = {op: 'except'}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'except'}; 
+		}
 	| INTERSECT
-		{ $$ = {op: 'intersect'}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'intersect'}; 
+		}
 	| UNION CORRESPONDING
-		{ $$ = {op: 'union', corresponding: true}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'union', corresponding: true}; 
+		}
 	| UNION ALL CORRESPONDING
-		{ $$ = {op: 'unionall', corresponding: true}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'unionall', corresponding: true}; 
+		}
 	| EXCEPT CORRESPONDING
-		{ $$ = {op: 'except', corresponding: true}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'except', corresponding: true}; 
+		}
 	| INTERSECT CORRESPONDING
-		{ $$ = {op: 'intersect', corresponding: true}; }
+		{ 
+			// Save current queries for outer SELECT before parsing nested SELECT
+			if(!yy.savedQueriesForUnion) yy.savedQueriesForUnion = [];
+			yy.savedQueriesForUnion.push(yy.queries || []);
+			yy.queries = []; // Reset for nested SELECT
+			$$ = {op: 'intersect', corresponding: true}; 
+		}
 	;
 
 UnionableSelect
