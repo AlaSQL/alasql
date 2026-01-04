@@ -181,11 +181,20 @@ function queryfn3(query) {
 	// apply ORDER BY and LIMIT to the first SELECT before combining.
 	// This handles the pattern: SELECT ... ORDER BY ... LIMIT ... UNION ALL SELECT ... ORDER BY ... LIMIT ...
 	// We only do this if the UNION branch also has ORDER BY/LIMIT (pattern 2), not if ORDER BY is at the end (pattern 1).
-	var unionBranchHasOrder = (query.unionallfn && query.unionallfn.query && (query.unionallfn.query.orderfn || query.unionallfn.query.limit)) ||
-	                          (query.unionfn && query.unionfn.query && (query.unionfn.query.orderfn || query.unionfn.query.limit)) ||
-	                          (query.exceptfn && query.exceptfn.query && (query.exceptfn.query.orderfn || query.exceptfn.query.limit)) ||
-	                          (query.intersectfn && query.intersectfn.query && (query.intersectfn.query.orderfn || query.intersectfn.query.limit));
-	
+	var unionBranchHasOrder =
+		(query.unionallfn &&
+			query.unionallfn.query &&
+			(query.unionallfn.query.orderfn || query.unionallfn.query.limit)) ||
+		(query.unionfn &&
+			query.unionfn.query &&
+			(query.unionfn.query.orderfn || query.unionfn.query.limit)) ||
+		(query.exceptfn &&
+			query.exceptfn.query &&
+			(query.exceptfn.query.orderfn || query.exceptfn.query.limit)) ||
+		(query.intersectfn &&
+			query.intersectfn.query &&
+			(query.intersectfn.query.orderfn || query.intersectfn.query.limit));
+
 	if (unionBranchHasOrder && (query.orderfn || query.limit)) {
 		// Apply ordering to first SELECT's data
 		if (query.orderfn) {

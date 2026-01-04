@@ -20,6 +20,6 @@ console.log(
 			isWebWorker: alasql.utils.isWebWorker,
 		},
 		null,
-		4
+		2
 	)
 );

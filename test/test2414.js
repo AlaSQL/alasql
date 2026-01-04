@@ -129,11 +129,11 @@ describe('Test 2414 - UNION with parenthesized SELECT and ORDER BY', function ()
 		];
 
 		var res = alasql(
-			`(SELECT a FROM ? ORDER BY a LIMIT 2) UNION ALL (SELECT a FROM ? ORDER BY a DESC LIMIT 1)`,
+			`(SELECT b FROM ? ORDER BY a LIMIT 2) UNION ALL (SELECT b FROM ? ORDER BY a DESC LIMIT 1)`,
 			[data, data]
 		);
 
-		assert.deepEqual(res, [{a: 1}, {a: 2}]);
+		assert.deepEqual(res, [{b: 'x'}, {b: 'y'}, {b: 'w'}]);
 	});
 
 	it('H) UNION ALL with parenthesized ORDER BY', function () {
