@@ -5,7 +5,7 @@ if (typeof exports === 'object') {
 
 let testId = '000'; // Use the ID of the issue being fixed by this PR
 
-describe(`Test ${testID} - multiple statements`, function () {
+describe(`Test ${testId} - multiple statements`, function () {
 	before(function () {
 		alasql('create database test' + testId);
 		alasql('use test' + testId);
@@ -30,7 +30,7 @@ describe(`Test ${testID} - multiple statements`, function () {
 		let sql = 'create table two (a int);';
 		sql += 'insert into two values (1),(2),(3),(4),(5);';
 		sql += 'select * from two;';
-		var res = alasql(sql);
+		let res = alasql(sql);
 		assert.deepStrictEqual(res, [1, 5, [{a: 1}, {a: 2}, {a: 3}, {a: 4}, {a: 5}]]);
 	});
 
